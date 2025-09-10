@@ -2,7 +2,7 @@
 
 ::: columns
 :::: {.column width=15%}
-![](lectures_source/UMD_Logo.png)
+![](msml610/lectures_source/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -145,13 +145,13 @@ MSML610: Advanced Machine Learning
 - **Neuro-symbolic approaches** blends the two approaches
   - Reason over learned concepts using structured logic
 
- ![](lectures_source/figures/Lesson03_symbolic_vs_subsymbolic.png)
+ ![](msml610/lectures_source/figures/Lesson03_symbolic_vs_subsymbolic.png)
 
 // TODO: Convert in tikz
 
 * Neuro-symbolic Approach: Conceptual Spaces
 
-![](lectures_source/figures/Lesson03_conceptual_spaces.png)
+![](msml610/lectures_source/figures/Lesson03_conceptual_spaces.png)
 
 - **Conceptual spaces** are frameworks for representing knowledge using geometric
   structures
@@ -825,7 +825,7 @@ digraph UniversityOntology {
     `Person`
   - Important for building taxonomies and ontologies
 
-- **Satisfiability**:
+- **Satisfiability**
   - "Can an instance of a concept exist?"
   - Test if a concept is logically consistent (i.e., without contradiction)
   - E.g., if the concept `FlyingPenguin` requires flying but is also defined as a
@@ -869,7 +869,7 @@ digraph UniversityOntology {
   - Infer consequences that logically follow from facts and rules
   - E.g., if `John` is a `Student` in `ComputerScience` then he can attend `MSML610`
 
-* E.g., of reasoning tasks in KR (4/4)
+* Example of reasoning tasks in KR (4/4)
 - **Belief Revision**
   - Update the knowledge base when new, possibly conflicting, information
     arrives
@@ -890,20 +890,20 @@ digraph UniversityOntology {
 - Protégé is a free, open-source platform for building ontologies
   - Developed at Stanford
 
-- Provides tools to construct and visualize ontologies
+- Provides tools to *construct and visualize ontologies*
   - Users can define classes, properties, individuals, and relationships
 
-- Enable reasoning over ontologies using plugins
+- *Enable reasoning* over ontologies using plugins
   - E.g., checking consistency, inferring new knowledge
 
-- Supports:
+- **Supports**
   - Major ontology languages
     - OWL (Web Ontology Language)
     - RDF (Resource Description Framework)
   - Multiple serialization formats
     - RDF/XML, Turtle, OWL Functional Syntax
 
-- Use cases:
+- **Use cases**
   - Domain-specific knowledge modeling (e.g., biomedicine, law)
   - Semantic Web applications
   - AI systems that require structured knowledge
@@ -915,25 +915,25 @@ digraph UniversityOntology {
 // ## 7.4, Propositional logic (p. 263)
 
 * Propositional Logic
-- Propositional logic is a formal system for reasoning about statements that can
-  be true or false
-  - Syntax defines the allowable sentences
+- **Propositional logic** is a formal system for reasoning about statements that
+  can be true or false
+  - **Syntax** defines the allowable sentences
     - Consists of proposition symbol and logical connectives
     - E.g., $P \land Q$
-  - Semantics is the way in which the truth of sentences is determined
+  - **Semantics** is the way in which the truth of sentences is determined
     - Truth tables or deduction rules evaluate the truth value of complex
       sentences
     - E.g., if $P$ is true and $Q$ is false then $P \land Q$ is false
 
-- Atomic representation
+- **Atomic representation**
   - No internal structure within atomic propositions
 
-- **Uses:**
+- **Uses**
   - SAT solvers
     - Tools for determining if a propositional logic formula can be satisfied
     - E.g., used in hardware verification and scheduling problems
   - Expert systems
-    - Systems that use logic rules to mimic human decision-making
+    - Use logic rules to mimic human decision-making
     - E.g., medical diagnosis systems
   - Rule-based agents
     - Agents that operate based on a set of predefined rules
@@ -941,26 +941,28 @@ digraph UniversityOntology {
 
 // ## Syntax of propositional logic
 
-* Proposition symbol
-- Proposition symbol
+* Proposition Symbol
+- **Proposition symbol**
   - Is an atomic sentence consisting of a single symbol
     - E.g., $P$, $Q$, $North$
   - Doesn't have truth value, it is just a symbol for a real-world statement
+    - Needs grounding
   - Stands for a proposition that can be true or false
     - E.g., $K_{E,5}$ = "the Knight is in E5"
     - $K_{E,5}$ is not composed of any other symbol, it is an atomic symbol
-  - $True$ and $False$ are proposition symbols with inherent truth values
+
+- $True$ and $False$ are proposition symbols with inherent truth values
 
 * Sentences
-- Atomic sentence:
+- **Atomic sentence**
   - Is a sentence composed of a single proposition symbol
+  - E.g., $P$
 
-- Complex sentence:
+- **Complex sentence**
   - Is constructed from simpler (sentences) using parentheses and logical
     connectives
-  - Note: it is a recursive definition that allow to build more complex sentences
-
-- Each sentence (atomic or complex) can be only true or false
+  - E.g., $(P \land Q) \lor R$
+  - It is a recursive definition that allow to build more complex sentences
 
 - Common logical connectives
   - Not: $\lnot$
@@ -969,87 +971,85 @@ digraph UniversityOntology {
   - Implies: $\implies$
   - If and only if: $\iff$
 
+- Each sentence (atomic or complex) can be only true or false
+
 * Proposition Logic: Weather Example
-- Proposition symbols are
+- Proposition symbols are:
   - $Rain$ = "it's raining"
   - $Cold$ = "it's cold"
   - $Sunny$ = "it's sunny"
   - $Snow$ = "it's snowing"
   - $Cloudy$ = "it's cloudy"
 
-- Atomic sentence can be positive (e.g., $Rain$) or negated (e.g.,
-  $\lnot Rain$ = "it's not raining")
+- **Atomic sentence** can be positive or negated
+  - E.g., $Rain$, $\lnot Rain$ = "it's not raining"
 
-- Negation
-  - E.g., $\lnot (Rain \lor Cloudy)$ = "it's not the case that it's raining or cloudy"
+- **Negation**
+  - E.g., $\lnot (Rain \lor Cloudy)$ = "it's not the case that it's raining or
+    cloudy"
 
-- Conjunction
+- **Conjunction / Disjunction**
   - E.g., $Rain \land Cold$ = "it's raining and it's cold"
-
-- Disjunction
   - E.g., $Rain \lor Snow$ = "it's either raining or snowing"
 
-- Implication is a sentence containing a premise (aka antecedent), the
-  connective $\implies$, and a conclusion (aka consequent)
+- **Implication** is a sentence containing a premise $\implies$ conclusion
   - Aka "if-then statements", "rules"
   - E.g., $Rain \implies \lnot Snow$ = "if it's raining, it's not snowing"
 
-- Biconditional: $A \implies B \land B \implies A$
+- **Biconditional**: $A \implies B \land B \implies A$
   - E.g., $Sunny \iff \lnot Cloudy$ = "it's sunny if and only if it's not cloudy"
 
 * Grammar in BNF form
 ::: columns
 :::: {.column width=50%}
-- Use BNF to formally represent the grammar of propositional logic
+- **Backus Normal Form** formally represents the grammar of propositional logic
 
 - Ambiguous, i.e., the same sentence can be parsed in multiple ways
-  - E.g.,
-  $\lnot A \lor B = (\lnot A) \lor B \text{ or } \lnot (A \lor B) ?$
+  - E.g., $\lnot A \lor B = (\lnot A) \lor B$ or $\lnot (A \lor B)$ ?
 
 - To eliminate ambiguity define the precedence for each operator
   - E.g., $\lnot$ has higher precedence than $\land, \lor$ so:
     $\lnot A \lor B \text{ means } (\lnot A) \lor B$
 ::::
 :::: {.column width=45%}
-  ![](lectures_source/figures/Lesson13_propositional_logic_BNF.png){ height=50% }
+![](msml610/lectures_source/figures/Lesson13_propositional_logic_BNF.png){ height=50% }
 ::::
 :::
 
 ## Semantics
 
-* Semantics of propositional logic
-- Semantics are rules for determining the truth of a sentence $\alpha$ with
+* Semantics of Propositional Logic
+- **Semantics** are rules for determining the truth of a sentence $\alpha$ with
   respect to a model $m$
-  - We want to determine if a sentence is true or false, given a possible world
+  - Determine if a sentence is true or false, given a possible world
 
 - In propositional logic, a model $m$ fixes the truth value (true or false) for
   every proposition symbol/atomic sentence, e.g.,
 
-- The models are abstractions of the real world and have no a-priori connection
-  to a specific world, e.g.,
+- The models are **abstractions** of the real world and have no a-priori
+  connection to a specific world, e.g.,
   - $P_{1,2}$ is just a symbol and can mean:
     - "There is a pit in [1, 2]" or
     - "I'm in Paris today and tomorrow"
+  - Need grounding
 
-* Computing the truth value of a sentence
-- The truth value of a sentence can be derived from the truth of the proposition
-  symbols (recursively from the model $m$), e.g.,
-
-- If the KB is based on proposition symbols $P_{1,2}, P_{2,2}, P_{3,1}$:
+* Computing the Truth Value of a Sentence
+- The **truth value of a sentence** is derived from the truth of the proposition
+  symbols (recursively from the model $m$)
   $$
   m = \{ P_{1,2}=F, P_{2,2}=F, P_{3,1}=T \}
   $$
 
 - All sentences $\alpha$ are constructed from atomic sentences (assigned by the
-  model $m$) and the five connectives:
+  model $m$) and connectives:
   - $\lnot P$ is T iff $P$ is F in $m$
   - $P \land Q$ is T iff $P$ and $Q$ are both true in $m$
   - $P \lor Q$ is T iff $P$ or $Q$ are true in $m$
   - $P \implies Q$ is true unless $P$ is true and $Q$ is false in $m$
   - $P \iff Q$ is true iff $P$ and $Q$ are both true or both false in $m$
 
-- Truth table contains the truth value of a sentence (no matter how complex) for
-  each possible assignment of truth values to its components
+- **Truth table** contains the truth value of a sentence for each possible
+  assignment of truth values to its components (which depends on model $m$)
   - E.g., $X = A \land B \lor C$
     ```
     A   B   C   X
@@ -1062,19 +1062,19 @@ digraph UniversityOntology {
 * Interpretation of Implication
 - In a logical implication $P \implies Q$ there is no causation between $P$ and
   $Q$
-  - E.g., "5 is odd implies that Tokyo is the capital of Japan" is a true
+  - E.g., _"5 is odd implies that Tokyo is the capital of Japan"_ is a true
     sentence in propositional logic (although very odd)
+
+- $P \implies Q$ is saying _"If $P$ is true, I claim that $Q$ is true. Otherwise I
+  am making no claim"_
 
 - Pathological cases for implication
   - An implication is true whenever the antecedent is false
-    - E.g., "5 is even implies pigs fly" is true
-    - E.g., "5 is even implies Sam is smart" is true, even if Sam is not smart
-    - The reason is that $P \implies Q$ is saying "If $P$ is true, I claim that
-      $Q$ is true. Otherwise I am making no claim"
+  - E.g., _"5 is even implies pigs fly"_ is true
 
 * Model Checking is Sound and Complete
-- **Model checking algorithm:**
-  - Enumerate all models (truth tables)
+- **Model checking algorithm**
+  - Enumerate all the models (truth tables)
   - Check if $\alpha$ is true for every model where $KB$ is true
 
 - The model checking algorithm is:
@@ -1092,21 +1092,40 @@ digraph UniversityOntology {
     - Average case is better than exponential
   - Space complexity is $O(n)$ since enumeration is depth-first
 
+* Inference in Propositional Logic
+- Inference are the rules of reasoning
+  - **Modus Ponens**: if $p \implies q$ and $p$, infer $q$
+    - If it rains, the ground will be wet. It rains.
+    - Therefore, the ground is wet.
+  - **Modus Tollens**: if $p \implies q$ and $\lnot q$, infer $\lnot p$
+    - If it rains, the ground will be wet. The ground is not wet.
+    - Therefore, it did not rain.
+  - **Syllogism (Transitivity)**
+    - If $p \implies q$ and $q \implies r$, then $p \implies r$
+  - **Disjunctive Syllogism**
+    - If $p \lor q$ and $\lnot p$, infer $q$
+  - **Addition**: if $p$, then $p \lor q$
+  - **Simplification**: from $p \land q$, infer $p$ (or $q$)
+  - **Conjunction**: from $p$ and k$q$, infer $p \land q$
+  - **Resolution Rule**
+    - From $(p \lor q)$ and $(\lnot p \lor r)$, infer $(q \lor r)$
+
 * Propositional Theorem Proving
-- To prove a desired sentence $\alpha$ under a knowledge base KB
+- To **prove** a desired sentence $\alpha$ under a knowledge base KB
   - Apply rules of inference to construct a proof of $\alpha$
   - Any sentence can have only one of the following truth values:
     1. True
     2. False
     3. Undecidable under the KB
 
-- Theorem proving vs. model checking:
+- **Theorem proving vs model checking**
   - Model checking involves enumerating all models to show the sentence is
     true/false in all models where KB is true
+  - Propositional theorem proving builds a proof
   - If the proof is short, theorem proving can be more efficient than model
     checking
 
-* Logical equivalence of sentences
+* Logical Equivalence of Sentences
 - Two sentences $\alpha$ and $\beta$ are logically equivalent 
   $\alpha \equiv \beta$
   - Iff they are true in the same set of models:
@@ -1119,7 +1138,7 @@ digraph UniversityOntology {
     $$
 - E.g., $P \lor Q \equiv Q \lor P$
 
-* Logical equivalences (1/2)
+* Logical Equivalences (1/2)
 - Commutativity of $\land$ and $\lor$
   $$
   (\alpha \land \beta) \equiv (\beta \land \alpha)
@@ -1153,7 +1172,7 @@ digraph UniversityOntology {
   \lnot (\lnot \alpha) \equiv \alpha
   $$
 
-* Logical equivalences (2/2)
+* Logical Equivalences (2/2)
 
 - Contraposition:
   $$
@@ -1168,7 +1187,7 @@ digraph UniversityOntology {
   (\alpha \iff \beta)
   \equiv (\alpha \implies \beta) \land (\beta \implies \alpha)
   $$
-- De Morgan:
+- De Morgan equivalence:
   $$
   \lnot (\alpha \land \beta) \equiv (\lnot \alpha \lor \lnot \beta)
   $$
@@ -1176,36 +1195,45 @@ digraph UniversityOntology {
   \lnot (\alpha \lor \beta) \equiv (\lnot \alpha \land \lnot \beta)
   $$
 
-* Valid sentence
-- A valid sentence $\alpha$ is true for all the models
+* Deduction theorem
+- A **valid sentence** $\alpha$ is true for all the models
   - E.g., $P \lor \lnot P$
   - Aka "tautology"
   - Every tautology is equivalent to the sentence $True$
 
-- Contradiction is a sentence $\alpha$ that is false for all the models
+- **Contradiction** is a sentence $\alpha$ that is false for all the models
   - E.g., $P \land \lnot P$
   - Every contraction is equivalent to the sentence $False$
 
-* Deduction theorem
-- The sentence $\alpha$ entails $\beta$ (written $\alpha \models \beta$) iff the
-  sentence $\alpha \implies \beta$ is a tautology, i.e., is equivalent to
-  $True$
+- **Deduction theorem**
+  - The sentence $\alpha$ entails $\beta$ (written $\alpha \models \beta$) iff the
+    sentence $\alpha \implies \beta$ is a tautology, i.e., is equivalent to
+    $True$
+
+- The deduction theorem is best thought of as a **bridge** between two different
+  but closely related ideas
+  - Entailment $\models$ is a semantic notion
+    - It's about truth across all models
+    - $\alpha entails \beta$ means in every possible world where $\alpha$ is true,
+      $\beta$ is also true
+  -  Implication $\implies$ is a syntactic notion
+    - $\alpha \implies \beta$ is just another formula inside the logic
 
 * Satisfiability
-- A sentence $\alpha$ is satisfiable iff $\alpha$ is true for some model
+- A sentence $\alpha$ is **satisfiable** iff $\alpha$ is true for some model
 
-- SAT problem is about determining satisfiability of sentence in propositional
-  logic
+- **SAT problem** is about determining satisfiability of sentence in
+  propositional logic
   - One can enumerate all the possible models until one is found to satisfy the
     sentence $\alpha$
   - It is NP-complete
 
-- A sentence $\alpha$ is un-satisfiable iff $\alpha$ is never true (i.e., a
+- A sentence $\alpha$ is **un-satisfiable** iff $\alpha$ is never true (i.e., a
   contradiction)
 
-- Validity and satisfiability
+- **Validity and satisfiability**
   - $\alpha$ is valid (i.e., a tautology) iff $\lnot \alpha$ is un-satisfiable
-  - By contrapositive $\alpha$ is satisfiable iff $\lnot \alpha$ is not valid
+  - By contrapositive, $\alpha$ is satisfiable iff $\lnot \alpha$ is not valid
     ($\lnot \alpha$ is not a tautology)
 
 * Proof by contraction
@@ -1307,7 +1335,7 @@ digraph UniversityOntology {
 ::::
 :::: {.column width=35%}
 
-![](lectures_source/figures/Lesson03_FOL_Syntax.png)
+![](msml610/lectures_source/figures/Lesson03_FOL_Syntax.png)
 
 ::::
 :::
@@ -1718,7 +1746,7 @@ digraph UniversityOntology {
 
 * Example of OWL in RDF
 
-![](lectures_source/figures/Lesson03_RDF_example.png)
+![](msml610/lectures_source/figures/Lesson03_RDF_example.png)
 
 ```graphviz[width=50%]
 digraph OWL_Example {
