@@ -313,29 +313,49 @@ MSML610: Advanced Machine Learning
     - Sentence $\alpha$ is entailed by KB if it is true in all models where KB is
       true
 
-* Grounding and Symbol Anchoring
+* Grounding
+
+::: columns
+:::: {.column width=50%}
 
 - **Grounding**
-  - Connecting abstract symbols to real-world entities or observations
-  - E.g., the symbol `Apple` must be linked to the fruit "apple" in the world
-  - Essential for making representations meaningful beyond pure syntax
-    - Enables agents to act meaningfully in the real world
-    - Avoids purely symbolic manipulation without real-world relevance
+  - Connect abstract symbols to real-world entities or observations
+  - E.g., link `Apple` to the fruit "apple"
+  - Make representations meaningful beyond syntax
+    - Enable agents to act meaningfully in the real world
+    - Avoid purely symbolic manipulation without real-world relevance
 
-- **Symbol Anchoring**
-  - Specific instance of grounding where sensory data anchors symbols in an agent's
-    memory
-  - E.g., a robot sees a round red object and anchors it to the symbol `Apple`
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph G {
+    rankdir=TB;
+    node [shape=box, style=rounded, fontsize=14];
+
+    R1 [label="Reality"];
+    R2 [label="Reality"];
+    Repr1 [label="Representation"];
+    Reason [label="Reason"];
+    Repr2 [label="Representation"];
+
+    {rank=same; R1; R2}
+    {rank=same; Repr1; Reason, Repr2}
+
+    R1 -> Repr1 -> Reason -> Repr2 -> R2;
+}
+```
+::::
+:::
 
 - **Challenges**
-  - Sensory data is noisy and incomplete
-  - Mapping from real-world inputs to abstract concepts can be complex and
-    context-dependent
+  - Noisy, incomplete sensory data
+  - Complex, context-dependent mapping from inputs to concepts
 
 - **Applications**
-  - Robotics (object recognition, manipulation)
+  - Robotics: object recognition, manipulation
   - Natural language understanding
-  - Autonomous agents and cognitive systems
+  - Autonomous agents, cognitive systems
 
 // # 7, Logical agents (p. 221)
 
@@ -344,10 +364,10 @@ MSML610: Advanced Machine Learning
 * Reflex Agents
 
 - **Reflex agents** act based on the current percept, ignoring percept history
-  - Operate using a condition-action rule: "if condition, then action"
+  - Operate using a condition-action rule: _"if condition, then action"_
   - Rely on predefined rules
   - Have no internal state or memory
-  - E.g., a thermostat turns on the heater if temperature < threshold
+    - E.g., a thermostat: _"if temperature < threshold, turn on the heater"_
 
 - **Pros**
   - Fast and efficient in well-defined environments
@@ -359,39 +379,42 @@ MSML610: Advanced Machine Learning
 - **Application**
   - Simple or fully observable environments where quick reactions are sufficient
 
-* Knowledge-based agents
+* Knowledge-based Agents
+
 - **Intelligence** is achieved by _reasoning_ on an internal _representation of
   knowledge_
 
 - **Knowledge-based agents:**
   - Form representations of a complex world
-  - Use inference to derive new representations about the world
-  - Use new representations to deduce actions
+  - Use inference to derive new representations
+  - Deduce actions from new representations
   - Accept tasks as goal descriptions
   - Achieve competence by learning new knowledge
-  - Adapt to environmental changes by updating knowledge
+  - Adapt to changes by updating knowledge
   - Utilize a knowledge base to store information
-  - Explain actions based on their knowledge
-    - E.g., a medical diagnosis system using patient data to infer diseases and
-      suggest treatments
-    - E.g., a chess-playing program using a database of moves to plan strategy
-  - Require mechanisms to update their knowledge base with new information
+  - Explain actions based on knowledge
+    - E.g., medical diagnosis system infers diseases, suggests treatments
+    - E.g., chess program uses move database to plan strategy
   - Handle incomplete or uncertain information through probabilistic reasoning
 
 * Logic / Knowledge Base (1/2)
+
 - **Knowledge base (KB)** is a set of:
-  - Sentences $\alpha$ expressing assertions (observed, assumed or derived) about the world
+  - **Sentences** $\alpha$ expressing assertions (observed, assumed or derived)
+    about the world
     - E.g., "it rains", "the ground is dry", "the ground is wet"
-  - Rules
+  - **Rules**
     - E.g, "If it rains, the ground gets wet"
 
 - **Knowledge representation language** is a formal way of creating sentences about
   the world
+
 - **Syntax** specifies all the sentences $\alpha$ that are well-formed in a logic / knowledge
   base
   - E.g., in arithmetic the sentence:
     - "$x + y = 4$" is well-formed
     - "$x4y+ =$" is not well-formed
+
 - **Semantics** is the meaning of sentences (i.e., their truth) with respect to each
   possible world
   - E.g., the sentence $x + y = 4$
@@ -400,23 +423,28 @@ MSML610: Advanced Machine Learning
 
 * Logic / Knowledge Base (2/2)
 
-- **Axiom** is sentence taken as given without being derived from other sentences
+- **Axiom** is a sentence taken as given
+  - Not derived from other sentences
 
-- **Inference** is a process of deriving new sentences from old ones
-  - It should be done in a "logical" way, i.e., the answer should "follow" from
-    what is in the knowledge base
+- **Inference** is the process of deriving new sentences from old ones
+  - It should be done in a "logical" way
 
-- Truth values of a sentence
-  - In **most logics** every sentence is either true or false
+- **Truth values** of a sentence
+  - In most logics every sentence is either true or false
   - **Fuzzy logic** allows sentences to have different degrees of truth
+    - $Belief(\alpha) = 0.5$
   - **Probabilistic logic** allows sentences to have different probability of
     being true
+    - $\Pr(\alpha) = 0.3$
 
-* Model and possible worlds
-- We want to represent worlds where there is rain and wet ground
+* Model and Possible Worlds: Examples
+
+::: columns
+:::: {.column width=70%}
+
+- **Example**: represent worlds where there is rain and wet ground
   - In each possible world/model, values are assigned to all relevant variables
-  - "Possible worlds" can be thought of as real environments
-    - E.g., a world where $Rain$ is true and $WetGround$ is false
+  - "Possible worlds" can be thought of as real the environments
   - Model $m$ is a mathematical abstraction of "possible world"
     - E.g., $m$ is $(Rain = F, WetGround = T)$
   - Each possible world is a complete assignment of truth values to all
@@ -426,41 +454,70 @@ MSML610: Advanced Machine Learning
     - World 3: $(Rain = F, WetGround = T)$
     - World 4: $(Rain = F, WetGround = F)$
 
-- E.g., we represent worlds with "men and women sitting at a table"
-  - The model represents all possible worlds as ($x$ men, $y$ women)
-  - The sentence $x + y = 4$ is true in certain worlds and false in others
-  - In worlds with $x = 2$ men and $y = 2$ women sitting at the table,
-    $x + y = 4$ is true
+- **Example**: represent worlds with "men and women sitting at a table"
+  - Model represents all possible worlds as ($x$ men, $y$ women)
+  - Sentence $x + y = 4$ is true in certain worlds, false in others
+  - In worlds with $x = 2$ men and $y = 2$ women, $x + y = 4$ is true
 
-* Satisfaction of a sentence in a model
-- Any model $m$ fixes all the variables $x_1, ..., x_n$ used in sentences
+::::
+:::: {.column width=20%}
+
+```graphviz
+digraph G {
+  rankdir=TD;
+  nodesep=3.5;
+  node [shape=box, style="rounded,filled", fillcolor="#f7f7f7"];
+
+  Model [label="Model"];
+  Worlds [label="Possible\nworlds"];
+
+  Model -> Worlds [
+    dir=both
+    fontsize=10
+    penwidth=2
+    label="   Grounding"
+    labeldistance=3.0
+    labelangle=0
+  ];
+}
+```
+
+::::
+:::
+
+* Satisfaction of a Sentence in a Model
+- A model $m$ fixes all the variables $x_1, ..., x_n$ used in sentences
   - E.g., $(Rain = T, WetGround = T)$
 
-- If a sentence $\alpha$ is true in model $m$, we say "the model $m$ satisfies
-  the sentence $\alpha$"
+- If a sentence $\alpha$ is true in model $m$, we say _"the model $m$
+  **satisfies** the sentence $\alpha$"_
   - E.g., the model $(Rain = T, WetGround = F)$ satisfies $\alpha: Rain = T$
-  - Note: this seems backwards, since in our common way of reasoning, the model
+  - Note: this seems backwards, since in our common way of reasoning, the world
     is fixed and sentences are evaluated as true or false
 
 - $M(\alpha)$ is the set of all the models in which $\alpha$ is true
-  - E.g., $M(Rain = T) = \{(Rain, WetGround), (Rain, \lnot WetGround)\}$
+  - E.g.,
+    - $\alpha: Rain = T$
+    - $M(Rain = T) = \{(Rain, WetGround), (Rain, \lnot WetGround)\}$
 
-* Logical entailment
-- **Logical entailment** between sentences is the relation representing the fact
-  that a sentence follows logically from another sentence in a KB, e.g.,
+* Logical Entailment
+- **Logical entailment** between sentences is the fact that a sentence follows
+  logically from another sentence in a KB
 
-- "$\alpha$ entails $\beta$" (written $\alpha \models \beta$) iff (by def) in
-  every model in which $\alpha$ is true, $\beta$ is also true, e.g.,
-  - $\alpha: "Rain \implies WetGround"$ entails
-    $\beta: "(Rain = T, WetGround = F)"$
+- "$\alpha$ **entails** $\beta$" (written $\alpha \models \beta$) iff (by def) in
+  every model in which $\alpha$ is true, $\beta$ is also true
   - Equivalent to $M(\alpha) \subseteq M(\beta)$
 
-- E.g., in the table world
+- E.g., in the "rain and wet ground" world
+  - $\alpha: "Rain \implies WetGround"$ entails
+    $\beta: "(Rain = T, WetGround = T)"$
+
+- E.g., in the "sitting table" world
   - $\alpha$: "$x = 0$", $\beta$: "$x \cdot y = 0$"
   - $\alpha$ entails $\beta$ since in any model in which $x = 0$ is true, also
     $x \cdot y = 0$ is true, regardless of the value of $y$
 
-- Intuition:
+- **Intuition**:
   - Entailment is not related to a proof, it just "preserves truth" across all
     models
   - _"If you believe your KB, you must believe the entailed sentences"_
@@ -486,6 +543,10 @@ MSML610: Advanced Machine Learning
     - $A \implies B$ is the statement "If it is raining, then the ground is wet"
     - This statement can be true even if it's not raining
 
+- **Intuition**:
+  - Entailment is "meta-level truth-following"
+  - Implication is "within the logic"
+
 * Model Checking Procedure
 - $M(KB)$ represents all the models / possible worlds that are true given our
   $KB$
@@ -498,14 +559,20 @@ MSML610: Advanced Machine Learning
   - According to the definition, we need to verify that $\alpha$ is true in all
     the models in which $KB$ is true
     - I.e., $M(KB) \subseteq M(\alpha)$
-  - Model checking procedure (brute force)
 
-    1. Enumerate all the models / possible worlds
-    2. Find which models are possible given the $KB$, i.e., $M(KB)$
-    3. Check whether the sentence $\alpha$ is true in all the models that are
-       compatible with the $KB$
+- E.g., **model checking procedure** (brute force)
+  1. Enumerate all the models / possible worlds
+  2. Find which models are possible given the $KB$, i.e., $M(KB)$
+  3. Check whether the sentence $\alpha$ is true in all the models that are
+     compatible with the $KB$
 
 * Sound and Complete Inference Algorithm
+- Inference: a syntactic process of deriving new sentences from others, using
+  formal rules of a proof system (e.g., modus ponens, resolution, etc.)
+  - You know: "If it rains, the ground gets wet."
+  - You see: "It is raining."
+  - You infer: "The ground must be wet."
+
 - The ideal inference algorithm is both sound and complete
 
 - **Sound** inference algorithm
@@ -520,15 +587,20 @@ MSML610: Advanced Machine Learning
   - Can derive any sentence entailed from $KB$
   - "The inference algorithm doesn't miss anything," i.e., no false negatives
 
-* Isomorphism between Representation and World
+* Isomorphism between Model and Possible Worlds
+::: columns
+:::: {.column width=55%}
 - A sound and complete inference algorithm should yield conclusions guaranteed to
   be true in any world where the premises are true
+  - 
 
 - In other words, even if the inference operates on "syntax" (the internal
   representation):
   - "Sentences in the representation" correspond to "aspects of the real world"
   - "Entailment between sentences in the representation" corresponds to
     "implication between aspects of the real world"
+::::
+:::: {.column width=40%}
 
 ```graphviz
 digraph EntailmentSemantics {
@@ -565,41 +637,62 @@ digraph EntailmentSemantics {
   }
 }
 ```
+::::
+:::
+
+* Entailment vs Inference vs Implication
+- **Logical entailment**
+  - $A$ entails $B$: if the fact $A$ is true and that automatically guarantees
+    that fact $B$ must also be true
+  - E.g., $Rain$ entails $WetGround$ iff in every possible world where $Rain$ is
+    true, $WetGround$ is also true
+    - $Rain = T, WetGround = F \to$ violation
+    - Since there is at least one counterexample, $Rain$ does not entail
+      $WetGround$
+
+- **Inference**
+  - This is what you (a person or a computer) figure out based on what you know
+  - You start with some truths, then reason your way to new truths
+  - It's "reasoning inside the logic system"
+
+- **Implication**
+  - "If $A$, then $B$"
+  - It doesn't say whether A is true; it just says, if it happens, then B follows
+  - It's a "statement inside the logic system"
 
 * Grounding
-- Grounding is the operation of linking abstract symbols (e.g., words, logical
-  variables, ..) to reality (e.g., objects, entities, or situations in the real
-  world)
+- **Grounding** is the operation of linking abstract symbols to reality
+  - E.g., words, variables in the representation ... $\to$ objects, entities, or
+    situations in the real world
   - It is the bridge between representation in a KB and the world
 
-- A philosophical question: how can we know that a KB accurately reflects the
-  real world?
-  - We can't be sure
+- How **can we know** that a KB accurately reflects the real world?
+  - We can't be sure!
   - Do we live in a simulation? What is reality?
 
-- We assume that is correct
+- We **assume** that is correct
   - Agent's sensors create a sentence in the KB when something happens in the
     real world
     ```
     IF smell = burning THEN food_is_burning
-    IF object = {red, round, small} THEN object_is_tomato
     ```
-  - We assume that "learning" (generalizing particular cases to general cases)
-    is possible and typically correct
+  - Agent learns rules and acts
     ```
     IF food_is_burning THEN turn_off_stove
     ```
-    - Learning is still fallible
-    - E.g., maybe somebody is cooking on a grill
+
+- We assume that "learning" (going from particular cases to general cases) is
+  typically correct
+  - Learning is still fallible
+  - E.g., `smell = burning` because maybe somebody is cooking on a grill
 
 ## Ontologies
 
 * Ontologies (in computer science)
 
-- **An ontology:**
+- **Ontology:**
   - Is a formal, explicit representation of a domain
   - Describes the types of things that exist and how they relate to each other
-  - E.g., some components are:
     - Classes: types of things
     - Individuals: specific objects
     - Properties: how things are related
@@ -610,18 +703,18 @@ digraph EntailmentSemantics {
   - A geographical ontology describes cities, states, and countries
   - Semantic web (an extension of the current web to give meaning to information)
 
-- **Purpose**
-  - Provide a common vocabulary for a domain of knowledge
+- **Goal**
+  - Provide a vocabulary for a domain of knowledge
   - Enable machines and humans to understand and share information consistently
   - Enable reasoning about entities and their relationships
 
 - **Related Concepts**
   - Schema: database-oriented structure, often more rigid than ontologies
-  - Taxonomy: simpler hierarchical classification (like a tree)
+  - Taxonomy: simpler hierarchical tree-like classification
   - Knowledge base: a collection of facts and rules, sometimes built from an
     ontology
 
-* Ontologies: Main Components
+* Ontologies: Components
 
 - **Classes / Concepts**:
   - Represent general concepts in a domain
@@ -645,7 +738,6 @@ digraph EntailmentSemantics {
 
 - **Axioms**:
   - Logical statements that define rules and constraints
-  - Used to infer new knowledge
   - E.g., all humans are mortal: $\forall x (Person(x) \implies Mortal(x))$
 
 - **Hierarchies**:
@@ -655,14 +747,14 @@ digraph EntailmentSemantics {
 * Ontology: Example University
 
 ::: columns
-:::: {.column width=40%}
-- Classes: general types of things
+:::: {.column width=20%}
+- **Classes**
   - `Student`
   - `Professor`
   - `Course`
   - `Department`
 ::::
-:::: {.column width=55%}
+:::: {.column width=75%}
 
 ```graphviz
 digraph UniversityOntology {
@@ -709,22 +801,19 @@ digraph UniversityOntology {
 ::::
 :::
 
-- Properties: relationships between Classes
+- **Properties**: relationships between Classes
   - `takesCourse` (`Student` $\rightarrow$ `Course`)
   - `teachesCourse` (`Professor` $\rightarrow$ `Course`)
   - `belongsToDepartment` (Student, Professor $\rightarrow$ `Department`)
-  - `offersCourse` (`Department` $\rightarrow$ `Course`)
 
-- Individuals / Instances: examples of Classes
+- **Individuals**: examples of Classes
   - `Student`: Alice, Bob
   - `Professor`: GP, DrNo
   - `Course`: DATA605, MSML610
-  - `Department`: ComputerScience, Mathematics
 
-- Axioms: logical rules that must be true
+- **Axioms**: logical rules that must be true
   - Every `Course` must be taught by exactly one `Professor`
   - Every `Student` must belong to exactly one `Department`
-  - A `Department` offers at least one `Course`
 
 ## Reasoning in Ontologies
 
