@@ -1,73 +1,63 @@
 **Description**
 
-EconML is a Python library designed for estimating causal effects in economic and social science contexts using machine learning methods. It provides tools for treatment effect estimation and policy evaluation, leveraging machine learning models to uncover heterogeneous treatment effects. Key features include:
+EconML is a Python library designed for estimating causal effects in economic contexts using machine learning methods. It provides tools for treatment effect estimation and policy evaluation, leveraging machine learning models to uncover heterogeneous treatment effects. Key features include:
 
-- **Causal Inference**: Implements advanced techniques for estimating treatment effects.  
-- **Flexible Models**: Supports a variety of base learners (e.g., Random Forest, Gradient Boosting) for estimating conditional average treatment effects (CATE).  
-- **Integration with Scikit-learn**: Seamlessly integrates with Scikit-learn for model training and evaluation.  
-- **Robustness**: Offers methods to control for confounding variables and improve the reliability of causal estimates.  
-
----
-
-### Project 1: Evaluating the Impact of Marketing Campaigns on Sales  
-**Difficulty**: 1 (Easy) 
-
-**Project Objective**  
-Estimate the causal effect of a marketing campaign on sales for a retail company, identifying whether the campaign significantly boosted sales.  
-
-**Dataset Suggestions**  
-- [Online Retail Dataset](https://www.kaggle.com/datasets/vijayuv/onlineretail) on Kaggle, which contains transactions from a UK-based online retailer.  
-
-**Tasks**  
-- **Data Preprocessing**: Clean and preprocess the dataset, focusing on transaction dates, product categories, and sales amounts.  
-- **Define Treatment Groups**: Simulate campaign periods (e.g., treat specific months as “campaign active”) to create treated vs. control groups.  
-- **ATE Estimation**: Use EconML to estimate the average treatment effect of the campaign on sales.  
-- **Model Experimentation**: Compare results across at least two base learners (e.g., Linear Regression vs. Random Forest).  
-- **Interpret Results**: Visualize the treatment effects and highlight customer/product groups that benefited most.  
-
-**Bonus Ideas (Optional)**  
-- Evaluate multiple campaign types (e.g., holiday promotions vs. regular discounts).  
+- **Causal Inference**: Implements advanced techniques for estimating treatment effects.
+- **Flexible Models**: Supports various machine learning models for estimating conditional average treatment effects (CATE).
+- **Integration with Scikit-learn**: Seamlessly integrates with Scikit-learn for model training and evaluation.
+- **Robustness**: Offers methods to control for confounding variables and improve the reliability of causal estimates.
 
 ---
 
-### Project 2: Analyzing the Effects of Education Programs on Student Performance  
-**Difficulty**: 2 (Medium) 
+### Project 1: Evaluating the Impact of Marketing Campaigns on Sales
 
-**Project Objective**  
-Evaluate the impact of educational programs on student performance, identifying which student demographics benefit most.  
+**Difficulty**: 1 (Easy)
 
-**Dataset Suggestions**  
-- [OECD PISA Dataset](https://www.oecd.org/pisa/data/) (Programme for International Student Assessment), which provides large-scale international student performance data with demographics and education variables.  
+**Project Objective**: The goal is to estimate the causal effect of a marketing campaign on sales for a retail company, optimizing the understanding of which campaign strategies are most effective.
 
-**Tasks**  
-- **EDA**: Explore student demographics (e.g., socioeconomic background, gender) and performance scores (math, reading, science).  
-- **Define Treatment Groups**: Define “treatment” as participation in extra educational resources/programs available in the dataset (e.g., tutoring, study support).  
-- **CATE Estimation**: Use EconML to estimate heterogeneous treatment effects across demographics.  
-- **Model Experimentation**: Compare multiple base learners (e.g., Gradient Boosting, Random Forest, Lasso) for treatment effect estimation.  
-- **Interpretation**: Identify which student subgroups show the greatest benefit.  
+**Dataset Suggestions**: Use the "Online Retail Dataset" available on Kaggle, which contains transactions from a UK-based online retailer.
 
-**Bonus Ideas (Optional)**  
-- Perform cross-validation to assess robustness of estimates.  
-- Compare results across multiple PISA countries to study policy differences.  
+**Tasks**:
+- **Data Preprocessing**: Clean and preprocess the dataset, focusing on relevant features such as transaction dates, product categories, and sales amounts.
+- **Define Treatment and Control Groups**: Identify periods when the marketing campaign was active and compare sales with periods when it was not.
+- **Estimate Causal Effects**: Use EconML to estimate the treatment effect of the marketing campaign on sales.
+- **Interpret Results**: Analyze and visualize the estimated effects, highlighting which segments benefited most from the campaign.
+
+**Bonus Ideas**: Explore different marketing strategies (e.g., email vs. social media) and compare their effectiveness using EconML's heterogeneous treatment effect functionalities.
 
 ---
 
-### Project 3: Evaluating the Impact of Health Interventions on Patient Outcomes  
-**Difficulty**: 3 (Hard) 
+### Project 2: Analyzing the Effects of Education Programs on Student Performance
 
-**Project Objective**  
-Assess the causal effects of a health intervention on patient outcomes, focusing on treatment heterogeneity across different health conditions.  
+**Difficulty**: 2 (Medium)
 
-**Dataset Suggestions**  
-- [NHANES (National Health and Nutrition Examination Survey)](https://www.cdc.gov/nchs/nhanes/) from the CDC, which provides detailed health and nutrition data.  
+**Project Objective**: The aim is to evaluate the impact of a new educational program on student performance, optimizing for the identification of which student demographics benefit the most from the program.
 
-**Tasks**  
-- **Data Preparation**: Clean NHANES data, select relevant health metrics (e.g., blood pressure, cholesterol).  
-- **Define Treatment Groups**: Define interventions (e.g., exercise programs, dietary changes, or medication use) vs. control.  
-- **CATE Estimation**: Use EconML to estimate heterogeneous treatment effects across patient demographics and health conditions.  
-- **Model Experimentation**: Compare multiple base learners (e.g., Gradient Boosting, Neural Nets) for causal effect estimation.  
-- **Robustness Checks**: Control for confounders and assess how sensitive estimates are to model assumptions.  
+**Dataset Suggestions**: Use the "Student Performance Dataset" from Kaggle, which includes student scores and demographic information.
 
-**Bonus Ideas (Optional)**  
-- Compare EconML’s treatment effect estimates with traditional regression-based methods.  
-- Analyze policy implications (e.g., which patient subgroups should interventions prioritize).  
+**Tasks**:
+- **Data Exploration**: Conduct exploratory data analysis (EDA) to understand the dataset, focusing on student demographics and performance metrics.
+- **Define Treatment Conditions**: Identify students who participated in the educational program versus those who did not.
+- **Estimate Treatment Effects**: Utilize EconML to estimate the causal impact of the educational program on student performance.
+- **Assess Heterogeneity**: Investigate how the treatment effect varies across different demographic groups (e.g., gender, socioeconomic status).
+
+**Bonus Ideas**: Implement a cross-validation strategy to assess the robustness of the treatment effect estimates and explore potential confounding factors.
+
+---
+
+### Project 3: Evaluating the Impact of Health Interventions on Patient Outcomes
+
+**Difficulty**: 3 (Hard)
+
+**Project Objective**: This project aims to assess the causal effects of a new health intervention on patient outcomes, optimizing for a thorough understanding of treatment heterogeneity across various health conditions.
+
+**Dataset Suggestions**: Use the "Health and Nutrition Examination Survey (NHANES)" dataset available through the CDC's website, which provides comprehensive health data.
+
+**Tasks**:
+- **Data Preparation**: Clean and preprocess the NHANES dataset, focusing on relevant health metrics and intervention details.
+- **Define Treatment Groups**: Identify patients who received the health intervention and those who did not, controlling for baseline health conditions.
+- **Causal Effect Estimation**: Apply EconML to estimate the causal effects of the health intervention on various health outcomes (e.g., blood pressure, cholesterol levels).
+- **Heterogeneity Analysis**: Analyze how treatment effects differ across patient demographics and health conditions using EconML's tools.
+
+**Bonus Ideas**: Compare the estimated treatment effects with traditional statistical methods (e.g., regression analysis) to evaluate the advantages of using machine learning approaches for causal inference.
+
