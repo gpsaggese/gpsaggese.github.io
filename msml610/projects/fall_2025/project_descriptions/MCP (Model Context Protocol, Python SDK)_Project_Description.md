@@ -37,8 +37,8 @@ MCP (Model Context Protocol) is a Python SDK designed to facilitate the integrat
 **Project Objective**: The aim is to predict house prices based on various features such as location, size, and amenities. The project seeks to optimize the pricing strategy for real estate listings.
 
 **Dataset Suggestions**:  
-- Dataset: "Ames Housing Dataset" available on Kaggle.  
-- Link: [Ames Housing Dataset](https://www.kaggle.com/datasets/prestonvong/ames-housing-data)
+- Dataset: "House Sales in King County, USA" available on Kaggle.  
+- Link: [House Sales in King County, USA](https://www.kaggle.com/datasets/harlfoxem/housesalesprediction)
 
 **Tasks**:  
 - Data Exploration:

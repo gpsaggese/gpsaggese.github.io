@@ -1,60 +1,52 @@
 **Description**
 
-Megatron-LM is a powerful framework designed for training large-scale transformer models, particularly suited for natural language processing (NLP) tasks. It optimizes the training of language models by leveraging model parallelism, enabling the handling of massive datasets and complex architectures efficiently. Its features include:
+Megatron-LM is a framework optimized for training and fine-tuning large-scale transformer-based language models. It is designed for scalability, leveraging model parallelism to handle models with billions of parameters. By combining mixed-precision training, GPU/TPU acceleration, and pre-trained checkpoints, Megatron-LM enables researchers and practitioners to efficiently explore advanced NLP tasks. Its strengths include:
 
-- **Model Parallelism**: Distributes the model across multiple GPUs to efficiently utilize resources.
-- **Mixed Precision Training**: Reduces memory usage and increases training speed without sacrificing model accuracy.
-- **Pre-trained Models**: Offers a selection of pre-trained models that can be fine-tuned for specific NLP tasks.
-- **Scalability**: Supports scaling up to billions of parameters, allowing for the exploration of state-of-the-art language representations.
-
----
-
-### Project 1: Text Summarization (Difficulty: 1 - Easy)
-
-**Project Objective**: Develop a text summarization model that can condense articles into shorter summaries while retaining key information.
-
-**Dataset Suggestions**: Use the "CNN/Daily Mail" dataset available on Hugging Face Datasets, which contains news articles paired with human-written summaries.
-
-**Tasks**:
-- **Set Up Megatron-LM**: Install and configure Megatron-LM for text summarization tasks.
-- **Data Preprocessing**: Load the CNN/Daily Mail dataset and preprocess the text for tokenization.
-- **Model Fine-tuning**: Fine-tune a pre-trained Megatron-LM model on the summarization dataset.
-- **Generate Summaries**: Implement the model to generate summaries for new articles.
-- **Evaluation**: Use ROUGE scores to evaluate the quality of the generated summaries against the reference summaries.
-
-**Bonus Ideas**: Experiment with different summarization techniques (extractive vs. abstractive) and compare performance metrics. Implement a user interface to allow users to input articles for summarization.
+- **Model Parallelism**: Efficiently distributes massive models across multiple GPUs.
+- **Mixed Precision Training**: Reduces memory usage and accelerates training without loss of accuracy.
+- **Pre-trained Models**: Provides access to powerful pre-trained checkpoints for downstream tasks.
+- **Scalability**: Supports handling very large datasets and architectures beyond typical frameworks.
 
 ---
 
-### Project 2: Sentiment Analysis on Movie Reviews (Difficulty: 2 - Medium)
+### Project 1: Abstractive Text Summarization
 
-**Project Objective**: Build a sentiment analysis model to classify movie reviews as positive or negative based on their text content.
-
-**Dataset Suggestions**: Use the "IMDb Movie Reviews" dataset available on Kaggle, which contains labeled movie reviews for training and evaluation.
-
-**Tasks**:
-- **Set Up Megatron-LM**: Install and configure the Megatron-LM framework for sentiment analysis tasks.
-- **Data Ingestion**: Load the IMDb dataset and preprocess the reviews, including tokenization and cleaning.
-- **Feature Engineering**: Create additional features such as review length and sentiment lexicon scores if needed.
-- **Model Training**: Fine-tune a pre-trained Megatron-LM model on the sentiment analysis task.
-- **Model Evaluation**: Evaluate the model's performance using accuracy, precision, recall, and F1-score metrics.
-
-**Bonus Ideas**: Implement a confusion matrix to analyze misclassifications. Explore multi-class sentiment analysis by extending the dataset to include neutral reviews.
+- **Difficulty**: 1 (Easy)
+- **Project Objective**: Fine-tune a pre-trained Megatron-LM model to generate abstractive summaries of news articles, optimizing for ROUGE scores.  
+- **Dataset Suggestions**: ["CNN/Daily Mail"](https://huggingface.co/datasets/cnn_dailymail) dataset on Hugging Face.  
+- **Tasks**:
+  - Load and preprocess the dataset (article-summary pairs).
+  - Use Megatron-LM’s pre-trained checkpoint and fine-tune with low-resource techniques (e.g., adapters or LoRA).
+  - Generate summaries for unseen articles.
+  - Evaluate results with ROUGE metrics.
+- **Bonus Ideas**: Compare abstractive vs extractive summarization. Deploy a simple web app where users can input an article to receive a summary.
 
 ---
 
-### Project 3: Topic Modeling on News Articles (Difficulty: 3 - Hard)
+### Project 2: Sentiment Classification of Movie Reviews
 
-**Project Objective**: Create a topic modeling system that identifies and clusters topics from a large corpus of news articles, enabling insights into trending subjects over time.
+- **Difficulty**: 2 (Medium)
+- **Project Objective**: Build a sentiment analysis model to classify movie reviews as positive or negative by fine-tuning Megatron-LM.  
+- **Dataset Suggestions**: ["IMDb Movie Reviews"](https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews) dataset on Kaggle.  
+- **Tasks**:
+  - Preprocess the reviews (cleaning + tokenization).
+  - Fine-tune a pre-trained Megatron-LM checkpoint for binary classification.
+  - Evaluate model performance with accuracy, precision, recall, and F1-score.
+  - (Optional) Compare with smaller transformer models (e.g., BERT) for efficiency trade-offs.
+- **Bonus Ideas**: Extend to multi-class classification (positive/negative/neutral). Visualize attention weights to interpret model decisions.
 
-**Dataset Suggestions**: Use the "20 Newsgroups" dataset available on scikit-learn or a collection of news articles from the "NewsAPI" (free tier) that allows access to current articles.
+---
 
-**Tasks**:
-- **Set Up Megatron-LM**: Configure Megatron-LM for handling large text corpora and topic modeling tasks.
-- **Data Collection**: Use NewsAPI to gather recent news articles over a specified period.
-- **Preprocessing and Tokenization**: Clean and tokenize the text data to prepare it for modeling.
-- **Model Training**: Fine-tune a Megatron-LM model to identify latent topics within the text corpus.
-- **Topic Analysis**: Analyze the generated topics, including keyword extraction and visualization of topic distributions over time.
+### Project 3: Topic Discovery in News Articles using Embeddings
 
-**Bonus Ideas**: Implement interactive visualizations to explore topic trends. Compare the model's performance with traditional LDA-based topic modeling techniques.
+- **Difficulty**: 3 (Hard)
+- **Project Objective**: Use Megatron-LM embeddings to discover and cluster latent topics in large collections of news articles.  
+- **Dataset Suggestions**: ["20 Newsgroups"](https://scikit-learn.org/0.19/datasets/twenty_newsgroups.html) dataset from scikit-learn, or articles from the [NewsAPI free tier](https://newsapi.org/).  
+- **Tasks**:
+  - Collect and preprocess a corpus of news articles.
+  - Generate sentence or document embeddings using Megatron-LM.
+  - Apply clustering algorithms (e.g., k-means, hierarchical clustering) on embeddings to identify topics.
+  - Visualize topic clusters and top keywords.
+  - Compare results with classical topic modeling (e.g., LDA).
+- **Bonus Ideas**: Track topic distributions over time to analyze trends. Build an interactive dashboard for topic exploration.
 

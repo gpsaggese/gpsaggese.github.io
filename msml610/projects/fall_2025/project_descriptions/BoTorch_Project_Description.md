@@ -1,67 +1,87 @@
-**Description**
+## Description  
+BoTorch is a library built on PyTorch that facilitates Bayesian optimization, enabling users to optimize expensive-to-evaluate functions efficiently. It provides a flexible interface for defining and optimizing objective functions using Gaussian processes, allowing for the incorporation of prior knowledge and uncertainty quantification.  
 
-BoTorch is a library built on PyTorch that facilitates Bayesian optimization, enabling users to optimize expensive-to-evaluate functions efficiently. It provides a flexible interface for defining and optimizing objective functions using Gaussian processes, allowing for the incorporation of prior knowledge and uncertainty quantification.
-
-Technologies Used
-BoTorch
-
-- Implements advanced Bayesian optimization techniques.
-- Supports multi-fidelity and multi-objective optimization.
-- Integrates seamlessly with PyTorch for deep learning applications.
+**Technologies Used**  
+BoTorch  
+- Implements advanced Bayesian optimization techniques.  
+- Supports multi-fidelity and multi-objective optimization.  
+- Integrates seamlessly with PyTorch for deep learning applications.  
 
 ---
 
-### Project 1: Optimizing Hyperparameters for Machine Learning Models
-**Difficulty**: 1 (Easy)
+### Project 1: Hyperparameter Optimization for Classification Models  
+**Difficulty**: 1 (Easy)  
 
-**Project Objective**: The goal is to optimize the hyperparameters of a simple machine learning model (e.g., Random Forest) using BoTorch to achieve the best performance on a classification task.
+**Project Objective**:  
+Use BoTorch to optimize hyperparameters of a classification model (e.g., Random Forest) to achieve the best performance on a tabular dataset.  
 
-**Dataset Suggestions**: 
-- Use the "Wine Quality" dataset available on Kaggle (https://www.kaggle.com/datasets/uciml/wine-quality).
+**Dataset Suggestions**:  
+- **Dataset**: Heart Disease UCI Dataset  
+- **Link**: [Heart Disease UCI on Kaggle](https://www.kaggle.com/datasets/johnsmith88/heart-disease-dataset)  
 
-**Tasks**:
-- **Data Preprocessing**: Load the dataset, handle missing values, and encode categorical variables.
-- **Define Objective Function**: Create an objective function that evaluates model performance (e.g., accuracy) based on hyperparameters.
-- **Set Up BoTorch**: Utilize BoTorch to perform Bayesian optimization on hyperparameters like `n_estimators`, `max_depth`, and `min_samples_split`.
-- **Model Evaluation**: Assess the best hyperparameters using cross-validation and compare against a grid search baseline.
-- **Visualization**: Visualize the optimization process and performance metrics using Matplotlib.
-
----
-
-### Project 2: Multi-Objective Optimization for Portfolio Allocation
-**Difficulty**: 2 (Medium)
-
-**Project Objective**: The goal is to optimize a stock portfolio's allocation by maximizing returns while minimizing risk using BoTorch's multi-objective optimization capabilities.
-
-**Dataset Suggestions**: 
-- Use the "S&P 500 Stock Data" dataset available on Yahoo Finance (via the yfinance library) to gather historical stock prices.
-
-**Tasks**:
-- **Data Collection**: Gather historical stock prices for a selection of S&P 500 companies using the yfinance library.
-- **Define Objectives**: Create an objective function that calculates expected returns and volatility (risk) based on portfolio weights.
-- **Set Up BoTorch**: Implement multi-objective optimization to find the optimal portfolio allocation that balances return and risk.
-- **Constraint Handling**: Ensure the weights sum to 1 and are non-negative.
-- **Performance Analysis**: Analyze the Pareto front and visualize the trade-off between return and risk.
+**Tasks**:  
+- **Data Preprocessing**: Clean the dataset, handle missing values, and encode categorical variables.  
+- **Define Objective Function**: Create a function that evaluates model accuracy given a set of hyperparameters.  
+- **Set Up BoTorch**: Apply Bayesian optimization to tune hyperparameters such as `n_estimators`, `max_depth`, and `min_samples_split`.  
+- **Model Evaluation**: Use cross-validation to assess the best configuration and compare against random search or grid search.  
+- **Visualization**: Plot convergence of the optimization process and accuracy improvements.  
 
 ---
 
-### Project 3: Optimizing Experimental Design for Drug Discovery
-**Difficulty**: 3 (Hard)
+### Project 2: Multi-Objective Optimization for Renewable Energy Forecasting  
+**Difficulty**: 2 (Medium)  
 
-**Project Objective**: The goal is to optimize the experimental design for a drug discovery process by identifying the most promising compounds to test, maximizing effectiveness while minimizing cost using BoTorch.
+**Project Objective**:  
+Leverage BoTorch’s multi-objective optimization to forecast renewable energy production while minimizing prediction error and model complexity.  
 
-**Dataset Suggestions**: 
-- Use the "ChEMBL" dataset available on the ChEMBL database (https://www.ebi.ac.uk/chembl/) for compound bioactivity data.
+**Dataset Suggestions**:  
+- **Dataset**: Global Wind and Solar Energy Dataset  
+- **Link**: [Renewable Energy Production (Kaggle)](https://www.kaggle.com/datasets/anikannal/solar-power-generation-data)  
 
-**Tasks**:
-- **Data Preparation**: Extract relevant bioactivity data and preprocess it for modeling.
-- **Define Objective Function**: Create an objective function that evaluates the expected efficacy and cost of testing specific compounds.
-- **Set Up BoTorch**: Utilize BoTorch for Bayesian optimization to select compounds based on the defined objectives.
-- **Incorporate Uncertainty**: Model uncertainty in efficacy predictions and cost estimates using Gaussian processes.
-- **Results Interpretation**: Analyze and interpret the optimized compound selections, focusing on the trade-offs between efficacy and cost.
+**Tasks**:  
+- **Data Preparation**: Load energy production data, handle missing timestamps, and create lag features.  
+- **Define Objectives**: Create two objectives: (1) minimize RMSE of forecasts, (2) minimize number of features/model complexity.  
+- **Set Up BoTorch**: Implement multi-objective Bayesian optimization to balance accuracy and simplicity.  
+- **Pareto Front Analysis**: Visualize trade-offs between error and complexity.  
+- **Evaluation**: Compare optimized model results against a baseline ARIMA or simple regression model.  
 
-**Bonus Ideas**:
-- For Project 1, compare the Bayesian optimization results to other optimization techniques like random search or grid search.
-- For Project 2, extend the analysis to include transaction costs and rebalancing strategies.
-- For Project 3, integrate additional data sources (e.g., genetic information) to enhance the optimization process.
+---
 
+### Project 3: Optimizing Compound Selection from ChEMBL Subset  
+**Difficulty**: 3 (Hard)  
+
+**Project Objective**:  
+Apply BoTorch to optimize the selection of chemical compounds from a ChEMBL-derived subset to balance predicted bioactivity (lower IC50 → better potency) and experimental cost/effort.  
+
+**Dataset Suggestions**:  
+- **Dataset**: *Human Acetylcholinesterase Dataset from ChEMBL* — includes compounds tested against human acetylcholinesterase, with IC50 (“standard_value”) measurements.
+- **Optional alternate/more complex**: *MultiTarget Bioactivity ChEMBL* — includes multiple protein targets for compounds, allowing multi-target optimization.
+
+**Tasks**:  
+- **Data Loading & Preprocessing**  
+  - Download the ChEMBL subset dataset (e.g. “Human Acetylcholinesterase ...”).  
+  - Clean data: remove missing or non-numeric IC50 values, convert units if needed (e.g. ensure all µM or nM), log transform IC50 if useful.  
+  - Extract or compute molecular descriptors or fingerprints (e.g. Morgan fingerprints) for compounds.  
+
+- **Define Objective Function(s)**  
+  - Primary objective: predicted potency (e.g. minimize log(IC50) or some proxy).  
+  - Secondary objective: minimize “testing cost / experimental effort” (could be approximated by e.g. molecular weight, number of rings, synthetic accessibility, or just a constant cost per compound).  
+
+- **Set Up BoTorch Optimization**  
+  - Use BoTorch’s Bayesian optimization to choose among a candidate pool of compounds the ones expected to give best trade-off between potency and cost.  
+  - If using the MultiTarget dataset: you could also set up multi-objective optimization over potency for multiple targets.  
+
+- **Evaluation**  
+  - Split the dataset: train a surrogate model (e.g. Gaussian Process) to predict potency from descriptors.  
+  - Validate predictions on held-out compounds.  
+  - Compare optimized selection (what BoTorch suggests) vs baseline selections (random sampling; top potency only; etc.).  
+
+- **Visualization & Interpretation**  
+  - Visualize the Pareto front (potency vs cost).  
+  - Show chemical structures (SMILES) of selected compounds and discuss trade-offs.  
+
+
+**Bonus Ideas (Optional)**:  
+- Project 1: Extend comparison to random forest vs. gradient boosting models.  
+- Project 2: Add multi-fidelity optimization (e.g., low-res vs. high-res time series data).  
+- Project 3: Integrate additional biological or genetic datasets to enhance compound prioritization.  

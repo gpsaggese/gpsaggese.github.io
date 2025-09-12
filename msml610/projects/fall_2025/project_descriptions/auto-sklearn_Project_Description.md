@@ -1,88 +1,66 @@
-**Description**
+## Description  
+Auto-sklearn is an automated machine learning (AutoML) tool built on top of the popular scikit-learn library. It automatically selects models, hyperparameters, and data pre-processing methods to optimize the model's performance on a given dataset. Key features include:  
 
-In this project, students will utilize auto-sklearn, an automated machine learning toolkit for Python, to streamline the process of model selection and hyperparameter optimization. Auto-sklearn automatically searches for the best machine learning algorithms and their configurations, enabling students to focus on data preparation and analysis rather than manual tuning. The tool is designed for supervised classification and regression tasks, making it versatile for various datasets.
+- Selection of the best model pipelines using Bayesian optimization.  
+- Automatic feature preprocessing and engineering.  
+- Built-in ensemble construction for improved predictive accuracy.  
+- Handles both classification and regression tasks efficiently.  
 
-Technologies Used
-auto-sklearn
+---
 
-- Automates the process of model selection and hyperparameter tuning.
-- Supports a wide range of machine learning algorithms from scikit-learn.
-- Provides ensemble methods to improve predictive performance.
+### Project 1: Predictive Maintenance for Aircraft Engines  
+**Difficulty**: 1 (Easy)  
 
-### Project 1: Predicting Housing Prices (Difficulty: 1)
+**Project Objective**:  
+Predict the remaining useful life (RUL) of aircraft engines to preemptively schedule maintenance and reduce downtime.  
 
-**Project Objective**  
-Develop a predictive model to estimate housing prices based on various features such as location, size, and number of bedrooms. The goal is to optimize the accuracy of the price predictions.
+**Dataset Suggestions**:  
+- **Dataset**: Predictive Maintenance of Aircraft Engines Dataset (CMAPSS)  
+- **Link**: [Aircraft Engine RUL Dataset (Kaggle)](https://www.kaggle.com/datasets/behrad3d/nasa-cmaps)  
 
-**Dataset Suggestions**  
-- Use the "Ames Housing Dataset" available on Kaggle: [Ames Housing Dataset](https://www.kaggle.com/datasets/prestonvong/AmesHousing)  
+**Tasks**:  
+- Load and preprocess the dataset using auto-sklearn’s built-in preprocessing.  
+- Train regression models with auto-sklearn to predict RUL values.  
+- Compare ensemble models automatically created by auto-sklearn.  
+- Evaluate model performance using RMSE and R² metrics.  
+- Benchmark auto-sklearn’s results against a simple baseline (Linear Regression).  
 
-**Tasks**  
-- Data Preprocessing:
-  - Clean the dataset by handling missing values and encoding categorical variables.
-  
-- Feature Selection:
-  - Identify relevant features that significantly impact housing prices using correlation analysis.
-  
-- Model Training with auto-sklearn:
-  - Set up auto-sklearn to automatically select the best model and hyperparameters for regression.
-  
-- Model Evaluation:
-  - Evaluate model performance using metrics such as RMSE (Root Mean Squared Error) and R² score.
-  
-- Visualization:
-  - Visualize the predicted vs. actual prices using scatter plots.
+---
 
-### Project 2: Customer Segmentation (Difficulty: 2)
+### Project 2: House Price Estimation in India  
+**Difficulty**: 2 (Medium)  
 
-**Project Objective**  
-Segment customers based on purchasing behavior to identify distinct groups for targeted marketing strategies. The objective is to optimize clustering results to enhance marketing effectiveness.
+**Project Objective**:  
+Estimate house prices across India using structured tabular data that includes features such as location, size, and number of rooms. The goal is to apply auto-sklearn to build optimized regression models for accurate price prediction.  
 
-**Dataset Suggestions**  
-- Use the "Online Retail Dataset" available on UCI Machine Learning Repository: [Online Retail Dataset](https://archive.ics.uci.edu/ml/datasets/online+retail)  
+**Dataset Suggestions**:  
+- **Dataset**: India House Price Prediction
+- **Link**: [India House Price Prediction (Kaggle)](https://www.kaggle.com/datasets/ankushpanday1/india-house-price-prediction)  
 
-**Tasks**  
-- Data Cleaning:
-  - Preprocess the dataset by removing duplicates and handling missing values.
-  
-- Feature Engineering:
-  - Create features such as total purchase amount and frequency of purchases for each customer.
-  
-- Clustering with auto-sklearn:
-  - Implement auto-sklearn to identify the best clustering algorithms and hyperparameters for customer segmentation.
-  
-- Model Evaluation:
-  - Evaluate the clustering results using silhouette score and Davies-Bouldin index.
-  
-- Visualization:
-  - Visualize clusters using PCA or t-SNE to reduce dimensionality.
+**Tasks**:  
+- Preprocess the dataset: handle missing values, encode categorical variables, and normalize features.  
+- Use auto-sklearn to automatically generate and optimize regression models.  
+- Compare auto-sklearn’s best ensemble with baseline models (Random Forest, XGBoost).  
+- Evaluate predictions using MAE and RMSE.  
+- Visualize regional house price variations and prediction errors across states.  
 
-### Project 3: Predicting Customer Churn (Difficulty: 3)
+---
 
-**Project Objective**  
-Build a predictive model to identify customers likely to churn based on their interaction and usage data. The goal is to optimize the model's ability to predict churn effectively.
+### Project 3: Traffic Flow Anomaly Detection  
+**Difficulty**: 3 (Hard)  
 
-**Dataset Suggestions**  
-- Use the "Telco Customer Churn" dataset available on Kaggle: [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn)  
+**Project Objective**:  
+Detect unusual traffic conditions and anomalies in traffic flow using structured time series data, optimized with auto-sklearn.  
 
-**Tasks**  
-- Data Preprocessing:
-  - Clean the dataset by addressing missing values and encoding categorical features.
-  
-- Feature Engineering:
-  - Create new features that capture customer engagement metrics, such as tenure and service usage.
-  
-- Classification with auto-sklearn:
-  - Utilize auto-sklearn to automatically select the best classification model and hyperparameters for churn prediction.
-  
-- Model Evaluation:
-  - Assess model performance using metrics like accuracy, precision, recall, and F1 score.
-  
-- Visualization:
-  - Visualize feature importance and confusion matrix to analyze model performance.
+**Dataset Suggestions**:  
+- **Dataset**: Metro Interstate Traffic Volume Dataset  
+- **Link**: [Metro Traffic Volume (Kaggle)](https://www.kaggle.com/datasets/raj713335/metro-interstate-traffic-volume)  
 
-**Bonus Ideas (Optional)**  
-- Implement cross-validation techniques to improve model robustness.
-- Compare results with traditional manual tuning approaches to highlight the efficiency of auto-sklearn.
-- Explore ensemble methods to further enhance predictive performance.
+**Tasks**:  
+- Load and preprocess traffic data (time, weather, holiday information).  
+- Use auto-sklearn to train anomaly detection and classification models.  
+- Evaluate detection accuracy using precision, recall, and F1-score.  
+- Compare auto-sklearn’s optimized ensembles with traditional anomaly detection methods (Isolation Forest, One-Class SVM).  
+- Visualize anomalies in traffic volume over time with plots and dashboards.  
 
+---

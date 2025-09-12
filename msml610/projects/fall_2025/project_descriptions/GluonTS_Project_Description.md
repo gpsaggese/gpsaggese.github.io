@@ -54,6 +54,7 @@ GluonTS
 - Data Preparation:
     - Load the dataset and convert the timestamp into a time series format.
     - Aggregate energy consumption data to a daily granularity.
+    - Aggregate to daily/weekly to keep training manageable.
 
 - Feature Engineering:
     - Create additional features such as day of the week, month, and holidays.
@@ -82,6 +83,7 @@ GluonTS
 **Tasks**:
 - Data Ingestion:
     - Collect and preprocess daily reported COVID-19 cases for the selected region.
+    - Focus on a single country or region to reduce complexity.
 
 - Time Series Transformation:
     - Transform the dataset into a format suitable for time series forecasting.
@@ -100,6 +102,6 @@ GluonTS
 
 **Bonus Ideas (Optional)**:
 - For Project 1, consider adding promotions or seasonal effects in the forecasting model.
-- For Project 2, explore the use of external temperature data from public APIs (e.g., OpenWeatherMap).
+- For Project 2, explore external temperature data by downloading historical weather datasets (e.g., from NOAA or Kaggle)
 - For Project 3, incorporate mobility data (e.g., Google Mobility Reports) to enhance predictions.
 

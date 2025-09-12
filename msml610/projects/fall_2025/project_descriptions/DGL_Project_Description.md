@@ -1,60 +1,71 @@
-**Description**
+## Description  
+DGL (Deep Graph Library) is a Python library designed for deep learning on graphs. It provides a flexible framework that allows users to build and train graph neural networks (GNNs) efficiently. DGL supports various graph structures and enables seamless integration with popular deep learning frameworks like PyTorch and TensorFlow.  
 
-DGL (Deep Graph Library) is a Python library designed for deep learning on graphs. It provides a flexible framework that allows users to build and train graph neural networks (GNNs) efficiently. DGL supports various graph structures and enables seamless integration with popular deep learning frameworks like PyTorch and TensorFlow.
+**Features of DGL:**  
+- Supports various graph types including undirected, directed, and heterogeneous graphs.  
+- Facilitates the implementation of state-of-the-art GNN architectures.  
+- Provides efficient data handling and batching for large-scale graphs.  
 
-Technologies Used
-DGL
+---
 
-- Supports various graph types including undirected, directed, and heterogenous graphs.
-- Facilitates the implementation of state-of-the-art GNN architectures.
-- Provides efficient data handling and batching for large-scale graphs.
-
-**Project 1: Social Network Analysis for Community Detection**  
+## Project 1: Social Network Analysis for Community Detection  
 **Difficulty**: 1 (Easy)  
-**Project Objective**: The goal is to identify and visualize communities within a social network using graph clustering techniques, optimizing for modularity.
 
-**Dataset Suggestions**: Use the "Facebook Social Network" dataset available on [Kaggle](https://www.kaggle.com/datasets/shubhendra/facebook-social-network).
+**Project Objective**: Identify and visualize communities within a social network by learning node embeddings and clustering them, optimizing for modularity.  
 
-**Tasks**:
-- **Data Preprocessing**: Load the Facebook social network dataset and create a graph representation using DGL.
-- **Graph Construction**: Construct the graph with nodes representing users and edges representing friendships.
-- **Community Detection**: Implement a GNN model (e.g., GraphSAGE) to detect communities within the network.
-- **Evaluation**: Assess the quality of detected communities using metrics like modularity and silhouette score.
-- **Visualization**: Visualize the community structure using libraries like NetworkX or Matplotlib.
+**Dataset Suggestions**:  
+- **Dataset**: "Facebook Social Network" dataset on Kaggle  
+- **Link**: [Facebook Social Network](https://www.kaggle.com/datasets/shubhendra/facebook-social-network)  
 
-**Bonus Ideas**: Experiment with different GNN architectures for community detection or apply the model to different social networks.
+**Tasks**:  
+- **Data Preprocessing**: Load the dataset and construct a graph where nodes represent users and edges represent friendships.  
+- **Graph Representation**: Use DGL to represent the social network as a graph.  
+- **Node Embeddings**: Train a GNN (e.g., GraphSAGE) to generate embeddings for users.  
+- **Clustering**: Apply clustering (e.g., KMeans) on learned embeddings to detect communities.  
+- **Evaluation**: Assess community quality using modularity and silhouette score.  
+- **Visualization**: Plot detected communities using NetworkX or Matplotlib.  
+
+**Bonus Ideas (Optional)**: Compare embeddings from different GNN architectures (e.g., GCN vs. GraphSAGE) for community detection.  
 
 ---
 
-**Project 2: Fraud Detection in Credit Card Transactions**  
+## Project 2: Fraud Detection in Credit Card Transactions  
 **Difficulty**: 2 (Medium)  
-**Project Objective**: Build a GNN model that predicts fraudulent transactions in a credit card dataset, optimizing for detection accuracy.
 
-**Dataset Suggestions**: Use the "Credit Card Fraud Detection" dataset available on [Kaggle](https://www.kaggle.com/datasets/dalpozz/creditcard-fraud).
+**Project Objective**: Build a GNN-based classifier to detect fraudulent transactions by modeling relationships between users and their transaction patterns, optimizing for fraud detection accuracy.  
 
-**Tasks**:
-- **Data Preparation**: Load the dataset and create a transaction graph where nodes represent transactions and edges represent user connections.
-- **Feature Engineering**: Generate features based on transaction patterns and user behavior.
-- **Model Development**: Implement a GNN model (e.g., GAT) to classify transactions as fraudulent or legitimate.
-- **Training and Evaluation**: Train the model and evaluate performance using precision, recall, and F1-score.
-- **Anomaly Analysis**: Analyze misclassified transactions to identify patterns of fraud.
+**Dataset Suggestions**:  
+- **Dataset**: "Credit Card Fraud Detection" dataset on Kaggle  
+- **Link**: [Credit Card Fraud Detection](https://www.kaggle.com/datasets/dalpozz/creditcard-fraud)  
 
-**Bonus Ideas**: Compare the GNN model's performance with traditional machine learning models like Random Forest or SVM.
+**Tasks**:  
+- **Graph Construction**: Represent the dataset as a bipartite graph (users ↔ transactions), where nodes are users and transactions, and edges indicate ownership.  
+- **Feature Engineering**: Extract transaction-level features (amount, time) and user-level aggregated features.  
+- **Model Development**: Implement a GNN model (e.g., Graph Attention Network, GAT) to classify transactions as fraudulent or legitimate.  
+- **Training and Evaluation**: Train the GNN and evaluate with precision, recall, and F1-score, handling class imbalance carefully.  
+- **Anomaly Analysis**: Inspect misclassified cases to identify fraud patterns.  
+
+**Bonus Ideas (Optional)**: Compare GNN performance with traditional models (Random Forest, SVM) or apply edge classification for fraud detection.  
 
 ---
 
-**Project 3: Recommendation System for Movie Recommendations**  
+## Project 3: Movie Recommendation System  
 **Difficulty**: 3 (Hard)  
-**Project Objective**: Develop a GNN-based recommendation system that predicts user preferences for movies based on their viewing history, optimizing for user satisfaction.
 
-**Dataset Suggestions**: Use the "MovieLens 20M" dataset available on [Kaggle](https://www.kaggle.com/datasets/grouplens/movielens-20m-dataset).
+**Project Objective**: Develop a GNN-based recommendation system that predicts user–movie preferences by treating it as a link prediction task, optimizing for top-N recommendation accuracy.  
 
-**Tasks**:
-- **Data Preparation**: Load the MovieLens dataset and create a bipartite graph with users and movies as nodes, and edges representing user ratings.
-- **Graph Representation**: Implement techniques to represent user-movie interactions effectively within the graph structure.
-- **Model Training**: Build and train a GNN model (e.g., Graph Convolutional Network) to predict user ratings for unrated movies.
-- **Evaluation**: Evaluate the model using metrics such as RMSE and MAE to assess prediction accuracy.
-- **Recommendation Generation**: Generate and recommend top-N movies for users based on predicted ratings.
+**Dataset Suggestions**:  
+- **Dataset**: "MovieLens 20M" dataset on Kaggle  
+- **Link**: [MovieLens 20M](https://www.kaggle.com/datasets/grouplens/movielens-20m-dataset)  
 
-**Bonus Ideas**: Explore the impact of incorporating additional features (like genre or director) into the GNN model, or implement a hybrid recommendation approach combining GNN with collaborative filtering techniques.
+**Tasks**:  
+- **Graph Construction**: Build a bipartite graph with users and movies as nodes, and edges representing user ratings.  
+- **Graph Representation**: Incorporate edge weights (ratings) and node features (genres, metadata) into the graph.  
+- **Model Training**: Implement a GNN (e.g., Graph Convolutional Network or GraphSAGE) for link prediction to estimate missing user–movie interactions.  
+- **Evaluation**: Evaluate the recommendation model using RMSE for rating prediction and precision@k/recall@k for top-N recommendations.  
+- **Recommendation Generation**: Generate personalized recommendations for each user based on predicted interactions.  
 
+**Bonus Ideas (Optional)**:  
+- Incorporate side information (director, actors, tags) into the graph as heterogeneous node types.  
+- Explore hybrid methods combining collaborative filtering with GNN-based embeddings.  
+- Implement temporal GNNs to account for the evolution of user preferences over time.  

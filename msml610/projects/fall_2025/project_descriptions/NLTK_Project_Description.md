@@ -62,10 +62,10 @@ In this project, students will utilize NLTK (Natural Language Toolkit), a powerf
 - **Data Acquisition**: Download and preprocess the CORD-19 dataset.
 - **Text Cleaning**: Clean the text by removing unnecessary elements (e.g., references, figures).
 - **Tokenization and Tagging**: Use NLTK to tokenize the text and apply part-of-speech tagging.
-- **Entity Recognition**: Implement a Named Entity Recognition (NER) model using NLTK or pre-trained models.
+- **Entity Recognition**: Start with NLTK’s built-in NER tools, then compare results with pre-trained models (e.g., spaCy or Hugging Face Transformers
 - **Evaluation**: Measure the performance of the NER system using standard metrics like F1-score.
 
-**Bonus Ideas (Optional)**: 
+**Bonus Ideas (Optional)**:
 - Integrate additional datasets to improve entity recognition performance.
 - Explore the use of deep learning models for NER and compare results with traditional methods.
 

@@ -1,99 +1,79 @@
 **Description**
 
-Dask is a flexible parallel computing library for analytics that enables users to scale their computations across multiple cores or clusters. It integrates seamlessly with NumPy, Pandas, and Scikit-learn, making it ideal for handling large datasets and complex computations efficiently. 
+Dask is a flexible parallel computing library for analytics that enables users to scale their computations across multiple cores or clusters. It integrates seamlessly with NumPy, Pandas, and Scikit-learn, making it ideal for handling large datasets and complex computations efficiently.  
 
-Technologies Used
-Dask
+Technologies Used  
+Dask  
 
-- Enables parallel computing with minimal changes to existing NumPy and Pandas code.
-- Supports out-of-core computation, allowing the processing of datasets larger than memory.
-- Provides advanced scheduling capabilities for distributed computing.
-
----
-
-### Project 1: Movie Recommendation System (Difficulty: 1 - Easy)
-
-**Project Objective**  
-Create a movie recommendation system that predicts user ratings based on collaborative filtering techniques using a large movie dataset. The goal is to optimize recommendations for users based on their historical ratings.
-
-**Dataset Suggestions**  
-- Use the "MovieLens 20M Dataset" available on Kaggle: [MovieLens 20M](https://www.kaggle.com/grouplens/movielens-20m-dataset).
-
-**Tasks**  
-- Load Dataset with Dask:
-  - Read the MovieLens dataset into a Dask DataFrame for efficient handling of large data.
-  
-- Data Preprocessing:
-  - Clean and preprocess the data to handle missing values and format issues.
-
-- Build User-Item Matrix:
-  - Create a sparse matrix representing user ratings for movies.
-
-- Implement Collaborative Filtering:
-  - Use Dask-ML to implement user-based or item-based collaborative filtering algorithms.
-
-- Generate Recommendations:
-  - Predict ratings for unrated movies and recommend top-N movies for each user.
-
-- Evaluate Model Performance:
-  - Use metrics such as RMSE or MAE to evaluate the recommendation accuracy.
+- Enables parallel computing with minimal changes to existing NumPy and Pandas code.  
+- Supports out-of-core computation, allowing the processing of datasets larger than memory.  
+- Provides advanced scheduling capabilities for distributed computing.  
 
 ---
 
-### Project 2: Large-Scale Twitter Sentiment Analysis (Difficulty: 2 - Medium)
+### Project 1: News Article Recommendation System  
+**Difficulty**: 1 (Easy) 
 
 **Project Objective**  
-Perform sentiment analysis on a large volume of tweets to detect sentiments towards a specific topic (e.g., climate change). The goal is to analyze trends over time and visualize sentiment distributions.
+Build a recommendation system that suggests news articles to readers based on collaborative filtering techniques. The goal is to optimize recommendations using large-scale user interaction data.  
 
 **Dataset Suggestions**  
-- Use the "Sentiment140" dataset available on Kaggle: [Sentiment140](https://www.kaggle.com/kazanova/sentiment140).
+- [MIND: Microsoft News Recommendation Dataset](https://msnews.github.io/) (contains millions of user click histories and news articles).  
 
 **Tasks**  
-- Load and Explore Dataset:
-  - Use Dask to load the dataset and explore its structure and content.
-
-- Data Cleaning and Preprocessing:
-  - Clean the tweets (remove URLs, mentions, special characters) and preprocess text for sentiment analysis.
-
-- Sentiment Analysis:
-  - Utilize pre-trained models (e.g., VADER or TextBlob) to classify tweet sentiments as positive, negative, or neutral.
-
-- Time-Series Analysis:
-  - Aggregate sentiment scores over time to analyze trends and visualize results using Dask with Matplotlib.
-
-- Sentiment Visualization:
-  - Create visualizations to show how sentiments change over time regarding climate change discussions.
-
----
-
-### Project 3: Predictive Maintenance for Industrial Equipment (Difficulty: 3 - Hard)
-
-**Project Objective**  
-Develop a predictive maintenance model for industrial equipment using sensor data to forecast failures and optimize maintenance schedules. The goal is to minimize downtime and maintenance costs.
-
-**Dataset Suggestions**  
-- Use the "NASA Turbofan Engine Degradation Simulation Data Set" available on Kaggle: [NASA Turbofan](https://www.kaggle.com/datasets/behnamf/engine-failure-prediction).
-
-**Tasks**  
-- Load Large Datasets:
-  - Use Dask to load and manage the large turbine engine dataset efficiently.
-
-- Data Exploration:
-  - Perform exploratory data analysis (EDA) to understand the relationships between variables and failure events.
-
-- Feature Engineering:
-  - Create new features based on sensor readings and historical failure data to enhance predictive modeling.
-
-- Model Development:
-  - Implement machine learning models (e.g., Random Forest, Gradient Boosting) using Dask-ML to predict failures.
-
-- Model Evaluation:
-  - Evaluate the model using confusion matrix, precision, recall, and F1 score to understand its predictive capabilities.
-
-- Deployment Consideration:
-  - Discuss how to integrate the model into a real-time monitoring system for predictive maintenance.
+- **Load Data with Dask**: Read the large MIND dataset into a Dask DataFrame for scalable preprocessing.  
+- **Data Preprocessing**: Clean interaction logs, normalize article metadata.  
+- **Build User-Item Matrix**: Construct a sparse matrix of user-article interactions.  
+- **Collaborative Filtering**: Implement user- or item-based collaborative filtering with Dask-ML.  
+- **Generate Recommendations**: Recommend top-N articles for each user.  
+- **Evaluation**: Use metrics like RMSE, MAP@K, or NDCG to evaluate recommendation quality.  
 
 **Bonus Ideas (Optional)**  
-- Experiment with ensemble methods or deep learning models for improved accuracy.
-- Implement a dashboard using Dash or Streamlit to visualize predictions and maintenance schedules.
+- Compare collaborative filtering with a baseline popularity-based recommender.  
+- Explore hybrid recommendations by incorporating article content (text embeddings).  
 
+---
+
+### Project 2: Large-Scale Airline Passenger Sentiment Analysis  
+**Difficulty**: 2 (Medium) 
+
+**Project Objective**  
+Perform sentiment analysis on airline passenger tweets to evaluate service quality and trends. The goal is to analyze large-scale feedback and visualize sentiment distributions over time.  
+
+**Dataset Suggestions**  
+- [Twitter US Airline Sentiment Dataset](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment) (contains ~15K labeled tweets with positive, negative, neutral sentiments).  
+
+**Tasks**  
+- **Load with Dask**: Load and explore the dataset at scale.  
+- **Preprocessing**: Clean tweets (remove hashtags, links, mentions), tokenize text.  
+- **Sentiment Classification**: Use pretrained sentiment analyzers (e.g., VADER, TextBlob) or train simple classifiers with Dask-ML.  
+- **Trend Analysis**: Aggregate sentiments over time or by airline.  
+- **Visualization**: Plot time-series sentiment trends and distribution per airline.  
+
+**Bonus Ideas (Optional)**  
+- Compare rule-based models (VADER) vs ML classifiers (Logistic Regression, Random Forest).  
+- Extend analysis to aspect-based sentiment (e.g., delays vs staff service).  
+
+---
+
+### Project 3: Energy Consumption Forecasting for Smart Grids  
+**Difficulty**: 3 (Hard)  
+
+**Project Objective**  
+Develop a predictive model to forecast household energy consumption using large-scale smart meter data, enabling better demand management and reducing costs.  
+
+**Dataset Suggestions**  
+- [UK Domestic Electricity Smart Meter Dataset](https://data.ukdataservice.ac.uk/series/2000056) (Smart Energy Research Lab - anonymized household energy usage, time-series).  
+- Alternative: [UCI Electricity Load Diagrams Dataset](https://archive.ics.uci.edu/ml/datasets/ElectricityLoadDiagrams20112014).  
+
+**Tasks**  
+- **Load with Dask**: Use Dask to handle the large time-series dataset efficiently.  
+- **EDA**: Explore consumption patterns across households and time periods.  
+- **Feature Engineering**: Create lag features, rolling averages, seasonal indicators (holidays, weekdays).  
+- **Model Development**: Train scalable ML models (e.g., Gradient Boosting, Random Forest with Dask-ML) to forecast consumption.  
+- **Evaluation**: Evaluate models using RMSE, MAE, and MAPE.  
+- **Visualization**: Plot actual vs predicted consumption curves.  
+
+**Bonus Ideas (Optional)**  
+- Experiment with ensemble methods or sequence models (e.g., RNNs with chunked training).  
+- Build a dashboard with Dask + Bokeh/Streamlit for interactive visualization.  

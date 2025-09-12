@@ -60,7 +60,7 @@ Fairlearn
 
 **Tasks**:  
 - Data Preprocessing: Clean and preprocess the dataset, including geospatial features and demographic attributes.
-- Model Training: Create a predictive model (e.g., random forest) to identify potential crime hotspots based on historical data.
+- Model Training: Train a Random Forest or Gradient Boosted Trees model to identify potential crime hotspots based on historical data.
 - Fairness Evaluation: Use Fairlearn to assess the fairness of the model predictions across different demographic groups (e.g., race, income).
 - Mitigation Strategy: Implement Fairlearn’s pre-processing or in-processing techniques to reduce bias in predictions.
 - Impact Analysis: Analyze the effects of fairness mitigation on model performance and discuss implications for policing practices.

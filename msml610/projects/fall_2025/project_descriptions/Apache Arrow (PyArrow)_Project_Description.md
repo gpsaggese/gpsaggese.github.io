@@ -1,85 +1,81 @@
-**Description**
+## Description  
+Apache Arrow (PyArrow) is a cross-language development platform for in-memory data that provides a standardized columnar memory format to accelerate data processing. It enables efficient data interchange between different data processing systems and languages.  
 
-Apache Arrow (PyArrow) is a cross-language development platform for in-memory data that provides a standardized columnar memory format to accelerate data processing. It enables efficient data interchange between different data processing systems and languages. 
+**Features** 
+  - Provides high-performance, columnar data representation.  
+  - Supports zero-copy reads for efficient data access.  
+  - Facilitates interoperability between different data processing frameworks like Pandas, Dask, and Spark.  
 
-Technologies Used:
-- **Apache Arrow (PyArrow)**:
-    - Provides high-performance, columnar data representation.
-    - Supports zero-copy reads for efficient data access.
-    - Facilitates interoperability between different data processing frameworks like Pandas, Dask, and Spark.
+---
+ 
+ 
+### Project 1: Airbnb Price Prediction with Efficient Data Pipelines  
+**Difficulty**: 1 (Easy)  
+
+**Project Objective**:  
+Predict nightly Airbnb rental prices using PyArrow to efficiently handle and process structured tabular data. The project emphasizes building a memory-efficient data pipeline while improving regression model performance.  
+
+**Dataset Suggestions**:  
+- **Dataset**: New York City Airbnb Open Data  
+- **Link**: [NYC Airbnb Open Data (Kaggle)](https://www.kaggle.com/datasets/dgomonov/new-york-city-airbnb-open-data)  
+
+**Tasks**:  
+- **Data Ingestion**: Load the dataset into PyArrow tables for efficient memory usage.  
+- **Data Cleaning**: Handle missing values, normalize numerical variables, and encode categorical features.  
+- **Feature Engineering**: Create new features such as average price per neighborhood and host experience length.  
+- **Model Training**: Train regression models (Linear Regression, Random Forest, XGBoost) using processed data.  
+- **Evaluation**: Evaluate performance with MAE and RMSE, comparing PyArrow pipelines vs standard Pandas workflows.  
+
+**Bonus Ideas (Optional)**:  
+- Benchmark runtime and memory usage between Arrow-based and Pandas-only pipelines.  
+- Visualize price distributions across neighborhoods and property types.  
 
 ---
 
-**Project 1: Predicting House Prices (Difficulty: 1 - Easy)**
+### Project 2: Analyzing Global Weather Patterns  
+**Difficulty**: 2 (Medium)  
 
-**Project Objective**: Create a predictive model to estimate house prices based on various features such as location, size, and number of bedrooms. The goal is to optimize the accuracy of the price predictions.
+**Project Objective**:  
+Analyze historical weather data to identify temperature and precipitation trends across regions, and forecast future climate patterns using machine learning.  
 
-**Dataset Suggestions**: 
-- Use the **Ames Housing dataset** available on Kaggle ([Ames Housing Dataset](https://www.kaggle.com/datasets/prestonvong/austin-housing-dataset)).
+**Dataset Suggestions**:  
+- **Dataset**: Climate Change: Earth Surface Temperature Data  
+- **Link**: [Climate Change Data (Kaggle)](https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data)  
 
-**Tasks**:
-- **Data Ingestion**:
-    - Load the dataset using PyArrow for efficient memory handling.
-- **Data Cleaning**:
-    - Identify and handle missing values and outliers using Pandas with Arrow integration.
-- **Feature Engineering**:
-    - Create new features (e.g., total square footage) to enhance model performance.
-- **Model Training**:
-    - Train a regression model (e.g., Linear Regression) using Scikit-learn.
-- **Model Evaluation**:
-    - Evaluate model performance using metrics like RMSE and R².
+**Tasks**:  
+- **Data Ingestion**: Use PyArrow to handle large climate datasets efficiently.  
+- **Preprocessing**: Clean missing values, unify units, and aggregate data by region and time.  
+- **Exploratory Analysis**: Visualize long-term temperature and precipitation trends.  
+- **Forecasting Models**: Implement ARIMA, Prophet, or Random Forest regressors for time series forecasting.  
+- **Evaluation**: Compare forecast accuracy with MAE and RMSE.  
 
-**Bonus Ideas**: 
-- Compare model performance using different regression algorithms (e.g., Ridge, Lasso).
-- Implement feature importance analysis to understand the key drivers of house prices.
+**Bonus Ideas (Optional)**:  
+- Add CO₂ concentration datasets to analyze correlations with rising temperatures.  
+- Visualize country-level climate anomalies over time with interactive dashboards.  
 
 ---
 
-**Project 2: Analyzing Global Weather Patterns (Difficulty: 2 - Medium)**
+### Project 3: Streaming News Article Classification  
+**Difficulty**: 3 (Hard)  
 
-**Project Objective**: Analyze historical weather data to identify trends and anomalies in temperature and precipitation across various regions. The goal is to optimize the detection of significant trends over time.
+**Project Objective**:  
+Build a system that simulates real-time classification of news articles into categories such as politics, technology, sports, and business. The project focuses on using PyArrow for efficient text ingestion and batch-stream processing.  
 
-**Dataset Suggestions**: 
-- Use the **Global Historical Climatology Network (GHCN)** dataset available through the National Oceanic and Atmospheric Administration (NOAA) ([NOAA Climate Data](https://www.ncdc.noaa.gov/cdo-web/)).
+**Dataset Suggestions**:  
+- **Dataset**: News Category Dataset (200,000+ headlines from HuffPost)  
+- **Link**: [News Category Dataset (Kaggle)](https://www.kaggle.com/datasets/rmisra/news-category-dataset)  
 
-**Tasks**:
-- **Data Ingestion**:
-    - Load large weather datasets using PyArrow to manage memory efficiently.
-- **Data Preprocessing**:
-    - Clean and preprocess data, handling missing values and normalizing temperature scales.
-- **Exploratory Data Analysis**:
-    - Visualize trends in temperature and precipitation using Matplotlib or Seaborn.
-- **Anomaly Detection**:
-    - Implement statistical methods to detect anomalies in weather patterns (e.g., Z-score method).
-- **Trend Analysis**:
-    - Use time-series analysis to identify long-term trends in weather data.
+**Tasks**:  
+- **Data Ingestion**: Store and load the large dataset in Arrow format for optimized memory usage.  
+- **Preprocessing**: Clean headlines (lowercasing, stopword removal, tokenization) and prepare text embeddings (TF-IDF or pretrained word embeddings).  
+- **Model Training**: Train multiple classifiers:  
+  - Logistic Regression or Naive Bayes (baseline).  
+  - Random Forest or XGBoost for structured text features.  
+  - Deep learning model (LSTM, Transformer-based) for richer representations.  
+- **Streaming Simulation**: Feed batches of new headlines into the system to mimic real-time article classification.  
+- **Evaluation**: Use accuracy, F1-score, and confusion matrices to measure classification performance.  
 
-**Bonus Ideas**: 
-- Integrate additional datasets (e.g., CO2 levels) to analyze correlations with weather patterns.
-- Implement a forecasting model (e.g., ARIMA) to predict future weather trends.
-
----
-
-**Project 3: Real-Time Social Media Sentiment Analysis (Difficulty: 3 - Hard)**
-
-**Project Objective**: Build a real-time sentiment analysis system for tweets related to a specific topic (e.g., climate change). The goal is to optimize the accuracy of sentiment classification and visualize trends over time.
-
-**Dataset Suggestions**: 
-- Use the **Twitter API** to collect real-time tweets on a specific topic (e.g., climate change). The API is free to use with basic authentication.
-
-**Tasks**:
-- **Data Collection**:
-    - Set up a stream listener using Tweepy to collect tweets in real-time and store them in Arrow format for efficient processing.
-- **Data Preprocessing**:
-    - Clean the tweet text (removing URLs, mentions, and special characters) using regular expressions.
-- **Sentiment Analysis**:
-    - Utilize a pre-trained sentiment analysis model (e.g., VADER or TextBlob) to classify tweets as positive, negative, or neutral.
-- **Trend Visualization**:
-    - Aggregate sentiment scores over time and visualize trends using Plotly or Matplotlib.
-- **Performance Evaluation**:
-    - Evaluate the accuracy of sentiment classification using a confusion matrix and precision-recall metrics.
-
-**Bonus Ideas**: 
-- Extend the analysis to compare sentiments across different demographics or regions.
-- Implement a dashboard using Dash or Streamlit to visualize real-time sentiment trends interactively.
-
+**Bonus Ideas (Optional)**:  
+- Compare Arrow-based pipelines vs Pandas-only processing for large-scale text.  
+- Build an interactive dashboard (Streamlit/Dash) to display real-time category distributions of incoming headlines.  
+- Extend the project to sentiment analysis (positive/negative tone) in addition to category classification.  

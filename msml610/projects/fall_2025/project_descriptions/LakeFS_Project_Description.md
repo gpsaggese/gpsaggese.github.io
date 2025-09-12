@@ -24,15 +24,16 @@ LakeFS is an open-source data versioning tool designed for managing data lakes. 
 
 **Project Objective**: The aim is to develop a time-series forecasting model for predicting airline passenger numbers, utilizing LakeFS to manage different versions of the dataset and model experiments.
 
-**Dataset Suggestions**: Use the "Airline Passenger Satisfaction" dataset from Kaggle ([link](https://www.kaggle.com/datasets/teejmahal20/airline-passenger-satisfaction)).
+**Dataset Suggestions**: Use the "International Airline Passengers" dataset from Kaggle ([link](https://www.kaggle.com/datasets/rakannimer/air-passengers)).
 
 **Tasks**:
-- **LakeFS Setup**: Create a LakeFS repository for versioning the airline dataset.
-- **Data Exploration**: Analyze the dataset to understand trends and seasonality in passenger numbers.
-- **Preprocessing**: Perform necessary transformations (date parsing, resampling) and version the processed dataset.
-- **Model Development**: Implement an ARIMA model to forecast future passenger numbers.
-- **Model Evaluation**: Use metrics like Mean Absolute Error (MAE) and visualize the forecast against actual values.
-- **Experiment Tracking**: Utilize LakeFS branching to test different model parameters and track their performance.
+- **LakeFS Setup**: Create a LakeFS repository for versioning the AirPassengers dataset.
+- **Data Exploration**: Analyze seasonality and trends in passenger numbers.
+- **Preprocessing**: Perform date parsing, resampling, and version the processed dataset.
+- **Model Development**: Implement an ARIMA or Prophet model to forecast future passenger numbers.
+- **Model Evaluation**: Use metrics like Mean Absolute Error (MAE) and visualize predictions against actual values.
+- **Experiment Tracking**: Use LakeFS branching to test different model parameters and track results.
+
 
 ### Project 3: Anomaly Detection in Financial Transactions
 **Difficulty**: 3 (Hard)

@@ -1,95 +1,71 @@
-**Description**
+## Description  
+CausalPy is a Python library designed for causal inference, enabling data scientists to analyze the effects of interventions and understand causal relationships in data. It provides a user-friendly interface for estimating causal effects through various methods, including propensity score matching and regression-based approaches.  
 
-CausalPy is a Python library designed for causal inference, enabling data scientists to analyze the effects of interventions and understand causal relationships in data. It provides a user-friendly interface for estimating causal effects through various methods, including propensity score matching and instrumental variable analysis.
-
-Features of CausalPy:
-- Implements state-of-the-art causal inference methods for estimating treatment effects.
-- Allows for easy integration with popular data manipulation libraries like Pandas.
-- Provides visualization tools for causal graphs and treatment effect estimates.
-
----
-
-### Project 1: Understanding the Impact of Advertising on Sales
-**Difficulty**: 1 (Easy)
-
-**Project Objective**: 
-Analyze how different advertising channels (TV, online, print) impact sales figures for a retail company, optimizing for understanding the most effective channel.
-
-**Dataset Suggestions**: 
-- Retail data from the "Advertising" dataset on Kaggle (https://www.kaggle.com/ashishpatel26/advertising-dataset).
-
-**Tasks**:
-- Data Preprocessing:
-    - Clean and prepare the dataset, ensuring appropriate formats and handling missing values.
-  
-- Exploratory Data Analysis:
-    - Visualize sales trends and advertising spend across different channels using Seaborn or Matplotlib.
-  
-- Causal Inference Setup:
-    - Use CausalPy to define treatment groups based on advertising channels and control for confounding variables.
-  
-- Estimate Causal Effects:
-    - Apply propensity score matching to estimate the impact of each advertising channel on sales.
-  
-- Interpret Results:
-    - Summarize findings, highlighting which advertising channel yielded the highest sales increase.
+**Features of CausalPy:**  
+- Implements state-of-the-art causal inference methods for estimating treatment effects.  
+- Allows for easy integration with popular data manipulation libraries like Pandas.  
+- Provides visualization tools for causal graphs and treatment effect estimates.  
 
 ---
 
-### Project 2: Evaluating the Effect of Employee Training on Productivity
-**Difficulty**: 2 (Medium)
+## Project 1: Understanding the Impact of Advertising on Sales  
+**Difficulty**: 1 (Easy)  
 
-**Project Objective**: 
-Investigate how a structured employee training program affects productivity levels, optimizing for the most effective training methods.
+**Project Objective**: Estimate how different advertising channels (TV, online, print) affect sales figures for a retail company, identifying the most effective channel.  
 
-**Dataset Suggestions**: 
-- Employee productivity data from the "Employee Training" dataset on Kaggle (https://www.kaggle.com/datasets/benroshan/employee-productivity).
+**Dataset Suggestions**:  
+- **Dataset**: "Advertising Dataset" on Kaggle  
+- **Link**: [Advertising Dataset](https://www.kaggle.com/datasets/ashydv/advertising-dataset)  
 
-**Tasks**:
-- Data Preprocessing:
-    - Clean the dataset and encode categorical variables related to training methods and productivity metrics.
-  
-- Exploratory Data Analysis:
-    - Analyze productivity trends before and after training, segmenting by different training methods.
-  
-- Causal Framework:
-    - Define treatment and control groups based on training participation using CausalPy.
-  
-- Causal Effect Estimation:
-    - Implement instrumental variable analysis to control for selection bias and estimate the causal impact of training on productivity.
-  
-- Reporting:
-    - Generate visualizations to present the causal estimates and discuss implications for training programs.
+**Tasks**:  
+- **Data Preprocessing**: Clean and prepare the dataset, ensuring proper formats.  
+- **Exploratory Analysis**: Visualize relationships between sales and advertising spend.  
+- **Causal Setup**: Define treatment groups based on advertising channels.  
+- **Causal Estimation**: Apply propensity score matching in CausalPy to estimate treatment effects.  
+- **Interpretation**: Summarize which channel has the largest causal impact on sales.  
+
+**Bonus Idea (Optional)**: Compare results against a simple linear regression to highlight the benefit of causal methods.  
 
 ---
 
-### Project 3: Analyzing the Effects of Policy Changes on Public Health Outcomes
-**Difficulty**: 3 (Hard)
+## Project 2: Evaluating the Effect of Training on Earnings  
+**Difficulty**: 2 (Medium)  
 
-**Project Objective**: 
-Examine the causal impact of health policy changes (e.g., smoking bans, vaccination campaigns) on public health outcomes, optimizing for policy effectiveness.
+**Project Objective**: Investigate how participation in a training program affects individuals’ earnings, optimizing for unbiased causal effect estimation.  
 
-**Dataset Suggestions**: 
-- Health outcomes data from the "Health Policy" dataset on Kaggle (https://www.kaggle.com/datasets/aaronschlegel/health-policy-data).
+**Dataset Suggestions**:  
+- **Dataset**: "Lalonde Dataset" (classic causal inference dataset for job training vs. control)  
+- **Link**: [Lalonde Dataset](https://github.com/robjellis/lalonde)  
 
-**Tasks**:
-- Data Preprocessing:
-    - Clean and format the dataset, focusing on health indicators and policy implementation dates.
-  
-- Exploratory Data Analysis:
-    - Visualize trends in health outcomes before and after policy changes, identifying potential confounders.
-  
-- Causal Inference Design:
-    - Use CausalPy to construct a causal graph that represents the relationships between policies, confounders, and health outcomes.
-  
-- Causal Effect Estimation:
-    - Apply advanced causal inference techniques (e.g., difference-in-differences) to estimate the impact of policy changes on health outcomes.
-  
-- Comprehensive Analysis:
-    - Provide a detailed interpretation of results, including policy recommendations based on the causal analysis.
+**Tasks**:  
+- **Data Preprocessing**: Load the dataset, clean covariates, and ensure treatment vs. control groups are defined.  
+- **Exploratory Analysis**: Compare distributions of covariates between treated and control groups.  
+- **Causal Setup**: Define treatment = program participation, control = non-participants.  
+- **Causal Estimation**: Use propensity score weighting or matching in CausalPy to estimate the average treatment effect on earnings.  
+- **Reporting**: Visualize balance before/after matching and summarize the causal estimate.  
 
-**Bonus Ideas (Optional)**:
-- For Project 1: Compare the estimated effects of advertising channels with a baseline model without causal inference.
-- For Project 2: Implement a sensitivity analysis to assess the robustness of the causal estimates.
-- For Project 3: Explore the potential long-term effects of the policies on health outcomes using time-series analysis.
+**NOTE**: The Lalonde dataset is widely used for benchmarking causal methods and works well for testing multiple approaches.  
 
+**Bonus Idea (Optional)**: Apply multiple methods (matching, weighting, regression adjustment) and compare results for robustness.  
+
+---
+
+## Project 3: Analyzing the Effects of Healthcare Policies on Patient Outcomes  
+**Difficulty**: 3 (Hard)  
+
+**Project Objective**: Estimate the causal effect of healthcare interventions or policy changes on patient outcomes using observational healthcare data.  
+
+**Dataset Suggestions**:  
+- **Dataset**: "Healthcare Dataset" on Kaggle  
+- **Link**: [Healthcare Dataset](https://www.kaggle.com/datasets/prasad22/healthcare-dataset)  
+
+**Tasks**:  
+- **Data Preprocessing**: Focus on key outcome variables (e.g., health scores, recovery rates) and align them with policy or treatment indicators.  
+- **Exploratory Analysis**: Visualize outcome trends across treatment vs. control groups.  
+- **Causal Setup**: Define treatment = patients exposed to a healthcare intervention, control = those without.  
+- **Causal Estimation**: Apply difference-in-differences (DiD) or regression discontinuity in CausalPy to estimate effects.  
+- **Interpretation**: Provide a detailed policy-relevant interpretation of results.  
+
+**NOTE**: To keep the project feasible, select a **subset of patients, time windows, or policy changes** rather than using the full dataset.  
+
+**Bonus Idea (Optional)**: Extend the analysis with lagged outcomes to measure long-term effects of interventions.  

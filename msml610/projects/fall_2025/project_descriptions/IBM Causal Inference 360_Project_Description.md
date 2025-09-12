@@ -19,7 +19,7 @@ Evaluate the causal effect of a marketing campaign on sales performance, identif
 
 **Dataset Suggestions**: 
 - Dataset: Marketing Campaign Data from Kaggle (e.g., “Marketing Campaigns”).
-- Source: [Kaggle - Marketing Campaign Dataset](https://www.kaggle.com/datasets/)
+- Source: [Kaggle - Marketing Campaign Dataset](https://www.kaggle.com/datasets/henriqueyamahata/bank-marketing)
 
 **Tasks**:
 - Data Preprocessing:
@@ -51,7 +51,7 @@ Investigate the causal relationship between educational interventions (e.g., tut
 
 **Dataset Suggestions**: 
 - Dataset: Student Performance Data from Kaggle (e.g., “Student Performance Dataset”).
-- Source: [Kaggle - Student Performance Dataset](https://www.kaggle.com/datasets/)
+- Source: [Kaggle - Student Performance Dataset](https://www.kaggle.com/datasets/spscientist/students-performance-in-exams)
 
 **Tasks**:
 - Data Exploration:

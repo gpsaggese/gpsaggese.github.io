@@ -1,97 +1,68 @@
 **Description**
 
-JAX is a high-performance machine learning library designed for numerical computing, enabling automatic differentiation and GPU/TPU acceleration. It provides a flexible and composable approach to building machine learning models, allowing for rapid experimentation and optimization.
+JAX is a high-performance machine learning library designed for numerical computing, offering automatic differentiation, GPU/TPU acceleration, and a NumPy-like API. It enables flexible and composable model development while supporting functional programming paradigms. With features like JIT compilation and vectorization, JAX is particularly well-suited for building scalable and efficient machine learning models.
 
-Technologies Used
-JAX
-
-- Offers automatic differentiation for functions, enabling gradient-based optimization.
-- Supports Just-In-Time (JIT) compilation for accelerated performance on CPUs, GPUs, and TPUs.
-- Facilitates vectorization and parallelization of operations, making it suitable for large-scale computations.
-
----
-
-### Project 1: Predicting House Prices (Difficulty: 1 - Easy)
-
-**Project Objective**  
-The goal of this project is to develop a regression model that predicts house prices based on various features such as size, location, and number of rooms. Students will optimize the model to minimize prediction error.
-
-**Dataset Suggestions**  
-- **Dataset**: California Housing Prices Dataset  
-- **Source**: Available on Kaggle [California Housing Prices](https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data)
-
-**Tasks**  
-- Data Preprocessing:  
-  Clean the dataset by handling missing values and normalizing features.
-
-- Feature Engineering:  
-  Create additional features like price per square foot or age of the house.
-
-- Model Development:  
-  Use JAX to implement a linear regression model and optimize parameters using gradient descent.
-
-- Model Evaluation:  
-  Evaluate model performance using metrics such as Mean Absolute Error (MAE) and R-squared.
-
-- Visualization:  
-  Visualize the relationship between predicted and actual house prices using Matplotlib.
+**Technologies Used**  
+JAX  
+- Provides automatic differentiation for gradient-based optimization.  
+- Supports Just-In-Time (JIT) compilation for accelerated performance on CPUs, GPUs, and TPUs.  
+- Facilitates vectorization and parallelization for large-scale computations.  
+- Uses a NumPy-like API, making it intuitive for scientific computing.  
 
 ---
 
-### Project 2: Image Classification with Convolutional Neural Networks (Difficulty: 2 - Medium)
+### Project 1: Predicting Bike Sharing Demand (Difficulty: 1 - Easy)  
 
 **Project Objective**  
-Students will build a convolutional neural network (CNN) to classify images from a dataset of handwritten digits (MNIST). The objective is to achieve high accuracy in recognizing digits while optimizing the model architecture.
+Build a regression model to predict daily bike rental counts based on weather and seasonal factors. Use JAX for model development and gradient-based optimization.  
 
 **Dataset Suggestions**  
-- **Dataset**: MNIST Handwritten Digits  
-- **Source**: Available on Kaggle [MNIST Handwritten Digits](https://www.kaggle.com/c/digit-recognizer/data)
+- **Dataset**: [Bike Sharing Demand Dataset](https://www.kaggle.com/datasets/c/bike-sharing-demand)  
+- **Domain**: Transportation, tabular time-related regression.  
 
 **Tasks**  
-- Data Loading:  
-  Load and preprocess the MNIST dataset, including normalization and reshaping of image data.
-
-- Model Architecture:  
-  Design a CNN architecture using JAX, including convolutional layers, activation functions, and pooling layers.
-
-- Training the Model:  
-  Train the CNN using stochastic gradient descent and JAX's automatic differentiation for backpropagation.
-
-- Model Evaluation:  
-  Assess model performance using accuracy metrics and confusion matrix.
-
-- Hyperparameter Tuning:  
-  Experiment with different hyperparameters (learning rate, batch size) to optimize model performance.
+- **Data Preprocessing**: Handle missing values, extract datetime features (day, season, weather).  
+- **Feature Engineering**: Create features like holiday/weekend flags or temperature bins.  
+- **Model Development**: Implement linear regression and polynomial regression in JAX.  
+- **Model Evaluation**: Use RMSE and R² to evaluate predictions.  
+- **Visualization**: Plot predicted vs. actual bike rental demand.  
 
 ---
 
-### Project 3: Time Series Forecasting with LSTM (Difficulty: 3 - Hard)
+### Project 2: Wildlife Image Classification (Difficulty: 2 - Medium)  
 
 **Project Objective**  
-This project focuses on building a Long Short-Term Memory (LSTM) model to forecast future stock prices based on historical data. The objective is to capture temporal dependencies and improve prediction accuracy.
+Develop a CNN to classify animal species from camera-trap images. Use JAX for model development and optimize hyperparameters for improved accuracy.  
 
 **Dataset Suggestions**  
-- **Dataset**: Historical Stock Prices  
-- **Source**: Yahoo Finance API (free tier) for stock data (e.g., Apple Inc. - AAPL)
+- **Dataset**: [Animals-10 Image Dataset](https://www.kaggle.com/datasets/alessiocorrado99/animals10) (10 categories of animals).  
+- **Domain**: Image classification.  
 
 **Tasks**  
-- Data Collection:  
-  Use the Yahoo Finance API to fetch historical stock price data for a specified period.
+- **Data Loading**: Load and preprocess images (resize, normalize).  
+- **CNN Architecture**: Implement convolutional and pooling layers in JAX.  
+- **Training the Model**: Use SGD/Adam optimizers with JAX’s autodiff for backpropagation.  
+- **Hyperparameter Tuning**: Experiment with kernel sizes, dropout, and learning rates.  
+- **Model Evaluation**: Use accuracy, precision, recall, and confusion matrices.  
+- **Visualization**: Display examples of correct vs. misclassified images.  
 
-- Data Preprocessing:  
-  Clean the data by handling missing values and transforming the time series into a supervised learning format.
+---
 
-- LSTM Model Development:  
-  Implement an LSTM model using JAX to capture time dependencies in the stock prices.
+### Project 3: Retail Sales Forecasting with LSTMs (Difficulty: 3 - Hard)  
 
-- Model Training:  
-  Train the LSTM model with appropriate loss functions and optimizers, utilizing JAX's JIT compilation for performance.
+**Project Objective**  
+Build an LSTM-based model in JAX to forecast retail sales at the store and product level. Capture multiple seasonalities (weekly, yearly) and event effects (holidays, promotions) to improve forecasting accuracy.  
 
-- Model Evaluation:  
-  Evaluate the model using metrics such as Mean Squared Error (MSE) and visualize the predicted vs. actual stock prices.
+**Dataset Suggestions**  
+- **Dataset**: [Store Sales - Time Series Forecasting](https://www.kaggle.com/competitions/store-sales-time-series-forecasting/data)  
+- **Domain**: Retail sales forecasting.  
 
-**Bonus Ideas (Optional)**  
-- Experiment with different LSTM architectures (e.g., stacked LSTMs).
-- Integrate additional features like trading volume or technical indicators for improved forecasting.
-- Compare LSTM performance with traditional time series models (e.g., ARIMA).
+**Tasks**  
+- **Data Preprocessing**: Clean and aggregate sales data, create time windows, and encode holiday/promotional events.  
+- **Model Development**: Implement LSTM and GRU architectures in JAX for sequence modeling.  
+- **Training**: Train models using JIT-compiled optimization in JAX for performance gains.  
+- **Evaluation**: Compare results using MAE, RMSE, and MAPE across stores and product categories.  
+- **Visualization**: Plot actual vs. predicted sales, highlighting holiday and promotion effects.  
+- **Advanced**: Extend to multivariate forecasting by including external regressors like oil prices or inflation.  
 
+---
