@@ -32,21 +32,26 @@
 
 ## Choosing a project
 
-- Each student should pick one project from the signup sheet
-  - The difficulty of the project does affect the final grade, but we want to
-    give a way for everyone to select a project based on their level of computer
-    literacy
-  - Each project has a description in the
-    - class_project/MSML610/Fall2025/project_descriptions/
-  - You need to fill out the yellow fields in the
-    [signup sheet](https://docs.google.com/spreadsheets/d/1Ez5uRvOgvDMkFc9c6mI21kscTKnpiCSh4UkUh_ifLIw/edit?gid=0#gid=0),
-    such as Name, GitHub user, UMD ID, Date
-  - Once done, we will add you to the repo so that you can start working
-
-- The project is individual
+- The project is individual or group
   - Students can discuss and help each other (they will do that even if we say
     not to)
   - Students should not have exactly the same project
+  - Groups are less than 3
+
+- Each student should pick one project from the sign up sheet
+  - The difficulty of the project does affect the final grade, but we want to
+    give a way for everyone to select a project based on their level of computer
+    literacy
+  - Each project has a description in the corresponding directory
+    - MSML610 Fall 2025:
+      - [List of projects](https://docs.google.com/spreadsheets/d/1H_Ev1psuPpUrrRcmBrBb2chfurSo5rPcAdd6i2SIUTQ/edit?gid=0#gid=0)
+      - [Description of
+        projects](https://github.com/gpsaggese/umd_classes/tree/master/class_project/MSML610/Fall2025/project_descriptions)
+    - DATA605 Spring 2025:
+      - [Description of projects](https://github.com/gpsaggese/umd_classes/blob/master/class_project/DATA605/Spring2025/project_description.md)
+
+- You need to fill out the [sign up form](https://docs.google.com/forms/d/1TPCt7UFnTOEICltrPU3sIu9RoCbILR32zHbZNzRi9jw/edit)
+  - Once done, we will add you to the repo so that you can start working
 
 - The goal is to get your hands dirty and figure things out
   - Often working is all about trying different approaches until one works out
@@ -69,9 +74,9 @@
 - If selecting a project from the sign-up sheet, ensure you fill out the
   corresponding details promptly. For modifications, email us with the necessary
   information, and we will update the sign-up sheet and Google Doc accordingly.
-- **Project selection must be finalized within one week** to allow sufficient
+- **Project selection must be finalized within 1 or 2 weeks** to allow sufficient
   time for planning and execution.
-- The project duration is approximately **four weeks**, making timely selection
+- The project duration is approximately **4 to 6 weeks**, making timely selection
   crucial.
 - Your grade will be based on **project complexity, effort, understanding, and
   adherence to guidelines**.
@@ -87,8 +92,8 @@
 ## Pre-requisites
 
 - Watch, star, and fork the Causify.AI repos
+  - [umd_classes](https://github.com/gpsaggese/umd_classes)
   - [tutorials](https://github.com/causify-ai/tutorials)
-  - [kaizenflow](https://github.com/causify-ai/kaizenflow)
   - [helpers](https://github.com/causify-ai/helpers)
 
 - Install Docker on your computer
@@ -98,9 +103,8 @@
       one computer from UMD, or perhaps a device of one your friends
 - After signing up for a project accept the invitation to collaborate sent to
   the email that you used to register your GitHub account, or check
-  [here](https://github.com/causify-ai/tutorials/invitations)
-- Check your GitHub issue on
-  [https://github.com/causify-ai/tutorials/issues](https://github.com/causify-ai/tutorials/issues)
+  [here](https://github.com/gpsaggese/umd_classes/invitations)
+- Check your GitHub issue on https://github.com/gpsaggese/umd_classes/issues
   - Make sure you are assigned to it
 - Only Python should be used together with the needed configs for the specific
   tools
@@ -118,7 +122,7 @@
 
 - Each project will need to be organized like a proper open source project,
   including filing issues, opening PRs, checking in the code in
-  [https://github.com/causify-ai/tutorials](https://github.com/causify-ai/tutorials)
+  [https://github.com/gpsaggese/umd_classes/tree/master](https://github.com/gpsaggese/umd_classes/tree/master)
 
 - Set up your working environment by following the instructions in the
   [document](https://github.com/causify-ai/helpers/blob/master/docs/onboarding/intern.set_up_development_on_laptop.how_to_guide.md)
@@ -141,7 +145,6 @@
     - Example: `Spring2025_Redis_cache_to_fetch_user_profiles`
   - [ ] Copy/paste the project description and add a link to the Google Doc with the details.
   - [ ] Assign the issue to yourself. This issue will be used for project-related discussions.
-  - [ ] Update the [signup sheet](https://docs.google.com/spreadsheets/d/1Ez5uRvOgvDMkFc9c6mI21kscTKnpiCSh4UkUh_ifLIw/edit?gid=0#gid=0) with the GitHub issue link.
 
 - **Create a Git Branch Named After the Issue**
   - [ ] Name your Git branch as follows: `TutorTask{issue_number}_{project_tag}`
@@ -151,28 +154,28 @@
 
   ```bash
   > cd $HOME/src
-  > git clone --recursive git@github.com:causify-ai/tutorials.git tutorials1
-  > cd $HOME/src/tutorials1
+  > git clone --recursive git@github.com:gpsaggese/umd_classes.git umd_classes1
+  > cd $HOME/src/umd_classes1
   > git checkout master
   > git checkout -b TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles
   ```
 
 - **Add Files Only in Your Project Directory**
   - Add your project files under the following directory:
-    `{GIT_ROOT}/{COURSE_CODE}/{TERM}{YEAR}/projects/{branch_name}`
+    `{GIT_ROOT}/class_project/{COURSE_CODE}/{TERM}{YEAR}/projects/{branch_name}`
     - Example: If you cloned the repo on your laptop for DATA605, your directory should be:
-      `~/src/tutorials1/DATA605/Spring2025/projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`
+      `~/src/umd_classes1/class_project/DATA605/Spring2025/projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`
   - Copy the template files to the project directory:
     ```bash
-    > cp -r ~/src/tutorials1/class_project_instructions/tutorial_template/ ~/src/tutorials1/COURSECODE/Term20xx/projects/{branch_name}
-    > cd ~/src/tutorials1/COURSECODE/Term20xx/projects/{branch_name}
+    > cp -r ~/src/umd_classes1/class_project/instructions/tutorial_template/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+    > cd ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
     ```
   - Start working on the files
 
 - **Create a Pull Request (PR)**:
   - [ ] Always create a **Pull Request (PR)** from your branch.
   - [ ] Name the PR the same as your project branch, and reference the issue number your branch is based on.
-  - [ ] Add your TAs (e.g., `@tkpratardan`, `@Prahar08modi`) and `@gpsaggese` as reviewers.
+  - [ ] Add your TAs and `@gpsaggese` as reviewers.
   - [ ] Assign the PR to yourself.
   - [ ] Do **not** push directly to the `master` branch. Only push commits to **your project branch**.
 
@@ -232,7 +235,7 @@ development.
 If you're unsure which setup is best or want to explore both, refer to the full
 breakdown in the tutorial template:
 
-- [Tutorial Template: Two Docker Approaches](/class_project_instructions/tutorial_template/README.md)
+- [Tutorial Template: Two Docker Approaches](/tutorial_template/tutorial_template/README.md)
 
 ## Working on the project
 
@@ -251,7 +254,7 @@ breakdown in the tutorial template:
 
 ### Understanding the deliverables
 
-- Use the project template files in `//tutorials/class_project_instructions/tutorial_template` to
+- Use the project template files in `instructions/tutorial_template` to
   understand the deliverables and the coding style. They consist of:
 
 - **Utils Module**:
@@ -273,8 +276,7 @@ In general
 
 - For API: you are expected to describe the API, its architecture, etc.
 - For Example: You are expected to use the project tool according to the
-  specifications mentioned in
-  [Google Doc](https://docs.google.com/document/d/1fEd7_oLhFnA5ovzj_HMb9EeMU84nOGEGeWqNRZSz2wo)
+  specifications mentioned in the project description
 
 ## Submission
 
