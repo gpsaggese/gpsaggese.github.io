@@ -1,0 +1,19 @@
+# Class Projects
+### Project Proposal
+
+- **Title:** Multi-Task Learning for Sentiment and Emotion Detection in Social Media Posts
+- **Difficulty:** Hard
+- **Tech description:** This project will utilize a multi-task learning framework to develop a model capable of predicting both sentiment (positive, negative, neutral) and emotions (joy, anger, sadness, surprise) from social media text data. The approach will involve creating shared representations for both tasks, which should improve performance over single-task learning.
+- **Project idea:** Students will design and implement a neural network model that shares layers for sentiment and emotion classification tasks. The dataset will be pre-processed to include labeled social media posts. The model's performance will be evaluated using metrics suitable for multi-task learning scenarios. Students should experiment with different hyperparameters and architectures to enhance the model's effectiveness.
+- **Data set to use:** The Emotional Tone Dataset (ETD), containing labeled social media posts annotated for sentiment and various emotions.
+- **Python libs:** TensorFlow or PyTorch, Scikit-learn, NLTK or SpaCy, Pandas, NumPy, Matplotlib
+- **Links to relevant tools:**
+  - [TensorFlow](https://www.tensorflow.org/)
+  - [PyTorch](https://pytorch.org/)
+  - [Scikit-learn](https://scikit-learn.org/)
+  - [NLTK](https://www.nltk.org/)
+  - [SpaCy](https://spacy.io/)
+- **Links to related resources:**
+  - [Multi-Task Learning Paper](https://www.semanticscholar.org/paper/Multitask-Learning-in-Sentiment-Analysis-Allan-Gonzalez/9ae289542e3f6c391c426551e85e8e450d3d8eb6)
+  - [Understanding Emotion Analysis](https://towardsdatascience.com/emotion-analysis-with-machine-learning-in-python-3-ee81778e9790)
+  - [Working with Social Media Data](https://www.kaggle.com/datasets/irfanasrullah/emotion-and-sentiment-analysis-on-social-media)

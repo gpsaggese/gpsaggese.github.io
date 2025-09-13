@@ -1,0 +1,14 @@
+# Class Projects
+- **Title:** Advanced Weather Prediction using Random Forests and Naive Bayes
+- **Difficulty:** Hard
+- **Tech description:** Build a predictive model for outdoor activities based on weather data using Random Forest and Naive Bayes classifiers. Evaluate the models' performance through cross-validation and assess feature importance.
+- **Project idea:** Students will create a comprehensive weather prediction tool that predicts whether children can play outdoors based on features such as temperature, humidity, wind speed, and outlook. The model will compare the effectiveness of Random Forests versus Naive Bayes using a dataset of historical weather data and outdoor activity logs.
+- **Data set to use:** The UCI Machine Learning Repository's "Weather" dataset (or similar) that includes hourly weather conditions and activity outcomes.
+- **Python libs:** pandas, numpy, scikit-learn, matplotlib, seaborn
+- **Links to relevant tools:** 
+  - [UCI Machine Learning Repository - Weather](https://archive.ics.uci.edu/ml/datasets/weather)
+  - [Kaggle Datasets](https://www.kaggle.com/datasets)
+- **Links to related resources:** 
+  - [Introduction to Random Forests](https://scikit-learn.org/stable/modules/ensemble.html#forests-of-randomized-trees)
+  - [Naive Bayes Classification](https://scikit-learn.org/stable/modules/naive_bayes.html) 
+  - [Feature Importance in Random Forest](https://towardsdatascience.com/feature-importance-in-random-forests-6f308c5f8c12)
