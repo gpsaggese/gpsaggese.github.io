@@ -54,7 +54,7 @@ Detect unusual traffic conditions and anomalies in traffic flow using structured
 
 **Dataset Suggestions**:  
 - **Dataset**: Metro Interstate Traffic Volume Dataset  
-- **Link**: [Metro Traffic Volume (Kaggle)](https://www.kaggle.com/datasets/raj713335/metro-interstate-traffic-volume)  
+- **Link**: [Metro Traffic Volume (Kaggle)](https://www.kaggle.com/code/ramyahr/metro-interstate-traffic-volume)  
 
 **Tasks**:  
 - Load and preprocess traffic data (time, weather, holiday information).  
