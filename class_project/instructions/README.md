@@ -32,14 +32,12 @@
 
 ## Choosing a project
 
-- Each student should pick one project from the
-  [signup sheet](https://docs.google.com/spreadsheets/d/1Ez5uRvOgvDMkFc9c6mI21kscTKnpiCSh4UkUh_ifLIw/edit?gid=0#gid=0)
+- Each student should pick one project from the signup sheet
   - The difficulty of the project does affect the final grade, but we want to
     give a way for everyone to select a project based on their level of computer
     literacy
   - Each project has a description in the
-    [Google Doc](https://docs.google.com/document/d/1fEd7_oLhFnA5ovzj_HMb9EeMU84nOGEGeWqNRZSz2wo)
-    under a header with the same name of the Project Name
+    - class_project/MSML610/Fall2025/project_descriptions/
   - You need to fill out the yellow fields in the
     [signup sheet](https://docs.google.com/spreadsheets/d/1Ez5uRvOgvDMkFc9c6mI21kscTKnpiCSh4UkUh_ifLIw/edit?gid=0#gid=0),
     such as Name, GitHub user, UMD ID, Date
