@@ -235,7 +235,7 @@ development.
 If you're unsure which setup is best or want to explore both, refer to the full
 breakdown in the tutorial template:
 
-- [Tutorial Template: Two Docker Approaches](/tutorial_template/tutorial_template/README.md)
+- [Tutorial Template: Two Docker Approaches](/class_project/instructions/tutorial_template/README.md)
 
 ## Working on the project
 
@@ -270,7 +270,8 @@ breakdown in the tutorial template:
   - One markdown file linked to each python script, i.e, API and example.
 
 For more guidance on this structure and the rationale behind it, see
-[How to write the Tutorial](/docs/all.how_write_tutorials.how_to_guide.md).
+[How to write the
+Tutorial](https://github.com/causify-ai/tutorials/blob/master/docs/all.learn_X_in_60_minutes.how_to_guide.md)
 
 In general
 
