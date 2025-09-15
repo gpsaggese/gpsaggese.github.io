@@ -1500,7 +1500,7 @@ digraph UniversityOntology {
 
 # Non-classical Logics
 
-## Intro
+## Intro and Examples
 
 * Ontological Commitment
 - **Ontological commitments** are assumptions about reality made by a language
@@ -1681,7 +1681,7 @@ digraph UniversityOntology {
 
 - **Example**
   - Commonsense knowledge: _"Birds have wings"_
-  - Positive example: _"Tweety can fly"_
+  - Positive example: _"Tweety is a bird that can fly"_
   - Negative example: _"Penguin cannot fly"_
   - Learned rule: _"Birds can fly unless they are penguins"_
 
@@ -1700,22 +1700,22 @@ digraph UniversityOntology {
 
 * Description Logic
 
-- **Description Logic**
+- **Description logic**
   - Represents structured knowledge about a domain
   - Balances expressivity and computational efficiency
   - More expressive than propositional logic, less than first-order logic
 
 - **Core building blocks:**
-  - Concepts  / classes: abstract groups
+  - Classes: abstract groups
     - E.g., $Person$, $Animal$
-  - Roles / properties: binary relations between individuals
+  - Properties: binary relations between individuals
     - E.g., $hasChild$, $ownsPet$
-  - Individuals / instances: specific objects
+  - Instances: specific objects
     - E.g., $GP$, $Nuvolo$
 
 - Supports reasoning tasks such as:
-  - Concept subsumption: "is $A$ a subset of $B$?"
-  - Instance checking: "does $a$ belong to $A$?"
+  - Concept subsumption: _"Is class $A$ a subset of class $B$?"_
+  - Instance checking: _"Does instance $a$ belong to class $A$?"_
 
 - **Syntax often combines:**
   - Atomic concepts and roles
@@ -1727,46 +1727,49 @@ digraph UniversityOntology {
 
 * ALC
 
-- Attributive Concept Language with Complements (ALC) is a basic but expressive
-  description logic
+- **Attributive Concept Language with Complements (ALC)** is a basic but
+  expressive description logic
   - Concepts can be combined using logical operators, e.g.,
     - $\sqcap$ means "and"
     - $\sqcup$ means "or"
     - $\neg$ means "not"
   - Allows for existential and universal quantification, e.g.,
     $\exists R.C$, $\forall R.C$
-- Interpretation is set-theoretic
-  - Concepts as sets, roles as binary relations
-- Example:
-  - "All students take some course":
-    $\text{Student} \sqsubseteq \exists \text{takes}.\text{Course}$
-  - "A mother is a woman who has at least one child"
+  - Interpretation is set-theoretic
+    - Classes as sets, properties as binary relations
+
+- **Examples**
+  - _"All students take some course"_:
+    $\text{Student} \equiv \exists \text{takes}.\text{Course}$
+  - _"A mother is a woman who has at least one child"_:
     $\text{Mother} \equiv \text{Woman} \sqcap \exists \text{hasChild}.\top$
+
 - ALC:
   - Is decidable
-  - balances expressiveness and computational complexity
-  - Is basis for more complex logics used in OWL
-  - Practical for moderate-sized ontologies
+  - Balances expressiveness and computational complexity
+  - Is the basis for more complex logics used in OWL
 
 * SHOIN
 
-- SHOIN is a description logic more expressive than ALC
+- **SHOIN** is a description logic more expressive than ALC
+
 - Components:
   - $\mathcal{S}$: Allows transitive properties
-    - E.g., $\text{ancestorOf}$ is transitive
+    - E.g., $ancestorOf$ is transitive
   - $\mathcal{H}$: Supports role hierarchies
-    - E.g., $\text{hasSon} \sqsubseteq \text{hasChild}$
+    - E.g., $hasSon \sqsubseteq hasChild$
   - $\mathcal{O}$: Introduces specific individuals
-    - E.g., ${ \text{John} }$ is a nominal class
+    - E.g., $John$ is a nominal class
   - $\mathcal{I}$: Enables roles to be navigated backward
-    - E.g., $\text{isChildOf}$ is inverse of $\text{hasChild}$
+    - E.g., $isChildOf$ is inverse of $hasChild$
   - $\mathcal{N}$: Sets cardinality constraints
-    - E.g., "has exactly 1 passport"
-- E.g.,:
-  - "Exactly two children"
-    $\text{Person} \sqsubseteq (=2\ \text{hasChild}.\top)$
+    - E.g., _"has exactly 1 children"_
 
-- Characteristics
+- **Examples**
+  - _"Exactly two children"_:
+    $Person \sqsubseteq (=2\ hasChild.\top)$
+
+- **Characteristics**
   - More powerful but reasoning is harder (exponential complexity)
   - Model richer real-world scenarios
   - Foundation for OWL DL reasoning capabilities
@@ -1775,33 +1778,33 @@ digraph UniversityOntology {
 
 * OWL
 
-- OWL = Web Ontology Language
+- **Web Ontology Language (OWL)**:
+  - "OWL" easier to pronounce than "WOL"
   - Semantic web language designed to represent complex knowledge about things
     and their relationships
   - Enables rich knowledge representation on the web (based on SHOIN)
-  - "OWL" easier to pronounce than "WOL"
   - Supports formal semantics for machine reasoning
   - Key constructs:
     - Classes, properties, individuals, axioms
 
-- Example:
-  - "Every cat is a mammal"
-    $\text{Cat} \sqsubseteq \text{Mammal}$
+- **Example**
+  - "Every cat is a mammal": $Cat \sqsubseteq Mammal$
 
-- OWL variants:
+- **OWL variants**:
   - OWL Lite: simpler, for classification hierarchies
   - OWL DL: full expressiveness with decidable reasoning
   - OWL Full: maximum expressiveness, but undecidable
 
-- Applications
+- **Applications**
   - Semantic search
   - Biomedical data
 
 * Example of OWL in RDF
 
-![](msml610/lectures_source/figures/Lesson03_RDF_example.png)
+::: columns
+:::: {.column width=45%}
 
-```graphviz[width=50%]
+```graphviz
 digraph OWL_Example {
     rankdir=TD;
     node [shape=ellipse, style=filled, fillcolor=lightgray];
@@ -1817,26 +1820,30 @@ digraph OWL_Example {
 }
 ```
 
+::::
+:::: {.column width=60%}
+
+![](msml610/lectures_source/figures/Lesson03_RDF_example.png)
+
+::::
+:::
+
 * RDF (Resource Description Framework)
 
-- **RDF** is a standard model for data interchange on the web
+- **Resource Description Framework (RDF)** is a standard model for data
+  interchange on the web
   - Represent structured information in a machine-readable way
 
-- **Basic building block** is a triple $(Subject, Predicate, Object)$
-  - **Subject**: the entity being described, e.g., `Nuvolo`
-  - **Predicate**: the property or relationship, e.g., `isA`
-  - **Object**: the value or another entity, e.g., `Dog`
+::: columns
+:::: {.column width=45%}
 
-- **Key Features**:
-  - Statements are directed graphs of nodes and edges
-  - Components of the triple are URIs (Uniform Resource Identifiers) to ensure
-    global uniqueness or literals (e.g., strings, numbers), e.g.,
-    `http://example.org/Nuvolo`
+- **Basic building block** is a triple:
+  - _Subject_: the entity being described, e.g., `Nuvolo`
+  - _Predicate_: the property or relationship, e.g., `isA`
+  - _Object_: the value or another entity, e.g., `Dog`
 
-- **Use Cases**:
-  - Building knowledge graphs
-  - Enabling semantic search
-  - Supporting ontologies (e.g., OWL)
+::::
+:::: {.column width=50%}
 
 \begingroup \scriptsize
 
@@ -1850,16 +1857,30 @@ digraph OWL_Example {
 
 \endgroup
 
+::::
+:::
+
+- **Key Features**:
+  - Statements are directed graphs of nodes and edges
+  - Components are URIs (Uniform Resource Identifiers) to ensure global
+    uniqueness or literals
+    - E.g., `http://example.org/Nuvolo`
+
+- **Use Cases**:
+  - Building knowledge graphs
+  - Enabling semantic search
+  - Supporting ontologies (e.g., OWL)
+
 * SPARQL
 
 - SPARQL is the query language for RDF data
   - Allows users to retrieve and manipulate data stored in RDF format
 
 - **Key Concepts**:
-  - **Triple Patterns**: Query fragments that match triples in an RDF graph
-  - **Basic Graph Pattern**: A set of triple patterns combined
-  - **Variables**: Stand in for unknown parts of the triples (e.g., `?person`,
-    `?animal`)
+  - _Triple Patterns_: Query fragments that match triples in an RDF graph
+  - _Basic Graph Pattern_: A set of triple patterns combined
+  - _Variables_: Stand in for unknown parts of the triples  
+    - E.g., `?person`, `?animal`
 
 - **Main Query Types**:
   - `SELECT`: Retrieve specific variables from the data
@@ -1867,8 +1888,8 @@ digraph OWL_Example {
   - `ASK`: Return a boolean indicating whether a pattern exists
   - `DESCRIBE`: Return an RDF graph describing resources
 
-- Example:
-  - "Find all resources that are of type Bird"
+- **Example**:
+  - _"Find all resources that are of type Bird"_
     ```
     SELECT ?animal WHERE { ?animal rdf:type ex:Bird }
     ```
@@ -1908,16 +1929,16 @@ digraph OWL_Example {
   - Accessible via APIs using SPARQL queries
 
 - **Graph-based data model**
-  - Item: represents an entity or concept, e.g.,
+  - _Item_: represents an entity or concept
     - `Q42` $\rightarrow$ Douglas Adams
-  - Property: describes a relationship or attribute, e.g.,
+  - _Property_: describes a relationship or attribute
     - `P31` (instance of), `P27` (country of citizenship)
-  - Value: specific data linked to an item via a property, e.g.,
+  - _Value_: specific data linked to an item via a property
     - `Q42` (Douglas Adams) $\to$ `P31` (instance of) $\to$ `Q5` (human)
     - `Q42` $\to$ `P106` (occupation) $\to$ `Q36180` (science fiction writer)
-  - Reference: supports a claim by citing a source, e.g.,
+  - _Reference_: supports a claim by citing a source
     - Stating Douglas Adams's citizenship with a reference to a biography
-  - Qualifier: adds context or additional information to a statement
+  - _Qualifier_: adds context or additional information to a statement
       - `Q90` (Paris) $\to$ `P1082` (population) $\to$ "2,165,423"
       - With qualifier: `P585` (point in time) $\to$ "2021"
       - Meaning: "The population of Paris was 2,165,423 in the year 2021"
@@ -1927,24 +1948,34 @@ digraph OWL_Example {
   - Semantic search
   - AI reasoning
   - Data enrichment
-  - AI and machine learning training datasets
 
 * DBPedia
 
+::: columns
+:::: {.column width=55%}
+
 - **DBpedia** extracts structured content from Wikipedia
   - Creates a large-scale, multilingual knowledge graph for querying
-  - Data is extracted as RDF triples (subject-predicate-object), e.g.,
-    - "Berlin" entity linked with properties like `dbo:country Germany`,
-      `dbo:populationTotal 3.7M`
+  - Data is extracted as RDF triples _(Subject, Predicate, Object)_
+    - E.g., "Berlin" entity linked with properties like `dbo:country Germany`,
+      `dbo:populationTotal 3.5M`
   - Enables semantic queries over Wikipedia data via SPARQL endpoints
 
 - **Applications**
-  - Semantic Web research
+  - Semantic Web
   - Enhancing AI models with real-world knowledge
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/Lesson03_DBPedia.png)
+
+::::
+:::
 
 * Semantic Networks
 
-- Semantic Networks represent knowledge as graphs of concepts and relations
+- **Semantic Networks** represent knowledge as graphs of concepts and relations
   - Nodes represent concepts
   - Edges represent relations (e.g., "is-a", "part-of")
     - E.g., if a `Dog` is an `Animal`, it inherits `Animal` traits
@@ -1957,28 +1988,33 @@ digraph OWL_Example {
 
 * WordNet
 
-- **WordNet** is a large lexical database of English words
-  - Designed to model the semantic relationships between words
-  - Groups words into sets of synonyms
-  - Manually curated, ensuring high-quality semantic relations
-  - Can be incomplete for domain-specific language
+::: columns
+:::: {.column width=50%}
 
-- Key Components:
-  - Synsets: Sets of synonyms expressing a distinct concepts
+- **WordNet** is a large lexical database of English words
+  - Models semantic relationships between words
+  - Manually curated for high-quality semantic relations
+  - Incomplete for domain-specific language
+
+::::
+:::: {.column width=45%}
+
+![](msml610/lectures_source/figures/Lesson03_WordNet.png)
+
+::::
+:::
+
+- **Graph** with synsets as nodes and relations as edges
+  - _Synsets_ are sets of synonyms expressing a distinct concepts
     - E.g., {`car`, `automobile`} share the same synset
-  - Relations between synsets:
+  - _Relations_ between synsets
     - Is-a relationships (e.g., `Dog` is a type of `Animal`)
     - Part-whole relationships (e.g., `Wheel` is a part of `Car`)
     - Opposite meanings
 
-- Structure:
-  - Semantic network where nodes are synsets and edges are relations
-  - Organized hierarchically, especially for nouns and verbs
-
-- Applications:
-  - Word sense disambiguation: choose the correct meaning of a word in
-    context
-  - Semantic similarity measures: how close two concepts are
+- **Applications**
+  - Word sense disambiguation: choose correct word meaning in context
+  - Semantic similarity measures: assess concept closeness
   - Information retrieval and question answering systems
 
 * ConceptNet
@@ -1992,6 +2028,10 @@ digraph OWL_Example {
     unstated
   - Focuses on making AI systems more human-like in their understanding
 
+::: columns
+:::: {.column width=55%}
+
+
 - Structure:
   - Nodes: concepts (words or phrases)
   - Edges: semantic relationships between concepts, e.g.,
@@ -2003,6 +2043,14 @@ digraph OWL_Example {
 
 - Example Triple:
   - (`bicycle`, `UsedFor`, `transportation`)
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/Lesson03_ConceptNet.png)
+
+::::
+:::
 
 - Applications:
   - Natural language understanding
