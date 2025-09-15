@@ -2,7 +2,7 @@
 
 ::: columns
 :::: {.column width=15%}
-![](msml610/lectures_source/UMD_Logo.png)
+![](msml610/lectures_source/figures/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -20,19 +20,26 @@ MSML610: Advanced Machine Learning
 \endgroup
 \vspace{1cm}
 
+::: columns
+:::: {.column width=65%}
+
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
 
 **References**:
 
-- Mostly papers and Internet
+- Papers and Internet
+- Russell et al.: _"Artificial Intelligence: A Modern Approach"_ (4th ed, 2020)
+  - Chap 7: Logical agents
+  - Chap 8, First-order logic
+  - Chap 9: Inference in first-order logic
+  - Chap 10, Knowledge representation
 
-- AIMA 7: Logical agents
+::::
+:::: {.column width=40%}
 
-- AIMA 8, First-order logic
-
-- AIMA 9: Inference in first-order logic
-
-- AIMA 10, Knowledge representation
+![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
+::::
+:::
 
 # Knowledge Representation
 

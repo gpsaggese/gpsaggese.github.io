@@ -49,8 +49,8 @@ MSML610: Advanced Machine Learning
 :::: {.column width=65%}
 - **Goal**: make the slides self-sufficient from recommended books
   - **Simple**
-    - Burkov: _"Machine Learning Engineering"_ (2020)
     - Burkov: _"The Hundred-Page Machine Learning Book"_ (2019)
+    - Burkov: _"Machine Learning Engineering"_ (2020)
   - **Medium**
     - Abu-Mostafa et al.: _"Learning From Data"_ (2012)
     - Martin: _"Bayesian Analysis with Python"_ (2nd ed, 2021)

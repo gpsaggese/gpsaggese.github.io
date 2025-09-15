@@ -1,6 +1,6 @@
 ::: columns
 :::: {.column width=15%}
-![](lectures_source/UMD_Logo.png)
+![](msml610/lectures_source/figures/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -21,6 +21,16 @@ MSML610: Advanced Machine Learning
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
 
 **References**:
+- Burkov: _"Machine Learning Engineering"_ (2020)
+- Hastie et al.: _"The Elements of Statistical Learning"_ (2nd ed, 2009)
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/figures/book_covers/Book_cover_Hundred_page_ML_book..jpg){ height=20% }
+![](msml610/lectures_source/figures/figures/book_covers/Book_cover_The_Elements_of_Statistical_Learning.jpg){ height=20% }
+::::
+:::
 
 # ##############################################################################
 # Models
