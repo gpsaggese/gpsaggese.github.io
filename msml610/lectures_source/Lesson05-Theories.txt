@@ -214,7 +214,7 @@ MSML610: Advanced Machine Learning
 * Hoeffding Inequality
 - Consider a Bernoulli random variable $X$ with probability of success $\mu$
 
-- Estimate the mean $\mu$ using $N$ samples with $\nu = \frac{1}{N} \sum X_i$
+- Estimate the mean $\mu$ using $N$ samples with $\nu = \frac{1}{N} \sum_i X_i$
 
 - The **probably approximately correct** (PAC) statement holds:
   $$
@@ -223,30 +223,28 @@ MSML610: Advanced Machine Learning
 
 - **Remarks:**
   - Valid for all $N$ and $\varepsilon$, not an asymptotic result
-  - Holds only if you sample at random and if you sample is $\nu$ and $\mu$ in
-    the same way
+  - Holds only if you sample $\nu$ and $\mu$ at random and in the same way
   - If $N$ increases, it is exponentially small that $\nu$ will deviate from
     $\mu$ by more than $\varepsilon$
   - The bound does not depend on $\mu$
   - Trade-off between $N$, $\varepsilon$, and the bound:
     - Smaller $\varepsilon$ requires larger $N$ for the same probability bound
-    - Since $\mu \in [\mu - \varepsilon, \mu + \varepsilon]$, we want small
+    - Since $\nu \in [\mu - \varepsilon, \mu + \varepsilon]$, you want small
       $\varepsilon$ with a large probability
-  - The Hoeffding inequality is a statement about $\nu$ and not $\mu$ (like for
-    a confidence interval), although we use it to state something about $\nu$
+  - It is a statement about $\nu$ and not $\mu$ although you use it to state
+    something about $\nu$ (like for a confidence interval)
 
 * Supervised Learning: Bin Analogy (2/2)
 
 - Let's connect the bin analogy, Hoeffding inequality, and feasibility of
   machine learning
-  - We know $f(\vx)$ at points $\vx \in \calX$
-  - We choose hypothesis $h: \calX \rightarrow \calY = \{0, 1\}$
+  - You know $f(\vx)$ at points $\vx \in \calX$
+  - You choose an hypothesis $h: \calX \rightarrow \calY = \{0, 1\}$
   - Each point $\vx \in \calX$ is a marble
-  - We color \red{red} if the hypothesis is correct $h(\vx) = f(\vx)$,
+  - You color \red{red} if the hypothesis is correct $h(\vx) = f(\vx)$,
     \green{green} otherwise
   - The in-sample error $E_{in}(h)$ corresponds to $\nu$
-  - There are finite marbles of unknown color, corresponding to
-    $E_{out}(h) = \mu$
+  - The marbles of unknown color corresponds to $E_{out}(h) = \mu$
   - $\vx_1, ..., \vx_n$ are picked randomly and independently from a
     distribution over $\calX$ which is the same as for $E_{out}$
 
@@ -260,19 +258,19 @@ MSML610: Advanced Machine Learning
 
 * Validation vs Learning Set-Up: Bin Analogy
 
-- We know that for a given $h$, in-sample performance $E_{in}(h) = \nu$ needs to
-  be close to out-of-sample performance $E_{out}(h) = \mu$
-  - This is a **validation setup**, after we have already learned a model
+- You have learned that for a given $h$, in-sample performance $E_{in}(h) = \nu$
+  needs to be close to out-of-sample performance $E_{out}(h) = \mu$
+  - This is the **validation setup**, after you have already learned a model
 
-- In a **learning setup** we have $h$ to choose from $M$ hypotheses
-  - We need a bound on the out-of-sample performance of the chosen hypothesis
-    $h \in \calH$, regardless of which hypothesis we choose
-  - We need a Hoeffding counterpart for the case of choosing from multiple
+- In a **learning setup** you have $h$ to choose from $M$ hypotheses
+  - You need a bound on the out-of-sample performance of the chosen hypothesis
+    $h \in \calH$, regardless of which hypothesis you choose
+  - You need a Hoeffding counterpart for the case of choosing from multiple
     hypotheses
-  - Pick $g$ from $\calH = \{h_1, ... , h_M\}$, so
     \begingroup \small
     \begin{alignat*}{2}
-    & \Pr(|E_{in}(g) - E_{out}(g)| > \varepsilon)
+    & \forall g \in \calH = \{h_1, ... , h_M\}
+    \Pr(|E_{in}(g) - E_{out}(g)| > \varepsilon)
     &
     \\
     & \hspace{1cm} \le \Pr(\bigcup_{i=1}^M (|E_{in}(h_i) - E_{out}(h_i) | > \varepsilon))
@@ -286,9 +284,7 @@ MSML610: Advanced Machine Learning
     \\
     \end{alignat*}
     \endgroup
-  - **Intuition**: if we have 1000 bins with mostly \red{red marbles}, it is
-    possible that our sample ends up being 100\% \green{green}, so the bound is
-    weak
+  - **Problem**: the bound is weak
 
 * Validation vs Learning Set-Up: Coin Analogy
 - In a **validation set-up**, we have a coin and want to determine if it is fair
@@ -360,6 +356,10 @@ MSML610: Advanced Machine Learning
   $$
   is artificially too loose
 - Is it possible to replace it with a stricter bound?
+
+  - **Intuition**: if we have 1000 bins with mostly \red{red marbles}, it is
+    possible that our sample ends up being 100\% \green{green}, so the bound is
+    weak
 
 - $M$ was coming from the bad event:
   \begin{alignat*}{2}
