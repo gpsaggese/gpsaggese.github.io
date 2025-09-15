@@ -1,10 +1,10 @@
-// notes_to_pdf.py --input lectures_source/Lesson5-Theory_Statistical_learning.txt --output tmp.pdf --type slides --debug_on_error --skip_action cleanup_after --toc_type navigation
+// notes_to_pdf.py --input msml610/lectures_source/figures/Lesson5-Theory_Statistical_learning.txt --output tmp.pdf --type slides --debug_on_error --skip_action cleanup_after --toc_type navigation
 
 // /Users/saggese/Library/CloudStorage/GoogleDrive-saggese@gmail.com/My\ Drive/books/Math\ -\ Machine\ learning/LearningFromData/Abu-Mostafa\ Yaser\ S.,\ Malik\ Magdon\ \(2012\)\ --Ismail,\ et\ al.,\ Learning\ From\ Data\ -\ A\ short\ course\ \(2012\).pdf 
 
 ::: columns
 :::: {.column width=15%}
-![](lectures_source/UMD_Logo.png)
+![](msml610/lectures_source/figures/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -22,9 +22,20 @@ MSML610: Advanced Machine Learning
 \endgroup
 \vspace{1cm}
 
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
 
 **References**:
+
+- Abu-Mostafa et al.: _"Learning From Data"_ (2012)
+
+::::
+:::: {.column width=20%}
+![](msml610/lectures_source/figures/book_covers/Book_cover_Learning_from_Data.jpg){ height=20% }
+::::
+:::
 
 # Is machine learning possible?
 
@@ -179,7 +190,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=45%}
 
-![](lectures_source/figures/Lesson5_Bin_with_marbles.png)
+![](msml610/lectures_source/figures/figures/Lesson5_Bin_with_marbles.png)
 ::::
 :::
 
@@ -865,7 +876,7 @@ MSML610: Advanced Machine Learning
     selection (i.e., data snooping)
   - From VC analysis, complexity is that of the initial hypothesis set
 
-![](lectures_source/figures/Lesson05_Void_VC_guarantee.png)
+![](msml610/lectures_source/figures/figures/Lesson05_Void_VC_guarantee.png)
 
 # Overfitting
 
@@ -949,7 +960,7 @@ MSML610: Advanced Machine Learning
     - High variance (many degrees of freedom)
 ::::
 :::: {.column width=40%}
-![](lectures_source/figures/Lesson05_Diamond_price_example.png)
+![](msml610/lectures_source/figures/figures/Lesson05_Diamond_price_example.png)
 
 ::::
 :::
@@ -987,7 +998,7 @@ MSML610: Advanced Machine Learning
   - Bias-variance analysis:
     $$E_{out} = \text{bias and variance}$$
 
-![](lectures_source/figures/Lesson05_VC_analysis_vs_Bias_Variance_analysis.png)
+![](msml610/lectures_source/figures/figures/Lesson05_VC_analysis_vs_Bias_Variance_analysis.png)
 
 * Hypothesis set and bias-variance analysis
 - Learning consists in finding $g \in \calH$ such that $g \approx f$ where
@@ -1140,7 +1151,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=35%}
 
-![](lectures_source/figures/Lesson05_bias_variance.png)
+![](msml610/lectures_source/figures/figures/Lesson05_bias_variance.png)
 ::::
 :::
 
@@ -1165,7 +1176,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](lectures_source/figures/Lesson05_Bias_Variance_tradeoff_example.png)
+![](msml610/lectures_source/figures/figures/Lesson05_Bias_Variance_tradeoff_example.png)
 
 ```tikz
 % Axis
@@ -1249,7 +1260,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=45%}
 
-![](lectures_source/figures/Lesson05_bias_variance_curve.png)
+![](msml610/lectures_source/figures/figures/Lesson05_bias_variance_curve.png)
 
 ::::
 :::
@@ -1500,9 +1511,9 @@ MSML610: Advanced Machine Learning
 \node[blue] at (5.8,2.15) {$E_{\text{out}}$};
 ```
 
-![](lectures_source/figures/Lesson05_learning_curve.png)
+![](msml610/lectures_source/figures/figures/Lesson05_learning_curve.png)
 
-![](lectures_source/figures/Lesson05_learning_curve2.png)
+![](msml610/lectures_source/figures/figures/Lesson05_learning_curve2.png)
 ::::
 :::
 
