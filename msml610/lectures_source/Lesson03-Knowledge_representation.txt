@@ -1557,7 +1557,7 @@ digraph UniversityOntology {
   - Non-monotonic logic allows systems to reason flexibly and adapt to new
     circumstances
 
-* Default reasoning
+* Default Reasoning
 - **Default reasoning** is reasoning where assumptions are made by default in
   the absence of contrary evidence
   - It allows conclusions based on typical situations unless exceptions are
@@ -2023,26 +2023,18 @@ digraph OWL_Example {
   - Connects words and phrases with labeled semantic relationships
   - Represents commonsense knowledge about the world
 
-- Key Characteristics:
-  - Designed to capture knowledge that people generally assume but often leave
-    unstated
-  - Focuses on making AI systems more human-like in their understanding
-
 ::: columns
 :::: {.column width=55%}
 
-
-- Structure:
+- **Structure**
   - Nodes: concepts (words or phrases)
   - Edges: semantic relationships between concepts, e.g.,
-    - IsA: (`dog`, `animal`)
-    - PartOf: (`wheel`, `car`)
-    - UsedFor: (`knife`, `cutting`)
-    - CapableOf: (`bird`, `fly`)
-    - Causes: (`fire`, `smoke`)
-
-- Example Triple:
-  - (`bicycle`, `UsedFor`, `transportation`)
+    - _IsA_: (`dog`, `animal`)
+    - _PartOf_: (`wheel`, `car`)
+    - _UsedFor_: (`knife`, `cutting`)
+    - _CapableOf_: (`bird`, `fly`)
+    - _Causes_: (`fire`, `smoke`)
+  - E.g., (`bicycle`, `UsedFor`, `transportation`)
 
 ::::
 :::: {.column width=40%}
@@ -2052,54 +2044,16 @@ digraph OWL_Example {
 ::::
 :::
 
-- Applications:
+- **Applications**
   - Natural language understanding
   - Question answering and chatbots
   - Commonsense reasoning in AI
   - Semantic search and recommendation systems
 
-* Frame-Based Representations
+* Knowledge Graphs
 
-- Frame-based systems represent structured knowledge about objects, events, or
-  situations
-
-- Key Concepts:
-  - Frame: A data structure for a concept or entity
-    - E.g., a frame for `Dog` might include properties like `hasLegs`, `hasFur`,
-      `barks`
-  - Slots: attributes or relationships associated with the frame
-    - E.g., slot `hasLegs` with value `4`
-  - Slot fillers: values or links to other frames that fill the slots
-    - E.g., slot `eats` might link to another frame `Meat`
-
-- Example:
-  - Frame: `Dog`
-  - Slots:
-    - `isA`: `Animal`
-    - `hasLegs`: `4`
-    - `sound`: `Bark`
-    - `canDo`: [`Run`, `Fetch`]
-
-- Features:
-  - Inheritance: frames can inherit slots and slot values from more general
-    frames, e.g.,
-    - A `Bichon Frise` frame inherits from the `Dog` frame
-  - Defaults: slots can have default values, overridden if needed
-  - Procedural attachments: slots can trigger actions when accessed or modified
-
-- Applications:
-  - Expert systems (e.g., medical diagnosis)
-  - Natural language understanding
-  - Modeling common-sense reasoning about objects and actions
-
-- Frame vs Triples
-  - Frame-based representation emphasizes context and structured relationships
-  - Easier for AI systems to reason flexibly compared to triples (flat logical
-    assertions)
-
-* Knowledge Graphs (KGs)
-
-- KGs represent entities and their relationships as a graph structure
+- Knowledge Graphs (KGs) represent entities and their relationships as a graph
+  structure
   - Nodes = entities
   - Edges = relations
   - E.g., "Paris $\to$ isCapitalOf $\to$ France"
@@ -2153,41 +2107,3 @@ digraph UniversityOntology {
     Mathematics -> MATH201 [label="offersCourse"];
 }
 ```
-
-* Technologies
-
-- **TransE (Translation Embedding)**
-  - Embedding model for knowledge graph completion
-  - Represents relationships as translations in vector space: $h + r \approx t$
-  - Good for 1-to-1 relations, less effective with complex patterns
-
-- **RotatE**
-  - Embeds entities in complex space
-  - Models relations as rotations: $t = h \circ r$ where $\circ$ is complex
-    multiplication
-  - Captures symmetry, antisymmetry, inversion, and composition
-
-- **DeepProbLog**
-  - Combines ProbLog (probabilistic logic) with deep learning
-  - Supports neural predicates in logic programs
-  - Learns probabilistic facts and neural components jointly
-
-- **PyMLN**
-  - Python-based Markov Logic Network (MLN) system
-  - MLNs combine first-order logic with probabilistic graphical models
-  - Allows reasoning with weighted logical rules
-
-- **ProbLog**
-  - Probabilistic logic programming language
-  - Extends Prolog by attaching probabilities to facts
-  - Computes success probabilities of queries
-
-- **Tuffy**
-  - Scalable Markov Logic Network inference engine
-  - Uses an RDBMS (E.g., postgreSQL) to scale to large domains
-  - Optimized for grounding and inference efficiency
-
-- **Datalog**
-  - Subset of Prolog used in databases and deductive reasoning
-  - Uses Horn clauses with no function symbols (ensuring decidability)
-  - Often used in static analysis, data integration, and semantic web
