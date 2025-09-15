@@ -37,20 +37,20 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
-# Is machine learning possible?
+# Is Machine Learning Even Possible?
 
-* A simple visual ML experiment
+* A Simple Visual ML Experiment (1/2)
 
 ::: columns
 :::: {.column width=50%}
 - Consider the supervised classification problem
 
-- **Input**
-  - A 9 bit vector represented as a 3x3 black and white array
-- **Training set**
+- **\black{Input}**
+  - A 9 bit vector represented as a 3x3 array
+- **\black{Training set}**
   - The \blue{blue row} $\vx_1, \vx_2, \vx_3$ for $f(\vx) = -1$
   - The \green{green row} $\vx_4, \vx_5, \vx_6$ for $f(\vx) = +1$
-- **Test set**
+- **\black{Test set}**
   - For the \red{red pattern} $\vx_0$, is $f(\vx_0) = -1 \text{ or } +1$?
 
 ::::
@@ -77,16 +77,16 @@ MSML610: Advanced Machine Learning
 %\begin{center}
 \begin{tikzpicture}
   \matrix[row sep=1em] {
-    \node{\gridpattern{{1,0,0,0,1,0,1,0,1}}{blue}}; &
-    \node{\gridpattern{{1,1,0,0,1,0,0,1,1}}{blue}}; &
-    \node{\gridpattern{{1,1,0,1,0,0,0,0,0}}{blue}}; &
+    \node{\gridpattern{{1,0,0,1,0,1,0,1,0}}{blue}}; &
+    \node{\gridpattern{{1,0,0,0,0,1,1,0,1}}{blue}}; &
+    \node{\gridpattern{{1,0,0,0,0,1,0,0,0}}{blue}}; &
     \node{\(f = -1\)}; \\
-    \node{\gridpattern{{0,1,1,1,0,0,0,1,0}}{green}}; &
-    \node{\gridpattern{{1,0,1,0,1,0,1,0,1}}{green}}; &
-    \node{\gridpattern{{1,1,0,1,0,0,0,0,1}}{green}}; &
+    \node{\gridpattern{{0,0,1,0,1,0,1,0,0}}{green}}; &
+    \node{\gridpattern{{0,1,0,1,0,1,0,1,0}}{green}}; &
+    \node{\gridpattern{{0,1,1,1,1,0,0,1,1}}{green}}; &
     \node{\(f = +1\)}; \\
   };
-  \node at (-0.6,-3.0) {\gridpattern{{1,0,1,0,1,0,0,0,1}}{red}};
+  \node at (-0.6,-3.0) {\gridpattern{{1,0,0,0,1,0,0,0,1}}{red}};
   \node at (1.4,-3.0) {\(f = ?\)};
 \end{tikzpicture}
 %\end{center}
@@ -95,16 +95,17 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
-* A simple visual ML experiment (2/2)
+* A Simple Visual ML Experiment (2/2)
 
 ::: columns
 :::: {.column width=70%}
-- **Option 1**
+
+- **\black{Model 1}**
   - $f(\vx) = +1$ when $\vx$ has an axis of symmetry
   - $f(\vx) = -1$ when $\vx$ is not symmetric
   - The test set is symmetrical $\implies f(\vx_0) = +1$
 
-- **Option 2**
+- **\black{Model 2}**
   - $f(\vx) = +1$ when the top left square $\vx$ is empty
   - $f(\vx) = -1$ when the top left square $\vx$ is full
   - The test set has top left square full $\implies f(\vx_0) = -1$
@@ -115,7 +116,7 @@ MSML610: Advanced Machine Learning
 
 - How can a limited data set reveal enough information to define the entire
   target function?
-  - **Is machine learning possible?**
+  - **\black{Is machine learning possible?}**
 ::::
 :::: {.column width=30%}
 
@@ -140,57 +141,59 @@ MSML610: Advanced Machine Learning
 %\begin{center}
 \begin{tikzpicture}
   \matrix[row sep=1em] {
-    \node{\gridpattern{{1,0,0,0,1,0,1,0,1}}{blue}}; &
-    \node{\gridpattern{{1,1,0,0,1,0,0,1,1}}{blue}}; &
-    \node{\gridpattern{{1,1,0,1,0,0,0,0,0}}{blue}}; &
+    \node{\gridpattern{{1,0,0,1,0,1,0,1,0}}{blue}}; &
+    \node{\gridpattern{{1,0,0,0,0,1,1,0,1}}{blue}}; &
+    \node{\gridpattern{{1,0,0,0,0,1,0,0,0}}{blue}}; &
     \node{\(f = -1\)}; \\
-    \node{\gridpattern{{0,1,1,1,0,0,0,1,0}}{green}}; &
-    \node{\gridpattern{{1,0,1,0,1,0,1,0,1}}{green}}; &
-    \node{\gridpattern{{1,1,0,1,0,0,0,0,1}}{green}}; &
+    \node{\gridpattern{{0,0,1,0,1,0,1,0,0}}{green}}; &
+    \node{\gridpattern{{0,1,0,1,0,1,0,1,0}}{green}}; &
+    \node{\gridpattern{{0,1,1,1,1,0,0,1,1}}{green}}; &
     \node{\(f = +1\)}; \\
   };
-  \node at (-0.6,-3.0) {\gridpattern{{1,0,1,0,1,0,0,0,1}}{red}};
+  \node at (-0.6,-3.0) {\gridpattern{{1,0,0,0,1,0,0,0,1}}{red}};
   \node at (1.4,-3.0) {\(f = ?\)};
 \end{tikzpicture}
 %\end{center}
 \end{document}
 ```
+
 ::::
 :::
 
-* Is machine learning possible?
-- The function can assume **any value outside the data** we have
-  - E.g., if you have temperature data only for summer, the function could
-    assume a very different value for winter
+* Is Machine Learning Possible?
+- The function can assume **any value outside data**
+  - E.g., with summer temperature data, the function could assume a different
+    value for winter
 
-- How to learn an unknown function?
-  - Estimating the function at unseen points seems impossible
-  - Requires assumptions or models about the function's behavior
+- **How to learn an unknown function?**
+  - Estimating at unseen points seems impossible in general
+  - Requires assumptions or models about behavior
 
-- The difference is between possible and probable
-  - What is **possible**
-    - We don't know anything about the unknown function
-    - E.g., the function could be linear, quadratic, or a sine wave outside our
-      known data
-  - What is **probable**
-    - We know something about the unknown function
-    - This could come from domain knowledge or historical data patterns
-    - E.g., if historical weather data usually forms a sinusoidal pattern, it is
-      probable that unknown points follow that pattern
+- Difference between:
+  - **Possible**
+    - No knowledge of the unknown function
+    - E.g., could be linear, quadratic, or sine wave outside known data
+  - **Probable**
+    - Some knowledge of the unknown function from domain knowledge or historical
+      data patterns
+    - E.g., if historical weather data forms a sinusoidal pattern, unknown
+      points likely follow that pattern
 
-* Supervised learning: bin analogy (1/2)
+* Supervised Learning: Bin Analogy (1/2)
 
 ::: columns
 :::: {.column width=50%}
+
 - Consider a bin with \red{red} and \green{green} marbles
   - We want to estimate $\Pr(\text{pick a \red{red} marble}) = \mu$ where the
     value of $\mu$ is unknown
   - We pick $N$ marbles independently with replacement
   - The fraction of \red{red} marbles is $\nu$
+
 ::::
 :::: {.column width=45%}
 
-![](msml610/lectures_source/figures/figures/Lesson5_Bin_with_marbles.png)
+![](msml610/lectures_source/figures/Lesson5_Bin_with_marbles.png)
 ::::
 :::
 
@@ -198,31 +201,30 @@ MSML610: Advanced Machine Learning
   - **"No"**
     - In strict terms, we don't know anything about the marbles we didn't pick
     - The sample can be mostly \green{green}, while the bin is mostly \red{red}
-    - This is possible, but not probable
+    - This is _possible_, but _not probable_
   - **"Yes"**
     - Under certain conditions, the sample frequency is close to the real
       frequency
 
-- Possible vs probable
+- **Possible vs probable**
   - It is **possible** that we don't know anything about the marbles in the bin
   - It is **probable** that we know something
   - Hoeffding inequality makes this intuition formal
 
-* Hoeffding inequality
+* Hoeffding Inequality
 - Consider a Bernoulli random variable $X$ with probability of success $\mu$
 
 - Estimate the mean $\mu$ using $N$ samples with $\nu = \frac{1}{N} \sum X_i$
 
-- The probably approximately correct (PAC) statement holds:
+- The **probably approximately correct** (PAC) statement holds:
   $$
-  \Pr(|\nu - \mu| > \varepsilon) \le \frac{2}{e^{-2 \varepsilon^2 N}}
+  \Pr(|\nu - \mu| > \varepsilon) \le \frac{2}{e^{2 \varepsilon^2 N}}
   $$
 
 - **Remarks:**
   - Valid for all $N$ and $\varepsilon$, not an asymptotic result
-  - Works for finite or infinite distributions
-  - Holds because we picked marbles at random and only if we sample is $\nu$ and
-    $\mu$ in the same way
+  - Holds only if you sample at random and if you sample is $\nu$ and $\mu$ in
+    the same way
   - If $N$ increases, it is exponentially small that $\nu$ will deviate from
     $\mu$ by more than $\varepsilon$
   - The bound does not depend on $\mu$
@@ -233,10 +235,10 @@ MSML610: Advanced Machine Learning
   - The Hoeffding inequality is a statement about $\nu$ and not $\mu$ (like for
     a confidence interval), although we use it to state something about $\nu$
 
-* Supervised learning: bin analogy (2/2)
+* Supervised Learning: Bin Analogy (2/2)
 
-- Let's connect the bin analogy, Hoeffding inequality, and feasibility of machine
-  learning
+- Let's connect the bin analogy, Hoeffding inequality, and feasibility of
+  machine learning
   - We know $f(\vx)$ at points $\vx \in \calX$
   - We choose hypothesis $h: \calX \rightarrow \calY = \{0, 1\}$
   - Each point $\vx \in \calX$ is a marble
@@ -245,16 +247,18 @@ MSML610: Advanced Machine Learning
   - The in-sample error $E_{in}(h)$ corresponds to $\nu$
   - There are finite marbles of unknown color, corresponding to
     $E_{out}(h) = \mu$
-  - $\vx_1, ..., \vx_n$ are picked randomly and independently from a distribution
-    over $\calX$ which is the same as for $E_{out}$
+  - $\vx_1, ..., \vx_n$ are picked randomly and independently from a
+    distribution over $\calX$ which is the same as for $E_{out}$
 
 - Hoeffding inequality holds and bounds the error going from in-sample to
   out-of-sample
-  $$\Pr(|E_{in} - E_{out}| > \varepsilon) \le c$$
+  $$
+  \Pr(|E_{in} - E_{out}| > \varepsilon) \le c
+  $$
   - Generalization over unknown points (i.e., marbles) is possible
   - **Machine learning is possible!**
 
-* Validation vs learning set-up: bin analogy
+* Validation vs Learning Set-Up: Bin Analogy
 
 - We know that for a given $h$, in-sample performance $E_{in}(h) = \nu$ needs to
   be close to out-of-sample performance $E_{out}(h) = \mu$
@@ -286,7 +290,7 @@ MSML610: Advanced Machine Learning
     possible that our sample ends up being 100\% \green{green}, so the bound is
     weak
 
-* Validation vs learning set-up: Coin Analogy
+* Validation vs Learning Set-Up: Coin Analogy
 - In a **validation set-up**, we have a coin and want to determine if it is fair
 
 - Assume the coin is unbiased: $\mu = 0.5$
@@ -298,7 +302,7 @@ MSML610: Advanced Machine Learning
 - In other terms the probability that the out-of-sample performance ($\nu=0.0$)
   is very different from the in-sample perf ($\mu=0.5$) is very low
 
-* Validation vs learning set-up: Coin Analogy
+* Validation vs Learning Set-Up: Coin Analogy
 
 - In a **learning set-up**, we have many coins and we need to choose one and
   determine if it's fair
@@ -307,21 +311,21 @@ MSML610: Advanced Machine Learning
   biased using 10 experiments?
   - I.e., out-of-sample performance is completely different from in-sample
     performance
-  $$
-  \begin{aligned}
-  \Pr(\text{at least one coin has } \nu = 0) &
-  = 1 - \Pr(\text{all coins have } \nu \neq 0)\\
-  &= 1 - (\Pr(\text{a coin has } \nu \neq 0)) ^{10}\\
-  &= 1 - (1 - \Pr(\text{a coin has } \nu = 0)) ^{10}\\
-  &= 1 - (1 - 1 / 2 ^ {10}) ^ {1000}\\
-  &\approx 0.63\%
-  \end{aligned}
-  $$
+    $$
+    \begin{aligned}
+    \Pr(\text{at least one coin has } \nu = 0) &
+    = 1 - \Pr(\text{all coins have } \nu \neq 0)\\
+    &= 1 - (\Pr(\text{a coin has } \nu \neq 0)) ^{10}\\
+    &= 1 - (1 - \Pr(\text{a coin has } \nu = 0)) ^{10}\\
+    &= 1 - (1 - 1 / 2 ^ {10}) ^ {1000}\\
+    &\approx 0.63\%
+    \end{aligned}
+    $$
 - It is probable, more than 50\%
 
 // TODO(gp): Merge the next two slides
 
-* Hoeffding inequality: validation vs learning
+* Hoeffding Inequality: Validation vs Learning
 - In **validation / testing**
   - We can use Hoeffding to assess how well our $g$ (the chosen hypothesis)
     approximates $f$ (unknown hypothesis):
@@ -346,12 +350,14 @@ MSML610: Advanced Machine Learning
     $$
   - The bound for $E_{out}$ from Hoeffding is weak
 
-- Is the bound weak because it needs to be or because the Hoeffding inequality is
-  not good enough?
+- Is the bound weak because it needs to be or because the Hoeffding inequality
+  is not good enough?
 
-* Why union bound for Hoeffding is loose: Intuition
+* Why Union Bound for Hoeffding Is Loose: Intuition
 - The Hoeffding inequality and the union bound applied to training set
-  $$\Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 M \exp(-2 \varepsilon^2 N)$$
+  $$
+  \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 M \exp(-2 \varepsilon^2 N)
+  $$
   is artificially too loose
 - Is it possible to replace it with a stricter bound?
 
@@ -387,11 +393,14 @@ MSML610: Advanced Machine Learning
 \node[text=green] at (2.2,0.7) {$\mathcal{B}_2$};
 \node[text=blue] at (0.3,-2.5) {$\mathcal{B}_3$};
 ```
+
 ::::
 :::
 
-* Why union bound for Hoeffding is loose: Intuition
-// TODO(gp): Improve this
+* Why Union Bound for Hoeffding Is Loose: Intuition
+
+// TODO(Gp): Improve this
+
 - Consider two linearly separable classes on a plane, in terms of the ground
   truth and a training set
 
@@ -408,7 +417,7 @@ MSML610: Advanced Machine Learning
 - Thus the two "bad events" $\calB_1$ and $\calB_2$ are related to
   $\Delta E_{in}$ and $\Delta E_{out}$
 
-* Training vs testing: college course analogy
+* Training vs Testing: College Course Analogy
 - Before the final exam, students receive practice problems and solutions
   - These problems won't appear on the exam
   - Studying the problems helps students improve performance
@@ -425,11 +434,11 @@ MSML610: Advanced Machine Learning
 
 - This is similar to training and testing in machine learning
 
-# #############################################################################
-# Growth function
-# #############################################################################
+# ##############################################################################
+# Growth Function
+# ##############################################################################
 
-* Dichotomy: definition
+* Dichotomy: Definition
 - Consider the problem of classifying $N$ (fixed) points $\vx_1, ..., \vx_N$
   with an hypothesis set $\calH$
 - Consider an assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
@@ -442,8 +451,8 @@ MSML610: Advanced Machine Learning
 - **Example**
 - 4 points in a plane $A, B, C, D$
 - $\calH$ = \{ bidimensional perceptrons (binary classifier) \}
-- Moving the separating hyperplane, one gets different classifications for the
-  4 points (i.e., dichotomies)
+- Moving the separating hyperplane, one gets different classifications for the 4
+  points (i.e., dichotomies)
   ```
         d1    d2   d3
   A     0     0    0
@@ -452,6 +461,7 @@ MSML610: Advanced Machine Learning
   D     0     1
   ```
 - Certain classifications are not possible (e.g., XOR assignment)
+
 ::::
 :::: {.column width=30%}
 
@@ -510,17 +520,18 @@ MSML610: Advanced Machine Learning
 % Draw single line
 \draw[red, dotted, thick] (5, 0) -- (0, 3.5);
 ```
+
 // TODO: Finish a few plots.
 
 ::::
 :::
 
-* Training set, dichotomies, hypotheses
-- An hypothesis classifies each point of $\calX$:
-  $\calX \rightarrow \{-1, +1\}$
+* Training Set, Dichotomies, Hypotheses
+- An hypothesis classifies each point of $\calX$: $\calX \rightarrow \{-1, +1\}$
 - A dichotomy classifies each point of a set:
   $\{\vx_1, ..., \vx_N\} \rightarrow \{-1, +1\}$
-  - Dichotomies are "mini-hypotheses", i.e., hypotheses restricted to given points
+  - Dichotomies are "mini-hypotheses", i.e., hypotheses restricted to given
+    points
   - A dichotomy depends on $\calH$ and on where the points are placed
   - Certain dichotomies can exist for a certain position of the $N$ points, but
     not for all the sets of $N$ points
@@ -537,11 +548,12 @@ MSML610: Advanced Machine Learning
   - The number of hypotheses is usually infinite, i.e., $|\calH| = \infty$
   - Many (infinite) hypotheses can correspond to the same dichotomy
 
-* Growth function
+* Growth Function
 - The growth function counts the maximum number of possible dichotomies on $N$
   points for a hypothesis set $\calH$:
+
   $$
-  m_{\calH}(N) 
+  m_{\calH}(N)
   = \max_{\vx_1, \cdots, \vx_N \in \calX} |\calH(\vx_1, \cdots, \vx_N)|
   $$
 
@@ -555,10 +567,10 @@ MSML610: Advanced Machine Learning
   - Compute the corresponding dichotomy for $h$ on $\vx_1, ..., \vx_N$
   - Count the number of different dichotomies
 
-* What can vary in a dichotomy
+* What Can Vary in a Dichotomy
 - Given:
   - An hypothesis set $\calH$
-  - $N$ (fixed) points $\vx_1, ..., \vx_N$ 
+  - $N$ (fixed) points $\vx_1, ..., \vx_N$
   - An assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
 - $D$ is a dichotomy for hypothesis set $\calH$ $\iff$ there exists
   $h \in \calH$ that gets the desired classification $D$
@@ -573,18 +585,18 @@ MSML610: Advanced Machine Learning
   - How the points are assigned to the classes
     - It is determined by each hypothesis in $\calH$
   - Where the points are positioned
-    - It is a free parameter, removed by the the growth function through $\max$
+    - It is a free parameter, removed by the growth function through $\max$
 
-* Growth function is increasing
+* Growth Function Is Increasing
 - $m_{\calH}(N)$ increases (although not monotonically) with $N$
 - E.g.,
   - The number of dichotomies on $N=3$ points $m_{\calH}(3)$ is smaller or equal
     than the number of dichotomies on $N=4$ points
   - In fact we can ignore a new point and get the same classification
 
-- $m_{\calH}(N)$ increases with the complexity of $\calH$ 
+- $m_{\calH}(N)$ increases with the complexity of $\calH$
 
-* Growth function: Examples
+* Growth Function: Examples
 - Consider the growth function $m_{\calH}$ for different hypothesis sets $\calH$
 
 ::: columns
@@ -628,11 +640,11 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
-* Growth function: Examples
+* Growth Function: Examples
 ::: columns
 :::: {.column width=50%}
 
-- Positive intervals on $\bbR$ $x \in [a, b]$ 
+- Positive intervals on $\bbR$ $x \in [a, b]$
   - $m_{\calH}(N) = {N + 1 \choose 2} + 1 \sim \N^2$
   - Pick 2 distinct intervals out of $N + 1$, and there is a dichotomy with 2
     points in the same interval
@@ -703,14 +715,16 @@ MSML610: Advanced Machine Learning
     \fi
 }
 ```
+
 ::::
 :::
 
-* Break point of an hypothesis set
+* Break Point of an Hypothesis Set
 - Given an hypothesis set $\calH$
 
 - A hypothesis set $\calH$ shatters $N$ points $\iff$ $m_{\calH}(N) = 2^N$
-  - There is a position of $N$ points that we can classify in any way using $h
+  - There is a position of $N$ points that we can classify in any way using
+    $h
     \in \calH$
   - It does not mean all sets of $N$ points can be classified in any way
 
@@ -723,19 +737,23 @@ MSML610: Advanced Machine Learning
   - For positive intervals: a break point is 3
   - For convex set on a plane: there is no break point
 
-* Break point for an hypothesis set and learning
+* Break Point for an Hypothesis Set and Learning
 - If there is a break point for a hypothesis set $\calH$, it can be shown that:
 
 1. $m_{\calH}(N)$ is polynomial in $N$
 2. In Hoeffding's inequality for learning, replace $M$ with $m_{\calH}(N)$:
    - Instead of:
-     $$\Pr(|E_{in}(g) - E_{out}(g)| > \varepsilon) \le 2 M e^{-2 \varepsilon^2 N}$$
+
+     $$
+     \Pr(|E_{in}(g) - E_{out}(g)| > \varepsilon) \le 2 M e^{-2 \varepsilon^2 N}
+     $$
+
      we can use the Vapnik-Chervonenkis Inequality:
+
      $$
      \Pr(\text{bad generalization}) \le
      4 m_\calH(2N) e^{-\frac{1}{8} \varepsilon^2 N}
      $$
-
    - Since $m_{\calH}(N)$ is polynomial in $N$, it will be dominated by the
      negative exponential, given enough examples
      - We can have a generalization bound (i.e., we can learn)
@@ -743,7 +761,7 @@ MSML610: Advanced Machine Learning
 - A hypothesis set can be characterized for learning by the existence and value
   of a break point
 
-* $m_\calH(N)$ can replace $M$ in Hoeffding inequality
+* What Can Replace $M$ in Hoeffding Inequality
 - How does $m_\calH(N)$ relate to overlaps?
   - Given an hypothesis $g$, the "bad event" is a function of which data set $D$
     is used for training
@@ -760,31 +778,32 @@ MSML610: Advanced Machine Learning
     know that many others hypothesis, say 100, will color the same paint as bad
     events, so that the area is 100 smaller than what would have been without
     overlap
-  - The growth function is a measure of how many hypothesis correspond
-    to the same dichotomy
+  - The growth function is a measure of how many hypothesis correspond to the
+    same dichotomy
 
 - What to do about $E_{out}$?
-  - The problem is that the bad event not only is
-  function of $E_{in}$ (which is function of the data set) but also of $E_{out}$
+  - The problem is that the bad event not only is function of $E_{in}$ (which is
+    function of the data set) but also of $E_{out}$
   which is function of the entire space
 
 - Consider the bin with $E_{in}$ and
   $E_{out}$. If there are lots of bins $E_{out}$ is going to deviate from
   $E_{in}$. Instead of picking one sample we pick 2 samples, $E_{in}$ and
   $E'_{in}$. They both track $E_{out}$ and thus track each other, although
-  loosely - We can characterize the bad events in terms of $E_{in}$ and
-  $E'_{in}$, but one can use only dichotomies to reason about the bad event
+  loosely
+  - We can characterize the bad events in terms of $E_{in}$ and $E'_{in}$, but
+    one can use only dichotomies to reason about the bad event
   - For this reason there is $m_\calH(2N)$ in the VC inequality
 
 // TODO: Improve this
 
-# #############################################################################
-# The VC dimension
-# #############################################################################
+# ##############################################################################
+# The VC Dimension
+# ##############################################################################
 
-* VC dimension of an hypothesis set
-- The VC dimension of a hypothesis set $\calH$, denoted as $d_{VC}(\calH)$,
-  is defined as the largest value of $N$ for which $m_{\calH(N)} = 2^N$
+* VC Dimension of an Hypothesis Set
+- The VC dimension of a hypothesis set $\calH$, denoted as $d_{VC}(\calH)$, is
+  defined as the largest value of $N$ for which $m_{\calH(N)} = 2^N$
   - I.e., the VC dimension is the most points $\calH$ can shatter
 
 - If $d_{VC}(\calH) = N$ then
@@ -799,7 +818,7 @@ MSML610: Advanced Machine Learning
   $m_{\calH} \le \sum_{i=0}^{d_{VC}} {N \choose i}$
   - The VC dimension is the order of the polynomial bounding $m_{\calH}$
 
-* VC dimension: interpretation
+* VC Dimension: Interpretation
 - The VC dimension measures the complexity of a hypothesis set in terms of
   effective parameters
   - A perceptron in a $d$-dimensional space has $d_{VC} = d + 1$
@@ -831,34 +850,39 @@ MSML610: Advanced Machine Learning
 
 - We can plot the intersection $N$ of $N^d e^{-N}$ with a certain probability
   (e.g., $10^{-3}$) as a function of $d$
-  - The number of examples $N$ needed to get to a certain level of performance is
-    proportional to $d$
+  - The number of examples $N$ needed to get to a certain level of performance
+    is proportional to $d$
   - As a rule of thumb: $N \ge 10 d_{VC}$ to get reasonable generalization
 
 * VC Generalization Bounds
 - One can use the VC inequality in several ways, relating $\varepsilon$,
   $\delta$, and $N$, e.g.,
-  - "Given $\varepsilon$ = 1% error, how many examples $N$ are needed to
-    get $\delta = 0.05$?"
+  - "Given $\varepsilon$ = 1% error, how many examples $N$ are needed to get
+    $\delta = 0.05$?"
   - "Given $N$ examples, what's the probability of an error larger than
     $\varepsilon$?"
 
 - We can equate $\delta$ to $4 m_{\calH}(2N) e^{\frac{1}{8}\varepsilon^2 N}$ and
   solve for $\varepsilon$, getting
-  $$\Omega(N, \calH, \delta)
-  = \sqrt{\frac{8}{N} \ln \frac{4 m_{\calH}(2N)}{\delta}}$$
-    Then we can say $|E_{out} - E_{in}| \le \Omega(N, \calH, \delta)$ with
-    probability $\ge 1 - \delta$
+
+  $$
+  \Omega(N, \calH, \delta)
+  = \sqrt{\frac{8}{N} \ln \frac{4 m_{\calH}(2N)}{\delta}}
+  $$
+
+  Then we can say $|E_{out} - E_{in}| \le \Omega(N, \calH, \delta)$ with
+  probability $\ge 1 - \delta$
   - The generalization bounds are then:
     $\Pr(E_{out} \le E_{in} + \Omega) \ge 1 - \delta$
 
-* How to void the VC analysis guarantee
+* How to Void the VC Analysis Guarantee
 - Consider the case where data is genuinely non-linear
   - E.g., "o" points in the center and "x" in the corners
 
 // TODO: Add a picture
 
 - Transform to high-dimensional $\calZ$ with:
+
   $$
   \Phi: \vx = (x_0, ... , x_d) \rightarrow \vz = (z_0, ... , z_{\tilde{d}})
   $$
@@ -876,13 +900,15 @@ MSML610: Advanced Machine Learning
     selection (i.e., data snooping)
   - From VC analysis, complexity is that of the initial hypothesis set
 
-![](msml610/lectures_source/figures/figures/Lesson05_Void_VC_guarantee.png)
+![](msml610/lectures_source/figures/Lesson05_Void_VC_guarantee.png)
 
+# ##############################################################################
 # Overfitting
+# ##############################################################################
 
 // Overfitting
 
-* Overfitting: definition
+* Overfitting: Definition
 
 ::: columns
 :::: {.column width=60%}
@@ -923,10 +949,11 @@ MSML610: Advanced Machine Learning
 \node[violet] at (5.5,1.5) {Model Complexity};
 \node[red] at (6.0,2.8) {Out-of-sample Error};
 ```
+
 ::::
 :::
 
-* Optimal fit
+* Optimal Fit
 - "Optimal fit" is the opposite of overfitting
   - Train a model with the proper complexity for the data
 - The optimal fit:
@@ -934,10 +961,10 @@ MSML610: Advanced Machine Learning
   - Does not imply that generalization error $E_{out} - E_{in}$ is minimal
     (e.g., no training at all implies generalization error equal to 0)
 
-- The generalization error is the additional error $E_{out} - E_{in}$ we see when
-  we go from in-sample to out-of-sample
+- The generalization error is the additional error $E_{out} - E_{in}$ we see
+  when we go from in-sample to out-of-sample
 
-* Overfitting: diamond price example
+* Overfitting: Diamond Price Example
 - Predict diamond price as a function of carat size (regression problem)
 
 - True relationship:
@@ -948,8 +975,8 @@ MSML610: Advanced Machine Learning
   - Square function: price increases more with rarity
   - Noise: e.g., market noise, missing features
 
-::: columns
-:::: {.column width=55%}
+::: columns :::: {.column width=55%}
+
 - **Fit with:**
   - Line $\to$ underfit
     - High bias (large error)
@@ -960,12 +987,12 @@ MSML610: Advanced Machine Learning
     - High variance (many degrees of freedom)
 ::::
 :::: {.column width=40%}
-![](msml610/lectures_source/figures/figures/Lesson05_Diamond_price_example.png)
+![](msml610/lectures_source/figures/Lesson05_Diamond_price_example.png)
 
 ::::
 :::
 
-* Overfitting: 2-features classification example
+* Overfitting: 2-Features Classification Example
 - Assume:
   - We want to separate 2 classes using 2 features $x_1, x_2$
   - The class boundary of sample points has a parabola shape
@@ -977,52 +1004,59 @@ MSML610: Advanced Machine Learning
     right fit
   - A wiggly decision boundary
     $\text{logit}(w_0 + \text{high powers of } x_1, x_2)$ $\to$ overfit
-      - Low bias, high variance
+    - Low bias, high variance
 
 // TODO: Add picture
 
-* Margin in classification
+* Margin in Classification
 - Classification margin is the difference between the chosen class and the next
   predicted class
 - Even if the error on training data gets to 0, one can improve out-of-sample
   performance by increasing the margin
   - More robust to noise
 
+# ##############################################################################
 # Bias Variance Analysis
+# ##############################################################################
 
-* VC analysis vs bias-variance analysis
+* VC Analysis vs Bias-Variance Analysis
 - Both VC analysis and bias-variance analysis are concerned with the hypothesis
   set $\calH$
   - VC analysis:
-    $$E_{out} \le E_{in} + \Omega(\calH)$$
+    $$
+    E_{out} \le E_{in} + \Omega(\calH)
+    $$
   - Bias-variance analysis:
-    $$E_{out} = \text{bias and variance}$$
+    $$
+    E_{out} = \text{bias and variance}
+    $$
 
-![](msml610/lectures_source/figures/figures/Lesson05_VC_analysis_vs_Bias_Variance_analysis.png)
+![](msml610/lectures_source/figures/Lesson05_VC_analysis_vs_Bias_Variance_analysis.png)
 
-* Hypothesis set and bias-variance analysis
-- Learning consists in finding $g \in \calH$ such that $g \approx f$ where
-  $f$ is an unknown function
+* Hypothesis Set and Bias-Variance Analysis
+- Learning consists in finding $g \in \calH$ such that $g \approx f$ where $f$
+  is an unknown function
 - The tradeoff in learning is between:
   - Bias vs variance
   - Overfitting vs underfitting
   - More complex vs less complex $\calH$ / $h$
   - Approximation (in-sample) vs generalization (out-of-sample)
 
-* Decomposing error in bias-variance
-- Consider machine learning problem 
+* Decomposing Error in Bias-Variance
+- Consider machine learning problem
   - Regression set-up: target is a real-valued function
   - Hypothesis set $\calH = \{ h_1(\vx), h_2(\vx), ... h_n(\vx) \}$
   - Training data $D$ with $N$ examples
   - Error is squared error $E_out = \EE[(g(\vx) - f(\vx))^2]$
   - Choose the best function $g$ from $\calH$ that approximates $f$
 
-- What is the out-of-sample error $E_{out}(g)$ as function of $\calH$ for
-  a training set of $N$ examples?
+- What is the out-of-sample error $E_{out}(g)$ as function of $\calH$ for a
+  training set of $N$ examples?
 
-* Decomposing error in bias-variance
+* Decomposing Error in Bias-Variance
 - The final hypothesis $g$ depends on the training set $D$, so we make the
   dependency explicit $g^{(D)}$:
+
   $$
   E_{out}(g^{(D)})
   \defeq \EE_{\vx}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]
@@ -1033,21 +1067,22 @@ MSML610: Advanced Machine Learning
   - In a training set $D$ of $N$ examples, rather than the specific $D$
 - Therefore we Remove the dependency from $D$ by averaging over all the possible
   training sets $D$ with $N$ examples:
+
   $$
   E_{out}(\calH)
   \defeq \EE_{D}[ E_{out}(g^{(D)}) ]
   = \EE_{D}[\EE_{\vx}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]]
   $$
 
-* Decomposing error in bias-variance
+* Decomposing Error in Bias-Variance
 - Switch the order of the expectations since the quantity is non-negative:
+
   $$
   E_{out}(\calH)
   = \EE_{\vx}[ \EE_{D}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]
   $$
 
-- Focus on $\EE_D [( g^{(D)}(\vx) - f(\vx) ) ^ 2 ]$ which is a function of
-  $\vx$
+- Focus on $\EE_D [( g^{(D)}(\vx) - f(\vx) ) ^ 2 ]$ which is a function of $\vx$
 - Define the \textit{average hypothesis} over all training sets as:
   $$
   \overline{g}(\vx) \defeq \EE_D [ g^{(D)} (\vx) ]
@@ -1082,9 +1117,11 @@ MSML610: Advanced Machine Learning
   \end{aligned}
   $$
 
-* Decomposing error in bias-variance
+* Decomposing Error in Bias-Variance
 - The cross term:
-  $$\EE_D[(g^{(D)} - \overline{g})] (\overline{g} - f)$$
+  $$
+  \EE_D[(g^{(D)} - \overline{g})] (\overline{g} - f)
+  $$
   disappears since applying the expectation on $D$, it is equal to:
   $$
   (g^{(D)} - \EE_D[\overline{g}]) (\overline{g} - f)
@@ -1111,9 +1148,13 @@ MSML610: Advanced Machine Learning
 
 // TODO: Add a numerical example
 
-* Interpretation of average hypothesis
+* Interpretation of Average Hypothesis
 - The average hypothesis over all training sets
-  $$\overline{g}(\vx) \defeq \EE_D [ g^{(D)} (\vx) ]$$
+
+  $$
+  \overline{g}(\vx) \defeq \EE_D [ g^{(D)} (\vx) ]
+  $$
+
   can be interpreted as the "best" hypothesis from $\calH$ training on $N$
   samples
   - Note: $\overline{g}$ is not necessarily $\in \calH$
@@ -1123,15 +1164,16 @@ MSML610: Advanced Machine Learning
   - Learn $g$ from each $D$
   - Average the hypotheses
 
-* Interpretation of variance and bias terms
+* Interpretation of Variance and Bias Terms
 - The out-of-sample error can be decomposed as:
   $$
   E_{out}(\calH) = \text{bias}^2 + \text{variance}
   $$
 
-::: columns
-:::: {.column width=60%}
+::: columns :::: {.column width=60%}
+
 - **Bias term**
+
   $$
   \text{bias}^2 = \EE_{\vx} [ ( \overline{g}(\vx) - f(\vx) ) ^ 2 ]
   $$
@@ -1151,11 +1193,11 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/figures/Lesson05_bias_variance.png)
+![](msml610/lectures_source/figures/Lesson05_bias_variance.png)
 ::::
 :::
 
-* Variance and bias term varying cardinality of $\calH$
+* Variance and Bias Term Varying Cardinality of $\calH$
 
 ::: columns
 :::: {.column width=55%}
@@ -1176,7 +1218,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/figures/Lesson05_Bias_Variance_tradeoff_example.png)
+![](msml610/lectures_source/figures/Lesson05_Bias_Variance_tradeoff_example.png)
 
 ```tikz
 % Axis
@@ -1204,7 +1246,7 @@ MSML610: Advanced Machine Learning
 
 // TODO: Add pic (see book)
 
-* Bias-variance trade-off: numerical trade-off
+* Bias-Variance Trade-Off: Numerical Trade-Off
 - Assume:
   - Target function $f(x) = \sin(\pi x), x \in [-1, 1]$
   - Noiseless target
@@ -1237,7 +1279,7 @@ MSML610: Advanced Machine Learning
 
 // TODO: Add an example
 
-* Bias-variance curves
+* Bias-Variance Curves
 - Bias-variance curve are plots of $E_{out}$ increasing the complexity of the
   model
   - Can diagnose bias-variance problem
@@ -1260,12 +1302,12 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=45%}
 
-![](msml610/lectures_source/figures/figures/Lesson05_bias_variance_curve.png)
+![](msml610/lectures_source/figures/Lesson05_bias_variance_curve.png)
 
 ::::
 :::
 
-* How to measure the model complexity
+* How to Measure the Model Complexity
 - Number of features
 - Parameters for model form / degrees of freedom, e.g.,
   - VC dimension $d_{VC}$
@@ -1275,7 +1317,7 @@ MSML610: Advanced Machine Learning
 - Regularization param $\lambda$
 - Training epochs for neural network
 
-* Bias-variance curves and regularization
+* Bias-Variance Curves and Regularization
 - We can use a complex model together with regularization to learn at the same
   time:
   - The model coefficients $\vw$
@@ -1299,14 +1341,16 @@ MSML610: Advanced Machine Learning
 - There will be an intermediate value of $\lambda$ that optimizes the trade-off
   between bias and variance
 
-* Bias-variance decomposition with a noisy target
+* Bias-Variance Decomposition with a Noisy Target
 
 - We can extend the bias-variance decomposition to the noisy target
+
   $$
   y = \vw^T \vx + \varepsilon
   $$
 
 - With similar hypothesis and a similar analysis we conclude that:
+
   $$
   \begin{aligned}
   E_{out}(\calH)
@@ -1325,11 +1369,12 @@ MSML610: Advanced Machine Learning
 
 - **Interpretation**:
   - The error is the sum of 3 contributions
-    1. Variance: from the set of hypotheses to the centroid of the hypothesis set
+    1. Variance: from the set of hypotheses to the centroid of the hypothesis
+       set
     2. Bias: from the centroid of the hypothesis set to the noiseless function
     3. Noise: from the noiseless function to the real function
 
-* Bias as deterministic noise
+* Bias as Deterministic Noise
 - The bias term can be interpreted as "deterministic noise"
   - Bias is the part of the target function that our hypothesis set cannot
     capture:
@@ -1337,13 +1382,14 @@ MSML610: Advanced Machine Learning
     h^*(\vx) - f(\vx)
     $$
     where
-    - $h^*()$ is the best approximation of $f(\vx)$ in the hypothesis set $\calH$
+    - $h^*()$ is the best approximation of $f(\vx)$ in the hypothesis set
+      $\calH$
     - E.g., $\overline{g}(x)$
 
 - The hypothesis set $\calH$ cannot learn the deterministic noise since it is
   outside of its ability, and thus it behaves like noise
 
-* Deterministic vs stochastic noise in practice
+* Deterministic vs Stochastic Noise in Practice
 - In bias-variance analysis, the error for a noisy target is decomposed into:
   - Bias (deterministic noise)
   - Variance
@@ -1358,12 +1404,12 @@ MSML610: Advanced Machine Learning
   - Not fixed for $\vx$
   - Independent of $D$ or $\calH$
 
-- In an actual machine learning problem, there's no difference between stochastic
-  and deterministic noise, since $\calH$ and $D$ are fixed
+- In an actual machine learning problem, there's no difference between
+  stochastic and deterministic noise, since $\calH$ and $D$ are fixed
   - E.g., from the training set alone, we cannot tell if the data is from a
     _noiseless complex_ target or a _noisy simple_ target
 
-* Deterministic vs stochastic noise example
+* Deterministic vs Stochastic Noise Example
 - 2 targets:
   - Noisy low-order target (5-th order polynomial)
   - Noiseless high-order target (50-th order polynomial)
@@ -1396,7 +1442,7 @@ MSML610: Advanced Machine Learning
 
 // TODO: Add numerical example
 
-* Amount of data and model complexity
+* Amount of Data and Model Complexity
 - The lesson learned from bias-variance analysis is that one must match the
   _model complexity_:
   - To the _data resources_
@@ -1404,6 +1450,7 @@ MSML610: Advanced Machine Learning
   - **Not** to the _target complexity_
 
 - The rule of thumb is:
+
   $$
   d_{VC} (\text{degrees of freedom of the model})
   = N (\text{number of data points}) / 10
@@ -1411,7 +1458,7 @@ MSML610: Advanced Machine Learning
   - In other words, 10 data points needed to fit a degree of freedom
   - If the data is noisy, you need even more data
 
-* Bias-variance curves for neural networks
+* Bias-Variance Curves for Neural Networks
 - For neural networks one can plot $E_{in}$ and $E_{out}$ as function of the
   training epochs
 
@@ -1430,7 +1477,7 @@ MSML610: Advanced Machine Learning
 - It is like the VC dimension is increasing from 0 towards all the available
   degrees of freedom while exploring the weight space
 
-* Overfitting as a function of data resources, model complexity, noise
+* Overfitting as a Function of Data Resources, Model Complexity, Noise
 - We can measure overfitting as $\frac{E_{out} - E_{in}}{E_{out}}$
   - $\uparrow \text{data resources } (N) \implies \downarrow \text{overfitting}$
   - $\uparrow \text{model complexity } (d_{VC}) \implies \uparrow
@@ -1444,9 +1491,11 @@ MSML610: Advanced Machine Learning
   - This error depends on stochastic and deterministic noise
   - There is no variance (since $N = \infty$)
 
-# Learning curves
+# ##############################################################################
+# Learning Curves
+# ##############################################################################
 
-* Learning curves vs bias-variance curves
+* Learning Curves vs Bias-Variance Curves
 - Learning curves are the dual of the bias-variance curves
 
 - For bias-variance curves
@@ -1468,8 +1517,7 @@ MSML610: Advanced Machine Learning
   - Fix the model
   - Vary the size $N$ of training set
 
-* Typical form of learning curves
-  ... tmp.prettier_on_str._4r6shu5.md 25ms
+* Typical Form of Learning Curves
 - Learning curves plot $E_{in}$ and $E_{out}$ error as a function of data amount
 
 ::: columns
@@ -1511,21 +1559,19 @@ MSML610: Advanced Machine Learning
 \node[blue] at (5.8,2.15) {$E_{\text{out}}$};
 ```
 
-![](msml610/lectures_source/figures/figures/Lesson05_learning_curve.png)
+![](msml610/lectures_source/figures/Lesson05_learning_curve.png)
 
-![](msml610/lectures_source/figures/figures/Lesson05_learning_curve2.png)
+![](msml610/lectures_source/figures/Lesson05_learning_curve2.png)
 ::::
 :::
 
-* High-bias vs high-variance regime
+* High-Bias vs High-Variance Regime
 - From the learning curve we can see two regimes:
-
   - High-variance regime for small $N$
     - $E_{in}$ is small
     - $E_{out}$ > $E_{in}$
     - More data helps; gap between $E_{in}$ and $E_{out}$ decreases
     - Small data set $D$; high dependency on $D$
-
   - **High-bias regime for large $N$**
     - $E_{in}$ is large; flattens for large $N$
     - Best model fitted; more data won't help
@@ -1594,16 +1640,22 @@ MSML610: Advanced Machine Learning
 //  which shows that what matters is $\frac{d + 1}{N}$ (our rule of thumb was
 //  $N > 10 d_{VC}$)
 
-# Learn-validation approach
+# ##############################################################################
+# Learn-Validation Approach
+# ##############################################################################
 
-## Train / test
+## #############################################################################
+## Train / Test
+## #############################################################################
 
-* Estimating out-of-sample error with one point
+* Estimating Out-Of-Sample Error with One Point
 - Pick an out-of-sample point $(\vx', y)$
 - The error of the model $h$ is:
+
   $$
   E_{val}(h) = e(h(\vx'), y)
   $$
+
   where the error can be:
   - Squared error $(h(\vx) - y)^2$
   - Binary error $I[h(\vx) - y]$
@@ -1611,18 +1663,21 @@ MSML610: Advanced Machine Learning
 
 - The error on an out-of-sample point is an unbiased estimate of $E_{out}$,
   since
+
   $$
   \EE[E_{val}(h)] = \EE[e(h(\vx), y)] = E_{out}
   $$
+
   by definition
   - The quality of the estimate depends on $\VV[e(h(\vx), y)]$, which in an
     unknown value
 
-* Estimating out-of-sample error with $K$ points
+* Estimating Out-Of-Sample Error with $K$ Points
 - To improve the estimate, use a validation set, i.e., $K$ points instead of one
   point $(\vx_1, y_1), ... , (\vx_K, y_K)$ drawn IID
 
 - Compute the error on the validation set as:
+
   $$
   E_{val}(h) = \frac{1}{K} \sum_{i=1}^K e(h(\vx_i), y_i)
   $$
@@ -1645,11 +1700,10 @@ MSML610: Advanced Machine Learning
   \\
   \end{alignat*}
 
-- We want to use as much data as possible to get a reliable estimate of
-  $E_val$ since $E_{val}(h) = E_{out}(h) \pm \frac{c \sigma}{\sqrt{K}}$
+* Trade-Off Between Training and Validation Set Size
+- **Problem**: to better estimate $E_{val}$, we need points from the training
+  set:
 
-* Trade-off between training and validation set size
-- **Problem**: to better estimate $E_{val}$, we need points from the training set:
   $$
   \begin{aligned}
   & D_{val} = \{K \text{ points}\} \\
@@ -1658,11 +1712,14 @@ MSML610: Advanced Machine Learning
   $$
 
 - We know:
+
   $$
   \uparrow K \implies \VV[E_{val}] \implies |E_{val} - E_{out}| \downarrow
   \text{ (most reliable estimate)}
   $$
+
   but
+
   $$
   \uparrow K \implies \downarrow N - K \implies E_{in}, E_{out} \uparrow
   \text{ (worse model)}
@@ -1671,10 +1728,11 @@ MSML610: Advanced Machine Learning
 
 - **Solution**:
   - Rule of thumb: 70-30 or 80-20 split between train and validation
-  - 20\%-30\% of data for validation 
+  - 20\%-30\% of data for validation
 
-* $E_{out}$ from VC analysis vs learn-validation approach
+* $E_{Out}$ From VC Analysis vs Learn-Validation Approach
 - In general:
+
   $$
   E_{out}(h) = E_{in}(h) + \text{generalization error}
   $$
@@ -1685,11 +1743,13 @@ MSML610: Advanced Machine Learning
 
 - Learn-validation
   - Estimates $E_{out}$ directly by holding out data as validation set:
-    $$E_{val} \approx E_{out}$$
-  - Use learn-validation approach at different points of the modeling flow: e.g.,
-    validation / test sets
+    $$
+    E_{val} \approx E_{out}
+    $$
+  - Use learn-validation approach at different points of the modeling flow:
+    e.g., validation / test sets
 
-* Reusing validation / test set for training
+* Reusing Validation / Test Set for Training
 - Never use $D_{val}$ for training, at least during research
   - If $D_{val}$ affects learning (e.g., model selection), this data set is
     biased and optimistic and cannot assess the model
@@ -1699,15 +1759,15 @@ MSML610: Advanced Machine Learning
   2. Use $K$ points to compute $E_{val}[g^-]$ estimating $E_{out}[g^-]$
   3. Once the model form is finalized, use all $N$ data points (including
      validation, test set) to re-train to get $g$
-     - $E_{val}[g] < E_{val}[g^-]$ since $g$ is learned on a larger data set than
-       $g^-$ and is thus better
+     - $E_{val}[g] < E_{val}[g^-]$ since $g$ is learned on a larger data set
+       than $g^-$ and is thus better
   4. Deliver to customers:
      - Final hypothesis $g$
      - Upper bound of out-of-sample performance $E_{val}[g^-]$
 
 // TODO: Add pic
 
-* Learn-validation approach: pros and cons
+* Learn-Validation Approach: Pros and Cons
 - **Pros**
   - Estimate $E_{out}$ using $E_{val}$
   - Simple to compute, no complexity from VC analysis
@@ -1717,7 +1777,9 @@ MSML610: Advanced Machine Learning
   - Learned model and $E_{val}$ depend on the split; different splits can give
     different results
 
-## Cross-validation
+## #############################################################################
+## Cross-Validation
+## #############################################################################
 
 * Cross-validation
 ::: columns
@@ -1730,9 +1792,13 @@ MSML610: Advanced Machine Learning
   - In the $i$-th iteration, train on all folds except $i$ (use
     $\frac{K - 1}{K}N$ points) and get $g^{(-i)}(\vx)$
   - Validate on the $i$-th fold (use $\frac{N}{K}$ points) to compute
-    $$E_{val}^{(i)} = E_{val}[g^{(-i)}(\vx)]$$
+    $$
+    E_{val}^{(i)} = E_{val}[g^{(-i)}(\vx)]
+    $$
 - Average the $K$ error rates and compute bounds:
-  $$E_{val} = \frac{1}{K} \sum_i E_{val}^{(i)}$$
+  $$
+  E_{val} = \frac{1}{K} \sum_i E_{val}^{(i)}
+  $$
 
 ::::
 :::: {.column width=40%}
@@ -1800,10 +1866,10 @@ MSML610: Advanced Machine Learning
 ```
 
 Train / test validation
-::::
+:::: 
 :::
 
-* Cross-validation: pros and cons
+* Cross-Validation: Pros and Cons
 - **Pros**
   - Efficient data usage (all data used for learning and validation)
   - Better estimate of $E_{val}$ than separate training/validation sets
@@ -1816,7 +1882,7 @@ Train / test validation
     samples)
     - Experimentally not completely correlated
 
-* Repeated cross-validation
+* Repeated Cross-Validation
 - Cross-validation results depend on fold selection
   - To remove this dependency, repeat cross-validation multiple times (e.g., 10)
     and average results
@@ -1824,12 +1890,12 @@ Train / test validation
 - Note: "10x 10-fold cross-validation" is different than "1x 100-fold
   cross-validation"
 
-* Leave-one-out cross-validation
+* Leave-One-Out Cross-Validation
 - Leave-one-out (LOO) cross-validation
   - There are $N$ training sessions
   - Each session trains on $N - 1$ points and validates on 1 point
-  - Like "$N$-fold cross-validation," where $N$ is the number of examples in
-    the dataset
+  - Like "$N$-fold cross-validation," where $N$ is the number of examples in the
+    dataset
 
 - Train:
   - For $i$-th fold, $N - 1$ samples for training $\implies g^-_i \approx g$
@@ -1845,7 +1911,7 @@ Train / test validation
     = \frac{1}{N} \sum_i E_{val}[g^{-}_i]
     $$
 
-* Leave-one-out cross-validation: pros and cons
+* Leave-One-Out Cross-Validation: Pros and Cons
 - **Pros**
   - Max data used for training
   - Deterministic procedure (no fold selection dependency)
@@ -1857,8 +1923,8 @@ Train / test validation
 
 * Bootstrap
 - **Algorithm**
-  - Pick $N$ samples with replacement from a data set with $N$ instances to build
-    training set
+  - Pick $N$ samples with replacement from a data set with $N$ instances to
+    build training set
   - Pick the elements never chosen to build the test set ("out-of-bag" samples)
   - Training set contains 63.2\% of all the samples, 36.8\% in the test set
 
