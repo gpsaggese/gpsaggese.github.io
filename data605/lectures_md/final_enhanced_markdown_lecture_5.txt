@@ -49,7 +49,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Explains how to run the tutorial
 - Notebook to execute / study
 
-2
+
 
 © UMD DATA605
 
@@ -65,7 +65,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Nice high-level view:
   - Seven Databases in Seven Weeks, 2e
 
-4
+
 
 ![](images/lecture_5_0/lec_5_0_slide_4_image_1.png)
 
@@ -100,7 +100,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_5_0/lec_5_0_slide_5_image_1.png)
 
-5
+
 
 # ##############################################################################
 # Issues with Relational DBs
@@ -120,7 +120,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Within relational SQL paradigm
     - With NoSQL approach
 
-6
+
 
 # ##############################################################################
 # 1 App-DB Impedance Mismatch: Problem
@@ -149,7 +149,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - One could denormalize the tables using a single table
     - **Names(name, tag)**
 
-7
+
 
 # ##############################################################################
 # 1 App-DB Impedance Mismatch: Solutions
@@ -177,7 +177,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Every object can be flat or complex (e.g., nested JSON)
     - Stored objects (aka documents) can be different
 
-8
+
 ```
 
 ```markdown
@@ -203,7 +203,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Application needs to deal with variety of schemas when it processes the data
     - Related to ETL vs ELT data pipelines
 
-9
+
 
 # ##############################################################################
 # 3 Consistency in Relational DBs
@@ -229,7 +229,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - = once a transaction has been committed, the *content is preserved for any system failure*
   - Just record the data in non-volatile memory
 
-10
+
 
 ![](images/lecture_5_0/lec_5_0_slide_10_image_1.png)
 
@@ -257,7 +257,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Due to CAP theorem
     - Even weak consistency is difficult to achieve
 
-11
+
 
 ![](images/lecture_5_0/lec_5_0_slide_11_image_1.png)
 
@@ -275,7 +275,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Originally a conjecture (Eric Brewer)
 - Made formal later (Gilbert, Lynch, 2002)
 
-12
+
 
 ![](images/lecture_5_0/lec_5_0_slide_12_image_1.png)
 
@@ -293,7 +293,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - *Consistency* (i.e., allow different views of the system)
     - E.g., social network
 
-13
+
 
 ![](images/lecture_5_0/lec_5_0_slide_13_image_1.png)
 
@@ -320,7 +320,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Sometimes inconsistency is not acceptable (e.g., a banking system)
   - Stop the service (no availability) to avoid inconsistency
 
-14
+
 
 ![](images/lecture_5_0/lec_5_0_slide_14_image_1.png)
 
@@ -352,7 +352,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - When writing, we make sure to write to *W* replicas
   - When reading, we read from *R* replicas and pick the latest update (using timestamps)
 
-15
+
 
 ![](images/lecture_5_0/lec_5_0_slide_15_image_1.png)
 
@@ -379,7 +379,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **CAP theorem**: still only one among Consistency, Availability, in case of Network partition
   - Many systems use relaxed / loose consistency models
 
-16
+
 
 ![](images/lecture_5_0/lec_5_0_slide_16_image_1.png)
 ```
@@ -408,7 +408,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Replicas version their data with timestamps
   - If local replica has fresh data, uses it, otherwise send request to primary node
 
-17
+
 
 # ##############################################################################
 # 4 Scalability Issues with RDMS
@@ -427,7 +427,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - To enforce DB consistency, locks are applied across networks
     - Overhead of replica consistency (2PC, Paxos)
 
-18
 
 # ##############################################################################
 # Scalability Issues with RDMS: Solutions
@@ -451,7 +450,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - E.g., eventual consistency
 - **NoSQL**
 
-19
+
 
 ![images/lecture_5_0/lec_5_0_slide_19_image_1.png]
 
@@ -485,7 +484,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Most NoSQL stores will only allow one object transactions
     - E.g., one document / key
 
-20
+
 
 # ##############################################################################
 # Relational DB vs MongoDB
@@ -507,9 +506,7 @@ How MongoDB solves the four RDBM problems
 - Updating data means locking only one document, and not entire collection
 - Sharding: use more machines to do collectively do more work
 
-21
 
-22
 
 **UMD DATA605 - Big Data** **Systems**
 Issues with Relational DBs
@@ -526,7 +523,7 @@ NoSQL Taxonomy
 - Mastery:
   - Seven Databases in Seven Weeks, 2e
 
-23
+
 
 ![images/lecture_5_0/lec_5_0_slide_23_image_1.png]
 
@@ -547,7 +544,7 @@ NoSQL Taxonomy
   - Querying capability
   - Replication scheme
 
-24
+
 
 ![images/lecture_5_0/lec_5_0_slide_24_image_1.png]
 
@@ -582,7 +579,7 @@ NoSQL Taxonomy
   - When data is hierarchical (not a nice row in one or more tables)
   - When data structure is variable/dishomogeneous (record-to-record variation)
 
-25
+
 
 # ##############################################################################
 # Key-Value Store
@@ -605,7 +602,7 @@ NoSQL Taxonomy
   - Not great if data queries are needed
   - Lacking secondary indexes and scanning capabilities
 
-26
+
 
 ![](images/lecture_5_0/lec_5_0_slide_26_image_1.png)
 
@@ -630,7 +627,7 @@ NoSQL Taxonomy
   - Complex join queries
   - Denormalized form is the norm
 
-27
+
 
 ![](images/lecture_5_0/lec_5_0_slide_27_image_1.png)
 
@@ -658,7 +655,7 @@ NoSQL Taxonomy
   - Need to design the schema based on how you plan to query the data
   - No native joins, applications need to handle join
 
-28
+
 
 ![](images/lecture_5_0/lec_5_0_slide_28_image_1.png)
 
@@ -683,7 +680,6 @@ NoSQL Taxonomy
   - Don't scale well, since it's difficult to partition graph on different nodes
     - Store the graph in the graph DB and the relations in a key-value store
 
-29
 
 ![](images/lecture_5_0/lec_5_0_slide_29_image_1.png)
 
@@ -692,7 +688,7 @@ NoSQL Taxonomy
 # ##############################################################################
 
 * Taxonomy by CAP
-30
+
 
 ![](images/lecture_5_0/lec_5_0_slide_30_image_1.png)
 
@@ -720,7 +716,7 @@ From http://blog.nahurst.com/visual-guide-to-nosql-systems
   - Cassandra (column-oriented/tabular)
   - CouchDB (document-oriented)
 
-31
+
 
 ![](images/lecture_5_0/lec_5_0_slide_31_image_1.png)
 
@@ -729,7 +725,7 @@ From http://blog.nahurst.com/visual-guide-to-nosql-systems
 # ##############################################################################
 
 * Taxonomy by CAP
-32
+
 
 **UMD DATA605 - Big Data** **Systems**
 NoSQL Stores
@@ -751,7 +747,7 @@ NoSQL Taxonomy
 - Good overview:
   - Seven Databases in Seven Weeks, 2e
 
-33
+
 
 ![](images/lecture_5_0/lec_5_0_slide_33_image_1.png)
 
@@ -781,7 +777,7 @@ NoSQL Taxonomy
   - Facebook Messages (based on Cassandra)
   - Twitter metrics monitoring
 
-34
+
 
 # ##############################################################################
 # HBase: Features
@@ -805,7 +801,7 @@ NoSQL Taxonomy
   - Distributed configuration
     - Nodes can rely on each other rather than on a centralized source
 
-35
+
 
 # ##############################################################################
 # From HDFS to HBase
@@ -828,7 +824,7 @@ NoSQL Taxonomy
   - Use additional storage and memory to organize the tables
   - Write tables back to HDFS as needed
 
-36
+
 
 # ##############################################################################
 # HBase Data Model
@@ -849,7 +845,7 @@ NoSQL Taxonomy
   - New values don't overwrite the old ones
   - `put()` and `get()` allow to specify a timestamp (otherwise uses current time)
 
-37
+
 
 HBase Database: from table name to Table.
 **Database** = Dict[str, Table]
@@ -892,7 +888,7 @@ HBase Database: from table name to Table.
   - 2 columns in the column family “shape”
 - Data is accessed using a row key and column (family:qualifier)
 
-38
+
 
 ![](images/lecture_5_0/lec_5_0_slide_38_image_1.png)
 
@@ -928,7 +924,7 @@ HBase Database: from table name to Table.
   - Store versioned web-site data
   - Store a wiki
 
-39
+
 
 ![](images/lecture_5_0/lec_5_0_slide_39_image_1.png)
 
@@ -948,7 +944,7 @@ HBase Database: from table name to Table.
 - Column → ‘’ (empty)
 - Cell value → article text
 
-40
+
 
 ![](images/lecture_5_0/lec_5_0_slide_40_image_1.png)
 
@@ -984,7 +980,7 @@ wiki_table['Home']['text']
 text: timestamp=1295774833226, value=Welcome!
 - HBase returns the timestamp (ms since the epoch 01-01-1970 UTC)
 
-41
+
 
 ![](images/lecture_5_0/lec_5_0_slide_41_image_1.png)
 
@@ -1025,7 +1021,7 @@ wiki_table['Home']['text']
   - It's fixed and identified uniquely the page (like a primary key)
   - If you want to change the title you need to re-write all the row
 
-42
+
 
 ![](images/lecture_5_0/lec_5_0_slide_42_image_1.png)
 
@@ -1043,7 +1039,6 @@ wiki_table['Home']['text']
 | 102 | Marilyn | Tollerud | 555-1213 |  | 666-1213 |  |
 | 103 | Pastor | Inqvist |  |  | 555-1214 | inqvist@wel.org |
 
-43
 
 - Fundamental operations
   - CREATE table, families
@@ -1071,7 +1066,7 @@ wiki_table['Home']['text']
 be added at runtime
 *
 
-44
+
 
 Table People(Name, Home, Office)
 {
@@ -1107,7 +1102,7 @@ Table People(Name, Home, Office)
 **GET People:101:Name:First**
 	“Florian”
 
-45
+
 
 |  | Name | Home | Office |  |  |  |
 |---------|---------|---------|---------|---------|---------|---------|
@@ -1140,7 +1135,6 @@ Table People(Name, Home, Office)
   - Everything is designed to accommodate a special kind of data
     - E.g., timestamped web data for search engine
 
-46
 
 # ##############################################################################
 # Consistency Model
@@ -1165,7 +1159,7 @@ Table People(Name, Home, Office)
 **
   - All successful writes have been made durable on disk
 
-47
+
 
 # ##############################################################################
 # Checking for Row or Column Existence
@@ -1194,7 +1188,7 @@ Table People(Name, Home, Office)
   - Has false positives (no false negatives)
   - O(1)
 
-48
+
 ```
 
 ```markdown
@@ -1224,7 +1218,7 @@ Table People(Name, Home, Office)
 - When running a big import job, disable the WAL to improve performance
   - Trade off disaster recovery protection for speed
 
-49
+
 
 # ##############################################################################
 # Storing variable-length data in DBs
@@ -1260,7 +1254,7 @@ PUT People, 403, Home:Phone, 555-3434
 fseek(file, 401*52);
 - Overwrite the data in place
 
-50
+
 
 Need to use pointers
 
@@ -1287,7 +1281,7 @@ Need to use pointers
     - Region = a chunk of rows [a, b)
     - Regions never overlap
 
-51
+
 
 # ##############################################################################
 # Idea 1: Put the Table in a Single File
@@ -1319,7 +1313,7 @@ Table People(Name, Home, Office)
 
 **File “People”**
 
-52
+
 
 # ##############################################################################
 # Idea 2: One file + WAL
@@ -1351,7 +1345,7 @@ PUT 102:Home:Email = mt@yahoo.com
 
 **PUT People:101:Office:Phone = “555-3434”**
 
-53
+
 
 	101: {
 		Timestamp: T403;
@@ -1391,7 +1385,7 @@ PUT 102:Home:Email = mt@yahoo.com
 - Delete the log and memory cache
 - Start over
 
-54
+
 
 - Similar to caching in memory hierarchy
 
@@ -1439,7 +1433,7 @@ Data for
 Column Family
 Name
 
-55
+
 
 - Same scheme as before but split by column family
 - Now it’s clear why column family vs columns
@@ -1505,12 +1499,10 @@ People?
 Access data
 in tables
 
-56
+
 
 # ##############################################################################
 # Final HBase Data Layout
 # ##############################################################################
 
 * Final HBase Data Layout
-
-57

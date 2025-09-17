@@ -63,7 +63,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Often one computing node is not powerful enough to process in real-time
 
 [TEXT]
-2
+
 
 # ##############################################################################
 # Examples of Data Stream Tasks
@@ -90,7 +90,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Correlating events from different streams
 
 [TEXT]
-3
+
 
 # ##############################################################################
 # Why Not Using the Usual RDBM?
@@ -111,7 +111,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Typically 1000's of such continuous queries
 
 [TEXT]
-4
+
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_4_image_1.png)
 
@@ -145,7 +145,7 @@ Computation
   - E.g., AWS SQS, AWS Kinesis, Apache Kafka, RabbitMQ, Redis, Celery, JBoss
 
 [TEXT]
-5
+
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_5_image_1.png)
 
@@ -178,7 +178,6 @@ Computation
     - Exactly once
 
 [TEXT]
-6
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_6_image_1.png)
 
@@ -217,7 +216,7 @@ Computation
   - E.g., financial-related use cases (e.g., payment, trading, accounting)
 
 [TEXT]
-7
+
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_7_image_1.png)
 
@@ -251,7 +250,7 @@ Computation
   - Do you recompute once the late data arrives? If not, do you drop late data?
 
 [TEXT]
-8
+
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_8_image_1.png)
 ```
@@ -280,7 +279,7 @@ Computation
   - Language supported
 - Built at the same time at different companies to solve their specific problem and then open-sourced
 
-9
+
 
 # ##############################################################################
 # Apache Storm (1)
@@ -297,7 +296,7 @@ Computation
   - data streams as edges
 - Suitable for complex data processing workflows with multiple stages and parallelism
 
-10
+
 
 ![](images/lecture_12_1/lec_12_1_slide_10_image_1.png)
 
@@ -317,7 +316,7 @@ Computation
 - Kafka Connect: Integration with various data sources and sinks
 - Kafka Streams: Stream processing library built on Kafka
 
-11
+
 
 ![](images/lecture_12_1/lec_12_1_slide_11_image_1.png)
 
@@ -337,7 +336,7 @@ Computation
 - Flexible windowing: time-based, count-based, and session windows
 - Deployment options: standalone, YARN, Mesos, Kubernetes, and cloud environments
 
-12
+
 
 ![](images/lecture_12_1/lec_12_1_slide_12_image_1.png)
 
@@ -362,7 +361,7 @@ Computation
     - E.g., need failover resources / redundancy
   - Stragglers nodes (i.e., nodes that are slower than others)
 
-13
+
 
 ![](images/lecture_12_1/lec_12_1_slide_13_image_1.png)
 
@@ -387,7 +386,7 @@ Computation
   - Higher latency
     - E.g., seconds
 
-14
+
 
 ![](images/lecture_12_1/lec_12_1_slide_14_image_1.png)
 
@@ -408,7 +407,7 @@ Computation
   - Support micro-batch and true continuous streaming
   - Make batch vs streaming API even closer
 
-15
+
 
 ![](images/lecture_12_1/lec_12_1_slide_16_image_1.png)
 # ##############################################################################
@@ -431,7 +430,7 @@ Computation
     - Every new record becomes a new row appended
     - At time *T* there is like a static dataframe with data until *T*
 
-16
+
 ```
 
 ```markdown
@@ -447,7 +446,7 @@ Computation
 - Developers specify triggers to update the results
 - Update incrementally the result each time a record arrives
 
-17
+
 
 ![](images/lecture_12_1/lec_12_1_slide_17_image_1.png)
 
@@ -470,7 +469,7 @@ Computation
     - Not all operations are available
     - Lower latency
 
-18
+
 
 # ##############################################################################
 # Saving Data
@@ -488,7 +487,7 @@ Computation
     - Entire updated result table is written to external storage
     - More general but more expensive
 
-19
+
 
 # ##############################################################################
 # Spark Streaming “Hello world”
@@ -516,21 +515,21 @@ Computation
 - Then you **start()** the processing (non-blocking)
 - **awaitTermination()** blocks until data is still available
 
-20
+
 
 # ##############################################################################
 # BACKUP
 # ##############################################################################
 
 * BACKUP
-21
+
 
 # ##############################################################################
 # Apache Storm (2)
 # ##############################################################################
 
 * Apache Storm
-22
+
 
 # ##############################################################################
 # Storm Introduction
@@ -543,7 +542,7 @@ Computation
   - **tuple**: a named list of values
   - **stream**: a (possibly) unbounded sequence of tuples processed by the application
 
-23
+
 
 # ##############################################################################
 # Storm Rationale
@@ -558,7 +557,7 @@ Computation
   - **Painful to scale**: When the message throughput gets too high for a single worker or queue, developer must partition how the data is spread around. Developer must reconfigure the other workers to know the new locations to send messages.
     - More opportunities for failures
 
-24
+
 
 From: http://storm.apache.org/releases/current/Rationale.html
 ```
@@ -576,7 +575,6 @@ From: http://storm.apache.org/releases/current/Rationale.html
 - **Guarantees no data loss**:
   - A realtime system must have strong guarantees about data being successfully processed. A system that drops data has a very limited set of use cases. Storm guarantees that every message will be processed, in direct contrast with other systems, like S4 (Yahoo).
 
-25
 
 From: http://storm.apache.org/releases/current/Rationale.html
 
@@ -592,7 +590,7 @@ From: http://storm.apache.org/releases/current/Rationale.html
 - **Programming language agnostic**:
   - Robust and scalable realtime processing not limited to a single platform. Storm topologies and processing components can be defined in any language, making Storm highly accessible.
 
-26
+
 
 From: http://storm.apache.org/releases/current/Rationale.html
 
@@ -608,7 +606,7 @@ From: http://storm.apache.org/releases/current/Rationale.html
 - A tuple is dynamically typed, so you just need to define the names of the fields in a tuple and not their data type
 - Fields in a tuple can be accessed by its name **getValueByField**(String) or its positional index **getValue**(int)
 
-27
+
 
 # ##############################################################################
 # Basics
@@ -619,7 +617,7 @@ From: http://storm.apache.org/releases/current/Rationale.html
   - **spouts**: *are the sources of streams in a topology. Generally will read tuples from external sources (e.g., Twitter API) or from disk and emit them in the topology*
   - **bolts**: process input streams and produce output streams. They encapsulate the application logic
 
-28
+
 
 ![](images/lecture_12_1/lec_12_1_slide_28_image_1.png)
 
@@ -628,7 +626,7 @@ From: http://storm.apache.org/releases/current/Rationale.html
 # ##############################################################################
 
 * Topology Example
-29
+
 
 Word Count: count the different words in a stream of sentences
 
@@ -651,7 +649,7 @@ builder.setBolt("count-bolt", new WordCountBolt())
 # ##############################################################################
 
 * Topology Example
-30
+
 
 **public class** SplitSentenceBolt **extends** BaseRichBolt {
         **private** OutputCollector collector;
@@ -676,7 +674,7 @@ builder.setBolt("count-bolt", new WordCountBolt())
 # ##############################################################################
 
 * Topology Example
-31
+
 
 **public class** WordCountBolt **extends** BaseRichBolt {
          **private** OutputCollector collector;
@@ -703,7 +701,7 @@ builder.setBolt("count-bolt", new WordCountBolt())
 - When executed, the topology is deployed as a set of processing entities over a set of computational resources (typically a cluster). Parallelism is achieved in Storm by running multiple replicas of the same spout/bolt
   - **Groupings** specify how tuples are routed to the various replicas
 
-32
+
 
 ![](images/lecture_12_1/lec_12_1_slide_32_image_1.png)
 ```
@@ -722,7 +720,6 @@ builder.setBolt("count-bolt", new WordCountBolt())
   - *global grouping*: all the tuples go to the same replica (e.g., lowest ID)
 - Users also have the possibility of implementing their own grouping through the CustomStreamGrouping interface
 
-33
 
 # ##############################################################################
 # Guaranteed Processing (1)
@@ -735,7 +732,7 @@ builder.setBolt("count-bolt", new WordCountBolt())
   - the bolt generates a set of words for each sentence (*child tuples*)
 - A tuple is fully processed *iff it and all its child tuples have been correctly processed* by the topology
 
-34
+
 
 # ##############################################################################
 # Guaranteed Processing (2)
@@ -746,7 +743,6 @@ builder.setBolt("count-bolt", new WordCountBolt())
   - If all bolts in the tree acknowledge the tuple and child tuples the message processing is *complete*
   - If any bolts explicitly fail a tuple, or exceed a time-out period, the processing is *failed*
 
-35
 
 Another way to look at it is to consider the tuple tree:
 
@@ -775,7 +771,7 @@ Another way to look at it is to consider the tuple tree:
       // …
    }
 
-36
+
 
 Assign a unique ID to any emitted tuple
 
@@ -798,7 +794,7 @@ Implement the ack and fail methods for handling successes and failures
    this.collector.fail(tuple);
 }
 
-37
+
 
 # ##############################################################################
 # Internal Architecture
@@ -815,7 +811,7 @@ Implement the ack and fail methods for handling successes and failures
 - **Workers**
   - Listen for assigned work and execute the application.
 
-38
+
 
 # ##############################################################################
 # Storm Architecture (1)
@@ -827,7 +823,6 @@ Implement the ack and fail methods for handling successes and failures
   - **Worker nodes**: nodes of the cluster in which applications are executed. Each of them run a Supervisor, that communicates with *Nimbus* about topologies and available resources
 - The coordination between the two entities is done through *Zookeper* that is also used for fault tolerance
 
-39
 
 # ##############################################################################
 # Storm components: Nimbus
@@ -846,7 +841,7 @@ Implement the ack and fail methods for handling successes and failures
   - Only one Nimbus node in a Storm Cluster
   - Can be restarted without having any effects on the already running tasks on the worker nodes
 
-40
+
 ```
 
 ```markdown
@@ -865,7 +860,7 @@ worker processes to execute the tasks assigned to that node
   - Like Nimbus, a supervisor daemon is also fail-fast and stores all of its state in ZooKeeper so that it can be restarted without any state loss
   - A single supervisor daemon normally handles multiple worker processes 
 
-41
+
 
 # ##############################################################################
 # Storm Architecture (2)
@@ -883,7 +878,7 @@ spout)
 inter-topology parallelism, Executors intra-topology and Tasks intra-component
 - By default there is a 1:1 association between Executor and Tasks
 
-42
+
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_42_image_1.png)
 
@@ -917,7 +912,7 @@ Spawns Workers
 
 Processes  Tasks
 
-43
+
 
 # ##############################################################################
 # On Top of Storm
@@ -930,7 +925,7 @@ Processes  Tasks
   - *Yahoo/Apache Samoa*: a distributed streaming machine learning (ML) framework that can run on top of Storm 
   - *Twitter Summingbird*: streaming MapReduce 
 
-44
+
 
 # ##############################################################################
 # Storm Use Cases 
@@ -940,7 +935,6 @@ Processes  Tasks
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_45_image_1.png)
 
-45
 
 # ##############################################################################
 # Comparison  of big data tools
@@ -955,7 +949,7 @@ Processes  Tasks
 - Storm is better choice for real time data processing 
 - Reference: “Benchmarking Streaming Computation Engines: Storm, Flink and Spark Streaming”, By S. Chintapalliet al., Yahoo Inc., Presented at 2016 IEEE International Parallel and Distributed Processing Symposium Workshops
 
-46
+
 
 # ##############################################################################
 # Storm vs. Hadoop
@@ -969,7 +963,7 @@ Processes  Tasks
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_47_image_3.png)
 
-47
+
 
 # ##############################################################################
 # Storm- Pros and Cons
@@ -987,7 +981,7 @@ Cons
 - Use of native scheduler and resource management feature (Nimbus) in particular, can become bottlenecks 
 - Difficulties with debugging given the way the threads and data flows are split
 
-48
+
 ```
 
 ```
@@ -1003,7 +997,7 @@ Storm, Flink and Spark Streaming
 
 ![lec_12_1_slide_49_image_2](images/lecture_12_1/lec_12_1_slide_49_image_2.png)
 
-49
+
 
 # ##############################################################################
 # Spark Streaming
@@ -1011,7 +1005,7 @@ Storm, Flink and Spark Streaming
 
 * Spark Streaming
 
-50
+
 
 # ##############################################################################
 # What is Spark Streaming?
@@ -1024,7 +1018,7 @@ Storm, Flink and Spark Streaming
 - Efficient and fault-tolerant stateful stream processing
 - Simple batch-like API for implementing complex algorithms
 
-51
+
 
 # ##############################################################################
 # Integration with Batch Processing
@@ -1043,7 +1037,7 @@ Storm, Flink and Spark Streaming
 
 ![lec_12_1_slide_52_image_1](images/lecture_12_1/lec_12_1_slide_52_image_1.png)
 
-52
+
 
 # ##############################################################################
 # Stateful Stream Processing
@@ -1055,7 +1049,7 @@ Storm, Flink and Spark Streaming
   - Each node has mutable state
   - For each record, update state and send new records
 
-53
+
 
 - State is lost if node dies!
 - Making stateful stream processing be fault-tolerant is challenging
@@ -1075,7 +1069,7 @@ Storm, Flink and Spark Streaming
   - Processes each record *exactly once*
   - Per state transaction to external database is slow
 
-54
+
 
 # ##############################################################################
 # Discretized Stream Processing (1)
@@ -1085,7 +1079,6 @@ Storm, Flink and Spark Streaming
 
 Run a streaming computation as a series of very small, deterministic batch jobs
 
-55
 
 **Spark**
 
@@ -1108,7 +1101,7 @@ live data stream
 
 Run a streaming computation as a series of very small, deterministic batch jobs
 
-56
+
 
 - Batch sizes as low as ½ second, latency of about 1 second
 - Potential for combining batch processing and streaming processing in the same system
@@ -1139,7 +1132,7 @@ live data stream
   - saveAsHadoopFiles – saves to HDFS
   - foreach – do anything with each batch of results
 
-57
+
 
 # ##############################################################################
 # Example – Get hashtags from Twitter (1)
@@ -1156,7 +1149,6 @@ stored in memory as an RDD (immutable, distributed)
 
 Twitter Streaming API
 
-58
 
 # ##############################################################################
 # Example – Get hashtags from Twitter (2)
@@ -1177,7 +1169,7 @@ tweets DStream
 hashTags Dstream
 [#cat, #dog, … ]
 
-59
+
 
 # ##############################################################################
 # Example – Get hashtags from Twitter (3)
@@ -1208,7 +1200,7 @@ hashTags DStream
 
 every batch saved to HDFS
 
-60
+
 
 # ##############################################################################
 # Example – Get hashtags from Twitter (4)
@@ -1245,7 +1237,7 @@ hashTags DStream
 
 Write to database, update analytics UI, do whatever you want
 
-61
+
 
 # ##############################################################################
 # Java Example
@@ -1264,7 +1256,7 @@ hashTags.saveAsHadoopFiles("hdfs://...")
 
 Function object
 
-62
+
 
 # ##############################################################################
 # Window-based Transformations
@@ -1281,7 +1273,7 @@ window length
 
 sliding interval
 
-63
+
 
 # ##############################################################################
 # Arbitrary Stateful Computations
@@ -1293,7 +1285,7 @@ Specify function to generate new state based on previous state and new data
   	updateMood(newTweets, lastMood) => newMood
  	moods = tweets.updateStateByKey(updateMood _)
 
-64
+
 ```
 
 ```markdown
@@ -1307,7 +1299,7 @@ Can inter-mix RDD and DStream operations
  tweets.transform(tweetsRDD => {		tweetsRDD.join(spamHDFSFile).filter(...)
  })
 
-65
+
 
 # ##############################################################################
 # Fault-tolerance: Worker
@@ -1340,7 +1332,7 @@ RDD
 hashTags
 RDD
 
-66
+
 
 # ##############################################################################
 # Fault-tolerance: Master
@@ -1353,7 +1345,7 @@ RDD
 - More information in the Spark Streaming programmer guide
 - Automated master fault recovery available using *write ahead logs*
 
-67
+
 
 # ##############################################################################
 # Performance
@@ -1367,7 +1359,7 @@ Can process **6 GB/sec (60M records/sec**) of data on 100 nodes at **sub-second*
 
 ![](images/lecture_12_1/lec_12_1_slide_68_image_2.png)
 
-68
+
 
 # ##############################################################################
 # Comparison with Storm and S4
@@ -1383,7 +1375,7 @@ Higher throughput than Storm
 
 ![](images/lecture_12_1/lec_12_1_slide_69_image_2.png)
 
-69
+
 
 # ##############################################################################
 # Unifying Batch and Stream Processing Models
@@ -1399,7 +1391,7 @@ val tweets = ssc.twitterStream()
 val hashTags = tweets.flatMap (status => getTags(status))
 hashTags.saveAsHadoopFiles("hdfs://...”)
 
-70
+
 
 # ##############################################################################
 # Vision - *one stack to rule them all*
@@ -1453,4 +1445,4 @@ object ProcessLiveStream {
 - Spark Streaming uses **micro-batching** and is fundamentally limited in the latencies it can deliver
   - because it is based on a batch analytics platform, i.e., Spark
 
-72
+

@@ -50,7 +50,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 © UMD DATA605
 
-2
 
 # ##############################################################################
 # Outline (2)
@@ -66,7 +65,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 © UMD DATA605
 
-3
+
 
 # ##############################################################################
 # Cloud Computing (1)
@@ -88,7 +87,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 © UMD DATA605
 
-4
+
 
 ![](images/lecture_11_1/lec_11_1_slide_4_image_1.png)
 
@@ -110,7 +109,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Administering
     - Installing, updating, maintaining software stack
 
-5
 
 © UMD DATA605
 
@@ -126,7 +124,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - No need to estimate a multi-year resource plan
   - Pick machines that suit your application and data requirements
 
-6
+
 
 © UMD DATA605
 
@@ -151,7 +149,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 © UMD DATA605
 
-7
+
 
 ![](images/lecture_11_1/lec_11_1_slide_7_image_1.png)
 
@@ -166,7 +164,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 * X-as-a-Service
 © UMD DATA605
 
-8
+
 
 ![](images/lecture_11_1/lec_11_1_slide_8_image_1.png)
 
@@ -193,7 +191,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 * X-as-a-Service
 © UMD DATA605
 
-9
+
 
 **... XaaS**
 - Business model of “Anything-as-a-service” (2010s)
@@ -211,7 +209,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 * Platform-as-a-Service
 © UMD DATA605
 
-10
+
 
 ![](images/lecture_11_1/lec_11_1_slide_10_image_1.png)
 
@@ -238,7 +236,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 # ##############################################################################
 
 * Different Cloud Computing Layers‏
-11
+
 
 From Dr. Mehmet Gunes, U. Nevada Reno
 
@@ -270,7 +268,7 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 
 **Hosting – Physical data centers (e.g., IBM, HP, DigitalOcean)**
 
-12
+
 
 From Dr. Mehmet Gunes, U. Nevada Reno
 
@@ -283,7 +281,6 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 * Cloud Types
 © UMD DATA605
 
-13
 
 ![](images/lecture_11_1/lec_11_1_slide_13_image_1.png)
 
@@ -301,7 +298,7 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 
 © UMD DATA605
 
-14
+
 
 # ##############################################################################
 # Data Centers (1)
@@ -317,7 +314,7 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 
 © UMD DATA605
 
-15
+
 
 ![](images/lecture_11_1/lec_11_1_slide_15_image_2.png)
 
@@ -348,7 +345,7 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 
 © UMD DATA605
 
-16
+
 
 ![](images/lecture_11_1/lec_11_1_slide_16_image_1.png)
 
@@ -365,7 +362,6 @@ Meta investment in 18 data centers
 * Data Centers
 © UMD DATA605
 
-17
 
 ![](images/lecture_11_1/lec_11_1_slide_17_image_1.png)
 
@@ -382,7 +378,7 @@ From James Hamilton Presentation
 
 © UMD DATA605
 
-18
+
 
 ![](images/lecture_11_1/lec_11_1_slide_18_image_1.png)
 
@@ -393,7 +389,7 @@ From James Hamilton Presentation
 * Amazon Web Services
 © UMD DATA605
 
-19
+
 
 As of 2022, 28 geographical regions
 
@@ -413,7 +409,6 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-20
 
 ![](images/lecture_11_1/lec_11_1_slide_20_image_2.png)
 
@@ -429,7 +424,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-21
+
 
 |        | S3 Default | S3 RRS | S3 IA | Glacier |
 |---------|---------|---------|---------|---------|
@@ -465,7 +460,6 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-22
 
 ![](images/lecture_11_1/lec_11_1_slide_22_image_1.png)
 
@@ -483,7 +477,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-23
+
 
 # ##############################################################################
 # Virtualization (1)
@@ -504,7 +498,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-24
+
 ```
 
 ```
@@ -527,7 +521,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-25
+
 
 ![alt text](images/lecture_11_1/lec_11_1_slide_25_image_2.png)
 
@@ -544,7 +538,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-26
+
 
 # ##############################################################################
 # Docker
@@ -563,7 +557,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-27
+
 
 ![alt text](images/lecture_11_1/lec_11_1_slide_27_image_1.png)
 
@@ -583,7 +577,6 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-28
 
 # ##############################################################################
 # Programming Frameworks
@@ -609,7 +602,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-29
+
 
 # ##############################################################################
 # MapReduce Framework
@@ -634,7 +627,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-30
+
 
 # ##############################################################################
 # Other Programming Frameworks
@@ -664,7 +657,6 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-31
 
 # ##############################################################################
 # Outline (6)
@@ -680,7 +672,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-32
+
 ```
 
 ```
@@ -705,7 +697,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-33
+
 
 # ##############################################################################
 # Advantages of Cloud Computing (2)
@@ -724,7 +716,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-34
+
 
 # ##############################################################################
 # Advantages of Cloud Computing (3)
@@ -744,7 +736,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-35
+
 
 # ##############################################################################
 # Advantages of Cloud Computing (4)
@@ -765,7 +757,6 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-36
 
 # ##############################################################################
 # Disadvantages of Cloud Computing (1)
@@ -790,7 +781,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-37
+
 
 # ##############################################################################
 # Disadvantages of Cloud Computing (2)
@@ -811,7 +802,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-38
+
 
 # ##############################################################################
 # Disadvantages of Cloud Computing (3)
@@ -834,7 +825,7 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-39
+
 
 # ##############################################################################
 # Disadvantages of Cloud Computing (4)
@@ -854,4 +845,4 @@ As of 2022, 28 geographical regions
 
 © UMD DATA605
 
-40
+

@@ -50,7 +50,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Data science with Python and Dask, 2019
     - Amazon
 
-2
 ![alt_text](images/lecture_9_2/lec_9_2_slide_2_image_1.png)
 
 # ##############################################################################
@@ -75,7 +74,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Use frameworks for massive datasets
   - E.g., Hadoop, Spark, Dask, Ray
 
-3
+
 ![alt_text](images/lecture_9_2/lec_9_2_slide_3_image_1.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_3_image_2.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_3_image_3.png)
@@ -105,7 +104,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Need to think about *what to do* it and *how to do* it efficiently
 - Cumbersome framework (Pandas easy, Hadoop difficult)
 
-4
 
 # ##############################################################################
 # Dask
@@ -135,7 +133,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Dask can use cluster managers
     - E.g., Yarn, Mesos, Kubernetes, AWS ECS
 
-5
+
 ![alt_text](images/lecture_9_2/lec_9_2_slide_5_image_1.png)
 
 # ##############################################################################
@@ -143,7 +141,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 # ##############################################################################
 
 * Dask Layers
-6
+
 ![alt_text](images/lecture_9_2/lec_9_2_slide_6_image_1.png)
 
 # ##############################################################################
@@ -175,7 +173,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Need to write code to expose parallelism
     - Costs of maintaining a cluster
 
-7
+
 ![alt_text](images/lecture_9_2/lec_9_2_slide_7_image_1.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_7_image_2.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_7_image_3.png)
@@ -208,7 +206,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - **persist()** tells Dask to keep the intermediate result in memory
   - This speeds up a large and complex DAG that needs to be reused many times
 
-8
+
 
 ```
 
@@ -226,7 +224,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Dag Bag** coordinates Python lists of objects
   - Parallelize computations on unstructured or semi-structured data
 
-9
+
 
 ![](images/lecture_9_2/lec_9_2_slide_9_image_1.png)
 
@@ -251,7 +249,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Graph is composed of 99 tasks
   - Each partition reads data, splits data, initializes df object
 
-10
+
 
 ![](images/lecture_9_2/lec_9_2_slide_10_image_1.png)
 
@@ -273,7 +271,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Handle computations that don’t fit in native Dask data structures (e.g., Dask DataFrame)
 - In the example below there is parallelism that can be exploited
 
-11
+
 
 ![](images/lecture_9_2/lec_9_2_slide_11_image_1.png)
 
@@ -295,7 +293,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **
   - Dask client can be used anywhere **concurrent.futures** can be used
 
-12
+
 
 ![](images/lecture_9_2/lec_9_2_slide_12_image_1.png)
 
@@ -313,7 +311,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Break program in medium-size tasks of computation
   - E.g., a function call
 
-13
+
 
 ![](images/lecture_9_2/lec_9_2_slide_13_image_1.png)
 
@@ -328,7 +326,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 * Encoding Task Graph
 - Dask encodes tasks in terms of Python dicts and functions
 
-14
+
 
 ![](images/lecture_9_2/lec_9_2_slide_14_image_1.png)
 
@@ -355,7 +353,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Distributed scheduler
   - It can run locally or distributed across a cluster
 
-15
 
 ![](images/lecture_9_2/lec_9_2_slide_15_image_1.png)
 
@@ -384,7 +381,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Network unreliability
     - Just re-run or remove the isolated nodes
 
-16
+
 
 ![](images/lecture_9_2/lec_9_2_slide_16_image_1.png)
 
@@ -409,7 +406,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Optimized for MapReduce operations over a collection
   - Difficult to set-up and configure
 
-17
+
 
 # ##############################################################################
 # Tutorial
@@ -420,4 +417,3 @@ Tutorial
 - From the official documentation
 https://docs.dask.org/en/stable/10-minutes-to-dask.html
 
-18

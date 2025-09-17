@@ -48,8 +48,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Typical graph analysis tasks
 - Executing graph analysis tasks
 
-[TEXT]
-2
 
 # ##############################################################################
  # Overview (2)
@@ -68,8 +66,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Executing graph analysis tasks
   - E.g., Google Pregel, Apache Giraph, Spark GraphX
 
-[TEXT]
-3
+
 
 # ##############################################################################
  # Overview (3)
@@ -83,8 +80,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Typical graph analysis tasks
 - Executing graph analysis tasks
 
-[TEXT]
-4
+
 
 # ##############################################################################
 # Graphs: Background
@@ -98,8 +94,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Graph theory and algorithms widely studied in Computer Science
   - Not as much work on managing graph-structured data
 
-[TEXT]
-5
+
 
 # ##############################################################################
 # Graph Data Structures: Motivation
@@ -108,8 +103,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 * Graph Data Structures: Motivation
 - Increasing interest in querying and reasoning about the *underlying graph structure *in a variety of disciplines
 
-[TEXT]
-6
+
 
 ![](images/lecture_12_2/lec_12_2_slide_6_image_1.png)
 
@@ -120,8 +114,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 # ##############################################################################
 
 * Motivation
-[TEXT]
-7
+
 
 ![](images/lecture_12_2/lec_12_2_slide_7_image_1.png)
 
@@ -146,8 +139,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Dedicated solutions: Google Pregel / Apache Giraph, Spark GraphX
     - Problems getting worse with increasingly large graphs seen in practice
 
-[TEXT]
-8
+
 ```
 
 ```text
@@ -163,7 +155,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Typical graph analysis tasks
 - Executing graph analysis tasks
 
-9
+
 
 # ##############################################################################
 # Knowledge Graphs
@@ -186,7 +178,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Provide a formal representation of knowledge
   - Promote interoperability across knowledge bases
 
-10
+
 
 # ##############################################################################
 # Graph Data Models: RDF
@@ -211,7 +203,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Can add new nodes and relationships
     - Support ontologies
 
-11
+
 
 ![](images/lecture_12_2/lec_12_2_slide_11_image_1.png)
 
@@ -228,7 +220,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Similar expressive power to RDFs but less “schema” so more difficult to interoperate
 - Used by many open-source graph data management tools
 
-12
+
 
 ![](images/lecture_12_2/lec_12_2_slide_12_image_1.png)
 
@@ -243,7 +235,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - It is a directed labeled tree
 - Popular data exchange format for non-tabular data
 
-13
 
 ![](images/lecture_12_2/lec_12_2_slide_13_image_1.png)
 
@@ -275,7 +266,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Typical graph analysis tasks
 - Executing graph analysis tasks
 
-14
+
 
 # ##############################################################################
 # Storing Graph Data
@@ -299,7 +290,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Often no declarative language (similar to SQL)
   - You need to write programs
 
-15
+
 
 # ##############################################################################
 # Graph Databases
@@ -318,7 +309,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Most applications need to be written using programmatic interfaces
   - Expose a programmatic API to write arbitrary graph algorithms
 
-16
+
 ```
 
 ```text
@@ -334,7 +325,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Typical graph analysis tasks
 - Executing graph analysis tasks
 
-17
+
 
 # ##############################################################################
 # Query Languages for Graph Databases
@@ -357,7 +348,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Query language for RDF data
   - Standardized by W3C
 
-18
+
 
 **PREFIX** **foaf**: <http://xmlns.com/foaf/0.1/>
 **SELECT** ?name
@@ -394,7 +385,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Incremental backups
 - Can run in small application or run on large clusters of servers
 
-19
+
 
 ![](images/lecture_12_2/lec_12_2_slide_19_image_1.png)
 
@@ -426,7 +417,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Graph DB approach**
   - Provide values and structure only where necessary
 
-20
+
 
 ![](images/lecture_12_2/lec_12_2_slide_20_image_1.png)
 
@@ -456,7 +447,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Labels indexed to accelerate finding nodes in the graph
   - Native label indexes optimized for performance
 
-21
+
 
 # ##############################################################################
 # Cypher Example (1)
@@ -481,7 +472,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **     vintage: 2015})**
 **    CREATE (p)-[r:reported_on]->(w)**
 
-22
+
 
 # ##############################################################################
 # Cypher Example (2)
@@ -498,7 +489,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **  (g:GrapeType {name: "Riesling"})**
 **  CREATE (w)-[r:grape_type]->(g)**
 
-23
 
 ![](images/lecture_12_2/lec_12_2_slide_23_image_1.png)
 
@@ -524,7 +514,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **$ MATCH (w:Wine), (g:GrapeType {name: "Riesling"})**
 **    CREATE (w)-[r:grape_type]->(g)**
 
-24
+
 
 ![](images/lecture_12_2/lec_12_2_slide_24_image_1.png)
 ```
@@ -561,7 +551,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **
 - The changes were made “superimposing” new relationships without changing the previous data
 
-25
+
 
 ![](images/lecture_12_2/lec_12_2_slide_25_image_1.png)
 
@@ -593,7 +583,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **  RETURN fof.name;
 **
 
-26
+
 
 ![](images/lecture_12_2/lec_12_2_slide_26_image_1.png)
 
@@ -613,7 +603,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **SKIP [Number] LIMIT [Number]
 **
 
-27
+
 
 # ##############################################################################
 # Simple query
@@ -632,7 +622,7 @@ Get all nodes of type *Program* that have the name *Hello World!*
 Type = Program
 Name = ‘Hello World!’
 
-28
+
 
 # ##############################################################################
 # Query relationships
@@ -652,7 +642,7 @@ Type = Programmer
 
 **Author**
 
-29
+
 
 # ##############################################################################
 # Matching nodes and relationships
@@ -677,7 +667,7 @@ Type = Programmer
 - Path
 **	   p = (a)-->(b)**
 
-30
+
 
 # ##############################################################################
 # More options
@@ -694,7 +684,7 @@ Could be used also as:
 (a)-[r*2]->(b) – r gets a sequence of relationships
 (a)-[*{prop:val}]->(b)
 
-31
+
 
 # ##############################################################################
 # Operators
@@ -714,7 +704,7 @@ Could be used also as:
 	 Concatenation through + 
 	 IN to check if an element exists in a collection
 
-32
+
 ```
 
 ```
@@ -734,8 +724,6 @@ Could be used also as:
   (Returns all nodes where name = 'Bob' plus all nodes
   without a name property)
 
-33
-
 # ##############################################################################
 # Functions
 # ##############################################################################
@@ -754,7 +742,7 @@ Could be used also as:
   - WHERE SINGLE (x IN nodes(p) WHERE var.eyes = "blue") – Only one
 * nodes(p) – nodes of the path p
 
-34
+
 
 # ##############################################################################
 # With
@@ -767,7 +755,7 @@ Could be used also as:
   - Introduce aggregates which can then be used in predicates in WHERE.
   - Separate reading from updating of the graph. Every part of a query must be either read-only or write-only.
 
-35
+
 
 # ##############################################################################
 # Data access is *programmatic*
@@ -784,7 +772,7 @@ Could be used also as:
 - Path finding
 - Pattern matching
 
-36
+
 
 # ##############################################################################
  # Overview (7)
@@ -798,7 +786,7 @@ Could be used also as:
 - **Typical graph analysis tasks**
 - Executing graph analysis tasks
 
-37
+
 
 # ##############################################################################
 # Queries vs Analysis Tasks
@@ -817,7 +805,7 @@ Could be used also as:
     - How to handle the large volume of data efficiently
     - How to parallelize if data doesn’t fit in memory / disk
 
-38
+
 
 # ##############################################################################
 # Examples of Graph Tasks
@@ -841,7 +829,7 @@ Could be used also as:
   - Network flows
   - Spanning trees
 
-39
+
 
 # ##############################################################################
 # Queries: Subgraph Matching
@@ -852,7 +840,7 @@ Could be used also as:
   - Query graph can specify restrictions on the graph structure, on values of node attributes, and so on
   - An important variation: *approximate* matching
 
-40
+
 
 ![](images/lecture_12_2/lec_12_2_slide_40_image_1.png)
 ```
@@ -867,7 +855,7 @@ Could be used also as:
 - How to define “best captures”?
   - E.g., “shortest path”: but that may not be most informative 
 
-41
+
 
 ![](images/lecture_12_2/lec_12_2_slide_41_image_1.png)
 
@@ -880,7 +868,7 @@ Could be used also as:
 - Many different definition of centrality measures
   - Can give fairly different results
 
-42
+
 
 - **Degree centrality of a node **u*
   - *Number *of edges incident on **u **
@@ -906,7 +894,7 @@ Could be used also as:
 edges 
   - And so on … 
 
-43
+
 
 # ##############################################################################
  # Overview (8)
@@ -922,7 +910,7 @@ edges
 - **Executing graph analysis tasks
 **
 
-44
+
 
 # ##############################################################################
 # Bulk Synchronous Parallel (BSP) (1)
@@ -946,14 +934,14 @@ edges
 - Suitable for iterative graph algorithms
   - E.g., PageRank and Shortest Path
 
-45
+
 
 # ##############################################################################
 # Bulk Synchronous Parallel (BSP) (2)
 # ##############################################################################
 
 * Bulk Synchronous Parallel (BSP) 
-46
+
 
 ![](images/lecture_12_2/lec_12_2_slide_46_image_1.png)
 
@@ -975,7 +963,6 @@ time
 - Handles graph mutations and updates during computation
 - Not open-source, used internally at Google
 
-47
 
 # ##############################################################################
 # Apache Giraph
@@ -991,7 +978,6 @@ time
 - Suitable for large-scale graph analytics and machine learning algorithms
 - Actively maintained and widely adopted in the open-source community
 
-48
 
 ![](images/lecture_12_2/lec_12_2_slide_48_image_1.png)
 
@@ -1012,6 +998,6 @@ time
 - Implements various graph algorithms
   - E.g., PageRank, Connected Components, and Shortest Path
 
-49
+
 
 ![](images/lecture_12_2/lec_12_2_slide_49_image_1.png)

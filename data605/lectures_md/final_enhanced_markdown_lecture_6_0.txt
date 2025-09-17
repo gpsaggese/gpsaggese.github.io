@@ -5,7 +5,7 @@
 * Class Announcement - Spring 2024
 - https://github.com/sorrentum/sorrentum/tree/master/sorrentum_sandbox/projects/spring2024
 
-1
+
 
 # ##############################################################################
 # Class Announcement - Spring 2023
@@ -31,6 +31,5 @@
   - Run Git / GitHub tutorial from https://github.com/gpsaggese/umd_data605/tree/main/tutorials
   - Run Docker tutorial
 
-2
 
 ![](images/lecture_6_0/lec_6_0_slide_2_image_1.png)

@@ -66,7 +66,7 @@ Silbershatz: Chap 2
 
 © UMD DATA605
 
-3
+
 
 # ##############################################################################
 # Relational Model: Key Definitions
@@ -90,7 +90,7 @@ Silbershatz: Chap 2
 
 © UMD DATA605
 
-4
+
 
 ![](images/lecture_4_1/lec_4_1_slide_4_image_1.png)
 
@@ -118,7 +118,7 @@ Silbershatz: Chap 2
 
 © UMD DATA605
 
-5
+
 
 ![](images/lecture_4_1/lec_4_1_slide_5_image_1.png)
 
@@ -135,7 +135,7 @@ Silbershatz: Chap 2
 * Example: University DB
 © UMD DATA605
 
-6
+
 
 ![](images/lecture_4_1/lec_4_1_slide_6_image_1.png)
 
@@ -180,7 +180,7 @@ Silbershatz: Chap 2
 
 © UMD DATA605
 
-7
+
 
 ![](images/lecture_4_1/lec_4_1_slide_7_image_1.png)
 
@@ -208,7 +208,7 @@ Silbershatz: Chap 2
 
 © UMD DATA605
 
-8
+
 
 ![](images/lecture_4_1/lec_4_1_slide_8_image_1.png)
 ```
@@ -234,7 +234,7 @@ Silbershatz: Chap 2
 
 © UMD DATA605
 
-9
+
 
 ![images/lecture_4_1/lec_4_1_slide_9_image_1.png](images/lecture_4_1/lec_4_1_slide_9_image_1.png)
 
@@ -255,7 +255,7 @@ Silbershatz: Chap 2
 
 © UMD DATA605
 
-10
+
 
 ![images/lecture_4_1/lec_4_1_slide_10_image_1.png](images/lecture_4_1/lec_4_1_slide_10_image_1.png)
 
@@ -277,7 +277,7 @@ Silbershatz: Chap 2
 
 © UMD DATA605
 
-11
+
 
 ![images/lecture_4_1/lec_4_1_slide_11_image_1.png](images/lecture_4_1/lec_4_1_slide_11_image_1.png)
 
@@ -301,7 +301,6 @@ Silbershatz: Chap 2
 
 © UMD DATA605
 
-12
 
 ![images/lecture_4_1/lec_4_1_slide_12_image_1.png](images/lecture_4_1/lec_4_1_slide_12_image_1.png)
 
@@ -327,7 +326,7 @@ Silbershatz: Chap 2
 
 © UMD DATA605
 
-13
+
 
 ![images/lecture_4_1/lec_4_1_slide_13_image_1.png](images/lecture_4_1/lec_4_1_slide_13_image_1.png)
 
@@ -356,7 +355,7 @@ Silbershatz: Chap 2
 
 © UMD DATA605
 
-14
+
 
 ![images/lecture_4_1/lec_4_1_slide_14_image_1.png](images/lecture_4_1/lec_4_1_slide_14_image_1.png)
 
@@ -369,7 +368,7 @@ Silbershatz: Chap 2
 * SQL Overview
 © UMD DATA605
 
-15
+
 
 - **Relational algebra**: mathematical description of a language to manipulate *relations*
 - **SQL**: programming language to describe and transform data in a relational DB
@@ -398,7 +397,7 @@ Silbershatz: Chap 2
 **
 © UMD DATA605
 
-16
+
 
 - Data description language (DDL)
 **CREATE TABLE <name> (<field> <domain>, ... )**
@@ -416,7 +415,7 @@ Silbershatz: Chap 2
 * Create Table
 © UMD DATA605
 
-17
+
 
 **CREATE TABLE r**
 **(A_1 D_1,**
@@ -449,7 +448,7 @@ where:
 * Select
 © UMD DATA605
 
-18
+
 
 **SELECT A_1, A_2, ..., A_n**
 **FROM r_1, r_2, ..., r_m**
@@ -482,8 +481,6 @@ where:
   - False AND Unknown = False
 - In a WHERE clause, if the result is Unknown it’s not included
 
-19
-
 © UMD DATA605
 
 # ##############################################################################
@@ -503,7 +500,7 @@ where:
 **    GROUP BY dept_name;**
 - salary is not in GROUP BY so it must be in an aggregate function
 
-20
+
 
 ![](images/lecture_4_1/lec_4_1_slide_20_image_1.png)
 ![](images/lecture_4_1/lec_4_1_slide_20_image_2.png)
@@ -529,7 +526,7 @@ where:
   - (optional) HAVING is applied to each group and groups are filtered
   - SELECT generates tuples of the results, applying aggregate functions to get a single result for each group
 
-21
+
 
 © UMD DATA605
 
@@ -550,7 +547,7 @@ where:
 **      GROUP BY dept_name) AS tmp**
 **WHERE avg_salary > 42000**
 
-22
+
 
 ![](images/lecture_4_1/lec_4_1_slide_22_image_1.png)
 
@@ -570,7 +567,7 @@ where:
 **        FROM department, max_budget**
 **        WHERE department.budget = max_budget.value**
 
-23
+
 
 ![](images/lecture_4_1/lec_4_1_slide_23_image_1.png)
 
@@ -595,7 +592,7 @@ To insert data into a relation we can specify tuples to insert
 - Many DB have bulk loader utilities to insert a large set of tuples into a relation, reading from formatted text files
 This is much faster than **INSERT** statements
 
-24
+
 
 © UMD DATA605
 ```
@@ -619,7 +616,7 @@ This is much faster than **INSERT** statements
 **SET salary = salary * 1.05**
 **WHERE salary < (SELECT AVG(salary) FROM instructor)**
 
-25
+
 
 © UMD DATA605
 
@@ -636,7 +633,7 @@ where:
 - Remove all tuples (but not the table)
 **DELETE FROM instructor**
 
-26
+
 
 © UMD DATA605
 
@@ -661,7 +658,7 @@ where:
   - Play with it
   - Build your mental model
 
-27
+
 
 © UMD DATA605
 
@@ -687,7 +684,7 @@ where:
 
 © UMD DATA605
 
-29
+
 
 ![](images/lecture_4_1/lec_4_1_slide_29_image_1.png)
 
@@ -701,7 +698,7 @@ where:
 
 © UMD DATA605
 
-30
+
 
 **CREATE TABLE movieExec (
           name char(30),
@@ -740,7 +737,7 @@ INSERT INTO StarsIn(starName, movieTitle, movieYear)
 
 © UMD DATA605
 
-31
+
 
 # ##############################################################################
 # SQL: Data Manipulation (2)
@@ -766,7 +763,7 @@ SET netWorth =
 
 © UMD DATA605
 
-32
+
 ```
 
 ```
@@ -789,7 +786,7 @@ title LIKE 'star wars _'**
 
 © UMD DATA605
 
-33
+
 
 # ##############################################################################
 # Single Table Queries (2)
@@ -813,7 +810,7 @@ GROUP BY year;**
 
 © UMD DATA605
 
-34
+
 
 # ##############################################################################
 # Single Table Queries (3)
@@ -836,7 +833,7 @@ WHERE 5 >= (SELECT count(*)
 
 © UMD DATA605
 
-35
+
 
 # ##############################################################################
 # Single Table Queries (4)
@@ -861,7 +858,7 @@ union/intersect/minus
 
 © UMD DATA605
 
-36
+
 
 # ##############################################################################
 # Single Table Queries (5)
@@ -882,7 +879,7 @@ SELECT *
 
 © UMD DATA605
 
-37
+
 
 # ##############################################################################
 # Multi-table Queries (1)
@@ -900,7 +897,7 @@ WHERE m.producerC# = me.cert#;**
 
 © UMD DATA605
 
-38
+
 
 # ##############################################################################
 # Multi-table Queries (2)
@@ -929,7 +926,6 @@ WHERE m.producerC# = me.cert#;**
 
 © UMD DATA605
 
-39
 
 # ##############################################################################
 # Other SQL Constructs (1)
@@ -949,7 +945,7 @@ WHERE m.producerC# = me.cert#;**
 
 © UMD DATA605
 
-40
+
 ```
 
 ```
@@ -974,7 +970,7 @@ WHERE m.producerC# = me.cert#;**
 
 © UMD DATA605
 
-41
+
 
 # ##############################################################################
 # Other SQL Constructs (3)
@@ -991,7 +987,7 @@ WHERE m.producerC# = me.cert#;**
 
 © UMD DATA605
 
-42
+
 
 # ##############################################################################
 # Integrity Constraints (1)
@@ -1010,7 +1006,7 @@ WHERE m.producerC# = me.cert#;**
 
 © UMD DATA605
 
-43
+
 
 # ##############################################################################
 # Integrity Constraints (2)
@@ -1025,7 +1021,7 @@ WHERE m.producerC# = me.cert#;**
 
 © UMD DATA605
 
-44
+
 
 # ##############################################################################
 # Additional SQL Constructs
@@ -1040,7 +1036,7 @@ WHERE m.producerC# = me.cert#;**
   - Real advantage is when subquery needs to be referenced multiple times in main select
   - Helps with complex queries, both for readability and maybe performance (can cache subquery results)
 
-45
+
 
 # ##############################################################################
 # Another SQL Construct
@@ -1053,4 +1049,3 @@ WHERE m.producerC# = me.cert#;**
 **
   - Difference from **WHERE** clause is that it applies to summarized group records, and where applies to individual records
 
-46

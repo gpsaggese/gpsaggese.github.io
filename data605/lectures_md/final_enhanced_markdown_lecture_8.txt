@@ -49,7 +49,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Sanjay Ghemawat, Howard Gobioff, and Shun-Tak Leung: The Google File System, 2003
   - Jeffrey Dean and Sanjay Ghemawat: MapReduce: Simplified Data Processing on Large Clusters, 2004
 
-3
+
 
 # ##############################################################################
 # Big Data: Sources and Applications (1)
@@ -66,7 +66,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Data from sensors / Internet of Things
 - Metadata from communication data
 
-4
+
 
 ![](images/lecture_8_1/lec_8_1_slide_4_image_1.png)
 
@@ -89,7 +89,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - E.g., semi-structured, textual, graphical data
 - **Solution**: process data with 10,000-100,000 machines
 
-5
+
 
 ![](images/lecture_8_1/lec_8_1_slide_5_image_1.png)
 
@@ -116,7 +116,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Conversion rate**
   - When a user actually purchases the advertised product or service
 
-6
+
 
 # ##############################################################################
 # Big Data: Storing and Computing
@@ -130,7 +130,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Need to be solved together and *efficiently***
   - If one phase is slow → the entire system is slow
 
-7
+
 
 # ##############################################################################
 # Processing the Web: Example
@@ -148,7 +148,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 = 4,433 years to read the web serially from disk
 - It takes even more to do something useful with the data!
 
-8
+
 
 ![](images/lecture_8_1/lec_8_1_slide_8_image_1.png)
 
@@ -175,7 +175,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Limitations on semantics, consistency, querying with respect to relational DBs
   - E.g., NoSQL DB, Mongo, Redis
 
-9
+
 
 # ##############################################################################
 # 1 Distributed File Systems
@@ -196,7 +196,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Increase performance
     - Increase reliability/availability/fault tolerance
 
-10
+
 
 # ##############################################################################
 # 2 Sharding Across Multiple DBs
@@ -216,7 +216,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Ensuring consistency is challenging
   - Relational DBs are not good at supporting constraints (e.g., foreign key) and transactions on multiple machines
 
-11
+
 
 # ##############################################################################
 # 3 Parallel and Distributed DBs
@@ -237,7 +237,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Run a query incrementally requires a lot of complexity
   - Limit to the scalability
 
-12
+
 
 # ##############################################################################
 # 4 Key-value Stores
@@ -262,7 +262,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Transactions
   - Retrieval based on non-key attributes
 
-13
+
 
 # ##############################################################################
 # 4 Parallel Key-value Stores
@@ -284,7 +284,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Replicated or partitioned across multiple machines
 - E.g., memcached or Redis
 
-14
+
 
 # ##############################################################################
 # Big Data: Computing Systems
@@ -307,7 +307,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Started as Google’s data manipulation model
     - (But it wasn’t an entirely new idea)
 
-15
+
 
 # ##############################################################################
 # Cluster Architecture (1)
@@ -330,7 +330,7 @@ Switch
 
 **2-10 Gbps backbone between racks**
 
-16
+
 
 - Today, a standard architecture for big data computation has emerged:
   - Cluster of commodity Linux nodes
@@ -351,7 +351,7 @@ Switch
 
 …
 
-17
+
 
 ![alt_text](images/lecture_8_1/lec_8_1_slide_17_image_1.png)
 
@@ -373,7 +373,7 @@ Switch
     - Google GFS, Hadoop HDFS
   - Programming model: MapReduce
 
-18
+
 
 # ##############################################################################
 # Storage Infrastructure
@@ -396,7 +396,7 @@ Switch
     - Typically with replication across machines
   - Give a single file-system view to clients
 
-19
+
 
 # ##############################################################################
 # Distributed File System
@@ -411,7 +411,7 @@ Switch
 - Bring computation directly to the data
   - “chunk servers” also serve as “compute servers”
 
-20
+
 
 # ##############################################################################
 # Hadoop Distributed File System (1)
@@ -428,7 +428,7 @@ Switch
   - Each chunk is replicated (usually 2x or 3x)
   - Keep replicas in different server racks
 
-21
+
 
 # ##############################################################################
 # Hadoop Distributed File System (2)
@@ -449,7 +449,7 @@ Switch
   - API (e.g,. Python, Java) to internal library
   - Mount HDFS on local filesystem
 
-22
+
 
 # ##############################################################################
 # MapReduce: Overview (1)
@@ -473,7 +473,7 @@ Switch
   - **reduce(function, set of values)**
     - Combine all the values using a binary function (e.g., add) **reduce(add, [0, 1, 2, 3]) -> 6**
 
-23
+
 
 # ##############################################################################
 # MapReduce: Overview (2)
@@ -494,7 +494,7 @@ Switch
 - MapReduce framework (e.g., Hadoop, Spark) implements the general algorithm
 - User specifies the **map()** and **reduce()** functions to solve the problem
 
-24
+
 
 # ##############################################################################
 # MapReduce: Word Count (1)
@@ -519,7 +519,7 @@ cross 1
 - **words** takes a file and outputs the words one per line
 - This Unix pipeline is naturally parallelizable in a MapReduce sense
 
-25
+
 
 ![](images/lecture_8_1/lec_8_1_slide_25_image_1.png)
 
@@ -552,7 +552,7 @@ cross 1
 (“cross”, 1),
 (“buns”, 1)]
 
-26
+
 
 **Python code**
 **values = read(file_name)**
@@ -632,7 +632,7 @@ Collect all values belonging to the key and output
 
 **(key, value)**
 
-27
+
 
 # ##############################################################################
 # MapReduce: Map Step
@@ -650,7 +650,7 @@ k
 **Input**
 **key-value pairs**
 
-28
+
 
 **map(values: List):**
   # values: words in document
@@ -664,7 +664,7 @@ can output 0 or more tuples for each input
 # ##############################################################################
 
 * MapReduce: Reduce Step
-29
+
 
 **reduce(key: word, values: List[int]):**
    # key: a word
@@ -693,7 +693,7 @@ can output 0 or more tuples for each input
   - There is one **Reduce** call per unique key *k’*
 - Output: write key-value pairs **List[Tuple[k, v]]**
 
-30
+
 
 # ##############################################################################
 # MapReduce: Log Processing
@@ -717,7 +717,6 @@ can output 0 or more tuples for each input
 - **Output**
   - Write results on disk separated by newline
 
-31
 
 ![](images/lecture_8_1/lec_8_1_slide_31_image_1.png)
 
@@ -751,7 +750,7 @@ can output 0 or more tuples for each input
   - **rv****i** = reduce input values
   - Reduce outputs are not shown
 
-32
+
 
 ![](images/lecture_8_1/lec_8_1_slide_32_image_1.png)
 
@@ -786,7 +785,7 @@ can output 0 or more tuples for each input
   - Output data from Reduce is saved on disk
 - **Write to disk**
 
-33
+
 
 ![](images/lecture_8_1/lec_8_1_slide_33_image_1.png)
 
@@ -808,7 +807,7 @@ can output 0 or more tuples for each input
   - Reduce tasks become idle and can get scheduled
 - **Master node pings workers periodically to detect failures**
 
-34
+
 
 # ##############################################################################
 # Dealing with Failures
@@ -825,7 +824,7 @@ can output 0 or more tuples for each input
   - MapReduce task is aborted
   - Client is notified
 
-35
+
 
 # ##############################################################################
 # How many Map and Reduce jobs?
@@ -847,7 +846,7 @@ can output 0 or more tuples for each input
     - Usually *R* < *M*
     - Output is spread across fewer files
 
-36
+
 
 # ##############################################################################
 # Refinements: Backup Tasks
@@ -869,7 +868,7 @@ can output 0 or more tuples for each input
 - **Result**
   - Shorten job completion time
 
-37
+
 
 # ##############################################################################
 # Refinement: Combiners
@@ -893,7 +892,7 @@ can output 0 or more tuples for each input
 
 ![](images/lecture_8_1/lec_8_1_slide_38_image_1.gif)
 
-38
+
 
 # ##############################################################################
 # Refinement: Partition Function
@@ -910,7 +909,7 @@ can output 0 or more tuples for each input
   - Sometimes useful to override the hash function:
   - E.g., **hash(hostname(URL)) mod R** ensures URLs from a host end up in the same output file
 
-39
+
 
 
 # ##############################################################################
@@ -933,7 +932,7 @@ can output 0 or more tuples for each input
 - **Spark**
 - **Dask**
 
-41
+
 
 # ##############################################################################
 # MapReduce: Hadoop
@@ -953,7 +952,7 @@ can output 0 or more tuples for each input
     - E.g., Avro, ORC, Parquet
   - Schedule multiple *MapReduce* jobs
 
-42
+
 
 ![](images/lecture_8_1/lec_8_1_slide_42_image_1.png)
 
@@ -969,7 +968,7 @@ can output 0 or more tuples for each input
   - Intermediate results (e.g., GroupBy) are stored on local FS of Map and Reduce workers
 - Output is often input to another MapReduce task
 
-43
+
 
 # ##############################################################################
 # Input Data
@@ -984,7 +983,7 @@ can output 0 or more tuples for each input
     - Something else
       - E.g., an SQL database
 
-44
+
 
 ![](images/lecture_8_1/lec_8_1_slide_44_image_1.png)
 
@@ -998,7 +997,7 @@ can output 0 or more tuples for each input
   - Defines the **InputSplits** that break a file
   - Provides a factory for **RecordReaders** objects that read the file
 
-45
+
 
 | InputFormat | Description | Key | Value |
 |-------------|-------------|-----|-------|
@@ -1019,7 +1018,7 @@ can output 0 or more tuples for each input
     - Each **MapTask** corresponds to a single input split
     - Several **MapTask**s to operate on a single file in parallel
 
-46
+
 
 ![](images/lecture_8_1/lec_8_1_slide_46_image_1.png)
 
@@ -1034,7 +1033,7 @@ can output 0 or more tuples for each input
   - Is invoked repeatedly on the input until the entire **InputSplit** is consumed
   - Each invocation leads to a call of the map function defined by the programmer
 
-47
+
 
 ![](images/lecture_8_1/lec_8_1_slide_47_image_1.png)
 
@@ -1106,7 +1105,7 @@ OutputFormat
 | SequenceFileOutputFormat | Writes binary files suitable for reading into subsequent MapReduce jobs |
 | NullOutputFormat | Generates no output files |
 
-48
+
 
 
 # ##############################################################################
@@ -1121,7 +1120,7 @@ OutputFormat
   - Data mining and machine learning
   - Link analysis and graph processing
 
-50
+
 
 # ##############################################################################
 # Example: Language Model
@@ -1139,7 +1138,7 @@ OutputFormat
   - Reduce
     - Combine the counts
 
-51
+
 
 # ##############################################################################
 # Cost Measures for Distributed Algorithms
@@ -1165,7 +1164,7 @@ OutputFormat
   - Multiplicative constant matters
   - Adding more machines is always an option
 
-52
+
 
 # ##############################################################################
 # MapReduce Cost Measures
@@ -1188,7 +1187,7 @@ OutputFormat
     - Ideally all Map and Reduce processes end at the same time
     - Workload is “perfectly balanced”
 
-53
+
 
 # ##############################################################################
 # Example: Join By MapReduce
@@ -1209,7 +1208,7 @@ OutputFormat
   - Matches all the pairs (b, (a, R)) with all (b, (c, S)) to get (a, b, c)
   - Output (a, c)
 
-54
+
 
 | A    | B    |
 |------|------|
@@ -1260,7 +1259,7 @@ OutputFormat
   - Using proper indexes there is no shuffle
   - So computation cost is like communication cost
 
-55
+
 
 
 # ##############################################################################
@@ -1283,7 +1282,7 @@ OutputFormat
   - Designed to support ACID
     - Most MapReduce applications don’t care about ACID consistency
 
-57
+
 
 # ##############################################################################
 # History (2)
@@ -1303,4 +1302,3 @@ OutputFormat
   - Hadoop Zoo
   - E.g., Spark, Dask, Ray
 
-58
