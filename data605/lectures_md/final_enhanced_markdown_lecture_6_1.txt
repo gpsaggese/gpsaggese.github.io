@@ -66,7 +66,7 @@ UMD DATA605 - Big Data Systems
     - Similar to *tables* in relational DBs
     - Large collections can be partitioned and indexed
 
-3
+
 
 ![](images/lecture_6_1/lec_6_1_slide_3_image_1.png)
 
@@ -86,7 +86,7 @@ UMD DATA605 - Big Data Systems
 - Book
   - Seven Databases in Seven Weeks, 2e
 
-5
+
 
 ![](images/lecture_6_1/lec_6_1_slide_5_image_1.png)
 
@@ -113,7 +113,7 @@ UMD DATA605 - Big Data Systems
 - Supports APIs (drivers) in many languages
   - E.g., JavaScript, Python, Ruby, Java, Scala, C++, ...
 
-6
+
 
 ![](images/lecture_6_1/lec_6_1_slide_6_image_1.png)
 
@@ -128,7 +128,7 @@ UMD DATA605 - Big Data Systems
   - Primary key is **_id**
   - Values nested to an arbitrary depth
 
-7
+
 
 ![](images/lecture_6_1/lec_6_1_slide_7_image_1.png)
 
@@ -155,7 +155,7 @@ UMD DATA605 - Big Data Systems
   - Horizontal scaling via automated range-based partitioning of data
   - Reads and writes distributed over shards
 
-8
+
 
 # ##############################################################################
 # MongoDB: Hierarchical Objects
@@ -177,7 +177,7 @@ UMD DATA605 - Big Data Systems
     - It has always primary key _id
     - Mongo field ~ Postgres columns
 
-9
+
 
 **Collection
 **
@@ -198,7 +198,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 # ##############################################################################
 
 * Relational DBs vs MongoDB: Terms and Concepts
-10
+
 
 | RDBMS Concept | MongoDB Concept | Meaning in MongoDB |
 |---------|---------|---------|
@@ -237,7 +237,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
     - Get the data from the server
     - Process data on the client side
 
-11
+
 
 # ##############################################################################
 # Why Use MongoDB?
@@ -255,7 +255,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 - Not well suited for heavy and complex transactions systems
   - E.g., banking system
 
-12
+
 
 ![](images/lecture_6_1/lec_6_1_slide_12_image_1.png)
 
@@ -264,7 +264,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 # ##############################################################################
 
 * MongoDB: Data Model
-13
+
 
 - **Documents** are composed of field and value pairs
   - **Field names** are strings
@@ -288,7 +288,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 # ##############################################################################
 
 * MongoDB: Data Model
-14
+
 
 ![](images/lecture_6_1/lec_6_1_slide_14_image_1.png)
 
@@ -314,7 +314,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
   - No need for NULL values / union of fields like in relational DBs
 - E.g., dishomogeneous data instances
 
-15
+
 
 ![](images/lecture_6_1/lec_6_1_slide_15_image_1.png)
 
@@ -351,7 +351,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
   - Embedding of nested objects within other objects
   - Just references
 
-16
+
 
 # ##############################################################################
 # BSON Format 
@@ -370,7 +370,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 - MongoDB understands the internals of BSON objects, even nested ones
   - Can build indexes and match objects against query expressions for BSON keys
 
-17
+
 
 # ##############################################################################
 # ObjectID
@@ -388,7 +388,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
   - Mongo has a distributed nature
 - Details here
 
-18
+
 
 ![](images/lecture_6_1/lec_6_1_slide_18_image_1.png)
 
@@ -412,7 +412,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 - Reject records with duplicate key value if an index is unique and sparse
 - Details at https://www.mongodb.com/docs/manual/indexes/
 
-19
+
 
 # ##############################################################################
 # CRUD Operations
@@ -433,7 +433,7 @@ Upsert = update (if exists) or insert (if it doesn’t)
 **db.collection.remove(<query>, <justOne>)**
 Details at https://www.mongodb.com/docs/manual/crud/
 
-20
+
 
 # ##############################################################################
 # Create Operations
@@ -452,7 +452,7 @@ Details at https://www.mongodb.com/docs/manual/crud/
    **db.collection.save(<document>)**
 - A more modern OOP-like syntax than the COBOL / FORTRAN-inspired SQL
 
-21
+
 
 # ##############################################################################
 # Read Operations
@@ -470,7 +470,6 @@ with:
   - Can specify to return the ‘top’ number of records from the result set
 - **db.collection.findOne(<query>, <projection>)**
 
-22
 
 # ##############################################################################
 # More Query Examples
@@ -497,7 +496,7 @@ with:
 **WHERE age>33 AND age<=40
 **
 
-23
+
 
 **Mongo**
 **`db.users.find({age: {$gt: 33}}) `
@@ -527,7 +526,6 @@ with:
 # ##############################################################################
 
 * Query Operators
-24
 
 ![](images/lecture_6_1/lec_6_1_slide_24_image_1.png)
 
@@ -549,7 +547,7 @@ with:
   - Modify existing record(s)
   - Retrieve old or new version of the record
 
-25
+
 
 # ##############################################################################
 # Delete Operations
@@ -564,7 +562,7 @@ with:
 - Delete all documents in the **parts** collection
 **db.parts.remove()**
 
-26
+
 
 # ##############################################################################
 # MongoDB Features
@@ -583,7 +581,7 @@ with:
   - Horizontally = add more machines
   - Commodity hardware = relatively inexpensive servers
 
-27
+
 
 # ##############################################################################
 # MongoDB vs Relational DBs
@@ -599,7 +597,7 @@ with:
   - ACID consistency
   - Joins
 
-28
+
 
 # ##############################################################################
 # MongoDB Tutorial
@@ -613,7 +611,6 @@ The instructions are here**
 **
 **> vi tutorial_mongo.md**
 
-29
 
 # ##############################################################################
 # MongoDB Processes and Configuration
@@ -633,7 +630,7 @@ The instructions are here**
   - One **mongos** (router) for the whole system no matter how many **mongod**s you have; or
   - One local **mongos** for every client if you wanted to minimize network latency
 
-30
+
 
 ![](images/lecture_6_1/lec_6_1_slide_30_image_1.png)
 
@@ -670,7 +667,6 @@ The instructions are here**
 **
 **})**
 
-31
 
 ![](images/lecture_6_1/lec_6_1_slide_31_image_1.png)
 
@@ -692,7 +688,7 @@ The instructions are here**
     - E.g., secondary-only, hidden delayed, arbiters, non-voting
 - If the primary fails the secondary sets “vote” to elect the new primary set
 
-32
+
 
 ![](images/lecture_6_1/lec_6_1_slide_32_image_1.png)
 
@@ -716,7 +712,7 @@ The instructions are here**
   - The transaction is completed before replicas are updated (even if there are failures)
   - Commits are quick at cost of consistency
 
-33
+
 
 ![](images/lecture_6_1/lec_6_1_slide_33_image_2.png)
 
@@ -735,7 +731,7 @@ The instructions are here**
   - Client may read a previous state of the database
   - All *eventually consistent* reads are distributed among the secondaries
 
-34
+
 
 # ##############################################################################
 # MongoDB: Sharding
@@ -754,7 +750,7 @@ The instructions are here**
   - Each shard can be deployed as a replica set
   - Config servers store metadata and configuration settings for cluster
 
-35
+
 
 ![](images/lecture_6_1/lec_6_1_slide_35_image_1.png)
 
@@ -781,7 +777,7 @@ The instructions are here**
 - Specify sequence of pages to be brought in memory
 - Operate upon the tuples to produce results
 
-36
+
 
 # ##############################################################################
 # Query Optimizer (1)
@@ -795,7 +791,7 @@ The instructions are here**
   - Search for the best query
   - At least traditional RDBMs
 
-37
+
 
 ![](images/lecture_6_1/lec_6_1_slide_37_image_1.png)
 
@@ -821,7 +817,7 @@ The instructions are here**
   - If a plan that was working well starts performing poorly try again different plans
     - E.g, data in the DB has changed, parameter values to a query are different
 
-38
+
 
 ![](images/lecture_6_1/lec_6_1_slide_38_image_1.png)
 
@@ -845,7 +841,7 @@ The instructions are here**
   - The relationships between the elements does not matter
   - What matters is the ability to store and retrieve great quantities of data
 
-39
+
 
 # ##############################################################################
 # MongoDB: Limitations
@@ -863,7 +859,7 @@ The instructions are here**
   - Objects within a collection can be completely inconsistent in their fields
 - CAP Theorem: targets consistency and partition tolerance, giving up on availability
 
-40
+
 
 ![](images/lecture_6_1/lec_6_1_slide_40_image_1.png)
 
@@ -897,7 +893,7 @@ The instructions are here**
   - Supports consistency and partition tolerance
   - High availability is achieved through use of multiple clusters
 
-42
+
 
 ![](images/lecture_6_1/lec_6_1_slide_42_image_1.png)
 
@@ -924,7 +920,6 @@ The instructions are here**
   - Writes data *asynchronously *to disk after acknowledging to the client
   - Optionally *synchronous: *ensure data is written to more than one server before acknowledging a write
 
-43
 
 ![](images/lecture_6_1/lec_6_1_slide_43_image_1.png)
 
@@ -955,4 +950,3 @@ The instructions are here**
   - (Map) First define a view with the columns of the document your are interested in
   - (Reduce) Optionally define aggregate functions over the data
 
-44

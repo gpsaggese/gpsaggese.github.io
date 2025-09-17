@@ -45,7 +45,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - https://www.linkedin.com/in/gpsaggese/
   - Feel free to connect on LinkedIn to stay in touch
 
-3/58
+
 
 # ##############################################################################
 # Learning Outcomes
@@ -69,8 +69,13 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 UMD DATA605
 
-4/58
 
+
+![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_2.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_3.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_4.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_5.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_1.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_2.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_3.png)
@@ -104,7 +109,7 @@ UMD DATA605
 
 UMD DATA605
 
-5/58
+
 
 # ##############################################################################
 # Todos
@@ -126,7 +131,7 @@ UMD DATA605
 - Lessons are recorded
   - Still come to class!
 
-6/58
+
 
 UMD DATA605
 
@@ -147,7 +152,7 @@ UMD DATA605
 
 UMD DATA605
 
-7/58
+
 
 # ##############################################################################
 # Soft Skills to Succeed in the Workplace
@@ -168,7 +173,7 @@ UMD DATA605
 - Have a sense of how an OS works (e.g., virtual memory, processes)
 - **Goal**: model the class project to prepare you for the workplace
 
-8/58
+
 
 UMD DATA605
 
@@ -182,7 +187,7 @@ Course Intro
 **Big Data**
 Data Models
 
-9
+
 
 UMD DATA605
 
@@ -209,7 +214,7 @@ UMD DATA605
 - Large data sets available
 - Cheap computing (e.g., AWS, Google Cloud)
 
-10/58
+
 
 UMD DATA605
 
@@ -237,7 +242,7 @@ UMD DATA605
 
 UMD DATA605
 
-11/58
+
 
 # ##############################################################################
 # Scale of Data Size
@@ -265,7 +270,7 @@ UMD DATA605
   - Yottabyte costs (USD) 100T
 - **Brontobytes** = 1027 bytes
 
-12/58
+
 
 # ##############################################################################
 # Scale of Data Size (1)
@@ -273,8 +278,9 @@ UMD DATA605
 
 * Scale of Data Size
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_13_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_13_image_1.png)
 
-13/58
+
 
 # ##############################################################################
 # Constants Everybody Should Know
@@ -293,8 +299,9 @@ From Latency Numbers Every Programmer Should Know (by year)
 - Packet round-trip from CA to Netherland: 150ms
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_14_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_14_image_1.png)
 
-14/58
+
 
 UMD DATA605
 
@@ -321,7 +328,7 @@ UMD DATA605
 
 UMD DATA605
 
-15/58
+
 
 # ##############################################################################
 # Big Data Applications (1)
@@ -347,7 +354,7 @@ UMD DATA605
 
 UMD DATA605
 
-16/58
+
  
 
  
@@ -360,6 +367,7 @@ UMD DATA605
 
 17/58
 
+![](data605/lectures_md/images/lecture_1/lec_1_slide_17_image_1.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_17_image_1.png)
 
 # ##############################################################################
@@ -380,7 +388,7 @@ UMD DATA605
 
 UMD DATA605
 
-18/58
+
 
 # ##############################################################################
 # Big Data Applications (4)
@@ -398,7 +406,7 @@ UMD DATA605
 
 UMD DATA605
 
-19/58
+
 
 # ##############################################################################
 # Goal of Data Science
@@ -417,8 +425,8 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_20_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_20_image_1.png)
 
-20/58
 
 # ##############################################################################
 # Four V's of Big Data
@@ -444,8 +452,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_21_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_21_image_1.png)
 
-21/58
+
 
 # ##############################################################################
 # Four V's of Big Data (1)
@@ -470,7 +479,7 @@ UMD DATA605
 
 UMD DATA605
 
-22/58
+
 
 # ##############################################################################
 # Four V's of Big Data (2)
@@ -491,7 +500,7 @@ UMD DATA605
 
 UMD DATA605
 
-23/58
+
 
 # ##############################################################################
 # Sources of Big Data
@@ -506,8 +515,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_24_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_24_image_1.png)
 
-24/58
+
  
 
  
@@ -530,7 +540,7 @@ UMD DATA605
 
 UMD DATA605
 
-25/58
+
 
 # ##############################################################################
 # Sources of Big Data: People
@@ -550,6 +560,7 @@ UMD DATA605
 - **Cons**
   - Typically semi-structured or unstructured data
     - Text, data605/lectures_md/images, movies
+    - Text, data605/lectures_md/images, movies
   - It takes an investment before you can reap the value
     - Acquire → Store → Clean → Retrieve → Process → Insights
   - Surveillance capitalism
@@ -557,8 +568,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_26_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_26_image_1.png)
 
-26/58
+
 
 # ##############################################################################
 # Sources of Big Data: Orgs
@@ -585,7 +597,7 @@ UMD DATA605
 
 UMD DATA605
 
-27/58
+
 
 # ##############################################################################
 # Is Data Science Just Hype?
@@ -601,8 +613,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_28_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_28_image_1.png)
 
-28/58
+
 
 # ##############################################################################
 # Is Data Science Just Hype? (1)
@@ -623,7 +636,7 @@ UMD DATA605
 
 UMD DATA605
 
-29/58
+
 
 # ##############################################################################
 # What was Cool in 2012?
@@ -633,8 +646,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_30_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_30_image_1.png)
 
-30/58
+
 
 # ##############################################################################
 # What was Cool in 2017?
@@ -644,8 +658,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_31_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_31_image_1.png)
 
-31/58
+
 
 # ##############################################################################
 # What was Cool in 2022?
@@ -655,8 +670,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_32_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_32_image_1.png)
 
-32/58
+
  
 
  
@@ -667,7 +683,7 @@ UMD DATA605
 * What is Cool in 2023?
 UMD DATA605
 
-33/58
+
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_33_image_1.png)
 
@@ -698,7 +714,7 @@ UMD DATA605
 
 UMD DATA605
 
-34/58
+
 
 # ##############################################################################
 # Examples: Election Prediction
@@ -721,8 +737,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_35_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_35_image_1.png)
 
-35/58
+
 
 # ##############################################################################
 # Examples: Google Flu Trends
@@ -746,7 +763,7 @@ UMD DATA605
 
 UMD DATA605
 
-36/58
+
 
 # ##############################################################################
 # Data Scientist
@@ -759,8 +776,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_37_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_37_image_1.png)
 
-37/58
+
 
 # ##############################################################################
 # Typical Data Scientist Workflow
@@ -772,8 +790,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_38_image_1.jpeg)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_38_image_1.jpeg)
 
-38/58
+
 
 # ##############################################################################
 # Where Data Scientist Spends Most Time
@@ -783,12 +802,13 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_39_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_39_image_1.png)
 
 - 80-90% of the work is data cleaning and wrangling
 - 'Janitor Work' in Data Science
 - Research Directions in Data Wrangling
 
-39/58
+
 
 # ##############################################################################
 # **What a Data Scientist Should Know**
@@ -817,7 +837,7 @@ UMD DATA605
 
 **DATA605**
 
-40/58
+
  
 
 # ##############################################################################
@@ -830,7 +850,7 @@ Course Intro
 Big data
 [BOLD]Data Models[/BOLD]
 
-41
+
 
 # ##############################################################################
 # Data Models
@@ -851,7 +871,7 @@ Big data
 
 UMD DATA605
 
-42/58
+
 
 # ##############################################################################
 # Multiple Layers of Data Modeling
@@ -873,8 +893,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_43_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_43_image_1.png)
 
-43/58
+
 
 # ##############################################################################
 # Data Models: Logical Layer
@@ -898,8 +919,8 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_44_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_44_image_1.png)
 
-44/58
 
 # ##############################################################################
 # Examples of Data Models
@@ -924,7 +945,7 @@ UMD DATA605
 
 UMD DATA605
 
-45/58
+
 
 # ##############################################################################
 # Good Data Models
@@ -948,7 +969,7 @@ UMD DATA605
 
 UMD DATA605
 
-46/58
+
 
 # ##############################################################################
 # Data Independence
@@ -967,7 +988,7 @@ UMD DATA605
 
 UMD DATA605
 
-47/58
+
 
 # ##############################################################################
 # Databases: A Brief History
@@ -992,7 +1013,7 @@ UMD DATA605
 
 UMD DATA605
 
-48/58
+
 
  
 # ##############################################################################
@@ -1014,7 +1035,7 @@ UMD DATA605
 
 UMD DATA605
 
-49/58
+
 
 # ##############################################################################
 # Relational, Hierarchical, Network model
@@ -1039,8 +1060,11 @@ UMD DATA605
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_1.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_2.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_3.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_2.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_3.png)
 
-50/58
+
 
 # ##############################################################################
 # Databases: A Brief History (2)
@@ -1065,7 +1089,7 @@ UMD DATA605
 
 UMD DATA605
 
-51/58
+
 
 # ##############################################################################
 # Entity-Relationship Model
@@ -1086,8 +1110,11 @@ UMD DATA605
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_1.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_2.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_3.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_2.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_3.png)
 
-52/58
+
 
 # ##############################################################################
 # Databases: A Brief History (3)
@@ -1109,7 +1136,7 @@ UMD DATA605
 
 UMD DATA605
 
-53/58
+
 
 # ##############################################################################
 # Object-Oriented
@@ -1134,7 +1161,7 @@ UMD DATA605
 
 UMD DATA605
 
-54/58
+
 
 # ##############################################################################
 # Databases: A Brief History (4)
@@ -1173,7 +1200,7 @@ UMD DATA605
      ...
 ```
 
-55/58
+
 
 # ##############################################################################
 # Resource Description Framework
@@ -1194,6 +1221,7 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_56_image_1.png)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_56_image_1.png)
 
 ```
 01    <http://example.org/bob#me> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
@@ -1205,7 +1233,7 @@ UMD DATA605
 07    <http://data.europeana.eu/item/04802/243FA8618938F4117025F17A8B813C5F9AA4D619> <http://purl.org/dc/terms/subject> <http://www.wikidata.org/entity/Q12418> .
 ```
 
-56/58
+
 
 # ##############################################################################
 # Property Graph Model
@@ -1222,8 +1250,9 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_57_image_1.jpeg)
+![](data605/lectures_md/images/lecture_1/lec_1_slide_57_image_1.jpeg)
 
-57/58
+
 
 # ##############################################################################
 # Class Project: TODOs
@@ -1234,4 +1263,4 @@ UMD DATA605
 - Next:
   - Dr Saggese + TA come up with list of projects
 
-58/58
+

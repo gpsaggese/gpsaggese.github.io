@@ -54,7 +54,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Do not be shy
   - Send emails
 
-1 / 50
+
 
 **UMD DATA605 - Big Data Systems**
 Git
@@ -66,12 +66,12 @@ with thanks to Prof.
 Alan Sussman
 Amol Deshpande
 
-2
+
 
 **UMD DATA605 - Big Data Systems**
 **Git Data Pipelines**
 
-3
+
 
 # ##############################################################################
 # Bash / Linux: Resources
@@ -79,6 +79,7 @@ Amol Deshpande
 
 * Bash / Linux: Resources
 - Command line
+  - `https://ubuntu.com/tutorials/command-line-for-beginners`
   - `https://ubuntu.com/tutorials/command-line-for-beginners`
 - E.g., find, xargs, chmod, chown, symbolic, and hard links
 - How Linux works
@@ -88,7 +89,9 @@ Amol Deshpande
   - How to administer a Linux box as root
 - Mastery
   - `https://linuxcommand.org/tlcl.php`
+  - `https://linuxcommand.org/tlcl.php`
 
+![](data605/lectures_md/images/lecture_2/lec_2_slide_4_image_1.png)
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_4_image_1.png)
 
 # ##############################################################################
@@ -103,11 +106,14 @@ Amol Deshpande
 
 * Version Control Systems
 - A Version Control System (VCS) is a system that allows to:
+- A Version Control System (VCS) is a system that allows to:
   - Record changes to files
   - Recall specific versions later (like a "file time-machine")
   - Compare changes to files over time
   - Track *who* changed *what* and *when* and *why*
 - **Simplest "VCS"**
+  - Make a copy of a dir and add `_v1` (bad) or add a timestamp `_20220101`
+    (better)
   - Make a copy of a dir and add `_v1` (bad) or add a timestamp `_20220101`
     (better)
   - **Cons**: It kind of works for one person, but doesn’t scale
@@ -122,8 +128,10 @@ Amol Deshpande
   - **Cons**: complex
 
 **Centralized VCS**
+**Centralized VCS**
 ![](images/lecture_2/lec_2_slide_6_image_1.png)
 
+**Distributed VCS**
 **Distributed VCS**
 ![](images/lecture_2/lec_2_slide_6_image_2.png)
 
@@ -145,7 +153,7 @@ Amol Deshpande
   - Store reference (hash) to the snapshots
   - Save link to previous identical files
 
-7
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_7_image_1.png)
 
@@ -176,7 +184,7 @@ Amol Deshpande
     - "porcelain": key-value store for a file-system
     - "plumbing": VCS layer
 
-8
+
 
 # ##############################################################################
 # States of a File in Git
@@ -198,7 +206,7 @@ Each file can be in 4 states from Git point-of-view
 - **Staged**: you have marked a modified file to go into your next commit snapshot
 - **Committed**: data is safely stored in your local DB
 
-9
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_9_image_1.png)
 
@@ -231,7 +239,7 @@ Each file can be in 4 states from Git point-of-view
   - Pandas
   - ...
 
-10 / 50
+
 
 # ##############################################################################
 # Git: Daily Use
@@ -254,7 +262,7 @@ Each file can be in 4 states from Git point-of-view
   - Pull Request (aka PR) to get the code reviewed
   - Merge PR into upstream
 
-11
+
 
 # ##############################################################################
 # Git Remote
@@ -278,7 +286,7 @@ Each file can be in 4 states from Git point-of-view
   - (Test project sanity, e.g., by running unit tests)
   - Push changes to the remote
 
-12
+
 
 # ##############################################################################
 # Git Tagging
@@ -292,13 +300,14 @@ Each file can be in 4 states from Git point-of-view
   - If you commit your change won’t be added to the tag or to the branch
   - The commit will be "unreachable", i.e., reachable only by the commit hash
 
-13
+
 
 # ##############################################################################
 # Git Internals
 # ##############################################################################
 
 * Git Internals
+![](data605/lectures_md/images/lecture_2/lec_2_slide_14_image_1.png)
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_14_image_1.png)
 
 - **You can understand Git only if you understand the data model**
@@ -315,7 +324,7 @@ Each file can be in 4 states from Git point-of-view
   - Easy: Understanding Git — Data Model
   - Hard-core: Git internals
 
-14
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_14_image_2.png)
 
@@ -354,7 +363,7 @@ Each file can be in 4 states from Git point-of-view
   - Branches are cheap in Git
     - Use them all the times to isolate your work and organize it
 
-15
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_15_image_1.png)
 
@@ -377,7 +386,7 @@ Each file can be in 4 states from Git point-of-view
 - Divergent history
   - When work progresses in two branches that are "split"
 
-16
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_16_image_1.png)
 
@@ -398,8 +407,11 @@ Each file can be in 4 states from Git point-of-view
   - Then you can keep working by committing on **testing**
   - The pointer to **testing** moves forward (no divergent history)
 
-17
 
+
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_1.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_2.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_3.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_1.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_2.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_3.png)
@@ -425,8 +437,13 @@ Need a hotfix to master
 **Fast forward**
 Now there is a divergent history between `master` and `iss53`
 
-18
 
+
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_1.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_2.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_3.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_4.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_5.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_1.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_2.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_3.png)
@@ -451,7 +468,7 @@ Git creates a new snapshot with the 3-way "merge commit" (commit with more than 
 Delete the branch
 **> git branch -d iss53**
 
-19
+
 
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_19_image_1.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_19_image_2.png)
@@ -470,7 +487,7 @@ Delete the branch
 **> git merge experiment**
 - Git moves the pointer of master to C4’
 
-20
+
 
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_20_image_1.png)
 
@@ -494,8 +511,12 @@ Delete the branch
   - **git commit**
   - Use PyCharm
 
-21
 
+
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_1.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_2.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_3.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_4.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_1.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_2.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_3.png)
@@ -524,8 +545,11 @@ Delete the branch
     - Only the branch where we are is affected
   - Finally fast forward master
 
-22
 
+
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_1.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_2.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_3.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_1.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_2.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_3.png)
@@ -547,11 +571,15 @@ Delete the branch
     - Does not have to do any integration work
     - Does just a fast forward or a clean apply (no conflicts)
 
-23
+
 
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_1.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_2.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_1.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_2.png)
 
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_1.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_2.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_1.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_2.png)
 
@@ -571,8 +599,9 @@ Delete the branch
 **Strict version**: "Do not **ever** rebase commits that exist outside your repository"
 **Loose version**: "It’s ok to rebase your branch even if you pushed to a server, as long as you are the only one to use it"
 
-24
 
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_24_image_1.png)
+![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_24_image_2.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_24_image_1.png)
 ![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_24_image_2.png)
 
@@ -593,7 +622,7 @@ Delete the branch
 - *You should tell the history in the way that is best for future readers*
 - Use **git rebase** and filter-branch**
 
-25
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_25_image_1.png)
 
@@ -618,7 +647,7 @@ Delete the branch
   - My commits are just my checkpoints
   - Rarely they are "complete"
 
-26
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_26_image_1.png)
 
@@ -644,7 +673,7 @@ Delete the branch
 - To work on it
   - **> git checkout -b serverfix origin/serverfix**
 
-27
+
 
 # ##############################################################################
 # Git Workflows
@@ -670,7 +699,7 @@ Delete the branch
   - Somebody starts **dumbidea** branch and merge to **master** (!)**
   - You squash-and-merge your **iss91v2**
 
-28
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_28_image_1.png)
 
@@ -694,7 +723,7 @@ Delete the branch
   - Need to fetch and then merge
   - Cannot push code that will overwrite each other code (only fast-forward changes)
 
-29
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_29_image_1.png)
 
@@ -721,8 +750,9 @@ Delete the branch
 - **Aka "GitHub workflow"**
   - "Innovation" was forking (Fork me on GitHub!)
   - GitHub acquired by Microsoft for 7.5b USD
+  - GitHub acquired by Microsoft for 7.5b USD
 
-30
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_30_image_1.png)
 
@@ -750,7 +780,7 @@ Delete the branch
   - Tests changes locally
   - Pushes branch to the official repo
 
-31
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_31_image_1.png)
 
@@ -777,7 +807,7 @@ Delete the branch
   - **1...2** = commits that are reachable from either branch but not from both (union excluding intersection)**
   - **git log master...experiment → F,E,D,C**
 
-32
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_32_image_1.png)
 ```
@@ -811,7 +841,7 @@ Delete the branch
 - hooks
   - Run scripts before each commit, merging, ...
 
-33
+
 
 # ##############################################################################
 # GitHub
@@ -834,7 +864,7 @@ Delete the branch
   - In GitHub parlance
     - Make a copy of a project so that you can contribute to it even if you don’t have push / write access
 
-34
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_34_image_1.png)
 
@@ -845,13 +875,13 @@ Delete the branch
 * GitHub: Tutorial
 Tutorial: GitHub
 
-35 / 50
+
 
 **UMD DATA605 - Big Data Systems**
 Git
 **Data Pipelines**
 
-36
+
 
 # ##############################################################################
 # Data Pipelines - Resources
@@ -863,7 +893,7 @@ Git
 - Mastery
   - Data Pipelines Pocket Reference: Moving and Processing Data for Analytics
 
-37
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_37_image_1.png)
 
@@ -894,7 +924,7 @@ Git
     - E.g., recommendations vs what users bought
     - Ingest data from production for future versions of the model
 
-38
+
 
 # ##############################################################################
 # Data Pipelines
@@ -917,7 +947,7 @@ Git
   - Extract data (e.g., from REST API)
   - Load data into DB (e.g., SQL table)
 
-39
+
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_39_image_1.png)
 
@@ -992,7 +1022,7 @@ Git
   - 3rd-parties
     - E.g., Google analytics tracking website usage
 
-41
+
 
 ![Data Ingestion](data605/lectures_md/images/lecture_2/lec_2_slide_41_image_1.png)
 
@@ -1011,8 +1041,8 @@ Git
   - ELT
   - EtLT
 
-42 / 50
 
+![Data Pipeline Paradigms](data605/lectures_md/images/lecture_2/lec_2_slide_42_image_1.png)
 ![Data Pipeline Paradigms](data605/lectures_md/images/lecture_2/lec_2_slide_42_image_1.png)
 
 # ##############################################################################
@@ -1038,7 +1068,7 @@ Git
   - Make a copy
   - Have different tools to operate on the data
 
-43
+
 
 # ##############################################################################
 # ETL Paradigm: Example
@@ -1060,7 +1090,7 @@ Git
     - E.g., load data in relational DB
   - Finally data modeling
 
-44
+
 
 # ##############################################################################
 # Workflow Orchestration
@@ -1077,7 +1107,7 @@ Git
   - Pipeline and jobs are represented through DAGs
 - Monitor, retry, and send alarms
 
-45
+
 
 ![Workflow Orchestration](data605/lectures_md/images/lecture_2/lec_2_slide_45_image_1.png)
 
@@ -1108,7 +1138,7 @@ Git
   - Columnar DBs
   - Data compression
 
-46
+
 
 ![ELT paradigm](data605/lectures_md/images/lecture_2/lec_2_slide_46_image_1.png)
 
@@ -1127,7 +1157,7 @@ Git
   - Analytics requires a few columns
   - Better data compression
 
-47
+
 
 ![Row-based vs Columnar DBs](data605/lectures_md/images/lecture_2/lec_2_slide_47_image_1.png)
 
@@ -1150,7 +1180,7 @@ Git
     - Obfuscate sensitive data (for legal or security reasons)
   - Then implement rest of "LT" pipeline
 
-48
+
 ```
 
 ```
@@ -1177,7 +1207,7 @@ Git
   - Blobs of data
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_49_image_1.png)
-49
+
 
 # ##############################################################################
 # Data Cleaning
@@ -1204,7 +1234,7 @@ Git
   - Be defensive
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_50_image_1.png)
-50
+
 
 # ##############################################################################
 # OLAP vs OLTP Workloads
@@ -1224,9 +1254,10 @@ Git
   - E.g., data mining, business intelligence
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_51_image_1.png)
+![](data605/lectures_md/images/lecture_2/lec_2_slide_51_image_1.png)
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_51_image_2.png)
-51
+
 
 # ##############################################################################
 # Challenges with Data Pipelines
@@ -1242,7 +1273,7 @@ Git
 - Connection time-outs
 - Slow downloads
 - Incremental mode vs catch-up
-52
+
 
 # ##############################################################################
 # Data Warehouse vs Data Lake
@@ -1260,11 +1291,13 @@ Git
   - = data stored in a semi-structured or without structure
   - Corresponds to ELT data pipeline style
   - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_md/images
+  - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_md/images
 
+![](data605/lectures_md/images/lecture_2/lec_2_slide_53_image_1.png)
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_53_image_1.png)
 
 ![](data605/lectures_md/images/lecture_2/lec_2_slide_53_image_2.png)
-53
+
 
 # ##############################################################################
 # Data Lake: Pros and Cons
@@ -1283,7 +1316,7 @@ Git
   - It is not optimized for querying like a structured data warehouse
     - There are tools that allow to query data in a data lake similar to SQL
     - E.g., AWS Athena, Redshift Spectrum
-54
+
 
 # ##############################################################################
 # Advantages of Cloud Computing
@@ -1307,4 +1340,3 @@ Git
 - **Cons**
   - The flexibility has a cost (2x-3x more expensive than owning)
   - Vendor lock-in
-55

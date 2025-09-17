@@ -52,7 +52,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Individual project
   - Different complexity
 
-1
+
 
 ![](images/lecture_3/lec_3_slide_1_image_1.png)
 
@@ -76,7 +76,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Mastery:
   - Poulton, Docker Deep Dive: Zero to Docker in a single book, 2020
 
-3
+
 
 ![](images/lecture_3/lec_3_slide_3_image_1.png)
 
@@ -95,7 +95,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - 2000s-2010s: “virtual machine era”
   - > ~2013: “container era”
 
-4
+
 
 # ##############################################################################
 # DevOps
@@ -113,7 +113,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - IT: “It doesn’t work!”
     - Devs: “What? It works for me”
 
-5
+
 
 ![](images/lecture_3/lec_3_slide_5_image_1.png)
 
@@ -146,7 +146,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - It kind of came back in 2020 but with different use cases in Cloud Computing
 - **Winners**: Cisco, Sun, Microsoft
 
-6
+
 
 ![](images/lecture_3/lec_3_slide_6_image_1.png)
 
@@ -167,7 +167,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - VMs are slow to boot
 - **Winners**: VMWare, RedHat, Citrix
 
-7
+
 
 ![](images/lecture_3/lec_3_slide_7_image_1.png)
 
@@ -195,7 +195,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Toolchain to learn / use
 - **Winners**: AWS, Microsoft Azure, Google (not Docker Inc.)
 
-8
+
 
 ![](images/lecture_3/lec_3_slide_8_image_1.png)
 
@@ -221,7 +221,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - As long your application runs somewhere, you don’t care “how” or “where”
   - E.g., AWS Lambda
 
-9
+
 
 # ##############################################################################
 # HW vs OS Virtualization
@@ -242,7 +242,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Containers perform OS virtualization**
   - It’s like having multiple OSes
 
-10
+
 
 ![](images/lecture_3/lec_3_slide_10_image_1.png)
 
@@ -265,7 +265,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Modular and built from several OCI-compliant sub-systems
     - E.g., Docker daemon, **containerd**, **runc**, plug-ins for networking and storage
 
-11
 
 ![](images/lecture_3/lec_3_slide_11_image_2.png)
 
@@ -292,7 +291,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - E.g., image format, run-time API
   - “Death” of Docker
 
-12
+
 
 ![](images/lecture_3/lec_3_slide_12_image_1.png)
 
@@ -310,7 +309,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - vs Docker images are built-time objects
     - Like program running (container) vs program code (image)
 
-13
+
 
 # ##############################################################################
 # Docker Image
@@ -330,7 +329,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Multiple layers stacked on top of each other
     - Typically few 100s MBs
 
-14
+
 
 # ##############################################################################
 # Docker Image Layers
@@ -353,7 +352,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - The hash is function of the config file and of the layers
   - When an image changes, a new hash is generated
 
-15
+
 
 ![](images/lecture_3/lec_3_slide_15_image_1.png)
 
@@ -382,7 +381,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - State is permanent across container invocations
   - Can be shared across containers
 
-16
+
 ```
 
 ```markdown
@@ -400,7 +399,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Unofficial repos shouldn’t be trusted
   - E.g., https://hub.docker.com/
 
-17
+
 
 ![](images/lecture_3/lec_3_slide_17_image_1.png)
 
@@ -421,7 +420,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Run the app as a container
 - Test “locally”
 
-18
+
 
 ![](images/lecture_3/lec_3_slide_18_image_1.png)
 
@@ -453,7 +452,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Run / test container from image
 - Distribute your app as a container (no installation)
 
-19
+
 
 # ##############################################################################
 # Building a Container
@@ -469,7 +468,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Sent to Docker engine to build the application
   - Typically the Dockerfile is in the root directory of the build context
 
-20
+
 
 # ##############################################################################
 # Dockerfile Example
@@ -484,7 +483,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **COPY . .**
 **CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]**
 
-21
+
 
 # ##############################################################################
 # Docker: Commands (1)
@@ -509,7 +508,7 @@ Show the running containers
 **505541bcfe8b counter_app-web-fe "python app.py" 7 minutes ago Up 7 minutes 0.0.0.0:5001->5000/tcp counter_app-web-fe-1**
 **c1889540cfd2 redis:alpine "docker-entrypoint.s…" 7 minutes ago Up 7 minutes 6379/tcp counter_app-redis-1**
 
-22
+
 
 # ##############################################################################
 # Docker: Commands (2)
@@ -530,7 +529,7 @@ Show volumes and networks
 **b4c1976d7c27 bridge bridge local**
 **33ff702253b3 counter-app_counter-net bridge local**
 
-23
+
 
 # ##############################################################################
 # Docker: Delete state
@@ -546,7 +545,7 @@ Show volumes and networks
 **> docker network ls**
 **> docker network rm $(docker network ls -q)**
 
-24
+
 ```
 
 ```
@@ -557,7 +556,7 @@ Show volumes and networks
 * Docker Tutorial
 - tutorial_docker.md
 © UMD DATA605
-25
+
 
 # ##############################################################################
 # Docker Compose
@@ -578,7 +577,7 @@ Show volumes and networks
   - Docker Stacks / Swarm
   - Kubernetes
 © UMD DATA605
-26
+
 
 # ##############################################################################
 # Docker Compose: Tutorial Example
@@ -601,7 +600,7 @@ Show volumes and networks
     - Creates new volumes
 - **Key in services** describe a different “service” in terms of container
   - **Inner keys** specify the params of Docker run command
-27
+
   **version**: "3.8"
   **services**:
     **web-fe**:
@@ -662,7 +661,7 @@ Commands:
   unpause     Unpause services
   up          Create and start containers
   version     Show the Docker Compose version information
-28
+
 
 # ##############################################################################
 # Docker Compose: Commands (2)
@@ -690,7 +689,7 @@ Show the processes inside each container
 **UID    PID     PPID    C    STIME   TTY   TIME       CMD**
 **root   49614   49574   0    10:40   ?     00:00:00   python app.py**
 **root   49734   49614   1    10:40   ?     00:00:08   /usr/local/bin/python /code/app.py**
-29
+
 
 # ##############################################################################
 # Docker Compose: Commands (3)
@@ -708,7 +707,7 @@ Shutdown service removing the volume (i.e., resetting state)
 **> docker-compose down -v**
 Shutdown service removing images and volume
 **> docker-compose down -v --rmi all**
-30
+
 
 # ##############################################################################
 # Docker Compose: Tutorial
@@ -719,7 +718,7 @@ Shutdown service removing images and volume
 - tutorial_docker_compose
 - > cd tutorials/tutorial_docker_compose
 - > vi tutorial_docker_compose.md
-31
+
 
 
 # ##############################################################################
@@ -740,7 +739,7 @@ Shutdown service removing images and volume
 - Projects have about the same complexity
 - If not, we will try to account for this when grading
 - Projects were assigned randomly to the teams
-33
+
 
 # ##############################################################################
 # Class Announcements (3)
@@ -761,4 +760,3 @@ Shutdown service removing images and volume
 - *Treat others how you want to be treated*
   - Everybody comes from a different place and different skill level, somebody has a job, somebody has a full-time work
 - *If you want to go fast, go alone; if you want to go far, go together*
-34

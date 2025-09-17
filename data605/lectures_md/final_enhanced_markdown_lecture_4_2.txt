@@ -55,7 +55,7 @@ UMD DATA605 - Big Data Systems
 - DB internals
 Sources: Silberschatz et al. 2020
 
-2
+
 
 ##############################################################################
 # Outline (2)
@@ -70,7 +70,7 @@ Sources: Silberschatz et al. 2020
 - DB internals
 Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 
-3
+
 
 ##############################################################################
 # Storage Characteristics
@@ -92,7 +92,7 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 **WHERE name LIKE ‘__a__b’**
   - Need to know how data is stored in order to optimize access
 
-4
+
 
 ![](images/lecture_4_2/lec_4_2_slide_4_image_1.png)
 
@@ -101,7 +101,7 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 ##############################################################################
 
 * Storage Hierarchy
-5
+
 
 ![](images/lecture_4_2/lec_4_2_slide_5_image_1.png)
 
@@ -140,7 +140,7 @@ The various storage can be organized in a hierarchy according to (decreasing) sp
 
 source: http://cse1.net/recaps/4-memory.html
 
-6
+
 
 ##############################################################################
 # How Important is Memory Hierarchy?
@@ -161,7 +161,7 @@ source: http://cse1.net/recaps/4-memory.html
 - Similar reasoning for algorithms
   - Best algorithm depends on the technology available
 
-7
+
 
 ##############################################################################
 # Outline (3)
@@ -175,7 +175,7 @@ source: http://cse1.net/recaps/4-memory.html
     - RAID
 - DB internals
 
-8
+
 ```
 
 ```
@@ -206,7 +206,7 @@ source: http://cse1.net/recaps/4-memory.html
       - Object store
       - High latency
 
-9
+
 
 ![images/lecture_4_2/lec_4_2_slide_10_image_1.png](images/lecture_4_2/lec_4_2_slide_10_image_1.png)
 
@@ -218,7 +218,7 @@ source: http://cse1.net/recaps/4-memory.html
 
 ![images/lecture_4_2/lec_4_2_slide_10_image_2.jpeg](images/lecture_4_2/lec_4_2_slide_10_image_2.jpeg)
 
-10
+
 
 # ##############################################################################
 # Magnetic Disks (1)
@@ -226,7 +226,7 @@ source: http://cse1.net/recaps/4-memory.html
 
 * Magnetic Disks
 
-11
+
 
 # ##############################################################################
 # Magnetic Disks (2)
@@ -234,7 +234,7 @@ source: http://cse1.net/recaps/4-memory.html
 
 * Magnetic Disks
 
-12
+
 
 ![images/lecture_4_2/lec_4_2_slide_12_image_1.png](images/lecture_4_2/lec_4_2_slide_12_image_1.png)
 
@@ -293,7 +293,7 @@ source: http://cse1.net/recaps/4-memory.html
   - Mean time to failure (MTTF) = the amount of time that on average the system can run continuously without a failure
   - Lifespan of an HDD is ~5 years
 
-13
+
 
 ![images/lecture_4_2/lec_4_2_slide_13_image_1.png](images/lecture_4_2/lec_4_2_slide_13_image_1.png)
 
@@ -323,7 +323,7 @@ source: http://cse1.net/recaps/4-memory.html
   - 30-50MB/s to up to 200MB/s
 - **Seeks are bad!**
 
-14
+
 
 # ##############################################################################
 # Solid State Disk (SSD)
@@ -356,7 +356,7 @@ source: http://cse1.net/recaps/4-memory.html
   - There is a limit to how many times a flash page can be erased (~1M times)
 - Better than an HDD from any point of view, but more expensive per GB
 
-15
+
 
 ![images/lecture_4_2/lec_4_2_slide_15_image_1.png](images/lecture_4_2/lec_4_2_slide_15_image_1.png)
 
@@ -372,7 +372,7 @@ source: http://cse1.net/recaps/4-memory.html
   - **RAID**
 - DB internals
 
-16
+
 
 # ##############################################################################
 # RAID
@@ -397,7 +397,7 @@ source: http://cse1.net/recaps/4-memory.html
   - Expose a logical view of a single large and reliable disk from many unreliable disks
   - Different RAID “levels” (reliability vs performance)
 
-17
+
 
 ![](images/lecture_4_2/lec_4_2_slide_17_image_1.png)
 
@@ -422,7 +422,7 @@ source: http://cse1.net/recaps/4-memory.html
 - Striping data across multiple disks
   - Increase transfer rate
 
-18
+
 
 ![](images/lecture_4_2/lec_4_2_slide_18_image_1.png)
 
@@ -450,7 +450,7 @@ source: http://cse1.net/recaps/4-memory.html
 **RAID 5: Block-interleaved distributed parity**
 - Distributed parity “blocks” instead of bits
 
-19
+
 
 ![](images/lecture_4_2/lec_4_2_slide_19_image_1.png)
 
@@ -473,7 +473,7 @@ source: http://cse1.net/recaps/4-memory.html
   - RAID 1: 2x more disks
   - RAID 5 is preferred for applications with *low update rate* and *large amounts of data*
 
-20
+
 
 ![](images/lecture_4_2/lec_4_2_slide_20_image_1.png)
 
@@ -492,7 +492,7 @@ source: http://cse1.net/recaps/4-memory.html
 Sources:
 - Silberschatz et al. 2020, Chap 13: Data Storage Structures
 
-21
+
 
 # ##############################################################################
 # (Centralized) DB Internals
@@ -520,7 +520,7 @@ Shared memory
   - Buffer pool, Lock table, Log buffer (log records waiting to be saved on stable storage), Caches (e.g., query plans)
 - Data needs to be projected by mutual exclusion locks
 
-22
+
 
 ![](images/lecture_4_2/lec_4_2_slide_22_image_1.png)
 
@@ -543,4 +543,4 @@ Shared memory
 - Specify sequence of pages to be brought in memory
 - Operate upon the tuples to produce results
 
-23
+

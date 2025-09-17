@@ -62,7 +62,7 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-2
+
 
 ![](images/lecture_7_1/lec_7_1_slide_2_image_1.png)
 
@@ -84,7 +84,7 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-3
+
 
 ![](images/lecture_7_1/lec_7_1_slide_3_image_1.png)
 
@@ -108,7 +108,7 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-4
+
 
 ![](images/lecture_7_1/lec_7_1_slide_4_image_2.png)
 
@@ -138,7 +138,7 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-5
+
 
 ![](images/lecture_7_1/lec_7_1_slide_5_image_1.png)
 
@@ -168,7 +168,7 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-6
+
 
 ![](images/lecture_7_1/lec_7_1_slide_6_image_1.png)
 
@@ -194,7 +194,7 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-7
+
 
 # ##############################################################################
 # Airflow: What Doesn’t Do Well
@@ -216,7 +216,6 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-8
 
 ![](images/lecture_7_1/lec_7_1_slide_8_image_1.png)
 ```
@@ -251,7 +250,7 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-9
+
 
 # ##############################################################################
 # Airflow: Concepts
@@ -266,7 +265,7 @@ gsaggese@umd.edu
   - Simulate the scheduler running DAG / task for a specific date
   - Even if it is physically run now
 
-10
+
 
 # ##############################################################################
 # Airflow: Tutorial (1)
@@ -278,7 +277,7 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-11
+
 
 # ##############################################################################
 # Airflow: Tutorial (2)
@@ -293,7 +292,7 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-12
+
 
 ![](images/lecture_7_1/lec_7_1_slide_12_image_1.png)
 
@@ -308,7 +307,7 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-13
+
 
 ![](images/lecture_7_1/lec_7_1_slide_13_image_1.png)
 
@@ -327,7 +326,6 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-14
 
 ![](images/lecture_7_1/lec_7_1_slide_14_image_1.png)
 
@@ -359,7 +357,7 @@ gsaggese@umd.edu
   - https://wesmckinney.com/book
   - Read cover-to-cover and execute all examples 2-3x time to really *master*
 
-16
+
 
 ![](images/lecture_7_1/lec_7_1_slide_16_image_1.png)
 
@@ -383,7 +381,7 @@ gsaggese@umd.edu
   - **Data integration**: combine data from multiple sources
   - **Information extraction**: extract structured information from unstructured / text sources
 
-17
+
 
 © UMD DATA605
 
@@ -392,7 +390,7 @@ gsaggese@umd.edu
 # ##############################################################################
 
 * Overview
-18
+
 
 ![](images/lecture_7_1/lec_7_1_slide_18_image_1.png)
 
@@ -414,7 +412,7 @@ gsaggese@umd.edu
   - Data extraction is the E step
   - Data wrangling is the T step
 
-19
+
 
 © UMD DATA605
 
@@ -423,7 +421,7 @@ gsaggese@umd.edu
 # ##############################################################################
 
 * Overview
-20
+
 
 ![](images/lecture_7_1/lec_7_1_slide_20_image_1.png)
 
@@ -455,7 +453,7 @@ gsaggese@umd.edu
   - Several tools out there to do this (somewhat) automatically
     - E.g., import.io, portia, ...
 
-21
+
 
 © UMD DATA605
 
@@ -469,7 +467,7 @@ gsaggese@umd.edu
   - Each observation forms a row
 - Wide vs long format
 
-22
+
 
 ![](images/lecture_7_1/lec_7_1_slide_22_image_1.png)
 
@@ -496,7 +494,7 @@ Long format
 # ##############################################################################
 
 * **Data Quality Problems
-23
+
 
 ![](images/lecture_7_1/lec_7_1_slide_23_image_1.png)
 
@@ -521,7 +519,7 @@ Long format
   - Evolving schemas or classification schemes (for categorical attributes)
   - Outliers
 
-24
+
 
 © UMD DATA605
 
@@ -533,7 +531,7 @@ Long format
 **Data Quality Problems
 **
 
-25
+
 
 ![](images/lecture_7_1/lec_7_1_slide_25_image_1.png)
 
@@ -562,7 +560,7 @@ Long format
   - Mismatched information
   - ...
 
-26
+
 
 © UMD DATA605
 
@@ -581,7 +579,7 @@ Long format
   - Distillation errors: errors that pop up during processing and summarization
   - Data integration errors: inconsistencies across sources that are combined together
 
-27
+
 
 © UMD DATA605
 
@@ -606,7 +604,7 @@ Long format
     - Median absolute deviation (MAD)
     - Median distance of values from the median value
 
-28
+
 
 ![](images/lecture_7_1/lec_7_1_slide_28_image_1.png)
 
@@ -639,7 +637,7 @@ Long format
     - Not as straightforward
 - Wikipedia article on Outliers
 
-29
+
 
 © UMD DATA605
 
@@ -664,7 +662,7 @@ Long format
   - Approximation techniques often used
 - Need to try different techniques based on the data
 
-30
+
 
 ![](images/lecture_7_1/lec_7_1_slide_30_image_1.png)
 
@@ -696,7 +694,7 @@ Long format
 - Can use the historical patterns in the data to flag outliers
   - Rolling MAD (median absolute variation)
 
-31
+
 
 ![](images/lecture_7_1/lec_7_1_slide_31_image_1.png)
 
@@ -729,7 +727,7 @@ Long format
   - SQL GROUP BY operator
   - Map-Reduce
 
-32
+
 
 ![](images/lecture_7_1/lec_7_1_slide_32_image_1.png)
 
@@ -746,7 +744,7 @@ Long format
     - JSON, YAML, Protocol Buffer, Python Pickle
 - Serialization formats are data models
 
-34
+
 
 © UMD DATA605
 
@@ -773,7 +771,7 @@ Long format
     - Annotate CSV files with schema
   - Mainly read-only, difficult to modify
 
-35
+
 
 ![](images/lecture_7_1/lec_7_1_slide_35_image_1.png)
 ![](images/lecture_7_1/lec_7_1_slide_35_image_2.png)
@@ -802,7 +800,7 @@ Long format
   - Need ingestion step converting the inbound format to Parquet
   - Mainly read-only, difficult to modify
 
-36
+
 
 ![](images/lecture_7_1/lec_7_1_slide_36_image_1.png)
 
@@ -823,7 +821,6 @@ Long format
 **{     "firstName": "John",     "lastName": "Smith",     "isAlive": true,     "age": 25,     "height_cm": 167.6,     "address": {        "streetAddress": "21 2nd Street",        "city": "New York",        "state": "NY",        "postalCode": "10021-3100"     }, 
 **   "phoneNumbers": [        {        "type": "home",        "number": "212 555-1234”       },        {        "type": "office",        "number": "646 555-4567"        }     ],     "children": [],     "spouse": null  }**
 
-37
 
 © UMD DATA605
 
@@ -874,7 +871,7 @@ Long format
 **}
 **
 
-38
+
 
 © UMD DATA605
 
@@ -894,7 +891,7 @@ Long format
 
 **{        "namespace": "example.avro",        "type": "record",        "name": "User",        "fields": [                   {"name": "name", "type": "string"},                   {"name": "favorite_number", "type": ["int", "null"]},                   {"name": "favorite_color", "type": ["string", "null"]}        ] }**
 
-39
+
 
 © UMD DATA605
 
@@ -913,7 +910,7 @@ Long format
   - E.g., microservices architectures, cloud services, and client-server applications
 - Can be synchronous or asynchronous
 
-40
+
 
 © UMD DATA605
 
@@ -936,7 +933,7 @@ Long format
 - **Response marshalling**: Once the procedure completes, the return values are marshaled into a response message
 - **Client communication **/ **response unmarshalling** / **return to client**: Return values are passed back to the client's original stub call, and execution continues as if the call were local.
 
-41
+
 
 © UMD DATA605
 
@@ -961,7 +958,7 @@ Long format
 
 © UMD DATA605
 
-42
+
 
 # ##############################################################################
 # Software testing (2)
@@ -983,7 +980,6 @@ Long format
 
 © UMD DATA605
 
-43
 
 # ##############################################################################
 # CI / CD
@@ -1006,7 +1002,7 @@ Long format
 
 © UMD DATA605
 
-44
+
 
 # ##############################################################################
 # RESTful API (1)
@@ -1031,7 +1027,7 @@ Long format
 
 © UMD DATA605
 
-45
+
 
 # ##############################################################################
 # RESTful API (2)
@@ -1050,7 +1046,7 @@ Long format
 
 © UMD DATA605
 
-46
+
 
 ![](images/lecture_7_1/lec_7_1_slide_46_image_1.png)
 
@@ -1081,7 +1077,7 @@ Long format
 
 © UMD DATA605
 
-47
+
 
 # ##############################################################################
 # Semantic versioning
@@ -1106,14 +1102,14 @@ Long format
 
 © UMD DATA605
 
-48
+
 
 # ##############################################################################
 # Microservices vs Monolithic Architecture
 # ##############################################################################
 
 * Microservices vs Monolithic Architecture
-49
+
 
 ![](images/lecture_7_1/lec_7_1_slide_49_image_1.png)
 
@@ -1139,7 +1135,7 @@ Long format
 - Complexity to deploy
 - Needs tooling
 
-50
+
 
 # ##############################################################################
 # Monolithic Architecture
@@ -1152,4 +1148,4 @@ Long format
 - **Deployment complexity**: Updates to a small part of the application require redeploying the entire application
 - **Single point of failure**: Issues in any module can potentially affect the availability of the entire application
 
-51
+
