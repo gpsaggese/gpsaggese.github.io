@@ -269,8 +269,7 @@ MSML610: Advanced Machine Learning
     hypotheses
     \begingroup \small
     \begin{alignat*}{2}
-    & \forall g \in \calH = \{h_1, ... , h_M\}
-    \Pr(|E_{in}(g) - E_{out}(g)| > \varepsilon)
+    & \forall g \in \calH = \{h_1, ... , h_M\} \; \Pr(|E_{in}(g) - E_{out}(g)| > \varepsilon)
     &
     \\
     & \hspace{1cm} \le \Pr(\bigcup_{i=1}^M (|E_{in}(h_i) - E_{out}(h_i) | > \varepsilon))
