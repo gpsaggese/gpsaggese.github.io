@@ -35,9 +35,6 @@ Deployment
 
 UMD DATA605 - Big Data Systems
 
-# ##############################################################################
-# UMD DATA605 - Big Data Systems Orchestration with Airflow
-# ##############################################################################
 
 * UMD DATA605 - Big Data Systems Orchestration with Airflow
 **UMD DATA605 - Big Data Systems** **Orchestration with Airflow**
@@ -47,9 +44,6 @@ Deployment
 Dr. GP Saggese
 gsaggese@umd.edu
 
-# ##############################################################################
-# Orchestration - Resources
-# ##############################################################################
 
 * Orchestration - Resources
 - Concepts in the slides
@@ -62,13 +56,10 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-2
+
 
 ![](images/lecture_7_1/lec_7_1_slide_2_image_1.png)
 
-# ##############################################################################
-# Workflow Managers (1)
-# ##############################################################################
 
 * Workflow Managers
 - **Data pipelines** move/transform data across data stores
@@ -84,13 +75,10 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-3
+
 
 ![](images/lecture_7_1/lec_7_1_slide_3_image_1.png)
 
-# ##############################################################################
-# Workflow Managers (2)
-# ##############################################################################
 
 * Workflow Managers
 ![](images/lecture_7_1/lec_7_1_slide_4_image_1.png)
@@ -108,15 +96,12 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-4
+
 
 ![](images/lecture_7_1/lec_7_1_slide_4_image_2.png)
 
 ![](images/lecture_7_1/lec_7_1_slide_4_image_3.png)
 
-# ##############################################################################
-# Workflow Managers (3)
-# ##############################################################################
 
 * Workflow Managers
 - **Workflow managers address the orchestration problem**
@@ -138,7 +123,7 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-5
+
 
 ![](images/lecture_7_1/lec_7_1_slide_5_image_1.png)
 
@@ -146,9 +131,6 @@ gsaggese@umd.edu
 
 ![](images/lecture_7_1/lec_7_1_slide_5_image_3.png)
 
-# ##############################################################################
-# Airflow
-# ##############################################################################
 
 * Airflow
 - Developed at AirBnB in 2015
@@ -168,13 +150,10 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-6
+
 
 ![](images/lecture_7_1/lec_7_1_slide_6_image_1.png)
 
-# ##############################################################################
-# Airflow: Execution Semantics
-# ##############################################################################
 
 * Airflow: Execution Semantics
 - **Scheduling semantic**
@@ -194,11 +173,8 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-7
 
-# ##############################################################################
-# Airflow: What Doesn’t Do Well
-# ##############################################################################
+
 
 * Airflow: What Doesn’t Do Well
 - **Not great for streaming pipelines**
@@ -216,15 +192,11 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-8
 
 ![](images/lecture_7_1/lec_7_1_slide_8_image_1.png)
 ```
 
 ```
-# ##############################################################################
-# Airflow: Components
-# ##############################################################################
 
 * Airflow: Components
 ![](images/lecture_7_1/lec_7_1_slide_9_image_1.png)
@@ -251,11 +223,8 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-9
 
-# ##############################################################################
-# Airflow: Concepts
-# ##############################################################################
+
 
 * Airflow: Concepts
 - Each DAG run represents a data interval, i.e., an interval between two times
@@ -266,11 +235,8 @@ gsaggese@umd.edu
   - Simulate the scheduler running DAG / task for a specific date
   - Even if it is physically run now
 
-10
 
-# ##############################################################################
-# Airflow: Tutorial (1)
-# ##############################################################################
+
 
 * Airflow: Tutorial
 - Follow Airflow Tutorial in README
@@ -278,11 +244,8 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-11
 
-# ##############################################################################
-# Airflow: Tutorial (2)
-# ##############################################################################
+
 
 * Airflow: Tutorial
 - The script describes the DAG structure as Python code
@@ -293,13 +256,10 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-12
+
 
 ![](images/lecture_7_1/lec_7_1_slide_12_image_1.png)
 
-# ##############################################################################
-# Airflow: Tutorial (3)
-# ##############################################################################
 
 * Airflow: Tutorial
 - Dict with various default params to pass to the DAG constructor
@@ -308,15 +268,12 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-13
+
 
 ![](images/lecture_7_1/lec_7_1_slide_13_image_1.png)
 
 ![](images/lecture_7_1/lec_7_1_slide_13_image_2.png)
 
-# ##############################################################################
-# Airflow: Tutorial (4)
-# ##############################################################################
 
 * Airflow: Tutorial
 - DAG defines tasks by instantiating **Operator** objects
@@ -327,7 +284,6 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-14
 
 ![](images/lecture_7_1/lec_7_1_slide_14_image_1.png)
 
@@ -345,9 +301,6 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-# ##############################################################################
-# Resources
-# ##############################################################################
 
 * Resources
 - Pandas tutorial
@@ -359,7 +312,7 @@ gsaggese@umd.edu
   - https://wesmckinney.com/book
   - Read cover-to-cover and execute all examples 2-3x time to really *master*
 
-16
+
 
 ![](images/lecture_7_1/lec_7_1_slide_16_image_1.png)
 
@@ -367,9 +320,6 @@ gsaggese@umd.edu
 ```
 
 ```
-# ##############################################################################
-# Overview (1)
-# ##############################################################################
 
 * Overview
 - **Data wrangling**
@@ -383,24 +333,18 @@ gsaggese@umd.edu
   - **Data integration**: combine data from multiple sources
   - **Information extraction**: extract structured information from unstructured / text sources
 
-17
+
 
 © UMD DATA605
 
-# ##############################################################################
-# Overview (2)
-# ##############################################################################
 
 * Overview
-18
+
 
 ![](images/lecture_7_1/lec_7_1_slide_18_image_1.png)
 
 © UMD DATA605
 
-# ##############################################################################
-# Overview (3)
-# ##############################################################################
 
 * Overview
 - Many of the data wrangling problems are not easy to formalize, and have seen little research work, e.g.,
@@ -414,16 +358,13 @@ gsaggese@umd.edu
   - Data extraction is the E step
   - Data wrangling is the T step
 
-19
+
 
 © UMD DATA605
 
-# ##############################################################################
-# Overview (4)
-# ##############################################################################
 
 * Overview
-20
+
 
 ![](images/lecture_7_1/lec_7_1_slide_20_image_1.png)
 
@@ -433,9 +374,6 @@ gsaggese@umd.edu
 
 © UMD DATA605
 
-# ##############################################################################
-# Data Extraction
-# ##############################################################################
 
 * Data Extraction
 - Data may reside in a wide variety of different sources
@@ -455,13 +393,10 @@ gsaggese@umd.edu
   - Several tools out there to do this (somewhat) automatically
     - E.g., import.io, portia, ...
 
-21
+
 
 © UMD DATA605
 
-# ##############################################################################
-# Tidy Data
-# ##############################################################################
 
 * Tidy Data
 - Tidy data, Wickham, 2014
@@ -469,7 +404,7 @@ gsaggese@umd.edu
   - Each observation forms a row
 - Wide vs long format
 
-22
+
 
 ![](images/lecture_7_1/lec_7_1_slide_22_image_1.png)
 
@@ -491,20 +426,14 @@ Long format
 
 © UMD DATA605
 
-# ##############################################################################
-# **Data Quality Problems
-# ##############################################################################
 
 * **Data Quality Problems
-23
+
 
 ![](images/lecture_7_1/lec_7_1_slide_23_image_1.png)
 
 © UMD DATA605
 
-# ##############################################################################
-# Single-Source Problems
-# ##############################################################################
 
 * Single-Source Problems
 - Depends largely on the source
@@ -521,27 +450,21 @@ Long format
   - Evolving schemas or classification schemes (for categorical attributes)
   - Outliers
 
-24
+
 
 © UMD DATA605
 
-# ##############################################################################
-# Data Quality Problems
-# ##############################################################################
 
 * Data Quality Problems
 **Data Quality Problems
 **
 
-25
+
 
 ![](images/lecture_7_1/lec_7_1_slide_25_image_1.png)
 
 © UMD DATA605
 
-# ##############################################################################
-# Multi-Source Problems
-# ##############################################################################
 
 * Multi-Source Problems
 ## Multi-Source Problems
@@ -562,13 +485,10 @@ Long format
   - Mismatched information
   - ...
 
-26
+
 
 © UMD DATA605
 
-# ##############################################################################
-# Data Cleaning: Outlier Detection
-# ##############################################################################
 
 * Data Cleaning: Outlier Detection
 ## Data Cleaning: Outlier Detection
@@ -581,13 +501,10 @@ Long format
   - Distillation errors: errors that pop up during processing and summarization
   - Data integration errors: inconsistencies across sources that are combined together
 
-27
+
 
 © UMD DATA605
 
-# ##############################################################################
-# Univariate Outlier Detection
-# ##############################################################################
 
 * Univariate Outlier Detection
 ## Univariate Outlier Detection
@@ -606,7 +523,7 @@ Long format
     - Median absolute deviation (MAD)
     - Median distance of values from the median value
 
-28
+
 
 ![](images/lecture_7_1/lec_7_1_slide_28_image_1.png)
 
@@ -614,9 +531,6 @@ Long format
 
 © UMD DATA605
 
-# ##############################################################################
-# Outlier Detection
-# ##############################################################################
 
 * Outlier Detection
 ## Outlier Detection
@@ -639,13 +553,10 @@ Long format
     - Not as straightforward
 - Wikipedia article on Outliers
 
-29
+
 
 © UMD DATA605
 
-# ##############################################################################
-# Multivariate Outliers
-# ##############################################################################
 
 * Multivariate Outliers
 ## Multivariate Outliers
@@ -664,7 +575,7 @@ Long format
   - Approximation techniques often used
 - Need to try different techniques based on the data
 
-30
+
 
 ![](images/lecture_7_1/lec_7_1_slide_30_image_1.png)
 
@@ -672,9 +583,6 @@ Long format
 
 © UMD DATA605
 
-# ##############################################################################
-# Time Series Outliers
-# ##############################################################################
 
 * Time Series Outliers
 ## Time Series Outliers
@@ -696,7 +604,7 @@ Long format
 - Can use the historical patterns in the data to flag outliers
   - Rolling MAD (median absolute variation)
 
-31
+
 
 ![](images/lecture_7_1/lec_7_1_slide_31_image_1.png)
 
@@ -705,9 +613,6 @@ Long format
 
 © UMD DATA605
 
-# ##############################################################################
-# Split-Apply-Combine
-# ##############################################################################
 
 * Split-Apply-Combine
 ## Split-Apply-Combine
@@ -729,15 +634,12 @@ Long format
   - SQL GROUP BY operator
   - Map-Reduce
 
-32
+
 
 ![](images/lecture_7_1/lec_7_1_slide_32_image_1.png)
 
 © UMD DATA605
 
-# ##############################################################################
-# Serialization Formats (1)
-# ##############################################################################
 
 * Serialization Formats
 - Programs need to send data to each other (on the network, on disk)
@@ -746,13 +648,10 @@ Long format
     - JSON, YAML, Protocol Buffer, Python Pickle
 - Serialization formats are data models
 
-34
+
 
 © UMD DATA605
 
-# ##############################################################################
-# Comma Separated Values (CSV)
-# ##############################################################################
 
 * Comma Separated Values (CSV)
 - CSV stores data row-wise as text without schema
@@ -773,16 +672,13 @@ Long format
     - Annotate CSV files with schema
   - Mainly read-only, difficult to modify
 
-35
+
 
 ![](images/lecture_7_1/lec_7_1_slide_35_image_1.png)
 ![](images/lecture_7_1/lec_7_1_slide_35_image_2.png)
 
 © UMD DATA605
 
-# ##############################################################################
-# (Apache) Parquet
-# ##############################################################################
 
 * (Apache) Parquet
 - Parquet allows to read tiles of data
@@ -802,15 +698,12 @@ Long format
   - Need ingestion step converting the inbound format to Parquet
   - Mainly read-only, difficult to modify
 
-36
+
 
 ![](images/lecture_7_1/lec_7_1_slide_36_image_1.png)
 
 © UMD DATA605
 
-# ##############################################################################
-# JSON
-# ##############################################################################
 
 * JSON
 - JSON = JavaScript Object Notation
@@ -823,13 +716,9 @@ Long format
 **{     "firstName": "John",     "lastName": "Smith",     "isAlive": true,     "age": 25,     "height_cm": 167.6,     "address": {        "streetAddress": "21 2nd Street",        "city": "New York",        "state": "NY",        "postalCode": "10021-3100"     }, 
 **   "phoneNumbers": [        {        "type": "home",        "number": "212 555-1234”       },        {        "type": "office",        "number": "646 555-4567"        }     ],     "children": [],     "spouse": null  }**
 
-37
 
 © UMD DATA605
 
-# ##############################################################################
-# Protocol Buffers
-# ##############################################################################
 
 * Protocol Buffers
 - Developed by Google
@@ -874,13 +763,10 @@ Long format
 **}
 **
 
-38
+
 
 © UMD DATA605
 
-# ##############################################################################
-# Serialization Formats (2)
-# ##############################################################################
 
 * Serialization Formats
 - Avro
@@ -894,13 +780,10 @@ Long format
 
 **{        "namespace": "example.avro",        "type": "record",        "name": "User",        "fields": [                   {"name": "name", "type": "string"},                   {"name": "favorite_number", "type": ["int", "null"]},                   {"name": "favorite_color", "type": ["string", "null"]}        ] }**
 
-39
+
 
 © UMD DATA605
 
-# ##############################################################################
-# Remote Procedure Call
-# ##############################################################################
 
 * Remote Procedure Call
 - **Remote Procedure Call** (RPC) is a protocol to request a service from a program located in another computer abstracting the details of the network communication
@@ -913,7 +796,7 @@ Long format
   - E.g., microservices architectures, cloud services, and client-server applications
 - Can be synchronous or asynchronous
 
-40
+
 
 © UMD DATA605
 
@@ -923,9 +806,6 @@ Long format
 # Content processing error - slide missing
 
 ```
-# ##############################################################################
-# RPCs: Internals
-# ##############################################################################
 
 * RPCs: Internals
 - **Client procedure call**: Client calls a stub function, providing the necessary arguments
@@ -936,15 +816,12 @@ Long format
 - **Response marshalling**: Once the procedure completes, the return values are marshaled into a response message
 - **Client communication **/ **response unmarshalling** / **return to client**: Return values are passed back to the client's original stub call, and execution continues as if the call were local.
 
-41
+
 
 © UMD DATA605
 
 ![](images/lecture_7_1/lec_7_1_slide_41_image_1.png)
 
-# ##############################################################################
-# Software testing (1)
-# ##############################################################################
 
 * Software testing
 - Evaluate the functionality, reliability, performance, and security of a product and ensure it meets specified requirements
@@ -961,11 +838,8 @@ Long format
 
 © UMD DATA605
 
-42
 
-# ##############################################################################
-# Software testing (2)
-# ##############################################################################
+
 
 * Software testing
 - **Smoke/sanity testing**: A quick, non-exhaustive run-through of the functionalities to ensure that the main functions work as expected
@@ -983,11 +857,7 @@ Long format
 
 © UMD DATA605
 
-43
 
-# ##############################################################################
-# CI / CD
-# ##############################################################################
 
 * CI / CD
 - **Continuous integration (CI)
@@ -1006,11 +876,8 @@ Long format
 
 © UMD DATA605
 
-44
 
-# ##############################################################################
-# RESTful API (1)
-# ##############################################################################
+
 
 * RESTful API
 - REST API
@@ -1031,11 +898,8 @@ Long format
 
 © UMD DATA605
 
-45
 
-# ##############################################################################
-# RESTful API (2)
-# ##############################################################################
+
 
 * RESTful API
 - **Cacheable
@@ -1050,13 +914,10 @@ Long format
 
 © UMD DATA605
 
-46
+
 
 ![](images/lecture_7_1/lec_7_1_slide_46_image_1.png)
 
-# ##############################################################################
-# Stages of deployment
-# ##############################################################################
 
 * Stages of deployment
 - The deployment of software progresses through several environments
@@ -1081,11 +942,8 @@ Long format
 
 © UMD DATA605
 
-47
 
-# ##############################################################################
-# Semantic versioning
-# ##############################################################################
+
 
 * Semantic versioning
 - Semantic versioning is a versioning scheme for software that aims to convey meaning about the underlying changes
@@ -1106,14 +964,11 @@ Long format
 
 © UMD DATA605
 
-48
 
-# ##############################################################################
-# Microservices vs Monolithic Architecture
-# ##############################################################################
+
 
 * Microservices vs Monolithic Architecture
-49
+
 
 ![](images/lecture_7_1/lec_7_1_slide_49_image_1.png)
 
@@ -1124,9 +979,6 @@ Long format
 - Different styles of building complex systems
 - Find the right granularity
 
-# ##############################################################################
-# Microservice Architecture
-# ##############################################################################
 
 * Microservice Architecture
 - **Modularity**: composed of small, independently deployable services, each implementing a specific business functionality
@@ -1139,11 +991,8 @@ Long format
 - Complexity to deploy
 - Needs tooling
 
-50
 
-# ##############################################################################
-# Monolithic Architecture
-# ##############################################################################
+
 
 * Monolithic Architecture
 - **Simplicity**: (initially) simpler to develop, test, deploy, and scale as a single application unit
@@ -1152,4 +1001,4 @@ Long format
 - **Deployment complexity**: Updates to a small part of the application require redeploying the entire application
 - **Single point of failure**: Issues in any module can potentially affect the availability of the entire application
 
-51
+

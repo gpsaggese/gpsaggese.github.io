@@ -34,9 +34,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-# ##############################################################################
-# Overview
-# ##############################################################################
 
 * Overview
 
@@ -55,14 +52,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - RA positions, internships, full-time positions
   - Office hours
 
-2
+
 
 ![](images/lecture_9_3/lec_9_3_slide_2_image_1.png)
 ![](images/lecture_9_3/lec_9_3_slide_2_image_2.png)
 
-# ##############################################################################
-# Sorrentum Primitives
-# ##############################################################################
 
 * Sorrentum Primitives
 
@@ -81,13 +75,9 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Connect to centralized and decentralized exchanges
   - Manage orders and portfolios using algorithmic trading
 
-3 / XYZ
 
 ![](images/lecture_9_3/lec_9_3_slide_3_image_1.png)
 
-# ##############################################################################
-# Sorrentum: Financial Machine Learning
-# ##############################################################################
 
 * Sorrentum: Financial Machine Learning
 
@@ -104,7 +94,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Behavioral biases and fallacies
     - Markets are influenced by emotions, fear, and greed
 
-4 / XYZ
 
 ![](images/lecture_9_3/lec_9_3_slide_4_image_1.png)
 ![](images/lecture_9_3/lec_9_3_slide_4_image_2.png)
@@ -124,9 +113,6 @@ R^2: 0.1% (10bps)
 
 **Financial ML**
 
-# ##############################################################################
-# Blockchain
-# ##############################################################################
 
 * Blockchain
 
@@ -145,14 +131,10 @@ R^2: 0.1% (10bps)
 - **Example of blockchain + consensus algorithms**
   - Bitcoin, Ethereum, Solana, Cardano
 
-5 / XYZ
 
 ![](images/lecture_9_3/lec_9_3_slide_5_image_1.png)
 ![](images/lecture_9_3/lec_9_3_slide_5_image_2.png)
 
-# ##############################################################################
-# Smart Contract
-# ##############################################################################
 
 * Smart Contract
 
@@ -178,11 +160,8 @@ R^2: 0.1% (10bps)
   - Turing-complete
   - EVM
 
-6 / XYZ
 
-# ##############################################################################
-# DApps and DAO
-# ##############################################################################
+
 
 * DApps and DAO
 
@@ -203,11 +182,8 @@ R^2: 0.1% (10bps)
   - Not influenced by central government
   - E.g., Uniswap
 
-7 / XYZ
 
-# ##############################################################################
-# Current Financial System is Failing
-# ##############################################################################
+
 
 * Current Financial System is Failing
 
@@ -226,7 +202,7 @@ R^2: 0.1% (10bps)
   - Inflation is rampant around the world
   - There are 1.7b people in the world that have no access to banking system
 
-8 / XYZ
+
 
 ![](images/lecture_9_3/lec_9_3_slide_8_image_1.png)
 
@@ -235,9 +211,6 @@ Tyler Durden’s Project Mayhem: erase debt by blowing up buildings where credit
 ```
 
 ```markdown
-# ##############################################################################
-# Decentralized Finance
-# ##############################################################################
 
 * Decentralized Finance
 - **Idea: instead of renovating a crumbling financial system, rebuild it from the ground up
@@ -264,11 +237,8 @@ Tyler Durden’s Project Mayhem: erase debt by blowing up buildings where credit
   - Get rid of rent-seeking tech companies
   - You can’t defeat economy as you can’t defeat gravity
 
-9 / XYZ
 
-# ##############################################################################
-# Sorrentum: Projects (1)
-# ##############################################################################
+
 
 * Sorrentum: Projects
 - **Arbitrage
@@ -287,11 +257,8 @@ Tyler Durden’s Project Mayhem: erase debt by blowing up buildings where credit
   - Predict noisy financial quantities with ML
   - E.g., price, volatility, volume, bid-ask spread
 
-10 / XYZ
 
-# ##############################################################################
-# Sorrentum: Projects (2)
-# ##############################################################################
+
 
 * Sorrentum: Projects
 - **DeFi / Web3 Research
@@ -311,14 +278,11 @@ Tyler Durden’s Project Mayhem: erase debt by blowing up buildings where credit
   - How to build a community around these research project
   - How to fund raise for DeFi ideas
 
-11 / XYZ
 
-# ##############################################################################
-# Additional Resources
-# ##############################################################################
+
 
 * Additional Resources
-12 / XYZ
+
 
 ![](images/lecture_9_3/lec_9_3_slide_12_image_1.png)
 
@@ -344,14 +308,9 @@ The Wolf of Wall Street, 2013
 
 The Big Short, 2015
 
-# ##############################################################################
-# Sorrentum Sandbox
-# ##############################################################################
 
 * Sorrentum Sandbox
 - Tutorial
 - Two data node examples
   - Binance
   - Reddit
-
-13 / XYZ

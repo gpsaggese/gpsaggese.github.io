@@ -38,9 +38,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-# ##############################################################################
-# Jupyter Tutorial
-# ##############################################################################
 
 * Jupyter Tutorial
 - Let’s start with a tutorial of Jupyter notebooks
@@ -49,14 +46,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Explains how to run the tutorial
 - Notebook to execute / study
 
-2
+
 
 © UMD DATA605
 
 
-# ##############################################################################
-# Resources (1)
-# ##############################################################################
 
 * Resources
 - Concepts in the slides
@@ -65,13 +59,10 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Nice high-level view:
   - Seven Databases in Seven Weeks, 2e
 
-4
+
 
 ![](images/lecture_5_0/lec_5_0_slide_4_image_1.png)
 
-# ##############################################################################
-# From SQL to NoSQL
-# ##############################################################################
 
 * From SQL to NoSQL
 - **DBs are central tools to big data
@@ -100,11 +91,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_5_0/lec_5_0_slide_5_image_1.png)
 
-5
 
-# ##############################################################################
-# Issues with Relational DBs
-# ##############################################################################
+
 
 * Issues with Relational DBs
 - **Relational DBs have drawbacks
@@ -120,11 +108,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Within relational SQL paradigm
     - With NoSQL approach
 
-6
 
-# ##############################################################################
-# 1 App-DB Impedance Mismatch: Problem
-# ##############################################################################
+
 
 * 1 App-DB Impedance Mismatch: Problem
 - **Mismatch between how data is represented in the code and in a relational DB
@@ -149,11 +134,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - One could denormalize the tables using a single table
     - **Names(name, tag)**
 
-7
 
-# ##############################################################################
-# 1 App-DB Impedance Mismatch: Solutions
-# ##############################################################################
+
 
 * 1 App-DB Impedance Mismatch: Solutions
 - **Ad-hoc mapping layer
@@ -177,13 +159,10 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Every object can be flat or complex (e.g., nested JSON)
     - Stored objects (aka documents) can be different
 
-8
+
 ```
 
 ```markdown
-# ##############################################################################
-# 2 Schema Flexibility
-# ##############################################################################
 
 * 2 Schema Flexibility
 - **Problem**
@@ -203,11 +182,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Application needs to deal with variety of schemas when it processes the data
     - Related to ETL vs ELT data pipelines
 
-9
 
-# ##############################################################################
-# 3 Consistency in Relational DBs
-# ##############################################################################
+
 
 * 3 Consistency in Relational DBs
 - **All systems in the real-world fail**
@@ -229,7 +205,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - = once a transaction has been committed, the *content is preserved for any system failure*
   - Just record the data in non-volatile memory
 
-10
+
 
 ![](images/lecture_5_0/lec_5_0_slide_10_image_1.png)
 
@@ -239,9 +215,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 **Application error**
 
-# ##############################################################################
-# 3 Consistency in Distributed DB
-# ##############################################################################
 
 * 3 Consistency in Distributed DB
 - When data scales up or number of clients increases → **distributed setup**
@@ -257,13 +230,10 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Due to CAP theorem
     - Even weak consistency is difficult to achieve
 
-11
+
 
 ![](images/lecture_5_0/lec_5_0_slide_11_image_1.png)
 
-# ##############################################################################
-# CAP Theorem
-# ##############################################################################
 
 * CAP Theorem
 - **CAP** **theorem**: Any *distributed* DB can have *at most two* of the following *three* properties
@@ -275,13 +245,10 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Originally a conjecture (Eric Brewer)
 - Made formal later (Gilbert, Lynch, 2002)
 
-12
+
 
 ![](images/lecture_5_0/lec_5_0_slide_12_image_1.png)
 
-# ##############################################################################
-# CAP Corollary
-# ##############################################################################
 
 * CAP Corollary
 - **CAP Theorem**: pick 2 among consistency, availability, partition tolerance
@@ -293,15 +260,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - *Consistency* (i.e., allow different views of the system)
     - E.g., social network
 
-13
+
 
 ![](images/lecture_5_0/lec_5_0_slide_13_image_1.png)
 
 **You are here**
 
-# ##############################################################################
-# CAP Theorem: Intuition
-# ##############################################################################
 
 * CAP Theorem: Intuition
 - Imagine there are
@@ -320,7 +284,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Sometimes inconsistency is not acceptable (e.g., a banking system)
   - Stop the service (no availability) to avoid inconsistency
 
-14
+
 
 ![](images/lecture_5_0/lec_5_0_slide_14_image_1.png)
 
@@ -334,9 +298,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 **Client**
 
-# ##############################################################################
-# Replication Schemes
-# ##############################################################################
 
 * Replication Schemes
 - **Replication schemes**: how to organize multiple servers implementing a distributed DB
@@ -352,7 +313,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - When writing, we make sure to write to *W* replicas
   - When reading, we read from *R* replicas and pick the latest update (using timestamps)
 
-15
+
 
 ![](images/lecture_5_0/lec_5_0_slide_15_image_1.png)
 
@@ -362,9 +323,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 *Update-anywhere replication*
 
-# ##############################################################################
-# Synchronous Replication
-# ##############################################################################
 
 * Synchronous Replication
 - **Synchronous replication**: updates are propagated to other replicas as part of a single transaction
@@ -379,7 +337,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **CAP theorem**: still only one among Consistency, Availability, in case of Network partition
   - Many systems use relaxed / loose consistency models
 
-16
+
 
 ![](images/lecture_5_0/lec_5_0_slide_16_image_1.png)
 ```
@@ -387,9 +345,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ```markdown
 ![images/lecture_5_0/lec_5_0_slide_17_image_1.png]
 
-# ##############################################################################
-# Asynchronous Replication
-# ##############################################################################
 
 * Asynchronous Replication
 - **Asynchronous replication**
@@ -408,11 +363,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Replicas version their data with timestamps
   - If local replica has fresh data, uses it, otherwise send request to primary node
 
-17
 
-# ##############################################################################
-# 4 Scalability Issues with RDMS
-# ##############################################################################
+
 
 * 4 Scalability Issues with RDMS
 - The sources of relational SQL DB scalability issues are:
@@ -427,11 +379,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - To enforce DB consistency, locks are applied across networks
     - Overhead of replica consistency (2PC, Paxos)
 
-18
 
-# ##############################################################################
-# Scalability Issues with RDMS: Solutions
-# ##############################################################################
 
 * Scalability Issues with RDMS: Solutions
 - **Table denormalization**
@@ -451,7 +399,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - E.g., eventual consistency
 - **NoSQL**
 
-19
+
 
 ![images/lecture_5_0/lec_5_0_slide_19_image_1.png]
 
@@ -461,9 +409,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 *Denormalized data*
 
-# ##############################################################################
-# NoSQL Stores
-# ##############################################################################
 
 * NoSQL Stores
 - **Use cases of large-scale web applications**
@@ -485,11 +430,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Most NoSQL stores will only allow one object transactions
     - E.g., one document / key
 
-20
 
-# ##############################################################################
-# Relational DB vs MongoDB
-# ##############################################################################
+
 
 * Relational DB vs MongoDB
 How MongoDB solves the four RDBM problems
@@ -507,18 +449,13 @@ How MongoDB solves the four RDBM problems
 - Updating data means locking only one document, and not entire collection
 - Sharding: use more machines to do collectively do more work
 
-21
 
-22
 
 **UMD DATA605 - Big Data** **Systems**
 Issues with Relational DBs
 NoSQL Taxonomy
 (Apache) HBase
 
-# ##############################################################################
-# Resources (2)
-# ##############################################################################
 
 * Resources
 - Concepts in the slides
@@ -526,13 +463,10 @@ NoSQL Taxonomy
 - Mastery:
   - Seven Databases in Seven Weeks, 2e
 
-23
+
 
 ![images/lecture_5_0/lec_5_0_slide_23_image_1.png]
 
-# ##############################################################################
-# DB Taxonomy
-# ##############################################################################
 
 * DB Taxonomy
 - **At least five DB genres**
@@ -547,7 +481,7 @@ NoSQL Taxonomy
   - Querying capability
   - Replication scheme
 
-24
+
 
 ![images/lecture_5_0/lec_5_0_slide_24_image_1.png]
 
@@ -559,9 +493,6 @@ NoSQL Taxonomy
 ```
 
 ```markdown
-# ##############################################################################
-# Relational DB
-# ##############################################################################
 
 * Relational DB
 - E.g., *Postgres*, MySQL, Oracle, SQLite
@@ -582,11 +513,8 @@ NoSQL Taxonomy
   - When data is hierarchical (not a nice row in one or more tables)
   - When data structure is variable/dishomogeneous (record-to-record variation)
 
-25
 
-# ##############################################################################
-# Key-Value Store
-# ##############################################################################
+
 
 * Key-Value Store
 - E.g., Redis, DynamoDB, *Git*, *AWS S3*, *filesystem*
@@ -605,13 +533,10 @@ NoSQL Taxonomy
   - Not great if data queries are needed
   - Lacking secondary indexes and scanning capabilities
 
-26
+
 
 ![](images/lecture_5_0/lec_5_0_slide_26_image_1.png)
 
-# ##############################################################################
-# Document Store
-# ##############################################################################
 
 * Document Store
 - E.g., *MongoDB*, CouchDB
@@ -630,13 +555,10 @@ NoSQL Taxonomy
   - Complex join queries
   - Denormalized form is the norm
 
-27
+
 
 ![](images/lecture_5_0/lec_5_0_slide_27_image_1.png)
 
-# ##############################################################################
-# Columnar Store
-# ##############################################################################
 
 * Columnar Store
 - E.g., *HBase*, Cassandra, *Parquet*
@@ -658,13 +580,10 @@ NoSQL Taxonomy
   - Need to design the schema based on how you plan to query the data
   - No native joins, applications need to handle join
 
-28
+
 
 ![](images/lecture_5_0/lec_5_0_slide_28_image_1.png)
 
-# ##############################################################################
-# Graph DB
-# ##############################################################################
 
 * Graph DB
 - E.g., *Neo4J*, GraphX
@@ -683,24 +602,17 @@ NoSQL Taxonomy
   - Don't scale well, since it's difficult to partition graph on different nodes
     - Store the graph in the graph DB and the relations in a key-value store
 
-29
 
 ![](images/lecture_5_0/lec_5_0_slide_29_image_1.png)
 
-# ##############################################################################
-# Taxonomy by CAP (1)
-# ##############################################################################
 
 * Taxonomy by CAP
-30
+
 
 ![](images/lecture_5_0/lec_5_0_slide_30_image_1.png)
 
 From http://blog.nahurst.com/visual-guide-to-nosql-systems
 
-# ##############################################################################
-# Taxonomy by CAP (2)
-# ##############################################################################
 
 * Taxonomy by CAP
 - **CA (Consistent, Available) systems**
@@ -720,16 +632,13 @@ From http://blog.nahurst.com/visual-guide-to-nosql-systems
   - Cassandra (column-oriented/tabular)
   - CouchDB (document-oriented)
 
-31
+
 
 ![](images/lecture_5_0/lec_5_0_slide_31_image_1.png)
 
-# ##############################################################################
-# Taxonomy by CAP (3)
-# ##############################################################################
 
 * Taxonomy by CAP
-32
+
 
 **UMD DATA605 - Big Data** **Systems**
 NoSQL Stores
@@ -738,9 +647,6 @@ NoSQL Taxonomy
 ```
 
 ```text
-# ##############################################################################
-# Resources (3)
-# ##############################################################################
 
 * Resources
 - Content in slides
@@ -751,15 +657,12 @@ NoSQL Taxonomy
 - Good overview:
   - Seven Databases in Seven Weeks, 2e
 
-33
+
 
 ![](images/lecture_5_0/lec_5_0_slide_33_image_1.png)
 
 ![](images/lecture_5_0/lec_5_0_slide_34_image_1.png)
 
-# ##############################################################################
-# (Apache) HBase
-# ##############################################################################
 
 * (Apache) HBase
 - HBase = **H**adoop Data**Base**
@@ -781,11 +684,8 @@ NoSQL Taxonomy
   - Facebook Messages (based on Cassandra)
   - Twitter metrics monitoring
 
-34
 
-# ##############################################################################
-# HBase: Features
-# ##############################################################################
+
 
 * HBase: Features
 - Data versioning
@@ -805,11 +705,8 @@ NoSQL Taxonomy
   - Distributed configuration
     - Nodes can rely on each other rather than on a centralized source
 
-35
 
-# ##############################################################################
-# From HDFS to HBase
-# ##############################################################################
+
 
 * From HDFS to HBase
 - **Different types of workloads for DB backends**
@@ -828,11 +725,8 @@ NoSQL Taxonomy
   - Use additional storage and memory to organize the tables
   - Write tables back to HDFS as needed
 
-36
 
-# ##############################################################################
-# HBase Data Model
-# ##############################################################################
+
 
 * HBase Data Model
 - **Warning**: HBase uses names similar to relational DB concepts, but with different meanings
@@ -849,7 +743,7 @@ NoSQL Taxonomy
   - New values don't overwrite the old ones
   - `put()` and `get()` allow to specify a timestamp (otherwise uses current time)
 
-37
+
 
 HBase Database: from table name to Table.
 **Database** = Dict[str, Table]
@@ -872,9 +766,6 @@ HBase Database: from table name to Table.
 (**value**, **metadata**) = \
 **table**['**row1**']['**cf1**:**col1**']
 
-# ##############################################################################
-# Example 1: Colors and Shape
-# ##############################################################################
 
 * Example 1: Colors and Shape
 - Table with:
@@ -892,7 +783,7 @@ HBase Database: from table name to Table.
   - 2 columns in the column family “shape”
 - Data is accessed using a row key and column (family:qualifier)
 
-38
+
 
 ![](images/lecture_5_0/lec_5_0_slide_38_image_1.png)
 
@@ -913,9 +804,6 @@ HBase Database: from table name to Table.
 
 ![](images/lecture_5_0/lec_5_0_slide_38_image_2.png)
 
-# ##############################################################################
-# Why all this convoluted stuff?
-# ##############################################################################
 
 * Why all this convoluted stuff?
 - **A row in HBase is almost like a mini-database**
@@ -928,13 +816,10 @@ HBase Database: from table name to Table.
   - Store versioned web-site data
   - Store a wiki
 
-39
+
 
 ![](images/lecture_5_0/lec_5_0_slide_39_image_1.png)
 
-# ##############################################################################
-# Example 2: Storing a Wiki (1)
-# ##############################################################################
 
 * Example 2: Storing a Wiki
 **Wiki (e.g., Wikipedia)**
@@ -948,7 +833,7 @@ HBase Database: from table name to Table.
 - Column → ‘’ (empty)
 - Cell value → article text
 
-40
+
 
 ![](images/lecture_5_0/lec_5_0_slide_40_image_1.png)
 
@@ -969,9 +854,6 @@ wiki_table['Home']['text']
 ```
 
 ```markdown
-# ##############################################################################
-# Example 2: Storing a Wiki (2)
-# ##############################################################################
 
 * Example 2: Storing a Wiki
 **Add data**
@@ -984,7 +866,7 @@ wiki_table['Home']['text']
 text: timestamp=1295774833226, value=Welcome!
 - HBase returns the timestamp (ms since the epoch 01-01-1970 UTC)
 
-41
+
 
 ![](images/lecture_5_0/lec_5_0_slide_41_image_1.png)
 
@@ -1003,9 +885,6 @@ database: Database = {'wikipedia':  wiki_table}
 (queried_value, metadata) = \
 wiki_table['Home']['text']
 
-# ##############################################################################
-# Example 2: Improved Wiki
-# ##############################################################################
 
 * Example 2: Improved Wiki
 - **Improved wiki using versioning**
@@ -1025,15 +904,12 @@ wiki_table['Home']['text']
   - It's fixed and identified uniquely the page (like a primary key)
   - If you want to change the title you need to re-write all the row
 
-42
+
 
 ![](images/lecture_5_0/lec_5_0_slide_42_image_1.png)
 
 ![](images/lecture_5_0/lec_5_0_slide_42_image_2.png)
 
-# ##############################################################################
-# Data in Tabular Form (1)
-# ##############################################################################
 
 * Data in Tabular Form
 |  | Name | Home | Office |  |  |  |
@@ -1043,7 +919,6 @@ wiki_table['Home']['text']
 | 102 | Marilyn | Tollerud | 555-1213 |  | 666-1213 |  |
 | 103 | Pastor | Inqvist |  |  | 555-1214 | inqvist@wel.org |
 
-43
 
 - Fundamental operations
   - CREATE table, families
@@ -1053,9 +928,6 @@ wiki_table['Home']['text']
   - SCAN table *WITH filters*
   - DROP table
 
-# ##############################################################################
-# Data in Tabular Form (2)
-# ##############################################################################
 
 * Data in Tabular Form
 |  | Name | Home | Office | Social |  |  |  |  |
@@ -1071,7 +943,7 @@ wiki_table['Home']['text']
 be added at runtime
 *
 
-44
+
 
 Table People(Name, Home, Office)
 {
@@ -1090,9 +962,6 @@ Table People(Name, Home, Office)
 	…
 }
 
-# ##############################################################################
-# Nested Data Representation
-# ##############################################################################
 
 * Nested Data Representation
 **GET People:101**
@@ -1107,7 +976,7 @@ Table People(Name, Home, Office)
 **GET People:101:Name:First**
 	“Florian”
 
-45
+
 
 |  | Name | Home | Office |  |  |  |
 |---------|---------|---------|---------|---------|---------|---------|
@@ -1116,9 +985,6 @@ Table People(Name, Home, Office)
 | 102 | Marilyn | Tollerud | 555-1213 |  | 666-1213 |  |
 | 103 | Pastor | Inqvist |  |  | 555-1214 | inqvist@wel.org |
 
-# ##############################################################################
-# Column Family vs Column
-# ##############################################################################
 
 * Column Family vs Column
 - **Adding a column**
@@ -1140,11 +1006,7 @@ Table People(Name, Home, Office)
   - Everything is designed to accommodate a special kind of data
     - E.g., timestamped web data for search engine
 
-46
 
-# ##############################################################################
-# Consistency Model
-# ##############################################################################
 
 * Consistency Model
 - **Atomicity**
@@ -1165,11 +1027,8 @@ Table People(Name, Home, Office)
 **
   - All successful writes have been made durable on disk
 
-47
 
-# ##############################################################################
-# Checking for Row or Column Existence
-# ##############################################################################
+
 
 * Checking for Row or Column Existence
 - HBase supports Bloom filters to check whether a row or column exists
@@ -1194,13 +1053,10 @@ Table People(Name, Home, Office)
   - Has false positives (no false negatives)
   - O(1)
 
-48
+
 ```
 
 ```markdown
-# ##############################################################################
-# Write-Ahead Log (WAL)
-# ##############################################################################
 
 * Write-Ahead Log (WAL)
 
@@ -1224,11 +1080,8 @@ Table People(Name, Home, Office)
 - When running a big import job, disable the WAL to improve performance
   - Trade off disaster recovery protection for speed
 
-49
 
-# ##############################################################################
-# Storing variable-length data in DBs
-# ##############################################################################
+
 
 * Storing variable-length data in DBs
 
@@ -1260,13 +1113,10 @@ PUT People, 403, Home:Phone, 555-3434
 fseek(file, 401*52);
 - Overwrite the data in place
 
-50
+
 
 Need to use pointers
 
-# ##############################################################################
-# HBase Implementation
-# ##############################################################################
 
 * HBase Implementation
 
@@ -1287,11 +1137,8 @@ Need to use pointers
     - Region = a chunk of rows [a, b)
     - Regions never overlap
 
-51
 
-# ##############################################################################
-# Idea 1: Put the Table in a Single File
-# ##############################################################################
+
 
 * Idea 1: Put the Table in a Single File
 
@@ -1319,11 +1166,8 @@ Table People(Name, Home, Office)
 
 **File “People”**
 
-52
 
-# ##############################################################################
-# Idea 2: One file + WAL
-# ##############################################################################
+
 
 * Idea 2: One file + WAL
 
@@ -1351,7 +1195,7 @@ PUT 102:Home:Email = mt@yahoo.com
 
 **PUT People:101:Office:Phone = “555-3434”**
 
-53
+
 
 	101: {
 		Timestamp: T403;
@@ -1366,9 +1210,6 @@ PUT 102:Home:Email = mt@yahoo.com
 		Office: {Phone=“666-1213”}
 	},
 
-# ##############################################################################
-# Idea 2 Requires Periodic Table Update
-# ##############################################################################
 
 * Idea 2 Requires Periodic Table Update
 
@@ -1391,13 +1232,10 @@ PUT 102:Home:Email = mt@yahoo.com
 - Delete the log and memory cache
 - Start over
 
-54
+
 
 - Similar to caching in memory hierarchy
 
-# ##############################################################################
-# Idea 3: Partition by Column Family
-# ##############################################################################
 
 * Idea 3: Partition by Column Family
 
@@ -1439,14 +1277,11 @@ Data for
 Column Family
 Name
 
-55
+
 
 - Same scheme as before but split by column family
 - Now it’s clear why column family vs columns
 
-# ##############################################################################
-# Idea 4: Split Into Regions
-# ##############################################################################
 
 * Idea 4: Split Into Regions
 
@@ -1505,12 +1340,7 @@ People?
 Access data
 in tables
 
-56
 
-# ##############################################################################
-# Final HBase Data Layout
-# ##############################################################################
+
 
 * Final HBase Data Layout
-
-57

@@ -37,9 +37,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-# ##############################################################################
-# Outline (1)
-# ##############################################################################
 
 * Outline
 - Storage
@@ -52,12 +49,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Transactions
 Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 
-Some text.
-2
 
-# ##############################################################################
-# Storage Characteristics
-# ##############################################################################
+
 
 * Storage Characteristics
 - **Storage media presents a trade-off between:**
@@ -75,14 +68,10 @@ Some text.
 **WHERE name LIKE ‘Einst*’**
   - Need to know how data is stored in order to optimize access
 
-Some text.
-3
+
 
 ![](images/lecture_10_1/lec_10_1_slide_3_image_1.png)
 
-# ##############################################################################
-# Storage Hierarchy (1)
-# ##############################################################################
 
 * Storage Hierarchy
 4
@@ -114,22 +103,14 @@ Some text.
 - **Secondary** (or **online**): flash memory, magnetic disk
 - **Offline**: optical, magnetic tape
 
-# ##############################################################################
-# Storage Hierarchy (2)
-# ##############################################################################
 
 * Storage Hierarchy
 ![](images/lecture_10_1/lec_10_1_slide_5_image_1.png)
 
-Some text.
+
 From http://cse1.net/recaps/4-memory.html
 
-Some text.
-5
 
-# ##############################################################################
-# How Important is Memory Hierarchy?
-# ##############################################################################
 
 * How Important is Memory Hierarchy?
 - **Trade-offs shifted drastically over last 10-15 years****
@@ -151,12 +132,7 @@ Some text.
   - Design and pick algorithms based on current trade-offs
   - E.g., many algorithms designed to minimize access time (e.g., elevator algorithms for disk access)
 
-Some text.
-6
 
-# ##############################################################################
- # Outline (2)
-# ##############################################################################
 
 * Outline
 - Storage
@@ -168,12 +144,8 @@ Some text.
 - Query Processing
 - Transactions
 
-Some text.
-7
 
-# ##############################################################################
-# Connecting Disks to a Server
-# ##############################################################################
+
 
 * Connecting Disks to a Server
 - **Disks (magnetic and SSDs) can be connected to computer:**
@@ -195,8 +167,6 @@ Some text.
       - Object store
       - High latency
 
-Some text.
-8
 
 ![](images/lecture_10_1/lec_10_1_slide_8_image_1.png)
 ```
@@ -204,9 +174,6 @@ Some text.
 # Content processing error - slide missing
 
 ```markdown
-# ##############################################################################
-# Magnetic Disks (1)
-# ##############################################################################
 
 * Magnetic Disks
 ![alt_text](images/lecture_10_1/lec_10_1_slide_9_image_1.png)
@@ -219,11 +186,8 @@ Some text.
 
 ![alt_text](images/lecture_10_1/lec_10_1_slide_9_image_2.jpeg)
 
-9
 
-# ##############################################################################
-# Magnetic Disks (2)
-# ##############################################################################
+
 
 * Magnetic Disks
 **1979**
@@ -238,18 +202,15 @@ Western Digital
 
 ![alt_text](images/lecture_10_1/lec_10_1_slide_10_image_2.jpeg)
 
-10
+
 
 ![alt_text](images/lecture_10_1/lec_10_1_slide_10_image_3.png)
 
 Exponential increase in capacity over time
 
-# ##############################################################################
-# Magnetic Disks: Components
-# ##############################################################################
 
 * Magnetic Disks: Components
-11
+
 
 ![alt_text](images/lecture_10_1/lec_10_1_slide_11_image_1.png)
 
@@ -274,9 +235,6 @@ Exponential increase in capacity over time
 
 ![alt_text](images/lecture_10_1/lec_10_1_slide_11_image_2.png)
 
-# ##############################################################################
-# Magnetic Disks: Current Specs
-# ##############################################################################
 
 * Magnetic Disks: Current Specs
 - **Capacity**
@@ -296,13 +254,10 @@ Exponential increase in capacity over time
   - Mean time to failure (MTTF) = the average amount of time that the system runs continuously without a failure
   - Lifespan of an HDD is ~5 years
 
-12
+
 
 ![alt_text](images/lecture_10_1/lec_10_1_slide_12_image_1.png)
 
-# ##############################################################################
-# Accessing Data
-# ##############################################################################
 
 * Accessing Data
 - **Random data transfer rates**
@@ -325,13 +280,10 @@ Exponential increase in capacity over time
 - **Reading random data is 1000x slower than reading serial data**
   - Seeks are very bad!
 
-13
+
 
 ![alt_text](images/lecture_10_1/lec_10_1_slide_13_image_1.png)
 
-# ##############################################################################
-# Solid State Disk (SSD)
-# ##############################################################################
 
 * Solid State Disk (SSD)
 - Mainstream around 2000s
@@ -356,13 +308,10 @@ Exponential increase in capacity over time
 - **Reliability**
   - There is a limit to how many times a page can be erased (~1m times)
 
-14
+
 
 ![alt_text](images/lecture_10_1/lec_10_1_slide_14_image_1.png)
 
-# ##############################################################################
- # Outline (3)
-# ##############################################################################
 
 * Outline
 - Storage
@@ -374,11 +323,8 @@ Exponential increase in capacity over time
 - Query Processing
 - Transactions
 
-15
 
-# ##############################################################################
-# RAID
-# ##############################################################################
+
 
 * RAID
 - RAID = Redundant Array of Independent Disks
@@ -398,15 +344,12 @@ Exponential increase in capacity over time
   - Expose a logical view of a single large and reliable disk from many unreliable disks
   - Different reliability vs performance (RAID levels)
 
-16
+
 
 ![alt_text](images/lecture_10_1/lec_10_1_slide_16_image_1.png)
 ```
 
 ```text
-# ##############################################################################
-# Improve Reliability / Performance with RAID
-# ##############################################################################
 
 * Improve Reliability / Performance with RAID
 **Increase reliability**
@@ -429,13 +372,10 @@ Exponential increase in capacity over time
   - Same number of read requests
   - Increase transfer rate
 
-17
+
 
 ![](images/lecture_10_1/lec_10_1_slide_17_image_1.png)
 
-# ##############################################################################
-# Error Correction Codes
-# ##############################################################################
 
 * Error Correction Codes
 - = a technique used for controlling errors in data transmission over unreliable communication channels
@@ -450,7 +390,7 @@ Exponential increase in capacity over time
   - Add an extra bit representing the number of 1s
   - Detect (but not correct) one bit errors
 
-18
+
 
 ![](images/lecture_10_1/lec_10_1_slide_18_image_1.png)
 
@@ -460,9 +400,6 @@ Exponential increase in capacity over time
 
 ![](images/lecture_10_1/lec_10_1_slide_18_image_4.png)
 
-# ##############################################################################
-# RAID Levels (1)
-# ##############################################################################
 
 * RAID Levels
 Good article on wikipedia
@@ -483,7 +420,7 @@ Good article on wikipedia
   - Writes
     - Need to write to both disks
 
-19
+
 
 ![](images/lecture_10_1/lec_10_1_slide_19_image_1.png)
 
@@ -493,9 +430,6 @@ Good article on wikipedia
 
 ![](images/lecture_10_1/lec_10_1_slide_19_image_4.png)
 
-# ##############################################################################
-# RAID Levels (2)
-# ##############################################################################
 
 * RAID Levels
 **RAID 2: Memory-style error correction**
@@ -508,7 +442,7 @@ Good article on wikipedia
 **RAID 5: Block-interleaved distributed parity**
 - Distributed parity blocks instead of bits
 
-20
+
 
 ![](images/lecture_10_1/lec_10_1_slide_20_image_1.png)
 
@@ -520,9 +454,6 @@ Good article on wikipedia
 
 ![](images/lecture_10_1/lec_10_1_slide_20_image_5.png)
 
-# ##############################################################################
-# Choosing a RAID Level
-# ##############################################################################
 
 * Choosing a RAID Level
 - Main choice between RAID 0, RAID 1, and RAID 5
@@ -539,7 +470,7 @@ Good article on wikipedia
   - Lower storage cost
   - Preferred for applications with low update rate and large amounts of data (e.g., analytics)
 
-21
+
 
 ![](images/lecture_10_1/lec_10_1_slide_21_image_1.png)
 
@@ -549,16 +480,9 @@ Good article on wikipedia
 
 ![](images/lecture_10_1/lec_10_1_slide_21_image_4.png)
 
-# ##############################################################################
-# BACKUP (1)
-# ##############################################################################
 
 * BACKUP
-22
 
-# ##############################################################################
- # Outline (4)
-# ##############################################################################
 
 * Outline
 - Storage
@@ -572,11 +496,7 @@ Good article on wikipedia
 Sources:
 - Silberschatz et al. 2020, Chap 13: Data Storage Structures
 
-23
 
-# ##############################################################################
-# (Centralized) DB Internals
-# ##############################################################################
 
 * (Centralized) DB Internals
 User processes
@@ -600,15 +520,12 @@ Shared memory
   - Buffer pool, Lock table, Log buffer (log records waiting to be saved on stable storage), Caches (e.g., query plans)
 - Data needs to be projected by mutual exclusion locks
 
-24
+
 
 ![](images/lecture_10_1/lec_10_1_slide_24_image_1.png)
 ```
 
 ```markdown
-# ##############################################################################
-# DB Internals
-# ##############################################################################
 
 * DB Internals
 
@@ -628,19 +545,11 @@ Shared memory
 - Specify sequence of pages to be brought in memory
 - Operate upon the tuples to produce results
 
-25
 
-# ##############################################################################
-# BACKUP (2)
-# ##############################################################################
 
 * BACKUP
 
-26
 
-# ##############################################################################
- # Outline (5)
-# ##############################################################################
 
 * Outline
 
@@ -653,11 +562,8 @@ Shared memory
 - Query Processing
 - Transactions
 
-27
 
-# ##############################################################################
-# File Organization (1)
-# ##############################################################################
+
 
 * File Organization
 
@@ -676,13 +582,10 @@ Shared memory
     - Often DB needs to be aware of underlying blocks
     - Read / write directly disk blocks
 
-28
+
 
 ![](images/lecture_10_1/lec_10_1_slide_28_image_1.png)
 
-# ##############################################################################
-# File Organization (2)
-# ##############################################################################
 
 * File Organization
 
@@ -699,13 +602,10 @@ Shared memory
   - Fixed-length records
   - Variable-length records
 
-29
+
 
 ![](images/lecture_10_1/lec_10_1_slide_29_image_1.png)
 
-# ##############################################################################
-# Records -> Blocks
-# ##############################################################################
 
 * Records -> Blocks
 
@@ -723,11 +623,8 @@ Shared memory
     - Hashing organization
     - E.g., Store the record with SSN = x in the block number x%1000
 
-30
 
-# ##############################################################################
-# Record Organization
-# ##############################################################################
+
 
 * Record Organization
 
@@ -757,11 +654,8 @@ Shared memory
     - 300 ms to find just one account information
     - < 4 requests satisfied per second
 
-31
 
-# ##############################################################################
-# Fixed-length Records
-# ##############################################################################
+
 
 * Fixed-length Records
 
@@ -786,7 +680,7 @@ Shared memory
     - Like a linked list of free blocks (e.g., after deleting record 1, 4, 6)
   - Conceptually store pointers, in practice file header
 
-32
+
 
 ![](images/lecture_10_1/lec_10_1_slide_32_image_1.png)
 
@@ -796,9 +690,6 @@ Shared memory
 ```
 
 ```text
-# ##############################################################################
-# Variable-length Records
-# ##############################################################################
 
 * Variable-length Records
 ![Variable-length Records](images/lecture_10_1/lec_10_1_slide_33_image_1.png)
@@ -814,11 +705,8 @@ Shared memory
     - The records may move inside the block, but the outside world is oblivious to it
   - End of free space in the block
 
-33
 
-# ##############################################################################
-# Variable-length Attributes
-# ##############################################################################
+
 
 * Variable-length Attributes
 ![Variable-length Attributes](images/lecture_10_1/lec_10_1_slide_34_image_1.png)
@@ -829,11 +717,7 @@ Shared memory
   - Null bitmap
   - Store which attributes of the record have a null value
 
-34
 
-# ##############################################################################
- # Outline (6)
-# ##############################################################################
 
 * Outline
 - Storage
@@ -845,11 +729,7 @@ Shared memory
 - Query Processing
 - Transactions
 
-35
 
-# ##############################################################################
-# Buffer Manager (1)
-# ##############################################################################
 
 * Buffer Manager
 - Many DBs are much larger than available memory on servers
@@ -871,11 +751,8 @@ Shared memory
       - Make a request to the storage subsystem to fetch it
     - Pass the address back
 
-36
 
-# ##############################################################################
-# Buffer Manager (2)
-# ##############################################################################
+
 
 * Buffer Manager
 MAIN MEMORY
@@ -893,11 +770,8 @@ Buffer pool
 Choice of page dictated
 by **replacement policy**
 
-37
 
-# ##############################################################################
-# Buffer Manager (3)
-# ##############################################################################
+
 
 * Buffer Manager
 - Similar to *virtual memory manager*
@@ -909,13 +783,10 @@ by **replacement policy**
     - The opposite
     - E.g., during a join there is a nested loop, the block just used won’t be used until the next iteration
 
-38
+
 
 ![Buffer Manager](images/lecture_10_1/lec_10_1_slide_38_image_1.png)
 
-# ##############################################################################
-# Buffer Manager (4)
-# ##############################################################################
 
 * Buffer Manager
 - **Pinning a block**
@@ -929,11 +800,7 @@ by **replacement policy**
   - If there is a crash, the buffer pool and the memory content are lost
   - It is necessary to write a block to disk to make sure the transaction was "committed"
 
-39
 
-# ##############################################################################
-# Disk-block Access
-# ##############################################################################
 
 * Disk-block Access
 - DB systems (i.e., the query processing sub-system) generate requests for disk I/O
@@ -955,13 +822,10 @@ by **replacement policy**
 - Non-volatile write buffers
   - Save data in non-volatile RAM to speed-up writes and survive system crashes
 
-40
+
 ```
 
 ```
-# ##############################################################################
- # Outline (7)
-# ##############################################################################
 
 * Outline
 - Storage
@@ -973,11 +837,8 @@ by **replacement policy**
 - Query Processing
 - Transactions
 
-41
 
-# ##############################################################################
-# Index
-# ##############################################################################
+
 
 * Index
 - **Index** = a data structure for efficient search through large databases
@@ -996,11 +857,8 @@ by **replacement policy**
   - Order is not preserved
   - Collisions
 
-42
 
-# ##############################################################################
-# Ordered Indexes
-# ##############################################################################
+
 
 * Ordered Indexes
 - Map from key to corresponding record / row
@@ -1016,22 +874,14 @@ Relation
 
 Index
 
-43
 
-# ##############################################################################
-# Example B+-Tree Index (1)
-# ##############################################################################
+
 
 * Example B+-Tree Index
 ![](images/lecture_10_1/lec_10_1_slide_44_image_1.png)
 
 Index
 
-44
-
-# ##############################################################################
-# B+-Tree Node Structure
-# ##############################################################################
 
 * B+-Tree Node Structure
 - Typical node
@@ -1042,11 +892,8 @@ Index
 
 ![](images/lecture_10_1/lec_10_1_slide_45_image_1.png)
 
-45
 
-# ##############################################################################
-# Properties of B+-Trees
-# ##############################################################################
+
 
 * Properties of B+-Trees
 - It is balanced
@@ -1059,22 +906,15 @@ Index
 
 ![](images/lecture_10_1/lec_10_1_slide_46_image_1.png)
 
-46
 
-# ##############################################################################
-# Example B+-Tree Index (2)
-# ##############################################################################
 
 * Example B+-Tree Index
 ![](images/lecture_10_1/lec_10_1_slide_47_image_1.png)
 
 Index
 
-47
 
-# ##############################################################################
-# Properties
-# ##############################################################################
+
 
 * Properties
 - Interior nodes
@@ -1086,23 +926,16 @@ Index
 
 ![](images/lecture_10_1/lec_10_1_slide_48_image_1.png)
 
-48
+
 ```
 
 ```markdown
-# ##############################################################################
-# Example B+-Tree Index (3)
-# ##############################################################################
 
 * Example B+-Tree Index
 ![Example B+-Tree Index](images/lecture_10_1/lec_10_1_slide_49_image_1.png)
 Index
 
-49
 
-# ##############################################################################
- # Outline (8)
-# ##############################################################################
 
 * Outline
 - Storage**
@@ -1115,18 +948,12 @@ Index
   - Putting it all together…
 - Transactions
 
-50
 
-# ##############################################################################
-# Overview (1)
-# ##############################################################################
+
 
 * Overview
-51
 
-# ##############################################################################
-# “Cost”
-# ##############################################################################
+
 
 * “Cost”
 - Complicated to compute
@@ -1140,11 +967,7 @@ Index
         *b * t**T* + S * t**S*
   - Measured in *seconds*
 
-52
 
-# ##############################################################################
- # Outline (9)
-# ##############################################################################
 
 * Outline
 - Storage
@@ -1156,11 +979,8 @@ Index
   - Putting it all together…
 - Transactions
 
-53
 
-# ##############################################################################
-# Selection Operation (1)
-# ##############################################################################
+
 
 * Selection Operation
 **SELECT** * **FROM** person **WHERE** SSN = “123”
@@ -1178,11 +998,8 @@ Index
       - *If SSN is a key, then can stop when found*
         - *So on average, b**r*/2 blocks accessed*
 
-54
 
-# ##############################################################################
-# Selection Operation (2)
-# ##############################################################################
+
 
 * Selection Operation
 **SELECT** * **FROM** person **WHERE** SSN = “123”
@@ -1200,11 +1017,7 @@ Index
   - Not quite: what if 10,000 tuples match the condition?
     - Incurs additional cost
 
-55
 
-# ##############################################################################
-# Selection Operation (3)
-# ##############################################################################
 
 * Selection Operation
 **SELECT** * **FROM** person **WHERE** SSN = “123”
@@ -1219,11 +1032,8 @@ Index
         - Go to the relation and read blocks sequentially
       - If secondary index, must follow all pointers using the index
 
-56
 
-# ##############################################################################
-# Query Processing (1)
-# ##############################################################################
+
 
 * Query Processing
 - Overview
@@ -1233,11 +1043,8 @@ Index
 - Other operators
 - Putting it all together…
 
-57
 
-# ##############################################################################
-# Join
-# ##############################################################################
+
 
 * Join
 - **SELECT** * **FROM** R, S **WHERE** R.a = S.a
@@ -1253,11 +1060,8 @@ Index
 - R called *outer relation*
 - S called *inner relation*
 
-58
 
-# ##############################################################################
-# Nested-loops Join (1)
-# ##############################################################################
+
 
 * Nested-loops Join
 - Cost? Depends on the actual values of parameters, especially memory
@@ -1272,11 +1076,8 @@ Index
   - Seeks?
     - *n*r + b*r
 
-59
 
-# ##############################################################################
-# Nested-loops Join (2)
-# ##############################################################################
+
 
 * Nested-loops Join
 - Case 1: Minimum memory required = 3 blocks
@@ -1292,11 +1093,8 @@ Index
   - 2,000,100 block transfers, 5100 seeks
 - Matters
 
-60
 
-# ##############################################################################
-# Nested-loops Join (3)
-# ##############################################################################
+
 
 * Nested-loops Join
 - Case 2: *S* fits in memory
@@ -1310,11 +1108,7 @@ Index
   - seeks: 2
 - This is orders of magnitude difference
 
-61
 
-# ##############################################################################
- # Hash Join (1)
-# ##############################################################################
 
 * Hash Join
 - Case 1: Smaller relation *(S)* fits in memory
@@ -1330,11 +1124,8 @@ Index
 	  *for* *each tuple r* *in* *R*
             use the hash index on S to find tuples such that S.a = r.a
 
-62
 
-# ##############################################################################
- # Hash Join (2)
-# ##############################################################################
+
 
 * Hash Join
 - Case 1: Smaller relation *(S)* fits in memory
@@ -1348,11 +1139,7 @@ Index
   - CPU cost is much better (even though we don’t care about it too much)
   - Performs much better than nested-loops join when *S* doesn’t fit in memory (next)
 
-63
 
-# ##############################################################################
- # Hash Join (3)
-# ##############################################################################
 
 * Hash Join
 - Case 2: Smaller relation *(S)* doesn’t fit in memory
@@ -1366,14 +1153,10 @@ Index
   - Only requirement:
     - Each S partition fits in memory
 
-64
+
 ```
 
 ```
-# ##############################################################################
- # Hash Join (4)
-# ##############################################################################
-
 * Hash Join
 - Case 2: Smaller relation *(S)* doesn’t fit in memory
 - Two “phases”
@@ -1383,11 +1166,7 @@ Index
   - Read R1 block by block, and use the hash index to find matches.
   - Repeat for S2, R2, and so on.
 
-65
 
-# ##############################################################################
- # Hash Join (5)
-# ##############################################################################
 
 * Hash Join
 - Case 2: Smaller relation *(S)* doesn’t fit in memory
@@ -1403,20 +1182,10 @@ Index
   - Much better than Nested-loops join under the same conditions*
 *
 
-66
-
-# ##############################################################################
- # Hash Join (6)
-# ##############################################################################
 
 * Hash Join
 ![](images/lecture_10_1/lec_10_1_slide_67_image_1.png)
 
-67
-
-# ##############################################################################
- # Merge-Join (Sort-merge join) (1)
-# ##############################################################################
 
 * Merge-Join (Sort-merge join)
 - Pre-condition:
@@ -1435,11 +1204,6 @@ Index
 *         - Depending on the join condition*
 *    3. Repeat *
 
-68
-
-# ##############################################################################
- # Merge-Join (Sort-merge join) (2)
-# ##############################################################################
 
 * Merge-Join (Sort-merge join)
 - Cost:
@@ -1454,11 +1218,8 @@ Index
   - This might make further operations easier to do
     - E.g., duplicate elimination
 
-69
 
-# ##############################################################################
-# Joins: Summary
-# ##############################################################################
+
 
 * Joins: Summary
 - Block Nested-loops join
@@ -1474,11 +1235,8 @@ Index
   - Sorted results commonly desired at the output
     - To answer group by queries, for duplicate elimination, because of ASC/DSC
 
-70
 
-# ##############################################################################
-# Query Processing (2)
-# ##############################################################################
+
 
 * Query Processing
 - Overview
@@ -1488,11 +1246,8 @@ Index
 - Other operators
 - Putting it all together…
 
-71
 
-# ##############################################################################
-# Sorting
-# ##############################################################################
+
 
 * Sorting
 - Commonly required for many operations
@@ -1507,13 +1262,10 @@ Index
 - What if relation too large to fit in memory ?
   - External sort-merge
 
-72
+
 ```
 
 ```
-# ##############################################################################
-# External sort-merge (1)
-# ##############################################################################
 
 * External sort-merge
 - Divide and Conquer !!
@@ -1527,11 +1279,8 @@ Index
   - Merge the *N* runs (*N-way merge*)
   - Can do it in one shot if *N < M*
 
-73
 
-# ##############################################################################
-# External sort-merge (2)
-# ##############################################################################
+
 
 * External sort-merge
 - Phase 1:
@@ -1546,19 +1295,13 @@ Index
   - If *M =* 1000 blocks = 4MB  (assuming blocks of 4KB each)
     - Can sort: 4000MB = 4GB of data
 
-74
 
-# ##############################################################################
-# Example: External Sorting Using Sort-Merge
-# ##############################################################################
+
 
 * Example: External Sorting Using Sort-Merge
 ![](images/lecture_10_1/lec_10_1_slide_75_image_1.png)
-75
 
-# ##############################################################################
-# External Merge Sort (Cont.)
-# ##############################################################################
+
 
 * External Merge Sort (Cont.)
 - Cost analysis:
@@ -1569,11 +1312,8 @@ Index
 Thus total number of disk accesses for external sorting:
 		*b**r* ( 2 [log*M*–1(*b**r* / M)] + 1)
 
-76
 
-# ##############################################################################
-# Query Processing (3)
-# ##############################################################################
+
 
 * Query Processing
 - Overview
@@ -1583,11 +1323,8 @@ Thus total number of disk accesses for external sorting:
 - Other operators
 - Putting it all together…
 
-77
 
-# ##############################################################################
-# Group By and Aggregation (1)
-# ##############################################################################
+
 
 * Group By and Aggregation
 *select a, count(b)*
@@ -1602,11 +1339,7 @@ Thus total number of disk accesses for external sorting:
     - If yes, increment the count
     - If not, insert a new value
 
-78
 
-# ##############################################################################
-# Group By and Aggregation (2)
-# ##############################################################################
 
 * Group By and Aggregation
 *select a, count(b)*
@@ -1618,11 +1351,8 @@ Thus total number of disk accesses for external sorting:
   - Now all tuples in a single group are contigous
   - Read tuples of *R (sorted)* one by one and compute the aggregates
 
-79
 
-# ##############################################################################
-# Group By and Aggregation (3)
-# ##############################################################################
+
 
 * Group By and Aggregation
 *select a, AGGR(b)  from R group by a;*
@@ -1635,13 +1365,9 @@ Thus total number of disk accesses for external sorting:
   - First to find the number of tuples in each group, and then to find the median tuple in each group
 - count(distinct b): must do duplicate elimination before the count
 
-80
 ```
 
 ```text
-# ##############################################################################
-# Duplicate Elimination
-# ##############################################################################
 
 * Duplicate Elimination
 * *select distinct a*
@@ -1658,11 +1384,8 @@ Thus total number of disk accesses for external sorting:
     - else
       - Skip *r*
 
-81
 
-# ##############################################################################
-# Set operations
-# ##############################################################################
+
 
 * Set operations
 *(select * from R) union (select * from S) ;*
@@ -1676,11 +1399,8 @@ Thus total number of disk accesses for external sorting:
   - Find tuples of R and S that are identical on all attributes
   - Can use *hash-based or sort-based algorithm*
 
-82
 
-# ##############################################################################
-# Query Processing (4)
-# ##############################################################################
+
 
 * Query Processing
 - Overview
@@ -1690,11 +1410,8 @@ Thus total number of disk accesses for external sorting:
 - Other operators
 - Putting it all together…
 
-83
 
-# ##############################################################################
-# Evaluation of Expressions (1)
-# ##############################################################################
+
 
 * Evaluation of Expressions
 - Two options:
@@ -1708,11 +1425,8 @@ from account a, customer c
 where a.SSN = c.SSN and
            a.balance < 2500
 
-84
 
-# ##############################################################################
-# Evaluation of Expressions (2)
-# ##############################################################################
+
 
 * Evaluation of Expressions
 - Materialization
@@ -1727,11 +1441,8 @@ where a.SSN = c.SSN and
     - E.g., Sort-Merge Join
   - Harder to reason about
 
-85
 
-# ##############################################################################
-# Materialization
-# ##############################################################################
+
 
 * Materialization
 - Materialized evaluation is always applicable
@@ -1741,11 +1452,8 @@ where a.SSN = c.SSN and
 - Double buffering: use two output buffers for each operation, when one is full write it to disk, while the other is getting filled
   - Allows overlap of disk writes with computation and reduces execution time
 
-86
 
-# ##############################################################################
-# Pipelining (1)
-# ##############################################################################
+
 
 * Pipelining
 - Evaluate several operations simultaneously, passing the results of one operation on to the next.
@@ -1759,11 +1467,8 @@ where a.SSN = c.SSN and
 
 ![](images/lecture_10_1/lec_10_1_slide_87_image_1.png)
 
-87
 
-# ##############################################################################
-# Pipelining (2)
-# ##############################################################################
+
 
 * Pipelining
 - Need operators that generate output tuples while receiving tuples from their inputs
@@ -1776,13 +1481,10 @@ where a.SSN = c.SSN and
   - Duplicate elimination: Since it requires sort, the final merge phase could be pipelined
   - Set operations: see duplicate elimination
 
-88
+
 ```
 
 ```
-# ##############################################################################
-# Transactions (1)
-# ##############################################################################
 
 * Transactions
 - Storage**
@@ -1792,11 +1494,8 @@ where a.SSN = c.SSN and
   - Concurrency Control
   - Recovery
 
-89
 
-# ##############################################################################
-# Overview (2)
-# ##############################################################################
+
 
 * Overview
 - *Transaction*: A sequence of database actions enclosed within special tags
@@ -1809,20 +1508,14 @@ where a.SSN = c.SSN and
   - DBMS can do a few things, e.g., enforce constraints on the data
 - Rest: DBMS guarantees
 
-90
 
-# ##############################################################################
-# Bank application example
-# ##############################################################################
+
 
 * Bank application example
 - TODO
 
-91
 
-# ##############################################################################
-# How does..
-# ##############################################################################
+
 
 * How does..
 - .. this relate to *queries* that we discussed ?
@@ -1833,11 +1526,8 @@ where a.SSN = c.SSN and
     - What if somebody makes a *transfer* while we are computing the balance
     - Typically not guaranteed for such long-running queries
 
-92
 
-# ##############################################################################
-# Performance benchmark
-# ##############################################################################
+
 
 * Performance benchmark
 - Transaction per minute
@@ -1853,11 +1543,8 @@ where a.SSN = c.SSN and
   - OLAP application
   - Query analytics in a 'data warehouse' context
 
-93
 
-# ##############################################################################
-# Assumptions and Goals
-# ##############################################################################
+
 
 * Assumptions and Goals
 - Assumptions:
@@ -1873,22 +1560,16 @@ where a.SSN = c.SSN and
     - Two transactions updating the same account balance… NO
     - Two transactions updating different account balances… YES
 
-94
 
-# ##############################################################################
-# Transactions (2)
-# ##############################################################################
+
 
 * Transactions
 - Overview
 - Concurrency Control
 - Recovery
 
-95
 
-# ##############################################################################
-# Lock-based Protocols (1)
-# ##############################################################################
+
 
 * Lock-based Protocols
 - A transaction *must* get a *lock* before operating on the data
@@ -1898,13 +1579,10 @@ where a.SSN = c.SSN and
   - *Exclusive* (X) locks (also called *write locks*)
     - Obtained for updating a data item
 
-96
+
 ```
 
 ```text
-# ##############################################################################
- # Lock instructions (1)
-# ##############################################################################
 
 * Lock instructions
 - New instructions
@@ -1913,11 +1591,7 @@ where a.SSN = c.SSN and
   - unlock: release previously held lock
 Example schedule:
 
-97
 
-# ##############################################################################
- # Lock instructions (2)
-# ##############################################################################
 
 * Lock instructions
 - New instructions
@@ -1926,11 +1600,8 @@ Example schedule:
   - unlock: release previously held lock
 Example schedule:
 
-98
 
-# ##############################################################################
-# Lock-based Protocols (2)
-# ##############################################################################
+
 
 * Lock-based Protocols
 - Lock requests are made to the *concurrency control manager*
@@ -1945,11 +1616,8 @@ Example schedule:
 | Shared       | Exclusive    | NO             |
 | Exclusive    | -            | NO             |
 
-99
 
-# ##############################################################################
-# Snapshot Isolation (1)
-# ##############################################################################
+
 
 * Snapshot Isolation
 - Very popular scheme, used as the primary scheme by many systems including Oracle, PostgreSQL etc…
@@ -1959,11 +1627,8 @@ Example schedule:
   - For each object, maintain past “versions” of the data along with timestamps
     - Every update to an object causes a new version to be generated
 
-100
 
-# ##############################################################################
-# Snapshot Isolation (2)
-# ##############################################################################
+
 
 * Snapshot Isolation
 - Read queries:
@@ -1979,11 +1644,8 @@ Example schedule:
     - If yes, then abort and restart
     - If no, make all the writes public simultaneously (by making new versions)
 
-101
 
-# ##############################################################################
-# Snapshot Isolation (3)
-# ##############################################################################
+
 
 * Snapshot Isolation
 - Advantages:
@@ -1996,22 +1658,16 @@ Example schedule:
   - See the wikipedia article for more details and an example
     - http://en.wikipedia.org/wiki/Snapshot_isolation
 
-102
 
-# ##############################################################################
-# Transactions (3)
-# ##############################################################################
+
 
 * Transactions
 - Overview
 - Concurrency Control
 - Recovery
 
-103
 
-# ##############################################################################
-# Context
-# ##############################################################################
+
 
 * Context
 - ACID properties:
@@ -2025,11 +1681,8 @@ Example schedule:
       - Transaction finished. User notified. But changes not sent to disk yet (for performance reasons). System crashed.
 - Essentially similar solutions
 
-104
 
-# ##############################################################################
-# Reasons for crashes
-# ##############################################################################
+
 
 * Reasons for crashes
 - Transaction failures
@@ -2043,11 +1696,8 @@ Example schedule:
   - Head crashes; **we will assume**
     - **STABLE STORAGE: Data never lost. Can approximate by using RAID and maintaining geographically distant copies of the data**
 
-105
 
-# ##############################################################################
-# Log-based Recovery
-# ##############################################################################
+
 
 * Log-based Recovery
 - Most commonly used recovery method
@@ -2059,4 +1709,4 @@ Example schedule:
 - *<T1, A, 100, 200>*
   - T1 modified A; old value = 100, new value = 200
 
-106
+
