@@ -1,15 +1,9 @@
-# ##############################################################################
-# Class Announcement - Spring 2024
-# ##############################################################################
 
 * Class Announcement - Spring 2024
 - https://github.com/sorrentum/sorrentum/tree/master/sorrentum_sandbox/projects/spring2024
 
 
 
-# ##############################################################################
-# Class Announcement - Spring 2023
-# ##############################################################################
 
 * Class Announcement - Spring 2023
 - Make sure your info are complete in UMD DATA605 - Class Project Teams - Spring 2023

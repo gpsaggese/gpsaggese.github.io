@@ -34,9 +34,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-# ##############################################################################
-# Overview
-# ##############################################################################
 
 * Overview
 
@@ -60,9 +57,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ![](images/lecture_9_3/lec_9_3_slide_2_image_1.png)
 ![](images/lecture_9_3/lec_9_3_slide_2_image_2.png)
 
-# ##############################################################################
-# Sorrentum Primitives
-# ##############################################################################
 
 * Sorrentum Primitives
 
@@ -84,9 +78,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_3/lec_9_3_slide_3_image_1.png)
 
-# ##############################################################################
-# Sorrentum: Financial Machine Learning
-# ##############################################################################
 
 * Sorrentum: Financial Machine Learning
 
@@ -122,9 +113,6 @@ R^2: 0.1% (10bps)
 
 **Financial ML**
 
-# ##############################################################################
-# Blockchain
-# ##############################################################################
 
 * Blockchain
 
@@ -147,9 +135,6 @@ R^2: 0.1% (10bps)
 ![](images/lecture_9_3/lec_9_3_slide_5_image_1.png)
 ![](images/lecture_9_3/lec_9_3_slide_5_image_2.png)
 
-# ##############################################################################
-# Smart Contract
-# ##############################################################################
 
 * Smart Contract
 
@@ -177,9 +162,6 @@ R^2: 0.1% (10bps)
 
 
 
-# ##############################################################################
-# DApps and DAO
-# ##############################################################################
 
 * DApps and DAO
 
@@ -202,9 +184,6 @@ R^2: 0.1% (10bps)
 
 
 
-# ##############################################################################
-# Current Financial System is Failing
-# ##############################################################################
 
 * Current Financial System is Failing
 
@@ -232,9 +211,6 @@ Tyler Durden’s Project Mayhem: erase debt by blowing up buildings where credit
 ```
 
 ```markdown
-# ##############################################################################
-# Decentralized Finance
-# ##############################################################################
 
 * Decentralized Finance
 - **Idea: instead of renovating a crumbling financial system, rebuild it from the ground up
@@ -263,9 +239,6 @@ Tyler Durden’s Project Mayhem: erase debt by blowing up buildings where credit
 
 
 
-# ##############################################################################
-# Sorrentum: Projects (1)
-# ##############################################################################
 
 * Sorrentum: Projects
 - **Arbitrage
@@ -286,9 +259,6 @@ Tyler Durden’s Project Mayhem: erase debt by blowing up buildings where credit
 
 
 
-# ##############################################################################
-# Sorrentum: Projects (2)
-# ##############################################################################
 
 * Sorrentum: Projects
 - **DeFi / Web3 Research
@@ -310,9 +280,6 @@ Tyler Durden’s Project Mayhem: erase debt by blowing up buildings where credit
 
 
 
-# ##############################################################################
-# Additional Resources
-# ##############################################################################
 
 * Additional Resources
 
@@ -341,9 +308,6 @@ The Wolf of Wall Street, 2013
 
 The Big Short, 2015
 
-# ##############################################################################
-# Sorrentum Sandbox
-# ##############################################################################
 
 * Sorrentum Sandbox
 - Tutorial

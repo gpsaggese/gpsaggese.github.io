@@ -36,9 +36,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Outline (1)
-# ##############################################################################
 
 * Outline
 - Cloud computing
@@ -51,9 +48,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 © UMD DATA605
 
 
-# ##############################################################################
-# Outline (2)
-# ##############################################################################
 
 * Outline
 - **Cloud computing**
@@ -67,9 +61,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Cloud Computing (1)
-# ##############################################################################
 
 * Cloud Computing
 - **Computing as “service” rather than “product”**
@@ -91,9 +82,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_11_1/lec_11_1_slide_4_image_1.png)
 
-# ##############################################################################
-# Building vs Renting (1)
-# ##############################################################################
 
 * Building vs Renting
 - **Building / buying infrastructure**
@@ -112,9 +100,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 © UMD DATA605
 
-# ##############################################################################
-# Building vs Renting (2)
-# ##############################################################################
 
 * Building vs Renting
 - **Cloud computing**
@@ -128,9 +113,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 © UMD DATA605
 
-# ##############################################################################
-# Cloud Computing (2)
-# ##############################################################################
 
 * Cloud Computing
 - **Basic ideas of cloud computing around for a long time**
@@ -157,9 +139,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_11_1/lec_11_1_slide_7_image_3.png)
 
-# ##############################################################################
-# X-as-a-Service (1)
-# ##############################################################################
 
 * X-as-a-Service
 © UMD DATA605
@@ -184,9 +163,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ```
 
 ```markdown
-# ##############################################################################
-# X-as-a-Service (2)
-# ##############################################################################
 
 * X-as-a-Service
 © UMD DATA605
@@ -202,9 +178,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Marketing-as-a-service
 - Banking-as-a-service, ...
 
-# ##############################################################################
-# Platform-as-a-Service
-# ##############################################################################
 
 * Platform-as-a-Service
 © UMD DATA605
@@ -231,9 +204,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - E.g., pre-built distributions for Linux
   - RedHat, Gentoo, CentOS
 
-# ##############################################################################
-# Different Cloud Computing Layers‏
-# ##############################################################################
 
 * Different Cloud Computing Layers‏
 
@@ -242,9 +212,6 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 
 © UMD DATA605
 
-# ##############################################################################
-# Cloud Computing Service Layers
-# ##############################################################################
 
 * Cloud Computing Service Layers
 **Description**
@@ -274,9 +241,6 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 
 © UMD DATA605
 
-# ##############################################################################
-# Cloud Types
-# ##############################################################################
 
 * Cloud Types
 © UMD DATA605
@@ -284,9 +248,6 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 
 ![](images/lecture_11_1/lec_11_1_slide_13_image_1.png)
 
-# ##############################################################################
-# Outline (3)
-# ##############################################################################
 
 * Outline
 - Cloud Computing
@@ -300,9 +261,6 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 
 
 
-# ##############################################################################
-# Data Centers (1)
-# ##############################################################################
 
 * Data Centers
 - Data centers are key infrastructure piece that enables cloud computing
@@ -322,9 +280,6 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 
 ![](images/lecture_11_1/lec_11_1_slide_15_image_4.png)
 
-# ##############################################################################
-# Data Centers (2)
-# ##############################################################################
 
 * Data Centers
 - **Equipment cost**
@@ -355,9 +310,6 @@ Meta investment in 18 data centers
 ```
 
 ```markdown
-# ##############################################################################
-# Data Centers (3)
-# ##############################################################################
 
 * Data Centers
 © UMD DATA605
@@ -369,9 +321,6 @@ Meta investment in 18 data centers
 
 ![](images/lecture_11_1/lec_11_1_slide_17_image_3.png)
 
-# ##############################################################################
-# (Modular) Data Centers
-# ##############################################################################
 
 * (Modular) Data Centers
 From James Hamilton Presentation
@@ -382,9 +331,6 @@ From James Hamilton Presentation
 
 ![](images/lecture_11_1/lec_11_1_slide_18_image_1.png)
 
-# ##############################################################################
-# Amazon Web Services
-# ##############################################################################
 
 * Amazon Web Services
 © UMD DATA605
@@ -395,9 +341,6 @@ As of 2022, 28 geographical regions
 
 ![](images/lecture_11_1/lec_11_1_slide_19_image_1.png)
 
-# ##############################################################################
-# Amazon Web Services (EC2)
-# ##############################################################################
 
 * Amazon Web Services (EC2)
 - The most widely used current solution to cloud computing
@@ -414,9 +357,6 @@ As of 2022, 28 geographical regions
 
 ![](images/lecture_11_1/lec_11_1_slide_20_image_3.png)
 
-# ##############################################################################
-# Amazon S3
-# ##############################################################################
 
 * Amazon S3
 - Amazon storage services (Simple Storage Solution)
@@ -436,9 +376,6 @@ As of 2022, 28 geographical regions
 
 **S3 Storage Types**
 
-# ##############################################################################
-# Google App Engine
-# ##############################################################################
 
 * Google App Engine
 - Google Compute Engine (IaaS)
@@ -463,9 +400,6 @@ As of 2022, 28 geographical regions
 
 ![](images/lecture_11_1/lec_11_1_slide_22_image_1.png)
 
-# ##############################################################################
-# Outline (4)
-# ##############################################################################
 
 * Outline
 - Cloud Computing
@@ -479,9 +413,6 @@ As of 2022, 28 geographical regions
 
 
 
-# ##############################################################################
-# Virtualization (1)
-# ##############################################################################
 
 * Virtualization
 - **Virtual machines have been around for a long time**
@@ -502,9 +433,6 @@ As of 2022, 28 geographical regions
 ```
 
 ```
-# ##############################################################################
-# Virtualization (2)
-# ##############################################################################
 
 * Virtualization
 ![alt text](images/lecture_11_1/lec_11_1_slide_25_image_1.png)
@@ -525,9 +453,6 @@ As of 2022, 28 geographical regions
 
 ![alt text](images/lecture_11_1/lec_11_1_slide_25_image_2.png)
 
-# ##############################################################################
-# Virtualization (3)
-# ##############################################################################
 
 * Virtualization
 - Performance and tricky things to keep in mind
@@ -540,9 +465,6 @@ As of 2022, 28 geographical regions
 
 
 
-# ##############################################################################
-# Docker
-# ##############################################################################
 
 * Docker
 - Enable true independence between application devs and IT ops
@@ -563,9 +485,6 @@ As of 2022, 28 geographical regions
 
 ![alt text](images/lecture_11_1/lec_11_1_slide_27_image_2.png)
 
-# ##############################################################################
-# Outline (5)
-# ##############################################################################
 
 * Outline
 - Cloud Computing
@@ -578,9 +497,6 @@ As of 2022, 28 geographical regions
 © UMD DATA605
 
 
-# ##############################################################################
-# Programming Frameworks
-# ##############################################################################
 
 * Programming Frameworks
 - **Programming frameworks emerged from efforts to “scale out” workloads**
@@ -604,9 +520,6 @@ As of 2022, 28 geographical regions
 
 
 
-# ##############################################################################
-# MapReduce Framework
-# ##############################################################################
 
 * MapReduce Framework
 - Provide a fairly restricted, but still powerful abstraction for programming distributed workloads
@@ -629,9 +542,6 @@ As of 2022, 28 geographical regions
 
 
 
-# ##############################################################################
-# Other Programming Frameworks
-# ##############################################################################
 
 * Other Programming Frameworks
 - Many different programming frameworks suitable for different applications
@@ -658,9 +568,6 @@ As of 2022, 28 geographical regions
 © UMD DATA605
 
 
-# ##############################################################################
-# Outline (6)
-# ##############################################################################
 
 * Outline
 - Cloud computing
@@ -676,9 +583,6 @@ As of 2022, 28 geographical regions
 ```
 
 ```
-# ##############################################################################
-# Advantages of Cloud Computing (1)
-# ##############################################################################
 
 * Advantages of Cloud Computing
 - **Lower edge computer costs**
@@ -699,9 +603,6 @@ As of 2022, 28 geographical regions
 
 
 
-# ##############################################################################
-# Advantages of Cloud Computing (2)
-# ##############################################################################
 
 * Advantages of Cloud Computing
 - **Instant software updates**
@@ -718,9 +619,6 @@ As of 2022, 28 geographical regions
 
 
 
-# ##############################################################################
-# Advantages of Cloud Computing (3)
-# ##############################################################################
 
 * Advantages of Cloud Computing
 - **“Unlimited” storage capacity**
@@ -738,9 +636,6 @@ As of 2022, 28 geographical regions
 
 
 
-# ##############################################################################
-# Advantages of Cloud Computing (4)
-# ##############################################################################
 
 * Advantages of Cloud Computing
 - **Universal document access**
@@ -758,9 +653,6 @@ As of 2022, 28 geographical regions
 © UMD DATA605
 
 
-# ##############################################################################
-# Disadvantages of Cloud Computing (1)
-# ##############################################################################
 
 * Disadvantages of Cloud Computing
 - **Using cloud computing means dependence on Big Tech**
@@ -783,9 +675,6 @@ As of 2022, 28 geographical regions
 
 
 
-# ##############################################################################
-# Disadvantages of Cloud Computing (2)
-# ##############################################################################
 
 * Disadvantages of Cloud Computing
 - **Requires a constant Internet connection**
@@ -804,9 +693,6 @@ As of 2022, 28 geographical regions
 
 
 
-# ##############################################################################
-# Disadvantages of Cloud Computing (3)
-# ##############################################################################
 
 * Disadvantages of Cloud Computing
 - **Features might be limited**
@@ -827,9 +713,6 @@ As of 2022, 28 geographical regions
 
 
 
-# ##############################################################################
-# Disadvantages of Cloud Computing (4)
-# ##############################################################################
 
 * Disadvantages of Cloud Computing
 - **HPC systems**

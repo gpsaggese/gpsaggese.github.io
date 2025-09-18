@@ -34,9 +34,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-# ##############################################################################
-# Dask: Resources
-# ##############################################################################
 
 * Dask: Resources
 - Web resources:
@@ -52,9 +49,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![alt_text](images/lecture_9_2/lec_9_2_slide_2_image_1.png)
 
-# ##############################################################################
-# Dataset Size Issues (1)
-# ##############################################################################
 
 * Dataset Size Issues
 - **Small datasets (< 1 GB)**
@@ -80,9 +74,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ![alt_text](images/lecture_9_2/lec_9_2_slide_3_image_3.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_3_image_4.png)
 
-# ##############################################################################
-# Dataset Size Issues (2)
-# ##############################################################################
 
 * Dataset Size Issues
 - **Small datasets
@@ -105,9 +96,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Cumbersome framework (Pandas easy, Hadoop difficult)
 
 
-# ##############################################################################
-# Dask
-# ##############################################################################
 
 * Dask
 - **Dask is written in Python
@@ -136,17 +124,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![alt_text](images/lecture_9_2/lec_9_2_slide_5_image_1.png)
 
-# ##############################################################################
-# Dask Layers
-# ##############################################################################
 
 * Dask Layers
 
 ![alt_text](images/lecture_9_2/lec_9_2_slide_6_image_1.png)
 
-# ##############################################################################
-# Scaling Up vs Scaling Out
-# ##############################################################################
 
 * Scaling Up vs Scaling Out
 - **Scaling up
@@ -179,9 +161,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ![alt_text](images/lecture_9_2/lec_9_2_slide_7_image_3.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_7_image_4.png)
 
-# ##############################################################################
-# Dask: Computation
-# ##############################################################################
 
 * Dask: Computation
 - **Lazy computations
@@ -211,9 +190,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ```
 
 ```text
-# ##############################################################################
-# Dask: Data Structures
-# ##############################################################################
 
 * Dask: Data Structures
 - **Dask DataFrame** implements Pandas DataFrame
@@ -232,9 +208,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_2/lec_9_2_slide_9_image_3.png)
 
-# ##############################################################################
-# Dask Reading Data
-# ##############################################################################
 
 * Dask Reading Data
 - **dask.dataframe.read_csv()**
@@ -263,9 +236,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **
 **missing_values**
 
-# ##############################################################################
-# Low Level APIs: Delayed
-# ##############################################################################
 
 * Low Level APIs: Delayed
 - Handle computations that don’t fit in native Dask data structures (e.g., Dask DataFrame)
@@ -277,9 +247,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_2/lec_9_2_slide_11_image_2.png)
 
-# ##############################################################################
-# Low Level APIs: Futures
-# ##############################################################################
 
 * Low Level APIs: Futures
 - In parallel programming, a “future” encapsulates the asynchronous execution of a callable, representing the eventual result of the operation
@@ -303,9 +270,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_2/lec_9_2_slide_12_image_4.png)
 
-# ##############################################################################
-# Different Types of Parallel Workload
-# ##############################################################################
 
 * Different Types of Parallel Workload
 - Break program in medium-size tasks of computation
@@ -319,9 +283,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_2/lec_9_2_slide_13_image_3.png)
 
-# ##############################################################################
-# Encoding Task Graph
-# ##############################################################################
 
 * Encoding Task Graph
 - Dask encodes tasks in terms of Python dicts and functions
@@ -338,9 +299,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_2/lec_9_2_slide_14_image_5.png)
 
-# ##############################################################################
-# Task Scheduling (1)
-# ##############################################################################
 
 * Task Scheduling
 - Data collections (Bags, Arrays, DataFrame) and their operations create task graphs
@@ -356,9 +314,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_2/lec_9_2_slide_15_image_1.png)
 
-# ##############################################################################
-# Task Scheduling (2)
-# ##############################################################################
 
 * Task Scheduling
 - **Dask task scheduler orchestrates the work dynamically
@@ -385,9 +340,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_2/lec_9_2_slide_16_image_1.png)
 
-# ##############################################################################
-# Dask vs Spark
-# ##############################################################################
 
 * Dask vs Spark
 - Spark has
@@ -408,9 +360,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Tutorial
-# ##############################################################################
 
 * Tutorial
 Tutorial

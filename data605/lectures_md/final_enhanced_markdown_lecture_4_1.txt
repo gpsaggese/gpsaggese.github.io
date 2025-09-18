@@ -47,9 +47,6 @@ SQL Intro**
 SQL tutorial
 Silbershatz: Chap 2
 
-# ##############################################################################
-# Relational Model: Overview
-# ##############################################################################
 
 * Relational Model: Overview
 - Introduced by Ted Codd (late 60's, early 70's)
@@ -68,9 +65,6 @@ Silbershatz: Chap 2
 
 
 
-# ##############################################################################
-# Relational Model: Key Definitions
-# ##############################################################################
 
 * Relational Model: Key Definitions
 - A relational DB consists of a collection of **tables / relations**
@@ -100,9 +94,6 @@ Silbershatz: Chap 2
 
 **course** relation
 
-# ##############################################################################
-# UML Class Diagram
-# ##############################################################################
 
 * UML Class Diagram
 - UML class diagram
@@ -128,9 +119,6 @@ Silbershatz: Chap 2
 
 ![](images/lecture_4_1/lec_4_1_slide_5_image_4.png)
 
-# ##############################################################################
-# Example: University DB
-# ##############################################################################
 
 * Example: University DB
 © UMD DATA605
@@ -156,9 +144,6 @@ Silbershatz: Chap 2
   - teaches
   - ...
 
-# ##############################################################################
-# Primary Key
-# ##############################################################################
 
 * Primary Key
 - *R* is the set of attributes of a relation *r*
@@ -188,9 +173,6 @@ Silbershatz: Chap 2
 
 **instructor** relation
 
-# ##############################################################################
-# Question: What are Primary Keys?
-# ##############################################################################
 
 * Question: What are Primary Keys?
 - Marital status
@@ -214,9 +196,6 @@ Silbershatz: Chap 2
 ```
 
 ```markdown
-# ##############################################################################
-# Answer: What are Primary Keys?
-# ##############################################################################
 
 * Answer: What are Primary Keys?
 - Marital status
@@ -238,9 +217,6 @@ Silbershatz: Chap 2
 
 ![images/lecture_4_1/lec_4_1_slide_9_image_1.png](images/lecture_4_1/lec_4_1_slide_9_image_1.png)
 
-# ##############################################################################
-# Foreign Key
-# ##############################################################################
 
 * Foreign Key
 - **Foreign key** = primary key of a relation that appears in another relation
@@ -259,9 +235,6 @@ Silbershatz: Chap 2
 
 ![images/lecture_4_1/lec_4_1_slide_10_image_1.png](images/lecture_4_1/lec_4_1_slide_10_image_1.png)
 
-# ##############################################################################
-# Relational Algebra: 1/4
-# ##############################################################################
 
 * Relational Algebra: 1/4
 - **Relation**: set of tuples
@@ -289,9 +262,6 @@ Silbershatz: Chap 2
 
 ![images/lecture_4_1/lec_4_1_slide_11_image_5.png](images/lecture_4_1/lec_4_1_slide_11_image_5.png)
 
-# ##############################################################################
-# Relational Algebra: 2/4
-# ##############################################################################
 
 * Relational Algebra: 2/4
 - **Cartesian product**: combine information from two relations into a new one
@@ -314,9 +284,6 @@ Silbershatz: Chap 2
 
 *instructor x teaches*
 
-# ##############################################################################
-# Relational Algebra: 3/4
-# ##############################################################################
 
 * Relational Algebra: 3/4
 - **Join**: composition of two operations
@@ -340,9 +307,6 @@ Silbershatz: Chap 2
 
 *teaches* relation
 
-# ##############################################################################
-# Relational Algebra: 4/4
-# ##############################################################################
 
 * Relational Algebra: 4/4
 - **Query**: combination of relational algebra operations
@@ -361,9 +325,6 @@ Silbershatz: Chap 2
 
 ![images/lecture_4_1/lec_4_1_slide_14_image_2.png](images/lecture_4_1/lec_4_1_slide_14_image_2.png)
 
-# ##############################################################################
-# SQL Overview (2)
-# ##############################################################################
 
 * SQL Overview
 © UMD DATA605
@@ -388,10 +349,6 @@ Silbershatz: Chap 2
   - Authorization
     - Specify access and security constraints
 
-# ##############################################################################
-# **SQL Overview
-# **
-# ##############################################################################
 
 * **SQL Overview
 **
@@ -408,9 +365,6 @@ Silbershatz: Chap 2
 ```
 
 ```
-# ##############################################################################
-# Create Table
-# ##############################################################################
 
 * Create Table
 © UMD DATA605
@@ -441,9 +395,6 @@ where:
 - A_i name of *attribute* (aka *field*, *column*)
 - D_i domain of attribute A_i
 
-# ##############################################################################
-# Select
-# ##############################################################################
 
 * Select
 © UMD DATA605
@@ -464,9 +415,6 @@ where:
   - Cartesian product → selection → projection
   - Difference: SQL allows duplicate values, relational algebra works with mathematical sets
 
-# ##############################################################################
-# Null values
-# ##############################################################################
 
 * Null values
 - An arithmetic operation with NULL yields NULL
@@ -483,9 +431,6 @@ where:
 
 © UMD DATA605
 
-# ##############################################################################
-# Group by Query
-# ##############################################################################
 
 * Group by Query
 - The attributes in GROUP BY are used to form groups
@@ -507,9 +452,6 @@ where:
 
 © UMD DATA605
 
-# ##############################################################################
-# Having
-# ##############################################################################
 
 * Having
 - State a condition that applies to groups instead of tuples (like WHERE)
@@ -530,9 +472,6 @@ where:
 
 © UMD DATA605
 
-# ##############################################################################
-# Nested subqueries
-# ##############################################################################
 
 * Nested subqueries
 - SQL allows to use the result of a query in another query
@@ -553,9 +492,6 @@ where:
 
 © UMD DATA605
 
-# ##############################################################################
-# With
-# ##############################################################################
 
 * With
 - WITH clause allows to define a temporary relation containing the results of a subquery
@@ -573,9 +509,6 @@ where:
 
 © UMD DATA605
 
-# ##############################################################################
-# Insert
-# ##############################################################################
 
 * Insert
 To insert data into a relation we can specify tuples to insert
@@ -598,9 +531,6 @@ This is much faster than **INSERT** statements
 ```
 
 ```
-# ##############################################################################
-# Update
-# ##############################################################################
 
 * Update
 - SQL can change a value in a tuple without changing all the other values
@@ -620,9 +550,6 @@ This is much faster than **INSERT** statements
 
 © UMD DATA605
 
-# ##############################################################################
-# Delete
-# ##############################################################################
 
 * Delete
 - One can delete tuples using a query returning entire rows of a table
@@ -637,9 +564,6 @@ where:
 
 © UMD DATA605
 
-# ##############################################################################
-# SQL Tutorial
-# ##############################################################################
 
 * SQL Tutorial
 - SQL tutorial dir
@@ -667,9 +591,6 @@ where:
 **UMD DATA605 - Big Data Systems**
 **Movie Database Example (Optional)**
 
-# ##############################################################################
-# Example Schema for SQL Queries
-# ##############################################################################
 
 * Example Schema for SQL Queries
 **Movie(title, year, length, inColor, studioName, producerC#)
@@ -688,9 +609,6 @@ where:
 
 ![](images/lecture_4_1/lec_4_1_slide_29_image_1.png)
 
-# ##############################################################################
-# SQL: Data Definition
-# ##############################################################################
 
 * SQL: Data Definition
 - CREATE TABLE
@@ -714,9 +632,6 @@ CREATE TABLE movie (
           producerC# integer references
              movieExec(cert#) ); **
 
-# ##############################################################################
-# SQL: Data Manipulation (1)
-# ##############################################################################
 
 * SQL: Data Manipulation
 - INSERT
@@ -739,9 +654,6 @@ INSERT INTO StarsIn(starName, movieTitle, movieYear)
 
 
 
-# ##############################################################################
-# SQL: Data Manipulation (2)
-# ##############################################################################
 
 * SQL: Data Manipulation
 - UPDATE
@@ -767,9 +679,6 @@ SET netWorth =
 ```
 
 ```
-# ##############################################################################
-# SQL Single Table Queries (1)
-# ##############################################################################
 
 * SQL Single Table Queries
 - Movies produced by Disney in 1990: note the *rename*
@@ -788,9 +697,6 @@ title LIKE 'star wars _'**
 
 
 
-# ##############################################################################
-# Single Table Queries (2)
-# ##############################################################################
 
 * Single Table Queries
 - Find distinct movies sorted by title
@@ -812,9 +718,6 @@ GROUP BY year;**
 
 
 
-# ##############################################################################
-# Single Table Queries (3)
-# ##############################################################################
 
 * Single Table Queries
 - Find movie with the maximum length
@@ -835,9 +738,6 @@ WHERE 5 >= (SELECT count(*)
 
 
 
-# ##############################################################################
-# Single Table Queries (4)
-# ##############################################################################
 
 * Single Table Queries
 - Rank movies by their length
@@ -860,9 +760,6 @@ union/intersect/minus
 
 
 
-# ##############################################################################
-# Single Table Queries (5)
-# ##############################################################################
 
 * Single Table Queries
 - Set Comparisons
@@ -881,9 +778,6 @@ SELECT *
 
 
 
-# ##############################################################################
-# Multi-table Queries (1)
-# ##############################################################################
 
 * Multi-table Queries
 - Key:
@@ -899,9 +793,6 @@ WHERE m.producerC# = me.cert#;**
 
 
 
-# ##############################################################################
-# Multi-table Queries (2)
-# ##############################################################################
 
 * Multi-table Queries
 - Consider the query:
@@ -927,9 +818,6 @@ WHERE m.producerC# = me.cert#;**
 © UMD DATA605
 
 
-# ##############################################################################
-# Other SQL Constructs (1)
-# ##############################################################################
 
 * Other SQL Constructs
 - Views
@@ -949,9 +837,6 @@ WHERE m.producerC# = me.cert#;**
 ```
 
 ```
-# ##############################################################################
-# Other SQL Constructs (2)
-# ##############################################################################
 
 * Other SQL Constructs
 - NULLs
@@ -972,9 +857,6 @@ WHERE m.producerC# = me.cert#;**
 
 
 
-# ##############################################################################
-# Other SQL Constructs (3)
-# ##############################################################################
 
 * Other SQL Constructs
 - Integrity Constraints
@@ -989,9 +871,6 @@ WHERE m.producerC# = me.cert#;**
 
 
 
-# ##############################################################################
-# Integrity Constraints (1)
-# ##############################################################################
 
 * Integrity Constraints
 - Referential integrity: prevent dangling tuples
@@ -1008,9 +887,6 @@ WHERE m.producerC# = me.cert#;**
 
 
 
-# ##############################################################################
-# Integrity Constraints (2)
-# ##############################################################################
 
 * Integrity Constraints
 - Global Constraints
@@ -1023,9 +899,6 @@ WHERE m.producerC# = me.cert#;**
 
 
 
-# ##############################################################################
-# Additional SQL Constructs
-# ##############################################################################
 
 * Additional SQL Constructs
 - **Select** subquery factoring
@@ -1038,9 +911,6 @@ WHERE m.producerC# = me.cert#;**
 
 
 
-# ##############################################################################
-# Another SQL Construct
-# ##############################################################################
 
 * Another SQL Construct
 - **SELECT HAVING** clause

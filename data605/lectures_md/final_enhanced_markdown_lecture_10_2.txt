@@ -1,43 +1,22 @@
 
-# ##############################################################################
-# Client-Server Architecture
-# ##############################################################################
 
 * Client-Server Architecture
 
-# ##############################################################################
-# Parallel vs Distributed Computing
-# ##############################################################################
 
 * Parallel vs Distributed Computing
 
-# ##############################################################################
-# Parallel Systems
-# ##############################################################################
 
 * Parallel Systems
 
-# ##############################################################################
-# Parallel Databases: Introduction
-# ##############################################################################
 
 * Parallel Databases: Introduction
 
-# ##############################################################################
-# Parallel Databases
-# ##############################################################################
 
 * Parallel Databases
 
-# ##############################################################################
-# How to Measure Parallel Performance
-# ##############################################################################
 
 * How to Measure Parallel Performance
 
-# ##############################################################################
-# Speed-Up and Scale-Up: Intuition
-# ##############################################################################
 
 * Speed-Up and Scale-Up: Intuition
 
@@ -191,9 +170,6 @@ Connection Machine in Jurassic Park
 ```
 
 ```markdown
-# ##############################################################################
-# Speed-Up vs Scale-Up
-# ##############################################################################
 
 * Speed-Up vs Scale-Up
 
@@ -217,9 +193,6 @@ Connection Machine in Jurassic Park
 
 
 
-# ##############################################################################
-# Factors Limiting Speed-up and Scale-up
-# ##############################################################################
 
 * Factors Limiting Speed-up and Scale-up
 
@@ -242,9 +215,6 @@ Connection Machine in Jurassic Park
 
 
 
-# ##############################################################################
-# Factors Limiting Speed-up and Scale-up
-# ##############################################################################
 
 * Factors Limiting Speed-up and Scale-up
 
@@ -266,9 +236,6 @@ Connection Machine in Jurassic Park
 
 
 
-# ##############################################################################
-# Topology of Parallel Systems
-# ##############################################################################
 
 * Topology of Parallel Systems
 
@@ -297,9 +264,6 @@ Connection Machine in Jurassic Park
 
 
 
-# ##############################################################################
-# Topology of Parallel Systems: Comparison
-# ##############################################################################
 
 * Topology of Parallel Systems: Comparison
 
@@ -313,9 +277,6 @@ Connection Machine in Jurassic Park
 
 
 
-# ##############################################################################
-# Parallel Databases
-# ##############################################################################
 
 * Parallel Databases
 
@@ -359,9 +320,6 @@ Extremely fast
 
 
 
-# ##############################################################################
-# Distributed Databases
-# ##############################################################################
 
 * Distributed Databases
 
@@ -392,9 +350,6 @@ Extremely fast
 
 
 
-# ##############################################################################
-# Consistency Issues in Distributed DB Systems
-# ##############################################################################
 
 * Consistency Issues in Distributed DB Systems
 
@@ -427,16 +382,10 @@ Extremely fast
 ```
 
 ```markdown
-# ##############################################################################
-# BACKUP
-# ##############################################################################
 
 * BACKUP
 
 
-# ##############################################################################
-# Parallel Databases
-# ##############################################################################
 
 * Parallel Databases
 - Introduction
@@ -449,9 +398,6 @@ Extremely fast
 Silbershatz: Chap 22
 
 
-# ##############################################################################
-# Parallelism in Databases
-# ##############################################################################
 
 * Parallelism in Databases
 - Data can be partitioned across multiple disks for parallel I/O
@@ -464,9 +410,6 @@ Silbershatz: Chap 22
 - Thus, databases naturally lend themselves to parallelism
 
 
-# ##############################################################################
-# I/O Parallelism
-# ##############################################################################
 
 * I/O Parallelism
 - Reduce the time required to retrieve relations from disk by partitioning the relations on multiple disks
@@ -480,9 +423,6 @@ Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
   - Let *i* denote result of hash function *h* applied to the partitioning attribute value of a tuple. Send tuple to disk *i*.
 
 
-# ##############################################################################
-# I/O Parallelism (Cont.)
-# ##############################################################################
 
 * I/O Parallelism (Cont.)
 - **Range partitioning**:
@@ -492,9 +432,6 @@ Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
      E.g., with a partitioning vector [5,11], a tuple with partitioning attribute value of 2 will go to disk 0, a tuple with value 8 will go to disk 1, while a tuple with value 20 will go to disk2.
 
 
-# ##############################################################################
-# Comparison of Partitioning Techniques
-# ##############################################################################
 
 * Comparison of Partitioning Techniques
 - Evaluate how well partitioning techniques support the following types of data access:
@@ -505,9 +442,6 @@ Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
   - E.g., 10 ≤ *r.A* < 25.
 
 
-# ##############################################################################
-# Comparison of Partitioning Techniques (Cont.)
-# ##############################################################################
 
 * Comparison of Partitioning Techniques (Cont.)
 Round robin:
@@ -518,9 +452,6 @@ Round robin:
   - No clustering -- tuples are scattered across all disks
 
 
-# ##############################################################################
-# Comparison of Partitioning Techniques (Cont.)
-# ##############################################################################
 
 * Comparison of Partitioning Techniques (Cont.)
 Hash partitioning:
@@ -534,9 +465,6 @@ Hash partitioning:
 
 
 ```text
-# ##############################################################################
-# Comparison of Partitioning Techniques (Cont.)
-# ##############################################################################
 
 * Comparison of Partitioning Techniques (Cont.)
 - Range partitioning:
@@ -551,9 +479,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Partitioning a Relation across Disks
-# ##############################################################################
 
 * Partitioning a Relation across Disks
 - If a relation contains only a few tuples which will fit into a single disk block, then assign the relation to a single disk.
@@ -562,9 +487,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Handling of Skew
-# ##############################################################################
 
 * Handling of Skew
 - The distribution of tuples to disks may be **skewed**
@@ -579,9 +501,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Handling Skew in Range-Partitioning
-# ##############################################################################
 
 * Handling Skew in Range-Partitioning
 - To create a **balanced partitioning vector** (assuming partitioning attribute forms a key of the relation):
@@ -594,9 +513,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Handling Skew using Histograms
-# ##############################################################################
 
 * Handling Skew using Histograms
 - Balanced partitioning vector can be constructed from histogram in a relatively straightforward fashion
@@ -607,9 +523,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Handling Skew Using Virtual Processor Partitioning
-# ##############################################################################
 
 * Handling Skew Using Virtual Processor Partitioning
 - Skew in range partitioning can be handled elegantly using **virtual processor partitioning**:
@@ -621,9 +534,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Interquery Parallelism
-# ##############################################################################
 
 * Interquery Parallelism
 - Queries/transactions execute in parallel with one another.
@@ -636,9 +546,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Cache Coherency Protocol
-# ##############################################################################
 
 * Cache Coherency Protocol
 - Example of a cache coherency protocol for shared disk systems:
@@ -652,9 +559,6 @@ Hash partitioning:
 ```
 
 ```text
-# ##############################################################################
-# Intraquery Parallelism
-# ##############################################################################
 
 * Intraquery Parallelism
 - Execution of a single query in parallel on multiple processors/disks; important for speeding up long-running queries.
@@ -665,9 +569,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Parallel Processing of Relational Operations
-# ##############################################################################
 
 * Parallel Processing of Relational Operations
 - Our discussion of parallel algorithms assumes:
@@ -681,9 +582,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Parallel Sort
-# ##############################################################################
 
 * Parallel Sort
 **Range-Partitioning Sort**
@@ -699,9 +597,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Parallel Sort (Cont.)
-# ##############################################################################
 
 * Parallel Sort (Cont.)
 **Parallel External Sort-Merge**
@@ -715,9 +610,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Parallel Join
-# ##############################################################################
 
 * Parallel Join
 - The join operation requires pairs of tuples to be tested to see if they satisfy the join condition, and if they do, the pair is added to the join output.
@@ -726,9 +618,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Partitioned Join
-# ##############################################################################
 
 * Partitioned Join
 - For equi-joins and natural joins, it is possible to *partition* the two input relations across the processors, and compute the join locally at each processor.
@@ -741,18 +630,12 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Partitioned Join (Cont.)
-# ##############################################################################
 
 * Partitioned Join (Cont.)
 ![Partitioned Join](images/lecture_10_2/lec_10_2_slide_39_image_1.png)
 
 
 
-# ##############################################################################
-# Fragment-and-Replicate Join
-# ##############################################################################
 
 * Fragment-and-Replicate Join
 - Partitioning not possible for some join conditions
@@ -768,9 +651,6 @@ Hash partitioning:
 ```
 
 ```text
-# ##############################################################################
-# Depiction of Fragment-and-Replicate Joins
-# ##############################################################################
 
 * Depiction of Fragment-and-Replicate Joins
 
@@ -778,9 +658,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Fragment-and-Replicate Join (Cont.)
-# ##############################################################################
 
 * Fragment-and-Replicate Join (Cont.)
 
@@ -795,9 +672,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Fragment-and-Replicate Join (Cont.)
-# ##############################################################################
 
 * Fragment-and-Replicate Join (Cont.)
 
@@ -808,9 +682,6 @@ Hash partitioning:
 
 
 
-# ##############################################################################
-# Partitioned Parallel Hash-Join
-# ##############################################################################
 
 * Partitioned Parallel Hash-Join
 
@@ -822,9 +693,6 @@ Parallelizing partitioned hash join:
 
 
 
-# ##############################################################################
-# Partitioned Parallel Hash-Join (Cont.)
-# ##############################################################################
 
 * Partitioned Parallel Hash-Join (Cont.)
 
@@ -838,9 +706,6 @@ Parallelizing partitioned hash join:
 
 
 
-# ##############################################################################
-# Parallel Nested-Loop Join
-# ##############################################################################
 
 * Parallel Nested-Loop Join
 
@@ -854,9 +719,6 @@ Parallelizing partitioned hash join:
 
 
 
-# ##############################################################################
-# Other Relational Operations
-# ##############################################################################
 
 * Other Relational Operations
 
@@ -869,9 +731,6 @@ Selection σθ(r)
 
 
 
-# ##############################################################################
-# Other Relational Operations (Cont.)
-# ##############################################################################
 
 * Other Relational Operations (Cont.)
 
@@ -885,9 +744,6 @@ Selection σθ(r)
 ```
 
 ```markdown
-# ##############################################################################
-# Grouping/Aggregation
-# ##############################################################################
 
 * Grouping/Aggregation
 - Partition the relation on the grouping attributes and then compute the aggregate values locally at each processor.
@@ -899,9 +755,6 @@ Selection σθ(r)
 - Fewer tuples need to be sent to other processors during partitioning.
 
 
-# ##############################################################################
-# Cost of Parallel Evaluation of Operations
-# ##############################################################################
 
 * Cost of Parallel Evaluation of Operations
 - If there is no skew in the partitioning, and there is no overhead due to the parallel evaluation, expected speed-up will be 1/n
@@ -914,9 +767,6 @@ Selection σθ(r)
 
 
 
-# ##############################################################################
-# Interoperator Parallelism
-# ##############################################################################
 
 * Interoperator Parallelism
 - **Pipelined parallelism**
@@ -931,9 +781,6 @@ Selection σθ(r)
 
 
 
-# ##############################################################################
-# Factors Limiting Utility of Pipeline Parallelism
-# ##############################################################################
 
 * Factors Limiting Utility of Pipeline Parallelism
 - Pipeline parallelism is useful since it avoids writing intermediate results to disk
@@ -943,9 +790,6 @@ Selection σθ(r)
 
 
 
-# ##############################################################################
-# Independent Parallelism
-# ##############################################################################
 
 * Independent Parallelism
 - **Independent parallelism**
