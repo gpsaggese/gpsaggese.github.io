@@ -256,7 +256,7 @@ MSML610: Advanced Machine Learning
   - Generalization over unknown points (i.e., marbles) is possible
   - **Machine learning is possible!**
 
-* Validation vs Learning Set-Up: Bin Analogy
+* Validation vs Learning: Bin Analogy
 
 - You have learned that for a given $h$, in-sample performance $E_{in}(h) = \nu$
   needs to be close to out-of-sample performance $E_{out}(h) = \mu$
@@ -283,47 +283,49 @@ MSML610: Advanced Machine Learning
     \\
     \end{alignat*}
     \endgroup
-  - **Problem**: the bound is weak
+- **Problem**: the bound is weak
 
-* Validation vs Learning Set-Up: Coin Analogy
-- In a **validation set-up**, we have a coin and want to determine if it is fair
+* Validation vs Learning: Coin Analogy
+- In a **validation set-up**, you have a coin and want to determine if it is fair
 
 - Assume the coin is unbiased: $\mu = 0.5$
-  - Toss the coin 10 times
-  - How likely is that we get 10 heads (i.e., the coin looks biased $\nu = 0$)?
-    $$
-    \Pr(\text{coin shows } \nu = 0) = 1 / 2^{10} = 1 / 1024 \approx 0.1\%
-    $$
-- In other terms the probability that the out-of-sample performance ($\nu=0.0$)
-  is very different from the in-sample perf ($\mu=0.5$) is very low
+- Toss the coin 10 times
+- How likely is that you get 10 heads (i.e., the coin looks biased $\nu = 0$)?
+  $$
+  \Pr(\text{coin shows } \nu = 0) = 1 / 2^{10} = 1 / 1024 \approx 0.1\%
+  $$
 
-* Validation vs Learning Set-Up: Coin Analogy
+- **Conclusion**: the probability that the out-of-sample performance ($\nu=0.0$)
+  is completely different from the in-sample perf ($\mu=0.5$) is very low
 
-- In a **learning set-up**, we have many coins and we need to choose one and
+* Validation vs Learning: Coin Analogy
+
+- In a **learning set-up**, you have many coins and you need to choose one and
   determine if it's fair
 
-- If we have 1000 fair coins, how likely is it that at least one appears totally
+- If you have 1000 fair coins, how likely is it that at least one appears totally
   biased using 10 experiments?
   - I.e., out-of-sample performance is completely different from in-sample
     performance
-    $$
-    \begin{aligned}
-    \Pr(\text{at least one coin has } \nu = 0) &
-    = 1 - \Pr(\text{all coins have } \nu \neq 0)\\
-    &= 1 - (\Pr(\text{a coin has } \nu \neq 0)) ^{10}\\
-    &= 1 - (1 - \Pr(\text{a coin has } \nu = 0)) ^{10}\\
-    &= 1 - (1 - 1 / 2 ^ {10}) ^ {1000}\\
-    &\approx 0.63\%
-    \end{aligned}
-    $$
-- It is probable, more than 50\%
+  $$
+  \begin{aligned}
+  \Pr(\text{at least one coin has } \nu = 0) &
+  = 1 - \Pr(\text{all coins have } \nu \neq 0)\\
+  &= 1 - (\Pr(\text{a coin has } \nu \neq 0)) ^{10}\\
+  &= 1 - (1 - \Pr(\text{a coin has } \nu = 0)) ^{10}\\
+  &= 1 - (1 - 1 / 2 ^ {10}) ^ {1000}\\
+  &\approx 0.63\%
+  \end{aligned}
+  $$
+
+- **Conclusion**: It is probable, more than 50\%
 
 // TODO(gp): Merge the next two slides
 
-* Hoeffding Inequality: Validation vs Learning
+* Validation vs Learning: Hoeffding Inequality
 - In **validation / testing**
-  - We can use Hoeffding to assess how well our $g$ (the chosen hypothesis)
-    approximates $f$ (unknown hypothesis):
+  - Use Hoeffding to assess how well our $g$ (the _chosen hypothesis_)
+    approximates $f$ (the _unknown hypothesis_):
     $$
     \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 \exp(-2 \varepsilon^2 N)
     $$
@@ -335,35 +337,30 @@ MSML610: Advanced Machine Learning
     \end{alignat*}
     \endgroup
   - Since the hypothesis $g$ is final and fixed, Hoeffding inequality guarantees
-    that we can learn since it gives a bound for $E_{out}$ to track $E_{in}$
+    that you can learn since it gives a bound for $E_{out}$ to track $E_{in}$
 
-- In **learning / training**
-  - We need to account that our hypothesis is the best of $M$ hypotheses, so the
-    union bound gives:
+- In **learning**
+  - Need to account that our hypothesis is the best of $M$ hypotheses, so:
     $$
     \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 M \exp(-2 \varepsilon^2 N)
     $$
   - The bound for $E_{out}$ from Hoeffding is weak
 
-- Is the bound weak because it needs to be or because the Hoeffding inequality
-  is not good enough?
+- **Questions**:
+  - Is the bound weak because it needs to be?
+  - Is it possible to replace it with a stricter bound?
 
-* Why Union Bound for Hoeffding Is Loose: Intuition
+* Intuition Why Bound for Hoeffding Is Weak
 - The Hoeffding inequality and the union bound applied to training set
   $$
   \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 M \exp(-2 \varepsilon^2 N)
   $$
-  is artificially too loose
-- Is it possible to replace it with a stricter bound?
-
-  - **Intuition**: if we have 1000 bins with mostly \red{red marbles}, it is
-    possible that our sample ends up being 100\% \green{green}, so the bound is
-    weak
+  is **artificially** too loose
 
 - $M$ was coming from the bad event:
   \begin{alignat*}{2}
   \calB_i
-  &= \text{"hypothesis $h_i$ does not generalize out-of-sample"} \\
+  &= \textit{"hypothesis $h_i$ does not generalize out-of-sample"} \\
   &= "|E_{in}(h_i) - E_{out}(h_i)| > \varepsilon"
   \end{alignat*}
 
@@ -373,10 +370,11 @@ MSML610: Advanced Machine Learning
   $\Pr(\calB)
   \le \Pr(\bigcup_i \calB_i)
   \le \sum_i \Pr(\calB_i)$
-- The union bound assumes events are disjoint, leading to a conservative
-  estimate if events overlap (i.e., correlated)
-  - In practice, bad events are extremely overlapping because bad hypotheses are
-    extremely similar
+
+- The union bound assumes the events are disjoint, leading to a conservative
+  estimate if events overlap
+- **In reality**, bad events are extremely overlapping because bad hypotheses are
+  extremely similar
 
 ::::
 :::: {.column width=30%}
@@ -396,70 +394,74 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
-* Why Union Bound for Hoeffding Is Loose: Intuition
-
-// TODO(Gp): Improve this
-
-- Consider two linearly separable classes on a plane, in terms of the ground
-  truth and a training set
-
-- Consider two 2D perceptrons with similar weights: $g_1, g_2$
-- $E_{out}$ is the area where each hypothesis $g_i$ and the ground truth
-  disagree
-- $\Delta E_{out}$ is the differential area between the two $E_{out}$
-
-- $E_{in}$ corresponds to the points in the training set falling in the area
-  corresponding to $E_{out}$
-- $\Delta E_{in}$ is the number of points falling in $\Delta E_{out}$, i.e.,
-  changing classification going from one hypothesis to the other
-
-- Thus the two "bad events" $\calB_1$ and $\calB_2$ are related to
-  $\Delta E_{in}$ and $\Delta E_{out}$
+//* Why Union Bound for Hoeffding Is Loose: Intuition
+//
+//// TODO(Gp): Improve this
+//
+//- Consider two linearly separable classes on a plane, in terms of the ground
+//  truth and a training set
+//
+//- Consider two 2D perceptrons with similar weights: $g_1, g_2$
+//- $E_{out}$ is the area where each hypothesis $g_i$ and the ground truth
+//  disagree
+//- $\Delta E_{out}$ is the differential area between the two $E_{out}$
+//
+//- $E_{in}$ corresponds to the points in the training set falling in the area
+//  corresponding to $E_{out}$
+//- $\Delta E_{in}$ is the number of points falling in $\Delta E_{out}$, i.e.,
+//  changing classification going from one hypothesis to the other
+//
+//- Thus the two "bad events" $\calB_1$ and $\calB_2$ are related to
+//  $\Delta E_{in}$ and $\Delta E_{out}$
 
 * Training vs Testing: College Course Analogy
+- In machine learning there is always a training / learning phase and a 
+  validation / testing phase
+- This set-up is very similar to studying and exams in a college course
+
 - Before the final exam, students receive practice problems and solutions
   - These problems won't appear on the exam
-  - Studying the problems helps students improve performance
-  - They serve as a "training set" in our learning setup
+  - Studying the problems improves performance
+  - Serve as a "training set" in learning
 
-- Why not give out the exam problems if the goal is to improve exam performance?
+- Why not give out exam problems to improve performance?
   - Doing well in the exam isn't the goal
-  - The goal is for students to learn the course material
+  - The goal is to learn the course material
 
 - The final exam isn't strictly necessary
-  - It gauges how well you've learned the material
-  - (and motivates you to study)
-  - Knowing the exam problems in advance wouldn't gauge learning effectively
-
-- This is similar to training and testing in machine learning
+  - Gauges how well you've learned
+  - Motivates you to study
+  - Knowing exam problems in advance wouldn't gauge learning effectively
 
 # ##############################################################################
 # Growth Function
 # ##############################################################################
 
 * Dichotomy: Definition
-- Consider the problem of classifying $N$ (fixed) points $\vx_1, ..., \vx_N$
-  with an hypothesis set $\calH$
+- **Problem**: classify $N$ (fixed) points $\vx_1, ..., \vx_N$ with an hypothesis
+  set $\calH$ of multi-class classifiers
 - Consider an assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
-- $D$ is a dichotomy for hypothesis set $\calH$ $\iff$ there exists
+- $D$ is a **dichotomy** for hypothesis set $\calH$ $\iff$ there exists
   $h \in \calH$ that gets the desired classification $D$
 
 ::: columns
 :::: {.column width=65%}
 
 - **Example**
-- 4 points in a plane $A, B, C, D$
-- $\calH$ = \{ bidimensional perceptrons (binary classifier) \}
-- Moving the separating hyperplane, one gets different classifications for the 4
-  points (i.e., dichotomies)
-  ```
-        d1    d2   d3
-  A     0     0    0
-  B     0     0
-  C     0     0
-  D     0     1
-  ```
-- Certain classifications are not possible (e.g., XOR assignment)
+  - 4 points in a plane $A, B, C, D$
+  - Binary classification
+  - $\calH$ = \{ bidimensional perceptrons \}
+  - Moving the separating hyperplane, you get different classifications for the
+    points (i.e., dichotomies)
+    ```
+          D1    D2   D3   D4   D...
+    A     o     x      ...
+    B     x     x
+    C     o     o
+    D     x     o      ...
+    ```
+  - There are at most $2^N$ dichotomies
+  - Certain classifications are not possible (e.g., XOR assignment)
 
 ::::
 :::: {.column width=30%}
@@ -525,65 +527,71 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
-* Training Set, Dichotomies, Hypotheses
-- An hypothesis classifies each point of $\calX$: $\calX \rightarrow \{-1, +1\}$
-- A dichotomy classifies each point of a set:
+* Dichotomies vs Hypotheses
+- An **hypothesis** classifies each point of $\calX$: $\calX \rightarrow \{-1, +1\}$
+- A **dichotomy** classifies each point of a fixed set:
   $\{\vx_1, ..., \vx_N\} \rightarrow \{-1, +1\}$
   - Dichotomies are "mini-hypotheses", i.e., hypotheses restricted to given
     points
-  - A dichotomy depends on $\calH$ and on where the points are placed
-  - Certain dichotomies can exist for a certain position of the $N$ points, but
-    not for all the sets of $N$ points
+  - A dichotomy depends on:
+    - The number of points $N$
+    - Hypothesis set $\calH$ (i.e., the possible models)
+    - Where the points are placed
+    - How the points are assigned
 
-- The number of different dichotomies is indicated by
+- The **number of different dichotomies** is indicated by
   $|\calH(\vx_1, ..., \vx_N)|$
-  - This notation is like applying each hypothesis to the points and see how
-    points are classified
-
-- From the training set point of view, what matters are dichotomies and not
-  hypotheses
   - The number of dichotomies is always finite, since
     $|\calH(\vx_1, ..., \vx_N)| \le N^K$
   - The number of hypotheses is usually infinite, i.e., $|\calH| = \infty$
+
+- The "complexity" of $\calH$ is related to the number of hypothesis
+
+- From the training set point of view what matters are dichotomies and not
+  hypotheses
   - Many (infinite) hypotheses can correspond to the same dichotomy
 
 * Growth Function
-- The growth function counts the maximum number of possible dichotomies on $N$
-  points for a hypothesis set $\calH$:
+- The **growth function** counts the maximum number of possible dichotomies on
+  $N$ points for a hypothesis set $\calH$:
 
   $$
   m_{\calH}(N)
   = \max_{\vx_1, \cdots, \vx_N \in \calX} |\calH(\vx_1, \cdots, \vx_N)|
   $$
 
-- The dichotomies depend on point distribution
+- **Why growth function?**
+  - The dichotomies depend on point distribution and assignment
   - The growth function considers the maximum by placing points in the most
     "favorable way" for the hypothesis set
 
-- To compute $m_{\calH}(N)$ by brute force:
+- To compute $m_{\calH}(N)$ by **brute force**:
   - Consider all possible placements of $N$ points $\vx_1, ..., \vx_N$
+  - Consider all possible assignments of the points to the classes
   - Consider all possible hypotheses $h \in \calH$
   - Compute the corresponding dichotomy for $h$ on $\vx_1, ..., \vx_N$
   - Count the number of different dichotomies
 
 * What Can Vary in a Dichotomy
 - Given:
-  - An hypothesis set $\calH$
+  - An hypothesis set $\calH$ (e.g., bidimensional perceptrons)
   - $N$ (fixed) points $\vx_1, ..., \vx_N$
   - An assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
-- $D$ is a dichotomy for hypothesis set $\calH$ $\iff$ there exists
+
+- $D$ is a **dichotomy** for hypothesis set $\calH$ $\iff$ there exists
   $h \in \calH$ that gets the desired classification $D$
 
-- There are various quantities in play in the definition of dichotomy
+- There are various quantities in the definition of dichotomy
   - The hypothesis set $\calH$
     - It is fixed
   - The number of dimensions of the input space
     - It is fixed through the hypothesis set $\calH$
   - The number of points $N$
     - Input to the growth function $m_{\calH}(N)$
-  - How the points are assigned to the classes
-    - It is determined by each hypothesis in $\calH$
-  - Where the points are positioned
+  - How the points are assigned to the classes $\vd_1, ..., \vd_N$
+    - It is a free parameter, removed by how each hypothesis in $\calH$ "splits"
+      the space 
+  - Where the points are positioned $\vx_1, ..., \vx_N$
     - It is a free parameter, removed by the growth function through $\max$
 
 * Growth Function Is Increasing
@@ -595,19 +603,62 @@ MSML610: Advanced Machine Learning
 
 - $m_{\calH}(N)$ increases with the complexity of $\calH$
 
+- $m_{\calH}(N)$ increases with the number of dimensions in the input space
+  (i.e., feature space)
+
 * Growth Function: Examples
 - Consider the growth function $m_{\calH}$ for different hypothesis sets $\calH$
 
 ::: columns
 :::: {.column width=50%}
-
-- Perceptron on a plane
+- **Perceptron on a plane**
   - $m_{\calH}(3) = 8$
   - $m_{\calH}(4) = 14$ (2 XOR classifications not possible)
+::::
+:::: {.column width=45%}
 
-- Positive rays $\sign(x - a)$ on $\bbR$
+// TODO(gp): Use x_1, x_2, ... instead of A
+
+```tikz[width=60%]
+% Draw rectangle
+\draw[thick] (0,0) rectangle (5,3.5);
+
+% Define coordinates for points
+\coordinate (A) at (2.5,3);   % top circle
+\coordinate (B) at (3.8,2);   % right cross
+\coordinate (C) at (2.5,1);   % bottom circle
+\coordinate (D) at (1,1.2);   % left cross
+
+% Draw symbols
+\node at (A) {\Large $\circ$};
+\node at (B) {\Large $\times$};
+\node at (C) {\Large $\circ$};
+\node at (D) {\Large $\times$};
+
+% Add labels
+\node[above right] at (A) {$A$};
+\node[above left] at (B) {$B$};
+\node[below right] at (C) {$C$};
+\node[below left] at (D) {$D$};
+
+% Define coordinates for points
+\coordinate (TopCircle) at (5, 0);
+\coordinate (BottomCircle) at (0, 3.5);
+
+% Draw single line between the circles
+\draw[red, dotted, thick] (TopCircle) -- (BottomCircle);
+```
+
+\vspace{1cm}
+::::
+:::
+
+::: columns
+:::: {.column width=50%}
+- **Positive rays** $\sign(x - a)$ on $\bbR$
   - $m_{\calH}(N) = N + 1$
   - Origin of rays $a$ can be placed in $N + 1$ intervals
+
 ::::
 :::: {.column width=45%}
 
