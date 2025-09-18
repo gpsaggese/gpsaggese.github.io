@@ -46,9 +46,6 @@ Prof. Kathleen Durant (Northeastern U.)
 
 UMD DATA605 - Big Data Systems
 
-# ##############################################################################
-# Key-Value Store vs Document DBs
-# ##############################################################################
 
 * Key-Value Store vs Document DBs
 - **Key-value stores**
@@ -72,9 +69,6 @@ UMD DATA605 - Big Data Systems
 
 ![](images/lecture_6_1/lec_6_1_slide_3_image_2.png)
 
-# ##############################################################################
-# Resources
-# ##############################################################################
 
 * Resources
 - All concepts in slides
@@ -90,9 +84,6 @@ UMD DATA605 - Big Data Systems
 
 ![](images/lecture_6_1/lec_6_1_slide_5_image_1.png)
 
-# ##############################################################################
-# MongoDB
-# ##############################################################################
 
 * MongoDB
 - Developed by MongoDB Inc.
@@ -117,9 +108,6 @@ UMD DATA605 - Big Data Systems
 
 ![](images/lecture_6_1/lec_6_1_slide_6_image_1.png)
 
-# ##############################################################################
-# MongoDB: Example of Document
-# ##############################################################################
 
 * MongoDB: Example of Document
 - **A document is a JSON data structure**
@@ -132,9 +120,6 @@ UMD DATA605 - Big Data Systems
 
 ![](images/lecture_6_1/lec_6_1_slide_7_image_1.png)
 
-# ##############################################################################
-# MongoDB: Functionalities
-# ##############################################################################
 
 * MongoDB: Functionalities
 - **Design goals**
@@ -157,9 +142,6 @@ UMD DATA605 - Big Data Systems
 
 
 
-# ##############################################################################
-# MongoDB: Hierarchical Objects
-# ##############################################################################
 
 * MongoDB: Hierarchical Objects
 - A Mongo **instance** has:
@@ -193,9 +175,6 @@ UMD DATA605 - Big Data Systems
 
 From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
-# ##############################################################################
-# Relational DBs vs MongoDB: Terms and Concepts
-# ##############################################################################
 
 * Relational DBs vs MongoDB: Terms and Concepts
 
@@ -213,9 +192,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 ![](images/lecture_6_1/lec_6_1_slide_10_image_1.png)
 
-# ##############################################################################
-# Relational vs Document DB: Workflows
-# ##############################################################################
 
 * Relational vs Document DB: Workflows
 - **Relational DBs**
@@ -239,9 +215,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 
 
-# ##############################################################################
-# Why Use MongoDB?
-# ##############################################################################
 
 * Why Use MongoDB?
 - Simple to query
@@ -259,9 +232,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 ![](images/lecture_6_1/lec_6_1_slide_12_image_1.png)
 
-# ##############################################################################
-# MongoDB: Data Model (1)
-# ##############################################################################
 
 * MongoDB: Data Model
 
@@ -283,9 +253,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 ![](images/lecture_6_1/lec_6_1_slide_13_image_2.png)
 
-# ##############################################################################
-# MongoDB: Data Model (2)
-# ##############################################################################
 
 * MongoDB: Data Model
 
@@ -304,9 +271,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 ![](images/lecture_6_1/lec_6_1_slide_14_image_2.png)
 
-# ##############################################################################
-# Schema Free
-# ##############################################################################
 
 * Schema Free
 - MongoDB does not need any pre-defined data schema
@@ -327,9 +291,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 **Document
 **
 
-# ##############################################################################
-# JSON Format
-# ##############################################################################
 
 * JSON Format
 - JSON = JavaScript Object Notation
@@ -353,9 +314,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 
 
-# ##############################################################################
-# BSON Format 
-# ##############################################################################
 
 * BSON Format 
 - Binary-encoded serialization of JSON-like documents
@@ -372,9 +330,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 
 
-# ##############################################################################
-# ObjectID
-# ##############################################################################
 
 * ObjectID
 - Each JSON data contains an _id field of type ObjectId
@@ -392,9 +347,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 ![](images/lecture_6_1/lec_6_1_slide_18_image_1.png)
 
-# ##############################################################################
-# Indexes
-# ##############################################################################
 
 * Indexes
 - **Primary index**
@@ -414,9 +366,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 
 
-# ##############################################################################
-# CRUD Operations
-# ##############################################################################
 
 * CRUD Operations
 - CRUD = Create, Read, Update, Delete
@@ -435,9 +384,6 @@ Details at https://www.mongodb.com/docs/manual/crud/
 
 
 
-# ##############################################################################
-# Create Operations
-# ##############################################################################
 
 * Create Operations
 - **db.collection** specifies the collection (like an SQL table) to store the document 
@@ -454,9 +400,6 @@ Details at https://www.mongodb.com/docs/manual/crud/
 
 
 
-# ##############################################################################
-# Read Operations
-# ##############################################################################
 
 * Read Operations
 - **find** provides functionality similar to **SQL SELECT** command 
@@ -471,9 +414,6 @@ with:
 - **db.collection.findOne(<query>, <projection>)**
 
 
-# ##############################################################################
-# More Query Examples
-# ##############################################################################
 
 * More Query Examples
 **SQL**
@@ -521,17 +461,11 @@ with:
 - Mongo has a functional programming flavor
   - E.g., composing operators, like **`$or`**
 
-# ##############################################################################
-# Query Operators
-# ##############################################################################
 
 * Query Operators
 
 ![](images/lecture_6_1/lec_6_1_slide_24_image_1.png)
 
-# ##############################################################################
-# Update Operations
-# ##############################################################################
 
 * Update Operations
 - **db.collection.insert(<document>)**
@@ -549,9 +483,6 @@ with:
 
 
 
-# ##############################################################################
-# Delete Operations
-# ##############################################################################
 
 * Delete Operations
 - **db.collection.remove(<query>, <justone>)**
@@ -564,9 +495,6 @@ with:
 
 
 
-# ##############################################################################
-# MongoDB Features
-# ##############################################################################
 
 * MongoDB Features
 - Document-oriented NoSQL store
@@ -583,9 +511,6 @@ with:
 
 
 
-# ##############################################################################
-# MongoDB vs Relational DBs
-# ##############################################################################
 
 * MongoDB vs Relational DBs
 - Keep the functionality that works well in RDBMSs
@@ -599,9 +524,6 @@ with:
 
 
 
-# ##############################################################################
-# MongoDB Tutorial
-# ##############################################################################
 
 * MongoDB Tutorial
 Tutorial is at GitHub
@@ -612,9 +534,6 @@ The instructions are here**
 **> vi tutorial_mongo.md**
 
 
-# ##############################################################################
-# MongoDB Processes and Configuration
-# ##############################################################################
 
 * MongoDB Processes and Configuration
 - **mongod**: database instance (i.e., a server process)
@@ -634,9 +553,6 @@ The instructions are here**
 
 ![](images/lecture_6_1/lec_6_1_slide_30_image_1.png)
 
-# ##############################################################################
-# MapReduce Functionality
-# ##############################################################################
 
 * MapReduce Functionality
 - Perform map-reduce computation given a collection of (keys, value) pairs
@@ -672,9 +588,6 @@ The instructions are here**
 
 ![](images/lecture_6_1/lec_6_1_slide_31_image_2.png)
 
-# ##############################################################################
-# Data Replication
-# ##############################################################################
 
 * Data Replication
 - **Data replication** ensure:
@@ -694,9 +607,6 @@ The instructions are here**
 
 ![](images/lecture_6_1/lec_6_1_slide_32_image_2.png)
 
-# ##############################################################################
-# Sync vs Async Replication
-# ##############################################################################
 
 * Sync vs Async Replication
 
@@ -716,9 +626,6 @@ The instructions are here**
 
 ![](images/lecture_6_1/lec_6_1_slide_33_image_2.png)
 
-# ##############################################################################
-# Data Consistency
-# ##############################################################################
 
 * Data Consistency
 
@@ -733,9 +640,6 @@ The instructions are here**
 
 
 
-# ##############################################################################
-# MongoDB: Sharding
-# ##############################################################################
 
 * MongoDB: Sharding
 
@@ -758,9 +662,6 @@ The instructions are here**
 
 ![](images/lecture_6_1/lec_6_1_slide_35_image_3.png)
 
-# ##############################################################################
-# RDMBS Internals
-# ##############################################################################
 
 * RDMBS Internals
 
@@ -779,9 +680,6 @@ The instructions are here**
 
 
 
-# ##############################################################################
-# Query Optimizer (1)
-# ##############################################################################
 
 * Query Optimizer
 
@@ -801,9 +699,6 @@ The instructions are here**
 
 ![](images/lecture_6_1/lec_6_1_slide_37_image_4.png)
 
-# ##############################################################################
-# Query Optimizer (2)
-# ##############################################################################
 
 * Query Optimizer
 
@@ -821,9 +716,6 @@ The instructions are here**
 
 ![](images/lecture_6_1/lec_6_1_slide_38_image_1.png)
 
-# ##############################################################################
-# MongoDB: Strengths
-# ##############################################################################
 
 * MongoDB: Strengths
 
@@ -843,9 +735,6 @@ The instructions are here**
 
 
 
-# ##############################################################################
-# MongoDB: Limitations
-# ##############################################################################
 
 * MongoDB: Limitations
 
@@ -863,15 +752,9 @@ The instructions are here**
 
 ![](images/lecture_6_1/lec_6_1_slide_40_image_1.png)
 
-# ##############################################################################
-# UMD DATA605 - Big Data Systems
-# ##############################################################################
 
 * UMD DATA605 - Big Data Systems
 
-# ##############################################################################
-# Couchbase
-# ##############################################################################
 
 * Couchbase
 
@@ -899,9 +782,6 @@ The instructions are here**
 
 ![](images/lecture_6_1/lec_6_1_slide_42_image_2.png)
 
-# ##############################################################################
-# Architecture
-# ##############################################################################
 
 * Architecture
 
@@ -925,9 +805,6 @@ The instructions are here**
 
 ![](images/lecture_6_1/lec_6_1_slide_43_image_2.png)
 
-# ##############################################################################
-# Queries
-# ##############################################################################
 
 * Queries
 

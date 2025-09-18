@@ -42,10 +42,6 @@ Prof. Amol Deshpande
 UMD DATA605 - Big Data Systems
 
 
-##############################################################################
-# Outline (1)
-##############################################################################
-
 * Outline
 - Storage
   - Physical storage
@@ -57,10 +53,6 @@ Sources: Silberschatz et al. 2020
 
 
 
-##############################################################################
-# Outline (2)
-##############################################################################
-
 * Outline
 - Storage
   - Physical storage
@@ -71,10 +63,6 @@ Sources: Silberschatz et al. 2020
 Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 
 
-
-##############################################################################
-# Storage Characteristics
-##############################################################################
 
 * Storage Characteristics
 - Storage media presents a trade-off between:
@@ -96,9 +84,6 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 
 ![](images/lecture_4_2/lec_4_2_slide_4_image_1.png)
 
-##############################################################################
-# Storage Hierarchy (1)
-##############################################################################
 
 * Storage Hierarchy
 
@@ -131,9 +116,6 @@ The various storage can be organized in a hierarchy according to (decreasing) sp
 **Secondary** (or **online**): flash memory, magnetic disk
 **Offline**: optical, magnetic tape
 
-##############################################################################
-# Storage Hierarchy (2)
-##############################################################################
 
 * Storage Hierarchy
 ![](images/lecture_4_2/lec_4_2_slide_6_image_1.png)
@@ -141,10 +123,6 @@ The various storage can be organized in a hierarchy according to (decreasing) sp
 source: http://cse1.net/recaps/4-memory.html
 
 
-
-##############################################################################
-# How Important is Memory Hierarchy?
-##############################################################################
 
 * How Important is Memory Hierarchy?
 - Trade-offs shifted drastically over last 10-15 years
@@ -162,11 +140,6 @@ source: http://cse1.net/recaps/4-memory.html
   - Best algorithm depends on the technology available
 
 
-
-##############################################################################
-# Outline (3)
-##############################################################################
-
 * Outline
 - Storage
   - Physical storage
@@ -179,9 +152,6 @@ source: http://cse1.net/recaps/4-memory.html
 ```
 
 ```
-# ##############################################################################
-# Connecting disks to a server
-# ##############################################################################
 
 * Connecting disks to a server
 - **Disks** (magnetic and SSDs) can be **connected to computer**:
@@ -220,17 +190,11 @@ source: http://cse1.net/recaps/4-memory.html
 
 
 
-# ##############################################################################
-# Magnetic Disks (1)
-# ##############################################################################
 
 * Magnetic Disks
 
 
 
-# ##############################################################################
-# Magnetic Disks (2)
-# ##############################################################################
 
 * Magnetic Disks
 
@@ -257,17 +221,11 @@ source: http://cse1.net/recaps/4-memory.html
 - Operates arm / heads
 - Bad sectors are remapped to a different physical location
 
-# ##############################################################################
-# Magnetic Disks: Components
-# ##############################################################################
 
 * Magnetic Disks: Components
 
 ![images/lecture_4_2/lec_4_2_slide_12_image_2.png](images/lecture_4_2/lec_4_2_slide_12_image_2.png)
 
-# ##############################################################################
-# Magnetic Disks: Current Specs
-# ##############################################################################
 
 * Magnetic Disks: Current Specs
 - **Capacity
@@ -297,9 +255,6 @@ source: http://cse1.net/recaps/4-memory.html
 
 ![images/lecture_4_2/lec_4_2_slide_13_image_1.png](images/lecture_4_2/lec_4_2_slide_13_image_1.png)
 
-# ##############################################################################
-# Accessing Data Speed
-# ##############################################################################
 
 * Accessing Data Speed
 - **Random data transfer rates
@@ -325,9 +280,6 @@ source: http://cse1.net/recaps/4-memory.html
 
 
 
-# ##############################################################################
-# Solid State Disk (SSD)
-# ##############################################################################
 
 * Solid State Disk (SSD)
 - Mainstream around 2000s
@@ -360,9 +312,6 @@ source: http://cse1.net/recaps/4-memory.html
 
 ![images/lecture_4_2/lec_4_2_slide_15_image_1.png](images/lecture_4_2/lec_4_2_slide_15_image_1.png)
 
-# ##############################################################################
-# Outline (4)
-# ##############################################################################
 
 * Outline
 - Storage
@@ -374,9 +323,6 @@ source: http://cse1.net/recaps/4-memory.html
 
 
 
-# ##############################################################################
-# RAID
-# ##############################################################################
 
 * RAID
 - RAID = Redundant Array of Independent Disks
@@ -401,9 +347,6 @@ source: http://cse1.net/recaps/4-memory.html
 
 ![](images/lecture_4_2/lec_4_2_slide_17_image_1.png)
 
-# ##############################################################################
-# Improve Reliability / Performance with RAID
-# ##############################################################################
 
 * Improve Reliability / Performance with RAID
 **Reliability**
@@ -426,9 +369,6 @@ source: http://cse1.net/recaps/4-memory.html
 
 ![](images/lecture_4_2/lec_4_2_slide_18_image_1.png)
 
-# ##############################################################################
-# RAID Levels
-# ##############################################################################
 
 * RAID Levels
 **RAID 0: No redundancy**
@@ -458,9 +398,6 @@ source: http://cse1.net/recaps/4-memory.html
 
 ![](images/lecture_4_2/lec_4_2_slide_19_image_3.png)
 
-# ##############################################################################
-# Choosing a RAID Level
-# ##############################################################################
 
 * Choosing a RAID Level
 - Main choice between RAID 1 and RAID 5
@@ -481,9 +418,6 @@ source: http://cse1.net/recaps/4-memory.html
 
 ![](images/lecture_4_2/lec_4_2_slide_20_image_3.png)
 
-# ##############################################################################
-# Outline (5)
-# ##############################################################################
 
 * Outline
 - Storage
@@ -494,9 +428,6 @@ Sources:
 
 
 
-# ##############################################################################
-# (Centralized) DB Internals
-# ##############################################################################
 
 * (Centralized) DB Internals
 User processes
@@ -524,9 +455,6 @@ Shared memory
 
 ![](images/lecture_4_2/lec_4_2_slide_22_image_1.png)
 
-# ##############################################################################
-# DB Internals
-# ##############################################################################
 
 * DB Internals
 

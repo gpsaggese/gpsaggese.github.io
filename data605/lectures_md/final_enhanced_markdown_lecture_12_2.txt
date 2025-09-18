@@ -36,10 +36,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 :::
 
 
-# ##############################################################################
- # Overview (1)
-# ##############################################################################
-
 * Overview
 - Motivation
 - Graph data models
@@ -48,10 +44,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Typical graph analysis tasks
 - Executing graph analysis tasks
 
-
-# ##############################################################################
- # Overview (2)
-# ##############################################################################
 
 * Overview
 - Motivation
@@ -68,10 +60,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
- # Overview (3)
-# ##############################################################################
-
 * Overview
 - **Motivation**
 - Graph data models
@@ -82,9 +70,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Graphs: Background
-# ##############################################################################
 
 * Graphs: Background
 - A *graph (*or* network)* captures a set of entities and interconnections between pairs of them
@@ -96,9 +81,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Graph Data Structures: Motivation
-# ##############################################################################
 
 * Graph Data Structures: Motivation
 - Increasing interest in querying and reasoning about the *underlying graph structure *in a variety of disciplines
@@ -109,9 +91,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_12_2/lec_12_2_slide_6_image_2.png)
 
-# ##############################################################################
-# Motivation (1)
-# ##############################################################################
 
 * Motivation
 
@@ -122,9 +101,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_12_2/lec_12_2_slide_7_image_3.png)
 
-# ##############################################################################
-# Motivation (2)
-# ##############################################################################
 
 * Motivation
 - **Graph data structures have not changed that much over time**
@@ -143,9 +119,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ```
 
 ```text
-# ##############################################################################
- # Overview (4)
-# ##############################################################################
 
 * Overview
 - Motivation
@@ -157,9 +130,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Knowledge Graphs
-# ##############################################################################
 
 * Knowledge Graphs
 - **Representation of knowledge in the form of graphs
@@ -180,9 +150,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Graph Data Models: RDF
-# ##############################################################################
 
 * Graph Data Models: RDF
 - Resource Description Framework
@@ -207,9 +174,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_12_2/lec_12_2_slide_11_image_1.png)
 
-# ##############################################################################
-# Graph Data Models: Property Graph
-# ##############################################################################
 
 * Graph Data Models: Property Graph
 - A directed graph where each node and each edge may be associated with a set of *properties* (*key-values*)
@@ -226,9 +190,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_12_2/lec_12_2_slide_12_image_2.jpeg)
 
-# ##############################################################################
-# Graph Data Models: XML
-# ##############################################################################
 
 * Graph Data Models: XML
 - Commonly used data model for representing data without rigid structure
@@ -253,10 +214,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **  </movie>**
 **…**
 
-# ##############################################################################
- # Overview (5)
-# ##############################################################################
-
 * Overview
 - Motivation
 - Graph data models
@@ -268,9 +225,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Storing Graph Data
-# ##############################################################################
 
 * Storing Graph Data
 - **File systems**
@@ -292,9 +246,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Graph Databases
-# ##############################################################################
 
 * Graph Databases
 - Many specialized graph database systems in recent years
@@ -313,9 +264,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ```
 
 ```text
-# ##############################################################################
- # Overview (6)
-# ##############################################################################
 
 * Overview
 - Motivation
@@ -327,9 +275,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Query Languages for Graph Databases
-# ##############################################################################
 
 * Query Languages for Graph Databases
 - Cypher
@@ -367,9 +312,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **WHERE** **movie.year** **<** **2007
 **RETURN** **movie**
 
-# ##############################################################################
-# Neo4j
-# ##############################################################################
 
 * Neo4j
 - Graph DB storing data as Property Graph
@@ -389,9 +331,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_12_2/lec_12_2_slide_19_image_1.png)
 
-# ##############################################################################
-# Graph DB: Example
-# ##############################################################################
 
 * Graph DB: Example
 - **Specs**
@@ -423,9 +362,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_12_2/lec_12_2_slide_20_image_2.png)
 
-# ##############################################################################
-# Labeled Property Graphs in Neo4j
-# ##############################################################################
 
 * Labeled Property Graphs in Neo4j
 - **Nodes**
@@ -449,9 +385,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Cypher Example (1)
-# ##############################################################################
 
 * Cypher Example
 **# Create a wine node with attributes.**
@@ -474,9 +407,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Cypher Example (2)
-# ##############################################################################
 
 * Cypher Example
 **# Attach a rating.**
@@ -492,9 +422,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_12_2/lec_12_2_slide_23_image_1.png)
 
-# ##############################################################################
-# Cypher Example (3)
-# ##############################################################################
 
 * Cypher Example
 **# Add winery.**
@@ -520,9 +447,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ```
 
 ```markdown
-# ##############################################################################
-# Cypher Example (4)
-# ##############################################################################
 
 * Cypher Example
 - Add a social component to the wine graph
@@ -555,9 +479,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_12_2/lec_12_2_slide_25_image_1.png)
 
-# ##############################################################################
-# Cypher Example (5)
-# ##############################################################################
 
 * Cypher Example
 **# See all nodes associated with Alice.
@@ -587,9 +508,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_12_2/lec_12_2_slide_26_image_1.png)
 
-# ##############################################################################
-# A general query structure
-# ##############################################################################
 
 * A general query structure
 **MATCH [Nodes and relationships]
@@ -605,9 +523,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Simple query
-# ##############################################################################
 
 * Simple query
 Get all nodes of type *Program* that have the name *Hello World!*
@@ -624,9 +539,6 @@ Name = ‘Hello World!’
 
 
 
-# ##############################################################################
-# Query relationships
-# ##############################################################################
 
 * Query relationships
 Get all relationships of type *Author* connecting *Programmers* and *Programs*:
@@ -644,9 +556,6 @@ Type = Programmer
 
 
 
-# ##############################################################################
-# Matching nodes and relationships
-# ##############################################################################
 
 * Matching nodes and relationships
 - Nodes
@@ -669,9 +578,6 @@ Type = Programmer
 
 
 
-# ##############################################################################
-# More options
-# ##############################################################################
 
 * More options
 - Relationship distance:
@@ -686,9 +592,6 @@ Could be used also as:
 
 
 
-# ##############################################################################
-# Operators
-# ##############################################################################
 
 * Operators
 • Mathematical 
@@ -708,9 +611,6 @@ Could be used also as:
 ```
 
 ```
-# ##############################################################################
-# More WHERE options
-# ##############################################################################
 
 * More WHERE options
 - WHERE others.name IN ['Andres', 'Peter']
@@ -724,9 +624,6 @@ Could be used also as:
   (Returns all nodes where name = 'Bob' plus all nodes
   without a name property)
 
-# ##############################################################################
-# Functions
-# ##############################################################################
 
 * Functions
 - On paths:
@@ -744,9 +641,6 @@ Could be used also as:
 
 
 
-# ##############################################################################
-# With
-# ##############################################################################
 
 * With
 - Manipulate the result sequence before it is passed on to the following query parts.
@@ -757,9 +651,6 @@ Could be used also as:
 
 
 
-# ##############################################################################
-# Data access is *programmatic*
-# ##############################################################################
 
 * Data access is *programmatic*
 - REST API
@@ -773,11 +664,6 @@ Could be used also as:
 - Pattern matching
 
 
-
-# ##############################################################################
- # Overview (7)
-# ##############################################################################
-
 * Overview
 - Motivation
 - Graph data models
@@ -788,9 +674,6 @@ Could be used also as:
 
 
 
-# ##############################################################################
-# Queries vs Analysis Tasks
-# ##############################################################################
 
 * Queries vs Analysis Tasks
 - **Queries**
@@ -807,9 +690,6 @@ Could be used also as:
 
 
 
-# ##############################################################################
-# Examples of Graph Tasks
-# ##############################################################################
 
 * Examples of Graph Tasks
 - Subgraph pattern matching
@@ -831,9 +711,6 @@ Could be used also as:
 
 
 
-# ##############################################################################
-# Queries: Subgraph Matching
-# ##############################################################################
 
 * Queries: Subgraph Matching
 - Given a “query” graph, find where it occurs in a given “data” graph
@@ -846,9 +723,6 @@ Could be used also as:
 ```
 
 ```markdown
-# ##############################################################################
-# Queries: Connection Subgraphs 
-# ##############################################################################
 
 * Queries: Connection Subgraphs 
 - Given a data graph and two (or more) nodes in it, find a small subgraph that best captures the relationship between the nodes 
@@ -859,9 +733,6 @@ Could be used also as:
 
 ![](images/lecture_12_2/lec_12_2_slide_41_image_1.png)
 
-# ##############################################################################
-# Graph Analysis: Centrality Measures 
-# ##############################################################################
 
 * Graph Analysis: Centrality Measures 
 - Centrality measure: a measure of the relative importance of a vertex within a graph 
@@ -879,9 +750,6 @@ Could be used also as:
 
 ![](images/lecture_12_2/lec_12_2_slide_42_image_1.png)
 
-# ##############################################################################
-# Graph Analysis: Community Detection 
-# ##############################################################################
 
 * Graph Analysis: Community Detection 
 - Goal: partitioning the vertices into (potentially overlapping) groups based on the interconnections between them 
@@ -896,10 +764,6 @@ edges
 
 
 
-# ##############################################################################
- # Overview (8)
-# ##############################################################################
-
 * Overview
 - Motivation
 - Graph data models
@@ -912,9 +776,6 @@ edges
 
 
 
-# ##############################################################################
-# Bulk Synchronous Parallel (BSP) (1)
-# ##############################################################################
 
 * Bulk Synchronous Parallel (BSP) 
 - BSP model is a computational model used to design parallel algorithms for distributed systems
@@ -936,9 +797,6 @@ edges
 
 
 
-# ##############################################################################
-# Bulk Synchronous Parallel (BSP) (2)
-# ##############################################################################
 
 * Bulk Synchronous Parallel (BSP) 
 
@@ -947,9 +805,6 @@ edges
 
 time
 
-# ##############################################################################
-# Pregel System
-# ##############################################################################
 
 * Pregel System
 - Large-scale graph processing system developed by Google
@@ -964,9 +819,6 @@ time
 - Not open-source, used internally at Google
 
 
-# ##############################################################################
-# Apache Giraph
-# ##############################################################################
 
 * Apache Giraph
 - Apache Giraph
@@ -981,9 +833,6 @@ time
 
 ![](images/lecture_12_2/lec_12_2_slide_48_image_1.png)
 
-# ##############################################################################
-# Apache Spark GraphX
-# ##############################################################################
 
 * Apache Spark GraphX
 - Apache Spark GraphX

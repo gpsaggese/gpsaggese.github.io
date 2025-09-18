@@ -35,9 +35,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-# ##############################################################################
-# Apache Spark - Resources
-# ##############################################################################
 
 * Apache Spark - Resources
 - Concepts in the slides
@@ -54,9 +51,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_1/lec_9_1_slide_2_image_1.png)
 
-# ##############################################################################
-# Hadoop MapReduce: Shortcomings
-# ##############################################################################
 
 * Hadoop MapReduce: Shortcomings
 - **Hadoop is hard to administer**
@@ -80,9 +74,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_1/lec_9_1_slide_3_image_2.png)
 
-# ##############################################################################
-# (Apache) Spark
-# ##############################################################################
 
 * (Apache) Spark
 ![](images/lecture_9_1/lec_9_1_slide_4_image_1.png)
@@ -107,9 +98,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Persist data on disk or in memory, if needed -> speed
   - Initial winning advantage
 
-# ##############################################################################
-# Berkeley: From Research to Companies
-# ##############################################################################
 
 * Berkeley: From Research to Companies
 - Amplab
@@ -138,9 +126,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_1/lec_9_1_slide_5_image_8.png)
 
-# ##############################################################################
-# Berkeley AMPLab Data Analytics Stack
-# ##############################################################################
 
 * Berkeley AMPLab Data Analytics Stack
 
@@ -151,9 +136,6 @@ https://amplab.cs.berkeley.edu/software/
 
 - So many tools that they have their own big data stack!
 
-# ##############################################################################
-# Apache Spark
-# ##############################################################################
 
 * Apache Spark
 - **Unified stack**
@@ -185,9 +167,6 @@ https://amplab.cs.berkeley.edu/software/
 
 **One computation engine**
 
-# ##############################################################################
-# Resilient Distributed Dataset (RDD)
-# ##############################################################################
 
 * Resilient Distributed Dataset (RDD)
 - **A Resilient Distributed Dataset (RDD)**
@@ -210,9 +189,6 @@ https://amplab.cs.berkeley.edu/software/
 
 ![](images/lecture_9_1/lec_9_1_slide_8_image_1.png)
 
-# ##############################################################################
-# UMD DATA605[BOLD] - Big Data Systems[/BOLD] (Apache) Spark 
-# ##############################################################################
 
 * UMD DATA605[BOLD] - Big Data Systems[/BOLD]
 Dr. GP Saggese
@@ -222,9 +198,6 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 ```
 
 ```
-# ##############################################################################
-# Transformations vs Actions (1)
-# ##############################################################################
 
 * Transformations vs Actions
 - **Transformations**
@@ -239,9 +212,6 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 ![](images/lecture_9_1/lec_9_1_slide_9_image_1.png)
 
-# ##############################################################################
-# Spark Example: Estimate Pi
-# ##############################################################################
 
 * Spark Example: Estimate Pi
 
@@ -250,9 +220,6 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 - Estimate Pi with MapReduce in Spark
 
-# ##############################################################################
-# Spark: Architecture
-# ##############################################################################
 
 * Spark: Architecture
 - **Architecture** = who does what, what are the responsibilities of each piece
@@ -278,9 +245,6 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 ![](images/lecture_9_1/lec_9_1_slide_11_image_1.png)
 
-# ##############################################################################
-# Spark: Computation Model
-# ##############################################################################
 
 * Spark: Computation Model
 - **Architecture = who does what, what are the responsibilities of each piece**
@@ -304,9 +268,6 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 ![](images/lecture_9_1/lec_9_1_slide_12_image_1.png)
 
-# ##############################################################################
-# Deployment Modes
-# ##############################################################################
 
 * Deployment Modes
 - Spark can run on several different configurations
@@ -321,9 +282,6 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 
 
-# ##############################################################################
-# Distributed Data and Partitions
-# ##############################################################################
 
 * Distributed Data and Partitions
 - **Data is distributed as partitions across different physical nodes**
@@ -340,9 +298,6 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 ![](images/lecture_9_1/lec_9_1_slide_14_image_2.png)
 
-# ##############################################################################
-# Parallelized Collections
-# ##############################################################################
 
 * Parallelized Collections
 - Parallelized collections are created by calling *SparkContext* **parallelize()** method on an existing collection
@@ -356,9 +311,6 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 ![](images/lecture_9_1/lec_9_1_slide_15_image_1.png)
 
-# ##############################################################################
-# Transformations vs Actions (2)
-# ##############################################################################
 
 * Transformations vs Actions
 - **Transformations**
@@ -380,9 +332,6 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 ```
 
 ```
-# ##############################################################################
-# Spark Example: MapReduce in 1 (or 4) Line
-# ##############################################################################
 
 * Spark Example: MapReduce in 1 (or 4) Line
 - MapReduce in 4 lines
@@ -395,9 +344,6 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 - MapReduce in 1 line (show-off version)
 
-# ##############################################################################
-# Same Code in Java Hadoop
-# ##############################################################################
 
 * Same Code in Java Hadoop
 
@@ -405,9 +351,6 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 ![](images/lecture_9_1/lec_9_1_slide_18_image_2.png)
 
-# ##############################################################################
-# Spark Example: Logistic Regression in MapReduce
-# ##############################################################################
 
 * Spark Example: Logistic Regression in MapReduce
 ![](images/lecture_9_1/lec_9_1_slide_19_image_1.png)
@@ -441,9 +384,6 @@ https://spark.apache.org/docs/latest/quick-start.html
 
 ![](images/lecture_9_1/lec_9_1_slide_19_image_3.png)
 
-# ##############################################################################
-# Spark Transformations: 1 / 3
-# ##############################################################################
 
 * Spark Transformations: 1 / 3
 - **map**(func)
@@ -462,9 +402,6 @@ https://spark.apache.org/docs/latest/quick-start.html
 
 https://spark.apache.org/docs/latest/rdd-programming-guide.html
 
-# ##############################################################################
-# Spark Transformations: 2 / 3
-# ##############################################################################
 
 * Spark Transformations: 2 / 3
 - **distinct**(*[numTasks]*)
@@ -479,9 +416,6 @@ https://spark.apache.org/docs/latest/rdd-programming-guide.html
 
 
 
-# ##############################################################################
-# Spark Transformations: 3 / 3
-# ##############################################################################
 
 * Spark Transformations: 3 / 3
 - **groupByKey**(*[numPartitions]*)
@@ -500,9 +434,6 @@ https://spark.apache.org/docs/latest/rdd-programming-guide.html
 
 
 
-# ##############################################################################
-# Spark Actions
-# ##############################################################################
 
 * Spark Actions
 - **reduce**(func)
@@ -522,9 +453,6 @@ https://spark.apache.org/docs/latest/rdd-programming-guide.html
 
 https://spark.apache.org/docs/latest/rdd-programming-guide.html
 
-# ##############################################################################
-# Spark: Fault-tolerance
-# ##############################################################################
 
 * Spark: Fault-tolerance
 - Spark uses *immutability* and *lineage* to provide fault tolerance
@@ -538,9 +466,6 @@ https://spark.apache.org/docs/latest/rdd-programming-guide.html
 ```
 
 ```markdown
-# ##############################################################################
-# Spark: RDD Persistence
-# ##############################################################################
 
 * Spark: RDD Persistence
 - **User explicitly persists (aka cache) an RDD**
@@ -567,9 +492,6 @@ https://spark.apache.org/docs/latest/rdd-programming-guide.html
 
 ![](images/lecture_9_1/lec_9_1_slide_25_image_1.png)
 
-# ##############################################################################
-# Spark: RDD Persistence and Fault-tolerance
-# ##############################################################################
 
 * Spark: RDD Persistence and Fault-tolerance
 - Spark handles persistence and fault-tolerance in a similar way
@@ -585,9 +507,6 @@ https://spark.apache.org/docs/latest/rdd-programming-guide.html
 
 ![](images/lecture_9_1/lec_9_1_slide_26_image_1.png)
 
-# ##############################################################################
-# Spark Shuffle
-# ##############################################################################
 
 * Spark Shuffle
 ![](images/lecture_9_1/lec_9_1_slide_27_image_1.png)
@@ -613,9 +532,6 @@ https://spark.apache.org/docs/latest/rdd-programming-guide.html
 
 
 
-# ##############################################################################
-# Broadcast Variables
-# ##############################################################################
 
 * Broadcast Variables
 - **Problem**
@@ -633,9 +549,6 @@ broadcast_var = sc.broadcast(var)
 # Do not modify `var`.
 # Use `broadcast_var.value` instead of `var`.
 
-# ##############################################################################
-# Accumulators
-# ##############################################################################
 
 * Accumulators
 - **Accumulator** = variable that can be "added to" through associative and commutative operations
@@ -665,9 +578,6 @@ data.map(g)
 
 
 
-# ##############################################################################
-# Gray Sort Competition
-# ##############################################################################
 
 * Gray Sort Competition
 |       | Hadoop MR Record | Spark Record (2014) |
@@ -693,9 +603,6 @@ System
 with 1/10
 # of nodes
 
-# ##############################################################################
-# Spark vs Hadoop MapReduce
-# ##############################################################################
 
 * Spark vs Hadoop MapReduce
 - **Performance**: Spark normally faster but with caveats

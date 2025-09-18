@@ -37,9 +37,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 :::
 
 
-# ##############################################################################
-# Class Announcements (1)
-# ##############################################################################
 
 * Class Announcements
 - **Install Docker**
@@ -57,9 +54,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ![](images/lecture_3/lec_3_slide_1_image_1.png)
 
 
-# ##############################################################################
-# Docker - Resources
-# ##############################################################################
 
 * Docker - Resources
 - We will use Docker during the class project and most tutorials
@@ -80,9 +74,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_3/lec_3_slide_3_image_1.png)
 
-# ##############################################################################
-# Application Deployment
-# ##############################################################################
 
 * Application Deployment
 - **For (almost all) Internet companies, the application is the business**
@@ -97,9 +88,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# DevOps
-# ##############################################################################
 
 * DevOps
 - **DevOps** = set of practices that combines:
@@ -126,9 +114,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Operate
 - Monitor
 
-# ##############################################################################
-# Run on bare metal
-# ##############################################################################
 
 * Run on bare metal
 - **< 2000s**
@@ -150,9 +135,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_3/lec_3_slide_6_image_1.png)
 
-# ##############################################################################
-# Virtual Machine Era
-# ##############################################################################
 
 * Virtual Machine Era
 - **Circa 2000-2010: Virtual Machine**
@@ -171,9 +153,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_3/lec_3_slide_7_image_1.png)
 
-# ##############################################################################
-# Containers Era
-# ##############################################################################
 
 * Containers Era
 - **Circa 2013: Docker becomes ubiquitous**
@@ -203,9 +182,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ```
 
 ```text
-# ##############################################################################
-# Serverless Computing
-# ##############################################################################
 
 * Serverless Computing
 - **Containers run in an OS, OS runs on a host**
@@ -223,9 +199,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# HW vs OS Virtualization
-# ##############################################################################
 
 * HW vs OS Virtualization
 - **Hypervisor performs HW virtualization**
@@ -248,9 +221,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_3/lec_3_slide_10_image_2.png)
 
-# ##############################################################################
-# Docker: Client-Server
-# ##############################################################################
 
 * Docker: Client-Server
 ![](images/lecture_3/lec_3_slide_11_image_1.png)
@@ -268,9 +238,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_3/lec_3_slide_11_image_2.png)
 
-# ##############################################################################
-# Docker Architecture
-# ##############################################################################
 
 * Docker Architecture
 - **Docker run-time**
@@ -295,9 +262,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_3/lec_3_slide_12_image_1.png)
 
-# ##############################################################################
-# Docker Container
-# ##############################################################################
 
 * Docker Container
 - **Docker Container**
@@ -311,9 +275,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Docker Image
-# ##############################################################################
 
 * Docker Image
 - **Docker Image**
@@ -331,9 +292,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Docker Image Layers
-# ##############################################################################
 
 * Docker Image Layers
 - **Docker image** is a configuration file that lists the layers and some metadata
@@ -360,9 +318,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_3/lec_3_slide_15_image_3.png)
 
-# ##############################################################################
-# Docker: Container Data
-# ##############################################################################
 
 * Docker: Container Data
 - A container has access to different data
@@ -385,9 +340,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ```
 
 ```markdown
-# ##############################################################################
-# Docker Repos
-# ##############################################################################
 
 * Docker Repos
 - **Docker Repo (Registry)**
@@ -405,9 +357,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_3/lec_3_slide_17_image_2.png)
 
-# ##############################################################################
-# Devops = Devs + Ops
-# ##############################################################################
 
 * Devops = Devs + Ops
 - **Devs**
@@ -433,9 +382,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Run command line
   - Deploy on a test system and debug
 
-# ##############################################################################
-# Containerizing an App
-# ##############################################################################
 
 * Containerizing an App
 - = create a container with your app inside
@@ -454,9 +400,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Building a Container
-# ##############################################################################
 
 * Building a Container
 - **Dockerfile**
@@ -470,9 +413,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Dockerfile Example
-# ##############################################################################
 
 * Dockerfile Example
 **FROM python:3.8-slim-buster**
@@ -485,9 +425,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Docker: Commands (1)
-# ##############################################################################
 
 * Docker: Commands
 Show all the available images
@@ -510,9 +447,6 @@ Show the running containers
 
 
 
-# ##############################################################################
-# Docker: Commands (2)
-# ##############################################################################
 
 * Docker: Commands
 Show running containers
@@ -531,9 +465,6 @@ Show volumes and networks
 
 
 
-# ##############################################################################
-# Docker: Delete state
-# ##############################################################################
 
 * Docker: Delete state
 **> docker container ls**
@@ -549,18 +480,12 @@ Show volumes and networks
 ```
 
 ```
-# ##############################################################################
-# Docker Tutorial
-# ##############################################################################
 
 * Docker Tutorial
 - tutorial_docker.md
 © UMD DATA605
 
 
-# ##############################################################################
-# Docker Compose
-# ##############################################################################
 
 * Docker Compose
 - **Manage multi-container apps running on a single node**
@@ -579,9 +504,6 @@ Show volumes and networks
 © UMD DATA605
 
 
-# ##############################################################################
-# Docker Compose: Tutorial Example
-# ##############################################################################
 
 * Docker Compose: Tutorial Example
 - The default name for a Compose file is `docker-compose.yml`
@@ -624,9 +546,6 @@ Show volumes and networks
   **volumes**:
     counter-vol:
 
-# ##############################################################################
-# Docker Compose: Commands (1)
-# ##############################################################################
 
 * Docker Compose: Commands
 > docker compose --help
@@ -663,9 +582,6 @@ Commands:
   version     Show the Docker Compose version information
 
 
-# ##############################################################################
-# Docker Compose: Commands (2)
-# ##############################################################################
 
 * Docker Compose: Commands
 Build the containers for the services
@@ -691,9 +607,6 @@ Show the processes inside each container
 **root   49734   49614   1    10:40   ?     00:00:08   /usr/local/bin/python /code/app.py**
 
 
-# ##############################################################################
-# Docker Compose: Commands (3)
-# ##############################################################################
 
 * Docker Compose: Commands
 Build the containers for the services**
@@ -709,9 +622,6 @@ Shutdown service removing images and volume
 **> docker-compose down -v --rmi all**
 
 
-# ##############################################################################
-# Docker Compose: Tutorial
-# ##############################################################################
 
 * Docker Compose: Tutorial
 - Example taken from https://github.com/nigelpoulton/counter-app
@@ -721,9 +631,6 @@ Shutdown service removing images and volume
 
 
 
-# ##############################################################################
-# Class Announcements (2)
-# ##############################################################################
 
 * Class Announcements
 **1 Project teams**
@@ -741,9 +648,6 @@ Shutdown service removing images and volume
 - Projects were assigned randomly to the teams
 
 
-# ##############################################################################
-# Class Announcements (3)
-# ##############################################################################
 
 * Class Announcements
 **4) Add personal info**

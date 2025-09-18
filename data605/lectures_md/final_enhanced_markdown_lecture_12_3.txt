@@ -36,9 +36,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 :::
 
 
-# ##############################################################################
-# Options for Processing Graph Data 
-# ##############################################################################
 
 * Options for Processing Graph Data 
 - Write your own programs 
@@ -56,9 +53,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Option 2: Declarative Interfaces 
-# ##############################################################################
 
 * Option 2: Declarative Interfaces 
 - No consensus on declarative, high-level languages (like SQL) for either querying or for analysis 
@@ -75,9 +69,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Option 3: MapReduce (1)
-# ##############################################################################
 
 * Option 3: MapReduce 
 - A popular option for (batch) processing very large datasets, as we know
@@ -93,9 +84,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Option 3: MapReduce (2)
-# ##############################################################################
 
 * Option 3: MapReduce 
 - Disadvantages: 
@@ -110,9 +98,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Option 4: Graph Programming Frameworks 
-# ##############################################################################
 
 * Option 4: Graph Programming Frameworks 
 - Frameworks (analogous to MapReduce) proposed for analyzing large volumes of graph data 
@@ -128,9 +113,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Bulk Synchronous Parallel (BSP) 
-# ##############################################################################
 
 * Bulk Synchronous Parallel (BSP) 
 
@@ -139,9 +121,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 time
 
-# ##############################################################################
-# Vertex-centric BSP 
-# ##############################################################################
 
 * Vertex-centric BSP 
 - Each vertex has an id, a value, a list of its adjacent vertex ids and the corresponding edge values 
@@ -154,9 +133,6 @@ time
 ```
 
 ```markdown
-# ##############################################################################
-# Think like a vertex
-# ##############################################################################
 
 * Think like a vertex
 - I know my local state
@@ -167,9 +143,6 @@ time
 
 
 
-# ##############################################################################
-# Option 4: Pregel
-# ##############################################################################
 
 * Option 4: Pregel
 - Programmers write one program: **compute()**
@@ -186,16 +159,10 @@ time
 
 
 
-# ##############################################################################
-# Apache giraph
-# ##############################################################################
 
 * Apache giraph
 
 
-# ##############################################################################
-# Apache Giraph
-# ##############################################################################
 
 * Apache Giraph
 - Pregel is proprietary, but:
@@ -209,27 +176,18 @@ time
 
 
 
-# ##############################################################################
-# Plays well with Hadoop
-# ##############################################################################
 
 * Plays well with Hadoop
 
 
 ![](images/lecture_12_3/lec_12_3_slide_13_image_1.png)
 
-# ##############################################################################
-# Giraph Execution
-# ##############################################################################
 
 * Giraph Execution
 
 
 ![](images/lecture_12_3/lec_12_3_slide_14_image_1.png)
 
-# ##############################################################################
-# Which part is doing what?
-# ##############################################################################
 
 * Which part is doing what?
 - **ZooKeeper**: responsible for computation state
@@ -249,9 +207,6 @@ time
 
 
 
-# ##############################################################################
-# What do you have to implement?
-# ##############################################################################
 
 * What do you have to implement?
 - Your algorithm as a **Vertex**
@@ -265,18 +220,12 @@ time
 ```
 
 ```
-# ##############################################################################
-# A vertex view 
-# ##############################################################################
 
 * A vertex view 
 
 
 ![](images/lecture_12_3/lec_12_3_slide_17_image_1.png)
 
-# ##############################################################################
-# Designed for iterations 
-# ##############################################################################
 
 * Designed for iterations 
 - Stateful (in-memory)
@@ -289,18 +238,12 @@ time
 
 
 
-# ##############################################################################
-# Graph modeling in Giraph 
-# ##############################################################################
 
 * Graph modeling in Giraph 
 - BasicComputation<          I extends WritableComparable, // VertexID -- vertex ref           V extends Writable, // VertexData -- a vertex datum           E extends Writable, // EdgeData -- an edge label           M extends Writable> // MessageData-– message payload 
 
 
 
-# ##############################################################################
-# Giraph “Hello World” 
-# ##############################################################################
 
 * Giraph “Hello World” 
 public class GiraphHelloWorld extends    BasicComputation<IntWritable, IntWritable, NullWritable, NullWritable> {
@@ -313,9 +256,6 @@ public void compute(Vertex<IntWritable, IntWritable,     NullWritable> vertex, I
 
 
 
-# ##############################################################################
-# Example: Ping neighbors
-# ##############################################################################
 
 * Example: Ping neighbors
 public void compute(Vertex<Text, DoubleWritable, DoubleWritable> vertex, Iterable<Text> ms ){ 
@@ -326,9 +266,6 @@ public void compute(Vertex<Text, DoubleWritable, DoubleWritable> vertex, Iterabl
 
 
 
-# ##############################################################################
-# Giraph PageRank Example
-# ##############################################################################
 
 * Giraph PageRank Example
 
@@ -337,9 +274,6 @@ public class PageRankComputation      extends BasicComputation<IntWritable, Floa
   /** Number of supersteps */
   public static final String SUPERSTEP_COUNT =              "giraph.pageRank.superstepCount";
 
-# ##############################################################################
-# Giraph PageRank Example
-# ##############################################################################
 
 * Giraph PageRank Example
 
@@ -360,9 +294,6 @@ public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Ite
   }
 }
 
-# ##############################################################################
-# Additional functionality
-# ##############################################################################
 
 * Additional functionality
 - Combiners
@@ -378,9 +309,6 @@ public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Ite
 ```
 
 ```markdown
-# ##############################################################################
-# Giraph scales 
-# ##############################################################################
 
 * Giraph scales 
 
@@ -389,25 +317,16 @@ public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Ite
 
 https://www.facebook.com/notes/facebook-engineering/scaling-apache-giraph-to-a-trillion-edges/10151617006153920
 
-# ##############################################################################
-# Graphx
-# ##############################################################################
 
 * Graphx
 
 
-# ##############################################################################
-# GraphX Motivation
-# ##############################################################################
 
 * GraphX Motivation
 
 
 ![](images/lecture_12_3/lec_12_3_slide_27_image_1.png)
 
-# ##############################################################################
-# GraphX Motivation
-# ##############################################################################
 
 * GraphX Motivation
 
@@ -421,9 +340,6 @@ complex interfaces
 
 ![](images/lecture_12_3/lec_12_3_slide_28_image_1.png)
 
-# ##############################################################################
-# And Inefficient
-# ##############################################################################
 
 * And Inefficient
 
@@ -436,9 +352,6 @@ across stages
 
 ![](images/lecture_12_3/lec_12_3_slide_29_image_1.png)
 
-# ##############################################################################
-# The GraphX Unified Approach 
-# ##############################################################################
 
 * The GraphX Unified Approach 
 
@@ -453,9 +366,6 @@ Enables users to easily and efficiently express the entire graph analytics pipel
 
 ![](images/lecture_12_3/lec_12_3_slide_30_image_1.png)
 
-# ##############################################################################
-# Representation 
-# ##############################################################################
 
 * Representation 
 
@@ -465,11 +375,6 @@ Enables users to easily and efficiently express the entire graph analytics pipel
 Plus optimizations:
 - Distributed join optimization
 - Materialized view maintenance
-
-# ##############################################################################
-# Graph modeling in **GraphX
-# **
-# ##############################################################################
 
 * Graph modeling in **GraphX
 **
@@ -487,9 +392,6 @@ String), String]
 ```
 
 ```markdown
-# ##############################################################################
-# Creating a Graph (Scala)
-# ##############################################################################
 
 * Creating a Graph (Scala)
 type **VertexId** = Long
@@ -512,9 +414,6 @@ val **graph** = Graph(vertices, edges)
 
 ![](images/lecture_12_3/lec_12_3_slide_33_image_1.png)
 
-# ##############################################################################
-# Hello world in GraphX
-# ##############################################################################
 
 * Hello world in GraphX
 $ spark*/bin/spark-shell
@@ -533,9 +432,6 @@ Hello world from the: 3 : 1 2
 
 
 
-# ##############################################################################
-# Spark Table Operators
-# ##############################################################################
 
 * Spark Table Operators
 - GraphX **Table** (RDD) operators are inherited from Spark:
@@ -567,9 +463,6 @@ pipe
 save
 …
 
-# ##############################################################################
-# Graph Operators (Scala)
-# ##############################################################################
 
 * Graph Operators (Scala)
 class Graph [ V, E ] {
@@ -595,9 +488,6 @@ reduceF: (T, T) => T): Graph[T, E]
 
 
 
-# ##############################################################################
-# Built-in Algorithms (Scala)
-# ##############################################################################
 
 * Built-in Algorithms (Scala)
 def **pageRank**(tol: Double): Graph[Double, Double]
@@ -610,9 +500,6 @@ def **stronglyConnectedComponents**(numIter:Int):Graph[VertexID,ED]
 
 ![](images/lecture_12_3/lec_12_3_slide_37_image_1.png)
 
-# ##############################################################################
-# Triplets Join Vertices and Edges
-# ##############################################################################
 
 * Triplets Join Vertices and Edges
 - Triplets capture Gather-Scatter pattern from specialized graph processing systems (like Giraph)
@@ -622,9 +509,6 @@ def **stronglyConnectedComponents**(numIter:Int):Graph[VertexID,ED]
 
 ![](images/lecture_12_3/lec_12_3_slide_38_image_1.png)
 
-# ##############################################################################
-# MapReduce Triplets
-# ##############################################################################
 
 * MapReduce Triplets
 Map-Reduce triplets collect information about the neighborhood of each vertex:
@@ -633,18 +517,12 @@ Map-Reduce triplets collect information about the neighborhood of each vertex:
 
 ![](images/lecture_12_3/lec_12_3_slide_39_image_1.png)
 
-# ##############################################################################
-# Performance Comparisons
-# ##############################################################################
 
 * Performance Comparisons
 
 
 ![](images/lecture_12_3/lec_12_3_slide_40_image_1.png)
 
-# ##############################################################################
-# GraphX scales to larger graphs
-# ##############################################################################
 
 * GraphX scales to larger graphs
 - GraphX is roughly 2x slower than GraphLab
@@ -654,9 +532,6 @@ Map-Reduce triplets collect information about the neighborhood of each vertex:
 
 ![](images/lecture_12_3/lec_12_3_slide_41_image_1.png)
 
-# ##############################################################################
-# But, a Small Pipeline in GraphX
-# ##############################################################################
 
 * But, a Small Pipeline in GraphX
 Timed end-to-end GraphX is faster than GraphLab (and Giraph)
@@ -665,9 +540,6 @@ Timed end-to-end GraphX is faster than GraphLab (and Giraph)
 
 ![](images/lecture_12_3/lec_12_3_slide_42_image_1.png)
 
-# ##############################################################################
-# Giraph vs. GraphX
-# ##############################################################################
 
 * Giraph vs. GraphX
 **Giraph**

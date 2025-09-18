@@ -39,9 +39,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-# ##############################################################################
-# Resources
-# ##############################################################################
 
 * Resources
 - Silbershatz: Chap 10
@@ -51,9 +48,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Big Data: Sources and Applications (1)
-# ##############################################################################
 
 * Big Data: Sources and Applications
 - **Growth of World Wide Web in 1990s and 2000s**
@@ -72,9 +66,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 **Volume of data in the world**
 
-# ##############################################################################
-# Big Data: Sources and Applications (2)
-# ##############################################################################
 
 * Big Data: Sources and Applications
 - **Big Data characteristics**
@@ -95,9 +86,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 **Volume of data in the world**
 
-# ##############################################################################
-# Big Data: Sources and Applications (3)
-# ##############################################################################
 
 * Big Data: Sources and Applications
 - **Web server logs**
@@ -118,9 +106,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Big Data: Storing and Computing
-# ##############################################################################
 
 * Big Data: Storing and Computing
 - Big data needs 10k-100k machines
@@ -132,9 +117,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Processing the Web: Example
-# ##############################################################################
 
 * Processing the Web: Example
 - The web has:
@@ -157,9 +139,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 # Content processing error - slide missing
 
 ```
-# ##############################################################################
-# Big Data: Storage Systems
-# ##############################################################################
 
 * Big Data: Storage Systems
 - How can we store big data?
@@ -177,9 +156,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# 1 Distributed File Systems
-# ##############################################################################
 
 * 1 Distributed File Systems
 - **Distributed file system**
@@ -198,9 +174,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# 2 Sharding Across Multiple DBs
-# ##############################################################################
 
 * 2 Sharding Across Multiple DBs
 - **Sharding** = process of partitioning records across multiple DBs or machines
@@ -218,9 +191,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# 3 Parallel and Distributed DBs
-# ##############################################################################
 
 * 3 Parallel and Distributed DBs
 - **Parallel and distributed DBs**: store and process data running on multiple machines (aka "cluster")
@@ -239,9 +209,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# 4 Key-value Stores
-# ##############################################################################
 
 * 4 Key-value Stores
 - **Problem**
@@ -264,9 +231,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# 4 Parallel Key-value Stores
-# ##############################################################################
 
 * 4 Parallel Key-value Stores
 - **Parallel key-value stores**
@@ -286,9 +250,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Big Data: Computing Systems
-# ##############################################################################
 
 * Big Data: Computing Systems
 - **How to process Big Data?**
@@ -309,9 +270,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-# ##############################################################################
-# Cluster Architecture (1)
-# ##############################################################################
 
 * Cluster Architecture
 **…**
@@ -341,9 +299,6 @@ Switch
 
 **Rack**
 
-# ##############################################################################
-# Cluster Architecture (2)
-# ##############################################################################
 
 * Cluster Architecture
 
@@ -355,9 +310,6 @@ Switch
 
 ![alt_text](images/lecture_8_1/lec_8_1_slide_17_image_1.png)
 
-# ##############################################################################
-# Cluster Architecture: Network Bandwidth
-# ##############################################################################
 
 * Cluster Architecture: Network Bandwidth
 
@@ -375,9 +327,6 @@ Switch
 
 
 
-# ##############################################################################
-# Storage Infrastructure
-# ##############################################################################
 
 * Storage Infrastructure
 
@@ -398,9 +347,6 @@ Switch
 
 
 
-# ##############################################################################
-# Distributed File System
-# ##############################################################################
 
 * Distributed File System
 
@@ -413,9 +359,6 @@ Switch
 
 
 
-# ##############################################################################
-# Hadoop Distributed File System (1)
-# ##############################################################################
 
 * Hadoop Distributed File System
 
@@ -430,9 +373,6 @@ Switch
 
 
 
-# ##############################################################################
-# Hadoop Distributed File System (2)
-# ##############################################################################
 
 * Hadoop Distributed File System
 
@@ -451,9 +391,6 @@ Switch
 
 
 
-# ##############################################################################
-# MapReduce: Overview (1)
-# ##############################################################################
 
 * MapReduce: Overview
 
@@ -475,9 +412,6 @@ Switch
 
 
 
-# ##############################################################################
-# MapReduce: Overview (2)
-# ##############################################################################
 
 * MapReduce: Overview
 
@@ -496,9 +430,6 @@ Switch
 
 
 
-# ##############################################################################
-# MapReduce: Word Count (1)
-# ##############################################################################
 
 * MapReduce: Word Count
 - **Word Count**
@@ -523,9 +454,6 @@ cross 1
 
 ![](images/lecture_8_1/lec_8_1_slide_25_image_1.png)
 
-# ##############################################################################
-# MapReduce: Word Count (2)
-# ##############################################################################
 
 * MapReduce: Word Count
 **Example**
@@ -580,9 +508,6 @@ Read input
 **Reduce:**
 - Combine the list of outputs with same keys
 
-# ##############################################################################
-# MapReduce: Word Count (3)
-# ##############################################################################
 
 * MapReduce: Word Count
 The crew of the space shuttle Endeavor recently returned to Earth as ambassadors, harbingers of a new era of space exploration. Scientists at NASA are saying that the recent assembly of the Dextre bot is the first step in a long-term space-based man/machine partnership. '"The work we're doing now -- the robotics we're doing -- is what we're going to need …
@@ -634,9 +559,6 @@ Collect all values belonging to the key and output
 
 
 
-# ##############################################################################
-# MapReduce: Map Step
-# ##############################################################################
 
 * MapReduce: Map Step
 k
@@ -659,9 +581,6 @@ k
 **map()** needs to process all the values
 can output 0 or more tuples for each input
 
-# ##############################################################################
-# MapReduce: Reduce Step
-# ##############################################################################
 
 * MapReduce: Reduce Step
 
@@ -674,9 +593,6 @@ can output 0 or more tuples for each input
 	result += count
    emit(key, result)
 
-# ##############################################################################
-# MapReduce: Interfaces
-# ##############################################################################
 
 * MapReduce: Interfaces
 - Input: read key-value pairs **List[Tuple[k, v]]**
@@ -695,9 +611,6 @@ can output 0 or more tuples for each input
 
 
 
-# ##############################################################################
-# MapReduce: Log Processing
-# ##############################################################################
 
 * MapReduce: Log Processing
 - Log file recording access to a website with format
@@ -734,9 +647,6 @@ can output 0 or more tuples for each input
 **/slide-dir/12.ppt 2**
 **...**
 
-# ##############################################################################
-# MapReduce: Data Flow
-# ##############################################################################
 
 * MapReduce: Data Flow
 - **Input**
@@ -764,9 +674,6 @@ can output 0 or more tuples for each input
 
 - Focusing on MapReduce functionality / flow of the data to expose the parallelism
 
-# ##############################################################################
-# MapReduce: Parallel Data Flow
-# ##############################################################################
 
 * MapReduce: Parallel Data Flow
 - **User program** specifies map/reduce code
@@ -794,9 +701,6 @@ can output 0 or more tuples for each input
 
 ![](images/lecture_8_1/lec_8_1_slide_34_image_1.png)
 
-# ##############################################################################
-# Master Node Responsibilities
-# ##############################################################################
 
 * Master Node Responsibilities
 - **Master node takes care of coordination**
@@ -809,9 +713,6 @@ can output 0 or more tuples for each input
 
 
 
-# ##############################################################################
-# Dealing with Failures
-# ##############################################################################
 
 * Dealing with Failures
 - **Map worker failure**
@@ -826,9 +727,6 @@ can output 0 or more tuples for each input
 
 
 
-# ##############################################################################
-# How many Map and Reduce jobs?
-# ##############################################################################
 
 * How many Map and Reduce jobs?
 - **M** **map tasks**
@@ -848,9 +746,6 @@ can output 0 or more tuples for each input
 
 
 
-# ##############################################################################
-# Refinements: Backup Tasks
-# ##############################################################################
 
 * Refinements: Backup Tasks
 - **Problem**
@@ -870,9 +765,6 @@ can output 0 or more tuples for each input
 
 
 
-# ##############################################################################
-# Refinement: Combiners
-# ##############################################################################
 
 * Refinement: Combiners
 - **Problem**
@@ -894,9 +786,6 @@ can output 0 or more tuples for each input
 
 
 
-# ##############################################################################
-# Refinement: Partition Function
-# ##############################################################################
 
 * Refinement: Partition Function
 - **Problem**
@@ -912,9 +801,6 @@ can output 0 or more tuples for each input
 
 
 
-# ##############################################################################
-# Implementations of MapReduce
-# ##############################################################################
 
 * Implementations of MapReduce
 - **Google**
@@ -934,9 +820,6 @@ can output 0 or more tuples for each input
 
 
 
-# ##############################################################################
-# MapReduce: Hadoop
-# ##############################################################################
 
 * MapReduce: Hadoop
 - Hadoop is an open-source implementation of MapReduce
@@ -956,9 +839,6 @@ can output 0 or more tuples for each input
 
 ![](images/lecture_8_1/lec_8_1_slide_42_image_1.png)
 
-# ##############################################################################
-# Data Flow
-# ##############################################################################
 
 * Data Flow
 - Input, intermediate, final outputs are stored in a distributed file system (HDFS)
@@ -970,9 +850,6 @@ can output 0 or more tuples for each input
 
 
 
-# ##############################################################################
-# Input Data
-# ##############################################################################
 
 * Input Data
   - **InputData** stores the data for a **MapTask** typically in a distributed file system (e.g., HDFS)
@@ -987,9 +864,6 @@ can output 0 or more tuples for each input
 
 ![](images/lecture_8_1/lec_8_1_slide_44_image_1.png)
 
-# ##############################################################################
-# InputFormat
-# ##############################################################################
 
 * InputFormat
   - **InputFormat** class reads and splits up the input files
@@ -1007,9 +881,6 @@ can output 0 or more tuples for each input
 
 ![](images/lecture_8_1/lec_8_1_slide_45_image_1.png)
 
-# ##############################################################################
-# InputSplit
-# ##############################################################################
 
 * InputSplit
   - **InputSplit** describes a unit of work that comprises a single **MapTask**
@@ -1022,9 +893,6 @@ can output 0 or more tuples for each input
 
 ![](images/lecture_8_1/lec_8_1_slide_46_image_1.png)
 
-# ##############################################################################
-# RecordReader
-# ##############################################################################
 
 * RecordReader
 - The **InputSplit** defines a slice of work but does not describe how to access it
@@ -1037,9 +905,6 @@ can output 0 or more tuples for each input
 
 ![](images/lecture_8_1/lec_8_1_slide_47_image_1.png)
 
-# ##############################################################################
-# OutputFormat
-# ##############################################################################
 
 * OutputFormat
 - The **OutputFormat** class
@@ -1108,9 +973,6 @@ OutputFormat
 
 
 
-# ##############################################################################
-# MapReduce: Applications
-# ##############################################################################
 
 * MapReduce: Applications
 
@@ -1122,9 +984,6 @@ OutputFormat
 
 
 
-# ##############################################################################
-# Example: Language Model
-# ##############################################################################
 
 * Example: Language Model
 
@@ -1140,9 +999,6 @@ OutputFormat
 
 
 
-# ##############################################################################
-# Cost Measures for Distributed Algorithms
-# ##############################################################################
 
 * Cost Measures for Distributed Algorithms
 
@@ -1166,9 +1022,6 @@ OutputFormat
 
 
 
-# ##############################################################################
-# MapReduce Cost Measures
-# ##############################################################################
 
 * MapReduce Cost Measures
 
@@ -1189,9 +1042,6 @@ OutputFormat
 
 
 
-# ##############################################################################
-# Example: Join By MapReduce
-# ##############################################################################
 
 * Example: Join By MapReduce
 
@@ -1237,9 +1087,6 @@ OutputFormat
 
 **S**
 
-# ##############################################################################
-# Cost of MapReduce Join
-# ##############################################################################
 
 * Cost of MapReduce Join
 
@@ -1262,9 +1109,6 @@ OutputFormat
 
 
 
-# ##############################################################################
-# History (1)
-# ##############################################################################
 
 * History
 
@@ -1284,9 +1128,6 @@ OutputFormat
 
 
 
-# ##############################################################################
-# History (2)
-# ##############################################################################
 
 * History
 

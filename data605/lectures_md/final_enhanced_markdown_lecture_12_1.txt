@@ -35,9 +35,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 :::
 
 
-# ##############################################################################
-# Motivation
-# ##############################################################################
 
 * Motivation
 
@@ -65,9 +62,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 [TEXT]
 
 
-# ##############################################################################
-# Examples of Data Stream Tasks
-# ##############################################################################
 
 * Examples of Data Stream Tasks
 
@@ -92,9 +86,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 [TEXT]
 
 
-# ##############################################################################
-# Why Not Using the Usual RDBM?
-# ##############################################################################
 
 * Why Not Using the Usual RDBM?
 
@@ -122,9 +113,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 [TEXT]
 Computation
 
-# ##############################################################################
-# Pub-Sub Systems (1)
-# ##############################################################################
 
 * Pub-Sub Systems
 
@@ -149,9 +137,6 @@ Computation
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_5_image_1.png)
 
-# ##############################################################################
-# Pub-Sub Systems (2)
-# ##############################################################################
 
 * Pub-Sub Systems
 
@@ -181,9 +166,6 @@ Computation
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_6_image_1.png)
 
-# ##############################################################################
-# Delivery Semantics
-# ##############################################################################
 
 * Delivery Semantics
 
@@ -224,9 +206,6 @@ Computation
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_7_image_3.png)
 
-# ##############################################################################
-# Event vs Processing Time
-# ##############################################################################
 
 * Event vs Processing Time
 
@@ -256,9 +235,6 @@ Computation
 ```
 
 ```markdown
-# ##############################################################################
-# Apache Streaming Zoo
-# ##############################################################################
 
 * Apache Streaming Zoo
 - Many different streaming frameworks
@@ -281,9 +257,6 @@ Computation
 
 
 
-# ##############################################################################
-# Apache Storm (1)
-# ##############################################################################
 
 * Apache Storm
 - Open-source distributed real-time computation system
@@ -300,9 +273,6 @@ Computation
 
 ![](images/lecture_12_1/lec_12_1_slide_10_image_1.png)
 
-# ##############################################################################
-# Apache Kafka
-# ##############################################################################
 
 * Apache Kafka
 - Open-source distributed streaming platform
@@ -322,9 +292,6 @@ Computation
 
 ![](images/lecture_12_1/lec_12_1_slide_11_image_2.png)
 
-# ##############################################################################
-# Apache Flink
-# ##############################################################################
 
 * Apache Flink
 - Open-source, distributed data processing framework
@@ -340,9 +307,6 @@ Computation
 
 ![](images/lecture_12_1/lec_12_1_slide_12_image_1.png)
 
-# ##############################################################################
-# Record-at-a-time Processing
-# ##############################################################################
 
 * Record-at-a-time Processing
 - Implemented in Apache Kafka
@@ -365,9 +329,6 @@ Computation
 
 ![](images/lecture_12_1/lec_12_1_slide_13_image_1.png)
 
-# ##############################################################################
-# Micro-Batch Stream Processing
-# ##############################################################################
 
 * Micro-Batch Stream Processing
 - Aka DStreams
@@ -390,9 +351,6 @@ Computation
 
 ![](images/lecture_12_1/lec_12_1_slide_14_image_1.png)
 
-# ##############################################################################
-# Spark Micro-Batch Processing: Cons
-# ##############################################################################
 
 * Spark Micro-Batch Processing: Cons
 - Line between real-time processing and batch processing has blurred
@@ -410,9 +368,6 @@ Computation
 
 
 ![](images/lecture_12_1/lec_12_1_slide_16_image_1.png)
-# ##############################################################################
-# Spark Structured Streaming
-# ##############################################################################
 
 * Spark Structured Streaming
 - New approach used by Spark
@@ -434,9 +389,6 @@ Computation
 ```
 
 ```markdown
-# ##############################################################################
-# Incrementalization
-# ##############################################################################
 
 * Incrementalization
 - Automatically detect the state that needs to be maintained
@@ -450,9 +402,6 @@ Computation
 
 ![](images/lecture_12_1/lec_12_1_slide_17_image_1.png)
 
-# ##############################################################################
-# Triggering Modes
-# ##############################################################################
 
 * Triggering Modes
 - Need to indicate when to process newly available streaming data
@@ -471,9 +420,6 @@ Computation
 
 
 
-# ##############################################################################
-# Saving Data
-# ##############################################################################
 
 * Saving Data
 - Each time the result table is updated, the developer writes updates to external file system (e.g., HDFS, AWS S3) or DB (e.g., MySQL, Cassandra)
@@ -489,9 +435,6 @@ Computation
 
 
 
-# ##############################################################################
-# Spark Streaming “Hello world”
-# ##############################################################################
 
 * Spark Streaming “Hello world”
 - **lines** looks like an RDD but it’s a **DataStreamReader**
@@ -517,23 +460,14 @@ Computation
 
 
 
-# ##############################################################################
-# BACKUP
-# ##############################################################################
 
 * BACKUP
 
 
-# ##############################################################################
-# Apache Storm (2)
-# ##############################################################################
 
 * Apache Storm
 
 
-# ##############################################################################
-# Storm Introduction
-# ##############################################################################
 
 * Storm Introduction
 - Apache Storm is a real-time, fault-tolerant, distributed Stream Processing Engine.
@@ -544,9 +478,6 @@ Computation
 
 
 
-# ##############################################################################
-# Storm Rationale
-# ##############################################################################
 
 * Storm Rationale
 - Before Storm, developer would typically have to manually build a network of queues and workers to do real-time processing
@@ -563,9 +494,6 @@ From: http://storm.apache.org/releases/current/Rationale.html
 ```
 
 ```
-# ##############################################################################
-# Storm Key Properties (1)
-# ##############################################################################
 
 * Storm Key Properties
 - **Extremely broad set of use cases**:
@@ -578,9 +506,6 @@ From: http://storm.apache.org/releases/current/Rationale.html
 
 From: http://storm.apache.org/releases/current/Rationale.html
 
-# ##############################################################################
-# Storm Key Properties (2)
-# ##############################################################################
 
 * Storm Key Properties
 - **Extremely robust**:
@@ -594,9 +519,6 @@ From: http://storm.apache.org/releases/current/Rationale.html
 
 From: http://storm.apache.org/releases/current/Rationale.html
 
-# ##############################################################################
-# Storm data model
-# ##############################################################################
 
 * Storm data model
 - Basic unit of data that can be processed by a Storm application is a *tuple*
@@ -608,9 +530,6 @@ From: http://storm.apache.org/releases/current/Rationale.html
 
 
 
-# ##############################################################################
-# Basics
-# ##############################################################################
 
 * Basics
 - A Streaming Application is defined in Storm by means of a **topology** that describes its logic as a graph of operators and streams. Can have two types of operators:
@@ -621,9 +540,6 @@ From: http://storm.apache.org/releases/current/Rationale.html
 
 ![](images/lecture_12_1/lec_12_1_slide_28_image_1.png)
 
-# ##############################################################################
-# Topology Example (1)
-# ##############################################################################
 
 * Topology Example
 
@@ -644,9 +560,6 @@ builder.setBolt("count-bolt", new WordCountBolt())
    {sentence: “my dog has fleas”} *SplitSentenceBolt*: emits a tuple for each word in the sentences it receives:
    {word: “my”}; {word:”dog”}; ... *WordCountBolt*: updates the count and at save it to file.
 
-# ##############################################################################
-# Topology Example (2)
-# ##############################################################################
 
 * Topology Example
 
@@ -669,9 +582,6 @@ builder.setBolt("count-bolt", new WordCountBolt())
       }
 }
 
-# ##############################################################################
-# Topology Example (3)
-# ##############################################################################
 
 * Topology Example
 
@@ -693,9 +603,6 @@ builder.setBolt("count-bolt", new WordCountBolt())
           }
 }
 
-# ##############################################################################
-# Application Deployment
-# ##############################################################################
 
 * Application Deployment
 - When executed, the topology is deployed as a set of processing entities over a set of computational resources (typically a cluster). Parallelism is achieved in Storm by running multiple replicas of the same spout/bolt
@@ -707,9 +614,6 @@ builder.setBolt("count-bolt", new WordCountBolt())
 ```
 
 ```text
-# ##############################################################################
-# Groupings
-# ##############################################################################
 
 * Groupings
 - 7 built-in possibilities, the most interesting are:
@@ -721,9 +625,6 @@ builder.setBolt("count-bolt", new WordCountBolt())
 - Users also have the possibility of implementing their own grouping through the CustomStreamGrouping interface
 
 
-# ##############################################################################
-# Guaranteed Processing (1)
-# ##############################################################################
 
 * Guaranteed Processing
 - Storm provides an API to guarantee that a tuple emitted by a spout is fully processed by the topology (*at-least-once* semantic)
@@ -734,9 +635,6 @@ builder.setBolt("count-bolt", new WordCountBolt())
 
 
 
-# ##############################################################################
-# Guaranteed Processing (2)
-# ##############################################################################
 
 * Guaranteed Processing
 - With guaranteed processing, each bolt in the tree can either *acknowledge* or *fail* a tuple:
@@ -751,9 +649,6 @@ Another way to look at it is to consider the tuple tree:
 
 ![](images/lecture_12_1/lec_12_1_slide_35_image_1.png)
 
-# ##############################################################################
-# Guaranteed Processing (3)
-# ##############################################################################
 
 * Guaranteed Processing
 - From the Spout side, have to keep track of the tuples emitted and be prepared to handle fails:
@@ -777,9 +672,6 @@ Assign a unique ID to any emitted tuple
 
 Implement the ack and fail methods for handling successes and failures
 
-# ##############################################################################
-# Guaranteed Processing (4)
-# ##############################################################################
 
 * Guaranteed Processing
 - On the Bolts side, have to *anchor* any emitted tuple to the originating one and to acknowledging or failing tuples
@@ -796,9 +688,6 @@ Implement the ack and fail methods for handling successes and failures
 
 
 
-# ##############################################################################
-# Internal Architecture
-# ##############################################################################
 
 * Internal Architecture
 - **Nimbus-Master Node**
@@ -813,9 +702,6 @@ Implement the ack and fail methods for handling successes and failures
 
 
 
-# ##############################################################################
-# Storm Architecture (1)
-# ##############################################################################
 
 * Storm Architecture
 - Two kinds of nodes in a Storm cluster:
@@ -824,9 +710,6 @@ Implement the ack and fail methods for handling successes and failures
 - The coordination between the two entities is done through *Zookeper* that is also used for fault tolerance
 
 
-# ##############################################################################
-# Storm components: Nimbus
-# ##############################################################################
 
 * Storm components: Nimbus
 - Nimbus:
@@ -845,9 +728,6 @@ Implement the ack and fail methods for handling successes and failures
 ```
 
 ```markdown
-# ##############################################################################
-# Storm components: Supervisor nodes 
-# ##############################################################################
 
 * Storm components: Supervisor nodes 
 - Supervisor nodes 
@@ -862,9 +742,6 @@ worker processes to execute the tasks assigned to that node
 
 
 
-# ##############################################################################
-# Storm Architecture (2)
-# ##############################################################################
 
 * Storm Architecture
 - Three entities are involved in running a topology:
@@ -882,9 +759,6 @@ inter-topology parallelism, Executors intra-topology and Tasks intra-component
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_42_image_1.png)
 
-# ##############################################################################
-# Interaction between Storm Internal Components
-# ##############################################################################
 
 * Interaction between Storm Internal Components
 Events - Heartbeat protocol (every 15 seconds), synchronize supervisor event(every 10 seconds) and synchronize process event(every 3 seconds).
@@ -914,9 +788,6 @@ Processes  Tasks
 
 
 
-# ##############################################################################
-# On Top of Storm
-# ##############################################################################
 
 * On Top of Storm
 - Various libraries/frameworks have been developed on top:
@@ -927,18 +798,12 @@ Processes  Tasks
 
 
 
-# ##############################################################################
-# Storm Use Cases 
-# ##############################################################################
 
 * Storm Use Cases 
 
 ![alt_text](images/lecture_12_1/lec_12_1_slide_45_image_1.png)
 
 
-# ##############################################################################
-# Comparison  of big data tools
-# ##############################################################################
 
 * Comparison  of big data tools
 - A Storm cluster is superficially similar to a Hadoop cluster
@@ -951,9 +816,6 @@ Processes  Tasks
 
 
 
-# ##############################################################################
-# Storm vs. Hadoop
-# ##############################################################################
 
 * Storm vs. Hadoop
 
@@ -965,9 +827,6 @@ Processes  Tasks
 
 
 
-# ##############################################################################
-# Storm- Pros and Cons
-# ##############################################################################
 
 * Storm- Pros and Cons
 Pros
@@ -985,10 +844,6 @@ Cons
 ```
 
 ```
-# ##############################################################################
-# Benchmarking Streaming Computation Engines:
-# Storm, Flink and Spark Streaming
-# ##############################################################################
 
 * Benchmarking Streaming Computation Engines:
 Storm, Flink and Spark Streaming
@@ -999,17 +854,11 @@ Storm, Flink and Spark Streaming
 
 
 
-# ##############################################################################
-# Spark Streaming
-# ##############################################################################
 
 * Spark Streaming
 
 
 
-# ##############################################################################
-# What is Spark Streaming?
-# ##############################################################################
 
 * What is Spark Streaming?
 
@@ -1020,9 +869,6 @@ Storm, Flink and Spark Streaming
 
 
 
-# ##############################################################################
-# Integration with Batch Processing
-# ##############################################################################
 
 * Integration with Batch Processing
 
@@ -1039,9 +885,6 @@ Storm, Flink and Spark Streaming
 
 
 
-# ##############################################################################
-# Stateful Stream Processing
-# ##############################################################################
 
 * Stateful Stream Processing
 
@@ -1054,9 +897,6 @@ Storm, Flink and Spark Streaming
 - State is lost if node dies!
 - Making stateful stream processing be fault-tolerant is challenging
 
-# ##############################################################################
-# Existing Streaming Systems
-# ##############################################################################
 
 * Existing Streaming Systems
 
@@ -1071,9 +911,6 @@ Storm, Flink and Spark Streaming
 
 
 
-# ##############################################################################
-# Discretized Stream Processing (1)
-# ##############################################################################
 
 * Discretized Stream Processing
 
@@ -1093,9 +930,6 @@ live data stream
 - Spark treats each batch of data as RDDs and processes them using RDD operations
 - Finally, the processed results of the RDD operations are returned in batches
 
-# ##############################################################################
-# Discretized Stream Processing (2)
-# ##############################################################################
 
 * Discretized Stream Processing
 
@@ -1117,9 +951,6 @@ live data stream
 ```
 
 ```text
-# ##############################################################################
-# Key concepts
-# ##############################################################################
 
 * Key concepts
 - **DStream** – sequence of RDDs representing a stream of data
@@ -1134,9 +965,6 @@ live data stream
 
 
 
-# ##############################################################################
-# Example – Get hashtags from Twitter (1)
-# ##############################################################################
 
 * Example – Get hashtags from Twitter
 val tweets = ssc.twitterStream()
@@ -1150,9 +978,6 @@ stored in memory as an RDD (immutable, distributed)
 Twitter Streaming API
 
 
-# ##############################################################################
-# Example – Get hashtags from Twitter (2)
-# ##############################################################################
 
 * Example – Get hashtags from Twitter
 val tweets = ssc.twitterStream()
@@ -1171,9 +996,6 @@ hashTags Dstream
 
 
 
-# ##############################################################################
-# Example – Get hashtags from Twitter (3)
-# ##############################################################################
 
 * Example – Get hashtags from Twitter
 val tweets = ssc.twitterStream()
@@ -1202,9 +1024,6 @@ every batch saved to HDFS
 
 
 
-# ##############################################################################
-# Example – Get hashtags from Twitter (4)
-# ##############################################################################
 
 * Example – Get hashtags from Twitter
 val tweets = ssc.twitterStream()
@@ -1239,9 +1058,6 @@ Write to database, update analytics UI, do whatever you want
 
 
 
-# ##############################################################################
-# Java Example
-# ##############################################################################
 
 * Java Example
 **Scala
@@ -1258,9 +1074,6 @@ Function object
 
 
 
-# ##############################################################################
-# Window-based Transformations
-# ##############################################################################
 
 * Window-based Transformations
 val tweets = ssc.twitterStream()
@@ -1275,9 +1088,6 @@ sliding interval
 
 
 
-# ##############################################################################
-# Arbitrary Stateful Computations
-# ##############################################################################
 
 * Arbitrary Stateful Computations
 Specify function to generate new state based on previous state and new data
@@ -1289,9 +1099,6 @@ Specify function to generate new state based on previous state and new data
 ```
 
 ```markdown
-# ##############################################################################
-# Arbitrary Combinations of Batch and Streaming Computations
-# ##############################################################################
 
 * Arbitrary Combinations of Batch and Streaming Computations
 Can inter-mix RDD and DStream operations
@@ -1301,9 +1108,6 @@ Can inter-mix RDD and DStream operations
 
 
 
-# ##############################################################################
-# Fault-tolerance: Worker
-# ##############################################################################
 
 * Fault-tolerance: Worker
 - RDDs remember the operations that created them
@@ -1334,9 +1138,6 @@ RDD
 
 
 
-# ##############################################################################
-# Fault-tolerance: Master
-# ##############################################################################
 
 * Fault-tolerance: Master
 - Master saves the state of the DStreams to a checkpoint file
@@ -1347,9 +1148,6 @@ RDD
 
 
 
-# ##############################################################################
-# Performance
-# ##############################################################################
 
 * Performance
 Can process **6 GB/sec (60M records/sec**) of data on 100 nodes at **sub-second** latency
@@ -1361,9 +1159,6 @@ Can process **6 GB/sec (60M records/sec**) of data on 100 nodes at **sub-second*
 
 
 
-# ##############################################################################
-# Comparison with Storm and S4
-# ##############################################################################
 
 * Comparison with Storm and S4
 Higher throughput than Storm
@@ -1377,9 +1172,6 @@ Higher throughput than Storm
 
 
 
-# ##############################################################################
-# Unifying Batch and Stream Processing Models
-# ##############################################################################
 
 * Unifying Batch and Stream Processing Models
 Spark program on Twitter log file using RDDs
@@ -1393,9 +1185,6 @@ hashTags.saveAsHadoopFiles("hdfs://...”)
 
 
 
-# ##############################################################################
-# Vision - *one stack to rule them all*
-# ##############################################################################
 
 * Vision - *one stack to rule them all*
 - Explore data interactively using Spark Shell to identify problems
@@ -1436,9 +1225,6 @@ object ProcessLiveStream {
 }
 ```
 
-# ##############################################################################
-# Apache Storm vs. Spark Streaming
-# ##############################################################################
 
 * Apache Storm vs. Spark Streaming
 - Storm is a true streaming system (handles tuple-at-a-time) and can achieve better latencies
