@@ -1,17 +1,17 @@
 // notes_to_pdf.py --input lectures_source/final_enhanced_markdown.txt --output tmp.pdf --type slides --skip_action cleanup_after --debug_on_error --toc_type navigation
 
-::: columns
-:::: {.column width=15%}
+:::: columns
+::::: {.column width=15%}
 ![](lectures_source/UMD_Logo.png)
-::::
-:::: {.column width=75%}
+:::::
+::::: {.column width=75%}
 
 \vspace{0.4cm}
 \begingroup \large
 UMD DATA605 - Big Data Systems
 \endgroup
+:::::
 ::::
-:::
 
 \vspace{1cm}
 
@@ -19,8 +19,8 @@ UMD DATA605 - Big Data Systems
 **Course Intro Big Data & Data Models**
 \endgroup
 
-::: columns
-:::: {.column width=75%}
+:::: columns
+::::: {.column width=75%}
 \vspace{1cm}
 
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
@@ -30,26 +30,19 @@ Krishna Pratardan Taduri, kptaduri@umd.edu
 Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 **v1.1**
+:::::
+::::: {.column width=20%}
+
+:::::
 ::::
-:::: {.column width=20%}
-
-::::
-:::
 
 
-# ##############################################################################
-# Why I Am Interested in Big Data
-# ##############################################################################
 
 * Why I Am Interested in Big Data
 - https://www.linkedin.com/in/gpsaggese/
   - Feel free to connect on LinkedIn to stay in touch
 
-3/58
 
-# ##############################################################################
-# Learning Outcomes
-# ##############################################################################
 
 * Learning Outcomes
 - Model and reason about data
@@ -69,7 +62,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 UMD DATA605
 
-4/58
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_1.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_2.png)
@@ -77,9 +69,6 @@ UMD DATA605
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_4.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_5.png)
 
-# ##############################################################################
-# Tools We Will Learn To Use
-# ##############################################################################
 
 * Tools We Will Learn To Use
 - **Programming languages**
@@ -104,11 +93,6 @@ UMD DATA605
 
 UMD DATA605
 
-5/58
-
-# ##############################################################################
-# Todos
-# ##############################################################################
 
 * Todos
 - Studying the slides and the (free) materials is enough
@@ -126,13 +110,8 @@ UMD DATA605
 - Lessons are recorded
   - Still come to class!
 
-6/58
-
 UMD DATA605
 
-# ##############################################################################
-# Grading!
-# ##############################################################################
 
 * Grading!
   - Multiple choices quizzes for 40%
@@ -147,11 +126,6 @@ UMD DATA605
 
 UMD DATA605
 
-7/58
-
-# ##############################################################################
-# Soft Skills to Succeed in the Workplace
-# ##############################################################################
 
 * Soft Skills to Succeed in the Workplace
 - Work in a team
@@ -168,8 +142,6 @@ UMD DATA605
 - Have a sense of how an OS works (e.g., virtual memory, processes)
 - **Goal**: model the class project to prepare you for the workplace
 
-8/58
-
 UMD DATA605
 
  
@@ -182,13 +154,8 @@ Course Intro
 **Big Data**
 Data Models
 
-9
-
 UMD DATA605
 
-# ##############################################################################
-# Data Science
-# ##############################################################################
 
 * Data Science
 - **Promises of data science** (DS)
@@ -209,13 +176,8 @@ UMD DATA605
 - Large data sets available
 - Cheap computing (e.g., AWS, Google Cloud)
 
-10/58
-
 UMD DATA605
 
-# ##############################################################################
-# Motivation: Data Overload
-# ##############################################################################
 
 * Motivation: Data Overload
 - **"Data science is the number one catalyst for economic growth**"
@@ -237,11 +199,6 @@ UMD DATA605
 
 UMD DATA605
 
-11/58
-
-# ##############################################################################
-# Scale of Data Size
-# ##############################################################################
 
 * Scale of Data Size
 - **Megabyte** = 210 approx 106 bytes
@@ -265,20 +222,10 @@ UMD DATA605
   - Yottabyte costs (USD) 100T
 - **Brontobytes** = 1027 bytes
 
-12/58
-
-# ##############################################################################
-# Scale of Data Size (1)
-# ##############################################################################
 
 * Scale of Data Size
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_13_image_1.png)
 
-13/58
-
-# ##############################################################################
-# Constants Everybody Should Know
-# ##############################################################################
 
 * Constants Everybody Should Know
 From Latency Numbers Every Programmer Should Know (by year)
@@ -294,13 +241,8 @@ From Latency Numbers Every Programmer Should Know (by year)
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_14_image_1.png)
 
-14/58
-
 UMD DATA605
 
-# ##############################################################################
-# Big Data Applications
-# ##############################################################################
 
 * Big Data Applications
 - **Personalized marketing
@@ -321,11 +263,6 @@ UMD DATA605
 
 UMD DATA605
 
-15/58
-
-# ##############################################################################
-# Big Data Applications (1)
-# ##############################################################################
 
 * Big Data Applications
 - **Mobile advertisement
@@ -347,24 +284,15 @@ UMD DATA605
 
 UMD DATA605
 
-16/58
  
 
  
-# ##############################################################################
-# Big Data Applications (2)
-# ##############################################################################
 
 * Big Data Applications
 UMD DATA605
 
-17/58
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_17_image_1.png)
 
-# ##############################################################################
-# Big Data Applications (3)
-# ##############################################################################
 
 * Big Data Applications
 - **Biomedical data**
@@ -380,11 +308,6 @@ UMD DATA605
 
 UMD DATA605
 
-18/58
-
-# ##############################################################################
-# Big Data Applications (4)
-# ##############################################################################
 
 * Big Data Applications
 - **Smart cities**
@@ -398,11 +321,6 @@ UMD DATA605
 
 UMD DATA605
 
-19/58
-
-# ##############################################################################
-# Goal of Data Science
-# ##############################################################################
 
 * Goal of Data Science
 - **Goal**: from data to wisdom
@@ -418,11 +336,6 @@ UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_20_image_1.png)
 
-20/58
-
-# ##############################################################################
-# Four V's of Big Data
-# ##############################################################################
 
 * Four V's of Big Data
 - Characteristics of big data
@@ -445,11 +358,6 @@ UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_21_image_1.png)
 
-21/58
-
-# ##############################################################################
-# Four V's of Big Data (1)
-# ##############################################################################
 
 * Four V's of Big Data
 - **Volume**
@@ -470,11 +378,6 @@ UMD DATA605
 
 UMD DATA605
 
-22/58
-
-# ##############################################################################
-# Four V's of Big Data (2)
-# ##############################################################################
 
 * Four V's of Big Data
 - **Velocity**
@@ -491,11 +394,6 @@ UMD DATA605
 
 UMD DATA605
 
-23/58
-
-# ##############################################################################
-# Sources of Big Data
-# ##############################################################################
 
 * Sources of Big Data
 - We can distinguish Big Data in terms of its source
@@ -506,14 +404,8 @@ UMD DATA605
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_24_image_1.png)
-
-24/58
  
-
  
-# ##############################################################################
-# Sources of Big Data: Machines
-# ##############################################################################
 
 * Sources of Big Data: Machines
 - **Machines** generate data
@@ -530,11 +422,6 @@ UMD DATA605
 
 UMD DATA605
 
-25/58
-
-# ##############################################################################
-# Sources of Big Data: People
-# ##############################################################################
 
 * Sources of Big Data: People
 - **People** and their activities generate data
@@ -558,11 +445,6 @@ UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_26_image_1.png)
 
-26/58
-
-# ##############################################################################
-# Sources of Big Data: Orgs
-# ##############################################################################
 
 * Sources of Big Data: Orgs
 - **Organizations** generate data
@@ -585,11 +467,6 @@ UMD DATA605
 
 UMD DATA605
 
-27/58
-
-# ##############################################################################
-# Is Data Science Just Hype?
-# ##############################################################################
 
 * Is Data Science Just Hype?
 - Big data (or data science)
@@ -602,11 +479,6 @@ UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_28_image_1.png)
 
-28/58
-
-# ##############################################################################
-# Is Data Science Just Hype? (1)
-# ##############################################################################
 
 * Is Data Science Just Hype?
 - **No**
@@ -623,57 +495,31 @@ UMD DATA605
 
 UMD DATA605
 
-29/58
-
-# ##############################################################################
-# What was Cool in 2012?
-# ##############################################################################
 
 * What was Cool in 2012?
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_30_image_1.png)
 
-30/58
-
-# ##############################################################################
-# What was Cool in 2017?
-# ##############################################################################
 
 * What was Cool in 2017?
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_31_image_1.png)
 
-31/58
-
-# ##############################################################################
-# What was Cool in 2022?
-# ##############################################################################
 
 * What was Cool in 2022?
 UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_32_image_1.png)
-
-32/58
  
-
  
-# ##############################################################################
-# What is Cool in 2023?
-# ##############################################################################
 
 * What is Cool in 2023?
 UMD DATA605
 
-33/58
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_33_image_1.png)
 
-# ##############################################################################
-# Key Shifts Before/After Big-Data
-# ##############################################################################
 
 * Key Shifts Before/After Big-Data
 - **Datasets: small, curated, clean → large, uncurated, messy**
@@ -698,11 +544,6 @@ UMD DATA605
 
 UMD DATA605
 
-34/58
-
-# ##############################################################################
-# Examples: Election Prediction
-# ##############################################################################
 
 * Examples: Election Prediction
 - Nate Silver and the 2012 Elections
@@ -722,11 +563,6 @@ UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_35_image_1.png)
 
-35/58
-
-# ##############################################################################
-# Examples: Google Flu Trends
-# ##############################################################################
 
 * Examples: Google Flu Trends
 - 5% to 20% of US population contracts flu every year and 40k deaths
@@ -746,11 +582,6 @@ UMD DATA605
 
 UMD DATA605
 
-36/58
-
-# ##############################################################################
-# Data Scientist
-# ##############################################################################
 
 * Data Scientist
 - Very ambiguous and ill-defined term
@@ -760,11 +591,6 @@ UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_37_image_1.png)
 
-37/58
-
-# ##############################################################################
-# Typical Data Scientist Workflow
-# ##############################################################################
 
 * Typical Data Scientist Workflow
 - From Data Science Workflow
@@ -773,11 +599,6 @@ UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_38_image_1.jpeg)
 
-38/58
-
-# ##############################################################################
-# Where Data Scientist Spends Most Time
-# ##############################################################################
 
 * Where Data Scientist Spends Most Time
 UMD DATA605
@@ -788,11 +609,6 @@ UMD DATA605
 - 'Janitor Work' in Data Science
 - Research Directions in Data Wrangling
 
-39/58
-
-# ##############################################################################
-# **What a Data Scientist Should Know**
-# ##############################################################################
 
 * **What a Data Scientist Should Know**
 - From: How to hire a data scientist
@@ -817,12 +633,9 @@ UMD DATA605
 
 **DATA605**
 
-40/58
+
  
 
-# ##############################################################################
-# UMD DATA605 - Big Data Systems
-# ##############################################################################
 
 * UMD DATA605 - Big Data Systems
 [BOLD]UMD DATA605 - Big Data Systems[/BOLD]
@@ -830,11 +643,6 @@ Course Intro
 Big data
 [BOLD]Data Models[/BOLD]
 
-41
-
-# ##############################################################################
-# Data Models
-# ##############################################################################
 
 * Data Models
 - **Data modeling**
@@ -851,11 +659,6 @@ Big data
 
 UMD DATA605
 
-42/58
-
-# ##############################################################################
-# Multiple Layers of Data Modeling
-# ##############################################################################
 
 * Multiple Layers of Data Modeling
 - **Physical layer**
@@ -874,11 +677,6 @@ UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_43_image_1.png)
 
-43/58
-
-# ##############################################################################
-# Data Models: Logical Layer
-# ##############################################################################
 
 * Data Models: Logical Layer
 - **Modeling constructs**
@@ -899,11 +697,6 @@ UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_44_image_1.png)
 
-44/58
-
-# ##############################################################################
-# Examples of Data Models
-# ##############################################################################
 
 * Examples of Data Models
 - We will cover:
@@ -924,11 +717,6 @@ UMD DATA605
 
 UMD DATA605
 
-45/58
-
-# ##############################################################################
-# Good Data Models
-# ##############################################################################
 
 * Good Data Models
 - We would like a data model to be:
@@ -948,11 +736,6 @@ UMD DATA605
 
 UMD DATA605
 
-46/58
-
-# ##############################################################################
-# Data Independence
-# ##############################################################################
 
 * Data Independence
 - **Logical data independence**
@@ -967,11 +750,6 @@ UMD DATA605
 
 UMD DATA605
 
-47/58
-
-# ##############################################################################
-# Databases: A Brief History
-# ##############################################################################
 
 * Databases: A Brief History
 - **1960s: Early beginning**
@@ -992,12 +770,7 @@ UMD DATA605
 
 UMD DATA605
 
-48/58
-
  
-# ##############################################################################
-# Databases: A Brief History (1)
-# ##############################################################################
 
 * Databases: A Brief History
 - **1960s, Hierarchical and network model (before relational model)**
@@ -1014,11 +787,6 @@ UMD DATA605
 
 UMD DATA605
 
-49/58
-
-# ##############################################################################
-# Relational, Hierarchical, Network model
-# ##############################################################################
 
 * Relational, Hierarchical, Network model
 - **Relational model**
@@ -1040,11 +808,6 @@ UMD DATA605
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_2.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_3.png)
 
-50/58
-
-# ##############################################################################
-# Databases: A Brief History (2)
-# ##############################################################################
 
 * Databases: A Brief History
 - **1970s: Relational model**
@@ -1065,11 +828,6 @@ UMD DATA605
 
 UMD DATA605
 
-51/58
-
-# ##############################################################################
-# Entity-Relationship Model
-# ##############################################################################
 
 * Entity-Relationship Model
 - 1976: Peter Chen proposed "Entity-Relationship Model"
@@ -1087,11 +845,6 @@ UMD DATA605
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_2.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_3.png)
 
-52/58
-
-# ##############################################################################
-# Databases: A Brief History (3)
-# ##############################################################################
 
 * Databases: A Brief History
 - **1980s: Widespread acceptance of relational model**
@@ -1109,11 +862,6 @@ UMD DATA605
 
 UMD DATA605
 
-53/58
-
-# ##############################################################################
-# Object-Oriented
-# ##############################################################################
 
 * Object-Oriented
 - OOP is a data model
@@ -1134,11 +882,6 @@ UMD DATA605
 
 UMD DATA605
 
-54/58
-
-# ##############################################################################
-# Databases: A Brief History (4)
-# ##############################################################################
 
 * Databases: A Brief History
 - **Late 90's-today**
@@ -1173,11 +916,6 @@ UMD DATA605
      ...
 ```
 
-55/58
-
-# ##############################################################################
-# Resource Description Framework
-# ##############################################################################
 
 * Resource Description Framework
 - Aka RDF
@@ -1205,11 +943,6 @@ UMD DATA605
 07    <http://data.europeana.eu/item/04802/243FA8618938F4117025F17A8B813C5F9AA4D619> <http://purl.org/dc/terms/subject> <http://www.wikidata.org/entity/Q12418> .
 ```
 
-56/58
-
-# ##############################################################################
-# Property Graph Model
-# ##############################################################################
 
 * Property Graph Model
 - Graph:
@@ -1223,15 +956,8 @@ UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_57_image_1.jpeg)
 
-57/58
-
-# ##############################################################################
-# Class Project: TODOs
-# ##############################################################################
 
 * Class Project: TODOs
 - Clone Class GitHub repo
 - Next:
   - Dr Saggese + TA come up with list of projects
-
-58/58

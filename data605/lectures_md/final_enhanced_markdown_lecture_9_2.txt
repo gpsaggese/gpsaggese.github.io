@@ -34,9 +34,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-# ##############################################################################
-# Dask: Resources
-# ##############################################################################
 
 * Dask: Resources
 - Web resources:
@@ -50,12 +47,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Data science with Python and Dask, 2019
     - Amazon
 
-2
 ![alt_text](images/lecture_9_2/lec_9_2_slide_2_image_1.png)
 
-# ##############################################################################
-# Dataset Size Issues (1)
-# ##############################################################################
 
 * Dataset Size Issues
 - **Small datasets (< 1 GB)**
@@ -75,15 +68,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Use frameworks for massive datasets
   - E.g., Hadoop, Spark, Dask, Ray
 
-3
+
 ![alt_text](images/lecture_9_2/lec_9_2_slide_3_image_1.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_3_image_2.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_3_image_3.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_3_image_4.png)
 
-# ##############################################################################
-# Dataset Size Issues (2)
-# ##############################################################################
 
 * Dataset Size Issues
 - **Small datasets
@@ -105,11 +95,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Need to think about *what to do* it and *how to do* it efficiently
 - Cumbersome framework (Pandas easy, Hadoop difficult)
 
-4
 
-# ##############################################################################
-# Dask
-# ##############################################################################
 
 * Dask
 - **Dask is written in Python
@@ -135,20 +121,14 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Dask can use cluster managers
     - E.g., Yarn, Mesos, Kubernetes, AWS ECS
 
-5
+
 ![alt_text](images/lecture_9_2/lec_9_2_slide_5_image_1.png)
 
-# ##############################################################################
-# Dask Layers
-# ##############################################################################
 
 * Dask Layers
-6
+
 ![alt_text](images/lecture_9_2/lec_9_2_slide_6_image_1.png)
 
-# ##############################################################################
-# Scaling Up vs Scaling Out
-# ##############################################################################
 
 * Scaling Up vs Scaling Out
 - **Scaling up
@@ -175,15 +155,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Need to write code to expose parallelism
     - Costs of maintaining a cluster
 
-7
+
 ![alt_text](images/lecture_9_2/lec_9_2_slide_7_image_1.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_7_image_2.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_7_image_3.png)
 ![alt_text](images/lecture_9_2/lec_9_2_slide_7_image_4.png)
 
-# ##############################################################################
-# Dask: Computation
-# ##############################################################################
 
 * Dask: Computation
 - **Lazy computations
@@ -208,14 +185,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - **persist()** tells Dask to keep the intermediate result in memory
   - This speeds up a large and complex DAG that needs to be reused many times
 
-8
+
 
 ```
 
 ```text
-# ##############################################################################
-# Dask: Data Structures
-# ##############################################################################
 
 * Dask: Data Structures
 - **Dask DataFrame** implements Pandas DataFrame
@@ -226,7 +200,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Dag Bag** coordinates Python lists of objects
   - Parallelize computations on unstructured or semi-structured data
 
-9
+
 
 ![](images/lecture_9_2/lec_9_2_slide_9_image_1.png)
 
@@ -234,9 +208,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_2/lec_9_2_slide_9_image_3.png)
 
-# ##############################################################################
-# Dask Reading Data
-# ##############################################################################
 
 * Dask Reading Data
 - **dask.dataframe.read_csv()**
@@ -251,7 +222,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Graph is composed of 99 tasks
   - Each partition reads data, splits data, initializes df object
 
-10
+
 
 ![](images/lecture_9_2/lec_9_2_slide_10_image_1.png)
 
@@ -265,23 +236,17 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **
 **missing_values**
 
-# ##############################################################################
-# Low Level APIs: Delayed
-# ##############################################################################
 
 * Low Level APIs: Delayed
 - Handle computations that don’t fit in native Dask data structures (e.g., Dask DataFrame)
 - In the example below there is parallelism that can be exploited
 
-11
+
 
 ![](images/lecture_9_2/lec_9_2_slide_11_image_1.png)
 
 ![](images/lecture_9_2/lec_9_2_slide_11_image_2.png)
 
-# ##############################################################################
-# Low Level APIs: Futures
-# ##############################################################################
 
 * Low Level APIs: Futures
 - In parallel programming, a “future” encapsulates the asynchronous execution of a callable, representing the eventual result of the operation
@@ -295,7 +260,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **
   - Dask client can be used anywhere **concurrent.futures** can be used
 
-12
+
 
 ![](images/lecture_9_2/lec_9_2_slide_12_image_1.png)
 
@@ -305,15 +270,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_2/lec_9_2_slide_12_image_4.png)
 
-# ##############################################################################
-# Different Types of Parallel Workload
-# ##############################################################################
 
 * Different Types of Parallel Workload
 - Break program in medium-size tasks of computation
   - E.g., a function call
 
-13
+
 
 ![](images/lecture_9_2/lec_9_2_slide_13_image_1.png)
 
@@ -321,14 +283,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_2/lec_9_2_slide_13_image_3.png)
 
-# ##############################################################################
-# Encoding Task Graph
-# ##############################################################################
 
 * Encoding Task Graph
 - Dask encodes tasks in terms of Python dicts and functions
 
-14
+
 
 ![](images/lecture_9_2/lec_9_2_slide_14_image_1.png)
 
@@ -340,9 +299,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](images/lecture_9_2/lec_9_2_slide_14_image_5.png)
 
-# ##############################################################################
-# Task Scheduling (1)
-# ##############################################################################
 
 * Task Scheduling
 - Data collections (Bags, Arrays, DataFrame) and their operations create task graphs
@@ -355,13 +311,9 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Distributed scheduler
   - It can run locally or distributed across a cluster
 
-15
 
 ![](images/lecture_9_2/lec_9_2_slide_15_image_1.png)
 
-# ##############################################################################
-# Task Scheduling (2)
-# ##############################################################################
 
 * Task Scheduling
 - **Dask task scheduler orchestrates the work dynamically
@@ -384,13 +336,10 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Network unreliability
     - Just re-run or remove the isolated nodes
 
-16
+
 
 ![](images/lecture_9_2/lec_9_2_slide_16_image_1.png)
 
-# ##############################################################################
-# Dask vs Spark
-# ##############################################################################
 
 * Dask vs Spark
 - Spark has
@@ -409,15 +358,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Optimized for MapReduce operations over a collection
   - Difficult to set-up and configure
 
-17
 
-# ##############################################################################
-# Tutorial
-# ##############################################################################
+
 
 * Tutorial
 Tutorial
 - From the official documentation
 https://docs.dask.org/en/stable/10-minutes-to-dask.html
 
-18

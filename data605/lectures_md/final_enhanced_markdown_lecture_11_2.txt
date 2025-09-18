@@ -35,18 +35,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 :::
 
 
-# ##############################################################################
-# UMD DATA605 - Big Data Systems
-# ##############################################################################
 
 * UMD DATA605 - Big Data Systems
 
 Dr. GP Saggese
 gsaggese@umd.edu
 
-# ##############################################################################
-# AWS: Resources
-# ##############################################################################
 
 * AWS: Resources
 - Some basic info in the slides
@@ -54,13 +48,10 @@ gsaggese@umd.edu
 - Mastery
   - Amazon Web Services in Action 3rd Edition
 
-2
+
 
 ![](images/lecture_11_2/lec_11_2_slide_2_image_1.png)
 
-# ##############################################################################
-# Amazon Web Services (AWS)
-# ##############################################################################
 
 * Amazon Web Services (AWS)
 - **AWS is a platform offering complete cloud solutions**
@@ -79,11 +70,8 @@ gsaggese@umd.edu
   - Programmatically
     - Through language libraries, SDK (e.g., Python **boto3**)
 
-3
 
-# ##############################################################################
-# AWS as Business
-# ##############################################################################
+
 
 * AWS as Business
 - Services charge a pay-per-use pricing model
@@ -95,7 +83,7 @@ gsaggese@umd.edu
   - Grows 42% year-over-year
   - Controls 30% of cloud business
 
-4
+
 
 ![](images/lecture_11_2/lec_11_2_slide_4_image_1.png)
 
@@ -103,9 +91,6 @@ gsaggese@umd.edu
 
 ![](images/lecture_11_2/lec_11_2_slide_4_image_2.png)
 
-# ##############################################################################
-# Types of Cloud Computing
-# ##############################################################################
 
 * Types of Cloud Computing
 - Cloud computing enables a shared pool of configurable computing resources
@@ -119,11 +104,8 @@ gsaggese@umd.edu
   - *Private*: virtualize and share IT infrastructure within a single organization (e.g., government)
   - *Hybrid*: a mixture of public and private clouds
 
-5
 
-# ##############################################################################
-# AWS vs Google Cloud vs Microsoft Azure
-# ##############################################################################
+
 
 * AWS vs Google Cloud vs Microsoft Azure
 - **Similarities:**
@@ -139,7 +121,7 @@ gsaggese@umd.edu
   - Azure provides Microsoft stack in the cloud
   - Google seems more focused on cloud-native applications rather than migrating local applications to the cloud
 
-6
+
 
 ![](images/lecture_11_2/lec_11_2_slide_6_image_1.png)
 
@@ -147,9 +129,6 @@ gsaggese@umd.edu
 
 ![](images/lecture_11_2/lec_11_2_slide_6_image_3.png)
 
-# ##############################################################################
-# From On-premise to AWS (1)
-# ##############################################################################
 
 * From On-premise to AWS
 - **Aka “Cloud-transformation”**
@@ -164,22 +143,16 @@ gsaggese@umd.edu
     - E.g., products and prices
     - Delivered by web server
 
-# ##############################################################################
-# From On-premise to AWS (2)
-# ##############################################################################
 
 * From On-premise to AWS
 - **Step 1: Move to cloud**
 
-8
+
 
 ![](images/lecture_11_2/lec_11_2_slide_8_image_1.png)
 ```
 
 ```markdown
-# ##############################################################################
-# From On-premise to AWS (3)
-# ##############################################################################
 
 * From On-premise to AWS
 - **Step 2: Design for the cloud**
@@ -189,13 +162,10 @@ gsaggese@umd.edu
 - Potentially managed solutions
 - Use multiple smaller virtual services using load balancer to increase reliability
 
-9
+
 
 ![alt_text](images/lecture_11_2/lec_11_2_slide_9_image_1.png)
 
-# ##############################################################################
-# Low-Cost Batch Processing
-# ##############################################################################
 
 * Low-Cost Batch Processing
 - Lots of batch jobs run on a schedule
@@ -211,11 +181,8 @@ gsaggese@umd.edu
 - AWS Lambda
   - Serverless
 
-10
 
-# ##############################################################################
-# Capacity Scaling
-# ##############################################################################
+
 
 * Capacity Scaling
 - **No need to plan for capacity**
@@ -232,15 +199,11 @@ gsaggese@umd.edu
   - AWS has many data centers
   - You can deploy applications close to your customers
 
-11
 
 ![alt_text](images/lecture_11_2/lec_11_2_slide_11_image_1.png)
 
 ![alt_text](images/lecture_11_2/lec_11_2_slide_11_image_2.png)
 
-# ##############################################################################
-# Pay-per-use (1)
-# ##############################################################################
 
 * Pay-per-use
 - **AWS bill**
@@ -255,13 +218,10 @@ gsaggese@umd.edu
   - If you exceed the limits, you start paying (without further notice)
     - Need to set an alarm!
 
-12
+
 
 ![alt_text](images/lecture_11_2/lec_11_2_slide_12_image_1.png)
 
-# ##############################################################################
-# Pay-per-use (2)
-# ##############################################################################
 
 * Pay-per-use
 - **Advantages**
@@ -272,13 +232,10 @@ gsaggese@umd.edu
   - Make fault tolerance / high performance affordable
     - For scalable workload, buy 1 server for 1000 hours = buy 1000 servers for 1 hour
 
-13
+
 
 ![alt_text](images/lecture_11_2/lec_11_2_slide_13_image_1.png)
 
-# ##############################################################################
-# Interacting with AWS
-# ##############################################################################
 
 * Interacting with AWS
 - **AWS internal API allows to interact with services**
@@ -296,7 +253,6 @@ gsaggese@umd.edu
   - Description of your system containing all services and dependencies
   - It describes the system, it does not explain how to build it
 
-14
 
 ![alt_text](images/lecture_11_2/lec_11_2_slide_14_image_1.png)
 
@@ -304,9 +260,6 @@ gsaggese@umd.edu
 
 ![alt_text](images/lecture_11_2/lec_11_2_slide_14_image_3.png)
 
-# ##############################################################################
-# Accounts and Users
-# ##############################################################################
 
 * Accounts and Users
 - **Users**
@@ -324,13 +277,10 @@ gsaggese@umd.edu
   - Private key is your secret
     - Don't lose it, you can't retrieve it
 
-15
+
 
 ![alt_text](images/lecture_11_2/lec_11_2_slide_15_image_1.png)
 
-# ##############################################################################
-# AWS VMs
-# ##############################################################################
 
 * AWS VMs
 - With virtualization multiple VMs can run on the same hardware
@@ -347,15 +297,11 @@ gsaggese@umd.edu
   - Switched recently to AWS Nitro, hardware assisted virtualization
     - Performance close to bare metal
 
-16
 
 ![alt_text](images/lecture_11_2/lec_11_2_slide_16_image_1.png)
 ```
 
 ```
-# ##############################################################################
-# Starting an EC2 Instance (1)
-# ##############################################################################
 
 * Starting an EC2 Instance
 - **Select region**
@@ -363,7 +309,7 @@ gsaggese@umd.edu
   - Where is it?
     - 21155 Smith Switch Road, Ashburn, VA, USA
 
-17
+
 
 ![](images/lecture_11_2/lec_11_2_slide_17_image_1.png)
 
@@ -371,9 +317,6 @@ gsaggese@umd.edu
 
 ![](images/lecture_11_2/lec_11_2_slide_17_image_3.png)
 
-# ##############################################################################
-# Starting an EC2 Instance (2)
-# ##############################################################################
 
 * Starting an EC2 Instance
 - **Select OS**
@@ -386,7 +329,7 @@ gsaggese@umd.edu
 - **Configure instance**
   - Network, shutdown behavior, termination protection, monitoring
 
-18
+
 
 ![](images/lecture_11_2/lec_11_2_slide_18_image_1.png)
 
@@ -394,9 +337,6 @@ gsaggese@umd.edu
 
 ![](images/lecture_11_2/lec_11_2_slide_18_image_3.png)
 
-# ##############################################################################
-# AWS Instance Type (1)
-# ##############################################################################
 
 * AWS Instance Type
 - An "instance type" describes the amount of computing power available
@@ -420,15 +360,12 @@ gsaggese@umd.edu
   - large (2 vCPUs, 8GB memory)
   - 0.14 USD / hr
 
-19
+
 
 ![](images/lecture_11_2/lec_11_2_slide_19_image_1.png)
 
 ![](images/lecture_11_2/lec_11_2_slide_19_image_2.png)
 
-# ##############################################################################
-# AWS Instance Type (2)
-# ##############################################################################
 
 * AWS Instance Type
 - Price on AWS website is somehow unclear (duh really?)
@@ -440,11 +377,8 @@ gsaggese@umd.edu
   - From 37 USD / yr to 1.91M USD / yr (500 CPUs and 24TB of mem)
 - Alternative sites: https://instances.vantage.sh
 
-20
 
-# ##############################################################################
-# Starting an EC2 Instance (3)
-# ##############################################################################
+
 
 * Starting an EC2 Instance
 - Add storage
@@ -457,15 +391,11 @@ gsaggese@umd.edu
 - How to monitor the instance
   - E.g. CloudWatch
 
-21
 
 ![](images/lecture_11_2/lec_11_2_slide_21_image_1.png)
 
 ![](images/lecture_11_2/lec_11_2_slide_21_image_2.png)
 
-# ##############################################################################
-# Starting an EC2 Instance (4)
-# ##############################################################################
 
 * Starting an EC2 Instance
 - Start instance
@@ -477,13 +407,10 @@ gsaggese@umd.edu
 **> sudo apt-get update**
 **> sudo apt-get install ...**
 
-22
+
 
 ![](images/lecture_11_2/lec_11_2_slide_22_image_1.png)
 
-# ##############################################################################
-# States of a VM
-# ##############################################################################
 
 * States of a VM
 - **Start**
@@ -503,15 +430,12 @@ gsaggese@umd.edu
   - Data storage is wiped out
   - Attached volumes persist
 
-23
+
 
 ![](images/lecture_11_2/lec_11_2_slide_23_image_1.png)
 
 ![](images/lecture_11_2/lec_11_2_slide_23_image_2.png)
 
-# ##############################################################################
-# Moving / Upgrading EC2 Instances
-# ##############################################################################
 
 * Moving / Upgrading EC2 Instances
 - **Scale up / down**
@@ -536,13 +460,9 @@ gsaggese@umd.edu
     - Service costs vary by region
 - **Often you want an Elastic IP address to get a fixed public IP**
 
-24
 ```
 
 ```markdown
-# ##############################################################################
-# Optimizing Costs
-# ##############################################################################
 
 * Optimizing Costs
 - **On-demand instances**
@@ -563,11 +483,8 @@ gsaggese@umd.edu
   - Discount: up to 10x cheaper than on-demand price
   - Useful for running asynchronous tasks
 
-25
 
-# ##############################################################################
-# Programming the Infrastructure
-# ##############################################################################
+
 
 * Programming the Infrastructure
 - On AWS *everything* can be controlled via an API over HTTPS
@@ -587,7 +504,6 @@ gsaggese@umd.edu
     - Call AWS API from your code
   - CloudFormation: templates that describe the state of the infrastructure and are translated into API calls
 
-26
 
 ![Programming the Infrastructure](images/lecture_11_2/lec_11_2_slide_26_image_1.png)
 
@@ -596,9 +512,6 @@ gsaggese@umd.edu
 
 ![Programming the Infrastructure](images/lecture_11_2/lec_11_2_slide_26_image_2.png)
 
-# ##############################################################################
-# Infrastructure-As-Code
-# ##############################################################################
 
 * Infrastructure-As-Code
 - **Use high-level programming language to control IT systems
@@ -616,11 +529,8 @@ gsaggese@umd.edu
     - Ops -> involved in software development, making system easier to operate
   - Foster communication and collaboration
 
-27
 
-# ##############################################################################
-# Infrastructure-as-Code: Advantages
-# ##############################################################################
+
 
 * Infrastructure-as-Code: Advantages
 - **Save time
@@ -646,11 +556,7 @@ gsaggese@umd.edu
 **
   - It explains what and how, but not why (not a design document)
 
-28
 
-# ##############################################################################
-# Create User Account
-# ##############################################################################
 
 * Create User Account
 - Do not to use AWS root account for all development
@@ -662,7 +568,7 @@ gsaggese@umd.edu
   - Enable console access
   - Limit what an user can do through policies
 
-29
+
 
 ![Create User Account](images/lecture_11_2/lec_11_2_slide_29_image_1.png)
 
@@ -672,9 +578,6 @@ gsaggese@umd.edu
 
 **Bad idea!**
 
-# ##############################################################################
-# AWS Command Line Interface (CLI)
-# ##############################################################################
 
 * AWS Command Line Interface (CLI)
 - Provide unified interface to all AWS services
@@ -694,11 +597,6 @@ gsaggese@umd.edu
 - Execute command
 **> aws <service> <action> --key value**
 
-30
-
-# ##############################################################################
-# Software Development Kit (SDK)
-# ##############################################################################
 
 * Software Development Kit (SDK)
 - SDK is a library that calls into AWS API from your favorite programming language
@@ -713,13 +611,10 @@ gsaggese@umd.edu
   - Imperative approach
   - Need to deal with dependencies
 
-31
+
 
 ![Software Development Kit (SDK)](images/lecture_11_2/lec_11_2_slide_31_image_1.png)
 
-# ##############################################################################
-# AWS CloudFormation
-# ##############################################################################
 
 * AWS CloudFormation
 - **Use templates (e.g., JSON, YAML) to describe infrastructure
@@ -743,11 +638,8 @@ gsaggese@umd.edu
   - It serves as documentation
     - Use it as code in source control
 
-32
 
-# ##############################################################################
-# Securing Your System
-# ##############################################################################
+
 
 * Securing Your System
 - **Always install software updates
@@ -767,13 +659,10 @@ gsaggese@umd.edu
 **
   - Subnets that are not reachable from the Internet
 
-33
+
 
 ![Securing Your System](images/lecture_11_2/lec_11_2_slide_33_image_1.png)
 
-# ##############################################################################
-# AWS Shared-responsibility Principle
-# ##############################################################################
 
 * AWS Shared-responsibility Principle
 - AWS is responsible for:
@@ -789,4 +678,4 @@ gsaggese@umd.edu
   - Updating OS (kernel, libs) and software
 - More info here
 
-34
+
