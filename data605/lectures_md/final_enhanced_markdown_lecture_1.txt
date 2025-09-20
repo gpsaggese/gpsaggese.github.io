@@ -39,20 +39,16 @@ MSML610: Advanced Machine Learning
 - ...
 - **What has changed**
 - Now learning and applying DS is easy**
-**
   - No need for hiring a consulting company
 - Tools are open-source
   - E.g., Python + pydata stack (numpy, scipy, Pandas, sklearn)
 - Large data sets available
 - Cheap computing (e.g., AWS, Google Cloud)
 
-
-
 * Motivation: Data Overload
 - **"Data science is the number one catalyst for economic growth**"
   - McKinsey, 2013
-- **Explosion of data in every domain
-**
+- **Explosion of data in every domain**
   - Sensing devices/networks monitor processes 24/7
     - E.g., temperature of your room, your vital signs, pollution in the air
   - Sophisticated smart-phones (80% of the world population)
@@ -61,8 +57,7 @@ MSML610: Advanced Machine Learning
     - E.g., power supply, toasters
   - Datafication: turn all aspects of life into data
     - E.g., what you like/enjoy turned into a stream of your "likes"
-- **Challenges
-**
+- **Challenges**
   - How to handle the increasing amount data?
   - How to extract actionable insights and scientific knowledge from data?
 
@@ -112,8 +107,7 @@ From Latency Numbers Every Programmer Should Know (by year)
 
 
 * Big Data Applications
-- **Personalized marketing
-**
+- **Personalized marketing**
 - Target each consumer instead of the consumers at large
   - E.g., Amazon personalizes suggestions using signals from:
     - Your shopping history
@@ -131,8 +125,7 @@ From Latency Numbers Every Programmer Should Know (by year)
 
 
 * Big Data Applications
-- **Mobile advertisement
-**
+- **Mobile advertisement**
 - Mobile phones are ubiquitous
   - 80% of world population has one
   - 6.5b smart phones
@@ -149,9 +142,9 @@ From Latency Numbers Every Programmer Should Know (by year)
   - "I feel like Google is following me", "it's like Facebook is reading my mind"
 
 
- 
 
- 
+
+
 
 * Big Data Applications
 
@@ -261,8 +254,8 @@ From Latency Numbers Every Programmer Should Know (by year)
 
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_24_image_1.png)
- 
- 
+
+
 
 * Sources of Big Data: Machines
 - **Machines** generate data
@@ -361,8 +354,8 @@ From Latency Numbers Every Programmer Should Know (by year)
 * What was Cool in 2022?
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_32_image_1.png)
- 
- 
+
+
 
 * What is Cool in 2023?
 
@@ -475,7 +468,7 @@ From Latency Numbers Every Programmer Should Know (by year)
 **DATA605**
 
 
- 
+
 
 
 Course Intro
@@ -602,7 +595,7 @@ Big data
       - E.g., integrity, security, privacy concerns
 
 
- 
+
 
 * Databases: A Brief History
 - **1960s, Hierarchical and network model (before relational model)**
@@ -719,23 +712,23 @@ Big data
 
 
 ```
-<?xml version="1.0" encoding="UTF-8"?> 
-<!-- Edited by XMLSpy -→
- <CATALOG> 
-     <CD> 
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Edited by XMLSpy -->
+ <CATALOG>
+     <CD>
  	<TITLE>Empire Burlesque</TITLE>
       <ARTIST>Bob Dylan</ARTIST>
- 	<COUNTRY>USA</COUNTRY> 	
+ 	<COUNTRY>USA</COUNTRY>
       <COMPANY>Columbia</COMPANY>
-      <PRICE>10.90</PRICE> 
-	<YEAR>1985</YEAR> 
-    </CD> 
-    <CD> 
-	<TITLE>Hide your heart</TITLE> 
+      <PRICE>10.90</PRICE>
+	<YEAR>1985</YEAR>
+    </CD>
+    <CD>
+	<TITLE>Hide your heart</TITLE>
 	<ARTIST>Bonnie Tyler</ARTIST>
-	<COUNTRY>UK</COUNTRY> 
-	<COMPANY>CBS Records</COMPANY> 
-	<PRICE>9.90</PRICE> 
+	<COUNTRY>UK</COUNTRY>
+	<COMPANY>CBS Records</COMPANY>
+	<PRICE>9.90</PRICE>
 	<YEAR>1988</YEAR>
      </CD>
      ...
