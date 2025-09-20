@@ -84,7 +84,7 @@ MSML610: Advanced Machine Learning
 - **Brontobytes** = 1027 bytes
 
 * Scale of Data Size
-![](data605/lectures_md/images/lecture_1/lec_1_slide_13_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_13_image_1.png)
 
 * Constants Everybody Should Know
 From Latency Numbers Every Programmer Should Know (by year)
@@ -98,7 +98,7 @@ From Latency Numbers Every Programmer Should Know (by year)
 - Disk seek: 2ms
 - Packet round-trip from CA to Netherland: 150ms
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_14_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_14_image_1.png)
 
 * Big Data Applications
 - **Personalized marketing**
@@ -135,7 +135,7 @@ From Latency Numbers Every Programmer Should Know (by year)
 
 * Big Data Applications
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_17_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_17_image_1.png)
 
 * Big Data Applications
 - **Biomedical data**
@@ -169,7 +169,7 @@ From Latency Numbers Every Programmer Should Know (by year)
 - Combine streams of big data to generate new data
   - New data can be "big data" itself
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_20_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_20_image_1.png)
 
 * Four V's of Big Data
 - Characteristics of big data
@@ -188,7 +188,7 @@ From Latency Numbers Every Programmer Should Know (by year)
   - Data needs to be valuable
   - Big data needs to benefit an organization
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_21_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_21_image_1.png)
 
 * Four V's of Big Data
 - **Volume**
@@ -226,7 +226,7 @@ From Latency Numbers Every Programmer Should Know (by year)
   - **People**
   - **Organizations**
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_24_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_24_image_1.png)
 
 * Sources of Big Data: Machines
 - **Machines** generate data
@@ -254,12 +254,12 @@ From Latency Numbers Every Programmer Should Know (by year)
   - Highly valuable for business intelligence
 - **Cons**
   - Typically semi-structured or unstructured data
-    - Text, data605/lectures_md/images, movies
+    - Text, data605/lectures_source/images, movies
   - It takes an investment before you can reap the value
     - Acquire → Store → Clean → Retrieve → Process → Insights
   - Surveillance capitalism
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_26_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_26_image_1.png)
 
 * Sources of Big Data: Orgs
 - **Organizations** generate data
@@ -287,7 +287,7 @@ From Latency Numbers Every Programmer Should Know (by year)
   - The term has becoming very muddled at this point
 - **Is it all hype?**
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_28_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_28_image_1.png)
 
 * Is Data Science Just Hype?
 - **No**
@@ -304,19 +304,19 @@ From Latency Numbers Every Programmer Should Know (by year)
 
 * What was Cool in 2012?
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_30_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_30_image_1.png)
 
 * What was Cool in 2017?
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_31_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_31_image_1.png)
 
 * What was Cool in 2022?
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_32_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_32_image_1.png)
 
 * What is Cool in 2023?
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_33_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_33_image_1.png)
 
 * Key Shifts Before/After Big-Data
 - **Datasets: small, curated, clean → large, uncurated, messy**
@@ -353,7 +353,7 @@ From Latency Numbers Every Programmer Should Know (by year)
   - Focus on probabilities instead of predictions
   - Great communication and presentation skills
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_35_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_35_image_1.png)
 
 * Examples: Google Flu Trends
 - 5% to 20% of US population contracts flu every year and 40k deaths
@@ -375,16 +375,16 @@ From Latency Numbers Every Programmer Should Know (by year)
 - Very ambiguous and ill-defined term
 - From Drew Conway's Venn Diagram
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_37_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_37_image_1.png)
 
 * Typical Data Scientist Workflow
 - From Data Science Workflow
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_38_image_1.jpeg)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_38_image_1.jpeg)
 
 * Where Data Scientist Spends Most Time
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_39_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_39_image_1.png)
 
 - 80-90% of the work is data cleaning and wrangling
 - 'Janitor Work' in Data Science
@@ -441,7 +441,7 @@ Big data
   - Restrict information flow
   - Security and/or ease-of-use
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_43_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_43_image_1.png)
 
 * Data Models: Logical Layer
 - **Modeling constructs**
@@ -458,7 +458,7 @@ Big data
 - **Manipulation constructs**
   - E.g., insert, update, delete data
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_44_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_44_image_1.png)
 
 * Examples of Data Models
 - We will cover:
@@ -519,7 +519,7 @@ Big data
     - How to write data dictionaries?
     - How to access data?
     - Who controls the data?
-      - E.g., integrity, security, privacy concerns
+    - E.g., integrity, security, privacy concerns
 
 * Databases: A Brief History
 - **1960s, Hierarchical and network model (before relational model)**
@@ -548,9 +548,9 @@ Big data
     - Each record can have multiple parent and child records
   - Resurgence in 2010s with graph DBs
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_1.png)
-![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_2.png)
-![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_3.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_50_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_50_image_2.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_50_image_3.png)
 
 * Databases: A Brief History
 - **1970s: Relational model**
@@ -579,9 +579,9 @@ Big data
 - An ER model can be mapped onto a relational DB
   - Entities, relationships → tables
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_1.png)
-![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_2.png)
-![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_3.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_2.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_3.png)
 
 * Databases: A Brief History
 - **1980s: Widespread acceptance of relational model**
@@ -657,7 +657,7 @@ Big data
   - Relational DBs
   - Dedicated "triple-stores" DBs
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_56_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_56_image_1.png)
 
 ```
 01    <http://example.org/bob#me> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
@@ -677,4 +677,4 @@ Big data
   - Relational DBs
   - Graph DBs
 
-![](data605/lectures_md/images/lecture_1/lec_1_slide_57_image_1.jpeg)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_57_image_1.jpeg)
