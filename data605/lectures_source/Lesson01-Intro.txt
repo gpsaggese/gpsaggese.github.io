@@ -25,6 +25,202 @@ DATA605: Big Data Systems
 
 **References**:
 
+# ##############################################################################
+# Class Intro
+# ##############################################################################
+
+* Invariants of a Class Lecture
+- **Invariants**
+  - Focus on intuition over math (unless necessary)
+  - Emphasize realistic assumptions and numerical methods
+    - Analytical solutions are so 1800s
+  - Interactive Jupyter notebook tutorials for hands-on approach
+    - Tutorials are mainly done at home
+    - Videos of each tutorial will be added over time
+
+- **Class flow**
+  - Lessons alternate between slides, whiteboard, tutorials
+
+- **Labs**
+  - Review examples of complete class projects
+  - Work together on the class project
+
+* Books of the Class
+::: columns
+:::: {.column width=65%}
+- **Goal**: make the slides self-sufficient from recommended books
+
+::::
+:::: {.column width=40%}
+
+::::
+:::
+
+* Learning Outcomes
+::: columns
+:::: {.column width=65%}
+- Model and reason about data
+- Process and manipulate data in different ways
+  - E.g., Python, Pandas
+- Introduce a variety of data models
+  - E.g., relational, NoSQL, graph DBs
+  - Decide which data model is appropriate for different applications
+- Use a variety of data management systems
+  - E.g., PostgreSQL, MongoDB, HBase
+  - Decide which system is appropriate for a data management scenario
+- Build data processing pipelines
+  - E.g., Docker, Airflow
+- Build a big-data system end-to-end
+  - Class project
+  - Contribute to an open-source project
+::::
+:::: {.column width=30%}
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_1.png){ height=1cm }
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_2.png){ height=1cm }
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_3.png){ height=1cm }
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_4.png){ height=1cm }
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_5.png){ height=1cm }
+::::
+:::
+
+* Tools We Will Learn To Use
+- **Programming languages**
+  - Python
+
+- **Development tools**
+  - Bash/Linux OS
+  - Git (understand data model, branching)
+  - GitHub (PRs, work with issues)
+  - Jupyter notebooks
+  - Docker
+
+- **Big data tools**
+  - ETL pipelines
+  - Relational DBs (PostgreSQL)
+  - NoSQL DBs (HBase, MongoDB, Couchbase, Redis)
+  - Graph DBs (Neo4j, OrientDB, AllegroGraph, GraphX, Giraph)
+  - Computing framework (Hadoop, Spark, Dask, Storm, Spark Streaming)
+  - Workflow manager (Airflow)
+  - Cloud services (AWS)
+
+- **Tutorials** for all the tools we use for the class project
+
+* Todos
+- Studying the slides and the (free) materials is enough
+- DATA605 - ELMS/Canvas site
+  - Make sure to enable notifications
+  - How to get in touch with me/TAs
+- DATA605 - Schedule
+- DATA605 - GitHub repo
+- Setup your computing environment
+  - Install Linux/VMware
+  - Install Docker on your laptop
+  - Instructions are in the class repo
+- Bring your laptop to class
+  - Quizzes at the beginning of class
+- Lessons are recorded
+  - Still come to class!
+
+* Grading!
+  - Multiple choices quizzes for 40%
+    - Start on the 3rd week of class
+    - 3 quizzes, every 2 lessons
+  - Graded individually (60% of final grade)
+    - Each student implements 1 class project
+    - Learn a cutting-edge modern big data technology
+    - Write a tutorial + an example of a system using that tech
+  - Review examples of complete projects
+  - In class labs
+
+* Grading
+- **Quizzes**
+  - 40% of the grade
+  - Multi-choice quizzes on previous 2 lessons
+  - 20 questions in 20 minutes
+  - 4-5 quizzes to make you study during the semester and don't cram
+
+- **Final Project**
+  - 60% of the grade
+  - A comprehensive application of course concepts
+  - Big data project in Python selected from a list of topics
+
+* Class Projects
+- The project is _"Build $X$ with $Y$"_, where $X$ is a "use case" and $Y$ is a
+  "technology"
+  - Study and describe technology $Y$
+  - Implement a use case $X$ using the technology $Y$
+  - Create Jupyter notebooks to demo your project
+  - Commit code to GitHub and contribute to open-source repo
+  - Write a blog entry
+  - Present your project in a video
+
+- There is a list of $X$ and $Y$ you can pick from, e.g.,
+  - Big data
+  - LLMs
+  - ...
+
+- Each project:
+  - Is individual or group ($n < 4$)
+  - Has different levels of difficulty
+
+* Soft Skills to Succeed in the Workplace
+- **Goal**: model the class project to prepare you for the workplace
+  - Work in a team
+  - Design software architecture (e.g., OOP, Agile, Design Patterns)
+  - Comment your own code
+  - Write external documentation (e.g., tutorials, manuals, how-tos)
+  - Write code that other people can understand (including future-you)
+  - Read other people's code
+  - Follow code conventions (e.g., PEP8, Google Code)
+  - Be clear in communications (e.g., in emails, Slack)
+  - File a bug report
+  - Reproduce a bug
+  - Have a sense of CS constants
+  - Have a sense of how an OS works (e.g., virtual memory, processes)
+
+* Links
+
+- [\textcolor{blue}{\underline{ELMS}}](https://umd.instructure.com/courses/1391619/pages/homepage)
+
+- [\textcolor{blue}{\underline{Syllabus}}](https://docs.google.com/document/d/1YXCrqh6KGg3xm4-Lr4QGdBnjeWEfkqz67FHNHB_rdAk/edit?tab=t.0#heading=h.278ryn4xodsb)
+  - Schedule
+  - GitHub project
+  - Class FAQs
+
+- [\textcolor{blue}{\underline{Project specs}}](TBD)
+
+// TODO: Add link to project specs
+
+* Yours Truly
+::: columns
+:::: {.column width=65%}
+
+- **GP Saggese**
+  - 2001-2006, PhD / Postdoc at the University of Illinois at Urbana-Champaign
+  - [\textcolor{blue}{\underline{LinkedIn}}](https://www.linkedin.com/in/gpsaggese/)
+  - [\textcolor{blue}{\underline{gsaggese@umd.edu}}](gsaggese@umd.edu)
+- **University of Maryland**:
+  - 2023-, Lecturer for UMD DATA605: Big Data Systems
+  - 2025-, Lecturer for UMD MSML610: Advanced Machine Learning
+- **In the real-world**
+  - Research scientist at NVIDIA, Synopys, Teza, Engineers' Gate
+  - 3x AI and fin-tech startup founder (ZeroSoft, June, Causify AI)
+  - 20+ academic papers, 2 US patents
+::::
+:::: {.column width=30%}
+![](msml610/lectures_source/figures/GP_in_coding_state.png)
+::::
+:::
+
+# ##############################################################################
+# Big Data
+# ##############################################################################
+
 * Data Science
 - **Promises of data science**
   - Give a competitive advantages
@@ -33,7 +229,7 @@ DATA605: Big Data Systems
 
 - **Data science is not new**, it was called:
   - Operation research (~1970-80s)
-  - Decision support, Business intelligence (~1990s)
+  - Decision support, business intelligence (~1990s)
   - Predictive analytics (Early 2010s)
   - ...
 
@@ -46,8 +242,8 @@ DATA605: Big Data Systems
   - Cheap computing (e.g., AWS, Google Cloud)
 
 * Motivation: Data Overload
-- **"Data science is the number one catalyst for economic growth**"
-  - McKinsey, 2013
+- _"Data science is the number one catalyst for economic growth"_ (McKinsey,
+  2013)
 - **Explosion of data in every domain**
   - Sensing devices/networks monitor processes 24/7
     - E.g., temperature of your room, your vital signs, pollution in the air
@@ -62,32 +258,39 @@ DATA605: Big Data Systems
   - How to extract actionable insights and scientific knowledge from data?
 
 * Scale of Data Size
-- **Megabyte** = 210 approx 106 bytes
+::: columns
+:::: {.column width=45%}
+
+- **Megabyte** = $2^{10} \approx 10^6$ bytes
   - Typical English book
-- **Gigabyte** = 109 bytes = 1000 MB
+- **Gigabyte** = $10^9$ bytes = 1000 MB
   - 1/2 hour of video
   - Wikipedia (compressed, without media) is 22GB
 - **Terabyte** = 1M MB
   - Human genome: ~1TB
   - 100,000 photos
-  - LHC generates 100TB of data per day
-  - 50 to buy 1TB HDD, 23/mo on AWS S3
+  - \$50 to buy 1TB HDD, \$23/mo on AWS S3
 - **Petabyte** = 1000 TB
   - 13 years of HD video
-  - 250k (USD) /year on AWS S3
+  - \$250k /year on AWS S3
+
+::::
+:::: {.column width=50%}
+
 - **Exabyte** = 1M TB
   - Global yearly Internet traffic in 2004
-- **Zetabyte** = 1B TB = 1021 bytes
+- **Zettabyte** = 1B TB = $10^{21}$ bytes
   - Global yearly Internet traffic in 2016
-- **Yottabytes** = 1024 bytes
-  - Yottabyte costs (USD) 100T
-- **Brontobytes** = 1027 bytes
+  - Will fill 20% of Manhattan, New York with data centers
+- **Yottabytes** = $10^{24}$ bytes
+  - Yottabyte costs \$100T
+  - Fill Delaware and Rhode Island with a million data centers
+- **Brontobytes** = $10^{27}$ bytes
 
-* Scale of Data Size
-  ![](data605/lectures_source/images/lecture_1/lec_1_slide_13_image_1.png)
+::::
+:::
 
 * Constants Everybody Should Know
-- From Latency Numbers Every Programmer Should Know (by year)
 - A CPU running at 3GHz executes an instruction every 0.3ns
 - L1 cache reference/register: 1ns
 - L2 cache reference: 4ns
@@ -96,7 +299,7 @@ DATA605: Big Data Systems
 - Read 1MB from memory: 2us
 - SSD random read: 16us
 - Disk seek: 2ms
-- Packet round-trip from CA to Netherland: 150ms
+- Packet round-trip from CA to Netherlands: 150ms
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_14_image_1.png)
 
@@ -113,14 +316,18 @@ DATA605: Big Data Systems
     - Social media, on-line reviews, blogs, surveys
   - Positive, negative, neutral feeling
 - E.g.,
-  - In 2022, (USD)600B spent on digital marketing
-  - 50 Stats Showing The Power Of Personalization
+  - In 2022, \$600B spent on digital marketing
+// - 50 Stats Showing The Power Of Personalization
 
 * Big Data Applications
+
+::: columns
+:::: {.column width=60%}
+
 - **Mobile advertisement**
 - Mobile phones are ubiquitous
   - 80% of world population has one
-  - 6.5b smart phones
+  - 6.5B smart phones
 - Integration of on-line and off-line databases, e.g.,
   - GPS location
   - Search history
@@ -131,12 +338,15 @@ DATA605: Big Data Systems
   - You watch shows about renovations
   - Your phone tracks where you are
   - Google sends you coupons for the closest Home Depot
-  - "I feel like Google is following me", "it's like Facebook is reading my
-    mind"
+  - _"I feel like Google is following me"_
 
-* Big Data Applications
+::::
+:::: {.column width=35%}
 
-![](data605/lectures_source/images/lecture_1/lec_1_slide_17_image_1.png)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_17_image_1.png){ height=50% }
+
+::::
+:::
 
 * Big Data Applications
 - **Biomedical data**
@@ -161,6 +371,9 @@ DATA605: Big Data Systems
   - Maximize energy savings
 
 * Goal of Data Science
+
+::: columns
+:::: {.column width=55%}
 - **Goal**: from data to wisdom
   - Data (raw bytes)
   - Information (organized, structured)
@@ -169,11 +382,17 @@ DATA605: Big Data Systems
 - Insights enable decisions and actions
 - Combine streams of big data to generate new data
   - New data can be "big data" itself
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_20_image_1.png)
 
-* Four V'S of Big Data
-- Characteristics of big data
+::::
+:::
+
+* The Six V'S of Big Data
+::: columns
+:::: {.column width=55%}
 - **Volume**
   - Vast amount of data is generated
 - **Variety**
@@ -183,51 +402,66 @@ DATA605: Big Data Systems
 - **Veracity**
   - Biases, noise, abnormality in data
   - Uncertainty, trustworthiness
-- (**Valence**)
+- **Valence**
   - Connectedness of big data in the form of graphs
-- (**Value**)
+- **Value**
   - Data needs to be valuable
   - Big data needs to benefit an organization
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_21_image_1.png)
 
-* Four V's of Big Data
-- **Volume**
-- Exponentially increasing amount of data
-- Every day 2.5 exabytes (1m of TB) of data is generated
-  - 90% of all the data in the world was generated in the last 2 years
-  - Total amount of stored data doubles every 1.2 years
-- Twitter / X: 500M tweets/day (2022)
-- Google processes 8.5B queries/day (2022)
-- Meta generates 4PB of data/day (2022)
-- Walmart: 2.5PB of unstructured data/hour (2022)
-- **Variety**
-- Data has different forms
-  - Structured data (e.g., spreadsheets, relational data)
-  - Semi-structured data (e.g., text, sales receipts, your class notes)
-  - Unstructured data (e.g., photos, videos)
-- Data comes in different formats (e.g., binary, CSV, XML, JSON)
+::::
+:::
 
-* Four V's of Big Data
+* The Six V's of Big Data
+- **Volume**
+  - Exponentially increasing amount of data
+  - Every day 2.5 exabytes (1m of TB) of data is generated
+    - 90% of all the data in the world was generated in the last 2 years
+    - Total amount of stored data doubles every 1.2 years
+  - Twitter / X: 500M tweets/day (2022)
+  - Google processes 8.5B queries/day (2022)
+  - Meta generates 4PB of data/day (2022)
+  - Walmart: 2.5PB of unstructured data/hour (2022)
+
+- **Variety**
+  - Data has different forms
+    - Structured data (e.g., spreadsheets, relational data)
+    - Semi-structured data (e.g., text, sales receipts, your class notes)
+    - Unstructured data (e.g., photos, videos)
+  - Data comes in different formats (e.g., binary, CSV, XML, JSON)
+
+* The Six V's of Big Data
 - **Velocity**
-- Relates to the speed at which data is generated
-  - E.g., sensors generate data streams
-- Sometimes data can be processed off-line
-- Real-time analytics: consume data as fast as it is generated
+  - Relates to the speed at which data is generated
+    - E.g., sensors generate data streams
+  - Sometimes data can be processed off-line
+  - Real-time analytics: consume data as fast as it is generated
+
 - **Veracity**
-- Relates to data quality
-- How to remove noise and bad data?
-- How to fill in missing values?
-- What is an outlier?
-- How do you decide what data to trust?
+  - Relates to data quality
+  - How to remove noise and bad data?
+  - How to fill in missing values?
+  - What is an outlier?
+  - How do you decide what data to trust?
 
 * Sources of Big Data
+
+::: columns
+:::: {.column width=55%}
 - We can distinguish Big Data in terms of its source
   - **Machines**
   - **People**
   - **Organizations**
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_24_image_1.png)
+
+::::
+:::
 
 * Sources of Big Data: Machines
 - **Machines** generate data
@@ -244,6 +478,10 @@ DATA605: Big Data Systems
   - Streaming, not batch
 
 * Sources of Big Data: People
+
+::: columns
+:::: {.column width=55%}
+
 - **People** and their activities generate data
   - Social media (e.g., Instagram, Twitter, LinkedIn)
   - Video sharing (e.g., YouTube, TikTok)
@@ -261,7 +499,13 @@ DATA605: Big Data Systems
     - Acquire $\to$ Store $\to$ Clean $\to$ Retrieve $\to$ Process $\to$ Insights
   - Surveillance capitalism
 
+::::
+:::: {.column width=40%}
+
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_26_image_1.png)
+
+::::
+:::
 
 * Sources of Big Data: Orgs
 - **Organizations** generate data
@@ -271,8 +515,10 @@ DATA605: Big Data Systems
   - Banking
   - Medical records
   - Clicks on a website
+
 - **Pros**
   - Highly structured
+
 - **Cons**
   - Need to store every event in the past to predict the future
     - Missing opportunities
@@ -283,13 +529,23 @@ DATA605: Big Data Systems
     - Cloud computing helps (e.g., data lakes, data warehouses)
 
 * Is Data Science Just Hype?
+
+::: columns
+:::: {.column width=55%}
+
 - Big data (or data science)
   - "Any process where interesting information is inferred from data"
 - Data scientist called the "sexiest job" of the 21st century
   - The term has becoming very muddled at this point
 - **Is it all hype?**
 
+::::
+:::: {.column width=40%}
+
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_28_image_1.png)
+
+::::
+:::
 
 * Is Data Science Just Hype?
 - **No**
@@ -311,15 +567,21 @@ DATA605: Big Data Systems
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_30_image_1.png)
 
+// TODO: Add "From Gartner"
+
 * What Was Cool in 2017?
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_31_image_1.png)
 
 * What Was Cool in 2022?
 
+// TODO: Remove the title
+
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_32_image_1.png)
 
-* What Is Cool in 2023?
+* What Was Cool in 2023?
+
+// TODO: Remove the title
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_33_image_1.png)
 
@@ -345,6 +607,8 @@ DATA605: Big Data Systems
 - From: Rise of Big Data, 2013
 
 * Examples: Election Prediction
+::: columns
+:::: {.column width=55%}
 - Nate Silver and the 2012 Elections
   - 49 out of 50 in calling each state in 2008 US elections
   - 50 out of 50 in 2012 US elections
@@ -357,8 +621,12 @@ DATA605: Big Data Systems
   - Monte-Carlo simulations to compute the probabilities of electoral college
   - Focus on probabilities instead of predictions
   - Great communication and presentation skills
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_35_image_1.png)
+::::
+:::
 
 * Examples: Google Flu Trends
 - 5% to 20% of US population contracts flu every year and 40k deaths
@@ -377,44 +645,55 @@ DATA605: Big Data Systems
   - Google Flu Trends: The Limits of Big Data
 
 * Data Scientist
+::: columns
+:::: {.column width=55%}
 - Very ambiguous and ill-defined term
 - From Drew Conway's Venn Diagram
 
+::::
+:::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_37_image_1.png)
+
+::::
+:::
 
 * Typical Data Scientist Workflow
 - From Data Science Workflow
 
-![](data605/lectures_source/images/lecture_1/lec_1_slide_38_image_1.jpeg)
+![](data605/lectures_source/images/lecture_1/lec_1_slide_38_image_1.jpeg)[ height=70% ]
 
 * Where Data Scientist Spends Most Time
 
-![](data605/lectures_source/images/lecture_1/lec_1_slide_39_image_1.png)
-
 - 80-90% of the work is data cleaning and wrangling
-- 'Janitor Work' in Data Science
+- "Janitor Work" in Data Science
 - Research Directions in Data Wrangling
 
-* **What a Data Scientist Should Know**
+![](data605/lectures_source/images/lecture_1/lec_1_slide_39_image_1.png)[ height=70% ]
+
+* What a Data Scientist Should Know
 - From: How to hire a data scientist
 - **Data grappling skills**
   - How to move data around and manipulate it with some programming language
   - Scripting languages (e.g., Python)
   - Data storage tools like relational databases, key-value stores
   - Programming frameworks like SQL, Hadoop, Spark, etc.
+
 - **Data visualization experience**
   - How to draw informative pictures of data
-  - Many tools (e.g., D3.js, plotting libraries)
+  - Many tools (e.g., `D3.js`, plotting libraries)
   - Harder question is knowing what to draw
+
 - **Knowledge of statistics**
   - E.g., error-bars, confidence intervals
   - Python libraries; Matlab; R
+
 - **Experience with forecasting and prediction**
   - Basic machine learning techniques
+
 - **Communication skills**
   - Tell the story, communicate the findings
 
-**DATA605**
+# Data Models
 
 * Data Models
 - **Data modeling**
@@ -435,6 +714,9 @@ DATA605: Big Data Systems
     field)
 
 * Multiple Layers of Data Modeling
+::: columns
+:::: {.column width=55%}
+
 - **Physical layer**
   - How is the data physically stored
   - How to represent complex data structures (e.g., B-trees for indexing)
@@ -447,9 +729,19 @@ DATA605: Big Data Systems
   - Restrict information flow
   - Security and/or ease-of-use
 
+::::
+:::: {.column width=40%}
+
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_43_image_1.png)
 
+::::
+:::
+
 * Data Models: Logical Layer
+
+::: columns
+:::: {.column width=55%}
+
 - **Modeling constructs**
   - A collection of concepts used to represent the structure in the data
   - E.g.,
@@ -464,7 +756,13 @@ DATA605: Big Data Systems
 - **Manipulation constructs**
   - E.g., insert, update, delete data
 
+::::
+:::: {.column width=40%}
+
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_44_image_1.png)
+
+::::
+:::
 
 * Examples of Data Models
 - We will cover:
@@ -582,6 +880,10 @@ DATA605: Big Data Systems
 - Many debates between Relational Model vs Network Model proponents
 
 * Entity-Relationship Model
+
+::: columns
+:::: {.column width=55%}
+
 - 1976: Peter Chen proposed "Entity-Relationship Model"
 - Data model describing knowledge in terms of entities and relationships
 - **Entities** are physical or logical objects that can be uniquely identified
@@ -591,9 +893,15 @@ DATA605: Big Data Systems
 - An ER model can be mapped onto a relational DB
   - Entities, relationships $\to$ tables
 
+::::
+:::: {.column width=40%}
+
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_1.png)
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_2.png)
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_3.png)
+
+::::
+:::
 
 * Databases: A Brief History
 - **1980s: Widespread acceptance of relational model**
@@ -661,6 +969,8 @@ DATA605: Big Data Systems
 ```
 
 * Resource Description Framework
+::: columns
+:::: {.column width=55%}
 - Aka RDF
 - Key construct: a "subject-predicate-object" triple, e.g.
   - Subject=sky
@@ -671,6 +981,8 @@ DATA605: Big Data Systems
 - Typically stored in:
   - Relational DBs
   - Dedicated "triple-stores" DBs
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_56_image_1.png)
 ```
@@ -682,13 +994,23 @@ DATA605: Big Data Systems
 06    <http://www.wikidata.org/entity/Q12418> <http://purl.org/dc/terms/creator> <http://dbpedia.org/resource/Leonardo_da_Vinci> .
 07    <http://data.europeana.eu/item/04802/243FA8618938F4117025F17A8B813C5F9AA4D619> <http://purl.org/dc/terms/subject> <http://www.wikidata.org/entity/Q12418> .
 ```
+::::
+:::
 
 * Property Graph Model
+
+::: columns
+:::: {.column width=55%}
 - Graph:
   - With vertices and edges
   - With properties associated with each edge and vertex
 - Typically stored in:
   - Relational DBs
   - Graph DBs
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_57_image_1.jpeg)
+
+::::
+:::
