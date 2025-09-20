@@ -8,7 +8,7 @@
 
 \vspace{0.4cm}
 \begingroup \large
-MSML610: Advanced Machine Learning
+DATA605: Big Data Systems
 \endgroup
 ::::
 :::
@@ -19,8 +19,6 @@ MSML610: Advanced Machine Learning
 **$$\text{\blue{Introduction}}$$**
 \endgroup
 
-::: columns
-:::: {.column width=75%}
 \vspace{1cm}
 
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
@@ -29,21 +27,21 @@ MSML610: Advanced Machine Learning
 
 * Data Science
 - **Promises of data science** (DS)
-- Give a competitive advantages
-- Make better strategic and tactical business decisions
-- Optimize business processes
+  - Give a competitive advantages
+  - Make better strategic and tactical business decisions
+  - Optimize business processes
 - **Data science is not new**, it was called:
-- Operation research (~1970-80s)
-- Decision support, Business intelligence (~1990s)
-- Predictive analytics (Early 2010s)
+  - Operation research (~1970-80s)
+  - Decision support, Business intelligence (~1990s)
+  - Predictive analytics (Early 2010s)
 - ...
 - **What has changed**
-- Now learning and applying DS is easy**
-  - No need for hiring a consulting company
-- Tools are open-source
-  - E.g., Python + pydata stack (numpy, scipy, Pandas, sklearn)
-- Large data sets available
-- Cheap computing (e.g., AWS, Google Cloud)
+  - Now learning and applying DS is easy\*\*
+    - No need for hiring a consulting company
+  - Tools are open-source
+    - E.g., Python + pydata stack (numpy, scipy, Pandas, sklearn)
+  - Large data sets available
+  - Cheap computing (e.g., AWS, Google Cloud)
 
 * Motivation: Data Overload
 - **"Data science is the number one catalyst for economic growth**"
@@ -84,10 +82,10 @@ MSML610: Advanced Machine Learning
 - **Brontobytes** = 1027 bytes
 
 * Scale of Data Size
-![](data605/lectures_source/images/lecture_1/lec_1_slide_13_image_1.png)
+  ![](data605/lectures_source/images/lecture_1/lec_1_slide_13_image_1.png)
 
 * Constants Everybody Should Know
-From Latency Numbers Every Programmer Should Know (by year)
+- From Latency Numbers Every Programmer Should Know (by year)
 - A CPU running at 3GHz executes an instruction every 0.3ns
 - L1 cache reference/register: 1ns
 - L2 cache reference: 4ns
@@ -131,7 +129,8 @@ From Latency Numbers Every Programmer Should Know (by year)
   - You watch shows about renovations
   - Your phone tracks where you are
   - Google sends you coupons for the closest Home Depot
-  - "I feel like Google is following me", "it's like Facebook is reading my mind"
+  - "I feel like Google is following me", "it's like Facebook is reading my
+    mind"
 
 * Big Data Applications
 
@@ -171,7 +170,7 @@ From Latency Numbers Every Programmer Should Know (by year)
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_20_image_1.png)
 
-* Four V's of Big Data
+* Four V'S of Big Data
 - Characteristics of big data
 - **Volume**
   - Vast amount of data is generated
@@ -238,7 +237,8 @@ From Latency Numbers Every Programmer Should Know (by year)
 - **Pros**
   - Highly structured
 - **Cons**
-  - Can't be easily moved, but need to be computed in-place or in centralized fashion
+  - Can't be easily moved, but need to be computed in-place or in centralized
+    fashion
   - Streaming, not batch
 
 * Sources of Big Data: People
@@ -291,30 +291,33 @@ From Latency Numbers Every Programmer Should Know (by year)
 
 * Is Data Science Just Hype?
 - **No**
-  - Extracting insights and knowledge from data Is very important and will continue to increase in importance
+  - Extracting insights and knowledge from data Is very important and will
+    continue to increase in importance
   - Big data techniques are revolutionizing the world in many domains
-    - E.g., education, food supply, disease epidemics, …
+    - E.g., education, food supply, disease epidemics, ...
 - **But**
   - Not much different from what statisticians have been doing for many years
 - **What is different?**
   - Much more data is digitally available than ever before
-  - Easy-to-use programming frameworks (e.g., Hadoop) = much easier to analyze it
+  - Easy-to-use programming frameworks (e.g., Hadoop) = much easier to analyze
+    it
   - Cloud computing (e.g., AWS) = much cheaper to analyze it
-  - Often large-scale data + simple algorithms >> small data + complex algorithms
+  - Often large-scale data + simple algorithms >> small data + complex
+    algorithms
 
-* What was Cool in 2012?
+* What Was Cool in 2012?
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_30_image_1.png)
 
-* What was Cool in 2017?
+* What Was Cool in 2017?
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_31_image_1.png)
 
-* What was Cool in 2022?
+* What Was Cool in 2022?
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_32_image_1.png)
 
-* What is Cool in 2023?
+* What Is Cool in 2023?
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_33_image_1.png)
 
@@ -411,22 +414,23 @@ From Latency Numbers Every Programmer Should Know (by year)
 
 **DATA605**
 
-Course Intro
-Big data
-[BOLD]Data Models[/BOLD]
-
 * Data Models
 - **Data modeling**
-  - = process of representing and capturing the structure and properties of real-world entities
-  - Process of abstraction: real-world → representation**
+  - = process of representing and capturing the structure and properties of
+    real-world entities
+  - Process of abstraction: real-world → representation\*\*
 - **Data model**
-  - = description of how data is *represented* (e.g., relational, key-value) and *accessed* (e.g., insert operations, how to query)
-  - E.g., schema in a DB describes a specific collection of data, using a given data model
+  - = description of how data is _represented_ (e.g., relational, key-value) and
+    _accessed_ (e.g., insert operations, how to query)
+  - E.g., schema in a DB describes a specific collection of data, using a given
+    data model
 - **Why do we need data model?**
-  - Need to know the structure of the data (to some extent) to be able to write general purpose code
+  - Need to know the structure of the data (to some extent) to be able to write
+    general purpose code
   - Allow to share data across programs, organizations, systems
   - Need to integrate information from multiple sources
-  - Preprocess data to make access efficient (e.g., building an index on a data field)
+  - Preprocess data to make access efficient (e.g., building an index on a data
+    field)
 
 * Multiple Layers of Data Modeling
 - **Physical layer**
@@ -488,14 +492,16 @@ Big data
     - Can represent more datasets
     - Harder to use/to query
     - Less efficient (e.g., more memory, more time)
-- The evolution of data modeling tools is an attempt to capture the structure in the data
+- The evolution of data modeling tools is an attempt to capture the structure in
+  the data
   - Structured data → Relational DBs
   - Semi-structured web data → XML, JSON
   - Unstructured data → NoSQL DBs
 
 * Data Independence
 - **Logical data independence**
-  - Can change the representation of data without changing programs that operate on it
+  - Can change the representation of data without changing programs that operate
+    on it
   - E.g., an API abstracting the backend
 - **Physical data independence**
   - Can change the layout of data on disk and programs won't change
@@ -511,7 +517,8 @@ Big data
   - Most applications initially used their own data stores
     - Each application had its own format
     - Data was basically unavailable to other programs
-  - **Database**: term coined in military information systems to denote "shared data banks" by multiple applications
+  - **Database**: term coined in military information systems to denote "shared
+    data banks" by multiple applications
     - Define a data format
     - Store it as a "data dictionary" (schema)
     - Implement general-purpose "database management" software to access data
@@ -527,14 +534,17 @@ Big data
   - E.g., connect accounts with customers
   - Network model attempted to be very general and flexible
 - IBM designed IMS hierarchical database in 1966 for the Apollo space program
-  - Predates *hard disks*
+  - Predates _hard disks_
   - Still around today!
-  - *.. more than 95 percent of the top Fortune 1000 companies use IMS to process 50 billion transactions a day and manage 15 million gigabytes of critical business data* (from IBM Website on IMS)
+  - _.. more than 95 percent of the top Fortune 1000 companies use IMS to
+    process 50 billion transactions a day and manage 15 million gigabytes of
+    critical business data_ (from IBM Website on IMS)
 - Cons:
-  - Hierarchical/network models exposed too much of the internal data (e.g., structures/pointers to the users)
+  - Hierarchical/network models exposed too much of the internal data (e.g.,
+    structures/pointers to the users)
   - Leaky abstraction
 
-* Relational, Hierarchical, Network model
+* Relational, Hierarchical, Network Model
 - **Relational model**
   - Data is represented as tuples grouped in relations
   - Omnipresent SQL
@@ -557,11 +567,11 @@ Big data
   - Set theory, first-order predicate logic
     - Ted Codd developed the Relational Model
   - Elegant, formal model
-    - Provided almost complete *data independence*
+    - Provided almost complete _data independence_
     - Users didn't need to worry about how the data was stored, processed
   - High-level query language
     - SQL based on relational algebra
-  - Notion of *normal forms*
+  - Notion of _normal forms_
     - Allowed one to reason about data and its relations
     - Remove redundancies
 - Influential projects:
@@ -591,15 +601,18 @@ Big data
 - Late 80's
   - Object-oriented DBs
     - Store objects instead of tables
-    - Get around *impedance mismatch* between programming languages and databases
+    - Get around _impedance mismatch_ between programming languages and
+      databases
   - Object-relational DBs
     - Allow user-defined types
-    - Get many benefits of object-oriented while keeping the essence of relational model
+    - Get many benefits of object-oriented while keeping the essence of
+      relational model
   - No expressive difference from pure relational model
 
 * Object-Oriented
 - OOP is a data model
-  - Object behavior is described through data (stored as fields) and code (in the form of methods)
+  - Object behavior is described through data (stored as fields) and code (in
+    the form of methods)
 - **Composition**
   - Aka `has-a` relationships
   - E.g., an Employee class has an Address class
@@ -609,7 +622,8 @@ Big data
 - **Polymorphism**
   - Code executed depends on the class of the object
   - One interface, many implementations
-  - E.g., draw() method on a Circle vs Square object, both descending from Shape class
+  - E.g., draw() method on a Circle vs Square object, both descending from Shape
+    class
 - **Encapsulation**
   - E.g., private vs public fields/members
   - Prevents external code from being concerned with inner workings of an object
@@ -618,39 +632,38 @@ Big data
 - **Late 90's-today**
 - Web/Internet emerges
 - XML: eXtensible Markup Language
-  - Intended for *semi-structured* data
+  - Intended for _semi-structured_ data
   - Tree-like structure
   - Flexible schema
-
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Edited by XMLSpy -->
- <CATALOG>
-     <CD>
- 	<TITLE>Empire Burlesque</TITLE>
+  <CATALOG>
+    <CD>
+      <TITLE>Empire Burlesque</TITLE>
       <ARTIST>Bob Dylan</ARTIST>
- 	<COUNTRY>USA</COUNTRY>
+      <COUNTRY>USA</COUNTRY>
       <COMPANY>Columbia</COMPANY>
       <PRICE>10.90</PRICE>
-	<YEAR>1985</YEAR>
+      <YEAR>1985</YEAR>
     </CD>
     <CD>
-	<TITLE>Hide your heart</TITLE>
-	<ARTIST>Bonnie Tyler</ARTIST>
-	<COUNTRY>UK</COUNTRY>
-	<COMPANY>CBS Records</COMPANY>
-	<PRICE>9.90</PRICE>
-	<YEAR>1988</YEAR>
-     </CD>
-     ...
+      <TITLE>Hide your heart</TITLE>
+      <ARTIST>Bonnie Tyler</ARTIST>
+      <COUNTRY>UK</COUNTRY>
+      <COMPANY>CBS Records</COMPANY>
+      <PRICE>9.90</PRICE>
+      <YEAR>1988</YEAR>
+    </CD>
+    ...
 ```
 
 * Resource Description Framework
 - Aka RDF
 - Key construct: a "subject-predicate-object" triple, e.g.
-  - subject=sky
-  - predicate=has-the-color
-  - object=blue
+  - Subject=sky
+  - Predicate=has-the-color
+  - Object=blue
 - Can be mapped to a labeled, directed multi-graph
   - More general than a tree
 - Typically stored in:
@@ -658,7 +671,6 @@ Big data
   - Dedicated "triple-stores" DBs
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_56_image_1.png)
-
 ```
 01    <http://example.org/bob#me> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
 02    <http://example.org/bob#me> <http://xmlns.com/foaf/0.1/knows> <http://example.org/alice#me> .
@@ -671,8 +683,8 @@ Big data
 
 * Property Graph Model
 - Graph:
-  - with vertices and edges
-  - with properties associated with each edge and vertex
+  - With vertices and edges
+  - With properties associated with each edge and vertex
 - Typically stored in:
   - Relational DBs
   - Graph DBs
