@@ -1,161 +1,31 @@
-// notes_to_pdf.py --input lectures_source/final_enhanced_markdown.txt --output tmp.pdf --type slides --skip_action cleanup_after --debug_on_error --toc_type navigation
+// https://docs.google.com/presentation/d/1dWY49EVhAEiOJBbw07oMUDrA3D7QQAGubPAO4SYQvgE/edit?slide=id.g185912b214c_0_13#slide=id.g185912b214c_0_13
 
-:::: columns
-::::: {.column width=15%}
-![](lectures_source/UMD_Logo.png)
-:::::
-::::: {.column width=75%}
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
 
 \vspace{0.4cm}
 \begingroup \large
-UMD DATA605 - Big Data Systems
+MSML610: Advanced Machine Learning
 \endgroup
-:::::
 ::::
+:::
 
 \vspace{1cm}
 
 \begingroup \Large
-**Course Intro Big Data & Data Models**
+**$$\text{\blue{Introduction}}$$**
 \endgroup
 
-:::: columns
-::::: {.column width=75%}
+::: columns
+:::: {.column width=75%}
 \vspace{1cm}
 
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
 
-**TAs**:
-Krishna Pratardan Taduri, kptaduri@umd.edu
-Prahar Kaushikbhai Modi, pmodi08@umd.edu
-
-**v1.1**
-:::::
-::::: {.column width=20%}
-
-:::::
-::::
-
-
-
-* Why I Am Interested in Big Data
-- https://www.linkedin.com/in/gpsaggese/
-  - Feel free to connect on LinkedIn to stay in touch
-
-
-
-* Learning Outcomes
-- Model and reason about data
-- Process and manipulate data in different ways
-  - E.g., Python, Pandas
-- Introduce a variety of data models
-  - E.g., relational, NoSQL, graph
-  - Decide which data model is appropriate for different applications
-- Use a variety of data management systems
-  - E.g., PostgreSQL, MongoDB, HBase
-  - Decide which system is appropriate for a data management scenario
-- Build data processing pipelines
-  - E.g., Docker, Airflow
-- Build a big-data system end-to-end
-- Contribute to an open-source project
-- Project: build a (little) system with Big Data technology
-
-UMD DATA605
-
-
-![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_1.png)
-![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_2.png)
-![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_3.png)
-![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_4.png)
-![](data605/lectures_md/images/lecture_1/lec_1_slide_4_image_5.png)
-
-
-* Tools We Will Learn To Use
-- **Programming languages**
-  - Python
-- **Development tools**
-
-  - Bash/Linux OS
-  - Git (understand data model, branching)
-  - GitHub (PRs, work with issues)
-  - Jupyter notebooks
-  - Docker
-- **Big data tools**
-
-  - ETL pipelines
-  - Relational DBs (PostgreSQL)
-  - NoSQL DBs (HBase, MongoDB, Couchbase, Redis)
-  - Graph DBs (Neo4j, OrientDB, AllegroGraph, GraphX, Giraph)
-  - Computing framework (Hadoop, Spark, Dask, Storm, Spark Streaming)
-  - Workflow manager (Airflow)
-  - Cloud services (AWS)
-- **Tutorials** for all the tools we use for the class project
-
-UMD DATA605
-
-
-* Todos
-- Studying the slides and the (free) materials is enough
-- DATA605 - ELMS/Canvas site
-  - Make sure to enable notifications
-  - How to get in touch with me/TAs
-- DATA605 - Schedule
-- DATA605 - GitHub repo
-- Setup your computing environment
-  - Install Linux/VMware
-  - Install Docker on your laptop
-  - Instructions are in the class repo
-- Bring your laptop to class
-  - Quizzes at the beginning of class
-- Lessons are recorded
-  - Still come to class!
-
-UMD DATA605
-
-
-* Grading!
-  - Multiple choices quizzes for 40%
-    - Start on the 3rd week of class
-    - 3 quizzes, every 2 lessons
-  - Graded individually (60% of final grade)
-    - Each student implements 1 class project
-    - Learn a cutting-edge modern big data technology
-    - Write a tutorial + an example of a system using that tech
-  - Review examples of complete projects
-  - In class labs
-
-UMD DATA605
-
-
-* Soft Skills to Succeed in the Workplace
-- Work in a team
-- Design software architecture (e.g., OOP, Agile, Design Patterns)
-- Comment your own code
-- Write external documentation (e.g., tutorials, manuals, how-tos)
-- Write code that other people can understand (including future-you)
-- Read other people's code
-- Follow code conventions (e.g., PEP8, Google Code)
-- Be clear in communications (e.g., in emails, Slack)
-- File a bug report
-- Reproduce (aka repro) a bug
-- Have a sense of CS constants
-- Have a sense of how an OS works (e.g., virtual memory, processes)
-- **Goal**: model the class project to prepare you for the workplace
-
-UMD DATA605
-
- 
-
-# Content processing error - slide missing
-
- 
-UMD DATA605 - Big Data Systems
-Course Intro
-**Big Data**
-Data Models
-
-UMD DATA605
-
+**References**:
 
 * Data Science
 - **Promises of data science** (DS)
@@ -176,7 +46,6 @@ UMD DATA605
 - Large data sets available
 - Cheap computing (e.g., AWS, Google Cloud)
 
-UMD DATA605
 
 
 * Motivation: Data Overload
@@ -197,7 +66,6 @@ UMD DATA605
   - How to handle the increasing amount data?
   - How to extract actionable insights and scientific knowledge from data?
 
-UMD DATA605
 
 
 * Scale of Data Size
@@ -241,7 +109,6 @@ From Latency Numbers Every Programmer Should Know (by year)
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_14_image_1.png)
 
-UMD DATA605
 
 
 * Big Data Applications
@@ -261,7 +128,6 @@ UMD DATA605
   - In 2022, (USD)600B spent on digital marketing
   - 50 Stats Showing The Power Of Personalization
 
-UMD DATA605
 
 
 * Big Data Applications
@@ -282,14 +148,12 @@ UMD DATA605
   - Google sends you coupons for the closest Home Depot
   - "I feel like Google is following me", "it's like Facebook is reading my mind"
 
-UMD DATA605
 
  
 
  
 
 * Big Data Applications
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_17_image_1.png)
 
@@ -306,7 +170,6 @@ UMD DATA605
 - Health tech
   - Personal health trackers (e.g., smart rings, phones)
 
-UMD DATA605
 
 
 * Big Data Applications
@@ -319,7 +182,6 @@ UMD DATA605
   - Optimal urban services
   - Maximize energy savings
 
-UMD DATA605
 
 
 * Goal of Data Science
@@ -332,7 +194,6 @@ UMD DATA605
 - Combine streams of big data to generate new data
   - New data can be "big data" itself
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_20_image_1.png)
 
@@ -354,7 +215,6 @@ UMD DATA605
   - Data needs to be valuable
   - Big data needs to benefit an organization
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_21_image_1.png)
 
@@ -376,7 +236,6 @@ UMD DATA605
   - Unstructured data (e.g., photos, videos)
 - Data comes in different formats (e.g., binary, CSV, XML, JSON)
 
-UMD DATA605
 
 
 * Four V's of Big Data
@@ -392,7 +251,6 @@ UMD DATA605
 - What is an outlier?
 - How do you decide what data to trust?
 
-UMD DATA605
 
 
 * Sources of Big Data
@@ -401,7 +259,6 @@ UMD DATA605
   - **People**
   - **Organizations**
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_24_image_1.png)
  
@@ -420,7 +277,6 @@ UMD DATA605
   - Can't be easily moved, but need to be computed in-place or in centralized fashion
   - Streaming, not batch
 
-UMD DATA605
 
 
 * Sources of Big Data: People
@@ -441,7 +297,6 @@ UMD DATA605
     - Acquire → Store → Clean → Retrieve → Process → Insights
   - Surveillance capitalism
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_26_image_1.png)
 
@@ -465,7 +320,6 @@ UMD DATA605
     - Data is outdated/not visible
     - Cloud computing helps (e.g., data lakes, data warehouses)
 
-UMD DATA605
 
 
 * Is Data Science Just Hype?
@@ -475,7 +329,6 @@ UMD DATA605
   - The term has becoming very muddled at this point
 - **Is it all hype?**
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_28_image_1.png)
 
@@ -493,30 +346,25 @@ UMD DATA605
   - Cloud computing (e.g., AWS) = much cheaper to analyze it
   - Often large-scale data + simple algorithms >> small data + complex algorithms
 
-UMD DATA605
 
 
 * What was Cool in 2012?
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_30_image_1.png)
 
 
 * What was Cool in 2017?
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_31_image_1.png)
 
 
 * What was Cool in 2022?
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_32_image_1.png)
  
  
 
 * What is Cool in 2023?
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_33_image_1.png)
 
@@ -542,7 +390,6 @@ UMD DATA605
   - Your preference is data-fied into a stream of likes
 - From: Rise of Big Data, 2013
 
-UMD DATA605
 
 
 * Examples: Election Prediction
@@ -559,7 +406,6 @@ UMD DATA605
   - Focus on probabilities instead of predictions
   - Great communication and presentation skills
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_35_image_1.png)
 
@@ -580,14 +426,12 @@ UMD DATA605
     - E.g., people searching for "fever" and "cough"
   - Google Flu Trends: The Limits of Big Data
 
-UMD DATA605
 
 
 * Data Scientist
 - Very ambiguous and ill-defined term
 - From Drew Conway's Venn Diagram
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_37_image_1.png)
 
@@ -595,13 +439,11 @@ UMD DATA605
 * Typical Data Scientist Workflow
 - From Data Science Workflow
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_38_image_1.jpeg)
 
 
 * Where Data Scientist Spends Most Time
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_39_image_1.png)
 
@@ -629,7 +471,6 @@ UMD DATA605
 - **Communication skills**
   - Tell the story, communicate the findings
 
-UMD DATA605
 
 **DATA605**
 
@@ -637,8 +478,6 @@ UMD DATA605
  
 
 
-* UMD DATA605 - Big Data Systems
-[BOLD]UMD DATA605 - Big Data Systems[/BOLD]
 Course Intro
 Big data
 [BOLD]Data Models[/BOLD]
@@ -657,7 +496,6 @@ Big data
   - Need to integrate information from multiple sources
   - Preprocess data to make access efficient (e.g., building an index on a data field)
 
-UMD DATA605
 
 
 * Multiple Layers of Data Modeling
@@ -673,7 +511,6 @@ UMD DATA605
   - Restrict information flow
   - Security and/or ease-of-use
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_43_image_1.png)
 
@@ -693,7 +530,6 @@ UMD DATA605
 - **Manipulation constructs**
   - E.g., insert, update, delete data
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_44_image_1.png)
 
@@ -715,7 +551,6 @@ UMD DATA605
   - Avro/Thrift
   - Python Pickle
 
-UMD DATA605
 
 
 * Good Data Models
@@ -734,7 +569,6 @@ UMD DATA605
   - Semi-structured web data → XML, JSON
   - Unstructured data → NoSQL DBs
 
-UMD DATA605
 
 
 * Data Independence
@@ -748,7 +582,6 @@ UMD DATA605
     - Compress the data
     - Sort the data
 
-UMD DATA605
 
 
 * Databases: A Brief History
@@ -768,7 +601,6 @@ UMD DATA605
     - Who controls the data?
       - E.g., integrity, security, privacy concerns
 
-UMD DATA605
 
  
 
@@ -785,7 +617,6 @@ UMD DATA605
   - Hierarchical/network models exposed too much of the internal data (e.g., structures/pointers to the users)
   - Leaky abstraction
 
-UMD DATA605
 
 
 * Relational, Hierarchical, Network model
@@ -802,7 +633,6 @@ UMD DATA605
     - Each record can have multiple parent and child records
   - Resurgence in 2010s with graph DBs
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_1.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_2.png)
@@ -826,7 +656,6 @@ UMD DATA605
   - Didn't care about IMS compatibility (as IBM had to)
 - Many debates between Relational Model vs Network Model proponents
 
-UMD DATA605
 
 
 * Entity-Relationship Model
@@ -839,7 +668,6 @@ UMD DATA605
 - An ER model can be mapped onto a relational DB
   - Entities, relationships → tables
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_1.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_2.png)
@@ -860,7 +688,6 @@ UMD DATA605
     - Get many benefits of object-oriented while keeping the essence of relational model
   - No expressive difference from pure relational model
 
-UMD DATA605
 
 
 * Object-Oriented
@@ -880,7 +707,6 @@ UMD DATA605
   - E.g., private vs public fields/members
   - Prevents external code from being concerned with inner workings of an object
 
-UMD DATA605
 
 
 * Databases: A Brief History
@@ -891,7 +717,6 @@ UMD DATA605
   - Tree-like structure
   - Flexible schema
 
-UMD DATA605
 
 ```
 <?xml version="1.0" encoding="UTF-8"?> 
@@ -929,7 +754,6 @@ UMD DATA605
   - Relational DBs
   - Dedicated "triple-stores" DBs
 
-UMD DATA605
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_56_image_1.png)
 
@@ -952,12 +776,4 @@ UMD DATA605
   - Relational DBs
   - Graph DBs
 
-UMD DATA605
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_57_image_1.jpeg)
-
-
-* Class Project: TODOs
-- Clone Class GitHub repo
-- Next:
-  - Dr Saggese + TA come up with list of projects
