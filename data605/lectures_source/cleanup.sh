@@ -20,5 +20,7 @@ perl -i -0777 -pe 's/\*\*([^\n]+?)\s*\n\s*\*\*/**$1**/g' $FILE
 # Clean up 
 perl -i -0777 -pe 's/\n{3,}/\n\n/g' $FILE
 
+perl -i -pe 's/→/$\to$/g' $FILE
+
 # Reflow
 lint_txt.py -i $FILE --use_dockerized_prettier
