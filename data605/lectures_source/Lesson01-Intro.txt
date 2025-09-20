@@ -36,7 +36,7 @@ DATA605: Big Data Systems
   - Predictive analytics (Early 2010s)
 - ...
 - **What has changed**
-  - Now learning and applying DS is easy\*\*
+  - Now learning and applying DS is **easy**
     - No need for hiring a consulting company
   - Tools are open-source
     - E.g., Python + pydata stack (numpy, scipy, Pandas, sklearn)
@@ -256,7 +256,7 @@ DATA605: Big Data Systems
   - Typically semi-structured or unstructured data
     - Text, data605/lectures_source/images, movies
   - It takes an investment before you can reap the value
-    - Acquire → Store → Clean → Retrieve → Process → Insights
+    - Acquire $\to$ Store $\to$ Clean $\to$ Retrieve $\to$ Process $\to$ Insights
   - Surveillance capitalism
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_26_image_1.png)
@@ -322,7 +322,7 @@ DATA605: Big Data Systems
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_33_image_1.png)
 
 * Key Shifts Before/After Big-Data
-- **Datasets: small, curated, clean → large, uncurated, messy**
+- **Datasets: small, curated, clean $\to$ large, uncurated, messy**
   - Before:
     - Statistics based on small, carefully collected random samples
     - Costly and careful planning for experiments
@@ -331,9 +331,9 @@ DATA605: Big Data Systems
     - Easily collect huge volume of data
     - Feed it into algorithms
     - Usually the signal is strong enough to overcome the noise
-- **Causation → Correlation**
+- **Causation $\to$ Correlation**
   - Goal: figure out what caused what
-  - Causation very hard to figure out → give up causation for correlation
+  - Causation very hard to figure out $\to$ give up causation for correlation
     - Finding out if two things are correlated is good enough
     - E.g., people buying diapers and beer together at the supermarket
 - **"Data-fication"**
@@ -418,7 +418,7 @@ DATA605: Big Data Systems
 - **Data modeling**
   - = process of representing and capturing the structure and properties of
     real-world entities
-  - Process of abstraction: real-world → representation\*\*
+  - Process of abstraction: real-world $\to$ **representation**
 - **Data model**
   - = description of how data is _represented_ (e.g., relational, key-value) and
     _accessed_ (e.g., insert operations, how to query)
@@ -494,9 +494,9 @@ DATA605: Big Data Systems
     - Less efficient (e.g., more memory, more time)
 - The evolution of data modeling tools is an attempt to capture the structure in
   the data
-  - Structured data → Relational DBs
-  - Semi-structured web data → XML, JSON
-  - Unstructured data → NoSQL DBs
+  - Structured data $\to$ Relational DBs
+  - Semi-structured web data $\to$ XML, JSON
+  - Unstructured data $\to$ NoSQL DBs
 
 * Data Independence
 - **Logical data independence**
@@ -587,7 +587,7 @@ DATA605: Big Data Systems
 - **Relationships** between entities
   - "Verbs"
 - An ER model can be mapped onto a relational DB
-  - Entities, relationships → tables
+  - Entities, relationships $\to$ tables
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_1.png)
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_2.png)
