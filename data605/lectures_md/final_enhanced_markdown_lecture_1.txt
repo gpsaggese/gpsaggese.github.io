@@ -61,8 +61,6 @@ MSML610: Advanced Machine Learning
   - How to handle the increasing amount data?
   - How to extract actionable insights and scientific knowledge from data?
 
-
-
 * Scale of Data Size
 - **Megabyte** = 210 approx 106 bytes
   - Typical English book
@@ -85,10 +83,8 @@ MSML610: Advanced Machine Learning
   - Yottabyte costs (USD) 100T
 - **Brontobytes** = 1027 bytes
 
-
 * Scale of Data Size
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_13_image_1.png)
-
 
 * Constants Everybody Should Know
 From Latency Numbers Every Programmer Should Know (by year)
@@ -103,8 +99,6 @@ From Latency Numbers Every Programmer Should Know (by year)
 - Packet round-trip from CA to Netherland: 150ms
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_14_image_1.png)
-
-
 
 * Big Data Applications
 - **Personalized marketing**
@@ -121,8 +115,6 @@ From Latency Numbers Every Programmer Should Know (by year)
 - E.g.,
   - In 2022, (USD)600B spent on digital marketing
   - 50 Stats Showing The Power Of Personalization
-
-
 
 * Big Data Applications
 - **Mobile advertisement**
@@ -141,15 +133,9 @@ From Latency Numbers Every Programmer Should Know (by year)
   - Google sends you coupons for the closest Home Depot
   - "I feel like Google is following me", "it's like Facebook is reading my mind"
 
-
-
-
-
-
 * Big Data Applications
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_17_image_1.png)
-
 
 * Big Data Applications
 - **Biomedical data**
@@ -163,8 +149,6 @@ From Latency Numbers Every Programmer Should Know (by year)
 - Health tech
   - Personal health trackers (e.g., smart rings, phones)
 
-
-
 * Big Data Applications
 - **Smart cities**
 - Interconnected mesh of sensors
@@ -174,8 +158,6 @@ From Latency Numbers Every Programmer Should Know (by year)
   - Minimize traffic congestion
   - Optimal urban services
   - Maximize energy savings
-
-
 
 * Goal of Data Science
 - **Goal**: from data to wisdom
@@ -187,9 +169,7 @@ From Latency Numbers Every Programmer Should Know (by year)
 - Combine streams of big data to generate new data
   - New data can be "big data" itself
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_20_image_1.png)
-
 
 * Four V's of Big Data
 - Characteristics of big data
@@ -208,9 +188,7 @@ From Latency Numbers Every Programmer Should Know (by year)
   - Data needs to be valuable
   - Big data needs to benefit an organization
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_21_image_1.png)
-
 
 * Four V's of Big Data
 - **Volume**
@@ -229,8 +207,6 @@ From Latency Numbers Every Programmer Should Know (by year)
   - Unstructured data (e.g., photos, videos)
 - Data comes in different formats (e.g., binary, CSV, XML, JSON)
 
-
-
 * Four V's of Big Data
 - **Velocity**
 - Relates to the speed at which data is generated
@@ -244,18 +220,13 @@ From Latency Numbers Every Programmer Should Know (by year)
 - What is an outlier?
 - How do you decide what data to trust?
 
-
-
 * Sources of Big Data
 - We can distinguish Big Data in terms of its source
   - **Machines**
   - **People**
   - **Organizations**
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_24_image_1.png)
-
-
 
 * Sources of Big Data: Machines
 - **Machines** generate data
@@ -269,8 +240,6 @@ From Latency Numbers Every Programmer Should Know (by year)
 - **Cons**
   - Can't be easily moved, but need to be computed in-place or in centralized fashion
   - Streaming, not batch
-
-
 
 * Sources of Big Data: People
 - **People** and their activities generate data
@@ -290,9 +259,7 @@ From Latency Numbers Every Programmer Should Know (by year)
     - Acquire → Store → Clean → Retrieve → Process → Insights
   - Surveillance capitalism
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_26_image_1.png)
-
 
 * Sources of Big Data: Orgs
 - **Organizations** generate data
@@ -313,8 +280,6 @@ From Latency Numbers Every Programmer Should Know (by year)
     - Data is outdated/not visible
     - Cloud computing helps (e.g., data lakes, data warehouses)
 
-
-
 * Is Data Science Just Hype?
 - Big data (or data science)
   - "Any process where interesting information is inferred from data"
@@ -322,9 +287,7 @@ From Latency Numbers Every Programmer Should Know (by year)
   - The term has becoming very muddled at this point
 - **Is it all hype?**
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_28_image_1.png)
-
 
 * Is Data Science Just Hype?
 - **No**
@@ -339,28 +302,21 @@ From Latency Numbers Every Programmer Should Know (by year)
   - Cloud computing (e.g., AWS) = much cheaper to analyze it
   - Often large-scale data + simple algorithms >> small data + complex algorithms
 
-
-
 * What was Cool in 2012?
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_30_image_1.png)
-
 
 * What was Cool in 2017?
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_31_image_1.png)
 
-
 * What was Cool in 2022?
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_32_image_1.png)
 
-
-
 * What is Cool in 2023?
 
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_33_image_1.png)
-
 
 * Key Shifts Before/After Big-Data
 - **Datasets: small, curated, clean → large, uncurated, messy**
@@ -383,8 +339,6 @@ From Latency Numbers Every Programmer Should Know (by year)
   - Your preference is data-fied into a stream of likes
 - From: Rise of Big Data, 2013
 
-
-
 * Examples: Election Prediction
 - Nate Silver and the 2012 Elections
   - 49 out of 50 in calling each state in 2008 US elections
@@ -399,9 +353,7 @@ From Latency Numbers Every Programmer Should Know (by year)
   - Focus on probabilities instead of predictions
   - Great communication and presentation skills
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_35_image_1.png)
-
 
 * Examples: Google Flu Trends
 - 5% to 20% of US population contracts flu every year and 40k deaths
@@ -419,22 +371,16 @@ From Latency Numbers Every Programmer Should Know (by year)
     - E.g., people searching for "fever" and "cough"
   - Google Flu Trends: The Limits of Big Data
 
-
-
 * Data Scientist
 - Very ambiguous and ill-defined term
 - From Drew Conway's Venn Diagram
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_37_image_1.png)
-
 
 * Typical Data Scientist Workflow
 - From Data Science Workflow
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_38_image_1.jpeg)
-
 
 * Where Data Scientist Spends Most Time
 
@@ -443,7 +389,6 @@ From Latency Numbers Every Programmer Should Know (by year)
 - 80-90% of the work is data cleaning and wrangling
 - 'Janitor Work' in Data Science
 - Research Directions in Data Wrangling
-
 
 * **What a Data Scientist Should Know**
 - From: How to hire a data scientist
@@ -464,17 +409,11 @@ From Latency Numbers Every Programmer Should Know (by year)
 - **Communication skills**
   - Tell the story, communicate the findings
 
-
 **DATA605**
-
-
-
-
 
 Course Intro
 Big data
 [BOLD]Data Models[/BOLD]
-
 
 * Data Models
 - **Data modeling**
@@ -489,8 +428,6 @@ Big data
   - Need to integrate information from multiple sources
   - Preprocess data to make access efficient (e.g., building an index on a data field)
 
-
-
 * Multiple Layers of Data Modeling
 - **Physical layer**
   - How is the data physically stored
@@ -504,9 +441,7 @@ Big data
   - Restrict information flow
   - Security and/or ease-of-use
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_43_image_1.png)
-
 
 * Data Models: Logical Layer
 - **Modeling constructs**
@@ -523,9 +458,7 @@ Big data
 - **Manipulation constructs**
   - E.g., insert, update, delete data
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_44_image_1.png)
-
 
 * Examples of Data Models
 - We will cover:
@@ -544,8 +477,6 @@ Big data
   - Avro/Thrift
   - Python Pickle
 
-
-
 * Good Data Models
 - We would like a data model to be:
   - Expressive
@@ -562,8 +493,6 @@ Big data
   - Semi-structured web data → XML, JSON
   - Unstructured data → NoSQL DBs
 
-
-
 * Data Independence
 - **Logical data independence**
   - Can change the representation of data without changing programs that operate on it
@@ -574,8 +503,6 @@ Big data
     - Partition/distribute/replicate the data
     - Compress the data
     - Sort the data
-
-
 
 * Databases: A Brief History
 - **1960s: Early beginning**
@@ -594,9 +521,6 @@ Big data
     - Who controls the data?
       - E.g., integrity, security, privacy concerns
 
-
-
-
 * Databases: A Brief History
 - **1960s, Hierarchical and network model (before relational model)**
   - Both allowed connecting records of different types
@@ -609,8 +533,6 @@ Big data
 - Cons:
   - Hierarchical/network models exposed too much of the internal data (e.g., structures/pointers to the users)
   - Leaky abstraction
-
-
 
 * Relational, Hierarchical, Network model
 - **Relational model**
@@ -626,11 +548,9 @@ Big data
     - Each record can have multiple parent and child records
   - Resurgence in 2010s with graph DBs
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_1.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_2.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_50_image_3.png)
-
 
 * Databases: A Brief History
 - **1970s: Relational model**
@@ -649,8 +569,6 @@ Big data
   - Didn't care about IMS compatibility (as IBM had to)
 - Many debates between Relational Model vs Network Model proponents
 
-
-
 * Entity-Relationship Model
 - 1976: Peter Chen proposed "Entity-Relationship Model"
 - Data model describing knowledge in terms of entities and relationships
@@ -661,11 +579,9 @@ Big data
 - An ER model can be mapped onto a relational DB
   - Entities, relationships → tables
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_1.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_2.png)
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_52_image_3.png)
-
 
 * Databases: A Brief History
 - **1980s: Widespread acceptance of relational model**
@@ -680,8 +596,6 @@ Big data
     - Allow user-defined types
     - Get many benefits of object-oriented while keeping the essence of relational model
   - No expressive difference from pure relational model
-
-
 
 * Object-Oriented
 - OOP is a data model
@@ -700,8 +614,6 @@ Big data
   - E.g., private vs public fields/members
   - Prevents external code from being concerned with inner workings of an object
 
-
-
 * Databases: A Brief History
 - **Late 90's-today**
 - Web/Internet emerges
@@ -709,7 +621,6 @@ Big data
   - Intended for *semi-structured* data
   - Tree-like structure
   - Flexible schema
-
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -734,7 +645,6 @@ Big data
      ...
 ```
 
-
 * Resource Description Framework
 - Aka RDF
 - Key construct: a "subject-predicate-object" triple, e.g.
@@ -747,7 +657,6 @@ Big data
   - Relational DBs
   - Dedicated "triple-stores" DBs
 
-
 ![](data605/lectures_md/images/lecture_1/lec_1_slide_56_image_1.png)
 
 ```
@@ -759,7 +668,6 @@ Big data
 06    <http://www.wikidata.org/entity/Q12418> <http://purl.org/dc/terms/creator> <http://dbpedia.org/resource/Leonardo_da_Vinci> .
 07    <http://data.europeana.eu/item/04802/243FA8618938F4117025F17A8B813C5F9AA4D619> <http://purl.org/dc/terms/subject> <http://www.wikidata.org/entity/Q12418> .
 ```
-
 
 * Property Graph Model
 - Graph:
