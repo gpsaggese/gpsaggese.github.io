@@ -26,15 +26,17 @@ DATA605: Big Data Systems
 **References**:
 
 * Data Science
-- **Promises of data science** (DS)
+- **Promises of data science**
   - Give a competitive advantages
   - Make better strategic and tactical business decisions
   - Optimize business processes
+
 - **Data science is not new**, it was called:
   - Operation research (~1970-80s)
   - Decision support, Business intelligence (~1990s)
   - Predictive analytics (Early 2010s)
-- ...
+  - ...
+
 - **What has changed**
   - Now learning and applying DS is **easy**
     - No need for hiring a consulting company
