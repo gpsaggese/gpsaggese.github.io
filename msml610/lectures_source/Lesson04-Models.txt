@@ -16,19 +16,26 @@ MSML610: Advanced Machine Learning
 \begingroup \Large
 **$$\text{\blue{Machine Learning Models}}$$**
 \endgroup
+
+::: columns
+:::: {.column width=75%}
 \vspace{1cm}
 
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
 
 **References**:
+
 - Burkov: _"Machine Learning Engineering"_ (2020)
+
 - Hastie et al.: _"The Elements of Statistical Learning"_ (2nd ed, 2009)
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=20%}
 
-![](msml610/lectures_source/figures/figures/book_covers/Book_cover_Hundred_page_ML_book..jpg){ height=20% }
-![](msml610/lectures_source/figures/figures/book_covers/Book_cover_The_Elements_of_Statistical_Learning.jpg){ height=20% }
+![](msml610/lectures_source/figures/book_covers/Book_cover_Hundred_page_ML_book..jpg){ height=20% }
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_The_Elements_of_Statistical_Learning.jpg){ height=20% }
+
 ::::
 :::
 
@@ -41,15 +48,14 @@ MSML610: Advanced Machine Learning
 ## #############################################################################
 
 * Naive Bayes
-- We need to predict one of the classes $H_1, ..., H_n$ using the vector of
-  evidence $\vE$:
-  - Use Bayes' rule of conditional probability to decide which class
-    $H_1, ... H_n$ to pick given the evidence $\vE$:
+- Predict classes $H_1, ..., H_n$ using evidence $\vE$:
+  - Use Bayes' rule of conditional probability to decide output class
+    $H_1, ... H_n$ given evidence $\vE$:
     $$
     \Pr(H_j|\vv{E}) = \frac{\Pr(\vv{E}|H_j) \Pr(H_j)}{\Pr(\vv{E})}
     $$
-    where the evidence $\vv{E}$ is the vector of features
-  - The training data provides an estimate of joint probability $\Pr(H_i, \vE)$
+    where $\vv{E}$ is the vector of features
+  - Training data estimates joint probability $\Pr(H_i, \vE)$
 
 - **Naive Bayes assumptions:**
   1. Features are independent
@@ -66,23 +72,21 @@ MSML610: Advanced Machine Learning
 :::: {.column width=55%}
 
 - **Problem**
-  - Predict whether kids are going to play outside or not using past observations
-    of weather condition
+  - Predict if kids play outside using past weather observations
 
 - **ML formulation**
-  - Supervised learning set-up
-  - Predictor vars are:
+  - Supervised learning
+  - Predictor vars:
     - `outlook = {sunny, overcast, rainy}`
     - `temperature = {hot, mild, cold}`
     - `humidity = {high, normal}`
     - `windy = {true, false}`
-  - Response var is:
+  - Response var:
     - `play = {yes, no}`
   - Training set:
-    - We have samples for predictors and response from observations
-    - There might be noise in the data
-    - E.g., different kids have different preference about weather, one kid is
-      sick or has lots of homework
+    - Samples for predictors and response from observations
+    - Possible noise in data (e.g., kids have different preferences, some are
+      sick illness, some have homework)
 
 ::::
 :::: {.column width=40%}
@@ -109,36 +113,37 @@ MSML610: Advanced Machine Learning
 :::
 
 * Naive Bayes: Weather Prediction example
-- We use Bayes' rule of conditional probability to decide which class $H_j$ to
-  pick:
+- Use Bayes' rule to decide class $H_j$:
   $$
   \Pr(H_j|\vv{E}) = \frac{\Pr(\vv{E}|H_j) \Pr(H_j)}{\Pr(\vv{E})}
   $$
   where:
-  - $H_j$ is one of the events we want to predict
+  - $H_j$: event to predict
     - E.g., `play = yes`
-  - $\vv{E}$ is the event corresponding to a combination of feature values
+  - $\vv{E}$: event with feature values
     - E.g., `outlook=sunny, temperature=high, humidity=high, windy=yes`
 
 * Naive Bayes: Weather Prediction example
-- The model is:
+- The **model** is:
+  \begingroup \scriptsize
   $$
   \Pr(H_j|\vv{E}) = \frac{\Pr(\vv{E}|H_j) \Pr(H_j)}{\Pr(\vv{E})}
   $$
-  where
-  - $\Pr(H_j)$: probability of the outcome before evidence $\vv{E}$
-    ("prior probability")
+  \endgroup
+  where:
+  - $\Pr(H_j)$: **prior probability** (probability of the outcome before evidence
+    $\vv{E}$)
     - E.g., $\Pr(\text{play = yes})$
-    - Computed from the training set as:
+    - Computed from training set as:
       \begingroup \scriptsize
       $$\Pr(H_j) = \sum_{k=1}^N \Pr(H_j \land \vv{E}_k)$$
       \endgroup
 
-  - $\Pr(\vv{E})$: probability of the evidence
-    - Computed from the training set
+  - $\Pr(\vv{E})$: **probability of the evidence**
+    - Computed from training set
     - Not needed as it is common to the probability of each class
 
-  - $\Pr(\vv{E}|H_j)$: conditional probability
+  - $\Pr(\vv{E}|H_j)$: **conditional probability**
     - Computed as independent probabilities (the "naive" assumption):
       \begingroup \scriptsize
       \begin{alignat*}{2}
@@ -147,8 +152,10 @@ MSML610: Advanced Machine Learning
       &\approx \Pr(E_1=e_1|H_j) \cdot ... \cdot \Pr(E_n=e_n|H_j) \\
       \end{alignat*}
       \endgroup
-- Bayes theorem shows that the prior is modulated through the conditional
-  probability and the probability of the evidence
+
+- Interpretation of Bayes theorem
+  - The prior is modulated through the conditional probability and the
+    probability of the evidence
 
 * 1-Rule
 - Aka "tree stump", i.e., a decision tree with a single node
