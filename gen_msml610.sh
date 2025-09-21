@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xe
 LESSON=$1
 DIR=msml610
 OPTS=${@:2}
