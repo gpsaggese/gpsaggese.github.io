@@ -601,37 +601,34 @@ MSML610: Advanced Machine Learning
 ## #############################################################################
 
 * Linear Regression Model
-- Data set is $(\vx_1, y_1), ... , (\vx_N, y_N)$
-  - There are $N$ examples
-  - There are $P$ features, i.e., $\vx_i \in \bbR^P$
-  - In regression problems the output of model is a real-value number:
-    $y = h(\vx) \in \bbR$
+- **Data set**
+  - $(\vx_1, y_1), ... , (\vx_N, y_N)$
+  - $N$ examples
+  - $P$ features, $\vx_i \in \bbR^P$
 
-- Linear regression model form is:
+- **Linear regression model**
   $$
-  h(\vx) = \sum_{i=1}^{P} w_i x_i = \vw^T \vx
+  h(\vx) = \sum_{i=1}^{P} w_i x_i = \vw^T \vx \in \bbR
   $$
 
-- You can add a bias term $w_0$ by including an additional component $x_0 = 1$
-  to the data and the model
+- Add **bias term** $w_0$ to model with $x_0 = 1$ to data
   $$
   h(\vx) = w_0 + \sum_{i=1}^{P} w_i x_i = \sum_{i=0}^{P} w_i x_i = \vw^T \vx
   $$
 
-* In Sample Error for Linear Regression
-- For **regression**, we use the squared error for the in-sample error of
-  hypothesis $h$:
+* Linear Regression: In-sample Error
+- For regression, use **squared error for in-sample error**:
   $$
   E_{in}(h) = \frac{1}{N} \sum_{i=1}^{N} (h(\vx_i) - f(\vx_i)) ^ 2
   $$
 
-- For **linear regression:**
+- Squared error for **linear regression**
   $$
   E_{in}(h)
   = E_{in}(\vw)
   = \frac{1}{N} \sum_{i=1}^{N} (\vw^T \vx_i - y_i) ^ 2
   $$
-- In vector form:
+- Squared error **in vector form**
   $$
   E_{in}(h)
   = \frac{1}{N} \| \mX \vw - \vy \| ^ 2
@@ -642,134 +639,132 @@ MSML610: Advanced Machine Learning
   - $\mX$ is a tall matrix with few parameters ($P$) and many examples ($N$)
   - $\vy$ is the column vector with all outputs (target vector)
 
-* Find Optimal Model for Linear Regression
-- We want to minimize $E_{in}(\vw) = (\mX \vw - \vy)^T (\mX \vw - \vy)$ with
+* Linear Regression: Find Optimal Model 
+- You want to minimize $E_{in}(\vw) = (\mX \vw - \vy)^T (\mX \vw - \vy)$ with
   respect to $\vw$
+  \begingroup \small
   \begin{alignat*}{1}
   & \nabla E_{in}(\vw^*) = \vv{0} \\
   & \frac{2}{N}\mX^T(\mX \vw^* - \vy) = \vv{0} \\
   & \mX^T \mX \vw^* = \mX^T \vy \\
   \end{alignat*}
+  \endgroup
 - If the square matrix $\mX^T \mX$ is invertible:
   $$
   \vw^* = (\mX^T \mX)^{-1} \mX^T \vy = \mX^\dagger \vy
   $$
-- The matrix $\mX^\dagger \defeq (\mX^T \mX)^{-1} \mX^T$ is called pseudo-inverse
-  because it is a generalization of the inverse for non-square matrices
-- In fact:
-  - $\mX^\dagger \mX = \mI$
-  - If $\mX$ is square and invertible, then $\mX^\dagger = \mX^{-1}$
+
+- The matrix $\mX^\dagger \defeq (\mX^T \mX)^{-1} \mX^T$ is called
+  **pseudo-inverse**
+  - It generalizes the inverse for non-square matrices, in fact:
+    - $\mX^\dagger \mX = \mI$
+    - If $\mX$ is square and invertible, then $\mX^\dagger = \mX^{-1}$
 
 * Complexity of One-Step Learning
-- Learning with the pseudo-inverse is sometimes called "one-step learning"
-  - In contrast with iterative methods, e.g., gradient descent
+- Learning with the pseudo-inverse is **one-step learning**
+  - Contrasts with iterative methods, e.g., gradient descent
 
-- We need to invert a square matrix of size $P$, which is related to the number
-  of parameters and not the number of examples $N$
-  - The complexity of one-step learning is $O(P^3)$
+- Inverting a square matrix of size $P$ is related to the number of parameters,
+  not examples $N$
+  - Complexity of one-step learning is $O(P^3)$
 
 * Linear Models Are Linear in What?
-- A model is linear when the signal $s = \sum_{i=0}^P w_i x_i = \vw^T \vx$ used
-  to make decision is linear with its variables
-  - The (unknown) variables are the weights $w_i$
-  - The inputs $x_i$ are fixed
-- If you apply a non-linear transform to the inputs $z_i = \Phi(x_i)$, the model
-  $$s = \sum_{i=0}^P w_i \Phi(x_i) = \vw^T \Phi(\vx)$$
-  is still linear
-  - Positive / negative part (e.g., $z_i = RELU(x_i), RELU(-x_i)$)
-  - Waterfall (i.e., conditioning the model to different range of features)
+- A **model is linear** when the signal $s = \sum_{i=0}^P w_i x_i = \vw^T \vx$ is
+  linear **with variables**
+  - Unknown variables: weights $w_i$
+  - Inputs $x_i$ are fixed
+
+- Applying a **non-linear transform to inputs** $z_i = \Phi(x_i)$ keeps the model
+  linear, e.g.,
+  - Positive/negative part (e.g., $z_i = RELU(x_i), RELU(-x_i)$)
+  - Waterfall (conditioning model to different feature ranges)
   - Thresholding (e.g., $z_i = \min(x_i, T)$)
   - Indicator variables (e.g., $z_i = I(x_i > 0)$)
-  - Winsorizing (i.e., replace outliers with a large but constant value)
-  - ...
+  - Winsorizing (replace outliers with a large constant value)
 
-- If you apply a non-linear transform to the weights $z_i = \Phi(w_i)$, the model
-  $$s = \Phi(\vw)^T \vx$$
-  is not linear
+- Applying a **non-linear transform to weights** $z_i = \Phi(w_i)$ makes the
+  model non-linear
 
-* Non-Linear Transformations with Linear Models
-- Transform variables:
-  - Use a $\Phi: \calX \rightarrow \calZ$
-  - Transform each point $\vx_n \in \calX = \bbR^d$ into a point in the
-    feature space $\vz_n = \Phi(\vx_n) \in \calZ = \bbR^{\tilde{d}}$ with
-    $d \ne \tilde{d}$
-- Learn:
-  - Learn a linear model in the $\calZ$ space, obtaining $\vv{\tilde{w}}$ for
-    a separating hyperplane in $\calZ$
-- Predict:
-  - Evaluate the model on a new point in the $\calZ$ space with:
+* Non-Linear Transformations in Linear Models
+- **Transform variables**
+  - Use $\Phi: \calX \rightarrow \calZ$
+  - Transform each point $\vx_n \in \calX = \bbR^d$ into a point in feature space
+    $\vz_n = \Phi(\vx_n) \in \calZ = \bbR^{\tilde{d}}$ with $d \ne \tilde{d}$
+
+- **Learn**
+  - Learn linear model in $\calZ$, obtaining $\vv{\tilde{w}}$ for separating
+    hyperplane
+
+- **Predict**
+  - Evaluate model on new point in $\calZ$:
     $$
     y = \sign(\vv{\tilde{w}}^T \Phi(\vx))
     \text{or} \quad y = \vv{\tilde{w}}^T \Phi(\vx)
     $$
-- Compute the decision boundary:
-  - In the $\calX$ space if $\Phi$ is invertible; or
-  - By brute force classifying any point $\vx \in \calX$ by going to the
-    $\calZ$ space
+
+- Compute **decision boundary**
+  - In $\calX$ if $\Phi$ is invertible; or
+  - By classifying any $\vx \in \calX$ in $\calZ$
 
 ## #############################################################################
 ## Perceptron
 ## #############################################################################
 
 * Example of Classification Problems
-- Binary classification problem
+- **Binary classification problem**
   - $y \in \{0, 1\}$
-    - Encoding is arbitrary, although we tend to assign 1 to what we want to
-      detect
-  - Email: spam / not spam
-  - Online transaction fraudulent: yes / no
-  - Tumor: malignant / benign
+    - Typically assign 1 to what you want to detect
+  - Email: `spam`, `not_spam`
+  - Online transaction: `fraudulent`, `valid`
+  - Tumor: `malignant`, `benign`
 
-- Multi-class classification problem
+- **Multi-class classification problem**
   - $y \in \{0, 1, 2, ... , K\}$
-  - Email tagging: work, family, friends
-  - Medical diagnosis: not ill, cold, flu
-  - Weather: sunny, rainy, cloudy, snow
+  - Email tagging: `work`, `family`, `friends`
+  - Medical diagnosis: `not_ill`, `cold`, `flu`
+  - Weather: `sunny`, `rainy`, `cloudy`, `snow`
 
 * Linear Regression for Classification
-- You can use linear regression for classification
-  - Transform inputs $+1, -1 \in \bbR$
+- Use **linear regression for classification**
+  - Transform outputs into $\{+1, -1\} \in \bbR$
   - Learn $\vw^T \vx_n \approx y_n = \pm 1$
-  - Use $\sign(\vw^T \vx_n)$ as model (aka perceptron)
-- This is not optimal since outliers can influence the fit due to the square
-  distance metric
-  - Use the weights from linear regressions to initialize a learning algorithm
-    for classification (e.g., PLA)
+  - Use $\sign(\vw^T \vx_n)$ as model (perceptron)
+
+- **Not optimal**: outliers influence fit due to square distance metric
+  - Use weights from linear regression to initialize a learning algorithm for
+    classification (e.g., PLA)
 
 * Perceptron Learning Algorithm (PLA)
-- First learning algorithm discovered
+- First machine learning algorithm discovered
 
 - **Algorithm**
+  - Training set $\calD = \{(\vx_1, y_1), ..., (\vx_n, y_n) \}$
   - Initialize weights $\vw$
     - Random values
-    - Use linear classification value as seed
-
-  - Pick a misclassified point $\sign(\vw^T \vx_i) \ne y_i$ from the training set
-    $\calD = \{(\vx_1, y_1), ..., (\vx_n, y_n) \}$
+    - Use linear regression for classification as seed
+  - Pick a misclassified point $\sign(\vw^T \vx_i) \ne y_i$ from training set
+    $\calD$
   - Update weights: $\vw(t + 1) = \vw(t) + y_i \vx_i$
     - Like stochastic gradient descent
-
   - Iterate until no misclassified points
 
-- The algorithm is guaranteed to converge (slowly) for linearly separable data
+- Algorithm **converges** (slowly) for linearly separable data
 
 - **Pocket version of PLA**
   - Idea
-    - Continuously update the solution
-    - Keep the best solution "in the back pocket"
-  - We have a solution if we stop after a max number of iterations
+    - Continuously update solution
+    - Keep best solution "in the back pocket"
+  - Have a solution if stopping after max iterations
 
-* Using Non-Linear Transformations for Classifications
-- In practice, a classification problem can have various degrees of non-linear
-  boundary:
-  1. Data clustered in a way that is not linearly separable
-     - E.g., with $+$ in the center and $-$ in the corner in a scatter plot of 2
-       features
-  2. Mostly linearly separable classes with few outliers to capture
-  3. A higher-order decision boundary
+* Non-Linear Transformations for Classifications
+- Classification problems have **varying degrees of non-linear boundaries**:
+  1. Non-linearly separable data
+     - E.g., $+$ in center, $-$ in corners in a 2-feature scatter plot
+  2. Mostly linear classes with few outliers
+  3. Higher-order decision boundary
      - E.g., quadratic
-  4. A non-linear relationship between data and features
-     - E.g., threshold for a variable
+  4. Non-linear data-feature relationship
+     - E.g., variable threshold
 
 // TODO: Add examples
 
@@ -778,38 +773,45 @@ MSML610: Advanced Machine Learning
 ## #############################################################################
 
 * Logistic Regression Is a Probabilistic Classifier
-- In logistic regression, we learn $\Pr(y | \vx)$, i.e., the probability of each
-  class given the input, instead of predicting the class directly
+- **Logistic regression** learns:
+  - The probability of each class $\Pr(y | \vx)$ given input $\vx$
+  - Instead of predicting class $y$ directly
 
-- **Parametric approach:**
-  - Assume $\Pr(y | \vx; \vw)$ has a known functional form
-    $$\Pr(y=1|\vx; \vw) = \text{logit}(\vw^T \vx)$$
-  - Learn by optimizing parameters $\vw$ using maximum likelihood
-    $$\vw^* = \argmax_{\vw} \Pr(\calD; \vw)$$
-  - Predict by outputting the class that has the highest probability
-    $$
-    h_{\vw}(\vx) =
-    \begin{cases}
-    +1 & \Pr(y=1|\vx; \vw) \ge 0.5 \\
-    -1 & \Pr(y=1|\vx; \vw) < 0.5 \\
-    \end{cases}
-    $$
+- **Parametric approach**: assume $\Pr(y | \vx; \vw)$ has a known functional
+  form
+  $$
+  \Pr(y=1|\vx; \vw) = \text{logit}(\vw^T \vx)
+  $$
+
+- **Optimize parameters** $\vw$ using maximum likelihood
+  $$
+  \vw^* = \argmax_{\vw} \Pr(\calD; \vw)
+  $$
+
+- **Predict** by outputting class with highest probability
+  $$
+  h_{\vw}(\vx) =
+  \begin{cases}
+  +1 & \Pr(y=1|\vx; \vw) \ge 0.5 \\
+  -1 & \Pr(y=1|\vx; \vw) < 0.5 \\
+  \end{cases}
+  $$
 
 * Logistic Regression: Example
 - Assume $y$ is:
-  - Event "patient had heart attack"
-  - Function of params $\vx$ (E.g., age, gender, diet)
-
-- Learn $\Pr(y | \vx)$
+  - The event $y_i$ _"patient with characteristics $\vx$ had heart attack"_
+  - Function of parameters $\vx$ (e.g., age, gender, diet)
 
 - In data set $\calD$:
-  - No samples of $\Pr(y | \vx)$, i.e., probability that someone with $\vx$ had
-    a heart attack
-  - Have realizations: "patient with $\vx_1$ had a heart attack", "patient with
-    $\vx_2$ didn't",
+  - No samples of $\Pr(y | \vx)$
+  - Have realizations:
+    - _"Patient with $\vx_1$ had a heart attack"_
+    - _"Patient with $\vx_2$ didn't"_
+    - ...
 
-- Find best parameters $\vw$ for logistic regression model to explain data
-  $\calD$
+- Learn $\Pr(y | \vx)$
+  - Find best parameters $\vw$ for logistic regression model to explain data
+    $\calD$
 
 * Logistic Function
 - Aka "sigmoid"
