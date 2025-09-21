@@ -234,7 +234,7 @@ MSML610: Advanced Machine Learning
   - Blends prior of equiprobable feature values with MLE estimates
 
 ## #############################################################################
-## Decision trees
+## Decision Trees
 ## #############################################################################
 
 // AIMA 19.3 Learning Decision Trees
@@ -257,61 +257,69 @@ MSML610: Advanced Machine Learning
   - Evaluate model from root to leaves
   - Prediction cost: $O(log(n))$ with number of training points
 
-* Typical decision trees
-- Each node tests a particular feature against a constant (i.e., splitting the
-  input space with hyperplanes parallel to the axes)
-- Each features
-  - Is tested only once
-  - Is labeled with $(x^{(j)}, {<, =, >}, t)$
-  - Checks a feature $x^{(j)}$ against a threshold $t$
-  - Depending on the result we follow one or the other branch
-- There are no re-converging paths: it is a tree!
-- The leaves at the bottom of the tree represent decision in terms of:
-  - Class labels (e.g., classification)
-    - Can predict class or its probability
-  - Regression function
-- The deeper the tree, the more complex the decision rules, and fitter the model
+* Typical Decision Trees
+- **Each node** tests a feature against a constant
+  - Split input space with hyperplanes parallel to axes
 
-- Trees are non-linear models since they use interaction of variables
-  - Each predicted class can be expressed in a OR-AND form:
+- **Each feature**:
+  - Tested once
+  - Labeled with $(x^{(j)}, {<, =, >}, t)$
+  - Checks feature $x^{(j)}$ against threshold $t$
+  - Result determines branch to follow
+
+- **Leaves** represent decisions:
+  - Class labels (e.g., classification)
+    - Predict class or probability
+  - Regression function
+
+- Deeper tree, more complex decision rules, fitter model
+  - No re-converging paths: it's a tree!
+  - Trees are non-linear models using variable interaction in `OR-AND` form:
     $$
     y_i = (x_1 \ge x_1') \land (x_2 \ge x_2') ...) \lor (...)
     $$
 
-* Decision trees: pros
-1. Can be used for both regression and classification
-2. Simple to understand and interpret
-   - White box model: explanation of the decision can be reported (vs black box
-     model like neural network)
-   - Can be visualized
-   - Can be created by hand
-3. Requires little data preparation
-   - Invariant under feature scaling, e.g.,
-     - No data normalization
-     - No dummy variables
-   - Handles both numerical and categorical data simultaneously
-   - Robust to irrelevant features (e.g., feature selection is implicit)
-   - Handles NAs
-4. Scalable
-   - Performs well with large datasets
+* Decision Trees: Pros
+- Both for **regression and classification**
 
-* Decision trees: cons
-1. Learning a decision tree is NP-complete
-   - Worse than complexity of OLS
-   - Algorithms use heuristics (e.g., greedy algorithms)
-2. Risk of overfitting
-   - Solutions:
-     - Pruning
-     - Minimum samples at a leaf node
-     - Max depth of trees
-3. Some training sets are hard to learn
-   - E.g., XORs, parity
-4. Unstable
-   - Small data variations can greatly influence the tree
-   - Solutions:
-     - Ensemble learning / randomization
+- **Simple to understand and interpret**
+  - White box model: explainable decisions
+  - Visualizable
+  - Can be created by hand
 
-* Handling of missing values
+- Requires **little data preparation**
+  - Invariant under feature scaling
+    - No data normalization
+    - No dummy variables
+  - Handles numerical and categorical data
+  - Robust to irrelevant features (implicit feature selection)
+  - Missing values are treated:
+    - As their own value; or
+    - Assigned the most frequent value (i.e., imputation)
+
+- **Scalable**
+  - Performs well with large datasets
+
+* Decision Trees: Cons
+- **Learning a decision tree** is NP-complete
+  - Much worse than complexity of OLS
+  - Algorithms use heuristics (e.g., greedy algorithms)
+
+- **Risk of overfitting**
+  - Solutions:
+    - Pruning
+    - Minimum samples at a leaf node
+    - Max depth of trees
+
+- **Some training sets are hard to learn**
+  - E.g., `XORs`, parity
+
+- **Unstable**
+  - Small data variations greatly influence the tree
+  - Solutions:
+    - Ensemble learning / randomization
+
+* Handling of Missing Values
 - Missing values are treated:
   - As their own value; or
   - Assigned the most frequent value (i.e., imputation)
@@ -335,61 +343,58 @@ MSML610: Advanced Machine Learning
 //  - The splitting is done considering the average reduction across all $n$
 //    outputs
 
-* Learning decision trees: intuition
+* Learning Decision Trees: Intuition
 - **Several algorithms**
   - ID3
   - C4.5
   - CART (Classification And Regression Trees)
 
-- Typically the problem has a recursive formulation
+- Typically, the problem has a **recursive formulation**
   - Consider the current "leaf"
-  - Find the variable/split ("node") that best separates the outcomes into two
+  - Find the variable/split ("node") that best separates outcomes into two
     groups ("leaves")
-    remaining items into two leaves
-    - Best = samples with same labels are grouped together
+    - "Best" = samples with same labels grouped together
   - Continue splitting until:
     - Groups are small enough
     - Maximum depth is reached
     - Sufficiently "pure"
 
-// Example: think of two coordinates $x_1, x_2$ with various examples with 3 labels
+// TODO: Add example. Think of two coordinates $x_1, x_2$ with various examples
+// with 3 labels
 
-* Mathematical formulation of splitting at one node
-- Consider the $m$-th node
-- Given $p_i = (\vx_i, y_i)$ where $i = 1, ..., N_m$, with training vectors
-  $\vx_i$ and corresponding labels $y_i$
-- Candidate splits are $\theta = (j, t_m)$ consisting of feature $j$ and
-  threshold $t_m$
+* Splitting at One Node: Problem Formulation
+- Consider the $m$-th node of a decision tree
+  - Given $p_i = (\vx_i, y_i)$ where $i = 1, ..., N_m$, with training vectors
+    $\vx_i$ and labels $y_i$
+  - Candidate splits are $\theta = (j, t_m)$ with feature $j$ and threshold $t_m$
+  - Each split partitions data into subsets:
+    \begin{alignat*}{2}
+    Q_{L}(j, t_m) & = \{ p_i = (\vx_i, y_i): x_j \le t_m \} \\
+    Q_{R}(j, t_m) & = \{ p_i \notin Q_{L} \} \\
+    \end{alignat*}
+  - Impurity of a split is defined as:
+    $$
+    H(j, t_m) = \frac{n_{L}}{N_m} H(Q_{L}) + \frac{n_{R}}{N_m} H(Q_{R})
+    $$
+  - Find split $(j, t_m)^*$ minimizing $H(j, t_m)$
 
-- Each split partitions the data into the subsets:
-  \begin{alignat*}{2}
-  Q_{L}(j, t_m) & = \{ p_i = (\vx_i, y_i): x_j \le t_m \} \\
-  Q_{R}(j, t_m) & = \{ p_i \notin Q_{L} \} \\
-  \end{alignat*}
+- **Recurse** on $Q_{L}(j, t_m)^*$ and $Q_{R}(j, t_m)^*$
 
-- The impurity of a split is defined as:
-  $$
-  H(j, t_m) = \frac{n_{L}}{N_m} H(Q_{L}) + \frac{n_{R}}{N_m} H(Q_{R})
-  $$
-- The goal is to find the split $(j, t_m)^*$ that minimizes $H(j, t_m)$
-- Then we recurse on $Q_{L}(j, t_m)^*$ and $Q_{R}(j, t_m)^*$
-
-* Measures of node impurity for classification
+* Measures of Node Impurity for Classification
 - **Measures of node impurity:**
-  - Are based on probabilities of choosing objects of different classes
-    $k = 1, ..., K$ in the $m$-th node , i.e., $p_k$
+  - Based on probabilities of choosing objects of different classes
+    $k = 1, ..., K$ in the $m$-th node, i.e., $p_k$
   - Smaller impurity values are better
-  - E.g., less impurity means smaller probability of misclassification
+  - Less impurity means smaller probability of misclassification
 
-- Examples of measures of node impurity
+- **Examples**
   1. Misclassification error
   2. Gini impurity index
-  3. Information gain / deviance
+  3. Information gain
 
-* Probability of classification in a node
-- Assume that in the $m$-th node there are $N_m$ objects $x_i$ that belong to
-  different $K$ classes
-- Compute the probability of each class in the $m$-th node as:
+* Probability of Classification in a Node
+- Assume $m$-th node has $N_m$ objects $x_i$ in $K$ classes
+- Compute class probability in $m$-th node as:
   $$
   \hat{f}_{m, k}
   \defeq \Pr(\text{pick object of class $k$ in $m$-th node })
@@ -404,59 +409,60 @@ MSML610: Advanced Machine Learning
     - Blue = 6/10
     - Green = 1/10
 
-* Misclassification error: definition
-- We have several class probabilities $p$ and need a single probability
-  - Consider the worst case, i.e., the most common class $k'$ in the node
+* Misclassification Error: Definition
+- You have several class probabilities $p_i$ need a single probability
+  - Consider worst case: most common class $k'$ in node
 
-- The misclassification error is defined as:
+- **Misclassification error**
   $$
-  H_M(p) = 1 - \max_{k}{p_k}
+  H_M(p) \defeq 1 - \max_{k}{p_k}
   $$
 
-- For binary classifier
+- **Binary classifier**
   - Best case (perfect purity)
-    - Only one class in the node
+    - Only one class in node
     - $H_M(p) = 0$
   - Worst case (perfect impurity)
-    - There is a 50-50 split between classes in the node
-  - $H_M(p) = 0.5$
+    - 50-50 split between classes in node
+    - $H_M(p) = 0.5$
 
-- For multi-class classifier with $K$ classes
-  - The misclassification error has the upper bound of $1 / K$
+- **Multi-class classifier** with $K$ classes
+  - Misclassification error has upper bound: $1 / K$
 
-* Gini impurity index: definition
-- Given the distribution of elements $p$ in the $m$-th node, the Gini index
-  $H_G(p)$ is the probability of picking an element randomly and classify it
-  incorrectly
+* Gini Impurity Index: Definition
+- **Gini index** $H_G(p)$ is probability of picking an element randomly and
+  classifying it incorrectly
+  - By using the law of total probability:
+    \begingroup \small
+    \begin{alignat*}{2}
+    H_G(p)
+    & = \Pr(\text{pick elem of $k$-th class}) \cdot
+    \Pr(\text{misclassification | elem of $k$ class}) \\
+    & = \sum_{k=1}^K p_k \cdot (1 - p_k)
+    \end{alignat*}
+    \endgroup
 
-- By using the law of total probability:
-  \begingroup \small
-  \begin{alignat*}{2}
-  H_G(p)
-  & = \Pr(\text{pick elem of $k$-th class}) \cdot
-  \Pr(\text{misclassification | elem of $k$ class}) \\
-  & = \sum_{k=1}^K p_k \cdot (1 - p_k)
-  \end{alignat*}
-  \endgroup
-
-- For binary classifier
+- **Binary classifier**
   - $H_G(p)$ is between 0 (perfect purity) and 0.5 (perfect impurity)
-- For multi-class classifier with $K$ classes
-  - $H_G(p)$ has upper bound of $1 - K \frac{1}{K}^2 = 1 - \frac{1}{K}$
 
-* Information gain: definition
+- **Multi-class classifier** with $K$ classes
+  - $H_G(p)$ has upper bound: $1 - K \frac{1}{K}^2 = 1 - \frac{1}{K}$
+
+* Information Gain: Definition
 - Aka cross-entropy (remember entropy is $- p \log p$)
-- Information gain entropy is defined as:
+
+- **Information gain**
   $$
   H_{IG} = - \sum_{k=1}^K p_k \cdot \log_2(p_k)
   $$
 
-- For binary classifier
+- **Binary classifier**
   - $H_{IG}$ varies between 0 (perfect purity) and 1 (perfect impurity)
-- For multi-class classifier with $K$ classes
-  - $H_{IG}$ has upper bound of $\log{K}$
 
-* Measures of impurity: examples
+- **Multi-class classifier** with $K$ classes
+  - $H_{IG}$ has upper bound: $\log{K}$
+
+* Measures of Impurity: Examples
 - Consider the case of 16 elements in a node , belonging to 2 classes
 
 - If all elements are of the same class:
@@ -479,9 +485,11 @@ MSML610: Advanced Machine Learning
     $= -( \frac{8}{16} \log_2(\frac{8}{16}) +
   \frac{8}{16} \log_2(\frac{8}{16})) = 1$
 
-* Measures of impurity for regression
-- For continuous variables given $N_m$ observations at a certain node, one can
-  minimize the mean squared error
+// TODO: Convert into a table / widget
+
+* Measures of Impurity for Regression
+- For continuous variables with $N_m$ observations at a node, minimize mean
+  squared error:
 
   $$
   \begin{aligned}
@@ -490,100 +498,95 @@ MSML610: Advanced Machine Learning
   \end{aligned}
   $$
 
-* Tips for using trees
-- Decision trees tend to overfit on data with many features
-  - Need to get the right ratio of training samples to features
-  - Consider dimensionality reduction (PCA, feature selection) to remove
+* Tips for Using Trees
+- **Decision trees overfit** with **many features**
+  - Get right ratio of training samples to features
+
+- **Solutions**
+  - Use dimensionality reduction (PCA, feature selection) to remove
     non-discriminative features
 
-- Use maximum tree depth to prevent overfitting
+  - Use maximum tree depth to prevent overfitting
 
-- Control number of examples at a leaf node with min number of samples in a leaf
-  or in a split
-  - Small number means overfit
-  - Large number means no learning
+  - Control minimum number of examples at a leaf node / split
+    - Small number $\to$  overfitting
+    - Large number $\to$  no learning
 
-- Balance dataset before training to avoid bias towards dominant classes
-  - E.g., normalize sum of sample weights for each class
+- **Balance dataset before training** to avoid **bias**
+  - Normalize sum of sample weights for each class
 
-* Feature selection with trees
-- Intuition:
-  - Features at the top of the tree contribute to predicting a larger fraction of
-    input samples
+* Feature Selection with Trees
+- **Intuition**
+  - Top tree features predict more samples
 
-- Importance of a variable
-  - The fraction of training samples a feature "controls" estimates the feature's
-    relative importance
-  - The depth of a feature as a decision node in a tree assesses its relative
-    importance
+- **Importance of a variable**
+  - Feature's control over samples estimates importance
+  - Feature's depth as a decision node assesses importance
 
-- Since trees are unstable, reduce estimation variance by averaging the depth of
-  a variable over several randomized trees (random forest)
+- **Trees are unstable**
+  - Reduce estimation variance by averaging variable depth over multiple
+    randomized trees (random forest)
 
-* Embeddings with trees
-- Intuition:
-  - Learning a tree performs a non-parametric density estimation
-  - Neighboring data points are more likely to lie within the same leaf
+* Embeddings with Trees
+- **Intuition**
+  - Learning a tree is like a non-parametric density estimation
+  - Neighboring data points likely lie within the same leaf
 
-- Embedding are unsupervised transformation of the data
-  - Tree encode the data by the indices of the leaves a data point belongs to
-  - The index is encoded one-hot to get a high dimensional, sparse, binary coding
+- **Embedding: unsupervised data transformation**
+  - Tree encodes data by indices of leaves a data point belongs to
+  - Index encoded one-hot for high-dimensional, sparse, binary coding
 
-- Use number of trees and max depth per tree to control the size of the
-  space
+- Use **number of trees and max depth per tree** to control space size
 
 ## #############################################################################
-## Random forests
+## Random Forests
 ## #############################################################################
 
-* From decision trees to random forests
-- **Decision trees have:**
+* From Decision Trees to Random Forests
+- Decision trees are **high capacity models**:
   - Low bias
-  - High variance (i.e., high capacity models)
+  - High variance
 
-- Apply ensemble methods to trees $\to$ "random forests"
+- Idea: apply ensemble methods to trees $\rightarrow$ "random forests"
 
-- Bagging:
-  - Is effective with "unstable" non-linear models to reduces variance
+- **Bagging**
+  - Reduces variance in "unstable" non-linear models
     - Learning trees is unstable
-  - Is best with complex models (e.g., fully grown trees)
-    - Vs boosting methods work best with weak models (e.g., shallow decision
-      trees, aka tree stumps)
-  - Works for both regression and classification
-  - Can be customized for trees
+  - Best with complex models (e.g., fully grown trees)
+    - Boosting works best with weak models (e.g., shallow decision trees, aka
+      tree stumps)
+  - Works for regression and classification
+  - Customizable for trees
     - Different types of randomization in trees
 
-- Bias-variance trade-off in random forests
-  - The bias of the forest could increase compared to a single non-random tree
-  - The variance of the forest is reduced by averaging, usually compensating for
-    the increase in bias
+- **Bias-variance trade-off** in random forests
+  - Forest bias could increase compared to a single non-random tree
+  - Forest variance reduced by averaging, usually compensating for bias increase
 
-* Randomization in trees
-- Perturb-and-combine techniques specifically designed for trees
-- One can bag (i.e., bootstrap aggregate)
-
-  1. Training samples
-     - E.g., with / without replacement
-  2. Picking features (aka random subspaces)
+* Randomization in Trees
+- **Bagging** (bootstrap aggregate) / perturb-and-combine techniques designed for
+  trees
+  1. Training samples (with replacement)
+  2. Picking features (random subspaces)
   3. Decision split thresholds
   4. All the above
 
-- Random forests
-  - Each tree in the ensemble is built from samples drawn with replacement from
-    the training set (aka bootstrap sample)
-  - The split is picked as best among a random subset of the features
+- **Random forests**
+  - Each tree built from samples drawn with replacement (bootstrap sample)
+  - Split picked as best among random subset of features
 
-- Extremely randomized trees (aka "Extra-Trees")
-  - Also the thresholds are randomized
-  - More randomness with respect to random forests
-  - The result is trading off even more bias for variance
+- **Extremely randomized trees** (aka "Extra-Trees")
+  - Thresholds randomized
+  - More randomness than random forests
+  - Trade off more bias for variance
 
-- Combine random forests for classification:
-  - Using average / majority vote on class
+- **Combine random forests**
+  - Majority vote on class
   - Averaging prediction probability
+  - Averaging prediction
 
-* Random forests: pros and cons
-- The pros and cons are the same as ensemble learning
+* Random Forests: Pros and Cons
+- Pros and cons are the same as ensemble learning
 
 - **Pros**
   - Increased accuracy
@@ -594,10 +597,10 @@ MSML610: Advanced Machine Learning
   - Overfitting (cross-validation is needed)
 
 ## #############################################################################
-## Linear models
+## Linear Models
 ## #############################################################################
 
-* Linear regression model
+* Linear Regression Model
 - Data set is $(\vx_1, y_1), ... , (\vx_N, y_N)$
   - There are $N$ examples
   - There are $P$ features, i.e., $\vx_i \in \bbR^P$
@@ -615,7 +618,7 @@ MSML610: Advanced Machine Learning
   h(\vx) = w_0 + \sum_{i=1}^{P} w_i x_i = \sum_{i=0}^{P} w_i x_i = \vw^T \vx
   $$
 
-* In sample error for linear regression
+* In Sample Error for Linear Regression
 - For **regression**, we use the squared error for the in-sample error of
   hypothesis $h$:
   $$
@@ -639,7 +642,7 @@ MSML610: Advanced Machine Learning
   - $\mX$ is a tall matrix with few parameters ($P$) and many examples ($N$)
   - $\vy$ is the column vector with all outputs (target vector)
 
-* Find optimal model for linear regression
+* Find Optimal Model for Linear Regression
 - We want to minimize $E_{in}(\vw) = (\mX \vw - \vy)^T (\mX \vw - \vy)$ with
   respect to $\vw$
   \begin{alignat*}{1}
@@ -657,7 +660,7 @@ MSML610: Advanced Machine Learning
   - $\mX^\dagger \mX = \mI$
   - If $\mX$ is square and invertible, then $\mX^\dagger = \mX^{-1}$
 
-* Complexity of one-step learning
+* Complexity of One-Step Learning
 - Learning with the pseudo-inverse is sometimes called "one-step learning"
   - In contrast with iterative methods, e.g., gradient descent
 
@@ -665,7 +668,7 @@ MSML610: Advanced Machine Learning
   of parameters and not the number of examples $N$
   - The complexity of one-step learning is $O(P^3)$
 
-* Linear models are linear in what?
+* Linear Models Are Linear in What?
 - A model is linear when the signal $s = \sum_{i=0}^P w_i x_i = \vw^T \vx$ used
   to make decision is linear with its variables
   - The (unknown) variables are the weights $w_i$
@@ -684,7 +687,7 @@ MSML610: Advanced Machine Learning
   $$s = \Phi(\vw)^T \vx$$
   is not linear
 
-* Non-linear transformations with linear models
+* Non-Linear Transformations with Linear Models
 - Transform variables:
   - Use a $\Phi: \calX \rightarrow \calZ$
   - Transform each point $\vx_n \in \calX = \bbR^d$ into a point in the
@@ -708,7 +711,7 @@ MSML610: Advanced Machine Learning
 ## Perceptron
 ## #############################################################################
 
-* Example of classification problems
+* Example of Classification Problems
 - Binary classification problem
   - $y \in \{0, 1\}$
     - Encoding is arbitrary, although we tend to assign 1 to what we want to
@@ -723,7 +726,7 @@ MSML610: Advanced Machine Learning
   - Medical diagnosis: not ill, cold, flu
   - Weather: sunny, rainy, cloudy, snow
 
-* Linear regression for classification
+* Linear Regression for Classification
 - You can use linear regression for classification
   - Transform inputs $+1, -1 \in \bbR$
   - Learn $\vw^T \vx_n \approx y_n = \pm 1$
@@ -733,7 +736,7 @@ MSML610: Advanced Machine Learning
   - Use the weights from linear regressions to initialize a learning algorithm
     for classification (e.g., PLA)
 
-* Perceptron learning algorithm (PLA)
+* Perceptron Learning Algorithm (PLA)
 - First learning algorithm discovered
 
 - **Algorithm**
@@ -756,7 +759,7 @@ MSML610: Advanced Machine Learning
     - Keep the best solution "in the back pocket"
   - We have a solution if we stop after a max number of iterations
 
-* Using non-linear transformations for classifications
+* Using Non-Linear Transformations for Classifications
 - In practice, a classification problem can have various degrees of non-linear
   boundary:
   1. Data clustered in a way that is not linearly separable
@@ -771,10 +774,10 @@ MSML610: Advanced Machine Learning
 // TODO: Add examples
 
 ## #############################################################################
-## Logistic regression
+## Logistic Regression
 ## #############################################################################
 
-* Logistic regression is a probabilistic classifier
+* Logistic Regression Is a Probabilistic Classifier
 - In logistic regression, we learn $\Pr(y | \vx)$, i.e., the probability of each
   class given the input, instead of predicting the class directly
 
@@ -792,7 +795,7 @@ MSML610: Advanced Machine Learning
     \end{cases}
     $$
 
-* Logistic regression: Example
+* Logistic Regression: Example
 - Assume $y$ is:
   - Event "patient had heart attack"
   - Function of params $\vx$ (E.g., age, gender, diet)
@@ -808,7 +811,7 @@ MSML610: Advanced Machine Learning
 - Find best parameters $\vw$ for logistic regression model to explain data
   $\calD$
 
-* Logistic function
+* Logistic Function
 - Aka "sigmoid"
 - Logistic function $\text{logit}(s)$ is defined as
   $$
@@ -822,7 +825,7 @@ MSML610: Advanced Machine Learning
 
 // TODO(gp): Add picture
 
-* Logistic regression vs linear classifier
+* Logistic Regression vs Linear Classifier
 - The functional form is the same as the linear classifier
   - Logistic regression: $h(\vw) = \text{logit}(\vw^T \vx$)
   - Linear classifier (or perceptron): $h(\vw) = \sign(\vw^T \vx)$
@@ -838,7 +841,7 @@ MSML610: Advanced Machine Learning
 - In linear classification we assume that the class value is a linear function of
   the inputs
 
-* Error for probabilistic binary classifiers
+* Error for Probabilistic Binary Classifiers
 - For probabilistic binary classification we can use the log-probability error
   as point-wise error
 - Log-probability is defined as:
@@ -858,7 +861,7 @@ MSML610: Advanced Machine Learning
 
 // TODO: Add a picture
 
-* One-liner error for probabilistic binary classifiers
+* One-Liner Error for Probabilistic Binary Classifiers
 - The point-wise error for one example $(\vx, y)$ for probabilistic binary
   classifiers is defined as:
   \begingroup \small
@@ -896,7 +899,7 @@ MSML610: Advanced Machine Learning
   $$
   \endgroup
 
-* One-liner error for logistic regression
+* One-Liner Error for Logistic Regression
 - For a binary classifier the we can write the point-wise error as:
   $$
   e(h(\vx), y) = -y \log(\Pr(y=1|\vx) - (1 - y) \log(1 - \Pr(y=1|\vx))
@@ -926,7 +929,7 @@ MSML610: Advanced Machine Learning
 - The point-wise error for a logistic regression is equal to the cross-entropy
   error
 
-* Cross-entropy error
+* Cross-Entropy Error
 - The point-wise error for logistic regression:
   $$
   e(h(\vx), y) = \log(1 + \exp(- y \cdot \vw^T \vx))
@@ -946,7 +949,7 @@ MSML610: Advanced Machine Learning
   E_{in} = \frac{1}{N} \sum_n e(h(\vx_n), y_n)
   $$
 
-* Fitting logistic regression
+* Fitting Logistic Regression
 - A plausible error measure of an hypothesis is based on likelihood of the data
   $\Pr(\calD | h = f)$
   - "How likely is the data $\calD$ we have under the assumption that $h = f$?"
@@ -956,7 +959,7 @@ MSML610: Advanced Machine Learning
   $\Pr(y = 1| \vx; \vw)$ is equivalent to minimizing in-sample error on the
   training set using cross-entropy error
 
-* Fitting logistic regression (opt)
+* Fitting Logistic Regression (Opt)
 - Find $\vw$ that maximizes the likelihood that the given data set
   $\calD = \{ (\vx_1, y_1), ... , (\vx_N, y_N) \}$ was generated by the model
   $h(\vx)$:
@@ -984,7 +987,7 @@ MSML610: Advanced Machine Learning
 - Thus in both cases we can write
   $\Pr(y_n = y_n') = \text{logit}(y_n \vw^T \vx_n)$
 
-* Fitting logistic regression (opt)
+* Fitting Logistic Regression (Opt)
 - We have
   $$
   \Pr(D | \vw) = \prod_{i=1}^N \text{logit}(y_n \vw^T \vx_n)
@@ -1013,7 +1016,7 @@ MSML610: Advanced Machine Learning
   \\
   \end{alignat*}
 
-* Gradient descent for logistic regression
+* Gradient Descent for Logistic Regression
 - Gradient descent requires two inputs:
   - Gradient of the cost function $\frac{\partial E}{w_j} \text{ for all } j$
   - Cost function $E_{in}(\vw)$
@@ -1032,7 +1035,7 @@ MSML610: Advanced Machine Learning
   - In fact sum of exponentials and flipped exponentials is convex and log is
     monotone
 
-* One-vs-all multi-class classification
+* One-Vs-All Multi-Class Classification
 - Aka "one-vs-rest" classifier
 - Assume we have $n$ classes $c_1, ... , c_n$ to distinguish given $\vx$
 - Learn
@@ -1044,7 +1047,7 @@ MSML610: Advanced Machine Learning
   - Evaluate the $n$ classifiers
   - Pick the class $y = i$ with the maximum $\Pr(y = i | \vx)$
 
-* Cost function for multi-class probabilistic classification
+* Cost Function for Multi-Class Probabilistic Classification
 - The cost function for logistic regression is:
   $$
   E_{in}(\vw)
@@ -1073,7 +1076,7 @@ MSML610: Advanced Machine Learning
 ## LDA, QDA
 ## #############################################################################
 
-* Basic idea of parametric models
+* Basic Idea of Parametric Models
 - We assume a model is generating the data
   - The functional form of the model is known
   - The model is parametrized with unknown parameters to estimate
@@ -1087,7 +1090,7 @@ MSML610: Advanced Machine Learning
   - Strong assumptions about the data
   - Low accuracy if model assumptions are incorrect
 
-* Linear and quadratic discriminant analysis
+* Linear and Quadratic Discriminant Analysis
 - Aka LDA and QDA
 - Parametric models
   - Assume each class generating process is multivariate Gaussian
@@ -1101,7 +1104,7 @@ MSML610: Advanced Machine Learning
 - **Cons**
   - Strong assumptions about the data
 
-* LDA / QDA: Model form
+* LDA / QDA: Model Form
 - Both LDA and QDA assume that the class generating process
   $f_k(\vx; \vv{\mu_k}, \mat{\Sigma_k})$ is from a multivariate Gaussian
 
@@ -1119,7 +1122,7 @@ MSML610: Advanced Machine Learning
   - Classes $k$ have different covariance matrix $\mat{\Sigma_k}$
   - It can be proved that the classes are separated by quadratic boundaries
 
-* Bayes theorem for LDA / QDA
+* Bayes Theorem for LDA / QDA
 - Consider a classification setup with multi-class output $Y \in \{1, ..., K\}$
 
 - We need to build a parametric model for the conditional distribution:
@@ -1188,7 +1191,7 @@ MSML610: Advanced Machine Learning
 
   which is a term linear in $\vx$
 
-* LDA / QDA: Learn model
+* LDA / QDA: Learn Model
 - In practice:
   - We don't care about $\Pr(X = \vx)$ since this is common for all classes
   - We assume to know the prior $\Pr(Y = k) = \pi_k$ or we estimate it from the
@@ -1221,7 +1224,7 @@ MSML610: Advanced Machine Learning
   - Then the expressions can be simplified even more
 
 ## #############################################################################
-## Kernel methods
+## Kernel Methods
 ## #############################################################################
 
 * Kernel: Definition
@@ -1238,7 +1241,7 @@ MSML610: Advanced Machine Learning
   = \vz^T \vz'
   $$
 
-* Kernel: Expression from the transform
+* Kernel: Expression From the Transform
 - If we have an expression for $\Phi$, we can compute a closed formula for the
   kernel
 
@@ -1252,7 +1255,7 @@ MSML610: Advanced Machine Learning
     K_{\Phi}(\vx, \vx') = 1 + x_1 x'_1 + x_2 x_2' + x_1^2 {x'}_1^2
     $$
 
-* Gaussian kernel
+* Gaussian Kernel
 - Aka "exponential kernel" or "Radial Basis Function" (RBF) kernel
 - A Gaussian kernel has the form:
   $$
@@ -1262,7 +1265,7 @@ MSML610: Advanced Machine Learning
   $$
 - It can be shown to be an inner product in an infinite dimension $\calZ$
 
-* Kernel as way to measure similarity
+* Kernel as Way to Measure Similarity
 - The Gaussian kernel expression:
   $$
   K(\vx, \vx')
@@ -1279,7 +1282,7 @@ MSML610: Advanced Machine Learning
     - E.g., Euclidean norm $\|\vx - \vx'\|^2$
   - Need to scale features to ensure similar effects among various coordinates
 
-* Linear kernel
+* Linear Kernel
 - The transformation $\Phi$ is the identity function $\Phi(\vx) = \vx$
 - The kernel function is:
   $$
@@ -1288,7 +1291,7 @@ MSML610: Advanced Machine Learning
 - A linear kernel means using no kernel
   - It is just a "pass-through"
 
-* Polynomial kernel
+* Polynomial Kernel
 - Given a point $\vx \in \bbR^n$, consider the function with two parameters $k$
   and $d$
   $$
@@ -1296,7 +1299,7 @@ MSML610: Advanced Machine Learning
   $$
 - It can be proved that this is always a kernel
 
-* Kernel: Identifying a function as a kernel
+* Kernel: Identifying a Function as a Kernel
 - In theory, a given function $K(\vx, \vx')$ is a kernel $K(\vx, \vx')$ is a
   valid kernel iff:
   - It is a symmetric, and
@@ -1310,7 +1313,7 @@ MSML610: Advanced Machine Learning
   $$
   for a certain $\Phi$ and $\calZ$
 
-* Kernel: example of identifying a kernel
+* Kernel: Example of Identifying a Kernel
 - Let's show that:
   $$K(\vx, \vx') = (k + \vx^T \vx')^d$$
   is a kernel for any $n, k, d$
@@ -1335,7 +1338,7 @@ MSML610: Advanced Machine Learning
     - $\Phi(x_1, x_2) = (1, x_1^2, x_2^2, \sqrt{2} x_1, \sqrt{2} x_2, \sqrt{2} x_1 x_2)$
   - This is a particular case of the polynomial kernel
 
-* A kernel is a computational shortcut
+* A Kernel Is a Computational Shortcut
 - In literature people refer to the "kernel trick" as a computational shortcut
   to compute the dot product of transformed vectors
 
@@ -1358,10 +1361,10 @@ MSML610: Advanced Machine Learning
     product
 
 ## #############################################################################
-## Support vector machines
+## Support Vector Machines
 ## #############################################################################
 
-* Support vector machines (SVM)
+* Support Vector Machines (SVM)
 - Arguably one of the most successful classification algorithm, together with
   neural networks and random forests
 
@@ -1381,7 +1384,7 @@ MSML610: Advanced Machine Learning
   - Solve a very complex optimization problem with some neat tricks
   - Works for both regression and classification
 
-* SVM is a large margin classifier
+* SVM Is a Large Margin Classifier
 - Why large margin classifier is good?
 - Given a linearly separable data set, the optimal separating line is the one
   that maximizes the margin:
@@ -1389,7 +1392,7 @@ MSML610: Advanced Machine Learning
   - By restricting ourselves to functions with a large margin reduces the VC
     dimension of the hypothesis set
 
-* SVM: Notation and conventions
+* SVM: Notation and Conventions
 
 - Assume that:
   1. Outputs are encoded as $y_i \in \{-1, 1\}$
@@ -1424,7 +1427,7 @@ MSML610: Advanced Machine Learning
 - This problem is not friendly to optimization since it has norm, min, and
   absolute value
 
-* Primal form of SVM problem
+* Primal Form of SVM Problem
 - We can rewrite it as:
 
   $$
@@ -1441,7 +1444,7 @@ MSML610: Advanced Machine Learning
 - In fact otherwise we could scale down $\vw$ and $b$ (which does not change the
   plane) to use the slack, against the hypothesis of minimality of $\vw$
 
-* Dual (Lagrangian) form of SVM problem
+* Dual (Lagrangian) Form of SVM Problem
 
   $$
   \begin{aligned}
@@ -1459,7 +1462,7 @@ MSML610: Advanced Machine Learning
   (the plane) given $\valpha$, while $b$ is given by
   $\min |\vw^T \vx_i + b| = 1$
 
-* Dual form of SVM as QP problem
+* Dual Form of SVM as QP Problem
 - The dual form of SVM problem is a convex quadratic programming problem, in the
   form:
 
@@ -1475,7 +1478,7 @@ MSML610: Advanced Machine Learning
   where the matrix $\mQ = \{ y_i y_j \vx_i^T \vx_j \}_{ij}$ and $\valpha$ is the
   column vector $(\alpha_1, \ldots , \alpha_N)$.
 
-* Solving dual formulation of SVM problem (1/2)
+* Solving Dual Formulation of SVM Problem (1/2)
 \textit{Solving for $\alpha$}
 
 - Feeding this problem to a QP solver, we get the optimal vector $\valpha$
@@ -1496,7 +1499,7 @@ MSML610: Advanced Machine Learning
   - $\alpha_i \ne 0$ and the slack is $0$, which implies that the $\vx_i$ point
     touches the margin, i.e., it is a \textit{support vector}
 
-* Solving dual formulation of SVM problem (2/2)
+* Solving Dual Formulation of SVM Problem (2/2)
 - Thus the hyperplane is only function of the support vectors:
   $$
   \vw
@@ -1514,7 +1517,7 @@ MSML610: Advanced Machine Learning
   y_i (\vw^T \vx_i + b) = 1
   $$
 
-* Support vectors and degrees of freedom for SVM
+* Support Vectors and Degrees of Freedom for SVM
 - The number of support vectors is related to the degrees of freedom of the
   model
 - Thus we have an in-sample quantity to bound the out-of-sample error:
@@ -1523,7 +1526,7 @@ MSML610: Advanced Machine Learning
   E_{out} \le E_{in} + c \frac{\text{num of SVs}}{N - 1}
   $$
 
-* Non-linear transform for SVM
+* Non-Linear Transform for SVM
 - We have a $\Phi: \calX \to \calZ$ that transforms $\vx_i$ into
   $\vz_i = \Phi(\vx_i) \in \bbR^{\tilde{d}}$ with $\tilde{d} > d$
 - We can transform all the vectors through $\Phi$ and then apply all SVM
@@ -1545,13 +1548,13 @@ MSML610: Advanced Machine Learning
   - The decision boundary and the margin can be represented in the original space
     (although they are not linear)
 
-* Non-linear transforms for SVM vs others
+* Non-Linear Transforms for SVM vs Others
 - In SVM the non-linear transform does not change the number of unknowns and
   degrees of freedom of the model
 - This is different from transforming the variables in a linear problem, since
   in that case the number of unknowns changes
 
-* SVM in higher dimensional space: pros and cons
+* SVM in Higher Dimensional Space: Pros and Cons
 \textit{Pros}
 - We don't pay the price in terms of complexity of optimization problem
   - Number of unknowns is still $N$ (different than a linear problem)
@@ -1566,7 +1569,7 @@ MSML610: Advanced Machine Learning
   - The kernel trick will remove this extra complexity by doing
     $\Phi(\vx_i)^T \Phi(\vx_j) = K_{\Phi}(\vx_i, \vx_j)$
 
-* Trivial approach for non-linear transform in SVM vs kernel trick
+* Trivial Approach for Non-Linear Transform in SVM vs Kernel Trick
 - The trivial approach is
   - transform vectors with $\Phi(\cdot)$
   - apply all SVM machinery to the transformed vectors
@@ -1583,7 +1586,7 @@ MSML610: Advanced Machine Learning
   we would need the kernel of the transformation $\Phi(\cdot)$ (and not
   $\Phi(\cdot)$) itself
 
-* SVM formulation in terms of kernel: optimization step
+* SVM Formulation in Terms of Kernel: Optimization Step
 - When we build the QP formulation for the Lagrangian to compute the $\alpha$ we
   can use $K_{\Phi}(\vx_i, \vx_j)$ instead of $\vz_i^T \vz_j$
   $$
@@ -1598,7 +1601,7 @@ MSML610: Advanced Machine Learning
   \valpha \ge \vv{0}, \valpha^T \vy = 0
   $$
 
-* SVM formulation in terms of kernel: prediction step
+* SVM Formulation in Terms of Kernel: Prediction Step
 - We need only inner products to compute a prediction for a given $\vz$
 - In fact to make predictions, we replace the expression of
   $\tilde{\vw} = \sum_{i : \alpha_i > 0} \alpha_i y_i \vz_i$ in
@@ -1616,7 +1619,7 @@ MSML610: Advanced Machine Learning
   b = \frac{1}{y_m} - \sum_{i: \alpha_i > 0} \alpha_i y_i K_{\Phi}(\vx_i, \vx_m)
   $$
 
-* Implications of kernel trick in SVM
+* Implications of Kernel Trick in SVM
 - The ``kernel trick" is a computational shortcut:
   - Use the kernel of the transformation instead of the transformation itself
 
@@ -1634,7 +1637,7 @@ MSML610: Advanced Machine Learning
     transformation $\Phi$ to an infinite dimensional space (e.g., Gaussian
     kernel)
 
-* Non-linearly separable SVM problem
+* Non-Linearly Separable SVM Problem
 - In general there are 2 types of non-separable data sets:
 1) Slightly non-separable
    - Few points crossing the boundary => use soft margin SVMs
@@ -1643,7 +1646,7 @@ MSML610: Advanced Machine Learning
 - In practice, both issues are present and one can combine soft margin SVM and
   non-linear transforms
 
-* Soft-margin SVM for better generalization on linearly-separable data sets
+* Soft-Margin SVM for Better Generalization on Linearly-Separable Data Sets
 - Sometimes, even if the data is linearly separable, one can get better
   $E_{out}$ using soft margin SVM at the cost of worst $E_{in}$
   - Usual trade off between in-sample and out-of-sample performance
@@ -1654,7 +1657,7 @@ MSML610: Advanced Machine Learning
   very small, and this might trade off a large margin with getting all the
   classification right
 
-* Primal formulation for soft margin SVM
+* Primal Formulation for Soft Margin SVM
 - We want to introduce an error measure based on the margin violation for each
   point, so instead of the constraint:
   $$
@@ -1678,7 +1681,7 @@ MSML610: Advanced Machine Learning
   \end{aligned}
   $$
 
-* Classes of support vectors for soft margin SVM
+* Classes of Support Vectors for Soft Margin SVM
 - There are 3 classes of points:
 - \textit{margin support vectors}: they are exactly on the margin defining it
   - In primal form: $y_i (\vw^T \vx_i + b) = 1 \iff \xi_i = 0$
@@ -1703,7 +1706,7 @@ MSML610: Advanced Machine Learning
 
 - $C$ is chosen through cross validation, like any regularization parameter
 
-* Multi-class classification for SVM
+* Multi-Class Classification for SVM
 - Often SVM packages have built-in multi-class classification
 - Otherwise use the one-vs-all method:
   - Train $K$ SVMs distinguishing each class from the rest using one-hot
@@ -1713,10 +1716,10 @@ MSML610: Advanced Machine Learning
     about its class vs the rest of the classes)
 
 ## #############################################################################
-## Similarity-based models
+## Similarity-Based Models
 ## #############################################################################
 
-* Similarity-based models: Intuition
+* Similarity-Based Models: Intuition
 - Idea: the model evaluated in one point $h(\vx)$ is affected by:
   - Other data points in the training set $(\vx_n, y_n) \in D$
   - The effect is based on the distance $d(\vx, \vx_n) = \|\vx - \vx_n\|$
@@ -1731,7 +1734,7 @@ MSML610: Advanced Machine Learning
 
 - This approach allows to define complex decision boundaries
 
-* Similarity-based models: Gaussian kernels
+* Similarity-Based Models: Gaussian Kernels
 - Consider a Gaussian kernel with a "landmark" point $\vx_i$ and a similarity
   distance defined as:
   $$
@@ -1784,7 +1787,7 @@ MSML610: Advanced Machine Learning
 
 // TODO
 
-* RBF: Reducing Model VC Dimension 
+* RBF: Reducing Model VC Dimension
 - Some variants for RBF:
   - Add a bias term
   - Use different $\gamma_i$ for each point, i.e., different influence of
@@ -1822,7 +1825,7 @@ MSML610: Advanced Machine Learning
   $$
   - Use an iterative approach (e.g., EM, coordinate descent)
 
-* Learning RBF models
+* Learning RBF Models
 - Use iterative approach (similar to EM algorithm):
   - Fix $\gamma$, solve for $\vw$ (using one-step learning)
   - Fix $\vw$, solve for $\gamma$ (with gradient descent)
@@ -1844,7 +1847,7 @@ MSML610: Advanced Machine Learning
   - $\mat{\Phi}$ is known since it is function of the data set and $\gamma$
 - The problem in matrix form is like: $\mat{\Phi} \cdot \vw = \vy$
 
-* Learning RBF models
+* Learning RBF Models
 
 - The problem in matrix form is like
   $$\mat{\Phi} \cdot \vw = \vy$$
@@ -1863,7 +1866,7 @@ MSML610: Advanced Machine Learning
   - Assume that $\vw$ is known and fixed
   - Learn $\gamma$
 
-* RBF network vs Neural Networks
+* RBF Network vs Neural Networks
 - Consider the case of regression model for Neural Networks and RBF model
   - RBF: 
     $$h(\vx)
@@ -1884,7 +1887,7 @@ MSML610: Advanced Machine Learning
     - For RBF features are $e^{-\gamma \|\vx - \vx_i\|^2}$ fixed and always $> 0$
     - For NN hidden layers synthesize features that can be $> 0$ or $< 0$
 
-* RBF network vs SVM
+* RBF Network vs SVM
 - The model form is the same:
   - RBF:
     $$h(\vx) = \sign(\sum_i w_i e^{-\gamma \|\vx - \vx_i\|^2}$$
@@ -1907,7 +1910,7 @@ MSML610: Advanced Machine Learning
   - Consider the $k$ closest points to the evaluation point $\vx$
   - Take an average of their response
 
-* KNN: Intuition of number degrees of freedom
+* KNN: Intuition of Number Degrees of Freedom
 - Nearest neighbor model ($k = 1$)
   - Adopt the response of the closest point to the point we are evaluating $\vx$
   - Like Voronoi tessellations: each point has a region for which it is the
@@ -1930,7 +1933,7 @@ MSML610: Advanced Machine Learning
   - E.g., $k = 1$ we consider the Voronoi tesselation low-bias / high-variance
   - E.g., $k = N$ we consider the average value (high-bias / low-variance)
 
-* Training and test error for KNN
+* Training and Test Error for KNN
 - For $k=1$ a KNN model
   - Makes no error on the training set (assuming a non-noisy target), since it
     memorizes the training set (low bias / high variance)
@@ -1939,7 +1942,7 @@ MSML610: Advanced Machine Learning
   $E_{out}$ decreases until it starts increasing again
   - We have the typical behavior of model complexity as in bias-variance diagrams
 
-* KNN vs RBF models
+* KNN vs RBF Models
 - **Similarities**
   - K-Nearest Neighbor is a \textit{discrete} version of the RBF model
 
@@ -1952,7 +1955,7 @@ MSML610: Advanced Machine Learning
 ## Clustering
 ## #############################################################################
 
-* K-means clustering: Problem Formulation
+* K-Means Clustering: Problem Formulation
 - We have $N$ \textit{unlabeled} points $\{\vx_1, \vx_2, ..., \vx_N\}$
 - We want to partition the points into $K$ clusters $S_1, ..., S_K$
   - Each cluster is defined by its center $\vmu_k$
@@ -1973,7 +1976,7 @@ MSML610: Advanced Machine Learning
 - K-means clustering is NP-hard (combinatorial) and thus intractable
   - In fact there are $K^N$ possible assignments
 
-* K-means clustering: Lloyd's algorithm
+* K-Means Clustering: Lloyd'S Algorithm
 - We start picking a random assignment of $N$ points to the $K$ clusters
   - Better than picking randomly the centroids of the clusters
 - Each iteration does 2 steps
@@ -1991,7 +1994,7 @@ MSML610: Advanced Machine Learning
     \{\vx_n: \| \vx_n - \vmu_k \| \le \|\vx_n - \vmu_l\| \;
     \forall l \ne k \}$
 
-* K-means clustering: convergence
+* K-Means Clustering: Convergence
 - K-means algorithm converges since:
   - There is a finite (though large $K^N$) number of possible partitionings, and
     thus a finite number of possible values of the objective functions
@@ -2011,7 +2014,7 @@ MSML610: Advanced Machine Learning
   - Run K-means multiple times using different random initializations
   - Pick the best result
 
-* K-means clustering: non-separable clusters
+* K-Means Clustering: Non-Separable Clusters
 - For simplicity, we imagine a clear separation between clusters
   - In practice, clusters (especially in high dimensions) are not obviously
     separable
@@ -2023,7 +2026,7 @@ MSML610: Advanced Machine Learning
     - Run K-means
     - Find the optimal way to split the population into 3 sizes (S, M, L)
 
-* Choosing the number of clusters
+* Choosing the Number of Clusters
 - It's often unclear how many clusters $K$ exist in the data
   - E.g., visual analysis can be inconclusive with 2D or 3D data
   - Even more difficult in high dimensional spaces
@@ -2077,10 +2080,10 @@ MSML610: Advanced Machine Learning
     $(35 \text{ yrs}, 120K, 20)$ $\to$ "High Income, Low Spending Customers"
 
 ## #############################################################################
-## Anomaly detection
+## Anomaly Detection
 ## #############################################################################
 
-* Anomaly detection: problem formulation
+* Anomaly Detection: Problem Formulation
 - **Problem**:
   - We have $\{\vx_1, ..., \vx_N\}$ examples with features $\vx \in \bbR^P$ for
     good / non-anomalous instances
@@ -2101,7 +2104,7 @@ MSML610: Advanced Machine Learning
     $$\Pr(\vx_{new} \text{ is good}) \le \varepsilon$$
     we flag it as an anomaly
 
-* Anomaly detection: example of aircraft engines
+* Anomaly Detection: Example of Aircraft Engines
 - **Problem**
   - Test aircraft engines to identify anomalies in a new engine
 
@@ -2115,7 +2118,7 @@ MSML610: Advanced Machine Learning
   - Decide if a new engine is acceptable $\Pr(\vx_{good}) \le \varepsilon$
     or needs more testing
 
-* Anomaly detection: example of hacked account
+* Anomaly Detection: Example of Hacked Account
 - **Problem**
   - Find if an account for a given user $i$ was hacked
 
@@ -2131,7 +2134,7 @@ MSML610: Advanced Machine Learning
   - Model a PDF $\Pr(\vx \text{ is good})$
   - Identify unusual users by checking $\Pr(\vx_{new}) \le \varepsilon$
 
-* Anomaly detection: example of computers in data center
+* Anomaly Detection: Example of Computers in Data Center
 - **Problem**
   - Monitor servers in a data center to find malfunctioning or hanged servers
 
@@ -2146,7 +2149,7 @@ MSML610: Advanced Machine Learning
   - Model a PDF $\Pr(\vx \text{ is good})$
   - Identify unusual users by checking $\Pr(\vx_{new}) \le \varepsilon$
 
-* Using a Gaussian model for anomaly detection
+* Using a Gaussian Model for Anomaly Detection
 - Aka "density estimation"
 - Given $N$ examples $\vx_1, ..., \vx_N \in \bbR^p$
 - Ensure that the features have a Gaussian distribution
@@ -2159,7 +2162,7 @@ MSML610: Advanced Machine Learning
   $$
   to flag an anomaly
 
-* Estimate univariate Gaussian model
+* Estimate Univariate Gaussian Model
 - We have $N$ (scalar) examples $\vx_1, ..., \vx_N \in \bbR$ for "good instances"
 
 - Assume the data is generated by a Gaussian distribution
@@ -2175,7 +2178,7 @@ MSML610: Advanced Machine Learning
   &\sigma^2 = \frac{1}{N-1}\sum_i (x_i - \mu)^2 \\
   \end{alignat*}
 
-* Estimate multivariate independent Gaussian model
+* Estimate Multivariate Independent Gaussian Model
 - We have $N$ examples $\vx_1, ..., \vx_N \in \bbR^p$ for "good instances"
 
 - Assume independence of the features, the PDF of a multi-variate Gaussian $X$
@@ -2189,7 +2192,7 @@ MSML610: Advanced Machine Learning
   complete model
 - Vectorize the computation
 
-* Estimate a multi-variate Gaussian model
+* Estimate a Multi-Variate Gaussian Model
 - **Problem**:
   - Sometimes features vary together (e.g., network use and CPU load), so using
     the independent assumption might cause misclassifications
@@ -2206,7 +2209,7 @@ MSML610: Advanced Machine Learning
   - Estimate the entire multivariate model, instead of assuming independence and
     estimating one marginal Gaussian at a time
 
-* Estimate a multi-variate Gaussian model
+* Estimate a Multi-Variate Gaussian Model
 - The PDF of a multi-variate Gaussian is:
   $$
   f_X(\vx; \vmu, \mSigma) =
@@ -2231,7 +2234,7 @@ MSML610: Advanced Machine Learning
 - If there is independence between the variables, then the multivariate Gaussian
   is decomposed into a product of Gaussian distributions
 
-* Evaluate anomaly detection systems
+* Evaluate Anomaly Detection Systems
 - To evaluate models one needs to:
   - Compare different models
   - Tune hyperparameters (e.g., $\varepsilon$) of models
@@ -2249,7 +2252,7 @@ MSML610: Advanced Machine Learning
   y = 1 & \text{anomalous} \\
   \end{alignat*}
 
-* Evaluate anomaly detection systems
+* Evaluate Anomaly Detection Systems
 - Often the number of anomalous examples $y = 1$ is much smaller than good
   examples with $y = 0$
   - E.g., 10,000 good vs 20 bad examples
@@ -2278,7 +2281,7 @@ MSML610: Advanced Machine Learning
   - Validation set: 2,000 $y=0$ and 10 $y=1$
   - Test set: 2,000 $y=0$ and 10 $y=1$
 
-* Anomaly detection vs supervised learning
+* Anomaly Detection vs Supervised Learning
 - Even in unsupervised learning, we need \textit{labeled} data for model
   evaluation
 
