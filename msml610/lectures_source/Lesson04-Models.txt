@@ -815,56 +815,47 @@ MSML610: Advanced Machine Learning
 
 * Logistic Function
 - Aka "sigmoid"
-- Logistic function $\text{logit}(s)$ is defined as
+- **Logistic function** $\text{logit}(s)$ is defined as
   $$
-  \text{logit}(s) = \frac{e^s}{1 + e^s} = \frac{1}{1 + e^{-s}}
+  \text{logit}(s) \defeq \frac{e^s}{1 + e^s} = \frac{1}{1 + e^{-s}}
   $$
-- $\text{logit}(s)$
   - Varies in [0, 1]
   - Crosses the origin at 0.5
   - Asymptotes at 0 and 1
-- It is a soft version of $\sign()$
+  - It is a soft version of $\sign()$
 
 // TODO(gp): Add picture
 
 * Logistic Regression vs Linear Classifier
-- The functional form is the same as the linear classifier
-  - Logistic regression: $h(\vw) = \text{logit}(\vw^T \vx$)
-  - Linear classifier (or perceptron): $h(\vw) = \sign(\vw^T \vx)$
+- **Functional form is similar**
+  - **Logistic regression**: $h(\vw) = \text{logit}(\vw^T \vx$)
+  - **Linear classifier** (perceptron): $h(\vw) = \sign(\vw^T \vx)$
 
-- The difference is in the probabilistic interpretation and the way it is fit
-
-- In logistic regression, we don't have samples of the probability function to
-  interpolate
-  - Rather we have realizations of the random variable
-  - We look for parameters of a given model that maximize the likelihood of the
-    data
-
-- In linear classification we assume that the class value is a linear function of
-  the inputs
+- **Difference** in probabilistic interpretation and fitting method
+  - Logistic regression** lacks samples of probability function to interpolate
+    - Uses realizations of random variable
+    - Seeks model parameters maximizing data likelihood
+  - **Linear classification** assumes class value is linear function of inputs
 
 * Error for Probabilistic Binary Classifiers
-- For probabilistic binary classification we can use the log-probability error
-  as point-wise error
-- Log-probability is defined as:
+- For probabilistic binary classification, use **log-probability error** as
+  point-wise error
   $$
   e(h(\vx), y) \defeq -\log(\Pr(y = h(\vx)| \vx; \vw))
   $$
-  - We need to negate since we want positive errors and
-    $\log([0, 1]) \in [-\infty, 0)$
+  - Negate for positive errors: $\log([0, 1]) \in [-\infty, 0)$
 
-- Log probability is a generalization of the 0-1 error
-  - Consider the case $y = 1$
-    - If we always output a value $h(\vx)$ close to 1 $\implies$ the probability is 1
-      $\implies$ the log is 0 $\implies e(\cdot) = 0$
-    - If we always output a value close to 0 $\implies e() = -\log(0) \to +\infty$
-
-  - Analogous behavior is obtained in the case of $y = 0$
+- Log probability generalizes 0-1 error
+  - Case $y = 1$
+    - Output $h(\vx)$ close to 1 $\implies$ probability 1 $\implies \log(1) = 0$
+      $\implies e(\cdot) = 0$
+    - Output close to 0 $\implies e() = -\log(0) \to +\infty$
+  - Similar behavior for $y = 0$
 
 // TODO: Add a picture
 
 * One-Liner Error for Probabilistic Binary Classifiers
-- The point-wise error for one example $(\vx, y)$ for probabilistic binary
+- **Point-wise error** for example $(\vx, y)$ for probabilistic binary
   classifiers is defined as:
   \begingroup \small
   \begin{alignat*}{2}
@@ -881,6 +872,8 @@ MSML610: Advanced Machine Learning
   \\
   \end{alignat*}
   \endgroup
+  \vspace{-1cm}
+
 - Any function of a binary variable:
   \begingroup \small
   $$
@@ -894,7 +887,8 @@ MSML610: Advanced Machine Learning
   $$
   \endgroup
   can be written as one-liner: $y = x \cdot a + (1 - x) \cdot b$
-- Thus we can write the point-wise error (independently of $\Pr(y=1|\vx)$)
+
+- Point-wise error can be written independently of $\Pr(y=1|\vx)$:
   \begingroup \small
   $$
   e(h(\vx), y) = -y \log(\Pr(y=1|\vx) - (1 - y) \log(1 - \Pr(y=1|\vx))
@@ -902,13 +896,12 @@ MSML610: Advanced Machine Learning
   \endgroup
 
 * One-Liner Error for Logistic Regression
-- For a binary classifier the we can write the point-wise error as:
+- The point-wise error for a binary classifier is:
   $$
   e(h(\vx), y) = -y \log(\Pr(y=1|\vx) - (1 - y) \log(1 - \Pr(y=1|\vx))
   $$
 
-- We can make further simplification in the case of logit function
-
+- Simplify further **with logit function**:
   \begin{alignat*}{3}
   e(h(\vx), y)
   & \defeq - \log \Pr(h(\vx)=y)
@@ -927,50 +920,52 @@ MSML610: Advanced Machine Learning
   &
   \\
   \end{alignat*}
+  \vspace{-1cm}
 
-- The point-wise error for a logistic regression is equal to the cross-entropy
-  error
+- Point-wise error for logistic regression equals **cross-entropy error**
 
 * Cross-Entropy Error
-- The point-wise error for logistic regression:
+- **Point-wise error for logistic regression** has expression:
   $$
   e(h(\vx), y) = \log(1 + \exp(- y \cdot \vw^T \vx))
   $$
-  is called "cross-entropy error"
-  - Note: it does not have $-$ before the $\log(\cdot)$ but before
-    $y \cdot \vw^T \vx$
+  - It is called **cross-entropy error**
+  - Note: no $-$ before $\log(\cdot)$ but before $y \cdot \vw^T \vx$
 
-- Cross-entropy error is a generalization of 0-1 error
-  - If $\vw^T \vx$ agrees with $y$ in sign and $|\vw^T \vx|$ is very large $\to$
-    the error goes to 0
-  - If they disagree in sign $\to$ the error goes towards $\infty$
+- Cross-entropy error **generalizes 0-1 error**
+  - If $\vw^T \vx$ agrees with $y$ in sign and $|\vw^T \vx|$ is large $\implies$
+    error goes to 0
+  - If they disagree in sign $\implies$ error goes towards $\infty$
 
-- As usual we define the in-sample error on the training set as the average of the
-  point-wise errors:
+- Define **in-sample error on training set** as average of point-wise errors:
   $$
-  E_{in} = \frac{1}{N} \sum_n e(h(\vx_n), y_n)
+  E_{in} \defeq \frac{1}{N} \sum_n e(h(\vx_n), y_n)
   $$
 
 * Fitting Logistic Regression
-- A plausible error measure of an hypothesis is based on likelihood of the data
-  $\Pr(\calD | h = f)$
-  - "How likely is the data $\calD$ we have under the assumption that $h = f$?"
-  - "How likely is that the data $\calD$ was generated by $h$?"
+- A plausible error measure of a hypothesis is based on **likelihood of data**
+  $$
+  \Pr(\calD | h = f)
+  $$
+  - _"How likely is the data $\calD$ under the assumption that $h = f$?"_
+  - _"How likely is that the data $\calD$ was generated by $h$?"_
 
-- Maximizing the likelihood that $\calD$ is generated from a logistic regression
-  $\Pr(y = 1| \vx; \vw)$ is equivalent to minimizing in-sample error on the
-  training set using cross-entropy error
+- **Maximize likelihood** $\calD$ generated from logistic regression
+  $$\Pr(y = 1| \vx; \vw)$$
 
-* Fitting Logistic Regression (Opt)
-- Find $\vw$ that maximizes the likelihood that the given data set
-  $\calD = \{ (\vx_1, y_1), ... , (\vx_N, y_N) \}$ was generated by the model
-  $h(\vx)$:
+- It can be proved that this is equivalent to **minimizing in-sample error** on
+  training set **using cross-entropy error**
+
+* Fitting Logistic Regression (Optional)
+- Find $\vw$ that maximizes likelihood for data set
+  $\calD = \{ (\vx_1, y_1), ... , (\vx_N, y_N) \}$ generated by model $h(\vx)$:
   $$
   \Pr(D | \vw)
   = \Pr(y_1 = h(\vx_1) \land ... \land y_N = h(\vx_N))
   = \Pr(y_1 = y_1' \land ... \land y_N = y_N')
   $$
-- The model form is:
+
+- Model form:
   $$
   y' = h(\vx) =
   \begin{cases}
@@ -978,29 +973,30 @@ MSML610: Advanced Machine Learning
   -1 & \text{ otherwise}
   \end{cases}
   $$
-- Assuming independence among training examples
+
+- Assuming independence among training examples:
   $$
   \Pr(D | \vw) = \prod_{i=1}^N \Pr(y_i = y_i' | \vx_i)
   $$
-- Note that we can fold $y_n$ in the expression since:
-  - When $y_n = 1$ then $\Pr(y_n = y_n') = \text{logit}(\vw^T \vx_n)$
-  - When $y_n = -1$ then
-    $\Pr(y_n = y_n') = 1 - \text{logit}(\vw^T \vx_n) = \text{logit}(-\vw^T \vx_n)$
-- Thus in both cases we can write
-  $\Pr(y_n = y_n') = \text{logit}(y_n \vw^T \vx_n)$
 
-* Fitting Logistic Regression (Opt)
-- We have
+- Fold $y_n$ in expression:
+  - When $y_n = 1$, $\Pr(y_n = y_n') = \text{logit}(\vw^T \vx_n)$
+  - When $y_n = -1$, $\Pr(y_n = y_n') = \text{logit}(-\vw^T \vx_n)$
+
+- Thus, $\Pr(y_n = y_n') = \text{logit}(y_n \vw^T \vx_n)$
+
+* Fitting Logistic Regression (Optional)
+- Given:
   $$
   \Pr(D | \vw) = \prod_{i=1}^N \text{logit}(y_n \vw^T \vx_n)
   $$
 
-- We can re-write this optimization problem similar to minimizing the sum of the
-  point-wise errors $E_{in} = \sum e(h(\vx_n), y_n)$
-  - We can maximize with respect to $\vw$ the $\log(...)$ since the log argument
-    is always $> 0$ and $\log()$ is monotone
+- Re-write optimization as minimizing sum of point-wise errors
+  $E_{in} = \sum e(h(\vx_n), y_n)$
+  - Maximize $\log(...)$ with respect to $\vw$ since log argument $> 0$ and
+    $\log()$ is monotone
 
-- Equivalently, we can minimize:
+- Equivalently, minimize:
 
   \begin{alignat*}{3}
   - \frac{1}{N} \log(...)
