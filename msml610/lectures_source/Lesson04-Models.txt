@@ -112,7 +112,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
-* Naive Bayes: Weather Prediction example
+* Naive Bayes: Weather Prediction Example
 - Use Bayes' rule to decide class $H_j$:
   $$
   \Pr(H_j|\vv{E}) = \frac{\Pr(\vv{E}|H_j) \Pr(H_j)}{\Pr(\vv{E})}
@@ -123,7 +123,7 @@ MSML610: Advanced Machine Learning
   - $\vv{E}$: event with feature values
     - E.g., `outlook=sunny, temperature=high, humidity=high, windy=yes`
 
-* Naive Bayes: Weather Prediction example
+* Naive Bayes: Weather Prediction Example
 - The **model** is:
   \begingroup \scriptsize
   $$
@@ -153,7 +153,7 @@ MSML610: Advanced Machine Learning
       \end{alignat*}
       \endgroup
 
-- Interpretation of Bayes theorem
+- **Interpretation of Bayes theorem**
   - The prior is modulated through the conditional probability and the
     probability of the evidence
 
@@ -164,39 +164,40 @@ MSML610: Advanced Machine Learning
   - Pick a single feature (e.g., `outlook`):
     - Most discriminant
     - Based on expert opinion
-  - To evaluate the model choose the most frequent output given the current value
-    of the feature
+  - Choose the most frequent output for the feature's current value
 
-- In the weather problem:
-  - Assume you pick `outlook` as single feature
-  - We know the value of the predictor vars, e.g., `outlook = sunny`
-  - Compute the probability of `play = yes` given the `outlook = sunny` using the
-    training set:
+// TODO(gp): Add picture of tree stump
+
+- **Weather problem example**:
+  - Pick `outlook` as single feature
+  - Know predictor vars, e.g., `outlook = sunny`
+  - Compute probability of `play = yes` given `outlook = sunny` using training
+    set:
     $$
     \Pr(\texttt{play = yes} | \texttt{outlook = sunny})
     $$
-  - Output the predicted var
+  - Output the predicted variable
 
-* Naive Bayes: why independence assumption is useful
-- The independence assumption allows to factor out the joint probability into
-  marginal probabilities:
+
+* Naive Bayes: Why Independence Assumption
+- **Independence assumption** factors joint probability into marginal
+  probabilities:
   \begin{alignat*}{2}
   \Pr(\vv{E}|H_j)
   &= \Pr(E_1=e_1, E_2=e_2, ..., E_n=e_n | H_j) \\
   &\approx \Pr(E_1=e_1|H_j) \cdot ... \cdot \Pr(E_n=e_n|H_j) \\
   \end{alignat*}
 
-- Pros:
-  - Simplifies the computation of the probability
-  - Helps with generalization, since there is an underlying model (independence)
-    and one needs fewer samples to fit it
+- **Pros**:
+  - Simplifies probability computation
+  - Aids generalization due to underlying model and so fewer samples needed
 
-- Cons:
-  - Not necessarily true assumption
+- **Cons**:
+  - Assumption may not be true
 
-* Intuition of estimating probabilities
-- Maximum likelihood estimate (MLE) estimates the probability of an event by
-  counting the occurrences of that event among all the possible events:
+* Estimating Probabilities: MLE
+- **Maximum Likelihood Estimate** (MLE) estimates event probability by counting
+  occurrences among all possible events:
   $$
   \Pr(\vv{E} = \vv{e}') = \frac{\# I(\vv{E} = \vv{e}')}{K}
   $$
@@ -207,33 +208,30 @@ MSML610: Advanced Machine Learning
   $$
 
 - **Problem**
-  - A particular value $e'$ of a feature $E_i$ does not occur in the training
-    set in conjunction with an output class $H_j$
-  - The estimated probability $\Pr(E_i=e'|H_j) = 0$
-  - Then plugging $\Pr(E_i=e'|H_j) = 0$ into
-    $$\Pr(H_j|\vv{E}) \approx \Pr(E_1=e_1|H_j) \cdot ... \cdot \Pr(E_n=e_n|H_j)$$
-  - It yields $\Pr(H_j|\vv{E}) = 0$
-  - It is impossible to decide
+  - Value $e'$ of feature $E_i$ not in training set with output class $H_j$
+  - Estimated probability $\Pr(E_i=e'|H_j) = 0$
+  - Plugging $\Pr(E_i=e'|H_j) = 0$ into
+    $$
+    \Pr(H_j|\vv{E}) \approx \Pr(E_1=e_1|H_j) \cdot ... \cdot \Pr(E_n=e_n|H_j)
+    $$
+  - Yields $\Pr(H_j|\vv{E}) = 0$ $\to$ impossible to decide output
 
-* Laplace estimator for probabilities
-- To address events not in the training set, we can use the Laplace estimator for
-  conditional probabilities instead of MLE
+* Estimating Probabilities: Laplace Estimator
+- Use Laplace estimator for events not in training set instead of MLE
 
-- The maximum likelihood estimate (MLE) is:
+- **Maximum likelihood estimate** (MLE)
   $$
   \Pr(E_i = e') = \frac{\# I(E_i = e')}{\sum_{k=1}^K \# I(E_i = e_k)}
   $$
 
-- The Laplace estimator
-  - Adds 1 to each count and $V$ (number of feature values) to the denominator to
-    normalize the probability to 1:
+- **Laplace estimator**
+  - Adds 1 to each count and $V$ (number of feature values) to denominator:
     $$
     \Pr(E_i = e')
     = \frac{1 + \# I(E_i = e')}{\sum_{j=1}^V (1 + \# I(E_i = e'))}
     = \frac{1 + \# I(E_i = e')}{V + \sum_{j=1}^V \# I(E_i = e')}
     $$
-  - Blends a prior that feature values are equiprobable with the estimated
-    probabilities using MLE
+  - Blends prior of equiprobable feature values with MLE estimates
 
 ## #############################################################################
 ## Decision trees
@@ -241,21 +239,23 @@ MSML610: Advanced Machine Learning
 
 // AIMA 19.3 Learning Decision Trees
 
-* Decision tree
-- Characteristics:
-  - Supervised learning method
-  - For both classification and regression
+* Decision Tree
+- **Characteristics**
+  - Supervised learning
+  - Classification and regression
   - Non-parametric (i.e., no functional form)
 
-- Model
-  - A set of decision rules organized in a tree
-- Training
-  - Infer a set of decision rules from data set
-  - Worst case complexity is $O(2^n)$ with number of variables
-  - Greedy divide-and-conquer make the average complexity better
-- Evaluation
-  - The model is evaluated from root to leaves, similar to a flow chart
-  - Cost of prediction is $O(log(n))$ with numbers of training points
+- **Model**
+  - Decision rules organized in a tree
+
+- **Training**
+  - Infer decision rules from data
+  - Worst case complexity: $O(2^n)$ with number of variables
+  - Greedy divide-and-conquer improves average complexity
+
+- **Evaluation**
+  - Evaluate model from root to leaves
+  - Prediction cost: $O(log(n))$ with number of training points
 
 * Typical decision trees
 - Each node tests a particular feature against a constant (i.e., splitting the
