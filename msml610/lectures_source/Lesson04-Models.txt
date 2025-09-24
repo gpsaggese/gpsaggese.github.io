@@ -1589,10 +1589,24 @@ MSML610: Advanced Machine Learning
     linear)
 
 * Non-Linear Transforms for SVM vs Others
+::: columns
+:::: {.column width=40%}
+
 - In SVM the non-linear transform does not change the number of unknowns and
   degrees of freedom of the model
 - This is different from transforming the variables in a linear problem, since
   in that case the number of unknowns changes
+
+::::
+:::: {.column width=60%}
+
+![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM1.png){ width=4cm }
+![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM2.png){ width=4cm }
+![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM3.png){ width=4cm }
+![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM4.png){ width=4cm }
+
+::::
+:::
 
 * SVM in Higher Dimensional Space
 - **Pros**
@@ -1754,49 +1768,54 @@ MSML610: Advanced Machine Learning
 
 * Classes of Support Vectors for Soft Margin SVM
 - There are 3 classes of points:
-  - \textit{Margin support vectors}: they are exactly on the margin defining it
+  - **Margin support vectors**: they are exactly on the margin and define it
     - In primal form: $y_i (\vw^T \vx_i + b) = 1 \iff \xi_i = 0$
     - In dual form: $0 < \alpha_i < C$
-  - \textit{Non-margin support vectors}: they are inside the margin and classified
+  - **Non-margin support vectors**: they are inside the margin and classified
     correctly or not
     - In primal form: $y_i (\vw^T \vx_i + b) < 1 \iff \xi_i > 0$
     - In dual form: $\alpha_i = C$
-  - \textit{Non-support vectors}, i.e., interior points:
+  - **Non-support vectors**, i.e., interior points:
     - In primal form: $y_i (\vw^T \vx_i + b) > 1$
     - In dual form: $\alpha_i = 0$
 
 * Intuition for C in SVM
-- $C$ represents how much penalty we incur for passing the margin
-- If $C$ is large, then SVM will try to fit all the points to avoid being
-  penalized (lower bias / higher variance)
-  - $C \to \infty$ which yields hard-margin SVM
-- If $C$ is small, then we allow margin violations (higher bias / lower
-  variance)
+- $C$ represents how much penalty you incur for passing the margin
+  - If $C$ is large, then SVM will try to fit all the points to avoid being
+    penalized
+    - Lower bias / higher variance
+    - $C \to \infty$ which yields hard-margin SVM
+  - If $C$ is small, then you allow margin violations
+    - Higher bias / lower variance
+
 - From another point of view $C \propto \frac{1}{\lambda}$, so large $C$ means
   small $\lambda$ and thus small regularization
+  - $C$ is chosen through cross validation, like any regularization parameter
 
-- $C$ is chosen through cross validation, like any regularization parameter
+![](msml610/lectures_source/figures/Lesson04_Varying_C_in_SVM.png)
 
 * Multi-Class Classification for SVM
 - Often SVM packages have built-in multi-class classification
+
 - Otherwise use the one-vs-all method:
   - Train $K$ SVMs distinguishing each class from the rest using one-hot
-    encoding, getting SVM parameters $(\vw_1, b_1), ..., (\vw_K, b_k)$
+    encoding
+    - Get SVM parameters $(\vw_1, b_1), ..., (\vw_K, b_k)$
   - For a new example $\vx$ compute $\vw_i^T \vx + b_i$ for all the models
-  - Pick the model that gives the largest positive value (i.e., more confident
-    about its class vs the rest of the classes)
+  - Pick the model that gives the largest positive value
+    - I.e., more confident about its class vs the rest of the classes
 
 ## #############################################################################
 ## Similarity-Based Models
 ## #############################################################################
 
 * Similarity-Based Models: Intuition
-- Idea: the model evaluated in one point $h(\vx)$ is affected by:
-  - Other data points in the training set $(\vx_n, y_n) \in D$
+- **Idea**: the model evaluated in one point $h(\vx)$ is affected by:
+  - Other data points in the training set $(\vx_n, y_n) \in \calD$
   - The effect is based on the distance $d(\vx, \vx_n) = \|\vx - \vx_n\|$
 
-- In other words, the model is the sum of the effect of each point in the
-  training set, scaled down by the distance
+- The model is the sum of the effect of each point in the training set, scaled
+  down by the distance
   - The model is a superposition of effects
   $$
   h(\vx)
