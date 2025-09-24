@@ -1526,10 +1526,10 @@ MSML610: Advanced Machine Learning
     \alpha_i (y_i (\vw^T \vx_i + b) - 1) = 0
     $$
   - From these equations, either
-    - $\alpha_i = 0$ and $\vx_i$ is an \textit{interior point} since it has
+    - $\alpha_i = 0$ and $\vx_i$ is an _interior point_ since it has
       non-null distance from the plane (i.e., slack) from the plane; or
     - $\alpha_i \ne 0$ and the slack is $0$, which implies that the $\vx_i$ point
-      touches the margin, i.e., it is a \textit{support vector}
+      touches the margin, i.e., it is a _support vector_
 
 * Solving Dual Formulation of SVM Problem (2/2)
 ::: columns
@@ -1990,7 +1990,7 @@ MSML610: Advanced Machine Learning
     - NN hidden layers: features can be $> 0$ or $< 0$
 
 * RBF Network vs SVM
-- The model form is the same:
+- The **model form** is the same:
   - RBF:
     $$h(\vx) = \sign(\sum_i w_i e^{-\gamma \|\vx - \vx_i\|^2}$$
   - SVM:
@@ -2001,13 +2001,13 @@ MSML610: Advanced Machine Learning
   - SVM: only support vectors contribute to the model
 
 * K-Nearest Neighbor (KNN) Model
-- The **model for** is like:
+- The **model form** is like:
   $$
   h_{\vw}(\vx) = \frac{1}{n} \sum_{\vx_i \text{closest to } \vx} w_i
   $$
 
 ::: columns
-:::: {.column width=15%}
+:::: {.column width=60%}
 
 - **Idea**:
   - Closeness implies a distance (e.g., euclidean metric) or similarity (e.g., a
@@ -2016,7 +2016,7 @@ MSML610: Advanced Machine Learning
   - Take an average of their response
 
 ::::
-:::: {.column width=75%}
+:::: {.column width=40%}
 
 ![](msml610/lectures_source/figures/Lesson04_KNN_Model.png)
 
@@ -2025,21 +2025,21 @@ MSML610: Advanced Machine Learning
 
 * KNN: Intuition of Number Degrees of Freedom
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=60%}
 
 - Nearest neighbor model ($k = 1$)
-  - Adopt response of closest point to point $\vx$
-  - Like Voronoi tessellations: each point has a region for which it is the
-    closest point and assigns its output to that region
+  - Use response of closest point to $\vx$
+  - Similar to Voronoi tessellations: each point has a region where it is the
+    closest and assigns its output to that region
 
-- $k$ is the only parameter for KNN
-  - For $k = 1$, $N$ neighborhoods, one around each training point
-  - For $k = N$, single neighborhood
+- $k$ is **the only parameter** for KNN
+  - For $k = 1$ $\implies$ $N$ neighborhoods, one around each training point
+  - For $k = N$ $\implies$ single neighborhood
   - Effective number of parameters: $\frac{N}{k}$, imagining $N / k$
     non-overlapping neighborhoods
 
 ::::
-:::: {.column width=50%}
+:::: {.column width=40%}
 
 ![](msml610/lectures_source/figures/Lesson04_Voronoi.png)
 
@@ -2047,45 +2047,48 @@ MSML610: Advanced Machine Learning
 :::
 
 * KNN: Assumptions on the Data
-- KNN makes no assumption on the data
-  - This is the opposite of the linear model where there is a strong assumption on
-    the data
-- KNN assumes locality in parameter space
-  - The model is constant in the neighborhood of an example
-  - E.g., $k = 1$ we consider the Voronoi tesselation low-bias / high-variance
-  - E.g., $k = N$ we consider the average value (high-bias / low-variance)
+- KNN makes **no assumption on data**
+  - Opposite of linear model with strong data assumption
 
-* Training and Test Error for KNN
-- For $k=1$ a KNN model
-  - Makes no error on the training set (assuming a non-noisy target), since it
-    memorizes the training set (low bias / high variance)
-  - $E_{out}$ is larger than $E_{in}$
-- If $k$ increases the training error $E_{in}$ increases but the test error
-  $E_{out}$ decreases until it starts increasing again
-  - We have the typical behavior of model complexity as in bias-variance diagrams
+- KNN assumes **locality in parameter space**
+  - Model is constant in example's neighborhood
+  - E.g., $k = 1$: Voronoi tessellation (low-bias/high-variance)
+  - E.g., $k = N$: Average value (high-bias/low-variance)
+
+* KNN: Training and Test Error
+- For $k=1$
+  - No error on training set (low bias / high variance) assuming non-noisy target
+  - $E_{out}$ larger than $E_{in}$
+
+- Increasing $k$
+  - Training error $E_{in}$ increases
+  - Test error $E_{out}$ decreases, then increases
+  - Typical model complexity behavior in bias-variance diagrams
 
 * KNN vs RBF Models
 - **Similarities**
-  - K-Nearest Neighbor is a \textit{discrete} version of the RBF model
+  - K-Nearest Neighbor is a _discrete_ version of the RBF model
 
 - **Differences:**
-  - Consider only the $k$ \textit{closest examples} to the point $\vx$ (not all
+  - Consider only the $k$ _closest examples_ to the point $\vx$ (not all
     examples in the training set)
-  - Use a \textit{constant kernel} (responses are not weighted by distance)
+  - Use a _constant kernel_ (responses are not weighted by distance)
 
 ## #############################################################################
 ## Clustering
 ## #############################################################################
 
 * K-Means Clustering: Problem Formulation
-- We have $N$ \textit{unlabeled} points $\{\vx_1, \vx_2, ..., \vx_N\}$
-- We want to partition the points into $K$ clusters $S_1, ..., S_K$
-  - Each cluster is defined by its center $\vmu_k$
-  - Each point $\vx_i$ is assigned to cluster $c(\vx_i)$
-  - The unknowns are: $c(\vx_1), ..., c(\vx_N), \vmu_1, ..., \vmu_K$
+- $N$ _unlabeled_ points $\{\vx_1, \vx_2, ..., \vx_N\}$
 
-- We want to minimize the distance between each $\vx_i$ and the assigned center
-  $\vmu_k$ where $k = c(\vx_i)$:
+- Partition points into $K$ clusters $S_1, ..., S_K$
+  - Each cluster defined by center $\vmu_k$
+  - Each point $\vx_i$ assigned to cluster $c(\vx_i)$
+  - Unknowns are $c(\vx_1), ..., c(\vx_N), \vmu_1, ..., \vmu_K$
+
+- Minimize distance between each $\vx_i$ and assigned center $\vmu_k$ where
+  $k = c(\vx_i)$
+  \vspace{-0.5cm}
   \begin{alignat*}{3}
   J(c_1, ..., c_N, \mu_1, ..., \mu_K) 
   &= \sum_{k=1}^K \sum_{\vx_n \in S_k} \|\vx_n - \vmu_k\| ^ 2
@@ -2094,112 +2097,124 @@ MSML610: Advanced Machine Learning
   &= \sum_{i=1}^N \| \vx_i - \vmu_{c(\vx_i)} \| ^ 2
   & \text{(scanning the points)} \\
   \end{alignat*}
+  \vspace{-1cm}
 
-- K-means clustering is NP-hard (combinatorial) and thus intractable
+- **K-means clustering is NP-hard** (combinatorial) and thus intractable
   - In fact there are $K^N$ possible assignments
 
-* K-Means Clustering: Lloyd'S Algorithm
-- We start picking a random assignment of $N$ points to the $K$ clusters
-  - Better than picking randomly the centroids of the clusters
-- Each iteration does 2 steps
+* K-Means Clustering: Lloyd's Algorithm
+- **Start with a random assignment** of $N$ points to $K$ clusters
+  - Better than picking random centroids
 
-- **Step 1**: Move centroid
-  - We move the centroid of each cluster to the mean point of the current cluster
-  - This loop iterates over the $K$ clusters
-  - $\vmu_k \leftarrow \frac{1}{|S_k|}\sum_{\vx_n \in S_k}\vx_n$
+- **Each iteration** has 2 steps
 
-- **Step 2**: Cluster assignment
+  - **Step 1**: Move centroid
+    - Move each cluster's centroid to the mean point
+    - Iterate over $K$ clusters
+    - $\vmu_k \leftarrow \frac{1}{|S_k|}\sum_{\vx_n \in S_k}\vx_n$
 
-  - Each $\vx_n$ is assigned to the closest cluster based on its center
-  - This loop iterates over the $N$ points
-  - $S_k \leftarrow
-    \{\vx_n: \| \vx_n - \vmu_k \| \le \|\vx_n - \vmu_l\| \;
-    \forall l \ne k \}$
+  - **Step 2**: Cluster assignment
+    - Assign each $\vx_n$ to the closest cluster center
+    - Iterate over $N$ points
+    - $S_k \leftarrow
+      \{\vx_n: \| \vx_n - \vmu_k \| \le \|\vx_n - \vmu_l\| \;
+      \forall l \ne k \}$
 
 * K-Means Clustering: Convergence
-- K-means algorithm converges since:
-  - There is a finite (though large $K^N$) number of possible partitionings, and
-    thus a finite number of possible values of the objective functions
-  - The objective function $J(\cdot)$ is always decreased
+- **K-means algorithm converges** since:
+  - Finite number of possible partitions (and values of objective functions)
+  - Objective function $J(\cdot)$ always decreases
 
-- The objective function is always decreasing
-  - The cost function $J(\vmu_1, ..., \vmu_K, c_1, ..., c_N)$ can be seen as a
-    function of:
-    - The centroids $c_1, .., c_N$
-    - The point assignments $\vmu_1, ..., \vmu_K$
-  - At each step, K-means minimizes $J$ with respect to:
-    - The centroids (keeping the assignments fixed); then
-    - The assignments (keeping the centroids fixed)
-  - It is like coordinate descent
+- **Objective function always decreases**
+  - Cost function $J(\vmu_1, ..., \vmu_K, c_1, ..., c_N)$ depends on:
+    - Centroids $c_1, .., c_N$
+    - Point assignments $\vmu_1, ..., \vmu_K$
+  - K-means minimizes $J$ by:
+    - Adjusting centroids (fixed assignments)
+    - Adjusting assignments (fixed centroids)
+  - Similar to coordinate descent
 
-- Generally, it converges to a local minimum
-  - Run K-means multiple times using different random initializations
-  - Pick the best result
+- Generally converges to a **local minimum**
+  - Run K-means multiple times with different random initializations
+  - Choose best result
 
 * K-Means Clustering: Non-Separable Clusters
-- For simplicity, we imagine a clear separation between clusters
-  - In practice, clusters (especially in high dimensions) are not obviously
-    separable
 
-- We can use K-means on data that is not obviously separated
+::: columns
+:::: {.column width=60%}
+
+- For simplicity, you tend to imagine a clear separation between clusters
+  - Clusters, especially in high dimensions, are not obviously separable
+
+- Using K-means on data not obviously separated
   - E.g., market segmentation
   - E.g., t-shirt sizing
-    - Collect height and width of a population of customers
+    - Collect height and width of customers
     - Run K-means
-    - Find the optimal way to split the population into 3 sizes (S, M, L)
+    - Find optimal way to split population into 3 sizes (S, M, L)
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/Lesson04_Clustering.png)
+
+::::
+:::
 
 * Choosing the Number of Clusters
-- It's often unclear how many clusters $K$ exist in the data
-  - E.g., visual analysis can be inconclusive with 2D or 3D data
-  - Even more difficult in high dimensional spaces
+- Often unclear how many clusters $K$ exist
+  - Visual analysis can be inconclusive in 2D or 3D
+  - More difficult in high dimensions
 
-1. Elbow Method
-   - Vary the number of clusters $K$
-   - Compute the optimal cost function $J(\cdot)$
-   - Choose $K$ at the "elbow" point if visible
-   - The elbow is absent if the curve resembles a hyperbole $\approx 1/K$
+::: columns
+:::: {.column width=60%}
 
-2. End-to-end approach
-   - Choose $K$ to optimize later processing stages
-   - E.g., More t-shirt sizes (i.e., more clusters) $\implies$
-     - Satisfy customers
-     - Complicates manufacturing
-     - Increases stocking and inventory management
+- **Elbow Method**
+  - Vary clusters $K$
+  - Compute optimal cost function $J(\cdot)$
+  - Choose $K$ at "elbow" point if visible
+  - Elbow absent if curve resembles hyperbole $\approx 1/K$
 
-* Clustering: Interpretation of Clusters
-- Often we want to give a meaning to clusters
+::::
+:::: {.column width=40%}
 
-- Cluster meaning is difficult to automate: it must be interpreted manually
-  - Examine the cluster centroids
-    - Centroid values show the "typical" point in each cluster
+![](msml610/lectures_source/figures/Lesson04_Elbow_method.png)
+
+::::
+:::
+
+- **End-to-end approach**
+  - Choose $K$ to optimize later stages
+  - E.g., more t-shirt sizes (more clusters) $\implies$
+    - Satisfy customers
+    - Complicates manufacturing
+    - Increases inventory management
+
+* Interpretation of Clusters
+- Cluster meaning **often interpreted manually** (difficult to automate)
+  - Examine cluster centroids
+    - Centroid values show "typical" point in each cluster
     - High, low, or zero feature values highlight key characteristics
-
-  - Analyze the distribution of features per cluster
+  - Analyze distribution of features per cluster
     - Plot histograms or boxplots for each feature
     - Identify features that vary sharply across clusters
-
   - Visualize clusters in 2D or 3D
     - E.g., PCA, t-SNE, UMAP
-    - Helps understand separation and internal structure
-
-  - Identify common traits in each cluster
-    - For categorical features, count dominant categories
-
+    - Understand separation and internal structure
   - Compare clusters to external labels if available
     - See if clusters align with known real-world groups
-
   - Train a classifier like decision tree
     - Important features for predicting cluster reveal their meaning
 
-- Example: Customer Segmentation
-  - Features: (Age, Annual Income, Spending Score)
-  - Cluster 1
-    - $(25 \text{ yrs}, 30K, 90)$ $\to$ "Young Big Spenders"
-  - Cluster 2:
-    - $(50 \text{ yrs}, 80K, 40)$ $\to$ "Comfortable
-    Mid-Lifers"
-  - Cluster 3:
-    $(35 \text{ yrs}, 120K, 20)$ $\to$ "High Income, Low Spending Customers"
+- **Example: Customer Segmentation**
+
+\begingroup \scriptsize
+| Cluster    | Age       | Annual Income | Spending Score | Label                              |
+|------------|-----------|----------------|----------------|-------------------------------------|
+| Cluster 1  | 25 yrs    | 30K            | 90             | Young Big Spenders                  |
+| Cluster 2  | 50 yrs    | 80K            | 40             | Comfortable Mid-Lifers              |
+| Cluster 3  | 35 yrs    | 120K           | 20             | High Income, Low Spending Customers |
+\endgroup
 
 ## #############################################################################
 ## Anomaly Detection
@@ -2207,24 +2222,21 @@ MSML610: Advanced Machine Learning
 
 * Anomaly Detection: Problem Formulation
 - **Problem**:
-  - We have $\{\vx_1, ..., \vx_N\}$ examples with features $\vx \in \bbR^P$ for
-    good / non-anomalous instances
-  - We want to find a way to detect bad / anomalous instances
+  - $\{\vx_1, ..., \vx_N\}$ examples with features $\vx \in \bbR^P$ for good
+    instances
+  - Detect bad/anomalous instances
 
 - **Algorithm**:
-  - We don't know what makes a _"bad instances"_
-  - We learn what _"good instances"_ have in common using unsupervised learning
-    - I.e., find the distribution for _"good instances"_ $\vx_i$, 
-      $\Pr(\vx \text{ is good})$
+  - Unknown characteristics of _"bad instances"_
+  - Learn common traits of _"good instances"_ using unsupervised learning
+    - Find distribution for $\vx_i$: $\Pr(\vx \text{ is good})$
   - Pick features
-    - The goal is to find "sensitive" features, i.e., features that might take
-      large or small values in case of an anomaly
-    - E.g., ratio between CPU load and network traffic
-  - Estimate the distribution $\Pr(\vx \text{ is good})$
-  - Choose the threshold $\varepsilon$
-  - For a new instance $\vx_{new}$, if
-    $$\Pr(\vx_{new} \text{ is good}) \le \varepsilon$$
-    we flag it as an anomaly
+    - Find "sensitive" features, e.g., ratio between CPU load and network
+      traffic
+  - Estimate distribution $\Pr(\vx \text{ is good})$
+  - Choose threshold $\varepsilon$
+  - For new instance $\vx_{new}$, if
+    $\Pr(\vx_{new} \text{ is good}) \le \varepsilon$ flag as anomaly
 
 * Anomaly Detection: Example of Aircraft Engines
 - **Problem**
@@ -2236,8 +2248,9 @@ MSML610: Advanced Machine Learning
     - Vibration intensity
     - ...
   - Collect data for all engines
-  - Model a PDF $\Pr(\vx \text{ is good})$
-  - Decide if a new engine is acceptable $\Pr(\vx_{good}) \le \varepsilon$
+  - Model $\Pr(\vx \text{ is good})$
+  - Decide if a new engine is acceptable
+    $\Pr(\vx_{new} \text{ is good}) \le \varepsilon$
     or needs more testing
 
 * Anomaly Detection: Example of Hacked Account
@@ -2253,10 +2266,10 @@ MSML610: Advanced Machine Learning
     - How many pages s/he visits
     - How many times s/he posts comments
     - ...
-  - Model a PDF $\Pr(\vx \text{ is good})$
-  - Identify unusual users by checking $\Pr(\vx_{new}) \le \varepsilon$
+  - Model $\Pr(\vx \text{ is good})$
+  - Identify unusual users by checking $\Pr(\vx_{new} \text{ is good}) \le \varepsilon$
 
-* Anomaly Detection: Example of Computers in Data Center
+* Anomaly Detection: Example of Data Center
 - **Problem**
   - Monitor servers in a data center to find malfunctioning or hanged servers
 
@@ -2268,24 +2281,24 @@ MSML610: Advanced Machine Learning
     - Number of reads/writes per sec
     - CPU load / network activity
     - ...
-  - Model a PDF $\Pr(\vx \text{ is good})$
-  - Identify unusual users by checking $\Pr(\vx_{new}) \le \varepsilon$
+  - Model $\Pr(\vx \text{ is good})$
+  - Identify unusual systems by checking $\Pr(\vx_{new} \text{ is good}) \le \varepsilon$
 
 * Using a Gaussian Model for Anomaly Detection
 - Aka "density estimation"
 - Given $N$ examples $\vx_1, ..., \vx_N \in \bbR^p$
-- Ensure that the features have a Gaussian distribution
-  - If not, we can apply some transformations, e.g., $\log(x_i + k)$
-- Estimate the parameters of the Gaussian model $f_X(\vx)$
+- Ensure that the **features have a Gaussian distribution**
+  - If not, apply some transformations, e.g., $\log(x_i + k)$
+- **Estimate the parameters** of the Gaussian model $f_X(\vx)$
 
-- Given a new example $\vx_{new}$, compute:
-  $$
-  \Pr(\vx_{new} \text{ is good}) \le \varepsilon
-  $$
-  to flag an anomaly
+- Given a new example $\vx_{new}$ **compute**
+  $\Pr(\vx_{new} \text{ is good}) \le \varepsilon$ to flag an anomaly
 
 * Estimate Univariate Gaussian Model
-- We have $N$ (scalar) examples $\vx_1, ..., \vx_N \in \bbR$ for "good instances"
+::: columns
+:::: {.column width=60%}
+- You have $N$ (scalar) examples $\vx_1, ..., \vx_N \in \bbR$ representing _"good
+  instances"_
 
 - Assume the data is generated by a Gaussian distribution
   $$X \sim \calN(\mu, \sigma)$$
@@ -2299,9 +2312,15 @@ MSML610: Advanced Machine Learning
   &\mu = \frac{1}{N}\sum_i x_i \\
   &\sigma^2 = \frac{1}{N-1}\sum_i (x_i - \mu)^2 \\
   \end{alignat*}
+::::
+:::: column
+
+![](msml610/lectures_source/figures/Lesson04_1D_Gaussian.png)
+::::
+:::
 
 * Estimate Multivariate Independent Gaussian Model
-- We have $N$ examples $\vx_1, ..., \vx_N \in \bbR^p$ for "good instances"
+- You have $N$ examples $\vx_1, ..., \vx_N \in \bbR^p$ for _"good instances"_
 
 - Assume independence of the features, the PDF of a multi-variate Gaussian $X$
   is:
@@ -2312,24 +2331,28 @@ MSML610: Advanced Machine Learning
 
 - Infer the parameters $\mu_i$ and $\sigma_i$ using discrete formulas to get the
   complete model
-- Vectorize the computation
 
 * Estimate a Multi-Variate Gaussian Model
+::: columns
+:::: {.column width=60%}
 - **Problem**:
-  - Sometimes features vary together (e.g., network use and CPU load), so using
-    the independent assumption might cause misclassifications
-  - E.g., the components of an example $\vx_{new}$ are within the expected range
-    but together make no sense
+  - Often features vary together (e.g., network use and CPU load), causing
+    mis-classifications with independent assumptions
+  - Components of $\vx_{new}$ are within range but nonsensical together
     - E.g., low network use with high CPU load
 
 - **Solution 1**:
-  - Engineer features to create features that are high in case of an anomaly
-  - This bridges the gap for the correlation between variables (that can't be
-    modeled in independent Gaussian models)
+  - Engineer features to highlight anomalies
+  - Address variable correlation not modeled in independent Gaussian models
 
 - **Solution 2**:
-  - Estimate the entire multivariate model, instead of assuming independence and
-    estimating one marginal Gaussian at a time
+  - Estimate the entire multivariate model instead of assuming independence
+::::
+:::: column
+
+![](msml610/lectures_source/figures/Lesson04_2D_Gaussian.png)
+::::
+:::
 
 * Estimate a Multi-Variate Gaussian Model
 - The PDF of a multi-variate Gaussian is:
@@ -2339,22 +2362,20 @@ MSML610: Advanced Machine Learning
   \exp(-\frac{1}{2} (\vx - \vmu)^T \mSigma^{-1} (\vx - \vmu))
   $$
 
-- We estimate:
+- Estimate:
   $$
   \vmu \in \bbR^d = \frac{1}{N}\sum_{k=1}^N \vx_k
   $$
-  and
   $$
   \mSigma \in \bbR^{d \times d}
   = \{s_{ij}\}
   = \frac{1}{N - 1} \sum_{k=1}^N (\vx_k - \vmu) (\vx_k - \vmu)^T
   $$
 
-- This model requires more examples to train since there are more parameters to
-  fit
+- Model requires more examples to train due to more parameters
 
-- If there is independence between the variables, then the multivariate Gaussian
-  is decomposed into a product of Gaussian distributions
+- Independence between variables decomposes multivariate Gaussian into product
+  of Gaussian distributions
 
 * Evaluate Anomaly Detection Systems
 - To evaluate models one needs to:
@@ -2370,51 +2391,49 @@ MSML610: Advanced Machine Learning
 
 - _Labeled_ data is still needed to rate models
   \begin{alignat*}{2}
-  y = 0 & \text{good} \\
-  y = 1 & \text{anomalous} \\
+  y = 0 & \text{ good} \\
+  y = 1 & \text{ anomalous} \\
   \end{alignat*}
 
 * Evaluate Anomaly Detection Systems
-- Often the number of anomalous examples $y = 1$ is much smaller than good
-  examples with $y = 0$
+- Often, anomalous examples $y = 1$ are much fewer than good examples $y = 0$
   - E.g., 10,000 good vs 20 bad examples
-  - Important to address class imbalance for accurate model performance
+  - Address class imbalance for accurate model performance
 
 - **Algorithm**:
-  - Pick 60% of data with $y = 0$ to train (only on the good examples)
-
-  - Split the remaining data $y = 0$ and $y = 1$ into validation and test sets
-    - Ensure both sets are representative of the overall dataset
-    - Train, validation, and test sets should have no overlap but have the same
+  - Pick 60% of $y = 0$ data to train (only on good examples)
+  - Split remaining $y = 0$ and $y = 1$ into validation and test sets
+    - Ensure both sets represent the overall dataset
+    - Train, validation, and test sets should not overlap but have the same
       characteristics
-    - This helps in evaluating the model's performance accurately
+    - Helps evaluate model performance accurately
+  - Use validation set to compare models, estimate hyperparameters
+    - E.g., $\varepsilon$ is the threshold for anomaly detection
+  - Use test set to evaluate final model
+    - Train on normal data, test on both normal and anomalous data
 
-  - Use the validation set to compare models, estimate the hyper parameters
-    - E.g., $\varepsilon$ is the threshold for anomaly detection 
+- **Aircraft engine example**
 
-  - Use the test set to evaluate the final model
-    - The model is trained on normal data and tested on both normal and anomalous
-      data
-
-- **Example**:
-  - In aircraft engine example there are 10,000 good engines ($y = 0$), 20 bad
-    engines ($y=1$) 
-  - Train set: 6,000 $y=0$ examples
-  - Validation set: 2,000 $y=0$ and 10 $y=1$
-  - Test set: 2,000 $y=0$ and 10 $y=1$
+\begingroup \scriptsize
+| **Dataset**    | $y = 0$ (Good Engines) | $y = 1$ (Bad Engines) |
+|----------------|------------------------|------------------------|
+| Total Example  | 10,000                 | 20                     |
+| Train Set      | 6,000                  | 0                      |
+| Validation Set | 2,000                  | 10                     |
+| Test Set       | 2,000                  | 10                     |
+\endgroup
 
 * Anomaly Detection vs Supervised Learning
-- Even in unsupervised learning, we need \textit{labeled} data for model
-  evaluation
+- Even in unsupervised learning, you need labeled data for model evaluation
 
-- What's the difference with supervised learning?
-  - In anomaly detection/unsupervised learning, we train only on good examples
-  - In supervised learning, we train on both good and bad examples
+- Difference with supervised learning:
+  - Anomaly detection/unsupervised learning: Train only on good examples
+  - Supervised learning: Train on both good and bad examples
 
 - Use:
   - Anomaly detection/unsupervised learning:
-    - When learning only from good examples due to few anomalous examples
-    - When having a strong prior on the model
-    - When future anomalous examples are unknown (no prior)
-  - Supervised learning when the training set has less skewed classes
-  - It is not a clear-cut decision
+    - Learn from good examples due to few anomalous examples
+    - Strong prior on the model
+    - Future anomalous examples unknown
+  - Supervised learning: Less skewed classes in training set
+  - Not a clear-cut decision
