@@ -1664,59 +1664,77 @@ MSML610: Advanced Machine Learning
 - To use SVMs, compute inner products between transformed vectors $\vz$
 
 - The kernel trick implies:
-  - No need to compute $\Phi()$: use the kernel $K_{\Phi}$, not the
-    transformation $\Phi$
-  - No need to know $\Phi$: with function $K_{\Phi}$ as an inner product, use
-    SVM machinery without knowing $\calZ$ space or transformation $\Phi$
-  - $\Phi$ can be impossible to compute: $K_{\Phi}$ can correspond to a
-    transformation $\Phi$ to an infinite dimensional space (e.g., Gaussian
-    kernel)
+  - No need to compute $\Phi()$
+    - Use the kernel $K_{\Phi}$, not the transformation $\Phi$
+  - No need to know $\Phi$
+    - With function $K_{\Phi}$ as an inner product, use SVM machinery without
+      knowing $\calZ$ space or transformation $\Phi$
+  - $\Phi$ can be impossible to compute
+    - $K_{\Phi}$ can correspond to a transformation $\Phi$ to an infinite
+      dimensional space (e.g., Gaussian kernel)
 
 * Non-Linearly Separable SVM Problem
 
 ::: columns
-:::: {.column width=75%}
-
-- In general there are 2 types of non-separable data sets:
-  - Slightly non-separable
-    - Few points crossing the boundary $\implies$ use soft margin SVMs
-  - Seriously non-separable
-    - E.g., the class inside the circle $\implies$ use non-linear transforms /
-      kernels
-
-::::
 :::: {.column width=50%}
 
-![](msml610/lectures_source/figures/Lesson04_Slightly_non_separable_dataset.png)
+- In general there are different types of **non-linearly separable data sets**
 
-![](msml610/lectures_source/figures/Lesson04_Slightly_non_separable_dataset2.png)
+- **Slightly non-separable**
+  - Few points crossing the boundary
+  - $\implies$ use soft margin SVMs
 
-![](msml610/lectures_source/figures/Lesson04_Non_separable_dataset.png)
+- **Seriously non-separable**
+  - E.g., the class inside the circle
+  - $\implies$ use non-linear kernels
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/Lesson04_Slightly_non_separable_dataset.png){ width=40% }
+
+![](msml610/lectures_source/figures/Lesson04_Slightly_non_separable_dataset2.png){ width=40% }
+
+![](msml610/lectures_source/figures/Lesson04_Non_separable_dataset.png){ width=40% }
 
 ::::
 :::
 
-- In practice, both issues are present and one can combine soft margin SVM and
-  non-linear transforms
+- In practice, both issues are present
+  - Combine soft margin SVM and non-linear kernel transforms
 
-* Soft-Margin SVM for Better Generalization on Linearly-Separable Data Sets
-- Sometimes, even if the data is linearly separable, one can get better
-  $E_{out}$ using soft margin SVM at the cost of worst $E_{in}$
-  - Usual trade off between in-sample and out-of-sample performance
-  - E.g., in the data set there are a few of outliers that are forcing a smaller
-    margin than what we could obtain if we ignore them, in order to get all the
-    points classified correctly
-- If $C$ parameter is very large the SVM optimization requires to make the error
-  very small, and this might trade off a large margin with getting all the
-  classification right
+* Soft-Margin SVM: Advantages
+
+::: columns
+:::: {.column width=50%}
+
+- Even with linearly separable data, improve $E_{out}$ using soft margin SVM at
+  the cost of worse $E_{in}$
+  - Trade-off between in-sample and out-of-sample performance
+
+- E.g., outliers force a smaller margin
+  - Ignoring outliers could increase margin
+
+- Large $C$ parameter in SVM requires minimizing error, trading off large margin
+  for correct classification
+
+::::
+:::: {.column width=45%}
+
+![](msml610/lectures_source/figures/Lesson04_Hard_vs_Soft_margin.png)
+
+![](msml610/lectures_source/figures/Lesson04_Hard_vs_Soft_margin2.png)
+
+::::
+:::
 
 * Primal Formulation for Soft Margin SVM
-- We want to introduce an error measure based on the margin violation for each
+- You want to introduce an error measure based on the margin violation for each
   point, so instead of the constraint:
   $$
   y_i (\vw^T \vx_i + b) \ge 1 \text{ (hard margin)}
   $$
-  we use:
+- You can use:
   $$
   y_i (\vw^T \vx_i + b) \ge 1 - \xi_i, \text{ where } \xi_i \ge 0
   \text{ (soft margin)}
@@ -1736,16 +1754,16 @@ MSML610: Advanced Machine Learning
 
 * Classes of Support Vectors for Soft Margin SVM
 - There are 3 classes of points:
-- \textit{margin support vectors}: they are exactly on the margin defining it
-  - In primal form: $y_i (\vw^T \vx_i + b) = 1 \iff \xi_i = 0$
-  - In dual form: $0 < \alpha_i < C$
-- \textit{non-margin support vectors}: they are inside the margin and classified
-  correctly or not
-  - In primal form: $y_i (\vw^T \vx_i + b) < 1 \iff \xi_i > 0$
-  - In dual form: $\alpha_i = C$
-- \textit{non-support vectors}, i.e., interior points:
-  - In primal form: $y_i (\vw^T \vx_i + b) > 1$
-  - In dual form: $\alpha_i = 0$
+  - \textit{Margin support vectors}: they are exactly on the margin defining it
+    - In primal form: $y_i (\vw^T \vx_i + b) = 1 \iff \xi_i = 0$
+    - In dual form: $0 < \alpha_i < C$
+  - \textit{Non-margin support vectors}: they are inside the margin and classified
+    correctly or not
+    - In primal form: $y_i (\vw^T \vx_i + b) < 1 \iff \xi_i > 0$
+    - In dual form: $\alpha_i = C$
+  - \textit{Non-support vectors}, i.e., interior points:
+    - In primal form: $y_i (\vw^T \vx_i + b) > 1$
+    - In dual form: $\alpha_i = 0$
 
 * Intuition for C in SVM
 - $C$ represents how much penalty we incur for passing the margin
