@@ -44,11 +44,11 @@ MSML610: Advanced Machine Learning
 # ##############################################################################
 
 ## #############################################################################
-## Naive Bayes
+## Naive Bayes Model
 ## #############################################################################
 
-* Naive Bayes
-- Predict classes $H_1, ..., H_n$ using evidence $\vE$:
+* Naive Bayes Model
+- **Problem**: predict classes $H_1, ..., H_n$ using evidence $\vE$:
   - Use Bayes' rule of conditional probability to decide output class
     $H_1, ... H_n$ given evidence $\vE$:
     $$
@@ -57,7 +57,7 @@ MSML610: Advanced Machine Learning
     where $\vv{E}$ is the vector of features
   - Training data estimates joint probability $\Pr(H_i, \vE)$
 
-- **Naive Bayes assumptions:**
+- **Assumptions:**
   1. Features are independent
   2. Features are equally important (or at least all relevant)
 
@@ -74,8 +74,7 @@ MSML610: Advanced Machine Learning
 - **Problem**
   - Predict if kids play outside using past weather observations
 
-- **ML formulation**
-  - Supervised learning
+- **Supervised learning problem**
   - Predictor vars:
     - `outlook = {sunny, overcast, rainy}`
     - `temperature = {hot, mild, cold}`
@@ -83,10 +82,6 @@ MSML610: Advanced Machine Learning
     - `windy = {true, false}`
   - Response var:
     - `play = {yes, no}`
-  - Training set:
-    - Samples for predictors and response from observations
-    - Possible noise in data (e.g., kids have different preferences, some are
-      sick illness, some have homework)
 
 ::::
 :::: {.column width=40%}
@@ -112,6 +107,12 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
+- **Training set**:
+  - Samples for predictors and response from observations
+  - Possible noise in data
+    - E.g., kids have different preferences, some are sick illness, some have
+      homework
+
 * Naive Bayes: Weather Prediction Example
 - Use Bayes' rule to decide class $H_j$:
   $$
@@ -136,7 +137,7 @@ MSML610: Advanced Machine Learning
     - E.g., $\Pr(\text{play = yes})$
     - Computed from training set as:
       \begingroup \scriptsize
-      $$\Pr(H_j) = \sum_{k=1}^N \Pr(H_j \land \vv{E}_k)$$
+      $\Pr(H_j) = \sum_{k=1}^N \Pr(H_j \land \vv{E}_k)$
       \endgroup
 
   - $\Pr(\vv{E})$: **probability of the evidence**
@@ -158,26 +159,35 @@ MSML610: Advanced Machine Learning
     probability of the evidence
 
 * 1-Rule
+::: columns
+:::: {.column width=65%}
+
 - Aka "tree stump", i.e., a decision tree with a single node
 
 - **Algorithm**
   - Pick a single feature (e.g., `outlook`):
-    - Most discriminant
+    - Most discriminant; or
     - Based on expert opinion
   - Choose the most frequent output for the feature's current value
 
-// TODO(gp): Add picture of tree stump
+::::
+:::: {.column width=30%}
+
+![](msml610/lectures_source/figures/Lesson04_Tree_stump.png)
+
+![](msml610/lectures_source/figures/Lesson04_Tree_stump2.png)
+
+::::
+:::
 
 - **Weather problem example**:
   - Pick `outlook` as single feature
   - Know predictor vars, e.g., `outlook = sunny`
-  - Compute probability of `play = yes` given `outlook = sunny` using training
-    set:
+  - Compute conditional probability using training set:
     $$
-    \Pr(\texttt{play = yes} | \texttt{outlook = sunny})
+    \Pr(\texttt{play = yes, no} | \texttt{outlook = sunny})
     $$
   - Output the predicted variable
-
 
 * Naive Bayes: Why Independence Assumption
 - **Independence assumption** factors joint probability into marginal
@@ -190,7 +200,7 @@ MSML610: Advanced Machine Learning
 
 - **Pros**:
   - Simplifies probability computation
-  - Aids generalization due to underlying model and so fewer samples needed
+  - Aids generalization due to few samples needed
 
 - **Cons**:
   - Assumption may not be true
@@ -204,9 +214,10 @@ MSML610: Advanced Machine Learning
 
 - For Naive Bayes, we need to estimate probability of each feature:
   $$
-  \Pr(E_i = e') = \frac{\# I(E_i = e')}{\sum_{k=1}^K \# I(E_i = e_k)}
+  \Pr(E_i = e') = \frac{\# I(E_i = e')}{\sum_{j=1}^V \# I(E_i = e_k)}
   $$
 
+\vspace{-0.5cm}
 - **Problem**
   - Value $e'$ of feature $E_i$ not in training set with output class $H_j$
   - Estimated probability $\Pr(E_i=e'|H_j) = 0$
@@ -214,14 +225,14 @@ MSML610: Advanced Machine Learning
     $$
     \Pr(H_j|\vv{E}) \approx \Pr(E_1=e_1|H_j) \cdot ... \cdot \Pr(E_n=e_n|H_j)
     $$
-  - Yields $\Pr(H_j|\vv{E}) = 0$ $\to$ impossible to decide output
+  - Yields $\Pr(H_j|\vv{E}) = 0$ $\implies$ impossible to decide output
 
 * Estimating Probabilities: Laplace Estimator
 - Use Laplace estimator for events not in training set instead of MLE
 
 - **Maximum likelihood estimate** (MLE)
   $$
-  \Pr(E_i = e') = \frac{\# I(E_i = e')}{\sum_{k=1}^K \# I(E_i = e_k)}
+  \Pr(E_i = e') = \frac{\# I(E_i = e')}{\sum_{j=1}^V \# I(E_i = e_k)}
   $$
 
 - **Laplace estimator**
@@ -240,6 +251,9 @@ MSML610: Advanced Machine Learning
 // AIMA 19.3 Learning Decision Trees
 
 * Decision Tree
+::: columns
+:::: {.column width=55%}
+
 - **Characteristics**
   - Supervised learning
   - Classification and regression
@@ -250,21 +264,32 @@ MSML610: Advanced Machine Learning
 
 - **Training**
   - Infer decision rules from data
+  - Greedy divide-and-conquer
   - Worst case complexity: $O(2^n)$ with number of variables
-  - Greedy divide-and-conquer improves average complexity
 
 - **Evaluation**
   - Evaluate model from root to leaves
   - Prediction cost: $O(log(n))$ with number of training points
 
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/Lesson04_Decision_Tree1.png)
+
+::::
+:::
+
 * Typical Decision Trees
+::: columns
+:::: {.column width=65%}
+
 - **Each node** tests a feature against a constant
   - Split input space with hyperplanes parallel to axes
 
 - **Each feature**:
   - Tested once
-  - Labeled with $(x^{(j)}, {<, =, >}, t)$
   - Checks feature $x^{(j)}$ against threshold $t$
+    - E.g., $x^{(j)} \{<, =, >\} t$
   - Result determines branch to follow
 
 - **Leaves** represent decisions:
@@ -272,15 +297,23 @@ MSML610: Advanced Machine Learning
     - Predict class or probability
   - Regression function
 
-- Deeper tree, more complex decision rules, fitter model
+::::
+:::: {.column width=30%}
+
+![](msml610/lectures_source/figures/Lesson04_Decision_Tree1.png)
+
+::::
+:::
+
+- Trees are non-linear models using variable interaction in `OR-AND` form:
+  $$
+  y_i = (x_1 \ge x_1') \land (x_2 \ge x_2') ...) \lor (...)
+  $$
   - No re-converging paths: it's a tree!
-  - Trees are non-linear models using variable interaction in `OR-AND` form:
-    $$
-    y_i = (x_1 \ge x_1') \land (x_2 \ge x_2') ...) \lor (...)
-    $$
+  - Deeper tree $\implies$ more complex decision rules $\implies$ fitter model
 
 * Decision Trees: Pros
-- Both for **regression and classification**
+- Works for both **regression and classification**
 
 - **Simple to understand and interpret**
   - White box model: explainable decisions
@@ -301,7 +334,7 @@ MSML610: Advanced Machine Learning
   - Performs well with large datasets
 
 * Decision Trees: Cons
-- **Learning a decision tree** is NP-complete
+- **Learning optimal decision tree** is NP-complete
   - Much worse than complexity of OLS
   - Algorithms use heuristics (e.g., greedy algorithms)
 
@@ -311,18 +344,24 @@ MSML610: Advanced Machine Learning
     - Minimum samples at a leaf node
     - Max depth of trees
 
+::: columns
+:::: {.column width=55%}
+
 - **Some training sets are hard to learn**
   - E.g., `XORs`, parity
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/Lesson04_Decision_Tree_parity.png)
+
+::::
+:::
 
 - **Unstable**
   - Small data variations greatly influence the tree
   - Solutions:
     - Ensemble learning / randomization
-
-* Handling of Missing Values
-- Missing values are treated:
-  - As their own value; or
-  - Assigned the most frequent value (i.e., imputation)
 
 // This should be moved somewhere else
 //* Multi-output problem with no correlation
@@ -344,10 +383,14 @@ MSML610: Advanced Machine Learning
 //    outputs
 
 * Learning Decision Trees: Intuition
+
 - **Several algorithms**
   - ID3
-  - C4.5
+  - C4.5 (proprietary)
   - CART (Classification And Regression Trees)
+
+::: columns
+:::: {.column width=55%}
 
 - Typically, the problem has a **recursive formulation**
   - Consider the current "leaf"
@@ -359,11 +402,19 @@ MSML610: Advanced Machine Learning
     - Maximum depth is reached
     - Sufficiently "pure"
 
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/Lesson04_Decision_Tree_Intuition.png)
+
+::::
+:::
+
 // TODO: Add example. Think of two coordinates $x_1, x_2$ with various examples
 // with 3 labels
 
 * Splitting at One Node: Problem Formulation
-- Consider the $m$-th node of a decision tree
+- **Consider the $m$-th node** of a decision tree
   - Given $p_i = (\vx_i, y_i)$ where $i = 1, ..., N_m$, with training vectors
     $\vx_i$ and labels $y_i$
   - Candidate splits are $\theta = (j, t_m)$ with feature $j$ and threshold $t_m$
@@ -381,6 +432,10 @@ MSML610: Advanced Machine Learning
 - **Recurse** on $Q_{L}(j, t_m)^*$ and $Q_{R}(j, t_m)^*$
 
 * Measures of Node Impurity for Classification
+
+::: columns
+:::: {.column width=45%}
+
 - **Measures of node impurity:**
   - Based on probabilities of choosing objects of different classes
     $k = 1, ..., K$ in the $m$-th node, i.e., $p_k$
@@ -391,6 +446,14 @@ MSML610: Advanced Machine Learning
   1. Misclassification error
   2. Gini impurity index
   3. Information gain
+
+::::
+:::: {.column width=55%}
+
+![](msml610/lectures_source/figures/Lesson04_Decision_Tree_Impurity.png)
+
+::::
+:::
 
 * Probability of Classification in a Node
 - Assume $m$-th node has $N_m$ objects $x_i$ in $K$ classes
@@ -410,7 +473,7 @@ MSML610: Advanced Machine Learning
     - Green = 1/10
 
 * Misclassification Error: Definition
-- You have several class probabilities $p_i$ need a single probability
+- You have several class probabilities $p_i$ and need a single probability
   - Consider worst case: most common class $k'$ in node
 
 - **Misclassification error**
