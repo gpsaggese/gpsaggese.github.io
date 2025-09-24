@@ -1048,7 +1048,7 @@ MSML610: Advanced Machine Learning
   - Evaluate the $n$ classifiers
   - Pick the class $y = i$ with the maximum $\Pr(y = i | \vx)$
 
-* Cost Function for Multi-Class Classification (Optional)
+* Cost Function for Multi-Class Classification (Opt)
 - The cost function for logistic regression is:
   $$
   E_{in}(\vw)
