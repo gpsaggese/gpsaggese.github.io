@@ -1814,13 +1814,13 @@ MSML610: Advanced Machine Learning
   - Other data points in the training set $(\vx_n, y_n) \in \calD$
   - The effect is based on the distance $d(\vx, \vx_n) = \|\vx - \vx_n\|$
 
-- The model is the sum of the effect of each point in the training set, scaled
-  down by the distance
-  - The model is a superposition of effects
-  $$
-  h(\vx)
-  = \sum_i \text{ effect of } h(\vx_i) \text{ scaled by } d(\vx, \vx_i)
-  $$
+- The model is a **superposition of effects**
+  - Sum of the effect of each point in the training set, scaled down by the
+    distance
+    $$
+    h(\vx)
+    = \sum_i \text{ effect of } h(\vx_i) \text{ scaled by } d(\vx, \vx_i)
+    $$
 
 - This approach allows to define complex decision boundaries
 
@@ -1843,7 +1843,7 @@ MSML610: Advanced Machine Learning
 
 // TODO: Add plot
 
-* Radial Basis Function Model
+* Radial Basis Function Model for Regression
 - Aka RBF
 
 - The model form for **regression** is:
@@ -1851,13 +1851,14 @@ MSML610: Advanced Machine Learning
   h(\vx) = \sum_{i=1}^{N} w_i \exp(-\gamma \|\vx - \vx_i\| ^2)
   $$
   where:
-  - If $\gamma$ is small, the exponential falls off slowly, and multiple
-    training points affect a point between them
-  - If $\gamma$ is large, there are spikes centered in the training points and
-    nothing outside
+  - If $\gamma$ is small $\implies$ the exponential falls off slowly, and
+    multiple training points affect a point between them
+  - If $\gamma$ is large $\implies$ there are spikes centered in the training
+    points and nothing outside
 
 // TODO: Add plot
 
+* Radial Basis Function Model for Classification
 - For **classification** use a similar approach to "linear regression for
   classification"
   - Fit a regression model:
@@ -1870,41 +1871,51 @@ MSML610: Advanced Machine Learning
     $$
 
 * RBF: Block Diagram
-- One can represent graphically an RBF model
-  - The (fixed by learning) params, one for each training point
+::: columns
+:::: {.column width=50%}
+
+- The params(fixed by learning) are one for each training point
   - The weights depending on the distance of the input to the examples
   - The weighted params are summed together
 
-// TODO
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/Lesson04_RBF_Model.png)
+
+::::
+:::
+
+// TODO: Create a better diagram
+
+* RBF: Number of Parameters
+- Some variants for RBF:
+  - Add bias term
+  - Use different $\gamma_i$ for each point
+  - Increase degrees of freedom
+
+- RBF has lots of parameters
+  - Parameters $\vw$ equal data points $N$ (e.g., $N = 10^{9}$)
+  - One parameter $w_i$ per training point (e.g., $N = 10^6$)
+  - **Cons**: Negative impact on generalization error
 
 * RBF: Reducing Model VC Dimension
-- Some variants for RBF:
-  - Add a bias term
-  - Use different $\gamma_i$ for each point, i.e., different influence of
-    different points
-  - Then the number of degrees of freedom increases even more
-
-- In RBF there are many parameters:
-  - There are as many parameters $\vw$ as data points $N$ (e.g., $N = 10^{9}$)
-  - One parameter $w_i$ per training point (e.g., $N$ can be $10^6$)
-  - Cons: negative consequences on generalization error
-
-- To reduce number of parameters
-  - Pick $K \ll N$ centers $\vmu_1, ... , \vmu_K$ instead of $\vx_1, ... , \vx_N$
-    - We can use $k$-means clustering to find the centers
-    - Note: this doesn't burn the training set since this is unsupervised
-      learning and we don't use the labels
-  - Same as RBF model using the distances from the centers of the clusters:
+- **To reduce number of parameters**
+  - Pick $K \ll N$ centers $\vmu_1, ... , \vmu_K$ instead of
+    $\vx_1, ... , \vx_N$
+    - Use $k$-means clustering to find centers
+    - Unsupervised learning; doesn't use labels
+  - Same as RBF model using distances from cluster centers:
     $$
     h(\vx) = \sum_{i=1}^{K} w_i \exp (-\gamma \|\vx - \vmu_i\|^2)
     $$
 
-- Still a lot of parameters because:
+- **Still many parameters** because:
   - $K$ (scalar) weights $w_k$
   - $K$ reference points $\vmu_k$ ($d$-dimensional vectors)
 
-* RBF: Learning Models
-- We want to learn $w_i, \gamma$, with fixed centers $\vmu_i$, for an RBF model:
+* RBF: Learning Models (1/2)
+- **Learn** $w_i, \gamma$, with fixed centers $\vmu_i$, for an RBF model:
   $$
   h(\vx) = \sum_{i=1}^{K} w_i \exp (-\gamma \|\vx - \vmu_i\|^2)
   $$
@@ -1915,67 +1926,68 @@ MSML610: Advanced Machine Learning
   $$
   - Use an iterative approach (e.g., EM, coordinate descent)
 
-* Learning RBF Models
+* RBF: Learning Models (2/2)
 - Use iterative approach (similar to EM algorithm):
-  - Fix $\gamma$, solve for $\vw$ (using one-step learning)
-  - Fix $\vw$, solve for $\gamma$ (with gradient descent)
+  - Fix $\gamma$, solve for $\vw$ (one-step learning)
+  - Fix $\vw$, solve for $\gamma$ (gradient descent)
 
 - **Step 1**
-  - Assume that $\gamma$ is known and fixed
+  - Assume $\gamma$ is known and fixed
   - Learn $\vw$
 
-- We can impose perfect interpolation:
+- Impose perfect interpolation:
   $$E_{in} = \frac{1}{n} \sum (h(\vx_i) - y_i)^2 = 0$$
-  and get the problem:
+- **Problem**:
   $$
   h(\vx_j)
   = \sum_i w_i \exp(-\gamma \|\vx_i - \vx_j\| ^2)
   = \sum_i w_i \phi_{i,j}
   = \vphi_j^T \vw = y_i
   $$
-  - We have $N$ equations (one per point) and $N$ unknowns $\vw$
-  - $\mat{\Phi}$ is known since it is function of the data set and $\gamma$
-- The problem in matrix form is like: $\mat{\Phi} \cdot \vw = \vy$
+  - $N$ equations (one per point) and $N$ unknowns $\vw$
+  - $\mat{\Phi}$ is known, function of data set and $\gamma$
 
 * Learning RBF Models
 
-- The problem in matrix form is like
+- The problem in matrix form is:
   $$\mat{\Phi} \cdot \vw = \vy$$
   - If $\mat{\Phi}$ is invertible, then $\vw = \mat{\Phi}^{-1} \vy$
-    - We have the desired values on the training points and the exponential
-      interpolates in the other points
-  - If $\mat{\Phi}$ is not invertible, optimize the problem in a least square
-    sense:
+    - Desired values on training points
+    - Exponential interpolates other points
+  - If $\mat{\Phi}$ is not invertible, optimize in least square sense:
     $$\argmin_{\vw} E_{in} = \sum_i (h(\vx_j) - y_i)^2$$
-    - Compute the pseudo-inverse (assuming $\mat{\Phi}^T \mat{\Phi}$ is
-      invertible)
-    - Assign the weights as:
+    - Compute pseudo-inverse (assuming $\mat{\Phi}^T \mat{\Phi}$ is invertible)
+    - Assign weights:
       $$\vw = (\mat{\Phi}^T \mat{\Phi})^{-1} \mat{\Phi}^T \vy$$
 
 - **Step 2**
-  - Assume that $\vw$ is known and fixed
+  - Assume $\vw$ is known and fixed
   - Learn $\gamma$
 
 * RBF Network vs Neural Networks
-- Consider the case of regression model for Neural Networks and RBF model
-  - RBF: 
-    $$h(\vx)
+- The regression model for Neural Networks and RBF model is **similar**:
+  - **RBF**:
+    $$
+    h(\vx)
     = \sum_i w_i e^{-\gamma \|\vx - \vx_i\|^2}
-    = \vw^T \vv{phi}$$
-  - Neural networks:
-    $$h(\vx)
-    = \Theta(\vw^{(L)}T \vx^{(L)})
-    = \Theta(\vw^{(L)}T \vv{Theta}(\mW^{(L-1)} ...))$$
+    = \vw^T \vv{\vphi}
+    $$
+  - **Neural networks**:
+    $$
+    h(\vx)
+    = \Theta(\vw^{(L)T} \vx^{(L)})
+    = \Theta(\vw^{(L)T} \vv{\Theta}(\mW^{(L-1)} ...))
+    $$
 
-- Difference:
+- **Difference**:
   - RBF has a single layer
   - Neural networks have multiple layers
 
-- Similarities:
-  - Combine features together with weights with a dot product
-  - Have features extracted from the inputs
-    - For RBF features are $e^{-\gamma \|\vx - \vx_i\|^2}$ fixed and always $> 0$
-    - For NN hidden layers synthesize features that can be $> 0$ or $< 0$
+- **Similarities**:
+  - Combine features with weights using dot product
+  - Extract features from inputs
+    - RBF features: $e^{-\gamma \|\vx - \vx_i\|^2}$, always $> 0$
+    - NN hidden layers: features can be $> 0$ or $< 0$
 
 * RBF Network vs SVM
 - The model form is the same:
@@ -1985,14 +1997,17 @@ MSML610: Advanced Machine Learning
     $$h(\vx) = \sign(\vw^T \vx + b)$$ 
 
 - The interpretation is completely different (interpolation vs large margin)
-  - In RBF all vectors (or centers of few clusters) contribute to the model
-  - In SVM only support vectors contribute to the model
+  - RBF: all vectors (or centers of few clusters) contribute to the model
+  - SVM: only support vectors contribute to the model
 
 * K-Nearest Neighbor (KNN) Model
-- The model is like:
+- The **model for** is like:
   $$
   h_{\vw}(\vx) = \frac{1}{n} \sum_{\vx_i \text{closest to } \vx} w_i
   $$
+
+::: columns
+:::: {.column width=15%}
 
 - **Idea**:
   - Closeness implies a distance (e.g., euclidean metric) or similarity (e.g., a
@@ -2000,19 +2015,36 @@ MSML610: Advanced Machine Learning
   - Consider the $k$ closest points to the evaluation point $\vx$
   - Take an average of their response
 
+::::
+:::: {.column width=75%}
+
+![](msml610/lectures_source/figures/Lesson04_KNN_Model.png)
+
+::::
+:::
+
 * KNN: Intuition of Number Degrees of Freedom
+::: columns
+:::: {.column width=50%}
+
 - Nearest neighbor model ($k = 1$)
-  - Adopt the response of the closest point to the point we are evaluating $\vx$
+  - Adopt response of closest point to point $\vx$
   - Like Voronoi tessellations: each point has a region for which it is the
     closest point and assigns its output to that region
 
-- One could think there is a single parameter for KNN, i.e., $k$, since this is
-  the hyperparameter we need to learn
-  - For $k = 1$ there are $N$ neighborhoods, one around each point of the
-    training set
-  - For $k = N$ there is a single neighborhood
-  - So the intuition is that the effective number of parameters is $\frac{N}{k}$
-    since one can imagine there are $N / k$ non-overlapping neighborhoods
+- $k$ is the only parameter for KNN
+  - For $k = 1$, $N$ neighborhoods, one around each training point
+  - For $k = N$, single neighborhood
+  - Effective number of parameters: $\frac{N}{k}$, imagining $N / k$
+    non-overlapping neighborhoods
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/Lesson04_Voronoi.png)
+
+::::
+:::
 
 * KNN: Assumptions on the Data
 - KNN makes no assumption on the data
