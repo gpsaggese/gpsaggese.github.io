@@ -1029,15 +1029,15 @@ digraph ML_Phases {
 ::: columns
 :::: {.column width=50%}
 
-- Overfitting occurs when the model fits the data more than what is warranted
+- **Overfitting** occurs when the model fits the data more than what is warranted
 
-- In practice, we surpass the point where $E_{out}$ is minimal (optimal fit)
-  - Model complexity is too high for the data/noise
-  - Noise in the training set is mistaken for signal
+- Surpass point where $E_{out}$ is minimal (optimal fit)
+  - Model complexity too high for data/noise
+  - Noise in training set mistaken for signal
 
-- Fitting the noise instead than signal is worse than useless, it is harmful
-  - The model infers a pattern in-sample that, when extrapolated out-of-sample,
-    deviates from the target function $\implies$ poor generalization
+- **Fitting noise instead of signal** is not useless but harmful
+  - Model infers in-sample pattern that, when extrapolated out-of-sample,
+    deviates from target function $\implies$ poor generalization
 
 ::::
 :::: {.column width=45%}
@@ -1070,20 +1070,32 @@ digraph ML_Phases {
 :::
 
 * Optimal Fit
-- "Optimal fit" is the opposite of overfitting
+
+::: columns
+:::: {.column width=55%}
+
+- The opposite of overfitting is **optimal fit**
   - Train a model with the proper complexity for the data
 - The optimal fit:
   - Implies that $E_{out}$ is minimal
   - Does not imply that generalization error $E_{out} - E_{in}$ is minimal
     (e.g., no training at all implies generalization error equal to 0)
 
-- The generalization error is the additional error $E_{out} - E_{in}$ we see
-  when we go from in-sample to out-of-sample
+- The **generalization error** is the additional error $E_{out} - E_{in}$ you see
+  when you go from in-sample to out-of-sample
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/Lesson05_Optimal_fit.png)
+
+::::
+:::
 
 * Overfitting: Diamond Price Example
 - Predict diamond price as a function of carat size (regression problem)
 
-- True relationship:
+- **True relationship**
   $$
   \text{price} \sim (\text{carat size})^2 + \varepsilon
   $$
@@ -1091,18 +1103,23 @@ digraph ML_Phases {
   - Square function: price increases more with rarity
   - Noise: e.g., market noise, missing features
 
-::: columns :::: {.column width=55%}
+::: columns
+:::: {.column width=50%}
 
 - **Fit with:**
-  - Line $\to$ underfit
+  - _Line_
+    - Underfit
     - High bias (large error)
     - Low variance (stable model)
-  - Polynomial of degree 2 $\to$ right fit
-  - Polynomial of degree 10 $\to$ overfit (wiggly curve)
+  - _Polynomial of degree 2_
+    - right fit
+  - _Polynomial of degree 10_
+    - Overfit (wiggly curve)
     - Low bias
     - High variance (many degrees of freedom)
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
+
 ![](msml610/lectures_source/figures/Lesson05_Diamond_price_example.png)
 
 ::::
@@ -1110,26 +1127,19 @@ digraph ML_Phases {
 
 * Overfitting: 2-Features Classification Example
 - Assume:
-  - We want to separate 2 classes using 2 features $x_1, x_2$
-  - The class boundary of sample points has a parabola shape
+  - You want to separate 2 classes using 2 features $x_1, x_2$
+  - The true class boundary has a parabola shape
 
 - We can use logistic regression and a decision boundary equal to:
   - A line $\text{logit}(w_0 + w_1 x + w_2 y)$ $\to$ underfit
     - High bias, low variance
-  - A parabola $\text{logit}(w_0 + w_1 x + w_2 x^2 + w_3 x y + w_4 y^2)$ $\to$
-    right fit
+  - A parabola $\text{logit}(w_0 + w_1 x + w_2 x^2 + w_3 x y + w_4 y^2)$
+    - Right fit
   - A wiggly decision boundary
     $\text{logit}(w_0 + \text{high powers of } x_1, x_2)$ $\to$ overfit
     - Low bias, high variance
 
-// TODO: Add picture
-
-* Margin in Classification
-- Classification margin is the difference between the chosen class and the next
-  predicted class
-- Even if the error on training data gets to 0, one can improve out-of-sample
-  performance by increasing the margin
-  - More robust to noise
+![](msml610/lectures_source/figures/Lesson05_Optimal_fit2.png)
 
 # ##############################################################################
 # Bias Variance Analysis
