@@ -23,12 +23,14 @@ perl -i -0777 -pe 's/\*\*([^\n]+?)\s*\n\s*\*\*/**$1**/g' $FILE
 # Clean up 
 perl -i -0777 -pe 's/\n{3,}/\n\n/g' $FILE
 
-perl -i -pe 's/→/$\to$/g' $FILE
+perl -i -pe 's/→/\$\\to\$/g' $FILE
+perl -i -pe "s/’/'/g" $FILE
 
 # Convert '**git pull**: short hand from **git fetch origin**'
 # to
 # `git pull`: short hand from `git fetch origin`
 perl -i -pe 's/\*\*git ([^*]+)\*\*/`git \1`/g' $FILE
+perl -i -pe 's/\*\*> git ([^*]+)\*\*/`> git \1`/g' $FILE
 
 # Reflow
 lint_txt.py -i $FILE --use_dockerized_prettier
