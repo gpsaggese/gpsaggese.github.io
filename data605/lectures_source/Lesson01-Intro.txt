@@ -8,7 +8,7 @@
 
 \vspace{0.4cm}
 \begingroup \large
-DATA605: Big Data Systems
+UMD DATA605: Big Data Systems
 \endgroup
 ::::
 :::
