@@ -1,6 +1,6 @@
 ::: columns
 :::: {.column width=15%}
-![](lectures_source/UMD_Logo.png)
+![](msml610/lectures_source/figures/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -14,7 +14,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**GIT Data Pipelines**
+**$$\text{\blue{Git, Data Pipelines}}$$**
 \endgroup
 
 ::: columns
@@ -23,51 +23,11 @@ UMD DATA605 - Big Data Systems
 
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`**
 
-**TAs**:
-Krishna Pratardan Taduri, kptaduri@umd.edu
-Prahar Kaushikbhai Modi, pmodi08@umd.edu
-
-**v1.1**
 ::::
 :::: {.column width=20%}
 
 ::::
 :::
-
-
-* Class Logistics
-- Is everybody getting the announcements from Canvas?
-- Any problem with A/V, recorded lessons?
-- Are we going too fast through the slides?
-- Are we taking enough breaks?
-  - 50 mins of class and 10 mins of decompression
-- We are going to record the lesson
-  - Please come to class so we can do hands-on labs
-- Anything else we should improve upon?
-  - How can we make class more interactive?
-  - There is always something it can be done better
-  - Do not be shy
-  - Send emails
-
-
-
-**UMD DATA605 - Big Data Systems**
-Git
-Data Pipelines
-
-## Dr. GP Saggese
-gsaggese@umd.edu
-with thanks to Prof.
-Alan Sussman
-Amol Deshpande
-
-
-
-**UMD DATA605 - Big Data Systems**
-**Git Data Pipelines**
-
-
-
 
 * Bash / Linux: Resources
 - Command line
@@ -83,15 +43,14 @@ Amol Deshpande
   - `https://linuxcommand.org/tlcl.php`
   - `https://linuxcommand.org/tlcl.php`
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_4_image_1.png)
-![](data605/lectures_md/images/lecture_2/lec_2_slide_4_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_4_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_4_image_1.png)
 
 
 * Git Resources
 
 
 * Version Control Systems
-- A Version Control System (VCS) is a system that allows to:
 - A Version Control System (VCS) is a system that allows to:
   - Record changes to files
   - Recall specific versions later (like a "file time-machine")
@@ -115,12 +74,11 @@ Amol Deshpande
 
 **Centralized VCS**
 **Centralized VCS**
-![](images/lecture_2/lec_2_slide_6_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_1.png)
 
 **Distributed VCS**
 **Distributed VCS**
-![](images/lecture_2/lec_2_slide_6_image_2.png)
-
+![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_2.png)
 
 * VCS: How to Track Data
 - Consider a directory with project files inside
@@ -138,9 +96,9 @@ Amol Deshpande
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_7_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_1.png)
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_7_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_2.png)
 
 
 * Git
@@ -185,9 +143,9 @@ Each file can be in 4 states from Git point-of-view
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_9_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_1.png)
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_9_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_2.png)
 
 
 * Git Tutorial
@@ -269,8 +227,8 @@ Each file can be in 4 states from Git point-of-view
 
 
 * Git Internals
-![](data605/lectures_md/images/lecture_2/lec_2_slide_14_image_1.png)
-![](data605/lectures_md/images/lecture_2/lec_2_slide_14_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_1.png)
 
 - **You can understand Git only if you understand the data model**
 
@@ -288,9 +246,9 @@ Each file can be in 4 states from Git point-of-view
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_14_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_2.png)
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_14_image_3.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_3.png)
 
 *Commit tree*
 
@@ -324,7 +282,7 @@ Each file can be in 4 states from Git point-of-view
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_15_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_15_image_1.png)
 
 
 * Git Branching
@@ -344,9 +302,9 @@ Each file can be in 4 states from Git point-of-view
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_16_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_16_image_1.png)
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_16_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_16_image_2.png)
 
 
 * Git Checkout
@@ -362,12 +320,12 @@ Each file can be in 4 states from Git point-of-view
 
 
 
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_2.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_3.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_2.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_17_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_3.png)
 
 
 * Git Branching and Merging
@@ -389,16 +347,16 @@ Now there is a divergent history between `master` and `iss53`
 
 
 
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_2.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_3.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_4.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_5.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_2.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_3.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_4.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_18_image_5.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_4.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_5.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_4.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_5.png)
 
 
 * Git Branching and Merging
@@ -417,8 +375,8 @@ Delete the branch
 
 
 
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_19_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_19_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_2.png)
 
 
 * Fast Forward Merge
@@ -433,7 +391,7 @@ Delete the branch
 
 
 
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_20_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_20_image_1.png)
 
 
 * Merging Conflicts
@@ -454,14 +412,14 @@ Delete the branch
 
 
 
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_2.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_3.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_4.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_2.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_3.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_21_image_4.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_4.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_4.png)
 
 
 * Git Rebasing
@@ -485,12 +443,12 @@ Delete the branch
 
 
 
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_2.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_3.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_2.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_22_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_3.png)
 
 
 * Uses of Rebase
@@ -508,15 +466,15 @@ Delete the branch
 
 
 
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_2.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
 
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_2.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_23_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
 
 
 * Golden Rule of Rebasing
@@ -532,10 +490,10 @@ Delete the branch
 **Loose version**: "It’s ok to rebase your branch even if you pushed to a server, as long as you are the only one to use it"
 
 
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_24_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_24_image_2.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_24_image_1.png)
-![alt_text](data605/lectures_md/images/lecture_2/lec_2_slide_24_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_2.png)
 
 
 * Rebase vs Merge: Philosophical Considerations
@@ -553,9 +511,9 @@ Delete the branch
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_25_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_1.png)
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_25_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_2.png)
 
 
 * Rebase vs Merge: Philosophical Considerations
@@ -575,9 +533,9 @@ Delete the branch
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_26_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_26_image_1.png)
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_26_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_26_image_2.png)
 
 
 * Remote Branches
@@ -621,11 +579,11 @@ Delete the branch
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_28_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_1.png)
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_28_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_2.png)
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_28_image_3.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_3.png)
 
 
 * Centralized Workflow
@@ -642,7 +600,7 @@ Delete the branch
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_29_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_29_image_1.png)
 
 
 * Forking Workflows
@@ -668,7 +626,7 @@ Delete the branch
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_30_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_30_image_1.png)
 
 
 * Integration-Manager Workflow
@@ -693,7 +651,7 @@ Delete the branch
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_31_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_31_image_1.png)
 
 
 * Git log
@@ -717,7 +675,7 @@ Delete the branch
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_32_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_32_image_1.png)
 ```
 
 ```
@@ -768,7 +726,7 @@ Delete the branch
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_34_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_34_image_1.png)
 
 
 * GitHub: Tutorial
@@ -791,7 +749,7 @@ Git
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_37_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_37_image_1.png)
 
 
 * Data as a Product
@@ -839,9 +797,9 @@ Git
 
 
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_39_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_39_image_1.png)
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_39_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_39_image_2.png)
 
 
 * Roles in Building Data Pipelines
@@ -908,7 +866,7 @@ Git
 
 
 
-![Data Ingestion](data605/lectures_md/images/lecture_2/lec_2_slide_41_image_1.png)
+![Data Ingestion](data605/lectures_source/images/lecture_2/lec_2_slide_41_image_1.png)
 
 
 * Data Pipeline Paradigms
@@ -923,8 +881,8 @@ Git
   - EtLT
 
 
-![Data Pipeline Paradigms](data605/lectures_md/images/lecture_2/lec_2_slide_42_image_1.png)
-![Data Pipeline Paradigms](data605/lectures_md/images/lecture_2/lec_2_slide_42_image_1.png)
+![Data Pipeline Paradigms](data605/lectures_source/images/lecture_2/lec_2_slide_42_image_1.png)
+![Data Pipeline Paradigms](data605/lectures_source/images/lecture_2/lec_2_slide_42_image_1.png)
 
 
 * ETL Paradigm: Phases
@@ -981,9 +939,9 @@ Git
 
 
 
-![Workflow Orchestration](data605/lectures_md/images/lecture_2/lec_2_slide_45_image_1.png)
+![Workflow Orchestration](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_1.png)
 
-![Workflow Orchestration](data605/lectures_md/images/lecture_2/lec_2_slide_45_image_2.png)
+![Workflow Orchestration](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_2.png)
 
 
 * ELT paradigm
@@ -1009,7 +967,7 @@ Git
 
 
 
-![ELT paradigm](data605/lectures_md/images/lecture_2/lec_2_slide_46_image_1.png)
+![ELT paradigm](data605/lectures_source/images/lecture_2/lec_2_slide_46_image_1.png)
 
 
 * Row-based vs Columnar DBs
@@ -1025,9 +983,9 @@ Git
 
 
 
-![Row-based vs Columnar DBs](data605/lectures_md/images/lecture_2/lec_2_slide_47_image_1.png)
+![Row-based vs Columnar DBs](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_1.png)
 
-![Row-based vs Columnar DBs](data605/lectures_md/images/lecture_2/lec_2_slide_47_image_2.png)
+![Row-based vs Columnar DBs](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_2.png)
 
 
 * EtLT
@@ -1066,7 +1024,7 @@ Git
   - Movies
   - Blobs of data
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_49_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_49_image_1.png)
 
 
 
@@ -1090,7 +1048,7 @@ Git
   - Don’t trust anything
   - Be defensive
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_50_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_50_image_1.png)
 
 
 
@@ -1107,10 +1065,10 @@ Git
   - **Few large read or write transactions**
   - E.g., data mining, business intelligence
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_51_image_1.png)
-![](data605/lectures_md/images/lecture_2/lec_2_slide_51_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_1.png)
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_51_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_2.png)
 
 
 
@@ -1138,15 +1096,13 @@ Git
 - **Data lake**
   - = data stored in a semi-structured or without structure
   - Corresponds to ELT data pipeline style
-  - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_md/images
-  - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_md/images
+  - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_source/images
+  - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_source/images
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_53_image_1.png)
-![](data605/lectures_md/images/lecture_2/lec_2_slide_53_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_1.png)
 
-![](data605/lectures_md/images/lecture_2/lec_2_slide_53_image_2.png)
-
-
+![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_2.png)
 
 * Data Lake: Pros and Cons
 - Data lake = stores data in a semi-structured or without structure
