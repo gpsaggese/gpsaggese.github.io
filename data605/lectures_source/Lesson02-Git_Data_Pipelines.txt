@@ -1,3 +1,5 @@
+// https://docs.google.com/presentation/d/15WGtmsPNyg0KevSfxfVutZjnOMbozxDC01snSWNL7XY/edit
+
 ::: columns
 :::: {.column width=15%}
 ![](msml610/lectures_source/figures/UMD_Logo.png)
@@ -30,18 +32,25 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Bash / Linux: Resources
+::: columns
+:::: {.column width=65%}
 - Command line
-  - `https://ubuntu.com/tutorials/command-line-for-beginners`
-- E.g., find, xargs, chmod, chown, symbolic, and hard links
+  - [\textcolor{blue}{\underline{https://ubuntu.com/tutorials/command-line-for-beginners}}](https://ubuntu.com/tutorials/command-line-for-beginners)
+- E.g., `find`, `xargs`, `chmod`, `chown`, symbolic, and hard links
 - How Linux works
   - Processes
   - File ownership and permissions
   - Virtual memory
   - How to administer a Linux box as root
 - Mastery
-  - `https://linuxcommand.org/tlcl.php`
+  - [\textcolor{blue}{\underline{https://linuxcommand.org/tlcl.php}}](https://linuxcommand.org/tlcl.php)
+  - [\textcolor{blue}{\underline{}}]()
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_4_image_1.png)
+::::
+:::
 
 * Git Resources
 
@@ -817,6 +826,8 @@ Delete the branch
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_2.png)
 
 * ELT paradigm
+::: columns
+:::: {.column width=65%}
 - ETL has been the standard approach for long time
   - Extract $\to$ Transform $\to$ Load
   - **Cons**
@@ -834,10 +845,15 @@ Delete the branch
   - Distributed data storage and querying (e.g., HDFS)
   - Columnar DBs
   - Data compression
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_46_image_1.png)
-
+::::
+:::
 * Row-based vs Columnar DBs
+::: columns
+:::: {.column width=65%}
 - **Row-based DBs**
   - E.g., MySQL, Postgres
   - Optimized for reading / writing rows
@@ -847,10 +863,14 @@ Delete the branch
   - Read / write large amounts of data infrequently
   - Analytics requires a few columns
   - Better data compression
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_2.png)
+::::
+:::
 
 * EtLT
 - **ETL**
