@@ -32,7 +32,6 @@ UMD DATA605 - Big Data Systems
 * Bash / Linux: Resources
 - Command line
   - `https://ubuntu.com/tutorials/command-line-for-beginners`
-  - `https://ubuntu.com/tutorials/command-line-for-beginners`
 - E.g., find, xargs, chmod, chown, symbolic, and hard links
 - How Linux works
   - Processes
@@ -41,14 +40,10 @@ UMD DATA605 - Big Data Systems
   - How to administer a Linux box as root
 - Mastery
   - `https://linuxcommand.org/tlcl.php`
-  - `https://linuxcommand.org/tlcl.php`
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_4_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_4_image_1.png)
-
 
 * Git Resources
-
 
 * Version Control Systems
 - A Version Control System (VCS) is a system that allows to:
@@ -73,10 +68,8 @@ UMD DATA605 - Big Data Systems
   - **Cons**: complex
 
 **Centralized VCS**
-**Centralized VCS**
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_1.png)
 
-**Distributed VCS**
 **Distributed VCS**
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_2.png)
 
@@ -94,12 +87,9 @@ UMD DATA605 - Big Data Systems
   - Store reference (hash) to the snapshots
   - Save link to previous identical files
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_2.png)
-
 
 * Git
 - **Almost everything is local for Git**
@@ -122,9 +112,6 @@ UMD DATA605 - Big Data Systems
     - "porcelain": key-value store for a file-system
     - "plumbing": VCS layer
 
-
-
-
 * States of a File in Git
 There are 3 main sections of a Git project:
 - **Working tree** (aka checkout)
@@ -141,12 +128,9 @@ Each file can be in 4 states from Git point-of-view
 - **Staged**: you have marked a modified file to go into your next commit snapshot
 - **Committed**: data is safely stored in your local DB
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_2.png)
-
 
 * Git Tutorial
 - Git tutorial on class repo
@@ -171,9 +155,6 @@ Each file can be in 4 states from Git point-of-view
   - Pandas
   - ...
 
-
-
-
 * Git: Daily Use
 - Check out a project (git clone) or start from scratch (git init)
   - Only once per Git project client
@@ -190,9 +171,6 @@ Each file can be in 4 states from Git point-of-view
   - Isolate master from your changes
   - Pull Request (aka PR) to get the code reviewed
   - Merge PR into upstream
-
-
-
 
 * Git Remote
 - Remote repos are versions of the project hosted on Internet/remote file system
@@ -212,9 +190,6 @@ Each file can be in 4 states from Git point-of-view
   - (Test project sanity, e.g., by running unit tests)
   - Push changes to the remote
 
-
-
-
 * Git Tagging
 - Git allows to mark specific points in history with a tag
   - E.g., release points
@@ -223,11 +198,7 @@ Each file can be in 4 states from Git point-of-view
   - If you commit your change won’t be added to the tag or to the branch
   - The commit will be "unreachable", i.e., reachable only by the commit hash
 
-
-
-
 * Git Internals
-![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_1.png)
 
 - **You can understand Git only if you understand the data model**
@@ -244,8 +215,6 @@ Each file can be in 4 states from Git point-of-view
   - Easy: Understanding Git — Data Model
   - Hard-core: Git internals
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_2.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_3.png)
@@ -255,7 +224,6 @@ Each file can be in 4 states from Git point-of-view
 *Commit parents*
 
 *Commit history of a branch*
-
 
 * Git Branching
 - **Branching**
@@ -280,10 +248,7 @@ Each file can be in 4 states from Git point-of-view
   - Branches are cheap in Git
     - Use them all the times to isolate your work and organize it
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_15_image_1.png)
-
 
 * Git Branching
 - **master** (or **main**) is just a normal branch
@@ -300,12 +265,9 @@ Each file can be in 4 states from Git point-of-view
 - Divergent history
   - When work progresses in two branches that are "split"
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_16_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_16_image_2.png)
-
 
 * Git Checkout
 - **git checkout** switches branch
@@ -318,15 +280,12 @@ Each file can be in 4 states from Git point-of-view
   - Then you can keep working by committing on **testing**
   - The pointer to **testing** moves forward (no divergent history)
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_3.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_3.png)
-
 
 * Git Branching and Merging
 -Tutorials: Work on main, Hot fix
@@ -345,8 +304,6 @@ Need a hotfix to master
 **Fast forward**
 Now there is a divergent history between `master` and `iss53`
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_3.png)
@@ -357,7 +314,6 @@ Now there is a divergent history between `master` and `iss53`
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_3.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_4.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_5.png)
-
 
 * Git Branching and Merging
 **> git checkout iss53**
@@ -373,11 +329,8 @@ Git creates a new snapshot with the 3-way "merge commit" (commit with more than 
 Delete the branch
 **> git branch -d iss53**
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_2.png)
-
 
 * Fast Forward Merge
 - **Fast forward merge** = merge a commit X with a commit Y that can be reached by following the history of commit X**
@@ -389,10 +342,7 @@ Delete the branch
 **> git merge experiment**
 - Git moves the pointer of master to C4’
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_20_image_1.png)
-
 
 * Merging Conflicts
 - Tutorial:
@@ -410,8 +360,6 @@ Delete the branch
   - **git commit**
   - Use PyCharm
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_3.png)
@@ -420,7 +368,6 @@ Delete the branch
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_3.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_4.png)
-
 
 * Git Rebasing
 - In Git there are two ways of merging divergent history
@@ -441,15 +388,12 @@ Delete the branch
     - Only the branch where we are is affected
   - Finally fast forward master
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_3.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_3.png)
-
 
 * Uses of Rebase
 - **Rebasing makes for a cleaner history**
@@ -464,8 +408,6 @@ Delete the branch
     - Does not have to do any integration work
     - Does just a fast forward or a clean apply (no conflicts)
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
@@ -475,7 +417,6 @@ Delete the branch
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
-
 
 * Golden Rule of Rebasing
 - **Remember**: rebasing means abandoning existing commits and creating new ones that are similar but different
@@ -489,12 +430,10 @@ Delete the branch
 **Strict version**: "Do not **ever** rebase commits that exist outside your repository"
 **Loose version**: "It’s ok to rebase your branch even if you pushed to a server, as long as you are the only one to use it"
 
-
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_2.png)
-
 
 * Rebase vs Merge: Philosophical Considerations
 - Rebase-vs-merge depend on the answer to the question:
@@ -509,12 +448,9 @@ Delete the branch
 - *You should tell the history in the way that is best for future readers*
 - Use **git rebase** and filter-branch**
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_2.png)
-
 
 * Rebase vs Merge: Philosophical Considerations
 - Many man-centuries have been wasted discussing rebase-vs-merge at the watercooler
@@ -531,12 +467,9 @@ Delete the branch
   - My commits are just my checkpoints
   - Rarely they are "complete"
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_26_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_26_image_2.png)
-
 
 * Remote Branches
 - Remote branches are pointers to branches in remote repos
@@ -553,9 +486,6 @@ Delete the branch
   - **> git push origin serverfix**
 - To work on it
   - **> git checkout -b serverfix origin/serverfix**
-
-
-
 
 * Git Workflows
 **Git workflows**
@@ -577,14 +507,11 @@ Delete the branch
   - Somebody starts **dumbidea** branch and merge to **master** (!)**
   - You squash-and-merge your **iss91v2**
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_2.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_3.png)
-
 
 * Centralized Workflow
 **Centralized workflow in centralized VCS**
@@ -598,10 +525,7 @@ Delete the branch
   - Need to fetch and then merge
   - Cannot push code that will overwrite each other code (only fast-forward changes)
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_29_image_1.png)
-
 
 * Forking Workflows
 - Typically devs don't have permissions to update directly branches on a project
@@ -622,12 +546,8 @@ Delete the branch
 - **Aka "GitHub workflow"**
   - "Innovation" was forking (Fork me on GitHub!)
   - GitHub acquired by Microsoft for 7.5b USD
-  - GitHub acquired by Microsoft for 7.5b USD
-
-
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_30_image_1.png)
-
 
 * Integration-Manager Workflow
 - This is the classical model for open-source development
@@ -649,10 +569,7 @@ Delete the branch
   - Tests changes locally
   - Pushes branch to the official repo
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_31_image_1.png)
-
 
 * Git log
 - **git log** reports info about commits**
@@ -672,8 +589,6 @@ Delete the branch
 - **Triple-dot notation**
   - **1...2** = commits that are reachable from either branch but not from both (union excluding intersection)**
   - **git log master...experiment → F,E,D,C**
-
-
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_32_image_1.png)
 ```
@@ -704,9 +619,6 @@ Delete the branch
 - hooks
   - Run scripts before each commit, merging, ...
 
-
-
-
 * GitHub
 - GitHub acquired by MSFT for 7.5b
 - **GitHub: largest host for Git repos**
@@ -724,22 +636,14 @@ Delete the branch
   - In GitHub parlance
     - Make a copy of a project so that you can contribute to it even if you don’t have push / write access
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_34_image_1.png)
-
 
 * GitHub: Tutorial
 Tutorial: GitHub
 
-
-
 **UMD DATA605 - Big Data Systems**
 Git
 **Data Pipelines**
-
-
-
 
 * Data Pipelines - Resources
 - Concepts in the slides
@@ -747,10 +651,7 @@ Git
 - Mastery
   - Data Pipelines Pocket Reference: Moving and Processing Data for Analytics
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_37_image_1.png)
-
 
 * Data as a Product
 - **Many services today "sell" data**
@@ -775,9 +676,6 @@ Git
     - E.g., recommendations vs what users bought
     - Ingest data from production for future versions of the model
 
-
-
-
 * Data Pipelines
 - "Data is the new oil"
   - ... but oil needs to be refined
@@ -795,12 +693,9 @@ Git
   - Extract data (e.g., from REST API)
   - Load data into DB (e.g., SQL table)
 
-
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_39_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_39_image_2.png)
-
 
 * Roles in Building Data Pipelines
 - **Data engineers**
@@ -864,10 +759,7 @@ Git
   - 3rd-parties
     - E.g., Google analytics tracking website usage
 
-
-
 ![Data Ingestion](data605/lectures_source/images/lecture_2/lec_2_slide_41_image_1.png)
-
 
 * Data Pipeline Paradigms
 - There are several styles of building data pipelines
@@ -880,10 +772,7 @@ Git
   - ELT
   - EtLT
 
-
 ![Data Pipeline Paradigms](data605/lectures_source/images/lecture_2/lec_2_slide_42_image_1.png)
-![Data Pipeline Paradigms](data605/lectures_source/images/lecture_2/lec_2_slide_42_image_1.png)
-
 
 * ETL Paradigm: Phases
 - **Extract**
@@ -904,9 +793,6 @@ Git
   - Make a copy
   - Have different tools to operate on the data
 
-
-
-
 * ETL Paradigm: Example
 - **Extract**
   - Buy-vs-build data ingestion tools
@@ -923,9 +809,6 @@ Git
     - E.g., load data in relational DB
   - Finally data modeling
 
-
-
-
 * Workflow Orchestration
 - Companies have many (10-1000s) data pipelines
 - Orchestration tools, e.g.,
@@ -937,12 +820,9 @@ Git
   - Pipeline and jobs are represented through DAGs
 - Monitor, retry, and send alarms
 
-
-
 ![Workflow Orchestration](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_1.png)
 
 ![Workflow Orchestration](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_2.png)
-
 
 * ELT paradigm
 - **ET**[BOLD]L[/BOLD][BOLD] has been the standard approach for long time**
@@ -965,10 +845,7 @@ Git
   - Columnar DBs
   - Data compression
 
-
-
 ![ELT paradigm](data605/lectures_source/images/lecture_2/lec_2_slide_46_image_1.png)
-
 
 * Row-based vs Columnar DBs
 - **Row-based DBs**
@@ -981,12 +858,9 @@ Git
   - Analytics requires a few columns
   - Better data compression
 
-
-
 ![Row-based vs Columnar DBs](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_1.png)
 
 ![Row-based vs Columnar DBs](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_2.png)
-
 
 * EtLT
 - **ETL**
@@ -1000,7 +874,6 @@ Git
     - Parse URLs into individual components
     - Obfuscate sensitive data (for legal or security reasons)
   - Then implement rest of "LT" pipeline
-
 
 ```
 
@@ -1026,8 +899,6 @@ Git
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_49_image_1.png)
 
-
-
 * Data Cleaning
 - **Data cleanliness**
   - Quality of source data varies greatly
@@ -1050,8 +921,6 @@ Git
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_50_image_1.png)
 
-
-
 * OLAP vs OLTP Workloads
 - There are two classes of data workloads
 - **OLTP**
@@ -1066,11 +935,8 @@ Git
   - E.g., data mining, business intelligence
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_2.png)
-
-
 
 * Challenges with Data Pipelines
 - High-volume vs low-volume
@@ -1082,8 +948,6 @@ Git
 - Connection time-outs
 - Slow downloads
 - Incremental mode vs catch-up
-
-
 
 * Data Warehouse vs Data Lake
 - **Data warehouse**
@@ -1097,9 +961,7 @@ Git
   - = data stored in a semi-structured or without structure
   - Corresponds to ELT data pipeline style
   - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_source/images
-  - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_source/images
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_2.png)
@@ -1117,8 +979,6 @@ Git
   - It is not optimized for querying like a structured data warehouse
     - There are tools that allow to query data in a data lake similar to SQL
     - E.g., AWS Athena, Redshift Spectrum
-
-
 
 * Advantages of Cloud Computing
 - **Ease of building and deploying:**
