@@ -291,16 +291,16 @@ Each file can be in 4 states from Git point-of-view
 -Tutorials: Work on main, Hot fix
 Start from a project with some commits
 Branch to work on a new feature "Issue 53"
-**> git checkout -b iss53**
+`> git checkout -b iss53`
 **work ... work ... work**
-**> git commit**
+`> git commit`
 Need a hotfix to master
-**> git checkout master**
-**> git checkout -b hotfix**
+`> git checkout master`
+`> git checkout -b hotfix`
 **fix ... fix ... fix**
-**> git commit -am "Hot fix"**
-**> git checkout master**
-**> git merge hotfix**
+`> git commit -am "Hot fix"`
+`> git checkout master`
+`> git merge hotfix`
 **Fast forward**
 Now there is a divergent history between `master` and `iss53`
 
@@ -316,18 +316,18 @@ Now there is a divergent history between `master` and `iss53`
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_5.png)
 
 * Git Branching and Merging
-**> git checkout iss53**
+`> git checkout iss53`
 **work ... work ... work**
 The branch keeps diverging
 At some point you are done with **iss53**
 You want to merge your work back to **master**
 Go to the target branch
-**> git checkout master**
-**> git merge iss53**
+`> git checkout master`
+`> git merge iss53`
 Git can’t fast forward
 Git creates a new snapshot with the 3-way "merge commit" (commit with more than one parent)
 Delete the branch
-**> git branch -d iss53**
+`> git branch -d iss53`
 
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_2.png)
@@ -338,8 +338,8 @@ Delete the branch
 - Git simply moves the branch pointer forward from X to Y
 - **Mental model**: a branch is just a pointer that says where the tip of the branch is**
 - E.g., C4’ is reachable from C3
-**> git checkout master**
-**> git merge experiment**
+`> git checkout master`
+`> git merge experiment`
 - Git moves the pointer of master to C4’
 
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_20_image_1.png)
@@ -374,13 +374,13 @@ Delete the branch
   - E.g., **master** and **experiment** have a common ancestor C2
 - **Merge**
   - Go to the target branch
-  - **> git checkout master**
-  - **> git merge experiment**
+  - `> git checkout master`
+  - `> git merge experiment`
   - Create a new snapshot C5 and commit
 - **Rebase**
   - Go to the branch to rebase
-  - **> git checkout experiment**
-  - **> git rebase master**
+  - `> git checkout experiment`
+  - `> git rebase master`
   - Rebase algo:
     - Get all the changes committed in the branch (C4) where we are on (experiment) since the common ancestor (C2)
     - Sync to the branch that we are rebasing onto (master at C3)
@@ -485,9 +485,9 @@ Delete the branch
   - You can change tracking branch (e.g., **master**)
   - Git updates tracking branches when you do `git fetch origin` (or `git pull`)
 - To share code in a local branch you need to push it to a remote
-  - **> git push origin serverfix**
+  - `> git push origin serverfix`
 - To work on it
-  - **> git checkout -b serverfix origin/serverfix**
+  - `> git checkout -b serverfix origin/serverfix`
 
 * Git Workflows
 **Git workflows**
