@@ -414,24 +414,48 @@ MSML610: Advanced Machine Learning
 //- Thus the two "bad events" $\calB_1$ and $\calB_2$ are related to
 //  $\Delta E_{in}$ and $\Delta E_{out}$
 
-* Training vs Testing: College Course Analogy
-- In machine learning there is always a training / learning phase and a 
-  validation / testing phase
+* Training vs Testing: College Course Analogy (1/2)
+- In machine learning there are several phases
+```graphviz
+digraph ML_Phases {
+  rankdir=LR;
+  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+  learning   [label="Learning Phase\n(Training Set)"];
+  validation [label="Validation Phase\n(Validation Set)"];
+  testing    [label="Testing Phase\n(Test Set)"];
+  production [label="Out-of-Sample Phase\n(Production)"];
+
+  learning -> validation -> testing -> production;
+}
+```
+
 - This set-up is very similar to studying and exams in a college course
 
+- Students study the material
+  - This is the **learning phase**
+
 - Before the final exam, students receive practice problems and solutions
-  - These problems won't appear on the exam
-  - Studying the problems improves performance
-  - Serve as a "training set" in learning
+  - Studying the problems improves performance by understating what they need to
+    improve
+  - This corresponds to the **validation set**
 
-- Why not give out exam problems to improve performance?
-  - Doing well in the exam isn't the goal
-  - The goal is to learn the course material
+* Training vs Testing: College Course Analogy (2/2)
 
-- The final exam isn't strictly necessary
-  - Gauges how well you've learned
-  - Motivates you to study
-  - Knowing exam problems in advance wouldn't gauge learning effectively
+- The final exam corresponds to the **testing phase**
+  - These problems are different than the problems in the validation set
+
+  - Why not give out exam problems to improve performance?
+    - Doing well in the exam isn't the goal
+    - The goal is to learn the course material
+
+  - The final exam isn't strictly necessary
+    - Gauges how well you've learned
+    - Motivates you to study
+    - Knowing exam problems in advance wouldn't gauge learning effectively
+
+- What matters is how students do once they graduate and find a job
+  - This is the **out-of-sample phase**
 
 # ##############################################################################
 # Growth Function
@@ -694,14 +718,10 @@ MSML610: Advanced Machine Learning
 ::: columns
 :::: {.column width=50%}
 
-- Positive intervals on $\bbR$ $x \in [a, b]$
+- **Positive intervals** on $\bbR$ $x \in [a, b]$
   - $m_{\calH}(N) = {N + 1 \choose 2} + 1 \sim \N^2$
   - Pick 2 distinct intervals out of $N + 1$, and there is a dichotomy with 2
     points in the same interval
-
-- Convex sets on a plane
-  - $m_{\calH}(N) = 2^N$
-  - Place points in a circle and can classify $N$ points in any way
 
 ::::
 :::: {.column width=45%}
@@ -736,7 +756,22 @@ MSML610: Advanced Machine Learning
 \node at (8.3, 0.9) {\color{red}$h(x) = -1$};
 ```
 
-```tikz
+::::
+:::
+
+\vspace{1cm}
+
+::: columns
+:::: {.column width=50%}
+
+- **Convex sets on a plane**
+  - $m_{\calH}(N) = 2^N$
+  - Place points in a circle and can classify $N$ points in any way
+
+::::
+:::: {.column width=45%}
+
+```tikz[width=50%]
 % Circle radius
 \def\r{3}
 
@@ -772,116 +807,115 @@ MSML610: Advanced Machine Learning
 * Break Point of an Hypothesis Set
 - Given an hypothesis set $\calH$
 
-- A hypothesis set $\calH$ shatters $N$ points $\iff$ $m_{\calH}(N) = 2^N$
-  - There is a position of $N$ points that we can classify in any way using
-    $h
-    \in \calH$
+- A hypothesis set $\calH$ **shatters $N$ points** $\iff$ $m_{\calH}(N) = 2^N$
+  - There is a position of $N$ points and a class assignment that you can
+    classify using $h \in \calH$
   - It does not mean all sets of $N$ points can be classified in any way
 
-- $k$ is a break point for $\calH$ $\iff m_{\calH}(k) < 2^k$
+- $k$ is a **break point** for $\calH$ $\iff m_{\calH}(k) < 2^k$
   - I.e., no data set of size $k$ can be shattered by $\calH$
-
-- E.g.,
-  - For 2D perceptron: a break point is 4
-  - For positive rays: a break point is 2
-  - For positive intervals: a break point is 3
-  - For convex set on a plane: there is no break point
+  - E.g.,
+    - For 2D perceptron: a break point is 4
+    - For positive rays: a break point is 2
+    - For positive intervals: a break point is 3
+    - For convex set on a plane: there is no break point
 
 * Break Point for an Hypothesis Set and Learning
 - If there is a break point for a hypothesis set $\calH$, it can be shown that:
 
-1. $m_{\calH}(N)$ is polynomial in $N$
-2. In Hoeffding's inequality for learning, replace $M$ with $m_{\calH}(N)$:
-   - Instead of:
-
-     $$
-     \Pr(|E_{in}(g) - E_{out}(g)| > \varepsilon) \le 2 M e^{-2 \varepsilon^2 N}
-     $$
-
-     we can use the Vapnik-Chervonenkis Inequality:
-
-     $$
-     \Pr(\text{bad generalization}) \le
-     4 m_\calH(2N) e^{-\frac{1}{8} \varepsilon^2 N}
-     $$
+  - $m_{\calH}(N)$ is polynomial in $N$
+  - Instead of Hoeffding's inequality for learning
+    $$
+    \Pr(|E_{in}(g) - E_{out}(g)| > \varepsilon) \le 2 M e^{-2 \varepsilon^2 N}
+    $$
+    you can use the Vapnik-Chervonenkis inequality:
+    $$
+    \Pr(\text{bad generalization}) \le
+    4 m_\calH(2N) e^{-\frac{1}{8} \varepsilon^2 N}
+    $$
    - Since $m_{\calH}(N)$ is polynomial in $N$, it will be dominated by the
      negative exponential, given enough examples
-     - We can have a generalization bound (i.e., we can learn)
+   - You can have a generalization bound: machine learning works!
 
-- A hypothesis set can be characterized for learning by the existence and value
-  of a break point
+- A hypothesis set can be characterized from the learning point of view by the
+  **existence and value of a break point**
 
-* What Can Replace $M$ in Hoeffding Inequality
-- How does $m_\calH(N)$ relate to overlaps?
-  - Given an hypothesis $g$, the "bad event" is a function of which data set $D$
-    is used for training
-  - Consider the space of data sets as an area of the plane: for some data sets
-    $|E_{in} - E_{out}| > \varepsilon$, and we color the area representing the
-    data set as bad
-  - Hoeffding tells us that the area representing the bad event for hypothesis
-    $g$ is small
-  - The union bound tells us that the areas representing the bad events for the
-    various hypothesis are not overlapping (even if small) and thus the space is
-    quickly filled, since there are many hypothesis (often infinity)
-  - The VC bound tells us that there is a lot of overlap between the bad events.
-  - The intuition is that if one point is colored by an hypothesis as bad, we
-    know that many others hypothesis, say 100, will color the same paint as bad
-    events, so that the area is 100 smaller than what would have been without
-    overlap
-  - The growth function is a measure of how many hypothesis correspond to the
-    same dichotomy
-
-- What to do about $E_{out}$?
-  - The problem is that the bad event not only is function of $E_{in}$ (which is
-    function of the data set) but also of $E_{out}$
-  which is function of the entire space
-
-- Consider the bin with $E_{in}$ and
-  $E_{out}$. If there are lots of bins $E_{out}$ is going to deviate from
-  $E_{in}$. Instead of picking one sample we pick 2 samples, $E_{in}$ and
-  $E'_{in}$. They both track $E_{out}$ and thus track each other, although
-  loosely
-  - We can characterize the bad events in terms of $E_{in}$ and $E'_{in}$, but
-    one can use only dichotomies to reason about the bad event
-  - For this reason there is $m_\calH(2N)$ in the VC inequality
-
-// TODO: Improve this
+//* What Can Replace $M$ in Hoeffding Inequality
+//- How does $m_\calH(N)$ relate to overlaps?
+//  - Given an hypothesis $g$, the "bad event" is a function of which data set $D$
+//    is used for training
+//  - Consider the space of data sets as an area of the plane: for some data sets
+//    $|E_{in} - E_{out}| > \varepsilon$, and we color the area representing the
+//    data set as bad
+//  - Hoeffding tells us that the area representing the bad event for hypothesis
+//    $g$ is small
+//  - The union bound tells us that the areas representing the bad events for the
+//    various hypothesis are not overlapping (even if small) and thus the space is
+//    quickly filled, since there are many hypothesis (often infinity)
+//  - The VC bound tells us that there is a lot of overlap between the bad events.
+//  - The intuition is that if one point is colored by an hypothesis as bad, we
+//    know that many others hypothesis, say 100, will color the same paint as bad
+//    events, so that the area is 100 smaller than what would have been without
+//    overlap
+//  - The growth function is a measure of how many hypothesis correspond to the
+//    same dichotomy
+//
+//- What to do about $E_{out}$?
+//  - The problem is that the bad event not only is function of $E_{in}$ (which is
+//    function of the data set) but also of $E_{out}$
+//  which is function of the entire space
+//
+//- Consider the bin with $E_{in}$ and
+//  $E_{out}$. If there are lots of bins $E_{out}$ is going to deviate from
+//  $E_{in}$. Instead of picking one sample we pick 2 samples, $E_{in}$ and
+//  $E'_{in}$. They both track $E_{out}$ and thus track each other, although
+//  loosely
+//  - We can characterize the bad events in terms of $E_{in}$ and $E'_{in}$, but
+//    one can use only dichotomies to reason about the bad event
+//  - For this reason there is $m_\calH(2N)$ in the VC inequality
+//
+//// TODO: Improve this
 
 # ##############################################################################
 # The VC Dimension
 # ##############################################################################
 
 * VC Dimension of an Hypothesis Set
-- The VC dimension of a hypothesis set $\calH$, denoted as $d_{VC}(\calH)$, is
-  defined as the largest value of $N$ for which $m_{\calH(N)} = 2^N$
+- The **VC dimension of a hypothesis set** $\calH$, denoted as $d_{VC}(\calH)$,
+  is defined as the largest value of $N$ for which $m_{\calH}(N) = 2^N$
   - I.e., the VC dimension is the most points $\calH$ can shatter
 
-- If $d_{VC}(\calH) = N$ then
+- **Properties** of the VC dimension: if $d_{VC}(\calH) = N$ then
+
   - Exists a constellation of $N$ points that can be shattered by $\calH$
-  - Not all sets of $N$ points can be shattered (as before)
-  - If $N$ points were placed randomly, they could not be necessarily shattered
+    - Not all sets of $N$ points can be shattered
+    - If $N$ points were placed randomly, they could not be necessarily shattered
 
-- $\calH$ can shatter $N$ points for any $N \le d_{VC}(\calH)$
+  - $\calH$ can _shatter_ $N$ points for any $N \le d_{VC}(\calH)$
 
-- The smallest break point is $d_{VC} - 1$
-- The growth function in terms of the VC dimension is
-  $m_{\calH} \le \sum_{i=0}^{d_{VC}} {N \choose i}$
-  - The VC dimension is the order of the polynomial bounding $m_{\calH}$
+  - The _smallest break point_ is $d_{VC} - 1$
+
+  - The _growth function_ in terms of the VC dimension is
+    $m_{\calH} \le \sum_{i=0}^{d_{VC}} {N \choose i}$
+
+  - The VC dimension is the _order of the polynomial bounding_ $m_{\calH}$
 
 * VC Dimension: Interpretation
-- The VC dimension measures the complexity of a hypothesis set in terms of
-  effective parameters
+- The VC dimension **measures the complexity** of a hypothesis set in terms of
+  **effective parameters**
+
+- E.g.,
   - A perceptron in a $d$-dimensional space has $d_{VC} = d + 1$
   - In fact $d_{VC}$ is the number of perceptron parameters!
   - E.g., for a 2D perceptron ($d = 2$), the break point is 2, so $d_{VC} = 3$
 
+- The VC dimension considers the model as a black box in order to estimate
+  effective parameters
+  - How many points $N$ a model can shatter, not the number of parameters
+
 - Not all parameters contribute to degrees of freedom
   - E.g., combining $N$ 1D perceptrons gives $2N$ parameters, but the effective
     degrees of freedom remain 2
-
-- The VC dimension considers:
-  - How many points $N$ perceptrons can shatter, not the number of parameters
-  - The model as a black box to estimate effective parameters
 
 - A complex hypothesis $\calH$:
   - Has more parameters (higher VC dimension $d_{VC}$)
@@ -891,66 +925,98 @@ MSML610: Advanced Machine Learning
 - How many data points are needed to obtain
   $\Pr(|E_{in} - E_{out}| > \varepsilon) \le \delta$?
 
-- $N^d e^{-N}$ abstracts the term
-  $\delta = 4 m_{\calH}(2N) e^{\frac{1}{8}\varepsilon^2 N}$
-  - If we plot $N^d e^{-N}$ as a function of $N$, the power wins for small $N$,
-    then the exponential dominates, bringing the function to 0
-  - Varying $d$ (the VC dimension), the function peaks for larger $N$ and then
-    goes in the region of interest $< 1, 0.1, 0.01, ...$
+- The VC inequality states
+  $$
+  \Pr(\text{bad generalization}) \le
+    4 m_\calH(2N) e^{-\frac{1}{8} \varepsilon^2 N}
+  $$
 
-- We can plot the intersection $N$ of $N^d e^{-N}$ with a certain probability
-  (e.g., $10^{-3}$) as a function of $d$
-  - The number of examples $N$ needed to get to a certain level of performance
-    is proportional to $d$
-  - As a rule of thumb: $N \ge 10 d_{VC}$ to get reasonable generalization
+::: columns
+:::: {.column width=55%}
+
+- $N^d e^{-N}$ abstracts the upper bound term
+  - Plot $N^d e^{-N}$ vs. $N$: Power dominates for small $N$, exponential for
+    large $N$ and brings it to 0
+  - Vary $d$ (VC dimension) function peaks for larger $N$, then approaches
+    the region of interest $< 1$
+
+::::
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/Lesson05_VC_Generalization_Bounds.png)
+
+::::
+:::
+
+::: columns
+:::: {.column width=55%}
+
+- Plot intersection of $N^d e^{-N}$ with a probability as a function of $d$
+  - Examples $N$ needed are proportional to $d$
+  - Rule of thumb: $N \ge 10 d_{VC}$ for generalization
+
+::::
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/Lesson05_VC_Generalization_Bounds2.png)
+
+::::
+:::
 
 * VC Generalization Bounds
-- One can use the VC inequality in several ways, relating $\varepsilon$,
-  $\delta$, and $N$, e.g.,
+- The VC inequality 
+  $$
+  \Pr(|E_{in} - E_{out}| > \varepsilon) \le 
+    4 m_\calH(2N) e^{-\frac{1}{8} \varepsilon^2 N}
+  $$
+  can be used in several ways to relate $\varepsilon$, $\delta$, and $N$, e.g.,
+
+- Examples
   - "Given $\varepsilon$ = 1% error, how many examples $N$ are needed to get
     $\delta = 0.05$?"
   - "Given $N$ examples, what's the probability of an error larger than
     $\varepsilon$?"
 
-- We can equate $\delta$ to $4 m_{\calH}(2N) e^{\frac{1}{8}\varepsilon^2 N}$ and
+- You can equate $\delta$ to $4 m_{\calH}(2N) e^{\frac{1}{8}\varepsilon^2 N}$ and
   solve for $\varepsilon$, getting
-
   $$
   \Omega(N, \calH, \delta)
   = \sqrt{\frac{8}{N} \ln \frac{4 m_{\calH}(2N)}{\delta}}
   $$
-
-  Then we can say $|E_{out} - E_{in}| \le \Omega(N, \calH, \delta)$ with
+- Then you can say $|E_{out} - E_{in}| \le \Omega(N, \calH, \delta)$ with
   probability $\ge 1 - \delta$
   - The generalization bounds are then:
     $\Pr(E_{out} \le E_{in} + \Omega) \ge 1 - \delta$
 
 * How to Void the VC Analysis Guarantee
+::: columns
+:::: {.column width=60%}
 - Consider the case where data is genuinely non-linear
   - E.g., "o" points in the center and "x" in the corners
 
-// TODO: Add a picture
-
 - Transform to high-dimensional $\calZ$ with:
-
   $$
   \Phi: \vx = (x_0, ... , x_d) \rightarrow \vz = (z_0, ... , z_{\tilde{d}})
   $$
 
-- $d_{VC} \le \tilde{d} + 1$ and smaller $\tilde{d}$ improves generalization
-  bounds
-  - We can use $\vz = (1, x_1, x_2, x_1 x_2, x_1^2, x_2^2)$
+- $d_{VC} \le \tilde{d} + 1$; smaller $\tilde{d}$ improves generalization
+  - Use $\vz = (1, x_1, x_2, x_1 x_2, x_1^2, x_2^2)$
   - Why not $\vz = (1, x_1^2, x_2^2)$?
   - Why not $\vz = (1, x_1^2 + x_2^2)$?
   - Why not $\vz = (x_1^2 + x_2^2 - 0.6)$?
 
-- Some model coefficients were zero and discarded, leaving machine learning the
-  rest
-  - VC analysis is a warranty, forfeited if data is examined _before_ model
-    selection (i.e., data snooping)
-  - From VC analysis, complexity is that of the initial hypothesis set
+::::
+:::: {.column width=35%}
 
 ![](msml610/lectures_source/figures/Lesson05_Void_VC_guarantee.png)
+::::
+:::
+
+- Some model coefficients were zero and discarded, leaving machine learning the
+  rest
+  - VC analysis is a warranty, forfeited if data is examined before model
+    selection (data snooping)
+  - From VC analysis, complexity is that of the initial hypothesis set
 
 # ##############################################################################
 # Overfitting
@@ -961,7 +1027,7 @@ MSML610: Advanced Machine Learning
 * Overfitting: Definition
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=50%}
 
 - Overfitting occurs when the model fits the data more than what is warranted
 
@@ -974,7 +1040,7 @@ MSML610: Advanced Machine Learning
     deviates from the target function $\implies$ poor generalization
 
 ::::
-:::: {.column width=25%}
+:::: {.column width=45%}
 
 ```tikz
 % Axis
