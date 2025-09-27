@@ -9,6 +9,7 @@
 # Link
 
 [\textcolor{blue}{\underline{Hello}}](www.hello.com)
+// [\textcolor{blue}{\underline{}}]()
 
 # Color
 

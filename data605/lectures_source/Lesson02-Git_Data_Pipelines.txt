@@ -31,6 +31,8 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
+# Git
+
 * Bash / Linux: Resources
 ::: columns
 :::: {.column width=65%}
@@ -52,37 +54,79 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-* Git Resources
 
-* Version Control Systems
-- A Version Control System (VCS) is a system that allows to:
+//* Git Resources
+//::: columns
+//:::: {.column width=65%}
+//- Concepts in the slides
+//- Tutorial:
+//  [\textcolor{blue}{\underline{tutorial_git}}](https://github.com/gpsaggese/umd_data605/tree/main/tutorials/tutorial_git)
+//- We will use Git during the project
+//- Mastery:
+//  [\textcolor{blue}{\underline{Pro Git}}](https://git-scm.com/book/en/v2) (free)
+//- Web resources:
+//  - [\textcolor{blue}{\underline{https://githowto.com}}](https://githowto.com)
+//  - [\textcolor{blue}{\underline{dangitgit.com}}](https://dangitgit.com) (without swearing)
+//  - [\textcolor{blue}{\underline{Oh Sh*t, Git!?!}}](https://ohshitgit.com/) (with swearing)
+//- Playgrounds
+//  - [\textcolor{blue}{\underline{https://learngitbranching.js.org}}](https://learngitbranching.js.org)
+//:::: 
+//:::: {.column width=40%}
+//![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_1.png)
+//:::: 
+//:::
+//
+//![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_2.png)
+//![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_3.png)
+
+// TODO(gp): Fix
+
+* Version Control Systems (1/2)
+
+- A **Version Control System** (VCS) is a system that allows to:
   - Record changes to files
   - Recall specific versions later (like a "file time-machine")
   - Compare changes to files over time
   - Track *who* changed *what* and *when* and *why*
+
 - **Simplest "VCS"**
-  - Make a copy of a dir and add `_v1` (bad) or add a timestamp `_20220101`
-    (better)
-  - Make a copy of a dir and add `_v1` (bad) or add a timestamp `_20220101`
-    (better)
+  - Make a copy of a dir and add
+    - `_v1` (bad) or
+    - a timestamp `_20220101` (better)
   - **Cons**: It kind of works for one person, but doesn't scale
+
+* Version Control Systems (2/2)
+
+::: columns
+:::: {.column width=65%}
 - **Centralized VCS**
   - E.g., Perforce, Subversion
   - A server stores the code, clients connect to it
   - **Cons**: If the server is down, nobody can work
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_1.png)
+
+::::
+:::
+
+::: columns
+:::: {.column width=65%}
 - **Distributed VCS**
   - E.g., Git, Mercurial, Bazaar, Dart
   - Each client has the entire history of the repo locally
   - Each node is both a client and a server
   - **Cons**: complex
-
-**Centralized VCS**
-![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_1.png)
-
-**Distributed VCS**
+::::
+:::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_2.png)
+::::
+:::
 
 * VCS: How to Track Data
+::: columns
+:::: {.column width=65%}
 - Consider a directory with project files inside
 - **How do you track changes to the data?**
 - **Delta-based VCS**
@@ -95,10 +139,15 @@ UMD DATA605 - Big Data Systems
   - Take a "picture" of what files look like
   - Store reference (hash) to the snapshots
   - Save link to previous identical files
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_2.png)
+
+::::
+:::
 
 * Git
 - **Almost everything is local for Git**
@@ -121,7 +170,10 @@ UMD DATA605 - Big Data Systems
     - "porcelain": key-value store for a file-system
     - "plumbing": VCS layer
 
+
 * States of a File in Git
+::: columns
+:::: {.column width=65%}
 There are 3 main sections of a Git project:
 - **Working tree** (aka checkout)
   - Version of the code placed on the filesystem for the user to use and modify
@@ -136,10 +188,15 @@ Each file can be in 4 states from Git point-of-view
 - **Modified**: you have changed the file, but not committed to DB yet
 - **Staged**: you have marked a modified file to go into your next commit snapshot
 - **Committed**: data is safely stored in your local DB
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_2.png)
+
+::::
+:::
 
 * Git Tutorial
 - Git tutorial on class repo
@@ -164,6 +221,7 @@ Each file can be in 4 states from Git point-of-view
   - Pandas
   - ...
 
+
 * Git: Daily Use
 - Check out a project (git clone) or start from scratch (git init)
   - Only once per Git project client
@@ -180,6 +238,7 @@ Each file can be in 4 states from Git point-of-view
   - Isolate master from your changes
   - Pull Request (aka PR) to get the code reviewed
   - Merge PR into upstream
+
 
 * Git Remote
 - Remote repos are versions of the project hosted on Internet/remote file system
@@ -199,6 +258,7 @@ Each file can be in 4 states from Git point-of-view
   - (Test project sanity, e.g., by running unit tests)
   - Push changes to the remote
 
+
 * Git Tagging
 - Git allows to mark specific points in history with a tag
   - E.g., release points
@@ -207,7 +267,13 @@ Each file can be in 4 states from Git point-of-view
   - If you commit your change won't be added to the tag or to the branch
   - The commit will be "unreachable", i.e., reachable only by the commit hash
 
+
 * Git Internals
+::: columns
+:::: {.column width=65%}
+::::
+:::: {.column width=40%}
+
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_1.png)
 
 - **You can understand Git only if you understand the data model**
@@ -234,7 +300,12 @@ Each file can be in 4 states from Git point-of-view
 
 *Commit history of a branch*
 
+::::
+:::
+
 * Git Branching
+::: columns
+:::: {.column width=65%}
 - **Branching**
 
   - = diverging from the main line of development
@@ -256,10 +327,17 @@ Each file can be in 4 states from Git point-of-view
     - E.g., you would start branching before going for lunch
   - Branches are cheap in Git
     - Use them all the times to isolate your work and organize it
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_15_image_1.png)
 
+::::
+:::
+
 * Git Branching
+::: columns
+:::: {.column width=65%}
 - **master** (or **main**) is just a normal branch
   - master is a pointer to the last commit
   - As you commit the pointer moves forward
@@ -273,12 +351,19 @@ Each file can be in 4 states from Git point-of-view
   - Pointer can be moved around
 - Divergent history
   - When work progresses in two branches that are "split"
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_16_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_16_image_2.png)
 
+::::
+:::
+
 * Git Checkout
+::: columns
+:::: {.column width=65%}
 - `git checkout` switches branch
   - Move `HEAD` pointer to the new branch
   - Change the files in the working dir to match the state corresponding to the branch pointer
@@ -288,6 +373,8 @@ Each file can be in 4 states from Git point-of-view
   - The pointer moves, the working dir is changed (not really in this case)
   - Then you can keep working by committing on **testing**
   - The pointer to **testing** moves forward (no divergent history)
+::::
+:::: {.column width=40%}
 
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_2.png)
@@ -295,8 +382,13 @@ Each file can be in 4 states from Git point-of-view
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_3.png)
+
+::::
+:::
 
 * Git Branching and Merging
+::: columns
+:::: {.column width=65%}
 -Tutorials: Work on main, Hot fix
 Start from a project with some commits
 Branch to work on a new feature "Issue 53"
@@ -312,6 +404,8 @@ Need a hotfix to master
 `> git merge hotfix`
 **Fast forward**
 Now there is a divergent history between `master` and `iss53`
+::::
+:::: {.column width=40%}
 
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_2.png)
@@ -323,8 +417,13 @@ Now there is a divergent history between `master` and `iss53`
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_3.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_4.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_5.png)
+
+::::
+:::
 
 * Git Branching and Merging
+::: columns
+:::: {.column width=65%}
 `> git checkout iss53`
 **work ... work ... work**
 The branch keeps diverging
@@ -337,11 +436,18 @@ Git can't fast forward
 Git creates a new snapshot with the 3-way "merge commit" (commit with more than one parent)
 Delete the branch
 `> git branch -d iss53`
+::::
+:::: {.column width=40%}
 
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_2.png)
 
+::::
+:::
+
 * Fast Forward Merge
+::: columns
+:::: {.column width=65%}
 - **Fast forward merge** = merge a commit X with a commit Y that can be reached by following the history of commit X**
 - There is not divergent history to merge
 - Git simply moves the branch pointer forward from X to Y
@@ -350,10 +456,17 @@ Delete the branch
 `> git checkout master`
 `> git merge experiment`
 - Git moves the pointer of master to C4'
+::::
+:::: {.column width=40%}
 
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_20_image_1.png)
 
+::::
+:::
+
 * Merging Conflicts
+::: columns
+:::: {.column width=65%}
 - Tutorial:
   - Merging conflicts
 - Sometimes Git can't merge, e.g.,
@@ -368,6 +481,8 @@ Delete the branch
   - `git add` to mark as resolved**
   - `git commit`
   - Use PyCharm
+::::
+:::: {.column width=40%}
 
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_2.png)
@@ -377,8 +492,13 @@ Delete the branch
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_3.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_4.png)
+
+::::
+:::
 
 * Git Rebasing
+::: columns
+:::: {.column width=65%}
 - In Git there are two ways of merging divergent history
   - E.g., **master** and **experiment** have a common ancestor C2
 - **Merge**
@@ -396,6 +516,8 @@ Delete the branch
     - Apply the changes C4'
     - Only the branch where we are is affected
   - Finally fast forward master
+::::
+:::: {.column width=40%}
 
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_2.png)
@@ -403,8 +525,13 @@ Delete the branch
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_3.png)
+
+::::
+:::
 
 * Uses of Rebase
+::: columns
+:::: {.column width=65%}
 - **Rebasing makes for a cleaner history**
   - The history looks like all the work happened in series
   - Although in reality it happened in parallel to the development in master
@@ -416,6 +543,8 @@ Delete the branch
   - The maintainer
     - Does not have to do any integration work
     - Does just a fast forward or a clean apply (no conflicts)
+::::
+:::: {.column width=40%}
 
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
@@ -426,8 +555,13 @@ Delete the branch
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
+
+::::
+:::
 
 * Golden Rule of Rebasing
+::: columns
+:::: {.column width=65%}
 - **Remember**: rebasing means abandoning existing commits and creating new ones that are similar but different
 - **Problem**
   - You push your commits to a remote somewhere
@@ -438,13 +572,20 @@ Delete the branch
 - **Solution**
 **Strict version**: "Do not **ever** rebase commits that exist outside your repository"
 **Loose version**: "It's ok to rebase your branch even if you pushed to a server, as long as you are the only one to use it"
+::::
+:::: {.column width=40%}
 
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_2.png)
+
+::::
+:::
 
 * Rebase vs Merge: Philosophical Considerations
+::: columns
+:::: {.column width=65%}
 - Rebase-vs-merge depend on the answer to the question:
 - **What does the commit history of a repo mean?**
 - **a) History is the record of what actually happened**
@@ -456,12 +597,19 @@ Delete the branch
 - *"You would not publish a book as a sequence of drafts and correction, but rather the final version"*
 - *You should tell the history in the way that is best for future readers*
 - Use `git rebase` and filter-branch**
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_2.png)
 
+::::
+:::
+
 * Rebase vs Merge: Philosophical Considerations
+::: columns
+:::: {.column width=65%}
 - Many man-centuries have been wasted discussing rebase-vs-merge at the watercooler
   - Total waste of time! Tell people to get back to work!
 - When you contribute to a project often people decide for you based on their preference
@@ -475,10 +623,15 @@ Delete the branch
 - I like squash-and-merge branches to master
   - My commits are just my checkpoints
   - Rarely they are "complete"
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_26_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_26_image_2.png)
+
+::::
+:::
 
 * Remote Branches
 - Remote branches are pointers to branches in remote repos
@@ -498,7 +651,12 @@ Delete the branch
 - To work on it
   - `> git checkout -b serverfix origin/serverfix`
 
+
 * Git Workflows
+
+::: columns
+:::: {.column width=65%}
+
 **Git workflows**
 - = ways of working and collaborating using Git
 **Long-running branches**
@@ -517,6 +675,8 @@ Delete the branch
   - You start **iss91**, then you cancel some stuff, and go to **iss91v2**
   - Somebody starts **dumbidea** branch and merge to **master** (!)**
   - You squash-and-merge your **iss91v2**
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_1.png)
 
@@ -524,7 +684,12 @@ Delete the branch
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_3.png)
 
+::::
+:::
+
 * Centralized Workflow
+::: columns
+:::: {.column width=65%}
 **Centralized workflow in centralized VCS**
 - Developers:
   - Check out the code from the central repo on their computer
@@ -535,10 +700,17 @@ Delete the branch
   - Have push (i.e., write) access to the central repo
   - Need to fetch and then merge
   - Cannot push code that will overwrite each other code (only fast-forward changes)
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_29_image_1.png)
 
+::::
+:::
+
 * Forking Workflows
+::: columns
+:::: {.column width=65%}
 - Typically devs don't have permissions to update directly branches on a project
   - Read-write permissions for core contributors
   - Read-only for anybody else
@@ -557,10 +729,17 @@ Delete the branch
 - **Aka "GitHub workflow"**
   - "Innovation" was forking (Fork me on GitHub!)
   - GitHub acquired by Microsoft for 7.5b USD
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_30_image_1.png)
 
+::::
+:::
+
 * Integration-Manager Workflow
+::: columns
+:::: {.column width=65%}
 - This is the classical model for open-source development
   - E.g., Linux, GitHub (forking) workflow
 - **1. One repo is the "official" project**
@@ -579,10 +758,17 @@ Delete the branch
   - Merges the changes into a local branch
   - Tests changes locally
   - Pushes branch to the official repo
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_31_image_1.png)
 
+::::
+:::
+
 * Git log
+::: columns
+:::: {.column width=65%}
 - `git log` reports info about commits**
 - **refs** are references to:
   - `HEAD` (commit you are working on, next commit)
@@ -600,8 +786,13 @@ Delete the branch
 - **Triple-dot notation**
   - **1...2** = commits that are reachable from either branch but not from both (union excluding intersection)**
   - `git log master...experiment $\to$ F,E,D,C`
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_32_image_1.png)
+
+::::
+:::
 
 * Advanced Git
 - stashing
@@ -627,7 +818,10 @@ Delete the branch
 - hooks
   - Run scripts before each commit, merging, ...
 
+
 * GitHub
+::: columns
+:::: {.column width=65%}
 - GitHub acquired by MSFT for 7.5b
 - **GitHub: largest host for Git repos**
   - Git hosting (100m+ open source projects)
@@ -643,16 +837,28 @@ Delete the branch
     - Take a project, modify it, and make it a competing project
   - In GitHub parlance
     - Make a copy of a project so that you can contribute to it even if you don't have push / write access
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_34_image_1.png)
 
+::::
+:::
+
 * Data Pipelines - Resources
+::: columns
+:::: {.column width=65%}
 - Concepts in the slides
 - Class project
 - Mastery
   - Data Pipelines Pocket Reference: Moving and Processing Data for Analytics
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_37_image_1.png)
+
+::::
+:::
 
 * Data as a Product
 - **Many services today "sell" data**
@@ -677,7 +883,10 @@ Delete the branch
     - E.g., recommendations vs what users bought
     - Ingest data from production for future versions of the model
 
+
 * Data Pipelines
+::: columns
+:::: {.column width=65%}
 - "Data is the new oil"
   - ... but oil needs to be refined
 - **Data pipelines**
@@ -693,10 +902,15 @@ Delete the branch
   - Simplest data pipeline
   - Extract data (e.g., from REST API)
   - Load data into DB (e.g., SQL table)
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_39_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_39_image_2.png)
+
+::::
+:::
 
 * Roles in Building Data Pipelines
 - **Data engineers**
@@ -741,7 +955,10 @@ Delete the branch
 
 ```markdown
 
+
 * Data Ingestion
+::: columns
+:::: {.column width=65%}
 - **Data ingestion**
   - = extract data from one source and load it into another store
 - **Data sources / sinks**
@@ -759,10 +976,17 @@ Delete the branch
     - E.g., DB storing shopping carts for a e-commerce site
   - 3rd-parties
     - E.g., Google analytics tracking website usage
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_41_image_1.png)
 
+::::
+:::
+
 * Data Pipeline Paradigms
+::: columns
+:::: {.column width=65%}
 - There are several styles of building data pipelines
 - Multiple phases
   - Extract
@@ -772,8 +996,13 @@ Delete the branch
   - ETL
   - ELT
   - EtLT
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_42_image_1.png)
+
+::::
+:::
 
 * ETL Paradigm: Phases
 - **Extract**
@@ -794,6 +1023,7 @@ Delete the branch
   - Make a copy
   - Have different tools to operate on the data
 
+
 * ETL Paradigm: Example
 - **Extract**
   - Buy-vs-build data ingestion tools
@@ -810,7 +1040,10 @@ Delete the branch
     - E.g., load data in relational DB
   - Finally data modeling
 
+
 * Workflow Orchestration
+::: columns
+:::: {.column width=65%}
 - Companies have many (10-1000s) data pipelines
 - Orchestration tools, e.g.,
   - Apache Airflow (from AirBnB)
@@ -820,10 +1053,15 @@ Delete the branch
 - Schedule and manage flow of tasks according to their dependencies
   - Pipeline and jobs are represented through DAGs
 - Monitor, retry, and send alarms
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_2.png)
+
+::::
+:::
 
 * ELT paradigm
 ::: columns
@@ -851,6 +1089,7 @@ Delete the branch
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_46_image_1.png)
 ::::
 :::
+
 * Row-based vs Columnar DBs
 ::: columns
 :::: {.column width=65%}
@@ -872,6 +1111,7 @@ Delete the branch
 ::::
 :::
 
+
 * EtLT
 - **ETL**
   - Extract $\to$ Transform $\to$ Load
@@ -885,7 +1125,10 @@ Delete the branch
     - Obfuscate sensitive data (for legal or security reasons)
   - Then implement rest of "LT" pipeline
 
+
 * Structure in Data (or Lack Thereof)
+::: columns
+:::: {.column width=65%}
 - **Structured data**: there is a schema
   - Relational DB
   - CSV
@@ -902,6 +1145,8 @@ Delete the branch
   - Pictures
   - Movies
   - Blobs of data
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_49_image_1.png)
 
@@ -927,7 +1172,12 @@ Delete the branch
 //
 //![](data605/lectures_source/images/lecture_2/lec_2_slide_50_image_1.png)
 
+::::
+:::
+
 * OLAP vs OLTP Workloads
+::: columns
+:::: {.column width=65%}
 - There are two classes of data workloads
 - **OLTP**
   - **O**n-**L**ine **T**ransactional **P**rocessing
@@ -939,10 +1189,15 @@ Delete the branch
   - Perform multi-dimensional analysis on large volumes of data
   - **Few large read or write transactions**
   - E.g., data mining, business intelligence
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_2.png)
+
+::::
+:::
 
 * Challenges with Data Pipelines
 - High-volume vs low-volume
@@ -955,7 +1210,10 @@ Delete the branch
 - Slow downloads
 - Incremental mode vs catch-up
 
+
 * Data Warehouse vs Data Lake
+::: columns
+:::: {.column width=65%}
 - **Data warehouse**
   - = DB storing data from different systems in a structured way
   - Corresponds to ETL data pipeline style
@@ -967,10 +1225,15 @@ Delete the branch
   - = data stored in a semi-structured or without structure
   - Corresponds to ELT data pipeline style
   - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_source/images
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_1.png)
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_2.png)
+
+::::
+:::
 
 * Data Lake: Pros and Cons
 - Data lake = stores data in a semi-structured or without structure
@@ -985,6 +1248,7 @@ Delete the branch
   - It is not optimized for querying like a structured data warehouse
     - There are tools that allow to query data in a data lake similar to SQL
     - E.g., AWS Athena, Redshift Spectrum
+
 
 * Advantages of Cloud Computing
 - **Ease of building and deploying:**
