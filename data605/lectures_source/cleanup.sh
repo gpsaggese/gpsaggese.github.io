@@ -32,5 +32,8 @@ perl -i -pe "s/’/'/g" $FILE
 perl -i -pe 's/\*\*git ([^*]+)\*\*/`git \1`/g' $FILE
 perl -i -pe 's/\*\*> git ([^*]+)\*\*/`> git \1`/g' $FILE
 
+# Remove trailing \*\*
+perl -pe 's/\*\*$//' $FILE
+
 # Reflow
 lint_txt.py -i $FILE --use_dockerized_prettier
