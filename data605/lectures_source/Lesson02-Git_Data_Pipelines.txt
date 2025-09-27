@@ -178,11 +178,11 @@ Each file can be in 4 states from Git point-of-view
   - Push / pull changes
 - You can have multiple forks of the same repo with different policies
   - E.g., read-only, read-write
-- **git remote -v**: show what are the remotes
-- **git fetch**: pull from the remote repo all the data (e.g., branches, commits) that you don’t have locally
-- **git pull**: short hand from **git fetch origin** + **git merge master --rebase**
-- **git push <REMOTE> <BRANCH>**: push local data to a remote
-  - E.g., **git push origin master**
+- `git remote -v`: show what are the remotes
+- `git fetch`: pull from the remote repo all the data (e.g., branches, commits) that you don’t have locally
+- `git pull`: short hand from `git fetch origin` + `git merge master --rebase`
+- `git push <REMOTE> <BRANCH>`: push local data to a remote
+  - E.g., `git push origin master`
 - If somebody pushed to the remote, you can’t push your changes right away, but you need to:
   - Fetch the changes
   - Merge changes to the branch in your client
@@ -258,7 +258,7 @@ Each file can be in 4 states from Git point-of-view
   - Pointer to the local branch you are on
   - E.g., master, testing
   - `git checkout <BRANCH>` moves you across branches
-- **git branch testing**
+- `git branch testing`
   - Create a new pointer `testing`
   - Point to the commit you are on
   - Pointer can be moved around
@@ -270,12 +270,12 @@ Each file can be in 4 states from Git point-of-view
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_16_image_2.png)
 
 * Git Checkout
-- **git checkout** switches branch
+- `git checkout` switches branch
   - Move **HEAD** pointer to the new branch
   - Change the files in the working dir to match the state corresponding to the branch pointer
 - E.g., there are two branches master and testing
   - You are on master
-  - **git checkout testing**
+  - `git checkout testing`
   - The pointer moves, the working dir is changed (not really in this case)
   - Then you can keep working by committing on **testing**
   - The pointer to **testing** moves forward (no divergent history)
@@ -355,9 +355,9 @@ Delete the branch
   - Pauses to let you resolve the conflict
   - Adds conflict resolution markers
 - User merges manually
-  - Edit the files **git mergetool**
-  - **git add** to mark as resolved**
-  - **git commit**
+  - Edit the files `git mergetool`
+  - `git add` to mark as resolved**
+  - `git commit`
   - Use PyCharm
 
 ![alt_text](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_1.png)
@@ -423,7 +423,7 @@ Delete the branch
 - **Problem**
   - You push your commits to a remote somewhere
   - Others pull your commits down and base their work on them
-  - You rewrite those commits with **git rebase**
+  - You rewrite those commits with `git rebase`
   - You push them again with **git push --force
   - Your collaborators have to re-merge their work
 - **Solution**
@@ -442,11 +442,11 @@ Delete the branch
 - *"History should not be tampered with!"**
 - **Q: What if there is a series of messy merge commits?**
 - **A: This is how it happened. The repo should preserve this**
-- Use **git merge**
+- Use `git merge`
 - **b) History represents how a project should have been made**
 - *"You would not publish a book as a sequence of drafts and correction, but rather the final version"*
 - *You should tell the history in the way that is best for future readers*
-- Use **git rebase** and filter-branch**
+- Use `git rebase` and filter-branch**
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_1.png)
 
@@ -459,9 +459,9 @@ Delete the branch
 - **Best of the merge-vs-rebase approaches**
 - Rebase changes you've made in your local repo
   - Even if you have pushed but you know the branch is yours
-  - Use **git pull --rebase** to clean up the history of your work
-  - If the branch is shared with others then you need to definitively **git merge**
-- Only **git merge** to master to preserve the history of how something was built
+  - Use `git pull --rebase` to clean up the history of your work
+  - If the branch is shared with others then you need to definitively `git merge`
+- Only `git merge` to master to preserve the history of how something was built
 - **Personally**
 - I like squash-and-merge branches to master
   - My commits are just my checkpoints
@@ -473,15 +473,17 @@ Delete the branch
 
 * Remote Branches
 - Remote branches are pointers to branches in remote repos
-  - **> git remote -v**
-  - **origin  git@github.com:gpsaggese/umd_data605.git (fetch)**
-  - **origin  git@github.com:gpsaggese/umd_data605.git (push)**
+  ```
+  git remote -v
+  origin  git@github.com:gpsaggese/umd_data605.git (fetch)
+  origin  git@github.com:gpsaggese/umd_data605.git (push)
+  ```
 - **Tracking branches**
   - Local references representing the state of the remote repo
   - E.g., **master** tracks **origin/master**
   - You can’t change the remote branch (e.g., **origin/master**)
   - You can change tracking branch (e.g., **master**)
-  - Git updates tracking branches when you do **git fetch origin** (or **git pull**)
+  - Git updates tracking branches when you do `git fetch origin` (or `git pull`)
 - To share code in a local branch you need to push it to a remote
   - **> git push origin serverfix**
 - To work on it
@@ -572,7 +574,7 @@ Delete the branch
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_31_image_1.png)
 
 * Git log
-- **git log** reports info about commits**
+- `git log` reports info about commits**
 - **refs** are references to:**
   - HEAD (commit you are working on, next commit)
   - origin/master (remote branch)
@@ -584,11 +586,11 @@ Delete the branch
   - A merge commit has multiple parents
 - **Double-dot notation**
   - **1..2** = commits that are reachable from 2 but not from 1 (difference)**
-  - **git log master..experiment → D,C**
-  - **git log experiment..master → F,E**
+  - `git log master..experiment → D,C`
+  - `git log experiment..master → F,E`
 - **Triple-dot notation**
   - **1...2** = commits that are reachable from either branch but not from both (union excluding intersection)**
-  - **git log master...experiment → F,E,D,C**
+  - `git log master...experiment → F,E,D,C`
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_32_image_1.png)
 ```
@@ -611,7 +613,7 @@ Delete the branch
   - Sometimes a bug shows up at top of tree
   - You don't know at which revision it started manifesting
   - You have a script that returns 0 if the project is good and non-0 if the project is bad
-  - **git bisect** can find the revision at which the script goes from good to bad**
+  - `git bisect` can find the revision at which the script goes from good to bad**
 - filter-branch
   - Rewrite repo history in some script-able way
     - E.g., change your email, remove a file (with passwords or large file)
