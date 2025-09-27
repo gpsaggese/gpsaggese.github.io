@@ -21,7 +21,7 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`**
+**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
 
 ::::
 :::: {.column width=20%}
@@ -194,7 +194,7 @@ Each file can be in 4 states from Git point-of-view
 - Git allows to mark specific points in history with a tag
   - E.g., release points
 - You can check out a tag
-- You get in detached HEAD state
+- You get in detached `HEAD` state
   - If you commit your change won't be added to the tag or to the branch
   - The commit will be "unreachable", i.e., reachable only by the commit hash
 
@@ -254,7 +254,7 @@ Each file can be in 4 states from Git point-of-view
 - **master** (or **main**) is just a normal branch
   - master is a pointer to the last commit
   - As you commit the pointer moves forward
-- **HEAD**
+- `HEAD`
   - Pointer to the local branch you are on
   - E.g., master, testing
   - `git checkout <BRANCH>` moves you across branches
@@ -271,7 +271,7 @@ Each file can be in 4 states from Git point-of-view
 
 * Git Checkout
 - `git checkout` switches branch
-  - Move **HEAD** pointer to the new branch
+  - Move `HEAD` pointer to the new branch
   - Change the files in the working dir to match the state corresponding to the branch pointer
 - E.g., there are two branches master and testing
   - You are on master
@@ -575,13 +575,13 @@ Delete the branch
 
 * Git log
 - `git log` reports info about commits**
-- **refs** are references to:**
-  - HEAD (commit you are working on, next commit)
-  - origin/master (remote branch)
+- **refs** are references to:
+  - `HEAD` (commit you are working on, next commit)
+  - `origin/master` (remote branch)
   - experiment (local branch)
   - d921970 (commit)
 -   after a reference resolves to the parent of that commit
-  - HEAD  = commit before HEAD, i.e., last commit
+  - `HEAD` = commit before `HEAD`, i.e., last commit
   -  2 means   
   - A merge commit has multiple parents
 - **Double-dot notation**
@@ -593,9 +593,6 @@ Delete the branch
   - `git log master...experiment $\to$ F,E,D,C`
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_32_image_1.png)
-```
-
-```
 
 * Advanced Git
 - stashing
@@ -639,13 +636,6 @@ Delete the branch
     - Make a copy of a project so that you can contribute to it even if you don't have push / write access
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_34_image_1.png)
-
-* GitHub: Tutorial
-Tutorial: GitHub
-
-**UMD DATA605 - Big Data Systems**
-Git
-**Data Pipelines**
 
 * Data Pipelines - Resources
 - Concepts in the slides
@@ -761,7 +751,7 @@ Git
   - 3rd-parties
     - E.g., Google analytics tracking website usage
 
-![Data Ingestion](data605/lectures_source/images/lecture_2/lec_2_slide_41_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_41_image_1.png)
 
 * Data Pipeline Paradigms
 - There are several styles of building data pipelines
@@ -774,7 +764,7 @@ Git
   - ELT
   - EtLT
 
-![Data Pipeline Paradigms](data605/lectures_source/images/lecture_2/lec_2_slide_42_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_42_image_1.png)
 
 * ETL Paradigm: Phases
 - **Extract**
@@ -822,21 +812,19 @@ Git
   - Pipeline and jobs are represented through DAGs
 - Monitor, retry, and send alarms
 
-![Workflow Orchestration](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_1.png)
 
-![Workflow Orchestration](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_2.png)
 
 * ELT paradigm
-- **ET**[BOLD]L[/BOLD][BOLD] has been the standard approach for long time**
-[/BOLD]
+- ETL has been the standard approach for long time
   - Extract $\to$ Transform $\to$ Load
   - **Cons**
     - Need to understand the data at ingestion time
     - Need to know how the data will be used
-- **Today E**[BOLD]L[/BOLD][BOLD]T is becoming the pattern of choice**
-[/BOLD]
+- **Today E**LT is becoming the pattern of choice**
   - Extract $\to$ Load $\to$ Transform
-  - **Pro**:**
+  - **Pro**:
     - No need to know how the data will be used
     - Separate data engineers and data scientists / analysts
     - Data engineers focus on data ingestion (E + L)
@@ -847,7 +835,7 @@ Git
   - Columnar DBs
   - Data compression
 
-![ELT paradigm](data605/lectures_source/images/lecture_2/lec_2_slide_46_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_46_image_1.png)
 
 * Row-based vs Columnar DBs
 - **Row-based DBs**
@@ -860,9 +848,9 @@ Git
   - Analytics requires a few columns
   - Better data compression
 
-![Row-based vs Columnar DBs](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_1.png)
 
-![Row-based vs Columnar DBs](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_2.png)
 
 * EtLT
 - **ETL**
@@ -876,10 +864,6 @@ Git
     - Parse URLs into individual components
     - Obfuscate sensitive data (for legal or security reasons)
   - Then implement rest of "LT" pipeline
-
-```
-
-```
 
 * Structure in Data (or Lack Thereof)
 - **Structured data**: there is a schema
