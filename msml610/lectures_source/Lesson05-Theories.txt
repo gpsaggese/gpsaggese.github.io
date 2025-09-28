@@ -1075,14 +1075,15 @@ digraph ML_Phases {
 :::: {.column width=55%}
 
 - The opposite of overfitting is **optimal fit**
-  - Train a model with the proper complexity for the data
-- The optimal fit:
-  - Implies that $E_{out}$ is minimal
-  - Does not imply that generalization error $E_{out} - E_{in}$ is minimal
-    (e.g., no training at all implies generalization error equal to 0)
+  - Train a model with proper complexity for the data
 
-- The **generalization error** is the additional error $E_{out} - E_{in}$ you see
-  when you go from in-sample to out-of-sample
+- The optimal fit:
+  - Implies $E_{out}$ is minimal
+  - Does not imply generalization error $E_{out} - E_{in}$ is minimal
+    - E.g., no training implies generalization error equal to 0
+
+- The **generalization error** is the additional error $E_{out} - E_{in}$ when
+  going from in-sample to out-of-sample
 
 ::::
 :::: {.column width=40%}
@@ -1101,7 +1102,7 @@ digraph ML_Phases {
   $$
   where:
   - Square function: price increases more with rarity
-  - Noise: e.g., market noise, missing features
+  - Noise $\varepsilon$: e.g., market noise, missing features
 
 ::: columns
 :::: {.column width=50%}
@@ -1125,21 +1126,23 @@ digraph ML_Phases {
 ::::
 :::
 
-* Overfitting: 2-Features Classification Example
+* Overfitting: Classification Example
 - Assume:
   - You want to separate 2 classes using 2 features $x_1, x_2$
   - The true class boundary has a parabola shape
 
-- We can use logistic regression and a decision boundary equal to:
-  - A line $\text{logit}(w_0 + w_1 x + w_2 y)$ $\to$ underfit
+- You can use logistic regression and a decision boundary equal to:
+  - A line $\text{logit}(w_0 + w_1 x + w_2 y)$
+    - Underfit
     - High bias, low variance
   - A parabola $\text{logit}(w_0 + w_1 x + w_2 x^2 + w_3 x y + w_4 y^2)$
     - Right fit
   - A wiggly decision boundary
-    $\text{logit}(w_0 + \text{high powers of } x_1, x_2)$ $\to$ overfit
+    $\text{logit}(w_0 + \text{high powers of } x_1, x_2)$
+    - Overfit
     - Low bias, high variance
 
-![](msml610/lectures_source/figures/Lesson05_Optimal_fit2.png)
+![](msml610/lectures_source/figures/Lesson05_Optimal_fit2.png){ width=80% }
 
 # ##############################################################################
 # Bias Variance Analysis
@@ -1148,74 +1151,78 @@ digraph ML_Phases {
 * VC Analysis vs Bias-Variance Analysis
 - Both VC analysis and bias-variance analysis are concerned with the hypothesis
   set $\calH$
-  - VC analysis:
+  - **VC analysis**:
     $$
     E_{out} \le E_{in} + \Omega(\calH)
     $$
-  - Bias-variance analysis:
+  - **Bias-variance analysis**
     $$
-    E_{out} = \text{bias and variance}
+    E_{out} = \text{bias + variance}
     $$
 
-![](msml610/lectures_source/figures/Lesson05_VC_analysis_vs_Bias_Variance_analysis.png)
+// TODO(gp): Redraw this
+
+![](msml610/lectures_source/figures/Lesson05_VC_analysis_vs_Bias_Variance_analysis.png){ width=80% }
 
 * Hypothesis Set and Bias-Variance Analysis
-- Learning consists in finding $g \in \calH$ such that $g \approx f$ where $f$
-  is an unknown function
-- The tradeoff in learning is between:
+- **Learning** consists in finding $g \in \calH$ such that $g \approx f$ where
+  $f$ is an unknown function
+
+- The **tradeoff in learning** is between:
   - Bias vs variance
   - Overfitting vs underfitting
   - More complex vs less complex $\calH$ / $h$
   - Approximation (in-sample) vs generalization (out-of-sample)
 
-* Decomposing Error in Bias-Variance
-- Consider machine learning problem
+* Decomposing Error in Bias-Variance (1/4)
+- **Problem**
   - Regression set-up: target is a real-valued function
   - Hypothesis set $\calH = \{ h_1(\vx), h_2(\vx), ... h_n(\vx) \}$
-  - Training data $D$ with $N$ examples
-  - Error is squared error $E_out = \EE[(g(\vx) - f(\vx))^2]$
-  - Choose the best function $g$ from $\calH$ that approximates $f$
+  - Training data $\calD$ with $N$ examples
+  - Squared error $E_out = \EE[(g(\vx) - f(\vx))^2]$
+  - Choose the best function $g \in \calH$ that approximates unknown $f$
 
-- What is the out-of-sample error $E_{out}(g)$ as function of $\calH$ for a
-  training set of $N$ examples?
+- **Question**
+  - What is the out-of-sample error $E_{out}(g)$ as function of $\calH$ for a
+    training set of $N$ examples?
 
-* Decomposing Error in Bias-Variance
-- The final hypothesis $g$ depends on the training set $D$, so we make the
-  dependency explicit $g^{(D)}$:
-
+* Decomposing Error in Bias-Variance (2/4)
+- The final hypothesis $g$ depends on training set $D$, so make the dependency
+  explicit $g^{(D)}$:
   $$
   E_{out}(g^{(D)})
   \defeq \EE_{\vx}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]
   $$
 
-- We are interested in:
-  - The hypothesis set $\calH$ rather than the specific $h$; and
-  - In a training set $D$ of $N$ examples, rather than the specific $D$
-- Therefore we Remove the dependency from $D$ by averaging over all the possible
-  training sets $D$ with $N$ examples:
+- Interested in:
+  - Hypothesis set $\calH$ rather than specific $h$
+  - Training set $D$ of $N$ examples, rather than a specific $D$
 
+- Remove dependency from $D$ by averaging over all possible training sets $D$
+  with $N$ examples:
   $$
   E_{out}(\calH)
   \defeq \EE_{D}[ E_{out}(g^{(D)}) ]
   = \EE_{D}[\EE_{\vx}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]]
   $$
 
-* Decomposing Error in Bias-Variance
+* Decomposing Error in Bias-Variance (3/4)
 - Switch the order of the expectations since the quantity is non-negative:
-
   $$
   E_{out}(\calH)
   = \EE_{\vx}[ \EE_{D}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]
   $$
 
 - Focus on $\EE_D [( g^{(D)}(\vx) - f(\vx) ) ^ 2 ]$ which is a function of $\vx$
+
 - Define the \textit{average hypothesis} over all training sets as:
   $$
   \overline{g}(\vx) \defeq \EE_D [ g^{(D)} (\vx) ]
   $$
-- Add and subtract it inside the $\EE_D$ expression:
 
+- Add and subtract it inside the $\EE_D$ expression:
   $$
+  \begingroup \small
   \begin{aligned}
   E_{out}(\calH)
   = & \EE_{\vx} \left[ \EE_D \left[ \left(
@@ -1241,9 +1248,10 @@ digraph ML_Phases {
   2 \EE_D[(g^{(D)} - \overline{g})] (\overline{g} - f)
   \right]\\
   \end{aligned}
+  \endgroup
   $$
 
-* Decomposing Error in Bias-Variance
+* Decomposing Error in Bias-Variance (4/4)
 - The cross term:
   $$
   \EE_D[(g^{(D)} - \overline{g})] (\overline{g} - f)
@@ -1254,6 +1262,7 @@ digraph ML_Phases {
   = 0 \cdot (\overline{g} - f)
   = 0 \cdot \text{constant}
   $$
+
 - Finally:
   \begin{alignat*}{3}
   E_{out}(\calH)
@@ -1275,20 +1284,18 @@ digraph ML_Phases {
 // TODO: Add a numerical example
 
 * Interpretation of Average Hypothesis
-- The average hypothesis over all training sets
-
+- The **average hypothesis** over all training sets
   $$
   \overline{g}(\vx) \defeq \EE_D [ g^{(D)} (\vx) ]
   $$
-
   can be interpreted as the "best" hypothesis from $\calH$ training on $N$
   samples
   - Note: $\overline{g}$ is not necessarily $\in \calH$
 
-- In fact it's like ensemble learning:
+- In fact it's like **ensemble learning**:
   - Consider all the possible data sets $D$ with $N$ samples
   - Learn $g$ from each $D$
-  - Average the hypotheses
+  - Average all the hypotheses
 
 * Interpretation of Variance and Bias Terms
 - The out-of-sample error can be decomposed as:
@@ -1296,10 +1303,10 @@ digraph ML_Phases {
   E_{out}(\calH) = \text{bias}^2 + \text{variance}
   $$
 
-::: columns :::: {.column width=60%}
+::: columns
+:::: {.column width=60%}
 
 - **Bias term**
-
   $$
   \text{bias}^2 = \EE_{\vx} [ ( \overline{g}(\vx) - f(\vx) ) ^ 2 ]
   $$
@@ -1320,31 +1327,6 @@ digraph ML_Phases {
 :::: {.column width=35%}
 
 ![](msml610/lectures_source/figures/Lesson05_bias_variance.png)
-::::
-:::
-
-* Variance and Bias Term Varying Cardinality of $\calH$
-
-::: columns
-:::: {.column width=55%}
-
-- If we have a hypothesis set with a single function: $\calH = \{ h \ne f \}$
-  - Bias can be large
-    - Since $h$ might be far from $f$
-  - Variance = 0
-    - There is no cost of choosing an hypothesis
-
-- If we have $\calH = \{ \text{many hypotheses } h \}$
-  - Bias can be 0
-    - E.g., if $f \in \calH$
-  - Variance can be large
-    - Since depending on which data set $D$ we get, we end up far from $f$
-    - We can assume that the larger $\calH$ is, the farther apart $g$ from $f$
-      will be
-::::
-:::: {.column width=40%}
-
-![](msml610/lectures_source/figures/Lesson05_Bias_Variance_tradeoff_example.png)
 
 ```tikz
 % Axis
@@ -1367,43 +1349,101 @@ digraph ML_Phases {
 \draw[thick, red] plot[smooth, domain=0.6:6] (\x, {2.0/(0.5*\x^2.0+0.3) + 1.0*(\x/1.5)^0.6});
 \node[red] at (6.0,2.8) {Out-of-sample Error};
 ```
+
+::::
+:::
+
+* Variance and Bias Term Varying Cardinality of $\calH$
+
+::: columns
+:::: {.column width=60%}
+
+- If hypothesis set **has a single function**: $\calH = \{ h \ne f \}$
+  - Large bias
+    - $h$ might be far from $f$
+  - Variance = 0
+    - No cost in choosing hypothesis
+::::
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/Lesson05_Bias_Variance_tradeoff_example1.png)
+
+::::
+:::
+
+::: columns
+:::: {.column width=60%}
+
+\vspace{1cm}
+
+- If hypothesis set **has many functions**:
+  $\calH = \{ \text{many hypotheses } h \}$
+  - Bias can be 0
+    - E.g., if $f \in \calH$
+  - Large variance
+    - Depending on data set $D$, end up far from $f$
+    - Larger $\calH$, farther $g$ from $f$
+::::
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/Lesson05_Bias_Variance_tradeoff_example2.png)
+
 ::::
 :::
 
 // TODO: Add pic (see book)
 
-* Bias-Variance Trade-Off: Numerical Trade-Off
-- Assume:
+* Bias-Variance Trade-Off: Numerical Example
+- **Machine learning problem**:
   - Target function $f(x) = \sin(\pi x), x \in [-1, 1]$
   - Noiseless target
-  - Value of $f(\vx)$ for $N = 2$ points
+  - You have $f(\vx)$ for $N = 2$ points
 
-- Hypotheses sets:
-  - $\calH_0: h(x) = b$ constant
-  - $\calH_1: h(x) = ax + b$ linear
+- **Two hypotheses sets** $\calH$:
+  - Constant model: $\calH_0: h(x) = b$
+  - Linear model: $\calH_1: h(x) = ax + b$
 
-- Which one is best?
-  - Depends on the perspective
-  - Best for approximation: minimal error approximating the sinusoid
-  - Best for learning: "learn" the unknown function with minimal error from 2
+- **Which model is best**?
+  - Depends on the perspective!
+  - Best for _approximation_: minimal error approximating the sinusoid
+  - Best for _learning_: learn the unknown function with minimal error from 2
     points
 
-- Approximation:
-  - $E_{out}(g_0) = 0.5$
-  - $E_{out}(g_1) = 0.2$; $g_1$ has more degrees of freedom
+* Bias-Variance Trade-Off: Numerical Example
 
-- Learning:
-  - Pick 2 points as training set, learn $g$, compute $\EE_D [ E_{out}(g) ]$
-  - Different $D$ gives different $g$
-  - Average over all data sets $D$ gives $\overline{g}$:
+- **Approximation**
+  - $E_{out}(g_0) = 0.5$
+    - $g_0$ is a constant and approximates the sinusoid poorly (higher bias)
+  - $E_{out}(g_1) = 0.2$
+    - $g_1$ is a line and has more degrees of freedom (lower bias)
+  - The line model _approximates better_ than the constant model
+
+::: columns
+:::: {.column width=60%}
+- **Learning**
+  - Algorithm:
+    - Pick 2 points as training set $D$
+    - Learn $g$ from $D$
+    - Different $D$ gives different $g$
+    - Compute $\EE_D [ E_{out}(g) ]$
+  - Average over all data sets $D$:
     $$
-    E_{out} = \text{bias} + \text{variance}
+    E_{out} = \text{bias}^2 + \text{variance}
     $$
   - $E_{out}(g_0) = 0.5 + 0.25 = 0.75$
-  - $E_{out}(g_1) = 0.21 + 1.69 = 1.9$; $g_1$ heavily depends on the training
-    set
+    - $g_0$ is more stable from the data set (lower variance)
+  - $E_{out}(g_1) = 0.2 + 1.69 = 1.9$
+    - $g_1$ heavily depends on the training set (higher variance)
+  - The constant model _learns better_ than the line model
 
-// TODO: Add an example
+::::
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/Lesson05_Bias_Variance_Numerical_Example1.png)
+![](msml610/lectures_source/figures/Lesson05_Bias_Variance_Numerical_Example2.png)
+
+::::
+:::
 
 * Bias-Variance Curves
 - Bias-variance curve are plots of $E_{out}$ increasing the complexity of the
