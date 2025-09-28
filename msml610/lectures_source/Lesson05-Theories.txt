@@ -1429,13 +1429,12 @@ digraph ML_Phases {
   the model
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=50%}
 - Typical **shape** of bias-variance curves
   - $E_{in}$ and $E_{out}$ start from the same point
   - $E_{in}$
     - Is decreasing with increasing model complexity
     - Can even go to 0
-    - Is shaped like an hyperbole
   - $E_{out}$
     - Is always larger than $E_{in}$
     - Is the sum of bias and variance
@@ -1444,12 +1443,39 @@ digraph ML_Phases {
     - Before the minimum there is a "high bias / underfitting" regime
     - After the minimum there is a "high variance / overfitting" regime
 ::::
-:::: {.column width=35%}
+:::: {.column width=45%}
 
 ![](msml610/lectures_source/figures/Lesson05_bias_variance_curve.png)
 
+![](msml610/lectures_source/figures/Lesson05_bias_variance_decomposition.png)
+
 ::::
 :::
+
+* Bias-Variance Curves and Regularization
+
+- Use **model with regularization** to learn at the same time:
+  - Model coefficients $\vw$
+  - Model "complexity" (e.g., VC dimension)
+
+- Learn the optimal model $\vw(\lambda)$ as a function of
+  $\lambda = \{..., 10^{-1}, 1.0, 10, ...\}$ by optimizing:
+  $$
+  \vw(\lambda) = \argmin_{\vw} E_{aug}(\vw) = E_{in}(\vw) + \Omega(\lambda)
+  $$
+
+![](msml610/lectures_source/figures/Lesson05_regularization.png)
+
+- Interpret the regularization parameter:
+  - Small $\lambda$:
+    - Complex model
+    - Low bias
+    - High variance
+  - Large $\lambda$:
+    - Simple model
+    - High bias
+    - Low variance
+  - An intermediate $\lambda$ optimizes bias-variance trade-off
 
 * How to Measure the Model Complexity
 - Number of features
@@ -1461,40 +1487,13 @@ digraph ML_Phases {
 - Regularization param $\lambda$
 - Training epochs for neural network
 
-* Bias-Variance Curves and Regularization
-- We can use a complex model together with regularization to learn at the same
-  time:
-  - The model coefficients $\vw$
-  - The model "complexity" (e.g., VC dimension), which is related to the
-    regularization parameter $\lambda$
-
-- For each different values of $\lambda = \{10^{-1}, 1.0, 10\}$ we optimize:
-  $$
-  \vw{\lambda} = \argmin_{\vw} E_{aug}(\vw) = E_{in}(\vw) + \Omega(\lambda)
-  $$
-  - $\vw(\lambda)$ is the optimal model as function of $\lambda$
-- Then estimate $E_{out}$ using $\vw(\lambda)$ and $\lambda$
-  - Small $\lambda$ means
-    - Complex model (with respect to data)
-    - Low bias
-    - High variance
-  - Large $\lambda$ means
-    - Simple model
-    - High bias
-    - Low variance
-- There will be an intermediate value of $\lambda$ that optimizes the trade-off
-  between bias and variance
-
 * Bias-Variance Decomposition with a Noisy Target
-
-- We can extend the bias-variance decomposition to the noisy target
-
+- Extend bias-variance decomposition to **a noisy target**
   $$
-  y = \vw^T \vx + \varepsilon
+  y = f(\vx; \vw) + \varepsilon = \vw^T \vx + \varepsilon
   $$
 
-- With similar hypothesis and a similar analysis we conclude that:
-
+- With similar hypothesis and analysis conclude that:
   $$
   \begin{aligned}
   E_{out}(\calH)
@@ -1507,38 +1506,31 @@ digraph ML_Phases {
   + \EE_{\varepsilon, \vx} \left[
   ( f - y) ^ 2
   \right]\\
-  &= \text{variance + bias (= deterministic noise) + stochastic noise}\\
+  &= \text{variance + bias + stochastic noise}\\
   \end{aligned}
   $$
 
-- **Interpretation**:
-  - The error is the sum of 3 contributions
-    1. Variance: from the set of hypotheses to the centroid of the hypothesis
-       set
-    2. Bias: from the centroid of the hypothesis set to the noiseless function
-    3. Noise: from the noiseless function to the real function
+- The out-of-sample error is the sum of 3 contributions
+  1. **Variance**: from the set of hypotheses to the centroid of the hypothesis
+     set
+  2. **Bias**: from the centroid of the hypothesis set to the noiseless function
+  3. **Noise**: from the noiseless function to the real function
 
 * Bias as Deterministic Noise
-- The bias term can be interpreted as "deterministic noise"
-  - Bias is the part of the target function that our hypothesis set cannot
-    capture:
-    $$
-    h^*(\vx) - f(\vx)
-    $$
-    where
-    - $h^*()$ is the best approximation of $f(\vx)$ in the hypothesis set
-      $\calH$
-    - E.g., $\overline{g}(x)$
+- The bias term can be interpreted as **deterministic noise**
+
+- Bias is the part of the target function that hypothesis set cannot capture:
+  $$
+  h^*(\vx) - f(\vx)
+  $$
+  where:
+  - $h^*()$ is the best approximation of $f(\vx)$ in the hypothesis set
+    $\calH$ (e.g., $\overline{g}(x)$)
 
 - The hypothesis set $\calH$ cannot learn the deterministic noise since it is
   outside of its ability, and thus it behaves like noise
 
 * Deterministic vs Stochastic Noise in Practice
-- In bias-variance analysis, the error for a noisy target is decomposed into:
-  - Bias (deterministic noise)
-  - Variance
-  - Stochastic noise
-
 - **Deterministic noise:**
   - Fixed for a particular $\vx$
   - Depends on $\calH$
@@ -1548,43 +1540,76 @@ digraph ML_Phases {
   - Not fixed for $\vx$
   - Independent of $D$ or $\calH$
 
-- In an actual machine learning problem, there's no difference between
-  stochastic and deterministic noise, since $\calH$ and $D$ are fixed
-  - E.g., from the training set alone, we cannot tell if the data is from a
+- In a machine learning problem, no difference exists between stochastic and
+  deterministic noise, as $\calH$ and $D$ are fixed
+  - From the training set alone, you cannot determine if data is from a
     _noiseless complex_ target or a _noisy simple_ target
 
 * Deterministic vs Stochastic Noise Example
-- 2 targets:
-  - Noisy low-order target (5-th order polynomial)
-  - Noiseless high-order target (50-th order polynomial)
-  - Generate $N=15$ data points from them
+::: columns
+:::: {.column width=70%}
+- **Two targets**:
+  - Noisy low-order target (10th order polynomial)
+  - Noiseless high-order target (50th order polynomial)
 
-- 2 models:
+- **Training set**
+  - Generate $N=15$ data points
+
+- **Two models**
   - ${\calH}_{2}$ low-order hypothesis (2nd order polynomial)
-  - ${\calH}_{10}$ high-order hypothesis (10-th order polynomial)
+  - ${\calH}_{10}$ high-order hypothesis (10th order polynomial)
 
-- When learning a model there is no difference between deterministic and
-  stochastic noise
-- In fact the learning algorithm only sees the samples in the training set and
-  one cannot distinguish the two different sources
-- For noisy low-order target: going from fitting the 2nd order to the 10-th
-  order polynomial we see that $\downarrow E_{in}$ (we have more degrees of
-  freedoms) and $\uparrow\uparrow E_{out}$ (since the 10-th polynomial fits the
-  noise)
-- For noiseless high-order target: exactly the same phenomenon!
+- Learning model:
+  - Sees only training samples
+  - Can't distinguish noise sources
 
-- Knowing that the target is a 10-th order polynomial, one can think that with a
-  10-order hypothesis set we can fit the target perfectly
-- The issue is that we should only consider the number of data points we have
-- In this case 15 points, using the rule of thumb:
+::::
+:::: {.column width=25%}
 
-  $$
-  \text{degrees of freedom of the model = number of data points / 10}
-  $$
+![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example1.png)
 
-  we should use either 1 or 2 degrees of freedom
+![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example2.png)
 
-// TODO: Add numerical example
+::::
+:::
+
+* Deterministic vs Stochastic Noise Example
+::: columns
+:::: {.column width=70%}
+
+- Noisy low-order target:
+  - Fit 2nd to 10th order polynomial
+  - $\downarrow E_{in}$ (more degrees of freedom), $\uparrow\uparrow E_{out}$
+    (fits noise)
+
+- Noiseless high-order target
+  - Fit 2nd to 10th order polynomial
+  - Same phenomenon
+  - $\downarrow E_{in}$ (more degrees of freedom), $\uparrow\uparrow E_{out}$
+    (fits noise)
+
+- Knowing target is 10th order polynomial:
+  - Use 10-order hypothesis to fit target perfectly
+  - Consider number of data points, i.e., 15 points
+  - Rule of thumb from VC analysis
+    $$
+    \text{degrees of freedom of model = number of data points / 10}
+    $$
+  - Use 1 or 2 degrees of freedom
+
+::::
+:::: {.column width=25%}
+
+![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example3.png)
+
+![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example4.png)
+
+![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example5.png)
+
+![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example6.png)
+
+::::
+:::
 
 * Amount of Data and Model Complexity
 - The lesson learned from bias-variance analysis is that one must match the
