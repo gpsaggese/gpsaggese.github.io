@@ -1327,29 +1327,6 @@ digraph ML_Phases {
 :::: {.column width=35%}
 
 ![](msml610/lectures_source/figures/Lesson05_bias_variance.png)
-
-```tikz
-% Axis
-\draw[->] (0,0) -- (7,0) node[right] {Model complexity};
-\draw[->] (0,0) -- (0,5) node[above] {Error};
-
-% Dashed line for optimal fit.
-\draw[dashed, thick] (2.5,0) -- (2.5,4.5);
-\node at (2.5,-0.3) {Optimal fit};
-
-% Bias.
-\draw[thick, blue] plot[smooth, domain=0.6:6] (\x, {2.0/(0.5*\x^2.0+0.3)});
-\node[blue] at (5.0,0.7) {Bias};
-
-% Variance.
-\draw[thick, violet] plot[smooth, domain=0.6:6] (\x, {1.0*(\x/1.5)^0.6});
-\node[violet] at (5.5,1.5) {Variance};
-
-% Out-of-sample error curve.
-\draw[thick, red] plot[smooth, domain=0.6:6] (\x, {2.0/(0.5*\x^2.0+0.3) + 1.0*(\x/1.5)^0.6});
-\node[red] at (6.0,2.8) {Out-of-sample Error};
-```
-
 ::::
 :::
 
@@ -1393,57 +1370,38 @@ digraph ML_Phases {
 
 // TODO: Add pic (see book)
 
-* Bias-Variance Trade-Off: Numerical Example
-- **Machine learning problem**:
+* Bias-Variance Trade-Off: Numerical Trade-Off
+- Assume:
   - Target function $f(x) = \sin(\pi x), x \in [-1, 1]$
   - Noiseless target
-  - You have $f(\vx)$ for $N = 2$ points
+  - Value of $f(\vx)$ for $N = 2$ points
 
-- **Two hypotheses sets** $\calH$:
-  - Constant model: $\calH_0: h(x) = b$
-  - Linear model: $\calH_1: h(x) = ax + b$
+- Hypotheses sets:
+  - $\calH_0: h(x) = b$ constant
+  - $\calH_1: h(x) = ax + b$ linear
 
-- **Which model is best**?
-  - Depends on the perspective!
-  - Best for _approximation_: minimal error approximating the sinusoid
-  - Best for _learning_: learn the unknown function with minimal error from 2
+- Which one is best?
+  - Depends on the perspective
+  - Best for approximation: minimal error approximating the sinusoid
+  - Best for learning: "learn" the unknown function with minimal error from 2
     points
 
-* Bias-Variance Trade-Off: Numerical Example
-
-- **Approximation**
+- Approximation:
   - $E_{out}(g_0) = 0.5$
-    - $g_0$ is a constant and approximates the sinusoid poorly (higher bias)
-  - $E_{out}(g_1) = 0.2$
-    - $g_1$ is a line and has more degrees of freedom (lower bias)
-  - The line model _approximates better_ than the constant model
+  - $E_{out}(g_1) = 0.2$; $g_1$ has more degrees of freedom
 
-::: columns
-:::: {.column width=60%}
-- **Learning**
-  - Algorithm:
-    - Pick 2 points as training set $D$
-    - Learn $g$ from $D$
-    - Different $D$ gives different $g$
-    - Compute $\EE_D [ E_{out}(g) ]$
-  - Average over all data sets $D$:
+- Learning:
+  - Pick 2 points as training set, learn $g$, compute $\EE_D [ E_{out}(g) ]$
+  - Different $D$ gives different $g$
+  - Average over all data sets $D$ gives $\overline{g}$:
     $$
-    E_{out} = \text{bias}^2 + \text{variance}
+    E_{out} = \text{bias} + \text{variance}
     $$
   - $E_{out}(g_0) = 0.5 + 0.25 = 0.75$
-    - $g_0$ is more stable from the data set (lower variance)
-  - $E_{out}(g_1) = 0.2 + 1.69 = 1.9$
-    - $g_1$ heavily depends on the training set (higher variance)
-  - The constant model _learns better_ than the line model
+  - $E_{out}(g_1) = 0.21 + 1.69 = 1.9$; $g_1$ heavily depends on the training
+    set
 
-::::
-:::: {.column width=35%}
-
-![](msml610/lectures_source/figures/Lesson05_Bias_Variance_Numerical_Example1.png)
-![](msml610/lectures_source/figures/Lesson05_Bias_Variance_Numerical_Example2.png)
-
-::::
-:::
+// TODO: Add an example
 
 * Bias-Variance Curves
 - Bias-variance curve are plots of $E_{out}$ increasing the complexity of the
