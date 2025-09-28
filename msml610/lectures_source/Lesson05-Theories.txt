@@ -1327,6 +1327,9 @@ digraph ML_Phases {
 :::: {.column width=35%}
 
 ![](msml610/lectures_source/figures/Lesson05_bias_variance.png)
+
+![](msml610/lectures_source/figures/Lesson05_bias_variance_decomposition.png)
+
 ::::
 :::
 
@@ -1370,61 +1373,78 @@ digraph ML_Phases {
 
 // TODO: Add pic (see book)
 
-* Bias-Variance Trade-Off: Numerical Trade-Off
-- Assume:
+* Bias-Variance Trade-Off: Numerical Example
+- **Machine learning problem**:
   - Target function $f(x) = \sin(\pi x), x \in [-1, 1]$
   - Noiseless target
-  - Value of $f(\vx)$ for $N = 2$ points
+  - You have $f(\vx)$ for $N = 2$ points
 
-- Hypotheses sets:
-  - $\calH_0: h(x) = b$ constant
-  - $\calH_1: h(x) = ax + b$ linear
+- **Two hypotheses sets** $\calH$:
+  - Constant model: $\calH_0: h(x) = b$
+  - Linear model: $\calH_1: h(x) = ax + b$
 
-- Which one is best?
-  - Depends on the perspective
-  - Best for approximation: minimal error approximating the sinusoid
-  - Best for learning: "learn" the unknown function with minimal error from 2
+- **Which model is best**?
+  - Depends on the perspective!
+  - Best for _approximation_: minimal error approximating the sinusoid
+  - Best for _learning_: learn the unknown function with minimal error from 2
     points
 
-- Approximation:
+* Bias-Variance Trade-Off: Numerical Example
+
+- **Approximation**
   - $E_{out}(g_0) = 0.5$
-  - $E_{out}(g_1) = 0.2$; $g_1$ has more degrees of freedom
-
-- Learning:
-  - Pick 2 points as training set, learn $g$, compute $\EE_D [ E_{out}(g) ]$
-  - Different $D$ gives different $g$
-  - Average over all data sets $D$ gives $\overline{g}$:
-    $$
-    E_{out} = \text{bias} + \text{variance}
-    $$
-  - $E_{out}(g_0) = 0.5 + 0.25 = 0.75$
-  - $E_{out}(g_1) = 0.21 + 1.69 = 1.9$; $g_1$ heavily depends on the training
-    set
-
-// TODO: Add an example
-
-* Bias-Variance Curves
-- Bias-variance curve are plots of $E_{out}$ increasing the complexity of the
-  model
-  - Can diagnose bias-variance problem
+    - $g_0$ is a constant and approximates the sinusoid poorly (higher bias)
+  - $E_{out}(g_1) = 0.2$
+    - $g_1$ is a line and has more degrees of freedom (lower bias)
+  - The line model _approximates better_ than the constant model
 
 ::: columns
-:::: {.column width=50%}
-- Typical form of bias-variance curves
-- $E_{in}$ and $E_{out}$ start from the same point
-- $E_{in}$
-  - Is decreasing with increasing model complexity
-  - Can even go to 0
-  - Is shaped like an hyperbole
-- $E_{out}$
-  - Is always larger than $E_{in}$
-  - Is the sum of bias and variance
-  - Has a bowl shape
-  - Reaches a minimum for optimal fit
-  - Before the minimum there is a "high bias / underfitting" regime
-  - After the minimum there is a "high variance / overfitting" regime
+:::: {.column width=60%}
+- **Learning**
+  - Algorithm:
+    - Pick 2 points as training set $D$
+    - Learn $g$ from $D$
+    - Compute $\EE_D [ E_{out}(g) ]$
+  - Average over all data sets $D$:
+    $$
+    E_{out} = \text{bias}^2 + \text{variance}
+    $$
+  - $E_{out}(g_0) = 0.5 + 0.25 = 0.75$
+    - $g_0$ is more stable given the data set (lower variance)
+  - $E_{out}(g_1) = 0.2 + 1.69 = 1.9$
+    - $g_1$ heavily depends on the training set (higher variance)
+  - The constant model _learns better_ than the line model
+
 ::::
-:::: {.column width=45%}
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/Lesson05_Bias_Variance_Numerical_Example1.png)
+![](msml610/lectures_source/figures/Lesson05_Bias_Variance_Numerical_Example2.png)
+
+::::
+:::
+
+* Bias-Variance Curves
+- **Bias-variance curves** are plots of $E_{out}$ increasing the complexity of
+  the model
+
+::: columns
+:::: {.column width=60%}
+- Typical **shape** of bias-variance curves
+  - $E_{in}$ and $E_{out}$ start from the same point
+  - $E_{in}$
+    - Is decreasing with increasing model complexity
+    - Can even go to 0
+    - Is shaped like an hyperbole
+  - $E_{out}$
+    - Is always larger than $E_{in}$
+    - Is the sum of bias and variance
+    - Has a bowl shape
+    - Reaches a minimum for optimal fit
+    - Before the minimum there is a "high bias / underfitting" regime
+    - After the minimum there is a "high variance / overfitting" regime
+::::
+:::: {.column width=35%}
 
 ![](msml610/lectures_source/figures/Lesson05_bias_variance_curve.png)
 
