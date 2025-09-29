@@ -1986,28 +1986,31 @@ digraph ML_Phases {
 ::: columns
 :::: {.column width=55%}
 
-- Divide dataset into $K$ folds, each with $\frac{N}{K}$ samples
-
-- Each fold should reflect dataset statistics
+- **Divide dataset** into $K$ folds, each with $\frac{N}{K}$ samples
+  - Each fold should reflect dataset statistics
   - E.g., stratified sampling
 
-- $K$ iterations $i = 1, ..., K$:
+- **Do $K$ iterations** $i = 1, ..., K$
 - In $i$-th iteration
-  - Train on all folds except $i$ (use $\frac{K - 1}{K}N$ points) and get
+  - Train on all folds except $i$ using $\frac{K - 1}{K}N$ points and get
     $g^{(-i)}(\vx)$
-  - Validate on $i$-th fold (use $\frac{N}{K}$ points) to compute
+  - Validate on $i$-th fold using $\frac{N}{K}$ points to compute
     $$
     E_{val}^{(i)} = E_{val}[g^{(-i)}(\vx)]
     $$
 
-- Average $K$ error rates and compute bounds:
+- **Average** $K$ error rates and compute bounds:
   $$
   E_{val} = \frac{1}{K} \sum_i E_{val}^{(i)}
   $$
 
 ::::
 :::: {.column width=40%}
+
+\begingroup \scriptsize
 _Train / test validation_
+\endgroup
+\vspace{0.1cm}
 
 ```tikz
     \def\blockwidth{1.2}
@@ -2034,7 +2037,11 @@ _Train / test validation_
     }
 ```
 
+\vspace{1cm}
+\begingroup \scriptsize
 _5x cross-validation_
+\endgroup
+\vspace{0.1cm}
 
 ```tikz
 \def\blockwidth{1.2}
@@ -2076,50 +2083,52 @@ _5x cross-validation_
 
 * Cross-Validation: Pros and Cons
 - **Pros**
-  - Efficient data usage (all data used for learning and validation)
+  - Efficient data usage
+    - All data used for learning and validation
   - Better estimate of $E_{val}$ than separate training/validation sets
   - Folds can be stratified
 
 - **Cons**
   - Computationally intensive: $K$ learning phases
   - Dependency on fold selection
-  - Errors $E_{val}$ are not independent (coupling through common training
-    samples)
+  - Errors $E_{val}$ are not independent
+    - Coupling through common training samples
     - Experimentally not completely correlated
 
 * Repeated Cross-Validation
-- Cross-validation results depend on fold selection
+- **Repeated Cross-Validation**
+  - Cross-validation results depend on fold selection
   - To remove this dependency, repeat cross-validation multiple times (e.g., 10)
     and average results
-
-- Note: "10x 10-fold cross-validation" is different than "1x 100-fold
-  cross-validation"
+  - Note that _"10x 10-fold cross-validation"_ is different than _"1x 100-fold
+    cross-validation"_
 
 * Leave-One-Out Cross-Validation
-- Leave-one-out (LOO) cross-validation
+- **Leave-one-out** (LOO) cross-validation
   - There are $N$ training sessions
   - Each session trains on $N - 1$ points and validates on 1 point
-  - Like "$N$-fold cross-validation," where $N$ is the number of examples in the
-    dataset
+  - Equivalent to "$N$-fold cross-validation" where $N$ is the number of examples
+    in the dataset
 
-- Train:
-  - For $i$-th fold, $N - 1$ samples for training $\implies g^-_i \approx g$
+- **Train**
+  - For $i$-th fold, $N - 1$ samples for training $\implies g^{(-i)} \approx g$
 
-- Validate / estimate:
+- **Validate**
   - Estimate the validation error on a single point (bad):
     $$
-    E_{val}[g^{-}_i] = e(g^{-}_i(\vx_i), y_i) \not\approx E_{out}[g^{-}_i]
+    E_{val}[g^{(-i)}] = e(g^{(-i)}(\vx_i), y_i) \not\approx E_{out}[g^{(-i)}]
     $$
   - Average $E_{val}$ over the points as estimate of $E_{out}$ (good):
     $$
     E_{val}
-    = \frac{1}{N} \sum_i E_{val}[g^{-}_i]
+    = \frac{1}{N} \sum_{i=1}^K E_{val}[g^{(-i)}]
     $$
 
 * Leave-One-Out Cross-Validation: Pros and Cons
 - **Pros**
   - Max data used for training
-  - Deterministic procedure (no fold selection dependency)
+  - Deterministic procedure
+    - No dependency on fold selection
 
 - **Cons**
   - High computational cost (as many learning phases as data points)
@@ -2140,3 +2149,114 @@ _5x cross-validation_
   - Not flexible
   - Smaller percentage of instances are used for training set than 10-fold cross
     validation
+
+* Bootstrap: Problem
+- **Assumption**
+  - Given $X \sim F$
+  - Draw $n$ IID samples $X_i$ from $F$
+
+- **Goal**:
+  - Consider a sampling statistic $T = g(X_1, ..., X_n)$
+    - E.g., mean, median, OLS coefficients, ...
+  - You want to:
+    - Estimate distribution of $T$, e.g., $F_T(x), f_T(x)$
+    - Estimate a statistic of $T$, e.g., mean, std err
+    - Construct confidence intervals, e.g., $\mu \pm \epsilon$
+    - Calculate standard errors, e.g., $\sigma(\hat{T}_n)$
+    - Hypothesis testing
+
+* Bootstrap Procedure: Algorithm
+- Use observed data $X_1, ..., X_n$ to construct estimated population
+  distribution $\hat{F}_n$
+
+- Repeat $B$ times:
+  - Draw $n$ samples with replacement from estimated population distribution
+    $\hat{F}_n$
+  - Sampling with replacement from $X_i$ equals sampling from $\hat{F}_n$
+  - Compute sample statistics from $n$ samples:
+    $T^{(i)} = g(X^{(i)}_1, ..., X^{(i)}_n)$
+
+- Use $B$ samples of $T^{(i)}$ to estimate empirical distribution $\hat{T}$
+
+- Compute statistics (e.g., confidence interval, standard error) of $T$ from
+  empirical distribution of $\hat{T}$
+
+* Bootstrap: Pros
+- **Tremendously useful tool**
+  - Fewer assumptions
+    - No need for simplifying assumptions for closed formulas
+    - Data doesn't need to be Gaussian
+  - Generality
+    - Applies to any sample statistics, even non-linear ones (e.g., median)
+
+- **Math $\to$ simulation**
+  - Bootstrap is a non-parametric method
+  - Does not rely on large sample sizes, e.g., Central Limit Theorem (CLT) / Law
+    Large Numbers (LLN)
+  - Bootstrap frees data scientists from complex math, approximations, and
+    asymptotics
+
+* Bootstrap: Example of Die Rolls
+- **Problem**
+  - Compute distribution of sum of rolling a die 50 times
+    $$Y = \sum_{i=1}^{50} X_i = g(X_1, ..., X_{50})$$
+  - Sample statistics similar to sample mean, but can be anything
+
+- **Solution**
+  1. **By math**
+     - If you know PMF of the die, compute distribution using mathematics
+     - Theorem of lazy statistician for mean, variance
+     - Compute PDF of $Y$ by convolving PDFs
+  2. **By sampling** (real or simulated)
+     - Roll die 50 times
+     - Compute sample statistic
+     - Repeat procedure
+     - Plot approximate distribution of $Y$
+  3. If only 50 samples of die are known $\to$ **bootstrap**
+
+* Bootstrap of the Median: Pseudo-Code
+
+// TODO(gp): Add a way to render it with render_images.py
+
+\begingroup \small
+```
+def bootstrap_median(x, n_boot):
+    # Compute n_boot sample statistics.
+    median_boot = [0.0] * n_boot
+    for i in range(n_boot):
+        # Sample with replacement.
+        x_star = sample with replacements from x
+        # Compute median for bootstrapped samples.
+        median_boot[i] = median(x_star)
+    # Compute mean and std err from approximation of sample statistics.
+    m_median = numpy.mean(median_boot)
+    se_median = numpy.std(median_boot)
+    return m_median, se_median
+```
+\endgroup
+
+* Bootstrap for variance of sample statistics: explanation
+- Under the hypotheses of bootstrap:
+  - $X \sim F$
+  - $n$ samples $X_i$ IID from $F$
+  - Statistic $T = g(X_1, ..., X_n)$
+  - Compute $\VV_F[T]$ (variance of sample statistics), where $F$ is unknown
+
+- **First approximation**
+  - Only samples from $F$ available
+  - Approximate $F$ with $\hat{F}$, as empirical CDF $\hat{F}$ converges to $F$
+    $$\VV_F[T] \approx \VV_{\hat{F}}[T]$$
+  - Approximation
+    - Not small
+    - Depends on sample size and shape of $F$
+
+- **Second approximation**
+  - Exact $\hat{F}$ may lack closed formula for $\VV_{\hat{F}}[T]$
+  - Use LLN and simulation to approximate variance:
+    $$
+    \VV_{\hat{F}}[T]
+    \approx v_{boot}
+    = \frac{1}{B} \sum_i (T_i - \overline{T}) ^ 2
+    $$
+  - Approximation size reduced by increasing $B$
+  - $v_{boot} \to \VV_{\hat{F}}[T]$ as $B \to \infty$
