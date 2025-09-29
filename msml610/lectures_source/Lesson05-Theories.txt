@@ -1464,9 +1464,10 @@ digraph ML_Phases {
   \vw(\lambda) = \argmin_{\vw} E_{aug}(\vw) = E_{in}(\vw) + \Omega(\lambda)
   $$
 
-![](msml610/lectures_source/figures/Lesson05_regularization.png)
+::: columns
+:::: {.column width=45%}
 
-- Interpret the regularization parameter:
+- Interpret regularization parameter:
   - Small $\lambda$:
     - Complex model
     - Low bias
@@ -1475,7 +1476,15 @@ digraph ML_Phases {
     - Simple model
     - High bias
     - Low variance
-  - An intermediate $\lambda$ optimizes bias-variance trade-off
+  - An intermediate $\lambda$ is optimal
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/Lesson05_regularization.png)
+
+::::
+:::
 
 * How to Measure the Model Complexity
 - Number of features
@@ -1517,9 +1526,11 @@ digraph ML_Phases {
   3. **Noise**: from the noiseless function to the real function
 
 * Bias as Deterministic Noise
+::: columns
+:::: {.column width=65%}
 - The bias term can be interpreted as **deterministic noise**
 
-- Bias is the part of the target function that hypothesis set cannot capture:
+- **Bias** is the part of the target function that hypothesis set cannot capture:
   $$
   h^*(\vx) - f(\vx)
   $$
@@ -1528,7 +1539,15 @@ digraph ML_Phases {
     $\calH$ (e.g., $\overline{g}(x)$)
 
 - The hypothesis set $\calH$ cannot learn the deterministic noise since it is
-  outside of its ability, and thus it behaves like noise
+  outside of its ability, and thus it behaves like "noise"
+
+::::
+:::: {.column width=30%}
+
+![](msml610/lectures_source/figures/Lesson05_Deterministic_Noise.png)
+
+::::
+:::
 
 * Deterministic vs Stochastic Noise in Practice
 - **Deterministic noise:**
@@ -1588,8 +1607,11 @@ digraph ML_Phases {
   - $\downarrow E_{in}$ (more degrees of freedom), $\uparrow\uparrow E_{out}$
     (fits noise)
 
-- Knowing target is 10th order polynomial:
+- **Wrong approach**
+  - Target is 10th order polynomial
   - Use 10-order hypothesis to fit target perfectly
+
+- **Right approach**
   - Consider number of data points, i.e., 15 points
   - Rule of thumb from VC analysis
     $$
@@ -1602,9 +1624,9 @@ digraph ML_Phases {
 
 ![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example3.png)
 
-![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example4.png)
-
 ![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example5.png)
+
+![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example4.png)
 
 ![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example6.png)
 
@@ -1612,14 +1634,12 @@ digraph ML_Phases {
 :::
 
 * Amount of Data and Model Complexity
-- The lesson learned from bias-variance analysis is that one must match the
-  _model complexity_:
-  - To the _data resources_
-  - To the _signal to noise ratio_
-  - **Not** to the _target complexity_
+- One must match the _model complexity_ to
+  - **Data resources**
+  - **Signal to noise ratio**
+  - **Not target complexity**
 
 - The rule of thumb is:
-
   $$
   d_{VC} (\text{degrees of freedom of the model})
   = N (\text{number of data points}) / 10
@@ -1627,84 +1647,41 @@ digraph ML_Phases {
   - In other words, 10 data points needed to fit a degree of freedom
   - If the data is noisy, you need even more data
 
-* Bias-Variance Curves for Neural Networks
-- For neural networks one can plot $E_{in}$ and $E_{out}$ as function of the
-  training epochs
-
-- One starts with random weights
-
-- Both $E_{in}$ and $E_{out}$:
-  - Are large
-  - Start exactly from the same value
-    - No generalization error
-    - Since the model is random, it has no optimistic bias on the training set
-
-- As learning proceeds:
-  - $E_{in}$ and $E_{out}$ decrease
-  - The generalization error $E_{out} - E_{in}$ increases
-
-- It is like the VC dimension is increasing from 0 towards all the available
-  degrees of freedom while exploring the weight space
-
 * Overfitting as a Function of Data Resources, Model Complexity, Noise
-- We can measure overfitting as $\frac{E_{out} - E_{in}}{E_{out}}$
-  - $\uparrow \text{data resources } (N) \implies \downarrow \text{overfitting}$
-  - $\uparrow \text{model complexity } (d_{VC}) \implies \uparrow
-    \text{overfitting}$
-  - $\uparrow$ stochastic noise ($\sigma^2$) / deterministic noise (target
-    complexity) $\implies \uparrow \text{overfitting}$
 
-- There is an error to which both $E_{in}$ and $E_{out}$ converge for
-  $N \to \infty$
-  - Irreducible error
-  - This error depends on stochastic and deterministic noise
-  - There is no variance (since $N = \infty$)
+- You can measure overfitting in terms of **generalization error**
+  $\frac{E_{out} - E_{in}}{E_{out}}$
+
+  - $\uparrow$ data resources $N \implies \downarrow$ overfitting
+  - $\uparrow$ model complexity $d_{VC} \implies \uparrow$ overfitting
+  - $\uparrow$ deterministic noise (target complexity) $\implies \uparrow$ overfitting
+  - $\uparrow$ stochastic noise $\sigma^2 \implies \uparrow$ overfitting
 
 # ##############################################################################
 # Learning Curves
 # ##############################################################################
 
 * Learning Curves vs Bias-Variance Curves
-- Learning curves are the dual of the bias-variance curves
+- **Learning curves** are the dual of the bias-variance curves
 
-- For bias-variance curves
-
+- For **bias-variance curves**
   $$
   E_{in}, E_{out} = f(d_{VC} \vert N)
   $$
-  - Keep the training / test set fixed (number of examples $N$)
+  - Keep the complexity of training set fixed (number of examples $N$)
   - Vary the model in terms of:
     - Model complexity $d$
     - Number of features $p$
     - Regularization amount $\lambda$
 
-- For learning curves
-
+::: columns
+:::: {.column width=55%}
+- For **learning curves**
   $$
   E_{in}, E_{out} = f(N \vert d_{VC})
   $$
   - Fix the model
   - Vary the size $N$ of training set
-
-* Typical Form of Learning Curves
-- Learning curves plot $E_{in}$ and $E_{out}$ error as a function of data amount
-
-::: columns
-:::: {.column width=55%}
-
-- **Small $N$**
-  - With small data $N$, $E_{in}$ might be small (even 0) depending on model
-    capacity (VC dimension)
-  - The model is likely overfitted, memorizing examples, generalizing poorly,
-    and $E_{out}$ is large
-
-- **Increasing $N$**
-  - $E_{in}$ increases as the model cannot fit all data
-  - $E_{out}$ decreases as the model fits better and generalizes better
-    ($E_{out} - E_{in}$ decreases)
-  - Asymptotically, $E_{in}$ reaches a minimum (not 0 if noise), while $E_{out}$
-    starts increasing, entering overfitting regime
-  - $E_{out} \ge E_{in}$ for any $N$
 
 ::::
 :::: {.column width=40%}
@@ -1727,6 +1704,33 @@ digraph ML_Phases {
 \node[red] at (5.8,0.95) {$E_{\text{in}}$};
 \node[blue] at (5.8,2.15) {$E_{\text{out}}$};
 ```
+::::
+:::
+
+* Typical Form of Learning Curves
+- Learning curves plot $E_{in}$ and $E_{out}$ as a function of data amount $N$,
+  given the model $h()$
+  - $E_{out} \ge E_{in}$ for any $N$
+
+::: columns
+:::: {.column width=60%}
+
+- **Small $N$**
+  - $E_{in}$ is small (even 0)
+  - The model is likely overfitted, memorizing and generalizing poorly
+  - $E_{out}$ is large
+
+- **Increasing $N$**
+  - $E_{in} \uparrow$ as the model cannot fit all data
+  - $E_{out} \downarrow$ as the model fits better and generalizes better
+  - Generalization error $E_{out} - E_{in} \downarrow$
+
+- **$N \to \infty$**
+  - $E_{in}$ reaches a maximum (irreducible error)
+  - $E_{out}$ reaches a minimum
+  - $E_{out} - E_{in}$ depends on the complexity of the model
+::::
+:::: {.column width=35%}
 
 ![](msml610/lectures_source/figures/Lesson05_learning_curve.png)
 
@@ -1735,16 +1739,28 @@ digraph ML_Phases {
 :::
 
 * High-Bias vs High-Variance Regime
-- From the learning curve we can see two regimes:
-  - High-variance regime for small $N$
+::: columns
+:::: {.column width=60%}
+- From the learning curve you can see the two regimes:
+
+  - **High-variance regime** for small $N$
     - $E_{in}$ is small
-    - $E_{out}$ > $E_{in}$
-    - More data helps; gap between $E_{in}$ and $E_{out}$ decreases
-    - Small data set $D$; high dependency on $D$
-  - **High-bias regime for large $N$**
+    - Small data set $D$ $\implies$ high dependency on $D$
+
+  - More data helps reduce gap between $E_{in}$ and $E_{out}$
+
+  - **High-bias regime** for large $N$
     - $E_{in}$ is large; flattens for large $N$
     - Best model fitted; more data won't help
     - $E_{out}$ can be close to $E_{in}$ (good generalization) or not
+::::
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/Lesson05_Irreducible_Error1.png)
+
+![](msml610/lectures_source/figures/Lesson05_Irreducible_Error2.png)
+::::
+:::
 
 // TODO: Add pic
 
@@ -1818,61 +1834,58 @@ digraph ML_Phases {
 ## #############################################################################
 
 * Estimating Out-Of-Sample Error with One Point
-- Pick an out-of-sample point $(\vx', y)$
-- The error of the model $h$ is:
+- Pick a **single out-of-sample point** $(\vx', y)$
 
+- The error of the model $h$ is:
   $$
   E_{val}(h) = e(h(\vx'), y)
   $$
-
   where the error can be:
   - Squared error $(h(\vx) - y)^2$
   - Binary error $I[h(\vx) - y]$
   - ...
 
-- The error on an out-of-sample point is an unbiased estimate of $E_{out}$,
-  since
-
+- The **error on an out-of-sample point** is an **unbiased estimate** of
+  $E_{out}$, since:
   $$
   \EE[E_{val}(h)] = \EE[e(h(\vx), y)] = E_{out}
   $$
-
-  by definition
-  - The quality of the estimate depends on $\VV[e(h(\vx), y)]$, which in an
-    unknown value
+- The quality of the estimate depends on the standard error $\VV[e(h(\vx), y)]$,
+  which in an unknown value
 
 * Estimating Out-Of-Sample Error with $K$ Points
-- To improve the estimate, use a validation set, i.e., $K$ points instead of one
-  point $(\vx_1, y_1), ... , (\vx_K, y_K)$ drawn IID
+- To improve the estimate, use a validation set with $K$ points 
+  $(\vx_1, y_1), ... , (\vx_K, y_K)$ drawn IID
 
-- Compute the error on the validation set as:
-
+- Compute the **error on the validation set** as:
   $$
   E_{val}(h) = \frac{1}{K} \sum_{i=1}^K e(h(\vx_i), y_i)
   $$
 
-- The validation error is an unbiased estimate of out-of-sample error since:
+- The validation error is an **unbiased estimate** of out-of-sample error since:
   $$
   \EE[E_{val}(h)] = E_{out}(h)
   $$
-- The error is:
-  \begin{alignat*}{3}
+- The standard error is $\sqrt{K}$ smaller:
+  \begingroup \small
+  \begin{alignat*}{2}
   \VV[E_{val}(h)]
   & = \frac{1}{K^2} \sum_i \VV[e(h(\vx_i), y_i)] + \text{covariances}
-  &
   \\
-  &= \frac{1}{K^2} \sum_i \VV[e(h(\vx_i), y_i)]
   &\text{(covariances are 0 because $\vx_i$ independent)}
   \\
-  &= \frac{K \sigma^2}{K^2}
-  = \frac{\sigma^2}{K}
+  &= \frac{1}{K^2} \sum_i \VV[e(h(\vx_i), y_i)]
+  \\
+  &= \frac{K \sigma^2}{K^2} = \frac{\sigma^2}{K}
   \\
   \end{alignat*}
+  \endgroup
 
-* Trade-Off Between Training and Validation Set Size
-- **Problem**: to better estimate $E_{val}$, we need points from the training
-  set:
+* Trade-Off Between Training and Validation Set
+- **Problem**: you have finite amount of data points $N$
 
+::: columns
+:::: {.column width=60%}
   $$
   \begin{aligned}
   & D_{val} = \{K \text{ points}\} \\
@@ -1880,48 +1893,59 @@ digraph ML_Phases {
   \end{aligned}
   $$
 
-- We know:
+- You know that:
+  $$
+  \begin{aligned}
+  \uparrow K
+  & \implies |E_{val} - E_{out}| \downarrow \text{ (most reliable estimate)}
+  \\
+  & \implies \downarrow N - K \implies E_{in}, E_{out} \uparrow \text{ (worse model)}
+  \\
+  \end{aligned}
+  $$
+  - If $K$ is too big, you get a **reliable estimate of a bad number**!
 
-  $$
-  \uparrow K \implies \VV[E_{val}] \implies |E_{val} - E_{out}| \downarrow
-  \text{ (most reliable estimate)}
-  $$
+::::
+:::: {.column width=35%}
 
-  but
+![](msml610/lectures_source/figures/Lesson05_Train_Validation_Set_Trade_Off.png)
 
-  $$
-  \uparrow K \implies \downarrow N - K \implies E_{in}, E_{out} \uparrow
-  \text{ (worse model)}
-  $$
-  - If $K$ is too big, we get a reliable estimate of a bad number!
+::::
+:::
 
 - **Solution**:
   - Rule of thumb: 70-30 or 80-20 split between train and validation
-  - 20\%-30\% of data for validation
 
-* $E_{Out}$ From VC Analysis vs Learn-Validation Approach
+* Error From VC Analysis vs Learn-Validation Approach
 - In general:
-
   $$
   E_{out}(h) = E_{in}(h) + \text{generalization error}
   $$
 
-- VC analysis
+- **VC analysis**
   - Estimates generalization error as "overfit penalty" in terms of hypothesis
     set complexity
 
-- Learn-validation
+- **Learn-validation**
   - Estimates $E_{out}$ directly by holding out data as validation set:
     $$
     E_{val} \approx E_{out}
     $$
   - Use learn-validation approach at different points of the modeling flow:
-    e.g., validation / test sets
+    - For selecting hyperparameters (validation set)
+    - To estimate final performance (test set)
 
 * Reusing Validation / Test Set for Training
-- Never use $D_{val}$ for training, at least during research
-  - If $D_{val}$ affects learning (e.g., model selection), this data set is
-    biased and optimistic and cannot assess the model
+- Any data used for learning (e.g., model training or model selection)
+  - Is biased and optimistic
+  - Cannot used to assess the learned model
+
+- **Never use** $D_{val}$ / $D_{test}$ for training or $D_{train}$ for evaluation
+
+- After research is done, all available data can be used to learn
+
+::: columns
+:::: {.column width=60%}
 
 - **Algorithm**
   1. Train with $N - K$ points to learn $g^-$
@@ -1933,6 +1957,14 @@ digraph ML_Phases {
   4. Deliver to customers:
      - Final hypothesis $g$
      - Upper bound of out-of-sample performance $E_{val}[g^-]$
+
+::::
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/Lesson05_Use_Validation_Set_To_Train.png)
+
+::::
+:::
 
 // TODO: Add pic
 
@@ -1954,23 +1986,55 @@ digraph ML_Phases {
 ::: columns
 :::: {.column width=55%}
 
-- Divide the dataset into $K$ folds, each with $\frac{N}{K}$ samples
-- Each fold should reflect the full dataset's statistics
+- Divide dataset into $K$ folds, each with $\frac{N}{K}$ samples
+
+- Each fold should reflect dataset statistics
   - E.g., stratified sampling
-- There are $K$ iterations $i = 1, ..., K$:
-  - In the $i$-th iteration, train on all folds except $i$ (use
-    $\frac{K - 1}{K}N$ points) and get $g^{(-i)}(\vx)$
-  - Validate on the $i$-th fold (use $\frac{N}{K}$ points) to compute
+
+- $K$ iterations $i = 1, ..., K$:
+- In $i$-th iteration
+  - Train on all folds except $i$ (use $\frac{K - 1}{K}N$ points) and get
+    $g^{(-i)}(\vx)$
+  - Validate on $i$-th fold (use $\frac{N}{K}$ points) to compute
     $$
     E_{val}^{(i)} = E_{val}[g^{(-i)}(\vx)]
     $$
-- Average the $K$ error rates and compute bounds:
+
+- Average $K$ error rates and compute bounds:
   $$
   E_{val} = \frac{1}{K} \sum_i E_{val}^{(i)}
   $$
 
 ::::
 :::: {.column width=40%}
+_Train / test validation_
+
+```tikz
+    \def\blockwidth{1.2}
+    \def\blockheight{0.7}
+
+    % Label
+    \node[anchor=east] at (-0.2, -0.5*\blockheight) {\textbf{Train/Test Split}};
+
+    % Create 6 blocks
+    \foreach \j in {0,...,5} {
+        \pgfmathsetmacro{\x}{\j * \blockwidth}
+        \pgfmathsetmacro{\y}{0}
+
+        % Mark first 4 as train, last 2 as test
+        \ifnum\j<4
+            \fill[blue!70] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
+            \node at (\x + 0.5*\blockwidth, \y - 0.5*\blockheight) {\textbf{Train}};
+        \else
+            \fill[red!80] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
+            \node at (\x + 0.5*\blockwidth, \y - 0.5*\blockheight) {\textbf{Test}};
+        \fi
+
+        \draw[black] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
+    }
+```
+
+_5x cross-validation_
 
 ```tikz
 \def\blockwidth{1.2}
@@ -2007,34 +2071,6 @@ digraph ML_Phases {
 }
 ```
 
-5x cross-validation
-
-```tikz
-    \def\blockwidth{1.2}
-    \def\blockheight{0.7}
-
-    % Label
-    \node[anchor=east] at (-0.2, -0.5*\blockheight) {\textbf{Train/Test Split}};
-
-    % Create 6 blocks
-    \foreach \j in {0,...,5} {
-        \pgfmathsetmacro{\x}{\j * \blockwidth}
-        \pgfmathsetmacro{\y}{0}
-
-        % Mark first 4 as train, last 2 as test
-        \ifnum\j<4
-            \fill[blue!70] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
-            \node at (\x + 0.5*\blockwidth, \y - 0.5*\blockheight) {\textbf{Train}};
-        \else
-            \fill[red!80] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
-            \node at (\x + 0.5*\blockwidth, \y - 0.5*\blockheight) {\textbf{Test}};
-        \fi
-
-        \draw[black] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
-    }
-```
-
-Train / test validation
 :::: 
 :::
 
