@@ -5,3 +5,8 @@
 > gen_data605.sh 01
 
 > gen_msml610.sh 02
+
+
+> FILE=msml610/lectures_source/Lesson05*
+> process_slides.py --in_file $FILE --action slide_format_figures --out_file $FILE --use_llm_transform
+> process_slides.py --in_file $FILE --action slide_check --out_file $FILE --use_llm_transform --limit None:10
