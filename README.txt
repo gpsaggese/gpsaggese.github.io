@@ -9,4 +9,4 @@
 
 > FILE=msml610/lectures_source/Lesson05*
 > process_slides.py --in_file $FILE --action slide_format_figures --out_file $FILE --use_llm_transform
-> process_slides.py --in_file $FILE --action slide_check --out_file $FILE --use_llm_transform --limit None:10
+> process_slides.py --in_file $FILE --action slide_check --out_file ${FILE}.check --use_llm_transform --limit None:10
