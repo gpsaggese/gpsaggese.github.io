@@ -1807,6 +1807,8 @@ digraph BayesianFlow {
   - Converges with rate $\frac{1}{\sqrt{N}}$
 
 * Rejection Sampling
+::: columns
+:::: {.column width=50%}
 - **Rejection sampling** is a method for sampling from a hard-to-sample
   distribution
 
@@ -1817,6 +1819,14 @@ digraph BayesianFlow {
      - Remaining samples $X \land E=e$ estimate $\Pr(X, E=e)$
   3. Count occurrences of $X=x$ in remaining samples $X \land E=e$
      - Estimate $\Pr(X=x | E=e)$
+
+::::
+:::: {.column width=45%}
+
+![](msml610/lectures_source/figures/Lesson06_Rejection_Sampling.png)
+
+::::
+:::
 
 - **Example**:
   - You want to estimate $\Pr(Rain | Sprinkler = T)$
@@ -1831,62 +1841,93 @@ digraph BayesianFlow {
 
 * Rejection Sampling: Pros and Cons
 - **Pros**
-  - Consistent estimate (converges to true value as samples increase)
+  - Consistent estimate
+    - Converges to true value as number of samples increases
 
 - **Cons**
   - Many samples are rejected, depending on rarity of $\Pr(E=e)$
   - Fraction of samples matching evidence $e$ decreases exponentially with more
     evidence variables
+    - Curse of dimensionality
     - Not suitable for complex systems
-  - Difficult with continuous variables, as $\Pr(E=e)$ is theoretically 0
-    (limited by floating-point precision)
+  - Difficult with continuous variables
+    - E.g., $\Pr(E=e)$ is theoretically 0 due to limited floating-point precision
 
 * Importance Sampling
-- Importance sampling:
-  - Draw samples from an easier distribution $Q(X)$
-  - Weight each sample by its importance weight $w = \frac{P(X)}{Q(X)}$
-  - Estimate desired probability by averaging weighted samples:
+::: columns
+:::: {.column width=60%}
+
+- **Importance sampling**
+  - Draw samples from "easier" distribution $Q(X)$
+  - Weight each sample by importance weight $w = \frac{\Pr(X)}{Q(X)}$
+  - Estimate probability by averaging weighted samples:
     $$
     E[f(X)] \approx \frac{1}{N} \sum_{i=1}^N w_i f(X_i)
-    $$
-
-- For Bayesian networks use the network's structure to define $Q(X)$ that
-  respects observed evidence
+    $$ :::: ::::
+    {.column width=35%}
+    ![](msml610/lectures_source/figures/Lesson06_Importance_Sampling.png) ::::
+    :::
 
 - **Example**:
-  - Estimating $P(A | E=e)$ where $E$ is rare
-  - Standard sampling might never see $E=e$
-  - Importance sampling focuses samples near $E=e$ with appropriate reweighting
-  - Analogy: Like rebalancing a biased survey by giving underrepresented groups
-    higher weights
+  - Estimate $\Pr(A | E=e)$ where $E$ is rare
+  - Standard sampling might miss $E=e$
+  - Importance sampling focuses samples near $E=e$ with reweighting
+  - Analogy: Rebalance biased survey by giving underrepresented groups higher
+    weights
 
 - **Pros**
-  - Reduces variance and improves efficiency of inference over rejection sampling
-
-- **Cons**
-  - Performance degrades as the number of evidence variables increases
+  - Improves inference efficiency over rejection sampling
 
 * Markov Chain Monte Carlo
-- **Purpose**: Approximate inference method for Bayesian networks when exact
-  inference is computationally hard
-  - Markov Chain Monte Carlo (MCMC) are different than rejection and importance
-    sampling
-  - Instead of generating each sample as independent, make a random change to
-    the preceding sample
+- This is one of the top 10 most mind blowing algorithms in history
+  - Euclide's GCD
+  - Fundamental theorem of calculus
+  - Quicksort
+  - Fast Fourier Transform
+  - Viterbi algorithm
+  - MCMC sampling
+  - Kalman filter
+  - RSA Algorithm
+  - ...
+- Invented by Ulam, Von Neumann, Metropolis and others during the Manhattan
+  Project (1940)
+  - Used to solve high-dimensional integrals, Bayesian inference, ...
 
-- Construct a Markov Chain from the Bayesian network and the sampling technique
-  (e.g., Gibbs sampling, Metropolis-Hastings sampling)
-  - Markov Chain:
-    - Is used as process to generate a sequence of states
-    - Has initial state and transition matrix $\Pr(\vx \to \vx')$
-    - After $t$ steps, probability of being in state $\vx$ is $\pi_t(\vx)$
-    - Stationary distribution is achieved when $\pi_t(\vx) = \pi_{t+1}(\vx)$
+- **Purpose**: Approximate inference for Bayesian networks when exact inference
+  is hard
+  - MCMC differs from rejection and importance sampling
+  - Make random changes to preceding sample instead of generating each sample
+    independently
+  - **Magic**: two very different objects (Markov Chains) and Bayesian Networks
+    are connected
 
-- Under certain conditions (ergodicity, aperiodicity) the stationary
-  distribution is the posterior distribution for the non-evidence variables
-  conditioned on the evidence
+* Markov Chain Construction
+- A **Markov chain** is a "random walk" through states, where the future depends
+  only on the present
+  - _Sequence of states_: $\vx^{(0)}, \vx^{(1)}, \vx^{(2)}, \dots$
+  - _Initial state_: starting configuration
+  - _Transition probabilities_: $\Pr(\vx \to \vx')$
+  - After $t$ steps, distribution is $\pi_t(\vx)$
+  - When $\pi_t(\vx) = \pi_{t+1}(\vx)$, chain reaches stationary distribution
+
+- **Transition operator**: moves from one state to another:
+  - Gibbs sampling: resample one variable given its Markov blanket
+  - Metropolis–Hastings: propose a new state, then accept/reject based on a
+    probability ratio
+
+- There are algorithms generate a Markov Chain from a Bayesian network
+
+- Under certain conditions:
+  - Ergodicity: chain can reach any state
+  - Aperiodicity: chain does not get stuck in cycles
+  stationary distribution equals the **posterior distribution** over non-evidence
+  variables given evidence
 
 * Markov Chain Monte Carlo: Mixing
+- In practice:
+  - Discard initial samples as a burn-in period (before convergence)
+  - After convergence, collected samples approximate the true posterior
+
 - **Mixing** describes how quickly a Markov chain forgets its starting point and
   explores the whole state space efficiently
   - A well-mixed chain:
