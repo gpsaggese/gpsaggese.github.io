@@ -1236,25 +1236,26 @@ digraph CausalModel {
 :::
 
 * How Can a Node Be Influenced by Its Children?
-- A descendant can influence its ancestor indirectly through _"explaining away"_
-  - Information flows both ways (casual and diagnostic)
+- A **descendant can influence its ancestor** indirectly through _"explaining
+  away"_
   - Evidence about the descendant can change what you believe about the ancestor
     through dependent paths
+  - Information flows both ways in Bayesian networks
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=75%}
 
 - E.g.,
   - Consider the Garden World
-  - You know the grass is wet
+  - You know the grass is wet $WetGrass$
   - This evidence increases the probability of either causes $Rain$ or
     $Sprinkler$
   - If you find out that the $Sprinkler$ was on, this "explains away" the
     $WetGrass$, and the probability of $Rain$ goes down
   - The evidence from a descendant $WetGrass$ can update your belief about an
-    ancestor ($Rain$)
+    ancestor $Rain$
 ::::
-:::: {.column width=30%}
+:::: {.column width=20%}
 ```graphviz
 digraph BayesianFlow {
     // rankdir=LR;
@@ -1326,27 +1327,36 @@ digraph HeartDiseaseGraph {
 ::::
 :::
 - **\red{Target node}**
-- **\blue{Parent nodes}** (direct influence of $H$, risk factors)
-- **\green{Children nodes}** (directly influenced by $H$, outcomes)
+  - Heart disease
 
-- Note that $A$, $G$, $D$, $E$ also influence $BP$ and $C$ so they are
-  **\blue{spouse nodes}** of $H$
+- **\blue{Parent nodes}**
+  - Risk factors of heart disease
+  - Direct influence of $H$
+
+- **\green{Children nodes}**
+  - Outcomes of heart disease
+  - Directly influenced by $H$ $\to$ 
+
+- **\blue{Spouse nodes}**
+  - $A$, $G$, $D$, $E$ also influence $BP$ and $C$
 
 - Knowing the state of $A$, $G$, $D$, $E$, $BP$, $C$ (Markov Blanket) allows to
   compute $H$, without any other information
 
 * Markov Blanket: Economic Example
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=55%}
 - Consider factors affecting house prices in a particular region
+
 - **\red{Target node}**
   - House prices
+
 - **\blue{Parent nodes}**
   - Economic growth
   - Interest rate
   - Unemployment rate
 ::::
-:::: {.column width=50%}
+:::: {.column width=40%}
 ```graphviz
 digraph HousePriceGraph {
     splines=true;
@@ -1387,8 +1397,9 @@ digraph HousePriceGraph {
 
 * Markov Blanket: Finance Example
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=50%}
 - Consider factors affecting an individual company's stock price
+
 - **\red{Target node}**
   - $SP$: Stock Price
 - **\blue{Parent nodes}**
@@ -1396,7 +1407,7 @@ digraph HousePriceGraph {
   - $EPS$: Earnings per share
   - $MS$: Market sentiment
 ::::
-:::: {.column width=55%}
+:::: {.column width=45%}
 
 ```graphviz
 digraph StockPriceGraph {
@@ -1444,12 +1455,14 @@ digraph StockPriceGraph {
   - $GE$: Global economic conditions
     - Influences $MS$ and $EPS$, but not directly $TV$
 
+- You don't need to know $RC$ and $GE$ to estimate Stock Price
+
 // ### 13.2.2, Efficient representation of conditional distributions (p. 433)
 
 * Specifying a Conditional Probability Table
-- The Conditional Probability Table (CPT) for a node requires $O(2^k)$ values in
-  the worst case
-  - Difficult to specify CPT even with a small number of parents $k$
+- Conditional Probability Table (CPT) for a node requires $O(2^k)$ values in the
+  worst case
+  - Difficult to specify even with a small number of parents $k$
 
 - Often, the relationship is not completely arbitrary, e.g.,
   - Deterministic nodes
@@ -1472,7 +1485,7 @@ digraph StockPriceGraph {
 * Noisy Logical Relationships
 - **Noisy logical relationships** (e.g., noisy-OR, noisy-MAX):
   - Are a probabilistic version of a logical relationship
-  - Can be simpler to describe given the $k$ parents
+  - Can be simpler to describe given $k$ parents
 
 - **Example**
 - In propositional logic
@@ -1483,7 +1496,7 @@ digraph StockPriceGraph {
     1. All the possible causes are listed (you can use a leak node for "misc
        causes")
     2. There is uncertainty about the parents to cause the child node
-    3. The probabilities of inhibition are independent
+    3. The probabilities of parents are independent
   - Under these assumptions:
     \begin{align*}
     &\Pr(Fever | parents(Fever)) \\
@@ -1497,26 +1510,26 @@ digraph StockPriceGraph {
   independent of its parents given certain values of others
 
 - **Example**
-- $Damage$ occurs during a period of time depending on the $Ruggedness$ of your
-  car and whether an $Accident$ occurred in that period:
-
-  \small
-  $$
-  \Pr(Damage \mid Ruggedness, Accident) =
-  \begin{cases}
-  d_1 & \text{if } Accident = True \\
-  d_2(Ruggedness) & \text{if } Accident = False
-  \end{cases}
-  $$
-  \normalsize
-
-  where $d1$ and $d2$ are distributions
+  - $Damage$ occurs depending on the $Ruggedness$ of your car and whether an
+    $Accident$ occurred in that period:
+    \begingroup \scriptsize
+    $$
+    \Pr(Damage \mid Ruggedness, Accident) =
+    \begin{cases}
+    d_1 & \text{if } Accident = True \\
+    d_2(Ruggedness) & \text{if } Accident = False
+    \end{cases}
+    $$
+    \endgroup
+    where $d1$ and $d2$ are distributions
 
 * Bayesian Networks with Continuous Variables
 - Many real world problems involve continuous quantities
   - E.g., height, mass, temperature, money
-- Conditional Probability Table (CPT) is not suitable for continuous RVs
-- We can use:
+
+- **Problem**: Conditional Probability Table (CPT) is not suitable for continuous RVs
+
+- **Solution**:
   1. Discretization (i.e., use intervals)
      - Cons: loss of accuracy and large CPTs
   2. Continuous variables
@@ -1530,11 +1543,11 @@ digraph StockPriceGraph {
     information (e.g., make model)
 
 * Bayesian Network: Car Insurance Company (1/2)
-- A car insurance company:
+- A **car insurance company**:
   - Receive an application from an individual to insure a specific vehicle
   - Analyze information about the individual and its car
   - Decide on appropriate annual premium to charge
-    - Based on the type of claim and pay out
+  - Pay out a claim, based on the type of claim
 
 - Build a Bayesian network that captures the causal structure of the domain
 
@@ -1543,10 +1556,9 @@ digraph StockPriceGraph {
       $GoodStudent$
     - About the vehicle: $MakeModel$, $VehicleYear$, $Airbag$, $SafetyFeatures$
     - About the driving situation: $Mileage$, $HasGarage$
-  - Some input informations are important but not available:
+  - Some input informations are **important but not available**:
     - $RiskAversion$
     - $DrivingBehavior$
-
   - **Type of claims**:
     - $MedicalCost$: injuries sustained by the applicant
     - $LiabilityCost$: lawsuits filed by other parties against applicant
@@ -1554,7 +1566,7 @@ digraph StockPriceGraph {
 
 * Bayesian Network: Car Insurance Company (2/2)
 - **\blue{Blue nodes}**: information provided by the applicants
-- **\brown{Brown nodes}**: hidden variables (i.e., not input nor output)
+- **\brown{Brown nodes}**: hidden variables (not observable)
 - **\violet{Violet nodes}**: target variables
 ```graphviz
 digraph InsuranceRiskModel {
@@ -1651,45 +1663,47 @@ digraph InsuranceRiskModel {
 * Exact Inference in Bayesian Networks
 
 - **Goal of exact inference**
-  - Compute the posterior $P(X|\ve)$ for query variable $X$ given evidence $\ve$
+  - Compute the posterior $P(X|\vE=\ve)$ for query variable $X$ given evidence
+    $\ve$
+
 - **Variables involved**
   - Query variable $X$
   - Evidence variables $\vE = \{E_1, \dots, E_m\}$
   - Hidden variables $\vY = \{Y_1, \dots, Y_\ell\}$
+
 - **Inference by Enumeration**
   - Use full joint distribution and sum over all hidden variables:
     $$P(X|e) = \alpha \sum_Y P(X,e,Y)$$
+
 - **Variable Elimination**
   - Improves efficiency by caching intermediate results
   - Eliminates variables systematically to avoid redundant sums
   - Removing irrelevant variables
     - Variables not ancestors of query or evidence can be ignored
-- **Complexity of exact inference**
-  - Exact inference is efficient for trees, but intractable in general
-    - Singly connected networks (polytrees): linear in network size
-    - Multiply connected networks: can be exponential; inference is NP-hard
+
+- **Problems**
+  - Exact inference is efficient $O(n)$ for trees, but intractable $O(2^n)$ in
+    general
   - It doesn't work for continuous variables
   - Basis for approximate methods when exact is impractical
 
 * Exact Inference in Bayesian Networks: Example
-- We observe $JohnCalls = T$, $MaryCalls = T$
-- What is the probability of the burglary
-  $P(Burglary | JohnCalls=True, MaryCalls=True)$ ?
+- You get a call from both John and Mary, what is the probability of the
+  burglary?
+  $$P(Burglary | JohnCalls=True, MaryCalls=True)$$
 
-- We know that a conditional probability can be computed summing terms from the
-  full joint distribution
+- A conditional probability can be computed summing terms from the full joint
+  distribution
   $$\Pr(X | \ve) = \alpha \Pr(X, \ve) = \alpha \sum_y \Pr(X, \ve, \vy)$$
 
 - Terms of the joint distribution can be written as products of conditional
   probabilities from the Bayesian network
-- E.g.,
   $$
   \Pr(b | j, m)
   = \alpha \Pr(B, j, m)
   = \alpha \sum_e \sum_a \Pr(B, j, m, e, a)
   $$
-  - Then the joint probability is written in terms of CPTs of the Bayesian
-    network
+- Then the joint probability is written in terms of CPTs of the Bayesian network
   $$
   \Pr(b | j, m)
   = \alpha \sum_e \sum_a \Pr(b) \Pr(e) \Pr(a | b, e) \Pr(j | a) \Pr(m | a)
@@ -1701,11 +1715,13 @@ digraph InsuranceRiskModel {
 - **Monte Carlo algorithms** are randomized sampling algorithms used to estimate
   quantities that are difficult to calculate exactly
   - E.g., samples from the posterior probability of a Bayes network
+
 - **Pros**
   - The accuracy of the approximation depends on the number of samples generated
-  - We can get arbitrarily close to the true probability distribution with enough
-    samples
-  - Can be used in many branches of science
+  - You can get arbitrarily close to the true probability distribution with
+    enough samples
+  - Is used in many branches of science
+
 - **Cons**
   - Difficult to understand how the variables interact
   - Computationally intensive
@@ -1730,21 +1746,49 @@ digraph InsuranceRiskModel {
       $$
     - If $F^{-1}$ has no closed form, use numerical methods
 
+// TODO(gp): Make an example.
+
 * Sampling Bayesian Network Without Evidence
 
 - **Goal**: Generate events from a Bayesian network without evidence (prior sampling)
 
+::: columns
+:::: {.column width=60%}
 - **Solution**
-  - Sample variables in topological order (ensure parents have values)
+  - Sample variables in topological order (to ensure parents have values)
   - Source nodes have known unconditional probability distribution
-    - E.g., $\Pr(Cloudy) = 0.5$
+    - E.g., $\Pr(Rain) = 0.5$
   - Conditional variable's probability distribution depends on parent's values
-    - E.g., $\Pr(Sprinkler | Cloudy = T) = 0.1$
+    - E.g., $\Pr(WetGrass | Rain = T) = 0.1$
   - Implement Bayesian network semantics, representing joint probability:
     $$
     f_{PS}(x_1, ..., x_n) = \prod_{i=1}^n \Pr(x_i | parents(X_i))
     $$
     where $PS$ means "Prior Sampling"
+
+::::
+:::: {.column width=35%}
+
+```graphviz
+digraph BayesianFlow {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    Rain       [label="Rain",       fillcolor="#A6C8F4"];
+    Sprinkler  [label="Sprinkler",  fillcolor="#FFD1A6"];
+    WetGrass   [label="WetGrass",   fillcolor="#B2E2B2"];
+
+    { rank = same; Rain; Sprinkler; }
+
+    Rain      -> WetGrass;
+    Sprinkler -> WetGrass;
+}
+```
+::::
+:::
 
 * Consistency of Sampling
 - **Consistency of estimation**: distribution from prior sampling converges to
@@ -1758,9 +1802,9 @@ digraph InsuranceRiskModel {
 
 - Estimate probability using:
   $$
-  \Pr(x_1, ..., x_m) \approx \frac{N_{PS}(x_1, ..., x_m)}{N}
+  \Pr(x_1, ..., x_n) \approx \frac{N_{PS}(x_1, ..., x_n)}{N}
   $$
-  - Converges with rate $\frac{1}{\sqrt{n}}$
+  - Converges with rate $\frac{1}{\sqrt{N}}$
 
 * Rejection Sampling
 - **Rejection sampling** is a method for sampling from a hard-to-sample
