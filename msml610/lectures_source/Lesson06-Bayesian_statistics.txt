@@ -1924,10 +1924,8 @@ digraph BayesianFlow {
   variables given evidence
 
 * Markov Chain Monte Carlo: Mixing
-- In practice:
-  - Discard initial samples as a burn-in period (before convergence)
-  - After convergence, collected samples approximate the true posterior
-
+::: columns
+:::: {.column width=60%}
 - **Mixing** describes how quickly a Markov chain forgets its starting point and
   explores the whole state space efficiently
   - A well-mixed chain:
@@ -1937,10 +1935,20 @@ digraph BayesianFlow {
     - Chain gets stuck in one mode for a long time
     - Leads to biased estimates and high variance
 
+- In practice:
+  - Discard initial samples as a burn-in period (before convergence)
+  - After convergence, collected samples approximate the true posterior
+
 - **Example**
   - If sampling from a bimodal distribution:
     - "Poor mixing" means the chain stays in one peak
     - "Good mixing" jumps between both peaks to reflect the true posterior
+::::
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/Lesson06_MCMC_mixing.png)
+::::
+:::
 
 * Gibbs Sampling in Bayesian Networks
 - Special case of Markov Chain Monte Carlo (MCMC) method that samples one
