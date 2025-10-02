@@ -30,7 +30,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/book_covers/Book_cover_Hundred_page_ML_book..jpg){ height=20% }
+![](msml610/lectures_source/figures/book_covers/Book_cover_Hundred_page_ML_book.jpg){ height=20% }
 ![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
 ![](msml610/lectures_source/figures/book_covers/Book_cover_The_Elements_of_Statistical_Learning.jpg){ height=20% }
 ::::
