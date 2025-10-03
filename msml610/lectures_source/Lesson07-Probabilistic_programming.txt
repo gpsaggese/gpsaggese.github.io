@@ -1,8 +1,6 @@
-// notes_to_pdf.py --input lectures_source/Lesson07-Bayesian_statistics_1.txt --output tmp.pdf --type slides --debug_on_error --skip_action cleanup_after --toc_type navigation
-
 ::: columns
 :::: {.column width=15%}
-![](lectures_source/UMD_Logo.png)
+![](msml610/lectures_source/figures/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -20,6 +18,9 @@ MSML610: Advanced Machine Learning
 \endgroup
 \vspace{1cm}
 
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
 
 **References**:
@@ -28,6 +29,14 @@ MSML610: Advanced Machine Learning
   - Chap 15: Probabilistic programming
 
 - Martin, Bayesian Analysis with Python, 2018 (2e)
+
+::::
+:::: {.column width=20%}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
+
+::::
+:::
 
 # Concepts
 
@@ -43,8 +52,6 @@ MSML610: Advanced Machine Learning
 // From notes/_IN_PROGRESS/book.2018.Martin.Bayesian_Analysis_with_Python.2e.txt
 // 1, Thinking probabilistically
 
-// TODO(gp): Move this to Techniques?
-
 * EDA vs Inference
 - **Exploratory data analysis**
   - Summarize, interpret, check data
@@ -58,6 +65,9 @@ MSML610: Advanced Machine Learning
   - Understand a phenomenon
   - Choose among competing explanations for the same observations
 
+// TODO(gp): Add figure
+// TODO(gp): Move this to Techniques?
+
 * Good vs Bad Way to Do Statistics
 - **Bad** ![Smile Emoji](emoji/angry_devil.png){ width=12px }
   - Learn a collection of "statistical recipes"
@@ -70,11 +80,14 @@ MSML610: Advanced Machine Learning
 
 - **Good** ![Smile Emoji](emoji/emoji_smile.png){ width=12px }
   - General approach to statistical inference (Bayesian statistics)
-  - Remove limitations from closed analytical form
+    - Remove limitations from closed analytical form
   - Probabilistic approach unifies (seemingly) disparate methods
     - E.g., statistical methods and machine learning
+    - E.g., `statsmodels` linear regression vs `sklearn` decision tree
     - Deep unity of different recipes
   - Modern tools (e.g., PyMC3) solve previously unsolvable models
+
+// TODO(gp): Make it a table?
 
 // ## 1.2, Working with data
 
@@ -101,21 +114,23 @@ MSML610: Advanced Machine Learning
 // ## 1.3, Bayesian modeling
 
 * Models
-- Models are simplified descriptions of a given system/process
+- **Models** are simplified descriptions of a given system/process
   - A more complex model is not always a better one
+  - VC dimension made it mathematical precise
+    - _"You need at least 10 data points per effective degree of freedom of the
+      hypothesis set"_
 
-- **Goal**:
+- **Goals**
   - Capture the most relevant aspects of the system
   - Ignore minor details
 
 * Bayes' Theorem: Recap
-- Bayes' theorem posits that for model parameters $\theta$ and data $X$
-
+- **\black{Bayes' theorem}** posits that for model parameters $\theta$ and data
+  $X$
   $$
   \red{\Pr(\theta | X)}
   = \frac{\teal{\Pr(X | \theta)} \cdot \blue{\Pr(\theta)}}{\violet{\Pr(X)}}
   $$
-
   where:
   - **\red{$\Pr(\theta | X)$}**
     - **\black{Posterior}**: probability for parameters $\theta$ after seeing
@@ -137,26 +152,24 @@ MSML610: Advanced Machine Learning
   $$
 
 * Bayesian Models
-- **Probabilities** measure uncertainty about parameters
-- **Bayes' theorem** updates the probabilities in light of new data (hopefully)
-  reducing the uncertainty
+- **Probability** measures uncertainty about parameters
 
+- **Bayes' theorem** updates probabilities with new data, reducing uncertainty
+  (hopefully)
   $$
   \Pr(hyp | data) = \frac{\Pr(data | hyp) \Pr(hyp)}{\Pr(data)}
   $$
 
-- **Bayesian model workflow**
-  1. Design a model using probability distributions based on data and
-     assumptions
-     - Assumptions on how data could have been generated
+- **Bayesian modeling workflow**
+  1. Design a model using probabilities based on data and assumptions
+     - Assumptions on data generation
      - Model can be a crude approximation
-  2. Apply Bayes' theorem to incorporate data
-     - "Condition" the model on data
+  2. Apply Bayes' theorem to "condition" the model on data
   3. Validate model against:
      - Data
      - Subject expertise
      - Related models
-  - Often steps are not linear and may involve backtracking:
+  - Steps may involve backtracking:
     - Correct coding errors
     - Improve model
     - Gather more or different data
@@ -171,40 +184,39 @@ MSML610: Advanced Machine Learning
 - **Problem**:
   - Toss a coin $N$ times
   - Record the number of heads $Y$ and tails $N - Y$
-  - How biased is the coin?
+  - Question: _"How biased is the coin?"_
 
-- There is true uncertainty
+- There is **true uncertainty**
   - An underlying parameter exists, but it is unknown
   - $\theta$ represents the coin bias
     - $0$: always tails
     - $1$: always heads
     - $0.5$: half tails, half heads
-  - It is related to observed realizations, but not deterministically
 
 - **Model assumptions**:
   - Independent Identically Distributed (IID)
-    - Independence: a coin toss does not affect other tosses
-    - Identically distributed: the coin's bias is constant
-  - The likelihood $Y | \theta$ is modeled as a binomial distribution
+    - Independence: coin tosses don't affect each other
+    - Identically distributed: coin's bias is constant
+  - Likelihood $Y | \theta$ as a binomial distribution
     - Probability of $Y$ heads out of $N$ tosses, given $\theta$
-  - Prior is modeled as a beta distribution
-    - It can adopt several shapes
+  - Prior $\theta$ as a beta distribution
+    - Adopts several shapes
     - Beta is the conjugate prior of the binomial distribution
 
 * Binomial Distribution
 
 ::: columns
 :::: {.column width=40%}
-Probability of $k$ heads out of $n$ tosses given $p$ is:
+Probability of $k$ heads out of $n$ tosses given bias $p$
 
-::::
-:::: {.column width=55%}
 \begin{align*}
   & X \sim Binomial(n, p) \\
   & \Pr(k) = \frac{n!}{k! (n - k)!} p^k (1 - p)^{n-k} \\
 \end{align*}
 
-![](lectures_source/figures/Lesson07_Binomial_distribution.png)
+::::
+:::: {.column width=55%}
+![](msml610/lectures_source/figures/Lesson07_Binomial_distribution.png)
 ::::
 :::
 
@@ -213,16 +225,16 @@ Probability of $k$ heads out of $n$ tosses given $p$ is:
 ::: columns
 :::: {.column width=50%}
 - Continuous PDF in [0, 1]
-- It can adopt several shapes
-  - E.g., uniform, increasing, decreasing, Gaussian-like, U-like
-  - $\alpha$ represents "success" parameter
-  - $\beta$ represents "failure" parameter
-  - When $\alpha > \beta$, the distribution skews toward 1, indicating a higher
-    probability of success
-  - When $\alpha = \beta$, the distribution is symmetric and centered around 0.5
 
-- It is useful to model probability or proportion
-  - E.g., the probability of success in a Bernoulli trial $\theta$
+- Adopts several shapes
+  - Uniform, increasing, decreasing, Gaussian-like, U-like
+  - $\alpha$: "success" parameter
+  - $\beta$: "failure" parameter
+  - $\alpha > \beta$: Skews toward 1, higher probability of success
+  - $\alpha = \beta$: Symmetric, centered around 0.5
+
+- Models probability or proportion
+  - E.g., probability of success in a Bernoulli trial $\theta$
 
 - Beta is the conjugate prior of the binomial distribution
 ::::
@@ -235,7 +247,7 @@ Probability of $k$ heads out of $n$ tosses given $p$ is:
     \theta^{\alpha - 1} (1 - \theta)^{\beta - 1} \\
 \end{align*}
 
-![](lectures_source/figures/Lesson07_Beta_distribution.png)
+![](msml610/lectures_source/figures/Lesson07_Beta_distribution.png)
 ::::
 :::
 
@@ -250,17 +262,19 @@ Probability of $k$ heads out of $n$ tosses given $p$ is:
   | Beta      | Binomial       | Beta          |
   | Normal    | Normal         | Normal        |
 
-- Conjugacy ensures tractability of the posterior
+- **Properties**
   - Prior and posterior have the same distribution
   - Posterior has a closed analytical form
-  - Update parameters from the prior using data in multiple iterations
+    - Update parameters from the prior using data in multiple iterations
+  - Ensures tractability of the posterior
 
 * Coin Example: Analytical Solution
 - The **\red{posterior}** is proportional to **\green{likelihood}** $\times$
   **\blue{prior}**
-  $$\red{\Pr(\theta | y)} \propto \green{\Pr(y | theta)} \blue{\Pr(theta)}$$
-- Substituting the **\green{likelihood}** with a Binomial and the
-  **\blue{prior}** with a Beta
+  $$\red{\Pr(\theta | y)} \propto \green{\Pr(y | \theta)} \blue{\Pr(\theta)}$$
+
+- Substituting **\green{likelihood}** with a Binomial and **\blue{prior}** with a
+  Beta
   \begin{align*}
   & \Pr(\theta \mid Y)
   \\
@@ -278,7 +292,8 @@ Probability of $k$ heads out of $n$ tosses given $p$ is:
   \\
   \end{align*}
 
-- This is how the posterior is updated given the data
+\vspace{-0.7cm}
+- This is how **\black{the posterior is updated}** given the data
 
 * Coin Example: Effect of Priors (1/2)
 
@@ -301,7 +316,7 @@ Probability of $k$ heads out of $n$ tosses given $p$ is:
 ::::
 :::: {.column width=60%}
 
-![](lectures_source/figures/Lesson07_Updating_the_prior.png)
+![](msml610/lectures_source/figures/Lesson07_Updating_the_prior.png)
 ::::
 :::
 
@@ -317,106 +332,148 @@ Probability of $k$ heads out of $n$ tosses given $p$ is:
 ::::
 :::: {.column width=55%}
 
-![](lectures_source/figures/Lesson07_Updating_the_prior.png)
+![](msml610/lectures_source/figures/Lesson07_Updating_the_prior.png)
 ::::
 :::
 
+## Frequentist vs Bayesian
+
 * Frequentist Approach vs Priors
-- Detractors of Bayesian approach complain that:
+- **Detractors of Bayesian approach** complain that:
   - _"One should let the data speak"_
   - The prior doesn't let the data speak for itself
 
 - ![](emoji/balance_scale.png){ width=14px } **Counterpoints** 
   - _"Data doesn't speak, but murmurs"_
     - Data doesn't have meaning per-se
-    - Make sense of data only in context of models (priors, mental models,
+    - Make sense of data only in context of models (e.g., mental models,
       mathematical models)
+    - A prior is a mathematical model
 
   - Every statistical model has a prior, even if not explicit
     - E.g., maximum likelihood estimate (MLE) in frequentist approach corresponds
       to a uniform prior and using the mode of the posterior
-    - Assumptions unclear in frequentist statistics 
-    - MLE is a point-estimate, not a distribution of plausible values
+    - Frequentist statistics still makes assumptions (i.e., has a prior), but are
+      hidden
+    - E.g, MLE is a point-estimate, not a distribution of plausible values
 
 * Advantages of Using Prior
 
-- Assumptions are clear and specified
-- Prior encourages deeper analysis of problem and data
+- **Assumptions are clear and explicit**
+  - Instead of hidden by frequentist / hack-ey ML approach
+
+- **Prior encourages deeper analysis** of problem and data
   - Forces understanding before seeing data
-- Posterior, averaged over priors, is robust and less prone to overfitting
-- Spread of distribution linked to uncertainty
-- Well-chosen prior simplifies and speeds up inference
+
+- Posterior, averaged over priors, is robust and **less prone to overfitting**
+
+- Spread of distribution measures **uncertainty**
+
+- Well-chosen prior simplifies and **speeds up inference**
   - _"When you encounter computational problems, there's often an issue with your
-    model"_
+    model"_ (Gelman, 2008)
 
 * How to Choose Priors
 - **Weakly-informative priors** (aka "flat", "vague", "diffuse priors")
   - Provide minimal information
     - Coefficient of linear regression centered around 0: $\beta \sim Normal(0, 10)$
+
 - **Regularizing priors**
   - Known information about the parameter
     - Parameter is positive: $\sigma \sim HalfCauchy(0, 5)$
     - Parameter close to zero, above/below a number, or in a range
     - $\beta \sim Laplace(0, 1)$ (lasso prior) encourages sparsity
     - $\beta \sim Normal(0, 1)$ discourages extreme values
+
 - **Informative priors**
   - Strong priors from previous knowledge (expert opinion, studies)
     - From experimental data: $\beta_1 \sim Normal(2.5, 0.5^2)$
     - From previous data, about 5% of cases positive: $p \sim Beta(2, 38)$
+
 - **Prior elicitation**
   - Compute least informative distribution given constraints
     - Estimate distribution using maximum entropy to satisfy constraints
     - E.g., beta distribution with 90% of mass between 0.1 and 0.7
 
-## #############################################################################
-## Communicating a Bayesian Analysis
-## #############################################################################
-
 * Communicating the Model of a Bayesian Analysis
 ::: columns
 :::: {.column width=65%}
-- Communicate probabilistic models
-  - Coin-flip distributions:
-    \begin{equation*}
-      \begin{cases}
-      \theta \sim \Beta(\alpha, \beta) \\
-      y \sim Binomial(n=1, p=\theta) \\
-      \end{cases}
-    \end{equation*}
-- Bayesian analysis result: posterior distribution
-  - Summarized with location and dispersion
-  - Mean (or mode, median)
-  - Std dev
-    - Misleading for skewed distributions
-  - Highest-posterior density (HPD)
-    - Shortest interval containing a portion of probability density (e.g., 95% or
-      50%)
-    - Amount is arbitrary (e.g., `ArviZ` defaults to 94%)
+1. **Communicate assumptions / hypothesis**
+   - Describe priors and probabilistic models
+   - E.g., coin-flip distributions:
+     \begin{equation*}
+       \begin{cases}
+       \theta \sim \Beta(\alpha, \beta) \\
+       y \sim Binomial(n=1, p=\theta) \\
+       \end{cases}
+     \end{equation*}
+
+2. **Communicate Bayesian analysis result**
+   - Describe posterior distribution
+   - Summarize location and dispersion
+   - Mean (or mode, median)
+   - Std dev
+     - Misleading for skewed distributions
+   - Highest-posterior density (HPD)
+     - Shortest interval containing a portion of probability density (e.g., 95% or
+       50%)
+     - Amount is arbitrary (e.g., `ArviZ` defaults to 94%)
 
 ::::
 :::: {.column width=30%}
 
 Kruschke diagram
-![](lectures_source/figures/Lesson07_Kruschke_diagram.png){ height=50%}
+![](msml610/lectures_source/figures/Lesson07_Kruschke_diagram.png){ height=50%}
 ::::
 :::
 
 * Confidence Intervals vs Credible Intervals
-- People confuse frequentist **confidence intervals** with Bayesian **credible
-  intervals**
+- People confuse:
+  - Frequentist **confidence intervals** with
+  - Bayesian **credible intervals**
 
 - In the frequentist framework, there is a true (unknown) parameter value
   - A **confidence interval** may or may not contain the true parameter value
   - Interpretation of a 95% confidence interval
-    - No: _"There is a 95% probability that the true value is in this interval"_
-    - Yes: _"If repeated many times, 95% of intervals would contain the true
+    - ![](emoji/wrong.png){ width=12px }
+      No: _"There is a 95% probability that the true value is in this interval"_
+    - ![](emoji/check_mark.png){ width=12px }
+      Yes: _"If repeated many times, 95% of intervals would contain the true
       value"_
 
-- In the Bayesian framework, parameters are random variables with a probability
-  of being inside an interval
-  - Bayesian **credible interval** is intuitive
-  - _"There is a 95% probability that the true parameter lies within this
-    interval, given the observed data"_
+- In the Bayesian framework, parameters are random variables
+  - Interpretation of a 95% **Bayesian credible interval**
+    - _"There is a 95% probability that the true parameter lies within this
+      interval, given the observed data"_
+    - Bayesian **credible interval** is intuitive
+
+// TODO: Build an example
+
+* Confidence Intervals vs Credible Intervals (ELI5)
+
+- **Confidence Interval (Frequentist)**
+  - Imagine fishing in a lake without seeing the fish
+  - You throw your net
+  - 95% confidence interval: _"If I threw this net 100 times, about 95 nets
+    would catch the fish."_
+  - Important: Once the net is thrown, it either caught the fish or not. The 95%
+    makes sense across many attempts
+
+- **Credible Interval (Bayesian)**
+  - Imagine a magical map showing where fish _probably_ are, based on past
+    observations
+  - 95% credible interval: _"Given my map, there's a 95% chance the fish is
+    inside this part of the lake."_
+  - The fish's location is uncertain, and probability describes your
+    belief
+
+- **Key Difference**
+  - Confidence interval (Frequentist): Probability from repeating
+    experiments
+    - It's about the procedure, not the specific interval
+  - Credible interval (Bayesian): Probability describes your belief
+    about the value, given the data
+    - It's about _this interval_
 
 // 2, Programming probabilistically
 
@@ -433,8 +490,9 @@ Kruschke diagram
     - Data, observations (modeled as constants)
   - The **"unknowns"**
     - Model parameters (modeled as probability distributions)
-- Use Bayes' theorem to condition unknowns to knowns hoping to reduce the
-  uncertainty about the unknowns
+- Use Bayes' theorem to:
+  - Condition unknowns to knowns
+  - Reduce the uncertainty about the unknowns
 
 ::::
 :::: {.column width=35%}
@@ -477,7 +535,8 @@ digraph BayesTheorem {
 * Probabilistic Programming Languages
 - **Steps**:
   1. Specify models using code
-  2. Numerical models solve inference problems without user understanding
+  2. Numerical models solve inference problems without need of user to understand
+     how
      - Universal inference engines
      - `PyMC3`: flexible Python library for probabilistic programming
      - `Theano`: library to define, optimize, evaluate mathematical expressions
@@ -489,30 +548,35 @@ digraph BayesTheorem {
   - Treat model solving as a black box
   - Focus on model design, evaluation, interpretation
 
-- Probabilistic programming languages impact like Fortran on scientific computing
-  - Build algorithms, ignore computational details
+- **Probabilistic programming languages** impact like Fortran on scientific
+  computing
+  - Build algorithms but ignore computational details
 
 * Coin Example: Numerical Solution (1/3)
 
-- Assume you know the true value of $\theta$ (not true in general)
-- Observe samples of the variable $y$
-- Model the prior $\theta$ and the likelihood $y | \theta$
-  \begin{equation*}
-    \begin{cases}
-    \theta \sim \text{Beta}(\alpha = 1, \beta = 1) \\
-    Y \sim \text{Binomial}(n = 1, p = \theta) \\
-    \end{cases}
-  \end{equation*}
-- Run inference
-- Generate samples of the posterior
-- Summarize posterior
-   - E.g., Highest-Posterior Density (HPD)
+- It's a synthetic example!
+  - Assume you know the true value of $\theta$ (not true in general)
+
+- **Workflow**
+  - Model the prior $\theta$ and the likelihood $Y | \theta$
+    \begin{equation*}
+      \begin{cases}
+      \theta \sim \text{Beta}(\alpha = 1, \beta = 1) \\
+      Y \sim \text{Binomial}(n = 1, p = \theta) \\
+      \end{cases}
+    \end{equation*}
+  - Observe samples of the variable $Y$
+  - Run inference
+  - Generate samples of the posterior
+  - Summarize posterior
+     - E.g., Highest-Posterior Density (HPD)
+  - ...
 
 * Coin Example: Numerical Solution (2/3)
 
 ::: columns
 :::: {.column width=70%}
-![](lectures_source/figures/Lesson07_Coin_example_numerical_solution.png)
+![](msml610/lectures_source/figures/Lesson07_Coin_example_numerical_solution.png)
 ::::
 
 :::: {.column width=30%}
@@ -537,7 +601,7 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=70%}
-![](lectures_source/figures/Lesson07_Coin_example_numerical_solution_2.png)
+![](msml610/lectures_source/figures/Lesson07_Coin_example_numerical_solution_2.png)
 ::::
 
 :::: {.column width=30%}
@@ -599,7 +663,7 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=60%}
-![](lectures_source/figures/Lesson07_Savage_Dickey.png)
+![](msml610/lectures_source/figures/Lesson07_Savage_Dickey.png)
 
 ::::
 :::: {.column width=30%}
@@ -694,7 +758,7 @@ digraph BayesTheorem {
 - Data looks Gaussian with a couple of outliers
 ::::
 :::: {.column width=45%}
-![](lectures_source/figures/Lesson07_Chemical_shift.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift.png)
 ::::
 :::
 
@@ -709,7 +773,7 @@ digraph BayesTheorem {
 
 ::::
 :::: {.column width=45%}
-![](lectures_source/figures/Lesson07_Chemical_shift.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift.png)
 ::::
 :::
 
@@ -728,7 +792,7 @@ digraph BayesTheorem {
 
 * Chemical Shift: PyMC
 
-![](lectures_source/figures/Lesson07_Chemical_shift_pymc_solution1.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution1.png)
 
 - The code is one-to-one with the model:
   \begin{equation*}
@@ -745,7 +809,7 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=70%}
-![](lectures_source/figures/Lesson07_Chemical_shift_pymc_solution2.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution2.png)
 ::::
 :::: {.column width=30%}
 
@@ -820,7 +884,7 @@ digraph BayesTheorem {
 * Chemical Shift Example: PPC
 ::: columns
 :::: {.column width=60%}
-![](lectures_source/figures/Lesson07_Chemical_shift_pymc_solution3.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution3.png)
 ::::
 :::: {.column width=40%}
 - **Is the PPC model good?**
@@ -833,7 +897,7 @@ digraph BayesTheorem {
 * Chemical Shift: Model Critique
 ::: columns
 :::: {.column width=40%}
-![](lectures_source/figures/Lesson07_Chemical_shift_pymc_solution3.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution3.png)
 ::::
 :::: {.column width=55%}
 - **Problem**
@@ -866,7 +930,7 @@ digraph BayesTheorem {
 - Heavy tails (high kurtosis) means _"values are more likely to be far from the
   mean compared to a Normal"_
 
-![](lectures_source/figures/Lesson07_Student-t.png){ height=30%}
+![](msml610/lectures_source/figures/Lesson07_Student-t.png){ height=30%}
 
 * Chemical Shift: Use Student's t-dist (1/3)
 ::: columns
@@ -883,14 +947,14 @@ digraph BayesTheorem {
 \end{equation*}
 ::::
 :::: column
-![](lectures_source/figures/Lesson07_Chemical_shift_robust_model.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_robust_model.png)
 ::::
 :::
 
 * Chemical Shift: Use Student's t-dist (2/3)
 ::: columns
 :::: {.column width=70%}
-![](lectures_source/figures/Lesson07_Chemical_shift_robust_model2.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_robust_model2.png)
 ::::
 :::: {.column width=35%}
 - Outliers decrease $\nu$ (less Gaussian) instead of increasing mean and standard
@@ -905,7 +969,7 @@ digraph BayesTheorem {
 * Chemical Shift: Use Student's t-dist (3/3)
 ::: columns
 :::: {.column width=60%}
-![](lectures_source/figures/Lesson07_Chemical_shift_robust_model3.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_robust_model3.png)
 ::::
 :::: {.column width=35%}
 - PPC (posterior predictive check) fits better than Normal model
@@ -1024,7 +1088,7 @@ digraph BayesTheorem {
 - **Hierarchical**
   - Groups have different priors which come from a common prior
 
-![](lectures_source/figures/Lesson07_Pooled_unpooled_hierarchical_models.png){ width=80% }
+![](msml610/lectures_source/figures/Lesson07_Pooled_unpooled_hierarchical_models.png){ width=80% }
 
 // TODO(gp): Convert it into graphviz
 
@@ -1039,7 +1103,7 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=40%}
-![](lectures_source/figures/Lesson07_Chemical_shift_hierarchical1.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical1.png)
 ::::
 :::: {.column width=55%}
 - `ID`: Code of the protein
@@ -1066,7 +1130,7 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=60%}
-![](lectures_source/figures/Lesson07_Chemical_shift_hierarchical2.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical2.png)
 ::::
 :::: {.column width=35%}
 - Model each group independently
@@ -1077,7 +1141,7 @@ digraph BayesTheorem {
 * Chemical Shift: Hierarchical Model
 ::: columns
 :::: {.column width=60%}
-![](lectures_source/figures/Lesson07_Chemical_shift_hierarchical3.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical3.png)
 ::::
 :::: {.column width=35%}
 - Add two hyperpriors:
@@ -1093,7 +1157,7 @@ digraph BayesTheorem {
 * Chemical Shift: Results
 ::: columns
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Chemical_shift_hierarchical4.png)
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical4.png)
 ::::
 :::: {.column width=45%}
 - Compare estimates of two models
@@ -1195,7 +1259,7 @@ digraph BayesTheorem {
   - Add noise
 ::::
 :::: {.column width=70%}
-![](lectures_source/figures/Lesson07_Linear_regression_synthetic_example1.png)
+![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example1.png)
 ::::
 :::
 
@@ -1209,7 +1273,7 @@ digraph BayesTheorem {
 
 ::::
 :::: {.column width=60%}
-![](lectures_source/figures/Lesson07_Linear_regression_synthetic_example2.png)
+![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example2.png)
 ::::
 :::
 
@@ -1226,7 +1290,7 @@ digraph BayesTheorem {
 
 ::::
 :::: {.column width=70%}
-![](lectures_source/figures/Lesson07_Linear_regression_synthetic_example3.png)
+![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example3.png)
 ::::
 :::
 
@@ -1236,7 +1300,7 @@ digraph BayesTheorem {
 
 - Model relationship between temperature $X$ and number of bikes rented $Y$
 
-![](lectures_source/figures/Lesson07_Bike_rental_data.png){ width=80% }
+![](msml610/lectures_source/figures/Lesson07_Bike_rental_data.png){ width=80% }
 
 - Use intermediate variable $\mu = \alpha + \beta X$, mean number of bikes
   rented for temperature $X$
@@ -1262,8 +1326,8 @@ digraph BayesTheorem {
 ::::
 :::: {.column width=50%}
 
-![](lectures_source/figures/Lesson07_Bike_rental_data_2.png)
-![](lectures_source/figures/Lesson07_Bike_rental_data_3.png)
+![](msml610/lectures_source/figures/Lesson07_Bike_rental_data_2.png)
+![](msml610/lectures_source/figures/Lesson07_Bike_rental_data_3.png)
 
 ::::
 :::
@@ -1332,7 +1396,7 @@ digraph BayesTheorem {
 ::::
 :::: {.column width=50%}
 
-![](lectures_source/figures/Lesson07_Poisson_PMF.png)
+![](msml610/lectures_source/figures/Lesson07_Poisson_PMF.png)
 
 ::::
 :::
@@ -1352,7 +1416,7 @@ digraph BayesTheorem {
 ::::
 :::: {.column width=50%}
 
-![](lectures_source/figures/Lesson07_Neg_binomial_PMF.png)
+![](msml610/lectures_source/figures/Lesson07_Neg_binomial_PMF.png)
 
 ::::
 :::
@@ -1387,7 +1451,7 @@ digraph BayesTheorem {
 
 ::::
 :::: {.column width=55%}
-![](lectures_source/figures/Lesson07_Non_robust_regression1.png)
+![](msml610/lectures_source/figures/Lesson07_Non_robust_regression1.png)
 ::::
 :::
 
@@ -1398,12 +1462,12 @@ digraph BayesTheorem {
 ::: columns
 :::: {.column width=45%}
 
-//![](lectures_source/figures/Lesson07_Robust_regression_code.png)
-![](lectures_source/figures/Lesson07_Robust_regression_model.png)
+//![](msml610/lectures_source/figures/Lesson07_Robust_regression_code.png)
+![](msml610/lectures_source/figures/Lesson07_Robust_regression_model.png)
 
 ::::
 :::: {.column width=45%}
-![](lectures_source/figures/Lesson07_Non_robust_regression2.png)
+![](msml610/lectures_source/figures/Lesson07_Non_robust_regression2.png)
 
 ::::
 :::
@@ -1488,7 +1552,7 @@ digraph BayesTheorem {
   - E.g., we want to predict the probability of a flower being `setosa` from the
     `sepal_length`
 
-![](lectures_source/figures/Lesson07_Logistic_regression_df.png)
+![](msml610/lectures_source/figures/Lesson07_Logistic_regression_df.png)
 
 * Classification with Logistic Regression
 
@@ -1549,22 +1613,22 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Logistic_regression_code.png)
+![](msml610/lectures_source/figures/Lesson07_Logistic_regression_code.png)
 
 ::::
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Logistic_regression_model.png){ height=50% }
+![](msml610/lectures_source/figures/Lesson07_Logistic_regression_model.png){ height=50% }
 
 ::::
 :::
 
 ::: columns
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Logistic_regression_result.png)
+![](msml610/lectures_source/figures/Lesson07_Logistic_regression_result.png)
 
 ::::
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Logistic_regression_result2.png)
+![](msml610/lectures_source/figures/Lesson07_Logistic_regression_result2.png)
 
 ::::
 :::
@@ -1579,24 +1643,24 @@ digraph BayesTheorem {
   - $\sigma$ is a linear function of the predictor variable
   - Mean $\mu$ is square root of a linear model
 
-![](lectures_source/figures/Lesson07_Variable_variance_data.png)
+![](msml610/lectures_source/figures/Lesson07_Variable_variance_data.png)
 
 * Heteroskedasticity: Bayesian Model
 ::: columns
 :::: {.column width=50%}
 
-![](lectures_source/figures/Lesson07_Variable_variance_code.png)
+![](msml610/lectures_source/figures/Lesson07_Variable_variance_code.png)
 
 ::::
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Variable_variance_model.png)
+![](msml610/lectures_source/figures/Lesson07_Variable_variance_model.png)
 
 ::::
 :::
 
 ::: columns
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Variable_variance_result.png)
+![](msml610/lectures_source/figures/Lesson07_Variable_variance_result.png)
 
 ::::
 :::: {.column width=50%}
@@ -1656,10 +1720,10 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=40%}
-![](lectures_source/figures/Lesson07_Multiple_linear_regression1.png)
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression1.png)
 ::::
 :::: {.column width=55%}
-![](lectures_source/figures/Lesson07_Multiple_linear_regression2.png)
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression2.png)
 ::::
 :::
 
@@ -1667,10 +1731,10 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Multiple_linear_regression_model_code.png)
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_code.png)
 ::::
 :::: {.column width=45%}
-![](lectures_source/figures/Lesson07_Multiple_linear_regression_model.png)
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model.png)
 ::::
 :::
 
@@ -1680,10 +1744,10 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Multiple_linear_regression_results1.png)
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_results1.png)
 ::::
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Multiple_linear_regression_results2.png)
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_results2.png)
 ::::
 :::
 
@@ -1696,10 +1760,10 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_code.png)
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_code.png)
 ::::
 :::: {.column width=45%}
-![](lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model.png)
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model.png)
 ::::
 :::
 
@@ -1709,11 +1773,11 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_trace.png)
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_trace.png)
 
 ::::
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_results.png)
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_results.png)
 ::::
 :::
 
@@ -1759,9 +1823,9 @@ digraph BayesTheorem {
 ::::
 :::: {.column width=50%}
 
-![](lectures_source/figures/Lesson07.Comparing_models.data.png)
+![](msml610/lectures_source/figures/Lesson07.Comparing_models.data.png)
 
-![](lectures_source/figures/Lesson07.Comparing_models.model_code.png)
+![](msml610/lectures_source/figures/Lesson07.Comparing_models.model_code.png)
 
 ::::
 :::
@@ -1784,10 +1848,10 @@ digraph BayesTheorem {
 
 ::::
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson07.Comparing_models.model_fit.png)
+![](msml610/lectures_source/figures/Lesson07.Comparing_models.model_fit.png)
 
-![](lectures_source/figures/Lesson07.Comparing_models.lin_model_PPC.png)
-![](lectures_source/figures/Lesson07.Comparing_models.quadr_model_PPC.png)
+![](msml610/lectures_source/figures/Lesson07.Comparing_models.lin_model_PPC.png)
+![](msml610/lectures_source/figures/Lesson07.Comparing_models.quadr_model_PPC.png)
 ::::
 :::
 
