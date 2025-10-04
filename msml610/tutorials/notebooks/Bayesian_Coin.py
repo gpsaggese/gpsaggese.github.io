@@ -16,7 +16,7 @@
 # %% [markdown]
 # ## Imports
 
-# %% [markdown]
+# %% [markdown] jp-MarkdownHeadingCollapsed=true
 # ### Install packages
 
 # %%
@@ -51,32 +51,114 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import preliz as pz
 
+import ipywidgets as widgets
+from IPython.display import display
+
 # %%
 import msml610_utils as ut
 
 ut.config_notebook()
 
 # %% [markdown] heading_collapsed=true
-# # Chap1: Thinking probabilistically
+# # Probability distributions
 
 # %% [markdown]
-# ## Binomial
+# ## Bernoulli
 
-# %%
-#help(pz.Binomial.plot_interactive)
+# %% [markdown]
+# - A **Bernoulli variable** is a random variable that takes only two possible values.
+#   - Typically, these values are $1$ (success) and $0$ (failure).
+#
+# - **Definition:**
+#   - $X \sim \text{Bernoulli}(p)$ means $P(X = 1) = p$ and $P(X = 0) = 1 - p$
+#   - The parameter $p$ represents the probability of success, where $0 \leq p \leq 1$.
+#
+# - **Intuition:**
+#   - Represents a single trial of an experiment that can result in one of two outcomes.
+#   - Examples:
+#     - Coin flip: $X = 1$ if heads, $X = 0$ if tails.
+#     - Answer correctness: $X = 1$ if correct, $X = 0$ if incorrect.
 
 # %%
 np.random.seed(42)
 
-# Create a Normal Gaussian.
+n = 4
+p = 0.35
+
+data = stats.bernoulli.rvs(p=p, size=n)
+print(data)
+
+# %%
+# Set random seed for reproducibility
+np.random.seed(42)
+
+# Define interactive function
+def sample_bernoulli(n=4, p=0.35):
+    data = stats.bernoulli.rvs(p=p, size=n)
+    print(f"Bernoulli(p={p}) - {n} realizations:")
+    print(data)
+
+# Create interactive sliders
+widgets.interact(
+    sample_bernoulli,
+    n=widgets.IntSlider(value=4, min=1, max=50, step=1, description='n (samples)'),
+    p=widgets.FloatSlider(value=0.35, min=0.0, max=1.0, step=0.01, description='p (success prob)')
+);
+
+# %% [markdown]
+# ## Binomial
+
+# %% [markdown]
+# A **binomial random variable** represents the number of successes in a fixed number of independent trials, where each trial has two possible outcomes: success or failure.
+#
+# - **Parameters:**
+#   - $n$: number of trials  
+#   - $p$: probability of success in each trial
+#
+# - **Probability formula:**
+#   $$
+#   P(X = k) = \binom{n}{k} p^k (1 - p)^{n - k}
+#   $$
+#   where $k = 0, 1, 2, \dots, n$
+#
+# - **Example:**
+#   - If you flip a fair coin 10 times, the number of heads follows a `Binomial(10, 0.5)` distribution
+
+# %% editable=true slideshow={"slide_type": ""}
+# #?stats.binom
+
+# %%
+np.random.seed(42)
+
+# Create a Binomial.
 n = 8
-#p = 0.25
 p = 0.01
 X = stats.binom(n, p)
 
-# Print 3 realizations.
-x = X.rvs(n)
+# Print k realizations.
+k = 4
+x = X.rvs(k)
 print(x)
+
+# %%
+# Set random seed for reproducibility.
+np.random.seed(42)
+
+# Define interactive function.
+def sample_binomial(n: int, p: float, k: int) -> None:
+    X = stats.binom(n, p)
+    x = X.rvs(k)
+    print(f"Binomial(n={n}, p={p}) - {k} realizations:")
+    print(x)
+    
+
+# Create interactive controls.
+widgets.interact(
+    sample_binomial,
+    n=widgets.IntSlider(value=8, min=1, max=100, step=1, description='n (trials)'),
+    p=widgets.FloatSlider(value=0.01, min=0.0, max=1.0, step=0.01, description='p (success prob)'),
+    k=widgets.IntSlider(value=4, min=1, max=50, step=1, description='k (samples)')
+);
 
 # %%
 ut.plot_binomial()
@@ -90,6 +172,8 @@ params = {
     #"interval": "eti",  # Equal tailed interval.
     "xy_lim": "auto"
 }
+
+#help(pz.Binomial.plot_interactive)
 
 # Probability of k successes on N trial flipping a coin with p success
 pz.Binomial(p=0.5, n=5).plot_interactive(**params)
@@ -110,8 +194,7 @@ pz.Binomial(p=0.5, n=5).plot_interactive(**params)
 np.random.seed(123)
 
 trials = 4
-# Unknown value.
-theta_real = 0.35
+theta = 0.35
 
 # Generate some values.
 data = stats.bernoulli.rvs(p=theta_real, size=trials)
