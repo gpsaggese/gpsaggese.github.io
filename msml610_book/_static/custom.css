@@ -1,0 +1,17 @@
+/* Reduce space before/after headers */
+h1, h2, h3, h4 {
+  margin-top: 1.2em;
+  margin-bottom: 0.4em;
+}
+
+/* Make paragraphs more compact */
+p {
+  margin-top: 0.3em;
+  margin-bottom: 0.6em;
+}
+
+/* Compact code cells */
+div.cell {
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+}
