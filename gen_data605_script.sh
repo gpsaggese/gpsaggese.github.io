@@ -22,3 +22,5 @@ generate_slide_script.py \
   --out_file $DIR/lectures_script/$DST_NAME \
   --slides_per_group 3 \
   $OPTS
+
+lint_txt.py -i $DIR/lectures_script/$DST_NAME --use_dockerized_prettier
