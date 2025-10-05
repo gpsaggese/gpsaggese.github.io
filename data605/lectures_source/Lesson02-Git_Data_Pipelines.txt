@@ -35,7 +35,7 @@ UMD DATA605 - Big Data Systems
 
 * Bash / Linux: Resources
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - Command line
   - [\textcolor{blue}{\underline{https://ubuntu.com/tutorials/command-line-for-beginners}}](https://ubuntu.com/tutorials/command-line-for-beginners)
 - E.g., `find`, `xargs`, `chmod`, `chown`, symbolic, and hard links
@@ -48,7 +48,7 @@ UMD DATA605 - Big Data Systems
   - [\textcolor{blue}{\underline{https://linuxcommand.org/tlcl.php}}](https://linuxcommand.org/tlcl.php)
   - [\textcolor{blue}{\underline{}}]()
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_4_image_1.png)
 ::::
@@ -57,7 +57,7 @@ UMD DATA605 - Big Data Systems
 
 //* Git Resources
 //::: columns
-//:::: {.column width=65%}
+//:::: {.column width=55%}
 //- Concepts in the slides
 //- Tutorial:
 //  [\textcolor{blue}{\underline{tutorial_git}}](https://github.com/gpsaggese/umd_data605/tree/main/tutorials/tutorial_git)
@@ -71,7 +71,7 @@ UMD DATA605 - Big Data Systems
 //- Playgrounds
 //  - [\textcolor{blue}{\underline{https://learngitbranching.js.org}}](https://learngitbranching.js.org)
 //:::: 
-//:::: {.column width=40%}
+//:::: {.column width=30%}
 //![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_1.png)
 //:::: 
 //:::
@@ -91,35 +91,37 @@ UMD DATA605 - Big Data Systems
 
 - **Simplest "VCS"**
   - Make a copy of a dir and add
-    - `_v1` (bad) or
+    - `_v1` (bad); or
     - a timestamp `_20220101` (better)
   - **Cons**: It kind of works for one person, but doesn't scale
 
 * Version Control Systems (2/2)
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Centralized VCS**
-  - E.g., Perforce, Subversion
+  - E.g., `Perforce`, `Subversion`
   - A server stores the code, clients connect to it
   - **Cons**: If the server is down, nobody can work
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_1.png)
 
 ::::
 :::
 
+\vspace{1cm}
+
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Distributed VCS**
-  - E.g., Git, Mercurial, Bazaar, Dart
+  - E.g., `Git`, `Mercurial`, `Bazaar`, `Dart`
   - Each client has the entire history of the repo locally
   - Each node is both a client and a server
   - **Cons**: complex
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_2.png)
 ::::
 :::
@@ -129,29 +131,31 @@ UMD DATA605 - Big Data Systems
 - **How do you track changes to the data?**
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Delta-based VCS**
-  - E.g., Subversion
+  - E.g., `Subversion`
   - Store the data in terms of patches (changes of files over time)
   - Can reconstruct the state of the repo by applying the patches
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_1.png)
 
 ::::
 :::
 
+\vspace{1cm}
+
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Stream of snapshots VCS**
-  - E.g., Git
+  - E.g., `Git`
   - Store data in terms of snapshots of a filesystem
   - Take a "picture" of what files look like
   - Store reference (hash) to the snapshots
   - Save link to previous identical files
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_2.png)
 
@@ -160,41 +164,41 @@ UMD DATA605 - Big Data Systems
 
 * Git
 - **Almost everything is local for Git**
-  - The history is stored locally in each node
-  - Diff-ing is done locally
-    - For centralized VCS you need to access the server
-  - You can commit to your local copy
-    - Upload changes when there is network connection
+  - History stored locally in each node
+  - Diff-ing files done locally
+    - Centralized VCS requires server access
+  - Commit to local copy
+    - Upload changes with network connection
+
 - **Almost everything is undoable in Git**
   - No data corruption
-    - Everything is checksummed
-  - Nothing can be lost
+    - Everything checksummed
+  - Nothing lost
   - Disclaimer:
-    - As long as you commit (at least locally) or stash
-    - As long as you don't precipitate in "git hell"
-    - You need to know how to do it
-- **Git is a mini key-value store with a VCS built on top**
-  - This is actually exactly true
-  - Two layers:
-    - "porcelain": key-value store for a file-system
-    - "plumbing": VCS layer
+    - Commit (at least locally) or stash
+    - Know how to do it to avoid "git hell"
 
+- **Git is a mini key-value store with a VCS built on top**
+  - Exactly true
+  - Two layers:
+    - "porcelain": key-value store for file-system
+    - "plumbing": VCS layer
 
 * Sections of a Git Project
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 
 - There are 3 main sections of a Git project
   - **Working tree** (aka checkout)
-    - Version of the code placed on the filesystem for the user to use and modify
+    - Version of code on the filesystem for use and modification
   - **Staging area** (aka cache, index)
-    - A file in `.git` that stores information about the next commit
+    - File in `.git` storing info for the next commit
   - **Git directory** (aka .git)
-    - Store metadata and objects (like a DB)
-    - It is the repo itself with all history
-    - When you clone, you get the `.git` of the project
+    - Stores metadata and objects (like a DB)
+    - The repo itself with all history
+    - Cloning gets you the project's `.git`
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_1.png)
 
@@ -204,14 +208,14 @@ UMD DATA605 - Big Data Systems
 * States of a File in Git
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - Each file can be in 4 states from Git point-of-view
-  - **Untracked**: files that are not under Git version control
-  - **Modified**: you have changed the file, but not committed to DB yet
-  - **Staged**: you have marked a modified file to go into your next commit snapshot
-  - **Committed**: data is safely stored in your local DB
+  - **Untracked**: files not under Git version control
+  - **Modified**: changed files, not committed yet
+  - **Staged**: marked modified files for next commit
+  - **Committed**: data stored in local DB
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_2.png)
 
@@ -219,92 +223,99 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Git Tutorial
-- Git tutorial on class repo
-  - Read me
-- How to use a tutorial
-  - Type the commands from the tutorial one-by-one
-    - Do not copy paste
-  - Look at the results
-    - Understand what each line means
-  - Play with things
-    - "What happens if I do this?"
-    - "Does the result match my mental model?"
-  - Learn command line before switching to the GUI
+- **Git tutorial on class repo**
+  - Follow the `README`
+
+- **How to use a tutorial**
+  - Type commands one-by-one
+    - Avoid copy-paste
+  - Observe results
+    - Understand each line
+  - Experiment
+    - _"What happens if I do this?"_
+    - _"Does the result match my mental model?"_
+  - Learn command line before GUI
     - GUIs hide details and you become dependent on it
-- Use one or more tutorials on-line
-  - Ideally go through the Git book and the examples
-- Build your own cheat sheet
-  - Reusing other people cheat sheet works only if you already know
-- Strive to achieve mastery of the basic tools of the trade
+
+- Go through **recommended Git book** and try all examples
+  - Use online tutorials
+
+- Build your own **cheat sheet**
+  - Reuse others' cheat sheets only if familiar
+
+- Achieve **mastery of basic tools**
   - Bash, Git, editor
-  - Python
-  - Pandas
+  - Python, Pandas
   - ...
 
 
 * Git: Daily Use
-- Check out a project (git clone) or start from scratch (git init)
+- Check out a project (`git clone`) or start from scratch (`git init`)
   - Only once per Git project client
+
 - **Daily routine**
+  - Modify files in working tree (`vi ...`)
+  - Add files (`git add ...`)
+  - Stage changes for next commit (`git add -u ...`)
+  - Commit changes to `.git` (`git commit`)
 
-  - Modify files in working tree (vi ...)
-  - Add files (git add ...)
-  - Stage changes for the next commit (git add -u ...)
-  - Commit changes to .git (git commit)
 - **Use a branch to group commits together**
-
-  - Isolate your code from changes in master
-  - Merge master into your branch
-  - Isolate master from your changes
-  - Pull Request (aka PR) to get the code reviewed
+  - Isolate code from changes in `master`
+  - Merge `master` into branch
+  - Isolate `master` from changes
+  - Pull Request (PR) for code review
   - Merge PR into upstream
 
-
 * Git Remote
-- Remote repos are versions of the project hosted on Internet/remote file system
-  - To collaborate you need to manage remote repos
-  - Push / pull changes
-- You can have multiple forks of the same repo with different policies
-  - E.g., read-only, read-write
-- `git remote -v`: show what are the remotes
-- `git fetch`: pull from the remote repo all the data (e.g., branches, commits) that you don't have locally
-- `git pull`: short hand from `git fetch origin` + `git merge master --rebase`
-- `git push <REMOTE> <BRANCH>`: push local data to a remote
-  - E.g., `git push origin master`
-- If somebody pushed to the remote, you can't push your changes right away, but you need to:
-  - Fetch the changes
-  - Merge changes to the branch in your client
-  - Resolve conflicts, if needed
-  - (Test project sanity, e.g., by running unit tests)
-  - Push changes to the remote
+- **Remote repos**: versions of the project hosted online
+  - Manage remote repos to collaborate
+  - Push/pull changes
+  - `git remote -v`: show remotes
+  - `git fetch`: pull data from remote repo you don't have locally
+  - `git pull`: shorthand for `git fetch origin` + `git merge master --rebase`
+  - `git push <REMOTE> <BRANCH>`: push local data to remote
+    - E.g., `git push origin master`
 
+- Multiple forks of the same repo with different policies
+  - E.g., read-only, read-write
+
+- If someone pushed to remote, you **can't push changes immediately**:
+  - Fetch changes
+  - Merge changes to your branch
+  - Resolve conflicts, if needed
+  - Test project sanity (e.g., run unit tests)
+  - Push changes to remote
 
 * Git Tagging
-- Git allows to mark specific points in history with a tag
+- Git allows marking points in history with a **tag**
   - E.g., release points
-- You can check out a tag
-- You get in detached `HEAD` state
-  - If you commit your change won't be added to the tag or to the branch
-  - The commit will be "unreachable", i.e., reachable only by the commit hash
+  - Check out a tag
+
+- Enter detached `HEAD` state
+  - Committing won't add changes to the tag or branch
+  - Commit will be "unreachable," reachable only by commit hash
 
 * Git Internals
 ::: columns
-:::: {.column width=65%}
-- **You can understand Git only if you understand the data model**
+:::: {.column width=55%}
 
-  - Git is a key-value store with a VCS user interface on top of it
+- **Understand Git only if you understand its data model**
+  - Git is a key-value store with a VCS interface
   - Key = hash of a file
   - Value = content of a file
-- **Git objects**
 
-  - Commits: store pointers to the tree and commit metadata
-  - Trees: represent directories and mapping between files and blobs
+- **Git objects**
+  - Commits: pointers to the tree and commit metadata
+  - Trees: directories and mapping between files and blobs
   - Blobs: content of files
+
 - Refs:
-  - Easy: Understanding Git — Data Model
-  - Hard-core: Git internals
+  - Easy: 
+[\textcolor{blue}{\underline{Understanding Git Data Model}}](https://konrad126.medium.com/https-medium-com-zspajich-understanding-git-data-model-95eb16cc99f5)
+  - Hard-core: 
+[\textcolor{blue}{\underline{Git internals}}](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects)
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 *Commit tree*
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_1.png)
@@ -320,54 +331,57 @@ UMD DATA605 - Big Data Systems
 
 * Git Branching
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Branching**
+  - Diverge from main development line
 
-  - = diverging from the main line of development
 - **Why branch?**
+  - Work without affecting main code
+  - Avoid changes in main branch
+  - Merge code downstream for updates
+  - Merge code upstream after completion
 
-  - Work without messing the rest of the code
-  - Work without being affected by changes in the main branch
-  - Merge the code downstream to pick up the changes
-  - Once you are done working in your branch, merge code upstream
-- **Git branching is lightweight**
-
-  - It's instantaneous
-  - A branch is just a pointer to a commit
-  - Git doesn't store data as difference of files, but as a series of snapshot
-- **Git workflows branch and merge often**
-
-  - Even multiple times a day
-  - This is surprising for people used to distributed VCS
-    - E.g., you would start branching before going for lunch
-  - Branches are cheap in Git
-    - Use them all the times to isolate your work and organize it
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_15_image_1.png)
 
 ::::
 :::
 
+- **Git branching is lightweight**
+  - Instantaneous
+  - Branch is a pointer to a commit
+  - Git stores data as snapshots, not file differences
+
+- **Git workflows branch and merge often**
+  - Multiple times a day
+  - Surprising for users of distributed VCS
+    - E.g., branch before lunch
+  - Branches are cheap
+    - Use them to isolate and organize work
+
 * Git Branching
 ::: columns
-:::: {.column width=65%}
-- **master** (or **main**) is just a normal branch
-  - master is a pointer to the last commit
-  - As you commit the pointer moves forward
+:::: {.column width=55%}
+- `master` (or `main`) is a normal branch
+  - Pointer to the last commit
+  - Moves forward with each commit
+
 - `HEAD`
-  - Pointer to the local branch you are on
-  - E.g., master, testing
-  - `git checkout <BRANCH>` moves you across branches
+  - Pointer to the local branch
+  - E.g., `master`, `testing`
+  - `git checkout <BRANCH>` moves across branches
+
 - `git branch testing`
   - Create a new pointer `testing`
-  - Point to the commit you are on
-  - Pointer can be moved around
+  - Points to the current commit
+  - Pointer is movable
+
 - Divergent history
-  - When work progresses in two branches that are "split"
+  - Work progresses in two "split" branches
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_16_image_1.png)
 
@@ -378,22 +392,21 @@ UMD DATA605 - Big Data Systems
 
 * Git Checkout
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - `git checkout` switches branch
-  - Move `HEAD` pointer to the new branch
-  - Change the files in the working dir to match the state corresponding to the branch pointer
-- E.g., there are two branches master and testing
-  - You are on master
-  - `git checkout testing`
-  - The pointer moves, the working dir is changed (not really in this case)
-  - Then you can keep working by committing on **testing**
-  - The pointer to **testing** moves forward (no divergent history)
-::::
-:::: {.column width=40%}
+  - Move `HEAD` pointer to new branch
+  - Change files in working dir to match branch pointer
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_2.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_3.png)
+- E.g., two branches, master and testing
+  - You are on `master`
+  - `git checkout testing`
+  - Pointer moves, working dir changes
+  - Keep working and commit on `testing`
+  - Pointer to `testing` moves forward
+
+::::
+:::: {.column width=30%}
+
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_2.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_3.png)
@@ -403,7 +416,7 @@ UMD DATA605 - Big Data Systems
 
 * Git Branching and Merging
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - Tutorials: Work on main, Hot fix
 
 - Start from a project with some commits
@@ -426,7 +439,7 @@ UMD DATA605 - Big Data Systems
 - **Fast forward**
   - Now there is a divergent history between `master` and `iss53`
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_2.png)
@@ -439,7 +452,7 @@ UMD DATA605 - Big Data Systems
 
 * Git Branching and Merging
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
   ```
   > git checkout iss53
   **work ... work ... work**
@@ -458,7 +471,7 @@ UMD DATA605 - Big Data Systems
 - Delete the branch
   `> git branch -d iss53`
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_2.png)
@@ -468,7 +481,7 @@ UMD DATA605 - Big Data Systems
 
 * Fast Forward Merge
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Fast forward merge** = merge a commit X with a commit Y that can be reached
   by following the history of commit X**
 - There is not divergent history to merge
@@ -482,7 +495,7 @@ UMD DATA605 - Big Data Systems
   ```
 - Git moves the pointer of master to C4'
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_20_image_1.png)
 
@@ -491,7 +504,7 @@ UMD DATA605 - Big Data Systems
 
 * Merging Conflicts
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - Tutorial:
   - Merging conflicts
 - Sometimes Git can't merge, e.g.,
@@ -507,7 +520,7 @@ UMD DATA605 - Big Data Systems
   - `git commit`
   - Use PyCharm
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_2.png)
@@ -523,9 +536,9 @@ UMD DATA605 - Big Data Systems
 
 * Git Rebasing
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - In Git there are two ways of merging divergent history
-  - E.g., **master** and **experiment** have a common ancestor C2
+  - E.g., `master` and **experiment** have a common ancestor C2
 - **Merge**
   - Go to the target branch
   - `> git checkout master`
@@ -542,7 +555,7 @@ UMD DATA605 - Big Data Systems
     - Only the branch where we are is affected
   - Finally fast forward master
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_2.png)
@@ -556,7 +569,7 @@ UMD DATA605 - Big Data Systems
 
 * Uses of Rebase
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Rebasing makes for a cleaner history**
   - The history looks like all the work happened in series
   - Although in reality it happened in parallel to the development in master
@@ -569,7 +582,7 @@ UMD DATA605 - Big Data Systems
     - Does not have to do any integration work
     - Does just a fast forward or a clean apply (no conflicts)
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
@@ -586,7 +599,7 @@ UMD DATA605 - Big Data Systems
 
 * Golden Rule of Rebasing
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Remember**: rebasing means abandoning existing commits and creating new ones
   that are similar but different
 - **Problem**
@@ -601,7 +614,7 @@ UMD DATA605 - Big Data Systems
   - Loose version: "It's ok to rebase your branch even if you pushed to a server,
     as long as you are the only one to use it"
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_2.png)
@@ -613,7 +626,7 @@ UMD DATA605 - Big Data Systems
 
 * Rebase vs Merge: Philosophical Considerations
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - Rebase-vs-merge depend on the answer to the question:
 - **What does the commit history of a repo mean?**
 - **a) History is the record of what actually happened**
@@ -626,7 +639,7 @@ UMD DATA605 - Big Data Systems
 - *You should tell the history in the way that is best for future readers*
 - Use `git rebase` and filter-branch**
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_1.png)
 
@@ -637,7 +650,7 @@ UMD DATA605 - Big Data Systems
 
 * Rebase vs Merge: Philosophical Considerations
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - Many man-centuries have been wasted discussing rebase-vs-merge at the watercooler
   - Total waste of time! Tell people to get back to work!
 - When you contribute to a project often people decide for you based on their preference
@@ -652,7 +665,7 @@ UMD DATA605 - Big Data Systems
   - My commits are just my checkpoints
   - Rarely they are "complete"
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_26_image_1.png)
 
@@ -670,9 +683,9 @@ UMD DATA605 - Big Data Systems
   ```
 - **Tracking branches**
   - Local references representing the state of the remote repo
-  - E.g., **master** tracks **origin/master**
+  - E.g., `master` tracks **origin/master**
   - You can't change the remote branch (e.g., **origin/master**)
-  - You can change tracking branch (e.g., **master**)
+  - You can change tracking branch (e.g., `master`)
   - Git updates tracking branches when you do `git fetch origin` (or `git pull`)
 - To share code in a local branch you need to push it to a remote
   - `> git push origin serverfix`
@@ -682,12 +695,12 @@ UMD DATA605 - Big Data Systems
 
 * Git Workflows
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 
 - **Git workflows** = ways of working and collaborating using Git
 - **Long-running branches** = branches at different level of stabilities, that
   are always open
-  - **master** is always ready to be released
+  - `master` is always ready to be released
   - **develop** branch to develop in
   - *topic / feature* branches
   - When branches are "stable enough" they are merged up
@@ -702,7 +715,7 @@ UMD DATA605 - Big Data Systems
     - Somebody starts `dumbidea` branch and merge to `master` (!)`
     - You squash-and-merge your `iss91v2`
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_1.png)
 
@@ -715,7 +728,7 @@ UMD DATA605 - Big Data Systems
 
 * Centralized Workflow
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Centralized workflow in centralized VCS**
   - Developers:
     - Check out the code from the central repo on their computer
@@ -730,7 +743,7 @@ UMD DATA605 - Big Data Systems
     - Cannot push code that will overwrite each other code (only fast-forward
       changes)
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_29_image_1.png)
 
@@ -739,7 +752,7 @@ UMD DATA605 - Big Data Systems
 
 * Forking Workflows
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - Typically devs don't have permissions to update directly branches on a project
   - Read-write permissions for core contributors
   - Read-only for anybody else
@@ -760,7 +773,7 @@ UMD DATA605 - Big Data Systems
   - "Innovation" was forking (Fork me on GitHub!)
   - GitHub acquired by Microsoft for 7.5b USD
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_30_image_1.png)
 
@@ -769,7 +782,7 @@ UMD DATA605 - Big Data Systems
 
 * Integration-Manager Workflow
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - This is the classical model for open-source development
   - E.g., Linux, GitHub (forking) workflow
 - **1. One repo is the "official" project**
@@ -789,7 +802,7 @@ UMD DATA605 - Big Data Systems
   - Tests changes locally
   - Pushes branch to the official repo
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_31_image_1.png)
 
@@ -798,7 +811,7 @@ UMD DATA605 - Big Data Systems
 
 * Git log
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - `git log` reports info about commits**
 - **refs** are references to:
   - `HEAD` (commit you are working on, next commit)
@@ -817,7 +830,7 @@ UMD DATA605 - Big Data Systems
   - **1...2** = commits that are reachable from either branch but not from both (union excluding intersection)**
   - `git log master...experiment $\to$ F,E,D,C`
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_32_image_1.png)
 
@@ -851,7 +864,7 @@ UMD DATA605 - Big Data Systems
 
 * GitHub
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - GitHub acquired by MSFT for 7.5b
 - **GitHub: largest host for Git repos**
   - Git hosting (100m+ open source projects)
@@ -868,7 +881,7 @@ UMD DATA605 - Big Data Systems
   - In GitHub parlance
     - Make a copy of a project so that you can contribute to it even if you don't have push / write access
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_34_image_1.png)
 
@@ -879,13 +892,13 @@ UMD DATA605 - Big Data Systems
 
 * Data Pipelines: Resources
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - Concepts in the slides
 - Class project
 - Mastery
   - Data Pipelines Pocket Reference: Moving and Processing Data for Analytics
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_37_image_1.png)
 
@@ -918,7 +931,7 @@ UMD DATA605 - Big Data Systems
 
 * Data Pipelines
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - "Data is the new oil"
   - ... but oil needs to be refined
 - **Data pipelines**
@@ -935,7 +948,7 @@ UMD DATA605 - Big Data Systems
   - Extract data (e.g., from REST API)
   - Load data into DB (e.g., SQL table)
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_39_image_1.png)
 
@@ -986,7 +999,7 @@ UMD DATA605 - Big Data Systems
 
 * Data Ingestion
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Data ingestion**
   - = extract data from one source and load it into another store
 - **Data sources / sinks**
@@ -1005,7 +1018,7 @@ UMD DATA605 - Big Data Systems
   - 3rd-parties
     - E.g., Google analytics tracking website usage
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_41_image_1.png)
 
@@ -1014,7 +1027,7 @@ UMD DATA605 - Big Data Systems
 
 * Data Pipeline Paradigms
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - There are several styles of building data pipelines
 - Multiple phases
   - Extract
@@ -1025,7 +1038,7 @@ UMD DATA605 - Big Data Systems
   - ELT
   - EtLT
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_42_image_1.png)
 
@@ -1071,7 +1084,7 @@ UMD DATA605 - Big Data Systems
 
 * Workflow Orchestration
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - Companies have many (10-1000s) data pipelines
 - Orchestration tools, e.g.,
   - Apache Airflow (from AirBnB)
@@ -1082,7 +1095,7 @@ UMD DATA605 - Big Data Systems
   - Pipeline and jobs are represented through DAGs
 - Monitor, retry, and send alarms
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_1.png)
 
@@ -1093,7 +1106,7 @@ UMD DATA605 - Big Data Systems
 
 * ELT paradigm
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - ETL has been the standard approach for long time
   - Extract $\to$ Transform $\to$ Load
   - **Cons**
@@ -1112,7 +1125,7 @@ UMD DATA605 - Big Data Systems
   - Columnar DBs
   - Data compression
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_46_image_1.png)
 ::::
@@ -1120,7 +1133,7 @@ UMD DATA605 - Big Data Systems
 
 * Row-based vs Columnar DBs
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Row-based DBs**
   - E.g., MySQL, Postgres
   - Optimized for reading / writing rows
@@ -1131,7 +1144,7 @@ UMD DATA605 - Big Data Systems
   - Analytics requires a few columns
   - Better data compression
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_1.png)
 
@@ -1156,7 +1169,7 @@ UMD DATA605 - Big Data Systems
 
 * Structure in Data (or Lack Thereof)
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Structured data**: there is a schema
   - Relational DB
   - CSV
@@ -1174,7 +1187,7 @@ UMD DATA605 - Big Data Systems
   - Movies
   - Blobs of data
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_49_image_1.png)
 
@@ -1205,7 +1218,7 @@ UMD DATA605 - Big Data Systems
 
 * OLAP vs OLTP Workloads
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - There are two classes of data workloads
 - **OLTP**
   - **O**n-**L**ine **T**ransactional **P**rocessing
@@ -1218,7 +1231,7 @@ UMD DATA605 - Big Data Systems
   - **Few large read or write transactions**
   - E.g., data mining, business intelligence
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_1.png)
 
@@ -1241,7 +1254,7 @@ UMD DATA605 - Big Data Systems
 
 * Data Warehouse vs Data Lake
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 - **Data warehouse**
   - = DB storing data from different systems in a structured way
   - Corresponds to ETL data pipeline style
@@ -1254,7 +1267,7 @@ UMD DATA605 - Big Data Systems
   - Corresponds to ELT data pipeline style
   - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_source/images
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_1.png)
 
