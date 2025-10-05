@@ -1,49 +1,40 @@
 # ##############################################################################
-# Slide 1: Invariants of a Class Lecture
+# Invariants of a Class Lecture
 # ##############################################################################
 
-- Invariants are key concepts that remain constant throughout the course. The
-  focus is on understanding these concepts intuitively, which means grasping the
-  basic ideas without getting bogged down in complex details. This approach
-  helps students build a strong foundation in the subject matter.
+- The focus of class lectures is on understanding key concepts intuitively, which
+  means grasping the basic ideas without getting bogged down in complex details.
+  This approach will help you build a strong foundation in the subject matter.
 
 - The course includes interactive Jupyter notebook tutorials. These tutorials
   are designed to be completed at home, allowing students to learn at their own
-  pace. Over time, videos will be added to these tutorials to enhance
-  understanding and provide additional guidance.
+  pace.
 
-- The class flow is dynamic, alternating between different teaching methods.
-  This includes using slides for structured information, the whiteboard for
-  spontaneous explanations, and tutorials for hands-on practice. This variety
-  keeps the class engaging and caters to different learning styles.
+- The class alternates between slides for structured information, the whiteboard
+  for spontaneous explanations, and tutorials for hands-on practice.
 
 - Labs are an essential part of the course. They provide an opportunity to
   review complete class project examples, which helps students understand how
-  theoretical concepts are applied in real-world scenarios. Collaboration on
-  class projects is encouraged, fostering teamwork and communication skills.
+  theoretical concepts are applied in real-world scenarios.
 
-Transition: Now, let's explore the resources that will support your learning
-journey in this class.
+Now, let's explore the resources that will support your learning
+in this class.
 
 # ##############################################################################
-# Slide 2: Books of the Class
+# Books of the Class
 # ##############################################################################
 
-- The slides used in this class are carefully curated from various sources,
-  including books, technical articles, and the Internet. This ensures that the
-  content is comprehensive and up-to-date with the latest developments in the
-  field.
+- The slides used in this class are curated from various sources, including
+  books, technical articles, and the Internet. This ensures that the content is
+  comprehensive and up-to-date with the latest developments in the field.
 
 - The slides are designed to be self-sufficient, meaning they contain all the
-  necessary information for understanding the topics covered. This allows
-  students to rely on them as a primary resource for studying and revising the
-  material.
+  necessary information for understanding the topics covered.
 
-Transition: With a solid understanding of the resources, let's delve into the
-learning outcomes you can expect from this course.
+Let's delve into the learning outcomes you can expect from this course.
 
 # ##############################################################################
-# Slide 3: Learning Outcomes
+# Learning Outcomes
 # ##############################################################################
 
 - By the end of this course, students will be able to model and reason about
@@ -72,16 +63,16 @@ learning outcomes you can expect from this course.
   skills and professional portfolio.
 
 # ##############################################################################
-# Slide 1: Tools We Will Learn to Use
+# Tools We Will Learn to Use
 # ##############################################################################
 
 In this course, we will explore a variety of tools essential for machine
 learning and big data. We'll start with programming languages, focusing on
 Python, which is widely used for data analysis and machine learning tasks.
-Development tools are crucial, and we'll cover Bash/Linux OS for command-line
-operations, Git for version control, and GitHub for collaboration through Pull
-Requests and issue tracking. Jupyter notebooks will be used for interactive
-coding, and Docker will help us create consistent development environments.
+Development tools are crucial, and we'll cover Git for version control, and
+GitHub for collaboration through Pull Requests and issue tracking. Jupyter
+notebooks will be used for interactive coding, and Docker will help us create
+consistent development environments.
 
 For big data, we'll delve into Extract-Transform-Load (ETL) pipelines, which are
 vital for data processing. We'll explore relational databases like PostgreSQL
@@ -96,7 +87,7 @@ Transitioning to the next slide, let's discuss what you need to do to prepare
 for the course.
 
 # ##############################################################################
-# Slide 2: Todos
+# Todos
 # ##############################################################################
 
 To succeed in this course, there are several tasks you need to complete. First,
@@ -114,7 +105,7 @@ recorded, attending class when possible is beneficial for interactive learning.
 Now, let's move on to how your performance will be evaluated in this course.
 
 # ##############################################################################
-# Slide 3: Grading
+# Grading
 # ##############################################################################
 
 Your grade in this course will be based on quizzes and a final project. Quizzes
@@ -133,7 +124,7 @@ With this understanding of the grading structure, you're now equipped to focus
 on your learning journey in this course.
 
 # ##############################################################################
-# Slide 1: Class Projects
+# Class Projects
 # ##############################################################################
 
 In this slide, we discuss the structure and expectations for class projects. The
@@ -155,11 +146,11 @@ or large language models. Projects can be done individually or in groups of up
 to three people, with varying levels of difficulty to accommodate different
 skill levels.
 
-Transition: Now, let's explore the soft skills necessary for success in the
+Now, let's explore the soft skills necessary for success in the
 workplace.
 
 # ##############################################################################
-# Slide 2: Soft Skills to Succeed in the Workplace
+# Soft Skills to Succeed in the Workplace
 # ##############################################################################
 
 This slide emphasizes the importance of soft skills in preparing for the
@@ -179,11 +170,11 @@ maintaining software quality. Having an intuition for computer science constants
 and a basic understanding of operating systems, including virtual memory and
 processes, are foundational skills that enhance problem-solving abilities.
 
-Transition: Let's move on to learn more about the instructor and their
+Let's move on to learn more about the instructor and their
 background.
 
 # ##############################################################################
-# Slide 3: Yours Truly
+# Yours Truly
 # ##############################################################################
 
 This slide provides an introduction to the instructor, GP Saggese. GP Saggese
@@ -199,10 +190,10 @@ LinkedIn or email for further engagement and learning opportunities. The slide
 also includes a picture of GP Saggese in a coding state, providing a personal
 touch and visual connection.
 
-Transition: With this background, let's dive into the world of Big Data.
+With this background, let's dive into the world of Big Data.
 
 # ##############################################################################
-# Slide 1: Data Science
+# Data Science
 # ##############################################################################
 
 Data science offers several promises that can significantly benefit businesses.
@@ -232,7 +223,7 @@ Transitioning to the next slide, let's explore the motivation behind the growing
 importance of data science.
 
 # ##############################################################################
-# Slide 2: Motivation: Data Overload
+# Motivation: Data Overload
 # ##############################################################################
 
 Data science is recognized as a key driver of economic growth, as highlighted by
@@ -260,7 +251,7 @@ As we move forward, let's delve into the scale of data size and understand the
 magnitude of data we are dealing with.
 
 # ##############################################################################
-# Slide 3: Scale of Data Size
+# Scale of Data Size
 # ##############################################################################
 
 Understanding the scale of data size is crucial in the context of data science.
@@ -287,7 +278,7 @@ Understanding these scales helps us appreciate the vast amounts of data
 generated and the challenges in managing and analyzing such data.
 
 # ##############################################################################
-# Slide 1: Constants Everybody Should Know
+# Constants Everybody Should Know
 # ##############################################################################
 
 This slide provides a list of constants that are crucial for understanding the
@@ -307,10 +298,10 @@ approximately 150 milliseconds. Understanding these constants helps in designing
 efficient systems and applications by highlighting the importance of minimizing
 data movement and optimizing data access patterns.
 
-Transition: Now, let's explore how these constants impact big data applications.
+Now, let's explore how these constants impact big data applications.
 
 # ##############################################################################
-# Slide 2: Big Data Applications
+# Big Data Applications
 # ##############################################################################
 
 This slide focuses on the application of big data in personalized marketing.
@@ -328,11 +319,11 @@ in personalized marketing strategies. The power of personalization is evident in
 its ability to enhance customer engagement and drive sales by delivering
 relevant content and offers to consumers.
 
-Transition: Let's continue by examining another big data application in mobile
+Let's continue by examining another big data application in mobile
 advertisement.
 
 # ##############################################################################
-# Slide 3: Big Data Applications
+# Big Data Applications
 # ##############################################################################
 
 This slide discusses the role of big data in mobile advertisement. With mobile
@@ -351,7 +342,7 @@ advertising enhances the effectiveness of marketing campaigns by ensuring that
 the right message reaches the right audience at the right time.
 
 # ##############################################################################
-# Slide 1: Big Data Applications - Biomedical Data
+# Big Data Applications - Biomedical Data
 # ##############################################################################
 
 In the realm of big data applications, biomedical data plays a crucial role.
@@ -371,11 +362,11 @@ issues, and make informed decisions about treatment and lifestyle changes.
 Overall, the integration of big data in biomedical applications is transforming
 the healthcare industry by enabling more precise and personalized care.
 
-Transition: Let's now explore how big data is shaping the development of smart
+Let's now explore how big data is shaping the development of smart
 cities.
 
 # ##############################################################################
-# Slide 2: Big Data Applications - Smart Cities
+# Big Data Applications - Smart Cities
 # ##############################################################################
 
 Smart cities are another exciting application of big data, where an
@@ -393,11 +384,11 @@ where energy savings can be maximized, contributing to a more sustainable urban
 environment. Overall, the use of big data in smart cities is paving the way for
 more efficient, sustainable, and livable urban spaces.
 
-Transition: Now, let's delve into the overarching goal of data science and its
+Now, let's delve into the overarching goal of data science and its
 transformative potential.
 
 # ##############################################################################
-# Slide 3: Goal of Data Science
+# Goal of Data Science
 # ##############################################################################
 
 The primary goal of data science is to transform data into wisdom. This
@@ -417,7 +408,7 @@ with the knowledge and wisdom needed to navigate an increasingly data-driven
 world.
 
 # ##############################################################################
-# Slide 1: the Six V'S of Big Data
+# the Six V'S of Big Data
 # ##############################################################################
 
 In this slide, we explore the six key characteristics of big data, often
@@ -451,7 +442,7 @@ datasets.
 Let's delve deeper into the first two V's: Volume and Variety.
 
 # ##############################################################################
-# Slide 2: the Six V'S of Big Data - Volume and Variety
+# the Six V'S of Big Data - Volume and Variety
 # ##############################################################################
 
 This slide focuses on the first two V's: Volume and Variety, providing more
@@ -474,7 +465,7 @@ detailed insights into these aspects.
 Next, we will explore the concepts of Velocity and Veracity in big data.
 
 # ##############################################################################
-# Slide 1: Sources of Big Data
+# Sources of Big Data
 # ##############################################################################
 
 In this slide, we are introduced to the concept of Big Data and its various
@@ -490,7 +481,7 @@ from it. The slide also includes an image to visually represent these sources,
 which can help in better understanding the concept.
 
 # ##############################################################################
-# Slide 2: Sources of Big Data: Machines
+# Sources of Big Data: Machines
 # ##############################################################################
 
 This slide focuses on machines as a source of Big Data. Machines generate data
@@ -505,11 +496,11 @@ streaming rather than batch, meaning it is continuously generated and needs
 real-time processing. Understanding these pros and cons is essential for
 effectively managing and utilizing machine-generated data.
 
-Transition: Now, let's explore how people contribute to the generation of Big
+Now, let's explore how people contribute to the generation of Big
 Data.
 
 # ##############################################################################
-# Slide 3: Sources of Big Data: People
+# Sources of Big Data: People
 # ##############################################################################
 
 This slide delves into how people generate Big Data through their activities.
@@ -528,7 +519,7 @@ these aspects is crucial for leveraging people-generated data effectively while
 addressing privacy concerns.
 
 # ##############################################################################
-# Slide 1: Sources of Big Data: Orgs
+# Sources of Big Data: Orgs
 # ##############################################################################
 
 Organizations are major contributors to the generation of big data. They produce
@@ -546,11 +537,11 @@ departments. Cloud computing solutions, such as data lakes and data warehouses,
 offer ways to mitigate these issues by providing centralized and accessible data
 storage options.
 
-Transition: Now, let's explore whether data science is just a passing trend or
+Now, let's explore whether data science is just a passing trend or
 something more substantial.
 
 # ##############################################################################
-# Slide 2: Is Data Science Just Hype?
+# Is Data Science Just Hype?
 # ##############################################################################
 
 The term "big data" or "data science" refers to any process where valuable
@@ -567,11 +558,11 @@ reduction offered by cloud computing services such as AWS. These advancements
 allow large-scale data combined with simple algorithms to often outperform small
 data with complex algorithms.
 
-Transition: Let's delve deeper into what sets modern data science apart from
+Let's delve deeper into what sets modern data science apart from
 traditional statistical methods.
 
 # ##############################################################################
-# Slide 1: What Was Cool in 2012?
+# What Was Cool in 2012?
 # ##############################################################################
 
 In 2012, the technology landscape was buzzing with innovations that were
@@ -588,7 +579,7 @@ collectively shaped the way businesses operated and how individuals interacted
 with technology.
 
 # ##############################################################################
-# Slide 2: What Was Cool in 2017?
+# What Was Cool in 2017?
 # ##############################################################################
 
 By 2017, the technological landscape had evolved significantly. Artificial
@@ -605,7 +596,7 @@ sectors, promising to transform industries and improve efficiencies.
 Let's see how the technological landscape continued to evolve in 2022.
 
 # ##############################################################################
-# Slide 3: What Was Cool in 2022?
+# What Was Cool in 2022?
 # ##############################################################################
 
 In 2022, technology continued to advance at a rapid pace. Artificial
@@ -621,7 +612,7 @@ highlighted the ongoing innovation in the tech industry and the potential for
 future breakthroughs.
 
 # ##############################################################################
-# Slide 1: Key Shifts Before/After Big-Data
+# Key Shifts Before/After Big-Data
 # ##############################################################################
 
 In this slide, we explore the significant changes that have occurred with the
@@ -650,7 +641,7 @@ Let's now look at a practical example of how big data has been used effectively
 in election predictions.
 
 # ##############################################################################
-# Slide 2: Examples: Election Prediction
+# Examples: Election Prediction
 # ##############################################################################
 
 This slide presents a compelling example of how big data has been utilized in
@@ -673,7 +664,7 @@ underscores the power of big data in making informed predictions and decisions,
 showcasing its potential in various fields beyond just elections.
 
 # ##############################################################################
-# Slide 1: Examples: Google Flu Trends
+# Examples: Google Flu Trends
 # ##############################################################################
 
 This slide discusses Google Flu Trends, a project that aimed to predict flu
@@ -691,11 +682,11 @@ searched for flu-related symptoms like "fever" and "cough" without having a
 confirmed diagnosis. This highlights the limitations of relying solely on big
 data for accurate predictions.
 
-Transition: Now, let's explore the role of a data scientist in the context of
+Now, let's explore the role of a data scientist in the context of
 big data.
 
 # ##############################################################################
-# Slide 2: Data Scientist
+# Data Scientist
 # ##############################################################################
 
 This slide introduces the concept of a data scientist, a term that is often
@@ -711,11 +702,11 @@ actionable insights. However, the term "data scientist" can mean different
 things in different contexts, and the specific skills required can vary
 depending on the industry and the specific problems being addressed.
 
-Transition: Let's delve into the typical workflow of a data scientist to
+Let's delve into the typical workflow of a data scientist to
 understand their role better.
 
 # ##############################################################################
-# Slide 3: Typical Data Scientist Workflow
+# Typical Data Scientist Workflow
 # ##############################################################################
 
 This slide outlines the typical workflow of a data scientist, which is essential
@@ -735,7 +726,7 @@ for anyone looking to pursue a career in data science, as it provides a
 structured approach to tackling complex data problems.
 
 # ##############################################################################
-# Slide 1: Where Data Scientist Spends Most Time
+# Where Data Scientist Spends Most Time
 # ##############################################################################
 
 - Data scientists spend a significant portion of their time, about 80-90%, on
@@ -751,11 +742,11 @@ structured approach to tackling complex data problems.
   significantly reduce the time data scientists spend on these tasks, allowing
   them to focus more on analysis and interpretation.
 
-Transition: Now that we understand where data scientists spend most of their
+Now that we understand where data scientists spend most of their
 time, let's explore what skills they need to be effective.
 
 # ##############################################################################
-# Slide 2: What a Data Scientist Should Know
+# What a Data Scientist Should Know
 # ##############################################################################
 
 - Data grappling skills are essential for data scientists. They need to be
@@ -775,11 +766,11 @@ time, let's explore what skills they need to be effective.
 - Communication skills are key for data scientists to tell the story behind the
   data and effectively communicate their findings to stakeholders.
 
-Transition: With these skills in mind, let's delve into the concept of data
+With these skills in mind, let's delve into the concept of data
 models and their importance in data science.
 
 # ##############################################################################
-# Slide 3: Data Models
+# Data Models
 # ##############################################################################
 
 - Data modeling is the process of representing and capturing the structure and
@@ -798,7 +789,7 @@ models and their importance in data science.
   faster retrieval.
 
 # ##############################################################################
-# Slide 1: Multiple Layers of Data Modeling
+# Multiple Layers of Data Modeling
 # ##############################################################################
 
 - Physical Layer: This is about how data is stored on physical devices. It
@@ -820,10 +811,10 @@ models and their importance in data science.
   which helps in maintaining data privacy and simplifying user interactions with
   the database.
 
-Transition: Now, let's delve deeper into the logical layer of data models.
+Now, let's delve deeper into the logical layer of data models.
 
 # ##############################################################################
-# Slide 2: Data Models: Logical Layer
+# Data Models: Logical Layer
 # ##############################################################################
 
 - Modeling Constructs: These are the basic building blocks used to represent
@@ -843,11 +834,11 @@ Transition: Now, let's delve deeper into the logical layer of data models.
   constructs are essential for keeping the database up-to-date and relevant to
   the needs of its users.
 
-Transition: With a solid understanding of the logical layer, let's explore
+With a solid understanding of the logical layer, let's explore
 various examples of data models.
 
 # ##############################################################################
-# Slide 3: Examples of Data Models
+# Examples of Data Models
 # ##############################################################################
 
 - Relational Model (SQL): This is a widely used model that organizes data into
@@ -876,7 +867,7 @@ various examples of data models.
   formats is crucial for choosing the right one for your data needs.
 
 # ##############################################################################
-# Slide 1: Good Data Models
+# Good Data Models
 # ##############################################################################
 
 - A good data model is essential for effectively capturing and utilizing
@@ -900,11 +891,11 @@ various examples of data models.
   and JSON. Unstructured data, which lacks a predefined format, is typically
   handled by NoSQL databases, which offer more flexibility.
 
-Transition: Understanding data independence is crucial for managing data
+Understanding data independence is crucial for managing data
 effectively across different systems and applications.
 
 # ##############################################################################
-# Slide 2: Data Independence
+# Data Independence
 # ##############################################################################
 
 - Data independence is a fundamental concept in database management, allowing
@@ -925,11 +916,11 @@ effectively across different systems and applications.
   requirements and technologies without disrupting existing applications or
   workflows.
 
-Transition: Let's take a brief look at the history of databases to understand
+Let's take a brief look at the history of databases to understand
 how these concepts have evolved over time.
 
 # ##############################################################################
-# Slide 3: Databases: A Brief History
+# Databases: A Brief History
 # ##############################################################################
 
 - The history of databases dates back to the 1960s when computers began to gain
@@ -951,7 +942,7 @@ how these concepts have evolved over time.
   us appreciate the complexities and capabilities of modern database systems.
 
 # ##############################################################################
-# Slide 1: Databases: A Brief History
+# Databases: A Brief History
 # ##############################################################################
 
 In the 1960s, databases were primarily organized using hierarchical and network
@@ -968,11 +959,11 @@ They often exposed too much internal data, such as structures and pointers,
 leading to what is known as a "leaky abstraction," where the complexity of the
 system becomes apparent to the user.
 
-Transition: As we move forward, let's explore the different database models that
+As we move forward, let's explore the different database models that
 emerged over time.
 
 # ##############################################################################
-# Slide 2: Relational, Hierarchical, Network Model
+# Relational, Hierarchical, Network Model
 # ##############################################################################
 
 The relational model, hierarchical model, and network model each offer unique
@@ -987,11 +978,11 @@ This model experienced a resurgence in the 2010s with the popularity of graph
 databases. Each model has its strengths and is suited to different types of data
 and use cases.
 
-Transition: Now, let's delve into the evolution of the relational model in the
+Now, let's delve into the evolution of the relational model in the
 1970s.
 
 # ##############################################################################
-# Slide 3: Databases: A Brief History
+# Databases: A Brief History
 # ##############################################################################
 
 The 1970s marked the introduction of the relational model, developed by Ted
@@ -1009,7 +1000,7 @@ between proponents of the relational and network models, each advocating for
 their preferred approach to data management.
 
 # ##############################################################################
-# Slide 1: Entity-Relationship Model
+# Entity-Relationship Model
 # ##############################################################################
 
 In 1976, Peter Chen introduced the Entity-Relationship (ER) Model, a framework
@@ -1027,10 +1018,10 @@ are maintained. The images accompanying this slide likely illustrate examples of
 entities and relationships, providing a visual representation of how the ER
 model is structured.
 
-Transition: Now, let's explore the evolution of databases over time.
+Now, let's explore the evolution of databases over time.
 
 # ##############################################################################
-# Slide 2: Databases: A Brief History
+# Databases: A Brief History
 # ##############################################################################
 
 The 1980s marked a significant period for databases with the widespread
@@ -1050,11 +1041,11 @@ However, despite these advancements, there was no significant expressive
 difference from the pure relational model, meaning that the core capabilities of
 relational databases remained largely unchanged.
 
-Transition: Let's delve deeper into the object-oriented paradigm and its key
+Let's delve deeper into the object-oriented paradigm and its key
 concepts.
 
 # ##############################################################################
-# Slide 3: Object-Oriented
+# Object-Oriented
 # ##############################################################################
 
 Object-oriented programming (OOP) is a data model that describes object behavior
@@ -1074,7 +1065,7 @@ This prevents external code from accessing the inner workings of an object,
 promoting modularity and security in software design.
 
 # ##############################################################################
-# Slide 1: Databases: A Brief History
+# Databases: A Brief History
 # ##############################################################################
 
 In the late 90s, the internet began to grow rapidly, leading to the need for
@@ -1089,11 +1080,11 @@ artist, and price, demonstrating how XML can organize complex data in a readable
 format. XML's ability to represent hierarchical data structures made it a
 popular choice for web data exchange and storage.
 
-Transition: Moving from XML, let's explore another framework for data
+Moving from XML, let's explore another framework for data
 representation.
 
 # ##############################################################################
-# Slide 2: Resource Description Framework
+# Resource Description Framework
 # ##############################################################################
 
 The Resource Description Framework, or RDF, is another method for organizing
@@ -1109,11 +1100,11 @@ The example provided illustrates how RDF can represent relationships between
 people, dates, and interests, showing its versatility in linking diverse data
 points.
 
-Transition: Now, let's delve into another model that uses graphs to represent
+Now, let's delve into another model that uses graphs to represent
 data.
 
 # ##############################################################################
-# Slide 3: Property Graph Model
+# Property Graph Model
 # ##############################################################################
 
 The Property Graph Model is a way to represent data using graphs, which consist
