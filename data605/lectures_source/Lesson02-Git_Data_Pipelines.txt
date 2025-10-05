@@ -48,7 +48,7 @@ UMD DATA605 - Big Data Systems
   - [\textcolor{blue}{\underline{https://linuxcommand.org/tlcl.php}}](https://linuxcommand.org/tlcl.php)
   - [\textcolor{blue}{\underline{}}]()
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_4_image_1.png)
 ::::
@@ -71,7 +71,7 @@ UMD DATA605 - Big Data Systems
 //- Playgrounds
 //  - [\textcolor{blue}{\underline{https://learngitbranching.js.org}}](https://learngitbranching.js.org)
 //:::: 
-//:::: {.column width=30%}
+//:::: {.column width=40%}
 //![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_1.png)
 //:::: 
 //:::
@@ -104,7 +104,7 @@ UMD DATA605 - Big Data Systems
   - A server stores the code, clients connect to it
   - **Cons**: If the server is down, nobody can work
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_1.png)
 
@@ -121,7 +121,7 @@ UMD DATA605 - Big Data Systems
   - Each node is both a client and a server
   - **Cons**: complex
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_2.png)
 ::::
 :::
@@ -137,7 +137,7 @@ UMD DATA605 - Big Data Systems
   - Store the data in terms of patches (changes of files over time)
   - Can reconstruct the state of the repo by applying the patches
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_1.png)
 
@@ -155,7 +155,7 @@ UMD DATA605 - Big Data Systems
   - Store reference (hash) to the snapshots
   - Save link to previous identical files
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_2.png)
 
@@ -198,7 +198,7 @@ UMD DATA605 - Big Data Systems
     - The repo itself with all history
     - Cloning gets you the project's `.git`
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_1.png)
 
@@ -215,7 +215,7 @@ UMD DATA605 - Big Data Systems
   - **Staged**: marked modified files for next commit
   - **Committed**: data stored in local DB
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_2.png)
 
@@ -315,7 +315,7 @@ UMD DATA605 - Big Data Systems
   - Hard-core: 
 [\textcolor{blue}{\underline{Git internals}}](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects)
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 *Commit tree*
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_1.png)
@@ -342,7 +342,7 @@ UMD DATA605 - Big Data Systems
   - Merge code upstream after completion
 
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_15_image_1.png)
 
@@ -381,7 +381,7 @@ UMD DATA605 - Big Data Systems
 - Divergent history
   - Work progresses in two "split" branches
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_16_image_1.png)
 
@@ -397,7 +397,7 @@ UMD DATA605 - Big Data Systems
   - Move `HEAD` pointer to new branch
   - Change files in working dir to match branch pointer
 
-- E.g., two branches, master and testing
+- E.g., two branches, `master` and `testing`
   - You are on `master`
   - `git checkout testing`
   - Pointer moves, working dir changes
@@ -405,7 +405,7 @@ UMD DATA605 - Big Data Systems
   - Pointer to `testing` moves forward
 
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_2.png)
@@ -415,22 +415,40 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Git Branching and Merging
+
 ::: columns
 :::: {.column width=55%}
-- Tutorials: Work on main, Hot fix
+- Tutorials
+  - [\textcolor{blue}{\underline{Work on main}}](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#work-on-main)
+  - [\textcolor{blue}{\underline{Hot fix}}](https://github.com/gpsaggese/umd_data605/blob/main/tutorials/tutorial_git/tutorial_git.md#hot-fix)
 
 - Start from a project with some commits
+
 - Branch to work on a new feature "Issue 53"
   ```
   > git checkout -b iss53
-  **work ... work ... work**
+  work ... work ... work
   > git commit
   ```
-- Need a hotfix to master
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_3.png)
+
+::::
+:::
+
+* Git Branching and Merging
+
+::: columns
+:::: {.column width=55%}
+- **Need a hotfix** to `master`
   ```
   > git checkout master
   > git checkout -b hotfix
-  **fix ... fix ... fix**
+  fix ... fix ... fix
   > git commit -am "Hot fix"
   > git checkout master
   > git merge hotfix
@@ -439,10 +457,8 @@ UMD DATA605 - Big Data Systems
 - **Fast forward**
   - Now there is a divergent history between `master` and `iss53`
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_2.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_3.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_4.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_5.png)
@@ -453,25 +469,22 @@ UMD DATA605 - Big Data Systems
 * Git Branching and Merging
 ::: columns
 :::: {.column width=55%}
+- Keep working on `iss53`
   ```
   > git checkout iss53
-  **work ... work ... work**
+  work ... work ... work
   ```
-- The branch keeps diverging
+  - The branch keeps diverging
 - At some point you are done with `iss53`
-- You want to merge your work back to `master`
-- Go to the target branch
+  - You want to merge your work back to `master`
+  - Go to the target branch
   ```
   > git checkout master
   > git merge iss53
   ```
 - Git can't fast forward
-- Git creates a new snapshot with the 3-way "merge commit" (commit with more than
-  one parent)
-- Delete the branch
-  `> git branch -d iss53`
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_2.png)
@@ -479,25 +492,35 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
+- Git creates a new snapshot with the 3-way "merge commit" (i.e., a commit with
+  more than one parent)
+- Delete the branch
+  `> git branch -d iss53`
+
 * Fast Forward Merge
+- **Fast forward merge**
+  - Merge a commit `X` with a commit `Y` that can be reached by following the
+    history of commit `X`
+
+- There is not divergent history to merge
+  - Git simply moves the branch pointer forward from X to Y
+
 ::: columns
 :::: {.column width=55%}
-- **Fast forward merge** = merge a commit X with a commit Y that can be reached
-  by following the history of commit X**
-- There is not divergent history to merge
-- Git simply moves the branch pointer forward from X to Y
 - **Mental model**: a branch is just a pointer that says where the tip of the
-  branch is**
-- E.g., C4' is reachable from C3
+  branch is
+- E.g., `C4'` is reachable from `C3`
   ```
   > git checkout master
   > git merge experiment
   ```
-- Git moves the pointer of master to C4'
+- Git moves the pointer of master to `C4'`
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_20_image_1.png)
+
+![](data605/lectures_source/images/lecture_2/lec_2_slide_20_image_2.png)
 
 ::::
 :::
@@ -507,25 +530,25 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=55%}
 - Tutorial:
   - Merging conflicts
+
 - Sometimes Git can't merge, e.g.,
   - The same file has been modified by both branches
   - One file was modified by one branch and deleted by another
+
 - Git:
   - Does not create a merge commit
   - Pauses to let you resolve the conflict
   - Adds conflict resolution markers
+
 - User merges manually
   - Edit the files `git mergetool`
-  - `git add` to mark as resolved**
+  - `git add` to mark as resolved
   - `git commit`
-  - Use PyCharm
-::::
-:::: {.column width=30%}
+  - Use PyCharm or VS Code
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_2.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_3.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_4.png)
+::::
+:::: {.column width=40%}
+
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_2.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_3.png)
@@ -555,7 +578,7 @@ UMD DATA605 - Big Data Systems
     - Only the branch where we are is affected
   - Finally fast forward master
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_2.png)
@@ -577,12 +600,13 @@ UMD DATA605 - Big Data Systems
   - Developer
     - You are contributing to a project that you don't maintain
     - You work on your branch
-    - When you are ready to integrate your work, rebase your work onto **origin/master**
+    - When you are ready to integrate your work, rebase your work onto
+      `origin/master`
   - The maintainer
     - Does not have to do any integration work
     - Does just a fast forward or a clean apply (no conflicts)
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
@@ -606,7 +630,7 @@ UMD DATA605 - Big Data Systems
   - You push your commits to a remote somewhere
   - Others pull your commits down and base their work on them
   - You rewrite those commits with `git rebase`
-  - You push them again with **git push --force
+  - You push them again with `git push --force`
   - Your collaborators have to re-merge their work
 - **Solution**
   - Strict version: "Do not _ever_ rebase commits that exist outside your
@@ -614,7 +638,7 @@ UMD DATA605 - Big Data Systems
   - Loose version: "It's ok to rebase your branch even if you pushed to a server,
     as long as you are the only one to use it"
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_2.png)
@@ -637,9 +661,9 @@ UMD DATA605 - Big Data Systems
 - **b) History represents how a project should have been made**
 - *"You would not publish a book as a sequence of drafts and correction, but rather the final version"*
 - *You should tell the history in the way that is best for future readers*
-- Use `git rebase` and filter-branch**
+- Use `git rebase` and filter-branch
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_1.png)
 
@@ -665,7 +689,7 @@ UMD DATA605 - Big Data Systems
   - My commits are just my checkpoints
   - Rarely they are "complete"
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_26_image_1.png)
 
@@ -683,7 +707,7 @@ UMD DATA605 - Big Data Systems
   ```
 - **Tracking branches**
   - Local references representing the state of the remote repo
-  - E.g., `master` tracks **origin/master**
+  - E.g., `master` tracks `origin/master`
   - You can't change the remote branch (e.g., **origin/master**)
   - You can change tracking branch (e.g., `master`)
   - Git updates tracking branches when you do `git fetch origin` (or `git pull`)
@@ -715,7 +739,7 @@ UMD DATA605 - Big Data Systems
     - Somebody starts `dumbidea` branch and merge to `master` (!)`
     - You squash-and-merge your `iss91v2`
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_1.png)
 
@@ -743,7 +767,7 @@ UMD DATA605 - Big Data Systems
     - Cannot push code that will overwrite each other code (only fast-forward
       changes)
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_29_image_1.png)
 
@@ -773,7 +797,7 @@ UMD DATA605 - Big Data Systems
   - "Innovation" was forking (Fork me on GitHub!)
   - GitHub acquired by Microsoft for 7.5b USD
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_30_image_1.png)
 
@@ -787,12 +811,12 @@ UMD DATA605 - Big Data Systems
   - E.g., Linux, GitHub (forking) workflow
 - **1. One repo is the "official" project**
   - Only the project maintainer pushes to the public repo
-  - E.g., **sorrentum/sorrentum**
+  - E.g., `sorrentum/sorrentum`
 - **2. Each contributor**
   - Has read access to everyone else's public repo
   - Forks the project into a private copy
     - Write access to their own public repo
-    - E.g., **gpsaggese/sorrentum**
+    - E.g., `gpsaggese/sorrentum`
   - Makes changes
   - Pushes changes to his own public copy
   - Sends email to maintainer asking to pull changes (pull request)
@@ -802,7 +826,7 @@ UMD DATA605 - Big Data Systems
   - Tests changes locally
   - Pushes branch to the official repo
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_31_image_1.png)
 
@@ -812,7 +836,7 @@ UMD DATA605 - Big Data Systems
 * Git log
 ::: columns
 :::: {.column width=55%}
-- `git log` reports info about commits**
+- `git log` reports info about commits
 - **refs** are references to:
   - `HEAD` (commit you are working on, next commit)
   - `origin/master` (remote branch)
@@ -823,14 +847,14 @@ UMD DATA605 - Big Data Systems
   -  2 means   
   - A merge commit has multiple parents
 - **Double-dot notation**
-  - **1..2** = commits that are reachable from 2 but not from 1 (difference)**
+  - `1..2` = commits that are reachable from 2 but not from 1 (difference)
   - `git log master..experiment $\to$ D,C`
   - `git log experiment..master $\to$ F,E`
 - **Triple-dot notation**
-  - **1...2** = commits that are reachable from either branch but not from both (union excluding intersection)**
+  - `1...2` = commits that are reachable from either branch but not from both (union excluding intersection)
   - `git log master...experiment $\to$ F,E,D,C`
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_32_image_1.png)
 
@@ -853,7 +877,7 @@ UMD DATA605 - Big Data Systems
   - Sometimes a bug shows up at top of tree
   - You don't know at which revision it started manifesting
   - You have a script that returns 0 if the project is good and non-0 if the project is bad
-  - `git bisect` can find the revision at which the script goes from good to bad**
+  - `git bisect` can find the revision at which the script goes from good to bad
 - filter-branch
   - Rewrite repo history in some script-able way
     - E.g., change your email, remove a file (with passwords or large file)
@@ -881,7 +905,7 @@ UMD DATA605 - Big Data Systems
   - In GitHub parlance
     - Make a copy of a project so that you can contribute to it even if you don't have push / write access
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_34_image_1.png)
 
@@ -898,7 +922,7 @@ UMD DATA605 - Big Data Systems
 - Mastery
   - Data Pipelines Pocket Reference: Moving and Processing Data for Analytics
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_37_image_1.png)
 
@@ -948,7 +972,7 @@ UMD DATA605 - Big Data Systems
   - Extract data (e.g., from REST API)
   - Load data into DB (e.g., SQL table)
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_39_image_1.png)
 
@@ -1018,7 +1042,7 @@ UMD DATA605 - Big Data Systems
   - 3rd-parties
     - E.g., Google analytics tracking website usage
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_41_image_1.png)
 
@@ -1038,7 +1062,7 @@ UMD DATA605 - Big Data Systems
   - ELT
   - EtLT
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_42_image_1.png)
 
@@ -1095,7 +1119,7 @@ UMD DATA605 - Big Data Systems
   - Pipeline and jobs are represented through DAGs
 - Monitor, retry, and send alarms
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_1.png)
 
@@ -1125,7 +1149,7 @@ UMD DATA605 - Big Data Systems
   - Columnar DBs
   - Data compression
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_46_image_1.png)
 ::::
@@ -1144,7 +1168,7 @@ UMD DATA605 - Big Data Systems
   - Analytics requires a few columns
   - Better data compression
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_1.png)
 
@@ -1187,7 +1211,7 @@ UMD DATA605 - Big Data Systems
   - Movies
   - Blobs of data
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_49_image_1.png)
 
@@ -1231,7 +1255,7 @@ UMD DATA605 - Big Data Systems
   - **Few large read or write transactions**
   - E.g., data mining, business intelligence
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_1.png)
 
@@ -1267,7 +1291,7 @@ UMD DATA605 - Big Data Systems
   - Corresponds to ELT data pipeline style
   - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_source/images
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_1.png)
 
