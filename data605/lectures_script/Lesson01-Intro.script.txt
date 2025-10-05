@@ -1,0 +1,74 @@
+# Slide 1: Books of the Class
+
+- The slides used in this class are derived from various sources such as books, technical articles, and the Internet. This means they are compiled from a wide range of expert opinions and research findings, ensuring a comprehensive understanding of the topics covered.
+- The slides are designed to be self-sufficient. This means that each slide should provide enough information for you to understand the topic without needing to refer to external sources. This approach helps in making the learning process more efficient and focused.
+
+Transition: Now that we understand the resources, let's look at what you will achieve by the end of this course.
+
+# Slide 2: Learning Outcomes
+
+- You will learn how to model and reason about data. This involves understanding how data can be structured and interpreted to extract meaningful insights.
+- You will gain skills in processing and manipulating data using tools like Python and Pandas. These are essential for handling large datasets efficiently.
+- The course will introduce you to various data models, including relational, NoSQL, and graph databases. You will learn how to choose the right data model for different applications, which is crucial for effective data management.
+- You will learn to use data management systems such as PostgreSQL, MongoDB, and HBase. Understanding these systems will help you decide which one to use in different scenarios.
+- Building data processing pipelines using tools like Docker and Airflow will be covered. This is important for automating and managing data workflows.
+- Finally, you will have the opportunity to build a big-data system from start to finish. This will be part of a class project where you can also contribute to an open-source project, providing practical experience in real-world applications.
+
+Transition: With these outcomes in mind, let's explore the tools you will learn to use throughout the course.
+
+# Slide 3: Tools We Will Learn To Use
+
+- You will learn to use Python, a versatile programming language widely used in data science and machine learning.
+- Development tools such as Bash/Linux OS, Git, and GitHub will be covered. These tools are essential for managing code and collaborating with others. You will learn about data models, branching, pull requests, and issues.
+- Jupyter notebooks will be used for interactive coding and data visualization, making it easier to document and share your work.
+- Docker will be introduced for containerization, which helps in creating consistent development environments.
+- In the realm of big data tools, you will learn about ETL pipelines, which are crucial for data integration and transformation.
+- You will explore various database systems, including relational databases like PostgreSQL, NoSQL databases like HBase, MongoDB, Couchbase, and Redis, and graph databases like Neo4j, GraphX, and Giraph.
+- Computing frameworks such as Hadoop, Spark, and Dask will be covered to help you process large datasets efficiently.
+- Airflow will be introduced as a workflow manager to automate complex data workflows.
+- You will also learn about cloud services like AWS, which are essential for scalable data storage and processing.
+- Tutorials will be provided for all the tools used in class projects, ensuring you have the necessary guidance to apply what you learn.
+
+# Slide 1: Todos
+
+This slide outlines the essential tasks you need to complete for the course. First, make sure to study the slides and materials provided. This will help you understand the course content better. Next, visit the DATA605 ELMS/Canvas site. It's important to enable notifications so you don't miss any updates. Also, note down the contact information for the instructor and TAs in case you need assistance. Check the DATA605 schedule regularly to keep track of important dates and deadlines. The DATA605 GitHub repository is another crucial resource, so make sure to check it for any updates or additional materials. The FAQs section can be very helpful for addressing common questions or concerns. Setting up your computing environment is crucial. You need to install Linux or VMware and Docker on your laptop. Instructions for these installations can be found in the class repository. Remember to bring your laptop to class as lessons are recorded, but attending class in person is encouraged whenever possible.
+
+Transition: Now that we have covered the essential tasks, let's move on to understanding how you will be graded in this course.
+
+# Slide 2: Grading
+
+This slide explains how your performance in the course will be evaluated. Quizzes make up 40% of your grade. These quizzes are multiple-choice and cover the previous two lessons. Each quiz consists of 20 questions that you need to complete in 20 minutes. There will be 4-5 quizzes throughout the semester to encourage consistent study habits. The final project is a significant part of your grade, accounting for 60%. This project requires you to apply the course concepts comprehensively. You will work on a big data project in Python, choosing from a list of topics. You can work individually or in a group. This project is an opportunity to demonstrate your understanding and application of the course material.
+
+Transition: With the grading criteria in mind, let's explore the details of the class projects you will undertake.
+
+# Slide 3: Class Projects
+
+This slide provides an overview of the class projects. The project theme is "Build X with Y," where X is a use case and Y is a technology. Your task is to study and describe the chosen technology Y, then implement the use case X using this technology. You will create Jupyter notebooks to demonstrate your project and commit your code to GitHub, contributing to an open-source repository. Additionally, you will write a blog entry and present your project in a video. You can choose from a list of use cases and technologies, such as big data or large language models. Each project can be done individually or in a group of up to three people. The projects vary in difficulty, allowing you to choose one that matches your skill level and interests. This project is an excellent opportunity to apply what you've learned in a practical setting and showcase your skills.
+
+# Slide 1: Soft Skills to Succeed in the Workplace
+
+This slide focuses on essential soft skills needed for workplace success, particularly in tech-related fields. Working in a team is crucial as it fosters collaboration and enhances productivity. Designing software architecture using principles like Object-Oriented Programming (OOP), Agile methodologies, and Design Patterns is vital for creating efficient and scalable software. Commenting on your code and writing external documentation such as tutorials and manuals are important for clarity and future reference. Writing understandable code is not just for others but also for your future self when revisiting projects. Reading others' code helps in learning and understanding different coding styles and techniques. Following code conventions like PEP8 or Google Code ensures consistency and readability across projects. Clear communication through emails or platforms like Slack is essential for effective collaboration. Filing and reproducing bug reports are key skills in software development, helping to identify and fix issues efficiently. Having an intuition for computer science constants and a basic understanding of operating systems, including virtual memory and processes, provides a solid foundation for technical problem-solving.
+
+Transition: Now, let's learn about the instructor who will guide us through these skills.
+
+# Slide 2: Yours Truly
+
+This slide introduces GP Saggese, the instructor for the course. GP Saggese has an extensive academic background, having completed a PhD and postdoctoral work at the University of Illinois at Urbana-Champaign. You can connect with him on LinkedIn or via email at gsaggese@umd.edu. At the University of Maryland, he lectures on Big Data Systems and Advanced Machine Learning, sharing his expertise with students. In the real world, GP Saggese has worked as a research scientist at notable companies like NVIDIA and Synopys and has founded three AI and fintech startups: ZeroSoft, June, and Causify AI. His contributions to the field include over 20 academic papers and two US patents, showcasing his depth of knowledge and experience. The accompanying image captures GP Saggese in a coding state, emphasizing his hands-on approach to teaching and research.
+
+Transition: With this background in mind, let's delve into the world of Big Data.
+
+# Slide 3: Big Data
+
+This slide explores the promises and evolution of data science within the context of Big Data. Data science offers competitive advantages by enabling better strategic and tactical business decisions and optimizing business processes. Although data science might seem like a modern concept, it has roots in older disciplines such as operations research from the 1970s and 1980s, decision support and business intelligence from the 1990s, and predictive analytics from the early 2010s. What has changed is the accessibility and ease of learning and applying data science today. Unlike in the past, there's no need to hire consulting companies, as many tools are now open-source. For instance, the Python ecosystem, including libraries like numpy, scipy, Pandas, and sklearn, provides powerful tools for data analysis. Additionally, large datasets are more readily available, and computing has become cheaper with the advent of cloud computing services like AWS and Google Cloud, as well as the use of GPUs. These advancements have democratized data science, making it accessible to a broader audience.
+
+# Slide 1: Motivation: Data Overload
+
+- Data science is a major driver of economic growth, as highlighted by McKinsey in 2013. This is because data is becoming increasingly important in decision-making processes across various industries.
+- There is a massive explosion of data in every domain. This is largely due to the proliferation of sensing devices and networks that monitor processes around the clock. For example, sensors can track the temperature in your room, your vital signs, or even pollution levels in the air.
+- The widespread use of sophisticated smartphones contributes significantly to data generation. With 80% of the global population owning a smartphone, the amount of data being produced is staggering.
+- The internet and social networks have made it incredibly easy for individuals and organizations to publish data. This has led to an unprecedented amount of information being available online.
+- The Internet of Things (IoT) connects everyday objects to the internet, further increasing data generation. For instance, even household items like power supplies and toasters can now be connected to the internet.
+- Datafication is the process of turning various aspects of life into data. This means that everything from your preferences to your daily activities can be transformed into data streams, such as your "likes" on social media.
+- The main challenges we face include managing the ever-increasing volume of data and finding ways to extract actionable insights and scientific knowledge from it. This requires advanced tools and techniques in data analysis and machine learning.
+
+Transitioning to the next slide, let's explore how machine learning can help address these challenges.

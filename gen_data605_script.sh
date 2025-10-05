@@ -19,6 +19,6 @@ DST_NAME=$(echo $SRC_NAME | sed 's/\.txt$/.script.txt/')
 
 generate_slide_script.py \
   --in_file $DIR/lectures_source/$SRC_NAME \
-  --out_file $DIR/lectures_source/$DST_NAME \
+  --out_file $DIR/lectures_script/$DST_NAME \
   --slides_per_group 3 \
   $OPTS
