@@ -23,4 +23,6 @@ generate_slide_script.py \
   --slides_per_group 3 \
   $OPTS
 
+perl -pi -e 's/^Transition: //g' $DIR/lectures_script/$DST_NAME
+
 lint_txt.py -i $DIR/lectures_script/$DST_NAME --use_dockerized_prettier
