@@ -31,14 +31,14 @@ UMD DATA605: Big Data Systems
 
 * Invariants of a Class Lecture
 - **Invariants**
-  - Focus on intuition over math
-  - Emphasize realistic assumptions, numerical methods
-    - Analytical solutions are outdated
+  - Focus on intuition
   - Interactive Jupyter notebook tutorials
     - Tutorials done at home
     - Videos added over time
+
 - **Class flow**
   - Alternate between slides, whiteboard, tutorials
+
 - **Labs**
   - Review complete class project examples
   - Collaborate on class project
@@ -51,7 +51,7 @@ UMD DATA605: Big Data Systems
   - Should be self-sufficient
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ::::
 :::
@@ -115,16 +115,16 @@ UMD DATA605: Big Data Systems
 - DATA605 - ELMS/Canvas site
   - Enable notifications
   - Contact info for me/TAs
-- DATA605 - Schedule
-- DATA605 - GitHub repo
+- Check DATA605 Schedule
+- Check DATA605 GitHub repo
+- Check DATA605 FAQs
 - Setup computing environment
   - Install Linux/VMware
   - Install Docker on laptop
   - Instructions in class repo
 - Bring laptop to class
-  - Quizzes at class start
 - Lessons recorded
-  - Attend class!
+  - Still attend class, when possible
 
 * Grading
 - **Quizzes**
@@ -132,6 +132,7 @@ UMD DATA605: Big Data Systems
   - Multi-choice on previous 2 lessons
   - 20 questions in 20 minutes
   - 4-5 quizzes to encourage study during semester
+
 - **Final Project**
   - 60% of grade
   - Comprehensive application of course concepts
@@ -171,19 +172,6 @@ UMD DATA605: Big Data Systems
   - Reproduce a bug
   - Intuition of CS constants
   - Basic understanding of OS (virtual memory, processes)
-
-* Links
-
-- [\textcolor{blue}{\underline{ELMS}}](https://umd.instructure.com/courses/1391619/pages/homepage)
-
-- [\textcolor{blue}{\underline{Syllabus}}](https://docs.google.com/document/d/1YXCrqh6KGg3xm4-Lr4QGdBnjeWEfkqz67FHNHB_rdAk/edit?tab=t.0#heading=h.278ryn4xodsb)
-  - Schedule
-  - GitHub project
-  - Class FAQs
-
-- [\textcolor{blue}{\underline{Project specs}}](TBD)
-
-// TODO: Add link to project specs
 
 * Yours Truly
 ::: columns
@@ -311,7 +299,7 @@ UMD DATA605: Big Data Systems
 * Big Data Applications
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=50%}
 
 - **Mobile advertisement**
 - Mobile phones are ubiquitous
@@ -321,6 +309,14 @@ UMD DATA605: Big Data Systems
   - GPS location
   - Search history
   - Credit card transactions
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_17_image_1.png){ height=50% }
+
+::::
+:::
+
 - E.g.,
   - You've bought a new house
   - You google questions about house renovations
@@ -328,14 +324,6 @@ UMD DATA605: Big Data Systems
   - Your phone tracks where you are
   - Google sends you coupons for the closest Home Depot
   - _"I feel like Google is following me"_
-
-::::
-:::: {.column width=35%}
-
-![](data605/lectures_source/images/lecture_1/lec_1_slide_17_image_1.png){ height=50% }
-
-::::
-:::
 
 * Big Data Applications
 - **Biomedical data**
@@ -362,7 +350,7 @@ UMD DATA605: Big Data Systems
 * Goal of Data Science
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 - **Goal**: from data to wisdom
   - Data (raw bytes)
   - Information (organized, structured)
@@ -372,7 +360,7 @@ UMD DATA605: Big Data Systems
 - Combine streams of big data to generate new data
   - New data can be "big data" itself
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_20_image_1.png)
 
@@ -381,7 +369,7 @@ UMD DATA605: Big Data Systems
 
 * The Six V'S of Big Data
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 - **Volume**
   - Vast amount of data is generated
 - **Variety**
@@ -397,7 +385,7 @@ UMD DATA605: Big Data Systems
   - Data must be valuable
   - Benefit an organization
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_21_image_1.png)
 
@@ -439,13 +427,13 @@ UMD DATA605: Big Data Systems
 * Sources of Big Data
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 - Distinguish Big Data by source
   - **Machines**
   - **People**
   - **Organizations**
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_24_image_1.png)
 
@@ -468,7 +456,7 @@ UMD DATA605: Big Data Systems
 * Sources of Big Data: People
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 
 - **People** and their activities generate data
   - Social media (Instagram, Twitter, LinkedIn)
@@ -488,7 +476,7 @@ UMD DATA605: Big Data Systems
   - Surveillance capitalism
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_26_image_1.png)
 
@@ -517,7 +505,7 @@ UMD DATA605: Big Data Systems
 * Is Data Science Just Hype?
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 
 - Big data (or data science)
   - "Any process where interesting information is inferred from data"
@@ -526,7 +514,7 @@ UMD DATA605: Big Data Systems
 - **Is it all hype?**
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_28_image_1.png)
 
@@ -578,20 +566,23 @@ UMD DATA605: Big Data Systems
     - Easily collect huge data volumes
     - Feed into algorithms
     - Strong signal overcomes noise
+
 - **Causation $\to$ Correlation**
   - Goal: determine cause and effect
   - Causation hard to determine $\to$ focus on correlation
     - Correlation is often sufficient
     - E.g., diapers and beer bought together
+
 - **"Data-fication"**
   - = converting abstract concepts into data
   - E.g., "sitting posture" data-fied by sensors in your seat
   - Preferences data-fied into likes
+
 - From: Rise of Big Data, 2013
 
 * Examples: Election Prediction
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 - Nate Silver and the 2012 Elections
   - Predicted 49/50 states in 2008 US elections
   - Predicted 50/50 states in 2012 US elections
@@ -604,7 +595,7 @@ UMD DATA605: Big Data Systems
   - Focus on probabilities
   - Effective communication
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_35_image_1.png)
 ::::
@@ -628,12 +619,12 @@ UMD DATA605: Big Data Systems
 
 * Data Scientist
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 - Ambiguous, ill-defined term
 - From Drew Conway's Venn Diagram
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_37_image_1.png)
 
 ::::
@@ -694,7 +685,7 @@ UMD DATA605: Big Data Systems
 
 * Multiple Layers of Data Modeling
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 
 - **Physical layer**
   - How is the data physically stored
@@ -709,7 +700,7 @@ UMD DATA605: Big Data Systems
   - Security and/or ease-of-use
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_43_image_1.png)
 
@@ -719,7 +710,7 @@ UMD DATA605: Big Data Systems
 * Data Models: Logical Layer
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 
 - **Modeling constructs**
   - Concepts to represent data structure
@@ -736,7 +727,7 @@ UMD DATA605: Big Data Systems
   - E.g., insert, update, delete data
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_44_image_1.png)
 
@@ -823,7 +814,7 @@ UMD DATA605: Big Data Systems
 * Relational, Hierarchical, Network Model
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 - **Relational model**
   - Data as tuples in relations
   - SQL
@@ -837,7 +828,7 @@ UMD DATA605: Big Data Systems
     - Multiple parents and children
   - Graph DBs resurgence in 2010s
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_50_image_1.png)
 
@@ -867,7 +858,7 @@ UMD DATA605: Big Data Systems
 * Entity-Relationship Model
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 
 - 1976: Peter Chen proposed "Entity-Relationship Model"
 - Describes knowledge as entities and relationships
@@ -875,7 +866,7 @@ UMD DATA605: Big Data Systems
 - **Relationships**: Connections between entities, "Verbs"
 - Map ER model to relational DB: Entities, relationships $\to$ tables
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_1.png)
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_2.png)
@@ -951,7 +942,7 @@ UMD DATA605: Big Data Systems
 
 * Resource Description Framework
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 - Aka RDF
 - Key construct: "subject-predicate-object" triple
   - Subject=sky
@@ -963,7 +954,7 @@ UMD DATA605: Big Data Systems
   - Relational DBs
   - Dedicated "triple-stores" DBs
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_56_image_1.png)
 ```
@@ -981,7 +972,7 @@ UMD DATA605: Big Data Systems
 * Property Graph Model
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 - Graph:
   - Vertices and edges
   - Properties for each edge and vertex
@@ -989,7 +980,7 @@ UMD DATA605: Big Data Systems
   - Relational DBs
   - Graph DBs
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_57_image_1.jpeg)
 
