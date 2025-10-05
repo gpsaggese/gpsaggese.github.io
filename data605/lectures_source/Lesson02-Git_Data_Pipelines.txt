@@ -475,6 +475,7 @@ UMD DATA605 - Big Data Systems
   work ... work ... work
   ```
   - The branch keeps diverging
+
 - At some point you are done with `iss53`
   - You want to merge your work back to `master`
   - Go to the target branch
@@ -482,6 +483,7 @@ UMD DATA605 - Big Data Systems
   > git checkout master
   > git merge iss53
   ```
+
 - Git can't fast forward
 ::::
 :::: {.column width=40%}
@@ -529,18 +531,19 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=55%}
 - Tutorial:
-  - Merging conflicts
+  - [\textcolor{blue}{\underline{Merging
+  conflicts}}](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#merging-conflicts)
 
-- Sometimes Git can't merge, e.g.,
+- Sometimes **Git can't merge**, e.g.,
   - The same file has been modified by both branches
   - One file was modified by one branch and deleted by another
 
-- Git:
+- **Git**:
   - Does not create a merge commit
   - Pauses to let you resolve the conflict
   - Adds conflict resolution markers
 
-- User merges manually
+- **User merges manually**
   - Edit the files `git mergetool`
   - `git add` to mark as resolved
   - `git commit`
@@ -558,35 +561,39 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Git Rebasing
+- In Git there are **two ways of merging divergent history**
+  - E.g., `master` and `experiment` have a common ancestor `C2`
+
 ::: columns
 :::: {.column width=55%}
-- In Git there are two ways of merging divergent history
-  - E.g., `master` and **experiment** have a common ancestor C2
+
 - **Merge**
   - Go to the target branch
-  - `> git checkout master`
-  - `> git merge experiment`
-  - Create a new snapshot C5 and commit
+    ```
+    > git checkout master
+    > git merge experiment
+    ```
+  - Create a new snapshot `C5` and commit
+
 - **Rebase**
   - Go to the branch to rebase
-  - `> git checkout experiment`
-  - `> git rebase master`
+    ```
+    > git checkout experiment
+    > git rebase master
+    ```
   - Rebase algo:
-    - Get all the changes committed in the branch (C4) where we are on (experiment) since the common ancestor (C2)
-    - Sync to the branch that we are rebasing onto (master at C3)
-    - Apply the changes C4'
-    - Only the branch where we are is affected
-  - Finally fast forward master
+    - Get all the changes committed in the branch (`C4`) where we are on
+      (`experiment`) since the common ancestor (`C2`)
+    - Sync to the branch that we are rebasing onto (`master` at `C3`)
+    - Apply the changes `C4`
+    - Only current branch is affected
+    - Finally fast forward master
 ::::
 :::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_2.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_3.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_2.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_3.png)
-
 ::::
 :::
 
@@ -596,6 +603,7 @@ UMD DATA605 - Big Data Systems
 - **Rebasing makes for a cleaner history**
   - The history looks like all the work happened in series
   - Although in reality it happened in parallel to the development in master
+
 - **Rebasing to contribute to a project**
   - Developer
     - You are contributing to a project that you don't maintain
@@ -610,38 +618,30 @@ UMD DATA605 - Big Data Systems
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
 
 ::::
 :::
 
 * Golden Rule of Rebasing
-::: columns
-:::: {.column width=55%}
 - **Remember**: rebasing means abandoning existing commits and creating new ones
   that are similar but different
+
+::: columns
+:::: {.column width=55%}
+
 - **Problem**
-  - You push your commits to a remote somewhere
-  - Others pull your commits down and base their work on them
-  - You rewrite those commits with `git rebase`
-  - You push them again with `git push --force`
-  - Your collaborators have to re-merge their work
+  - You push commits to a remote
+  - Others pull commits and base work on them
+  - You rewrite commits with `git rebase`
+  - You push again with `git push --force`
+  - Collaborators must re-merge work
+
 - **Solution**
-  - Strict version: "Do not _ever_ rebase commits that exist outside your
-    repository"
-  - Loose version: "It's ok to rebase your branch even if you pushed to a server,
-    as long as you are the only one to use it"
+  - Strict: _"Do not ever rebase commits outside your repository"_
+  - Loose: _"Rebase your branch if only you use it, even if pushed to a server"_
 ::::
 :::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_2.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_1.png)
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_2.png)
 
@@ -649,23 +649,34 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Rebase vs Merge: Philosophical Considerations
+- Deciding **Rebase-vs-merge** depends on the answer to the question:
+  - _What does the commit history of a repo mean?_
+
 ::: columns
 :::: {.column width=55%}
-- Rebase-vs-merge depend on the answer to the question:
-- **What does the commit history of a repo mean?**
-- **a) History is the record of what actually happened**
-- *"History should not be tampered with!"**
-- **Q: What if there is a series of messy merge commits?**
-- **A: This is how it happened. The repo should preserve this**
-- Use `git merge`
-- **b) History represents how a project should have been made**
-- *"You would not publish a book as a sequence of drafts and correction, but rather the final version"*
-- *You should tell the history in the way that is best for future readers*
-- Use `git rebase` and filter-branch
+
+1) **History is the record of what actually happened**
+   - _"History should not be tampered with!"_
+   - Q: What if there is a series of messy merge commits?
+   - A: This is how it happened. The repo should preserve this
+   - Use `git merge`
 ::::
 :::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_1.png)
+::::
+:::
+
+::: columns
+:::: {.column width=55%}
+
+2) **History represents how a project should have been made**
+   - _"You would not publish a book as a sequence of drafts and correction, but
+     rather the final version"_
+   - _"You should tell the history in the way that is best for future readers"_
+   - Use `git rebase` and filter-branch
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_2.png)
 
@@ -673,30 +684,24 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Rebase vs Merge: Philosophical Considerations
-::: columns
-:::: {.column width=55%}
-- Many man-centuries have been wasted discussing rebase-vs-merge at the watercooler
+- Many man-centuries have been wasted discussing rebase-vs-merge at the
+  watercooler
   - Total waste of time! Tell people to get back to work!
-- When you contribute to a project often people decide for you based on their preference
+
+- When you contribute to a project often people decide for you based on their
+  preference
+
 - **Best of the merge-vs-rebase approaches**
-- Rebase changes you've made in your local repo
-  - Even if you have pushed but you know the branch is yours
-  - Use `git pull --rebase` to clean up the history of your work
-  - If the branch is shared with others then you need to definitively `git merge`
-- Only `git merge` to master to preserve the history of how something was built
+  - Rebase changes you've made in your local repo
+    - Even if you have pushed but you know the branch is yours
+    - Use `git pull --rebase` to clean up the history of your work
+    - If the branch is shared with others then you need to definitively `git
+      merge`
+  - Only `git merge` to master to preserve the history of how something was built
+
 - **Personally**
-- I like squash-and-merge branches to master
-  - My commits are just my checkpoints
-  - Rarely they are "complete"
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_26_image_1.png)
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_26_image_2.png)
-
-::::
-:::
+  - I like to squash-and-merge branches to `master`
+  - Rarely my commits are "complete", are just checkpoints
 
 * Remote Branches
 - Remote branches are pointers to branches in remote repos
