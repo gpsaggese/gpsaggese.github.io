@@ -85,7 +85,7 @@ def print_figure(file_name: str) -> None:
 def process_figure(title: str) -> None:
     file_name = convert_to_filename(title)
     plt.savefig(file_name, dpi=300)
-    print_figure(file_name)
+    #print_figure(file_name)
 
 
 def plot_binomial() -> None:
@@ -154,8 +154,132 @@ def plot_beta() -> None:
     ax[2, 1].set_xlabel('x')
     ax[1, 0].set_ylabel('p(x)', rotation=0, labelpad=20);
     #
-    title = "Chap7: Beta distribution"
+    title = "Beta distribution"
     process_figure(title)
+
+
+# #############################################################################
+
+# Interactive Beta Prior updater
+
+from scipy import stats
+import ipywidgets as W
+from IPython.display import display, clear_output
+
+def _parse_trials(text: str) -> List[int]:
+    """Parse comma-separated trial counts (non-negative, unique, keep order)."""
+    try:
+        vals: List[int] = [int(x.strip()) for x in text.split(",") if x.strip()]
+        vals = [v for i, v in enumerate(vals) if v >= 0 and v not in vals[:i]]
+        return vals if vals else [0]
+    except Exception:
+        return [0]
+
+def _generate_data(theta_real: float, n_trials: List[int], seed: int) -> List[int]:
+    """Generate binomial counts y ~ Binomial(N, theta_real) deterministically per index via seed."""
+    y_vals: List[int] = []
+    for idx, N in enumerate(n_trials):
+        rng = np.random.default_rng(seed + idx * 1009)
+        y_vals.append(rng.binomial(N, theta_real))
+    return y_vals
+
+def _validate_ab(a: float | str, b: float | str, fallback: Tuple[float, float]) -> Tuple[float, float]:
+    """Ensure α, β are valid positive floats; otherwise return fallback."""
+    try:
+        a_f, b_f = float(a), float(b)
+        if a_f > 0 and b_f > 0:
+            return a_f, b_f
+        return fallback
+    except Exception:
+        return fallback
+
+def beta_prior_interactive() -> None:
+    """Create an interactive ipywidgets visualization with a single Beta prior."""
+    # Widgets
+    theta_slider: W.FloatSlider = W.FloatSlider(
+        value=0.35, min=0.0, max=1.0, step=0.01,
+        description="θ (true)", readout_format=".2f",
+        continuous_update=False, style={"description_width":"90px"},
+        layout=W.Layout(width="350px")
+    )
+
+    trials_text: W.Text = W.Text(
+        value="0,1,2,3,4,8,16,32,64,96,128,160",
+        description="n_trials", style={"description_width":"90px"},
+        layout=W.Layout(width="420px"),
+    )
+
+    seed_int: W.IntText = W.IntText(
+        value=42, description="seed",
+        style={"description_width":"90px"}, layout=W.Layout(width="200px")
+    )
+
+    # Single prior parameter widgets
+    a1: W.FloatText = W.FloatText(value=1.0, description="α", layout=W.Layout(width="150px"))
+    b1: W.FloatText = W.FloatText(value=1.0, description="β", layout=W.Layout(width="150px"))
+
+    index_slider: W.IntSlider = W.IntSlider(
+        value=0, min=0, max=0, step=1,
+        description="Index", style={"description_width":"90px"},
+        layout=W.Layout(width="420px"), continuous_update=False
+    )
+    play: W.Play = W.Play(interval=600, value=0, min=0, max=0, step=1)
+    W.jslink((play, 'value'), (index_slider, 'value'))
+
+    out: W.Output = W.Output()
+
+    # Core update function
+    def refresh_plot(*args) -> None:
+        with out:
+            clear_output(wait=True)
+            theta_real: float = theta_slider.value
+            n_trials: List[int] = _parse_trials(trials_text.value)
+
+            index_slider.max = max(0, len(n_trials)-1)
+            play.max = index_slider.max
+
+            seed: int = seed_int.value
+            y_vals: List[int] = _generate_data(theta_real, n_trials, seed)
+            idx: int = max(0, min(index_slider.value, len(n_trials)-1))
+            N: int = n_trials[idx]
+            y: int = y_vals[idx]
+
+            alpha_beta: Tuple[float, float] = _validate_ab(a1.value, b1.value, (1.0, 1.0))
+            alpha, beta = alpha_beta
+
+            x: np.ndarray = np.linspace(0, 1, 400)
+            post: np.ndarray = stats.beta.pdf(x, alpha + y, beta + N - y)
+            ymax: float = float(np.max(post)) if np.isfinite(np.max(post)) and np.max(post) > 0 else 1.0
+            ymax *= 1.1
+
+            plt.figure(figsize=(8, 5))
+            plt.fill_between(x, 0, post, alpha=0.5, label=f"Posterior: α={alpha:g}, β={beta:g}")
+            plt.axvline(theta_real, ymax=0.3, linestyle="--")
+            plt.xlabel("θ")
+            plt.ylabel("density")
+            plt.xlim(0, 1)
+            plt.ylim(0, max(10, ymax))
+            plt.legend(loc="upper left", frameon=False)
+            plt.title(f"Posterior after N={N} trials, y={y} heads")
+            plt.show()
+
+    # Bind observers
+    for w in [theta_slider, trials_text, seed_int, a1, b1, index_slider]:
+        w.observe(refresh_plot, names='value')
+
+    # Initial draw
+    refresh_plot()
+
+    # Layout
+    prior_box = W.HBox([a1, b1])
+    top_box = W.HBox([theta_slider, seed_int])
+    trials_box = W.HBox([trials_text])
+    index_box = W.HBox([play, index_slider])
+
+    ui = W.VBox([top_box, trials_box, prior_box, index_box, out])
+    display(ui)
+
+# #############################################################################
 
 
 def update_prior() -> None:
@@ -193,7 +317,7 @@ def update_prior() -> None:
         plt.yticks([])
     plt.tight_layout()
     #
-    title = "Chap7: Updating the prior"
+    title = "Updating the prior"
     process_figure(title)
 
 
