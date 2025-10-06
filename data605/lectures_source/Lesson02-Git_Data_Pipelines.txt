@@ -1179,7 +1179,7 @@ UMD DATA605 - Big Data Systems
 * Workflow Orchestration
 - Companies have **many data pipelines** (10-1000s) 
 
-- Orchestration tools, e.g.,
+- **Orchestration tools**, e.g.,
   - Apache Airflow (from AirBnB)
   - Luigi (from Spotify)
   - AWS Glue
@@ -1188,7 +1188,7 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=65%}
 
-- Schedule and manage flow of tasks according to their dependencies
+- **Schedule and manage** flow of tasks according to their dependencies
   - Pipeline and jobs are represented through DAGs
 
 - Monitor, retry, and send alarms
@@ -1203,27 +1203,30 @@ UMD DATA605 - Big Data Systems
 :::
 
 * ELT paradigm
-::: columns
-:::: {.column width=55%}
-- ETL has been the standard approach for long time
+- **ETL** has been the standard approach for long time
   - Extract $\to$ Transform $\to$ Load
   - **Cons**
     - Need to understand the data at ingestion time
     - Need to know how the data will be used
-- **Today E**LT is becoming the pattern of choice**
+::: columns
+:::: {.column width=55%}
+
+::::
+:::: {.column width=40%}
+
+- Today **ELT** is becoming the pattern of choice
   - Extract $\to$ Load $\to$ Transform
   - **Pro**:
     - No need to know how the data will be used
     - Separate data engineers and data scientists / analysts
     - Data engineers focus on data ingestion (E + L)
     - Data scientists focus on transform (T)
-- **ETL $\to$ ELT enabled by new technologies**
+
+- ETL $\to$ ELT **enabled by new technologies**
   - Large storage to save all the raw data (cloud computing)
   - Distributed data storage and querying (e.g., HDFS)
   - Columnar DBs
   - Data compression
-::::
-:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_46_image_1.png)
 ::::
@@ -1236,6 +1239,16 @@ UMD DATA605 - Big Data Systems
   - E.g., MySQL, Postgres
   - Optimized for reading / writing rows
   - Read / write small amounts of data frequently
+
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_1.png)
+::::
+:::
+
+::: columns
+:::: {.column width=55%}
 - **Columnar DBs**
   - E.g., Amazon Redshift, Snowflake
   - Read / write large amounts of data infrequently
@@ -1244,26 +1257,24 @@ UMD DATA605 - Big Data Systems
 ::::
 :::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_1.png)
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_2.png)
 ::::
 :::
 
-
 * EtLT
 - **ETL**
   - Extract $\to$ Transform $\to$ Load
+
 - **ELT**
   - Extract $\to$ Load $\to$ Transform
   - Transformation / data modeling ("T") according to business logic
+
 - **EtLT**
   - Sometimes transformations with limited scope ("t") are needed
     - De-duplicate records
     - Parse URLs into individual components
     - Obfuscate sensitive data (for legal or security reasons)
   - Then implement rest of "LT" pipeline
-
 
 * Structure in Data (or Lack Thereof)
 ::: columns
@@ -1273,12 +1284,14 @@ UMD DATA605 - Big Data Systems
   - CSV
   - DataFrame
   - Parquet
+
 - **Semi-structured**: subsets of data have different schema
   - Logs
   - HTML pages
   - XML
   - Nested JSON
   - NoSQL data
+
 - **Unstructured**: no schema
   - Text
   - Pictures
@@ -1288,50 +1301,65 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_49_image_1.png)
+::::
+:::
 
-//* Data Cleaning
-//- **Data cleanliness**
-//  - Quality of source data varies greatly
-//  - Data is typically messy
-//    - Duplicated records
-//    - Incomplete or missing records (nans)
-//    - Inconsistent formats
-//      - E.g., phone with / without dashes
-//    - Mislabeled or unlabeled data
-//- **When to clean it?**
-//  - As soon as possible!
-//  - As late as possible!
-//  - In different stages
-//  - $\to$ Pipeline style: ETL vs ELT vs EtLT
-//- **Heuristics when dealing with data**
-//  - Hope for the best, assume the worst
-//  - Validate data early and often
-//  - Don't trust anything
-//  - Be defensive
-//
-//![](data605/lectures_source/images/lecture_2/lec_2_slide_50_image_1.png)
+* Data Cleaning
+::: columns
+:::: {.column width=55%}
+- **Data cleanliness**
+  - Quality of source data varies greatly
+  - Data is typically messy
+    - Duplicated records
+    - Incomplete or missing records (nans)
+    - Inconsistent formats (e.g., phone with / without dashes)
+    - Mislabeled or unlabeled data
 
+- **When to clean it?**
+  - As soon as possible!
+  - As late as possible!
+  - In different stages
+  - $\to$ Pipeline style: ETL vs ELT vs EtLT
+
+- **Heuristics when dealing with data**
+  - Hope for the best, assume the worst
+  - Validate data early and often
+  - Don't trust anything
+  - Be defensive
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_2/lec_2_slide_50_image_1.png)
 ::::
 :::
 
 * OLAP vs OLTP Workloads
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=75%}
 - There are two classes of data workloads
 - **OLTP**
-  - **O**n-**L**ine **T**ransactional **P**rocessing
-  - Execute large numbers of transactions by a large number of processes in real-time
+  - On-Line Transactional Processing
+  - Execute large numbers of transactions by a large number of processes in
+    real-time
   - **Lots of concurrent small read / write transactions**
   - E.g., online banking, e-commerce, travel reservations
+::::
+:::: {.column width=20%}
+
+![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_1.png)
+
+::::
+:::
+
+::: columns
+:::: {.column width=75%}
 - **OLAP**
-  - **O**n-**L**ine **A**nalytical **P**rocessing
+  - On-Line Analytical Processing
   - Perform multi-dimensional analysis on large volumes of data
   - **Few large read or write transactions**
   - E.g., data mining, business intelligence
 ::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_1.png)
+:::: {.column width=20%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_51_image_2.png)
 
@@ -1342,13 +1370,17 @@ UMD DATA605 - Big Data Systems
 - High-volume vs low-volume
   - Lots of small reads / writes
   - A few large reads / writes
+
 - Batch vs streaming
   - Real-time constraints
-- API rate limits / throttling
-- Connection time-outs
-- Slow downloads
-- Incremental mode vs catch-up
 
+- API rate limits / throttling
+
+- Connection time-outs
+
+- Slow downloads
+
+- Incremental mode vs catch-up
 
 * Data Warehouse vs Data Lake
 ::: columns
@@ -1360,14 +1392,22 @@ UMD DATA605 - Big Data Systems
   - E.g.,
     - AWS Athena, RDS
     - Google BigQuery
-- **Data lake**
-  - = data stored in a semi-structured or without structure
-  - Corresponds to ELT data pipeline style
-  - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, data605/lectures_source/images
 ::::
 :::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_1.png)
+
+::::
+:::
+
+::: columns
+:::: {.column width=55%}
+- **Data lake**
+  - = data stored in a semi-structured or without structure
+  - Corresponds to ELT data pipeline style
+  - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, images
+::::
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_53_image_2.png)
 
@@ -1375,35 +1415,42 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Data Lake: Pros and Cons
-- Data lake = stores data in a semi-structured or without structure
+- **Data lake**
+  - Stores data in a semi-structured or without structure
+
 - **Pros**
   - Storing data in cloud storage is cheaper
-  - Making changes to types or properties is easier since it's unstructured or semi-structured (with no predefined schema)
+  - Making changes to types or properties is easier since it's unstructured or
+    semi-structured (with no predefined schema)
     - E.g., JSON documents
   - Data scientists
     - Don't know initially how to access and use the data
     - Want to explore the raw data
-- **Cons**
-  - It is not optimized for querying like a structured data warehouse
-    - There are tools that allow to query data in a data lake similar to SQL
-    - E.g., AWS Athena, Redshift Spectrum
 
+- **Cons**
+  - Not optimized for querying like a structured data warehouse
+    - Tools allow to query data in a data lake similar to SQL
+    - E.g., AWS Athena, Redshift Spectrum
 
 * Advantages of Cloud Computing
 - **Ease of building and deploying:**
   - Data pipelines
   - Data warehouses
   - Data lakes
+
 - **Managed services**
   - No need for admin and deploy
   - Highly scalable DBs
     - E.g., Amazon Redshift, Google BigQuery, Snowflake
+
 - **Rent-vs-buy**
   - Easy to scale up and out
   - Easy to upgrade
   - Better cash-flow
+
 - **Cost of storage and compute is continuously dropping**
   - Economies of scale
+
 - **Cons**
   - The flexibility has a cost (2x-3x more expensive than owning)
   - Vendor lock-in
