@@ -218,7 +218,7 @@ pz.Beta(alpha=alpha, beta=beta).plot_interactive(**params)
 ut.plot_beta()
 ```
 
-# Coin problem: analytical solution
+# Coin Example: Analytical Solution
 
 ```{code-cell} ipython3
 # prior=(1, 1) -> uniform
@@ -236,9 +236,31 @@ ut.beta_prior_interactive()
 ut.update_prior()
 ```
 
-## Coin problem: PyMC solution
+# Coin Example: Numerical Solution
+
++++
+
+- It's a synthetic example!
+  - Assume you know the true value of $\theta$ (not true in general)
+
+- **Workflow**
+  - Model the prior $\theta$ and the likelihood $Y | \theta$
+    \begin{equation*}
+      \begin{cases}
+      \theta \sim \text{Beta}(\alpha = 1, \beta = 1) \\
+      Y \sim \text{Binomial}(n = 1, p = \theta) \\
+      \end{cases}
+    \end{equation*}
+  - Observe samples of the variable $Y$
+  - Run inference
+  - Generate samples of the posterior
+  - Summarize posterior
+     - E.g., Highest-Posterior Density (HPD)
+  - ...
 
 ```{code-cell} ipython3
+# Generate data from ground truth model.
+
 np.random.seed(123)
 n = 4
 # Unknown value.
@@ -250,6 +272,8 @@ data1
 ```
 
 ```{code-cell} ipython3
+# Build PyMC model matching mathematical model.
+
 with pm.Model() as model1:
     # Prior.
     theta = pm.Beta('theta', alpha=1., beta=1.)
@@ -263,6 +287,10 @@ with pm.Model() as model1:
 az.plot_trace(idata1);
 ```
 
+- PyMC uses NUTS sampler, computes 4 chains
+- No trace diverges
+- Kernel density estimation (KDE) for posterior (should be Beta)
+
 ```{code-cell} ipython3
 #?az.summary
 ```
@@ -270,6 +298,11 @@ az.plot_trace(idata1);
 ```{code-cell} ipython3
 az.summary(idata1, kind="stats")
 ```
+
+- Traces appear "noisy" and non-diverging (good)
+- Numerical summary of posterior: mean, std dev, HDI
+- $E[\hat{\theta}] \approx 0.324$
+- $\Pr(\hat{\theta} \in [0.031, 0.653]) = 0.94$
 
 ```{code-cell} ipython3
 az.plot_trace(idata1, kind="rank_bars", combined=True);
