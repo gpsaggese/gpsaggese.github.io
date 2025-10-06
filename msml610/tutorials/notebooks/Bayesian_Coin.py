@@ -206,7 +206,7 @@ pz.Beta(alpha=alpha, beta=beta).plot_interactive(**params)
 ut.plot_beta()
 
 # %% [markdown]
-# # Coin problem: analytical solution
+# # Coin Example: Analytical Solution
 
 # %%
 # prior=(1, 1) -> uniform
@@ -222,9 +222,30 @@ ut.beta_prior_interactive()
 ut.update_prior()
 
 # %% [markdown]
-# ## Coin problem: PyMC solution
+# # Coin Example: Numerical Solution
+
+# %% [markdown]
+# - It's a synthetic example!
+#   - Assume you know the true value of $\theta$ (not true in general)
+#
+# - **Workflow**
+#   - Model the prior $\theta$ and the likelihood $Y | \theta$
+#     \begin{equation*}
+#       \begin{cases}
+#       \theta \sim \text{Beta}(\alpha = 1, \beta = 1) \\
+#       Y \sim \text{Binomial}(n = 1, p = \theta) \\
+#       \end{cases}
+#     \end{equation*}
+#   - Observe samples of the variable $Y$
+#   - Run inference
+#   - Generate samples of the posterior
+#   - Summarize posterior
+#      - E.g., Highest-Posterior Density (HPD)
+#   - ...
 
 # %%
+# Generate data from ground truth model.
+
 np.random.seed(123)
 n = 4
 # Unknown value.
@@ -235,6 +256,8 @@ data1 = stats.bernoulli.rvs(p=theta_real, size=n)
 data1
 
 # %%
+# Build PyMC model matching mathematical model.
+
 with pm.Model() as model1:
     # Prior.
     theta = pm.Beta('theta', alpha=1., beta=1.)
@@ -246,11 +269,23 @@ with pm.Model() as model1:
 # %%
 az.plot_trace(idata1);
 
+# %% [markdown]
+# - PyMC uses NUTS sampler, computes 4 chains
+# - No trace diverges
+# - Kernel density estimation (KDE) for posterior (should be Beta)
+#
+
 # %%
 # #?az.summary
 
 # %%
 az.summary(idata1, kind="stats")
+
+# %% [markdown]
+# - Traces appear "noisy" and non-diverging (good)
+# - Numerical summary of posterior: mean, std dev, HDI
+# - $E[\hat{\theta}] \approx 0.324$
+# - $\Pr(\hat{\theta} \in [0.031, 0.653]) = 0.94$
 
 # %%
 az.plot_trace(idata1, kind="rank_bars", combined=True);
