@@ -87,26 +87,16 @@ ut.config_notebook()
     - Answer correctness: $X = 1$ if correct, $X = 0$ if incorrect.
 
 ```{code-cell} ipython3
+# Set random seed for reproducibility.
 np.random.seed(42)
 
-n = 4
-p = 0.35
-
-data = stats.bernoulli.rvs(p=p, size=n)
-print(data)
-```
-
-```{code-cell} ipython3
-# Set random seed for reproducibility
-np.random.seed(42)
-
-# Define interactive function
-def sample_bernoulli(n=4, p=0.35):
+# Define an interactive function.
+def sample_bernoulli(n: int =4, p: float=0.35) -> None:
     data = stats.bernoulli.rvs(p=p, size=n)
     print(f"Bernoulli(p={p}) - {n} realizations:")
     print(data)
 
-# Create interactive sliders
+# Create interactive sliders.
 widgets.interact(
     sample_bernoulli,
     n=widgets.IntSlider(value=4, min=1, max=50, step=1, description='n (samples)'),
@@ -134,51 +124,25 @@ A **binomial random variable** represents the number of successes in a fixed num
   - If you flip a fair coin 10 times, the number of heads follows a `Binomial(10, 0.5)` distribution
 
 ```{code-cell} ipython3
----
-editable: true
-slideshow:
-  slide_type: ''
----
-#?stats.binom
-```
-
-```{code-cell} ipython3
+# Set random seed for reproducibility
 np.random.seed(42)
 
-# Create a Binomial.
-n = 8
-p = 0.01
-X = stats.binom(n, p)
+# Define interactive function with type hints
+def sample_binomial(n: int = 4, p: float = 0.35, trials: int = 10) -> None:
+    """
+    Sample n values from a Binomial(trials, p) distribution and print them.
+    """
+    data: np.ndarray = stats.binom.rvs(n=trials, p=p, size=n)
+    print(f"Binomial(n={trials}, p={p}) - {n} realizations:")
+    print(data)
 
-# Print k realizations.
-k = 4
-x = X.rvs(k)
-print(x)
-```
-
-```{code-cell} ipython3
-# Set random seed for reproducibility.
-np.random.seed(42)
-
-# Define interactive function.
-def sample_binomial(n: int, p: float, k: int) -> None:
-    X = stats.binom(n, p)
-    x = X.rvs(k)
-    print(f"Binomial(n={n}, p={p}) - {k} realizations:")
-    print(x)
-    
-
-# Create interactive controls.
+# Create interactive sliders
 widgets.interact(
     sample_binomial,
-    n=widgets.IntSlider(value=8, min=1, max=100, step=1, description='n (trials)'),
-    p=widgets.FloatSlider(value=0.01, min=0.0, max=1.0, step=0.01, description='p (success prob)'),
-    k=widgets.IntSlider(value=4, min=1, max=50, step=1, description='k (samples)')
+    n=widgets.IntSlider(value=4, min=1, max=50, step=1, description='n (samples)'),
+    trials=widgets.IntSlider(value=10, min=1, max=100, step=1, description='trials per sample'),
+    p=widgets.FloatSlider(value=0.35, min=0.0, max=1.0, step=0.01, description='p (success prob)')
 );
-```
-
-```{code-cell} ipython3
-ut.plot_binomial()
 ```
 
 ```{code-cell} ipython3
@@ -187,14 +151,18 @@ params = {
     "kind": "pdf",
     "pointinterval": False,
     "interval": "hdi",   # Highest density interval.
-    #"interval": "eti",  # Equal tailed interval.
+    #"interval": "eti",  # Equally tailed interval.
     "xy_lim": "auto"
 }
 
 #help(pz.Binomial.plot_interactive)
 
-# Probability of k successes on N trial flipping a coin with p success
+# Probability of k successes on N trials flipping a coin with p success
 pz.Binomial(p=0.5, n=5).plot_interactive(**params)
+```
+
+```{code-cell} ipython3
+ut.plot_binomial()
 ```
 
 ## Beta
@@ -209,18 +177,25 @@ pz.Binomial(p=0.5, n=5).plot_interactive(**params)
     - When alpha = beta the distribution is symmetric and centered around 0.5
 
 ```{code-cell} ipython3
-np.random.seed(123)
+# Set random seed for reproducibility.
+np.random.seed(42)
 
-trials = 4
-theta = 0.35
+# Define an interactive function.
+def sample_beta(n: int, a: float, b: float) -> None:
+    """
+    Sample n values from a Beta(a, b) distribution and print them.
+    """
+    data: np.ndarray = stats.beta.rvs(a=a, b=b, size=n)
+    print(f"Beta(a={a}, b={b}) - {n} realizations:")
+    print(data)
 
-# Generate some values.
-data = stats.bernoulli.rvs(p=theta_real, size=trials)
-print(data)
-```
-
-```{code-cell} ipython3
-ut.plot_beta()
+# Create interactive sliders.
+widgets.interact(
+    sample_beta,
+    n=widgets.IntSlider(value=4, min=1, max=50, step=1, description='n (samples)'),
+    a=widgets.FloatSlider(value=2.0, min=0.1, max=10.0, step=0.1, description='α (shape1)'),
+    b=widgets.FloatSlider(value=5.0, min=0.1, max=10.0, step=0.1, description='β (shape2)')
+);
 ```
 
 ```{code-cell} ipython3
@@ -239,7 +214,23 @@ beta = 1.0
 pz.Beta(alpha=alpha, beta=beta).plot_interactive(**params)
 ```
 
+```{code-cell} ipython3
+ut.plot_beta()
+```
+
 # Coin problem: analytical solution
+
+```{code-cell} ipython3
+# prior=(1, 1) -> uniform
+# (20, 20) -> "Gaussian" centered around 0.5
+# (1, 4) -> "Exponential" centered around 0
+
+# theta = 0.35, 1.00
+```
+
+```{code-cell} ipython3
+ut.beta_prior_interactive()
+```
 
 ```{code-cell} ipython3
 ut.update_prior()
