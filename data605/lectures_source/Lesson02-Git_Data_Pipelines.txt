@@ -656,9 +656,7 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=55%}
 
 1) **History is the record of what actually happened**
-   - _"History should not be tampered with!"_
-   - Q: What if there is a series of messy merge commits?
-   - A: This is how it happened. The repo should preserve this
+   - _"History should not be tampered with, even if messy!"_
    - Use `git merge`
 ::::
 :::: {.column width=40%}
@@ -667,12 +665,12 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
+\vspace{0.5cm}
+
 ::: columns
 :::: {.column width=55%}
 
 2) **History represents how a project should have been made**
-   - _"You would not publish a book as a sequence of drafts and correction, but
-     rather the final version"_
    - _"You should tell the history in the way that is best for future readers"_
    - Use `git rebase` and filter-branch
 ::::
@@ -704,53 +702,71 @@ UMD DATA605 - Big Data Systems
   - Rarely my commits are "complete", are just checkpoints
 
 * Remote Branches
-- Remote branches are pointers to branches in remote repos
+- **Remote branches** are pointers to branches in remote repos
   ```
   git remote -v
   origin  git@github.com:gpsaggese/umd_data605.git (fetch)
   origin  git@github.com:gpsaggese/umd_data605.git (push)
   ```
+
 - **Tracking branches**
   - Local references representing the state of the remote repo
   - E.g., `master` tracks `origin/master`
-  - You can't change the remote branch (e.g., **origin/master**)
+  - You can't change the remote branch (e.g., `origin/master`)
   - You can change tracking branch (e.g., `master`)
   - Git updates tracking branches when you do `git fetch origin` (or `git pull`)
-- To share code in a local branch you need to push it to a remote
-  - `> git push origin serverfix`
-- To work on it
-  - `> git checkout -b serverfix origin/serverfix`
 
+- To share code in a local branch you need to push it to a remote
+  ```
+  > git push origin serverfix
+  ```
+
+- To work on it
+  ```
+  > git checkout -b serverfix origin/serverfix
+  ```
 
 * Git Workflows
 ::: columns
 :::: {.column width=55%}
 
 - **Git workflows** = ways of working and collaborating using Git
+
 - **Long-running branches** = branches at different level of stabilities, that
   are always open
   - `master` is always ready to be released
-  - **develop** branch to develop in
-  - *topic / feature* branches
+  - `develop` branch to develop in
+  - topic / feature branches
   - When branches are "stable enough" they are merged up
 
-- **Topic branches** = short-lived branches for a single feature
-  - E.g., `hotfix`, `wip-XYZ`
-  - Easy to review
-  - Silo-ed from the rest
-  - This is typical of Git since other VCS support for branches is not good enough
-  - E.g.,
-    - You start `iss91`, then you cancel some stuff, and go to `iss91v2`
-    - Somebody starts `dumbidea` branch and merge to `master` (!)`
-    - You squash-and-merge your `iss91v2`
 ::::
 :::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_1.png)
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_2.png)
+::::
+:::
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_3.png)
+* Git Workflows
+::: columns
+:::: {.column width=55%}
+
+- **Topic branches** = short-lived branches for a single feature
+  - E.g., `hotfix`, `wip-XYZ`
+  - Easy to review
+  - Silo-ed from the rest
+  - This is typical of Git since other VCS support for branches is not good
+    enough
+  - E.g.,
+    - You start `iss91`, then you cancel some stuff, and go to `iss91v2`
+    - Somebody starts `dumbidea` branch and merge to `master` (!)
+    - You squash-and-merge your `iss91v2`
+
+::::
+:::: {.column width=40%}
+
+
+![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_2.png)
 
 ::::
 :::
@@ -781,10 +797,11 @@ UMD DATA605 - Big Data Systems
 
 * Forking Workflows
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=80%}
 - Typically devs don't have permissions to update directly branches on a project
   - Read-write permissions for core contributors
   - Read-only for anybody else
+
 - **Solution**
   - "Forking" a repo
   - External contributors
@@ -798,11 +815,12 @@ UMD DATA605 - Big Data Systems
     - Integrates PRs
   - In practice it's the project maintainer that pulls the code when it's ready,
     instead of external contributors pushing the code
+
 - **Aka "GitHub workflow"**
   - "Innovation" was forking (Fork me on GitHub!)
   - GitHub acquired by Microsoft for 7.5b USD
 ::::
-:::: {.column width=40%}
+:::: {.column width=15%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_30_image_1.png)
 
@@ -814,22 +832,6 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=55%}
 - This is the classical model for open-source development
   - E.g., Linux, GitHub (forking) workflow
-- **1. One repo is the "official" project**
-  - Only the project maintainer pushes to the public repo
-  - E.g., `sorrentum/sorrentum`
-- **2. Each contributor**
-  - Has read access to everyone else's public repo
-  - Forks the project into a private copy
-    - Write access to their own public repo
-    - E.g., `gpsaggese/sorrentum`
-  - Makes changes
-  - Pushes changes to his own public copy
-  - Sends email to maintainer asking to pull changes (pull request)
-- **3. The maintainer**
-  - Adds contributor repo as a remote
-  - Merges the changes into a local branch
-  - Tests changes locally
-  - Pushes branch to the official repo
 ::::
 :::: {.column width=40%}
 
@@ -838,26 +840,65 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
+1. **One repo is the official project**
+   - Only the project maintainer pushes to the public repo
+   - E.g., `causify-ai/csfy`
+
+2. **Each contributor**
+   - Has read access to everyone else's public repo
+   - Forks the project into a private copy
+     - Write access to their own public repo
+     - E.g., `gpsaggese/csfy`
+   - Makes changes
+   - Pushes changes to his own public copy
+   - Sends email to maintainer asking to pull changes (pull request)
+
+3. **The maintainer**
+   - Adds contributor repo as a remote
+   - Merges the changes into a local branch
+   - Tests changes locally
+   - Pushes branch to the official repo
+
 * Git log
-::: columns
-:::: {.column width=55%}
 - `git log` reports info about commits
+
 - **refs** are references to:
   - `HEAD` (commit you are working on, next commit)
   - `origin/master` (remote branch)
-  - experiment (local branch)
-  - d921970 (commit)
--   after a reference resolves to the parent of that commit
-  - `HEAD` = commit before `HEAD`, i.e., last commit
-  -  2 means   
+  - `experiment` (local branch)
+  - `d921970` (commit)
+
+::: columns
+:::: {.column width=55%}
+
+- `^` after a reference resolves to the parent of that commit
+  - `HEAD^` = commit before `HEAD`, i.e., last commit
+  - `^2` means `^^`
   - A merge commit has multiple parents
+
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_2/lec_2_slide_32_image_1.png)
+
+::::
+:::
+
+* Dot notation
+::: columns
+:::: {.column width=55%}
+
 - **Double-dot notation**
-  - `1..2` = commits that are reachable from 2 but not from 1 (difference)
-  - `git log master..experiment $\to$ D,C`
-  - `git log experiment..master $\to$ F,E`
+  - `1..2` = commits that are reachable from 2 but not from 1
+  - Like a "difference"
+  - `git log master..experiment` $\to$ `D,C`
+  - `git log experiment..master`$\to$ `F,E`
+
 - **Triple-dot notation**
-  - `1...2` = commits that are reachable from either branch but not from both (union excluding intersection)
-  - `git log master...experiment $\to$ F,E,D,C`
+  - `1...2` = commits that are reachable from either branch but not from both
+  - Like "union excluding intersection"
+  - `git log master...experiment` $\to$ `F,E,D,C`
+
 ::::
 :::: {.column width=40%}
 
@@ -867,33 +908,39 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Advanced Git
-- stashing
-  - Copy state of your working dir (e.g., modified and staged files), save it in a stack, to apply later
-- cherry-picking
+- **Stashing**
+  - Copy state of your working dir (e.g., modified and staged files)
+  - Save it in a stack
+  - Apply later
+
+- **Cherry-picking**
   - Rebase for a single commit
-- rerere
+
+- **rerere**
   - = "Reuse Recorded Resolution"
   - Git caches how to solve certain conflicts
-- tagging
-  - Give a name to a specific commit (e.g., v1.3)
-- submodules / subtrees
-  - Project including other Git projects
-- bisect
-  - Sometimes a bug shows up at top of tree
-  - You don't know at which revision it started manifesting
-  - You have a script that returns 0 if the project is good and non-0 if the project is bad
-  - `git bisect` can find the revision at which the script goes from good to bad
-- filter-branch
-  - Rewrite repo history in some script-able way
-    - E.g., change your email, remove a file (with passwords or large file)
-  - Check out each version, run a command, commit the result
-- hooks
-  - Run scripts before each commit, merging, ...
 
+- **Submodules / subtrees**
+  - Project including other Git projects
+
+* Advanced Git
+- **bisect**
+  - Bug appears at top of tree
+  - Unknown revision where it started
+  - Script returns 0 if good, non-0 if bad
+  - `git bisect` finds revision where script changes from good to bad
+
+- **filter-branch**
+  - Rewrite repo history in a script-able way
+    - E.g., change email, remove sensitive file
+  - Check out each version, run command, commit result
+
+- **Hooks**
+  - Run scripts before commit, merging,
 
 * GitHub
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=65%}
 - GitHub acquired by MSFT for 7.5b
 - **GitHub: largest host for Git repos**
   - Git hosting (100m+ open source projects)
@@ -903,14 +950,15 @@ UMD DATA605 - Big Data Systems
   - Collaboration
   - Wiki
   - Actions (CI / CD)
+
 - **"Forking a project"**
-  - In open-source communities
-    - It had a negative connotation
-    - Take a project, modify it, and make it a competing project
-  - In GitHub parlance
-    - Make a copy of a project so that you can contribute to it even if you don't have push / write access
+  - Open-source communities
+    - Negative connotation
+    - Modify and create a competing project
+  - GitHub parlance
+    - Copy a project to contribute without push/write access
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_34_image_1.png)
 
@@ -925,7 +973,7 @@ UMD DATA605 - Big Data Systems
 - Concepts in the slides
 - Class project
 - Mastery
-  - Data Pipelines Pocket Reference: Moving and Processing Data for Analytics
+  - [Data Pipelines Pocket Reference](https://www.amazon.com/Data-Pipelines-Pocket-Reference-Processing/dp/1492087831)
 ::::
 :::: {.column width=40%}
 
@@ -936,12 +984,12 @@ UMD DATA605 - Big Data Systems
 
 * Data as a Product
 - **Many services today "sell" data**
-  - Services are typically powered by data and machine learning
-  - Data products, e.g.,
+  - Services are typically powered by data and machine learning, e.g.,
     - Personalized search engine (Google)
     - Sentiment analysis on user-generated data (Facebook)
-    - A recommendation engine + e-commerce (Amazon)
+    - E-commerce + recommendation engine (Amazon)
     - Streaming data (Netflix, Spotify)
+
 - **Several steps are required to generate data products**
   - Data ingestion
   - Data pre-processing
@@ -957,25 +1005,17 @@ UMD DATA605 - Big Data Systems
     - E.g., recommendations vs what users bought
     - Ingest data from production for future versions of the model
 
-
 * Data Pipelines
+- _"Data is the new oil"_ ... but oil needs to be refined
+
 ::: columns
 :::: {.column width=55%}
-- "Data is the new oil"
-  - ... but oil needs to be refined
+
 - **Data pipelines**
   - Processes that move and transform data
-  - **Goal**: derive new value from data through analytics, reporting, machine learning**
-- Data needs to be:
-  - Collected
-  - Pre-processed / cleaned
-  - Validated
-  - Processed
-  - Combined
-- **Data ingestion**
-  - Simplest data pipeline
-  - Extract data (e.g., from REST API)
-  - Load data into DB (e.g., SQL table)
+  - **Goal**: derive new value from data through analytics, reporting, machine
+    learning
+
 ::::
 :::: {.column width=40%}
 
@@ -985,6 +1025,18 @@ UMD DATA605 - Big Data Systems
 
 ::::
 :::
+
+- Data needs to be:
+  - Collected
+  - Pre-processed / cleaned
+  - Validated
+  - Processed
+  - Combined
+
+- **Data ingestion**
+  - Simplest data pipeline
+  - Extract data (e.g., from REST API)
+  - Load data into DB (e.g., SQL table)
 
 * Roles in Building Data Pipelines
 - **Data engineers**
@@ -1008,22 +1060,29 @@ UMD DATA605 - Big Data Systems
     - GUI tools (e.g., Tableaux)
     - Desktop
 
-- **Recurring practical problems**
+* Practical problems in Data Pipeline Organization
+
 - Who is responsible for the data?
-- Issues with scaling
+
+- **Issues with scaling**
   - Performance
   - Memory
   - Disk
-- Build-vs-buy
+
+- **Build-vs-buy**
   - Which tools?
   - Open-source vs proprietary?
-- Architecture
+
+- **Architecture**
   - Who is in charge of it?
   - Conventions
   - Documentation
-- Service level agreement (SLA)
-- Talk to stakeholders on a regular basis
-- Getting stuff done
+
+- **Service level agreement (SLA)**
+
+- **Talk to stakeholders on a regular basis**
+
+- **Getting stuff done**
   - Done is better than perfect
 
 * Data Ingestion
@@ -1058,11 +1117,14 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=55%}
 - There are several styles of building data pipelines
-- Multiple phases
+
+- **Multiple phases**
   - Extract
   - Load
   - Transform
-- Phases arranged in different ways depending on philosophy about data / roles
+
+- **Phases arranged in different ways** depending on philosophy about data /
+  roles
   - ETL
   - ELT
   - EtLT
@@ -1081,50 +1143,57 @@ UMD DATA605 - Big Data Systems
     - REST API
     - Data downloading from API
     - Web scraping
+
 - **Transform**
   - Raw data is combined and formatted to become useful for analysis step
+
 - **Load**
   - Move data into the final destination, e.g.,
     - Data warehouse
     - Data lake
+
 - **Data ingestion pipeline = E + L**
   - Move data from one point to another
   - Format the data
   - Make a copy
   - Have different tools to operate on the data
 
-
 * ETL Paradigm: Example
 - **Extract**
   - Buy-vs-build data ingestion tools
     - Vendor lock-in
+
 - **Transform**
   - Data conversion (e.g., parsing timestamp)
   - Create new columns from multiple source columns
-    - E.g., year, month, day -> yyyy/mm/dd
+    - E.g., year, month, day $\to$ `yyyy/mm/dd`
   - Aggregate / filter through business logic
-    - Try not to filter, better to mark
+    - Try not to filter, better to add tags / mark data
   - Anonymize data
+
 - **Load**
   - Organize data in a format optimized for data analysis
     - E.g., load data in relational DB
   - Finally data modeling
 
-
 * Workflow Orchestration
-::: columns
-:::: {.column width=55%}
-- Companies have many (10-1000s) data pipelines
+- Companies have **many data pipelines** (10-1000s) 
+
 - Orchestration tools, e.g.,
   - Apache Airflow (from AirBnB)
   - Luigi (from Spotify)
   - AWS Glue
   - Kubeflow
+
+::: columns
+:::: {.column width=65%}
+
 - Schedule and manage flow of tasks according to their dependencies
   - Pipeline and jobs are represented through DAGs
+
 - Monitor, retry, and send alarms
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_1.png)
 

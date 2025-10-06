@@ -1,3 +1,4 @@
+# Generate the script.
 > i docker_bash --base-image=623860924167.dkr.ecr.eu-north-1.amazonaws.com/cmamp --skip-pull
 
 docker> sudo /bin/bash -c "(source /venv/bin/activate; pip install --upgrade openai)"
@@ -9,3 +10,8 @@ docker> generate_slide_script.py \
   --limit 1:5
 
 docker> gen_data605_script.sh 01 --limit 1:5
+
+# Check all the slides.
+SRC_NAME=$(ls $DIR/lectures_source/Lesson02*); echo $SRC_NAME
+DST_NAME=process_slides.txt
+> process_slides.py --in_file $SRC_NAME --action slide_check --out_file $DST_NAME --use_llm_transform --limit 0:10
