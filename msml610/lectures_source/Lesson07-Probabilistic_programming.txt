@@ -1013,26 +1013,30 @@ digraph BayesTheorem {
 ::::
 :::
 
+* Tutorial: Robust Modeling
+
+- [Bayesian Coin](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks/Bayesian_Coin.ipynb)
+
 # #############################################################################
 # Groups Comparison
 # #############################################################################
 
 * Group Comparison
 - **Group comparison** tests for statistically significant results between
-  "treatment" and "control group"
+  _"treatment"_ and _"control group"_
 
-- E.g., ![](emoji/pushpin_tack.png){ width=12px }
-  - How well do patients respond to a new drug vs a placebo?
-  - Is there a reduction in car accidents after new traffic regulation?
-  - Does college student performance improve without cellphones at school?
+- E.g.,
+  - _How well do patients respond to a new drug vs a placebo?_
+  - _Is there a reduction in car accidents after new traffic regulation?_
+  - _Does college student performance improve without cellphones at school?_
 
 - **Effect size** quantifies the difference between two groups
-  - Moves from "does it work?" (hypothesis testing) to "how well does it work?"
+  - From _"does it work?"_ (hypothesis testing) to _"how well does it work?"_
     (estimate effect size)
 
 * Bogus Control Groups
-- When something is claimed to be harder/better/faster/stronger, ask for the
-  baseline used for comparison
+- When something is claimed to be harder/better/faster/stronger, **ask for the
+  baseline used for comparison**
   - E.g.,
     - Sell sugary yogurts to boost the immune system by comparing it to using
       milk
@@ -1054,13 +1058,33 @@ digraph BayesTheorem {
     - Probability of superiority
 
 * Sample Size Effect
+::: columns
+:::: {.column width=70%}
 - **Sample size effect** is the impact of the number of observations on
   statistical results (e.g., p-values, confidence intervals)
-  - Small sample: Large mean difference might not be statistically significant
-    (low p-value)
-  - Large sample: Tiny mean difference can be highly significant (small p-value)
-    but meaningless
-  - E.g., Cohen's d
+
+- **Small sample effect**
+  - Large mean difference might not be statistically significant (low p-value)
+  - Estimates (e.g., means, proportions, correlations) fluctuate widely due to
+    high sampling variability
+  - Outliers have a disproportionate influence
+  - Inference is unstable: results may not replicate
+
+- **Large sample**:
+  - Tiny mean difference can be highly significant (small p-value) but
+    meaningless
+
+- E.g., Cohen's d, probability of superiority
+
+::::
+:::: {.column width=30%}
+
+![](msml610/lectures_source/figures/Lesson07_Immigrant_Nobel_Prize.png)
+
+![](msml610/lectures_source/figures/Lesson07_Immigrant_Nobel_Prize_density_by_country.png)
+
+::::
+:::
 
 * Cohen's d
 - **Cohen's d** is the difference of means relative to pooled standard deviation
@@ -1068,18 +1092,19 @@ digraph BayesTheorem {
   \frac{\mu_2 - \mu_1}{\sqrt{(\sigma_1^2 + \sigma_2^2) / 2}}
   $$
   - Normalizes effect by variability for pooled std dev
-  - Bayesian analysis estimates actual std dev
-- Variability of each group normalizes mean difference
+  - Variability of each group normalizes mean difference
   - Similar to a Z-score, number of std dev values differ
-- Compute posterior distribution of means and std
-- Compute distribution of Cohen's d or use formula
 
-* Probability of Superiority
-- = probability that a data point taken randomly from one group is larger than a
-  random point from the other group
+![](msml610/lectures_source/figures/Lesson07_Cohen_d.png)
 
-- We can compute the
+- Bayesian approach
+  - Compute posterior distribution of means and std $\to$ formula
+  - Compute distribution of Cohen's d $\to$ summary statistics
 
+//* Probability of Superiority
+//- = probability that a data point taken randomly from one group is larger than a
+//  random point from the other group
+// - We can compute the
 // TODO: Finish
 
 // 3, Hierarchical models
@@ -1091,21 +1116,25 @@ digraph BayesTheorem {
 * Hierarchical Models
 - Aka "multilevel", "nested", "mixed-effects" models
 
-- **Observation**: Data points share common structure, but also have variations
-  - Group data
-    - E.g., sales in cities: each city is a market, with common trends
-  - Hierarchical structure
+- **Key observation**: often data points share common structure, but also have
+  variations
+  - **Group data**
+    - E.g., sales in cities: each city is a different market, but there are
+      common trends
+  - **Hierarchical structure**
     - E.g., students in a school: each student is different, with common
       educational factors
-  - Repeated measurements on same objects
+  - **Repeated measurements on same objects**
 
 - **Approach**: ![](emoji/lightbulb.png){ width=14px }
   - Model shares information between groups, but it allows differences
-  - Parameters of prior distributions have a prior distribution, aka
-    "hyper-priors"
+  - Parameters of prior distributions have a prior distribution
+    - Aka "hyper-priors" (!)
+
+- You can't do this with frequentist approach, only with Bayesian approach
 
 * Hierarchical Models: Examples
-- Many data structures lend themselves to hierarchical descriptions
+- Many data problems lend themselves to **hierarchical descriptions**
 
 - E.g.,
   - Medical research:
@@ -1117,10 +1146,10 @@ digraph BayesTheorem {
     - Categorize consumers by age, gender, income, education
 
 * Unpooled, Pooled, Hierarchical Models
-- **Unpooled**
-  - Groups have different priors
 - **Pooled**
   - Groups have the same priors
+- **Unpooled**
+  - Groups have different priors
 - **Hierarchical**
   - Groups have different priors which come from a common prior
 
@@ -1152,38 +1181,39 @@ digraph BayesTheorem {
 
 * Hierarchical Models: Chemical Shift
 - Experimental measures of chemical shifts vs theoretical values
+
 - Evaluate model using different modeling styles
-1. **Unpooled**
-   - Fit 20 Gaussians for 20 amino acids
-   - Detailed analysis, less accuracy
-2. **Pooled**
-   - Compute difference between estimates and measures, fit Gaussian
-   - More accurate estimates, lose amino acid information
-3. **Hierarchical**
-   - Model groups assuming common population
+  1. **Pooled**
+     - Compute difference between estimates and measures, fit Gaussian
+     - More accurate estimates, lose amino acid information
+  2. **Unpooled**
+     - Fit 20 Gaussians for 20 amino acids
+     - Detailed analysis, less accuracy
+  3. **Hierarchical**
+     - Model groups assuming common population
 
 * Chemical Shift: Unpooled Model
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=55%}
 ![](msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical2.png)
 ::::
-:::: {.column width=35%}
-- Model each group independently
-- Use same model structure to compare groups
+:::: {.column width=40%}
+- **Model each group independently**
+  - Use same model structure to compare groups
 ::::
 :::
 
 * Chemical Shift: Hierarchical Model
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=55%}
 ![](msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical3.png)
 ::::
-:::: {.column width=35%}
-- Add two hyperpriors:
+:::: {.column width=40%}
+- **Add two hyperpriors on $\mu$**
   - One for mean of $\mu$
   - One for standard deviation of $\mu$
-- Assume same variance for all groups
+- **Assume same variance $\sigma$ for all groups**
   - Modeling choice
   - Option to add hyperpriors for $\sigma$
 - Intermediate situation between single group and 20 separate groups
@@ -1197,35 +1227,44 @@ digraph BayesTheorem {
 ::::
 :::: {.column width=45%}
 - Compare estimates of two models
-- 20 groups, each model has 4 estimated variable
-  - Plot 94% credible intervals
+  - 20 groups
+  - Each model has 4 estimated variable
+
+- Plot 94% credible intervals
+  - Blue is hierarchical
+  - Orange is non-hierarchical
   - Black vertical line: global mean (hierarchical model)
-  - Blue (hierarchical) means pulled towards mean compared to orange
+  - Blue / hierarchical means pulled towards mean compared to orange
     (non-hierarchical)
-  - "Shrinkage" occurs
+  - **There is shrinkage**
 ::::
 :::
 
 * Shrinkage
-- Hierarchical models **shrink parameters towards a common mean**, as groups
-  share information through the hyper-prior
+- **Hierarchical models shrink parameters towards a common mean**
+  - As groups share information through the hyper-prior
   - Model groups as neither independent nor a single group, but in between
   - Less responsive to extreme values in individual groups
   - Improves estimation for small groups using data from others
+
 - **Amount of shrinkage** depends on data:
   - Groups with more data influence estimates more
   - Similar groups reinforce common estimation
+  - It's a global optimization!
+
 - **Result**: inference is more stable
 
 * You Need to Know When to Stop
-- Create hierarchical models with as many levels as you want
+- You can create hierarchical models with as many levels as you want
+
 - More levels:
   - Don't improve inference quality
   - Complicate interpretation
+
 - Goal:
   - Leverage data structure
-  - Add as many degrees as freedom as needed, but not more than what is warranted
-    (Occam's razor)
+  - _"Add as many degrees as freedom as needed, but not more than what is
+    warranted"_ (Occam's razor)
 
 // 4, Modeling with lines
 
@@ -1234,20 +1273,31 @@ digraph BayesTheorem {
 # ##############################################################################
 
 * Linear Model
+::: columns
+:::: {.column width=70%}
+
 - Many problems can be stated as:
   - $X$ and $Y$: uni-dimensional continuous RVs
   - Dataset of paired observations $\{(x_1, y_1), ..., (x_n, y_n)\}$
-  - $X$: independent variable
+  - $X$ are independent variables
   - Model/predict dependent variable $Y$
   - Assume a linear relationship between $Y$ and $X$
 
-- E.g.,:
+- E.g.,
   - Average temperature vs Nobel laureates in a country
   - Sugar intake vs Blood glucose
   - Years of education vs Annual income
   - Advertising spend vs Sales
   - Study hours vs Exam score
   - Coffee consumption vs Productivity
+
+::::
+:::: {.column width=30%}
+
+![](msml610/lectures_source/figures/Lesson07_Immigrant_Nobel_Prize_and_chocolate.png)
+
+::::
+:::
 
 * Linear Model: Frequentist Approach
 - A **linear model** is described by:

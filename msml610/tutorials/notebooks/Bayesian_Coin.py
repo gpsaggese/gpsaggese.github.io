@@ -365,3 +365,31 @@ for idata in [idata1, idata2, idata3]:
 for idata in [idata1, idata2, idata3]:
     az.plot_posterior(idata, rope=[0.45, .55], ref_val=0.5)
     plt.xlim(0, 1);
+
+# %%
+# Decision with loss function
+
+# %%
+#loss_func = lambda x: ut.squared_loss(x, theta_real)
+#loss_func = lambda x: ut.abs_loss(x, theta_real)
+#loss_func = lambda x: ut.asymmetric_loss(x, theta_real)
+loss_func = lambda x: ut.sin_loss(x, theta_real)
+
+grid = np.linspace(-2.0, 2.0, 50)
+ut.plot_loss(grid, loss_func)
+
+# %%
+idata1.to_dataframe()[("posterior", "theta")]
+
+# %%
+plt.plot(idata1.to_dataframe()[("posterior", "theta")]);
+
+# %%
+df = idata1.to_dataframe()[("posterior", "theta")]
+df.plot(kind="kde")
+
+# %%
+ut.pick_best_theta(idata1)
+
+# %%
+ut.pick_best_theta(idata2)
