@@ -366,8 +366,8 @@ for idata in [idata1, idata2, idata3]:
     az.plot_posterior(idata, rope=[0.45, .55], ref_val=0.5)
     plt.xlim(0, 1);
 
-# %%
-# Decision with loss function
+# %% [markdown]
+# # Decision with loss function
 
 # %%
 #loss_func = lambda x: ut.squared_loss(x, theta_real)
