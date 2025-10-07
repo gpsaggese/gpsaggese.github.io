@@ -737,7 +737,7 @@ digraph BayesTheorem {
   - Estimate $\theta$ in terms of the posterior distribution
   - Find the value $\hat{\theta}$ that minimizes the expected loss function
 
-* Tutorial: Bayesian Coin
+* Tutorial
 
 - [Bayesian Coin](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks/Bayesian_Coin.ipynb)
 
@@ -1013,9 +1013,9 @@ digraph BayesTheorem {
 ::::
 :::
 
-* Tutorial: Robust Modeling
+* Tutorial
 
-- [Bayesian Coin](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks/Bayesian_Coin.ipynb)
+- [Robust modeling](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks/Lesson07.02_Robust_Modeling.ipynb)
 
 # #############################################################################
 # Groups Comparison
@@ -1266,6 +1266,10 @@ digraph BayesTheorem {
 
 - _"Add as many degrees as freedom as needed, but not more than what is
   warranted"_ (Occam's razor)
+
+* Tutorial
+
+- [Hierarchical Models](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks/Lesson07.03_Hierarchical_Models.ipynb)
 
 // 4, Modeling with lines
 
@@ -1891,6 +1895,10 @@ digraph BayesTheorem {
 ::::
 :::
 
+* Tutorial
+
+- [Generalized Linear Models](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks/Lesson07.04_Generalized_Linear_Models.ipynb)
+
 // 5, Comparing models
 
 # ##############################################################################
@@ -1898,12 +1906,12 @@ digraph BayesTheorem {
 # ##############################################################################
 
 * Models as Maps of the Real World
-- Often you need to compare models to understand which one is **"better"**
+- Typically you need to compare models to understand which one is **"better"**
 
 - Models are a **map, not a copy** of the real world
   - _"All models are wrong, but some are useful"_ (Box, 1976)
-    - All models are wrong since they aren't the actual territory
-    - Some models describe a problem better than others
+    - "Wrong": all models are wrong since they aren't the actual territory
+    - "Useful" some models describe a problem better than others
 
 - Models have a **purpose**
   - Are approximations to understand a problem
@@ -1920,7 +1928,7 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=50%}
-- Goal of PPC:
+- **Goal of PPC**:
   - Evaluate model's data explanation
   - Understand model limitations
   - Improve model
@@ -1928,7 +1936,7 @@ digraph BayesTheorem {
 - Given data from parabola + noise:
   - Fit with linear model
   - Fit with quadratic model
-  - Compare predicted (posterior) vs observed data
+  - Compare predicted posterior vs observed data
 
 ::::
 :::: {.column width=50%}
@@ -1944,7 +1952,7 @@ digraph BayesTheorem {
 
 ::: columns
 :::: {.column width=50%}
-- Compare KDE of observed and predicted data:
+- **Compare KDE of observed and predicted data**
   - Linear model KDE doesn't match
   - Quadratic model KDE matches better
   - High uncertainty in both models, especially at tails
@@ -1954,7 +1962,9 @@ digraph BayesTheorem {
   - Data set provides a single point
   - Posterior provides a distribution
 
-- Statistics "orthogonal" to model's focus are more informative
+- Statistics "orthogonal" to model's focus are more informative, since they are
+  less "overfit"
+  - E.g., fit the mean, compare the "median"
 
 ::::
 :::: {.column width=50%}
@@ -2026,8 +2036,8 @@ digraph BayesTheorem {
   - Model (Bayesian approach)
 
 - Does p-value incorporate uncertainty?
-  - (frequentist) No: use single point estimates
-  - (Bayesian) Yes, incorporate uncertainty of parameter estimates
+  - (Frequentist) No, it uses single point estimates
+  - (Bayesian) Yes, it incorporates uncertainty of parameter estimates
 
 // ## 5.2, The balance between simplicity and accuracy
 
@@ -2041,15 +2051,16 @@ digraph BayesTheorem {
   - Quality of explanation $\approx$ accuracy
   - Simpler $\approx$ number of model parameters
 
-- Ideally we should balance complexity and accuracy in a quantitative way
-
-- Complexity vs accuracy
+- **Complexity vs accuracy**
   - Increasing model complexity (e.g., number of model parameters) is
-    accompanied by increasing in-sample accuracy, but not necessarily
-    out-of-sample accuracy
+    accompanied by:
+    - Increasing in-sample accuracy
+    - Not necessarily out-of-sample accuracy
   - The complex model:
     - Did not "learn" from the data but just "memorize" it
-    - Do a bad job generalizing to predict potentially observable data
+    - Does a bad job generalizing to predict potentially observable data
+
+- Ideally balance complexity and accuracy in a quantitative way
 
 * Overfitting and Underfitting
 - A model is **overfit** when it has many parameters, fitting the training data
@@ -2066,13 +2077,16 @@ digraph BayesTheorem {
 // ## 5.3, Measures of predictive accuracy
 
 * Bias-Variance Trade-Off
-- A model has **high bias** when it has low ability to accommodate the data
-  (i.e., underfitting)
+- A model has **high bias** when:
+  - It has low ability to accommodate the data
+  - I.e., underfitting
   - E.g., a polynomial of degree 0
 
-- A model has **high variance** when it has high capacity and it is sensitive to
-  details in the data, capturing noise (i.e., overfitting)
-  - E.g., a polynomial of degree 5
+- A model has **high variance** when:
+  - It has high capacity and it is sensitive to details in the data, capturing
+    noise
+  - I.e., overfitting
+  - E.g., a polynomial of degree 100
 
 - Trade-off between bias and variance
   - Goal: balance simplicity and goodness of fit
@@ -2100,56 +2114,50 @@ digraph BayesTheorem {
 ### ############################################################################
 
 * Information Criteria: Intuition
-- Information criteria are tools to compare models in terms of fitting the data
-  taking into account their complexity through a penalization term
+- **Information criteria** compare models in terms of fitting the data taking
+  into account their complexity through a penalization term
   - Out-of-sample accuracy $\approx$ in-sample accuracy + a term penalizing
     model complexity
+  - It's the VC equation
+    $$E_{out}[h] = E_{in}[h] + \Omega(\calH)$$
 
 * Model Parameters for Bayesian vs Non-Bayesian Set-Up
-- Model parameters $\theta$ are:
-  - A point estimate (frequentist)
-  - A distribution estimated from the posterior (Bayesian)
 
-* Squared Error Metric
-- Squared error between the data and the predictions from the model
-  $$
-  \frac{1}{N} \sum_i (y_i - \EE[y_i | \theta])^2
-  $$
-  where $\EE[y_i | \theta]$ is the predicted value given the parameters
-- Squaring errors:
-  - Ensures that errors do not cancel out
-  - Emphasizes large errors (vs absolute values)
-
-* Log-Likelihood
-- In a probabilistic set-up, log-likelihood is more natural
-- **Log-likelihood** is defined as:
-
-  $$
-  \sum_i \log \Pr(y_i | \theta)
-  $$
-
-- Deviance is defined as:
-
-  $$
-  -2 \sum_i \log \Pr(y_i | \theta)
-  $$
+//* Squared Error Metric
+//- Squared error between the data and the predictions from the model
+//  $$
+//  \frac{1}{N} \sum_i (y_i - \EE[y_i | \theta])^2
+//  $$
+//  where $\EE[y_i | \theta]$ is the predicted value given the parameters
+//- Squaring errors:
+//  - Ensures that errors do not cancel out
+//  - Emphasizes large errors (vs absolute values)
+//
+//* Log-Likelihood
+//- In a probabilistic set-up, log-likelihood is more natural
+//- **Log-likelihood** is defined as:
+//
+//  $$
+//  \sum_i \log \Pr(y_i | \theta)
+//  $$
+//
+//- Deviance is defined as:
+//
+//  $$
+//  -2 \sum_i \log \Pr(y_i | \theta)
+//  $$
 
 * Maximum Likelihood Estimation (MLE)
-- MLE finds the parameter values that make the observed data most probable
+- **MLE** finds the parameter values that make the observed data most probable
+  (given a model)
   - Denoted by $\hat{\theta}_{MLE}$
   - It's a point not a distribution
 
-- Procedure:
+- **Procedure**:
   - Given the data $x_1, x_2, ..., x_n$
   - Assume it comes from a distribution with an unknown parameter $\theta$
   - Pick the value of $\theta$ that makes the data most likely given a likelihood
     function
-//    $$
-//    \left\{
-//        \begin{array}{l}
-//        \end{array}
-//    \right
-//    $$
   \begin{equation*}
     \begin{cases}
       L(\theta) = \log \Pr(x_1, x_2, ..., x_n | \theta) \\
@@ -2172,7 +2180,7 @@ digraph BayesTheorem {
   - $\text{num}_{params}$ is the number of parameters
 
 - **Interpretation**:
-  - The first term measures how well the model fits the data
+  - The first term (log likelihood) measures how well the model fits the data
   - The second term penalizes complex models
 
 - **Cons**:
@@ -2182,15 +2190,16 @@ digraph BayesTheorem {
     - E.g., in hierarchical models the effective number of params is smaller
 
 * Bayesian Information Criteria
-- Widely Applicable Information Criteria (WAIC)
+- **Bayesian Information Criteria (BIC)**
+  - Like AIC, it assumes flat priors and uses MLE
+  - It is not Bayesian
+
+- **Widely Applicable Information Criteria (WAIC)**
   - Bayesian version of AIC
   - It has two terms:
     - One that measures how good the fit is
     - One that penalizes complex models
-  - WAIC uses the posterior distribution to estimate both terms `
-- Bayesian Information Criteria (BIC)
-  - It is not fully Bayesian
-    - Like AIC, it assumes flat priors and uses MLE
+  - WAIC uses the posterior distribution to estimate both terms
 
 // ### 5.3.2, Cross-validation
 
@@ -2199,29 +2208,29 @@ digraph BayesTheorem {
 ### ############################################################################
 
 * Cross-Validation
-- Cross-validation (CV)
-  - Simple and effective solution to use all data to compare models
+- **Cross-validation** (CV)
   - **Procedure**
     - Partition data into $K$ portions of equal size and similar statistics
-    - Use $K-1$ partitions to train the model and the remaining partition to
-      test it
-    - Repeat $K$ times
+    - Use $K-1$ partitions to train the model and test on remaining partition
+    - Repeat for all $K$ folds
     - Average the results
+  - **Pros**
+    - Simple and effective solution to use all data to compare models
 
-- Leave-one-out cross-validation (LOO-CV)
+- **Leave-one-out cross-validation** (LOO-CV)
   - **Procedure**:
     - The model is fit for all data, excluding one observation
     - The model's predictive accuracy is tested on the left out observation
-    - Repeat the process for all observations and average
+    - Repeat the process for all observations
+    - Average the results
   - **Cons**
     - It is very computationally expensive since one needs to refit the model
 
-- How to adapt cross-validation to a Bayesian approach?
+- How to adapt **cross-validation to a Bayesian approach**?
   - CV and LOO require multiple model fits and fitting a Bayesian model is very
     expensive
   - Yes! There is a way to approximate using a single fit to the data
-
-// TODO: add picture
+  - ![](emoji/skull.png){ width=14px } Math alert
 
 * ELPD with LOO-CV
 - We want to compute $ELPD_{LOO-CV}$ where:
