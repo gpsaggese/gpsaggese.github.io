@@ -1059,7 +1059,7 @@ digraph BayesTheorem {
 
 * Sample Size Effect
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=60%}
 - **Sample size effect** is the impact of the number of observations on
   statistical results (e.g., p-values, confidence intervals)
 
@@ -1077,7 +1077,7 @@ digraph BayesTheorem {
 - E.g., Cohen's d, probability of superiority
 
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](msml610/lectures_source/figures/Lesson07_Immigrant_Nobel_Prize.png)
 
@@ -1255,36 +1255,39 @@ digraph BayesTheorem {
 - **Result**: inference is more stable
 
 * You Need to Know When to Stop
-- You can create hierarchical models with as many levels as you want
+- You can create **hierarchical models with as many levels** as you want
 
-- More levels:
+- **Pros**:
+  - Leverage data structure
+
+- **Cons**
   - Don't improve inference quality
   - Complicate interpretation
 
-- Goal:
-  - Leverage data structure
-  - _"Add as many degrees as freedom as needed, but not more than what is
-    warranted"_ (Occam's razor)
+- _"Add as many degrees as freedom as needed, but not more than what is
+  warranted"_ (Occam's razor)
 
 // 4, Modeling with lines
 
-# ##############################################################################
-# Simple Linear Model
-# ##############################################################################
+# Generalized Linear Models
+
+## ##############################################################################
+## Simple Linear Model
+## ##############################################################################
 
 * Linear Model
-::: columns
-:::: {.column width=70%}
-
-- Many problems can be stated as:
+- Many problems can be formulated as **linear regression**:
   - $X$ and $Y$: uni-dimensional continuous RVs
   - Dataset of paired observations $\{(x_1, y_1), ..., (x_n, y_n)\}$
   - $X$ are independent variables
   - Model/predict dependent variable $Y$
   - Assume a linear relationship between $Y$ and $X$
 
+::: columns
+:::: {.column width=70%}
+
 - E.g.,
-  - Average temperature vs Nobel laureates in a country
+  - Nobel laureates in a country vs amount of chocolate consumed
   - Sugar intake vs Blood glucose
   - Years of education vs Annual income
   - Advertising spend vs Sales
@@ -1292,7 +1295,7 @@ digraph BayesTheorem {
   - Coffee consumption vs Productivity
 
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ![](msml610/lectures_source/figures/Lesson07_Immigrant_Nobel_Prize_and_chocolate.png)
 
@@ -1304,21 +1307,33 @@ digraph BayesTheorem {
   $$
   y = \alpha + \beta x
   $$
+
 - **Frequentist approach**:
   - Find parameters $\alpha, \beta$ using least square fitting
     - Minimize average quadratic error between observed $y$ and predicted
       $\hat{y}$
+      $$
+      \text{MSE} = \frac{1}{N} \sum_{i=1}^N (\alpha + \beta x_i - \hat{y}_i)^2
+      $$
   - Point-estimate from least squares corresponds to maximum a-posteriori with
-    flat priors
+    flat (uniform) priors on $\alpha$ and $\beta$
+
+  - With certain assumptions, it's "optimal"
+    - Residuals are Gaussian
+    - Linearity in parameters
+    - Independence
+    - Homoscedasticity (constant variance of $\varepsilon_i$)
 
 * Linear Model: Bayesian Approach
-- A **linear model** is described by:
+- A **linear model** is described by the same model:
   $$
   y = \alpha + \beta x
   $$
-- **Bayesian approach assumes**:
-  - Data is Gaussian with mean $\alpha + \beta x$ and standard deviation
-    $\sigma$: $y \sim N(\mu=\alpha + \beta x, \sigma)$
+- **Bayesian assumptions**:
+  - Data $y$ is Gaussian with mean $\alpha + \beta x$ and standard deviation
+    $$
+    \sigma: y \sim N(\mu=\alpha + \beta x, \sigma)
+    $$
   - $\alpha, \beta, \sigma$ are independent
   - Priors:
     \begin{equation*}
@@ -1328,7 +1343,8 @@ digraph BayesTheorem {
       \sigma \sim HalfNormal(0, \sigma_\epsilon) \\
       \end{cases}
     \end{equation*}
-- Use **vague priors**:
+
+- You can use **vague priors** to add problem knowledge:
   - Prior of intercept $\alpha$ often centered around $0$
   - Info on sign of $\beta$ sometimes available
   - Half-Cauchy / exponential distribution for $\sigma$
@@ -1344,28 +1360,28 @@ digraph BayesTheorem {
   - $\beta = 0.9$
   - Add noise
 ::::
-:::: {.column width=70%}
+:::: {.column width=60%}
 ![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example1.png)
 ::::
 :::
 
 * Linear Model: Synthetic Example
 ::: columns
-:::: {.column width=35%}
+:::: {.column width=40%}
 - Create linear model in PyMC
 - Use vague priors
   - Prior of intercept $\alpha$ and $\beta$ centered around $0$
   - Half-Cauchy distribution for $\sigma$
 
 ::::
-:::: {.column width=60%}
+:::: {.column width=55%}
 ![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example2.png)
 ::::
 :::
 
 * Linear Model: Synthetic Example
 ::: columns
-:::: {.column width=35%}
+:::: {.column width=40%}
 - Run the sampler
 - Ground truth
   - $\alpha = 2.5$
@@ -1375,7 +1391,7 @@ digraph BayesTheorem {
   - $\beta = 0.95$
 
 ::::
-:::: {.column width=70%}
+:::: {.column width=55%}
 ![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example3.png)
 ::::
 :::
@@ -1399,13 +1415,13 @@ digraph BayesTheorem {
 ::: columns
 :::: {.column width=45%}
 
-- Fit model: $\mu = 69 + 7.9 X$
+- **Fit model with PyMC**: $\mu = 69 + 7.9 X$
 
-- Interpreting the model
+- **Interpreting the model**
   - For temperature 0 expected rented bikes = 69
   - Each degree increase: expected value increases by 7.9
 
-- Parameters have uncertainty
+- **Parameters have uncertainty**
   - Posterior accounts for combined uncertainty
   - Bands represent quantiles [0.25, 0.75] and [0.03, 0.97] of prediction
 
@@ -1423,19 +1439,28 @@ digraph BayesTheorem {
 * Linear Model: Bike Rental Example (Criticism)
 
 - **Problems**
-  - Model outputs negative bike numbers
-  - Model predicts real numbers, but count is discrete
+  1. Model outputs negative bike numbers
+  2. Model predicts real numbers, but count is discrete
 
-- **Root cause**: Not surprising since using Normal likelihood:
-  - Extends to negative numbers
-  - Is continuous
+- **Root cause**: Not surprising since using Gaussian likelihood:
+  - Gaussian extends to negative numbers
+  - Gaussian is continuous
 
 - **Solutions**:
-  - Clip predictions below 0 and discretize output (hack)
-  - Use model defined for positive numbers only
+  - Hack: clip predictions below 0 and discretize output
+  - Elegant: use model defined only for discrete positive numbers
+
+* Count Data
+- **Count data** = when the RV is a discrete number and bounded at 0
+  - E.g., the number of rented bikes
+- If the number is large, we can use a continuous distribution
+  - E.g., Gaussian
+- Other times, it's modeled as discrete
+  - E.g., Poisson, negative binomial
 
 * Generalized Liner Model (GLM)
-- Generalization of linear model using different distributions for likelihood:
+- **Generalization of linear model** using different distributions for
+  likelihood:
   \begin{equation*}
     \begin{cases}
     \alpha \sim prior \\
@@ -1451,17 +1476,9 @@ digraph BayesTheorem {
   - $\theta$: auxiliary parameter for $\phi$
     - E.g., $\sigma$ for Normal
   - $f()$: "inverse link function" transforming $\mu$ from the real line to
-    domain of $\phi$
+   domain of $\phi$
 
 // ## 4.4 Counting bikes
-
-* Count Data
-- **Count data** = when the RV is a discrete number and bounded at 0
-  - E.g., the number of rented bikes
-- If the number is large, we can use a continuous distribution
-  - E.g., Gaussian
-- Other times, it's modeled as discrete
-  - E.g., Poisson, negative binomial
 
 * Poisson Distribution
 
@@ -1487,18 +1504,36 @@ digraph BayesTheorem {
 ::::
 :::
 
+* Overdispersion
+- **Overdispersion** occurs when variance of count data is much larger (e.g.,
+  15-20x) than mean
+
+- **Examples**:
+  - _Epidemiology_: modeling disease outbreak, number of new infections
+    fluctuates widely
+  - _Customer service_: large variation in daily complaints
+
+- **How to model it?**
+  - **Model using Poisson**:
+    - Mean and variance needs to be equal ![](emoji/wrong.png){ width=12px }
+  - **Model using Normal**:
+    - Mismatch predicting negative rented bikes
+    - Poor fit on positive side
+  - **Model using Negative Binomial**:
+    - Better fit, though not perfect
+    - Right tail predictions differ, but high demand probability is low
+    - Second parameter controls variance 
+    - Overall better than Normal model ![](emoji/check_mark.png){ width=12px }
+
 * Negative Binomial Distribution
 ::: columns
 :::: {.column width=50%}
 - **Negative binomial distribution**
   - Models failures/trials to achieve fixed number of successes in IID Bernoulli
     trials
-  - Generalizes geometric distribution, which models number of trials to achieve
-    first success
-  - Models overdispersion (i.e., mean << variance)
-- **E.g.,**
-  - Customer service: unsuccessful interactions before success
-  - Sports: games lost before winning a fixed number of games
+  - Generalizes geometric distribution, modeling trials to first success
+  - Models overdispersion (mean $\ll$ variance)
+
 ::::
 :::: {.column width=50%}
 
@@ -1507,26 +1542,9 @@ digraph BayesTheorem {
 ::::
 :::
 
-* Overdispersion
-- **Overdispersion** occurs when variance of count data is much larger (e.g.,
-  15-20x) than mean
 - **E.g.,**
-  - Epidemiology: when modeling disease outbreak, number of new infections on a
-    given day might fluctuate widely
-  - Customer service: large variation of number of daily complaints
-
-- **How to model it?**
-  - Poisson distribution:
-    - Mean and variance equal ![](emoji/wrong.png){ width=12px }
-  - Negative binomial:
-    - Second parameter controls variance ![](emoji/check_mark.png){ width=12px }
-  - **Model using Normal**:
-    - Mismatch when predicting negative rented bikes
-    - Poor fit even on positive side
-  - **Model using Negative Binomial**:
-    - Better fit, though not perfect
-    - Right tail predictions differ, but high demand probability is low
-    - Overall better than Normal model
+  - Customer service: unsuccessful interactions before success
+  - Sports: games lost before winning a fixed number of games
 
 // ## 4.5, Robust regression
 
@@ -1534,6 +1552,9 @@ digraph BayesTheorem {
 ::: columns
 :::: {.column width=40%}
 - Outliers pull regression line away from bulk of data
+
+- Robust regression is just another generalized linear model
+  - Instead of some feature transform / winsorization like in the hacker ML
 
 ::::
 :::: {.column width=55%}
@@ -1565,12 +1586,12 @@ digraph BayesTheorem {
 ## #############################################################################
 
 * Logistic Regression
-- Logistic regression model
+- **Logistic regression model**
   - Is a generalized linear model
   - Models the response variable as binary
     - E.g., ham/spam, safe/unsafe, cloudy/sunny, hotdog/not hotdog
 
-- The logistic model is:
+- The **logistic model** is:
   \begin{equation*}
     \begin{cases}
     \theta = logit(\alpha + \beta x) \\
@@ -1633,12 +1654,12 @@ digraph BayesTheorem {
 :::
 
 * Iris Dataset
-- Classical dataset of measurements from flowers from 3 closely related species
+- Classical dataset of measurements of flowers from 3 closely related species
   of Iris setosa, virginica, and versicolor
   - E.g., we want to predict the probability of a flower being `setosa` from the
     `sepal_length`
 
-![](msml610/lectures_source/figures/Lesson07_Logistic_regression_df.png)
+![](msml610/lectures_source/figures/Lesson07_Logistic_regression_df.png){ width=90% }
 
 * Classification with Logistic Regression
 
@@ -1650,7 +1671,11 @@ digraph BayesTheorem {
     \Pr(Y = \texttt{versicolor} | \texttt{sepal\_length}) > 0.5
     $$
 
-- "Classification with logistic regression" might seem a **misnomer**
+- Same treatment as frequentist approach, since it has a Bayesian flavor
+  - But once it's Bayesian, you can generalize even more!
+  - No gradient descent, but solved with Bayesian inference
+
+- **Classification with logistic regression** might seem a **misnomer**
   - **Regression** predicts a continuous variable given input variables
   - **Classification** predicts a discrete variable given input variables
   - Is a "regression" since it computes the probability that the output is a
@@ -1674,18 +1699,17 @@ digraph BayesTheorem {
     false positives ("patient doesn't have disease, predicted")
 
 * Odds
-- The **odds** of event $y=1$ is:
+- The **odds of event** "$y=1$" is the ratio between favorable vs unfavorable
+  events
   $$
   \text{odds} \defeq \frac{\Pr(y=1)}{1 - \Pr(y=1)}
   $$
-  - Ratio between favorable vs unfavorable events
 
-- Transformation exists between probability, odds, and log-odds
-
-- More intuitive than probability in "gambling"
+- Transformation between probability, odds, and log-odds
+  - More intuitive than probability in "gambling"
   - E.g., odds of getting a 2 rolling a fair die are
     $\frac{1/6}{5/6} = \frac{1}{5} = 0.2$
-  - One favorable event for 5 unfavorable events
+    - One favorable event for 5 unfavorable events
 
 - Interpreting **logistic regression in terms of odds**:
   - Since $\theta = logit(\alpha + \beta x)$ and $\theta = \Pr(y = 1)$, we get:
@@ -1725,7 +1749,7 @@ digraph BayesTheorem {
   - E.g., variance can be a linear function of the dependent variable
 
 - **Example**:
-  - Variance of baby height as a function of age is heteroskedastic
+  - Baby height as a function of age is heteroskedastic
   - $\sigma$ is a linear function of the predictor variable
   - Mean $\mu$ is square root of a linear model
 
@@ -1785,10 +1809,10 @@ digraph BayesTheorem {
 //    group
 //  - The information is represented in the same way
 
-# Multiple linear regression
+## Multiple Linear Regression
 
 * Multiple Linear Regression
-- In prediction problems, several independent variables are common 
+- In prediction problems, it is common to have several independent variables
   - E.g., student's grades = f(family income, mother's education, ...)
 
 - **Problem formulation**
@@ -1839,10 +1863,10 @@ digraph BayesTheorem {
 
 * Multiple Regression: Rented Bike Example 1/2
 
-- Assumption: number of bike rented is function of temperature and hour of the
-  day
+- **Assumption**: number of bike rented is function of temperature and hour of
+  the day
 
-- Create model
+- Create PyMC model
 
 ::: columns
 :::: {.column width=50%}
@@ -2674,171 +2698,171 @@ digraph BayesTheorem {
     - E.g., using posterior-predictive checks, WAIC, LOO, or domain expertise
 
 // TODO: Add plots
-
-## #############################################################################
-## 7.5, Zero-Inflated and Hurdle Models
-## #############################################################################
-
-*
-- When counting things, it is possible to get a count of zero
-
-- Problem: some models (e.g., Poisson, Negative Binomial distribution) can
-  generate fewer zeros compared to the data
-
-- Solutions
-1. We can improve the model (e.g., use a better model, non-parametric one)
-2. We can assume we have a mixture model, with one model for the zero element and
-   one model giving non-zero elements, aka "Zero-inflated distributions"
-   - Family of distributions allowing for "extra" zeros, e.g.,
-     - zero-inflated Poisson
-     - zero-inflated Negative Binomial
-     - zero-inflated Binomial
-
-* Hurdle Models
-- A Bernoulli model determines if the count variable is zero or a different
-  distribution truncated at 0, i.e., which doesn't assume the value 0
-
-- E.g., hurdle Poisson, NegativeBinomial, Gamma, LogNormal
-
-* Zero-Inflated vs Hurdle Models
-- Zero-inflated models are a mixture of zeros and a distribution of zeros and
-  non-zeros
-  - The probability $\Pr(x = 0)$ can only be larger than the base distribution,
-    i.e., the probability of zero is "inflated"
-- Hurdle models are a mixture of zeros and non-zeros
-  - The probability $\Pr(x = 0)$ is independent of the base distribution
-
-* Hanging root-ograms
-- Useful for treating issues such as over-dispersion and/or excess zeros in count
-  data models
-1) Plot the square root of observed and predicted values
-   - It makes it simper to adjust for scale differences
-2) Bars of observed data are hanging from the expected values
-   - It makes it simple to see if it's a good fit or not by comparing the bottom
-     of the values to a base
-
-## #############################################################################
-## 7.6, Mixture Models and Clustering
-## #############################################################################
-
-* Clustering
-- Goal: group objects so that the objects in a given group (aka cluster) are
-  "closer" to each other than to those in the other groups
-  - Degree of closeness is computed using a distance (e.g., Euclidean distance)
-
-- Clustering is an unsupervised learning task
-  - Similar to classification but without knowing the correct labels
-
-* Soft- vs Hard- Clustering
-- Soft-clustering computes the probability of each data point belonging to each
-  cluster
-- Hard-clustering assigns each point to a single cluster
-
-- One can turn soft-clustering into hard- by assigning each data point to the
-  cluster with the highest probability
-  - E.g., assigning points to the cluster with highest probability
-  - E.g., using a threshold for probability of 0.5 (as in classification for
-    logistic regression)
-
-* Probabilistic Clustering
-- Aka "model-based clustering"
-- = clustering using probabilistic model, i.e., compute the probability of each
-  point belonging to one of the customers
-- E.g., we assume that data is generated by a mixture models
-
-## #############################################################################
-## 7.7, Non-Finite Mixture Models
-## #############################################################################
-
-* How Many Mixture Models to Use?
-- For some problems, it is easy to choose the number of mixtures to use, since
-  we know how many groups there are in the data
-  - E.g., when clustering handwritten digits we know there are 10 groups
-
-- For other problems, we can't choose the number of groups a priori and we want
-  it to estimate from the data
-  - E.g., Dirichlet process
-
-* Parametric vs Non-Parametric Models
-- Parametric models have a fixed number of parameters
-- Non-parametric models have (theoretically) an infinite number of parameters
-  - Very flexible
-  - The data decides how many parameters are needed
-  - E.g., Gaussian process (GP), Bayesian Additive Regression Trees (BART),
-    Dirichlet process (DP)
-
-* Dirichlet Process
-- Dirichlet distribution is the $n$-dimensional generalization of beta
-  distribution
-- Dirichlet process (DP) is the infinite-dimensional generalization of the
-  Dirichlet distribution
-  - A draw from a DP is actually a (discrete) Dirichlet distribution
-
-- A DP has:
-  - A base distribution $\mathcal{H}$ (e.g., Gaussian, Poisson, Laplace)
-  - $\alpha$ a concentration parameter
-    - Increasing $\alpha$ means less and less concentrated realization
-    - For $\alpha \to \infty$ the realization of a DP are equal to the base
-      distribution
-
-* Categorical Distribution
-- The categorical distribution (the most general discrete distribution) is
-  parameterized specifying the probabilities of each possible outcome
-- It is specified by:
-  - Indicating the positions on the x axis and the height on the y axis
-  - $x$ positions are integers
-  - $y$ heights must sum to 1
-
-- A generalization of this is to have $x$ sampled from $\mathcal{H}$
-  - $\mathcal{H}$ to be a Gaussian, so $x$ are on the real line
-  - $\mathcal{H}$ to be a Beta, so $x$ are in [0, 1]
-  - $\mathcal{H}$ to be a Poisson, so $x$ are non-negative integers 0, 1, 2, ...
-
-* Stick-Breaking Process
-- = process to generate values on the y axis so that the sum is 1
-- You start with a stick of length 1
-- Break it into two parts (not necessarily equal)
-  - Use the "concentration parameter" $\alpha$ to control the size of the break
-- Save the first part
-- Pick the second part and break it again
-- Repeat until you get $K$ values
-
-* Dirichlet Process Using Stick-Breaking
-- The locations are sampled from the base distribution
-- The weights are controlled by $\alpha$
-- As $\alpha \to \infty$ the DP distribution approximates the base distribution
-
-* Infinite Mixture Model
-- We can place a Gaussian on each data point and weight from a Dirichlet process
-- The same approach can be use for Laplace distribution
-
-## #############################################################################
-## 7.8, Continuous Mixtures
-## #############################################################################
-
-// 8, Gaussian processes
-// 9, Bayesian additive regression
-
-# ##############################################################################
-# Inference Engines
-# ##############################################################################
-
-// 10, Inference engines
-// AIMA 13.4
-
-## #############################################################################
-## 10.1, Inference Engines
-## #############################################################################
-
-* Inference Engines as Black
-- Bayesian methods are numerically challenging
-  - Intractable / computationally intractable integral to solve
-
-- Probabilistic programming separates:
-  1. Model building
-  - Users should not care how sampling is carried out
-  2. Inference process (can be a black box, leave PyMC to handle computation)
-
-- Understanding how the posterior is sampled can help understand how different
-  methods can fail
-  - E.g., diagnose samples
+//
+//## #############################################################################
+//## 7.5, Zero-Inflated and Hurdle Models
+//## #############################################################################
+//
+//*
+//- When counting things, it is possible to get a count of zero
+//
+//- Problem: some models (e.g., Poisson, Negative Binomial distribution) can
+//  generate fewer zeros compared to the data
+//
+//- Solutions
+//1. We can improve the model (e.g., use a better model, non-parametric one)
+//2. We can assume we have a mixture model, with one model for the zero element and
+//   one model giving non-zero elements, aka "Zero-inflated distributions"
+//   - Family of distributions allowing for "extra" zeros, e.g.,
+//     - zero-inflated Poisson
+//     - zero-inflated Negative Binomial
+//     - zero-inflated Binomial
+//
+//* Hurdle Models
+//- A Bernoulli model determines if the count variable is zero or a different
+//  distribution truncated at 0, i.e., which doesn't assume the value 0
+//
+//- E.g., hurdle Poisson, NegativeBinomial, Gamma, LogNormal
+//
+//* Zero-Inflated vs Hurdle Models
+//- Zero-inflated models are a mixture of zeros and a distribution of zeros and
+//  non-zeros
+//  - The probability $\Pr(x = 0)$ can only be larger than the base distribution,
+//    i.e., the probability of zero is "inflated"
+//- Hurdle models are a mixture of zeros and non-zeros
+//  - The probability $\Pr(x = 0)$ is independent of the base distribution
+//
+//* Hanging root-ograms
+//- Useful for treating issues such as over-dispersion and/or excess zeros in count
+//  data models
+//1) Plot the square root of observed and predicted values
+//   - It makes it simper to adjust for scale differences
+//2) Bars of observed data are hanging from the expected values
+//   - It makes it simple to see if it's a good fit or not by comparing the bottom
+//     of the values to a base
+//
+//## #############################################################################
+//## 7.6, Mixture Models and Clustering
+//## #############################################################################
+//
+//* Clustering
+//- Goal: group objects so that the objects in a given group (aka cluster) are
+//  "closer" to each other than to those in the other groups
+//  - Degree of closeness is computed using a distance (e.g., Euclidean distance)
+//
+//- Clustering is an unsupervised learning task
+//  - Similar to classification but without knowing the correct labels
+//
+//* Soft- vs Hard- Clustering
+//- Soft-clustering computes the probability of each data point belonging to each
+//  cluster
+//- Hard-clustering assigns each point to a single cluster
+//
+//- One can turn soft-clustering into hard- by assigning each data point to the
+//  cluster with the highest probability
+//  - E.g., assigning points to the cluster with highest probability
+//  - E.g., using a threshold for probability of 0.5 (as in classification for
+//    logistic regression)
+//
+//* Probabilistic Clustering
+//- Aka "model-based clustering"
+//- = clustering using probabilistic model, i.e., compute the probability of each
+//  point belonging to one of the customers
+//- E.g., we assume that data is generated by a mixture models
+//
+//## #############################################################################
+//## 7.7, Non-Finite Mixture Models
+//## #############################################################################
+//
+//* How Many Mixture Models to Use?
+//- For some problems, it is easy to choose the number of mixtures to use, since
+//  we know how many groups there are in the data
+//  - E.g., when clustering handwritten digits we know there are 10 groups
+//
+//- For other problems, we can't choose the number of groups a priori and we want
+//  it to estimate from the data
+//  - E.g., Dirichlet process
+//
+//* Parametric vs Non-Parametric Models
+//- Parametric models have a fixed number of parameters
+//- Non-parametric models have (theoretically) an infinite number of parameters
+//  - Very flexible
+//  - The data decides how many parameters are needed
+//  - E.g., Gaussian process (GP), Bayesian Additive Regression Trees (BART),
+//    Dirichlet process (DP)
+//
+//* Dirichlet Process
+//- Dirichlet distribution is the $n$-dimensional generalization of beta
+//  distribution
+//- Dirichlet process (DP) is the infinite-dimensional generalization of the
+//  Dirichlet distribution
+//  - A draw from a DP is actually a (discrete) Dirichlet distribution
+//
+//- A DP has:
+//  - A base distribution $\mathcal{H}$ (e.g., Gaussian, Poisson, Laplace)
+//  - $\alpha$ a concentration parameter
+//    - Increasing $\alpha$ means less and less concentrated realization
+//    - For $\alpha \to \infty$ the realization of a DP are equal to the base
+//      distribution
+//
+//* Categorical Distribution
+//- The categorical distribution (the most general discrete distribution) is
+//  parameterized specifying the probabilities of each possible outcome
+//- It is specified by:
+//  - Indicating the positions on the x axis and the height on the y axis
+//  - $x$ positions are integers
+//  - $y$ heights must sum to 1
+//
+//- A generalization of this is to have $x$ sampled from $\mathcal{H}$
+//  - $\mathcal{H}$ to be a Gaussian, so $x$ are on the real line
+//  - $\mathcal{H}$ to be a Beta, so $x$ are in [0, 1]
+//  - $\mathcal{H}$ to be a Poisson, so $x$ are non-negative integers 0, 1, 2, ...
+//
+//* Stick-Breaking Process
+//- = process to generate values on the y axis so that the sum is 1
+//- You start with a stick of length 1
+//- Break it into two parts (not necessarily equal)
+//  - Use the "concentration parameter" $\alpha$ to control the size of the break
+//- Save the first part
+//- Pick the second part and break it again
+//- Repeat until you get $K$ values
+//
+//* Dirichlet Process Using Stick-Breaking
+//- The locations are sampled from the base distribution
+//- The weights are controlled by $\alpha$
+//- As $\alpha \to \infty$ the DP distribution approximates the base distribution
+//
+//* Infinite Mixture Model
+//- We can place a Gaussian on each data point and weight from a Dirichlet process
+//- The same approach can be use for Laplace distribution
+//
+//## #############################################################################
+//## 7.8, Continuous Mixtures
+//## #############################################################################
+//
+//// 8, Gaussian processes
+//// 9, Bayesian additive regression
+//
+//# ##############################################################################
+//# Inference Engines
+//# ##############################################################################
+//
+//// 10, Inference engines
+//// AIMA 13.4
+//
+//## #############################################################################
+//## 10.1, Inference Engines
+//## #############################################################################
+//
+//* Inference Engines as Black
+//- Bayesian methods are numerically challenging
+//  - Intractable / computationally intractable integral to solve
+//
+//- Probabilistic programming separates:
+//  1. Model building
+//  - Users should not care how sampling is carried out
+//  2. Inference process (can be a black box, leave PyMC to handle computation)
+//
+//- Understanding how the posterior is sampled can help understand how different
+//  methods can fail
+//  - E.g., diagnose samples
