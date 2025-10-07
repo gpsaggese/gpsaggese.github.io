@@ -597,19 +597,20 @@ digraph BayesTheorem {
 * Coin Example: Numerical Solution (3/3)
 
 ::: columns
-:::: {.column width=70%}
-
-![](msml610/lectures_source/figures/Lesson07_Coin_example_numerical_solution_2.png)
-
-::::
 :::: {.column width=30%}
-\begingroup
-\small
+
+\begingroup \small
+
 - Compute single KDE for all chains
 - Rank plot to check results
 - Histograms should look uniform, exploring different (and all) posterior regions
 - Plot single KDE with all statistics
+
 \endgroup
+
+::::
+:::: {.column width=70%}
+![](msml610/lectures_source/figures/Lesson07_Coin_example_numerical_solution_2.png)
 ::::
 :::
 
@@ -630,12 +631,15 @@ digraph BayesTheorem {
   - Define a more informative prior
 
 * Savage-Dickey Density Ratio
-- The Savage-Dickey ratio tests a point null-hypotheses in Bayesian inference
+- The **Savage-Dickey ratio** tests a _point null-hypotheses_ in Bayesian
+  inference
 
 - **Idea**: compare prior and posterior densities at a single point $\theta_0$
+  \begingroup \scriptsize
   $$
   BF_{01} = \frac{p(\theta_0 | H_1)}{p(\theta_0 | \mathcal{D}, H_1)}
   $$
+  \endgroup
   where:
   - $p(\theta_0 | H_1)$ is the _prior_ density $\theta$ under the alternative
     hypothesis $H_1$, evaluated at $\theta_0$
@@ -651,9 +655,12 @@ digraph BayesTheorem {
 | > 100           | Decisive evidence         |
 \endgroup
 
-- **Intuition**: this ratio shows how much data changes belief about $\theta_0$
-  - If posterior density at $\theta_0$ is much smaller than prior density, Bayes
-    factor suggests strong evidence against $H_0$
+- **Intuition**: show how data changes belief about $\theta_0$
+  - If posterior density at $\theta_0$ is much smaller than prior density, strong
+    evidence against null hypothesis $H_0$
+
+- **Cons**:
+  - It's a point statistics (not considering the entire posterior)
 
 * Savage-Dickey Density Ratio: Example
 
@@ -664,44 +671,46 @@ digraph BayesTheorem {
 ::::
 :::: {.column width=30%}
 - $H_0$: "coin is fair"
-- The prior for $H_0$ is 0.87
-- The posterior for $H_0$ is 1.15
-- $BF_{10} = $
+  - The prior for $H_0$ is 0.87
+  - The posterior for $H_0$ is 1.15
+  - $BF_{10} = 0.76$ $\to$ no evidence to reject the null hypothesis
 
+- In the other case, very strong evidence
+  - $BF_{10} = 15.06$ $\to$ strong evidence to reject the null hypothesis
 ::::
 :::
-
-// TODO: improve
 
 * ROPE: Region of Practical Equivalence
 - **ROPE** = an interval for a parameter where all values inside are considered
   "equivalent"
+
+- **Example**
   - $H_0$: _"coin is fair"_ iff $\theta = 0.5$ is impractical
   - ROPE: $\theta \in [0.45, 0.55]$ is equivalent to $0.5$
 
 - **Hypothesis testing with ROPE and HPI**
   - Compare ROPE (Region Of Practical Equivalence) with HPI (Highest-Posterior
     Interval)
-    - If HPI is within ROPE, no effect: $H_1$ is rejected
-    - If HPI is outside ROPE, there is an effect: $H_0$ is rejected
-    - If HPI overlaps with ROPE, result is inconclusive
+    - If HPI is within ROPE $\to$ no effect, $H_1$ is rejected
+    - If HPI is outside ROPE $to$ effect present, $H_0$ is rejected
+    - If HPI overlaps with ROPE $\to$ result is inconclusive
 
 - Decide ROPE before analysis based on domain knowledge
   - Picking it after analysis is like picking the p-value threshold after seeing
     the p-value
 
 * Loss Function: Motivation
-- You need to make decisions based on our inference
+- You need to **make decisions** based on inference
 
-- For many problems, decision cost is asymmetric
-  - E.g., cost of a bad decision > benefit of a good decision
+- For many problems, **decision cost is asymmetric**
+  - E.g., cost of a bad decision > or < benefit of a good decision
   - E.g., vaccines may cause overreaction, but benefits outweigh risks
 
-- To make the best decision, measure:
+- To make the **best decision**, measure:
   - Benefits of a correct decision
   - Cost of a mistake
   - Decide trade-off between benefits and costs using a loss function
-  - Use loss we function for decisions
+  - Use loss function for decisions
 
 - Loss quantifies _"how bad is an estimation mistake?"_
   - Larger loss indicates worse estimation
@@ -714,31 +723,23 @@ digraph BayesTheorem {
   - The true value $\theta$; and
   - The estimated value $\hat{\theta}$
 
-  \begingroup \small
-  | **Loss**       | **Expression**               | **Point estimate**    |
-  | -------------- | ---------------------------- | --------------------- | 
-  | Quadratic loss | $(\theta - \hat{\theta})^2$  | Mean of posterior     |
-  | Absolute loss  | $|\theta - \hat{\theta}|$    | Median of posterior   |
-  | 1-0 loss       | $I(\theta \ne \hat{\theta})$ | Mode of posterior     |
-  \endgroup
+\begingroup \scriptsize
+| **Loss**       | **Expression**               | **Point estimate**    |
+| -------------- | ---------------------------- | --------------------- | 
+| Quadratic loss | $(\theta - \hat{\theta})^2$  | Mean of posterior     |
+| Absolute loss  | $|\theta - \hat{\theta}|$    | Median of posterior   |
+| 1-0 loss       | $I(\theta \ne \hat{\theta})$ | Mode of posterior     |
+\endgroup
 
-- Making decisions in Bayesian statistics using loss function
+- Algorithm to make decisions in Bayesian statistics using loss function
   - Goal: pick a single value $\hat{\theta}$
   - You don't know the true value $\theta$
   - Estimate $\theta$ in terms of the posterior distribution
   - Find the value $\hat{\theta}$ that minimizes the expected loss function
 
-* Use of Gaussians in Bayesian Analysis
-- Aka "normal" distribution
+* Tutorial: Bayesian Coin
 
-- **Pros**:
-  - Gaussians are easy to work with and abundant in nature
-  - Average of large sample size tends to be Gaussian (CLT)
-  - Many phenomena approximated using Gaussians (since they are average of
-    effects)
-  - Conjugate prior of Gaussian is Gaussian
-
-- Important to relax assumption of Gaussianity
+- [Bayesian Coin](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks/Bayesian_Coin.ipynb)
 
 ## Chemical Shift: Example
 
@@ -758,14 +759,31 @@ digraph BayesTheorem {
 ::::
 :::
 
+* Use of Gaussians in Statistics
+- Aka "normal" distribution
+
+- **Gaussians are easy to work with and abundant in nature**
+
+- **Pros**:
+  - Average of large sample size tends to be Gaussian (by Central Limit Theorem)
+  - Many phenomena approximated using Gaussians (since they are average of
+    effects)
+  - Conjugate prior of Gaussian is Gaussian
+
+- **Cons**:
+  - Not robust to outliers
+  - Important to relax assumption of Gaussianity
+
 * Chemical Shift: Example
 
 ::: columns
 :::: {.column width=50%}
 - Assume Gaussian is a decent approximation of the data
 
-- The likelihood $y | \mu, \sigma$ comes from a normal distribution:
-  $$Y \sim N(\mu, \sigma)$$
+- The **likelihood** $y | \mu, \sigma$ comes from a normal distribution:
+  $$
+  Y \sim N(\mu, \sigma)
+  $$
 
 ::::
 :::: {.column width=45%}
@@ -773,46 +791,52 @@ digraph BayesTheorem {
 ::::
 :::
 
-- Priors for mean and sigma of $Y$
-  1. Mean from uniform distribution $U(l, h)$:
-     $$
-     \mu \sim U(l, h)
-     $$
-     - Set $\mu$ larger than data range, e.g., $[40, 75]$
-  2. Std dev from half-normal distribution (i.e., a regular normal, but
-     restricted to non-negative values):
-     $$
-     \sigma \sim HalfNormal(0, \sigma_\sigma)
-     $$
-     - If unknown, set $\sigma_\sigma = 10$
+- **Priors** for mean and sigma of $Y$
+  - **Mean** from uniform distribution $U(l, h)$:
+    $$
+    \mu \sim U(l, h)
+    $$
+    - Set $\mu$ larger than data range, e.g., $[40, 70]$
+  * Std dev from half-normal distribution (i.e., a regular normal, but restricted
+    to non-negative values):
+    $$
+    \sigma \sim HalfNormal(0, \sigma_\sigma)
+    $$
+    - If unknown, set $\sigma_\sigma = 10$
 
 * Chemical Shift: PyMC
 
 ![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution1.png)
 
-- The code is one-to-one with the model:
+- The PyMC code is **one-to-one with the model**:
+  \begingroup \scriptsize
   \begin{equation*}
     \begin{cases}
-    \mu \sim U(l=40, h=75) \\
+    \mu \sim U(l=40, h=70) \\
     \sigma \sim HalfNormal(0, \sigma_\sigma=10) \\
     Y \sim N(\mu, \sigma) \\
     \end{cases}
   \end{equation*}
-
-- Get 1000 samples from the posterior
+  \endgroup
+  - Get 1000 samples from the posterior
 
 * Chemical Shift: PyMC
 
 ::: columns
-:::: {.column width=70%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution2.png)
-::::
-:::: {.column width=30%}
+:::: {.column width=25%}
 
 - Compute 4 traces for 2 variables $\mu$, $\sigma$
-  - Results are well-formed
-  - $\mu \in [52.55, 54.45]$
-  - $\sigma \in [2.86, 4.23]$
+- Results are well-formed
+- $\mu \in [52.55, 54.45]$
+- $\sigma \in [2.86, 4.23]$
+
+- Is the model good?
+
+::::
+:::: {.column width=70%}
+
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution2.png)
+
 ::::
 :::
 
@@ -825,10 +849,9 @@ digraph BayesTheorem {
 
   $$
   \Pr(\red{\tilde{y}} | \green{y})
-  = \int_{\theta} \Pr(\tilde{y} | \hat{\theta}) \Pr(\theta | y) d\theta
+  = \int_{\theta} \Pr(\tilde{y} | \theta) \Pr(\theta | y) d\theta
   = \int \text{model} \times \text{posterior}
   $$
-// TODO(gp): Is it \hat{\theta}?
 
 - This is called the "**\red{posterior} \blue{predictive} distribution**" as it
   predicts \blue{future data} using the \red{posterior distribution}
@@ -847,32 +870,39 @@ digraph BayesTheorem {
 * Posterior Predictive Check (PPC)
 - **Intuition**: can the model reproduce observed data?
 
-- PPC approach:
+- **PPC approach**:
   - Generate predictions $\tilde{y}$ with observed data $y$
-  - Check for consistency
+  - Check consistency between predicted values and observed data
 
 - Models should always be checked
-  - Differences can arise by mistakes or limitations of the problem/data
-  - E.g., the model works well for average behavior but fails to predict rare
-    values
+- Differences can arise by:
+  - Mistakes
+  - Limitations of the model
+    - E.g., the model works well for average behavior but fails to predict rare
+      values
+  - Limitations of the data
 
 * Bayesian Workflow Using PPC
 
-1. You have data from a process
-   - True distribution unknown / unknowable
-2. Sample
+1. Given a process
+   - True distribution of the process is unknown / unknowable
+
+2. **Sample the process**
    - Get finite sample $y$ through sampling
    - E.g., experiment, survey, simulation
-3. Inference
+
+3. **Inference**
    - Build probabilistic model using prior $\Pr(\theta)$ and likelihood
      $\Pr(y | \theta)$ to get posterior distribution $\Pr(\theta | y)$
    - Posterior distribution: distribution of model parameters $\theta$ given data
-4. Predictive distribution
+
+4. **Predictive distribution**
    - Compute predictions from posterior distribution (i.e., posterior predictive
      distribution)
-   - Posterior predictive distribution: distribution of predicted samples
+   - Posterior predictive distribution is the distribution of predicted samples
      averaged over posterior distribution
-5. Validation
+
+5. **Validation**
    - Validate model by comparing original samples vs predicted samples
 
 ### Robust Inference
@@ -883,8 +913,13 @@ digraph BayesTheorem {
 ![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution3.png)
 ::::
 :::: {.column width=40%}
+- Sample the posterior
+- Apply the model
+- Get predictive posterior distribution (dashed orange distribution)
+- Compare to data (black distribution)
+
 - **Is the PPC model good?**
-- No
+- **No**
   - Posterior mean is more to the right than data
   - Posterior std dev is larger
 ::::
@@ -898,22 +933,24 @@ digraph BayesTheorem {
 :::: {.column width=55%}
 - **Problem**
   - Two data points on the tails of the distribution
-  - The normal distribution is "surprised" by these points and "reacts" by
-    adjusting the mean towards them and increasing the standard deviation
+  - The normal distribution is
+    - "surprised" by these points
+    - "reacts" by adjusting the mean towards them and increasing the standard
+      deviation
 ::::
 :::
 
 - **Solution**
   - Declare points as outliers and discard
-    - E.g., equipment malfunction (need evidence)
+    - E.g., equipment malfunction (you need evidence!)
   - Change the model
 
-- Bayesians prefer to encode assumptions into the model (e.g., priors,
-  likelihoods)
-  - Rather than ad-hoc heuristics (e.g., outlier removal rules)
+- **Bayesian philosophy**
+  - Encode assumptions into the model (e.g., priors, likelihoods)
+  - Instead of ad-hoc heuristics (e.g., outlier removal rules)
 
 * Student's t-distribution: Recap
-- Student's t-distribution has 3 params:
+- **Student's t-distribution** has 3 params:
   1. Mean $\mu$
      - It doesn't always exist
   2. Scale $\sigma$
@@ -923,8 +960,10 @@ digraph BayesTheorem {
        distribution
      - With $\nu=1$: heavy tails and no mean (Cauchy)
      - With $\nu \to \infty$ we recover the Gaussian
-- Heavy tails (high kurtosis) means _"values are more likely to be far from the
-  mean compared to a Normal"_
+
+- Student's t has **heavy tails**
+  - Heavy tails (high kurtosis) means _"values are more likely to be far from the
+    mean compared to a Normal"_
 
 ![](msml610/lectures_source/figures/Lesson07_Student-t.png){ height=30%}
 
@@ -958,7 +997,8 @@ digraph BayesTheorem {
   - $\mu$ similar to Gaussian estimate
   - $\sigma$ smaller
   - $\nu \approx 5$ (not very Gaussian)
-- Estimation more robust; outliers have less effect
+- Estimation more robust
+  - Outliers have less effect
 ::::
 :::
 
