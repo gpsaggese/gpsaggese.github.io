@@ -317,6 +317,7 @@ az.plot_posterior(idata1);
 ```{code-cell} ipython3
 np.random.seed(123)
 n = 20
+
 # Unknown value.
 theta_real = 0.35
 
