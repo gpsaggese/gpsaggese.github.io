@@ -416,7 +416,7 @@ ax.scatter(x_c, np.random.normal(y_0, 0.02), marker=".")
 
 az.plot_hdi(x_c, posterior["theta"], color="C0", ax=ax)
 
-save_ax(ax, "Lesson07_Logistic_regression_result2.png")
+ut.save_ax(ax, "Lesson07_Logistic_regression_result2.png")
 
 # %% [markdown]
 # ## Variable variance
@@ -430,7 +430,7 @@ display(data.head())
 
 # %%
 ax = data.plot.scatter("month", "length")
-save_ax(ax, "Lesson07_Variable_variance_data.png")
+ut.save_ax(ax, "Lesson07_Variable_variance_data.png")
 
 # %%
 with pm.Model() as model_vv:
@@ -469,7 +469,7 @@ plt.plot(data.month, mu_m, c="k")
 plt.fill_between(data.month, mu_m + 1 * sigma_m, mu_m - 1 * sigma_m, alpha=0.6, color="C1")
 plt.fill_between(data.month, mu_m + 2 * sigma_m, mu_m - 2 * sigma_m, alpha=0.4, color="C1")
 
-save_plt("Lesson07_Variable_variance_result.png")
+ut.save_plt("Lesson07_Variable_variance_result.png")
 
 # %% [markdown]
 # # Multiple linear regression
