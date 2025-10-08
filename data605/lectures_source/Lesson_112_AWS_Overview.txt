@@ -50,7 +50,7 @@ gsaggese@umd.edu
 
 
 
-![](images/lecture_11_2/lec_11_2_slide_2_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_2_image_1.png)
 
 
 * Amazon Web Services (AWS)
@@ -85,11 +85,11 @@ gsaggese@umd.edu
 
 
 
-![](images/lecture_11_2/lec_11_2_slide_4_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_4_image_1.png)
 
 **Beef Jezos**
 
-![](images/lecture_11_2/lec_11_2_slide_4_image_2.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_4_image_2.png)
 
 
 * Types of Cloud Computing
@@ -103,8 +103,6 @@ gsaggese@umd.edu
   - *Public*: open to use by general public (e.g., AWS)
   - *Private*: virtualize and share IT infrastructure within a single organization (e.g., government)
   - *Hybrid*: a mixture of public and private clouds
-
-
 
 
 * AWS vs Google Cloud vs Microsoft Azure
@@ -123,11 +121,11 @@ gsaggese@umd.edu
 
 
 
-![](images/lecture_11_2/lec_11_2_slide_6_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_1.png)
 
-![](images/lecture_11_2/lec_11_2_slide_6_image_2.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_2.png)
 
-![](images/lecture_11_2/lec_11_2_slide_6_image_3.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_3.png)
 
 
 * From On-premise to AWS
@@ -149,7 +147,7 @@ gsaggese@umd.edu
 
 
 
-![](images/lecture_11_2/lec_11_2_slide_8_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_8_image_1.png)
 ```
 
 ```markdown
@@ -164,7 +162,7 @@ gsaggese@umd.edu
 
 
 
-![alt_text](images/lecture_11_2/lec_11_2_slide_9_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_9_image_1.png)
 
 
 * Low-Cost Batch Processing
@@ -200,9 +198,9 @@ gsaggese@umd.edu
   - You can deploy applications close to your customers
 
 
-![alt_text](images/lecture_11_2/lec_11_2_slide_11_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_11_image_1.png)
 
-![alt_text](images/lecture_11_2/lec_11_2_slide_11_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_11_image_2.png)
 
 
 * Pay-per-use
@@ -220,7 +218,7 @@ gsaggese@umd.edu
 
 
 
-![alt_text](images/lecture_11_2/lec_11_2_slide_12_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_12_image_1.png)
 
 
 * Pay-per-use
@@ -234,7 +232,7 @@ gsaggese@umd.edu
 
 
 
-![alt_text](images/lecture_11_2/lec_11_2_slide_13_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_13_image_1.png)
 
 
 * Interacting with AWS
@@ -254,11 +252,11 @@ gsaggese@umd.edu
   - It describes the system, it does not explain how to build it
 
 
-![alt_text](images/lecture_11_2/lec_11_2_slide_14_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_1.png)
 
-![alt_text](images/lecture_11_2/lec_11_2_slide_14_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_2.png)
 
-![alt_text](images/lecture_11_2/lec_11_2_slide_14_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_3.png)
 
 
 * Accounts and Users
@@ -279,7 +277,8 @@ gsaggese@umd.edu
 
 
 
-![alt_text](images/lecture_11_2/lec_11_2_slide_15_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_15_image_1.png)
+
 
 
 * AWS VMs
@@ -298,7 +297,7 @@ gsaggese@umd.edu
     - Performance close to bare metal
 
 
-![alt_text](images/lecture_11_2/lec_11_2_slide_16_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_16_image_1.png)
 ```
 
 ```
@@ -311,11 +310,11 @@ gsaggese@umd.edu
 
 
 
-![](images/lecture_11_2/lec_11_2_slide_17_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_1.png)
 
-![](images/lecture_11_2/lec_11_2_slide_17_image_2.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_2.png)
 
-![](images/lecture_11_2/lec_11_2_slide_17_image_3.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_3.png)
 
 
 * Starting an EC2 Instance
@@ -331,11 +330,11 @@ gsaggese@umd.edu
 
 
 
-![](images/lecture_11_2/lec_11_2_slide_18_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_1.png)
 
-![](images/lecture_11_2/lec_11_2_slide_18_image_2.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_2.png)
 
-![](images/lecture_11_2/lec_11_2_slide_18_image_3.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_3.png)
 
 
 * AWS Instance Type
@@ -362,9 +361,9 @@ gsaggese@umd.edu
 
 
 
-![](images/lecture_11_2/lec_11_2_slide_19_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_19_image_1.png)
 
-![](images/lecture_11_2/lec_11_2_slide_19_image_2.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_19_image_2.png)
 
 
 * AWS Instance Type
@@ -392,9 +391,9 @@ gsaggese@umd.edu
   - E.g. CloudWatch
 
 
-![](images/lecture_11_2/lec_11_2_slide_21_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_21_image_1.png)
 
-![](images/lecture_11_2/lec_11_2_slide_21_image_2.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_21_image_2.png)
 
 
 * Starting an EC2 Instance
@@ -409,7 +408,7 @@ gsaggese@umd.edu
 
 
 
-![](images/lecture_11_2/lec_11_2_slide_22_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_22_image_1.png)
 
 
 * States of a VM
@@ -432,9 +431,9 @@ gsaggese@umd.edu
 
 
 
-![](images/lecture_11_2/lec_11_2_slide_23_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_23_image_1.png)
 
-![](images/lecture_11_2/lec_11_2_slide_23_image_2.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_23_image_2.png)
 
 
 * Moving / Upgrading EC2 Instances
@@ -505,12 +504,12 @@ gsaggese@umd.edu
   - CloudFormation: templates that describe the state of the infrastructure and are translated into API calls
 
 
-![Programming the Infrastructure](images/lecture_11_2/lec_11_2_slide_26_image_1.png)
+![Programming the Infrastructure](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_26_image_1.png)
 
 **Jeff Bezos 2002 API mandate
 **
 
-![Programming the Infrastructure](images/lecture_11_2/lec_11_2_slide_26_image_2.png)
+![Programming the Infrastructure](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_26_image_2.png)
 
 
 * Infrastructure-As-Code
@@ -570,11 +569,11 @@ gsaggese@umd.edu
 
 
 
-![Create User Account](images/lecture_11_2/lec_11_2_slide_29_image_1.png)
+![Create User Account](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_1.png)
 
-![Create User Account](images/lecture_11_2/lec_11_2_slide_29_image_2.png)
+![Create User Account](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_2.png)
 
-![Create User Account](images/lecture_11_2/lec_11_2_slide_29_image_3.png)
+![Create User Account](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_3.png)
 
 **Bad idea!**
 
@@ -613,7 +612,7 @@ gsaggese@umd.edu
 
 
 
-![Software Development Kit (SDK)](images/lecture_11_2/lec_11_2_slide_31_image_1.png)
+![Software Development Kit (SDK)](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_31_image_1.png)
 
 
 * AWS CloudFormation
@@ -661,7 +660,7 @@ gsaggese@umd.edu
 
 
 
-![Securing Your System](images/lecture_11_2/lec_11_2_slide_33_image_1.png)
+![Securing Your System](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_33_image_1.png)
 
 
 * AWS Shared-responsibility Principle

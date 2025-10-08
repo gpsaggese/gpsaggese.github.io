@@ -117,7 +117,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 * Bulk Synchronous Parallel (BSP) 
 
 
-![](images/lecture_12_3/lec_12_3_slide_7_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_7_image_1.png)
 
 time
 
@@ -129,7 +129,7 @@ time
 
 
 
-![](images/lecture_12_3/lec_12_3_slide_8_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_8_image_1.png)
 ```
 
 ```markdown
@@ -180,13 +180,13 @@ time
 * Plays well with Hadoop
 
 
-![](images/lecture_12_3/lec_12_3_slide_13_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_13_image_1.png)
 
 
 * Giraph Execution
 
 
-![](images/lecture_12_3/lec_12_3_slide_14_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_14_image_1.png)
 
 
 * Which part is doing what?
@@ -224,7 +224,7 @@ time
 * A vertex view 
 
 
-![](images/lecture_12_3/lec_12_3_slide_17_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_17_image_1.png)
 
 
 * Designed for iterations 
@@ -313,7 +313,7 @@ public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Ite
 * Giraph scales 
 
 
-![](images/lecture_12_3/lec_12_3_slide_25_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_25_image_1.png)
 
 https://www.facebook.com/notes/facebook-engineering/scaling-apache-giraph-to-a-trillion-edges/10151617006153920
 
@@ -325,7 +325,7 @@ https://www.facebook.com/notes/facebook-engineering/scaling-apache-giraph-to-a-t
 * GraphX Motivation
 
 
-![](images/lecture_12_3/lec_12_3_slide_27_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_27_image_1.png)
 
 
 * GraphX Motivation
@@ -338,7 +338,7 @@ Users must *Learn, Deploy, and *
 Leads to brittle and often 
 complex interfaces 
 
-![](images/lecture_12_3/lec_12_3_slide_28_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_28_image_1.png)
 
 
 * And Inefficient
@@ -350,7 +350,7 @@ the network and file system
 Limited reuse of internal data-structures 
 across stages 
 
-![](images/lecture_12_3/lec_12_3_slide_29_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_29_image_1.png)
 
 
 * The GraphX Unified Approach 
@@ -364,20 +364,19 @@ Combines Data-Parallel Graph-Parallel Systems
 
 Enables users to easily and efficiently express the entire graph analytics pipeline 
 
-![](images/lecture_12_3/lec_12_3_slide_30_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_30_image_1.png)
 
 
 * Representation 
 
 
-![](images/lecture_12_3/lec_12_3_slide_31_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_31_image_1.png)
 
 Plus optimizations:
 - Distributed join optimization
 - Materialized view maintenance
 
-* Graph modeling in **GraphX
-**
+* Graph modeling in **GraphX**
 - The property graph is parameterized over the vertex (VD) and edge (ED) types 
      class Graph[VD, ED] {
        val vertices: VertexRDD[VD] 
@@ -388,31 +387,31 @@ String), String]
 
 
 
-![](images/lecture_12_3/lec_12_3_slide_32_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_32_image_1.png)
 ```
 
 ```markdown
 
 * Creating a Graph (Scala)
-type **VertexId** = Long
-val **vertices**: RDD[(VertexId, String)] =
+type VertexId = Long
+val vertices: RDD[(VertexId, String)] =
 sc.parallelize(List(
-(1L, “Alice”),
+(1L,“Alice”),
 (2L, “Bob”),
 (3L, “Charlie”)))
-class **Edge**[ED](
-val **srcId**: VertexId,
-val **dstId**: VertexId,
-val **attr**: ED)
-val **edges**: RDD[Edge[String]] =
+class Edge[ED](
+val srcId: VertexId,
+val dstId: VertexId,
+val attr: ED)
+val edges: RDD[Edge[String]] =
 sc.parallelize(List(
 Edge(1L, 2L, “coworker”),
 Edge(2L, 3L, “friend”)))
-val **graph** = Graph(vertices, edges)
+val graph = Graph(vertices, edges)
 
 
 
-![](images/lecture_12_3/lec_12_3_slide_33_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_33_image_1.png)
 
 
 * Hello world in GraphX
@@ -490,15 +489,15 @@ reduceF: (T, T) => T): Graph[T, E]
 
 
 * Built-in Algorithms (Scala)
-def **pageRank**(tol: Double): Graph[Double, Double]
-def **triangleCount**(): Graph[Int, ED]
-def **connectedComponents**(): Graph[VertexId, ED]
-def **stronglyConnectedComponents**(numIter:Int):Graph[VertexID,ED]
+def pageRank(tol: Double): Graph[Double, Double]
+def triangleCount(): Graph[Int, ED]
+def connectedComponents(): Graph[VertexId, ED]
+def stronglyConnectedComponents(numIter:Int):Graph[VertexID,ED]
 // ...and more: org.apache.spark.graphx.lib (GraphX libraries)
 
 
 
-![](images/lecture_12_3/lec_12_3_slide_37_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_37_image_1.png)
 
 
 * Triplets Join Vertices and Edges
@@ -507,7 +506,7 @@ def **stronglyConnectedComponents**(numIter:Int):Graph[VertexID,ED]
 
 
 
-![](images/lecture_12_3/lec_12_3_slide_38_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_38_image_1.png)
 
 
 * MapReduce Triplets
@@ -515,13 +514,13 @@ Map-Reduce triplets collect information about the neighborhood of each vertex:
 
 
 
-![](images/lecture_12_3/lec_12_3_slide_39_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_39_image_1.png)
 
 
 * Performance Comparisons
 
 
-![](images/lecture_12_3/lec_12_3_slide_40_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_40_image_1.png)
 
 
 * GraphX scales to larger graphs
@@ -530,7 +529,7 @@ Map-Reduce triplets collect information about the neighborhood of each vertex:
   - No shared memory parallelism: 2x increase in communication
 
 
-![](images/lecture_12_3/lec_12_3_slide_41_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_41_image_1.png)
 
 
 * But, a Small Pipeline in GraphX
@@ -538,7 +537,7 @@ Timed end-to-end GraphX is faster than GraphLab (and Giraph)
 
 
 
-![](images/lecture_12_3/lec_12_3_slide_42_image_1.png)
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_42_image_1.png)
 
 
 * Giraph vs. GraphX

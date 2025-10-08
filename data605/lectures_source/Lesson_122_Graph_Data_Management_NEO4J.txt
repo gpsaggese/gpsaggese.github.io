@@ -22,7 +22,7 @@ Neo4J**
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`**
+**Instructor: Dr. GP Saggese - `gsaggese@umd.edu`**
 
 **TAs**:
 Krishna Pratardan Taduri, kptaduri@umd.edu
@@ -87,19 +87,19 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-![](images/lecture_12_2/lec_12_2_slide_6_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_6_image_1.png)
 
-![](images/lecture_12_2/lec_12_2_slide_6_image_2.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_6_image_2.png)
 
 
 * Motivation
 
 
-![](images/lecture_12_2/lec_12_2_slide_7_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_1.png)
 
-![](images/lecture_12_2/lec_12_2_slide_7_image_2.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_2.png)
 
-![](images/lecture_12_2/lec_12_2_slide_7_image_3.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_3.png)
 
 
 * Motivation
@@ -116,9 +116,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Problems getting worse with increasingly large graphs seen in practice
 
 
-```
 
-```text
 
 * Overview
 - Motivation
@@ -132,19 +130,16 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 * Knowledge Graphs
-- **Representation of knowledge in the form of graphs
-**
+- **Representation of knowledge in the form of graphs**
   - Capture entities, relationships, and properties
   - Provide a structured view of real-world information
 - Can be represented using RDF or Property Graph models
   - E.g., Google Knowledge Graph, DBpedia, Wikidata
-- **Applications
-**
+- **Applications**
   - Enable machine understanding of complex domains
   - Support semantic search, recommendation, and analytics
   - Used in various industries for data integration, knowledge discovery, and AI applications
-- **Ontologies
-**
+- **Ontologies**
   - Provide a formal representation of knowledge
   - Promote interoperability across knowledge bases
 
@@ -156,11 +151,9 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - RDF uses triples subject-predicate-object
   - Each triple connects a “subject” and an “object” through a “predicate”
   - E.g., “TomCruise-acted-TopGun”
-- **Used to represent ** **knowledge bases** **
-**
+- **Used to represent knowledge bases**
   - Typically queried through SPARQL
-- **Pros
-**
+- **Pros**
   - Standardization
     - Standard W3C to model data
     - Subject and object can be URI (Uniform Resource Identifier) in semantic web
@@ -172,7 +165,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-![](images/lecture_12_2/lec_12_2_slide_11_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_11_image_1.png)
 
 
 * Graph Data Models: Property Graph
@@ -186,9 +179,9 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-![](images/lecture_12_2/lec_12_2_slide_12_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_1.png)
 
-![](images/lecture_12_2/lec_12_2_slide_12_image_2.jpeg)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_2.jpeg)
 
 
 * Graph Data Models: XML
@@ -197,28 +190,28 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Popular data exchange format for non-tabular data
 
 
-![](images/lecture_12_2/lec_12_2_slide_13_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_13_image_1.png)
+<movies>
+  <movie>
+  <title>Top Gun</title>
+  <actors>
+    <actor>
+     <name>Tom Cruise</name>
+     <born>7/3/1962</born>
+    </actor>
+   <actor>
+     …
+   </actor>
+  </actors>
+  </movie>
 
-**<movies>**
-**  <movie>**
-**  <title>Top Gun</title>**
-**  <actors>**
-**    <actor>**
-**      <name>Tom Cruise</name>**
-**      <born>7/3/1962</born>**
-**    </actor>**
-**    <actor>**
-**      …**
-**    </actor>**
-**  </actors>**
-**  </movie>**
-**…**
+
+
 
 * Overview
 - Motivation
 - Graph data models
-- **Storing graph data
-**
+- **Storing graph data**
 - Querying graph data
 - Typical graph analysis tasks
 - Executing graph analysis tasks
@@ -243,7 +236,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Not as a mature as RDBMs
 - Often no declarative language (similar to SQL)
   - You need to write programs
-
 
 
 
@@ -295,22 +287,25 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-**PREFIX** **foaf**: <http://xmlns.com/foaf/0.1/>
-**SELECT** ?name
+
+
+
+PREFIX  foaf: <http://xmlns.com/foaf/0.1/>
+SELECT ?name
        ?email
-**WHERE**
+WHERE
   {
-    ?person  **a**          **foaf**:**Person** .
-    ?person  **foaf**:**name**  ?name .
-    ?person  **foaf**:**mbox**  ?email .
+    ?person  a          foaf:Person.
+    ?person  foaf:name  ?name .
+    ?person  foaf:mbox  ?email .
   }
 
-![](images/lecture_12_2/lec_12_2_slide_18_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_18_image_1.png)
 
-**MATCH** **(nicole:Actor**
-**   {name:** **'Nicole** **Kidman'})-[[:ACTED_IN]->(movie:Movie)
-**WHERE** **movie.year** **<** **2007
-**RETURN** **movie**
+MATCH (nicole:Actor
+   {name:'Nicole Kidman'})-[[:ACTED_IN]->(movie:Movie)
+WHERE movie.year < 2007
+RETURN movie
 
 
 * Neo4j
@@ -329,7 +324,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-![](images/lecture_12_2/lec_12_2_slide_19_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_19_image_1.png)
 
 
 * Graph DB: Example
@@ -358,9 +353,10 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-![](images/lecture_12_2/lec_12_2_slide_20_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_20_image_1.png)
 
-![](images/lecture_12_2/lec_12_2_slide_20_image_2.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_20_image_2.png)
+
 
 
 * Labeled Property Graphs in Neo4j
@@ -383,156 +379,108 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Labels indexed to accelerate finding nodes in the graph
   - Native label indexes optimized for performance
 
-
+* Cypher Example
+CREATE (w:Wine
+    {name: "Prancing Wolf",
+      style: "ice wine",
+      vintage: 2015})
+MATCH (n)
+  RETURN n;
+CREATE (p:Publication
+    {name: "Wine Expert Monthly"})
+MATCH (p:Publication
+    {name: "Wine Expert Monthly"}),
+    (w:Wine {name: "Prancing Wolf",
+    vintage: 2015})
+    CREATE (p)-[r:reported_on]->(w)
 
 
 * Cypher Example
-**# Create a wine node with attributes.**
-**$ CREATE (w:Wine**
-**    {name: "Prancing Wolf",**
-**       style: "ice wine",**
-**       vintage: 2015})**
-**# Return the entire graph.**
-**$ MATCH (n)**
-**  RETURN n;**
-**# Create a publication node.**
-**$ CREATE (p:Publication**
-**    {name: "Wine Expert Monthly"})**
-**# Create a relation “reported_on”.**
-**$ MATCH (p:Publication**
-**    {name: "Wine Expert Monthly"}),**
-**    (w:Wine {name: "Prancing Wolf",**
-**     vintage: 2015})**
-**    CREATE (p)-[r:reported_on]->(w)**
+MATCH (p:Publication {name: "Wine Expert Monthly"}),
+    (w:Wine {name: "Prancing Wolf"})
+    CREATE (p)-[r:reported_on {rating: 2}]->(w)
+
+CREATE (g:GrapeType {name: "Riesling"})
+MATCH (w:Wine {name: "Prancing Wolf"}),
+  (g:GrapeType {name: "Riesling"})
+  CREATE (w)-[r:grape_type]->(g)
 
 
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_23_image_1.png)
 
 
 * Cypher Example
-**# Attach a rating.**
-**$ MATCH (p:Publication {name: "Wine Expert Monthly"}),**
-**    (w:Wine {name: "Prancing Wolf"})**
-**    CREATE (p)-[r:reported_on {rating: 2}]->(w)**
-**# Add a “grape_type” relationship.**
-**$ CREATE (g:GrapeType {name: "Riesling"})**
-**$ MATCH (w:Wine {name: "Prancing Wolf"}),**
-**  (g:GrapeType {name: "Riesling"})**
-**  CREATE (w)-[r:grape_type]->(g)**
-
-
-![](images/lecture_12_2/lec_12_2_slide_23_image_1.png)
-
-
-* Cypher Example
-**# Add winery.**
-**$ CREATE (wr:Winery {name: "Prancing Wolf Winery"})**
-**# Add “produced” relationship.**
-**$ MATCH (w:Wine {name: "Prancing Wolf"}),**
-**    (wr:Winery {name: "Prancing Wolf Winery"})**
-**    CREATE (wr)-[r:produced]->(w)**
-**$ CREATE (w:Wine**
-**    {name:"Prancing Wolf", style: "Kabinett", vintage: 2002})**
-**$ CREATE (w:Wine**
-**    {name: "Prancing Wolf", style: "Spätlese", vintage: 2010})**
-**$ MATCH (wr:Winery**
-**    {name: "Prancing Wolf"}),(w:Wine {name: "Prancing Wolf"})**
-**    CREATE (wr)-[r:produced]->(w)**
-**# Add “grape type” relationship.**
-**$ MATCH (w:Wine), (g:GrapeType {name: "Riesling"})**
-**    CREATE (w)-[r:grape_type]->(g)**
+CREATE (wr:Winery {name: "Prancing Wolf Winery"})
+MATCH (w:Wine {name: "Prancing Wolf"}),
+    (wr:Winery {name: "Prancing Wolf Winery"})
+    CREATE (wr)-[r:produced]->(w)
+CREATE (w:Wine
+    {name:"Prancing Wolf", style: "Kabinett", vintage: 2002})
+CREATE (w:Wine
+    {name: "Prancing Wolf", style: "Spätlese", vintage: 2010})
+MATCH (wr:Winery
+    {name: "Prancing Wolf Winery"}),(w:Wine {name: "Prancing Wolf"})
+    CREATE (wr)-[r:produced]->(w)
+MATCH (w:Wine), (g:GrapeType {name: "Riesling"})
+    CREATE (w)-[r:grape_type]->(g)
 
 
 
-![](images/lecture_12_2/lec_12_2_slide_24_image_1.png)
-```
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_24_image_1.png)
 
-```markdown
 
 * Cypher Example
 - Add a social component to the wine graph
   - People preference for wine
   - Relationships with one another
-**# Alice likes a certain wine.**
-**$ CREATE (p:Person {name: "Alice"})
-**
-**$ MATCH (p:Person {name: "Alice"}),
-**
-**    (w:Wine {name: "Prancing Wolf", 
-**
-**    style: "ice wine"})
-**
-**    CREATE (p)-[r:likes]->(w)
-**
-**# Patty and Tom are friends.
-**
-**$ CREATE (p:Person {name: "Patty"})
-**
-**$ MATCH (p1:Person {name: "Patty"}),
-**
-**    (p2:Person {name: "Tom"})
-**
-**    CREATE (p1)-[r:friends]->(p2)
-**
-- The changes were made “superimposing” new relationships without changing the previous data
+CREATE (p:Person {name: "Alice"})
+
+MATCH (p:Person {name: "Alice"}),
+    (w:Wine {name: "Prancing Wolf",
+    style: "ice wine"})
+    CREATE (p)-[r:likes]->(w)
+
+CREATE (p:Person {name: "Patty"})
+
+MATCH (p1:Person {name: "Patty"}),
+    (p2:Person {name: "Tom"})
+    CREATE (p1)-[r:friends]->(p2)- The changes were made “superimposing” new relationships without changing the previous data
 
 
 
-![](images/lecture_12_2/lec_12_2_slide_25_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_25_image_1.png)
 
 
 * Cypher Example
-**# See all nodes associated with Alice.
-**
-**$ MATCH (p:Person 
-**
-**  {name: "Alice"})-->(n)
-**
-**  RETURN n;
-**
-**# Find all of the people that Alice is friends with, returning only the name property of those nodes
-**
-**$ MATCH (p:Person 
-**
-**  {name: "Alice"})-->(other: Person)
-**
-**  RETURN other.name;
-**
-**# Find friends of friends of Alice.**
-**
-**$ MATCH (fof:Person)-[:friends]-(f:Person)-[:friends]-(p:Person {name: "Alice"})
-**
-**  RETURN fof.name;
-**
+MATCH (p:Person
+  {name: "Alice"})-->(n)
+  RETURN n;
+
+MATCH (p:Person
+  {name: "Alice"})-->(other: Person)
+  RETURN other.name;
+
+MATCH (fof:Person)-[:friends]-(f:Person)-[:friends]-(p:Person {name: "Alice"})
+  RETURN fof.name;
 
 
-
-![](images/lecture_12_2/lec_12_2_slide_26_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_26_image_1.png)
 
 
 * A general query structure
-**MATCH [Nodes and relationships]
-**
-**WHERE [Boolean filter statement]
-**
-**RETURN [DISTINCT] [statements [AS alias]] 
-**
-**ORDER BY [Properties] [ASC\DESC]
-**
-**SKIP [Number] LIMIT [Number]
-**
-
-
+MATCH [Nodes and relationships]
+WHERE [Boolean filter statement]
+RETURN [DISTINCT] [statements [AS alias]]
+ORDER BY [Properties] [ASC or DESC]
+SKIP [Number] LIMIT [Number]
 
 
 * Simple query
 Get all nodes of type *Program* that have the name *Hello World!*
 
-**MATCH (a : Program)
-**
-**WHERE a.name = ‘Hello World!’
-**
-**RETURN a
-**
+MATCH (a : Program)
+WHERE a.name = 'Hello World!'
+RETURN a
 
 Type = Program
 Name = ‘Hello World!’
@@ -543,40 +491,34 @@ Name = ‘Hello World!’
 * Query relationships
 Get all relationships of type *Author* connecting *Programmers* and *Programs*:
 
-**MATCH (a:Programmer)-[r:Author]->(b:Program)
-**
-**RETURN r
-**
+MATCH (a:Programmer)-[r:Author]->(b:Program)
+
+RETURN r
+
 
 Type = Program
 
 Type = Programmer
 
-**Author**
-
+Author
 
 
 
 * Matching nodes and relationships
 - Nodes
-**       (a), (), (:Ntype), (a:Ntype),
-**
-**       (a { prop:’value’ } ) ,
-       (a:Ntype { prop:’value’ } ) **
+(a), (), (:Ntype), (a:Ntype),
+(a { prop:'value' } ) ,
+(a:Ntype { prop:'value' } )
 - Relationships
-**      (a)--(b)
-**
-**      (a)-->(b), (a)<--(b),
-**
-**      (a)-->(), (a)-[r]->(b),
-      (a)-[:Rtype]->(b), (a)-[:R1|:R2]->(b), 
-      (a)-[r:Rtype]->(b) **
+(a)--(b)
+(a)-->(b), (a)<--(b),
+(a)-->(), (a)-[r]->(b),
+(a)-[:Rtype]->(b), (a)-[:R1|:R2]->(b),
+(a)-[r:Rtype]->(b)
 - May have more than 2 nodes
-**  (a)-->(b)<--(c), (a)-->(b)-->(c)**
+(a)-->(b)<--(c), (a)-->(b)-->(c)
 - Path
-**	   p = (a)-->(b)**
-
-
+p = (a)-->(b)
 
 
 * More options
@@ -592,10 +534,11 @@ Could be used also as:
 
 
 
-
 * Operators
+''' markdown
 • Mathematical 
 	+, -, *, /,%, ^ (power, not XOR)
+''' 
 • Comparison
 	 =,<>,<,>,>=,<=, =~ (Regex), IS NULL , 
           IS NOT NULL
@@ -648,7 +591,6 @@ Could be used also as:
   - Limit the number of entries that are then passed on to other MATCH clauses.
   - Introduce aggregates which can then be used in predicates in WHERE.
   - Separate reading from updating of the graph. Every part of a query must be either read-only or write-only.
-
 
 
 
@@ -719,7 +661,7 @@ Could be used also as:
 
 
 
-![](images/lecture_12_2/lec_12_2_slide_40_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_1.png)
 ```
 
 ```markdown
@@ -731,7 +673,8 @@ Could be used also as:
 
 
 
-![](images/lecture_12_2/lec_12_2_slide_41_image_1.png)
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_41_image_1.png)
 
 
 * Graph Analysis: Centrality Measures 
@@ -741,16 +684,16 @@ Could be used also as:
 
 
 
-- **Degree centrality of a node **u*
-  - *Number *of edges incident on **u **
-- **Betweenness centrality of a node **u*
-  - *Number *of shortest paths between pairs of vertices that go through **u **
-- **Page**R**ank of a node **u*
-  - *P*robability that a random surfer (who is following links randomly) ends up at node **u**
+- Degree centrality of a node 
+  - Number of edges incident on
+- Betweenness centrality of a node 
+  - Number *of shortest paths between pairs of vertices that go through 
+- Page **R**ank of a node 
+  - *P*robability that a random surfer (who is following links randomly) ends up at node  
 
-![](images/lecture_12_2/lec_12_2_slide_42_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_42_image_1.png)
 
-
+ 
 * Graph Analysis: Community Detection 
 - Goal: partitioning the vertices into (potentially overlapping) groups based on the interconnections between them 
   - Basic intuition: More connections within a community than across communities 
@@ -767,28 +710,22 @@ edges
 * Overview
 - Motivation
 - Graph data models
-- Storing graph data**
-**
+- **Storing graph data**
 - Querying graph data
 - Typical graph analysis tasks
-- **Executing graph analysis tasks
-**
-
+- **Executing graph analysis tasks**
 
 
 
 * Bulk Synchronous Parallel (BSP) 
 - BSP model is a computational model used to design parallel algorithms for distributed systems
 - Computation is divided into a series of *supersteps*, each consisting of three main phases
-  - **Local computation phase
-**
+  - **Local computation phase**
     - Each processing unit performs calculations independently and concurrently, without any interaction
-  - **Communication phase
-**
+  - **Communication phase**
     - The processing units exchange information with each other by sending and receiving messages
     - These messages can be exchanged asynchronously without waiting for a response
-  - **Synchronization phase
-**
+  - **Synchronization phase**
     - Aka barrier
     - Ensures that all processing units have completed their local computations and communication before proceeding to the next superstep
     - This guarantees that all messages from the previous superstep have been received and processed
@@ -801,7 +738,7 @@ edges
 * Bulk Synchronous Parallel (BSP) 
 
 
-![](images/lecture_12_2/lec_12_2_slide_46_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_46_image_1.png)
 
 time
 
@@ -831,7 +768,7 @@ time
 - Actively maintained and widely adopted in the open-source community
 
 
-![](images/lecture_12_2/lec_12_2_slide_48_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_48_image_1.png)
 
 
 * Apache Spark GraphX
@@ -849,4 +786,13 @@ time
 
 
 
-![](images/lecture_12_2/lec_12_2_slide_49_image_1.png)
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_49_image_1.png)
+
+
+
+
+
+
+
+
+
