@@ -45,7 +45,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Programming frameworks
 - Challenges and opportunities
 
-© UMD DATA605
+ 
 
 
 
@@ -57,7 +57,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Programming frameworks
 - Challenges and opportunities
 
-© UMD DATA605
+ 
 
 
 
@@ -76,11 +76,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Cheaper (?) than building your own systems
     - Computing as a commodity (like electricity)
 
-© UMD DATA605
-
-
-
-![](images/lecture_11_1/lec_11_1_slide_4_image_1.png)
+ 
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_4_image_1.png)
 
 
 * Building vs Renting
@@ -98,7 +95,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Installing, updating, maintaining software stack
 
 
-© UMD DATA605
+ 
 
 
 * Building vs Renting
@@ -109,9 +106,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - No need to estimate a multi-year resource plan
   - Pick machines that suit your application and data requirements
 
-
-
-© UMD DATA605
 
 
 * Cloud Computing
@@ -129,23 +123,23 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Decreasing hardware costs
   - Big data frameworks
 
-© UMD DATA605
+ 
 
 
 
-![](images/lecture_11_1/lec_11_1_slide_7_image_1.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_1.png)
 
-![](images/lecture_11_1/lec_11_1_slide_7_image_2.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_2.png)
 
-![](images/lecture_11_1/lec_11_1_slide_7_image_3.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_3.png)
 
 
 * X-as-a-Service
-© UMD DATA605
+ 
 
 
 
-![](images/lecture_11_1/lec_11_1_slide_8_image_1.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_8_image_1.png)
 
 **Infrastructure-as-a-service (IaaS)**
 - Cloud provides low-level resources
@@ -160,12 +154,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - You use it
 - No need to install anything on your machine
 - E.g., Dropbox, Salesforce, any app running in a browser
-```
+ 
 
-```markdown
+
 
 * X-as-a-Service
-© UMD DATA605
+ 
 
 
 
@@ -180,11 +174,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 * Platform-as-a-Service
-© UMD DATA605
+ 
 
 
 
-![](images/lecture_11_1/lec_11_1_slide_10_image_1.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_10_image_1.png)
 
 - **Problem: assembling your own software stack requires work**
 - Install
@@ -199,54 +193,23 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - E.g., VMware or Docker
   - The software stack comes as a large file with the image of the system
   - **Business model built around this**
-- E.g., pre-built images for Hadoop
+- E.g., pre-built data605/lectures_source/images for Hadoop
   - E.g., Hortonworks, Cloudera
 - E.g., pre-built distributions for Linux
   - RedHat, Gentoo, CentOS
 
 
-* Different Cloud Computing Layers‏
 
-
-From Dr. Mehmet Gunes, U. Nevada Reno
-
-© UMD DATA605
-
-
-* Cloud Computing Service Layers
-**Description**
-
-**Services – Complete business services (e.g., PayPal, OpenID, OAuth, Google Maps, Alexa)**
-
-**Services**
-
-**Application** **Focused**
-
-**Infrastructure**
-**Focused**
-
-**Application – Cloud based software that eliminates the need for local installation (e.g., Google Apps, Microsoft Office 365)**
-
-**Storage – Data storage or cloud based NAS (e.g., AWS S3, Apple iCloud, CloudNAS, CTERA)**
-
-**Development – Software development platforms used to build custom cloud based applications (PAAS & SAAS), e.g., SalesForce**
-
-**Platform – Cloud based platforms, typically provided using virtualization (e.g., Amazon EC2, Google Compute)**
-
-**Hosting – Physical data centers (e.g., IBM, HP, DigitalOcean)**
-
-
+* Different Cloud Computing Layers
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_.png)
 
 From Dr. Mehmet Gunes, U. Nevada Reno
 
-© UMD DATA605
+ * Cloud Types
+ 
 
 
-* Cloud Types
-© UMD DATA605
-
-
-![](images/lecture_11_1/lec_11_1_slide_13_image_1.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_13_image_1.png)
 
 
 * Outline
@@ -257,7 +220,7 @@ From Dr. Mehmet Gunes, U. Nevada Reno
   - Programming Frameworks
 - Challenges and opportunities
 
-© UMD DATA605
+ 
 
 
 
@@ -268,17 +231,25 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 - Huge amount of work on deciding how to build / design them
 - Research on how to save energy to power and cool data centers
 
-![](images/lecture_11_1/lec_11_1_slide_15_image_1.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_1.png)
 
-© UMD DATA605
+ 
 
 
 
-![](images/lecture_11_1/lec_11_1_slide_15_image_2.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_2.png)
 
-![](images/lecture_11_1/lec_11_1_slide_15_image_3.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_3.png)
 
-![](images/lecture_11_1/lec_11_1_slide_15_image_4.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_4.png)
+
+
+
+
+* Cloud Computing Service Layers
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide.png)
+From Dr. Mehmet Gunes, U. Nevada Reno
+
 
 
 * Data Centers
@@ -298,48 +269,47 @@ From Dr. Mehmet Gunes, U. Nevada Reno
     - Ideally PUE should be 1, currently numbers are around 1.07-1.22
     - May lead to very large data centers in near future (already happening)
 
-© UMD DATA605
+ 
 
 
 
-![](images/lecture_11_1/lec_11_1_slide_16_image_1.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_16_image_1.png)
 
 Meta investment in 18 data centers
 
-![](images/lecture_11_1/lec_11_1_slide_16_image_2.png)
-```
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_16_image_2.png)
 
-```markdown
 
 * Data Centers
-© UMD DATA605
+ 
 
 
-![](images/lecture_11_1/lec_11_1_slide_17_image_1.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_17_image_1.png)
 
-![](images/lecture_11_1/lec_11_1_slide_17_image_2.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_17_image_2.png)
 
-![](images/lecture_11_1/lec_11_1_slide_17_image_3.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_17_image_3.png)
 
 
 * (Modular) Data Centers
 From James Hamilton Presentation
 
-© UMD DATA605
+ 
 
 
 
-![](images/lecture_11_1/lec_11_1_slide_18_image_1.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_18_image_1.png)
+
 
 
 * Amazon Web Services
-© UMD DATA605
+ 
 
 
 
 As of 2022, 28 geographical regions
 
-![](images/lecture_11_1/lec_11_1_slide_19_image_1.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_19_image_1.png)
 
 
 * Amazon Web Services (EC2)
@@ -348,21 +318,21 @@ As of 2022, 28 geographical regions
   - Current prices are very “low” and likely to remain that way due to competition
   - See https://aws.amazon.com/ec2/pricing/on-demand/ for current on-demand pricing
 
-![](images/lecture_11_1/lec_11_1_slide_20_image_1.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_1.png)
 
-© UMD DATA605
+ 
 
 
-![](images/lecture_11_1/lec_11_1_slide_20_image_2.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_2.png)
 
-![](images/lecture_11_1/lec_11_1_slide_20_image_3.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_3.png)
 
 
 * Amazon S3
 - Amazon storage services (Simple Storage Solution)
   - Pay for what you use
 
-© UMD DATA605
+ 
 
 
 
@@ -395,10 +365,9 @@ As of 2022, 28 geographical regions
     - (Often) lack of commitment (Killed by google)
     - No (or horrible) customer service
 
-© UMD DATA605
 
 
-![](images/lecture_11_1/lec_11_1_slide_22_image_1.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_22_image_1.png)
 
 
 * Outline
@@ -409,7 +378,7 @@ As of 2022, 28 geographical regions
   - Programming frameworks
 - Challenges and opportunities
 
-© UMD DATA605
+ 
 
 
 
@@ -427,15 +396,13 @@ As of 2022, 28 geographical regions
   - Multi-tenancy: can have multiple VMs on the same server
   - Efficiency: replace many underpowered machines with fewer high-powered machines
 
-© UMD DATA605
+ 
 
 
-```
 
-```
 
 * Virtualization
-![alt text](images/lecture_11_1/lec_11_1_slide_25_image_1.png)
+![alt text](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_25_image_1.png)
 - **Consumer / desktop virtualization**
   - E.g., VMWare, Xen, VirtualBox
   - Run on top of host OS
@@ -447,11 +414,11 @@ As of 2022, 28 geographical regions
   - Now custom hardware AWS Nitro
   - Support Windows and Linux Virtual Machines
 
-© UMD DATA605
+ 
 
 
 
-![alt text](images/lecture_11_1/lec_11_1_slide_25_image_2.png)
+![alt text](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_25_image_2.png)
 
 
 * Virtualization
@@ -461,7 +428,7 @@ As of 2022, 28 geographical regions
     - E.g., multi-tenancy, different hardware
 - “Bare-metal” compute to improve performance
 
-© UMD DATA605
+ 
 
 
 
@@ -477,13 +444,13 @@ As of 2022, 28 geographical regions
   - Reduce OS licencing cost
   - Reduce overhead of OS maintenance
 
-© UMD DATA605
+ 
 
 
 
-![alt text](images/lecture_11_1/lec_11_1_slide_27_image_1.png)
+![alt text](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_27_image_1.png)
 
-![alt text](images/lecture_11_1/lec_11_1_slide_27_image_2.png)
+![alt text](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_27_image_2.png)
 
 
 * Outline
@@ -494,10 +461,7 @@ As of 2022, 28 geographical regions
   - **Programming frameworks**
 - Challenges and opportunities
 
-© UMD DATA605
-
-
-
+ 
 * Programming Frameworks
 - **Programming frameworks emerged from efforts to “scale out” workloads**
   - Distribute work over large numbers of machines (thousands of machines)
@@ -516,7 +480,7 @@ As of 2022, 28 geographical regions
     - Hadoop, Spark
   - AWS services
 
-© UMD DATA605
+ 
 
 
 
@@ -525,7 +489,7 @@ As of 2022, 28 geographical regions
 - Provide a fairly restricted, but still powerful abstraction for programming distributed workloads
 - Programmers only write functions called *map* and *reduce*
   - **map** programs
-    - inputs: a list of “records” (e.g., images, genomes)
+    - inputs: a list of “records” (e.g., data605/lectures_source/images, genomes)
     - output: for each record, produce a set of **(key, value)** pairs
   - **reduce** programs
     - input: a list of **(key, [values])** grouped together from the mapper
@@ -538,7 +502,7 @@ As of 2022, 28 geographical regions
   - Very large-scale applications that need real-time access with few ms latencies
   - Trade-off between “consistency” and “performance”
 
-© UMD DATA605
+ 
 
 
 
@@ -565,8 +529,6 @@ As of 2022, 28 geographical regions
 - **Giraph, GraphLab, GraphX**
   - Graph processing systems
 
-© UMD DATA605
-
 
 
 * Outline
@@ -577,12 +539,9 @@ As of 2022, 28 geographical regions
   - Programming frameworks
 - **Challenges and opportunities**
 
-© UMD DATA605
+ 
 
 
-```
-
-```
 
 * Advantages of Cloud Computing
 - **Lower edge computer costs**
@@ -599,7 +558,7 @@ As of 2022, 28 geographical regions
     - Most applications are cloud based today
   - Rent (monthly payments) instead of buying
 
-© UMD DATA605
+ 
 
 
 
@@ -615,7 +574,7 @@ As of 2022, 28 geographical regions
   - Do not have to worry about the documents on your machine being compatible with other users' applications or OSes
   - Potentially no format incompatibilities when everyone is sharing documents in the (same) cloud
 
-© UMD DATA605
+ 
 
 
 
@@ -632,7 +591,7 @@ As of 2022, 28 geographical regions
     - All your data is still out there in the cloud, still accessible
     - Cloud computing is a data-safe computing platform
 
-© UMD DATA605
+ 
 
 
 
@@ -650,7 +609,7 @@ As of 2022, 28 geographical regions
   - Sharing documents leads directly to better collaboration
   - Multiple users can collaborate easily on documents and projects
 
-© UMD DATA605
+ 
 
 
 
@@ -671,7 +630,7 @@ As of 2022, 28 geographical regions
     - How will you then access files?
   - Cases of users being locked out of accounts and losing access to data
 
-© UMD DATA605
+ 
 
 
 
@@ -689,7 +648,7 @@ As of 2022, 28 geographical regions
   - Interface (not data) is sent back and forth from your computer to the computers in the cloud
   - Latency (more than throughput) matters
 
-© UMD DATA605
+ 
 
 
 
@@ -709,7 +668,7 @@ As of 2022, 28 geographical regions
   - Data stored in the cloud is safe, replicated across multiple machines (theoretically)
   - Doing local backups might still be a good idea
 
-© UMD DATA605
+ 
 
 
 
@@ -726,6 +685,10 @@ As of 2022, 28 geographical regions
   - May not be possible to run applications across different cloud-based systems
   - Solution: indirection layer (Terraform, Ansible)
 
-© UMD DATA605
+ 
+
+
+
+
 
 

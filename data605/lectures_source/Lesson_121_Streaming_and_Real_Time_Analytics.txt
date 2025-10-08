@@ -38,18 +38,15 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 * Motivation
 
-[TEXT]
-- **Often Big Data is generated continuously
-**
+
+- **Often Big Data is generated continuously**
 - Applications are growing every day, e.g.,
   - Financial data
   - Sensors, RFID, IoT
   - Network / systems monitoring
   - Video / audio data
-- **Data stream is an (unbounded or not) sequences of events in time
-**
-- **Stream processing is a programming paradigm dealing with data streams as objects of computation
-**
+- **Data stream is an (unbounded or not) sequences of events in time**
+- **Stream processing is a programming paradigm dealing with data streams as objects of computation**
 - Needs to support
   - High data rates
   - Real-time processing with low latencies
@@ -59,13 +56,13 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Distributed operation
     - Often one computing node is not powerful enough to process in real-time
 
-[TEXT]
+
 
 
 
 * Examples of Data Stream Tasks
 
-[TEXT]
+
 - Any SQL query can be made continuous
   - E.g., "*compute moving average over last hour every 10 mins*"
   - StreamSQL extended SQL to support *windows* over streams
@@ -83,13 +80,13 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - E.g., online object detection, activity detection
 - Correlating events from different streams
 
-[TEXT]
+
 
 
 
 * Why Not Using the Usual RDBM?
 
-[TEXT]
+
 - Simple case: "*report moving average over last hour every 10 minutes*"
   - Insert items as they arrive into DB table
   - Execute the query every 10 minutes
@@ -101,30 +98,28 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Can’t always be easily rewritten in recursive terms
 - Typically 1000's of such continuous queries
 
-[TEXT]
 
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_4_image_1.png)
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_4_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_1.png)
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_4_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_2.png)
 
-[TEXT]
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_3.png)
+
+
 Computation
 
 
 * Pub-Sub Systems
 
-[TEXT]
-- In modern architecture, complex distributed systems are built with **small and independent building blocks
-**
+
+- In modern architecture, complex distributed systems are built with **small and independent building blocks**
   - E.g., serverless, micro-services
   - E.g., Uber
   - Facilitate decoupling and allow systems to evolve independently
   - Allow scalability and flexibility
-- **Publish-subscribe systems
-**
+- **Publish-subscribe systems**
   - Aka pub-sub, message queues, message brokers
   - Provide communication and coordination between building blocks
   - Focus is on data dissemination
@@ -132,26 +127,22 @@ Computation
     - Topics to categorize messages and events
   - E.g., AWS SQS, AWS Kinesis, Apache Kafka, RabbitMQ, Redis, Celery, JBoss
 
-[TEXT]
 
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_5_image_1.png)
+
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_5_image_1.png)
 
 
 * Pub-Sub Systems
 
-[TEXT]
-- **Publishers
-**
+
+- **Publishers**
   - Send messages or events
-- **Subscribers
-**
+- **Subscribers**
   - Consume messages
-- **Message broker
-**
+- **Message broker**
   - Manage the flow of messages between publishers and subscribers
-- **Design parameters
-**
+- **Design parameters**
   - Which events are distributed
     - E.g., topics, by subscription
   - How events are distributed
@@ -162,24 +153,22 @@ Computation
     - At-least once
     - Exactly once
 
-[TEXT]
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_6_image_1.png)
+
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_6_image_1.png)
 
 
 * Delivery Semantics
 
-[TEXT]
-- **At-most once
-**
+
+- **At-most once**
   - Message may be lost but not redelivered
   - Pros
     - High-performance
     - Small implementation overhead
     - Easy to implement: “fire-and-forget”
   - E.g., in monitoring metrics a small amount of data loss is acceptable
-- **At-least once
-**
+- **At-least once**
   - Acceptable to deliver a message more than once, but no message should be lost
   - Handle transport message loss
     - Keep state at the sender
@@ -188,8 +177,7 @@ Computation
     - Data duplication is not a problem
     - Deduplication (e.g., storing key-value)
     - Idempotency
-- **Exactly once
-**
+- **Exactly once**
   - Every message is sent exactly one time
   - Friendly for downstream consumers
   - Difficult to implement
@@ -197,19 +185,19 @@ Computation
   - E.g., mission critical systems
   - E.g., financial-related use cases (e.g., payment, trading, accounting)
 
-[TEXT]
 
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_7_image_1.png)
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_7_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_1.png)
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_7_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_2.png)
+
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_3.png)
 
 
 * Event vs Processing Time
 
-[TEXT]
+
 - In both streaming and pub-sub architectures
 - **Event time
 **
@@ -228,13 +216,11 @@ Computation
     - Assume you know something on the data (e.g., data should arrive every single minute)
   - Do you recompute once the late data arrives? If not, do you drop late data?
 
-[TEXT]
 
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_8_image_1.png)
-```
 
-```markdown
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_8_image_1.png)
+
 
 * Apache Streaming Zoo
 - Many different streaming frameworks
@@ -256,8 +242,6 @@ Computation
 - Built at the same time at different companies to solve their specific problem and then open-sourced
 
 
-
-
 * Apache Storm
 - Open-source distributed real-time computation system
   - Acquired and open-sourced by Twitter
@@ -271,7 +255,7 @@ Computation
 
 
 
-![](images/lecture_12_1/lec_12_1_slide_10_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_10_image_1.png)
 
 
 * Apache Kafka
@@ -288,9 +272,9 @@ Computation
 
 
 
-![](images/lecture_12_1/lec_12_1_slide_11_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_1.png)
 
-![](images/lecture_12_1/lec_12_1_slide_11_image_2.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_2.png)
 
 
 * Apache Flink
@@ -305,7 +289,7 @@ Computation
 
 
 
-![](images/lecture_12_1/lec_12_1_slide_12_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_12_image_1.png)
 
 
 * Record-at-a-time Processing
@@ -327,7 +311,7 @@ Computation
 
 
 
-![](images/lecture_12_1/lec_12_1_slide_13_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_13_image_1.png)
 
 
 * Micro-Batch Stream Processing
@@ -349,7 +333,7 @@ Computation
 
 
 
-![](images/lecture_12_1/lec_12_1_slide_14_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_14_image_1.png)
 
 
 * Spark Micro-Batch Processing: Cons
@@ -367,7 +351,7 @@ Computation
 
 
 
-![](images/lecture_12_1/lec_12_1_slide_16_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_16_image_1.png)
 
 * Spark Structured Streaming
 - New approach used by Spark
@@ -386,9 +370,7 @@ Computation
     - At time *T* there is like a static dataframe with data until *T*
 
 
-```
 
-```markdown
 
 * Incrementalization
 - Automatically detect the state that needs to be maintained
@@ -400,7 +382,7 @@ Computation
 
 
 
-![](images/lecture_12_1/lec_12_1_slide_17_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_17_image_1.png)
 
 
 * Triggering Modes
@@ -460,7 +442,6 @@ Computation
 
 
 
-
 * BACKUP
 
 
@@ -491,9 +472,7 @@ Computation
 
 
 From: http://storm.apache.org/releases/current/Rationale.html
-```
 
-```
 
 * Storm Key Properties
 - **Extremely broad set of use cases**:
@@ -538,7 +517,7 @@ From: http://storm.apache.org/releases/current/Rationale.html
 
 
 
-![](images/lecture_12_1/lec_12_1_slide_28_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_28_image_1.png)
 
 
 * Topology Example
@@ -546,7 +525,7 @@ From: http://storm.apache.org/releases/current/Rationale.html
 
 Word Count: count the different words in a stream of sentences
 
-![](images/lecture_12_1/lec_12_1_slide_29_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_29_image_1.png)
 
 Implemented by 3 *classes* and composed to obtain the desired topology:
 TopologyBuilder builder = new TopologyBuilder();
@@ -582,38 +561,34 @@ builder.setBolt("count-bolt", new WordCountBolt())
       }
 }
 
-
 * Topology Example
 
-
-**public class** WordCountBolt **extends** BaseRichBolt {
+ 
+**public class** WordCountBolt **extends** BaseRichBolt{
          **private** OutputCollector collector;
          **private** HashMap<String,Long> counts=null;
-**        public void** declareOutputFields(OutputFieldsDeclarer declarer) {
+         **public void** declareOutputFields(OutputFieldsDeclarer declarer){
                 //this bolt does not emit anything
         }
-**        public void** prepare(Map config, TopologyContext context,
+         **public void** prepare(Map config, TopologyContext context,
                                          OutputCollector collector) {
                  this.collector = collector;
                  this.counts = new HashMap<String,Long>();
          }
-**         public void** execute(Tuple tuple) {
+         **public void** execute(Tuple tuple) {
                   String word = tuple.getStringByField("word");
                   // … increments count ..
           }
 }
 
-
 * Application Deployment
-- When executed, the topology is deployed as a set of processing entities over a set of computational resources (typically a cluster). Parallelism is achieved in Storm by running multiple replicas of the same spout/bolt
+- When executed, the topology is deployed as a set of processing entities over a set of computational resources (typically a cluster). Parallelism is achieved in Storm by running multiple replicas of the same spout or bolt
   - **Groupings** specify how tuples are routed to the various replicas
 
 
 
-![](images/lecture_12_1/lec_12_1_slide_32_image_1.png)
-```
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_32_image_1.png)
 
-```text
 
 * Groupings
 - 7 built-in possibilities, the most interesting are:
@@ -636,6 +611,9 @@ builder.setBolt("count-bolt", new WordCountBolt())
 
 
 
+
+
+
 * Guaranteed Processing
 - With guaranteed processing, each bolt in the tree can either *acknowledge* or *fail* a tuple:
   - If all bolts in the tree acknowledge the tuple and child tuples the message processing is *complete*
@@ -647,7 +625,7 @@ Another way to look at it is to consider the tuple tree:
 - the solid lines represent the tuple emitted by the spout
 - the dashed ones are the child tuples generated by the bolts
 
-![](images/lecture_12_1/lec_12_1_slide_35_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_35_image_1.png)
 
 
 * Guaranteed Processing
@@ -701,8 +679,6 @@ Implement the ack and fail methods for handling successes and failures
   - Listen for assigned work and execute the application.
 
 
-
-
 * Storm Architecture
 - Two kinds of nodes in a Storm cluster:
   - **Master node:** runs *Nimbus*, a central job master to which topologies are submitted. It is in charge of scheduling, job orchestration, communication and fault tolerance
@@ -725,9 +701,7 @@ Implement the ack and fail methods for handling successes and failures
   - Can be restarted without having any effects on the already running tasks on the worker nodes
 
 
-```
 
-```markdown
 
 * Storm components: Supervisor nodes 
 - Supervisor nodes 
@@ -757,7 +731,7 @@ inter-topology parallelism, Executors intra-topology and Tasks intra-component
 
 
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_42_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_42_image_1.png)
 
 
 * Interaction between Storm Internal Components
@@ -801,8 +775,7 @@ Processes  Tasks
 
 * Storm Use Cases 
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_45_image_1.png)
-
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_45_image_1.png)
 
 
 * Comparison  of big data tools
@@ -819,11 +792,11 @@ Processes  Tasks
 
 * Storm vs. Hadoop
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_47_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_47_image_1.png)
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_47_image_2.png)
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_47_image_2.png)
 
-![alt_text](images/lecture_12_1/lec_12_1_slide_47_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_47_image_3.png)
 
 
 
@@ -841,16 +814,14 @@ Cons
 - Difficulties with debugging given the way the threads and data flows are split
 
 
-```
 
-```
 
 * Benchmarking Streaming Computation Engines:
 Storm, Flink and Spark Streaming
 
-![lec_12_1_slide_49_image_1](images/lecture_12_1/lec_12_1_slide_49_image_1.png)
+![lec_12_1_slide_49_image_1](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_49_image_1.png)
 
-![lec_12_1_slide_49_image_2](images/lecture_12_1/lec_12_1_slide_49_image_2.png)
+![lec_12_1_slide_49_image_2](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_49_image_2.png)
 
 
 
@@ -870,6 +841,7 @@ Storm, Flink and Spark Streaming
 
 
 
+
 * Integration with Batch Processing
 
 - Many environments require processing same data in live streaming as well as batch post processing
@@ -881,7 +853,7 @@ Storm, Flink and Spark Streaming
   - Double the implementation effort
   - Double the number of bugs
 
-![lec_12_1_slide_52_image_1](images/lecture_12_1/lec_12_1_slide_52_image_1.png)
+![lec_12_1_slide_52_image_1](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_52_image_1.png)
 
 
 
@@ -948,9 +920,7 @@ Run a streaming computation as a series of very small, deterministic batch jobs
 batches of X seconds
 
 live data stream
-```
 
-```text
 
 * Key concepts
 - **DStream** – sequence of RDDs representing a stream of data
@@ -993,7 +963,6 @@ tweets DStream
 
 hashTags Dstream
 [#cat, #dog, … ]
-
 
 
 
@@ -1096,9 +1065,7 @@ Specify function to generate new state based on previous state and new data
  	moods = tweets.updateStateByKey(updateMood _)
 
 
-```
 
-```markdown
 
 * Arbitrary Combinations of Batch and Streaming Computations
 Can inter-mix RDD and DStream operations
@@ -1115,16 +1082,18 @@ Can inter-mix RDD and DStream operations
 - Data lost due to worker failure can be recomputed from replicated input data
 - All transformed data is fault-tolerant, and exactly-once transformations
 
+
+
 input data replicated
 in memory
 
-![](images/lecture_12_1/lec_12_1_slide_66_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_66_image_1.png)
 
-![](images/lecture_12_1/lec_12_1_slide_66_image_2.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_66_image_2.png)
 
-![](images/lecture_12_1/lec_12_1_slide_66_image_3.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_66_image_3.png)
 
-![](images/lecture_12_1/lec_12_1_slide_66_image_4.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_66_image_4.png)
 
 flatMap
 
@@ -1153,9 +1122,9 @@ RDD
 Can process **6 GB/sec (60M records/sec**) of data on 100 nodes at **sub-second** latency
   - Tested with 100 text streams on 100 EC2 instances with 4 cores each
 
-![](images/lecture_12_1/lec_12_1_slide_68_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_68_image_1.png)
 
-![](images/lecture_12_1/lec_12_1_slide_68_image_2.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_68_image_2.png)
 
 
 
@@ -1166,9 +1135,9 @@ Higher throughput than Storm
   - Storm: **115k** records/second/node
   - Apache S4: 7.5k records/second/node
 
-![](images/lecture_12_1/lec_12_1_slide_69_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_69_image_1.png)
 
-![](images/lecture_12_1/lec_12_1_slide_69_image_2.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_69_image_2.png)
 
 
 
@@ -1191,7 +1160,7 @@ hashTags.saveAsHadoopFiles("hdfs://...”)
 - Use same code in Spark standalone programs to identify problems in production logs
 - Use similar code in Spark Streaming to identify problems in live log streams
 
-```
+
 $ ./spark-shell
 scala> val file = sc.hadoopFile(“smallLogs”)
 ...
@@ -1199,9 +1168,8 @@ scala> val filtered = file.filter(_.contains(“ERROR”))
 ...
 scala> val mapped = filtered.map(...)
 ...
-```
 
-```
+
 object ProcessProductionData {
   def main(args: Array[String]) {
     val sc = new SparkContext(...)
@@ -1211,9 +1179,9 @@ object ProcessProductionData {
     ...
   }
 }
-```
 
-```
+
+
 object ProcessLiveStream {
   def main(args: Array[String]) {
     val sc = new StreamingContext(...)
@@ -1223,12 +1191,19 @@ object ProcessLiveStream {
     ...
   }
 }
-```
+
 
 
 * Apache Storm vs. Spark Streaming
 - Storm is a true streaming system (handles tuple-at-a-time) and can achieve better latencies
 - Spark Streaming uses **micro-batching** and is fundamentally limited in the latencies it can deliver
   - because it is based on a batch analytics platform, i.e., Spark
+
+
+
+
+
+
+
 
 

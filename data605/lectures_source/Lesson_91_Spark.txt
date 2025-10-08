@@ -49,7 +49,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_2_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_2_image_1.png)
 
 
 * Hadoop MapReduce: Shortcomings
@@ -70,34 +70,33 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - E.g., Apache Hive, Storm, Impala, Giraph, Drill
 
 
-![](images/lecture_9_1/lec_9_1_slide_3_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_3_image_1.png)
 
-![](images/lecture_9_1/lec_9_1_slide_3_image_2.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_3_image_2.png)
 
 
 * (Apache) Spark
-![](images/lecture_9_1/lec_9_1_slide_4_image_1.png)
-- **Open-source**
-  - DataBrick monetizes it (40B startup)
-- **General processing engine**
-  - Large set of operations instead of just **Map()** and **Reduce()**
-  - Operations can be arbitrarily combined in any order
-  - Transformations vs Actions
-  - Computation is organized as a DAG
-  - DAGs are decomposed into tasks that can run in parallel
-  - Scheduler / optimizer on parallel workers
-- **Supports several languages**
-  - Java, Scala (preferred)
-  - Python good support through bindings, but not the main language
-- **Data abstraction**
-  - Resilient Distributed Dataset (RDD)
-  - Other data structures (e.g., DataFrames, Datasets) built on top of RDDs
-- **Fault tolerance through RDD lineage**
-- **In-memory computation**
-  - All intermediate results are kept in memory instead of disk
-  - Persist data on disk or in memory, if needed -> speed
-  - Initial winning advantage
-
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_4_image_1.png)
+  - **Open-source**
+    - DataBrick monetizes it (40B startup)
+  - **General processing engine**
+    - Large set of operations instead of just **Map()** and **Reduce()**
+    - Operations can be arbitrarily combined in any order
+    - Transformations vs Actions
+    - Computation is organized as a DAG
+    - DAGs are decomposed into tasks that can run in parallel
+    - Scheduler / optimizer on parallel workers
+  - **Supports several languages**
+    - Java, Scala (preferred)
+    - Python good support through bindings, but not the main language
+  - **Data abstraction**
+    - Resilient Distributed Dataset (RDD)
+    - Other data structures (e.g., DataFrames, Datasets) built on top of RDDs
+  - **Fault tolerance through RDD lineage**
+  - **In-memory computation**
+    - All intermediate results are kept in memory instead of disk
+    - Persist data on disk or in memory, if needed -> speed
+    - Initial winning advantage
 
 * Berkeley: From Research to Companies
 - Amplab
@@ -110,21 +109,21 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_5_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_1.png)
 
-![](images/lecture_9_1/lec_9_1_slide_5_image_2.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_2.png)
 
-![](images/lecture_9_1/lec_9_1_slide_5_image_3.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_3.png)
 
-![](images/lecture_9_1/lec_9_1_slide_5_image_4.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_4.png)
 
-![](images/lecture_9_1/lec_9_1_slide_5_image_5.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_5.png)
 
-![](images/lecture_9_1/lec_9_1_slide_5_image_6.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_6.png)
 
-![](images/lecture_9_1/lec_9_1_slide_5_image_7.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_7.png)
 
-![](images/lecture_9_1/lec_9_1_slide_5_image_8.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_8.png)
 
 
 * Berkeley AMPLab Data Analytics Stack
@@ -132,7 +131,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 https://amplab.cs.berkeley.edu/software/
 
-![](images/lecture_9_1/lec_9_1_slide_6_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_6_image_1.png)
 
 - So many tools that they have their own big data stack!
 
@@ -159,9 +158,9 @@ https://amplab.cs.berkeley.edu/software/
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_7_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_7_image_1.png)
 
-![](images/lecture_9_1/lec_9_1_slide_7_image_2.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_7_image_2.png)
 
 **General purpose applications**
 
@@ -187,10 +186,10 @@ https://amplab.cs.berkeley.edu/software/
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_8_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_8_image_1.png)
 
 
-* UMD DATA605[BOLD] - Big Data Systems[/BOLD]
+* UMD DATA605 - Big Data Systems
 Dr. GP Saggese
 gsaggese@umd.edu
 with thanks to Alan Sussman, Amol Deshpande,
@@ -210,13 +209,13 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_9_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_9_image_1.png)
 
 
 * Spark Example: Estimate Pi
 
 
-![](images/lecture_9_1/lec_9_1_slide_10_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_10_image_1.png)
 
 - Estimate Pi with MapReduce in Spark
 
@@ -243,7 +242,7 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_11_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_11_image_1.png)
 
 
 * Spark: Computation Model
@@ -266,7 +265,7 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_12_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_12_image_1.png)
 
 
 * Deployment Modes
@@ -294,9 +293,9 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_14_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_14_image_1.png)
 
-![](images/lecture_9_1/lec_9_1_slide_14_image_2.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_14_image_2.png)
 
 
 * Parallelized Collections
@@ -309,7 +308,7 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
   - You can also set it manually by passing it as a second parameter to **parallelize()**
 
 
-![](images/lecture_9_1/lec_9_1_slide_15_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_15_image_1.png)
 
 
 * Transformations vs Actions
@@ -328,7 +327,7 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_16_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_16_image_1.png)
 ```
 
 ```
@@ -338,52 +337,50 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_17_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_17_image_1.png)
 
-![](images/lecture_9_1/lec_9_1_slide_17_image_2.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_17_image_2.png)
 
 - MapReduce in 1 line (show-off version)
 
 
+
+
 * Same Code in Java Hadoop
 
-![](images/lecture_9_1/lec_9_1_slide_18_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_18_image_1.png)
 
-![](images/lecture_9_1/lec_9_1_slide_18_image_2.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_18_image_2.png)
 
 
 * Spark Example: Logistic Regression in MapReduce
-![](images/lecture_9_1/lec_9_1_slide_19_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_19_image_1.png)
 
-**# Logistic Regression**
-**# - iterative machine learning algorithm**
-**# - find best hyperplane that separates two sets**
-**#   of points in a multi-dimensional feature space**
-**#**
-**# Apply MapReduce operation repeatedly to the same**
-**# dataset, so it benefits greatly from caching the**
-**# input in RAM.**
-**points**= spark.textFile(...).map(parsePoint).cache()
-**# Initial separating plane.**
-**w**= numpy.random.ranf(size = D)
-**# Until convergence.**
-**for** i in range(ITERATIONS):
-   # Parallel loop over the samples i=1...m
-   gradient = points.map(
-       lambda p:
-(1 / (1 + exp(-p.y*(w.dot(p.x)))) - 1) * p.y * p.x
-   ).reduce(lambda a, b: a + b)
-   w -= alpha * gradient
+ Logistic Regression
+```python
+# Load points
+points= spark.textFile(...).map(parsePoint).cache()
+
+# Initial separating plane
+w = numpy.random.ranf(size=D)
+
+# Until convergence
+for i in range(ITERATIONS):
+    # Parallel loop over the samples i=1...m
+    gradient = points.map(
+        lambda p: (1 / (1 + exp(-p.y*(w.dot(p.x)))) - 1) * p.y * p.x
+    ).reduce(lambda a, b: a + b)
+    w -= alpha * gradient
+
 print("Final separating plane: %s" % w)
-
+```
 
 
 https://spark.apache.org/docs/latest/quick-start.html
 
-![](images/lecture_9_1/lec_9_1_slide_19_image_2.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_19_image_2.png)
 
-![](images/lecture_9_1/lec_9_1_slide_19_image_3.png)
-
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_19_image_3.png)
 
 * Spark Transformations: 1 / 3
 - **map**(func)
@@ -462,7 +459,7 @@ https://spark.apache.org/docs/latest/rdd-programming-guide.html
   - Data can be kept in memory to increase performance
 - Fault-tolerance comes for free!
 
-![](images/lecture_9_1/lec_9_1_slide_24_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_24_image_1.png)
 ```
 
 ```markdown
@@ -490,7 +487,7 @@ https://spark.apache.org/docs/latest/rdd-programming-guide.html
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_25_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_25_image_1.png)
 
 
 * Spark: RDD Persistence and Fault-tolerance
@@ -505,13 +502,13 @@ https://spark.apache.org/docs/latest/rdd-programming-guide.html
 
 
 
-![](images/lecture_9_1/lec_9_1_slide_26_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_26_image_1.png)
 
 
 * Spark Shuffle
-![](images/lecture_9_1/lec_9_1_slide_27_image_1.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_27_image_1.png)
 
-![](images/lecture_9_1/lec_9_1_slide_27_image_2.png)
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_27_image_2.png)
 
 - E.g., **reduceByKey()**
   - **Definition**: all values [v1, ..., vn] for a single key *k* are combined into a tuple *(k, v)* where *v* = reduce(v1, ..., vn)
@@ -616,3 +613,7 @@ with 1/10
 “Spark vs. Hadoop MapReduce”, Saggi Neumann, 2014
 https://www.xplenty.com/blog/2014/11/apache-spark-vs-hadoop-mapreduce/
 ```
+
+
+
+

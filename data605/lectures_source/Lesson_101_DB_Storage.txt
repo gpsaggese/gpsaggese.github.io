@@ -16,8 +16,7 @@ UMD DATA605 - Big Data Systems
 \begingroup \Large
 **Storage
 Query Processing
-Transactions
-**
+Transactions**
 \endgroup
 
 ::: columns
@@ -62,21 +61,20 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
   - **Non-volatile**: can survive failures and system crashes
 - **Sequential vs random access**
   - **Sequential**: read the data contiguously
-**SELECT * FROM employee**
+- **SELECT * FROM employee**
   - **Random**: read the data from anywhere at any time
-**SELECT * FROM employee**
-**WHERE name LIKE ‘Einst*’**
+- **SELECT * FROM employee**
+- **WHERE name LIKE ‘Einst*’**
   - Need to know how data is stored in order to optimize access
 
 
 
-![](images/lecture_10_1/lec_10_1_slide_3_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_3_image_1.png)
 
 
 * Storage Hierarchy
-4
 
-![](images/lecture_10_1/lec_10_1_slide_4_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_4_image_1.png)
 
 **Organize storage in a hierarchy according to speed / cost**
 - **Cache memory**
@@ -98,6 +96,7 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
   - Backup and archival data
   - Stored for long period of time, e.g., for legal reasons
   - Sequential-access
+
 **Simplified organization**
 - **Primary storage**: cache, main memory
 - **Secondary** (or **online**): flash memory, magnetic disk
@@ -105,16 +104,15 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 
 
 * Storage Hierarchy
-![](images/lecture_10_1/lec_10_1_slide_5_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_5_image_1.png)
 
 
-From http://cse1.net/recaps/4-memory.html
+- From http://cse1.net/recaps/4-memory.html
 
 
 
 * How Important is Memory Hierarchy?
-- **Trade-offs shifted drastically over last 10-15 years****
-**
+- **Trade-offs shifted drastically over last 10-15 years**
   - Several innovations
     - Large memories
     - SSDs
@@ -145,22 +143,20 @@ From http://cse1.net/recaps/4-memory.html
 - Transactions
 
 
-
-
 * Connecting Disks to a Server
-- **Disks (magnetic and SSDs) can be connected to computer:**
-  - Directly through high-speed interconnection; or
+- ** Disks (magnetic and SSDs) can be connected to computer:**
+  - Directly through high-speed interconnection, or
   - Through high-speed network
-- **Through a high-speed interconnection**
+- ** Through a high-speed interconnection**
   - Serial ATA (SATA)
   - Serial Attached SCSI (SAS)
   - NVMe (Non-volatile Memory Express)
-- **Through high-speed networks**
+- ** Through high-speed networks**
   - Storage Area Network (SAN)
     - ISCSI
     - Fiber Channel
     - InfiniBand
-  - **Network Attached Storage (NAS)**
+- Network Attached Storage (NAS)
     - Provides a file-system interface (e.g., NFS)
     - Cloud storage
       - Data is stored in the cloud and accessed via an API
@@ -168,15 +164,12 @@ From http://cse1.net/recaps/4-memory.html
       - High latency
 
 
-![](images/lecture_10_1/lec_10_1_slide_8_image_1.png)
-```
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_8_image_1.png)
 
-# Content processing error - slide missing
 
-```markdown
 
 * Magnetic Disks
-![alt_text](images/lecture_10_1/lec_10_1_slide_9_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_9_image_1.png)
 
 **1956**
 
@@ -184,57 +177,46 @@ From http://cse1.net/recaps/4-memory.html
 - 24” platters
 - 5 million characters
 
-![alt_text](images/lecture_10_1/lec_10_1_slide_9_image_2.jpeg)
-
-
-
+![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_9_image_2.jpeg)
 
 * Magnetic Disks
-**1979**
-SEAGATE
-5MB
+-  **1979**
+-  SEAGATE
+-  5MB
 
-![alt_text](images/lecture_10_1/lec_10_1_slide_10_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_10_image_1.png)
 
 **2006**
 Western Digital
 500GB
 
-![alt_text](images/lecture_10_1/lec_10_1_slide_10_image_2.jpeg)
+![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_10_image_2.jpeg)
 
 
 
-![alt_text](images/lecture_10_1/lec_10_1_slide_10_image_3.png)
+![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_10_image_3.png)
 
-Exponential increase in capacity over time
-
+- Exponential increase in capacity over time
 
 * Magnetic Disks: Components
 
 
-![alt_text](images/lecture_10_1/lec_10_1_slide_11_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_11_image_1.png)
 
-**Platters**
-
-- Metal covered with magnetic material on both surfaces
-- It spins at 5400 or 9600 RPM
-- **Tracks** subdivided into **sectors** (smallest unit read or written, with a checksum)
-**Read-write heads**
-
-- Store information magnetically on the disk
-- Spinning creates a cushion that maintain the heads a few microns from the disk
-- **Cylinder** is the i-th tracks of all the platters (can be read / written together)
-**Arm**
-
-- Move all the heads along the disks
-**Disk controller**
-
-- Accept commands to read / write data
-- Operate arm and heads
-- Bad sectors are remapped to a different physical location
-
-![alt_text](images/lecture_10_1/lec_10_1_slide_11_image_2.png)
-
+- **Platters**
+  - Metal covered with magnetic material on both surfaces
+  - It spins at 5400 or 9600 RPM
+  - **Tracks** subdivided into **sectors** (smallest unit read or written, with a checksum)
+- **Read-write heads**
+  - Store information magnetically on the disk
+  - Spinning creates a cushion that maintain the heads a few microns from the disk
+  - **Cylinder** is the i-th tracks of all the platters (can be read / written together)
+- **Arm**
+  - Move all the heads along the disks
+- **Disk controller**
+  - Accept commands to read / write data
+  - Operate arm and heads
+  - Bad sectors are remapped to a different physical location
 
 * Magnetic Disks: Current Specs
 - **Capacity**
@@ -256,7 +238,7 @@ Exponential increase in capacity over time
 
 
 
-![alt_text](images/lecture_10_1/lec_10_1_slide_12_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_12_image_1.png)
 
 
 * Accessing Data
@@ -282,7 +264,7 @@ Exponential increase in capacity over time
 
 
 
-![alt_text](images/lecture_10_1/lec_10_1_slide_13_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_13_image_1.png)
 
 
 * Solid State Disk (SSD)
@@ -310,7 +292,7 @@ Exponential increase in capacity over time
 
 
 
-![alt_text](images/lecture_10_1/lec_10_1_slide_14_image_1.png)
+![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_14_image_1.png)
 
 
 * Outline
@@ -346,10 +328,8 @@ Exponential increase in capacity over time
 
 
 
-![alt_text](images/lecture_10_1/lec_10_1_slide_16_image_1.png)
-```
+![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_16_image_1.png)
 
-```text
 
 * Improve Reliability / Performance with RAID
 **Increase reliability**
@@ -374,7 +354,7 @@ Exponential increase in capacity over time
 
 
 
-![](images/lecture_10_1/lec_10_1_slide_17_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_17_image_1.png)
 
 
 * Error Correction Codes
@@ -392,13 +372,13 @@ Exponential increase in capacity over time
 
 
 
-![](images/lecture_10_1/lec_10_1_slide_18_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_1.png)
 
-![](images/lecture_10_1/lec_10_1_slide_18_image_2.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_2.png)
 
-![](images/lecture_10_1/lec_10_1_slide_18_image_3.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_3.png)
 
-![](images/lecture_10_1/lec_10_1_slide_18_image_4.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_4.png)
 
 
 * RAID Levels
@@ -422,13 +402,13 @@ Good article on wikipedia
 
 
 
-![](images/lecture_10_1/lec_10_1_slide_19_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_1.png)
 
-![](images/lecture_10_1/lec_10_1_slide_19_image_2.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_2.png)
 
-![](images/lecture_10_1/lec_10_1_slide_19_image_3.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_3.png)
 
-![](images/lecture_10_1/lec_10_1_slide_19_image_4.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_4.png)
 
 
 * RAID Levels
@@ -444,15 +424,15 @@ Good article on wikipedia
 
 
 
-![](images/lecture_10_1/lec_10_1_slide_20_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_1.png)
 
-![](images/lecture_10_1/lec_10_1_slide_20_image_2.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_2.png)
 
-![](images/lecture_10_1/lec_10_1_slide_20_image_3.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_3.png)
 
-![](images/lecture_10_1/lec_10_1_slide_20_image_4.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_4.png)
 
-![](images/lecture_10_1/lec_10_1_slide_20_image_5.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_5.png)
 
 
 * Choosing a RAID Level
@@ -472,13 +452,13 @@ Good article on wikipedia
 
 
 
-![](images/lecture_10_1/lec_10_1_slide_21_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_21_image_1.png)
 
-![](images/lecture_10_1/lec_10_1_slide_21_image_2.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_21_image_2.png)
 
-![](images/lecture_10_1/lec_10_1_slide_21_image_3.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_21_image_3.png)
 
-![](images/lecture_10_1/lec_10_1_slide_21_image_4.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_21_image_4.png)
 
 
 * BACKUP
@@ -499,51 +479,49 @@ Sources:
 
 
 * (Centralized) DB Internals
-User processes
-- Issue commands to the DB
-Server processes
-- Receive commands and call into the DB code
-Process monitor process
-- Monitor DB processes
-- Recover processes from failures
-Lock manager process
-- Lock grant / release
-- Deadlock detection
-Database writer process
-- Output modified buffer blocks to disk on a continuous basis
-Log writer process
-- Output log records to stable storage
-Checkpoint process
-- Perform periodic checkpoints
-Shared memory
-- Contain all shared data
-  - Buffer pool, Lock table, Log buffer (log records waiting to be saved on stable storage), Caches (e.g., query plans)
-- Data needs to be projected by mutual exclusion locks
+- User processes
+  - Issue commands to the DB
+- Server processes
+  - Receive commands and call into the DB code
+- Process monitor process
+  - Monitor DB processes
+  - Recover processes from failures
+- Lock manager process
+  - Lock grant / release
+  - Deadlock detection
+- Database writer process
+  - Output modified buffer blocks to disk on a continuous basis
+- Log writer process
+  - Output log records to stable storage
+- Checkpoint process
+  - Perform periodic checkpoints
+- Shared memory
+  - Contain all shared data
+    - Buffer pool, Lock table, Log buffer (log records waiting to be saved on stable storage), Caches (e.g., query plans)
+  - Data needs to be projected by mutual exclusion locks
 
 
 
-![](images/lecture_10_1/lec_10_1_slide_24_image_1.png)
-```
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_24_image_1.png)
 
-```markdown
 
 * DB Internals
 
-**Storage hierarchy**
+- **Storage hierarchy**
 
-- How are tables mapped to files?
-- How are tuples mapped to disk blocks?
+  - How are tables mapped to files?
+  - How are tuples mapped to disk blocks?
 
-**Buffer Manager**
+- **Buffer Manager**
 
-- Bring pages from disk to memory
-- Manage the limited memory
+  - Bring pages from disk to memory
+  - Manage the limited memory
 
-**Query Processing Engine**
+- **Query Processing Engine**
 
-- Given a user query, decide how to “execute” it
-- Specify sequence of pages to be brought in memory
-- Operate upon the tuples to produce results
+  - Given a user query, decide how to “execute” it
+  - Specify sequence of pages to be brought in memory
+  - Operate upon the tuples to produce results
 
 
 
@@ -584,7 +562,7 @@ Shared memory
 
 
 
-![](images/lecture_10_1/lec_10_1_slide_28_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_28_image_1.png)
 
 
 * File Organization
@@ -604,7 +582,7 @@ Shared memory
 
 
 
-![](images/lecture_10_1/lec_10_1_slide_29_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_29_image_1.png)
 
 
 * Records -> Blocks
@@ -682,17 +660,15 @@ Shared memory
 
 
 
-![](images/lecture_10_1/lec_10_1_slide_32_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_32_image_1.png)
 
-![](images/lecture_10_1/lec_10_1_slide_32_image_2.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_32_image_2.png)
 
-![](images/lecture_10_1/lec_10_1_slide_32_image_3.png)
-```
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_32_image_3.png)
 
-```text
 
 * Variable-length Records
-![Variable-length Records](images/lecture_10_1/lec_10_1_slide_33_image_1.png)
+![Variable-length Records](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_33_image_1.png)
 - **Variable-length records occur** due to:
   - The presence of variable-length fields (e.g., strings, arrays, sets)
   - Multiple record types in the same file / blocks
@@ -707,9 +683,8 @@ Shared memory
 
 
 
-
 * Variable-length Attributes
-![Variable-length Attributes](images/lecture_10_1/lec_10_1_slide_34_image_1.png)
+![Variable-length Attributes](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_34_image_1.png)
 - **How to extract an attribute of variable-length of a record?**
   - The fixed-length attributes are allocated statically at the beginning
   - Variable-length attributes (e.g., VARCHAR type) are represented by an offset and length
@@ -745,36 +720,35 @@ Shared memory
   - If block already in memory, return a pointer to it
   - If not:
     - Allocate space, evicting a current page
-      - Either write it back to its original location, or
-      - Just throw it away (if it was read from disk, and not modified)
+    - Either write it back to its original location, or
+    - Just throw it away (if it was read from disk, and not modified)
     - Read data
-      - Make a request to the storage subsystem to fetch it
+    - Make a request to the storage subsystem to fetch it
     - Pass the address back
 
 
 
 
 * Buffer Manager
-MAIN MEMORY
+- MAIN MEMORY
 
-DISK
+- DISK
 
-disk page
+- disk page
 
-free pages
+- free pages
 
-Page Requests from Higher Levels
+- Page Requests from Higher Levels
 
-Buffer pool
+- Buffer pool
 
-Choice of page dictated
-by **replacement policy**
+- Choice of page dictated by **replacement policy**
 
 
 
 
 * Buffer Manager
-- Similar to *virtual memory manager*
+- Similar to virtual memory manager
 - Buffer replacement policies
   - What page to evict?
   - LRU: Least Recently Used
@@ -783,9 +757,7 @@ by **replacement policy**
     - The opposite
     - E.g., during a join there is a nested loop, the block just used won’t be used until the next iteration
 
-
-
-![Buffer Manager](images/lecture_10_1/lec_10_1_slide_38_image_1.png)
+![Buffer Manager](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_38_image_1.png)
 
 
 * Buffer Manager
@@ -823,9 +795,6 @@ by **replacement policy**
   - Save data in non-volatile RAM to speed-up writes and survive system crashes
 
 
-```
-
-```
 
 * Outline
 - Storage
@@ -836,7 +805,6 @@ by **replacement policy**
     - **Indexes**
 - Query Processing
 - Transactions
-
 
 
 
@@ -868,19 +836,16 @@ by **replacement policy**
 - Secondary index
   - Key is not sorted
 
-![](images/lecture_10_1/lec_10_1_slide_43_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_43_image_1.png)
 
-Relation
+- Relation
 
-Index
+- Index
 
+* Example B+- Tree Index
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_44_image_1.png)
 
-
-
-* Example B+-Tree Index
-![](images/lecture_10_1/lec_10_1_slide_44_image_1.png)
-
-Index
+- Index
 
 
 * B+-Tree Node Structure
@@ -888,9 +853,9 @@ Index
   - Ki are the search-key values
   - Pi are pointers to children (for non-leaf nodes) or pointers to records or buckets of records (for leaf nodes).
 - The search-keys in a node are ordered
-  *K*1 < *K*2 < *K*3 < *. . .* < *K**n–*1
+  K1 < K2 < K3 < . . . < Kn–1
 
-![](images/lecture_10_1/lec_10_1_slide_45_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_45_image_1.png)
 
 
 
@@ -904,12 +869,12 @@ Index
   - *P*n is a pointer to the *next* leaf node
   - Must contain at least n/2 entries
 
-![](images/lecture_10_1/lec_10_1_slide_46_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_46_image_1.png)
 
 
 
 * Example B+-Tree Index
-![](images/lecture_10_1/lec_10_1_slide_47_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_47_image_1.png)
 
 Index
 
@@ -924,15 +889,13 @@ Index
   - Finally, search keys in the tuples contained in the subtree pointed to by *P*n, are all larger than *K*n-1
   - Must contain at least n/2 entries (unless root)
 
-![](images/lecture_10_1/lec_10_1_slide_48_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_48_image_1.png)
 
 
-```
 
-```markdown
 
 * Example B+-Tree Index
-![Example B+-Tree Index](images/lecture_10_1/lec_10_1_slide_49_image_1.png)
+![Example B+-Tree Index](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_49_image_1.png)
 Index
 
 
@@ -980,8 +943,6 @@ Index
 - Transactions
 
 
-
-
 * Selection Operation
 **SELECT** * **FROM** person **WHERE** SSN = “123”
 - **Option 1: Sequential Scan****
@@ -1021,8 +982,7 @@ Index
 
 * Selection Operation
 **SELECT** * **FROM** person **WHERE** SSN = “123”
-- **Option 3 : Use Index****
-**
+- **Option 3 : Use Index**
   - Pre-condition:
     - An appropriate index must exist
   - Use the index
@@ -1031,7 +991,6 @@ Index
       - If primary index, the relation is sorted by the search key
         - Go to the relation and read blocks sequentially
       - If secondary index, must follow all pointers using the index
-
 
 
 
@@ -1139,8 +1098,6 @@ Index
   - CPU cost is much better (even though we don’t care about it too much)
   - Performs much better than nested-loops join when *S* doesn’t fit in memory (next)
 
-
-
 * Hash Join
 - Case 2: Smaller relation *(S)* doesn’t fit in memory
 - Two “phases”
@@ -1154,9 +1111,7 @@ Index
     - Each S partition fits in memory
 
 
-```
 
-```
 * Hash Join
 - Case 2: Smaller relation *(S)* doesn’t fit in memory
 - Two “phases”
@@ -1180,11 +1135,10 @@ Index
   - 3(*br* + *bs*) +4 * *nh*  block transfers + 2( [*br */ *bb*] + [*bs */ *bb*])  seeks
     - Where *bb* is the size of each output buffer
   - Much better than Nested-loops join under the same conditions*
-*
 
 
 * Hash Join
-![](images/lecture_10_1/lec_10_1_slide_67_image_1.png)
+![](umd_classes/data605/lectures_sources/data605/lectures_source/images/lecture_10_1/lec_10_1_slide_67_image_1.png)
 
 
 * Merge-Join (Sort-merge join)
@@ -1193,9 +1147,11 @@ Index
   - If not sorted, can sort first, and then use this algorithms
 - Called “sort-merge join” sometimes
 
-![](images/lecture_10_1/lec_10_1_slide_68_image_1.png)
 
-*select ** from r, s where r.a1 = s.a1*
+
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_68_image_1.png)
+
+**select** from r, s where r.a1 = s.a1*
 
 *Step:*
 *    1. Compare the tuples at pr and ps
@@ -1220,7 +1176,6 @@ Index
 
 
 
-
 * Joins: Summary
 - Block Nested-loops join
   - Can always be applied irrespective of the join condition
@@ -1234,9 +1189,6 @@ Index
   - Very commonly used – especially since relations are typically sorted
   - Sorted results commonly desired at the output
     - To answer group by queries, for duplicate elimination, because of ASC/DSC
-
-
-
 
 * Query Processing
 - Overview
@@ -1263,9 +1215,8 @@ Index
   - External sort-merge
 
 
-```
 
-```
+
 
 * External sort-merge
 - Divide and Conquer !!
@@ -1296,24 +1247,21 @@ Index
     - Can sort: 4000MB = 4GB of data
 
 
-
-
-* Example: External Sorting Using Sort-Merge
-![](images/lecture_10_1/lec_10_1_slide_75_image_1.png)
-
-
+*Example: External Sorting Using Sort-Merge
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_75_image_1.png)
 
 * External Merge Sort (Cont.)
 - Cost analysis:
-  - Total number of merge passes required: [log*M*–1(*b**r*/M)].
-  - Disk accesses for initial run creation as well as in each pass is 2*b**r*
+  - Total number of merge passes required: 
+    ```text 
+  [log*M*–1(*b**r*/M)] 
+  ```
+  - Disk accesses for initial run creation as well as in each pass is ''' 2*b**r* '''
     - for final pass, we don’t count write cost
-      - we ignore final write cost for all operations since the output of an operation may be sent to the parent operation without being written to disk
-Thus total number of disk accesses for external sorting:
-		*b**r* ( 2 [log*M*–1(*b**r* / M)] + 1)
-
-
-
+    - we ignore final write cost for all operations since the output of an operation may be sent to the parent operation without being written to disk
+  - Thus total number of disk accesses for external sorting: ''' text 
+  *b**r* ( 2 [log*M*–1(*b**r* / M)] + 1) 
+  '''
 
 * Query Processing
 - Overview
@@ -1322,9 +1270,6 @@ Thus total number of disk accesses for external sorting:
 - Sorting
 - Other operators
 - Putting it all together…
-
-
-
 
 * Group By and Aggregation
 *select a, count(b)*
@@ -1338,7 +1283,6 @@ Thus total number of disk accesses for external sorting:
     - Check if *r.a* exists in the hash table
     - If yes, increment the count
     - If not, insert a new value
-
 
 
 * Group By and Aggregation
@@ -1365,9 +1309,7 @@ Thus total number of disk accesses for external sorting:
   - First to find the number of tuples in each group, and then to find the median tuple in each group
 - count(distinct b): must do duplicate elimination before the count
 
-```
 
-```text
 
 * Duplicate Elimination
 * *select distinct a*
@@ -1418,7 +1360,7 @@ Thus total number of disk accesses for external sorting:
   - Materialization
   - Pipelining
 
-![](images/lecture_10_1/lec_10_1_slide_84_image_1.png)
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_84_image_1.png)
 
 select customer-name
 from account a, customer c
@@ -1465,8 +1407,7 @@ where a.SSN = c.SSN and
 - Somewhat limited applicability
 - A “blocking” operation: An operation that has to consume entire input before it starts producing output tuples
 
-![](images/lecture_10_1/lec_10_1_slide_87_image_1.png)
-
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_87_image_1.png)
 
 
 
@@ -1482,18 +1423,15 @@ where a.SSN = c.SSN and
   - Set operations: see duplicate elimination
 
 
-```
 
-```
 
 * Transactions
-- Storage**
+- Storage
 - Query Processing
 - Transactions
   - Overview
   - Concurrency Control
   - Recovery
-
 
 
 
@@ -1508,11 +1446,19 @@ where a.SSN = c.SSN and
   - DBMS can do a few things, e.g., enforce constraints on the data
 - Rest: DBMS guarantees
 
-
+		
 
 
 * Bank application example
 - TODO
+
+
+
+
+
+
+
+
 
 
 
@@ -1525,7 +1471,6 @@ where a.SSN = c.SSN and
   - Would want *isolation*
     - What if somebody makes a *transfer* while we are computing the balance
     - Typically not guaranteed for such long-running queries
-
 
 
 
@@ -1542,8 +1487,6 @@ where a.SSN = c.SSN and
 - TPC-H
   - OLAP application
   - Query analytics in a 'data warehouse' context
-
-
 
 
 * Assumptions and Goals
@@ -1580,9 +1523,7 @@ where a.SSN = c.SSN and
     - Obtained for updating a data item
 
 
-```
 
-```text
 
 * Lock instructions
 - New instructions
@@ -1674,12 +1615,11 @@ Example schedule:
   - We have talked about Isolation and Consistency
   - How do we guarantee Atomicity and Durability?
     - Atomicity: Two problems
-      - Part of the transaction is done, but we want to cancel it
-        - ABORT/ROLLBACK
-      - System crashes during the transaction. Some changes made it to the disk, some didn’t.
+    - Part of the transaction is done, but we want to cancel it: ABORT/ROLLBACK
+    - System crashes during the transaction. Some changes made it to the disk, some didn’t.
     - Durability:
-      - Transaction finished. User notified. But changes not sent to disk yet (for performance reasons). System crashed.
-- Essentially similar solutions
+    - Transaction finished. User notified. But changes not sent to disk yet (for performance reasons). System crashed.
+- Essentially similar solutions  
 
 
 
@@ -1698,7 +1638,6 @@ Example schedule:
 
 
 
-
 * Log-based Recovery
 - Most commonly used recovery method
 - Intuitively, a log is a record of everything the database system does
@@ -1708,5 +1647,12 @@ Example schedule:
 - *<T2, ABORT>*
 - *<T1, A, 100, 200>*
   - T1 modified A; old value = 100, new value = 200
+
+
+
+
+
+
+
 
 

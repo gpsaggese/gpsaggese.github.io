@@ -54,8 +54,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 
 
-![](images/lecture_9_3/lec_9_3_slide_2_image_1.png)
-![](images/lecture_9_3/lec_9_3_slide_2_image_2.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_2_image_1.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_2_image_2.png)
 
 
 * Sorrentum Primitives
@@ -76,7 +76,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Manage orders and portfolios using algorithmic trading
 
 
-![](images/lecture_9_3/lec_9_3_slide_3_image_1.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_3_image_1.png)
 
 
 * Sorrentum: Financial Machine Learning
@@ -95,23 +95,25 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Markets are influenced by emotions, fear, and greed
 
 
-![](images/lecture_9_3/lec_9_3_slide_4_image_1.png)
-![](images/lecture_9_3/lec_9_3_slide_4_image_2.png)
-![](images/lecture_9_3/lec_9_3_slide_4_image_3.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_4_image_1.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_4_image_2.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_4_image_3.png)
 
-“Imagine how much harder physics would be if electrons had feelings!”, **Prof.** **Andrew Lo (MIT)**
+“Imagine how much harder physics would be if electrons had feelings!”, *Prof.Andrew Lo (MIT)*
 
-![](images/lecture_9_3/lec_9_3_slide_4_image_4.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_4_image_4.png)
 
+**Traditional ML**
 Hit rate: 80%
 R^2: 70%
 
+**Financial ML**
 Hit rate: 51%
 R^2: 0.1% (10bps)
 
-**Traditional ML**
 
-**Financial ML**
+
+
 
 
 * Blockchain
@@ -132,8 +134,8 @@ R^2: 0.1% (10bps)
   - Bitcoin, Ethereum, Solana, Cardano
 
 
-![](images/lecture_9_3/lec_9_3_slide_5_image_1.png)
-![](images/lecture_9_3/lec_9_3_slide_5_image_2.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_5_image_1.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_5_image_2.png)
 
 
 * Smart Contract
@@ -159,7 +161,6 @@ R^2: 0.1% (10bps)
 - Ethereum = a blockchain for general-purpose smart contracts
   - Turing-complete
   - EVM
-
 
 
 
@@ -204,34 +205,28 @@ R^2: 0.1% (10bps)
 
 
 
-![](images/lecture_9_3/lec_9_3_slide_8_image_1.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_8_image_1.png)
 
 Fight Club, 1999
 Tyler Durden’s Project Mayhem: erase debt by blowing up buildings where credit information is stored
-```
 
-```markdown
 
 * Decentralized Finance
-- **Idea: instead of renovating a crumbling financial system, rebuild it from the ground up
-**
+- **Idea: instead of renovating a crumbling financial system, rebuild it from the ground up**
   - Offer financial instruments without relying on intermediaries (e.g., brokerage, exchanges, banks)
   - Replace old crap with dApps and smart contracts running on blockchain
-- **The bright side
-**
+- **The bright side**
   - No layers of bureaucracy
   - No middle-man taking commissions
   - No delay
   - Interoperability between services
   - Transparency
   - Equality (no special treatments or bribes)
-- **The dark side
-**
+- **The dark side**
   - Scams, greed, stupidity, rabbid speculation -> bubbles + bankruptcies
   - Do not learn from the past and make the same mistakes
   - As humans it seems that we can’t help ourselves
-- **My take: the impact of Web3 / Defi will be as big as the Internet
-**
+- **My take: the impact of Web3 / Defi will be as big as the Internet**
   - From free information (Internet) to free society (Web3)
   - Put society and democracy on the blockchain
   - Get rid of rent-seeking tech companies
@@ -241,19 +236,16 @@ Tyler Durden’s Project Mayhem: erase debt by blowing up buildings where credit
 
 
 * Sorrentum: Projects
-- **Arbitrage
-**
+- **Arbitrage**
   - = take advantage of discrepancy of prices in time or space to make a profit
   - Key to a well-functioning markets
     - Capitalism at its best
   - Mechanical (or risk-less) vs statistical arbitrage
   - Cross-exchange
   - Single-exchange
-- **Natural Language Processing (NLP) and markets
-**
+- **Natural Language Processing (NLP) and markets**
   - Understand effect of news and social media on markets
-- **Model research
-**
+- **Model research**
   - Predict noisy financial quantities with ML
   - E.g., price, volatility, volume, bid-ask spread
 
@@ -284,13 +276,13 @@ Tyler Durden’s Project Mayhem: erase debt by blowing up buildings where credit
 * Additional Resources
 
 
-![](images/lecture_9_3/lec_9_3_slide_12_image_1.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_12_image_1.png)
 
-![](images/lecture_9_3/lec_9_3_slide_12_image_2.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_12_image_2.png)
 
-![](images/lecture_9_3/lec_9_3_slide_12_image_3.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_12_image_3.png)
 
-![](images/lecture_9_3/lec_9_3_slide_12_image_4.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_12_image_4.png)
 
 Pi, 1998
 
@@ -300,11 +292,11 @@ Margin call, 2011
 
 Boiler room, 2000
 
-![](images/lecture_9_3/lec_9_3_slide_12_image_5.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_12_image_5.png)
 
 The Wolf of Wall Street, 2013
 
-![](images/lecture_9_3/lec_9_3_slide_12_image_6.png)
+![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_12_image_6.png)
 
 The Big Short, 2015
 
@@ -314,3 +306,4 @@ The Big Short, 2015
 - Two data node examples
   - Binance
   - Reddit
+
