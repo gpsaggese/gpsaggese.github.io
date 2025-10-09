@@ -49,7 +49,10 @@ UMD DATA605 - Big Data Systems
     - Magnetic disks / SSDs
     - RAID
 - DB internals
-Sources: Silberschatz et al. 2020
+
+\vspace{2cm}
+\footnotesize
+- Sources: Silberschatz et al. 2020
 
 
 
@@ -60,11 +63,15 @@ Sources: Silberschatz et al. 2020
     - Magnetic disks / SSDs
     - RAID
 - DB internals
-Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 
+\vspace{2cm}
+\footnotesize
+- Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 
 
 * Storage Characteristics
+:::columns
+::::{.column width=70%}
 - Storage media presents a trade-off between:
   - speed of access (e.g., 500-3,500MB / sec)
   - cost per unit of data (e.g., 50 USD / TB)
@@ -74,51 +81,66 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
   - **Non-volatile**: can survive failures and system crashes
 - Sequential vs random access
   - **Sequential**: read the data contiguously
-**SELECT * FROM employee**
+```sql
+        SELECT * FROM employee
+```
   - **Random**: read the data from anywhere at any time
-**SELECT * FROM employee**
-**WHERE name LIKE '\_\_a\_\_b'**
-  - Need to know how data is stored in order to optimize access
-
-
-
+```sql
+      SELECT * FROM employee
+      WHERE name LIKE '\_\_a\_\_b'
+```
+- Need to know how data is stored in order to optimize access
+::::
+::::{.column width=30%}
 ![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_4_image_1.png)
-
+::::
+:::
 
 * Storage Hierarchy
+::: columns
+:::: {.column width=60%}
+\footnotesize
+```
+Various storage can be organized in a hierarchy
+according to (decreasing) speed and cost
+```
+- **Cache**
+  - Fastest and most costly
+  - ~MBs on chip
+  - DB developers do pay attention to cache effects
+- **Main memory**
+  - Up to 100s of GBs
+  - Typically can't store the entire DB
+  - Volatile
+- **Flash memory / SSDs**
+  - More expensive than RAM but less than magnetic disk
+  - Non-volatile, random access
+- **Magnetic disk**
+  - Long-term on-line storage
+  - Non-volatile (can survive failures and system crashes)
+- **Optical disk (CD, Blue Ray)**
+  - Mainly read-only
+- **Magnetic tapes**
+  - Backup and archival data
+  - Stored for long period of time, e.g., for legal reasons
+  - Sequential-access
 
+::::
+::::{.column width=40%}
 
 ![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_5_image_1.png)
 
-The various storage can be organized in a hierarchy according to (decreasing) speed and cost
-**Cache**
-- Fastest and most costly
-- ~MBs on chip
-- DB developers do pay attention to cache effects
-**Main memory**
-- Up to 100s of GBs
-- Typically can't store the entire DB
-- Volatile
-**Flash memory / SSDs**
-- More expensive than RAM but less than magnetic disk
-- Non-volatile, random access
-**Magnetic disk**
-- Long-term on-line storage
-- Non-volatile (can survive failures and system crashes)
-```text Optical disk (CD, Blue Ray) ```
-- Mainly read-only
-```text Magnetic tapes ```
-- Backup and archival data
-- Stored for long period of time, e.g., for legal reasons
-- Sequential-access
-
-**Primary storage**: cache, main memory
-```text Secondary (or online): flash memory, magnetic disk ```
-```text Offline: optical, magnetic tape ```
-
+\vspace{1cm}
+\footnotesize
+- **Primary storage**: cache, main memory
+- **Secondary (or online)**: flash memory, magnetic disk
+- **Offline:** optical, magnetic tape
+::::
+:::
 
 * Storage Hierarchy
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_6_image_1.png)
+\centering
+![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_6_image_1.png){width=80%}
 
 source: http://cse1.net/recaps/4-memory.html
 
@@ -149,9 +171,6 @@ source: http://cse1.net/recaps/4-memory.html
 - DB internals
 
 
-```
-
-```
 
 * Connecting disks to a server
 - **Disks** (magnetic and SSDs) can be **connected to computer**:
@@ -161,83 +180,112 @@ source: http://cse1.net/recaps/4-memory.html
   - Serial ATA (SATA)
   - Serial Attached SCSI (SAS)
   - NVMe (Non-volatile Memory Express)
-- ```text Through high-speed networks ```
+- **Through high-speed networks**
   - Storage Area Network (SAN): ISCSI, Fiber Channel, InfiniBand
-  - ```text Network Attached Storage (NAS) ```
+  - ** Network Attached Storage (NAS)**
     - Provides a file-system interface (e.g., NFS)
     - Cloud storage: Data is stored in the cloud and accessed via an API, Object store, High latency
 
-
-
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_10_image_1.png)
-
-*1956*
-
-- IBM RAMAC
-- 24” platters
-- 5 million characters
+* Magnetic Disks
+:::columns
+::::{.column width=50%}
+- *1956*
+  - IBM RAMAC
+  - 24” platters
+  - 5 million characters
 
 ![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_10_image_2.jpeg)
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_10_image_1.png)
 
+::::
+:::
+* Magnetic Disks
+:::columns
+::::{.column width=20%}
+- 1979
+- SEAGATE
+- 5MB
+::::
+::::{.column width=30%}
+![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_11_image_1.png)
+::::
+::::{.column width=20%}
+- 1998
+- SEAGATE
+- 47GB
 
-
-
-
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_12_image_1.png)
-
-**Platters
-**
-- Made of rigid metal covered with magnetic material on both surfaces
-- It spins at 5400 or 9600 RPM
-- *Tracks* subdivided into *sectors* (smallest unit read or written, with a checksum)
-**Read-write heads
-**
-- Store information magnetically on the disk
-- Spinning creates a cushion that maintain the heads a few microns from the disk surface
-- *Cylinder* is the i-th tracks of all the platters (can be read / written together)
-**Arm
-**
-- Move all the heads along the disks
-**Disk controller
-**
-- Accepts high-level commands to read / write a sector
-- Operates arm / heads
-- Bad sectors are remapped to a different physical location
-
+::::
+::::{.column width=30%}
+![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_11_image_2.png)
+::::
+:::
+\vspace{1cm}
+:::columns
+::::{.column width=30%}
+- 2006	
+- Western Digital
+- 500GB
+::::
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_11_image_3.jpg)
+::::
+:::
 
 * Magnetic Disks: Components
-
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_12_image_2.png)
-
+:::columns
+::::{.column width=50%}
+- **Platters**
+  - Made of rigid metal covered with magnetic material on both surfaces
+  - It spins at 5400 or 9600 RPM
+  - *Tracks* subdivided into *sectors* (smallest unit read or written, with a checksum)
+- **Read-write heads**
+  - Store information magnetically on the disk
+  - Spinning creates a cushion that maintain the heads a few microns from the disk surface
+  - *Cylinder* is the i-th tracks of all the platters (can be read / written together)
+- **Arm**
+  - Move all the heads along the disks
+- **Disk controller**
+  - Accepts high-level commands to read / write a sector
+  - Operates arm / heads
+  - Bad sectors are remapped to a different physical location
+::::
+::::{.column width=50%}
+\centering
+![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_12_image_1.png){width=120%}
+![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_12_image_2.png){width=40%}
+::::
+:::
 
 * Magnetic Disks: Current Specs
-- **Capacity
-**
-- 10 terabyte and more
-- **Access time
-**
-- = Time to start reading data
-- Seek time
-  - = Move the arm across cylinders (2-20ms)
-- Rotational latency time
-  - = Wait for sector to be accessed (4-12ms)
-- **Data-transfer rate
-**
+
+:::columns
+::::{.column width=70%}
+- **Capacity**
+  - 10 terabyte and more
+- **Access time**
+  - = Time to start reading data
+  - Seek time
+    - = Move the arm across cylinders (2-20ms)
+  - Rotational latency time
+    - = Wait for sector to be accessed (4-12ms)
+::::
+::::{.column width=30%}
+
+![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_13_image_1.png)
+::::
+:::
+- **Data-transfer rate**
   - Once the data is reached the transfer begins
   - Transfer rate = 50-200MB / secs
   - Sector (disk block) = logical unit of storage (4-16KB)
   - Sequential access = when the blocks are on the same or adjacent tracks
   - Random access = each request requires a seek
     - IOPS = number of random single block accesses in a second (50-200 IOPS)
-- **Reliability
-**
+- **Reliability**
   - Mean time to failure (MTTF) = the amount of time that on average the system can run continuously without a failure
   - Lifespan of an HDD is ~5 years
-
-
-
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_13_image_1.png)
-
 
 * Accessing Data Speed
 - **Random data transfer rates**
@@ -257,35 +305,38 @@ source: http://cse1.net/recaps/4-memory.html
 
 
 * Solid State Disk (SSD)
+:::columns
+::::{.column width=80%}
 - Mainstream around 2000s
 - Like non-volatile RAM (NAND and NOR)
-- **Capacity
-**
+- **Capacity**
   - 250, 500 GBs (vs 1-10 TB for HDD)
-- **Access time
-**
+- **Access time**
   - Latency for random access is 1,000x smaller than HDD
     - E.g., 20-100 us (vs 10 ms HDDs)
   - Multiple random requests (e.g., 32) in parallel
   - 10,000 IOPS (vs 50/200 for HDDs)
   - Require to read an entire "page" of data (typically 4KB)
     - Equivalent to a block in magnetic disks
-- **Data-transfer rate
-**
+::::
+::::{.column width=20%}
+![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_15_image_1.png)
+::::
+:::
+- **Data-transfer rate**
   - 1 GB/s (vs 200 MB/s HDD)
   - Typically limited by the interface speed
   - Reads and writes are ~500MB/s for SATA and 2-3 GB/s for NVMe
   - Lower power consumption than HDDs
   - Writing to SSD is slower than reading (~2-3x)
     - It requires erasing all pages in the block
-- **Reliability
-**
+- **Reliability**
   - There is a limit to how many times a flash page can be erased (~1M times)
 - Better than an HDD from any point of view, but more expensive per GB
 
 
 
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_15_image_1.png)
+
 
 
 * Outline
@@ -300,6 +351,8 @@ source: http://cse1.net/recaps/4-memory.html
 
 
 * RAID
+:::columns
+::::{.column width=80%}
 - RAID = Redundant Array of Independent Disks
 - **Problem**
   - Storage capacity has been growing exponentially
@@ -307,6 +360,11 @@ source: http://cse1.net/recaps/4-memory.html
   - You need a lot of disks
   - MTTF between failure of any disk get smaller (e.g., days)
     - If we store a single copy of the data, the frequency of data loss is unacceptable
+::::
+::::{.column width=20%}
+![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_17_image_1.png)
+::::
+:::
 - **Observations**
   - Disks are very cheap
   - Failures are very costly
@@ -318,63 +376,61 @@ source: http://cse1.net/recaps/4-memory.html
   - Expose a logical view of a single large and reliable disk from many unreliable disks
   - Different RAID “levels” (reliability vs performance)
 
-
-
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_17_image_1.png)
-
-
 * Improve Reliability / Performance with RAID
-**Reliability**
-- Use redundancy
-  - Store the same data multiple times
-    - E.g., mirroring (aka shadowing)
-  - If a disk fails, the data is not lost but it can be reconstructed
-  - Increased MTTF
-- Assumption: independence of disk failure
-  - Power failures and natural disasters
-  - As disks age, probability of failure increases together
-**Performance**
-- Parallel access to multiple disks
-  - E.g., mirroring
-  - Increase number of read requests
-- Striping data across multiple disks
-  - Increase transfer rate
-
-
-
+:::columns
+::::{.column width=70%}
+- **Reliability**
+  - Use redundancy
+    - Store the same data multiple times: E.g., mirroring (aka shadowing)
+    - If a disk fails, the data is not lost but it can be reconstructed
+    - Increased MTTF
+  - Assumption: independence of disk failure
+    - Power failures and natural disasters
+    - As disks age, probability of failure increases together
+- **Performance**
+  - Parallel accessto multiple disks: E.g., mirroring, Increase number of read requests
+  - Striping data across multiple disks: Increase transfer rate
+::::
+::::{.column width=30%}
 ![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_18_image_1.png)
-
+::::
+:::
 
 * RAID Levels
-**RAID 0: No redundancy**
+
+:::columns
+::::{.column width=50%}
+- **RAID 0: No redundancy**
   - Array of independent disks
   - Same access-time
   - Increased transfer rate
-**RAID 1: Mirroring**
+- **RAID 1: Mirroring**
   - Make a copy of the disks
   - If one disk fails, we have a copy
   - Reads: can go to either disk, so higher data rate possible
   - Writes: need to write to both disks
-**RAID 2: Memory-style error correction**
+- **RAID 2: Memory-style error correction**
   - Use extra bits so we can reconstruct
   - Superseded by RAID 5
-**RAID 3: Interleaved parity**
+- **RAID 3: Interleaved parity**
   - One disk contains “parity” for the main data disks
   - Can handle a single disk failure
   - Little overhead (only 25% in the above case)
-**RAID 5: Block-interleaved distributed parity**
+- **RAID 5: Block-interleaved distributed parity**
 - Distributed parity “blocks” instead of bits
+::::
+::::{.column width=50%}
+\includegraphics[trim={12cm 22cm 12cm 0.5cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
+\includegraphics[trim={12cm 13cm 12cm 8cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
+\includegraphics[trim={12cm 4cm 12cm 22cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
 
-
-
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png)
-
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_2.png)
-
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_3.png)
+::::
+:::
 
 
 * Choosing a RAID Level
+:::columns
+::::{.column width=50%}
 - Main choice between RAID 1 and RAID 5
 - **RAID 1 better write performance**
   - E.g., to write a single block
@@ -384,66 +440,161 @@ source: http://cse1.net/recaps/4-memory.html
 - **RAID 5 lower storage cost**
   - RAID 1: 2x more disks
   - RAID 5 is preferred for applications with *low update rate* and *large amounts of data*
+::::
+::::{.column width=50%}
+\includegraphics[trim={12cm 22cm 12cm 0.5cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
+\includegraphics[trim={12cm 13cm 12cm 8cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
+\includegraphics[trim={12cm 4cm 12cm 22cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
 
-
-
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_20_image_1.png)
-
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_20_image_2.png)
-
-![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_20_image_3.png)
-
+::::
+:::
 
 * Outline
 - Storage
   - Physical storage
 - **DB internals**
-Sources:
-- Silberschatz et al. 2020, Chap 13: Data Storage Structures
+\vspace{1cm}
+\footnotesize
+- Sources: Silberschatz et al. 2020, Chap 13: Data Storage Structures
 
 
 
 
 * (Centralized) DB Internals
-User processes
-- Issue commands to the DB
-Server processes
-- Receive commands and call into the DB code
-Process monitor process
-- Monitor DB processes
-- Recover processes from failures
-Lock manager process
-- Lock grant / release
-- Deadlock detection
-Database writer process
-- Output modified buffer blocks to disk on a continuous basis
-Log writer process
-- Output log records to stable storage
-Checkpoint process
-- Perform periodic checkpoints
-Shared memory
-- Contain all shared data
-  - Buffer pool, Lock table, Log buffer (log records waiting to be saved on stable storage), Caches (e.g., query plans)
-- Data needs to be projected by mutual exclusion locks
+:::columns
+::::{.column width=60%}
+- User processes
+  - Issue commands to the DB
+- Server processes
+  - Receive commands and call into the DB code
+- Process monitor process
+  - Monitor DB processes
+  - Recover processes from failures
+- Lock manager process
+  - Lock grant / release
+  - Deadlock detection
+- Database writer process
+  - Output modified buffer blocks to disk on a continuous basis
+- Log writer process
+  - Output log records to stable storage
+- Checkpoint process
+  - Perform periodic checkpoints
+- Shared memory
+  - Contain all shared data
+    - Buffer pool, Lock table, Log buffer (log records waiting to be saved on stable storage), Caches (e.g., query plans)
+  - Data needs to be projected by mutual exclusion locks
 
-
+::::
+::::{.column width=40%}
 
 ![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_22_image_1.png)
 
+::::
+:::
 
 * DB Internals
 
-**Storage hierarchy**
-- How are tables mapped to files?
-- How are tuples mapped to disk blocks?
+:::columns
+::::{.column width=50%}
+```graphviz
+digraph SystemArchitecture {
+    // Global graph settings
+    graph [rankdir=TB, splines=ortho, nodesep=0.5, ranksep=0.8];
+    
+    // Default node and edge styles
+    node [fontname="Helvetica", fontsize=14, shape=box];
+    edge [penwidth=2, color=blue, arrowsize=1.2];
+    
+    // --- Top Component: Query Processing ---
+    node [style=filled, fillcolor=yellow, width=1.5, height=0.5];
+    user_query [label="user\nquery"];
+    
+    node [style="bold, rounded", color=blue, fillcolor=white, penwidth=2, width=3.5, height=0.7];
+    query_engine [label="Query Processing Engine"];
+    
+    node [style=filled, fillcolor="cadetblue", width=1.5, height=0.5];
+    results [label="results"];
+    
+    // --- Middle Component: Buffer Management ---
+    node [style=filled, fillcolor=yellow, width=1.5, height=0.5];
+    page_requests [label="page\nrequests"];
+    
+    node [style="bold, rounded", color=blue, fillcolor=white, penwidth=2, width=3.5, height=0.7];
+    buffer_manager [label="Buffer Manager"];
+    
+    node [style=filled, fillcolor="cadetblue", width=1.5, height=0.5];
+    pointers [label="pointers\nto pages"];
+    
+    // --- Bottom Component: Storage Management ---
+    node [style=filled, fillcolor=yellow, width=1.5, height=0.5];
+    block_requests [label="block\nrequests"];
+    
+    node [style="bold, rounded", color=blue, fillcolor=white, penwidth=2, width=3.5, height=0.7];
+    space_management [label="Space Management on\nPersistent Storage"];
+    
+    node [style=filled, fillcolor="cadetblue", width=1.5, height=0.5];
+    data [label="data"];
+    
+    // --- Layout Constraints ---
+    // Top component
+    { rank=same; user_query; results; }
+    { rank=same; query_engine; }
+    
+    // Middle component
+    { rank=same; page_requests; pointers; }
+    { rank=same; buffer_manager; }
+    
+    // Bottom component
+    { rank=same; block_requests; data; }
+    { rank=same; space_management; }
+    
+    // Invisible edges to align inputs and outputs with their engines
+    user_query -> query_engine [style=invis];
+    results -> query_engine [style=invis];
+    
+    page_requests -> buffer_manager [style=invis];
+    pointers -> buffer_manager [style=invis];
+    
+    block_requests -> space_management [style=invis];
+    data -> space_management [style=invis];
+    
+    // --- Visible Edges ---
+    // Top component flow
+    user_query -> query_engine [arrowhead=normal, constraint=false];
+    query_engine -> results [arrowhead=normal, constraint=false];
+    
+    // Middle component flow
+    page_requests -> buffer_manager [arrowhead=normal, constraint=false];
+    buffer_manager -> pointers [arrowhead=normal, constraint=false];
+    
+    // Bottom component flow
+    block_requests -> space_management [arrowhead=normal, constraint=false];
+    space_management -> data [arrowhead=normal, constraint=false];
+    
+    // --- Force vertical stacking ---
+    query_engine -> page_requests [style=invis, weight=10];
+    buffer_manager -> block_requests [style=invis, weight=10];
+}
+```
+::::
+::::{.column width=50%}
+- **Query Processing Engine**
+  - Given a user query, decide how to “execute” it
+  - Specify sequence of pages to be brought in memory
+  - Operate upon the tuples to produce results
 
-**Buffer Manager**
-- Bring pages from disk to memory
-- Manage the limited memory
+\vspace{1cm}
+- **Buffer Manager**
+  - Bring pages from disk to memory
+  - Manage the limited memory
 
-**Query Processing Engine**
-- Given a user query, decide how to “execute” it
-- Specify sequence of pages to be brought in memory
-- Operate upon the tuples to produce results
+\vspace{1cm}
+- **Storage hierarchy**
+  - How are tables mapped to files?
+  - How are tuples mapped to disk blocks?
 
+
+
+::::
+:::
 
