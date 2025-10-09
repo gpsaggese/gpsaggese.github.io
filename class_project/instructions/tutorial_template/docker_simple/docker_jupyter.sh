@@ -35,7 +35,7 @@ fi;
 
 # Import the utility functions.
 GIT_ROOT=$(git rev-parse --show-toplevel)
-source $GIT_ROOT/class_project/instructions/tutorial_template/docker_simple/utils.sh
+source $GIT_ROOT/class_project/docker_common/utils.sh
 
 # Execute the script setting the vars for this tutorial.
 get_docker_vars_script ${BASH_SOURCE[0]}
