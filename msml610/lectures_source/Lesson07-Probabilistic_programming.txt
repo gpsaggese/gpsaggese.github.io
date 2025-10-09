@@ -2230,28 +2230,29 @@ digraph BayesTheorem {
   - CV and LOO require multiple model fits and fitting a Bayesian model is very
     expensive
   - Yes! There is a way to approximate using a single fit to the data
-  - ![](emoji/skull.png){ width=14px } Math alert
 
 * ELPD with LOO-CV
+- ![](emoji/skull.png){ width=14px } Math alert
 - We want to compute $ELPD_{LOO-CV}$ where:
   - "Expected Log-Pointwise predictive Density" (ELPD)
     - It should be ELPPD and not ELPD!
-  - We use "Leave-One-Out Cross-Validation" (LOO-CV) to compute it
+  - "Leave-One-Out Cross-Validation" (LOO-CV) is used to compute it
 
 - The definition of ELPD with LOO-CV is:
-
+  \begingroup \small
   $$
   ELPD_{LOO-CV} =
     \red{\sum_{i=1}^n} \log
     % Need to avoid the `text` inside `\textcolor`.
     \textcolor{violet}{\int}
     \teal{p(y_i | \theta)}
-    \blue{(\theta | y_{-i})}
+    \blue{p(\theta | y_{-i})}
     \textcolor{violet}{d\theta}
   $$
-  - Where:
-    - \blue{Fit a model using all the data without $y_{-i}$}
-    - \teal{Predict the unseen $y_i$ with the model}
+  \endgroup
+  where:
+    - \blue{Fit model using all the data without $y_{-i}$}
+    - \teal{Predict with the model the unseen $y_i$}
     - \violet{Integrate on all the posterior values}
     - \red{Repeat for all the points}
 
@@ -2259,43 +2260,40 @@ digraph BayesTheorem {
   - Use "Pareto smooth importance sampling leave-one-out cross-validation"
 
 * Pointwise Predictive Density (PPD)
-- The **pointwise predictive density** (or probability) for a given data point
-  $y_i$ is defined as the posterior predictive probability, given the rest of
-  the data
-
+- The **pointwise predictive density** for a given data point $y_i$ is defined as
+  the posterior predictive probability, given the rest of the data
   $$
   PPD
   \defeq \Pr(y_i | data - \{i\})
   = \textcolor{blue}{\int} \red{p(y_i | \theta)} \green{p(\theta | y_{-i})} \textcolor{blue}{d\theta}
   $$
+  - $y_i$: observed data point
+  - \red{$p(y_i | \theta)$}: \red{likelihood} given model parameters $\theta$
+  - \green{$p(\theta | y_{-i})$}: \green{posterior distribution} of the model
+    parameters given rest of data
+  - \blue{Integral}: averages over posterior distribution, capturing parameter
+    uncertainty
 
-  where:
-  - $y_i$ is the observed data point
-  - \red{$p(y_i | \theta)$} is the \red{likelihood} of the data point $y_i$
-    given the model parameters $\theta$
-  - \green{$p(\theta | y_{-i})$} is the \green{posterior distribution} of the
-    model parameters given the rest of the observed data
-  - The \blue{integral} averages over the posterior distribution of $\theta$,
-    capturing the uncertainty about the model parameters
-
-- **Interpretation**
-  - PPD measures how well a model, training on the data excluding $y_i$,
-    predicts $y_i$
-  - It's like cross-validation but using the Bayesian concept of averaging over
-    the distribution of the parameters
+- **\black{Interpretation}**
+  - PPD measures model's predictive ability for $y_i$ when trained on data
+    excluding $y_i$
+  - Similar to cross-validation, using Bayesian parameter averaging over the
+    model parameters
 
 * Expected Log Pointwise Predictive Density
 - The ELPD is the \red{average} over unseen points of the \green{log} \blue{PPD}
-
   $$
-  ELPD = \textcolor{red}{\sum_{i=1}^n} \textcolor{green}{\log}
+  ELPD
+  \defeq \textcolor{red}{\sum_{i=1}^n} \textcolor{green}{\log}
   \textcolor{blue}{\int p(y_i | \theta_{-i}) p(\theta_{-i} | y_{-i}) d\theta}
   $$
 
-- **Interpretation**
+- **\black{Interpretation}**
   - It can be used to determine which model generalizes better to new data
   - ELPD measures the predictive accuracy of a Bayesian model on unseen data
   - Train on $y_{-i}$, i.e., all data excluding $y_i$
+  - For each point $y_i$ excluded from the training set, there is a new
+    distribution of the params $\theta_{-i}$
   - Test on $y_i$
 
 * Approximating PPD
