@@ -13,8 +13,6 @@ set -e
 export JUPYTER_HOST_PORT=8888
 export JUPYTER_USE_VIM=0
 export TARGET_DIR=""
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TARGET_DIR="$(realpath "$SCRIPT_DIR/../../../MSML610/Fall2025/Projects")"
 export VERBOSE=0
 
 OLD_CMD_OPTS=$@
@@ -35,7 +33,7 @@ fi;
 
 # Import the utility functions.
 GIT_ROOT=$(git rev-parse --show-toplevel)
-source $GIT_ROOT/class_project/instructions/tutorial_template/docker_simple/utils.sh
+source $GIT_ROOT/docker_common/utils.sh
 
 # Execute the script setting the vars for this tutorial.
 get_docker_vars_script ${BASH_SOURCE[0]}
