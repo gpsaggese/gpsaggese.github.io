@@ -15,15 +15,19 @@ apt-get install -y --no-install-recommends \
     curl \
     sudo 
 
-echo ">>> Installing common Python packages..."
+echo ">>> Installing Python packages..."
 pip3 install --no-cache-dir \
     ipython \
-     tornado==6.1 \
+    tornado==6.1 \
     jupyter-client==7.3.2 \
     jupyter-contrib-core \
     jupyter-contrib-nbextensions \
     yapf \
-    psycopg2-binary
+    psycopg2-binary \
+    numpy \
+    pandas \
+    matplotlib \
+    seaborn 
 
 
 
