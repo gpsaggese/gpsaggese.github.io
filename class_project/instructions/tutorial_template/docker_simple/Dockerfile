@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM --platform=linux/amd64 ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update
@@ -27,6 +27,14 @@ RUN python3 -m pip install --upgrade pip
 #   assert 0 < size <= self._size
 # for tornado==6.2 and jupyter-client==8.0.2.
 # https://discourse.jupyter.org/t/jupyter-notebook-zmq-message-arrived-on-closed-channel-error/17869/10
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    python3-dev \
+    libxml2-dev \
+    libxslt-dev \
+    zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN pip3 install \
     ipython \
     tornado==6.1 \
