@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 ubuntu:20.04
+FROM --platform=$BUILDPLATFORM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update
@@ -35,16 +35,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install \
-    ipython \
-    tornado==6.1 \
-    jupyter-client==7.3.2 \
-    jupyter-contrib-core \
-    jupyter-contrib-nbextensions \
-    psycopg2-binary \
-    yapf
-
 RUN mkdir /install
+
+# Install common packages
+ADD install_common_packages.sh /install/
+RUN chmod +x /install/install_common_packages.sh && /install/install_common_packages.sh
 
 # Install Jupyter extensions.
 ADD install_jupyter_extensions.sh /install
