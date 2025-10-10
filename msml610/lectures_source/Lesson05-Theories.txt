@@ -218,7 +218,7 @@ MSML610: Advanced Machine Learning
 
 - The **probably approximately correct** (PAC) statement holds:
   $$
-  \Pr(|\nu - \mu| > \varepsilon) \le \frac{2}{e^{-2 \varepsilon^2 N}}
+  \Pr(|\nu - \mu| > \varepsilon) \le \frac{2}{e^{2 \varepsilon^2 N}}
   $$
 
 - **Remarks:**
