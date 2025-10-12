@@ -53,7 +53,6 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-
 * Git Resources
 ::: columns
 :::: {.column width=55%}
@@ -79,11 +78,12 @@ UMD DATA605 - Big Data Systems
 :::: 
 :::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_1.png)
-:::: 
-:::
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_2.png)
+
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_3.png)
+:::: 
+:::
 
 // TODO(gp): Fix
 
@@ -253,7 +253,6 @@ UMD DATA605 - Big Data Systems
   - Bash, Git, editor
   - Python, Pandas
   - ...
-
 
 * Git: Daily Use
 - Check out a project (`git clone`) or start from scratch (`git init`)
@@ -770,7 +769,6 @@ UMD DATA605 - Big Data Systems
 
 ::::
 :::: {.column width=40%}
-
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_2.png)
 
