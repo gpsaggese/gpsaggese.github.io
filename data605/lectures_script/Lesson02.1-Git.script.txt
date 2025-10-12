@@ -22,23 +22,19 @@ Now, let's move on to resources for Git, a popular version control system.
 
 - As always all concepts are in the slides
 
-- There is a tutorial
-
 - Tutorial: There is a Git tutorial available online that can help you get
   started with using Git effectively.
 
 - We will use Git during the project: Git will be an integral part of the
   project work, so familiarity with it is important.
 
-- Mastery: For those seeking to master Git, there is a free book available
-  online that covers Git in depth.
+- For those seeking to master Git, there is a free book available online that
+  covers Git in depth.
 
-- Web resources: There are several online resources that provide additional
-  guidance on using Git, including interactive tutorials and troubleshooting
-  guides.
-
-- Playgrounds: There are also interactive platforms where you can practice Git
-  commands and concepts in a safe environment.
+- There are several online resources that provide additional guidance on using
+  Git, including interactive tutorials and troubleshooting guides.
+- There are also interactive platforms where you can practice Git commands and
+  concepts in a safe environment.
 
 Let's delve into the basics of version control systems and their importance.
 

@@ -209,7 +209,6 @@ UMD DATA605 - Big Data Systems
 ::::
 ::::{.column width=40%}
 
-
 ![](data605/lectures_source/images/lecture_3/lec_3_slide_10_image_1.png){width=90%}
 \vspace{1cm}
 ![](data605/lectures_source/images/lecture_3/lec_3_slide_10_image_2.png){width=90%}
@@ -313,7 +312,6 @@ UMD DATA605 - Big Data Systems
 ::::
 ::::{.column width=35%}
 
-
 ![](data605/lectures_source/images/lecture_3/lec_3_slide_15_image_1.png)
 
 ![](data605/lectures_source/images/lecture_3/lec_3_slide_15_image_3.png)
@@ -340,8 +338,6 @@ UMD DATA605 - Big Data Systems
   - State is permanent across container invocations
   - Can be shared across containers
 
-
-
 * Docker Repos
 :::columns
 ::::{.column width=65%}
@@ -362,7 +358,6 @@ UMD DATA605 - Big Data Systems
 :::
 \centering
 ![](data605/lectures_source/images/lecture_3/lec_3_slide_17_image_2.png){width=70%}
-
 
 * Devops = Devs + Ops
 \centering
@@ -392,8 +387,6 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-
-
 * Containerizing an App
 - = create a container with your app inside
 - Develop your application code using the needed dependencies
@@ -409,9 +402,6 @@ UMD DATA605 - Big Data Systems
 - Run / test container from image
 - Distribute your app as a container (no installation)
 
-
-
-
 * Building a Container
 - **Dockerfile**
   - Describe how to create a container
@@ -421,9 +411,6 @@ UMD DATA605 - Big Data Systems
   - Directory containing the application and what’s needed to build it
   - Sent to Docker engine to build the application
   - Typically the Dockerfile is in the root directory of the build context
-
-
-
 
 * Dockerfile Example
 \color{blue}
@@ -441,8 +428,6 @@ COPY . .
 CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
 ```
 
-
-
 * Docker: Commands
 Show all the available images
 \begingroup \footnotesize \color{blue}
@@ -453,7 +438,6 @@ counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
 …
 ```
 \endgroup
-
 
 Show a particular image
 \begingroup \footnotesize \color{blue}
@@ -516,9 +500,6 @@ b4c1976d7c27   bridge                  bridge    local
 ```
 \endgroup
 
-
-
-
 * Docker: Delete state
 Commands:
 \begingroup \footnotesize \color{blue}
@@ -537,15 +518,8 @@ Commands:
 ```
 \endgroup
 
-
-
-
-
 * Docker Tutorial
 - tutorial_docker.md
-
-
-
 
 * Docker Compose
 - **Manage multi-container apps running on a single node**
@@ -561,9 +535,6 @@ Commands:
 - **Manage multi-container apps running on multiple hosts**
   - Docker Stacks / Swarm
   - Kubernetes
-
-
-
 
 * Docker Compose: Tutorial Example
 :::columns
@@ -706,7 +677,6 @@ root   49734   49614   1    10:40   ?     00:00:08   /usr/local/bin/python /code
 ```
 \endgroup
 
-
 * Docker Compose: Commands
 Build the containers for the services
 \begingroup \footnotesize \color{blue}
@@ -732,16 +702,11 @@ Shutdown service removing images and volume
 ```
 \endgroup
 
-
-
 * Docker Compose: Tutorial
 - Example taken from https://github.com/nigelpoulton/counter-app
 - tutorial_docker_compose
 - `> cd tutorials/tutorial_docker_compose`
 - `> vi tutorial_docker_compose.md`
-
-
-
 
 * Class Announcements
 - **1 Project teams**
@@ -757,22 +722,4 @@ Shutdown service removing images and volume
   - Projects have about the same complexity
   - If not, we will try to account for this when grading
   - Projects were assigned randomly to the teams
-
-
-
-* Class Announcements
-- **4 Add personal info**
-  - Fill the spreadsheet UMD DATA605 - Class Project Teams - Spring 2023 with your information
-  - Email
-  - GitHub username (free account at https://github.com)
-  - Telegram Handle for IM (free account at https://telegram.org)
-- **5 Next steps**
-  - Read carefully UMD DATA605 - Class Project
-  - If things are not clear send us an email or add a comment to the Google Doc
-  - Read the Google doc corresponding to your assigned project from UMD DATA605 - Class Project Teams - Spring 2023
-  - Read the first Deliverable 1 from UMD DATA605 - Class Project
-- **6 Golden rule**
-  - *Treat others how you want to be treated*
-    - Everybody comes from a different place and different skill level, somebody has a job, somebody has a full-time work
-  - *If you want to go fast, go alone; if you want to go far, go together*
 
