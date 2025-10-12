@@ -129,3 +129,72 @@ Now, let's discuss how your performance in the course will be evaluated.
   - You will select a topic from a provided list
   - This allows you to explore an area of personal interest in depth
   - You can complete the project individually or in a group
+
+Now, let's delve into the specifics of the class projects and what they entail.
+
+# ##############################################################################
+# Class Projects
+# ##############################################################################
+
+- The class project involves building a specific use case (X) with a chosen
+  technology (Y)
+  - First, you will study and describe the chosen technology (Y)
+  - Then, implement the use case (X) using that technology
+  - You must create Jupyter notebooks to demonstrate your work
+  - You will commit your code to GitHub and contribute to an open-source repository
+  - Write a blog entry and present your project in a video format
+- This approach ensures you learn technical skills and effective communication
+- You can choose from a list of use cases and technologies, such as big data or
+  large language models
+- Tailor the project to your interests and strengths
+- Projects can be done individually or in groups of up to three people
+- Difficulty levels vary, providing challenges suitable for different skill
+  levels
+
+Let's explore the soft skills that are crucial for success in the workplace and
+how this course prepares you for them.
+
+# ##############################################################################
+# Soft Skills to Succeed in the Workplace
+# ##############################################################################
+
+- The goal of the class project is to prepare you for the workplace by
+  developing essential soft skills. Working in a team is a critical component,
+  as it mirrors real-world scenarios where collaboration is key. You will also
+  learn to design software architecture using principles like object-oriented
+  programming, Agile methodologies, and design patterns. Commenting your code
+  and writing external documentation, such as tutorials and manuals, are
+  emphasized to ensure clarity and usability.
+
+- Writing understandable code is crucial, not just for others but for your future
+  self as well. You will practice reading others' code and following code
+  conventions like PEP8, which are standard in the industry.
+  Clear communication through emails and instant messaging is also
+  highlighted, along with the ability to file and reproduce bug reports.
+
+With these skills and knowledge, you are well-equipped to tackle the challenges
+of the tech industry.
+
+# ##############################################################################
+# Yours Truly
+# ##############################################################################
+
+- My name is GP Saggese
+  - I have a academic background, having completed a PhD and
+  postdoctoral work at the University of Illinois at Urbana-Champaign
+- I am a lecturer at the University of Maryland, teaching courses on
+  big data systems and advanced machine learning.
+
+- In addition to my academic roles, I have significant real-world
+  experience as a research scientist at well-known companies like NVIDIA,
+  Synopsys, Teza, and Engineers' Gate, so I am a practitioner of machine learning
+  and big data in industry settings.
+
+- I have founded three AI and fintech startups: ZeroSoft, June, and Causify
+  AI. I've written over 20 academic papers and have two US patents
+
+- In this picture, I am in my natural coding environment, surrounded by books and
+  silence
+
+Now, let's delve into the specifics of big data systems and their importance in
+today's world.
