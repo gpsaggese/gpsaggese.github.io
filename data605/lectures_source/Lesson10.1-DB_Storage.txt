@@ -36,7 +36,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-
 * Outline
 - Storage
   - Physical storage
@@ -47,9 +46,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Query Processing
 - Transactions
 Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
-
-
-
 
 * Storage Characteristics
 - **Storage media presents a trade-off between:**
@@ -64,13 +60,10 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 - **SELECT * FROM employee**
   - **Random**: read the data from anywhere at any time
 - **SELECT * FROM employee**
-- **WHERE name LIKE ‘Einst*’**
+- **WHERE name LIKE ‘Einst*'**
   - Need to know how data is stored in order to optimize access
 
-
-
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_3_image_1.png)
-
 
 * Storage Hierarchy
 
@@ -102,14 +95,10 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 - **Secondary** (or **online**): flash memory, magnetic disk
 - **Offline**: optical, magnetic tape
 
-
 * Storage Hierarchy
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_5_image_1.png)
 
-
 - From http://cse1.net/recaps/4-memory.html
-
-
 
 * How Important is Memory Hierarchy?
 - **Trade-offs shifted drastically over last 10-15 years**
@@ -122,15 +111,13 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
   - Cache is playing more and more important role
   - In-memory DBs
     - Enough memory that data often fits in memory of a cluster of machines
-  - It’s faster to access another computer’s memory through network than accessing your own disk
+  - It's faster to access another computer's memory through network than accessing your own disk
   - “Disk” considerations less important
     - HDDs vs SSDs
     - Still disks are where most of the data lives today
 - **Similar changes for algorithms**
   - Design and pick algorithms based on current trade-offs
   - E.g., many algorithms designed to minimize access time (e.g., elevator algorithms for disk access)
-
-
 
 * Outline
 - Storage
@@ -141,7 +128,6 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
   - Logical storage
 - Query Processing
 - Transactions
-
 
 * Connecting Disks to a Server
 - ** Disks (magnetic and SSDs) can be connected to computer:**
@@ -163,10 +149,7 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
       - Object store
       - High latency
 
-
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_8_image_1.png)
-
-
 
 * Magnetic Disks
 ![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_9_image_1.png)
@@ -192,14 +175,11 @@ Western Digital
 
 ![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_10_image_2.jpeg)
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_10_image_3.png)
 
 - Exponential increase in capacity over time
 
 * Magnetic Disks: Components
-
 
 ![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_11_image_1.png)
 
@@ -236,10 +216,7 @@ Western Digital
   - Mean time to failure (MTTF) = the average amount of time that the system runs continuously without a failure
   - Lifespan of an HDD is ~5 years
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_12_image_1.png)
-
 
 * Accessing Data
 - **Random data transfer rates**
@@ -262,10 +239,7 @@ Western Digital
 - **Reading random data is 1000x slower than reading serial data**
   - Seeks are very bad!
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_13_image_1.png)
-
 
 * Solid State Disk (SSD)
 - Mainstream around 2000s
@@ -290,10 +264,7 @@ Western Digital
 - **Reliability**
   - There is a limit to how many times a page can be erased (~1m times)
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_14_image_1.png)
-
 
 * Outline
 - Storage
@@ -304,9 +275,6 @@ Western Digital
   - Logical storage
 - Query Processing
 - Transactions
-
-
-
 
 * RAID
 - RAID = Redundant Array of Independent Disks
@@ -326,10 +294,7 @@ Western Digital
   - Expose a logical view of a single large and reliable disk from many unreliable disks
   - Different reliability vs performance (RAID levels)
 
-
-
 ![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_16_image_1.png)
-
 
 * Improve Reliability / Performance with RAID
 **Increase reliability**
@@ -352,10 +317,7 @@ Western Digital
   - Same number of read requests
   - Increase transfer rate
 
-
-
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_17_image_1.png)
-
 
 * Error Correction Codes
 - = a technique used for controlling errors in data transmission over unreliable communication channels
@@ -370,8 +332,6 @@ Western Digital
   - Add an extra bit representing the number of 1s
   - Detect (but not correct) one bit errors
 
-
-
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_1.png)
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_2.png)
@@ -379,7 +339,6 @@ Western Digital
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_3.png)
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_4.png)
-
 
 * RAID Levels
 Good article on wikipedia
@@ -400,8 +359,6 @@ Good article on wikipedia
   - Writes
     - Need to write to both disks
 
-
-
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_1.png)
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_2.png)
@@ -409,7 +366,6 @@ Good article on wikipedia
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_3.png)
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_4.png)
-
 
 * RAID Levels
 **RAID 2: Memory-style error correction**
@@ -422,8 +378,6 @@ Good article on wikipedia
 **RAID 5: Block-interleaved distributed parity**
 - Distributed parity blocks instead of bits
 
-
-
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_1.png)
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_2.png)
@@ -433,7 +387,6 @@ Good article on wikipedia
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_4.png)
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_5.png)
-
 
 * Choosing a RAID Level
 - Main choice between RAID 0, RAID 1, and RAID 5
@@ -450,8 +403,6 @@ Good article on wikipedia
   - Lower storage cost
   - Preferred for applications with low update rate and large amounts of data (e.g., analytics)
 
-
-
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_21_image_1.png)
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_21_image_2.png)
@@ -460,9 +411,7 @@ Good article on wikipedia
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_21_image_4.png)
 
-
 * BACKUP
-
 
 * Outline
 - Storage
@@ -475,8 +424,6 @@ Good article on wikipedia
 - Transactions
 Sources:
 - Silberschatz et al. 2020, Chap 13: Data Storage Structures
-
-
 
 * (Centralized) DB Internals
 - User processes
@@ -500,10 +447,7 @@ Sources:
     - Buffer pool, Lock table, Log buffer (log records waiting to be saved on stable storage), Caches (e.g., query plans)
   - Data needs to be projected by mutual exclusion locks
 
-
-
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_24_image_1.png)
-
 
 * DB Internals
 
@@ -523,11 +467,7 @@ Sources:
   - Specify sequence of pages to be brought in memory
   - Operate upon the tuples to produce results
 
-
-
 * BACKUP
-
-
 
 * Outline
 
@@ -539,9 +479,6 @@ Sources:
     - Indexes
 - Query Processing
 - Transactions
-
-
-
 
 * File Organization
 
@@ -560,10 +497,7 @@ Sources:
     - Often DB needs to be aware of underlying blocks
     - Read / write directly disk blocks
 
-
-
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_28_image_1.png)
-
 
 * File Organization
 
@@ -580,10 +514,7 @@ Sources:
   - Fixed-length records
   - Variable-length records
 
-
-
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_29_image_1.png)
-
 
 * Records -> Blocks
 
@@ -600,9 +531,6 @@ Sources:
   - Based on a hash key
     - Hashing organization
     - E.g., Store the record with SSN = x in the block number x%1000
-
-
-
 
 * Record Organization
 
@@ -632,9 +560,6 @@ Sources:
     - 300 ms to find just one account information
     - < 4 requests satisfied per second
 
-
-
-
 * Fixed-length Records
 
 - **Physical layout of records on blocks**
@@ -658,14 +583,11 @@ Sources:
     - Like a linked list of free blocks (e.g., after deleting record 1, 4, 6)
   - Conceptually store pointers, in practice file header
 
-
-
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_32_image_1.png)
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_32_image_2.png)
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_32_image_3.png)
-
 
 * Variable-length Records
 ![Variable-length Records](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_33_image_1.png)
@@ -681,8 +603,6 @@ Sources:
     - The records may move inside the block, but the outside world is oblivious to it
   - End of free space in the block
 
-
-
 * Variable-length Attributes
 ![Variable-length Attributes](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_34_image_1.png)
 - **How to extract an attribute of variable-length of a record?**
@@ -691,8 +611,6 @@ Sources:
 - How to represent the value NULL?
   - Null bitmap
   - Store which attributes of the record have a null value
-
-
 
 * Outline
 - Storage
@@ -704,11 +622,9 @@ Sources:
 - Query Processing
 - Transactions
 
-
-
 * Buffer Manager
 - Many DBs are much larger than available memory on servers
-  - 1 PB data can’t fit in a 100 GBs memory
+  - 1 PB data can't fit in a 100 GBs memory
   - DB data resides on disk
   - The block must be in memory to operate upon
 - When the Query Processor Engine wants a block, it asks the Buffer manager
@@ -726,9 +642,6 @@ Sources:
     - Make a request to the storage subsystem to fetch it
     - Pass the address back
 
-
-
-
 * Buffer Manager
 - MAIN MEMORY
 
@@ -744,9 +657,6 @@ Sources:
 
 - Choice of page dictated by **replacement policy**
 
-
-
-
 * Buffer Manager
 - Similar to virtual memory manager
 - Buffer replacement policies
@@ -755,10 +665,9 @@ Sources:
     - Throw out the page that was not used in a long time
   - MRU: Most Recently Used
     - The opposite
-    - E.g., during a join there is a nested loop, the block just used won’t be used until the next iteration
+    - E.g., during a join there is a nested loop, the block just used won't be used until the next iteration
 
 ![Buffer Manager](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_38_image_1.png)
-
 
 * Buffer Manager
 - **Pinning a block**
@@ -771,8 +680,6 @@ Sources:
 - **Forced output of blocks**
   - If there is a crash, the buffer pool and the memory content are lost
   - It is necessary to write a block to disk to make sure the transaction was "committed"
-
-
 
 * Disk-block Access
 - DB systems (i.e., the query processing sub-system) generate requests for disk I/O
@@ -794,8 +701,6 @@ Sources:
 - Non-volatile write buffers
   - Save data in non-volatile RAM to speed-up writes and survive system crashes
 
-
-
 * Outline
 - Storage
   - Physical storage
@@ -805,8 +710,6 @@ Sources:
     - **Indexes**
 - Query Processing
 - Transactions
-
-
 
 * Index
 - **Index** = a data structure for efficient search through large databases
@@ -824,9 +727,6 @@ Sources:
   - Locate the index
   - Order is not preserved
   - Collisions
-
-
-
 
 * Ordered Indexes
 - Map from key to corresponding record / row
@@ -847,7 +747,6 @@ Sources:
 
 - Index
 
-
 * B+-Tree Node Structure
 - Typical node
   - Ki are the search-key values
@@ -856,9 +755,6 @@ Sources:
   K1 < K2 < K3 < . . . < Kn–1
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_45_image_1.png)
-
-
-
 
 * Properties of B+-Trees
 - It is balanced
@@ -871,34 +767,24 @@ Sources:
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_46_image_1.png)
 
-
-
 * Example B+-Tree Index
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_47_image_1.png)
 
 Index
 
-
-
-
 * Properties
 - Interior nodes
   - All tuples in the subtree pointed to by *P*1, have search key < *K*1
-  - To find a tuple with key *K*1’ < K1, follow *P*1
+  - To find a tuple with key *K*1' < K1, follow *P*1
   - *…*
   - Finally, search keys in the tuples contained in the subtree pointed to by *P*n, are all larger than *K*n-1
   - Must contain at least n/2 entries (unless root)
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_48_image_1.png)
 
-
-
-
 * Example B+-Tree Index
 ![Example B+-Tree Index](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_49_image_1.png)
 Index
-
-
 
 * Outline
 - Storage**
@@ -911,12 +797,7 @@ Index
   - Putting it all together…
 - Transactions
 
-
-
-
 * Overview
-
-
 
 * “Cost”
 - Complicated to compute
@@ -930,8 +811,6 @@ Index
         *b * t**T* + S * t**S*
   - Measured in *seconds*
 
-
-
 * Outline
 - Storage
 - Query Processing
@@ -941,7 +820,6 @@ Index
   - Other operators
   - Putting it all together…
 - Transactions
-
 
 * Selection Operation
 **SELECT** * **FROM** person **WHERE** SSN = “123”
@@ -959,9 +837,6 @@ Index
       - *If SSN is a key, then can stop when found*
         - *So on average, b**r*/2 blocks accessed*
 
-
-
-
 * Selection Operation
 **SELECT** * **FROM** person **WHERE** SSN = “123”
 - **Option 2 : Binary Search****
@@ -969,7 +844,7 @@ Index
   - Pre-condition:
     - The relation is sorted on SSN
     - Selection condition is an equality
-      - E.g. can’t apply to “*Name like ‘%424%’*”
+      - E.g. can't apply to “*Name like ‘%424%'*”
   - Do binary search
     - Cost of finding the *first* tuple that matches
       - [log2(*b**r*)]* (*t**T* + *t**S*)
@@ -977,8 +852,6 @@ Index
         - The last few are closeby, but we ignore such small effects
   - Not quite: what if 10,000 tuples match the condition?
     - Incurs additional cost
-
-
 
 * Selection Operation
 **SELECT** * **FROM** person **WHERE** SSN = “123”
@@ -992,8 +865,6 @@ Index
         - Go to the relation and read blocks sequentially
       - If secondary index, must follow all pointers using the index
 
-
-
 * Query Processing
 - Overview
 - Selection operation
@@ -1001,9 +872,6 @@ Index
 - Sorting
 - Other operators
 - Putting it all together…
-
-
-
 
 * Join
 - **SELECT** * **FROM** R, S **WHERE** R.a = S.a
@@ -1019,9 +887,6 @@ Index
 - R called *outer relation*
 - S called *inner relation*
 
-
-
-
 * Nested-loops Join
 - Cost? Depends on the actual values of parameters, especially memory
 - *b*r, b*s* -> Number of blocks of R and S
@@ -1034,9 +899,6 @@ Index
     - For each *R* tuple, must scan *S:  n*r * b*s
   - Seeks?
     - *n*r + b*r
-
-
-
 
 * Nested-loops Join
 - Case 1: Minimum memory required = 3 blocks
@@ -1052,9 +914,6 @@ Index
   - 2,000,100 block transfers, 5100 seeks
 - Matters
 
-
-
-
 * Nested-loops Join
 - Case 2: *S* fits in memory
   - Blocks transferred: *b*s + b*r
@@ -1066,8 +925,6 @@ Index
   - blocks transferred: 400 + 100 = 500
   - seeks: 2
 - This is orders of magnitude difference
-
-
 
 * Hash Join
 - Case 1: Smaller relation *(S)* fits in memory
@@ -1083,9 +940,6 @@ Index
 	  *for* *each tuple r* *in* *R*
             use the hash index on S to find tuples such that S.a = r.a
 
-
-
-
 * Hash Join
 - Case 1: Smaller relation *(S)* fits in memory
 - Hash join:
@@ -1095,11 +949,11 @@ Index
 
 - Cost: *b*r + b*s transfers, 2 seeks (unchanged)
 - Why good ?
-  - CPU cost is much better (even though we don’t care about it too much)
-  - Performs much better than nested-loops join when *S* doesn’t fit in memory (next)
+  - CPU cost is much better (even though we don't care about it too much)
+  - Performs much better than nested-loops join when *S* doesn't fit in memory (next)
 
 * Hash Join
-- Case 2: Smaller relation *(S)* doesn’t fit in memory
+- Case 2: Smaller relation *(S)* doesn't fit in memory
 - Two “phases”
 - Phase 1:
   - Read the relation *R* block by block and partition it using a hash function, *h1(a)*
@@ -1110,10 +964,8 @@ Index
   - Only requirement:
     - Each S partition fits in memory
 
-
-
 * Hash Join
-- Case 2: Smaller relation *(S)* doesn’t fit in memory
+- Case 2: Smaller relation *(S)* doesn't fit in memory
 - Two “phases”
 - Phase 2:
   - Read S1 into memory, and build a hash index on it (S1 fits in memory)
@@ -1121,10 +973,8 @@ Index
   - Read R1 block by block, and use the hash index to find matches.
   - Repeat for S2, R2, and so on.
 
-
-
 * Hash Join
-- Case 2: Smaller relation *(S)* doesn’t fit in memory
+- Case 2: Smaller relation *(S)* doesn't fit in memory
 - Two “phases”:
 - Phase 1:
   - Partition the relations using one hash function, *h*1*(a)*
@@ -1136,18 +986,14 @@ Index
     - Where *bb* is the size of each output buffer
   - Much better than Nested-loops join under the same conditions*
 
-
 * Hash Join
 ![](umd_classes/data605/lectures_sources/data605/lectures_source/images/lecture_10_1/lec_10_1_slide_67_image_1.png)
-
 
 * Merge-Join (Sort-merge join)
 - Pre-condition:
   - The relations must be sorted by the join attribute
   - If not sorted, can sort first, and then use this algorithms
 - Called “sort-merge join” sometimes
-
-
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_68_image_1.png)
 
@@ -1159,7 +1005,6 @@ Index
 *    2. Move pointers down the list*
 *         - Depending on the join condition*
 *    3. Repeat *
-
 
 * Merge-Join (Sort-merge join)
 - Cost:
@@ -1173,8 +1018,6 @@ Index
   - The final join result will also be sorted on *a1*
   - This might make further operations easier to do
     - E.g., duplicate elimination
-
-
 
 * Joins: Summary
 - Block Nested-loops join
@@ -1198,12 +1041,9 @@ Index
 - Other operators
 - Putting it all together…
 
-
-
-
 * Sorting
 - Commonly required for many operations
-  - Duplicate elimination, group by’s, sort-merge join
+  - Duplicate elimination, group by's, sort-merge join
   - Queries may have ASC or DSC in the query
 - One option:
   - Read the lowest level of the index
@@ -1213,10 +1053,6 @@ Index
   - Read in memory, use quick sort (qsort() in C)
 - What if relation too large to fit in memory ?
   - External sort-merge
-
-
-
-
 
 * External sort-merge
 - Divide and Conquer !!
@@ -1229,9 +1065,6 @@ Index
 - Phase 2:
   - Merge the *N* runs (*N-way merge*)
   - Can do it in one shot if *N < M*
-
-
-
 
 * External sort-merge
 - Phase 1:
@@ -1246,7 +1079,6 @@ Index
   - If *M =* 1000 blocks = 4MB  (assuming blocks of 4KB each)
     - Can sort: 4000MB = 4GB of data
 
-
 *Example: External Sorting Using Sort-Merge
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_75_image_1.png)
 
@@ -1257,7 +1089,7 @@ Index
   [log*M*–1(*b**r*/M)] 
   ```
   - Disk accesses for initial run creation as well as in each pass is ''' 2*b**r* '''
-    - for final pass, we don’t count write cost
+    - for final pass, we don't count write cost
     - we ignore final write cost for all operations since the output of an operation may be sent to the parent operation without being written to disk
   - Thus total number of disk accesses for external sorting: ''' text 
   *b**r* ( 2 [log*M*–1(*b**r* / M)] + 1) 
@@ -1284,7 +1116,6 @@ Index
     - If yes, increment the count
     - If not, insert a new value
 
-
 * Group By and Aggregation
 *select a, count(b)*
 *from R*
@@ -1294,9 +1125,6 @@ Index
   - Sort *R* on *a*
   - Now all tuples in a single group are contigous
   - Read tuples of *R (sorted)* one by one and compute the aggregates
-
-
-
 
 * Group By and Aggregation
 *select a, AGGR(b)  from R group by a;*
@@ -1308,8 +1136,6 @@ Index
 - median(): can do efficiently with sort, but need two passes (called “holistic”)
   - First to find the number of tuples in each group, and then to find the median tuple in each group
 - count(distinct b): must do duplicate elimination before the count
-
-
 
 * Duplicate Elimination
 * *select distinct a*
@@ -1326,9 +1152,6 @@ Index
     - else
       - Skip *r*
 
-
-
-
 * Set operations
 *(select * from R) union (select * from S) ;*
 *(select * from R) intersect (select * from S) ;*
@@ -1341,9 +1164,6 @@ Index
   - Find tuples of R and S that are identical on all attributes
   - Can use *hash-based or sort-based algorithm*
 
-
-
-
 * Query Processing
 - Overview
 - Selection operation
@@ -1351,9 +1171,6 @@ Index
 - Sorting
 - Other operators
 - Putting it all together…
-
-
-
 
 * Evaluation of Expressions
 - Two options:
@@ -1366,9 +1183,6 @@ select customer-name
 from account a, customer c
 where a.SSN = c.SSN and
            a.balance < 2500
-
-
-
 
 * Evaluation of Expressions
 - Materialization
@@ -1383,9 +1197,6 @@ where a.SSN = c.SSN and
     - E.g., Sort-Merge Join
   - Harder to reason about
 
-
-
-
 * Materialization
 - Materialized evaluation is always applicable
 - Cost of writing results to disk and reading them back can be quite high
@@ -1394,13 +1205,10 @@ where a.SSN = c.SSN and
 - Double buffering: use two output buffers for each operation, when one is full write it to disk, while the other is getting filled
   - Allows overlap of disk writes with computation and reduces execution time
 
-
-
-
 * Pipelining
 - Evaluate several operations simultaneously, passing the results of one operation on to the next.
-- E.g., in previous expression tree, don’t store result of
-  - instead, pass tuples directly to the join.. Similarly, don’t store result of join, pass tuples directly to projection.
+- E.g., in previous expression tree, don't store result of
+  - instead, pass tuples directly to the join.. Similarly, don't store result of join, pass tuples directly to projection.
 - Much cheaper: no need to store a temporary relation to disk.
 - Requires higher amount of memory
   - All operations are executing at the same time (say as processes)
@@ -1408,8 +1216,6 @@ where a.SSN = c.SSN and
 - A “blocking” operation: An operation that has to consume entire input before it starts producing output tuples
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_87_image_1.png)
-
-
 
 * Pipelining
 - Need operators that generate output tuples while receiving tuples from their inputs
@@ -1422,9 +1228,6 @@ where a.SSN = c.SSN and
   - Duplicate elimination: Since it requires sort, the final merge phase could be pipelined
   - Set operations: see duplicate elimination
 
-
-
-
 * Transactions
 - Storage
 - Query Processing
@@ -1432,8 +1235,6 @@ where a.SSN = c.SSN and
   - Overview
   - Concurrency Control
   - Recovery
-
-
 
 * Overview
 - *Transaction*: A sequence of database actions enclosed within special tags
@@ -1448,31 +1249,17 @@ where a.SSN = c.SSN and
 
 		
 
-
 * Bank application example
 - TODO
 
-
-
-
-
-
-
-
-
-
-
-
 * How does..
 - .. this relate to *queries* that we discussed ?
-  - Actual queries don’t update data, so *durability* and *consistency* not relevant
+  - Actual queries don't update data, so *durability* and *consistency* not relevant
   - Would want *concurrency*
     - Consider a query computing total balance at the end of the day
   - Would want *isolation*
     - What if somebody makes a *transfer* while we are computing the balance
     - Typically not guaranteed for such long-running queries
-
-
 
 * Performance benchmark
 - Transaction per minute
@@ -1488,12 +1275,11 @@ where a.SSN = c.SSN and
   - OLAP application
   - Query analytics in a 'data warehouse' context
 
-
 * Assumptions and Goals
 - Assumptions:
   - The system can crash at any time
   - Similarly, the power can go out at any point
-    - Contents of the main memory won’t survive a crash, or power outage
+    - Contents of the main memory won't survive a crash, or power outage
   - BUT… **disks are durable. They might stop, but data is not lost.**
   - Disks only guarantee *atomic* *sector* *writes,* nothing more
   - Transactions are by themselves consistent
@@ -1503,16 +1289,10 @@ where a.SSN = c.SSN and
     - Two transactions updating the same account balance… NO
     - Two transactions updating different account balances… YES
 
-
-
-
 * Transactions
 - Overview
 - Concurrency Control
 - Recovery
-
-
-
 
 * Lock-based Protocols
 - A transaction *must* get a *lock* before operating on the data
@@ -1522,9 +1302,6 @@ where a.SSN = c.SSN and
   - *Exclusive* (X) locks (also called *write locks*)
     - Obtained for updating a data item
 
-
-
-
 * Lock instructions
 - New instructions
   - lock-S: shared lock request
@@ -1532,17 +1309,12 @@ where a.SSN = c.SSN and
   - unlock: release previously held lock
 Example schedule:
 
-
-
 * Lock instructions
 - New instructions
   - lock-S: shared lock request
   - lock-X: exclusive lock request
   - unlock: release previously held lock
 Example schedule:
-
-
-
 
 * Lock-based Protocols
 - Lock requests are made to the *concurrency control manager*
@@ -1557,9 +1329,6 @@ Example schedule:
 | Shared       | Exclusive    | NO             |
 | Exclusive    | -            | NO             |
 
-
-
-
 * Snapshot Isolation
 - Very popular scheme, used as the primary scheme by many systems including Oracle, PostgreSQL etc…
   - Several others support this in addition to locking-based protocol
@@ -1567,9 +1336,6 @@ Example schedule:
 - Key idea:
   - For each object, maintain past “versions” of the data along with timestamps
     - Every update to an object causes a new version to be generated
-
-
-
 
 * Snapshot Isolation
 - Read queries:
@@ -1585,13 +1351,10 @@ Example schedule:
     - If yes, then abort and restart
     - If no, make all the writes public simultaneously (by making new versions)
 
-
-
-
 * Snapshot Isolation
 - Advantages:
-  - Read query don’t block at all, and run very fast
-  - As long as conflicts are rare, update transactions don’t abort either
+  - Read query don't block at all, and run very fast
+  - As long as conflicts are rare, update transactions don't abort either
   - Overall better performance than locking-based protocols
 - Major disadvantage:
   - Not serializable
@@ -1599,16 +1362,10 @@ Example schedule:
   - See the wikipedia article for more details and an example
     - http://en.wikipedia.org/wiki/Snapshot_isolation
 
-
-
-
 * Transactions
 - Overview
 - Concurrency Control
 - Recovery
-
-
-
 
 * Context
 - ACID properties:
@@ -1616,13 +1373,10 @@ Example schedule:
   - How do we guarantee Atomicity and Durability?
     - Atomicity: Two problems
     - Part of the transaction is done, but we want to cancel it: ABORT/ROLLBACK
-    - System crashes during the transaction. Some changes made it to the disk, some didn’t.
+    - System crashes during the transaction. Some changes made it to the disk, some didn't.
     - Durability:
     - Transaction finished. User notified. But changes not sent to disk yet (for performance reasons). System crashed.
 - Essentially similar solutions  
-
-
-
 
 * Reasons for crashes
 - Transaction failures
@@ -1636,8 +1390,6 @@ Example schedule:
   - Head crashes; **we will assume**
     - **STABLE STORAGE: Data never lost. Can approximate by using RAID and maintaining geographically distant copies of the data**
 
-
-
 * Log-based Recovery
 - Most commonly used recovery method
 - Intuitively, a log is a record of everything the database system does
@@ -1647,12 +1399,4 @@ Example schedule:
 - *<T2, ABORT>*
 - *<T1, A, 100, 200>*
   - T1 modified A; old value = 100, new value = 200
-
-
-
-
-
-
-
-
 

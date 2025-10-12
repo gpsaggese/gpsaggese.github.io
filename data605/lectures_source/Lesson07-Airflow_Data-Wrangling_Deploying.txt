@@ -35,7 +35,6 @@ Deployment
 
 UMD DATA605 - Big Data Systems
 
-
 * UMD DATA605 - Big Data Systems Orchestration with Airflow
 **UMD DATA605 - Big Data Systems** **Orchestration with Airflow**
 Data wrangling
@@ -43,7 +42,6 @@ Deployment
 
 Dr. GP Saggese
 gsaggese@umd.edu
-
 
 * Orchestration - Resources
 - Concepts in the slides
@@ -54,12 +52,7 @@ gsaggese@umd.edu
 - Mastery
 - Data Pipelines with Apache Airflow
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_2_image_1.png)
-
 
 * Workflow Managers
 - **Data pipelines** move/transform data across data stores
@@ -73,12 +66,7 @@ gsaggese@umd.edu
   - Meet real-time constraints
   - Scale performance
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_3_image_1.png)
-
 
 * Workflow Managers
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_4_image_1.png)
@@ -94,14 +82,9 @@ gsaggese@umd.edu
   - Quickly one wants to add machine learning
   - Quickly the complexity increases
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_4_image_2.png)
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_4_image_3.png)
-
 
 * Workflow Managers
 - **Workflow managers address the orchestration problem**
@@ -121,16 +104,11 @@ gsaggese@umd.edu
   - Horizontally scalable (e.g., multiple runners)
 - **Provide monitoring web interface**
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_5_image_1.png)
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_5_image_2.png)
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_5_image_3.png)
-
 
 * Airflow
 - Developed at AirBnB in 2015
@@ -148,12 +126,7 @@ gsaggese@umd.edu
   - Run Airflow on your laptop (e.g., in tutorial)
   - Managed solution (e.g., AWS)
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_6_image_1.png)
-
 
 * Airflow: Execution Semantics
 - **Scheduling semantic**
@@ -171,12 +144,7 @@ gsaggese@umd.edu
   - Execute DAG for historical schedule intervals that occurred in the past
   - E.g., if the data pipeline has changed one needs to re-process data from scratch
 
- 
-
-
-
-
-* Airflow: What Doesn’t Do Well
+* Airflow: What Doesn't Do Well
 - **Not great for streaming pipelines**
   - Better for recurring batch-oriented tasks
   - Time is assumed to be discrete and not continuous
@@ -190,11 +158,7 @@ gsaggese@umd.edu
   - No tracking of updates to the data
   - Need to be implemented manually
 
- 
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_8_image_1.png)
-
 
 * Airflow: Components
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_9_image_1.png)
@@ -219,11 +183,6 @@ gsaggese@umd.edu
   - Execute the tasks
   - Register task outcome in Metastore
 
- 
-
-
-
-
 * Airflow: Concepts
 - Each DAG run represents a data interval, i.e., an interval between two times
   - E.g., a DAG scheduled **@daily**
@@ -233,17 +192,9 @@ gsaggese@umd.edu
   - Simulate the scheduler running DAG / task for a specific date
   - Even if it is physically run now
 
-
-
-
 * Airflow: Tutorial
 - Follow Airflow Tutorial in README
 - From the tutorial for Airflow
-
- 
-
-
-
 
 * Airflow: Tutorial
 - The script describes the DAG structure as Python code
@@ -252,26 +203,16 @@ gsaggese@umd.edu
 - The **Scheduler** executes the code to build DAG
 - **BashOperator** creates a task wrapping a Bash command
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_12_image_1.png)
-
 
 * Airflow: Tutorial
 - Dict with various default params to pass to the DAG constructor
   - E.g., different set-ups for dev vs prod
 - Instantiate the DAG
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_13_image_1.png)
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_13_image_2.png)
-
 
 * Airflow: Tutorial
 - DAG defines tasks by instantiating **Operator** objects
@@ -279,9 +220,6 @@ gsaggese@umd.edu
   - Can be overridden explicitly
 - One can use a Jinja template
 - Add tasks to the DAG with dependencies
-
- 
-
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_14_image_1.png)
 
@@ -297,9 +235,6 @@ Deployment
 Dr. GP Saggese
 gsaggese@umd.edu
 
- 
-
-
 * Resources
 - Pandas tutorial
 - Class project
@@ -310,11 +245,8 @@ gsaggese@umd.edu
   - https://wesmckinney.com/book
   - Read cover-to-cover and execute all examples 2-3x time to really *master*
 
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_16_image_1.png)
 
- 
 ```
 
 ```
@@ -331,18 +263,9 @@ gsaggese@umd.edu
   - **Data integration**: combine data from multiple sources
   - **Information extraction**: extract structured information from unstructured / text sources
 
-
-
- 
-
-
 * Overview
 
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_18_image_1.png)
-
- 
-
 
 * Overview
 - Many of the data wrangling problems are not easy to formalize, and have seen little research work, e.g.,
@@ -356,22 +279,13 @@ gsaggese@umd.edu
   - Data extraction is the E step
   - Data wrangling is the T step
 
-
-
- 
-
-
 * Overview
-
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_20_image_1.png)
 
 - From Data Cleaning: Problems and Current Approaches
 - Paper somewhat old: data is mostly coming from structured sources
 - Today unstructured/semi-structured are equally important
-
- 
-
 
 * Data Extraction
 - Data may reside in a wide variety of different sources
@@ -386,23 +300,16 @@ gsaggese@umd.edu
   - Scraping data from web sources is tough
     - Can be fragile
     - Throttling
-    - It’s cat-and-mouse game between scrapers and website
+    - It's cat-and-mouse game between scrapers and website
   - Often pipelines are set up to do this on a periodic basis
   - Several tools out there to do this (somewhat) automatically
     - E.g., import.io, portia, ...
-
-
-
- 
-
 
 * Tidy Data
 - Tidy data, Wickham, 2014
   - Each variable forms a column
   - Each observation forms a row
 - Wide vs long format
-
-
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_1.png)
 
@@ -422,16 +329,9 @@ Long format
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_5.png)
 
- 
-
-
 * Data Quality Problems
 
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_23_image_1.png)
-
- 
-
 
 * Single-Source Problems
 - Depends largely on the source
@@ -448,21 +348,11 @@ Long format
   - Evolving schemas or classification schemes (for categorical attributes)
   - Outliers
 
-
-
- 
-
-
 * Data Quality Problems
 **Data Quality Problems
 **
 
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_25_image_1.png)
-
- 
-
 
 * Multi-Source Problems
 \#\# Multi-Source Problems
@@ -483,11 +373,6 @@ Long format
   - Mismatched information
   - ...
 
-
-
- 
-
-
 * Data Cleaning: Outlier Detection
 \#\# Data Cleaning: Outlier Detection
 
@@ -498,11 +383,6 @@ Long format
   - Measurement errors: especially sensor data
   - Distillation errors: errors that pop up during processing and summarization
   - Data integration errors: inconsistencies across sources that are combined together
-
-
-
- 
-
 
 * Univariate Outlier Detection
 \#\# Univariate Outlier Detection
@@ -521,14 +401,9 @@ Long format
     - Median absolute deviation (MAD)
     - Median distance of values from the median value
 
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_28_image_1.png)
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_28_image_2.png)
-
- 
-
 
 * Outlier Detection
 \#\# Outlier Detection
@@ -551,11 +426,6 @@ Long format
     - Not as straightforward
 - Wikipedia article on Outliers
 
-
-
- 
-
-
 * Multivariate Outliers
 \#\# Multivariate Outliers
 
@@ -573,14 +443,9 @@ Long format
   - Approximation techniques often used
 - Need to try different techniques based on the data
 
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_30_image_1.png)
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_30_image_2.png)
-
- 
-
 
 * Time Series Outliers
 \#\# Time Series Outliers
@@ -602,15 +467,10 @@ Long format
 - Can use the historical patterns in the data to flag outliers
   - Rolling MAD (median absolute variation)
 
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_31_image_1.png)
 
 **Time
 **
-
- 
-
 
 * Split-Apply-Combine
 \#\# Split-Apply-Combine
@@ -632,12 +492,7 @@ Long format
   - SQL GROUP BY operator
   - Map-Reduce
 
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_32_image_1.png)
-
- 
-
 
 * Serialization Formats
 - Programs need to send data to each other (on the network, on disk)
@@ -645,11 +500,6 @@ Long format
   - Several recent technologies based around schemas
     - JSON, YAML, Protocol Buffer, Python Pickle
 - Serialization formats are data models
-
-
-
- 
-
 
 * Comma Separated Values (CSV)
 - CSV stores data row-wise as text without schema
@@ -670,17 +520,12 @@ Long format
     - Annotate CSV files with schema
   - Mainly read-only, difficult to modify
 
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_35_image_1.png)
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_35_image_2.png)
 
- 
-
-
 * (Apache) Parquet
 - Parquet allows to read tiles of data
-  - That’s what the name comes from
+  - That's what the name comes from
 - Supports multi-dimensional and nested data
   - A generalization of dataframes
 - Column-storage
@@ -696,12 +541,7 @@ Long format
   - Need ingestion step converting the inbound format to Parquet
   - Mainly read-only, difficult to modify
 
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_36_image_1.png)
-
- 
-
 
 * JSON
 - JSON = JavaScript Object Notation
@@ -715,9 +555,6 @@ Long format
 {     "firstName": "John",     "lastName": "Smith",     "isAlive": true,     "age": 25,     "height_cm": 167.6,     "address": {        "streetAddress": "21 2nd Street",        "city": "New York",        "state": "NY",        "postalCode": "10021-3100"     }, 
    "phoneNumbers": [        {        "type": "home",        "number": "212 555-1234”       },        {        "type": "office",        "number": "646 555-4567"        }     ],     "children": [],     "spouse": null  }
 ```
-
- 
-
 
 * Protocol Buffers
 - Developed by Google
@@ -764,12 +601,6 @@ message Person {
 }
 ```
 
-
-
-
- 
-
-
 * Serialization Formats
 - Avro
   - Richer data structures
@@ -784,24 +615,16 @@ message Person {
 {        "namespace": "example.avro",        "type": "record",        "name": "User",        "fields": [                   {"name": "name", "type": "string"},                   {"name": "favorite_number", "type": ["int", "null"]},                   {"name": "favorite_color", "type": ["string", "null"]}        ] }
 ```
 
-
- 
-
-
 * Remote Procedure Call
 - **Remote Procedure Call** (RPC) is a protocol to request a service from a program located in another computer abstracting the details of the network communication
 - **Goal**: similar to how procedure calls are made within a single process, without having to understand the network's details
 - **Problems**
-  - Can’t serialize pointers
+  - Can't serialize pointers
   - Asynchronous communication
   - Failures and retry
 - Used in distributed systems
   - E.g., microservices architectures, cloud services, and client-server applications
 - Can be synchronous or asynchronous
-
-
-
- 
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_40_image_1.png)
 ```
@@ -819,35 +642,25 @@ message Person {
 - **Response marshalling**: Once the procedure completes, the return values are marshaled into a response message
 - **Client communication **/ **response unmarshalling** / **return to client**: Return values are passed back to the client's original stub call, and execution continues as if the call were local.
 
-
-
- 
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_41_image_1.png)
-
 
 * Software testing
 - Evaluate the functionality, reliability, performance, and security of a product and ensure it meets specified requirements
   - Software testing is a critical phase in the development process
 - Adage:
-  - “If it’s not tested, it doesn’t work”
+  - “If it's not tested, it doesn't work”
   - “Debugging is 2x harder than writing code”
-    - Corollary: if I’m doing my best to write code, how I can possibly debug it?
+    - Corollary: if I'm doing my best to write code, how I can possibly debug it?
 - **Different types of testing
 **
 - **Unit testing**: test individual components to ensure that each part functions correctly in isolation
 - **Integration testing**: ensure that components work together as expected (e.g., detect interface defects)
 - **System testing**: evaluate a fully integrated system's compliance with its specified requirements
 
- 
-
-
-
-
 * Software testing
 - **Smoke/sanity testing**: A quick, non-exhaustive run-through of the functionalities to ensure that the main functions work as expected
   - E.g., decide if a new build is stable enough to use
-  - E.g., the application doesn’t crash upon launching
+  - E.g., the application doesn't crash upon launching
 - **Regression testing**: ensure that the new changes have not adversely affected existing functionality
   - Confusing: regressing in the sense of “getting worse”
 - **Acceptance testing**: final phase of testing before the software is released
@@ -857,10 +670,6 @@ message Person {
 - **Usability testing**: assess how easy it is for end-users to use the software application
   - E.g., UI/UX
 - **Compatibility testing**: check if the software is compatible with different browsers, database versions, operating systems, mobile devices, ...
-
- 
-
-
 
 * CI / CD
 - **Continuous integration (CI)
@@ -876,11 +685,6 @@ message Person {
     - after the build and test phases pass
   - **Goal**: new features, bug fixes, and updates are continuously delivered to users in real-time
 - E.g., GitHub actions, GitLab workflows, AWS Code, Jenkins
-
- 
-
-
-
 
 * RESTful API
 - REST API
@@ -899,11 +703,6 @@ message Person {
   - No shared state
   - Inspired by HTTP (modulo cookies)
 
- 
-
-
-
-
 * RESTful API
 - **Cacheable
 **
@@ -915,12 +714,7 @@ message Person {
   - Each layer cannot "see" beyond the immediate layer that they interface
   - E.g., in a tier application
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_46_image_1.png)
-
 
 * Stages of deployment
 - The deployment of software progresses through several environments
@@ -943,11 +737,6 @@ message Person {
   - Highly optimized for security, performance, and scalability
   - Focus is on uptime, user experience, and data integrity
 
- 
-
-
-
-
 * Semantic versioning
 - Semantic versioning is a versioning scheme for software that aims to convey meaning about the underlying changes
   - Systematic approach
@@ -965,13 +754,7 @@ message Person {
   - Optional metadata to denote build information or environment specifics
   - E.g., 1.0.0+20210313120000 or 1.0.0+f8a34b3228c
 
- 
-
-
-
-
 * Microservices vs Monolithic Architecture
-
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_49_image_1.png)
 
@@ -982,20 +765,16 @@ message Person {
 - Different styles of building complex systems
 - Find the right granularity
 
-
 * Microservice Architecture
 - **Modularity**: composed of small, independently deployable services, each implementing a specific business functionality
 - **Scalability**: services can be scaled independently, allowing for efficient use of resources based on demand for specific features
 - **Technology diversity**: each service can be developed using the most appropriate technology stack for its functionality
 - **Deployment flexibility**: allows for continuous delivery and deployment practices, enabling faster iterations and updates
-- **Resilience**: failure in one service doesn’t necessarily bring down the entire system; easier to isolate and address faults
+- **Resilience**: failure in one service doesn't necessarily bring down the entire system; easier to isolate and address faults
 - **Cons
 **
 - Complexity to deploy
 - Needs tooling
-
-
-
 
 * Monolithic Architecture
 - **Simplicity**: (initially) simpler to develop, test, deploy, and scale as a single application unit
@@ -1003,5 +782,4 @@ message Person {
 - **Technology stack uniformity**: the entire application is developed with a single technology stack, which can limit flexibility
 - **Deployment complexity**: Updates to a small part of the application require redeploying the entire application
 - **Single point of failure**: Issues in any module can potentially affect the availability of the entire application
-
 

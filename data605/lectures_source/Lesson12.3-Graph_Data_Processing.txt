@@ -35,8 +35,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-
-
 * Options for Processing Graph Data 
 - Write your own programs 
   - Extract the relevant data, and construct an in-memory graph 
@@ -51,9 +49,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Goal is to simplify writing graph analysis tasks, and scale them to very large volumes at the same time 
   - E.g., Giraph or GraphX
 
-
-
-
 * Option 2: Declarative Interfaces 
 - No consensus on declarative, high-level languages (like SQL) for either querying or for analysis 
   - Too much variety in the types of queries/analysis tasks 
@@ -67,9 +62,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Datalog-based frameworks for specifying analysis tasks 
     - Many prototypes, typically specific to some analysis task 
 
-
-
-
 * Option 3: MapReduce 
 - A popular option for (batch) processing very large datasets, as we know
   - More specifically: Hadoop or Spark
@@ -82,9 +74,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Hadoop framework not ideal for large numbers of phases, Spark is better, though 
 - However, much work on showing how different graph analysis tasks can be done using MapReduce 
 
-
-
-
 * Option 3: MapReduce 
 - Disadvantages: 
   - Hard to use this for graph analysis task 
@@ -95,9 +84,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Mappers send PR values and structure of graph
   - In PageRank example: repeated reading and parsing of the inputs for each iteration
     - Extensive I/O at input, shuffle/sort, output
-
-
-
 
 * Option 4: Graph Programming Frameworks 
 - Frameworks (analogous to MapReduce) proposed for analyzing large volumes of graph data 
@@ -111,23 +97,16 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - GraphLab: asynchronous execution
 - GraphX: built on top of Spark
 
-
-
-
 * Bulk Synchronous Parallel (BSP) 
-
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_7_image_1.png)
 
 time
 
-
 * Vertex-centric BSP 
 - Each vertex has an id, a value, a list of its adjacent vertex ids and the corresponding edge values 
 - Each vertex is invoked in each superstep, can recompute its value and send messages to other vertices, which are delivered over superstep barriers 
 - Advanced features : termination votes, combiners, aggregators, topology mutations 
-
-
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_8_image_1.png)
 ```
@@ -140,9 +119,6 @@ time
 - I can send messages to vertices
 - I can declare that I am done
 - I can mutate graph topology
-
-
-
 
 * Option 4: Pregel
 - Programmers write one program: **compute()**
@@ -157,12 +133,7 @@ time
   - Synchronize (wait for all messages to be delivered)
   - Repeat
 
-
-
-
 * Apache giraph
-
-
 
 * Apache Giraph
 - Pregel is proprietary, but:
@@ -174,20 +145,13 @@ time
   - graph partition via hashing
   - fault tolerance via checkpointing
 
-
-
-
 * Plays well with Hadoop
-
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_13_image_1.png)
 
-
 * Giraph Execution
 
-
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_14_image_1.png)
-
 
 * Which part is doing what?
 - **ZooKeeper**: responsible for computation state
@@ -205,9 +169,6 @@ time
   - sends, receives and assigns messages
   - computes local aggregation values
 
-
-
-
 * What do you have to implement?
 - Your algorithm as a **Vertex**
   - Subclass one of the many existing implementations: *BasicVertex, MutableVertex, EdgeListVertex, HashMapVertex, LongDoubleFloatDoubleVertex*, ...
@@ -216,16 +177,13 @@ time
 - a **VertexOutputFormat** to write back the result
   - e.g., *<vertex> <pageRank> *
 
-
 ```
 
 ```
 
 * A vertex view 
 
-
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_17_image_1.png)
-
 
 * Designed for iterations 
 - Stateful (in-memory)
@@ -236,14 +194,8 @@ time
 - Can go out-of-core
   - If the data does not fit into memory 
 
-
-
-
 * Graph modeling in Giraph 
 - BasicComputation<          I extends WritableComparable, // VertexID -- vertex ref           V extends Writable, // VertexData -- a vertex datum           E extends Writable, // EdgeData -- an edge label           M extends Writable> // MessageData-– message payload 
-
-
-
 
 * Giraph “Hello World” 
 public class GiraphHelloWorld extends    BasicComputation<IntWritable, IntWritable, NullWritable, NullWritable> {
@@ -252,10 +204,6 @@ public void compute(Vertex<IntWritable, IntWritable,     NullWritable> vertex, I
       System.out.println(“ “ + e.getTargetVertexId());     } 
    System.out.println(“”);     vertex.voteToHalt(); 
 } 
-} 
-
-
-
 
 * Example: Ping neighbors
 public void compute(Vertex<Text, DoubleWritable, DoubleWritable> vertex, Iterable<Text> ms ){ 
@@ -264,16 +212,11 @@ public void compute(Vertex<Text, DoubleWritable, DoubleWritable> vertex, Iterabl
           if (vertex.getEdgeValue(m) == null) {              vertex.addEdge(EdgeFactory.create(m, SYNTHETIC_EDGE));            }        } 
    }     vertex.voteToHalt(); } 
 
-
-
-
 * Giraph PageRank Example
-
 
 public class PageRankComputation      extends BasicComputation<IntWritable, FloatWritable, NullWritable, FloatWritable> {
   /** Number of supersteps */
   public static final String SUPERSTEP_COUNT =              "giraph.pageRank.superstepCount";
-
 
 * Giraph PageRank Example
 
@@ -294,7 +237,6 @@ public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Ite
   }
 }
 
-
 * Additional functionality
 - Combiners
   - To minimize messages 
@@ -312,24 +254,17 @@ public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Ite
 
 * Giraph scales 
 
-
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_25_image_1.png)
 
 https://www.facebook.com/notes/facebook-engineering/scaling-apache-giraph-to-a-trillion-edges/10151617006153920
 
-
 * Graphx
 
-
-
 * GraphX Motivation
-
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_27_image_1.png)
 
-
 * GraphX Motivation
-
 
 Difficult to Program and Use 
 Users must *Learn, Deploy, and *
@@ -340,9 +275,7 @@ complex interfaces
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_28_image_1.png)
 
-
 * And Inefficient
-
 
 Extensive data movement and duplication across 
 the network and file system 
@@ -352,9 +285,7 @@ across stages
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_29_image_1.png)
 
-
 * The GraphX Unified Approach 
-
 
 New API 
 Blurs the distinction between *Tables* and *Graphs *
@@ -366,9 +297,7 @@ Enables users to easily and efficiently express the entire graph analytics pipel
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_30_image_1.png)
 
-
 * Representation 
-
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_31_image_1.png)
 
@@ -384,8 +313,6 @@ Plus optimizations:
      } 
 - Graph[(String, 
 String), String] 
-
-
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_32_image_1.png)
 ```
@@ -409,10 +336,7 @@ Edge(1L, 2L, “coworker”),
 Edge(2L, 3L, “friend”)))
 val graph = Graph(vertices, edges)
 
-
-
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_33_image_1.png)
-
 
 * Hello world in GraphX
 $ spark*/bin/spark-shell
@@ -424,18 +348,13 @@ l.drop(1).map(x => (l.head.toLong, x.toLong))
 scala> val graph = Graph.fromEdgeTuples(edges, "")
 scala> val result = graph.collectNeighborIds(EdgeDirection.Out).map(x =>
 println("Hello world from the: " + x._1 + " : " + x._2.mkString(" ")) )
-scala> result.collect() // don’t try this @home
+scala> result.collect() // don't try this @home
 Hello world from the: 1 :
 Hello world from the: 2 : 1 3
 Hello world from the: 3 : 1 2
 
-
-
-
 * Spark Table Operators
 - GraphX **Table** (RDD) operators are inherited from Spark:
-
-
 
 map
 filter
@@ -462,7 +381,6 @@ pipe
 save
 …
 
-
 * Graph Operators (Scala)
 class Graph [ V, E ] {
 def Graph(vertices: Table[ (Id, V) ],
@@ -485,9 +403,6 @@ def mrTriplets(mapF: (Edge[V,E]) => List[(Id, T)],
 reduceF: (T, T) => T): Graph[T, E]
 }
 
-
-
-
 * Built-in Algorithms (Scala)
 def pageRank(tol: Double): Graph[Double, Double]
 def triangleCount(): Graph[Int, ED]
@@ -495,50 +410,34 @@ def connectedComponents(): Graph[VertexId, ED]
 def stronglyConnectedComponents(numIter:Int):Graph[VertexID,ED]
 // ...and more: org.apache.spark.graphx.lib (GraphX libraries)
 
-
-
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_37_image_1.png)
-
 
 * Triplets Join Vertices and Edges
 - Triplets capture Gather-Scatter pattern from specialized graph processing systems (like Giraph)
 - **Triplets** operator joins vertices and edges
 
-
-
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_38_image_1.png)
-
 
 * MapReduce Triplets
 Map-Reduce triplets collect information about the neighborhood of each vertex:
 
-
-
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_39_image_1.png)
-
 
 * Performance Comparisons
 
-
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_40_image_1.png)
-
 
 * GraphX scales to larger graphs
 - GraphX is roughly 2x slower than GraphLab
   - Scala + Java overhead: Lambdas, GC time, …
   - No shared memory parallelism: 2x increase in communication
 
-
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_41_image_1.png)
-
 
 * But, a Small Pipeline in GraphX
 Timed end-to-end GraphX is faster than GraphLab (and Giraph)
 
-
-
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_42_image_1.png)
-
 
 * Giraph vs. GraphX
 **Giraph**
@@ -552,6 +451,5 @@ Timed end-to-end GraphX is faster than GraphLab (and Giraph)
 - Graphs are “views” on RDDs and thus immutable
 - Functional-like, “declarative” programming model
 - Genuine part of Spark ecosystem
-
 
 ```

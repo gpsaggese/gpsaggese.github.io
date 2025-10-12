@@ -152,7 +152,7 @@ UMD DATA605 - Big Data Systems
 ::::{.column width=75%}
 - **Circa 2013: Docker becomes ubiquitous**
 - **Docker**
-  - Didn’t invent containers
+  - Didn't invent containers
   - Made containers simple and mainstream
 - Linux supported containers for some time
   - Kernel namespaces
@@ -160,7 +160,7 @@ UMD DATA605 - Big Data Systems
   - Union filesystems
 - **Pros**
   - Containers are fast and portable
-  - Containers don’t require full-blown OS
+  - Containers don't require full-blown OS
   - All containers run on a single host
   - Reduce OS licencing cost
   - Reduce overhead of OS patching and maintenance
@@ -188,7 +188,7 @@ UMD DATA605 - Big Data Systems
     - On a virtual machine
     - On a virtual machine running a virtual machine
 - **Serverless computing**
-  - As long your application runs somewhere, you don’t care “how” or “where”
+  - As long your application runs somewhere, you don't care “how” or “where”
   - E.g., AWS Lambda
 
 * HW vs OS Virtualization
@@ -197,7 +197,7 @@ UMD DATA605 - Big Data Systems
 - **Hypervisor performs HW virtualization**
   - Carves out physical hardware resources into VMs
   - Resources (CPUs, RAM, storage) are allocated to a VM
-  - It’s like having multiple computers
+  - It's like having multiple computers
 - “Virtual machine tax”
   - To run 3 apps, you need 3 VMs
     - Each VM requires time to start
@@ -208,7 +208,7 @@ UMD DATA605 - Big Data Systems
 
 \vspace{1cm}
 - **Containers perform OS virtualization**
-  - It’s like having multiple OSes
+  - It's like having multiple OSes
 ::::
 ::::{.column width=40%}
 
@@ -350,7 +350,7 @@ UMD DATA605 - Big Data Systems
     - bash docker.io/alpine:latest
     - E.g., DockerHub, AWS ECR
   - Some repos are vetted by Docker
-  - Unofficial repos shouldn’t be trusted
+  - Unofficial repos shouldn't be trusted
   - E.g., https://hub.docker.com/
 
 ::::
@@ -383,7 +383,7 @@ UMD DATA605 - Big Data Systems
 - Download container images
   - Contain filesystem, application, app dependencies
 - Start / destroy containers
-- In case of issues, it’s easy to repro the problem
+- In case of issues, it's easy to repro the problem
   - “Here is the log”
   - Run command line
   - Deploy on a test system and debug
@@ -411,7 +411,7 @@ UMD DATA605 - Big Data Systems
 - **Build context**
   - \> **docker build -t web:latest .**
   - . is the build context
-  - Directory containing the application and what’s needed to build it
+  - Directory containing the application and what's needed to build it
   - Sent to Docker engine to build the application
   - Typically the Dockerfile is in the root directory of the build context
 
@@ -720,7 +720,7 @@ Shutdown service removing images and volume
   - Teams based on your self-assessed skills
   - In each group there should be someone with experience with Git, Docker, Python, and so on
   - Teams are not perfect, but none of your team at your future jobs will be
-  - Working in a team is a skill that takes a long time to hone: let’s start practicing it
+  - Working in a team is a skill that takes a long time to hone: let's start practicing it
 - **3 Class project complexity**
   - Projects have about the same complexity
   - If not, we will try to account for this when grading

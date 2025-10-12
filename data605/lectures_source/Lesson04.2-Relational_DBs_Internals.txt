@@ -41,7 +41,6 @@ Prof. Amol Deshpande
 :::
 UMD DATA605 - Big Data Systems
 
-
 * Outline
 - Storage
   - Physical storage
@@ -54,8 +53,6 @@ UMD DATA605 - Big Data Systems
 \footnotesize
 - Sources: Silberschatz et al. 2020
 
-
-
 * Outline
 - Storage
   - Physical storage
@@ -67,7 +64,6 @@ UMD DATA605 - Big Data Systems
 \vspace{2cm}
 \footnotesize
 - Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
-
 
 * Storage Characteristics
 :::columns
@@ -144,15 +140,13 @@ according to (decreasing) speed and cost
 
 source: http://cse1.net/recaps/4-memory.html
 
-
-
 * How Important is Memory Hierarchy?
 - Trade-offs shifted drastically over last 10-15 years
 - **Innovations:**
   - Fast network, SSDs, and large memories
   - However, the volume of data is growing rapidly
 - **Observations**:
-  - Faster to access another computer’s memory through network than accessing your own disk
+  - Faster to access another computer's memory through network than accessing your own disk
   - Cache is playing more and more important role
   - In-memory DBs
     - Enough memory that data often fits in memory of a cluster of machines
@@ -161,7 +155,6 @@ source: http://cse1.net/recaps/4-memory.html
 - Similar reasoning for algorithms
   - Best algorithm depends on the technology available
 
-
 * Outline
 - Storage
   - Physical storage
@@ -169,8 +162,6 @@ source: http://cse1.net/recaps/4-memory.html
     - **Magnetic disks / SSD**
     - RAID
 - DB internals
-
-
 
 * Connecting disks to a server
 - **Disks** (magnetic and SSDs) can be **connected to computer**:
@@ -301,9 +292,6 @@ source: http://cse1.net/recaps/4-memory.html
   - 30-50MB/s to up to 200MB/s
 - **Seeks are bad!**
 
-
-
-
 * Solid State Disk (SSD)
 :::columns
 ::::{.column width=80%}
@@ -334,11 +322,6 @@ source: http://cse1.net/recaps/4-memory.html
   - There is a limit to how many times a flash page can be erased (~1M times)
 - Better than an HDD from any point of view, but more expensive per GB
 
-
-
-
-
-
 * Outline
 - Storage
   - Physical storage
@@ -346,9 +329,6 @@ source: http://cse1.net/recaps/4-memory.html
   - Magnetic disks / SSD
   - **RAID**
 - DB internals
-
-
-
 
 * RAID
 :::columns
@@ -427,7 +407,6 @@ source: http://cse1.net/recaps/4-memory.html
 ::::
 :::
 
-
 * Choosing a RAID Level
 :::columns
 ::::{.column width=50%}
@@ -456,9 +435,6 @@ source: http://cse1.net/recaps/4-memory.html
 \vspace{1cm}
 \footnotesize
 - Sources: Silberschatz et al. 2020, Chap 13: Data Storage Structures
-
-
-
 
 * (Centralized) DB Internals
 :::columns
@@ -500,77 +476,57 @@ source: http://cse1.net/recaps/4-memory.html
 digraph SystemArchitecture {
     // Global graph settings
     graph [rankdir=TB, splines=ortho, nodesep=0.5, ranksep=0.8];
-    
     // Default node and edge styles
     node [fontname="Helvetica", fontsize=14, shape=box];
     edge [penwidth=2, color=blue, arrowsize=1.2];
-    
     // --- Top Component: Query Processing ---
     node [style=filled, fillcolor=yellow, width=1.5, height=0.5];
     user_query [label="user\nquery"];
-    
     node [style="bold, rounded", color=blue, fillcolor=white, penwidth=2, width=3.5, height=0.7];
     query_engine [label="Query Processing Engine"];
-    
     node [style=filled, fillcolor="cadetblue", width=1.5, height=0.5];
     results [label="results"];
-    
     // --- Middle Component: Buffer Management ---
     node [style=filled, fillcolor=yellow, width=1.5, height=0.5];
     page_requests [label="page\nrequests"];
-    
     node [style="bold, rounded", color=blue, fillcolor=white, penwidth=2, width=3.5, height=0.7];
     buffer_manager [label="Buffer Manager"];
-    
     node [style=filled, fillcolor="cadetblue", width=1.5, height=0.5];
     pointers [label="pointers\nto pages"];
-    
     // --- Bottom Component: Storage Management ---
     node [style=filled, fillcolor=yellow, width=1.5, height=0.5];
     block_requests [label="block\nrequests"];
-    
     node [style="bold, rounded", color=blue, fillcolor=white, penwidth=2, width=3.5, height=0.7];
     space_management [label="Space Management on\nPersistent Storage"];
-    
     node [style=filled, fillcolor="cadetblue", width=1.5, height=0.5];
     data [label="data"];
-    
     // --- Layout Constraints ---
     // Top component
     { rank=same; user_query; results; }
     { rank=same; query_engine; }
-    
     // Middle component
     { rank=same; page_requests; pointers; }
     { rank=same; buffer_manager; }
-    
     // Bottom component
     { rank=same; block_requests; data; }
     { rank=same; space_management; }
-    
     // Invisible edges to align inputs and outputs with their engines
     user_query -> query_engine [style=invis];
     results -> query_engine [style=invis];
-    
     page_requests -> buffer_manager [style=invis];
     pointers -> buffer_manager [style=invis];
-    
     block_requests -> space_management [style=invis];
     data -> space_management [style=invis];
-    
     // --- Visible Edges ---
     // Top component flow
     user_query -> query_engine [arrowhead=normal, constraint=false];
     query_engine -> results [arrowhead=normal, constraint=false];
-    
     // Middle component flow
     page_requests -> buffer_manager [arrowhead=normal, constraint=false];
     buffer_manager -> pointers [arrowhead=normal, constraint=false];
-    
     // Bottom component flow
     block_requests -> space_management [arrowhead=normal, constraint=false];
     space_management -> data [arrowhead=normal, constraint=false];
-    
     // --- Force vertical stacking ---
     query_engine -> page_requests [style=invis, weight=10];
     buffer_manager -> block_requests [style=invis, weight=10];
@@ -592,8 +548,6 @@ digraph SystemArchitecture {
 - **Storage hierarchy**
   - How are tables mapped to files?
   - How are tuples mapped to disk blocks?
-
-
 
 ::::
 :::
