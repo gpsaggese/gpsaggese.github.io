@@ -461,7 +461,8 @@ CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
 ```
 
 * Docker: Commands
-Show all the available images
+- Show all the available images
+
 \begingroup \footnotesize \color{blue}
 ```
 > docker images 
@@ -471,24 +472,23 @@ counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
 ```
 \endgroup
 
-Show a particular image
+- Show a particular image
 \begingroup \footnotesize \color{blue}
 ```
-\> docker images counter_app_web-fe
+> docker images counter_app_web-fe
 counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
 ...
 ```
 \endgroup
-Note that docker images ls is incorrect since it shows the image ls
 
-Delete an image
+- Delete an image
 \begingroup \footnotesize \color{blue}
 ```
-\> docker rmi ...
+> docker rmi ...
 ```
 \endgroup
 
-Show the running containers
+- Show the running containers
 \begingroup \tiny\color{blue}
 ```
 > docker container ls
@@ -499,14 +499,10 @@ c1889540cfd2  redis:alpine        "docker-entrypoint.sh"  7 minutes ago  Up 7 mi
 \endgroup
 
 * Docker: Commands
-Show running containers
+- Show running containers
 \begingroup \footnotesize \color{blue}
 ```
 > docker container ls
-```
-\endgroup
-\begingroup \tiny \color{blue}
-```
 CONTAINER ID   IMAGE                COMMAND                  CREATED         STATUS        
 PORTS                   NAMES
 281d654f6b8d   counter_app-web-fe   "python app.py"          5 minutes ago   Up 5 minutes  
@@ -517,9 +513,8 @@ de55ae4104da   redis:alpine         "docker-entrypoint.s..." 5 minutes ago  Up 5
 ```
 \endgroup
 
-Show volumes and networks
+- Show volumes and networks
 \begingroup \footnotesize \color{blue}
-> docker volume ls
 ```
 > docker volume ls
 DRIVER    VOLUME NAME
@@ -533,7 +528,7 @@ b4c1976d7c27   bridge                  bridge    local
 \endgroup
 
 * Docker: Delete state
-Commands:
+- Commands:
 \begingroup \footnotesize \color{blue}
 ```
 > docker container ls
@@ -551,19 +546,21 @@ Commands:
 \endgroup
 
 * Docker Tutorial
-- tutorial_docker.md
+// TODO
+- [tutorial_docker.md](
+  https://github.com/gpsaggese/umd_classes/blob/main/data605/tutorials/tutorial_docker/tutorial_docker.md)
 
 * Docker Compose
 - **Manage multi-container apps running on a single node**
-  - Describe app in a single *declarative* configuration YAML file
-    - Instead of scripts with long Docker commands
-  - Compose talks to Docker API to achieve what you requested
-  - E.g., you need a client app and Postgres DB
-  - E.g., microservices
-    - Web front-end
-    - Ordering
-    - Back-end DB
-- In 2020 Docker Compose has become an open standard for "code-to-cloud" process
+  - Describe app in a single _declarative_ YAML file
+    - Avoid long Docker command scripts
+  - Compose interacts with Docker API to achieve the requested state
+  - Examples:
+    - Client app and Postgres DB
+    - Microservices: Web front-end, Ordering, Back-end DB
+
+- In 2020, Docker Compose became an open standard for "code-to-cloud" process
+
 - **Manage multi-container apps running on multiple hosts**
   - Docker Stacks / Swarm
   - Kubernetes
@@ -571,24 +568,25 @@ Commands:
 * Docker Compose: Tutorial Example
 :::columns
 ::::{.column width=60%}
-- The default name for a Compose file is `docker-compose.yml`
-  - You can specify `-f` for custom filenames
-- **Top-level keys** are:
+- Default name for a Compose file is `docker-compose.yml`
+  - Specify `-f` for custom filenames
+
+- **Top-level keys**:
   - `version`:
-    - Mandatory first line to specify API version
-    - Ideally always use the latest version
-    - Typically 3 or higher
+    - Mandatory first line for API version
+    - Use latest version, typically 3 or higher
   - `services`:
-    - Define the different microservices
+    - Define microservices
   - `networks`:
-    - Creates new networks
-    - By default it creates a `bridge` network to connect multiple containers on the same Docker host
+    - Create new networks
+    - Default `bridge` network connects containers on the same Docker host
   - `volumes`:
-    - Creates new volumes
-- **Key in services** describe a different "service" in terms of container
-  - **Inner keys** specify the params of Docker run command
+    - Create new volumes
+
+- **Key in services** describes a "service" in terms of container
+  - **Inner keys** specify Docker run command params
 ::::
-::::{.column width=40%}
+::::{.column width=35%}
 \footnotesize
   ```yaml
   version: "3.8"
@@ -657,44 +655,49 @@ Commands:
 \endgroup
 
 * Docker Compose: Commands
-Build the containers for the services
+- Build the containers for the services
 \begingroup \footnotesize \color{blue}
-```> docker compose build
+```
+> docker compose build
 ```
 \endgroup
 
-Pull the needed images for the services
+- Pull the needed images for the services
 \begingroup \footnotesize \color{blue}
-```> docker compose pull
+```
+> docker compose pull
 ```
 \endgroup
 
-Show the running services
+- Show the running services
 \begingroup \footnotesize \color{blue}
-```> docker compose ps
+```
+> docker compose ps
 ```
 \endgroup
 
-Show the status of the service
+- Show the status of the service
 \begingroup \footnotesize \color{blue}
-```> docker compose ls
+```
+> docker compose ls
 ```
 \endgroup
 
-Bring up the entire service
+- Bring up the entire service
 \begingroup \footnotesize \color{blue}
-```> docker compose up
+```
+> docker compose up
 ```
 \endgroup
 
-Rebuild after trying out some changes in dockerfile/compose file
+- Rebuild after trying out some changes in dockerfile/compose file
 \begingroup \footnotesize \color{blue}
 ```
 > docker-compose up --build --force-recreate
 ```
 \endgroup
 
-Show the processes inside each container
+- Show the processes inside each container
 \begingroup \tiny \color{blue}
 ```
 > docker compose top
@@ -710,7 +713,7 @@ root   49734   49614   1    10:40   ?     00:00:08   /usr/local/bin/python /code
 \endgroup
 
 * Docker Compose: Commands
-Build the containers for the services
+- Build the containers for the services
 \begingroup \footnotesize \color{blue}
 ```
 > docker compose down
@@ -721,13 +724,14 @@ Build the containers for the services
 ```
 \endgroup
 
-Shutdown service removing the volume (i.e., resetting state)
+- Shutdown service removing the volume (i.e., resetting state)
 \begingroup \footnotesize \color{blue}
 ```
 > docker-compose down -v
 ```
 \endgroup
-Shutdown service removing images and volume
+
+- Shutdown service removing images and volume
 \begingroup \footnotesize \color{blue}
 ```
 > docker-compose down -v --rmi all
@@ -736,21 +740,9 @@ Shutdown service removing images and volume
 
 * Docker Compose: Tutorial
 - Example taken from https://github.com/nigelpoulton/counter-app
-- tutorial_docker_compose
-- `> cd tutorials/tutorial_docker_compose`
-- `> vi tutorial_docker_compose.md`
-
-* Class Announcements
-- **1 Project teams**
-  - Posted UMD DATA605 - Class Project Teams - Spring 2023
-  - If your name is not on any of the teams, please send me an email
-  - No midterm or final exam, complete class project to get a grade
-- **2 Team composition**
-  - Teams based on your self-assessed skills
-  - In each group there should be someone with experience with Git, Docker, Python, and so on
-  - Teams are not perfect, but none of your team at your future jobs will be
-  - Working in a team is a skill that takes a long time to hone: let's start practicing it
-- **3 Class project complexity**
-  - Projects have about the same complexity
-  - If not, we will try to account for this when grading
-  - Projects were assigned randomly to the teams
+- [tutorial_docker_compose](
+  https://github.com/gpsaggese/umd_classes/tree/main/data605/tutorials/tutorial_docker_compose)
+  ```
+  > cd tutorials/tutorial_docker_compose
+  > vi tutorial_docker_compose.md
+  ```
