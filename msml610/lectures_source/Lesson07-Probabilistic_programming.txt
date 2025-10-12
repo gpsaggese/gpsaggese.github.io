@@ -2364,6 +2364,41 @@ digraph BayesTheorem {
 
 // TODO(gp): Use 
 
+## Bayesian Model Selection and Ensemble
+
+//## 5.6, Bayes factors
+
+* Bayesian Model Selection
+- **Bayesian way to compare $k$ models**
+  - Calculate the evidence of each model $\Pr(Y | M_k)$, i.e., the probability of
+    observed data $Y$ given each model $M_k$
+
+- Fitting a model and model selections are the same process in Bayesian approach
+  - The VC framework considers fitting models and selecting models in the same
+    way
+  - In the frequentist approach there are different procedures
+
+- **Model fitting**
+  - Consider Bayes theorem for parameters $\theta$ and data $Y$, given model
+    $M_k$
+    $$
+    \Pr(\theta | Y, M_k)
+    = \frac{\Pr(Y | \theta, M_k) \Pr(\theta | M_k)}{\Pr(Y | M_k)}
+    $$
+
+  - Find parameters $\theta$ that maximize the ratio, independently of evidence
+    probability
+    $$
+    \argmax_{\theta} \Pr(\theta | y, M_k)
+    = \argmax_{\theta} \Pr(y|\theta, M_k) \Pr(\theta | M_k)
+    $$
+
+- **Model selection**
+  - To choose the best model among $M_1, ..., M_k$, pick the one that maximizes
+    $$
+    \argmax_k \Pr(M_k | y) \propto \Pr(y | M_k) \Pr(M_k)
+    $$
+
 * Model Averaging
 - What do you do when you have multiple models explaining the data?
 
@@ -2379,31 +2414,7 @@ digraph BayesTheorem {
        WAIC, LOO) of the models
      - A hierarchical model is a continuous versions of multiple discrete models
 
-//## 5.6, Bayes factors
-
-* Bayesian Model Selection
-- **Bayesian way to compare $k$ models**
-  - Calculate the evidence of each model $\Pr(Y | M_k)$, i.e., the probability of
-    observed data $Y$ given each model $M_k$
-  - Typically ignore evidence during parameter inference
-
-- Consider Bayes theorem for parameters $\theta$ and data $Y$, given model $M_k$
-  $$
-  \Pr(\theta | Y, M_k)
-  = \frac{\Pr(Y | \theta, M_k) \Pr(\theta | M_k)}{\Pr(Y | M_k)}
-  $$
-
-- Find parameters $\theta$ that maximize the ratio, independently of evidence
-  probability
-  $$
-  \argmax_{\theta} \Pr(\theta | y, M_k)
-  = \argmax_{\theta} \Pr(y|\theta, M_k) \Pr(\theta | M_k)
-  $$
-
-- To choose the best model among $M_1, ..., M_k$, pick the one that maximizes
-  $$
-  \argmax_k \Pr(M_k | y) \propto \Pr(y | M_k) \Pr(M_k)
-  $$
+## Bayesian Hypothesis Testing
 
 * Bayes Factors
 - **Bayes factors** are ratio of two marginal likelihoods of the data under

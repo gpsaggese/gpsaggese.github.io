@@ -120,96 +120,265 @@ MSML610: Advanced Machine Learning
 * Correlation is Not Causation!
 - **Correlation** is a statistical method for understanding relationships
   between data
-  - **Pros**
+  - Pros
     - Use past outcomes to predict future outcomes by finding patterns and
-      anomalies in data
-  - **Cons**
-    - Doesn't explain the cause of the results
-    - Two variables may move together due to coincidence or a hidden factor
+      anomalies
+  - Cons
+    - Doesn't explain the cause
+    - Variables may move together due to coincidence or a hidden factor
 
-- **Causation** explains how / why changing one variable influences the other,
-  - This cannot be concluded from correlation alone
+- **Causation** explains how changing one variable influences the other
+  - Cannot be concluded from correlation alone
 
 - **Data does not understand causes and effects**
-  - Only humans can identify variables and relationships (cause-effect) based on
-    their understanding of context of data
+  - Only humans can identify variables and relationships based on context
   - Without causation, you can't make intelligent decisions
 
-- AI needs to **augment the power of humans** to understand the world
-
 * Causal AI
-- Causal AI solves the previous problems
-
 - **Understands the why**
   - Determines cause-and-effect between variables
-  - E.g., determining whether a marketing campaign increased sales
+  - E.g., whether a marketing campaign increased sales
 
 - **Identify interventions**
   - Identifies variables and interventions to change outcomes
-  - E.g., determining which lifestyle changes can reduce blood pressure
+  - E.g., which lifestyle changes reduce blood pressure
 
 - **Predicting counterfactuals**
-  - Hypothesizes what could happen under different circumstances
-  - E.g., estimating student grades if they attended a different school
+  - Hypothesizes outcomes under different circumstances
+  - E.g., student grades if they attended a different school
 
 - **Avoiding bias**
-  - Traditional AI is biased by training data and ignored variables
+  - Traditional AI biased by training data and ignored variables
   - Ensure fairness by accounting for confounding variables
 
 - **Improving decision-making**
-  - Provides a deeper understanding of relationships for better decisions
+  - Provides understanding of relationships for better decisions
   - E.g., improving supply chain by understanding logistic impact
 
+* Causal AI vs Traditional AI
+- _"The next revolution of data science is the science of interpreting reality,
+  not of summarizing data"_ (Judea Pearl)
+
+- Current AI uses correlation to:
+  - Analyze data
+  - Identify patterns
+  - Make predictions
+
+- Models depend on data quality
+  - Biased or unclean data $\implies$ poor model
+
+# The Ladder of Causation
+
+* The Ladder of Causation
+
+- Pearl provided a 3-layer framework for understanding causality
+
+\begingroup \scriptsize
+| **Level**          | **Symbol**         | **Activity** | **Typical Questions**    |
+| ------------------ | -------------------| -------------| ------------------------ |
+| 1. Association     | $\Pr(Y | X)$       | Seeing       | What is? |
+| 2. Intervention    | $\Pr(Y | do(X), Z)$| Intervening  | What if? |
+| 3. Counterfactuals | $\Pr(Y_X | x', y')$| Imagining    | Why?     |
+\endgroup
+
+* Rung 1: Association
+- **Question**: _"How would seeing $X$ change our belief in $Y$?"_
+
+- **Symbol**: $\Pr(Y|X)$
+  - Bayesian update
+
+- **Activity**
+  - It is just "passive observation"
+  - Determine if two things are related
+  - Traditional AI and ML is based on this
+
+- **Example**
+  - _"The tree has green leaves during spring"_
+  - _"What does a symptom tell you about a disease?"_
+  - _"What does a survey tell you about the election results?"_
+
+* Rung 2: Intervention
+- **Question**: _"What happens to $Y$ if you do $X$?"_
+
+- **Symbol**: $\Pr(Y | do(X), Z)$
+
+- **Activity**
+  - Understand the impact of an action
+  - E.g., "tree has green leaves" vs "spring makes tree leaves turn green"
+  - Association is just about observational
+  - Interventions involve "doing something" and need a causal model
+
+- **Example**
+  - _"Why did the headache go away?"_
+    - "Because the pain reliever" or "Because you ate food after skipping lunch"
+  - _"If you take aspirin, will your headache be cured?"_
+  - _"What if you ban sodas?"_
+
+* Level 3: Counterfactuals
+- **Question**: _"Was $X$ that caused $Y$?"_
+
+- **Symbol**: $\Pr(Y_X | x', y')$
+
+- **Activity**:
+  - "Imaging what will happen if facts were different"
+  - Predicting an outcome is the highest form of reasoning
+    - It requires to understand relationships between cause and effect
+
+- **Example**
+  - Scientific experiments: _"What if we give a child an adult dose of a drug?"_
+  - Litigation: _"What would the jury conclude?"_
+  - Marketing: _"Why did my marketing campaign fail to generate sales?"_
+
+// # Chap 3: Elements of Causal AI (Causal_AI_in_business.Hurwitz.2023.txt)
+
 ## #############################################################################
-## Concepts in Causal AI
+## Correlation vs Causation Models
 ## #############################################################################
 
+* Correlation vs Causation Model
+- **Correlation** = identify how variables are related to each other
+- **Causality** = determine whether one variable causes another variable
+
+- Both:
+  - Accept inputs and transform them
+  - Identify how variables are related to each other
+
+- Correlation-based AI is best when there is abundant historical and
+  observational data
+- Causal-based AI first creates a business-focused model before integrating data
+
+* Correlation-Based Model Process
+- **Correlation-based AI** is "data first"
+  - The more data collected the better
+
+- **Modeling process**
+  - Data Acquisition
+  - Data integration, cleaning
+  - Exploratory data analysis (EDA)
+  - Feature engineering
+  - Model testing
+  - Production use
+
+- Many AI projects fail because
+  - Cultural and organizational issues
+  - Models are opaque and lack explainability
+  - Spurious correlations
+  - Missing articulating "what and why are you doing ML?"
+
+* Causation-based Model Process
+- **Causal AI** is "model first"
+  - Understand business question before ingest and transform the data
+
+- **Modeling process**
+  - What is the intended outcome?
+  - What is the proposed intervention?
+  - What are the confounding factors?
+  - What are the effecting factors?
+  - Create a model graph or diagram
+  - Data acquisition
+  - ...
+
+# Causal Networks
+
+// ## 13.5 Causal networks (p. 462)
+
+* (Non-Causal) Bayesian Networks
+- **Bayesian networks** represent a joint distribution function
+  - Many possible **edges** and **node ordering**
+  - The direction of the arrow represent the **conditional dependence**
+    - $A \to B$ requires to estimate $\Pr(A | B)$
+
+::: columns
+:::: {.column width=60%}
+
+- E.g., a Bayesian network with $Fire$ and $Smoke$, which are dependent
+  - Specify as $Fire \to Smoke$
+    - Need $\Pr(Fire)$ and $\Pr(Smoke | Fire)$ to compute $\Pr(Fire, Smoke)$
+  - Represent as $Smoke \to Fire$
+    - Need $\Pr(Smoke)$ and $\Pr(Fire | Smoke)$
+  - Networks are equivalent and convey the same information
+
+::::
+:::: {.column width=35%}
+
+```graphviz
+digraph BayesianNetwork1 {
+    rankdir=LR;
+    Fire [label="P(Fire)"];
+    Smoke [label="P(Smoke)"];
+    Fire -> Smoke [label="P(Smoke | Fire)"];
+}
+```
+
+```graphviz
+digraph BayesianNetwork1 {
+    rankdir=LR;
+    Fire [label="P(Fire)"];
+    Smoke [label="P(Smoke)"];
+    Smoke -> Fire [label="P(Fire | Smoke)"];
+}
+```
+
+::::
+:::
+
+- There is an **asymmetry in nature**
+  - Extinguishing fire stops smoke
+  - Clearing smoke doesn't affect fire
+
+* Causal (Bayesian) Networks
+- **Causal networks** are Bayesian networks forbidding non-causal edges (node
+  ordering)
+
+- Use judgment based on nature instead of just statistics
+  - E.g., "Are random variables $Smoke$ and $Fire$ correlated?"
+  - E.g., "What causes what, $Smoke$ or $Fire$?"
+
+- "Dependency in nature" is like assignment in programming
+  - Nature assigns $Smoke$ based on $Fire$:
+    - ![](emoji/check_mark.png){ width=12px } $Smoke = f(Fire)$
+    - ![](emoji/wrong.png){ width=12px } $Fire = f(Smoke)$
+  - **Structural equations** describe "assignment mechanism"
+    $$
+    x_i = f(x_j) \iff X_j \to X_i
+    $$
+
 * Causal DAG
-- A **Causal DAG** is a directed acyclic graph that represents causal
-  relationships between variables
+- **Causal DAG**
   - Directed: Arrows show direction of cause $\rightarrow$ effect
   - Acyclic: No feedback loops
     - Causal relationships assume a temporal order: cause happens before effect
     - A cycle would imply a variable is both a cause and effect of itself
       (paradox)
 
-- **Structure**:
-  - Nodes represent variables (e.g., income, education)
-  - Edges represent causal influences (e.g., education $\to$ income)
-  - E.g., education causally affects income through job skill
-    $$
-    Education \to JobSkill \to Income
-    $$
-
 - **Benefits**
   - DAGs encode _causal_ rather than _associative_ links
   - Enables reasoning about interventions and counterfactuals
-  - Supports fair, explainable AI models
+  - Supports explainable AI models
 
 - **Limitations**:
   - Requires domain knowledge to specify structure
   - Assumes all relevant variables are included (no hidden confounders)
 
 * Structural Causal Model
-- A **Structural Causal Model** (SCM) translates a graphical model / DAG into
-  mathematical equations
+- A **Structural Causal Model** (SCM) translates a causal DAG into mathematical
+  equations
   - DAGs show structure (variables and arrows)
-  - SCMs add equations that define how variables interact
+  - SCMs use equations to define how variables interact
 
 - **Structure of SCMs**
+  - Equations model each variable as a function of its direct causes
   - Variables: $X_1, X_2, ..., X_n$ represent quantities in the system
-  - Structural equations
-    $$
-    X_i = f_i(PA_i, U_i)
-    $$
+  - Formally, $X_i$ is modeled as:
+    - $X_i = f_i(\text{Parents}(X_i), \epsilon_i)$
     where:
-    - $f_i$: function describing how $X_i$ is determined
-    - $PA_i$: parent variables (direct causes)
-    - $U_i$: exogenous (external, unobserved) variables
+    - $\text{Parents}(X_i)$ are direct causes of $X_i$
+    - $\epsilon_i$ is an exogenous (external, unobserved) noise term
 
 - SCMs can:
   - Explain causal relationships between variables
-  - Make predictions on how relationships change if conditions changed
+  - Provide a foundation for causal reasoning and simulation
+  - Describe how the world works, not just variable correlations
 
 * Structural Causal Model: Example
 - SCM expresses the relationship between the state of the world and how the
@@ -251,11 +420,70 @@ digraph SCMExample {
 ::::
 :::
 
+* Structural Equation: Sprinkler Example
+::: columns
+:::: {.column width=70%}
+- Consider the Sprinkler example
+
+- Express joint distribution of five variables as a product of conditional
+  distributions using causal DAG topology:
+  $$
+  \begingroup \small
+  \Pr(c, r, s, w, g) = \Pr(c) \Pr(r|c) \Pr(s|c) \Pr(w|r,s) \Pr(g|w)
+  \endgroup
+  $$
+
+- Structural equations for this model:
+  \begin{align*}
+    & C = f_C(U_C) \\
+    & R = f_R(C, U_R) \\
+    & S = f_S(C, U_S) \\
+    & W = f_W(R, S, U_W) \\
+    & G = f_G(W, U_G) \\
+  \end{align*}
+
+- Unmodeled variables U-variables represent error terms
+  - E.g., $U_W$ is another source of wetness besides $Sprinkler$ and $Rain$
+    (e.g., $MorningDew$)
+  - Assume U-variables are exogenous, independent, with a certain distribution
+    (prior)
+::::
+:::: {.column width=25%}
+
+```graphviz
+digraph BayesianFlow {
+    rankdir=TD;
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    // Node styles
+    Cloudy        [label="Cloudy",        fillcolor="#b3cde3"];
+    Sprinkler     [label="Sprinkler",     fillcolor="#ccebc5"];
+    Rain          [label="Rain",          fillcolor="#ccebc5"];
+    WetGrass      [label="Wet Grass",     fillcolor="#decbe4"];
+    GreenerGrass  [label="Greener Grass", fillcolor="#fed9a6"];
+
+    // Force ranks
+    { rank=same; Sprinkler; Rain; }
+
+    // Edges
+    Cloudy -> Sprinkler;
+    Cloudy -> Rain;
+    Sprinkler -> WetGrass;
+    Rain -> WetGrass;
+    WetGrass -> GreenerGrass;
+}
+```
+::::
+:::
+
 ## #############################################################################
 ## Variables
 ## #############################################################################
 
-* Observed vs Unobserved Variables
+* Observed Vs. Unobserved Variables
 - **Observed variables**
   - Aka "measurable" or "visible" variables
   - Variables directly measured or collected in a dataset
@@ -298,11 +526,9 @@ digraph SCMExample {
 
 * Endogenous / Exogenous vs Observed / Unobserved Variables
 - In Structural Causal Models (SCMs)
-
   $$
   X_i = f_i(PA_i, U_i)
   $$
-
   where:
   - $X_i$ is endogenous
   - $PA_i$: its parent variables (causes within the model)
@@ -321,28 +547,333 @@ digraph SCMExample {
 | Exogenous                | Unobserved          | Macroeconomic shocks    |
 \endgroup
 
-* Counterfactuals
+## Intervention
 
-- A **counterfactual** describes what would have happened under a different
-  scenario
-  - _"What would the outcome have been _if_ X had been different?"_
-  - _"If kangaroos had no tails, they would topple over"_
-  - _"What if we had two suppliers of our product, rather than one? Would we
-    have more sales?"_
-  - _"Would customers be more satisfied if we could ship products in one week,
-    rather than three weeks?"_
+* Intervention in structural equations and joint probability
+- Structural equations:
+  - Model the system
+  - Predict intervention effects not easily represented by joint distribution
 
-- **Causal reasoning**:
-  - Goes beyond correlation and association
-  - Requires a causal model (like an SCM) to simulate alternate realities
-  - E.g.,
-    - Actual: A student received tutoring and scored 85%
-    - Counterfactual: What if the student didn't receive tutoring?
-    - Causal model estimates the alternative outcome (e.g., 70%)
+- Intervention $do(X_j = x_j)$ changes
+  $$X_j = f_j(Parents(X_j), U_J)$$
+  to
+  $$X_j = x_j$$
+  - "Mutilate" causal network by removing edge
+  - Derive joint distribution from causal network
 
-- **Challenges**:
-  - Requires strong assumptions and accurate models
-  - Difficult to validate directly since counterfactuals are unobservable
+- Multiple interventions:
+  - Superposition of individual interventions
+
+* Adjustment Formula in Causal Networks
+
+- Estimate the effect of an intervention $do(X_j = x_{jk})$ on another variable
+  $X_i$ in a causal network
+
+- **The Basic Adjustment Formula**
+  - Derived from the modified joint distribution after intervention:
+    $$
+    \Pr(X_i = x_i | do(X_j = x_{jk})) = \sum_{\text{parents}(X_j)} \Pr(x_i | x_{jk}, \text{parents}(X_j)) \Pr(\text{parents}(X_j))
+    $$
+  - Omits the causal mechanism for $X_j$ and treats it as fixed
+
+- **Interpretation**
+  - Weighted average of the effect of $X_j$ and its parents on $X_i$
+  - Weights are given by the prior probabilities of the parent values
+
+- **Causal Inference via Graph Surgery**
+  - "Mutilate" the network by cutting incoming edges to $X_j$
+  - Replace $X_j$'s structural equation with $X_j = x_{jk}$
+
+- **E.g., (Sprinkler Network)**
+  - To evaluate $\Pr(GreenerGrass | do(Sprinkler = true))$:
+    $$
+    \Pr(g | do(S = \text{true})) = \sum_r \Pr(g | S = \text{true}, r) \Pr(r)
+    $$
+
+- **Back-door Criterion for Valid Adjustment Sets**
+  - A set $Z$ satisfies the back-door criterion if it blocks all back-door paths
+    from $X_j$ to $X_i$
+  - Formally: $X_i$ is conditionally independent of the parents of $X_j$ given
+    $X_j$ and $Z$
+
+- **Why This Matters**
+  - Enables causal reasoning from observational data
+  - Avoids the need for randomized controlled trials in some cases
+
+- **Applications**
+  - Estimating treatment effects, policy interventions, and understanding system
+    behavior under manipulation
+
+* Intervention: Sprinkler Example
+::: columns
+:::: {.column width=70%}
+- We "intervene" and turn the sprinkler on, i.e., in do-calculus $do(Sprinkler = T)$
+  - Now the sprinkler variable $s$ is not dependent on whether it's a cloudy day
+    $c$
+  - The causal network is "mutilated"
+
+- The structural equations after the intervention become:
+  \begingroup \small
+  \begin{align*}
+  & C = f_C(U_C) \\
+  & R = f_R(C, U_R) \\
+  & S = True \\
+  & W = f_W(R, S, U_W) \\
+  & G = f_G(W, U_G) \\
+  \end{align*}
+  \endgroup
+
+::::
+:::: {.column width=25%}
+
+```graphviz
+digraph GrassBayes {
+    rankdir=TB;
+    nodesep=1.0;
+    ranksep=0.75;
+    splines=true;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    // Nodes with custom colors
+    Cloudy        [label="Cloudy",        fillcolor="#c6dbef"];
+    Rain          [label="Rain",          fillcolor="#c6dbef"];
+    Sprinkler     [label="Sprinkler\n= True", fillcolor="#e5d5e7"];
+    WetGrass      [label="WetGrass",      fillcolor="#c6dbef"];
+    GreenerGrass  [label="GreenerGrass",  fillcolor="#c6dbef"];
+
+    // Edges
+    Cloudy -> Rain;
+    Sprinkler -> WetGrass;
+    Rain -> WetGrass;
+    WetGrass -> GreenerGrass;
+}
+```
+
+::::
+:::
+- Then the $\Pr(s|c) = 1$ and $\Pr(w|r,s) = \Pr(w|r,s=T)$ and the joint
+  probability becomes:
+  $$
+  \Pr(c, r, w, g | do(S=True)) = \Pr(c) \Pr(r|c) \Pr(w|r,s=True) \Pr(g|w)
+  $$
+- The variables that are affected are only the descendants of the manipulated
+  variable $Sprinkler$
+
+* Intervention vs Observation
+- **Intervention** "breaks" normal causal link between $Weather$ and $Sprinkler$
+  - Causal graph shows no influence of $Sprinkler$ on $Weather$
+
+- Difference between $do(Sprinkler=T)$ (intervention) and $Sprinkler=T$
+  (observation)
+  - Observing sprinkler on:
+    - Less likely weather is cloudy
+  - Turning on sprinkler:
+    - Weather unaffected, probability of cloudy unchanged
+
+* Back Door
+- A causal network can predict the effect of an intervention using the
+  adjustment formula
+- The problem is that it requires accurate knowledge of the conditional
+  distributions of the model
+
+- E.g., in the Sprinkler example, why does someone turn on the sprinkler? Maybe
+  they check the weather, but how do they make their decision?
+
+- Besides the direct route, we needs to take in account the "back door" route
+
+* Problem
+- In experimental settings, randomization ensures that $X$ is not confounded so
+  that we can directly estimate its causal effect on $Y$
+
+- Problem:
+  - In observational data, we don't have randomization and confounding variables
+    can create spurious correlations between $X$ and $Y$
+  - Consider the causal graph
+    ```mermaid
+    flowchart LR
+      U["Confounder (U)"] --> X["Cause (X)"]
+      U["Confounder (U)"] --> Y["Effect (Y)"]
+      X["Cause (X)"] --> Y["Effect (Y)"]
+    ```
+    where $U$ is a common cause (confounder) of both $X$ and $Y$
+
+- Solution:
+  - Controlling for a set of $Z$ that satisfies the backdoor criterion, we can
+    estimate the causal effect of variable $X$ on $Y$
+  - This allows to "simulate" a randomized experiment
+
+* TBD
+- We want to estimate the effect of $Sprinkler$ on $GreenerGrass$
+  - We intervene and set $Sprinkler=True$
+
+- Besides the direct route, we needs to take in account the "back door" route
+  $Cloudy \to Rain$
+
+```mermaid
+flowchart TD
+    S("Sprinkler=True"):::highlight --> WetGrass
+    Cloudy --> Rain --> WetGrass
+    WetGrass --> GreenerGrass
+
+    %% Define a global rounded style
+    classDef rounded fill:#f9f9f9,stroke:#15aebf,stroke-width:2px,rx:10,ry:10;
+
+    %% Apply the style to all nodes by default
+    class Cloudy,Rain,WetGrass,GreenerGrass rounded;
+
+    classDef highlight fill:#F8F2DC,stroke:#333,stroke-width:2px;
+
+    %% Highlight the backdoor path in red
+    linkStyle 1 stroke:red,stroke-width:2px;
+    linkStyle 2 stroke:red,stroke-width:2px;
+    linkStyle 3 stroke:red,stroke-width:2px;
+```
+
+- If we knew the value of $Rain$, this back door path would be blocked and we
+  could condition on $Rain$ instead of $Cloudy$
+
+- In formal way we need to find a set of $Z$ variables such that $X_i$ is
+  conditionally independent of $Parents(X_j)$ given $X_j$ and $Z$
+  - TODO: ?
+
+* Backdoor Path
+- $Z$ blocks all backdoor paths from X to Y
+
+- A backdoor path is any path from X to Y that starts with an arrow pointing
+  into X. These paths create confounding relationships that can bias the
+  estimate of X's effect on Y
+
+* Backdoor Criteria: Condition
+- Variables $Z$ satisfy the backdoor criterion for $X$ and $Y$ in a causal
+  network if:
+  1. No element of $Z$ is a descendant of $X$
+     - $Z$ do not capture the effect of $X$ on $Y$ through any causal pathway
+  2. $Z$ "blocks" every path from $X$ to $Y$
+
+- The idea is to estimate the causal effect of $X$ on $Y$ without confounding
+  relationships, by controlling variables $Z$ satisfying the backdoor criterion
+- Then we can use non-experimental (i.e., observational data), assigning $X$
+  randomly
+
+```mermaid
+flowchart TD
+  X["Cause (X)"] --> Y["Effect (Y)"]
+  U["Confounder (U)"] --> X["Cause (X)"]
+  U["Confounder (U)"] --> Y["Effect (Y)"]
+  Z["Backdoor Blocker (Z)"] --- U
+```
+
+## Type of Variables in Causal AI
+
+* Mediator Variable
+::: columns
+:::: {.column width=50%}
+- A **mediator variable** $M$ lies on the causal path between a treatment $X$ and an
+  outcome $Y$
+::::
+:::: {.column width=45%}
+  ```graphviz
+  digraph CausalFlow {
+    rankdir=LR;
+    node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    X [fillcolor=white, color=black];
+    M [fillcolor="#FFCCCC", color=red, fontcolor=black];
+    Y [fillcolor=white, color=black];
+
+    X -> M;
+    M -> Y;
+  }
+  ```
+::::
+:::
+
+* Mediator Variable: Example
+
+- Does a Training Program increase Employee Productivity?
+
+- Training Program may not directly increase productivity
+  - It might increase job satisfaction (mediator), leading to greater productivity
+
+```graphviz
+digraph CausalFlow {
+  rankdir=LR;
+  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+  X [label="Training program", fillcolor=white, color=black];
+  M [label="Job satisfaction", fillcolor="#FFCCCC", color=red, fontcolor=black];
+  Y [label="Employee productivity", fillcolor=white, color=black];
+
+  X -> M;
+  M -> Y;
+}
+```
+
+* Moderator variable
+::: columns
+:::: {.column width=50%}
+- **Moderator variable** affects the strength or direction between two other
+  variables
+::::
+:::: {.column width=45%}
+```graphviz
+digraph ModeratorModel {
+  // General settings
+  rankdir=TB;
+  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+  // Nodes
+  X [label="Independent\nVariable", pos="0,1!"];
+  Y [label="Dependent\nVariable", pos="2,1!"];
+  M [label="Moderator\nVariable", pos="1,0!", fillcolor="#FFCCCC", style="filled,rounded,bold", color=red];
+  XY [label="", shape=point, width=0.01, style=invis, pos="1,1!"];
+
+  // Edges
+  X -> XY [arrowhead=none];
+  XY -> Y;
+  M -> XY;
+
+  // Use neato for fixed positioning
+  layout=neato;
+}
+```
+::::
+:::
+
+::: columns
+:::: {.column width=50%}
+- **E.g.,**
+  - Study the relationship between stress $X$ and job performance $Y$
+  - The level of social support an individual receives $M$ could be a moderator
+    - If social support is high, the negative effect of stress on job
+      performance might be weaker
+    - If social support is low, the negative effect might be stronger
+::::
+:::: {.column width=45%}
+```graphviz
+digraph ModeratorModel {
+  // General settings
+  rankdir=TB;
+  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+  // Nodes
+  X [label="Stress", pos="0,1!"];
+  Y [label="Job\nPerformance", pos="2,1!"];
+  M [label="Social Support", pos="1,0!", fillcolor="#FFCCCC", style="filled,rounded,bold", color=red];
+  XY [label="", shape=circle, width=0.01, style=invis, pos="1,1!"];
+
+  // Edges
+  X -> XY [arrowhead=none];
+  XY -> Y;
+  M -> XY;
+
+  // Use neato for fixed positioning
+  layout=neato;
+}
+```
+::::
+:::
+
 
 * Confounder Variable
 ::: columns
@@ -377,7 +908,7 @@ digraph CausalTriangle {
 ::::
 :::
 
-- Example
+* Confounder Variable: Example
 
 ::: columns
 :::: {.column width=25%}
@@ -546,115 +1077,9 @@ digraph ColliderDiagram {
 
 // TODO: Add an example in the tutorial
 
-* Mediator Variable
-::: columns
-:::: {.column width=50%}
-- A **mediator variable** $M$ lies on the causal path between a treatment $X$ and an
-  outcome $Y$
-::::
-:::: {.column width=45%}
-  ```graphviz
-  digraph CausalFlow {
-    rankdir=LR;
-    node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
-
-    X [fillcolor=white, color=black];
-    M [fillcolor="#FFCCCC", color=red, fontcolor=black];
-    Y [fillcolor=white, color=black];
-
-    X -> M;
-    M -> Y;
-  }
-  ```
-::::
-:::
-
-- E.g.,
-  - Study the effect of a training program (X) on employee productivity (Y)
-  - Job satisfaction (M) could be a mediator variable
-
-```graphviz
-digraph CausalFlow {
-  rankdir=LR;
-  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
-
-  X [label="Training program", fillcolor=white, color=black];
-  M [label="Job satisfaction", fillcolor="#FFCCCC", color=red, fontcolor=black];
-  Y [label="Employee productivity", fillcolor=white, color=black];
-
-  X -> M;
-  M -> Y;
-}
-```
-
-* Moderator variable
-::: columns
-:::: {.column width=50%}
-- **Moderator variable** affects the strength or direction between two other
-  variables
-::::
-:::: {.column width=45%}
-```graphviz
-digraph ModeratorModel {
-  // General settings
-  rankdir=TB;
-  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
-
-  // Nodes
-  X [label="Independent\nVariable", pos="0,1!"];
-  Y [label="Dependent\nVariable", pos="2,1!"];
-  M [label="Moderator\nVariable", pos="1,0!", fillcolor="#FFCCCC", style="filled,rounded,bold", color=red];
-  XY [label="", shape=point, width=0.01, style=invis, pos="1,1!"];
-
-  // Edges
-  X -> XY [arrowhead=none];
-  XY -> Y;
-  M -> XY;
-
-  // Use neato for fixed positioning
-  layout=neato;
-}
-```
-::::
-:::
-
-::: columns
-:::: {.column width=50%}
-- **E.g.,**
-  - Study the relationship between stress $X$ and job performance $Y$
-  - The level of social support an individual receives $M$ could be a moderator
-    - If social support is high, the negative effect of stress on job
-      performance might be weaker
-    - If social support is low, the negative effect might be stronger
-::::
-:::: {.column width=45%}
-```graphviz
-digraph ModeratorModel {
-  // General settings
-  rankdir=TB;
-  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
-
-  // Nodes
-  X [label="Stress", pos="0,1!"];
-  Y [label="Job\nPerformance", pos="2,1!"];
-  M [label="Social Support", pos="1,0!", fillcolor="#FFCCCC", style="filled,rounded,bold", color=red];
-  XY [label="", shape=circle, width=0.01, style=invis, pos="1,1!"];
-
-  // Edges
-  X -> XY [arrowhead=none];
-  XY -> Y;
-  M -> XY;
-
-  // Use neato for fixed positioning
-  layout=neato;
-}
-```
-::::
-:::
-
 ## Paths
 
-* Fork Structure in Causal Diagrams
+* Fork Structure
 ::: columns
 :::: {.column width=70%}
 - A **fork** occurs when a single variable causally influences two or more
@@ -712,7 +1137,7 @@ digraph CausalDAG {
 ::::
 :::
 
-* Inverted Fork in Causal Diagrams
+* Inverted Fork
 
 ::: columns
 :::: {.column width=70%}
@@ -919,194 +1344,6 @@ digraph CausalDAG {
 ::::
 :::
 
-// Chap 2: Understanding the value of Causal AI
-
-## The Ladder of Causation
-
-* Causal AI vs Traditional AI
-- _"The next revolution of data science is the science of interpreting reality,
-  not of summarizing data"_ (Judea Pearl)
-- The current approach of AI uses statistics and ML to analyze data, identifying
-  patterns and anomalies to make predictions
-  - Models depend on the quality of the data
-  - Biased or unclean data $\implies$ poor model
-
-* The Ladder of Causation
-
-- Pearl provided a 3-layer framework for understanding causality
-
-\begingroup \scriptsize
-
-| **Level**          | **Symbol** | **Typical Activity** | **Typical Questions**    |
-| ------------------ | ---------- | -------------------- | ------------------------ | -------- |
-| 1. Association     | $\Pr(Y     | X)$                  | Seeing                   | What is? |
-| 2. Intervention    | $\Pr(Y     | do(X), Z)$           | Doing, Intervening       | What if? |
-| 3. Counterfactuals | $\Pr(Y_X   | x', y')$             | Imagining, Retrospection | Why?     |
-
-\endgroup
-
-// TODO: Add a pic of ladder of causation
-
-* Rung 1: Association
-- $\Pr(Y|X)$: how would seeing $X$ change our belief in $Y$?
-
-- It is just "passive observation" to determine if two things are related
-  - Traditional AI and ML is based on this
-
-- E.g.,
-  - "The tree has green leaves during spring"
-  - "What does a symptom tell me about a disease?"
-  - "What does a survey tell us about the election results?"
-
-* Rung 2: Intervention
-- $\Pr(Y | do(X), Z)$: what happens to $Y$ if we do $X$?
-
-- Not just passively observing but understanding the impact of change
-  - Association is purely observational and is not model based
-  - E.g., "tree has green leaves" vs "spring makes the tree leaves turn green"
-  - Interventions are about "doing something" and require a causal model
-
-- E.g.,
-  - "Why did the headache go away?"
-    - "Because the pain reliever" or "Because you ate food after skipping lunch"
-  - "What if I take aspirin, will my headache be cured?"
-  - "What if we ban sodas?"
-
-* Level 3: Counterfactuals
-- $\Pr(Y_X | x', y')$: was $X$ that caused $Y$?
-
-- Determine what would occur if a new condition were applied to a situation
-  - "Imaging what will happen if facts were different"
-  - Counterfactuals establish causal relationships
-  - Predicting an outcome is the highest form of reasoning, since it requires to
-    understand relationships between cause and effect
-
-- E.g.,
-  - "What if I had acted differently?"
-  - "What if I had not been drinking sodas for 2 years?"
-  - Scientific experiments: "What if we give a child an adult dose of a drug?"
-  - Litigation: "What would the jury conclude?"
-  - Marketing: "Why did my marketing campaign fail to generate sales?"
-
-// # Chap 3: Elements of Causal AI (Causal_AI_in_business.Hurwitz.2023.txt)
-
-## #############################################################################
-## Correlation vs Causation Models
-## #############################################################################
-
-* Correlation vs Causation Model
-- Correlation = identify how variables are related to each other
-- Causality = determine whether one variable causes another variable
-
-- Both:
-  - Accept inputs and transform them
-  - Identify how variables are related to each other
-
-- Correlation-based AI is best when there is abundant historical and
-  observational data
-- Causal-based AI first creates a business-focused model before integrating data
-
-* Correlation-Based Model Process
-- Correlation-based AI is "data first"
-
-- The more data collected the better
-
-- Many AI projects fail because
-  - Cultural and organizational issues
-  - Models are opaque
-  - Lack explainability
-  - Spurious correlations
-
-```graphviz
-digraph ML_Pipeline {
-  rankdir=LR;
-  node [shape=box, style=rounded, fontname="Helvetica", fontsize=12];
-
-  DataAcq      [label="Data\nAcquisition"];
-  DataInteg    [label="Data\nIntegration"];
-  EDA          [label="Exploratory\nData Analysis"];
-  FeatureEng   [label="Feature\nEngineering"];
-  ModelTest    [label="Model\nTesting"];
-  ProdUse      [label="Production\nUse"];
-
-  DataAcq   -> DataInteg;
-  DataInteg -> EDA;
-  EDA       -> FeatureEng;
-  FeatureEng-> ModelTest;
-  ModelTest -> ProdUse;
-}
-```
-
-* Correlation-based model process
-// TODO: Make it horizontal
-::: columns
-:::: {.column width=60%}
-
-- Correlation-based AI is "data first"
-
-- The more data collected the better
-
-- Many AI projects fail because
-  - Cultural and organizational issues
-  - Models are opaque
-  - Lack explainability
-  - Spurious correlations
-
-::::
-:::: {.column width=35%}
-
-```graphviz
-digraph ML_Pipeline {
-  rankdir=TD;
-  node [shape=box, style=rounded, fontname="Helvetica", fontsize=12];
-
-  DataAcq      [label="Data Acquisition"];
-  DataInteg    [label="Data Integration"];
-  EDA          [label="Exploratory Data Analysis"];
-  FeatureEng   [label="Feature Engineering"];
-  ModelTest    [label="Model Testing"];
-  ProdUse      [label="Production Use"];
-
-  DataAcq   -> DataInteg;
-  DataInteg -> EDA;
-  EDA       -> FeatureEng;
-  FeatureEng-> ModelTest;
-  ModelTest -> ProdUse;
-}
-```
-::::
-:::
-
-* Causation-based model process
-::: columns
-:::: {.column width=50%}
-- Causal-based AI is "model first"
-- Understand business question before ingest and transform the data
-::::
-:::: {.column}
-
-```graphviz
-digraph CausalReasoningFlow {
-  rankdir=TD;
-  node [shape=box, style=rounded, fontname="Helvetica", fontsize=12];
-
-  Outcome      [label="What is the intended outcome?"];
-  Intervention [label="What is the proposed intervention?"];
-  Confounders  [label="What are the confounding factors?"];
-  Effecting    [label="What are the effecting factors?"];
-  GraphModel   [label="Create a model graph or diagram."];
-  DataAcq      [label="Data acquisition"];
-
-  // Edges in sequence
-  Outcome -> Intervention;
-  Intervention -> Confounders;
-  Confounders -> Effecting;
-  Effecting -> GraphModel;
-  GraphModel -> DataAcq;
-}
-```
-::::
-:::
 
 * Building a DAG
 - **Causal models** visually represent complex environments and relationships
@@ -1165,6 +1402,30 @@ digraph CausalReasoningFlow {
     Exercise -> Heart_Disease [label="-0.6"];
   }
   ```
+
+* Counterfactuals
+
+- A **counterfactual** describes what would have happened under a different
+  scenario
+  - _"What would the outcome have been _if_ X had been different?"_
+  - _"If kangaroos had no tails, they would topple over"_
+  - _"What if we had two suppliers of our product, rather than one? Would we
+    have more sales?"_
+  - _"Would customers be more satisfied if we could ship products in one week,
+    rather than three weeks?"_
+
+- **Causal reasoning**:
+  - Goes beyond correlation and association
+  - Requires a causal model (like an SCM) to simulate alternate realities
+  - E.g.,
+    - Actual: A student received tutoring and scored 85%
+    - Counterfactual: What if the student didn't receive tutoring?
+    - Causal model estimates the alternative outcome (e.g., 70%)
+
+- **Challenges**:
+  - Requires strong assumptions and accurate models
+  - Difficult to validate directly since counterfactuals are unobservable
+
 
 # ##############################################################################
 # Business Processes Around Data Modeling
@@ -1561,198 +1822,198 @@ digraph CausalFlowGrid {
   - Hybrid teams (technical + domain experts) enhance context awareness and
     reduce blind spots
 
-// # Chap 7: Tools, practices, and techniques (p. 168)
-
-* The Iterative Causal AI Pipeline
-
-- Similar to the DevOps infinity loop, the causal AI pipeline has 8 stages,
-  which are circular and iterative
-
-// TODO: Add picture
-
-1. Define business objectives
-   - Identify goals and key performance indicators (KPI)
-2. Model development
-   - Establish causal relationships among variables
-   - Develop causal AI model using graphical models, potential outcomes,
-     do-calculus
-3. Data identification and collection
-   - Gather data with causal relationships and potential confounders
-4. Model validation
-   - Test and validate model to ensure it provides accurate causal insights,
-     e.g.,
-     - Measure performance against KPIs
-     - Assess model generalizability
-5. Deployment / production
-   - Integrate validated AI model into existing systems for decision-making
-6. Monitor and evaluate
-   - Track performance of deployed model
-   - Assess impact on decision-making process
-7. Update and iterate
-   - Refine model based on real-time performance evaluation
-8. Continuous learning
-   - Create culture of learning and improvement
-   - Share knowledge and best practices for causal AI
-   - Stay updated on latest advancements in causal AI
-
-* Define Business Objectives
-- Use one of the systems
-  - SMART goals
-  - MoSCoW method
-  - Kano model
-
-- Goals
-  - Establish a shared understanding of the project's goals among stakeholders,
-    business leaders, data scientists, and exports
-  - Enhances clarity, focus, and motivation
-  - Improves performance tracking and outcome evaluation
-  - Facilitates effective communication and collaboration
-
-* SMART Goals
-- SMART is an acronym for Specific, Measurable, Achievable, Relevant, Time-bound
-- **Specific**
-  - Clearly defines what is to be achieved
-  - E.g., "Increase website traffic by 15%"
-- **Measurable**
-  - Includes criteria to track progress and success
-  - E.g., "Track visits using Google Analytics"
-- **Achievable**
-  - Realistic based on resources and constraints
-  - E.g., "Based on historical growth rates, 15% is attainable"
-- **Relevant**
-  - Aligns with broader organizational or personal objectives
-  - E.g., "Traffic increase supports lead generation goals"
-- **Time-bound**
-  - Specifies a deadline or timeframe
-  - E.g., "Achieve by end of Q3"
-
-* Moscow Method
-- Framework for prioritization of features to:
-  - Focus on critical features
-  - Ensure stakeholders are aligned on priorities
-  - Support agile and iterative development by delivering value in phases
-
-\begingroup \scriptsize
-
-| Priority    | Description                                   | Example                                         |
-| ----------- | --------------------------------------------- | ----------------------------------------------- |
-| Must-have   | Essential requirements                        | A login system for a banking app                |
-| Should-have | Important but not critical features           | Multi-factor authentication to enhance security |
-| Could-have  | Enhance user experience but are not essential | Dark mode for a mobile app                      |
-| Won't-have  | Excluded features due to low priority         | AI-powered chat assistant                       |
-
-\endgroup
-
-* Kano Model
-- Framework for product development and customer satisfaction analysis to
-  prioritize features
-
-\begingroup \scriptsize
-
-| Category         | Description                                              | Examples                           |
-| ---------------- | -------------------------------------------------------- | ---------------------------------- |
-| Must-have        | Expected features; absence causes dissatisfaction        | Keyboard and screen on a laptop    |
-|                  |                                                          | Calling and texting on a cellphone |
-| Performance      | The better, the more satisfied customers are             | Faster battery charging            |
-|                  |                                                          | Longer battery life                |
-| Delighters       | Unexpected features that wow customers and build loyalty | Free cloud storage with a laptop   |
-|                  |                                                          | Novel camera                       |
-| Indifferent      | Features that do not affect customer satisfaction        | 5 power adapter options for laptop |
-|                  |                                                          | Color of phone internals           |
-| Reverse features | Features liked by some but disliked by others            | Touchscreen instead of touchpad    |
-|                  |                                                          | Excessive automation               |
-
-\endgroup
-
-* Decision Matrix
-- Tool to evaluate options based on criteria for objective comparison
-
-- **Goals**
-  - Eliminate biases by quantifying decisions
-  - Clarify priorities
-  - Enable comparison between options
-
-- **Approach**
-  1. List alternatives
-     - E.g., laptop A, laptop B
-  2. Define criteria
-     - E.g., price, performance, battery life
-  3. Assign weight to each criterion
-  4. Score each option
-     - Rate 1-5 for each criterion
-  5. Calculate weighted score
-     - Weighted sum of scores for each alternative
-  6. Compare totals
-     - E.g., choose the alternative with the highest score
-
-* Key Performance Indicators (KPIs): General Overview
-
-- **What are KPIs?**
-  - Quantitative metrics that reflect how well an individual, team, or
-    organization is achieving key objectives
-
-- **Purpose of KPIs**
-  - Provide focus for strategic and operational improvement
-  - Serve as benchmarks for progress and performance evaluation
-
-- **Categories of KPIs**
-  - **Financial KPIs**: Revenue, profit margin, cost per acquisition
-  - **Customer KPIs**: Customer satisfaction, churn rate
-  - **Process KPIs**: Efficiency, cycle time, error rate
-  - **People KPIs**: Employee engagement, turnover rate, training hours
-
-- **Characteristics of Effective KPIs**
-  - Specific and clearly defined
-  - Measurable with reliable data
-  - Achievable and realistic
-  - Relevant to the business goals
-  - Time-bound for periodic evaluation
-
-- **Developing KPIs**
-  - Align with strategic goals
-  - Involve key stakeholders in the design process
-  - Establish baseline and targets
-
-- **Using KPIs**
-  - Monitor performance regularly
-  - Identify trends and root causes
-  - Inform decisions and prioritize actions
-
-- **Continuous Improvement**
-  - Review and refine KPIs as objectives and environments evolve
-
-* The Importance of Synthetic Data in Causal AI
-
-- Synthetic data is artificially generated to simulate real-world data
-  properties
-  - Created using algorithms or simulations based on real data distributions
-
-- **Key Benefits**
-  - Enhances data availability when real data is limited, biased, or sensitive
-  - Enables experimentation without risking privacy breaches
-  - Protects identities by not using real personal data
-  - Helps comply with data privacy regulations like GDPR and HIPAA
-  - Allows rebalancing of underrepresented groups or scenarios
-  - Facilitates fairer model training and evaluation
-
-- **Use in Causal Modeling**
-  - Simulates counterfactual scenarios to test causal hypotheses
-  - Assists in validating causal assumptions and interventions
-
-- **Challenges**
-  - Ensuring synthetic data accurately reflects key patterns and relationships
-  - Avoiding distortion of causal dependencies or overfitting to synthetic
-    features
-
-- **Best Practices**
-  - Combine with real data for validation
-  - Use domain knowledge to guide synthetic data generation and use
-
-* Digital Twin
-- A digital twin is a virtual representation of a physical system or process
-  created using data and software
-  - Used to simulate and identify potential problems under different conditions
-  - Used to generate synthetic data
+//// # Chap 7: Tools, practices, and techniques (p. 168)
+//
+//* The Iterative Causal AI Pipeline
+//
+//- Similar to the DevOps infinity loop, the causal AI pipeline has 8 stages,
+//  which are circular and iterative
+//
+//// TODO: Add picture
+//
+//1. Define business objectives
+//   - Identify goals and key performance indicators (KPI)
+//2. Model development
+//   - Establish causal relationships among variables
+//   - Develop causal AI model using graphical models, potential outcomes,
+//     do-calculus
+//3. Data identification and collection
+//   - Gather data with causal relationships and potential confounders
+//4. Model validation
+//   - Test and validate model to ensure it provides accurate causal insights,
+//     e.g.,
+//     - Measure performance against KPIs
+//     - Assess model generalizability
+//5. Deployment / production
+//   - Integrate validated AI model into existing systems for decision-making
+//6. Monitor and evaluate
+//   - Track performance of deployed model
+//   - Assess impact on decision-making process
+//7. Update and iterate
+//   - Refine model based on real-time performance evaluation
+//8. Continuous learning
+//   - Create culture of learning and improvement
+//   - Share knowledge and best practices for causal AI
+//   - Stay updated on latest advancements in causal AI
+//
+//* Define Business Objectives
+//- Use one of the systems
+//  - SMART goals
+//  - MoSCoW method
+//  - Kano model
+//
+//- Goals
+//  - Establish a shared understanding of the project's goals among stakeholders,
+//    business leaders, data scientists, and exports
+//  - Enhances clarity, focus, and motivation
+//  - Improves performance tracking and outcome evaluation
+//  - Facilitates effective communication and collaboration
+//
+//* SMART Goals
+//- SMART is an acronym for Specific, Measurable, Achievable, Relevant, Time-bound
+//- **Specific**
+//  - Clearly defines what is to be achieved
+//  - E.g., "Increase website traffic by 15%"
+//- **Measurable**
+//  - Includes criteria to track progress and success
+//  - E.g., "Track visits using Google Analytics"
+//- **Achievable**
+//  - Realistic based on resources and constraints
+//  - E.g., "Based on historical growth rates, 15% is attainable"
+//- **Relevant**
+//  - Aligns with broader organizational or personal objectives
+//  - E.g., "Traffic increase supports lead generation goals"
+//- **Time-bound**
+//  - Specifies a deadline or timeframe
+//  - E.g., "Achieve by end of Q3"
+//
+//* Moscow Method
+//- Framework for prioritization of features to:
+//  - Focus on critical features
+//  - Ensure stakeholders are aligned on priorities
+//  - Support agile and iterative development by delivering value in phases
+//
+//\begingroup \scriptsize
+//
+//| Priority    | Description                                   | Example                                         |
+//| ----------- | --------------------------------------------- | ----------------------------------------------- |
+//| Must-have   | Essential requirements                        | A login system for a banking app                |
+//| Should-have | Important but not critical features           | Multi-factor authentication to enhance security |
+//| Could-have  | Enhance user experience but are not essential | Dark mode for a mobile app                      |
+//| Won't-have  | Excluded features due to low priority         | AI-powered chat assistant                       |
+//
+//\endgroup
+//
+//* Kano Model
+//- Framework for product development and customer satisfaction analysis to
+//  prioritize features
+//
+//\begingroup \scriptsize
+//
+//| Category         | Description                                              | Examples                           |
+//| ---------------- | -------------------------------------------------------- | ---------------------------------- |
+//| Must-have        | Expected features; absence causes dissatisfaction        | Keyboard and screen on a laptop    |
+//|                  |                                                          | Calling and texting on a cellphone |
+//| Performance      | The better, the more satisfied customers are             | Faster battery charging            |
+//|                  |                                                          | Longer battery life                |
+//| Delighters       | Unexpected features that wow customers and build loyalty | Free cloud storage with a laptop   |
+//|                  |                                                          | Novel camera                       |
+//| Indifferent      | Features that do not affect customer satisfaction        | 5 power adapter options for laptop |
+//|                  |                                                          | Color of phone internals           |
+//| Reverse features | Features liked by some but disliked by others            | Touchscreen instead of touchpad    |
+//|                  |                                                          | Excessive automation               |
+//
+//\endgroup
+//
+//* Decision Matrix
+//- Tool to evaluate options based on criteria for objective comparison
+//
+//- **Goals**
+//  - Eliminate biases by quantifying decisions
+//  - Clarify priorities
+//  - Enable comparison between options
+//
+//- **Approach**
+//  1. List alternatives
+//     - E.g., laptop A, laptop B
+//  2. Define criteria
+//     - E.g., price, performance, battery life
+//  3. Assign weight to each criterion
+//  4. Score each option
+//     - Rate 1-5 for each criterion
+//  5. Calculate weighted score
+//     - Weighted sum of scores for each alternative
+//  6. Compare totals
+//     - E.g., choose the alternative with the highest score
+//
+//* Key Performance Indicators (KPIs): General Overview
+//
+//- **What are KPIs?**
+//  - Quantitative metrics that reflect how well an individual, team, or
+//    organization is achieving key objectives
+//
+//- **Purpose of KPIs**
+//  - Provide focus for strategic and operational improvement
+//  - Serve as benchmarks for progress and performance evaluation
+//
+//- **Categories of KPIs**
+//  - **Financial KPIs**: Revenue, profit margin, cost per acquisition
+//  - **Customer KPIs**: Customer satisfaction, churn rate
+//  - **Process KPIs**: Efficiency, cycle time, error rate
+//  - **People KPIs**: Employee engagement, turnover rate, training hours
+//
+//- **Characteristics of Effective KPIs**
+//  - Specific and clearly defined
+//  - Measurable with reliable data
+//  - Achievable and realistic
+//  - Relevant to the business goals
+//  - Time-bound for periodic evaluation
+//
+//- **Developing KPIs**
+//  - Align with strategic goals
+//  - Involve key stakeholders in the design process
+//  - Establish baseline and targets
+//
+//- **Using KPIs**
+//  - Monitor performance regularly
+//  - Identify trends and root causes
+//  - Inform decisions and prioritize actions
+//
+//- **Continuous Improvement**
+//  - Review and refine KPIs as objectives and environments evolve
+//
+//* The Importance of Synthetic Data in Causal AI
+//
+//- Synthetic data is artificially generated to simulate real-world data
+//  properties
+//  - Created using algorithms or simulations based on real data distributions
+//
+//- **Key Benefits**
+//  - Enhances data availability when real data is limited, biased, or sensitive
+//  - Enables experimentation without risking privacy breaches
+//  - Protects identities by not using real personal data
+//  - Helps comply with data privacy regulations like GDPR and HIPAA
+//  - Allows rebalancing of underrepresented groups or scenarios
+//  - Facilitates fairer model training and evaluation
+//
+//- **Use in Causal Modeling**
+//  - Simulates counterfactual scenarios to test causal hypotheses
+//  - Assists in validating causal assumptions and interventions
+//
+//- **Challenges**
+//  - Ensuring synthetic data accurately reflects key patterns and relationships
+//  - Avoiding distortion of causal dependencies or overfitting to synthetic
+//    features
+//
+//- **Best Practices**
+//  - Combine with real data for validation
+//  - Use domain knowledge to guide synthetic data generation and use
+//
+//* Digital Twin
+//- A digital twin is a virtual representation of a physical system or process
+//  created using data and software
+//  - Used to simulate and identify potential problems under different conditions
+//  - Used to generate synthetic data
 
 * The Future of Causal AI
 - Causal AI:
@@ -1765,340 +2026,48 @@ digraph CausalFlowGrid {
 
 // ###########################################################################
 
-// ## 13.5 Causal networks (p. 462)
-
-* Causal Networks
-- Bayesian networks represent the joint distribution function, independently of
-  how the nodes are ordered
-
-::: columns
-:::: {.column width=60%}
-
-- E.g., a Bayesian network with $Fire$ and $Smoke$, which are dependent
-
-  - We can specify it as $Fire \to Smoke$
-    - We need $\Pr(Fire)$ and then $\Pr(Smoke | Fire)$, to compute
-      $\Pr(Fire, Smoke)$
-  - The same distribution can also be represented as $Smoke \to Fire$
-    - Then we need $\Pr(Smoke)$ and $\Pr(Fire | Smoke)$
-  - These two networks are equivalent and convey the same information
-
-::::
-:::: column
-
-```graphviz
-digraph BayesianNetwork1 {
-    rankdir=LR;
-    Fire [label="P(Fire)"];
-    Smoke [label="P(Smoke)"];
-    Fire -> Smoke [label="P(Smoke | Fire)"];
-    Smoke -> Fire [label="P(Fire | Smoke)"];
-}
-```
-::::
-:::
-
-- There is an **asymmetry in nature** that we need to capture
-  - Extinguishing the fire will stop the smoke
-  - Clearing the smoke won't affect the fire
-
-* Causal (Bayesian) Networks
-- Causal networks are Bayesian networks that forbids any variable ordering that
-  is not causal
-- Instead of using probabilistic reasoning (e.g., "are $Smoke$ and $Fire$
-  variables correlated?"), we use judgement rooted in how nature works (e.g.,
-  "what causes what, $Smoke$ or $Fire$?")
-
-- "Dependency in nature" is similar to assignment in programming language
-  - E.g., it's like if nature assigns a value to $Smoke$ based on the value of
-    $Fire$:
-    $$
-    Smoke = f(Fire)
-    $$
-
-- A structural equation describes a stable mechanism in nature that remain
-  invariant to changes in the environment and measurements
-
-  $$
-  x_i = f(x_j) \iff X_j \to X_i
-  $$
-
-- We will see that "intervention" action affect a causal network only locally
-
-// https://ics.uci.edu/~dechter/courses/ics-295cr/spring-2021/slides/CS295-class3-2021.pdf
-
-* Structural Equation: Sprinkler Example
-::: columns
-:::: {.column width=70%}
-- Consider the Sprinkler example
-
-- The joint distribution of the five variables can be expressed as a product of
-  conditional distributions according to the causal DAG topology
-  $$
-  \begingroup \small
-  \Pr(c, r, s, w, g) = \Pr(c) \Pr(r|c) \Pr(s|c) \Pr(w|r,s) \Pr(g|w)
-  \endgroup
-  $$
-
-- The structural equations for this model look like:
-  \begin{align*}
-    & C = f_C(U_C) \\
-    & R = f_R(C, U_R) \\
-    & S = f_S(C, U_S) \\
-    & W = f_W(R, S, U_W) \\
-    & G = f_G(W, U_G) \\
-  \end{align*}
-
-- The unmodeled variables U-variables represent error terms
-  - E.g., $U_W$ is another source of wetness besides $Sprinkler$ and $Rain$
-    (e.g., $MorningDew$)
-  - Typically, we assume that U-variables are exogenous, independent, and have a
-    certain distribution (prior)
-::::
-:::: {.column width=25%}
-
-  ```graphviz
-  digraph BayesianFlow {
-      rankdir=TD;
-      splines=true;
-      nodesep=1.0;
-      ranksep=0.75;
-      node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
-
-      // Node styles
-      Cloudy        [label="Cloudy",        fillcolor="#b3cde3"];
-      Sprinkler     [label="Sprinkler",     fillcolor="#ccebc5"];
-      Rain          [label="Rain",          fillcolor="#ccebc5"];
-      WetGrass      [label="Wet Grass",     fillcolor="#decbe4"];
-      GreenerGrass  [label="Greener Grass", fillcolor="#fed9a6"];
-
-      // Force ranks
-      { rank=same; Sprinkler; Rain; }
-
-      // Edges
-      Cloudy -> Sprinkler;
-      Cloudy -> Rain;
-      Sprinkler -> WetGrass;
-      Rain -> WetGrass;
-      WetGrass -> GreenerGrass;
-  }
-  ```
-::::
-:::
-
-* Intervention in structural equations and joint probability
-- The structural equations:
-  - Model the system
-  - Allow to predict how interventions will affect the system, which is not
-    easily represented by the joint distribution
-
-- The intervention $do(X_j = x_j)$ causes $X_j = f_j(Parents(X_j), U_J)$ to
-  become $X_j = x_j$ in the structural equations
-  - The causal network is "mutilated" by removing the edge
-  - Then the joint distribution can be derived from the causal network
-
-- Multiple interventions are the superposition of the individual interventions
-  - In practice we can
-
-* Adjustment Formula in Causal Networks
-
-- Estimate the effect of an intervention $do(X_j = x_{jk})$ on another variable
-  $X_i$ in a causal network
-
-- **The Basic Adjustment Formula**
-  - Derived from the modified joint distribution after intervention:
-    $$
-    \Pr(X_i = x_i | do(X_j = x_{jk})) = \sum_{\text{parents}(X_j)} \Pr(x_i | x_{jk}, \text{parents}(X_j)) \Pr(\text{parents}(X_j))
-    $$
-  - Omits the causal mechanism for $X_j$ and treats it as fixed
-
-- **Interpretation**
-  - Weighted average of the effect of $X_j$ and its parents on $X_i$
-  - Weights are given by the prior probabilities of the parent values
-
-- **Causal Inference via Graph Surgery**
-  - "Mutilate" the network by cutting incoming edges to $X_j$
-  - Replace $X_j$'s structural equation with $X_j = x_{jk}$
-
-- **E.g., (Sprinkler Network)**
-  - To evaluate $\Pr(GreenerGrass | do(Sprinkler = true))$:
-    $$
-    \Pr(g | do(S = \text{true})) = \sum_r \Pr(g | S = \text{true}, r) \Pr(r)
-    $$
-
-- **Back-door Criterion for Valid Adjustment Sets**
-  - A set $Z$ satisfies the back-door criterion if it blocks all back-door paths
-    from $X_j$ to $X_i$
-  - Formally: $X_i$ is conditionally independent of the parents of $X_j$ given
-    $X_j$ and $Z$
-
-- **Why This Matters**
-  - Enables causal reasoning from observational data
-  - Avoids the need for randomized controlled trials in some cases
-
-- **Applications**
-  - Estimating treatment effects, policy interventions, and understanding system
-    behavior under manipulation
-
-* Intervention and Structural Equations: Sprinkler Example
-- We "intervene" and turn the sprinkler on
-- This is modeled in Do-calculus as $do(Sprinkler = T)$
-- Now the sprinkler variable $s$ is not dependent on whether it's a cloudy day
-  $c$
-- The causal network is "mutilated"
-
-::: columns
-:::: {.column width=25%}
-  ```graphviz
-  digraph GrassBayes {
-      rankdir=TB;
-      nodesep=1.0;
-      ranksep=0.75;
-      splines=true;
-      node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
-
-      // Nodes with custom colors
-      Cloudy        [label="Cloudy",        fillcolor="#c6dbef"];
-      Rain          [label="Rain",          fillcolor="#c6dbef"];
-      Sprinkler     [label="Sprinkler\n= True", fillcolor="#e5d5e7"];
-      WetGrass      [label="WetGrass",      fillcolor="#c6dbef"];
-      GreenerGrass  [label="GreenerGrass",  fillcolor="#c6dbef"];
-
-      // Edges
-      Cloudy -> Rain;
-      Sprinkler -> WetGrass;
-      Rain -> WetGrass;
-      WetGrass -> GreenerGrass;
-  }
-  ```
-::::
-:::: {.column width=70%}
-
-- The structural equations after the intervention become:
-  \begin{align*}
-  & C = f_C(U_C) \\
-  & R = f_R(C, U_R) \\
-  & S = True \\
-  & W = f_W(R, S, U_W) \\
-  & G = f_G(W, U_G) \\
-  \end{align*}
-::::
-:::
-- Then the $\Pr(s|c) = 1$ and $\Pr(w|r,s) = \Pr(w|r,s=T)$ and the joint
-  probability becomes:
-  $$
-  \Pr(c, r, w, g | do(S=True)) = \Pr(c) \Pr(r|c) \Pr(w|r,s=True) \Pr(g|w)
-  $$
-- The variables that are affected are only the descendants of the manipulated
-  variable $Sprinkler$
-
-* Intervention vs Observation
-- Intervention "breaks" the normal causal link between $Weather$ and $Sprinkler$
-  - From the causal graph we know that there is no influence of $Sprinkler$ on
-    $Weather$
-
-- There is a difference between $do(Sprinkler=T)$ (intervention) and
-  $Sprinkler=T$ (observation)
-  - If we observe that the sprinkler is on:
-    - We can deduce that it's less likely that the weather is cloudy
-  - If we turn on the sprinkler:
-    - The weather is not affected and so the probability of cloudy is unaffected
 
 // ### 13.5.2, The back-door criterion
 
-* Back Door
-- A causal network can predict the effect of an intervention using the
-  adjustment formula
-- The problem is that it requires accurate knowledge of the conditional
-  distributions of the model
-
-- E.g., in the Sprinkler example, why does someone turn on the sprinkler? Maybe
-  they check the weather, but how do they make their decision?
-
-- Besides the direct route, we needs to take in account the "back door" route
-
-* Problem
-- In experimental settings, randomization ensures that $X$ is not confounded so
-  that we can directly estimate its causal effect on $Y$
-
-- Problem:
-  - In observational data, we don't have randomization and confounding variables
-    can create spurious correlations between $X$ and $Y$
-  - Consider the causal graph
-    ```mermaid
-    flowchart LR
-      U["Confounder (U)"] --> X["Cause (X)"]
-      U["Confounder (U)"] --> Y["Effect (Y)"]
-      X["Cause (X)"] --> Y["Effect (Y)"]
-    ```
-    where $U$ is a common cause (confounder) of both $X$ and $Y$
-
-- Solution:
-  - Controlling for a set of $Z$ that satisfies the backdoor criterion, we can
-    estimate the causal effect of variable $X$ on $Y$
-  - This allows to "simulate" a randomized experiment
-
-* TBD
-- We want to estimate the effect of $Sprinkler$ on $GreenerGrass$
-  - We intervene and set $Sprinkler=True$
-
-- Besides the direct route, we needs to take in account the "back door" route
-  $Cloudy \to Rain$
-
-```mermaid
-flowchart TD
-    S("Sprinkler=True"):::highlight --> WetGrass
-    Cloudy --> Rain --> WetGrass
-    WetGrass --> GreenerGrass
-
-    %% Define a global rounded style
-    classDef rounded fill:#f9f9f9,stroke:#15aebf,stroke-width:2px,rx:10,ry:10;
-
-    %% Apply the style to all nodes by default
-    class Cloudy,Rain,WetGrass,GreenerGrass rounded;
-
-    classDef highlight fill:#F8F2DC,stroke:#333,stroke-width:2px;
-
-    %% Highlight the backdoor path in red
-    linkStyle 1 stroke:red,stroke-width:2px;
-    linkStyle 2 stroke:red,stroke-width:2px;
-    linkStyle 3 stroke:red,stroke-width:2px;
-```
-
-- If we knew the value of $Rain$, this back door path would be blocked and we
-  could condition on $Rain$ instead of $Cloudy$
-
-- In formal way we need to find a set of $Z$ variables such that $X_i$ is
-  conditionally independent of $Parents(X_j)$ given $X_j$ and $Z$
-  - TODO: ?
-
-* Backdoor Path
-- $Z$ blocks all backdoor paths from X to Y
-
-- A backdoor path is any path from X to Y that starts with an arrow pointing
-  into X. These paths create confounding relationships that can bias the
-  estimate of X's effect on Y
-
-* Backdoor Criteria: Condition
-- Variables $Z$ satisfy the backdoor criterion for $X$ and $Y$ in a causal
-  network if:
-  1. No element of $Z$ is a descendant of $X$
-     - $Z$ do not capture the effect of $X$ on $Y$ through any causal pathway
-  2. $Z$ "blocks" every path from $X$ to $Y$
-
-- The idea is to estimate the causal effect of $X$ on $Y$ without confounding
-  relationships, by controlling variables $Z$ satisfying the backdoor criterion
-- Then we can use non-experimental (i.e., observational data), assigning $X$
-  randomly
-
-```mermaid
-flowchart TD
-  X["Cause (X)"] --> Y["Effect (Y)"]
-  U["Confounder (U)"] --> X["Cause (X)"]
-  U["Confounder (U)"] --> Y["Effect (Y)"]
-  Z["Backdoor Blocker (Z)"] --- U
-```
 
 // TODO(gp): Add d-separation
 
 // TODO(gp): Add Facuce?
+
+// Do-operator
+
+//* Causal Discovery
+//
+//- **Definition**
+//  - Causal discovery identifies **cause–effect relationships** among variables
+//  - Understand **which variables influence others** and **how interventions
+//    change outcomes**
+//
+//- **Key Idea**
+//  - Networks like $Fire \to Smoke$ and $Smoke \to Fire$ can represent the same
+//    probability, but only one shows the **true causal direction**
+//  - Causal discovery infers this direction from **observational or experimental
+//    data**
+//
+//- **Interventions and the $do()$ Operator**
+//  - Introduced by Judea Pearl for **interventions**
+//  - $\Pr(X_i | do(X_j = x_j))$ describes the effect of **actively setting**
+//    $X_j$ to a value
+//
+//- **Learning from Data**
+//  - Causal discovery algorithms recover the **causal graph** structure using:
+//    - **Conditional independence tests**
+//    - **Score-based search**
+//    - **Hybrid methods**
+//  - Determine which links in a Bayesian network represent **true causal
+//    influences**
+//
+//- **Relation to Causal Inference**
+//  - Causal discovery identifies **the structure** of causality
+//  - Causal inference predicts **effects of actions or interventions**
+//
+//- **Example**
+//  - Observe **Sprinkler** and **Rain** affecting **WetGrass**
+//  - Causal discovery determines if **Rain causes WetGrass directly**
+//    **through influencing Sprinkler**.
+//
