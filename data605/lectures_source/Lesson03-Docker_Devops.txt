@@ -61,13 +61,14 @@ UMD DATA605 - Big Data Systems
 * Application Deployment
 - **For (almost all) Internet companies, the application is the business**
   - If the application breaks, the business stops working
-  - E.g., Amazon, Google, Facebook, on-line banks, travel sites (e.g., Expedia), ..., OpenAI
+  - E.g., Amazon, Google, Facebook, on-line banks, travel sites (e.g., Expedia),
+    ...
 - **Problem**
   - How to release / deploy / manage / monitor applications?
 - **Solutions**
   - Before 2000s: "bare-metal era"
   - 2000s-2010s: "virtual machine era"
-  - \> ~2013: "container era"
+  - After ~2013: "container era"
 
 * DevOps
 
@@ -149,61 +150,71 @@ UMD DATA605 - Big Data Systems
 
 * Containers Era
 :::columns
-::::{.column width=75%}
+::::{.column width=60%}
+  ... tmp.prettier_on_str.md 22ms
 - **Circa 2013: Docker becomes ubiquitous**
+
 - **Docker**
   - Didn't invent containers
   - Made containers simple and mainstream
-- Linux supported containers for some time
+
+- Linux supported containers
   - Kernel namespaces
   - Control groups
   - Union filesystems
+
 - **Pros**
   - Containers are fast and portable
-  - Containers don't require full-blown OS
-  - All containers run on a single host
-  - Reduce OS licencing cost
-  - Reduce overhead of OS patching and maintenance
-- **Cons**
-  - CPU overhead
-  - Toolchain to learn / use
-- **Winners**: AWS, Microsoft Azure, Google (not Docker Inc.)
+  - Don't require full OS
+  - All run on a single host
+  - Reduce OS licensing cost
+  - Reduce OS patching and maintenance
 ::::
-::::{.column width=25%}
+::::{.column width=35%}
 
 ![](data605/lectures_source/images/lecture_3/lec_3_slide_8_image_1.png){width=70%}
+
+\vspace{1cm}
 
 ![](data605/lectures_source/images/lecture_3/lec_3_slide_8_image_2.png){width=120%}
 ::::
 :::
+- **Cons**
+  - CPU overhead
+  - Toolchain to learn / use
+
+- **Winners**: AWS, Microsoft Azure, Google (not Docker Inc.)
 
 * Serverless Computing
 - **Containers run in an OS, OS runs on a host**
   - **Where is the host running?**
     - Local (your laptop)
-    - On premise (your own computer in a rack)
-    - Cloud instance (e.g., AWS EC2 instance)
+    - On premise (your computer in a rack)
+    - Cloud instance (e.g., AWS EC2)
   - **How is the host running?**
     - On bare-metal server
     - On a virtual machine
     - On a virtual machine running a virtual machine
+
 - **Serverless computing**
-  - As long your application runs somewhere, you don't care "how" or "where"
+  - Application runs without concern for _"how"_ or _"where"_
   - E.g., AWS Lambda
 
 * HW vs OS Virtualization
 :::columns
-::::{.column width=60%}
+::::{.column width=55%}
+
 - **Hypervisor performs HW virtualization**
-  - Carves out physical hardware resources into VMs
-  - Resources (CPUs, RAM, storage) are allocated to a VM
-  - It's like having multiple computers
+  - Carves physical hardware into VMs
+  - Allocates CPUs, RAM, storage to a VM
+  - Like having multiple computers
+
 - "Virtual machine tax"
-  - To run 3 apps, you need 3 VMs
-    - Each VM requires time to start
+  - Running 3 apps requires 3 VMs
+    - Each VM takes time to start
     - Consumes CPU, RAM, storage
-    - VM needs a OS license
-    - VM / OS need admins, patching
+    - Needs OS license
+    - Requires admins, patching
   - You just want to run 3 apps!
 
 \vspace{1cm}
@@ -221,16 +232,19 @@ UMD DATA605 - Big Data Systems
 * Docker: Client-Server
 
 :::columns
-::::{.column width=60%}
-- Client-Server architecture
+::::{.column width=55%}
+- Docker relies on a **client-server architecture**
+
 - **Docker client**
   - Command line interface
-  - Communicate with the server through IPC socket
+  - Communicate with server through IPC socket
     - E.g., **/var/run/docker.sock** or IP port
+
 - **Docker engine**
   - Run and manage containers
-  - Modular and built from several OCI-compliant sub-systems
-    - E.g., Docker daemon, **containerd**, **runc**, plug-ins for networking and storage
+  - Modular, built from OCI-compliant sub-systems
+    - E.g., docker daemon, `containerd`, `runc`, plug-ins for networking and
+      storage
 ::::
 ::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_3/lec_3_slide_11_image_1.png)
@@ -244,20 +258,23 @@ UMD DATA605 - Big Data Systems
 * Docker Architecture
 
 :::columns
-::::{.column width=65%}
+::::{.column width=60%}
 - **Docker run-time**
-  - **runc**: start and stop containers
-  - **containerd**
+  - `runc`: start and stop containers
+  - `containerd`
     - Pull images
     - Create containers, volumes, network interfaces
+
 - **Docker engine**
-  - **dockerd**
+  - `dockerd`
     - Expose remote API
     - Manage images, volumes, networks
+
 - **Docker orchestration**
-  - **docker swarm**
+  - `docker swarm`
   - Manage clusters of nodes
   - Replaced by Kubernetes
+
 - **Open Container Initiative (OCI)**
   - Standardize low-level components of container infrastructure
   - E.g., image format, run-time API
@@ -271,19 +288,22 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Docker Container
+
 - **Docker Container**
   - Unit of computation
   - Lightweight, stand-alone, executable software package
-  - Include everything needed to run
-    - E.g., code, runtime / system libraries, settings
-  - It is a run-time object
-    - vs Docker images are built-time objects
+  - Includes everything needed to run, e.g.,
+    - Code
+    - Runtime/system libraries
+    - Settings
+  - Run-time object
+    - Docker images are build-time objects
     - Like program running (container) vs program code (image)
 
 * Docker Image
 - **Docker Image**
   - Unit of deployment
-  - Contain everything needed by an app to run
+  - Contains everything needed to run an app
     - Application code
     - Application dependencies
     - Minimal OS support
@@ -291,27 +311,30 @@ UMD DATA605 - Big Data Systems
   - Users can
     - Build images from Dockerfiles
     - Pull pre-built images from a registry
-  - Multiple layers stacked on top of each other
+  - Multiple layers stacked
     - Typically few 100s MBs
 
 * Docker Image Layers
 :::columns
-::::{.column width=65%}
-- **Docker image** is a configuration file that lists the layers and some metadata
-  - It is composed of read-only layers
-  - Each layer is independent from each other
-  - Each layer comprises of many files
+::::{.column width=60%}
+- **Docker image** is a configuration file listing layers and metadata
+  - Composed of read-only layers
+  - Each layer is independent
+  - Each layer comprises many files
+
 - **Docker driver**
-  - Stacks these layers as a unified filesystem
-  - Implements a copy-on-write behavior
-  - Files from the top layers can obscure the files from the bottom layers
+  - Stacks layers as a unified filesystem
+  - Implements copy-on-write behavior
+  - Files from top layers can obscure files from bottom layers
+
 - **Layer hash**
-  - Each layer has an hash based on its content
+  - Each layer has a hash based on content
   - Layers are pulled and pushed compressed
+
 - **Image hash**
-  - Each image has an hash
-  - The hash is function of the config file and of the layers
-  - When an image changes, a new hash is generated
+  - Each image has a hash
+  - Hash is a function of the config file and layers
+  - Image changes generate a new hash
 ::::
 ::::{.column width=35%}
 
@@ -326,40 +349,43 @@ UMD DATA605 - Big Data Systems
 
 * Docker: Container Data
 - A container has access to different data
+
 - **Container storage**
-  - It is a copy-on-write layer in the image
-  - It is ephemeral (only temporary data)
-  - Data inside of containers is persisted as long as the container is not killed
-    - If you stop or pause a container data is not lost
-  - Containers are designed to be immutable
-    - It's not good practice to write "persistent" data into containers
+  - Copy-on-write layer in the image
+  - Ephemeral (temporary data)
+  - Data persists until the container is killed
+    - Stopping or pausing a container doesn't lose data
+  - Containers are immutable
+    - Avoid writing persistent data into containers
+
 - **Bind-mount a local dir**
-  - = a local dir is mounted to a dir inside a container
+  - Mount a local dir to a dir inside a container
+
 - **Docker volumes**
-  - Docker provides volumes that exist separately from the container
-    - E.g., to store the content of a Postgres DB
+  - Volumes exist separately from the container
+    - E.g., store Postgres DB content
   - State is permanent across container invocations
-  - Can be shared across containers
+  - Shareable across containers
 
 * Docker Repos
 :::columns
-::::{.column width=65%}
+::::{.column width=55%}
 - **Docker Repo (Registry)**
+  - E.g., DockerHub, AWS ECR
   - Store Docker images
-    - \<registry>/\<repo>:\<tag>
-    - bash docker.io/alpine:latest
-    - E.g., DockerHub, AWS ECR
+    - `<registry>/<repo>:<tag>`
+    - E.g., `docker.io/alpine:latest`
   - Some repos are vetted by Docker
   - Unofficial repos shouldn't be trusted
   - E.g., https://hub.docker.com/
 
 ::::
-::::{.column width=35%}
+::::{.column width=40%}
 
 ![](data605/lectures_source/images/lecture_3/lec_3_slide_17_image_1.png)
 ::::
 :::
-\centering
+
 ![](data605/lectures_source/images/lecture_3/lec_3_slide_17_image_2.png){width=70%}
 
 * Devops = Devs + Ops
@@ -369,53 +395,56 @@ UMD DATA605 - Big Data Systems
 :::columns
 ::::{.column width=50%}
 - **Devs**
-- Implement the app
-  - E.g., Python, virtual env
-- Containerize the app
+- Implement app
+  - Python, virtual env
+- Containerize app
   - Create Dockerfile
-  - Contain the instruction on how to build an image
+  - Instructions to build image
 - Build image
-- Run the app as a container
-- Test "locally"
+- Run app as container
+
+- Test locally
 ::::
 ::::{.column width=50%}
 - **Ops**
 - Download container images
-  - Contain filesystem, application, app dependencies
+  - Filesystem, application, dependencies
 - Start / destroy containers
-- In case of issues, it's easy to repro the problem
+- Reproduce issues easily
   - "Here is the log"
   - Run command line
-  - Deploy on a test system and debug
+  - Deploy on test system and debug
 ::::
 :::
 
 * Containerizing an App
-- = create a container with your app inside
-- Develop your application code using the needed dependencies
-  - E.g., install dependencies
-    - Directly inside a container
+- Containerizing an app means creating a container with your app inside
+
+- Develop application code with dependencies
+  - Install dependencies
+    - Inside a container
     - Inside a virtual env
+
 - Create a Dockerfile describing:
-  - your app
-  - its dependencies
-  - how to run it
-- Build image with **docker image build**
-- (Optional) Push image to a Docker image registry
-- Run / test container from image
-- Distribute your app as a container (no installation)
+  - App
+  - Dependencies
+  - How to run it
+
+- Build image with `docker image build`
+- (Optional) Push image to Docker image registry
+- Run/test container from image
+- Distribute app as a container (no installation required)
 
 * Building a Container
 - **Dockerfile**
   - Describe how to create a container
 - **Build context**
-  - \> **docker build -t web:latest .**
-  - . is the build context
+  - `docker build -t web:latest .` where `.` is the build context
   - Directory containing the application and what's needed to build it
   - Sent to Docker engine to build the application
   - Typically the Dockerfile is in the root directory of the build context
 
-* Dockerfile Example
+* Dockerfile: Example
 \color{blue}
 ```docker
 FROM python:3.8-slim-buster
@@ -435,7 +464,7 @@ CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
 Show all the available images
 \begingroup \footnotesize \color{blue}
 ```
-\> docker images 
+> docker images 
 REPOSITORY              TAG         IMAGE ID          CREATED             SIZE
 counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
 …
@@ -725,4 +754,3 @@ Shutdown service removing images and volume
   - Projects have about the same complexity
   - If not, we will try to account for this when grading
   - Projects were assigned randomly to the teams
-
