@@ -16,7 +16,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**DevOps with Docker**
+**$$\text{\blue{DevOps with Docker}}$$**
 \endgroup
 
 ::: columns
@@ -32,21 +32,24 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Docker - Resources
+
+// TODO(gp):
 :::columns
-::::{.column width=75%}
+::::{.column width=70%}
 - We will use Docker during the class project and most tutorials
+
 - Concepts in the slides
 - Class tutorials:
-  - tutorial_docker
-  - tutorial_docker_compose
+  - [tutorial_docker](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker)
+  - [tutorial_docker_compose](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker_compose)
 - Web resources:
-  - Docker Tutorial for beginners
-  - https://labs.play-with-docker.com/
-  - https://training.play-with-docker.com
-  - A Beginner-Friendly Introduction to Containers, VMs and Docker
-  - Official Docker Getting Started Tutorial
+  - [Docker Tutorial for beginners](https://www.youtube.com/watch?v=zJ6WbK9zFpI)
+  - [https://labs.play-with-docker.com/](https://labs.play-with-docker.com/)
+  - [https://training.play-with-docker.com](https://training.play-with-docker.com)
+  - [A Beginner-Friendly Introduction to Containers, VMs and Docker](https://medium.freecodecamp.org/a-beginner-friendly-introduction-to-containers-vms-and-docker-79a9e3e119b)
+  - [Official Docker Getting Started Tutorial](https://docs.docker.com/get-started/)
 - Mastery:
-  - Poulton, Docker Deep Dive: Zero to Docker in a single book, 2020
+  - Poulton, [Docker Deep Dive: Zero to Docker in a single book](https://www.amazon.com/Docker-Deep-Dive-Nigel-Poulton/dp/1521822808), 2020
 
 ::::
 ::::{.column width=25%}
@@ -71,14 +74,14 @@ UMD DATA605 - Big Data Systems
 :::columns
 ::::{.column width=65%}
 - **DevOps** = set of practices that combines:
-  - Software development (*dev*)
-  - IT operations (*ops*)
+  - Software development (_dev_)
+  - IT operations (_ops_)
 - **Containers revolutionized DevOps**
   - Enable true independence between application development and IT ops
     - One team creates an application
     - Another team deploys and manages the applications
   - Create a model for better collaboration (fewer conflicts) and innovation
-    - IT: “It doesn’t work!”
+    - IT: “It doesn't work!”
     - Devs: “What? It works for me”
 
 ::::

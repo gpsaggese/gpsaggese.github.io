@@ -16,7 +16,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Git, Data Pipelines}}$$**
+**$$\text{\blue{Git}}$$**
 \endgroup
 
 ::: columns
