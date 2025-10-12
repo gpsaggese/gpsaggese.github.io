@@ -34,9 +34,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-
-
-
 * Outline
 - Cloud computing
 - Technologies behind cloud computing
@@ -45,10 +42,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Programming frameworks
 - Challenges and opportunities
 
- 
-
-
-
 * Outline
 - **Cloud computing**
 - Technologies behind cloud computing
@@ -56,11 +49,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Virtualization
   - Programming frameworks
 - Challenges and opportunities
-
- 
-
-
-
 
 * Cloud Computing
 - **Computing as “service” rather than “product”**
@@ -76,14 +64,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Cheaper (?) than building your own systems
     - Computing as a commodity (like electricity)
 
- 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_4_image_1.png)
-
 
 * Building vs Renting
 - **Building / buying infrastructure**
   - Require time and capital investments (Capex)
-    - Especially at the beginning when there aren’t revenues
+    - Especially at the beginning when there aren't revenues
     - A smooth cash flow (constant $/mo) is better than lumpy one (big one-time purchase)
   - Buy hardware (e.g., computers, storage, network)
     - How do you estimate the size of your hardware for today?
@@ -94,10 +80,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Administering
     - Installing, updating, maintaining software stack
 
-
- 
-
-
 * Building vs Renting
 - **Cloud computing**
   - Pay for what you use
@@ -105,8 +87,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Get your systems ready with a click on a web-site
   - No need to estimate a multi-year resource plan
   - Pick machines that suit your application and data requirements
-
-
 
 * Cloud Computing
 - **Basic ideas of cloud computing around for a long time**
@@ -123,21 +103,13 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Decreasing hardware costs
   - Big data frameworks
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_1.png)
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_2.png)
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_3.png)
 
-
 * X-as-a-Service
- 
-
-
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_8_image_1.png)
 
@@ -154,14 +126,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - You use it
 - No need to install anything on your machine
 - E.g., Dropbox, Salesforce, any app running in a browser
- 
-
-
 
 * X-as-a-Service
- 
-
-
 
 **... XaaS**
 - Business model of “Anything-as-a-service” (2010s)
@@ -172,11 +138,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Marketing-as-a-service
 - Banking-as-a-service, ...
 
-
 * Platform-as-a-Service
- 
-
-
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_10_image_1.png)
 
@@ -198,19 +160,14 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - E.g., pre-built distributions for Linux
   - RedHat, Gentoo, CentOS
 
-
-
 * Different Cloud Computing Layers
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_.png)
 
 From Dr. Mehmet Gunes, U. Nevada Reno
 
  * Cloud Types
- 
-
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_13_image_1.png)
-
 
 * Outline
 - Cloud Computing
@@ -220,11 +177,6 @@ From Dr. Mehmet Gunes, U. Nevada Reno
   - Programming Frameworks
 - Challenges and opportunities
 
- 
-
-
-
-
 * Data Centers
 - Data centers are key infrastructure piece that enables cloud computing
   - Every large company (e.g., AWS, Apple, Google, Facebook) is building data centers around the world
@@ -233,24 +185,15 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_1.png)
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_2.png)
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_3.png)
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_4.png)
 
-
-
-
 * Cloud Computing Service Layers
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide.png)
 From Dr. Mehmet Gunes, U. Nevada Reno
-
-
 
 * Data Centers
 - **Equipment cost**
@@ -269,20 +212,13 @@ From Dr. Mehmet Gunes, U. Nevada Reno
     - Ideally PUE should be 1, currently numbers are around 1.07-1.22
     - May lead to very large data centers in near future (already happening)
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_16_image_1.png)
 
 Meta investment in 18 data centers
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_16_image_2.png)
 
-
 * Data Centers
- 
-
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_17_image_1.png)
 
@@ -290,27 +226,16 @@ Meta investment in 18 data centers
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_17_image_3.png)
 
-
 * (Modular) Data Centers
 From James Hamilton Presentation
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_18_image_1.png)
 
-
-
 * Amazon Web Services
- 
-
-
 
 As of 2022, 28 geographical regions
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_19_image_1.png)
-
 
 * Amazon Web Services (EC2)
 - The most widely used current solution to cloud computing
@@ -320,21 +245,13 @@ As of 2022, 28 geographical regions
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_1.png)
 
- 
-
-
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_2.png)
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_3.png)
 
-
 * Amazon S3
 - Amazon storage services (Simple Storage Solution)
   - Pay for what you use
-
- 
-
-
 
 |        | S3 Default | S3 RRS | S3 IA | Glacier |
 |---------|---------|---------|---------|---------|
@@ -345,7 +262,6 @@ As of 2022, 28 geographical regions
 | Frequently Accessed? | Yes | Yes | No | No |
 
 **S3 Storage Types**
-
 
 * Google App Engine
 - Google Compute Engine (IaaS)
@@ -365,10 +281,7 @@ As of 2022, 28 geographical regions
     - (Often) lack of commitment (Killed by google)
     - No (or horrible) customer service
 
-
-
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_22_image_1.png)
-
 
 * Outline
 - Cloud Computing
@@ -377,11 +290,6 @@ As of 2022, 28 geographical regions
   - **Virtualization**
   - Programming frameworks
 - Challenges and opportunities
-
- 
-
-
-
 
 * Virtualization
 - **Virtual machines have been around for a long time**
@@ -396,11 +304,6 @@ As of 2022, 28 geographical regions
   - Multi-tenancy: can have multiple VMs on the same server
   - Efficiency: replace many underpowered machines with fewer high-powered machines
 
- 
-
-
-
-
 * Virtualization
 ![alt text](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_25_image_1.png)
 - **Consumer / desktop virtualization**
@@ -414,12 +317,7 @@ As of 2022, 28 geographical regions
   - Now custom hardware AWS Nitro
   - Support Windows and Linux Virtual Machines
 
- 
-
-
-
 ![alt text](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_25_image_2.png)
-
 
 * Virtualization
 - Performance and tricky things to keep in mind
@@ -428,30 +326,20 @@ As of 2022, 28 geographical regions
     - E.g., multi-tenancy, different hardware
 - “Bare-metal” compute to improve performance
 
- 
-
-
-
-
 * Docker
 - Enable true independence between application devs and IT ops
 - Package all the dependencies
 - Advantages
   - Containers are fast and portable
   - Reduce overhead of virtualization
-  - Containers don’t require full-blown OS
+  - Containers don't require full-blown OS
   - All containers run on a single host
   - Reduce OS licencing cost
   - Reduce overhead of OS maintenance
 
- 
-
-
-
 ![alt text](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_27_image_1.png)
 
 ![alt text](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_27_image_2.png)
-
 
 * Outline
 - Cloud Computing
@@ -461,7 +349,6 @@ As of 2022, 28 geographical regions
   - **Programming frameworks**
 - Challenges and opportunities
 
- 
 * Programming Frameworks
 - **Programming frameworks emerged from efforts to “scale out” workloads**
   - Distribute work over large numbers of machines (thousands of machines)
@@ -480,11 +367,6 @@ As of 2022, 28 geographical regions
     - Hadoop, Spark
   - AWS services
 
- 
-
-
-
-
 * MapReduce Framework
 - Provide a fairly restricted, but still powerful abstraction for programming distributed workloads
 - Programmers only write functions called *map* and *reduce*
@@ -501,11 +383,6 @@ As of 2022, 28 geographical regions
 - **Streaming data**
   - Very large-scale applications that need real-time access with few ms latencies
   - Trade-off between “consistency” and “performance”
-
- 
-
-
-
 
 * Other Programming Frameworks
 - Many different programming frameworks suitable for different applications
@@ -529,8 +406,6 @@ As of 2022, 28 geographical regions
 - **Giraph, GraphLab, GraphX**
   - Graph processing systems
 
-
-
 * Outline
 - Cloud computing
 - Technologies behind cloud computing
@@ -538,10 +413,6 @@ As of 2022, 28 geographical regions
   - Virtualization
   - Programming frameworks
 - **Challenges and opportunities**
-
- 
-
-
 
 * Advantages of Cloud Computing
 - **Lower edge computer costs**
@@ -558,11 +429,6 @@ As of 2022, 28 geographical regions
     - Most applications are cloud based today
   - Rent (monthly payments) instead of buying
 
- 
-
-
-
-
 * Advantages of Cloud Computing
 - **Instant software updates**
   - No longer faced with choosing between obsolete software and high upgrade costs
@@ -573,11 +439,6 @@ As of 2022, 28 geographical regions
 - **Improved document format compatibility**
   - Do not have to worry about the documents on your machine being compatible with other users' applications or OSes
   - Potentially no format incompatibilities when everyone is sharing documents in the (same) cloud
-
- 
-
-
-
 
 * Advantages of Cloud Computing
 - **“Unlimited” storage capacity**
@@ -590,11 +451,6 @@ As of 2022, 28 geographical regions
   - A computer crashing in the cloud does not affect the storage of your data
     - All your data is still out there in the cloud, still accessible
     - Cloud computing is a data-safe computing platform
-
- 
-
-
-
 
 * Advantages of Cloud Computing
 - **Universal document access**
@@ -609,10 +465,6 @@ As of 2022, 28 geographical regions
   - Sharing documents leads directly to better collaboration
   - Multiple users can collaborate easily on documents and projects
 
- 
-
-
-
 * Disadvantages of Cloud Computing
 - **Using cloud computing means dependence on Big Tech**
   - Big Internet companies like AWS, Google, and Microsoft monopolise the market
@@ -624,16 +476,11 @@ As of 2022, 28 geographical regions
   - Ownership of data is not always clear
 - **Issues relating to policy and access**
   - If your data is stored abroad whose policy do you adhere to?
-    - To deal with government restrictions (e.g., export restrictions), cloud providers ensure your data is stored within your country’s borders
+    - To deal with government restrictions (e.g., export restrictions), cloud providers ensure your data is stored within your country's borders
     - E.g., TikTok saga
   - What happens if the remote server goes down?
     - How will you then access files?
   - Cases of users being locked out of accounts and losing access to data
-
- 
-
-
-
 
 * Disadvantages of Cloud Computing
 - **Requires a constant Internet connection**
@@ -647,11 +494,6 @@ As of 2022, 28 geographical regions
   - Even with a fast connection, web-based applications are often slower than your desktop
   - Interface (not data) is sent back and forth from your computer to the computers in the cloud
   - Latency (more than throughput) matters
-
- 
-
-
-
 
 * Disadvantages of Cloud Computing
 - **Features might be limited**
@@ -668,11 +510,6 @@ As of 2022, 28 geographical regions
   - Data stored in the cloud is safe, replicated across multiple machines (theoretically)
   - Doing local backups might still be a good idea
 
- 
-
-
-
-
 * Disadvantages of Cloud Computing
 - **HPC systems**
   - Unclear if you can run compute-intensive HPC applications that use MPI or OpenMP
@@ -684,11 +521,4 @@ As of 2022, 28 geographical regions
   - Each cloud systems uses different protocols and different APIs
   - May not be possible to run applications across different cloud-based systems
   - Solution: indirection layer (Terraform, Ansible)
-
- 
-
-
-
-
-
 

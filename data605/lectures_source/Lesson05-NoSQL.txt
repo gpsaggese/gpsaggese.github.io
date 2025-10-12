@@ -38,19 +38,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-
 * Jupyter Tutorial
-- Let’s start with a tutorial of Jupyter notebooks
+- Let's start with a tutorial of Jupyter notebooks
 - Jupyter tutorial dir
 - Readme
   - Explains how to run the tutorial
 - Notebook to execute / study
-
-
-
-
-
-
 
 * Resources
 - Concepts in the slides
@@ -59,10 +52,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Nice high-level view:
   - Seven Databases in Seven Weeks, 2e
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png)
-
 
 * From SQL to NoSQL
 - **DBs are central tools to big data
@@ -91,9 +81,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_5_image_1.png)
 
-
-
-
 * Issues with Relational DBs
 - **Relational DBs have drawbacks
 **
@@ -107,9 +94,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - **Possible solutions**
     - Within relational SQL paradigm
     - With NoSQL approach
-
-
-
 
 * 1 App-DB Impedance Mismatch: Problem
 - **Mismatch between how data is represented in the code and in a relational DB**
@@ -130,9 +114,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - One could denormalize the tables using a single table
     - ```text Names(name, tag) ```
 
-
-
-
 * 1 App-DB Impedance Mismatch: Solutions
 - **Ad-hoc mapping layer**
   - Translate objects and data structures into DB data model
@@ -151,7 +132,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - No schema
     - Every object can be flat or complex (e.g., nested JSON)
     - Stored objects (aka documents) can be different
-
 
 ```
 
@@ -175,9 +155,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Application needs to deal with variety of schemas when it processes the data
     - Related to ETL vs ELT data pipelines
 
-
-
-
 * 3 Consistency in Relational DBs
 - **All systems in the real-world fail**
   - Application error (e.g., corner case, internal error)
@@ -198,8 +175,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - = once a transaction has been committed, the *content is preserved for any system failure*
   - Just record the data in non-volatile memory
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_10_image_1.png)
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_10_image_2.png)
@@ -207,7 +182,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **Hardware failure **
 
 **Application error**
-
 
 * 3 Consistency in Distributed DB
 - When data scales up or number of clients increases → **distributed setup**
@@ -218,15 +192,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Achieving ACID consistency is:**
   - *Not easy* in a single DB setup
     - E.g., Postgres guarantees ACID
-    - E.g., MongoDB doesn’t guarantee ACID
+    - E.g., MongoDB doesn't guarantee ACID
   - *Impossible* in a distributed DB setup
     - Due to CAP theorem
     - Even weak consistency is difficult to achieve
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_11_image_1.png)
-
 
 * CAP Theorem
 - **CAP** **theorem**: Any *distributed* DB can have *at most two* of the following *three* properties
@@ -238,10 +209,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Originally a conjecture (Eric Brewer)
 - Made formal later (Gilbert, Lynch, 2002)
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_12_image_1.png)
-
 
 * CAP Corollary
 - **CAP Theorem**: pick 2 among consistency, availability, partition tolerance
@@ -253,12 +221,9 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - *Consistency* (i.e., allow different views of the system)
     - E.g., social network
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_13_image_1.png)
 
 **You are here**
-
 
 * CAP Theorem: Intuition
 - Imagine there are
@@ -277,8 +242,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Sometimes inconsistency is not acceptable (e.g., a banking system)
   - Stop the service (no availability) to avoid inconsistency
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_14_image_1.png)
 
 **X**
@@ -290,7 +253,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **DB replica**
 
 **Client**
-
 
 * Replication Schemes
 - **Replication schemes**: how to organize multiple servers implementing a distributed DB
@@ -306,8 +268,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - When writing, we make sure to write to *W* replicas
   - When reading, we read from *R* replicas and pick the latest update (using timestamps)
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_15_image_1.png)
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_15_image_2.png)
@@ -315,7 +275,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 *Primary-secondary replication*
 
 *Update-anywhere replication*
-
 
 * Synchronous Replication
 - **Synchronous replication**: updates are propagated to other replicas as part of a single transaction
@@ -330,14 +289,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **CAP theorem**: still only one among Consistency, Availability, in case of Network partition
   - Many systems use relaxed / loose consistency models
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_16_image_1.png)
 ```
 
 ```markdown
 ![images/lecture_5_0/lec_5_0_slide_17_image_1.png]
-
 
 * Asynchronous Replication
 - **Asynchronous replication**
@@ -356,9 +312,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Replicas version their data with timestamps
   - If local replica has fresh data, uses it, otherwise send request to primary node
 
-
-
-
 * 4 Scalability Issues with RDMS
 - The sources of relational SQL DB scalability issues are:
 - **Locking data**
@@ -371,8 +324,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Network delays
     - To enforce DB consistency, locks are applied across networks
     - Overhead of replica consistency (2PC, Paxos)
-
-
 
 * Scalability Issues with RDMS: Solutions
 - **Table denormalization**
@@ -387,8 +338,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Make definition of consistency weaker (E.g., eventual consistency)
 - **NoSQL**
 
-
-
 ![images/lecture_5_0/lec_5_0_slide_19_image_1.png]
 
 ![images/lecture_5_0/lec_5_0_slide_19_image_2.png]
@@ -396,7 +345,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 *Normalized data*
 
 *Denormalized data*
-
 
 * NoSQL Stores
 - **Use cases of large-scale web applications**
@@ -418,9 +366,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Most NoSQL stores will only allow one object transactions
     - E.g., one document / key
 
-
-
-
 * Relational DB vs MongoDB
 How MongoDB solves the four RDBM problems
 1 **Application-DB impedance mismatch**
@@ -437,13 +382,10 @@ How MongoDB solves the four RDBM problems
 - Updating data means locking only one document, and not entire collection
 - Sharding: use more machines to do collectively do more work
 
-
-
 **UMD DATA605 - Big Data** **Systems**
 Issues with Relational DBs
 NoSQL Taxonomy
 (Apache) HBase
-
 
 * Resources
 - Concepts in the slides
@@ -451,10 +393,7 @@ NoSQL Taxonomy
 - Mastery:
   - Seven Databases in Seven Weeks, 2e
 
-
-
 ![images/lecture_5_0/lec_5_0_slide_23_image_1.png]
-
 
 * DB Taxonomy
 - **At least five DB genres**
@@ -468,8 +407,6 @@ NoSQL Taxonomy
   - Trade-off with respect to CAP theorem
   - Querying capability
   - Replication scheme
-
-
 
 ![images/lecture_5_0/lec_5_0_slide_24_image_1.png]
 
@@ -501,9 +438,6 @@ NoSQL Taxonomy
   - When data is hierarchical (not a nice row in one or more tables)
   - When data structure is variable/dishomogeneous (record-to-record variation)
 
-
-
-
 * Key-Value Store
 - E.g., Redis, DynamoDB, *Git*, *AWS S3*, *filesystem*
 - **Data model**
@@ -521,10 +455,7 @@ NoSQL Taxonomy
   - Not great if data queries are needed
   - Lacking secondary indexes and scanning capabilities
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_26_image_1.png)
-
 
 * Document Store
 - E.g., *MongoDB*, CouchDB
@@ -543,10 +474,7 @@ NoSQL Taxonomy
   - Complex join queries
   - Denormalized form is the norm
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_27_image_1.png)
-
 
 * Columnar Store
 - E.g., *HBase*, Cassandra, *Parquet*
@@ -568,10 +496,7 @@ NoSQL Taxonomy
   - Need to design the schema based on how you plan to query the data
   - No native joins, applications need to handle join
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_28_image_1.png)
-
 
 * Graph DB
 - E.g., *Neo4J*, GraphX
@@ -590,17 +515,13 @@ NoSQL Taxonomy
   - Don't scale well, since it's difficult to partition graph on different nodes
     - Store the graph in the graph DB and the relations in a key-value store
 
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_29_image_1.png)
 
-
 * Taxonomy by CAP
-
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_30_image_1.png)
 
 From http://blog.nahurst.com/visual-guide-to-nosql-systems
-
 
 * Taxonomy by CAP
 - **CA (Consistent, Available) systems**
@@ -620,13 +541,9 @@ From http://blog.nahurst.com/visual-guide-to-nosql-systems
   - Cassandra (column-oriented/tabular)
   - CouchDB (document-oriented)
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_31_image_1.png)
 
-
 * Taxonomy by CAP
-
 
 **UMD DATA605 - Big Data** **Systems**
 NoSQL Stores
@@ -645,12 +562,9 @@ NoSQL Taxonomy
 - Good overview:
   - Seven Databases in Seven Weeks, 2e
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_33_image_1.png)
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_34_image_1.png)
-
 
 * (Apache) HBase
 - HBase = **H**adoop Data**Base**
@@ -672,9 +586,6 @@ NoSQL Taxonomy
   - Facebook Messages (based on Cassandra)
   - Twitter metrics monitoring
 
-
-
-
 * HBase: Features
 - Data versioning
   - Store versions of data
@@ -693,9 +604,6 @@ NoSQL Taxonomy
   - Distributed configuration
     - Nodes can rely on each other rather than on a centralized source
 
-
-
-
 * From HDFS to HBase
 - **Different types of workloads for DB backends**
   - **OLTP** (On-Line Transactional Processing)
@@ -713,9 +621,6 @@ NoSQL Taxonomy
   - Use additional storage and memory to organize the tables
   - Write tables back to HDFS as needed
 
-
-
-
 * HBase Data Model
 - **Warning**: HBase uses names similar to relational DB concepts, but with different meanings
 - A **database** consists of multiple tables
@@ -730,7 +635,6 @@ NoSQL Taxonomy
 - Versioning
   - New values don't overwrite the old ones
   - `put()` and `get()` allow to specify a timestamp (otherwise uses current time)
-
 
 ```text
 HBase Database: from table name to Table.
@@ -755,7 +659,6 @@ HBase Database: from table name to Table.
 **table**['**row1**']['**cf1**:**col1**']
 ```
 
-
 * Example 1: Colors and Shape
 - Table with:
   - 2 column families
@@ -771,8 +674,6 @@ HBase Database: from table name to Table.
   - no columns in “color”
   - 2 columns in the column family “shape”
 - Data is accessed using a row key and column (family:qualifier)
-
-
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_1.png)
 ```text
@@ -794,7 +695,6 @@ HBase Database: from table name to Table.
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_2.png)
 
-
 * Why all this convoluted stuff?
 - **A row in HBase is almost like a mini-database**
   - A cell has many different values associated with it
@@ -806,10 +706,7 @@ HBase Database: from table name to Table.
   - Store versioned web-site data
   - Store a wiki
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_39_image_1.png)
-
 
 * Example 2: Storing a Wiki
 **Wiki (e.g., Wikipedia)**
@@ -820,10 +717,8 @@ HBase Database: from table name to Table.
 - Row → entire wiki page
 - Row keys → wiki identifier (e.g., title or URL)
 - Column family → `text`
-- Column → ‘’ (empty)
+- Column → ‘' (empty)
 - Cell value → article text
-
-
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_40_image_1.png)
 
@@ -855,8 +750,6 @@ wiki_table['Home']['text']
 text: timestamp=1295774833226, value=Welcome!
 - HBase returns the timestamp (ms since the epoch 01-01-1970 UTC)
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_41_image_1.png)
 ```text
 **wikipedia_table** = {
@@ -874,7 +767,6 @@ database: Database = {'wikipedia':  wiki_table}
 (queried_value, metadata) = \
 wiki_table['Home']['text']
 ```
-
 
 * Example 2: Improved Wiki
 - **Improved wiki using versioning**
@@ -894,12 +786,9 @@ wiki_table['Home']['text']
   - It's fixed and identified uniquely the page (like a primary key)
   - If you want to change the title you need to re-write all the row
 
-
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_42_image_1.png)
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_42_image_2.png)
-
 
 * Data in Tabular Form
 |  | Name | Home | Office |  |  |  |
@@ -909,7 +798,6 @@ wiki_table['Home']['text']
 | 102 | Marilyn | Tollerud | 555-1213 |  | 666-1213 |  |
 | 103 | Pastor | Inqvist |  |  | 555-1214 | inqvist@wel.org |
 
-
 - Fundamental operations
   - CREATE table, families
   - PUT table, rowid, family:column, value
@@ -917,7 +805,6 @@ wiki_table['Home']['text']
   - GET table, rowid
   - SCAN table *WITH filters*
   - DROP table
-
 
 * Data in Tabular Form
 |  | Name | Home | Office | Social |  |  |  |  |
@@ -932,7 +819,6 @@ wiki_table['Home']['text']
 *Column families cannot
 be added at runtime
 *
-
 
 ```text
 Table People(Name, Home, Office)
@@ -953,7 +839,6 @@ Table People(Name, Home, Office)
 }
 ```
 
-
 * Nested Data Representation
 ```text
 **GET People:101**
@@ -969,7 +854,6 @@ Table People(Name, Home, Office)
 	“Florian”
 ```
 
-
 |  | Name | Home | Office |  |  |  |
 |---------|---------|---------|---------|---------|---------|---------|
 | Key | First | Last | Phone | Email | Phone | Email |
@@ -977,13 +861,12 @@ Table People(Name, Home, Office)
 | 102 | Marilyn | Tollerud | 555-1213 |  | 666-1213 |  |
 | 103 | Pastor | Inqvist |  |  | 555-1214 | inqvist@wel.org |
 
-
 * Column Family vs Column
 - **Adding a column**
   - Is cheap
   - Can be done at run-time
 - **Adding a column family**
-  - Can’t be done at run-time
+  - Can't be done at run-time
   - Need a copy operation of the table (expensive)
   - This tells you something about how the data is stored
     - Easy to add is a map
@@ -998,14 +881,12 @@ Table People(Name, Home, Office)
   - Everything is designed to accommodate a special kind of data
     - E.g., timestamped web data for search engine
 
-
-
 * Consistency Model
 - **Atomicity**
   - Entire rows are updated atomically or not at all
   - Independently of how many columns are affected
 - **Consistency**
-  - A GET is guaranteed to return a complete row that existed at some point in the table’s history
+  - A GET is guaranteed to return a complete row that existed at some point in the table's history
     - Weak / eventual consistency
     - Check the timestamp to be sure!
   - A SCAN
@@ -1018,9 +899,6 @@ Table People(Name, Home, Office)
 - **Durability
 **
   - All successful writes have been made durable on disk
-
-
-
 
 * Checking for Row or Column Existence
 - HBase supports Bloom filters to check whether a row or column exists
@@ -1038,14 +916,12 @@ Table People(Name, Home, Office)
   - When a new blob of data is presented, turning the blob into a hash, and then use hash to set some bits to 1
   - To test if we have seen a blob, compute the hash, check the bits
     - If all bits are 0s, then for sure we didn't see it
-    - If all bits are 1s, then it’s likely but not sure you have seen that blob (false positive)
+    - If all bits are 1s, then it's likely but not sure you have seen that blob (false positive)
 - **Bloom filter complexity
 **
   - Use a constant amount of space
   - Has false positives (no false negatives)
   - O(1)
-
-
 
 * Write-Ahead Log (WAL)
 
@@ -1063,14 +939,11 @@ Table People(Name, Home, Office)
   - If the server crashes during this limbo period, the state is lost
 - **Solution**
   - Use append-only disk-resident data structure
-  - Log of operations performed since last table checkpoint are appended to the WAL (it’s like storing deltas)
+  - Log of operations performed since last table checkpoint are appended to the WAL (it's like storing deltas)
   - When tables are stored to disk, the WAL is cleared
   - If the server crashes during the limbo period, use WAL to recover the state that was not written yet
 - When running a big import job, disable the WAL to improve performance
   - Trade off disaster recovery protection for speed
-
-
-
 
 * Storing variable-length data in DBs
 
@@ -1103,10 +976,7 @@ PUT People, 403, Home:Phone, 555-3434
 fseek(file, 401*52);
 - Overwrite the data in place
 
-
-
 Need to use pointers
-
 
 * HBase Implementation
 
@@ -1126,9 +996,6 @@ Need to use pointers
   - ```text Idea 4: Partition table into regions by key ```
     - Region = a chunk of rows [a, b)
     - Regions never overlap
-
-
-
 
 * Idea 1: Put the Table in a Single File
 
@@ -1156,9 +1023,6 @@ Table People(Name, Home, Office)
 
 **File “People”**
 
-
-
-
 * Idea 2: One file + WAL
 
 **Table People(Name, Home, Office)**
@@ -1185,8 +1049,6 @@ PUT 102:Home:Email = mt@yahoo.com
 
 **PUT People:101:Office:Phone = “555-3434”**
 
-
-
 	101: {
 		Timestamp: T403;
 		Name: {First=“Florian”, Middle=“Garfield”, Last=“Krepsbach”},
@@ -1199,7 +1061,6 @@ PUT 102:Home:Email = mt@yahoo.com
 		Home: {Phone=“555-1213”},
 		Office: {Phone=“666-1213”}
 	},
-
 
 * Idea 2 Requires Periodic Table Update
 
@@ -1222,10 +1083,7 @@ PUT 102:Home:Email = mt@yahoo.com
 - Delete the log and memory cache
 - Start over
 
-
-
 - Similar to caching in memory hierarchy
-
 
 * Idea 3: Partition by Column Family
 
@@ -1267,11 +1125,8 @@ Data for
 Column Family
 Name
 
-
-
 - Same scheme as before but split by column family
-- Now it’s clear why column family vs columns
-
+- Now it's clear why column family vs columns
 
 * Idea 4: Split Into Regions
 
@@ -1329,8 +1184,5 @@ People?
 
 Access data
 in tables
-
-
-
 
 * Final HBase Data Layout
