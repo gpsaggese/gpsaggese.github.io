@@ -584,33 +584,33 @@ Now, let's explore another workflow model commonly used in open-source projects.
 # Integration-Manager Workflow
 # ##############################################################################
 
-- The integration-manager workflow is a traditional open-source development
-  model, used by projects like Linux. Here, one official repository is managed
-  by the project maintainer, who alone can push changes to it
-- Contributors can read this repository and fork it into private copies. They
-  make changes in their forks and push these to their public copies. To propose
+- The integration-manager workflow is a classic open-source development model,
+  used by projects like Linux. One official repository is managed by the project
+  maintainer, who alone can push changes
+- Contributors can read and fork this repository into private copies. They make
+  changes in their forks and push these to their public copies. To propose
   changes, contributors send a pull request to the maintainer. The maintainer
   adds the contributor's repository as a remote, merges changes into a local
   branch, tests them, and if satisfactory, pushes them to the official
-  repository. This workflow ensures the maintainer controls what is included,
+  repository. This workflow ensures the maintainer controls inclusion,
   maintaining quality and consistency
 
 # ##############################################################################
 # Git Log
 # ##############################################################################
 
-The `git log` command is a powerful tool for viewing the history of commits in a
-repository. It provides detailed information about each commit, including the
-author, date, and commit message. In Git, references or "refs" are pointers to
-specific commits. Common refs include `HEAD`, which points to the current commit
-you are working on, `origin/master`, which refers to the remote branch, and
-local branches like `experiment`. Each commit has a unique identifier, such as
-`d921970`. The caret symbol `^` is used to navigate through the commit history.
-For example, `HEAD^` refers to the commit before the current `HEAD`, essentially
-the last commit. The notation `^2` is equivalent to `^^`, indicating the second
-parent of a merge commit, which can have multiple parents. Understanding these
-references and how to navigate them is crucial for managing and reviewing
-changes in a project effectively.
+- The `git log` command is essential for viewing commit history in a repository,
+showing details like author, date, and message. In Git, references or "refs" are
+pointers to specific commits
+
+- Key refs include `HEAD` for the current commit, `origin/master` for the remote
+  branch, and local branches like `experiment`.
+
+- Each commit has a unique ID. The caret `^` helps navigate
+  commit history; `HEAD^` points to the commit before `HEAD`, the last commit.
+
+- The notation `^2` or `^^` indicates the second parent of a merge commit, which
+  may have multiple parents.
 
 # ##############################################################################
 # Dot Notation
@@ -631,81 +631,52 @@ changes in a project effectively.
   `git log master...experiment` will show `F`, `E`, `D`, and `C`, which are the
   commits that are not common to both branches.
 
-Now, let's delve into some advanced Git features that can enhance your workflow.
+# ##############################################################################
+# Advanced Git
+# ##############################################################################
+
+- Stashing in Git lets you save your working directory's current state,
+  including modified and staged files, without committing. This state is stored
+  in a stack for later use. It's useful for switching branches without
+  committing changes
+- Cherry-picking applies a single commit from one branch to another, similar to
+  rebasing but for one commit. It's useful for applying specific changes without
+  merging the entire branch
+- Rerere, "Reuse Recorded Resolution," in Git remembers how you resolved
+  conflicts. It saves time by automatically applying previous resolutions if the
+  same conflict arises again
+- Submodules and subtrees allow inclusion of other Git projects within your
+  project. Submodules act as pointers to other repositories, while subtrees
+  integrate the external project directly into your repository
 
 # ##############################################################################
 # Advanced Git
 # ##############################################################################
 
-- Stashing is a handy feature in Git that allows you to save the current state
-  of your working directory, including modified and staged files, without
-  committing them. This saved state is stored in a stack, which you can apply
-  later when needed. It's useful when you need to switch branches but aren't
-  ready to commit your changes.
-
-- Cherry-picking is a way to apply a single commit from one branch onto another.
-  It's like rebasing, but for just one commit. This is useful when you want to
-  apply a specific change without merging the entire branch.
-
-- Rerere, which stands for "Reuse Recorded Resolution," is a feature in Git that
-  remembers how you resolved certain conflicts. This can save time if you
-  encounter the same conflict again, as Git can automatically apply the previous
-  resolution.
-
-- Submodules and subtrees allow you to include other Git projects within your
-  project. Submodules are like pointers to other repositories, while subtrees
-  integrate the external project directly into your repository.
-
-Let's continue exploring more advanced Git functionalities that can help in
-managing your codebase effectively.
-
-# ##############################################################################
-# Advanced Git
-# ##############################################################################
-
-- The bisect command is a powerful tool for finding the exact commit where a bug
-  was introduced. When a bug appears at the top of the tree and you don't know
-  when it started, `git bisect` helps you pinpoint the problematic commit. It
-  uses a binary search approach, where you mark commits as good or bad, and it
-  narrows down to the commit where the change occurred.
-
-- Filter-branch is used to rewrite the history of a repository in a scriptable
-  way. This can be useful for tasks like changing an email address in commit
-  history or removing a sensitive file. It checks out each version of the
-  repository, runs a command, and commits the result, effectively rewriting the
-  history.
-
-- Hooks in Git are scripts that run automatically at certain points in the Git
-  workflow, such as before a commit or merging. They can be used to enforce
-  policies, run tests, or automate tasks, ensuring that certain conditions are
-  met before changes are made to the repository.
+- The `git bisect` command is a tool for identifying the specific commit where a
+  bug was introduced. When a bug is present and its origin is unknown,
+  `git bisect` uses a binary search method to locate the faulty commit by
+  marking them as good or bad
+- `Filter-branch` allows for rewriting a repository's history in a scriptable
+  manner. It's useful for tasks like altering an email in commit history or
+  removing sensitive files. It checks out each repository version, executes a
+  command, and commits the changes, thus rewriting history
+- Git hooks are scripts that execute automatically at specific points in the Git
+  workflow, such as pre-commit or pre-merge. They enforce policies, run tests,
+  or automate tasks, ensuring conditions are met before repository changes occur
 
 # ##############################################################################
 # Github
 # ##############################################################################
 
-GitHub is a major platform for hosting and collaborating on software projects.
-In 2018, Microsoft acquired GitHub for $7.5 billion, highlighting its importance
-in the tech industry. GitHub is the largest host for Git repositories, with over
-100 million open-source projects. It offers a range of features that facilitate
-software development and collaboration. These include pull requests (PRs) for
-proposing changes, forks for creating personal copies of projects, issue
-tracking for managing bugs and tasks, and code review for improving code
-quality. GitHub also supports collaboration through wikis and provides
-automation tools like Actions for continuous integration and continuous
-deployment (CI/CD).
-
-The concept of "forking a project" is significant in open-source communities.
-Traditionally, forking has a negative connotation, as it implies modifying a
-project to create a competing version. However, on GitHub, forking is a common
-practice that allows users to copy a project and contribute to it without having
-direct write access. This encourages collaboration and innovation, as developers
-can experiment with changes and propose improvements to the original project.
-
-GitHub's role in the software development ecosystem is crucial, as it provides a
-platform for developers to work together, share knowledge, and build upon each
-other's work. Its acquisition by Microsoft underscores its value and potential
-for growth in the tech industry.
-
-Now, let's explore the impact of GitHub on open-source development and its
-community-driven approach.
+- GitHub is a crucial platform for software hosting and collaboration, acquired
+  by Microsoft in 2018 for $7.5 billion
+- As the largest Git repository host, GitHub supports over 100 million
+  open-source projects. It features pull requests for change proposals, forks
+  for personal copies, issue tracking for bugs, and code review for quality
+- GitHub enhances collaboration with wikis and automation tools like Actions for
+  CI/CD. In open-source communities, "forking a project" is essential
+- Traditionally seen as creating competing versions, forking on GitHub is
+  common. It allows users to copy and contribute without direct write access,
+  promoting collaboration and innovation. Developers can experiment and propose
+  improvements to the original project.
