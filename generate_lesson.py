@@ -190,7 +190,9 @@ def _generate_pdf(
     if limit:
         cmd.extend(["--limit", limit])
     # Execute command.
-    hsystem.system(" ".join(cmd))
+    cmd_str = " ".join(cmd)
+    _LOG.info("Executing: %s", cmd_str)
+    hsystem.system(cmd_str, suppress_output=False)
 
 
 def _generate_script(class_dir: str, source_path: str, source_name: str) -> None:
@@ -222,13 +224,17 @@ def _generate_script(class_dir: str, source_path: str, source_name: str) -> None
         "--slides_per_group",
         "3",
     ]
-    hsystem.system(" ".join(cmd))
+    cmd_str = " ".join(cmd)
+    _LOG.info("Executing: %s", cmd_str)
+    hsystem.system(cmd_str, suppress_output=False)
     # Step 2: Remove 'Transition: ' prefix.
-    _LOG.debug("Removing 'Transition: ' prefix from %s", output_path)
-    hsystem.system(f"perl -pi -e 's/^Transition: //g' {output_path}")
+    cmd_str = f"perl -pi -e 's/^Transition: //g' {output_path}"
+    _LOG.info("Executing: %s", cmd_str)
+    hsystem.system(cmd_str, suppress_output=False)
     # Step 3: Lint the output.
-    _LOG.debug("Linting %s", output_path)
-    hsystem.system(f"lint_txt.py -i {output_path} --use_dockerized_prettier")
+    cmd_str = f"lint_txt.py -i {output_path} --use_dockerized_prettier"
+    _LOG.info("Executing: %s", cmd_str)
+    hsystem.system(cmd_str, suppress_output=False)
 
 
 def _process_lecture_file(
