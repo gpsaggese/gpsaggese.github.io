@@ -79,13 +79,11 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_1.png)
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_2.png)
+//![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_2.png)
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_3.png)
+//![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_3.png)
 :::: 
 :::
-
-// TODO(gp): Fix
 
 * Version Control Systems (1/2)
 
