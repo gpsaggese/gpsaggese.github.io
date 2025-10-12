@@ -252,13 +252,13 @@ UMD DATA605: Big Data Systems
 * Sources of Big Data
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=40%}
 - Distinguish Big Data by source
   - **Machines**
   - **People**
   - **Organizations**
 ::::
-:::: {.column width=45%}
+:::: {.column width=55%}
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_24_image_1.png)
 
@@ -458,18 +458,16 @@ UMD DATA605: Big Data Systems
 * Typical Data Scientist Workflow
 - From Data Science Workflow
 
-![](data605/lectures_source/images/lecture_1/lec_1_slide_38_image_1.jpeg)[ height=70% ]
+![](data605/lectures_source/images/lecture_1/lec_1_slide_38_image_1.jpeg){ height=70% }
 
 * Where Data Scientist Spends Most Time
 
 - 80-90% of the work is data cleaning and wrangling
 - "Janitor Work" in Data Science
-- Research Directions in Data Wrangling
 
-![](data605/lectures_source/images/lecture_1/lec_1_slide_39_image_1.png)[ height=70% ]
+![](data605/lectures_source/images/lecture_1/lec_1_slide_39_image_1.png){ height=70% }
 
 * What a Data Scientist Should Know
-- From: How to hire a data scientist
 - **Data grappling skills**
   - Move and manipulate data with programming
   - Scripting languages (e.g., Python)
