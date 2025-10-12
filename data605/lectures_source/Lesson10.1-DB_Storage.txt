@@ -112,7 +112,7 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
   - In-memory DBs
     - Enough memory that data often fits in memory of a cluster of machines
   - It's faster to access another computer's memory through network than accessing your own disk
-  - “Disk” considerations less important
+  - "Disk" considerations less important
     - HDDs vs SSDs
     - Still disks are where most of the data lives today
 - **Similar changes for algorithms**
@@ -157,7 +157,7 @@ Sources: Silberschatz et al. 2020, Chap 12, Physical Storage Systems
 **1956**
 
 - IBM RAMAC
-- 24” platters
+- 24" platters
 - 5 million characters
 
 ![alt_text](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_9_image_2.jpeg)
@@ -286,7 +286,7 @@ Western Digital
 - **Observations**
   - Disks are very cheap
   - Failures are very costly
-  - Use “extra” disks to ensure reliability
+  - Use "extra" disks to ensure reliability
     - Store data redundantly
     - If one disk goes down, the data still survives
   - Bonus: allow faster access to data
@@ -372,7 +372,7 @@ Good article on wikipedia
   - = use extra bits so we can reconstruct data (like ECC in RAM)
   - Can trade-off different levels of error detection and recovery
 **RAID 3: Interleaved parity**
-  - = one disk contains “parity” for the main data disks
+  - = one disk contains "parity" for the main data disks
   - Can handle a single disk failure
   - Little overhead (only 25% in the above case)
 **RAID 5: Block-interleaved distributed parity**
@@ -463,7 +463,7 @@ Sources:
 
 - **Query Processing Engine**
 
-  - Given a user query, decide how to “execute” it
+  - Given a user query, decide how to "execute" it
   - Specify sequence of pages to be brought in memory
   - Operate upon the tuples to produce results
 
@@ -523,7 +523,7 @@ Sources:
     - Records are allocated contiguously in no particular order
     - A new record is appended at the end of free space and the header is updated
     - A new record is deleted, the space is freed, the entry is deleted
-    - Need to scan the records to find for “SSN = 123”
+    - Need to scan the records to find for "SSN = 123"
   - Sorted by key
     - Sequential organization
     - Keeping it sorted is complex
@@ -799,7 +799,7 @@ Index
 
 * Overview
 
-* “Cost”
+* "Cost"
 - Complicated to compute
 - We will focus on disk:
   - Number of I/Os?
@@ -822,10 +822,10 @@ Index
 - Transactions
 
 * Selection Operation
-**SELECT** * **FROM** person **WHERE** SSN = “123”
+**SELECT** * **FROM** person **WHERE** SSN = "123"
 - **Option 1: Sequential Scan****
 **
-  - Read the relation start to end and look for “123”
+  - Read the relation start to end and look for "123"
     - Can always be used (not true for the other options)
   - Cost
     - *Let b**r * = Number of relation blocks*
@@ -838,13 +838,13 @@ Index
         - *So on average, b**r*/2 blocks accessed*
 
 * Selection Operation
-**SELECT** * **FROM** person **WHERE** SSN = “123”
+**SELECT** * **FROM** person **WHERE** SSN = "123"
 - **Option 2 : Binary Search****
 **
   - Pre-condition:
     - The relation is sorted on SSN
     - Selection condition is an equality
-      - E.g. can't apply to “*Name like ‘%424%'*”
+      - E.g. can't apply to "*Name like ‘%424%'*"
   - Do binary search
     - Cost of finding the *first* tuple that matches
       - [log2(*b**r*)]* (*t**T* + *t**S*)
@@ -854,7 +854,7 @@ Index
     - Incurs additional cost
 
 * Selection Operation
-**SELECT** * **FROM** person **WHERE** SSN = “123”
+**SELECT** * **FROM** person **WHERE** SSN = "123"
 - **Option 3 : Use Index**
   - Pre-condition:
     - An appropriate index must exist
@@ -877,7 +877,7 @@ Index
 - **SELECT** * **FROM** R, S **WHERE** R.a = S.a
   - Called an "*equi-join*"
 - **SELECT** * **FROM** R, S **WHER**E |R.a – S.a | < 0.5
-  - *Not an “equi-join”*
+  - *Not an "equi-join"*
 - Option 1: Nested-loops
         *for* *each tuple r* *in* *R*
              *for* *each tuple s* *in* *S*
@@ -954,7 +954,7 @@ Index
 
 * Hash Join
 - Case 2: Smaller relation *(S)* doesn't fit in memory
-- Two “phases”
+- Two "phases"
 - Phase 1:
   - Read the relation *R* block by block and partition it using a hash function, *h1(a)*
     - Create one partition for each possible value of *h1(a)*
@@ -966,7 +966,7 @@ Index
 
 * Hash Join
 - Case 2: Smaller relation *(S)* doesn't fit in memory
-- Two “phases”
+- Two "phases"
 - Phase 2:
   - Read S1 into memory, and build a hash index on it (S1 fits in memory)
     - Using a different hash function, *h*2*(a)*
@@ -975,7 +975,7 @@ Index
 
 * Hash Join
 - Case 2: Smaller relation *(S)* doesn't fit in memory
-- Two “phases”:
+- Two "phases":
 - Phase 1:
   - Partition the relations using one hash function, *h*1*(a)*
 - Phase 2:
@@ -993,7 +993,7 @@ Index
 - Pre-condition:
   - The relations must be sorted by the join attribute
   - If not sorted, can sort first, and then use this algorithms
-- Called “sort-merge join” sometimes
+- Called "sort-merge join" sometimes
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_68_image_1.png)
 
@@ -1060,7 +1060,7 @@ Index
 - Phase 1:
   - Read first M blocks of relation, sort, and write it to disk
   - Read the next M blocks, sort, and write to disk …
-  - Say we have to do this “N” times
+  - Say we have to do this "N" times
   - Result: *N* sorted runs of size *M* blocks each
 - Phase 2:
   - Merge the *N* runs (*N-way merge*)
@@ -1111,7 +1111,7 @@ Index
 - Steps:
   - Create a hash table on *a,* and keep the *count(b) so far*
   - Read *R* tuples one by one
-  - For a new *R tuple, “r”*
+  - For a new *R tuple, "r"*
     - Check if *r.a* exists in the hash table
     - If yes, increment the count
     - If not, insert a new value
@@ -1129,11 +1129,11 @@ Index
 * Group By and Aggregation
 *select a, AGGR(b)  from R group by a;*
 - sum(), count(), min(), max(): only need to maintain one value per group
-  - Called “distributive”
-- average() : need to maintain the “sum” and “count” per group
-  - Called “algebraic”
+  - Called "distributive"
+- average() : need to maintain the "sum" and "count" per group
+  - Called "algebraic"
 - stddev(): algebraic, but need to maintain some more state
-- median(): can do efficiently with sort, but need two passes (called “holistic”)
+- median(): can do efficiently with sort, but need two passes (called "holistic")
   - First to find the number of tuples in each group, and then to find the median tuple in each group
 - count(distinct b): must do duplicate elimination before the count
 
@@ -1158,9 +1158,9 @@ Index
 *(select * from R) union all (select * from S) ;*
 *(select * from R) intersect all (select * from S) ;*
 - Remember the rules about duplicates
-- “union all”: just append the tuples of *R and S*
-- *“*union”: append the tuples of *R and S, and do duplicate elimination*
-- *“intersection”*: similar to joins
+- "union all": just append the tuples of *R and S*
+- *"*union": append the tuples of *R and S, and do duplicate elimination*
+- *"intersection"*: similar to joins
   - Find tuples of R and S that are identical on all attributes
   - Can use *hash-based or sort-based algorithm*
 
@@ -1213,7 +1213,7 @@ where a.SSN = c.SSN and
 - Requires higher amount of memory
   - All operations are executing at the same time (say as processes)
 - Somewhat limited applicability
-- A “blocking” operation: An operation that has to consume entire input before it starts producing output tuples
+- A "blocking" operation: An operation that has to consume entire input before it starts producing output tuples
 
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_87_image_1.png)
 
@@ -1332,15 +1332,15 @@ Example schedule:
 * Snapshot Isolation
 - Very popular scheme, used as the primary scheme by many systems including Oracle, PostgreSQL etc…
   - Several others support this in addition to locking-based protocol
-- A type of “optimistic concurrency control”
+- A type of "optimistic concurrency control"
 - Key idea:
-  - For each object, maintain past “versions” of the data along with timestamps
+  - For each object, maintain past "versions" of the data along with timestamps
     - Every update to an object causes a new version to be generated
 
 * Snapshot Isolation
 - Read queries:
-  - Let “t” be the “time-stamp” of the query, i.e., the time at which it entered the system
-  - When the query asks for a data item, provide a version of the data item that was latest as of “t”
+  - Let "t" be the "time-stamp" of the query, i.e., the time at which it entered the system
+  - When the query asks for a data item, provide a version of the data item that was latest as of "t"
     - Even if the data changed in between, provide an old version
   - No locks needed, no waiting for any other transactions or queries
   - The query executes on a consistent snapshot of the database

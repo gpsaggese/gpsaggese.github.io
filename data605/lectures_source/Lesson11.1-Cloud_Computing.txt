@@ -51,16 +51,16 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Challenges and opportunities
 
 * Cloud Computing
-- **Computing as “service” rather than “product”**
+- **Computing as "service" rather than "product"**
   - Everything happens in the cloud: both storage and computing
   - Edge devices (e.g., phones, laptops, tablets) simply interact with the cloud
 - **Advantages of cloud computing**
   - Device agnostic: computation can seamlessly move from one device to other
   - On demand
   - Efficiency / scalability
-    - Programming frameworks (e.g., Hadoop, Spark, Dask) allow “easy” scalability
+    - Programming frameworks (e.g., Hadoop, Spark, Dask) allow "easy" scalability
   - Reliability
-  - Cost: “pay-as-you-go” allows renting computing resources as needed
+  - Cost: "pay-as-you-go" allows renting computing resources as needed
     - Cheaper (?) than building your own systems
     - Computing as a commodity (like electricity)
 
@@ -130,7 +130,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 * X-as-a-Service
 
 **... XaaS**
-- Business model of “Anything-as-a-service” (2010s)
+- Business model of "Anything-as-a-service" (2010s)
 - Desktop-as-a-service (e.g., AWS app)
 - Mobility-as-a-service (e.g., Uber)
 - Games-as-a-service (e.g., Google Stadia)
@@ -203,7 +203,7 @@ From Dr. Mehmet Gunes, U. Nevada Reno
 - **Powering / cooling cost**
   - Cost of running the equipment
   - Cost of cooling is quite high
-    - Both have led to focus on “energy-efficient computing”
+    - Both have led to focus on "energy-efficient computing"
   - Appropriate placement of vents is a key issue
     - Thermal hotspots often appear and need to worked around
   - PUE (Power Usage Effectiveness)
@@ -240,7 +240,7 @@ As of 2022, 28 geographical regions
 * Amazon Web Services (EC2)
 - The most widely used current solution to cloud computing
   - However alternatives are attractive depending on your needs
-  - Current prices are very “low” and likely to remain that way due to competition
+  - Current prices are very "low" and likely to remain that way due to competition
   - See https://aws.amazon.com/ec2/pricing/on-demand/ for current on-demand pricing
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_1.png)
@@ -324,7 +324,7 @@ As of 2022, 28 geographical regions
   - Hard to reason about performance (if you care)
   - Identical VMs may deliver somewhat different performance
     - E.g., multi-tenancy, different hardware
-- “Bare-metal” compute to improve performance
+- "Bare-metal" compute to improve performance
 
 * Docker
 - Enable true independence between application devs and IT ops
@@ -350,7 +350,7 @@ As of 2022, 28 geographical regions
 - Challenges and opportunities
 
 * Programming Frameworks
-- **Programming frameworks emerged from efforts to “scale out” workloads**
+- **Programming frameworks emerged from efforts to "scale out" workloads**
   - Distribute work over large numbers of machines (thousands of machines)
 - Parallelism has been around for a long time
   - Both in a single machine and as a cluster of computers
@@ -371,7 +371,7 @@ As of 2022, 28 geographical regions
 - Provide a fairly restricted, but still powerful abstraction for programming distributed workloads
 - Programmers only write functions called *map* and *reduce*
   - **map** programs
-    - inputs: a list of “records” (e.g., data605/lectures_source/images, genomes)
+    - inputs: a list of "records" (e.g., data605/lectures_source/images, genomes)
     - output: for each record, produce a set of **(key, value)** pairs
   - **reduce** programs
     - input: a list of **(key, [values])** grouped together from the mapper
@@ -382,7 +382,7 @@ As of 2022, 28 geographical regions
   - MapReduce and other analytics frameworks are great
 - **Streaming data**
   - Very large-scale applications that need real-time access with few ms latencies
-  - Trade-off between “consistency” and “performance”
+  - Trade-off between "consistency" and "performance"
 
 * Other Programming Frameworks
 - Many different programming frameworks suitable for different applications
@@ -441,7 +441,7 @@ As of 2022, 28 geographical regions
   - Potentially no format incompatibilities when everyone is sharing documents in the (same) cloud
 
 * Advantages of Cloud Computing
-- **“Unlimited” storage capacity**
+- **"Unlimited" storage capacity**
   - Cloud computing offers virtually limitless storage
   - Your computer has ~1TB hard drive
   - Hundreds of PBs available in the cloud (elastic and on-demand)

@@ -59,7 +59,7 @@ gsaggese@umd.edu
     - Run enterprise software
     - Run machine learning applications
 - **Services can be controlled in different ways**
-  - A web interface (aka “console”)
+  - A web interface (aka "console")
   - CLI: **aws** command
   - Programmatically
     - Through language libraries, SDK (e.g., Python **boto3**)
@@ -113,7 +113,7 @@ gsaggese@umd.edu
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_3.png)
 
 * From On-premise to AWS
-- **Aka “Cloud-transformation”**
+- **Aka "Cloud-transformation"**
 - **Move a medium-sized e-commerce site from on-premise to the cloud**
 - **Architecture**
   - **Web-server**: handle requests from customers

@@ -59,8 +59,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **
   - New applications, new constraints to data / storage **
 **
-  - Around 2000s NoSQL “movement” started
-    - Initially it meant “No SQL” -> “Not Only SQL”
+  - Around 2000s NoSQL "movement" started
+    - Initially it meant "No SQL" -> "Not Only SQL"
 - **DBs (e.g., SQL vs NoSQL) make different trade-offs
 **
   - Different worldviews
@@ -74,7 +74,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **The user base / applications have expanded**
   - IMO Postgres + Mongo cover 99% of use cases
   - Any data scientist / engineer needs to be familiar with both
-  - “Which DB solves my problem best?”
+  - "Which DB solves my problem best?"
 - **Polyglot model**
   - Use more than one DB in each project
   - Relational DBs are not going to disappear any time soon
@@ -261,7 +261,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Replicas cannot update local data, but require primary node to perform update
   - Single-point of failure
 - **Update-anywhere replication**
-  - Aka “multi-master replication”
+  - Aka "multi-master replication"
   - Every replica can update a data item, which is then propagated (synchronously or asynchronously) to the other replicas
 - **Quorum-based replication**
   - Let *N* be the total number of replicas
@@ -303,11 +303,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Eventual consistency**
   - Popularized by AWS DynamoDB
   - Consistency guaranteed only on the eventual outcome
-  - “*Eventual*” can mean after the server or network is fixed
-- **“Freshness” property**
+  - "*Eventual*" can mean after the server or network is fixed
+- **"Freshness" property**
   - Under asynchronous updates, a read from a replica may not get the latest version of a data item
   - User can request a version with a certain "freshness"
-    - E.g., “data from not more than 10 minutes ago”
+    - E.g., "data from not more than 10 minutes ago"
     - E.g., it's ok to show price for an airplane ticket that is few minutes old
   - Replicas version their data with timestamps
   - If local replica has fresh data, uses it, otherwise send request to primary node
@@ -662,17 +662,17 @@ HBase Database: from table name to Table.
 * Example 1: Colors and Shape
 - Table with:
   - 2 column families
-    - “color” and “shape”
+    - "color" and "shape"
   - 2 rows
-    - “first” and “second”
-- The row “first” has:
-  - 3 columns in the column family “color”
-    - “red”, “blue”, “yellow”
-  - 1 column in the column family “shape”
+    - "first" and "second"
+- The row "first" has:
+  - 3 columns in the column family "color"
+    - "red", "blue", "yellow"
+  - 1 column in the column family "shape"
     - shape = 4
-- The row “second” has:
-  - no columns in “color”
-  - 2 columns in the column family “shape”
+- The row "second" has:
+  - no columns in "color"
+  - 2 columns in the column family "shape"
 - Data is accessed using a row key and column (family:qualifier)
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_1.png)
@@ -779,7 +779,7 @@ wiki_table['Home']['text']
   - Is identified by its timestamp
   - Contains text
 - **HBase data model**
-- Add a family column “revision” with multiple columns
+- Add a family column "revision" with multiple columns
   - E.g., author, comment, ...
 - Timestamp is automatic and binds article text and metadata
 - The title is not part of the revision
@@ -825,15 +825,15 @@ Table People(Name, Home, Office)
 {
 	101: {
 		Timestamp: T403;
-		Name: {First=“Florian”, Middle=“Garfield”, Last=“Krepsbach”},
-		Home: {Phone=“555-1212”, Email=“florian@wobegon.org”},
-		Office: {Phone=“666-1212”, Email=“fk@phc.com”}
+		Name: {First="Florian", Middle="Garfield", Last="Krepsbach"},
+		Home: {Phone="555-1212", Email="florian@wobegon.org"},
+		Office: {Phone="666-1212", Email="fk@phc.com"}
 	},
 	102: {
 		Timestamp: T593;
-		Name: {First=“Marilyn”, Last=“Tollerud”},
-		Home: {Phone=“555-1213”},
-		Office: {Phone=“666-1213”}
+		Name: {First="Marilyn", Last="Tollerud"},
+		Home: {Phone="555-1213"},
+		Office: {Phone="666-1213"}
 	},
 	…
 }
@@ -844,14 +844,14 @@ Table People(Name, Home, Office)
 **GET People:101**
 	{
 		Timestamp: T403;
-		Name: {First=“Florian”, Last=“Krepsbach”},
-		Home: {Phone=“555-1212”, Email=“florian@wobegon.org”},
-		Office: {Phone=“666-1212”, Email=“fk@phc.com”}
+		Name: {First="Florian", Last="Krepsbach"},
+		Home: {Phone="555-1212", Email="florian@wobegon.org"},
+		Office: {Phone="666-1212", Email="fk@phc.com"}
 	}
 **GET People:101:Name**
-	{First=“Florian”, Last=“Krepsbach”}
+	{First="Florian", Last="Krepsbach"}
 **GET People:101:Name:First**
-	“Florian”
+	"Florian"
 ```
 
 |  | Name | Home | Office |  |  |  |
@@ -955,16 +955,16 @@ Table People(Name, Home, Office)
 {
 	101: {
 		Timestamp: T403;
-		Name: {First=“Florian”, Middle=“Garfield”, Last=“Krepsbach”},
-		Home: {Phone=“555-1212”, Email=“florian@wobegon.org”},
-		Office: {Phone=“666-1212”, Email=“fk@phc.com”}
+		Name: {First="Florian", Middle="Garfield", Last="Krepsbach"},
+		Home: {Phone="555-1212", Email="florian@wobegon.org"},
+		Office: {Phone="666-1212", Email="fk@phc.com"}
 	},
 ...
 }
 
 **SQL Table**
 **People(ID: Integer, FirstName: CHAR[20], LastName: CHAR[20], Phone: CHAR[8])**
-UPDATE People SET Phone=“555-3434” WHERE ID=403;
+UPDATE People SET Phone="555-3434" WHERE ID=403;
 
 **HBase Table**
 **People(ID, Name, Home, Office)**
@@ -1008,26 +1008,26 @@ Table People(Name, Home, Office)
 {
 	101: {
 		Timestamp: T403;
-		Name: {First=“Florian”, Middle=“Garfield”, Last=“Krepsbach”},
-		Home: {Phone=“555-1212”, Email=“florian@wobegon.org”},
-		Office: {Phone=“666-1212”, Email=“fk@phc.com”}
+		Name: {First="Florian", Middle="Garfield", Last="Krepsbach"},
+		Home: {Phone="555-1212", Email="florian@wobegon.org"},
+		Office: {Phone="666-1212", Email="fk@phc.com"}
 	},
 	102: {
 		Timestamp: T593;
-		Name: {First=“Marilyn”, Last=“Tollerud”},
-		Home: {Phone=“555-1213”},
-		Office: {Phone=“666-1213”}
+		Name: {First="Marilyn", Last="Tollerud"},
+		Home: {Phone="555-1213"},
+		Office: {Phone="666-1213"}
 	},
 	…
 }
 
-**File “People”**
+**File "People"**
 
 * Idea 2: One file + WAL
 
 **Table People(Name, Home, Office)**
 
-PUT 101:Office:Phone = “555-3434”
+PUT 101:Office:Phone = "555-3434"
 PUT 102:Home:Email = mt@yahoo.com
 ….
 
@@ -1047,35 +1047,35 @@ PUT 102:Home:Email = mt@yahoo.com
 
 **GET People:103**
 
-**PUT People:101:Office:Phone = “555-3434”**
+**PUT People:101:Office:Phone = "555-3434"**
 
 	101: {
 		Timestamp: T403;
-		Name: {First=“Florian”, Middle=“Garfield”, Last=“Krepsbach”},
-		Home: {Phone=“555-1212”, Email=“florian@wobegon.org”},
-		Office: {Phone=“666-1212”, Email=“fk@phc.com”}
+		Name: {First="Florian", Middle="Garfield", Last="Krepsbach"},
+		Home: {Phone="555-1212", Email="florian@wobegon.org"},
+		Office: {Phone="666-1212", Email="fk@phc.com"}
 	},
 	102: {
 		Timestamp: T593;
-		Name: {First=“Marilyn”, Last=“Tollerud”},
-		Home: {Phone=“555-1213”},
-		Office: {Phone=“666-1213”}
+		Name: {First="Marilyn", Last="Tollerud"},
+		Home: {Phone="555-1213"},
+		Office: {Phone="666-1213"}
 	},
 
 * Idea 2 Requires Periodic Table Update
 
-101: {Timestamp: T403;Name: {First=“Florian”, Middle=“Garfield”, Last=“Krepsbach”},Home: {Phone=“555-1212”, Email=“florian@wobegon.org”},Office: {Phone=“666-1212”, Email=“fk@phc.com”}},
-102: {Timestamp: T593;Name: { First=“Marilyn”, Last=“Tollerud”},Home: { Phone=“555-1213” },Office: { Phone=“666-1213” }}, . . .
+101: {Timestamp: T403;Name: {First="Florian", Middle="Garfield", Last="Krepsbach"},Home: {Phone="555-1212", Email="florian@wobegon.org"},Office: {Phone="666-1212", Email="fk@phc.com"}},
+102: {Timestamp: T593;Name: { First="Marilyn", Last="Tollerud"},Home: { Phone="555-1213" },Office: { Phone="666-1213" }}, . . .
 
 **Table for People on Disk (Old)**
 
-PUT 101:Office:Phone = “555-3434”
+PUT 101:Office:Phone = "555-3434"
 PUT 102:Home:Email = mt@yahoo.com
 ...
 
 **WAL for Table People:**
 
-101: {Timestamp: T403;Name: {First=“Florian”, Middle=“Garfield”, Last=“Krepsbach”},Home: {Phone=“555-1212”, Email=“florian@wobegon.org”},Office: {Phone=“**555-3434**”, Email=“fk@phc.com”}},102: {Timestamp: T593;Name: { First=“Marilyn”, Last=“Tollerud”},Home: { Phone=“555-1213”, **Email=“my@yahoo.com”** }, . . .
+101: {Timestamp: T403;Name: {First="Florian", Middle="Garfield", Last="Krepsbach"},Home: {Phone="555-1212", Email="florian@wobegon.org"},Office: {Phone="**555-3434**", Email="fk@phc.com"}},102: {Timestamp: T593;Name: { First="Marilyn", Last="Tollerud"},Home: { Phone="555-1213", **Email="my@yahoo.com"** }, . . .
 
 **Table for People on Disk (New)**
 
@@ -1093,7 +1093,7 @@ Name
 
 **Tables for People on Disk (Old)**
 
-PUT 101:Office:Phone = “555-3434”
+PUT 101:Office:Phone = "555-3434"
 PUT 102:Home:Email = mt@yahoo.com
 ….
 

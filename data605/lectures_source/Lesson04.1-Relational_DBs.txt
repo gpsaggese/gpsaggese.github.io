@@ -231,8 +231,8 @@ Silbershatz: Chap 2
 * Foreign Key
 - **Foreign key** = primary key of a relation that appears in another relation
   - E.g., **(ID)** from *student* appears in the relations *takes*, *advisor*
-  - *takes* is the “referencing relation”, has the foreign key
-  - *student* is the “referenced relation”, has the primary key
+  - *takes* is the "referencing relation", has the foreign key
+  - *student* is the "referenced relation", has the primary key
   - Typically shown by an arrow from referencing → referenced
 - **Foreign key constraint**: for each row, the tuple corresponding to a primary key must exist
   - Aka referential integrity constraint

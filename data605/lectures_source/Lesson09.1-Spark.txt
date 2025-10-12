@@ -38,12 +38,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 * Apache Spark - Resources
 - Concepts in the slides
 - Academic paper
-  - “Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing”, 2012
+  - "Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing", 2012
 - Web resources
   - Spark programming guide
   - Coursera Spark in Python tutorial
 - Mastery
-  - “Learning Spark: Lightning-Fast Data Analytics” (2nd Edition)
+  - "Learning Spark: Lightning-Fast Data Analytics" (2nd Edition)
   - Not my favorite, but free here
 
 ![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_2_image_1.png)
@@ -255,7 +255,7 @@ David Wheeler (GMU), T. Yang (UCSB) and Apache documentation
 - **Data is distributed as partitions across different physical nodes**
   - Each partition is typically stored in memory
   - Partitions allow efficient parallelism
-- **Spark Executors process data that is “close” to them**
+- **Spark Executors process data that is "close" to them**
   - Minimize network bandwidth
   - Data locality
   - Same approach as Hadoop
@@ -535,7 +535,7 @@ with 1/10
 - **Ease of use**: Spark is easier to program
 - **Data processing**: Spark more general
 
-“Spark vs. Hadoop MapReduce”, Saggi Neumann, 2014
+"Spark vs. Hadoop MapReduce", Saggi Neumann, 2014
 https://www.xplenty.com/blog/2014/11/apache-spark-vs-hadoop-mapreduce/
 ```
 

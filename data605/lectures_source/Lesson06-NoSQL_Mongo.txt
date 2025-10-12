@@ -81,7 +81,7 @@ UMD DATA605 - Big Data Systems
 - Developed by MongoDB Inc.
   - Founded in 2007
   - Based on DoubleClick experience with large-scale data
-  - Mongo comes from “hu-mongo-us”
+  - Mongo comes from "hu-mongo-us"
 - One of the most used NoSQL DBs (if not the most used)
 - **Document-oriented NoSQL database**
   - Schema-less
@@ -128,17 +128,17 @@ UMD DATA605 - Big Data Systems
 
 * MongoDB: Hierarchical Objects
 - A Mongo **instance** has:
-  - Zero or more “databases”
+  - Zero or more "databases"
   - Mongo instance ~ Postgres instance
 - A Mongo **database** has:
-  - Zero or more “collections”
+  - Zero or more "collections"
     - Mongo collection ~ Postgres tables
   - Mongo database ~ Postgres database
 - A Mongo **collection** has:
-  - Zero or more “documents”
+  - Zero or more "documents"
     - Mongo document ~ Postgres rows
 - A Mongo **document** has:
-  - One or more “fields”
+  - One or more "fields"
     - It has always primary key \_id
     - Mongo field ~ Postgres columns
 
@@ -264,15 +264,15 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
   - A field name (always a string)
   - Followed by a colon :
   - Followed by a typed value
-“name”: “R2-D2”
+"name": "R2-D2"
 - Data in documents is separated by commas ,**
 **
-  “name”: “R2-D2”, race : “Droid”
+  "name": "R2-D2", race : "Droid"
 - Curly braces {} hold documents
-    {“name”: “R2-D2”, race : “Droid”, affiliation: “rebels”}
+    {"name": "R2-D2", race : "Droid", affiliation: "rebels"}
 - An array is stored in brackets []
-    [{“name”: “R2-D2”, race: “Droid”, affiliation: “rebels”},
-     {“name”: “Yoda”, affiliation: “rebels”}]
+    [{"name": "R2-D2", race: "Droid", affiliation: "rebels"},
+     {"name": "Yoda", affiliation: "rebels"}]
 - Supports:
   - Embedding of nested objects within other objects
   - Just references
@@ -354,7 +354,7 @@ Details at https://www.mongodb.com/docs/manual/crud/
 with:
   - <query> = WHERE condition
   - <projection> = fields in result set 
-- **db.parts.find({parts: “hammer”}).limit(5)** 
+- **db.parts.find({parts: "hammer"}).limit(5)** 
   - Return cursor to handle a result set 
   - Can modify the query to impose limits, skips, and sort orders
   - Can specify to return the ‘top' number of records from the result set
@@ -538,7 +538,7 @@ The instructions are here**
   - **Secondary set**: set of servers used for duplication of data
   - Different properties can be associated with a secondary set,
     - E.g., secondary-only, hidden delayed, arbiters, non-voting
-- If the primary fails the secondary sets “vote” to elect the new primary set
+- If the primary fails the secondary sets "vote" to elect the new primary set
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_32_image_1.png)
 
@@ -601,7 +601,7 @@ The instructions are here**
 - Manage the limited memory
 
 **Query Processing Engine**
-- Given a user query, decide how to “execute” it
+- Given a user query, decide how to "execute" it
 - Specify sequence of pages to be brought in memory
 - Operate upon the tuples to produce results
 
@@ -725,7 +725,7 @@ The instructions are here**
   - Know in advance what kinds of queries you want to execute
 - **Query
 **
-  - Uses a custom query language called N1QL (“nickel”)
+  - Uses a custom query language called N1QL ("nickel")
   - Extends SQL to JSON documents
   - Queries over multiple documents using (server-side) joins
 - **Map-reduce support
