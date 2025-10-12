@@ -462,7 +462,7 @@ Long format
   - Hourly energy usage
   - Customer satisfaction ratings over time
   - Weekly retail foot traffic
-  - …
+  - ...
 - Rich literature on *forecasting* in time series data
 - Can use the historical patterns in the data to flag outliers
   - Rolling MAD (median absolute variation)

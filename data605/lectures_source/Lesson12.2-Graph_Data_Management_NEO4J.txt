@@ -169,7 +169,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
      <born>7/3/1962</born>
     </actor>
    <actor>
-     …
+     ...
    </actor>
   </actors>
   </movie>
@@ -514,7 +514,7 @@ Could be used also as:
 - REST API
 - Through the Java APIs
   - JVM languages have bindings to the same APIs
-    - JRuby, Jython, Clojure, Scala…
+    - JRuby, Jython, Clojure, Scala...
 - Managing nodes and relationships
 - Indexing
 - Traversing
@@ -600,7 +600,7 @@ Could be used also as:
   - Maximizing some "goodness" function 
   - Recursively removing high centrality
 edges 
-  - And so on … 
+  - And so on ... 
 
 * Overview
 - Motivation

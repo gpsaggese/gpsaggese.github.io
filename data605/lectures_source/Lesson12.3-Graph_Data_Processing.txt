@@ -125,7 +125,7 @@ time
 - Typical structure of **compute()**:
   - **Inputs**: current values associated with the node
   - **Inputs**: messages sent by the neighboring nodes
-  - Do something …
+  - Do something ...
   - Modify current values associated with the node (if desired)
   - **Outputs**: send messages to neighbors
 - Execution framework:
@@ -173,7 +173,7 @@ time
 - Your algorithm as a **Vertex**
   - Subclass one of the many existing implementations: *BasicVertex, MutableVertex, EdgeListVertex, HashMapVertex, LongDoubleFloatDoubleVertex*, ...
 - A **VertexInputFormat** to read your graph
-  - e.g., from a text file with adjacency lists like *<vertex> <neighbor1> <neighbor2> *…
+  - e.g., from a text file with adjacency lists like *<vertex> <neighbor1> <neighbor2> *...
 - a **VertexOutputFormat** to write back the result
   - e.g., *<vertex> <pageRank> *
 
@@ -379,7 +379,7 @@ partitionBy
 mapWith
 pipe
 save
-…
+...
 
 * Graph Operators (Scala)
 class Graph [ V, E ] {
@@ -429,7 +429,7 @@ Map-Reduce triplets collect information about the neighborhood of each vertex:
 
 * GraphX scales to larger graphs
 - GraphX is roughly 2x slower than GraphLab
-  - Scala + Java overhead: Lambdas, GC time, …
+  - Scala + Java overhead: Lambdas, GC time, ...
   - No shared memory parallelism: 2x increase in communication
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_41_image_1.png)

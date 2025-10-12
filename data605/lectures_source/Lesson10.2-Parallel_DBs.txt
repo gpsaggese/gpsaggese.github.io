@@ -365,7 +365,7 @@ Silbershatz: Chap 22
 Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
 **Hash partitioning**:
   - Choose one or more attributes as the partitioning attributes.
-  - Choose hash function *h* with range 0…*n* - 1
+  - Choose hash function *h* with range 0...*n* - 1
   - Let *i* denote result of hash function *h* applied to the partitioning attribute value of a tuple. Send tuple to disk *i*.
 
 * I/O Parallelism (Cont.)
@@ -615,7 +615,7 @@ Selection
 * Cost of Parallel Evaluation of Operations
 - If there is no skew in the partitioning, and there is no overhead due to the parallel evaluation, expected speed-up will be 1/n
 - If skew and overheads are also to be taken into account, the time taken by a parallel operation can be estimated as
-            Tpart + Tasm + max (T0, T1, …, Tn-1)
+            Tpart + Tasm + max (T0, T1, ..., Tn-1)
   - Tpart is the time for partitioning the relations
   - Tasm is the time for assembling the results
   - Ti is the time taken for the operation at processor Pi

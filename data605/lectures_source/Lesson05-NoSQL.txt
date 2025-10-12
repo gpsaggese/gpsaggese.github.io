@@ -650,7 +650,7 @@ HBase Database: from table name to Table.
     'cf2:col1': 'value3'
   },
   '**row2**': {
-    … # More row data
+    ... # More row data
   }
 }
 **database** = {'table1': **table**}
@@ -730,7 +730,7 @@ HBase Database: from table name to Table.
     ':text': 'Welcome to the wiki!',
   },
   'Welcome page': {
-    … # More row data
+    ... # More row data
   }
 }
 Database = Dict[str, Table]
@@ -759,7 +759,7 @@ text: timestamp=1295774833226, value=Welcome!
     'text': 'Welcome to the wiki!',
   },
   'Welcome page': {
-    … # More row data
+    ... # More row data
   }
 }
 Database = Dict[str, Table]
@@ -835,7 +835,7 @@ Table People(Name, Home, Office)
 		Home: {Phone="555-1213"},
 		Office: {Phone="666-1213"}
 	},
-	…
+	...
 }
 ```
 
@@ -1018,7 +1018,7 @@ Table People(Name, Home, Office)
 		Home: {Phone="555-1213"},
 		Office: {Phone="666-1213"}
 	},
-	…
+	...
 }
 
 **File "People"**
@@ -1029,7 +1029,7 @@ Table People(Name, Home, Office)
 
 PUT 101:Office:Phone = "555-3434"
 PUT 102:Home:Email = mt@yahoo.com
-….
+....
 
 **WAL for Table People**
 
@@ -1095,7 +1095,7 @@ Name
 
 PUT 101:Office:Phone = "555-3434"
 PUT 102:Home:Email = mt@yahoo.com
-….
+...
 
 **WAL for Table People**
 

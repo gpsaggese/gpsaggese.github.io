@@ -761,7 +761,7 @@ Sources:
   - Every path from the root to a leaf is same length
 - Leaf nodes (at the bottom)
   - *P*1 contains the pointers to tuple(s) with key *K*1
-  - *…*
+  - *...*
   - *P*n is a pointer to the *next* leaf node
   - Must contain at least n/2 entries
 
@@ -776,7 +776,7 @@ Index
 - Interior nodes
   - All tuples in the subtree pointed to by *P*1, have search key < *K*1
   - To find a tuple with key *K*1' < K1, follow *P*1
-  - *…*
+  - *...*
   - Finally, search keys in the tuples contained in the subtree pointed to by *P*n, are all larger than *K*n-1
   - Must contain at least n/2 entries (unless root)
 
@@ -794,7 +794,7 @@ Index
   - Join operators
   - Sorting
   - Other operators
-  - Putting it all together…
+  - Putting it all together...
 - Transactions
 
 * Overview
@@ -804,7 +804,7 @@ Index
 - We will focus on disk:
   - Number of I/Os?
     - Not sufficient
-    - Number of seeks matters a lot… why ?
+    - Number of seeks matters a lot... why ?
   - *t**T* – time to transfer one block
   - *t**S* – time for one seek
   - Cost for *b* block transfers plus *S* seeks
@@ -818,7 +818,7 @@ Index
   - Join operators
   - Sorting
   - Other operators
-  - Putting it all together…
+  - Putting it all together...
 - Transactions
 
 * Selection Operation
@@ -871,7 +871,7 @@ Index
 - Join operators
 - Sorting
 - Other operators
-- Putting it all together…
+- Putting it all together...
 
 * Join
 - **SELECT** * **FROM** R, S **WHERE** R.a = S.a
@@ -959,8 +959,8 @@ Index
   - Read the relation *R* block by block and partition it using a hash function, *h1(a)*
     - Create one partition for each possible value of *h1(a)*
   - Write the partitions to disk
-    - R gets partitioned into R1, R2, …, Rk
-  - Similarly, read and partition S, and write partitions S1, S2,  …, Sk to disk
+    - R gets partitioned into R1, R2, ..., Rk
+  - Similarly, read and partition S, and write partitions S1, S2,  ..., Sk to disk
   - Only requirement:
     - Each S partition fits in memory
 
@@ -1039,7 +1039,7 @@ Index
 - Join operators
 - Sorting
 - Other operators
-- Putting it all together…
+- Putting it all together...
 
 * Sorting
 - Commonly required for many operations
@@ -1049,7 +1049,7 @@ Index
   - Read the lowest level of the index
     - May be enough in many cases
   - But if relation not sorted, this leads to too many random accesses
-- If relation small enough…
+- If relation small enough...
   - Read in memory, use quick sort (qsort() in C)
 - What if relation too large to fit in memory ?
   - External sort-merge
@@ -1059,7 +1059,7 @@ Index
 - Let *M* denote the memory size (in blocks)
 - Phase 1:
   - Read first M blocks of relation, sort, and write it to disk
-  - Read the next M blocks, sort, and write to disk …
+  - Read the next M blocks, sort, and write to disk ...
   - Say we have to do this "N" times
   - Result: *N* sorted runs of size *M* blocks each
 - Phase 2:
@@ -1101,7 +1101,7 @@ Index
 - Join operators
 - Sorting
 - Other operators
-- Putting it all together…
+- Putting it all together...
 
 * Group By and Aggregation
 *select a, count(b)*
@@ -1170,7 +1170,7 @@ Index
 - Join operators
 - Sorting
 - Other operators
-- Putting it all together…
+- Putting it all together...
 
 * Evaluation of Expressions
 - Two options:
@@ -1280,14 +1280,14 @@ where a.SSN = c.SSN and
   - The system can crash at any time
   - Similarly, the power can go out at any point
     - Contents of the main memory won't survive a crash, or power outage
-  - BUT… **disks are durable. They might stop, but data is not lost.**
+  - BUT... **disks are durable. They might stop, but data is not lost.**
   - Disks only guarantee *atomic* *sector* *writes,* nothing more
   - Transactions are by themselves consistent
 - Goals:
   - Guaranteed durability, atomicity
   - As much concurrency as possible, while not compromising isolation and/or consistency
-    - Two transactions updating the same account balance… NO
-    - Two transactions updating different account balances… YES
+    - Two transactions updating the same account balance... NO
+    - Two transactions updating different account balances... YES
 
 * Transactions
 - Overview
@@ -1330,7 +1330,7 @@ Example schedule:
 | Exclusive    | -            | NO             |
 
 * Snapshot Isolation
-- Very popular scheme, used as the primary scheme by many systems including Oracle, PostgreSQL etc…
+- Very popular scheme, used as the primary scheme by many systems including Oracle, PostgreSQL etc...
   - Several others support this in addition to locking-based protocol
 - A type of "optimistic concurrency control"
 - Key idea:
