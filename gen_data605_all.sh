@@ -1,6 +1,16 @@
 #!/bin/bash -xe
 DIR=data605
 
+shopt -s nullglob   # empty pattern expands to nothing instead of itself
+
+files=($DIR/lectures_source/Lesson${LESSON}*)
+if (( ${#files[@]} != 1 )); then
+    echo "Need exactly one file"
+    exit 1
+else
+    echo "Found file: ${files[*]}"
+fi
+
 #FILES=$(ls -1 $DIR/lectures_source/Lesson*)
 FILES=$(ls -1 $DIR/lectures_source/Lesson{01,02}*)
 

@@ -45,10 +45,10 @@ services:
     extends: base_app
     volumes:
       - /Users/saggese/src/umd_classes1:/src
+      - ../../:/app
     working_dir: /src
     environment:
       - MYPYPATH
-      - CSFY_REPO_CONFIG_PATH=/app/repo_config.py
   jupyter_server:
     command: devops/docker_run/run_jupyter_server.sh
     environment:

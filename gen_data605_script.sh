@@ -5,11 +5,11 @@ DIR=data605
 shopt -s nullglob   # empty pattern expands to nothing instead of itself
 
 files=($DIR/lectures_source/Lesson${LESSON}*)
-if (( ${#files[@]} == 0 )); then
-    echo "No files found"
+if (( ${#files[@]} != 1 )); then
+    echo "Need exactly one file"
     exit 1
 else
-    echo "Found files: ${files[*]}"
+    echo "Found file: ${files[*]}"
 fi
 
 OPTS=${@:2}
