@@ -1,4 +1,28 @@
 # ##############################################################################
+# Invariants of a Class Lecture
+# ##############################################################################
+
+- Invariants in programming and computer science are fundamental concepts that
+  remain unchanged throughout the execution of a program or process.
+  - This class has invariants as well, related to how we go through the material
+
+- To aid your learning, we will use interactive Jupyter notebook tutorials.
+  These tutorials are designed to be completed at home, allowing you to learn at
+  your own pace. The interactive nature of Jupyter notebooks will enable you to
+  experiment with code and see the effects of invariants in action.
+
+- We will alternate between traditional slides, whiteboard discussions, and
+  hands-on tutorials. This varied approach will cater to different learning
+  styles and help reinforce the concepts we cover.
+
+- Labs are an essential component of this course. They provide an opportunity to
+  review complete class project examples, giving you a comprehensive
+  understanding of how invariants are applied in practice. Collaboration is
+  encouraged during lab sessions, allowing you to work together on class
+  projects. This collaborative environment will help you develop teamwork skills
+  and learn from your peers.
+
+# ##############################################################################
 # Books of the Class
 # ##############################################################################
 
@@ -21,23 +45,23 @@ Let's move on to the learning outcomes you can expect from this course.
 # Learning Outcomes
 # ##############################################################################
 
-- One of the primary goals of this course is to help you model and reason about
-  data effectively. This involves understanding how to process and manipulate
-  data using tools like Python and Pandas. These skills are essential for
-  analyzing data and drawing meaningful conclusions.
-- You will also be introduced to a variety of data models, such as relational,
-  NoSQL, and graph databases. Understanding these models will help you decide
-  which one is most appropriate for different applications.
-- Additionally, you will learn to use data management systems like PostgreSQL,
-  MongoDB, and HBase. This knowledge will enable you to choose the right system
-  for various scenarios.
-- Building data processing pipelines using tools like Docker and Airflow is
-  another key outcome. These pipelines are crucial for handling large volumes of
-  data efficiently.
-- Finally, you will have the opportunity to build a big-data system from start
-  to finish as part of a class project. This hands-on experience will also allow
-  you to contribute to an open-source project, giving you practical experience
-  in the field.
+- The course aims to teach you how to model and reason about data effectively
+- You will learn to process and manipulate data using Python and Pandas
+- These skills are crucial for analyzing data and drawing meaningful conclusions
+- You will explore various data models, including relational, NoSQL, and graph
+  databases
+- Understanding these models helps in choosing the right one for different
+  applications
+- You will learn to use data management systems like PostgreSQL, MongoDB, and
+  HBase
+- This knowledge will help you select the appropriate system for various
+  scenarios
+- Building data processing pipelines with tools like Docker and Airflow is a key
+  focus
+- These pipelines are essential for efficiently handling large volumes of data
+- You will build a big-data system from start to finish in a class project
+- This project offers hands-on experience and the chance to contribute to an
+  open-source project
 
 Now, let's explore the tools you will learn to use throughout this course.
 
@@ -45,53 +69,48 @@ Now, let's explore the tools you will learn to use throughout this course.
 # Tools We Will Learn to Use
 # ##############################################################################
 
-- In this course, you will learn to use several programming languages and
-  development tools. Python is a primary language due to its versatility and
-  ease of use in data science.
-- You will also become familiar with Bash/Linux OS, which is essential for
-  navigating and managing files in a Unix-like environment. Git and GitHub are
-  crucial for version control and collaboration, allowing you to manage code
-  changes and work with others effectively. Jupyter notebooks will be used for
-  interactive data analysis and visualization. Docker will help you create and
-  manage containerized applications, which is important for deploying scalable
-  solutions.
-- The course will cover big data tools, including ETL pipelines for data
-  processing, and various types of databases such as relational (PostgreSQL),
-  NoSQL (HBase, MongoDB, Couchbase, Redis), and graph databases (Neo4j, GraphX,
-  Giraph). You will also learn about computing frameworks like Hadoop, Spark,
-  and Dask, which are essential for processing large datasets. Airflow will be
-  introduced as a workflow manager, and you will explore cloud services like AWS
-  for scalable computing resources.
-- Tutorials will be provided for all the tools used in class projects, ensuring
-  you have the guidance needed to apply these tools effectively in real-world
-  scenarios.
+- This course will teach you to use various programming languages and
+  development tools
+  - Python is the primary language due to its versatility and ease of use in data
+    science
+  - You will use Bash/Linux OS for navigating and managing files in a Unix-like
+    environment
+- Git and GitHub are essential for version control and collaboration, enabling
+  effective code management and teamwork
+- Jupyter notebooks will be used for interactive data analysis and visualization
+- Docker will help you create and manage containerized applications, crucial for
+  deploying scalable solutions
+- The course covers big data tools, including ETL pipelines for data processing
+- You will explore various databases: relational (PostgreSQL), NoSQL (HBase,
+  MongoDB, Couchbase, Redis), and graph databases (Neo4j, GraphX, Giraph)
+- Learn computing frameworks like Hadoop, Spark, and Dask for processing large
+  datasets
+- Airflow will be introduced as a workflow manager
+- Explore cloud services like AWS for scalable computing resources
+- Tutorials will guide you in using these tools effectively in class projects
+  and real-world scenarios
 
 # ##############################################################################
 # Todos
 # ##############################################################################
 
-- It's important to study the slides and materials provided for the course. This
-  will help you understand the topics better and prepare for quizzes and
-  projects.
-- Make sure to enable notifications on the DATA605 ELMS/Canvas site. This will
-  keep you updated on any announcements or changes in the course.
-- Keep the contact information for the instructor and teaching assistants handy.
-  This will be useful if you have questions or need help with the course
-  material.
-- Regularly check the DATA605 schedule to stay on top of deadlines and upcoming
-  classes.
-- The DATA605 GitHub repository is a valuable resource. It likely contains code
-  examples, assignments, and other materials that will aid your learning.
-- Review the DATA605 FAQs. They might answer common questions you have about the
-  course.
-- Setting up your computing environment is crucial. Install Linux or VMware and
-  Docker on your laptop as instructed in the class repository. This setup will
-  be necessary for completing assignments and projects.
-- Bringing your laptop to class is recommended. It allows you to follow along
-  with coding exercises and participate in hands-on activities.
-- Although lessons are recorded, attending class when possible is beneficial. It
-  provides an opportunity to ask questions and engage with the material in
-  real-time.
+- Study the course slides and materials thoroughly. This will enhance your
+  understanding and prepare you for quizzes and projects
+- Enable notifications on the DATA605 ELMS/Canvas site. This ensures you receive
+  updates on announcements or course changes
+- Keep the instructor's and teaching assistants' contact information accessible.
+  - This is essential for questions or assistance with course material
+- Regularly check the DATA605 schedule. This helps you stay informed about
+  deadlines and upcoming classes
+- Utilize the DATA605 GitHub repository. It contains code examples, assignments,
+  and other learning materials
+- Review the DATA605 FAQs. They may address common questions about the course
+- Set up your computing environment as instructed. Install Linux or VMware and
+  Docker on your laptop for assignments and projects
+- Bring your laptop to class. This allows you to follow coding exercises and
+  participate in hands-on activities
+- Attend class whenever possible, even if lessons are recorded. It offers a
+  chance to ask questions and engage with the material in real-time
 
 Now, let's discuss how your performance in the course will be evaluated.
 
@@ -99,14 +118,14 @@ Now, let's discuss how your performance in the course will be evaluated.
 # Grading
 # ##############################################################################
 
-- Quizzes make up 40% of your grade. They are designed to test your
-  understanding of the material covered in the previous two lessons. Each quiz
-  consists of 20 multiple-choice questions, and you have 20 minutes to complete
-  them. There will be 4-5 quizzes throughout the semester, which encourages you
-  to keep up with the material regularly.
-- The final project is a significant part of your grade, accounting for 60%.
-  This project requires you to apply the concepts learned in the course to a big
-  data project using Python. You will choose a topic from a provided list,
-  allowing you to explore an area of interest in depth. The project can be
-  completed individually or as part of a group, giving you the flexibility to
-  work in a way that suits your learning style.
+- Quizzes contribute 40% to your overall grade
+  - They assess your understanding of the last two lessons
+  - Each quiz has 20 multiple-choice questions
+  - You have 20 minutes to complete each quiz
+  - Expect 4-5 quizzes throughout the semester
+  - Quizzes encourage regular engagement with the material
+- The final project is crucial, making up 60% of your grade
+  - It involves applying course concepts to a big data project using Python
+  - You will select a topic from a provided list
+  - This allows you to explore an area of personal interest in depth
+  - You can complete the project individually or in a group
