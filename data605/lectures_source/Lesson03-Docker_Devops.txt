@@ -1,4 +1,4 @@
-// notes_to_pdf.py --input lectures_source/final_enhanced_markdown.txt --output tmp.pdf --type slides --skip_action cleanup_after --debug_on_error --toc_type navigation
+// https://docs.google.com/presentation/d/1VoUmig6CIA4ZtfNAuAIKbr3qtZjYNWIZxK9xxK6wTxI/edit
 
 ::: columns
 :::: {.column width=15%}
@@ -25,30 +25,11 @@ UMD DATA605 - Big Data Systems
 
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
 
-**TAs**:
-Krishna Pratardan Taduri, kptaduri@umd.edu
-Prahar Kaushikbhai Modi, pmodi08@umd.edu
-
-**v1.1**
 ::::
 :::: {.column width=20%}
 
 ::::
 :::
-
-* Class Announcements
-- **Install Docker**
-  - Assignments on ELMS
-![](data605/lectures_source/images/lecture_3/lec_3_slide_1_image_1.png)
-
-- **Do the Git and GitHub tutorial**
-- **Quiz about Git next week**
-- **Class project**
-  - Study and experiment with different big data technology
-  - We will give you different examples
-    - Individual project
-    - Different complexity
-
 
 * Docker - Resources
 :::columns
@@ -84,9 +65,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Before 2000s: “bare-metal era”
   - 2000s-2010s: “virtual machine era”
   - \> ~2013: “container era”
-
-
-
 
 * DevOps
 
@@ -196,8 +174,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-
-
 * Serverless Computing
 - **Containers run in an OS, OS runs on a host**
   - **Where is the host running?**
@@ -211,9 +187,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Serverless computing**
   - As long your application runs somewhere, you don’t care “how” or “where”
   - E.g., AWS Lambda
-
-
-
 
 * HW vs OS Virtualization
 :::columns
@@ -305,9 +278,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - vs Docker images are built-time objects
     - Like program running (container) vs program code (image)
 
-
-
-
 * Docker Image
 - **Docker Image**
   - Unit of deployment
@@ -321,9 +291,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Pull pre-built images from a registry
   - Multiple layers stacked on top of each other
     - Typically few 100s MBs
-
-
-
 
 * Docker Image Layers
 :::columns
