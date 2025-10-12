@@ -184,7 +184,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **Application error**
 
 * 3 Consistency in Distributed DB
-- When data scales up or number of clients increases → **distributed setup**
+- When data scales up or number of clients increases $\to$ **distributed setup**
 - Goals to achieve:
   - Performance (e.g., transaction per seconds)
   - Availability (guarantee of a certain up-time)
@@ -317,7 +317,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Locking data**
   - The DB engine needs to lock rows and tables to ensure ACID properties
   - When DB locked:
-    - Higher latency → Fewer updates per second → Slower application
+    - Higher latency $\to$ Fewer updates per second $\to$ Slower application
 - **Even worse in distributed set-up**
   - Requires replicating data over multiple servers (scaling out)
   - Application becomes even slower
@@ -713,12 +713,12 @@ HBase Database: from table name to Table.
 - Contains pages
 - Each page has a title, an article text varying over time
 **HBase data model**
-- Table name → `wikipedia`
-- Row → entire wiki page
-- Row keys → wiki identifier (e.g., title or URL)
-- Column family → `text`
-- Column → ‘' (empty)
-- Cell value → article text
+- Table name $\to$ `wikipedia`
+- Row $\to$ entire wiki page
+- Row keys $\to$ wiki identifier (e.g., title or URL)
+- Column family $\to$ `text`
+- Column $\to$ ‘' (empty)
+- Cell value $\to$ article text
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_40_image_1.png)
 
@@ -726,7 +726,7 @@ HBase Database: from table name to Table.
 **wikipedia_table** = {
   # wiki id.
   'Home': {
-    # Column family:column → value
+    # Column family:column $\to$ value
     ':text': 'Welcome to the wiki!',
   },
   'Welcome page': {

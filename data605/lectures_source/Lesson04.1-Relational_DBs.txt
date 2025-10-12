@@ -49,8 +49,8 @@ Silbershatz: Chap 2
 - Introduced by Ted Codd (late 60's, early 70's)
 - **First prototypes**
   - Ingres Project at Berkeley (1970-1985)
-    - Ingres (INteractive Graphics REtrieval System) → PostgreSQL (=Post Ingres)
-  - IBM System R (1970) → Oracle, IBM DB2
+    - Ingres (INteractive Graphics REtrieval System) $\to$ PostgreSQL (=Post Ingres)
+  - IBM System R (1970) $\to$ Oracle, IBM DB2
 - **Contributions from relational data model**
   - Formal semantics for data operations
   - Data independence: separation of logical and physical data models
@@ -233,7 +233,7 @@ Silbershatz: Chap 2
   - E.g., **(ID)** from *student* appears in the relations *takes*, *advisor*
   - *takes* is the "referencing relation", has the foreign key
   - *student* is the "referenced relation", has the primary key
-  - Typically shown by an arrow from referencing → referenced
+  - Typically shown by an arrow from referencing $\to$ referenced
 - **Foreign key constraint**: for each row, the tuple corresponding to a primary key must exist
   - Aka referential integrity constraint
   - If there is a **(student101, DATA605)** in *takes*, there must be a tuple with **student101** in *student*
@@ -433,7 +433,7 @@ SELECT A_1, A_2, ..., A_n
 - In SELECT or WHERE clauses, might need to use the table names as prefix to qualify the attribute name
   - E.g., instructor.ID vs teaches.ID
 - A SELECT statement can be expressed in terms of relational algebra
-  - Cartesian product → selection → projection
+  - Cartesian product $\to$ selection $\to$ projection
   - Difference: SQL allows duplicate values, relational algebra works with mathematical sets
 
 * Null values

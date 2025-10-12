@@ -114,7 +114,7 @@ UMD DATA605 - Big Data Systems
   - Expensive
 - **Expensive / low efficiency**
   - IT would buy a new server for each application
-  - Difficult to spec out the machine → buy "big and fast servers"
+  - Difficult to spec out the machine $\to$ buy "big and fast servers"
     - Overpowered servers operating at 5-10% of capacity
     - Tons of money in the 2000 DotCom boom was spent on machines and networks
 - It kind of came back in 2020 but with different use cases in Cloud Computing
