@@ -467,7 +467,7 @@ Show all the available images
 > docker images 
 REPOSITORY              TAG         IMAGE ID          CREATED             SIZE
 counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
-…
+...
 ```
 \endgroup
 
@@ -476,7 +476,7 @@ Show a particular image
 ```
 \> docker images counter_app_web-fe
 counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
-…
+...
 ```
 \endgroup
 Note that docker images ls is incorrect since it shows the image ls
@@ -484,7 +484,7 @@ Note that docker images ls is incorrect since it shows the image ls
 Delete an image
 \begingroup \footnotesize \color{blue}
 ```
-\> docker rmi …
+\> docker rmi ...
 ```
 \endgroup
 
@@ -512,7 +512,7 @@ PORTS                   NAMES
 281d654f6b8d   counter_app-web-fe   "python app.py"          5 minutes ago   Up 5 minutes  
 0.0.0.0:5001->5000/tcp  counter_app-web-fe-1
 
-de55ae4104da   redis:alpine         "docker-entrypoint.s…" 5 minutes ago  Up 5 minutes  
+de55ae4104da   redis:alpine         "docker-entrypoint.s..." 5 minutes ago  Up 5 minutes  
 6379/tcp       counter_app-redis-1
 ```
 \endgroup

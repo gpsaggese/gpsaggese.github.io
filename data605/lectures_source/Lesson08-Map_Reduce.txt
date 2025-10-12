@@ -233,13 +233,13 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - (But it wasn't an entirely new idea)
 
 * Cluster Architecture
-**…**
+**...**
 
 Switch
 
 **Each rack contains 16-64 nodes**
 
-**…**
+**...**
 
 Switch
 
@@ -260,9 +260,9 @@ Switch
 
 * Cluster Architecture
 
-…
+...
 
-…
+...
 
 ![alt_text](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_17_image_1.png)
 
@@ -442,7 +442,7 @@ Read input
 - Combine the list of outputs with same keys
 
 * MapReduce: Word Count
-The crew of the space shuttle Endeavor recently returned to Earth as ambassadors, harbingers of a new era of space exploration. Scientists at NASA are saying that the recent assembly of the Dextre bot is the first step in a long-term space-based man/machine partnership. '"The work we're doing now -- the robotics we're doing -- is what we're going to need …
+The crew of the space shuttle Endeavor recently returned to Earth as ambassadors, harbingers of a new era of space exploration. Scientists at NASA are saying that the recent assembly of the Dextre bot is the first step in a long-term space-based man/machine partnership. '"The work we're doing now -- the robotics we're doing -- is what we're going to need ...
 
 **Big document**
 
@@ -454,21 +454,21 @@ The crew of the space shuttle Endeavor recently returned to Earth as ambassadors
 (shuttle, 1)
 (Endeavor, 1)
 (recently, 1)
-….
+....
 
 (crew, [1, 1])
 (space, [1])
 (the, [1, 1, 1])
 (shuttle, [1])
 (recently, [1])
-…
+...
 
 (crew, 2)
 (space, 1)
 (the, 3)
 (shuttle, 1)
 (recently, 1)
-…
+...
 
 **Map**:
 Read input Produce a set of key-value pairs
@@ -496,7 +496,7 @@ k
 
 k
 
-**…**
+**...**
 
 **Input**
 **key-value pairs**
@@ -672,14 +672,14 @@ reduce(key: word, values: List[int]):
 - **Problem**
   - Often a *Map* task produces many pairs for the same key *k*
 ```python
-[(k1, v1), (k1, v2), …]
+[(k1, v1), (k1, v2), ...]
 ```
   - E.g., common words in the word count example
   - Increase complexity of the GroupBy stage
 - **Solution**
   - Pre-aggregate values in the *Map* with a *Combine*
 ```python
-[k1, (v1, v2, …), k2, ([…])]
+[k1, (v1, v2, ...), k2, ([...])]
 ```
   - *Combine* is usually the same as the *Reduce* function
   - Works only if *Reduce* function is commutative and associative
@@ -713,7 +713,7 @@ reduce(key: word, values: List[int]):
 - **Amazon Elastic MapReduce (EMR)**
   - Website
   - Hadoop MapReduce running on Amazon EC2
-  - Can also run Spark, HBase, Hive, …
+  - Can also run Spark, HBase, Hive, ...
 - **Spark**
 - **Dask**
 

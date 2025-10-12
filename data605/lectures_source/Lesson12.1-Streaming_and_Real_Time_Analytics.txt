@@ -483,7 +483,7 @@ builder.setBolt("count-bolt", new WordCountBolt())
          }
          **public void** execute(Tuple tuple) {
                   String word = tuple.getStringByField("word");
-                  // … increments count ..
+                  // ... increments count ..
           }
 }
 
@@ -526,15 +526,15 @@ Another way to look at it is to consider the tuple tree:
 **public void** nextTuple() {
        // prepare the next sentence S to emit
        this.collector.emit(**new** Values(S), msgID);
-       // …
+       // ...
    }
 **public void** ack(Object msgID) {
        // handle success
-       // …
+       // ...
    }
 **public void** fail(Object msgID) {
        // handle failure
-      // …
+      // ...
    }
 
 Assign a unique ID to any emitted tuple
@@ -544,7 +544,7 @@ Implement the ack and fail methods for handling successes and failures
 * Guaranteed Processing
 - On the Bolts side, have to *anchor* any emitted tuple to the originating one and to acknowledging or failing tuples
 **public void** execute(Tuple tuple) {
-    // … processing …
+    // ... processing ...
    this.collector.emit(tuple, **new** Values(word));
 
    // acknowledgment
@@ -762,8 +762,8 @@ live data stream
   - Twitter, HDFS, Kafka, Flume, ZeroMQ, Akka Actor, TCP sockets
   - Can write a *receiver* for your own data source too
 - **Transformations** – modify data from one DStream to another
-  - Standard RDD operations – map, countByValue, reduce, join, …
-  - Stateful operations – window, countByValueAndWindow, …
+  - Standard RDD operations – map, countByValue, reduce, join, ...
+  - Stateful operations – window, countByValueAndWindow, ...
 - **Output Operations – **send data to external entity
   - saveAsHadoopFiles – saves to HDFS
   - foreach – do anything with each batch of results
@@ -792,7 +792,7 @@ new RDDs created for every batch
 tweets DStream
 
 hashTags Dstream
-[#cat, #dog, … ]
+[#cat, #dog, ... ]
 
 * Example – Get hashtags from Twitter
 val tweets = ssc.twitterStream()
