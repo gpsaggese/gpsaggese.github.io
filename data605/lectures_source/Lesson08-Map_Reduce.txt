@@ -80,7 +80,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 * Big Data: Sources and Applications
 - **Web server logs**
 - Record user interactions with web servers
-- Billions of users click on thousands links per day → TB of data / day
+- Billions of users click on thousands links per day $\to$ TB of data / day
 - Decide what information (e.g., posts, news) to present to users to keep them "engaged"
   - E.g., what user has viewed, what other similar users have viewed
 - Understand visit patterns to optimize for users to find information
@@ -100,7 +100,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Storing big data
   - Processing big data
 - **Need to be solved together and *efficiently***
-  - If one phase is slow → the entire system is slow
+  - If one phase is slow $\to$ the entire system is slow
 
 * Processing the Web: Example
 - The web has:
@@ -225,7 +225,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - How to survive failures?
     - One server may stay up 3 years (1,000 days)
     - If you have 1,000 servers, expect to lose 1 / day
-    - E.g., 1M machines (Google in 2011) → 1,000 machines fail every day!
+    - E.g., 1M machines (Google in 2011) $\to$ 1,000 machines fail every day!
 - **MapReduce**
   - Solve these problems for certain kinds of computations
   - An elegant way to work with big data
@@ -881,7 +881,7 @@ OutputFormat
 - **Total cost**
   - = what you pay as rent to your "friendly" neighborhood cloud provider
   - CPU + disk + I/O used
-  - Either CPU, disk, I/O cost dominates → ignore the others
+  - Either CPU, disk, I/O cost dominates $\to$ ignore the others
 - **In this case, the big-O notation is not the most useful**
   - The actual cost matters and not the asymptotic cost!
   - Multiplicative constant matters
@@ -910,7 +910,7 @@ OutputFormat
 - Use a hash function *h* from B-values to *h(b)* in [1, ..., k]
 - **Map task**
   - Transform an input tuple *R(a, b)* into key-value pair *(h(b), (a, R))*
-  - Each input tuple *S(b, c)* → *(h(b), (c, S))*
+  - Each input tuple *S(b, c)* $\to$ *(h(b), (c, S))*
 - **GroupBy task**
   - Each key-value pair with key *b* to is sent to Reduce task *h(b)*
   - Hadoop does this automatically; just tell it what *h* is

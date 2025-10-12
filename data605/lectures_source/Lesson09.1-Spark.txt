@@ -372,7 +372,7 @@ https://spark.apache.org/docs/latest/rdd-programming-guide.html
     - Pass an optional numPartitions argument to set a different number of tasks
 - **reduceByKey(**func, *[numPartitions]***)**
   - When called on a RDD of (K, V) pairs, return a dataset of (K, f(V_1, ..., V_n)) pairs where the values for each key are aggregated using the given reduce function *func()*
-  - func(): (V, V) → V
+  - func(): (V, V) $\to$ V
   - This is Shuffle + Reduce from MapReduce
   - Number of reduce tasks is configurable through *numPartitions*
 - **sortByKey(**[ascending], *[numPartitions]***)**
