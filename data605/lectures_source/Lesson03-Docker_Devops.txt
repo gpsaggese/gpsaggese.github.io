@@ -65,9 +65,9 @@ UMD DATA605 - Big Data Systems
 - **Problem**
   - How to release / deploy / manage / monitor applications?
 - **Solutions**
-  - Before 2000s: “bare-metal era”
-  - 2000s-2010s: “virtual machine era”
-  - \> ~2013: “container era”
+  - Before 2000s: "bare-metal era"
+  - 2000s-2010s: "virtual machine era"
+  - \> ~2013: "container era"
 
 * DevOps
 
@@ -81,8 +81,8 @@ UMD DATA605 - Big Data Systems
     - One team creates an application
     - Another team deploys and manages the applications
   - Create a model for better collaboration (fewer conflicts) and innovation
-    - IT: “It doesn't work!”
-    - Devs: “What? It works for me”
+    - IT: "It doesn't work!"
+    - Devs: "What? It works for me"
 
 ::::
 ::::{.column width=35%}
@@ -114,7 +114,7 @@ UMD DATA605 - Big Data Systems
   - Expensive
 - **Expensive / low efficiency**
   - IT would buy a new server for each application
-  - Difficult to spec out the machine → buy “big and fast servers”
+  - Difficult to spec out the machine → buy "big and fast servers"
     - Overpowered servers operating at 5-10% of capacity
     - Tons of money in the 2000 DotCom boom was spent on machines and networks
 - It kind of came back in 2020 but with different use cases in Cloud Computing
@@ -188,7 +188,7 @@ UMD DATA605 - Big Data Systems
     - On a virtual machine
     - On a virtual machine running a virtual machine
 - **Serverless computing**
-  - As long your application runs somewhere, you don't care “how” or “where”
+  - As long your application runs somewhere, you don't care "how" or "where"
   - E.g., AWS Lambda
 
 * HW vs OS Virtualization
@@ -198,7 +198,7 @@ UMD DATA605 - Big Data Systems
   - Carves out physical hardware resources into VMs
   - Resources (CPUs, RAM, storage) are allocated to a VM
   - It's like having multiple computers
-- “Virtual machine tax”
+- "Virtual machine tax"
   - To run 3 apps, you need 3 VMs
     - Each VM requires time to start
     - Consumes CPU, RAM, storage
@@ -261,7 +261,7 @@ UMD DATA605 - Big Data Systems
 - **Open Container Initiative (OCI)**
   - Standardize low-level components of container infrastructure
   - E.g., image format, run-time API
-  - “Death” of Docker
+  - "Death" of Docker
 ::::
 ::::{.column width=35%}
 
@@ -332,7 +332,7 @@ UMD DATA605 - Big Data Systems
   - Data inside of containers is persisted as long as the container is not killed
     - If you stop or pause a container data is not lost
   - Containers are designed to be immutable
-    - It's not good practice to write “persistent” data into containers
+    - It's not good practice to write "persistent" data into containers
 - **Bind-mount a local dir**
   - = a local dir is mounted to a dir inside a container
 - **Docker volumes**
@@ -376,7 +376,7 @@ UMD DATA605 - Big Data Systems
   - Contain the instruction on how to build an image
 - Build image
 - Run the app as a container
-- Test “locally”
+- Test "locally"
 ::::
 ::::{.column width=50%}
 - **Ops**
@@ -384,7 +384,7 @@ UMD DATA605 - Big Data Systems
   - Contain filesystem, application, app dependencies
 - Start / destroy containers
 - In case of issues, it's easy to repro the problem
-  - “Here is the log”
+  - "Here is the log"
   - Run command line
   - Deploy on a test system and debug
 ::::
@@ -534,7 +534,7 @@ Commands:
     - Web front-end
     - Ordering
     - Back-end DB
-- In 2020 Docker Compose has become an open standard for “code-to-cloud” process
+- In 2020 Docker Compose has become an open standard for "code-to-cloud" process
 - **Manage multi-container apps running on multiple hosts**
   - Docker Stacks / Swarm
   - Kubernetes
@@ -556,7 +556,7 @@ Commands:
     - By default it creates a `bridge` network to connect multiple containers on the same Docker host
   - `volumes`:
     - Creates new volumes
-- **Key in services** describe a different “service” in terms of container
+- **Key in services** describe a different "service" in terms of container
   - **Inner keys** specify the params of Docker run command
 ::::
 ::::{.column width=40%}

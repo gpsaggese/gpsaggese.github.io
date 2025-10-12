@@ -75,7 +75,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 * Sorrentum: Financial Machine Learning
 
-- **Financial ML is very different than “traditional” ML**
+- **Financial ML is very different than "traditional" ML**
 - **Problems**
   - Non stationarity
   - Fat-tails (vs Gaussianity)
@@ -92,7 +92,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_4_image_2.png)
 ![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_4_image_3.png)
 
-“Imagine how much harder physics would be if electrons had feelings!”, *Prof.Andrew Lo (MIT)*
+"Imagine how much harder physics would be if electrons had feelings!", *Prof.Andrew Lo (MIT)*
 
 ![](data605/lectures_source/images/lecture_9_3/lec_9_3_slide_4_image_4.png)
 

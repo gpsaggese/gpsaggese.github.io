@@ -182,7 +182,7 @@ source: http://cse1.net/recaps/4-memory.html
 ::::{.column width=50%}
 - *1956*
   - IBM RAMAC
-  - 24” platters
+  - 24" platters
   - 5 million characters
 
 ![](data605/lectures_source/images/lecture_4_2/lec_4_2_slide_10_image_2.jpeg)
@@ -348,13 +348,13 @@ source: http://cse1.net/recaps/4-memory.html
 - **Observations**
   - Disks are very cheap
   - Failures are very costly
-  - Use “extra” disks to ensure reliability
+  - Use "extra" disks to ensure reliability
     - Store data redundantly
     - If one disk goes down, the data still survives
   - Bonus: allow faster access to data
 - **Goal**
   - Expose a logical view of a single large and reliable disk from many unreliable disks
-  - Different RAID “levels” (reliability vs performance)
+  - Different RAID "levels" (reliability vs performance)
 
 * Improve Reliability / Performance with RAID
 :::columns
@@ -393,11 +393,11 @@ source: http://cse1.net/recaps/4-memory.html
   - Use extra bits so we can reconstruct
   - Superseded by RAID 5
 - **RAID 3: Interleaved parity**
-  - One disk contains “parity” for the main data disks
+  - One disk contains "parity" for the main data disks
   - Can handle a single disk failure
   - Little overhead (only 25% in the above case)
 - **RAID 5: Block-interleaved distributed parity**
-- Distributed parity “blocks” instead of bits
+- Distributed parity "blocks" instead of bits
 ::::
 ::::{.column width=50%}
 \includegraphics[trim={12cm 22cm 12cm 0.5cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
@@ -535,7 +535,7 @@ digraph SystemArchitecture {
 ::::
 ::::{.column width=50%}
 - **Query Processing Engine**
-  - Given a user query, decide how to “execute” it
+  - Given a user query, decide how to "execute" it
   - Specify sequence of pages to be brought in memory
   - Operate upon the tuples to produce results
 

@@ -70,14 +70,14 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Relatively simple programming framework 
 - Disadvantages: 
   - Hard to use directly for graph analysis tasks 
-  - Each “traversal” effectively requires a new “map-reduce” phase 
+  - Each "traversal" effectively requires a new "map-reduce" phase 
     - Hadoop framework not ideal for large numbers of phases, Spark is better, though 
 - However, much work on showing how different graph analysis tasks can be done using MapReduce 
 
 * Option 3: MapReduce 
 - Disadvantages: 
   - Hard to use this for graph analysis task 
-  - Each “traversal” effectively requires a new “map-reduce” phase 
+  - Each "traversal" effectively requires a new "map-reduce" phase 
     - Each job is execute *N* times
   - Hadoop framework not ideal for large numbers of phases (even with YARN) 
   - Not efficient – too much redundant work 
@@ -92,7 +92,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Programs written from the point of view of a vertex 
   - Most based on message passing between nodes 
 - Pregel: original framework proposed by Google 
-  - Based on “Bulk Synchronous Parallel” (BSP) model
+  - Based on "Bulk Synchronous Parallel" (BSP) model
 - Giraph: an open-source implementation of Pregel built on top of Hadoop
 - GraphLab: asynchronous execution
 - GraphX: built on top of Spark
@@ -197,12 +197,12 @@ time
 * Graph modeling in Giraph 
 - BasicComputation<          I extends WritableComparable, // VertexID -- vertex ref           V extends Writable, // VertexData -- a vertex datum           E extends Writable, // EdgeData -- an edge label           M extends Writable> // MessageData-– message payload 
 
-* Giraph “Hello World” 
+* Giraph "Hello World" 
 public class GiraphHelloWorld extends    BasicComputation<IntWritable, IntWritable, NullWritable, NullWritable> {
 public void compute(Vertex<IntWritable, IntWritable,     NullWritable> vertex, Iterable<NullWritable> messages) { 
-   System.out.println(“Hello world from the: “ + vertex.getId() + “ : “);     for (Edge<IntWritable, NullWritable> e : vertex.getEdges()) { 
-      System.out.println(“ “ + e.getTargetVertexId());     } 
-   System.out.println(“”);     vertex.voteToHalt(); 
+   System.out.println("Hello world from the: " + vertex.getId() + " : ");     for (Edge<IntWritable, NullWritable> e : vertex.getEdges()) { 
+      System.out.println(" " + e.getTargetVertexId());     } 
+   System.out.println("");     vertex.voteToHalt(); 
 } 
 
 * Example: Ping neighbors
@@ -323,24 +323,24 @@ String), String]
 type VertexId = Long
 val vertices: RDD[(VertexId, String)] =
 sc.parallelize(List(
-(1L,“Alice”),
-(2L, “Bob”),
-(3L, “Charlie”)))
+(1L,"Alice"),
+(2L, "Bob"),
+(3L, "Charlie")))
 class Edge[ED](
 val srcId: VertexId,
 val dstId: VertexId,
 val attr: ED)
 val edges: RDD[Edge[String]] =
 sc.parallelize(List(
-Edge(1L, 2L, “coworker”),
-Edge(2L, 3L, “friend”)))
+Edge(1L, 2L, "coworker"),
+Edge(2L, 3L, "friend")))
 val graph = Graph(vertices, edges)
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_33_image_1.png)
 
 * Hello world in GraphX
 $ spark*/bin/spark-shell
-scala> val inputFile = sc.textFile(“hdfs:///tmp/graph/1.txt”)
+scala> val inputFile = sc.textFile("hdfs:///tmp/graph/1.txt")
 scala> val edges = inputFile.flatMap(s => {
 val l = s.split("\t");
 l.drop(1).map(x => (l.head.toLong, x.toLong))
@@ -448,8 +448,8 @@ Timed end-to-end GraphX is faster than GraphLab (and Giraph)
 
 **GraphX**
 - An RDD framework
-- Graphs are “views” on RDDs and thus immutable
-- Functional-like, “declarative” programming model
+- Graphs are "views" on RDDs and thus immutable
+- Functional-like, "declarative" programming model
 - Genuine part of Spark ecosystem
 
 ```

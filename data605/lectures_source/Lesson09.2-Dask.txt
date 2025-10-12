@@ -210,7 +210,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_11_image_2.png)
 
 * Low Level APIs: Futures
-- In parallel programming, a “future” encapsulates the asynchronous execution of a callable, representing the eventual result of the operation
+- In parallel programming, a "future" encapsulates the asynchronous execution of a callable, representing the eventual result of the operation
 - Futures is the most general way of specifying concurrency in Dask
   - Everything can be expressed in terms of futures
   - User can specify what's blocking and what's not blocking

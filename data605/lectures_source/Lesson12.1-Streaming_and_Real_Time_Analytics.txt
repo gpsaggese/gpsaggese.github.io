@@ -138,7 +138,7 @@ Computation
   - Pros
     - High-performance
     - Small implementation overhead
-    - Easy to implement: “fire-and-forget”
+    - Easy to implement: "fire-and-forget"
   - E.g., in monitoring metrics a small amount of data loss is acceptable
 - **At-least once**
   - Acceptable to deliver a message more than once, but no message should be lost
@@ -330,10 +330,10 @@ Computation
     - Process a micro-batch as soon as the previous is completed
   - **Trigger interval**
     - Specify a fixed interval for each micro-batch
-    - E.g., “every 10 minutes”
+    - E.g., "every 10 minutes"
   - **Once**
     - Wait for an external trigger
-    - E.g., “at end of day”
+    - E.g., "at end of day"
   - **Continuous (experimental)**
     - Process data continuously instead of micro-batches
     - Not all operations are available
@@ -351,7 +351,7 @@ Computation
     - Entire updated result table is written to external storage
     - More general but more expensive
 
-* Spark Streaming “Hello world”
+* Spark Streaming "Hello world"
 - **lines** looks like an RDD but it's a **DataStreamReader**
   - Unbounded DataFrame
   - Set up the reading but doesn't start reading
@@ -445,8 +445,8 @@ builder.setBolt("count-bolt", new WordCountBolt())
       .fieldsGrouping("split-bolt", new Fields("word"));
 
 *SentenceSpout*: emits a stream of tuples that represent sentences:
-   {sentence: “my dog has fleas”} *SplitSentenceBolt*: emits a tuple for each word in the sentences it receives:
-   {word: “my”}; {word:”dog”}; ... *WordCountBolt*: updates the count and at save it to file.
+   {sentence: "my dog has fleas"} *SplitSentenceBolt*: emits a tuple for each word in the sentences it receives:
+   {word: "my"}; {word:"dog"}; ... *WordCountBolt*: updates the count and at save it to file.
 
 * Topology Example
 
@@ -648,12 +648,12 @@ Processes  Tasks
 
 * Comparison  of big data tools
 - A Storm cluster is superficially similar to a Hadoop cluster
-  - on Hadoop you run MapReduce jobs, on Storm you run “topologies”
-  - Jobs and “topologies are very different — one key difference is that a MapReduce job eventually finishes, whereas a topology processes messages forever (or until you kill it).
+  - on Hadoop you run MapReduce jobs, on Storm you run "topologies"
+  - Jobs and "topologies are very different — one key difference is that a MapReduce job eventually finishes, whereas a topology processes messages forever (or until you kill it).
   - Storm can do real time processing of streams of tuple's (incoming data) while Hadoop does batch processing in a MapReduce job
 - Storm behaves like true streaming processing systems with lower latencies, while Spark is able to handle higher throughput while having somewhat higher latencies.
 - Storm is better choice for real time data processing 
-- Reference: “Benchmarking Streaming Computation Engines: Storm, Flink and Spark Streaming”, By S. Chintapalliet al., Yahoo Inc., Presented at 2016 IEEE International Parallel and Distributed Processing Symposium Workshops
+- Reference: "Benchmarking Streaming Computation Engines: Storm, Flink and Spark Streaming", By S. Chintapalliet al., Yahoo Inc., Presented at 2016 IEEE International Parallel and Distributed Processing Symposium Workshops
 
 * Storm vs. Hadoop
 
@@ -946,7 +946,7 @@ hashTags.saveAsHadoopFile("hdfs://...")
 Spark Streaming program on Twitter stream using DStreams
 val tweets = ssc.twitterStream()
 val hashTags = tweets.flatMap (status => getTags(status))
-hashTags.saveAsHadoopFiles("hdfs://...”)
+hashTags.saveAsHadoopFiles("hdfs://...")
 
 * Vision - *one stack to rule them all*
 - Explore data interactively using Spark Shell to identify problems
@@ -954,9 +954,9 @@ hashTags.saveAsHadoopFiles("hdfs://...”)
 - Use similar code in Spark Streaming to identify problems in live log streams
 
 $ ./spark-shell
-scala> val file = sc.hadoopFile(“smallLogs”)
+scala> val file = sc.hadoopFile("smallLogs")
 ...
-scala> val filtered = file.filter(_.contains(“ERROR”))
+scala> val filtered = file.filter(_.contains("ERROR"))
 ...
 scala> val mapped = filtered.map(...)
 ...
@@ -964,8 +964,8 @@ scala> val mapped = filtered.map(...)
 object ProcessProductionData {
   def main(args: Array[String]) {
     val sc = new SparkContext(...)
-    val file = sc.hadoopFile(“productionLogs”)
-    val filtered = file.filter(_.contains(“ERROR”))
+    val file = sc.hadoopFile("productionLogs")
+    val filtered = file.filter(_.contains("ERROR"))
     val mapped = filtered.map(...)
     ...
   }
@@ -975,7 +975,7 @@ object ProcessLiveStream {
   def main(args: Array[String]) {
     val sc = new StreamingContext(...)
     val stream = sc.kafkaStream(...)
-    val filtered = file.filter(_.contains(“ERROR”))
+    val filtered = file.filter(_.contains("ERROR"))
     val mapped = filtered.map(...)
     ...
   }

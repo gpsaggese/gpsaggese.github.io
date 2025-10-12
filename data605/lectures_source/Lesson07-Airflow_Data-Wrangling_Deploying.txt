@@ -131,7 +131,7 @@ gsaggese@umd.edu
 * Airflow: Execution Semantics
 - **Scheduling semantic**
   - Describe when the next scheduling interval is
-    - E.g., “every day at midnight”, “every 5 minutes on the hour”
+    - E.g., "every day at midnight", "every 5 minutes on the hour"
   - Similar to **cron**
 - **Retry**
   - If a task fails, it can be re-run (after a wait time) to recover from intermittent failures
@@ -253,7 +253,7 @@ gsaggese@umd.edu
 
 * Overview
 - **Data wrangling**
-  - Aka “data preparation”, “data munging”, “data curation”
+  - Aka "data preparation", "data munging", "data curation"
   - Get data into a structured form suitable for analysis
   - Often it is the step where majority of time (80-90%) is spent
 - **Key steps**
@@ -270,7 +270,7 @@ gsaggese@umd.edu
 * Overview
 - Many of the data wrangling problems are not easy to formalize, and have seen little research work, e.g.,
   - Data cleaning: mainly statistics, outlier detection, imputation
-  - Data transformation, i.e., put the data in the “right” structure (e.g., tidy data)
+  - Data transformation, i.e., put the data in the "right" structure (e.g., tidy data)
   - Information extraction: feature computation, highly domain specific
 - Others aspects have been studied in depth, e.g.,
   - Schema mapping
@@ -319,7 +319,7 @@ gsaggese@umd.edu
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_4.png)
 
-“Messy” data
+"Messy" data
 
 Tidy data
 
@@ -336,7 +336,7 @@ Long format
 * Single-Source Problems
 - Depends largely on the source
 - Databases can enforce constraints
-- Data extracted from spreadsheets is often “clean”
+- Data extracted from spreadsheets is often "clean"
   - At least there is a schema
 - Logs are messy
 - Data scraped from web-pages is much more messy
@@ -421,7 +421,7 @@ Long format
 - Most of these techniques start breaking down as the dimensionality of the data increases
   - *Curse of dimensionality*
     - You need an O(e^n) points with n dimensions to estimate
-    - “In high dimensional spaces, data is always is sparse”
+    - "In high dimensional spaces, data is always is sparse"
   - Can project data into lower-dimensional space and look for outliers there
     - Not as straightforward
 - Wikipedia article on Outliers
@@ -553,7 +553,7 @@ Long format
 
 ```json
 {     "firstName": "John",     "lastName": "Smith",     "isAlive": true,     "age": 25,     "height_cm": 167.6,     "address": {        "streetAddress": "21 2nd Street",        "city": "New York",        "state": "NY",        "postalCode": "10021-3100"     }, 
-   "phoneNumbers": [        {        "type": "home",        "number": "212 555-1234”       },        {        "type": "office",        "number": "646 555-4567"        }     ],     "children": [],     "spouse": null  }
+   "phoneNumbers": [        {        "type": "home",        "number": "212 555-1234"       },        {        "type": "office",        "number": "646 555-4567"        }     ],     "children": [],     "spouse": null  }
 ```
 
 * Protocol Buffers
@@ -648,8 +648,8 @@ message Person {
 - Evaluate the functionality, reliability, performance, and security of a product and ensure it meets specified requirements
   - Software testing is a critical phase in the development process
 - Adage:
-  - “If it's not tested, it doesn't work”
-  - “Debugging is 2x harder than writing code”
+  - "If it's not tested, it doesn't work"
+  - "Debugging is 2x harder than writing code"
     - Corollary: if I'm doing my best to write code, how I can possibly debug it?
 - **Different types of testing
 **
@@ -662,7 +662,7 @@ message Person {
   - E.g., decide if a new build is stable enough to use
   - E.g., the application doesn't crash upon launching
 - **Regression testing**: ensure that the new changes have not adversely affected existing functionality
-  - Confusing: regressing in the sense of “getting worse”
+  - Confusing: regressing in the sense of "getting worse"
 - **Acceptance testing**: final phase of testing before the software is released
   - More used in waterfall workflows than Agile development
 - **Performance testing**: load testing, stress testing, and spike testing
@@ -760,7 +760,7 @@ message Person {
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_49_image_2.png)
 
-“Microservice” interest over time (from Google Trends)
+"Microservice" interest over time (from Google Trends)
 
 - Different styles of building complex systems
 - Find the right granularity
