@@ -24,7 +24,7 @@ UMD DATA605: Big Data Systems
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
 
 * Invariants of a Class Lecture
-- **Invariants**
+- **Invariants of a class lecture**
   - Focus on intuition
   - Interactive Jupyter notebook tutorials
     - Tutorials done at home
