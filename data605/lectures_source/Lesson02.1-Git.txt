@@ -35,7 +35,7 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=55%}
 - Command line
-  - [\textcolor{blue}{\underline{Command-Line for Beginners}}](https://ubuntu.com/tutorials/command-line-for-beginners)
+  - [Command-Line for Beginners](https://ubuntu.com/tutorials/command-line-for-beginners)
   - E.g., `find`, `xargs`, `chmod`, `chown`, symbolic, and hard links
 
 - How Linux works
@@ -45,7 +45,7 @@ UMD DATA605 - Big Data Systems
   - How to administer a Linux box as root
 
 - Mastery
-  - [\textcolor{blue}{\underline{The Linux Command Line}}](https://linuxcommand.org/tlcl.php)
+  - [The Linux Command Line](https://linuxcommand.org/tlcl.php)
 ::::
 :::: {.column width=40%}
 
@@ -59,21 +59,20 @@ UMD DATA605 - Big Data Systems
 - Concepts in the slides
 
 - Tutorial:
-  [\textcolor{blue}{\underline{Tutorial
-  Git}}](https://github.com/gpsaggese/umd_classes/tree/main/data_605/tutorials/tutorial_git)
+  [Tutorial Git](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_git)
 
 - We will use Git during the project
 
 - Mastery:
-  [\textcolor{blue}{\underline{Pro Git}}](https://git-scm.com/book/en/v2) (free)
+  [Pro Git](https://git-scm.com/book/en/v2) (free)
 
 - Web resources:
-  - [\textcolor{blue}{\underline{https://githowto.com}}](https://githowto.com)
-  - [\textcolor{blue}{\underline{dangitgit.com}}](https://dangitgit.com) (without swearing)
-  - [\textcolor{blue}{\underline{Oh Sh*t, Git!?!}}](https://ohshitgit.com/) (with swearing)
+  - [https://githowto.com](https://githowto.com)
+  - [dangitgit.com](https://dangitgit.com) (without swearing)
+  - [Oh Sh*t, Git!?!](https://ohshitgit.com/) (with swearing)
 
 - Playgrounds
-  - [\textcolor{blue}{\underline{https://learngitbranching.js.org}}](https://learngitbranching.js.org)
+  - [https://learngitbranching.js.org](https://learngitbranching.js.org)
 
 :::: 
 :::: {.column width=40%}
@@ -313,10 +312,8 @@ UMD DATA605 - Big Data Systems
   - Blobs: content of files
 
 - Refs:
-  - Easy: 
-[\textcolor{blue}{\underline{Understanding Git Data Model}}](https://konrad126.medium.com/https-medium-com-zspajich-understanding-git-data-model-95eb16cc99f5)
-  - Hard-core: 
-[\textcolor{blue}{\underline{Git internals}}](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects)
+  - Easy: [Understanding Git Data Model](https://konrad126.medium.com/https-medium-com-zspajich-understanding-git-data-model-95eb16cc99f5)
+  - Hard-core: [Git internals](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects)
 ::::
 :::: {.column width=40%}
 
@@ -422,8 +419,8 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=55%}
 - Tutorials
-  - [\textcolor{blue}{\underline{Work on main}}](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#work-on-main)
-  - [\textcolor{blue}{\underline{Hot fix}}](https://github.com/gpsaggese/umd_data605/blob/main/tutorials/tutorial_git/tutorial_git.md#hot-fix)
+  - [Work on main](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#work-on-main)
+  - [Hot fix](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#hot-fix)
 
 - Start from a project with some commits
 
@@ -534,8 +531,7 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=55%}
 - Tutorial:
-  - [\textcolor{blue}{\underline{Merging
-  conflicts}}](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#merging-conflicts)
+  - [Merging conflicts](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#merging-conflicts)
 
 - Sometimes **Git can't merge**, e.g.,
   - The same file has been modified by both branches
@@ -708,8 +704,8 @@ UMD DATA605 - Big Data Systems
 - **Remote branches** are pointers to branches in remote repos
   ```
   git remote -v
-  origin  git@github.com:gpsaggese/umd_data605.git (fetch)
-  origin  git@github.com:gpsaggese/umd_data605.git (push)
+  origin  git@github.com:gpsaggese/umd_classes.git (fetch)
+  origin  git@github.com:gpsaggese/umd_classes.git (push)
   ```
 
 - **Tracking branches**

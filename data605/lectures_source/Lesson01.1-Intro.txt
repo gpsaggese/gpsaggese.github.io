@@ -21,7 +21,7 @@ UMD DATA605: Big Data Systems
 
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 * Invariants of a Class Lecture
 - **Invariants of a class lecture**
@@ -173,8 +173,8 @@ UMD DATA605: Big Data Systems
 
 - **GP Saggese**
   - 2001-2006, PhD / Postdoc at the University of Illinois at Urbana-Champaign
-  - [\textcolor{blue}{\underline{LinkedIn}}](https://www.linkedin.com/in/gpsaggese/)
-  - [\textcolor{blue}{\underline{gsaggese@umd.edu}}](gsaggese@umd.edu)
+  - [LinkedIn](https://www.linkedin.com/in/gpsaggese/)
+  - [gsaggese@umd.edu](gsaggese@umd.edu)
 - **University of Maryland**:
   - 2023-, Lecturer for UMD DATA605: Big Data Systems
   - 2025-, Lecturer for UMD MSML610: Advanced Machine Learning
