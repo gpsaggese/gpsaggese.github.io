@@ -737,8 +737,7 @@ Commands:
 
 * Docker Compose: Tutorial
 - Example taken from https://github.com/nigelpoulton/counter-app
-- [tutorial_docker_compose](
-  https://github.com/gpsaggese/umd_classes/tree/main/data605/tutorials/tutorial_docker_compose)
+- [tutorial_docker_compose](https://github.com/gpsaggese/umd_classes/tree/main/data605/tutorials/tutorial_docker_compose)
   ```
   > cd tutorials/tutorial_docker_compose
   > vi tutorial_docker_compose.md
