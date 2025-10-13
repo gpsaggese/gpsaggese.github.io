@@ -44,10 +44,10 @@ MSML610: Advanced Machine Learning
 ## #############################################################################
 
 * Big Data and Traditional AI
-- For the past 10 years, **focus of AI** analytics:
+- For the past 10 years, **focus of analytics** on:
   - Organize and analyze massive amount of data
   - Data analytics (dashboards, models, reports)
-  - Run machine learning, AI on data
+  - Run machine learning on data
 
 - Problems with **traditional AI**
   - Predicts based on observed correlations
@@ -55,7 +55,7 @@ MSML610: Advanced Machine Learning
 
 - **AI in decision making**
   - Understand impact of decisions
-  - E.g., what happens if a product price is reduced by 10%?
+  - E.g., _"What happens if a product price is reduced by 10%?"_
     - Will more customers buy?
     - If revenue decreases, what to do?
     - Why are customers leaving? Quality issue? Emerging competitor?
@@ -83,10 +83,6 @@ MSML610: Advanced Machine Learning
 
 * Data Analytics Sophistication
 
-\begin{center}
-  \includegraphics[width=0.9\textwidth]{msml610/lectures_source/figures/Lesson9-Analytical_sophistication.png}
-\end{center}
-
 \begingroup \footnotesize
 | **Business Question**       | **Methodology**                  |
 |-----------------------------|----------------------------------|
@@ -95,6 +91,10 @@ MSML610: Advanced Machine Learning
 | What should we do?          | Prescriptive programs            |
 | What's the best we can do?  | Simulation + optimization        |
 \endgroup
+
+\begin{center}
+  \includegraphics[width=0.9\textwidth]{msml610/lectures_source/figures/Lesson9-Analytical_sophistication.png}
+\end{center}
 
 * Explainability
 - **Regulators** require that if you are making decisions using ML / AI, you
@@ -106,9 +106,9 @@ MSML610: Advanced Machine Learning
   - Face **backlash** from customers and activists
 
 - E.g., neural networks are "black boxes"
-  - Humans can't understand how inputs are combined into a conclusion
-  - Cannot explain to shareholders why certain decisions were made
   - Lack of explainability
+    - Humans can't understand how inputs are combined into a conclusion
+    - Cannot explain to shareholders why certain decisions were made
   - Bias
     - E.g., using age, race, sex as a feature can introduce bias
 
@@ -157,7 +157,7 @@ MSML610: Advanced Machine Learning
 
 * Causal AI vs Traditional AI
 - _"The next revolution of data science is the science of interpreting reality,
-  not of summarizing data"_ (Judea Pearl)
+  not of summarizing data"_ (Judea Pearl, 2021)
 
 - Current AI uses correlation to:
   - Analyze data
@@ -167,7 +167,7 @@ MSML610: Advanced Machine Learning
 - Models depend on data quality
   - Biased or unclean data $\implies$ poor model
 
-# The Ladder of Causation
+## The Ladder of Causation
 
 * The Ladder of Causation
 
@@ -176,9 +176,9 @@ MSML610: Advanced Machine Learning
 \begingroup \scriptsize
 | **Level**          | **Symbol**         | **Activity** | **Typical Questions**    |
 | ------------------ | -------------------| -------------| ------------------------ |
-| 1. Association     | $\Pr(Y | X)$       | Seeing       | What is? |
-| 2. Intervention    | $\Pr(Y | do(X), Z)$| Intervening  | What if? |
-| 3. Counterfactuals | $\Pr(Y_X | x', y')$| Imagining    | Why?     |
+| 1. Association     | $\Pr(Y | X)$       | Observing    | What is?                 |
+| 2. Intervention    | $\Pr(Y | do(X), Z)$| Intervening  | What if?                 |
+| 3. Counterfactuals | $\Pr(Y_X | x', y')$| Imagining    | Why?                     |
 \endgroup
 
 * Rung 1: Association
@@ -204,8 +204,8 @@ MSML610: Advanced Machine Learning
 
 - **Activity**
   - Understand the impact of an action
-  - E.g., "tree has green leaves" vs "spring makes tree leaves turn green"
-  - Association is just about observational
+  - E.g., _"tree has green leaves"_ vs _"spring makes tree leaves turn green"_
+  - Association is just about observations
   - Interventions involve "doing something" and need a causal model
 
 - **Example**
@@ -220,7 +220,7 @@ MSML610: Advanced Machine Learning
 - **Symbol**: $\Pr(Y_X | x', y')$
 
 - **Activity**:
-  - "Imaging what will happen if facts were different"
+  - Imagine what will happen if facts were different
   - Predicting an outcome is the highest form of reasoning
     - It requires to understand relationships between cause and effect
 
@@ -239,31 +239,31 @@ MSML610: Advanced Machine Learning
 - **Correlation** = identify how variables are related to each other
 - **Causality** = determine whether one variable causes another variable
 
-- Both:
-  - Accept inputs and transform them
-  - Identify how variables are related to each other
+  - Both:
+    - Accept inputs and transform them to compute predictions
+    - Identify how variables are related to each other
 
-- Correlation-based AI is best when there is abundant historical and
-  observational data
-- Causal-based AI first creates a business-focused model before integrating data
+  - Correlation-based AI works well when there is abundant historical and
+    observational data
+  - Causal-based AI first creates a business-focused model before integrating data
 
 * Correlation-Based Model Process
 - **Correlation-based AI** is "data first"
   - The more data collected the better
 
 - **Modeling process**
-  - Data Acquisition
-  - Data integration, cleaning
+  - Acquire data
+  - Integrate and clean data
   - Exploratory data analysis (EDA)
   - Feature engineering
-  - Model testing
-  - Production use
+  - Build and test models
+  - Deploy models in production
 
-- Many AI projects fail because
+- **Many AI projects fail because**
   - Cultural and organizational issues
   - Models are opaque and lack explainability
   - Spurious correlations
-  - Missing articulating "what and why are you doing ML?"
+  - Missing articulating "what's the goal of doing ML?"
 
 * Causation-based Model Process
 - **Causal AI** is "model first"
@@ -284,9 +284,11 @@ MSML610: Advanced Machine Learning
 
 * (Non-Causal) Bayesian Networks
 - **Bayesian networks** represent a joint distribution function
-  - Many possible **edges** and **node ordering**
-  - The direction of the arrow represent the **conditional dependence**
+  - The direction of the arrow represent **conditional dependence** (not
+    causality)
     - $A \to B$ requires to estimate $\Pr(A | B)$
+  - There are many possible **edges** and **node ordering** for the same Bayesian
+    network
 
 ::: columns
 :::: {.column width=60%}
@@ -297,6 +299,7 @@ MSML610: Advanced Machine Learning
   - Represent as $Smoke \to Fire$
     - Need $\Pr(Smoke)$ and $\Pr(Fire | Smoke)$
   - Networks are equivalent and convey the same information
+  - Different difficulties to estimate
 
 ::::
 :::: {.column width=35%}
@@ -327,26 +330,25 @@ digraph BayesianNetwork1 {
   - Clearing smoke doesn't affect fire
 
 * Causal (Bayesian) Networks
-- **Causal networks** are Bayesian networks forbidding non-causal edges (node
-  ordering)
+- **Causal networks** are Bayesian networks forbidding **non-causal edges**
 
 - Use judgment based on nature instead of just statistics
-  - E.g., "Are random variables $Smoke$ and $Fire$ correlated?"
-  - E.g., "What causes what, $Smoke$ or $Fire$?"
+  - E.g., from _"Are random variables $Smoke$ and $Fire$ correlated?"_ to _"What
+    causes what, $Smoke$ or $Fire$?"_
 
-- "Dependency in nature" is like assignment in programming
-  - Nature assigns $Smoke$ based on $Fire$:
-    - ![](emoji/check_mark.png){ width=12px } $Smoke = f(Fire)$
-    - ![](emoji/wrong.png){ width=12px } $Fire = f(Smoke)$
-  - **Structural equations** describe "assignment mechanism"
+- **"Dependency in nature" is like assignment in programming**
+  - E.g., nature assigns $Smoke$ based on $Fire$:
+    - ![](emoji/check_mark.png){ width=12px } $Smoke := f(Fire)$
+    - ![](emoji/wrong.png){ width=12px } $Fire := f(Smoke)$
+  - Structural equations describe "assignment mechanism"
     $$
-    x_i = f(x_j) \iff X_j \to X_i
+    x_i := f(x_j) \iff X_j \to X_i
     $$
 
 * Causal DAG
 - **Causal DAG**
-  - Directed: Arrows show direction of cause $\rightarrow$ effect
-  - Acyclic: No feedback loops
+  - _Directed_: Arrows show direction of cause $\rightarrow$ effect
+  - _Acyclic_: No feedback loops
     - Causal relationships assume a temporal order: cause happens before effect
     - A cycle would imply a variable is both a cause and effect of itself
       (paradox)
@@ -355,10 +357,41 @@ digraph BayesianNetwork1 {
   - DAGs encode _causal_ rather than _associative_ links
   - Enables reasoning about interventions and counterfactuals
   - Supports explainable AI models
+  - Stability to estimation
 
 - **Limitations**:
   - Requires domain knowledge to specify structure
   - Assumes all relevant variables are included (no hidden confounders)
+
+* Causal Edges are Stable
+
+- **Causal edge** $X \rightarrow Y$ shows direct causal influence of $X$ on $Y$,
+  holding other variables constant
+  - Captures how manipulating $X$ changes $Y$, not just their covariance
+
+- Causal edges reflect **stable relationship**
+
+  - Mechanistic stability
+    - Causal relationships show system function, not just behavior in one dataset
+    - E.g., "Temperature $\rightarrow$ ice melting rate" holds true in Alaska and
+      Arizona
+
+  - Invariance under interventions
+    - If $X$ causes $Y$, intervening on $X$ affects $Y$ consistently, despite
+      confounders or context changes
+    - Invariance makes causal edges robust to data distribution shifts
+
+  - Easier estimation through causal modeling
+    - Identifying causal direction focuses estimation on effect size (e.g.,
+      regression of $Y$ on $X$ under intervention)
+
+  - Reduced sensitivity to sampling and omitted variables
+    - Correlations may change with confounder addition or removal
+    - True causal edge persists, stable across model specifications
+
+- **Example**: study $Exercise \rightarrow Health$:
+  - Correlation may differ in young or elderly populations
+  - Causal effect remains stable, as physiological mechanism doesn't change
 
 * Structural Causal Model
 - A **Structural Causal Model** (SCM) translates a causal DAG into mathematical
@@ -370,20 +403,17 @@ digraph BayesianNetwork1 {
   - Equations model each variable as a function of its direct causes
   - Variables: $X_1, X_2, ..., X_n$ represent quantities in the system
   - Formally, $X_i$ is modeled as:
-    - $X_i = f_i(\text{Parents}(X_i), \epsilon_i)$
+    $$X_i = f_i(Parents(X_i), \varepsilon_i)$$
     where:
-    - $\text{Parents}(X_i)$ are direct causes of $X_i$
-    - $\epsilon_i$ is an exogenous (external, unobserved) noise term
+    - $Parents(X_i)$ are direct causes of $X_i$
+    - $\varepsilon_i$ is an exogenous (external, unobserved) noise term
 
-- SCMs can:
+- **Properties**:
   - Explain causal relationships between variables
   - Provide a foundation for causal reasoning and simulation
   - Describe how the world works, not just variable correlations
 
 * Structural Causal Model: Example
-- SCM expresses the relationship between the state of the world and how the
-  variables interact
-
 ::: columns
 :::: {.column width=50%}
 - **Explanatory variables**
@@ -391,12 +421,8 @@ digraph BayesianNetwork1 {
   - E.g., _"does a large cup of coffee before an exam help with a test?"_
 
 - **Outcome variables**
-  - Result of the action (independent variables)
+  - Result of the action
   - E.g., _"by how much did the score test improve?"_
-
-- **Unobserved variables**
-  - Not seen and more difficult to account
-  - E.g., _"temperature of the room, which makes students sleepy and less alert"_
 ::::
 :::: {.column width=45%}
 ```graphviz
@@ -420,34 +446,12 @@ digraph SCMExample {
 ::::
 :::
 
-* Structural Equation: Sprinkler Example
+- **Unobserved variables**
+  - Not seen and more difficult to account
+  - E.g., _"temperature of the room makes students sleepy and less alert"_
+
+* Structural Causal Model: Sprinkler Example
 ::: columns
-:::: {.column width=70%}
-- Consider the Sprinkler example
-
-- Express joint distribution of five variables as a product of conditional
-  distributions using causal DAG topology:
-  $$
-  \begingroup \small
-  \Pr(c, r, s, w, g) = \Pr(c) \Pr(r|c) \Pr(s|c) \Pr(w|r,s) \Pr(g|w)
-  \endgroup
-  $$
-
-- Structural equations for this model:
-  \begin{align*}
-    & C = f_C(U_C) \\
-    & R = f_R(C, U_R) \\
-    & S = f_S(C, U_S) \\
-    & W = f_W(R, S, U_W) \\
-    & G = f_G(W, U_G) \\
-  \end{align*}
-
-- Unmodeled variables U-variables represent error terms
-  - E.g., $U_W$ is another source of wetness besides $Sprinkler$ and $Rain$
-    (e.g., $MorningDew$)
-  - Assume U-variables are exogenous, independent, with a certain distribution
-    (prior)
-::::
 :::: {.column width=25%}
 
 ```graphviz
@@ -477,44 +481,184 @@ digraph BayesianFlow {
 }
 ```
 ::::
+:::: {.column width=70%}
+- Structural equations for this model:
+  \begingroup \small
+  \begin{align*}
+    & C = f_C(U_C) \\
+    & R = f_R(C, U_R) \\
+    & S = f_S(C, U_S) \\
+    & W = f_W(R, S, U_W) \\
+    & G = f_G(W, U_G) \\
+  \end{align*}
+  \endgroup
+
+- Unmodeled variables $U_x$ represent error terms
+  - E.g., $U_W$ is another source of wetness besides $Sprinkler$ and $Rain$
+    (e.g., $MorningDew$)
+  - Assume unmodeled variables are exogenous, independent, with a certain
+    distribution (prior)
+::::
 :::
+
+- Express joint distribution of five variables as a product of conditional
+  distributions using causal DAG topology:
+  \begingroup \small
+  $$
+  \Pr(C, R, S, W, G) = \Pr(C) \Pr(R|C) \Pr(S|C) \Pr(W|R,S) \Pr(G|W)
+  $$
+  \endgroup
 
 ## #############################################################################
 ## Variables
 ## #############################################################################
 
 * Observed Vs. Unobserved Variables
+::: columns
+:::: {.column width=45%}
 - **Observed variables**
-  - Aka "measurable" or "visible" variables
+  - Aka "measurable" or "visible"
   - Variables directly measured or collected in a dataset
   - E.g.,
-    - Age
+    - Education
     - Income
+    - Age
     - Blood pressure
     - Product price
 
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph EducationIncomeModel_ObservedUnobserved_Vertical {
+    rankdir=TD; // top-down layout
+    splines=true;
+    nodesep=0.8;
+    ranksep=0.9;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    Education       [label="Education",       fillcolor="#ccebc5"];
+    Income          [label="Income",          fillcolor="#ccebc5"];
+    EconomicPolicy  [label="Economic Policy", fillcolor="#ccebc5"];
+    Motivation      [label="Motivation",      fillcolor="#decbe4"];
+    NaturalTalent   [label="Natural Talent",  fillcolor="#decbe4"];
+    Weather         [label="Weather",         fillcolor="#decbe4"];
+    News            [label="News",            fillcolor="#decbe4"];
+
+    // Vertical order (top to bottom)
+    { rank=same; EconomicPolicy; }
+    { rank=same; NaturalTalent; }
+    { rank=same; Education; }
+    { rank=same; Motivation; }
+    { rank=same; Income; }
+    { rank=same; Weather; }
+    { rank=same; News; }
+
+    // Causal links
+    EconomicPolicy  -> Education;
+    EconomicPolicy  -> Income;
+    NaturalTalent   -> Education;
+    NaturalTalent   -> Motivation;
+    Motivation      -> Education;
+    Motivation      -> Income;
+    Education       -> Income;
+    Weather         -> Income;
+    News            -> Income;
+
+    // Legend (top, vertical stack)
+    subgraph cluster_legend {
+        label="Legend";
+        fontsize=11;
+        color="#dddddd";
+        style="rounded";
+        rankdir=TB; // vertical stacking
+
+        key1 [label="Observed", shape=box, style="rounded,filled", fillcolor="#ccebc5"];
+        key2 [label="Unobserved",  shape=box, style="rounded,filled", fillcolor="#decbe4"];
+
+        key1 -> key2 [style=invis];
+    }
+}
+```
+::::
+:::
+
 - **Unobserved variables**
-  - Aka "latent" or "hidden" variables
-  - Variables that exist but are not measured or included in the data
+  - Aka "latent" or "hidden"
+  - Exist but not measured or included in data
   - E.g.,
-    - Patient’s stress level
-    - Trust in a brand
+    - Natural talent
+    - Motivation
     - Company culture
-  - Unobserved variables, when ignored, can distort causal relationships
-    creating spurious correlations or biased results, e.g.,
-    - Observed: `IceCreamSales` and `DrowningRates`
-    - Unobserved: `Temperature`
-    - Misleading conclusion without unobserved variable: `IceCream` causes
-      `Drowning`
+  - Ignoring unobserved variables distorts causal relationships
+    - Observed: $IceCreamSales$ and $DrowningRates$
+    - Unobserved: $Temperature$
+    - Misleading conclusion: $IceCream$ causes $Drowning$
 
 * Endogenous Vs. Exogenous Variables
+::: columns
+:::: {.column width=45%}
 - **Endogenous variables**
   - Variables whose values are determined _within_ the model
     - I.e., dependent on other variables in the system
   - Represent the system’s internal behavior and outcomes
-    - E.g., in a model of `Education` $\rightarrow$ `Income`, `Income` is
-      endogenous since it is affected by `Education` level
 
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph EducationIncomeModel_EndoExo{
+    rankdir=TD; // top-down layout
+    splines=true;
+    nodesep=0.8;
+    ranksep=0.9;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    Education       [label="Education",       fillcolor="#fed9a6"];
+    Income          [label="Income",          fillcolor="#b3cde3"];
+    EconomicPolicy  [label="Economic Policy", fillcolor="#fed9a6"];
+    Motivation      [label="Motivation",      fillcolor="#b3cde3"];
+    NaturalTalent   [label="Natural Talent",  fillcolor="#fed9a6"];
+    Weather         [label="Weather",         fillcolor="#fed9a6"];
+    News            [label="News",            fillcolor="#fed9a6"];
+
+    // Vertical order (top to bottom)
+    { rank=same; EconomicPolicy; }
+    { rank=same; NaturalTalent; }
+    { rank=same; Education; }
+    { rank=same; Motivation; }
+    { rank=same; Income; }
+    { rank=same; Weather; }
+    { rank=same; News; }
+
+    // Causal links
+    EconomicPolicy  -> Education;
+    EconomicPolicy  -> Income;
+    NaturalTalent   -> Education;
+    NaturalTalent   -> Motivation;
+    Motivation      -> Education;
+    Motivation      -> Income;
+    Education       -> Income;
+    Weather         -> Income;
+    News            -> Income;
+
+    // Legend at top
+    subgraph cluster_legend {
+        label="Legend";
+        fontsize=11;
+        color="#dddddd";
+        style="rounded";
+        rankdir=TB; // vertical stacking
+
+        key1 [label="Endogenous", shape=box, style="rounded,filled", fillcolor="#b3cde3"];
+        key2 [label="Exogenous",  shape=box, style="rounded,filled", fillcolor="#fed9a6"];
+
+        key1 -> key2 [style=invis];
+    }
+}
+```
+::::
+:::
 - **Exogenous variables**
   - Variables that originate _outside_ the system being modeled
     - I.e., not caused by other variables in the model
@@ -523,94 +667,349 @@ digraph BayesianFlow {
     - Natural talent
     - Economic policy
     - Weather
+    - News
 
-* Endogenous / Exogenous vs Observed / Unobserved Variables
-- In Structural Causal Models (SCMs)
+* Endo / Exogenous, Observed / Unobserved Vars
+::: columns
+:::: {.column width=35%}
+- In **Structural Causal Models**
   $$
-  X_i = f_i(PA_i, U_i)
+  X_i = f_i(Parents(X_i), \varepsilon_i)
   $$
   where:
-  - $X_i$ is endogenous
-  - $PA_i$: its parent variables (causes within the model)
-  - $U_i$: exogenous noise term (outside causes)
+  - $X_i$ is endogenous (modeled variable in the system)
+  - $\varepsilon_i$ is exogenous noise term (outside causes)
 
-- Typically
-  - Endogenous variables: focus for prediction and intervention
-  - Exogenous variables: capture randomness or unknown external factors
+- **Typically**
+  - _Endogenous variables_: focus for prediction and intervention
+  - _Exogenous variables_: capture randomness or unknown external factors
+
+::::
+:::: {.column width=60%}
+
+```graphviz
+digraph EducationIncomeModel_EndoExo{
+    rankdir=TD; // top-down layout
+    splines=true;
+    nodesep=0.8;
+    ranksep=0.9;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    Education       [label="Education",       fillcolor="#ccebc5"];
+    Income          [label="Income",          fillcolor="#b3cde3"];
+    EconomicPolicy  [label="Economic Policy", fillcolor="#ccebc5"];
+    Motivation      [label="Motivation",      fillcolor="#decbe4"];
+    NaturalTalent   [label="Natural Talent",  fillcolor="#fed9a6"];
+    Weather         [label="Weather",         fillcolor="#fed9a6"];
+    News            [label="News",            fillcolor="#fed9a6"];
+
+    // Vertical order (top to bottom)
+    { rank=same; EconomicPolicy; }
+    { rank=same; NaturalTalent; }
+    { rank=same; Education; }
+    { rank=same; Motivation; }
+    { rank=same; Income; }
+    { rank=same; Weather; }
+    { rank=same; News; }
+
+    // Causal links
+    EconomicPolicy  -> Education;
+    EconomicPolicy  -> Income;
+    NaturalTalent   -> Education;
+    NaturalTalent   -> Motivation;
+    Motivation      -> Education;
+    Motivation      -> Income;
+    Education       -> Income;
+    Weather         -> Income;
+    News            -> Income;
+
+    // Legend
+    subgraph cluster_legend {
+        label="Legend";
+        fontsize=11;
+        color="#dddddd";
+        style="rounded";
+        rankdir=TB; // vertical layout for legend
+
+        key1 [label="Endogenous / Observed", shape=box, style="rounded,filled", fillcolor="#b3cde3"];
+        key2 [label="Exogenous / Observed",  shape=box, style="rounded,filled", fillcolor="#ccebc5"];
+        key3 [label="Endogenous / Unobserved", shape=box, style="rounded,filled", fillcolor="#decbe4"];
+        key4 [label="Exogenous / Unobserved",  shape=box, style="rounded,filled", fillcolor="#fed9a6"];
+
+        key1 -> key2 [style=invis];
+        key2 -> key3 [style=invis];
+        key3 -> key4 [style=invis];
+    }
+}
+```
 
 \begingroup \scriptsize
-| **Variable Type**        | **Observability**   | **Example**             |
-|--------------------------|---------------------|-------------------------|
-| Endogenous               | Observed            | Sales                   |
-| Exogenous                | Observed            | Marketing Budget        |
-| Endogenous               | Unobserved          | Motivation              |
-| Exogenous                | Unobserved          | Macroeconomic shocks    |
+| **Variable Type**        | **Observability**   | **Example**          |
+|---------------------------|---------------------|---------------------|
+| Endogenous               | Observed            | Income               |
+| Exogenous                | Observed            | Education            |
+| Endogenous               | Unobserved          | Motivation           |
+| Exogenous                | Unobserved          | Natural Talent       |
 \endgroup
+
+::::
+:::
 
 ## Intervention
 
-* Intervention in structural equations and joint probability
-- Structural equations:
-  - Model the system
-  - Predict intervention effects not easily represented by joint distribution
+* Estimating Causal Effects
 
-- Intervention $do(X_j = x_j)$ changes
-  $$X_j = f_j(Parents(X_j), U_J)$$
-  to
-  $$X_j = x_j$$
-  - "Mutilate" causal network by removing edge
-  - Derive joint distribution from causal network
+- **Goal**: Determine the causal effect of a treatment (aka intervention)
+  variable $T$ on an outcome $Y$
 
-- Multiple interventions:
-  - Superposition of individual interventions
+::: columns
+:::: {.column width=60%}
+- **Example:**
+    - $T$ = "takes drug"
+    - $Y$ = "recovers"
+    - $C$ = "overall health"
+  - Healthier people may both take medicine and recover faster $\implies$ correlation
+    without causation
+
+- In **observational data**
+  - Confounding variable $C$ affects both treatment $T$ and outcome $Y$
+  - $C$ creates _spurious correlation_ between $T$ and $Y$
+::::
+:::: {.column width=35%}
+```graphviz
+digraph Observational {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+    rankdir=TD;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    // Node styles
+    C [label="Confounder (C)", shape=ellipse, fillcolor="#FFD1A6"];
+    T [label="Treatment (T)", fillcolor="#A6C8F4"];
+    Y [label="Outcome (Y)", fillcolor="#B2E2B2"];
+
+    // Edges
+    C -> T [label="affects"];
+    C -> Y [label="affects"];
+    T -> Y [label="causal effect?"];
+}
+```
+::::
+:::
+
+- **Problem**
+  - There is a "backdoor path" from $Treatment \to Confounder \to Outcome$
+
+* Frontdoor and Backdoor Paths: Intuition
+::: columns
+:::: {.column width=55%}
+
+- **Backdoor path**
+  - A backdoor path is any path from $T$ to $Y$ starting with an arrow into $T$
+    - E.g., backdoor path: $T \leftarrow C \rightarrow Y$
+  - Interpretation:
+    - $C$ is a common cause of both $T$ and $Y$ and it confounds the relationship
+      between $T$ and $Y$
+    - Controlling for (condition) $C$ blocks the backdoor path, allowing
+      identification of the causal effect of $T$ on $Y$
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph Observational {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+    rankdir=TD;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    // Node styles
+    C [label="Confounder (C)",fillcolor="#FFD1A6"];
+    T [label="Treatment (T)", fillcolor="#A6C8F4"];
+    Y [label="Outcome (Y)", fillcolor="#B2E2B2"];
+
+    // Edges
+    C -> T [label="Backdoor", color="#FA5050", fontcolor="#FA5050", penwidth=1.8];
+    C -> Y [label="Backdoor", color="#FA5050", fontcolor="#FA5050", penwidth=1.8];
+    T -> Y [label="Frontdoor", color="#1E8449", fontcolor="#1E8449", penwidth=2.5];
+}
+```
+
+::::
+:::
+
+- **Frontdoor path**
+  - A frontdoor path goes directly or indirectly from $T$ to $Y$ through
+    mediators, following the direction of causal flow
+    - E.g., front-door path: $T \rightarrow Y$
+  - Interpretation:
+    - This is the direct causal path of interest
+    - No mediators here, so the front-door path is the direct causal effect of
+      $T$ on $Y$
+
+* Randomized Controlled Trials (RCTs)
+
+- **Randomized Controlled Trial (RCT)** is an experimental study to assess the
+  causal effect of an intervention or treatment
+  - Determine whether an intervention causes an effect, not just associated with
+    it
+  - Eliminate selection bias and confounding variables through randomization
+
+- **Key Components**
+  - _Randomization:_ ensures groups are statistically equivalent at baseline
+  - _Control Group:_ receives a placebo or standard treatment
+  - _Blinding:_ participants and/or researchers do not know the assignment to
+    avoid bias
+  - _Outcome Measurement:_ pre-defined metrics assess the intervention's
+    effect
+
+- **Example**: testing a new drug
+  - Treatment group receives the new drug
+  - Control group receives a placebo
+  - Compare recovery rates after a fixed period
+
+- **Pros**
+  - Provides clear causal inference due to randomization
+
+- **Cons**
+  - Expensive and time-consuming
+  - Ethical or practical constraints may prevent randomization
+
+* RCTs Solve the Problem of Confounders
+::: columns
+:::: {.column width=70%}
+- In **observational data**
+  - Confounding variable $C$ affects both treatment $T$ and outcome $Y$
+  - $C$ creates _spurious correlation_ between $T$ and $Y$
+::::
+:::: {.column width=25%}
+```graphviz
+digraph Observational {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+    rankdir=TD;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    // Node styles
+    C [label="Confounder (C)", shape=ellipse, fillcolor="#FFD1A6"];
+    T [label="Treatment (T)", fillcolor="#A6C8F4"];
+    Y [label="Outcome (Y)", fillcolor="#B2E2B2"];
+
+    // Edges
+    C -> T [label="affects"];
+    C -> Y [label="affects"];
+    T -> Y [label="causal effect?"];
+}
+```
+::::
+:::
+
+::: columns
+:::: {.column width=55%}
+- In **experimental settings**
+  - Randomization ($R$) breaks the link between $C$ and $T$
+  - Everyone is assigned randomly, so nothing can influence both treatment and
+    outcome
+  - Now $T$ is independent of $C$: $T \perp C$
+  - The only open path between $T$ and $Y$ is the causal path $T \rightarrow Y$
+::::
+:::: {.column width=40%}
+```graphviz
+digraph RCT {
+  splines=true;
+  nodesep=1.0;
+  ranksep=0.75;
+  rankdir=TD;
+
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+  // Node styles
+  R [label="Randomization", shape=diamond, fillcolor="#C6A6F4"];
+  T [label="Treatment (T)", fillcolor="#A6C8F4"];
+  Y [label="Outcome (Y)", fillcolor="#B2E2B2"];
+  C [label="Confounder (C)", shape=ellipse, fillcolor="#FFD1A6"];
+
+  // Edges
+  R -> T [label="assigns"];
+  T -> Y [label="causal effect"];
+  C -> Y [label="affects"];
+}
+```
+::::
+:::
+
+* Causal Graphs and Interventions
+- Simply **observing correlations** between variables _does not reveal causality_
+  - $\Pr(Y | T)$ confounds direct and indirect influences
+
+- **Randomized Controlled Trials (RCTs)** provide the _gold standard_ for causal
+  inference
+  - Randomization breaks all back-door (confounding) paths
+  - But RCTs are expensive, slow, or ethically impossible
+
+- **Alternative solution**
+  - Can we estimate the _causal effect_ from _observational data alone_?
+  - Under _what conditions_ and using _which variables_?
+
+- **Idea**: If we identify and condition on the right _confounders_, you can
+  - Block spurious associations between $T$ and $Y$
+  - Recover the true causal effect $P(Y | do(T))$
+
+* Intervention in Structural Equations
+- **Purpose of Structural Equations**
+  - Capture causal mechanisms among variables
+  - Go beyond correlations: predict the impact of external interventions
+
+- **Effect of Intervention $do(X_j = x_j)$**
+  - Original equation: $X_j = f_j(Parents(X_j), U_j)$
+  - Modified by intervention: $X_j = x_j$ (fixed value)
+  - "Mutilate" the causal network by _removing incoming edges_ to $X_j$
+  - Use the modified structure to recompute the joint distribution of all variables
+
+- **Intuition**
+  - The $do$-operator enforces a variable's value externally, breaking causal dependencies
+  - Enables reasoning about "what would happen if...?" scenarios
 
 * Adjustment Formula in Causal Networks
 
-- Estimate the effect of an intervention $do(X_j = x_{jk})$ on another variable
-  $X_i$ in a causal network
+- **Goal**
+  - Estimate causal effect of intervention $do(X_j = x_{jk})$ on another variable $X_i$
 
-- **The Basic Adjustment Formula**
-  - Derived from the modified joint distribution after intervention:
+- **The Adjustment Formula**
+  - Derived from the post-intervention joint distribution:
     $$
-    \Pr(X_i = x_i | do(X_j = x_{jk})) = \sum_{\text{parents}(X_j)} \Pr(x_i | x_{jk}, \text{parents}(X_j)) \Pr(\text{parents}(X_j))
+    \Pr(X_i = x_i | do(X_j = x_{jk})) =
+    \sum_{Parents(X_j)}
+    \Pr(x_i | x_{jk}, Parents(X_j))
+    \Pr(Parents(X_j))
     $$
-  - Omits the causal mechanism for $X_j$ and treats it as fixed
+  - The mechanism for $X_j$ is _removed_: it is treated as a fixed cause, not a
+    random variable
 
 - **Interpretation**
-  - Weighted average of the effect of $X_j$ and its parents on $X_i$
-  - Weights are given by the prior probabilities of the parent values
+  - Computes a _weighted average_ of effects of $X_j$ and its parents on $X_i$
+  - Weights come from prior probabilities of the parents’ values
 
-- **Causal Inference via Graph Surgery**
-  - "Mutilate" the network by cutting incoming edges to $X_j$
-  - Replace $X_j$'s structural equation with $X_j = x_{jk}$
+- **Back-Door Criterion**
+  - A set $Z$ is a valid adjustment set if it blocks _all back-door paths_ from $X_j$ to $X_i$
+  - Ensures $X_i \perp \text{Parents}(X_j) \mid X_j, Z$
 
-- **E.g., (Sprinkler Network)**
-  - To evaluate $\Pr(GreenerGrass | do(Sprinkler = true))$:
-    $$
-    \Pr(g | do(S = \text{true})) = \sum_r \Pr(g | S = \text{true}, r) \Pr(r)
-    $$
-
-- **Back-door Criterion for Valid Adjustment Sets**
-  - A set $Z$ satisfies the back-door criterion if it blocks all back-door paths
-    from $X_j$ to $X_i$
-  - Formally: $X_i$ is conditionally independent of the parents of $X_j$ given
-    $X_j$ and $Z$
-
-- **Why This Matters**
-  - Enables causal reasoning from observational data
-  - Avoids the need for randomized controlled trials in some cases
-
-- **Applications**
-  - Estimating treatment effects, policy interventions, and understanding system
-    behavior under manipulation
+- **Why It Matters**
+  - Enables causal inference from observational data
+  - Estimate treatment and policy effects _without randomized trials_
 
 * Intervention: Sprinkler Example
 ::: columns
 :::: {.column width=70%}
-- We "intervene" and turn the sprinkler on, i.e., in do-calculus $do(Sprinkler = T)$
+- "Intervene" by turning the sprinkler on
+  - I.e., in do-calculus $do(Sprinkler = T)$
   - Now the sprinkler variable $s$ is not dependent on whether it's a cloudy day
     $c$
-  - The causal network is "mutilated"
 
 - The structural equations after the intervention become:
   \begingroup \small
@@ -651,8 +1050,8 @@ digraph GrassBayes {
 
 ::::
 :::
-- Then the $\Pr(s|c) = 1$ and $\Pr(w|r,s) = \Pr(w|r,s=T)$ and the joint
-  probability becomes:
+- $\Pr(s|c) = 1$ and $\Pr(w|r,s) = \Pr(w|r,s=T)$ and the joint probability
+  becomes:
   $$
   \Pr(c, r, w, g | do(S=True)) = \Pr(c) \Pr(r|c) \Pr(w|r,s=True) \Pr(g|w)
   $$
@@ -663,11 +1062,13 @@ digraph GrassBayes {
 - **Intervention** "breaks" normal causal link between $Weather$ and $Sprinkler$
   - Causal graph shows no influence of $Sprinkler$ on $Weather$
 
-- Difference between $do(Sprinkler=T)$ (intervention) and $Sprinkler=T$
+- Difference between and $Sprinkler=T$
   (observation)
-  - Observing sprinkler on:
+  - Observing "sprinkler is on"
+    - Condition on $| Sprinkler=T$
     - Less likely weather is cloudy
   - Turning on sprinkler:
+    - $do(Sprinkler=T)$ (intervention) 
     - Weather unaffected, probability of cloudy unchanged
 
 * Back Door
@@ -680,27 +1081,6 @@ digraph GrassBayes {
   they check the weather, but how do they make their decision?
 
 - Besides the direct route, we needs to take in account the "back door" route
-
-* Problem
-- In experimental settings, randomization ensures that $X$ is not confounded so
-  that we can directly estimate its causal effect on $Y$
-
-- Problem:
-  - In observational data, we don't have randomization and confounding variables
-    can create spurious correlations between $X$ and $Y$
-  - Consider the causal graph
-    ```mermaid
-    flowchart LR
-      U["Confounder (U)"] --> X["Cause (X)"]
-      U["Confounder (U)"] --> Y["Effect (Y)"]
-      X["Cause (X)"] --> Y["Effect (Y)"]
-    ```
-    where $U$ is a common cause (confounder) of both $X$ and $Y$
-
-- Solution:
-  - Controlling for a set of $Z$ that satisfies the backdoor criterion, we can
-    estimate the causal effect of variable $X$ on $Y$
-  - This allows to "simulate" a randomized experiment
 
 * TBD
 - We want to estimate the effect of $Sprinkler$ on $GreenerGrass$
