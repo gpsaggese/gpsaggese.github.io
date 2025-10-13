@@ -23,7 +23,7 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese - [gsaggese@umd.edu](gsaggese@umd.edu)
 
 ::::
 :::: {.column width=20%}
@@ -33,15 +33,14 @@ UMD DATA605 - Big Data Systems
 
 * Docker - Resources
 
-// TODO(gp):
 :::columns
 ::::{.column width=70%}
 - We will use Docker during the class project and most tutorials
 
 - Concepts in the slides
 - Class tutorials:
-  - [tutorial_docker](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker)
-  - [tutorial_docker_compose](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker_compose)
+  - [tutorial\_docker](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker)
+  - [tutorial\_docker_compose](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker_compose)
 - Web resources:
   - [Docker Tutorial for beginners](https://www.youtube.com/watch?v=zJ6WbK9zFpI)
   - [https://labs.play-with-docker.com/](https://labs.play-with-docker.com/)
@@ -151,7 +150,6 @@ UMD DATA605 - Big Data Systems
 * Containers Era
 :::columns
 ::::{.column width=60%}
-  ... tmp.prettier_on_str.md 22ms
 - **Circa 2013: Docker becomes ubiquitous**
 
 - **Docker**
@@ -418,7 +416,7 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Containerizing an App
-- Containerizing an app means creating a container with your app inside
+- **Containerizing an app** means creating a container with your app inside
 
 - Develop application code with dependencies
   - Install dependencies
@@ -440,8 +438,8 @@ UMD DATA605 - Big Data Systems
   - Describe how to create a container
 - **Build context**
   - `docker build -t web:latest .` where `.` is the build context
-  - Directory containing the application and what's needed to build it
-  - Sent to Docker engine to build the application
+  - Send directory containing the application to Docker engine to build the
+    application
   - Typically the Dockerfile is in the root directory of the build context
 
 * Dockerfile: Example
@@ -462,91 +460,89 @@ CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
 
 * Docker: Commands
 - Show all the available images
-
-\begingroup \footnotesize \color{blue}
-```
-> docker images 
-REPOSITORY              TAG         IMAGE ID          CREATED             SIZE
-counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
-...
-```
-\endgroup
+  \begingroup \scriptsize \color{blue}
+  ```
+  > docker images 
+  REPOSITORY              TAG         IMAGE ID          CREATED             SIZE
+  counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
+  ...
+  ```
+  \endgroup
 
 - Show a particular image
-\begingroup \footnotesize \color{blue}
-```
-> docker images counter_app_web-fe
-counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
-...
-```
-\endgroup
+  \begingroup \scriptsize \color{blue}
+  ```
+  > docker images counter_app_web-fe
+  counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
+  ...
+  ```
+  \endgroup
 
 - Delete an image
-\begingroup \footnotesize \color{blue}
-```
-> docker rmi ...
-```
-\endgroup
+  \begingroup \scriptsize \color{blue}
+  ```
+  > docker rmi ...
+  ```
+  \endgroup
 
 - Show the running containers
-\begingroup \tiny\color{blue}
-```
-> docker container ls
-CONTAINER ID  IMAGE               COMMAND                 CREATED        STATUS        PORTS                   NAMES
-505541bcfe8b  counter_app-web-fe  "python app.py"         7 minutes ago  Up 7 minutes  0.0.0.0:5001->5000/tcp  counter_app-web-fe-1
-c1889540cfd2  redis:alpine        "docker-entrypoint.sh"  7 minutes ago  Up 7 minutes  6379/tcp                counter_app-redis-1
-```
-\endgroup
+  \begingroup \tiny \color{blue}
+  ```
+  > docker container ls
+  CONTAINER ID  IMAGE               COMMAND                 CREATED        STATUS        PORTS                   NAMES
+  505541bcfe8b  counter_app-web-fe  "python app.py"         7 minutes ago  Up 7 minutes  0.0.0.0:5001->5000/tcp  counter_app-web-fe-1
+  c1889540cfd2  redis:alpine        "docker-entrypoint.sh"  7 minutes ago  Up 7 minutes  6379/tcp                counter_app-redis-1
+  ```
+  \endgroup
 
 * Docker: Commands
 - Show running containers
-\begingroup \footnotesize \color{blue}
-```
-> docker container ls
-CONTAINER ID   IMAGE                COMMAND                  CREATED         STATUS        
-PORTS                   NAMES
-281d654f6b8d   counter_app-web-fe   "python app.py"          5 minutes ago   Up 5 minutes  
-0.0.0.0:5001->5000/tcp  counter_app-web-fe-1
+  \begingroup \tiny \color{blue}
+  ```
+  > docker container ls
+  CONTAINER ID   IMAGE                COMMAND                  CREATED         STATUS        
+  PORTS                   NAMES
+  281d654f6b8d   counter_app-web-fe   "python app.py"          5 minutes ago   Up 5 minutes  
+  0.0.0.0:5001->5000/tcp  counter_app-web-fe-1
 
-de55ae4104da   redis:alpine         "docker-entrypoint.s..." 5 minutes ago  Up 5 minutes  
-6379/tcp       counter_app-redis-1
-```
-\endgroup
+  de55ae4104da   redis:alpine         "docker-entrypoint.s..." 5 minutes ago  Up 5 minutes  
+  6379/tcp       counter_app-redis-1
+  ```
+  \endgroup
 
 - Show volumes and networks
-\begingroup \footnotesize \color{blue}
-```
-> docker volume ls
-DRIVER    VOLUME NAME
-local     counter_app_counter-vol
+  \begingroup \scriptsize \color{blue}
+  ```
+  > docker volume ls
+  DRIVER    VOLUME NAME
+  local     counter_app_counter-vol
 
-> docker network ls
-NETWORK ID     NAME                    DRIVER    SCOPE
-b4c1976d7c27   bridge                  bridge    local
-33ff702253b3   counter-app_counter-net bridge    local
-```
-\endgroup
+  > docker network ls
+  NETWORK ID     NAME                    DRIVER    SCOPE
+  b4c1976d7c27   bridge                  bridge    local
+  33ff702253b3   counter-app_counter-net bridge    local
+  ```
+  \endgroup
 
-* Docker: Delete state
+* Docker: Delete State
 - Commands:
-\begingroup \footnotesize \color{blue}
-```
-> docker container ls
-> docker container rm $(docker container ls -q)
+  \begingroup \footnotesize \color{blue}
+  ```
+  > docker container ls
+  > docker container rm $(docker container ls -q)
 
-> docker images
-> docker rmi $(docker images -q)
+  > docker images
+  > docker rmi $(docker images -q)
 
-> docker volume ls
-> docker volume rm $(docker volume ls -q)
+  > docker volume ls
+  > docker volume rm $(docker volume ls -q)
 
-> docker network ls
-> docker network rm $(docker network ls -q)
-```
-\endgroup
+  > docker network ls
+  > docker network rm $(docker network ls -q)
+  ```
+  \endgroup
 
 * Docker Tutorial
-// TODO
 - [tutorial_docker.md](
   https://github.com/gpsaggese/umd_classes/blob/main/data605/tutorials/tutorial_docker/tutorial_docker.md)
 
@@ -656,61 +652,62 @@ Commands:
 
 * Docker Compose: Commands
 - Build the containers for the services
-\begingroup \footnotesize \color{blue}
-```
-> docker compose build
-```
-\endgroup
+  \begingroup \footnotesize \color{blue}
+  ```
+  > docker compose build
+  ```
+  \endgroup
 
 - Pull the needed images for the services
-\begingroup \footnotesize \color{blue}
-```
-> docker compose pull
-```
-\endgroup
+  \begingroup \footnotesize \color{blue}
+  ```
+  > docker compose pull
+  ```
+  \endgroup
 
 - Show the running services
-\begingroup \footnotesize \color{blue}
-```
-> docker compose ps
-```
-\endgroup
+  \begingroup \footnotesize \color{blue}
+  ```
+  > docker compose ps
+  ```
+  \endgroup
 
 - Show the status of the service
-\begingroup \footnotesize \color{blue}
-```
-> docker compose ls
-```
-\endgroup
+  \begingroup \footnotesize \color{blue}
+  ```
+  > docker compose ls
+  ```
+  \endgroup
 
 - Bring up the entire service
-\begingroup \footnotesize \color{blue}
-```
-> docker compose up
-```
-\endgroup
+  \begingroup \footnotesize \color{blue}
+  ```
+  > docker compose up
+  ```
+  \endgroup
 
 - Rebuild after trying out some changes in dockerfile/compose file
-\begingroup \footnotesize \color{blue}
-```
-> docker-compose up --build --force-recreate
-```
-\endgroup
+  \begingroup \footnotesize \color{blue}
+  ```
+  > docker-compose up --build --force-recreate
+  ```
+  \endgroup
 
+* Docker Compose: Commands
 - Show the processes inside each container
-\begingroup \tiny \color{blue}
-```
-> docker compose top
-counter_app-redis-1
-UID   PID     PPID    C    STIME   TTY   TIME       CMD
-999   49590   49549   0    10:40   ?     00:00:02   redis-server *:6379
+  \begingroup \tiny \color{blue}
+  ```
+  > docker compose top
+  counter_app-redis-1
+  UID   PID     PPID    C    STIME   TTY   TIME       CMD
+  999   49590   49549   0    10:40   ?     00:00:02   redis-server *:6379
 
-counter_app-web-fe-1
-UID    PID     PPID    C    STIME   TTY   TIME       CMD
-root   49614   49574   0    10:40   ?     00:00:00   python app.py
-root   49734   49614   1    10:40   ?     00:00:08   /usr/local/bin/python /code/app.py
-```
-\endgroup
+  counter_app-web-fe-1
+  UID    PID     PPID    C    STIME   TTY   TIME       CMD
+  root   49614   49574   0    10:40   ?     00:00:00   python app.py
+  root   49734   49614   1    10:40   ?     00:00:08   /usr/local/bin/python /code/app.py
+  ```
+  \endgroup
 
 * Docker Compose: Commands
 - Build the containers for the services
