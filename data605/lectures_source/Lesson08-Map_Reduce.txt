@@ -39,15 +39,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-
 * Resources
 - Silbershatz: Chap 10
 - Seminal papers
   - Sanjay Ghemawat, Howard Gobioff, and Shun-Tak Leung: The Google File System, 2003
   - Jeffrey Dean and Sanjay Ghemawat: MapReduce: Simplified Data Processing on Large Clusters, 2004
-
-
-
 
 * Big Data: Sources and Applications
 - **Growth of World Wide Web in 1990s and 2000s**
@@ -60,12 +56,9 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Data from sensors / Internet of Things
 - Metadata from communication data
 
-
-
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_4_image_1.png)
 
 **Volume of data in the world**
-
 
 * Big Data: Sources and Applications
 - **Big Data characteristics**
@@ -80,18 +73,15 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - E.g., semi-structured, textual, graphical data
 - **Solution**: process data with 10,000-100,000 machines
 
-
-
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_5_image_1.png)
 
 **Volume of data in the world**
 
-
 * Big Data: Sources and Applications
 - **Web server logs**
 - Record user interactions with web servers
-- Billions of users click on thousands links per day → TB of data / day
-- Decide what information (e.g., posts, news) to present to users to keep them “engaged”
+- Billions of users click on thousands links per day $\to$ TB of data / day
+- Decide what information (e.g., posts, news) to present to users to keep them "engaged"
   - E.g., what user has viewed, what other similar users have viewed
 - Understand visit patterns to optimize for users to find information
 - Determine user preferences and trends to inform business decisions
@@ -104,19 +94,13 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Conversion rate**
   - When a user actually purchases the advertised product or service
 
-
-
-
 * Big Data: Storing and Computing
 - Big data needs 10k-100k machines
 - **Two problems**
   - Storing big data
   - Processing big data
 - **Need to be solved together and *efficiently***
-  - If one phase is slow → the entire system is slow
-
-
-
+  - If one phase is slow $\to$ the entire system is slow
 
 * Processing the Web: Example
 - The web has:
@@ -129,8 +113,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - 5e6 * 1024 * 1024 * 8 / 300 / 3600 / 24 / 365
 = 4,433 years to read the web serially from disk
 - It takes even more to do something useful with the data!
-
-
 
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_8_image_1.png)
 
@@ -154,9 +136,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Limitations on semantics, consistency, querying with respect to relational DBs
   - E.g., NoSQL DB, Mongo, Redis
 
-
-
-
 * 1 Distributed File Systems
 - **Distributed file system**
   - Files stored across a number of machines, giving a single file-system view to clients
@@ -168,12 +147,9 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Blocks are partitioned across multiple machines
     - Blocks are often replicated across machines
   - **Goals**:
-    - Store data that doesn’t fit on one machine
+    - Store data that doesn't fit on one machine
     - Increase performance
     - Increase reliability/availability/fault tolerance
-
-
-
 
 * 2 Sharding Across Multiple DBs
 - **Sharding** = process of partitioning records across multiple DBs or machines
@@ -189,9 +165,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Ensuring consistency is challenging
   - Relational DBs are not good at supporting constraints (e.g., foreign key) and transactions on multiple machines
 
-
-
-
 * 3 Parallel and Distributed DBs
 - **Parallel and distributed DBs**: store and process data running on multiple machines (aka "cluster")
   - E.g., Mongo
@@ -201,20 +174,17 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Looks like a DB running on a single machine
   - Can run on 10s-100s of machines
   - Data is replicated for performance and reliability
-    - Failures are “frequent” with 100s of machines
+    - Failures are "frequent" with 100s of machines
     - A query can be just restarted using a different machine
 - **Cons**
   - Run a query incrementally requires a lot of complexity
   - Limit to the scalability
 
-
-
-
 * 4 Key-value Stores
 - **Problem**
 - Many applications (e.g., web) store a very large number (billions or more) small records (few KBs to few MBs)
-- File systems can’t store such a large number of files
-- RDBMSs don’t support constraints and transactions on multiple machines
+- File systems can't store such a large number of files
+- RDBMSs don't support constraints and transactions on multiple machines
 - **Solution**
 - Key-value stores / Document / NoSQL systems
 - Records are stored, updated, and retrieved based on a key
@@ -228,9 +198,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Declarative querying
   - Transactions
   - Retrieval based on non-key attributes
-
-
-
 
 * 4 Parallel Key-value Stores
 - **Parallel key-value stores**
@@ -248,9 +215,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Replicated or partitioned across multiple machines
 - E.g., memcached or Redis
 
-
-
-
 * Big Data: Computing Systems
 - **How to process Big Data?**
 - **Challenges**
@@ -261,24 +225,21 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - How to survive failures?
     - One server may stay up 3 years (1,000 days)
     - If you have 1,000 servers, expect to lose 1 / day
-    - E.g., 1M machines (Google in 2011) → 1,000 machines fail every day!
+    - E.g., 1M machines (Google in 2011) $\to$ 1,000 machines fail every day!
 - **MapReduce**
   - Solve these problems for certain kinds of computations
   - An elegant way to work with big data
-  - Started as Google’s data manipulation model
-    - (But it wasn’t an entirely new idea)
-
-
-
+  - Started as Google's data manipulation model
+    - (But it wasn't an entirely new idea)
 
 * Cluster Architecture
-**…**
+**...**
 
 Switch
 
 **Each rack contains 16-64 nodes**
 
-**…**
+**...**
 
 Switch
 
@@ -287,8 +248,6 @@ Switch
 **1 Gbps between any pair of nodes in a rack**
 
 **2-10 Gbps backbone between racks**
-
-
 
 - Today, a standard architecture for big data computation has emerged:
   - Cluster of commodity Linux nodes
@@ -299,17 +258,13 @@ Switch
 
 **Rack**
 
-
 * Cluster Architecture
 
-…
+...
 
-…
-
-
+...
 
 ![alt_text](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_17_image_1.png)
-
 
 * Cluster Architecture: Network Bandwidth
 
@@ -324,9 +279,6 @@ Switch
   - Storage infrastructure: distributed file system
     - Google GFS, Hadoop HDFS
   - Programming model: MapReduce
-
-
-
 
 * Storage Infrastructure
 
@@ -345,9 +297,6 @@ Switch
     - Typically with replication across machines
   - Give a single file-system view to clients
 
-
-
-
 * Distributed File System
 
 - Reliable distributed file system
@@ -355,10 +304,7 @@ Switch
   - Each chunk **replicated** on different machines
   - Seamless recovery from disk or machine failure
 - Bring computation directly to the data
-  - “chunk servers” also serve as “compute servers”
-
-
-
+  - "chunk servers" also serve as "compute servers"
 
 * Hadoop Distributed File System
 
@@ -370,9 +316,6 @@ Switch
   - File is split into contiguous 16-64MB blocks
   - Each chunk is replicated (usually 2x or 3x)
   - Keep replicas in different server racks
-
-
-
 
 * Hadoop Distributed File System
 
@@ -388,9 +331,6 @@ Switch
 - **Client**
   - API (e.g,. Python, Java) to internal library
   - Mount HDFS on local filesystem
-
-
-
 
 * MapReduce: Overview
 
@@ -410,9 +350,6 @@ Switch
   - **reduce(function, set of values)**
     - Combine all the values using a binary function (e.g., add) **reduce(add, [0, 1, 2, 3]) -> 6**
 
-
-
-
 * MapReduce: Overview
 
 - Structure of computation stays the same
@@ -428,13 +365,10 @@ Switch
 - MapReduce framework (e.g., Hadoop, Spark) implements the general algorithm
 - User specifies the **map()** and **reduce()** functions to solve the problem
 
-
-
-
 * MapReduce: Word Count
 - **Word Count**
-  - “Hello world” of MapReduce
-  - We have a huge text file (so big you can’t keep it in memory)
+  - "Hello world" of MapReduce
+  - We have a huge text file (so big you can't keep it in memory)
   - Count the number of times each distinct word appears in the file
 - **Sample application**
   - Analyze web server logs to find popular URLs
@@ -450,39 +384,34 @@ cross 1
 - **words** takes a file and outputs the words one per line
 - This Unix pipeline is naturally parallelizable in a MapReduce sense
 
-
-
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_25_image_1.png)
-
 
 * MapReduce: Word Count
 **Example**
-“One a penny, two a penny, hot cross buns.”
+"One a penny, two a penny, hot cross buns."
 **Map:**
 ```text
-[(“one”, 1), (“a”, 1),
-(“penny”, 1),(“two”, 1),
-(“a”, 1), (“penny”, 1),
-(“hot”, 1), (“cross”, 1),
-(“buns”, 1)]
+[("one", 1), ("a", 1),
+("penny", 1),("two", 1),
+("a", 1), ("penny", 1),
+("hot", 1), ("cross", 1),
+("buns", 1)]
 **Group by key:**
-[(“a”, [1, 1]),
-(“buns”, [1]),
-(“cross”, [1]),
-(“hot”, [1]),
-(“one”, [1]),
-(“penny”, [1, 1]),
-(“two”, [1])]
+[("a", [1, 1]),
+("buns", [1]),
+("cross", [1]),
+("hot", [1]),
+("one", [1]),
+("penny", [1, 1]),
+("two", [1])]
 **Reduce:**
-[(“one”, 1), (“a”, 2),
-(“penny”, 2),
-(“two”, 1),
-(“hot”, 1),
-(“cross”, 1),
-(“buns”, 1)]
+[("one", 1), ("a", 2),
+("penny", 2),
+("two", 1),
+("hot", 1),
+("cross", 1),
+("buns", 1)]
 ```
-
-
 
 **Python code**
 ```python
@@ -512,9 +441,8 @@ Read input
 **Reduce:**
 - Combine the list of outputs with same keys
 
-
 * MapReduce: Word Count
-The crew of the space shuttle Endeavor recently returned to Earth as ambassadors, harbingers of a new era of space exploration. Scientists at NASA are saying that the recent assembly of the Dextre bot is the first step in a long-term space-based man/machine partnership. '"The work we're doing now -- the robotics we're doing -- is what we're going to need …
+The crew of the space shuttle Endeavor recently returned to Earth as ambassadors, harbingers of a new era of space exploration. Scientists at NASA are saying that the recent assembly of the Dextre bot is the first step in a long-term space-based man/machine partnership. '"The work we're doing now -- the robotics we're doing -- is what we're going to need ...
 
 **Big document**
 
@@ -526,21 +454,21 @@ The crew of the space shuttle Endeavor recently returned to Earth as ambassadors
 (shuttle, 1)
 (Endeavor, 1)
 (recently, 1)
-….
+....
 
 (crew, [1, 1])
 (space, [1])
 (the, [1, 1, 1])
 (shuttle, [1])
 (recently, [1])
-…
+...
 
 (crew, 2)
 (space, 1)
 (the, 3)
 (shuttle, 1)
 (recently, 1)
-…
+...
 
 **Map**:
 Read input Produce a set of key-value pairs
@@ -561,9 +489,6 @@ Collect all values belonging to the key and output
 
 **(key, value)**
 
-
-
-
 * MapReduce: Map Step
 k
 
@@ -571,12 +496,10 @@ k
 
 k
 
-**…**
+**...**
 
 **Input**
 **key-value pairs**
-
-
 
 **map(values: List):**
   # values: words in document
@@ -584,7 +507,6 @@ k
 		emit(word, 1)
 **map()** needs to process all the values
 can output 0 or more tuples for each input
-
 
 * MapReduce: Reduce Step
 
@@ -598,24 +520,20 @@ reduce(key: word, values: List[int]):
    emit(key, result)
 ```
 
-
 * MapReduce: Interfaces
 - Input: read key-value pairs **List[Tuple[k, v]]**
 - Programmer specifies two methods map and reduce
 **Map(Tuple[k, v]) → List[Tuple[k, v]]**
   - Take a key-value pair and output a set of key-value pairs
   - E.g., key is a file, value is the number of occurrences
-  - “One a penny” → [(“One”, 1), (“a”, 1), (“penny”, 1)]
+  - "One a penny" → [("One", 1), ("a", 1), ("penny", 1)]
   - There is one **Map** call for every *(*k*, v) pair*
 **GroupBy(List[Tuple[k, v]]) → List[Tuple[k, List[v]]]]**
   - Group and optionally sort all the records with the reduce key
 **Reduce(Tuple[k, List[v]]) → Tuple[k, v]**
-  - All values *v’* with same key *k’* are reduced together
-  - There is one **Reduce** call per unique key *k’*
+  - All values *v'* with same key *k'* are reduced together
+  - There is one **Reduce** call per unique key *k'*
 - Output: write key-value pairs **List[Tuple[k, v]]**
-
-
-
 
 * MapReduce: Log Processing
 - Log file recording access to a website with format
@@ -635,7 +553,6 @@ reduce(key: word, values: List[int]):
 - **Output**
   - Write results on disk separated by newline
 
-
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_31_image_1.png)
 
 **After Input**
@@ -654,7 +571,6 @@ reduce(key: word, values: List[int]):
 **...**
 ```
 
-
 * MapReduce: Data Flow
 - **Input**
 ```text
@@ -669,7 +585,6 @@ reduce(key: word, values: List[int]):
   - Reduce outputs are not shown
 ```
 
-
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_32_image_1.png)
 
 **Input**
@@ -681,7 +596,6 @@ reduce(key: word, values: List[int]):
 **Reduce**
 
 - Focusing on MapReduce functionality / flow of the data to expose the parallelism
-
 
 * MapReduce: Parallel Data Flow
 - **User program** specifies map/reduce code
@@ -700,15 +614,12 @@ reduce(key: word, values: List[int]):
   - Output data from Reduce is saved on disk
 - **Write to disk**
 
-
-
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_33_image_1.png)
 
 - All operations use HDFS as storage
 - Machines are reused for multiple computations (Map, GroupBy, Reduce) at different times
 
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_34_image_1.png)
-
 
 * Master Node Responsibilities
 - **Master node takes care of coordination**
@@ -718,9 +629,6 @@ reduce(key: word, values: List[int]):
   - Master pushes this info to *Reduce tasks*
   - Reduce tasks become idle and can get scheduled
 - **Master node pings workers periodically to detect failures**
-
-
-
 
 * Dealing with Failures
 - **Map worker failure**
@@ -733,9 +641,6 @@ reduce(key: word, values: List[int]):
   - MapReduce task is aborted
   - Client is notified
 
-
-
-
 * How many Map and Reduce jobs?
 - **M** **map tasks**
 - **R** **reduce tasks**
@@ -746,9 +651,6 @@ reduce(key: word, values: List[int]):
     - Cons: More communication between *Master* and *Worker Nodes*, Lots of smaller files
   - *R* > *N*
     - Usually *R* < *M*, Output is spread across fewer files
-
-
-
 
 * Refinements: Backup Tasks
 - **Problem**
@@ -762,25 +664,22 @@ reduce(key: word, values: List[int]):
 - **Solution**
   - Near the end of Map / Reduce phase
     - Spawn backup copies of tasks
-    - Whichever one finishes first “wins”
+    - Whichever one finishes first "wins"
 - **Result**
   - Shorten job completion time
-
-
-
 
 * Refinement: Combiners
 - **Problem**
   - Often a *Map* task produces many pairs for the same key *k*
 ```python
-[(k1, v1), (k1, v2), …]
+[(k1, v1), (k1, v2), ...]
 ```
   - E.g., common words in the word count example
   - Increase complexity of the GroupBy stage
 - **Solution**
   - Pre-aggregate values in the *Map* with a *Combine*
 ```python
-[k1, (v1, v2, …), k2, ([…])]
+[k1, (v1, v2, ...), k2, ([...])]
 ```
   - *Combine* is usually the same as the *Reduce* function
   - Works only if *Reduce* function is commutative and associative
@@ -790,9 +689,6 @@ reduce(key: word, values: List[int]):
   - Less network / disk traffic
 
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_38_image_1.gif)
-
-
-
 
 * Refinement: Partition Function
 - **Problem**
@@ -804,10 +700,6 @@ reduce(key: word, values: List[int]):
 - **Solution**
   - Sometimes useful to override the hash function:
   - E.g., **hash(hostname(URL)) mod R** ensures URLs from a host end up in the same output file
-
-
-
-
 
 * Implementations of MapReduce
 - **Google**
@@ -821,12 +713,9 @@ reduce(key: word, values: List[int]):
 - **Amazon Elastic MapReduce (EMR)**
   - Website
   - Hadoop MapReduce running on Amazon EC2
-  - Can also run Spark, HBase, Hive, …
+  - Can also run Spark, HBase, Hive, ...
 - **Spark**
 - **Dask**
-
-
-
 
 * MapReduce: Hadoop
 - Hadoop is an open-source implementation of MapReduce
@@ -834,7 +723,7 @@ reduce(key: word, values: List[int]):
   - Partition the input data (HDFS)
   - Input adapters
     - E.g., HBase, MongoDB, Cassandra, Amazon Dynamo
-  - Schedule program’s execution across a set of machines
+  - Schedule program's execution across a set of machines
   - Handle machine failures
   - Manage inter-machine communication
   - Perform the *GroupByKey* step
@@ -842,21 +731,15 @@ reduce(key: word, values: List[int]):
     - E.g., Avro, ORC, Parquet
   - Schedule multiple *MapReduce* jobs
 
-
-
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_42_image_1.png)
-
 
 * Data Flow
 - Input, intermediate, final outputs are stored in a distributed file system (HDFS)
   - Every operation in Hadoop goes from disk to disk
 - Adapters to read / partition the data in chunks
-- Scheduler tries to schedule map tasks “close” to physical storage location of input data
+- Scheduler tries to schedule map tasks "close" to physical storage location of input data
   - Intermediate results (e.g., GroupBy) are stored on local FS of Map and Reduce workers
 - Output is often input to another MapReduce task
-
-
-
 
 * Input Data
   - **InputData** stores the data for a **MapTask** typically in a distributed file system (e.g., HDFS)
@@ -866,18 +749,13 @@ reduce(key: word, values: List[int]):
     - Multi-line input records
     - Something else (E.g., an SQL database)
 
-
-
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_44_image_1.png)
-
 
 * InputFormat
   - **InputFormat** class reads and splits up the input files
   - Select the files that should be used for input
   - Defines the **InputSplits** that break a file
   - Provides a factory for **RecordReaders** objects that read the file
-
-
 
 | InputFormat | Description | Key | Value |
 |-------------|-------------|-----|-------|
@@ -887,7 +765,6 @@ reduce(key: word, values: List[int]):
 
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_45_image_1.png)
 
-
 * InputSplit
   - **InputSplit** describes a unit of work that comprises a single **MapTask**
     - By default, the **InputFormat** breaks a file up into 64MB splits
@@ -895,10 +772,7 @@ reduce(key: word, values: List[int]):
     - Each **MapTask** corresponds to a single input split
     - Several **MapTask**s to operate on a single file in parallel
 
-
-
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_46_image_1.png)
-
 
 * RecordReader
 - The **InputSplit** defines a slice of work but does not describe how to access it
@@ -907,10 +781,7 @@ reduce(key: word, values: List[int]):
   - Is invoked repeatedly on the input until the entire **InputSplit** is consumed
   - Each invocation leads to a call of the map function defined by the programmer
 
-
-
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_47_image_1.png)
-
 
 * OutputFormat
 - The **OutputFormat** class
@@ -976,10 +847,6 @@ OutputFormat
 | SequenceFileOutputFormat | Writes binary files suitable for reading into subsequent MapReduce jobs |
 | NullOutputFormat | Generates no output files |
 
-
-
-
-
 * MapReduce: Applications
 
 - Major classes of applications
@@ -987,9 +854,6 @@ OutputFormat
   - Processing of large data structures
   - Data mining and machine learning
   - Link analysis and graph processing
-
-
-
 
 * Example: Language Model
 
@@ -1003,9 +867,6 @@ OutputFormat
   - Reduce
     - Combine the counts
 
-
-
-
 * Cost Measures for Distributed Algorithms
 
 - **Quantify the cost of a parallel algorithm in terms of:**
@@ -1018,16 +879,13 @@ OutputFormat
   - = end-to-end running time of algorithm
   - It is the wall-clock time using parallelism
 - **Total cost**
-  - = what you pay as rent to your “friendly” neighborhood cloud provider
+  - = what you pay as rent to your "friendly" neighborhood cloud provider
   - CPU + disk + I/O used
-  - Either CPU, disk, I/O cost dominates → ignore the others
+  - Either CPU, disk, I/O cost dominates $\to$ ignore the others
 - **In this case, the big-O notation is not the most useful**
   - The actual cost matters and not the asymptotic cost!
   - Multiplicative constant matters
   - Adding more machines is always an option
-
-
-
 
 * MapReduce Cost Measures
 
@@ -1043,10 +901,7 @@ OutputFormat
 - **Elapsed computation cost**
   - = end-to-end running time of algorithm
   - Ideally all Map and Reduce processes end at the same time
-  - Workload is “perfectly balanced”
-
-
-
+  - Workload is "perfectly balanced"
 
 * Example: Join By MapReduce
 
@@ -1055,15 +910,13 @@ OutputFormat
 - Use a hash function *h* from B-values to *h(b)* in [1, ..., k]
 - **Map task**
   - Transform an input tuple *R(a, b)* into key-value pair *(h(b), (a, R))*
-  - Each input tuple *S(b, c)* → *(h(b), (c, S))*
+  - Each input tuple *S(b, c)* $\to$ *(h(b), (c, S))*
 - **GroupBy task**
   - Each key-value pair with key *b* to is sent to Reduce task *h(b)*
   - Hadoop does this automatically; just tell it what *h* is
 - **Reduce task**
   - Matches all the pairs (b, (a, R)) with all (b, (c, S)) to get (a, b, c)
   - Output (a, c)
-
-
 
 | A    | B    |
 |------|------|
@@ -1092,32 +945,27 @@ OutputFormat
 
 **S**
 
-
 * Cost of MapReduce Join
 
 - **Total communication cost**
   - = total I/O of all processes
   - = O(|R|+|S|+|R  bowtieS|)
   - You need to read all the data and then write the result
-  - It doesn’t matter how you split the computation
+  - It doesn't matter how you split the computation
 - **Elapsed communication cost**
   - We put a limit **s** on the amount of input or output that any one process can have, e.g.,
     - What fits in main memory
     - What fits on local disk
   - = O(s)
-  - We’re going to pick the number of Map and Reduce processes so that the I/O limit **s** is respected
+  - We're going to pick the number of Map and Reduce processes so that the I/O limit **s** is respected
 - **Computation cost**
   - = O(|R|+|S|+|R  bowtieS|)
   - Using proper indexes there is no shuffle
   - So computation cost is like communication cost
 
-
-
-
-
 * History
 
-- Abstract ideas about MapReduce have been known before Google’s MapReduce paper
+- Abstract ideas about MapReduce have been known before Google's MapReduce paper
 - **The strength of MapReduce comes from simplicity, ease of use, and performance**
   - Declarative design
   - User specifies what is to be done, not how many machines to use, etc...
@@ -1126,13 +974,10 @@ OutputFormat
   - See MapReduce and Parallel DBMSs by Stonebraker et al., 2010
 - No database system can come close to the performance of MapReduce infrastructure
   - E.g., RDBMSs
-  - Can’t scale to that degree
+  - Can't scale to that degree
   - Are not as fault-tolerant
   - Designed to support ACID
-    - Most MapReduce applications don’t care about ACID consistency
-
-
-
+    - Most MapReduce applications don't care about ACID consistency
 
 * History
 
@@ -1140,7 +985,7 @@ OutputFormat
 - Is very good at doing what it was designed for
   - If the application maps well to MapReduce, one can achieve optimal theoretical speed-up
 - May not be ideal for more complex tasks
-  - E.g., no notion of “query optimization”, e.g., operator order optimization
+  - E.g., no notion of "query optimization", e.g., operator order optimization
   - The sequence of MapReduce tasks makes it procedural within a single machine
 - Assumes a single input
   - E.g., joins are tricky to do, but doable

@@ -5,7 +5,6 @@ GP Saggese
 gsaggese@umd.edu
 with thanks to Alan Sussman, Amol Deshpande
 
-
 * Client-Server Architecture
 - The **client-server** is a model for distributed applications that partitions tasks between:
   - **Clients**: request a service (e.g., dashboard, GUI, client applications)
@@ -35,7 +34,6 @@ with thanks to Alan Sussman, Amol Deshpande
   - Heterogeneous and distant
   - Working on separate tasks
 
-
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_3_image_1.png)
 
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_3_image_2.png)
@@ -56,8 +54,6 @@ with thanks to Alan Sussman, Amol Deshpande
   - Much larger degree of parallelism
   - With or without shared memory
   - E.g., GPUs, The Connection Machine
-
-
 
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_4_image_1.png)
 
@@ -87,8 +83,6 @@ Connection Machine in Jurassic Park
   - Processing time-consuming queries
   - Providing high throughput for transaction processing
 
-
-
 * Parallel Databases
 - Internet / Big Data created the need for large and fast DBs, e.g.,
   - Store petabytes of data
@@ -108,7 +102,6 @@ Connection Machine in Jurassic Park
   - Interference of tasks
   - Skew
 
-
 * How to Measure Parallel Performance
 
 - **Throughput**
@@ -123,8 +116,6 @@ Connection Machine in Jurassic Park
   - E.g., increase throughput by pipelining, i.e., overlapping execution of tasks
     - E.g., building a car takes weeks but one car is completed per hour
     - Pipelining of instructions of microprocessor
-
-
 
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_7_image_1.png)
 
@@ -156,8 +147,6 @@ Connection Machine in Jurassic Park
     - Increase the problem size *M*
     - Increase the power of the machine *N*
 
-
-
 * Speed-Up vs Scale-Up
 
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_9_image_1.png)
@@ -178,8 +167,6 @@ Connection Machine in Jurassic Park
                        *big system-problem time *
   - **Scale-up is linear if equation equals 1**
 
-
-
 * Factors Limiting Speed-up and Scale-up
 
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_10_image_1.png)
@@ -189,7 +176,7 @@ Connection Machine in Jurassic Park
 - Speed-up and scale-up are often sub-linear due to several issues
 - **Sequential computation**
   - Some pieces of the computation can be executed in parallel, others must be executed sequentially
-            Amdahl’s Law
+            Amdahl's Law
   - p = fraction of computation that can be parallelized
   - s = number of nodes
   - T = the execution time in the serial case
@@ -198,7 +185,6 @@ Connection Machine in Jurassic Park
   - Speedup(s) = T / T(s)
   - E.g., if 90% is parallelizable, the max speed-up is 10x
   - If 50% is parallelizable, the max speed-up is 2x (even with infinite amount of nodes!)
-
 
 * Factors Limiting Speed-up and Scale-up
 
@@ -217,10 +203,6 @@ Connection Machine in Jurassic Park
   - Splitting the work to do increases the variance in response time of parallely executed tasks
   - Difficult to keep a task split in equally sized parts
   - Overall execution time determined by slowest of parallely executing tasks
-
-
-
-
 
 * Topology of Parallel Systems
 
@@ -247,8 +229,6 @@ Connection Machine in Jurassic Park
   - Fault tolerance
   - Resource congestion
 
-
-
 * Topology of Parallel Systems: Comparison
 
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_1.png)
@@ -258,9 +238,6 @@ Connection Machine in Jurassic Park
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_3.png)
 
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_4.png)
-
-
-
 
 * Parallel Databases
 
@@ -302,9 +279,6 @@ Extremely fast
 
 **Shared Memory**
 
-
-
-
 * Distributed Databases
 
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_15_image_1.png)
@@ -331,9 +305,6 @@ Extremely fast
   - The communication delay is dominance
 - Nodes can have different size and functions
   - Parallel DBs have nodes that are similar
-
-
-
 
 * Consistency Issues in Distributed DB Systems
 
@@ -364,11 +335,7 @@ Extremely fast
   - **Problem**: Even within an organization, people tend to be protective of their unit / department
   - E.g., for administering systems, patching, updating
 
-
-
 * BACKUP
-
-
 
 * Parallel Databases
 - Introduction
@@ -380,8 +347,6 @@ Extremely fast
 - Design of Parallel Systems
 Silbershatz: Chap 22
 
-
-
 * Parallelism in Databases
 - Data can be partitioned across multiple disks for parallel I/O
 - Individual relational operations (e.g., sort, join, aggregation) can be executed in parallel
@@ -392,8 +357,6 @@ Silbershatz: Chap 22
   - Concurrency control takes care of conflicts
 - Thus, databases naturally lend themselves to parallelism
 
-
-
 * I/O Parallelism
 - Reduce the time required to retrieve relations from disk by partitioning the relations on multiple disks
 - Horizontal partitioning – tuples of a relation are divided among many disks such that each tuple resides on one disk
@@ -402,7 +365,7 @@ Silbershatz: Chap 22
 Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
 **Hash partitioning**:
   - Choose one or more attributes as the partitioning attributes.
-  - Choose hash function *h* with range 0…*n* - 1
+  - Choose hash function *h* with range 0...*n* - 1
   - Let *i* denote result of hash function *h* applied to the partitioning attribute value of a tuple. Send tuple to disk *i*.
 
 * I/O Parallelism (Cont.)
@@ -419,7 +382,6 @@ Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
   - E.g., *r.A* = 25.
      3. Locating all tuples such that the value of a given attribute lies within a specified range – **range queries**.
   - E.g., 10 <= *r.A* < 25.
- 
 * Comparison of Partitioning Techniques (Cont.)
 Round robin:
 - Advantages
@@ -427,8 +389,6 @@ Round robin:
   - All disks have almost an equal number of tuples; retrieval work is thus well balanced between disks.
 - Range queries are difficult to process
   - No clustering -- tuples are scattered across all disks
-
-
 
 * Comparison of Partitioning Techniques (Cont.)
 Hash partitioning:
@@ -439,9 +399,6 @@ Hash partitioning:
   - Can lookup single disk, leaving others available for answering other queries.
   - Index on partitioning attribute can be local to disk, making lookup and update more efficient
 - No clustering, so difficult to answer range queries
-
-
-
 
 * Comparison of Partitioning Techniques (Cont.)
 - Range partitioning:
@@ -454,15 +411,10 @@ Hash partitioning:
   - If many blocks are to be fetched, they are still fetched from one to a few disks, and potential parallelism in disk access is wasted
     - Example of execution skew.
 
-
-
-
 * Partitioning a Relation across Disks
 - If a relation contains only a few tuples which will fit into a single disk block, then assign the relation to a single disk.
 - Large relations are preferably partitioned across all the available disks.
 - If a relation consists of *m* disk blocks and there are *n* disks available in the system, then the relation should be allocated **min**(*m,n*) disks.
-
-
 
 * Handling of Skew
 - The distribution of tuples to disks may be **skewed**
@@ -475,9 +427,6 @@ Hash partitioning:
     - With range-partitioning, badly chosen partition vector may assign too many tuples to some partitions and too few to others.
     - Less likely with hash-partitioning if a good hash-function is chosen.
 
-
-
-
 * Handling Skew in Range-Partitioning
 - To create a **balanced partitioning vector** (assuming partitioning attribute forms a key of the relation):
   - Sort the relation on the partitioning attribute.
@@ -487,17 +436,12 @@ Hash partitioning:
   - Duplicate entries or imbalances can result if duplicates are present in partitioning attributes.
 - Alternative technique based on **histograms** used in practice
 
-
-
 * Handling Skew using Histograms
 - Balanced partitioning vector can be constructed from histogram in a relatively straightforward fashion
   - Assume uniform distribution within each range of the histogram
 - Histogram can be constructed by scanning relation, or sampling (blocks containing) tuples of the relation
 
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_29_image_1.png)
-
-
-
 
 * Handling Skew Using Virtual Processor Partitioning
 - Skew in range partitioning can be handled elegantly using **virtual processor partitioning**:
@@ -506,8 +450,6 @@ Hash partitioning:
 - Basic idea:
   - If any normal partition would have been skewed, it is very likely the skew is spread over a number of virtual partitions
   - Skewed virtual partitions get spread across a number of processors, so work gets distributed evenly!
-
-
 
 * Interquery Parallelism
 - Queries/transactions execute in parallel with one another.
@@ -518,8 +460,6 @@ Hash partitioning:
   - Data in a local buffer may have been updated at another processor.
   - **Cache-coherency** has to be maintained — reads and writes of data in buffer must find latest version of data.
 
-
-
 * Cache Coherency Protocol
 - Example of a cache coherency protocol for shared disk systems:
   - Before reading/writing to a page, the page must be locked in shared/exclusive mode.
@@ -528,17 +468,12 @@ Hash partitioning:
 - More complex protocols with fewer disk reads/writes exist.
 - Cache coherency protocols for shared-nothing systems are similar. Each database page is assigned a *home* processor. Requests to fetch the page or write it to disk are sent to the home processor.
 
-
-
-
 * Intraquery Parallelism
 - Execution of a single query in parallel on multiple processors/disks; important for speeding up long-running queries.
 - Two complementary forms of intraquery parallelism:
   - **Intraoperation Parallelism** – parallelize the execution of each individual operation in the query.
   - **Interoperation Parallelism** – execute the different operations in a query expression in parallel.
 - The first form scales better with increasing parallelism because the number of tuples processed by each operation is typically more than the number of operations in a query.
-
-
 
 * Parallel Processing of Relational Operations
 - Our discussion of parallel algorithms assumes:
@@ -562,8 +497,6 @@ Hash partitioning:
   - Each processors executes same operation (sort) in parallel with other processors, without any interaction with the others (**data parallelism**).
   - Final merge operation is trivial: range-partitioning ensures that, for 1 *j m*, the key values in processor *P*i are all less than the key values in *P*j.
 
-
-
 * Parallel Sort (Cont.)
 **Parallel External Sort-Merge**
 - Assume the relation has already been partitioned among disks *D*0, ..., *D*n-1 (in whatever manner).
@@ -574,14 +507,10 @@ Hash partitioning:
   - Each processor *P*i performs a merge on the streams as they are received, to get a single sorted run.
   - The sorted runs on processors *P*0,..., *P*m-1 are concatenated to get the final result.
 
-
 * Parallel Join
 - The join operation requires pairs of tuples to be tested to see if they satisfy the join condition, and if they do, the pair is added to the join output.
 - Parallel join algorithms attempt to split the pairs to be tested over several processors. Each processor then computes part of the join locally.
 - In a final step, the results from each processor can be collected together to produce the final result.
-
-
-
 
 * Partitioned Join
 - For equi-joins and natural joins, it is possible to *partition* the two input relations across the processors, and compute the join locally at each processor.
@@ -592,13 +521,8 @@ Hash partitioning:
 - Partitions *r*i and *s*i are sent to processor *P*i,
 - Each processor *P*i locally computes *r*i *r*i.A=si.B si. Any of the standard join methods can be used.
 
-
-
 * Partitioned Join (Cont.)
 ![Partitioned Join](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_39_image_1.png)
-
-
-
 
 * Fragment-and-Replicate Join
 - Partitioning not possible for some join conditions
@@ -610,15 +534,9 @@ Hash partitioning:
   - The other relation, *s*, is replicated across all the processors.
   - Processor *P*i then locally computes the join of *r*i with all of s using any join technique.
 
-
-
-
 * Depiction of Fragment-and-Replicate Joins
 
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_41_image_1.png)
-
-
-
 
 * Fragment-and-Replicate Join (Cont.)
 
@@ -631,18 +549,12 @@ Hash partitioning:
   - *P**i,j* computes the join of *r**i* with *s**j*. In order to do so, *r**i* is replicated to *P**i,*0, *P**i*,1, ..., *P**i,m*-1, while si is replicated to *P*0*,i*, *P*1,*i*, ..., *P**n*-1,*i*
   - Any join technique can be used at each processor *P**i,j*.
 
-
-
-
 * Fragment-and-Replicate Join (Cont.)
 
 - Both versions of fragment-and-replicate work with any join condition, since every tuple in* r* can be tested with every tuple in *s*.
 - Usually has a higher cost than partitioning, since one of the relations (for asymmetric fragment-and-replicate) or both relations (for general fragment-and-replicate) have to be replicated.
 - Sometimes asymmetric fragment-and-replicate is preferable even though partitioning could be used.
   - E.g., say *s* is small and *r* is large, and already partitioned. It may be cheaper to replicate *s* across all processors, rather than repartition *r* and *s* on the join attributes.
-
-
-
 
 * Partitioned Parallel Hash-Join
 
@@ -651,9 +563,6 @@ Parallelizing partitioned hash join:
 - A hash function *h*1 takes the join attribute value of each tuple in *s* and maps this tuple to one of the *n* processors.
 - Each processor *P**i* reads the tuples of *s* that are on its disk *D**i*, and sends each tuple to the appropriate processor based on hash function *h*1. Let *s**i* denote the tuples of relation *s* that are sent to processor *P**i*.
 - As tuples of relation *s* are received at the destination processors, they are partitioned further using another hash function, *h*2, which is used to compute the hash-join locally. *(Cont.)*
-
-
-
 
 * Partitioned Parallel Hash-Join (Cont.)
 
@@ -665,9 +574,6 @@ Parallelizing partitioned hash join:
 - Note: Hash-join optimizations can be applied to the parallel case
   -  e.g., the hybrid hash-join algorithm can be used to cache some of the incoming tuples in memory and avoid the cost of writing them and reading them back in.
 
-
-
-
 * Parallel Nested-Loop Join
 
 - Assume that
@@ -678,8 +584,6 @@ Parallelizing partitioned hash join:
   - At the end of this phase, relation *s* is replicated at all sites that store tuples of relation *r*. 
 - Each processor *P*i performs an indexed nested-loop join of relation *s* with the ith partition of relation *r*.
 
-
-
 * Other Relational Operations
 
 Selection 
@@ -688,7 +592,6 @@ Selection
 - If thetha is of the form l <= ai <= u  (i.e., thetha is a range selection) and the relation has been range-partitioned on ai
   - Selection is performed at each processor whose partition overlaps with the specified range of values.
 - In all other cases: the selection is performed in parallel at all the processors.
-
 
 * Other Relational Operations (Cont.)
 
@@ -700,8 +603,6 @@ Selection
   - Projection without duplicate elimination can be performed as tuples are read in from disk in parallel.
   - If duplicate elimination is required, any of the above duplicate elimination techniques can be used.
 
-
-
 * Grouping/Aggregation
 - Partition the relation on the grouping attributes and then compute the aggregate values locally at each processor.
 - Can reduce cost of transferring tuples during partitioning by partly computing aggregate values before partitioning.
@@ -711,19 +612,14 @@ Selection
   - Result of the local aggregation is partitioned on the grouping attributes, and the aggregation performed again at each processor Pi to get the final result.
 - Fewer tuples need to be sent to other processors during partitioning.
 
-
-
 * Cost of Parallel Evaluation of Operations
 - If there is no skew in the partitioning, and there is no overhead due to the parallel evaluation, expected speed-up will be 1/n
 - If skew and overheads are also to be taken into account, the time taken by a parallel operation can be estimated as
-            Tpart + Tasm + max (T0, T1, …, Tn-1)
+            Tpart + Tasm + max (T0, T1, ..., Tn-1)
   - Tpart is the time for partitioning the relations
   - Tasm is the time for assembling the results
   - Ti is the time taken for the operation at processor Pi
     - this needs to be estimated taking into account the skew, and the time wasted in contentions.
-
-
-
 
 * Interoperator Parallelism
 - **Pipelined parallelism**
@@ -736,15 +632,11 @@ Selection
   - Each of these operations can execute in parallel, sending result tuples it computes to the next operation even as it is computing further results
     - Provided a pipelinable join evaluation algorithm (e.g., indexed nested loops join) is used
 
-
-
 * Factors Limiting Utility of Pipeline Parallelism
 - Pipeline parallelism is useful since it avoids writing intermediate results to disk
 - Useful with small number of processors, but does not scale up well with more processors. One reason is that pipeline chains do not attain sufficient length.
 - Cannot pipeline operators which do not produce output until all inputs have been accessed (e.g., aggregate and sort)
 - Little speedup is obtained for the frequent cases of skew in which one operator's execution cost is much higher than the others.
-
-
 
 * Independent Parallelism
 - **Independent parallelism**
@@ -759,43 +651,4 @@ Selection
   - Does not provide a high degree of parallelism
     - useful with a lower degree of parallelism.
     - less useful in a highly parallel system.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

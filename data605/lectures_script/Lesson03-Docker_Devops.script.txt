@@ -1,0 +1,458 @@
+# ##############################################################################
+# Docker - Resources
+# ##############################################################################
+
+Docker is a platform that allows developers to automate the deployment of
+applications inside lightweight, portable containers.
+
+This slide provides several resources to help us understand and use Docker
+effectively
+
+Transitioning to the next slide, let's explore how applications are deployed and
+managed in different technological eras.
+
+# ##############################################################################
+# Application Deployment
+# ##############################################################################
+
+For companies like Amazon, Google, and Facebook, the application is the
+business. If it fails, operations stop.
+
+The problem is how to release,
+deploy, manage, and monitor these applications effectively
+
+There have been different solutions, starting with the "bare-metal era" before
+the 2000s, where applications ran directly on physical hardware. This was
+succeeded by the "virtual machine era" from the 2000s to 2010s, offering more
+flexibility and resource efficiency. Since around 2013, we've entered the
+"container era," where applications are deployed in containers, providing even
+greater efficiency and scalability. Containers are now the preferred deployment
+method due to their lightweight nature and consistent performance across
+environments.
+
+# ##############################################################################
+# Devops
+# ##############################################################################
+
+- This slide covers DevOps, a practice merging software development (dev) and IT
+  operations (ops). DevOps aims to shorten development cycles and ensure
+  continuous delivery with high-quality software
+- Containers have transformed DevOps by allowing application development and IT
+  operations to operate independently. This separation enables one team to focus
+  on application creation while another manages deployment and operations,
+  fostering collaboration, reducing conflicts, and encouraging innovation
+- The slide's image illustrates the DevOps lifecycle: planning, coding,
+  building, testing, releasing, deploying, operating, and monitoring. Each stage
+  is vital for efficient, high-quality software delivery
+
+# ##############################################################################
+# Run on Bare Metal
+# ##############################################################################
+
+- Before the 2000s, applications ran directly on servers without virtualization,
+  deploying one or a few applications per server
+- The advantage was no virtualization overhead, allowing full use of server
+  resources for applications
+- However, this method had major drawbacks. Lack of application separation led
+  to security risks, as issues in one application could impact others. It was
+  also costly, requiring each application to have its own server, resulting in
+  expensive, underutilized servers operating at just 5-10% capacity. This
+  inefficiency was notable during the 2000 DotCom boom, with significant
+  spending on machines and networks. Although this approach re-emerged in 2020
+  with cloud computing, challenges persisted
+- Companies like Cisco, Sun, and Microsoft benefited most during this period
+
+# ##############################################################################
+# Virtual Machine Era
+# ##############################################################################
+
+- From 2000 to 2010, virtual machine (VM) technology emerged, enabling multiple
+  operating systems on one hardware
+- VMs offered benefits like secure multi-application execution on a single
+  server, optimizing server use for IT departments
+- Downsides included each VM needing its own OS, wasting CPU, RAM, and disk
+  resources. Organizations faced costs for OS licenses and the complexity of
+  monitoring and patching each OS. VMs also had slow boot times, problematic in
+  dynamic settings
+- Companies like VMWare, RedHat, and Citrix became leaders, meeting the rising
+  demand for virtualization solutions
+
+# ##############################################################################
+# Containers Era
+# ##############################################################################
+
+- In 2013, Docker gained prominence, ushering in the container era
+- Docker didn't invent containers but simplified and popularized them.
+  Containers use Linux features like kernel namespaces, control groups, and
+  union filesystems for efficient application deployment
+- Containers offer many benefits: they are fast, portable, and allow easy
+  application migration across environments. Unlike virtual machines, they don't
+  need a full OS, reducing licensing costs and OS maintenance. Multiple
+  containers can run on a single host, optimizing resources
+- However, containers can cause CPU overhead and require learning the toolchain
+- Major cloud providers like AWS, Microsoft Azure, and Google have thrived in
+  this era, though Docker didn't dominate the market
+
+# ##############################################################################
+# Serverless Computing
+# ##############################################################################
+
+- Containers run applications and require an operating system (OS) to function.
+  This OS operates on a host, which can be your local machine, a data center
+  computer, or a cloud instance like AWS EC2. The host setup varies: it can be
+  on a physical server (bare-metal), a virtual machine (VM), or a VM running
+  another VM. This configuration affects resource allocation and management
+- Serverless computing eliminates concerns about infrastructure. You focus
+  solely on your application, while the service provider, such as AWS Lambda,
+  handles everything else. This approach removes the need to manage servers,
+  simplifying deployment and scaling
+
+Now, let's explore the differences between hardware and OS virtualization.
+
+# ##############################################################################
+# HW vs OS Virtualization
+# ##############################################################################
+
+- Hypervisors enable hardware virtualization by splitting a physical server into
+  multiple virtual machines (VMs), each with its own CPU, RAM, and storage. This
+  mimics having several distinct computers. However, a drawback is the "virtual
+  machine tax." Running multiple applications necessitates multiple VMs, each
+  needing startup time, resources, an OS license, and maintenance, which can be
+  burdensome for running just a few applications
+- Containers provide OS virtualization, allowing multiple applications to run on
+  a single OS instance. This method is more efficient than using separate VMs
+  for each application, reducing overhead and simplifying management
+
+# ##############################################################################
+# Docker: Client-Server
+# ##############################################################################
+
+- Docker employs a client-server model to handle containers. The Docker client,
+  a command-line tool, communicates with the Docker server via an IPC socket
+  like /var/run/docker.sock or an IP port, enabling users to send commands for
+  container management
+- The Docker engine runs and manages containers, built modularly with components
+  adhering to Open Container Initiative (OCI) standards. Key components include
+  the Docker daemon, containerd, runc, and plugins for networking and storage.
+  This architecture efficiently manages containerized applications, making
+  Docker popular among developers and operations teams
+
+# ##############################################################################
+# Docker Architecture
+# ##############################################################################
+
+- Docker runtime is essential for starting and stopping containers. It includes
+  runc for executing containers and containerd for tasks like pulling images,
+  creating containers, and setting up resources such as volumes and network
+  interfaces
+- The Docker engine, particularly dockerd, is the server-side component
+  providing a remote API. This API facilitates managing Docker images, volumes,
+  and networks, simplifying automation and control of containerized applications
+- Docker orchestration involves managing node clusters, traditionally done with
+  Docker Swarm. However, Kubernetes has largely replaced Docker Swarm due to its
+  superior features and community support
+- The Open Container Initiative (OCI) seeks to standardize container
+  infrastructure components, like image formats and runtime APIs. This shift
+  towards open standards has led to the decline of Docker as a standalone
+  entity, as the industry embraces more standardized solutions
+
+Now, let's delve into the specifics of Docker containers and images.
+
+# ##############################################################################
+# Docker Container
+# ##############################################################################
+
+- A Docker container is a computation unit: lightweight, standalone, and
+  executable. It packages everything needed to run an application, including
+  code, runtime, system libraries, and settings
+- Containers are runtime objects, the active instances of Docker images, akin to
+  a running program being the active instance of its code. Docker images are
+  build-time objects, representing the static code and dependencies required to
+  create a container
+- Understanding the difference between containers and images is key to grasping
+  Docker's operation, as images create containers that execute applications
+
+Next, we'll explore Docker images in more detail.
+
+# ##############################################################################
+# Docker Image
+# ##############################################################################
+
+- A Docker image is the deployment unit in Docker, containing everything to run
+  an application: code, dependencies, minimal OS support, and file system
+- Users can create Docker images using Dockerfiles, scripts outlining image
+  creation steps, or pull pre-built images from a registry, a Docker image
+  repository
+- Docker images consist of multiple layers, each representing different
+  application or environment aspects. These layers are typically a few hundred
+  megabytes, making them lighter than traditional virtual machines
+- Understanding Docker images is crucial for deploying applications in a
+  containerized environment, as they serve as the blueprint for creating
+  containers to run applications
+
+# ##############################################################################
+# Docker Image Layers
+# ##############################################################################
+
+- Docker images are configuration files listing layers and metadata. Composed of
+  read-only layers, they remain unchanged post-creation. Each independent layer
+  contains numerous files, offering flexibility and efficiency in application
+  management and deployment
+- The Docker driver stacks these layers into a unified filesystem using
+  copy-on-write, altering files only when necessary to conserve space and
+  resources. Top layer files can hide or replace lower layer files, enabling
+  updates without changing the entire image
+- Each Docker image layer has a unique hash, a digital fingerprint based on
+  content, ensuring consistency and efficient compression for data transfer
+- Similarly, each Docker image has a unique hash derived from its configuration
+  file and layers. Any change generates a new hash, maintaining image integrity
+
+Now, let's explore how containers handle data and storage.
+
+# ##############################################################################
+# Docker: Container Data
+# ##############################################################################
+
+- Containers access various data types essential for their operation and
+  management
+- Container storage uses a copy-on-write layer in the image. Changes are
+  temporary and persist only until the container stops or is killed. Stopping or
+  pausing doesn't cause data loss. Containers are immutable and not for storing
+  persistent data
+- For effective data management, you can bind-mount a local directory to a
+  container directory. This facilitates easy data access and management between
+  the host and container
+- Docker volumes offer another data handling method. Volumes exist independently
+  of containers, storing data like a Postgres database's content. This data
+  remains permanent across container instances and can be shared among multiple
+  containers, ensuring flexibility and reliability
+
+# ##############################################################################
+# Docker Repos
+# ##############################################################################
+
+- Docker repositories, or registries, store Docker images. Examples include
+  DockerHub and AWS ECR. They follow a naming format: `<registry>/<repo>:<tag>`,
+  e.g., `docker.io/alpine:latest`
+- Some repositories are vetted by Docker, ensuring they are trusted and secure.
+  Unofficial repositories may lack reliability or safety. DockerHub is a trusted
+  source for finding and sharing Docker images
+- Using trusted repositories is essential for maintaining Docker image security
+  and integrity, preventing risks, and ensuring images are reliable and
+  up-to-date
+
+# ##############################################################################
+# Devops = Devs + Ops
+# ##############################################################################
+
+- DevOps combines development (devs) and operations (ops) to enhance software
+  development
+- Devs use languages like Python and manage dependencies with virtual
+  environments
+- They create a Dockerfile to containerize applications, specifying how to build
+  a Docker image—a compact, standalone package with all components
+- Devs build the image and run the application in a container for isolated local
+  testing
+- Ops handle the deployment of these container images, which include the
+  filesystem, application, and dependencies
+- Ops manage container operations, ensuring smooth application performance
+  across environments
+- They troubleshoot by reviewing logs and using command-line instructions,
+  aiding in debugging and deployment on test systems
+
+Now, let's delve deeper into the process of containerizing an application.
+
+# ##############################################################################
+# Containerizing an App
+# ##############################################################################
+
+- Containerizing an app involves creating a container that packages your
+  application and its dependencies for easy execution anywhere
+- First, develop the application code with its dependencies, which can be
+  installed in a container or virtual environment
+- Create a Dockerfile to outline the application, its dependencies, and
+  execution instructions, serving as a blueprint for the container
+- Build the Docker image using `docker image build`, compiling the application
+  and dependencies into one image
+- Optionally, push the image to a Docker image registry for storage and sharing
+- Once ready, run and test the image as a container to ensure the application
+  functions correctly in a controlled setting
+- Distributing the app as a container allows users to run it without
+  installations, simplifying deployment
+
+Let's explore the specifics of building a container using a Dockerfile.
+
+# ##############################################################################
+# Building a Container
+# ##############################################################################
+
+- A Dockerfile is a script detailing container creation, including environment
+  setup, dependency installation, and application execution
+- The build context is the directory with the application and all necessary
+  files for building. In the command `docker build -t web:latest .`, the `.`
+  signifies the build context
+- This directory is sent to the Docker engine, which uses the Dockerfile to
+  create a Docker image
+- Typically, the Dockerfile is in the root of the build context, ensuring all
+  needed files are included in the image build
+- The build context is vital as it defines what the Docker engine accesses
+  during the build. It must contain all application files and dependencies
+- Understanding the Dockerfile and build context helps developers efficiently
+  create and manage containers, ensuring applications are portable and easily
+  deployable across environments
+
+# ##############################################################################
+# Dockerfile: Example
+# ##############################################################################
+
+- A Dockerfile is a script with instructions to build a Docker image
+- The `FROM` command sets the base image, here a lightweight Python 3.8
+- The `LABEL` command adds metadata, like maintainer contact info
+- The `WORKDIR` command sets `/app` as the container's working directory
+- The `COPY` command transfers files from the host to the container, including
+  `requirements.txt` and current directory contents
+- The `RUN` command installs Python packages from `requirements.txt` inside the
+  container
+- The `CMD` command defines the default command to execute when the container
+  starts, running a Flask app on all network interfaces
+
+# ##############################################################################
+# Docker: Commands
+# ##############################################################################
+
+- Use `docker images` to list all Docker images on your system, showing
+  repository, tag, image ID, creation time, and size
+- To filter and view a specific image, use `docker images` with the image name
+- Remove an image with `docker rmi` followed by the image ID or name to free up
+  disk space
+- View running containers with `docker container ls`, displaying container ID,
+  image, command, creation time, status, ports, and names
+
+# ##############################################################################
+# Docker: Commands (Continued)
+# ##############################################################################
+
+- The `docker container ls` command is crucial for monitoring active containers,
+  offering a snapshot of all running containers and their configurations
+- Use `docker volume ls` to list all Docker volumes for storage management.
+  Volumes persist data generated and used by Docker containers
+- For network management, `docker network ls` lists all Docker networks,
+  enabling container communication internally and externally
+
+# ##############################################################################
+# Docker: Delete State
+# ##############################################################################
+
+- This slide offers commands to clean Docker resources, removing unused
+  containers, images, volumes, and networks
+
+- Use `docker container ls` to list running containers
+- Similarly, `docker images` lists images, and `docker rmi` deletes them
+
+- For volumes, `docker volume ls` lists the volumes, and `docker volume rm`
+  removes them
+
+- Lastly, `docker network ls` shows networks, and `docker network rm` deletes
+  them
+
+# ##############################################################################
+# Docker Tutorial
+# ##############################################################################
+
+This slide points to the Docker tutorial
+
+Next, we will discuss Docker Compose and its role in managing multi-container
+applications.
+
+# ##############################################################################
+# Docker Compose
+# ##############################################################################
+
+- Docker Compose simplifies managing multi-container apps on a single node. It
+  uses a YAML file to describe your app declaratively, specifying the desired
+  state, which Docker Compose achieves by interacting with the Docker API. This
+  eliminates complex Docker command scripts, easing app management. Examples
+  include a client app with a Postgres database or microservices like a web
+  front-end, ordering system, and back-end database
+- In 2020, Docker Compose became an open standard for the "code-to-cloud"
+  process, underscoring its role in modern app development
+- Docker Compose also manages multi-container apps on multiple hosts using
+  Docker Stacks, Swarm, or Kubernetes, offering advanced orchestration to scale
+  apps across servers. It's essential for developers and operations teams to
+  streamline workflows and manage complex apps efficiently
+
+# ##############################################################################
+# Docker Compose: Tutorial Example
+# ##############################################################################
+
+- This slide introduces the basics of a Docker Compose file, usually named
+  `docker-compose.yml`. You can use a different filename with the `-f` option
+- The file includes essential top-level keys for setting up your Docker
+  environment. The `version` key is mandatory, indicating the API version;
+  version 3 or higher is recommended. The `services` key defines your
+  microservices, describing each service as a container. The `networks` key
+  allows creating new networks, with `bridge` as the default for connecting
+  containers on the same Docker host. The `volumes` key is for creating new
+  volumes for persistent data storage
+- The example YAML file on the slide shows a simple setup with two services:
+  `web-fe` and `redis`. The `web-fe` service is built from the current
+  directory, runs a Python app, and exposes port 5001. It connects to a network
+  named `counter-net` and uses a volume `counter-vol` for code storage. The
+  `redis` service uses a pre-built image and also connects to the `counter-net`
+  network. This setup demonstrates how Docker Compose simplifies multi-container
+  application orchestration by defining services, networks, and volumes in one
+  file
+
+Now, let's move on to understanding the various commands available in Docker
+Compose.
+
+# ##############################################################################
+# Docker Compose: Commands
+# ##############################################################################
+
+This slide provides a comprehensive list of commands available in Docker
+Compose, which are essential for managing your containerized applications
+
+# ##############################################################################
+# Docker Compose: Commands
+# ##############################################################################
+
+- This slide highlights key Docker Compose commands for managing services
+- Use `docker compose build` to construct containers from your Compose file. To
+  fetch necessary images, apply `docker compose pull`. Check running services
+  with `docker compose ps`, and view service status using `docker compose ls`
+
+- To launch the full service stack, execute `docker compose up`, which initiates
+  and starts containers. For changes in your Dockerfile or Compose file, use
+  `docker-compose up --build --force-recreate` to rebuild and recreate
+  containers.
+- The `docker compose top` command reveals running processes inside each
+  container, offering insights into service operations 
+
+# ##############################################################################
+# Docker Compose: Commands
+# ##############################################################################
+
+- Docker Compose manages multi-container Docker apps using a simple YAML file.
+  The `docker compose down` command stops and removes containers and networks
+  created by `docker compose up`. This is useful for stopping applications and
+  cleaning up resources
+- To reset your application state by removing volumes, use
+  `docker-compose down -v`. This stops containers and removes volumes, erasing
+  stored data. It's helpful for starting fresh without old data
+- To remove everything, including images, use
+  `docker-compose down -v --rmi all`. This stops containers, removes volumes,
+  and deletes images, freeing disk space and ensuring the latest image versions
+  are used next time
+
+Now, let's move on to a practical example to see Docker Compose in action.
+
+# ##############################################################################
+# Docker Compose: Tutorial
+# ##############################################################################
+
+- The tutorial provides a practical example of using Docker Compose with a
+  sample application.
+
+- With this understanding of Docker Compose commands and a practical example, you
+  are now ready to explore more complex applications.

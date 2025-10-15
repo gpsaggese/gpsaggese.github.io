@@ -127,7 +127,6 @@ UMD DATA605: Big Data Systems
   - Change data representation without altering programs
   - E.g., API abstracting backend
 
-
 - **Physical data independence**
   - Change data layout on disk without altering programs
     - Index data

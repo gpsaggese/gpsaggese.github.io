@@ -36,7 +36,6 @@ Prof. Amol Deshpande
 Prof. Nguyen Vo (Utah State U.)
 Prof. Kathleen Durant (Northeastern U.)
 
-
 **v1.1**
 ::::
 :::: {.column width=20%}
@@ -45,7 +44,6 @@ Prof. Kathleen Durant (Northeastern U.)
 :::
 
 UMD DATA605 - Big Data Systems
-
 
 * Key-Value Store vs Document DBs
 - **Key-value stores**
@@ -63,12 +61,9 @@ UMD DATA605 - Big Data Systems
     - Similar to *tables* in relational DBs
     - Large collections can be partitioned and indexed
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_3_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_3_image_2.png)
-
 
 * Resources
 - All concepts in slides
@@ -80,16 +75,13 @@ UMD DATA605 - Big Data Systems
 - Book
   - Seven Databases in Seven Weeks, 2e
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_5_image_1.png)
-
 
 * MongoDB
 - Developed by MongoDB Inc.
   - Founded in 2007
   - Based on DoubleClick experience with large-scale data
-  - Mongo comes from “hu-mongo-us”
+  - Mongo comes from "hu-mongo-us"
 - One of the most used NoSQL DBs (if not the most used)
 - **Document-oriented NoSQL database**
   - Schema-less
@@ -104,10 +96,7 @@ UMD DATA605 - Big Data Systems
 - Supports APIs (drivers) in many languages
   - E.g., JavaScript, Python, Ruby, Java, Scala, C++, ...
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_6_image_1.png)
-
 
 * MongoDB: Example of Document
 - **A document is a JSON data structure**
@@ -116,10 +105,7 @@ UMD DATA605 - Big Data Systems
   - Primary key is **\_id**
   - Values nested to an arbitrary depth
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_7_image_1.png)
-
 
 * MongoDB: Functionalities
 - **Design goals**
@@ -140,26 +126,21 @@ UMD DATA605 - Big Data Systems
   - Horizontal scaling via automated range-based partitioning of data
   - Reads and writes distributed over shards
 
-
-
-
 * MongoDB: Hierarchical Objects
 - A Mongo **instance** has:
-  - Zero or more “databases”
+  - Zero or more "databases"
   - Mongo instance ~ Postgres instance
 - A Mongo **database** has:
-  - Zero or more “collections”
+  - Zero or more "collections"
     - Mongo collection ~ Postgres tables
   - Mongo database ~ Postgres database
 - A Mongo **collection** has:
-  - Zero or more “documents”
+  - Zero or more "documents"
     - Mongo document ~ Postgres rows
 - A Mongo **document** has:
-  - One or more “fields”
+  - One or more "fields"
     - It has always primary key \_id
     - Mongo field ~ Postgres columns
-
-
 
 **Collection
 **
@@ -175,9 +156,7 @@ UMD DATA605 - Big Data Systems
 
 From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
-
 * Relational DBs vs MongoDB: Terms and Concepts
-
 
 | RDBMS Concept | MongoDB Concept | Meaning in MongoDB |
 |---------|---------|---------|
@@ -191,7 +170,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 | table joins | embedded documents | Nested name-value pairs |
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_10_image_1.png)
-
 
 * Relational vs Document DB: Workflows
 - **Relational DBs**
@@ -213,13 +191,10 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
     - Get the data from the server
     - Process data on the client side
 
-
-
-
 * Why Use MongoDB?
 - Simple to query
   - Do the work on client side
-- It’s fast
+- It's fast
   - 2-10x faster than Postgres
 - Data model / functionalities suitable for most web applications
   - Semi-structured data
@@ -228,13 +203,9 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 - Not well suited for heavy and complex transactions systems
   - E.g., banking system
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_12_image_1.png)
 
-
 * MongoDB: Data Model
-
 
 - **Documents** are composed of field and value pairs
   - **Field names** are strings
@@ -253,9 +224,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_13_image_2.png)
 
-
 * MongoDB: Data Model
-
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_14_image_1.png)
 
@@ -271,14 +240,11 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_14_image_2.png)
 
-
 * Schema Free
 - MongoDB does not need any pre-defined data schema
 - Every **document** in a **collection** can have different fields and values
   - No need for NULL values / union of fields like in relational DBs
 - E.g., dishomogeneous data instances
-
-
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_15_image_1.png)
 
@@ -291,7 +257,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 **Document
 **
 
-
 * JSON Format
 - JSON = JavaScript Object Notation
 - Data is stored in field / value pairs
@@ -299,21 +264,18 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
   - A field name (always a string)
   - Followed by a colon :
   - Followed by a typed value
-“name”: “R2-D2”
+"name": "R2-D2"
 - Data in documents is separated by commas ,**
 **
-  “name”: “R2-D2”, race : “Droid”
+  "name": "R2-D2", race : "Droid"
 - Curly braces {} hold documents
-    {“name”: “R2-D2”, race : “Droid”, affiliation: “rebels”}
+    {"name": "R2-D2", race : "Droid", affiliation: "rebels"}
 - An array is stored in brackets []
-    [{“name”: “R2-D2”, race: “Droid”, affiliation: “rebels”},
-     {“name”: “Yoda”, affiliation: “rebels”}]
+    [{"name": "R2-D2", race: "Droid", affiliation: "rebels"},
+     {"name": "Yoda", affiliation: "rebels"}]
 - Supports:
   - Embedding of nested objects within other objects
   - Just references
-
-
-
 
 * BSON Format 
 - Binary-encoded serialization of JSON-like documents
@@ -328,9 +290,6 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 - MongoDB understands the internals of BSON objects, even nested ones
   - Can build indexes and match objects against query expressions for BSON keys
 
-
-
-
 * ObjectID
 - Each JSON data contains an \_id field of type ObjectId
   - Same as a SERIAL constraint incrementing a numeric primary key in PostgreSQL
@@ -343,10 +302,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
   - Mongo has a distributed nature
 - Details here
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_18_image_1.png)
-
 
 * Indexes
 - **Primary index**
@@ -364,15 +320,12 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 - Reject records with duplicate key value if an index is unique and sparse
 - Details at https://www.mongodb.com/docs/manual/indexes/
 
-
-
-
 * CRUD Operations
 - CRUD = Create, Read, Update, Delete
 - **Create**
 **db.collection.insert(<document>)**
 **db.collection.update(<query>, <update>, {upsert: true})**
-Upsert = update (if exists) or insert (if it doesn’t)
+Upsert = update (if exists) or insert (if it doesn't)
 - **Read**
 **db.collection.find(<query>, <projection>)**
 **db.collection.findOne(<query>, <projection>)**
@@ -381,9 +334,6 @@ Upsert = update (if exists) or insert (if it doesn’t)
 - **Delete**
 **db.collection.remove(<query>, <justOne>)**
 Details at https://www.mongodb.com/docs/manual/crud/
-
-
-
 
 * Create Operations
 - **db.collection** specifies the collection (like an SQL table) to store the document 
@@ -398,22 +348,17 @@ Details at https://www.mongodb.com/docs/manual/crud/
    **db.collection.save(<document>)**
 - A more modern OOP-like syntax than the COBOL / FORTRAN-inspired SQL
 
-
-
-
 * Read Operations
 - **find** provides functionality similar to **SQL SELECT** command 
 **db.collection.find(<query>, <projection>).cursor**
 with:
   - <query> = WHERE condition
   - <projection> = fields in result set 
-- **db.parts.find({parts: “hammer”}).limit(5)** 
+- **db.parts.find({parts: "hammer"}).limit(5)** 
   - Return cursor to handle a result set 
   - Can modify the query to impose limits, skips, and sort orders
-  - Can specify to return the ‘top’ number of records from the result set
+  - Can specify to return the ‘top' number of records from the result set
 - **db.collection.findOne(<query>, <projection>)**
-
-
 
 * More Query Examples
 ```sql
@@ -427,7 +372,7 @@ SELECT * FROM users WHERE name LIKE "%Joe%"
 ```
 
 ```sql
-SELECT * FROM users WHERE a=1 and b='q’ 
+SELECT * FROM users WHERE a=1 and b='q' 
 ```
 ```sql
 SELECT * FROM users WHERE a=1 or b=2 
@@ -438,7 +383,7 @@ SELECT * FROM users WHERE a=1 or b=2
 ```
 
 ```sql
-WHERE name=‘bob’ and (a=1 or b=2 ) 
+WHERE name=‘bob' and (a=1 or b=2 ) 
 ```
 ```sql
 SELECT * FROM users
@@ -446,7 +391,6 @@ SELECT * FROM users
 ```sql
 WHERE age>33 AND age<=40
 ```
-
 
 ```text
 
@@ -457,7 +401,7 @@ WHERE age>33 AND age<=40
 **
 **db.users.find({name: /Joe/}) 
 **
-**db.users.find({a: 1, b: 'q’}) 
+**db.users.find({a: 1, b: 'q'}) 
 **
 **db.users.find({`$or: [{a: 1}, {b: 2}]`}) 
 **
@@ -478,7 +422,6 @@ WHERE age>33 AND age<=40
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_24_image_1.png)
 
-
 * Update Operations
 - **db.collection.insert(<document>)**
   - Omit the **\_id** field to have MongoDB generate a unique key
@@ -493,9 +436,6 @@ WHERE age>33 AND age<=40
   - Modify existing record(s)
   - Retrieve old or new version of the record
 
-
-
-
 * Delete Operations
 - **db.collection.remove(<query>, <justone>)**
   - Delete all records from a collection or matching a criterion
@@ -504,9 +444,6 @@ WHERE age>33 AND age<=40
 **db.parts.remove(type: /^h/ )**
 - Delete all documents in the **parts** collection
 **db.parts.remove()**
-
-
-
 
 * MongoDB Features
 - Document-oriented NoSQL store
@@ -521,21 +458,15 @@ WHERE age>33 AND age<=40
   - Horizontally = add more machines
   - Commodity hardware = relatively inexpensive servers
 
-
-
-
 * MongoDB vs Relational DBs
 - Keep the functionality that works well in RDBMSs
   - Ad-hoc queries
   - Fully featured indexes
   - Secondary indexes
-- Do not offer RDBMS functionalities that don’t scale up
+- Do not offer RDBMS functionalities that don't scale up
   - Long running multi-row transactions
   - ACID consistency
   - Joins
-
-
-
 
 * MongoDB Tutorial
 Tutorial is at GitHub
@@ -544,8 +475,6 @@ The instructions are here**
 **> `cd $GIT\_REPO/tutorials/tutorial\_mongodb`
 **
 **> vi tutorial\_mongo.md**
-
-
 
 * MongoDB Processes and Configuration
 - **mongod**: database instance (i.e., a server process)
@@ -561,10 +490,7 @@ The instructions are here**
   - One **mongos** (router) for the whole system no matter how many **mongod**s you have; or
   - One local **mongos** for every client if you wanted to minimize network latency
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_30_image_1.png)
-
 
 * MapReduce Functionality
 - Perform map-reduce computation given a collection of (keys, value) pairs
@@ -598,11 +524,9 @@ The instructions are here**
 **})**
 ```
 
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_31_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_31_image_2.png)
-
 
 * Data Replication
 - **Data replication** ensure:
@@ -614,14 +538,11 @@ The instructions are here**
   - **Secondary set**: set of servers used for duplication of data
   - Different properties can be associated with a secondary set,
     - E.g., secondary-only, hidden delayed, arbiters, non-voting
-- If the primary fails the secondary sets “vote” to elect the new primary set
-
-
+- If the primary fails the secondary sets "vote" to elect the new primary set
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_32_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_32_image_2.png)
-
 
 * Sync vs Async Replication
 
@@ -637,10 +558,7 @@ The instructions are here**
   - The transaction is completed before replicas are updated (even if there are failures)
   - Commits are quick at cost of consistency
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_33_image_2.png)
-
 
 * Data Consistency
 
@@ -652,9 +570,6 @@ The instructions are here**
   - Updates propagate gradually
   - Client may read a previous state of the database
   - All *eventually consistent* reads are distributed among the secondaries
-
-
-
 
 * MongoDB: Sharding
 
@@ -669,14 +584,11 @@ The instructions are here**
   - Each shard can be deployed as a replica set
   - Config servers store metadata and configuration settings for cluster
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_35_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_35_image_2.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_35_image_3.png)
-
 
 * RDMBS Internals
 
@@ -689,12 +601,9 @@ The instructions are here**
 - Manage the limited memory
 
 **Query Processing Engine**
-- Given a user query, decide how to “execute” it
+- Given a user query, decide how to "execute" it
 - Specify sequence of pages to be brought in memory
 - Operate upon the tuples to produce results
-
-
-
 
 * Query Optimizer
 
@@ -704,8 +613,6 @@ The instructions are here**
   - Search for the best query
   - At least traditional RDBMs
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_2.png)
@@ -713,7 +620,6 @@ The instructions are here**
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_3.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_4.png)
-
 
 * Query Optimizer
 
@@ -727,10 +633,7 @@ The instructions are here**
   - If a plan that was working well starts performing poorly try again different plans
     - E.g, data in the DB has changed, parameter values to a query are different
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_38_image_1.png)
-
 
 * MongoDB: Strengths
 
@@ -748,9 +651,6 @@ The instructions are here**
   - The relationships between the elements does not matter
   - What matters is the ability to store and retrieve great quantities of data
 
-
-
-
 * MongoDB: Limitations
 
 - No referential integrity
@@ -763,13 +663,9 @@ The instructions are here**
   - Objects within a collection can be completely inconsistent in their fields
 - CAP Theorem: targets consistency and partition tolerance, giving up on availability
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_40_image_1.png)
 
-
 * UMD DATA605 - Big Data Systems
-
 
 * Couchbase
 
@@ -791,12 +687,9 @@ The instructions are here**
   - Supports consistency and partition tolerance
   - High availability is achieved through use of multiple clusters
 
-
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_42_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_42_image_2.png)
-
 
 * Architecture
 
@@ -815,11 +708,9 @@ The instructions are here**
   - Writes data *asynchronously *to disk after acknowledging to the client
   - Optionally *synchronous: *ensure data is written to more than one server before acknowledging a write
 
-
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_43_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_43_image_2.png)
-
 
 * Queries
 
@@ -834,7 +725,7 @@ The instructions are here**
   - Know in advance what kinds of queries you want to execute
 - **Query
 **
-  - Uses a custom query language called N1QL (“nickel”)
+  - Uses a custom query language called N1QL ("nickel")
   - Extends SQL to JSON documents
   - Queries over multiple documents using (server-side) joins
 - **Map-reduce support
