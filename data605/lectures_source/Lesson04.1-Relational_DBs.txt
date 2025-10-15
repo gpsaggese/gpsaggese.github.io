@@ -38,8 +38,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-
-
 **UMD DATA605 - Big Data Systems****Relational DBs
 **
 SQL Intro**
@@ -47,24 +45,18 @@ SQL Intro**
 SQL tutorial
 Silbershatz: Chap 2
 
-
 * Relational Model: Overview
 - Introduced by Ted Codd (late 60's, early 70's)
 - **First prototypes**
   - Ingres Project at Berkeley (1970-1985)
-    - Ingres (INteractive Graphics REtrieval System) → PostgreSQL (=Post Ingres)
-  - IBM System R (1970) → Oracle, IBM DB2
+    - Ingres (INteractive Graphics REtrieval System) $\to$ PostgreSQL (=Post Ingres)
+  - IBM System R (1970) $\to$ Oracle, IBM DB2
 - **Contributions from relational data model**
   - Formal semantics for data operations
   - Data independence: separation of logical and physical data models
   - Declarative query languages (e.g., SQL)
   - Query optimization
 - **Key to commercial success**
-
- 
-
-
-
 
 * Relational Model: Key Definitions
 ::: columns
@@ -102,7 +94,6 @@ Silbershatz: Chap 2
 ::::
 :::
 
-
 * UML Class Diagram
 ::: columns
 :::: {.column width=55%}
@@ -135,11 +126,7 @@ Silbershatz: Chap 2
 ::::
 :::
 
-
 * Example: University DB
- 
-
-
 
 - **UML diagram of a DB and schemas representing a University**
 - Each box is a table / relation
@@ -198,7 +185,6 @@ Silbershatz: Chap 2
 ::::
 :::
 
-
 * Question: What are Primary Keys?
 ::: columns
 :::: {.column width=75%}
@@ -245,20 +231,15 @@ Silbershatz: Chap 2
 * Foreign Key
 - **Foreign key** = primary key of a relation that appears in another relation
   - E.g., **(ID)** from *student* appears in the relations *takes*, *advisor*
-  - *takes* is the “referencing relation”, has the foreign key
-  - *student* is the “referenced relation”, has the primary key
-  - Typically shown by an arrow from referencing → referenced
+  - *takes* is the "referencing relation", has the foreign key
+  - *student* is the "referenced relation", has the primary key
+  - Typically shown by an arrow from referencing $\to$ referenced
 - **Foreign key constraint**: for each row, the tuple corresponding to a primary key must exist
   - Aka referential integrity constraint
   - If there is a **(student101, DATA605)** in *takes*, there must be a tuple with **student101** in *student*
 - In words, the key referenced as foreign key needs to exist as primary key
 
- 
-
-
-
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_10_image_1.png)
-
 
 * Relational Algebra: 1/4
 ::: columns
@@ -291,7 +272,6 @@ Silbershatz: Chap 2
 ::::
 :::
 
-
 * Relational Algebra: 2/4
 - **Cartesian product**: combine information from two relations into a new one
   - *instructor* = **(ID, name, dept\_name, salary)**
@@ -319,7 +299,6 @@ Silbershatz: Chap 2
 ::::
 :::
 
-
 * Relational Algebra: 3/4
 
 - **Join**: composition of two operations
@@ -346,9 +325,6 @@ Silbershatz: Chap 2
 ::::
 :::
 
-
-
-
 * Relational Algebra: 4/4
 ::: columns
 :::: {.column width=55%}
@@ -368,16 +344,10 @@ Silbershatz: Chap 2
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_14_image_1.png)
 
-
-
 ::::
 :::
 
-
 * SQL Overview
- 
-
-
 
 - **Relational algebra**: mathematical description of a language to manipulate *relations*
 - **SQL**: programming language to describe and transform data in a relational DB
@@ -397,10 +367,7 @@ Silbershatz: Chap 2
   - Authorization
     - Specify access and security constraints
 
-
 * SQL Overview
-
-
 
 - Data description language (DDL)
   ```sql
@@ -451,11 +418,7 @@ where:
     - Specify that null value is not allowed for that attribute
     - ``` A_i D_i NOT NULL ```
 
-
 * Select
-
-
-
 
 ```sql 
 SELECT A_1, A_2, ..., A_n 
@@ -470,9 +433,8 @@ SELECT A_1, A_2, ..., A_n
 - In SELECT or WHERE clauses, might need to use the table names as prefix to qualify the attribute name
   - E.g., instructor.ID vs teaches.ID
 - A SELECT statement can be expressed in terms of relational algebra
-  - Cartesian product → selection → projection
+  - Cartesian product $\to$ selection $\to$ projection
   - Difference: SQL allows duplicate values, relational algebra works with mathematical sets
-
 
 * Null values
 - An arithmetic operation with NULL yields NULL
@@ -485,10 +447,7 @@ SELECT A_1, A_2, ..., A_n
   - Can be extended according to common sense, e.g.,
   - True AND Unknown = Unknown
   - False AND Unknown = False
-- In a WHERE clause, if the result is Unknown it’s not included
-
- 
-
+- In a WHERE clause, if the result is Unknown it's not included
 
 * Group by Query
 ::: columns
@@ -522,9 +481,6 @@ SELECT A_1, A_2, ..., A_n
 ::::
 :::
 
-
-
-
 * Having
 - State a condition that applies to groups instead of tuples (like WHERE)
 - Any attribute in the HAVING clause must appear in the GROUP BY clause
@@ -542,11 +498,6 @@ SELECT A_1, A_2, ..., A_n
   - GROUP BY collects tuples into groups
   - (optional) HAVING is applied to each group and groups are filtered
   - SELECT generates tuples of the results, applying aggregate functions to get a single result for each group
-
-
-
- 
-
 
 * Nested subqueries
 - SQL allows to use the result of a query in another query
@@ -568,12 +519,9 @@ WHERE avg_salary > 42000
 ::::
 ::::{.column width=40%}  
 
-
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_22_image_1.png)
 ::::
 :::
- 
-
 
 * With
 - WITH clause allows to define a temporary relation containing the results of a subquery
@@ -594,8 +542,6 @@ WITH max_budget(value) as (
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_23_image_1.png)
 ::::
 :::
- 
-
 
 * Insert
 - To insert data into a relation we can specify tuples to insert
@@ -624,8 +570,6 @@ WITH max_budget(value) as (
   - Many DB have bulk loader utilities to insert a large set of tuples into a relation, reading from formatted text files 
   This is much faster than INSERT statements
 
-
-
 * Update
 - SQL can change a value in a tuple without changing all the other values
 - E.g., increase salary of all instructors by 5%
@@ -643,11 +587,6 @@ WITH max_budget(value) as (
       WHERE salary < (SELECT AVG(salary) FROM instructor)
   ```
 
-
-
- 
-
-
 * Delete
 - One can delete tuples using a query returning entire rows of a table
   ```sql
@@ -660,11 +599,6 @@ WITH max_budget(value) as (
   ```sql
   DELETE FROM instructor
   ```
-
-
-
- 
-
 
 * SQL Tutorial
 
@@ -696,7 +630,6 @@ WITH max_budget(value) as (
 **UMD DATA605 - Big Data Systems**
 **Movie Database Example (Optional)**
 
-
 * Example Schema for SQL Queries
 
 \footnotesize
@@ -707,12 +640,8 @@ MovieStar(name, address, gender, birthdate)
 MovieExec(name, address, cert\#, netWorth)
 Studio(name, address, presC\#)
 ```
- 
-
-
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_29_image_1.png){width=70%}
-
 
 * SQL: Data Definition
 - CREATE TABLE
@@ -757,11 +686,6 @@ Studio(name, address, presC\#)
   - Solution:
     - First, compute avg length and find all tuples to delete
     - Next, delete all tuples found above (without recomputing avg or retesting the tuples)
-
- 
-
-
-
 
 * SQL: Data Manipulation
 - UPDATE
@@ -810,11 +734,6 @@ Studio(name, address, presC\#)
       title LIKE 'star wars _'
   ```
 
- 
-
-
-
-
 * Single Table Queries
 - Find distinct movies sorted by title
   ```sql
@@ -835,8 +754,6 @@ Studio(name, address, presC\#)
     - Do something (*compute avg* in this case) for each group
     - Number of resulting tuples == number of groups
 
- 
-
 * Single Table Queries
 - Find movie with the maximum length
   ```sql
@@ -855,11 +772,6 @@ Studio(name, address, presC\#)
                             si.year = m.year);
   ```
   - The "inner" subquery counts the number of actors for that movie.
-
- 
-
-
-
 
 * Single Table Queries
 - Rank movies by their length
@@ -882,11 +794,6 @@ Studio(name, address, presC\#)
               movieStar
   ```
 
- 
-
-
-
-
 * Single Table Queries
 - Set Comparisons
   ```sql
@@ -903,11 +810,6 @@ Studio(name, address, presC\#)
       );
   ```
 
- 
-
-
-
-
 * Multi-table Queries
 - Key:
   - Do a join to get an appropriate table
@@ -919,11 +821,6 @@ Studio(name, address, presC\#)
           FROM movies m, movieexec me
           WHERE m.producerC# = me.cert#;
   ```
-
- 
-
-
-
 
 * Multi-table Queries
 - Consider the query:
@@ -950,10 +847,6 @@ Studio(name, address, presC\#)
   - The count(starName) works correctly then
   - Note: count(*) would not work correctly (NULLs can have unintuitive behavior)
 
- 
-
-
-
 * Other SQL Constructs
 - Views
   ```sql
@@ -966,8 +859,6 @@ Studio(name, address, presC\#)
   - Can use it in any place where a table name is used
   - Views are used quite extensively to: (1) simplify queries, (2) hide data (by giving users access only to specific views)
   - Views may be *materialized *or not
-
-
 
 * Other SQL Constructs
 - NULLs
@@ -986,11 +877,6 @@ Studio(name, address, presC\#)
     - Both the *deduction* from one account and *credit* to the other account should happen, or neither should
 - Triggers
   - A trigger is a statement that is executed automatically by the system as a side effect of a modification to the database
-
- 
-
-
-
 
 * Other SQL Constructs
 - Integrity Constraints
@@ -1012,11 +898,6 @@ Studio(name, address, presC\#)
   balance int not null, check (balance>= 0)
   ```
 
- 
-
-
-
-
 * Integrity Constraints
 - Referential integrity: prevent dangling tuples
   ```sql
@@ -1026,11 +907,6 @@ Studio(name, address, presC\#)
   CREATE TABLE loan(..., FOREIGN KEY bname REFERENCES branch);
   ```
 - Can tell the system what to do if a referenced tuple is being deleted
-
- 
-
-
-
 
 * Integrity Constraints
 - Global Constraints
@@ -1049,9 +925,6 @@ Studio(name, address, presC\#)
                   AND L.lno= B.lno)))
   ```
 
-
-
-
 * Additional SQL Constructs
 - **Select** subquery factoring
   - To allow assigning a name to a subquery, then use its result by referencing that name
@@ -1065,9 +938,6 @@ Studio(name, address, presC\#)
   - Can have multiple subqueries (multiple with clauses)
   - Real advantage is when subquery needs to be referenced multiple times in main select
   - Helps with complex queries, both for readability and maybe performance (can cache subquery results)
-
-
-
 
 * Another SQL Construct
 - **SELECT HAVING** clause
