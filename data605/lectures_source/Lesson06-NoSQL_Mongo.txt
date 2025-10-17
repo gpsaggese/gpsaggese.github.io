@@ -46,6 +46,8 @@ Prof. Kathleen Durant (Northeastern U.)
 UMD DATA605 - Big Data Systems
 
 * Key-Value Store vs Document DBs
+::: columns
+:::: {.column width=75%}
 - **Key-value stores**
   - Basically a map or a dictionary
     - E.g., HBase, Redis
@@ -60,12 +62,16 @@ UMD DATA605 - Big Data Systems
   - Documents organized into *collections*
     - Similar to *tables* in relational DBs
     - Large collections can be partitioned and indexed
-
+::::
+:::: {.column width=15%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_3_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_3_image_2.png)
-
+::::
+:::
 * Resources
+::: columns
+:::: {.column width=50%}
 - All concepts in slides
 - MongoDB tutorial
 - Web
@@ -74,10 +80,14 @@ UMD DATA605 - Big Data Systems
   - pymongo
 - Book
   - Seven Databases in Seven Weeks, 2e
-
+::::
+:::: {.column width=50%} 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_5_image_1.png)
-
+::::
+:::
 * MongoDB
+:::columns
+:::: {.column width=75%}
 - Developed by MongoDB Inc.
   - Founded in 2007
   - Based on DoubleClick experience with large-scale data
@@ -95,17 +105,20 @@ UMD DATA605 - Big Data Systems
 - Written in C++
 - Supports APIs (drivers) in many languages
   - E.g., JavaScript, Python, Ruby, Java, Scala, C++, ...
-
+::::
+:::: {.column width=15%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_6_image_1.png)
-
+::::
+:::
 * MongoDB: Example of Document
+
 - **A document is a JSON data structure**
 - It corresponds to a row in a relational DB
   - Without schema
   - Primary key is **\_id**
   - Values nested to an arbitrary depth
 
-![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_7_image_1.png)
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_7_image_1.png){width=80%}
 
 * MongoDB: Functionalities
 - **Design goals**
@@ -127,6 +140,8 @@ UMD DATA605 - Big Data Systems
   - Reads and writes distributed over shards
 
 * MongoDB: Hierarchical Objects
+:::columns
+::::{.column width=50%}
 - A Mongo **instance** has:
   - Zero or more "databases"
   - Mongo instance ~ Postgres instance
@@ -141,23 +156,18 @@ UMD DATA605 - Big Data Systems
   - One or more "fields"
     - It has always primary key \_id
     - Mongo field ~ Postgres columns
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_9_image_1.png)
+::::
+:::
 
-**Collection
-**
 
-**Document
-**
-
-**Database
-**
-
-**Instance
-**
 
 From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 
 * Relational DBs vs MongoDB: Terms and Concepts
-
+\tiny
 | RDBMS Concept | MongoDB Concept | Meaning in MongoDB |
 |---------|---------|---------|
 | database | database | Container for collections |
@@ -169,7 +179,7 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 | foreign key | reference | Pointers |
 | table joins | embedded documents | Nested name-value pairs |
 
-![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_10_image_1.png)
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_10_image_1.png){width=70%}
 
 * Relational vs Document DB: Workflows
 - **Relational DBs**
@@ -192,6 +202,8 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
     - Process data on the client side
 
 * Why Use MongoDB?
+::: columns
+:::: {.column width=60%}
 - Simple to query
   - Do the work on client side
 - It's fast
@@ -202,9 +214,11 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 - Easy and fast integration of data
 - Not well suited for heavy and complex transactions systems
   - E.g., banking system
-
+::::
+::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_12_image_1.png)
-
+::::
+:::
 * MongoDB: Data Model
 
 - **Documents** are composed of field and value pairs
@@ -225,8 +239,8 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_13_image_2.png)
 
 * MongoDB: Data Model
-
-![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_14_image_1.png)
+:::columns
+::::{.column width=50%}
 
 - Documents can be nested
   - Embedded sub-document
@@ -237,25 +251,33 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
 **
   - Eliminate duplication
   - Represent many-to-many relationships
-
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_14_image_1.png)
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_14_image_2.png)
-
+::::
+:::
 * Schema Free
 - MongoDB does not need any pre-defined data schema
 - Every **document** in a **collection** can have different fields and values
   - No need for NULL values / union of fields like in relational DBs
 - E.g., dishomogeneous data instances
 
+
+:::columns
+::::{.column width=33%}
+**Document**
+::::
+::::{.column width=33%}
+**Document**
+::::
+::::{.column width=33%}
+
+**Collection**
+::::
+:::
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_15_image_1.png)
 
-**Collection
-**
-
-**Document
-**
-
-**Document
-**
 
 * JSON Format
 - JSON = JavaScript Object Notation
@@ -265,8 +287,8 @@ From https://www.mongodb.com/docs/manual/core/data-modeling-introduction
   - Followed by a colon :
   - Followed by a typed value
 "name": "R2-D2"
-- Data in documents is separated by commas ,**
-**
+- ** Data in documents is separated by commas ,**
+
   "name": "R2-D2", race : "Droid"
 - Curly braces {} hold documents
     {"name": "R2-D2", race : "Droid", affiliation: "rebels"}
@@ -361,6 +383,13 @@ with:
 - **db.collection.findOne(<query>, <projection>)**
 
 * More Query Examples
+- Mongo has a functional programming flavor
+  - E.g., composing operators, like **`$or`**
+
+:::columns
+::::{.column width=40%}
+\footnotesize
+**SQL**
 ```sql
 SELECT * FROM users WHERE age>33 
 ```
@@ -368,7 +397,8 @@ SELECT * FROM users WHERE age>33
 SELECT * FROM users WHERE age!=33 
 ```
 ```sql
-SELECT * FROM users WHERE name LIKE "%Joe%"
+SELECT * FROM users WHERE name 
+LIKE "%Joe%"
 ```
 
 ```sql
@@ -379,7 +409,7 @@ SELECT * FROM users WHERE a=1 or b=2
 ```
 
 ```sql
-**SELECT * FROM foo
+SELECT * FROM foo
 ```
 
 ```sql
@@ -392,42 +422,42 @@ SELECT * FROM users
 WHERE age>33 AND age<=40
 ```
 
-```text
-
+::::
+::::{.column width=40%}
+\footnotesize
 **Mongo**
-**`db.users.find({age: {$gt: 33}}) `
-**
-**`db.users.find({age: {$ne: 33}}) `
-**
-**db.users.find({name: /Joe/}) 
-**
-**db.users.find({a: 1, b: 'q'}) 
-**
-**db.users.find({`$or: [{a: 1}, {b: 2}]`}) 
-**
-**db.foo.find({name: "bob",
-**
-** `$or: [{a: 1}, {b: 2}]})`
-**
-**db.users.find({'age':
-**
-**{`$gt: 33, $lte: 40`}}) 
-**
+```mongo
+db.users.find({age: {$gt: 33}}) 
 
-- Mongo has a functional programming flavor
-  - E.g., composing operators, like **`$or`**
-```text
+db.users.find({age: {$ne: 33}}) 
+
+db.users.find({name: /Joe/}) 
+
+db.users.find({a: 1, b: 'q'}) 
+
+db.users.find({$or: [{a: 1}, {b: 2}]}) 
+
+db.foo.find({name: "bob",
+
+$or: [{a: 1}, {b: 2}]})
+
+db.users.find({'age':
+
+{$gt: 33, $lte: 40}}) 
+```
+::::
+:::
+
 
 * Query Operators
 
-![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_24_image_1.png)
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_24_image_1.png){width=80%}
 
 * Update Operations
 - **db.collection.insert(<document>)**
   - Omit the **\_id** field to have MongoDB generate a unique key
-   **db.parts.insert({type: "screwdriver", quantity: 15})
-**
-  **db.parts.insert({\_id: 10, type: "hammer", quantity: 1})**
+  - **db.parts.insert({type: "screwdriver", quantity: 15})**
+  - **db.parts.insert({\_id: 10, type: "hammer", quantity: 1})**
 - **db.collection.save(<document>)**
   - Updates an existing record or creates a new record
 - **db.collection.update(<query>, <update>, {upsert: true})**
@@ -436,14 +466,16 @@ WHERE age>33 AND age<=40
   - Modify existing record(s)
   - Retrieve old or new version of the record
 
+
 * Delete Operations
 - **db.collection.remove(<query>, <justone>)**
   - Delete all records from a collection or matching a criterion
   - **<justone>** specifies to delete only 1 record matching the criterion
 - Remove all records in **parts** with **type** starting with h
-**db.parts.remove(type: /^h/ )**
+  - **db.parts.remove(type: /h/ )**
 - Delete all documents in the **parts** collection
-**db.parts.remove()**
+  - **db.parts.remove()**
+
 
 * MongoDB Features
 - Document-oriented NoSQL store
@@ -470,17 +502,18 @@ WHERE age>33 AND age<=40
 
 * MongoDB Tutorial
 Tutorial is at GitHub
-The instructions are here**
-**
-**> `cd $GIT\_REPO/tutorials/tutorial\_mongodb`
-**
-**> vi tutorial\_mongo.md**
+The instructions are here:
+```
+> cd $GIT\_REPO/tutorials/tutorial\_mongodb
 
+> vi tutorial\_mongo.md
+```
 * MongoDB Processes and Configuration
+:::columns
+::::{.column width=60%}
 - **mongod**: database instance (i.e., a server process)
 - **mongosh**: interactive shell (i.e., a client)
-  - Fully functional JavaScript environment for use with a MongoDB *
-*
+  - Fully functional JavaScript environment for use with a MongoDB 
 - **mongos**: database router
   - Process all requests
   - Decide how many and which **mongod** instances should receive the query (sharding / partitioning)
@@ -489,46 +522,43 @@ The instructions are here**
 - You should have:
   - One **mongos** (router) for the whole system no matter how many **mongod**s you have; or
   - One local **mongos** for every client if you wanted to minimize network latency
-
+::::
+::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_30_image_1.png)
+::::
+:::
 
 * MapReduce Functionality
+::: columns
+::::{.column width=50%}
 - Perform map-reduce computation given a collection of (keys, value) pairs
 - Must provide at least a map function, reduction function, and the name of the result set
 
-```text
-**db.collection.mapReduce(
-**
-**<map\_function>,
-**
-**<reduce\_function>,
-**
-**{
-**
-**out: <collection>,
-**
-**query: <document>,
-**
-**sort: <document>,
-**
-**limit: <number>,
-**
-**finalize: <function>,
-**
-**scope: <document>,
-**
-**jsMode: <boolean>,
-**
-**verbose: <boolean>
-**
-**})**
 ```
-
-![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_31_image_1.png)
-
+db.collection.mapReduce(
+<map\_function>,
+<reduce\_function>,
+{
+out: <collection>,
+query: <document>,
+sort: <document>,
+limit: <number>,
+finalize: <function>,
+scope: <document>,
+jsMode: <boolean>,
+verbose: <boolean>
+})
+```
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_31_image_2.png)
 
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_31_image_1.png)
+::::
+:::
 * Data Replication
+:::columns
+::::{.column width=75%}
 - **Data replication** ensure:
   - Redundancy
   - Backup
@@ -539,15 +569,16 @@ The instructions are here**
   - Different properties can be associated with a secondary set,
     - E.g., secondary-only, hidden delayed, arbiters, non-voting
 - If the primary fails the secondary sets "vote" to elect the new primary set
-
+::::
+:::: {.column width=25%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_32_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_32_image_2.png)
-
+::::
+:::
 * Sync vs Async Replication
-
-![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_33_image_1.png)
-
+:::columns
+:::: {.column width=40%}
 - **Synchronous replication**: updates are propagated to other replicas as part of a single transaction
 - Implementations
   - 2-Phase Commit (2PC)
@@ -557,9 +588,12 @@ The instructions are here**
   - The primary node propagates updates to replicas
   - The transaction is completed before replicas are updated (even if there are failures)
   - Commits are quick at cost of consistency
-
+::::
+:::: {.column width=60%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_33_image_1.png)
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_33_image_2.png)
-
+::::
+:::
 * Data Consistency
 
 - **Client decides how to enforce consistency for reads**
@@ -572,7 +606,8 @@ The instructions are here**
   - All *eventually consistent* reads are distributed among the secondaries
 
 * MongoDB: Sharding
-
+::: columns
+::::{.column width=60%}
 - **Shard** = subset of data
   - A collection is split in pieces based on the shard key
   - Data distributed based on shard key or intervals [a, b)
@@ -583,13 +618,15 @@ The instructions are here**
 - **mongos** acts as a query router interfacing clients and sharded cluster
   - Each shard can be deployed as a replica set
   - Config servers store metadata and configuration settings for cluster
-
+::::
+::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_35_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_35_image_2.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_35_image_3.png)
-
+::::
+:::
 * RDMBS Internals
 
 **Storage hierarchy**
@@ -606,23 +643,34 @@ The instructions are here**
 - Operate upon the tuples to produce results
 
 * Query Optimizer
-
+:::columns
+::::{.column width=50%}
 - **RDBMSs: query optimizer is static**
   - Assign a cost to each query plan
   - Estimate some cost params (e.g., time to access data)
   - Search for the best query
   - At least traditional RDBMs
 
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_1.png)
+::::
+:::
 
-![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_2.png)
-
+:::columns
+::::{.column width=15%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_2.png){width=80%}
+::::
+::::{.column width=15%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_3.png)
-
+::::
+::::{.column width=15%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_4.png)
-
+::::
+:::
 * Query Optimizer
-
+:::columns
+::::{.column width=50%}
 - **MongoDB: query optimizer is dynamic**
   - Try different query plans and learn which ones perform well
   - The space of query plans is not so large, because there are no joins
@@ -632,9 +680,11 @@ The instructions are here**
   - Cache the result
   - If a plan that was working well starts performing poorly try again different plans
     - E.g, data in the DB has changed, parameter values to a query are different
-
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_38_image_1.png)
-
+::::
+:::
 * MongoDB: Strengths
 
 - Provide a flexible and modern query language
@@ -652,7 +702,8 @@ The instructions are here**
   - What matters is the ability to store and retrieve great quantities of data
 
 * MongoDB: Limitations
-
+:::columns 
+::::{.column width=50%}
 - No referential integrity
   - Aka foreign key constraint
 - Lack of transactions and joins
@@ -662,13 +713,15 @@ The instructions are here**
   - You must have a data model in your application
   - Objects within a collection can be completely inconsistent in their fields
 - CAP Theorem: targets consistency and partition tolerance, giving up on availability
-
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_40_image_1.png)
-
-* UMD DATA605 - Big Data Systems
+::::
+:::
 
 * Couchbase
-
+::: columns 
+:::: {.column width=50%}
 - NoSQL document-oriented DB (like MongoDB)
 - Couchbase = merge of CouchDB and membase
   - *CouchDB*
@@ -686,13 +739,16 @@ The instructions are here**
 - From CAP point of view:
   - Supports consistency and partition tolerance
   - High availability is achieved through use of multiple clusters
-
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_42_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_42_image_2.png)
-
+::::
+:::
 * Architecture
-
+::: columns
+::::{.column width=50%}
 - Every Couchbase node consists of **different services**:
   - Data service
   - Index service
@@ -707,11 +763,13 @@ The instructions are here**
 **
   - Writes data *asynchronously *to disk after acknowledging to the client
   - Optionally *synchronous: *ensure data is written to more than one server before acknowledging a write
-
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_43_image_1.png)
 
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_43_image_2.png)
-
+::::
+:::
 * Queries
 
 - **Can create multiple views over documents
@@ -732,4 +790,5 @@ The instructions are here**
 **
   - (Map) First define a view with the columns of the document your are interested in
   - (Reduce) Optionally define aggregate functions over the data
+
 
