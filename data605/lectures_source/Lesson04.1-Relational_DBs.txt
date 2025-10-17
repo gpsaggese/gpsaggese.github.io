@@ -77,6 +77,9 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=40%}
 
 \centering
+
+\footnotesize
+
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_4_image_1.png){width=60%}
 `instructor` relation
 
@@ -123,23 +126,23 @@ UMD DATA605 - Big Data Systems
 * Example: University DB
 
 - **UML diagram of a DB and schemas representing a University**
-- Each box is a table / relation
-- Column / fields / attributes are listed inside the box
-- Primary keys are underlined fields
-- Foreign key constraints are arrows between boxes
+  - Each box is a table / relation
+  - Column / fields / attributes are listed inside the box
+  - Primary keys are underlined fields
+  - Foreign key constraints are arrows between boxes
 
 ::: columns
 :::: {.column width=40%}
 - **Analysis of the diagram**
-- ER model
-- Entities
-  - student
-  - department
-  - ...
-- Relationships
-  - takes
-  - teaches
-  - ...
+  - ER model
+  - Entities
+    - `student`
+    - `department`
+    - ...
+  - Relationships
+    - `takes`
+    - `teaches`
+    - ...
 ::::
 :::: {.column width=55%}
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_6_image_1.png)
@@ -150,22 +153,19 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=65%}
 
-- *R* is the set of attributes of a relation *r*
-  - E.g., `ID, name, dept\_name, salary` are attributes of relation `instructor`
+- _R_ is the set of attributes of a relation _r_
+  - E.g., `ID, name, dept_name, salary` are attributes of relation `instructor`
 
-- *K* is a superkey of *R* if values for *K* are sufficient to identify a unique
-  tuple of each possible relation *r(R)*
-  - E.g., `(ID)` and `(ID, name)** are both superkeys of `instructor`
-  - ``` (name)``` is not a superkey of ``` instructor```
+- _K_ is a superkey of _R_ if values for _K_ identify a unique tuple of each
+  possible relation _r(R)_
+  - E.g., `(ID)` and `(ID, name)` are superkeys of `instructor`
+  - `(name)` is not a superkey of `instructor`
 
-- **Superkey** *K*` is a candidate key** if *K* is minimal
-  - E.g., (ID) is a candidate key for **instructor**
+- A primary key is a minimal set of attributes that uniquely identify each row
+  - Typically small and immutable
+  - Would `SSN` be a primary key? Yes and no
 
-- One of the candidate keys is selected to be the **primary key**
-  - Typically one that is small and immutable (or at least it doesn't change often)
-  - Would **SSN** be a primary key? Yes and no
-- A primary key is a minimal set of attributes that identify *uniquely* each possible row
-- **Primary key constraint**: rows in the relation can't have the same primary key
+- **Primary key constraint**: rows can't have the same primary key
 
 ::::
 :::: {.column width=35%}
@@ -173,7 +173,7 @@ UMD DATA605 - Big Data Systems
 \centering
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_7_image_1.png)
 \footnotesize
-**instructor** relation
+`instructor` relation
 
 \vspace{1cm}
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_7_image_2.png){width=50%}
@@ -185,14 +185,21 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=75%}
 - Marital status
   - Married(person1\_ssn, person2\_ssn, date\_married, date\_divorced)
+
 - Bank account
   - Account(cust\_ssn, account\_number, cust\_name, balance, cust\_address)
+
 - Research assistantship at UMD
-  - RA(student\_id, project\_id, supervisor\_id, appt\_time, appt\_start\_date, appt\_end\_date)
+  - RA(student\_id, project\_id, supervisor\_id, appt\_time, appt\_start\_date,
+    appt\_end\_date)
+
 - Information typically found on Wikipedia
   - Person(Name, Born, Died, Citizenship, Education, ...)
+
 - Info about US President on Wikipedia
-  - President(name, start\_date, end\_date, vice\_president, preceded\_by, succeeded\_by)
+  - President(name, start\_date, end\_date, vice\_president, preceded\_by,
+    succeeded\_by)
+
 - Tour de France: historical rider participation information
   - Rider(Name, Born, Team-name, Coach, Sponsor, Year)
 ::::
@@ -206,15 +213,22 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=75%}
 - Marital status
-  - text Married(**person1\_ssn, person2\_ssn, date\_married**, date\_divorced)
+  - Married(**person1\_ssn, person2\_ssn, date\_married**, date\_divorced)
+
 - Bank account
   - Account(cust\_ssn, **account\_number**, cust\_name, balance, cust\_address)
+
 - Research assistantship at UMD
-  - RA(**student\_id, project\_id**, supervisor\_id, appt\_time, **appt\_start\_date**, appt\_end\_date)
+  - RA(**student\_id, project\_id**, supervisor\_id, appt\_time,
+    **appt\_start\_date**, appt\_end\_date)
+
 - Information typically found on Wikipedia
   - Person(**Name, Born, Died, Citizenship, Education, ...**)
+
 - Info about US President on Wikipedia
-  - President(**name, start\_date**, end\_date, vice\_president, preceded\_by, succeeded\_by)
+  - President(**name, start\_date**, end\_date, vice\_president, preceded\_by,
+    succeeded\_by)
+
 - Tour de France: historical rider participation information
   - Rider(**Name, Born, Team-name,** Coach, Sponsor, **Year**)
 ::::
@@ -224,31 +238,45 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Foreign Key
-- **Foreign key** = primary key of a relation that appears in another relation
-  - E.g., **(ID)** from *student* appears in the relations *takes*, *advisor*
-  - *takes* is the "referencing relation", has the foreign key
-  - *student* is the "referenced relation", has the primary key
-  - Typically shown by an arrow from referencing $\to$ referenced
-- **Foreign key constraint**: for each row, the tuple corresponding to a primary key must exist
-  - Aka referential integrity constraint
-  - If there is a **(student101, DATA605)** in *takes*, there must be a tuple with **student101** in *student*
-- In words, the key referenced as foreign key needs to exist as primary key
-
+::: columns
+:::: {.column width=60%}
+- **Foreign key** = primary key of a relation in another relation
+  - E.g., `(ID)` from `student` in `takes`, `advisor`
+  - `takes` is the "referencing relation", has the foreign key
+  - `student` is the "referenced relation", has the primary key
+  - Shown by an arrow from referencing $\to$ referenced
+::::
+:::: {.column width=35%}
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_10_image_1.png)
+::::
+:::
+
+- **Foreign key constraint**: for each row, the tuple for a primary key must
+  exist
+  - Aka referential integrity constraint
+  - If `(student101, DATA605)` in `takes`, there must be `student101` in
+    `student`
+
+- The key referenced as foreign key needs to exist as primary key
+
 
 * Relational Algebra: 1/4
 ::: columns
 :::: {.column width=70%}
 - **Relation**: set of tuples
-- **Relational algebra**: operations that take one or more relations as input and produce a new relation, e.g.,
-  - Unary relation: selection, projection, rename
-  - Binary relation: union, set difference, intersection, Cartesian product, join
-- **Selection ($\Sigma$)**: select tuples that satisfy a given predicate
-  - E.g., select tuples of *instructor* where **dept\_name = "Physics"**
-- **Projection ($\pi$)**: return tuples with a subset of attributes
-  - E.g., project tuples of *instructor* with only **(name, salary)**
-- **Set operations**: union, intersection, set\_difference of relations
-  - Need to be compatible (i.e., have the same attributes)
+
+- **Relational algebra**: operations on relations producing a new relation
+  - Unary: selection, projection, rename
+  - Binary: union, set difference, intersection, Cartesian product, join
+
+- **Selection $\Sigma$**: select tuples satisfying a predicate
+  - E.g., select `instructor` tuples where `dept_name = "Physics"`
+
+- **Projection $\pi$**: return tuples with subset of attributes
+  - E.g., project `instructor` tuples with `(name, salary)`
+
+- **Set operations**: union, intersection, set difference
+  - Must be compatible (same attributes)
 ::::
 :::: {.column width=30%}
 
@@ -269,28 +297,29 @@ UMD DATA605 - Big Data Systems
 
 * Relational Algebra: 2/4
 - **Cartesian product**: combine information from two relations into a new one
-  - *instructor* = **(ID, name, dept\_name, salary)**
-  - *teaches* = **(ID, course\_id, sec\_id, semester, year)**
-- E.g., *instructor* x *teaches* gives **(instructor.ID, instructor.name, instructor.dept\_name, teaches.ID, ...)**
+  - `instructor` = `(ID, name, dept_name, salary)`
+  - `teaches` = `(ID, course_id, sec_id, semester, year)``
+- E.g., `instructor` x `teaches` gives
+  `(instructor.ID, instructor.name, instructor.dept_name, teaches.ID, ...)`
 
 ::: columns
 :::: {.column width=25%}
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_12_image_1.png)
 
 \footnotesize
-*instructor* relation
+`instructor` relation
 ::::
 :::: {.column width=30%}
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_12_image_2.png)
 
 \footnotesize
-*teaches* relation
+`teaches` relation
 ::::
 :::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_12_image_3.png){width=90%}
 
 \footnotesize
-*instructor x teaches*
+`instructor` x `teaches`
 ::::
 :::
 
@@ -299,24 +328,28 @@ UMD DATA605 - Big Data Systems
 - **Join**: composition of two operations
   - Cartesian-product
   - A selection based on equality between two fields
-- E.g., *instructor* x *teaches* when **instructor.ID = teaches.ID**
+  - E.g., `instructor` x `teaches` when `instructor.ID = teaches.ID`
 
 ::: columns
 :::: {.column width=25%}
+
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_13_image_3.png)
 \footnotesize
-*instructor* relation
+`instructor` relation
+
 ::::
 :::: {.column width=30%}
-![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_13_image_4.png)
 
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_13_image_4.png)
 \footnotesize
-*teaches* relation
+`teaches` relation
+
 ::::
 :::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_13_image_1.png)
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_13_image_2.png){width=80%}
+
 ::::
 :::
 
@@ -324,18 +357,21 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=55%}
 - **Query**: combination of relational algebra operations
-  - E.g., "find the **course\_id** from the rows of the table section for the fall semester of 2017"
-- **Assignment**: assign parts of relational algebra to temporary relation variables
-  - A query can be written as a sequential program
-  - E.g., "find the **course\_id** for the classes that are run in both fall 2017 and spring 2018"
-- **Equivalent queries**: two queries that give the same result on any DB instance
-  - Some formulation can be more efficient than others
+  - E.g., _"find `course_id` from table section for fall 2017"_
+
+- **Assignment**: assign parts of relational algebra to temporary relation
+  variables
+  - Write a query as a sequential program
+  - E.g., _"find `course_id` for classes in both fall 2017 and spring 2018"_
+
+- **Equivalent queries**: two queries giving the same result on any DB instance
+  - Some formulations are more efficient
 ::::
 :::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_14_image_2.png)
 
-\vspace{3cm}
+\vspace{2cm}
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_14_image_1.png)
 
@@ -344,20 +380,22 @@ UMD DATA605 - Big Data Systems
 
 * SQL Overview
 
-- **Relational algebra**: mathematical description of a language to manipulate *relations*
-- **SQL**: programming language to describe and transform data in a relational DB
-  - Originally called Sequel
-  - Name was changed to Structured Query Language
-- **SQL statements can be grouped based on their goal**
+- **Relational algebra**: mathematical language to manipulate _relations_
+
+- **SQL**: language to describe and transform data in a relational DB
+  - Originally Sequel
+  - Changed to Structured Query Language
+
+- **SQL statements grouped by goal**
   - Data definition language (DDL)
-    - Define schema of the data (e.g., tables, attributes, indices)
-    - Specify integrity constraints (e.g., primary key, foreign key, not null)
+    - Define schema (tables, attributes, indices)
+    - Specify integrity constraints (primary key, foreign key, not null)
   - Data modification language (DML)
-    - Modify the data in tables
-    - E.g., Insert, Update, Delete
+    - Modify data in tables
+    - Insert, Update, Delete
   - Query data (DQL)
   - Control transactions
-    - E.g., specify beginning and end, control isolation level
+    - Specify beginning and end, control isolation level
   - Define views
   - Authorization
     - Specify access and security constraints
@@ -368,12 +406,14 @@ UMD DATA605 - Big Data Systems
   ```sql
   CREATE TABLE <name> (<field> <domain>, ... )
   ```
+
 - Data modification language (DML)
   ```sql
   INSERT INTO <name> (<field names>) VALUES (<field values>)
   DELETE FROM <name> WHERE <condition>
   UPDATE <name> SET <field name> = <value> WHERE <condition>
   ```
+
 - Query language
   ```sql
   SELECT <fields> FROM <name> WHERE <condition>
@@ -396,22 +436,23 @@ UMD DATA605 - Big Data Systems
 ::::{.column width=50%}
 where:
 
-- r is name of *table* (aka *relation*)
-- A\_i name of *attribute* (aka *field*, *column*)
-- D\_i domain of attribute A\_i
+- `r` is name of *table* (aka *relation*)
+- `A_i` name of *attribute* (aka *field*, *column*)
+- `D_i` domain of attribute `A_i`
 ::::
 :::
+
 - **Constraints**
-  - SQL will prevent changes to the DB that violate any integrity constraint
+  - SQL prevents changes violating integrity constraints
   - Primary key
-    - Need to be all non-null and unique
-    - ``` PRIMARY KEY (A_j1, A_j2, ..., A_jn) ```
+    - Must be non-null and unique
+    - `PRIMARY KEY (A_j1, A_j2, ..., A_jn)`
   - Foreign key
-    - Values of attributes for any tuple in current relation must correspond to values of the primary key attributes of some tuple in relation s
-    - ``` FOREIGN KEY (A_k1, A_k2, ..., A_kn) REFERENCES s ```
+    - Attribute values must match primary key values in relation s
+    - `FOREIGN KEY (A_k1, A_k2, ..., A_kn) REFERENCES s`
   - Not null
-    - Specify that null value is not allowed for that attribute
-    - ``` A_i D_i NOT NULL ```
+    - Null value not allowed for attribute
+    - A_i D_i NOT NULL
 
 * Select
 
@@ -420,36 +461,42 @@ SELECT A_1, A_2, ..., A_n
     FROM r_1, r_2, ..., r_m 
     WHERE P; 
 ```
-- **SELECT**: select the attributes to list (i.e., projection)
-- **FROM**: list of tables to be accessed
+- `SELECT`: select the attributes to list (i.e., projection)
+- `FROM`: list of tables to be accessed
   - Define a Cartesian product of the tables
-  - The query is going to be optimized to avoid to enumerate tuples that will be eliminated
-- **WHERE**: predicate involving attributes of the relations in the FROM clause (i.e., selection)
-- In SELECT or WHERE clauses, might need to use the table names as prefix to qualify the attribute name
-  - E.g., instructor.ID vs teaches.ID
-- A SELECT statement can be expressed in terms of relational algebra
+  - The query is going to be optimized to avoid to enumerate tuples that will be
+    eliminated
+- `WHERE`: predicate involving attributes of the relations in the `FROM` clause
+  (i.e., selection)
+- In `SELECT` or `WHERE` clauses, might need to use the table names as prefix to
+  qualify the attribute name
+  - E.g., `instructor.ID` vs `teaches.ID`
+- A `SELECT` statement can be expressed in terms of relational algebra
   - Cartesian product $\to$ selection $\to$ projection
-  - Difference: SQL allows duplicate values, relational algebra works with mathematical sets
+  - Difference: SQL allows duplicate values, relational algebra works with
+    mathematical sets
 
 * Null values
-- An arithmetic operation with NULL yields NULL
+- An arithmetic operation with `NULL` yields `NULL`
 - Comparison with NULL
-  - 1 < NULL?
-  - What about NOT(1 < NULL)?
-  - SQL yields UNKNOWN when comparing with NULL value
-  - There are 3 logical values: True, False, Unknown
+  - `1 < NULL`
+  - `NOT(1 < NULL)`
+  - SQL yields `UNKNOWN` when comparing with `NULL` value
+  - There are 3 logical values: `True`, `False`, `Unknown`
 - Boolean operators
   - Can be extended according to common sense, e.g.,
-  - True AND Unknown = Unknown
-  - False AND Unknown = False
-- In a WHERE clause, if the result is Unknown it's not included
+  - `True AND UNKNOWN = UNKNOWN`
+  - `False AND Unknown = False`
+- In a `WHERE` clause, if the result is `UNKNOWN` it's not included
 
 * Group by Query
 ::: columns
 :::: {.column width=65%}
-- The attributes in GROUP BY are used to form groups
+- The attributes in `GROUP BY` are used to form groups
   - Tuples with the same value on all attributes are placed in one group
-- Any attribute that is not in the GROUP BY can appear in the SELECT clause only as argument of aggregate function
+- Any attribute that is not in the `GROUP BY` can appear in the `SELECT` clause
+  only as argument of aggregate function
+
 \vspace{0.25cm}
 ```sql 
     SELECT dept_name, AVG(salary)
@@ -460,13 +507,14 @@ SELECT A_1, A_2, ..., A_n
 ```
     -- Error. 
 ```
+
 ```sql 
     SELECT dept_name, salary 
         FROM instructor 
         GROUP BY dept_name; 
 ```
 \vspace{0.25cm}
-- salary is not in GROUP BY so it must be in an aggregate function
+- `salary` is not in `GROUP BY` so it must be in an aggregate function
 ::::
 :::: {.column width=35%}
 
@@ -480,12 +528,12 @@ SELECT A_1, A_2, ..., A_n
 - State a condition that applies to groups instead of tuples (like WHERE)
 - Any attribute in the HAVING clause must appear in the GROUP BY clause
 - E.g., find departments with avg salary of instructors > 42k
-```sql 
-    SELECT dept_name, AVG(salary) AS avg_salary
-        FROM instructor 
-        GROUP BY dept_name 
-        HAVING AVG(salary) > 42000; 
-```
+  ```sql 
+      SELECT dept_name, AVG(salary) AS avg_salary
+          FROM instructor 
+          GROUP BY dept_name 
+          HAVING AVG(salary) > 42000; 
+  ```
 \vspace{0.5cm}
 - How does it work
   - FROM is evaluated to create a relation
@@ -495,10 +543,12 @@ SELECT A_1, A_2, ..., A_n
   - SELECT generates tuples of the results, applying aggregate functions to get a single result for each group
 
 * Nested subqueries
-- SQL allows to use the result of a query in another query
-  - E.g., one can use a subquery returning only one attribute (aka scalar subquery) in any place a value is used
-  - E.g., use the result of a query for set membership in the WHERE clause
-  - E.g., use the result of a query in a FROM clause
+  ... tmp.prettier_on_str.md 27ms
+- SQL allows using the result of a query in another query
+  - Use a subquery returning one attribute (scalar subquery) where a value is
+    used
+  - Use the result of a query for set membership in the WHERE clause
+  - Use the result of a query in a FROM clause
 
 :::columns
 ::::{.column width=60%}  
