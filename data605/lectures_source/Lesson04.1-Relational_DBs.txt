@@ -1,8 +1,10 @@
-// notes_to_pdf.py --input lectures_source/final_enhanced_markdown.txt --output tmp.pdf --type slides --skip_action cleanup_after --debug_on_error --toc_type navigation
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+// https://docs.google.com/presentation/d/1XnaVECt0YkkPBt-7TDuOBRGHSba9fiSuodAXECf2-tc/edit?slide=id.p42#slide=id.p42
 
 ::: columns
 :::: {.column width=15%}
-![](data605/lectures_source/images/UMD_Logo.png)
+![](msml610/lectures_source/figures/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -16,80 +18,72 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**Relational DBs
-SQL Intro
-SQL tutorial**
+**$$\text{\blue{Relational DBs}}$$**
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`**
+**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
 
-**TAs**:
-Krishna Pratardan Taduri, kptaduri@umd.edu
-Prahar Kaushikbhai Modi, pmodi08@umd.edu
-
-**v1.1**
 ::::
 :::: {.column width=20%}
 
 ::::
 :::
 
-**UMD DATA605 - Big Data Systems****Relational DBs
-**
-SQL Intro**
-**
-SQL tutorial
-Silbershatz: Chap 2
-
 * Relational Model: Overview
 - Introduced by Ted Codd (late 60's, early 70's)
+
 - **First prototypes**
   - Ingres Project at Berkeley (1970-1985)
-    - Ingres (INteractive Graphics REtrieval System) $\to$ PostgreSQL (=Post Ingres)
+    - Ingres (INteractive Graphics REtrieval System)
+    - $\to$ PostgreSQL (=Post Ingres)
   - IBM System R (1970) $\to$ Oracle, IBM DB2
+
 - **Contributions from relational data model**
   - Formal semantics for data operations
   - Data independence: separation of logical and physical data models
   - Declarative query languages (e.g., SQL)
   - Query optimization
+
 - **Key to commercial success**
 
 * Relational Model: Key Definitions
 ::: columns
-:::: {.column width=65%}
-\footnotesize
+:::: {.column width=55%}
 - A relational DB consists of a collection of **tables / relations**
-  - Each table has a unique name and a schema
-- Each **row / tuple / record** in a table represents a relationship among a set of values
+  - Each table has a unique name and schema
+
+- Each **row / tuple / record** in a table represents a relationship among
+  values
+
 - Each **element** of a row corresponds to a **column / field / attribute**
-  - Each element in a column is atomic (e.g., a phone number is a single object and not a sequence of numbers)
-  - **NULL** represents a value that is unknown or doesn't exist (e.g., someone not having a phone number)
-- E.g., ***instructor*** and ***course*** relations
+  - Each element in a column is atomic (e.g., a phone number is a single object)
+  - `NULL` represents a value that is unknown or doesn't exist
+
+- E.g., `instructor` and `course` relations
+
 - **Schema of a relation**
   - A list of attributes and their domains
-  - It's like type definition in programming languages
-  - E.g., the domain of **salary** is integers >= 0
+  - Like type definition in programming languages
+  - E.g., the domain of `salary` is integers >= 0
+
 - **Instance of relation**
   - A particular instantiation of a relation with actual values
-  - Will change over time
+  - Changes over time
 ::::
 :::: {.column width=40%}
 
 \centering
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_4_image_1.png){width=60%}
-
-\footnotesize
-***instructor*** relation
+`instructor` relation
 
 \vspace{1cm}
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_4_image_2.png)
-
-***course*** relation
+`course` relation
 
 ::::
 :::
@@ -135,7 +129,7 @@ Silbershatz: Chap 2
 - Foreign key constraints are arrows between boxes
 
 ::: columns
-:::: {.column width=30%}
+:::: {.column width=40%}
 - **Analysis of the diagram**
 - ER model
 - Entities
@@ -147,7 +141,7 @@ Silbershatz: Chap 2
   - teaches
   - ...
 ::::
-:::: {.column width=70%}
+:::: {.column width=55%}
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_6_image_1.png)
 ::::
 :::
@@ -157,10 +151,11 @@ Silbershatz: Chap 2
 :::: {.column width=65%}
 
 - *R* is the set of attributes of a relation *r*
-  - E.g., **ID, name, dept\_name, salary** are attributes of relation ``` instructor```
+  - E.g., `ID, name, dept\_name, salary` are attributes of relation `instructor`
 
-- *K* is a superkey of *R* if values for *K* are sufficient to identify a unique tuple of each possible relation *r(R)*
-  - E.g., **(ID)** and **(ID, name)** are both superkeys of **instructor**
+- *K* is a superkey of *R* if values for *K* are sufficient to identify a unique
+  tuple of each possible relation *r(R)*
+  - E.g., `(ID)` and `(ID, name)** are both superkeys of `instructor`
   - ``` (name)``` is not a superkey of ``` instructor```
 
 - **Superkey** *K*` is a candidate key** if *K* is minimal

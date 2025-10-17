@@ -1,3 +1,5 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
 // https://docs.google.com/presentation/d/15WGtmsPNyg0KevSfxfVutZjnOMbozxDC01snSWNL7XY
 
 ::: columns
@@ -23,7 +25,7 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
 
 ::::
 :::: {.column width=20%}
@@ -419,8 +421,8 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=55%}
 - Tutorials
-  - [Work on main](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#work-on-main)
-  - [Hot fix](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#hot-fix)
+- [Work on main](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#work-on-main)
+- [Hot fix](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#hot-fix)
 
 - Start from a project with some commits
 
