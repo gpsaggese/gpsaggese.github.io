@@ -45,16 +45,34 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Explains how to run the tutorial
 - Notebook to execute / study
 
+* Issues with Relational DBs
+\begingroup \large
+**UMD DATA605 - Big Data Systems**
+\endgroup
+
+- **Issues with Relational DBs**
+- NoSQL Taxonomy
+- (Apache) HBase
+
 * Resources
+:::columns
+::::{.column width=50%}
 - Concepts in the slides
 - Tons of tutorials on line
 - Silbershatz Chap 10.2
 - Nice high-level view:
   - Seven Databases in Seven Weeks, 2e
 
+::::
+::::{.column width=50%}
+
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png)
+::::
+:::
 
 * From SQL to NoSQL
+:::columns
+::::{.column width=90%}
 - **DBs are central tools to big data
 **
   - New applications, new constraints to data / storage **
@@ -78,19 +96,19 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Polyglot model**
   - Use more than one DB in each project
   - Relational DBs are not going to disappear any time soon
-
+::::
+::::{.column width=10%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_5_image_1.png)
-
+::::
+:::
 * Issues with Relational DBs
-- **Relational DBs have drawbacks
-**
+- **Relational DBs have drawbacks**
   - 1 Application-DB impedance mismatch
   - 2 Schema flexibility
   - 3 Consistency in distributed set-up
   - 4 Limited scalability
 - In the next slides for each drawback we will discuss:
-  - **What is the problem
-**
+  - **What is the problem**
   - **Possible solutions**
     - Within relational SQL paradigm
     - With NoSQL approach
@@ -106,13 +124,20 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Relationships between tables (relationships between entities)
 - **Example of the app-DB mismatch**:
   - Application stores a simple Python map like:
-```text \# Store a dictionary from name (string) to tags (list of strings). tag_dict: Dict[str, List[str]] ```
+
+\begingroup \footnotesize \color{blue}
+```
+        # Store a dictionary from name (string) to tags (list of strings).
+        tag_dict: Dict[str, List[str]] 
+```
+\endgroup
+
   - A relational DB needs 3 tables:
-    - **Names(**nameId**, name)** to store the keys
-    - **Tags(**tagId**, tag)** to store the values
-    - ```text Names_To_Tags(**nameId**, **tagId**) ``` to map the keys to the values
+    - \textcolor{blue}{Names(\ul{nameId}, name)} to store the keys
+    - \textcolor{blue}{Tags(\ul{tagId}, tag)} to store the values
+    - Names_To_Tags(\ul{nameId}, \ul{tagId}) to map the keys to the values
   - One could denormalize the tables using a single table
-    - ```text Names(name, tag) ```
+    - \textcolor{blue}{Names(name, tag)}
 
 * 1 App-DB Impedance Mismatch: Solutions
 - **Ad-hoc mapping layer**
@@ -124,23 +149,21 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Object-relational mapping (ORM)**
   - Pros
     - Convert automatically data between object code and relational DB
-    - E.g., implement a Person object (e.g., name, phone number, addresses) using DB
+    - E.g., implement a \textcolor{blue}{Person} object (e.g., name, phone number, addresses) using DB
     - E.g., SQLAlchemy for Python and SQL
   - Cons
     - Complex types (e.g., struct), polymorphism, inheritance
-- ```text NoSQL approach ```
+- `**NoSQL approach**
   - No schema
     - Every object can be flat or complex (e.g., nested JSON)
     - Stored objects (aka documents) can be different
 
-```
 
-```markdown
 
 * 2 Schema Flexibility
 - **Problem**
   - Not all applications have data that fits neatly into a schema
-  - E.g., data can be nested and / or dishomogeneous (e.g., **List[Obj]**)
+  - E.g., data can be nested and / or dishomogeneous (e.g., \textcolor{blue}{List[Obj]})
 - **Within relational DB**
   - Use a schema general enough to accommodate all the possible cases
   - Cons
@@ -156,34 +179,46 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Related to ETL vs ELT data pipelines
 
 * 3 Consistency in Relational DBs
-- **All systems in the real-world fail**
+:::columns
+::::{.column width=75%}
+- **All systems in the real-world fail
+**
   - Application error (e.g., corner case, internal error)
   - Application crash (e.g., OS issue)
   - Hardware failure (e.g., RAM ECC error, disk)
   - Power failure
-- **Relational DBs enforce ACID properties**
+- **Relational DBs enforce ACID properties
+**
   - Need to be guaranteed for any system failure
+\footnotesize
 - **Atomicity**
   - = transactions are "*all or nothing*"
   - Either a transaction (which can be composed of multiple statements) succeeds completely or fails
 - **Consistency**
   - = any transaction brings the DB *from a valid state to another*
   - The "invariants" of the DB (e.g., primary, foreign key constraints) must be maintained
-- ```text Isolation ```
+- **Isolation**
   - = if transactions are executed *concurrently*, the result is the same as if the transactions were executed *sequentially*
-- ```text Durability ```
+- **Durability**
   - = once a transaction has been committed, the *content is preserved for any system failure*
   - Just record the data in non-volatile memory
+::::
+::::{.column width=30%}
+\footnotesize\centering
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_10_image_2.png)
+**Application error
+**
+\vspace{2cm}
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_10_image_1.png)
-
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_10_image_2.png)
-
-**Hardware failure **
-
-**Application error**
+**Hardware failure
+**
+::::
+:::
 
 * 3 Consistency in Distributed DB
+:::columns
+::::{.column width=70%}
 - When data scales up or number of clients increases $\to$ **distributed setup**
 - Goals to achieve:
   - Performance (e.g., transaction per seconds)
@@ -196,11 +231,17 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - *Impossible* in a distributed DB setup
     - Due to CAP theorem
     - Even weak consistency is difficult to achieve
-
+::::
+::::{.column width=30%}
+\vspace{1cm}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_11_image_1.png)
+::::
+:::
 
 * CAP Theorem
-- **CAP** **theorem**: Any *distributed* DB can have *at most two* of the following *three* properties
+:::columns
+::::{.column width=60%}
+- **CAP theorem**: Any *distributed* DB can have *at most two* of the following *three* properties
   - **Consistent**:
     - All clients see the same data
     - Writes are atomic and subsequent reads retrieve the new value
@@ -208,10 +249,16 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - **Partition tolerant**: the system still works even if communication is temporary lost (i.e., the network is partitioned)
 - Originally a conjecture (Eric Brewer)
 - Made formal later (Gilbert, Lynch, 2002)
+::::
+::::{.column width=40%}
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_12_image_1.png)
+::::
+:::
 
 * CAP Corollary
+:::columns
+::::{.column width=60%}
 - **CAP Theorem**: pick 2 among consistency, availability, partition tolerance
 - *Network partitions* cannot be prevented in large-scale distributed system
   - Minimize probability of failures using redundancy and fault-tolerance
@@ -220,12 +267,17 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - E.g., banking system
   - *Consistency* (i.e., allow different views of the system)
     - E.g., social network
-
+::::
+::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_13_image_1.png)
-
 **You are here**
+::::
+:::
+
 
 * CAP Theorem: Intuition
+:::columns
+::::{.column width=70%}
 - Imagine there are
   - a client (*Node0*)
   - two DB replicas (*Node1*, *Node2*)
@@ -241,9 +293,9 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - **Consistent, but not available**
   - Sometimes inconsistency is not acceptable (e.g., a banking system)
   - Stop the service (no availability) to avoid inconsistency
-
+::::
+::::{.column width=30%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_14_image_1.png)
-
 **X**
 
 **X**
@@ -253,8 +305,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 **DB replica**
 
 **Client**
+::::
+:::
 
 * Replication Schemes
+:::columns
+::::{.column width=70%}
 - **Replication schemes**: how to organize multiple servers implementing a distributed DB
 - **Primary-secondary replication**
   - Application only communicates with primary
@@ -267,16 +323,23 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Let *N* be the total number of replicas
   - When writing, we make sure to write to *W* replicas
   - When reading, we read from *R* replicas and pick the latest update (using timestamps)
-
+::::
+::::{.column width=30%}
+\tiny\centering
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_15_image_1.png)
+*Primary-secondary replication*
+\vspace{2cm}
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_15_image_2.png)
-
-*Primary-secondary replication*
-
 *Update-anywhere replication*
+::::
+:::
+
+
 
 * Synchronous Replication
+:::columns
+::::{.column width=50%}
 - **Synchronous replication**: updates are propagated to other replicas as part of a single transaction
 - Implementations
   - **2-Phase Commit (2PC)**: original proposal for doing this
@@ -288,30 +351,40 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Both solutions are complex / expensive
 - **CAP theorem**: still only one among Consistency, Availability, in case of Network partition
   - Many systems use relaxed / loose consistency models
-
+::::
+::::{.column width=50%}
+\vspace{2cm}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_16_image_1.png)
-```
-
-```markdown
-![images/lecture_5_0/lec_5_0_slide_17_image_1.png]
+::::
+:::
 
 * Asynchronous Replication
+:::columns
+::::{.column width=75%}
 - **Asynchronous replication**
+\footnotesize
   - The primary node propagates updates to replicas
   - The transaction is completed before replicas are updated (even if there are failures)
   - Commits are quick at cost of consistency
 - **Eventual consistency**
+\footnotesize
   - Popularized by AWS DynamoDB
   - Consistency guaranteed only on the eventual outcome
   - "*Eventual*" can mean after the server or network is fixed
 - **"Freshness" property**
+\footnotesize
   - Under asynchronous updates, a read from a replica may not get the latest version of a data item
   - User can request a version with a certain "freshness"
     - E.g., "data from not more than 10 minutes ago"
     - E.g., it's ok to show price for an airplane ticket that is few minutes old
   - Replicas version their data with timestamps
   - If local replica has fresh data, uses it, otherwise send request to primary node
-
+::::
+::::{.column width=40%}
+\vspace{2cm}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_17_image_1.png)
+::::
+:::
 * 4 Scalability Issues with RDMS
 - The sources of relational SQL DB scalability issues are:
 - **Locking data**
@@ -326,6 +399,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Overhead of replica consistency (2PC, Paxos)
 
 * Scalability Issues with RDMS: Solutions
+:::columns
+::::{.column width=70%}
 - **Table denormalization**
   - = approach used to increase relational DB performance by adding redundant data
   - Pros
@@ -337,15 +412,17 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Give up on part of ACID
   - Make definition of consistency weaker (E.g., eventual consistency)
 - **NoSQL**
-
-![images/lecture_5_0/lec_5_0_slide_19_image_1.png]
-
-![images/lecture_5_0/lec_5_0_slide_19_image_2.png]
-
+::::
+::::{.column width=30%}
+\tiny
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_19_image_1.png)
 *Normalized data*
+\vspace{1cm}
 
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_19_image_2.png)
 *Denormalized data*
-
+::::
+:::
 * NoSQL Stores
 - **Use cases of large-scale web applications**
   - Applications need real-time access with a few ms latencies
@@ -367,57 +444,82 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - E.g., one document / key
 
 * Relational DB vs MongoDB
+```
 How MongoDB solves the four RDBM problems
-1 **Application-DB impedance mismatch**
-- Store data as nested objects
-2 **Schema flexibility**
-- No schema, no tables, no rows, no columns, no relationships between tables
-3 **Consistency in replicated set-up**
-- Application decides consistency level
-  - *Synchronous*: wait until primary and secondary servers are updated
-  - *Quorum synchronous*: wait until the majority of secondary servers are updated
-  - *Asynchronous*, *eventual*: wait until only the primary is updated
-  - *"Fire and forget"*: not even wait until the primary persisted the data
-4 **Scalability**
-- Updating data means locking only one document, and not entire collection
-- Sharding: use more machines to do collectively do more work
+```
+- **1 Application-DB impedance mismatch**
+  - Store data as nested objects
+- **2 Schema flexibility**
+  - No schema, no tables, no rows, no columns, no relationships between tables
+- **3 Consistency in replicated set-up**
+  - Application decides consistency level
+    - *Synchronous*: wait until primary and secondary servers are updated
+    - *Quorum synchronous*: wait until the majority of secondary servers are updated
+    - *Asynchronous*, *eventual*: wait until only the primary is updated
+    - *"Fire and forget"*: not even wait until the primary persisted the data
+- **4 Scalability**
+  - Updating data means locking only one document, and not entire collection
+  - Sharding: use more machines to do collectively do more work
 
-**UMD DATA605 - Big Data** **Systems**
-Issues with Relational DBs
-NoSQL Taxonomy
-(Apache) HBase
+* NoSQL Taxanomy
+\begingroup \large
+**UMD DATA605 - Big Data Systems**
+\endgroup
+
+- Issues with Relational DBs
+- **NoSQL Taxonomy**
+- (Apache) HBase
 
 * Resources
+:::columns
+::::{.column width=50%}
 - Concepts in the slides
 - Silberschatz Chapter 23.6
 - Mastery:
   - Seven Databases in Seven Weeks, 2e
-
-![images/lecture_5_0/lec_5_0_slide_23_image_1.png]
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_23_image_1.png)
+::::
+:::
 
 * DB Taxonomy
+:::columns
+::::{.column width=50%}
 - **At least five DB genres**
   - *Relational* (e.g., Postgres)
   - *Key-value* (e.g., Redis)
   - *Document* (e.g.,. MongoDB)
   - *Columnar* (e.g., Parquet)
   - *Graph* (e.g., Neo4j)
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_24_image_3.png){width=80%}
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_24_image_2.png){width=80%}
+::::
+:::
+\vspace{1cm}
+:::columns
+::::{.column width=50%}
 - **Criteria to differentiate DBs**
   - Data model
   - Trade-off with respect to CAP theorem
   - Querying capability
   - Replication scheme
+::::
+::::{.column width=25%}
 
-![images/lecture_5_0/lec_5_0_slide_24_image_1.png]
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_24_image_4.png){width=80%}
+::::
+::::{.column width=25%}
 
-![images/lecture_5_0/lec_5_0_slide_24_image_2.png]
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_24_image_1.png){width=80%}
+::::
+:::
 
-![images/lecture_5_0/lec_5_0_slide_24_image_3.png]
 
-![images/lecture_5_0/lec_5_0_slide_24_image_4.png]
-```
-
-```markdown
 
 * Relational DB
 - E.g., *Postgres*, MySQL, Oracle, SQLite
@@ -439,6 +541,8 @@ NoSQL Taxonomy
   - When data structure is variable/dishomogeneous (record-to-record variation)
 
 * Key-Value Store
+:::columns
+::::{.column width=75%}
 - E.g., Redis, DynamoDB, *Git*, *AWS S3*, *filesystem*
 - **Data model**
   - Map simple keys (e.g., strings) to more complex values (e.g., it can be anything, binary blob)
@@ -454,10 +558,15 @@ NoSQL Taxonomy
 - **Not so good for**
   - Not great if data queries are needed
   - Lacking secondary indexes and scanning capabilities
-
+::::
+::::{.column width=25%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_26_image_1.png)
+::::
+:::
 
 * Document Store
+:::columns
+::::{.column width=75%}
 - E.g., *MongoDB*, CouchDB
 - **Data model**
   - Like key-value but value is a document (i.e., a nested dict)
@@ -473,10 +582,15 @@ NoSQL Taxonomy
 - **Not so good for**
   - Complex join queries
   - Denormalized form is the norm
-
+::::
+::::{.column width=25%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_27_image_1.png)
+::::
+:::
 
 * Columnar Store
+:::columns
+::::{.column width=80%}
 - E.g., *HBase*, Cassandra, *Parquet*
 - **Data model**
   - Data is stored by columns, instead of rows like in relational DBs
@@ -495,10 +609,15 @@ NoSQL Taxonomy
 - **Not so good for**
   - Need to design the schema based on how you plan to query the data
   - No native joins, applications need to handle join
-
+::::
+::::{.column width=20%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_28_image_1.png)
+::::
+:::
 
 * Graph DB
+:::columns
+::::{.column width=80%}
 - E.g., *Neo4J*, GraphX
 - **Data model**
   - Highly interconnected data, storing nodes and relationships between nodes
@@ -514,16 +633,22 @@ NoSQL Taxonomy
 - **Not so good for**
   - Don't scale well, since it's difficult to partition graph on different nodes
     - Store the graph in the graph DB and the relations in a key-value store
-
+::::
+::::{.column width=20%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_29_image_1.png)
+::::
+:::
 
 * Taxonomy by CAP
 
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_30_image_1.png)
+\centering
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_30_image_1.png){width=80%}
 
 From http://blog.nahurst.com/visual-guide-to-nosql-systems
 
 * Taxonomy by CAP
+:::columns
+::::{.column width=60%}
 - **CA (Consistent, Available) systems**
   - Have trouble with partitions and typically deal with it with replication
   - Traditional RDBMSs (e.g., PostgreSQL, MySQL)
@@ -535,25 +660,30 @@ From http://blog.nahurst.com/visual-guide-to-nosql-systems
   - Redis (key-value)
   - MemcacheDB (key-value)
   - Berkeley DB (key-value)
+::::
+::::{.column width=40%}
+\vspace{1cm}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_31_image_1.png)
+::::
+:::
 - **AP (Available, Partition-Tolerant) systems**
   - Achieve "eventual consistency" through replication and verification
   - Dynamo (key-value)
   - Cassandra (column-oriented/tabular)
   - CouchDB (document-oriented)
 
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_31_image_1.png)
+* (Apache) HBase
+\begingroup \large
+**UMD DATA605 - Big Data Systems**
+\endgroup
 
-* Taxonomy by CAP
-
-**UMD DATA605 - Big Data** **Systems**
-NoSQL Stores
-NoSQL Taxonomy
-(Apache) HBase
-```
-
-```text
+- Issues with Relational DBs
+- NoSQL Taxonomy
+- **(Apache) HBase**
 
 * Resources
+:::columns
+::::{.column width=50%}
 - Content in slides
 - Web
   - 2006, BigTable paper
@@ -561,12 +691,15 @@ NoSQL Taxonomy
   - https://github.com/apache/hbase
 - Good overview:
   - Seven Databases in Seven Weeks, 2e
-
+::::{.column width=50%}
+::::
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_33_image_1.png)
-
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_34_image_1.png)
+::::
+:::
 
 * (Apache) HBase
+:::columns
+::::{.column width=80%}
 - HBase = **H**adoop Data**Base**
   - Support very large tables on clusters of commodity hardware
   - Column oriented DB
@@ -585,6 +718,11 @@ NoSQL Taxonomy
   - Search systems (e.g., Internet search)
   - Facebook Messages (based on Cassandra)
   - Twitter metrics monitoring
+::::
+::::{.column width=20%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_34_image_1.png)
+::::
+:::
 
 * HBase: Features
 - Data versioning
@@ -622,44 +760,55 @@ NoSQL Taxonomy
   - Write tables back to HDFS as needed
 
 * HBase Data Model
+:::columns
+::::{.column width=65%}
 - **Warning**: HBase uses names similar to relational DB concepts, but with different meanings
 - A **database** consists of multiple tables
 - Each **table** consists of multiple rows, sorted by row key
 - Each row contains a *row key* and one or more column families
-- ```text Each column family ```
+- Each **column family**
   - Can contain multiple columns (family:column)
   - Is defined when the table is created
-- ```text A cell ```
+- A **cell**
   - Is uniquely identified by (table, row, family:column)
   - Contains metadata (e.g., timestamp) and an uninterpreted array of bytes (blob)
-- Versioning
+- **Versioning**
   - New values don't overwrite the old ones
   - `put()` and `get()` allow to specify a timestamp (otherwise uses current time)
+::::
+::::{.column width=35%}
+\vspace{1.5cm}
+\begingroup \tiny\centering
+```python
+\# HBase Database: from table name to Table.
+Database = Dict[str, Table]
 
-```text
-HBase Database: from table name to Table.
-**Database** = Dict[str, Table]
-# HBase Table.
-
-**table: Table** = {
-  # **Row key**
-  '**row1**': {
-    # (**column family**:**column**) → **value**
-    '**cf1**:**col1**': '**value1**',
+\# HBase Table.
+table: Table = {
+  # Row key
+  'row1': {
+    # (column family:column) → value
+    'cf1:col1': 'value1',
     'cf1:col2': 'value2',
     'cf2:col1': 'value3'
   },
-  '**row2**': {
+  'row2': {
     ... # More row data
   }
 }
-**database** = {'table1': **table**}
-# Querying data.
-(**value**, **metadata**) = \
-**table**['**row1**']['**cf1**:**col1**']
+database = {'table1': table}
+
+\# Querying data.
+(value, metadata) = \
+table['row1']['cf1:col1']
 ```
+\endgroup
+::::
+:::
 
 * Example 1: Colors and Shape
+:::columns
+::::{.column width=50%}
 - Table with:
   - 2 column families
     - "color" and "shape"
@@ -675,27 +824,34 @@ HBase Database: from table name to Table.
   - 2 columns in the column family "shape"
 - Data is accessed using a row key and column (family:qualifier)
 
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_1.png)
-```text
-**table** = {
+\centering
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_2.png){width=15%}
 
-  '**first**': {
-    # (**column family**, **column**) → **value**
-    '**color**': {'**red**': '**\#F00**',
-              '**blue**': '**\#00F**',
-              '**yellow**': '**\#FF0**'}
-    '**shape**': {'**square**': '**4**'}
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_1.png)
+\footnotesize
+```python
+table = {
+  'first': {
+    # (column family, column) → value
+    'color': {'red': '#F00',
+              'blue': '#00F',
+              'yellow': '#FF0'}
+    'shape': {'square': '4'}
   },
-  '**second**': {
-    '**shape**': {'**triangle**': '**3**',
-              '**square**': '**4**'}
+  'second': {
+    'shape': {'triangle': '3',
+              'square': '4'}
   }
 }
 ```
-
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_2.png)
+::::
+:::
 
 * Why all this convoluted stuff?
+:::columns
+::::{.column width=60%}
 - **A row in HBase is almost like a mini-database**
   - A cell has many different values associated with it
   - Data is stored in a sparse format
@@ -705,25 +861,31 @@ HBase Database: from table name to Table.
 - **Applications**
   - Store versioned web-site data
   - Store a wiki
-
+::::
+::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_39_image_1.png)
+::::
+:::
 
 * Example 2: Storing a Wiki
-**Wiki (e.g., Wikipedia)**
-- Contains pages
-- Each page has a title, an article text varying over time
-**HBase data model**
-- Table name $\to$ `wikipedia`
-- Row $\to$ entire wiki page
-- Row keys $\to$ wiki identifier (e.g., title or URL)
-- Column family $\to$ `text`
-- Column $\to$ ‘' (empty)
-- Cell value $\to$ article text
-
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_40_image_1.png)
-
-```text
-**wikipedia_table** = {
+:::columns
+::::{.column width=50%}
+- **Wiki (e.g., Wikipedia)**
+  - Contains pages
+  - Each page has a title, an article text varying over time
+- **HBase data model**
+  - Table name $\to$ `wikipedia`
+  - Row $\to$ entire wiki page
+  - Row keys $\to$ wiki identifier (e.g., title or URL)
+  - Column family $\to$ `text`
+  - Column $\to$ ‘' (empty)
+  - Cell value $\to$ article text
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_40_image_1.png){width=80%}
+\footnotesize\centering
+```python
+wikipedia_table = {
   # wiki id.
   'Home': {
     # Column family:column $\to$ value
@@ -734,25 +896,46 @@ HBase Database: from table name to Table.
   }
 }
 Database = Dict[str, Table]
-database: Database = {'wikipedia':  wiki_table}
+database: Database = {'wikipedia':  
+wiki_table}
 (article, metadata) = \
 wiki_table['Home']['text']
 ```
+::::
+:::
 
 * Example 2: Storing a Wiki
-**Add data**
-- Columns don't need to be predefined when creating a table
-- The column is defined as `text`
-> put 'wikipedia', 'Home', 'text', 'Welcome!'
-**Query data**
-- Specify the table name, the row key, and optionally a list of columns
-> get 'wikipedia', 'Home', 'text'
-text: timestamp=1295774833226, value=Welcome!
-- HBase returns the timestamp (ms since the epoch 01-01-1970 UTC)
+:::columns
+::::{.column width=50%}
+- **Add data**
+  - Columns don't need to be predefined when creating a table
+  - The column is defined as `text`
+  
+  \begingroup\color{blue}\footnotesize
+  ```
+  > put 'wikipedia', 'Home', 'text', 
+  'Welcome!'
+  ```
+  \endgroup
 
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_41_image_1.png)
-```text
-**wikipedia_table** = {
+  - **Query data**
+  - Specify the table name, the row key, and optionally a list of columns
+  
+  \begingroup\color{blue}\footnotesize
+  ```
+    > get 'wikipedia', 'Home', 'text'
+    text: timestamp=1295774833226, 
+    value=Welcome!
+  ```
+  \endgroup
+
+  - HBase returns the timestamp (ms since the epoch 01-01-1970 UTC)
+::::
+::::{.column width=50%}
+\footnotesize\centering
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_41_image_1.png){width=80%}
+```python
+wikipedia_table = {
   # wiki id.
   'Home': {
     # Column family, column → value
@@ -763,12 +946,17 @@ text: timestamp=1295774833226, value=Welcome!
   }
 }
 Database = Dict[str, Table]
-database: Database = {'wikipedia':  wiki_table}
+database: Database = {'wikipedia':  
+wiki_table}
 (queried_value, metadata) = \
 wiki_table['Home']['text']
 ```
+::::
+:::
 
 * Example 2: Improved Wiki
+:::columns
+:::{.column width=60%}
 - **Improved wiki using versioning**
 - A page
   - Is uniquely identified by its title
@@ -785,40 +973,67 @@ wiki_table['Home']['text']
 - The title is not part of the revision
   - It's fixed and identified uniquely the page (like a primary key)
   - If you want to change the title you need to re-write all the row
-
+::::
+::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_42_image_1.png)
 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_42_image_2.png)
-
+::::
+:::
 * Data in Tabular Form
-|  | Name | Home | Office |  |  |  |
-|---------|---------|---------|---------|---------|---------|---------|
+\tiny
+|  | Name | |Home | |Office |  |
+|---------|---------|---------|---------|---------------|---------|------------|
 | Key | First | Last | Phone | Email | Phone | Email |
+|---------|---------|---------|---------|---------------|---------|------------|
 | 101 | Florian | Krepsbach | 555-1212 | florian@wobegon.org | 666-1212 | fk@phc.com |
 | 102 | Marilyn | Tollerud | 555-1213 |  | 666-1213 |  |
 | 103 | Pastor | Inqvist |  |  | 555-1214 | inqvist@wel.org |
 
+\normalsize
 - Fundamental operations
   - CREATE table, families
   - PUT table, rowid, family:column, value
   - PUT table, rowid, whole-row
   - GET table, rowid
-  - SCAN table *WITH filters*
+  - SCAN table (*WITH filters*)
   - DROP table
 
 * Data in Tabular Form
-|  | Name | Home | Office | Social |  |  |  |  |
-|---------|---------|---------|---------|---------|---------|---------|---------|---------|
-| Key | First |  | Last | Phone | Email | Phone | Email | FacebookID |
-| 101 | Florian | Garfield | Krepsbach | 555-1212 | florian@wobegon.org | 666-1212 | fk@phc.com |  |
-| 102 | Marilyn |  | Tollerud | 555-1213 |  | 666-1213 |  |  |
-| 103 | Pastor |  | Inqvist |  |  | 555-1214 | inqvist@wel.org |  |
-
-*New columns can be* *added at runtime*
-
-*Column families cannot
+\tiny
+|  | Name | | |Home | |Office |  | \red{Social} |
+|---------|---------|---------|---------|---------|---------------|---------|------------| \red{---------} |
+| Key | First | | Last | Phone | Email | Phone | Email | \red{FacebookID} |
+|---------|---------|---------|---------|---------|---------------|---------|------------| \red{---------} |
+| 101 | Florian | \green{Garfield}| Krepsbach | 555-1212 | florian@wobegon.org | 666-1212 | fk@phc.com | \red{-} |
+| 102 | Marilyn | \green{-} | Tollerud | 555-1213 |  | 666-1213 | | \red{-} |
+| 103 | Pastor | \green{-} | Inqvist |  |  | 555-1214 | inqvist@wel.org | \red{-} |
+:::columns
+::::{.column width=20%}
+```
+```
+::::
+::::{.column width=20%}
+\begingroup\color{green}
+```
+New columns can be 
+added at runtime
+```
+\endgroup
+::::
+::::{.column width=50%}
+```
+```
+::::
+::::{.column width=20%}
+\begingroup\color{red}
+```
+Column families cannot 
 be added at runtime
-*
+```
+\endgroup
+::::
+:::
 
 ```text
 Table People(Name, Home, Office)
@@ -840,26 +1055,29 @@ Table People(Name, Home, Office)
 ```
 
 * Nested Data Representation
-```text
-**GET People:101**
+\tiny
+|  | Name | |Home | |Office |  |
+|---------|---------|---------|---------|---------------|---------|------------|
+| Key | First | Last | Phone | Email | Phone | Email |
+|---------|---------|---------|---------|---------------|---------|------------|
+| 101 | Florian | Krepsbach | 555-1212 | florian@wobegon.org | 666-1212 | fk@phc.com |
+| 102 | Marilyn | Tollerud | 555-1213 |  | 666-1213 |  |
+| 103 | Pastor | Inqvist |  |  | 555-1214 | inqvist@wel.org |
+```
+GET People:101
 	{
 		Timestamp: T403;
 		Name: {First="Florian", Last="Krepsbach"},
 		Home: {Phone="555-1212", Email="florian@wobegon.org"},
 		Office: {Phone="666-1212", Email="fk@phc.com"}
 	}
-**GET People:101:Name**
+
+GET People:101:Name
 	{First="Florian", Last="Krepsbach"}
-**GET People:101:Name:First**
+
+GET People:101:Name:First
 	"Florian"
 ```
-
-|  | Name | Home | Office |  |  |  |
-|---------|---------|---------|---------|---------|---------|---------|
-| Key | First | Last | Phone | Email | Phone | Email |
-| 101 | Florian | Krepsbach | 555-1212 | florian@wobegon.org | 666-1212 | fk@phc.com |
-| 102 | Marilyn | Tollerud | 555-1213 |  | 666-1213 |  |
-| 103 | Pastor | Inqvist |  |  | 555-1214 | inqvist@wel.org |
 
 * Column Family vs Column
 - **Adding a column**
@@ -946,37 +1164,57 @@ Table People(Name, Home, Office)
   - Trade off disaster recovery protection for speed
 
 * Storing variable-length data in DBs
-
-**ID FirstName LastName Phone**
-101 Florian Krepsbach **555-3434**
-102 Marilyn Tollerud 555-1213
-103 Pastor Ingvist 555-1214
-
-{
-	101: {
-		Timestamp: T403;
-		Name: {First="Florian", Middle="Garfield", Last="Krepsbach"},
-		Home: {Phone="555-1212", Email="florian@wobegon.org"},
-		Office: {Phone="666-1212", Email="fk@phc.com"}
-	},
-...
-}
-
+\footnotesize
 **SQL Table**
-**People(ID: Integer, FirstName: CHAR[20], LastName: CHAR[20], Phone: CHAR[8])**
+
+```
+People(ID: Integer, FirstName: CHAR[20], LastName: CHAR[20], Phone: CHAR[8])
 UPDATE People SET Phone="555-3434" WHERE ID=403;
+```
 
-**HBase Table**
-**People(ID, Name, Home, Office)**
-PUT People, 403, Home:Phone, 555-3434
-
+:::columns
+::::{.column width=60%}
+| ID | FirstName | LastName | Phone |
+|----|-----------|----------|----------|
+| 101 | Florian | Krepsbach | \magenta{555-3434} |
+| 102 | Marilyn | Tollerud | 555-1213 |
+| 103 | Pastor | Ingvist | 555-1214 |
+::::
+::::{.column width=40%}
 - Each row is exactly 4 + 20 + 20 + 8 = 52 bytes long
 - To move to the next row: fseek(file,+52)
 - To get to Row 401
 fseek(file, 401*52);
 - Overwrite the data in place
+::::
+:::
 
+
+**HBase Table**
+```
+People(ID, Name, Home, Office)
+PUT People, 403, Home:Phone, 555-3434
+```
+
+:::columns
+::::{.column width=80%}
+\tiny
+```json
+  {
+    101: {
+      Timestamp: T403;
+      Name: {First="Florian", Middle="Garfield", Last="Krepsbach"},
+      Home: {Phone="555-1212", Email="florian@wobegon.org"},
+      Office: {Phone="666-1212", Email="fk@phc.com"}
+    },
+  ...
+  }
+```
+::::
+::::{.column width=20%}
 Need to use pointers
+::::
+:::
 
 * HBase Implementation
 

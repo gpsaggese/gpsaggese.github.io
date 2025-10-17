@@ -1,0 +1,6 @@
+title: "DATA 605: Big Data Systems"
+execute:
+  execute_notebooks: "auto"
+  timeout: 120
+html:
+  use_repository_button: false
