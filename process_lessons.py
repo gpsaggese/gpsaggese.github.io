@@ -4,20 +4,23 @@
 Generate PDF slides and/or a reading scripts for lecture materials.
 
 # Generate PDFs for specific lectures:
-> generate_lesson.py --lectures 01.1 --class data605 --target pdf
+> process_lessons.py --lectures 01.1 --class data605 --action pdf
 
 # Generate scripts for multiple lectures:
-> generate_lesson.py --lectures 01*:02* --class data605 --target script
+> process_lessons.py --lectures 01*:02* --class data605 --action script
 
 # Generate both PDFs and scripts:
-> generate_lesson.py --lectures 01* --class msml610 --target pdf,script
+> process_lessons.py --lectures 01* --class msml610 --action pdf --action script
+
+# Generate all default actions:
+> process_lessons.py --lectures 01* --class msml610
 
 # Generate specific slides from a lecture:
-> generate_lesson.py --lectures 01.1 --limit 1:3 --class data605 --target pdf
+> process_lessons.py --lectures 01.1 --limit 1:3 --class data605 --action pdf
 
 Import as:
 
-import generate_lesson as genlssn
+import process_lessons as prlssn
 """
 
 import argparse
@@ -32,6 +35,11 @@ import helpers.hparser as hparser
 import helpers.hsystem as hsystem
 
 _LOG = logging.getLogger(__name__)
+
+# #############################################################################
+
+_VALID_ACTIONS = ["pdf", "script"]
+_DEFAULT_ACTIONS = ["pdf"]
 
 # #############################################################################
 
@@ -65,19 +73,12 @@ def _parse() -> argparse.ArgumentParser:
         choices=["data605", "msml610"],
         help="Class directory name",
     )
-    # TODO(ai): Use hparser.add_action_arg(parser, _VALID_ACTIONS, _DEFAULT_ACTIONS)
-    # and allow a single action to be specified.
-    parser.add_argument(
-        "--target",
-        action="store",
-        required=True,
-        help="Target output types: 'pdf', 'script', or 'pdf,script'",
-    )
     parser.add_argument(
         "--dry_run",
         action="store_true",
         help="Print the commands that would be executed without running them",
     )
+    hparser.add_action_arg(parser, _VALID_ACTIONS, _DEFAULT_ACTIONS)
     hparser.add_verbosity_arg(parser)
     return parser
 
@@ -125,21 +126,6 @@ def _find_lecture_files(
     result = [(f, os.path.basename(f)) for f in all_files]
     _LOG.info("Found %d lecture files", len(result))
     return result
-
-
-def _parse_target_arg(target_arg: str) -> List[str]:
-    """
-    Parse the target argument into a list of target types.
-
-    :param target_arg: target argument from command line (e.g., 'pdf', 'pdf,script')
-    :return: list of target types
-    """
-    targets = [t.strip() for t in target_arg.split(",")]
-    # Validate targets.
-    for target in targets:
-        hdbg.dassert_in(target, ["pdf", "script"], "Invalid target:", target)
-    _LOG.debug("Parsed targets: %s", targets)
-    return targets
 
 
 def _generate_pdf(
@@ -237,30 +223,30 @@ def _process_lecture_file(
     class_dir: str,
     source_path: str,
     source_name: str,
-    targets: List[str],
+    actions: List[str],
     *,
     limit: str = None,
 ) -> None:
     """
-    Process a single lecture file for specified targets.
+    Process a single lecture file for specified actions.
 
     :param class_dir: class directory (data605 or msml610)
     :param source_path: path to source .txt file
     :param source_name: name of source file
-    :param targets: list of targets to generate ('pdf' and/or 'script')
+    :param actions: list of actions to execute ('pdf' and/or 'script')
     :param limit: optional slide range to process
     """
     _LOG.info("Processing file: %s", source_path)
-    # Process each target.
-    for target in targets:
-        if target == "pdf":
+    # Process each action.
+    for action in actions:
+        if action == "pdf":
             _generate_pdf(class_dir, source_path, source_name, limit=limit)
-        elif target == "script":
+        elif action == "script":
             if limit:
                 _LOG.warning("Ignoring --limit for script generation")
             _generate_script(class_dir, source_path, source_name)
         else:
-            hdbg.dfatal("Unknown target: %s", target)
+            hdbg.dfatal("Unknown action: %s", action)
 
 
 def _main(parser: argparse.ArgumentParser) -> None:
@@ -270,7 +256,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
     Orchestrates the lesson generation process:
     1. Parse and validate arguments
     2. Find matching lecture files
-    3. Process each file for specified targets
+    3. Process each file for specified actions
 
     :param parser: configured argument parser
     """
@@ -278,7 +264,8 @@ def _main(parser: argparse.ArgumentParser) -> None:
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     # Parse arguments.
     patterns = _parse_lecture_patterns(args.lectures)
-    targets = _parse_target_arg(args.target)
+    actions = hparser.select_actions(args, _VALID_ACTIONS, _DEFAULT_ACTIONS)
+    _LOG.info("Selected actions: %s", actions)
     # Find matching lecture files.
     files = _find_lecture_files(args.class_name, patterns)
     hdbg.dassert_lt(0, len(files), "No lecture files found for patterns:", patterns)
@@ -294,7 +281,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
     # Process each file.
     for source_path, source_name in files:
         _process_lecture_file(
-            args.class_name, source_path, source_name, targets, limit=args.limit
+            args.class_name, source_path, source_name, actions, limit=args.limit
         )
     _LOG.info("All files processed successfully")
 

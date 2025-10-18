@@ -30,7 +30,7 @@ vimdiff $SRC_NAME process_slides.txt
 
 # Generate all the slides.
 
-> process_lesson.py --lectures 0*:1* --class data605 --target pdf
+> process_lessons.py --lectures 0*:1* --class data605 --target pdf
 
 # Count pages.
 
