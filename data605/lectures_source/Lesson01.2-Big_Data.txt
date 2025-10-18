@@ -21,7 +21,7 @@ UMD DATA605: Big Data Systems
 
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 * Data Science
 - **Promises of data science**
@@ -45,8 +45,8 @@ UMD DATA605: Big Data Systems
     - E.g., cloud computing (AWS, Google Cloud), GPUs
 
 * Motivation: Data Overload
-- _"Data science is the number one catalyst for economic growth"_ (McKinsey,
-  2013)
+- _"Data science is the number one catalyst for economic growth"_
+  (McKinsey, 2013)
 - **Explosion of data in every domain**
   - Sensing devices/networks monitor processes 24/7
     - E.g., temperature of your room, your vital signs, pollution in the air
@@ -64,7 +64,6 @@ UMD DATA605: Big Data Systems
 * Scale of Data Size
 ::: columns
 :::: {.column width=45%}
-
 - **Megabyte** = $2^{20} \approx 10^6$ bytes
   - Typical English book
 - **Gigabyte** = $10^9$ bytes = 1,000 MB
@@ -88,10 +87,8 @@ UMD DATA605: Big Data Systems
   - Yottabyte costs \$100T
   - Fill Delaware and Rhode Island with a million data centers
 - **Brontobytes** = $10^{27}$ bytes
-
 ::::
 :::
-
 * Constants Everybody Should Know
 - CPU at 3GHz: 0.3 ns per instruction
 - L1 cache reference/register: 1 ns
@@ -118,14 +115,12 @@ UMD DATA605: Big Data Systems
     - Social media, online reviews, blogs, surveys
   - Positive, negative, neutral sentiment
 - E.g.,
-  - In 2022, \$600B spent on digital marketing
-// - 50 Stats Showing The Power Of Personalization
+  - In 2022, \$600B spent on digital marketing // - 50 Stats Showing The Power
+    Of Personalization
 
 * Big Data Applications
-
 ::: columns
 :::: {.column width=50%}
-
 - **Mobile advertisement**
 - Mobile phones are ubiquitous
   - 80% of world population has one
@@ -136,12 +131,9 @@ UMD DATA605: Big Data Systems
   - Credit card transactions
 ::::
 :::: {.column width=45%}
-
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_17_image_1.png){ height=50% }
-
 ::::
 :::
-
 - E.g.,
   - You've bought a new house
   - You google questions about house renovations
@@ -173,7 +165,6 @@ UMD DATA605: Big Data Systems
   - Maximize energy savings
 
 * Goal of Data Science
-
 ::: columns
 :::: {.column width=50%}
 - **Goal**: from data to wisdom
@@ -186,12 +177,9 @@ UMD DATA605: Big Data Systems
   - New data can be "big data" itself
 ::::
 :::: {.column width=45%}
-
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_20_image_1.png)
-
 ::::
 :::
-
 * The Six V'S of Big Data
 ::: columns
 :::: {.column width=50%}
@@ -211,9 +199,7 @@ UMD DATA605: Big Data Systems
   - Benefit an organization
 ::::
 :::: {.column width=45%}
-
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_21_image_1.png)
-
 ::::
 :::
 
@@ -250,7 +236,6 @@ UMD DATA605: Big Data Systems
   - How do you decide what data to trust?
 
 * Sources of Big Data
-
 ::: columns
 :::: {.column width=40%}
 - Distinguish Big Data by source
@@ -259,12 +244,9 @@ UMD DATA605: Big Data Systems
   - **Organizations**
 ::::
 :::: {.column width=55%}
-
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_24_image_1.png)
-
 ::::
 :::
-
 * Sources of Big Data: Machines
 - **Machines** generate data
   - Real-time sensors (e.g., sensors on Boeing 787)
@@ -279,10 +261,8 @@ UMD DATA605: Big Data Systems
   - Streaming, not batch
 
 * Sources of Big Data: People
-
 ::: columns
 :::: {.column width=50%}
-
 - **People** and their activities generate data
   - Social media (Instagram, Twitter, LinkedIn)
   - Video sharing (YouTube, TikTok)
@@ -297,17 +277,14 @@ UMD DATA605: Big Data Systems
   - Semi-structured or unstructured data
     - Text, images, movies
   - Requires investment to extract value
-    - Acquire $\to$ Store $\to$ Clean $\to$ Retrieve $\to$ Process $\to$ Insights
+    - Acquire $\to$ Store $\to$ Clean $\to$ Retrieve $\to$ Process $\to$
+      Insights
   - Surveillance capitalism
-
 ::::
 :::: {.column width=45%}
-
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_26_image_1.png)
-
 ::::
 :::
-
 * Sources of Big Data: Orgs
 - **Organizations** generate data
   - Commercial transactions
@@ -328,21 +305,16 @@ UMD DATA605: Big Data Systems
     - Cloud computing helps (e.g., data lakes, data warehouses)
 
 * Is Data Science Just Hype?
-
 ::: columns
 :::: {.column width=50%}
-
 - Big data (or data science)
   - "Any process where interesting information is inferred from data"
 - Data scientist called the "sexiest job" of the 21st century
   - The term has becoming very muddled at this point
 - **Is it all hype?**
-
 ::::
 :::: {.column width=45%}
-
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_28_image_1.png)
-
 ::::
 :::
 
@@ -357,7 +329,8 @@ UMD DATA605: Big Data Systems
   - More data is digitally available
   - Easy-to-use programming frameworks (e.g., Hadoop) simplify analysis
   - Cloud computing (e.g., AWS) reduces costs
-  - Large-scale data + simple algorithms often outperform small data + complex algorithms
+  - Large-scale data + simple algorithms often outperform small data + complex
+    algorithms
 
 * What Was Cool in 2012?
 
@@ -421,11 +394,9 @@ UMD DATA605: Big Data Systems
   - Effective communication
 ::::
 :::: {.column width=45%}
-
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_35_image_1.png)
 ::::
 :::
-
 * Examples: Google Flu Trends
 - 5% to 20% of US population contracts flu yearly; 40k deaths
 - Early warnings enable prevention and control
@@ -447,11 +418,9 @@ UMD DATA605: Big Data Systems
 :::: {.column width=50%}
 - Ambiguous, ill-defined term
 - From Drew Conway's Venn Diagram
-
 ::::
 :::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_37_image_1.png)
-
 ::::
 :::
 
