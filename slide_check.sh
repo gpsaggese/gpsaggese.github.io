@@ -12,7 +12,8 @@ else
     echo "Found file: ${files[*]}"
 fi
 
-SRC_NAME=$(ls $DIR/lectures_source/Lesson${LESSON}*)
+SRC_NAME=$(cd $DIR/lectures_source; ls Lesson${LESSON}*)
+DIR_NAME="processed.txt"
 OPTS=${@:2}
 
-process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $SRC_NAME --use_llm_transform $OPTS
+process_slides.py --in_file $SRC_NAME --action slide_check --out_file $DST_NAME --use_llm_transform $OPTS

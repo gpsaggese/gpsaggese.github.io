@@ -21,15 +21,17 @@ vimdiff $SRC_NAME process_slides.txt
 ```
 
 ```
-> process_lessons.py --lectures 1.1* --class data605 --action slide_check --limit 0:2
+> process_lessons.py --lectures 01.1* --class data605 --action slide_check --limit 0:2
 ```
 
 # Reduce all slides
 ```
 SRC_NAME=$(ls $DIR/lectures_source/Lesson04.2*); echo $SRC_NAME
-DST_NAME=process_slides.txt
-process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $DST_NAME --use_llm_transform --limit 0:10
-vimdiff $SRC_NAME process_slides.txt
+process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $SRC_NAME --use_llm_transform --limit 0:10
+```
+
+```
+> slide_reduce.sh 01.1*
 ```
 
 # Generate all the slides.

@@ -53,25 +53,25 @@ UMD DATA605 - Big Data Systems
 * Relational Model: Key Definitions
 ::: columns
 :::: {.column width=55%}
-- A relational DB consists of a collection of **tables / relations**
-  - Each table has a unique name and schema
 
-- Each **row / tuple / record** in a table represents a relationship among
-  values
+- Relational DB: Collection of **tables / relations**
+  - Unique name and schema for each table
 
-- Each **element** of a row corresponds to a **column / field / attribute**
-  - Each element in a column is atomic (e.g., a phone number is a single object)
-  - `NULL` represents a value that is unknown or doesn't exist
+- **Row / tuple / record**: Represents a relationship among values
+
+- **Element**: Corresponds to a **column / field / attribute**
+  - Atomic elements (e.g., phone number as a single object)
+  - `NULL` for unknown or non-existent values
 
 - E.g., `instructor` and `course` relations
 
 - **Schema of a relation**
-  - A list of attributes and their domains
+  - List of attributes and their domains
   - Like type definition in programming languages
-  - E.g., the domain of `salary` is integers >= 0
+  - E.g., domain of `salary` is integers >= 0
 
 - **Instance of relation**
-  - A particular instantiation of a relation with actual values
+  - Specific instantiation with actual values
   - Changes over time
 ::::
 :::: {.column width=40%}
@@ -80,11 +80,13 @@ UMD DATA605 - Big Data Systems
 \footnotesize
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_4_image_1.png){width=60%}
+
 `instructor` relation
 
 \vspace{1cm}
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_4_image_2.png)
+
 `course` relation
 ::::
 :::
@@ -92,6 +94,7 @@ UMD DATA605 - Big Data Systems
 * UML Class Diagram
 ::: columns
 :::: {.column width=55%}
+
 - UML class diagram
   - UML = Unified Modeling Language
   - Used in OOP and DB design
@@ -99,11 +102,12 @@ UMD DATA605 - Big Data Systems
   - Diagram showing classes, attributes, methods, and relationships
 
 \vspace{2cm}
+  - Diagram shows classes, attributes, methods, relationships \vspace{2cm}
 
 - **In DB design**
   - Each box is a table / relation
   - Columns / fields / attributes are listed inside the box
-  - Primary keys are underlined
+  - Primary keys underlined
   - Foreign key constraints are arrows
 ::::
 :::: {.column width=40%}
@@ -129,6 +133,7 @@ UMD DATA605 - Big Data Systems
 
 ::: columns
 :::: {.column width=40%}
+
 - **Analysis of the diagram**
   - ER model
   - Entities
@@ -148,20 +153,20 @@ UMD DATA605 - Big Data Systems
 * Primary Key
 ::: columns
 :::: {.column width=65%}
-- _R_ is the set of attributes of a relation _r_
-  - E.g., `ID, name, dept_name, salary` are attributes of relation `instructor`
 
-- _K_ is a superkey of _R_ if values for _K_ identify a unique tuple of each
-  possible relation _r(R)_
+- _R_ is set of attributes of a relation _r_
+  - E.g., `ID, name, dept_name, salary` are attributes of `instructor`
+
+- _K_ is superkey of _R_ if values for _K_ identify a unique tuple of each
+  relation _r(R)_
   - E.g., `(ID)` and `(ID, name)` are superkeys of `instructor`
   - `(name)` is not a superkey of `instructor`
 
-- A primary key is a minimal set of attributes that uniquely identify each row
+- **Primary key**: minimal set of attributes that uniquely identify each row
   - Typically small and immutable
   - Would `SSN` be a primary key? Yes and no
 
 - **Primary key constraint**: rows can't have the same primary key
-
 ::::
 :::: {.column width=35%}
 
@@ -234,7 +239,8 @@ UMD DATA605 - Big Data Systems
 * Foreign Key
 ::: columns
 :::: {.column width=60%}
-- **Foreign key** = primary key of a relation in another relation
+
+- **Foreign key** = primary key of another relation
   - E.g., `(ID)` from `student` in `takes`, `advisor`
   - `takes` is the "referencing relation", has the foreign key
   - `student` is the "referenced relation", has the primary key
@@ -244,17 +250,18 @@ UMD DATA605 - Big Data Systems
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_10_image_1.png)
 ::::
 :::
-- **Foreign key constraint**: for each row, the tuple for a primary key must
-  exist
+
+- **Foreign key constraint**: for each row, the primary key tuple must exist
   - Aka referential integrity constraint
   - If `(student101, DATA605)` in `takes`, there must be `student101` in
     `student`
 
-- The key referenced as foreign key needs to exist as primary key
+- The key referenced as foreign key must exist as primary key
 
 * Relational Algebra: 1/4
 ::: columns
 :::: {.column width=70%}
+
 - **Relation**: set of tuples
 
 - **Relational algebra**: operations on relations producing a new relation
@@ -286,9 +293,11 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Relational Algebra: 2/4
-- **Cartesian product**: combine information from two relations into a new one
+
+- **Cartesian product**: combine two relations into a new one
   - `instructor` = `(ID, name, dept_name, salary)`
-  - `teaches` = `(ID, course_id, sec_id, semester, year)``
+  - `teaches` = `(ID, course_id, sec_id, semester, year)`
+
 - E.g., `instructor` x `teaches` gives
   `(instructor.ID, instructor.name, instructor.dept_name, teaches.ID, ...)`
 
@@ -317,7 +326,7 @@ UMD DATA605 - Big Data Systems
 
 - **Join**: composition of two operations
   - Cartesian-product
-  - A selection based on equality between two fields
+  - Selection based on equality between two fields
   - E.g., `instructor` x `teaches` when `instructor.ID = teaches.ID`
 
 ::: columns
