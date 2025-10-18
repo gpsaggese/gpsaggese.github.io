@@ -1,4 +1,4 @@
-# generate_lesson.py
+# process_lessons.py
 
 ## Goal
 
@@ -8,30 +8,28 @@ This script generates PDF slides and/or reading scripts for lecture materials
 
 - Generate PDF slides for a specific lecture
   ```bash
-  ./generate_lesson.py --lectures 01.1 --class data605 --target pdf
+  > process_lessons.py --lectures 01.1 --class data605 --target pdf
   ```
 
 - Generate reading scripts for multiple lectures
   ```bash
-  ./generate_lesson.py --lectures 01*:02* --class data605 --target script
+  > process_lessons.py --lectures 01*:02* --class data605 --target script
   ```
 
 - Generate both PDFs and scripts
   ```bash
-  ./generate_lesson.py --lectures 01* --class msml610 --target pdf,script
+  > process_lessons.py --lectures 01* --class msml610 --target pdf,script
   ```
 
 - Generate specific slides from a lecture
-
-```bash
-./generate_lesson.py --lectures 01.1 --limit 1:3 --class data605 --target pdf
-```
+  ```bash
+  > process_lessons.py --lectures 01.1 --limit 1:3 --class data605 --target pdf
+  ```
 
 - Process all lectures in a class
-
-```bash
-./generate_lesson.py --lectures "0*" --class data605 --target pdf,script
-```
+  ```bash
+  > process_lessons.py --lectures "0*" --class data605 --target pdf,script
+  ```
 
 ## Command Line Arguments
 

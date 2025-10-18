@@ -65,6 +65,8 @@ def _parse() -> argparse.ArgumentParser:
         choices=["data605", "msml610"],
         help="Class directory name",
     )
+    # TODO(ai): Use hparser.add_action_arg(parser, _VALID_ACTIONS, _DEFAULT_ACTIONS)
+    # and allow a single action to be specified.
     parser.add_argument(
         "--target",
         action="store",
@@ -123,17 +125,6 @@ def _find_lecture_files(
     result = [(f, os.path.basename(f)) for f in all_files]
     _LOG.info("Found %d lecture files", len(result))
     return result
-
-
-def _validate_single_lecture_file(files: List[Tuple[str, str]]) -> None:
-    """
-    Validate that exactly one lecture file was found.
-
-    Used when processing a single lecture with --limit option.
-
-    :param files: list of file tuples
-    """
-    hdbg.dassert_eq(len(files), 1, "Need exactly one file when using --limit")
 
 
 def _parse_target_arg(target_arg: str) -> List[str]:
@@ -293,7 +284,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
     hdbg.dassert_lt(0, len(files), "No lecture files found for patterns:", patterns)
     # Validate if --limit is specified.
     if args.limit:
-        _validate_single_lecture_file(files)
+        hdbg.dassert_eq(len(files), 1, "Need exactly one file when using --limit")
     # Print the commands that would be executed without running them.
     if args.dry_run:
         _LOG.info("Dry run mode enabled. Will print the commands that would be executed without running them.")

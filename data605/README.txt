@@ -30,8 +30,10 @@ vimdiff $SRC_NAME process_slides.txt
 
 # Generate all the slides.
 
-> generate_lesson.py --lectures 0*:1* --class data605 --target pdf
+> process_lesson.py --lectures 0*:1* --class data605 --target pdf
 
 # Count pages.
 
 > find data605/lectures/Lesson0*.pdf -type f -name "*.pdf" -print -exec mdls -name kMDItemNumberOfPages {} \;
+
+// process_slides.py --in_file data605/lectures_source/Lesson02-Git_Data_Pipelines.txt --action slide_format_figures --out_file data605/lectures_source/Lesson02-Git_Data_Pipelines.txt --use_llm_transform
