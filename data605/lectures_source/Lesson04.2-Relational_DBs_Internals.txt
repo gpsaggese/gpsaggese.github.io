@@ -1,7 +1,8 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
 
 ::: columns
 :::: {.column width=15%}
-![](data605/lectures_source/images/UMD_Logo.png)
+![](msml610/lectures_source/figures/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -15,31 +16,20 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**Storage
-DB internals**
+**$$\text{\blue{Relational DB Internals}}$$**
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`**
+**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
 
-**TAs**:
-Krishna Pratardan Taduri, kptaduri@umd.edu
-Prahar Kaushikbhai Modi, pmodi08@umd.edu
-
-**with thanks to**
-Prof. Alan Sussman
-Prof. Amol Deshpande
-
-**v1.1**
 ::::
 :::: {.column width=20%}
 
 ::::
 :::
-UMD DATA605 - Big Data Systems
 
 * Outline
 - Storage
