@@ -7,21 +7,19 @@ This script generates PDF slides and/or reading scripts for lecture materials
 ## Usage Examples
 
 - Generate PDF slides for a specific lecture
-```bash
-./generate_lesson.py --lectures 01.1 --class data605 --target pdf
-```
+  ```bash
+  ./generate_lesson.py --lectures 01.1 --class data605 --target pdf
+  ```
 
 - Generate reading scripts for multiple lectures
-
-```bash
-./generate_lesson.py --lectures 01*:02* --class data605 --target script
-```
+  ```bash
+  ./generate_lesson.py --lectures 01*:02* --class data605 --target script
+  ```
 
 - Generate both PDFs and scripts
-
-```bash
-./generate_lesson.py --lectures 01* --class msml610 --target pdf,script
-```
+  ```bash
+  ./generate_lesson.py --lectures 01* --class msml610 --target pdf,script
+  ```
 
 - Generate specific slides from a lecture
 

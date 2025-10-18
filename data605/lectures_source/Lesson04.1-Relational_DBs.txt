@@ -534,7 +534,9 @@ SELECT A_1, A_2, ..., A_n
           GROUP BY dept_name 
           HAVING AVG(salary) > 42000; 
   ```
+
 \vspace{0.5cm}
+
 - How does it work
   - FROM is evaluated to create a relation
   - (optional) WHERE is used to filter
@@ -543,7 +545,6 @@ SELECT A_1, A_2, ..., A_n
   - SELECT generates tuples of the results, applying aggregate functions to get a single result for each group
 
 * Nested subqueries
-  ... tmp.prettier_on_str.md 27ms
 - SQL allows using the result of a query in another query
   - Use a subquery returning one attribute (scalar subquery) where a value is
     used
@@ -569,19 +570,20 @@ WHERE avg_salary > 42000
 :::
 
 * With
-- WITH clause allows to define a temporary relation containing the results of a subquery
+- `WITH` clause allows to define a temporary relation containing the results of a
+  subquery
 - It can be equivalent to a nested subqueries, but clearer
-- Find department with the maximum budget
 
-:::columns
-::::{.column width=80%}  
-```sql
-WITH max_budget(value) as (
-  SELECT MAX(budget) FROM department) 
-  SELECT department.dept_name, budget 
-    FROM department, max_budget 
-    WHERE department.budget = max_budget.value 
-```
+- E.g., find department with the maximum budget
+  :::columns
+  ::::{.column width=80%}  
+  ```sql
+  WITH max_budget(value) as (
+    SELECT MAX(budget) FROM department) 
+    SELECT department.dept_name, budget 
+      FROM department, max_budget 
+      WHERE department.budget = max_budget.value 
+  ```
 ::::
 ::::{.column width=20%}  
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_23_image_1.png)
@@ -591,28 +593,29 @@ WITH max_budget(value) as (
 * Insert
 - To insert data into a relation we can specify tuples to insert
   - Tuples
-
-\begingroup \footnotesize
-
+  \begingroup
+  \footnotesize
   ```sql
       INSERT INTO course VALUES ('DATA-605', 'Big data systems', 'Comp. Sci.', 3)
       INSERT INTO course(course_id, title, dept_name, credits)
           VALUES ('DATA-605', 'Big data systems', 'Comp. Sci.', 3)
   ```
-\endgroup
-  - Query whose results is a set of tuples
+  \endgroup
 
+  - Query whose results is a set of tuples
   ```sql
       INSERT INTO instructor
           (SELECT ID, name, dept_name, 18000
           FROM student
           WHERE dept_name = 'Music' AND tot_cred > 144)
   ```
+
   - Nested queries are evaluated and then inserted so this doesn't create infinite loops
-  ```sql
+    ```sql
       INSERT INTO student (SELECT * FROM student)
-  ```
-  - Many DB have bulk loader utilities to insert a large set of tuples into a relation, reading from formatted text files 
+    ```
+  - Many DB have bulk loader utilities to insert a large set of tuples into a
+    relation, reading from formatted text files 
   This is much faster than INSERT statements
 
 * Update
@@ -671,9 +674,7 @@ WITH max_budget(value) as (
 ::::
 :::
 
-* .
-**UMD DATA605 - Big Data Systems**
-**Movie Database Example (Optional)**
+## Movie Database Example (Optional)
 
 * Example Schema for SQL Queries
 
@@ -887,8 +888,8 @@ Studio(name, address, presC\#)
   ```
 
   - All tuples from 'movies' that have no matches in starsIn are included with NULLs
-  - So if a tuple (m1, 1990) has no match in starsIn, we get
-(m1, 1990, NULL) in the result
+  - So if a tuple (m1, 1990) has no match in starsIn, we get (m1, 1990, NULL) in
+    the result
   - The count(starName) works correctly then
   - Note: count(*) would not work correctly (NULLs can have unintuitive behavior)
 
@@ -902,7 +903,9 @@ Studio(name, address, presC\#)
   ```
 
   - Can use it in any place where a table name is used
-  - Views are used quite extensively to: (1) simplify queries, (2) hide data (by giving users access only to specific views)
+  - Views are used quite extensively to:
+    - simplify queries
+    - hide data (by giving users access only to specific views)
   - Views may be *materialized *or not
 
 * Other SQL Constructs
@@ -946,47 +949,49 @@ Studio(name, address, presC\#)
 * Integrity Constraints
 - Referential integrity: prevent dangling tuples
   ```sql
-  CREATE TABLE branch(bname CHAR(15) PRIMARY KEY, ...);
-  ```
-  ```sql
-  CREATE TABLE loan(..., FOREIGN KEY bname REFERENCES branch);
+    CREATE TABLE branch(bname CHAR(15) PRIMARY KEY, ...);
+    CREATE TABLE loan(..., FOREIGN KEY bname REFERENCES branch);
   ```
 - Can tell the system what to do if a referenced tuple is being deleted
 
 * Integrity Constraints
 - Global Constraints
   - Single-table
-  ```sql
+    ```sql
       CREATE TABLE branch (..., bcity CHAR(15), assets INT,
           CHECK (NOT(bcity = 'Bkln') OR assets>5M))
-  ```
+    ```
   - Multi-table
-  ```sql
+    ```sql
       CREATE ASSERTION loan-constraint 
       CHECK (NOT EXISTS
           (SELECT* FROM loan AS L WHERE NOT EXISTS
               (SELECT* FROM borrower B, depositor D, account A
               WHERE B.cname = D.cname AND D.acct_no = A.acct_no
                   AND L.lno= B.lno)))
-  ```
+    ```
 
 * Additional SQL Constructs
-- **Select** subquery factoring
-  - To allow assigning a name to a subquery, then use its result by referencing that name
-  ```sql
-        WITH temp AS (
-            SELECT title, avg(length)
-            FROM movies
-            GROUP BY year)
-        SELECT COUNT(*) FROM temp;
-  ```
+- `SELECT` subquery factoring
+  - To allow assigning a name to a subquery, then use its result by referencing
+    that name
+    ```sql
+      WITH temp AS (
+          SELECT title, avg(length)
+          FROM movies
+          GROUP BY year)
+      SELECT COUNT(*) FROM temp;
+    ```
   - Can have multiple subqueries (multiple with clauses)
-  - Real advantage is when subquery needs to be referenced multiple times in main select
-  - Helps with complex queries, both for readability and maybe performance (can cache subquery results)
+  - Real advantage is when subquery needs to be referenced multiple times in main
+    select
+  - Helps with complex queries, both for readability and maybe performance (can
+    cache subquery results)
 
 * Another SQL Construct
-- **SELECT HAVING** clause
-  - Used in combination with **GROUP BY** to restrict the groups of returned rows to only those where condition evaluates to true
+- `SELECT HAVING` clause
+  - Used in combination with `GROUP BY` to restrict the groups of returned rows
+    to only those where condition evaluates to true
   ```sql
     SELECT year, count(*)
         FROM movies
@@ -994,5 +999,6 @@ Studio(name, address, presC\#)
         GROUP BY year
         HAVING COUNT(*) > 10;
   ```
-  - Difference from **WHERE** clause is that it applies to summarized group records, and where applies to individual records
+  - Difference from `WHERE` clause is that it applies to summarized group
+    records, and where applies to individual records
 

@@ -1,3 +1,5 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
 // https://docs.google.com/presentation/d/1VoUmig6CIA4ZtfNAuAIKbr3qtZjYNWIZxK9xxK6wTxI/edit
 
 ::: columns
@@ -23,7 +25,7 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - [gsaggese@umd.edu](gsaggese@umd.edu)
+**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
 
 ::::
 :::: {.column width=20%}
@@ -40,7 +42,7 @@ UMD DATA605 - Big Data Systems
 - Concepts in the slides
 - Class tutorials:
   - [tutorial\_docker](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker)
-  - [tutorial\_docker_compose](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker_compose)
+  - [tutorial\_docker\_compose](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker_compose)
 - Web resources:
   - [Docker Tutorial for beginners](https://www.youtube.com/watch?v=zJ6WbK9zFpI)
   - [https://labs.play-with-docker.com/](https://labs.play-with-docker.com/)
@@ -737,7 +739,7 @@ Commands:
 
 * Docker Compose: Tutorial
 - Example taken from https://github.com/nigelpoulton/counter-app
-- [tutorial_docker_compose](https://github.com/gpsaggese/umd_classes/tree/main/data605/tutorials/tutorial_docker_compose)
+- [tutorial\_docker\_compose](https://github.com/gpsaggese/umd_classes/tree/main/data605/tutorials/tutorial_docker_compose)
   ```
   > cd tutorials/tutorial_docker_compose
   > vi tutorial_docker_compose.md

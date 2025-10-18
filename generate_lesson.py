@@ -71,6 +71,11 @@ def _parse() -> argparse.ArgumentParser:
         required=True,
         help="Target output types: 'pdf', 'script', or 'pdf,script'",
     )
+    parser.add_argument(
+        "--dry_run",
+        action="store_true",
+        help="Print the commands that would be executed without running them",
+    )
     hparser.add_verbosity_arg(parser)
     return parser
 
@@ -289,6 +294,12 @@ def _main(parser: argparse.ArgumentParser) -> None:
     # Validate if --limit is specified.
     if args.limit:
         _validate_single_lecture_file(files)
+    # Print the commands that would be executed without running them.
+    if args.dry_run:
+        _LOG.info("Dry run mode enabled. Will print the commands that would be executed without running them.")
+        for source_path, source_name in files:
+            _LOG.info("Processing file: %s", source_path)
+        return
     # Process each file.
     for source_path, source_name in files:
         _process_lecture_file(
