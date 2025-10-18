@@ -3,31 +3,14 @@
 """
 Generate PDF slides and/or a reading scripts for lecture materials.
 
-# Generate PDFs for specific lectures:
-> process_lessons.py --lectures 01.1 --class data605 --action pdf
-
-# Generate scripts for multiple lectures:
-> process_lessons.py --lectures 01*:02* --class data605 --action script
-
-# Generate both PDFs and scripts:
-> process_lessons.py --lectures 01* --class msml610 --action pdf --action script
-
-# Generate all default actions:
-> process_lessons.py --lectures 01* --class msml610
-
-# Generate specific slides from a lecture:
-> process_lessons.py --lectures 01.1 --limit 1:3 --class data605 --action pdf
-
-Import as:
-
-import process_lessons as prlssn
+Check process_lessons.md for more details.
 """
 
 import argparse
 import glob
 import logging
 import os
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import helpers.hdbg as hdbg
 import helpers.hio as hio
@@ -38,7 +21,7 @@ _LOG = logging.getLogger(__name__)
 
 # #############################################################################
 
-_VALID_ACTIONS = ["pdf", "script"]
+_VALID_ACTIONS = ["pdf", "script", "slide_reduce", "slide_check"]
 _DEFAULT_ACTIONS = ["pdf"]
 
 # #############################################################################
@@ -110,12 +93,14 @@ def _find_lecture_files(
     :return: list of tuples (source_path, source_name)
     """
     lectures_source_dir = os.path.join(class_dir, "lectures_source")
+    # TODO(ai): Use hdbg.dassert_dir_exists(lectures_source_dir)
     hdbg.dassert(
         os.path.isdir(lectures_source_dir),
         "Lectures source directory does not exist:",
         lectures_source_dir,
     )
     # Find all matching files.
+    _LOG.debug("Finding lecture files for lecture_source_dir='%s' and patterns='%s'", lectures_source_dir, patterns)
     all_files = []
     for pattern in patterns:
         pattern_path = os.path.join(lectures_source_dir, f"Lesson{pattern}*")
@@ -133,7 +118,7 @@ def _generate_pdf(
     source_path: str,
     source_name: str,
     *,
-    limit: str = None,
+    limit: Optional[str] = None,
     skip_action: str = "open",
 ) -> None:
     """
@@ -157,27 +142,22 @@ def _generate_pdf(
     _LOG.info("Processing %s -> %s", source_name, dst_name)
     cmd = [
         "notes_to_pdf.py",
-        "--input",
-        source_path,
-        "--output",
-        output_path,
-        "--type",
-        "slides",
-        "--toc_type",
-        "navigation",
-        "--skip_action",
-        skip_action,
-        "--debug_on_error",
+        f"--input {source_path}",
+        f"--output {output_path}",
+        f"--type slides",
+        f"--toc_type navigation",
+        f"--skip_action {skip_action}",
+        f"--debug_on_error",
     ]
     if limit:
-        cmd.extend(["--limit", limit])
+        cmd.extend([f"--limit {limit}"])
     # Execute command.
     cmd_str = " ".join(cmd)
     _LOG.info("Executing: %s", cmd_str)
     hsystem.system(cmd_str, suppress_output=False)
 
 
-def _generate_script(class_dir: str, source_path: str, source_name: str) -> None:
+def _generate_script(class_dir: str, source_path: str, source_name: str, *, limit: Optional[str] = None) -> None:
     """
     Generate script from a lecture source file.
 
@@ -199,13 +179,12 @@ def _generate_script(class_dir: str, source_path: str, source_name: str) -> None
     _LOG.info("Generating script for %s -> %s", source_name, dst_name)
     cmd = [
         "generate_slide_script.py",
-        "--in_file",
-        source_path,
-        "--out_file",
-        output_path,
-        "--slides_per_group",
-        "3",
+        f"--in_file {source_path}",
+        f"--out_file {output_path}",
+        f"--slides_per_group 3",
     ]
+    if limit:
+        cmd.extend([f"--limit {limit}"])
     cmd_str = " ".join(cmd)
     _LOG.info("Executing: %s", cmd_str)
     hsystem.system(cmd_str, suppress_output=False)
@@ -215,6 +194,55 @@ def _generate_script(class_dir: str, source_path: str, source_name: str) -> None
     hsystem.system(cmd_str, suppress_output=False)
     # Step 3: Lint the output.
     cmd_str = f"lint_txt.py -i {output_path} --use_dockerized_prettier"
+    _LOG.info("Executing: %s", cmd_str)
+    hsystem.system(cmd_str, suppress_output=False)
+
+
+def _slide_reduce(source_path: str, source_name: str, *, limit: Optional[str] = None) -> None:
+    """
+    Reduce slides by applying LLM transformation.
+
+    This transforms the data in place using process_slides.py.
+
+    :param source_path: path to source .txt file
+    :param source_name: name of source file
+    """
+    _LOG.info("Reducing slides for %s", source_name)
+    cmd = [
+        "process_slides.py",
+        f"--in_file {source_path}",
+        f"--action slide_reduce",
+        "--use_llm_transform",
+    ]
+    if limit:
+        cmd.extend([f"--limit {limit}"])
+    cmd_str = " ".join(cmd)
+    _LOG.info("Executing: %s", cmd_str)
+    hsystem.system(cmd_str, suppress_output=False)
+
+
+def _slide_check(source_path: str, source_name: str, *, limit: str = None) -> None:
+    """
+    Check slides by applying LLM transformation.
+
+    Creates a check report in a separate output file.
+
+    :param source_path: path to source .txt file
+    :param source_name: name of source file
+    """
+    # Compute output path.
+    output_path = f"{source_path}.slide_check.txt"
+    _LOG.info("Checking slides for %s -> %s", source_name, output_path)
+    cmd = [
+        "process_slides.py",
+        f"--in_file {source_path}",
+        f"--action slide_check",
+        f"--out_file {output_path}",
+        f"--use_llm_transform",
+    ]
+    if limit:
+        cmd.extend([f"--limit {limit}"])
+    cmd_str = " ".join(cmd)
     _LOG.info("Executing: %s", cmd_str)
     hsystem.system(cmd_str, suppress_output=False)
 
@@ -233,7 +261,7 @@ def _process_lecture_file(
     :param class_dir: class directory (data605 or msml610)
     :param source_path: path to source .txt file
     :param source_name: name of source file
-    :param actions: list of actions to execute ('pdf' and/or 'script')
+    :param actions: list of actions to execute ('pdf', 'script', 'slide_reduce', 'slide_check')
     :param limit: optional slide range to process
     """
     _LOG.info("Processing file: %s", source_path)
@@ -242,9 +270,11 @@ def _process_lecture_file(
         if action == "pdf":
             _generate_pdf(class_dir, source_path, source_name, limit=limit)
         elif action == "script":
-            if limit:
-                _LOG.warning("Ignoring --limit for script generation")
-            _generate_script(class_dir, source_path, source_name)
+            _generate_script(class_dir, source_path, source_name, limit=limit)
+        elif action == "slide_reduce":
+            _slide_reduce(source_path, source_name, limit=limit)
+        elif action == "slide_check":
+            _slide_check(source_path, source_name, limit=limit)
         else:
             hdbg.dfatal("Unknown action: %s", action)
 
@@ -268,7 +298,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
     _LOG.info("Selected actions: %s", actions)
     # Find matching lecture files.
     files = _find_lecture_files(args.class_name, patterns)
-    hdbg.dassert_lt(0, len(files), "No lecture files found for patterns:", patterns)
+    hdbg.dassert_lt(0, len(files), "No lecture files found for patterns: %s", patterns)
     # Validate if --limit is specified.
     if args.limit:
         hdbg.dassert_eq(len(files), 1, "Need exactly one file when using --limit")

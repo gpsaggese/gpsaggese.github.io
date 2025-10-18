@@ -75,7 +75,6 @@ UMD DATA605 - Big Data Systems
   - Changes over time
 ::::
 :::: {.column width=40%}
-
 \centering
 
 \footnotesize
@@ -87,7 +86,6 @@ UMD DATA605 - Big Data Systems
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_4_image_2.png)
 `course` relation
-
 ::::
 :::
 
@@ -109,7 +107,6 @@ UMD DATA605 - Big Data Systems
   - Foreign key constraints are arrows
 ::::
 :::: {.column width=40%}
-
 \centering
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_1.png)
@@ -119,7 +116,6 @@ UMD DATA605 - Big Data Systems
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_3.png)
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_4.png){ width=60% }
-
 ::::
 :::
 
@@ -152,7 +148,6 @@ UMD DATA605 - Big Data Systems
 * Primary Key
 ::: columns
 :::: {.column width=65%}
-
 - _R_ is the set of attributes of a relation _r_
   - E.g., `ID, name, dept_name, salary` are attributes of relation `instructor`
 
@@ -180,7 +175,7 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-* Question: What are Primary Keys?
+* Question: What Are Primary Keys?
 ::: columns
 :::: {.column width=75%}
 - Marital status
@@ -204,12 +199,11 @@ UMD DATA605 - Big Data Systems
   - Rider(Name, Born, Team-name, Coach, Sponsor, Year)
 ::::
 :::: {.column width=25%}
-
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_8_image_1.png)
 ::::
 :::
 
-* Answer: What are Primary Keys?
+* Answer: What Are Primary Keys?
 ::: columns
 :::: {.column width=75%}
 - Marital status
@@ -250,7 +244,6 @@ UMD DATA605 - Big Data Systems
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_10_image_1.png)
 ::::
 :::
-
 - **Foreign key constraint**: for each row, the tuple for a primary key must
   exist
   - Aka referential integrity constraint
@@ -258,7 +251,6 @@ UMD DATA605 - Big Data Systems
     `student`
 
 - The key referenced as foreign key needs to exist as primary key
-
 
 * Relational Algebra: 1/4
 ::: columns
@@ -279,7 +271,6 @@ UMD DATA605 - Big Data Systems
   - Must be compatible (same attributes)
 ::::
 :::: {.column width=30%}
-
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_11_image_1.png)
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_11_image_2.png)
@@ -291,7 +282,6 @@ UMD DATA605 - Big Data Systems
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_11_image_4.png){width=80%}
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_11_image_5.png){width=80%}
-
 ::::
 :::
 
@@ -368,13 +358,11 @@ UMD DATA605 - Big Data Systems
   - Some formulations are more efficient
 ::::
 :::: {.column width=40%}
-
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_14_image_2.png)
 
 \vspace{2cm}
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_14_image_1.png)
-
 ::::
 :::
 
@@ -403,11 +391,13 @@ UMD DATA605 - Big Data Systems
 * SQL Overview
 
 - Data description language (DDL)
+
   ```sql
   CREATE TABLE <name> (<field> <domain>, ... )
   ```
 
 - Data modification language (DML)
+
   ```sql
   INSERT INTO <name> (<field names>) VALUES (<field values>)
   DELETE FROM <name> WHERE <condition>
@@ -415,33 +405,32 @@ UMD DATA605 - Big Data Systems
   ```
 
 - Query language
+
   ```sql
   SELECT <fields> FROM <name> WHERE <condition>
   ```
 
 * Create Table
-
 :::columns
 ::::{.column width=50%}
-```sql 
+```sql
   CREATE TABLE r
-   (A_1 D_1, 
-   A_2 D_2, 
-   ..., 
-   A_n D_n, 
-   IntegrityConstraint_1, 
-   IntegrityConstraint_n); 
+   (A_1 D_1,
+   A_2 D_2,
+   ...,
+   A_n D_n,
+   IntegrityConstraint_1,
+   IntegrityConstraint_n);
 ```
 ::::
 ::::{.column width=50%}
 where:
 
-- `r` is name of *table* (aka *relation*)
-- `A_i` name of *attribute* (aka *field*, *column*)
+- `r` is name of _table_ (aka _relation_)
+- `A_i` name of _attribute_ (aka _field_, _column_)
 - `D_i` domain of attribute `A_i`
 ::::
 :::
-
 - **Constraints**
   - SQL prevents changes violating integrity constraints
   - Primary key
@@ -456,11 +445,12 @@ where:
 
 * Select
 
-```sql 
-SELECT A_1, A_2, ..., A_n 
-    FROM r_1, r_2, ..., r_m 
-    WHERE P; 
+```sql
+SELECT A_1, A_2, ..., A_n
+    FROM r_1, r_2, ..., r_m
+    WHERE P;
 ```
+
 - `SELECT`: select the attributes to list (i.e., projection)
 - `FROM`: list of tables to be accessed
   - Define a Cartesian product of the tables
@@ -476,7 +466,7 @@ SELECT A_1, A_2, ..., A_n
   - Difference: SQL allows duplicate values, relational algebra works with
     mathematical sets
 
-* Null values
+* Null Values
 - An arithmetic operation with `NULL` yields `NULL`
 - Comparison with NULL
   - `1 < NULL`
@@ -498,29 +488,31 @@ SELECT A_1, A_2, ..., A_n
   only as argument of aggregate function
 
 \vspace{0.25cm}
-```sql 
+
+```sql
     SELECT dept_name, AVG(salary)
-        FROM instructor 
-        GROUP BY dept_name; 
-```
-\vspace{0.25cm}
-```
-    -- Error. 
+        FROM instructor
+        GROUP BY dept_name;
 ```
 
-```sql 
-    SELECT dept_name, salary 
-        FROM instructor 
-        GROUP BY dept_name; 
-```
 \vspace{0.25cm}
+```
+    -- Error.
+```
+
+```sql
+    SELECT dept_name, salary
+        FROM instructor
+        GROUP BY dept_name;
+```
+
+\vspace{0.25cm}
+
 - `salary` is not in `GROUP BY` so it must be in an aggregate function
 ::::
 :::: {.column width=35%}
-
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_20_image_1.png)
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_20_image_2.png)
-
 ::::
 :::
 
@@ -528,11 +520,11 @@ SELECT A_1, A_2, ..., A_n
 - State a condition that applies to groups instead of tuples (like WHERE)
 - Any attribute in the HAVING clause must appear in the GROUP BY clause
 - E.g., find departments with avg salary of instructors > 42k
-  ```sql 
+  ```sql
       SELECT dept_name, AVG(salary) AS avg_salary
-          FROM instructor 
-          GROUP BY dept_name 
-          HAVING AVG(salary) > 42000; 
+          FROM instructor
+          GROUP BY dept_name
+          HAVING AVG(salary) > 42000;
   ```
 
 \vspace{0.5cm}
@@ -542,48 +534,47 @@ SELECT A_1, A_2, ..., A_n
   - (optional) WHERE is used to filter
   - GROUP BY collects tuples into groups
   - (optional) HAVING is applied to each group and groups are filtered
-  - SELECT generates tuples of the results, applying aggregate functions to get a single result for each group
+  - SELECT generates tuples of the results, applying aggregate functions to get
+    a single result for each group
 
-* Nested subqueries
+* Nested Subqueries
 - SQL allows using the result of a query in another query
   - Use a subquery returning one attribute (scalar subquery) where a value is
     used
   - Use the result of a query for set membership in the WHERE clause
   - Use the result of a query in a FROM clause
-
 :::columns
 ::::{.column width=60%}  
-```sql 
-SELECT tmp.dept_name, tmp.avg_salary 
+```sql
+SELECT tmp.dept_name, tmp.avg_salary
   FROM (
-    SELECT dept_name, 
-        AVG(salary) AS avg_salary 
-    FROM instructor 
+    SELECT dept_name,
+        AVG(salary) AS avg_salary
+    FROM instructor
     GROUP BY dept_name) AS tmp
-WHERE avg_salary > 42000 
+WHERE avg_salary > 42000
 ```
 ::::
 ::::{.column width=40%}  
-
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_22_image_1.png)
 ::::
 :::
 
 * With
-- `WITH` clause allows to define a temporary relation containing the results of a
-  subquery
+- `WITH` clause allows to define a temporary relation containing the results of
+  a subquery
 - It can be equivalent to a nested subqueries, but clearer
 
 - E.g., find department with the maximum budget
   :::columns
   ::::{.column width=80%}  
-  ```sql
-  WITH max_budget(value) as (
-    SELECT MAX(budget) FROM department) 
-    SELECT department.dept_name, budget 
-      FROM department, max_budget 
-      WHERE department.budget = max_budget.value 
-  ```
+```sql
+WITH max_budget(value) as (
+  SELECT MAX(budget) FROM department)
+  SELECT department.dept_name, budget
+    FROM department, max_budget
+    WHERE department.budget = max_budget.value
+```
 ::::
 ::::{.column width=20%}  
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_23_image_1.png)
@@ -600,8 +591,8 @@ WHERE avg_salary > 42000
       INSERT INTO course(course_id, title, dept_name, credits)
           VALUES ('DATA-605', 'Big data systems', 'Comp. Sci.', 3)
   ```
-  \endgroup
 
+  \endgroup
   - Query whose results is a set of tuples
   ```sql
       INSERT INTO instructor
@@ -609,14 +600,14 @@ WHERE avg_salary > 42000
           FROM student
           WHERE dept_name = 'Music' AND tot_cred > 144)
   ```
-
-  - Nested queries are evaluated and then inserted so this doesn't create infinite loops
+  - Nested queries are evaluated and then inserted so this doesn't create
+    infinite loops
     ```sql
       INSERT INTO student (SELECT * FROM student)
     ```
   - Many DB have bulk loader utilities to insert a large set of tuples into a
-    relation, reading from formatted text files 
-  This is much faster than INSERT statements
+    relation, reading from formatted text files This is much faster than INSERT
+    statements
 
 * Update
 - SQL can change a value in a tuple without changing all the other values
@@ -630,6 +621,7 @@ WHERE avg_salary > 42000
       WHERE salary < 70000
   ```
 - Nesting is allowed
+
   ```sql
   UPDATE instructor SET salary = salary * 1.05
       WHERE salary < (SELECT AVG(salary) FROM instructor)
@@ -644,21 +636,19 @@ WHERE avg_salary > 42000
   - r is a relation
   - P is a predicate
 - Remove all tuples (but not the table)
+
   ```sql
   DELETE FROM instructor
   ```
 
 * SQL Tutorial
-
 :::columns
 ::::{.column width=60%}
 - SQL tutorial dir
-- Readme**
-**
+- Readme\*\* \*\*
   - Explains how to run the tutorial
-- Three notebooks in tutorial\_university
-- **How to learn from a tutorial
-**
+- Three notebooks in tutorial_university
+- **How to learn from a tutorial **
   - Reset the notebook
   - Execute each cell one at the time
   - Ideally create a new file and retype (!) everything
@@ -669,16 +659,17 @@ WHERE avg_salary > 42000
   - Build your mental model
 ::::
 ::::{.column width=40%}
-
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_27_image_1.png)
 ::::
 :::
 
+## #############################################################################
 ## Movie Database Example (Optional)
+## #############################################################################
 
 * Example Schema for SQL Queries
-
 \footnotesize
+
 ```schema
 Movie(title, year, length, inColor, studioName, producerC\#)
 StarsIn(movieTitle, movieYear, starName)
@@ -708,6 +699,7 @@ Studio(name, address, presC\#)
         producerC# integer references
             movieExec(cert#) );
 ```
+
 - Must define movieExec before movie. Why?
 
 * SQL: Data Manipulation
@@ -720,10 +712,12 @@ Studio(name, address, presC\#)
           values('Naomi Watts', 'King Kong', 2005);
   ```
 - DELETE
+
   ```sql
       DELETE FROM movies WHERE movieYear < 1980;
   ```
   - Syntax is fine, but this command will be rejected. Why?
+
   ```sql
       DELETE FROM movies
           WHERE length < (SELECT avg(length) FROM movies);
@@ -731,22 +725,27 @@ Studio(name, address, presC\#)
   - Problem: as we delete tuples, the average length changes
   - Solution:
     - First, compute avg length and find all tuples to delete
-    - Next, delete all tuples found above (without recomputing avg or retesting the tuples)
+    - Next, delete all tuples found above (without recomputing avg or retesting
+      the tuples)
 
 * SQL: Data Manipulation
 - UPDATE
-  - Increase all movieExec netWorth's over 100,000 USD by 6%, all other accounts receive 5%
+  - Increase all movieExec netWorth's over 100,000 USD by 6%, all other accounts
+    receive 5%
   - Write two update statements:
+
   ```sql
       UPDATE movieExec SET netWorth = netWorth * 1.06
           WHERE netWorth > 100000;
   ```
+
   ```sql
       UPDATE movieExec SET netWorth = netWorth * 1.05
           WHERE netWorth <= 100000;
   ```
   - The order is important
   - Can be done better using the case statement
+
   ```sql
       UPDATE movieExec SET netWorth =
           CASE
@@ -756,26 +755,33 @@ Studio(name, address, presC\#)
   ```
 
 * SQL Single Table Queries
-- Movies produced by Disney in 1990: note the *rename*
+- Movies produced by Disney in 1990: note the _rename_
+
   ```sql
       SELECT m.title, m.year
           FROM movie m
           WHERE m.studioname = 'disney' AND m.year = 1990;
   ```
   - The SELECT clause can contain expressions
+
   ```sql
       SELECT title || ' (' || to_char(year) || ')' AS titleyear
   ```
+
   ```sql
       SELECT 2014 - year
   ```
-  - The WHERE clause support a large number of different predicates and combinations thereof
+  - The WHERE clause support a large number of different predicates and
+    combinations thereof
+
   ```sql
       year BETWEEN 1990 and 1995
   ```
+
   ```sql
       title LIKE 'star wars%'
   ```
+
   ```sql
       title LIKE 'star wars _'
   ```
@@ -793,11 +799,12 @@ Studio(name, address, presC\#)
       SELECT year, avg(length)
           FROM movie
           GROUP BY year;
-  ``` 
-- **GROUP BY:** is a very important concept that shows up in many data processing platforms
+  ```
+- **GROUP BY:** is a very important concept that shows up in many data
+  processing platforms
   - What it does:
-    - Partition the tuples by the group attributes (*year* in this case)
-    - Do something (*compute avg* in this case) for each group
+    - Partition the tuples by the group attributes (_year_ in this case)
+    - Do something (_compute avg_ in this case) for each group
     - Number of resulting tuples == number of groups
 
 * Single Table Queries
@@ -809,6 +816,7 @@ Studio(name, address, presC\#)
   ```
   - The smaller "subquery" is called a "nested subquery"
 - Find movies with at most 5 stars: an example of a correlated subquery
+
   ```sql
       SELECT *
           FROM movies m
@@ -828,10 +836,12 @@ Studio(name, address, presC\#)
           WHERE m1.length <= m2.length) AS rank
           FROM movies m1;
   ```
-  - Key insight: A movie is ranked 5th if there are exactly 4 movies with longer length.
-  - Most database systems support some sort of a *rank* keyword for doing this
+  - Key insight: A movie is ranked 5th if there are exactly 4 movies with longer
+    length.
+  - Most database systems support some sort of a _rank_ keyword for doing this
   - The above query doesn't work in presence of ties, etc.
 - Set operations
+
   ```sql
       SELECT name
           FROM movieExec
@@ -842,11 +852,13 @@ Studio(name, address, presC\#)
 
 * Single Table Queries
 - Set Comparisons
+
   ```sql
   SELECT *
       FROM movies
       WHERE year IN [1990, 1995, 2000];
   ```
+
   ```sql
   SELECT *
       FROM movies
@@ -856,20 +868,22 @@ Studio(name, address, presC\#)
       );
   ```
 
-* Multi-table Queries
+* Multi-Table Queries
 - Key:
   - Do a join to get an appropriate table
   - Use the constructs for single-table queries
   - You will get used to doing all at once
 - Examples:
+
   ```sql
       SELECT title, year, me.name AS producerName
           FROM movies m, movieexec me
           WHERE m.producerC# = me.cert#;
   ```
 
-* Multi-table Queries
+* Multi-Table Queries
 - Consider the query:
+
   ```sql
       SELECT title, year, producerC#, count(starName)
           FROM movies, starsIn
@@ -877,35 +891,36 @@ Studio(name, address, presC\#)
                 year = starsIn.movieYear
           GROUP BY title, year, producerC#
   ```
-
   - What about movies with no stars?
   - Need to use **outer joins**
+
   ```sql
       SELECT title, year, producerC#, count(starName)
           FROM movies LEFT OUTER JOIN starsIn
           ON title = starsIn.movieTitle AND year = starsIn.movieYear
           GROUP BY title, year, producerC#
   ```
-
-  - All tuples from 'movies' that have no matches in starsIn are included with NULLs
+  - All tuples from 'movies' that have no matches in starsIn are included with
+    NULLs
   - So if a tuple (m1, 1990) has no match in starsIn, we get (m1, 1990, NULL) in
     the result
   - The count(starName) works correctly then
-  - Note: count(*) would not work correctly (NULLs can have unintuitive behavior)
+  - Note: count(\*) would not work correctly (NULLs can have unintuitive
+    behavior)
 
 * Other SQL Constructs
 - Views
+
   ```sql
     CREATE VIEW DisneyMovies
         SELECT *
             FROM movie m
             WHERE m.studioname = 'disney';
   ```
-
   - Can use it in any place where a table name is used
   - Views are used quite extensively to:
-    - simplify queries
-    - hide data (by giving users access only to specific views)
+    - Simplify queries
+    - Hide data (by giving users access only to specific views)
   - Views may be *materialized *or not
 
 * Other SQL Constructs
@@ -915,21 +930,25 @@ Studio(name, address, presC\#)
   - Can lead to counterintuitive behavior
   - For example, the following query does not return movies where length = NULL
   ```sql
-        SELECT * FROM movies 
+        SELECT * FROM movies
         WHERE length >= 120 OR length <= 120
   ```
   - Aggregate operations can be especially tricky
 - Transactions
-  - A transaction is a sequence of queries and update statements executed as a single unit
+  - A transaction is a sequence of queries and update statements executed as a
+    single unit
   - For example, transferring money from one account to another
-    - Both the *deduction* from one account and *credit* to the other account should happen, or neither should
+    - Both the _deduction_ from one account and _credit_ to the other account
+      should happen, or neither should
 - Triggers
-  - A trigger is a statement that is executed automatically by the system as a side effect of a modification to the database
+  - A trigger is a statement that is executed automatically by the system as a
+    side effect of a modification to the database
 
 * Other SQL Constructs
 - Integrity Constraints
   - Predicates on the database that must always hold
   - Key Constraints: Specifying something is a primary key or unique
+
   ```sql
       CREATE TABLE customer (
           ssn CHAR(9) PRIMARY KEY,
@@ -939,9 +958,11 @@ Studio(name, address, presC\#)
       UNIQUE (cname, address, city));
   ```
   - Attribute constraints: Constraints on the values of attributes
+
   ```sql
   bname char(15) not null
   ```
+
   ```sql
   balance int not null, check (balance>= 0)
   ```
@@ -963,7 +984,7 @@ Studio(name, address, presC\#)
     ```
   - Multi-table
     ```sql
-      CREATE ASSERTION loan-constraint 
+      CREATE ASSERTION loan-constraint
       CHECK (NOT EXISTS
           (SELECT* FROM loan AS L WHERE NOT EXISTS
               (SELECT* FROM borrower B, depositor D, account A
@@ -983,8 +1004,8 @@ Studio(name, address, presC\#)
       SELECT COUNT(*) FROM temp;
     ```
   - Can have multiple subqueries (multiple with clauses)
-  - Real advantage is when subquery needs to be referenced multiple times in main
-    select
+  - Real advantage is when subquery needs to be referenced multiple times in
+    main select
   - Helps with complex queries, both for readability and maybe performance (can
     cache subquery results)
 
@@ -1001,4 +1022,3 @@ Studio(name, address, presC\#)
   ```
   - Difference from `WHERE` clause is that it applies to summarized group
     records, and where applies to individual records
-

@@ -2,7 +2,8 @@
 
 ## Goal
 
-This script generates PDF slides and/or reading scripts for lecture materials
+This script generates PDF slides and/or reading scripts for lecture materials, and
+can process slides using LLM transformations
 
 ## Usage Examples
 
@@ -36,6 +37,16 @@ This script generates PDF slides and/or reading scripts for lecture materials
   > process_lessons.py --lectures 01* --class data605 --skip_action script
   ```
 
+- Reduce slides using LLM transformation (modifies in place)
+  ```bash
+  > process_lessons.py --lectures 01.1 --class data605 --action slide_reduce
+  ```
+
+- Check slides using LLM transformation (creates separate report)
+  ```bash
+  > process_lessons.py --lectures 01.1 --class data605 --action slide_check
+  ```
+
 - Generate specific slides from a lecture
   ```bash
   > process_lessons.py --lectures 01.1 --limit 1:3 --class data605 --action pdf
@@ -56,11 +67,15 @@ This script generates PDF slides and/or reading scripts for lecture materials
 - `--action`: Actions to execute. Can be specified multiple times:
   - `pdf`: Generate PDF slides
   - `script`: Generate reading scripts
+  - `slide_reduce`: Reduce slides using LLM transformation (modifies source in
+    place)
+  - `slide_check`: Check slides using LLM transformation (creates separate
+    report file)
   - Default: `pdf` (if no action specified)
 - `--skip_action`: Actions to skip (mutually exclusive with `--action`)
 - `--all`: Execute all available actions (mutually exclusive with `--action`)
 - `--limit`: Slide range to process (e.g., `1:3`). Only valid when a single
-  lecture file matches the pattern.
+  lecture file matches the pattern. Only applies to `pdf` action.
 - `--dry_run`: Print commands without executing them
 - `--log_level`: Logging verbosity (optional)
 
@@ -80,6 +95,10 @@ This script generates PDF slides and/or reading scripts for lecture materials
     - generate_slide_script.py → lectures_script/*.script.txt
     - perl (remove prefixes) → lectures_script/*.script.txt
     - lint_txt.py → lectures_script/*.script.txt
+  - Process slide_reduce action (if selected)
+    - process_slides.py --action slide_reduce --use_llm_transform → modifies source in place
+  - Process slide_check action (if selected)
+    - process_slides.py --action slide_check --use_llm_transform → creates *.slide_check.txt
 ```
 
 ### Directory Structure

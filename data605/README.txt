@@ -20,6 +20,10 @@ docker> process_slides.py --in_file $SRC_NAME --action slide_check --out_file $D
 vimdiff $SRC_NAME process_slides.txt
 ```
 
+```
+> process_lessons.py --lectures 1.1* --class data605 --action slide_check --limit 0:2
+```
+
 # Reduce all slides
 ```
 SRC_NAME=$(ls $DIR/lectures_source/Lesson04.2*); echo $SRC_NAME
@@ -30,7 +34,7 @@ vimdiff $SRC_NAME process_slides.txt
 
 # Generate all the slides.
 
-> process_lessons.py --lectures 0*:1* --class data605 --target pdf
+> process_lessons.py --lectures 0*:1* --class data605 --action pdf
 
 # Count pages.
 
