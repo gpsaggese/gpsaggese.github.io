@@ -94,11 +94,11 @@ UMD DATA605 - Big Data Systems
   - **OLAP** (On-Line Analytical Processing)
     - Read large amount of data and process it
     - E.g., analyze item purchases over time
-- ```text Hadoop FileSystem (HDFS) supports OLAP workloads ```
+- **Hadoop FileSystem (HDFS) supports OLAP workloads**
   - Provide a filesystem consisting of arbitrarily large files
   - Data should be read sequentially, end-to-end
   - Rarely updated
-- ```text HBase supports OLTP interactions ```
+- **HBase supports OLTP interactions**
   - Built on top of HDFS
   - Use additional storage and memory to organize the tables
   - Write tables back to HDFS as needed
@@ -106,19 +106,22 @@ UMD DATA605 - Big Data Systems
 * HBase Data Model
 :::columns
 ::::{.column width=65%}
-- **Warning**: HBase uses names similar to relational DB concepts, but with different meanings
+- **Warning**: HBase uses names similar to relational DB concepts, but with
+  different meanings
 - A **database** consists of multiple tables
 - Each **table** consists of multiple rows, sorted by row key
-- Each row contains a *row key* and one or more column families
+- Each row contains a _row key_ and one or more column families
 - Each **column family**
   - Can contain multiple columns (family:column)
   - Is defined when the table is created
 - A **cell**
   - Is uniquely identified by (table, row, family:column)
-  - Contains metadata (e.g., timestamp) and an uninterpreted array of bytes (blob)
+  - Contains metadata (e.g., timestamp) and an uninterpreted array of bytes
+    (blob)
 - **Versioning**
   - New values don't overwrite the old ones
-  - `put()` and `get()` allow to specify a timestamp (otherwise uses current time)
+  - `put()` and `get()` allow to specify a timestamp (otherwise uses current
+    time)
 ::::
 ::::{.column width=35%}
 \vspace{1.5cm}
@@ -146,6 +149,7 @@ database = {'table1': table}
 (value, metadata) = \
 table['row1']['cf1:col1']
 ```
+
 \endgroup
 ::::
 :::
@@ -162,19 +166,19 @@ table['row1']['cf1:col1']
   - 3 columns in the column family "color"
     - "red", "blue", "yellow"
   - 1 column in the column family "shape"
-    - shape = 4
+    - Shape = 4
 - The row "second" has:
-  - no columns in "color"
+  - No columns in "color"
   - 2 columns in the column family "shape"
 - Data is accessed using a row key and column (family:qualifier)
 
 \centering
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_2.png){width=15%}
-
 ::::
 ::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_1.png)
 \footnotesize
+
 ```python
 table = {
   'first': {
@@ -193,15 +197,19 @@ table = {
 ::::
 :::
 
-* Why all this convoluted stuff?
+* Why All This Convoluted Stuff?
 :::columns
 ::::{.column width=60%}
 - **A row in HBase is almost like a mini-database**
   - A cell has many different values associated with it
   - Data is stored in a sparse format
+
 - **Rows in HBase are "deeper" than in relational DBs**
-  - In relational DBs rows contain a lot of column values (fixed array with types)
-  - In HBase rows contain something like a two-level nested dictionary and metadata (e.g., timestamp)
+  - In relational DBs rows contain a lot of column values (fixed array with
+    types)
+  - In HBase rows contain something like a two-level nested dictionary and
+    metadata (e.g., timestamp)
+
 - **Applications**
   - Store versioned web-site data
   - Store a wiki
@@ -228,6 +236,7 @@ table = {
 ::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_40_image_1.png){width=80%}
 \footnotesize\centering
+
 ```python
 wikipedia_table = {
   # wiki id.
@@ -240,7 +249,7 @@ wikipedia_table = {
   }
 }
 Database = Dict[str, Table]
-database: Database = {'wikipedia':  
+database: Database = {'wikipedia':
 wiki_table}
 (article, metadata) = \
 wiki_table['Home']['text']
@@ -254,30 +263,31 @@ wiki_table['Home']['text']
 - **Add data**
   - Columns don't need to be predefined when creating a table
   - The column is defined as `text`
-  
+
   \begingroup\color{blue}\footnotesize
   ```
-  > put 'wikipedia', 'Home', 'text', 
+  > put 'wikipedia', 'Home', 'text',
   'Welcome!'
   ```
-  \endgroup
 
+  \endgroup
   - **Query data**
   - Specify the table name, the row key, and optionally a list of columns
-  
-  \begingroup\color{blue}\footnotesize
+
+  \begingroup \color{blue} \footnotesize
   ```
     > get 'wikipedia', 'Home', 'text'
-    text: timestamp=1295774833226, 
+    text: timestamp=1295774833226,
     value=Welcome!
   ```
-  \endgroup
 
+  \endgroup
   - HBase returns the timestamp (ms since the epoch 01-01-1970 UTC)
 ::::
 ::::{.column width=50%}
 \footnotesize\centering
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_41_image_1.png){width=80%}
+
 ```python
 wikipedia_table = {
   # wiki id.
@@ -290,14 +300,13 @@ wikipedia_table = {
   }
 }
 Database = Dict[str, Table]
-database: Database = {'wikipedia':  
+database: Database = {'wikipedia':
 wiki_table}
 (queried_value, metadata) = \
 wiki_table['Home']['text']
 ```
 ::::
 :::
-
 * Example 2: Improved Wiki
 :::columns
 :::{.column width=60%}
@@ -335,12 +344,13 @@ wiki_table['Home']['text']
 | 103 | Pastor | Inqvist |  |  | 555-1214 | inqvist@wel.org |
 
 \normalsize
+
 - Fundamental operations
   - CREATE table, families
   - PUT table, rowid, family:column, value
   - PUT table, rowid, whole-row
   - GET table, rowid
-  - SCAN table (*WITH filters*)
+  - SCAN table (_WITH filters_)
   - DROP table
 
 * Data in Tabular Form
@@ -360,9 +370,10 @@ wiki_table['Home']['text']
 ::::{.column width=20%}
 \begingroup\color{green}
 ```
-New columns can be 
+New columns can be
 added at runtime
 ```
+
 \endgroup
 ::::
 ::::{.column width=50%}
@@ -372,13 +383,13 @@ added at runtime
 ::::{.column width=20%}
 \begingroup\color{red}
 ```
-Column families cannot 
+Column families cannot
 be added at runtime
 ```
+
 \endgroup
 ::::
 :::
-
 ```text
 Table People(Name, Home, Office)
 {
@@ -448,7 +459,8 @@ GET People:101:Name:First
   - Entire rows are updated atomically or not at all
   - Independently of how many columns are affected
 - **Consistency**
-  - A GET is guaranteed to return a complete row that existed at some point in the table's history
+  - A GET is guaranteed to return a complete row that existed at some point in
+    the table's history
     - Weak / eventual consistency
     - Check the timestamp to be sure!
   - A SCAN
@@ -458,29 +470,27 @@ GET People:101:Name:First
   - Concurrent vs sequential semantics
   - Not guaranteed outside a single row
   - The atom of information is a row
-- **Durability
-**
+- **Durability**
   - All successful writes have been made durable on disk
 
 * Checking for Row or Column Existence
 - HBase supports Bloom filters to check whether a row or column exists
   - It's like a cache for key in keys, instead of keys[key]
   - E.g., instead of querying one can keep track of what's present
-- **Hashset complexity
-**
+- **Hashset complexity**
   - Space needed to store data is unbounded
   - No false positives
   - O(1) in average / amortized (because of reallocations, re-balancing)
-- **Bloom filter implementation
-**
+- **Bloom filter implementation**
   - Bloom filter is like a probabilistic hash set
   - Array of bits initially all equal to 0
-  - When a new blob of data is presented, turning the blob into a hash, and then use hash to set some bits to 1
+  - When a new blob of data is presented, turning the blob into a hash, and then
+    use hash to set some bits to 1
   - To test if we have seen a blob, compute the hash, check the bits
     - If all bits are 0s, then for sure we didn't see it
-    - If all bits are 1s, then it's likely but not sure you have seen that blob (false positive)
-- **Bloom filter complexity
-**
+    - If all bits are 1s, then it's likely but not sure you have seen that blob
+      (false positive)
+- **Bloom filter complexity**
   - Use a constant amount of space
   - Has false positives (no false negatives)
   - O(1)
@@ -501,48 +511,47 @@ GET People:101:Name:First
   - If the server crashes during this limbo period, the state is lost
 - **Solution**
   - Use append-only disk-resident data structure
-  - Log of operations performed since last table checkpoint are appended to the WAL (it's like storing deltas)
+  - Log of operations performed since last table checkpoint are appended to the
+    WAL (it's like storing deltas)
   - When tables are stored to disk, the WAL is cleared
-  - If the server crashes during the limbo period, use WAL to recover the state that was not written yet
+  - If the server crashes during the limbo period, use WAL to recover the state
+    that was not written yet
 - When running a big import job, disable the WAL to improve performance
   - Trade off disaster recovery protection for speed
 
-* Storing variable-length data in DBs
+* Storing Variable-Length Data in Dbs
+
 \footnotesize
 **SQL Table**
 
-```
+```sql
 People(ID: Integer, FirstName: CHAR[20], LastName: CHAR[20], Phone: CHAR[8])
 UPDATE People SET Phone="555-3434" WHERE ID=403;
 ```
-
 :::columns
 ::::{.column width=60%}
-| ID | FirstName | LastName | Phone |
-|----|-----------|----------|----------|
-| 101 | Florian | Krepsbach | \magenta{555-3434} |
-| 102 | Marilyn | Tollerud | 555-1213 |
-| 103 | Pastor | Ingvist | 555-1214 |
+| ID  | FirstName | LastName  | Phone              |
+| --- | --------- | --------- | ------------------ |
+| 101 | Florian   | Krepsbach | \magenta{555-3434} |
+| 102 | Marilyn   | Tollerud  | 555-1213           |
+| 103 | Pastor    | Ingvist   | 555-1214           |
 ::::
 ::::{.column width=40%}
 - Each row is exactly 4 + 20 + 20 + 8 = 52 bytes long
 - To move to the next row: fseek(file,+52)
-- To get to Row 401
-fseek(file, 401*52);
+- To get to Row 401 fseek(file, 401\*52);
 - Overwrite the data in place
 ::::
 :::
-
-
 **HBase Table**
 ```
 People(ID, Name, Home, Office)
 PUT People, 403, Home:Phone, 555-3434
 ```
-
 :::columns
 ::::{.column width=80%}
 \tiny
+
 ```json
   {
     101: {
@@ -559,8 +568,7 @@ PUT People, 403, Home:Phone, 555-3434
 Need to use pointers
 ::::
 :::
-
-* HBase Implementation
+* Hbase Implementation
 
 - **How to store the web on disk?**
 - **HBase is backed by HDFS**
@@ -571,11 +579,11 @@ Need to use pointers
   - **Idea 1: Put an entire table in one file**
     - Need to overwrite the file every time there is a change in any cell
     - Too slow
-  - ```text Idea 2: One file + WAL ```
+  - `text Idea 2: One file + WAL `
     - Better, but doesn't scale to large data
-  - ```text Idea 3: One file per column family + WAL ```
+  - `text Idea 3: One file per column family + WAL `
     - Getting better!
-  - ```text Idea 4: Partition table into regions by key ```
+  - `text Idea 4: Partition table into regions by key `
     - Region = a chunk of rows [a, b)
     - Regions never overlap
 
@@ -605,7 +613,7 @@ Table People(Name, Home, Office)
 
 **File "People"**
 
-* Idea 2: One file + WAL
+* Idea 2: One File + WAL
 
 **Table People(Name, Home, Office)**
 
@@ -631,18 +639,18 @@ PUT 102:Home:Email = mt@yahoo.com
 
 **PUT People:101:Office:Phone = "555-3434"**
 
-	101: {
-		Timestamp: T403;
-		Name: {First="Florian", Middle="Garfield", Last="Krepsbach"},
-		Home: {Phone="555-1212", Email="florian@wobegon.org"},
-		Office: {Phone="666-1212", Email="fk@phc.com"}
-	},
-	102: {
-		Timestamp: T593;
-		Name: {First="Marilyn", Last="Tollerud"},
-		Home: {Phone="555-1213"},
-		Office: {Phone="666-1213"}
-	},
+    101: {
+    	Timestamp: T403;
+    	Name: {First="Florian", Middle="Garfield", Last="Krepsbach"},
+    	Home: {Phone="555-1212", Email="florian@wobegon.org"},
+    	Office: {Phone="666-1212", Email="fk@phc.com"}
+    },
+    102: {
+    	Timestamp: T593;
+    	Name: {First="Marilyn", Last="Tollerud"},
+    	Home: {Phone="555-1213"},
+    	Office: {Phone="666-1213"}
+    },
 
 * Idea 2 Requires Periodic Table Update
 

@@ -43,7 +43,6 @@ UMD DATA605 - Big Data Systems
 * DB Taxonomy
 :::columns
 ::::{.column width=50%}
-
 - **At least five DB genres**
   - _Relational_ (e.g., Postgres)
   - _Key-value_ (e.g., Redis)
@@ -61,7 +60,6 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 :::columns
 ::::{.column width=50%}
-
 - **Criteria to differentiate DBs**
   - Data model
   - Trade-off with CAP theorem
@@ -103,7 +101,6 @@ UMD DATA605 - Big Data Systems
 * Key-Value Store
 :::columns
 ::::{.column width=75%}
-
 - E.g., redis, DynamoDB, Git, AWS S3, filesystem
 
 - **Data model**
@@ -128,7 +125,6 @@ UMD DATA605 - Big Data Systems
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_26_image_1.png)
 ::::
 :::
-
 * Document Store
 :::columns
 ::::{.column width=75%}
@@ -161,7 +157,6 @@ UMD DATA605 - Big Data Systems
 * Columnar Store
 :::columns
 ::::{.column width=80%}
-
 - E.g., _HBase_, Cassandra, _Parquet_
 
 - **Data model**
@@ -193,7 +188,6 @@ UMD DATA605 - Big Data Systems
 * Graph DB
 :::columns
 ::::{.column width=80%}
-
 - E.g., _Neo4J_, GraphX
 
 - **Data model**
@@ -227,7 +221,6 @@ From http://blog.nahurst.com/visual-guide-to-nosql-systems
 * Taxonomy by CAP
 :::columns
 ::::{.column width=60%}
-
 - **CA (Consistent, Available) systems**
   - Struggle with partitions, use replication
   - Traditional RDBMSs (e.g., PostgreSQL, MySQL)
@@ -246,7 +239,6 @@ From http://blog.nahurst.com/visual-guide-to-nosql-systems
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_31_image_1.png)
 ::::
 :::
-
 - **AP (Available, Partition-Tolerant) systems**
   - Achieve "eventual consistency" via replication and verification
   - Dynamo (key-value)
