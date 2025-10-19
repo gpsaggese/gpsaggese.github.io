@@ -44,18 +44,21 @@ UMD DATA605 - Big Data Systems
 * (Apache) HBase
 :::columns
 ::::{.column width=80%}
+
 - HBase = **H**adoop Data**Base**
-  - Support very large tables on clusters of commodity hardware
-  - Column oriented DB
+  - Supports large tables on commodity hardware clusters
+  - Column-oriented DB
   - Part of Apache Hadoop ecosystem
-  - Use Hadoop filesystem (HDFS)
+  - Uses Hadoop filesystem (HDFS)
     - HDFS modeled after Google File System (GFS)
     - HBase based on Google BigTable
     - Google BigTable runs on GFS, HBase runs on HDFS
-  - Used at Google, Airbnb, eBay
+  - Used by Google, Airbnb, eBay
+
 - **When to use HBase**
-  - For large DBs (e.g., at least many 100 GBs or TBs)
-  - When having at least 5 nodes in production
+  - For large DBs (e.g., many 100 GBs or TBs)
+  - With at least 5 nodes in production
+
 - **Applications**
   - Large-scale online analytics
   - Heavy-duty logging
@@ -71,20 +74,23 @@ UMD DATA605 - Big Data Systems
 * HBase: Features
 - Data versioning
   - Store versions of data
+
 - Data compression
   - Compress and decompress on-the-fly
-  - Makes the system much more complicated
-  - Difficult to do random access
-- Garbage collection (for expired data)
+
+- Garbage collection for expired data
+
 - In-memory tables
-- Atomicity, but only at row level
-  - Relational DBs have flexible atomicity **begin ... end transaction**
+
+- Atomicity at row level
+
 - Strong consistency guarantees
-- Fault tolerant (for machines and network)
+
+- Fault tolerant for machines and network
   - Write-ahead logging
-    - Write data to an in-memory log before it's written to disk
+    - Write data to in-memory log before disk
   - Distributed configuration
-    - Nodes can rely on each other rather than on a centralized source
+    - Nodes rely on each other, not centralized source
 
 * From HDFS to HBase
 - **Different types of workloads for DB backends**
@@ -92,35 +98,44 @@ UMD DATA605 - Big Data Systems
     - Read and write individual data items in a large table
     - E.g., update inventory and price as orders come in
   - **OLAP** (On-Line Analytical Processing)
-    - Read large amount of data and process it
+    - Read large data amounts and process it
     - E.g., analyze item purchases over time
+
 - **Hadoop FileSystem (HDFS) supports OLAP workloads**
-  - Provide a filesystem consisting of arbitrarily large files
-  - Data should be read sequentially, end-to-end
+  - Provide a filesystem with large files
+  - Read data sequentially, end-to-end
   - Rarely updated
+
 - **HBase supports OLTP interactions**
-  - Built on top of HDFS
-  - Use additional storage and memory to organize the tables
+  - Built on HDFS
+  - Use additional storage and memory to organize tables
   - Write tables back to HDFS as needed
 
 * HBase Data Model
 :::columns
 ::::{.column width=65%}
+
 - **Warning**: HBase uses names similar to relational DB concepts, but with
   different meanings
+
 - A **database** consists of multiple tables
+
 - Each **table** consists of multiple rows, sorted by row key
+
 - Each row contains a _row key_ and one or more column families
+
 - Each **column family**
-  - Can contain multiple columns (family:column)
-  - Is defined when the table is created
+  - Contains multiple columns (family:column)
+  - Defined when the table is created
+
 - A **cell**
-  - Is uniquely identified by (table, row, family:column)
+  - Uniquely identified by (table, row, family:column)
   - Contains metadata (e.g., timestamp) and an uninterpreted array of bytes
     (blob)
+
 - **Versioning**
-  - New values don't overwrite the old ones
-  - `put()` and `get()` allow to specify a timestamp (otherwise uses current
+  - New values don't overwrite old ones
+  - `put()` and `get()` allow specifying a timestamp (otherwise uses current
     time)
 ::::
 ::::{.column width=35%}
@@ -157,23 +172,21 @@ table['row1']['cf1:col1']
 * Example 1: Colors and Shape
 :::columns
 ::::{.column width=50%}
-- Table with:
-  - 2 column families
-    - "color" and "shape"
-  - 2 rows
-    - "first" and "second"
-- The row "first" has:
-  - 3 columns in the column family "color"
-    - "red", "blue", "yellow"
-  - 1 column in the column family "shape"
-    - Shape = 4
-- The row "second" has:
-  - No columns in "color"
-  - 2 columns in the column family "shape"
-- Data is accessed using a row key and column (family:qualifier)
 
-\centering
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_2.png){width=15%}
+- Table with:
+  - 2 column families: "color" and "shape"
+  - 2 rows: "first" and "second"
+
+- Row "first":
+  - 3 columns in "color": "red", "blue", "yellow"
+  - 1 column in "shape": shape = 4
+
+- Row "second":
+  - No columns in "color"
+  - 2 columns in "shape"
+
+- Access data using row key and column (family:qualifier) \centering
+  ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_2.png){width=15%}
 ::::
 ::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_38_image_1.png)
@@ -200,18 +213,18 @@ table = {
 * Why All This Convoluted Stuff?
 :::columns
 ::::{.column width=60%}
-- **A row in HBase is almost like a mini-database**
-  - A cell has many different values associated with it
-  - Data is stored in a sparse format
+
+- **A row in HBase is like a mini-database**
+  - A cell has many values
+  - Data stored sparsely
 
 - **Rows in HBase are "deeper" than in relational DBs**
-  - In relational DBs rows contain a lot of column values (fixed array with
-    types)
-  - In HBase rows contain something like a two-level nested dictionary and
-    metadata (e.g., timestamp)
+  - Relational DBs: rows have many column values (fixed array with types)
+  - HBase: rows like a two-level nested dictionary with metadata (e.g.,
+    timestamp)
 
 - **Applications**
-  - Store versioned web-site data
+  - Store versioned website data
   - Store a wiki
 ::::
 ::::{.column width=40%}
@@ -222,9 +235,11 @@ table = {
 * Example 2: Storing a Wiki
 :::columns
 ::::{.column width=50%}
+
 - **Wiki (e.g., Wikipedia)**
   - Contains pages
-  - Each page has a title, an article text varying over time
+  - Each page has a title, article text varies over time
+
 - **HBase data model**
   - Table name $\to$ `wikipedia`
   - Row $\to$ entire wiki page
@@ -307,32 +322,40 @@ wiki_table['Home']['text']
 ```
 ::::
 :::
+
 * Example 2: Improved Wiki
 :::columns
 :::{.column width=60%}
+
 - **Improved wiki using versioning**
+
 - A page
-  - Is uniquely identified by its title
+  - Uniquely identified by title
   - Can have multiple revisions
+
 - A revision
-  - Is made by an author
-  - Contains optionally a commit comment
-  - Is identified by its timestamp
+  - Made by an author
+  - Optionally contains a commit comment
+  - Identified by timestamp
   - Contains text
+
 - **HBase data model**
-- Add a family column "revision" with multiple columns
-  - E.g., author, comment, ...
-- Timestamp is automatic and binds article text and metadata
-- The title is not part of the revision
-  - It's fixed and identified uniquely the page (like a primary key)
-  - If you want to change the title you need to re-write all the row
+
+- Add family column "revision" with multiple columns
+  - E.g., author, comment,
+
+- Timestamp automatically binds article text and metadata
+
+- Title not part of revision
+  - Fixed and uniquely identifies page (like a primary key)
+  - To change title, re-write entire row
 ::::
 ::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_42_image_1.png)
-
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_42_image_2.png)
 ::::
 :::
+
 * Data in Tabular Form
 \tiny
 |  | Name | |Home | |Office |  |
@@ -435,88 +458,100 @@ GET People:101:Name:First
 ```
 
 * Column Family vs Column
+
 - **Adding a column**
-  - Is cheap
-  - Can be done at run-time
+  - Cheap
+  - Done at run-time
+
 - **Adding a column family**
-  - Can't be done at run-time
-  - Need a copy operation of the table (expensive)
-  - This tells you something about how the data is stored
-    - Easy to add is a map
-    - Hard to add is some sort of static array
-    - E.g., MongoDB document vs Relational DB column
-- **Why differentiating column families vs columns?**
-  - Why not storing all the row data in a single column family?
-  - Each column family can be configured independently, e.g.,
+  - Not at run-time
+  - Requires table copy (expensive)
+  - Indicates data storage method
+    - Easy to add: map
+    - Hard to add: static array
+    - E.g., mongoDB document vs Relational DB column
+
+- **Why differentiate column families vs columns?**
+  - Why not store all row data in one column family?
+  - Each column family configured independently, e.g.,
     - Compression
     - Performance tuning
     - Stored together in files
-  - Everything is designed to accommodate a special kind of data
+  - Designed for specific data types
     - E.g., timestamped web data for search engine
 
 * Consistency Model
+
 - **Atomicity**
-  - Entire rows are updated atomically or not at all
-  - Independently of how many columns are affected
+  - Update entire rows atomically or not at all
+  - Independent of column count
+
 - **Consistency**
-  - A GET is guaranteed to return a complete row that existed at some point in
-    the table's history
-    - Weak / eventual consistency
-    - Check the timestamp to be sure!
-  - A SCAN
-    - Must include all data written prior to the scan
-    - May include updates since it started
+  - GET returns a complete row from the table's history
+    - Weak/eventual consistency
+    - Check timestamp for certainty
+  - SCAN
+    - Includes all data written before scan
+    - May include updates since start
+
 - **Isolation**
   - Concurrent vs sequential semantics
-  - Not guaranteed outside a single row
-  - The atom of information is a row
+  - Not guaranteed beyond a single row
+  - Row is the atom of information
+
 - **Durability**
-  - All successful writes have been made durable on disk
+  - Successful writes are durable on disk
 
 * Checking for Row or Column Existence
-- HBase supports Bloom filters to check whether a row or column exists
-  - It's like a cache for key in keys, instead of keys[key]
-  - E.g., instead of querying one can keep track of what's present
+
+- HBase uses Bloom filters to check row or column existence
+  - Acts like a cache for keys
+  - Track presence without querying
+
 - **Hashset complexity**
-  - Space needed to store data is unbounded
+  - Unbounded space for data storage
   - No false positives
-  - O(1) in average / amortized (because of reallocations, re-balancing)
+  - O(1) average/amortized time
+
 - **Bloom filter implementation**
-  - Bloom filter is like a probabilistic hash set
-  - Array of bits initially all equal to 0
-  - When a new blob of data is presented, turning the blob into a hash, and then
-    use hash to set some bits to 1
-  - To test if we have seen a blob, compute the hash, check the bits
-    - If all bits are 0s, then for sure we didn't see it
-    - If all bits are 1s, then it's likely but not sure you have seen that blob
-      (false positive)
+  - Probabilistic hash set
+  - Array of bits initially set to 0
+  - Hash new data, set bits to 1
+  - To test data presence, compute hash, check bits
+    - All bits 0: data not seen
+    - All bits 1: likely seen (false positive possible)
+
 - **Bloom filter complexity**
-  - Use a constant amount of space
-  - Has false positives (no false negatives)
-  - O(1)
+  - Constant space usage
+  - False positives possible (no false negatives)
+  - O(1) time complexity
 
 * Write-Ahead Log (WAL)
 
-- Write-Ahead Log is a general technique used by DBs
+- Technique used by DBs
   - Provide atomicity and durability
   - Protect against node failures
-  - Equivalent to journaling in file system
-- HBase and Postgres uses WAL
+  - Equivalent to journaling in file systems
+
+- HBase and Postgres use WAL
+
 - **WAL mechanics**
-- For performance reasons, the updated state of tables are:
+
+- Updated state of tables:
   - Not written to disk immediately
   - Buffered in memory
   - Written to disk as checkpoints periodically
+
 - **Problem**
-  - If the server crashes during this limbo period, the state is lost
+  - Server crash during this period loses state
+
 - **Solution**
   - Use append-only disk-resident data structure
-  - Log of operations performed since last table checkpoint are appended to the
-    WAL (it's like storing deltas)
-  - When tables are stored to disk, the WAL is cleared
-  - If the server crashes during the limbo period, use WAL to recover the state
-    that was not written yet
-- When running a big import job, disable the WAL to improve performance
+  - Log operations since last checkpoint in WAL
+  - Clear WAL when tables stored to disk
+  - Use WAL to recover state if server crashes
+
+- Disable WAL during big import jobs to improve performance
   - Trade off disaster recovery protection for speed
 
 * Storing Variable-Length Data in Dbs
@@ -537,10 +572,14 @@ UPDATE People SET Phone="555-3434" WHERE ID=403;
 | 103 | Pastor    | Ingvist   | 555-1214           |
 ::::
 ::::{.column width=40%}
-- Each row is exactly 4 + 20 + 20 + 8 = 52 bytes long
-- To move to the next row: fseek(file,+52)
-- To get to Row 401 fseek(file, 401\*52);
-- Overwrite the data in place
+
+- Each row: 52 bytes
+
+- Move to next row: fseek(file,+52)
+
+- Get to Row 401: fseek(file, 401\*52)
+
+- Overwrite data in place
 ::::
 :::
 **HBase Table**
@@ -568,23 +607,26 @@ PUT People, 403, Home:Phone, 555-3434
 Need to use pointers
 ::::
 :::
-* Hbase Implementation
+
+* HBase Implementation
 
 - **How to store the web on disk?**
+
 - **HBase is backed by HDFS**
   - Store each table (e.g., Wikipedia) in one file
   - "One file" means one gigantic file stored in HDFS
-    - HDFS splits/replicate file into blocks on different servers
-- Here is the idea in several steps:
-  - **Idea 1: Put an entire table in one file**
-    - Need to overwrite the file every time there is a change in any cell
+    - HDFS splits/replicates file into blocks on different servers
+
+- Idea in several steps:
+  - **Idea 1: Put entire table in one file**
+    - Overwrite file with any cell change
     - Too slow
-  - `text Idea 2: One file + WAL `
+  - `Idea 2: One file + WAL`
     - Better, but doesn't scale to large data
-  - `text Idea 3: One file per column family + WAL `
+  - `Idea 3: One file per column family + WAL`
     - Getting better!
-  - `text Idea 4: Partition table into regions by key `
-    - Region = a chunk of rows [a, b)
+  - `Idea 4: Partition table into regions by key`
+    - Region = chunk of rows [a, b)
     - Regions never overlap
 
 * Idea 1: Put the Table in a Single File
