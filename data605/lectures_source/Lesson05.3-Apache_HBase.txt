@@ -25,24 +25,6 @@ UMD DATA605 - Big Data Systems
 
 **Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
 
-::::
-:::: {.column width=20%}
-
-::::
-:::
-
-* (Apache) HBase
-\begingroup \large
-**UMD DATA605 - Big Data Systems**
-\endgroup
-
-- Issues with Relational DBs
-- NoSQL Taxonomy
-- **(Apache) HBase**
-
-* Resources
-:::columns
-::::{.column width=50%}
 - Content in slides
 - Web
   - 2006, BigTable paper
@@ -50,9 +32,12 @@ UMD DATA605 - Big Data Systems
   - https://github.com/apache/hbase
 - Good overview:
   - Seven Databases in Seven Weeks, 2e
-::::{.column width=50%}
+
 ::::
+:::: {.column width=20%}
+
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_33_image_1.png)
+
 ::::
 :::
 
