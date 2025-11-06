@@ -2,7 +2,7 @@
 
 A comprehensive FastAI-based application for forecasting stock prices using deep learning and advanced feature engineering techniques.
 
-## 🎯 Project Overview
+## Project Overview
 
 This project implements a complete time series forecasting system for stock prices that includes:
 
@@ -12,26 +12,26 @@ This project implements a complete time series forecasting system for stock pric
 - **Comprehensive Evaluation**: Performance metrics, visualization, and trading simulation
 - **Docker Support**: Complete containerization for easy deployment
 
-## 📊 Features
+## Features
 
 ### Core Functionality
-- ✅ Real-time stock data fetching from Yahoo Finance
-- ✅ Technical indicator calculation (Moving Averages, RSI, Volatility)
-- ✅ Sequence creation for time series modeling
-- ✅ Neural network training with FastAI
-- ✅ Model evaluation with MAE and MAPE metrics
-- ✅ Interactive visualization of results
-- ✅ Trading strategy simulation
+- Real-time stock data fetching from Yahoo Finance
+- Technical indicator calculation (Moving Averages, RSI, Volatility)
+- Sequence creation for time series modeling
+- Neural network training with FastAI
+- Model evaluation with MAE and MAPE metrics
+- Interactive visualization of results
+- Trading strategy simulation
 
 ### Advanced Features
-- 🔄 Configurable model parameters
-- 📊 Feature importance analysis
-- 💰 Backtesting with trading simulation
-- 🎯 Direction accuracy evaluation
-- 📈 Comprehensive error analysis
-- 🐳 Docker containerization
+- Configurable model parameters
+- Feature importance analysis
+- Backtesting with trading simulation
+- Direction accuracy evaluation
+- Comprehensive error analysis
+- Docker containerization
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Option 1: Docker (Recommended)
 
@@ -62,7 +62,7 @@ cd UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices
 
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -74,22 +74,22 @@ jupyter notebook
 ## 📁 Project Structure
 
 ```
-├── UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices_utils.py  # Core API module
-├── UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices.API.md          # API documentation
-├── UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices.API.ipynb       # API demonstration
-├── UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices.example.md      # Example documentation
-├── UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices.example.ipynb   # Complete application demo
+├── fastai/fastai_Time_Series_Forecasting_of_Stock_Prices_utils.py  # Core API module
+├── fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.API.md          # API documentation
+├── fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.API.ipynb       # API demonstration
+├── fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.example.md      # Example documentation
+├── fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.example.ipynb   # Complete application demo
 ├── requirements.txt                      # Python dependencies
 ├── Dockerfile                           # Docker configuration
 └── README.md                           # This file
 ```
 
-## 💻 Usage Examples
+## Usage Examples
 
 ### Basic Usage
 
 ```python
-from UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices_utils import create_pipeline, ModelConfig
+from fastai_Time_Series_Forecasting_of_Stock_Prices_utils import create_pipeline, ModelConfig
 
 # Configure model
 config = ModelConfig(
@@ -115,7 +115,7 @@ print(f"MAPE: {results['metrics']['MAPE']:.2f}%")
 ### Advanced Usage
 
 ```python
-from UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices_utils import (
+from fastai_Time_Series_Forecasting_of_Stock_Prices_utils import (
     StockDataCollector, DataPreprocessor, TimeSeriesForecaster
 )
 
@@ -131,7 +131,7 @@ forecaster.train_model(X, y)
 predictions = forecaster.predict(X_test, scaler)
 ```
 
-## 📊 Model Performance
+## Model Performance
 
 ### Typical Results (SPY - S&P 500 ETF)
 - **MAE**: $20-50 (2-5% of stock price)
@@ -153,7 +153,7 @@ The API provides **realistic** performance metrics based on actual testing:
 - **Time Horizon**: Shorter predictions (1-5 days) more accurate
 - **Stock Liquidity**: Major indices and large-cap stocks perform best
 
-## 🔧 Configuration
+## Configuration
 
 ### Model Parameters
 
@@ -173,7 +173,7 @@ config = ModelConfig(
 - **Stocks**: AAPL, GOOGL, MSFT, TSLA, etc.
 - **ETFs**: Any ETF with sufficient historical data
 
-## 📈 Visualization
+## Visualization
 
 The application provides comprehensive visualizations:
 
@@ -182,7 +182,7 @@ The application provides comprehensive visualizations:
 3. **Feature Importance**: Correlation analysis
 4. **Trading Simulation**: Strategy backtesting results
 
-## 🐳 Docker Details
+## Docker Details
 
 ### Image Specifications
 - **Base Image**: Python 3.9-slim
@@ -191,11 +191,11 @@ The application provides comprehensive visualizations:
 - **Volumes**: `/app/outputs` for persistent data
 
 ### Container Features
-- ✅ Pre-installed dependencies
-- ✅ Jupyter notebook server
-- ✅ Non-root user for security
-- ✅ Health checks
-- ✅ Optimized for reproducibility
+- Pre-installed dependencies
+- Jupyter notebook server
+- Non-root user for security
+- Health checks
+- Optimized for reproducibility
 
 ### Docker Commands
 
@@ -216,35 +216,16 @@ docker exec -it <container-id> bash
 docker stop <container-id>
 ```
 
-## ⚠️ Important Disclaimers
-
-### Educational Purpose Only
-- This tool is for **educational purposes only**
-- **NOT** financial advice
-- Do **NOT** use for actual trading without proper validation
-
-### Limitations
-- Predictions become less accurate further into the future
-- Cannot predict black swan events or market crashes
-- Performance varies significantly across market conditions
-- Past performance does not guarantee future results
-
-### Risk Management
-- Always implement proper risk management strategies
-- Use stop-losses and position sizing
-- Diversify investments
-- Consult with financial professionals
-
-## 🔄 Development Workflow
+## Development Workflow
 
 ### Running the Notebooks
 
-1. **API Demo**: Run `UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices.API.ipynb` first to understand the core API
-2. **Complete Example**: Run `UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices.example.ipynb` for the full application
+1. **API Demo**: Run `fastai_Time_Series_Forecasting_of_Stock_Prices.API.ipynb` first to understand the core API
+2. **Complete Example**: Run `fastai_Time_Series_Forecasting_of_Stock_Prices.example.ipynb` for the full application
 
 ### Modifying the Code
 
-1. **Core Logic**: Edit `UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices_utils.py`
+1. **Core Logic**: Edit `fastai_Time_Series_Forecasting_of_Stock_Prices_utils.py`
 2. **Documentation**: Update corresponding `.md` files
 3. **Testing**: Validate changes in notebooks before deployment
 
@@ -257,14 +238,14 @@ git commit -m "Update model hyperparameters"
 git push origin main
 ```
 
-## 🚀 Extensions and Improvements
+## Extensions and Improvements
 
 ### Planned Enhancements
-- 🔄 **LSTM Networks**: Better for long-term dependencies
-- 📊 **Sentiment Analysis**: News and social media integration
-- 🌐 **Multi-Asset Support**: Portfolio optimization
-- 📱 **Web Interface**: Real-time prediction dashboard
-- ⚡ **Real-time API**: Live prediction endpoints
+- **LSTM Networks**: Better for long-term dependencies
+- **Sentiment Analysis**: News and social media integration
+- **Multi-Asset Support**: Portfolio optimization
+- **Web Interface**: Real-time prediction dashboard
+- **Real-time API**: Live prediction endpoints
 
 ### Data Sources
 - **Current**: Yahoo Finance API
@@ -277,7 +258,7 @@ git push origin main
 - **Uncertainty Quantification**: Prediction intervals
 - **Feature Selection**: Automated feature importance
 
-## 📚 Dependencies
+## Dependencies
 
 ### Core Libraries
 - **pandas**: Data manipulation
@@ -295,122 +276,3 @@ git push origin main
 - **jupyter**: Notebook environment
 - **ipykernel**: Jupyter kernel
 - **ipywidgets**: Interactive widgets
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-#### Data Collection Errors
-```python
-# Solution: Check internet connection and symbol validity
-import yfinance as yf
-stock = yf.Ticker("SPY")
-print(stock.history(period="1d"))
-```
-
-#### Dataloader/Column Name Errors ✅ FIXED
-```python
-# These errors have been resolved in the current version:
-# - "positional indexers are out-of-bounds"
-# - "unsupported operand type(s) for -: 'float' and 'dict'"
-# - "None of [Index([...])] are in the [columns]"
-
-# If you encounter similar issues, ensure:
-# 1. All dependencies are up to date (pip install -r requirements.txt)
-# 2. You're using the latest version of the API
-```
-
-#### Memory Issues
-```python
-# Solution: Reduce sequence length or batch size
-config = ModelConfig(
-    sequence_length=30,  # Reduce from 60
-    batch_size=16        # Reduce from 32
-)
-```
-
-#### Training Slow
-```python
-# Solution: Reduce epochs or use GPU
-config = ModelConfig(epochs=10)  # Reduce training time
-```
-
-### Docker Issues
-
-#### Port Already in Use
-```bash
-# Solution: Use different port
-docker run -p 8889:8888 stock-forecaster
-```
-
-#### Permission Denied
-```bash
-# Solution: Fix volume permissions
-sudo chown -R $USER:$USER ./outputs
-```
-
-### Known Issues ✅ All Resolved
-- ✅ **Dataloader validation index issues**: Fixed with proper data splitting
-- ✅ **Column name mismatches**: Resolved with feature name storage
-- ✅ **Prediction errors**: Fixed with consistent DataFrame structure
-- ✅ **MAPE calculation errors**: Resolved with safe arithmetic handling
-
-## 📞 Support and Contributing
-
-### Getting Help
-- 📖 Check documentation in `.md` files
-- 📊 Review notebook examples
-- 🐛 Report issues with detailed error messages
-
-### Contributing
-1. Fork the repository
-2. Create feature branch
-3. Make changes with tests
-4. Submit pull request
-
-### Citation
-If you use this project in your research, please cite:
-
-```bibtex
-@misc{stock_forecasting_2023,
-  title={Time Series Forecasting of Stock Prices},
-  author={Your Name},
-  year={2023},
-  url={https://github.com/your-repo}
-}
-```
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
-**🎯 Remember**: This is an educational tool. Always validate models thoroughly and implement proper risk management before any practical application.
-
-## ✅ Current Status: FULLY FUNCTIONAL
-
-This project has been thoroughly tested and all known issues have been resolved:
-
-### ✅ What Works
-- ✅ Complete data collection and preprocessing pipeline
-- ✅ Robust model training with FastAI
-- ✅ Accurate predictions and evaluation metrics
-- ✅ Comprehensive visualization and analysis
-- ✅ Docker containerization for easy deployment
-- ✅ Error handling and robustness
-
-### ✅ Issues Resolved
-- ✅ **Dataloader validation errors**: Fixed proper train/test splitting
-- ✅ **Column name mismatches**: Implemented consistent feature naming
-- ✅ **Prediction failures**: Resolved DataFrame structure issues
-- ✅ **MAPE calculation errors**: Added safe arithmetic handling
-- ✅ **Type conversion errors**: Implemented robust type checking
-
-### ✅ Performance Verified
-- ✅ Tested with multiple stocks (SPY, AAPL, GOOGL, etc.)
-- ✅ Validated performance metrics accuracy
-- ✅ Confirmed training and prediction pipeline stability
-- ✅ Verified Docker container functionality
-
-The project is ready for production use with appropriate risk management and educational disclaimers.
