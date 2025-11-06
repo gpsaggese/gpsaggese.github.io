@@ -42,13 +42,13 @@ This dataset contains extensive flight and delay information across multiple US 
 
 ### 🧩 Project Structure
 
-AirlineDelay.API.ipynb      → Explains data handling and API design
-AirlineDelay.API.md         → Text documentation for API layer
-AirlineDelay.example.ipynb  → End-to-end delay prediction workflow
-AirlineDelay.example.md     → Explanation of modeling process
-AirlineDelay_utils.py       → Helper functions for data and model
-Dockerfile                  → Reproducible environment setup
-README.md                   → Project overview (this file)
+`AirlineDelay.API.ipynb` → Explains data handling and API design  
+`AirlineDelay.API.md` → Text documentation for API layer  
+`AirlineDelay.example.ipynb` → End-to-end delay prediction workflow  
+`AirlineDelay.example.md` → Explanation of modeling process  
+`AirlineDelay_utils.py` → Helper functions for data and model  
+`Dockerfile` → Reproducible environment setup  
+`README.md` → Project overview (this file)  
 
 ---
 
@@ -58,8 +58,3 @@ To build and run this project using Docker:
 ```bash
 bash docker_build.sh
 bash docker_bash.sh
-
-
-📈 Outcome
-
-The project produces a reliable, explainable delay prediction system capable of identifying the strongest factors influencing flight delays, from weather disruptions to airline operations. It demonstrates real-world data integration, feature design, and ML interpretability in a reproducible environment.
