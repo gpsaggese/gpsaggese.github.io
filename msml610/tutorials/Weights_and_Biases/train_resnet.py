@@ -1,19 +1,33 @@
+# train_resnet.py
+
+import os
+import math
+import dotenv
+import wandb
 import tensorflow
 import tensorflow.keras.models
 import tensorflow.keras.layers
 import tensorflow.keras.applications
 import tensorflow.keras.optimizers
-import wandb
-# import wandb.keras
-import math
-import os
-import dotenv
-import dataset_operations # Import the script with main_prep()
+import wandb.integration.keras
+import dataset_operations  # your data prep script with main_prep()
+
+# --- Dynamic GPU/CPU Selection ---
+gpus = tensorflow.config.list_physical_devices('GPU')
+if gpus:
+    print(f"GPUs detected: {[gpu.name for gpu in gpus]}")
+    try:
+        for gpu in gpus:
+            tensorflow.config.experimental.set_memory_growth(gpu, True)
+    except Exception as e:
+        print(f"Could not set memory growth for GPUs: {e}")
+else:
+    print("No GPUs detected. Using CPU only.")
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 # --- W&B Setup ---
 dotenv.load_dotenv()
-# Note: Using os.environ.get to fetch the key
-key = os.environ.get("WANDB_API_KEY") 
+key = os.environ.get("WANDB_API_KEY")
 
 if key:
     print("Logging into Weights & Biases...")
@@ -22,52 +36,42 @@ else:
     print("WARNING: WANDB_API_KEY not found in .env. Logging in anonymously.")
     wandb.login()
 
-# Initialize the project run
-wandb.init(project="animal-faces-classification") 
-# -----------------
+wandb.init(project="animal-faces-classification")
 
-# --- Configuration for Training ---
-NUM_EPOCHS = 10 
+# --- Training Configuration ---
+NUM_EPOCHS = 10
 LEARNING_RATE = 0.0001
-
 
 def build_and_train_model(train_generator, val_generator, epochs=NUM_EPOCHS, lr=LEARNING_RATE):
     """
-    Builds a ResNet50 Transfer Learning model, compiles it, and trains it 
-    while logging metrics to the already-initialized Weights & Biases run.
+    Builds a ResNet50 Transfer Learning model, compiles it, and trains it
+    while logging metrics to W&B.
     """
     print("\n--- Initializing Transfer Learning Pipeline (ResNet50) ---")
-    
-    # --- 1. Model Selection and Setup ---
-    
-    # Get necessary parameters from the generators
+
     IMG_HEIGHT, IMG_WIDTH = train_generator.target_size
     num_classes = len(train_generator.class_indices)
     input_shape = (IMG_HEIGHT, IMG_WIDTH, 3)
 
     print(f"Model Input Shape: {input_shape}")
     print(f"Number of Classes: {num_classes}")
-    
-    # Load ResNet50 base model (Transfer Learning)
+
     base_model = tensorflow.keras.applications.ResNet50(
-        weights='imagenet', 
-        include_top=False, 
+        weights="imagenet",
+        include_top=False,
         input_shape=input_shape
     )
-
-    # Freeze base model layers
     base_model.trainable = False
 
-    # Create the top layers for classification
-    x = base_model.output
+    # Functional API to avoid graph errors
+    inputs = tensorflow.keras.Input(shape=input_shape)
+    x = base_model(inputs, training=False)
     x = tensorflow.keras.layers.GlobalAveragePooling2D()(x)
-    predictions = tensorflow.keras.layers.Dense(num_classes, activation='softmax')(x)
-    
-    model = tensorflow.keras.models.Model(inputs=base_model.input, outputs=predictions)
-    
+    outputs = tensorflow.keras.layers.Dense(num_classes, activation="softmax")(x)
+    model = tensorflow.keras.models.Model(inputs=inputs, outputs=outputs, name="ResNet50_Transfer")
+
     print("ResNet50 Base Model loaded and frozen. Top layers added.")
 
-    # Log configuration to the already-initialized W&B run
     wandb.config.update({
         "learning_rate": lr,
         "epochs": epochs,
@@ -75,21 +79,18 @@ def build_and_train_model(train_generator, val_generator, epochs=NUM_EPOCHS, lr=
         "model_type": "ResNet50_Transfer",
         "dataset": "AFHQ"
     })
-    
-    # --- 2. Compilation ---
+
     model.compile(
         optimizer=tensorflow.keras.optimizers.Adam(learning_rate=lr),
-        loss='categorical_crossentropy',
-        metrics=['accuracy']
+        loss="categorical_crossentropy",
+        metrics=["accuracy"]
     )
-    
-    # Calculate steps per epoch
+
     train_steps = math.ceil(train_generator.samples / train_generator.batch_size)
     val_steps = math.ceil(val_generator.samples / val_generator.batch_size)
-    
-    # --- 3. Model Training and Tracking ---
 
     print("\nStarting model training...")
+
     model.fit(
         train_generator,
         epochs=epochs,
@@ -97,41 +98,29 @@ def build_and_train_model(train_generator, val_generator, epochs=NUM_EPOCHS, lr=
         steps_per_epoch=train_steps,
         validation_steps=val_steps,
         callbacks=[
-            # The W&B Keras Callback tracks all metrics, model topology, and system stats
-            wandb.keras.WandbCallback() 
+            wandb.integration.keras.WandbMetricsLogger(log_freq="epoch"),
+            wandb.integration.keras.WandbModelCheckpoint("model_checkpoint.keras", save_weights_only=False)
         ]
     )
 
-    # --- 4. Final Evaluation ---
     print("\n--- Final Model Evaluation ---")
-    final_loss, final_accuracy = model.evaluate(val_generator, steps=val_steps)
+    final_loss, final_acc = model.evaluate(val_generator, steps=val_steps)
     print(f"Validation Loss: {final_loss:.4f}")
-    print(f"Validation Accuracy: {final_accuracy:.4f}")
-    
-    wandb.log({
-        "final_val_accuracy": final_accuracy,
-        "final_val_loss": final_loss
-    })
+    print(f"Validation Accuracy: {final_acc:.4f}")
 
-    # The wandb.finish() is called in the __main__ block for cleaner exit
+    wandb.log({"final_val_loss": final_loss, "final_val_accuracy": final_acc})
     return model
 
-
-# --- Main Execution ---
 if __name__ == "__main__":
-    
     try:
         print("--- Calling Data Preparation Pipeline from dataset_operations.py ---")
-        # Call the data preparation function to get the generators
         train_gen, val_gen = dataset_operations.main_prep()
 
         print("\n--- Starting Model Training ---")
-        # Start the training process
         final_model = build_and_train_model(train_gen, val_gen)
-        
+
     except Exception as e:
         print(f"\nAn error occurred during pipeline execution: {e}")
     finally:
-        # Ensure the W&B run is closed even if an error occurs during training
         if wandb.run:
             wandb.finish()
