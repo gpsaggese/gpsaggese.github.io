@@ -185,7 +185,7 @@ The API follows a simple three-step pattern:
 For most use cases, use the simplified `create_pipeline()` function for end-to-end execution:
 
 ```python
-from UmdTask63_Fall2025_fastai_Time_Series_Forecasting_of_Stock_Prices_utils import create_pipeline, ModelConfig
+from fastai_Time_Series_Forecasting_of_Stock_Prices_utils import create_pipeline, ModelConfig
 
 # Configure model
 config = ModelConfig(
