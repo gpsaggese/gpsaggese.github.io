@@ -39,7 +39,7 @@ else:
 wandb.init(project="animal-faces-classification")
 
 # --- Training Configuration ---
-NUM_EPOCHS = 10
+NUM_EPOCHS = 20
 LEARNING_RATE = 0.0001
 
 def build_and_train_model(train_generator, val_generator, epochs=NUM_EPOCHS, lr=LEARNING_RATE):
