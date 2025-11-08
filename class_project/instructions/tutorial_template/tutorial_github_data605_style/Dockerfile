@@ -49,7 +49,7 @@ RUN /install/install_jupyter_extensions.sh
 # Config.
 ADD etc_sudoers /install/
 COPY etc_sudoers /etc/sudoers
-COPY bashrc /root/.bashrc
+# COPY bashrc /root/.bashrc
 
 # Report package versions.
 ADD version.sh /install/

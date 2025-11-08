@@ -20,6 +20,8 @@ pip3 install --no-cache-dir \
     ipython \
     tornado==6.1 \
     jupyter-client==7.3.2 \
+    jupyter \
+    notebook \
     jupyter-contrib-core \
     jupyter-contrib-nbextensions \
     yapf \
@@ -27,7 +29,10 @@ pip3 install --no-cache-dir \
     numpy \
     pandas \
     matplotlib \
-    seaborn 
+    seaborn \
+    scikit-learn \
+    xgboost \
+    plotly 
 
 
 
