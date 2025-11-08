@@ -1,0 +1,28 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.Python
+
+# Common Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Tool-specific / env files
+.python-version
+Pipfile.lock
+pip-wheel-metadata/
+*.egg-info/
+
+# Large data files
+data/*.csv
+data/2020_US_Region_Mobility_Report.csv
+data/mobility_report_US.csv
+data/time_series_covid19_confirmed_US.csv
+data/time_series_covid19_deaths_US.csv
+data/time_series_covid19_vaccine_us.csv
+
