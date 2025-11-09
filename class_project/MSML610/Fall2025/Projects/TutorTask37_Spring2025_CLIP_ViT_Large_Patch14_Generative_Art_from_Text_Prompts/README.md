@@ -15,17 +15,24 @@ The project contains the following:
    ```bash
    cd class_project/instructions/clip_faiss_streamlit
 
+Work in Progress.
+
 ## Project Structure
-.
-├── clip_embed.API.py               # API for generating embeddings
-├── clip_embed.dataset              # Dataset folder
-│   ├── captions.txt                # Text captions for image-text pairs
-│   └── Images/                     # Folder containing sample images
-├── clip_embed.example.ipynb        # Example notebook demonstrating embedding generation
-├── clip_embed.image_index.faiss    # FAISS index for image embeddings
-├── clip_embed.text_index.faiss     # FAISS index for text embeddings
-├── clip_embed.streamlit.py         # Streamlit web app for querying
-├── clip_embed.utils.py             # Helper functions for embeddings and indexing
-├── Dockerfile                      # Docker environment setup
-├── README.md                       # Project documentation
-└── requirements.txt                # Python dependencies
+
+| File/Folder                        | Description                                       |
+| ----------------------------------- | ------------------------------------------------- |
+| **clip_embed.API.py**               | API for generating embeddings                     |
+| **clip_embed.dataset/**             | Dataset folder containing text and images         |
+| **clip_embed.dataset/captions.txt** | Text captions for image-text pairs                |
+| **clip_embed.dataset/Images/**     | Folder containing sample images                   |
+| **clip_embed.example.ipynb**        | Example notebook demonstrating embedding generation|
+| **clip_embed.image_index.faiss**    | FAISS index for image embeddings                  |
+| **clip_embed.text_index.faiss**     | FAISS index for text embeddings                   |
+| **clip_embed.streamlit.py**         | Streamlit web app for querying                    |
+| **clip_embed.utils.py**             | Helper functions for embeddings and indexing      |
+| **Dockerfile**                      | Docker environment setup                          |
+| **README.md**                       | Project documentation                            |
+| **requirements.txt**                | Python dependencies                               |
+
+## Note
+This is a work in progress project: additional features, improved UI, and dataset integration is still being worked on.
