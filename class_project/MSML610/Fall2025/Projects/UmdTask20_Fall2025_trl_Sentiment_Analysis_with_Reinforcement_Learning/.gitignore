@@ -1,0 +1,6 @@
+# Exclude model and result directories
+final-baseline-model/
+results-baseline/
+
+# Exclude macOS system file
+.DS_Store
