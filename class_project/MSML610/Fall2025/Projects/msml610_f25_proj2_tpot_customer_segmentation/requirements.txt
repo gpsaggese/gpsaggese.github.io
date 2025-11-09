@@ -1,0 +1,7 @@
+tpot==0.12.0
+scikit-learn==1.3.2
+pandas==2.0.3
+numpy==1.26.4
+matplotlib==3.8.4
+openpyxl==3.1.2
+joblib==1.3.2
