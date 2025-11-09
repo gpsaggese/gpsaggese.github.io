@@ -1360,7 +1360,7 @@ Example schedule:
   - Not serializable
   - Inconsistencies may be introduced
   - See the wikipedia article for more details and an example
-    - http://en.wikipedia.org/wiki/Snapshot_isolation
+// - ![](http://en.wikipedia.org/wiki/Snapshot_isolation)
 
 * Transactions
 - Overview

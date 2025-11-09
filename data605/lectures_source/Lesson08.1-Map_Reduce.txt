@@ -365,26 +365,26 @@ Switch
 - MapReduce framework (e.g., Hadoop, Spark) implements the general algorithm
 - User specifies the **map()** and **reduce()** functions to solve the problem
 
-* MapReduce: Word Count
-- **Word Count**
-  - "Hello world" of MapReduce
-  - We have a huge text file (so big you can't keep it in memory)
-  - Count the number of times each distinct word appears in the file
-- **Sample application**
-  - Analyze web server logs to find popular URLs
-- **Linux solution**
-  - Example file from https://en.wikipedia.org/wiki/Hot_Cross_Buns_(song)
-> **more doc.txt**
-One a penny, two a penny, hot cross buns.
-> **words doc.txt | sort | uniq -c**
-a 2
-buns 1
-cross 1
-...
-- **words** takes a file and outputs the words one per line
-- This Unix pipeline is naturally parallelizable in a MapReduce sense
-
-![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_25_image_1.png)
+//* MapReduce: Word Count
+//- **Word Count**
+//  - "Hello world" of MapReduce
+//  - We have a huge text file (so big you can't keep it in memory)
+//  - Count the number of times each distinct word appears in the file
+//- **Sample application**
+//  - Analyze web server logs to find popular URLs
+//- **Linux solution**
+//  - Example file from https://en.wikipedia.org/wiki/Hot_Cross_Buns_(song)
+//> **more doc.txt**
+//One a penny, two a penny, hot cross buns.
+//> **words doc.txt | sort | uniq -c**
+//a 2
+//buns 1
+//cross 1
+//...
+//- **words** takes a file and outputs the words one per line
+//- This Unix pipeline is naturally parallelizable in a MapReduce sense
+//
+//![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_25_image_1.png)
 
 * MapReduce: Word Count
 **Example**

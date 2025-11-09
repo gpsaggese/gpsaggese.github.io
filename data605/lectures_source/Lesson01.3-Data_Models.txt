@@ -21,7 +21,7 @@ UMD DATA605: Big Data Systems
 
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 * Data Models
 - **Data modeling**
