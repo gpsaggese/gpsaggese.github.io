@@ -1,19 +1,31 @@
-# GitHub & Docker Tutorial DATA605 style
+# CLIP Embeddings Search App - MSML610 Spring25#37
 
-## Run instructions
+This project demonstrates how to build and query **text and image embeddings** using **CLIP** and **FAISS**, all packaged with **Docker** and a **Streamlit** interface.
 
-1. Navigate to this path in terminal - ```class_project/instructions/tutorial_template/docker_simple```
+The project contains the following:
+- Generate and store embeddings for images and text using CLIP.
+- Use FAISS for fast similarity search.
+- Build a simple Streamlit app for querying by text or image.
 
-2. Build the container
+---
+
+## Run Instructions
+
+1. Navigate to the project directory:
    ```bash
-   > ./docker_build.sh
-   ```
-3. Start the Jupyter inside the container
-   ```bash
-   > ./docker_jupyter.sh
-   ```
+   cd class_project/instructions/clip_faiss_streamlit
 
-4. Open in browser
-   - Go to [http://localhost:8888](http://localhost:8888) in your web browser
-
-The Jupyter notebook will open in the path - ```class_project/MSML610/Fall2025/Projects```
+## Project Structure
+.
+├── clip_embed.API.py               # API for generating embeddings
+├── clip_embed.dataset              # Dataset folder
+│   ├── captions.txt                # Text captions for image-text pairs
+│   └── Images/                     # Folder containing sample images
+├── clip_embed.example.ipynb        # Example notebook demonstrating embedding generation
+├── clip_embed.image_index.faiss    # FAISS index for image embeddings
+├── clip_embed.text_index.faiss     # FAISS index for text embeddings
+├── clip_embed.streamlit.py         # Streamlit web app for querying
+├── clip_embed.utils.py             # Helper functions for embeddings and indexing
+├── Dockerfile                      # Docker environment setup
+├── README.md                       # Project documentation
+└── requirements.txt                # Python dependencies
