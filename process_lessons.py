@@ -236,7 +236,7 @@ def _slide_check(source_path: str, source_name: str, *, limit: str = None) -> No
     cmd = [
         "process_slides.py",
         f"--in_file {source_path}",
-        f"--action slide_check",
+        f"--action text_check",
         f"--out_file {output_path}",
         f"--use_llm_transform",
     ]
@@ -261,7 +261,8 @@ def _process_lecture_file(
     :param class_dir: class directory (data605 or msml610)
     :param source_path: path to source .txt file
     :param source_name: name of source file
-    :param actions: list of actions to execute ('pdf', 'script', 'slide_reduce', 'slide_check')
+    :param actions: list of actions to execute ('pdf', 'script',
+        'slide_reduce', 'slide_check')
     :param limit: optional slide range to process
     """
     _LOG.info("Processing file: %s", source_path)

@@ -6,22 +6,35 @@ gsaggese@umd.edu
 with thanks to Alan Sussman, Amol Deshpande
 
 * Client-Server Architecture
+:::columns
+::::{.column width=65%}
 - The **client-server** is a model for distributed applications that partitions tasks between:
   - **Clients**: request a service (e.g., dashboard, GUI, client applications)
 
   - **Servers**: provide resource or service (e.g., a database)
+::::
+::::{.column width=35%}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_2_image_2.png)
+::::
+:::
+
+:::columns
+::::{.column width=65%}
 - The **architecture of a database system** can be divided into:
   - **Back-end** (Server): manage access, query evaluation and optimization, concurrency control, and recovery
   - **Front-end** (Clients): consist of tools such as forms, report-writers, and graphical user interface (GUI)
 - The interface between the front-end and the back-end is through:
   - SQL; or
   - An application programming interface (API)
-
+::::
+::::{.column width=35%}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_2_image_1.png)
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_2_image_2.png)
+::::
+:::
 
 * Parallel vs Distributed Computing
+:::columns
+::::{.column width=60%}
 - **Parallel computing**
 
   - One computer with multiple CPUs
@@ -29,15 +42,28 @@ with thanks to Alan Sussman, Amol Deshpande
   - Homogenous and (geographically) close computing nodes
   - Working on one task
 
+::::
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_3_image_2.png)
+::::
+:::
+
+:::columns
+::::{.column width=60%}
 - **Distributed computing**
   - Several autonomous (often geographically separate) computers systems
   - Heterogeneous and distant
   - Working on separate tasks
-
+::::
+::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_3_image_1.png)
+::::
+:::
 
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_3_image_2.png)
+
 * Parallel Systems
+:::columns
+::::{.column width=65%}
 - Parallel systems consist of:
   - Multiple processors
   - Multiple memories
@@ -48,37 +74,34 @@ with thanks to Alan Sussman, Amol Deshpande
   - Small number of powerful processors
   - E.g., your laptop with multiple CPUs
 - **Fine-grain parallel machine**
-
   - Aka massively parallel
   - Thousands of smaller processors
   - Much larger degree of parallelism
   - With or without shared memory
   - E.g., GPUs, The Connection Machine
+::::
+::::{.column width=40%}
+\tiny
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_4_image_3.png){width=70%}
 
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_4_image_1.png)
-
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_4_image_1.png){width=70%}
 The Connection Machine, MIT, 1980s
 
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_4_image_2.png)
-
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_4_image_2.png){width=70%}
 Connection Machine in Jurassic Park
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_4_image_3.png)
+::::
+:::
 
 * Parallel Databases: Introduction
-
 - **Parallel DBs were historically the standard approach before MapReduce**
-
 - **Parallel machines have become common and affordable**
-
   - Prices of microprocessors, memory, and disks keep dropping sharply
   - Desktop / laptop computers feature multiple processors
   - This trend will continue
 - **DBs are growing increasingly large**
-
   - Large volumes of transaction data are collected and stored for later analysis
   - Multimedia objects like data605/lectures_source/images are increasingly stored in databases
 - **Large-scale parallel DBs increasingly used for:**
-
   - Storing large volumes of data
   - Processing time-consuming queries
   - Providing high throughput for transaction processing
@@ -88,12 +111,10 @@ Connection Machine in Jurassic Park
   - Store petabytes of data
   - Process thousands of transactions per second (e.g., commerce web-site)
 - **Databases can be parallelized**
-
   - The set-oriented nature of DB queries often lends itself to parallelization
   - Some database operations are embarrassingly parallel
     - E.g., a join between R and S on R.b = S.b can be done as MapReduce task
 - **Parallel DBs**
-
   - More transactions per second, or less time per query
   - Throughput vs response time
   - Speed-up vs scale-up
@@ -104,6 +125,8 @@ Connection Machine in Jurassic Park
 
 * How to Measure Parallel Performance
 
+:::columns
+::::{.column width=70%}
 - **Throughput**
   - = the number of tasks that can be completed in a given time interval
   - Increase throughput by processing many tasks in parallel
@@ -116,14 +139,15 @@ Connection Machine in Jurassic Park
   - E.g., increase throughput by pipelining, i.e., overlapping execution of tasks
     - E.g., building a car takes weeks but one car is completed per hour
     - Pipelining of instructions of microprocessor
-
+::::
+::::{.column width=30%}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_7_image_1.png)
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_7_image_2.png)
-
-**Pipelining of instructions in microprocessor**
-
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_7_image_3.png)
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_7_image_2.png)
+\tiny
+Pipelining of instructions in microprocessor
+::::
+:::
 * Speed-Up and Scale-Up: Intuition
 
 - **You have a workload to execute**
@@ -148,31 +172,30 @@ Connection Machine in Jurassic Park
     - Increase the power of the machine *N*
 
 * Speed-Up vs Scale-Up
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_9_image_1.png)
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_9_image_2.png)
-
+:::columns
+::::{.column width=60%}
 - The amount of computing power can be changed (*N*)
 - The amount of work can be changed (*M*)
 - **Speed-up**: a fixed-sized problem executing on a small system is given to a system which is *N*-times larger
   - Measured by:
-     *speed-up = small system elapsed time*
-                         *large system elapsed time*
+     *speed-up = small system elapsed time* / *large system elapsed time*
   - **Speed-up is linear if equation equals N**
 - **Scale-up**: increase the size of both the problem (*M*) and the system (*N*)
   - *N*-times larger system to perform *M*-times larger job
   - Measured by:
-     *scale-up = small system-problem time *
-                       *big system-problem time *
+     *scale-up = small system-problem time * / *big system-problem time *
   - **Scale-up is linear if equation equals 1**
+::::
+::::{.column width=30%}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_9_image_1.png)
+\vspace{1cm}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_9_image_2.png)
+::::
+:::
 
 * Factors Limiting Speed-up and Scale-up
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_10_image_1.png)
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_10_image_2.png)
-
+:::columns
+::::{.column width=60%}
 - Speed-up and scale-up are often sub-linear due to several issues
 - **Sequential computation**
   - Some pieces of the computation can be executed in parallel, others must be executed sequentially
@@ -182,12 +205,16 @@ Connection Machine in Jurassic Park
   - T = the execution time in the serial case
   - T(p) = the execution time on s nodes
 = (1-p)T + (p / s)T
-  - Speedup(s) = T / T(s)
+  - Speedup(s) = T / T(s) = ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_10_image_2.png){width=40%}
   - E.g., if 90% is parallelizable, the max speed-up is 10x
   - If 50% is parallelizable, the max speed-up is 2x (even with infinite amount of nodes!)
+::::
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_10_image_1.png)
+::::
+:::
 
 * Factors Limiting Speed-up and Scale-up
-
 - **Startup costs**
   - Cost of starting up many processes may dominate computation time
   - E.g., DBs create a pool of threads when they start, instead of waiting for requests
@@ -205,15 +232,8 @@ Connection Machine in Jurassic Park
   - Overall execution time determined by slowest of parallely executing tasks
 
 * Topology of Parallel Systems
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_12_image_1.png)
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_12_image_2.png)
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_12_image_3.png)
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_12_image_4.png)
-
+:::columns
+::::{.column width=30%}
 - Several ways to organize computation and storage
   - M = memory
   - P = processors
@@ -228,63 +248,35 @@ Connection Machine in Jurassic Park
   - Data communication
   - Fault tolerance
   - Resource congestion
-
+::::
+::::{.column width=60%}
+\vspace{0.2cm}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_12_image_1.png){width=30%}
+\vspace{0.2cm}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_12_image_2.png){width=30%}
+\vspace{0.2cm}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_12_image_3.png){width=30%}
+\vspace{0.2cm}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_12_image_4.png)
+::::
+:::
 * Topology of Parallel Systems: Comparison
-
+:::columns
+::::{.column width=70%}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_1.png)
+::::
+::::{.column width=30%}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_2.png){width=70%}
 
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_2.png)
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_3.png){width=70%}
 
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_3.png)
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_4.png)
-
-* Parallel Databases
-
-Distributed transactions are complicated (deadlock detection etc);
-
-Transactions complicated; natural fault-tolerance.
-
-Cache-coherency an issue
-
-**Notes**
-
-**Main use**
-
-**Scalability?**
-
-**Communication between processors**
-
-Everywhere
-
-Not used very often
-
-Low degrees of parallelism
-
-Very very scalable
-
-Not very scalable (disk interconnect is the bottleneck)
-
-Not beyond 32 or 64 or so (memory bus is the bottleneck)
-
-Over a LAN, so slowest
-
-Disk interconnect is very fast
-
-Extremely fast
-
-**Shared Nothing**
-
-**Shared Disk**
-
-**Shared Memory**
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_4.png){width=70%}
+::::
+:::
 
 * Distributed Databases
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_15_image_1.png)
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_15_image_2.png)
-
+:::columns
+::::{.column width=70%}
 - **Distributed DBs**
 
   - DB is stored on nodes located at geographically separated sites
@@ -305,13 +297,18 @@ Extremely fast
   - The communication delay is dominance
 - Nodes can have different size and functions
   - Parallel DBs have nodes that are similar
+::::
+::::{.column width=30%}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_15_image_2.png)
+\vspace{2cm}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_15_image_1.png)
+::::
+:::
 
 * Consistency Issues in Distributed DB Systems
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_16_image_1.png)
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_16_image_2.png)
-
+:::columns
+::::{.column width=70%}
+\footnotesize
 - Parallel and distributed DBs work well for query processing
   - Since we are only reading the data
 - When updating a parallel or distributed DB consistency needs to be enforced
@@ -334,6 +331,13 @@ Extremely fast
 
   - **Problem**: Even within an organization, people tend to be protective of their unit / department
   - E.g., for administering systems, patching, updating
+::::
+::::{.column width=30%}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_16_image_1.png)
+
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_16_image_2.png)
+::::
+:::
 
 * BACKUP
 
@@ -382,23 +386,24 @@ Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
   - E.g., *r.A* = 25.
      3. Locating all tuples such that the value of a given attribute lies within a specified range – **range queries**.
   - E.g., 10 <= *r.A* < 25.
-* Comparison of Partitioning Techniques (Cont.)
-Round robin:
-- Advantages
-  - Best suited for sequential scan of entire relation on each query.
-  - All disks have almost an equal number of tuples; retrieval work is thus well balanced between disks.
-- Range queries are difficult to process
-  - No clustering -- tuples are scattered across all disks
 
 * Comparison of Partitioning Techniques (Cont.)
-Hash partitioning:
-- Good for sequential access
-  - Assuming hash function is good, and partitioning attributes form a key, tuples will be equally distributed between disks
-  - Retrieval work is then well balanced between disks.
-- Good for point queries on partitioning attribute
-  - Can lookup single disk, leaving others available for answering other queries.
-  - Index on partitioning attribute can be local to disk, making lookup and update more efficient
-- No clustering, so difficult to answer range queries
+- Round robin:
+  - Advantages
+    - Best suited for sequential scan of entire relation on each query.
+    - All disks have almost an equal number of tuples; retrieval work is thus well balanced between disks.
+  - Range queries are difficult to process
+    - No clustering -- tuples are scattered across all disks
+
+* Comparison of Partitioning Techniques (Cont.)
+- Hash partitioning:
+  - Good for sequential access
+    - Assuming hash function is good, and partitioning attributes form a key, tuples will be equally distributed between disks
+    - Retrieval work is then well balanced between disks.
+  - Good for point queries on partitioning attribute
+    - Can lookup single disk, leaving others available for answering other queries.
+    - Index on partitioning attribute can be local to disk, making lookup and update more efficient
+  - No clustering, so difficult to answer range queries
 
 * Comparison of Partitioning Techniques (Cont.)
 - Range partitioning:
@@ -441,7 +446,7 @@ Hash partitioning:
   - Assume uniform distribution within each range of the histogram
 - Histogram can be constructed by scanning relation, or sampling (blocks containing) tuples of the relation
 
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_29_image_1.png)
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_29_image_1.png){width=70%}
 
 * Handling Skew Using Virtual Processor Partitioning
 - Skew in range partitioning can be handled elegantly using **virtual processor partitioning**:
@@ -498,14 +503,14 @@ Hash partitioning:
   - Final merge operation is trivial: range-partitioning ensures that, for 1 *j m*, the key values in processor *P*i are all less than the key values in *P*j.
 
 * Parallel Sort (Cont.)
-**Parallel External Sort-Merge**
-- Assume the relation has already been partitioned among disks *D*0, ..., *D*n-1 (in whatever manner).
-- Each processor *P*i locally sorts the data on disk *D*i.
-- The sorted runs on each processor are then merged to get the final sorted output.
-- Parallelize the merging of sorted runs as follows:
-  - The sorted partitions at each processor *P*i are range-partitioned across the processors P0, ..., *P*m-1.
-  - Each processor *P*i performs a merge on the streams as they are received, to get a single sorted run.
-  - The sorted runs on processors *P*0,..., *P*m-1 are concatenated to get the final result.
+- **Parallel External Sort-Merge**
+  - Assume the relation has already been partitioned among disks *D*0, ..., *D*n-1 (in whatever manner).
+  - Each processor *P*i locally sorts the data on disk *D*i.
+  - The sorted runs on each processor are then merged to get the final sorted output.
+  - Parallelize the merging of sorted runs as follows:
+    - The sorted partitions at each processor *P*i are range-partitioned across the processors P0, ..., *P*m-1.
+    - Each processor *P*i performs a merge on the streams as they are received, to get a single sorted run.
+    - The sorted runs on processors *P*0,..., *P*m-1 are concatenated to get the final result.
 
 * Parallel Join
 - The join operation requires pairs of tuples to be tested to see if they satisfy the join condition, and if they do, the pair is added to the join output.
@@ -522,7 +527,7 @@ Hash partitioning:
 - Each processor *P*i locally computes *r*i *r*i.A=si.B si. Any of the standard join methods can be used.
 
 * Partitioned Join (Cont.)
-![Partitioned Join](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_39_image_1.png)
+![Partitioned Join](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_39_image_1.png){width=70%}
 
 * Fragment-and-Replicate Join
 - Partitioning not possible for some join conditions
@@ -536,7 +541,7 @@ Hash partitioning:
 
 * Depiction of Fragment-and-Replicate Joins
 
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_41_image_1.png)
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_41_image_1.png){width=70%}
 
 * Fragment-and-Replicate Join (Cont.)
 
@@ -558,11 +563,11 @@ Hash partitioning:
 
 * Partitioned Parallel Hash-Join
 
-Parallelizing partitioned hash join:
-- Assume *s* is smaller than *r* and therefore *s* is chosen as the build relation.
-- A hash function *h*1 takes the join attribute value of each tuple in *s* and maps this tuple to one of the *n* processors.
-- Each processor *P**i* reads the tuples of *s* that are on its disk *D**i*, and sends each tuple to the appropriate processor based on hash function *h*1. Let *s**i* denote the tuples of relation *s* that are sent to processor *P**i*.
-- As tuples of relation *s* are received at the destination processors, they are partitioned further using another hash function, *h*2, which is used to compute the hash-join locally. *(Cont.)*
+-Parallelizing partitioned hash join:
+  - Assume *s* is smaller than *r* and therefore *s* is chosen as the build relation.
+  - A hash function *h*1 takes the join attribute value of each tuple in *s* and maps this tuple to one of the *n* processors.
+  - Each processor *P**i* reads the tuples of *s* that are on its disk *D**i*, and sends each tuple to the appropriate processor based on hash function *h*1. Let *s**i* denote the tuples of relation *s* that are sent to processor *P**i*.
+  - As tuples of relation *s* are received at the destination processors, they are partitioned further using another hash function, *h*2, which is used to compute the hash-join locally. *(Cont.)*
 
 * Partitioned Parallel Hash-Join (Cont.)
 
@@ -586,12 +591,12 @@ Parallelizing partitioned hash join:
 
 * Other Relational Operations
 
-Selection 
-- If thetha is of the form ai = v, where ai is an attribute and v a value.
-  - If r is partitioned on ai the selection is performed at a single processor.
-- If thetha is of the form l <= ai <= u  (i.e., thetha is a range selection) and the relation has been range-partitioned on ai
-  - Selection is performed at each processor whose partition overlaps with the specified range of values.
-- In all other cases: the selection is performed in parallel at all the processors.
+-Selection 
+  - If thetha is of the form ai = v, where ai is an attribute and v a value.
+    - If r is partitioned on ai the selection is performed at a single processor.
+  - If thetha is of the form l <= ai <= u  (i.e., thetha is a range selection) and the relation has been range-partitioned on ai
+    - Selection is performed at each processor whose partition overlaps with the specified range of values.
+  - In all other cases: the selection is performed in parallel at all the processors.
 
 * Other Relational Operations (Cont.)
 

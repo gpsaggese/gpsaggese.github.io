@@ -1,0 +1,284 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+//
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{7.3: Serialization Formats}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+::::
+:::: {.column width=20%}
+::::
+:::
+
+* Serialization Formats
+- Programs need to send data to each other (network, disk)
+  - E.g., remote Procedure Calls (RPCs)
+  - Recent technologies based on schemas
+    - JSON, YAML, Protocol Buffer, Python Pickle
+
+- Serialization formats are data models
+
+* Comma Separated Values (CSV)
+::: columns
+:::: {.column width=50%}
+- CSV stores data row-wise as text without schema
+  - Each line is a data record
+  - Records have fields separated by commas
+
+- **Pros**
+  - Very portable
+    - Text format
+    - Supported by all tools
+  - Human-friendly
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_35_image_1.png)
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_35_image_2.png)
+::::
+:::
+
+- **Cons**
+  - Large footprint
+    - Requires compression
+  - Parsing is CPU intensive
+  - No easy random access
+  - Can't read only a subset of columns
+  - No schema/types
+    - Annotate CSV with schema
+  - Mainly read-only, hard to modify
+
+* (Apache) Parquet
+::: columns
+:::: {.column width=70%}
+- Parquet reads data tiles
+
+- Supports multi-dimensional, nested data
+  - Generalizes dataframes
+
+- Column-storage
+  - Stores each column together, uniform data type, compressed efficiently
+
+- IO layer executes queries
+  - Reads only necessary data chunks from disk
+
+- **Pros**
+  - 10x smaller than CSV
+  - 10x faster with multi-threading
+  - Read subset of columns and rows
+
+- **Cons**
+  - Binary, not human-friendly
+  - Requires ingestion step to convert to Parquet
+  - Mainly read-only, hard to modify
+::::
+:::: {.column width=25%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_36_image_1.png)
+::::
+:::
+
+* JSON
+::: columns
+:::: {.column width=50%}
+- JSON = JavaScript Object Notation
+
+- Nested dictionaries and arrays
+
+- Similar to XML
+  - More human-readable
+  - Less boilerplate
+  - Executable in JavaScript and Python
+::::
+:::: {.column width=45%}
+\scriptsize
+```json
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "isAlive": true,
+  "age": 25,
+  "height_cm": 167.6,
+  "address": {
+    "streetAddress": "21 2nd Street",
+    "city": "New York",
+    "state": "NY",
+    "postalCode": "10021-3100"
+  },
+  "phoneNumbers": [
+    {
+      "type": "home",
+      "number": "212 555-1234"
+    },
+    {
+      "type": "office",
+      "number": "646 555-4567"
+    }
+  ],
+  "children": [],
+  "spouse": null
+}
+```
+::::
+:::
+
+* Protocol Buffers
+::: columns
+:::: {.column width=50%}
+- Developed by Google
+- Open-source
+- Represent data structures:
+  - Language agnostic
+  - Platform agnostic
+  - Versioning
+- Schema is mostly relational
+  - Optional fields
+  - Types
+  - Default values
+  - Structures
+  - Arrays
+
+- Schema specified using a `.proto` file
+
+- Compiled by `protoc` to produce C++, Java, or Python code to initialize, read,
+  serialize objects
+::::
+:::: {.column width=45%}
+\scriptsize
+```python
+import addressbook_pb2
+person = addressbook_pb2.Person()
+person.id = 1234
+person.name = "John Doe"
+person.email = "jdoe@example.com"
+phone = person.phones.add()
+phone.number = "555-4321"
+phone.type = addressbook_pb2.Person.HOME
+```
+
+\vspace{0.5cm}
+
+```proto
+message Person {
+  optional string name = 1;
+  optional int32 id = 2;
+  optional string email = 3;
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+  message PhoneNumber {
+    optional string number = 1;
+    optional PhoneType type = 2;
+  }
+  repeated PhoneNumber phones = 4;
+}
+```
+::::
+:::
+
+* Serialization Formats
+::: columns
+:::: {.column width=50%}
+- Avro
+  - Richer data structures
+  - JSON-specified schema
+- Thrift
+  - Developed by Facebook
+  - Now Apache project
+  - More languages supported
+  - Supports exceptions and sets
+::::
+:::: {.column width=45%}
+\scriptsize
+```json
+{
+  "namespace": "example.avro",
+  "type": "record",
+  "name": "User",
+  "fields": [
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "favorite_number",
+      "type": [
+        "int",
+        "null"
+      ]
+    },
+    {
+      "name": "favorite_color",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  ]
+}
+```
+::::
+:::
+
+* Remote Procedure Call
+::: columns
+:::: {.column width=65%}
+- **Remote Procedure Call** (RPC) requests services from programs on other
+  computers, abstracting network communication
+
+- **Goal**: Make remote calls like local procedure calls without network details
+
+- **Problems**
+  - Can't serialize pointers
+  - Asynchronous communication
+  - Failures and retry
+
+- Used in distributed systems
+  - E.g., microservices, cloud services, client-server applications
+
+- Can be synchronous or asynchronous
+::::
+:::: {.column width=30%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_40_image_1.png)
+::::
+:::
+
+* RPCs: Internals
+::: columns
+:::: {.column width=50%}
+- _Client procedure call_: Client calls stub function with arguments
+- _Request marshalling_: Client stub serializes arguments for network
+  transmission
+- _Server communication_: Client's RPC runtime sends request to server
+- _Server-side unmarshalling_: Server's RPC runtime deserializes arguments
+- _Procedure execution_: Server calls procedure
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_41_image_1.png)
+::::
+:::
+- _Response marshalling_: Return values marshaled into response message
+- _Client communication_ / _response unmarshalling_ / _return to client_:
+  Return values passed back to client's stub call, execution continues locally

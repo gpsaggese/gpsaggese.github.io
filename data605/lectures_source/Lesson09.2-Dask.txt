@@ -35,6 +35,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 :::
 
 * Dask: Resources
+::: columns
+:::: {.column width=60%}
 - Web resources:
   - Dask project
   - Dask examples
@@ -45,10 +47,15 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Mastery
   - Data science with Python and Dask, 2019
     - Amazon
-
+::::
+:::: {.column width=40%}
 ![alt_text](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_2_image_1.png)
+::::
+:::
 
 * Dataset Size Issues
+::: columns
+:::: {.column width=40%}
 - **Small datasets (< 1 GB)**
   - Fits into RAM
   - Manipulation doesn't require paging to disk
@@ -65,11 +72,14 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Python / Pandas were not built to operate on distributed datasets
     - Use frameworks for massive datasets
     - E.g., Hadoop, Spark, Dask, Ray
-
+::::
+:::: {.column width=60%}
 ![alt_text](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_3_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_3_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_3_image_3.png)
 ![alt_text](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_3_image_4.png)
+::::
+:::
 
 * Dataset Size Issues
 - **Small datasets**
@@ -87,6 +97,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Cumbersome framework (Pandas easy, Hadoop difficult)
 
 * Dask
+::: columns
+:::: {.column width=60%}
 - **Dask is written in Python**
   - It scales natively Numpy, Pandas, sklearn
   - Dask objects are wrappers (don't just mirror the interface) objects from the respective libraries (e.g., Pandas DataFrame, numpy array)
@@ -106,14 +118,18 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Dask runs on multi-core
   - Dask can use cluster managers
     - E.g., Yarn, Mesos, Kubernetes, AWS ECS
-
+::::
+:::: {.column width=40%}
 ![alt_text](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_5_image_1.png)
+::::
+:::
 
 * Dask Layers
-
 ![alt_text](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_6_image_1.png)
 
 * Scaling Up vs Scaling Out
+::: columns
+:::: {.column width=80%}
 - **Scaling up**
   - = replace equipment with larger, faster equipments
     - E.g., buy a larger pot, replace knife with food processor
@@ -131,11 +147,14 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - **Cons**
     - Need to write code to expose parallelism
     - Costs of maintaining a cluster
-
+::::
+:::: {.column width=20%}
 ![alt_text](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_7_image_1.png)
 ![alt_text](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_7_image_2.png)
 ![alt_text](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_7_image_3.png)
 ![alt_text](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_7_image_4.png)
+::::
+:::
 
 * Dask: Computation
 - **Lazy computations**
@@ -159,25 +178,27 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - **persist()** tells Dask to keep the intermediate result in memory
   - This speeds up a large and complex DAG that needs to be reused many times
 
-```
-
-```text
 
 * Dask: Data Structures
+::: columns
+:::: {.column width=40%}
 - **Dask DataFrame** implements Pandas DataFrame
   - Tabular / relational data
 - **Dask Array** implements numpy ndarray
   - Multidimensional array**
 - **Dag Bag** coordinates Python lists of objects
   - Parallelize computations on unstructured or semi-structured data
-
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_9_image_1.png)
-
+::::
+:::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_9_image_2.png)
-
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_9_image_1.png)
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_9_image_3.png)
+::::
+:::
 
 * Dask Reading Data
+::: columns
+:::: {.column width=40%}
 - dask.dataframe.read_csv()
   - Doesn't load the data in memory with 
   - Tries to infer the types of the columns
@@ -189,10 +210,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Graph is composed of 99 tasks
   - Each partition reads data, splits data, initializes df object
 
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_10_image_1.png)
-
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_10_image_2.png)
-
+```python
   import dask.dataframe as dd
 
   df = dd.read_csv('nyc-parking-tickets-2017.csv')
@@ -200,16 +218,32 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   missing_values = df.isnull().sum()
 
   missing_values 
+```
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_10_image_1.png)
+::::
+:::: {.column width=20%}
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_10_image_2.png)
+::::
+:::
 
 * Low Level APIs: Delayed
+::: columns
+:::: {.column width=40%}
 - Handle computations that don't fit in native Dask data structures (e.g., Dask DataFrame)
 - In the example below there is parallelism that can be exploited
-
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_11_image_1.png)
+::::
+:::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_11_image_2.png)
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_11_image_2.png) 
+::::
+:::
 
 * Low Level APIs: Futures
+::: columns
+:::: {.column width=40%}
 - In parallel programming, a "future" encapsulates the asynchronous execution of a callable, representing the eventual result of the operation
 - Futures is the most general way of specifying concurrency in Dask
   - Everything can be expressed in terms of futures
@@ -217,10 +251,10 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Python** concurrent.futures**
   - High-level interface for asynchronously executing callables
   - Thread pool or Process pool (same interface **Executor**)
-- Dask extends **concurrent.futures
-**
+- Dask extends **concurrent.futures**
   - Dask client can be used anywhere **concurrent.futures** can be used
-
+::::
+:::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_12_image_1.png)
 
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_12_image_2.png)
@@ -228,29 +262,38 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_12_image_3.png)
 
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_12_image_4.png)
+::::
+:::
 
 * Different Types of Parallel Workload
+::: columns
+:::: {.column width=50%}
 - Break program in medium-size tasks of computation
   - E.g., a function call
-
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_13_image_1.png)
-
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_13_image_2.png)
-
+::::
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_13_image_1.png)
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_13_image_3.png)
+::::
+:::
 
 * Encoding Task Graph
+
 - Dask encodes tasks in terms of Python dicts and functions
-
+::: columns
+:::: {.column width=33%}
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_1.png)
-
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_2.png)
-
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_3.png)
-
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_4.png)
-
+::::
+:::: {.column width=33%}
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_2.png)
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_5.png)
+::::
+:::: {.column width=33%}
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_3.png)
+::::
+:::
 
 * Task Scheduling
 - Data collections (Bags, Arrays, DataFrame) and their operations create task graphs
@@ -263,9 +306,12 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Distributed scheduler
   - It can run locally or distributed across a cluster
 
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_15_image_1.png)
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_15_image_1.png) \footnotesize
+
 
 * Task Scheduling
+::: columns
+:::: {.column width=40%}
 - **Dask task scheduler orchestrates the work dynamically**
   - Not a static scheduling of operations like a relational DB
   - When the computation takes place, Dask dynamically assesses:
@@ -283,9 +329,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
     - Slower access to the data
   - Network unreliability
     - Just re-run or remove the isolated nodes
-
+::::
+:::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_16_image_1.png)
-
+::::
+:::
 * Dask vs Spark
 - Spark has
 - **Pros**

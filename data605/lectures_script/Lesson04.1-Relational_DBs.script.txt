@@ -1,0 +1,178 @@
+# ##############################################################################
+# Relational Model: Overview
+# ##############################################################################
+
+The relational model was introduced by Ted Codd in the late 1960s and early
+1970s. It laid the foundation for modern databases. The first prototypes were
+the Ingres Project at Berkeley, which later evolved into PostgreSQL, and IBM's
+System R, which influenced Oracle and IBM DB2. The relational model brought
+significant contributions such as formal semantics for data operations, data
+independence, and declarative query languages like SQL. It also introduced query
+optimization, which is crucial for efficient data retrieval. These innovations
+were key to the commercial success of relational databases.
+
+Transition: Let's delve into the key definitions of the relational model.
+
+# ##############################################################################
+# Relational Model: Key Definitions
+# ##############################################################################
+
+A relational database is essentially a collection of tables or relations, each
+with a unique name and schema. For example, tables like 'instructor' and
+'course' represent different sets of data. Each row, or tuple, in a table
+represents a relationship among values, while each element corresponds to a
+column or attribute. Elements are atomic, meaning they are indivisible, and can
+be set to 'NULL' if the value is unknown or non-existent. The schema of a
+relation lists attributes and their domains, similar to type definitions in
+programming. An instance of a relation is a specific set of data that can change
+over time.
+
+Transition: Now, let's explore how UML class diagrams are used in database
+design.
+
+# ##############################################################################
+# UML Class Diagram
+# ##############################################################################
+
+UML, or Unified Modeling Language, is a tool used in object-oriented programming
+(OOP) and database design. In OOP, UML class diagrams show classes, attributes,
+methods, and their relationships. In database design, each box in a UML diagram
+represents a table or relation, with columns or attributes listed inside.
+Primary keys are underlined, and foreign key constraints are shown with arrows.
+This visual representation helps in understanding the structure and
+relationships within a database, making it easier to design and manage complex
+data systems.
+
+# ##############################################################################
+# Example: University DB
+# ##############################################################################
+
+This slide presents a UML diagram of a database for a university. Each box in
+the diagram represents a table or relation, with columns, fields, or attributes
+listed inside. Primary keys are underlined, indicating unique identifiers for
+each table. Foreign key constraints are shown as arrows connecting different
+tables, illustrating relationships between them. The analysis of the diagram
+includes an ER model, identifying entities like 'student' and 'department', and
+relationships such as 'takes' and 'teaches'. This visual representation helps in
+understanding how data is structured and related within the university database.
+
+Transition: Now, let's delve into the concept of primary keys in databases.
+
+# ##############################################################################
+# Primary Key
+# ##############################################################################
+
+This slide explains the concept of primary keys in a database. A relation,
+denoted as R, consists of attributes like 'ID', 'name', 'dept_name', and
+'salary' for an 'instructor'. A superkey is a set of attributes that can
+uniquely identify a tuple in a relation. For example, '(ID)' and '(ID, name)'
+are superkeys for 'instructor', but '(name)' is not. A primary key is the
+minimal set of attributes that uniquely identifies each row, typically small and
+unchanging. The primary key constraint ensures that no two rows have the same
+primary key, maintaining data integrity.
+
+Transition: Let's explore some examples to understand primary keys better.
+
+# ##############################################################################
+# Question: What Are Primary Keys?
+# ##############################################################################
+
+This slide provides examples to illustrate the concept of primary keys in
+different contexts. For marital status, a combination of 'person1_ssn',
+'person2_ssn', and 'date_married' could serve as a primary key. In a bank
+account, 'account_number' uniquely identifies each account. For a research
+assistantship at UMD, 'student_id' and 'project_id' together might form a
+primary key. Wikipedia entries about people or US Presidents can use 'Name' and
+'start_date' as identifiers. In the Tour de France, 'Name' and 'Year' could
+uniquely identify a rider's participation. These examples highlight how primary
+keys are used to uniquely identify records in various datasets.
+
+# ##############################################################################
+# Answer: What Are Primary Keys?
+# ##############################################################################
+
+Primary keys are unique identifiers for records in a database table. They ensure
+that each record can be uniquely identified. For example, in a marital status
+table, the combination of person1_ssn, person2_ssn, and date_married serves as a
+primary key. In a bank account table, the account_number is the primary key. In
+a research assistantship table, student_id and project_id together form a
+primary key. Wikipedia entries for people and US Presidents use names and dates
+as primary keys. In the Tour de France rider information, Name and Year are used
+as primary keys. These keys are crucial for maintaining data integrity.
+
+Let's move on to understanding foreign keys and their role in databases.
+
+# ##############################################################################
+# Foreign Key
+# ##############################################################################
+
+A foreign key is a field in one table that uniquely identifies a row in another
+table. It acts as a bridge between two tables. For instance, in a database, the
+ID from the student table can be a foreign key in the takes table. The takes
+table is the referencing relation, while the student table is the referenced
+relation. This relationship is often depicted with an arrow pointing from the
+referencing table to the referenced table. The foreign key constraint ensures
+that every foreign key value must have a corresponding primary key value in the
+referenced table, maintaining referential integrity.
+
+Now, let's explore relational algebra and its operations on relations.
+
+# ##############################################################################
+# Relational Algebra: 1/4
+# ##############################################################################
+
+Relational algebra is a set of operations used to manipulate relations (tables)
+in a database. It produces new relations from existing ones. Operations include
+unary operations like selection, projection, and rename, and binary operations
+like union, set difference, intersection, Cartesian product, and join. Selection
+(denoted by Sigma) filters tuples based on a condition, such as selecting
+instructors from the Physics department. Projection (denoted by Pi) returns
+tuples with specific attributes, like instructor names and salaries. Set
+operations like union, intersection, and set difference require the relations to
+have compatible attributes. These operations are fundamental for querying and
+managing data in relational databases.
+
+# ##############################################################################
+# Relational Algebra: 2/4
+# ##############################################################################
+
+This slide introduces the concept of the Cartesian product in relational
+algebra. The Cartesian product combines two tables, or relations, into a new
+one. For example, if we have an `instructor` table with columns like ID, name,
+department name, and salary, and a `teaches` table with columns like ID, course
+ID, section ID, semester, and year, the Cartesian product of these two tables
+will create a new table that includes all possible combinations of rows from
+both tables. This operation is fundamental in relational databases as it sets
+the stage for more complex operations like joins.
+
+Let's move on to how we can refine this operation with joins.
+
+# ##############################################################################
+# Relational Algebra: 3/4
+# ##############################################################################
+
+This slide explains the join operation, which is a more refined version of the
+Cartesian product. A join is a combination of two operations: the Cartesian
+product and a selection based on equality between two fields. For instance, when
+we perform a join on the `instructor` and `teaches` tables, we only keep the
+rows where the `instructor.ID` matches the `teaches.ID`. This operation is
+crucial because it allows us to combine related data from different tables based
+on a common attribute, making it easier to analyze and retrieve meaningful
+information from a database.
+
+Now, let's explore how these operations can be used in queries.
+
+# ##############################################################################
+# Relational Algebra: 4/4
+# ##############################################################################
+
+This slide discusses how relational algebra operations can be combined to form
+queries. A query is essentially a combination of these operations to retrieve
+specific data from a database. For example, you might want to find all
+`course_id`s from a section table for a particular semester like fall 2017. The
+slide also introduces the concept of assignment, where parts of a relational
+algebra expression are assigned to temporary variables, allowing you to write
+queries as sequential programs. Additionally, it highlights that different
+queries can be equivalent, meaning they produce the same result, but some may be
+more efficient than others. Understanding these concepts is key to optimizing
+database queries.

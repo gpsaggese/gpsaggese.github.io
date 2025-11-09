@@ -1,0 +1,433 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+// https://docs.google.com/presentation/d/1VoUmig6CIA4ZtfNAuAIKbr3qtZjYNWIZxK9xxK6wTxI/edit
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 3.1: DevOps}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+::::
+:::: {.column width=20%}
+
+::::
+:::
+
+* Docker - Resources
+
+:::columns
+::::{.column width=70%}
+- We will use Docker during the class project and most tutorials
+
+- Concepts in the slides
+
+- Class tutorials:
+  - [tutorial\_docker](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker)
+  - [tutorial\_docker\_compose](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker_compose)
+
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_3/lec_3_slide_3_image_1.png)
+::::
+:::
+
+- Web resources:
+  - [Docker Tutorial for beginners](https://www.youtube.com/watch?v=zJ6WbK9zFpI)
+  - [https://labs.play-with-docker.com/](https://labs.play-with-docker.com/)
+  - [https://training.play-with-docker.com](https://training.play-with-docker.com)
+  - [A Beginner-Friendly Introduction to Containers, VMs and Docker](https://medium.freecodecamp.org/a-beginner-friendly-introduction-to-containers-vms-and-docker-79a9e3e119b)
+  - [Official Docker Getting Started Tutorial](https://docs.docker.com/get-started/)
+- Mastery:
+  - Poulton, [Docker Deep Dive: Zero to Docker in a single book](https://www.amazon.com/Docker-Deep-Dive-Nigel-Poulton/dp/1521822808), 2020
+
+* Application Deployment
+- For (almost all) Internet companies, **the application is the business**
+  - If the application breaks, the business stops
+  - E.g., Amazon, Google, Facebook, online banks, travel sites, ...
+
+- **Problem**
+  - Release, deploy, manage, monitor applications
+
+- **Solutions**
+  - Before 2000s: "bare-metal era"
+  - 2000s-2010s: "virtual machine era"
+  - After ~2013: "container era"
+
+* DevOps
+
+:::columns
+::::{.column width=65%}
+- **DevOps** = practices combining:
+  - Software development (_dev_)
+  - IT operations (_ops_)
+
+- **Containers revolutionized DevOps**
+  - Enable independence between app development and IT ops
+    - One team creates an app
+    - Another team deploys and manages apps
+  - Foster collaboration and innovation
+    - IT: "It doesn't work!"
+    - Devs: "What? It works for me!"
+::::
+::::{.column width=35%}
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_5_image_1.png)
+
+\footnotesize
+\centering
+- Plan
+- Code
+- Build
+- Test
+- Release
+- Deploy
+- Operate
+- Monitor
+::::
+:::
+
+* Run on bare metal
+:::columns
+::::{.column width=80%}
+- **< 2000s**
+  - Running few applications per server (no virtualization)
+
+- **Pros**
+  - No virtualization overhead
+
+- **Cons**
+  - Insecure due to no application separation
+  - Expensive
+
+- **Expensive / low efficiency**
+  - New server for each application
+  - Hard to spec machines $\to$ buy "big and fast servers"
+    - Overpowered servers at 5-10% capacity
+    - Significant spending during the 2000 DotCom boom on machines and networks
+
+- Resurfaced in 2020 with different Cloud Computing use cases
+
+- **Winners**: Cisco, Sun Microsystems, Microsoft
+::::
+::::{.column width=20%}
+\vspace{2.5cm}
+![](data605/lectures_source/images/lecture_3/lec_3_slide_6_image_1.png)
+::::
+:::
+```
+
+* Virtual Machine Era
+:::columns
+::::{.column width=75%}
+- **Circa 2000-2010: Virtual Machine**
+  - Run multiple OS copies on the same hardware
+
+- **Pros**
+  - Run multiple apps safely on one server
+  - Use existing servers with spare capacity
+
+- **Cons**
+  - Each VM needs an OS (wastes CPU, RAM, disk)
+  - Buy OS license
+  - Monitor and patch each OS
+  - Slow boot times
+
+- **Winners**: VMWare, RedHat, Citrix
+::::
+::::{.column width=25%}
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_7_image_1.png)
+::::
+:::
+
+* Containers Era
+:::columns
+::::{.column width=60%}
+- **Circa 2013: Docker becomes ubiquitous**
+
+- **Docker**
+  - Didn't invent containers
+  - Made containers simple and mainstream
+
+- Linux supported containers
+  - Kernel namespaces
+  - Control groups
+  - Union filesystems
+
+- **Pros**
+  - Containers are fast and portable
+  - Don't require a full OS
+  - All run on a single host
+  - Reduce OS licensing costs
+  - Reduce OS patching and maintenance
+::::
+::::{.column width=35%}
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_8_image_1.png){width=70%}
+
+\vspace{1cm}
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_8_image_2.png){width=120%}
+::::
+:::
+- **Cons**
+  - CPU overhead
+  - Toolchain to learn / use
+
+- **Winners**: AWS, Microsoft Azure, Google (not Docker Inc.)
+
+* Serverless Computing
+- **Containers run in an OS, OS runs on a host**
+  - **Where is the host running?**
+    - Local (your laptop)
+    - On-premise (your computer in a rack)
+    - Cloud instance (e.g., AWS EC2)
+  - **How is the host running?**
+    - On a bare-metal server
+    - On a virtual machine
+    - On a virtual machine running on a virtual machine
+
+- **Serverless computing**
+  - Application runs without concern for _"how"_ or _"where"_
+  - E.g., AWS Lambda
+
+* HW vs OS Virtualization
+:::columns
+::::{.column width=55%}
+
+- **Hypervisor performs HW virtualization**
+  - Carves physical hardware into VMs
+  - Allocates CPUs, RAM, and storage to a VM
+  - Like having multiple computers
+
+- "Virtual machine tax"
+  - Running 3 apps requires 3 VMs
+    - Each VM takes time to start
+    - Consumes CPU, RAM, and storage
+    - Needs an OS license
+    - Requires admins and patching
+  - You just want to run 3 apps!
+
+\vspace{1cm}
+- **Containers perform OS virtualization**
+  - It's like having multiple isolated environments within the same OS
+::::
+::::{.column width=40%}
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_10_image_1.png){width=90%}
+\vspace{1cm}
+![](data605/lectures_source/images/lecture_3/lec_3_slide_10_image_2.png){width=90%}
+::::
+:::
+
+* Docker: Client-Server
+
+:::columns
+::::{.column width=55%}
+- Docker relies on a **client-server architecture**
+
+- **Docker client**
+  - Command line interface
+  - Communicates with the server through an IPC socket
+    - E.g., `/var/run/docker.sock` or IP port
+
+- **Docker engine**
+  - Runs and manages containers
+  - Modular, built from OCI-compliant subsystems
+    - E.g., docker daemon, `containerd`, `runc`, plugins for networking and
+      storage
+::::
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_3/lec_3_slide_11_image_1.png)
+
+\vspace{1cm}
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_11_image_2.png)
+::::
+:::
+
+* Docker Architecture
+
+:::columns
+::::{.column width=60%}
+- **Docker runtime**
+  - `runc`: Start and stop containers
+  - `containerd`
+    - Pull images
+    - Create containers, volumes, network interfaces
+
+- **Docker engine**
+  - `dockerd`
+    - Expose remote API
+    - Manage images, volumes, networks
+
+- **Docker orchestration**
+  - `docker swarm`
+    - Manage clusters of nodes
+    - Often replaced by Kubernetes
+::::
+::::{.column width=35%}
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_12_image_1.png)
+
+::::
+:::
+
+- **Open Container Initiative (OCI)**
+  - Standardize low-level components of container infrastructure
+  - E.g., image format, runtime API
+  - Evolution of Docker standards
+
+* Docker Container
+
+- **Docker Container**
+  - Unit of computation
+  - Lightweight, stand-alone, executable software package
+
+- **Includes everything needed to run**
+  - Code
+  - Runtime/system libraries
+  - Settings
+
+- **Run-time object**
+  - Docker images are build-time objects
+  - Like program running (container) vs program code (image)
+
+* Docker Image
+- **Docker Image**
+  - Unit of deployment
+
+- **Contains everything needed to run an app**
+  - Application code
+  - Application dependencies
+  - Minimal OS support
+  - File system
+
+- Users can
+  - Build images from Dockerfiles
+  - Pull pre-built images from a registry
+
+- Multiple layers stacked
+  - Typically a few 100s of MBs
+
+* Docker Image Layers
+:::columns
+::::{.column width=60%}
+- **Docker image** is a configuration file listing layers and metadata
+  - Composed of read-only layers
+  - Each layer is independent
+  - Each layer comprises many files
+
+- **Docker driver**
+  - Stacks layers as a unified filesystem
+  - Implements copy-on-write behavior
+  - Files from top layers can obscure files from bottom layers
+
+- **Layer hash**
+  - Each layer has a hash based on content
+  - Layers are pulled and pushed in a compressed format
+
+- **Image hash**
+  - Each image has a hash
+  - Hash is a function of the config file and layers
+  - Image changes generate a new hash
+::::
+::::{.column width=35%}
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_15_image_1.png)
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_15_image_3.png)
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_15_image_2.png)
+
+::::
+:::
+
+* Docker: Container Data
+- A container has access to different data
+
+- **Container storage**
+  - Copy-on-write layer in the image
+  - Ephemeral (temporary data)
+  - Data persists until the container is removed
+    - Stopping or pausing a container doesn't lose data
+  - Containers are immutable
+    - Avoid writing persistent data into containers
+
+- **Bind-mount a local dir**
+  - Mount a local directory to a directory inside a container
+
+- **Docker volumes**
+  - Volumes exist separately from the container
+    - E.g., store PostgreSQL DB content
+  - State is permanent across container invocations
+  - Shareable across containers
+
+* Docker Repos
+:::columns
+::::{.column width=55%}
+- **Docker Repo (Registry)**
+  - E.g., DockerHub, AWS ECR
+  - Store Docker images
+    - `<registry>/<repo>:<tag>`
+    - E.g., `docker.io/alpine:latest`
+  - Some repos are vetted by Docker
+  - Unofficial repos shouldn't be trusted
+  - E.g., https://hub.docker.com/
+
+::::
+::::{.column width=40%}
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_17_image_1.png)
+::::
+:::
+
+![](data605/lectures_source/images/lecture_3/lec_3_slide_17_image_2.png){width=70%}
+
+* Devops = Devs + Ops
+\centering
+![](data605/lectures_source/images/lecture_3/lec_3_slide_18_image_1.png){width=50%}
+
+:::columns
+::::{.column width=50%}
+- **Devs**
+- Implement app
+  - Python, virtual environment
+- Containerize app
+  - Create Dockerfile
+  - Instructions to build image
+- Build image
+- Run app as container
+- Test locally
+::::
+::::{.column width=50%}
+- **Ops**
+- Download container images
+  - Filesystem, application, dependencies
+- Start / destroy containers
+- Reproduce issues easily
+  - "Here is the log"
+  - Run command line
+  - Deploy on test system and debug
+::::
+:::
