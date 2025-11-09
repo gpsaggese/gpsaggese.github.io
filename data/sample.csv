@@ -1,0 +1,6 @@
+drugA,drugB,interaction_type
+Aspirin,Ibuprofen,Antagonistic
+Paracetamol,Caffeine,Synergistic
+Warfarin,Aspirin,Severe
+Metformin,Insulin,Synergistic
+Amoxicillin,Clavulanic Acid,Synergistic
