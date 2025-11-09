@@ -1,0 +1,27 @@
+[
+  {
+    "intent": "reset password",
+    "question": "How do I reset my password?",
+    "answer": "To reset your password, please go to the login page and click the 'Forgot Password' link. You will receive an email with instructions."
+  },
+  {
+    "intent": "check order status",
+    "question": "Where is my order?",
+    "answer": "You can check your order status at any time by logging into your account and visiting the 'My Orders' section."
+  },
+  {
+    "intent": "billing inquiry",
+    "question": "I have a question about my bill.",
+    "answer": "For all billing inquiries, please contact our support team at support@example.com with your account number and the specific issue."
+  },
+  {
+    "intent": "request a refund",
+    "question": "How can I get a refund?",
+    "answer": "Refunds are available within 30 days of purchase. Please visit our 'Returns' page to start the process or contact support."
+  },
+  {
+    "intent": "speak to an agent",
+    "question": "I need to talk to a human.",
+    "answer": "To speak with a live agent, please say 'speak to an agent' or call us at 1-800-555-1234 during business hours."
+  }
+]

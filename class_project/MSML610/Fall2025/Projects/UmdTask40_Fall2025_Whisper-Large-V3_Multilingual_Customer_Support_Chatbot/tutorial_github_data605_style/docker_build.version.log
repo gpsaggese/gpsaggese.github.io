@@ -1,0 +1,1 @@
+the input device is not a TTY.  If you are using mintty, try prefixing the command with 'winpty'
