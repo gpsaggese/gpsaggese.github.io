@@ -4,7 +4,6 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import IPython.display as disp 
-import PIL.Image
 
 # --- Constants for Data Configuration ---
 DATASET_REF = "andrewmvd/animal-faces"
