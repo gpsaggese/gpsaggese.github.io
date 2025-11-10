@@ -19,7 +19,7 @@ Fall2025_CausalInference_Evaluating_the_Effect_of_Public_Health_Interventions_on
 ├── main.py                         # Main analysis pipeline
 ├── main.ipynb                      # Complete project update so far in notebook
 ├── requirements.txt                # Complete Python dependencies list
-├── LICENSE_DATASET.md              # Dataset usage terms and attribution
+├── license_dataset.md              # Dataset usage terms and attribution
 ├── src/                            # Source code modules
 │   ├── data_loader.py              # Data acquisition and loading
 │   ├── preprocess.py               # Data cleaning and preprocessing
@@ -244,7 +244,7 @@ python main.py
 
 ---
 
-**Project Status**: Checkpoint 1 Complete - Foundational analysis implemented and validated
+**Project Status**: Midterm PR Complete - Foundational analysis implemented and validated
 
-**Ready to proceed with advanced causal methods, comprehensive validation, and policy-relevant analysis in Checkpoint 2.**
+**Ready to proceed with advanced causal methods, comprehensive validation, and policy-relevant analysis in Final submission.**
 ```
