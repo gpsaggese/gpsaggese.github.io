@@ -1,3 +1,8 @@
+## IMPORTANT NOTICE: Dataset Size Issuse
+
+- Could not push the dataset due to a size limitation so the csv file has been added to .gitignore
+- To run the code, download the dataset from https://www.kaggle.com/datasets/ankushpanday1/india-house-price-prediction and put it in data/raw/
+
 ## VENV CONTROLS
 
 source dev_scripts_umd_classes/thin_client/setenv.sh
