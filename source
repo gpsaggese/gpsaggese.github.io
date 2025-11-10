@@ -1,0 +1,22 @@
+##> /Users/manan/Documents/MSML610/umd_classes1/dev_scripts_umd_classes/thin_client/setenv.sh
+GIT_ROOT_DIR=/Users/manan/Documents/MSML610/umd_classes1
+Thin client utils found at: /Users/manan/Documents/MSML610/umd_classes1/helpers_root/dev_scripts_helpers/thin_client/thin_client_utils.sh
+-e -n [0m
+##> Parsing repo config
+/Users/manan/Documents/MSML610/umd_classes1
+REPO_CONF_container_registry_info_ecr=623860924167.dkr.ecr.eu-north-1.amazonaws.com
+REPO_CONF_container_registry_info_ghcr=ghcr.io/cryptokaizen
+REPO_CONF_docker_info_docker_image_name=umd_msml610
+REPO_CONF_repo_info_github_host_name=github.com
+REPO_CONF_repo_info_github_repo_account=gpsaggese
+REPO_CONF_repo_info_issue_prefix=UmdTask
+REPO_CONF_repo_info_repo_name=umd_classes
+REPO_CONF_runnable_dir_info_dir_suffix=umd_classes
+REPO_CONF_runnable_dir_info_use_helpers_as_nested_module=1
+REPO_CONF_runnable_dir_info_venv_tag=helpers
+REPO_CONF_s3_bucket_info_html_bucket_name=s3://cryptokaizen-html
+REPO_CONF_s3_bucket_info_html_ip=http://172.30.2.44
+REPO_CONF_s3_bucket_info_unit_test_bucket_name=s3://cryptokaizen-unit-test
+# activate_venv()
+src_dir=/Users/manan/src
+-e [0;31mERROR[0m: Directory '/Users/manan/src' does not exist.
