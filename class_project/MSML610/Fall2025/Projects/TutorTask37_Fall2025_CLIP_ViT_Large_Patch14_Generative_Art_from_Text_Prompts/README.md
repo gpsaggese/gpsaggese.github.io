@@ -9,14 +9,6 @@ The project contains the following:
 
 ---
 
-## Run Instructions
-
-1. Navigate to the project directory:
-   ```bash
-   cd class_project/instructions/clip_faiss_streamlit
-
-Work in Progress.
-
 ## Project Structure
 
 | File/Folder                        | Description                                       |
@@ -34,5 +26,37 @@ Work in Progress.
 | **README.md**                       | Project documentation                            |
 | **requirements.txt**                | Python dependencies                               |
 
+## Run Instructions
+
+1. Navigate to the project directory:
+   ```bash
+   cd class_project/instructions
+   
+2. For project details and corresponding files:
+
+   cd umd_classes/class_project/MSML610/Fall2025/Projects/TutorTask37_Fall2025_CLIP_ViT_Large_Patch14_Generative_Art_from_Text_Prompts/
+
 ## Note
-This is a work in progress project: additional features, improved UI, and dataset integration are still being developed. However, the model has been successfully executed.
+The model has been successfully executed. However, This is a work in progress project: additional features, improved UI, and dataset integration are still being developed.
+
+## Completed
+- CLIP model integrated (ViT-L/14 architecture)
+- Embedding generation for text and images
+- FAISS similarity search implementation
+- Streamlit user interface for multimodal querying
+
+## In Progress
+- Enhancing UI design and interactivity
+- Adding additional dataset support
+- Docker Compose setup for full environment automation
+
+## Dependecies
+- numpy
+- pandas
+- seaborn
+- faiss
+- requests
+- streamlit
+- pillow
+- fastapi
+- torch
