@@ -13,9 +13,12 @@ if __name__ == "__main__":
 
     df = load_melbourne(csv)
     bundle = train_select_best(df)
+
     print("CV results:")
     for row in bundle["all_results"]:
         print(row)
     print(f"Best: {bundle['best']['name']} | RMSE={bundle['best']['rmse']:.0f}, R2={bundle['best']['r2']:.3f}")
+
     save_artifacts(bundle)
     print("Saved to artifacts/")
+

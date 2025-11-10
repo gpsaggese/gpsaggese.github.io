@@ -21,22 +21,23 @@ class House(BaseModel):
 def prepare_features(feat: Dict[str, Any]) -> pd.DataFrame:
     df = pd.DataFrame([feat])
 
-    # Ensure Date compatible with training
     if "Date" in EXPECTED_CAT:
         if "Date" in df.columns:
             df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
         else:
             df["Date"] = pd.NaT
 
-    # Derive Year/Month like training did
     if "Year" in EXPECTED_NUM:
-        df["Year"] = df.get("Date")
-        df["Year"] = pd.to_datetime(df["Year"], errors="coerce").dt.year
+        if "Date" in df.columns and not df["Date"].isna().all():
+            df["Year"] = pd.to_datetime(df["Date"], errors="coerce").dt.year
+        else:
+            df["Year"] = np.nan
     if "Month" in EXPECTED_NUM:
-        df["Month"] = df.get("Date")
-        df["Month"] = pd.to_datetime(df["Month"], errors="coerce").dt.month
+        if "Date" in df.columns and not df["Date"].isna().all():
+            df["Month"] = pd.to_datetime(df["Date"], errors="coerce").dt.month
+        else:
+            df["Month"] = np.nan
 
-    # Add missing expected cols as NaN, drop extras, enforce order
     for col in EXPECTED_ALL:
         if col not in df.columns:
             df[col] = np.nan
@@ -60,3 +61,4 @@ def predict(house: House):
         return {"predicted_price": float(yhat)}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+

@@ -8,3 +8,4 @@ uvicorn
 pydantic
 python-multipart
 kaggle
+
