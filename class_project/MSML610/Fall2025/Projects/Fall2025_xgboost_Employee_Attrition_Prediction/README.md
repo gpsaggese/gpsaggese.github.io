@@ -26,6 +26,7 @@ No manual CSV download is required as long as `kagglehub` is installed and confi
 ```text
 .
 ├── employee_attrition_eda.ipynb   # Main tutorial / analysis notebook
+├── employee_attrition_main.py     # Main Python entry point
 ├── utils_data_io.py               # Data loading, cleaning & preprocessing utilities
 ├── utils_post_processing.py       # Evaluation, feature names, and feature importance plotting
 ├── requirements.txt               # Python dependencies
