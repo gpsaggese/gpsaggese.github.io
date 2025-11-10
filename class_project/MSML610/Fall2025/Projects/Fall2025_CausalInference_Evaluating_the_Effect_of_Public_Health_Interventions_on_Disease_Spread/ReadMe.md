@@ -15,8 +15,11 @@ This project implements advanced causal inference methods to estimate the effect
 ## Project Structure
 
 ```
-MSML610/
+Fall2025_CausalInference_Evaluating_the_Effect_of_Public_Health_Interventions_on_Disease_Spread/
 ├── main.py                         # Main analysis pipeline
+├── main.ipynb                      # Complete project update so far in notebook
+├── requirements.txt                # Complete Python dependencies list
+├── LICENSE_DATASET.md              # Dataset usage terms and attribution
 ├── src/                            # Source code modules
 │   ├── data_loader.py              # Data acquisition and loading
 │   ├── preprocess.py               # Data cleaning and preprocessing
