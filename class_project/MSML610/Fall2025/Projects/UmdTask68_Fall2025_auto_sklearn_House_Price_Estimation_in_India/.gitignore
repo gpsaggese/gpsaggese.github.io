@@ -29,3 +29,6 @@ Thumbs.db
 # Virtual environments
 venv/
 env/
+
+# CSV file - its too big lol
+data/raw/india_housing_prices.csv

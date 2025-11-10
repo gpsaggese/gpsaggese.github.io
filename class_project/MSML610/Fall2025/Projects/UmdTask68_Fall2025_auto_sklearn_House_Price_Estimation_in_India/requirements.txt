@@ -4,3 +4,4 @@ scikit-learn>=1.4
 matplotlib>=3.8
 seaborn>=0.13
 jupyterlab>=4.1
+auto-sklearn>=0.16
