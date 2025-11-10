@@ -1,0 +1,196 @@
+"""
+House Price Prediction TFX Pipeline Definition
+
+This module defines the complete TFX pipeline with all components:
+1. CsvExampleGen - Data ingestion
+2. SchemaGen - Schema generation and validation
+3. Transform - Feature engineering
+4. Trainer - Model training (XGBoost and TensorFlow DNN)
+5. Evaluator - Model evaluation
+6. Pusher - Model deployment
+"""
+
+import os
+from typing import List, Optional
+
+import tensorflow_model_analysis as tfma
+from tfx.components import (
+    CsvExampleGen,
+    SchemaGen,
+    StatisticsGen,
+    Transform,
+    Trainer,
+    Evaluator,
+    Pusher,
+)
+from tfx.dsl.components.common.resolver import Resolver
+from tfx.dsl.input_resolution.strategies.latest_blessed_model_strategy import (
+    LatestBlessedModelStrategy
+)
+from tfx.orchestration import metadata, pipeline
+from tfx.proto import trainer_pb2, pusher_pb2
+from tfx.types import Channel
+from tfx.types.standard_artifacts import Model, ModelBlessing
+
+# Import configuration
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils import config
+
+
+def create_pipeline(
+    pipeline_name: str,
+    pipeline_root: str,
+    data_path: str,
+    transform_module_file: str,
+    trainer_module_file: str,
+    metadata_path: str,
+    serving_model_dir: str,
+    beam_pipeline_args: Optional[List[str]] = None,
+) -> pipeline.Pipeline:
+    """
+    Create TFX pipeline for house price prediction.
+
+    Args:
+        pipeline_name: Name of the pipeline
+        pipeline_root: Root directory for pipeline outputs
+        data_path: Path to the CSV data file
+        transform_module_file: Path to transform module
+        trainer_module_file: Path to trainer module
+        metadata_path: Path to metadata database
+        serving_model_dir: Directory for serving models
+        beam_pipeline_args: Optional Beam pipeline arguments
+
+    Returns:
+        TFX Pipeline instance
+
+    TODO: Implement components in phases:
+    - Phase 2: CsvExampleGen, SchemaGen
+    - Phase 3: Transform
+    - Phase 4: Trainer
+    - Phase 5: Evaluator
+    - Phase 6: Pusher
+    """
+
+    components = []
+
+    # ============================================================================
+    # PHASE 2: Data Ingestion & Validation
+    # ============================================================================
+
+    # Component 1: CsvExampleGen
+    # TODO: Implement in Phase 2
+    # example_gen = CsvExampleGen(input_base=data_path)
+    # components.append(example_gen)
+
+    # Component 2: StatisticsGen
+    # TODO: Implement in Phase 2
+    # statistics_gen = StatisticsGen(examples=example_gen.outputs['examples'])
+    # components.append(statistics_gen)
+
+    # Component 3: SchemaGen
+    # TODO: Implement in Phase 2
+    # schema_gen = SchemaGen(
+    #     statistics=statistics_gen.outputs['statistics'],
+    #     infer_feature_shape=True
+    # )
+    # components.append(schema_gen)
+
+    # ============================================================================
+    # PHASE 3: Feature Engineering
+    # ============================================================================
+
+    # Component 4: Transform
+    # TODO: Implement in Phase 3
+    # transform = Transform(
+    #     examples=example_gen.outputs['examples'],
+    #     schema=schema_gen.outputs['schema'],
+    #     module_file=transform_module_file
+    # )
+    # components.append(transform)
+
+    # ============================================================================
+    # PHASE 4: Model Training
+    # ============================================================================
+
+    # Component 5: Trainer
+    # TODO: Implement in Phase 4
+    # trainer = Trainer(
+    #     module_file=trainer_module_file,
+    #     examples=transform.outputs['transformed_examples'],
+    #     transform_graph=transform.outputs['transform_graph'],
+    #     schema=schema_gen.outputs['schema'],
+    #     train_args=trainer_pb2.TrainArgs(num_steps=config.TRAIN_STEPS),
+    #     eval_args=trainer_pb2.EvalArgs(num_steps=config.EVAL_STEPS)
+    # )
+    # components.append(trainer)
+
+    # ============================================================================
+    # PHASE 5: Model Evaluation
+    # ============================================================================
+
+    # Component 6: Resolver (get latest blessed model for comparison)
+    # TODO: Implement in Phase 5
+    # model_resolver = Resolver(
+    #     strategy_class=LatestBlessedModelStrategy,
+    #     model=Channel(type=Model),
+    #     model_blessing=Channel(type=ModelBlessing)
+    # ).with_id('latest_blessed_model_resolver')
+    # components.append(model_resolver)
+
+    # Component 7: Evaluator
+    # TODO: Implement in Phase 5
+    # eval_config = tfma.EvalConfig(
+    #     model_specs=[tfma.ModelSpec(label_key=config.TARGET_COLUMN)],
+    #     slicing_specs=[tfma.SlicingSpec()],
+    #     metrics_specs=[
+    #         tfma.MetricsSpec(metrics=[
+    #             tfma.MetricConfig(class_name='RootMeanSquaredError'),
+    #             tfma.MetricConfig(class_name='MeanAbsoluteError'),
+    #         ])
+    #     ]
+    # )
+    #
+    # evaluator = Evaluator(
+    #     examples=example_gen.outputs['examples'],
+    #     model=trainer.outputs['model'],
+    #     baseline_model=model_resolver.outputs['model'],
+    #     eval_config=eval_config
+    # )
+    # components.append(evaluator)
+
+    # ============================================================================
+    # PHASE 6: Model Deployment
+    # ============================================================================
+
+    # Component 8: Pusher
+    # TODO: Implement in Phase 6
+    # pusher = Pusher(
+    #     model=trainer.outputs['model'],
+    #     model_blessing=evaluator.outputs['blessing'],
+    #     push_destination=pusher_pb2.PushDestination(
+    #         filesystem=pusher_pb2.PushDestination.Filesystem(
+    #             base_directory=serving_model_dir
+    #         )
+    #     )
+    # )
+    # components.append(pusher)
+
+    # ============================================================================
+    # Create and return pipeline
+    # ============================================================================
+
+    return pipeline.Pipeline(
+        pipeline_name=pipeline_name,
+        pipeline_root=pipeline_root,
+        components=components,
+        metadata_connection_config=metadata.sqlite_metadata_connection_config(
+            metadata_path
+        ),
+        beam_pipeline_args=beam_pipeline_args,
+    )
+
+
+if __name__ == "__main__":
+    print("House Price TFX Pipeline Definition")
+    print("This module will be implemented across phases 2-6")
