@@ -1,0 +1,48 @@
+# Configuration for GPT-2 Small (Fine-tuning)
+
+# Model Configuration
+model:
+  type: "gpt2"  # Uses pretrained GPT-2 small
+  pretrained_name: "gpt2"
+
+# Training Configuration
+training:
+  epochs: 3
+  per_gpu_batch_size: 6
+  learning_rate: 2.0e-5
+  warmup_steps: 500
+  weight_decay: 0.01
+  gradient_accumulation_steps: 1
+  max_grad_norm: 1.0
+  log_interval: 100
+  save_interval: 2000
+  eval_interval: 1000
+
+# Data Configuration
+data:
+  dataset_name: "lucadiliello/bookcorpusopen"
+  dataset_split: "train"
+  max_samples: null
+  validation_split: 0.05
+  num_workers: 4
+  shuffle: true
+  max_seq_len: 512
+
+# Generation Configuration
+generation:
+  max_new_tokens: 200
+  temperature: 0.9
+  top_k: 50
+  top_p: 0.95
+  num_samples: 5
+
+# Paths
+paths:
+  checkpoint_dir: "checkpoints/gpt2_small"
+  log_dir: "logs"
+  tensorboard_dir: "runs/gpt2_small"
+
+# Misc
+seed: 42
+fp16: true
+
