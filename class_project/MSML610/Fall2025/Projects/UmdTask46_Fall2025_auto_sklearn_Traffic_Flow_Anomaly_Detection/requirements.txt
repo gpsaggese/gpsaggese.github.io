@@ -1,0 +1,13 @@
+# Core libraries
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+
+# Main project library
+auto-sklearn
+
+# Jupyter environment (already in base, but good to list)
+jupyterlab
+notebook
