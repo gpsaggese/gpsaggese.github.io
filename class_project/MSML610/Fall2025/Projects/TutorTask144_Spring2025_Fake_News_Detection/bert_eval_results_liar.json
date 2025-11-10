@@ -1,0 +1,32 @@
+{
+  "model": "distilbert-base-uncased",
+  "dataset": "LIAR",
+  "test_size": 1919,
+  "test_loss": 0.66863313789169,
+  "test_accuracy": 0.6091714434601355,
+  "test_precision": 0.6969849948133205,
+  "test_recall": 0.6091714434601355,
+  "test_f1": 0.47601250068182727,
+  "test_roc_auc": 0.5499886971166346,
+  "per_class_metrics": {
+    "fake": {
+      "precision": 0.8333333333333334,
+      "recall": 0.032467532467532464,
+      "f1-score": 0.0625,
+      "support": 770
+    },
+    "real": {
+      "precision": 0.6056114346214928,
+      "recall": 0.9956483899042646,
+      "f1-score": 0.7531270572745227,
+      "support": 1149
+    }
+  },
+  "confusion_matrix": {
+    "fake_as_fake": 25,
+    "fake_as_real": 745,
+    "real_as_fake": 5,
+    "real_as_real": 1144
+  },
+  "timestamp": "2025-11-09T17:05:35.534481"
+}

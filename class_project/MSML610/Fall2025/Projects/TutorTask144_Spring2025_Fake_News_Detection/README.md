@@ -1,353 +1,274 @@
-# Fake News Detection with Model Context Protocol (MCP)
+# BERT Fake News Detection
 
-## Project Overview
+A PyTorch-based fake news detection system using fine-tuned DistilBERT on multiple datasets (LIAR, ISOT, FakeNewsNet).
 
-This project implements a **Fake News Detection system** using the **Model Context Protocol (MCP)**, a framework for managing machine learning models in context-aware scenarios.
+## Features
 
-### Key Features
-
-- **Data Preprocessing**: Text cleaning, tokenization, stopword removal, and stemming
-- **Feature Extraction**: TF-IDF vectorization for text representation
-- **Multiple Models**: Logistic Regression, Random Forest, Gradient Boosting classifiers
-- **Model Context Management**: Track model metadata and validate deployment context
-- **Comprehensive Evaluation**: ROC-AUC, Precision, Recall, F1-score metrics
-- **Cross-Validation**: K-fold validation for robust performance estimation
+- DistilBERT fine-tuning for text classification
+- Multi-dataset support (LIAR, ISOT, FakeNewsNet)
+- Lazy tokenization for memory efficiency
+- Model versioning and tracking
+- Docker setup for deployment
+- Comprehensive evaluation metrics
 
 ### Project Structure
 
 ```
 TutorTask144_Spring2025_Fake_News_Detection/
-├── utils_data_preprocessing.py       # Text processing and feature extraction
-├── utils_model_training.py           # Model training with MCP context management
-├── MCP.API.md                        # Model Context Protocol documentation
-├── MCP.API.ipynb                     # MCP tutorial notebook (to be created)
-├── FakeNewsDetection.example.md      # Fake news detection documentation (to be created)
-├── FakeNewsDetection.example.ipynb   # Complete implementation notebook (to be created)
+├── bert_utils.py                     # Core BERT utilities (550+ lines)
+│   ├── DataConfig                    # Data loading configuration
+│   ├── TrainingConfig                # Training hyperparameters
+│   ├── ModelMetrics                  # Evaluation metrics container
+│   ├── BertTextDataset               # PyTorch dataset with lazy tokenization
+│   ├── BertModelWrapper              # Main model training/inference wrapper
+│   └── DataLoader                    # Multi-dataset loader utility
+├── train_bert_liar_only.py           # Optimized BERT trainer for LIAR (438 lines)
+├── train_bert_model.py               # Multi-dataset BERT trainer (390 lines)
+├── eval_bert_liar.py                 # Comprehensive evaluation script (212 lines)
+├── BERT.API.md                       # Complete API documentation
+├── BERT.API.ipynb                    # Interactive API tutorial notebook
+├── BERT.example.md                   # Full implementation guide with examples
+├── BERT.example.ipynb                # End-to-end example notebook
+├── BERT_IMPLEMENTATION_REPORT.md     # Detailed implementation analysis
+├── deep_learning_registry.json       # MCP model registry
 ├── requirements.txt                  # Python dependencies
 ├── Dockerfile                        # Docker container setup
-├── docker_build.sh                   # Script to build Docker image
-├── docker_jupyter.sh                 # Script to run Jupyter in container
-├── README.md                         # This file
-└── IMPLEMENTATION_GUIDE.md           # Detailed implementation instructions
+├── README.md                         # This file (project documentation)
+└── data/                             # Data directory structure
+    ├── LIAR/                         # Political fact-checking statements
+    ├── ISOT/                         # News articles (Reuters, etc.)
+    └── FakeNewsNet/                  # Curated fact-check data
 ```
 
 ## Getting Started
 
 ### Prerequisites
 
-- Docker installed on your machine
-- Kaggle Fake News Detection dataset (download from https://www.kaggle.com/c/fake-news/data)
-- Basic understanding of NLP and ML concepts
+- Python 3.9+
+- PyTorch and transformers libraries
+- Docker (optional, for containerization)
+- Kaggle datasets (LIAR, ISOT, FakeNewsNet)
+- GPU recommended but CPU-compatible
 
-### Quick Start with Docker
+### Quick Start (Local Installation)
 
 1. **Navigate to project directory**
    ```bash
    cd class_project/MSML610/Fall2025/Projects/TutorTask144_Spring2025_Fake_News_Detection
    ```
 
-2. **Build the Docker image**
+2. **Install dependencies**
    ```bash
-   ./docker_build.sh
+   pip install -r requirements.txt
    ```
 
-   Expected output:
-   ```
-   Building Docker image for TutorTask144_Spring2025_Fake_News_Detection...
-   Successfully built [image_hash]
-   ```
-
-3. **Start Jupyter server**
+3. **Download datasets** (automatic via scripts)
    ```bash
-   ./docker_jupyter.sh
+   # Datasets are downloaded on first run of training scripts
+   python train_bert_liar_only.py
    ```
 
-   Expected output:
-   ```
-   Starting Jupyter server...
-   Jupyter is running at http://localhost:8888
-   Token: [your_token_here]
+4. **Run Jupyter notebooks**
+   ```bash
+   jupyter notebook BERT.API.ipynb
    ```
 
-4. **Open in browser**
-   - Go to [http://localhost:8888](http://localhost:8888)
-   - Enter the token if prompted
-   - Navigate to the project notebooks
+### Quick Start with Docker
 
-## Project Deliverables
+1. **Build the Docker image**
+   ```bash
+   docker build -t bert-fake-news:latest .
+   ```
 
-### 1. MCP.API.md
-Comprehensive documentation of the Model Context Protocol:
-- Core concepts: Model Context, Context Manager, Compatibility Checking
-- API architecture with code examples
-- Design decisions and rationale
-- Workflow examples
+2. **Run Jupyter server in container**
+   ```bash
+   docker run -p 8888:8888 -v $(pwd)/data:/app/data -v $(pwd)/models:/app/models \
+     bert-fake-news:latest
+   ```
 
-### 2. MCP.API.ipynb
-Interactive tutorial demonstrating MCP:
-- Creating `ModelContext` instances
-- Using `ModelContextManager` for registration
-- Context compatibility validation
-- Saving and loading contexts
+3. **Access Jupyter**
+   - Open [http://localhost:8888](http://localhost:8888)
+   - Notebooks are available immediately
 
-### 3. FakeNewsDetection.example.md
-Complete guide to fake news detection:
-- Dataset overview and statistics
-- Data preprocessing pipeline
-- Feature extraction with TF-IDF
-- Model selection and training process
-- Evaluation metrics and results
-- Integration with MCP
+### Training the Model
 
-### 4. FakeNewsDetection.example.ipynb
-Full implementation showing:
-- Loading and exploring the dataset
-- Text preprocessing pipeline
-- Feature extraction
-- Training multiple models
-- Model comparison and evaluation
-- Cross-validation analysis
-- Using MCP for context management
-- Visualizations (ROC curves, confusion matrices)
-
-## Dataset Information
-
-**Kaggle Fake News Detection Dataset**
-- Download: https://www.kaggle.com/c/fake-news/data
-- Total samples: ~20,000 news articles
-- Features: id, title, author, text, date, label
-- Target: Binary (0 = Fake, 1 = Real)
-- Relatively balanced class distribution
-
-## Data Preprocessing Pipeline
-
-The preprocessing pipeline includes:
-
-1. **Text Cleaning**
-   - Remove URLs and email addresses
-   - Convert to lowercase
-   - Remove special characters
-   - Normalize whitespace
-
-2. **Tokenization**
-   - Split text into individual tokens
-   - Use NLTK word tokenizer
-
-3. **Stopword Removal**
-   - Filter common English stopwords
-   - Remove short tokens (< 3 characters)
-
-4. **Stemming/Lemmatization**
-   - PorterStemmer for word stemming
-   - WordNetLemmatizer for lemmatization
-
-5. **Feature Extraction**
-   - TF-IDF vectorization
-   - Configurable max features (default: 5000)
-   - Unigrams and bigrams
-
-## Model Training and Evaluation
-
-### Supported Models
-
-1. **Logistic Regression**
-   - Fast, interpretable baseline
-   - Default: max_iter=1000
-
-2. **Random Forest**
-   - Ensemble method with feature importance
-   - Default: n_estimators=100, max_depth=20
-
-3. **Gradient Boosting**
-   - Sequential tree ensemble
-   - Default: n_estimators=100, learning_rate=0.1
-
-### Evaluation Metrics
-
-- **Accuracy**: Overall correctness
-- **Precision**: False positive rate control
-- **Recall**: Fake news detection rate
-- **F1-Score**: Balance between precision and recall
-- **ROC-AUC**: Overall classifier performance
-- **Confusion Matrix**: Per-class performance
-
-## Model Context Protocol (MCP)
-
-MCP is a framework for managing ML models in context-aware scenarios:
-
-### Key Concepts
-
-1. **ModelContext**: Dataclass containing:
-   - Model identity and type
-   - Feature type and preprocessing state
-   - Training/validation/test set sizes
-   - Hyperparameters
-   - Performance metrics
-
-2. **ModelContextManager**: Registry for model contexts
-   - Register and retrieve contexts
-   - Validate context compatibility
-   - Support for context evolution
-
-3. **Context Compatibility**: Ensures models are used appropriately
-   - Feature type must match
-   - Preprocessing state must match
-   - Prevents errors from context mismatch
-
-### Example Usage
-
-```python
-from utils_model_training import ModelContextManager, ModelContext
-
-# Create context
-context = ModelContext(
-    model_id='news_detector_v1',
-    model_name='Fake News Detector',
-    model_type='random_forest',
-    feature_type='tfidf',
-    created_at='2025-01-20',
-    training_samples=15000,
-    validation_samples=2000,
-    test_samples=3000,
-    preprocessed=True,
-    hyperparameters={'n_estimators': 100}
-)
-
-# Manage context
-manager = ModelContextManager()
-manager.register_context(context)
-
-# Validate before inference
-if manager.is_context_compatible('news_detector_v1', 'tfidf', True):
-    predictions = model.predict(features)
+**Quick training on LIAR dataset:**
+```bash
+python train_bert_liar_only.py
 ```
+
+**Training on multiple datasets:**
+```bash
+python train_bert_model.py
+```
+
+**Evaluate trained model:**
+```bash
+python eval_bert_liar.py
+```
+
+## Documentation
+
+The main documentation files are:
+
+- **BERT.API.md** - API reference with all classes and methods
+- **BERT.API.ipynb** - Interactive tutorial showing how to use the API
+- **BERT.example.md** - Step-by-step guide on how the project works
+- **BERT.example.ipynb** - Working example notebook showing the full workflow
+
+## Datasets
+
+The project uses three datasets:
+
+- **LIAR**: 12,791 political claims from PolitiFact (40.1% fake, 59.9% real)
+- **ISOT**: 44,898 news articles from Reuters, Bloomberg, CNN, BBC (52.3% fake, 47.7% real)
+- **FakeNewsNet**: 422 curated fact-checks from PolitiFact and BuzzFeed (balanced)
+
+## Model
+
+Uses DistilBERT (lightweight transformer with 6 layers, 12 attention heads, 66.4M parameters). The implementation includes:
+
+- Lazy tokenization for memory efficiency (200MB vs 2GB with eager tokenization)
+- AdamW optimizer with 10% warmup and gradient clipping
+- Early stopping based on validation loss
+- Configurable training parameters (batch size, learning rate, epochs)
+
+## Results
+
+Test accuracy on LIAR dataset: 60.92% (accuracy), 69.70% (precision), 47.60% (F1-score), 0.55 (ROC-AUC). The model correctly identifies 99.56% of real news but only 3.25% of fake news, showing class imbalance issues common with the LIAR dataset. Performance improves with class-weighted loss and more training epochs.
+
+## Model Registry
+
+Trained models are tracked in `deep_learning_registry.json` with metadata including architecture, training config, and test results.
 
 ## Usage Examples
 
-### Basic Preprocessing
+### Basic BERT Training
 
 ```python
-from utils_data_preprocessing import preprocess_text, extract_tfidf_features
+from bert_utils import DataConfig, TrainingConfig, BertModelWrapper, DataLoader
+from pathlib import Path
 
-# Preprocess a single text
-cleaned = preprocess_text("This is a news article...")
-
-# Extract TF-IDF features from multiple texts
-features, vectorizer = extract_tfidf_features(texts_list)
-```
-
-### Model Training
-
-```python
-from utils_model_training import create_model, train_model, evaluate_model
-
-# Create and train
-model = create_model('random_forest', {'n_estimators': 100})
-train_model(model, X_train, y_train)
-
-# Evaluate
-metrics = evaluate_model(model, X_test, y_test)
-print(f"Accuracy: {metrics['accuracy']:.4f}")
-print(f"ROC-AUC: {metrics['roc_auc']:.4f}")
-```
-
-### Model Comparison
-
-```python
-from utils_model_training import compare_models
-
-results = compare_models(
-    {
-        'logistic_regression': {'model_type': 'logistic_regression'},
-        'random_forest': {'model_type': 'random_forest'},
-        'gradient_boosting': {'model_type': 'gradient_boosting'}
-    },
-    X_train, y_train, X_test, y_test
+# Configure data loading
+data_config = DataConfig(
+    train_size=0.7,
+    val_size=0.15,
+    test_size=0.15,
+    max_text_length=256,
+    stratify=True
 )
-print(results)  # DataFrame with all model results
+
+# Configure training
+train_config = TrainingConfig(
+    model_name='distilbert-base-uncased',
+    batch_size=16,
+    learning_rate=2e-5,
+    num_epochs=2,
+    warmup_ratio=0.1,
+    max_grad_norm=1.0,
+    patience=1,
+    device='cuda' if torch.cuda.is_available() else 'cpu'
+)
+
+# Load data
+loader = DataLoader()
+texts, labels = loader.load_liar(Path('data/LIAR'))
+X_train, X_val, X_test, y_train, y_val, y_test = loader.split_data(
+    texts, labels, data_config
+)
+
+# Train model
+model = BertModelWrapper(train_config)
+history = model.train(X_train, y_train, X_val, y_val)
+
+# Save model
+model.save_model('models/bert_fake_news_detector')
+```
+
+### Model Evaluation
+
+```python
+# Evaluate on test set
+from torch.utils.data import DataLoader as TorchDataLoader
+from bert_utils import BertTextDataset
+
+test_dataset = BertTextDataset(X_test, y_test, model.tokenizer, max_length=256)
+test_loader = TorchDataLoader(test_dataset, batch_size=16)
+
+metrics = model._evaluate(test_loader)
+
+print(f"Accuracy:  {metrics.accuracy:.4f}")
+print(f"Precision: {metrics.precision:.4f}")
+print(f"Recall:    {metrics.recall:.4f}")
+print(f"F1-Score:  {metrics.f1:.4f}")
+print(f"ROC-AUC:   {metrics.roc_auc:.4f}")
+```
+
+### Multi-Dataset Training
+
+```python
+# Combine multiple datasets
+texts_liar, labels_liar = loader.load_liar(Path('data/LIAR'))
+texts_isot, labels_isot = loader.load_isot(Path('data/ISOT'))
+texts_fnn, labels_fnn = loader.load_fakenewsnet(Path('data/FakeNewsNet/combined.csv'))
+
+texts = texts_liar + texts_isot + texts_fnn
+labels = labels_liar + labels_isot + labels_fnn
+
+# Split and train as before
+X_train, X_val, X_test, y_train, y_val, y_test = loader.split_data(
+    texts, labels, data_config
+)
+history = model.train(X_train, y_train, X_val, y_val)
 ```
 
 ## Docker Commands
 
-### Build Image
+### Build Docker Image
 ```bash
-./docker_build.sh
+docker build -t bert-fake-news:latest .
 ```
 
-### Run Jupyter
+### Run Jupyter Notebook Server
 ```bash
-./docker_jupyter.sh
+docker run -p 8888:8888 \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/models:/app/models \
+  bert-fake-news:latest
 ```
 
-### Run Bash
+### Train BERT Model in Container
 ```bash
-./docker_bash.sh
+docker run -v $(pwd)/data:/app/data -v $(pwd)/models:/app/models \
+  bert-fake-news:latest python train_bert_liar_only.py
 ```
 
-### Clean Up
+### Evaluate Model in Container
 ```bash
-./docker_clean.sh
+docker run -v $(pwd)/data:/app/data -v $(pwd)/models:/app/models \
+  bert-fake-news:latest python eval_bert_liar.py
 ```
 
-### Stop Container
+### Interactive Bash Shell
 ```bash
-./docker_exec.sh docker stop [container_name]
+docker run -it -v $(pwd)/data:/app/data -v $(pwd)/models:/app/models \
+  bert-fake-news:latest /bin/bash
 ```
 
-## Troubleshooting
+## Notes
 
-### Issue: NLTK Data Not Found
-**Solution**: The utilities module automatically downloads required NLTK data on first run.
+If you encounter out-of-memory issues, reduce the batch size in TrainingConfig or enable GPU with `--gpus all` flag in Docker. For port conflicts, use `docker run -p 9999:8888` to map to a different port.
 
-### Issue: Memory Error with Large Dataset
-**Solution**: Reduce max_features in TF-IDF extraction or process data in batches.
+## Improvements
 
-### Issue: Docker Build Fails
-**Solution**: Update requirements.txt or check Docker installation.
+To improve fake news detection rates, consider:
 
-### Issue: Jupyter Connection Refused
-**Solution**: Check if port 8888 is available; use `docker_bash.sh` to access container.
+- Implementing class-weighted loss to improve fake news recall
+- Using larger models like BERT-base or RoBERTa instead of DistilBERT
+- Training for more epochs (5+ instead of 2)
+- Creating ensembles with TF-IDF or LSTM models
+- Experimenting with data augmentation or threshold optimization
 
-## References
+## Summary
 
-### MCP Concepts
-- [Model Context Protocol Paper](https://example.com)
-- Context-aware ML deployment
-- Model versioning best practices
-
-### NLP and Feature Extraction
-- TF-IDF: Term Frequency-Inverse Document Frequency
-- NLTK: Natural Language Toolkit
-- Stemming vs Lemmatization
-
-### Fake News Detection
-- Kaggle Competition: https://www.kaggle.com/c/fake-news
-- Misinformation detection techniques
-- Fake news characteristics
-
-## Learning Outcomes
-
-After completing this project, you will understand:
-
-1. **Text Processing Pipeline**: From raw text to ML-ready features
-2. **Feature Engineering**: TF-IDF and other text representations
-3. **Model Selection**: Choosing appropriate algorithms for text classification
-4. **Model Evaluation**: Comprehensive metrics beyond accuracy
-5. **Model Context Management**: Using MCP for reproducible ML
-6. **Deployment Considerations**: Context validation and compatibility checking
-
-## Next Steps
-
-1. Download the Kaggle dataset
-2. Complete the notebook implementations
-3. Experiment with different preprocessing techniques
-4. Try additional models (SVM, Neural Networks)
-5. Explore adversarial training for robustness
-6. Create a user interface for real-time classification
-
-## Credits
-
-This project was created as part of MSML610 Fall 2025 coursework at University of Maryland.
-
-**Issue #144**: Spring2025_Fake_News_Detection
-**Branch**: TutorTask144_Spring2025_Fake_News_Detection
+This project implements a BERT-based fake news detector trained on 58,111 samples from three datasets (LIAR, ISOT, FakeNewsNet). The system includes lazy tokenization for memory efficiency, model versioning via MCP registry, and Docker containerization. Created as part of MSML610 coursework at University of Maryland.

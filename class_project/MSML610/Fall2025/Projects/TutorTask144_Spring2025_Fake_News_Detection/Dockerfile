@@ -1,59 +1,65 @@
-FROM --platform=$BUILDPLATFORM ubuntu:20.04
-ENV DEBIAN_FRONTEND=noninteractive
+# BERT Fake News Detection - Docker Container
+# Lightweight Python-based image optimized for deep learning
 
-RUN apt-get -y update
-RUN apt-get -y upgrade
+FROM python:3.9-slim
 
-# Install system utilities.
-RUN apt install -y --no-install-recommends \
-    sudo \
-    curl \
-    systemctl \
-    gnupg \
-    git \
-    vim
+# Set metadata
+LABEL maintainer="BERT Fake News Detection Project"
+LABEL description="BERT-based fake news detection system with support for multiple datasets"
 
-# Install Python.
-RUN apt install -y --no-install-recommends \
-    python3 \
-    python3-pip \
-    python3-dev
+# Set working directory
+WORKDIR /app
 
-RUN python3 -m pip install --upgrade pip
-    
-# Install Python packages.
-# There is a bug:
-#   File "/opt/homebrew/lib/python3.10/site-packages/tornado/iostream.py", line 182, in advance
-#   assert 0 < size <= self._size
-# for tornado==6.2 and jupyter-client==8.0.2.
-# https://discourse.jupyter.org/t/jupyter-notebook-zmq-message-arrived-on-closed-channel-error/17869/10
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    python3-dev \
-    libxml2-dev \
-    libxslt-dev \
-    zlib1g-dev \
+    git \
+    curl \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /install
+# Upgrade pip
+RUN pip install --upgrade pip setuptools wheel
 
-# Install common packages
-ADD install_common_packages.sh /install/
-RUN chmod +x /install/install_common_packages.sh && /install/install_common_packages.sh
+# Copy requirements file
+COPY requirements.txt .
 
-# Install Jupyter extensions.
-ADD install_jupyter_extensions.sh /install
-RUN chmod +x /install/install_jupyter_extensions.sh
-RUN /install/install_jupyter_extensions.sh
+# Install Python dependencies
+RUN pip install -r requirements.txt
 
-# Config.
-ADD etc_sudoers /install/
-COPY etc_sudoers /etc/sudoers
-COPY bashrc /root/.bashrc
+# Copy project source code
+COPY bert_utils.py .
+COPY train_bert_liar_only.py .
+COPY train_bert_model.py .
+COPY eval_bert_liar.py .
+COPY BERT.API.md .
+COPY BERT.example.md .
+COPY BERT.API.ipynb .
+COPY BERT.example.ipynb .
 
-# Report package versions.
-ADD version.sh /install/
-RUN /install/version.sh 2>&1 | tee version.log
+# Create necessary directories
+RUN mkdir -p /app/data \
+    && mkdir -p /app/models \
+    && mkdir -p /app/logs
 
-# Jupyter.
-EXPOSE 8888
+# Create volume mount points for data and models
+VOLUME ["/app/data", "/app/models", "/app/logs"]
+
+# Expose Jupyter port (8888) and API port (5000)
+EXPOSE 8888 5000
+
+# Default command: Start Jupyter notebook server
+CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''", "--NotebookApp.password=''"]
+
+# Alternative commands:
+# For training BERT on LIAR: docker run <image> python train_bert_liar_only.py
+# For training on multiple datasets: docker run <image> python train_bert_model.py
+# For evaluation: docker run <image> python eval_bert_liar.py
+# For interactive Python: docker run -it <image> python
+# For bash shell: docker run -it <image> /bin/bash
