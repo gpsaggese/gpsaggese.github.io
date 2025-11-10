@@ -15,7 +15,7 @@ UmdTask50_Fall2025_Weights_&_Biases_Image_Classification_with_Transfer_Learning/
 ├── docker_build.sh
 ├── docker_bash.sh
 ├── docker_jupyter.sh
-├── example.ipynb          # notebook for training the model
+├── train.ipynb          # notebook for training the model
 ├── README.md
 ├── utils_preprocessing.py # data preparation functions
 ├── utils_post_processing.py # model training, evaluation, W&B integration
@@ -52,7 +52,7 @@ All dependencies are installed inside the Docker image. No local `pip install` i
 
 
 ## Training 
-- The example.ipynb notebook is the main training script.
+- The train.ipynb notebook is the main training script.
 - It runs preprocessing, trains the model, and logs metrics to Weights & Biases.
 - Model checkpoints are saved as model_checkpoint.keras.
 
@@ -64,6 +64,5 @@ All dependencies are installed inside the Docker image. No local `pip install` i
 
 ## Notes
 
-- example.ipynb is currently used for training, not a demo/tutorial.
+- train.ipynb is currently used for training, not a demo/tutorial.
 - Utilities (utils_preprocessing.py and utils_post_processing.py) separate data preparation, training, and logging.
-- For final submission, the notebook can optionally be refactored into a proper example/tutorial if required.
