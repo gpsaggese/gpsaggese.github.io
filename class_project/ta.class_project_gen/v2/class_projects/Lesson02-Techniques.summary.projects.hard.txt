@@ -1,0 +1,14 @@
+# Class Projects
+- **Title**: Multi-Paradigm Approach to Fraud Detection 
+- **Difficulty**: Hard 
+- **Tech description**: Develop a comprehensive fraud detection system employing supervised learning, unsupervised learning, and anomaly detection techniques. Integrate model evaluation and optimization in a structured pipeline.
+- **Project idea**: Create a multi-faceted fraud detection application that leverages both supervised models (like Random Forests) to classify known fraudulent transactions and unsupervised methods (like Isolation Forests) to detect anomalies in non-labeled data. Additionally, implement reinforcement learning techniques for adaptive threshold setting based on observed fraud patterns. 
+- **Data set to use**: The Credit Card Fraud Detection dataset from Kaggle. (Link: [Kaggle Credit Card Fraud Detection](https://www.kaggle.com/datasets/dalpozz/creditcard-fraud))
+- **Python libs**: scikit-learn, pandas, NumPy, TensorFlow, Keras, Matplotlib, Seaborn
+- **Links to relevant tools**: 
+  - [Kaggle](https://www.kaggle.com)
+  - [scikit-learn documentation](https://scikit-learn.org/stable/documentation.html)
+  - [TensorFlow documentation](https://www.tensorflow.org/api_docs)
+- **Links to related resources**: 
+  - [Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow](https://www.oreilly.com/library/view/hands-on-machine-learning/9781492032632/)
+  - [Towards Data Science: Anomaly Detection Techniques in Python](https://towardsdatascience.com/anomaly-detection-techniques-in-python-2384b73b877c)

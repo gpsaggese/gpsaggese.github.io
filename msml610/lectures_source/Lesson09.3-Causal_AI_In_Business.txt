@@ -1,0 +1,670 @@
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Causal AI in Business}}$$**
+\endgroup
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+
+**References**:
+  - Hurwitz, Thompson: Causal Artificial Intelligence: The Next Step in Effective
+    Business AI, 2024
+
+# ##############################################################################
+# Business Processes Around Data Modeling
+# ##############################################################################
+
+## #############################################################################
+## Modeling Processes
+## #############################################################################
+
+* Digital Transformation
+
+- Integration of Digital Technology
+  - Embed digital tools (AI, cloud, IoT, automation) into all business areas to
+    enhance efficiency and value delivery
+- Cultural & Organizational Change
+  - Encourage innovation, agility, and a data-driven mindset to adapt to new
+    digital workflows and business models
+- Customer-Centric Approach
+  - Use digital solutions (e.g., personalized experiences, AI-driven insights)
+    to enhance customer engagement and satisfaction
+- Process Automation & Optimization
+  - Streamline operations through AI, robots, and analytics to reduce costs and
+    improve decision-making
+- Data-Driven Decision Making
+  - Leverage big data, machine learning, and real-time analytics to make
+    smarter, faster, and more strategic business decisions
+
+* Causal Modeling Process
+
+- The overall modeling process looks like:
+
+```graphviz
+digraph CausalFlowGrid {
+  layout=neato;
+  node [shape=box, style=rounded, fontname="Helvetica", fontsize=12, width=1.4, height=0.6, fixedsize=true];
+
+  // Top row
+  BusinessGoals   [label="Business Goals", pos="0,2!"];
+  UseCases        [label="Use Cases", pos="2,2!"];
+  CausalModels    [label="Causal Models", pos="4,2!"];
+
+  // Middle row
+  Results         [label="Key Results/\nTakeaways", pos="0,1!"];
+  Placeholder     [label="", pos="2,1!", style=invis]; // Center of grid
+  DataSources     [label="Data Sources", pos="4,1!"];
+
+  // Bottom row
+  Interventions   [label="Interventions/\nCounterfactuals", pos="0,0!"];
+  Algorithms      [label="Algorithms/\nLibraries", pos="2,0!"];
+  KnowledgeModels [label="Knowledge\nModels", pos="4,0!"];
+
+  // Edges connecting flow
+  BusinessGoals -> UseCases;
+  UseCases -> CausalModels;
+  CausalModels -> DataSources;
+  DataSources -> KnowledgeModels;
+  KnowledgeModels -> Algorithms;
+  Algorithms -> Interventions;
+  Interventions -> Results;
+  Results -> BusinessGoals;
+
+  edge [splines=true];
+}
+```
+
+* Step 1: What Are the Intended Outcomes?
+- What is the process/environment we are interested in analyzing?
+
+- What will happen if a course of action is (or not) taken?
+- What outcomes are positive, negative, unacceptable, optimal?
+- What are the possible / feasible interventions?
+- What confounding factors might be correlated with outcomes and treatments?
+- What factors exist but we cannot accurately measure?
+- What related data sets can be combine / leverage?
+
+* Step 2: What Are the Proposed Interventions?
+- We will make reference to a use case of customer marketing
+
+- Can we introduce a new product?
+- Should we buy one or more competitors?
+- Does bundling multiple products improve sales?
+- Does bundling multiple products inhibit long-term sales?
+- Should advertisement focus on quality of our product vs other options?
+- Should we divest the product line?
+- Should we discontinue the product?
+- Should we add more variations of the same product?
+
+* Marketing example: price intervention
+::: columns
+:::: column
+- Assume price is our intervention and the Causal DAG is:
+  ```graphviz[height=50%]
+  digraph CausalDiagram {
+    rankdir=TB;
+    node [shape=box, style="rounded,filled", fillcolor=white, color=black];
+
+    M [label="M = Price"];
+    X [label="X = Behavior"];
+    Y [label="Y = Outcome"];
+
+    M -> X;
+    M -> Y;
+    X -> Y;
+  }
+  ```
+::::
+:::: column
+
+- What happens to sales when we change the price often?
+- What pricing interventions are optimal?
+  - Should we increase the price and how much?
+  - Should we decrease the price and how much?
+  - Should price change in one-time or over time?
+- Should we adopt a dynamic pricing model?
+- Should we develop individual pricing model for each customer?
+
+::::
+:::
+
+* Step 3: What are the confounding factors?
+- There can be a variable $W$ that affects both $X$ and $Y$
+  ```graphviz[width=50%]
+  digraph CausalTriangle {
+    rankdir=TB;
+    node [shape=box, style=rounded, fontname="Helvetica", fontsize=12];
+
+    Confounder [label="W (Confounder)"];
+    Treatment  [label="X (Treatment)"];
+    Outcome    [label="Y (Outcome)"];
+
+    Confounder -> Treatment;
+    Confounder -> Outcome;
+    Treatment  -> Outcome;
+
+    // Align Treatment and Outcome on the same horizontal level
+    {rank=same; Treatment; Outcome;}
+  }
+  ```
+- E.g.,
+  - Competitive offers
+  - Distance to store
+  - Amount of product
+  - Time to consume product
+
+- A confounder can:
+  - Make it difficult to understand the relationship between variables
+  - Mute or inflate a relationship
+
+* Marketing Example: Effect of Confounder
+- E.g.,
+  - Intervention = a marketing campaign to sell winter jackets
+  - A confounding variable can be "running the campaign in the middle of the
+    winter, after customers have already purchased their jackets"
+  - A confounding var can be "a warm winter"
+
+  ```graphviz[width=50%]
+  digraph CausalDiagram {
+    rankdir=TB;
+    node [shape=box, style="rounded,filled"];
+
+    W [label="W = Confounder"];
+    M [label="M = Price"];
+    X [label="X = Behavior"];
+    Y [label="Y = Outcome"];
+
+    W -> X;
+    W -> Y;
+    M -> X;
+    M -> Y;
+    X -> Y;
+  }
+  ```
+
+* Step 4: What Are the Factors Creating the Effects and Changes?
+
+- Total causal effect
+  - Effect of all factors in the environment or model that modify the outcome
+- Direct effect
+  - Effect introduced through an intervention
+- Indirect effect
+  - Effect introduced by environment or it is a byproduct of the intervention in
+    a way that was not planned
+
+* Step 5: Build Causal DAG
+
+- Causal models
+  - Simplify complex systems without losing key relationships
+  - Focus on essential variables and their interactions
+- Visual models (e.g., DAGs) help abstract complexity into interpretable formats
+  - Highlight direction and strength of influence between variables
+- Simplicity
+  - Aids communication between technical and non-technical stakeholders
+  - Promotes shared understanding and collaborative refinement
+  - Reduces cognitive overload by excluding irrelevant details or noise
+  - Guides data collection by identifying the most impactful variables
+  - Supports hypothesis testing through counterfactual and intervention
+    scenarios
+- Balance is key
+  - Too much simplicity loses insight
+  - Too much complexity loses clarity
+
+* Step 7: Data Acquisition and Integration
+- You can use the data collected for correlation-based ML
+
+- Data collection can be done specifically for causal AI
+  - Treating, conditioning, transforming data
+
+* Step 8: Model Modification
+- Once the DAG is designed, use software packages to build models
+  - Refine the initial DAG and causal model to reduce bias and improve
+    reliability
+  - Clarify variables as confounders, mediators, or outcomes
+- Avoid common pitfalls:
+  - Do not control for mediators or effects, which can distort results
+  - Control for direct and indirect confounders to prevent biased estimates
+- Implementation tools:
+  - Use libraries to operationalize models
+  - Test models against technical and business objectives
+- D-separation:
+  - Identifies conditional independence relationships in a DAG
+  - Determines necessary controls to isolate causal effects
+  - Based on Judea Pearl's definition: independence = separation in the graph
+  - Prevent unintentional inclusion of bias
+  - Ensure causal assumptions align with data and domain logic
+  - Improve model interpretability and predictive power
+- Goal: Ensure final models are technically valid and business-relevant before
+  proceeding to data transformation and testing stages
+
+* Step 10: Data Transformation
+
+- Prepare the data to match the refined causal model
+  - Clean, normalize, and align data with model assumptions
+
+- Transformations include:
+  - Mapping observed variables to nodes in the DAG
+  - Encoding categorical variables appropriately
+  - Handling missing or unobserved data (e.g., imputation or exclusion)
+  - Normalizing or scaling values to align with model expectations
+- Control for bias and confounding:
+  - Apply methods like propensity score matching or stratification
+  - Exclude or adjust for variables that introduce bias per d-separation
+    insights
+
+- Goal: Ensure the data structure supports causal estimation
+  - Consistent with assumptions made in model refinement
+  - Aligned with theoretical model
+  - Fit for downstream tasks like estimation, inference, and simulation
+
+* Step 11: Preparing for Deployment in Business
+
+- Operationalize the causal model within a business context
+  - Transition from experimentation to integration with decision-making
+    processes
+  - Validate the model against real-world business data and outcomes
+  - Ensure stakeholders understand and trust the causal logic and assumptions
+- Model packaging:
+  - Develop user-friendly interfaces or dashboards for business users
+  - Automate data pipelines for timely updates and monitoring
+  - Embed the model within decision-support tools or policy engines
+- Governance and monitoring:
+  - Establish metrics for performance tracking and drift detection
+  - Create feedback loops to refine and improve models post-deployment
+- Documentation and training:
+  - Provide clear model documentation for auditors and users
+  - Train stakeholders on interpreting causal results and making informed
+    decisions
+- Goal: A deployable causal AI solution that supports strategic decisions and
+  delivers measurable business value
+
+## #############################################################################
+## Roles
+## #############################################################################
+
+* Why ML / AI Projects Fail?
+- AI projects fail because they approach problems only from a ML perspective
+  - Data scientists:
+    - Use data to create models
+    - Work in isolation from business users and internal data teams
+  - Black-box models unable to produce solutions to real-world problems
+
+* How to Make ML / AI Project Succeed
+
+1. Create a hybrid team
+   - Organizations are complex in structure and offerings
+   - A single group lacks the knowledge / skills to tackle difficult problems
+   - Need an hybrid team:
+     - Represents all aspects of the business problem
+     - Uses a collaborative framework
+     - Communicates with a single language (e.g., through DAGs)
+     - Team size depends on company size and project complexity
+2. Meet regularly to ensure project continuity
+3. Find an executive sponsor for the project
+   - Someone who understands the project's goals and potential
+4. Initial pilot
+   - Small team for a targeted problem
+   - Demonstrate the merit of the AI approach
+
+* Roles in Hybrid Teams
+
+\begingroup \small
+
+| Role                   | Responsibilities                            |
+| ---------------------- | ------------------------------------------- |
+| Business Strategists   | Align modeling with business goals          |
+|                        | Sponsor projects                            |
+|                        | Communicate insights to stakeholders        |
+| Subject-Matter Experts | Provide domain expertise                    |
+|                        | Identify relevant variables and assumptions |
+|                        | Validate DAGs                               |
+| Data Experts           | Source and clean data                       |
+|                        | Map data to model variables                 |
+|                        | Handle missing values                       |
+| Data Scientists        | Construct and validate DAGs                 |
+|                        | Apply causal inference methods              |
+|                        | Simulate decisions                          |
+| Software Developers    | Build tools and interfaces                  |
+|                        | Create data pipelines                       |
+| IT Professionals       | Provide infrastructure and governance       |
+|                        | Ensure model execution                      |
+|                        | Integrate with enterprise systems           |
+| Project Managers       | Coordinate collaboration and timelines      |
+|                        | Manage documentation                        |
+|                        | Ensure alignment with strategic goals       |
+
+\endgroup
+
+* Steps for a Hybrid Team Project
+
+- **Establish a Phased, Collaborative Approach**
+  - Align strategic goals with technical efforts
+  - Emphasize early stakeholder engagement and shared ownership
+- **Strategic Kickoff Meeting**
+  - Unite business, technical, and operational roles
+  - Clarify problems, outcomes, responsibilities, success metrics
+- **Define Team Goals**
+  - Use SMART objectives aligned with business strategy
+  - Focus on outcomes and supported decisions, not tools
+- **Target a Project**
+  - Choose a bounded, feasible, high-value use case
+  - Prioritize early wins for trust and momentum
+- **Define the Hypothesis**
+  - Translate business problems into testable causal assumptions
+  - Build a preliminary DAG with experts' input
+- **Incremental Model Development**
+  - Build the model in small, reviewable stages
+  - Iterate with regular feedback, refining scope and variables
+- **Embrace Iteration and Continuous Refinement**
+  - Keep progress collaborative and aligned with business needs
+  - Add complexity gradually to manage risk and enhance understanding
+
+* The Importance of Explainability
+
+- Managers rely on AI systems to automate decision-making
+  - Decisions rely on complex algorithms and data
+- Understanding AI-based models is growing in importance
+  - How do ML models make decisions?
+  - How can they be trusted?
+  - Are they biased?
+- Management often faces demands to prove code validity
+  - Loss of trust, regulation violations, fines, additional development costs,
+    lawsuits
+  - E.g., a false negative in a medical screening for cancer
+- Well-designed AI systems must foster trust, transparency, and user confidence
+
+- **Humans in the loop**
+  - AI systems lack true reasoning and contextual understanding
+  - Human involvement ensures interpretation and context are considered
+
+* Techniques for Interpretability
+- Local Interpretable Model-agnostic Explanations (LIME)
+  - Focuses on a single prediction (local fidelity)
+  - Approximates the model locally with an interpretable model
+  - Perturbs input data and observes changes in predictions
+- Partial Dependence Plots (PDP)
+  - Show the marginal effect of one or two features on the predicted outcome
+  - Vary the value of one feature while keeping others constant
+  - Plot feature values against the average predicted outcome
+- Individual Conditional Expectation (ICE)
+  - Show the relationship between a feature and the prediction for individual
+    instances
+
+- SHapley Additive exPlanations (SHAP)
+  - Quantify the contribution of each feature to a specific prediction
+
+* Causal AI in Interpretable AI
+- Causal AI helps understand causes, effects, and potential solutions
+  - Uses causal graphical models to present variables, relationships, and
+    strengths
+  - Counterfactual analysis predicts outcomes of different actions or policies
+    before deployment
+  - Model output is understandable to humans and non-experts
+  - Removing confounding variables prevents skewed causal estimates due to
+    hidden influences
+  - Hybrid teams (technical + domain experts) enhance context awareness and
+    reduce blind spots
+
+//// # Chap 7: Tools, practices, and techniques (p. 168)
+//
+//* The Iterative Causal AI Pipeline
+//
+//- Similar to the DevOps infinity loop, the causal AI pipeline has 8 stages,
+//  which are circular and iterative
+//
+//// TODO: Add picture
+//
+//1. Define business objectives
+//   - Identify goals and key performance indicators (KPI)
+//2. Model development
+//   - Establish causal relationships among variables
+//   - Develop causal AI model using graphical models, potential outcomes,
+//     do-calculus
+//3. Data identification and collection
+//   - Gather data with causal relationships and potential confounders
+//4. Model validation
+//   - Test and validate model to ensure it provides accurate causal insights,
+//     e.g.,
+//     - Measure performance against KPIs
+//     - Assess model generalizability
+//5. Deployment / production
+//   - Integrate validated AI model into existing systems for decision-making
+//6. Monitor and evaluate
+//   - Track performance of deployed model
+//   - Assess impact on decision-making process
+//7. Update and iterate
+//   - Refine model based on real-time performance evaluation
+//8. Continuous learning
+//   - Create culture of learning and improvement
+//   - Share knowledge and best practices for causal AI
+//   - Stay updated on latest advancements in causal AI
+//
+//* Define Business Objectives
+//- Use one of the systems
+//  - SMART goals
+//  - MoSCoW method
+//  - Kano model
+//
+//- Goals
+//  - Establish a shared understanding of the project's goals among stakeholders,
+//    business leaders, data scientists, and exports
+//  - Enhances clarity, focus, and motivation
+//  - Improves performance tracking and outcome evaluation
+//  - Facilitates effective communication and collaboration
+//
+//* SMART Goals
+//- SMART is an acronym for Specific, Measurable, Achievable, Relevant, Time-bound
+//- **Specific**
+//  - Clearly defines what is to be achieved
+//  - E.g., "Increase website traffic by 15%"
+//- **Measurable**
+//  - Includes criteria to track progress and success
+//  - E.g., "Track visits using Google Analytics"
+//- **Achievable**
+//  - Realistic based on resources and constraints
+//  - E.g., "Based on historical growth rates, 15% is attainable"
+//- **Relevant**
+//  - Aligns with broader organizational or personal objectives
+//  - E.g., "Traffic increase supports lead generation goals"
+//- **Time-bound**
+//  - Specifies a deadline or timeframe
+//  - E.g., "Achieve by end of Q3"
+//
+//* Moscow Method
+//- Framework for prioritization of features to:
+//  - Focus on critical features
+//  - Ensure stakeholders are aligned on priorities
+//  - Support agile and iterative development by delivering value in phases
+//
+//\begingroup \scriptsize
+//
+//| Priority    | Description                                   | Example                                         |
+//| ----------- | --------------------------------------------- | ----------------------------------------------- |
+//| Must-have   | Essential requirements                        | A login system for a banking app                |
+//| Should-have | Important but not critical features           | Multi-factor authentication to enhance security |
+//| Could-have  | Enhance user experience but are not essential | Dark mode for a mobile app                      |
+//| Won't-have  | Excluded features due to low priority         | AI-powered chat assistant                       |
+//
+//\endgroup
+//
+//* Kano Model
+//- Framework for product development and customer satisfaction analysis to
+//  prioritize features
+//
+//\begingroup \scriptsize
+//
+//| Category         | Description                                              | Examples                           |
+//| ---------------- | -------------------------------------------------------- | ---------------------------------- |
+//| Must-have        | Expected features; absence causes dissatisfaction        | Keyboard and screen on a laptop    |
+//|                  |                                                          | Calling and texting on a cellphone |
+//| Performance      | The better, the more satisfied customers are             | Faster battery charging            |
+//|                  |                                                          | Longer battery life                |
+//| Delighters       | Unexpected features that wow customers and build loyalty | Free cloud storage with a laptop   |
+//|                  |                                                          | Novel camera                       |
+//| Indifferent      | Features that do not affect customer satisfaction        | 5 power adapter options for laptop |
+//|                  |                                                          | Color of phone internals           |
+//| Reverse features | Features liked by some but disliked by others            | Touchscreen instead of touchpad    |
+//|                  |                                                          | Excessive automation               |
+//
+//\endgroup
+//
+//* Decision Matrix
+//- Tool to evaluate options based on criteria for objective comparison
+//
+//- **Goals**
+//  - Eliminate biases by quantifying decisions
+//  - Clarify priorities
+//  - Enable comparison between options
+//
+//- **Approach**
+//  1. List alternatives
+//     - E.g., laptop A, laptop B
+//  2. Define criteria
+//     - E.g., price, performance, battery life
+//  3. Assign weight to each criterion
+//  4. Score each option
+//     - Rate 1-5 for each criterion
+//  5. Calculate weighted score
+//     - Weighted sum of scores for each alternative
+//  6. Compare totals
+//     - E.g., choose the alternative with the highest score
+//
+//* Key Performance Indicators (KPIs): General Overview
+//
+//- **What are KPIs?**
+//  - Quantitative metrics that reflect how well an individual, team, or
+//    organization is achieving key objectives
+//
+//- **Purpose of KPIs**
+//  - Provide focus for strategic and operational improvement
+//  - Serve as benchmarks for progress and performance evaluation
+//
+//- **Categories of KPIs**
+//  - **Financial KPIs**: Revenue, profit margin, cost per acquisition
+//  - **Customer KPIs**: Customer satisfaction, churn rate
+//  - **Process KPIs**: Efficiency, cycle time, error rate
+//  - **People KPIs**: Employee engagement, turnover rate, training hours
+//
+//- **Characteristics of Effective KPIs**
+//  - Specific and clearly defined
+//  - Measurable with reliable data
+//  - Achievable and realistic
+//  - Relevant to the business goals
+//  - Time-bound for periodic evaluation
+//
+//- **Developing KPIs**
+//  - Align with strategic goals
+//  - Involve key stakeholders in the design process
+//  - Establish baseline and targets
+//
+//- **Using KPIs**
+//  - Monitor performance regularly
+//  - Identify trends and root causes
+//  - Inform decisions and prioritize actions
+//
+//- **Continuous Improvement**
+//  - Review and refine KPIs as objectives and environments evolve
+//
+//* The Importance of Synthetic Data in Causal AI
+//
+//- Synthetic data is artificially generated to simulate real-world data
+//  properties
+//  - Created using algorithms or simulations based on real data distributions
+//
+//- **Key Benefits**
+//  - Enhances data availability when real data is limited, biased, or sensitive
+//  - Enables experimentation without risking privacy breaches
+//  - Protects identities by not using real personal data
+//  - Helps comply with data privacy regulations like GDPR and HIPAA
+//  - Allows rebalancing of underrepresented groups or scenarios
+//  - Facilitates fairer model training and evaluation
+//
+//- **Use in Causal Modeling**
+//  - Simulates counterfactual scenarios to test causal hypotheses
+//  - Assists in validating causal assumptions and interventions
+//
+//- **Challenges**
+//  - Ensuring synthetic data accurately reflects key patterns and relationships
+//  - Avoiding distortion of causal dependencies or overfitting to synthetic
+//    features
+//
+//- **Best Practices**
+//  - Combine with real data for validation
+//  - Use domain knowledge to guide synthetic data generation and use
+//
+//* Digital Twin
+//- A digital twin is a virtual representation of a physical system or process
+//  created using data and software
+//  - Used to simulate and identify potential problems under different conditions
+//  - Used to generate synthetic data
+
+* The Future of Causal AI
+- Causal AI:
+  - Is moving out of academia into the commercial world
+  - Is a departure from the 2000 approach of a purely data-driven AI systems
+  - Is a reflection of the reality of how humans think, analyze, and make
+    decisions and how the real world works
+
+- Causal, traditional AI, deep learning, and generative techniques will merge
+
+// ###########################################################################
+
+
+// ### 13.5.2, The back-door criterion
+
+
+// TODO(gp): Add d-separation
+
+// TODO(gp): Add Facuce?
+
+// Do-operator
+
+//* Causal Discovery
+//
+//- **Definition**
+//  - Causal discovery identifies **cause–effect relationships** among variables
+//  - Understand **which variables influence others** and **how interventions
+//    change outcomes**
+//
+//- **Key Idea**
+//  - Networks like $Fire \to Smoke$ and $Smoke \to Fire$ can represent the same
+//    probability, but only one shows the **true causal direction**
+//  - Causal discovery infers this direction from **observational or experimental
+//    data**
+//
+//- **Interventions and the $do()$ Operator**
+//  - Introduced by Judea Pearl for **interventions**
+//  - $\Pr(X_i | do(X_j = x_j))$ describes the effect of **actively setting**
+//    $X_j$ to a value
+//
+//- **Learning from Data**
+//  - Causal discovery algorithms recover the **causal graph** structure using:
+//    - **Conditional independence tests**
+//    - **Score-based search**
+//    - **Hybrid methods**
+//  - Determine which links in a Bayesian network represent **true causal
+//    influences**
+//
+//- **Relation to Causal Inference**
+//  - Causal discovery identifies **the structure** of causality
+//  - Causal inference predicts **effects of actions or interventions**
+//
+//- **Example**
+//  - Observe **Sprinkler** and **Rain** affecting **WetGrass**
+//  - Causal discovery determines if **Rain causes WetGrass directly**
+//    **through influencing Sprinkler**.
+//

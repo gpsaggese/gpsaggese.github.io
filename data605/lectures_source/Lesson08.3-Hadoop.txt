@@ -1,0 +1,200 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+// 
+// 
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{8.3: Apache Hadoop}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=65%}
+\vspace{1cm}
+
+- **Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+
+- Resources
+  - Sanjay Ghemawat, Howard Gobioff, and Shun-Tak Leung: The Google File System, 2003
+  - Jeffrey Dean and Sanjay Ghemawat: MapReduce: Simplified Data Processing on Large Clusters, 2004
+::::
+:::: {.column width=20%}
+
+::::
+:::
+
+* Implementations of MapReduce
+- **Google**
+  - Not available outside Google
+
+- **Hadoop**
+  - Open-source in Java
+  - Uses HDFS for storage
+  - Hadoop Wiki: Intro, Getting Started, Map/Reduce Overview
+
+- **Amazon Elastic MapReduce (EMR)**
+  - Hadoop MapReduce on Amazon EC2
+  - Also runs Spark, HBase, Hive,
+
+- **Spark**
+
+- **Dask**
+
+* MapReduce: Hadoop
+
+- Hadoop: open-source MapReduce implementation
+
+- Functionalities
+  - Partition input data (HDFS)
+  - Input adapters
+    - E.g., hBase, MongoDB, Cassandra, Amazon Dynamo
+  - Schedule program execution across machines
+  - Handle machine failures
+  - Manage inter-machine communication
+  - Perform _GroupByKey_ step
+  - Output adapters
+    - E.g., avro, ORC, Parquet
+  - Schedule multiple _MapReduce_ jobs
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_42_image_1.png){width=80%}
+
+* Data Flow
+- Store input, intermediate, final outputs in HDFS
+  - Operations in Hadoop move disk to disk
+
+- Use adapters to read/partition data in chunks
+
+- Scheduler places map tasks near physical storage of input data
+  - Store intermediate results on local FS of Map and Reduce workers
+
+- Output often serves as input for another MapReduce task
+
+* Input Data
+  - **InputData** stores the data for a **MapTask** typically in a distributed file system (e.g., HDFS)
+  - The format of input data is arbitrary
+    - Line-based log files
+    - Binary files
+    - Multi-line input records
+    - Something else (E.g., an SQL database)
+
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_44_image_1.png)
+
+* InputFormat
+  - **InputFormat** class reads and splits up the input files
+  - Select the files that should be used for input
+  - Defines the **InputSplits** that break a file
+  - Provides a factory for **RecordReaders** objects that read the file
+
+\footnotesize
+| InputFormat | Description | Key | Value |
+|-------------|-------------|-----|-------|
+| TextInputFormat | Default format; reads lines of text files | The byte offset of the line | The line contents |
+| KeyValueInputFormat | Parses lines into (K, V) pairs | Everything up to the first tab character | The remainder of the line |
+| SequenceFileInputFormat | A Hadoop-specific high-performance binary format | User-defined | User-defined |
+\vspace{-0.75cm}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_45_image_1.png){width=60%}
+
+
+
+* InputSplit
+  - **InputSplit** describes a unit of work that comprises a single **MapTask**
+    - By default, the **InputFormat** breaks a file up into 64MB splits
+  - By dividing the file into splits
+    - Each **MapTask** corresponds to a single input split
+    - Several **MapTask**s to operate on a single file in parallel
+
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_46_image_1.png)
+
+* RecordReader
+- The **InputSplit** defines a slice of work but does not describe how to access it
+- The **RecordReader** class
+  - Loads data from its source and converts it into **(K, V) pairs** suitable for reading by **MapTasks**
+  - Is invoked repeatedly on the input until the entire **InputSplit** is consumed
+  - Each invocation leads to a call of the map function defined by the programmer
+
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_47_image_1.png)
+
+* OutputFormat
+
+:::columns
+::::{.column width=70%}
+- The **OutputFormat** class
+  - defines the way (K,V) pairs produced by **Reducers** are written to output files
+  - write to files on the local disk or in HDFS in different formats
+
+| OutputFormat | Description |
+|--------------|-------------|
+| TextOutputFormat | Default; writes lines in "key \t value" format |
+| SequenceFileOutputFormat | Writes binary files suitable for reading into subsequent MapReduce jobs |
+| NullOutputFormat | Generates no output files |
+::::
+::::{.column width=30%}
+```graphviz
+digraph G {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Helvetica", margin=0.1];
+
+    // Define Nodes
+    label_hdfs [label="Files loaded from local HDFS store", shape=plaintext, style="", fontcolor=black];
+    
+    file [label="file\nfile", shape=cylinder, style=filled, fillcolor="gray", color="blue", peripheries=1, fontcolor=black];
+    
+    input [label="InputFormat", fillcolor="#CC0000", fontcolor=white];
+    
+    split1 [label="Split", fillcolor="#F2C6C6", fontcolor=black];
+    split2 [label="Split", fillcolor="#F2C6C6", fontcolor=black];
+    split3 [label="Split", fillcolor="#F2C6C6", fontcolor=black];
+    
+    rr1 [label="RR", fillcolor="#336699", fontcolor=white];
+    rr2 [label="RR", fillcolor="#336699", fontcolor=white];
+    rr3 [label="RR", fillcolor="#336699", fontcolor=white];
+    
+    map1 [label="Map", fillcolor="blue", fontcolor=white];
+    map2 [label="Map", fillcolor="blue", fontcolor=white];
+    map3 [label="Map", fillcolor="blue", fontcolor=white];
+    
+    partitioner [label="Partitioner", fillcolor="gold", fontcolor=black];
+    sort [label="Sort", fillcolor="purple", fontcolor=white];
+    reduce [label="Reduce", fillcolor="red", fontcolor=white];
+    output [label="OutputFormat", fillcolor="#009933", fontcolor=white];
+
+    // Define Edges (Arrows)
+    label_hdfs -> input;
+    file -> input;
+    
+    input -> split1;
+    input -> split2;
+    input -> split3;
+
+    split1 -> rr1 [dir=both];
+    split2 -> rr2 [dir=both];
+    split3 -> rr3 [dir=both];
+
+    rr1 -> map1;
+    rr2 -> map2;
+    rr3 -> map3;
+
+    {map1, map2, map3} -> partitioner;
+    
+    partitioner -> sort -> reduce -> output;
+
+    // Define Ranks for horizontal alignment
+    { rank=same; split1; split2; split3; }
+    { rank=same; rr1; rr2; rr3; }
+    { rank=same; map1; map2; map3; }
+}
+```
+::::
+:::

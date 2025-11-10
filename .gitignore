@@ -1,0 +1,17 @@
+# Ignore virtual environments
+venv/
+*/venv/
+
+# Ignore Python cache and bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore logs, build files, etc.
+*.log
+build/
+dist/

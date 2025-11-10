@@ -1,0 +1,2 @@
+flask
+redis   # This is the Redis Python interface (not Redis the DB!)

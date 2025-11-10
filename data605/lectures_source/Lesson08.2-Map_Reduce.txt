@@ -1,0 +1,700 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+// 
+// 
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{8.2: Map Reduce}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=65%}
+\vspace{1cm}
+
+- **Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+
+- Resources
+  - Silbershatz: Chap 10
+  - Seminal papers
+    - Sanjay Ghemawat, Howard Gobioff, and Shun-Tak Leung: The Google File System, 2003
+    - Jeffrey Dean and Sanjay Ghemawat: MapReduce: Simplified Data Processing on Large Clusters, 2004
+::::
+:::: {.column width=30%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_2_image_1.png)
+::::
+:::
+
+* MapReduce: Overview
+
+- **MapReduce programming model**
+  - Inspired by functional programming (e.g., Lisp)
+  - Common pattern of parallel programming
+  - Basic algorithm
+    - Process large number of records
+    - Apply `map()` to each record
+    - Group results by key
+    - Apply `reduce()` to results of `map()`
+
+- **Example**
+  - **Goal**: Sum length of all tuples in a document
+    - E.g.,
+      ```
+      [() (a,) (a, b) (a, b, c)]
+      ```
+  - **map(function, set of values)**
+    - Apply function to each value (e.g., len)
+      ```
+      map(len, [(), (a), (a, b), (a, b, c))]) -> [0, 1, 2, 3]
+      ```
+  - **reduce(function, set of values)**
+    - Combine values using a binary function (e.g., add)
+      ```
+      reduce(add, [0, 1, 2, 3]) -> 6
+      ```
+
+* MapReduce: Overview
+
+- Structure of computation
+  - **Read input**
+    - Sequentially or in parallel
+  - **Map**
+    - Extract / compute from records
+  - **Group by key**
+    - Sort and shuffle
+  - **Reduce**
+    - Aggregate, summarize, filter, transform
+  - **Write the result**
+
+- MapReduce framework (e.g., Hadoop, Spark) implements algorithm
+
+- User specifies `map()` and `reduce()` functions to solve problem
+
+* MapReduce: Word Count
+
+- **Word Count**
+  - "Hello world" of MapReduce
+  - Huge text file (can't fit in memory)
+  - Count occurrences of each distinct word
+
+- **Sample application**
+  - Analyze web server logs for popular URLs
+
+- **Linux solution**
+
+::: columns
+:::: {.column width=70%}
+
+\begingroup \color{blue}
+```bash
+> more doc.txt
+One a penny, two a penny, hot cross buns.
+> words doc.txt | sort | uniq -c
+a 2
+buns 1
+cross 1
+...
+```
+\endgroup
+
+::::
+:::: {.column width=30%}
+
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_25_image_1.png){width=80%}
+
+::::
+:::
+
+- `words` outputs words one per line
+- Unix pipeline is parallelizable in MapReduce sense
+
+* MapReduce: Word Count
+::: columns
+:::: {.column width=33%}
+**Action**
+\footnotesize
+```
+Read input
+```
+
+\vspace{0.15cm}
+
+```
+Map:
+```
+- Invoke **map**() on each input record
+- Emit 0 or more output data items
+\vspace{0.5cm}
+
+```
+Group by key:
+```
+- Gather all outputs from **map**() stage
+- Collect outputs by keys
+
+\vspace{0.2cm}
+
+```
+Reduce:
+```
+- Combine the list of outputs with same keys
+::::
+:::: {.column width=33%}
+**Python code**
+\footnotesize
+```python
+
+values = read(file_name)
+
+def map(values):
+  # values: words in document
+  for word in values:
+		emit(word, 1)
+
+def reduce(key, values):
+   # key: a word
+   # value: a list of counts
+   result = 0
+   # result = sum(values)
+   for count in values:
+	result += count
+   emit(key, result)
+```
+::::
+:::: {.column width=33%}
+**Example**
+\footnotesize
+\begingroup\color{blue}\tiny
+```
+
+    "One a penny, two a penny, 
+    hot cross buns."
+```
+\endgroup
+
+```
+  Map:
+```
+\begingroup\tiny\color{blue}
+```python
+    [("one", 1), ("a", 1),
+    ("penny", 1),("two", 1),
+    ("a", 1), ("penny", 1),
+    ("hot", 1), ("cross", 1),
+    ("buns", 1)]
+```
+\endgroup
+
+```
+  Group by key:
+```
+\begingroup\tiny\color{blue}
+```python
+    [("a", [1, 1]),
+    ("buns", [1]),
+    ("cross", [1]),
+    ("hot", [1]),
+    ("one", [1]),
+    ("penny", [1, 1]),
+    ("two", [1])]
+```
+\endgroup
+```
+  Reduce:
+```
+
+\begingroup\tiny\color{blue}
+```python
+    [("one", 1), ("a", 2),
+    ("penny", 2),
+    ("two", 1),
+    ("hot", 1),
+    ("cross", 1),
+    ("buns", 1)]
+```
+\endgroup
+::::
+:::
+
+//* MapReduce: Word Count
+//```graphviz
+//digraph MapReduce {
+//    // --- Graph-level settings ---
+//    graph [
+//        // rankdir=LR,     // Default is TB (Top-Bottom)
+//        ranksep=0.5,    // Increase space between columns
+//        nodesep=1.0,    // Increase space between nodes on the same rank
+//        splines=false,  // Use straight lines
+//        bgcolor=white,  // Set background to white
+//        fontname="Helvetica"
+//    ];
+//
+//    // --- Default node settings ---
+//    node [
+//        fontname="Helvetica",
+//        fontsize=14,
+//        fontcolor=black
+//    ];
+//
+//    // --- Default edge settings (for the big dashed arrows) ---
+//    edge [
+//        style="dashed,bold",
+//        arrowhead=none,
+//        penwidth=6,
+//        color=black
+//    ];
+//
+//    // --- Column Headers ---
+//    // We create invisible nodes to hold the header text
+//    node [shape=plaintext, fontsize=16, fontcolor=black];
+//    input_header  [label=""]; // Empty placeholder for doc, to match group_header
+//    map_header    [label=<<b>Provided by the<br/>programmer</b>>];
+//    group_header  [label=""]; // Empty placeholder for alignment
+//    reduce_header [label=<<b>Provided by the<br/>programmer</b>>];
+//
+//    
+//    // --- Node Definitions ---
+//
+//    // 1. Big Document
+//    // Converted to an HTML-like label to add ports to each text block
+//    node [
+//        shape=box,
+//        style=solid,
+//        color=black,
+//        width=2.5,
+//        height=3.5,
+//        align=left
+//    ];
+//    doc [
+//        label=<
+//<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" ALIGN="LEFT">
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="part1">The crew of the space<BR/>
+//shuttle Endeavor recently<BR/>
+//returned to Earth as<BR/>
+//ambassadors, harbingers<BR/>
+//of a new era of space<BR/>
+//exploration. Scientists at</TD></TR>
+//  <TR><TD ALIGN="CENTER" HEIGHT="1" VALIGN="MIDDLE"><FONT FACE="monospace" POINT-SIZE="8">------------------------------</FONT></TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="part2">
+//NASA are saying that the<BR/>
+//recent assembly of the<BR/>
+//Dextre bot is the first step<BR/>
+//in a long-term space-based<BR/>
+//man/machine partnership.</TD></TR>
+//  <TR><TD ALIGN="CENTER" HEIGHT="1" VALIGN="MIDDLE"><FONT FACE="monospace" POINT-SIZE="8">------------------------------</FONT></TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="part3">
+//\"The work we're doing now<BR/>
+//-- the robotics we're doing<BR/>
+//-- is what we're going to<BR/>
+//need ...</TD></TR>
+//</TABLE>
+//>,
+//        xlabel=<<b><font color="darkgreen">Big document</font></b>>
+//    ];
+//
+//    // 2. Map Node
+//    // Data section is now multiple rows, each with a port
+//    node [
+//        shape=box,
+//        style="filled,rounded",
+//        fillcolor="#d29a9a", // Reddish color
+//        width=2.5,
+//        height=3.5,
+//        fontcolor=black
+//    ];
+//    map_node [
+//        label=<
+//<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" ALIGN="LEFT">
+//  <TR><TD ALIGN="LEFT" CELLPADDING="8" PORT="desc"><B>Map:</B><BR/>Read input<BR/>Produce a set of<BR/>key-value pairs</TD></TR>
+//  <TR><TD ALIGN="CENTER" HEIGHT="1" VALIGN="MIDDLE"><FONT FACE="monospace" POINT-SIZE="8">--------------------------</FONT></TD></TR> <!-- Simulated dashed line -->
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="m_data1">(The, 1)<BR/>(crew, 1)</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="m_data2">(of, 1)<BR/>(the, 1)</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="m_data3">(space, 1)<BR/>(shuttle, 1)</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="m_data4">(Endeavor, 1)<BR/>(recently, 1)<BR/>....</TD></TR>
+//</TABLE>
+//>,
+//        xlabel=<<b><font color="darkgreen">(key, value)</font></b>>
+//    ];
+//
+//    // 3. Group by key Node
+//    // Data section is now multiple rows, each with a port
+//    node [
+//        shape=box,
+//        style="filled,rounded",
+//        fillcolor="#8c96c6", // Bluish color
+//        width=2.5,
+//        height=3.5,
+//        fontcolor=black
+//    ];
+//    group_node [
+//        label=<
+//<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" ALIGN="LEFT">
+//  <TR><TD ALIGN="LEFT" CELLPADDING="8" PORT="desc"><B>Group by<BR/>key:</B><BR/>Collect all pairs<BR/>with same key</TD></TR>
+//  <TR><TD ALIGN="CENTER" HEIGHT="1" VALIGN="MIDDLE"><FONT FACE="monospace" POINT-SIZE="8">--------------------------</FONT></TD></TR> <!-- Simulated dashed line -->
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="g_crew">(crew, [1, 1])</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="g_space">(space, [1])</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="g_the">(the, [1, 1, 1])</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="g_shuttle">(shuttle, [1])</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="g_recently">(recently, [1])</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="g_dots">...</TD></TR>
+//</TABLE>
+//>,
+//        xlabel=<<b><font color="darkgreen">(key, value)</font></b>>
+//    ];
+//
+//    // 4. Reduce Node
+//    // Data section is now multiple rows, each with a port
+//    node [
+//        shape=box,
+//        style="filled,rounded",
+//        fillcolor="#a68cc6", // Purplish color
+//        width=2.5,
+//        height=3.5,
+//        fontcolor=black
+//    ];
+//    reduce_node [
+//        label=<
+//<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" ALIGN="LEFT">
+//  <TR><TD ALIGN="LEFT" CELLPADDING="8" PORT="desc"><B>Reduce:</B><BR/>Collect all values<BR/>belonging to the<BR/>key and output</TD></TR>
+//  <TR><TD ALIGN="CENTER" HEIGHT="1" VALIGN="MIDDLE"><FONT FACE="monospace" POINT-SIZE="8">--------------------------</FONT></TD></TR> <!-- Simulated dashed line -->
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="r_crew">(crew, 2)</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="r_space">(space, 1)</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="r_the">(the, 3)</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="r_shuttle">(shuttle, 1)</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="r_recently">(recently, 1)</TD></TR>
+//  <TR><TD ALIGN="LEFT" CELLPADDING="4" PORT="r_dots">...</TD></TR>
+//</TABLE>
+//>,
+//        xlabel=<<b><font color="darkgreen">(key, value)</font></b>>
+//    ];
+//
+//    
+//    // --- Layout and Edges ---
+//
+//    // Place all headers on the same top rank
+//    { rank=same; input_header; map_header; group_header; reduce_header; }
+//
+//    // Place all main nodes on the same rank below the headers
+//    { rank=same; doc; map_node; group_node; reduce_node; }
+//
+//    // Use invisible edges to align headers vertically with their nodes
+//    input_header -> doc          [style=invis];
+//    map_header -> map_node       [style=invis];
+//    group_header -> group_node   [style=invis];
+//    reduce_header -> reduce_node [style=invis];
+//
+//    // Define the main data flow
+//    // 1. Big dashed arrow from Doc to Map
+//    // This edge uses the default style (dashed, bold) defined at the top.
+//    doc:part1 -> map_node:desc; // Connects from a part of the doc to the map description
+//
+//    // 2. New dotted lines from Map to Group
+//    // We change the edge style *only* for these connections
+//    edge [style=dotted, color=black, penwidth=2, arrowhead=normal, arrowsize=0.8, constraint=false];
+//    map_node:m_data1 -> group_node:g_crew;     // (crew, 1) -> (crew, [1, 1])
+//    map_node:m_data2 -> group_node:g_the;      // (the, 1) -> (the, [1, 1, 1])
+//    map_node:m_data3 -> group_node:g_space;    // (space, 1) -> (space, [1])
+//    map_node:m_data3 -> group_node:g_shuttle;  // (shuttle, 1) -> (shuttle, [1])
+//    map_node:m_data4 -> group_node:g_recently; // (recently, 1) -> (recently, [1])
+//    // Note: (The, 1) and (of, 1) don't have obvious matches in the group list, so they are not explicitly connected
+//
+//    // 3. New dotted lines from Group to Reduce
+//    // These edges will *inherit* the dotted style from the change above
+//    group_node:g_crew -> reduce_node:r_crew;
+//    group_node:g_space -> reduce_node:r_space;
+//    group_node:g_the -> reduce_node:r_the;
+//    group_node:g_shuttle -> reduce_node:r_shuttle;
+//    group_node:g_recently -> reduce_node:r_recently;
+//}
+//```
+
+//* MapReduce: Map Step
+//::: columns
+//:::: {.column width=40%}
+//\vspace{1cm}
+//
+//- `map(values: List):`
+//  \begingroup\footnotesize
+//  ```python
+//  # values: words in document
+//  for word in values: emit(word, 1) \endgroup
+//  ```
+//
+//- `ma()` processes all values
+//
+//- Outputs 0 or more tuples per input
+//::::
+//:::: {.column width=60%}
+//![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_28_image_1.png){width=90%}
+//::::
+//:::
+
+* MapReduce: Reduce Step
+```python
+reduce(key: word, values: List[int]):
+   # key: a word
+   # value: an iterator over counts
+   result = 0
+   for count in values:
+	result += count
+   emit(key, result)
+```
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_29_image_1.png)
+
+* MapReduce: Interfaces
+- Input: read key-value pairs **List[Tuple[k, v]]**
+- Programmer specifies two methods map and reduce
+
+- **Map(Tuple[k, v]) → List[Tuple[k, v]]**
+  - Take a key-value pair and output a set of key-value pairs
+    - E.g., key is a file, value is the number of occurrences
+    - "One a penny" → [("One", 1), ("a", 1), ("penny", 1)]
+  - There is one **Map** call for every *(*k*, v) pair*
+- **GroupBy(List[Tuple[k, v]]) → List[Tuple[k, List[v]]]]**
+  - Group and optionally sort all the records with the reduce key
+- **Reduce(Tuple[k, List[v]]) → Tuple[k, v]**
+  - All values *v'* with same key *k'* are reduced together
+  - There is one **Reduce** call per unique key *k'*
+- Output: write key-value pairs **List[Tuple[k, v]]**
+
+* MapReduce: Log Processing
+::: columns
+:::: {.column width=60%}
+\footnotesize
+- Log file recording access to a website with format
+```
+date, hour, filename
+```
+- **Goal**: find how many times each files is accessed during Feb 2013
+- **Input**
+  - Read the file and split into lines
+- **Map**
+  - Parse each line into the 3 fields
+  - If the date is in the required interval emit(dir_name, 1)
+- **GroupBy**
+  - The reduce key is the filename
+  - Accumulate all the (key, value) with the same filename
+- **Reduce**
+  - Add the values for each list of (key, value) since they have the same filename
+  - Output the number of access to each file
+- **Output**
+  - Write results on disk separated by newline
+
+::::
+:::: {.column width=40%}
+\footnotesize
+**After Input**
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_31_image_1.png)
+
+**After Map**
+```
+[`/slide-dir/11.ppt`, 1), ...)]
+```
+\vspace{0.2cm}
+**After GroupBy**
+
+```
+[`/slide_dir/11.ppt`, 1), ...,
+(` /slide-dir/12.ppt`, [1, 1]), ...)]
+```
+\vspace{0.2cm}
+**After Reduce**
+```
+[`/slide_dir/11.ppt`, 1), ...,
+(`/slide-dir/12.ppt`, 2), ...)]
+```
+\vspace{0.2cm}
+**Output**
+```
+/slide_dir/11.ppt 1
+...
+/slide-dir/12.ppt 2
+...
+```
+::::
+:::
+
+* MapReduce: Data Flow
+```
+Focusing on MapReduce functionality / flow of the data to 
+expose the parallelism
+```
+::: columns
+:::: {.column width=60%}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_32_image_1.png){width=110%}
+::::
+:::: {.column width=40%}
+- **Input**
+- **Map**
+  - mki = map keys
+  - mvi = map input values
+- **GroupBy**
+  - Shuffle / collect the data
+- **Reduce**
+  - rki = reduce keys
+  - rvi** = reduce input values
+  - Reduce outputs are not shown
+::::
+:::
+\vspace{0.25cm}
+::: columns
+:::: {.column width=10%}
+**Input**
+::::
+:::: {.column width=15%}
+**Map**
+::::
+:::: {.column width=10%}
+**GroupBy**
+::::
+:::: {.column width=10%}
+**Reduce**
+::::
+:::: {.column width=40%}
+```
+.
+```
+::::
+:::
+
+* MapReduce: Parallel Data Flow
+::: columns
+:::: {.column width=55%}
+\footnotesize
+- **User program** specifies map/reduce code
+- **Input data** is partitioned across multiple machines (HDFS)
+- **Master** node sends copies of the code to all computing nodes
+- **Map**
+  - *n* data chunks to process
+  - Functions executed in parallel on multiple *k* machines
+  - Output data from *Map* is saved on disk
+- **GroupBy / Sort**
+  - Output data from *Map* is sorted and partitioned based on reduce key
+  - Different files are created for each *Reduce* task
+- **Reduce**
+  - Functions executed in parallel on multiple machines
+  - Each work on some part of the data
+  - Output data from Reduce is saved on disk
+- **Write to disk**
+
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_33_image_1.png)
+
+- All operations use HDFS as storage
+- Machines are reused for multiple computations (Map, GroupBy, Reduce) at different times
+::::
+:::
+
+
+* Master Node Responsibilities
+::: columns
+:::: {.column width=50%}
+
+- **Master node coordinates**
+  - Task status: idle, in-progress, completed
+  - Schedule idle tasks as workers become available
+  - Map task completion sends location and sizes of intermediate files to Master
+  - Master informs Reduce tasks
+  - Schedule idle Reduce tasks
+
+- **Master node pings workers to detect failures**
+::::
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_34_image_1.png)
+::::
+:::
+
+* Dealing with Failures
+
+- **Map worker failure**
+  - Reset failed map tasks to idle
+  - Notify reduce workers when task is rescheduled
+
+- **Reduce worker failure**
+  - Reset in-progress tasks to idle
+  - Restart reduce task
+
+- **Master failure**
+  - Abort MapReduce task
+  - Notify client
+
+* How many Map and Reduce jobs?
+- **M** **map tasks**
+- **R** **reduce tasks**
+- **N** **worker nodes**
+- Rules of thumb
+  - *M* >> *N*
+    - Pros: Improve dynamic load balancing, Speed up recovery from worker failures
+    - Cons: More communication between *Master* and *Worker Nodes*, Lots of smaller files
+  - *R* > *N*
+    - Usually *R* < *M*, Output is spread across fewer files
+
+* Refinements: Backup Tasks
+- **Problem**
+  - Slow workers significantly lengthen the job completion time
+  - Slow workers due to:
+    - Older processor
+    - Not enough RAM
+    - Other jobs on the machine
+    - Bad disks
+    - OS thrashing / virtual memory hell
+- **Solution**
+  - Near the end of Map / Reduce phase
+    - Spawn backup copies of tasks
+    - Whichever one finishes first "wins"
+- **Result**
+  - Shorten job completion time
+
+* Refinement: Combiners
+::: columns
+:::: {.column width=60%}
+- **Problem**
+  - Often a *Map* task produces many pairs for the same key *k*
+```
+  [(k1, v1), (k1, v2), ...]
+```
+  - E.g., common words in the word count example
+  - Increase complexity of the GroupBy stage
+- **Solution**
+  - Pre-aggregate values in the *Map* with a *Combine*
+```
+  [k1, (v1, v2, ...), k2, ([...])]
+```
+  - *Combine* is usually the same as the *Reduce* function
+  - Works only if *Reduce* function is commutative and associative
+- **Result**
+  - Better data locality
+  - Less shuffling and reordering
+  - Less network / disk traffic
+::::
+:::: {.column width=50%}
+\vspace{1cm}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_38_image_1.gif)
+::::
+:::
+
+* Refinement: Partition Function
+- **Problem**
+  - Sometimes users want to control how keys get partitioned
+  - Inputs to *Map* tasks are created by contiguous splits of input file
+  - MapReduce uses a default partition function
+**hash(key) mod R**
+  - Reduce needs to ensure that records with the same intermediate key end up at the same worker
+- **Solution**
+  - Sometimes useful to override the hash function:
+  - E.g., **hash(hostname(URL)) mod R** ensures URLs from a host end up in the same output file

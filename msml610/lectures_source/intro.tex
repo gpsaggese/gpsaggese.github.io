@@ -1,0 +1,547 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+
+\documentclass[aspectratio=169, xcolor=dvipsnames]{beamer}
+\usetheme{SimplePlus}
+
+\usepackage{hyperref}
+\usepackage{graphicx} % Allows including images
+\usepackage{
+  booktabs
+} % Allows the use of \toprule, \midrule and \bottomrule in tables
+
+\input{latex_abbrevs.sty}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[short title]{Simple Beamer Theme}
+% The short title appears at the bottom of every slide, the full title is only on the title page
+\subtitle{Subtitle}
+
+%\author{[]
+%]
+%{Dr. GP Saggese}
+
+\institute[UMD]
+% Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{ Department of Computer Science\\ University of Maryland, College Park% Your institution for the title page
+}
+\date{\today} % Date, can be changed to a custom date
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+  \begin{frame}{Overview}
+    % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+    \tableofcontents
+  \end{frame}
+
+  % #######################################################################################
+  \section{Map of the class}
+  % #######################################################################################
+
+  % ---------------------------------------------------------------------------------------
+  \subsection{Books of the class}
+
+  % ---------------------------------------------------------------------------------------
+  \subsection{Invariants of the class}
+
+  % #######################################################################################
+  \section{What is machine learning?}
+  % #######################################################################################
+
+  \subsection{Machine Learning Concepts}
+
+  \begin{frame}{Definition of Machine Learning}
+    \begin{itemize}
+      \item \textbf{Arthur Samuel (1959):} Machine learning is the study
+        enabling computers to \textcolor{blue}{learn without explicit
+        programming}
+
+      \item Example: A computer learning to play checkers by \textit{memorizing
+        winning positions}
+
+      \item \textbf{Tom Mitchell (1998):} A program learns from experience $E$, with
+        task $T$ and performance $P$ if \textcolor{purple}{$P(T)$ improves with
+        $E$}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Assumptions in Machine Learning}
+    \begin{itemize}
+      \item \textbf{Key assumptions:}
+        \begin{itemize}
+          \item Patterns exist in data
+
+          \item Mathematical pinning of patterns is challenging
+
+          \item There is data
+        \end{itemize}
+
+      \item \textbf{Which assumption is key?}
+        \begin{itemize}
+          \item If there is no pattern we can try learning, measure if learning
+            works and, in the worst case, conclude that it does not work
+
+          \item If we can find the solution in one step or program the solution,
+            machine learning is not the recommended technique, but it still works
+
+          \item Without data we cannot do anything: data is all that matters
+
+          \item \textcolor{red}{Data is the most crucial aspect}; without it,
+            learning is infeasible
+        \end{itemize}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Algorithm vs Data}
+    \begin{itemize}
+      \item The best ML algorithm is \textit{not always the winner}
+
+      \item \textcolor{cyan}{Data quantity often outweighs algorithm quality}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Some ML adages}
+    \begin{itemize}
+      \item "Every time I fire a linguist, the performance of the speech recognizer
+        goes up" (Researcher in speech recognition)
+
+      \item "If you torture the data long enough, it will confess whatever you want"
+        (data mining)
+
+      \item "An explanation of the data should be as simple as possible, but not
+        simpler" [Einstein] (overfitting)
+
+      \item The simplest model that fits the data is also the most plausible [Occam’s
+        razor]
+
+      \item "Combination of data and desire for an answer does not ensure that a
+        reasonable answer can extracted from the data" (John Tukey)
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{A map of machine learning}
+    \begin{itemize}
+      \item ML theory
+
+      \item Paradigms
+
+      \item Models
+
+      \item Techniques
+    \end{itemize}
+  \end{frame}
+
+  %```mermaid
+  %mindmap
+  %  root((A map of machine learning))
+  %
+  %    Theory
+  %      sub-branch(VC theory)
+  %      sub-branch(Bias-variance decomposition)
+  %      sub-branch(Computation complexity)
+  %      sub-branch(Bayesian)
+  %
+  %    Paradigms
+  %      Supervised_learning
+  %      Unsupervised_learning
+  %      Reinforcement_learning
+  %      Active_learning
+  %      Online_learning
+  %
+  %    Models
+  %      sub-branch(Linear models)
+  %      sub-branch(Generalized linear models)
+  %      sub-branch(Neural networks)
+  %      sub-branch(SVM)
+  %      sub-branch(Nearest neighbors)
+  %        sub-branch(Clustering)
+  %        sub-branch(KNN)
+  %      sub-branch(Gaussian processes)
+  %      sub-branch(Factor-based analysis)
+  %      sub-branch(Graphical models)
+  %        sub-branch(Model joint probability distributions using graphs)
+  %        sub-branch(Hidden Markov models)
+  %
+  %    Techniques
+  %      Input_processing
+  %        sub-branch(Data cleaning)
+  %        sub-branch(Dimensionality reduction)
+  %        sub-branch(Feature engineering)
+  %      Model_building
+  %        sub-branch(Models)
+  %        sub-branch(Learning algorithms)
+  %      Performance evaluation
+  %        sub-branch(Cross-validation)
+  %        sub-branch(Bias / variance curves)
+  %        sub-branch(Learning curves)
+  %      Regularization
+  %        sub-branch(Aggregation)
+  %        sub-branch(Boosting)
+  %        sub-branch(Bagging)
+  %        sub-branch(Stacking)
+  %```
+
+  \begin{frame}{ML theory}
+    \begin{itemize}
+      \item The problem with ML theory is that assumptions are sometimes divorced
+        from the practice problems
+
+      \item VC theory: it can be applied in practice
+
+      \item Bias-variance decomposition
+
+      \item Computation complexity (e.g., MDL)
+
+      \item Bayesian: ML as a branch of probability. If you have the joint probability
+        distribution you can answer almost any question
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{ML paradigms}
+    \begin{itemize}
+      \item Many different set-ups for machine learning problems
+
+      \item Supervised learning
+        \begin{itemize}
+          \item One has inputs and corresponding output
+        \end{itemize}
+
+      \item Unsupervised learning
+        \begin{itemize}
+          \item Unlabeled data
+
+          \item Need to find structure in the data
+        \end{itemize}
+
+      \item Reinforcement learning
+        \begin{itemize}
+          \item Not have the correct answer immediately
+
+          \item Need to judge an action by the final results
+        \end{itemize}
+
+      \item Active learning
+        \begin{itemize}
+          \item Not have all the examples beforehand
+
+          \item Query the output for certain inputs
+        \end{itemize}
+
+      \item On-line learning
+        \begin{itemize}
+          \item Cannot store all the data set
+
+          \item The data set is streamed and one tries to change the hypothesis on-the-flight
+        \end{itemize}
+
+      \item \ldots{}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Models}
+    \begin{itemize}
+      \item Linear models
+
+      \item Generalized linear models
+        \begin{itemize}
+          \item Logistic regression
+
+          \item Poisson regression
+        \end{itemize}
+
+      \item Neural networks
+
+      \item SVM
+
+      \item Nearest neighbors
+        \begin{itemize}
+          \item Clustering k-means
+
+          \item KNN
+        \end{itemize}
+
+      \item Gaussian processes
+
+      \item Graphical models: model joint probability distributions using graphs
+        \begin{itemize}
+          \item E.g., hidden Markov models
+        \end{itemize}
+
+      \item \ldots{}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{ML techniques}
+    \begin{itemize}
+      \item Input processing
+        \begin{itemize}
+          \item Data cleaning
+
+          \item Dimensionality reduction
+
+          \item Feature engineering
+        \end{itemize}
+
+      \item Model building
+        \begin{itemize}
+          \item Models
+
+          \item Learning algorithms
+        \end{itemize}
+
+      \item Performance evaluation
+        \begin{itemize}
+          \item Cross-validation
+
+          \item Bias / variance curves
+
+          \item Learning curves
+        \end{itemize}
+
+      \item Regularization
+        \begin{itemize}
+          \item To deal with overfitting
+        \end{itemize}
+
+      \item Aggregation
+        \begin{itemize}
+          \item Boosting
+
+          \item Bagging
+
+          \item Stacking
+        \end{itemize}
+
+      \item \ldots{}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Names for inputs and outputs}
+    \begin{itemize}
+      \item Inputs: predictor vars, independent vars, features
+
+      \item Outputs: predicted vars, dependent vars, responses, targets
+
+      \item Inputs and outputs can be of 3 types:
+        \begin{itemize}
+          \item Quantitative: continuous values
+
+          \item Qualitative (aka categorical): discrete values
+            \begin{itemize}
+              \item E.g., handwritten letters recognition, species of Iris, success
+                / failure, survived / died
+            \end{itemize}
+
+          \item Ordered categorical: categorical with an ordering, but without a
+            distance between them
+            \begin{itemize}
+              \item E.g., small, medium, large
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Supervised learning}
+    \begin{itemize}
+      \item One of the most commonly used paradigms of machine learning
+
+      \item Unknown target function $y = f(\vx)$
+        \begin{itemize}
+          \item Regression if the predicted variable $y \in \bbR$
+
+          \item Classification if $y \in \{y_{1}, ..., y_{k}\}$
+        \end{itemize}
+
+      \item Data set $(\vx_{1}, y_{1}), ... , (\vx_{n}, y_{n})$
+        \begin{itemize}
+          \item We know the (unknown) function on certain points
+        \end{itemize}
+
+      \item Learning algorithm picks $g \approx f$ from a hypothesis set $\calH$
+        (read ``script h'')
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Examples of supervised learning problems}
+    \begin{itemize}
+      \item Predict the price of a house given various features
+        \begin{itemize}
+          \item Features: size in square feet, number of bedrooms, age of home, zip
+            code, \ldots{}
+        \end{itemize}
+
+      \item Predict credit line given features
+        \begin{itemize}
+          \item Features: salary, credit history, debt, years in job, \ldots{}
+        \end{itemize}
+
+      \item Predict malignant or benign cancer given features
+        \begin{itemize}
+          \item Features: tumor size, age, gender, \ldots{}
+        \end{itemize}
+
+      \item Sometimes the same problem can be cast as regression or classification
+
+      \item E.g., approve credit line (yes/no) vs determine the credit line (dollar
+        amount)
+        \begin{itemize}
+          \item Features: current debt, age, annual salary, years in job, \ldots{}
+        \end{itemize}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Unsupervised learning}
+  \begin{itemize}
+  \item
+    Data is un-labeled
+  \item
+    We want to find structure in the data (e.g., clustering, anomaly
+    detection)
+  \item
+    E.g.,
+    \begin{itemize}
+    \item
+      Clustering of similar news stories
+    \item
+      Anomaly detection (aircraft engine, account hacked based on typical
+      user behavior, computer going to fail, \ldots)
+    \item
+      Market segmentation
+    \item
+      Social network analysis (e.g., find cliques representing close
+      friends)
+    \end{itemize}
+  \end{itemize}
+  \end{frame}
+
+  % #######################################################################################
+  \subsection{Practical ML}
+  % #######################################################################################
+
+  \begin{frame}{Machine learning research flow}
+    \begin{itemize}
+      \item Question
+      \item Input data
+      \item Features
+      \item Algorithm
+      \item Parameters
+      \item Evaluation (benchmark)
+    \end{itemize}
+  \end{frame}
+
+  %flowchart LR
+  %    A(Question) --> B(Input data)
+  %    B --> C(Features)
+  %    C --> D(Algorithm)
+  %    D --> E(Parameters)
+  %    E --> F(Evaluation)
+
+  \begin{frame}{Question}
+    \begin{itemize}
+      \item Question needs to be as concrete and precise as possible
+
+      \item Question $>$ data $>$ features $>$ algorithm
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Data}
+    \begin{itemize}
+      \item Data should be on exactly the same thing one is trying to predict
+        \begin{itemize}
+          \item E.g., to predict new movie ratings from old movie ratings
+        \end{itemize}
+
+      \item Sometimes the relationship is not as direct
+        \begin{itemize}
+          \item E.g., we are interested in prices, but we predict supply and
+            demand
+        \end{itemize}
+
+      \item If the data is not good, then one ends with ``garbage in - garbage out''
+
+      \item One needs to know when to give up when the data does not allow an answer
+
+      \item More data \textgreater{} better models
+        \begin{itemize}
+          \item Meta-studies have shown that the difference between the generic model
+            and the best model for a problem improves like 5\%
+        \end{itemize}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}{Properties of a good feature}
+    \begin{enumerate}
+      \def\labelenumi{\arabic{enumi}.}
+
+      \item Lead to data compression
+
+      \item Retain relevant information
+
+      \item Use expert knowledge
+
+      \item Is interpretable
+    \end{enumerate}
+  \end{frame}
+
+  \begin{frame}{Common mistakes when building features}
+    \begin{enumerate}
+      \def\labelenumi{\arabic{enumi}.}
+
+      \item Trying to automate feature selection leads to overfitting
+        \begin{itemize}
+          \item Black box prediction can be very accurate
+
+          \item System performance can change suddenly and we might not understand
+            why
+            \begin{itemize}
+              \item E.g., Google flu people didn't understand exactly the link between
+                features and model
+            \end{itemize}
+        \end{itemize}
+
+      \item Not paying attention to data-specific quirks
+        \begin{itemize}
+          \item E.g., outliers that are not really outliers
+        \end{itemize}
+
+      \item Throwing away information unnecessarily
+    \end{enumerate}
+  \end{frame}
+
+  \begin{frame}{Characteristics of best models}
+    \begin{enumerate}
+      \def\labelenumi{\arabic{enumi}.}
+
+      \item Interpretable
+        \begin{itemize}
+          \item E.g., decision trees are a appropriate in medical studies since they
+            produce a ``reasoning''
+        \end{itemize}
+
+      \item Simple
+
+      \item Accurate
+        \begin{itemize}
+          \item Often accuracy is traded off for remaining characteristics
+
+          \item E.g., accuracy vs interpretability, accuracy vs speed
+        \end{itemize}
+
+      \item Fast (to train and test)
+
+      \item Scalable
+        \begin{itemize}
+          \item E.g., in the Netflix prize, Netflix didn't ended up implementing
+            the best algorithm since it wasn't scalable enough
+        \end{itemize}
+    \end{enumerate}
+  \end{frame}
+
+\end{document}
