@@ -1,0 +1,6 @@
+%APPDATA%
+.DS_Store
+data/
+runs/
+.vscode/
+__pycache__/
