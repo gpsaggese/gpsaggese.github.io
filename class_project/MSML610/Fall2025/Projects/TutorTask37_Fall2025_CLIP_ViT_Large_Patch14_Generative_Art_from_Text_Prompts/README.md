@@ -1,4 +1,4 @@
-# CLIP Embeddings Search App - MSML610 Spring25#37
+# CLIP Embeddings Search App - MSML610 Fall25#37
 
 This project demonstrates how to build and query **text and image embeddings** using **CLIP** and **FAISS**, all packaged with **Docker** and a **Streamlit** interface.
 
@@ -35,4 +35,4 @@ Work in Progress.
 | **requirements.txt**                | Python dependencies                               |
 
 ## Note
-This is a work in progress project: additional features, improved UI, and dataset integration is still being worked on.
+This is a work in progress project: additional features, improved UI, and dataset integration are still being developed. However, the model has been successfully executed.
