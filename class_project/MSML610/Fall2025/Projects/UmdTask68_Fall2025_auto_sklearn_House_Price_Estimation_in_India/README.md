@@ -1,11 +1,11 @@
 # Auto-sklearn House Price Estimation (India)
 
-Estimate residential prices across India using structured tabular data (location, size, amenities). The project currently covers data exploration and a reusable preprocessing pipeline in preparation for auto-sklearn modeling.
+Estimate residential prices across India using structured tabular data (location, size, amenities). The project currently covers data exploration and a reusable preprocessing pipeline in preparation for auto-sklearn modeling
 
 ## Dataset
 
 - Source: [India House Price Prediction (Kaggle)](https://www.kaggle.com/datasets/ankushpanday1/india-house-price-prediction)
-- Download the CSV and place it at `data/raw/india_housing_prices.csv` (file not tracked via git because of size limitation).
+- Download the CSV and place it at `data/raw/india_housing_prices.csv` (file not tracked via git because of size limitation)
 
 ## What’s Implemented
 
@@ -20,13 +20,14 @@ Estimate residential prices across India using structured tabular data (location
 - Supporting docs:
   - `data_exploration.md` – summary of EDA findings
   - This README – setup and progress tracker
-  - Dockerfile, requirements, `.gitignore`
+  - Requirements, `.gitignore`
 
 ## Next Steps
 
-1. Train auto-sklearn regressors with `prepare_data()` output.
-2. Compare against RandomForest/XGBoost baselines.
-3. Evaluate with MAE/RMSE, visualize regional price trends.
+1. Docker support
+2. Train auto-sklearn regressors with `prepare_data()` output
+3. Compare against RandomForest/XGBoost baselines
+4. Evaluate with MAE/RMSE, visualize regional price trends
 
 ## Setup
 
