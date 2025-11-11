@@ -1,0 +1,9 @@
+# Class Projects
+- **Title:** Building a Simple Ontology for University Domain
+- **Difficulty:** Easy
+- **Tech description:** Create an ontology to represent relationships and entities in a university setting, utilizing OWL and RDF for knowledge representation.
+- **Project idea:** Develop a university ontology that includes classes such as `Student`, `Professor`, `Course`, and `Department`, and define their relationships through properties. Implement basic reasoning tasks like instance checking and classification.
+- **Data set to use:** Custom data set of university entities (e.g., a list of courses, students, and professors).
+- **Python libs:** Owlready2, rdflib
+- **Links to relevant tools:** [Protégé](https://protege.stanford.edu/), [OWL API](https://github.com/owlcs/owlapi)
+- **Links to related resources:** [Understanding OWL](https://www.w3.org/TR/owl-guide/), [Description Logics](https://en.wikipedia.org/wiki/Description_logic)

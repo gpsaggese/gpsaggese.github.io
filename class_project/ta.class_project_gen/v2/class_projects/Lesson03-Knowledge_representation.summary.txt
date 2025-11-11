@@ -1,0 +1,203 @@
+# Knowledge Representation
+
+## Basics of Knowledge Representation
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [39, 198]
+* Knowledge Representation (KR)
+  - Defines how to formally encode information for machines to reason with, bridging perception and reasoning; key in AI.
+  - Considers structure and semantics, enabling machines to draw conclusions, perform planning, and answer queries.
+
+* Tradeoff in Representations
+  - Involves expressiveness (richness of concepts) vs. tractability (efficiency of reasoning); more expressive systems are computationally harder.
+  - Representation forms include atomic (simple), factored (variable relationships), and structured (complex logic).
+
+* Approaches to Knowledge Representation
+  - Symbolic representation uses discrete symbols for interpretability, while sub-symbolic uses learned, distributed representations for perception.
+  - A neuro-symbolic approach merges both to enhance reasoning over learned concepts, and procedural vs. declarative methods focus on how vs. what.
+
+## Examples of Logic
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [199, 341]
+* Types of Logic
+  - **Propositional Logic**: Utilizes atomic statements and logical connectives; suitable for closed environments but limited in representing objects or relations.
+  - **First-Order Logic (FOL)**: Extends propositional logic with predicates and quantifiers, allowing representation of complex knowledge. It's computationally more complex and used for knowledge representation and automated theorem proving.
+
+* Rule-Based Systems
+  - Consist of "if-then" rules for decision-making, featuring a knowledge base, inference engine, and working memory. They are transparent but may struggle with scalability and uncertainty.
+
+* Reasoning in Logic
+  - Involves deriving new facts from a knowledge base through inference mechanisms like forward and backward chaining, crucial for decision-making. Grounding connects abstract symbols to real-world entities, enhancing the practical application of logical systems.
+
+## Logical Agents
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [342, 594]
+* Agent Types
+  - **Reflex agents** operate using condition-action rules based on current percepts without memory, suited for simple environments; pros include speed, while cons are limitations in complexity and learning.
+  - **Knowledge-based agents** utilize an internal representation of knowledge to reason, learn, and adapt, enabling them to handle complex, uncertain environments through probabilistic reasoning.
+
+* Knowledge Representation
+  - **Knowledge base (KB)** comprises sentences and rules about the world, using a syntax for well-formed sentences and semantics to determine truth across various possible worlds; inference is the process of deriving new sentences.
+  - **Logical entailment** denotes that one sentence logically follows from another within a KB, contrasting with implication, which is a conditional relationship between two statements.
+
+* Inference and Grounding
+  - An **ideal inference algorithm** is sound (only derives entailed sentences) and complete (can derive all entailed sentences); model checking verifies if a sentence is entailed by checking truth across all compatible models.
+  - **Grounding** involves linking abstract symbols to real-world entities, posing philosophical questions about the accuracy of KBs in reflecting reality, while assuming that generalization and learning from agent sensors are typically correct.
+
+## Ontologies
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [595, 728]
+* Ontologies Definition and Purpose
+  - An ontology is a formal representation of a domain, detailing types of entities and their relationships.
+  - Provides a common vocabulary to enable consistent understanding and sharing of information.
+
+* Main Components of Ontologies
+  - Classes: general concepts (e.g., `Person`, `City`).
+  - Individuals: specific instances of classes (e.g., `Alice` as a `Person`).
+  - Properties: define relationships between classes (e.g., `takesCourse` between `Student` and `Course`).
+
+* Example: University Ontology
+  - Classes include `Student`, `Professor`, `Course`, and `Department`.
+  - Relationships illustrate how students take courses, professors teach them, and departments offer them, governed by constraints and axioms.
+
+## Reasoning in Ontologies
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [729, 823]
+* Key Reasoning Tasks in Ontologies
+  - **Subsumption**: Determines subclass relationships (e.g., `Person` is a subclass of `Student`).
+  - **Satisfiability**: Tests logical consistency of concepts (e.g., `FlyingPenguin` as a non-existing concept).
+  - **Classification**: Organizes concepts hierarchically based on subsumption (e.g., places `Penguin` under `Bird`).
+
+* Additional Reasoning Tasks in Knowledge Representation
+  - **Instance Checking**: Confirms if an individual is an instance of a concept (e.g., is `GP` a `Student`?).
+  - **Consistency Checking**: Ensures the knowledge base contains no contradictions (e.g., a `Person` cannot be both `Alive` and `Dead`).
+  - **Query Answering**: Responds to complex queries (e.g., finding all `Person` who study but are not `Student`).
+
+* Protégé as an Ontology Tool
+  - Provides free, open-source tools for constructing and visualizing ontologies.
+  - Supports major ontology languages (e.g., OWL, RDF) and serialization formats (e.g., RDF/XML).
+  - Useful for domain-specific knowledge modeling and AI systems requiring structured knowledge.
+
+## Syntax
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [824, 928]
+* Propositional Logic Overview
+  - A formal system for reasoning about true/false statements using syntax defined by proposition symbols and logical connectives.
+  - Evaluates truth using semantics, such as truth tables.
+
+* Syntax Components
+  - Proposition symbols represent atomic sentences without inherent truth values (e.g., $P$, $Q$).
+  - Complex sentences are formed using atomic sentences, parentheses, and logical connectives (e.g., conjunction, disjunction).
+
+* Applications of Propositional Logic
+  - Utilized in SAT solvers for problem-solving (e.g., hardware verification) and in expert systems like medical diagnosis.
+  - Rule-based agents operate using predefined logical rules (e.g., automated customer service chatbots).
+
+## Semantics
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [929, 1137]
+* Semantics and Truth Values
+  - Semantics define rules for assessing the truth of propositions in relation to a model.
+  - Truth values for sentences are derived from the assigned truth values of atomic sentences in that model.
+
+* Model Checking and Theorem Proving
+  - Model checking is both sound and complete, with exponential time complexity, ensuring all models are evaluated for truth.
+  - Theorem proving constructs a proof for a sentence using rules of inference and can be more efficient than model checking for shorter proofs.
+
+* Logical Equivalences and Validity
+  - Two sentences are logically equivalent if they hold true in the same models.
+  - Valid sentences (tautologies) are true universally, whereas contradictions are universally false; satisfiability is determined by the existence of a model where a sentence holds true.
+
+## Syntax
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [1138, 1287]
+* Natural Languages vs. Programming Languages
+  - Natural languages (e.g., English) are expressive but ambiguous and context-dependent, while programming languages are formal, procedural, and structured around data representations.
+  - Natural language understanding can be influenced by the Sapir-Whorf hypothesis, which suggests that language shapes thought and perception.
+
+* First-Order Logic (FOL)
+  - FOL extends propositional logic through the use of quantifiers and predicates, allowing the representation of structured, relational knowledge about objects and their properties.
+  - It combines the expressiveness of natural languages with the accuracy of logic, enabling statements about all or some objects through universal and existential quantifiers.
+
+* Quantifiers and Their Meaning
+  - The universal ($\forall$) and existential ($\exists$) quantifiers allow for statements about objects collectively instead of naming each one, with the importance of scope and the distinction between bound and free variables in logical expressions.
+
+## Semantics
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [1288, 1337]
+* First-Order Logic Semantics
+  - Defines interpretation of sentences using symbols that represent entities, relationships, and functions.
+  - Utilizes constant symbols (e.g., $Alice$), predicate symbols (e.g., $EnrolledIn(Student, Class)$), and function symbols (e.g., $AdvisorOf(Student)$).
+
+* Inference in First-Order Logic
+  - Aims to derive new sentences from existing ones through sound rules like Universal Instantiation and Existential Instantiation.
+  - Inference is semi-decidable; entailed sentences can be proven, while others may lead to non-terminating proof searches.
+
+* Knowledge Representation in FOL
+  - Allows for representation of general rules (e.g., $\forall x\, (Bird(x) \rightarrow CanFly(x))$) and specific facts (e.g., $Bird(Tweety)$).
+  - Complex relationships and functions enable reasoning about objects, properties, and their interrelations within a knowledge base.
+
+## Intro
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [1338, 1526]
+* Ontological and Epistemological Commitments
+  - Ontological commitment refers to the assumptions about reality made by a language, defining what exists in the world, while epistemological commitment concerns an agent's beliefs about those facts.
+
+* Non-monotonic and Default Reasoning
+  - Non-monotonic logic allows for conclusions to change with new information, contrasting with classical logic where proven facts remain unchanged; default reasoning relies on typical assumptions unless new evidence states otherwise.
+
+* Common Sense Reasoning
+  - This reasoning involves making assumptions based on everyday knowledge and dealing with uncertain information, utilizing techniques like knowledge graphs and probabilistic reasoning to manage vast and informal knowledge.
+
+## Description Logics
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [1527, 1705]
+* Description Logic Overview
+  - Represents structured knowledge, balancing expressivity and computational efficiency, more expressive than propositional logic but less so than first-order logic.
+  - Core components include concepts (classes), roles (properties), and individuals (instances); supports reasoning tasks like concept subsumption and instance checking.
+
+* ALC and SHOIN Description Logics
+  - ALC is a basic description logic allowing logical operators and quantification; it is decidable and practical for moderate-sized ontologies.
+  - SHOIN extends ALC with transitive properties, role hierarchies, and cardinality constraints; offers more expressivity but with increased reasoning complexity.
+
+* OWL and RDF Framework
+  - OWL (Web Ontology Language) enables complex knowledge representation with classes, properties, and individuals, supporting semantic web capabilities.
+  - RDF models data as triples (subject, predicate, object) for data interchange, while SPARQL allows querying this RDF data effectively.
+
+## Semantic Web
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson03-Knowledge_representation.txt: [1706, 1976]
+* Semantic Web Overview
+  - Extends the current Web by enabling machines to understand and interpret data, improving integration, automation, and discovery.
+  - Key technologies include RDF, SPARQL, and OWL; however, full realization remains limited by complexity, privacy concerns, and needs for standardization.
+
+* WikiData and DBPedia
+  - WikiData is a collaborative knowledge base accessible via SPARQL that stores structured data for Wikipedia, while DBPedia extracts structured content from Wikipedia to create a multilingual knowledge graph for querying.
+  - Both platforms enable applications in knowledge graphs, semantic search, and AI reasoning.
+
+* Knowledge Graphs and Semantic Networks
+  - Knowledge graphs represent entities and relationships as graph structures, facilitating query languages like SPARQL and supporting applications like question answering and recommendations.
+  - Semantic networks visualize knowledge via nodes and edges, aiding in reasoning, with examples including WordNet and ConceptNet.
+
+// notes_to_pdf.py --input lectures_source/Lesson13-Knowledge_representation.txt --output tmp.pdf --type slides
+
+::: columns
+:::: {.column width=15%}
+![](lectures_source/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Knowledge Representation}}$$**
+\endgroup
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+
+**References**:
+
+- Mostly papers and Internet
+
+- AIMA 7: Logical agents
+
+- AIMA 8, First-order logic
+
+- AIMA 9: Inference in first-order logic
+
+- AIMA 10, Knowledge representation

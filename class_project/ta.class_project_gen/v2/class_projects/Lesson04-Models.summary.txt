@@ -1,0 +1,190 @@
+# Models
+# ##############################################################################
+
+## #############################################################################
+## Naive Bayes
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [30, 221]
+* Naive Bayes Overview
+  - Naive Bayes predicts class membership ($H_1, ..., H_n$) using evidence vector $\vv{E}$ based on Bayes' rule of conditional probability.
+  - Assumes feature independence and equal relevance, simplifying computation despite real-world complexities.
+
+* Weather Prediction Example
+  - Aiming to predict children's outdoor play based on weather conditions using predictors like outlook, temperature, humidity, and windiness.
+  - Model applies Bayes' theorem to evaluate probabilities of outcomes like `play = yes` using evidence.
+
+* Probability Estimation Challenges
+  - Problems arise when feature values not in training data yield zero probabilities; Laplace estimator can mitigate this by adjusting counts to avoid zero probabilities in conditional probabilities.
+
+## Decision trees
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [222, 518]
+* **Decision Tree Overview**
+  - A supervised learning method applicable for classification and regression, characterized by a tree structure of decision rules.
+  - Training involves inferring decision rules from the dataset, with evaluations performed from the root to leaves.
+
+* **Advantages and Disadvantages**
+  - Pros include ease of interpretation, scalability, minimal data preparation, and robustness to irrelevant features.
+  - Cons involve NP-completeness in learning, risk of overfitting, susceptibility to instability with small data variations, and challenges with certain training sets.
+
+* **Impurity Measures and Features**
+  - Node impurity measures (e.g., misclassification error, Gini index, information gain) are used to evaluate splits, aiming for lower impurity for better classification.
+  - Features at the top of the tree are more predictive, with variable importance assessed through their contributions and depths in the tree.
+
+## Random forests
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [519, 579]
+* Transition from Decision Trees to Random Forests
+  - Decision trees have low bias but high variance; random forests use ensemble methods like bagging to reduce variance.
+  - Bagging is effective for unstable non-linear models, particularly complex, fully grown trees.
+
+* Randomization Techniques in Random Forests
+  - Random forests utilize bootstrap sampling and random subsets of features for tree construction, improving prediction by averaging.
+  - Extremely randomized trees (Extra-Trees) introduce additional randomness for further variance reduction.
+
+* Pros and Cons of Random Forests
+  - **Pros:** Increased accuracy compared to single models.
+  - **Cons:** Slower training, lower interpretability, and potential for overfitting.
+
+## Linear models
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [580, 690]
+* Linear Regression Model
+  - Comprises a dataset of N examples with P features; outputs a real-value number.
+  - The model is expressed as \( h(\vx) = \vw^T \vx \) and can include a bias term.
+
+* In-Sample Error Calculation
+  - Uses squared error to measure in-sample error: \( E_{in}(h) = \frac{1}{N} \sum_{i=1}^{N} (h(\vx_i) - y_i)^2 \).
+  - In vector form: \( E_{in}(h) = \frac{1}{N} \| \mX \vw - \vy \|^2 \).
+
+* Optimal Model and Learning Complexity
+  - The optimal model is found by minimizing in-sample error using the pseudo-inverse \( \vw^* = \mX^\dagger \vy \), with complexity \( O(P^3) \).
+  - Models remain linear even with non-linear transformations applied to inputs, but not to weights.
+
+## Perceptron
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [691, 756]
+* Classification Problems
+  - Binary classification involves two classes (e.g., spam vs. not spam).
+  - Multi-class classification involves multiple classes (e.g., email tagging).
+  
+* Perceptron Learning Algorithm (PLA)
+  - The first discovered learning algorithm that updates weights based on misclassified points until convergence.
+  - The pocket version preserves the best solution encountered during iterations.
+
+* Non-Linear Transformations
+  - Classification problems often require non-linear boundaries due to data distribution.
+  - Examples include data that is not linearly separable or requires higher-order decision boundaries.
+
+## Logistic regression
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [757, 1055]
+* Logistic Regression Overview
+  - Logistic regression is a probabilistic classifier that predicts the probability of each class given input features.
+  - It operates under a parametric approach, learning parameters by maximizing the likelihood to output class probabilities using the logistic (sigmoid) function.
+
+* Error Measurement and Fitting
+  - The error for probabilistic binary classifiers is defined using log-probability, generalizing 0-1 error, and for logistic regression specifically, the point-wise error is called the cross-entropy error.
+  - Fitting logistic regression involves maximizing the data's likelihood under the model, equating to minimizing the in-sample cross-entropy error.
+
+* Multi-Class Classification
+  - The one-vs-all approach is used for multi-class classification in logistic regression, creating binary classifiers for each class against the rest.
+  - The cost function for multi-class classification is structured to capture errors for all classes, using a one-hot encoding of expected outputs.
+
+## LDA, QDA
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [1056, 1206]
+* Overview of LDA and QDA
+  - LDA (Linear Discriminant Analysis) and QDA (Quadratic Discriminant Analysis) are parametric models that assume each class follows a multivariate Gaussian distribution and are distinguished by linear (LDA) or quadratic (QDA) decision boundaries.
+  
+* Advantages and Disadvantages
+  - **Pros**: Easy to compute closed-form solutions, inherently multiclass, and require no hyperparameter tuning.
+  - **Cons**: Strong assumptions about data distribution may lead to low accuracy if violated.
+
+* Model Evaluation and Decision Boundary
+  - Use Bayes theorem to calculate class probabilities and decision boundaries, relying on parameters estimated from data (mean and covariance); outcomes are determined by maximizing the posterior probabilities for classification.
+
+## Kernel methods
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [1207, 1343]
+* Definition of Kernel
+  - A kernel is a function that yields the inner product of two points in a transformed space, typically representing a non-linear mapping from features in one space to a higher-dimensional space.
+
+* Types of Kernels
+  - Common kernels include the Gaussian (or RBF) kernel, which measures similarity and is defined as \( K(\vx, \vx') = \exp(-\gamma \|\vx - \vx'\|^2) \), and polynomial kernels expressed as \( K(\vx, \vx') = (k + \vx^T \vx')^d \).
+
+* Kernel Trick
+  - The "kernel trick" is a computational shortcut that allows the efficient calculation of inner products in transformed spaces without explicitly computing the transformed vectors, enhancing efficiency in various machine learning algorithms.
+
+## Support vector machines
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [1344, 1698]
+* Overview of Support Vector Machines (SVM)
+  - SVM is a powerful classification algorithm focusing on finding a separating hyperplane that maximizes the margin between classes.
+  - It predicts classes directly, without outputting probabilities, and works well for both classification and regression tasks.
+
+* SVM Formulations and Optimization
+  - The primal form aims to minimize the size of the weight vector while enforcing margin conditions, while the dual form is a quadratic programming problem that computes support vectors.
+  - The "kernel trick" allows SVMs to efficiently handle non-linear data transformations without directly computing them.
+
+* Soft-margin SVM and Multi-class Capability
+  - Soft-margin SVMs provide improved generalization by allowing some margin violations for better handling of outliers.
+  - SVM supports multi-class classification through methods like one-vs-all, training separate classifiers for each class against the rest.
+
+## Similarity-based models
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [1699, 1934]
+* Similarity-Based Models Overview
+  - These models evaluate a point \(h(\vx)\) based on the effect of other training data points, with influence decreasing by distance, allowing for complex decision boundaries.
+  - Common types include Gaussian kernels and Radial Basis Function (RBF) models, which use proximity to training points to define their response functions.
+
+* RBF Models
+  - RBF models represent outputs through a weighted sum of Gaussian functions centered around training points, with parameters learned iteratively to minimize error.
+  - Techniques to reduce complexity include selecting fewer centers through clustering, which helps combat overfitting while still maintaining model performance.
+
+* K-Nearest Neighbor (KNN) Model
+  - KNN predicts outputs based on the average of the \(k\) closest training points to the input, making no assumptions about the underlying data distribution, which contrasts with linear models.
+  - As \(k\) increases, the model's bias and variance change, influencing training and testing errors, revealing a trade-off in model complexity akin to that observed in bias-variance analysis.
+
+## Clustering
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [1935, 2062]
+* K-means Clustering Overview
+  - Aims to partition \( N \) unlabeled points into \( K \) clusters defined by their centroids.
+  - The optimization goal is to minimize the distance between each point and its assigned cluster center.
+
+* Lloyd's Algorithm Steps
+  - **Step 1**: Update centroids by calculating the mean of points in each cluster.
+  - **Step 2**: Assign each point to the nearest cluster based on the updated centroids.
+
+* Choosing and Interpreting Clusters
+  - The number of clusters \( K \) is often unclear; techniques like the Elbow Method can help determine \( K \).
+  - Cluster interpretation involves analyzing centroids, feature distributions, and visualizations to derive meaningful insights about the data segments.
+
+## Anomaly detection
+// From /Users/saggese/src/umd_msml6101/msml610/lectures_source/Lesson04-Models.txt: [2063, 2279]
+* Anomaly Detection Overview
+  - Focuses on identifying bad or anomalous instances from a set of good instances using unsupervised learning to model distributions.
+  - Involves selecting sensitive features, estimating distributions, and applying thresholds to flag instances as anomalies.
+
+* Applications
+  - Examples include monitoring aircraft engines, identifying hacked accounts, and detecting malfunctioning servers in data centers using relevant features to model good behavior.
+
+* Model Evaluation and Differences
+  - Requires labeled data for proper evaluation, involves addressing class imbalances, and employs various metrics for performance comparison.
+  - Distinguishes between anomaly detection (unsupervised) using only good examples and supervised learning that incorporates both good and bad examples.
+
+::: columns
+:::: {.column width=15%}
+![](lectures_source/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Machine Learning Models}}$$**
+\endgroup
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+
+**References**:
+
+# ##############################################################################

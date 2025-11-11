@@ -1,0 +1,221 @@
+# ##############################################################################
+# Key-Value Store vs Document DBs
+# ##############################################################################
+
+This slide compares key-value stores and document databases, two types of NoSQL
+databases. Key-value stores, like HBase and Redis, function like a map or
+dictionary, where you retrieve values using keys. They store uninterpreted
+values, such as binary blobs, linked to keys in a single namespace. Document
+databases, such as MongoDB and CouchDB, group key-value pairs into documents
+formatted in JSON, XML, or BSON. These documents are part of collections,
+similar to tables in relational databases. Large collections can be partitioned
+and indexed for efficient data retrieval.
+
+Transition: Now, let's dive deeper into MongoDB, a popular document database.
+
+# ##############################################################################
+# MongoDB
+# ##############################################################################
+
+MongoDB is a highly popular NoSQL database developed by MongoDB Inc, founded
+in 2007. It is based on DoubleClick's experience with handling large-scale data.
+The name Mongo comes from "hu-mongo-us," indicating its capability to manage
+vast amounts of data. MongoDB is a document-oriented NoSQL database that is
+schema-less, meaning it does not require a predefined schema like SQL databases.
+It stores data in BSON format, which is based on JSON, and each document has a
+unique identifier called `_id`. MongoDB is known for its high performance, being
+developed in C++, and supports APIs in various programming languages like
+JavaScript, Python, and Java.
+
+Transition: Let's look at an example of a document in MongoDB to understand its
+structure better.
+
+# ##############################################################################
+# MongoDB: Example of Document
+# ##############################################################################
+
+In MongoDB, a document is a JSON data structure that corresponds to a row in a
+relational database but without a fixed schema. Each document has a primary key,
+`_id`, which is unique. The values within a document can be nested to any depth,
+allowing for complex data structures. This flexibility makes MongoDB suitable
+for applications where the data structure may evolve over time or where
+different records may have different fields. The ability to nest values and the
+absence of a rigid schema provide significant advantages in terms of data
+modeling and application development.
+
+# ##############################################################################
+# MongoDB: Functionalities
+# ##############################################################################
+
+MongoDB is designed with specific goals in mind. It focuses on performance and
+availability, ensuring that the system can scale as needed. It offers rich data
+storage capabilities, although it does not emphasize complex querying. The
+dynamic schema means there is no need for Data Definition Language (DDL), and it
+supports secondary indexes and querying through an API. MongoDB provides several
+levels of data consistency, allowing atomic writes and fully-consistent reads at
+the document level. It does not support joins or transactions across multiple
+documents, which makes distributed queries fast and easy. High availability is
+achieved through replica sets, which include primary replication and automated
+failover. Built-in sharding allows for horizontal scaling, distributing reads
+and writes over multiple shards.
+
+Transition: Now, let's explore how MongoDB organizes its data hierarchically.
+
+# ##############################################################################
+# MongoDB: Hierarchical Objects
+# ##############################################################################
+
+In MongoDB, the structure is hierarchical. A Mongo instance can have zero or
+more databases, similar to a Postgres instance. Each database can contain zero
+or more collections, which are akin to tables in Postgres. Collections hold
+documents, comparable to rows in Postgres. Each document consists of fields,
+with every document having a primary key called `_id`, similar to columns in
+Postgres. This hierarchical organization allows MongoDB to efficiently manage
+and access data, providing flexibility in how data is stored and retrieved.
+
+Transition: Let's compare the concepts of Relational Databases and MongoDB.
+
+# ##############################################################################
+# Relational DBs vs MongoDB: Concepts
+# ##############################################################################
+
+This slide compares the concepts between Relational Database Management Systems
+(RDBMS) and MongoDB. In both systems, a database serves as a container, but in
+MongoDB, it holds collections instead of tables. Collections in MongoDB are
+groups of documents, similar to tables in RDBMS. Documents are akin to rows,
+consisting of fields, which are name-value pairs like columns. Indexes in
+MongoDB are automatic, and the `_id` field always serves as the primary key.
+While RDBMS uses foreign keys for relationships, MongoDB uses references or
+embedded documents, which are nested name-value pairs, to represent
+relationships. This comparison highlights the differences in data organization
+and management between the two systems.
+
+# ##############################################################################
+# Relational vs Document DB: Workflows
+# ##############################################################################
+
+This slide compares relational databases like PostgreSQL with document databases
+like MongoDB. Relational databases are great when you know exactly what data you
+need to store, as they use a structured, tabular format. They offer flexibility
+in querying, such as using joins, but require careful planning at the time of
+data insertion to decide on the schema. On the other hand, document databases
+like MongoDB do not assume a specific data structure, making them ideal for
+storing irregular data like JSON. They allow data access by key, which can be
+complex when retrieving and processing data on the client side.
+
+Transition: Now, let's explore why MongoDB might be a good choice for certain
+applications.
+
+# ##############################################################################
+# Why Use MongoDB?
+# ##############################################################################
+
+MongoDB is highlighted for its simplicity and powerful querying capabilities. It
+is significantly faster than PostgreSQL, making it a good choice for
+applications that require speed. Its data model is well-suited for web
+applications that handle semi-structured data and need to adapt quickly to
+changes. However, MongoDB is not ideal for systems that require complex
+transactions, such as banking systems, due to its limitations in handling such
+operations.
+
+Transition: Let's delve deeper into MongoDB's data model to understand its
+structure.
+
+# ##############################################################################
+# MongoDB: Data Model
+# ##############################################################################
+
+MongoDB uses a flexible data model where documents are composed of field-value
+pairs. Field names are strings, and values can be any BSON type, including
+arrays, native data types, or even other documents. This flexibility allows for
+a wide range of data structures within a single database. Examples include using
+ObjectId for unique identifiers, documents for names with first and last fields,
+date types for birth and death, arrays for contributions, and NumberLong for
+views. This model supports diverse data types and structures, making MongoDB
+versatile for various applications.
+
+# ##############################################################################
+# MongoDB: Data Model
+# ##############################################################################
+
+In MongoDB, data can be organized in a flexible way. Documents can be nested,
+meaning you can have sub-documents within a main document. This is useful for
+organizing related data together. There are two main types of data models:
+denormalized and normalized. Denormalized models store related information in
+the same record, which helps avoid complex join operations. On the other hand,
+normalized models eliminate data duplication and are good for representing
+many-to-many relationships. This flexibility allows MongoDB to handle complex
+data structures efficiently.
+
+Transition: Let's explore how MongoDB's schema-free nature enhances its
+flexibility.
+
+# ##############################################################################
+# Schema Free
+# ##############################################################################
+
+MongoDB is schema-free, which means you don't need to define a data structure
+before storing data. Each document in a collection can have different fields and
+values, unlike traditional databases where you might need to use NULL values for
+missing data. This allows for storing heterogeneous data instances, meaning each
+document can be unique. This flexibility is particularly useful when dealing
+with diverse data types or when the data structure is expected to evolve over
+time.
+
+Transition: Now, let's look at how data is formatted in MongoDB using JSON.
+
+# ##############################################################################
+# JSON Format
+# ##############################################################################
+
+MongoDB uses JSON format to store data, which is a simple way to represent data
+as field/value pairs. Each field name is a string followed by a colon and a
+typed value. For example, "name": "R2-D2" is a field/value pair. Multiple pairs
+are separated by commas, and documents are enclosed in curly braces. Arrays,
+which are lists of documents, are enclosed in brackets. This format is easy to
+read and write, making it a popular choice for data interchange. JSON's
+simplicity and readability make it a great fit for MongoDB's flexible data
+model.
+
+# ##############################################################################
+# BSON Format
+# ##############################################################################
+
+BSON is a binary format used to encode JSON-like documents. It is similar to
+Protocol Buffers but does not require a predefined schema, making it more
+flexible. BSON is designed for efficient random access, as it prefixes each
+element with a length field. This allows quick access to specific parts of a
+document. MongoDB uses BSON to store data, and it can handle even complex,
+nested BSON objects. This capability allows MongoDB to build indexes and perform
+queries efficiently on BSON keys.
+
+Transition: Now, let's explore how MongoDB uniquely identifies each document.
+
+# ##############################################################################
+# ObjectID
+# ##############################################################################
+
+In MongoDB, each document has a unique identifier called an ObjectId, stored in
+the `_id` field. This is similar to how PostgreSQL uses a SERIAL constraint for
+primary keys. An ObjectId is 12 bytes long and includes a timestamp, client
+machine ID, client process ID, and a 3-byte counter. This structure ensures that
+each MongoDB process can generate unique IDs without conflicts, which is crucial
+for distributed systems. The image on the right illustrates the components of an
+ObjectId. For more details, you can refer to the MongoDB documentation.
+
+Transition: Next, we will discuss how indexes enhance query performance in
+MongoDB.
+
+# ##############################################################################
+# Indexes
+# ##############################################################################
+
+Indexes in MongoDB are crucial for improving query performance. A primary index
+is automatically created on the `_id` field using a B+ tree structure. Secondary
+indexes can be added to enhance performance further and enforce unique values
+for specific fields. MongoDB supports single-field and compound indexes, similar
+to SQL, where the order of fields in a compound index is important. The sparse
+property of an index means it only includes entries for documents with the
+indexed field, ignoring those without it. If an index is both unique and sparse,
+it will reject records with duplicate keys. More information is available in the
+MongoDB documentation.

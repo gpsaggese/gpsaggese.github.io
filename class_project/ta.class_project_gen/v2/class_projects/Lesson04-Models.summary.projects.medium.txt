@@ -1,0 +1,15 @@
+# Class Projects
+- **Title:** Weather-Based Outdoor Activity Prediction Using Naive Bayes and Decision Trees
+- **Difficulty:** Medium
+- **Tech description:** Students will build a classification model to predict whether children can play outside based on weather-related features. They will implement both Naive Bayes and Decision Tree models for this task.
+- **Project idea:** Develop a web application that inputs weather conditions (like outlook, temperature, humidity, and windiness) and outputs a recommendation of whether children should play outside or not. The project will culminate in visualizing decision boundaries of the models used.
+- **Data set to use:** The UCI Machine Learning Repository - Weather Dataset (https://archive.ics.uci.edu/ml/datasets/weather)
+- **Python libs:** pandas, scikit-learn, matplotlib, Flask (for web app)
+- **Links to relevant tools:** 
+  - [Flask Documentation](https://flask.palletsprojects.com/)
+  - [UCI Weather Dataset](https://archive.ics.uci.edu/ml/datasets/weather)
+  - [Scikit-learn Documentation](https://scikit-learn.org/stable/documentation.html)
+- **Links to related resources:**
+  - [Naive Bayes Classifier - Scikit-learn](https://scikit-learn.org/stable/modules/naive_bayes.html)
+  - [Decision Trees - Scikit-learn](https://scikit-learn.org/stable/modules/tree.html)
+  - [Data Visualization with Matplotlib](https://matplotlib.org/stable/contents.html)
