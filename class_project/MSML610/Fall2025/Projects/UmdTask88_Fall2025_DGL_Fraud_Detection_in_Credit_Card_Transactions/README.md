@@ -93,6 +93,3 @@ Both files are joined on TransactionID to form a unified dataset stored as data/
    * Containerize the project using Docker.
    * Integrate with ClearML or W&B for experiment tracking and reproducibility.
 
----
-
-Would you like me to make this slightly shorter (for a clean summary near the top of README) or keep this detailed version as-is for the full report section?
