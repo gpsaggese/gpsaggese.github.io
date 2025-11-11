@@ -1,4 +1,4 @@
-# Fraud Detection in Credit Card Transactions
+# Fraud Detection in Credit Card Transactions 
 
 ## What Has Been Done So Far
 
@@ -92,4 +92,5 @@ Both files are joined on TransactionID to form a unified dataset stored as data/
 
    * Containerize the project using Docker.
    * Integrate with ClearML or W&B for experiment tracking and reproducibility.
+
 
