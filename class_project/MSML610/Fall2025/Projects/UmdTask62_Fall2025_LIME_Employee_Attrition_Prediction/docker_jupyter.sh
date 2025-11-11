@@ -13,8 +13,8 @@ set -e
 export JUPYTER_HOST_PORT=8888
 export JUPYTER_USE_VIM=0
 export TARGET_DIR=""
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TARGET_DIR="$(realpath "$SCRIPT_DIR/../../../MSML610/Fall2025/Projects")"
+SCRIPT_DIR="/home/dhanush/src/umd_classes/class_project/MSML610/Fall2025/Projects/UmdTask62_Fall2025_LIME_Employee_Attrition_Prediction"
+TARGET_DIR="/home/dhanush/src/umd_classes/class_project/MSML610/Fall2025/Projects/UmdTask62_Fall2025_LIME_Employee_Attrition_Prediction"
 export VERBOSE=0
 
 OLD_CMD_OPTS=$@
