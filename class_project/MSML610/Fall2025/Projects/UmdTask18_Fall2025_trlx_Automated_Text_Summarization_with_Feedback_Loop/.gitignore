@@ -1,6 +1,7 @@
 # === Data folders: keep structure, ignore contents ===
-data/**/*
+data/**
 !data/
+!data/README.md
 !data/raw/
 !data/processed/
 !data/models/
