@@ -46,7 +46,7 @@ The dataset contains monthly time series data from the Bureau of Labor Statistic
 - Wage data: average hourly earnings, wage growth rates
 - Industry classifications and seasonal adjustments
 
-Data files are located in the `Data/` directory with supporting metadata for series definitions, industry codes, and temporal information.
+Data files are downloaded to the `Data/` directory using the provided download script (`Data/download_data.py`). The dataset includes supporting metadata for series definitions, industry codes, and temporal information.
 
 ## Installation and Setup
 
@@ -65,9 +65,14 @@ cd class_project/MSML610/Fall2025/Projects/UmdTask83_Fall2025_causal_learn_Econo
 # Install Python dependencies
 pip install -r requirements.txt
 
+# Download the dataset from Kaggle
+python Data/download_data.py
+
 # Verify data files
 ls Data/  # Should show CSV files and data description
 ```
+
+**Note**: The large dataset file (`all.data.combined.csv`, ~1.14 GB) is not included in the repository. Run the download script to fetch it from Kaggle. You'll need a Kaggle account and API credentials configured (see [Kaggle API setup](https://www.kaggle.com/docs/api)).
 
 ### Docker Setup (Alternative)
 
@@ -84,9 +89,10 @@ docker-compose -f docker/docker-compose.yml up --build
 ```
 .
 ├── Data/                    # US Labor Statistics dataset
-│   ├── all.data.combined.csv
-│   ├── ce.*.csv            # Metadata files (series, industry, periods)
-│   └── data description.txt
+│   ├── download_data.py     # Script to download dataset from Kaggle
+│   ├── all.data.combined.csv  # (downloaded via script, not in repo)
+│   ├── ce.*.csv             # Metadata files (downloaded via script)
+│   └── data description.txt  # (downloaded via script)
 ├── utils/                   # Core functionality
 │   ├── utils_data_io.py     # Data loading and preprocessing
 │   └── utils_post_processing.py  # Causal inference functions
@@ -244,7 +250,7 @@ Key parameters are set in pipeline scripts:
 
 **Import Errors**: Ensure all dependencies are installed via `pip install -r requirements.txt`
 
-**Data Not Found**: Verify `Data/` directory contains required CSV files
+**Data Not Found**: Run `python Data/download_data.py` to download the dataset from Kaggle. Ensure you have Kaggle API credentials configured.
 
 **Docker Problems**: Rebuild container with `docker-compose build --no-cache`
 

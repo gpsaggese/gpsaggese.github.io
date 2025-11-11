@@ -36,7 +36,14 @@ This document presents a complete example of using causal-learn to analyze the c
 
 ### Data Loading
 
-The US Labor Statistics dataset contains multiple CSV files that need to be combined and processed.
+The US Labor Statistics dataset contains multiple CSV files that need to be downloaded and processed.
+
+**First, download the dataset:**
+```bash
+python Data/download_data.py
+```
+
+Then load and process the data:
 
 ```python
 from utils.utils_data_io import load_labor_data, merge_labor_datasets

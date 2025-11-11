@@ -199,11 +199,13 @@ visualize_causal_graph(
 
 ### Example 1: Basic Causal Discovery
 
+**Note**: First download the dataset by running `python Data/download_data.py`
+
 ```python
 import pandas as pd
 from causallearn.search.ConstraintBased.PC import pc
 
-# Load data
+# Load data (after downloading via download_data.py)
 data = pd.read_csv('Data/all.data.combined.csv')
 
 # Run PC algorithm

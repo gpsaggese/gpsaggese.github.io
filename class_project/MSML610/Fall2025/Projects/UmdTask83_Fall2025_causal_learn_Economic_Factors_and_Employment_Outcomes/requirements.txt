@@ -21,6 +21,9 @@ jupyterlab>=4.0.0
 ipykernel>=6.25.0
 notebook>=7.0.0
 
+# Data download
+kagglehub>=0.2.0
+
 # Utilities
 logging
 typing-extensions>=4.7.0
