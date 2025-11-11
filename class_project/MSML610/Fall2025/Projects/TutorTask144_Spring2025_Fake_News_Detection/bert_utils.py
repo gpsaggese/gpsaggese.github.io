@@ -25,6 +25,7 @@ from transformers import (
     get_linear_schedule_with_warmup
 )
 from sklearn.model_selection import train_test_split
+from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
     roc_auc_score, confusion_matrix, classification_report
@@ -60,6 +61,8 @@ class TrainingConfig:
     max_grad_norm: float = 1.0
     patience: int = 1
     device: str = 'cpu'
+    use_class_weights: bool = False
+    max_text_length: int = 256
 
 
 @dataclass
@@ -137,6 +140,7 @@ class BertModelWrapper:
         self.model = None
         self.tokenizer = None
         self.training_history = None
+        self.class_weights = None
 
         self._load_model()
 
@@ -169,6 +173,20 @@ class BertModelWrapper:
         Returns:
             Training history dictionary
         """
+        # Compute class weights if enabled
+        if self.config.use_class_weights:
+            class_weights = compute_class_weight(
+                'balanced',
+                classes=np.unique(y_train),
+                y=y_train
+            )
+            self.class_weights = torch.tensor(
+                class_weights, dtype=torch.float
+            ).to(self.device)
+            logger.info(f"Class weights: {class_weights}")
+        else:
+            self.class_weights = None
+
         # Create datasets and dataloaders
         train_dataset = BertTextDataset(
             X_train, y_train, self.tokenizer, self.config.max_text_length
@@ -228,6 +246,13 @@ class BertModelWrapper:
                     labels=labels
                 )
                 loss = outputs.loss
+
+                # Apply class weights if enabled
+                if self.class_weights is not None:
+                    from torch.nn import CrossEntropyLoss
+                    criterion = CrossEntropyLoss(weight=self.class_weights)
+                    loss = criterion(outputs.logits, labels)
+
                 train_loss += loss.item()
 
                 loss.backward()
@@ -361,6 +386,48 @@ class BertModelWrapper:
             per_class_metrics=per_class,
             confusion_matrix=cm_dict
         )
+
+    def predict_with_threshold(
+        self,
+        texts: List[str],
+        threshold: float = 0.5
+    ) -> Tuple[List[int], List[float]]:
+        """
+        Make predictions with custom threshold.
+
+        Args:
+            texts: List of texts to predict
+            threshold: Decision threshold (0.5 = default, higher = more "fake" predictions)
+
+        Returns:
+            Tuple of (predictions, probabilities)
+        """
+        dataset = BertTextDataset(
+            texts, [0] * len(texts), self.tokenizer, self.config.max_text_length
+        )
+        loader = DataLoader(dataset, batch_size=self.config.batch_size)
+
+        all_preds = []
+        all_probs = []
+
+        self.model.eval()
+        with torch.no_grad():
+            for batch in loader:
+                input_ids = batch['input_ids'].to(self.device)
+                attention_mask = batch['attention_mask'].to(self.device)
+
+                outputs = self.model(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask
+                )
+                logits = outputs.logits
+                probs = torch.softmax(logits, dim=1)[:, 1].cpu().numpy()
+                preds = (probs > threshold).astype(int)
+
+                all_preds.extend(preds)
+                all_probs.extend(probs)
+
+        return all_preds, all_probs
 
     def save_model(self, path: str):
         """Save model to disk."""
