@@ -1,0 +1,6 @@
+Task,Best Model,F1 Score,Precision,Recall,Accuracy,Training Time (s),R² Score,MAE,RMSE
+Anomaly Detection,1_RandomForest,0.9998,0.9998,0.9998,0.9998,0.31,,,
+Maintenance Prediction,1_RandomForest,0.9821,0.9827,0.9824,0.9824,0.72,,,
+Downtime Risk,1_RandomForest,0.9998,0.9998,0.9998,0.9998,0.34,,,
+Failure Type,10_GaussianNB,0.9300,0.9383,0.9232,0.9232,0.00,,,
+Remaining Life,1_RandomForestRegressor,,,,,6.98,0.1806,111.47,134.73
