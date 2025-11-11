@@ -387,14 +387,6 @@ _Pipelining of instructions in microprocessor_
   - Distributed consensus, e.g.,
     - Paxos
     - Blockchain
-
-- **Concurrency issues**
-  - _Problem_: Multiple processes writing and reading simultaneously
-  - Locks / deadlock management
-
-- **Autonomy issues**
-  - _Problem_: Units/departments protective of their systems
-  - E.g., administering systems, patching, updating
 ::::
 ::::{.column width=30%}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_16_image_1.png)
@@ -402,6 +394,15 @@ _Pipelining of instructions in microprocessor_
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_16_image_2.png)
 ::::
 :::
+
+* Consistency Issues in Distributed DB Systems
+- **Concurrency issues**
+  - _Problem_: Multiple processes writing and reading simultaneously
+  - Locks / deadlock management
+
+- **Autonomy issues**
+  - _Problem_: Units/departments protective of their systems
+  - E.g., administering systems, patching, updating
 
 //* BACKUP
 //
