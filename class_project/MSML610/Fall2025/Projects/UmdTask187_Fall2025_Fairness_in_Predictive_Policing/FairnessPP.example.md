@@ -5,7 +5,6 @@
 The project follows a standard machine learning workflow, with a critical intervention layer:
 
 
-
 ## 2. Core Technical Decisions
 
 ### A. Model Selection: Gradient Boosting Trees (GBT)
