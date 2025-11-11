@@ -1,7 +1,7 @@
 // Controlling size:
 //
-// ![](lectures_source/figures/Chap7_Binomial_distribution.png){ height=50% }
-// Bad ![Smile Emoji](emoji/angry_devil.png){ width=12px }
+// ![](lectures_source/figures/Chap7_Binomial_distribution.png){height=50%}
+// Bad ![Smile Emoji](emoji/angry_devil.png){width=12px}
 // \includegraphics[width=0.6\textwidth]{lectures_source/figures/Chap7_Binomial_distribution.png}
 // ```latex[width=50%]
 // ![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_1.png){ width=1cm }
