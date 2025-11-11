@@ -25,10 +25,6 @@ You can download the dataset from Kaggle. To access it:
 #### 2.3 Where to Place the File (Host & Container Paths):
 On your local machine (host), place the **WA_Fn-UseC_-HR-Employee-Attrition.csv** file under the `data/` directory.
 
-class_project/MSML610/Fall2025/Projects/UmdTask62_Fall2025_LIME_Employee_Attrition_Prediction/
-└── data/
-    └── WA_Fn-UseC_-HR-Employee-Attrition.csv
-
 
 ### 3. Install dependencies:
 
