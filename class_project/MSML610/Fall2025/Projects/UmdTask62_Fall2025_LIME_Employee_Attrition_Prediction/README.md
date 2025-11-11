@@ -27,7 +27,8 @@ On your local machine (host), place the **WA_Fn-UseC_-HR-Employee-Attrition.csv*
 
 class_project/MSML610/Fall2025/Projects/UmdTask62_Fall2025_LIME_Employee_Attrition_Prediction/
 └── data/
-└── WA_Fn-UseC_-HR-Employee-Attrition.csv# GitHub & Docker Tutorial DATA605 style
+    └── WA_Fn-UseC_-HR-Employee-Attrition.csv
+
 
 ### 3. Install dependencies:
 
