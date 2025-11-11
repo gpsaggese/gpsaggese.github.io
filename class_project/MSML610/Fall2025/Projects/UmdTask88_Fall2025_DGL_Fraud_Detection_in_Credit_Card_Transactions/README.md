@@ -1,71 +1,98 @@
-###Fraud Detection in Credit Card Transactions
-##Graph-Based Fraud Detection Pipeline
+# Fraud Detection in Credit Card Transactions
 
-#Overview
+## What Has Been Done So Far
 
-This project builds a heterogeneous bipartite graph of
-transactions ↔ account proxies ("users") from the
-IEEE-CIS Fraud Detection
- dataset.
-The goal is to detect fraudulent transactions by leveraging both tabular features and relational structure between entities.
+**Phase 1 (Completed)**
 
-Component	Description
-Data Pipeline	Joined train_transaction + train_identity into a cleaned parquet (merged.parquet).
-Feature Engineering	Added transaction-level and account-level aggregated features (time of day, log-amount, rolling stats).
-Graph Construction	Built a HeteroData object with transaction ↔ account nodes and reverse edges (data/artifacts/hetero_graph.pt).
-Tabular Baseline	Logistic Regression (balanced) trained on Phase 1 features; metrics logged in data/artifacts/baseline_metrics.json.
-Automation & Testing	Makefile targets for data→features→graph→baseline, plus Pytest smoke tests for graph counts & split integrity.
-📊 Current Results
-Metric	Validation (3 days hold-out)
-Precision	~ 0.6 – 0.8 (expected range after leakage fix)
-Recall	~ 0.6 – 0.8
-PR-AUC	0.70 ± 0.05
-(actual numbers in data/artifacts/baseline_metrics.json)	
+1. **Environment Setup**
 
-#Next Steps
+   * Created project folder with modular structure (`configs/`, `src/`, `data/`, `tests/`, `Makefile`).
+   * Installed and configured dependencies including `pandas`, `torch`, and `torch-geometric`.
+   * Resolved compatibility issues between `numpy`, `torch`, and PyG on macOS.
+     
 
-Leakage-free account features
+2. **Dataset Used**
 
-Re-compute account aggregates using train-only data before merging to validation.
+This project uses the IEEE-CIS Fraud Detection dataset from Kaggle
+.
+It combines transactional and identity-level information to simulate real-world credit card fraud detection scenarios.
 
-Graph Neural Network (GNN) Modeling
+Key Files Used
 
-Implement GraphSAGE / GAT for transaction-node classification.
+train_transaction.csv: contains transaction details such as TransactionID, TransactionDT, TransactionAmt, card1–card6, addr1–addr2, and the fraud label isFraud.
 
-Compare GNN vs. tabular baselines on precision, recall, PR-AUC.
+train_identity.csv: provides identity features linked to transactions by TransactionID, such as DeviceInfo, DeviceType, and email domains.
 
-Temporal Encoding (Optional Booster)
+Both files are joined on TransactionID to form a unified dataset stored as data/processed/merged.parquet.
+3. **Data Integration**
 
-Add time-aware node/edge embeddings to capture behavior drift.
+   * Joined `train_transaction.csv` and `train_identity.csv` into a unified dataset (`merged.parquet`).
+   * Implemented `src/data/load_data.py` to clean and optimize data types for memory efficiency.
 
-Benchmark & Error Analysis
+4. **Feature Engineering**
 
-Study false positives/negatives; derive business insights like Precision@K.
+   * Built a feature pipeline (`src/features/`) that generates:
 
-MLOps Packaging
+     * Transaction-level features (log-transformed amount, hour-of-day, day-of-week).
+     * Account-level aggregated statistics (mean, std, count of transactions).
+   * Saved engineered features to `data/processed/features.parquet`.
 
-Dockerize pipeline, integrate ClearML or W&B for reproducible experiments.
+5. **Graph Construction**
 
-#Project Structure
-configs/         – YAML configs for paths & settings  
-data/raw/        – Original Kaggle CSVs  
-data/processed/  – Cleaned & feature-ready parquet files  
-data/artifacts/  – Graph + metrics artifacts  
-src/             – Modular Python package (data, features, graph, models, tests)  
-notebooks/       – Prototyping / exploratory notebooks  
-Makefile         – One-command pipeline orchestration  
+   * Implemented a bipartite heterogeneous graph (`src/graph/construct_hetero_graph.py`) linking **transaction ↔ account** nodes.
+   * Saved the graph as a PyTorch Geometric `HeteroData` object (`data/artifacts/hetero_graph.pt`).
 
-#Tech Stack
+6. **Baseline Model**
 
-Python 3.11 | Pandas | PyTorch | PyTorch Geometric | Scikit-learn | Make | PyYAML
+   * Implemented `src/models/tabular_baselines.py` using Logistic Regression (balanced).
+   * Trained and evaluated with proper data split, producing precision/recall/F1/PR-AUC.
+   * Stored results in `data/artifacts/baseline_metrics.json`.
 
-#Inspiration / Use Case
+7. **Automation and Testing**
 
-Financial institutions like Capital One and Chase monitor high-volume transaction streams.
-Graph-based modeling captures behavioral relationships (e.g., shared device, IP, or card proxy) that traditional tabular models miss—making it ideal for real-time fraud detection and risk scoring.
+   * Created a reproducible `Makefile` for the full pipeline:
 
-#Timeline Snapshot
-Phase	Focus	Target
-1	Data pipeline + baseline + graph build	✅ Completed
-2	GNN modeling + evaluation	
-3	Deployment / MLOps integration
+     ```
+     make data → make features → make graph → make train_tabular
+     ```
+   * Added unit tests (`tests/`) to verify graph construction and data split integrity.
+   * Confirmed the full pipeline runs successfully end-to-end.
+
+8. **Version Control**
+
+   * Cleaned nested `.git` repo and committed all code under the main repository branch:
+     `UmdTask88_Fall2025_DGL_Fraud_Detection_in_Credit_Card_Transactions`.
+
+---
+
+## What’s Next (Planned Work)
+
+**Phase 2 and Beyond**
+
+1. **Leakage-Free Features**
+
+   * Recompute account-level aggregates using train-only data to avoid data leakage.
+
+2. **Graph Neural Network Modeling**
+
+   * Implement and train a GNN (GraphSAGE or GAT) to classify transaction nodes as fraudulent or not.
+   * Compare performance against the logistic regression baseline.
+
+3. **Temporal and Structural Enhancements**
+
+   * Incorporate temporal encoding or edge features to capture evolving transaction patterns.
+   * Experiment with edge classification as an alternative fraud detection approach.
+
+4. **Performance Benchmarking and Error Analysis**
+
+   * Perform detailed precision–recall and confusion matrix analysis.
+   * Investigate misclassified transactions to understand fraud behavior.
+
+5. **MLOps Integration**
+
+   * Containerize the project using Docker.
+   * Integrate with ClearML or W&B for experiment tracking and reproducibility.
+
+---
+
+Would you like me to make this slightly shorter (for a clean summary near the top of README) or keep this detailed version as-is for the full report section?
