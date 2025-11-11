@@ -1,0 +1,372 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+// 
+// https://docs.google.com/presentation/d/1vPnS1ExXBWG7fDwiBFiKWXvSNaocFCRhuPiUtL6KlOM/edit?slide=id.g14f60704d11_0_6#slide=id.g14f60704d11_0_6
+
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{6.1: MongoDB}}$$**
+\endgroup
+
+\vspace{1cm}
+
+::: columns
+:::: {.column width=75%}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+- **References**:
+  - All concepts in slides
+  - MongoDB tutorial
+  - Web
+    - https://www.mongodb.com/
+    - Official docs
+  - Seven Databases in Seven Weeks, 2e
+::::
+:::: {.column width=20%} 
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png){width=2cm}
+::::
+:::
+
+* Key-Value Store vs Document DBs
+::: columns
+:::: {.column width=60%}
+- **Key-value stores**
+  - Function as a map or dictionary
+    - Examples: HBase, Redis
+  - Primarily retrieve values using keys
+  - Occasionally search within value fields using patterns
+  - Store uninterpreted values (e.g., binary blobs) linked to keys
+  - Use a single namespace for all key-value pairs
+
+- **Document DBs**
+  - Group key-value pairs into _documents_
+    - Examples: MongoDB, CouchDB
+  - Documents formatted in JSON, XML, or BSON (binary JSON)
+  - Documents are part of _collections_
+    - Comparable to _tables_ in relational databases
+  - Large collections can be partitioned and indexed
+::::
+:::: {.column width=35%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_3_image_1.png){width=80%}
+
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_3_image_2.png){width=80%}
+::::
+:::
+
+* MongoDB
+:::columns
+:::: {.column width=70%}
+- **Developed by MongoDB Inc**
+  - Founded in 2007
+  - Based on DoubleClick's experience with large-scale data
+  - Mongo comes from "hu-mongo-us"
+::::
+:::: {.column width=25%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_6_image_1.png)
+::::
+:::
+
+- **Highly popular NoSQL database**
+- **Document-oriented NoSQL DB**
+  - Schema-less
+    - No Data Definition Language (DDL) like SQL
+    - Stores maps with any keys and values
+    - Application manages schema, linking documents to meanings
+  - Keys are string-stored hashes
+    - Each document has a unique `_id` (reserved by MongoDB)
+  - Values in BSON format
+    - Based on JSON (B for Binary)
+
+- **High-performance**
+  - Developed in C++
+  - Supports APIs (drivers) in various languages
+    - Examples: JavaScript, Python, Ruby, Java, Scala, C++, etc
+
+* MongoDB: Example of Document
+- **A document is a JSON data structure**
+
+- It corresponds to **a row in a relational DB**
+  - Without schema
+  - Primary key is `_id`
+  - Values can be nested to an arbitrary depth
+
+\centering
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_7_image_1.png){width=80%}
+
+* MongoDB: Functionalities
+- **Design goals**
+  - Performance
+  - Availability/scalability
+  - Rich data storage (not rich querying!)
+
+- **Dynamic schema**
+  - No DDL
+  - Secondary indexes
+  - Query language via API
+
+- **Several levels of data consistency**
+  - Atomic writes and fully-consistent reads (document level)
+
+- **No joins nor transactions across multiple documents**
+  - Distributed queries easy and fast
+
+- **High availability through replica sets**
+  - Primary replication with automated failover
+
+- **Built-in sharding**
+  - Horizontal scaling via automated range-based partitioning
+  - Reads and writes distributed over shards
+
+* MongoDB: Hierarchical Objects
+:::columns
+::::{.column width=50%}
+- A Mongo **instance** has:
+  - Zero or more "databases"
+  - Mongo instance ~ Postgres instance
+
+- A Mongo **database** has:
+  - Zero or more "collections"
+    - Mongo collection ~ Postgres tables
+  - Mongo database ~ Postgres database
+
+- A Mongo **collection** has:
+  - Zero or more "documents"
+    - Mongo document ~ Postgres rows
+
+- A Mongo **document** has:
+  - One or more "fields"
+    - Always has a primary key `_id`
+    - Mongo field ~ Postgres columns
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_9_image_1.png)
+::::
+:::
+
+* Relational DBs vs MongoDB: Concepts
+
+\scriptsize
+| **RDBMS Concept** | **MongoDB Concept** | **Meaning in MongoDB** |
+|---------|---------|---------|
+| database | database | Container for collections |
+| relation / table / view | collection | Group of documents |
+| row / instance | document | Group of fields |
+| column / attribute | field | A name-value pair |
+| index | index | Automatic |
+| primary keys | `_id` field | Always the primary key |
+| foreign key | reference | Pointers |
+| table joins | embedded documents | Nested name-value pairs |
+
+\begingroup \centering
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_10_image_1.png){width=70%}
+\endgroup
+
+* Relational vs Document DB: Workflows
+- **Relational DBs**
+  - E.g., PostgreSQL
+  - Know what to store
+    - Tabular data
+  - Static schema allows query flexibility (e.g., joins)
+  - Complexity at insertion time
+    - Decide data representation (schema)
+
+- **Document DBs**
+  - E.g., MongoDB
+  - No assumptions on storage
+    - E.g., irregular JSON data
+  - Access data by key
+    - Nested key-value map
+  - Complexity at access time
+    - Retrieve data from server
+    - Process data client-side
+
+* Why Use MongoDB?
+::: columns
+:::: {.column width=45%}
+- **Simple and powerful to query**
+
+- **Fast**
+  - 2-10x faster than PostgreSQL
+
+- **Data model suitable for most web applications**
+  - Semi-structured data
+  - Quickly evolving systems
+
+- Not suited for heavy, complex transaction systems
+  - E.g., banking systems
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_12_image_1.png)
+::::
+:::
+
+* MongoDB: Data Model
+:::columns
+::::{.column width=45%}
+
+- **Documents** are field-value pairs
+  - _Field names_: strings
+  - _Values_: any BSON type
+    - Arrays of documents
+    - Native data types
+    - Other documents
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_13_image_1.png)
+::::
+:::
+
+\vspace{0.5cm}
+
+:::columns
+::::{.column width=45%}
+- **Examples**:
+  - `_id`: `ObjectId`
+  - `name`: document with fields `first` and `last`
+  - `birth` and `death`: date type
+  - `contribs`: array of strings
+  - `views`: `NumberLong` type
+
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_13_image_2.png)
+::::
+:::
+
+* MongoDB: Data Model
+- **Documents can be nested**
+  - Embedded sub-document
+
+:::columns
+::::{.column width=45%}
+- **Denormalized data models**
+  - Store related information in the same record
+  - Avoids the need for a join operation
+
+- **Normalized data models**
+  - Eliminate duplication
+  - Represent many-to-many relationships
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_14_image_1.png)
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_14_image_2.png)
+::::
+:::
+
+* Schema Free
+- MongoDB does not need pre-defined data schema
+
+- Every **document** in a **collection** can have different fields and values
+  - No need for `NULL` values / union of fields like in relational DBs
+
+- E.g., heterogeneous data instances
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_15_image_1.png){width=80%}
+
+* JSON Format
+- **JSON = JavaScript Object Notation**
+  - Data is stored in field/value pairs
+  - A field/value pair consists of:
+    - A field name (always a string)
+    - Followed by a colon `:`
+    - Followed by a typed value
+    ```python
+    "name": "R2-D2"
+    ```
+  - Just references
+
+- Data in documents is separated by commas `,`
+
+  \begingroup \small
+  ```python
+  "name": "R2-D2", "race": "Droid"
+  ```
+  \endgroup
+
+- Curly braces `{}` hold documents
+
+  \begingroup \small
+  ```json
+  { "name": "R2-D2", "race": "Droid", "affiliation": "rebels" }
+  ```
+  \endgroup
+
+- An array is stored in brackets `[]`
+
+  \begingroup \small
+  ```json
+  [
+    { "name": "R2-D2", "race": "Droid", "affiliation": "rebels" },
+    { "name": "Yoda", "affiliation": "rebels" }
+  ]
+  ```
+  \endgroup
+
+* BSON Format 
+- **Binary-encoded serialization of JSON-like documents**
+  - https://bsonspec.org
+  - Similar to Protocol Buffers, but more schema-less
+
+- **Optimized for random access**
+  - Prefixes elements in a BSON document with a length field
+
+- **MongoDB understands BSON objects, even nested ones**
+  - Builds indexes and matches objects against query expressions for BSON keys
+
+* ObjectID
+:::columns
+::::{.column width=50%}
+- Each JSON document contains an `_id` field of type `ObjectId`
+  - Similar to the SERIAL constraint incrementing a numeric primary key in
+    PostgreSQL
+
+- An `ObjectId` is 12 bytes, composed of:
+  - Timestamp
+  - Client machine ID
+  - Client process ID
+  - 3-byte auto-incremented counter
+
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_18_image_1.png)
+::::
+:::
+
+- Each MongoDB process handles its own ID generation without collisions
+  - Due to MongoDB's distributed nature
+
+- Details
+  [here](https://www.mongodb.com/docs/manual/reference/bson-types/#objectid)
+
+* Indexes
+- **Primary index**
+  - Automatically created on the `_id` field
+  - B+ tree indexes
+
+- **Secondary index**
+  - Improve query performance
+  - Can enforce unique values for a field
+
+- Single field index and compound index (like SQL)
+  - Order of fields in a compound index matters
+
+- Sparse property of an index
+  - Index contains entries only for documents with the indexed field
+  - Ignores records without the field
+
+- Rejects records with duplicate keys if the index is unique and sparse
+
+- Details [here](https://www.mongodb.com/docs/manual/indexes/)

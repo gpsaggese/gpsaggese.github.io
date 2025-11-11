@@ -1,0 +1,229 @@
+# ##############################################################################
+# Storage Characteristics
+# ##############################################################################
+
+Understanding storage characteristics is crucial for optimizing data access.
+Storage media have trade-offs in speed, cost, and reliability. For example,
+faster access speeds can be more expensive. Volatile storage loses data when
+power is off, while non-volatile storage retains it. Data can be accessed
+sequentially, reading it in order, or randomly, accessing any part at any time.
+Knowing how data is stored helps in optimizing access, which is essential for
+efficient data management.
+
+Transition: Now, let's explore the hierarchy of storage based on speed and cost.
+
+# ##############################################################################
+# Storage Hierarchy (by Speed and Cost)
+# ##############################################################################
+
+Storage hierarchy is organized by speed and cost. Cache is the fastest and most
+expensive, located on the chip, and is crucial for database developers. Main
+memory is larger but volatile and can't store entire databases. Flash memory and
+SSDs are non-volatile and offer random access, being cheaper than RAM but
+costlier than magnetic disks. Magnetic disks are used for long-term storage,
+while optical disks are mainly read-only. Magnetic tapes are for backups and
+archival, accessed sequentially. Understanding this hierarchy helps in making
+informed decisions about data storage.
+
+Transition: Let's discuss the importance of memory hierarchy in today's
+technological landscape.
+
+# ##############################################################################
+# How Important Is Memory Hierarchy?
+# ##############################################################################
+
+Memory hierarchy has evolved significantly over the past decade. Innovations
+like fast networks, SSDs, and large memories have changed the landscape. It's
+now faster to access another computer's memory over a network than your own
+disk. Cache is crucial, and in-memory databases are becoming common as data
+often fits in machine clusters. While disks still store most data, their
+importance is decreasing. Algorithms must adapt to available technology,
+emphasizing the need to understand these trade-offs for efficient data
+management.
+
+# ##############################################################################
+# Connecting Disks to a Server
+# ##############################################################################
+
+This slide explains how disks, both magnetic and SSDs, connect to computers. The
+connections can be made through high-speed bus interconnections or high-speed
+networks. High-speed interconnections include technologies like SATA, SAS, and
+NVMe, which are used for direct connections to the computer. High-speed
+networks, such as SAN and NAS, allow disks to connect over a network. SAN uses
+protocols like iSCSI and Fibre Channel, while NAS provides a file-system
+interface and can include cloud storage, which is accessed via APIs and
+typically has higher latency.
+
+Let's now explore the evolution of magnetic disks over the years.
+
+# ##############################################################################
+# Magnetic Disks (1956)
+# ##############################################################################
+
+This slide highlights the early days of magnetic disks, starting with IBM's
+RAMAC in 1956. The RAMAC had large 24-inch platters and could store 5 million
+characters, which was a significant achievement at the time. This image shows
+the size and design of early magnetic disks, which were much larger and less
+efficient than today's storage solutions. The RAMAC represents the beginning of
+the journey toward more compact and higher-capacity storage devices.
+
+Now, let's see how magnetic disks evolved in the following decades.
+
+# ##############################################################################
+# Magnetic Disks (1979, 1998, 2006)
+# ##############################################################################
+
+This slide shows the progression of magnetic disk technology over the years. In
+1979, Seagate introduced a 5MB disk, marking a step forward in storage capacity.
+By 1998, Seagate had developed a 47GB disk, showing significant growth in
+storage capabilities. Finally, in 2006, Western Digital released a 500GB disk,
+demonstrating the rapid advancements in storage technology. These milestones
+illustrate how magnetic disks have evolved to offer more storage in smaller,
+more efficient packages, reflecting the ongoing demand for greater data storage
+solutions.
+
+# ##############################################################################
+# Magnetic Disks: Components
+# ##############################################################################
+
+Magnetic disks are made up of several key components. Platters are rigid metal
+disks coated with magnetic material, spinning at speeds of 5400 or 7200
+revolutions per minute. These platters are organized into tracks and sectors,
+which are the smallest units that can be read or written. Read-write heads are
+responsible for reading and writing data magnetically, hovering just a few
+microns above the platter surface. The arm moves these heads across the disks.
+The disk controller manages commands to read or write sectors, operates the arm
+and heads, and handles remapping of bad sectors to ensure data integrity.
+
+Transition: Now, let's look at the current specifications of magnetic disks.
+
+# ##############################################################################
+# Magnetic Disks: Current Specs
+# ##############################################################################
+
+Modern magnetic disks have impressive specifications. They can store 10
+terabytes or more of data. Access time, which is the time it takes to start
+reading data, includes seek time (2-20 milliseconds) and rotational latency time
+(4-12 milliseconds). Data-transfer rates range from 50 to 200 megabytes per
+second, with sectors being the logical storage units. Sequential access allows
+for faster data retrieval, while random access requires more time due to
+seeking. Reliability is measured by mean time to failure, with hard disk drives
+typically lasting around five years.
+
+Transition: Let's explore how data access speed is affected by these factors.
+
+# ##############################################################################
+# Accessing Data Speed
+# ##############################################################################
+
+Accessing data speed on magnetic disks varies between random and serial data
+transfer rates. Random data transfer involves three components: seek time (4-10
+milliseconds), rotational latency (4-11 milliseconds), and transfer time, which
+is minimal. This results in about 10 milliseconds per access for randomly
+accessed blocks, equating to 400 kilobytes per second for 100 block transfers.
+Serial data transfer rates, which do not involve seeking, range from 30-50
+megabytes per second to 200 megabytes per second. It's important to note that
+seeks are inefficient and can slow down data access significantly.
+
+# ##############################################################################
+# Solid State Disk (SSD)
+# ##############################################################################
+
+Solid State Disks (SSDs) became popular in the 2000s, offering better
+performance than traditional Hard Disk Drives (HDDs) but at a higher cost per
+gigabyte. SSDs function similarly to non-volatile RAM, using NAND and NOR
+technologies. They typically have smaller capacities, ranging from 250 to 500
+GB, compared to HDDs which can hold 1 to 10 TB. SSDs excel in access time, with
+latency for random access being 1,000 times smaller than HDDs. They can handle
+multiple random requests simultaneously and achieve 10,000 IOPS, compared to
+50/200 for HDDs. Data transfer rates for SSDs are significantly higher, reaching
+up to 1 GB/s, though they are often limited by interface speed. SSDs consume
+less power than HDDs, but writing to them is slower than reading due to the need
+to erase entire pages. Reliability is a concern, as flash pages have a limited
+number of erase cycles, around 1 million times.
+
+Transition: Now, let's explore how RAID technology can enhance storage
+reliability and performance.
+
+# ##############################################################################
+# RAID
+# ##############################################################################
+
+RAID, or Redundant Array of Independent Disks, addresses the challenge of
+growing storage needs and shrinking Mean Time To Failure (MTTF) between disk
+failures. As storage capacity grows exponentially, the demand for more disks
+increases, leading to a higher risk of data loss with a single data copy. Disks
+are relatively inexpensive, but failures can be costly, so using extra disks for
+redundancy is crucial. RAID allows data to survive disk failures by storing it
+redundantly, presenting a logical view of a large, reliable disk from many
+unreliable ones. Different RAID levels offer varying balances of reliability and
+performance.
+
+# ##############################################################################
+# Improve Reliability / Performance with RAID
+# ##############################################################################
+
+RAID improves reliability by using redundancy, such as mirroring, to store data
+multiple times. This redundancy allows data reconstruction if a disk fails,
+increasing the Mean Time To Failure (MTTF). RAID assumes disk failures are
+independent but considers factors like power failures and natural disasters.
+Aging disks also increase failure probability. Performance is enhanced through
+parallel access to multiple disks, which increases read requests, and by
+striping data across multiple disks, which boosts transfer rates. RAID's ability
+to improve both reliability and performance makes it a valuable technology in
+data storage solutions.
+
+# ##############################################################################
+# RAID Levels
+# ##############################################################################
+
+This slide explains different RAID levels, which are methods to manage multiple
+hard drives for better performance or data safety. RAID 0 offers no data
+protection but speeds up data access by using multiple disks. RAID 1 duplicates
+data on two disks, so if one fails, the other has a copy. RAID 2 uses extra bits
+for error correction but is outdated. RAID 3 uses one disk for error checking,
+allowing recovery from a single disk failure. RAID 5 spreads error-checking data
+across all disks, balancing performance and data safety.
+
+Transition: Now, let's discuss how to choose the right RAID level for your
+needs.
+
+# ##############################################################################
+# Choosing a RAID Level
+# ##############################################################################
+
+This slide helps you decide between RAID 1 and RAID 5. RAID 1 is better for
+tasks that need fast writing, like logging, because it writes data to two disks
+quickly. RAID 5 is more cost-effective for storing large amounts of data with
+fewer updates, as it requires fewer disks than RAID 1. The choice depends on
+whether you prioritize write speed or storage efficiency.
+
+Transition: Let's move on to understanding the internal workings of a
+centralized database.
+
+# ##############################################################################
+# (Centralized) DB Internals
+# ##############################################################################
+
+This slide outlines the components of a centralized database system. User
+processes send commands to the database, while server processes handle these
+commands. The process monitor oversees database operations and manages failures.
+The lock manager controls data access and resolves conflicts. The database
+writer saves changes to disk, and the log writer records actions for recovery.
+Checkpoints are periodic saves of the database state. Shared memory stores
+essential data and uses locks to prevent conflicts.
+
+Transition: Next, we'll explore the architecture of database internals in more
+detail.
+
+# ##############################################################################
+# DB Internals
+# ##############################################################################
+
+This slide breaks down the database system architecture into three main parts.
+The Query Processing Engine handles user queries, determining the order of data
+retrieval and processing results. The Buffer Manager moves data between disk and
+memory, optimizing limited memory use. The Storage Management component
+organizes data storage, mapping tables to files and data to disk blocks. This
+structure ensures efficient data processing and storage management in a database
+system.

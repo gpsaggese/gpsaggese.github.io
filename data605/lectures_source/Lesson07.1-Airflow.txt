@@ -1,0 +1,288 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+// 
+// 
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{7.1: Orchestration with Airflow}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=65%}
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+- Concepts in the slides
+- Airflow tutorial
+- Web resources
+- Documentation
+- Tutorial
+- Mastery
+- Data Pipelines with Apache Airflow
+::::
+:::: {.column width=30%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_2_image_1.png)
+::::
+:::
+
+
+* Workflow Managers
+::: columns 
+:::: {.column width=50%}
+- **Data pipelines** move/transform data across stores
+
+- **Orchestration problem** = coordinate jobs across systems
+  - Run tasks on schedule
+  - Run tasks in order (dependencies)
+  - Monitor tasks
+    - Notify devops on failure
+    - Retry on failure
+    - Track runtime
+  - Meet real-time constraints
+  - Scale performance
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_3_image_1.png)
+::::
+:::
+
+* Workflow Managers
+::: columns
+:::: {.column width=50%}
+- **E.g., live weather dashboard**
+  - Fetch weather data from API
+  - Clean/transform data
+  - Push data to dashboard/website
+
+- Problems
+  - Schedule tasks
+  - Manage task dependencies
+  - Monitor functionality and performance
+  - Add machine learning quickly
+  - Complexity increases quickly
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_4_image_1.png)
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_4_image_2.png)
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_4_image_3.png)
+::::
+:::
+
+* Workflow Managers
+::: columns
+:::: {.column width=50%}
+- **Workflow managers address orchestration problem**
+  - E.g., airflow, Luigi, Metaflow, make, cron
+
+- **Represent data pipelines as DAGs**
+  - Nodes are tasks
+  - Direct edges are dependencies
+  - Execute task when all ancestors executed
+  - Execute independent tasks in parallel
+  - Re-run failed tasks incrementally
+
+- **Describe data pipelines**
+  - Static files (e.g., XML, YAML)
+  - Workflows-as-code (e.g., Python in Airflow)
+
+- **Provide scheduling**
+  - Describe what and when to run
+
+- **Provide backfilling and catch-up**
+  - Horizontally scalable (e.g., multiple runners)
+
+- **Provide monitoring web interface**
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_5_image_3.png)
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_5_image_2.png)
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_5_image_1.png)
+
+::::
+:::
+
+* Airflow
+::: columns
+:::: {.column width=50%}
+- Developed at AirBnB in 2015
+  - Open-sourced as part of Apache project
+- **Batch oriented framework** for building data pipelines (not streaming)
+- **Data pipelines**
+  - Represented as DAGs
+  - Described as Python code
+- **Scheduler with rich semantics**
+- Web-interface for monitoring
+- Large ecosystem
+  - Support many DBs
+  - Many actions (e.g., emails, pager notifications)
+- **Hosted and managed solution**
+  - Run Airflow on your laptop (e.g., in tutorial)
+  - Managed solution (e.g., AWS)
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_6_image_1.png)
+::::
+:::
+
+* Airflow: Execution Semantics
+
+- **Scheduling semantic**
+  - Define next scheduling interval
+    - E.g., "every day at midnight", "every 5 minutes on the hour"
+  - Similar to **cron**
+
+- **Retry**
+  - Re-run task after failure to recover from intermittent issues
+
+- **Incremental processing**
+  - Divide time into intervals per schedule
+  - Execute DAG for data in that interval only
+
+- **Catch-up**
+  - Run all missing intervals up to now (e.g., after downtime)
+
+- **Backfilling**
+  - Execute DAG for past schedule intervals
+  - E.g., re-process data after pipeline changes
+
+* Airflow: What Doesn't Do Well
+::: columns
+:::: {.column width=55%}
+- **Not great for streaming pipelines**
+  - Better for recurring batch tasks
+  - Time is discrete, not continuous
+    - E.g., schedule hourly, not process data continuously
+
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_8_image_1.png)
+::::
+:::
+
+- **Prefer static pipelines**
+  - DAGs should remain consistent between runs
+
+- **No data lineage**
+  - No automatic tracking of data transformation
+  - Implement manually
+
+- **No data versioning**
+  - No automatic tracking of data updates
+  - Implement manually
+
+* Airflow: Components
+::: columns
+:::: {.column width=50%} 
+- **Users (DevOps)**
+
+- **Web-server**
+  - Visualize DAGs
+  - Monitor DAG runs and results
+
+- **Metastore**
+  - Keep system state
+  - Track executed DAG nodes
+
+- **Scheduler**
+  - Parse DAGs
+  - Track completed dependencies
+  - Add tasks to execution queue
+  - Schedule tasks
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_9_image_1.png)
+::::
+:::
+
+- **Queue**
+  - Tasks ready for execution
+  - Tasks picked up by Workers
+
+- **Workers**
+  - Pick up tasks from Queue
+  - Execute tasks
+  - Register task outcome in Metastore
+
+* Airflow: Concepts
+- Each DAG run represents a data interval
+  - E.g., a DAG scheduled `@daily`
+  - Data interval starts at midnight, ends at midnight next day
+
+- DAG scheduled after data interval ends
+
+- Logical date
+  - Simulate scheduler running DAG/task for a specific date
+  - Even if physically run now
+
+* Airflow: Tutorial
+- Follow Airflow Tutorial in README
+- From the tutorial for Airflow
+
+* Airflow: Tutorial
+::: columns
+:::: {.column width=40%}
+- Script describes DAG structure as Python code
+  - No computation inside DAG code
+  - Defines DAG structure and metadata (e.g., scheduling)
+::::
+:::: {.column width=55%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_12_image_1.png)
+::::
+:::
+
+- **Scheduler** executes code to build DAG
+
+- `BashOperator` creates task wrapping Bash command
+
+* Airflow: Tutorial
+::: columns
+:::: {.column width=40%}
+- Dict with various default params to pass to the DAG constructor
+  - E.g., different set-ups for dev vs prod
+
+- Instantiate the DAG
+::::
+:::: {.column width=55%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_13_image_1.png)
+
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_13_image_2.png)
+::::
+:::
+
+* Airflow: Tutorial
+::: columns
+:::: {.column width=40%}
+- DAG defines tasks by instantiating `Operator` objects
+  - Default params passed to all tasks
+  - Can be overridden explicitly
+
+- Use a Jinja template
+
+- Add tasks to the DAG with dependencies
+::::
+:::: {.column width=55%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_14_image_1.png)
+
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_14_image_2.png)
+
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_14_image_3.png)
+::::
+:::
