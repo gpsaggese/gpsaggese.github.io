@@ -50,6 +50,3 @@ the appropriate `jaxlib` wheel before rebuilding.
 - Expand exploratory plots (holiday overlays, per-store drill-downs).
 - Package trained parameters and scalers for reuse outside the notebooks.
 
-Please do not merge this branch without TA approval. Branch and folder naming
-follow the `UmdTask77_Retail_Sales_Forecasting_with_LSTMs` convention required by
-the course instructions.
