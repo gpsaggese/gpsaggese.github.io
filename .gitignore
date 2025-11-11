@@ -1,0 +1,3 @@
+class_project/**/data/*.sqlite
+class_project/**/data/*.db
+class_project/**/data/*.csv
