@@ -1,0 +1,15 @@
+# Virtual environments
+venv/
+.venv/
+
+# Python caches and bytecode
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local data (do not commit large CSVs)
+data/
+
