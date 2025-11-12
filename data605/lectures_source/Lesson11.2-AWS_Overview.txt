@@ -34,18 +34,28 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
+
+
 * UMD DATA605 - Big Data Systems
 
 Dr. GP Saggese
 gsaggese@umd.edu
 
+
 * AWS: Resources
+::: columns
+:::: {.column width=40%} 
 - Some basic info in the slides
 - Many tutorials on-line
 - Mastery
   - Amazon Web Services in Action 3rd Edition
 
+
+::::
+:::: {.column width=40%} 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_2_image_1.png)
+::::
+:::
 
 * Amazon Web Services (AWS)
 - **AWS is a platform offering complete cloud solutions**
@@ -59,12 +69,17 @@ gsaggese@umd.edu
     - Run enterprise software
     - Run machine learning applications
 - **Services can be controlled in different ways**
-  - A web interface (aka "console")
+  - A web interface (aka “console”)
   - CLI: **aws** command
   - Programmatically
     - Through language libraries, SDK (e.g., Python **boto3**)
 
+
+
+
 * AWS as Business
+::: columns
+:::: {.column width=40%} 
 - Services charge a pay-per-use pricing model
 - Data centers are distributed globally
   - US, Europe, Asia, South America
@@ -74,11 +89,17 @@ gsaggese@umd.edu
   - Grows 42% year-over-year
   - Controls 30% of cloud business
 
+::::
+:::: {.column width=40%} 
+
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_4_image_1.png)
 
 **Beef Jezos**
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_4_image_2.png)
+::::
+:::
+
 
 * Types of Cloud Computing
 - Cloud computing enables a shared pool of configurable computing resources
@@ -92,7 +113,10 @@ gsaggese@umd.edu
   - *Private*: virtualize and share IT infrastructure within a single organization (e.g., government)
   - *Hybrid*: a mixture of public and private clouds
 
+
 * AWS vs Google Cloud vs Microsoft Azure
+::: columns
+:::: {.column width=60%} 
 - **Similarities:**
   - Worldwide infrastructure
   - Provide IAAS (computing, networking, storage)
@@ -106,14 +130,19 @@ gsaggese@umd.edu
   - Azure provides Microsoft stack in the cloud
   - Google seems more focused on cloud-native applications rather than migrating local applications to the cloud
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_1.png)
-
+::::
+:::: {.column width=30%} 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_2.png)
 
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_1.png)
+
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_3.png)
+::::
+:::
+
 
 * From On-premise to AWS
-- **Aka "Cloud-transformation"**
+- **Aka “Cloud-transformation”**
 - **Move a medium-sized e-commerce site from on-premise to the cloud**
 - **Architecture**
   - **Web-server**: handle requests from customers
@@ -125,23 +154,30 @@ gsaggese@umd.edu
     - E.g., products and prices
     - Delivered by web server
 
+
 * From On-premise to AWS
 - **Step 1: Move to cloud**
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_8_image_1.png)
-```
 
-```markdown
 
 * From On-premise to AWS
+::: columns
+:::: {.column width=40%} 
 - **Step 2: Design for the cloud**
-- DNS
-- Database
-- Object store (S3)
-- Potentially managed solutions
-- Use multiple smaller virtual services using load balancer to increase reliability
+  - DNS
+  - Database
+  - Object store (S3)
+  - Potentially managed solutions
+  - Use multiple smaller virtual services using load balancer to increase reliability
+
+::::
+:::: {.column width=50%} 
 
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_9_image_1.png)
+::::
+:::
+
 
 * Low-Cost Batch Processing
 - Lots of batch jobs run on a schedule
@@ -157,7 +193,12 @@ gsaggese@umd.edu
 - AWS Lambda
   - Serverless
 
+
+
+
 * Capacity Scaling
+::: columns
+:::: {.column width=60%} 
 - **No need to plan for capacity**
   - You don't have to predict capacity
   - You can schedule capacity on-the-fly
@@ -172,11 +213,18 @@ gsaggese@umd.edu
   - AWS has many data centers
   - You can deploy applications close to your customers
 
+::::
+:::: {.column width=40%} 
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_11_image_1.png)
 
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_11_image_2.png)
+::::
+:::
+
 
 * Pay-per-use
+::: columns
+:::: {.column width=60%} 
 - **AWS bill**
   - Similar to an electric bill
   - Services are billed based on usage, e.g.,
@@ -189,9 +237,17 @@ gsaggese@umd.edu
   - If you exceed the limits, you start paying (without further notice)
     - Need to set an alarm!
 
+
+::::
+:::: {.column width=40%} 
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_12_image_1.png)
+::::
+:::
+
 
 * Pay-per-use
+::: columns
+:::: {.column width=60%} 
 - **Advantages**
   - No need for upfront investments or commitment
   - The price to start a project is lowered
@@ -200,9 +256,17 @@ gsaggese@umd.edu
   - Make fault tolerance / high performance affordable
     - For scalable workload, buy 1 server for 1000 hours = buy 1000 servers for 1 hour
 
+::::
+:::: {.column width=40%} 
+
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_13_image_1.png)
+::::
+:::
+
 
 * Interacting with AWS
+::: columns
+:::: {.column width=60%} 
 - **AWS internal API allows to interact with services**
 - **GUI (Management Console)**
   - Easy to start interacting with services
@@ -217,14 +281,19 @@ gsaggese@umd.edu
 - **Blueprints**
   - Description of your system containing all services and dependencies
   - It describes the system, it does not explain how to build it
-
+::::
+:::: {.column width=40%} 
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_1.png)
 
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_2.png)
 
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_3.png)
+::::
+:::
 
 * Accounts and Users
+::: columns
+:::: {.column width=60%} 
 - **Users**
   - There is one root AWS account
   - You can attach multiple users to an account
@@ -240,9 +309,18 @@ gsaggese@umd.edu
   - Private key is your secret
     - Don't lose it, you can't retrieve it
 
+::::
+:::: {.column width=40%} 
+
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_15_image_1.png)
+::::
+:::
+
+
 
 * AWS VMs
+::: columns
+:::: {.column width=60%} 
 - With virtualization multiple VMs can run on the same hardware
   - VMs can be started and stopped on-demand
 - Physical server
@@ -257,24 +335,35 @@ gsaggese@umd.edu
   - Switched recently to AWS Nitro, hardware assisted virtualization
     - Performance close to bare metal
 
+::::
+:::: {.column width=40%} 
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_16_image_1.png)
-```
+::::
+:::
 
-```
 
 * Starting an EC2 Instance
+::: columns
+:::: {.column width=40%} 
 - **Select region**
   - E.g., **us-east-1**
   - Where is it?
     - 21155 Smith Switch Road, Ashburn, VA, USA
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_2.png)
+::::
+:::: {.column width=40%} 
+
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_1.png)
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_2.png)
-
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_3.png)
+::::
+:::
+
 
 * Starting an EC2 Instance
+::: columns
+:::: {.column width=50%} 
 - **Select OS**
   - Amazon Machine Image (AMI)
   - Contains OS + pre-installed software
@@ -284,14 +373,22 @@ gsaggese@umd.edu
   - More info later
 - **Configure instance**
   - Network, shutdown behavior, termination protection, monitoring
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_2.png)
+
+::::
+:::: {.column width=50%} 
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_1.png)
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_2.png)
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_3.png)
+::::
+:::
+
 
 * AWS Instance Type
+::: columns
+:::: {.column width=50%} 
 - An "instance type" describes the amount of computing power available
 - https://aws.amazon.com/ec2/instance-types
 - Instance family
@@ -313,9 +410,15 @@ gsaggese@umd.edu
   - large (2 vCPUs, 8GB memory)
   - 0.14 USD / hr
 
+::::
+:::: {.column width=50%} 
+
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_19_image_1.png)
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_19_image_2.png)
+::::
+:::
+
 
 * AWS Instance Type
 - Price on AWS website is somehow unclear (duh really?)
@@ -327,7 +430,12 @@ gsaggese@umd.edu
   - From 37 USD / yr to 1.91M USD / yr (500 CPUs and 24TB of mem)
 - Alternative sites: https://instances.vantage.sh
 
+
+
+
 * Starting an EC2 Instance
+::: columns
+:::: {.column width=50%} 
 - Add storage
   - Volume size
   - Volume type (SSD or magnetic HDDs)
@@ -337,24 +445,40 @@ gsaggese@umd.edu
   - Select key-pair
 - How to monitor the instance
   - E.g. CloudWatch
+::::
+:::: {.column width=50%} 
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_21_image_1.png)
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_21_image_2.png)
+::::
+:::
+
 
 * Starting an EC2 Instance
+::: columns
+:::: {.column width=50%} 
 - Start instance
 - Find public IP
 - Connect to the machine
-**> ssh -i $PATH/mykey.pem ubuntu@$PUBLIC_UP**
-**> cat /proc/cpuinfo**
-**> free -m**
-**> sudo apt-get update**
-**> sudo apt-get install ...**
+```markdown
+> ssh -i $PATH/mykey.pem ubuntu@$PUBLIC_UP
+> cat /proc/cpuinfo
+> free -m
+> sudo apt-get update
+> sudo apt-get install ...
+```
+::::
+:::: {.column width=50%} 
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_22_image_1.png)
+::::
+:::
+
 
 * States of a VM
+::: columns
+:::: {.column width=50%} 
 - **Start**
   - You can start a stopped VM
 - **Stop**
@@ -371,10 +495,16 @@ gsaggese@umd.edu
   - It means delete: you cannot restart
   - Data storage is wiped out
   - Attached volumes persist
+::::
+:::: {.column width=50%} 
+
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_23_image_1.png)
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_23_image_2.png)
+::::
+:::
+
 
 * Moving / Upgrading EC2 Instances
 - **Scale up / down**
@@ -399,9 +529,7 @@ gsaggese@umd.edu
     - Service costs vary by region
 - **Often you want an Elastic IP address to get a fixed public IP**
 
-```
 
-```markdown
 
 * Optimizing Costs
 - **On-demand instances**
@@ -422,7 +550,12 @@ gsaggese@umd.edu
   - Discount: up to 10x cheaper than on-demand price
   - Useful for running asynchronous tasks
 
+
+
+
 * Programming the Infrastructure
+::: columns
+:::: {.column width=70%} 
 - On AWS *everything* can be controlled via an API over HTTPS
   - Start a VM
   - Create 1TB of storage
@@ -440,40 +573,42 @@ gsaggese@umd.edu
     - Call AWS API from your code
   - CloudFormation: templates that describe the state of the infrastructure and are translated into API calls
 
+::::
+:::: {.column width=30%} 
 ![Programming the Infrastructure](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_26_image_1.png)
 
-**Jeff Bezos 2002 API mandate
-**
+**Jeff Bezos 2002 API mandate**
 
 ![Programming the Infrastructure](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_26_image_2.png)
+::::
+:::
+
 
 * Infrastructure-As-Code
-- **Use high-level programming language to control IT systems
-**
+- **Use high-level programming language to control IT systems**
 - You can apply software development to infra
   - Code repository
   - Automated tests
   - Continuous integration
-- **DevOps (SRE in Google parlance)
-**
+- **DevOps (SRE in Google parlance)**
   - Mix devs and ops in the same team
   - Use software to bring development and operations closer together
-  - Switch roles to experience each others' pain
+  - Switch roles to experience each others’ pain
     - Devs -> responsible for operational tasks (e.g., being on-call)
     - Ops -> involved in software development, making system easier to operate
   - Foster communication and collaboration
 
+
+
+
 * Infrastructure-as-Code: Advantages
-- **Save time
-**
+- **Save time**
   - Reusing scripts or ready-to-use blueprints
   - Automating tasks done regularly
   - Copy-paste vs click-click-click
-- **Fewer mistakes
-**
+- **Fewer mistakes**
   - Push button flow
-- **Consistency of actions
-**
+- **Consistency of actions**
   - Multiple deploys per day
 - **Deployment pipeline**
   - Commit changes to source code in the repo
@@ -483,11 +618,14 @@ gsaggese@umd.edu
   - Run acceptance tests in isolation
   - Changes are propagated to production
   - Monitor production
-- **The script is a detailed documentation
-**
+- **The script is a detailed documentation**
   - It explains what and how, but not why (not a design document)
 
+
+
 * Create User Account
+::: columns
+:::: {.column width=50%} 
 - Do not to use AWS root account for all development
 - Create a new user
   - IAM = Identity and Access Management
@@ -496,58 +634,64 @@ gsaggese@umd.edu
   - Enable programmatic access
   - Enable console access
   - Limit what an user can do through policies
+![Create User Account](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_3.png)
+
+::::
+:::: {.column width=50%} 
 
 ![Create User Account](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_1.png)
 
 ![Create User Account](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_2.png)
 
-![Create User Account](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_3.png)
 
 **Bad idea!**
+::::
+:::
+
 
 * AWS Command Line Interface (CLI)
 - Provide unified interface to all AWS services
 - Output is in JSON format
-**> apt-get install awscli
-**
+**> apt-get install awscli**
 - Authenticate
 **> aws configure**
   - AWS access key ID
-    - E.g., **AKIAIRUR3YLPOSVD7ZCA
-**
+    - E.g., **AKIAIRUR3YLPOSVD7ZCA**
   - AWS secret access key
     - E.g., **SSKIng7jkA...enqBj7**
   - Default region name
-    - E.g., **us-east-1
-**
+    - E.g., **us-east-1**
 - Execute command
-**> aws <service> <action> --key value**
+  - **> aws <service> <action> --key value**
+
 
 * Software Development Kit (SDK)
+::: columns
+:::: {.column width=50%} 
 - SDK is a library that calls into AWS API from your favorite programming language
   - E.g., Python, Go, Ruby, C++, JavaScript
-- **Pros: **it handles
+- **Pros:** it handles
   - Authentication
   - Retry on error
   - HTTPS communication
   - XML / JSON de-/serialization
-- **Cons
-**
+- **Cons**
   - Imperative approach
   - Need to deal with dependencies
 
+::::
+:::: {.column width=50%} 
+
 ![Software Development Kit (SDK)](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_31_image_1.png)
+::::
+:::
 
 * AWS CloudFormation
-- **Use templates (e.g., JSON, YAML) to describe infrastructure
-**
-- **Declarative vs imperative approach
-**
+- **Use templates (e.g., JSON, YAML) to describe infrastructure**
+- **Declarative vs imperative approach**
   - Declare the system, rather than listing the steps to build the system
-- **AWS Stacks processes CloudFormation templates
-**
-- **Pros
-**
+- **AWS Stacks processes CloudFormation templates**
+- **Pros**
   - Consistent way to describe the infrastructure
     - People implement same thing in a different way
   - Handle dependencies
@@ -560,25 +704,32 @@ gsaggese@umd.edu
   - It serves as documentation
     - Use it as code in source control
 
+
+
+
 * Securing Your System
-- **Always install software updates
-**
+::: columns
+:::: {.column width=50%} 
+- **Always install software updates**
   - New security vulnerabilities are found and fixed every day
-- **Restrict access to AWS account
-**
+- **Restrict access to AWS account**
   - Multiple persons and scripts should use different AWS account
   - Principle of "least privilege": grant only permissions needed to perform a job
-- **Restrict network traffic
-**
+- **Restrict network traffic**
   - Leave open only the ports that you strictly need
     - E.g., 80 for HTTP traffic, 443 for HTTPS
   - Close everything else
   - Encrypt traffic and data
-- **Create a private network
-**
+- **Create a private network**
   - Subnets that are not reachable from the Internet
 
+::::
+:::: {.column width=50%} 
+
 ![Securing Your System](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_33_image_1.png)
+::::
+:::
+
 
 * AWS Shared-responsibility Principle
 - AWS is responsible for:
@@ -593,4 +744,5 @@ gsaggese@umd.edu
   - Encrypting data
   - Updating OS (kernel, libs) and software
 - More info here
+
 
