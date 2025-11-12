@@ -1,6 +1,6 @@
 ::: columns
 :::: {.column width=15%}
-![](lectures_source/UMD_Logo.png)
+![](data605/lectures_source/images/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -109,9 +109,6 @@ time
 - Advanced features : termination votes, combiners, aggregators, topology mutations 
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_8_image_1.png)
-```
-
-```markdown
 
 * Think like a vertex
 - I know my local state
@@ -177,9 +174,6 @@ time
 - a **VertexOutputFormat** to write back the result
   - e.g., *<vertex> <pageRank> *
 
-```
-
-```
 
 * A vertex view 
 
@@ -198,28 +192,38 @@ time
 - BasicComputation<          I extends WritableComparable, // VertexID -- vertex ref           V extends Writable, // VertexData -- a vertex datum           E extends Writable, // EdgeData -- an edge label           M extends Writable> // MessageData-– message payload 
 
 * Giraph "Hello World" 
-public class GiraphHelloWorld extends    BasicComputation<IntWritable, IntWritable, NullWritable, NullWritable> {
+```java
+public class GiraphHelloWorld extends    
+BasicComputation<IntWritable, IntWritable, NullWritable, NullWritable> {
+
 public void compute(Vertex<IntWritable, IntWritable,     NullWritable> vertex, Iterable<NullWritable> messages) { 
    System.out.println("Hello world from the: " + vertex.getId() + " : ");     for (Edge<IntWritable, NullWritable> e : vertex.getEdges()) { 
       System.out.println(" " + e.getTargetVertexId());     } 
-   System.out.println("");     vertex.voteToHalt(); 
+   System.out.println("");     
+   vertex.voteToHalt(); 
 } 
-
+}
+```
 * Example: Ping neighbors
+
+```java
 public void compute(Vertex<Text, DoubleWritable, DoubleWritable> vertex, Iterable<Text> ms ){ 
    if (getSuperstep() == 0) {        sendMessageToAllEdges(vertex, vertex.getId()); 
    } else {        for (Text m : ms) { 
           if (vertex.getEdgeValue(m) == null) {              vertex.addEdge(EdgeFactory.create(m, SYNTHETIC_EDGE));            }        } 
-   }     vertex.voteToHalt(); } 
-
+   }     vertex.voteToHalt(); 
+}
+```
 * Giraph PageRank Example
 
+```java
 public class PageRankComputation      extends BasicComputation<IntWritable, FloatWritable, NullWritable, FloatWritable> {
-  /** Number of supersteps */
+  //Number of supersteps 
   public static final String SUPERSTEP_COUNT =              "giraph.pageRank.superstepCount";
+```
 
 * Giraph PageRank Example
-
+```java
 public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Iterable<FloatWritable> messages)       throws IOException {
     if (getSuperstep() >= 1) {
       float sum = 0;
@@ -236,6 +240,7 @@ public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Ite
     }
   }
 }
+```
 
 * Additional functionality
 - Combiners
@@ -248,9 +253,6 @@ public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Ite
   - executed per worker task
 - PartitionContext
   - executed per partition
-```
-
-```markdown
 
 * Giraph scales 
 
@@ -266,79 +268,95 @@ https://www.facebook.com/notes/facebook-engineering/scaling-apache-giraph-to-a-t
 
 * GraphX Motivation
 
-Difficult to Program and Use 
-Users must *Learn, Deploy, and *
-*Manage* multiple systems 
-
-Leads to brittle and often 
-complex interfaces 
+- Difficult to Program and Use 
+- Users must ***Learn, Deploy, and Manage*** multiple systems 
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_28_image_1.png)
 
+- Leads to brittle and often complex interfaces 
+
 * And Inefficient
 
-Extensive data movement and duplication across 
-the network and file system 
-
-Limited reuse of internal data-structures 
-across stages 
+- Extensive **data movement** and duplication across the network and file system 
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_29_image_1.png)
 
-* The GraphX Unified Approach 
+- Limited reuse of internal data-structures across stages 
 
+
+* The GraphX Unified Approach 
+:::columns
+::::{.column width=50%}
 New API 
 Blurs the distinction between *Tables* and *Graphs *
-
+::::
+::::{.column width=50%}
 New System 
 Combines Data-Parallel Graph-Parallel Systems 
+::::
+:::
+
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_30_image_1.png)
 
 Enables users to easily and efficiently express the entire graph analytics pipeline 
 
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_30_image_1.png)
 
 * Representation 
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_31_image_1.png)
 
-Plus optimizations:
-- Distributed join optimization
-- Materialized view maintenance
+- Plus optimizations:
+  - Distributed join optimization
+  - Materialized view maintenance
 
-* Graph modeling in **GraphX**
+* Graph modeling in GraphX
 - The property graph is parameterized over the vertex (VD) and edge (ED) types 
+
+```
      class Graph[VD, ED] {
        val vertices: VertexRDD[VD] 
        val edges: EdgeRDD[ED] 
-     } 
-- Graph[(String, 
-String), String] 
+     }
+``` 
+- Graph[(String, String), String] 
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_32_image_1.png){width=60%}
 
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_32_image_1.png)
-```
-
-```markdown
 
 * Creating a Graph (Scala)
+
+:::columns
+::::{.column width=50%}
+\footnotesize
+```
 type VertexId = Long
+
 val vertices: RDD[(VertexId, String)] =
 sc.parallelize(List(
 (1L,"Alice"),
 (2L, "Bob"),
 (3L, "Charlie")))
+
 class Edge[ED](
 val srcId: VertexId,
 val dstId: VertexId,
 val attr: ED)
+
 val edges: RDD[Edge[String]] =
 sc.parallelize(List(
 Edge(1L, 2L, "coworker"),
 Edge(2L, 3L, "friend")))
-val graph = Graph(vertices, edges)
 
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_33_image_1.png)
+val graph = Graph(vertices, edges)
+```
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_33_image_1.png){width=70%}
+::::
+:::
+
 
 * Hello world in GraphX
+```
 $ spark*/bin/spark-shell
 scala> val inputFile = sc.textFile("hdfs:///tmp/graph/1.txt")
 scala> val edges = inputFile.flatMap(s => {
@@ -349,66 +367,84 @@ scala> val graph = Graph.fromEdgeTuples(edges, "")
 scala> val result = graph.collectNeighborIds(EdgeDirection.Out).map(x =>
 println("Hello world from the: " + x._1 + " : " + x._2.mkString(" ")) )
 scala> result.collect() // don't try this @home
+
 Hello world from the: 1 :
 Hello world from the: 2 : 1 3
 Hello world from the: 3 : 1 2
+```
 
 * Spark Table Operators
 - GraphX **Table** (RDD) operators are inherited from Spark:
 
-map
-filter
-groupBy
-sort
-union
-join
-leftOuterJoin
-rightOuterJoin
+:::columns
+::::{.column width=33%}
+- map
+- filter
+- groupBy
+- sort
+- union
+- join
+- leftOuterJoin
+- rightOuterJoin
+::::
+::::{.column width=33%}
+- reduce
+- count
+- fold
+- reduceByKey 
+- groupByKey
+- cogroup
+- cross
+- zip
+::::
+::::{.column width=33%}
+- sample
+- take
+- first
+- partitionBy
+- mapWith
+- pipe
+- save
+- ...
 
-reduce
-count
-fold
-reduceByKey groupByKey cogroup
-cross
-zip
+::::
+:::
 
-sample
-take
-first
-partitionBy
-mapWith
-pipe
-save
-...
 
 * Graph Operators (Scala)
+\footnotesize
+```
 class Graph [ V, E ] {
-def Graph(vertices: Table[ (Id, V) ],
-edges: Table[ (Id, Id, E) ])
-// Table Views -----------------
-def vertices: Table[ (Id, V) ]
-def edges: Table[ (Id, Id, E) ]
-def triplets: Table [ ((Id, V), (Id, V), E) ]
-// Transformations ------------------------------
-def reverse: Graph[V, E]
-def subgraph(pV: (Id, V) => Boolean,
-pE: Edge[V,E] => Boolean): Graph[V,E]
-def mapV(m: (Id, V) => T ): Graph[T,E]
-def mapE(m: Edge[V,E] => T ): Graph[V,T]
-// Joins ----------------------------------------
-def joinV(tbl: Table [(Id, T)]): Graph[(V, T), E ]
-def joinE(tbl: Table [(Id, Id, T)]): Graph[V, (E, T)]
-// Computation ----------------------------------
-def mrTriplets(mapF: (Edge[V,E]) => List[(Id, T)],
-reduceF: (T, T) => T): Graph[T, E]
-}
+   def Graph(vertices: Table[ (Id, V) ], 
+                    edges: Table[ (Id, Id, E) ]) 
+   // Table Views ----------------- 
+   def vertices: Table[ (Id, V) ]
+   def edges: Table[ (Id, Id, E) ]
+   def triplets: Table [ ((Id, V), (Id, V), E) ]
+   // Transformations ------------------------------ 
+   def reverse: Graph[V, E]
+   def subgraph(pV: (Id, V) => Boolean, 
+                         pE: Edge[V,E] => Boolean): Graph[V,E] 
+   def mapV(m: (Id, V) => T ): Graph[T,E] 
+   def mapE(m: Edge[V,E] => T ): Graph[V,T]
+   // Joins ----------------------------------------
+   def joinV(tbl: Table [(Id, T)]): Graph[(V, T), E ] 
+   def joinE(tbl: Table [(Id, Id, T)]): Graph[V, (E, T)] 
+   // Computation ----------------------------------
+   def mrTriplets(mapF: (Edge[V,E]) => List[(Id, T)], 
+                          reduceF: (T, T) => T): Graph[T, E] 
+} 
+```
 
 * Built-in Algorithms (Scala)
+\footnotesize
+```
 def pageRank(tol: Double): Graph[Double, Double]
 def triangleCount(): Graph[Int, ED]
 def connectedComponents(): Graph[VertexId, ED]
 def stronglyConnectedComponents(numIter:Int):Graph[VertexID,ED]
 // ...and more: org.apache.spark.graphx.lib (GraphX libraries)
+```
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_37_image_1.png)
 
@@ -428,11 +464,10 @@ Map-Reduce triplets collect information about the neighborhood of each vertex:
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_40_image_1.png)
 
 * GraphX scales to larger graphs
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_41_image_1.png)
 - GraphX is roughly 2x slower than GraphLab
   - Scala + Java overhead: Lambdas, GC time, ...
   - No shared memory parallelism: 2x increase in communication
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_41_image_1.png)
 
 * But, a Small Pipeline in GraphX
 Timed end-to-end GraphX is faster than GraphLab (and Giraph)
@@ -440,16 +475,20 @@ Timed end-to-end GraphX is faster than GraphLab (and Giraph)
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_42_image_1.png)
 
 * Giraph vs. GraphX
-**Giraph**
-- An unconstrained BSP framework
-- Specialized fully mutable, dynamically balanced in-memory graph representation
-- Procedural, vertex-centric programming model
-- Part of Hadoop ecosystem
+:::columns
+::::{.column width=50%}
+- **Giraph**
+  - An unconstrained BSP framework
+  - Specialized fully mutable, dynamically balanced in-memory graph representation
+  - Procedural, vertex-centric programming model
+  - Part of Hadoop ecosystem
+::::
+::::{.column width=50%}
+- **GraphX**
+  - An RDD framework
+  - Graphs are "views" on RDDs and thus immutable
+  - Functional-like, "declarative" programming model
+  - Genuine part of Spark ecosystem
+::::
+:::
 
-**GraphX**
-- An RDD framework
-- Graphs are "views" on RDDs and thus immutable
-- Functional-like, "declarative" programming model
-- Genuine part of Spark ecosystem
-
-```

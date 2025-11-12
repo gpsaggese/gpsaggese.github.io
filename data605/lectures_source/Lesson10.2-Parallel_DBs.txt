@@ -519,12 +519,12 @@ Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
 
 * Partitioned Join
 - For equi-joins and natural joins, it is possible to *partition* the two input relations across the processors, and compute the join locally at each processor.
-- Let *r* and *s* be the input relations, and we want to compute *r* *r.A=s.B* *s*.
+- Let *r* and *s* be the input relations, and we want to compute *r* $\bowtie$ *r.A=s.B* *s*.
 - *r* and *s* each are partitioned into *n* partitions, denoted *r*0, *r*1, ..., *r*n-1 and *s*0, *s*1, ..., *s*n-1.
 - Can use either *range partitioning* or *hash partitioning*.
 - *r* and *s* must be partitioned on their join attributes *r*.A and *s*.B, using the same range-partitioning vector or hash function.
 - Partitions *r*i and *s*i are sent to processor *P*i,
-- Each processor *P*i locally computes *r*i *r*i.A=si.B si. Any of the standard join methods can be used.
+- Each processor *P*i locally computes *r*i $\bowtie$ *r*i.A=si.B si. Any of the standard join methods can be used.
 
 * Partitioned Join (Cont.)
 ![Partitioned Join](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_39_image_1.png){width=70%}
@@ -563,7 +563,7 @@ Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
 
 * Partitioned Parallel Hash-Join
 
--Parallelizing partitioned hash join:
+- Parallelizing partitioned hash join:
   - Assume *s* is smaller than *r* and therefore *s* is chosen as the build relation.
   - A hash function *h*1 takes the join attribute value of each tuple in *s* and maps this tuple to one of the *n* processors.
   - Each processor *P**i* reads the tuples of *s* that are on its disk *D**i*, and sends each tuple to the appropriate processor based on hash function *h*1. Let *s**i* denote the tuples of relation *s* that are sent to processor *P**i*.
@@ -572,7 +572,7 @@ Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
 * Partitioned Parallel Hash-Join (Cont.)
 
 - Once the tuples of *s* have been distributed, the larger relation *r* is redistributed across the *m* processors using the hash function *h*1
-  -   Let ri denote the tuples of relation *r*  that are sent to processor *P**i*.
+  - Let ri denote the tuples of relation *r*  that are sent to processor *P**i*.
 - As the *r* tuples are received at the destination processors, they are repartitioned using the function *h*2
   - (just as the probe relation is partitioned in the sequential hash-join algorithm).
 - Each processor *P*i executes the build and probe phases of the hash-join algorithm on the local partitions *r**i* and *s* of  *r* and *s* to produce a partition of the final result of the hash-join.
@@ -591,7 +591,7 @@ Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
 
 * Other Relational Operations
 
--Selection 
+- Selection 
   - If thetha is of the form ai = v, where ai is an attribute and v a value.
     - If r is partitioned on ai the selection is performed at a single processor.
   - If thetha is of the form l <= ai <= u  (i.e., thetha is a range selection) and the relation has been range-partitioned on ai
@@ -629,11 +629,11 @@ Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
 * Interoperator Parallelism
 - **Pipelined parallelism**
   - Consider a join of four relations
-    - r1      r2       r3     r4
+    - r1 $\bowtie$ r2 $\bowtie$ r3 $\bowtie$ r4
   - Set up a pipeline that computes the three joins in parallel
-    - Let P1 be assigned the computation of 	temp1 = r1     r2
-    - And P2 be assigned the computation of temp2 = temp1     r3
-    - And P3 be assigned the computation of temp2      r4
+    - Let P1 be assigned the computation of 	temp1 = r1 $\bowtie$ r2
+    - And P2 be assigned the computation of temp2 = temp1 $\bowtie$ r3
+    - And P3 be assigned the computation of temp2 $\bowtie$ r4
   - Each of these operations can execute in parallel, sending result tuples it computes to the next operation even as it is computing further results
     - Provided a pipelinable join evaluation algorithm (e.g., indexed nested loops join) is used
 
@@ -646,10 +646,10 @@ Send the *i*th tuple inserted in the relation to disk *i* mod *n*.
 * Independent Parallelism
 - **Independent parallelism**
   - Consider a join of four relations
-    r1     r2      r3      r4
-    - Let P1 be assigned the computation of 	temp1 = r1      r2
-    - And P2 be assigned the computation of temp2 = r3     r4
-    - And P3 be assigned the computation of temp1     temp2
+      - r1 $\bowtie$ r2 $\bowtie$ r3 $\bowtie$ r4
+    - Let P1 be assigned the computation of 	temp1 = r1 $\bowtie$ r2
+    - And P2 be assigned the computation of temp2 = r3 $\bowtie$ r4
+    - And P3 be assigned the computation of temp1 $\bowtie$ temp2
     - P1 and P2 can work **independently in parallel**
     - P3 has to wait for input from P1 and P2
     - Can pipeline output of P1 and P2 to P3, combining independent parallelism and pipelined parallelism
