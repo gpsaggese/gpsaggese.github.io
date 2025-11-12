@@ -21,11 +21,12 @@ UMD DATA605 - Big Data Systems
 **$$\text{\blue{6.1: MongoDB}}$$**
 \endgroup
 
-::: columns
-:::: {.column width=65%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+::: columns
+:::: {.column width=75%}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 - **References**:
   - All concepts in slides
@@ -35,7 +36,7 @@ UMD DATA605 - Big Data Systems
     - Official docs
   - Seven Databases in Seven Weeks, 2e
 ::::
-:::: {.column width=30%} 
+:::: {.column width=20%} 
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png){width=2cm}
 ::::
 :::
@@ -47,7 +48,7 @@ UMD DATA605 - Big Data Systems
   - Function as a map or dictionary
     - Examples: HBase, Redis
   - Primarily retrieve values using keys
-    - Occasionally search within value fields using patterns
+  - Occasionally search within value fields using patterns
   - Store uninterpreted values (e.g., binary blobs) linked to keys
   - Use a single namespace for all key-value pairs
 
@@ -57,7 +58,7 @@ UMD DATA605 - Big Data Systems
   - Documents formatted in JSON, XML, or BSON (binary JSON)
   - Documents are part of _collections_
     - Comparable to _tables_ in relational databases
-    - Large collections can be partitioned and indexed
+  - Large collections can be partitioned and indexed
 ::::
 :::: {.column width=35%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_3_image_1.png){width=80%}
@@ -69,9 +70,9 @@ UMD DATA605 - Big Data Systems
 * MongoDB
 :::columns
 :::: {.column width=70%}
-- Developed by MongoDB Inc.
+- **Developed by MongoDB Inc**
   - Founded in 2007
-  - Based on DoubleClick experience with large-scale data
+  - Based on DoubleClick's experience with large-scale data
   - Mongo comes from "hu-mongo-us"
 ::::
 :::: {.column width=25%}
@@ -79,28 +80,31 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-- Highly popular NoSQL database
+- **Highly popular NoSQL database**
 - **Document-oriented NoSQL DB**
   - Schema-less
     - No Data Definition Language (DDL) like SQL
-    - Store maps with any keys and values
+    - Stores maps with any keys and values
     - Application manages schema, linking documents to meanings
   - Keys are string-stored hashes
-    - Each document has a unique `_id` (reserved by Mongo)
+    - Each document has a unique `_id` (reserved by MongoDB)
   - Values in BSON format
     - Based on JSON (B for Binary)
-- Developed in C++
-- Supports APIs (drivers) in various languages
-  - Examples: JavaScript, Python, Ruby, Java, Scala, C++, etc
+
+- **High-performance**
+  - Developed in C++
+  - Supports APIs (drivers) in various languages
+    - Examples: JavaScript, Python, Ruby, Java, Scala, C++, etc
 
 * MongoDB: Example of Document
-
 - **A document is a JSON data structure**
-- It corresponds to a row in a relational DB
+
+- It corresponds to **a row in a relational DB**
   - Without schema
   - Primary key is `_id`
-  - Values nested to an arbitrary depth
+  - Values can be nested to an arbitrary depth
 
+\centering
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_7_image_1.png){width=80%}
 
 * MongoDB: Functionalities
@@ -145,7 +149,7 @@ UMD DATA605 - Big Data Systems
 
 - A Mongo **document** has:
   - One or more "fields"
-    - Always has primary key `_id`
+    - Always has a primary key `_id`
     - Mongo field ~ Postgres columns
 ::::
 ::::{.column width=45%}
@@ -167,7 +171,9 @@ UMD DATA605 - Big Data Systems
 | foreign key | reference | Pointers |
 | table joins | embedded documents | Nested name-value pairs |
 
+\begingroup \centering
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_10_image_1.png){width=70%}
+\endgroup
 
 * Relational vs Document DB: Workflows
 - **Relational DBs**
@@ -191,20 +197,17 @@ UMD DATA605 - Big Data Systems
 * Why Use MongoDB?
 ::: columns
 :::: {.column width=45%}
-- Simple to query
-  - Work on client side
+- **Simple and powerful to query**
 
-- Fast
-  - 2-10x faster than Postgres
+- **Fast**
+  - 2-10x faster than PostgreSQL
 
-- Data model/functionalities suitable for most web applications
+- **Data model suitable for most web applications**
   - Semi-structured data
   - Quickly evolving systems
 
-- Easy and fast data integration
-
 - Not suited for heavy, complex transaction systems
-  - E.g., banking system
+  - E.g., banking systems
 ::::
 ::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_12_image_1.png)
@@ -216,36 +219,43 @@ UMD DATA605 - Big Data Systems
 ::::{.column width=45%}
 
 - **Documents** are field-value pairs
-  - **Field names**: strings
-  - **Values**: any BSON type
+  - _Field names_: strings
+  - _Values_: any BSON type
     - Arrays of documents
     - Native data types
     - Other documents
-
-- Examples:
-  - `_id`: `ObjectId`
-  - `name`: document with fields first and last
-  - `birth` and `death`: date type
-  - `contribs`: array of strings
-  - `views`: NumberLong type
-
 ::::
 ::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_13_image_1.png)
+::::
+:::
+
+\vspace{0.5cm}
+
+:::columns
+::::{.column width=45%}
+- **Examples**:
+  - `_id`: `ObjectId`
+  - `name`: document with fields `first` and `last`
+  - `birth` and `death`: date type
+  - `contribs`: array of strings
+  - `views`: `NumberLong` type
+
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_13_image_2.png)
 ::::
 :::
 
 * MongoDB: Data Model
-:::columns
-::::{.column width=45%}
-
-- Documents can be nested
+- **Documents can be nested**
   - Embedded sub-document
 
+:::columns
+::::{.column width=45%}
 - **Denormalized data models**
   - Store related information in the same record
-  - Result of a join operation
+  - Avoids the need for a join operation
 
 - **Normalized data models**
   - Eliminate duplication
@@ -263,65 +273,64 @@ UMD DATA605 - Big Data Systems
 - Every **document** in a **collection** can have different fields and values
   - No need for `NULL` values / union of fields like in relational DBs
 
-- E.g., dishomogeneous data instances
-
+- E.g., heterogeneous data instances
 ![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_15_image_1.png){width=80%}
 
 * JSON Format
-- JSON = JavaScript Object Notation
-  - Data is stored in field / value pairs
-  - A field / value pair consists of:
+- **JSON = JavaScript Object Notation**
+  - Data is stored in field/value pairs
+  - A field/value pair consists of:
     - A field name (always a string)
-    - Followed by a colon :
+    - Followed by a colon `:`
     - Followed by a typed value
     ```python
     "name": "R2-D2"
     ```
-- **Data in documents is separated by commas `,`**
-  \begingroup \small
-  ```python
-  "name": "R2-D2", race: "Droid"
-  ``` 
-  \endgroup
-- Curly braces {} hold documents
-  \begingroup \small
-  ```python
-  {"name": "R2-D2", race : "Droid", affiliation: "rebels"}
-  ```
-  \endgroup
-- An array is stored in brackets []
-  \begingroup \small
-  ```python
-  [{"name": "R2-D2", race: "Droid", affiliation: "rebels"},
-   {"name": "Yoda", affiliation: "rebels"}]
-  ```
-  \endgroup
-- Supports:
-  - Embedding of nested objects within other objects
   - Just references
 
+- Data in documents is separated by commas `,`
+
+  \begingroup \small
+  ```python
+  "name": "R2-D2", "race": "Droid"
+  ```
+  \endgroup
+
+- Curly braces `{}` hold documents
+
+  \begingroup \small
+  ```json
+  { "name": "R2-D2", "race": "Droid", "affiliation": "rebels" }
+  ```
+  \endgroup
+
+- An array is stored in brackets `[]`
+
+  \begingroup \small
+  ```json
+  [
+    { "name": "R2-D2", "race": "Droid", "affiliation": "rebels" },
+    { "name": "Yoda", "affiliation": "rebels" }
+  ]
+  ```
+  \endgroup
+
 * BSON Format 
-- Binary-encoded serialization of JSON-like documents
+- **Binary-encoded serialization of JSON-like documents**
   - https://bsonspec.org
+  - Similar to Protocol Buffers, but more schema-less
 
-- Store zero or more key/value pairs as a single entity
-  - Each entry consists of:
-    - Field name (string)
-    - Data type
-    - Value
+- **Optimized for random access**
+  - Prefixes elements in a BSON document with a length field
 
-- Similar to Protocol Buffer, but more schema-less
-
-- Prefix large elements in BSON document with a length field for scanning
-
-- MongoDB understands BSON objects, even nested
-  - Build indexes and match objects against query expressions for BSON keys
+- **MongoDB understands BSON objects, even nested ones**
+  - Builds indexes and matches objects against query expressions for BSON keys
 
 * ObjectID
 :::columns
 ::::{.column width=50%}
-- Each JSON data contains an `_id` field of type `ObjectId`
-  - Similar to SERIAL constraint incrementing a numeric primary key in
+- Each JSON document contains an `_id` field of type `ObjectId`
+  - Similar to the SERIAL constraint incrementing a numeric primary key in
     PostgreSQL
 
 - An `ObjectId` is 12 bytes, composed of:
@@ -336,28 +345,28 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-- Each Mongo process handles its own ID generation without colliding
-  - Mongo's distributed nature
+- Each MongoDB process handles its own ID generation without collisions
+  - Due to MongoDB's distributed nature
 
 - Details
   [here](https://www.mongodb.com/docs/manual/reference/bson-types/#objectid)
 
 * Indexes
 - **Primary index**
-  - Automatically created on `_id` field
+  - Automatically created on the `_id` field
   - B+ tree indexes
 
 - **Secondary index**
   - Improve query performance
-  - Enforce unique values for a field
+  - Can enforce unique values for a field
 
 - Single field index and compound index (like SQL)
   - Order of fields in a compound index matters
 
 - Sparse property of an index
-  - Index contains entries for documents with the indexed field
-  - Ignore records without the field
+  - Index contains entries only for documents with the indexed field
+  - Ignores records without the field
 
-- Reject records with duplicate key if index is unique and sparse
+- Rejects records with duplicate keys if the index is unique and sparse
 
 - Details [here](https://www.mongodb.com/docs/manual/indexes/)

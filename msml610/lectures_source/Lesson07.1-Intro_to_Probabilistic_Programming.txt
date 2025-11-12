@@ -20,15 +20,15 @@ MSML610: Advanced Machine Learning
 ::: columns
 :::: {.column width=75%}
 \vspace{1cm}
+
 **Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
 
 **References**:
 
-- AIMA (Artificial Intelligence: a Modern Approach)
-  - Chap 15: Probabilistic programming
+- AIMA (Artificial Intelligence: a Modern Approach), Chap 15: Probabilistic
+  programming
 
 - Martin, Bayesian Analysis with Python, 2018 (2e)
-
 ::::
 :::: {.column width=20%}
 

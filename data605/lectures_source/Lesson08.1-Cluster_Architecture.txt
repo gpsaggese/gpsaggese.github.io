@@ -22,120 +22,95 @@ UMD DATA605 - Big Data Systems
 \endgroup
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=75%}
 \vspace{1cm}
 
-- **Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
-- Resources
+- **References**:
   - Silbershatz: Chap 10
 ::::
 :::: {.column width=20%}
-![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_2_image_1.png)
-::::
-:::
-
-* Big Data: Sources and Applications
-:::columns
-::::{.column width=60%}
-
-- **Growth of World Wide Web in 1990s and 2000s**
-  - Store and query data larger than enterprise data
-  - Valuable data for advertisements and marketing
-  - Web server logs, web links
-  - Social media
-  - Mobile phone app data
-  - Transaction data
-  - Sensor/Internet of Things data
-  - Communication metadata
-::::
-::::{.column width=40%}
-\vspace{1cm}
-![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_4_image_1.png)
-\footnotesize \centering
-_Volume of data in the world_
+![](data605/lectures_source/images/Silberschatz_book.png)
 ::::
 :::
 
 * Big Data: Storing and Computing
+:::columns
+::::{.column width=60%}
 
-- Big data needs 10k-100k machines
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_4_image_1.png)
+\footnotesize \centering
+_Volume of data in the world_
+::::
+::::{.column width=40%}
+- Big data **needs 10k-100k machines**
 
 - **Two problems**
   - Storing big data
   - Processing big data
 
-- **Solve together efficiently**
+- Need to **solve together and efficiently**
   - One slow phase slows entire system
+::::
+:::
 
 * Processing the Web: Example
 :::columns
 ::::{.column width=50%}
 
-- Web contains:
+- Web contains (in 2024):
   - 20+ billion pages
-  - 5M TBs = 5 ZB
-  - 1M 5TB hard drives needed
-  - $100/HDD -> $100M total
+  - 5M TBs
+
+- Need 1M 5TB hard drives
+  - \$100/HDD -> \$100M in total
 
 - One computer reads 300 MB/sec
-  - 4,433 years to read web serially
+  - 4,433 years to read web serially!
 
-- More time needed for data processing
+- Much more time needed for data processing!
 ::::
 ::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_8_image_1.png)
 ::::
 :::
 
-* Big Data: Storage Systems
+* How to Store Big Data?
 
-- Store big data
+- Many different solutions to storing big data
+  1. **Distributed file systems**
+  2. **Sharding across multiple DBs**
+  3. **Parallel and distributed DBs**
+  4. **Key-value stores**
 
-- **Distributed file systems**
-  - Store large files like log files
+* 1) Distributed File Systems
 
-- **Sharding across multiple DBs**
-  - Partition records based on shard key
+- **Files stored across machines yet single file-system view to clients**
+  - E.g.,
+    - Google File System (GFS)
+    - Hadoop File System (HDFS)
+    - AWS S3
 
-- **Parallel and distributed DBs**
-  - Store data / perform queries across machines
-  - Use relational DB interface
-
-- **Key-value stores**
-  - Store/retrieve data based on a key
-  - Limitations on semantics, consistency, querying
-  - E.g., NoSQL DB, Mongo, Redis
-
-* 1 Distributed File Systems
-
-- **Distributed file system**
-  - Files stored across machines, single file-system view to clients
-    - E.g., Google File System (GFS)
-    - E.g., Hadoop File System (HDFS) based on GFS
-    - E.g., AWS S3
   - Files are:
     - Broken into blocks
     - Blocks partitioned across machines
     - Blocks often replicated
-  - **Goals**:
-    - Store data not fitting on one machine
-    - Increase performance
-    - Increase reliability/availability/fault tolerance
 
-* 2 Sharding Across Multiple DBs
+- **Goals**
+  - Store data not fitting on one machine
+  - Increase performance
+  - Increase reliability/availability/fault tolerance
+
+* 2) Sharding Across Multiple DBs
 
 - **Sharding**: Partition records across multiple DBs or machines
-
-- Shard keys
-  - Aka partitioning keys / partition attributes
-
-- Attributes to partition data
+  - Shard keys, aka partitioning keys / partition attributes
   - Range partition (e.g., timeseries)
   - Hash partition
 
 - **Pros**
-  - Scale beyond a centralized DB for more users, storage, processing speed
+  - Scale beyond centralized DB for more users, storage, processing speed
 
 - **Cons**
   - Replication needed for failures
@@ -143,17 +118,16 @@ _Volume of data in the world_
   - Relational DBs struggle with constraints (e.g., foreign key) and
     transactions on multiple machines
 
-* 3 Parallel and Distributed DBs
+* 3) Parallel and Distributed DBs
 
-- **Parallel and distributed DBs**: store and process data on multiple machines
+- Store and process data on multiple machines
   (cluster)
-  - E.g., mongo
 
 - **Pros**
-  - Programmer viewpoint
+  - From programmer viewpoint
     - Traditional relational DB interface
     - Appears as a single-machine DB
-  - Operates on 10s-100s of machines
+  - Scale to 10s-100s of machines
   - Data replication enhances performance and reliability
     - Frequent failures with 100s of machines
     - Queries can restart on different machines
@@ -162,17 +136,22 @@ _Volume of data in the world_
   - Incremental query execution is complex
   - Scalability limits
 
-* 4 Key-value Stores
+* 4) (Parallel) Key-value Stores
 
 - **Problem**
   - Applications store billions of small records
-  - File systems can't handle so many files
   - RDBMSs lack multi-machine constraints and transactions
 
 - **Solution**
   - Key-value stores / Document / NoSQL systems
-  - Store, update, retrieve records by key
-  - Operations: **put(key, value)**, **get(key)**
+  - E.g.,
+    - Redis
+    - Google BigTable
+    - Apache HBase (open source BigTable)
+    - AWS Dynamo, S3
+    - Cassandra (Facebook)
+    - Azure cloud storage (Microsoft)
+    - MongoDB cluster
 
 - **Pros**
   - Partition data across machines
@@ -185,28 +164,7 @@ _Volume of data in the world_
     - Transactions
     - Non-key attribute retrieval
 
-* 4 Parallel Key-value Stores
-
-- **Parallel key-value stores**
-  - BigTable (Google)
-  - Apache HBase (open source BigTable)
-  - Dynamo, S3 (AWS)
-  - Cassandra (Facebook)
-  - Azure cloud storage (Microsoft)
-  - Redis
-
-- **Parallel document stores**
-  - MongoDB cluster
-  - Couchbase
-
-- **In-memory caching systems**
-  - Store relations in-memory
-  - Replicated or partitioned across machines
-  - E.g., memcached or Redis
-
-* Big Data: Computing Systems
-
-- **How to process Big Data?**
+* How to Compute with Big Data?
 
 - **Challenges**
   - Distribute computation
@@ -214,133 +172,24 @@ _Volume of data in the world_
     - Distributed/parallel programming is hard
   - Store data in a distributed system
   - Survive failures
-    - One server may last 3 years (1,000 days)
+    - One server lasts ~3 years (1,000 days)
     - With 1,000 servers, expect 1 failure/day
     - E.g., 1M machines (Google in 2011) $\to$ 1,000 machines fail daily
 
 - **MapReduce**
-  - Solve these problems for specific computations
+  - Solve problems for specific computations
   - Elegant way to work with big data
   - Originated as Google's data manipulation model
     - Not an entirely new idea
 
 * Cluster Architecture
-- Today, a standard architecture for big data computation has emerged:
+- **Standard architecture for big data computation**
   - Cluster of commodity Linux nodes
-  - Commodity network (typically Ethernet) to connect them
-  - In 2011 it was guesstimated that Google had 1M machines, in 2025 ~10-15M (?)
-```graphviz
-digraph G {
-    rankdir=TB;
-    bgcolor="white";
-    node [fontname="Helvetica", fontsize=14, shape=box, style=solid, margin="0.2,0.1"];
-    edge [fontname="Helvetica", fontsize=12];
+  - Commodity network (typically Ethernet) to connect nodes
+  - 2011: Google ~1M machines
+  - 2025: ~10-15M (?)
 
-    // --- TOP LEVEL ---
-    label_backbone [label="2-10 Gbps backbone\nbetween racks", shape=plaintext, fontcolor="#003366", fontsize=16];
-    switch_top [label="Switch", style=filled, fillcolor="#6F9BCC", fontcolor=white, width=2, height=0.6];
-
-    // --- RACK 1 (Left) - Enclosed in a dashed box ---
-    subgraph cluster_rack1 {
-        label = "Rack";
-        style = "dashed";
-        fontcolor = "black";
-        fontsize = 16;
-        labelloc = "t";
-        bgcolor = "transparent";
-        
-        label_intra_rack [label="1 Gbps between\nany pair of nodes\nin a rack", shape=plaintext, fontcolor="#003366", fontsize=16];
-        switch_rack1 [label="Switch", style=filled, fillcolor="#6F9BCC", fontcolor=white, width=2, height=0.6];
-        
-        // Node 1 (with "Node" label)
-        subgraph cluster_node1 {
-            label = "Node"; // The "Node" label
-            labelloc = "l";
-            style = "solid";
-            fontcolor = "black";
-            bgcolor = "white";
-            
-            n1_cpu [label="CPU", style="filled", fillcolor="white"];
-            n1_mem [label="Mem", style="filled", fillcolor="white"];
-            n1_disk [label="Disk", shape=cylinder, style="filled", fillcolor="white", margin="0.3,0.1"];
-            n1_cpu -> n1_mem -> n1_disk [style=invis]; // Stack them
-        }
-
-        dots_left [label="...", shape=plaintext, fontsize=24];
-        
-        // Node 2 (no label)
-        subgraph cluster_node2 {
-            label = ""; // No label for this box
-            style = "solid";
-            bgcolor = "white";
-            
-            n2_cpu [label="CPU", style="filled", fillcolor="white"];
-            n2_mem [label="Mem", style="filled", fillcolor="white"];
-            n2_disk [label="Disk", shape=cylinder, style="filled", fillcolor="white", margin="0.3,0.1"];
-            n2_cpu -> n2_mem -> n2_disk [style=invis]; // Stack them
-        }
-
-        label_rack_size [label="Each rack contains 16-64 nodes", shape=plaintext, fontcolor="#003366", fontsize=16];
-
-        // --- RACK 1 - EDGES & RANKS ---
-        label_intra_rack -> switch_rack1 [style=invis];
-        // Connect switch to a node *inside* the cluster; Graphviz clips edge to cluster box
-        switch_rack1 -> n1_cpu; 
-        switch_rack1 -> dots_left;
-        switch_rack1 -> n2_cpu;
-        
-        { rank=same; dots_left; } // Align nodes horizontally
-
-        n1_cpu -> label_rack_size [style=invis]; // Use internal nodes for positioning
-        dots_left -> label_rack_size [style=invis];
-        n2_cpu -> label_rack_size [style=invis];
-    }
-
-    // --- OTHER RACKS (Right) - NOT in a dashed box ---
-    
-    switch_rack2 [label="Switch", style=filled, fillcolor="#6F9BCC", fontcolor=white, width=2, height=0.6];
-
-    // Node 3 (no label)
-    subgraph cluster_node3 {
-        label = ""; // No label
-        style = "solid";
-        bgcolor = "white";
-        
-        n3_cpu [label="CPU", style="filled", fillcolor="white"];
-        n3_mem [label="Mem", style="filled", fillcolor="white"];
-        n3_disk [label="Disk", shape=cylinder, style="filled", fillcolor="white", margin="0.3,0.1"];
-        n3_cpu -> n3_mem -> n3_disk [style=invis];
-    }
-
-    dots_right [label="...", shape=plaintext, fontsize=24];
-
-    // Node 4 (no label)
-    subgraph cluster_node4 {
-        label = ""; // No label
-        style = "solid";
-        bgcolor = "white";
-        
-        n4_cpu [label="CPU", style="filled", fillcolor="white"];
-        n4_mem [label="Mem", style="filled", fillcolor="white"];
-        n4_disk [label="Disk", shape=cylinder, style="filled", fillcolor="white", margin="0.3,0.1"];
-        n4_cpu -> n4_mem -> n4_disk [style=invis];
-    }
-
-    // --- RACK 2 - EDGES & RANKS ---
-    switch_rack2 -> n3_cpu;
-    switch_rack2 -> dots_right;
-    switch_rack2 -> n4_cpu;
-    
-    { rank=same; dots_right; cluster_node4 } // Align nodes horizontally
-
-    // --- TOP-LEVEL EDGES & RANKS ---
-    label_backbone -> switch_top [style=invis];
-    switch_top -> switch_rack1;
-    switch_top -> switch_rack2;
-    
-    { rank=same; switch_rack1; switch_rack2 } // Align rack switches
-}
-```
+- ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_16_image_1.png)
 
 * Cluster Architecture
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_17_image_1.png)
@@ -348,8 +197,8 @@ digraph G {
 * Cluster Architecture: Network Bandwidth
 
 - **Problems**
-  - Data hosted on different machines
-  - Network data transfer takes time
+  - Data on different machines
+  - Network data transfer delays
 
 - **Solutions**
   - Bring computation to data
@@ -386,99 +235,6 @@ digraph G {
   - Data in "chunks" across machines
   - Each chunk replicated on different machines
   - Seamless recovery from disk or machine failure
+
 - Bring computation directly to the data
-  - "chunk servers" also serve as "compute servers"
-
-```mermaid
-graph LR
-    %% --- Define Color Classes ---
-    %% These classes set the background, border, and text color for each block type.
-    classDef C0 fill:#fcfc04,stroke:#222,color:#333,font-weight:bold
-    classDef C1 fill:#fc9c04,stroke:#222,color:#333,font-weight:bold
-    classDef C2 fill:#c0c0c0,stroke:#222,color:#333,font-weight:bold
-    classDef C3 fill:#04fc04,stroke:#222,color:#333,font-weight:bold
-    classDef C5 fill:#a4d8fc,stroke:#222,color:#333,font-weight:bold
-    classDef D0 fill:#a4b48c,stroke:#222,color:#333,font-weight:bold
-    classDef D1 fill:#a4dc8c,stroke:#222,color:#333,font-weight:bold
-
-    %% --- Chunk server 1 ---
-    %% Assign an ID (SG1) and then the display text (the HTML span)
-    subgraph SG1 ["<span style='color:#049c9c; font-weight:bold;'>Chunk server 1</span>"]
-        direction TB
-        %% Use invisible links (~~~) to position nodes in a 2x2 grid
-        S1_C0["C₀"]:::C0 ~~~ S1_C1["C₁"]:::C1
-        S1_C5["C₅"]:::C5 ~~~ S1_C2["C₂"]:::C2
-    end
-
-    %% --- Chunk server 2 ---
-    %% Assign an ID (SG2)
-    subgraph SG2 ["<span style='color:#049c9c; font-weight:bold;'>Chunk server 2</span>"]
-        direction TB
-        S2_D0["D₀"]:::D0 ~~~ S2_C1["C₁"]:::C1
-        S2_C5["C₅"]:::C5 ~~~ S2_C3["C₃"]:::C3
-    end
-
-    %% --- Chunk server 3 ---
-    %% Assign an ID (SG3)
-    subgraph SG3 ["<span style='color:#049c9c; font-weight:bold;'>Chunk server 3</span>"]
-        direction TB
-        S3_C2["C₂"]:::C2 ~~~ S3_C5["C₅"]:::C5
-        S3_D0["D₀"]:::D0 ~~~ S3_D1["D₁"]:::D1
-    end
-
-    %% --- Ellipsis Node ---
-    %% A special node for the "..."
-    Dots["..."]
-    style Dots fill:none,stroke:none,color:#333,font-size:24px,font-weight:bold
-
-    %% --- Chunk server N ---
-    %% Assign an ID (SGN)
-    subgraph SGN ["<span style='color:#049c9c; font-weight:bold;'>Chunk server N</span>"]
-        direction TB
-        SN_C0["C₀"]:::C0 ~~~ SN_C5["C₅"]:::C5
-        SN_D0["D₀"]:::D0 ~~~ SN_C2["C₂"]:::C2
-    end
-    
-    %% --- Style Subgraphs ---
-    %% This applies the teal, dashed border to all subgraphs.
-    %% We now list them by their simple IDs (SG1, SG2, etc.)
-    style SG1 fill:none,stroke:#049c9c,stroke-width:3px,stroke-dasharray: 8 4
-    style SG2 fill:none,stroke:#049c9c,stroke-width:3px,stroke-dasharray: 8 4
-    style SG3 fill:none,stroke:#049c9c,stroke-width:3px,stroke-dasharray: 8 4
-    style SGN fill:none,stroke:#049c9c,stroke-width:3px,stroke-dasharray: 8 4
-
-    %% --- Link Diagram Parts ---
-    %% Use invisible links to force the horizontal layout of the subgraphs
-    S1_C2 ~~~ S2_D0
-    S2_C3 ~~~ S3_C2
-    S3_D1 ~~~ Dots
-    Dots ~~~ SN_C0
-```
-
-* Hadoop Distributed File System
-
-- **NameNode**
-  - Store file/dir hierarchy
-  - Store file metadata (location, size, permissions)
-
-- **DataNodes**
-  - Store data blocks
-  - Split file into 16-64MB blocks
-  - Replicate chunks (2x or 3x)
-  - Keep replicas in different racks
-
-* Hadoop Distributed File System
-
-- **Library for file access**
-  - Read:
-    - Contact _NameNode_ for _DataNode_ and block pointer
-    - Connect to _DataNode_ for data access
-  - Write:
-    - _NameNode_ creates blocks
-    - Assign blocks to multiple _DataNodes_
-    - Client sends data to _DataNodes_
-    - _DataNodes_ store data
-
-- **Client**
-  - API (e.g., Python, Java) to library
-  - Mount HDFS on local filesystem
+  - "Chunk servers" also serve as "compute servers"

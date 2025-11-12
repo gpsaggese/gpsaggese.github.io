@@ -87,8 +87,7 @@ UMD DATA605 - Big Data Systems
     - Another team deploys and manages apps
   - Foster collaboration and innovation
     - IT: "It doesn't work!"
-    - Devs: "What? It works for me"
-
+    - Devs: "What? It works for me!"
 ::::
 ::::{.column width=35%}
 
@@ -124,17 +123,18 @@ UMD DATA605 - Big Data Systems
   - New server for each application
   - Hard to spec machines $\to$ buy "big and fast servers"
     - Overpowered servers at 5-10% capacity
-    - Significant spending during 2000 DotCom boom on machines and networks
+    - Significant spending during the 2000 DotCom boom on machines and networks
 
 - Resurfaced in 2020 with different Cloud Computing use cases
 
-- **Winners**: Cisco, Sun, Microsoft
+- **Winners**: Cisco, Sun Microsystems, Microsoft
 ::::
 ::::{.column width=20%}
 \vspace{2.5cm}
 ![](data605/lectures_source/images/lecture_3/lec_3_slide_6_image_1.png)
 ::::
 :::
+```
 
 * Virtual Machine Era
 :::columns
@@ -176,9 +176,9 @@ UMD DATA605 - Big Data Systems
 
 - **Pros**
   - Containers are fast and portable
-  - Don't require full OS
+  - Don't require a full OS
   - All run on a single host
-  - Reduce OS licensing cost
+  - Reduce OS licensing costs
   - Reduce OS patching and maintenance
 ::::
 ::::{.column width=35%}
@@ -200,12 +200,12 @@ UMD DATA605 - Big Data Systems
 - **Containers run in an OS, OS runs on a host**
   - **Where is the host running?**
     - Local (your laptop)
-    - On premise (your computer in a rack)
+    - On-premise (your computer in a rack)
     - Cloud instance (e.g., AWS EC2)
   - **How is the host running?**
-    - On bare-metal server
+    - On a bare-metal server
     - On a virtual machine
-    - On a virtual machine running a virtual machine
+    - On a virtual machine running on a virtual machine
 
 - **Serverless computing**
   - Application runs without concern for _"how"_ or _"where"_
@@ -217,20 +217,20 @@ UMD DATA605 - Big Data Systems
 
 - **Hypervisor performs HW virtualization**
   - Carves physical hardware into VMs
-  - Allocates CPUs, RAM, storage to a VM
+  - Allocates CPUs, RAM, and storage to a VM
   - Like having multiple computers
 
 - "Virtual machine tax"
   - Running 3 apps requires 3 VMs
     - Each VM takes time to start
-    - Consumes CPU, RAM, storage
-    - Needs OS license
-    - Requires admins, patching
+    - Consumes CPU, RAM, and storage
+    - Needs an OS license
+    - Requires admins and patching
   - You just want to run 3 apps!
 
 \vspace{1cm}
 - **Containers perform OS virtualization**
-  - It's like having multiple OSes
+  - It's like having multiple isolated environments within the same OS
 ::::
 ::::{.column width=40%}
 
@@ -248,13 +248,13 @@ UMD DATA605 - Big Data Systems
 
 - **Docker client**
   - Command line interface
-  - Communicate with server through IPC socket
+  - Communicates with the server through an IPC socket
     - E.g., `/var/run/docker.sock` or IP port
 
 - **Docker engine**
-  - Run and manage containers
-  - Modular, built from OCI-compliant sub-systems
-    - E.g., docker daemon, `containerd`, `runc`, plug-ins for networking and
+  - Runs and manages containers
+  - Modular, built from OCI-compliant subsystems
+    - E.g., docker daemon, `containerd`, `runc`, plugins for networking and
       storage
 ::::
 ::::{.column width=40%}
@@ -270,8 +270,8 @@ UMD DATA605 - Big Data Systems
 
 :::columns
 ::::{.column width=60%}
-- **Docker run-time**
-  - `runc`: start and stop containers
+- **Docker runtime**
+  - `runc`: Start and stop containers
   - `containerd`
     - Pull images
     - Create containers, volumes, network interfaces
@@ -283,9 +283,8 @@ UMD DATA605 - Big Data Systems
 
 - **Docker orchestration**
   - `docker swarm`
-  - Manage clusters of nodes
-  - Replaced by Kubernetes
-
+    - Manage clusters of nodes
+    - Often replaced by Kubernetes
 ::::
 ::::{.column width=35%}
 
@@ -296,8 +295,8 @@ UMD DATA605 - Big Data Systems
 
 - **Open Container Initiative (OCI)**
   - Standardize low-level components of container infrastructure
-  - E.g., image format, run-time API
-  - "Death" of Docker
+  - E.g., image format, runtime API
+  - Evolution of Docker standards
 
 * Docker Container
 
@@ -329,7 +328,7 @@ UMD DATA605 - Big Data Systems
   - Pull pre-built images from a registry
 
 - Multiple layers stacked
-  - Typically few 100s MBs
+  - Typically a few 100s of MBs
 
 * Docker Image Layers
 :::columns
@@ -346,7 +345,7 @@ UMD DATA605 - Big Data Systems
 
 - **Layer hash**
   - Each layer has a hash based on content
-  - Layers are pulled and pushed compressed
+  - Layers are pulled and pushed in a compressed format
 
 - **Image hash**
   - Each image has a hash
@@ -370,17 +369,17 @@ UMD DATA605 - Big Data Systems
 - **Container storage**
   - Copy-on-write layer in the image
   - Ephemeral (temporary data)
-  - Data persists until the container is killed
+  - Data persists until the container is removed
     - Stopping or pausing a container doesn't lose data
   - Containers are immutable
     - Avoid writing persistent data into containers
 
 - **Bind-mount a local dir**
-  - Mount a local dir to a dir inside a container
+  - Mount a local directory to a directory inside a container
 
 - **Docker volumes**
   - Volumes exist separately from the container
-    - E.g., store Postgres DB content
+    - E.g., store PostgreSQL DB content
   - State is permanent across container invocations
   - Shareable across containers
 
@@ -413,13 +412,12 @@ UMD DATA605 - Big Data Systems
 ::::{.column width=50%}
 - **Devs**
 - Implement app
-  - Python, virtual env
+  - Python, virtual environment
 - Containerize app
   - Create Dockerfile
   - Instructions to build image
 - Build image
 - Run app as container
-
 - Test locally
 ::::
 ::::{.column width=50%}

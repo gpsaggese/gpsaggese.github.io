@@ -21,54 +21,180 @@ UMD DATA605 - Big Data Systems
 **$$\text{\blue{8.3: Apache Hadoop}}$$**
 \endgroup
 
-::: columns
-:::: {.column width=65%}
 \vspace{1cm}
+
+::: columns
+:::: {.column width=75%}
 
 - **Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
 
-- Resources
-  - Sanjay Ghemawat, Howard Gobioff, and Shun-Tak Leung: The Google File System, 2003
-  - Jeffrey Dean and Sanjay Ghemawat: MapReduce: Simplified Data Processing on Large Clusters, 2004
+- **References**
+  - Ghemawat et al.: _The Google File System_, 2003
+  - Dean et al.: _MapReduce: Simplified Data Processing on Large Clusters_, 2004
 ::::
 :::: {.column width=20%}
 
 ::::
 :::
 
-* Implementations of MapReduce
-- **Google**
-  - Not available outside Google
+# Apache Hadoop
 
-- **Hadoop**
-  - Open-source in Java
-  - Uses HDFS for storage
-  - Hadoop Wiki: Intro, Getting Started, Map/Reduce Overview
+## Hadoop Ecosystem
 
-- **Amazon Elastic MapReduce (EMR)**
-  - Hadoop MapReduce on Amazon EC2
-  - Also runs Spark, HBase, Hive,
+* Hadoop Ecosystem (aka Hadoop Zoo)
+:::columns
+::::{.column width=50%}
+- **Hadoop Map-Reduce**
 
-- **Spark**
+- **HDFS**
+  - Distributed file system
 
-- **Dask**
+- **Pig**
+  - High-level data-flow framework for parallel computation
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_59_image_1.png)
+::::
+:::
+- **HBase**
+  - Scalable, distributed database
+  - Structured data storage for large tables (like Google BigTable)
+
+- **Cassandra**
+  - Scalable multi-master database with no single points of failure
+
+- **Hive**
+  - Data warehouse infrastructure
+  - Provide data summarization and ad-hoc querying
+
+- **ZooKeeper**
+  - High-performance coordination service for distributed applications
+
+- **YARN, Kafka, Storm, Spark, Solr, ...**
+
+## Hadoop Distributed File System
+
+* Hadoop Distributed File System (HDFS)
+::: columns
+:::: {.column width=60%}
+- **HDFS** is a **distributed file system**
+  - Designed to store large data sets reliably
+  - Part of the Apache Hadoop ecosystem
+  - Inspired by the Google File System (GFS)
+
+1. Optimized for **high-throughput access** to large files
+   - Suitable for batch processing
+   - Not low-latency access
+::::
+:::: {.column width=35%}
+
+![](data605/lectures_source/images/lecture_8_3/lec_8_3_slide_1_image_1.png)
+
+
+::::
+:::
+
+2. Designed for **fault tolerance and scalability**
+   - Ensures fault tolerance through replication
+     - Blocks are stored on different nodes and racks
+     - Provides data availability even if some nodes fail
+   - Follows a primary-secondary architecture
+   - Replication strategy improves read performance
+
+* HDFS Architecture
+::: columns
+:::: {.column width=60%}
+- **NameNode**
+  - Store file/dir hierarchy
+  - Store file metadata
+    - E.g., block location, size, permissions
+
+- **DataNodes**
+  - Store actual data blocks
+  - Split file into 16-256MB blocks
+  - Replicate chunks (2x or 3x) across multiple _DataNodes_
+  - Keep replicas in different racks
+
+- **Client**
+  - API (e.g., Python, Java) to library
+  - Mount HDFS on local filesystem
+::::
+:::: {.column width=35%}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_18_image_1.png)
+::::
+:::
+
+* HDFS: Read / Write Protocols
+::: columns
+:::: {.column width=60%}
+
+- **Read**
+  - Contact _NameNode_ for _DataNode_ and block pointer
+  - Choose the nearest _DataNode_ for each block
+  - Connect to _DataNode_ for data access
+  - Reads blocks in parallel to improve performance
+  - Data is reassembled by the client in correct order
+
+- **Write**
+  - _NameNode_ creates blocks
+  - Assign blocks to multiple _DataNodes_
+  - Client sends data to _DataNodes_
+  - _DataNodes_ store data
+  - Blocks are pipelined to other replicas
+  - Write is considered successful after all replicas acknowledge
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_18_image_1.png)
+::::
+:::
+
+* Fault Tolerance and Recovery
+- _NameNode_ monitors _DataNode_ heartbeat signals
+  - On failure, blocks are re-replicated to maintain replication factor
+
+- _NameNode_ itself is a single point of failure
+  - Solved with HDFS High Availability
+
+- Data integrity ensured using checksums
+
+* HDFS vs Traditional File Systems
+- Best for **storing and processing large-scale files**
+  - E.g., logs, media, sensor data
+  - Commonly used in data lakes and ETL pipelines
+  - Supports very large files and directories
+  - Performance degrades with many small files
+
+- Optimized for **write-once, read-many** access pattern
+
+- Lacks low-latency access, but provides **high throughput**
+  - Good for analytics (OLAP)
+  - Not suitable for transactional systems (OLTP)
+    - E.g., bank
+
+## Hadoop MapReduce
 
 * MapReduce: Hadoop
 
-- Hadoop: open-source MapReduce implementation
+::: columns
+:::: {.column width=55%}
+- **Hadoop**: open-source MapReduce implementation
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_42_image_1.png){width=60%}
+::::
+:::
 
-- Functionalities
+- **Functionalities**
   - Partition input data (HDFS)
   - Input adapters
-    - E.g., hBase, MongoDB, Cassandra, Amazon Dynamo
+    - E.g., HBase, MongoDB, Cassandra, Amazon Dynamo
   - Schedule program execution across machines
   - Handle machine failures
   - Manage inter-machine communication
   - Perform _GroupByKey_ step
   - Output adapters
-    - E.g., avro, ORC, Parquet
+    - E.g., Avro, ORC, Parquet
   - Schedule multiple _MapReduce_ jobs
-![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_42_image_1.png){width=80%}
 
 * Data Flow
 - Store input, intermediate, final outputs in HDFS
@@ -81,120 +207,37 @@ UMD DATA605 - Big Data Systems
 
 - Output often serves as input for another MapReduce task
 
-* Input Data
-  - **InputData** stores the data for a **MapTask** typically in a distributed file system (e.g., HDFS)
-  - The format of input data is arbitrary
-    - Line-based log files
-    - Binary files
-    - Multi-line input records
-    - Something else (E.g., an SQL database)
+* Hadoop MapReduce: Overview
+- Programming model for distributed data processing
+- Processes data in parallel across a cluster
+- Consists of two main functions:
+  - Map: filters and sorts input data
+  - Reduce: aggregates intermediate outputs
+- Suited for batch jobs over large datasets
+- Fault-tolerant: tasks are retried upon failure
 
-![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_44_image_1.png)
+* MapReduce: Execution Phases
+- Input data split into chunks processed by Mappers
+- Mapper outputs key-value pairs
+- Shuffle and Sort: organizes data by key
+  - Intermediate keys are grouped and sent to Reducers
+- Reducers aggregate values by key
+- Final output written back to HDFS
 
-* InputFormat
-  - **InputFormat** class reads and splits up the input files
-  - Select the files that should be used for input
-  - Defines the **InputSplits** that break a file
-  - Provides a factory for **RecordReaders** objects that read the file
+* HDFS vs MapReduce: Complementary Roles
+- HDFS: distributed storage system
+  - Stores large datasets efficiently
+- MapReduce: distributed compute model
+  - Processes data stored in HDFS
+- Together enable scalable and fault-tolerant data analysis
 
-\footnotesize
-| InputFormat | Description | Key | Value |
-|-------------|-------------|-----|-------|
-| TextInputFormat | Default format; reads lines of text files | The byte offset of the line | The line contents |
-| KeyValueInputFormat | Parses lines into (K, V) pairs | Everything up to the first tab character | The remainder of the line |
-| SequenceFileInputFormat | A Hadoop-specific high-performance binary format | User-defined | User-defined |
-\vspace{-0.75cm}
-![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_45_image_1.png){width=60%}
+* Benefits and Limitations
+- **Benefits**
+  - Scalable and fault-tolerant
+  - Handles petabytes of data
+  - Open-source and cost-effective
 
-
-
-* InputSplit
-  - **InputSplit** describes a unit of work that comprises a single **MapTask**
-    - By default, the **InputFormat** breaks a file up into 64MB splits
-  - By dividing the file into splits
-    - Each **MapTask** corresponds to a single input split
-    - Several **MapTask**s to operate on a single file in parallel
-
-![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_46_image_1.png)
-
-* RecordReader
-- The **InputSplit** defines a slice of work but does not describe how to access it
-- The **RecordReader** class
-  - Loads data from its source and converts it into **(K, V) pairs** suitable for reading by **MapTasks**
-  - Is invoked repeatedly on the input until the entire **InputSplit** is consumed
-  - Each invocation leads to a call of the map function defined by the programmer
-
-![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_47_image_1.png)
-
-* OutputFormat
-
-:::columns
-::::{.column width=70%}
-- The **OutputFormat** class
-  - defines the way (K,V) pairs produced by **Reducers** are written to output files
-  - write to files on the local disk or in HDFS in different formats
-
-| OutputFormat | Description |
-|--------------|-------------|
-| TextOutputFormat | Default; writes lines in "key \t value" format |
-| SequenceFileOutputFormat | Writes binary files suitable for reading into subsequent MapReduce jobs |
-| NullOutputFormat | Generates no output files |
-::::
-::::{.column width=30%}
-```graphviz
-digraph G {
-    rankdir=TB;
-    node [shape=box, style=filled, fontname="Helvetica", margin=0.1];
-
-    // Define Nodes
-    label_hdfs [label="Files loaded from local HDFS store", shape=plaintext, style="", fontcolor=black];
-    
-    file [label="file\nfile", shape=cylinder, style=filled, fillcolor="gray", color="blue", peripheries=1, fontcolor=black];
-    
-    input [label="InputFormat", fillcolor="#CC0000", fontcolor=white];
-    
-    split1 [label="Split", fillcolor="#F2C6C6", fontcolor=black];
-    split2 [label="Split", fillcolor="#F2C6C6", fontcolor=black];
-    split3 [label="Split", fillcolor="#F2C6C6", fontcolor=black];
-    
-    rr1 [label="RR", fillcolor="#336699", fontcolor=white];
-    rr2 [label="RR", fillcolor="#336699", fontcolor=white];
-    rr3 [label="RR", fillcolor="#336699", fontcolor=white];
-    
-    map1 [label="Map", fillcolor="blue", fontcolor=white];
-    map2 [label="Map", fillcolor="blue", fontcolor=white];
-    map3 [label="Map", fillcolor="blue", fontcolor=white];
-    
-    partitioner [label="Partitioner", fillcolor="gold", fontcolor=black];
-    sort [label="Sort", fillcolor="purple", fontcolor=white];
-    reduce [label="Reduce", fillcolor="red", fontcolor=white];
-    output [label="OutputFormat", fillcolor="#009933", fontcolor=white];
-
-    // Define Edges (Arrows)
-    label_hdfs -> input;
-    file -> input;
-    
-    input -> split1;
-    input -> split2;
-    input -> split3;
-
-    split1 -> rr1 [dir=both];
-    split2 -> rr2 [dir=both];
-    split3 -> rr3 [dir=both];
-
-    rr1 -> map1;
-    rr2 -> map2;
-    rr3 -> map3;
-
-    {map1, map2, map3} -> partitioner;
-    
-    partitioner -> sort -> reduce -> output;
-
-    // Define Ranks for horizontal alignment
-    { rank=same; split1; split2; split3; }
-    { rank=same; rr1; rr2; rr3; }
-    { rank=same; map1; map2; map3; }
-}
-```
-::::
-:::
+- **Limitations**
+  - High latency, not suitable for real-time
+  - Difficult for complex iterative algorithms
+  - Superseded in many cases by Spark and other engines

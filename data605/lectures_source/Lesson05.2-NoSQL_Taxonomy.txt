@@ -18,21 +18,21 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Lesson 5.2: NoSQL Taxonomy}}$$**
+**$$\text{\blue{Lesson 5.2: Database Taxonomy}}$$**
 \endgroup
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
-- References:
+- **References**:
   - Online tutorials
   - Silbershatz: Chap 10.2
   - Seven Databases in Seven Weeks, 2e
 ::::
-:::: {.column width=30%}
+:::: {.column width=20%}
 
 ![](data605/lectures_source/images/Silberschatz_book.png){width=2cm}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png){width=2cm}
@@ -42,10 +42,10 @@ UMD DATA605 - Big Data Systems
 
 * DB Taxonomy
 - **At least five DB genres**
-  - _Relational_ (e.g., Postgres)
+  - _Relational_ (e.g., PostgreSQL)
   - _Key-value_ (e.g., Redis)
   - _Document_ (e.g., MongoDB)
-  - _Columnar_ (e.g., Parquet)
+  - _Columnar_ (e.g., Apache Parquet)
   - _Graph_ (e.g., Neo4j)
 
 - **Criteria to differentiate DBs**
@@ -60,11 +60,11 @@ UMD DATA605 - Big Data Systems
 
 - **Data model**
   - Set-theory, relational algebra
-  - Data as tables with rows, columns
+  - Data as tables with rows and columns
   - Many attribute types (e.g., numeric, strings, dates, arrays, blobs)
   - Strictly enforced attribute types
   - SQL query language
-  - ACID consistency
+  - ACID compliance
 
 - **Good for**
   - Known data layout, unknown access pattern
@@ -72,7 +72,7 @@ UMD DATA605 - Big Data Systems
   - Regular data
 
 - **Not so good for**
-  - Hierarchical data (not a nice row in tables)
+  - Hierarchical data (not easily represented as rows in tables)
   - Variable/heterogeneous data (record-to-record variation)
 
 * Key-Value Store
@@ -157,7 +157,7 @@ UMD DATA605 - Big Data Systems
   - Inexpensive to add columns
 
 - **Not so good for**
-  - Design schema based on query plans
+  - Designing schema based on query plans
   - No native joins; applications handle joins
 ::::
 ::::{.column width=25%}
@@ -173,8 +173,8 @@ UMD DATA605 - Big Data Systems
 
 - **Data model**
   - Interconnected data: nodes, relationships
-  - Nodes, edges have properties (key-value pairs)
-  - Queries traverse nodes, relationships
+  - Nodes and edges have properties (key-value pairs)
+  - Queries traverse nodes and relationships
 
 - **Applications**
   - Social data
@@ -182,11 +182,11 @@ UMD DATA605 - Big Data Systems
   - Geographical data
 
 - **Good for**
-  - Networked data, hard to model with relational model
-  - Matches OO systems
+  - Networked data, hard to model with a relational model
+  - Matches object-oriented (OO) systems
 
 - **Not so good for**
-  - Poor scalability, hard to partition graph on different nodes
+  - Poor scalability, hard to partition graph across different nodes
     - Store graph in graph DB, relations in key-value store
 ::::
 ::::{.column width=25%}
@@ -218,7 +218,7 @@ UMD DATA605 - Big Data Systems
 - **AP (Available, Partition-Tolerant) systems**
   - Achieve "eventual consistency" via replication and verification
   - MongoDB (document-oriented)
-  - MemcacheDB (key-value)
+  - Memcached (key-value)
   - Dynamo (key-value)
   - Cassandra (column-oriented/tabular)
   - CouchDB (document-oriented)

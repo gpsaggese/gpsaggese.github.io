@@ -23,15 +23,15 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
-- Content in slides
-- Web
-  - 2006, BigTable paper
-  - https://hbase.apache.org/
-  - https://github.com/apache/hbase
-- Good overview:
-  - Seven Databases in Seven Weeks, 2e
+- **References**
+  - Web
+    - 2006, BigTable paper
+    - https://hbase.apache.org/
+    - https://github.com/apache/hbase
+  - Good overview:
+    - Seven Databases in Seven Weeks, 2e
 
 ::::
 :::: {.column width=20%}

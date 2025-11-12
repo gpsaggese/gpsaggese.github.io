@@ -1,32 +1,42 @@
-# Generate the script.
-> i docker_bash --base-image=623860924167.dkr.ecr.eu-north-1.amazonaws.com/cmamp --skip-pull
+# Generate the lecture script
 
-docker> sudo /bin/bash -c "(source /venv/bin/activate; pip install --upgrade openai)"
+- Run from inside a container
+  ```bash
+  > i docker_bash --base-image=623860924167.dkr.ecr.eu-north-1.amazonaws.com/cmamp --skip-pull
 
-docker> generate_slide_script.py \
-  --in_file data605/lectures_source/Lesson01-Intro.txt \
-  --out_file data605/lectures_source/Lesson01-Intro.script.txt \
-  --slides_per_group 3 \
-  --limit 1:5
+  docker> sudo /bin/bash -c "(source /venv/bin/activate; pip install --upgrade openai)"
 
-docker> gen_data605_script.sh 01 --limit 1:5
+  docker> generate_slide_script.py \
+    --in_file data605/lectures_source/Lesson01-Intro.txt \
+    --out_file data605/lectures_source/Lesson01-Intro.script.txt \
+    --slides_per_group 3 \
+    --limit 1:5
+  ```
 
-# Check correctness of all the slides.
+- Run from outside the container
+  ```bash
+  > gen_data605_script.sh 04.3
+  ```
 
-```
-SRC_NAME=$(ls $DIR/lectures_source/Lesson02*); echo $SRC_NAME
-DST_NAME=process_slides.txt
-docker> process_slides.py --in_file $SRC_NAME --action text_check --out_file $DST_NAME --use_llm_transform --limit 0:10
-vimdiff $SRC_NAME process_slides.txt
-```
+# Check correctness of all the slides
 
-```
-> process_lessons.py --lectures 01.1* --class data605 --action slide_check --limit 0:2
-```
+- Run for one lecture from inside the container
+  ```
+  > SRC_NAME=$(ls $DIR/lectures_source/Lesson02*); echo $SRC_NAME
+  > DST_NAME=process_slides.txt
+  docker> process_slides.py --in_file $SRC_NAME --action text_check --out_file $DST_NAME --use_llm_transform --limit 0:10
+  > vimdiff $SRC_NAME process_slides.txt
+  ```
 
-```
-> slide_check.sh 01.2
-```
+- Run for one lecture outside the container
+  ```
+  > slide_check.sh 01.2
+  ```
+
+- Run for several lessons
+  ```
+  > process_lessons.py --lectures 01.1* --class data605 --action slide_check --limit 0:2
+  ```
 
 # Reduce all slides
 ```
@@ -38,11 +48,11 @@ process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $SRC_NAME
 > slide_reduce.sh 01.1*
 ```
 
-# Generate all the slides.
+# Generate all the slides
 
 > process_lessons.py --lectures 0*:1* --class data605 --action pdf
 
-# Count pages.
+# Count pages
 
 > find data605/lectures/Lesson0*.pdf -type f -name "*.pdf" -print -exec mdls -name kMDItemNumberOfPages {} \;
 
@@ -51,5 +61,7 @@ process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $SRC_NAME
 data605/lectures/Lesson01.1-Intro.pdf   10
 data605/lectures/Lesson01.2-Big_Data.pdf        17
 data605/lectures/Lesson01.3-Is_Data_Science_Just_Hype.pdf       14
+
+> count_pages.sh | pbcopy
 
 // process_slides.py --in_file data605/lectures_source/Lesson02-Git_Data_Pipelines.txt --action slide_format_figures --out_file data605/lectures_source/Lesson02-Git_Data_Pipelines.txt --use_llm_transform

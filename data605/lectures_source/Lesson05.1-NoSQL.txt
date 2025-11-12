@@ -20,17 +20,17 @@ UMD DATA605 - Big Data Systems
 \endgroup
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
-- References:
+- **References**:
   - Online tutorials
   - Silbershatz: Chap 10.2
   - Seven Databases in Seven Weeks, 2e
 ::::
-:::: {.column width=30%}
+:::: {.column width=20%}
 
 ![](data605/lectures_source/images/Silberschatz_book.png){width=2cm}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png){width=2cm}
@@ -95,7 +95,7 @@ UMD DATA605 - Big Data Systems
     - Relationships between tables
 
 - **Example of app-DB mismatch**:
-  - Application stores a Python map:
+  - Application stores a Python dictionary
     \begingroup \footnotesize
     ```python
     # Store a dictionary from name (string) to tags (list of strings)
@@ -116,20 +116,20 @@ UMD DATA605 - Big Data Systems
     - Implement "Name to Tags" storage
     - Code uses a simple map, DB has 3 tables
   - Cons
-    - Write and maintain code
+    - Requires writing and maintaining code
 
 - **Object-relational mapping (ORM)**
   - Pros
     - Automatic data conversion between object code and DB
     - Implement `Person` object using DB
-    - SQLAlchemy for Python and SQL
+    - Use SQLAlchemy for Python and SQL
   - Cons
-    - Complex types, polymorphism, inheritance
+    - Handling complex types, polymorphism, and inheritance can be challenging
 
 - **NoSQL approach**
   - No schema
     - Objects can be flat or complex (e.g., nested JSON)
-    - Stored objects (documents) can vary
+    - Stored objects (documents) can vary in structure
 
 * 2) Schema Flexibility
 
@@ -154,7 +154,7 @@ UMD DATA605 - Big Data Systems
 
 * 3) Consistency in Relational DBs
 :::columns
-::::{.column width=75%}
+::::{.column width=65%}
 
 - **All systems fail**
   - Application error (corner case, internal error)
@@ -163,34 +163,34 @@ UMD DATA605 - Big Data Systems
   - Power failure
 
 - **Relational DBs enforce ACID properties**
-  - Guarantee for system failure
+  - Guarantee for system reliability
 
 - **Atomicity**
   - Transactions are "all or nothing"
   - Transaction succeeds completely or fails
 
 - **Consistency**
-  - Transaction moves DB from valid state to another
+  - Transaction moves DB from one valid state to another
   - Maintain DB invariants (primary, foreign key constraints)
-
-- **Isolation**
-  - Concurrent transactions yield same result as sequential execution
-
-- **Durability**
-  - Committed transaction content preserved for system failure
-  - Record data in non-volatile memory
 ::::
 ::::{.column width=30%}
 \footnotesize \centering
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_10_image_2.png)
 _Application error_
 
-\vspace{2cm}
+\vspace{1cm}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_10_image_1.png)
 
 _Hardware failure_
 ::::
 :::
+
+- **Isolation**
+  - Concurrent transactions yield the same result as sequential execution
+
+- **Durability**
+  - Committed transaction content preserved after system failure
+  - Record data in non-volatile memory
 
 * 3) Consistency in Distributed DB
 :::columns
@@ -205,13 +205,13 @@ _Hardware failure_
 
 - **Achieving ACID consistency:**
   - _Not easy_ in single DB
-    - E.g., postgres guarantees ACID
+    - E.g., PostgreSQL guarantees ACID
     - E.g., MongoDB doesn't
   - _Impossible_ in distributed DB
     - Due to CAP theorem
     - Even weak consistency is difficult
 ::::
-::::{.column width=30%}
+::::{.column width=25%}
 \vspace{1cm}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_11_image_1.png)
 ::::
@@ -222,13 +222,12 @@ _Hardware failure_
 ::::{.column width=45%}
 
 - **CAP theorem**: Any distributed DB can have at most two of the following
-  three properties
-  - **Consistent**:
+  - **Consistency**:
     - All clients see the same data
     - Writes are atomic; subsequent reads retrieve the new value
-  - **Available**: Returns a value if a single server is running
-  - **Partition tolerant**: System works even if communication is temporarily
-    lost (network is partitioned)
+  - **Availability**: Returns a value if at least one server is running
+  - **Partition tolerance**: The system works even if communication is
+    temporarily lost (network is partitioned)
 ::::
 ::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_12_image_1.png)
@@ -246,7 +245,7 @@ _Hardware failure_
 
 - **Network partitions**
   - Cannot be prevented in large-scale distributed systems
-  - Can be reduced in probability using redundancy and fault-tolerance
+  - Can be reduced in probability using redundancy and fault tolerance
 
 - You must sacrifice either:
   - **Availability**
@@ -297,18 +296,18 @@ _Hardware failure_
 - **Replication schemes**: Organize multiple servers for a distributed DB
 
 - **Primary-secondary replication**
-  - Application communicates with primary
-  - Replicas require primary for updates
-  - Single-point of failure
+  - Application communicates with the primary
+  - Replicas require the primary for updates
+  - Single point of failure
 
 - **Update-anywhere replication**
   - Aka "multi-master replication"
-  - Every replica can update data, propagated to others
+  - Every replica can update data, which is propagated to others
 
 - **Quorum-based replication**
   - _N_: Total replicas
   - Write to _W_ replicas
-  - Read from _R_ replicas, pick latest update (timestamps)
+  - Read from _R_ replicas, pick the latest update (timestamps)
 ::::
 ::::{.column width=35%}
 \scriptsize \centering
@@ -344,8 +343,8 @@ _Update-anywhere replication_
 ::::
 :::
 
-- **CAP theorem**: only one of Consistency or Availability during Network
-  partition
+- **CAP theorem**: only one of Consistency or Availability can be guaranteed
+  during a network partition
   - Many systems use relaxed consistency models
 
 * Asynchronous Replication
@@ -401,15 +400,14 @@ _Update-anywhere replication_
     - Faster reads: Lock one table, no joins
   - Cons
     - Slower writes: More data to update
-    - Lose table relations
-
+    - Loss of table relations
 - **Relax consistency**
   - Compromise on ACID
   - Weaken consistency (e.g., eventual consistency)
 
 - **NoSQL**
 ::::
-::::{.column width=30%}
+::::{.column width=25%}
 \centering \scriptsize
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_19_image_1.png)
 _Normalized data_
@@ -441,5 +439,5 @@ _Denormalized data_
     - Most NoSQL stores don't allow server-side joins
     - Require data denormalization and duplication
   - Restricted transactions
-    - Most NoSQL stores allow one object transactions
+    - Most NoSQL stores allow single-object transactions
     - E.g., one document/key

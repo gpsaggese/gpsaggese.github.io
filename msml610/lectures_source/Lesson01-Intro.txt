@@ -24,9 +24,7 @@ MSML610: Advanced Machine Learning
 **Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
 
 **References**:
-
-- AIMA (Artificial Intelligence: a Modern Approach)
-  - Chap 1
+- AIMA (Artificial Intelligence: a Modern Approach), Chap 1
 ::::
 :::: {.column width=20%}
 ![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){width=1.5cm}

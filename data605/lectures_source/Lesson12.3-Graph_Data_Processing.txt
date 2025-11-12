@@ -491,4 +491,3 @@ Timed end-to-end GraphX is faster than GraphLab (and Giraph)
   - Genuine part of Spark ecosystem
 ::::
 :::
-
