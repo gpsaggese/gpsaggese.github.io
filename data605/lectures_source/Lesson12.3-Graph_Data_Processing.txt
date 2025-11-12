@@ -1,3 +1,7 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+// 
+// 
+
 ::: columns
 :::: {.column width=15%}
 ![](data605/lectures_source/images/UMD_Logo.png)
@@ -14,88 +18,91 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**Graph Data Processing
-Giraph, GraphX**
+**$$\text{\blue{12.3: Graph Data Processing}}$$**
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
-\vspace{1cm}
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`**
-
-**TAs**:
-Krishna Pratardan Taduri, kptaduri@umd.edu
-Prahar Kaushikbhai Modi, pmodi08@umd.edu
-
-**v1.1**
 ::::
 :::: {.column width=20%}
-
 ::::
 :::
 
 * Options for Processing Graph Data 
-- Write your own programs 
-  - Extract the relevant data, and construct an in-memory graph 
-  - Different storage options help to different degrees with this 
-- Write queries in a declarative language 
-  - Works for some classes of graph queries/tasks
-  - E.g., cypher for Neo4j
-- Use a general-purpose distributed programming framework 
-  - E.g.: Hadoop or Spark
-  - Hard to program many graph analysis tasks this way 
-- Use a graph-specific programming framework 
-  - Goal is to simplify writing graph analysis tasks, and scale them to very large volumes at the same time 
+- Write your own programs
+  - Extract relevant data, construct in-memory graph
+  - Different storage options help to varying degrees
+
+- Write queries in a declarative language
+  - Suitable for some graph queries/tasks
+  - E.g., Cypher for Neo4j
+
+- Use a general-purpose distributed programming framework
+  - E.g., Hadoop or Spark
+  - Difficult for many graph analysis tasks
+
+- Use a graph-specific programming framework
+  - Simplifies writing graph analysis tasks, scales to large volumes
   - E.g., Giraph or GraphX
 
 * Option 2: Declarative Interfaces 
-- No consensus on declarative, high-level languages (like SQL) for either querying or for analysis 
-  - Too much variety in the types of queries/analysis tasks 
-  - Makes it hard to find and exploit commonalities 
-- Some limited, but useful solutions: 
-  - XQuery for XML 
-    - Limited to tree-structured data 
-  - SPARQL for RDF 
-    - Standardized query language, but limited functionality 
-  - Cypher by Neo4j 
-  - Datalog-based frameworks for specifying analysis tasks 
-    - Many prototypes, typically specific to some analysis task 
+- No consensus on declarative, high-level languages for querying or analysis
+  - Variety in query/analysis tasks
+  - Hard to find and exploit commonalities
+
+- Limited, useful solutions:
+  - XQuery for XML
+    - Limited to tree-structured data
+  - SPARQL for RDF
+    - Standardized query language, limited functionality
+  - Cypher by Neo4j
+  - Datalog-based frameworks for analysis tasks
+    - Many prototypes, task-specific
 
 * Option 3: MapReduce 
-- A popular option for (batch) processing very large datasets, as we know
-  - More specifically: Hadoop or Spark
-- Two key advantages: 
-  - Scalability without worrying about scheduling, distributed execution, fault tolerance, and so on... 
-  - Relatively simple programming framework 
-- Disadvantages: 
-  - Hard to use directly for graph analysis tasks 
-  - Each "traversal" effectively requires a new "map-reduce" phase 
-    - Hadoop framework not ideal for large numbers of phases, Spark is better, though 
-- However, much work on showing how different graph analysis tasks can be done using MapReduce 
+- Popular option for processing large datasets
+  - Hadoop or Spark
+
+- Key advantages:
+  - Scalability without scheduling, distributed execution, fault tolerance
+    concerns
+  - Simple programming framework
+
+- Disadvantages:
+  - Difficult for graph analysis tasks
+  - Each traversal requires a new map-reduce phase
+    - Hadoop not ideal for many phases, Spark is better
+
+- Much work on graph analysis tasks using MapReduce
 
 * Option 3: MapReduce 
-- Disadvantages: 
-  - Hard to use this for graph analysis task 
-  - Each "traversal" effectively requires a new "map-reduce" phase 
-    - Each job is execute *N* times
-  - Hadoop framework not ideal for large numbers of phases (even with YARN) 
-  - Not efficient – too much redundant work 
-    - Mappers send PR values and structure of graph
-  - In PageRank example: repeated reading and parsing of the inputs for each iteration
+- Disadvantages:
+  - Difficult for graph analysis
+  - Each traversal requires a new map-reduce phase
+    - Each job executes _N_ times
+  - Hadoop not ideal for many phases (even with YARN)
+  - Inefficient – redundant work
+    - Mappers send PR values and graph structure
+  - In PageRank: repeated reading and parsing each iteration
     - Extensive I/O at input, shuffle/sort, output
 
 * Option 4: Graph Programming Frameworks 
-- Frameworks (analogous to MapReduce) proposed for analyzing large volumes of graph data 
-  - An attempt at addressing limitations of MapReduce 
-  - Most are *vertex-centric* 
-    - Programs written from the point of view of a vertex 
-  - Most based on message passing between nodes 
-- Pregel: original framework proposed by Google 
+- Frameworks (analogous to MapReduce) for analyzing large graph data
+  - Address MapReduce limitations
+  - Most are _vertex-centric_
+    - Programs from a vertex perspective
+  - Based on message passing between nodes
+
+- Pregel: original framework by Google
   - Based on "Bulk Synchronous Parallel" (BSP) model
-- Giraph: an open-source implementation of Pregel built on top of Hadoop
+
+- Giraph: open-source Pregel on Hadoop
+
 - GraphLab: asynchronous execution
-- GraphX: built on top of Spark
+
+- GraphX: built on Spark
 
 * Bulk Synchronous Parallel (BSP) 
 
@@ -104,9 +111,13 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 time
 
 * Vertex-centric BSP 
-- Each vertex has an id, a value, a list of its adjacent vertex ids and the corresponding edge values 
-- Each vertex is invoked in each superstep, can recompute its value and send messages to other vertices, which are delivered over superstep barriers 
-- Advanced features : termination votes, combiners, aggregators, topology mutations 
+- Each vertex has an id, value, list of adjacent vertex ids, and edge values
+
+- Each vertex invoked in each superstep, recomputes value, sends messages to
+  other vertices, delivered over superstep barriers
+
+- Advanced features: termination votes, combiners, aggregators, topology
+  mutations
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_8_image_1.png)
 
@@ -118,29 +129,28 @@ time
 - I can mutate graph topology
 
 * Option 4: Pregel
-- Programmers write one program: **compute()**
-- Typical structure of **compute()**:
-  - **Inputs**: current values associated with the node
-  - **Inputs**: messages sent by the neighboring nodes
-  - Do something ...
-  - Modify current values associated with the node (if desired)
-  - **Outputs**: send messages to neighbors
-- Execution framework:
-  - Execute *compute() *for all the nodes in parallel
-  - Synchronize (wait for all messages to be delivered)
-  - Repeat
+- Programmers write one program: `compute()`
 
-* Apache giraph
+- Typical structure of `compute()`:
+  - _Inputs_: current values of the node
+  - _Inputs_: messages from neighboring nodes
+  - Modify current values (if desired)
+  - _Outputs_: send messages to neighbors
+
+- Execution framework:
+  - Execute _compute()_ for all nodes in parallel
+  - Synchronize (wait for all messages)
+  - Repeat
 
 * Apache Giraph
 - Pregel is proprietary, but:
-  - **Apache Giraph** is an open source implementation of Pregel
-  - runs on standard **Hadoop** infrastructure
-  - computation is executed in memory
-  - can be a job in a pipeline (**MapReduce, Hive**)
-  - uses **Apache ZooKeeper** for synchronization
-  - graph partition via hashing
-  - fault tolerance via checkpointing
+  - **Apache Giraph**: open source implementation
+  - Runs on standard **Hadoop** infrastructure
+  - Computation executed in memory
+  - Can be a job in a pipeline (**MapReduce, Hive**)
+  - Uses **Apache ZooKeeper** for synchronization
+  - Graph partition via hashing
+  - Fault tolerance via checkpointing
 
 * Plays well with Hadoop
 
@@ -155,24 +165,30 @@ time
   - partition/worker mapping
   - global state: #superstep
   - checkpoint paths, aggregator values, statistics
+
 - **Master**: responsible for coordination
   - assigns partitions to workers
   - coordinates synchronization
   - requests checkpoints
   - aggregates aggregator values
   - collects health statuses
+
 - **Worker**: responsible for vertices
   - invokes active vertices compute() function
-  - sends, receives and assigns messages
+  - sends, receives, assigns messages
   - computes local aggregation values
 
 * What do you have to implement?
 - Your algorithm as a **Vertex**
-  - Subclass one of the many existing implementations: *BasicVertex, MutableVertex, EdgeListVertex, HashMapVertex, LongDoubleFloatDoubleVertex*, ...
-- A **VertexInputFormat** to read your graph
-  - e.g., from a text file with adjacency lists like *<vertex> <neighbor1> <neighbor2> *...
-- a **VertexOutputFormat** to write back the result
-  - e.g., *<vertex> <pageRank> *
+  - Subclass existing implementations: `BasicVertex, MutableVertex,
+    EdgeListVertex, HashMapVertex, LongDoubleFloatDoubleVertex`
+
+- A `VertexInputFormat` to read your graph
+  - e.g., from a text file with adjacency lists like _<vertex> <neighbor1>
+    <neighbor2> ..._
+
+- A `VertexOutputFormat` to write back the result
+  - e.g., _<vertex> <pageRank>_
 
 * A vertex view 
 
@@ -181,11 +197,14 @@ time
 * Designed for iterations 
 - Stateful (in-memory)
   - Keep all data in memory if possible
+
 - Only intermediate values (messages) sent
-  - To communicate with other vertices 
-- Hits the disk at input, output, checkpoint 
+  - Communicate with other vertices
+
+- Hits disk at input, output, checkpoint
+
 - Can go out-of-core
-  - If the data does not fit into memory 
+  - If data doesn't fit into memory
 
 * Graph modeling in Giraph 
 - BasicComputation<          I extends WritableComparable, // VertexID -- vertex ref           V extends Writable, // VertexData -- a vertex datum           E extends Writable, // EdgeData -- an edge label           M extends Writable> // MessageData-– message payload 
