@@ -92,13 +92,11 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_1.png){width=60%}
 
-
 Computation
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_2.png){width=80%}
 ::::
 :::
-
 
 * Pub-Sub Systems
 :::columns
@@ -338,7 +336,6 @@ Computation
   - Support micro-batch and true continuous streaming
   - Make batch vs streaming API even closer
 
-
 * Spark Structured Streaming
 :::columns
 ::::{.column width=60%}
@@ -431,7 +428,6 @@ Computation
 ::::
 ::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_20_image_1.png)
-::::
 ::::
 :::
 * BACKUP

@@ -34,13 +34,10 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-
-
 * UMD DATA605 - Big Data Systems
 
 Dr. GP Saggese
 gsaggese@umd.edu
-
 
 * AWS: Resources
 ::: columns
@@ -49,7 +46,6 @@ gsaggese@umd.edu
 - Many tutorials on-line
 - Mastery
   - Amazon Web Services in Action 3rd Edition
-
 
 ::::
 :::: {.column width=40%} 
@@ -69,13 +65,10 @@ gsaggese@umd.edu
     - Run enterprise software
     - Run machine learning applications
 - **Services can be controlled in different ways**
-  - A web interface (aka “console”)
+  - A web interface (aka "console")
   - CLI: **aws** command
   - Programmatically
     - Through language libraries, SDK (e.g., Python **boto3**)
-
-
-
 
 * AWS as Business
 ::: columns
@@ -100,7 +93,6 @@ gsaggese@umd.edu
 ::::
 :::
 
-
 * Types of Cloud Computing
 - Cloud computing enables a shared pool of configurable computing resources
   - E.g., servers, storage, networks, applications, services
@@ -112,7 +104,6 @@ gsaggese@umd.edu
   - *Public*: open to use by general public (e.g., AWS)
   - *Private*: virtualize and share IT infrastructure within a single organization (e.g., government)
   - *Hybrid*: a mixture of public and private clouds
-
 
 * AWS vs Google Cloud vs Microsoft Azure
 ::: columns
@@ -140,9 +131,8 @@ gsaggese@umd.edu
 ::::
 :::
 
-
 * From On-premise to AWS
-- **Aka “Cloud-transformation”**
+- **Aka "Cloud-transformation"**
 - **Move a medium-sized e-commerce site from on-premise to the cloud**
 - **Architecture**
   - **Web-server**: handle requests from customers
@@ -154,12 +144,10 @@ gsaggese@umd.edu
     - E.g., products and prices
     - Delivered by web server
 
-
 * From On-premise to AWS
 - **Step 1: Move to cloud**
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_8_image_1.png)
-
 
 * From On-premise to AWS
 ::: columns
@@ -178,7 +166,6 @@ gsaggese@umd.edu
 ::::
 :::
 
-
 * Low-Cost Batch Processing
 - Lots of batch jobs run on a schedule
   - E.g., analyze data once a day
@@ -192,9 +179,6 @@ gsaggese@umd.edu
   - Run when there is capacity, e.g., saving 50%
 - AWS Lambda
   - Serverless
-
-
-
 
 * Capacity Scaling
 ::: columns
@@ -221,7 +205,6 @@ gsaggese@umd.edu
 ::::
 :::
 
-
 * Pay-per-use
 ::: columns
 :::: {.column width=60%} 
@@ -237,13 +220,11 @@ gsaggese@umd.edu
   - If you exceed the limits, you start paying (without further notice)
     - Need to set an alarm!
 
-
 ::::
 :::: {.column width=40%} 
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_12_image_1.png)
 ::::
 :::
-
 
 * Pay-per-use
 ::: columns
@@ -262,7 +243,6 @@ gsaggese@umd.edu
 ![alt_text](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_13_image_1.png)
 ::::
 :::
-
 
 * Interacting with AWS
 ::: columns
@@ -316,8 +296,6 @@ gsaggese@umd.edu
 ::::
 :::
 
-
-
 * AWS VMs
 ::: columns
 :::: {.column width=60%} 
@@ -341,7 +319,6 @@ gsaggese@umd.edu
 ::::
 :::
 
-
 * Starting an EC2 Instance
 ::: columns
 :::: {.column width=40%} 
@@ -353,13 +330,11 @@ gsaggese@umd.edu
 ::::
 :::: {.column width=40%} 
 
-
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_1.png)
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_3.png)
 ::::
 :::
-
 
 * Starting an EC2 Instance
 ::: columns
@@ -380,11 +355,9 @@ gsaggese@umd.edu
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_1.png)
 
-
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_3.png)
 ::::
 :::
-
 
 * AWS Instance Type
 ::: columns
@@ -419,7 +392,6 @@ gsaggese@umd.edu
 ::::
 :::
 
-
 * AWS Instance Type
 - Price on AWS website is somehow unclear (duh really?)
   - Burst mode
@@ -429,9 +401,6 @@ gsaggese@umd.edu
   - 642 types of machines (as of 2023)
   - From 37 USD / yr to 1.91M USD / yr (500 CPUs and 24TB of mem)
 - Alternative sites: https://instances.vantage.sh
-
-
-
 
 * Starting an EC2 Instance
 ::: columns
@@ -454,7 +423,6 @@ gsaggese@umd.edu
 ::::
 :::
 
-
 * Starting an EC2 Instance
 ::: columns
 :::: {.column width=50%} 
@@ -474,7 +442,6 @@ gsaggese@umd.edu
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_22_image_1.png)
 ::::
 :::
-
 
 * States of a VM
 ::: columns
@@ -498,13 +465,11 @@ gsaggese@umd.edu
 ::::
 :::: {.column width=50%} 
 
-
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_23_image_1.png)
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_23_image_2.png)
 ::::
 :::
-
 
 * Moving / Upgrading EC2 Instances
 - **Scale up / down**
@@ -529,8 +494,6 @@ gsaggese@umd.edu
     - Service costs vary by region
 - **Often you want an Elastic IP address to get a fixed public IP**
 
-
-
 * Optimizing Costs
 - **On-demand instances**
   - Maximum flexibility, no restrictions
@@ -549,9 +512,6 @@ gsaggese@umd.edu
   - Price based on supply / demand
   - Discount: up to 10x cheaper than on-demand price
   - Useful for running asynchronous tasks
-
-
-
 
 * Programming the Infrastructure
 ::: columns
@@ -583,7 +543,6 @@ gsaggese@umd.edu
 ::::
 :::
 
-
 * Infrastructure-As-Code
 - **Use high-level programming language to control IT systems**
 - You can apply software development to infra
@@ -593,13 +552,10 @@ gsaggese@umd.edu
 - **DevOps (SRE in Google parlance)**
   - Mix devs and ops in the same team
   - Use software to bring development and operations closer together
-  - Switch roles to experience each others’ pain
+  - Switch roles to experience each others' pain
     - Devs -> responsible for operational tasks (e.g., being on-call)
     - Ops -> involved in software development, making system easier to operate
   - Foster communication and collaboration
-
-
-
 
 * Infrastructure-as-Code: Advantages
 - **Save time**
@@ -621,8 +577,6 @@ gsaggese@umd.edu
 - **The script is a detailed documentation**
   - It explains what and how, but not why (not a design document)
 
-
-
 * Create User Account
 ::: columns
 :::: {.column width=50%} 
@@ -643,11 +597,9 @@ gsaggese@umd.edu
 
 ![Create User Account](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_2.png)
 
-
 **Bad idea!**
 ::::
 :::
-
 
 * AWS Command Line Interface (CLI)
 - Provide unified interface to all AWS services
@@ -663,7 +615,6 @@ gsaggese@umd.edu
     - E.g., **us-east-1**
 - Execute command
   - **> aws <service> <action> --key value**
-
 
 * Software Development Kit (SDK)
 ::: columns
@@ -704,9 +655,6 @@ gsaggese@umd.edu
   - It serves as documentation
     - Use it as code in source control
 
-
-
-
 * Securing Your System
 ::: columns
 :::: {.column width=50%} 
@@ -730,7 +678,6 @@ gsaggese@umd.edu
 ::::
 :::
 
-
 * AWS Shared-responsibility Principle
 - AWS is responsible for:
   - Protect network through monitoring Internet access
@@ -744,5 +691,4 @@ gsaggese@umd.edu
   - Encrypting data
   - Updating OS (kernel, libs) and software
 - More info here
-
 

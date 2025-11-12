@@ -174,7 +174,6 @@ time
 - a **VertexOutputFormat** to write back the result
   - e.g., *<vertex> <pageRank> *
 
-
 * A vertex view 
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_17_image_1.png)
@@ -283,7 +282,6 @@ https://www.facebook.com/notes/facebook-engineering/scaling-apache-giraph-to-a-t
 
 - Limited reuse of internal data-structures across stages 
 
-
 * The GraphX Unified Approach 
 :::columns
 ::::{.column width=50%}
@@ -299,7 +297,6 @@ Combines Data-Parallel Graph-Parallel Systems
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_30_image_1.png)
 
 Enables users to easily and efficiently express the entire graph analytics pipeline 
-
 
 * Representation 
 
@@ -320,7 +317,6 @@ Enables users to easily and efficiently express the entire graph analytics pipel
 ``` 
 - Graph[(String, String), String] 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_32_image_1.png){width=60%}
-
 
 * Creating a Graph (Scala)
 
@@ -353,7 +349,6 @@ val graph = Graph(vertices, edges)
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_33_image_1.png){width=70%}
 ::::
 :::
-
 
 * Hello world in GraphX
 ```
@@ -409,7 +404,6 @@ Hello world from the: 3 : 1 2
 
 ::::
 :::
-
 
 * Graph Operators (Scala)
 \footnotesize

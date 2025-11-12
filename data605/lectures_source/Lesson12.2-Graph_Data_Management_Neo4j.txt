@@ -95,7 +95,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 \vspace{-5.5cm}\centering
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_6_image_2.png){width=30%}
 
-
 * Motivation
 :::columns
 ::::{.column width=50%}
@@ -250,7 +249,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Fairly rudimentary declarative interfaces
   - Most applications need to be written using programmatic interfaces
   - Expose a programmatic API to write arbitrary graph algorithms
-
 
 * Overview
 - Motivation
@@ -542,7 +540,7 @@ graph G {
                 <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">Type =</FONT></TD></TR>
                 <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="orange">Program</FONT></TD></TR>
                 <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">Name = ‘Hello</FONT></TD></TR>
-                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">World!’</FONT></TD></TR>
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">World!'</FONT></TD></TR>
             </TABLE>
         >
     ];
@@ -652,7 +650,6 @@ Could be used also as:
 	- Concatenation through + 
 	- IN to check if an element exists in a collection
 
-
 * More WHERE options
 - WHERE others.name IN ['Andres', 'Peter']
 - WHERE user.age IN range (18,30)
@@ -742,7 +739,6 @@ Could be used also as:
   - An important variation: *approximate* matching
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_1.png){width=70%}
-
 
 * Queries: Connection Subgraphs 
 - Given a data graph and two (or more) nodes in it, find a small subgraph that best captures the relationship between the nodes 
