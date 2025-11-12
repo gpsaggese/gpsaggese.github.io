@@ -1,3 +1,7 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+//
+
 ::: columns
 :::: {.column width=15%}
 ![](data605/lectures_source/images/UMD_Logo.png)
@@ -14,65 +18,42 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**Graph Data Management
-Neo4J**
+**$$\text{\blue{12.2: Graph Data Management}}$$**
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
-\vspace{1cm}
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
-**Instructor: Dr. GP Saggese - `gsaggese@umd.edu`**
-
-**TAs**:
-Krishna Pratardan Taduri, kptaduri@umd.edu
-Prahar Kaushikbhai Modi, pmodi08@umd.edu
-
-**v1.1**
 ::::
 :::: {.column width=20%}
-
 ::::
 :::
 
 * Overview
 - Motivation
 - Graph data models
+  - RDF, Property Graph, XML
 - Storing graph data
+  - Neo4j
 - Querying graph data
+  - Cypher, SPARQL, Gremlin
 - Typical graph analysis tasks
+  - PageRank, clustering
 - Executing graph analysis tasks
+  - Google Pregel, Apache Giraph, Spark GraphX
 
-* Overview
-- Motivation
-- Graph data models
-  - E.g., RDF, Property Graph, XML
-- Storing graph data
-  - E.g., Neo4j
-- Querying graph data
-  - E.g., Cypher, SPARQL, Gremlin
-- Typical graph analysis tasks
-  - E.g., PageRank, clustering
-- Executing graph analysis tasks
-  - E.g., Google Pregel, Apache Giraph, Spark GraphX
-
-* Overview
-- **Motivation**
-- Graph data models
-- Storing graph data
-- Querying graph data
-- Typical graph analysis tasks
-- Executing graph analysis tasks
+## Motivation
 
 * Graphs: Background
 :::columns
 ::::{.column width=100%}
-- A *graph (or network)* captures a set of entities and interconnections between pairs of them
-  - Entities / objects represented by *vertices or nodes*
-  - Interconnections between pairs of vertices called *edges* (or *links, arcs, relationships*)
+- A _graph (or network)_ captures entities and interconnections
+  - Entities represented by _vertices or nodes_
+  - Interconnections called _edges_ (or _links, arcs, relationships_)
 
-- Graph theory and algorithms widely studied in Computer Science
-  - Not as much work on managing graph-structured data
+- Graph theory and algorithms studied in Computer Science
+  - Less work on managing graph-structured data
 ::::
 ::::{.column width=0%}
 ::::
@@ -81,15 +62,19 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 :::columns
 ::::{.column width=50%}
-![An undirected, unweighted graph](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_1.png){width=90%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_1.png){width=90%}
+_An undirected, unweighted graph_
 ::::
 ::::{.column width=50%}
-![A directed, edge-weighted graph](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_2.png){width=90%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_2.png){width=90%}
+_A directed, edge-weighted graph_
 ::::
 :::
 
 * Graph Data Structures: Motivation
-- Increasing interest in querying and reasoning about the *underlying graph structure *in a variety of disciplines
+- Increasing interest in querying and reasoning about the *underlying graph
+  structure *in a variety of disciplines
+
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_6_image_1.png){width=85%}
 
 \vspace{-5.5cm}\centering
@@ -108,56 +93,58 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 * Motivation
 - **Graph data structures have not changed that much over time**
-  - Same problems in representing the data in 1960s than today
+  - Same problems in representing data in 1960s as today
+
 - **What has changed in recent years**
   - Large data volumes and easier availability
-  - Reasoning about the graph structure can provide useful and actionable insights
-    - Lose too much information if graph structure ignored
-  - Not easy to query using traditional tools (e.g., relational DBs)
+  - Reasoning about graph structure provides useful insights
+    - Lose information if graph structure ignored
+  - Not easy to query with traditional tools (e.g., relational DBs)
     - Need specialized tools (e.g., Neo4j)
-  - Hard to efficiently process graph-structured queries using existing tools
+  - Hard to efficiently process graph-structured queries with existing tools
     - Dedicated solutions: Google Pregel / Apache Giraph, Spark GraphX
-    - Problems getting worse with increasingly large graphs seen in practice
+    - Problems worsen with increasingly large graphs in practice
 
-* Overview
-- Motivation
-- **Graph data models**
-- Storing graph data
-- Querying graph data
-- Typical graph analysis tasks
-- Executing graph analysis tasks
+## Graph data models
 
 * Knowledge Graphs
 - **Representation of knowledge in the form of graphs**
-  - Capture entities, relationships, and properties
-  - Provide a structured view of real-world information
-- Can be represented using RDF or Property Graph models
+  - Capture entities, relationships, properties
+  - Provide structured view of real-world information
+
+- Represent using RDF or Property Graph models
   - E.g., Google Knowledge Graph, DBpedia, Wikidata
+
 - **Applications**
   - Enable machine understanding of complex domains
-  - Support semantic search, recommendation, and analytics
-  - Used in various industries for data integration, knowledge discovery, and AI applications
+  - Support semantic search, recommendation, analytics
+  - Used in industries for data integration, knowledge discovery, AI
+    applications
+
 - **Ontologies**
-  - Provide a formal representation of knowledge
+  - Provide formal representation of knowledge
   - Promote interoperability across knowledge bases
 
 * Graph Data Models: RDF
 :::columns
 ::::{.column width=60%}
 - Resource Description Framework
+
 - RDF uses triples subject-predicate-object
-  - Each triple connects a "subject" and an "object" through a "predicate"
+  - Connects "subject" and "object" through a "predicate"
   - E.g., "TomCruise-acted-TopGun"
+
 - **Used to represent knowledge bases**
-  - Typically queried through SPARQL
+  - Queried through SPARQL
+
 - **Pros**
   - Standardization
-    - Standard W3C to model data
-    - Subject and object can be URI (Uniform Resource Identifier) in semantic web
+    - W3C standard to model data
+    - Subject and object can be URI in semantic web
   - Interoperability
-    - Can merge RDF data store
+    - Merge RDF data store
   - Extensibility
-    - Can add new nodes and relationships
+    - Add new nodes and relationships
     - Support ontologies
 ::::
 ::::{.column width=40%}
@@ -168,15 +155,19 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 * Graph Data Models: Property Graph
 :::columns
 ::::{.column width=50%}
-- A directed graph where each node and each edge may be associated with a set of *properties* (*key-values*)
+- Directed graph with nodes and edges having _properties_ (_key-values_)
+
 - Query languages
   - Cypher (e.g., Neo4j)
   - Gremlin (e.g., Apache TinkerPop)
-- Lack universal standard
-- Similar expressive power to RDFs but less "schema" so more difficult to interoperate
+
+- No universal standard
+
+- Similar expressive power to RDFs, less "schema," harder to interoperate
+
 - Used by many open-source graph data management tools
 ::::
-::::{.column width=50%}
+::::{.column width=45%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_1.png)
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_2.jpeg)
@@ -184,9 +175,9 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 :::
 
 * Graph Data Models: XML
-- Commonly used data model for representing data without rigid structure
-- It is a directed labeled tree
-- Popular data exchange format for non-tabular data
+- Common data model for flexible data representation
+- Directed labeled tree
+- Popular for non-tabular data exchange
 
 :::columns
 ::::{.column width=50%}
@@ -211,13 +202,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 ::::
 :::
 
-* Overview
-- Motivation
-- Graph data models
-- **Storing graph data**
-- Querying graph data
-- Typical graph analysis tasks
-- Executing graph analysis tasks
+## Storing graph data
 
 * Storing Graph Data
 - **File systems**
@@ -238,43 +223,41 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - You need to write programs
 
 * Graph Databases
-- Many specialized graph database systems in recent years
+- Many specialized graph database systems
   - E.g., Neo4j, Titan, OrientDB, AllegroGraph
-- A few key distinctions from relational databases
-  - Built to manage and query graph-structured data
-  - Store the graph structure explicitly using data structures with pointers
-    - Avoid the need for joins, making graph traversals easier
-    - More natural to write *queries* and *graph algorithms* (reachability or shortest paths)
-  - Support graph query languages like SPARQL, Cypher, Gremlin
-  - Fairly rudimentary declarative interfaces
-  - Most applications need to be written using programmatic interfaces
-  - Expose a programmatic API to write arbitrary graph algorithms
 
-* Overview
-- Motivation
-- Graph data models
-- Storing graph data
-- **Querying graph data**
-- Typical graph analysis tasks
-- Executing graph analysis tasks
+- Key distinctions from relational databases
+  - Manage and query graph-structured data
+  - Store graph structure explicitly with pointers
+    - Avoid joins, simplify graph traversals
+    - Natural to write _queries_ and _graph algorithms_ (reachability, shortest
+      paths)
+  - Support graph query languages: SPARQL, Cypher, Gremlin
+  - Rudimentary declarative interfaces
+  - Applications often require programmatic interfaces
+  - Provide programmatic API for arbitrary graph algorithms
+
+## Querying graph data
 
 * Query Languages for Graph Databases
 :::columns
 ::::{.column width=50%}
 - Cypher
   - Designed for Property Graphs
-  - Data = vertices and edges annotated with key-value properties
+  - Data: vertices and edges with key-value properties
   - Declarative
   - Subgraph pattern matching
-  - Can't easily handle queries like reachability
-  - Native query language for Neo4j
+  - Struggles with reachability queries
+  - Native to Neo4j
+
 - Gremlin
-  - Works with both RDF and Property Graphs
+  - Works with RDF and Property Graphs
   - Imperative
-  - Allow to describe graph traversal
+  - Describes graph traversal
+
 - SPARQL
   - Similar to Cypher
-  - Query language for RDF data
+  - For RDF data
   - Standardized by W3C
 ::::
 ::::{.column width=60%}
@@ -307,17 +290,16 @@ WHERE
 :::columns
 ::::{.column width=60%}
 - Graph DB storing data as Property Graph
-  - Nodes, edges hold data as key-value pairs (like non-relational DBs)
+  - Nodes, edges hold data as key-value pairs
 - Focus is
   - On relationships between values
-  - Instead of commonalities among sets of values (e.g., tables of rows for RDBMs and collection of documents)
 - Two querying languages
   - Cypher, Gremlin
 - GUI or REST API
-- Full ACID-compliant transactions (atomicity, consistency, isolation, durability)
+- Full ACID-compliant transactions
 - High-availability clustering
 - Incremental backups
-- Can run in small application or run on large clusters of servers
+- Run in small application or large server clusters
 ::::
 ::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_19_image_1.png)
@@ -334,12 +316,15 @@ Specs
 ```
 \endgroup
 - Create a wine suggestion engine
-- Wines are categorized by different
+
+- Wines categorized by
   - Varieties (e.g., Chardonnay, Pinot Noir)
   - Regions (e.g., Bordeaux, Napa, Tuscany)
-  - Vintage (year in which the grapes were harvested)
-- Keep track of articles describing wines by various authors
-- Users can track their favorite wines
+  - Vintage (year grapes harvested)
+
+- Track articles describing wines by authors
+
+- Users track favorite wines
 \begingroup\color{red}
 ```
 Relational model
@@ -367,7 +352,8 @@ Problem with relational approach
 \endgroup
   - There isn't much of a schema
   - Lots of incomplete data
-  - An old saying in relational DB world: "*On a long enough timeline all fields become optional*"
+  - An old saying in relational DB world: "*On a long enough timeline all fields
+    become optional*"
 \begingroup\color{blue}
 ```
 Graph DB approach
@@ -378,21 +364,24 @@ Graph DB approach
 * Labeled Property Graphs in Neo4j
 - **Nodes**
   - Main data elements
-  - Connected to other nodes via *relationships*
-  - Can have one or more *properties* (stored as key/value pairs)
+  - Connected via _relationships_
+  - Have _properties_ (key/value pairs)
+
 - **Relationships**
-  - Connect two *nodes*
-  - Are directional
-  - *Nodes* can have multiple relationships
-  - Can have one or more *properties* (stored as key/value pairs)
+  - Connect two _nodes_
+  - Directional
+  - Multiple relationships per node
+  - Have _properties_ (key/value pairs)
+
 - **Properties**
-  - Named values where the name (or key) is a string
-  - Can be indexed and constrained
-  - Composite indexes can be created from multiple properties
+  - Named values (key is a string)
+  - Indexed and constrained
+  - Composite indexes from multiple properties
+
 - **Labels**
-  - Used to group nodes into sets
-  - A node may have multiple labels
-  - Labels indexed to accelerate finding nodes in the graph
+  - Group nodes into sets
+  - Nodes may have multiple labels
+  - Labels indexed for faster node retrieval
   - Native label indexes optimized for performance
 
 * Cypher Example
@@ -475,7 +464,8 @@ MATCH (p1:Person {name: "Patty"}),
     CREATE (p1)-[r:friends]->(p2)
 ```
 
-- The changes were made "superimposing" new relationships without changing the previous data
+- The changes were made "superimposing" new relationships without changing the
+  previous data
 ::::
 ::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_25_image_1.png)
@@ -514,7 +504,7 @@ SKIP [Number] LIMIT [Number]
 ```
 
 * Simple query
-- Get all nodes of type ***Program*** that have the name *Hello World!*
+- Get all nodes of type `Program` that have the name `Hello World!`
 
 :::columns
 ::::{.column width=50%}
@@ -551,7 +541,7 @@ graph G {
 :::
 
 * Query relationships
-- Get all relationships of type *Author* connecting *Programmers* and *Programs*:
+- Get all relationships of type `Author` connecting `Programmers` and `Programs`:
 
 ```graphviz
 digraph G {
@@ -625,29 +615,26 @@ RETURN r
 
 * More options
 - Relationship distance:
-  - (a)-[:Rtype*2]->(b) – 2 hops of type Rtype.
-  - (a)-[:Rtype*]->(b) – any number of hops of type Rtype.
-  - (a)-[:Rtype*2..10]-> (b) – 2-10 hops of Rtype.
-  - (a)-[:Rtype*  ..10]-> (b) – 1-10 hops of Rtype.
-  - (a)-[:Rtype*2..    ]-> (b) – at least 2 hops of Rtype.
-Could be used also as:
-  - (a)-[r*2]->(b) – r gets a sequence of relationships
-  - (a)-[*{prop:val}]->(b)
+  - `(a)-[:Rtype*2]->(b)`: 2 hops of type Rtype
+  - `(a)-[:Rtype*]->(b)`: any number of hops of type Rtype
+  - `(a)-[:Rtype*2..10]->(b)`: 2-10 hops of Rtype
+  - `(a)-[:Rtype*..10]->(b)`: 1-10 hops of Rtype
+  - `(a)-[:Rtype*2..]->(b)`: at least 2 hops of Rtype
+- Could be used also as:
+  - `(a)-[r*2]->(b)` r gets a sequence of relationships
+  - `(a)-[*{prop:val}]->(b)`
 
 * Operators
-
-- Mathematical 
+- Mathematical
   -	+, -, *, /,%, ^ (power, not XOR)
-
 - Comparison
-  - =,<>,<,>,>=,<=, =~ (Regex), IS NULL , 
-          IS NOT NULL
+  - =,<>,<,>,>=,<=, =~ (Regex), IS NULL, IS NOT NULL
 - Boolean
 	- AND, OR, XOR, NOT
 - String
   - Concatenation through +
-- Collection 
-	- Concatenation through + 
+- Collection
+	- Concatenation through +
 	- IN to check if an element exists in a collection
 
 * More WHERE options
@@ -671,19 +658,20 @@ Could be used also as:
 - On collections:
   - RETURN a.array, filter(x IN a.array WHERE length(x)= 3)
     FILTER - returns the elements in a collection that comply to a predicate.
-  - WHERE ANY      (x IN a.array    WHERE x = "one"  ) – at least one
-  - WHERE ALL       (x IN nodes(p) WHERE x.age > 30) – all elements
-  - WHERE SINGLE (x IN nodes(p) WHERE var.eyes = "blue") – Only one 
+  - WHERE ANY (x IN a.array    WHERE x = "one"  ) – at least one
+  - WHERE ALL (x IN nodes(p) WHERE x.age > 30) – all elements
+  - WHERE SINGLE (x IN nodes(p) WHERE var.eyes = "blue") – Only one
 - nodes(p) – nodes of the path p
 
 * With
-- Manipulate the result sequence before it is passed on to the following query parts.
+- Manipulate result sequence before passing to following query parts
 - Usage of WITH:
-  - Limit the number of entries that are then passed on to other MATCH clauses.
-  - Introduce aggregates which can then be used in predicates in WHERE.
-  - Separate reading from updating of the graph. Every part of a query must be either read-only or write-only.
+  - Limit entries passed to other MATCH clauses
+  - Introduce aggregates for predicates in WHERE
+  - Separate reading from updating the graph. Each query part must be read-only
+    or write-only
 
-* Data access is *programmatic*
+* Data access is programmatic
 - REST API
 - Through the Java APIs
   - JVM languages have bindings to the same APIs
@@ -694,41 +682,41 @@ Could be used also as:
 - Path finding
 - Pattern matching
 
-* Overview
-- Motivation
-- Graph data models
-- Storing graph data
-- Querying graph data
-- **Typical graph analysis tasks**
-- Executing graph analysis tasks
+## Typical graph analysis tasks
 
 * Queries vs Analysis Tasks
 - **Queries**
-  - Focused exploration of the data
-  - Result is typically a small portion of the graph (often just a node)
+  - Explore data
+  - Result: small graph portion (often a node)
   - Challenges
-    - Minimize the portion of the graph that is explored
-    - Use of indexes (auxiliary data structures)
+    - Minimize explored graph portion
+    - Use indexes (auxiliary data structures)
+
 - **Analysis tasks**
-  - Typically require processing the entire graph
+  - Process entire graph
   - Challenges
-    - How to handle the large volume of data efficiently
-    - How to parallelize if data doesn't fit in memory / disk
+    - Handle large data efficiently
+    - Parallelize if data doesn't fit in memory/disk
 
 * Examples of Graph Tasks
 - Subgraph pattern matching
-  - Find matching instances of a given small graph in a large graph
-  - Although technically NP-hard, usually the patterns are small
+  - Find matching instances of a small graph in a large graph
+  - Patterns are usually small
+
 - Shortest path queries
-  - Find the shortest path between two given nodes
-  - E.g., in road networks
+  - Find shortest path between two nodes
+  - E.g., road networks
+
 - Reachability
-  - Given two nodes, is there an undirected or directed path between them?
-  - Sometimes with constraints on the types of edges that can be used
+  - Determine if a path exists between two nodes
+  - May include edge constraints
+
 - Keyword search
-  - Find the smallest subgraph that contains all the specified keywords
+  - Find smallest subgraph containing all specified keywords
+
 - Historical queries
-  - Given a node, find other nodes that evolved most similarly in the past
+  - Find nodes with similar evolution to a given node
+
 - Graph algorithms
   - Network flows
   - Spanning trees
@@ -740,97 +728,101 @@ Could be used also as:
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_1.png){width=70%}
 
-* Queries: Connection Subgraphs 
-- Given a data graph and two (or more) nodes in it, find a small subgraph that best captures the relationship between the nodes 
-- How to define "best captures"?
-  - E.g., "shortest path": but that may not be most informative 
+* Queries: Connection Subgraphs
+- Given a data graph and nodes, find a subgraph that captures the relationship
+
+- Define "best captures"
+  - E.g., "shortest path": may not be most informative
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_41_image_1.png)
 
-* Graph Analysis: Centrality Measures 
+* Graph Analysis: Centrality Measures
 
-- Centrality measure: a measure of the relative importance of a vertex within a graph 
-- Many different definition of centrality measures
-  - Can give fairly different results
+- Centrality measure: relative importance of a vertex in a graph
+
+- Different centrality measures
+  - Yield different results
 
 :::columns
 ::::{.column width=50%}
 - **Degree centrality of a node u**
   - Number of edges incident on u
+
 - **Betweenness centrality of a node u**
-  - Number of shortest paths between pairs of vertices that go through u
+  - Number of shortest paths between vertex pairs through u
+
 - **Page Rank of a node u**
-  - Probability that a random surfer (who is following links randomly) ends up at node u
+  - Probability a random surfer ends up at node u
 ::::
 ::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_42_image_1.png)
 ::::
 :::
 
-* Graph Analysis: Community Detection 
-- Goal: partitioning the vertices into (potentially overlapping) groups based on the interconnections between them 
-  - Basic intuition: More connections within a community than across communities 
-  - Provide insights into how networks function; identify functional modules; improve performance of Web services; etc.
-- Numerous techniques proposed for community detection over the years 
-  - Graph partitioning-based methods 
-  - Maximizing some "goodness" function 
-  - Recursively removing high centrality
-edges 
-  - And so on ... 
+* Graph Analysis: Community Detection
+- Goal: partition vertices into (potentially overlapping) groups based on
+  interconnections
+  - More connections within a community than across communities
+  - Insights into network function; identify functional modules; improve Web
+    services
+
+- Techniques for community detection
+  - Graph partitioning-based methods
+  - Maximizing "goodness" function
+  - Recursively removing high centrality edges
+
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_43_image_1.png){width=40%}
 
-* Overview
-- Motivation
-- Graph data models
-- Storing graph data
-- Querying graph data
-- Typical graph analysis tasks
-- **Executing graph analysis tasks**
+## Executing graph analysis tasks
 
-* Bulk Synchronous Parallel (BSP) 
-- BSP model is a computational model used to design parallel algorithms for distributed systems
-- Computation is divided into a series of *supersteps*, each consisting of three main phases
+* Bulk Synchronous Parallel (BSP)
+- BSP model is a computational model for designing parallel algorithms for
+  distributed systems
+
+- Computation is divided into _supersteps_ with three phases
   - **Local computation phase**
-    - Each processing unit performs calculations independently and concurrently, without any interaction
+    - Processing units perform calculations independently and concurrently
   - **Communication phase**
-    - The processing units exchange information with each other by sending and receiving messages
-    - These messages can be exchanged asynchronously without waiting for a response
+    - Processing units exchange information by sending and receiving messages
+      asynchronously
   - **Synchronization phase**
     - Aka barrier
-    - Ensures that all processing units have completed their local computations and communication before proceeding to the next superstep
-    - This guarantees that all messages from the previous superstep have been received and processed
-- Suitable for iterative graph algorithms
-  - E.g., PageRank and Shortest Path
+    - Ensures all units complete computations and communication before the next
+      superstep
+    - Guarantees all messages from the previous superstep are processed
 
-* Bulk Synchronous Parallel (BSP) 
+- Suitable for iterative graph algorithms
+  - E.g., pageRank and Shortest Path
+
+* Bulk Synchronous Parallel (BSP)
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_46_image_1.png)
 
 time
 
 * Pregel System
-- Large-scale graph processing system developed by Google
+- Large-scale graph processing system by Google
   - Pregel paper, 2010
-- Inspired by the Bulk Synchronous Parallel (BSP) model
-  - Vertex-centric programming model
-  - Asynchronous message passing between vertices
-- Fault-tolerant using checkpointing mechanism
-- Scalable and distributed architecture
-- Designed for processing large graphs with billions of vertices and edges
-- Handles graph mutations and updates during computation
-- Not open-source, used internally at Google
+- Inspired by Bulk Synchronous Parallel (BSP) model
+  - Vertex-centric programming
+  - Asynchronous message passing
+- Fault-tolerant with checkpointing
+- Scalable, distributed architecture
+- Processes large graphs with billions of vertices, edges
+- Handles graph mutations, updates during computation
+- Not open-source, internal to Google
 
 * Apache Giraph
 :::columns
 ::::{.column width=80%}
 - Apache Giraph
-- Open-source graph processing framework, inspired by Google's Pregel
-- Implemented by Facebook and then open-sourced
-- Built on top of Apache Hadoop
-- Fault-tolerant using Hadoop checkpointing mechanism
-- Scalable and distributed architecture
-- Suitable for large-scale graph analytics and machine learning algorithms
-- Actively maintained and widely adopted in the open-source community
+  - Open-source graph processing framework, inspired by Google's Pregel
+  - Implemented by Facebook, then open-sourced
+  - Built on Apache Hadoop
+  - Fault-tolerant with Hadoop checkpointing
+  - Scalable, distributed architecture
+  - Suitable for large-scale graph analytics, machine learning algorithms
+  - Actively maintained, widely adopted in open-source community
 ::::
 ::::{.column width=20%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_48_image_1.png)
@@ -841,16 +833,16 @@ time
 :::columns
 ::::{.column width=80%}
 - Apache Spark GraphX
-- Graph processing library for Apache Spark
-- Built on top of Spark's RDD (Resilient Distributed Dataset) model
-- Supports both directed and undirected graphs
-- Provides a flexible graph computation API
-- Optimized for iterative graph computations
-- Scalable and fault-tolerant architecture
-- Supports in-memory graph processing for improved performance
-- Suitable for large-scale graph analytics and machine learning tasks
-- Implements various graph algorithms
-  - E.g., PageRank, Connected Components, and Shortest Path
+  - Graph processing library for Apache Spark
+  - Built on Spark's RDD model
+  - Supports directed and undirected graphs
+  - Flexible graph computation API
+  - Optimized for iterative graph computations
+  - Scalable, fault-tolerant architecture
+  - In-memory graph processing for improved performance
+  - Suitable for large-scale graph analytics, machine learning tasks
+  - Implements various graph algorithms
+    - E.g., pageRank, Connected Components, Shortest Path
 ::::
 ::::{.column width=20%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_49_image_1.png)
