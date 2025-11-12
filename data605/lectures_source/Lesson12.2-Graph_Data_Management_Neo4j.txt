@@ -1,6 +1,6 @@
 ::: columns
 :::: {.column width=15%}
-![](lectures_source/UMD_Logo.png)
+![](data605/lectures_source/images/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -65,26 +65,46 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Executing graph analysis tasks
 
 * Graphs: Background
-- A *graph (*or* network)* captures a set of entities and interconnections between pairs of them
+:::columns
+::::{.column width=100%}
+- A *graph (or network)* captures a set of entities and interconnections between pairs of them
   - Entities / objects represented by *vertices or nodes*
   - Interconnections between pairs of vertices called *edges* (or *links, arcs, relationships*)
 
 - Graph theory and algorithms widely studied in Computer Science
   - Not as much work on managing graph-structured data
+::::
+::::{.column width=0%}
+::::
+:::
+\vspace{0.5cm}
+
+:::columns
+::::{.column width=50%}
+![An undirected, unweighted graph](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_1.png){width=90%}
+::::
+::::{.column width=50%}
+![A directed, edge-weighted graph](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_2.png){width=90%}
+::::
+:::
 
 * Graph Data Structures: Motivation
 - Increasing interest in querying and reasoning about the *underlying graph structure *in a variety of disciplines
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_6_image_1.png){width=85%}
 
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_6_image_1.png)
+\vspace{-5.5cm}\centering
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_6_image_2.png){width=30%}
 
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_6_image_2.png)
 
 * Motivation
-
+:::columns
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_1.png)
-
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_2.png)
-
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_2.png){width=70%}
+::::
+:::
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_3.png)
 
 * Motivation
@@ -123,6 +143,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Promote interoperability across knowledge bases
 
 * Graph Data Models: RDF
+:::columns
+::::{.column width=60%}
 - Resource Description Framework
 - RDF uses triples subject-predicate-object
   - Each triple connects a "subject" and an "object" through a "predicate"
@@ -138,10 +160,15 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Extensibility
     - Can add new nodes and relationships
     - Support ontologies
-
+::::
+::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_11_image_1.png)
+::::
+:::
 
 * Graph Data Models: Property Graph
+:::columns
+::::{.column width=50%}
 - A directed graph where each node and each edge may be associated with a set of *properties* (*key-values*)
 - Query languages
   - Cypher (e.g., Neo4j)
@@ -149,17 +176,25 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Lack universal standard
 - Similar expressive power to RDFs but less "schema" so more difficult to interoperate
 - Used by many open-source graph data management tools
-
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_1.png)
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_2.jpeg)
+::::
+:::
 
 * Graph Data Models: XML
 - Commonly used data model for representing data without rigid structure
 - It is a directed labeled tree
 - Popular data exchange format for non-tabular data
 
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_13_image_1.png)
+:::columns
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_13_image_1.png){width=70%}
+::::
+::::{.column width=50%}
+```xml
 <movies>
   <movie>
   <title>Top Gun</title>
@@ -173,6 +208,9 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
    </actor>
   </actors>
   </movie>
+```
+::::
+:::
 
 * Overview
 - Motivation
@@ -213,9 +251,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Most applications need to be written using programmatic interfaces
   - Expose a programmatic API to write arbitrary graph algorithms
 
-```
-
-```text
 
 * Overview
 - Motivation
@@ -226,6 +261,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Executing graph analysis tasks
 
 * Query Languages for Graph Databases
+:::columns
+::::{.column width=50%}
 - Cypher
   - Designed for Property Graphs
   - Data = vertices and edges annotated with key-value properties
@@ -241,7 +278,19 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Similar to Cypher
   - Query language for RDF data
   - Standardized by W3C
+::::
+::::{.column width=60%}
+\footnotesize
+```sql
+MATCH (nicole:Actor
+   {name:'Nicole Kidman'})-[[:ACTED_IN]->(movie:Movie)
+WHERE movie.year < 2007
+RETURN movie
+```
 
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_18_image_1.png)
+
+```sql
 PREFIX  foaf: <http://xmlns.com/foaf/0.1/>
 SELECT ?name
        ?email
@@ -251,15 +300,14 @@ WHERE
     ?person  foaf:name  ?name .
     ?person  foaf:mbox  ?email .
   }
+```
 
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_18_image_1.png)
-
-MATCH (nicole:Actor
-   {name:'Nicole Kidman'})-[[:ACTED_IN]->(movie:Movie)
-WHERE movie.year < 2007
-RETURN movie
+::::
+:::
 
 * Neo4j
+:::columns
+::::{.column width=60%}
 - Graph DB storing data as Property Graph
   - Nodes, edges hold data as key-value pairs (like non-relational DBs)
 - Focus is
@@ -272,36 +320,62 @@ RETURN movie
 - High-availability clustering
 - Incremental backups
 - Can run in small application or run on large clusters of servers
-
+::::
+::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_19_image_1.png)
+::::
+:::
 
 * Graph DB: Example
-- **Specs**
-  - Create a wine suggestion engine
-  - Wines are categorized by different
-    - Varieties (e.g., Chardonnay, Pinot Noir)
-    - Regions (e.g., Bordeaux, Napa, Tuscany)
-    - Vintage (year in which the grapes were harvested)
-  - Keep track of articles describing wines by various authors
-  - Users can track their favorite wines
-- **Relational model**
-  - The important relationships are `produced`, `reported_on`, `grape_type`
-  - Create various tables
-    - `wines`: (id, name, year)
-    - `wines_categories` (wine_id, category_id)
-    - `category` table (id, name)
-    - `wines_articles` (wine_id, article_id)
-    - `articles` (id, publish_date, title, content)
-- **Problem with relational approach**
-  - There isn't much of a schema
-  - Lots of incomplete data
-  - An old saying in relational DB world: "*On a long enough timeline all fields become optional*"
-- **Graph DB approach**
-  - Provide values and structure only where necessary
+:::columns
+::::{.column width=60%}
+\footnotesize
+\begingroup\color{blue}
+```
+Specs
+```
+\endgroup
+- Create a wine suggestion engine
+- Wines are categorized by different
+  - Varieties (e.g., Chardonnay, Pinot Noir)
+  - Regions (e.g., Bordeaux, Napa, Tuscany)
+  - Vintage (year in which the grapes were harvested)
+- Keep track of articles describing wines by various authors
+- Users can track their favorite wines
+\begingroup\color{red}
+```
+Relational model
+```
+\endgroup
+- The important relationships are `produced`, `reported_on`, `grape_type`
+- Create various tables
+  - `wines`: (id, name, year)
+  - `wines_categories` (wine_id, category_id)
+  - `category` table (id, name)
+  - `wines_articles` (wine_id, article_id)
+  - `articles` (id, publish_date, title, content)
+::::
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_20_image_2.png)
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_20_image_1.png)
 
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_20_image_2.png)
+::::
+:::
+\begingroup\color{green}
+```
+Problem with relational approach
+```
+\endgroup
+  - There isn't much of a schema
+  - Lots of incomplete data
+  - An old saying in relational DB world: "*On a long enough timeline all fields become optional*"
+\begingroup\color{blue}
+```
+Graph DB approach
+```
+\endgroup
+  - Provide values and structure only where necessary
 
 * Labeled Property Graphs in Neo4j
 - **Nodes**
@@ -324,6 +398,10 @@ RETURN movie
   - Native label indexes optimized for performance
 
 * Cypher Example
+:::columns
+::::{.column width=50%}
+\footnotesize
+```sql
 CREATE (w:Wine
     {name: "Prancing Wolf",
       style: "ice wine",
@@ -337,8 +415,16 @@ MATCH (p:Publication
     (w:Wine {name: "Prancing Wolf",
     vintage: 2015})
     CREATE (p)-[r:reported_on]->(w)
+```
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_22_image_1.png)
+::::
+:::
 
 * Cypher Example
+\footnotesize
+```sql
 MATCH (p:Publication {name: "Wine Expert Monthly"}),
     (w:Wine {name: "Prancing Wolf"})
     CREATE (p)-[r:reported_on {rating: 2}]->(w)
@@ -347,10 +433,12 @@ CREATE (g:GrapeType {name: "Riesling"})
 MATCH (w:Wine {name: "Prancing Wolf"}),
   (g:GrapeType {name: "Riesling"})
   CREATE (w)-[r:grape_type]->(g)
-
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_23_image_1.png)
+```
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_23_image_1.png){width=40%}
 
 * Cypher Example
+\footnotesize
+```sql
 CREATE (wr:Winery {name: "Prancing Wolf Winery"})
 MATCH (w:Wine {name: "Prancing Wolf"}),
     (wr:Winery {name: "Prancing Wolf Winery"})
@@ -364,13 +452,17 @@ MATCH (wr:Winery
     CREATE (wr)-[r:produced]->(w)
 MATCH (w:Wine), (g:GrapeType {name: "Riesling"})
     CREATE (w)-[r:grape_type]->(g)
-
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_24_image_1.png)
+```
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_24_image_1.png){wdith=80%}
 
 * Cypher Example
+:::columns
+::::{.column width=50%}
 - Add a social component to the wine graph
   - People preference for wine
   - Relationships with one another
+
+```sql
 CREATE (p:Person {name: "Alice"})
 
 MATCH (p:Person {name: "Alice"}),
@@ -382,11 +474,20 @@ CREATE (p:Person {name: "Patty"})
 
 MATCH (p1:Person {name: "Patty"}),
     (p2:Person {name: "Tom"})
-    CREATE (p1)-[r:friends]->(p2)- The changes were made "superimposing" new relationships without changing the previous data
+    CREATE (p1)-[r:friends]->(p2)
+```
 
+- The changes were made "superimposing" new relationships without changing the previous data
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_25_image_1.png)
+::::
+:::
 
 * Cypher Example
+:::columns
+::::{.column width=50%}
+```sql
 MATCH (p:Person
   {name: "Alice"})-->(n)
   RETURN n;
@@ -397,85 +498,160 @@ MATCH (p:Person
 
 MATCH (fof:Person)-[:friends]-(f:Person)-[:friends]-(p:Person {name: "Alice"})
   RETURN fof.name;
-
+```
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_26_image_1.png)
+::::
+:::
 
 * A general query structure
+
+```sql
 MATCH [Nodes and relationships]
 WHERE [Boolean filter statement]
 RETURN [DISTINCT] [statements [AS alias]]
 ORDER BY [Properties] [ASC or DESC]
 SKIP [Number] LIMIT [Number]
+```
 
 * Simple query
-Get all nodes of type *Program* that have the name *Hello World!*
+- Get all nodes of type ***Program*** that have the name *Hello World!*
 
+:::columns
+::::{.column width=50%}
+\vspace{2cm}
+```sql
 MATCH (a : Program)
 WHERE a.name = 'Hello World!'
 RETURN a
+```
+::::
+::::{.column width=50%}
+```graphviz
+graph G {
+    ProgramNode [
+        shape = circle
+        style = "solid"
+        color = "#2F537A"
+        penwidth = 1
+        width = 1
+        fixedsize = true
+        label = <
+            <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0">
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">Type =</FONT></TD></TR>
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="orange">Program</FONT></TD></TR>
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">Name = ‘Hello</FONT></TD></TR>
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">World!’</FONT></TD></TR>
+            </TABLE>
+        >
+    ];
+}
 
-Type = Program
-Name = ‘Hello World!'
+```
+::::
+:::
 
 * Query relationships
-Get all relationships of type *Author* connecting *Programmers* and *Programs*:
+- Get all relationships of type *Author* connecting *Programmers* and *Programs*:
 
+```graphviz
+digraph G {
+    // --- Global settings ---
+    rankdir=LR; // left to right
+    layout=dot;
+    bgcolor="white";
+    nodesep=1.0;
+
+    // --- Node styles ---
+    ProgrammerNode [
+        shape=ellipse
+        color="red"
+        fontcolor="red"
+        penwidth=2
+        label=<
+            <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0">
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">Type =</FONT></TD></TR>
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="red">Programmer</FONT></TD></TR>
+            </TABLE>
+        >
+    ];
+
+    ProgramNode [
+        shape=ellipse
+        color="#2F537A"
+        fontcolor="#2F537A"
+        penwidth=2
+        label=<
+            <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0">
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">Type =</FONT></TD></TR>
+                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="#2F537A">Program</FONT></TD></TR>
+            </TABLE>
+        >
+    ];
+
+    // --- Edge ---
+    ProgrammerNode -> ProgramNode [
+        label=<
+            <FONT COLOR="orange" POINT-SIZE="8">Author</FONT>
+        >
+        color="green"
+        penwidth=3
+        arrowhead=normal
+    ];
+}
+
+```
+
+```sql
 MATCH (a:Programmer)-[r:Author]->(b:Program)
 
 RETURN r
-
-Type = Program
-
-Type = Programmer
-
-Author
+```
 
 * Matching nodes and relationships
 - Nodes
-(a), (), (:Ntype), (a:Ntype),
-(a { prop:'value' } ) ,
-(a:Ntype { prop:'value' } )
+  - (a), (), (:Ntype), (a:Ntype),
+  - (a { prop:'value' } ) ,
+  - (a:Ntype { prop:'value' } )
 - Relationships
-(a)--(b)
-(a)-->(b), (a)<--(b),
-(a)-->(), (a)-[r]->(b),
-(a)-[:Rtype]->(b), (a)-[:R1|:R2]->(b),
-(a)-[r:Rtype]->(b)
+  - (a)--(b)
+  - (a)-->(b), (a)<--(b),
+  - (a)-->(), (a)-[r]->(b),
+  - (a)-[:Rtype]->(b), (a)-[:R1|:R2]->(b),
+  - (a)-[r:Rtype]->(b)
 - May have more than 2 nodes
-(a)-->(b)<--(c), (a)-->(b)-->(c)
+  - (a)-->(b)<--(c), (a)-->(b)-->(c)
 - Path
-p = (a)-->(b)
+  - p = (a)-->(b)
 
 * More options
 - Relationship distance:
-(a)-[:Rtype*2]->(b) – 2 hops of type Rtype.
-(a)-[:Rtype*]->(b) – any number of hops of type Rtype.
-(a)-[:Rtype*2..10]-> (b) – 2-10 hops of Rtype.
-(a)-[:Rtype*  ..10]-> (b) – 1-10 hops of Rtype.
-(a)-[:Rtype*2..    ]-> (b) – at least 2 hops of Rtype.
+  - (a)-[:Rtype*2]->(b) – 2 hops of type Rtype.
+  - (a)-[:Rtype*]->(b) – any number of hops of type Rtype.
+  - (a)-[:Rtype*2..10]-> (b) – 2-10 hops of Rtype.
+  - (a)-[:Rtype*  ..10]-> (b) – 1-10 hops of Rtype.
+  - (a)-[:Rtype*2..    ]-> (b) – at least 2 hops of Rtype.
 Could be used also as:
-(a)-[r*2]->(b) – r gets a sequence of relationships
-(a)-[*{prop:val}]->(b)
+  - (a)-[r*2]->(b) – r gets a sequence of relationships
+  - (a)-[*{prop:val}]->(b)
 
 * Operators
-''' markdown
-• Mathematical 
-	+, -, *, /,%, ^ (power, not XOR)
-''' 
-• Comparison
-	 =,<>,<,>,>=,<=, =~ (Regex), IS NULL , 
+
+- Mathematical 
+  -	+, -, *, /,%, ^ (power, not XOR)
+
+- Comparison
+  - =,<>,<,>,>=,<=, =~ (Regex), IS NULL , 
           IS NOT NULL
-• Boolean
-	 AND, OR, XOR, NOT
-• String
-	 Concatenation through +
-• Collection 
-	 Concatenation through + 
-	 IN to check if an element exists in a collection
+- Boolean
+	- AND, OR, XOR, NOT
+- String
+  - Concatenation through +
+- Collection 
+	- Concatenation through + 
+	- IN to check if an element exists in a collection
 
-```
-
-```
 
 * More WHERE options
 - WHERE others.name IN ['Andres', 'Peter']
@@ -500,8 +676,8 @@ Could be used also as:
     FILTER - returns the elements in a collection that comply to a predicate.
   - WHERE ANY      (x IN a.array    WHERE x = "one"  ) – at least one
   - WHERE ALL       (x IN nodes(p) WHERE x.age > 30) – all elements
-  - WHERE SINGLE (x IN nodes(p) WHERE var.eyes = "blue") – Only one
-* nodes(p) – nodes of the path p
+  - WHERE SINGLE (x IN nodes(p) WHERE var.eyes = "blue") – Only one 
+- nodes(p) – nodes of the path p
 
 * With
 - Manipulate the result sequence before it is passed on to the following query parts.
@@ -565,10 +741,8 @@ Could be used also as:
   - Query graph can specify restrictions on the graph structure, on values of node attributes, and so on
   - An important variation: *approximate* matching
 
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_1.png)
-```
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_1.png){width=70%}
 
-```markdown
 
 * Queries: Connection Subgraphs 
 - Given a data graph and two (or more) nodes in it, find a small subgraph that best captures the relationship between the nodes 
@@ -578,18 +752,24 @@ Could be used also as:
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_41_image_1.png)
 
 * Graph Analysis: Centrality Measures 
+
 - Centrality measure: a measure of the relative importance of a vertex within a graph 
 - Many different definition of centrality measures
   - Can give fairly different results
 
-- Degree centrality of a node 
-  - Number of edges incident on
-- Betweenness centrality of a node 
-  - Number *of shortest paths between pairs of vertices that go through 
-- Page **R**ank of a node 
-  - *P*robability that a random surfer (who is following links randomly) ends up at node  
-
+:::columns
+::::{.column width=50%}
+- **Degree centrality of a node u**
+  - Number of edges incident on u
+- **Betweenness centrality of a node u**
+  - Number of shortest paths between pairs of vertices that go through u
+- **Page Rank of a node u**
+  - Probability that a random surfer (who is following links randomly) ends up at node u
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_42_image_1.png)
+::::
+:::
 
 * Graph Analysis: Community Detection 
 - Goal: partitioning the vertices into (potentially overlapping) groups based on the interconnections between them 
@@ -601,11 +781,12 @@ Could be used also as:
   - Recursively removing high centrality
 edges 
   - And so on ... 
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_43_image_1.png){width=40%}
 
 * Overview
 - Motivation
 - Graph data models
-- **Storing graph data**
+- Storing graph data
 - Querying graph data
 - Typical graph analysis tasks
 - **Executing graph analysis tasks**
@@ -644,6 +825,8 @@ time
 - Not open-source, used internally at Google
 
 * Apache Giraph
+:::columns
+::::{.column width=80%}
 - Apache Giraph
 - Open-source graph processing framework, inspired by Google's Pregel
 - Implemented by Facebook and then open-sourced
@@ -652,10 +835,15 @@ time
 - Scalable and distributed architecture
 - Suitable for large-scale graph analytics and machine learning algorithms
 - Actively maintained and widely adopted in the open-source community
-
+::::
+::::{.column width=20%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_48_image_1.png)
+::::
+:::
 
 * Apache Spark GraphX
+:::columns
+::::{.column width=80%}
 - Apache Spark GraphX
 - Graph processing library for Apache Spark
 - Built on top of Spark's RDD (Resilient Distributed Dataset) model
@@ -667,6 +855,9 @@ time
 - Suitable for large-scale graph analytics and machine learning tasks
 - Implements various graph algorithms
   - E.g., PageRank, Connected Components, and Shortest Path
-
+::::
+::::{.column width=20%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_49_image_1.png)
+::::
+:::
 

@@ -1,6 +1,6 @@
 ::: columns
 :::: {.column width=15%}
-![](lectures_source/UMD_Logo.png)
+![](data605/lectures_source/images/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -73,7 +73,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - Correlating events from different streams
 
 * Why Not Using the Usual RDBM?
-
+:::columns
+::::{.column width=60%}
 - Simple case: "*report moving average over last hour every 10 minutes*"
   - Insert items as they arrive into DB table
   - Execute the query every 10 minutes
@@ -84,17 +85,24 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - Can be much more complicated (e.g., train an LLM model with 1,000 GPUs)
   - Can't always be easily rewritten in recursive terms
 - Typically 1000's of such continuous queries
+::::
+::::{.column width=40%}
+\centering \tiny
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_3.png)
 
-![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_1.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_1.png){width=60%}
 
-![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_2.png)
-
-![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_3.png)
 
 Computation
 
-* Pub-Sub Systems
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_2.png){width=80%}
+::::
+:::
 
+
+* Pub-Sub Systems
+:::columns
+::::{.column width=65%}
 - In modern architecture, complex distributed systems are built with **small and independent building blocks**
   - E.g., serverless, micro-services
   - E.g., Uber
@@ -107,11 +115,15 @@ Computation
     - Typically no complex queries
     - Topics to categorize messages and events
   - E.g., AWS SQS, AWS Kinesis, Apache Kafka, RabbitMQ, Redis, Celery, JBoss
-
+::::
+::::{.column width=35%}
 ![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_5_image_1.png)
+::::
+:::
 
 * Pub-Sub Systems
-
+:::columns
+::::{.column width=50%}
 - **Publishers**
   - Send messages or events
 - **Subscribers**
@@ -128,10 +140,16 @@ Computation
     - At-most once
     - At-least once
     - Exactly once
-
-![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_6_image_1.png)
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_6_image_1.png)
+::::
+:::
 
 * Delivery Semantics
+:::columns
+::::{.column width=60%}
+\footnotesize
 
 - **At-most once**
   - Message may be lost but not redelivered
@@ -156,25 +174,30 @@ Computation
     - Two Generals' Problem
   - E.g., mission critical systems
   - E.g., financial-related use cases (e.g., payment, trading, accounting)
+::::
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_1.png)
 
-![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_1.png)
+\vspace{1cm}
 
-![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_2.png)
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_2.png)
 
-![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_3.png)
+\vspace{1.5cm}
+
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_3.png)
+::::
+:::
 
 * Event vs Processing Time
-
+:::columns
+::::{.column width=60%}
 - In both streaming and pub-sub architectures
-- **Event time
-**
+- **Event time**
   - The time when each record is generated
-- **Processing time
-**
+- **Processing time**
   - The time when each record is received
   - Ingestion vs processing time = when events are received vs processed
-- **Problems with events
-**
+- **Problems with events**
   - Out of order
   - Tardiness
   - How long to wait for late data?
@@ -182,8 +205,11 @@ Computation
     - Use bounds on delay
     - Assume you know something on the data (e.g., data should arrive every single minute)
   - Do you recompute once the late data arrives? If not, do you drop late data?
-
-![alt_text](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_8_image_1.png)
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_8_image_1.png)
+::::
+:::
 
 * Apache Streaming Zoo
 - Many different streaming frameworks
@@ -205,6 +231,7 @@ Computation
 - Built at the same time at different companies to solve their specific problem and then open-sourced
 
 * Apache Storm
+
 - Open-source distributed real-time computation system
   - Acquired and open-sourced by Twitter
 - Horizontal scalability: add more machines to handle increasing data volume
@@ -218,6 +245,8 @@ Computation
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_10_image_1.png)
 
 * Apache Kafka
+:::columns
+::::{.column width=75%}
 - Open-source distributed streaming platform
   - Developed at LinkedIn and open-sourced in 2011
 - Producers, brokers, consumers, topics, partitions
@@ -228,10 +257,13 @@ Computation
   - **At-least-once, at-most-once, exactly-once**
 - Kafka Connect: Integration with various data sources and sinks
 - Kafka Streams: Stream processing library built on Kafka
-
-![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_1.png)
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_1.png){width=30%}
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_2.png)
+::::
+:::
 
 * Apache Flink
 - Open-source, distributed data processing framework
@@ -246,6 +278,8 @@ Computation
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_12_image_1.png)
 
 * Record-at-a-time Processing
+:::columns
+::::{.column width=65%}
 - Implemented in Apache Kafka
 - Goal: handle an endless stream of data
 - **Multiple-node distributed processing engine**
@@ -261,10 +295,15 @@ Computation
   - Not efficient to recover from node failure
     - E.g., need failover resources / redundancy
   - Stragglers nodes (i.e., nodes that are slower than others)
-
+::::
+::::{.column width=35%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_13_image_1.png)
+::::
+:::
 
 * Micro-Batch Stream Processing
+:::columns
+::::{.column width=65%}
 - Aka DStreams
 - Implemented in Spark Streaming
 - **Computation as a continuous series of batch jobs on small chunks of the stream data**
@@ -280,8 +319,11 @@ Computation
 - **Cons**
   - Higher latency
     - E.g., seconds
-
+::::
+::::{.column width=35%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_14_image_1.png)
+::::
+:::
 
 * Spark Micro-Batch Processing: Cons
 - Line between real-time processing and batch processing has blurred
@@ -296,9 +338,10 @@ Computation
   - Support micro-batch and true continuous streaming
   - Make batch vs streaming API even closer
 
-![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_16_image_1.png)
 
 * Spark Structured Streaming
+:::columns
+::::{.column width=60%}
 - New approach used by Spark
 - Goal: write stream processing as easy as writing batch pipelines
   - Single unified programming model
@@ -313,16 +356,26 @@ Computation
   - Structured Streaming: table is like an unbounded, continuously appended table
     - Every new record becomes a new row appended
     - At time *T* there is like a static dataframe with data until *T*
+::::
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_16_image_1.png)
+::::
+:::
 
 * Incrementalization
+:::columns
+::::{.column width=55%}
 - Automatically detect the state that needs to be maintained
   - Build a DAG of computation
   - Express the output of graph at time T in terms of the other graph at time T-1
   - Cache results
 - Developers specify triggers to update the results
 - Update incrementally the result each time a record arrives
-
+::::
+::::{.column width=45%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_17_image_1.png)
+::::
+:::
 
 * Triggering Modes
 - Need to indicate when to process newly available streaming data
@@ -352,6 +405,9 @@ Computation
     - More general but more expensive
 
 * Spark Streaming "Hello world"
+:::columns
+::::{.column width=50%}
+\footnotesize
 - **lines** looks like an RDD but it's a **DataStreamReader**
   - Unbounded DataFrame
   - Set up the reading but doesn't start reading
@@ -372,7 +428,12 @@ Computation
   - Failure recovery
 - Then you **start()** the processing (non-blocking)
 - **awaitTermination()** blocks until data is still available
-
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_20_image_1.png)
+::::
+::::
+:::
 * BACKUP
 
 * Apache Storm
