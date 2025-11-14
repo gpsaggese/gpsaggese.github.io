@@ -1,9 +1,6 @@
 name: Publish Books
 
 on:
-  pull_request:
-    branches:
-      - master
   push:
     branches:
       - master
@@ -22,6 +19,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
       
       - name: Configure Git Credentials
         run: |
@@ -47,9 +45,9 @@ jobs:
             --output_dir tmp.mkdocs \
             -v INFO
       
-      - name: Build and Deploy Data605 Book
+      - name: Build Data605 Book
         working-directory: ./data605_book
-        run: mkdocs gh-deploy --force
+        run: mkdocs build -d site
       
       - name: Preprocess MSML610 Book
         working-directory: ./msml610_book
@@ -59,6 +57,36 @@ jobs:
             --output_dir tmp.mkdocs \
             -v INFO
       
-      - name: Build and Deploy MSML610 Book
+      - name: Build MSML610 Book
         working-directory: ./msml610_book
-        run: mkdocs gh-deploy --force
+        run: mkdocs build -d site
+      
+      - name: Checkout gh-pages
+        run: |
+          git fetch origin gh-pages
+          git checkout gh-pages
+      
+      - name: Update book directories
+        run: |
+          # Remove old book directories if they exist
+          rm -rf data605_book msml610_book
+          
+          # Create book directories
+          mkdir -p data605_book msml610_book
+          
+          # Copy built sites to book directories
+          git checkout master -- data605_book/site
+          git checkout master -- msml610_book/site
+          
+          # Move contents from site/ to book directories
+          mv data605_book/site/* data605_book/
+          mv msml610_book/site/* msml610_book/
+          
+          # Clean up empty site directories
+          rmdir data605_book/site msml610_book/site
+      
+      - name: Commit and push
+        run: |
+          git add data605_book msml610_book
+          git commit -m "Deploy books from commit ${GITHUB_SHA}" || echo "No changes to commit"
+          git push origin gh-pages
