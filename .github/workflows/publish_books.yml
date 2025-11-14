@@ -1,0 +1,64 @@
+name: Publish Books
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+    paths:
+      - data605_book/docs/**
+      - msml610_book/docs/**
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      
+      - name: Install MkDocs
+        run: pip install mkdocs mkdocs-material
+      
+      - name: Update PYTHONPATH
+        run: |
+          echo "PYTHONPATH=${{ github.workspace }}:${{ github.workspace }}/helpers_root" >> $GITHUB_ENV
+      
+      - name: Preprocess Data605 Book
+        working-directory: ./data605_book
+        run: |
+          python ../helpers_root/docs/mkdocs/preprocess_mkdocs.py \
+            --input_dir docs \
+            --output_dir tmp.mkdocs \
+            -v INFO
+      
+      - name: Build and Deploy Data605 Book
+        working-directory: ./data605_book
+        run: mkdocs gh-deploy --force
+      
+      - name: Preprocess MSML610 Book
+        working-directory: ./msml610_book
+        run: |
+          python ../helpers_root/docs/mkdocs/preprocess_mkdocs.py \
+            --input_dir docs \
+            --output_dir tmp.mkdocs \
+            -v INFO
+      
+      - name: Build and Deploy MSML610 Book
+        working-directory: ./msml610_book
+        run: mkdocs gh-deploy --force

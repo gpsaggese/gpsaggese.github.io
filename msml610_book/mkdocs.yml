@@ -1,0 +1,35 @@
+site_name: MSML610 Book
+site_url: https://gpsaggese.github.io/umd_classes/msml610_book
+
+theme:
+  name: material
+  palette:
+    primary: black
+    accent: cyan
+  logo: assets/logo.png
+  favicon: assets/favicon.ico
+  features:
+    - content.action.edit
+
+docs_dir: tmp.mkdocs
+
+use_directory_urls: false
+
+plugins:
+  - search
+
+# Markdown extensions.
+markdown_extensions:
+  - toc:
+      permalink: "#"
+      baselevel: 2
+      separator: "_"
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+# Custom CSS.
+extra_css:
+  - styles/styles.css
