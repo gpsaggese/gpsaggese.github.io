@@ -43,7 +43,7 @@ jobs:
       - name: Preprocess Data605 Book
         working-directory: ./data605_book
         run: |
-          python ../helpers_root/dev_scripts_helpers/documentation/mkdocs/preprocess_mkdocs.py \
+          python ../helpers_root/docs/mkdocs/preprocess_mkdocs.py \
             --input_dir docs \
             --output_dir tmp.mkdocs \
             -v INFO
