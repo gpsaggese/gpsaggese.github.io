@@ -1,6 +1,9 @@
 name: Publish Books
 
 on:
+  pull_request:
+    branches:
+    - master
   push:
     branches:
       - master
