@@ -1,0 +1,19 @@
+# OS / editor junk
+.DS_Store
+.ipynb_checkpoints/
+__pycache__/
+.Rhistory
+
+# Backups / logs
+*.bak
+*.log
+docker_build.version.log
+
+# Big raw / derived data
+data/arxiv-metadata-oai-snapshot.json
+data/clean_subset.parquet
+data/clean_subset_embeddings.npy
+
+# Local temp builds
+../docker_build.log
+../tmp.build/
