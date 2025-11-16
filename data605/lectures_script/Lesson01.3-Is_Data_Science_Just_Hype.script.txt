@@ -1,0 +1,192 @@
+# ##############################################################################
+# Is Data Science Just Hype?
+# ##############################################################################
+
+- Data science, often associated with big data, involves any process where
+  interesting information is inferred from data
+- It has been dubbed the "sexiest job" of the 21st century, but the term has
+  become somewhat muddled over time.
+- The question arises: is data science all hype? The answer is no. Data science
+  is not just hype because it allows us to extract valuable insights and
+  knowledge from data. Big data techniques have revolutionized many domains,
+  including education, food supply, and disease epidemics
+- However, it's important to note that data science is similar to what
+  statisticians have been doing for years. The difference lies in the fact that
+  more data is now digitally available, and easy-to-use programming frameworks
+  like Hadoop simplify the analysis process. Additionally, cloud computing
+  services such as AWS reduce costs, making data analysis more accessible
+- In many cases, large-scale data combined with simple algorithms can outperform
+  small data with complex algorithms.
+
+# ##############################################################################
+# What Was Cool in 2012?
+# ##############################################################################
+
+- In 2012, the technology landscape was buzzing with excitement over several
+  emerging trends.
+  - Cloud computing
+  - Big data was another hot topic
+  - Mobile technology was also on the rise
+  - Social media platforms were exploding in popularity, transforming how people
+    interacted online and how businesses engaged with customers.
+  - The Internet of Things (IoT) was starting to emerge, with more devices being
+    connected to the internet, promising smarter homes and cities.
+
+Let's move forward five years to see what was trending in 2017.
+
+# ##############################################################################
+# What Was Cool in 2017?
+# ##############################################################################
+
+- By 2017, the technology landscape had evolved significantly, with some trends
+  from 2012 maturing and new ones emerging.
+- Artificial intelligence (AI) and machine learning were at the forefront
+- Blockchain technology was gaining attention, primarily due to the rise of
+  cryptocurrencies like Bitcoin
+- Virtual reality and augmented reality were becoming more mainstream
+- The concept of smart cities was gaining traction
+- Cybersecurity was a growing concern, with increasing awareness of the need to
+  protect data and systems from cyber threats.
+
+# ##############################################################################
+# What Was Cool in 2022?
+# ##############################################################################
+
+- In 2022 and 2025 the focus shifted to even more advanced technologies and their
+  applications.
+- AI continued to dominate, with advancements in natural language processing and
+  computer vision making it more powerful and accessible.
+- The metaverse was a hot topic
+- Quantum computing was gaining attention as a potential game-changer for
+  solving complex problems that traditional computers couldn't handle.
+- Sustainability and green technology were becoming increasingly important
+- The rise of remote work due to the pandemic had led to innovations in
+  collaboration tools and digital workspaces.
+
+# ##############################################################################
+# Key Shifts Before/After Big-Data
+# ##############################################################################
+
+- Datasets have transformed with big data. Previously, data collection involved
+  small, curated samples due to high costs and logistical challenges, limiting
+  analyses
+- Today, we easily collect vast, uncurated data. Sophisticated algorithms
+  extract insights from this data, detecting strong signals despite noise
+- Data analysis now emphasizes correlation over causation. Previously, the focus
+  was on cause-and-effect, but causation is complex. Correlations, like between
+  diaper and beer purchases, inform strategies without full causation
+  understanding
+- "Data-fication" transforms abstract concepts into quantifiable data, enabling
+  analysis of human behavior and preferences. Sensors convert posture into data,
+  and social media interactions quantify preferences through likes and shares
+
+Let's explore how these shifts have impacted real-world applications, such as
+election predictions.
+
+# ##############################################################################
+# Examples: Election Prediction
+# ##############################################################################
+
+- Nate Silver's accurate predictions in the 2008 and 2012 US elections highlight
+  big data's power. In 2008, he predicted 49 out of 50 states correctly, and in
+  2012, he achieved a perfect score. This accuracy stemmed from using multiple
+  data sources for a comprehensive electoral view
+- Silver used historical data to refine predictions by considering past trends.
+  Statistical models analyzed data to identify correlations for informed
+  predictions. Monte-Carlo simulations assessed electoral probabilities,
+  offering a probabilistic framework to handle uncertainty
+- Silver's focus on probabilities over definitive outcomes was crucial. This
+  approach provided a nuanced understanding of the electoral process and
+  effectively communicated uncertainties. By presenting predictions
+  probabilistically, Silver conveyed outcome likelihoods in an informative and
+  accessible manner
+
+# ##############################################################################
+# Examples: Google Flu Trends
+# ##############################################################################
+
+- Google Flu Trends aimed to predict flu outbreaks by analyzing search queries,
+  significant due to the flu's annual impact on the US population and related
+  deaths. Early warnings can aid in prevention and control
+- The initiative analyzed 45 search terms and used IP addresses to locate
+  searches, predicting regional outbreaks 1-2 weeks before the CDC. Active from
+  2008 to 2015, its accuracy declined over time
+- Initially claiming 97% accuracy, it overshot CDC data by 30% when tested out of
+  sample
+- This discrepancy arose because people often searched for symptoms like "fever"
+  and "cough" without confirmed diagnoses. This example underscores the
+  limitations of relying solely on big data for predictions, as inaccuracies can
+  occur if not carefully managed
+
+# ##############################################################################
+# Data Scientist
+# ##############################################################################
+
+- The term "data scientist" is often ambiguous and not clearly defined. It
+  encompasses a wide range of skills and responsibilities
+
+- Drew Conway's Venn Diagram illustrates the skills defining a data scientist:
+  statistics, programming, and domain knowledge. A data scientist manages
+  complex data, derives insights, and communicates findings effectively. This
+  role combines technical skills with problem-solving abilities for real-world
+  issues. Despite no precise definition, data scientists are crucial in using
+  data to drive decision-making and innovation across fields
+
+# ##############################################################################
+# Typical Data Scientist Workflow
+# ##############################################################################
+
+- The data scientist workflow is a structured process for managing and analyzing
+  data, involving key steps
+- First, data collection gathers relevant data from various sources
+- Next, data cleaning and preprocessing remove errors and inconsistencies to
+  ensure quality
+- Then, exploratory data analysis helps understand data characteristics and
+  identify patterns
+- Following this, modeling involves developing statistical or machine learning
+  models for predictions or insights
+- After modeling, evaluation assesses the model's performance and accuracy
+- Finally, results are communicated to stakeholders through visualizations and
+  reports to inform decision-making
+- This workflow enables data scientists to systematically analyze data and derive
+  meaningful insights from complex datasets
+
+# ##############################################################################
+# Where Data Scientist Spends Most Time
+# ##############################################################################
+
+- Data scientists dedicate about 80-90% of their time to data cleaning and
+  wrangling, preparing and organizing data for analysis. This step is vital
+  because raw data is often messy and incomplete, requiring cleaning and
+  structuring for meaningful analysis
+- Often termed "janitor work," this task, though unglamorous, is crucial in data
+  science. Without proper cleaning, analysis results could be inaccurate or
+  misleading
+- Research in data wrangling focuses on making this process more efficient and
+  less time-consuming. New methods and tools are being developed to automate and
+  enhance data cleaning, potentially reducing the time data scientists spend on
+  this task
+
+Now that we understand where data scientists spend most of their time, let's
+explore what skills they need to be effective in their roles.
+
+# ##############################################################################
+# What a Data Scientist Should Know
+# ##############################################################################
+
+- Data grappling is crucial for data scientists, involving data manipulation via
+  programming. Python is often used, alongside familiarity with data storage
+  tools like relational databases and key-value stores, and frameworks such as
+  SQL, Hadoop, and Spark. These enable efficient handling of large datasets and
+  complex operations
+- Data visualization is vital. Data scientists must create visuals that convey
+  insights effectively, using tools like D3.js and plotting libraries. Choosing
+  the right visual for different scenarios is key
+- Strong statistical knowledge is essential. Understanding error-bars,
+  confidence intervals, and using statistical tools in Python, Matlab, or R is
+  necessary for accurate data analysis and reliable conclusions
+- Forecasting and prediction experience is important. Familiarity with basic
+  machine learning techniques is needed for data-based predictions
+- Communication skills are critical. Data scientists must narrate the data story
+  and communicate findings to non-technical stakeholders, translating complex
+  insights into clear, actionable information

@@ -5,8 +5,7 @@
   * [Pre-requisites](#pre-requisites)
     + [Contribution to the repo](#contribution-to-the-repo)
   * [Configuring your system](#configuring-your-system)
-    + [1. Simple Docker Setup (`data605_style`) — Recommended for Students](#1-simple-docker-setup-data605_style--recommended-for-students)
-    + [2. Causify-style Thin Docker Environment (`causify_style`)](#2-causify-style-thin-docker-environment-causify_style)
+    + [Simple Docker Setup (`data605_style`) — Recommended for Students](#simple-docker-setup-data605_style--recommended-for-students)
     + [Want to Learn More?](#want-to-learn-more)
   * [Working on the project](#working-on-the-project)
     + [Project Goal](#project-goal)
@@ -192,7 +191,7 @@ Before starting implementation, you need to choose **one** of the two supported
 Docker-based workflows. Finalize your setup choice before proceeding with
 development.
 
-### 1. Simple Docker Setup (`simple`) — Recommended for Students
+### Simple Docker Setup (`simple`) — Recommended for Students
 
 - A minimal and straightforward setup, modeled after what we use in class
   tutorials.
@@ -207,35 +206,6 @@ development.
 
 - You may still customize the Dockerfile, expose other ports, or add
   project-specific dependencies as needed.
-
-### 2. Causify-style Thin Docker Environment (`causify_dev_system`)
-
-- A production-style Docker setup used in internships, RA/TA work, at Causify
-  AI.
-- Uses a thin Docker layer, with logic written in Python and reusable script
-  structure.
-
-- **Why choose this?**
-  - Encouraged for students familiar with Docker or looking to grow into
-    advanced workflows
-  - Recommended for contributing to Causify, MSML610, and DATA605 long-term
-    projects
-
-- Setup Guide:
-  - To configure your system for this approach, follow this detailed guide:
-    - [Set Up Development on Laptop](https://github.com/causify-ai/helpers/blob/master/docs/onboarding/intern.set_up_development_on_laptop.how_to_guide.md)
-  - You may also refer to this reference checklist curated for interns:
-    - [Intern Onboarding Reference](https://github.com/causify-ai/helpers/blob/master/docs/onboarding/intern.onboarding_checklist.reference.md#must-read)
-
-> _Note: You don't have to follow everything in the intern checklist — it's
-> meant to help you become a better developer/researcher._
-
-### Want to Learn More?
-
-If you're unsure which setup is best or want to explore both, refer to the full
-breakdown in the tutorial template:
-
-- [Tutorial Template: Two Docker Approaches](/class_project/instructions/tutorial_template/README.md)
 
 ## Working on the project
 

@@ -21,10 +21,10 @@ UMD DATA605: Big Data Systems
 
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 * Invariants of a Class Lecture
-- **Invariants**
+- **Invariants of a class lecture**
   - Focus on intuition
   - Interactive Jupyter notebook tutorials
     - Tutorials done at home
@@ -39,13 +39,18 @@ UMD DATA605: Big Data Systems
 
 * Books of the Class
 ::: columns
-:::: {.column width=65%}
-- Slides
+:::: {.column width=50%}
+- **Slides**
   - Are extracted from books, technical articles, Internet
-  - Should be self-sufficient
+  - Aim to be self-sufficient
 
 ::::
 :::: {.column width=45%}
+
+![](data605/lectures_source/images/Silberschatz_book.png){width=40%}
+![](data605/lectures_source/images/lecture_2/lec_2_slide_37_image_1.png){width=40%}
+![](data605/lectures_source/images/lecture_3/lec_3_slide_3_image_1.png){width=40%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png){width=40%}
 
 ::::
 :::
@@ -53,18 +58,18 @@ UMD DATA605: Big Data Systems
 * Learning Outcomes
 ::: columns
 :::: {.column width=65%}
-- Model and reason about data
-- Process and manipulate data
+- **Model and reason about data**
+- **Process and manipulate data**
   - E.g., Python, Pandas
-- Introduce a variety of data models
+- **Introduce a variety of data models**
   - E.g., relational, NoSQL, graph DBs
   - Decide appropriate data model for different applications
-- Use data management systems
+- **Use data management systems**
   - E.g., PostgreSQL, MongoDB, HBase
   - Decide appropriate system for scenarios
-- Build data processing pipelines
+- **Build data processing pipelines**
   - E.g., Docker, Airflow
-- Build a big-data system end-to-end
+- **Build a big-data system end-to-end**
   - Class project
   - Contribute to an open-source project
 ::::
@@ -108,10 +113,12 @@ UMD DATA605: Big Data Systems
 - Study slides and materials
 - DATA605 - ELMS/Canvas site
   - Enable notifications
-  - Contact info for me/TAs
-- Check DATA605 Schedule
-- Check DATA605 GitHub repo
-- Check DATA605 FAQs
+  - Contact info for me and TAs
+    - Always keep the TAs in cc
+- Check [DATA605 Schedule](https://docs.google.com/document/d/1LYd7QqGOU2_JR5QOWaAxWCwBB2cy16n57dSaVV6A3tc)
+- Check [DATA605 GitHub repo](https://github.com/gpsaggese-org/umd_classes/tree/master/data605)
+- Get these [slides](https://github.com/gpsaggese-org/umd_classes/tree/master/data605/lectures)
+- Check [DATA605 FAQs](https://docs.google.com/document/d/1updvJmP5wl4cRGf4ncF51NTaCMsvio4SEqbswLm0NIk)
 - Setup computing environment
   - Install Linux/VMware
   - Install Docker on laptop
@@ -134,21 +141,25 @@ UMD DATA605: Big Data Systems
   - Individual or group
 
 * Class Projects
-- The project is _"Build $X$ with $Y$"_, where $X$ is a "use case" and $Y$ is a
-  "technology"
+- **Project** is _"Build $X$ with $Y$"_, where
+  - $X$ is a "use case"
+  - $Y$ is a "technology"
+
+- **Activities**
   - Study and describe technology $Y$
   - Implement use case $X$ using technology $Y$
   - Create Jupyter notebooks to demo your project
   - Commit code to GitHub, contribute to open-source repo
   - Write a blog entry
   - Present your project in a video
+  - In-class labs + reviews
 
-- Choose from list of $X$ and $Y$, e.g.,
-  - Big data
-  - Large language models
+- **You choose from list** of $X$ and $Y$, e.g.,
+  - Data engineering
+  - Emerging technologies (e.g., large language models)
   - ...
 
-- Each project:
+- **Each project**:
   - Individual or group ($n < 4$)
   - Varying difficulty levels
 
@@ -173,8 +184,8 @@ UMD DATA605: Big Data Systems
 
 - **GP Saggese**
   - 2001-2006, PhD / Postdoc at the University of Illinois at Urbana-Champaign
-  - [\textcolor{blue}{\underline{LinkedIn}}](https://www.linkedin.com/in/gpsaggese/)
-  - [\textcolor{blue}{\underline{gsaggese@umd.edu}}](gsaggese@umd.edu)
+  - [LinkedIn](https://www.linkedin.com/in/gpsaggese/)
+  - [gsaggese@umd.edu](gsaggese@umd.edu)
 - **University of Maryland**:
   - 2023-, Lecturer for UMD DATA605: Big Data Systems
   - 2025-, Lecturer for UMD MSML610: Advanced Machine Learning

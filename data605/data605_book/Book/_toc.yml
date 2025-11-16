@@ -1,0 +1,10 @@
+format: jb-book
+root: intro
+
+parts:
+  - caption: "SQL and Relational Databases"
+    chapters:
+      - file: lessons/sql/01_Relational_Model
+      - file: lessons/sql/02_SQL_Intro
+      - file: lessons/sql/03_SQL_Queries
+      - file: lessons/sql/04_Movie_Database_Example

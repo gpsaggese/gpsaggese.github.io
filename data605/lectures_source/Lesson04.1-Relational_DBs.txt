@@ -1,0 +1,375 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+// https://docs.google.com/presentation/d/1XnaVECt0YkkPBt-7TDuOBRGHSba9fiSuodAXECf2-tc/edit?slide=id.p42#slide=id.p42
+
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 4.1: Relational DBs}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+::::
+:::: {.column width=20%}
+
+::::
+:::
+
+* Relational Model: Overview
+- Introduced by Ted Codd (late 60's, early 70's)
+
+- **First prototypes**
+  - Ingres Project at Berkeley (1970-1985)
+    - Ingres (INteractive Graphics REtrieval System)
+    - $\to$ PostgreSQL (=Post Ingres)
+  - IBM System R (1970s) $\to$ Oracle, IBM DB2
+
+- **Contributions from relational data model**
+  - Formal semantics for data operations
+  - Data independence: separation of logical and physical data models
+  - Declarative query languages (e.g., SQL)
+  - Query optimization
+
+- **Key to commercial success**
+
+* Relational Model: Key Definitions
+::: columns
+:::: {.column width=60%}
+
+- Relational DB is a collection of **tables / relations**
+  - Unique name and schema for each table
+  - E.g., `instructor` and `course` relations
+
+- **Row / tuple / record**: Represents a relationship among values
+
+- **Element**: Corresponds to a **column / field / attribute**
+  - Atomic elements (e.g., phone number as a single object)
+  - `NULL` for unknown or non-existent values
+
+- **Schema of a relation**
+  - List of attributes and their domains
+  - Like type definition in programming languages
+  - E.g., domain of `salary` is integers >= 0
+
+- **Instance of relation**
+  - Specific instantiation with actual values
+  - Changes over time
+::::
+:::: {.column width=40%}
+\centering
+
+\footnotesize
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_4_image_1.png){width=60%}
+
+`instructor` relation
+
+\vspace{1cm}
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_4_image_2.png)
+
+`course` relation
+::::
+:::
+
+* UML Class Diagram
+::: columns
+:::: {.column width=55%}
+
+- **UML class diagram**
+  - UML = Unified Modeling Language
+  - Used in OOP and DB design
+
+\vspace{1cm}
+
+- **In OOP design**
+  - Diagram showing classes, attributes, methods, and relationships
+
+- **In DB design**
+  - Each box is a table / relation
+  - Columns / fields / attributes are listed inside the box
+  - Primary keys are underlined
+  - Foreign key constraints are represented by arrows
+::::
+:::: {.column width=40%}
+\centering
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_1.png)
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_2.png){width=60%}
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_3.png)
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_4.png){width=70%}
+::::
+:::
+
+* Example: University DB
+
+- **UML diagram of a DB and schemas representing a University**
+  - Each box is a table / relation
+  - Column / fields / attributes are listed inside the box
+  - Primary keys are underlined fields
+  - Foreign key constraints are arrows between boxes
+
+::: columns
+:::: {.column width=40%}
+
+- **Analysis of the diagram**
+  - ER model
+  - Entities
+    - `student`
+    - `department`
+    - ...
+  - Relationships
+    - `takes`
+    - `teaches`
+    - ...
+::::
+:::: {.column width=55%}
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_6_image_1.png)
+::::
+:::
+
+* Primary Key
+::: columns
+:::: {.column width=65%}
+
+- _R_ is a set of attributes of a relation _r_
+  - E.g., `ID, name, dept_name, salary` are attributes of `instructor`
+
+- _K_ is a superkey of _R_ if values for _K_ identify a unique tuple of each
+  relation _r(R)_
+  - E.g., `(ID)` and `(ID, name)` are superkeys of `instructor`
+  - `(name)` is not a superkey of `instructor`
+
+- **Primary key**: minimal set of attributes that uniquely identify each row
+  - Typically small and immutable
+  - Would `SSN` be a primary key? Yes and no
+
+- **Primary key constraint**: rows can't have the same primary key
+::::
+:::: {.column width=35%}
+
+\centering
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_7_image_1.png)
+\footnotesize
+`instructor` relation
+
+\vspace{1cm}
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_7_image_2.png){width=50%}
+::::
+:::
+
+* Question: What Are Primary Keys?
+::: columns
+:::: {.column width=75%}
+- Marital status
+  - Married(person1\_ssn, person2\_ssn, date\_married, date\_divorced)
+
+- Bank account
+  - Account(cust\_ssn, account\_number, cust\_name, balance, cust\_address)
+
+- Research assistantship at UMD
+  - RA(student\_id, project\_id, supervisor\_id, appt\_time, appt\_start\_date,
+    appt\_end\_date)
+
+- Information typically found on Wikipedia
+  - Person(Name, Born, Died, Citizenship, Education, ...)
+
+- Info about US President on Wikipedia
+  - President(name, start\_date, end\_date, vice\_president, preceded\_by,
+    succeeded\_by)
+
+- Tour de France: historical rider participation information
+  - Rider(Name, Born, Team-name, Coach, Sponsor, Year)
+::::
+:::: {.column width=25%}
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_8_image_1.png)
+::::
+:::
+
+* Answer: What Are Primary Keys?
+::: columns
+:::: {.column width=75%}
+- Marital status
+  - Married(**person1\_ssn, person2\_ssn, date\_married**, date\_divorced)
+
+- Bank account
+  - Account(cust\_ssn, **account\_number**, cust\_name, balance, cust\_address)
+
+- Research assistantship at UMD
+  - RA(**student\_id, project\_id**, supervisor\_id, appt\_time,
+    **appt\_start\_date**, appt\_end\_date)
+
+- Information typically found on Wikipedia
+  - Person(**Name, Born, Died, Citizenship, Education, ...**)
+
+- Info about US President on Wikipedia
+  - President(**name, start\_date**, end\_date, vice\_president, preceded\_by,
+    succeeded\_by)
+
+- Tour de France: historical rider participation information
+  - Rider(**Name, Born, Team-name,** Coach, Sponsor, **Year**)
+::::
+:::: {.column width=25%}
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_9_image_1.png)
+::::
+:::
+
+* Foreign Key
+::: columns
+:::: {.column width=60%}
+
+- **Foreign key** = primary key of another relation
+  - E.g., `(ID)` from `student` in `takes`, `advisor`
+  - `takes` is the "referencing relation", has the foreign key
+  - `student` is the "referenced relation", has the primary key
+  - Shown by an arrow from referencing $\to$ referenced
+::::
+:::: {.column width=35%}
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_10_image_1.png)
+::::
+:::
+
+- **Foreign key constraint**: for each row, the primary key tuple must exist
+  - Aka referential integrity constraint
+  - If `(student101, DATA605)` is in `takes`, there must be `student101` in
+    `student`
+
+- The key referenced as a foreign key must exist as a primary key
+
+* Relational Algebra: 1/4
+::: columns
+:::: {.column width=70%}
+
+- **Relation**: set of tuples
+
+- **Relational algebra**: operations on relations producing a new relation
+  - Unary: selection, projection, rename
+  - Binary: union, set difference, intersection, Cartesian product, join
+
+- **Selection $\Sigma$**: select tuples satisfying a predicate
+  - E.g., select `instructor` tuples where `dept_name = "Physics"`
+
+- **Projection $\pi$**: return tuples with subset of attributes
+  - E.g., project `instructor` tuples with `(name, salary)`
+
+- **Set operations**: union, intersection, set difference
+  - Must be compatible (same attributes)
+::::
+:::: {.column width=30%}
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_11_image_1.png)
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_11_image_2.png)
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_11_image_3.png){width=90%}
+
+\vspace{0.5cm}
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_11_image_4.png){width=80%}
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_11_image_5.png){width=80%}
+::::
+:::
+
+* Relational Algebra: 2/4
+
+- **Cartesian product**: combine two relations into a new one
+  - `instructor` = `(ID, name, dept_name, salary)`
+  - `teaches` = `(ID, course_id, sec_id, semester, year)`
+
+- E.g., `instructor` x `teaches` gives
+  `(instructor.ID, instructor.name, instructor.dept_name, teaches.ID, ...)`
+
+::: columns
+:::: {.column width=25%}
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_12_image_1.png)
+
+\footnotesize
+`instructor` relation
+::::
+:::: {.column width=30%}
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_12_image_2.png)
+
+\footnotesize
+`teaches` relation
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_12_image_3.png){width=90%}
+
+\footnotesize
+`instructor` x `teaches`
+::::
+:::
+
+* Relational Algebra: 3/4
+
+- **Join**: composition of two operations
+  - Cartesian product
+  - Selection based on equality between two fields
+  - E.g., `instructor` x `teaches` when `instructor.ID = teaches.ID`
+
+::: columns
+:::: {.column width=25%}
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_13_image_3.png)
+\footnotesize
+`instructor` relation
+
+::::
+:::: {.column width=30%}
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_13_image_4.png)
+\footnotesize
+`teaches` relation
+
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_13_image_1.png)
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_13_image_2.png){width=80%}
+
+::::
+:::
+
+* Relational Algebra: 4/4
+::: columns
+:::: {.column width=55%}
+- **Query**: combination of relational algebra operations
+  - E.g., _"find `course_id` from table section for fall 2017"_
+
+- **Assignment**: assign parts of relational algebra to temporary relation
+  variables
+  - Write a query as a sequential program
+  - E.g., _"find `course_id` for classes in both fall 2017 and spring 2018"_
+
+- **Equivalent queries**: two queries giving the same result on any DB instance
+  - Some formulations are more efficient
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_14_image_2.png)
+
+\vspace{2cm}
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_14_image_1.png)
+::::
+:::

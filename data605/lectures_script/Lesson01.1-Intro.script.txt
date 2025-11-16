@@ -1,0 +1,184 @@
+# ##############################################################################
+# Invariants of a Class Lecture
+# ##############################################################################
+
+- Invariants in programming are key concepts that remain constant during a
+  program's execution
+  - This class also has invariants related to our material coverage
+- We'll use interactive Jupyter notebook tutorials for learning. These can be
+  completed at home, allowing self-paced learning. Jupyter notebooks let you
+  experiment with code and observe invariants in action
+- We'll alternate between slides, whiteboard discussions, and hands-on
+  tutorials. This diverse approach supports various learning styles and
+  reinforces covered concepts
+- Labs are crucial for this course. They offer a chance to review complete class
+  project examples, providing a thorough understanding of invariants in
+  practice. Collaboration is encouraged in labs, fostering teamwork skills and
+  peer learning
+
+# ##############################################################################
+# Books of the Class
+# ##############################################################################
+
+- Because AI and machine learning are improving so quickly there is not a single
+  book that we can use in this class to cover the material
+- The slides used in this class are derived from a variety of sources including
+  books, technical articles, and the Internet
+  - This means that they are designed to be comprehensive and provide all the
+    necessary information you need to understand the topics being discussed
+- The goal is for the slides to be self-sufficient, meaning you should be able to
+  grasp the key concepts and ideas without needing to refer back to the original
+  sources
+
+Let's move on to the learning outcomes you can expect from this course.
+
+# ##############################################################################
+# Learning Outcomes
+# ##############################################################################
+
+- The course aims to teach you how to model and reason about data effectively
+- You will learn to process and manipulate data using Python and Pandas
+- These skills are crucial for analyzing data and drawing meaningful conclusions
+- You will explore various data models, including relational, NoSQL, and graph
+  databases
+- Understanding these models helps in choosing the right one for different
+  applications
+- You will learn to use data management systems like PostgreSQL, MongoDB, and
+  HBase
+- This knowledge will help you select the appropriate system for various
+  scenarios
+- Building data processing pipelines with tools like Docker and Airflow is a key
+  focus
+- These pipelines are essential for efficiently handling large volumes of data
+- You will build a big-data system from start to finish in a class project
+- This project offers hands-on experience and the chance to contribute to an
+  open-source project
+
+Now, let's explore the tools you will learn to use throughout this course.
+
+# ##############################################################################
+# Tools We Will Learn to Use
+# ##############################################################################
+
+- This course will teach you to use various development tools
+  - Python is the primary language due to its versatility and ease of use in data
+    science
+  - You will use Bash/Linux OS for navigating and managing files
+- Git and GitHub are essential for version control and collaboration, enabling
+  effective code management and teamwork
+- Jupyter notebooks will be used for interactive data analysis and visualization
+- Docker will help you create and manage containerized applications, crucial for
+  deploying scalable solutions
+- The course covers big data tools, including ETL pipelines for data processing
+- You will explore various databases: relational (PostgreSQL), NoSQL (HBase,
+  MongoDB, Couchbase, Redis), and graph databases (Neo4j)
+- Learn computing frameworks like Hadoop, Spark, and Dask for processing large
+  datasets
+- Airflow will be introduced as a workflow manager
+- We will explore cloud services like AWS for scalable computing resources
+- Tutorials will guide you in using these tools effectively in class projects
+  and real-world scenarios
+
+# ##############################################################################
+# Todos
+# ##############################################################################
+
+- Study the course slides and materials thoroughly. This will enhance your
+  understanding and prepare you for quizzes and projects
+- Enable notifications on the DATA605 ELMS/Canvas site to receive
+  updates on announcements or course changes
+- Keep the instructor's and teaching assistants' contact information accessible.
+  - This is essential for questions or assistance with course material
+- Regularly check the DATA605 schedule. This helps you stay informed about
+  deadlines and upcoming classes
+- Utilize the DATA605 GitHub repository. It contains code examples, assignments,
+  and other learning materials
+- Review the DATA605 FAQs. They may address common questions about the course
+- Set up your computing environment as instructed. Install Linux or VMware and
+  Docker on your laptop for assignments and projects
+- Bring your laptop to class to follow coding exercises and participate in
+  hands-on activities
+- Attend class whenever possible, even if lessons are recorded. It offers a
+  chance to ask questions and engage with the material in real-time
+
+Now, let's discuss how your performance in the course will be evaluated.
+
+# ##############################################################################
+# Grading
+# ##############################################################################
+
+- Quizzes contribute 40% to your overall grade
+  - They assess your understanding of the last two lessons
+  - Each quiz has 20 multiple-choice questions
+  - You have 20 minutes to complete each quiz
+  - Expect 4-5 quizzes throughout the semester
+  - Quizzes encourage regular engagement with the material
+- The final project is crucial, making up 60% of your grade
+  - It involves applying course concepts to a big data project using Python
+  - You will select a topic from a provided list
+  - This allows you to explore an area of personal interest in depth
+  - You can complete the project individually or in a group
+
+Now, let's delve into the specifics of the class projects and what they entail.
+
+# ##############################################################################
+# Class Projects
+# ##############################################################################
+
+- The class project involves building a specific use case (X) with a chosen
+  technology (Y)
+  - First, you will study and describe the chosen technology (Y)
+  - Then, implement the use case (X) using that technology
+  - You must create Jupyter notebooks to demonstrate your work
+  - You will commit your code to GitHub and contribute to an open-source repository
+  - Write a blog entry and present your project in a video format
+- This approach ensures you learn technical skills and effective communication
+- You can choose from a list of use cases and technologies, such as big data or
+  large language models
+- Tailor the project to your interests and strengths
+- Projects can be done individually or in groups of up to three people
+- Difficulty levels vary, providing challenges for different skill levels
+
+# ##############################################################################
+# Soft Skills to Succeed in the Workplace
+# ##############################################################################
+
+- The goal of the class project is to prepare you for the workplace by
+  developing essential soft skills. Working in a team is a critical component,
+  as it mirrors real-world scenarios where collaboration is key. You will also
+  learn to design software architecture using principles like object-oriented
+  programming, Agile methodologies, and design patterns. Commenting your code
+  and writing external documentation, such as tutorials and manuals, are
+  emphasized to ensure clarity and usability.
+
+- Writing understandable code is crucial, not just for others but for your future
+  self as well. You will practice reading others' code and following code
+  conventions like PEP8, which are standard in the industry.
+  Clear communication through emails and GitHub is also highlighted, along with
+  the ability to file and reproduce bug reports.
+
+With these skills and knowledge, you are well-equipped to tackle the challenges
+of the tech industry.
+
+# ##############################################################################
+# Yours Truly
+# ##############################################################################
+
+- My name is GP Saggese
+  - I have a academic background, having completed a PhD and postdoctoral work at
+    the University of Illinois at Urbana-Champaign
+- I am a lecturer at the University of Maryland, teaching courses on
+  big data systems and advanced machine learning
+
+- In addition to my academic roles, I have real-world experience as a research
+  scientist at well-known companies like NVIDIA, Synopsys, Teza, and Engineers'
+  Gate, so I am a practitioner of machine learning and big data in industry
+
+- I have founded three AI and fintech startups: ZeroSoft, June, and Causify
+  AI. I've written over 20 academic papers and have two US patents
+
+- In this picture, I am in my natural coding environment, surrounded by books and
+  silence
+
+Now, let's delve into the specifics of big data systems and their importance in
+today's world.

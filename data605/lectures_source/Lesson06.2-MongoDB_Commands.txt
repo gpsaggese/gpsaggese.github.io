@@ -1,0 +1,221 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+// https://docs.google.com/presentation/d/1vPnS1ExXBWG7fDwiBFiKWXvSNaocFCRhuPiUtL6KlOM/edit?slide=id.g14f60704d11_0_6#slide=id.g14f60704d11_0_6
+
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{6.2: MongoDB Commands}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=65%}
+\vspace{1cm}
+
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+- **References**:
+  - All concepts in slides
+  - MongoDB tutorial
+  - Web
+    - https://www.mongodb.com/
+    - Official docs
+    - pymongo
+  - Seven Databases in Seven Weeks, 2e
+::::
+:::: {.column width=30%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png){width=2cm}
+::::
+:::
+
+* CRUD Operations
+- CRUD = Create, Read, Update, Delete
+
+- **Create**
+  ```python
+  db.collection.insert(<document>)
+  db.collection.update(<query>, <update>, {upsert: true})
+  ```
+  - Upsert = update (if exists) or insert (if it doesn't)
+- **Read**
+  ```python
+  db.collection.find(<query>, <projection>)
+  db.collection.findOne(<query>, <projection>)
+  ```
+- **Update**
+  ```python
+  db.collection.update(<query>, <update>, <options>)
+  ```
+- **Delete**
+  ```python
+  db.collection.remove(<query>, <justOne>)
+  ```
+
+- Details [here](https://www.mongodb.com/docs/manual/crud/)
+
+* Create Operations
+- `db.collection` specifies the collection (like an SQL table) to store the
+  document
+  ```python
+  db.collection.insert(<document>)
+  ```
+  - Without `_id` field, MongoDB generates a unique key
+    ```python
+    db.parts.insert({type: "screwdriver", quantity: 15})
+    ```
+  - Use `_id` field if it has a special meaning
+    ```python
+    db.parts.insert({_id: 10, type: "hammer", quantity: 1})
+    ```
+- Update 1 or more records in a collection satisfying **query**
+  ```python
+  db.collection.update(<query>, <update>, {upsert: true})
+  ```
+- Update an existing record or create a new record
+  ```python
+  db.collection.save(<document>)
+  ```
+- A more modern OOP-like syntax than the COBOL / FORTRAN-inspired SQL
+
+* Read Operations
+- `find` provides functionality similar to `SQL SELECT` command
+  ```python
+  db.collection.find(<query>, <projection>).cursor
+  ```
+  with:
+    - `<query>` = `WHERE` condition
+    - `<projection>` = fields in result set
+
+- `db.parts.find({parts: "hammer"}).limit(5)`
+  - Return cursor to handle a result set
+  - Can modify the query to impose limits, skips, and sort orders
+  - Can specify to return the ‘top' number of records from the result set
+
+- `db.collection.findOne(<query>, <projection>)`
+
+* More Query Examples
+- Mongo has a functional programming flavor
+  - E.g., composing operators, like `$or`
+
+:::columns
+::::{.column width=40%}
+\footnotesize
+**SQL**
+```sql
+SELECT * FROM users WHERE age>33
+
+SELECT * FROM users WHERE age!=33
+
+SELECT * FROM users
+  WHERE name LIKE "%Joe%"
+
+SELECT * FROM users WHERE a=1 and b='q'
+
+SELECT * FROM users WHERE a=1 or b=2
+
+SELECT * FROM foo
+  WHERE name='bob' and (a=1 or b=2 )
+
+SELECT * FROM users
+  WHERE age>33 AND age<=40
+```
+
+::::
+::::{.column width=40%}
+\footnotesize
+**Mongo**
+```python
+db.users.find({age: {$gt: 33}})
+
+db.users.find({age: {$ne: 33}})
+
+db.users.find({name: /Joe/})
+
+db.users.find({a: 1, b: 'q'})
+
+db.users.find({$or: [{a: 1}, {b: 2}]})
+
+db.foo.find({name: "bob",
+  $or: [{a: 1}, {b: 2}]})
+
+db.users.find({'age':
+  {$gt: 33, $lte: 40}})
+```
+::::
+:::
+
+* Query Operators
+
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_24_image_1.png){width=70%}
+
+* Update Operations
+- `db.collection.insert(<document>)`
+  - Omit the `_id` field to have MongoDB generate a unique key
+    ```mongo
+    db.parts.insert({type: "screwdriver", quantity: 15})
+    db.parts.insert({_id: 10, type: "hammer", quantity: 1})
+    ```
+- `db.collection.save(<document>)`
+  - Updates an existing record or creates a new record
+- `db.collection.update(<query>, <update>, {upsert: true})`
+  - Will update 1 or more records in a collection satisfying query
+- `db.collection.findAndModify(<query>, <sort>, <update>, <new>, <fields>, <upsert>)`
+  - Modify existing record(s)
+  - Retrieve old or new version of the record
+
+* Delete Operations
+- `db.collection.remove(<query>, <just_one>)`
+  - Delete all records from a collection or matching a criterion
+  - `<just_one>` specifies to delete only 1 record matching the criterion
+- Remove all records in `parts` with `type` starting with h
+  - `db.parts.remove(type: /h/ )`
+- Delete all documents in the `parts` collection
+  - `db.parts.remove()`
+
+* MongoDB Features
+- Document-oriented NoSQL store
+
+- Rich querying
+  - Full index support (primary and secondary)
+
+- Fast in-place updates
+
+- Agile and scalable
+  - Replication and high availability
+  - Auto-sharding
+  - Map-reduce functionality
+
+- Scale horizontally over commodity hardware
+  - Horizontally = add more machines
+  - Commodity hardware = inexpensive servers
+
+* MongoDB vs Relational DBs
+- Keep the functionality that works well in RDBMSs
+  - Ad-hoc queries
+  - Fully featured indexes
+  - Secondary indexes
+- Do not offer RDBMS functionalities that don't scale up
+  - Long running multi-row transactions
+  - ACID consistency
+  - Joins
+
+* MongoDB Tutorial
+- Tutorial is at GitHub
+- The instructions are here:
+  ```bash
+  > cd $GIT_REPO/tutorials/tutorial_mongodb
+  > vi tutorial_mongo.md
+  ```
