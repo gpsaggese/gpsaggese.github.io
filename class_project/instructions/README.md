@@ -6,7 +6,6 @@
     + [Contribution to the repo](#contribution-to-the-repo)
   * [Configuring your system](#configuring-your-system)
     + [1. Simple Docker Setup (`data605_style`) — Recommended for Students](#1-simple-docker-setup-data605_style--recommended-for-students)
-    + [2. Causify-style Thin Docker Environment (`causify_style`)](#2-causify-style-thin-docker-environment-causify_style)
     + [Want to Learn More?](#want-to-learn-more)
   * [Working on the project](#working-on-the-project)
     + [Project Goal](#project-goal)
@@ -103,8 +102,8 @@
       one computer from UMD, or perhaps a device of one your friends
 - After signing up for a project accept the invitation to collaborate sent to
   the email that you used to register your GitHub account, or check
-  [here](https://github.com/gpsaggese/umd_classes/invitations)
-- Check your GitHub issue on https://github.com/gpsaggese/umd_classes/issues
+  [here](https://github.com/gpsaggese-org/umd_classes/invitations)
+- Check your GitHub issue on https://github.com/gpsaggese-org/umd_classes/issues
   - Make sure you are assigned to it
 - Only Python should be used together with the needed configs for the specific
   tools
@@ -122,7 +121,7 @@
 
 - Each project will need to be organized like a proper open source project,
   including filing issues, opening PRs, checking in the code in
-  [https://github.com/gpsaggese/umd_classes/tree/master](https://github.com/gpsaggese/umd_classes/tree/master)
+  [https://github.com/gpsaggese-org/umd_classes/tree/master](https://github.com/gpsaggese-org/umd_classes/tree/master)
 
 - Set up your working environment by following the instructions in the
   [document](https://github.com/causify-ai/helpers/blob/master/docs/onboarding/intern.set_up_development_on_laptop.how_to_guide.md)
@@ -154,7 +153,7 @@
 
   ```bash
   > cd $HOME/src
-  > git clone --recursive git@github.com:gpsaggese/umd_classes.git umd_classes1
+  > git clone --recursive git@github.com:gpsaggese-org/umd_classes.git umd_classes1
   > cd $HOME/src/umd_classes1
   > git checkout master
   > git checkout -b TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles
@@ -162,9 +161,9 @@
 
 - **Add Files Only in Your Project Directory**
   - Add your project files under the following directory:
-    `{GIT_ROOT}/class_project/{COURSE_CODE}/{TERM}{YEAR}/projects/{branch_name}`
+    `{GIT_ROOT}/class_project/{COURSE_CODE}/{TERM}{YEAR}/Projects/{branch_name}`
     - Example: If you cloned the repo on your laptop for DATA605, your directory should be:
-      `~/src/umd_classes1/class_project/DATA605/Spring2025/projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`
+      `~/src/umd_classes1/class_project/MSML610/Fall2025/Projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`
   - Copy the template files to the project directory:
     ```bash
     > cp -r ~/src/umd_classes1/class_project/instructions/tutorial_template/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
@@ -208,34 +207,10 @@ development.
 - You may still customize the Dockerfile, expose other ports, or add
   project-specific dependencies as needed.
 
-### 2. Causify-style Thin Docker Environment (`causify_dev_system`)
-
-- A production-style Docker setup used in internships, RA/TA work, at Causify
-  AI.
-- Uses a thin Docker layer, with logic written in Python and reusable script
-  structure.
-
-- **Why choose this?**
-  - Encouraged for students familiar with Docker or looking to grow into
-    advanced workflows
-  - Recommended for contributing to Causify, MSML610, and DATA605 long-term
-    projects
-
-- Setup Guide:
-  - To configure your system for this approach, follow this detailed guide:
-    - [Set Up Development on Laptop](https://github.com/causify-ai/helpers/blob/master/docs/onboarding/intern.set_up_development_on_laptop.how_to_guide.md)
-  - You may also refer to this reference checklist curated for interns:
-    - [Intern Onboarding Reference](https://github.com/causify-ai/helpers/blob/master/docs/onboarding/intern.onboarding_checklist.reference.md#must-read)
-
-> _Note: You don't have to follow everything in the intern checklist — it's
-> meant to help you become a better developer/researcher._
-
 ### Want to Learn More?
 
 If you're unsure which setup is best or want to explore both, refer to the full
 breakdown in the tutorial template:
-
-- [Tutorial Template: Two Docker Approaches](/class_project/instructions/tutorial_template/README.md)
 
 ## Working on the project
 
