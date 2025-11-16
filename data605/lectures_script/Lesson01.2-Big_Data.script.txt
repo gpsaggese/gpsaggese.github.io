@@ -1,0 +1,286 @@
+# ##############################################################################
+# Data Science
+# ##############################################################################
+
+- Data science provides businesses a competitive edge by enabling better
+  strategic and tactical decisions. Companies use data to understand market
+  trends, customer preferences, and operational efficiencies, leading to
+  informed decisions. It also optimizes processes, saving costs and boosting
+  productivity
+- Though data science seems modern, it has existed for decades under various
+  names. In the 1970s and 1980s, it was known as operations research, focusing
+  on process optimization. In the 1990s, it became decision support and business
+  intelligence, emphasizing data-driven decisions. By the early 2010s, it
+  evolved into predictive analytics, highlighting trend forecasting
+- The data science landscape has evolved significantly. Learning and applying
+  data science is now more accessible. Individuals and businesses no longer need
+  costly consulting firms. Open-source tools like Python and libraries (numpy,
+  scipy, Pandas, sklearn) simplify entry. Additionally, large datasets and
+  affordable computing resources, such as cloud services (AWS, Google Cloud) and
+  GPUs, have democratized access to data science
+
+Let's explore the motivation behind the growing importance of data science in
+today's world.
+
+# ##############################################################################
+# Motivation: Data Overload
+# ##############################################################################
+
+- Data science is a key economic growth driver, as noted by McKinsey in 2013.
+  The surge in data across domains fuels this growth. Devices and networks
+  constantly monitor processes, collecting data on everything from temperatures
+  to vital signs. With 80% of the global population owning smartphones, data
+  generation is further amplified
+
+- The internet and social networks simplify data sharing. The Internet of Things
+  (IoT) connects everyday objects, from power supplies to toasters, to the
+  internet, creating more data
+
+- Datafication turns life aspects into data, converting our preferences and
+  activities into data streams
+
+- This data surge presents challenges. A major issue is managing the growing
+  data volume. Organizations must store, process, and manage vast information.
+  Another challenge is deriving actionable insights and scientific knowledge.
+  Collecting data isn't enough; effective analysis is crucial for informed
+  decision-making
+
+Now, let's delve into the scale of data size and understand the magnitude of
+data we deal with today.
+
+# ##############################################################################
+# Scale of Data Size
+# ##############################################################################
+
+- Understanding the scale of data size is crucial in the context of data
+  science.
+  - A megabyte, which is approximately one million bytes, is roughly the size of
+    a typical English book
+  - A gigabyte, equivalent to one billion bytes or 1,000 megabytes, can store
+    about half an hour of video or the compressed text of Wikipedia without
+    media, which is around 22GB.
+
+- A terabyte, which is one million megabytes, can hold the entire human genome,
+  about 100,000 photos, and costs around $50 for a 1TB hard drive or $23 per
+  month on AWS S3
+- A petabyte, equivalent to 1,000 terabytes, can store 13 years of
+  high-definition video and costs approximately $250,000 per year on AWS S3.
+
+- An exabyte, which is one million terabytes, represents the global yearly
+  internet traffic in 2004
+- A zetabyte, equivalent to one billion terabytes, was the global yearly internet
+  traffic in 2016 and would fill 20% of Manhattan, New York, with data centers
+- A yottabyte, which costs $100 trillion, would fill Delaware and Rhode Island
+  with a million data centers
+- For a brontobyte, the largest unit mentioned staggering 10^27 bytes, I couldn't
+  come up with an example
+
+# ##############################################################################
+# Constants Everybody Should Know
+# ##############################################################################
+
+- Understanding the time it takes for different operations in computing is
+  crucial
+- A CPU running at 3GHz can execute an instruction in about 0.3 nanoseconds. This
+  is incredibly fast, but as we move away from the CPU to access data, the time
+  increases
+- Accessing data from the L1 cache takes about 1 nanosecond, while the L2 cache
+  takes around 4 nanoseconds
+- If the data is not in the cache and must be fetched from the main memory, it
+  takes significantly longer, about 100 nanoseconds. Reading a megabyte from
+  memory can take between 20 to 100 microseconds
+- For storage, a random read from an SSD takes about 16 microseconds, which is
+  much faster than a traditional disk seek that takes around 2 milliseconds
+- Sending data over a network is even slower; sending 1KB takes about 1
+  millisecond. Finally, a packet round-trip from California to the Netherlands
+  takes approximately 150 milliseconds. These constants are essential for
+  understanding the performance of systems and designing efficient algorithms.
+
+Now, let's explore how these constants impact big data applications, starting
+with personalized marketing.
+
+# ##############################################################################
+# Big Data Applications - Personalized Marketing
+# ##############################################################################
+
+- Personalized marketing is a powerful application of big data, allowing
+  companies to target consumers individually
+- For instance, Amazon uses a consumer's shopping history, search, click, and
+  browse activity, along with trends and reviews, to personalize suggestions
+- This approach helps brands understand the relationship between customers and
+  products. Sentiment analysis, which can be performed on social media, online
+  reviews, blogs, and surveys, helps brands gauge consumer sentiment as positive,
+  negative, or neutral
+- In 2022, a staggering $600 billion was spent on digital marketing.
+  Personalization leverages big data to create more relevant and engaging
+  marketing experiences for consumers.
+
+# ##############################################################################
+# Big Data Applications - Mobile Advertisement
+# ##############################################################################
+
+- Mobile advertisement is another significant application of big data, driven by
+  the widespread use of mobile phones
+- With 80% of the world's population owning a mobile phone and 6.5 billion
+  smartphones in use, the potential for targeted advertising is immense
+- By integrating online and offline databases, companies can gather data such as
+  GPS location, search history, and credit card transactions to create
+  personalized advertisements
+- For example, if someone buys a new house, searches for renovation tips, and
+  watches related shows, their phone can track their location and send them
+  coupons for nearby stores like Home Depot. This level of personalization can
+  make consumers feel like they are being closely followed by companies like
+  Google and Meta
+
+# ##############################################################################
+# Big Data Applications in Biomedical Data
+# ##############################################################################
+
+- Big data significantly impacts biomedical data
+- Personalized medicine is a key application, tailoring treatments to individual
+  patients for maximum effectiveness. It considers genetics, daily activities,
+  environment, and habits, enabling precise and effective healthcare
+- Genome sequencing is another crucial application, analyzing genetic codes to
+  enhance health understanding and predict potential issues
+- Health technology, including personal health trackers like smart rings and
+  smartphones, is vital. These devices gather health and activity data, offering
+  insights to improve health outcomes
+
+# ##############################################################################
+# Big Data Applications in Smart Cities
+# ##############################################################################
+
+- Smart cities are another exciting application of big data
+- These cities use an interconnected network of sensors, including traffic
+  sensors, camera networks, and satellites, to collect and analyze data
+- The primary goals of smart cities are to monitor air pollution, minimize
+  traffic congestion, provide optimal urban services, and maximize energy
+  savings. By using data from various sources, city planners can make informed
+  decisions to improve the quality of life for residents
+- For example, data from traffic sensors can help reduce congestion by optimizing
+  traffic light patterns. Similarly, air quality sensors can provide real-time
+  data to help reduce pollution levels. The ultimate aim is to create a more
+  efficient, sustainable, and livable urban environment.
+
+Let's delve into the overarching goal of data science and how it transforms raw
+data into actionable wisdom.
+
+# ##############################################################################
+# Goal of Data Science
+# ##############################################################################
+
+- The primary goal of data science is to transform raw data into wisdom. This
+  process involves several stages
+- Initially, data is collected in its raw form, which is often unorganized and
+  unstructured
+- The next step is to organize and structure this data to turn it into
+  information
+- Once the data is structured, it can be analyzed to gain knowledge, which
+  involves learning from the data to understand patterns and trends
+- The final stage is wisdom, where this understanding is used to make informed
+  decisions and take actions
+- Insights gained from data science enable organizations to make better decisions
+  and take actions that can lead to improved outcomes
+
+- Additionally, data science often involves combining multiple streams of big
+  data to generate new data, which can itself be considered big data. This
+  continuous cycle of data transformation and insight generation is at the heart
+  of data science.
+
+# ##############################################################################
+# The Six V'S of Big Data
+# ##############################################################################
+
+- The concept of the Six V's of Big Data helps understanding how data is managed
+  and utilized in today's world. Let's break down each of these V's:
+
+- Volume: Refers to the vast amount of data generated in the digital age.
+  Platforms like Amazon, Google, and Meta produce enormous data daily. This
+  growth necessitates robust systems for efficient storage and processing
+
+- Variety: Data exists in structured, semi-structured, and unstructured forms.
+  Structured data is organized, like spreadsheets. Semi-structured includes text
+  and receipts, while unstructured covers media like photos and videos. Managing
+  this variety requires systems that handle formats like CSV, XML, and JSON
+
+- Velocity: Concerns the speed of data generation and processing. Technologies
+  like sensors create continuous data streams. Organizations must choose between
+  real-time or offline processing. Real-time analytics is vital for applications
+  needing immediate insights, such as monitoring systems
+
+- Veracity: Focuses on data quality and trustworthiness. Data can be noisy or
+  erroneous, necessitating cleaning and validation. This involves removing bad
+  data, filling missing values, and identifying outliers. Trusting accurate data
+  is crucial for informed decision-making
+
+# ##############################################################################
+# Sources of Big Data
+# ##############################################################################
+
+- In the next slides, we are introduced to the concept of Big Data and its
+  various sources.
+
+- Big Data can be categorized based on its origin, which includes machines,
+  people, and organizations. Understanding these sources is crucial because it
+  helps us comprehend the nature of the data we are dealing with and how it can
+  be utilized effectively
+- Machines, people, and organizations each contribute unique types of data, and
+  recognizing these differences allows us to tailor our data processing and
+  analysis strategies accordingly.
+
+# ##############################################################################
+# Sources of Big Data: Machines
+# ##############################################################################
+
+- Machines are a significant source of Big Data. They generate data through
+  various means such as real-time sensors, cars, website tracking, personal
+  health trackers, and scientific experiments
+- The data from machines is highly structured, which is a major advantage because
+  it makes it easier to analyze and interpret
+- However, there are challenges associated with machine-generated data. It is
+  often difficult to move due to its large volume, and it is typically processed
+  in-place or in a centralized manner. Additionally, machine data is usually
+  streaming rather than batch, meaning it is continuously generated and needs to
+  be processed in real-time. This requires robust infrastructure and
+  sophisticated tools to handle the data efficiently.
+
+# ##############################################################################
+# Sources of Big Data: People
+# ##############################################################################
+
+- Transitioning from machines, let's explore how people contribute to Big Data.
+
+- People generate data through their activities on social media platforms like
+  Instagram, Twitter, and LinkedIn, video sharing sites such as YouTube and
+  TikTok, blogging, website comments, internet searches, text messages, and
+  personal documents like Google Docs and emails
+- The data from people is valuable because it enables personalization and
+  provides insights for business intelligence
+- However, this data is often semi-structured or unstructured, consisting of
+  text, images, and videos, which makes it challenging to process. Extracting
+  value from this data requires a significant investment in acquiring, storing,
+  cleaning, retrieving, processing, and deriving insights. Additionally, there
+  are ethical concerns related to surveillance capitalism, where personal data is
+  used for commercial purposes without explicit consent
+
+# ##############################################################################
+# Sources of Big Data: Orgs
+# ##############################################################################
+
+- Organizations are a major source of big data
+- They generate data through various activities such as commercial transactions,
+  credit card usage, e-commerce activities, banking operations, medical records,
+  and website clicks
+- This data is highly structured, which is a significant advantage because it can
+  be easily organized and analyzed
+- However, there are challenges associated with storing every event to predict
+  future trends, as this can lead to missed opportunities if not managed properly
+- Additionally, data is often stored in "data silos," meaning each department
+  within an organization may have its own system for storing data. This can
+  create additional complexity, as data may become outdated or not visible across
+  the organization. Cloud computing solutions, like data lakes and data
+  warehouses, can help mitigate these issues by providing centralized storage and
+  access to data.
+
+Now, let's explore whether data science is just a passing trend or something
+more substantial.

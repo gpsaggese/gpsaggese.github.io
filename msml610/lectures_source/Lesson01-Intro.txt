@@ -1,5 +1,3 @@
-// notes_to_pdf.py --input msml610/lectures_source/Lesson1-Intro.txt --output tmp.pdf --type slides --skip_action cleanup_after --debug_on_error --toc_type navigation
-
 ::: columns
 :::: {.column width=15%}
 ![](msml610/lectures_source/figures/UMD_Logo.png)
@@ -23,14 +21,13 @@ MSML610: Advanced Machine Learning
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
 
 **References**:
-
-- AIMA: Chap 1
+- AIMA (Artificial Intelligence: a Modern Approach), Chap 1
 ::::
 :::: {.column width=20%}
-![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
+![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){width=1.5cm}
 ::::
 :::
 

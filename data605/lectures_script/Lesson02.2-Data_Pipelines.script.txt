@@ -1,0 +1,386 @@
+# ##############################################################################
+# Data Pipelines: Resources
+# ##############################################################################
+
+- The slide introduces resources to help understand data pipelines, which are
+  essential for managing and processing data efficiently.
+- It mentions concepts covered in the slides and a class project, which likely
+  involves practical application of these concepts.
+- Mastery of data pipelines can be enhanced by referring to the "Data Pipelines
+  Pocket Reference," a book that provides detailed insights into processing
+  data.
+- The image on the slide might illustrate a data pipeline or related concept,
+  providing a visual aid to understand the flow and transformation of data.
+
+Now, let's explore how data is treated as a product in today's digital world.
+
+# ##############################################################################
+# Data as a Product
+# ##############################################################################
+
+- Modern services often "sell" data as a product, heavily relying on data and
+  machine learning
+- Examples include personalized search engines like Google, sentiment analysis
+  on Facebook, and recommendation engines on Amazon, Netflix, and Spotify
+- Creating data products involves several steps:
+  - Data ingestion: collecting raw data
+  - Data pre-processing: cleaning, tokenizing, and computing necessary features
+  - Model training: developing machine learning models with processed data
+  - Model deployment: putting the trained model into production, managed by
+    MLOps
+  - Model monitoring: ensuring the model functions correctly, maintains speed,
+    and performs well
+  - Feedback collection: refining the model by comparing recommendations to
+    actual user purchases for future improvements
+
+Let's delve deeper into the concept of data pipelines and their significance.
+
+# ##############################################################################
+# Data Pipelines
+# ##############################################################################
+
+- The phrase "Data is the new oil" highlights the value of data, but like oil,
+  it needs refining to be useful.
+- Data pipelines are processes that move and transform data to derive new value
+  through analytics, reporting, and machine learning.
+- The goal of data pipelines is to extract meaningful insights and drive
+  decision-making.
+- Key steps in a data pipeline include:
+  - Collecting data from various sources.
+  - Pre-processing or cleaning the data to ensure quality.
+  - Validating the data to confirm its accuracy and reliability.
+  - Processing the data to extract insights or prepare it for further analysis.
+  - Combining data from different sources to provide a comprehensive view.
+- Data ingestion is the simplest form of a data pipeline, involving extracting
+  data, such as from a REST API, and loading it into a database like a SQL
+  table.
+
+Understanding data pipelines is crucial for effectively managing and utilizing
+data in various applications.
+
+# ##############################################################################
+# Roles in Building Data Pipelines
+# ##############################################################################
+
+In data pipelines, three key roles exist: data engineers, data scientists, and
+data analysts. Data engineers build and maintain pipelines using tools like
+Python, Java, Go, and no-code solutions. They manage data flow with SQL and
+NoSQL databases and employ big data tools like Hadoop, MapReduce, and Spark,
+alongside cloud computing. Data scientists focus on predictive models, using
+languages such as Python, R, and Julia, and share tools like Hadoop, MapReduce,
+Spark, and cloud computing with engineers. Data analysts, often from marketing
+or sales, create metrics and dashboards using Excel and visualization tools like
+Tableau. Each role is vital for effective data processing and utilization in
+organizations
+
+Transitioning to the next slide, let's explore some practical challenges faced
+in organizing data pipelines.
+
+# ##############################################################################
+# Practical Problems in Data Pipeline Organization
+# ##############################################################################
+
+Organizing data pipelines presents challenges. A key issue is identifying data
+responsibility, crucial for accountability and integrity. Scaling is another
+challenge, as performance, memory, and disk space can become bottlenecks with
+growing data volumes. Organizations must decide whether to build tools or buy
+existing ones, considering open-source versus proprietary software. The data
+pipeline architecture is critical, requiring clear conventions and thorough
+documentation. Knowing who oversees the architecture is essential for
+consistency and efficiency. Service level agreements (SLAs) ensure data services
+meet standards. Regular communication with stakeholders aligns the pipeline's
+objectives with business goals and addresses concerns promptly
+
+Now, let's delve into the process of data ingestion and its components.
+
+# ##############################################################################
+# Data Ingestion
+# ##############################################################################
+
+Data ingestion involves extracting data from one source and loading it into
+another storage system, a key step in data pipelines. Sources include databases
+like Postgres and MongoDB, REST APIs, network file systems, or cloud storage
+with formats like CSV or Parquet. Data warehouses and lakes are common
+destinations. Organizations handle numerous data sources, from a few to
+thousands, both internal, like e-commerce shopping cart databases, and external,
+such as Google Analytics. Managing these diverse sources demands careful
+planning to ensure accurate and efficient data ingestion
+
+# ##############################################################################
+# Data Pipeline Paradigms
+# ##############################################################################
+
+- Data pipelines are essential for processing and managing data efficiently.
+  They can be built in various styles, each with its own approach to handling
+  data.
+- The process typically involves multiple phases: Extract, Load, and Transform.
+  These phases can be arranged differently based on the philosophy or roles
+  involved in data management.
+- The common arrangements are ETL (Extract, Transform, Load), ELT (Extract,
+  Load, Transform), and EtLT (Extract, transform, Load, Transform). Each
+  arrangement has its own advantages and is chosen based on specific needs and
+  goals.
+- ETL is often used when data needs to be transformed before loading it into a
+  data warehouse. ELT is preferred when the transformation is done after
+  loading, often in a data lake. EtLT is a hybrid approach that combines
+  elements of both ETL and ELT.
+
+Understanding these paradigms helps in choosing the right approach for your data
+processing needs.
+
+# ##############################################################################
+# ETL Paradigm: Phases
+# ##############################################################################
+
+- The ETL paradigm consists of three main phases: Extract, Transform, and Load.
+- In the Extract phase, data is gathered from various sources such as internal
+  or external data warehouses, REST APIs, or through web scraping. This phase is
+  crucial for collecting all necessary data for further processing.
+- The Transform phase involves converting raw data into a format that is useful
+  for analysis. This may include combining data, formatting it, and applying
+  business logic to make it ready for the next steps.
+- The Load phase is where the transformed data is moved into its final
+  destination, such as a data warehouse or data lake. This phase ensures that
+  data is organized and stored in a way that is optimized for analysis.
+- A data ingestion pipeline, which includes the Extract and Load phases, focuses
+  on moving data from one point to another, formatting it, and making copies as
+  needed. Different tools are used to operate on the data during this process.
+
+The ETL paradigm is a foundational concept in data processing, providing a
+structured approach to handling data efficiently.
+
+# ##############################################################################
+# ETL Paradigm: Example
+# ##############################################################################
+
+- In the Extract phase, organizations often face the decision of buying or
+  building data ingestion tools. This decision can lead to vendor lock-in, where
+  a company becomes dependent on a specific vendor's tools.
+- During the Transform phase, data is converted to a usable format. This can
+  involve parsing timestamps, creating new columns from existing ones, and
+  applying business logic to aggregate or filter data. It's often better to add
+  tags or mark data rather than filtering it out entirely. Anonymizing data is
+  also a key step to ensure privacy and compliance.
+- The Load phase involves organizing data in a format that is optimized for
+  analysis, such as loading it into a relational database. This phase may also
+  include data modeling, which structures the data for efficient querying and
+  analysis.
+
+The ETL paradigm provides a clear example of how data can be processed and
+prepared for analysis, highlighting the importance of each phase in the
+pipeline.
+
+# ##############################################################################
+# Workflow Orchestration
+# ##############################################################################
+
+- Companies often manage numerous data pipelines, from ten to thousands,
+  requiring efficient management for smooth operations
+- Orchestration tools like Apache Airflow, Luigi, AWS Glue, and Kubeflow assist
+  in managing these pipelines. Each tool has unique strengths, catering to
+  different company needs
+- These tools schedule and manage task flows based on dependencies, organizing
+  tasks in the required execution order
+- Pipelines and jobs are often visualized through Directed Acyclic Graphs
+  (DAGs), illustrating task flow and dependencies
+- Orchestration tools offer features to monitor task execution, retry failures,
+  and send alerts for issues, ensuring quick problem identification and
+  resolution
+
+Now, let's explore the shift from ETL to ELT in data processing.
+
+# ##############################################################################
+# ELT Paradigm
+# ##############################################################################
+
+- ETL (Extract, Transform, Load) is the traditional data processing method,
+  involving data extraction, transformation to a desired format, and loading
+  into a database
+- ETL's limitations include needing a deep understanding of data and its
+  intended use at ingestion
+- ELT (Extract, Load, Transform) is gaining popularity. Here, data is extracted,
+  loaded into storage, and transformed as needed
+- ELT's advantage is flexibility, as it doesn't require knowing data usage
+  upfront
+- ELT separates roles: data engineers handle extraction and loading, while data
+  scientists and analysts focus on transformation
+- The ETL to ELT shift is driven by technologies like cloud storage, distributed
+  systems like HDFS, columnar databases, and data compression
+
+Next, we'll compare row-based and columnar databases to understand their
+different use cases.
+
+# ##############################################################################
+# Row-Based vs Columnar Dbs
+# ##############################################################################
+
+- Row-based databases, such as MySQL and Postgres, are optimized for reading and
+  writing rows of data. They are ideal for applications that require frequent
+  reading and writing of small amounts of data.
+- These databases are commonly used in transactional systems where operations
+  are performed on individual records.
+- On the other hand, columnar databases like Amazon Redshift and Snowflake are
+  designed for reading and writing large amounts of data less frequently.
+- Columnar databases are particularly useful for analytical queries that require
+  accessing only a few columns of data. This makes them more efficient for data
+  analytics tasks.
+- They also offer better data compression, which can lead to significant storage
+  savings and improved performance for certain types of queries.
+- Understanding the differences between row-based and columnar databases can
+  help in choosing the right database for specific use cases, whether it's for
+  transactional processing or analytical workloads.
+
+# ##############################################################################
+# Etlt
+# ##############################################################################
+
+- ETL (Extract, Transform, Load) is a traditional data processing method. Data
+  is extracted from various sources, transformed into a suitable format, and
+  loaded into a data warehouse or database. This method is ideal for cleaning
+  and structuring data before system loading
+- ELT (Extract, Load, Transform) involves extracting and loading data into a
+  system first, followed by transformation based on business logic. This
+  approach is advantageous for handling large data volumes, offering flexible
+  and scalable transformations
+- EtLT is a variation where limited transformations occur before loading, such
+  as removing duplicates, breaking down URLs, or obfuscating sensitive data for
+  legal or security reasons. After these initial transformations, the data
+  undergoes the Load and Transform steps. This method is useful when certain
+  transformations are essential before effective data loading and processing
+
+Now, let's explore the different types of data structures and their
+implications.
+
+# ##############################################################################
+# Structure in Data (Or Lack Thereof)
+# ##############################################################################
+
+- Structured data is organized and follows a specific schema. Examples include
+  relational databases, CSV files, data frames, and Parquet files. This type of
+  data is easy to manage and analyze because it is consistent and predictable.
+
+- Semi-structured data contains elements that may not follow a strict schema,
+  but still have some organizational properties. Examples include logs, HTML
+  pages, XML files, nested JSON, and NoSQL databases. This type of data requires
+  more effort to process because it can vary in structure.
+
+- Unstructured data lacks a predefined schema and includes formats like text,
+  images, videos, and other binary large objects (blobs). This data type is the
+  most challenging to work with because it requires advanced techniques to
+  extract meaningful information.
+
+Understanding data structure is crucial, but data quality is equally important.
+Let's discuss data cleaning next.
+
+# ##############################################################################
+# Data Cleaning
+# ##############################################################################
+
+- Data cleanliness refers to the quality of source data, which can vary
+  significantly. Data is often messy, with issues like duplicated records,
+  incomplete or missing entries, inconsistent formats, and mislabeled or
+  unlabeled data. These issues can affect the accuracy and reliability of data
+  analysis.
+
+- The timing of data cleaning is crucial. It can be done as soon as data is
+  collected, as late as possible before analysis, or at different stages
+  throughout the data processing pipeline. The choice between ETL, ELT, and EtLT
+  methods can influence when and how data cleaning occurs.
+
+- When dealing with data, it's important to use heuristics such as hoping for
+  the best but assuming the worst, validating data early and often, not trusting
+  any data blindly, and being defensive in data handling. These practices help
+  ensure data quality and reliability.
+
+With a solid understanding of data processing and cleaning, we can now delve
+deeper into data analysis techniques.
+
+# ##############################################################################
+# OLAP vs OLTP Workloads
+# ##############################################################################
+
+- Two main data workloads exist: OLTP and OLAP
+- OLTP (On-Line Transactional Processing) handles numerous real-time
+  transactions, processing many small read/write operations simultaneously.
+  Examples include online banking, e-commerce, and travel reservations,
+  requiring speed and efficiency for multiple user transactions
+- Conversely, OLAP (On-Line Analytical Processing) analyzes large data volumes,
+  focusing on fewer, larger read/write operations. Used in data mining and
+  business intelligence, OLAP provides insights for informed business decisions
+
+Now, let's explore the challenges faced in managing data pipelines.
+
+# ##############################################################################
+# Challenges with Data Pipelines
+# ##############################################################################
+
+- Data pipelines face several challenges, especially when dealing with different
+  data volumes. High-volume pipelines involve many small read and write
+  operations, while low-volume pipelines handle fewer but larger operations.
+- Another challenge is the choice between batch processing and streaming. Batch
+  processing handles data in chunks at scheduled times, while streaming
+  processes data in real-time, which can be demanding due to time constraints.
+- API rate limits and throttling can restrict the number of requests a system
+  can handle, affecting data flow.
+- Connection time-outs and slow downloads can disrupt data transfer, causing
+  delays.
+- Managing data updates can be tricky. Incremental mode updates data as it
+  changes, while catch-up mode updates data in bulk after a delay.
+
+Let's move on to understanding the differences between data warehouses and data
+lakes.
+
+# ##############################################################################
+# Data Warehouse vs Data Lake
+# ##############################################################################
+
+- A data warehouse is a database that stores data from various systems in a
+  structured format. It follows the ETL (Extract, Transform, Load) data pipeline
+  style. This means data is extracted from different sources, transformed into a
+  suitable format, and then loaded into the warehouse. Examples of data
+  warehouses include large Postgres instances with multiple databases and
+  tables, as well as services like AWS Athena, RDS, and Google BigQuery.
+- In contrast, a data lake stores data in a semi-structured or unstructured
+  format. It follows the ELT (Extract, Load, Transform) data pipeline style.
+  Here, data is first loaded into the lake and then transformed as needed. Data
+  lakes can store a wide variety of data types, such as blog posts, flat files,
+  JSON objects, and images. An example of a data lake is an AWS S3 bucket that
+  holds diverse data types.
+
+Understanding these concepts is crucial for effectively managing and analyzing
+data in today's digital world.
+
+# ##############################################################################
+# Data Lake: Pros and Cons
+# ##############################################################################
+
+Data lakes store large data flexibly, accommodating semi-structured or
+unstructured formats. This flexibility allows easy changes to data types or
+properties without a predefined schema. For instance, JSON documents can be
+stored without fitting into a rigid structure, benefiting data scientists who
+explore raw data without a clear usage plan. However, data lakes are less
+optimized for querying compared to structured data warehouses. Tools like AWS
+Athena or Redshift Spectrum enable SQL-like queries in data lakes, but these may
+not match the efficiency of traditional data warehouse queries. In summary, data
+lakes provide a cost-effective, flexible storage solution but may not suit
+frequent complex queries
+
+Now, let's explore the benefits and drawbacks of using cloud computing for data
+management.
+
+# ##############################################################################
+# Advantages of Cloud Computing
+# ##############################################################################
+
+Cloud computing offers key advantages for building and deploying data solutions.
+It streamlines setting up data pipelines, warehouses, and lakes. Managed
+services eliminate administrative tasks and deployment concerns. These services
+are highly scalable, with options like Amazon Redshift, Google BigQuery, and
+Snowflake offering robust database solutions. The rent-vs-buy model facilitates
+scaling, system upgrades, and cash flow management. Storage and compute costs
+are decreasing due to economies of scale, enhancing cloud computing's appeal.
+However, there are drawbacks. Cloud flexibility can be 2 to 3 times more
+expensive than owning infrastructure. There's also a risk of vendor lock-in,
+making provider switching difficult and costly. Overall, cloud computing
+provides significant ease of use and scalability benefits, but potential costs
+and limitations must be considered
