@@ -1,6 +1,10 @@
 repo_info:
   repo_name: umd_classes
+<<<<<<< HEAD
   github_repo_account: gpsaggese
+=======
+  github_repo_account: gpsaggese-org
+>>>>>>> master
   github_host_name: github.com
   invalid_words:
   issue_prefix: UmdTask

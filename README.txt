@@ -10,3 +10,5 @@
 > FILE=msml610/lectures_source/Lesson05*
 > process_slides.py --in_file $FILE --action slide_format_figures --out_file $FILE --use_llm_transform
 > process_slides.py --in_file $FILE --action slide_check --out_file ${FILE}.check --use_llm_transform --limit None:10
+
+rsync -avz -e "ssh -i ~/.ssh/ck/saggese-cryptomatic.pem" saggese@$DEV1:/data/saggese/src/umd_classes1/msml610/lectures/ msml610/lectures/; open msml610/lectures/*07.1* -a "skim"

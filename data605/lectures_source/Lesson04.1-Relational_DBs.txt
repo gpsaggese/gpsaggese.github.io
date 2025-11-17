@@ -18,7 +18,11 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
+<<<<<<< HEAD
 **$$\text{\blue{Relational DBs}}$$**
+=======
+**$$\text{\blue{Lesson 4.1: Relational DBs}}$$**
+>>>>>>> master
 \endgroup
 
 ::: columns
@@ -40,7 +44,11 @@ UMD DATA605 - Big Data Systems
   - Ingres Project at Berkeley (1970-1985)
     - Ingres (INteractive Graphics REtrieval System)
     - $\to$ PostgreSQL (=Post Ingres)
+<<<<<<< HEAD
   - IBM System R (1970) $\to$ Oracle, IBM DB2
+=======
+  - IBM System R (1970s) $\to$ Oracle, IBM DB2
+>>>>>>> master
 
 - **Contributions from relational data model**
   - Formal semantics for data operations
@@ -52,10 +60,18 @@ UMD DATA605 - Big Data Systems
 
 * Relational Model: Key Definitions
 ::: columns
+<<<<<<< HEAD
 :::: {.column width=55%}
 
 - Relational DB: Collection of **tables / relations**
   - Unique name and schema for each table
+=======
+:::: {.column width=60%}
+
+- Relational DB is a collection of **tables / relations**
+  - Unique name and schema for each table
+  - E.g., `instructor` and `course` relations
+>>>>>>> master
 
 - **Row / tuple / record**: Represents a relationship among values
 
@@ -63,8 +79,11 @@ UMD DATA605 - Big Data Systems
   - Atomic elements (e.g., phone number as a single object)
   - `NULL` for unknown or non-existent values
 
+<<<<<<< HEAD
 - E.g., `instructor` and `course` relations
 
+=======
+>>>>>>> master
 - **Schema of a relation**
   - List of attributes and their domains
   - Like type definition in programming languages
@@ -95,6 +114,7 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=55%}
 
+<<<<<<< HEAD
 - UML class diagram
   - UML = Unified Modeling Language
   - Used in OOP and DB design
@@ -109,17 +129,41 @@ UMD DATA605 - Big Data Systems
   - Columns / fields / attributes are listed inside the box
   - Primary keys underlined
   - Foreign key constraints are arrows
+=======
+- **UML class diagram**
+  - UML = Unified Modeling Language
+  - Used in OOP and DB design
+
+\vspace{1cm}
+
+- **In OOP design**
+  - Diagram showing classes, attributes, methods, and relationships
+
+- **In DB design**
+  - Each box is a table / relation
+  - Columns / fields / attributes are listed inside the box
+  - Primary keys are underlined
+  - Foreign key constraints are represented by arrows
+>>>>>>> master
 ::::
 :::: {.column width=40%}
 \centering
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_1.png)
 
+<<<<<<< HEAD
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_2.png){ width=60% }
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_3.png)
 
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_4.png){ width=60% }
+=======
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_2.png){width=60%}
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_3.png)
+
+![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_5_image_4.png){width=70%}
+>>>>>>> master
 ::::
 :::
 
@@ -154,10 +198,17 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=65%}
 
+<<<<<<< HEAD
 - _R_ is set of attributes of a relation _r_
   - E.g., `ID, name, dept_name, salary` are attributes of `instructor`
 
 - _K_ is superkey of _R_ if values for _K_ identify a unique tuple of each
+=======
+- _R_ is a set of attributes of a relation _r_
+  - E.g., `ID, name, dept_name, salary` are attributes of `instructor`
+
+- _K_ is a superkey of _R_ if values for _K_ identify a unique tuple of each
+>>>>>>> master
   relation _r(R)_
   - E.g., `(ID)` and `(ID, name)` are superkeys of `instructor`
   - `(name)` is not a superkey of `instructor`
@@ -253,10 +304,17 @@ UMD DATA605 - Big Data Systems
 
 - **Foreign key constraint**: for each row, the primary key tuple must exist
   - Aka referential integrity constraint
+<<<<<<< HEAD
   - If `(student101, DATA605)` in `takes`, there must be `student101` in
     `student`
 
 - The key referenced as foreign key must exist as primary key
+=======
+  - If `(student101, DATA605)` is in `takes`, there must be `student101` in
+    `student`
+
+- The key referenced as a foreign key must exist as a primary key
+>>>>>>> master
 
 * Relational Algebra: 1/4
 ::: columns
@@ -325,7 +383,11 @@ UMD DATA605 - Big Data Systems
 * Relational Algebra: 3/4
 
 - **Join**: composition of two operations
+<<<<<<< HEAD
   - Cartesian-product
+=======
+  - Cartesian product
+>>>>>>> master
   - Selection based on equality between two fields
   - E.g., `instructor` x `teaches` when `instructor.ID = teaches.ID`
 
@@ -374,6 +436,7 @@ UMD DATA605 - Big Data Systems
 ![](data605/lectures_source/images/lecture_4_1/lec_4_1_slide_14_image_1.png)
 ::::
 :::
+<<<<<<< HEAD
 
 * SQL Overview
 
@@ -1031,3 +1094,5 @@ Studio(name, address, presC\#)
   ```
   - Difference from `WHERE` clause is that it applies to summarized group
     records, and where applies to individual records
+=======
+>>>>>>> master
