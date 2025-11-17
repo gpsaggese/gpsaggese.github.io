@@ -12,6 +12,7 @@ Functions:
     load_cdc_data: Specific helper to load and clean the CDC Diabetes dataset.
 """
 
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -36,23 +37,27 @@ sns.set_theme(style="whitegrid")
 # #############################################################################
 def load_cdc_data(filepath: str) -> pd.DataFrame:
     """
-    Loads the CDC Diabetes Health Indicators dataset and performs 
-    initial cleaning.
+    Loads the CDC Diabetes Health Indicators dataset from a local CSV.
+    Performs basic cleaning (duplicate removal, type casting) for CausalML.
     
     Args:
-        filepath (str): Path to the CSV file.
+        filepath (str): Relative path to the CSV file.
         
     Returns:
-        pd.DataFrame: Cleaned dataframe.
+        pd.DataFrame: Cleaned dataframe ready for processing.
     """
-    try:
-        df = pd.read_csv(filepath)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Could not find data at {filepath}. Please check the path.")
-    # Drop duplicates if any
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f"❌ Could not find file at: {filepath}")
+    print(f"Loading data from: {filepath}")
+    df = pd.read_csv(filepath)
+    # Drop duplicates
+    initial_len = len(df)
     df = df.drop_duplicates()
-    # ensure float types for consistency with XGBoost
+    if len(df) < initial_len:
+        print(f"Dropped {initial_len - len(df)} duplicate rows.")
+    # Ensure all data is float for XGBoost compatibility
     df = df.astype(float)
+    
     return df
 
 def preprocess_for_causal(df: pd.DataFrame, 
@@ -166,10 +171,17 @@ class CausalNavigator:
             Y (pd.Series): Outcome.
         """
         self.feature_names = X.columns.tolist()
+        T_proc = T.copy()
+        unique_vals = sorted(T_proc.unique())
+        if self.control_name not in unique_vals:
+            print(f"Mapping labels: 0.0 -> {self.control_name}, 1.0 -> {self.treatment_name}")
+            map_dict = {0: self.control_name, 1: self.treatment_name, 
+                        0.0: self.control_name, 1.0: self.treatment_name}
+            T_proc = T_proc.map(lambda x: map_dict.get(x, x))
         print(f"Training {self.learner_type}-Learner with XGBoost base models...")
         # fit_predict returns the CATE (difference in potential outcomes)
         # Note: causalml's API varies slightly by version; fit_predict is standard for BaseX/T/S.
-        cate = self.learner.fit_predict(X=X, treatment=T, y=Y)
+        cate = self.learner.fit_predict(X=X, treatment=T_proc, y=Y)
         # Handle shape differences (sometimes returns 2D array)
         if cate.ndim > 1 and cate.shape[1] == 1:
             cate = cate.flatten()  
