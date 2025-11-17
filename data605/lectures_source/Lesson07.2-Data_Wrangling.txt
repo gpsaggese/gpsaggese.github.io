@@ -26,7 +26,7 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=75%}
 
-- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](mailto:gsaggese@umd.edu)
+- **Instructor**: Dr. GP Saggese, [](gsaggese@umd.edu)
 
 - **Reference**
   - [Pandas tutorial](https://github.com/gpsaggese-org/umd_classes/tree/master/data605/tutorials/tutorial_pandas)
@@ -75,12 +75,12 @@ UMD DATA605 - Big Data Systems
   - Basic summaries
 
 - **Diagnose problems**
-  - Missing values, weird codes, inconsistent units, strange distributions
+  - Missing values, unusual codes, inconsistent units, strange distributions
 
 - **Decide strategy**, based on project
   - What to keep
   - What to fix
-  - What to drop 
+  - What to drop
 ::::
 :::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_19_image_1.png)
@@ -97,12 +97,12 @@ UMD DATA605 - Big Data Systems
 - **Web scraping**
   - Use APIs or scrape data explicitly
   - Scraping is challenging
-    - Fragile (page changes break your parser)
-    - Throttling / rate limits
-    - Cat-and-mouse with websites
+    - Fragile (page changes can break your parser)
+    - Throttling/rate limits
+    - Cat-and-mouse game with websites
   - Set up pipelines for periodic scraping
   - Tools for automated scraping
-    - E.g., `import.io`, `portia`, ...
+    - E.g., `import.io`, `portia`, ..
 
 - **Various sources of data**
   - Files (e.g., CSV, JSON, XML)
@@ -283,7 +283,8 @@ digraph DataQualityProblems {
 - **Types of problems**
   - Ill-formatted data
   - Missing/illegal values, misspellings, wrong fields, extraction issues
-  - Duplicated records, contradicting info, referential integrity violations
+  - Duplicated records, contradicting information, referential integrity
+    violations
   - Unclear default/missing values
   - Evolving schemas/classification schemes (categorical attributes)
   - Outliers
@@ -323,7 +324,7 @@ digraph DataQualityProblems {
 :::: {.column width=50%}
 
 - **Problems with outliers**
-  - Extreme outlier may alter metrics, masking others
+  - Extreme outliers may alter metrics, masking others
 
 - Use statistics to **identify outliers**
   - Robust statistics: minimize effect of corrupted data
@@ -350,13 +351,13 @@ digraph DataQualityProblems {
   - Estimate generating distribution (parametric or not)
   - Distance-based: find points with few neighbors
   - Density-based:
-    - Define _density_ as average distance to _k_ nearest neighbors
+    - Define _density_ as the average distance to _k_ nearest neighbors
     - Use relative density to identify outliers
 
 ::: columns
 :::: {.column width=50%}
 - **Curse of dimensionality**
-  - _"In high dimensional spaces, data is sparse"_
+  - _"In high-dimensional spaces, data is sparse"_
   - Techniques break down as data dimensionality increases
   - Need $O(e^n)$ points with $n$ dimensions to estimate
   - Project data into lower-dimensional space to find outliers
