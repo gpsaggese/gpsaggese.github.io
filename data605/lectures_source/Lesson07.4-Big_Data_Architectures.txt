@@ -222,10 +222,14 @@ UMD DATA605 - Big Data Systems
 
 * Microservice Architecture
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - **Microservices** = many small services collaborating over the network
+
+- **Cons**
+  - Complex deployment
+  - Requires tooling
 ::::
-:::: {.column width=45%}
+:::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_50_image_1.png)
 ::::
 :::
@@ -242,11 +246,7 @@ UMD DATA605 - Big Data Systems
   - _Resilience_: Isolate and address faults; one service failure doesn't affect
     the entire system
 
-- **Cons**
-  - Complex deployment
-  - Requires tooling
-
-* Microservices vs Monolithic Architecture: Hype
+* Microservices vs Monolith: Hype
 
 ::: columns
 :::: {.column width=35%}

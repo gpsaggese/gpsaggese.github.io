@@ -75,6 +75,10 @@ data605/lectures/Lesson01.3-Is_Data_Science_Just_Hype.pdf       14
 
 // process_slides.py --in_file data605/lectures_source/Lesson02-Git_Data_Pipelines.txt --action slide_format_figures --out_file data605/lectures_source/Lesson02-Git_Data_Pipelines.txt --use_llm_transform
 
+## Count words
+
+> dir="data605/lectures_script/"; for f in "$dir"/*; do [ -f "$f" ] && printf "%s\t%s\n" "$(basename "$f")" "$(wc -w < "$f")"; done
+
 # MSML610
 
 > cd $GIT_ROOT
