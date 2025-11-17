@@ -26,15 +26,15 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=75%}
 
-- **Instructor**: Dr. GP Saggese, [](gsaggese@umd.edu)
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](mailto:gsaggese@umd.edu)
 
 - **Reference**
   - [Pandas tutorial](https://github.com/gpsaggese-org/umd_classes/tree/master/data605/tutorials/tutorial_pandas)
   - Web
-    - Onslaught of free resources (e.g., [ref](https://pandas.pydata.org))
+    - Many free resources (e.g., [official docs](https://pandas.pydata.org))
   - Mastery
     - https://wesmckinney.com/book
-    - Read cover-to-cover and try all the examples 2-3x time to really _master_
+    - Read cover-to-cover and try the examples 2–3 times to really _master_ them
 ::::
 :::: {.column width=20%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_16_image_1.png){width=2cm}
@@ -47,9 +47,9 @@ UMD DATA605 - Big Data Systems
 - **Data wrangling and cleaning**
   - Turn _messy, inconsistent, incomplete_ data into a _coherent_ dataset
 
-- **Most effort** in data science is spent here, not modeling
-  - It is a iterative work
-  - Clean $\to$ Modeling $\to$ Clean $\to$ ...
+- **Most effort** in data science is spent here, not on modeling
+  - It is iterative work
+  - Clean $\to$ Model $\to$ Clean $\to$ ...
 ::::
 :::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_18_image_1.png)
@@ -77,10 +77,10 @@ UMD DATA605 - Big Data Systems
 - **Diagnose problems**
   - Missing values, weird codes, inconsistent units, strange distributions
 
-- **Decide strategy**
+- **Decide strategy**, based on project
   - What to keep
   - What to fix
-  - What to drop based on your question
+  - What to drop 
 ::::
 :::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_19_image_1.png)
@@ -91,14 +91,14 @@ UMD DATA605 - Big Data Systems
   - Filter, join, reshape, recode, aggregate
 
 - **Validate results**
-  - Check that changes make sense and key statistics are reasonable
+  - Check that changes make sense and that key statistics are reasonable
 
 * Data Extraction
 - **Web scraping**
   - Use APIs or scrape data explicitly
   - Scraping is challenging
-    - Fragile
-    - Throttling
+    - Fragile (page changes break your parser)
+    - Throttling / rate limits
     - Cat-and-mouse with websites
   - Set up pipelines for periodic scraping
   - Tools for automated scraping
@@ -113,7 +113,7 @@ UMD DATA605 - Big Data Systems
   - Logs
   - ...
 
-- Raw data reflects **collection method, not analysis needs**
+- Raw data reflects **collection needs, not analysis needs**
 
 * Tidy Data
 
@@ -125,7 +125,7 @@ UMD DATA605 - Big Data Systems
   - Each variable forms a _column_
   - Each observation forms a _row_
   - Each type of observational unit forms a _table_
-  - `pandas.melt()`, `pandas.pivot()`
+  - Key tools in pandas: `pandas.melt()`, `pandas.pivot()`
 
 ::: columns
 :::: {.column width=55%}
@@ -149,7 +149,7 @@ _Tidy data_
   - Turn key-value pairs into separate columns
 
 - **What is the best shape?**
-  - Choose shape for simple analysis and visualization
+  - Choose the shape that simplifies analysis and visualization
 
 ::: columns
 :::: {.column width=40%}
@@ -176,14 +176,14 @@ _Long format_
 :::: {.column width=55%}
 - **Examples**
   - Group-wise ranking
-  - Group vars (sums, means, counts)
-  - Create new models per group
+  - Group statistics (sums, means, counts)
+  - Create separate models per group
 
 - **Pros**
   - Code is compact
   - Easy to parallelize
 
-- **Supported by many languages**
+- **Supported by many systems**
   - Pandas
   - `SQL GROUP BY` operator
   - Map-Reduce
