@@ -1,0 +1,15 @@
+artifact_uri: file:///work/mlruns/463852737094711558/d1c03944323745beb4eab1367551487f/artifacts
+end_time: 1762904116430
+entry_point_name: ''
+experiment_id: '463852737094711558'
+lifecycle_stage: active
+run_id: d1c03944323745beb4eab1367551487f
+run_name: notebook_eda
+run_uuid: d1c03944323745beb4eab1367551487f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762904116392
+status: 3
+tags: []
+user_id: root

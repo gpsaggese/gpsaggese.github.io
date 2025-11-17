@@ -1,0 +1,26 @@
+data:
+  raw_dir: "data/raw"
+  raw_file: "solar_energy.csv"
+  processed_dir: "data/processed"
+  target_col: "energy_mwh"
+  time_col: "timestamp"
+
+features:
+  keep_weather: ["temp_c", "cloud_cover", "solar_radiation", "wind_speed"]
+  lags: [1, 24, 48, 168]
+  rolling_means: [24, 168]
+  calendar: ["dow", "hour", "is_weekend"]
+
+model:
+  type: "xgboost"
+  params:
+    n_estimators: 500
+    max_depth: 6
+    learning_rate: 0.05
+    subsample: 0.9
+    colsample_bytree: 0.9
+
+eval:
+  metric: ["MAE", "RMSE", "MAPE"]
+  horizon_hours: 24
+
