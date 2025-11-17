@@ -1,3 +1,9 @@
+# Intro
+In these lessons, we look at how massive datasets are stored and processed across
+thousands of machines. We introduce distributed file systems, sharding, parallel
+and key-value databases, and the cluster architectures behind them, then motivate
+MapReduce as a way to compute reliably at web scale.
+
 # ##############################################################################
 # Big Data: Storing and Computing
 # ##############################################################################
@@ -169,4 +175,8 @@ other machines. Additionally, computation is brought directly to the data by
 using the same machines that store the data chunks as compute servers. Hadoop
 and its file system, HDFS, are practical implementations of these concepts.
 
-Now, let's explore how data processing is handled in this system.
+# Outro
+We examined why big data required many machines, compared storage options like
+distributed file systems, sharding, parallel DBs, and key-value stores, and
+discussed cluster architectures and MapReduce, seeing how bringing computation to
+data enabled reliable, large-scale processing despite frequent failures.

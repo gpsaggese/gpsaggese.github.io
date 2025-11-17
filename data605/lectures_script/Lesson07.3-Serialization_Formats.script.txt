@@ -1,3 +1,12 @@
+# Intro
+
+Serialization formats are essential for sharing structured data between programs
+and across networks. In these lessons, we compare text-based and binary formats
+such as CSV, Parquet, JSON, Protocol Buffers, Avro, and Thrift, highlighting
+their trade-offs. We then connect these formats to Remote Procedure Calls (RPCs),
+examining how data is marshalled, transmitted, and unmarshalled to enable
+reliable communication in distributed systems.
+
 # ##############################################################################
 # Serialization Formats
 # ##############################################################################
@@ -114,3 +123,10 @@ arguments, a step called server-side unmarshalling. The server then executes the
 requested procedure. After execution, the return values are marshaled into a
 response message and sent back to the client. The client receives the response,
 unmarshals the return values, and continues execution locally.
+
+# Outro
+
+We explored why serialization formats matter, compared CSV, Parquet, JSON,
+Protocol Buffers, Avro, and Thrift, and connected them to RPC concepts. We walked
+through RPC internals, from marshalling requests to handling responses, to see
+how distributed systems exchange structured data.

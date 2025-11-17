@@ -1,3 +1,12 @@
+# Intro
+
+Data wrangling and cleaning prepare raw, messy data for meaningful analysis by
+correcting errors, handling missing values, reshaping structures, and ensuring
+consistency. This process includes inspecting datasets, diagnosing problems,
+transforming formats, integrating multiple sources, and applying principles of
+tidy data. Together, these steps create reliable, well-structured data ready for
+modeling and visualization.
+
 # ##############################################################################
 # Data Wrangling and Data Cleaning
 # ##############################################################################
@@ -208,3 +217,11 @@ outliers, historical patterns are analyzed, and techniques like Rolling MAD
 (median absolute deviation) are used. This helps in flagging unusual data points
 that deviate significantly from expected patterns, ensuring more accurate
 analysis and forecasting.
+
+# Outro
+
+We explored how data is inspected, cleaned, reshaped, and validated, and how
+issues like outliers and multi-source conflicts were addressed. We learned
+practical techniques and workflows that strengthened our ability to prepare
+high-quality data for analysis.
+
