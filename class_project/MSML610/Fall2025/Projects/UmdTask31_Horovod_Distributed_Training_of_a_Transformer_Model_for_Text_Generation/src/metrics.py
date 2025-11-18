@@ -5,7 +5,7 @@ Includes perplexity, BLEU, and ROUGE scores.
 """
 
 import math
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Tuple
 
 import torch
 import numpy as np
@@ -31,7 +31,11 @@ def compute_perplexity(loss: float) -> float:
     return perplexity
 
 
-def compute_accuracy(logits: torch.Tensor, labels: torch.Tensor, pad_token_id: int = 50256) -> float:
+def compute_accuracy(
+    logits: torch.Tensor,
+    labels: torch.Tensor,
+    ignore_index: int = -100
+) -> float:
     """
     Compute token-level accuracy.
     
@@ -45,14 +49,52 @@ def compute_accuracy(logits: torch.Tensor, labels: torch.Tensor, pad_token_id: i
     """
     predictions = torch.argmax(logits, dim=-1)
     
-    # Create mask for non-padding tokens
-    mask = (labels != pad_token_id)
+    # Create mask for valid tokens (ignore positions marked with ignore_index)
+    mask = (labels != ignore_index)
     
     # Compute accuracy only on non-padding tokens
     correct = (predictions == labels) & mask
-    accuracy = correct.sum().item() / mask.sum().item()
+    mask_sum = mask.sum().item()
+    
+    # Avoid division by zero
+    if mask_sum == 0:
+        return 0.0
+    
+    accuracy = correct.sum().item() / mask_sum
     
     return accuracy
+
+
+def compute_accuracy_for_allreduce(
+    logits: torch.Tensor,
+    labels: torch.Tensor,
+    ignore_index: int = -100
+) -> Tuple[float, float]:
+    """
+    Compute accuracy numerator and denominator for distributed averaging.
+    
+    Returns (correct_count, total_count) so they can be allreduced separately
+    and then divided to get the true average across all ranks.
+    
+    Args:
+        logits: Model output logits of shape (batch, seq_len, vocab_size).
+        labels: Target labels of shape (batch, seq_len).
+        pad_token_id: Padding token ID to ignore.
+        
+    Returns:
+        Tuple of (correct_count, total_count) as floats.
+    """
+    predictions = torch.argmax(logits, dim=-1)
+    
+    # Create mask for valid tokens (ignore positions marked with ignore_index)
+    mask = (labels != ignore_index)
+    
+    # Compute accuracy only on non-padding tokens
+    correct = (predictions == labels) & mask
+    correct_count = correct.sum().item()
+    total_count = mask.sum().item()
+    
+    return float(correct_count), float(total_count)
 
 
 def compute_bleu_score(
@@ -163,7 +205,7 @@ class MetricsTracker:
         self.perplexities = []
         self.accuracies = []
     
-    def update(self, loss: float, logits: Optional[torch.Tensor] = None, labels: Optional[torch.Tensor] = None):
+    def update(self, loss: float, logits: Optional[torch.Tensor] = None, labels: Optional[torch.Tensor] = None, accuracy: Optional[float] = None):
         """
         Update metrics with new batch.
         
@@ -171,11 +213,16 @@ class MetricsTracker:
             loss: Loss value.
             logits: Model output logits (optional).
             labels: Target labels (optional).
+            accuracy: Pre-computed accuracy (optional, for distributed training).
         """
         self.losses.append(loss)
         self.perplexities.append(compute_perplexity(loss))
         
-        if logits is not None and labels is not None:
+        if accuracy is not None:
+            # Use provided accuracy (already averaged across ranks)
+            self.accuracies.append(accuracy)
+        elif logits is not None and labels is not None:
+            # Compute locally (for backward compatibility)
             accuracy = compute_accuracy(logits, labels)
             self.accuracies.append(accuracy)
     
@@ -195,4 +242,3 @@ class MetricsTracker:
             metrics['accuracy'] = np.mean(self.accuracies)
         
         return metrics
-

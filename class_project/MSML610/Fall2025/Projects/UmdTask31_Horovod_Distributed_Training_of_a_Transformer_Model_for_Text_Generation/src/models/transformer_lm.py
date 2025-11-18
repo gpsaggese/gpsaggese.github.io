@@ -221,7 +221,8 @@ class TransformerLM(nn.Module):
         d_ff: int = 2048,
         max_seq_len: int = 512,
         dropout: float = 0.1,
-        pad_token_id: int = 50256
+        pad_token_id: int = 50256,
+        gradient_checkpointing: bool = False
     ):
         """
         Initialize Transformer Language Model.
@@ -244,6 +245,7 @@ class TransformerLM(nn.Module):
         self.n_layers = n_layers
         self.max_seq_len = max_seq_len
         self.pad_token_id = pad_token_id
+        self.gradient_checkpointing = gradient_checkpointing
         
         # Token embeddings
         self.token_embedding = nn.Embedding(vocab_size, d_model)
@@ -307,7 +309,7 @@ class TransformerLM(nn.Module):
         
         Args:
             input_ids: Input token IDs of shape (batch, seq_len).
-            attention_mask: Attention mask (not used, kept for compatibility).
+            attention_mask: Attention mask of shape (batch, seq_len). 1 for real tokens, 0 for padding.
             labels: Target labels for loss computation (batch, seq_len).
             
         Returns:
@@ -325,12 +327,41 @@ class TransformerLM(nn.Module):
         # Add positional encoding
         x = self.pos_encoding(x)
         
-        # Create causal mask
+        # Create causal mask (1, 1, seq_len, seq_len)
         causal_mask = self._create_causal_mask(seq_len, device)
         
+        # Combine with padding mask if provided
+        if attention_mask is not None:
+            # Convert attention_mask to (batch, 1, seq_len, seq_len) for proper masking
+            # attention_mask: (batch, seq_len) where 1 = real token, 0 = padding
+            # We need to mask out positions where either:
+            #   1. Causal: future tokens (already in causal_mask)
+            #   2. Padding: padding tokens (from attention_mask)
+            # Create key mask: (batch, 1, 1, seq_len) - which positions can be attended to
+            key_mask = attention_mask.unsqueeze(1).unsqueeze(2)  # (batch, 1, 1, seq_len)
+            # Create query mask: (batch, 1, seq_len, 1) - which positions are queries
+            query_mask = attention_mask.unsqueeze(1).unsqueeze(3)  # (batch, 1, seq_len, 1)
+            # Combine: (batch, 1, seq_len, seq_len)
+            # Both query and key must be valid (non-padding), AND causal constraint
+            padding_mask = key_mask * query_mask  # (batch, 1, seq_len, seq_len)
+            # Combine with causal mask: both must be 1
+            combined_mask = causal_mask * padding_mask  # (batch, 1, seq_len, seq_len)
+        else:
+            combined_mask = causal_mask
+        
         # Pass through transformer blocks
-        for block in self.blocks:
-            x = block(x, causal_mask)
+        if self.gradient_checkpointing:
+            # Use PyTorch activation checkpointing to save memory
+            from torch.utils.checkpoint import checkpoint
+
+            def _block_fn(b, x_in, m_in):
+                return b(x_in, m_in)
+
+            for block in self.blocks:
+                x = checkpoint(lambda xi, mi: _block_fn(block, xi, mi), x, combined_mask)
+        else:
+            for block in self.blocks:
+                x = block(x, combined_mask)
         
         # Final layer norm
         x = self.ln_f(x)
@@ -346,10 +377,11 @@ class TransformerLM(nn.Module):
             shift_labels = labels[:, 1:].contiguous()
             
             # Flatten for cross-entropy
+            # Use ignore_index=-100 to ignore padding (allows real EOS tokens to contribute to loss)
             loss = F.cross_entropy(
                 shift_logits.view(-1, self.vocab_size),
                 shift_labels.view(-1),
-                ignore_index=self.pad_token_id
+                ignore_index=-100
             )
         
         return logits, loss
@@ -419,4 +451,3 @@ class TransformerLM(nn.Module):
                     break
         
         return input_ids
-

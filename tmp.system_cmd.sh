@@ -1,0 +1,1 @@
+(gh issue view 31 --repo github.com/gpsaggese/umd_classes --json title,url) 2>&1

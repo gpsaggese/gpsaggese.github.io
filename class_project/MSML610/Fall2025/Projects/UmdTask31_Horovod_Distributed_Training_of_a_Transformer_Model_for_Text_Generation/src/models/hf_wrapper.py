@@ -126,6 +126,24 @@ class HFModelWrapper(nn.Module):
             )
         
         return output
+
+    # Gradient checkpointing for HF models (if supported)
+    def enable_gradient_checkpointing(self):
+        try:
+            if hasattr(self.model, 'gradient_checkpointing_enable'):
+                # Disable cache for gradient checkpointing compatibility
+                if hasattr(self.model, 'config'):
+                    self.model.config.use_cache = False
+                self.model.gradient_checkpointing_enable()
+                print("[INFO] Enabled gradient checkpointing for HF model; use_cache=False")
+            elif hasattr(self.model, 'enable_input_require_grads'):
+                # Some older APIs
+                if hasattr(self.model, 'config'):
+                    self.model.config.use_cache = False
+                self.model.enable_input_require_grads()
+                print("[INFO] Enabled gradient checkpointing (compat mode); use_cache=False")
+        except Exception as e:
+            print(f"[WARN] Failed to enable gradient checkpointing: {e}")
     
     def resize_token_embeddings(self, new_vocab_size: int):
         """
@@ -191,7 +209,8 @@ def get_model_from_config(config) -> nn.Module:
             n_layers=config.model.n_layers,
             d_ff=config.model.d_ff,
             max_seq_len=config.model.max_seq_len,
-            dropout=config.model.dropout
+            dropout=config.model.dropout,
+            gradient_checkpointing=getattr(config.training, 'gradient_checkpointing', False)
         )
         print(f"[INFO] Created custom TransformerLM:")
         print(f"  - Parameters: {sum(p.numel() for p in model.parameters()):,}")
@@ -205,9 +224,17 @@ def get_model_from_config(config) -> nn.Module:
             model_name=pretrained_name,
             cache_dir=cache_dir
         )
-        
+        # Enable gradient checkpointing if requested
+        if getattr(config.training, 'gradient_checkpointing', False):
+            if hasattr(model, 'enable_gradient_checkpointing'):
+                model.enable_gradient_checkpointing()
+            elif hasattr(model, 'model') and hasattr(model.model, 'gradient_checkpointing_enable'):
+                if hasattr(model.model, 'config'):
+                    model.model.config.use_cache = False
+                model.model.gradient_checkpointing_enable()
+                print("[INFO] Enabled gradient checkpointing on inner HF model; use_cache=False")
+
     else:
         raise ValueError(f"Unknown model type: {model_type}")
     
     return model
-

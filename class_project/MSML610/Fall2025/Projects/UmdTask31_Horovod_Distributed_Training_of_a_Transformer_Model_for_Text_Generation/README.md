@@ -184,6 +184,20 @@ bash scripts/train_local.sh
 sbatch scripts/train_zaratan.sh
 ```
 
+### 4. Run Recording and Reports
+
+The training script logs to TensorBoard and also writes a structured CSV + metadata package (rank 0) for easy grading and review.
+
+- Structured runs live under `runs/structured/<timestamp>_run/`
+- Files include: `metrics.csv`, `run_metadata.json`, and `config_used.yaml`
+- Generate a static HTML report with plots:
+
+```bash
+python scripts/generate_report.py --run_dir runs/structured/<timestamp>_run
+```
+
+Open the generated `report.html` in a browser.
+
 ### 4. Generate Text
 
 ```bash
@@ -220,8 +234,8 @@ horovodrun -np 2 -H localhost:2 \
 ### Cluster Training (Zaratan)
 
 1. **Edit the Slurm script** (`scripts/train_zaratan.sh`):
-   - Set `--gpus-per-node=4` (or desired GPU count)
-   - Set `--partition=gpu` (or your cluster's GPU partition)
+   - Set `--ntasks-per-node=4` and `--gres=gpu:h100:4` (or desired GPU count/type)
+   - Set `--partition=gpu-h100` (or your cluster's H100 partition)
    - Uncomment and configure module loads
    - Set environment activation commands
 
@@ -236,7 +250,7 @@ horovodrun -np 2 -H localhost:2 \
    squeue -u $USER
    
    # View output
-   tail -f logs/horovod_transformer-<JOB_ID>.out
+   tail -f logs/horovod_transformer_h100-<JOB_ID>.out
    ```
 
 ### Text Generation
@@ -528,7 +542,7 @@ squeue -u vikranth
 
 **View output** (while running):
 ```bash
-tail -f logs/horovod_transformer-<JOB_ID>.out
+tail -f logs/horovod_transformer_h100-<JOB_ID>.out
 ```
 
 **Cancel job**:
@@ -541,11 +555,9 @@ scancel <JOB_ID>
 The script prefers H100 GPUs but can fall back to A100s:
 
 ```bash
-# Default: H100 (edit scripts/train_zaratan.sh line 25)
-#SBATCH --gres=gpu:H100:4
-
-# Fallback: A100 (uncomment line 26 if H100s unavailable)
-#SBATCH --gres=gpu:A100:4
+# Default: H100 (edit scripts/train_zaratan.sh)
+#SBATCH --partition=gpu-h100
+#SBATCH --gres=gpu:h100:4
 ```
 
 ### Adaptive Behavior
@@ -573,4 +585,3 @@ If using a Python virtual environment, uncomment the appropriate line in `script
 ---
 
 **Happy Training!**
-

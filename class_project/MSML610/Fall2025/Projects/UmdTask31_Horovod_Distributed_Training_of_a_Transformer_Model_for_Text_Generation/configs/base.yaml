@@ -23,6 +23,9 @@ training:
   log_interval: 100
   save_interval: 1000
   eval_interval: 500
+  scale_lr_by_world_size: false  # If true, multiply LR by number of GPUs
+  amp_dtype: "fp32"              # bf16|fp16|fp32 (fp32 disables AMP)
+  gradient_checkpointing: false  # Enable activation checkpointing to save memory
 
 # Data Configuration
 data:
@@ -32,6 +35,7 @@ data:
   validation_split: 0.05
   num_workers: 4
   shuffle: true
+  pack_to_max_length: false  # Set to true to pack tokens into fixed-length blocks (reduces padding)
 
 # Generation Configuration
 generation:
@@ -47,7 +51,10 @@ paths:
   log_dir: "logs"
   tensorboard_dir: "runs"
 
+# Distributed options (optional)
+distributed:
+  horovod_compression: "none"  # Options: none, fp16
+
 # Misc
 seed: 42
-fp16: false  # Set to true for mixed precision training
-
+fp16: false  # Legacy flag (use training.amp_dtype instead)

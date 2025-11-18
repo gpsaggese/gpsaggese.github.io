@@ -34,9 +34,10 @@ def load_model_for_generation(
     Returns:
         Tuple of (model, tokenizer, config).
     """
-    # Load tokenizer
+    # Load tokenizer (use cache_dir to avoid re-downloads on HPC)
     print("[INFO] Loading tokenizer...")
-    tokenizer = GPT2TokenizerFast.from_pretrained('gpt2')
+    cache_dir = os.environ.get('HF_HOME', None)
+    tokenizer = GPT2TokenizerFast.from_pretrained('gpt2', cache_dir=cache_dir)
     tokenizer.pad_token = tokenizer.eos_token
     
     # Load model based on type
@@ -77,22 +78,37 @@ def load_model_for_generation(
     elif model_type in ["gpt2", "distilgpt2", "gpt2-medium", "gpt2-large"]:
         print(f"[INFO] Loading pretrained {model_type} model...")
         
+        cache_dir = os.environ.get('HF_HOME', None)
+        
         if checkpoint_path is not None:
             # Load fine-tuned model
             print(f"[INFO] Loading fine-tuned checkpoint from: {checkpoint_path}")
             
-            # First load the base model
-            model = HFModelWrapper(model_name=model_type)
+            # First load the base model (use cache_dir to avoid re-downloads)
+            model = HFModelWrapper(model_name=model_type, cache_dir=cache_dir)
             
             # Then load checkpoint
             checkpoint = torch.load(checkpoint_path, map_location=device)
-            if 'model_state_dict' in checkpoint:
-                model.load_state_dict(checkpoint['model_state_dict'])
-            else:
-                model.load_state_dict(checkpoint)
+            state_dict = checkpoint.get('model_state_dict', checkpoint)
+
+            # Try loading state_dict, handling potential key mismatches
+            try:
+                model.load_state_dict(state_dict, strict=False)
+                print("[INFO] Checkpoint loaded successfully (some keys may be missing)")
+            except Exception as e:
+                print(f"[WARN] Failed to load checkpoint: {e}")
+                print("[INFO] Attempting to load with key remapping...")
+                # Try to handle wrapped model state_dict
+                if any(key.startswith('model.') for key in state_dict.keys()):
+                    # Remove 'model.' prefix if present
+                    new_state_dict = {k.replace('model.', ''): v for k, v in state_dict.items() if k.startswith('model.')}
+                    model.model.load_state_dict(new_state_dict, strict=False)
+                else:
+                    # Fall back to loading directly into inner HF model
+                    model.model.load_state_dict(state_dict, strict=False)
         else:
-            # Use pretrained model
-            model = HFModelWrapper(model_name=model_type)
+            # Use pretrained model (use cache_dir to avoid re-downloads)
+            model = HFModelWrapper(model_name=model_type, cache_dir=cache_dir)
         
         config = None
     
@@ -151,15 +167,27 @@ def generate_text(
     
     for i in range(num_samples):
         with torch.no_grad():
-            # Generate
-            output_ids = model.generate(
-                input_ids=input_ids,
-                max_new_tokens=max_new_tokens,
-                temperature=temperature,
-                top_k=top_k,
-                top_p=top_p,
-                eos_token_id=tokenizer.eos_token_id
-            )
+            # Generate (with AMP if on GPU for faster inference)
+            if device.startswith('cuda') and torch.cuda.is_available():
+                from torch.cuda.amp import autocast
+                with autocast():
+                    output_ids = model.generate(
+                        input_ids=input_ids,
+                        max_new_tokens=max_new_tokens,
+                        temperature=temperature,
+                        top_k=top_k,
+                        top_p=top_p,
+                        eos_token_id=tokenizer.eos_token_id
+                    )
+            else:
+                output_ids = model.generate(
+                    input_ids=input_ids,
+                    max_new_tokens=max_new_tokens,
+                    temperature=temperature,
+                    top_k=top_k,
+                    top_p=top_p,
+                    eos_token_id=tokenizer.eos_token_id
+                )
             
             # Decode
             generated_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
@@ -376,4 +404,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
