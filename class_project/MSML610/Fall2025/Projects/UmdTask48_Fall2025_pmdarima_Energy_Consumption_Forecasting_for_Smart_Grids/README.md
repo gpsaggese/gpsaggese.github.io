@@ -21,29 +21,8 @@ class_project/MSML610/Fall2025/Projects/UmdTask48_Fall2025_pmdarima_Energy_Consu
 ├── pmdarima.example.ipynb  # End-to-end forecasting example  
 ├── pmdarima.example.md  # Example explanation and evaluation  
 ├── pmdarima_utils.py  # Utility functions for data loading and metrics  
-├── requirements.txt  # Python dependencies  
-├── Dockerfile  # Environment configuration  
-├── docker_build.sh  
-├── docker_jupyter.sh  
-├── docker_bash.sh  
+├── requirements.txt  # Python dependencies   
 └── README.md  # Project overview
-
-## Run Instructions
-1. **Build Docker Image**
-   ```bash
-   bash docker_build.sh
-   
-2. Run Jupyter Notebook
-   ```bash
-   bash docker_jupyter.sh
-
-3. Open in Browser
-   Navigate to http://localhost:8888
-
-4. Run Notebooks
-   Open:
-   pmdarima.API.ipynb – learn and visualize PMDARIMA usage
-   pmdarima.example.ipynb – run the complete forecasting pipeline
 
 ## Completed
 - ✅ Project initialized
