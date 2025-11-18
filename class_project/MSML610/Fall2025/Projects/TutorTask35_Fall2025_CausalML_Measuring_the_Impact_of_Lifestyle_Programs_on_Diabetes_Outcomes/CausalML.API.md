@@ -1,4 +1,4 @@
-# Causal Impact API Documentation
+# CausalML API Documentation
 
 ## Overview
 The `causal_impact` module provides a high-level wrapper around the `causalml` library. It is designed to simplify the workflow of Causal Inference for observational studies, specifically focusing on Heterogeneous Treatment Effects (HTE).
@@ -49,7 +49,14 @@ navigator = CausalNavigator(
 ## Helper Functions
 
 #### `load_cdc_data(filepath)`
-A specific utility for ensuring numeric consistency in the source CSV.
+**Purpose:** Robustly loads the CDC dataset from a local directory.
+- **Inputs:** `filepath` (str) - The relative path to the `.csv` file (e.g., `data/unprocessed/file.csv`).
+- **Behavior:** Checks for file existence, removes duplicates, and casts all columns to `float` to ensure compatibility with `XGBoost`.
+- **Output:** A cleaned `pandas.DataFrame`.
+
 
 #### `preprocess_for_causal(df, ...)`
-Extracts strict numpy/pandas vectors from the raw dataframe, ensuring no `NaN` values leak into the estimator.
+**Purpose:** splits the dataframe into the three required components for CausalML:
+1.  **X (Covariates):** The features used to control for confounding.
+2.  **T (Treatment):** The binary intervention vector.
+3.  **Y (Outcome):** The target variable.
