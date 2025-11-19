@@ -34,6 +34,7 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Software Testing
+<<<<<<< HEAD
 - Evaluate functionality, reliability, performance, and security of a product to
   ensure it meets requirements
   - Software testing is critical in development
@@ -71,18 +72,77 @@ UMD DATA605 - Big Data Systems
 
 - **Compatibility testing**: Check compatibility with browsers, database
   versions, OS, mobile devices
+=======
+- **Goal**
+  - Evaluate functionality, reliability, performance, and security of a product
+    to ensure it meets requirements
+  - Software testing is critical in development
+
+- **Adages**
+  - _"If it's not tested, it doesn't work"_
+  - _"Debugging is 2x harder than writing code"_
+    - Corollary: _"If you do your best to write code, how can you debug it?"_
+
+- **Many different types of testing**
+  - What do you test?
+  - From what point of view?
+  - ...
+
+* What Are You Testing?
+- **Unit testing**
+  - Test individual components for correct functionality in isolation
+
+- **Integration testing**
+  - Ensure components work together as expected
+  - Detect interface defects
+
+- **System testing**
+  - Evaluate a fully integrated system's compliance with requirements
+
+* How Are You Testing?
+- **Smoke/sanity testing**
+  - Quick check of functionalities to ensure main functions work
+  - E.g., decide if a new build is stable
+  - E.g., application doesn't crash on launch
+
+- **Regression testing**
+  - Ensure new changes don't affect existing functionality
+
+- **Acceptance testing**
+  - Final testing phase before release
+  - More common in waterfall than Agile
+
+- **Performance testing**
+  - Load, stress, and spike testing
+
+- **Security testing**
+  - Identify vulnerabilities, threats, and risks
+
+- **Usability testing**
+  - Assess ease of use for end-users
+  - E.g., uI/UX
+
+- **Compatibility testing**
+  - Check compatibility with browsers, database versions, OS, mobile devices
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 
 * CI / CD
 - **Continuous integration (CI)**
   - Merge code changes into a central repository multiple times a day
   - Automate build and test after each change
+<<<<<<< HEAD
   - **Goal**: Detect and fix integration errors quickly
   - Add code with unit tests
+=======
+  - Add code with unit tests
+  - _Goal_: Detect and fix integration errors quickly
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 
 - **Continuous deployment (CD)**
   - Automatically deploy code changes to production
     - Without human intervention
     - After build and test phases pass
+<<<<<<< HEAD
   - **Goal**: Deliver features, bug fixes, and updates continuously
   - E.g., GitHub actions, GitLab workflows, AWS Code, Jenkins
 
@@ -95,6 +155,23 @@ UMD DATA605 - Big Data Systems
 - **Uniform interface**
   - Refer to resources (e.g., document, services, URI, persons)
   - Use HTTP methods (`GET`, `POST`, `PUT`, `DELETE`)
+=======
+  - _Goal_: Deliver features, bug fixes, and updates continuously
+
+- **Examples**
+  - GitHub Actions, GitLab Workflows, AWS Code, Jenkins
+
+* RESTful API
+- **REST API**
+  - REST = REpresentational State Transfer
+  - Style of building API for web services / distributed systems
+
+- **Uniform interface**
+  - Refer to resources
+    - E.g., document, services, URI, persons
+  - Use HTTP methods
+    - E.g., `GET`, `POST`, `PUT`, `DELETE`
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
   - Naming convention, link format
   - Response (XML or JSON)
 
@@ -107,8 +184,13 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=50%}
 - **Cacheable**
+<<<<<<< HEAD
   - Label response data as cacheable or non-cacheable
   - Reuse cacheable responses
+=======
+  - APIs label response data as cacheable or non-cacheable
+  - Client can reuse cacheable responses
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
   - Increase scalability and performance
 
 - **Layered system**
@@ -121,12 +203,17 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Stages of Deployment
+<<<<<<< HEAD
 - The deployment of software progresses through several environments
+=======
+- **Software is deployed through several environments**
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
   - Each environment tests, validates, and prepares software for release to end
     user
 
 - **Development environment (Dev)**
   - Individual for each developer or feature team
+<<<<<<< HEAD
   - Goal: Developers write and initially test code
 
 - **Testing or Quality Assurance (QA) environment**
@@ -138,11 +225,27 @@ UMD DATA605 - Big Data Systems
   - Replica of production environment for final checks and stakeholder review
 
 - **Production Environment (Prod)**
+=======
+  - _Goal_: Developers write and initially test code
+
+- **Testing**
+  - Aka "Quality Assurance (QA)"
+  - Mirrors production environment to perform under similar conditions
+  - _Goal_: Systematic testing to uncover defects and ensure quality
+
+- **Pre-prod**
+  - Aka staging
+  - Final testing phase before deployment to production
+  - Replica of production environment for final checks and stakeholder review
+
+- **Production (Prod)**
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
   - Live environment where software is available to end users
   - Optimized for security, performance, and scalability
   - Focus on uptime, user experience, and data integrity
 
 * Semantic Versioning
+<<<<<<< HEAD
 - **Semantic versioning** is a versioning scheme for software that conveys meaning
   about underlying changes
   - Systematic approach
@@ -167,10 +270,38 @@ UMD DATA605 - Big Data Systems
 - Build Metadata
   - Optional metadata to denote build information or environment specifics
   - E.g., `1.0.0+20210313120000` or `1.0.0+f8a34b3228c`
+=======
+- **Semantic versioning** conveys meaning about changes to software
+  - Systematic approach
+  - Communicate to users potential impact of updating to a new version
+
+- **Increment version**
+
+  - Major Version `X.y.z`
+    - Incompatible API changes
+    - Significant updates that may break backward compatibility
+
+  - Minor Version `x.Y.z`
+    - Backward-compatible enhancements
+    - Significant new features that don't break existing functionalities
+
+  - Patch Version `x.y.Z`
+    - Backward-compatible bug fixes that address incorrect behavior
+
+  - Pre-release Version:
+    - Denote a pre-release version that might not be stable
+    - E.g., `1.0.0-alpha`, `1.0.0-beta`
+    - Releases for testing and feedback, not for production use
+
+  - Build Metadata
+    - Optional metadata to denote build information or environment specifics
+    - E.g., `1.0.0+20210313120000` or `1.0.0+f8a34b3228c`
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 
 * Microservices vs Monolithic Architecture
 ::: columns
 :::: {.column width=40%}
+<<<<<<< HEAD
 - Different styles of building complex systems
 - Find the right granularity
 ::::
@@ -196,10 +327,46 @@ _"Microservice" interest over time_
 
 - **Resilience**: isolate and address faults; one service failure doesn't affect
   the entire system
+=======
+- **Many styles of building complex systems**
+  - _Monolith_: all features in one deployable unit
+  - _Microservices_: many small services collaborating over the network
+
+::::
+:::: {.column width=60%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_49_image_2.png)
+::::
+:::
+
+- **Heuristics**
+  - Start from business domains, not technology layers
+  - Align service boundaries with independent business capabilities
+  - E.g., online shop with separate services for catalog, cart, payment,
+    shipping
+
+* Monolithic Architecture
+- **Monolith** = all features in one deployable unit
+- **Pros**:
+  - _Simplicity_: Simpler to develop, test, deploy, and scale as a single unit
+- **Cons**
+  - _Tightly coupled components_: Components run in the same process, leading to
+    scalability and resilience issues
+  - _Technology stack uniformity_: Developed with a single technology stack,
+    limiting flexibility
+  - _Deployment complexity_: Updates require redeploying the entire application
+  - _Single point of failure_: Issues in any module can affect the entire
+    application
+
+* Microservice Architecture
+::: columns
+:::: {.column width=55%}
+- **Microservices** = many small services collaborating over the network
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 
 - **Cons**
   - Complex deployment
   - Requires tooling
+<<<<<<< HEAD
 
 * Monolithic Architecture
 - **Simplicity**: Simpler to develop, test, deploy, and scale as a single unit
@@ -214,3 +381,36 @@ _"Microservice" interest over time_
 
 - **Single point of failure**: Issues in any module can affect the entire
   application
+=======
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_50_image_1.png)
+::::
+:::
+
+- **Pros**:
+  - _Modularity_: Small, independently deployable services with specific business
+    functionality
+  - _Scalability_: Scale services independently for efficient resource use based
+    on demand
+  - _Technology diversity_: Use the best technology stack for each service's
+    functionality
+  - _Deployment flexibility_: Supports continuous delivery and deployment for
+    faster updates
+  - _Resilience_: Isolate and address faults; one service failure doesn't affect
+    the entire system
+
+* Microservices vs Monolith: Hype
+
+::: columns
+:::: {.column width=35%}
+- Neither approach is a slam dunk!
+  - You need to find the right granularity for your use case
+::::
+:::: {.column width=60%}
+\centering \small
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_49_image_1.png)
+_"Microservice vs Monolithic" search over time_
+::::
+:::
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94

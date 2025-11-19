@@ -33,19 +33,47 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Serialization Formats
+<<<<<<< HEAD
 - Programs need to send data to each other (network, disk)
   - E.g., remote Procedure Calls (RPCs)
   - Recent technologies based on schemas
     - JSON, YAML, Protocol Buffer, Python Pickle
 
 - Serialization formats are data models
+=======
+- **Programs need to send data to each other**
+  - Through network, disk
+  - Examples:
+    - Remote Procedure Calls (RPCs)
+    - Data storage and retrieval
+  - Technologies based on schemas:
+    - JSON
+    - YAML
+    - Protocol Buffers
+    - Python Pickle
+
+- **Serialization formats are data models**
+  - Define how data is structured and stored
+  - Examples:
+    - JSON: Human-readable, used for web APIs
+    - YAML: Human-readable, used for configuration files
+    - Protocol Buffers: Efficient, used by Google for internal APIs
+    - Python Pickle: Python-specific, used for object serialization
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 
 * Comma Separated Values (CSV)
 ::: columns
 :::: {.column width=50%}
+<<<<<<< HEAD
 - CSV stores data row-wise as text without schema
   - Each line is a data record
   - Records have fields separated by commas
+=======
+- **CSV stores data row-wise**
+  - As text without schema
+  - Each line is a data record
+  - Fields separated by commas
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 
 - **Pros**
   - Very portable
@@ -72,6 +100,7 @@ UMD DATA605 - Big Data Systems
 * (Apache) Parquet
 ::: columns
 :::: {.column width=70%}
+<<<<<<< HEAD
 - Parquet reads data tiles
 
 - Supports multi-dimensional, nested data
@@ -92,12 +121,23 @@ UMD DATA605 - Big Data Systems
   - Binary, not human-friendly
   - Requires ingestion step to convert to Parquet
   - Mainly read-only, hard to modify
+=======
+- **Parquet**
+  - Reads data as tiles
+  - Supports multi-dimensional, nested data
+    - Generalizes dataframes
+  - Column-storage
+    - Stores each column together, uniform data type, compressed efficiently
+  - IO layer executes queries
+    - Reads only necessary data chunks from disk
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 ::::
 :::: {.column width=25%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_36_image_1.png)
 ::::
 :::
 
+<<<<<<< HEAD
 * JSON
 ::: columns
 :::: {.column width=50%}
@@ -109,6 +149,29 @@ UMD DATA605 - Big Data Systems
   - More human-readable
   - Less boilerplate
   - Executable in JavaScript and Python
+=======
+- **Pros**
+  - 10x smaller than CSV
+  - 10x faster with multi-threading
+  - Can read a subset of columns and rows
+
+- **Cons**
+  - Binary, not human-friendly
+  - Requires an ingestion step to convert to Parquet
+  - Mainly read-only, hard to modify
+
+* JSON
+::: columns
+:::: {.column width=50%}
+- **JavaScript Object Notation**
+
+- **Nested dictionaries and arrays**
+
+- **Similar to XML**
+  - More human-readable
+  - Less boilerplate
+  - Sometimes executable in JavaScript and Python
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 ::::
 :::: {.column width=45%}
 \scriptsize
@@ -145,23 +208,41 @@ UMD DATA605 - Big Data Systems
 * Protocol Buffers
 ::: columns
 :::: {.column width=50%}
+<<<<<<< HEAD
 - Developed by Google
 - Open-source
+=======
+- **Open-source**
+  - Developed by Google
+
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 - Represent data structures:
   - Language agnostic
   - Platform agnostic
   - Versioning
+<<<<<<< HEAD
 - Schema is mostly relational
+=======
+
+- **Schema is mostly relational**
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
   - Optional fields
   - Types
   - Default values
   - Structures
   - Arrays
 
+<<<<<<< HEAD
 - Schema specified using a `.proto` file
 
 - Compiled by `protoc` to produce C++, Java, or Python code to initialize, read,
   serialize objects
+=======
+- **Workflow**
+  - Schema specified using a `.proto` file
+  - Compiled by `protoc` to produce C++, Java, or Python code to initialize,
+    read, serialize objects
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 ::::
 :::: {.column width=45%}
 \scriptsize
@@ -201,12 +282,22 @@ message Person {
 * Serialization Formats
 ::: columns
 :::: {.column width=50%}
+<<<<<<< HEAD
 - Avro
   - Richer data structures
   - JSON-specified schema
 - Thrift
   - Developed by Facebook
   - Now Apache project
+=======
+- **Avro**
+  - Richer data structures
+  - JSON-specified schema
+
+- **Thrift**
+  - Developed by Facebook
+  - Now an Apache project
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
   - More languages supported
   - Supports exceptions and sets
 ::::
@@ -224,6 +315,7 @@ message Person {
     },
     {
       "name": "favorite_number",
+<<<<<<< HEAD
       "type": [
         "int",
         "null"
@@ -235,6 +327,13 @@ message Person {
         "string",
         "null"
       ]
+=======
+      "type": ["int", "null"]
+    },
+    {
+      "name": "favorite_color",
+      "type": ["string", "null"]
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
     }
   ]
 }
@@ -245,6 +344,7 @@ message Person {
 * Remote Procedure Call
 ::: columns
 :::: {.column width=65%}
+<<<<<<< HEAD
 - **Remote Procedure Call** (RPC) requests services from programs on other
   computers, abstracting network communication
 
@@ -259,6 +359,21 @@ message Person {
   - E.g., microservices, cloud services, client-server applications
 
 - Can be synchronous or asynchronous
+=======
+- **Remote Procedure Call** (RPC)
+  - Requests services from programs on other computers
+  - Abstracts network communication
+
+- **Goal**: Make remote calls like local procedure calls without network details
+  - Used in distributed systems
+    - E.g., microservices, cloud services, client-server applications
+  - Can be synchronous or asynchronous
+
+- **Problems**
+  - Can't serialize pointers
+  - Handling asynchronous communication
+  - Failures and retries
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 ::::
 :::: {.column width=30%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_40_image_1.png)
@@ -269,10 +384,21 @@ message Person {
 ::: columns
 :::: {.column width=50%}
 - _Client procedure call_: Client calls stub function with arguments
+<<<<<<< HEAD
 - _Request marshalling_: Client stub serializes arguments for network
   transmission
 - _Server communication_: Client's RPC runtime sends request to server
 - _Server-side unmarshalling_: Server's RPC runtime deserializes arguments
+=======
+
+- _Request marshalling_: Client stub serializes arguments for network
+  transmission
+
+- _Server communication_: Client's RPC runtime sends request to server
+
+- _Server-side unmarshalling_: Server's RPC runtime deserializes arguments
+
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 - _Procedure execution_: Server calls procedure
 ::::
 :::: {.column width=45%}

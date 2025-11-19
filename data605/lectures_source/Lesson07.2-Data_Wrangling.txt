@@ -18,6 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
+<<<<<<< HEAD
 **$$\text{\blue{7.2: Data Wrangling}}$$**
 \endgroup
 
@@ -38,10 +39,32 @@ UMD DATA605 - Big Data Systems
     - Read cover-to-cover and execute all examples 2-3x time to really _master_
 ::::
 :::: {.column width=30%}
+=======
+**$$\text{\blue{7.2: Data Wrangling and Cleaning}}$$**
+\endgroup
+
+\vspace{1cm}
+
+::: columns
+:::: {.column width=75%}
+
+- **Instructor**: Dr. GP Saggese, [](gsaggese@umd.edu)
+
+- **Reference**
+  - [Pandas tutorial](https://github.com/gpsaggese-org/umd_classes/tree/master/data605/tutorials/tutorial_pandas)
+  - Web
+    - Many free resources (e.g., [official docs](https://pandas.pydata.org))
+  - Mastery
+    - https://wesmckinney.com/book
+    - Read cover-to-cover and try the examples 2–3 times to really _master_ them
+::::
+:::: {.column width=20%}
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_16_image_1.png){width=2cm}
 ::::
 :::
 
+<<<<<<< HEAD
 * Overview
 - **Data wrangling**
   - Aka "data preparation", "data munging", "data curation"
@@ -149,10 +172,257 @@ Long format
   - Ill-formatted data
   - Missing/illegal values, misspellings, wrong fields, extraction issues
   - Duplicated records, contradicting info, referential integrity violations
+=======
+* Data Wrangling and Data Cleaning
+::: columns
+:::: {.column width=50%}
+- **Data wrangling and cleaning**
+  - Turn _messy, inconsistent, incomplete_ data into a _coherent_ dataset
+
+- **Most effort** in data science is spent here, not on modeling
+  - It is iterative work
+  - Clean $\to$ Model $\to$ Clean $\to$ ...
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_18_image_1.png)
+::::
+:::
+
+- **Data wrangling**
+  - Transform data into a useful structure
+  - Reshape tables, merge sources, create new variables
+
+- **Data cleaning**
+  - Correct or remove incorrect, corrupt, or irrelevant data
+  - Handle missing values, outliers, inconsistent formats
+
+- **Often done together**
+
+* Typical Data Wrangling Workflow
+::: columns
+:::: {.column width=50%}
+- **Inspect data**
+  - Look at column names, data types
+  - Look at a few rows
+  - Basic summaries
+
+- **Diagnose problems**
+  - Missing values, unusual codes, inconsistent units, strange distributions
+
+- **Decide strategy**, based on project
+  - What to keep
+  - What to fix
+  - What to drop
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_19_image_1.png)
+::::
+:::
+
+- **Apply transformations**
+  - Filter, join, reshape, recode, aggregate
+
+- **Validate results**
+  - Check that changes make sense and that key statistics are reasonable
+
+* Data Extraction
+- **Web scraping**
+  - Use APIs or scrape data explicitly
+  - Scraping is challenging
+    - Fragile (page changes can break your parser)
+    - Throttling/rate limits
+    - Cat-and-mouse game with websites
+  - Set up pipelines for periodic scraping
+  - Tools for automated scraping
+    - E.g., `import.io`, `portia`, ..
+
+- **Various sources of data**
+  - Files (e.g., CSV, JSON, XML)
+  - Databases
+  - Spreadsheets
+  - AWS S3 buckets
+  - Web APIs
+  - Logs
+  - ...
+
+- Raw data reflects **collection needs, not analysis needs**
+
+* Tidy Data
+
+- **Definition**: Tidy data is a structured format for datasets that makes them
+  easier to manipulate, analyze, and visualize
+  - [Tidy data, Wickham, 2014](https://vita.had.co.nz/papers/tidy-data.pdf)
+
+- **Core Principles**
+  - Each variable forms a _column_
+  - Each observation forms a _row_
+  - Each type of observational unit forms a _table_
+  - Key tools in pandas: `pandas.melt()`, `pandas.pivot()`
+
+::: columns
+:::: {.column width=55%}
+\small \center
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_1.png)
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_2.png)
+_"Messy" data_
+::::
+:::: {.column width=30%}
+\small \center
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_3.png)
+_Tidy data_
+::::
+:::
+
+* Reshaping data
+- **Wide to long**
+  - Turn similar columns into key-value pairs
+
+- **Long to wide**
+  - Turn key-value pairs into separate columns
+
+- **What is the best shape?**
+  - Choose the shape that simplifies analysis and visualization
+
+::: columns
+:::: {.column width=40%}
+\small \center
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_4.png)
+_Wide format_
+::::
+:::: {.column width=30%}
+\small \center
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_5.png)
+_Long format_
+::::
+:::
+
+* Split-Apply-Combine
+
+- **Common data analysis pattern**
+  - _Split_: break data into smaller pieces
+  - _Apply_: operate on each piece independently
+  - _Combine_: combine pieces back together
+  - [The Split-Apply-Combine Strategy for Data Analysis, Wickam, 2011](https://vita.had.co.nz/papers/plyr.pdf)
+
+::: columns
+:::: {.column width=55%}
+- **Examples**
+  - Group-wise ranking
+  - Group statistics (sums, means, counts)
+  - Create separate models per group
+
+- **Pros**
+  - Code is compact
+  - Easy to parallelize
+
+- **Supported by many systems**
+  - Pandas
+  - `SQL GROUP BY` operator
+  - Map-Reduce
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_32_image_1.png)
+::::
+:::
+
+* Classification of Data Problems
+//![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_23_image_1.png)
+
+```graphviz
+digraph DataQualityProblems {
+    rankdir=TB;
+    node [shape=box, style="rounded,filled", fontname="Helvetica"];
+
+    // Root
+    A [
+        label=<<b>Data Quality Problems</b>>,
+        fillcolor="#fef3c7",
+        color="#d97706",
+        penwidth=2
+    ];
+
+    // Level 1
+    B [
+        label=<<b>Single-Source Problems</b>>,
+        fillcolor="#e0f2fe",
+        color="#2563eb",
+        penwidth=1.5
+    ];
+
+    C [
+        label=<<b>Multi-Source Problems</b>>,
+        fillcolor="#e0f2fe",
+        color="#2563eb",
+        penwidth=1.5
+    ];
+
+    // Level 2 - Schema nodes
+    B1 [
+        label="Schema Level\n\n- Lack of integrity constraints\nPoor schema design\n- Uniqueness\n- Referential integrity\n- ...",
+        fillcolor="#f3e8ff",
+        color="#7c3aed",
+        penwidth=1.5
+    ];
+
+    C1 [
+        label="Schema Level\n\n- Heterogeneous data models\n- Schema designs\n- Naming conflicts\n- Structural conflicts\n- ...",
+        fillcolor="#ecfdf3",
+        color="#16a34a",
+        penwidth=1.5
+    ];
+
+    // Level 2 - Instance nodes
+    B2 [
+        label="Instance Level\n\n- Data entry errors\n- Misspellings\n- Redundancy / duplicates\n- Contradictory values\n- ...",
+        fillcolor="#f3e8ff",
+        color="#7c3aed",
+        penwidth=1.5
+    ];
+
+    C2 [
+        label="Instance Level\n\n- Overlapping, contradicting\n- Inconsistent data\n- Inconsistent aggregating\n- Inconsistent timing\n- ...",
+        fillcolor="#ecfdf3",
+        color="#16a34a",
+        penwidth=1.5
+    ];
+
+    // Edges
+    A -> B;
+    A -> C;
+
+    B -> B1;
+    B -> B2;
+
+    C -> C1;
+    C -> C2;
+}
+```
+
+- Several problems **reduce trust and usability of data**
+  - _Single-Source_: Occur within a single dataset
+  - _Multi-Source_: Arise when integrating data from multiple sources
+  - _Schema-Level_: Related to the structure or design of data
+  - _Instance-Level_: Related to actual data values stored
+
+* Single-Source Problems
+- **Depends largely on source**
+  - _Databases_ often enforce schema / instance constraints
+  - _Spreadsheet data_ is often "clean"
+    - Schema exists
+  - _Logs_ are messy
+  - _Web-page data_ is messier
+
+- **Types of problems**
+  - Ill-formatted data
+  - Missing/illegal values, misspellings, wrong fields, extraction issues
+  - Duplicated records, contradicting information, referential integrity
+    violations
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
   - Unclear default/missing values
   - Evolving schemas/classification schemes (categorical attributes)
   - Outliers
 
+<<<<<<< HEAD
 * Data Quality Problems
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_25_image_1.png)
@@ -183,15 +453,46 @@ Long format
   - Focuses on numerical data (integers/floats measuring quantities)
 
 - Sources of errors in data
+=======
+* Single-Source Problems: Example
+
+- **Sources of errors in data**
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
   - Data entry errors: arbitrary values entered
   - Measurement errors: sensor data inaccuracies
   - Distillation errors: processing and summarization issues
   - Data integration errors: inconsistencies across combined sources
 
+<<<<<<< HEAD
+=======
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_25_image_1.png)
+
+* Multi-Source Problems
+- **Different data sources**
+  - Developed separately
+  - Maintained by different people
+  - Stored in different systems
+
+- **Schema mapping / transformation**
+  - Map information across sources
+  - Naming conflicts
+    - Same name for different objects
+    - Different names for same objects
+  - Different representations across sources
+
+- **Entity resolution**
+  - Match entities across sources
+
+- **Data quality issues**
+  - Contradicting information
+  - Mismatched information
+
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 * Univariate Outlier Detection
 ::: columns
 :::: {.column width=50%}
 
+<<<<<<< HEAD
 - A set of values characterized by metrics:
   - Center (e.g., mean)
   - Dispersion (e.g., standard deviation)
@@ -204,6 +505,17 @@ Long format
     - Median
     - k%-trimmed mean (discard lowest and highest k% values)
   - Robust dispersion:
+=======
+- **Problems with outliers**
+  - Extreme outliers may alter metrics, masking others
+
+- Use statistics to **identify outliers**
+  - Robust statistics: minimize effect of corrupted data
+  - Robust center metrics
+    - Median
+    - k%-trimmed mean (discard lowest and highest k% values)
+  - Robust dispersion
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
     - Median absolute deviation (MAD)
     - Median distance from median value
 ::::
@@ -213,6 +525,7 @@ Long format
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_28_image_2.png)
 ::::
 :::
+<<<<<<< HEAD
 * Outlier Detection
 
 - For Gaussian data
@@ -255,11 +568,62 @@ Long format
   - Recompute mean and covariance
 
 - Often data volume too large
+=======
+
+* Outlier Detection
+- **For Gaussian data**
+  - Data points 1.5x MAD from median
+  - Plot histogram to confirm
+
+- **For non-Gaussian data**
+  - Estimate generating distribution (parametric or not)
+  - Distance-based: find points with few neighbors
+  - Density-based:
+    - Define _density_ as the average distance to _k_ nearest neighbors
+    - Use relative density to identify outliers
+
+::: columns
+:::: {.column width=50%}
+- **Curse of dimensionality**
+  - _"In high-dimensional spaces, data is sparse"_
+  - Techniques break down as data dimensionality increases
+  - Need $O(e^n)$ points with $n$ dimensions to estimate
+  - Project data into lower-dimensional space to find outliers
+    - Not straightforward
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_29_image_1.png)
+::::
+:::
+
+* Multivariate Outliers
+::: columns
+:::: {.column width=70%}
+
+- **Mean/covariance not robust**
+  - Sensitive to outliers
+  - Use robust statistics
+
+- Assume **multivariate Gaussian data**
+  - Defined by _mean_ $\vmu$ and _covariance matrix_ $\mSigma$
+  - _Iterative approach_
+    - Mahalanobis distance: $\sqrt{(\vx - \vmu)^T\mSigma^{-1}(\vx - \vmu)}$
+    - Measures distance of point $x$ from distribution
+    - Identify outliers: points too far by Mahalanobis distance
+    - Remove outliers
+    - Recompute mean and covariance
+
+- Data volume often large
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
   - Use approximation techniques
 
 - Try different techniques based on data
 ::::
+<<<<<<< HEAD
 :::: {.column width=35%}
+=======
+:::: {.column width=25%}
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_30_image_1.png)
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_30_image_2.png)
@@ -270,7 +634,11 @@ Long format
 ::: columns
 :::: {.column width=60%}
 
+<<<<<<< HEAD
 - Often data is in the form of a time series
+=======
+- Often data is in the form of a **time series**
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
 
 - A **time series** is a sequence of data points recorded at regular intervals
   - Stock prices
@@ -281,7 +649,10 @@ Long format
   - Market demand
   - Social media engagement
   - Hourly energy usage
+<<<<<<< HEAD
   - Customer satisfaction ratings
+=======
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
   - Weekly retail foot traffic
   - ...
 ::::
@@ -290,6 +661,7 @@ Long format
 ::::
 :::
 
+<<<<<<< HEAD
 - Rich literature on _forecasting_ in time series data
 
 - Use historical patterns to flag outliers
@@ -324,3 +696,10 @@ Long format
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_32_image_1.png)
 ::::
 :::
+=======
+- Rich literature on **forecasting** in time series data
+
+- Use historical patterns to flag **outliers**
+  - Rolling MAD (median absolute variation)
+
+>>>>>>> 4c56875bb7f021eaa66488461368697d63402a94
