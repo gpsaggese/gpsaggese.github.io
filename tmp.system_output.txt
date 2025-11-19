@@ -1,0 +1,2 @@
+/bin/bash: line 1: A_Bot_with_DocsGPT/__init__.py: No such file or directory
+fatal: pathspec '/app/class_project/DATA605/Spring2025/projects/TutorTask111_Spring2025_Real-Time_Bitcoin_Data_Q' did not match any files
