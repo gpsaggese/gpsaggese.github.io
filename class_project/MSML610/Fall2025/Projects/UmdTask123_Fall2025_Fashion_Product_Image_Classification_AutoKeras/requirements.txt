@@ -1,0 +1,6 @@
+tensorflow==2.13.0
+autokeras==1.1.0
+scikit-learn==1.5.0
+matplotlib==3.8.4
+pandas==2.2.2
+numpy==1.26.4
