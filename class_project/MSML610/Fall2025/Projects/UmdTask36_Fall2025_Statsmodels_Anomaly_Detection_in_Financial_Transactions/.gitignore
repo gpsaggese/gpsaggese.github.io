@@ -1,6 +1,4 @@
 .ipynb_checkpoints/
 __pycache__/
 *.pyc
-tmp.build/
 *.log
-tutorial_github_data605_style/
