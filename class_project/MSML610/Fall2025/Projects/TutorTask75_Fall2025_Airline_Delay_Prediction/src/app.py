@@ -11,9 +11,6 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-# -----------------------
-# Project-wide constants
-# -----------------------
 RANDOM_STATE = 610
 
 BASE_CATEGORICAL = [
@@ -65,9 +62,7 @@ ARTIFACTS = {
     },
 }
 
-# -----------------------
 # Small utils
-# -----------------------
 
 def _coerce_schema(df: pd.DataFrame) -> pd.DataFrame:
     """Apply the same dtype coercions as training."""
@@ -147,9 +142,7 @@ def pick_threshold_from_metrics(m: dict, default: float = 0.5) -> float:
         return float(th)
     return float(default)
 
-# -----------------------
 # Streamlit UI
-# -----------------------
 
 st.set_page_config(page_title="Airline Delay Prediction — GBDT Comparison", layout="wide")
 
@@ -169,9 +162,7 @@ model = load_model(tag)
 metrics = load_metrics(tag)
 threshold = pick_threshold_from_metrics(metrics, default=0.5)
 
-# -----------------------
 # Model cards (metrics)
-# -----------------------
 def _metric_row(tag_key: str):
     m = load_metrics(tag_key)
     name = {"cat": "CatBoost", "lgbm": "LightGBM", "xgb_tuned": "XGBoost (tuned)"}[tag_key]
@@ -215,9 +206,7 @@ else:
     st.info("No metrics JSONs found under models/. Train the models first to populate this table.")
 
 
-# -----------------------
 # Artifact preview
-# -----------------------
 st.subheader(f"Artifacts — { {'cat':'CatBoost','lgbm':'LightGBM','xgb_tuned':'XGBoost (tuned)'}[tag] }")
 colA, colB, colC = st.columns([1, 1, 1])
 plots = ARTIFACTS[tag]["plots"]
@@ -241,9 +230,7 @@ with colC:
 st.divider()
 
 
-# -----------------------
 # Scoring: Single example form (only)
-# -----------------------
 st.subheader("Score new flights")
 
 def _example_row() -> dict:

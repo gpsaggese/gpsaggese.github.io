@@ -50,7 +50,6 @@ BASE_NUMERIC: List[str] = [
     "temp","rhum","prcp","snow","wspd","pres"
 ]
 
-# ------------------ IO / utils ------------------
 
 def read_parquet(path: str) -> pd.DataFrame:
     import pyarrow.parquet as pq
@@ -171,7 +170,7 @@ def _clip01(p: np.ndarray, eps: float = 1e-15) -> np.ndarray:
     """Clip probabilities to (0,1) for numerical stability (sklearn >=1.5 removed eps kwarg)."""
     return np.clip(p, eps, 1.0 - eps)
 
-# ------------------ time-aware CV splits ------------------
+# time-aware CV splits
 
 def time_kfold_indices(n: int, n_splits: int) -> List[Tuple[np.ndarray, np.ndarray]]:
     idx = np.arange(n)
@@ -189,7 +188,7 @@ def time_kfold_indices(n: int, n_splits: int) -> List[Tuple[np.ndarray, np.ndarr
         folds = [(idx[:cut], idx[cut:])]
     return folds
 
-# ------------------ Native train helper ------------------
+# Native train helper 
 
 def train_native(
     Xtr: pd.DataFrame, ytr: np.ndarray, Xva: pd.DataFrame, yva: np.ndarray,
@@ -234,7 +233,7 @@ def train_native(
         "proba_train": proba_tr
     }
 
-# ------------------ Main ------------------
+#  Main 
 
 def main():
     ap = argparse.ArgumentParser(description="Bayesian tuning of XGBoost with time-aware CV (Optuna).")
@@ -277,7 +276,7 @@ def main():
 
     use_dep = _bool_arg(args.use_departure_delay)
 
-    # -------- Data
+    #  Data
     numeric = [c for c in BASE_NUMERIC if use_dep or c != "DEPARTURE_DELAY"]
     categorical = BASE_CATEGORICAL.copy()
 
@@ -318,7 +317,7 @@ def main():
     n = len(X_train)
     folds = time_kfold_indices(n, max(2, int(args.cv_folds)))
 
-    # -------- Optuna objective: maximize mean AP across folds
+    # Optuna objective: maximize mean AP across folds
     def objective(trial: optuna.Trial) -> float:
         params = {
             **base_const,

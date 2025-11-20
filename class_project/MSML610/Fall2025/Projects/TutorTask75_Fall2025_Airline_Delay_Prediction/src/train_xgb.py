@@ -1,4 +1,3 @@
-# src/train_xgb.py
 """
 Stream per-iteration metrics while training XGBoost (native path) with tidy rows.
 

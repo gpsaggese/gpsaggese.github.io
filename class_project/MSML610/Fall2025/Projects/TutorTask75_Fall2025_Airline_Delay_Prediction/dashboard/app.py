@@ -1,2 +1,0 @@
-#One of the optional bonus taks was to so some sort of interactive dashboard kinda thing so here is where i'll do it
-# Just have the .py file so I have the layout and to make sure these changes are shown on github

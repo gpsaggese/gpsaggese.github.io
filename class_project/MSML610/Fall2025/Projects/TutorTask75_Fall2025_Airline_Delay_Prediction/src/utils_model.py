@@ -1,4 +1,3 @@
-# src/utils_model.py
 # Reusable helpers for Airline Delay Prediction
 # Works with artifacts produced by:
 #   - src/tuning_models.py  (tuned XGBoost with Optuna)
@@ -15,9 +14,7 @@ import joblib
 import numpy as np
 import pandas as pd
 
-# ---------------------------
 # Project-wide schema
-# ---------------------------
 
 BASE_CATEGORICAL: List[str] = [
     "AIRLINE", "ORIGIN_AIRPORT", "DESTINATION_AIRPORT", "ORIGIN_STATE", "DEST_STATE"
@@ -35,9 +32,7 @@ TARGET = "is_delayed"
 RANDOM_STATE = 610
 
 
-# ---------------------------
 # Artifact registry (paths)
-# ---------------------------
 
 def get_artifacts() -> Dict[str, Dict[str, object]]:
     """
@@ -87,9 +82,7 @@ def get_artifacts() -> Dict[str, Dict[str, object]]:
     }
 
 
-# ---------------------------
 # IO helpers
-# ---------------------------
 
 def safe_read_csv(path_or_buffer, **kwargs) -> pd.DataFrame:
     """CSV reader with sensible defaults for big files."""
@@ -153,9 +146,7 @@ def load_all_metrics_table(tags: Iterable[str] = ("cat", "lgbm", "xgb_tuned")) -
     return pd.DataFrame(rows)
 
 
-# ---------------------------
 # Schema / dtype utilities
-# ---------------------------
 
 def coerce_schema(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -181,9 +172,7 @@ def coerce_schema(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-# ---------------------------
 # Prediction utilities
-# ---------------------------
 
 def _predict_xgb(model, Xc: pd.DataFrame) -> np.ndarray:
     """
@@ -258,9 +247,7 @@ def pick_threshold(metrics: Mapping[str, object], fallback: float = 0.5) -> floa
         return float(fallback)
 
 
-# ---------------------------
 # Scoring helpers
-# ---------------------------
 
 def score_dataframe(tag: str, df: pd.DataFrame, model=None, threshold: Optional[float] = None) -> pd.DataFrame:
     """
@@ -296,9 +283,7 @@ def score_row(tag: str, row: Mapping[str, object], model=None, threshold: Option
     return p, y
 
 
-# ---------------------------
 # Convenience: comparison CSV
-# ---------------------------
 
 def write_model_comparison_csv(path: str = "models/model_comparison.csv",
                                tags: Iterable[str] = ("cat", "lgbm", "xgb_tuned")) -> pd.DataFrame:
