@@ -1,0 +1,45 @@
+# Core
+pyspark==3.5.1
+pandas==2.2.3
+numpy==1.26.4
+pyarrow==16.1.0
+
+# Modeling -> haven't got to it yet
+
+# Weather + data
+meteostat==1.6.8
+geopy==2.4.1
+kagglehub==0.3.5
+
+# Viz / dashboard -> sort of an idea/layout despite me not starting but just here so i can go back and remember the tools I need
+matplotlib==3.9.2
+plotly==5.24.1
+dash==2.18.2
+dash-bootstrap-components==1.6.0
+seaborn==0.13.2
+
+# modeling and evaluation
+scikit-learn==1.5.2
+xgboost==2.1.1
+lightgbm==4.5.0
+catboost==1.2.5
+imbalanced-learn==0.12.3  # for class imbalance strategies (SMOTE, etc.)
+shap==0.44.1              # model explainability (works with XGB/LGBM/CatBoost)
+optuna==3.6.1             # hyperparameter tuning
+tqdm==4.66.5
+optuna==3.6.1 
+joblib==1.4.2                 # used for saving models/artifacts
+
+
+# Configs and utilities
+PyYAML==6.0.2             # for configs/config.yaml
+rich==13.7.1              # pretty logging / progress (optional but nice)
+
+# Dashboard for bonus
+streamlit==1.39.0
+
+# Notebooks (local dev)
+
+jupyterlab==4.2.5
+ipykernel==6.29.5
+ipython==8.26.0

@@ -1,0 +1,18 @@
+# Just adding this here for now since I am creating my layout of the project with the updates and changes 
+
+seed: 610
+label:
+  threshold_minutes: 15
+data:
+  kaggle_dataset: "usdot/flight-delays"
+  local_raw_dir: "data/raw"
+  local_processed_dir: "data/processed"
+weather:
+  provider: "meteostat"
+  use_imperial: false
+  # Number of km for nearest station search
+  max_km: 25
+
+# need to add stuff next for modeling and xgboost stuff - which I haven't started it since I am currently 
+# doing the preproccessing stuff and researching proper data for weather (since it was not provided) and make sure it's clean
+# Like profosser said in 1 of his lectures - garbage in = garbage out, so trynna have clean stuff before jumping into models

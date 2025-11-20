@@ -1,0 +1,78 @@
+{
+  "mode": "native",
+  "best_iteration": 983,
+  "hyperparams": {
+    "learning_rate": 0.08757364264182173,
+    "max_depth": 5,
+    "min_child_weight": 3,
+    "subsample": 0.8805135844073053,
+    "colsample_bytree": 0.6817038283811238,
+    "reg_alpha": 9.572006494251443e-06,
+    "reg_lambda": 0.09496277503603154
+  },
+  "features_used": {
+    "categorical": [
+      "AIRLINE",
+      "ORIGIN_AIRPORT",
+      "DESTINATION_AIRPORT",
+      "ORIGIN_STATE",
+      "DEST_STATE"
+    ],
+    "numeric": [
+      "DEPARTURE_DELAY",
+      "AIR_TIME",
+      "DISTANCE",
+      "ORIGIN_LAT",
+      "ORIGIN_LON",
+      "DEST_LAT",
+      "DEST_LON",
+      "temp",
+      "rhum",
+      "prcp",
+      "snow",
+      "wspd",
+      "pres"
+    ]
+  },
+  "roc_auc": 0.9619151559091732,
+  "pr_auc": 0.9177516823775622,
+  "threshold": 0.8079068064689636,
+  "f1_at_threshold": 0.8394622464131327,
+  "precision_at_threshold": 0.8952094155436774,
+  "recall_at_threshold": 0.7902511209172913,
+  "train_snapshot": {
+    "roc_auc": 0.96902324480114,
+    "pr_auc": 0.9276059068371201,
+    "threshold": 0.7294967174530029,
+    "f1_at_threshold": 0.8507985325716056,
+    "precision_at_threshold": 0.8901038737202855,
+    "recall_at_threshold": 0.8148176900788423
+  },
+  "classification_report": {
+    "0": {
+      "precision": 0.9509191132638241,
+      "recall": 0.9777435007483147,
+      "f1-score": 0.9641447664056838,
+      "support": 938108.0
+    },
+    "1": {
+      "precision": 0.8952094155436774,
+      "recall": 0.7902511209172913,
+      "f1-score": 0.8394622464131327,
+      "support": 225708.0
+    },
+    "accuracy": 0.94138162733628,
+    "macro avg": {
+      "precision": 0.9230642644037508,
+      "recall": 0.883997310832803,
+      "f1-score": 0.9018035064094083,
+      "support": 1163816.0
+    },
+    "weighted avg": {
+      "precision": 0.9401148929635198,
+      "recall": 0.94138162733628,
+      "f1-score": 0.9399641036355564,
+      "support": 1163816.0
+    }
+  }
+}
