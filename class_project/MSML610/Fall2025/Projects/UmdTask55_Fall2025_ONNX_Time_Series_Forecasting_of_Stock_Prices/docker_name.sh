@@ -1,0 +1,3 @@
+REPO_NAME=umd_msml610
+IMAGE_NAME=onnx_timeseries_forecasting
+FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME
