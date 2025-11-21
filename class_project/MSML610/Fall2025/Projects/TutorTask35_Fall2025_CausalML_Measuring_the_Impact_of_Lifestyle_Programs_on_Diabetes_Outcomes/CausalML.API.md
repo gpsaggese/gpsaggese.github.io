@@ -1,7 +1,28 @@
 # CausalML API Documentation
 
+## 🐳 Installation & Docker Setup
+To ensure reproducibility, this project is containerized. Follow these steps to build and run the analysis.
+
+### 1. Build the Image
+Run this command in the project root (where the `Dockerfile` is located):
+```bash
+docker build -t causalml_project .
+```
+
+### 2. Run the Container
+Start the Jupyter environment with volume mounting (to save your notebook changes):
+```bash
+# Mac/Linux/WSL
+docker run -p 8888:8888 -v "$(pwd)":/app causalml_project
+```
+
+### 3. Access the Project
+- Click the `http://127.0.0.1:8888...` link in your terminal to open JupyterLab.
+- Open `CausalML.API.ipynb` to test the tool.
+- Open `CausalML.example.ipynb` to see the full Diabetes analysis.
+
 ## Overview
-The `causal_impact` module provides a high-level wrapper around the `causalml` library. It is designed to simplify the workflow of Causal Inference for observational studies, specifically focusing on Heterogeneous Treatment Effects (HTE).
+The CausalML module provides a high-level wrapper around the `causalml` library. It is designed to simplify the workflow of Causal Inference for observational studies, specifically focusing on Heterogeneous Treatment Effects (HTE).
 
 While `causalml` provides powerful meta-learners (S/T/X-Learners), the native API requires significant boilerplate code for data preprocessing, assumption checking, and visualization. This API standardizes that workflow into a single `CausalNavigator` class.
 
