@@ -4,7 +4,8 @@ set -e
 
 FILE_NAME="devops/docker_run/run_jupyter_server.sh"
 echo "##> $FILE_NAME"
-
+source /venv/bin/activate
+cd /workspace
 # Use the old notebook interface.
 #jupyter_cmd="jupyter notebook"
 # Use Jupyter lab.
