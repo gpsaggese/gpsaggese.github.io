@@ -1,3 +1,12 @@
+# Intro
+
+This lesson introduces MongoDB by contrasting simple key-value stores with
+document databases and explaining how MongoDB uses flexible, schema-less
+JSON/BSON documents organized into collections. It covers MongoDB’s data model,
+indexing, ObjectIds, scaling features, and how its document-oriented design
+differs from relational databases, making it well-suited for large,
+semi-structured, and evolving datasets.
+
 # ##############################################################################
 # Key-Value Store vs Document DBs
 # ##############################################################################
@@ -27,7 +36,7 @@ unique identifier called `_id`. MongoDB is known for its high performance, being
 developed in C++, and supports APIs in various programming languages like
 JavaScript, Python, and Java.
 
-Transition: Let's look at an example of a document in MongoDB to understand its
+Next, let's look at an example of a document in MongoDB to understand its
 structure better.
 
 # ##############################################################################
@@ -59,7 +68,7 @@ achieved through replica sets, which include primary replication and automated
 failover. Built-in sharding allows for horizontal scaling, distributing reads
 and writes over multiple shards.
 
-Transition: Now, let's explore how MongoDB organizes its data hierarchically.
+Now, let's explore how MongoDB organizes its data hierarchically.
 
 # ##############################################################################
 # MongoDB: Hierarchical Objects
@@ -73,14 +82,14 @@ with every document having a primary key called `_id`, similar to columns in
 Postgres. This hierarchical organization allows MongoDB to efficiently manage
 and access data, providing flexibility in how data is stored and retrieved.
 
-Transition: Let's compare the concepts of Relational Databases and MongoDB.
+Let's compare the concepts of Relational Databases and MongoDB.
 
 # ##############################################################################
 # Relational DBs vs MongoDB: Concepts
 # ##############################################################################
 
 This slide compares the concepts between Relational Database Management Systems
-(RDBMS) and MongoDB. In both systems, a database serves as a container, but in
+and MongoDB. In both systems, a database serves as a container, but in
 MongoDB, it holds collections instead of tables. Collections in MongoDB are
 groups of documents, similar to tables in RDBMS. Documents are akin to rows,
 consisting of fields, which are name-value pairs like columns. Indexes in
@@ -103,8 +112,7 @@ like MongoDB do not assume a specific data structure, making them ideal for
 storing irregular data like JSON. They allow data access by key, which can be
 complex when retrieving and processing data on the client side.
 
-Transition: Now, let's explore why MongoDB might be a good choice for certain
-applications.
+Now, let's explore why MongoDB might be a good choice for certain applications.
 
 # ##############################################################################
 # Why Use MongoDB?
@@ -219,3 +227,10 @@ property of an index means it only includes entries for documents with the
 indexed field, ignoring those without it. If an index is both unique and sparse,
 it will reject records with duplicate keys. More information is available in the
 MongoDB documentation.
+
+# Outro
+
+As we finish these lessons, we’ve seen how MongoDB’s flexibility, performance,
+and scalability let us model evolving data naturally. We now understand when—and
+why—to use document databases and how their design choices shape modern
+data-driven applications.
