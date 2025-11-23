@@ -18,192 +18,320 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{7.2: Data Wrangling}}$$**
+**$$\text{\blue{7.2: Data Wrangling and Cleaning}}$$**
 \endgroup
 
-::: columns
-:::: {.column width=65%}
 \vspace{1cm}
 
-- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+::: columns
+:::: {.column width=75%}
+
+- **Instructor**: Dr. GP Saggese, [](gsaggese@umd.edu)
 
 - **Reference**
-  - Pandas tutorial
-  - Class project
+  - [Pandas tutorial](https://github.com/gpsaggese-org/umd_classes/tree/master/data605/tutorials/tutorial_pandas)
   - Web
-    - https://pandas.pydata.org
-    - Onslaught of free resources
+    - Many free resources (e.g., [official docs](https://pandas.pydata.org))
   - Mastery
     - https://wesmckinney.com/book
-    - Read cover-to-cover and execute all examples 2-3x time to really _master_
+    - Read cover-to-cover and try the examples 2–3 times to really _master_ them
 ::::
-:::: {.column width=30%}
+:::: {.column width=20%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_16_image_1.png){width=2cm}
 ::::
 :::
 
-* Overview
-- **Data wrangling**
-  - Aka "data preparation", "data munging", "data curation"
-  - Structure data for analysis
-  - Majority of time (80-90%) spent here
-
-- **Key steps**
-  - _Scraping_: extract info from sources (e.g., webpages)
-  - _Data cleaning_: remove inconsistencies/errors
-  - _Data transformation_: structure data correctly
-  - _Data integration_: combine data from multiple sources
-  - _Information extraction_: extract structured info from unstructured/text
-    sources
-
-* Overview
-
-![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_18_image_1.png){width=80%}
-
-* Overview
-- Data wrangling problems are hard to formalize, with little research, e.g.,
-  - Data cleaning: statistics, outlier detection, imputation
-  - Data transformation: structuring data (e.g., tidy data)
-  - Information extraction: feature computation, domain-specific
-
-- Other aspects studied in depth, e.g.,
-  - Schema mapping
-  - Data integration
-
-- In ETL process
-  - Data extraction is E step
-  - Data wrangling is T step
-
-* Overview
+* Data Wrangling and Data Cleaning
 ::: columns
-:::: {.column width=60%}
-![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_20_image_1.png)
-::::
-:::: {.column width=35%}
+:::: {.column width=50%}
+- **Data wrangling and cleaning**
+  - Turn _messy, inconsistent, incomplete_ data into a _coherent_ dataset
 
-- From Data Cleaning: Problems and Current Approaches
-  - Paper old: data from structured sources
-  - Today unstructured/semi-structured equally important
+- **Most effort** in data science is spent here, not on modeling
+  - It is iterative work
+  - Clean $\to$ Model $\to$ Clean $\to$ ...
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_18_image_1.png)
 ::::
 :::
 
+- **Data wrangling**
+  - Transform data into a useful structure
+  - Reshape tables, merge sources, create new variables
+
+- **Data cleaning**
+  - Correct or remove incorrect, corrupt, or irrelevant data
+  - Handle missing values, outliers, inconsistent formats
+
+- **Often done together**
+
+* Typical Data Wrangling Workflow
+::: columns
+:::: {.column width=50%}
+- **Inspect data**
+  - Look at column names, data types
+  - Look at a few rows
+  - Basic summaries
+
+- **Diagnose problems**
+  - Missing values, unusual codes, inconsistent units, strange distributions
+
+- **Decide strategy**, based on project
+  - What to keep
+  - What to fix
+  - What to drop
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_19_image_1.png)
+::::
+:::
+
+- **Apply transformations**
+  - Filter, join, reshape, recode, aggregate
+
+- **Validate results**
+  - Check that changes make sense and that key statistics are reasonable
+
 * Data Extraction
-- Data resides in various sources
-  - Files (CSV, JSON, XML)
+- **Web scraping**
+  - Use APIs or scrape data explicitly
+  - Scraping is challenging
+    - Fragile (page changes can break your parser)
+    - Throttling/rate limits
+    - Cat-and-mouse game with websites
+  - Set up pipelines for periodic scraping
+  - Tools for automated scraping
+    - E.g., `import.io`, `portia`, ..
+
+- **Various sources of data**
+  - Files (e.g., CSV, JSON, XML)
   - Databases
   - Spreadsheets
   - AWS S3 buckets
-  -
-  - Analytical tools support data import through adapters
+  - Web APIs
+  - Logs
+  - ...
 
-- Web scraping
-  - Use APIs or scrape data explicitly
-  - Scraping is challenging
-    - Fragile
-    - Throttling
-    - Cat-and-mouse with websites
-  - Set up pipelines for periodic scraping
-  - Tools for automated scraping
-    - E.g., import.io, portia,
+- Raw data reflects **collection needs, not analysis needs**
 
 * Tidy Data
-::: columns
-:::: {.column width=40%}
-- Tidy data, Wickham, 2014
-  - Each variable forms a column
-  - Each observation forms a row
-- Wide vs long format
 
-Wide format
-![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_4.png)
-::::
-:::: {.column width=40%}
+- **Definition**: Tidy data is a structured format for datasets that makes them
+  easier to manipulate, analyze, and visualize
+  - [Tidy data, Wickham, 2014](https://vita.had.co.nz/papers/tidy-data.pdf)
+
+- **Core Principles**
+  - Each variable forms a _column_
+  - Each observation forms a _row_
+  - Each type of observational unit forms a _table_
+  - Key tools in pandas: `pandas.melt()`, `pandas.pivot()`
+
+::: columns
+:::: {.column width=55%}
+\small \center
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_1.png)
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_2.png)
-"Messy" data
+_"Messy" data_
+::::
+:::: {.column width=30%}
+\small \center
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_3.png)
-Tidy data
-
-![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_5.png)
-Long format
+_Tidy data_
 ::::
 :::
 
-* Data Quality Problems
+* Reshaping data
+- **Wide to long**
+  - Turn similar columns into key-value pairs
 
-![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_23_image_1.png)
+- **Long to wide**
+  - Turn key-value pairs into separate columns
+
+- **What is the best shape?**
+  - Choose the shape that simplifies analysis and visualization
+
+::: columns
+:::: {.column width=40%}
+\small \center
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_4.png)
+_Wide format_
+::::
+:::: {.column width=30%}
+\small \center
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_22_image_5.png)
+_Long format_
+::::
+:::
+
+* Split-Apply-Combine
+
+- **Common data analysis pattern**
+  - _Split_: break data into smaller pieces
+  - _Apply_: operate on each piece independently
+  - _Combine_: combine pieces back together
+  - [The Split-Apply-Combine Strategy for Data Analysis, Wickam, 2011](https://vita.had.co.nz/papers/plyr.pdf)
+
+::: columns
+:::: {.column width=55%}
+- **Examples**
+  - Group-wise ranking
+  - Group statistics (sums, means, counts)
+  - Create separate models per group
+
+- **Pros**
+  - Code is compact
+  - Easy to parallelize
+
+- **Supported by many systems**
+  - Pandas
+  - `SQL GROUP BY` operator
+  - Map-Reduce
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_32_image_1.png)
+::::
+:::
+
+* Classification of Data Problems
+//![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_23_image_1.png)
+
+```graphviz
+digraph DataQualityProblems {
+    rankdir=TB;
+    node [shape=box, style="rounded,filled", fontname="Helvetica"];
+
+    // Root
+    A [
+        label=<<b>Data Quality Problems</b>>,
+        fillcolor="#fef3c7",
+        color="#d97706",
+        penwidth=2
+    ];
+
+    // Level 1
+    B [
+        label=<<b>Single-Source Problems</b>>,
+        fillcolor="#e0f2fe",
+        color="#2563eb",
+        penwidth=1.5
+    ];
+
+    C [
+        label=<<b>Multi-Source Problems</b>>,
+        fillcolor="#e0f2fe",
+        color="#2563eb",
+        penwidth=1.5
+    ];
+
+    // Level 2 - Schema nodes
+    B1 [
+        label="Schema Level\n\n- Lack of integrity constraints\nPoor schema design\n- Uniqueness\n- Referential integrity\n- ...",
+        fillcolor="#f3e8ff",
+        color="#7c3aed",
+        penwidth=1.5
+    ];
+
+    C1 [
+        label="Schema Level\n\n- Heterogeneous data models\n- Schema designs\n- Naming conflicts\n- Structural conflicts\n- ...",
+        fillcolor="#ecfdf3",
+        color="#16a34a",
+        penwidth=1.5
+    ];
+
+    // Level 2 - Instance nodes
+    B2 [
+        label="Instance Level\n\n- Data entry errors\n- Misspellings\n- Redundancy / duplicates\n- Contradictory values\n- ...",
+        fillcolor="#f3e8ff",
+        color="#7c3aed",
+        penwidth=1.5
+    ];
+
+    C2 [
+        label="Instance Level\n\n- Overlapping, contradicting\n- Inconsistent data\n- Inconsistent aggregating\n- Inconsistent timing\n- ...",
+        fillcolor="#ecfdf3",
+        color="#16a34a",
+        penwidth=1.5
+    ];
+
+    // Edges
+    A -> B;
+    A -> C;
+
+    B -> B1;
+    B -> B2;
+
+    C -> C1;
+    C -> C2;
+}
+```
+
+- Several problems **reduce trust and usability of data**
+  - _Single-Source_: Occur within a single dataset
+  - _Multi-Source_: Arise when integrating data from multiple sources
+  - _Schema-Level_: Related to the structure or design of data
+  - _Instance-Level_: Related to actual data values stored
 
 * Single-Source Problems
-- Depends largely on source
+- **Depends largely on source**
+  - _Databases_ often enforce schema / instance constraints
+  - _Spreadsheet data_ is often "clean"
+    - Schema exists
+  - _Logs_ are messy
+  - _Web-page data_ is messier
 
-- Databases enforce constraints
-
-- Data from spreadsheets is often "clean"
-  - Schema exists
-
-- Logs are messy
-
-- Data from web-pages is messier
-
-- Types of problems:
+- **Types of problems**
   - Ill-formatted data
   - Missing/illegal values, misspellings, wrong fields, extraction issues
-  - Duplicated records, contradicting info, referential integrity violations
+  - Duplicated records, contradicting information, referential integrity
+    violations
   - Unclear default/missing values
   - Evolving schemas/classification schemes (categorical attributes)
   - Outliers
 
-* Data Quality Problems
+* Single-Source Problems: Example
 
-![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_25_image_1.png)
-
-* Multi-Source Problems
-
-- Different data sources:
-  - Developed separately
-  - Maintained by different people
-  - Stored in different systems
-
-- Schema mapping / transformation:
-  - Map information across sources
-  - Naming conflicts: same name for different objects, different names for same
-    objects
-  - Structural conflicts: different representations across sources
-
-- Entity resolution:
-  - Match entities across sources
-
-- Data quality issues:
-  - Contradicting information
-  - Mismatched information
-
-* Data Cleaning: Outlier Detection
-
-- Quantitative Data Cleaning for Large Databases, Hellerstein, 2008
-  - Focuses on numerical data (integers/floats measuring quantities)
-
-- Sources of errors in data
+- **Sources of errors in data**
   - Data entry errors: arbitrary values entered
   - Measurement errors: sensor data inaccuracies
   - Distillation errors: processing and summarization issues
   - Data integration errors: inconsistencies across combined sources
 
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_25_image_1.png)
+
+* Multi-Source Problems
+- **Different data sources**
+  - Developed separately
+  - Maintained by different people
+  - Stored in different systems
+
+- **Schema mapping / transformation**
+  - Map information across sources
+  - Naming conflicts
+    - Same name for different objects
+    - Different names for same objects
+  - Different representations across sources
+
+- **Entity resolution**
+  - Match entities across sources
+
+- **Data quality issues**
+  - Contradicting information
+  - Mismatched information
+
 * Univariate Outlier Detection
 ::: columns
 :::: {.column width=50%}
 
-- A set of values characterized by metrics:
-  - Center (e.g., mean)
-  - Dispersion (e.g., standard deviation)
-  - Higher momenta (e.g., skew, kurtosis)
+- **Problems with outliers**
+  - Extreme outliers may alter metrics, masking others
 
-- Use statistics to identify outliers
-  - Watch for "masking": one extreme outlier may alter metrics, masking others
+- Use statistics to **identify outliers**
   - Robust statistics: minimize effect of corrupted data
-  - Robust center metrics:
+  - Robust center metrics
     - Median
     - k%-trimmed mean (discard lowest and highest k% values)
-  - Robust dispersion:
+  - Robust dispersion
     - Median absolute deviation (MAD)
     - Median distance from median value
 ::::
@@ -213,53 +341,56 @@ Long format
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_28_image_2.png)
 ::::
 :::
+
 * Outlier Detection
+- **For Gaussian data**
+  - Data points 1.5x MAD from median
+  - Plot histogram to confirm
 
-- For Gaussian data
-  - Data points 1.4826x MAD from median
-  - Eyeball data (e.g., plot histogram) to confirm
-
-- For non-Gaussian data
-  - Estimate generating distribution (parametric)
-  - Distance-based methods: find points with few neighbors
-  - Density-based methods:
-    - Define _density_ as average distance to _k_ nearest neighbors
-    - _Relative density_ = density of node/average density of neighbors
+- **For non-Gaussian data**
+  - Estimate generating distribution (parametric or not)
+  - Distance-based: find points with few neighbors
+  - Density-based:
+    - Define _density_ as the average distance to _k_ nearest neighbors
     - Use relative density to identify outliers
 
-- Techniques break down as data dimensionality increases
-  - _Curse of dimensionality_
-    - Need O(e^n) points with n dimensions to estimate
-    - "In high dimensional spaces, data is sparse"
+::: columns
+:::: {.column width=50%}
+- **Curse of dimensionality**
+  - _"In high-dimensional spaces, data is sparse"_
+  - Techniques break down as data dimensionality increases
+  - Need $O(e^n)$ points with $n$ dimensions to estimate
   - Project data into lower-dimensional space to find outliers
     - Not straightforward
-
-- Wikipedia article on Outliers
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_29_image_1.png)
+::::
+:::
 
 * Multivariate Outliers
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=70%}
 
-- One set of techniques _multivariate Gaussian distribution_ data
-  - Defined by _mean_ $\mu$ and _covariance matrix_ $\Sigma$
+- **Mean/covariance not robust**
+  - Sensitive to outliers
+  - Use robust statistics
 
-- Mean/covariance not robust (sensitive to outliers)
+- Assume **multivariate Gaussian data**
+  - Defined by _mean_ $\vmu$ and _covariance matrix_ $\mSigma$
+  - _Iterative approach_
+    - Mahalanobis distance: $\sqrt{(\vx - \vmu)^T\mSigma^{-1}(\vx - \vmu)}$
+    - Measures distance of point $x$ from distribution
+    - Identify outliers: points too far by Mahalanobis distance
+    - Remove outliers
+    - Recompute mean and covariance
 
-- Robust statistics analogous to univariate case
-
-- Iterative approach
-  - Mahalanobis distance: square root of $(x - \mu)'\Sigma^{-1}(x - \mu)$
-  - Measures distance of point x from multivariate normal distribution
-  - Outliers: points too far away by Mahalanobis distance
-  - Remove outliers
-  - Recompute mean and covariance
-
-- Often data volume too large
+- Data volume often large
   - Use approximation techniques
 
 - Try different techniques based on data
 ::::
-:::: {.column width=35%}
+:::: {.column width=25%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_30_image_1.png)
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_30_image_2.png)
@@ -270,7 +401,7 @@ Long format
 ::: columns
 :::: {.column width=60%}
 
-- Often data is in the form of a time series
+- Often data is in the form of a **time series**
 
 - A **time series** is a sequence of data points recorded at regular intervals
   - Stock prices
@@ -281,7 +412,6 @@ Long format
   - Market demand
   - Social media engagement
   - Hourly energy usage
-  - Customer satisfaction ratings
   - Weekly retail foot traffic
   - ...
 ::::
@@ -290,37 +420,8 @@ Long format
 ::::
 :::
 
-- Rich literature on _forecasting_ in time series data
+- Rich literature on **forecasting** in time series data
 
-- Use historical patterns to flag outliers
+- Use historical patterns to flag **outliers**
   - Rolling MAD (median absolute variation)
 
-* Split-Apply-Combine
-::: columns
-:::: {.column width=55%}
-
-- The Split-Apply-Combine Strategy for Data Analysis, Wickam, 2011
-
-- Common data analysis pattern
-  - Split: break data into smaller pieces
-  - Apply: operate on each piece independently
-  - Combine: combine pieces back together
-
-- Pros
-  - Code is compact
-  - Easy to parallelize
-
-- E.g.,
-  - group-wise ranking
-  - group vars (sums, means, counts)
-  - create new models per group
-
-- Supported by many languages
-  - Pandas
-  - SQL GROUP BY operator
-  - Map-Reduce
-::::
-:::: {.column width=40%}
-![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_32_image_1.png)
-::::
-:::
