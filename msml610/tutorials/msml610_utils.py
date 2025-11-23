@@ -11,7 +11,7 @@ import scipy.stats as stats
 import ipywidgets as W
 from IPython.display import clear_output, display
 
-import helpers.hdbg as hdbg
+import helpers_root.helpers.hdbg as hdbg
 
 
 _LOG = logging.getLogger(__name__)
