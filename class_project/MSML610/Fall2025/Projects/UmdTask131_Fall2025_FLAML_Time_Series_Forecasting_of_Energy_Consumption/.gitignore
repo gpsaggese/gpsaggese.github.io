@@ -1,11 +1,5 @@
 # MSML610 Energy Forecasting Project - Git Ignore
 
-# Dataset (too large for git)
-*.txt
-*.csv
-household_power_consumption.*
-data/household_power_consumption.txt
-
 # Python
 __pycache__/
 *.py[cod]
@@ -35,11 +29,6 @@ env/
 ENV/
 env.bak/
 venv.bak/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-*/.ipynb_checkpoints/*
-*.ipynb_checkpoints
 
 # IPython
 profile_default/
@@ -74,11 +63,6 @@ $RECYCLE.BIN/
 # FLAML logs
 flaml_energy_forecast.log
 *.log
-
-# Output files (can commit these later)
-outputs/*.png
-outputs/*.csv
-outputs/*.html
 
 # Temporary files
 *.tmp
@@ -120,6 +104,14 @@ docs/_build/
 # Streamlit
 .streamlit/
 
-# Ignore everything in outputs except README
-outputs/*
-!outputs/README.md
+# Allow outputs
+!outputs/
+!outputs/**
+
+# Allow notebooks
+!notebooks/
+!notebooks/**
+
+# Allow data
+!data/
+!data/**
