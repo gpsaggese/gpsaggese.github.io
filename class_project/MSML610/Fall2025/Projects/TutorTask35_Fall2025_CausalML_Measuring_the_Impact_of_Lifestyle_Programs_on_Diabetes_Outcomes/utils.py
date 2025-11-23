@@ -233,3 +233,52 @@ class CausalNavigator:
         plt.legend()
         plt.tight_layout()
         plt.show()
+
+    def run_placebo_test(self, X: pd.DataFrame, T: pd.Series, Y: pd.Series, n_simulations: int = 10):
+        """
+        Validates the model by randomizing the Treatment vector.
+        
+        Hypothesis: If T is random, the estimated ATE should be ~0.
+        If the model finds a strong effect on random data, the original result is suspect.
+        
+        Args:
+            n_simulations (int): How many times to shuffle and retrain. 
+                                 Keep low (e.g. 5-10) for speed on large data.
+        """
+        print(f"Running Placebo Test ({n_simulations} permutations)...")    
+        if self.cate_estimates is None:
+            raise ValueError("Run fit_estimate() first to establish a baseline.")    
+        original_ate = self.cate_estimates.mean()
+        placebo_ates = []
+        # Handle label mapping once for consistency
+        T_proc = T.copy()
+        unique_vals = sorted(T_proc.unique())
+        if self.control_name not in unique_vals:
+            map_dict = {0: self.control_name, 1: self.treatment_name, 
+                        0.0: self.control_name, 1.0: self.treatment_name}
+            T_proc = T_proc.map(lambda x: map_dict.get(x, x))
+        for i in range(n_simulations):
+            # Shuffle Treatment (break the causal link)
+            T_shuffled = T_proc.sample(frac=1, random_state=i).reset_index(drop=True)
+            T_shuffled.index = X.index # Align indices
+            # We create a fresh instance to avoid side effects
+            if self.learner_type == 'X':
+                temp_learner = BaseXRegressor(learner=self.model_y, control_name=self.control_name)
+            elif self.learner_type == 'T':
+                temp_learner = BaseTRegressor(learner=self.model_y, control_name=self.control_name)
+            else:
+                temp_learner = BaseSRegressor(learner=self.model_y, control_name=self.control_name)    
+            # Estimate Pseudo-Effect
+            cate_placebo = temp_learner.fit_predict(X=X, treatment=T_shuffled, y=Y)
+            if cate_placebo.ndim > 1: cate_placebo = cate_placebo.flatten()
+            placebo_ates.append(cate_placebo.mean())
+            print(f"   Sim {i+1}/{n_simulations}: Placebo ATE = {cate_placebo.mean():.5f}")
+        # Visualization
+        plt.figure(figsize=(10, 6))
+        sns.histplot(placebo_ates, color='grey', kde=True, label='Placebo Estimates (Random T)')
+        plt.axvline(original_ate, color='red', linestyle='--', linewidth=3, label=f'Actual Estimate ({original_ate:.4f})')
+        plt.axvline(0, color='black', linestyle='-', linewidth=1)
+        plt.title('Placebo Test: Actual Effect vs. Random Noise')
+        plt.xlabel('Estimated ATE')
+        plt.legend()
+        plt.show()

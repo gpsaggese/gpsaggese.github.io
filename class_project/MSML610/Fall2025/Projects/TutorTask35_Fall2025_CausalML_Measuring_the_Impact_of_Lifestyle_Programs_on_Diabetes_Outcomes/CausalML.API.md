@@ -67,6 +67,12 @@ navigator = CausalNavigator(
 - **Inputs:** Dataframe with CATE, column name, optional bins.
 - **Output:** A bar chart showing CATE by group with confidence intervals.
 
+#### `run_placebo_test(X, T, Y, n_simulations=10)`
+**Purpose:** Robustness check (Refutation).
+- **Logic:** Randomly shuffles the treatment array to break any true causal link, then re-trains the model.
+- **Success Criteria:** The "Placebo ATE" should cluster around 0. The "Actual ATE" should be far outside this distribution.
+- **Interpretation:** If the Actual Effect falls inside the Placebo distribution, the result is statistically indistinguishable from noise.
+
 ## Helper Functions
 
 #### `load_cdc_data(filepath)`
