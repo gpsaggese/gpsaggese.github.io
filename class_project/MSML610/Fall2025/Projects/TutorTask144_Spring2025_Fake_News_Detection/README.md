@@ -7,7 +7,9 @@ A PyTorch-based fake news detection system using fine-tuned DistilBERT on multip
 - DistilBERT fine-tuning for text classification
 - Multi-dataset support (LIAR, ISOT, FakeNewsNet)
 - Lazy tokenization for memory efficiency
-- Model versioning and tracking
+- **MCP (Model Context Protocol) integration** for model management
+- Model versioning and registry tracking
+- Async client-server architecture with stdio protocol
 - Docker setup for deployment
 - Comprehensive evaluation metrics
 
@@ -15,29 +17,55 @@ A PyTorch-based fake news detection system using fine-tuned DistilBERT on multip
 
 ```
 TutorTask144_Spring2025_Fake_News_Detection/
-├── bert_utils.py                     # Core BERT utilities (550+ lines)
-│   ├── DataConfig                    # Data loading configuration
-│   ├── TrainingConfig                # Training hyperparameters
-│   ├── ModelMetrics                  # Evaluation metrics container
-│   ├── BertTextDataset               # PyTorch dataset with lazy tokenization
-│   ├── BertModelWrapper              # Main model training/inference wrapper
-│   └── DataLoader                    # Multi-dataset loader utility
-├── train_bert_liar_only.py           # Optimized BERT trainer for LIAR (438 lines)
-├── train_bert_model.py               # Multi-dataset BERT trainer (390 lines)
-├── eval_bert_liar.py                 # Comprehensive evaluation script (212 lines)
-├── BERT.API.md                       # Complete API documentation
-├── BERT.API.ipynb                    # Interactive API tutorial notebook
-├── BERT.example.md                   # Full implementation guide with examples
-├── BERT.example.ipynb                # End-to-end example notebook
-├── BERT_IMPLEMENTATION_REPORT.md     # Detailed implementation analysis
-├── deep_learning_registry.json       # MCP model registry
-├── requirements.txt                  # Python dependencies
-├── Dockerfile                        # Docker container setup
-├── README.md                         # This file (project documentation)
-└── data/                             # Data directory structure
-    ├── LIAR/                         # Political fact-checking statements
-    ├── ISOT/                         # News articles (Reuters, etc.)
-    └── FakeNewsNet/                  # Curated fact-check data
+├── BERT Model Implementation
+│   ├── bert_utils.py                 # Core BERT utilities (550+ lines)
+│   │   ├── DataConfig                # Data loading configuration
+│   │   ├── TrainingConfig            # Training hyperparameters
+│   │   ├── ModelMetrics              # Evaluation metrics container
+│   │   ├── BertTextDataset           # PyTorch dataset with lazy tokenization
+│   │   ├── BertModelWrapper          # Main model training/inference wrapper
+│   │   └── DataLoader                # Multi-dataset loader utility
+│   ├── train_bert_liar_only.py       # Optimized BERT trainer for LIAR (438 lines)
+│   ├── train_bert_model.py           # Multi-dataset BERT trainer (390 lines)
+│   ├── eval_bert_liar.py             # Comprehensive evaluation script (212 lines)
+│   ├── BERT.API.md                   # Complete API documentation
+│   ├── BERT.API.ipynb                # Interactive API tutorial notebook
+│   ├── BERT.example.md               # Full implementation guide with examples
+│   ├── BERT.example.ipynb            # End-to-end example notebook
+│   └── BERT_IMPLEMENTATION_REPORT.md # Detailed implementation analysis
+│
+├── MCP (Model Context Protocol) System
+│   ├── MCP.server.py                 # FastMCP server with resources & tools
+│   │   ├── ModelRegistry             # Version & metadata management
+│   │   ├── Resources                 # model://registry, model://active
+│   │   └── Tools                     # predict, batch_predict, compare_models
+│   ├── MCP.client.py                 # Async MCP client for Python
+│   │   └── FakeNewsMCPClient         # High-level client interface
+│   ├── MCP_utils.py                  # Utilities for registry management
+│   │   ├── MCPRegistry               # Load/save model versions
+│   │   ├── MetricsComparator         # Model performance comparison
+│   │   ├── ContextGenerator          # Deployment context generation
+│   │   └── ModelValidator            # Config & metrics validation
+│   ├── MCP.API.md                    # Complete API reference
+│   ├── MCP.example.md                # End-to-end usage guide
+│   ├── deep_learning_registry.json   # Model registry (auto-generated)
+│   └── MCP_server/                   # Optional Docker-optimized server
+│
+├── Configuration & Deployment
+│   ├── requirements.txt              # Python dependencies (includes MCP)
+│   ├── Dockerfile                    # Docker container setup
+│   ├── README.md                     # This file
+│   ├── PROJECT_SUMMARY.md            # Project overview
+│   ├── COMPLETION_STATUS.md          # Implementation status
+│   ├── SUBMISSION_COMPLIANCE.md      # Submission requirements
+│   └── bert_eval_results_liar.json   # Evaluation results
+│
+└── Data Directories
+    ├── data/
+    │   ├── LIAR/                     # Political fact-checking statements
+    │   ├── ISOT/                     # News articles (Reuters, etc.)
+    │   └── FakeNewsNet/              # Curated fact-check data
+    └── models/                       # Saved model weights
 ```
 
 ## Getting Started
@@ -140,6 +168,75 @@ Test accuracy on LIAR dataset: 60.92% (accuracy), 69.70% (precision), 47.60% (F1
 ## Model Registry
 
 Trained models are tracked in `deep_learning_registry.json` with metadata including architecture, training config, and test results.
+
+## MCP (Model Context Protocol) System
+
+The project includes a complete MCP implementation for model versioning, management, and context-aware deployment.
+
+### MCP Features
+
+- **Model Registry**: Track multiple model versions with metadata
+- **MCP Resources**: Read-only access to model metadata (model://registry, model://active)
+- **MCP Tools**: Prediction and management operations (predict, batch_predict, compare_models)
+- **Async Client**: Python async client for easy integration
+- **Model Comparison**: Compare performance metrics across versions
+- **Deployment Context**: Get complete context for model deployment
+
+### Quick Start with MCP
+
+```bash
+# Terminal 1: Start MCP Server
+python MCP.server.py
+
+# Terminal 2: Use Client
+python
+```
+
+```python
+import asyncio
+from MCP.client import FakeNewsMCPClient
+
+async def main():
+    async with FakeNewsMCPClient() as client:
+        # Make a prediction
+        result = await client.predict("Breaking news text here")
+        print(f"Prediction: {result['label']}")
+        print(f"Confidence: {result['confidence']}")
+
+        # Get registry
+        registry = await client.get_registry()
+        print(f"Models: {registry['total_models']}")
+
+        # Compare models
+        models = await client.list_models()
+        comparison = await client.compare_models([m['model_id'] for m in models['models']])
+        print(comparison)
+
+asyncio.run(main())
+```
+
+### MCP API
+
+**Resources (Read-Only):**
+- `model://registry` - Get all models and active model
+- `model://active` - Get active model info
+- `model://metrics/{model_id}` - Get model performance metrics
+- `model://architecture/{model_id}` - Get model architecture details
+
+**Tools (Read-Write):**
+- `predict(text, model_id, return_confidence)` - Make single prediction
+- `batch_predict(texts, model_id)` - Batch predictions
+- `register_model_version(...)` - Register new model
+- `list_all_models()` - List all models with metrics
+- `set_active_model(model_id)` - Activate model for predictions
+- `compare_models(model_ids)` - Compare model performance
+- `get_model_context(model_id)` - Get deployment context
+
+### MCP Documentation
+
+- [MCP.API.md](MCP.API.md) - Complete API reference
+- [MCP.example.md](MCP.example.md) - Full usage guide
+- [MCP_utils.py](MCP_utils.py) - Utility functions for registry management
 
 ## Usage Examples
 
