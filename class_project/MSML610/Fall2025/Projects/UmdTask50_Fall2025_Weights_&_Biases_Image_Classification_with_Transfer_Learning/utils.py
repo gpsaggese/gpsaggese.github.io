@@ -21,8 +21,8 @@ DATASET_REF = "andrewmvd/animal-faces"
 BASE_SUBDIR = 'afhq'
 CLASSES = ['cat', 'dog', 'wild']
 IMG_HEIGHT, IMG_WIDTH = 128, 128
-BATCH_SIZE = 32
-
+BATCH_SIZE = 256
+num_workers = 16
 
 # ----------------------------------------------------------------------
 # --- Data Preparation Functions ---
@@ -105,7 +105,7 @@ def create_image_data_generators(train_df: pd.DataFrame, val_df: pd.DataFrame,
         rescale=1./255,          # Normalization (mandatory)
         shear_range=0.2,         
         zoom_range=0.2,          
-        horizontal_flip=True     # Augmentation applied only to training data
+        horizontal_flip=True
     )
 
     # Simple Rescaling for Validation Set (No Augmentation)
@@ -236,9 +236,11 @@ def build_model(architecture, input_shape, num_classes, trainable_layers=50):
     return model
 
 
-def train_model(train_generator, val_generator, architecture="ResNet50", epochs=10, lr=0.0001, trainable_layers=20):
+# MODIFIED: Added unique_name, returns final_acc
+def train_model(train_generator, val_generator, architecture="ResNet50", epochs=10, lr=0.0001, trainable_layers=20, unique_name=None):
     """
     Trains a single model (homogeneous or heterogeneous) with W&B logging.
+    Uses 'unique_name' for distinct logging keys if provided.
     """
     print(f"\n--- Training {architecture} model ---")
     
@@ -249,11 +251,17 @@ def train_model(train_generator, val_generator, architecture="ResNet50", epochs=
     model = build_model(architecture, input_shape, num_classes, trainable_layers=trainable_layers)
 
     # W&B configuration
+    run = wandb.init(
+        project="animal-faces-classification",
+        name=unique_name if unique_name else architecture,
+        reinit=True
+    )
+
     wandb.config.update({
         "learning_rate": lr,
         "epochs": epochs,
         "batch_size": train_generator.batch_size,
-        "model_type": architecture,
+        "model_type": unique_name if unique_name else architecture,
         "dataset": "AFHQ"
     })
 
@@ -279,19 +287,30 @@ def train_model(train_generator, val_generator, architecture="ResNet50", epochs=
     )
 
     final_loss, final_acc = model.evaluate(val_generator, steps=val_steps)
-    print(f"{architecture} Validation Accuracy: {final_acc:.4f}")
-    wandb.log({f"{architecture}_val_accuracy": final_acc})
+    
+    # Use unique_name for distinct logging if available, otherwise use architecture name
+    log_key = unique_name if unique_name else architecture
+    
+    print(f"{log_key} Validation Accuracy: {final_acc:.4f}")
+    # Logging with a unique key
+    wandb.log({f"{log_key}_val_accuracy": final_acc})
+    run.finish()
+    return model, final_acc # MODIFIED: Return final_acc
 
-    return model
 
-
-def ensemble_models(models, val_generator):
+# MODIFIED: Added ensemble_key
+def ensemble_models(models, val_generator, ensemble_key="ensemble"):
     """
     Evaluates an ensemble of models on the validation set (homogeneous or heterogeneous).
-    Uses soft voting (averaging predictions) and logs W&B metrics.
+    Uses soft voting (averaging predictions) and logs W&B metrics using the ensemble_key.
     """
+    run = wandb.init(
+        project="animal-faces-classification",
+        name=ensemble_key,
+        reinit=True
+    )
     val_steps = int(np.ceil(val_generator.samples / val_generator.batch_size))
-    print("\n--- Evaluating Ensemble ---")
+    print(f"\n--- Evaluating {ensemble_key.title()} Ensemble ---")
 
     # Collect predictions
     preds_list = [model.predict(val_generator, steps=val_steps) for model in models]
@@ -300,26 +319,39 @@ def ensemble_models(models, val_generator):
 
     # Compute accuracy
     ensemble_acc = np.mean(np.argmax(ensemble_preds, axis=1) == ensemble_labels)
-    print(f"Ensemble Validation Accuracy: {ensemble_acc:.4f}")
-    wandb.log({"ensemble_val_accuracy": ensemble_acc})
+    
+    print(f"{ensemble_key.title()} Validation Accuracy: {ensemble_acc:.4f}")
+    # Logging with a unique key
+    wandb.log({f"{ensemble_key}_val_accuracy": ensemble_acc})
+    run.finish()
 
     return ensemble_preds, ensemble_acc
 
 
+# MODIFIED: Unique names for each model and ensemble_key
 def homogeneous_ensemble(train_generator, val_generator, num_models=3, epochs=10, lr=0.0001, trainable_layers=50):
     """
     Trains multiple homogeneous ResNet50 models and returns the ensemble results.
     """
     models = []
     for i in range(num_models):
-        print(f"\n--- Training homogeneous model {i+1}/{num_models} ---")
-        model = train_model(train_generator, val_generator, architecture="ResNet50", epochs=epochs, lr=lr, trainable_layers=trainable_layers)
+        # Create a unique name for each ResNet model instance
+        arch_name = f"ResNet50_Homo_{i+1}" 
+        print(f"\n--- Training homogeneous model {i+1}/{num_models} ({arch_name}) ---")
+        
+        # Pass the unique name to train_model for distinct logging
+        model, _ = train_model(train_generator, val_generator, 
+                               architecture="ResNet50", epochs=epochs, lr=lr, 
+                               trainable_layers=trainable_layers, 
+                               unique_name=arch_name)
         models.append(model)
 
-    ensemble_preds, ensemble_acc = ensemble_models(models, val_generator)
+    # Pass unique ensemble key
+    ensemble_preds, ensemble_acc = ensemble_models(models, val_generator, ensemble_key="homogeneous_ensemble")
     return models, ensemble_preds, ensemble_acc
 
 
+# MODIFIED: Unique names for each model and ensemble_key
 def heterogeneous_ensemble(train_generator, val_generator, architectures, epochs=10, lr=0.0001, trainable_layers=50):
     """
     Trains multiple heterogeneous models and returns the ensemble results.
@@ -327,13 +359,20 @@ def heterogeneous_ensemble(train_generator, val_generator, architectures, epochs
     """
     models = []
     for arch in architectures:
-        model = train_model(train_generator, val_generator, architecture=arch, epochs=epochs, lr=lr, trainable_layers=trainable_layers)
+        # Create a unique name for each model instance, distinguishing it from single/homogeneous runs
+        unique_arch_name = f"{arch}_Hetero"
+        
+        # Pass the unique name to train_model for distinct logging
+        model, _ = train_model(train_generator, val_generator, 
+                               architecture=arch, epochs=epochs, lr=lr, 
+                               trainable_layers=trainable_layers,
+                               unique_name=unique_arch_name) 
         models.append(model)
 
-    ensemble_preds, ensemble_acc = ensemble_models(models, val_generator)
+    # Pass unique ensemble key
+    ensemble_preds, ensemble_acc = ensemble_models(models, val_generator, ensemble_key="heterogeneous_ensemble")
     print(f"\nHeterogeneous Ensemble Accuracy: {ensemble_acc:.4f}")
-    wandb.log({"hetero_ensemble_val_accuracy": ensemble_acc})
-
+    
     return models, ensemble_preds, ensemble_acc
 
 
