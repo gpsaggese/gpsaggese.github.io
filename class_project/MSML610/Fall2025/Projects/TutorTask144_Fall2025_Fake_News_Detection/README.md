@@ -1,17 +1,38 @@
-# BERT Fake News Detection
+# MCP-Driven Fake News Detection System
 
-A PyTorch-based fake news detection system using fine-tuned DistilBERT on multiple datasets (LIAR, ISOT, FakeNewsNet).
+**Project Focus: Model Context Protocol (MCP) Implementation**
 
-## Features
+An MCP-based fake news detection system that demonstrates Model Context Protocol for model management, versioning, and context-aware deployment. Uses DistilBERT fine-tuned on multiple datasets (LIAR, ISOT, FakeNewsNet) as the core ML component.
 
+## Core Features: MCP Implementation
+
+### MCP Server & Client
+- **MCP Server** (MCP.server.py): FastMCP implementation with resources and tools
+- **MCP Client** (MCP.client.py): Async Python client for MCP server communication
+- **Model Registry** (deep_learning_registry.json): Persistent model versioning
+- **stdio Protocol**: Model Context Protocol transport layer
+
+### MCP Resources (Read-Only)
+- `model://registry` - Complete model registry with all versions
+- `model://active` - Active model metadata
+- `model://metrics/{id}` - Performance metrics per model
+- `model://architecture/{id}` - Architecture and configuration details
+
+### MCP Tools (Read-Write)
+- `predict()` - Single text prediction with confidence
+- `batch_predict()` - Multi-text batch predictions
+- `register_model_version()` - Add new model to registry
+- `list_all_models()` - List all registered models
+- `set_active_model()` - Switch active model for predictions
+- `compare_models()` - Compare performance across models
+- `get_model_context()` - Get full deployment context
+
+### Supporting Features
 - DistilBERT fine-tuning for text classification
 - Multi-dataset support (LIAR, ISOT, FakeNewsNet)
 - Lazy tokenization for memory efficiency
-- **MCP (Model Context Protocol) integration** for model management
-- Model versioning and registry tracking
-- Async client-server architecture with stdio protocol
-- Docker setup for deployment
-- Comprehensive evaluation metrics
+- Context-aware model deployment
+- Docker containerization support
 
 ### Project Structure
 
