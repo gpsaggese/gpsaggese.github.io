@@ -11,7 +11,8 @@
 
 <!-- tocstop -->
 
-# Energy Consumption Forecasting for Smart Grids
+# Energy Consumption Forecasting for Smart Grids  
+**Level:** Hard · **Project 3**
 
 - Example notebook demonstrating an end-to-end **PMDARIMA** workflow for time-series forecasting on the *Individual Household Electric Power Consumption* dataset.
 
@@ -25,14 +26,21 @@ This file provides a detailed explanation of the `pmdarima.example.ipynb` notebo
 
 ## Project Overview
 
-This project extends the **PMDARIMA API demonstration** into a complete pipeline for forecasting household energy consumption on an hourly basis.
+This project implements a complete, end-to-end forecasting pipeline for **hourly household energy consumption** using PMDARIMA (Auto-ARIMA).  
+It includes the requirements of **Project 3 (Difficulty: Hard)**, including:
 
-**Objective:**  
-Develop a robust forecasting model capable of predicting electricity usage over the next 7 days (168 hours) for smart-grid energy optimization.
+- Data preparation  
+- Time-series decomposition  
+- Model development  
+- Model validation  
+- Forecasting and analysis 
+
+**Objective:** 
+Develop a forecasting model to predict hourly energy consumption for a smart grid system over the next week. The objective is to optimize the model for accuracy while handling large-scale and noisy data.
 
 **Dataset:**  
 - Source: [UCI Machine Learning Repository – Individual Household Electric Power Consumption](https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption)  
-- Sampling rate: 1 minute → resampled to hourly  
+- Sampling rate: 1 minute (resampled to hourly)  
 - Target variable: `Global_active_power`
 
 ---
@@ -43,72 +51,84 @@ The notebook follows a clear, modular structure:
 
 1️⃣ **Load and Preprocess Data**  
    - Implemented in `pmdarima_utils.py`  
-   - Combines `Date` and `Time` into a datetime index  
-   - Handles missing values (`? → NaN`)  
+   - Parses datetime from `Date` + `Time`  
+   - Cleans missing values (`? → NaN`)  
    - Resamples to hourly frequency  
 
 2️⃣ **Time-Series Decomposition**  
-   - Uses `seasonal_decompose()` to separate trend, seasonality, and residuals  
-   - Period = 24 hours (daily pattern)  
+   - Uses `seasonal_decompose()`  
+   - Extracts trend, seasonal patterns, and residuals  
 
-3️⃣ **Train Seasonal Auto-ARIMA Model**  
-   - `pmdarima.auto_arima()` automatically selects optimal (p, d, q) parameters  
-   - Seasonal component (m = 24) for daily cyclic behavior  
+3️⃣ **Train Auto-ARIMA Model**  
+   - Uses `pmdarima.auto_arima()` for automatic (p, d, q) selection  
+   - Robust fitting with AIC-based search  
 
-4️⃣ **Generate 7-Day Forecast**  
-   - Forecasts next 168 hours  
-   - Produces confidence intervals and visualizations  
+4️⃣ **Model Validation (Rolling Cross-Validation)**  
+   - Uses `RollingForecastCV`  
+   - Measures stability across multiple folds  
 
-5️⃣ **Evaluate Forecast Performance**  
-   - Calculates MAE and RMSE using `evaluate_forecast()`  
-   - Provides quantitative assessment of forecast accuracy  
+5️⃣ **Generate 7-Day Forecast**  
+   - Predicts the next 168 hours  
+   - Produces confidence intervals and plots  
 
-6️⃣ **Visualize Actual vs Forecast**  
-   - Overlays training, test, and predicted series  
-   - Plots confidence bands for uncertainty estimation  
+6️⃣ **Evaluate Forecast Performance**  
+   - Metrics: MAE, RMSE  
+   - Implemented using `evaluate_forecast()`  
+
+7️⃣ **Visualize Actual vs Forecast**  
+   - Overlays train, test, and predicted values  
+   - Adds confidence shading  
 
 ---
 
 ## Model Development
 
-The modeling step uses PMDARIMA’s **Auto-ARIMA** function to automate ARIMA parameter selection based on AIC/BIC.  
-The chosen model (e.g., SARIMAX (0, 1, 3)) captures short-term temporal dependencies.
+The modeling is performed using **PMDARIMA’s Auto-ARIMA**, which automates ARIMA parameter selection based on AIC/BIC. 
+This approach was chosen to avoid manual hyperparameter tuning and provide a robust model selection process suitable for long, noisy time-series.
 
 **Key Features:**
+
 - Automatic order selection (`stepwise=True`)  
-- Seasonal support (`m=24`)  
-- Suppressed warnings and robust fitting  
-- Integrates directly with `pmdarima_utils.py` for clean workflow  
+- Robust handling of long time-series  
+- Integrated with helper functions in `pmdarima_utils.py`  
+- Suitable for large and noisy datasets like UCI household consumption  
+
+Best model obtained:  
+`ARIMA(0,1,3)`  
 
 ---
 
 ## Forecasting and Evaluation
 
-After training, the model forecasts hourly consumption for one week.  
-Results are visualized and compared to actual test data.
+After training, the model forecasts hourly electricity consumption for the next 7 days.
+The forecast behavior was also analyzed by comparing predicted vs actual consumption and interpreting confidence intervals.
 
-**Metrics:**
+**Metrics Used:**
+
 - **MAE** – Mean Absolute Error  
-- **RMSE** – Root Mean Squared Error  
+- **RMSE** – Root Mean Square Error  
 
-**Visualization Highlights:**
-- Blue → Training data  
-- Orange → Actual test data  
-- Green → Forecast predictions  
-- Shaded area → Confidence intervals  
+**Visualization Includes:**
+
+- Train and test curves  
+- Forecasted values  
+- Confidence interval shading  
 
 ---
 
 ## Bonus Extensions 
 
-1️⃣ **External Factors (e.g., Weather Data)**  
-   - Incorporate temperature or humidity as exogenous regressors in `auto_arima(y, exogenous=X)`  
-   - Enables weather-aware forecasting  
+1️⃣ **External Factors (Weather Data)**  
+   - Integrated temperature data from Open-Meteo  
+   - Merged with energy dataset on hourly timestamps  
+   - Used as exogenous regressor in Auto-ARIMA  
+   - Helps analyze whether weather improves forecasting accuracy  
 
 2️⃣ **Hybrid ARIMA + Machine Learning Model**  
-   - Use ARIMA residuals as features for an ML regressor (e.g., RandomForest, XGBoost)  
-   - Combine predictions: `hybrid_forecast = arima_forecast + ml_pred`  
-   - Enhances accuracy by capturing non-linear patterns  
+   - Learned ARIMA residuals using a Random Forest  
+   - Generated a combined hybrid forecast:  
+     `hybrid = arima_forecast + ml_residual_prediction`  
+   - Captures non-linear structure not modeled by ARIMA  
 
 ---
 

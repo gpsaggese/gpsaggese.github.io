@@ -27,7 +27,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # -----------------------------------------------------------------------------
-# Example 1: Load and preprocess the dataset
+# Load and preprocess the dataset
 # -----------------------------------------------------------------------------
 def load_energy_data(path: str = "data/household_power_consumption.txt") -> pd.DataFrame:
     """
@@ -92,7 +92,7 @@ def load_energy_data(path: str = "data/household_power_consumption.txt") -> pd.D
 
 
 # -----------------------------------------------------------------------------
-# Example 2: Split the dataset into train and test sets
+# Split the dataset into train and test sets
 # -----------------------------------------------------------------------------
 
 
@@ -116,7 +116,7 @@ def split_train_test(df: pd.DataFrame, train_ratio: float = 0.8):
 
 
 # -----------------------------------------------------------------------------
-# Example 3: Evaluate PMDARIMA model performance
+# Evaluate PMDARIMA model performance
 # -----------------------------------------------------------------------------
 
 
@@ -141,7 +141,7 @@ def evaluate_forecast(model, test_series: pd.Series) -> dict:
 
 
 # -----------------------------------------------------------------------------
-# Example 4: Quick demo to verify workflow
+# Quick demo to verify workflow
 # -----------------------------------------------------------------------------
 
 
@@ -156,3 +156,44 @@ def quick_demo(path: str):
     train, test = split_train_test(df)
     print(f"Loaded {len(df)} records → Train: {len(train)}, Test: {len(test)}")
     return df, train, test
+
+# -----------------------------------------------------------------------------
+# Load weather data 
+# -----------------------------------------------------------------------------
+
+def load_weather_data(path: str = "data/weather.csv") -> pd.DataFrame:
+    """
+    Load local weather dataset. Auto-download from Open-Meteo only if missing.
+    """
+
+    # If file already exists → just load it
+    if os.path.exists(path):
+        logger.info("Loading cached weather data from %s", path)
+        return pd.read_csv(path, parse_dates=["datetime"])
+
+    # Otherwise → download and save to CSV
+    logger.info("Weather file not found. Downloading real hourly weather from Open-Meteo...")
+
+    import requests
+
+    url = (
+        "https://archive-api.open-meteo.com/v1/archive?"
+        "latitude=48.86&longitude=2.35&"
+        "start_date=2006-12-16&end_date=2010-11-26&"
+        "hourly=temperature_2m"
+    )
+
+    weather = requests.get(url).json()
+
+    weather_df = pd.DataFrame({
+        "datetime": pd.to_datetime(weather["hourly"]["time"]),
+        "temperature": weather["hourly"]["temperature_2m"]
+    })
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    weather_df.to_csv(path, index=False)
+
+    logger.info("Weather dataset downloaded and saved → %s", path)
+
+    return weather_df
+
