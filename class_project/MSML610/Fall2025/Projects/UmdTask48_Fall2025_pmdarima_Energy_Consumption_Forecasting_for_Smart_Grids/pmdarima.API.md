@@ -135,11 +135,6 @@ This tutorial demonstrates the **complete PMDARIMA workflow** for univariate tim
 3. Model training via `auto_arima()`
 4. Forecasting and performance visualization  
 
-Future extensions:
-- Add exogenous regressors (`X` argument in `auto_arima`)
-- Test seasonal ARIMA (`seasonal=True`)
-- Evaluate metrics such as MAE and RMSE
-
 ---
 
 ## References

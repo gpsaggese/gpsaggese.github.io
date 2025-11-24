@@ -1,4 +1,5 @@
 # Energy Consumption Forecasting for Smart Grids (PMDARIMA)
+**Level:** Hard · **Project 3**
 
 ## Objective
 Develop a forecasting model to predict **hourly energy consumption** for a smart grid system using the **PMDARIMA** library.  
@@ -24,15 +25,39 @@ class_project/MSML610/Fall2025/Projects/UmdTask48_Fall2025_pmdarima_Energy_Consu
 ├── requirements.txt  # Python dependencies   
 └── README.md  # Project overview
 
-## Completed
-- ✅ Project initialized
-- ✅ Data loading and helper functions implemented
-- ✅ Model training and forecasting completed
+## Project Status
+✅ Completed 
 
-## In progress
-- Adding 7-day forecast evaluation and decomposition plots.
-- Implementation of cross-validation for model validation.
-- Bonus extensions (weather data, hybrid ARIMA + ML)
+✔ Data Preparation
+
+- Loaded the UCI Power Consumption dataset
+- Parsed dates and times
+- Handled missing values
+- Resampled to hourly frequency
+
+✔ Time Series Decomposition
+
+- Performed trend, seasonality and residual decomposition
+
+✔ Model Development
+
+- Applied pmdarima.auto_arima
+- Selected best ARIMA model automatically
+
+✔ Model Validation
+
+- Implemented rolling cross-validation (RollingForecastCV)
+
+✔ Forecasting and Analysis
+
+- Generated full 7-day (168-hour) forecast
+- Visualized actual vs. forecast
+- Included confidence intervals
+
+✔ Bonus Extensions 
+
+- Integrated weather data as exogenous regressors
+- Implemented Hybrid ARIMA + ML (Random Forest residual model)
   
 ## Dependencies
 - numpy
