@@ -21,9 +21,10 @@ UMD DATA605 - Big Data Systems
 **$$\text{\blue{8.1: Cluster Architecture}}$$**
 \endgroup
 
+\vspace{1cm}
+
 ::: columns
 :::: {.column width=75%}
-\vspace{1cm}
 
 - **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
@@ -37,52 +38,54 @@ UMD DATA605 - Big Data Systems
 
 * Big Data: Storing and Computing
 :::columns
-::::{.column width=60%}
+::::{.column width=50%}
 
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_4_image_1.png)
 \footnotesize \centering
 _Volume of data in the world_
 ::::
-::::{.column width=40%}
-- Big data **needs 10k-100k machines**
+::::{.column width=45%}
+- **Big data needs 10k-100k machines**
 
 - **Two problems**
   - Storing big data
   - Processing big data
 
-- Need to **solve together and efficiently**
+- **Need to solve problems together and efficiently**
   - One slow phase slows entire system
 ::::
 :::
 
 * Processing the Web: Example
 :::columns
-::::{.column width=50%}
+::::{.column width=55%}
 
 - Web contains (in 2024):
   - 20+ billion pages
-  - 5M TBs
+  - 5M TBs of content
 
-- Need 1M 5TB hard drives
-  - \$100/HDD -> \$100M in total
+- **Storing the web**
+  - Need 1M 5TB hard drives
+    - \$100/HDD -> \$100M in total
+    - Not bad
+  - Wait, one computer reads 300 MB/sec
+    - 4,500 years to read web serially!
 
-- One computer reads 300 MB/sec
-  - 4,433 years to read web serially!
-
-- Much more time needed for data processing!
+- **Processing the web**
+  - Much larger time / cost needed!
 ::::
-::::{.column width=50%}
+::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_8_image_1.png)
 ::::
 :::
 
 * How to Store Big Data?
 
-- Many different solutions to storing big data
-  1. **Distributed file systems**
-  2. **Sharding across multiple DBs**
-  3. **Parallel and distributed DBs**
-  4. **Key-value stores**
+- **Many different solutions to storing big data**
+  1. _Distributed file systems_
+  2. _Sharding across multiple DBs_
+  3. _Parallel and distributed DBs_
+  4. _Key-value stores_
 
 * 1) Distributed File Systems
 
@@ -120,14 +123,13 @@ _Volume of data in the world_
 
 * 3) Parallel and Distributed DBs
 
-- Store and process data on multiple machines
-  (cluster)
+- **Store and process data on multiple machines (cluster)**
 
 - **Pros**
   - From programmer viewpoint
     - Traditional relational DB interface
     - Appears as a single-machine DB
-  - Scale to 10s-100s of machines
+  - Approach scales to 10s-100s of machines
   - Data replication enhances performance and reliability
     - Frequent failures with 100s of machines
     - Queries can restart on different machines
@@ -140,16 +142,15 @@ _Volume of data in the world_
 
 - **Problem**
   - Applications store billions of small records
-  - RDBMSs lack multi-machine constraints and transactions
+  - Relational DBs lack multi-machine constraints and transactions
 
 - **Solution**
   - Key-value stores / Document / NoSQL systems
   - E.g.,
     - Redis
-    - Google BigTable
-    - Apache HBase (open source BigTable)
+    - Apache HBase (open source of Google BigTable)
+    - ...
     - AWS Dynamo, S3
-    - Cassandra (Facebook)
     - Azure cloud storage (Microsoft)
     - MongoDB cluster
 
@@ -231,10 +232,12 @@ _Volume of data in the world_
 
 * Distributed File System
 
-- Reliable distributed file system
+- **Reliable distributed file system**
   - Data in "chunks" across machines
   - Each chunk replicated on different machines
   - Seamless recovery from disk or machine failure
 
-- Bring computation directly to the data
+- **Bring computation directly to the data**
   - "Chunk servers" also serve as "compute servers"
+
+- Hadoop and HDFS implement all these ideas

@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Lesson 5.2: NoSQL Taxonomy}}$$**
+**$$\text{\blue{Lesson 5.2: Database Taxonomy}}$$**
 \endgroup
 
 ::: columns
