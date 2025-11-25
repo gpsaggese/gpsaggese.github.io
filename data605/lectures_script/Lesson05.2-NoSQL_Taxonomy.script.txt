@@ -1,0 +1,122 @@
+# ##############################################################################
+# DB Taxonomy
+# ##############################################################################
+
+This slide introduces different types of databases and how they can be
+categorized.
+
+- There are at least five main types of databases: relational, key-value,
+  document, columnar, and graph. Each type has its own example, like PostgreSQL
+  for relational and Redis for key-value.
+- Databases can be differentiated based on their data model, how they handle the
+  CAP theorem trade-offs, their querying capabilities, and their replication
+  schemes.
+
+Let's dive deeper into relational databases next.
+
+# ##############################################################################
+# Relational DB
+# ##############################################################################
+
+This slide focuses on relational databases, which are widely used for structured
+data.
+
+- Examples include Postgres, MySQL, Oracle, and SQLite.
+- The data model is based on set theory and relational algebra, organizing data
+  into tables with rows and columns. It supports various attribute types and
+  uses SQL for querying. Relational databases are known for ACID compliance,
+  ensuring reliable transactions.
+- They are ideal for scenarios with a known data layout but unknown access
+  patterns, complex schemas, and regular data.
+- However, they struggle with hierarchical data and variable or heterogeneous
+  data, as these are not easily represented in tables.
+
+Now, let's explore key-value stores.
+
+# ##############################################################################
+# Key-Value Store
+# ##############################################################################
+
+This slide explains key-value stores, which are simple and efficient for certain
+use cases.
+
+- Examples include Redis, DynamoDB, Git, AWS S3, and filesystems.
+- The data model maps keys to complex values, supporting basic operations like
+  get, put, and delete on a primary key.
+- Key-value stores are useful for caching data, storing user session data in web
+  applications, and managing shopping carts in e-commerce applications.
+- They excel at handling unrelated data, providing fast lookups, and enabling
+  easy horizontal scaling through partitioning.
+- However, they are not suitable for complex data queries due to the lack of
+  secondary indexes and scanning capabilities.
+
+This concludes our discussion on different database types.
+
+# ##############################################################################
+# Document Store
+# ##############################################################################
+
+Document stores like MongoDB and CouchBase are databases that use a key-value
+data model where the value is a document, often in formats like JSON or XML.
+Each document has a unique ID, such as a hash, and can contain any number of
+fields, including nested ones. This makes them ideal for handling
+semi-structured data. They are particularly useful when the data structure is
+unknown or when mapping to object-oriented programming models, as they reduce
+the mismatch between the database and application code. However, they are not
+well-suited for complex join queries and typically use a denormalized data form.
+
+Transition: Now, let's explore another type of database that organizes data
+differently.
+
+# ##############################################################################
+# Columnar Store
+# ##############################################################################
+
+Columnar stores, such as HBase, Cassandra, and Parquet, organize data by columns
+instead of rows. This approach is similar to key-value and relational databases,
+where keys are used to query groups of columns. They are well-suited for storing
+web pages, time series data, and handling OLAP workloads. Columnar stores excel
+in horizontal scalability, enabling compression and versioning, and efficiently
+managing sparse tables. However, they require careful schema design based on
+query plans and lack native join capabilities, meaning applications must handle
+joins themselves.
+
+Transition: Next, we will discuss a database model that focuses on relationships
+between data.
+
+# ##############################################################################
+# Graph DB
+# ##############################################################################
+
+Graph databases like Neo4j and GraphX are designed to handle interconnected data
+using nodes and relationships. Each node and edge can have properties stored as
+key-value pairs, and queries navigate through these nodes and relationships.
+They are particularly useful for applications involving social data,
+recommendation engines, and geographical data. Graph databases are excellent for
+modeling networked data that is difficult to represent in a relational model and
+align well with object-oriented systems. However, they struggle with scalability
+and partitioning graphs across different nodes, often requiring a combination of
+graph databases and key-value stores for optimal performance.
+
+# ##############################################################################
+# Taxonomy by CAP
+# ##############################################################################
+
+This slide explains the CAP theorem, which categorizes distributed systems based
+on three properties: Consistency, Availability, and Partition Tolerance.
+
+- CA systems prioritize consistency and availability but struggle with network
+  partitions. They often use replication to manage data, with examples including
+  traditional relational databases like PostgreSQL and MySQL.
+- CP systems focus on consistency and partition tolerance, which can affect
+  availability. They maintain data consistency across network partitions.
+  Examples include BigTable, HBase, Redis, and Berkeley DB.
+- AP systems emphasize availability and partition tolerance, achieving eventual
+  consistency through replication and verification. Examples are MongoDB,
+  Memcached, Dynamo, Cassandra, and CouchDB.
+
+Understanding these categories helps in choosing the right system based on
+specific needs.
+
+Let's move on to explore how these systems handle data replication and
+consistency.
