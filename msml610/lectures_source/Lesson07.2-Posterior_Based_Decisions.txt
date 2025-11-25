@@ -1,0 +1,532 @@
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{0.5cm}
+
+\begingroup \Large
+**$$\text{\blue{7.2: Posterior-based Decisions}}$$**
+\endgroup
+\vspace{1cm}
+
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
+**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+
+**References**:
+
+- AIMA (Artificial Intelligence: a Modern Approach)
+  - Chap 15: Probabilistic programming
+
+- Martin, Bayesian Analysis with Python, 2018 (2e)
+
+::::
+:::: {.column width=20%}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){width=1.5cm}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_Bayesian_analysis_with_Python.jpg){width=1.5cm}
+
+::::
+:::
+
+# Posterior-Based Decisions
+
+* Posterior-Based Decisions
+- Sometimes describing the posterior is not enough
+  - **Make decisions based on inference**
+
+- E.g., is the coin fair ($\theta = 0.5$) or biased?
+  - $\EE[\hat{\theta}] = 0.324$ suggests bias
+  - Can't rule out unbiased since:
+    - $HPI = [0.03, 0.65]$
+    - $0.5 \in HPI$
+  - For **sharper decisions**:
+    - Collect more data to reduce posterior spread
+    - Define a more informative prior
+
+* Savage-Dickey Density Ratio
+- **Savage-Dickey ratio** tests _point null-hypotheses_ in Bayesian inference
+
+- **Idea**: compare prior and posterior densities at a single point $\theta_0$
+  \begingroup \scriptsize
+  $$
+  BF_{01} = \frac{p(\theta_0 | H_1)}{p(\theta_0 | \mathcal{D}, H_1)}
+  $$
+  \endgroup where:
+  - $p(\theta_0 | H_1)$ is _prior_ density $\theta$ under alternative hypothesis
+    $H_1$, evaluated at $\theta_0$
+  - $p(\theta_0 | \mathcal{D}, H_1)$ is _posterior_ density $\theta$ under $H_1$
+    evaluated at $\theta_0$
+
+::: columns
+:::: {.column width=50%}
+- **Intuition**: show how data changes belief about $\theta_0$
+  - If posterior density at $\theta_0$ is much smaller than prior density,
+    strong evidence against null hypothesis $H_0$
+- **Cons**:
+  - It's a point statistics (not considering the entire posterior)
+::::
+:::: {.column width=45%}
+
+\begingroup \scriptsize
+| **Bayes Factor (BF)** | **Interpretation**  |
+|-------------------|-------------------------|
+| 1 - 3           | Not enough evidence       |
+| 3 - 10          | Substantial evidence      |
+| 10 - 100        | Strong evidence           |
+| > 100           | Decisive evidence         |
+\endgroup
+::::
+:::
+
+* Savage-Dickey Density Ratio: Example
+
+::: columns
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Savage_Dickey.png)
+
+::::
+:::: {.column width=45%}
+- $H_0$: "coin is fair"
+  - The prior is 0.87
+  - The posterior is 1.15
+  - $BF_{10} = 0.76$ $\to$ **no evidence** to reject the null hypothesis
+
+- In the other case
+  - $BF_{10} = 15.06$ $\to$ **strong evidence** to reject the null hypothesis
+::::
+:::
+
+* Region of Practical Equivalence
+- **Region of Practical Equivalence** (ROPE) = interval where values are
+  "equivalent"
+
+- **Example**
+  - $H_0$: _"coin is fair"_ impractical if $\theta = 0.5$
+  - ROPE: $\theta \in [0.45, 0.55]$ equivalent to $0.5$
+
+- **Hypothesis testing with ROPE and HPI**
+  - Compare ROPE with HPI (Highest-Posterior Interval)
+    - HPI within ROPE $\to$ no effect, reject $H_1$
+    - HPI outside ROPE $\to$ effect present, reject $H_0$
+    - HPI overlaps ROPE $\to$ inconclusive
+
+- **Decide ROPE before analysis based on domain knowledge**
+  - Picking it after analysis is like choosing p-value threshold after seeing
+    p-value
+
+* Loss Function: Motivation
+
+- For many problems:
+  - **Make decisions based on inference**
+  - **Decision cost is asymmetric**
+    - Cost of a bad decision > or < benefit of a good decision
+    - Vaccines may cause overreaction, but benefits outweigh risks
+
+- Measure for **best decision**:
+  - Benefits of a correct decision
+  - Cost of a mistake
+  - Trade-off between benefits and costs using a loss function
+  - Use loss function for decisions
+
+* Loss Function
+- Aka "cost function"
+  - The inverse is known as "objective", "fitness", "utility function"
+
+- **Loss function** quantifies _"how bad is an estimation mistake?"_
+  - Larger loss indicates worse estimation
+  - Loss is difference between:
+    - The true value $\theta$; and
+    - The estimated value $\hat{\theta}$
+
+\begingroup \scriptsize
+| **Loss**       | **Expression**               | **Point estimate**    |
+| -------------- | ---------------------------- | --------------------- | 
+| Quadratic loss | $(\theta - \hat{\theta})^2$  | Mean of posterior     |
+| Absolute loss  | $|\theta - \hat{\theta}|$    | Median of posterior   |
+| 1-0 loss       | $I(\theta \ne \hat{\theta})$ | Mode of posterior     |
+\endgroup
+
+- Algorithm to make decisions in Bayesian statistics using loss function
+  - Goal: pick a single value $\hat{\theta}$
+  - True value $\theta$ is unknown
+  - Estimate $\theta$ using posterior distribution
+  - Find $\hat{\theta}$ minimizing expected loss function
+
+* Tutorial
+
+- [Bayesian Coin](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks/Bayesian_Coin.ipynb)
+
+## Chemical Shift: Example
+
+* Chemical Shift
+
+- **Nuclear magnetic resonance** (NMR)
+  - Used to study molecules of living things
+  - Measures observable quantities related to unobservable molecular properties
+    (e.g., chemical shift)
+
+- **Chemical shift** reveals local magnetic environment of atomic nuclei
+  - Identifies molecular structure and functional groups
+
+::: columns
+:::: {.column width=50%}
+- **Example of chemical shift**
+  - Data looks Gaussian with a couple of outliers
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift.png)
+::::
+:::
+
+* Use of Gaussians in Statistics
+- Aka "normal" distribution
+
+- **Gaussians** are:
+  - easy to work with
+  - abundant in nature
+
+- **Pros**:
+  - Average of large sample size tends to be Gaussian (Central Limit Theorem)
+  - Many phenomena approximated using Gaussians (since they are average of
+    effects)
+  - Conjugate prior of Gaussian is Gaussian
+
+- **Cons**:
+  - Not robust to outliers
+  - Important to relax assumption of Gaussianity
+
+* Chemical Shift: Example
+
+::: columns
+:::: {.column width=50%}
+
+- **Assume Gaussian** approximates data from example chemical shift
+
+- **Likelihood** from normal distribution:
+  $$
+  Y \sim N(\mu, \sigma)
+  $$
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift.png)
+::::
+:::
+
+- Weakly informative **priors** for mean and sigma of $Y$
+  - **Mean** from uniform distribution
+    $$
+    \mu \sim U(l=40, h=70)
+    $$
+    - Larger than data range, e.g., $[40, 70]$
+  - **Std dev** from half-normal distribution
+    $$
+    \sigma \sim HalfNormal(0, \sigma_\sigma = 10)
+    $$
+
+* Chemical Shift: PyMC
+
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution1.png)
+
+- The PyMC code is **one-to-one with the model**:
+  \begingroup \scriptsize
+  \begin{equation*}
+    \begin{cases}
+    \mu \sim U(l=40, h=70) \\
+    \sigma \sim HalfNormal(0, \sigma_\sigma=10) \\
+    Y \sim N(\mu, \sigma) \\
+    \end{cases}
+  \end{equation*}
+  \endgroup
+  - Get 1000 samples from the posterior
+
+* Chemical Shift: PyMC
+
+::: columns
+:::: {.column width=30%}
+
+- Compute 4 traces for 2 variables $\mu$, $\sigma$
+  - Results are well-formed
+  - $\mu \in [52.55, 54.45]$
+  - $\sigma \in [2.86, 4.23]$
+
+- **Is the model good?**
+
+::::
+:::: {.column width=65%}
+
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution2.png)
+
+::::
+:::
+
+## Posterior Predictive Checks
+
+* Samples from Posterior Distribution
+- Given **\blue{posterior distribution $\Pr(\theta | y)$}**, generate predictions
+  **\red{$\tilde{y}$}** based on data **\green{$y$}** and estimated parameters
+  **\purple{$\hat{\theta}$}**:
+  $$
+  \Pr(\red{\tilde{y}} | \green{y})
+  = \int_{\purple{\hat{\theta}}} \Pr(\tilde{y} | \theta)
+    \blue{\Pr(\theta | y)} d\theta
+  = \int \text{model} \times \text{posterior}
+  $$
+  - This is called the _"posterior predictive distribution"_ as it
+    predicts _future data_ using the _posterior distribution_
+
+- **\black{Conceptually}**
+  - Sample a value of $\theta$ from the posterior $\Pr(\theta | y)$
+  - Feed the value of $\theta$ to the likelihood $\Pr(\tilde{y} | \theta)$
+  - Obtain $\tilde{y}$
+
+- This process has **\black{two sources of uncertainty}**:
+  - Parameter uncertainty
+    - Captured by the posterior $\Pr(\theta | y)$
+  - Sampling uncertainty
+    - Captured by the likelihood $\Pr(\tilde{y} | \theta)$
+
+* Posterior Predictive Check (PPC)
+
+- **PPC approach**:
+  - Generate predictions $\tilde{y}$ with observed data $y$ from posterior
+    distribution
+  - Check consistency between predictions and observed data
+
+- **Intuition**: can the model reproduce observed data?
+  - Always check!
+
+- **Differences** arise from:
+  - Mistakes
+  - Model limitations
+    - E.g., works for average behavior but fails for rare values
+  - Data limitations
+
+* Bayesian Workflow Using PPC
+
+1. Given a process, **true distribution** is unknown / unknowable
+
+2. **Sample the process**
+   - Get finite sample $y$
+   - E.g., experiment, survey, simulation
+
+3. **Inference**
+   - Build probabilistic model using prior $\Pr(\theta)$ and likelihood
+     $\Pr(y | \theta)$ to get posterior $\Pr(\theta | y)$
+   - Posterior is distribution of model parameters $\theta$ given data
+
+4. **Predictive distribution**
+   - Compute predictions from posterior (posterior predictive distribution)
+   - Posterior predictive is distribution of predicted samples averaged over
+     posterior
+
+5. **Validation**
+   - Validate model by comparing original vs predicted samples
+
+### Robust Inference
+
+* Chemical Shift Example: PPC
+::: columns
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution3.png)
+::::
+:::: {.column width=45%}
+- **Apply the Bayesian workflow**
+  - Sample posterior
+  - Apply model
+  - Get predictive posterior distribution (dashed orange)
+  - Compare to data (black)
+
+- **Is the PPC model good?**
+  - **No!**
+  - Posterior mean is right of data
+  - Posterior std dev is larger
+  - You can't generate the data from the model!
+::::
+:::
+
+* Chemical Shift: Model Critique
+::: columns
+:::: {.column width=50%}
+- **Problem**
+  - Two data points on distribution tails
+  - Normal distribution:
+    - is "surprised" by these points
+    - "reacts" by adjusting mean towards them and increasing the standard
+      deviation
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution3.png)
+::::
+:::
+
+- **Possible solutions**
+  1) Declare and discard outliers
+     - E.g., equipment malfunction (requires evidence)
+  2) Change the model
+  3) **Bayesian philosophy**
+     - Encode assumptions into the model (e.g., priors, likelihoods)
+     - Avoid ad-hoc heuristics (e.g., outlier removal rules)
+
+* Student's t-distribution: Recap
+- **Student's t-distribution** has 3 params:
+  1. Mean $\mu$
+     - Doesn't always exist
+  2. Scale $\sigma$
+     - Similar to std dev, but doesn't always exist
+3. Degrees of freedom $\nu \in [0, \infty]$
+   - "Normality parameter": controls distribution normality
+   - $\nu=1$: heavy tails, no mean (Cauchy)
+   - $\nu \to \infty$: Gaussian
+
+- Student's t has **heavy tails** (high kurtosis)
+  - Values more likely far from mean compared to Normal
+
+![](msml610/lectures_source/figures/Lesson07_Student-t.png){ height=30%}
+
+* Chemical Shift: Use Student's t-dist (1/3)
+::: columns
+:::: {.column width=45%}
+- Use Student's t-distribution instead of Normal in model for chemical shift
+
+\begin{equation*}
+  \begin{cases}
+  \mu \sim U(l, h) \\
+  \sigma \sim HalfNornal(0, \sigma) \\
+  \nu \sim Exp(\lambda) \\
+  y \sim StudentT(\mu, \sigma, \nu) \\
+  \end{cases}
+\end{equation*}
+::::
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_robust_model.png)
+::::
+:::
+
+* Chemical Shift: Use Student's t-dist (2/3)
+::: columns
+:::: {.column width=35%}
+- Decrease $\nu$ (**less Gaussian**) instead of increasing mean and standard
+  deviation
+  - $\mu$ similar to Gaussian estimate
+  - $\sigma$ smaller
+  - $\nu \approx 5$ (not very Gaussian)
+- **Estimation more robust**
+  - Outliers have less effect
+::::
+:::: {.column width=60%}
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_robust_model2.png)
+::::
+:::
+
+* Chemical Shift: Use Student's t-dist (3/3)
+::: columns
+:::: {.column width=60%}
+![](msml610/lectures_source/figures/Lesson07_Chemical_shift_robust_model3.png)
+::::
+:::: {.column width=35%}
+- PPC fits better than Normal model
+- Plot is "hairy" because KDE is estimated only in data interval and 0 outside
+::::
+:::
+
+* Tutorial
+
+- [Robust modeling](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks/Lesson07.02_Robust_Modeling.ipynb)
+
+## Groups Comparison
+
+* Group Comparison
+
+- **Group comparison** tests for statistically significant results between
+  _treatment_ and _control group_
+
+- E.g.,
+  - _How well do patients respond to a new drug vs a placebo?_
+  - _Is there a reduction in car accidents after new traffic regulation?_
+  - _Does college student performance improve without cellphones at school?_
+
+- **Effect size** quantifies the difference between two groups
+  - From _"does it work?"_ (hypothesis testing) to _"how well does it work?"_
+    (estimate effect size)
+
+* Bogus Control Groups
+- **Always ask for the baseline** used for comparison, when something is claimed
+  to be harder/better/faster/stronger
+  - E.g., sell sugary yogurts to boost the immune system by comparing it to milk
+    - Better control group: less sugary yogurt
+
+- **Placebo** is a psychological phenomenon where a patient experiences
+  improvements after receiving an inactive treatment
+  - Using a placebo is better than "no treatment"
+  - Shows difficulty in accounting for all factors in an experiment
+
+* Group Comparison Bayesian-Style
+- **Frequentist approach**
+  - Compare p-value of difference of means in each group
+
+- **Bayesian approach**
+  - Compare posterior distribution of means between groups using:
+    - Plot of posterior
+    - Cohen's d
+    - Probability of superiority
+
+* Sample Size Effect
+::: columns
+:::: {.column width=60%}
+- **Sample size effect** is the impact of the number of observations on
+  statistical results (e.g., p-values, confidence intervals)
+
+- **Small sample effect**
+  - Large mean difference might not be statistically significant (low p-value)
+  - Estimates (e.g., means, proportions, correlations) fluctuate widely due to
+    high sampling variability
+  - Outliers have a disproportionate influence
+  - Inference is unstable: results may not replicate
+
+- **Large sample**:
+  - Tiny mean difference can be highly significant (small p-value) but
+    meaningless
+
+- E.g., Cohen's d, probability of superiority
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/Lesson07_Immigrant_Nobel_Prize.png)
+
+![](msml610/lectures_source/figures/Lesson07_Immigrant_Nobel_Prize_density_by_country.png)
+
+::::
+:::
+
+* Cohen's d
+- **Cohen's d** is the difference of means relative to pooled standard deviation
+  $$
+  \frac{\mu_2 - \mu_1}{\sqrt{(\sigma_1^2 + \sigma_2^2) / 2}}
+  $$
+  - Normalizes effect by variability for pooled std dev
+  - Variability of each group normalizes mean difference
+  - Similar to a Z-score, number of std dev values differ
+    ![](msml610/lectures_source/figures/Lesson07_Cohen_d.png)
+
+- **Bayesian approach**
+  - Compute posterior distribution of means and std $\to$ formula
+  - Compute distribution of Cohen's d $\to$ summary statistics
+
+//* Probability of Superiority
+//- = probability that a data point taken randomly from one group is larger than a
+//  random point from the other group
+// - We can compute the
+// TODO: Finish

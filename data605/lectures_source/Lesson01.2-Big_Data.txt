@@ -21,7 +21,7 @@ UMD DATA605: Big Data Systems
 
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 * Data Science
 - **Promises of data science**
@@ -36,22 +36,22 @@ UMD DATA605: Big Data Systems
   - ...
 
 - **What has changed**
-  - Now learning and applying data science is **easy**
+  - Now learning and applying data science is _easy_
     - No need for hiring a consulting company
-  - Tools are open-source
+  - Tools are _open-source_
     - E.g., Python + pydata stack (numpy, scipy, Pandas, sklearn)
-  - Large data sets available
-  - Cheap computing
+  - _Large data sets_ available
+  - _Cheap computing_
     - E.g., cloud computing (AWS, Google Cloud), GPUs
 
 * Motivation: Data Overload
-- _"Data science is the number one catalyst for economic growth"_ (McKinsey,
-  2013)
+- _"Data science is the number one catalyst for economic growth"_
+  (McKinsey, 2013)
 - **Explosion of data in every domain**
   - Sensing devices/networks monitor processes 24/7
     - E.g., temperature of your room, your vital signs, pollution in the air
   - Sophisticated smart-phones
-    - 80% of the world population has a smart-phone
+    - 80%+ of the world population has a smart-phone
   - Internet and social networks make it easy to publish data
   - Internet of Things (IoT): everything is connected to the internet
     - E.g., power supply, toasters
@@ -64,10 +64,9 @@ UMD DATA605: Big Data Systems
 * Scale of Data Size
 ::: columns
 :::: {.column width=45%}
-
 - **Megabyte** = $2^{20} \approx 10^6$ bytes
   - Typical English book
-- **Gigabyte** = $10^9$ bytes = 1,000 MB
+- **Gigabyte** = $2^{30}$ bytes = 1,000 MB
   - 1/2 hour of video
   - Wikipedia (compressed, no media) is 22GB
 - **Terabyte** = 1 million MB
@@ -81,17 +80,15 @@ UMD DATA605: Big Data Systems
 :::: {.column width=50%}
 - **Exabyte** = 1M TB
   - Global yearly Internet traffic in 2004
-- **Zetabyte** = 1B TB = $10^{21}$ bytes
+- **Zettabyte** = 1B TB = $10^{21}$ bytes
   - Global yearly Internet traffic in 2016
   - Fill 20% of Manhattan, New York with data centers
 - **Yottabytes** = $10^{24}$ bytes
   - Yottabyte costs \$100T
   - Fill Delaware and Rhode Island with a million data centers
 - **Brontobytes** = $10^{27}$ bytes
-
 ::::
 :::
-
 * Constants Everybody Should Know
 - CPU at 3GHz: 0.3 ns per instruction
 - L1 cache reference/register: 1 ns
@@ -105,43 +102,37 @@ UMD DATA605: Big Data Systems
 
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_14_image_1.png)
 
-* Big Data Applications
+* Big Data Applications: Marketing
 - **Personalized marketing**
-- Target each consumer individually
+  - Target each consumer individually
   - E.g., Amazon personalizes suggestions using:
     - Shopping history
     - Search, click, browse activity
     - Other consumers and trends
     - Reviews (NLP and sentiment analysis)
-- Brands understand customer-product relationships
+- **Brands want to understand customer-product relationships**
   - Use sentiment analysis from:
     - Social media, online reviews, blogs, surveys
   - Positive, negative, neutral sentiment
 - E.g.,
   - In 2022, \$600B spent on digital marketing
-// - 50 Stats Showing The Power Of Personalization
 
-* Big Data Applications
-
+* Big Data Applications: Advertisement
 ::: columns
 :::: {.column width=50%}
-
 - **Mobile advertisement**
-- Mobile phones are ubiquitous
+  - Mobile phones are ubiquitous
   - 80% of world population has one
   - 6.5 billion smartphones
-- Integrate online and offline databases, e.g.,
+- **Integrate online and offline databases**, e.g.,
   - GPS location
   - Search history
   - Credit card transactions
 ::::
 :::: {.column width=45%}
-
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_17_image_1.png){ height=50% }
-
 ::::
 :::
-
 - E.g.,
   - You've bought a new house
   - You google questions about house renovations
@@ -150,30 +141,29 @@ UMD DATA605: Big Data Systems
   - Google sends you coupons for the closest Home Depot
   - _"I feel like Google is following me"_
 
-* Big Data Applications
-- **Biomedical data**
-- Personalized medicine
+* Big Data Applications: Medicine
+- **Personalized medicine**
   - Patients receive treatment tailored to them for efficacy
   - Genetics
   - Daily activities
   - Environment
   - Habits
-- Genome sequencing
-- Health tech
+- **Biomedical data**
+- **Genome sequencing**
+- **Health tech**
   - Personal health trackers (e.g., smart rings, phones)
 
-* Big Data Applications
+* Big Data Applications: Smart Cities
 - **Smart cities**
-- Interconnected mesh of sensors
+  - Interconnected mesh of sensors
   - E.g., traffic sensors, camera networks, satellites
-- Goals:
+- **Goals**
   - Monitor air pollution
   - Minimize traffic congestion
   - Optimal urban services
   - Maximize energy savings
 
 * Goal of Data Science
-
 ::: columns
 :::: {.column width=50%}
 - **Goal**: from data to wisdom
@@ -181,18 +171,18 @@ UMD DATA605: Big Data Systems
   - Information (organized, structured)
   - Knowledge (learning)
   - Wisdom (understanding)
-- Insights enable decisions and actions
-- Combine streams of big data to generate new data
+- **Insights enable decisions and actions**
+- Combine streams of big data to **generate new data**
   - New data can be "big data" itself
 ::::
 :::: {.column width=45%}
-
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_20_image_1.png)
-
 ::::
 :::
 
 * The Six V'S of Big Data
+- What makes "Big Data" big?
+
 ::: columns
 :::: {.column width=50%}
 - **Volume**
@@ -211,9 +201,7 @@ UMD DATA605: Big Data Systems
   - Benefit an organization
 ::::
 :::: {.column width=45%}
-
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_21_image_1.png)
-
 ::::
 :::
 
@@ -250,23 +238,19 @@ UMD DATA605: Big Data Systems
   - How do you decide what data to trust?
 
 * Sources of Big Data
-
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=40%}
 - Distinguish Big Data by source
   - **Machines**
   - **People**
   - **Organizations**
 ::::
-:::: {.column width=45%}
-
+:::: {.column width=55%}
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_24_image_1.png)
-
 ::::
 :::
-
 * Sources of Big Data: Machines
-- **Machines** generate data
+- **Machines generate data**
   - Real-time sensors (e.g., sensors on Boeing 787)
   - Cars
   - Website tracking
@@ -279,11 +263,9 @@ UMD DATA605: Big Data Systems
   - Streaming, not batch
 
 * Sources of Big Data: People
-
 ::: columns
-:::: {.column width=50%}
-
-- **People** and their activities generate data
+:::: {.column width=60%}
+- **People and their activities generate data**
   - Social media (Instagram, Twitter, LinkedIn)
   - Video sharing (YouTube, TikTok)
   - Blogging, website comments
@@ -297,19 +279,17 @@ UMD DATA605: Big Data Systems
   - Semi-structured or unstructured data
     - Text, images, movies
   - Requires investment to extract value
-    - Acquire $\to$ Store $\to$ Clean $\to$ Retrieve $\to$ Process $\to$ Insights
+    - Acquire $\to$ Store $\to$ Clean $\to$ Retrieve $\to$ Process $\to$
+      Insights
   - Surveillance capitalism
-
 ::::
-:::: {.column width=45%}
-
+:::: {.column width=35%}
 ![](data605/lectures_source/images/lecture_1/lec_1_slide_26_image_1.png)
-
 ::::
 :::
 
-* Sources of Big Data: Orgs
-- **Organizations** generate data
+* Sources of Big Data: Organizations
+- **Organizations generate data**
   - Commercial transactions
   - Credit cards
   - E-commerce
@@ -326,167 +306,3 @@ UMD DATA605: Big Data Systems
     - Additional complexity
     - Data outdated/not visible
     - Cloud computing helps (e.g., data lakes, data warehouses)
-
-* Is Data Science Just Hype?
-
-::: columns
-:::: {.column width=50%}
-
-- Big data (or data science)
-  - "Any process where interesting information is inferred from data"
-- Data scientist called the "sexiest job" of the 21st century
-  - The term has becoming very muddled at this point
-- **Is it all hype?**
-
-::::
-:::: {.column width=45%}
-
-![](data605/lectures_source/images/lecture_1/lec_1_slide_28_image_1.png)
-
-::::
-:::
-
-* Is Data Science Just Hype?
-- **No**
-  - Extract insights and knowledge from data
-  - Big data techniques revolutionize many domains
-    - E.g., education, food supply, disease epidemics
-- **But**
-  - Similar to what statisticians have done for years
-- **What is different?**
-  - More data is digitally available
-  - Easy-to-use programming frameworks (e.g., Hadoop) simplify analysis
-  - Cloud computing (e.g., AWS) reduces costs
-  - Large-scale data + simple algorithms often outperform small data + complex algorithms
-
-* What Was Cool in 2012?
-
-![](data605/lectures_source/images/lecture_1/lec_1_slide_30_image_1.png)
-
-// TODO: Add "From Gartner"
-
-* What Was Cool in 2017?
-
-![](data605/lectures_source/images/lecture_1/lec_1_slide_31_image_1.png)
-
-* What Was Cool in 2022?
-
-// TODO: Remove the title
-
-![](data605/lectures_source/images/lecture_1/lec_1_slide_32_image_1.png)
-
-* What Was Cool in 2023?
-
-// TODO: Remove the title
-
-![](data605/lectures_source/images/lecture_1/lec_1_slide_33_image_1.png)
-
-* Key Shifts Before/After Big-Data
-- **Datasets: small, curated, clean $\to$ large, uncurated, messy**
-  - Before:
-    - Statistics based on small, carefully collected random samples
-    - Costly and careful planning for experiments
-    - Hard to do fine-grained analysis
-  - Today:
-    - Easily collect huge data volumes
-    - Feed into algorithms
-    - Strong signal overcomes noise
-
-- **Causation $\to$ Correlation**
-  - Goal: determine cause and effect
-  - Causation hard to determine $\to$ focus on correlation
-    - Correlation is often sufficient
-    - E.g., diapers and beer bought together
-
-- **"Data-fication"**
-  - = converting abstract concepts into data
-  - E.g., "sitting posture" data-fied by sensors in your seat
-  - Preferences data-fied into likes
-
-- From: Rise of Big Data, 2013
-
-* Examples: Election Prediction
-::: columns
-:::: {.column width=50%}
-- Nate Silver and the 2012 Elections
-  - Predicted 49/50 states in 2008 US elections
-  - Predicted 50/50 states in 2012 US elections
-- Reasons for accuracy
-  - Multiple data sources
-  - Historical accuracy incorporation
-  - Statistical models
-  - Understanding correlations
-  - Monte-Carlo simulations for electoral probabilities
-  - Focus on probabilities
-  - Effective communication
-::::
-:::: {.column width=45%}
-
-![](data605/lectures_source/images/lecture_1/lec_1_slide_35_image_1.png)
-::::
-:::
-
-* Examples: Google Flu Trends
-- 5% to 20% of US population contracts flu yearly; 40k deaths
-- Early warnings enable prevention and control
-- Google Flu Trends
-  - Early flu outbreak warnings via search query analysis
-    - 45 search terms analyzed
-    - IP used to determine location
-  - Predict regional flu outbreaks 1-2 weeks before CDC
-  - Active from 2008 to 2015
-- Caveat: accuracy declined
-  - Claimed 97% accuracy
-  - Out of sample accuracy lower (overshot CDC data by 30%)
-  - People search about flu without knowing diagnosis
-    - E.g., searching for "fever" and "cough"
-  - Google Flu Trends: The Limits of Big Data
-
-* Data Scientist
-::: columns
-:::: {.column width=50%}
-- Ambiguous, ill-defined term
-- From Drew Conway's Venn Diagram
-
-::::
-:::: {.column width=45%}
-![](data605/lectures_source/images/lecture_1/lec_1_slide_37_image_1.png)
-
-::::
-:::
-
-* Typical Data Scientist Workflow
-- From Data Science Workflow
-
-![](data605/lectures_source/images/lecture_1/lec_1_slide_38_image_1.jpeg)[ height=70% ]
-
-* Where Data Scientist Spends Most Time
-
-- 80-90% of the work is data cleaning and wrangling
-- "Janitor Work" in Data Science
-- Research Directions in Data Wrangling
-
-![](data605/lectures_source/images/lecture_1/lec_1_slide_39_image_1.png)[ height=70% ]
-
-* What a Data Scientist Should Know
-- From: How to hire a data scientist
-- **Data grappling skills**
-  - Move and manipulate data with programming
-  - Scripting languages (e.g., Python)
-  - Data storage tools: relational databases, key-value stores
-  - Programming frameworks: SQL, Hadoop, Spark
-
-- **Data visualization experience**
-  - Draw informative data visuals
-  - Tools: `D3.js`, plotting libraries
-  - Know what to draw
-
-- **Knowledge of statistics**
-  - Error-bars, confidence intervals
-  - Python libraries, Matlab, R
-
-- **Experience with forecasting and prediction**
-  - Basic machine learning techniques
-
-- **Communication skills**
-  - Tell the story, communicate findings

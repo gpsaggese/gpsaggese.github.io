@@ -1,6 +1,6 @@
 repo_info:
-  repo_name: umd
-  github_repo_account: gpsaggese
+  repo_name: umd_classes
+  github_repo_account: gpsaggese-org
   github_host_name: github.com
   invalid_words:
   issue_prefix: UmdTask

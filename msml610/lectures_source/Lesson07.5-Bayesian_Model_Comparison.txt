@@ -1,0 +1,1022 @@
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{7.5: Bayesian Model Comparison}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+
+**References**:
+
+- AIMA (Artificial Intelligence: a Modern Approach)
+  - Chap 15: Probabilistic programming
+
+- Martin, Bayesian Analysis with Python, 2018 (2e)
+
+::::
+:::: {.column width=20%}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){width=1.5cm}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_Bayesian_analysis_with_Python.jpg){width=1.5cm}
+
+::::
+:::
+
+# ##############################################################################
+# Bayesian Model Comparison
+# ##############################################################################
+
+* Models as Maps of the Real World
+- Typically you need to compare models to understand which one is **"better"**
+
+- Models are a **map, not a copy** of the real world
+  - _"All models are wrong, but some are useful"_ (Box, 1976)
+    - "Wrong": all models are wrong since they aren't the actual territory
+    - "Useful" some models describe a problem better than others
+
+- Models have a **purpose**
+  - Are approximations to understand a problem
+  - A model can't reproduce all aspects equally well
+  - Different models capture different data aspects
+
+// ## 5.1., Posterior predictive checks
+
+### ############################################################################
+### Posterior Predictive Checks
+### ############################################################################
+
+* Posterior Predictive Checks
+
+::: columns
+:::: {.column width=50%}
+- **Goal of PPC**:
+  - Evaluate model's data explanation
+  - Understand model limitations
+  - Improve model
+
+- Given data from parabola + noise:
+  - Fit with linear model
+  - Fit with quadratic model
+  - Compare predicted posterior vs observed data
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/Lesson07.Comparing_models.data.png)
+
+![](msml610/lectures_source/figures/Lesson07.Comparing_models.model_code.png)
+
+::::
+:::
+
+* Posterior Predictive Checks
+
+::: columns
+:::: {.column width=50%}
+- **Compare KDE of observed and predicted data**
+  - Linear model KDE doesn't match
+  - Quadratic model KDE matches better
+  - High uncertainty in both models, especially at tails
+
+- Compare mean / interquartile range for data vs model
+  - Plot dispersion of mean and IQR for models vs data
+  - Data set provides a single point
+  - Posterior provides a distribution
+
+- Statistics "orthogonal" to model's focus are more informative, since they are
+  less "overfit"
+  - E.g., fit the mean, compare the "median"
+
+::::
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07.Comparing_models.model_fit.png)
+
+![](msml610/lectures_source/figures/Lesson07.Comparing_models.lin_model_PPC.png)
+![](msml610/lectures_source/figures/Lesson07.Comparing_models.quadr_model_PPC.png)
+::::
+:::
+
+* Bayesian P-Value for a Statistic
+- A Bayesian p-value summarizes the comparison between simulated and observed
+  data
+
+- **Procedure**
+  - Given the posterior predictive $\tilde{Y}$
+  - Choose a summary statistic $T$ (E.g., mean, median, standard deviation)
+  - Compute $T$ for:
+    - The observed data $T_{obs}$
+    - The simulated data $T_{sim}$ from the posterior predictive
+  - Compute the Bayesian p-value as the portion of simulated datasets where the
+    test statistic is smaller than the observed data:
+    $$
+    \text{Bayesian p-value} \defeq \Pr(T_{sim} \ge T_{obs} | \tilde{Y})
+    $$
+  - If observed values agree with predicted ones, the value should be around 0.5
+
+* Bayesian P-Value for Entire Distribution
+- Instead of using a summary statistic, one can compute "the probability of
+  predicting a lower or equal value for each observed value"
+
+- If the model is well calibrated, it captures all observations equally well,
+  the probability should be the same for all observed values
+  - The output should be a uniform distribution
+
+// TODO: Compute Bayesian p-value for parabola vs linear fit
+
+* Bayesian P-Value: Example
+- Study the height of people in a population
+
+- **Fit the Bayesian model**
+  - Assume a normal distribution with unknown mean and variance
+  - Collect observed data of heights (e.g., 100 people)
+  - Specify a prior distribution for mean and variance
+  - Combine observed data with prior to obtain a posterior distribution of mean
+    and variance of population height
+
+- **Compute Bayesian p-value**
+  - From posterior distribution:
+    - Generate new simulated datasets
+    - For each dataset, compute mean height
+  - Use test statistic $T$, as the difference between the mean of the replicated
+    dataset and the observed mean
+  - Compute Bayesian p-value: the proportion of replicated datasets where the
+    test statistic is >= test statistic for observed data
+    - A value close to 0.5 means the observed data is covered by the model
+    - A value close to 0 or 1 indicates a poor fit
+
+* Bayesian vs Frequentist P-Value
+- **Frequentist p-value** is the probability of getting observed data as or more
+  extreme, assuming the null hypothesis is true
+
+- **Bayesian p-value** is the probability that simulated data from the model
+  (i.e., posterior predictive check) is as or more extreme than the observed
+  data
+
+- P-value measures inconsistency between observed data and:
+  - A null hypothesis (frequentist approach)
+  - Model (Bayesian approach)
+
+- Does p-value incorporate uncertainty?
+  - (Frequentist) No, it uses single point estimates
+  - (Bayesian) Yes, it incorporates uncertainty of parameter estimates
+
+// ## 5.2, The balance between simplicity and accuracy
+
+## #############################################################################
+## The Balance Between Simplicity and Accuracy
+## #############################################################################
+
+* Occam's Razor
+- _"If you have **equivalent** explanations for the same phenomenon, you should
+  choose the **simpler** one"_
+  - Quality of explanation $\approx$ accuracy
+  - Simpler $\approx$ number of model parameters
+
+- **Complexity vs accuracy**
+  - Increasing model complexity (e.g., number of model parameters) is
+    accompanied by:
+    - Increasing in-sample accuracy
+    - Not necessarily out-of-sample accuracy
+  - The complex model:
+    - Did not "learn" from the data but just "memorize" it
+    - Does a bad job generalizing to predict potentially observable data
+
+- Ideally balance complexity and accuracy in a quantitative way
+
+* Overfitting and Underfitting
+- A model is **overfit** when it has many parameters, fitting the training data
+  well but unseen data poorly
+  - Overfitting in terms of signal/noise:
+    - Each dataset has "signal" and "noise"
+    - We want the model to learn the signal
+    - A model overfits when it learns the noise, obscuring the signal
+
+- A model is **underfit** when it has few parameters, fitting the dataset poorly
+  - An underfit model doesn't learn the signal well
+  - E.g., a constant fits a dataset, only learning the mean
+
+// ## 5.3, Measures of predictive accuracy
+
+* Bias-Variance Trade-Off
+- A model has **high bias** when:
+  - It has low ability to accommodate the data
+  - I.e., underfitting
+  - E.g., a polynomial of degree 0
+
+- A model has **high variance** when:
+  - It has high capacity and it is sensitive to details in the data, capturing
+    noise
+  - I.e., overfitting
+  - E.g., a polynomial of degree 100
+
+- Trade-off between bias and variance
+  - Goal: balance simplicity and goodness of fit
+  - Aim for a model that "fits the data right," avoiding overfitting or
+    underfitting
+
+## #############################################################################
+## Measures of Predictive Accuracy
+## #############################################################################
+
+* Accuracy Measures
+- **In-sample accuracy** is measured on the data used to fit a model
+- **Out-of-sample accuracy** is measured on data not used to fit a model
+  - Aka "predictive accuracy"
+
+- In-sample accuracy > out-of-sample accuracy
+
+- There is a trade-off between how much data is used for training and for
+  evaluating true accuracy
+
+// ### 5.3.1, Information criteria
+
+### ############################################################################
+### Information Criteria
+### ############################################################################
+
+* Information Criteria: Intuition
+- **Information criteria** compare models in terms of fitting the data taking
+  into account their complexity through a penalization term
+  - Out-of-sample accuracy $\approx$ in-sample accuracy + a term penalizing
+    model complexity
+  - It's the VC equation
+    $$E_{out}[h] = E_{in}[h] + \Omega(\calH)$$
+
+* Model Parameters for Bayesian vs Non-Bayesian Set-Up
+
+//* Squared Error Metric
+//- Squared error between the data and the predictions from the model
+//  $$
+//  \frac{1}{N} \sum_i (y_i - \EE[y_i | \theta])^2
+//  $$
+//  where $\EE[y_i | \theta]$ is the predicted value given the parameters
+//- Squaring errors:
+//  - Ensures that errors do not cancel out
+//  - Emphasizes large errors (vs absolute values)
+//
+//* Log-Likelihood
+//- In a probabilistic set-up, log-likelihood is more natural
+//- **Log-likelihood** is defined as:
+//
+//  $$
+//  \sum_i \log \Pr(y_i | \theta)
+//  $$
+//
+//- Deviance is defined as:
+//
+//  $$
+//  -2 \sum_i \log \Pr(y_i | \theta)
+//  $$
+
+* Maximum Likelihood Estimation (MLE)
+- **MLE** finds the parameter values that make the observed data most probable
+  (given a model)
+  - Denoted by $\hat{\theta}_{MLE}$
+  - It's a point not a distribution
+
+- **Procedure**:
+  - Given the data $x_1, x_2, ..., x_n$
+  - Assume it comes from a distribution with an unknown parameter $\theta$
+  - Pick the value of $\theta$ that makes the data most likely given a likelihood
+    function
+  \begin{equation*}
+    \begin{cases}
+      L(\theta) = \log \Pr(x_1, x_2, ..., x_n | \theta) \\
+      \hat{\theta}_{MLE} = \argmax_{\theta} L(\theta) \\
+    \end{cases}
+  \end{equation*}
+
+- In Bayesian terms, MLE is equivalent to the mode of $\theta$ using flat priors
+  - Aka MAP (maximum a posteriori)
+
+* Akaike Information Criterion (AIC)
+- AIC is defined as
+
+  $$
+  AIC = -2 \sum \log \Pr(y_i | \hat{\theta}_{MLE}) + 2 \text{num}_{params}
+  $$
+
+  where:
+  - $\hat{\theta}_{MLE}$ is the maximum likelihood estimation of $\theta$
+  - $\text{num}_{params}$ is the number of parameters
+
+- **Interpretation**:
+  - The first term (log likelihood) measures how well the model fits the data
+  - The second term penalizes complex models
+
+- **Cons**:
+  - Discard information about uncertainty of posterior estimation
+  - MLE assumes flat priors (vs informative and weakly informative priors)
+  - Number of parameters is not always a good measure of complexity
+    - E.g., in hierarchical models the effective number of params is smaller
+
+* Bayesian Information Criteria
+- **Bayesian Information Criteria (BIC)**
+  - Like AIC, it assumes flat priors and uses MLE
+  - It is not Bayesian
+
+- **Widely Applicable Information Criteria (WAIC)**
+  - Bayesian version of AIC
+  - It has two terms:
+    - One that measures how good the fit is
+    - One that penalizes complex models
+  - WAIC uses the posterior distribution to estimate both terms
+
+// ### 5.3.2, Cross-validation
+
+### ############################################################################
+### Cross-Validation
+### ############################################################################
+
+* Cross-Validation
+- **Cross-validation** (CV)
+  - **Procedure**
+    - Partition data into $K$ portions of equal size and similar statistics
+    - Use $K-1$ partitions to train the model and test on remaining partition
+    - Repeat for all $K$ folds
+    - Average the results
+  - **Pros**
+    - Simple and effective solution to use all data to compare models
+
+- **Leave-one-out cross-validation** (LOO-CV)
+  - **Procedure**:
+    - The model is fit for all data, excluding one observation
+    - The model's predictive accuracy is tested on the left out observation
+    - Repeat the process for all observations
+    - Average the results
+  - **Cons**
+    - It is very computationally expensive since one needs to refit the model
+
+- How to adapt **cross-validation to a Bayesian approach**?
+  - CV and LOO require multiple model fits and fitting a Bayesian model is very
+    expensive
+  - Yes! There is a way to approximate using a single fit to the data
+
+* ELPD with LOO-CV
+- ![](emoji/skull.png){ width=14px } Math alert
+- We want to compute $ELPD_{LOO-CV}$ where:
+  - "Expected Log-Pointwise predictive Density" (ELPD)
+    - It should be ELPPD and not ELPD!
+  - "Leave-One-Out Cross-Validation" (LOO-CV) is used to compute it
+
+- The definition of ELPD with LOO-CV is:
+  \begingroup \small
+  $$
+  ELPD_{LOO-CV} =
+    \red{\sum_{i=1}^n} \log
+    % Need to avoid the `text` inside `\textcolor`.
+    \textcolor{violet}{\int}
+    \teal{p(y_i | \theta)}
+    \blue{p(\theta | y_{-i})}
+    \textcolor{violet}{d\theta}
+  $$
+  \endgroup
+  where:
+    - \blue{Fit model using all the data without $y_{-i}$}
+    - \teal{Predict with the model the unseen $y_i$}
+    - \violet{Integrate on all the posterior values}
+    - \red{Repeat for all the points}
+
+- How to compute it efficiently?
+  - Use "Pareto smooth importance sampling leave-one-out cross-validation"
+
+* Pointwise Predictive Density (PPD)
+- The **pointwise predictive density** for a given data point $y_i$ is defined as
+  the posterior predictive probability, given the rest of the data
+  $$
+  PPD
+  \defeq \Pr(y_i | data - \{i\})
+  = \textcolor{blue}{\int} \red{p(y_i | \theta)} \green{p(\theta | y_{-i})} \textcolor{blue}{d\theta}
+  $$
+  - $y_i$: observed data point
+  - \red{$p(y_i | \theta)$}: \red{likelihood} given model parameters $\theta$
+  - \green{$p(\theta | y_{-i})$}: \green{posterior distribution} of the model
+    parameters given rest of data
+  - \blue{Integral}: averages over posterior distribution, capturing parameter
+    uncertainty
+
+- **\black{Interpretation}**
+  - PPD measures model's predictive ability for $y_i$ when trained on data
+    excluding $y_i$
+  - Similar to cross-validation, using Bayesian parameter averaging over the
+    model parameters
+
+* Expected Log Pointwise Predictive Density
+- The ELPD is the \red{average} over unseen points of the \green{log} \blue{PPD}
+  $$
+  ELPD
+  \defeq \textcolor{red}{\sum_{i=1}^n} \textcolor{green}{\log}
+  \textcolor{blue}{\int p(y_i | \theta_{-i}) p(\theta_{-i} | y_{-i}) d\theta}
+  $$
+
+- **\black{Interpretation}**
+  - It can be used to determine which model generalizes better to new data
+  - ELPD measures the predictive accuracy of a Bayesian model on unseen data
+  - Train on $y_{-i}$, i.e., all data excluding $y_i$
+  - For each point $y_i$ excluded from the training set, there is a new
+    distribution of the params $\theta_{-i}$
+  - Test on $y_i$
+
+//* Approximating PPD
+//- Calculating analytically the pointwise posterior density integral
+//
+//  $$
+//  PPD = \int p(y_i | \theta) p(\theta | y_{-i}) d\theta
+//  $$
+//
+//  is difficult
+//  - The posterior $p(\theta | y_{-i})$ rarely has a closed form
+//  - The integral on $\theta$ is on a high-dimensional space
+//
+//- It can be approximated numerically given posterior samples $s$ of the model
+//  parameters $\theta^{(s)}$
+//
+//  $$
+//  PPD \approx \frac{1}{S} \sum_s p(y_i | \theta^{(s)}_{-i})
+//  $$
+//  - Suppose we already have posterior samples $\theta^{(s)} \sim p(\theta | y)$
+//    from the full dataset
+
+* PSIS-LOO-CV
+- Compute the Expected Log Pointwise Predictive Density (ELPD) using
+  Leave-One-Out Cross-Validation (LOO-CV):
+
+  $$
+  ELPD_{LOO-CV} \defeq \sum_i \log \int p(y_i | \theta) p(\theta | y_{-i}) d\theta
+  $$
+
+- **Problem**: Need to train N models, one for every data point
+
+- **Solution**:
+  - Pareto-Smoothed Importance Sampling (PSIS) Leave-One-Out Cross-Validation
+    (LOO-CV) estimates without refitting for every point
+  - **Importance sampling**:
+    - Use full dataset to approximate posterior distribution when one
+      observation is left out
+    - Re-weight posterior samples based on importance
+  - **Pareto-smoothing**:
+    - Stabilize importance weights, reducing extreme weights' impact
+    - E.g., if an observation left out influences the posterior distribution
+    - Provide diagnostics to assess reliability of importance weights
+
+//* Predictive Accuracy with Arviz
+//- If the inference data has the log-likelihood group
+//  ```
+//  pm.sample(idata_kwargs="log_likelihood": True)
+//  ```
+//  metrics such as WAIC and LOO (with / without ELPD) can be automatically
+//  computed
+//
+//// TODO: Add pic
+//
+//- In the first section
+//  - The first row is ELPD
+//  - The second row is the effective number of parameters
+//- In the second section, there is the Pareto k diagnostic
+//  - Since all the values are between 0 and 0.7, the approximation can be trusted
+//
+//* Comparing Predictive Accuracy with Arviz
+//- In general the predictive accuracy metrics should be interpreted in relation
+//  to other models
+
+// TODO: Add pic about `az.compare` and explanation
+
+// ## 5.5, Model averaging
+
+// TODO(gp): Use 
+
+## Bayesian Model Selection and Ensemble
+
+//## 5.6, Bayes factors
+
+* Bayesian Model Selection
+- **Bayesian way to compare $k$ models**
+  - Calculate the evidence of each model $\Pr(Y | M_k)$, i.e., the probability of
+    observed data $Y$ given each model $M_k$
+
+- Fitting a model and model selections are the same process in Bayesian approach
+  - The VC framework considers fitting models and selecting models in the same
+    way
+  - In the frequentist approach there are different procedures
+
+- **Model fitting**
+  - Consider Bayes theorem for parameters $\theta$ and data $Y$, given model
+    $M_k$
+    $$
+    \Pr(\theta | Y, M_k)
+    = \frac{\Pr(Y | \theta, M_k) \Pr(\theta | M_k)}{\Pr(Y | M_k)}
+    $$
+
+  - Find parameters $\theta$ that maximize the ratio, independently of evidence
+    probability
+    $$
+    \argmax_{\theta} \Pr(\theta | y, M_k)
+    = \argmax_{\theta} \Pr(y|\theta, M_k) \Pr(\theta | M_k)
+    $$
+
+- **Model selection**
+  - To choose the best model among $M_1, ..., M_k$, pick the one that maximizes
+    $$
+    \argmax_k \Pr(M_k | y) \propto \Pr(y | M_k) \Pr(M_k)
+    $$
+
+* Model Averaging
+- What do you do when you have multiple models explaining the data?
+
+  1. **Model selection**
+     - Select one model
+     - Simple solution
+  2. **Report all models with their informations**
+     - E.g., standard errors, posterior predictive checks
+     - Express advantages and shortcomings of the models
+  3. **Average all the models**
+     - Build a meta-model using a weighted average of each model
+     - Weight prediction by the difference between information criteria (e.g.,
+       WAIC, LOO) of the models
+     - A hierarchical model is a continuous versions of multiple discrete models
+
+## Bayesian Hypothesis Testing
+
+* Bayes Factors
+- **Bayes factors** are ratio of two marginal likelihoods of the data under
+  competing model hypotheses $M_0$ and $M_1$
+  $$
+  BF = \frac{\Pr(y|M_0)}{\Pr(y|M_1)}
+  $$
+  where $BF > 1$ means model 0 explains data better than model 1
+
+\begingroup \scriptsize
+| **Bayes factor**   | **Support**  |
+|----------|----------|
+| 1-3         | Anecdotal |
+| 3-10     | Moderate         |
+| 10-30 | Strong |
+| 30-100 | Very strong |
+| >100 | Extreme |
+\endgroup
+
+- **Intuition**
+  - Act as a scale weighing evidence for one theory over another
+
+* Assumption of Bayes Factors
+- The assumption of Bayes factor is that the models have the same prior
+  probability
+- Otherwise we need to compute the "posterior odds" as "Bayes factors" x "prior
+  odds"
+
+  $$
+  \frac{\Pr(M_0 | y)}{\Pr(M_1 | y)}
+  = \frac{\Pr(y | M_0)}{\Pr(y | M_1)} \frac{\Pr(M_0)}{\Pr(M_1)}
+  = \text{Bayes factors} \times \text{prior odds}
+  $$
+
+* Bayes Factors: Pros and Cons
+- Looking at the definition of marginal likelihood (aka evidence):
+
+  $$
+  p(y) = \int_{\theta} p(y|\theta) p(\theta) d\theta
+  $$
+
+- Making the dependency of the model $M_k$ explicit
+
+  $$
+  p(y | M_k) = \int_{\theta_k} p(y|\theta_k, M_k) p(\theta_k, M_k) d\theta_k
+  $$
+
+- Pros
+  - Models with more parameters have a larger prior, so the Bayes factor has a
+    built-in Occam's Razor
+- Cons
+  - The marginal likelihood needs to be computed numerically over a large
+    dimensional space
+  - The marginal likelihood depends on the value of the prior
+    - Changing the prior might not affect the inference of $\theta$ but have a
+      direct effect on the marginal likelihood
+
+* Hierarchical Models: Candies in a Jar Examples
+- Each classroom has a jar filled with candies, each different but coming from
+  the same candy shop
+- Kids in each classroom need to guess the number of candies in each jar
+
+- Individual guesses
+  - Think of each jar as its own little puzzle
+  - E.g., guess based on how big the jar is, how filled it is
+  - Each jar has certain "parameters"
+- Group learning
+  - Consider what you learn from other jars since they come from the same candy
+    shop
+  - E.g., the shop prefers to use a certain type of candies, or fills the jar up
+    to a certain level
+  - The jars have certain "hyper-parameters"
+- Sharing info
+  - As you make more guesses, you start sharing what you have learned with your
+    friends about each jar
+  - The hierarchical model lets the info flow across models for individual jar
+
+* Computing Bayes Factors as Hierarchical Models
+- The computation of Bayes factors can be framed as a hierarchical model
+  - The high-level parameter is an index assigned to each model and sampled from
+    a categorical distribution
+- We perform inference of the competing models at the same time, using a
+  discrete variable jumping between models
+  - The proportion we use to sample each model is proportional to $\Pr(M_k | y)$
+- Then we compute the Bayes factors
+
+- The models can be different in the prior, in the likelihood, or both
+
+* Common Problems When Computing Bayes Factors
+
+1. If one model is better than the other, then we will spend more time sampling
+   from it
+   - Cons: under-sample one of the models
+2. Values of the parameters are updated, even when the parameters are not used
+   to fit that model
+   - E.g., when model 0 is chosen, the parameters in model 1 are updated, but
+     they are only restricted by the prior
+   - If the prior is too vague, the parameter values might be too far from
+     previous accepted values and the step is rejected
+   - TODO: ?
+
+- Solutions to improve sampling
+  - Force both models to be visited equally
+  - Use "pseudo priors"
+
+* Using Sequential Monte Carlo to Compute Bayes Factors
+- TODO
+
+### ############################################################################
+### Bayes Factors and Information Criteria
+### ############################################################################
+
+*
+- If we take the log of Bayes factors, we turn ratio of marginal likelihood into
+  a difference, which is similar to comparing differences in information criteria
+- We can interpret each marginal likelihood as having:
+  - a fitting term (i.e., how well the model fits the data)
+  - penalizing term (i.g., averaging over the prior)
+    - more parameters $\to$ more diffused the prior $\to$ greater penalty
+
+*
+- TODO
+
+//## 5.8, Regularizing priors
+
+## #############################################################################
+## Regularizing Priors
+## #############################################################################
+
+* Priors and Regularization
+- Using weakly/informative priors is a way of pushing a model to prevent
+  overfitting and generalize well
+- This is similar to the idea of "regularization"
+
+- Regularization
+  - Reduce information that a model can represent and reduce chances to capture
+    noise instead of signal
+  - E.g., penalize large values for the parameters in a model
+  - E.g., ridge and Lasso regression applies regularization to least square
+    method
+
+* Popular Regularization Methods in Bayesian Framework
+- Ridge regression
+  - Normal distribution for coefficients of linear model, pushing them toward
+    zero
+- Lasso regression
+  - MAP of posterior using Laplace priors for coefficients
+  - Because Laplace distribution looks like Gaussian with a sharp peak at zero,
+    it provides "variable selection" since it induces sparsity of model
+
+//// # 7, Mixture models
+//// ## 7.1, Understanding mixture models
+//
+//## #############################################################################
+//## Mixture Models
+//## #############################################################################
+//
+//* Mixture Models
+//- Mixture models are models that assume that data comes from a mixture of
+//  distributions or where the solution can be approximated as a mix of simpler
+//  distributions
+//
+//- Mixtures can model data from sub-populations
+//  - E.g., distribution of heights in adult human population, made of male and
+//    female
+//  - E.g., clustering of handwritten digits (e.g., 10 sub-populations)
+//
+//- Mixture models as statistical trick to handle complex distributions
+//  - E.g., mix of Gaussians to describe an arbitrary distribution
+//    - E.g., multimodal, skewed distributions
+//    - The number of distributions depends on the accuracy of the approximation
+//      and the details of the data
+//  - E.g., Kernel density estimation (KDE) is a (non-Bayesian) non-parametric
+//    estimation technique
+//    - Place a Gaussian with a fixed variance on top of each data points
+//    - Use the sums of all the individual Gaussians to approximate the empirical
+//      distribution of the data
+//
+////## 7.2, Finite mixture models
+//
+//* Finite Mixture Models
+//- = the PDF of the observed data is a weighted sum of the PDFs of $K$ subgroups
+//
+//  $$
+//  p(y) = \sum_{i=1}^K w_i p(y | theta_i)
+//  $$
+//
+//  where:
+//  - $K$ is finite
+//  - $w_i \in [0, 1]$ (it's like the probability of component $i$)
+//  - $\sum_i w_i = 1$
+//  - $p(y | \theta_i)$ are simpler distributions (e.g., Gaussian or Poisson)
+//
+//* Conceptual Solution of a Mixture Model
+//- The assumption of a mixture model is that the data is generated by $K$
+//  underlying distributions / components
+//  - In other words, each data point is assumed to come from one of the
+//    components, but we don't know which
+//
+//- The goal is to determine which component of the model $k$ the data point $x$
+//  most likely belongs to
+//  - For each point $x$, assign probabilities of belonging to one of the $K$
+//    components $\Pr(k | x)$
+//  - This is modeled as a random variable, which is called "latent variable"
+//    since it can't be observed
+//  - E.g., for two components ($K = 2$) we use a Bernoulli, using a Beta
+//    distribution as prior (since it is conjugate prior for Bernoulli)
+//  - E.g., for $K$ outcomes we can use as prior
+//    - A Categorial distribution to generalize the Bernoulli
+//    - A Dirichlet distribution to generalize the Beta distribution
+//
+//- One can estimate the likelihood of the observed data based on:
+//  - Parameters of the individual components
+//  - Probabilities that a given data point belongs to each component
+//
+//* Categorical Distribution
+//- Discrete distribution representing "rolling a $K$-sided unfair die" or
+//  "choosing a random card from a deck of cards"
+//  - It generalizes a Bernoulli distribution $K = 2$
+//- It is parametrized with probabilities for each possible outcome
+//  $(p_1, p_2, ..., p_K)$, where $p_i$ is the probability of outcome $i$
+//
+//* Dirichlet Distribution
+//- Defined in a simplex which is a generalization of a triangle in
+//  $K$-dimensions, where $K$ vectors elements are in $[0, 1]$ and sum to $1$
+//  - A 1d simplex is an interval
+//  - A 2d simplex is a triangle
+//  - A 3d simplex is a tetrahedron
+//  - ...
+//
+//- Dirichlet distribution generalizes the Beta distribution
+//  - Beta models the probability of a single proportion (e.g., the probability of
+//    success in a Bernoulli trial)
+//  - Beta models 2 outcomes, one with probability $p$ and the other with $1-p$
+//  - It uses two parameters to describe its shape
+//
+//- The Dirichlet distribution models the probability of $K$ outcomes
+//  - It represents the uncertainty over the proportions of different outcomes in
+//    a multinomial experiment
+//
+//// TODO: Show distribution
+//
+//* Dirichlet Distribution: Examples
+//- Bucket of colored balls
+//  - You have a bucket of colored balls, each ball comes in 3 colors
+//  - You want to figure out the probability of picking a ball of each color
+//  - You are uncertain about the probability and you model that uncertainty
+//
+//- You want to divide a pie into 4 different slices
+//  - You want to model the size of the slices (making sure they split the entire
+//    pie), modeling the uncertainty
+//
+//* Re-Parametrization Using Marginalization
+//- Consider a mixture model that include latent variables representing the
+//  component from which each observation is drawn
+//- Performing posterior sampling on these models is inefficient for several
+//  reasons:
+//  - Discrete variables introduce discontinuities
+//  - Latent variable introduces dependencies
+//
+//- A solution is "marginalization"
+//  - Removing the latent variable by integrating out from the model
+//  - The observations are directly modeled from a mixture distribution
+//  - This makes sampling more efficient
+//  - The problem is that the model becomes more complex mathematically
+//  - `pymc` has distributions (e.g., `NormalMixture`) where the latent variable
+//    is already marginalized
+//
+//// ## 7.3, The non-identifiability of mixture models
+//
+//* Non-Identifiability of Parameters
+//- Parameters in a model are "not identifiable" when one or more parameters
+//  cannot be uniquely determined
+//
+//- In practice multiple model fits give different parameters corresponding to the
+//  same model
+//  - E.g., given a bimodal distribution sum of two Gaussians, solving the same
+//    model can switch the value of the means (aka "label switching problem")
+//  - E.g., variables with high-correlation in linear models
+//
+//- Solutions
+//  - Arrange the means of the components to be in increasing order
+//    - E.g., in `pymc` add a "potential" to the likelihood (which doesn't depend
+//      on the data) so that a constraint is not violated
+//  - Use informative priors to guide a model towards a canonical representation
+//
+//// ### How to choose K
+//
+//* How to Choose K
+//- How to decide the number of components $K$ in a finite mixture model?
+//
+//- Solution
+//  - Start with a small number of components $K$
+//  - Increase $K$ to improve the model-fit evaluation
+//  - Use model selection techniques to find best trade-off
+//    - E.g., using posterior-predictive checks, WAIC, LOO, or domain expertise
+
+// TODO: Add plots
+//
+//## #############################################################################
+//## 7.5, Zero-Inflated and Hurdle Models
+//## #############################################################################
+//
+//*
+//- When counting things, it is possible to get a count of zero
+//
+//- Problem: some models (e.g., Poisson, Negative Binomial distribution) can
+//  generate fewer zeros compared to the data
+//
+//- Solutions
+//1. We can improve the model (e.g., use a better model, non-parametric one)
+//2. We can assume we have a mixture model, with one model for the zero element and
+//   one model giving non-zero elements, aka "Zero-inflated distributions"
+//   - Family of distributions allowing for "extra" zeros, e.g.,
+//     - zero-inflated Poisson
+//     - zero-inflated Negative Binomial
+//     - zero-inflated Binomial
+//
+//* Hurdle Models
+//- A Bernoulli model determines if the count variable is zero or a different
+//  distribution truncated at 0, i.e., which doesn't assume the value 0
+//
+//- E.g., hurdle Poisson, NegativeBinomial, Gamma, LogNormal
+//
+//* Zero-Inflated vs Hurdle Models
+//- Zero-inflated models are a mixture of zeros and a distribution of zeros and
+//  non-zeros
+//  - The probability $\Pr(x = 0)$ can only be larger than the base distribution,
+//    i.e., the probability of zero is "inflated"
+//- Hurdle models are a mixture of zeros and non-zeros
+//  - The probability $\Pr(x = 0)$ is independent of the base distribution
+//
+//* Hanging root-ograms
+//- Useful for treating issues such as over-dispersion and/or excess zeros in count
+//  data models
+//1) Plot the square root of observed and predicted values
+//   - It makes it simper to adjust for scale differences
+//2) Bars of observed data are hanging from the expected values
+//   - It makes it simple to see if it's a good fit or not by comparing the bottom
+//     of the values to a base
+//
+//## #############################################################################
+//## 7.6, Mixture Models and Clustering
+//## #############################################################################
+//
+//* Clustering
+//- Goal: group objects so that the objects in a given group (aka cluster) are
+//  "closer" to each other than to those in the other groups
+//  - Degree of closeness is computed using a distance (e.g., Euclidean distance)
+//
+//- Clustering is an unsupervised learning task
+//  - Similar to classification but without knowing the correct labels
+//
+//* Soft- vs Hard- Clustering
+//- Soft-clustering computes the probability of each data point belonging to each
+//  cluster
+//- Hard-clustering assigns each point to a single cluster
+//
+//- One can turn soft-clustering into hard- by assigning each data point to the
+//  cluster with the highest probability
+//  - E.g., assigning points to the cluster with highest probability
+//  - E.g., using a threshold for probability of 0.5 (as in classification for
+//    logistic regression)
+//
+//* Probabilistic Clustering
+//- Aka "model-based clustering"
+//- = clustering using probabilistic model, i.e., compute the probability of each
+//  point belonging to one of the customers
+//- E.g., we assume that data is generated by a mixture models
+//
+//## #############################################################################
+//## 7.7, Non-Finite Mixture Models
+//## #############################################################################
+//
+//* How Many Mixture Models to Use?
+//- For some problems, it is easy to choose the number of mixtures to use, since
+//  we know how many groups there are in the data
+//  - E.g., when clustering handwritten digits we know there are 10 groups
+//
+//- For other problems, we can't choose the number of groups a priori and we want
+//  it to estimate from the data
+//  - E.g., Dirichlet process
+//
+//* Parametric vs Non-Parametric Models
+//- Parametric models have a fixed number of parameters
+//- Non-parametric models have (theoretically) an infinite number of parameters
+//  - Very flexible
+//  - The data decides how many parameters are needed
+//  - E.g., Gaussian process (GP), Bayesian Additive Regression Trees (BART),
+//    Dirichlet process (DP)
+//
+//* Dirichlet Process
+//- Dirichlet distribution is the $n$-dimensional generalization of beta
+//  distribution
+//- Dirichlet process (DP) is the infinite-dimensional generalization of the
+//  Dirichlet distribution
+//  - A draw from a DP is actually a (discrete) Dirichlet distribution
+//
+//- A DP has:
+//  - A base distribution $\mathcal{H}$ (e.g., Gaussian, Poisson, Laplace)
+//  - $\alpha$ a concentration parameter
+//    - Increasing $\alpha$ means less and less concentrated realization
+//    - For $\alpha \to \infty$ the realization of a DP are equal to the base
+//      distribution
+//
+//* Categorical Distribution
+//- The categorical distribution (the most general discrete distribution) is
+//  parameterized specifying the probabilities of each possible outcome
+//- It is specified by:
+//  - Indicating the positions on the x axis and the height on the y axis
+//  - $x$ positions are integers
+//  - $y$ heights must sum to 1
+//
+//- A generalization of this is to have $x$ sampled from $\mathcal{H}$
+//  - $\mathcal{H}$ to be a Gaussian, so $x$ are on the real line
+//  - $\mathcal{H}$ to be a Beta, so $x$ are in [0, 1]
+//  - $\mathcal{H}$ to be a Poisson, so $x$ are non-negative integers 0, 1, 2, ...
+//
+//* Stick-Breaking Process
+//- = process to generate values on the y axis so that the sum is 1
+//- You start with a stick of length 1
+//- Break it into two parts (not necessarily equal)
+//  - Use the "concentration parameter" $\alpha$ to control the size of the break
+//- Save the first part
+//- Pick the second part and break it again
+//- Repeat until you get $K$ values
+//
+//* Dirichlet Process Using Stick-Breaking
+//- The locations are sampled from the base distribution
+//- The weights are controlled by $\alpha$
+//- As $\alpha \to \infty$ the DP distribution approximates the base distribution
+//
+//* Infinite Mixture Model
+//- We can place a Gaussian on each data point and weight from a Dirichlet process
+//- The same approach can be use for Laplace distribution
+//
+//## #############################################################################
+//## 7.8, Continuous Mixtures
+//## #############################################################################
+//
+//// 8, Gaussian processes
+//// 9, Bayesian additive regression
+//
+//# ##############################################################################
+//# Inference Engines
+//# ##############################################################################
+//
+//// 10, Inference engines
+//// AIMA 13.4
+//
+//## #############################################################################
+//## 10.1, Inference Engines
+//## #############################################################################
+//
+//* Inference Engines as Black
+//- Bayesian methods are numerically challenging
+//  - Intractable / computationally intractable integral to solve
+//
+//- Probabilistic programming separates:
+//  1. Model building
+//  - Users should not care how sampling is carried out
+//  2. Inference process (can be a black box, leave PyMC to handle computation)
+//
+//- Understanding how the posterior is sampled can help understand how different
+//  methods can fail
+//  - E.g., diagnose samples

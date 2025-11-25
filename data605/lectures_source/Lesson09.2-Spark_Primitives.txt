@@ -1,0 +1,361 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+// 
+// 
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{9.1: Apache Spark: Primitives}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+- **References**:
+  - Concepts in the slides
+  - Academic paper
+    - "Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing", 2012
+  - Mastery
+    - "Learning Spark: Lightning-Fast Data Analytics" (2nd Edition)
+    - Not my favorite, but free here
+::::
+:::: {.column width=20%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_2_image_1.png){width=2cm}
+::::
+:::
+
+* Transformations vs Actions
+::: columns
+:::: {.column width=40%}
+- Transform a Spark RDD into a new RDD without modifying the input data
+  - Immutability like in functional programming
+  - E.g., `select(), filter(), join(), orderBy()`
+
+::::
+:::: {.column width=60%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_16_image_1.png)
+::::
+:::
+
+- Transformations are evaluated lazily
+  - Inspect computation and decide how to optimize it
+  - E.g., joining, pipeline operations, breaking into stages
+
+- Results are recorded as "lineage"
+  - A sequence of stages that can be rearranged, optimized without changing results
+
+- **Actions**
+- An action triggers the evaluation of a computation
+  - E.g., `show(), take(), count(), collect(), save()`
+
+* Spark Example: MapReduce in 1 or 4 Line
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_17_image_1.png){width=80%}
+_MapReduce in 4 lines_
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_17_image_2.png){width=80%}
+_MapReduce in 1 line (show-off version)_
+
+* Same Code in Java Hadoop
+::: columns
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_18_image_1.png)
+::::
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_18_image_2.png)
+::::
+:::
+
+* Spark Example: Logistic Regression in MapReduce
+::: columns
+:::: {.column width=60%}
+- Logistic Regression [ref](https://spark.apache.org/docs/latest/quick-start.html)
+  \footnotesize
+  ```python
+  # Load points
+  points = spark.textFile(...).map(parsePoint).cache()
+
+  # Initial separating plane
+  w = numpy.random.ranf(size=D)
+
+  # Until convergence
+  for i in range(ITERATIONS):
+      # Parallel loop over the samples i=1...m
+      gradient = points.map(
+          lambda p: (1 / (1 + exp(-p.y*(w.dot(p.x)))) - 1) * p.y * p.x
+      ).reduce(lambda a, b: a + b)
+      w -= alpha * gradient
+
+  print("Final separating plane: %s" % w)
+  ```
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_19_image_1.png)
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_19_image_2.png)
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_19_image_3.png)
+::::
+:::
+
+* Spark Transformations: 1 / 3
+- `map(func)`
+  - Return new RDD passing each element through `func()`
+
+- `flatmap(func)`
+  - Map each input item to 0 or more output items
+  - `func()` returns a sequence
+
+- `filter(func)`
+  - Return new RDD selecting elements where `func()` returns true
+
+- `union(otherDataset)`
+  - Return new RDD with union of elements in source dataset and argument
+
+- `intersection(otherDataset)`
+  - Return new RDD with intersection of elements in source dataset and argument
+
+https://spark.apache.org/docs/latest/rdd-programming-guide.html
+
+* Spark Transformations: 2 / 3
+- `distinct([numTasks])`
+  - Return new RDD with distinct elements of source dataset
+
+- `join(otherDataset, [numTasks])`
+  - On RDDs `(K, V)` and `(K, W)`, return dataset of `(K, (V, W))` pairs for
+    each key
+  - Support outer joins: `leftOuterJoin`, `rightOuterJoin`, `fullOuterJoin`
+
+- `cogroup(otherDataset, [numPartitions])`
+  - Aka `groupWith()`
+  - Like join but return dataset of `(K, (Iterable<V>, Iterable<W>))` tuples
+
+* Spark Transformations: 3 / 3
+- `groupByKey([numPartitions])`
+  - On RDD of `(K, V)` pairs, returns `(K, Iterable<V>)` pairs
+  - For aggregation (e.g., sum, average), use `reduceByKey` for better
+    performance
+    - Process data in place instead of iterators
+  - Output parallelism depends on parent RDD partitions
+    - Use `numPartitions` to set tasks
+
+- `reduceByKey(func, [numPartitions])`
+  - On RDD of `(K, V)` pairs, returns `(K, f(V_1, ..., V_n))` pairs with values
+    aggregated by `func()`
+  - `func(): (V, V)` $\to$ `V`
+  - Shuffle + Reduce from MapReduce
+  - Configure reduce tasks with `numPartitions`
+
+- `sortByKey([ascending], [numPartitions])`
+  - Returns `(K, V)` pairs sorted by keys in ascending or descending order
+
+* Spark Actions
+- `reduce(func)`
+  - Aggregate dataset elements using `func()`
+  - `func()` takes two arguments, returns one
+  - `func()` must be commutative and associative for parallel computation
+
+- `collect()`
+  - Return dataset elements as an array
+  - Useful after operations returning a small data subset (e.g., `filter()`)
+
+- `count()`
+  - Return number of elements in the dataset
+
+- `take(n)`
+  - Return array with first `n` dataset elements
+  - `.collect()[:n]` differs from `.take(n)`
+
+https://spark.apache.org/docs/latest/rdd-programming-guide.html
+
+* Spark: Fault-tolerance
+::: columns 
+:::: {.column width=50%}
+- Spark uses _immutability_ and _lineage_ for fault tolerance
+
+- In case of failure:
+  - Reproduce RDD by replaying lineage
+  - No need for checkpoints
+  - Keep data in memory to boost performance
+
+- Fault-tolerance is free!
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_24_image_1.png)
+::::
+:::
+
+
+* Spark: RDD Persistence
+::: columns
+:::: {.column width=60%}
+- **User explicitly persists (aka cache) an RDD**
+  - Call `persist()`, `unpersist()` on RDD
+  - Cache if RDD is expensive to compute
+    - E.g., filtering large data
+  - When you persist an RDD, each node:
+    - Stores (in memory or disk) partitions of the RDD
+    - Reuses cached partitions on derived datasets
+
+- **Cache**
+  - Makes future actions faster (often >10x)
+  - Managed by Spark with LRU policy + garbage collector
+
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_25_image_1.png)
+::::
+:::
+
+- **User can choose storage level**
+  - `MEMORY_ONLY` (default)
+  - `DISK_ONLY` (e.g., Python Pickle)
+  - `MEMORY_AND_DISK`
+    - If RDD doesn't fit in memory, store on disk
+  - `MEMORY_AND_DISK_2`
+    - Same as above, replicate each partition on two nodes
+  - Caching on disk can be more expensive than not caching
+  - Caching everything is often a bad idea
+
+* Spark: RDD Persistence and Fault-tolerance
+::: columns
+:::: {.column width=60%}
+- Spark handles persistence and fault-tolerance similarly
+
+- **Caching/Persistence**
+  - Cache RDD (in memory or on disk) instead of recomputing
+
+- **Fault-tolerance**
+  - If any partition of an RDD is lost
+    - Automatically recompute RDD using transformations that generated it
+    - Based on immutability and lineage
+
+- **Caching is fault-tolerant!**
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_26_image_1.png)
+::::
+:::
+
+* Spark Shuffle
+::: columns
+:::: {.column width=60%}
+- E.g., **reduceByKey()**
+  - _Definition_: Combine values `[v1, ..., vn]` for key `k` into `(k, v)` where
+    `v = reduce(v1, ..., vn)`
+  - _Problem_: Values for a key must be on the same partition/machine
+  - _Solution_: Shuffle data across machines
+
+- Certain Spark operations trigger a data shuffle
+  - E.g., `reduceByKey()`, `groupByKey()`, join, repartition, transpose
+
+- **Data shuffle** = Re-distribute data across partitions/machines
+
+- **Data shuffle is expensive** due to:
+  - Data serialization (pickle)
+  - Disk I/O (save to disk)
+  - Network I/O (copy across Executors)
+  - Deserialization and memory allocation
+
+- **Spark schedules general task graphs**
+  - Automatic function pipelining
+  - Data locality aware
+  - Partitioning aware to avoid shuffles
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_27_image_1.png)
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_27_image_2.png)
+::::
+:::
+
+* Broadcast Variables
+- **Problem**
+  - Ship common variables to nodes with code
+  - Broadcasting involves serialization, network transfer, de-serialization
+  - Sending large, constant data repeatedly is costly
+
+- **Solution**
+  - Cache read-only variables on each node, avoid task copies
+
+  ```python
+  # `var` is large variable.
+  var = list(range(1, int(1e6)))
+  # Create a broadcast variable.
+  broadcast_var = sc.broadcast(var)
+  # Do not modify `var`, but use `broadcast_var.value` instead of `var`.
+  ```
+
+* Accumulators
+- **Accumulator** = variable "added to" through associative, commutative
+  operations
+  - Efficient in parallel execution (e.g., MapReduce)
+
+- Spark supports Accumulators with numerical types (e.g., integers)
+  - Define Accumulators for different types
+
+  ```python
+  >>> accum = sc.accumulator(0) 
+  >>> accum 
+  Accumulator<id=0, value=0> 
+  >>> sc.parallelize([1, 2, 3, 4]).foreach(lambda x: accum.add(x)) 
+  >>> accum.value 
+  10
+  ```
+- Each node computes value to add to Accumulator
+- Usual semantic:
+  - Accumulators use logic of transformations (lazy evaluation) and actions
+  ```python
+  accum = sc.accumulator(0)
+  def g(x):
+    accum.add(x)
+    return f(x)
+  data.map(g)
+  # Here, accum is still 0 because no actions have caused the `map` to be computed.
+  ```
+
+* Gray Sort Competition
+\begingroup \scriptsize
+|       | **Hadoop MR Record** | **Spark Record (2014)** |
+|---------|-------------------|-----------------------|
+| Data Size | 102.5 TB        | 100 TB              |
+| Elapsed Time | 72 mins          | 23 mins               |
+| # Nodes | 2100             | 206                  |
+| # Cores | 50400 physical    | 6592 virtualized      |
+| Cluster disk throughput | 3150 GB/s        | 618 GB/s              |
+| Network | dedicated data center, 10Gbps | virtualized (EC2) 10Gbps network |
+| Sort rate | 1.42 TB/min        | 4.27 TB/min             |
+| Sort rate/node | 0.67 GB/min        | 20.7 GB/min             |
+\endgroup
+
+- Sort benchmark, Daytona Gray: sort of 100 TB of data (1 trillion records)
+  - Spark-based System 3x faster with 1/10 number of nodes
+
+- [Ref](http://databricks.com/blog/2014/11/05/spark-officially-sets-a-new-record-in-large-scale-sorting.html)
+
+
+* Spark vs Hadoop MapReduce
+- **Performance**: Spark faster with caveats
+  - Processes data in-memory
+  - Outperforms MapReduce, needs lots of memory
+  - Hadoop MapReduce persists to disk after actions
+
+- **Ease of use**: Spark easier to program
+
+- **Data processing**: Spark more general
+
+"Spark vs. Hadoop MapReduce", Saggi Neumann, 2014
+https://www.xplenty.com/blog/2014/11/apache-spark-vs-hadoop-mapreduce/

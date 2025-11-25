@@ -1,0 +1,743 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+//
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{11.2: AWS Overview}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+- **References**:
+  - Some basic info in the slides
+  - Many tutorials on-line
+  - Mastery
+    - Amazon Web Services in Action 3rd Edition
+::::
+:::: {.column width=20%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_2_image_1.png)
+::::
+:::
+
+* Amazon Web Services (AWS)
+- **AWS is a platform offering complete cloud solutions**
+  - Computing (e.g., EC2)
+  - Storing (e.g., S3)
+  - Networking
+
+- **Offers different levels of abstractions**
+  - IAAS, PAAS, SAAS
+  - From virtual hardware to applications, e.g.,
+    - Host websites
+    - Run enterprise software
+    - Run machine learning applications
+
+- **Control services in different ways**
+  - Web interface (console)
+  - CLI: `aws` command
+  - Programmatically
+    - Language libraries, SDK (e.g., Python `boto3`)
+
+* AWS as Business
+::: columns
+:::: {.column width=50%}
+- Services charge pay-per-use pricing model
+
+- Data centers distributed globally
+  - US, Europe, Asia, South America
+
+- 500 new services and features annually
+
+- Insanely profitable
+  - $91B/year in revenue (2023)
+  - Grows 42% year-over-year
+  - Controls 30% of cloud business
+
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_4_image_1.png)
+
+_Beef Jezos_
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_4_image_2.png)
+::::
+:::
+
+* Types of Cloud Computing
+- Cloud computing enables a shared pool of configurable computing resources
+  - E.g., servers, storage, networks, applications, services
+  - Accessible from anywhere
+  - Convenient
+  - On-demand
+
+- Clouds can be:
+  - _Public_: open to general public (e.g., AWS)
+  - _Private_: virtualize and share IT infrastructure within one organization
+    (e.g., government)
+  - _Hybrid_: mix of public and private clouds
+
+* AWS vs Google Cloud vs Microsoft Azure
+::: columns
+:::: {.column width=60%}
+- **Similarities:**
+  - Worldwide infrastructure
+  - Provide IAAS (computing, networking, storage)
+    - AWS EC2 / Google Compute Engine / Azure VMs
+    - AWS S3 / Google Cloud Storage / Azure Blob storage
+  - Pay-as-you-go pricing model
+
+- **Differences:**
+  - AWS
+    - Market leader, mature, powerful
+    - Utilizes open source technologies
+  - Azure offers Microsoft stack in the cloud
+  - Google focuses on cloud-native applications
+
+::::
+:::: {.column width=35%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_2.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_3.png)
+::::
+:::
+
+* From On-premise to AWS
+- **Aka "Cloud-transformation"**
+
+- **Move a medium-sized e-commerce site from on-premise to the cloud**
+
+- **Architecture**
+  - _Web-server_: handle customer requests
+  - _DB_: store product info and orders
+  - _Static content_ (e.g., JPEG image)
+    - Delivered over CDN
+    - Reduce load on services
+  - _Dynamic content_ (e.g., HTML pages)
+    - E.g., products and prices
+    - Delivered by web server
+
+* From On-premise to AWS
+- **Step 1: Move to cloud**
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_8_image_1.png)
+
+* From On-premise to AWS
+::: columns
+:::: {.column width=40%}
+- **Step 2: Design for the cloud**
+  - DNS
+  - Database
+  - Object store (S3)
+  - Managed solutions
+  - Use multiple smaller virtual services with load balancer to increase
+    reliability
+
+::::
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_9_image_1.png)
+::::
+:::
+
+* Low-Cost Batch Processing
+- Lots of batch jobs run on a schedule
+  - Analyze data daily
+  - Generate reports from a DB
+
+- Buy/allocate machine normally
+
+- AWS bills VMs per minute
+  - Pay only when running jobs
+
+- AWS Batch
+  - Offers spare capacity at a discount
+  - Run when capacity is available, saving 50%
+
+- AWS Lambda
+  - Serverless
+
+* Capacity Scaling
+::: columns
+:::: {.column width=60%}
+- **No need to plan for capacity**
+  - No need to predict capacity
+  - Schedule capacity on-the-fly
+  - No concern for rackspace, switches, power supplies
+  - Add more VMs (1 to 1000) and storage (GB to PB) as needed
+
+- **Handle seasonal traffic by scaling up/down**
+  - Day vs night
+  - Weekday vs weekend
+  - Holiday
+  - No test system needed when team is off
+
+- **Worldwide presence**
+  - AWS has many data centers
+  - Deploy applications close to customers
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_11_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_11_image_2.png)
+::::
+:::
+
+* Pay-per-use
+::: columns
+:::: {.column width=60%}
+- **AWS bill**
+  - Similar to an electric bill
+  - Services billed based on usage:
+    - Hours of virtual server (rounded up)
+    - Used storage in GB (allocated or real)
+    - Data traffic in GB or requests
+
+- Free tier
+  - Use some AWS services free for 12 months after signing up
+  - Experience services (e.g., EC2, S3)
+  - Exceed limits, start paying (without notice)
+    - Set an alarm!
+::::
+:::: {.column width=35%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_12_image_1.png)
+::::
+:::
+
+* Pay-per-use
+::: columns
+:::: {.column width=60%}
+- **Advantages**
+  - No upfront investments or commitment
+  - Lower project startup cost
+  - Easier to divide system into smaller parts
+    - One big server or two smaller ones cost the same
+  - Affordable fault tolerance/high performance
+    - For scalable workload, buy 1 server for 1000 hours = buy 1000 servers for
+      1 hour
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_13_image_1.png)
+
+::::
+:::
+
+* Interacting with AWS
+::: columns
+:::: {.column width=60%}
+- **AWS internal API allows to interact with services**
+
+- **GUI (Management Console)**
+  - Start interacting with services easily
+  - Set up cloud infrastructure for development and testing
+
+- **Command-line tool (CLI)**
+  - Manage and access AWS services
+  - Automate recurring tasks
+
+- **SDKs**
+  - Use libraries in any language to interact with AWS
+  - Integrate applications with AWS
+  - E.g., `boto3` for Python
+
+- **Blueprints**
+  - Describe your system with all services and dependencies
+  - Describe the system, not how to build it
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_2.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_3.png)
+::::
+:::
+
+* Accounts and Users
+::: columns
+:::: {.column width=55%}
+- **Users**
+  - One root AWS account
+  - Attach multiple users to an account
+    - Different privileges
+    - Isolate workloads
+
+- **Be safe**
+  - Never use root account to develop
+  - Always use 2FA
+  - Avoid costly mistakes
+
+- **Key pair**
+  - Create a key pair to access a virtual server
+  - Public key (in AWS and on virtual servers)
+  - Private key is your secret
+    - Don't lose it; can't retrieve it
+
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_15_image_1.png)
+::::
+:::
+
+* AWS VMs
+::: columns
+:::: {.column width=55%}
+- With virtualization, multiple VMs run on the same hardware
+  - Start and stop VMs on-demand
+
+- Physical server
+  - Aka "host machine", "bare metal"
+  - Consists of CPUs, memory, networking interfaces, storage
+
+- Hypervisor (software + CPU hardware)
+  - Isolates guests
+  - Schedules hardware requests
+
+- Virtual servers (aka "guests") are isolated on the same hardware
+
+- AWS
+  - Used Xen hypervisor (open-source)
+  - Switched to AWS Nitro, hardware-assisted virtualization
+    - Performance close to bare metal
+
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_16_image_1.png)
+::::
+:::
+
+* Starting an EC2 Instance
+::: columns
+:::: {.column width=45%}
+- **Select region**
+  - E.g., `us-east-1`
+  - Where is it?
+    - 21155 Smith Switch Road, Ashburn, VA, USA
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_2.png)
+
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_3.png)
+::::
+:::
+
+* Starting an EC2 Instance
+::: columns
+:::: {.column width=45%}
+- **Select OS**
+  - Amazon Machine Image (AMI)
+  - Contains OS + pre-installed software
+  - Saves time installing OS, packages, software
+
+- **Choose instance parameters**
+  - E.g., `t2.micro`
+  - More info later
+
+- **Configure instance**
+  - Network, shutdown behavior, termination protection, monitoring
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_2.png)
+
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_3.png)
+::::
+:::
+
+* AWS Instance Type
+::: columns
+:::: {.column width=50%}
+- An "instance type" describes computing power
+
+- https://aws.amazon.com/ec2/instance-types
+
+- Instance family
+  - `T`: cheap, baseline
+  - `M`: general purpose
+  - `C`: compute optimized
+  - `R`: memory optimized
+  - `D`: storage optimized for HDD
+  - `I`: storage optimized for SSD
+  - `F`: with FPGAs
+  - `P, G, CG`: with GPUs
+
+- E.g., `t2.micro`
+  - `t`: instance family (small, cheap)
+  - `2`: generation (second)
+  - `micro`: size (1 vCPU, 1GB memory)
+  - 0.013 USD/hr
+
+- E.g., `m4.large`
+  - `m`: general purpose
+  - `large`: size (2 vCPUs, 8GB memory)
+  - 0.14 USD/hr
+
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_19_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_19_image_2.png)
+::::
+:::
+
+* AWS Instance Type
+- Price on AWS website is somehow unclear (duh really?)
+  - Burst mode
+  - vCPUs
+  - Multi-tenancy
+  - On-demand vs spot vs reserved vs pre-paid
+  - 642 types of machines (as of 2023)
+  - From 37 USD / yr to 1.91M USD / yr (500 CPUs and 24TB of mem)
+- Alternative sites: https://instances.vantage.sh
+
+* Starting an EC2 Instance
+::: columns
+:::: {.column width=50%}
+- Add storage
+  - Volume size
+  - Volume type (SSD or magnetic HDDs)
+- Tag
+- Configure firewall
+  - How to access using SSH
+  - Select key-pair
+- How to monitor the instance
+  - E.g. CloudWatch
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_21_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_21_image_2.png)
+::::
+:::
+
+* Starting an EC2 Instance
+::: columns
+:::: {.column width=50%}
+- Start instance
+- Find public IP
+- Connect to the machine
+  ```bash
+  > ssh -i $PATH/mykey.pem ubuntu@$PUBLIC_UP
+  > cat /proc/cpuinfo
+  > free -m
+  > sudo apt-get update
+  > sudo apt-get install ...
+  ```
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_22_image_1.png)
+::::
+:::
+
+* States of a VM
+::: columns
+:::: {.column width=50%}
+- **Start**
+  - Start a stopped VM
+
+- **Stop**
+  - Stopped VM not billed
+  - Attached resources (e.g., network HDD) persist and incur charges
+  - Data storage (local disk) does _not_ persist
+  - VM can restart later on a different host (different IP)
+
+- **Reboot**
+  - Attached resources persist
+  - Data storage does _not_ persist
+  - Software remains installed after reboot
+  - VM restarts on a different host
+
+- **Terminate**
+  - Means delete: cannot restart
+  - Data storage wiped out
+  - Attached volumes persist
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_23_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_23_image_2.png)
+::::
+:::
+
+* Moving / Upgrading EC2 Instances
+- **Scale up / down**
+  - Increase VM size for more computing power
+  - Stop VM
+  - Change instance type (e.g., `m3.large`)
+  - Start VM
+  - IP addresses change
+
+- **AWS regions**
+  - Regions are collections of data centers
+  - Regions are independent
+  - No data transfer across regions
+  - Some services (e.g., IAM, CDN, DNS) are global
+
+- **Why move across AWS regions**
+  - Proximity to users
+  - Compliance
+    - Data storage and processing permissions
+  - Service availability
+    - Some services unavailable in certain regions
+  - Redundancy
+  - Costs
+    - Vary by region
+
+- **Often use Elastic IP for fixed public IP**
+
+* Optimizing Costs
+- **On-demand instances**
+  - Maximum flexibility, no restrictions
+  - Start and stop VMs anytime
+  - Pay by hour
+
+- **EC2 / Compute saving plans**
+  - 1 yr vs 3 yrs
+  - Commit to a certain number of hours
+  - Payment options: all, partial, no upfront
+  - Discount: up to 3x cheaper than on-demand
+  - Useful for dev servers
+
+- **Capacity reservation**
+  - Access machines even in peak hours
+
+- **Spot instances**
+  - Bid for unused capacity
+  - Price based on supply/demand
+  - Discount: up to 10x cheaper than on-demand
+  - Useful for asynchronous tasks
+
+* Programming the Infrastructure
+::: columns
+:::: {.column width=70%}
+- On AWS _everything_ can be controlled via an API over HTTPS
+  - Start a VM
+  - Create 1TB of storage
+  - Start Hadoop cluster
+
+- Jeff Bezos 2002 API mandate
+  - An email worth $100B/yr
+  - HackerNews
+  - An eye-witness from Google about it
+
+- You can use:
+  - AWS console
+  - HTTP requests to the API
+  - CLI (Command Line Interface)
+    - Call AWS API from your terminal
+  - SDK (Software Development Kit)
+    - Call AWS API from your code
+  - CloudFormation: templates describe infrastructure state, translated into API
+    calls
+
+::::
+:::: {.column width=30%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_26_image_1.png)
+
+**Jeff Bezos 2002 API mandate**
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_26_image_2.png)
+::::
+:::
+
+* Infrastructure-As-Code
+- **Use high-level programming language to control IT systems**
+
+- Apply software development to infra
+  - Code repository
+  - Automated tests
+  - Continuous integration
+
+- **DevOps (SRE in Google parlance)**
+  - Mix devs and ops in the same team
+  - Use software to bring development and operations closer
+  - Switch roles to experience each other's pain
+    - Devs -> responsible for operational tasks (e.g., on-call)
+    - Ops -> involved in software development, making system easier to operate
+  - Foster communication and collaboration
+
+* Infrastructure-as-Code: Advantages
+- **Save time**
+  - Reuse scripts or blueprints
+  - Automate regular tasks
+  - Copy-paste vs click-click-click
+
+- **Fewer mistakes**
+  - Push button flow
+
+- **Consistency of actions**
+  - Multiple deploys per day
+
+- **Deployment pipeline**
+  - Commit changes to source code
+  - Build application from source
+  - Automatic tests (e.g., integration tests)
+  - Build testing environment
+  - Run acceptance tests in isolation
+  - Propagate changes to production
+  - Monitor production
+
+- **The script is detailed documentation**
+  - Explains what and how, not why (not a design document)
+
+* Create User Account
+::: columns
+:::: {.column width=45%}
+- Avoid using AWS root account for development
+
+- Create a new user
+  - IAM: Identity and Access Management
+
+- Access key ID + secret access key
+
+- Access control
+  - Enable programmatic access
+  - Enable console access
+  - Limit user actions through policies
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_3.png)
+
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_2.png)
+
+_Bad idea!_
+::::
+:::
+
+* AWS Command Line Interface (CLI)
+- Provide unified interface to all AWS services
+- Output is in JSON format
+  ```bash
+  > apt-get install awscli
+  ```
+- Authenticate
+  ```
+  > aws configure
+  ```
+  - AWS access key ID
+    - E.g., `AKIAIR...D7ZCA`
+  - AWS secret access key
+    - E.g., `SSKIng7jkA...enqBj7`
+  - Default region name
+    - E.g., `us-east-1`
+- Execute command
+  ```
+  > aws <service> <action> --key value
+  ```
+
+* Software Development Kit (SDK)
+::: columns
+:::: {.column width=50%}
+- SDK is a library calling AWS API from your programming language
+  - E.g., python, Go, Ruby, C++, JavaScript
+
+- **Pros:** handles
+  - Authentication
+  - Retry on error
+  - HTTPS communication
+  - XML / JSON de-/serialization
+
+- **Cons**
+  - Imperative approach
+  - Deal with dependencies
+
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_31_image_1.png)
+::::
+:::
+
+* AWS CloudFormation
+- **Use templates (e.g., JSON, YAML) to describe infrastructure**
+
+- **Declarative vs imperative approach**
+  - Declare the system, not the steps to build it
+
+- **AWS Stacks processes CloudFormation templates**
+
+- **Pros**
+  - Consistent infrastructure description
+  - Handle dependencies
+  - Customizable
+    - Inject parameters to customize templates
+  - Testable
+    - Create infra from a template, test, shut down
+  - Updatable
+    - Update template, Stacks applies changes automatically
+  - Serves as documentation
+    - Use as code in source control
+
+* Securing Your System
+::: columns
+:::: {.column width=50%}
+- **Always install software updates**
+  - Fix new security vulnerabilities daily
+
+- **Restrict access to AWS account**
+  - Use different AWS accounts for individuals and scripts
+  - Apply "least privilege": grant only necessary permissions
+
+- **Restrict network traffic**
+  - Open only essential ports
+    - E.g., 80 for HTTP, 443 for HTTPS
+  - Close all others
+  - Encrypt traffic and data
+
+- **Create a private network**
+  - Use subnets not reachable from the Internet
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_33_image_1.png)
+::::
+:::
+
+* AWS Shared-responsibility Principle
+- AWS is responsible for:
+  - Protect network through monitoring Internet access
+    - E.g., prevent DDoS attacks
+  - Ensure physical security of data centers
+  - Decommission storage devices after end of life
+
+- You are responsible for:
+  - Restrict access using IAM
+  - Encrypt network traffic (e.g., HTTPS)
+  - Configure firewall for VPN
+  - Encrypt data
+  - Update OS (kernel, libs) and software
