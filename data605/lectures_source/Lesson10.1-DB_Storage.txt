@@ -393,33 +393,6 @@ Western Digital
 ::::
 :::
 
-* Error Correction Codes
-:::columns
-::::{.column width=70%}
-- = a technique used for controlling errors in data transmission over unreliable communication channels
-- **Idea**:
-  - the sender encodes the message in a redundant way
-  - the receiver can detect errors and correct (a limited number of) errors
-- 1940-1960s: Hamming, Reed-Solomon, Shannon, Viterbi
-- E.g., triple redundancy
-  - Send the same bit 3 times, receiver does majority voting
-  - Detect and correct one bit errors
-- E.g. parity bit
-  - Add an extra bit representing the number of 1s
-  - Detect (but not correct) one bit errors
-::::
-::::{.column width=30%}
-
-![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_2.png){width=40%}
-\vspace{1cm}
-![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_3.png){width=50%}
-\vspace{1cm}
-![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_1.png){width=60%}
-\vspace{0.5cm}
-![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_4.png)
-::::
-:::
-
 * RAID Levels
 :::columns
 ::::{.column width=60%}
