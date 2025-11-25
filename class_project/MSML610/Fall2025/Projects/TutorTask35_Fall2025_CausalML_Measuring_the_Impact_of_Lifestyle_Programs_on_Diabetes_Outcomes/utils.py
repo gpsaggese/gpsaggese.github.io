@@ -20,8 +20,9 @@ import seaborn as sns
 from typing import List, Dict, Optional, Tuple, Union
 
 # CausalML Imports
-from causalml.inference.meta import BaseXRegressor, BaseTRegressor, BaseSRegressor
+from causalml.inference.meta import BaseXRegressor, BaseTRegressor, BaseSRegressor, BaseRRegressor, BaseDRRegressor
 from causalml.match import NearestNeighborMatch
+from causalml.metrics import plot_gain # Calculates cumulative gain (Qini/Uplift)
 
 # Machine Learning Imports (Base Learners)
 from xgboost import XGBRegressor, XGBClassifier
@@ -157,7 +158,7 @@ class CausalNavigator:
         plt.legend()
         plt.show()
         # Interpretation text
-        print("\n--- Diagnostic Interpretation ---")
+        print("--- Diagnostic Interpretation ---")
         print("Good Overlap: The red and blue distributions share the same x-axis range.")
         print("Bad Overlap: One group is clustered at 0 and the other at 1 (Positivity Violation).\n")
 
@@ -282,3 +283,60 @@ class CausalNavigator:
         plt.xlabel('Estimated ATE')
         plt.legend()
         plt.show()
+
+    def compare_estimators(self, X: pd.DataFrame, T: pd.Series, Y: pd.Series):
+        """
+        Runs a 'Horse Race' tournament between S, T, X, R, and DR Learners.
+        
+        Since we lack ground truth CATE, we use the 'Gain' (Uplift) Curve on a held-out test set.
+        The model with the highest area under the curve (AUUC) is best at ranking 
+        patients from 'highest benefit' to 'lowest benefit'.
+        """
+        print("Starting Estimator Tournament...")
+        # Split Data 
+        X_train, X_test, T_train, T_test, y_train, y_test = train_test_split(
+            X, T, Y, test_size=0.3, random_state=42
+        )
+        # Define Candidates (Using XGBoost for consistency)
+        # Note: R and DR learners are more sensitive to hyperparams, but we use defaults.
+        learners = {
+            'S-Learner': BaseSRegressor(learner=self.model_y),
+            'T-Learner': BaseTRegressor(learner=self.model_y),
+            'X-Learner': BaseXRegressor(learner=self.model_y),
+            'R-Learner': BaseRRegressor(learner=self.model_y),
+            'DR-Learner': BaseDRRegressor(learner=self.model_y)
+        }
+        pred_results = pd.DataFrame()
+        # Train and Predict loop
+        for name, model in learners.items():
+            print(f"Training {name}...")
+            # We assume numeric T (0/1) which we ensured in preprocessing
+            try:
+                # Fit on Train
+                model.fit(X=X_train, treatment=T_train, y=y_train) 
+                # Predict on Test (CATE)
+                cate_test = model.predict(X=X_test)
+                # Standardize dimensions (some return 2D arrays)
+                if cate_test.ndim > 1: cate_test = cate_test.flatten()
+                pred_results[name] = cate_test
+            except Exception as e:
+                print(f"{name} failed: {e}")
+        # Evaluate using Cumulative Gain (Qini Curve)
+        print("Generating Uplift Curves (Metrics on Test Set)...")
+        # plot_gain calculates the cumulative treatment effect as we target the top k% of users
+        # according to the model's predictions.
+        # Ideally, we want the curve that bows upward the most (highest Area Under Curve).
+        df_preds = pred_results.copy()
+        df_preds['y'] = y_test.values
+        df_preds['t'] = T_test.values
+        plot_gain(
+            df_preds,
+            outcome_col='y',
+            treatment_col='t',
+            normalize=True,
+            random_seed=42,
+            figsize=(10, 6)
+        )
+        plt.title("Estimator Comparison: Cumulative Gain (Uplift)")
+        plt.show()
+        print("Interpretation: The line that stays highest on the Y-axis sorts patients best.")
