@@ -1,7 +1,7 @@
 // Controlling size:
 //
-// ![](lectures_source/figures/Chap7_Binomial_distribution.png){ height=50% }
-// Bad ![Smile Emoji](emoji/angry_devil.png){ width=12px }
+// ![](lectures_source/figures/Chap7_Binomial_distribution.png){height=50%}
+// Bad ![Smile Emoji](emoji/angry_devil.png){width=12px}
 // \includegraphics[width=0.6\textwidth]{lectures_source/figures/Chap7_Binomial_distribution.png}
 // ```latex[width=50%]
 // ![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_1.png){ width=1cm }
@@ -94,7 +94,7 @@
 - E.g., ![](emoji/backhand_pointing_right.png){ width=14px }
 - E.g., ![](emoji/pushpin_tack.png){ width=12px }
 - Fail ![](emoji/skull.png){ width=14px }
-- Good ![Smile Emoji](emoji/emoji_smile.png){ width=12px }
+- Good ![](emoji/emoji_smile.png){ width=12px }
 - Idea ![](emoji/lightbulb.png){ width=14px }
 - Intuition ![](emoji/lightbulb.png){ width=14px }
 - Issues ![](emoji/warning.png){ width=14px }

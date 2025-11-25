@@ -1,0 +1,182 @@
+# Intro
+In these lessons, we look at how massive datasets are stored and processed across
+thousands of machines. We introduce distributed file systems, sharding, parallel
+and key-value databases, and the cluster architectures behind them, then motivate
+MapReduce as a way to compute reliably at web scale.
+
+# ##############################################################################
+# Big Data: Storing and Computing
+# ##############################################################################
+
+Big data requires a massive number of machines, ranging from 10,000 to 100,000,
+to handle its storage and processing needs. The two main challenges are storing
+the vast amounts of data and processing it efficiently. These problems must be
+addressed together because if one part of the system is slow, it can slow down
+the entire process. Efficient solutions are crucial to ensure that both storage
+and processing work seamlessly without bottlenecks.
+
+Transition: Let's look at an example of processing large-scale data on the web.
+
+# ##############################################################################
+# Processing the Web: Example
+# ##############################################################################
+
+In 2024, the web is expected to have over 20 billion pages and 5 million
+terabytes of content. Storing this data would require around 1 million 5TB hard
+drives, costing approximately $100 million, which seems manageable. However,
+reading this data with a single computer at 300 MB per second would take about
+4,500 years, highlighting the challenge of processing such vast amounts of data.
+The time and cost involved in processing the web are significantly higher than
+just storing it.
+
+Transition: Now, let's explore different methods for storing big data.
+
+# ##############################################################################
+# How to Store Big Data?
+# ##############################################################################
+
+There are several solutions for storing big data effectively. These include
+using distributed file systems, which spread data across multiple machines, and
+sharding, which involves dividing data across multiple databases. Parallel and
+distributed databases allow for simultaneous data processing, while key-value
+stores provide a simple way to store and retrieve data efficiently. Each method
+has its advantages and is chosen based on specific needs and requirements.
+
+# ##############################################################################
+# Distributed File Systems
+# ##############################################################################
+
+Distributed file systems allow files to be stored across multiple machines while
+presenting a unified view to users. Examples include Google File System, Hadoop
+File System, and AWS S3. These systems break files into blocks, which are then
+distributed across different machines. To ensure data safety and availability,
+these blocks are often replicated. The main goals of distributed file systems
+are to store large amounts of data that cannot fit on a single machine, improve
+performance, and enhance reliability, availability, and fault tolerance.
+
+Transition: Let's move on to how databases handle large-scale data through
+sharding.
+
+# ##############################################################################
+# Sharding Across Multiple DBs
+# ##############################################################################
+
+Sharding is a technique used to partition records across multiple databases or
+machines. This involves using shard keys, also known as partitioning keys, to
+distribute data. Common partitioning methods include range partitioning, like
+for timeseries data, and hash partitioning. The advantages of sharding include
+the ability to scale beyond a centralized database, accommodating more users,
+increasing storage capacity, and improving processing speed. However, it also
+requires data replication to handle failures, maintaining consistency can be
+difficult, and relational databases may struggle with constraints and
+transactions across multiple machines.
+
+Transition: Now, let's explore how parallel and distributed databases manage
+data across clusters.
+
+# ##############################################################################
+# Parallel and Distributed DBs
+# ##############################################################################
+
+Parallel and distributed databases store and process data across multiple
+machines, forming a cluster. From a programmer's perspective, these systems
+offer a traditional relational database interface and appear as a single-machine
+database. This approach can scale to tens or hundreds of machines, with data
+replication enhancing performance and reliability. Frequent machine failures are
+mitigated by the ability to restart queries on different machines. However, the
+complexity of incremental query execution and scalability limits are notable
+challenges in these systems.
+
+# ##############################################################################
+# (Parallel) Key-value Stores
+# ##############################################################################
+
+Key-value stores are essential for handling applications that manage billions of
+small records. Traditional relational databases struggle with multi-machine
+constraints and transactions, making them less suitable for such tasks.
+Key-value stores, also known as document or NoSQL systems, offer a solution.
+Examples include Redis, Apache HBase, AWS Dynamo, S3, Azure cloud storage, and
+MongoDB clusters. These systems partition data across multiple machines, support
+replication and consistency, and allow for workload balancing by adding more
+machines. However, they often sacrifice features like declarative querying,
+transactions, and non-key attribute retrieval to achieve scalability.
+
+Transition: Now, let's explore how to compute with big data effectively.
+
+# ##############################################################################
+# How to Compute with Big Data?
+# ##############################################################################
+
+Computing with big data presents several challenges. Distributing computation
+and simplifying the writing of distributed programs is difficult, as distributed
+and parallel programming can be complex. Storing data in a distributed system
+and surviving failures is crucial, given that a single server typically lasts
+around three years. With 1,000 servers, one can expect a failure per day, and
+with 1 million machines, like Google in 2011, about 1,000 machines may fail
+daily. MapReduce offers a solution for specific computations, providing an
+elegant way to handle big data. It originated as Google's data manipulation
+model, though it wasn't an entirely new concept.
+
+Transition: Let's delve into the standard architecture for big data computation.
+
+# ##############################################################################
+# Cluster Architecture
+# ##############################################################################
+
+The standard architecture for big data computation involves a cluster of
+commodity Linux nodes connected by a commodity network, typically Ethernet. In
+2011, Google operated around 1 million machines, and by 2025, this number is
+expected to grow to 10-15 million. This architecture allows for efficient
+handling of large-scale data processing tasks by leveraging the power of
+multiple interconnected machines. The use of commodity hardware and networks
+helps keep costs manageable while providing the necessary computational power to
+process vast amounts of data.
+
+# ##############################################################################
+# Cluster Architecture
+# ##############################################################################
+
+In a cluster architecture, network bandwidth can be a challenge due to data
+being spread across different machines. This can lead to delays when
+transferring data over the network. To address this, it's more efficient to
+bring computation to where the data is located. Additionally, storing files
+multiple times enhances reliability and performance. The MapReduce framework is
+designed to tackle these issues. It uses a distributed file system, like Google
+GFS or Hadoop HDFS, to manage storage and employs a programming model that
+efficiently processes large data sets.
+
+Transition: Now, let's delve into the storage infrastructure that supports these
+systems.
+
+# ##############################################################################
+# Storage Infrastructure
+# ##############################################################################
+
+The main challenge in storage infrastructure is to store data persistently and
+efficiently, even if some nodes fail. Typically, data usage involves handling
+very large files, ranging from hundreds of gigabytes to terabytes. Most
+operations involve reading and appending data, with in-place updates being rare.
+The solution is a distributed file system that spreads files across multiple
+machines. Files are divided into blocks, partitioned, and replicated across
+machines to ensure data availability and reliability. This setup provides
+clients with a seamless, unified file-system view, simplifying data access and
+management.
+
+# ##############################################################################
+# Distributed File System
+# ##############################################################################
+
+A distributed file system is designed to store data across multiple machines. It
+breaks data into smaller pieces called chunks, which are then distributed across
+different machines. Each chunk is replicated on multiple machines to ensure data
+reliability and availability. This setup allows for seamless recovery in case of
+disk or machine failures, as the system can access the replicated data from
+other machines. Additionally, computation is brought directly to the data by
+using the same machines that store the data chunks as compute servers. Hadoop
+and its file system, HDFS, are practical implementations of these concepts.
+
+# Outro
+We examined why big data required many machines, compared storage options like
+distributed file systems, sharding, parallel DBs, and key-value stores, and
+discussed cluster architectures and MapReduce, seeing how bringing computation to
+data enabled reliable, large-scale processing despite frequent failures.
