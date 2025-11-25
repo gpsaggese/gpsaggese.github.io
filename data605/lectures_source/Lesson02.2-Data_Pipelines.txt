@@ -16,14 +16,14 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Git, Data Pipelines}}$$**
+**$$\text{\blue{Lesson 2.2: Data Pipelines}}$$**
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 ::::
 :::: {.column width=20%}
@@ -90,7 +90,7 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-- Data needs to be:
+- **Data needs to be**:
   - Collected
   - Pre-processed / cleaned
   - Validated
@@ -126,7 +126,7 @@ UMD DATA605 - Big Data Systems
 
 * Practical problems in Data Pipeline Organization
 
-- Who is responsible for the data?
+- **Who is responsible for the data?**
 
 - **Issues with scaling**
   - Performance
@@ -177,7 +177,7 @@ UMD DATA605 - Big Data Systems
 * Data Pipeline Paradigms
 ::: columns
 :::: {.column width=55%}
-- There are several styles of building data pipelines
+- There are **several styles of building data pipelines**
 
 - **Multiple phases**
   - Extract
@@ -256,24 +256,22 @@ UMD DATA605 - Big Data Systems
 ::::
 :::: {.column width=30%}
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_1.png)
-
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_2.png)
+
+![](data605/lectures_source/images/lecture_2/lec_2_slide_45_image_1.png)
 
 ::::
 :::
 
-* ELT paradigm
+* ELT Paradigm
 - **ETL** has been the standard approach for long time
   - Extract $\to$ Transform $\to$ Load
   - **Cons**
     - Need to understand the data at ingestion time
     - Need to know how the data will be used
+
 ::: columns
 :::: {.column width=55%}
-
-::::
-:::: {.column width=40%}
 
 - Today **ELT** is becoming the pattern of choice
   - Extract $\to$ Load $\to$ Transform
@@ -283,40 +281,46 @@ UMD DATA605 - Big Data Systems
     - Data engineers focus on data ingestion (E + L)
     - Data scientists focus on transform (T)
 
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_2/lec_2_slide_46_image_1.png)
+
+::::
+:::
+
 - ETL $\to$ ELT **enabled by new technologies**
   - Large storage to save all the raw data (cloud computing)
   - Distributed data storage and querying (e.g., HDFS)
   - Columnar DBs
   - Data compression
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_46_image_1.png)
-::::
-:::
-
 * Row-based vs Columnar DBs
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=45%}
 - **Row-based DBs**
   - E.g., MySQL, Postgres
   - Optimized for reading / writing rows
   - Read / write small amounts of data frequently
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=50%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_1.png)
 ::::
 :::
 
+\vspace{0.5cm}
+
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=45%}
 - **Columnar DBs**
   - E.g., Amazon Redshift, Snowflake
   - Read / write large amounts of data infrequently
   - Analytics requires a few columns
   - Better data compression
 ::::
-:::: {.column width=40%}
+:::: {.column width=50%}
 
 ![](data605/lectures_source/images/lecture_2/lec_2_slide_47_image_2.png)
 ::::
@@ -461,12 +465,14 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
+\vspace{0.5cm}
+
 ::: columns
 :::: {.column width=55%}
 - **Data lake**
-  - = data stored in a semi-structured or without structure
+  - Data stored semi-structured or unstructured
   - Corresponds to ELT data pipeline style
-  - E.g., an AWS S3 bucket storing blog posts, flat files, JSON objects, images
+  - E.g., AWS S3 bucket storing blog posts, flat files, JSON objects, images
 ::::
 :::: {.column width=40%}
 
@@ -477,20 +483,19 @@ UMD DATA605 - Big Data Systems
 
 * Data Lake: Pros and Cons
 - **Data lake**
-  - Stores data in a semi-structured or without structure
+  - Stores semi-structured or unstructured data
 
 - **Pros**
-  - Storing data in cloud storage is cheaper
-  - Making changes to types or properties is easier since it's unstructured or
-    semi-structured (with no predefined schema)
+  - Cheaper cloud storage
+  - Easier changes to types or properties
     - E.g., JSON documents
   - Data scientists
-    - Don't know initially how to access and use the data
-    - Want to explore the raw data
+    - Initially unsure how to access and use data
+    - Want to explore raw data
 
 - **Cons**
-  - Not optimized for querying like a structured data warehouse
-    - Tools allow to query data in a data lake similar to SQL
+  - Not optimized for querying like structured data warehouse
+    - Tools query data lake similar to SQL
     - E.g., AWS Athena, Redshift Spectrum
 
 * Advantages of Cloud Computing
