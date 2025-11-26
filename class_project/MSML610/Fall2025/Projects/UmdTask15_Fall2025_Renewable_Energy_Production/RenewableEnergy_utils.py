@@ -1,157 +1,258 @@
 """
-Utility functions for the Renewable Energy Forecasting project.
+Utility functions for the Solar / Renewable Energy Forecasting project.
 
-This module keeps all shared logic in one place so that scripts like
-`make_features.py` and `train.py` can import and reuse it.
-
-Typical flow:
-1. Load raw solar data from data/raw/solar_energy.csv
-2. Create time-based features for modeling
-3. Save the processed dataset to data/processed/train.csv
+Includes:
+- Data loading
+- Time-based feature engineering (lags, rolling means, calendar features)
+- Train/validation split for time-series
+- Simple plotting helpers for diagnostics
 """
 
-from __future__ import annotations
+from typing import List, Optional, Tuple
 
-from pathlib import Path
-from typing import Optional
-
+import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 # -------------------------------------------------------------------
-# Paths
+# Constants
 # -------------------------------------------------------------------
 
-# Project root is the folder that contains this file.
-PROJECT_ROOT = Path(__file__).resolve().parent
-
-DATA_DIR = PROJECT_ROOT / "data"
-RAW_DIR = DATA_DIR / "raw"
-PROCESSED_DIR = DATA_DIR / "processed"
+TIME_COL = "timestamp"
+TARGET_COL = "energy_mwh"
 
 
 # -------------------------------------------------------------------
 # Data loading
 # -------------------------------------------------------------------
 
-def load_raw_solar(path: Optional[str | Path] = None) -> pd.DataFrame:
+def load_data(csv_path: str, parse_dates: bool = True) -> pd.DataFrame:
     """
-    Load the raw solar energy CSV as a pandas DataFrame.
+    Load the raw solar energy CSV file.
 
-    Parameters
-    ----------
-    path : str or Path, optional
-        Path to the raw CSV. If not provided, defaults to
-        data/raw/solar_energy.csv under the project root.
+    Expected columns:
+        - timestamp
+        - energy_mwh
+        - temp_c
+        - cloud_cover
+        - solar_radiation
+        - wind_speed
 
     Returns
     -------
-    df : pandas.DataFrame
-        Raw data with (if possible) a parsed datetime column.
+    df : pd.DataFrame
+        DataFrame indexed by timestamp with the above columns (except timestamp),
+        sorted by time.
     """
-    if path is None:
-        path = RAW_DIR / "solar_energy.csv"
+    df = pd.read_csv(csv_path)
 
-    path = Path(path)
+    if parse_dates and TIME_COL in df.columns:
+        df[TIME_COL] = pd.to_datetime(df[TIME_COL])
+        df = df.sort_values(TIME_COL).set_index(TIME_COL)
 
-    if not path.exists():
-        raise FileNotFoundError(f"Raw data file not found at: {path}")
-
-    df = pd.read_csv(path)
-
-    # Try to automatically find a datetime column and parse it.
-    # We don't know the exact column name from the assignment,
-    # so we try a few common options.
-    datetime_candidates = ["timestamp", "datetime", "date", "time"]
-
-    for col in datetime_candidates:
-        if col in df.columns:
-            df[col] = pd.to_datetime(df[col])
-            df = df.sort_values(col)
-            df = df.set_index(col)
-            break
+    # Keep only the columns we care about (in case the CSV has extras)
+    expected_cols = [
+        TARGET_COL,
+        "temp_c",
+        "cloud_cover",
+        "solar_radiation",
+        "wind_speed",
+    ]
+    # Keep any that actually exist
+    cols = [c for c in expected_cols if c in df.columns]
+    df = df[cols]
 
     return df
+
+def load_raw_solar(csv_path: str) -> pd.DataFrame:
+    """
+    Backwards-compatible helper for older code.
+
+    scripts/make_features.py expects a function called `load_raw_solar`,
+    but the main implementation here is `load_data`. This wrapper just
+    forwards to `load_data` so both names work.
+    """
+    return load_data(csv_path)
 
 
 # -------------------------------------------------------------------
 # Feature engineering
 # -------------------------------------------------------------------
 
-def add_basic_time_features(
+def make_basic_time_features(
     df: pd.DataFrame,
-    target_col: str,
+    lags: Optional[List[int]] = None,
+    rolling_windows: Optional[List[int]] = None,
 ) -> pd.DataFrame:
     """
-    Add simple time-based features (month, day_of_week, hour, etc.)
-    to the solar energy dataframe.
+    Create simple time-series features:
+
+    - calendar features from the timestamp index:
+        * hour of day
+        * day of week
+        * month
+    - lagged values of energy_mwh
+    - rolling mean of energy_mwh over a few windows
 
     Parameters
     ----------
-    df : pandas.DataFrame
-        Input data. Index is expected to be datetime if possible.
-    target_col : str
-        Name of the target column (e.g., 'generation' or 'power').
+    df : pd.DataFrame
+        DataFrame indexed by a DatetimeIndex and containing TARGET_COL.
+    lags : list of int, optional
+        Lag steps (in hours) for the target. Default: [1, 2, 24].
+    rolling_windows : list of int, optional
+        Window sizes (in hours) for rolling mean of the target.
+        Default: [3, 24].
 
     Returns
     -------
-    features : pandas.DataFrame
-        A new dataframe containing features and the target.
+    df_feats : pd.DataFrame
+        DataFrame with original columns + new features, with rows
+        at the beginning dropped to account for lag/rolling history.
     """
-    # If the index is not datetime but we have a datetime column,
-    # you could adapt this function later. For now we assume the
-    # index is datetime after load_raw_solar() runs.
+    if lags is None:
+        lags = [1, 2, 24]
+    if rolling_windows is None:
+        rolling_windows = [3, 24]
+
     if not isinstance(df.index, pd.DatetimeIndex):
-        raise TypeError(
-            "Expected df.index to be a DatetimeIndex. "
-            "Make sure load_raw_solar() parsed the datetime column."
-        )
+        raise ValueError("DataFrame must be indexed by a DatetimeIndex to build time features.")
 
-    features = df.copy()
+    df_feats = df.copy()
 
-    # Calendar time features
-    features["year"] = features.index.year
-    features["month"] = features.index.month
-    features["day"] = features.index.day
-    features["day_of_week"] = features.index.dayofweek  # Monday=0, Sunday=6
-    features["hour"] = features.index.hour
-    features["is_weekend"] = (features["day_of_week"] >= 5).astype(int)
+    # Calendar features
+    df_feats["hour"] = df_feats.index.hour
+    df_feats["dayofweek"] = df_feats.index.dayofweek
+    df_feats["month"] = df_feats.index.month
 
-    # We keep the target column as-is; later scripts will choose
-    # which columns to use as X (features) and y (target).
-    if target_col not in features.columns:
-        raise KeyError(
-            f"Target column '{target_col}' not found in dataframe columns: "
-            f"{list(features.columns)}"
-        )
+    # Lag features for the target
+    for lag in lags:
+        col_name = f"{TARGET_COL}_lag_{lag}"
+        df_feats[col_name] = df_feats[TARGET_COL].shift(lag)
 
-    return features
+    # Rolling mean features for the target
+    for window in rolling_windows:
+        col_name = f"{TARGET_COL}_rollmean_{window}"
+        df_feats[col_name] = df_feats[TARGET_COL].rolling(window=window, min_periods=1).mean().shift(1)
+
+    # Drop initial rows that don't have full history
+    max_history = max(max(lags), max(rolling_windows))
+    df_feats = df_feats.iloc[max_history:]
+
+    return df_feats
 
 
 # -------------------------------------------------------------------
-# Saving processed data
+# Train / validation split
 # -------------------------------------------------------------------
 
-def save_processed(
-    df: pd.DataFrame,
-    filename: str = "train.csv",
-) -> Path:
+def train_val_split(
+    df_feats: pd.DataFrame,
+    test_size_days: int = 7,
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, List[str]]:
     """
-    Save a processed dataframe to the processed data folder.
+    Split the feature DataFrame into train and validation sets,
+    using the last `test_size_days` worth of data as validation.
 
     Parameters
     ----------
-    df : pandas.DataFrame
-        Dataframe to save.
-    filename : str
-        Name of the CSV file to create (default: 'train.csv').
+    df_feats : pd.DataFrame
+        Feature DataFrame returned by make_basic_time_features.
+        Must contain TARGET_COL.
+    test_size_days : int, optional
+        Number of days to hold out at the end of the series for validation.
+        With hourly data, each day has 24 rows.
 
     Returns
     -------
-    path : pathlib.Path
-        Path where the file was saved.
+    X_train : pd.DataFrame
+    X_val   : pd.DataFrame
+    y_train : pd.Series
+    y_val   : pd.Series
+    feature_cols : list of str
+        Names of the feature columns used in X.
     """
-    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
-    path = PROCESSED_DIR / filename
-    df.to_csv(path, index=True)
-    return path
+    if TARGET_COL not in df_feats.columns:
+        raise ValueError("Feature DataFrame must contain the target column '{}'".format(TARGET_COL))
+
+    # Determine number of validation rows based on days
+    rows_per_day = 24  # assumption: hourly data
+    test_size = test_size_days * rows_per_day
+
+    if test_size >= len(df_feats):
+        raise ValueError("Validation set ({} rows) is larger than or equal to dataset size ({})."
+                         .format(test_size, len(df_feats)))
+
+    # Features are all columns except the target
+    feature_cols = [c for c in df_feats.columns if c != TARGET_COL]
+
+    X = df_feats[feature_cols]
+    y = df_feats[TARGET_COL]
+
+    # Time-based split: first part = train, last part = validation
+    split_index = len(df_feats) - test_size
+
+    X_train = X.iloc[:split_index]
+    X_val = X.iloc[split_index:]
+    y_train = y.iloc[:split_index]
+    y_val = y.iloc[split_index:]
+
+    return X_train, X_val, y_train, y_val, feature_cols
+
+
+# -------------------------------------------------------------------
+# Plotting helpers
+# -------------------------------------------------------------------
+
+def plot_predictions(
+    y_true: pd.Series,
+    y_pred: np.ndarray,
+    save_path: Optional[str] = None,
+) -> None:
+    """
+    Plot actual vs predicted target values on a common time index.
+    """
+    plt.figure(figsize=(10, 4))
+    plt.plot(y_true.values, label="Actual")
+    plt.plot(y_pred, label="Predicted", alpha=0.8)
+    plt.xlabel("Time index")
+    plt.ylabel(TARGET_COL)
+    plt.title("Actual vs Predicted {}".format(TARGET_COL))
+    plt.legend()
+    plt.tight_layout()
+
+    if save_path is not None:
+        plt.savefig(save_path, dpi=120)
+    plt.close()
+
+
+def plot_feature_importance(
+    model,
+    feature_names: List[str],
+    top_n: int = 20,
+    save_path: Optional[str] = None,
+) -> None:
+    """
+    Plot feature importances for tree-based models (e.g., RandomForest, XGBoost).
+    """
+    if not hasattr(model, "feature_importances_"):
+        raise ValueError("Model does not have feature_importances_ attribute.")
+
+    importances = model.feature_importances_
+    if len(importances) != len(feature_names):
+        raise ValueError("Length of feature_importances_ does not match number of feature names.")
+
+    fi = pd.Series(importances, index=feature_names).sort_values(ascending=False)
+    fi_top = fi.head(top_n)
+
+    plt.figure(figsize=(8, 4))
+    fi_top.plot(kind="bar")
+    plt.ylabel("Importance")
+    plt.title("Top {} feature importances".format(top_n))
+    plt.tight_layout()
+
+    if save_path is not None:
+        plt.savefig(save_path, dpi=120)
+    plt.close()
+
