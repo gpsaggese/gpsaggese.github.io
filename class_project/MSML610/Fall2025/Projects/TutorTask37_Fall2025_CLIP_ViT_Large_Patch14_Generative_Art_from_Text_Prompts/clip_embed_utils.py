@@ -1,13 +1,13 @@
-from PIL import Image
-import requests
 import faiss
 import numpy as np
+import requests
+from PIL import Image
 
 API_URL = "http://172.16.7.95:8000"  # change if running remotely
 API_URL = "http://localhost:8000"
 
-image_index = faiss.read_index("image_index.faiss")
-text_index = faiss.read_index("text_index.faiss")
+image_index = faiss.read_index("clip_embed.image_index.faiss")
+text_index = faiss.read_index("clip_embed.text_index.faiss")
 
 
 def get_image_embedding(image_path: str):

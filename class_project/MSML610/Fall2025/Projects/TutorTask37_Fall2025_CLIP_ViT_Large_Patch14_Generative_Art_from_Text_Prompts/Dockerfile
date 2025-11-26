@@ -1,59 +1,13 @@
-FROM --platform=$BUILDPLATFORM ubuntu:20.04
-ENV DEBIAN_FRONTEND=noninteractive
+FROM python:3.11
 
-RUN apt-get -y update
-RUN apt-get -y upgrade
+WORKDIR /app
 
-# Install system utilities.
-RUN apt install -y --no-install-recommends \
-    sudo \
-    curl \
-    systemctl \
-    gnupg \
-    git \
-    vim
+COPY requirements.txt .
 
-# Install Python.
-RUN apt install -y --no-install-recommends \
-    python3 \
-    python3-pip \
-    python3-dev
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN python3 -m pip install --upgrade pip
-    
-# Install Python packages.
-# There is a bug:
-#   File "/opt/homebrew/lib/python3.10/site-packages/tornado/iostream.py", line 182, in advance
-#   assert 0 < size <= self._size
-# for tornado==6.2 and jupyter-client==8.0.2.
-# https://discourse.jupyter.org/t/jupyter-notebook-zmq-message-arrived-on-closed-channel-error/17869/10
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    python3-dev \
-    libxml2-dev \
-    libxslt-dev \
-    zlib1g-dev \
-    && rm -rf /var/lib/apt/lists/*
+COPY . .
 
-RUN mkdir /install
+EXPOSE 8000 8501
 
-# Install common packages
-ADD install_common_packages.sh /install/
-RUN chmod +x /install/install_common_packages.sh && /install/install_common_packages.sh
-
-# Install Jupyter extensions.
-ADD install_jupyter_extensions.sh /install
-RUN chmod +x /install/install_jupyter_extensions.sh
-RUN /install/install_jupyter_extensions.sh
-
-# Config.
-ADD etc_sudoers /install/
-COPY etc_sudoers /etc/sudoers
-COPY bashrc /root/.bashrc
-
-# Report package versions.
-ADD version.sh /install/
-RUN /install/version.sh 2>&1 | tee version.log
-
-# Jupyter.
-EXPOSE 8888
+CMD ["sh", "-c", "uvicorn clip_embed_API:app --host 0.0.0.0 --port 8000 & streamlit run clip_embed.streamlit.py --server.port 8501 --server.address 0.0.0.0"]

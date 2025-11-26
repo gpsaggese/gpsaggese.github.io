@@ -1,11 +1,12 @@
 numpy
 pandas
 seaborn
-faiss
 requests
 streamlit
 pillow
 fastapi
 torch
 transformers
-
+faiss-cpu
+uvicorn
+python-multipart

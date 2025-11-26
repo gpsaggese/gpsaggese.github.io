@@ -1,9 +1,10 @@
-from fastapi import FastAPI, File, UploadFile, Form
-from fastapi.responses import JSONResponse
-from transformers import CLIPProcessor, CLIPModel
-from PIL import Image
-import torch
 import io
+
+import torch
+from fastapi import FastAPI, File, Form, UploadFile
+from fastapi.responses import JSONResponse
+from PIL import Image
+from transformers import CLIPModel, CLIPProcessor
 
 app = FastAPI(title="CLIP Embedding API")
 
@@ -12,6 +13,7 @@ processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model.to(device)
+
 
 @app.post("/embed/image")
 async def embed_image(image: UploadFile = File(...)):
@@ -30,10 +32,7 @@ async def embed_image(image: UploadFile = File(...)):
         # Convert tensor to list for JSON serialization
         embedding = outputs.cpu().tolist()[0]
 
-        return JSONResponse({
-            "image_filename": image.filename,
-            "embedding": embedding
-        })
+        return JSONResponse({"image_filename": image.filename, "embedding": embedding})
 
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
@@ -52,13 +51,11 @@ async def embed_text(text: str = Form(...)):
 
         embedding = outputs.cpu().tolist()[0]
 
-        return JSONResponse({
-            "text": text,
-            "embedding": embedding
-        })
+        return JSONResponse({"text": text, "embedding": embedding})
 
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
+
 
 @app.get("/")
 def root():
