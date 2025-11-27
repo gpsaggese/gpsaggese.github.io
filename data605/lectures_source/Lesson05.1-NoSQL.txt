@@ -1,0 +1,443 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 5.1: NoSQL Databases}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
+
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+- **References**:
+  - Online tutorials
+  - Silbershatz: Chap 10.2
+  - Seven Databases in Seven Weeks, 2e
+::::
+:::: {.column width=20%}
+
+![](data605/lectures_source/images/Silberschatz_book.png){width=2cm}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png){width=2cm}
+::::
+:::
+
+* From SQL to NoSQL
+:::columns
+::::{.column width=70%}
+- **DBs are central tools to big data**
+  - New applications, data/storage constraints
+  - ~2000s NoSQL "movement" started
+    - Initially "No SQL" $\to$ then "Not Only SQL"
+::::
+::::{.column width=20%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_5_image_1.png)
+::::
+:::
+
+- **Different DB types make different trade-offs**
+  - Different worldviews
+  - Schema vs schema-less
+  - Rich vs fast query ability
+  - Strong consistency (ACID), weak, eventual consistency
+  - APIs (SQL, JS, REST)
+  - Horizontal vs vertical scaling, sharding, replication
+  - Indexing vs no indexing
+  - Tuned for reads or writes, control over tuning
+
+- **User base/applications have expanded**
+  - Postgres + Mongo cover 99% of use cases
+  - Data scientists/engineers need familiarity with both
+  - _"Which DB solves my problem best?"_
+
+- **Polyglot model**
+  - Use more than one DB per project
+  - Relational DBs won't disappear soon
+
+* Issues with Relational Dbs
+
+- **Relational DBs have drawbacks**
+  1) Application-DB impedance mismatch
+  2) Schema flexibility
+  3) Consistency in distributed set-up
+  4) Limited scalability
+
+- For each drawback a slide with:
+  - **Problem**
+  - **Solutions**
+    - Within relational SQL paradigm
+    - With NoSQL approach
+
+* 1) App / DB Impedance Mismatch: Problem
+
+- **Mismatch between data representation in code and relational DB**
+  - Code uses:
+    - Data structures (e.g., lists, dictionaries, sets)
+    - Objects
+  - Relational DB uses:
+    - Tables (entities)
+    - Rows (instances of entities)
+    - Relationships between tables
+
+- **Example of app-DB mismatch**:
+  - Application stores a Python dictionary
+    \begingroup \footnotesize
+    ```python
+    # Store a dictionary from name (string) to tags (list of strings)
+    tag_dict: Dict[str, List[str]]
+    ```
+   \endgroup
+  - Relational DB needs 3 tables:
+    - `Names(nameId, name)` for keys
+    - `Tags(tagId, tag)` for values
+    - `Names_To_Tags(nameId, tagId)` to map keys to values
+  - Denormalize using a single table:
+    - `Names(name, tag)`
+
+* 1) App / DB Impedance Mismatch: Solutions
+
+- **Ad-hoc mapping layer**
+  - Translate objects and data structures into DB model
+    - Implement "Name to Tags" storage
+    - Code uses a simple map, DB has 3 tables
+  - Cons
+    - Requires writing and maintaining code
+
+- **Object-relational mapping (ORM)**
+  - Pros
+    - Automatic data conversion between object code and DB
+    - Implement `Person` object using DB
+    - Use SQLAlchemy for Python and SQL
+  - Cons
+    - Handling complex types, polymorphism, and inheritance can be challenging
+
+- **NoSQL approach**
+  - No schema
+    - Objects can be flat or complex (e.g., nested JSON)
+    - Stored objects (documents) can vary in structure
+
+* 2) Schema Flexibility
+
+- **Problem**
+  - Data may not fit into a schema
+  - E.g., nested or dis-homogeneous data (`List[Obj]`)
+
+- **Within relational DB**
+  - Use a general schema covering all cases
+  - Cons
+    - Complicated schema with implicit relations
+    - Sparse DB tables
+    - Violates relational DB assumptions
+
+- **NoSQL approach**
+  - E.g., MongoDB does not enforce schema
+  - Pros
+    - No schema concerns when writing data
+  - Cons
+    - Handle various schemas during data processing
+    - Related to ETL vs ELT data pipelines
+
+* 3) Consistency in Relational DBs
+:::columns
+::::{.column width=65%}
+
+- **All systems fail**
+  - Application error (corner case, internal error)
+  - Application crash (OS issue)
+  - Hardware failure (RAM ECC error, disk)
+  - Power failure
+
+- **Relational DBs enforce ACID properties**
+  - Guarantee for system reliability
+
+- **Atomicity**
+  - Transactions are "all or nothing"
+  - Transaction succeeds completely or fails
+
+- **Consistency**
+  - Transaction moves DB from one valid state to another
+  - Maintain DB invariants (primary, foreign key constraints)
+::::
+::::{.column width=30%}
+\footnotesize \centering
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_10_image_2.png)
+_Application error_
+
+\vspace{1cm}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_10_image_1.png)
+
+_Hardware failure_
+::::
+:::
+
+- **Isolation**
+  - Concurrent transactions yield the same result as sequential execution
+
+- **Durability**
+  - Committed transaction content preserved after system failure
+  - Record data in non-volatile memory
+
+* 3) Consistency in Distributed DB
+:::columns
+::::{.column width=70%}
+
+- Scale data or clients $\to$ **distributed setup**
+
+- **Goals**:
+  - Performance (transactions per second)
+  **- Availability (up-time guarantee)
+  - Fault-tolerance (recover from faults)
+
+- **Achieving ACID consistency:**
+  - _Not easy_ in single DB
+    - E.g., PostgreSQL guarantees ACID
+    - E.g., MongoDB doesn't
+  - _Impossible_ in distributed DB
+    - Due to CAP theorem
+    - Even weak consistency is difficult
+::::
+::::{.column width=25%}
+\vspace{1cm}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_11_image_1.png)
+::::
+:::
+
+* CAP Theorem
+:::columns
+::::{.column width=45%}
+
+- **CAP theorem**: Any distributed DB can have at most two of the following
+  - **Consistency**:
+    - All clients see the same data
+    - Writes are atomic; subsequent reads retrieve the new value
+  - **Availability**: Returns a value if at least one server is running
+  - **Partition tolerance**: The system works even if communication is
+    temporarily lost (network is partitioned)
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_12_image_1.png)
+::::
+:::
+
+- Originally a conjecture (Eric Brewer)
+  - Proved formally (Gilbert, Lynch, 2002)
+
+* CAP Corollary
+:::columns
+::::{.column width=45%}
+
+- **CAP Theorem**: pick 2 among consistency, availability, partition tolerance
+
+- **Network partitions**
+  - Cannot be prevented in large-scale distributed systems
+  - Can be reduced in probability using redundancy and fault tolerance
+
+- You must sacrifice either:
+  - **Availability**
+    - Allow system downtime
+    - E.g., banking system
+  - **Consistency**
+    - Allow different system views
+    - E.g., social network
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_13_image_2.png)
+::::
+:::
+
+* CAP Theorem: Intuition
+:::columns
+::::{.column width=70%}
+
+- Consider:
+  - Client (_Node0_)
+  - Two DB replicas (_Node1_, _Node2_)
+
+- **Network partition occurs**
+  - DB servers (_Node1_, _Node2_) can't communicate
+  - Users (_Node0_) access only one (_Node2_)
+  - _Reads_: Access data on the same partition
+  - _Writes_: Can't update due to potential inconsistency
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_14_image_1.png)
+::::
+:::
+
+- **CAP theorem**: Sacrifice consistency or availability
+
+- **Available, not consistent**
+  - Inconsistency acceptable (e.g., social networking)
+  - Allow updates on accessible replica
+
+- **Consistent, not available**
+  - Inconsistency unacceptable (e.g., banking)
+  - Stop service to maintain consistency
+
+* Replication Schemes
+:::columns
+::::{.column width=60%}
+
+- **Replication schemes**: Organize multiple servers for a distributed DB
+
+- **Primary-secondary replication**
+  - Application communicates with the primary
+  - Replicas require the primary for updates
+  - Single point of failure
+
+- **Update-anywhere replication**
+  - Aka "multi-master replication"
+  - Every replica can update data, which is propagated to others
+
+- **Quorum-based replication**
+  - _N_: Total replicas
+  - Write to _W_ replicas
+  - Read from _R_ replicas, pick the latest update (timestamps)
+::::
+::::{.column width=35%}
+\scriptsize \centering
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_15_image_1.png)
+_Primary-secondary replication_
+
+\vspace{1.5cm}
+
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_15_image_2.png)
+_Update-anywhere replication_
+::::
+:::
+
+* Synchronous Replication
+:::columns
+::::{.column width=50%}
+
+- **Synchronous replication**: updates propagate to replicas in a single
+  transaction
+
+- Implementations
+  - **2-Phase Commit (2PC)**: original method
+    - Single point of failure
+    - Can't handle primary server failure
+  - **Paxos**: widely used
+    - No primary required
+    - More fault tolerant
+  - Both are complex/expensive
+
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_16_image_1.png)
+::::
+:::
+
+- **CAP theorem**: only one of Consistency or Availability can be guaranteed
+  during a network partition
+  - Many systems use relaxed consistency models
+
+* Asynchronous Replication
+:::columns
+::::{.column width=50%}
+
+- **Asynchronous replication**
+  - Primary node updates replicas
+  - Transaction completes before replicas update
+  - Quick commits, less consistency
+
+- **Eventual consistency**
+  - Popularized by AWS DynamoDB
+  - Consistency only on eventual outcome
+  - "Eventual" may mean after server/network fix
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_17_image_1.png)
+::::
+:::
+
+- **"Freshness" property**
+  - Read from replica may not be latest
+  - Request version with specific "freshness"
+    - E.g., "data from not more than 10 minutes ago"
+    - E.g., show airplane ticket price a few minutes old
+  - Replicas use timestamps for data versioning
+  - Use local replica if fresh, else request primary node
+
+* 4) Scalability Issues with RDMS: Problem
+
+- Sources of SQL DB scalability issues:
+
+1) **Locking data**
+    - DB engine locks rows/tables for ACID
+    - When locked higher latency $\to$ Fewer updates/second $\to$ Slower
+      application
+
+2) **Worse in distributed set-up**
+  - Requires data replication over multiple servers (scaling out)
+  - Slower application due to:
+    - Network delays
+    - Locks across networks for DB consistency
+    - Overhead of replica consistency (2PC, Paxos)
+
+* 4) Scalability Issues with RDMS: Solutions
+:::columns
+::::{.column width=70%}
+
+- **Table denormalization**
+  - Increase performance by adding redundant data
+  - Pros
+    - Faster reads: Lock one table, no joins
+  - Cons
+    - Slower writes: More data to update
+    - Loss of table relations
+- **Relax consistency**
+  - Compromise on ACID
+  - Weaken consistency (e.g., eventual consistency)
+
+- **NoSQL**
+::::
+::::{.column width=25%}
+\centering \scriptsize
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_19_image_1.png)
+_Normalized data_
+
+\vspace{1cm}
+
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_19_image_2.png)
+_Denormalized data_
+::::
+:::
+
+* NoSQL Stores
+
+- **Use cases of large-scale web applications**
+  - Real-time access with ms latencies
+    - E.g., facebook: 4ms for reads
+  - No need for ACID properties
+  - MongoDB started at DoubleClick (AdTech), acquired by Google
+
+- **Solve problems with relational databases**
+  - Application-DB impedance mismatch
+  - Schema flexibility
+  - Consistency in distributed setup
+  - Scalability
+
+- **To scale out, give up something**
+  - Consistency
+  - Joins
+    - Most NoSQL stores don't allow server-side joins
+    - Require data denormalization and duplication
+  - Restricted transactions
+    - Most NoSQL stores allow single-object transactions
+    - E.g., one document/key
