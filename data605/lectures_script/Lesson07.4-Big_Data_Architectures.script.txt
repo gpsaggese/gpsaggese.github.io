@@ -1,0 +1,206 @@
+# Intro
+
+In these lessons, we examine how modern software is built, tested, released, and
+structured. We start with core testing concepts and methods, then connect them to
+CI/CD pipelines and deployment stages. We introduce RESTful APIs as the backbone
+of web communication, explain semantic versioning for communicating change
+impact, and compare monolithic and microservice architectures. Together, these
+ideas show how teams deliver reliable, scalable systems while evolving features
+safely.
+
+# ##############################################################################
+# Software Testing
+# ##############################################################################
+
+Software testing is essential to ensure a product functions correctly, is
+reliable, performs well, and is secure. The goal is to make sure the software
+meets all the necessary requirements. Testing is a crucial part of the
+development process. There are some sayings in the industry that highlight its
+importance, such as "If it's not tested, it doesn't work" and "Debugging is
+twice as hard as writing code." This implies that if you write code to the best
+of your ability, debugging it can be even more challenging. There are various
+types of testing, and it's important to consider what you are testing and from
+what perspective.
+
+Transition: Now, let's explore the different types of testing in more detail.
+
+# ##############################################################################
+# What Are You Testing?
+# ##############################################################################
+
+Unit testing focuses on checking individual components to ensure they work
+correctly on their own. Integration testing is about making sure these
+components work together without issues, identifying any interface problems.
+System testing evaluates the entire integrated system to see if it meets the
+specified requirements. Each type of testing serves a unique purpose in the
+development process, ensuring that different aspects of the software are
+functioning as intended.
+
+Transition: Next, we will discuss the methods used in testing.
+
+# ##############################################################################
+# How Are You Testing?
+# ##############################################################################
+
+Smoke or sanity testing is a quick check to ensure the main functions of the
+software work, like making sure an application doesn't crash on launch.
+Regression testing ensures that new changes don't break existing features.
+Acceptance testing is the final phase before release, more common in traditional
+development than Agile. Performance testing checks how the software handles
+load, stress, and spikes. Security testing identifies vulnerabilities and risks.
+Usability testing assesses how easy the software is for users, focusing on user
+interface and experience. Compatibility testing ensures the software works
+across different browsers, databases, operating systems, and devices.
+
+# ##############################################################################
+# CI / CD
+# ##############################################################################
+
+Continuous integration and continuous deployment are key practices in modern
+software development. Continuous integration involves merging code changes into
+a central repository several times a day. This process includes automated
+building and testing after each change, ensuring that code is added with unit
+tests. The main goal is to quickly detect and fix integration errors. Continuous
+deployment takes it a step further by automatically deploying code changes to
+production without human intervention, once the build and test phases are
+successful. This allows for continuous delivery of features, bug fixes, and
+updates. Popular tools for CI/CD include GitHub Actions, GitLab Workflows, AWS
+Code, and Jenkins.
+
+Transition: Now, let's explore the concept of RESTful APIs, which are crucial
+for web services.
+
+# ##############################################################################
+# RESTful API
+# ##############################################################################
+
+RESTful APIs are a style of building APIs for web services and distributed
+systems. REST stands for Representational State Transfer. A key feature is the
+uniform interface, which refers to resources like documents, services, or
+persons using URIs. It uses standard HTTP methods such as GET, POST, PUT, and
+DELETE. REST APIs follow a naming convention and link format, and responses are
+typically in XML or JSON format. They are stateless, meaning each request
+contains all necessary information without relying on shared state, inspired by
+the HTTP protocol.
+
+Transition: Let's delve deeper into some additional features of RESTful APIs.
+
+# ##############################################################################
+# RESTful API (Continued)
+# ##############################################################################
+
+RESTful APIs can also be cacheable, meaning they label response data as either
+cacheable or non-cacheable. This allows clients to reuse cacheable responses,
+enhancing scalability and performance. Another feature is the layered system
+architecture, where each layer only interfaces with the immediate layer, such as
+in a tiered application. This design helps in managing complexity and improving
+system organization. Understanding these features is essential for building
+efficient and scalable web services.
+
+# ##############################################################################
+# Stages of Deployment
+# ##############################################################################
+
+Software deployment involves several stages to ensure quality and readiness
+before reaching the end user. Each stage serves a specific purpose:
+
+- Development environment is where developers write and initially test their
+  code. Each developer or team has their own space to work on features.
+- Testing, also known as Quality Assurance (QA), mirrors the production
+  environment to identify defects and ensure the software works as intended.
+- Pre-production, or staging, is the final testing phase. It replicates the
+  production environment for final checks and stakeholder reviews.
+- Production is the live environment where the software is available to users.
+  It focuses on security, performance, and maintaining a good user experience.
+
+Transition: Now, let's explore how semantic versioning helps communicate
+software changes.
+
+# ##############################################################################
+# Semantic Versioning
+# ##############################################################################
+
+Semantic versioning is a systematic way to convey the impact of software
+updates:
+
+- It helps users understand the potential effects of updating to a new version.
+- Major versions indicate significant updates that may break compatibility with
+  previous versions.
+- Minor versions introduce new features that are backward-compatible.
+- Patch versions fix bugs without affecting existing functionalities.
+- Pre-release versions, like alpha or beta, are for testing and feedback, not
+  for production.
+- Build metadata provides optional information about the build or environment
+  specifics.
+
+Transition: Next, we'll compare microservices and monolithic architecture in
+building complex systems.
+
+# ##############################################################################
+# Microservices vs Monolithic Architecture
+# ##############################################################################
+
+There are different styles for building complex systems, each with its own
+approach:
+
+- Monolithic architecture combines all features into one deployable unit, making
+  it simpler but less flexible.
+- Microservices architecture breaks down the system into small, independent
+  services that communicate over a network, offering more flexibility and
+  scalability.
+
+When designing systems, it's important to start from business domains rather
+than technology layers. Aligning service boundaries with independent business
+capabilities, like having separate services for catalog, cart, payment, and
+shipping in an online shop, can enhance efficiency and scalability.
+
+# ##############################################################################
+# Monolithic Architecture
+# ##############################################################################
+
+Monolithic architecture means all features are bundled into one deployable unit.
+This approach is simpler to develop, test, deploy, and scale because everything
+is in one place. However, it has some downsides. The components are tightly
+coupled, meaning they run together, which can cause issues with scalability and
+resilience. It also requires using a single technology stack, limiting
+flexibility. Updating the application can be complex because you have to
+redeploy the entire application. Lastly, if one part of the application fails,
+it can affect the whole system.
+
+Transition: Now, let's explore the microservice architecture and its
+characteristics.
+
+# ##############################################################################
+# Microservice Architecture
+# ##############################################################################
+
+Microservices involve many small services working together over a network. While
+this approach can be complex to deploy and requires specific tools, it offers
+several advantages. Microservices are modular, meaning each service is small and
+independently deployable, focusing on specific business functions. This allows
+for better scalability, as services can be scaled independently based on demand.
+You can also use different technology stacks for each service, providing
+flexibility. Deployment is more flexible, supporting continuous delivery and
+faster updates. Additionally, microservices are more resilient, as a failure in
+one service doesn't impact the entire system.
+
+Transition: Let's compare the hype around microservices and monolithic
+architectures.
+
+# ##############################################################################
+# Microservices vs Monolith: Hype
+# ##############################################################################
+
+Neither microservices nor monolithic architecture is a perfect solution for
+every situation. It's important to find the right balance and granularity for
+your specific use case. The decision should be based on the needs of your
+project rather than following trends. The accompanying image shows the search
+interest over time for "Microservice vs Monolithic," highlighting the ongoing
+debate and interest in these architectural approaches.
+
+# Outro
+
+We reviewed why testing mattered, distinguished unit, integration, and system
+tests, and saw how CI/CD automated quality and releases. We explained RESTful
+APIs, deployment stages, semantic versioning, and compared monoliths with
+microservices to understand trade-offs in building reliable, scalable systems.
