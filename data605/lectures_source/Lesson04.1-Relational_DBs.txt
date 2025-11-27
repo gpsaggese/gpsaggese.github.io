@@ -40,7 +40,7 @@ UMD DATA605 - Big Data Systems
   - Ingres Project at Berkeley (1970-1985)
     - Ingres (INteractive Graphics REtrieval System)
     - $\to$ PostgreSQL (=Post Ingres)
-  - IBM System R (1970) $\to$ Oracle, IBM DB2
+  - IBM System R (1970s) $\to$ Oracle, IBM DB2
 
 - **Contributions from relational data model**
   - Formal semantics for data operations
@@ -106,8 +106,8 @@ UMD DATA605 - Big Data Systems
 - **In DB design**
   - Each box is a table / relation
   - Columns / fields / attributes are listed inside the box
-  - Primary keys underlined
-  - Foreign key constraints are arrows
+  - Primary keys are underlined
+  - Foreign key constraints are represented by arrows
 ::::
 :::: {.column width=40%}
 \centering
@@ -153,10 +153,10 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=65%}
 
-- _R_ is set of attributes of a relation _r_
+- _R_ is a set of attributes of a relation _r_
   - E.g., `ID, name, dept_name, salary` are attributes of `instructor`
 
-- _K_ is superkey of _R_ if values for _K_ identify a unique tuple of each
+- _K_ is a superkey of _R_ if values for _K_ identify a unique tuple of each
   relation _r(R)_
   - E.g., `(ID)` and `(ID, name)` are superkeys of `instructor`
   - `(name)` is not a superkey of `instructor`
@@ -252,10 +252,10 @@ UMD DATA605 - Big Data Systems
 
 - **Foreign key constraint**: for each row, the primary key tuple must exist
   - Aka referential integrity constraint
-  - If `(student101, DATA605)` in `takes`, there must be `student101` in
+  - If `(student101, DATA605)` is in `takes`, there must be `student101` in
     `student`
 
-- The key referenced as foreign key must exist as primary key
+- The key referenced as a foreign key must exist as a primary key
 
 * Relational Algebra: 1/4
 ::: columns
@@ -324,7 +324,7 @@ UMD DATA605 - Big Data Systems
 * Relational Algebra: 3/4
 
 - **Join**: composition of two operations
-  - Cartesian-product
+  - Cartesian product
   - Selection based on equality between two fields
   - E.g., `instructor` x `teaches` when `instructor.ID = teaches.ID`
 

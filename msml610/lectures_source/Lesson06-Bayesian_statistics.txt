@@ -27,10 +27,10 @@ MSML610: Advanced Machine Learning
 
 **References**:
 
-  - AIMA (Artificial Intelligence: a Modern Approach)
-    - Chap 12, Quantifying uncertainty
-    - Chap 13: Probabilistic reasoning
-    - Chap 14: Probabilistic reasoning over time
+- AIMA (Artificial Intelligence: a Modern Approach)
+  - Chap 12, Quantifying uncertainty
+  - Chap 13: Probabilistic reasoning
+  - Chap 14: Probabilistic reasoning over time
 
 ::::
 :::: {.column width=20%}
