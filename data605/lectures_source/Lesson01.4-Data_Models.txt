@@ -1,0 +1,370 @@
+// https://docs.google.com/presentation/d/1dWY49EVhAEiOJBbw07oMUDrA3D7QQAGubPAO4SYQvgE
+
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605: Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 1.4: Data Models}}$$**
+\endgroup
+
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+* Data Models
+- **Data modeling**
+  - Represents and captures structure and properties of real-world entities
+  - Abstraction: real-world $\to$ **representation**
+
+- **Data model**
+  - Describes how data is _represented_ (e.g., relational, key-value) and _accessed_ (e.g., insert operations, query)
+  - Schema in a DB describes a specific data collection using a data model
+
+- **Why need data model?**
+  - Know data structure to write general-purpose code
+  - Share data across programs, organizations, systems
+  - Integrate information from multiple sources
+  - Preprocess data for efficient access (e.g., building an index)
+
+* Multiple Layers of Data Modeling
+::: columns
+:::: {.column width=50%}
+
+- **Physical layer**
+  - How is the data physically stored
+  - How to represent complex data structures (e.g., B-trees for indexing)
+- **Logical layer**
+  - Entities
+  - Attributes
+  - Type of information stored
+  - Relationships among the above
+- **Views**
+  - Restrict information flow
+  - Security and/or ease-of-use
+
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_43_image_1.png)
+
+::::
+:::
+
+* Data Models: Logical Layer
+
+::: columns
+:::: {.column width=50%}
+
+- **Modeling constructs**
+  - Concepts to represent data structure
+  - E.g.,
+    - Entity types
+    - Entity attributes
+    - Relationships between entities
+    - Relationships between attributes
+- **Integrity constraints**
+  - Ensure data integrity
+    - Avoid errors and inconsistencies
+    - E.g., field can't be empty, must be an integer
+- **Manipulation constructs**
+  - E.g., insert, update, delete data
+
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_44_image_1.png)
+
+::::
+:::
+
+* Data Independence
+- **Logical data independence**
+  - Change data representation without altering programs
+  - E.g., API abstracting backend
+
+- **Physical data independence**
+  - Change data layout on disk without altering programs
+    - Index data
+    - Partition/distribute/replicate data
+    - Compress data
+    - Sort data
+
+* Examples of Data Models
+- **Some examples of data models**
+  - Relational model (SQL)
+  - Entity-relationship (ER) model
+  - XML
+  - Object-oriented (OO)
+  - Object-relational
+  - RDF
+  - Property graph
+- **Serialization formats** as data models
+  - CSV
+  - Parquet
+  - JSON
+  - Protocol Buffer
+  - Avro/Thrift
+  - Python Pickle
+
+* Good Data Models
+- **Good data model** should be:
+  - Expressive
+    - Capture real-world data
+  - Easy to use
+  - Perform well
+
+- **Trade-off between characteristics**
+  - E.g., more powerful models
+    - Represent more datasets
+    - Harder to use/query
+    - Less efficient (e.g., more memory, time)
+
+- **Evolution of data models** captures data structure
+  - Structured data $\to$ Relational DBs
+  - Semi-structured web data $\to$ XML, JSON
+  - Unstructured data $\to$ NoSQL DBs
+
+* A Brief History of Databases (Early 1960s)
+- **1960s: Early beginning**
+  - Computers become attractive technology
+  - Enterprises adopt computers
+  - Applications use own data stores
+    - Each application has its own format
+    - Data unavailable to other programs
+
+- **Database**: term for "shared data banks" by multiple applications
+  - Define data format
+  - Store as "data dictionary" (schema)
+  - Implement "database management" software to access data
+
+- **Issues**
+  - How to write data dictionaries?
+  - How to access data?
+  - Who controls the data?
+    - E.g., integrity, security, privacy concerns
+
+* A Brief History of Databases (1960s)
+- **1960s, Hierarchical and Network Model**
+  - Connect records of different types
+  - Example: connect accounts with customers
+  - Network model aimed for generality and flexibility
+
+- IBM's IMS Hierarchical Database (1966)
+  - Designed for Apollo space program
+  - Predates hard disks
+  - Used by over 95% of top Fortune 1000 companies
+  - Processes 50 billion transactions daily, manages 15 million GBs of data
+
+- **Cons**
+  - Exposed too much internal data (structures/pointers)
+  - Leaky abstraction
+
+* Relational, Hierarchical, Network Model
+
+::: columns
+:::: {.column width=50%}
+- **Relational model**
+  - Data as tuples in relations
+  - SQL
+
+\vspace{1cm}
+
+- **Hierarchical model**
+  - Tree-like structure
+    - One parent, many children
+    - Connected through links
+  - XML DBs resurgence in 1990s
+
+\vspace{1cm}
+
+- **Network model**
+  - Graph organization
+    - Multiple parents and children
+  - Graph DBs resurgence in 2010s
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_50_image_2.png)
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_50_image_3.png)
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_50_image_1.png)
+::::
+:::
+
+* A Brief History of Databases (1970s)
+- **1970s: Relational model**
+  - Set theory, first-order predicate logic
+    - Ted Codd developed the Relational Model
+  - Elegant, formal model
+    - Provided data independence
+    - Users didn't worry about data storage, processing
+  - High-level query language
+    - SQL based on relational algebra
+  - Notion of normal forms
+    - Reason about data and relations
+    - Remove redundancies
+
+- **Influential projects**
+  - INGRES (UC Berkeley), System R (IBM)
+  - Ignored IMS compatibility
+
+- **Debates**:
+  - Relational Model vs Network Model proponents
+
+* Entity-Relationship Model
+
+::: columns
+:::: {.column width=50%}
+
+- **Entity-Relationship Model**
+  - Proposed in 1976 by Peter Chen
+
+- Describes knowledge as:
+  - **Entities**: Physical or logical objects, "Nouns"
+  - **Relationships**: Connections between entities, "Verbs"
+
+- Map ER model to relational DB
+  - Entities, relationships $\to$ tables
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_2.png)
+
+\vspace{0.5cm}
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_52_image_3.png)
+
+::::
+:::
+
+* A Brief History of Databases (1980s)
+- **1980s: Relational model acceptance**
+  - SQL standard due to IBM's backing
+  - Enhanced relational model
+    - Set-valued attributes, aggregation
+
+- **Late 80's**
+  - Object-oriented DBs
+    - Store objects, not tables
+    - Overcome _impedance mismatch_ between languages and databases
+  - Object-relational DBs
+    - User-defined types
+    - Combine object-oriented benefits with relational model
+  - No expressive difference from pure relational model
+
+* Object-Oriented
+- OOP is a data model
+  - Object behavior described through data (fields) and code (methods)
+
+- **Composition**
+  - `has-a` relationships
+  - E.g., `Employee` class has an `Address` class
+- **Inheritance**
+  - `is-a` relationships
+  - E.g., `Employee` class derives from `Person` class
+
+- **Polymorphism**
+  - Code executed depends on the class of the object
+  - One interface, many implementations
+  - E.g., `draw()` method on a `Circle` vs `Square` object, both descending from
+    `Shape` class
+
+- **Encapsulation**
+  - E.g., private vs public fields/members
+  - Prevents external code from accessing inner workings of an object
+
+* A Brief History of Databases (1990s)
+::: columns
+:::: {.column width=50%}
+- **Late 90's-today**
+- Web/Internet emerges
+- XML: eXtensible Markup Language
+  - For _semi-structured_ data
+  - Tree-like structure
+  - Flexible schema
+
+::::
+:::: {.column width=45%}
+
+\scriptsize
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Edited by XMLSpy -->
+  <CATALOG>
+    <CD>
+      <TITLE>Empire Burlesque</TITLE>
+      <ARTIST>Bob Dylan</ARTIST>
+      <COUNTRY>USA</COUNTRY>
+      <COMPANY>Columbia</COMPANY>
+      <PRICE>10.90</PRICE>
+      <YEAR>1985</YEAR>
+    </CD>
+    <CD>
+      <TITLE>Hide your heart</TITLE>
+      <ARTIST>Bonnie Tyler</ARTIST>
+      <COUNTRY>UK</COUNTRY>
+      <COMPANY>CBS Records</COMPANY>
+      <PRICE>9.90</PRICE>
+      <YEAR>1988</YEAR>
+    </CD>
+    ...
+```
+::::
+:::
+
+* Resource Description Framework
+::: columns
+:::: {.column width=40%}
+- Aka RDF
+- **(subject, predicate, object) triple**
+
+- Example of RDF triple
+  - `Subject`=sky
+  - `Predicate`=has-the-color
+  - `Object`=blue
+
+- Maps to a labeled, directed multi-graph
+  - More general than a tree
+
+- **Stored in**:
+  - Relational DBs
+  - Dedicated "triple-stores" DBs
+::::
+:::: {.column width=55%}
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_56_image_1.png)
+::::
+:::
+
+* Property Graph Model
+
+::: columns
+:::: {.column width=40%}
+- **Graph**:
+  - Vertices and edges
+  - Properties for each edge and vertex
+
+- **Stored in**:
+  - Relational DBs
+  - Graph DBs
+::::
+:::: {.column width=55%}
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_57_image_1.jpeg)
+
+::::
+:::
