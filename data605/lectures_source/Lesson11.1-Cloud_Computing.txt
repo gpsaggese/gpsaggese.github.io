@@ -1,0 +1,594 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{11.1: Cloud Computing}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+::::
+:::: {.column width=20%}
+::::
+:::
+
+# Cloud Computing
+
+* Cloud Computing
+::: columns
+:::: {.column width=55%}
+- **Computing as "service" rather than "product"**
+  - Happens in the cloud: storage and computing
+  - Edge devices (e.g., phones, laptops, tablets) interact with the cloud
+
+- **Advantages of cloud computing**
+  - Device agnostic: computation moves seamlessly between devices
+  - On demand
+  - Efficiency / scalability
+    - Programming frameworks (e.g., Hadoop, Spark, Dask) enable scalability
+  - Reliability
+  - Cost: "pay-as-you-go" for computing resources
+    - Cheaper than building own systems
+    - Computing as a commodity (like electricity)
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_4_image_1.png)
+::::
+:::
+
+* Building vs Renting
+- **Building / buying infrastructure**
+  - Require time and capital investments (Capex)
+    - Especially at the beginning without revenues
+    - Smooth cash flow (constant $/mo) is better than lumpy one (big one-time
+      purchase)
+  - Buy hardware (e.g., computers, storage, network)
+    - Estimate current hardware size
+    - Difficult to estimate future demands
+  - Update obsolete hardware
+  - Cost of owning hardware (Opex)
+    - Data center, electricity, cooling, handling faults
+  - Administering
+    - Install, update, maintain software stack
+
+* Building vs Renting
+- **Cloud computing**
+  - Pay for what you use
+    - Low initial capital investment
+  - Ready systems with a click
+  - No multi-year resource plan needed
+  - Choose machines for your application and data needs
+
+* Cloud Computing
+::: columns
+:::: {.column width=55%}
+- **Basic ideas of cloud computing around for a long time**
+  - Mainframes + thin clients (1960s)
+  - Personal computers (1980s)
+  - Grid computing for supercomputers (1990s)
+  - Peer-to-peer architecture (early 2000s)
+  - Client-server model (Web 1.0 and Web 2.0)
+  - Cloud computing (2010s)
+
+- **It finally works**
+
+- **Why now? A convergence of key technologies**
+  - OS virtualization
+  - Large data centers
+  - Decreasing hardware costs
+  - Big data frameworks
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_2.png)
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_3.png)
+::::
+:::
+
+* X-as-a-Service
+::: columns
+:::: {.column width=40%}
+- **Infrastructure-as-a-service (IaaS)**
+  - Cloud provides low-level resources
+  - Install and maintain OS and applications
+  - E.g., AWS EC2
+
+- **Platform-as-a-service (PaaS)**
+  - Cloud provides OS and programming languages
+  - Build application on top of it
+  - E.g., google App Engine, managed Hadoop
+
+- **Software-as-a-service (SaaS)**
+  - Cloud provides the application
+  - Use it
+  - No need to install on your machine
+  - E.g., Dropbox, Salesforce, any app running in a browser
+::::
+:::: {.column width=60%}
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_8_image_1.png)
+::::
+:::
+
+* X-as-a-Service
+- **... XaaS**
+  - Business model of "Anything-as-a-service" (2010s)
+  - Desktop-as-a-service (e.g., AWS app)
+  - Mobility-as-a-service (e.g., Uber)
+  - Games-as-a-service (e.g., Google Stadia)
+  - Storage-as-a-service (e.g., S3, Google Drive)
+  - Marketing-as-a-service
+  - Banking-as-a-service, ...
+
+* Platform-as-a-Service
+::: columns
+:::: {.column width=40%}
+- **Problem: assembling your own software stack requires work**
+  - Install
+  - Configure
+  - Manage dependencies
+  - Incompatible versions
+    - **Solution: get a pre-built software stack**
+  - Pre-installed OS
+  - Libraries
+  - Application software
+  - As a virtualization solution
+    - E.g., VMware or Docker
+    - The software stack comes as a large file with the image of the system
+    - **Business model built around this**
+  - E.g., pre-built data605/lectures_source/images for Hadoop
+    - E.g., Hortonworks, Cloudera
+  - E.g., pre-built distributions for Linux
+    - RedHat, Gentoo, CentOS
+::::
+:::: {.column width=60%}
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_10_image_1.png)
+::::
+:::
+
+* Different Cloud Computing Layers
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_.png)
+
+* Cloud Computing Service Layers
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide.png)
+
+* Cloud Types
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_13_image_1.png)
+
+# Technologies behind cloud computing
+
+## Data centers
+
+* Data Centers
+::: columns
+:::: {.column width=50%}
+- Data centers enable cloud computing
+  - Large companies (e.g., AWS, Apple, Google, Facebook) build data centers
+    globally
+
+- Design and construction decisions
+
+- Research energy-saving for power and cooling
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_1.png)
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_2.png)
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_3.png)
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_4.png)
+
+::::
+:::
+
+* Data Centers
+::: columns
+:::: {.column width=45%}
+- **Equipment cost**
+  - Computing, memory, storage, networking
+  - Data center costs around 1B USD
+  - Prices dropping
+
+- **Powering / cooling cost**
+  - Running equipment cost
+  - High cooling cost
+    - Focus on "energy-efficient computing"
+  - Vent placement is key
+    - Thermal hotspots need management
+  - PUE (Power Usage Effectiveness)
+    - Power converted to computation; rest is overhead
+  - Hard to optimize in small data centers
+    - Ideal PUE is 1; current is 1.07-1.22
+    - May lead to large data centers soon
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_16_image_1.png)
+
+_Meta investment in 18 data centers_
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_16_image_2.png)
+
+::::
+:::
+
+* Data Centers
+
+::: columns
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_17_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_17_image_2.png)
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_17_image_3.png)
+::::
+:::
+
+* (Modular) Data Centers
+From James Hamilton Presentation
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_18_image_1.png)
+
+* Amazon Web Services
+
+As of 2022, 28 geographical regions
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_19_image_1.png)
+
+* Amazon Web Services (EC2)
+::: columns
+:::: {.column width=50%}
+- Widely used solution for cloud computing
+  - Alternatives may suit your needs
+  - Prices are low due to competition
+  - See
+    [current on-demand pricing](https://aws.amazon.com/ec2/pricing/on-demand/)
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_1.png)
+
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_2.png)
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_3.png)
+::::
+:::
+
+* Amazon S3
+- Amazon storage services (Simple Storage Solution)
+  - Pay for what you use
+
+**S3 Storage Types**
+
+|        | S3 Default | S3 RRS | S3 IA | Glacier |
+|---------|---------|---------|---------|---------|
+| Durability | 99.999999999% | 99.99% | 99.999999999% | 99.999999999% |
+| Availability | 99.99% | 99.99% | 99.9% | 99.99% |
+| Extra Fees * | None | None | Retrieval | Retrieval |
+| Real-Time Access? | Yes | Yes | Yes | No (mins/hours) |
+| Frequently Accessed? | Yes | Yes | No | No |
+
+* Google App Engine
+::: columns
+:::: {.column width=70%}
+- Google Compute Engine (IaaS)
+  - Competes with AWS EC2
+
+- Google Infrastructure (PaaS)
+  - Run Docker containers on Google resources
+  - Managed services (e.g., SQL and NoSQL DBs)
+
+- Google Docs (SaaS)
+  - Share documents in the cloud
+  - Includes word processor, spreadsheet, presentations
+
+- Google Cloud Computing Market Share
+  - Built software infrastructure/data centers before Amazon
+  - Invented cloud technologies (e.g., Google File System, MapReduce, BigTable)
+  - Market share 3x smaller than AWS
+  - Issues:
+    - Developer/customer unfriendliness
+    - Lack of commitment (Killed by Google)
+    - Poor customer service
+
+::::
+:::: {.column width=30%}
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_22_image_1.png)
+::::
+:::
+
+## Virtualization
+
+* Virtualization
+- **Virtual machines have been around for a long time**
+  - E.g., running Windows inside a Mac
+  - Used to be slow (e.g., QEMU)
+
+- **Only recently (~2000s) became efficient enough for cloud computing**
+
+- **Basic idea of cloud computing**
+  - Run virtual machines on servers and sell time on them
+  - E.g., amazon EC2, Microsoft Azure, Google Cloud
+
+- **Many advantages**
+  - Security: virtual machines have almost impenetrable boundary
+  - Multi-tenancy: multiple VMs on the same server
+  - Efficiency: replace many underpowered machines with fewer high-powered
+    machines
+
+* Virtualization
+::: columns
+:::: {.column width=45%}
+- **Consumer / desktop virtualization**
+  - VMWare, Xen, VirtualBox
+  - Run on host OS
+  - Hypervisor/VM supports guest OS
+
+- **Server virtualization**
+  - Run hypervisor on hardware
+  - Ideal for server farms, cloud computing
+  - Amazon used Xen on RedHat
+  - Now uses AWS Nitro
+  - Supports Windows and Linux VMs
+::::
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_25_image_1.png)
+
+Consumer / desktop virtualization
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_25_image_2.png)
+
+Server virtualization
+::::
+:::
+
+* Virtualization
+- Performance and tricky things to keep in mind
+  - Hard to reason about performance
+  - Identical VMs may deliver different performance
+    - Multi-tenancy, different hardware
+
+- "Bare-metal" compute to improve performance
+
+* Docker
+::: columns
+:::: {.column width=60%}
+- Enable true independence between application devs and IT ops
+
+- Package all dependencies
+
+- Advantages
+  - Containers are fast and portable
+  - Reduce virtualization overhead
+  - Containers don't require full OS
+  - All containers run on a single host
+  - Reduce OS licensing cost
+  - Reduce OS maintenance overhead
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_27_image_2.png)
+
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_27_image_1.png)
+
+::::
+:::
+
+## Programming frameworks
+
+* Programming Frameworks
+- **Programming frameworks emerged from efforts to "scale out" workloads**
+  - Distribute work over thousands of machines
+
+- Parallelism has been around for a long time
+  - In a single machine and as a cluster of computers
+
+- Parallelism is hard for programmers
+  - Many things to track:
+    - Parallelize application
+    - Distribute data
+    - Handle failures
+    - Debugging
+    - Race conditions/Heisenbugs
+
+- **The difference is the user interface**
+  - Google developed MapReduce and BigTable, starting a new era
+    - Hadoop, Spark
+  - AWS services
+
+* MapReduce Framework
+- Provide a restricted, powerful abstraction for programming distributed
+  workloads
+
+- Programmers write functions: _map_ and _reduce_
+  - **map** programs
+    - Input: list of "records" (e.g., images, genomes)
+    - Output: set of **(key, value)** pairs for each record
+  - **reduce** programs
+    - Input: list of **(key, [values])** from mapper
+    - Output: flexible
+  - Perform arbitrary computations on input data within structure
+
+- Framework handles task scheduling, fault tolerance
+
+- **Batch processing of data**
+  - MapReduce and analytics frameworks excel
+
+- **Streaming data**
+  - Large-scale applications need real-time access with low latency
+  - Balance "consistency" and "performance"
+
+* Other Programming Frameworks
+- Many programming frameworks for different applications
+  - Address MapReduce limitations
+
+- **High-performance Computing (HPC) Systems**
+  - Cluster of supercomputers
+  - E.g., GridRPC, MPI
+  - More expressive, efficient
+
+- **Spark**
+  - Based on Resilient Distributed Data (RDD)
+  - In-memory, efficient
+  - Uses Scala, Python, Java
+
+- **Apache Hive**
+  - SQL-like interface on Hadoop/HDFS
+
+- **Apache HBase**
+  - NoSQL column-oriented DB
+  - Random read/write large tables on Hadoop/HDFS
+  - Modeled after Google BigTable
+
+- **Apache Storm, Spark Streaming**
+  - Handle real-time streaming data
+
+- **Giraph, GraphLab, GraphX**
+  - Graph processing systems
+
+## Challenges and opportunities
+
+* Advantages of Cloud Computing
+- **Lower edge computer costs**
+  - Applications run in the cloud, reducing desktop processing power/memory/disk
+    needs
+
+- **Improved performance of desktop**
+  - Faster system boot due to less memory usage by large programs
+
+- **Device independence**
+  - Not tethered to a single computer
+  - Applications/documents follow you through the cloud
+  - Access applications/documents on any device
+
+- **Reduced software costs**
+  - Access most software for free(-ish)
+    - Google Docs suite vs Microsoft
+    - Most applications are cloud-based
+  - Rent (monthly payments) instead of buying
+
+* Advantages of Cloud Computing
+- **Instant software updates**
+  - Avoid obsolete software and high upgrade costs
+  - Web-based apps update automatically
+    - Available next login
+    - Access latest version without paying or downloading
+  - Docker or VMs enable cross-platform software
+
+- **Improved document format compatibility**
+  - Ensure document compatibility across users
+  - Eliminate format issues with shared cloud documents
+
+* Advantages of Cloud Computing
+- **"Unlimited" storage capacity**
+  - Cloud computing offers limitless storage
+  - Your computer has ~1TB hard drive
+  - Hundreds of PBs available in the cloud (elastic, on-demand)
+
+- **Increased data reliability**
+  - Hard disk can crash and destroy data
+  - Few users regularly backup data
+  - Cloud computer crash doesn't affect data storage
+    - Data remains accessible in the cloud
+    - Cloud computing is data-safe
+
+* Advantages of Cloud Computing
+- **Universal document access**
+  - Documents stay in the cloud
+  - Instantly available wherever you are
+  - Requires Internet connection
+
+- **Latest version availability**
+  - Edit at home, see changes at work
+  - Cloud hosts latest version
+  - Built-in revision control
+
+- **Easier collaboration**
+  - Sharing improves collaboration
+  - Multiple users collaborate easily
+
+* Disadvantages of Cloud Computing
+- **Using cloud computing means dependence on Big Tech**
+  - AWS, Google, Microsoft monopolize the market
+  - Limits flexibility and innovation
+  - High barriers to enter the market
+
+- **Security is an issue**
+  - Unclear data safety
+  - Unclear data ownership
+
+- **Issues relating to policy and access**
+  - Adhere to foreign policies if data stored abroad
+    - Cloud providers store data within borders to comply with restrictions
+    - E.g., TikTok saga
+  - Remote server downtime affects file access
+  - Users may be locked out and lose data access
+
+* Disadvantages of Cloud Computing
+- **Requires a constant Internet connection**
+  - Cannot access applications or documents without Internet
+  - No Internet means no work
+    - Some applications offer offline capabilities
+
+- **Does not work well with low-speed/spotty connections**
+  - Low-speed Internet makes cloud computing difficult
+  - Web-based applications need high bandwidth
+
+- **Web-interface can be slow**
+  - Often slower than desktop even with fast connection
+  - Interface sent between your computer and cloud
+  - Latency is crucial
+
+* Disadvantages of Cloud Computing
+- **Features might be limited**
+  - Web-based apps often lack features compared to desktop apps
+  - Microsoft PowerPoint offers more features than Google Slides
+  - Situation is changing rapidly
+
+- **Stored data might not be secure**
+  - Cloud computing stores data on the cloud
+  - Is the cloud secure?
+    - Likely more secure than your laptop
+  - Can unauthorized users access your data?
+    - Data leaks are frequent
+
+- **Stored data can be lost**
+  - Cloud data is safe, replicated across machines
+  - Local backups are still advisable
+
+* Disadvantages of Cloud Computing
+- **HPC systems**
+  - Run compute-intensive HPC applications using MPI or OpenMP
+  - Require low-latency, high-bandwidth interconnect
+  - Schedule applications effectively
+  - Co-locate nodes to minimize communication latency
+  - Evolving landscape (e.g., MapReduce, AWS EC2)
+
+- **Interoperability**
+  - Cloud systems use different protocols and APIs
+  - Running applications across different cloud systems may be challenging
+  - Solution: Use indirection layer (Terraform, Ansible)
