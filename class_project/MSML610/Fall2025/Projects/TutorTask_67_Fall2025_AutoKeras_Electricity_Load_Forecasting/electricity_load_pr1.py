@@ -13,7 +13,10 @@ What this script does
 - Plots Actual vs Predicted (test window) and saves CSV of predictions.
 
 How to run
-$ python electricity_load_pr1.py --file "./continuous dataset.csv" --timestamp-col "timestamp" --target-col "target"
+$ python electricity_load_pr1.py --file "/mnt/data/continuous dataset.csv" --timestamp-col "timestamp" --target-col "target"
+
+If you are unsure of column names, just run without args; the script will try to infer them.
+$ python electricity_load_pr1.py
 
 Outputs (saved next to your data file or ./outputs if not writable):
 - pr1_metrics.txt
