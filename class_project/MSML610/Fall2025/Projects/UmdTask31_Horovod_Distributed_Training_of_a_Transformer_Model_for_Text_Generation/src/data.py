@@ -15,7 +15,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader, DistributedSampler
 from transformers import GPT2TokenizerFast
 
-from .utils.distributed import get_rank, get_world_size, print_once
+from .utils.distributed import get_rank, get_world_size, print_once, barrier
 
 
 class TextDataset(Dataset):
@@ -176,9 +176,16 @@ def load_and_tokenize_dataset(
     
     # Load dataset
     print_once(f"[INFO] Loading dataset: {dataset_name} (split: {dataset_split})...")
+    
+    # Import barrier at the top to ensure all ranks can use it
+    from .utils.distributed import barrier
+    
+    train_dataset = None
+    val_dataset = None
+    load_exception = None
+
     try:
         from datasets import load_dataset
-        from .utils.distributed import barrier
         
         # Load dataset (rank 0 downloads first, then barrier synchronization)
         if rank == 0:
@@ -283,12 +290,39 @@ def load_and_tokenize_dataset(
         
         print_once("[INFO] Dataset loaded and tokenized successfully.")
         
-        return train_dataset, val_dataset
-        
     except Exception as e:
-        print_once(f"[ERROR] Failed to load dataset: {e}")
+        load_exception = e
+
+    # Synchronize failure state so that all ranks make the same decision
+    any_failures = load_exception is not None
+    try:
+        import horovod.torch as hvd  # type: ignore
+        if hvd.is_initialized():
+            failure_tensor = torch.tensor(1 if any_failures else 0, device='cpu')
+            failure_sum = hvd.allreduce(
+                failure_tensor,
+                name='dataset_load_failure',
+                average=False
+            )
+            any_failures = failure_sum.item() > 0
+    except Exception:
+        # If Horovod isn't available, fall back to the local failure flag
+        pass
+
+    if any_failures or train_dataset is None or val_dataset is None:
+        if load_exception is not None:
+            print_once(f"[ERROR] Failed to load dataset on rank {rank}: {load_exception}")
         print_once("[INFO] Falling back to synthetic dataset.")
+        
+        # Ensure all ranks transition to the fallback together
+        try:
+            barrier()
+        except Exception:
+            pass
+        
         return create_synthetic_datasets(max_samples or 1000, max_length)
+    
+    return train_dataset, val_dataset
 
 
 def create_synthetic_datasets(

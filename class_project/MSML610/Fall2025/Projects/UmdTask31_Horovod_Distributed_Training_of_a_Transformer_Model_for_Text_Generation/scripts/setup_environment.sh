@@ -25,8 +25,11 @@ echo ""
 # Load required modules
 echo "Loading cluster modules..."
 module purge
+module load gcc/11.3.0
 module load cuda/12.3.0
-module load python/3.10.10/gcc/11.3.0/cuda/12.3.0/zen2
+module load python/3.10.10/gcc/11.3.0
+module load openmpi/4.1.5/gcc/11.3.0/zen2
+module load nccl/2.18.1-1/gcc/11.3.0/zen2
 module load pytorch/2.0.1/gcc/11.3.0/openmpi/4.1.5/cuda/12.3.0/zen2
 
 echo "Python version:"
@@ -63,16 +66,37 @@ echo "Note: PyTorch should already be available from the module system"
 echo ""
 
 # Install packages that aren't in modules
+echo "Installing build helpers (pybind11) for Horovod..."
+pip install --no-cache-dir pybind11
+
 echo "Installing Horovod (this may take a few minutes)..."
+# Ensure compiler and include paths are set for the build
+export CC=$(which gcc)
+export CXX=$(which g++)
+export CMAKE_C_COMPILER=$CC
+export CMAKE_CXX_COMPILER=$CXX
+export HOROVOD_NCCL_HOME=/cvmfs/hpcsw.umd.edu/spack-software/2023.11.20/linux-rhel8-zen2/gcc-11.3.0/nccl-2.18.1-1-iz663sfeinfvn4trcoxsrb2sch5lyev4
+export HOROVOD_NCCL_LINK=SHARED
+export HOROVOD_WITHOUT_GLOO=1
+export HOROVOD_WITH_MPI=1
+export MPICC=mpicc
+export MPICXX=mpic++
+export CPATH=$HOROVOD_NCCL_HOME/include:$(python -c "import pybind11, pathlib; print(pathlib.Path(pybind11.__file__).resolve().parent/'include')"):$CPATH
+export LD_LIBRARY_PATH=$HOROVOD_NCCL_HOME/lib:$LD_LIBRARY_PATH
+export CMAKE_PREFIX_PATH=$(python -c "import torch, pathlib; print(pathlib.Path(torch.__file__).resolve().parents[2] / 'share' / 'cmake')")
+
+PIP_NO_BUILD_ISOLATION=1 \
 HOROVOD_GPU_OPERATIONS=NCCL \
 HOROVOD_WITH_PYTORCH=1 \
-pip install --no-cache-dir horovod[pytorch]
+CC=$CC CXX=$CXX CMAKE_C_COMPILER=$CC CMAKE_CXX_COMPILER=$CXX \
+pip install --no-cache-dir --no-build-isolation horovod[pytorch]
 
 echo "Installing other dependencies..."
 pip install transformers datasets pyyaml tensorboard numpy tqdm pandas matplotlib
 
 # Optional: Install metrics packages
 pip install nltk rouge-score
+pip install psutil cloudpickle
 
 echo ""
 echo "=========================================="

@@ -21,7 +21,7 @@ import torch.nn as nn
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import LambdaLR
 
-from .utils.distributed import setup_horovod, metric_average
+from .utils.distributed import setup_horovod, metric_average, barrier as dist_barrier
 from .utils.config import load_config
 from .utils.logging import setup_logging, TensorBoardLogger
 from .utils.recorder import RunRecorder
@@ -575,6 +575,9 @@ def run_distributed_training(
     # Load data
     logger.info("Loading data...")
     train_dataloader, val_dataloader = get_dataloaders(config)
+    logger.info("Data prepared on rank %s. Waiting for all ranks before training...", rank)
+    dist_barrier()
+    logger.info("All ranks synchronized after data loading.")
     
     # Create model
     logger.info("Creating model...")
@@ -689,9 +692,12 @@ def run_distributed_training(
             
             # Broadcast initial parameters from rank 0 to all other processes
             hvd.broadcast_parameters(model.state_dict(), root_rank=0)
-            hvd.broadcast_optimizer_state(optimizer, root_rank=0)
             
-            logger.info("Horovod optimizer initialized successfully.")
+            # Skip optimizer state broadcast to avoid NumPy compatibility issues
+            # The optimizer will sync naturally during the first backward pass
+            # hvd.broadcast_optimizer_state(optimizer, root_rank=0)
+            
+            logger.info("Horovod optimizer initialized successfully (skipped optimizer state broadcast).")
         else:
             logger.info("Single-process mode: Horovod optimizer not needed.")
         

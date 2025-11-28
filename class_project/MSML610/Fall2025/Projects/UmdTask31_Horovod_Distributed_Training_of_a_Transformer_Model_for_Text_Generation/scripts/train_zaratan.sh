@@ -2,8 +2,8 @@
 ###############################################################################
 # Slurm Job Script for Zaratan HPC Cluster (UMD) - H100 Optimized
 #
-# Account: hpcintro-c+
-# Partition: gpu-h100 (H100 nodes)
+# Account: msml610-class
+# Partition: gpu# Partition: gpu-h100 (H100 nodes)
 # GPUs: H100 (80GB VRAM) - 4 GPUs per node, single node only
 #
 # This script is optimized for:
@@ -28,8 +28,8 @@
 ###############################################################################
 
 #SBATCH --job-name=horovod_transformer_h100
-#SBATCH --account=hpcintro-+
-#SBATCH --partition=gpu-h100
+#SBATCH --account=msml610-class
+#SBATCH --partition=gpu
 #SBATCH --nodes=1                       # Single node only - all 4 GPUs from same node
 #SBATCH --ntasks-per-node=4             # 4 processes (one per GPU)
 #SBATCH --gres=gpu:h100:4               # Request 4x H100 (80GB each)
@@ -137,55 +137,32 @@ mkdir -p logs
 ###############################################################################
 echo "Loading modules..."
 
-# Purge existing modules to avoid conflicts
 module purge
 
-# Load modules in the correct order (matching successful Horovod build)
 echo "Loading GCC 11.3.0..."
 module load gcc/11.3.0
 
 echo "Loading CUDA 12.3.0..."
 module load cuda/12.3.0
 
-# Verify CUDA version matches H100 requirements
-CUDA_VERSION=$(nvcc --version | grep "release" | sed 's/.*release \([0-9]\+\.[0-9]\+\).*/\1/')
-echo "CUDA Version: $CUDA_VERSION"
+# Load OpenMPI for Horovod MPI backend
+echo "Loading OpenMPI 4.1.5 (icelake)..."
+module load openmpi/4.1.5/gcc/11.3.0/icelake
 
-# Check if CUDA version is >= 11.8 (required for H100)
-CUDA_MAJOR=$(echo "$CUDA_VERSION" | cut -d. -f1)
-CUDA_MINOR=$(echo "$CUDA_VERSION" | cut -d. -f2)
+# Load NCCL for GPU communication
+echo "Loading NCCL 2.18.1-1 (icelake)..."
+module load nccl/2.18.1-1/gcc/11.3.0/icelake
 
-if [ "$CUDA_MAJOR" -lt 11 ]; then
-    echo "[ERROR] CUDA 11.8+ required for H100. Found: $CUDA_VERSION"
-    exit 1
-elif [ "$CUDA_MAJOR" -eq 11 ] && [ "$CUDA_MINOR" -lt 8 ]; then
-    echo "[ERROR] CUDA 11.8+ required for H100. Found: $CUDA_VERSION"
-    exit 1
-fi
-
-echo "[OK] CUDA version compatible with H100 (requires 11.8+, found $CUDA_VERSION)"
-echo ""
-
-# Load Python 3.10.10 (base, not CUDA-specific - PyTorch module handles CUDA)
+# Load Python (but NOT the pytorch module - we use venv PyTorch instead)
 echo "Loading Python 3.10.10..."
 module load python/3.10.10/gcc/11.3.0
 
-# Load OpenMPI with CUDA support (required for Horovod)
-# Use zen2 for GPU compute nodes (icelake is for CPU-only nodes)
-echo "Loading OpenMPI 4.1.5 with CUDA support..."
-module load openmpi/4.1.5/gcc/11.3.0/cuda/12.3.0/zen2
+# NOTE: We do NOT load the pytorch module here!
+# The virtual environment contains PyTorch 2.0.1+cu118 with H100 support.
+# Loading the system pytorch module would override it and cause compatibility issues.
 
-# Load NCCL for multi-GPU communication
-echo "Loading NCCL 2.18.1-1..."
-module load nccl/2.18.1-1/gcc/11.3.0/zen2
-
-# Load PyTorch 2.0.1 with CUDA 12.3 and OpenMPI (for Horovod)
-echo "Loading PyTorch 2.0.1 with CUDA 12.3..."
-module load pytorch/2.0.1/gcc/11.3.0/openmpi/4.1.5/cuda/12.3.0/zen2
-
-# Load CMake (may be needed for some operations)
-echo "Loading CMake 3.26.3..."
-module load cmake/3.26.3/gcc/11.3.0/zen2 2>/dev/null || echo "[INFO] CMake module not found, continuing..."
+echo "Loading CMake 3.26.3 (optional)..."
+module load cmake/3.26.3/gcc/11.3.0/icelake 2>/dev/null || echo "[INFO] CMake module not found, continuing..."
 
 echo "Loaded modules:"
 module list
@@ -196,27 +173,43 @@ echo ""
 ###############################################################################
 echo "Setting up Python environment..."
 
-# Activate virtual environment with Horovod installed
-# Based on successful setup: Horovod is installed in ~/envs/horovod-py310
-VENV_PATH="$HOME/envs/horovod-py310"
+# CRITICAL: Unset PYTHONPATH to prevent system packages from overriding venv
+# The module system adds system site-packages which can conflict with our venv
+echo "Clearing PYTHONPATH to ensure venv takes priority..."
+unset PYTHONPATH
+
+# Our Horovod venv on SCRATCH
+VENV_PATH="/scratch/zt1/project/msml610/user/vikranth/horovod-py310"
 
 if [ -f "$VENV_PATH/bin/activate" ]; then
     echo "Activating virtual environment: $VENV_PATH"
+    # shellcheck source=/dev/null
     source "$VENV_PATH/bin/activate"
     echo "[OK] Virtual environment activated"
 elif [ -f "venv/bin/activate" ]; then
     echo "Activating project virtual environment: venv"
+    # shellcheck source=/dev/null
     source venv/bin/activate
     echo "[OK] Project virtual environment activated"
 else
-    echo "[WARNING] No virtual environment found at $VENV_PATH or ./venv"
-    echo "[WARNING] Continuing with system Python (Horovod may not be available)"
+    echo "[ERROR] No virtual environment found at $VENV_PATH or ./venv"
+    echo "[ERROR] Cannot continue without the Horovod environment."
+    exit 1
+fi
+
+# From this point on, "python" comes from the active environment
+PYTHON_BIN=$(command -v python || true)
+echo "Using Python interpreter: ${PYTHON_BIN:-<not found>}"
+
+if [ -z "$PYTHON_BIN" ]; then
+    echo "[ERROR] 'python' is not on PATH even after activating the venv."
+    exit 1
 fi
 
 echo "Python version:"
 python --version
-which python
 echo ""
+
 
 echo "PyTorch and CUDA Information:"
 python -c "
@@ -242,7 +235,7 @@ if torch.cuda.is_available():
 echo ""
 
 echo "Horovod version:"
-python -c "import horovod.torch as hvd; print(f'Horovod: {hvd.__version__}'); print(f'NCCL built: {hvd.nccl_built()}'); print(f'MPI built: {hvd.mpi_built()}')" 2>&1 || {
+python -c "import horovod; import horovod.torch as hvd; print(f'Horovod: {horovod.__version__}'); print(f'NCCL built: {hvd.nccl_built()}'); print(f'MPI built: {hvd.mpi_built()}')" 2>&1 || {
     echo "[ERROR] Horovod not found!"
     echo "[ERROR] Please install Horovod following the setup guide:"
     echo "[ERROR] 1. Allocate interactive node: srun --pty --partition=gpu --gres=gpu:h100:4 --ntasks=4 --cpus-per-task=4 --time=00:30:00 /bin/bash"
@@ -257,8 +250,12 @@ echo ""
 echo "Setting environment variables..."
 
 # Zaratan-specific paths (msml610 allocation)
-export PROJECT_HOME=/afs/shell.umd.edu/project/msml610/user/vikranth
-export SCRATCH_DIR=/scratch/zt1/project/msml610/vikranth
+# Detect project root dynamically based on script location
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+export PROJECT_HOME="$PROJECT_ROOT"
+export SCRATCH_DIR=/scratch/zt1/project/msml610/user/vikranth
 
 # HuggingFace cache directory (use scratch for large datasets/models)
 export HF_HOME=$SCRATCH_DIR/hf_cache
@@ -267,10 +264,13 @@ export DATASET_CACHE=$HF_HOME
 mkdir -p $HF_HOME 2>/dev/null || true
 
 # Ensure we're in the project directory
-cd "$PROJECT_HOME/UmdTask31_Horovod_Distributed_Training_of_a_Transformer_Model_for_Text_Generation" || {
-    echo "[ERROR] Cannot find project directory. Please check PROJECT_HOME path."
+cd "$PROJECT_HOME" || {
+    echo "[ERROR] Cannot cd to project directory: $PROJECT_HOME"
     exit 1
 }
+
+# Create output directories if they don't exist
+mkdir -p checkpoints logs runs
 
 # PyTorch environment variables
 export PYTHONUNBUFFERED=1
@@ -414,9 +414,18 @@ if [ -n "$SLURM_JOB_ID" ]; then
   RUN_NAME_ARG="--run_name job$SLURM_JOB_ID"
 fi
 
+# Set Horovod/NCCL environment variables for better communication
+export HOROVOD_TIMELINE=""  # Disable timeline to reduce overhead
+export HOROVOD_STALL_CHECK_TIME_SECONDS=300  # Increase stall check timeout
+export HOROVOD_STALL_SHUTDOWN_TIME_SECONDS=600  # Increase shutdown timeout
+export NCCL_DEBUG=WARN  # Reduce NCCL verbosity
+export NCCL_IB_DISABLE=1  # Disable InfiniBand (use shared memory for single node)
+export NCCL_P2P_LEVEL=NVL  # Use NVLink for GPU-to-GPU communication
+
 horovodrun \
     -np $NP \
     -H localhost:$NP \
+    --mpi-args="--bind-to none --map-by slot" \
     python -m src.train --config "$CONFIG_FILE" $RUN_NAME_ARG
 
 # Capture exit code

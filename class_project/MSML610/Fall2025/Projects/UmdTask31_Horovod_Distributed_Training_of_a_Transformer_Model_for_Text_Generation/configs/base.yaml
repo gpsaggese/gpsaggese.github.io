@@ -31,7 +31,7 @@ training:
 data:
   dataset_name: "lucadiliello/bookcorpusopen"
   dataset_split: "train"
-  max_samples: null  # null for all, or int for subset
+  max_samples: null  # null for all, or int for subset (e.g., 10000 for testing)
   validation_split: 0.05
   num_workers: 4
   shuffle: true
