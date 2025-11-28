@@ -30,82 +30,94 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-* Overview
-- Motivation
-- Graph data models
-  - RDF, Property Graph, XML
-- Storing graph data
-  - Neo4j
-- Querying graph data
-  - Cypher, SPARQL, Gremlin
-- Typical graph analysis tasks
-  - PageRank, clustering
-- Executing graph analysis tasks
-  - Google Pregel, Apache Giraph, Spark GraphX
-
 ## Motivation
 
 * Graphs: Background
 :::columns
-::::{.column width=100%}
-- A _graph (or network)_ captures entities and interconnections
-  - Entities represented by _vertices or nodes_
-  - Interconnections called _edges_ (or _links, arcs, relationships_)
+::::{.column width=50%}
+- A **graph** (or network) captures entities and interconnections
+  - Entities represented by _vertices_ (or nodes)
+  - Interconnections called _edges_ (or links, arcs, relationships)
 
-- Graph theory and algorithms studied in Computer Science
+- **Graph theory and algorithms** studied in Computer Science
   - Less work on managing graph-structured data
-::::
-::::{.column width=0%}
-::::
-:::
-\vspace{0.5cm}
 
-:::columns
-::::{.column width=50%}
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_1.png){width=90%}
-_An undirected, unweighted graph_
+- **Applications across Disciplines**
+  - Social networks
+  - Biological networks
+  - Information networks
+  - Infrastructure networks
 ::::
-::::{.column width=50%}
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_2.png){width=90%}
+::::{.column width=45%}
+\centering
+\small
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_1.png)
+_An undirected, unweighted graph_
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_2.png)
 _A directed, edge-weighted graph_
 ::::
 :::
 
 * Graph Data Structures: Motivation
-- Increasing interest in querying and reasoning about the *underlying graph
-  structure *in a variety of disciplines
+:::columns
+::::{.column width=45%}
+- Increasing interest in querying and reasoning about _underlying graph
+  structure_
+  - Sectors: healthcare, finance, logistics
+  - Examples: fraud detection, recommendation systems, network analysis
+::::
+::::{.column width=25%}
+\center
+\small
 
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_6_image_1.png){width=85%}
+![](data605/lectures_source/images/lecture_12_2/big_data_graph1.png)
+_Protein-protein interaction network_
 
-\vspace{-5.5cm}\centering
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_6_image_2.png){width=30%}
+![](data605/lectures_source/images/lecture_12_2/big_data_graph2.png)
+_Supreme court citation network_
+::::
+::::{.column width=25%}
+\center
+\small
+
+![](data605/lectures_source/images/lecture_12_2/big_data_graph3.png)
+_Stock trading network_
+
+![](data605/lectures_source/images/lecture_12_2/big_data_graph4.png)
+_Social networks_
+::::
+:::
 
 * Motivation
 :::columns
 ::::{.column width=50%}
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_1.png)
-::::
-::::{.column width=50%}
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_2.png){width=70%}
-::::
-:::
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_3.png)
+- Graph data structures **have not changed much over time**
+  - Similar issues in representing data in the 1960s as today
 
-* Motivation
-- **Graph data structures have not changed that much over time**
-  - Same problems in representing data in 1960s as today
-
-- **What has changed in recent years**
+- **Recent Changes**
   - Large data volumes and easier availability
   - Reasoning about graph structure provides useful insights
-    - Lose information if graph structure ignored
-  - Not easy to query with traditional tools (e.g., relational DBs)
+    - Information lost if graph structure ignored
+  - Challenging to query with traditional tools (e.g., relational DBs)
     - Need specialized tools (e.g., Neo4j)
-  - Hard to efficiently process graph-structured queries with existing tools
+  - Difficult to efficiently process graph-structured queries with existing tools
     - Dedicated solutions: Google Pregel / Apache Giraph, Spark GraphX
     - Problems worsen with increasingly large graphs in practice
 
-## Graph data models
+::::
+::::{.column width=50%}
+\center
+\small
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_1.png)
+_Global virtual trade network_
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_2.png)
+_Federal funds networks_
+::::
+:::
 
 * Knowledge Graphs
 - **Representation of knowledge in the form of graphs**
@@ -128,47 +140,56 @@ _A directed, edge-weighted graph_
 * Graph Data Models: RDF
 :::columns
 ::::{.column width=60%}
-- Resource Description Framework
-
-- RDF uses triples subject-predicate-object
+- **Resource Description Framework**
+  - RDF uses triples subject-predicate-object
   - Connects "subject" and "object" through a "predicate"
   - E.g., "TomCruise-acted-TopGun"
 
 - **Used to represent knowledge bases**
   - Queried through SPARQL
-
-- **Pros**
-  - Standardization
-    - W3C standard to model data
-    - Subject and object can be URI in semantic web
-  - Interoperability
-    - Merge RDF data store
-  - Extensibility
-    - Add new nodes and relationships
-    - Support ontologies
 ::::
 ::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_11_image_1.png)
 ::::
 :::
 
+- **Pros**
+  - Standardization
+    - W3C standard to model data
+    - Subject and object can be URIs in semantic web
+  - Interoperability
+    - Merge RDF data stores
+  - Extensibility
+    - Add new nodes and relationships
+    - Support ontologies
+
+- **Example Use Cases**
+  - Linking Open Data project
+  - FOAF (Friend of a Friend) vocabulary
+
 * Graph Data Models: Property Graph
 :::columns
-::::{.column width=50%}
-- Directed graph with nodes and edges having _properties_ (_key-values_)
+::::{.column width=45%}
+- Directed graph with nodes and edges having key-values _properties_
 
-- Query languages
+- **No universal standard**
+  - Similar expressive power to RDFs
+  - Less "schema"
+  - Harder to interoperate
+
+- Examples of **query languages**:
   - Cypher (e.g., Neo4j)
   - Gremlin (e.g., Apache TinkerPop)
 
-- No universal standard
-
-- Similar expressive power to RDFs, less "schema," harder to interoperate
-
-- Used by many open-source graph data management tools
+- **Applications** 
+  - Used by many open-source graph data management tools
+  - Logistics and supply chain management
+  - Fraud detection in financial transactions
 ::::
-::::{.column width=45%}
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_1.png)
+
+\vspace{0.5cm}
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_2.jpeg)
 ::::
