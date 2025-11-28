@@ -73,6 +73,13 @@ navigator = CausalNavigator(
 - **Success Criteria:** The "Placebo ATE" should cluster around 0. The "Actual ATE" should be far outside this distribution.
 - **Interpretation:** If the Actual Effect falls inside the Placebo distribution, the result is statistically indistinguishable from noise.
 
+#### `compare_estimators(X, T, Y)`
+**Purpose:** Advanced model selection ("Horse Race").
+- **Methodology:** Splits data into Train (70%) and Test (30%). Trains S, T, X, R, and DR learners on the training set.
+- **Metric:** Generates a **Cumulative Gain Chart (Uplift Curve)** on the test set.
+- **Why this metric?** Since ground truth CATE is impossible to observe, we cannot use RMSE. The Gain Chart measures how well a model sorts individuals from "High Responder" to "Low Responder."
+- **Visual:** Produces a plot where the highest curve represents the best-performing model for targeting interventions.
+
 ## Helper Functions
 
 #### `load_cdc_data(filepath)`
