@@ -35,21 +35,35 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Extra system deps for h5py / TensorFlow
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    pkg-config \
+    libhdf5-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+
 RUN mkdir /install
 
 # Install common packages
 ADD install_common_packages.sh /install/
 RUN chmod +x /install/install_common_packages.sh && /install/install_common_packages.sh
 
+# Deep learning deps (for LSTM/GRU models in train.py)
+RUN python3 -m pip install --no-cache-dir "h5py<4" "tensorflow==2.12.0"
+
+# MLflow for experiment tracking
+RUN python3 -m pip install --no-cache-dir mlflow
+
+
 # Install Jupyter extensions.
-ADD install_jupyter_extensions.sh /install
-RUN chmod +x /install/install_jupyter_extensions.sh
-RUN /install/install_jupyter_extensions.sh
+#ADD install_jupyter_extensions.sh /install
+#RUN chmod +x /install/install_jupyter_extensions.sh
+#RUN /install/install_jupyter_extensions.sh
 
 # Config.
-ADD etc_sudoers /install/
-COPY etc_sudoers /etc/sudoers
-COPY bashrc /root/.bashrc
+#ADD etc_sudoers /install/
+#COPY etc_sudoers /etc/sudoers
+#COPY bashrc /root/.bashrc
 
 # Report package versions.
 ADD version.sh /install/
