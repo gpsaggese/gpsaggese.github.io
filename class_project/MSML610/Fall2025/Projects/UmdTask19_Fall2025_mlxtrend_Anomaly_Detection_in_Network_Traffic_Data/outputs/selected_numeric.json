@@ -1,1 +1,7 @@
-["sttl", "dttl", "Sload", "ct_state_ttl", "smeansz", "sbytes", "dur", "Dintpkt", "dmeansz", "dbytes"]
+[
+  "sttl",
+  "ct_state_ttl",
+  "Sload",
+  "smeansz",
+  "dmeansz"
+]

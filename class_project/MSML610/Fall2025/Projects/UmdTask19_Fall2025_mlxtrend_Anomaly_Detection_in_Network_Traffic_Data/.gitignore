@@ -8,3 +8,8 @@ __pycache__/
 archive.zip
 archive.zip
 archive.zip
+
+# Keep anomaly metrics outputs in git
+!outputs/
+!outputs/*.csv
+!outputs/*.json
