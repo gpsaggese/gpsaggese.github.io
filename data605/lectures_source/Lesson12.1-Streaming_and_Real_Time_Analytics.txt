@@ -64,36 +64,39 @@ UMD DATA605 - Big Data Systems
 - Process multimedia data
   - E.g., online object detection, activity detection
 
-* Why Not Using the Usual RDBM?
+* Why Not Using Standard Solutions?
+::: columns
+:::: {.column width=55%}
 - **Example**
-  - "_Report moving average over last hour every 10 minutes_"
+  - "_Report moving average of XYZ over last hour every 10 minutes_"
 
 - **Solution**
   - Insert arriving items into a relational table
   - Re-run query repeatedly
-
-:::columns
-::::{.column width=60%}
-- **Problems**
-  - Re-executes full query instead of leveraging incremental updates
-  - Many streaming computations are recursive by nature
-  - Complex computations may not be easily expressed incrementally
-  - Real systems may need to run thousands of such continuous queries
 ::::
-::::{.column width=40%}
-\centering \tiny
+:::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_3.png)
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_1.png){width=60%}
+::::
+:::
 
-Computation
+:::columns
+::::{.column width=55%}
+- **Problems**
+- Re-executes full query, not leveraging incremental updates
+- Many streaming computations are recursive
+- Complex computations may not be easily expressed incrementally
+- Real systems may run thousands of continuous queries
+::::
+::::{.column width=40%}
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_2.png){width=80%}
 ::::
 :::
 
 * Pub-Sub Systems
-- Modern distributed systems use small, independent components
+- Modern distributed systems use **small, independent components**
   - E.g., serverless architectures, microservices (e.g., Uber)
   - Easier evolution, isolation, scalability
 
@@ -111,9 +114,9 @@ Computation
 ::::
 :::
 
-* Pub-Sub Systems
-:::columns
-::::{.column width=45%}
+* Pub-Sub Systems: Architecture
+::: columns
+:::: {.column width=45%}
 - **Publishers**
   - Send messages or events
 
@@ -123,6 +126,11 @@ Computation
 - **Message broker**
   - Message broker routes event flow between publishers and subscribers, based on
     topics and subscriptions
+::::
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_6_image_1.png)
+::::
+:::
 
 - **Design parameters**
   - Event distribution model (topics, filters)
@@ -132,145 +140,123 @@ Computation
     - At-most-once
     - At-least-once
     - Exactly-once
-::::
-::::{.column width=50%}
-![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_6_image_1.png)
-::::
-:::
 
-* Delivery Semantics
-:::columns
-::::{.column width=60%}
+* Delivery Semantics: 1 / 3
 - **At-most once**
   - Message may be lost, not redelivered
-  - Pros
-    - High-performance
-    - Small implementation overhead
-    - Easy to implement: "fire-and-forget"
-  - E.g., monitoring metrics allow small data loss
+  - Small implementation overhead, high-performance
+  - Easy to implement: "fire-and-forget"
+  - Works when occasional loss is acceptable
+  - E.g., monitoring metrics of website
 
-- **At-least once**
-  - Deliver message more than once, no message lost
-  - Handle transport message loss
-    - Keep state at sender
-    - Acknowledge state at receiver
-  - Works if
-    - Data duplication is acceptable
-    - Deduplication (e.g., storing key-value)
-    - Idempotency
-
-- **Exactly once**
-  - Every message sent once
-  - Friendly for downstream consumers
-  - Difficult to implement
-    - Two Generals' Problem
-  - E.g., mission-critical systems
-  - E.g., financial use cases (e.g., payment, trading, accounting)
-::::
-::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_1.png)
 
-\vspace{1cm}
+
+* Delivery Semantics: 2 / 3 
+- **At-least once**
+  - Messages retried until acknowledged
+  - Ensures no loss but duplicates possible
+  - Requires idempotent operations or deduplication
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_2.png)
 
-\vspace{1.5cm}
+
+* Delivery Semantics: 2 / 3
+- **Exactly once**
+  - Each message processed once globally
+  - Most consumer-friendly but hardest to guarantee
+  - Used in financial and mission-critical systems
+  - Complicated by distributed coordination limits (e.g., "Two Generals' Problem")
+  - E.g., mission-critical systems (e.g., payment, trading, accounting)
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_3.png)
-::::
-:::
 
 * Event vs Processing Time
 :::columns
-::::{.column width=60%}
-- In both streaming and pub-sub architectures
-
-- **Event time**
-  - Time when each record is generated
-
-- **Processing time**
-  - Time when each record is received
-  - Ingestion vs processing time: when events are received vs processed
-
-- **Problems with events**
-  - Out of order
-  - Tardiness
-  - How long to wait for late data?
-    - In an asynchronous system, never sure all data has arrived
-    - Use bounds on delay
-    - Assume data arrives every minute
-  - Recompute once late data arrives? If not, drop late data?
-::::
 ::::{.column width=50%}
+- In both streaming and pub-sub architectures
+  - **Event time**
+    - Time when each record is generated
+
+  - **Processing time**
+    - Time when each record is received
+    - Ingestion vs processing time: when events are received vs processed
+::::
+::::{.column width=45%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_8_image_1.png)
 ::::
 :::
 
+- **Problems with events**
+  - Events may arrive late or out of order
+  - Determining how long to wait for stragglers is difficult
+  - Systems set bounds on lateness; extremely late data may be dropped or trigger
+    recomputation
+
 * Apache Streaming Zoo
-- Many different streaming frameworks
-  - Apache Apex, Apache Beam, Apache Flink, Apache Kafka, Apache Spark, Apache
-    Storm, Apache NiFi
+- Many different streaming frameworks in the Apache family
+  - E.g., Apex, Beam, Flink, Kafka, Spark, Storm, NiFi
+  - Built simultaneously at different companies, then open-sourced
 
-- Use cases
-  - Real-time analytics
-  - Online machine learning
-  - Continuous computation
-  - ETL processes
-  - Data pipeline processing
-  - Messaging
-  - Log aggregation
+- **Different workloads**
+  - Real-time analytics, continuous computation
+  - Streaming ML, ETL pipelines
+  - Messaging and log aggregation
 
-- Different solutions to the same problem
-  - Batch vs streaming
-  - Delivery semantic type
-  - Computing vs messaging/pub-sub
-  - Throughput vs fault-tolerance
-  - Supported languages
-
-- Built simultaneously at different companies, then open-sourced
+- **Differences arise in**
+  - Batch vs streaming orientation
+  - Delivery semantics
+  - Compute vs pub-sub roles
+  - Throughput, latency, fault tolerance
+  - API and language support
 
 * Apache Storm
+:::columns
+::::{.column width=60%}
 - Open-source distributed real-time computation system
   - Acquired and open-sourced by Twitter
+::::
+::::{.column width=35%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_10_image_1.png)
+::::
+:::
 
-- Horizontal scalability: add machines to handle increasing data
+- **Horizontal scalability**: add machines to handle increasing data
 
-- Fault tolerance: **at-least-once** processing, automatic task restarts,
-  workload redistribution
+- **Fault tolerance**:
+  - At-least-once** processing
+  - Automatic task restarts
+  - Workload redistribution
 
-- Directed acyclic graph (DAG) with:
-  - spouts (data sources)
-  - bolts (processing units) as vertices
-  - data streams as edges
+- **Directed acyclic graph (DAG)** with:
+  - Spouts as data sources (as source nodes)
+  - Bolts as processing units (as nodes)
+  - Data streams (as edges)
 
 - Suitable for complex data processing workflows with multiple stages and
   parallelism
 
-![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_10_image_1.png)
-
 * Apache Kafka
 :::columns
-::::{.column width=75%}
+::::{.column width=60%}
 - Open-source distributed streaming platform
   - Developed at LinkedIn, open-sourced in 2011
-
-- Producers, brokers, consumers, topics, partitions
-
-- Persistent storage, data replication across brokers
-
-- High-throughput, low-latency messaging
-
-- Fault tolerance: broker replication, automatic recovery
-
-- Message delivery semantics:
-  - **At-least-once, at-most-once, exactly-once**
-
-- Kafka Connect: Integrate with data sources and sinks
-
-- Kafka Streams: Stream processing library on Kafka
 ::::
-::::{.column width=25%}
-![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_1.png){width=30%}
+::::{.column width=35%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_1.png)
+::::
+:::
+
+:::columns
+::::{.column width=50%}
+- Core components: producers, brokers, consumers, topics, partitions
+- Persistent, replicated log storage
+- High throughput, low latency
+- Delivery: at-least-once, at-most-once, exactly-once
+- Kafka Connect for integration with external systems
+- Kafka Streams for native stream processing
+::::
+::::{.column width=45%}
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_2.png)
 ::::
