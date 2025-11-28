@@ -76,5 +76,3 @@ with tab3:
             st.container(border=True).write(
                 f"{row} \n | Hit Distance: {distances[0][i]}"
             )
-
-            # st.write(row)

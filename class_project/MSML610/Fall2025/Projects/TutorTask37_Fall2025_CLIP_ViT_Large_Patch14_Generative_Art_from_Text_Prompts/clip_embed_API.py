@@ -18,7 +18,13 @@ model.to(device)
 @app.post("/embed/image")
 async def embed_image(image: UploadFile = File(...)):
     """
-    Upload an image and get its CLIP embedding.
+    Generate CLIP embedding for an uploaded image.
+
+    Args:
+        image: Uploaded image file.
+
+    Returns:
+        JSONResponse containing image filename and embedding vector, or error message.
     """
     try:
         image_bytes = await image.read()
@@ -29,7 +35,6 @@ async def embed_image(image: UploadFile = File(...)):
         with torch.no_grad():
             outputs = model.get_image_features(**inputs)
 
-        # Convert tensor to list for JSON serialization
         embedding = outputs.cpu().tolist()[0]
 
         return JSONResponse({"image_filename": image.filename, "embedding": embedding})
@@ -41,7 +46,13 @@ async def embed_image(image: UploadFile = File(...)):
 @app.post("/embed/text")
 async def embed_text(text: str = Form(...)):
     """
-    Send text and get its CLIP embedding.
+    Generate CLIP embedding for input text.
+
+    Args:
+        text: Input text string.
+
+    Returns:
+        JSONResponse containing text and embedding vector, or error message.
     """
     try:
         inputs = processor(text=[text], return_tensors="pt", padding=True).to(device)
@@ -59,4 +70,10 @@ async def embed_text(text: str = Form(...)):
 
 @app.get("/")
 def root():
+    """
+    Root endpoint to check API status.
+
+    Returns:
+        Dictionary with API status message.
+    """
     return {"message": "CLIP embedding API is running!"}
