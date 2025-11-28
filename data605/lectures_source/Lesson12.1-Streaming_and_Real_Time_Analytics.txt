@@ -30,7 +30,9 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-* Motivation
+## Data Streams
+
+* Data Streams: Motivation
 - Big Data is generated as a **continuous, unbounded stream**
 
 - Applications generate data at **high velocity**
@@ -48,7 +50,7 @@ UMD DATA605 - Big Data Systems
   - Efficient dissemination of relevant subsets to consumers
   - Distributed processing to scale beyond a single machine
 
-* Examples of Data Stream Tasks
+* Data Streams: Examples
 - Continuous queries
   - Any SQL query can be continuous
   - E.g., _"compute moving average over last hour every 10 mins"_
@@ -81,13 +83,15 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
+\vspace{0.5cm}
+
 :::columns
 ::::{.column width=55%}
 - **Problems**
-- Re-executes full query, not leveraging incremental updates
-- Many streaming computations are recursive
-- Complex computations may not be easily expressed incrementally
-- Real systems may run thousands of continuous queries
+  - Re-executes full query, not leveraging incremental updates
+  - Many streaming computations are recursive
+  - Complex computations may not be easily expressed incrementally
+  - Real systems may run thousands of continuous queries
 ::::
 ::::{.column width=40%}
 
@@ -95,7 +99,9 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-* Pub-Sub Systems
+## Streaming Concepts
+
+* Pub-Sub Systems: Motivation
 - Modern distributed systems use **small, independent components**
   - E.g., serverless architectures, microservices (e.g., Uber)
   - Easier evolution, isolation, scalability
@@ -141,35 +147,39 @@ UMD DATA605 - Big Data Systems
     - At-least-once
     - Exactly-once
 
-* Delivery Semantics: 1 / 3
-- **At-most once**
-  - Message may be lost, not redelivered
-  - Small implementation overhead, high-performance
-  - Easy to implement: "fire-and-forget"
-  - Works when occasional loss is acceptable
-  - E.g., monitoring metrics of website
+* Delivery Semantics: At-most once
+- **At-most once**: _message may be lost, not redelivered_
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_1.png)
 
+- **Pros**
+  - Small implementation overhead, high-performance
+  - Easy to implement: "fire-and-forget"
 
-* Delivery Semantics: 2 / 3 
-- **At-least once**
-  - Messages retried until acknowledged
-  - Ensures no loss but duplicates possible
-  - Requires idempotent operations or deduplication
+- Works when occasional loss is acceptable
+  - E.g., monitoring metrics of website
+
+* Delivery Semantics: At-least once
+- **At-least once**: messages retried until acknowledged
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_2.png)
 
+- **Pros**
+  - Ensures no loss but duplicates possible
 
-* Delivery Semantics: 2 / 3
-- **Exactly once**
-  - Each message processed once globally
-  - Most consumer-friendly but hardest to guarantee
-  - Used in financial and mission-critical systems
-  - Complicated by distributed coordination limits (e.g., "Two Generals' Problem")
-  - E.g., mission-critical systems (e.g., payment, trading, accounting)
+- **Cons**
+  - Requires idempotent operations or deduplication
+
+* Delivery Semantics: Exactly once
+- **Exactly once**: each message processed once globally
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_3.png)
+
+- Most consumer-friendly but hardest to guarantee
+  - Complicated by distributed coordination limits (e.g., "Two Generals' Problem")
+
+- Used in financial and mission-critical systems
+  - E.g., mission-critical systems (e.g., payment, trading, accounting)
 
 * Event vs Processing Time
 :::columns
@@ -190,8 +200,10 @@ UMD DATA605 - Big Data Systems
 - **Problems with events**
   - Events may arrive late or out of order
   - Determining how long to wait for stragglers is difficult
-  - Systems set bounds on lateness; extremely late data may be dropped or trigger
-    recomputation
+  - Systems set bounds on lateness
+    - Extremely late data may be dropped or trigger re-computation
+
+## Apache Streaming Zoo
 
 * Apache Streaming Zoo
 - Many different streaming frameworks in the Apache family
@@ -223,38 +235,84 @@ UMD DATA605 - Big Data Systems
 
 - **Horizontal scalability**: add machines to handle increasing data
 
-- **Fault tolerance**:
-  - At-least-once** processing
-  - Automatic task restarts
-  - Workload redistribution
+:::columns
+::::{.column width=50%}
 
-- **Directed acyclic graph (DAG)** with:
+- **Directed acyclic graph (DAG)**:
   - Spouts as data sources (as source nodes)
   - Bolts as processing units (as nodes)
   - Data streams (as edges)
 
-- Suitable for complex data processing workflows with multiple stages and
-  parallelism
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_10_image_2.png)
+::::
+:::
+
+- **Fault tolerance**:
+  - At-least-once processing
+  - Automatic task restarts
+  - Workload redistribution
+
+- **Suitable for**
+  - Complex data processing workflows
+  - With multiple stages and parallelism
 
 * Apache Kafka
 :::columns
-::::{.column width=60%}
+::::{.column width=70%}
 - Open-source distributed streaming platform
   - Developed at LinkedIn, open-sourced in 2011
 ::::
-::::{.column width=35%}
+::::{.column width=25%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_1.png)
 ::::
 :::
 
+\vspace{0.5cm}
+
+:::columns
+::::{.column width=60%}
+- **Core components**
+  - Producers
+  - Brokers
+  - Consumers
+  - Topics
+  - Partitions
+
+- **Delivery**: at-least-once, at-most-once, exactly-once
+
+- High throughput, low latency
+  - Persistent, replicated log storage
+::::
+::::{.column width=35%}
+
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_2.png)
+::::
+:::
+
+- _Kafka Connect_ for integration with external systems
+- _Kafka Streams_ for native stream processing
+
+* Apache Flink
+:::columns
+::::{.column width=70%}
+- Open-source, distributed data processing framework
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_12_image_1.png)
+::::
+:::
+
+\vspace{1cm}
+
 :::columns
 ::::{.column width=50%}
-- Core components: producers, brokers, consumers, topics, partitions
-- Persistent, replicated log storage
-- High throughput, low latency
-- Delivery: at-least-once, at-most-once, exactly-once
-- Kafka Connect for integration with external systems
-- Kafka Streams for native stream processing
+- Distributed processing engine with strong support for stateful streaming
+- Exactly-once semantics via checkpointing and robust state management
+- Unified API for batch and streaming
+- Rich windowing functions
+- Runs on standalone clusters, YARN, Mesos, Kubernetes, and cloud
 ::::
 ::::{.column width=45%}
 
@@ -262,117 +320,67 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-* Apache Flink
-- Open-source, distributed data processing framework
-
-- Focus on stateful computations over data streams
-
-- Scalability: Horizontal scaling across large clusters
-
-- Fault tolerance:
-  - **Exactly-once** processing semantics, checkpointing, state management
-
-- Batch processing support: **unified API for stream and batch processing**
-
-- Flexible windowing: time-based, count-based, session windows
-
-- Deployment options: standalone, YARN, Mesos, Kubernetes, cloud environments
-
-![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_12_image_1.png)
+## Processing Styles
 
 * Record-at-a-time Processing
+- **Designed to handle infinite data streams**
+  - Implemented in Apache Kafka
+
 :::columns
-::::{.column width=60%}
-- Implemented in Apache Kafka
-
-- Goal: handle endless data stream
-
-- **Multiple-node distributed processing engine**
-  - Map computation on DAG of nodes
-  - Each node continuously
-    - Receives one record
-    - Processes it
-    - Forwards to next node
-
-- **Pros**
-  - Very low latencies
-    - E.g., less than msecs
-
-- **Cons**
-  - Inefficient node failure recovery
-    - E.g., need failover resources/redundancy
-  - Straggler nodes (slower than others)
+::::{.column width=50%}
+- **Distributed processing over multiple nodes**
+  - Nodes organized in a DAG
+  - Each node continuously:
+    - Receives a single record
+    - Processes the record immediately
+    - Forwards the output to the next node
 ::::
-::::{.column width=35%}
+::::{.column width=45%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_13_image_1.png)
 ::::
 :::
 
+- **Pros**
+  - Achieves extremely low latency
+    - Example: sub-millisecond response times
+
+- **Cons**
+  - Poor fault tolerance
+    - Requires extra nodes or redundant paths for failover
+  - Sensitive to stragglers
+    - Slow nodes can delay the entire pipeline
+
 * Micro-Batch Stream Processing
 :::columns
-::::{.column width=60%}
-- Aka DStreams
-
-- Implemented in Spark Streaming
-
-- **Computation as a continuous series of batch jobs on small chunks of stream
-  data**
-  - E.g., 1 second
-  - Process each batch in the Spark cluster in a distributed manner
+::::{.column width=50%}
+- Break continuous stream into **small batches** (e.g., 1-second windows)
+  - Implemented in Spark Streaming (aka "DStreams")
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_14_image_1.png)
+::::
+:::
 
 - **Pros**
-  - Recover from failures and stragglers using task scheduling
-    - E.g., schedule same task multiple times
+  - Recover from failures and stragglers with task scheduling
+    - Schedule same task multiple times
   - Deterministic tasks
-    - Exactly-once processing guarantees
-    - Consistent API: same functional semantics as RDDs
+    - Exactly-once processing
+    - Consistent API: same semantics as RDDs
     - Fault-tolerance
 
 - **Cons**
   - Higher latency
     - E.g., seconds
-::::
-::::{.column width=35%}
-![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_14_image_1.png)
-::::
-:::
-
-* Spark Micro-Batch Processing: Cons
-- Line between real-time and batch processing blurred
-  - Application computing data hourly: stream or batch?
-
-- No single API for batch and stream processing
-  - Same abstractions (RDD) and operations
-  - Rewrite code with different classes
-
-- No support for event-time windows
-  - Operations defined by processing time
-  - No support for tardy data
-
-- Spark replaced DStreams with Structured Streaming in v3
-  - Supports micro-batch and continuous streaming
-  - Closer batch vs streaming API
 
 * Spark Structured Streaming
 :::columns
 ::::{.column width=60%}
-- New approach used by Spark
-
-- Goal: write stream processing as easy as writing batch pipelines
-  - Single unified programming model
-  - Use SQL or DataFrames on stream
-
-- Handle automatically
-  - Fault tolerance
-  - Optimizations
-  - Incremental computation
-  - Tardy data
-
-- **Data abstraction**
-  - Batch applications: table (DataFrame) is the abstraction
-  - Structured Streaming: table is an unbounded, continuously appended table
-    - New record becomes a new row appended
-    - At time $T$, it's like a static dataframe with data until $T$
+- Unified DataFrame/SQL-based model for both batch and streaming
+- System manages state, faults, incremental computation, and late data
+- Streaming table abstraction
+  - Conceptually an unbounded table continuously appended with new rows
+  - At time T, equivalent to a static DataFrame of all rows up to T
 ::::
 ::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_16_image_1.png)
@@ -382,14 +390,10 @@ UMD DATA605 - Big Data Systems
 * Incrementalization
 :::columns
 ::::{.column width=50%}
-- Automatically detect state to maintain
-  - Build DAG of computation
-  - Express output of graph at time T in terms of graph at time T-1
-  - Cache results
-
-- Developers specify triggers to update results
-
-- Incrementally update result with each record arrival
+- Framework identifies necessary state across micro-batches
+- Uses DAG analysis to compute updated results from prior state
+- Developers specify trigger conditions for updates
+- Results updated incrementally as events arrive
 ::::
 ::::{.column width=45%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_17_image_1.png)
@@ -398,36 +402,40 @@ UMD DATA605 - Big Data Systems
 
 * Triggering Modes
 - Indicate when to process newly available streaming data
-  - **Default**
-    - Process micro-batch after previous completes
-  - **Trigger interval**
-    - Specify fixed interval for each micro-batch
-    - E.g., "every 10 minutes"
-  - **Once**
-    - Wait for external trigger
-    - E.g., "at end of day"
-  - **Continuous (experimental)**
-    - Process data continuously
-    - Not all operations available
-    - Lower latency
 
-* Saving Data
-- Each time result table updates, write to external file system (e.g., HDFS, AWS
-  S3) or DB (e.g., MySQL, Cassandra)
-  - **Append mode**
-    - Append new rows since last trigger
-    - Use when existing rows don't change
-  - **Update mode**
-    - Write updated rows since last trigger
-    - Update in place
-  - **Complete mode**
-    - Write entire updated result table
-    - General but expensive
+- **Default**
+  - Process micro-batch after previous completes
+- **Trigger interval**
+  - Specify fixed interval for each micro-batch
+  - E.g., "every 10 minutes"
+- **Once**
+  - Wait for external trigger
+  - E.g., "at end of day"
+- **Continuous (experimental)**
+  - Process data continuously
+  - Not all operations available
+  - Lower latency
+
+* Saving Modes
+- Indicate when to save results and where
+  - Each time result table updates, write to external file system
+    - E.g., HDFS, AWS S3 or DB (e.g., MySQL, Cassandra)
+ 
+- **Append mode**
+  - Append new rows since last trigger
+  - Use when existing rows don't change
+- **Update mode**
+  - Write updated rows since last trigger
+  - Update in place
+- **Complete mode**
+  - Write entire updated result table
+  - General but expensive
 
 * Spark Streaming "Hello world"
 :::columns
 ::::{.column width=50%}
-- `lines` looks like an RDD but it's a `DataStreamReader`
+\small
+- `lines` is a `DataStreamReader`
   - Unbounded DataFrame
   - Set up reading but doesn't start reading
 
@@ -436,28 +444,21 @@ UMD DATA605 - Big Data Systems
 - `counts` is a streaming DataFrame
   - Running word count
 
-- Stateless transformations don't require maintaining state
-  - E.g., `select()`, `filter()`
-
-- Stateful transformations
-  - E.g., `count()`
-
-- Define how to write processed output
-  - Where to write (e.g., `console`)
-  - How to write (e.g., `complete` for updated word counts)
-
-- When to trigger computation
-  - E.g., every 1 second
-
-- Where to save metadata for:
-  - Exactly-once guarantees
-  - Failure recovery
-
-- `start()` processing (non-blocking)
-
-- `awaitTermination()` blocks until data is available
+- `select()`, `filter()` are stateless transformations
+- `count()` is stateful transformation
 ::::
-::::{.column width=50%}
+::::{.column width=45%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_20_image_1.png)
 ::::
 :::
+
+\small
+- Configuration
+  - How to write processed output
+    - Where to write (e.g., `console`)
+    - How to write (e.g., `complete` for updated word counts)
+  - When to trigger computation (e.g., every 1 second)
+  - Where to save metadata for exactly-once guarantees, failure recovery
+
+- `start()` processing (non-blocking)
+  - `awaitTermination()` blocks until data is available
