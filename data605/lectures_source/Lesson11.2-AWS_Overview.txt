@@ -29,7 +29,7 @@ UMD DATA605 - Big Data Systems
   - Some basic info in the slides
   - Many tutorials on-line
   - Mastery
-    - Amazon Web Services in Action 3rd Edition
+    - "Amazon Web Services in Action" 3rd Edition
 ::::
 :::: {.column width=20%}
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_2_image_1.png)
@@ -43,7 +43,7 @@ UMD DATA605 - Big Data Systems
   - Networking
 
 - **Offers different levels of abstractions**
-  - IAAS, PAAS, SAAS
+  - IaaS, PaaS, SaaS
   - From virtual hardware to applications, e.g.,
     - Host websites
     - Run enterprise software
@@ -52,18 +52,16 @@ UMD DATA605 - Big Data Systems
 - **Control services in different ways**
   - Web interface (console)
   - CLI: `aws` command
-  - Programmatically
-    - Language libraries, SDK (e.g., Python `boto3`)
+  - Language libraries, SDK (e.g., Python `boto3`)
 
 * AWS as Business
 ::: columns
 :::: {.column width=50%}
 - Services charge pay-per-use pricing model
+  - 500 new services and features annually
 
 - Data centers distributed globally
   - US, Europe, Asia, South America
-
-- 500 new services and features annually
 
 - Insanely profitable
   - $91B/year in revenue (2023)
@@ -72,6 +70,7 @@ UMD DATA605 - Big Data Systems
 
 ::::
 :::: {.column width=45%}
+\center \small
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_4_image_1.png)
 
@@ -82,14 +81,14 @@ _Beef Jezos_
 :::
 
 * Types of Cloud Computing
-- Cloud computing enables a shared pool of configurable computing resources
+- Cloud computing enables a **shared pool of configurable computing resources**
   - E.g., servers, storage, networks, applications, services
   - Accessible from anywhere
   - Convenient
   - On-demand
 
 - Clouds can be:
-  - _Public_: open to general public (e.g., AWS)
+  - _Public_: open to the general public (e.g., AWS)
   - _Private_: virtualize and share IT infrastructure within one organization
     (e.g., government)
   - _Hybrid_: mix of public and private clouds
@@ -99,57 +98,73 @@ _Beef Jezos_
 :::: {.column width=60%}
 - **Similarities:**
   - Worldwide infrastructure
-  - Provide IAAS (computing, networking, storage)
+  - Provide IaaS (computing, networking, storage)
     - AWS EC2 / Google Compute Engine / Azure VMs
-    - AWS S3 / Google Cloud Storage / Azure Blob storage
+    - AWS S3 / Google Cloud Storage / Azure Blob Storage
   - Pay-as-you-go pricing model
 
 - **Differences:**
   - AWS
     - Market leader, mature, powerful
     - Utilizes open source technologies
-  - Azure offers Microsoft stack in the cloud
-  - Google focuses on cloud-native applications
+  - Azure
+    - Offers Microsoft stack in the cloud
+  - Google
+    - Focuses on cloud-native applications
 
 ::::
 :::: {.column width=35%}
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_2.png)
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_1.png)
-
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_6_image_3.png)
 ::::
 :::
 
-* From On-premise to AWS
-- **Aka "Cloud-transformation"**
+* From On-premise to AWS: 1/3
+- Aka "Cloud-transformation"
 
-- **Move a medium-sized e-commerce site from on-premise to the cloud**
+- **Example**: move a medium-sized e-commerce site _from on-premise to the cloud_
 
-- **Architecture**
-  - _Web-server_: handle customer requests
-  - _DB_: store product info and orders
-  - _Static content_ (e.g., JPEG image)
+::: columns
+:::: {.column width=45%}
+- **No-cloud**
+  - _Web-server_: handles customer requests
+  - _DB_: stores product info and orders
+  - _Static content_ (e.g., JPEG images)
     - Delivered over CDN
-    - Reduce load on services
+    - Reduces load on services
   - _Dynamic content_ (e.g., HTML pages)
     - E.g., products and prices
     - Delivered by web server
-
-* From On-premise to AWS
-- **Step 1: Move to cloud**
-
+::::
+:::: {.column width=50%}
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_8_image_1.png)
+::::
+:::
 
-* From On-premise to AWS
+* From On-premise to AWS: 2/3
+
 ::: columns
-:::: {.column width=40%}
-- **Step 2: Design for the cloud**
+:::: {.column width=45%}
+- **Move to cloud**
+  - Keep the same architecture
+  - Move components to cloud
+
+::::
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_8_image_1.png)
+::::
+:::
+
+* From On-premise to AWS: 3/3
+::: columns
+:::: {.column width=45%}
+- **Design for the cloud**
   - DNS
   - Database
   - Object store (S3)
   - Managed solutions
-  - Use multiple smaller virtual services with load balancer to increase
+  - Use multiple smaller virtual services with a load balancer to increase
     reliability
 
 ::::
@@ -158,43 +173,42 @@ _Beef Jezos_
 ::::
 :::
 
-* Low-Cost Batch Processing
-- Lots of batch jobs run on a schedule
+* Low-Cost Processing
+- Lots of batch jobs are not critical / run on a schedule
   - Analyze data daily
-  - Generate reports from a DB
+  - Generate reports from a database
 
-- Buy/allocate machine normally
+1) **Allocate machines on demand**
+   - AWS bills VMs per minute
+   - Pay only when running jobs
 
-- AWS bills VMs per minute
-  - Pay only when running jobs
+2) **AWS Batch**
+   - Offers spare capacity at a discount
+   - Runs when capacity is available, saving 50%
 
-- AWS Batch
-  - Offers spare capacity at a discount
-  - Run when capacity is available, saving 50%
-
-- AWS Lambda
-  - Serverless
+3) **AWS Lambda**
+   - Serverless
 
 * Capacity Scaling
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=50%}
 - **No need to plan for capacity**
-  - No need to predict capacity
+  - Do not predict capacity
   - Schedule capacity on-the-fly
-  - No concern for rackspace, switches, power supplies
+  - No concern for rack space, switches, power supplies
   - Add more VMs (1 to 1000) and storage (GB to PB) as needed
 
 - **Handle seasonal traffic by scaling up/down**
   - Day vs night
   - Weekday vs weekend
-  - Holiday
-  - No test system needed when team is off
+  - Holidays
+  - No test system needed when the team is off
 
 - **Worldwide presence**
   - AWS has many data centers
   - Deploy applications close to customers
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_11_image_1.png)
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_11_image_2.png)
@@ -203,36 +217,38 @@ _Beef Jezos_
 
 * Pay-per-use
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=50%}
 - **AWS bill**
   - Similar to an electric bill
   - Services billed based on usage:
     - Hours of virtual server (rounded up)
     - Used storage in GB (allocated or real)
     - Data traffic in GB or requests
+    - ...
 
-- Free tier
+- **Free tier**
   - Use some AWS services free for 12 months after signing up
-  - Experience services (e.g., EC2, S3)
+  - Experiment with services
+    - E.g., EC2, S3
   - Exceed limits, start paying (without notice)
     - Set an alarm!
 ::::
-:::: {.column width=35%}
+:::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_12_image_1.png)
 ::::
 :::
 
 * Pay-per-use
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=55%}
 - **Advantages**
   - No upfront investments or commitment
   - Lower project startup cost
-  - Easier to divide system into smaller parts
+  - Easier to divide the system into smaller parts
     - One big server or two smaller ones cost the same
   - Affordable fault tolerance/high performance
-    - For scalable workload, buy 1 server for 1000 hours = buy 1000 servers for
-      1 hour
+    - For a scalable workload "buy 1 server for 1000 hours" = "buy 1000 servers
+      for 1 hour"
 ::::
 :::: {.column width=40%}
 
@@ -243,9 +259,7 @@ _Beef Jezos_
 
 * Interacting with AWS
 ::: columns
-:::: {.column width=60%}
-- **AWS internal API allows to interact with services**
-
+:::: {.column width=55%}
 - **GUI (Management Console)**
   - Start interacting with services easily
   - Set up cloud infrastructure for development and testing
@@ -264,11 +278,11 @@ _Beef Jezos_
   - Describe the system, not how to build it
 ::::
 :::: {.column width=40%}
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_3.png)
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_2.png)
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_3.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_14_image_1.png)
 ::::
 :::
 
@@ -302,24 +316,27 @@ _Beef Jezos_
 * AWS VMs
 ::: columns
 :::: {.column width=55%}
-- With virtualization, multiple VMs run on the same hardware
+- With virtualization
+  - Multiple VMs run on the same hardware
   - Start and stop VMs on-demand
 
-- Physical server
+- **Physical server**
   - Aka "host machine", "bare metal"
   - Consists of CPUs, memory, networking interfaces, storage
 
-- Hypervisor (software + CPU hardware)
+- **Hypervisor**
+  - Software + CPU hardware
   - Isolates guests
   - Schedules hardware requests
 
-- Virtual servers (aka "guests") are isolated on the same hardware
-
 - AWS
-  - Used Xen hypervisor (open-source)
-  - Switched to AWS Nitro, hardware-assisted virtualization
+  - Before Xen hypervisor (open-source)
+  - Switched to AWS Nitro
+    - Hardware-assisted virtualization
     - Performance close to bare metal
 
+- **Virtual servers**
+  - Isolated on the same hardware
 ::::
 :::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_16_image_1.png)
@@ -328,26 +345,26 @@ _Beef Jezos_
 
 * Starting an EC2 Instance
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=55%}
 - **Select region**
   - E.g., `us-east-1`
-  - Where is it?
-    - 21155 Smith Switch Road, Ashburn, VA, USA
+  - 21155 Smith Switch Road, Ashburn, VA, USA
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_2.png)
+\vspace{1cm}
 
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_2.png){width=80%}
 ::::
-:::: {.column width=50%}
+:::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_1.png){width=80%}
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_3.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_3.png){width=80%}
 ::::
 :::
 
 * Starting an EC2 Instance
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=55%}
 - **Select OS**
   - Amazon Machine Image (AMI)
   - Contains OS + pre-installed software
@@ -360,25 +377,24 @@ _Beef Jezos_
 - **Configure instance**
   - Network, shutdown behavior, termination protection, monitoring
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_2.png)
-
 ::::
-:::: {.column width=50%}
+:::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_1.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_1.png){width=90%}
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_3.png)
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_3.png){width=90%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_18_image_2.png){width=90%}
+
 ::::
 :::
 
 * AWS Instance Type
 ::: columns
 :::: {.column width=50%}
-- An "instance type" describes computing power
+- **Instance type** describes the computing power
 
-- https://aws.amazon.com/ec2/instance-types
-
-- Instance family
+- **Instance family**
   - `T`: cheap, baseline
   - `M`: general purpose
   - `C`: compute optimized
@@ -387,6 +403,14 @@ _Beef Jezos_
   - `I`: storage optimized for SSD
   - `F`: with FPGAs
   - `P, G, CG`: with GPUs
+
+- [AWS EC2 list](https://aws.amazon.com/ec2/instance-types)
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_19_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_19_image_2.png)
 
 - E.g., `t2.micro`
   - `t`: instance family (small, cheap)
@@ -398,13 +422,6 @@ _Beef Jezos_
   - `m`: general purpose
   - `large`: size (2 vCPUs, 8GB memory)
   - 0.14 USD/hr
-
-::::
-:::: {.column width=45%}
-
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_19_image_1.png)
-
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_19_image_2.png)
 ::::
 :::
 
@@ -414,13 +431,17 @@ _Beef Jezos_
   - vCPUs
   - Multi-tenancy
   - On-demand vs spot vs reserved vs pre-paid
-  - 642 types of machines (as of 2023)
-  - From 37 USD / yr to 1.91M USD / yr (500 CPUs and 24TB of mem)
-- Alternative sites: https://instances.vantage.sh
+
+- 642 types of EC2 machines (as of 2023)
+  - Cheapest: 37 USD/yr
+  - Most expensive: 1.91M USD/yr (500 CPUs and 24TB of memory)
+
+- Alternative sites:
+  - E.g., https://instances.vantage.sh
 
 * Starting an EC2 Instance
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=45%}
 - Add storage
   - Volume size
   - Volume type (SSD or magnetic HDDs)
@@ -441,10 +462,17 @@ _Beef Jezos_
 
 * Starting an EC2 Instance
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=45%}
 - Start instance
 - Find public IP
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_22_image_1.png)
+::::
+:::
 - Connect to the machine
+  \small
   ```bash
   > ssh -i $PATH/mykey.pem ubuntu@$PUBLIC_UP
   > cat /proc/cpuinfo
@@ -452,41 +480,34 @@ _Beef Jezos_
   > sudo apt-get update
   > sudo apt-get install ...
   ```
-::::
-:::: {.column width=50%}
-
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_22_image_1.png)
-::::
-:::
 
 * States of a VM
-::: columns
-:::: {.column width=50%}
 - **Start**
-  - Start a stopped VM
+  - Start stopped VM
 
 - **Stop**
   - Stopped VM not billed
-  - Attached resources (e.g., network HDD) persist and incur charges
-  - Data storage (local disk) does _not_ persist
-  - VM can restart later on a different host (different IP)
+  - Network HDD persist and incur charges
+  - Local disk does not persist
+  - VM can restart on a different host (different IP)
+
+::: columns
+:::: {.column width=45%}
 
 - **Reboot**
-  - Attached resources persist
-  - Data storage does _not_ persist
-  - Software remains installed after reboot
+  - Network HDD persist
+  - Local disk does not persist
+  - Software remains installed
   - VM restarts on a different host
 
 - **Terminate**
-  - Means delete: cannot restart
-  - Data storage wiped out
-  - Attached volumes persist
+  - Delete: cannot restart
+  - Network HDD persist
+  - Local disk wiped out
 ::::
 :::: {.column width=50%}
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_23_image_1.png)
-
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_23_image_2.png)
 ::::
 :::
 
@@ -514,8 +535,6 @@ _Beef Jezos_
   - Costs
     - Vary by region
 
-- **Often use Elastic IP for fixed public IP**
-
 * Optimizing Costs
 - **On-demand instances**
   - Maximum flexibility, no restrictions
@@ -540,16 +559,20 @@ _Beef Jezos_
 
 * Programming the Infrastructure
 ::: columns
-:::: {.column width=70%}
-- On AWS _everything_ can be controlled via an API over HTTPS
+:::: {.column width=45%}
+- On AWS **everything can be controlled via an API**
   - Start a VM
   - Create 1TB of storage
   - Start Hadoop cluster
+  - ...
 
 - Jeff Bezos 2002 API mandate
   - An email worth $100B/yr
-  - HackerNews
-  - An eye-witness from Google about it
+::::
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_26_image_1.png)
+::::
+:::
 
 - You can use:
   - AWS console
@@ -561,26 +584,16 @@ _Beef Jezos_
   - CloudFormation: templates describe infrastructure state, translated into API
     calls
 
-::::
-:::: {.column width=30%}
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_26_image_1.png)
-
-**Jeff Bezos 2002 API mandate**
-
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_26_image_2.png)
-::::
-:::
-
 * Infrastructure-As-Code
 - **Use high-level programming language to control IT systems**
 
-- Apply software development to infra
+- Apply software development principles to infrastructure
   - Code repository
   - Automated tests
   - Continuous integration
 
 - **DevOps (SRE in Google parlance)**
-  - Mix devs and ops in the same team
+  - Mix developers and operations in the same team
   - Use software to bring development and operations closer
   - Switch roles to experience each other's pain
     - Devs -> responsible for operational tasks (e.g., on-call)
@@ -594,10 +607,10 @@ _Beef Jezos_
   - Copy-paste vs click-click-click
 
 - **Fewer mistakes**
-  - Push button flow
+  - Push-button flow
 
 - **Consistency of actions**
-  - Multiple deploys per day
+  - Multiple deployments per day
 
 - **Deployment pipeline**
   - Commit changes to source code
@@ -664,7 +677,7 @@ _Bad idea!_
 ::: columns
 :::: {.column width=50%}
 - SDK is a library calling AWS API from your programming language
-  - E.g., python, Go, Ruby, C++, JavaScript
+  - E.g., Python, Go, Ruby, C++, JavaScript
 
 - **Pros:** handles
   - Authentication
@@ -730,14 +743,14 @@ _Bad idea!_
 
 * AWS Shared-responsibility Principle
 - AWS is responsible for:
-  - Protect network through monitoring Internet access
-    - E.g., prevent DDoS attacks
-  - Ensure physical security of data centers
-  - Decommission storage devices after end of life
+  - Protecting the network through monitoring Internet access
+    - E.g., preventing DDoS attacks
+  - Ensuring the physical security of data centers
+  - Decommissioning storage devices after the end of life
 
 - You are responsible for:
-  - Restrict access using IAM
-  - Encrypt network traffic (e.g., HTTPS)
-  - Configure firewall for VPN
-  - Encrypt data
-  - Update OS (kernel, libs) and software
+  - Restricting access using IAM
+  - Encrypting network traffic (e.g., HTTPS)
+  - Configuring firewall for VPN
+  - Encrypting data
+  - Updating OS (kernel, libs) and software

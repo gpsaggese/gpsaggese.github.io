@@ -102,3 +102,7 @@ rsync -avz -e "ssh -i ~/.ssh/ck/saggese-cryptomatic.pem" saggese@$DEV1:/data/sag
 > i docker_jupyter --skip-pull --stage local --version 1.0.0
 
 > open -a "Chrome" http://127.0.0.1:5011/lab/tree/notebooks/Bayesian_Coin.ipynb
+
+##
+
+llm_cli.py --input data605/lectures_source/Lesson11.2-AWS_Overview.txt -pf "fix_slides.prompt.md" -o improved11.2.md --model "gpt-4o" -b
