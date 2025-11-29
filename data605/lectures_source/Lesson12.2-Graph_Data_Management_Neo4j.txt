@@ -227,21 +227,24 @@ _Federal funds networks_
 
 * Storing Graph Data
 - **File systems**
-+ Very simple
-- No support for transactions, ACID
-- Minimal functionality (e.g., must build the analysis/querying on top)
-- **Relational database**
-+ Mature technology
-+ All the good stuff (SQL, transactions, ACID, toolchains)
-- Minimal functionality
+  - Very simple
+  - No support for transactions, ACID compliance
+  - Minimal functionality (e.g., must build the analysis/querying on top)
+
+- **Relational databases**
+  - Mature technology
+  - All the good stuff (SQL, transactions, ACID compliance, toolchains)
+  - Minimal functionality for graph data
+
 - **NoSQL key-value stores**
-+ Can handle very large datasets efficiently in a distributed fashion
-- Minimal functionality
-- **Graph database***
-+ Efficiently support for queries / tasks (e.g., graph traversals)
-- Not as a mature as RDBMs
-- Often no declarative language (similar to SQL)
-  - You need to write programs
+  - Can handle very large datasets efficiently in a distributed fashion
+  - Minimal native functionality for graph data
+
+- **Graph databases**
+  - Efficiently support complex queries/tasks (e.g., graph traversals)
+  - Not as mature as RDBMSs
+  - Often lack declarative language similar to SQL
+    - You may need to write custom programs
 
 * Graph Databases
 - Many specialized graph database systems
@@ -263,23 +266,23 @@ _Federal funds networks_
 * Query Languages for Graph Databases
 :::columns
 ::::{.column width=50%}
-- Cypher
+- **Cypher**
   - Designed for Property Graphs
   - Data: vertices and edges with key-value properties
-  - Declarative
-  - Subgraph pattern matching
+  - Declarative query language
+  - Suitable for subgraph pattern matching
   - Struggles with reachability queries
   - Native to Neo4j
 
-- Gremlin
+- **Gremlin**
   - Works with RDF and Property Graphs
-  - Imperative
-  - Describes graph traversal
+  - Imperative query language
+  - Describes graph traversal processes
 
-- SPARQL
-  - Similar to Cypher
-  - For RDF data
-  - Standardized by W3C
+- **SPARQL**
+  - Similar to SQL in structure
+  - Designed for querying RDF data
+  - Standardized by the W3C for semantic web applications
 ::::
 ::::{.column width=60%}
 \footnotesize
@@ -863,10 +866,9 @@ time
   - In-memory graph processing for improved performance
   - Suitable for large-scale graph analytics, machine learning tasks
   - Implements various graph algorithms
-    - E.g., pageRank, Connected Components, Shortest Path
+    - E.g., PageRank, Connected Components, Shortest Path
 ::::
 ::::{.column width=20%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_49_image_1.png)
 ::::
 :::
-
