@@ -22,7 +22,7 @@ from typing import List, Dict, Optional, Tuple, Union
 # CausalML Imports
 from causalml.inference.meta import BaseXRegressor, BaseTRegressor, BaseSRegressor, BaseRRegressor, BaseDRRegressor
 from causalml.match import NearestNeighborMatch
-from causalml.metrics import plot_gain # Calculates cumulative gain (Qini/Uplift)
+from causalml.metrics import plot_gain, auuc_score 
 
 # Machine Learning Imports (Base Learners)
 from xgboost import XGBRegressor, XGBClassifier
@@ -323,12 +323,20 @@ class CausalNavigator:
                 print(f"{name} failed: {e}")
         # Evaluate using Cumulative Gain (Qini Curve)
         print("Generating Uplift Curves (Metrics on Test Set)...")
-        # plot_gain calculates the cumulative treatment effect as we target the top k% of users
-        # according to the model's predictions.
-        # Ideally, we want the curve that bows upward the most (highest Area Under Curve).
+        # plot_gain expects a DataFrame containing the predictions, outcome, and treatment
         df_preds = pred_results.copy()
         df_preds['y'] = y_test.values
         df_preds['t'] = T_test.values
+        # Calculate AUUC Score
+        auuc = auuc_score(
+            df_preds,
+            outcome_col='y',
+            treatment_col='t',
+            normalize=True
+        )
+        # Display Table
+        print("--- Qini / AUUC Scores (Higher is Better) ---")
+        print(auuc.sort_values(ascending=False))
         plot_gain(
             df_preds,
             outcome_col='y',
