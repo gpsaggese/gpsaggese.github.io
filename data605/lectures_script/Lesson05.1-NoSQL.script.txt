@@ -1,0 +1,250 @@
+# ##############################################################################
+# From SQL to NoSQL
+# ##############################################################################
+
+This slide introduces the transition from traditional SQL databases to NoSQL
+databases. It highlights that databases are crucial for handling big data, and
+new applications and storage needs have led to the rise of NoSQL around the
+2000s. Initially, NoSQL meant "No SQL," but it evolved to mean "Not Only SQL,"
+indicating that it complements rather than replaces SQL. Different database
+types offer various trade-offs, such as schema flexibility, query capabilities,
+consistency models, and scaling methods. The slide emphasizes the importance of
+understanding both SQL and NoSQL, as they cover most use cases, and suggests
+using a polyglot model where multiple databases are used in a single project.
+
+Transition: Now, let's explore the challenges associated with relational
+databases.
+
+# ##############################################################################
+# Issues with Relational Dbs
+# ##############################################################################
+
+This slide outlines the drawbacks of relational databases. The main issues
+include the mismatch between application data structures and database tables,
+limited schema flexibility, challenges in maintaining consistency across
+distributed systems, and scalability limitations. Each of these drawbacks will
+be discussed in detail in subsequent slides, along with potential solutions
+within the SQL paradigm and through NoSQL approaches.
+
+Transition: Let's delve into the first issue, the application-database impedance
+mismatch.
+
+# ##############################################################################
+# 1) App / DB Impedance Mismatch: Problem
+# ##############################################################################
+
+This slide discusses the problem of impedance mismatch between how data is
+represented in application code and in relational databases. In code, data is
+often organized using structures like lists, dictionaries, and objects, while
+relational databases use tables, rows, and relationships. An example is provided
+where an application stores a Python dictionary mapping names to tags. To
+represent this in a relational database, three tables are needed: one for names,
+one for tags, and one to map names to tags. Alternatively, denormalization can
+be used to store the data in a single table.
+
+# ##############################################################################
+# App / DB Impedance Mismatch: Solutions
+# ##############################################################################
+
+This slide discusses different solutions to the problem of impedance mismatch
+between applications and databases.
+
+- Ad-hoc mapping layer involves translating objects and data structures into a
+  database model. This requires implementing a "Name to Tags" storage system
+  where the code uses a simple map, but the database has three tables. The
+  downside is that it requires writing and maintaining code.
+- Object-relational mapping (ORM) automatically converts data between object
+  code and the database. It allows implementing a `Person` object using a
+  database and tools like SQLAlchemy for Python and SQL. However, handling
+  complex types, polymorphism, and inheritance can be challenging.
+- The NoSQL approach does not require a schema, allowing objects to be flat or
+  complex, such as nested JSON. Stored objects, or documents, can vary in
+  structure.
+
+Transition: Let's explore how schema flexibility can impact data management.
+
+# ##############################################################################
+# Schema Flexibility
+# ##############################################################################
+
+This slide addresses the challenges of schema flexibility in data management.
+
+- The problem arises when data does not fit into a predefined schema, such as
+  nested or dis-homogeneous data like `List[Obj]`.
+- Within relational databases, a general schema can be used to cover all cases,
+  but this leads to a complicated schema with implicit relations, sparse
+  database tables, and violations of relational database assumptions.
+- The NoSQL approach, exemplified by MongoDB, does not enforce a schema,
+  eliminating schema concerns when writing data. However, it requires handling
+  various schemas during data processing and is related to ETL vs. ELT data
+  pipelines.
+
+Transition: Now, let's discuss how relational databases maintain consistency.
+
+# ##############################################################################
+# Consistency in Relational DBs
+# ##############################################################################
+
+This slide explains how relational databases ensure consistency and reliability.
+
+- All systems are prone to failures, including application errors, crashes,
+  hardware failures, and power outages.
+- Relational databases enforce ACID properties to guarantee system reliability.
+- Atomicity ensures that transactions are "all or nothing," meaning they either
+  succeed completely or fail.
+- Consistency ensures that transactions move the database from one valid state
+  to another, maintaining database invariants like primary and foreign key
+  constraints.
+- Isolation ensures that concurrent transactions yield the same result as if
+  executed sequentially.
+- Durability ensures that committed transaction content is preserved after a
+  system failure by recording data in non-volatile memory.
+
+# ##############################################################################
+# Consistency in Distributed DB
+# ##############################################################################
+
+In distributed databases, scaling data or clients requires a distributed setup.
+The main goals of such a setup are to enhance performance, ensure availability,
+and maintain fault tolerance. Achieving ACID (Atomicity, Consistency, Isolation,
+Durability) consistency is challenging even in a single database, with some like
+PostgreSQL providing guarantees, while others like MongoDB do not. In
+distributed databases, achieving ACID consistency is impossible due to the CAP
+theorem, which makes even weak consistency difficult to maintain.
+
+Transition: Let's delve deeper into the CAP theorem to understand its
+implications on distributed databases.
+
+# ##############################################################################
+# CAP Theorem
+# ##############################################################################
+
+The CAP theorem states that a distributed database can only achieve two out of
+three properties: consistency, availability, and partition tolerance.
+Consistency ensures all clients see the same data, with atomic writes and
+subsequent reads reflecting the new value. Availability means the system can
+return a value if at least one server is operational. Partition tolerance allows
+the system to function even if communication is temporarily lost. Initially a
+conjecture by Eric Brewer, it was formally proven by Gilbert and Lynch in 2002.
+
+Transition: Understanding the CAP theorem leads us to its corollary, which
+guides system design choices.
+
+# ##############################################################################
+# CAP Corollary
+# ##############################################################################
+
+The CAP theorem corollary emphasizes that in distributed systems, you must
+choose two out of consistency, availability, and partition tolerance. Network
+partitions are inevitable in large-scale systems but can be mitigated with
+redundancy and fault tolerance. Depending on the system's needs, you might
+sacrifice availability, allowing for downtime, as seen in banking systems, or
+consistency, permitting different views of the system, as in social networks.
+This trade-off is crucial for designing distributed systems effectively.
+
+# ##############################################################################
+# CAP Theorem: Intuition
+# ##############################################################################
+
+This slide explains the CAP theorem using a simple scenario. Imagine a client
+and two database replicas. If a network partition happens, the database servers
+can't communicate with each other, and the client can only access one of them.
+This situation affects how data is read and written. The CAP theorem tells us
+that during such a partition, we must choose between consistency and
+availability. Some systems, like social networks, may allow inconsistency to
+keep services running. Others, like banking, may stop services to ensure data
+consistency.
+
+Transition: Let's explore different replication schemes used in distributed
+databases.
+
+# ##############################################################################
+# Replication Schemes
+# ##############################################################################
+
+This slide discusses various replication schemes for organizing multiple servers
+in a distributed database. Primary-secondary replication involves a primary
+server that handles updates, but it can fail if the primary server goes down.
+Update-anywhere replication allows any replica to update data, which is then
+shared with others. Quorum-based replication involves writing to a certain
+number of replicas and reading from others to ensure the latest data is
+accessed. Each scheme has its own advantages and challenges, and the choice
+depends on the specific needs of the system.
+
+Transition: Now, let's delve into synchronous replication methods.
+
+# ##############################################################################
+# Synchronous Replication
+# ##############################################################################
+
+This slide focuses on synchronous replication, where updates are sent to
+replicas in a single transaction. The 2-Phase Commit (2PC) is the original
+method but has a single point of failure and struggles if the primary server
+fails. Paxos is another method that doesn't require a primary server and is more
+fault-tolerant, but both methods are complex and costly. The slide also
+reiterates the CAP theorem, emphasizing that during a network partition, only
+consistency or availability can be guaranteed, leading many systems to adopt
+relaxed consistency models.
+
+# ##############################################################################
+# Asynchronous Replication
+# ##############################################################################
+
+Asynchronous replication is a method where the primary node updates its
+replicas, but the transaction is considered complete before these replicas are
+updated. This allows for quick commits but results in less consistency. Eventual
+consistency, a concept popularized by AWS DynamoDB, means that data will
+eventually become consistent, but it might take some time, especially after
+server or network issues are resolved. The "freshness" property indicates that
+reading from a replica might not provide the latest data. Users can request data
+with a specific freshness, like data not older than 10 minutes, and replicas use
+timestamps to manage data versions.
+
+Transition: Let's explore the scalability challenges faced by traditional SQL
+databases.
+
+# ##############################################################################
+# Scalability Issues with RDMS: Problem
+# ##############################################################################
+
+SQL databases face scalability issues primarily due to data locking and
+distributed setups. When a database engine locks rows or tables to maintain ACID
+properties, it results in higher latency, fewer updates per second, and a slower
+application. These issues are exacerbated in distributed environments where data
+replication across multiple servers is necessary. This setup introduces network
+delays, locks across networks to maintain database consistency, and the overhead
+of ensuring replica consistency using protocols like 2PC or Paxos.
+
+Transition: Now, let's look at some solutions to these scalability challenges.
+
+# ##############################################################################
+# Scalability Issues with RDMS: Solutions
+# ##############################################################################
+
+To address scalability issues in SQL databases, several solutions can be
+implemented. Table denormalization involves adding redundant data to increase
+performance. This approach allows for faster reads since only one table is
+locked, and no joins are needed. However, it results in slower writes and a loss
+of table relations. Another solution is to relax consistency by compromising on
+ACID properties and adopting weaker consistency models like eventual
+consistency. Additionally, using NoSQL databases can be a viable alternative, as
+they are designed to handle large volumes of data and provide scalability.
+
+# ##############################################################################
+# NoSQL Stores
+# ##############################################################################
+
+NoSQL databases are designed for large-scale web applications that require
+real-time access with very low latency, such as Facebook, which aims for 4ms
+read times. These databases do not require the traditional ACID properties of
+relational databases, making them more flexible for certain applications.
+MongoDB, a popular NoSQL database, originated in the advertising technology
+sector and was later acquired by Google. NoSQL databases address several
+limitations of relational databases, such as the mismatch between application
+and database, the need for flexible schemas, consistency in distributed systems,
+and scalability. However, to achieve scalability, NoSQL databases often
+sacrifice consistency, server-side joins, and have restricted transaction
+capabilities, typically allowing only single-object transactions.
+
+Transitioning to the next topic, let's explore the challenges and solutions in
+scaling databases.
