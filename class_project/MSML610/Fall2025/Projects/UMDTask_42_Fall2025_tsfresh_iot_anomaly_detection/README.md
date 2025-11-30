@@ -1,5 +1,6 @@
 # IoT Anomaly Detection for Smart Manufacturing
-#PREMAL SHAH UID: 121293596 (tsfresh difficulty: 3)
+PREMAL SHAH UID: 121293596 (tsfresh difficulty: 3)
+Dataset: https://www.kaggle.com/datasets/ziya07/smart-manufacturing-iot-cloud-monitoring-dataset
 
 Machine learning system for predictive maintenance in IoT-enabled manufacturing equipment using time-series feature extraction and ensemble learning.
 
