@@ -102,31 +102,55 @@ def run_pipeline(
     os.makedirs(os.path.dirname(metadata_path), exist_ok=True)
     os.makedirs(serving_model_dir, exist_ok=True)
 
-    # TODO: Implement pipeline creation in phases 2-6
-    # For now, this is a placeholder
+    # Create a directory for CsvExampleGen with only train.csv
+    # CsvExampleGen expects a directory with CSV files, all with the same schema
+    train_data_dir = os.path.join(pipeline_root, "csv_data")
+    os.makedirs(train_data_dir, exist_ok=True)
 
-    print("\nPipeline creation placeholder - will be implemented in Phase 2")
-    print("Once implemented, the pipeline will run with LocalDagRunner")
+    # Copy train.csv to the CsvExampleGen input directory
+    import shutil
+    train_csv_source = os.path.join(data_path, "train.csv")
+    train_csv_dest = os.path.join(train_data_dir, "train.csv")
+    if os.path.exists(train_csv_source):
+        shutil.copy(train_csv_source, train_csv_dest)
+        print(f"Copied train.csv to {train_data_dir}")
 
-    # When ready, uncomment and implement:
-    # transform_module_file = str(Path(__file__).parent.parent / "utils" / "feature_engineering.py")
-    # trainer_module_file = str(Path(__file__).parent.parent / "utils" / "model_utils.py")
-    #
-    # pipeline = create_pipeline(
-    #     pipeline_name=pipeline_name,
-    #     pipeline_root=pipeline_root,
-    #     data_path=data_path,
-    #     transform_module_file=transform_module_file,
-    #     trainer_module_file=trainer_module_file,
-    #     metadata_path=metadata_path,
-    #     serving_model_dir=serving_model_dir
-    # )
-    #
-    # LocalDagRunner().run(pipeline)
-    #
-    # print("\n" + "=" * 80)
-    # print("Pipeline execution completed successfully!")
-    # print("=" * 80)
+    # Update data_path to point to the train-only directory
+    data_path = train_data_dir
+
+    # Create module file paths (for future phases)
+    transform_module_file = str(Path(__file__).parent.parent / "utils" / "feature_engineering.py")
+    trainer_module_file = str(Path(__file__).parent.parent / "utils" / "model_utils.py")
+
+    print("\nCreating TFX pipeline...")
+    print(f"Components: CsvExampleGen, StatisticsGen, SchemaGen (Phase 2)")
+
+    # Create the pipeline
+    tfx_pipeline = create_pipeline(
+        pipeline_name=pipeline_name,
+        pipeline_root=pipeline_root,
+        data_path=data_path,
+        transform_module_file=transform_module_file,
+        trainer_module_file=trainer_module_file,
+        metadata_path=metadata_path,
+        serving_model_dir=serving_model_dir
+    )
+
+    print("\nRunning pipeline with LocalDagRunner...")
+    print("This may take a few minutes...\n")
+
+    # Run the pipeline
+    LocalDagRunner().run(tfx_pipeline)
+
+    print("\n" + "=" * 80)
+    print("Pipeline execution completed successfully!")
+    print("=" * 80)
+    print(f"\nOutputs saved to: {pipeline_root}")
+    print(f"Metadata saved to: {metadata_path}")
+    print("\nNext steps:")
+    print("  - Check pipeline_outputs/ for generated artifacts")
+    print("  - Review schema in pipeline_outputs/.../SchemaGen/...")
+    print("  - Proceed to Phase 3 for feature engineering")
 
 
 def main():

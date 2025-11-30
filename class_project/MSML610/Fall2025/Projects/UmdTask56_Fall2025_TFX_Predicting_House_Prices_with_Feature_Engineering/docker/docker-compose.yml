@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   house-price-tfx:
     build:
@@ -24,6 +22,7 @@ services:
       - PYTHONUNBUFFERED=1
       - TF_CPP_MIN_LOG_LEVEL=2
       - JUPYTER_ENABLE_LAB=yes
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     command: >
       bash -c "
       echo 'House Price TFX Pipeline Container Started' &&

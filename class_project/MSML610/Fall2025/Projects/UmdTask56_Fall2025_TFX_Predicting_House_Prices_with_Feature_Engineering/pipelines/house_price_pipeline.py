@@ -79,22 +79,22 @@ def create_pipeline(
     # ============================================================================
 
     # Component 1: CsvExampleGen
-    # TODO: Implement in Phase 2
-    # example_gen = CsvExampleGen(input_base=data_path)
-    # components.append(example_gen)
+    # Ingests CSV data and converts to TFRecord format
+    example_gen = CsvExampleGen(input_base=data_path)
+    components.append(example_gen)
 
     # Component 2: StatisticsGen
-    # TODO: Implement in Phase 2
-    # statistics_gen = StatisticsGen(examples=example_gen.outputs['examples'])
-    # components.append(statistics_gen)
+    # Generates statistics from the examples for schema inference
+    statistics_gen = StatisticsGen(examples=example_gen.outputs['examples'])
+    components.append(statistics_gen)
 
     # Component 3: SchemaGen
-    # TODO: Implement in Phase 2
-    # schema_gen = SchemaGen(
-    #     statistics=statistics_gen.outputs['statistics'],
-    #     infer_feature_shape=True
-    # )
-    # components.append(schema_gen)
+    # Infers schema from statistics
+    schema_gen = SchemaGen(
+        statistics=statistics_gen.outputs['statistics'],
+        infer_feature_shape=True
+    )
+    components.append(schema_gen)
 
     # ============================================================================
     # PHASE 3: Feature Engineering
