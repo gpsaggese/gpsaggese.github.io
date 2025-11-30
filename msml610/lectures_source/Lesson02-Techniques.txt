@@ -23,8 +23,11 @@ MSML610: Advanced Machine Learning
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
 
 **References**:
+
 - Burkov: _"The Hundred-Page Machine Learning Book"_ (2019)
+
 - Russell et al.: _"Artificial Intelligence: A Modern Approach"_ (4th ed, 2020)
+
 - Hastie et al.: _"The Elements of Statistical Learning"_ (2nd ed, 2009)
 
 ::::
