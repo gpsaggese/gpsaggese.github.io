@@ -126,7 +126,7 @@ def sidebar_inputs():
 def main():
     st.set_page_config(page_title="Solar Energy Forecasting", layout="wide")
 
-    st.title("🔆 Solar Energy Production Forecasting")
+    st.title( "Solar Energy Production Forecasting")
     st.markdown(
         """
         This app uses a **RandomForest time-series model** trained on hourly solar data
@@ -147,7 +147,7 @@ def main():
     col1, col2 = st.columns([1, 1.2])
 
     with col1:
-        st.subheader("🔮 Model Prediction")
+        st.subheader("Model Prediction")
         st.write("Input features used for prediction:")
         st.dataframe(input_df)
 
@@ -159,7 +159,7 @@ def main():
                 st.error(f"Prediction failed: {e}")
 
     with col2:
-        st.subheader("📊 Simple Dashboard")
+        st.subheader("Simple Dashboard")
 
         df = load_processed_data()
         if df is not None:

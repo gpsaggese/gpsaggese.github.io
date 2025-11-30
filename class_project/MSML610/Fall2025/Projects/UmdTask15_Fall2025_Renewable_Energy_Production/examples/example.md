@@ -1,133 +1,90 @@
-# Example Notebook – Renewable Energy Forecasting
+# Example Notebook — Renewable Energy Forecasting
 
-This notebook provides an end-to-end walkthrough of the baseline forecasting pipeline for hourly solar energy production.  
-It includes data loading, exploration, model training, evaluation, and interpretation.
+This document summarizes the purpose and workflow of the
+`example.ipynb` notebook.  
+The notebook demonstrates a complete, practical walkthrough of how to
+use the project utilities to explore the dataset, engineer features,
+train a baseline model, and evaluate forecasting performance.
 
----
-
-## 1. Dataset Description
-
-The processed dataset contains:
-
-### Target
-- energy_mwh
-
-### Weather features
-- temp_c  
-- cloud_cover  
-- solar_radiation  
-- wind_speed  
-
-### Time-based features
-- year  
-- month  
-- day  
-- day_of_week  
-- hour  
-- is_weekend  
-
-These features help the model learn both environmental and temporal patterns that affect solar energy generation.
+The goal of the example notebook is to show a **typical end-to-end
+workflow** that a user or teammate could follow when working with the
+forecasting system.
 
 ---
 
-## 2. Quick Data Inspection
+## What This Notebook Demonstrates
 
-Before modeling, I inspect the dataset to confirm:
+### **1. Dataset Exploration (EDA)**
+The notebook begins with exploratory data analysis on the raw solar
+dataset, including:
 
-- correct feature creation  
-- expected datatypes  
-- reasonable ranges for all variables  
+- Inspecting columns and data types  
+- Understanding the time range and sampling frequency  
+- Visualizing trends and distributions in solar production and weather  
+- Checking for patterns such as daily cycles and variability  
 
-I typically inspect:
-
-- df.head() – first few rows  
-- df.info() – structure and datatypes  
-- df.describe().T – summary statistics  
-
-This ensures the processed dataset is clean and ready for modeling.
+This helps build intuition about the data before modeling.
 
 ---
 
-## 3. Visualizing the Target
+### **2. Feature Engineering**
+The example notebook uses the project’s feature-engineering utilities to
+transform the dataset by adding:
 
-Plotting the target energy_mwh over time helps me understand:
+- Time features (hour, day of week, month)  
+- Lag features  
+- Rolling window averages  
 
-- overall distribution  
-- day–night patterns  
-- periods of low and high generation  
-- trends and variability  
-
-This visualization gives intuition about forecasting difficulty.
-
----
-
-## 4. Baseline Model Training
-
-I train a Random Forest Regressor as the baseline model.
-
-### Steps followed:
-
-1. Treat energy_mwh as the target.  
-2. Use all numeric columns as features.  
-3. Perform an 80/20 **time-aware** train/validation split (no shuffling).  
-4. Train using 200 trees (n_estimators = 200).  
-5. Evaluate the model using MAE and RMSE.
-
-The time-aware split preserves temporal ordering, avoiding data leakage.
+This results in a feature-rich dataset suitable for forecasting.
 
 ---
 
-## 5. Predictions vs Actuals
+### **3. Time-Based Train/Validation Split**
+The notebook shows how to create a proper **time-ordered split** using
+the utility functions, assigning the most recent days to validation to
+simulate real forecasting conditions.
 
-To visually evaluate model performance, I compare:
-
-- actual energy_mwh values from the validation set  
-- predicted energy_mwh values from the model  
-
-This shows:
-
-- how well predictions follow the true pattern  
-- periods of underestimation  
-- periods of overestimation  
+This ensures the model is evaluated on future data rather than shuffled
+samples.
 
 ---
 
-## 6. Feature Importance
+### **4. Baseline Model Training**
+A baseline model (Random Forest) is trained using the engineered
+features and the time-based split.
 
-Random Forests allow extraction of feature importance scores.  
-These highlight which features contribute the most to predicting solar energy.
+The notebook demonstrates:
 
-Common important features include:
+- Fitting the model  
+- Obtaining validation predictions  
+- Computing basic metrics such as MAE and RMSE  
 
-- solar_radiation  
-- hour  
-- cloud_cover  
-- temp_c  
-
-This guides ideas for improving the model using:
-
-- lag features  
-- rolling averages  
-- feature interactions  
+This provides a simple, interpretable benchmark for the project.
 
 ---
 
-## 7. Purpose of This Notebook
+### **5. Visualizing Forecast Performance**
+The notebook includes a comparison of actual vs. predicted energy
+production on the validation set.
 
-This notebook demonstrates the entire baseline workflow:
+This plot helps illustrate:
 
-- loading prepared data  
-- exploring dataset structure  
-- training a baseline model  
-- evaluating performance  
-- visualizing predictions  
-- interpreting feature importance  
+- How well the model follows real production patterns  
+- Any areas of over- or under-prediction  
+- Overall forecast shape and timing  
 
-It serves as a *quickstart reference* before moving on to more advanced forecasting models like:
+---
 
-- XGBoost  
-- Gradient Boosted Trees  
-- LSTM / GRU sequence models  
-- models with temporal lag features  
+## Summary
 
-This example confirms that the pipeline runs correctly and establishes a strong baseline.
+The `example.ipynb` notebook provides a clear, reproducible example of:
+
+1. Exploring the raw solar dataset  
+2. Creating forecasting features  
+3. Performing a correct time-based split  
+4. Training a baseline model  
+5. Evaluating and visualizing predictions  
+
+It demonstrates how the project’s utilities and workflow come together
+in practice, giving users and reviewers a complete overview of the
+system’s functionality.
