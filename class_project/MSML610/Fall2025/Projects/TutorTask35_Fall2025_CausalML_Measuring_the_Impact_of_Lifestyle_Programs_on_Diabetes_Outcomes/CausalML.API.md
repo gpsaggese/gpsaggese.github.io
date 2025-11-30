@@ -79,6 +79,9 @@ navigator = CausalNavigator(
 - **Metric:** Generates a **Cumulative Gain Chart (Uplift Curve)** on the test set.
 - **Why this metric?** Since ground truth CATE is impossible to observe, we cannot use RMSE. The Gain Chart measures how well a model sorts individuals from "High Responder" to "Low Responder."
 - **Visual:** Produces a plot where the highest curve represents the best-performing model for targeting interventions.
+- **Outputs:**
+    - **Uplift Curve Plot:** Visual comparison of model performance.
+    - **Qini/AUUC Score Table:** Numerical ranking of models (Area Under Uplift Curve).
 
 ## Helper Functions
 
