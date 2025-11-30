@@ -1,4 +1,5 @@
 # IoT Anomaly Detection for Smart Manufacturing
+#PREMAL SHAH UID: 121293596 (tsfresh difficulty: 3)
 
 Machine learning system for predictive maintenance in IoT-enabled manufacturing equipment using time-series feature extraction and ensemble learning.
 
