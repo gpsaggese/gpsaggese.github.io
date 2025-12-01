@@ -21,7 +21,7 @@ _LOG = logging.getLogger(__name__)
 
 # #############################################################################
 
-_VALID_ACTIONS = ["pdf", "script", "slide_reduce", "slide_check"]
+_VALID_ACTIONS = ["pdf", "script", "slide_reduce", "slide_check", "slide_improve"]
 _DEFAULT_ACTIONS = ["pdf"]
 
 # #############################################################################
@@ -277,7 +277,7 @@ def _process_lecture_file(
         elif action == "slide_check":
             _slide_check(source_path, source_name, limit=limit)
         else:
-            hdbg.dfatal("Unknown action: %s", action)
+            hdbg.dfatal("Unknown action: %s" % action)
 
 
 def _main(parser: argparse.ArgumentParser) -> None:

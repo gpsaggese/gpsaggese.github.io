@@ -373,65 +373,132 @@ _Commodore 64 cassette player_
 ::::
 :::
 
+* Error Correction Codes
+:::columns
+::::{.column width=70%}
+- = a technique used for controlling errors in data transmission over unreliable communication channels
+- **Idea**:
+  - the sender encodes the message in a redundant way
+  - the receiver can detect errors and correct (a limited number of) errors
+- 1940-1960s: Hamming, Reed-Solomon, Shannon, Viterbi
+- E.g., triple redundancy
+  - Send the same bit 3 times, receiver does majority voting
+  - Detect and correct one bit errors
+- E.g. parity bit
+  - Add an extra bit representing the number of 1s
+  - Detect (but not correct) one bit errors
+::::
+::::{.column width=30%}
+
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_2.png){width=40%}
+\vspace{1cm}
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_3.png){width=50%}
+\vspace{1cm}
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_1.png){width=60%}
+\vspace{0.5cm}
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_4.png)
+::::
+:::
+
 * RAID Levels
 :::columns
-::::{.column width=55%}
-\small
-
-- **RAID 0: No redundancy**
+::::{.column width=60%}
+- **RAID 0: Striping / no redundancy**
   - Array of independent disks
   - Same access time
-  - Increased transfer rate
+  - Increase transfer rate
 
 - **RAID 1: Mirroring**
   - Copy of disks
-  - If one disk fails, you have a copy
-  - Reads: higher data rate possible
-  - Writes: write to both disks
+  - If one disk fails, you have data copy
+    - Double redundancy like ECC
+  - Parallel access to multiple disks
+  - Reads
+    - Can go to either disk
+    - Same access time
+    - Increase read latency with same transfer rate
+    - Same read latency with increased transfer rate
+  - Writes
+    - Write to both disks
+::::
+::::{.column width=40%}
+\centering
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_3.png){width=60%}
+\vspace{0.2cm}
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_1.png){width=40%}
 
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_4.png){width=80%}
+
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_19_image_2.png){width=40%}
+::::
+:::
+* RAID Levels
+:::columns
+::::{.column width=60%}
 - **RAID 2: Memory-style error correction**
-  - Uses extra bits to reconstruct data
-  - Superseded by RAID 5
+  - Use extra bits to reconstruct data (like ECC in RAM)
+  - Trade-off error detection and recovery levels
 
-- **RAID 3: Bit-interleaved parity**
+- **RAID 3: Interleaved parity**
   - One disk contains parity for main data disks
-  - Handles single disk failure
+  - Handle single disk failure
   - Little overhead (only 25%)
 
 - **RAID 5: Block-interleaved distributed parity**
-  - Distributed parity blocks
+  - Distributed parity blocks instead of bits
 ::::
 ::::{.column width=40%}
-\includegraphics[trim={12cm 22cm 12cm 0.5cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
-\includegraphics[trim={12cm 13cm 12cm 8cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
-\includegraphics[trim={12cm 4cm 12cm 22cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_1.png){width=80%}
 
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_4.png)
+
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_2.png){width=70%}
+
+
+::::
+:::
+
+:::columns
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_3.png){width=80%}
+::::
+::::{.column width=70%}
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_5.png){width=40%}
 ::::
 :::
 
 * Choosing a RAID Level
 :::columns
 ::::{.column width=50%}
+- Main choice between RAID 0, RAID 1, and RAID 5
 
-- Main choice: RAID 1 vs. RAID 5
+- **RAID 0 (striping)**
+  - Better performance, no reliability
 
-- **RAID 1 = better write performance**
-  - E.g., writing a single block
+- **RAID 1 (mirroring)**
+  - Better performance and reliability
+  - High cost
+  - E.g., to write a single block
     - RAID 1: 2 block writes
     - RAID 5: 2 block reads, 2 block writes
-  - Best for high update rate, small data (e.g., log disks)
+  - Preferred for high update rate, small data (e.g., log disks)
 
-- **RAID 5 = lower storage cost**
-  - RAID 1: 2x more disks
-  - Best for low update rate, large data
+- **RAID 5 (interleaved parity)**
+  - Lower storage cost
+  - Preferred for low update rate, large data (e.g., analytics)
 ::::
-::::{.column width=45%}
-\includegraphics[trim={12cm 22cm 12cm 0.5cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
-\includegraphics[trim={12cm 13cm 12cm 8cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
-\includegraphics[trim={12cm 4cm 12cm 22cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_21_image_1.png)
 
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_21_image_2.png)
+
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_21_image_3.png)
+
+![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_21_image_4.png)
 ::::
 :::
+
+
 
 //## DB Internals
 //

@@ -1,0 +1,132 @@
+# Intro
+
+Serialization formats are essential for sharing structured data between programs
+and across networks. In these lessons, we compare text-based and binary formats
+such as CSV, Parquet, JSON, Protocol Buffers, Avro, and Thrift, highlighting
+their trade-offs. We then connect these formats to Remote Procedure Calls (RPCs),
+examining how data is marshalled, transmitted, and unmarshalled to enable
+reliable communication in distributed systems.
+
+# ##############################################################################
+# Serialization Formats
+# ##############################################################################
+
+Serialization formats are crucial for programs to communicate and share data,
+whether over a network or stored on a disk. This is important for tasks like
+remote procedure calls and data storage. Formats like JSON, YAML, Protocol
+Buffers, and Python Pickle are based on schemas that define how data is
+structured. JSON and YAML are human-readable, making them suitable for web APIs
+and configuration files. Protocol Buffers are efficient and used by Google for
+internal APIs, while Python Pickle is specific to Python for object
+serialization.
+
+Transition: Now, let's explore a common serialization format, CSV, and its
+characteristics.
+
+# ##############################################################################
+# Comma Separated Values (CSV)
+# ##############################################################################
+
+CSV is a simple format that stores data row-wise as text without a schema, with
+each line representing a data record and fields separated by commas. Its main
+advantage is portability, as it is a text format supported by most tools and is
+human-friendly. However, CSV files can be large, requiring compression, and
+parsing them is CPU intensive. They lack easy random access and schema, making
+them mainly read-only and hard to modify. Annotating CSV files with a schema can
+help, but they are not ideal for all use cases.
+
+Transition: Let's move on to a more efficient format, Apache Parquet, and see
+how it compares.
+
+# ##############################################################################
+# (Apache) Parquet
+# ##############################################################################
+
+Parquet is a columnar storage format that reads data as tiles and supports
+multi-dimensional, nested data, generalizing dataframes. It stores each column
+together, allowing for uniform data types and efficient compression. The IO
+layer can execute queries by reading only the necessary data chunks from disk.
+Parquet files are significantly smaller and faster than CSVs, especially with
+multi-threading, and allow reading subsets of columns and rows. However, they
+are binary and not human-friendly, require an ingestion step for conversion, and
+are mainly read-only, making them hard to modify.
+
+# ##############################################################################
+# JSON
+# ##############################################################################
+
+JSON, or JavaScript Object Notation, is a way to format data using nested
+dictionaries and arrays. It's similar to XML but is easier for humans to read
+and has less unnecessary code. JSON can sometimes be run directly in JavaScript
+and Python, making it versatile for developers. The example shows a JSON object
+with personal details like name, age, and address, demonstrating how data is
+organized in a clear, structured way. JSON is widely used for data interchange
+because of its simplicity and readability.
+
+Transition: Now, let's explore another data format developed by Google.
+
+# ##############################################################################
+# Protocol Buffers
+# ##############################################################################
+
+Protocol Buffers, developed by Google, is an open-source method for representing
+data structures. It's designed to work across different programming languages
+and platforms, making it very flexible. The schema, which is mostly relational,
+allows for optional fields, types, default values, and arrays. You define the
+schema in a `.proto` file, and then use `protoc` to generate code for languages
+like C++, Java, or Python. This code helps you create, read, and serialize data
+objects. The example shows how to define and use a Person message with optional
+fields and repeated phone numbers.
+
+Transition: Let's move on to other serialization formats that offer different
+features.
+
+# ##############################################################################
+# Serialization Formats
+# ##############################################################################
+
+Serialization formats like Avro and Thrift provide ways to structure and
+exchange data. Avro uses a JSON-specified schema and supports richer data
+structures, making it suitable for complex data needs. Thrift, initially
+developed by Facebook and now an Apache project, supports more programming
+languages and includes features like exceptions and sets. The Avro example shows
+a schema for a User record with fields for name, favorite number, and favorite
+color, demonstrating how data types can be specified. These formats are
+essential for efficient data serialization and communication across systems.
+
+# ##############################################################################
+# Remote Procedure Call
+# ##############################################################################
+
+Remote Procedure Call, or RPC, is a method used to request services from
+programs on other computers. It simplifies network communication by making
+remote calls appear like local procedure calls, without needing to worry about
+network details. This is particularly useful in distributed systems such as
+microservices, cloud services, and client-server applications. RPCs can operate
+synchronously, where the client waits for a response, or asynchronously, where
+the client continues processing without waiting. However, RPCs face challenges
+like the inability to serialize pointers, managing asynchronous communication,
+and dealing with failures and retries.
+
+Transition: Now, let's delve into the internal workings of RPCs.
+
+# ##############################################################################
+# RPCs: Internals
+# ##############################################################################
+
+The internal process of RPCs begins with the client making a procedure call to a
+stub function, passing the necessary arguments. These arguments are then
+serialized by the client stub in a process known as request marshalling,
+preparing them for network transmission. The client's RPC runtime sends this
+request to the server, where the server's RPC runtime deserializes the
+arguments, a step called server-side unmarshalling. The server then executes the
+requested procedure. After execution, the return values are marshaled into a
+response message and sent back to the client. The client receives the response,
+unmarshals the return values, and continues execution locally.
+
+# Outro
+
+We explored why serialization formats matter, compared CSV, Parquet, JSON,
+Protocol Buffers, Avro, and Thrift, and connected them to RPC concepts. We walked
+through RPC internals, from marshalling requests to handling responses, to see
+how distributed systems exchange structured data.
