@@ -101,13 +101,13 @@ def create_pipeline(
     # ============================================================================
 
     # Component 4: Transform
-    # TODO: Implement in Phase 3
-    # transform = Transform(
-    #     examples=example_gen.outputs['examples'],
-    #     schema=schema_gen.outputs['schema'],
-    #     module_file=transform_module_file
-    # )
-    # components.append(transform)
+    # Feature engineering and preprocessing using utils/feature_engineering.py
+    transform = Transform(
+        examples=example_gen.outputs['examples'],
+        schema=schema_gen.outputs['schema'],
+        module_file=transform_module_file
+    )
+    components.append(transform)
 
     # ============================================================================
     # PHASE 4: Model Training
