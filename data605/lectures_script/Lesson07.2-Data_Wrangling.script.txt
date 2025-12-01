@@ -1,0 +1,227 @@
+# Intro
+
+Data wrangling and cleaning prepare raw, messy data for meaningful analysis by
+correcting errors, handling missing values, reshaping structures, and ensuring
+consistency. This process includes inspecting datasets, diagnosing problems,
+transforming formats, integrating multiple sources, and applying principles of
+tidy data. Together, these steps create reliable, well-structured data ready for
+modeling and visualization.
+
+# ##############################################################################
+# Data Wrangling and Data Cleaning
+# ##############################################################################
+
+Data wrangling and cleaning are crucial steps in preparing data for analysis.
+This process involves transforming messy, inconsistent, and incomplete data into
+a coherent dataset that can be effectively used for modeling. Most of the effort
+in data science is spent on this iterative process, where you clean the data,
+model it, and then clean it again as needed. Data wrangling involves reshaping
+tables, merging data sources, and creating new variables, while data cleaning
+focuses on correcting or removing incorrect, corrupt, or irrelevant data,
+handling missing values, and dealing with outliers and inconsistent formats.
+These tasks are often performed together to ensure data quality.
+
+Transition: Now, let's explore the typical workflow for data wrangling.
+
+# ##############################################################################
+# Typical Data Wrangling Workflow
+# ##############################################################################
+
+The data wrangling workflow begins with inspecting the data to understand its
+structure, including column names, data types, and a few sample rows. Basic
+summaries help identify potential issues. Next, diagnose problems such as
+missing values, unusual codes, inconsistent units, or strange distributions.
+Based on the project's needs, decide on a strategy for what data to keep, fix,
+or drop. Apply necessary transformations like filtering, joining, reshaping,
+recoding, and aggregating data. Finally, validate the results to ensure that the
+changes are logical and that key statistics remain reasonable.
+
+Transition: After wrangling and cleaning, let's discuss how to extract data from
+various sources.
+
+# ##############################################################################
+# Data Extraction
+# ##############################################################################
+
+Data extraction involves gathering data from different sources, such as web
+scraping, which can be done using APIs or by explicitly scraping data from
+websites. Web scraping is challenging due to potential issues like page changes,
+throttling, and rate limits. Setting up pipelines for periodic scraping and
+using tools like import.io or portia can help automate the process. Data can
+come from various sources, including files (CSV, JSON, XML), databases,
+spreadsheets, AWS S3 buckets, web APIs, and logs. It's important to note that
+raw data is often collected based on collection needs rather than analysis
+needs, requiring further processing for analysis.
+
+# ##############################################################################
+# Tidy Data
+# ##############################################################################
+
+Tidy data is a way to organize datasets to make them easier to work with. The
+main idea is to have a clear structure where each variable is a column, each
+observation is a row, and each type of observational unit is a table. This
+structure helps in data manipulation, analysis, and visualization. Tools like
+`pandas.melt()` and `pandas.pivot()` in Python's pandas library are useful for
+achieving tidy data. The images illustrate the difference between messy and tidy
+data, showing how a well-organized dataset can simplify data tasks.
+
+Let's move on to how we can reshape data to fit our needs.
+
+# ##############################################################################
+# Reshaping Data
+# ##############################################################################
+
+Reshaping data involves changing its structure to make analysis easier. When
+converting from wide to long format, similar columns are turned into key-value
+pairs. Conversely, long to wide format involves turning key-value pairs into
+separate columns. The best shape for your data depends on what makes analysis
+and visualization simpler. The images show examples of wide and long formats,
+highlighting how data can be structured differently depending on the task at
+hand.
+
+Next, we'll discuss a common pattern in data analysis called
+Split-Apply-Combine.
+
+# ##############################################################################
+# Split-Apply-Combine
+# ##############################################################################
+
+The Split-Apply-Combine pattern is a common approach in data analysis. It
+involves splitting data into smaller pieces, applying operations to each piece
+independently, and then combining the results. This method is useful for tasks
+like group-wise ranking, calculating group statistics, and creating separate
+models for each group. The advantages include compact code and easy
+parallelization. This pattern is supported by many systems, including pandas,
+SQL's GROUP BY operator, and Map-Reduce. The image provides a visual
+representation of this process, emphasizing its practicality in data analysis.
+
+# ##############################################################################
+# Classification of Data Problems
+# ##############################################################################
+
+This slide introduces the concept of data quality problems, which can
+significantly impact the reliability and usability of data. These problems are
+categorized into two main types: single-source and multi-source problems.
+Single-source problems occur within a single dataset, while multi-source
+problems arise when integrating data from multiple sources. Additionally, data
+quality issues can be further divided into schema-level problems, which relate
+to the structure or design of the data, and instance-level problems, which
+pertain to the actual data values stored. Understanding these classifications
+helps in identifying and addressing data quality issues effectively.
+
+Transition: Let's delve deeper into single-source problems and their
+characteristics.
+
+# ##############################################################################
+# Single-Source Problems
+# ##############################################################################
+
+Single-source problems are largely dependent on the data source. Databases often
+have built-in constraints that help maintain data quality, whereas spreadsheet
+data is typically cleaner due to existing schemas. In contrast, logs and
+web-page data tend to be messier. Common issues include ill-formatted data,
+missing or illegal values, misspellings, and extraction issues. Duplicated
+records, contradicting information, and referential integrity violations are
+also prevalent. Additionally, unclear default or missing values, evolving
+schemas, and outliers can pose challenges. Recognizing these problems is crucial
+for maintaining data integrity and reliability.
+
+Transition: Let's look at some examples of single-source problems to better
+understand their impact.
+
+# ##############################################################################
+# Single-Source Problems: Example
+# ##############################################################################
+
+This slide highlights specific sources of errors in data. Data entry errors
+occur when arbitrary values are entered, leading to inaccuracies. Measurement
+errors are common in sensor data, where inaccuracies can affect data quality.
+Distillation errors arise during data processing and summarization, potentially
+leading to incorrect conclusions. Data integration errors occur when
+inconsistencies arise across combined sources. These examples illustrate the
+various ways single-source problems can manifest, emphasizing the need for
+careful data management and error-checking processes to ensure data quality and
+reliability.
+
+# ##############################################################################
+# Multi-Source Problems
+# ##############################################################################
+
+When dealing with data from multiple sources, several challenges arise.
+Different data sources are often developed and maintained separately, leading to
+variations in how data is stored. This requires schema mapping or transformation
+to align information across sources. Naming conflicts can occur, where the same
+name refers to different objects or different names refer to the same object.
+Additionally, data may be represented differently across sources. Entity
+resolution is necessary to match entities across these sources. Data quality
+issues such as contradicting or mismatched information can further complicate
+the integration process.
+
+Transition: Now, let's explore how to handle outliers in data.
+
+# ##############################################################################
+# Univariate Outlier Detection
+# ##############################################################################
+
+Outliers can significantly impact data analysis by skewing metrics and hiding
+other important data points. To identify outliers, robust statistical methods
+are used to minimize the influence of corrupted data. Robust center metrics like
+the median and k%-trimmed mean help in identifying central tendencies without
+being affected by extreme values. Robust dispersion measures, such as the median
+absolute deviation (MAD) and median distance from the median, are used to assess
+variability. These methods help in detecting outliers effectively while
+maintaining the integrity of the data analysis.
+
+Transition: Let's delve deeper into outlier detection techniques for different
+types of data.
+
+# ##############################################################################
+# Outlier Detection
+# ##############################################################################
+
+For Gaussian data, outliers are identified as data points that are 1.5 times the
+MAD from the median, and histograms can be used to confirm these outliers. For
+non-Gaussian data, the generating distribution is estimated, either
+parametrically or non-parametrically. Distance-based methods identify outliers
+by finding points with few neighbors, while density-based methods define density
+as the average distance to k nearest neighbors and use relative density to spot
+outliers. The curse of dimensionality poses a challenge, as data becomes sparse
+in high-dimensional spaces, requiring techniques to project data into
+lower-dimensional spaces to effectively find outliers.
+
+# ##############################################################################
+# Multivariate Outliers
+# ##############################################################################
+
+In this slide, we discuss how outliers can affect data analysis, especially when
+using mean and covariance, which are not resistant to outliers. To handle this,
+robust statistics are recommended. When dealing with multivariate Gaussian data,
+which is characterized by a mean and covariance matrix, an iterative approach is
+used. This involves calculating the Mahalanobis distance to measure how far a
+data point is from the distribution. Points that are too far are considered
+outliers and are removed, after which the mean and covariance are recalculated.
+Given the large volume of data, approximation techniques are often necessary,
+and it's important to try different methods based on the data.
+
+Let's move on to how outliers are handled in time series data.
+
+# ##############################################################################
+# Time Series Outliers
+# ##############################################################################
+
+This slide focuses on outliers in time series data, which is a sequence of data
+points collected at regular intervals. Examples include stock prices, sales
+revenue, and website traffic. Time series data is common in various fields, and
+there is extensive research on forecasting within this context. To identify
+outliers, historical patterns are analyzed, and techniques like Rolling MAD
+(median absolute deviation) are used. This helps in flagging unusual data points
+that deviate significantly from expected patterns, ensuring more accurate
+analysis and forecasting.
+
+# Outro
+
+We explored how data is inspected, cleaned, reshaped, and validated, and how
+issues like outliers and multi-source conflicts were addressed. We learned
+practical techniques and workflows that strengthened our ability to prepare
+high-quality data for analysis.
+
