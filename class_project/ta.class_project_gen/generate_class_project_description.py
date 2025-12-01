@@ -2,10 +2,11 @@
 """
 Generate project descriptions from a Google Sheet and save them to a Markdown
 file. This script also creates Github links for the project files and adds them
-back to the Google Sheet. Set the OPENAI_API_KEY using export before running script.
+back to the Google Sheet. Set the OPENAI_API_KEY using export before running
+script.
 
 >   python tutorial_class_project_instructions/generate_class_project_description.py
-    
+
     --tab_name ""
     -v INFO
 
@@ -18,7 +19,6 @@ import argparse
 import logging
 import pathlib
 import time
-import re
 from collections import defaultdict
 from typing import Any, Optional
 
@@ -92,7 +92,7 @@ Include:
 - Avoid real-time claims unless tool supports it.
 - Do **not propose large-scale training of transformer models or deep learning systems** unless pre-trained models are used for lightweight inference or fine-tuning on small datasets.
 - Avoid long texts or steps. Use concise, clear language.
-- Every project MUST involve at least one clear machine learning task (e.g., classification, regression, clustering, anomaly detection, forecasting, topic modeling, summarization, etc.).  
+- Every project MUST involve at least one clear machine learning task (e.g., classification, regression, clustering, anomaly detection, forecasting, topic modeling, summarization, etc.).
 - Tools that focus on EDA, data cleaning, feature engineering, or visualization MUST still include ML — even if basic.
 - Projects must go beyond just model acceleration or deployment; they must include an actual ML task, with data, training/fine-tuning (if needed), evaluation, and analysis.
 
@@ -110,7 +110,7 @@ You may use common domains like housing prices, movie sentiment, traffic data. B
 Examples of variation:
 - Different data sources: GraphQL, WebSockets, news APIs, order books
 - Different ML tasks: Forecasting, anomaly detection, clustering, classification, transfer learning
-Look at the example to get an idea of how it needs to look. 
+Look at the example to get an idea of how it needs to look.
 """
 
 
@@ -142,7 +142,7 @@ Your response must include:
 - Use pre-trained models if deep learning is involved.
 - Avoid overused examples like Titanic or Iris.
 - Avoid vague real-time claims unless well-justified.
-- Every project MUST involve at least one clear machine learning task (e.g., classification, regression, clustering, anomaly detection, forecasting, topic modeling, summarization, etc.).  
+- Every project MUST involve at least one clear machine learning task (e.g., classification, regression, clustering, anomaly detection, forecasting, topic modeling, summarization, etc.).
 - Tools that focus on EDA, data cleaning, feature engineering, or visualization MUST still include ML — even if basic.
 - Projects must go beyond just model acceleration or deployment; they must include an actual ML task, with data, training/fine-tuning (if needed), evaluation, and analysis.
 - Avoid vague statements like "scrape social media" — be specific and realistic.
@@ -304,19 +304,18 @@ def _build_prompt(project_name: str) -> str:
         #     return f"Technology: {project_name}."
         # else:
         #     previous_descriptions = "\n- " + "\n- ".join(previous_descriptions)
-            # return (
-            #     f"Technology: {project_name}."
-            #     f"Do NOT repeat the following idea:"
-            #     f"{previous_descriptions}\n"
-            #     f"Only focus on the new idea."
-            #     f"Create a **completely new project** that differs clearly in all three aspects:\n"
-            #     f"1. the domain or application (e.g., use a different target problem),"
-            #     f"2. the data source (e.g., webscraping, APIs,ready datasets),"
-            #     f"3. the ML task (e.g., clustering, regression, classification, forecasting, anomaly detection, etc.)."
-            #     f"Also change the difficulty by 1 from the previous project (i.e., make it one level easier or harder).\n"
-            #     f"Match the style and format of the GLOBAL PROMPT strictly."
-                
-            # )
+        # return (
+        #     f"Technology: {project_name}."
+        #     f"Do NOT repeat the following idea:"
+        #     f"{previous_descriptions}\n"
+        #     f"Only focus on the new idea."
+        #     f"Create a **completely new project** that differs clearly in all three aspects:\n"
+        #     f"1. the domain or application (e.g., use a different target problem),"
+        #     f"2. the data source (e.g., webscraping, APIs,ready datasets),"
+        #     f"3. the ML task (e.g., clustering, regression, classification, forecasting, anomaly detection, etc.)."
+        #     f"Also change the difficulty by 1 from the previous project (i.e., make it one level easier or harder).\n"
+        #     f"Match the style and format of the GLOBAL PROMPT strictly."
+        # )
         return (
             f"Tool: {project_name}.\n"
             f"Generate three new and distinct graduate-level data science project ideas using this tool.\n"
@@ -325,9 +324,7 @@ def _build_prompt(project_name: str) -> str:
         )
 
 
-def _generate_project_description(
-    project_name: str
-) -> Any:
+def _generate_project_description(project_name: str) -> Any:
     """
     Generate a project description. Depending on the value in No of Projects
     columns, this will generate N number of projects for each tool, each
@@ -365,7 +362,7 @@ def create_markdown_file(
     :param max_projects: limit to the rows processed
     :param sleep_sec: amount of time to sleep between rows
     """
-    file_githublinks_df = pd.DataFrame(columns=["Tool","URL"])
+    file_githublinks_df = pd.DataFrame(columns=["Tool", "URL"])
     rows = df.head(max_projects) if max_projects is not None else df
     # temps = [0.3,0.45,0.6]
     pathlib.Path(markdown_folder_path).mkdir(parents=True, exist_ok=True)
@@ -374,23 +371,25 @@ def create_markdown_file(
     for _, row in rows.iterrows():
         content = ""
         project_name = row["Tool"]
-        description = _generate_project_description(
-                project_name)
+        description = _generate_project_description(project_name)
         content = f"{description}\n\n"
         # content += f"######################## END ###############################\n\n"
         file_name = f"{project_name}_Project_Description.md"
         markdown_path = pathlib.Path(markdown_folder_path) / file_name
-            # if markdown_path.exists():
-            #     _LOG.info(
-            #         "File already exists, skipping generation: %s", markdown_path
-            #     )
-                
-            # else:
+        # if markdown_path.exists():
+        #     _LOG.info(
+        #         "File already exists, skipping generation: %s", markdown_path
+        #     )
+
+        # else:
         hio.to_file(str(markdown_path), content)
         _LOG.info("Generated Markdown File: %s", file_name)
         github_url = f"{DEFAULT_FILE_GITHUB_LINK}{file_name}"
-        file_githublinks_df.loc[len(file_githublinks_df)] = [project_name,github_url]
-            # Letting it wait for a while before triggering another request
+        file_githublinks_df.loc[len(file_githublinks_df)] = [
+            project_name,
+            github_url,
+        ]
+        # Letting it wait for a while before triggering another request
         time.sleep(sleep_sec)
     return file_githublinks_df
 
@@ -453,7 +452,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
     _LOG.info("Done: %s", markdown_folder_path)
     _LOG.info("Adding GitHub links to Project files to Google sheet")
     # _write_google_sheet(
-        # file_githublinks_df, args.sheet_url, 'MSML610 Project Github Links', secret_path
+    # file_githublinks_df, args.sheet_url, 'MSML610 Project Github Links', secret_path
     # )
 
 

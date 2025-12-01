@@ -1,4 +1,6 @@
 // Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+// Slides: https://docs.google.com/presentation/d/15B9sUw3iCjnu1BZT4pod-ddvbM6lHAcEFQHkgd8v2vY
 
 ::: columns
 :::: {.column width=15%}
@@ -16,80 +18,53 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{NoSQL Taxonomy}}$$**
+**$$\text{\blue{Lesson 5.2: Database Taxonomy}}$$**
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
-- Concepts in slides
-
-- Silberschatz Chapter 23.6
-
-- High-level view:
+- **References**:
+  - Online tutorials
+  - Silbershatz: Chap 10.2
   - Seven Databases in Seven Weeks, 2e
-
 ::::
 :::: {.column width=20%}
 
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png)
+![](data605/lectures_source/images/Silberschatz_book.png){width=2cm}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png){width=2cm}
 
 ::::
 :::
 
 * DB Taxonomy
-:::columns
-::::{.column width=50%}
-
 - **At least five DB genres**
-  - _Relational_ (e.g., Postgres)
+  - _Relational_ (e.g., PostgreSQL)
   - _Key-value_ (e.g., Redis)
   - _Document_ (e.g., MongoDB)
-  - _Columnar_ (e.g., Parquet)
+  - _Columnar_ (e.g., Apache Parquet)
   - _Graph_ (e.g., Neo4j)
-::::
-::::{.column width=25%}
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_24_image_3.png){width=80%}
-::::
-::::{.column width=25%}
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_24_image_2.png){width=80%}
-::::
-:::
-\vspace{1cm}
-:::columns
-::::{.column width=50%}
 
 - **Criteria to differentiate DBs**
   - Data model
   - Trade-off with CAP theorem
   - Querying capability
   - Replication scheme
-::::
-::::{.column width=25%}
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_24_image_4.png){width=80%}
-::::
-::::{.column width=25%}
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_24_image_1.png){width=80%}
-::::
-:::
 
 * Relational DB
 
 - E.g., _Postgres_, MySQL, Oracle, SQLite
 
 - **Data model**
-  - Set-theory and relational algebra
+  - Set-theory, relational algebra
   - Data as tables with rows and columns
   - Many attribute types (e.g., numeric, strings, dates, arrays, blobs)
   - Strictly enforced attribute types
   - SQL query language
-  - ACID consistency
-
-- **Application**
-  - Relational tabular data
+  - ACID compliance
 
 - **Good for**
   - Known data layout, unknown access pattern
@@ -97,31 +72,31 @@ UMD DATA605 - Big Data Systems
   - Regular data
 
 - **Not so good for**
-  - Hierarchical data (not a nice row in tables)
-  - Variable/dishomogeneous data (record-to-record variation)
+  - Hierarchical data (not easily represented as rows in tables)
+  - Variable/heterogeneous data (record-to-record variation)
 
 * Key-Value Store
 :::columns
-::::{.column width=75%}
+::::{.column width=70%}
 
-- E.g., redis, DynamoDB, Git, AWS S3, filesystem
+- E.g., Redis, DynamoDB, _Git_, AWS S3, filesystem
 
 - **Data model**
   - Map keys (e.g., strings) to complex values (e.g., binary blob)
   - Support get, put, delete operations on a primary key
 
 - **Application**
-  - Caching data
-  - Store users' session data in a web application
-  - Store the shopping cart in an e-commerce application
+  - Cache data
+  - Store users' session data in web applications
+  - Store shopping carts in e-commerce applications
 
 - **Good for**
-  - Data not "related" (e.g., no joins)
+  - Unrelated data (e.g., no joins)
   - Fast lookups
-  - Easy to scale horizontally using partitioning
+  - Easy horizontal scaling using partitioning
 
 - **Not so good for**
-  - Data queries needed
+  - Data queries
   - Lacking secondary indexes and scanning
 ::::
 ::::{.column width=25%}
@@ -131,36 +106,36 @@ UMD DATA605 - Big Data Systems
 
 * Document Store
 :::columns
-::::{.column width=75%}
+::::{.column width=70%}
 
-- E.g., _MongoDB_, CouchDB
+- E.g., _MongoDB_, _CouchBase_
 
 - **Data model**
-  - Like key-value but value is a document (nested dict)
-  - Each document has a unique ID (e.g., hash)
-  - Any number of fields per document, even nested
-    - E.g., jSON, XML, dict data
+  - Key-value with document as value (nested dict)
+  - Unique ID for each document (e.g., hash)
+  - Any number of fields per document, including nested
+    - E.g., JSON, XML, dict data
 
 - **Application**
   - Semi-structured data
-
-- **Good for**
-  - Unknown data structure
-  - Maps well to OOP models (less impedance mismatch)
-  - Easy to shard and replicate over distributed servers
-
-- **Not so good for**
-  - Complex join queries
-  - Denormalized form is the norm
 ::::
 ::::{.column width=25%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_27_image_1.png)
 ::::
 :::
 
+- **Good for**
+  - Unknown data structure
+  - Maps to OOP models (less impedance mismatch)
+  - Easy to shard and replicate over distributed servers
+
+- **Not so good for**
+  - Complex join queries
+  - Denormalized form is standard
+
 * Columnar Store
 :::columns
-::::{.column width=80%}
+::::{.column width=70%}
 
 - E.g., _HBase_, Cassandra, _Parquet_
 
@@ -182,22 +157,22 @@ UMD DATA605 - Big Data Systems
   - Inexpensive to add columns
 
 - **Not so good for**
-  - Design schema based on query plans
+  - Designing schema based on query plans
   - No native joins; applications handle joins
 ::::
-::::{.column width=20%}
+::::{.column width=25%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_28_image_1.png)
 ::::
 :::
 
 * Graph DB
 :::columns
-::::{.column width=80%}
+::::{.column width=70%}
 
-- E.g., _Neo4J_, GraphX
+- E.g., _Neo4j_, GraphX
 
 - **Data model**
-  - Interconnected data, storing nodes and relationships
+  - Interconnected data: nodes, relationships
   - Nodes and edges have properties (key-value pairs)
   - Queries traverse nodes and relationships
 
@@ -207,22 +182,17 @@ UMD DATA605 - Big Data Systems
   - Geographical data
 
 - **Good for**
-  - Networked data, difficult to model with relational model
-  - Matches OO systems
+  - Networked data, hard to model with a relational model
+  - Matches object-oriented (OO) systems
 
 - **Not so good for**
-  - Poor scalability, difficult to partition graph on different nodes
+  - Poor scalability, hard to partition graph across different nodes
     - Store graph in graph DB, relations in key-value store
 ::::
-::::{.column width=20%}
+::::{.column width=25%}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_29_image_1.png)
 ::::
 :::
-
-* Taxonomy by CAP
-\centering
-![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_30_image_1.png){width=80%}
-From http://blog.nahurst.com/visual-guide-to-nosql-systems
 
 * Taxonomy by CAP
 :::columns
@@ -230,18 +200,16 @@ From http://blog.nahurst.com/visual-guide-to-nosql-systems
 
 - **CA (Consistent, Available) systems**
   - Struggle with partitions, use replication
-  - Traditional RDBMSs (e.g., PostgreSQL, MySQL)
+  - Traditional RDBMSs (PostgreSQL, MySQL)
 
 - **CP (Consistent, Partition-Tolerant) systems**
   - Struggle with availability, maintain consistency across partitions
   - BigTable (column-oriented/tabular)
   - HBase (column-oriented/tabular)
-  - MongoDB (document-oriented)
   - Redis (key-value)
-  - MemcacheDB (key-value)
   - Berkeley DB (key-value)
 ::::
-::::{.column width=40%}
+::::{.column width=35%}
 \vspace{1cm}
 ![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_31_image_1.png)
 ::::
@@ -249,6 +217,8 @@ From http://blog.nahurst.com/visual-guide-to-nosql-systems
 
 - **AP (Available, Partition-Tolerant) systems**
   - Achieve "eventual consistency" via replication and verification
+  - MongoDB (document-oriented)
+  - Memcached (key-value)
   - Dynamo (key-value)
   - Cassandra (column-oriented/tabular)
   - CouchDB (document-oriented)

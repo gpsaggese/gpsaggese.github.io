@@ -1,5 +1,3 @@
-// notes_to_pdf.py --input lectures_source/Lesson1-Intro.txt --output tmp.pdf --type slides --skip_action cleanup_after --debug_on_error --toc_type navigation
-
 ::: columns
 :::: {.column width=15%}
 ![](msml610/lectures_source/figures/UMD_Logo.png)
@@ -20,7 +18,7 @@ MSML610: Advanced Machine Learning
 \endgroup
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
 
 # ##############################################################################
 # MSML610

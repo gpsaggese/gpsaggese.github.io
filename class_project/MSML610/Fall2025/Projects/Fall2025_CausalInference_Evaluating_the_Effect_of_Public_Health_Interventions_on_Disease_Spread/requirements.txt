@@ -1,0 +1,11 @@
+
+pandas>=2.0.0
+numpy>=1.21.0
+matplotlib>=3.5.0
+seaborn>=0.11.0
+statsmodels>=0.13.0
+linearmodels>=4.0
+causalinference>=0.1.0
+pyyaml>=6.0
+openpyxl>=3.0.0
+jupyter>=1.0.0

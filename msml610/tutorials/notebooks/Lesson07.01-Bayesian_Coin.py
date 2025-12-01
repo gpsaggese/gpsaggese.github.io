@@ -16,7 +16,7 @@
 # %% [markdown]
 # ## Imports
 
-# %% [markdown] jp-MarkdownHeadingCollapsed=true
+# %% [markdown]
 # ### Install packages
 
 # %%
