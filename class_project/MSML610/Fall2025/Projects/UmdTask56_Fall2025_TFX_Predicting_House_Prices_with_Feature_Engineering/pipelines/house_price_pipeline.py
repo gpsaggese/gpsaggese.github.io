@@ -114,16 +114,16 @@ def create_pipeline(
     # ============================================================================
 
     # Component 5: Trainer
-    # TODO: Implement in Phase 4
-    # trainer = Trainer(
-    #     module_file=trainer_module_file,
-    #     examples=transform.outputs['transformed_examples'],
-    #     transform_graph=transform.outputs['transform_graph'],
-    #     schema=schema_gen.outputs['schema'],
-    #     train_args=trainer_pb2.TrainArgs(num_steps=config.TRAIN_STEPS),
-    #     eval_args=trainer_pb2.EvalArgs(num_steps=config.EVAL_STEPS)
-    # )
-    # components.append(trainer)
+    # Train TensorFlow DNN model using utils/model_utils.py run_fn
+    trainer = Trainer(
+        module_file=trainer_module_file,
+        examples=transform.outputs['transformed_examples'],
+        transform_graph=transform.outputs['transform_graph'],
+        schema=schema_gen.outputs['schema'],
+        train_args=trainer_pb2.TrainArgs(num_steps=config.TRAIN_STEPS),
+        eval_args=trainer_pb2.EvalArgs(num_steps=config.EVAL_STEPS)
+    )
+    components.append(trainer)
 
     # ============================================================================
     # PHASE 5: Model Evaluation

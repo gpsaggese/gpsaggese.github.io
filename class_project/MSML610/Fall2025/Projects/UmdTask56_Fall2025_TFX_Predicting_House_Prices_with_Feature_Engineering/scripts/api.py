@@ -123,7 +123,7 @@ def run_pipeline(
     trainer_module_file = str(Path(__file__).parent.parent / "utils" / "model_utils.py")
 
     print("\nCreating TFX pipeline...")
-    print(f"Components: CsvExampleGen, StatisticsGen, SchemaGen (Phase 2)")
+    print(f"Components: CsvExampleGen, StatisticsGen, SchemaGen, Transform, Trainer (Phase 4)")
 
     # Create the pipeline
     tfx_pipeline = create_pipeline(
@@ -149,8 +149,9 @@ def run_pipeline(
     print(f"Metadata saved to: {metadata_path}")
     print("\nNext steps:")
     print("  - Check pipeline_outputs/ for generated artifacts")
-    print("  - Review schema in pipeline_outputs/.../SchemaGen/...")
-    print("  - Proceed to Phase 3 for feature engineering")
+    print("  - Review trained model in pipeline_outputs/.../Trainer/...")
+    print("  - Check models/serving/ for the saved model")
+    print("  - Proceed to Phase 5 for model evaluation")
 
 
 def main():
