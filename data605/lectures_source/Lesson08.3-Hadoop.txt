@@ -1,0 +1,243 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+// 
+// 
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{8.3: Apache Hadoop}}$$**
+\endgroup
+
+\vspace{1cm}
+
+::: columns
+:::: {.column width=75%}
+
+- **Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+
+- **References**
+  - Ghemawat et al.: _The Google File System_, 2003
+  - Dean et al.: _MapReduce: Simplified Data Processing on Large Clusters_, 2004
+::::
+:::: {.column width=20%}
+
+::::
+:::
+
+# Apache Hadoop
+
+## Hadoop Ecosystem
+
+* Hadoop Ecosystem (aka Hadoop Zoo)
+:::columns
+::::{.column width=50%}
+- **Hadoop Map-Reduce**
+
+- **HDFS**
+  - Distributed file system
+
+- **Pig**
+  - High-level data-flow framework for parallel computation
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_59_image_1.png)
+::::
+:::
+- **HBase**
+  - Scalable, distributed database
+  - Structured data storage for large tables (like Google BigTable)
+
+- **Cassandra**
+  - Scalable multi-master database with no single points of failure
+
+- **Hive**
+  - Data warehouse infrastructure
+  - Provide data summarization and ad-hoc querying
+
+- **ZooKeeper**
+  - High-performance coordination service for distributed applications
+
+- **YARN, Kafka, Storm, Spark, Solr, ...**
+
+## Hadoop Distributed File System
+
+* Hadoop Distributed File System (HDFS)
+::: columns
+:::: {.column width=60%}
+- **HDFS** is a **distributed file system**
+  - Designed to store large data sets reliably
+  - Part of the Apache Hadoop ecosystem
+  - Inspired by the Google File System (GFS)
+
+1. Optimized for **high-throughput access** to large files
+   - Suitable for batch processing
+   - Not low-latency access
+::::
+:::: {.column width=35%}
+
+![](data605/lectures_source/images/lecture_8_3/lec_8_3_slide_1_image_1.png)
+
+
+::::
+:::
+
+2. Designed for **fault tolerance and scalability**
+   - Ensures fault tolerance through replication
+     - Blocks are stored on different nodes and racks
+     - Provides data availability even if some nodes fail
+   - Follows a primary-secondary architecture
+   - Replication strategy improves read performance
+
+* HDFS Architecture
+::: columns
+:::: {.column width=60%}
+- **NameNode**
+  - Store file/dir hierarchy
+  - Store file metadata
+    - E.g., block location, size, permissions
+
+- **DataNodes**
+  - Store actual data blocks
+  - Split file into 16-256MB blocks
+  - Replicate chunks (2x or 3x) across multiple _DataNodes_
+  - Keep replicas in different racks
+
+- **Client**
+  - API (e.g., Python, Java) to library
+  - Mount HDFS on local filesystem
+::::
+:::: {.column width=35%}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_18_image_1.png)
+::::
+:::
+
+* HDFS: Read / Write Protocols
+::: columns
+:::: {.column width=60%}
+
+- **Read**
+  - Contact _NameNode_ for _DataNode_ and block pointer
+  - Choose the nearest _DataNode_ for each block
+  - Connect to _DataNode_ for data access
+  - Reads blocks in parallel to improve performance
+  - Data is reassembled by the client in correct order
+
+- **Write**
+  - _NameNode_ creates blocks
+  - Assign blocks to multiple _DataNodes_
+  - Client sends data to _DataNodes_
+  - _DataNodes_ store data
+  - Blocks are pipelined to other replicas
+  - Write is considered successful after all replicas acknowledge
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_18_image_1.png)
+::::
+:::
+
+* Fault Tolerance and Recovery
+- _NameNode_ monitors _DataNode_ heartbeat signals
+  - On failure, blocks are re-replicated to maintain replication factor
+
+- _NameNode_ itself is a single point of failure
+  - Solved with HDFS High Availability
+
+- Data integrity ensured using checksums
+
+* HDFS vs Traditional File Systems
+- Best for **storing and processing large-scale files**
+  - E.g., logs, media, sensor data
+  - Commonly used in data lakes and ETL pipelines
+  - Supports very large files and directories
+  - Performance degrades with many small files
+
+- Optimized for **write-once, read-many** access pattern
+
+- Lacks low-latency access, but provides **high throughput**
+  - Good for analytics (OLAP)
+  - Not suitable for transactional systems (OLTP)
+    - E.g., bank
+
+## Hadoop MapReduce
+
+* MapReduce: Hadoop
+
+::: columns
+:::: {.column width=55%}
+- **Hadoop**: open-source MapReduce implementation
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_42_image_1.png){width=60%}
+::::
+:::
+
+- **Functionalities**
+  - Partition input data (HDFS)
+  - Input adapters
+    - E.g., HBase, MongoDB, Cassandra, Amazon Dynamo
+  - Schedule program execution across machines
+  - Handle machine failures
+  - Manage inter-machine communication
+  - Perform _GroupByKey_ step
+  - Output adapters
+    - E.g., Avro, ORC, Parquet
+  - Schedule multiple _MapReduce_ jobs
+
+* Data Flow
+- Store input, intermediate, final outputs in HDFS
+  - Operations in Hadoop move disk to disk
+
+- Use adapters to read/partition data in chunks
+
+- Scheduler places map tasks near physical storage of input data
+  - Store intermediate results on local FS of Map and Reduce workers
+
+- Output often serves as input for another MapReduce task
+
+* Hadoop MapReduce: Overview
+- Programming model for distributed data processing
+- Processes data in parallel across a cluster
+- Consists of two main functions:
+  - Map: filters and sorts input data
+  - Reduce: aggregates intermediate outputs
+- Suited for batch jobs over large datasets
+- Fault-tolerant: tasks are retried upon failure
+
+* MapReduce: Execution Phases
+- Input data split into chunks processed by Mappers
+- Mapper outputs key-value pairs
+- Shuffle and Sort: organizes data by key
+  - Intermediate keys are grouped and sent to Reducers
+- Reducers aggregate values by key
+- Final output written back to HDFS
+
+* HDFS vs MapReduce: Complementary Roles
+- HDFS: distributed storage system
+  - Stores large datasets efficiently
+- MapReduce: distributed compute model
+  - Processes data stored in HDFS
+- Together enable scalable and fault-tolerant data analysis
+
+* Benefits and Limitations
+- **Benefits**
+  - Scalable and fault-tolerant
+  - Handles petabytes of data
+  - Open-source and cost-effective
+
+- **Limitations**
+  - High latency, not suitable for real-time
+  - Difficult for complex iterative algorithms
+  - Superseded in many cases by Spark and other engines
