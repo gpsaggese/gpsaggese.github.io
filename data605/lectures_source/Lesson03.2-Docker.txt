@@ -1,0 +1,164 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+// https://docs.google.com/presentation/d/1VoUmig6CIA4ZtfNAuAIKbr3qtZjYNWIZxK9xxK6wTxI/edit
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 3.2: Docker}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+::::
+:::: {.column width=20%}
+
+::::
+:::
+
+* Containerizing an App
+- **Containerizing an app** means creating a container with your app inside
+
+- Develop application code with dependencies
+  - Install dependencies
+    - Inside a container
+    - Inside a virtual env
+
+- Create a Dockerfile describing:
+  - App
+  - Dependencies
+  - How to run it
+
+- Build image with `docker image build`
+- (Optional) Push image to Docker image registry
+- Run/test container from image
+- Distribute app as a container (no installation required)
+
+* Building a Container
+- **Dockerfile**
+  - Describe how to create a container
+- **Build context**
+  - `docker build -t web:latest .` where `.` is the build context
+  - Send directory containing the application to Docker engine to build the
+    application
+  - Typically the Dockerfile is in the root directory of the build context
+
+* Dockerfile: Example
+\color{blue}
+```docker
+FROM python:3.8-slim-buster
+LABEL maintainer="gsaggese@umd.edu"
+
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
+
+COPY . .
+
+CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
+```
+
+* Docker: Commands
+- Show all the available images
+  \begingroup \scriptsize \color{blue}
+  ```
+  > docker images 
+  REPOSITORY              TAG         IMAGE ID          CREATED             SIZE
+  counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
+  ...
+  ```
+  \endgroup
+
+- Show a particular image
+  \begingroup \scriptsize \color{blue}
+  ```
+  > docker images counter_app_web-fe
+  counter_app-web-fe      latest      4bf6439418a1      17 minutes ago      54.7MB
+  ...
+  ```
+  \endgroup
+
+- Delete an image
+  \begingroup \scriptsize \color{blue}
+  ```
+  > docker rmi ...
+  ```
+  \endgroup
+
+- Show the running containers
+  \begingroup \tiny \color{blue}
+  ```
+  > docker container ls
+  CONTAINER ID  IMAGE               COMMAND                 CREATED        STATUS        PORTS                   NAMES
+  505541bcfe8b  counter_app-web-fe  "python app.py"         7 minutes ago  Up 7 minutes  0.0.0.0:5001->5000/tcp  counter_app-web-fe-1
+  c1889540cfd2  redis:alpine        "docker-entrypoint.sh"  7 minutes ago  Up 7 minutes  6379/tcp                counter_app-redis-1
+  ```
+  \endgroup
+
+* Docker: Commands
+- Show running containers
+  \begingroup \scriptsize \color{blue}
+  ```
+  > docker container ls
+  CONTAINER ID   IMAGE                COMMAND                  CREATED         STATUS        
+  PORTS                   NAMES
+  281d654f6b8d   counter_app-web-fe   "python app.py"          5 minutes ago   Up 5 minutes  
+  0.0.0.0:5001->5000/tcp  counter_app-web-fe-1
+
+  de55ae4104da   redis:alpine         "docker-entrypoint.s..." 5 minutes ago  Up 5 minutes  
+  6379/tcp       counter_app-redis-1
+  ```
+  \endgroup
+
+- Show volumes and networks
+  \begingroup \scriptsize \color{blue}
+  ```
+  > docker volume ls
+  DRIVER    VOLUME NAME
+  local     counter_app_counter-vol
+
+  > docker network ls
+  NETWORK ID     NAME                    DRIVER    SCOPE
+  b4c1976d7c27   bridge                  bridge    local
+  33ff702253b3   counter-app_counter-net bridge    local
+  ```
+  \endgroup
+
+* Docker: Delete State
+- Commands:
+  \begingroup \footnotesize \color{blue}
+  ```
+  > docker container ls
+  > docker container rm $(docker container ls -q)
+
+  > docker images
+  > docker rmi $(docker images -q)
+
+  > docker volume ls
+  > docker volume rm $(docker volume ls -q)
+
+  > docker network ls
+  > docker network rm $(docker network ls -q)
+  ```
+  \endgroup
+
+* Docker Tutorial
+- [Docker tutorial](https://github.com/gpsaggese/umd_classes/blob/main/data605/tutorials/tutorial_docker/tutorial_docker.md)
