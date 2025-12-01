@@ -1,0 +1,280 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+// 
+// https://docs.google.com/presentation/d/1vPnS1ExXBWG7fDwiBFiKWXvSNaocFCRhuPiUtL6KlOM/edit?slide=id.g14f60704d11_0_6#slide=id.g14f60704d11_0_6
+
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{6.3: MongoDB Config}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=65%}
+\vspace{1cm}
+
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+- **References**:
+  - All concepts in slides
+  - MongoDB tutorial
+  - Web
+    - https://www.mongodb.com/
+    - Official docs
+    - pymongo
+  - Seven Databases in Seven Weeks, 2e
+::::
+:::: {.column width=30%} 
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png){width=2cm}
+::::
+:::
+
+* MongoDB Processes and Configuration
+:::columns
+::::{.column width=60%}
+- `mongod`: database instance (server process)
+
+- `mongosh`: interactive shell (client)
+  - JavaScript environment for MongoDB
+
+- `mongos`: database router
+  - Process requests
+  - Decide which `mongod` instances receive the query (sharding/partitioning)
+  - Collate results
+  - Send result to client
+
+- You should have:
+  - One `mongos` (router) for the system regardless of `mongod` count; or
+  - One local `mongos` per client to minimize network latency
+::::
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_30_image_1.png)
+::::
+:::
+
+* MapReduce Functionality
+::: columns
+::::{.column width=50%}
+- Perform map-reduce computation on (key, value) pairs
+- Provide map function, reduction function, and result set name
+  \begingroup \small
+  ```python
+  db.collection.mapReduce(
+    <map_function>,
+    <reduce_function>,
+    {
+      out: <collection>,
+      query: <document>,
+      sort: <document>,
+      limit: <number>,
+      finalize: <function>,
+      scope: <document>,
+      jsMode: <boolean>,
+      verbose: <boolean>
+    })
+  ```
+  \endgroup
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_31_image_2.png)
+
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_31_image_1.png)
+::::
+:::
+* Data Replication
+:::columns
+::::{.column width=55%}
+- **Data replication** ensure:
+  - Redundancy
+  - Backup
+  - Automatic failover
+
+- Replication occurs through groups of servers known as **replica sets**
+  - **Primary set**: servers for direct updates
+  - **Secondary set**: servers for data duplication
+  - Properties of secondary set:
+    - Secondary-only, hidden, delayed, arbiters, non-voting
+
+- If primary fails, secondary sets "vote" to elect new primary
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_32_image_1.png)
+
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_32_image_2.png)
+::::
+:::
+
+* Sync vs Async Replication
+:::columns
+:::: {.column width=55%}
+- **Synchronous replication**: updates propagate to replicas in a single
+  transaction
+
+- Implementations
+  - 2-Phase Commit (2PC)
+  - Paxos
+  - Complex and expensive
+
+- **Asynchronous replication**
+  - Primary node propagates updates to replicas
+  - Transaction completes before replicas update (even if failures occur)
+  - Quick commits at consistency cost
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_33_image_1.png)
+
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_33_image_2.png)
+::::
+:::
+
+* Data Consistency
+- **Client decides how to enforce consistency for reads**
+
+- Reads to a primary have **strict consistency**
+  - Reflect latest data changes
+  - All writes and consistent reads go to primary
+
+- Reads to a secondary have **eventual consistency**
+  - Updates propagate gradually
+  - May read previous database state
+  - Eventually consistent reads distributed among secondaries
+
+* MongoDB: Sharding
+::: columns
+::::{.column width=50%}
+- **Shard** = subset of data
+  - Split collection based on shard key
+  - Distribute data based on shard key or intervals [a, b)
+
+- **Sharding** = method for distributing data across machines
+
+- **Horizontal scaling** achieved through sharding
+  - Divide data and workload over servers
+  - Complexity in infrastructure and maintenance
+
+- `mongos` acts as query router interfacing clients and sharded cluster
+  - Deploy each shard as a replica set
+  - Config servers store metadata and configuration settings for cluster
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_35_image_1.png)
+
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_35_image_2.png)
+
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_35_image_3.png)
+::::
+:::
+
+* RDBMS Internals
+- **Storage hierarchy**
+  - Map tables to files
+  - Map tuples to disk blocks
+
+- **Buffer Manager**
+  - Bring pages from disk to memory
+  - Manage limited memory
+
+- **Query Processing Engine**
+  - Execute user query
+  - Specify sequence of pages for memory
+  - Operate on tuples to produce results
+
+* Query Optimizer
+:::columns
+::::{.column width=50%}
+- **RDBMS: query optimizer is static**
+  - Assign cost to each query plan
+  - Estimate cost params (e.g., time to access data)
+  - Search for best query
+  - At least traditional RDBMS
+
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_1.png)
+::::
+:::
+
+:::columns
+::::{.column width=15%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_2.png){width=80%}
+::::
+::::{.column width=15%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_3.png)
+::::
+::::{.column width=15%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_37_image_4.png)
+::::
+:::
+
+* Query Optimizer
+:::columns
+::::{.column width=50%}
+- **MongoDB: query optimizer is dynamic**
+  - Try different query plans, learn which perform well
+  - Query plan space is small, no joins
+  - Testing new plans
+    - Execute multiple plans in parallel
+    - Terminate others when one finishes
+  - Cache result
+  - If a plan performs poorly, try different plans
+    - E.g., data changed, query parameters differ
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_38_image_1.png)
+::::
+:::
+
+* MongoDB: Strengths
+- Provide flexible, modern query language
+
+- High-performance
+  - Implemented in C++
+
+- Rapid development, open source
+  - Supports many platforms
+  - Multiple language drivers
+
+- Built for distributed database systems
+  - Sharding
+  - Replica sets
+
+- Tunable consistency
+
+- Ideal for large data not needing relational model
+  - Element relationships irrelevant
+  - Focus on storing and retrieving large data quantities
+
+* MongoDB: Limitations
+:::columns 
+::::{.column width=50%}
+- No referential integrity
+  - Aka foreign key constraint
+
+- Lack of transactions and joins
+
+- High degree of denormalization
+  - Update data in many places instead of one
+
+- Lack of predefined schema is a double-edged sword
+  - Have a data model in your application
+  - Objects within a collection can be inconsistent in their fields
+
+- CAP Theorem: targets consistency and partition tolerance, gives up on
+  availability
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_6_1/lec_6_1_slide_40_image_1.png)
+::::
+:::

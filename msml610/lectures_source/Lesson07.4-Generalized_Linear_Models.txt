@@ -1,0 +1,658 @@
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{0.5cm}
+
+\begingroup \Large
+**$$\text{\blue{7.4: Generalized Linear Models}}$$**
+\endgroup
+\vspace{1cm}
+
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
+**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+
+**References**:
+
+- AIMA (Artificial Intelligence: a Modern Approach)
+  - Chap 15: Probabilistic programming
+
+- Martin, Bayesian Analysis with Python, 2018 (2e)
+
+::::
+:::: {.column width=20%}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){width=1.5cm}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_Bayesian_analysis_with_Python.jpg){width=1.5cm}
+
+::::
+:::
+
+// 4, Modeling with lines
+
+# Generalized Linear Models
+
+## ##############################################################################
+## Simple Linear Model
+## ##############################################################################
+
+* Linear Model
+- Many problems can be formulated as **linear regression**:
+  - $X$ and $Y$: uni-dimensional continuous RVs
+  - Dataset of paired observations: $\{(x_1, y_1), ..., (x_n, y_n)\}$
+  - $X$: independent variables
+  - Model/predict dependent variable $Y$
+  - Assume linear relationship between $Y$ and $X$
+
+::: columns
+:::: {.column width=55%}
+
+- E.g.,
+  - Nobel laureates in a country vs amount of chocolate consumed
+  - Sugar intake vs Blood glucose
+  - Years of education vs Annual income
+  - Advertising spend vs Sales
+  - Study hours vs Exam score
+  - Coffee consumption vs Productivity
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/Lesson07_Immigrant_Nobel_Prize_and_chocolate.png)
+
+::::
+:::
+
+* Linear Model: Frequentist Approach
+- A **linear model** is described by:
+  $$
+  y = \alpha + \beta x
+  $$
+
+- **Frequentist approach**:
+  - Find parameters $\alpha, \beta$ using least square fitting
+    - Minimize average quadratic error between observed $y$ and predicted
+      $\hat{y}$
+      $$
+      \text{MSE} = \frac{1}{N} \sum_{i=1}^N (\alpha + \beta x_i - \hat{y}_i)^2
+      $$
+  - Point-estimate from least squares corresponds to maximum a-posteriori with
+    flat (uniform) priors on $\alpha$ and $\beta$
+  - With certain assumptions, it's "optimal"
+    - Residuals are Gaussian
+    - Linearity in parameters
+    - Independence
+    - Homoscedasticity (constant variance of $\varepsilon_i$)
+
+* Linear Model: Bayesian Approach
+- **Bayesian assumptions**:
+  - Data $y$ is Gaussian with mean $\alpha + \beta x$ and standard deviation
+    $$
+    \sigma: y \sim N(\mu=\alpha + \beta x, \sigma)
+    $$
+  - $\alpha, \beta, \sigma$ are independent
+  - Priors:
+    \begin{equation*}
+      \begin{cases}
+      \alpha \sim Normal(\mu_\alpha, \sigma_\alpha) \\
+      \beta \sim Normal(\mu_\beta, \sigma_\beta) \\
+      \sigma \sim HalfNormal(0, \sigma_\epsilon) \\
+      \end{cases}
+    \end{equation*}
+
+- Use **vague priors** to add problem knowledge:
+  - Center intercept $\alpha$ around $0$
+  - Info on sign of $\beta$ sometimes available
+  - Use Half-Cauchy / exponential distribution for $\sigma$
+  - Use uniform prior if parameter has hard boundaries
+
+// ## Linear model: synthetic example
+
+* Linear Model: Synthetic Example
+::: columns
+:::: {.column width=35%}
+- Generate **random data from ground truth**
+  - $\alpha = 2.5$
+  - $\beta = 0.9$
+  - Add noise
+::::
+:::: {.column width=60%}
+![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example1.png)
+::::
+:::
+
+* Linear Model: Synthetic Example
+::: columns
+:::: {.column width=45%}
+- Create **linear model in PyMC**
+- **Use vague priors**
+  - Prior of intercept $\alpha$ and $\beta$ centered around $0$
+  - Half-Cauchy distribution for $\sigma$
+
+::::
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example2.png)
+::::
+:::
+
+* Linear Model: Synthetic Example
+::: columns
+:::: {.column width=40%}
+- Run the sampler
+- Ground truth
+  - $\alpha = 2.5$
+  - $\beta = 0.9$
+- Recovered values
+  - $\alpha = 2.12$
+  - $\beta = 0.95$
+
+::::
+:::: {.column width=65%}
+![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example3.png)
+::::
+:::
+
+// ## Linear model: bike rental example
+
+* Linear Model: Bike Rental Example
+
+- Model relationship between:
+  - **Temperature** $X$
+  - **Number of bikes rented** $Y$
+
+![](msml610/lectures_source/figures/Lesson07_Bike_rental_data.png){ width=80% }
+
+- Intermediate variable is mean number of bikes rented for temperature $X$:
+  $\mu = \alpha + \beta X$
+  $$
+  Y \sim N(\mu, \sigma)
+  $$
+
+* Linear Model: Bike Rental Example
+
+::: columns
+:::: {.column width=45%}
+
+- **Fit model** with PyMC:
+  $$\mu = 69 + 7.9 X$$
+
+- **Interpreting the model**
+  - Temperature 0: expected rented bikes = 69
+  - Each degree increase: expected rented bikes = +7.9
+
+- **Parameters have uncertainty**
+  - Posterior accounts for combined uncertainty
+  - Bands represent quantiles [0.25, 0.75] and [0.03, 0.97] of prediction
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/Lesson07_Bike_rental_data_2.png)
+![](msml610/lectures_source/figures/Lesson07_Bike_rental_data_3.png)
+
+::::
+:::
+
+- **Do you see any problem in the model?** ![](emoji/puzzle.png){ width=14px }
+
+* Linear Model: Bike Rental Example (Criticism)
+
+- **Problems**
+  1. Model outputs negative bike numbers
+  2. Model predicts real numbers, but count is discrete
+
+- **Root cause**: Using Gaussian likelihood:
+  - Extends to negative numbers
+  - Is continuous
+
+- **Solutions**:
+  - _Hack_: Clip predictions below 0 and discretize output
+  - _Elegant_: Use model defined for discrete positive numbers
+
+* Count Data
+- **Count data** when random variable is discrete, bounded at 0
+  - E.g., number of rented bikes
+
+  - Large numbers use continuous distribution
+    - E.g., Gaussian
+
+  - Sometimes modeled as discrete
+    - E.g., Poisson, negative binomial
+
+* Generalized Liner Model (GLM)
+- **Generalization of linear model** using different distributions for
+  likelihood:
+  \begin{equation*}
+    \begin{cases}
+    \alpha \sim prior \\
+    \beta \sim prior \\
+    \mu = \alpha + \beta X \\
+    \theta \sim prior \\
+    Y \sim \phi(f(\mu), \theta) \\
+    \end{cases}
+  \end{equation*}
+  where:
+  - $\phi$: arbitrary distribution
+    - E.g., Normal, Student's t, negative binomial
+  - $\theta$: auxiliary parameter for $\phi$
+    - E.g., $\sigma$ for Normal
+  - $f()$: "inverse link function" transforming $\mu$ from real line to domain of
+    $\phi$
+
+// ## 4.4 Counting bikes
+
+* Poisson Distribution
+
+::: columns
+:::: {.column width=50%}
+
+- **Poisson distribution**
+  - Models events in a fixed interval (time, space)
+  - Assumes independent events at a constant rate
+
+- **Examples**
+  - _Call centers_: customers per hour
+  - _Natural events_: earthquakes in a region
+  - _Traffic flow_: cars through a toll booth per day
+  - _Biology_: mutations in a DNA segment
+
+- **Cons**
+  - Assumes mean equals variance (can't model "overdispersion")
+::::
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Poisson_PMF.png)
+::::
+:::
+
+* Negative Binomial Distribution
+::: columns
+:::: {.column width=45%}
+- **Negative binomial distribution**
+  - Models failures/trials for fixed successes in IID Bernoulli trials
+  - Generalizes geometric distribution, modeling trials to first success
+  - Models overdispersion
+    $$\text{mean } \ll \text{ variance}$$
+::::
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Neg_binomial_PMF.png)
+::::
+:::
+
+- **E.g.,**
+  - _Customer service_: unsuccessful interactions before success
+  - _Sports_: games lost before winning fixed number of games
+
+* Overdispersion
+- **Overdispersion** occurs when variance of count data is much larger than mean
+  (e.g., 15-20x)
+
+- **Examples**:
+  - _Epidemiology_: modeling disease outbreak, number of new infections
+    fluctuates widely
+  - _Customer service_: large variation in daily complaints
+
+- **How to model it?**
+  - _Use Poisson_:
+    - ![](emoji/wrong.png){ width=12px }: mean and variance must be equal
+  - _Use Gaussian_:
+    - Mismatch predicting negative rented bikes
+    - Poor fit on positive side
+  - _Use Negative Binomial_:
+    - Better fit, though not perfect
+    - Right tail predictions differ, but high demand probability is low
+    - Second parameter controls variance
+    - ![](emoji/check_mark.png){ width=12px }: overall better than Normal model
+
+// ## 4.5, Robust regression
+
+* Robust Regression
+::: columns
+:::: {.column width=40%}
+- **Outliers** pull regression line away from data
+
+- **Robust regression** is a generalized linear model
+  - Avoids feature transform/winsorization
+
+- Student's t-distribution
+  - Heavier tails than Normal
+  - Reduces outlier impact
+
+::::
+:::: {.column width=55%}
+![](msml610/lectures_source/figures/Lesson07_Non_robust_regression1.png){width=80%}
+
+//![](msml610/lectures_source/figures/Lesson07_Robust_regression_code.png)
+![](msml610/lectures_source/figures/Lesson07_Robust_regression_model.png){width=80%}
+
+![](msml610/lectures_source/figures/Lesson07_Non_robust_regression2.png){width=80%}
+::::
+:::
+
+// ## 4.6, Logistic regression
+
+## #############################################################################
+## Logistic Regression
+## #############################################################################
+
+* Logistic Regression
+- **Logistic regression model**
+  - Generalized linear model
+  - Models binary response variable
+    - E.g., ham/spam, safe/unsafe, cloudy/sunny, hotdog/not hotdog
+
+- **Logistic model** is:
+  \begin{equation*}
+    \begin{cases}
+    \theta = logit(\alpha + \beta x) \\
+    y \sim Bernoulli(\theta) \\
+    \end{cases}
+  \end{equation*}
+
+\vspace{0.5cm}
+
+::: columns
+:::: {.column width=50%}
+
+- **Logistic function** (aka sigmoid)
+  $$
+  logit(z) = \frac{1}{1 + \exp^{-z}}
+  $$
+- Convert real numbers from $\theta$ to [0, 1] for Bernoulli distribution
+
+::::
+:::: {.column width=45%}
+
+```tikz
+\begin{axis}[
+    width=12cm, height=7cm,
+    xmin=-6, xmax=6,
+    ymin=-0.05, ymax=1.05,
+    axis lines=left,
+    xlabel={$x$},
+    ylabel={$P(y=1 \mid x)$},
+    domain=-6:6,
+    samples=400,
+    grid=both,
+    minor grid style={gray!15},
+    major grid style={gray!25},
+    legend style={draw=none, fill=none, at={(0.02,0.98)}, anchor=north west, font=\small},
+    tick label style={font=\small},
+    label style={font=\small},
+  ]
+
+  % --- logistic curve: P(y=1|x) = 1/(1 + exp(-(a x + b)))
+  % adjust a (slope) and b (intercept) to taste:
+  \def\a{1.2}
+  \def\b{-0.5}
+  \addplot[very thick] {1/(1 + exp(-(\a*x + \b)))}; 
+
+  % --- decision threshold at 0.5
+  \addplot[densely dashed] coordinates {(-6,0.5) (6,0.5)};
+  \addlegendentry{Threshold $=0.5$}
+
+  % --- implied decision boundary x* where a x + b = 0  =>  x* = -b/a
+  \pgfmathsetmacro{\xb}{-(\b)/(\a)}
+  \addplot[densely dotted] coordinates {(\xb, -0.05) (\xb, 1.05)};
+  \addlegendentry{Boundary $x^\star=-b/a$}
+
+  % --- optional: annotate boundary
+  \node[anchor=north east, font=\small] at (axis cs:\xb,0.0) {$x^\star$};
+
+\end{axis}
+```
+::::
+:::
+
+* Iris Dataset
+- Classical dataset of flower measurements from 3 Iris species
+  - `setosa`, `virginica`, `versicolor`
+\centering
+![](msml610/lectures_source/figures/Lesson07_Logistic_regression_df.png){width=80%}
+
+- E.g., predict probability of a flower being `setosa` from `sepal_length`
+
+* Classification with Logistic Regression
+
+- **Logistic regression**:
+  - Computes probability of output being a certain value
+  - Models $\theta = \Pr(Y=1 | X)$
+  - Classifies output using decision rule, e.g.,
+    $$
+    \Pr(Y = \texttt{versicolor } | \texttt{ sepal\_length}) > 0.5
+    $$
+
+- Same treatment as frequentist approach, has Bayesian flavor
+  - Once Bayesian, generalize more
+  - No gradient descent, solved with Bayesian inference
+
+- **Classification with logistic regression might seem a misnomer**
+  - **Regression** predicts continuous variable
+  - **Classification** predicts discrete variable
+  - Is "regression" since it computes probability of output being a certain
+    value
+
+* Boundary Decision for a Classifier
+- **Boundary decision** $\delta$ for a classifier are the values of independent
+  variables making output probability 0.5
+
+- E.g., for logistic regression $\delta$:
+    \begin{align*}
+    & 0.5 = logit(\alpha + \beta \delta) \\
+    & 0 = \alpha + \beta \delta\\
+    & \delta = - \frac{\alpha}{\beta} \\
+    \end{align*}
+  - Decision boundary uncertainty due to $\alpha$ and $\beta$ uncertainty
+
+- Probability threshold $0.5$ for equal **misclassification risk**
+  - Misclassification cost may not be symmetrical
+  - Minimize false negatives
+    - E.g., _"patient has disease, disease missed"_
+  - Minimize false positives
+    - E.g., _"patient doesn't have disease, predicted"_
+
+* Odds
+- The **odds of event** _"$y=1$"_ is the ratio of favorable to unfavorable events
+  $$
+  \text{odds} \defeq \frac{\Pr(y=1)}{1 - \Pr(y=1)}
+  $$
+
+- Transformation between probability, odds, and log-odds
+  - More intuitive in "gambling"
+  - E.g., odds of rolling a 2 on a fair die are
+    $\frac{1/6}{5/6} = \frac{1}{5} = 0.2$
+    - One favorable event for 5 unfavorable events
+
+- Interpreting **logistic regression in terms of odds**:
+  - Since $\theta = logit(\alpha + \beta x)$ and $\theta = \Pr(y = 1)$:
+    $$
+    \alpha + \beta x = \log ( \frac{\Pr(y=1)}{1 - \Pr(y=1)} )
+    $$
+  - Logistic regression models log-odds linearly
+  - $\beta$ is the increase in log-odds for a unit change in $x$
+
+* Classification with Logistic Regression: Bayesian
+
+::: columns
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Logistic_regression_code.png)
+
+::::
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Logistic_regression_model.png){ height=50% }
+
+::::
+:::
+
+::: columns
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Logistic_regression_result.png)
+
+::::
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Logistic_regression_result2.png)
+
+::::
+:::
+
+* Heteroskedasticity
+- **Heteroskedasticity** is when variance of errors is not constant across
+  observations
+  - E.g., variance as a linear function of the dependent variable
+
+- **Example**:
+  - _"Baby height as a function of age"_ is heteroskedastic
+  - Mean $\mu$ as square root of a linear model
+  - Standard deviation $\sigma$ as a linear function of the predictor variable
+
+![](msml610/lectures_source/figures/Lesson07_Variable_variance_data.png)
+
+* Heteroskedasticity: Bayesian Model
+::: columns
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/Lesson07_Variable_variance_code.png)
+
+::::
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Variable_variance_model.png)
+
+::::
+:::
+
+::: columns
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Variable_variance_result.png)
+
+::::
+:::: {.column width=50%}
+
+::::
+:::
+
+//## Hierarchical linear regression
+//
+//// TODO: Finish
+//
+//* Hierarchical linear regression
+//- Hierarchical models are a powerful concept that allows us to model complex data
+//  structures
+//- We can do inference at / above the group level at the same time
+//- Groups can share information by using hyper-priors, which provides shrinkage
+//  and regularizes estimates
+//
+//- E.g., hierarchical linear regression models
+//
+//* Divergences after tuning
+//- Sometimes PyMC reports "divergences after tuning" (e.g., this is the case with
+//  linear models)
+//  - Samples generated by PyMC may not be trustworthy
+//
+//- Solutions
+//  1) You can increase `target_accept` in `pm.sample()`
+//  2) Re-parametrize model = re-write model in a different way to help the sampler
+//     (e.g., remove the divergences) or the model's interpretability
+//
+//* Centered vs non-centered hierarchical models
+//- Hierarchical centered
+//  - We estimate the parameters for the individual groups
+//- Hierarchical non-centered
+//  - Estimate common parameters for all groups and then the deflection for each
+//    group
+//  - The information is represented in the same way
+
+## Multiple Linear Regression
+
+* Multiple Linear Regression
+- In prediction problems, common to use **several independent variables**
+  - E.g., student's grades = f(family income, mother's education, ...)
+
+- **Problem formulation**
+  - $k$ independent variables
+  - $N$ observations
+  - Find a hyperplane of dimension $k$ to explain data
+    $$
+    \mu = \alpha + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_k x_k
+    $$
+  - Similar to polynomial regressions with independent variables
+
+* Multiple Regression: Synthetic Example 1/2
+
+- Generate random data
+
+::: columns
+:::: {.column width=40%}
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression1.png)
+::::
+:::: {.column width=55%}
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression2.png)
+::::
+:::
+
+- PyMC model
+
+::: columns
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_code.png)
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model.png)
+::::
+:::
+
+* Multiple Regression: Synthetic Example 2/2
+
+- Solve model
+
+::: columns
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_results1.png)
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_results2.png)
+::::
+:::
+
+* Multiple Regression: Rented Bike Example 1/2
+
+- **Assumption**: number of bike rented is function of temperature and hour of
+  the day
+
+- PyMC model
+
+::: columns
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_code.png)
+::::
+:::: {.column width=40%}
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model.png)
+::::
+:::
+
+* Multiple Regression: Rented Bike Example 2/2
+
+- Solve model
+
+::: columns
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_trace.png)
+
+::::
+:::: {.column width=50%}
+![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_results.png)
+::::
+:::
+
+* Tutorial
+
+- [Generalized Linear Models](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks/Lesson07.04_Generalized_Linear_Models.ipynb)

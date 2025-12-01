@@ -1,4 +1,4 @@
-# GP's University of Maryland Classes
+# GP's University of Maryland Machine Learning Classes
 
 ![alt text](https://1000logos.net/wp-content/uploads/2022/07/University-of-Maryland-Logo.png)
 
