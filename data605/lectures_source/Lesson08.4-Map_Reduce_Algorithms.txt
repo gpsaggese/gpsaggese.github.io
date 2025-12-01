@@ -76,82 +76,95 @@ UMD DATA605 - Big Data Systems
   - $|I|$ input GB, $|S|$ shuffle GB, $|O|$ output GB
   - $p_m$ mappers, $p_r$ reducers
   - $T_m$ map hours, $T_r$ reduce hours
-  - $c_{vm}$ = \$/VM hour, $c_{io}$ = \$/GB I/O, $c_{sh}$ = \$/GB shuffle
+  - $c_{compute}$ = \$/VM hour, $c_{io}$ = \$/GB I/O, $c_{shuffle}$ = \$/GB shuffle
 
 - **Compute cost**
-  $$C_{compute} = c_{vm}\left(p_m T_m + p_r T_r\right)$$
+  $$C_{compute} = c_{compute}\left(p_m T_m + p_r T_r\right)$$
   where $T_m,T_r$ include skew and stragglers
   - Skew effects = a heavy key or hotspot inflates the heaviest task and the
     critical path
 
 - **I/O cost**
   $$C_{io} = c_{io}\left(|I| + 2|S| + |O|\right)$$
-  - Shuffle often dominates when $\sum_i |S_i| \gg |I|, |O|$
+  - Shuffle often dominates since $\sum_i |S_i| \gg |I|, |O|$
 
 
 * Total Cost Model for MapReduce
 - **Notation**
   - $|I|$ input GB, $|S|$ shuffle GB, $|O|$ output GB
-  - $c_{sh}$ = \$/GB shuffle $c_{eg}$ = \$/GB egress, $c_{st}$ = \$/GB hour
+  - $c_{shuffle}$ = \$/GB shuffle $c_{egress}$ = \$/GB egress, $c_{storage}$ = \$/GB hour
   - $R$ HDFS replication
 
 - **Network cost**
-  $$C_{network} = c_{sh}|S| + c_{eg}|O|_{eg}$$
-  where $|O|_{eg}$ is data leaving the provider
+  $$C_{network} = c_{shuffle} |S| + c_{egress} |O|_{egress}$$
+  where $|O|_{egress}$ is data leaving the provider
 
 - **Storage cost**
-  $$C_{stor} = c_{st} R (|I| + |O|)$$
+  $$C_{storage} = c_{storage} R (|I| + |O|)$$
 
-- Plug in variables and unit prices to get $C_{total}$
-- Apply the dominant term heuristic to prioritize optimization
-- Tuning levers
-  - Use Combiners
-  - Compression
-  - Better partitioning
-  - Early filtering to reduce $\sum_i |S_i|$ and stragglers
+- **Putting all together**
+  - Plug in variables and unit prices to get $C_{total}$
+  - Apply the dominant term heuristic to prioritize optimization
+  - Tuning levers
+    - Use Combiners
+    - Compression
+    - Better partitioning
+    - Early filtering to reduce $\sum_i |S_i|$ and stragglers
 
 * Inverted Index using MapReduce
 
 - **Goal**: build a mapping from words to the list of documents they appear in
-  - Example: `MapReduce is powerful` in `doc1`
+
+- **Example**
+    - Input in `doc1` = `MapReduce is powerful`
     - Output = `[(MapReduce, doc1)`, `(is, doc1)`, `(powerful, doc1)]`
-  - Map phase:
+  - _Map phase_:
     - Input: `(docID, content)`
     - Emit: `(word, docID)` for each word in content
-  - Reduce phase:
+  - _Reduce phase_:
     - Input: `(word, [docID_1, docID_2, ...])`
     - Emit: `(word, list of unique docIDs)`
 
-- Useful in search engines and information retrieval
-- Requires tokenization and normalization of content
-- Deduplication of document IDs in reducer
+- **Implementation considerations**
+  - Useful in search engines and information retrieval
+  - Requires tokenization and normalization of content
+  - Deduplication of document IDs in reducer
 
 * Join Operations using MapReduce
 - **Goal**: join two datasets based on a common key
   - Types of joins:
     - Inner join, left/right outer join, full outer join
-  - Example: joining employee records with department data by deptID
-  - Map phase:
-    - Tag records by source and emit key as join attribute
-  - Reduce phase:
-    - Input: `key, [records from both sources]`
-    - Perform join logic in reducer
 
-- Careful data tagging and partitioning required
+- **Example**
+  - Join `EmployeeRecords(empID, name, deptID)` with
+    `Department(deptID, deptName)`
+  - Join key: `deptID`
+  - _Map phase_:
+    - Emit key as `deptID`, tag each record with source label (e.g., "E" or "D")
+    - Example output: `(deptID, ("E", empRecord))`, `(deptID, ("D", deptRecord))`
+  - _Reduce phase_:
+    - Input: `(deptID, [list of tagged records])`
+    - Cross-product logic based on tags to perform the actual join
+
+- **Implementation considerations**
+  - Use composite values with source tag to distinguish record origin
+  - Optimize data layout to minimize network shuffle
+  - Ensure proper partitioning so all records with the same key go to the same
+    reducer
 
 * Sorting and Grouping in MapReduce
 
 - **Goal**: organize data by keys or values for further analysis
-  - Map phase:
+
+- **Example**
+  - Sort sales data by date or group by product ID
+  - _Map phase_:
     - Emit data with key as sort/group criterion
-  - Shuffle and sort phase automatically sorts by key
-  - Reduce phase:
+  - _Shuffle phase_:
+    - Shuffle and sort phase automatically sorts by key
+  - _Reduce phase_:
     - Receives sorted keys and can perform grouped aggregation
-  - Example: sort sales data by date or group by product ID
-- Total sort:
-  - Requires partitioning and sampling for global order
-- Partial sort:
-  - Sort within each partition
+
 - Often used as a preprocessing step for reporting
 
 * Graph Processing with MapReduce
@@ -162,21 +175,25 @@ UMD DATA605 - Big Data Systems
 - PageRank:
   - Compute importance score of web pages
   - Graph is represented as adjacency lists
-  - Map phase:
+  - _Map phase_:
     - Emit contributions to neighboring nodes
-  - Reduce phase:
+  - _Reduce phase_:
     - Sum contributions to update PageRank score
 
 * Statistical Aggregation and Log Analysis
 
-- Statistical Aggregation:
-  - Map: emit relevant quantities (e.g., value, 1 for count)
-  - Reduce: compute sums, averages, variances
-  - Example: `(sensorID, temperature)` $\to$ compute average temperature per sensor
-- Log Analysis:
-  - Map: parse logs, extract fields (timestamp, IP, status)
-  - Emit: `(key, value)` for desired metrics
-  - Reduce: aggregate (e.g., count errors, hits per IP)
+- **Statistical Aggregation**
+  - Example: `(sensorID, temperature)` $\to$ compute average temperature per
+    sensor
+  - _Map phase_: emit relevant quantities (e.g., value, 1 for count)
+  - _Reduce phase_: compute sums, averages, variances
+
+- **Log Analysis**
   - Example: `(status code, 1)` $\to$ count occurrences
-- Useful for monitoring, alerting, and trend analysis
-- Can handle large-scale logs from distributed systems
+  - _Map phase_: parse logs, extract fields (timestamp, IP, status)
+    and emit `(key, value)` for desired metrics
+  - _Reduce phase_: aggregate (e.g., count errors, hits per IP)
+
+- **Implementation considerations**
+  - Useful for monitoring, alerting, and trend analysis
+  - Can handle large-scale logs from distributed systems
