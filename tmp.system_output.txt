@@ -1,1 +1,0 @@
-/bin/bash: aws: command not found

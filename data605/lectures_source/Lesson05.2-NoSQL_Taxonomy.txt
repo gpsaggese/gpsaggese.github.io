@@ -1,0 +1,224 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+// Slides: https://docs.google.com/presentation/d/15B9sUw3iCjnu1BZT4pod-ddvbM6lHAcEFQHkgd8v2vY
+
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 5.2: Database Taxonomy}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
+
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+- **References**:
+  - Online tutorials
+  - Silbershatz: Chap 10.2
+  - Seven Databases in Seven Weeks, 2e
+::::
+:::: {.column width=20%}
+
+![](data605/lectures_source/images/Silberschatz_book.png){width=2cm}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png){width=2cm}
+
+::::
+:::
+
+* DB Taxonomy
+- **At least five DB genres**
+  - _Relational_ (e.g., PostgreSQL)
+  - _Key-value_ (e.g., Redis)
+  - _Document_ (e.g., MongoDB)
+  - _Columnar_ (e.g., Apache Parquet)
+  - _Graph_ (e.g., Neo4j)
+
+- **Criteria to differentiate DBs**
+  - Data model
+  - Trade-off with CAP theorem
+  - Querying capability
+  - Replication scheme
+
+* Relational DB
+
+- E.g., _Postgres_, MySQL, Oracle, SQLite
+
+- **Data model**
+  - Set-theory, relational algebra
+  - Data as tables with rows and columns
+  - Many attribute types (e.g., numeric, strings, dates, arrays, blobs)
+  - Strictly enforced attribute types
+  - SQL query language
+  - ACID compliance
+
+- **Good for**
+  - Known data layout, unknown access pattern
+  - Schema complexity for query flexibility
+  - Regular data
+
+- **Not so good for**
+  - Hierarchical data (not easily represented as rows in tables)
+  - Variable/heterogeneous data (record-to-record variation)
+
+* Key-Value Store
+:::columns
+::::{.column width=70%}
+
+- E.g., Redis, DynamoDB, _Git_, AWS S3, filesystem
+
+- **Data model**
+  - Map keys (e.g., strings) to complex values (e.g., binary blob)
+  - Support get, put, delete operations on a primary key
+
+- **Application**
+  - Cache data
+  - Store users' session data in web applications
+  - Store shopping carts in e-commerce applications
+
+- **Good for**
+  - Unrelated data (e.g., no joins)
+  - Fast lookups
+  - Easy horizontal scaling using partitioning
+
+- **Not so good for**
+  - Data queries
+  - Lacking secondary indexes and scanning
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_26_image_1.png)
+::::
+:::
+
+* Document Store
+:::columns
+::::{.column width=70%}
+
+- E.g., _MongoDB_, _CouchBase_
+
+- **Data model**
+  - Key-value with document as value (nested dict)
+  - Unique ID for each document (e.g., hash)
+  - Any number of fields per document, including nested
+    - E.g., JSON, XML, dict data
+
+- **Application**
+  - Semi-structured data
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_27_image_1.png)
+::::
+:::
+
+- **Good for**
+  - Unknown data structure
+  - Maps to OOP models (less impedance mismatch)
+  - Easy to shard and replicate over distributed servers
+
+- **Not so good for**
+  - Complex join queries
+  - Denormalized form is standard
+
+* Columnar Store
+:::columns
+::::{.column width=70%}
+
+- E.g., _HBase_, Cassandra, _Parquet_
+
+- **Data model**
+  - Store data by columns, not rows
+  - Similar to key-value and relational DBs
+    - Use keys to query values
+    - Values are groups of columns
+
+- **Application**
+  - Store web pages
+  - Store time series data
+  - OLAP workloads
+
+- **Good for**
+  - Horizontal scalability
+  - Enable compression and versioning
+  - Sparse tables without extra storage cost
+  - Inexpensive to add columns
+
+- **Not so good for**
+  - Designing schema based on query plans
+  - No native joins; applications handle joins
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_28_image_1.png)
+::::
+:::
+
+* Graph DB
+:::columns
+::::{.column width=70%}
+
+- E.g., _Neo4j_, GraphX
+
+- **Data model**
+  - Interconnected data: nodes, relationships
+  - Nodes and edges have properties (key-value pairs)
+  - Queries traverse nodes and relationships
+
+- **Applications**
+  - Social data
+  - Recommendation engines
+  - Geographical data
+
+- **Good for**
+  - Networked data, hard to model with a relational model
+  - Matches object-oriented (OO) systems
+
+- **Not so good for**
+  - Poor scalability, hard to partition graph across different nodes
+    - Store graph in graph DB, relations in key-value store
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_29_image_1.png)
+::::
+:::
+
+* Taxonomy by CAP
+:::columns
+::::{.column width=60%}
+
+- **CA (Consistent, Available) systems**
+  - Struggle with partitions, use replication
+  - Traditional RDBMSs (PostgreSQL, MySQL)
+
+- **CP (Consistent, Partition-Tolerant) systems**
+  - Struggle with availability, maintain consistency across partitions
+  - BigTable (column-oriented/tabular)
+  - HBase (column-oriented/tabular)
+  - Redis (key-value)
+  - Berkeley DB (key-value)
+::::
+::::{.column width=35%}
+\vspace{1cm}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_31_image_1.png)
+::::
+:::
+
+- **AP (Available, Partition-Tolerant) systems**
+  - Achieve "eventual consistency" via replication and verification
+  - MongoDB (document-oriented)
+  - Memcached (key-value)
+  - Dynamo (key-value)
+  - Cassandra (column-oriented/tabular)
+  - CouchDB (document-oriented)
