@@ -305,11 +305,33 @@ _Beef Jezos_
   - Public key (in AWS and on virtual servers)
   - Private key is your secret
     - Don't lose it; can't retrieve it
-
 ::::
 :::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_15_image_1.png)
+::::
+:::
+
+* Create User Account
+::: columns
+:::: {.column width=40%}
+- **Create a new user**
+  - Avoid using AWS root account for development
+  - IAM: Identity and Access Management
+  - Access key ID + secret access key
+
+- **Access control**
+  - Enable programmatic access
+  - Enable console access
+  - Limit user actions through policies
+::::
+:::: {.column width=55%}
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_2.png)
+
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_3.png)
 ::::
 :::
 
@@ -560,22 +582,14 @@ _Beef Jezos_
 * Programming the Infrastructure
 ::: columns
 :::: {.column width=45%}
-- On AWS **everything can be controlled via an API**
+- On AWS everything can be **controlled via an API**
   - Start a VM
   - Create 1TB of storage
   - Start Hadoop cluster
   - ...
 
-- Jeff Bezos 2002 API mandate
-  - An email worth $100B/yr
-::::
-:::: {.column width=50%}
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_26_image_1.png)
-::::
-:::
-
 - You can use:
-  - AWS console
+  - AWS GUI console
   - HTTP requests to the API
   - CLI (Command Line Interface)
     - Call AWS API from your terminal
@@ -583,11 +597,19 @@ _Beef Jezos_
     - Call AWS API from your code
   - CloudFormation: templates describe infrastructure state, translated into API
     calls
+::::
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_26_image_1.png)
 
-* Infrastructure-As-Code
-- **Use high-level programming language to control IT systems**
+- **Jeff Bezos 2002 API mandate**
+  - An email worth $100B/yr
+::::
+:::
 
-- Apply software development principles to infrastructure
+* Infrastructure-as-Code
+- Use high-level **programming language to control IT systems**
+
+- Apply **software development principles to infrastructure**
   - Code repository
   - Automated tests
   - Continuous integration
@@ -596,14 +618,17 @@ _Beef Jezos_
   - Mix developers and operations in the same team
   - Use software to bring development and operations closer
   - Switch roles to experience each other's pain
-    - Devs -> responsible for operational tasks (e.g., on-call)
-    - Ops -> involved in software development, making system easier to operate
+    - Devs $\to$ responsible for operational tasks (e.g., on-call)
+    - Ops $\to$ involved in software development, making system easier to
+      operate
   - Foster communication and collaboration
 
 * Infrastructure-as-Code: Advantages
+::: columns
+:::: {.column width=55%}
 - **Save time**
   - Reuse scripts or blueprints
-  - Automate regular tasks
+  - Automate tasks
   - Copy-paste vs click-click-click
 
 - **Fewer mistakes**
@@ -619,36 +644,14 @@ _Beef Jezos_
   - Build testing environment
   - Run acceptance tests in isolation
   - Propagate changes to production
-  - Monitor production
 
 - **The script is detailed documentation**
-  - Explains what and how, not why (not a design document)
-
-* Create User Account
-::: columns
-:::: {.column width=45%}
-- Avoid using AWS root account for development
-
-- Create a new user
-  - IAM: Identity and Access Management
-
-- Access key ID + secret access key
-
-- Access control
-  - Enable programmatic access
-  - Enable console access
-  - Limit user actions through policies
-
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_3.png)
-
+  - Explains what and how, not why
 ::::
-:::: {.column width=50%}
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_3_slide_15_image_1.png)
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_1.png)
-
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_2.png)
-
-_Bad idea!_
+![](data605/lectures_source/images/lecture_11_2/lec_11_3_slide_15_image_2.png)
 ::::
 :::
 
@@ -675,9 +678,9 @@ _Bad idea!_
 
 * Software Development Kit (SDK)
 ::: columns
-:::: {.column width=50%}
-- SDK is a library calling AWS API from your programming language
-  - E.g., Python, Go, Ruby, C++, JavaScript
+:::: {.column width=60%}
+- SDK is a library calling AWS API **from your programming language**
+  - E.g., Python, Go, C++, JavaScript
 
 - **Pros:** handles
   - Authentication
@@ -690,19 +693,20 @@ _Bad idea!_
   - Deal with dependencies
 
 ::::
-:::: {.column width=50%}
+:::: {.column width=35%}
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_31_image_1.png)
 ::::
 :::
 
 * AWS CloudFormation
-- **Use templates (e.g., JSON, YAML) to describe infrastructure**
+- **Use templates to describe infrastructure**
+  - E.g., JSON, YAML
 
 - **Declarative vs imperative approach**
   - Declare the system, not the steps to build it
 
-- **AWS Stacks processes CloudFormation templates**
+- **AWS Stacks** processes CloudFormation templates
 
 - **Pros**
   - Consistent infrastructure description
@@ -720,37 +724,37 @@ _Bad idea!_
 ::: columns
 :::: {.column width=50%}
 - **Always install software updates**
-  - Fix new security vulnerabilities daily
+  - Fix security vulnerabilities daily
 
 - **Restrict access to AWS account**
   - Use different AWS accounts for individuals and scripts
-  - Apply "least privilege": grant only necessary permissions
+  - Apply "least privilege": grant necessary permissions only
 
 - **Restrict network traffic**
-  - Open only essential ports
+  - Open essential ports
     - E.g., 80 for HTTP, 443 for HTTPS
-  - Close all others
+  - Close others
   - Encrypt traffic and data
 
 - **Create a private network**
   - Use subnets not reachable from the Internet
 ::::
-:::: {.column width=50%}
+:::: {.column width=45%}
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_33_image_1.png)
 ::::
 :::
 
 * AWS Shared-responsibility Principle
-- AWS is responsible for:
-  - Protecting the network through monitoring Internet access
-    - E.g., preventing DDoS attacks
-  - Ensuring the physical security of data centers
-  - Decommissioning storage devices after the end of life
+- **AWS is responsible for**:
+  - Protecting network by monitoring Internet access
+    - Preventing DDoS attacks
+  - Ensuring physical security of data centers
+  - Decommissioning storage devices after end of life
 
-- You are responsible for:
+- **You are responsible for**:
   - Restricting access using IAM
   - Encrypting network traffic (e.g., HTTPS)
   - Configuring firewall for VPN
   - Encrypting data
-  - Updating OS (kernel, libs) and software
+  - Updating OS and software
