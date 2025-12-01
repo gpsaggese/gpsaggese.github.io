@@ -55,13 +55,13 @@ UMD DATA605 - Big Data Systems
   - Reorganized datasets for downstream systems
 
 * Cost Measures for Distributed Algorithms
-- What matter is the real dollar cost not just $O(\cdot)$
-  - **Total cost** $\approx \text { CPU + storage + network}$
-  - **Communication cost**
-    - Total I/O across all processes, e.g., shuffling $1\,\mathrm{TB}$
-  - **Elapsed communication cost**
+- What matter is the **real dollar cost** not just $O(\cdot)$
+  - _Total cost_ $\approx \text { CPU + storage + network}$
+  - _Communication cost_
+    - Total I/O across all processes, e.g., shuffling 1TB
+  - _Elapsed communication cost_
     - Max I/O along the critical path
-  - **Elapsed computation cost**
+  - _Elapsed computation cost_
     - Wall clock with $p$ workers, sensitive to skew and stragglers
 - **Dominant term heuristic**
   - _"If one cost dominates, ignore the others for first order reasoning"_
@@ -69,7 +69,7 @@ UMD DATA605 - Big Data Systems
   - _"Adding more machines trades \$ for time and may not fix skew"_
 
 * Total Cost Model for MapReduce
-- **Total cost**
+- **Total cost** of a computation
   $$C_{total} = C_{compute} + C_{io} + C_{network} + C_{storage}$$
 
 - **Notation**
@@ -78,13 +78,13 @@ UMD DATA605 - Big Data Systems
   - $T_m$ map hours, $T_r$ reduce hours
   - $c_{vm}$ = \$/VM hour, $c_{io}$ = \$/GB I/O, $c_{sh}$ = \$/GB shuffle
 
-- **Compute**
+- **Compute cost**
   $$C_{compute} = c_{vm}\left(p_m T_m + p_r T_r\right)$$
   where $T_m,T_r$ include skew and stragglers
   - Skew effects = a heavy key or hotspot inflates the heaviest task and the
     critical path
 
-- **I/O**
+- **I/O cost**
   $$C_{io} = c_{io}\left(|I| + 2|S| + |O|\right)$$
   - Shuffle often dominates when $\sum_i |S_i| \gg |I|, |O|$
 
@@ -95,11 +95,11 @@ UMD DATA605 - Big Data Systems
   - $c_{sh}$ = \$/GB shuffle $c_{eg}$ = \$/GB egress, $c_{st}$ = \$/GB hour
   - $R$ HDFS replication
 
-- **Network**
+- **Network cost**
   $$C_{network} = c_{sh}|S| + c_{eg}|O|_{eg}$$
   where $|O|_{eg}$ is data leaving the provider
 
-- **Storage**
+- **Storage cost**
   $$C_{stor} = c_{st} R (|I| + |O|)$$
 
 - Plug in variables and unit prices to get $C_{total}$
