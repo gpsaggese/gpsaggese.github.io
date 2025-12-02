@@ -310,7 +310,8 @@ UMD DATA605 - Big Data Systems
 
 * Different Types of Parallel Workload
 - Break program in medium-size tasks of computation
-  - E.g., a function call
+
+\vspace{0.5cm}
 
 ::: columns
 :::: {.column width=40%}
@@ -343,7 +344,8 @@ UMD DATA605 - Big Data Systems
   - Distributed scheduler
     - Runs locally or across a cluster
 
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_15_image_1.png)
+\center
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_15_image_1.png){width=80%}
 
 * Task Scheduling
 - **Dask task scheduler orchestrates work dynamically**
