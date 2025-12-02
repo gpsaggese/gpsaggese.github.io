@@ -123,7 +123,7 @@ def run_pipeline(
     trainer_module_file = str(Path(__file__).parent.parent / "utils" / "model_utils.py")
 
     print("\nCreating TFX pipeline...")
-    print(f"Components: CsvExampleGen, StatisticsGen, SchemaGen, Transform, Trainer (Phase 4)")
+    print(f"Components: CsvExampleGen, StatisticsGen, SchemaGen, Transform, Trainer, Evaluator, Pusher (Phase 6)")
 
     # Create the pipeline
     tfx_pipeline = create_pipeline(
@@ -150,8 +150,10 @@ def run_pipeline(
     print("\nNext steps:")
     print("  - Check pipeline_outputs/ for generated artifacts")
     print("  - Review trained model in pipeline_outputs/.../Trainer/...")
-    print("  - Check models/serving/ for the saved model")
-    print("  - Proceed to Phase 5 for model evaluation")
+    print("  - Review evaluation metrics in pipeline_outputs/.../Evaluator/...")
+    print("  - Check models/serving/ for the deployed model")
+    print("  - Test model serving with sample predictions")
+    print("  - All phases complete!")
 
 
 def main():

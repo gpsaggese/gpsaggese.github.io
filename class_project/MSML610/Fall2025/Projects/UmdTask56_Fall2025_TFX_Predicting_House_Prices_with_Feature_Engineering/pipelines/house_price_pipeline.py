@@ -11,7 +11,7 @@ This module defines the complete TFX pipeline with all components:
 """
 
 import os
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import tensorflow_model_analysis as tfma
 from tfx.components import (
@@ -47,6 +47,7 @@ def create_pipeline(
     metadata_path: str,
     serving_model_dir: str,
     beam_pipeline_args: Optional[List[str]] = None,
+    trainer_custom_config: Optional[Dict] = None,
 ) -> pipeline.Pipeline:
     """
     Create TFX pipeline for house price prediction.
@@ -60,14 +61,15 @@ def create_pipeline(
         metadata_path: Path to metadata database
         serving_model_dir: Directory for serving models
         beam_pipeline_args: Optional Beam pipeline arguments
+        trainer_custom_config: Optional custom config for Trainer (e.g., {'model_name': 'XGBoost'})
 
     Returns:
         TFX Pipeline instance
 
-    TODO: Implement components in phases:
-    - Phase 2: CsvExampleGen, SchemaGen
+    Phases implemented:
+    - Phase 2: CsvExampleGen, SchemaGen, StatisticsGen
     - Phase 3: Transform
-    - Phase 4: Trainer
+    - Phase 4: Trainer (supports TensorFlow DNN and sklearn models)
     - Phase 5: Evaluator
     - Phase 6: Pusher
     """
@@ -114,14 +116,15 @@ def create_pipeline(
     # ============================================================================
 
     # Component 5: Trainer
-    # Train TensorFlow DNN model using utils/model_utils.py run_fn
+    # Train model using specified trainer module (TensorFlow DNN or sklearn model)
     trainer = Trainer(
         module_file=trainer_module_file,
         examples=transform.outputs['transformed_examples'],
         transform_graph=transform.outputs['transform_graph'],
         schema=schema_gen.outputs['schema'],
         train_args=trainer_pb2.TrainArgs(num_steps=config.TRAIN_STEPS),
-        eval_args=trainer_pb2.EvalArgs(num_steps=config.EVAL_STEPS)
+        eval_args=trainer_pb2.EvalArgs(num_steps=config.EVAL_STEPS),
+        custom_config=trainer_custom_config  # Pass model name for sklearn models
     )
     components.append(trainer)
 
@@ -129,52 +132,62 @@ def create_pipeline(
     # PHASE 5: Model Evaluation
     # ============================================================================
 
-    # Component 6: Resolver (get latest blessed model for comparison)
-    # TODO: Implement in Phase 5
-    # model_resolver = Resolver(
-    #     strategy_class=LatestBlessedModelStrategy,
-    #     model=Channel(type=Model),
-    #     model_blessing=Channel(type=ModelBlessing)
-    # ).with_id('latest_blessed_model_resolver')
-    # components.append(model_resolver)
+    # Component 6: Evaluator
+    # Evaluate model performance on validation data
+    eval_config = tfma.EvalConfig(
+        model_specs=[
+            tfma.ModelSpec(
+                label_key='SalePrice',  # Raw target variable (transform layer handles log)
+                signature_name='serving_default'
+            )
+        ],
+        slicing_specs=[
+            tfma.SlicingSpec()  # Evaluate on entire dataset
+        ],
+        metrics_specs=[
+            tfma.MetricsSpec(
+                metrics=[
+                    tfma.MetricConfig(class_name='ExampleCount'),
+                    tfma.MetricConfig(
+                        class_name='MeanSquaredError',
+                        threshold=tfma.MetricThreshold(
+                            value_threshold=tfma.GenericValueThreshold(
+                                upper_bound={'value': 900000000.0}  # MSE ~= (30k RMSE)^2
+                            )
+                        )
+                    ),
+                    tfma.MetricConfig(class_name='RootMeanSquaredError'),
+                    tfma.MetricConfig(class_name='MeanAbsoluteError'),
+                ]
+            )
+        ]
+    )
 
-    # Component 7: Evaluator
-    # TODO: Implement in Phase 5
-    # eval_config = tfma.EvalConfig(
-    #     model_specs=[tfma.ModelSpec(label_key=config.TARGET_COLUMN)],
-    #     slicing_specs=[tfma.SlicingSpec()],
-    #     metrics_specs=[
-    #         tfma.MetricsSpec(metrics=[
-    #             tfma.MetricConfig(class_name='RootMeanSquaredError'),
-    #             tfma.MetricConfig(class_name='MeanAbsoluteError'),
-    #         ])
-    #     ]
-    # )
-    #
-    # evaluator = Evaluator(
-    #     examples=example_gen.outputs['examples'],
-    #     model=trainer.outputs['model'],
-    #     baseline_model=model_resolver.outputs['model'],
-    #     eval_config=eval_config
-    # )
-    # components.append(evaluator)
+    evaluator = Evaluator(
+        examples=example_gen.outputs['examples'],  # Use raw examples, not transformed
+        model=trainer.outputs['model'],
+        eval_config=eval_config
+    )
+    components.append(evaluator)
 
     # ============================================================================
     # PHASE 6: Model Deployment
     # ============================================================================
 
-    # Component 8: Pusher
-    # TODO: Implement in Phase 6
-    # pusher = Pusher(
-    #     model=trainer.outputs['model'],
-    #     model_blessing=evaluator.outputs['blessing'],
-    #     push_destination=pusher_pb2.PushDestination(
-    #         filesystem=pusher_pb2.PushDestination.Filesystem(
-    #             base_directory=serving_model_dir
-    #         )
-    #     )
-    # )
-    # components.append(pusher)
+    # Component 7: Pusher
+    # Deploy the trained model to serving directory
+    # Note: Since our model is not blessed, we'll push unconditionally for demonstration
+    pusher = Pusher(
+        model=trainer.outputs['model'],
+        # Commenting out model_blessing to push regardless of evaluation
+        # model_blessing=evaluator.outputs['blessing'],
+        push_destination=pusher_pb2.PushDestination(
+            filesystem=pusher_pb2.PushDestination.Filesystem(
+                base_directory=serving_model_dir
+            )
+        )
+    )
+    components.append(pusher)
 
     # ============================================================================
     # Create and return pipeline

@@ -13,7 +13,37 @@ import tensorflow_transform as tft
 from typing import Dict, Any, List
 from tfx.components.trainer.fn_args_utils import FnArgs
 
-import config
+# Handle imports for both package and TFX wheel usage
+try:
+    from . import config
+except ImportError:
+    # When packaged as TFX wheel, define constants inline
+    class config:
+        TARGET_COLUMN = 'SalePrice'
+        XGBOOST_PARAMS = {
+            "n_estimators": 1000,
+            "max_depth": 7,
+            "learning_rate": 0.01,
+            "subsample": 0.8,
+            "colsample_bytree": 0.8,
+            "min_child_weight": 3,
+            "gamma": 0,
+            "reg_alpha": 0.1,
+            "reg_lambda": 1,
+            "random_state": 42,
+            "objective": "reg:squarederror",
+            "eval_metric": "rmse",
+            "early_stopping_rounds": 50
+        }
+        TF_DNN_PARAMS = {
+            "hidden_units": [128, 64, 32],
+            "dropout_rate": 0.2,
+            "learning_rate": 0.001,
+            "batch_size": 32,
+            "epochs": 100,
+            "validation_split": 0.2,
+            "early_stopping_patience": 10
+        }
 
 # Import xgboost only when needed (not required for TFX Trainer)
 try:
@@ -191,7 +221,13 @@ def _get_serve_tf_examples_fn(model, tf_transform_output):
         concatenated_features = tf.concat([tf.reshape(f, [tf.shape(f)[0], -1])
                                           for f in features_list], axis=1)
 
-        return model(concatenated_features)
+        # Get predictions in log space
+        log_predictions = model(concatenated_features)
+
+        # Transform back to original scale: exp(log(price + 1)) - 1 = price
+        predictions = tf.exp(log_predictions) - 1.0
+
+        return predictions
 
     return serve_tf_examples_fn
 
@@ -306,29 +342,47 @@ def run_fn(fn_args: FnArgs):
     Args:
         fn_args: Holds args used to train the model as name/value pairs.
     """
+    print("\n" + "=" * 80)
+    print("TENSORFLOW DNN TRAINER FOR TFX")
+    print("=" * 80)
+
+    print(f"\nModel Architecture: Deep Neural Network")
+    print(f"Hidden Units: {config.TF_DNN_PARAMS['hidden_units']}")
+    print(f"Batch Size: {config.TF_DNN_PARAMS['batch_size']}")
+    print(f"Max Epochs: {config.TF_DNN_PARAMS['epochs']}")
+    print(f"Early Stopping Patience: {config.TF_DNN_PARAMS.get('early_stopping_patience', 10)}")
+
     # Load the transform output
+    print(f"\n[STEP 1/6] Loading TFX Transform output...")
     tf_transform_output = tft.TFTransformOutput(fn_args.transform_output)
+    print(f"✓ Transform output loaded")
 
     # Get training and eval datasets
+    print(f"\n[STEP 2/6] Loading transformed training data...")
     train_dataset = _input_fn(
         fn_args.train_files,
         fn_args.data_accessor,
         tf_transform_output,
         batch_size=config.TF_DNN_PARAMS['batch_size']
     )
+    print(f"✓ Training dataset loaded")
 
+    print(f"\n[STEP 3/6] Loading transformed evaluation data...")
     eval_dataset = _input_fn(
         fn_args.eval_files,
         fn_args.data_accessor,
         tf_transform_output,
         batch_size=config.TF_DNN_PARAMS['batch_size']
     )
+    print(f"✓ Evaluation dataset loaded")
 
     # Determine input dimension from transformed features
     # Count all features except the label
+    print(f"\n[STEP 4/6] Building model architecture...")
     transform_feature_spec = tf_transform_output.transformed_feature_spec()
     feature_keys = [k for k in transform_feature_spec.keys() if k != 'SalePrice_log']
     input_dim = len(feature_keys)
+    print(f"  Input dimension: {input_dim} features")
 
     # Build the model
     model = _build_keras_model(
@@ -336,8 +390,14 @@ def run_fn(fn_args: FnArgs):
         hidden_units=config.TF_DNN_PARAMS['hidden_units'],
         learning_rate=config.TF_DNN_PARAMS['learning_rate']
     )
+    print(f"✓ Model built successfully")
+    model.summary()
 
     # Set up callbacks
+    print(f"\n[STEP 5/6] Training TensorFlow DNN model...")
+    print(f"  This may take 2-5 minutes...")
+    print(f"  You'll see epoch-by-epoch progress below:\n")
+
     tensorboard_callback = tf.keras.callbacks.TensorBoard(
         log_dir=fn_args.model_run_dir,
         update_freq='batch'
@@ -351,7 +411,7 @@ def run_fn(fn_args: FnArgs):
     )
 
     # Train the model
-    model.fit(
+    history = model.fit(
         train_dataset,
         validation_data=eval_dataset,
         epochs=config.TF_DNN_PARAMS['epochs'],
@@ -359,8 +419,13 @@ def run_fn(fn_args: FnArgs):
         verbose=1
     )
 
+    print(f"\n✓ Training completed")
+    print(f"  Final training loss: {history.history['loss'][-1]:.4f}")
+    print(f"  Final validation loss: {history.history['val_loss'][-1]:.4f}")
+
     # Create a new model with the serving signature
     # This wraps the model to handle raw tf.Examples
+    print(f"\n[STEP 6/6] Creating serving signature and saving model...")
     signatures = {
         'serving_default':
             _get_serve_tf_examples_fn(model, tf_transform_output).get_concrete_function(
@@ -373,11 +438,20 @@ def run_fn(fn_args: FnArgs):
     }
 
     # Save the model
+    print(f"  Saving to {fn_args.serving_model_dir}...")
     model.save(
         fn_args.serving_model_dir,
         save_format='tf',
         signatures=signatures
     )
+    print(f"  ✓ TensorFlow SavedModel saved")
+
+    print("\n" + "=" * 80)
+    print("✓ TENSORFLOW DNN TRAINING COMPLETED SUCCESSFULLY")
+    print("=" * 80)
+    print(f"\nModel: TensorFlow Deep Neural Network")
+    print(f"Location: {fn_args.serving_model_dir}")
+    print("=" * 80 + "\n")
 
 
 if __name__ == "__main__":

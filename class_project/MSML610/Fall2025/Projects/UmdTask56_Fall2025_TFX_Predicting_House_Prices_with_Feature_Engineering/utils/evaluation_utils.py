@@ -82,59 +82,110 @@ def evaluate_model(model, X, y) -> Dict[str, float]:
     return metrics
 
 
-def cross_validate_model(model, X, y, cv_folds=None) -> Dict[str, Any]:
+def cross_validate_model(model, X, y, cv_folds=None, scoring='neg_root_mean_squared_error') -> Dict[str, Any]:
     """
     Perform cross-validation on the model.
 
     Args:
         model: Model to evaluate
         X: Features
-        y: Target values
+        y: Target values (can be log-transformed)
         cv_folds: Number of CV folds (optional)
+        scoring: Scoring metric for cross-validation
 
     Returns:
-        Dictionary of cross-validation results
-
-    TODO: Implement in Phase 5
+        Dictionary of cross-validation results with RMSE scores
     """
     if cv_folds is None:
         cv_folds = config.CV_FOLDS
 
-    # Placeholder - will be implemented in Phase 5
+    # Perform cross-validation with negative RMSE (sklearn convention)
+    cv_scores = cross_val_score(
+        model, X, y,
+        cv=cv_folds,
+        scoring=scoring,
+        n_jobs=-1  # Use all CPU cores
+    )
+
+    # Convert negative RMSE back to positive
+    cv_scores = -cv_scores
+
     results = {
         "cv_folds": cv_folds,
-        "scores": [],
-        "mean_score": 0.0,
-        "std_score": 0.0
+        "scores": cv_scores.tolist(),
+        "mean_rmse": float(np.mean(cv_scores)),
+        "std_rmse": float(np.std(cv_scores)),
+        "min_rmse": float(np.min(cv_scores)),
+        "max_rmse": float(np.max(cv_scores)),
+        "scoring": scoring
     }
 
     return results
 
 
-def compare_models(model1_results: Dict, model2_results: Dict) -> Dict[str, Any]:
+def compare_models(models_results: Dict[str, Dict]) -> Dict[str, Any]:
     """
-    Compare two models based on evaluation metrics.
+    Compare multiple models based on evaluation metrics.
 
     Args:
-        model1_results: Evaluation results for model 1
-        model2_results: Evaluation results for model 2
+        models_results: Dictionary mapping model names to their evaluation results
+                       Each result should have 'rmse', 'mae', 'r2' keys
 
     Returns:
-        Comparison summary
+        Comparison summary with rankings and best model
 
-    TODO: Implement in Phase 5
+    Example:
+        results = {
+            'XGBoost': {'rmse': 25000, 'mae': 18000, 'r2': 0.89},
+            'RandomForest': {'rmse': 27000, 'mae': 19000, 'r2': 0.87},
+            'TF_DNN': {'rmse': 30000, 'mae': 20000, 'r2': 0.85}
+        }
+        comparison = compare_models(results)
     """
+    if not models_results:
+        return {"error": "No models to compare"}
+
     comparison = {
-        "model1": model1_results,
-        "model2": model2_results,
-        "winner": None
+        "models": models_results,
+        "rankings": {},
+        "best_model": None,
+        "summary": {}
     }
 
-    # Determine winner based on RMSE (lower is better)
-    if model1_results.get("rmse", float('inf')) < model2_results.get("rmse", float('inf')):
-        comparison["winner"] = "model1"
-    else:
-        comparison["winner"] = "model2"
+    # Rank by RMSE (lower is better)
+    rmse_ranking = sorted(
+        models_results.items(),
+        key=lambda x: x[1].get('rmse', float('inf'))
+    )
+    comparison["rankings"]["by_rmse"] = [name for name, _ in rmse_ranking]
+
+    # Rank by MAE (lower is better)
+    mae_ranking = sorted(
+        models_results.items(),
+        key=lambda x: x[1].get('mae', float('inf'))
+    )
+    comparison["rankings"]["by_mae"] = [name for name, _ in mae_ranking]
+
+    # Rank by R² (higher is better)
+    r2_ranking = sorted(
+        models_results.items(),
+        key=lambda x: x[1].get('r2', -float('inf')),
+        reverse=True
+    )
+    comparison["rankings"]["by_r2"] = [name for name, _ in r2_ranking]
+
+    # Best model is top by RMSE (primary metric)
+    comparison["best_model"] = rmse_ranking[0][0]
+
+    # Calculate performance summary
+    comparison["summary"] = {
+        "best_rmse": rmse_ranking[0][1].get('rmse'),
+        "worst_rmse": rmse_ranking[-1][1].get('rmse'),
+        "rmse_improvement": (
+            rmse_ranking[-1][1].get('rmse', 0) -
+            rmse_ranking[0][1].get('rmse', 0)
+        )
+    }
 
     return comparison
 

@@ -13,8 +13,31 @@ __author__ = "MSML610 Fall 2025 Project"
 
 # Import submodules for easier access
 from . import config
+from . import data_utils
+from . import feature_engineering
+from . import model_utils
+from . import evaluation_utils
 
-# List of available modules (will be populated as we build them)
-__all__ = [
-    "config",
-]
+# Import optional modules only when explicitly needed
+# (avoid circular imports in TFX wheel packaging)
+try:
+    from . import model_comparison
+    from . import sklearn_trainer
+    __all__ = [
+        "config",
+        "data_utils",
+        "feature_engineering",
+        "model_utils",
+        "evaluation_utils",
+        "model_comparison",
+        "sklearn_trainer",
+    ]
+except ImportError:
+    # sklearn/model_comparison not available in TFX wheel
+    __all__ = [
+        "config",
+        "data_utils",
+        "feature_engineering",
+        "model_utils",
+        "evaluation_utils",
+    ]

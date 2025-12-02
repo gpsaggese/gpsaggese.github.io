@@ -10,11 +10,10 @@ This module contains:
 import tensorflow as tf
 import tensorflow_transform as tft
 
-import config
-
 
 # Define feature name constants
-TARGET = config.TARGET_COLUMN
+# Note: These are defined directly here to avoid import issues when TFX packages this module
+TARGET = 'SalePrice'  # Target column in the dataset
 LABEL_KEY = 'SalePrice_log'  # Log-transformed target
 
 
