@@ -1,7 +1,8 @@
-pandas>=2.1
-numpy>=1.24
-scikit-learn>=1.4
-matplotlib>=3.8
-seaborn>=0.13
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
 jupyterlab>=4.1
-auto-sklearn>=0.16
+auto-sklearn
+xgboost

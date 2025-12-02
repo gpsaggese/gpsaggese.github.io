@@ -1,6 +1,6 @@
 # Auto-sklearn House Price Estimation (India)
 
-Estimate residential prices across India using structured tabular data (location, size, amenities). The project currently covers data exploration and a reusable preprocessing pipeline in preparation for auto-sklearn modeling
+Estimate residential prices across India using structured tabular data (location, size, amenities). The project leverages **auto-sklearn** to automatically select and tune regression models, comparing them against Random Forest and XGBoost baselines.
 
 ## Dataset
 
@@ -9,48 +9,64 @@ Estimate residential prices across India using structured tabular data (location
 
 ## What’s Implemented
 
-- Exploratory analysis (`auto_sklearn_data_exploration.ipynb`)
-- Modular preprocessing utilities:
-  - `utils_data_io.py` – loading and cleaning
-  - `utils_feature_engineering.py` – column grouping and binary mapping
-  - `utils_transformers.py` – custom `AmenitiesEncoder`
-  - `utils_preprocessing.py` – end-to-end pipeline + train/test split
-  - `auto_sklearn_utils.py` – convenience re-exports
-- Example notebook (`auto_sklearn_example.ipynb`) showing `prepare_data()` usage
-- Supporting docs:
-  - `data_exploration.md` – summary of EDA findings
-  - This README – setup and progress tracker
-  - Requirements, `.gitignore`
+- **Data Pipeline**:
+  - `utils_data_io.py`: Loading and cleaning
+  - `utils_preprocessing.py`: End-to-end pipeline + train/test split, handling numeric imputation, one-hot encoding, and custom amenities parsing.
+- **Modeling**:
+  - `auto_sklearn_modeling.ipynb`: Main notebook for training and evaluating models.
+  - Implements `AutoSklearnRegressor`, `RandomForestRegressor`, and `XGBRegressor`.
+- **Infrastructure**:
+  - `Dockerfile`: Linux-based environment for running auto-sklearn.
+- **Analysis**:
+  - `auto_sklearn_data_exploration.ipynb`: Initial EDA.
+  - Evaluation metrics (MAE, RMSE) and regional error analysis.
 
-## Next Steps
+## Usage
 
-1. Docker support
-2. Train auto-sklearn regressors with `prepare_data()` output
-3. Compare against RandomForest/XGBoost baselines
-4. Evaluate with MAE/RMSE, visualize regional price trends
+### 1. Using Docker (Recommended for Auto-sklearn)
 
-## Setup
+Auto-sklearn requires a Linux environment. Use the provided Dockerfile:
 
-### 1. Virtual env controls
+```bash
+# Build the image
+docker build -t india-housing-prices .
 
+# Run Jupyter Lab
+docker run -p 8888:8888 -v $(pwd):/app india-housing-prices
+```
+
+Then open `auto_sklearn_modeling.ipynb` in the browser to run the experiments.
+
+### 2. Local Development
+
+If you are on Linux or have a compatible environment:
+
+```bash
+pip install -r requirements.txt
+jupyter lab
+```
+
+## Modeling Strategy
+
+1.  **Preprocessing**: Features are standardized (numeric) or one-hot/binary encoded (categorical/text). Missing values are imputed.
+2.  **AutoML**: `AutoSklearnRegressor` searches for the best ensemble of models (time limit configurable).
+3.  **Baselines**: Standard Random Forest and XGBoost regressors are trained for comparison.
+4.  **Evaluation**: Models are evaluated on a held-out test set (20%) using Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE).
+5.  **Interpretability**: Errors are analyzed by region (State) to identify geographic biases.
+
+## Setup & Git
+
+### Virtual env controls
+
+```bash
 source dev_scripts_umd_classes/thin_client/setenv.sh
 deactivate
+```
 
-### 2. Start up process
+### Git controls
 
-1. start venv
-2. open docker cli
-3. now you can git push
-
-### 3. Git controls
-
-git config --list
+```bash
 git add -A class_project/MSML610/Fall2025/Projects/UmdTask68_Fall2025_auto_sklearn_House_Price_Estimation_in_India
-git status
-git commit -m "UmdTask68: commit message (refs #68)"
+git commit -m "UmdTask68: Added auto-sklearn modeling and docker support (refs #68)"
 git push origin UmdTask68_Fall2025_auto_sklearn_House_Price_Estimation_in_India
-
-### 4. Pip install
-
-python -m pip install --upgrade pip
-pip install -r /Users/ritvik/src/umd_classes1/class_project/MSML610/Fall2025/Projects/UmdTask68_Fall2025_auto_sklearn_House_Price_Estimation_in_India/requirements.txt
+```
