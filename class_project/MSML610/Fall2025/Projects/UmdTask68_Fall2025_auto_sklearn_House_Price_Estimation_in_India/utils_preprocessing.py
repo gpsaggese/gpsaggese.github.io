@@ -42,7 +42,7 @@ def create_preprocessor(column_groups: Dict[str, list]) -> ColumnTransformer:
             # categorical: impute with most frequent and one-hot encode
             ("cat", Pipeline(steps=[
                 ("impute", SimpleImputer(strategy="most_frequent")),
-                ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False))
+                ("onehot", OneHotEncoder(handle_unknown="ignore", sparse=False))
             ]), categorical_cols),
             
             # amenities: expand into multiple binary columns
@@ -50,8 +50,7 @@ def create_preprocessor(column_groups: Dict[str, list]) -> ColumnTransformer:
                 ("bin", AmenitiesEncoder())
             ]), text_cols[0]),
         ],
-        remainder="drop",                   # discard unhandled columns
-        verbose_feature_names_out=False,    # keep feature names clean
+        remainder="drop"                   # discard unhandled columns
     )
     
     return preprocessor
@@ -106,7 +105,22 @@ def prepare_data(
     X_train_processed = preprocessor.fit_transform(X_train)
     X_test_processed = preprocessor.transform(X_test)
     
-    # get feature names for interpretability
-    feature_names = preprocessor.get_feature_names_out()
+    # get feature names for interpretability (handling older sklearn versions)
+    if hasattr(preprocessor, "get_feature_names_out"):
+        feature_names = preprocessor.get_feature_names_out()
+    else:
+        # Fallback for sklearn < 1.0
+        # This is a best-effort approximation for feature names
+        feature_names = []
+        for name, trans, _ in preprocessor.transformers_:
+            if name == "remainder":
+                continue
+            if hasattr(trans, "get_feature_names"):
+                feature_names.extend(trans.get_feature_names())
+            elif hasattr(trans, "get_feature_names_out"):
+                feature_names.extend(trans.get_feature_names_out())
+            else:
+                # If we can't get names, just append the transformer name
+                feature_names.append(name)
     
     return X_train_processed, X_test_processed, y_train, y_test, preprocessor, feature_names
