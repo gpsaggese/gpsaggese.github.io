@@ -33,19 +33,32 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Serialization Formats
-- Programs need to send data to each other (network, disk)
-  - E.g., remote Procedure Calls (RPCs)
-  - Recent technologies based on schemas
-    - JSON, YAML, Protocol Buffer, Python Pickle
+- **Programs need to send data to each other**
+  - Through network, disk
+  - Examples:
+    - Remote Procedure Calls (RPCs)
+    - Data storage and retrieval
+  - Technologies based on schemas:
+    - JSON
+    - YAML
+    - Protocol Buffers
+    - Python Pickle
 
-- Serialization formats are data models
+- **Serialization formats are data models**
+  - Define how data is structured and stored
+  - Examples:
+    - JSON: Human-readable, used for web APIs
+    - YAML: Human-readable, used for configuration files
+    - Protocol Buffers: Efficient, used by Google for internal APIs
+    - Python Pickle: Python-specific, used for object serialization
 
 * Comma Separated Values (CSV)
 ::: columns
 :::: {.column width=50%}
-- CSV stores data row-wise as text without schema
+- **CSV stores data row-wise**
+  - As text without schema
   - Each line is a data record
-  - Records have fields separated by commas
+  - Fields separated by commas
 
 - **Pros**
   - Very portable
@@ -72,43 +85,41 @@ UMD DATA605 - Big Data Systems
 * (Apache) Parquet
 ::: columns
 :::: {.column width=70%}
-- Parquet reads data tiles
-
-- Supports multi-dimensional, nested data
-  - Generalizes dataframes
-
-- Column-storage
-  - Stores each column together, uniform data type, compressed efficiently
-
-- IO layer executes queries
-  - Reads only necessary data chunks from disk
-
-- **Pros**
-  - 10x smaller than CSV
-  - 10x faster with multi-threading
-  - Read subset of columns and rows
-
-- **Cons**
-  - Binary, not human-friendly
-  - Requires ingestion step to convert to Parquet
-  - Mainly read-only, hard to modify
+- **Parquet**
+  - Reads data as tiles
+  - Supports multi-dimensional, nested data
+    - Generalizes dataframes
+  - Column-storage
+    - Stores each column together, uniform data type, compressed efficiently
+  - IO layer executes queries
+    - Reads only necessary data chunks from disk
 ::::
 :::: {.column width=25%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_36_image_1.png)
 ::::
 :::
 
+- **Pros**
+  - 10x smaller than CSV
+  - 10x faster with multi-threading
+  - Can read a subset of columns and rows
+
+- **Cons**
+  - Binary, not human-friendly
+  - Requires an ingestion step to convert to Parquet
+  - Mainly read-only, hard to modify
+
 * JSON
 ::: columns
 :::: {.column width=50%}
-- JSON = JavaScript Object Notation
+- **JavaScript Object Notation**
 
-- Nested dictionaries and arrays
+- **Nested dictionaries and arrays**
 
-- Similar to XML
+- **Similar to XML**
   - More human-readable
   - Less boilerplate
-  - Executable in JavaScript and Python
+  - Sometimes executable in JavaScript and Python
 ::::
 :::: {.column width=45%}
 \scriptsize
@@ -145,23 +156,25 @@ UMD DATA605 - Big Data Systems
 * Protocol Buffers
 ::: columns
 :::: {.column width=50%}
-- Developed by Google
-- Open-source
+- **Open-source**
+  - Developed by Google
+
 - Represent data structures:
   - Language agnostic
   - Platform agnostic
   - Versioning
-- Schema is mostly relational
+
+- **Schema is mostly relational**
   - Optional fields
   - Types
   - Default values
   - Structures
   - Arrays
 
-- Schema specified using a `.proto` file
-
-- Compiled by `protoc` to produce C++, Java, or Python code to initialize, read,
-  serialize objects
+- **Workflow**
+  - Schema specified using a `.proto` file
+  - Compiled by `protoc` to produce C++, Java, or Python code to initialize,
+    read, serialize objects
 ::::
 :::: {.column width=45%}
 \scriptsize
@@ -201,12 +214,13 @@ message Person {
 * Serialization Formats
 ::: columns
 :::: {.column width=50%}
-- Avro
+- **Avro**
   - Richer data structures
   - JSON-specified schema
-- Thrift
+
+- **Thrift**
   - Developed by Facebook
-  - Now Apache project
+  - Now an Apache project
   - More languages supported
   - Supports exceptions and sets
 ::::
@@ -224,17 +238,11 @@ message Person {
     },
     {
       "name": "favorite_number",
-      "type": [
-        "int",
-        "null"
-      ]
+      "type": ["int", "null"]
     },
     {
       "name": "favorite_color",
-      "type": [
-        "string",
-        "null"
-      ]
+      "type": ["string", "null"]
     }
   ]
 }
@@ -245,20 +253,19 @@ message Person {
 * Remote Procedure Call
 ::: columns
 :::: {.column width=65%}
-- **Remote Procedure Call** (RPC) requests services from programs on other
-  computers, abstracting network communication
+- **Remote Procedure Call** (RPC)
+  - Requests services from programs on other computers
+  - Abstracts network communication
 
 - **Goal**: Make remote calls like local procedure calls without network details
+  - Used in distributed systems
+    - E.g., microservices, cloud services, client-server applications
+  - Can be synchronous or asynchronous
 
 - **Problems**
   - Can't serialize pointers
-  - Asynchronous communication
-  - Failures and retry
-
-- Used in distributed systems
-  - E.g., microservices, cloud services, client-server applications
-
-- Can be synchronous or asynchronous
+  - Handling asynchronous communication
+  - Failures and retries
 ::::
 :::: {.column width=30%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_40_image_1.png)
@@ -269,10 +276,14 @@ message Person {
 ::: columns
 :::: {.column width=50%}
 - _Client procedure call_: Client calls stub function with arguments
+
 - _Request marshalling_: Client stub serializes arguments for network
   transmission
+
 - _Server communication_: Client's RPC runtime sends request to server
+
 - _Server-side unmarshalling_: Server's RPC runtime deserializes arguments
+
 - _Procedure execution_: Server calls procedure
 ::::
 :::: {.column width=45%}

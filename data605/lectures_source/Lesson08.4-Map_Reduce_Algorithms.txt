@@ -34,192 +34,149 @@ UMD DATA605 - Big Data Systems
 :::
 
 * MapReduce: Applications
+- **Intuition**
+  - Break massive jobs into independent map tasks
+  - Aggregate via shuffle
+  - Combine in reduce
 
-- Major classes of applications
-  - Text tokenization, indexing, and search
-  - Processing of large data structures
+- **Major classes of applications**
+  - Text processing and search
+    - E.g., tokenization, inverted index, log analysis
+  - Large data transforms
+    - E.g., ETL pipelines, joins, global sort, deduplication across petabytes
   - Data mining and machine learning
-  - Link analysis and graph processing
+    - E.g., Counting co occurrences, feature extraction, $k$-means iterations
+  - Graph and link analysis
+    - E.g., PageRank, connected components
 
-* Example: Language Model
-
-- Statistical machine translation
-  - Need to count number of times every 5-word sequence occurs in a large corpus of documents
-- Large Language Models
-  - OpenAI GPT
-- Very easy with MapReduce
-  - Map
-    - Extract (5-word sequence, count) from document
-  - Reduce
-    - Combine the counts
+- **Typical outputs**, e.g.,
+  - Counts
+  - Aggregates
+  - Reorganized datasets for downstream systems
 
 * Cost Measures for Distributed Algorithms
+- What matter is the real dollar cost not just $O(\cdot)$
+  - **Total cost** $\approx \text { CPU + storage + network}$
+  - **Communication cost**
+    - Total I/O across all processes, e.g., shuffling $1\,\mathrm{TB}$
+  - **Elapsed communication cost**
+    - Max I/O along the critical path
+  - **Elapsed computation cost**
+    - Wall clock with $p$ workers, sensitive to skew and stragglers
+- **Dominant term heuristic**
+  - _"If one cost dominates, ignore the others for first order reasoning"_
+- **Practical note**
+  - _"Adding more machines trades \$ for time and may not fix skew"_
 
-- **Quantify the cost of a parallel algorithm in terms of:**
-- Communication cost
-  - = total I/O of all processes
-  - Related to disk usage as well
-- Elapsed communication cost
-  - = max I/O along any path (critical path)
-- Elapsed computation cost
-  - = end-to-end running time of algorithm
-  - It is the wall-clock time using parallelism
+* Total Cost Model for MapReduce
 - **Total cost**
-  - = what you pay as rent to your "friendly" neighborhood cloud provider
-  - CPU + disk + I/O used
-  - Either CPU, disk, I/O cost dominates $\to$ ignore the others
-- **In this case, the big-O notation is not the most useful**
-  - The actual cost matters and not the asymptotic cost!
-  - Multiplicative constant matters
-  - Adding more machines is always an option
+  $$C_{total} = C_{compute} + C_{io} + C_{network} + C_{storage}$$
 
-* MapReduce Cost Measures
+- **Notation**
+  - $|I|$ input GB, $|S|$ shuffle GB, $|O|$ output GB
+  - $p_m$ mappers, $p_r$ reducers
+  - $T_m$ map hours, $T_r$ reduce hours
+  - $c_{vm}$ = \$/VM hour, $c_{io}$ = \$/GB I/O, $c_{sh}$ = \$/GB shuffle
 
-- **For a `map-reduce` algorithm:**
-- **Communication cost**
-  - = total I/O of all processes
-  - input file size
-  - + 2 × (sum of the sizes of all files passed from Map processes to Reduce processes) [You need to write and read back the data]
-  - + the sum of the output sizes of the Reduce processes
-- **Elapsed communication cost**
-  - = max of I/O along any path
-  - sum of the largest input + output for any Map process, plus the same for any Reduce process
-- **Elapsed computation cost**
-  - = end-to-end running time of algorithm
-  - Ideally all Map and Reduce processes end at the same time
-  - Workload is "perfectly balanced"
+- **Compute**
+  $$C_{compute} = c_{vm}\left(p_m T_m + p_r T_r\right)$$
+  where $T_m,T_r$ include skew and stragglers
+  - Skew effects = a heavy key or hotspot inflates the heaviest task and the
+    critical path
 
-* Example: Join By MapReduce
-
-:::columns
-::::{.column width=75%}
-- Compute the natural join **R(A,B) $\bowtie$ S(B,C)** joining on column **B**
-- **R** and **S** are stored in files as pairs **(a, b)** or **(b, c)**
-- Use a hash function *h* from B-values to *h(b)* in [1, ..., k]
-- **Map task**
-  - Transform an input tuple *R(a, b)* into key-value pair *(h(b), (a, R))*
-  - Each input tuple *S(b, c)* $\to$ *(h(b), (c, S))*
-- **GroupBy task**
-  - Each key-value pair with key *b* to is sent to Reduce task *h(b)*
-  - Hadoop does this automatically; just tell it what *h* is
-- **Reduce task**
-  - Matches all the pairs (b, (a, R)) with all (b, (c, S)) to get (a, b, c)
-  - Output (a, c)
-::::
-::::{.column width=25%}
-
-:::columns
-::::{.column width=5%}
-\vspace{1.5cm}
-R
-::::
-::::{.column width=15%}
-| A    | B    |
-|------|------|
-| a1   | b1   |
-| a2   | b1   |
-| a3   | b2   |
-| a4   | b3   |
-::::
-::::{.column width=5%}
-\vspace{1.5cm}
-$\bowtie$
-::::
-:::
+- **I/O**
+  $$C_{io} = c_{io}\left(|I| + 2|S| + |O|\right)$$
+  - Shuffle often dominates when $\sum_i |S_i| \gg |I|, |O|$
 
 
+* Total Cost Model for MapReduce
+- **Notation**
+  - $|I|$ input GB, $|S|$ shuffle GB, $|O|$ output GB
+  - $c_{sh}$ = \$/GB shuffle $c_{eg}$ = \$/GB egress, $c_{st}$ = \$/GB hour
+  - $R$ HDFS replication
 
-:::columns
-::::{.column width=5%}
-\vspace{1.5cm}
-S
-::::
-::::{.column width=15%}
-| B    | C    |
-|------|------|
-| b2   | c1   |
-| b2   | c2   |
-| b3   | c3   |
-::::
-::::{.column width=5%}
-\vspace{1.5cm}
-```
-=
-```
-::::
-:::
+- **Network**
+  $$C_{network} = c_{sh}|S| + c_{eg}|O|_{eg}$$
+  where $|O|_{eg}$ is data leaving the provider
 
+- **Storage**
+  $$C_{stor} = c_{st} R (|I| + |O|)$$
 
+- Plug in variables and unit prices to get $C_{total}$
+- Apply the dominant term heuristic to prioritize optimization
+- Tuning levers
+  - Use Combiners
+  - Compression
+  - Better partitioning
+  - Early filtering to reduce $\sum_i |S_i|$ and stragglers
 
-:::columns
-::::{.column width=5%}
+* Inverted Index using MapReduce
 
-::::
-::::{.column width=15%}
-| A    | C    |
-|------|------|
-| a3   | c1   |
-| a3   | c2   |
-| a4   | c3   |
-::::
-::::{.column width=5%}
+- **Goal**: build a mapping from words to the list of documents they appear in
+  - Example: `MapReduce is powerful` in `doc1`
+    - Output = `[(MapReduce, doc1)`, `(is, doc1)`, `(powerful, doc1)]`
+  - Map phase:
+    - Input: `(docID, content)`
+    - Emit: `(word, docID)` for each word in content
+  - Reduce phase:
+    - Input: `(word, [docID_1, docID_2, ...])`
+    - Emit: `(word, list of unique docIDs)`
 
-::::
-:::
+- Useful in search engines and information retrieval
+- Requires tokenization and normalization of content
+- Deduplication of document IDs in reducer
 
+* Join Operations using MapReduce
+- **Goal**: join two datasets based on a common key
+  - Types of joins:
+    - Inner join, left/right outer join, full outer join
+  - Example: joining employee records with department data by deptID
+  - Map phase:
+    - Tag records by source and emit key as join attribute
+  - Reduce phase:
+    - Input: `key, [records from both sources]`
+    - Perform join logic in reducer
 
-::::
-:::
+- Careful data tagging and partitioning required
 
-* Cost of MapReduce Join
+* Sorting and Grouping in MapReduce
 
-- **Total communication cost**
-  - = total I/O of all processes
-  - = O(|R|+|S|+|R  bowtieS|)
-  - You need to read all the data and then write the result
-  - It doesn't matter how you split the computation
-- **Elapsed communication cost**
-  - We put a limit **s** on the amount of input or output that any one process can have, e.g.,
-    - What fits in main memory
-    - What fits on local disk
-  - = O(s)
-  - We're going to pick the number of Map and Reduce processes so that the I/O limit **s** is respected
-- **Computation cost**
-  - = O(|R|+|S|+|R $\bowtie$ S|)
-  - Using proper indexes there is no shuffle
-  - So computation cost is like communication cost
+- **Goal**: organize data by keys or values for further analysis
+  - Map phase:
+    - Emit data with key as sort/group criterion
+  - Shuffle and sort phase automatically sorts by key
+  - Reduce phase:
+    - Receives sorted keys and can perform grouped aggregation
+  - Example: sort sales data by date or group by product ID
+- Total sort:
+  - Requires partitioning and sampling for global order
+- Partial sort:
+  - Sort within each partition
+- Often used as a preprocessing step for reporting
 
-* UMD DATA605 - Big Data System
-- Storing and Computing Big Data
-- MapReduce Framework
-- (Apache) Hadoop
-- Algorithms
-- **MapReduce vs DBs**  
+* Graph Processing with MapReduce
+- Many graph algorithms are iterative
+  - Requires multiple MapReduce rounds for convergence
+  - Each iteration refines the scores
 
-* History
-- Abstract ideas about MapReduce have been known before Google's MapReduce paper
-- **The strength of MapReduce comes from simplicity, ease of use, and performance**
-  - Declarative design
-  - User specifies what is to be done, not how many machines to use, etc...
-  - Many times commercial success comes from making something simple to use
-- MapReduce can be implemented using user-defined aggregates in PostgreSQL quite easily
-  - See MapReduce and Parallel DBMSs by Stonebraker et al., 2010
-- No database system can come close to the performance of MapReduce infrastructure
-  - E.g., RDBMSs
-  - Can't scale to that degree
-  - Are not as fault-tolerant
-  - Designed to support ACID
-    - Most MapReduce applications don't care about ACID consistency
+- PageRank:
+  - Compute importance score of web pages
+  - Graph is represented as adjacency lists
+  - Map phase:
+    - Emit contributions to neighboring nodes
+  - Reduce phase:
+    - Sum contributions to update PageRank score
 
-* History
-- **MapReduce**
-- Is very good at doing what it was designed for
-  - If the application maps well to MapReduce, one can achieve optimal theoretical speed-up
-- May not be ideal for more complex tasks
-  - E.g., no notion of "query optimization", e.g., operator order optimization
-  - The sequence of MapReduce tasks makes it procedural within a single machine
-- Assumes a single input
-  - E.g., joins are tricky to do, but doable
-- Much work in recent years on extending the basic MapReduce functionality, e.g.,
-- Hadoop Zoo
-- E.g., Spark, Dask, Ray
+* Statistical Aggregation and Log Analysis
+
+- Statistical Aggregation:
+  - Map: emit relevant quantities (e.g., value, 1 for count)
+  - Reduce: compute sums, averages, variances
+  - Example: `(sensorID, temperature)` $\to$ compute average temperature per sensor
+- Log Analysis:
+  - Map: parse logs, extract fields (timestamp, IP, status)
+  - Emit: `(key, value)` for desired metrics
+  - Reduce: aggregate (e.g., count errors, hits per IP)
+  - Example: `(status code, 1)` $\to$ count occurrences
+- Useful for monitoring, alerting, and trend analysis
+- Can handle large-scale logs from distributed systems

@@ -1,6 +1,6 @@
 ::: columns
 :::: {.column width=15%}
-![](msml609/lectures_source/figures/UMD_Logo.png)
+![](msml610/lectures_source/figures/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -40,7 +40,7 @@ MSML610: Advanced Machine Learning
 
 # Causal Networks
 
-## Causal DAGs and Structural Causal Models
+## Causal DAGs
 
 // ## 13.5 Causal networks (p. 462)
 
@@ -198,6 +198,215 @@ digraph SCMExample {
 - **Unobserved variables**
   - Not seen or more difficult to account
   - E.g., _"temperature of the room makes students sleepy and less alert"_
+
+### Example of ladder of causation
+
+* Example: Tornado Warning
+::: columns
+:::: {.column width=50%}
+- **Example**: Severe weather alert to the public
+
+- **Causal diagram**:
+  - $T$: Tornado forms
+  - $W$: National Weather Service issues tornado warning
+  - $A, B$: Radio and TV broadcast emergency
+  - $R$: Residents warned
+
+- **Assumptions**
+  - Channels broadcast only on official order
+  - Delivery systems never fail
+  - If either channel activates, residents warned
+::::
+:::: {.column width=45%}
+```graphviz
+digraph Tornado_Warning {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+    edge [penwidth=1.2, color="#555555", arrowsize=0.9];
+
+    // Node styles
+    T [label="Tornado forms (T)", fillcolor="#FFB3BA"]; // pastel red
+    W [label="Tornado warning (W)", fillcolor="#FFD1A6"]; // pastel orange
+    A [label="Radio broadcasts (A)", fillcolor="#FFF4A3"]; // pastel yellow
+    B [label="TV broadcasts (B)", fillcolor="#CFECCF"];   // pastel green
+    R [label="Residents warned (R)", fillcolor="#A6C8F4"]; // pastel blue
+
+    // Force ranks (top to bottom)
+    { rank=min;  T; }
+    { rank=same; W; }
+    { rank=same; A; B; }
+    { rank=max;  R; }
+
+    T -> W;
+    W -> A;
+    W -> B;
+    A -> R;
+    B -> R;
+}
+```
+::::
+:::
+
+* Tornado Warning: Level 1 (Association)
+::: columns
+:::: {.column width=50%}
+- **Use causal graph to understand how one fact informs another**
+  - Use predicate logic to answer
+
+- **If residents are warned, was a warning issued?**
+  - Does $R \implies W$? 
+  - Yes
+
+- **If radio $A$ broadcast, did TV $B$ also broadcast?**
+  - Yes
+  - True even though $A$ doesn't cause $B$
+  - Correlated through common cause $W$ (confounder)
+::::
+:::: {.column width=45%}
+```graphviz
+digraph Tornado_Warning {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+    edge [penwidth=1.2, color="#555555", arrowsize=0.9];
+
+    // Node styles
+    T [label="Tornado forms (T)", fillcolor="#FFB3BA"]; // pastel red
+    W [label="Tornado warning (W)", fillcolor="#FFD1A6"]; // pastel orange
+    A [label="Radio broadcasts (A)", fillcolor="#FFF4A3"]; // pastel yellow
+    B [label="TV broadcasts (B)", fillcolor="#CFECCF"];   // pastel green
+    R [label="Residents warned (R)", fillcolor="#A6C8F4"]; // pastel blue
+
+    // Force ranks (top to bottom)
+    { rank=min;  T; }
+    { rank=same; W; }
+    { rank=same; A; B; }
+    { rank=max;  R; }
+
+    T -> W;
+    W -> A;
+    W -> B;
+    A -> R;
+    B -> R;
+}
+```
+::::
+:::
+
+* Tornado Warning: Level 2 (Intervention)
+::: columns
+:::: {.column width=50%}
+- **If you make radio broadcast, will residents be warned?**
+  - Yes
+  - Breaks "rules of nature" as $A$ broadcasts only if $W$ is issued
+    - Like removing edge $W \to A$ in graph
+    - Set $A$ to _true_: $do(A=1)$
+  - Expect $B$ did _not_ broadcast
+    - Forcing $A$ shouldn't affect $B$ (no $A \to B$ edge)
+::::
+:::: {.column width=45%}
+```graphviz
+digraph Tornado_Warning {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+    edge [penwidth=1.2, color="#555555", arrowsize=0.9];
+
+    // Node styles
+    T [label="Tornado forms (T)", fillcolor="#FFB3BA"]; // pastel red
+    W [label="Tornado warning (W)", fillcolor="#FFD1A6"]; // pastel orange
+    A [
+      label="Radio broadcasts (A)",
+      fillcolor="#FFF4A3",
+      xlabel=<<B><FONT COLOR="red">do(A = 1)</FONT></B>>
+    ]; // Orange
+    B [label="TV broadcasts (B)", fillcolor="#CFECCF"];   // pastel green
+    R [label="Residents warned (R)", fillcolor="#A6C8F4"]; // pastel blue
+
+    // Force ranks (top to bottom)
+    { rank=min;  T; }
+    { rank=same; W; }
+    { rank=same; A; B; }
+    { rank=max;  R; }
+
+    T -> W;
+    W -> A [style=invis];
+    W -> B;
+    A -> R;
+    B -> R;
+}
+```
+::::
+:::
+
+- **Key difference between "seeing" and "doing"**
+  - If _see_ $A$ broadcast, conclude $B$ broadcast too
+  - If _make_ $A$ broadcast, expect $B$ didn't
+
+- **Observational data wouldn't reveal causal structure**
+  - Either all variables $T,W,A,B,R$ are true or all are false
+  - Correlations alone are uninformative
+
+* Tornado Warning: Level 3 (Counterfactual)
+::: columns
+:::: {.column width=50%}
+- **Assume that residents are warned $R=1$**
+  - You know $A$ and $B$ broadcast because
+  - ... a warning $W$ was issued
+  - ... after a tornado formed $T$
+
+- **Would residents be warned if $A$ had not broadcast?**
+  - Remove the edge into $A$
+  - Set $do(A=0)$
+  - TV $B$ still broadcasts (due to $W$), and $R=(A \lor B)$ remains
+    true
+  - Yes, $R=1$
+::::
+:::: {.column width=45%}
+```graphviz
+digraph Tornado_Warning {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+    edge [penwidth=1.2, color="#555555", arrowsize=0.9];
+
+    // Node styles
+    T [label="Tornado forms (T)", fillcolor="#FFB3BA"]; // pastel red
+    W [label="Tornado warning (W)", fillcolor="#FFD1A6"]; // pastel orange
+    A [
+      label="Radio broadcasts (A)",
+      fillcolor="#FFF4A3",
+      xlabel=<<B><FONT COLOR="red">do(A = 0)</FONT></B>>
+    ]; // Orange
+    B [label="TV broadcasts (B)", fillcolor="#CFECCF"];   // pastel green
+    R [label="Residents warned (R)", fillcolor="#A6C8F4"]; // pastel blue
+
+    // Force ranks (top to bottom)
+    { rank=min;  T; }
+    { rank=same; W; }
+    { rank=same; A; B; }
+    { rank=max;  R; }
+
+    T -> W;
+    W -> A [style=invis];
+    W -> B;
+    A -> R;
+    B -> R;
+}
+```
+::::
+:::
+
+## Structural Causal Model
 
 * Structural Causal Model
 - A **Structural Causal Model** (SCM) translates a causal DAG into mathematical
@@ -1249,8 +1458,8 @@ _Mutilated graph_
   - Denoted as $\text{do}(X = x)$
   - Represents performing an action that _sets_ $X$ to $x$, not _observing_
     $X = x$
-  - $\text{do}(X_j = x_j^k)$ removes $\Pr(x_j | \text{parents}(X_j))$ from the
-    product and gives a new joint distribution:
+  - $do(X_j = x_j^k)$ removes $\Pr(x_j | \text{parents}(X_j))$ from the product
+    and gives a new joint distribution:
     $$
     P_{X_j = x_j^k}(x_1, \ldots, x_n) =
     \begin{cases}
@@ -1261,10 +1470,11 @@ _Mutilated graph_
 
 - **Difference between observation and intervention**
     $$\Pr(Y | do(X=x) \ne \Pr(Y | X)$$
-  - Observing $S = \text{true}$ _provides information_ about its causes (e.g.,
-    weather)
+  - Observing $S = \text{true}$ _provides information_ about its causes
+    - E.g., information about weather (and the Markov blanket)
   - Intervening with $\text{do}(S = \text{true})$ _breaks_ those causal
-    dependencies (e.g., it doesn't inform about the weather)
+    dependencies
+    - E.g., it doesn't inform about anything
 
 * Intervention
 - **Estimate causal effect** of $X_j$ on $X_i$ with adjustment formula:
@@ -1274,10 +1484,9 @@ _Mutilated graph_
     $$
 
 - **Example**
-  - In the Sprinkler model) $\text{do}(S=\text{true})$ $\rightarrow$ gives the
-    new distribution:
+  - In the Sprinkler model $do(S=\text{true})$, gives the new distribution:
     $$
-    \Pr(c, r, w, g | \text{do}(S=\text{true})) = \Pr(c)\Pr(r|c)\Pr(w|r, S=\text{true})\Pr(g|w)
+    \Pr(c, r, w, g | do(S=true)) = \Pr(c)\Pr(r|c)\Pr(w|r, S=true)\Pr(g|w)
     $$
     - Only descendants of $Sprinkler$ (i.e., $WetGrass$) change
     - $Weather$ and $Rain$ remain unaffected
@@ -1288,13 +1497,12 @@ _Mutilated graph_
     and change X?_
 
 * Counterfactuals
-
-- A **counterfactual** describes what would have happened under a different
-  scenario
-  - _"What would the outcome have been if X had been different?"_
+- A **counterfactual** describes what would have happened in the past under a
+  different scenario
+  - _"What would the outcome have been, if X had been different?"_
 
 - **Business examples**
-  - _"What if we had two suppliers instead of one? Would we have more sales?"_
+  - _"What if we had two suppliers instead of one? Would we have fewer delays?"_
   - _"Would customers be more satisfied if we shipped products in one week
     instead of three?"_
   - That's what businesses want, but they can't get it from correlation-based
@@ -1313,7 +1521,6 @@ _Mutilated graph_
   - Difficult to validate directly since counterfactuals are unobservable
 
 * Causal Discovery
-
 - **Definition**
   - Causal discovery learns causal network structure from data
   - Identify which variables directly cause others (learn causal directions, not
@@ -1331,7 +1538,7 @@ _Mutilated graph_
     - If $X$ and $Y$ are independent given $Z$, this constrains possible arrows
 
 - **Dealing with complexity**
-  - Possible network structures grow superexponentially with the number of
+  - Possible network structures grow super-exponentially with the number of
     variables
   - Complexity penalties to avoid overfitting
 
@@ -1340,12 +1547,12 @@ _Mutilated graph_
   - Under certain assumptions, infer causality from observational data not only
     from experiments
 
-## Randomized Controlled Treatment
+## Randomized Controlled Trial
 
-* What is a Randomized Controlled Treatment?
+* What is a Randomized Controlled Trial?
 - **RCTs estimate causal effects** by comparing treatment and control groups
   - Randomly assign treatment, not chosen by subjects
-    - E.g., assign new drug vs placebo by lottery
+    - E.g., assign new drug vs placebo by flipping a coin
   - Ensure groups are statistically equivalent except for treatment
   - Isolate treatment effect
 
@@ -1361,14 +1568,14 @@ _Mutilated graph_
   - Foundation for scientific experimentation and evidence-based policy
   - Gold standard of causal inference (when feasible)
 
-* Randomized Controlled Treatment: Example
+* Randomized Controlled Trial: Example
 - **Research question**: _"Does offering an after-school tutoring program
   increase the probability that a student passes the end-of-term exam?"_
 
 - **Population**: eligible students in a district with proper sample size $n$
 
 - **Treatment and control**
-  - $X = 1$ (treatment): student is offered/assigned to tutoring.
+  - $X = 1$ (treatment): student is offered/assigned to tutoring
   - $X = 0$ (control): student is not offered tutoring
 
 - **Assignment mechanism (RCT)**
@@ -1382,12 +1589,12 @@ _Mutilated graph_
     control
   - Measure and report $Y_{X=1} - Y_{X=0}$
 
-* Randomized Controlled Treatment: Limits
+* Randomized Controlled Trial: Limits
 - **May be unethical**
   - E.g., assigning harmful treatment
   - E.g., you want to verify if asbestos causes cancer
 
-- Can be **expensive or impractical**
+- **Can be expensive or impractical**
 
 - **It doesn't always work**
   - Non-compliance: some participants may not follow assigned treatment
@@ -1464,60 +1671,146 @@ digraph CausalDAG {
     observational data (level 1 of the causality ladder)
     - Correlation implies causation
   - This is an alternative to randomized controlled experiments
-    - Foundation of many empirical studies in epidemiology, economics, and social science
   - **Mind blown!**
 
 * Back-Door Criterion: Overview
-- A **back-door path** is any path from $X$ to $Y$ that starts with an arrow into
-  $X$ and ends into $Y$
-  - The direction of the arrow doesn't matter
-  - If unblocked, back-door paths create spurious associations
+- A **back-door path** is any path from $X$ to $Y$ starting with an arrow into
+  $X$ and ending pointing into $Y$
+  - E.g., $X \leftrightarrow ... \leftrightarrow ... \rightarrow Y$
+  - Arrow direction doesn't matter
+  - Unblocked paths create spurious associations
+  - _Intuition_: Paths make $X$ and $Y$ look related even if changing $X$
+    doesn't change $Y$
 
-- **Back-door criterion**
-  - A set of variables $Z$ satisfies the back-door criterion relative to $(X, Y)$ if:
-    - No variable in $Z$ is a descendant of $X$
-    - $Z$ blocks every path from $X$ to $Y$ that starts with an arrow into $X$
+- **Back-door criterion**: A set of variables $Z$ satisfies the criterion
+  relative to $X \leftrightarrow ... Z ... \rightarrow Y$ if:
+  - No variable in $Z$ is a descendant of $X$
+  - $Z$ blocks every path from $X$ to $Y$ starting with an arrow into $X$
+  - _Intuition_: Block variables that interfere with the effect you're
+    estimating and remove paths where $X$ and $Y$ connect through common causes
 
+- Condition on variables satisfying the back-door criterion to estimate a causal
+  effect without intervention
+  - This guy won the Nobel prize for CS for this! **Mind blown!**
 
 * Chains, Forks, and Colliders
+::: columns
+:::: {.column width=60%}
 - In a **chain** $X \rightarrow M \rightarrow Y$
   - Conditioning on $M$ blocks causal effect
-  - _Do not do it_!
+  - Mediators must remain unconditioned
+  - ![](emoji/skull.png){ width=14px } _Do not do it_!
+::::
+:::: {.column width=35%}
+```graphviz
+digraph CausalFlow {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+    rankdir=LR;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    X [fillcolor="#A6C8F4", label="X"];
+    M [fillcolor="#F4A6A6", label="M"];
+    Y [fillcolor="#A6C8F4", label="Y"];
+
+    X -> M;
+    M -> Y;
+}
+```
+::::
+:::
+
+\vspace{1.0cm}
+
+::: columns
+:::: {.column width=60%}
 - In a **fork** $X \leftarrow Z \rightarrow Y$
   - Conditioning on $Z$ removes confounding
-  - _Need to do it_!
+  - ![](emoji/emoji_smile.png){ width=12px } _Need to do it_!
+::::
+:::: {.column width=35%}
+```graphviz[width=60%]
+digraph CausalDAG {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    X [fillcolor="#F4A6A6"];
+    C [fillcolor="#A6C8F4"];
+    D [fillcolor="#A6C8F4"];
+
+    {rank=same; C; D;}
+
+    X -> C;
+    X -> D;
+}
+```
+::::
+:::
+
+\vspace{0.5cm}
+
+::: columns
+:::: {.column width=60%}
 - In a **collider** $X \rightarrow M \leftarrow Y$
   - Conditioning on $M$ introduces bias
-  - _Do not do it_!
+  - Colliders must remain unconditioned
+  - ![](emoji/skull.png){ width=14px } _do not do it_!
+::::
+:::: {.column width=35%}
+```graphviz[width=60%]
+digraph ColliderExample {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
 
-- Back-door requires to block confounders / forks, not colliders / inverted forks
-  - Colliders must remain unconditioned unless for specific causal queries
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
 
-- It is essential to read and interpret graph structure correctly
+    X [label="X", fillcolor="#A6C8F4"];
+    Y [label="Y", fillcolor="#A6C8F4"];
+    Z [label="Z", fillcolor="#F4A6A6"];
+
+    {rank=same; X; Y;}
+
+    X -> Z;
+    Y -> Z;
+}
+```
+::::
+:::
 
 * Common Mistakes
 - The back-door criterion tells you all and only what you need to condition on
-  (i.e., block) to transform observation in intervention
+  (i.e., block) to:
+  - Transform observation in intervention
+  - Say that "correlation IS causation"
 
-- The solution that people use is to "condition on everything"
+- Before this, the solution that researchers used was to "condition on everything"
   - **This is incorrect!**
 
 - **Common mistakes**
   - Conditioning on a descendant of $X$ can bias the estimate
   - Controlling for too many variables can open colliders and introduce bias
   - Forgetting to block all back-door paths
-  - Using variables that lie on the causal path (blocks the effect)
+  - Using variables that lie on the causal path (blocks the mediator of the
+    effect)
   - Ignoring unobserved confounders: can make causal effect unidentifiable
 
 - **1000s of papers and their conclusions are wrong!**
-  - In medicine, economics, social science that use observational study
-    incorrectly 
+  - In medicine, economics, social science people have used observational study
+    incorrectly
 
 * When Back-Door Adjustment Fails
 - **Back-door is simple but not universally applicable**
   - No set of observable variables satisfies the back-door criterion
     - In order to condition on a variable it needs to be observable
     - E.g., an unobserved or unknown confounders
+  - You need to know a good approximation of the true causal graph
+    - Very easy to omit variables
 
 - **Alternatives**:
   - _Front-door criterion_: uses mediators
@@ -1574,17 +1867,17 @@ digraph CerealAds {
   \begingroup \small
   $$P(Y \mid do(X)) = \sum_m P(M \mid X) \sum_{x'} P(Y \mid M, X') P(X')$$
   \endgroup
-  - Intuition: estimate observed link $X \to M$ and $M \to Y$
+  - _Intuition_: estimate observed link $X \to M$ and $M \to Y$
 
 * Cereal and Ads: Example
 ::: columns
 :::: {.column width=50%}
 - **Research question**: _"Does watching ads (X) make people buy more cereal (Y)?"_
 
-- **Of course!**
+- You might think **yes, of course!**, I say **no, not so fast!**
 
 - **Hidden factor**: _"Parents who care about breakfast (U)"_ might:
-  - Let kids watch more TV and see ads
+  - Let kids watch more TV to have them eat breakfast and see ads
   - Buy more cereal anyway
 ::::
 :::: {.column width=45%}
@@ -1597,9 +1890,9 @@ digraph CerealAds {
 
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
 
-    X [label="X\n(Watches ads)", fillcolor="#A6C8F4"];
-    U [label="U\n(Cares about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
-    Y [label="Y\n(Buys cereal)", fillcolor="#FFD1A6"];
+    X [label="X\n(Watch ads)", fillcolor="#A6C8F4"];
+    U [label="U\n(Care about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
+    Y [label="Y\n(Buy cereal)", fillcolor="#FFD1A6"];
 
     { rank=same; X; Y; }
 
@@ -1611,7 +1904,7 @@ digraph CerealAds {
 ::::
 :::
 
-- Hidden factor $U$ confounds "watching ads" and "buying cereals"
+- Hidden factor $U$ confounds "Watch ads" and "Buy cereals"
   - Correlation exists even if ads don't cause it
   - Observing $X$ and $Y$ without controlling for $U$ leads to spurious
     association
@@ -1619,20 +1912,20 @@ digraph CerealAds {
 
 - A spurious relationship is **terrible for the business**!
   - It means you spend money on ads and that doesn't matter
-  - Google and Facebook are worth $3T and it's all predicated on "buy ads" to
-    "increase sales"
+  - Google and Facebook are worth \$3T and it's all predicated on "Watch ads"
+    $\implies$ "Buy stuff"
 
 * Cereal and Ads: Solutions
-- **Strategy 1: Back-Door adjustment**
+- **Strategy 1: Back-door adjustment**
   - If you _know_ and can _measure_ $U$ "how much parents care about breakfast",
     include $U$ as a control variable in analysis
-  - Intuition:
+  - _Intuition_:
     - Compare families with _the same_ breakfast attitudes ($U$ fixed)
     - See if ads ($X$) still change cereal buying ($Y$)
 
 - **Strategy 2: Use randomization**
   - Randomized experiments break link between $X$ and $U$
-    - Randomly show ads to some families, not others
+    - Randomly show ads to some families and not others
     - Randomization ignores parental breakfast attitude; differences in buying
       come from ads
   - This is why controlled experiments are gold standard for causal inference
@@ -1658,7 +1951,9 @@ digraph CerealAds {
 ::: columns
 :::: {.column width=45%}
 - So the **causal chain** is:
-  - Ads $(X)$ $\to$ Kids Nagging $(M)$ $\to$ Parents Buy Cereal $(Y)$
+  - Ads $(X)$ $\to$ ...
+  - Kids Nagging $(M)$ $\to$ ...
+  - Parents Buy Cereal $(Y)$
 - The hidden factor _"parents that care about breakfast"_ $U$:
   - Affects how much cereal gets bought
   - Doesn't affect how much kids nag (only ads do that)
@@ -1673,10 +1968,10 @@ digraph CerealAds {
 
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
 
-    U [label="U\n(Cares about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
-    X [label="X\n(Watches ads)", fillcolor="#A6C8F4"];
+    U [label="U\n(Care about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
+    X [label="X\n(Watch ads)", fillcolor="#A6C8F4"];
     M [label="M\n(Kids nag)", fillcolor="#C6A6F4"];
-    Y [label="Y\n(Buys cereal)", fillcolor="#FFD1A6"];
+    Y [label="Y\n(Buy cereal)", fillcolor="#FFD1A6"];
 
     { rank=same; X; Y; M }
 
@@ -1708,10 +2003,10 @@ digraph CerealAds {
 
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
 
-    U [label="U\n(Cares about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
-    X [label="X\n(Watches ads)", fillcolor="#A6C8F4"];
+    U [label="U\n(Care about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
+    X [label="X\n(Watch ads)", fillcolor="#A6C8F4"];
     M [label="M\n(Kids nag)", fillcolor="#C6A6F4"];
-    Y [label="Y\n(Buys cereal)", fillcolor="#FFD1A6"];
+    Y [label="Y\n(Buy cereal)", fillcolor="#FFD1A6"];
 
     { rank=same; X; Y; M }
 
@@ -1727,11 +2022,11 @@ digraph CerealAds {
 - **Yes! The front-door criterion is verified**
 
 - Instead of doing an intervention $do(X)$, just observe!
-  1. Observe how often ads make kids nag ($\Pr(M | X)$)
-  2. Observe nagging changes buying ($\Pr(Y | M, X')$)
+  1. Observe how often ads make kids nag, $\Pr(M | X)$
+  2. Observe nagging changes buying, $\Pr(Y | M, X')$
   3. Combine both to estimate what happens if you _force_ more ads
      $$\Pr(Y | do(X)) = \sum_m \Pr(M | X) \sum_{x'} \Pr(Y | M, X') \Pr(X')$$
-     - Intuition: "How ads cause nagging" × "How nagging causes buying"
+     - _Intuition_: "How ads cause nagging" × "How nagging causes buying"
 
 ## Do-Calculus
 
@@ -1739,65 +2034,68 @@ digraph CerealAds {
 - **Do-calculus** is a formal system for reasoning about causal effects in
   graphical models (Judea Pearl, 2000)
 
-- Provides algebraic rules to transform intervention expressions (do-operator,
-  e.g., do(X = x)) into expressions computable from observational data, given
-  certain conditions
+- **Problem**
+  - You care about **causal effects** like:
+    $$
+    \Pr(Y | do(X = x))
+    $$
+    - I.e., distribution of $Y$ if you intervene and set $X$ to $x$, breaking
+      causal links into $X$
 
-- Identify causal effects like:
-  $$
-  \Pr(Y | do(X = x))
-  $$
-  - I.e., distribution of $Y$ if you intervene and set $X$ to $x$, breaking
-    causal links into $X$
+  - You have **observational data** like:
+    $$
+    \Pr(Y | X = x)
+    $$
+  - In general $\Pr(Y | X) \ne \Pr(Y | do(X = x))$ due to "correlation is not
+    causation" (confounding, ...)
 
-- Observational data provides:
-  $$
-  \Pr(Y | X = x)
-  $$
-  - This is generally **not equal** to $\Pr(Y | do(X = x))$ due to confounding
+- **Solution**: do-calculus provides algebraic rules to transform intervention
+  expressions (do-operator, i.e.,, $do(X = x)$) into expressions computable from
+  observational data, given certain conditions
 
 * The Rules of Do-Calculus
 - Do-calculus provides **three transformation rules** for manipulating
   expressions involving $do()$:
 
-1. **Insertion/Deletion of Observations:**
-   If $Y \perp Z \mid X, W$ in $G_{\overline{X}}$ (where incoming edges to X
-   are removed), then:
-   $$P(Y \mid do(X), Z, W) = P(Y \mid do(X), W)$$
+  1. **Insertion/Deletion of Observations:**
+     If $Y \perp Z \mid X, W$ in $G_{\overline{X}}$ (where incoming edges to X
+     are removed), then:
+     $$\Pr(Y \mid do(X), Z, W) = \Pr(Y \mid do(X), W)$$
 
-2. **Action/Observation Exchange:**
-   If $Y \perp Z \mid X, W$ in $G_{\overline{X}, \underline{Z}}$ (incoming edges
-   to X removed, outgoing from Z removed), then:
-   $$P(Y \mid do(X), do(Z), W) = P(Y \mid do(X), Z, W)$$
+  2. **Action/Observation Exchange:**
+     If $Y \perp Z \mid X, W$ in $G_{\overline{X}, \underline{Z}}$ (incoming edges
+     to X removed, outgoing from Z removed), then:
+     $$\Pr(Y \mid do(X), do(Z), W) = \Pr(Y \mid do(X), Z, W)$$
 
-3. **Insertion/Deletion of Actions:**
-   If $Y \perp Z \mid X, W$ in $G_{\overline{X}, \overline{Z(W)}}$ (incoming
-   edges to X and to Z excluding those from W removed), then:
-   $$P(Y \mid do(X), do(Z), W) = P(Y \mid do(X), W)$$
+  3. **Insertion/Deletion of Actions:**
+     If $Y \perp Z \mid X, W$ in $G_{\overline{X}, \overline{Z(W)}}$ (incoming
+     edges to X and to Z excluding those from W removed), then:
+     $$\Pr(Y \mid do(X), do(Z), W) = \Pr(Y \mid do(X), W)$$
 
 - These rules allow the systematic reduction of expressions involving $do()$ into
-  observational terms if the causal graph permits
+  observational terms, if the causal graph permits
 
-* Back-door and Front-door Adjustments and do-calculus
+* Back/Front-door Adjustments and Do-calculus
 - The **back-door** and **front-door** criteria are **specific applications** of
   do-calculus
-- They are simpler, graphical conditions that allow $P(Y \mid do(X))$ to be
-  expressed using observational probabilities
+  - They are simpler, graphical conditions that allow $P(Y \mid do(X))$ to be
+    expressed using observational probabilities
 
-- Back-door adjustment
-  If a set of variables $Z$ blocks all **back-door paths** from X to Y (paths that go into X), then:
+- **Back-door adjustment**: If a set of variables $Z$ blocks all back-door
+  paths from $X$ to $Y$ (paths that go into $X$), then:
   $$
-  P(Y \mid do(X)) = \sum_z P(Y \mid X, Z) P(Z)
+  \Pr(Y | do(X)) = \sum_z \Pr(Y | X, Z) \Pr(Z)
   $$
 
-- Front-door adjustment
-  If there exists a variable $Z$ such that:
-  1. Z is affected by X,
-  2. Z affects Y,
-  3. All back-door paths from X to Z are blocked, and
-  4. All back-door paths from Z to Y are blocked by X,
+- **Front-door adjustment**: If there exists a variable $Z$ such that:
+  1. Z is affected by X
+  2. Z affects Y
+  3. All back-door paths from X to Z are blocked
+  4. All back-door paths from Z to Y are blocked by X
   then:
   $$
-  P(Y \mid do(X)) = \sum_z P(Z \mid X) \sum_{x'} P(Y \mid Z, X') P(X')
+  \Pr(Y | do(X)) = \sum_z \Pr(Z | X) \sum_{x'} \Pr(Y | Z, X') \Pr(X')
   $$
 
+// Propensity score
+// Significance tests
