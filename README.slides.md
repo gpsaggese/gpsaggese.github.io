@@ -105,4 +105,5 @@ rsync -avz -e "ssh -i ~/.ssh/ck/saggese-cryptomatic.pem" saggese@$DEV1:/data/sag
 
 ##
 
-llm_cli.py --input data605/lectures_source/Lesson11.2-AWS_Overview.txt -pf "fix_slides.prompt.md" -o improved11.2.md --model "gpt-4o" -b
+FILE=data605/lectures_source/Lesson09.2-Spark_Primitives.txt
+llm_cli.py --input $FILE -pf "fix_slides.prompt.md" -o improved.md --model "gpt-4o" -b

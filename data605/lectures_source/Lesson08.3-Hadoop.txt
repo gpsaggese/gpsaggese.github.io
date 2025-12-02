@@ -37,10 +37,6 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-# Apache Hadoop
-
-## Hadoop Ecosystem
-
 * Hadoop Ecosystem (aka Hadoop Zoo)
 :::columns
 ::::{.column width=50%}
@@ -72,8 +68,6 @@ UMD DATA605 - Big Data Systems
 
 - **YARN, Kafka, Storm, Spark, Solr, ...**
 
-## Hadoop Distributed File System
-
 * Hadoop Distributed File System (HDFS)
 ::: columns
 :::: {.column width=60%}
@@ -89,7 +83,6 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=35%}
 
 ![](data605/lectures_source/images/lecture_8_3/lec_8_3_slide_1_image_1.png)
-
 
 ::::
 :::
@@ -171,8 +164,6 @@ UMD DATA605 - Big Data Systems
   - Not suitable for transactional systems (OLTP)
     - E.g., bank
 
-## Hadoop MapReduce
-
 * MapReduce: Hadoop
 
 ::: columns
@@ -195,49 +186,3 @@ UMD DATA605 - Big Data Systems
   - Output adapters
     - E.g., Avro, ORC, Parquet
   - Schedule multiple _MapReduce_ jobs
-
-* Data Flow
-- Store input, intermediate, final outputs in HDFS
-  - Operations in Hadoop move disk to disk
-
-- Use adapters to read/partition data in chunks
-
-- Scheduler places map tasks near physical storage of input data
-  - Store intermediate results on local FS of Map and Reduce workers
-
-- Output often serves as input for another MapReduce task
-
-* Hadoop MapReduce: Overview
-- Programming model for distributed data processing
-- Processes data in parallel across a cluster
-- Consists of two main functions:
-  - Map: filters and sorts input data
-  - Reduce: aggregates intermediate outputs
-- Suited for batch jobs over large datasets
-- Fault-tolerant: tasks are retried upon failure
-
-* MapReduce: Execution Phases
-- Input data split into chunks processed by Mappers
-- Mapper outputs key-value pairs
-- Shuffle and Sort: organizes data by key
-  - Intermediate keys are grouped and sent to Reducers
-- Reducers aggregate values by key
-- Final output written back to HDFS
-
-* HDFS vs MapReduce: Complementary Roles
-- HDFS: distributed storage system
-  - Stores large datasets efficiently
-- MapReduce: distributed compute model
-  - Processes data stored in HDFS
-- Together enable scalable and fault-tolerant data analysis
-
-* Benefits and Limitations
-- **Benefits**
-  - Scalable and fault-tolerant
-  - Handles petabytes of data
-  - Open-source and cost-effective
-
-- **Limitations**
-  - High latency, not suitable for real-time
-  - Difficult for complex iterative algorithms
-  - Superseded in many cases by Spark and other engines
