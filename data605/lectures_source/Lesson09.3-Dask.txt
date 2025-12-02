@@ -131,7 +131,7 @@ UMD DATA605 - Big Data Systems
 
 * Scaling Up vs Scaling Out
 ::: columns
-:::: {.column width=80%}
+:::: {.column width=70%}
 - **Scaling up**
   - Replace equipment with larger, faster options
     - E.g., buy a larger pot, replace knife with food processor
@@ -141,7 +141,7 @@ UMD DATA605 - Big Data Systems
     - Exceed current machine capacity eventually
     - Cost: more powerful machines are expensive
 ::::
-:::: {.column width=15%}
+:::: {.column width=25%}
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_7_image_1.png)
 ::::
 :::
@@ -149,7 +149,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 ::: columns
-:::: {.column width=80%}
+:::: {.column width=70%}
 - **Scaling out**
   - Divide work between many workers in parallel
     - E.g., buy more pots and hire more cooks
@@ -160,7 +160,7 @@ UMD DATA605 - Big Data Systems
     - Write code to expose parallelism
     - Maintain cluster costs
 ::::
-:::: {.column width=15%}
+:::: {.column width=25%}
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_7_image_2.png)
 ::::
 :::
@@ -186,9 +186,8 @@ UMD DATA605 - Big Data Systems
 - `persist()`
   - Discard intermediate work to minimize memory
   - Re-run graph for additional computation on intermediate nodes
-  - `persist()` keeps intermediate result in memory
-  - Speeds up large, complex DAGs for reuse
-
+  - Keep intermediate result in memory
+  - Speed up large, complex DAGs for reuse
 
 * Dask: Data Structures
 ::: columns
@@ -218,170 +217,172 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=75%}
 - **Dask Bag**
   - Coordinates Python lists of objects
   - Parallelize computations on unstructured/semi-structured data
 ::::
-:::: {.column width=30%}
+:::: {.column width=20%}
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_9_image_3.png)
 ::::
 :::
 
 * Dask Reading Data
 ::: columns
-:::: {.column width=40%}
-- dask.dataframe.read_csv()
-  - Doesn't load the data in memory with 
-  - Tries to infer the types of the columns
-    - By randomly sampling some data
-    - Best to set the data types
-    - Even better is to use Parquet since it stores data and types together
-- Partitions = chunks of data that can be worked independently
-  - E.g., 33 partitions
-  - Graph is composed of 99 tasks
-  - Each partition reads data, splits data, initializes df object
+:::: {.column width=55%}
+- Consider:
 
-```python
+  \scriptsize
+  ```python
   import dask.dataframe as dd
-
   df = dd.read_csv('nyc-parking-tickets-2017.csv')
-
   missing_values = df.isnull().sum()
-
   missing_values 
-```
+  ```
 ::::
 :::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_10_image_1.png)
 ::::
-:::: {.column width=20%}
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_10_image_2.png)
+:::
+
+\vspace{0.5cm}
+
+::: columns
+:::: {.column width=65%}
+- `dask.dataframe.read_csv()`
+  - Doesn't load data in memory
+  - Infers column types
+    - Samples data
+    - Set data types
+    - Use Parquet for data and types together
+
+- Partitions = independent data chunks
+  - E.g., 33 partitions
+  - Graph = 99 tasks
+  - Each partition reads, splits data, initializes df object
+::::
+:::: {.column width=30%}
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_10_image_2.png){height=60%}
 ::::
 :::
 
 * Low Level APIs: Delayed
+- Handle computations that don't fit in native Dask data structures
+  - E.g., Dask DataFrame
+- In the example below there is parallelism that can be exploited
+
 ::: columns
 :::: {.column width=40%}
-- Handle computations that don't fit in native Dask data structures (e.g., Dask DataFrame)
-- In the example below there is parallelism that can be exploited
+
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_11_image_1.png)
 ::::
 :::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_11_image_2.png) 
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_11_image_2.png){height=60%}
 ::::
 :::
 
 * Low Level APIs: Futures
 ::: columns
-:::: {.column width=40%}
-- In parallel programming, a "future" encapsulates the asynchronous execution of a callable, representing the eventual result of the operation
-- Futures is the most general way of specifying concurrency in Dask
-  - Everything can be expressed in terms of futures
-  - User can specify what's blocking and what's not blocking
-- Python** concurrent.futures**
-  - High-level interface for asynchronously executing callables
-  - Thread pool or Process pool (same interface **Executor**)
-- Dask extends **concurrent.futures**
-  - Dask client can be used anywhere **concurrent.futures** can be used
+:::: {.column width=45%}
+- In parallel programming, a "future" encapsulates asynchronous execution,
+  representing the eventual result
+
+- Python `concurrent.futures`
+  - High-level interface for asynchronous execution
+  - Thread pool or Process pool (`Executor` interface)
+
+- Dask extends `concurrent.futures`
+  - Express everything as futures
+  - Specify blocking and non-blocking
+
 ::::
-:::: {.column width=40%}
+:::: {.column width=50%}
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_12_image_1.png)
 
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_12_image_2.png)
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_12_image_2.png){width=50%}
 
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_12_image_3.png)
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_12_image_3.png){width=150%}
 
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_12_image_4.png)
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_12_image_4.png){width=150%}
 ::::
 :::
 
 * Different Types of Parallel Workload
-::: columns
-:::: {.column width=50%}
 - Break program in medium-size tasks of computation
   - E.g., a function call
+
+::: columns
+:::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_13_image_2.png)
 ::::
-:::: {.column width=50%}
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_13_image_1.png)
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_13_image_3.png)
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_13_image_1.png){width=80%}
 ::::
 :::
+\center
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_13_image_3.png){width=40%}
 
 * Encoding Task Graph
-
 - Dask encodes tasks in terms of Python dicts and functions
-::: columns
-:::: {.column width=33%}
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_1.png)
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_4.png)
-::::
-:::: {.column width=33%}
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_2.png)
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_5.png)
-::::
-:::: {.column width=33%}
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_3.png)
-::::
-:::
+
+\center
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_1.png){width=10cm}
+
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_14_image_2.png){width=10cm}
 
 * Task Scheduling
-- Data collections (Bags, Arrays, DataFrame) and their operations create task graphs
-  - Nodes in the task graph are Python functions
-  - Edges are dependencies (e.g., output from one task used as input in another task)
-- Task graphs are scheduled for execution
-- Single-machine scheduler
-  - Use local process or thread pool
-  - Simple but it can only run on a single machine
-- Distributed scheduler
-  - It can run locally or distributed across a cluster
+- Data collections (Bags, Arrays, DataFrame) and operations create task graphs
+  - Nodes: Python functions
+  - Edges: Dependencies (output from one task used as input in another)
 
-![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_15_image_1.png) \footnotesize
+- Schedule task graphs for execution
+  - Single-machine scheduler
+    - Use local process or thread pool
+    - Runs on a single machine
+  - Distributed scheduler
+    - Runs locally or across a cluster
 
+![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_15_image_1.png)
 
 * Task Scheduling
+- **Dask task scheduler orchestrates work dynamically**
+  - Not static scheduling like a relational DB
+  - During computation, Dask dynamically assesses:
+    - Completed tasks
+    - Remaining tasks
+    - Free resources (CPUs)
+    - Data location
+
 ::: columns
-:::: {.column width=40%}
-- **Dask task scheduler orchestrates the work dynamically**
-  - Not a static scheduling of operations like a relational DB
-  - When the computation takes place, Dask dynamically assesses:
-    - What tasks has been completed
-    - What tasks is left to do
-    - What resources (CPUs) are free
-    - Where the data is located
-- **This dynamic approach handles a variety issues:**
+:::: {.column width=50%}
+- **Dynamic approach handles various issues**
   - Worker failure
-    - Just re-run
-  - Workers completing work at different speeds because of:
+    - Re-run tasks
+  - Workers completing at different speeds due to:
     - Different computation
     - Different hardware
-    - Different workloads on the servers
-    - Slower access to the data
+    - Varying server workloads
+    - Slower data access
   - Network unreliability
-    - Just re-run or remove the isolated nodes
+    - Re-run or remove isolated nodes
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_9_2/lec_9_2_slide_16_image_1.png)
 ::::
 :::
-* Dask vs Spark
-- Spark has
-- **Pros**
-  - Popular framework for analyzing large datasets
-  - In-memory alternative to MapReduce / Hadoop
-- **Cons**
-  - Spark is a Java library, supporting Python through PySpark API
-    - Python code is executed on JVM through `py4j`
-    - Difficult to debug since execution occurs outside Python
-  - Different DataFrame API than Pandas
-    - Learn how to do things "the Spark way"
-    - You might need to implement things twice to go from exploratory analysis to large experiments / production
-  - Optimized for MapReduce operations over a collection
-  - Difficult to set-up and configure
 
-* Tutorial
-Tutorial
-- From the official documentation
-https://docs.dask.org/en/stable/10-minutes-to-dask.html
+* Dask vs Spark
+- **Pros**
+  - Popular framework for large datasets
+  - In-memory alternative to MapReduce/Hadoop
+
+- **Cons**
+  - Java library, supports Python via PySpark API
+    - Python code runs on JVM
+    - Debugging is difficult as execution is outside Python
+  - Different DataFrame API than Pandas
+    - Learn "the Spark way"
+    - May need to implement twice for exploratory analysis and production
+  - Optimized for MapReduce operations
+  - Difficult to set up and configure
