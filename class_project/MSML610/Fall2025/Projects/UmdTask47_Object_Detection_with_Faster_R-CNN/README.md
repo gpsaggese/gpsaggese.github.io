@@ -75,3 +75,34 @@ UmdTask47_Object_Detection_with_Faster_R-CNN/
 - 🚧 Fine-tune Code
 
 - 🚧 Performance Evaluation
+
+## Some Demos
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .image-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .image-grid img {
+            width: 48%; 
+            height: auto; 
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <div class="image-grid">
+        <img src="./demos/001150_dog.jpg" title="Result 1"/>
+        <img src="./demos/001150_person.jpg" title="Result 2"/>
+        <img src="./demos/001763_cat.jpg" title="Result 3"/>
+        <img src="./demos/001763_dog.jpg" title="Result 4"/>
+    </div>
+</body>
+</html>
