@@ -97,12 +97,6 @@ def preprocess_for_causal(df: pd.DataFrame,
 class CausalNavigator:
     """
     A unified interface for CausalML meta-learners.
-    
-    This class wraps the complexity of:
-    1. Propensity Score Estimation (for overlap checks)
-    2. Meta-Learner Initialization (S-Learner, T-Learner, X-Learner)
-    3. CATE Estimation
-    4. Visualization of Heterogeneity
     """
     def __init__(self, 
                  learner_type: str = 'X', 
@@ -283,6 +277,61 @@ class CausalNavigator:
         plt.xlabel('Estimated ATE')
         plt.legend()
         plt.show()
+
+    def run_sensitivity_analysis(self, X: pd.DataFrame, T: pd.Series, Y: pd.Series):
+        """
+        Performs a Sensitivity Analysis by iteratively removing covariates.
+        
+        Purpose: Tests model stability. If removing a single confounder (e.g., 'Age') 
+        drastically changes the ATE, the result is highly sensitive to that variable.
+        If the ATE remains stable across removals, the causal finding is robust.
+        """
+        print("Running Sensitivity Analysis (Covariate Removal)...")
+        # Establish Baseline
+        if self.cate_estimates is None:
+            self.fit_estimate(X, T, Y)
+        baseline_ate = self.cate_estimates.mean()
+        print(f"   Baseline ATE: {baseline_ate:.5f}")
+        sensitivity_results = {}
+        # Iterate through covariates
+        T_proc = T.copy()
+        unique_vals = sorted(T_proc.unique())
+        if self.control_name not in unique_vals:
+            map_dict = {0: self.control_name, 1: self.treatment_name, 
+                        0.0: self.control_name, 1.0: self.treatment_name}
+            T_proc = T_proc.map(lambda x: map_dict.get(x, x))
+        # We create a new learner instance for each iteration to ensure a clean state
+        for feature in X.columns:
+            print(f"   ... testing robustness without '{feature}'")
+            X_drop = X.drop(columns=[feature])        
+            # Re-initialize learner (same type as original)
+            if self.learner_type == 'X':
+                temp_learner = BaseXRegressor(learner=self.model_y, control_name=self.control_name)
+            elif self.learner_type == 'T':
+                temp_learner = BaseTRegressor(learner=self.model_y, control_name=self.control_name)
+            else:
+                temp_learner = BaseSRegressor(learner=self.model_y, control_name=self.control_name)
+            # Estimate
+            cate_drop = temp_learner.fit_predict(X=X_drop, treatment=T_proc, y=Y)
+            if cate_drop.ndim > 1: cate_drop = cate_drop.flatten()            
+            sensitivity_results[feature] = cate_drop.mean()
+        # Visualization
+        # Convert to DF for plotting
+        sens_df = pd.DataFrame.from_dict(sensitivity_results, orient='index', columns=['ATE'])
+        sens_df = sens_df.sort_values(by='ATE')
+        plt.figure(figsize=(10, 8))
+        # Plot bars
+        sns.barplot(x=sens_df['ATE'], y=sens_df.index, palette='viridis')
+        # Add baseline reference line
+        plt.axvline(baseline_ate, color='red', linestyle='--', linewidth=2, label=f'Baseline ({baseline_ate:.4f})')
+        plt.axvline(0, color='black', linestyle='-', linewidth=1)
+        plt.title('Sensitivity Analysis: ATE Stability upon Covariate Removal')
+        plt.xlabel('Estimated ATE')
+        plt.ylabel('Removed Covariate')
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+        print("Interpretation: Variables causing large shifts from the red line are critical confounders.")
 
     def compare_estimators(self, X: pd.DataFrame, T: pd.Series, Y: pd.Series):
         """

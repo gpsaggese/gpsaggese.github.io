@@ -73,6 +73,14 @@ navigator = CausalNavigator(
 - **Success Criteria:** The "Placebo ATE" should cluster around 0. The "Actual ATE" should be far outside this distribution.
 - **Interpretation:** If the Actual Effect falls inside the Placebo distribution, the result is statistically indistinguishable from noise.
 
+#### `run_sensitivity_analysis(X, T, Y)`
+**Purpose:** Quantifies the stability of the causal estimate.
+- **Logic:** Iteratively removes one covariate at a time (e.g., removing 'Age', then 'Income') and re-calculates the Average Treatment Effect (ATE).
+- **Output:** A horizontal bar chart showing the ATE for each scenario compared to the baseline.
+- **Interpretation:** 
+    - **Stable:** Bars cluster near the baseline (red line).
+    - **Sensitive:** A bar shifts significantly (or crosses zero), indicating that specific variable drives the result.
+
 #### `compare_estimators(X, T, Y)`
 **Purpose:** Advanced model selection ("Horse Race").
 - **Methodology:** Splits data into Train (70%) and Test (30%). Trains S, T, X, R, and DR learners on the training set.
