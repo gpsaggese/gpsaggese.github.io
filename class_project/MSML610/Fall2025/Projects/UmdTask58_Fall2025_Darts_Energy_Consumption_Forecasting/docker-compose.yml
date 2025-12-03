@@ -1,0 +1,118 @@
+# Docker Compose configuration for Energy Consumption Forecasting
+# 
+# Usage:
+#   Development:  docker-compose up dev
+#   Production:   docker-compose up prod
+#   Script only:  docker-compose run --rm script
+#
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # ===========================================================================
+  # Development Service - JupyterLab with hot reload
+  # ===========================================================================
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: darts-dev
+    ports:
+      - "8888:8888"
+    volumes:
+      # Mount source code for live editing
+      - .:/app
+      # Persist Jupyter settings
+      - jupyter_data:/home/appuser/.jupyter
+      # Mount data directory
+      - ./data:/app/data
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - PYTHONPATH=/app
+    command: >
+      jupyter lab 
+      --ip=0.0.0.0 
+      --port=8888 
+      --no-browser 
+      --NotebookApp.token='' 
+      --NotebookApp.password=''
+    restart: unless-stopped
+
+  # ===========================================================================
+  # Production Service - Jupyter Notebook
+  # ===========================================================================
+  prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: darts-prod
+    ports:
+      - "8888:8888"
+    volumes:
+      # Mount data directory (read-only in prod)
+      - ./data:/app/data:ro
+      # Output directory for results
+      - ./output:/app/output
+    environment:
+      - PYTHONPATH=/app
+    command: >
+      jupyter notebook 
+      --ip=0.0.0.0 
+      --port=8888 
+      --no-browser
+    restart: unless-stopped
+
+  # ===========================================================================
+  # Script Runner - Run Python scripts directly
+  # ===========================================================================
+  script:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: darts-script
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+    environment:
+      - PYTHONPATH=/app
+    command: python darts.example.py
+    profiles:
+      - script
+
+  # ===========================================================================
+  # Training Service - Long-running model training
+  # ===========================================================================
+  train:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: darts-train
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+      - ./models:/app/models
+    environment:
+      - PYTHONPATH=/app
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 4G
+    command: python darts.example.py
+    profiles:
+      - train
+
+volumes:
+  jupyter_data:
+    driver: local
+
+networks:
+  default:
+    name: darts-network
+
