@@ -1,28 +1,33 @@
-# syntax=docker/dockerfile:1
-FROM mambaorg/micromamba:1.5.8
+# Use a public base Python image
+FROM python:3.10-slim AS builder
 
-# Create env from requirements.txt
+# Install system-level dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        libgomp1 \
+        curl \
+        git && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set workdir inside the container
 WORKDIR /app
-COPY requirements.txt /app/requirements.txt
 
-# Faster, reproducible installs via micromamba
-RUN micromamba create -y -n airline-delay-prediction python=3.10 \
- && micromamba run -n airline-delay-prediction pip install --no-cache-dir -r /app/requirements.txt \
- # catboost needs libgomp and openmp runtime; java for LightGBM (feature importances sometimes call out jvm utils)
- && micromamba install -y -n airline-delay-prediction -c conda-forge openjdk=11 libgomp \
- && micromamba clean -a -y
+# Copy requirements first, to leverage Docker caching
+COPY requirements.txt .
 
-# Add project files
-COPY . /app
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Streamlit + Jupyter ports
-EXPOSE 8501 8888
+# Copy the rest of the application code
+COPY src ./src
+COPY models ./models
+COPY notebooks ./notebooks
+COPY reports ./reports
+COPY configs ./configs
 
-# Default shell
-SHELL ["/bin/bash", "-lc"]
+# Expose the Streamlit port
+EXPOSE 8501
 
-# Helpful aliases inside the container
-RUN echo 'alias act="micromamba run -n airline-delay-prediction"' >> ~/.bashrc
-
-# Default: drop into bash. Use scripts to run Jupyter/Streamlit.
-CMD ["bash"]
+# Default command: run the Streamlit app
+CMD ["streamlit", "run", "src/app.py", "--server.port=8501", "--server.address=0.0.0.0"]

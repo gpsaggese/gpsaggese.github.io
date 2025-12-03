@@ -1,4 +1,3 @@
-set -euo pipefail
-IMG=airline-delay:latest
-docker build -t $IMG .
-echo "Built $IMG"
+#!/bin/bash
+# build the container image
+docker build -t airline-delay-prediction .
