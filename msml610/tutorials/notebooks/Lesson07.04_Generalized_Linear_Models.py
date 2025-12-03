@@ -6,12 +6,20 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.18.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
+
+# %%
+import sys, os
+sys.path.append("/workspace") 
+sys.path.append("/workspace/helpers_root") 
+sys.path.append("/workspace/msml610/tutorials") 
+os.environ["CSFY_GIT_ROOT_PATH"] = "/workspace/msml610"
+
 
 # %% [markdown]
 # ## Imports
@@ -578,3 +586,13 @@ ut.save_plt("Lesson07_Multiple_linear_regression_model_RentedBikes_model_trace.p
 # %%
 df = az.summary(idata_mlb, var_names=var_names, round_to=2, kind="stats")
 df
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%

@@ -6,12 +6,20 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.18.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
+
+# %%
+import sys, os
+sys.path.append("/workspace") 
+sys.path.append("/workspace/helpers_root") 
+sys.path.append("/workspace/msml610/tutorials") 
+os.environ["CSFY_GIT_ROOT_PATH"] = "/workspace/msml610"
+
 
 # %% [markdown]
 # ## Imports
@@ -28,6 +36,15 @@
 
 # %%
 # !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet dataframe_image)"
+
+# %%
+pip install arviz
+
+# %%
+pip install preliz
+
+# %%
+pip install pymc
 
 # %% [markdown]
 # ### Import modules
@@ -164,3 +181,13 @@ axes = az.plot_forest([idata_cs_h, idata_cs_nh],
 y_lims = axes[0].get_ylim()
 axes[0].vlines(idata_cs_h.posterior['mu_mu'].mean(), *y_lims, color='navy')
 axes[0].vlines(idata_cs_nh.posterior['mu'].mean(), *y_lims, color='orange');
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%

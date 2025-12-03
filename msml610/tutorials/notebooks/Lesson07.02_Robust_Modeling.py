@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.18.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -15,6 +15,14 @@
 
 # %% [markdown]
 # ## Imports
+
+# %%
+import sys, os
+sys.path.append("/workspace") 
+sys.path.append("/workspace/helpers_root") 
+sys.path.append("/workspace/msml610/tutorials") 
+os.environ["CSFY_GIT_ROOT_PATH"] = "/workspace/msml610"
+
 
 # %% [markdown]
 # ### Install packages
@@ -28,6 +36,16 @@
 
 # %%
 # !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet dataframe_image)"
+
+# %%
+pip install arviz
+
+
+# %%
+pip install pymc
+
+# %%
+pip install preliz
 
 # %% [markdown]
 # ### Import modules
@@ -162,3 +180,21 @@ y_ppc_t = pm.sample_posterior_predictive(idata_t, model_t);
 # %%
 ax = az.plot_ppc(y_ppc_t, num_pp_samples=100, mean=True)
 ax.set_xlim(40, 70);
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
