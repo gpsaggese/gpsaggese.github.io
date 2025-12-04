@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{10.1: Parallel DBs}}$$**
+**$$\text{\blue{10.1: Parallel and Distributed Systems / DBs}}$$**
 \endgroup
 
 ::: columns
@@ -65,9 +65,9 @@ UMD DATA605 - Big Data Systems
 :::columns
 ::::{.column width=60%}
 - **Parallel computing**
-  - One computer with multiple CPUs
-  - Cluster: many similar computers with multiple CPUs
-  - Homogenous, geographically close computing nodes
+  - One computer, multiple CPUs
+  - Cluster: many computers, multiple CPUs
+  - Homogenous, geographically close nodes
   - Work on one task
 
 ::::
@@ -81,7 +81,7 @@ UMD DATA605 - Big Data Systems
 :::columns
 ::::{.column width=60%}
 - **Distributed computing**
-  - Autonomous, geographically separate computer systems
+  - Autonomous, geographically separate systems
   - Heterogeneous and distant
   - Perform separate tasks
 ::::
@@ -90,10 +90,9 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-
 * Parallel Systems
 :::columns
-::::{.column width=65%}
+::::{.column width=55%}
 - **Parallel systems** consist of:
   - Multiple processors
   - Multiple memories
@@ -119,20 +118,16 @@ UMD DATA605 - Big Data Systems
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_4_image_1.png){width=70%}
 
 _The Connection Machine, MIT, 1980s_
-
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_4_image_2.png){width=70%}
-
-_Connection Machine in Jurassic Park_
 ::::
 :::
 
 * Parallel Databases: Introduction
-- **Parallel DBs were historically the standard approach before MapReduce**
+- **Parallel DBs** were the standard approach before MapReduce
 
 - **Parallel machines have become common and affordable**
   - Prices of microprocessors, memory, and disks drop sharply
   - Desktop/laptop computers feature multiple processors
-  - This trend will continue
+  - Trend will continue
 
 - **DBs are growing increasingly large**
   - Large volumes of transaction data collected and stored for analysis
@@ -151,7 +146,7 @@ _Connection Machine in Jurassic Park_
 - **Databases can be parallelized**
   - Set-oriented nature of DB queries suits parallelization
   - Some operations are embarrassingly parallel
-    - E.g., join between `R` and `S on R.b = S.b as MapReduce task
+    - E.g., join between `R` and `S on R.b = S.b` as MapReduce task
 
 - **Parallel DBs**
   - More transactions per second or less time per query
@@ -164,15 +159,14 @@ _Connection Machine in Jurassic Park_
   - Skew
 
 * How to Measure Parallel Performance
-
 :::columns
-::::{.column width=65%}
+::::{.column width=55%}
 - **Throughput**
-  - Number of tasks completed in a given time
+  - Number of tasks completed in given time
   - Increase by processing tasks in parallel
 
 - **Latency**
-  - Time to complete a single task from submission
+  - Time to complete single task from submission
   - Decrease by performing subtasks in parallel
 
 - **Throughput and latency are related but not the same**
@@ -181,7 +175,7 @@ _Connection Machine in Jurassic Park_
     - E.g., building a car takes weeks, but one car is completed per hour
     - Pipelining of microprocessor instructions
 ::::
-::::{.column width=30%}
+::::{.column width=40%}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_7_image_1.png)
 
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_7_image_3.png)
@@ -193,7 +187,6 @@ _Pipelining of instructions in microprocessor_
 :::
 
 * Speed-Up and Scale-Up: Intuition
-
 - **You have a workload to execute**
   - Change workload $M$
     - Number of DB transactions
@@ -204,7 +197,8 @@ _Pipelining of instructions in microprocessor_
     - Better CPU (scale vertically, scale up)
     - More CPUs (scale horizontally, scale out)
 
-- Two **ways to measure efficiency** when increasing workload and computing power
+- Two **ways to measure efficiency** when increasing workload and computing
+  power
   - _Speed-up_
     - Keep constant problem size $M$
     - Increase machine power $N$
@@ -213,8 +207,8 @@ _Pipelining of instructions in microprocessor_
     - Increase machine power $N$
 
 * Speed-Up vs Scale-Up
-- The amount of computing power can be changed _N_
-- The amount of work can be changed _M_
+- The amount of computing power $N$ can be changed
+- The amount of work $M$ can be changed
 
 :::columns
 ::::{.column width=60%}
@@ -245,11 +239,11 @@ _Pipelining of instructions in microprocessor_
 :::
 
 * Factors Limiting Speed-up and Scale-up
+- Speed-up and scale-up are often sub-linear due to several issues
+  - E.g., some computation is parallel, others sequential 
+
 :::columns
 ::::{.column width=60%}
-- Speed-up and scale-up are often sub-linear due to several issues
-
-- E.g., some computation is parallel, others sequential 
 - **Amdahl's Law**
   - $p$ = fraction parallelizable
   - $s$ = number of nodes
@@ -260,8 +254,9 @@ _Pipelining of instructions in microprocessor_
   = \frac{T}{T(s)}
   = \frac{1}{(1 - p) + \frac{p}{s}}
   $$
-  - E.g., 90% parallelizable, max speed-up 10x
-  - 50% parallelizable, max speed-up 2x (even with infinite nodes)
+- E.g.,
+  - 90% parallelizable $\to$ max speed-up 10x
+  - 50% parallelizable $\to$ max speed-up 2x (even with infinite nodes)
 ::::
 ::::{.column width=35%}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_10_image_1.png)
@@ -270,13 +265,13 @@ _Pipelining of instructions in microprocessor_
 
 * Factors Limiting Speed-up and Scale-up
 - **Startup costs**
-  - Starting many processes may dominate computation time
-  - E.g., DBs create a thread pool at startup
+  - Starting processes may dominate computation time
+  - E.g., dBs create thread pool at startup
 
 - **Interference**
   - Processes compete for shared resources (e.g., system bus, disks, locks)
   - Time spent waiting on other processes
-  - E.g., devs touching the same code create merge conflicts
+  - E.g., devs touching same code create merge conflicts
 
 - **Cost of synchronization**
   - Smaller work pieces increase synchronization complexity
@@ -301,7 +296,7 @@ _Pipelining of instructions in microprocessor_
   - Shared nothing
   - Hierarchical
 
-- **Problems** are:
+- **Problems**
   - Cache coherency
   - Data communication
   - Fault tolerance
@@ -318,17 +313,19 @@ _Pipelining of instructions in microprocessor_
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_12_image_4.png)
 ::::
 :::
+
 * Topology of Parallel Systems: Comparison
 :::columns
 ::::{.column width=60%}
+\vspace{1cm}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_1.png)
 ::::
 ::::{.column width=35%}
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_2.png){width=70%}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_2.png){width=60%}
 
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_3.png){width=70%}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_3.png){width=60%}
 
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_4.png){width=70%}
+![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_13_image_4.png){width=60%}
 ::::
 :::
 
@@ -362,6 +359,7 @@ _Pipelining of instructions in microprocessor_
 ::::
 ::::{.column width=30%}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_15_image_2.png)
+
 \vspace{2cm}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_15_image_1.png)
 ::::
