@@ -1,9 +1,12 @@
 {
+  "alora_invocation_tokens": null,
   "alpha_pattern": {},
+  "arrow_config": null,
   "auto_mapping": null,
   "base_model_name_or_path": "roberta-base",
   "bias": "none",
   "corda_config": null,
+  "ensure_weight_tying": false,
   "eva_config": null,
   "exclude_modules": null,
   "fan_in_fan_out": false,
@@ -23,13 +26,14 @@
     "score"
   ],
   "peft_type": "LORA",
+  "peft_version": "0.18.0",
   "qalora_group_size": 16,
   "r": 8,
   "rank_pattern": {},
   "revision": null,
   "target_modules": [
-    "value",
-    "query"
+    "query",
+    "value"
   ],
   "target_parameters": null,
   "task_type": "SEQ_CLS",
