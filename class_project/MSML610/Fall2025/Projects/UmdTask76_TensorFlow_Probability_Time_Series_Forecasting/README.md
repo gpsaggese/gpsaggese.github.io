@@ -21,4 +21,3 @@ The focus is on forecasting **air quality metrics** while capturing uncertainty 
 ---
 
 **Author:** Satyam Rai  
-**Repo:** [https://github.com/satyamrai0511/tfp_forecasting](https://github.com/satyamrai0511/tfp_forecasting)
