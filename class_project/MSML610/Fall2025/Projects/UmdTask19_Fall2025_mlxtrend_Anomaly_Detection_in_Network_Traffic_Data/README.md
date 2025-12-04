@@ -14,7 +14,7 @@ The project includes:
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 project/
 │
