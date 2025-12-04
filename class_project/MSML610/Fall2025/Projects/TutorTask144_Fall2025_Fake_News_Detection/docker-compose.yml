@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # Main application container
+  fake-news-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fake-news-detection
+    hostname: fake-news-detection
+    
+    # Environment variables
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      - TZ=UTC
+      - LOG_LEVEL=INFO
+      - MCP_PORT=5000
+      - API_PORT=8000
+    
+    # Volume mounts for persistence
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./output:/app/output
+      - ./logs:/app/logs
+      - ./accuracy_test_results.json:/app/accuracy_test_results.json
+    
+    # Port mappings
+    ports:
+      - "8000:8000"  # API Server
+      - "5000:5000"  # MCP Server
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    
+    # Network configuration
+    networks:
+      - fake-news-network
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Interactive terminal
+    stdin_open: true
+    tty: true
+
+  # Optional: Jupyter notebook server for interactive analysis
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fake-news-jupyter
+    hostname: fake-news-jupyter
+    
+    environment:
+      - PYTHONUNBUFFERED=1
+      - JUPYTER_ENABLE_LAB=yes
+    
+    volumes:
+      - ./notebooks:/app/notebooks
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./output:/app/output
+    
+    ports:
+      - "8888:8888"
+    
+    command: >
+      bash -c "pip install jupyter jupyterlab &&
+               jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root"
+    
+    networks:
+      - fake-news-network
+    
+    depends_on:
+      - fake-news-app
+    
+    profiles:
+      - jupyter
+
+networks:
+  fake-news-network:
+    driver: bridge
