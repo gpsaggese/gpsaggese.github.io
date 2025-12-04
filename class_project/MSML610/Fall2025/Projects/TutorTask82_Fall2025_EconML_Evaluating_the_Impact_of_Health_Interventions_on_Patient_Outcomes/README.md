@@ -2,7 +2,7 @@
 EconML – Evaluating the Impact of Health Interventions on Patient Outcomes (MSML610 – Fall 2025)
 ===============================================================================================
 
-**Branch / Folder:** `UmdTask82_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes`
+**Branch / Folder:** `TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes`
 
 Project layout
 --------------
