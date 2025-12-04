@@ -1,0 +1,358 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+// 
+// 
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{9.1: Apache Spark: Principles}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+- **References**:
+  - Concepts in the slides
+  - Academic paper
+    - "Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing", 2012
+  - Mastery
+    - "Learning Spark: Lightning-Fast Data Analytics" (2nd Edition)
+    - Not my favorite, but free
+::::
+:::: {.column width=20%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_2_image_1.png){width=2cm}
+::::
+:::
+
+* Hadoop MapReduce: Shortcomings
+::: columns
+:::: {.column width=55%}
+- **Hadoop is hard to administer**
+  - Many layers (HDFS, Yarn, Hadoop, ...)
+  - Extensive configuration
+
+- **Hadoop is hard to use**
+  - Verbose API
+  - Limited language support (e.g., Java is native)
+  - MapReduce jobs read / write data on disk
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_3_image_1.png)
+\vspace{0.5cm}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_3_image_2.png)
+::::
+:::
+
+- **Large but fragmented ecosystem**
+  - No native support for:
+    - Machine learning
+    - SQL
+    - Streaming
+    - Interactive computing
+  - New systems developed on Hadoop for new workloads
+    - E.g., Apache Hive, Storm, Impala, Giraph, Drill
+
+* (Apache) Spark
+::: columns
+:::: {.column width=70%}
+- **Open-source**
+  - DataBrick monetizes it (\$100B startup in 2025)
+::::
+:::: {.column width=20%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_4_image_1.png)
+::::
+:::
+
+- **General processing engine**
+  - Large set of operations beyond `Map()` and `Reduce()`
+  - Combine operations in any order
+  - Computation organized as a DAG, decomposed into parallel tasks
+  - Scheduler/optimizer for parallel workers
+
+- **Supports several languages**
+  - Java, Scala (preferred), Python supported through bindings
+
+- **Data abstraction**
+  - Resilient Distributed Dataset (RDD)
+  - DataFrames, Datasets built on RDDs
+
+- **Fault tolerance through RDD lineage**
+
+- **In-memory computation**
+  - Keep intermediate results in memory, if possible
+
+* Berkeley: From Research to Companies
+::: columns
+:::: {.column width=70%}
+- Pathway from lab innovation to startups
+  - Students and researchers creating companies from lab systems
+  - Focus on data-intensive systems and machine learning
+  - Open-source ecosystems enabling broad adoption
+
+- **AMPLab**
+  - Collaborative projects creating systems like Spark
+  - Industry engagement guiding real-world impact
+
+- **RISELab**
+  - Shift to systems supporting AI, security, and automation
+  - Platforms like Ray and ML-focused infrastructure
+::::
+:::: {.column width=25%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_6.png)
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_3.png)
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_7.png)
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_8.png)
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_1.png)
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_2.png)
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_5_image_4.png)
+::::
+:::
+
+* Berkeley AMPLab Data Analytics Stack
+- So many tools that they have their own Big Data stack!
+  https://amplab.cs.berkeley.edu/software/
+
+\center
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_6_image_1.png){width=80%}
+
+* Apache Spark: Introduction
+::: columns
+:::: {.column width=55%}
+- **Unified stack**
+  - Different computation models in a single framework
+
+  - **Spark SQL**
+    - ANSI SQL compliant
+    - Work with structured relational data
+
+  - **Spark MLlib**
+    - Build ML pipelines
+    - Support popular ML algorithms
+    - Built on Spark DataFrame
+
+  - **Spark Streaming**
+    - Handle continually growing tables
+    - Treat tables as static
+
+  - **GraphX**
+    - Manipulate graphs
+    - Perform graph-parallel computation
+
+- **Extensibility**
+  - Read from many sources
+  - Write to many backends
+::::
+:::: {.column width=40%}
+\center \small
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_7_image_1.png)
+_One computation engine_
+
+\vspace{0.5cm}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_7_image_2.png)
+_General purpose applications_
+::::
+:::
+
+* Resilient Distributed Dataset (RDD)
+::: columns
+:::: {.column width=60%}
+- **Resilient Distributed Dataset (RDD)**
+  - Collection of data elements
+  - Partitioned across nodes
+  - Operated on in parallel
+  - Fault-tolerant
+  - In-memory / serializable
+
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_8_image_1.png)
+::::
+:::
+
+- **Applications**
+  - Best for applying the same operation to all dataset elements (vectorized)
+  - Less suitable for asynchronous fine-grained updates to shared state
+    - E.g., updating one value in a dataframe
+
+- **Ways to create RDDs**
+  - Reference data in external storage
+    - E.g., file-system, HDFS, HBase
+  - Parallelize an existing collection in your driver program
+  - Transform RDDs into other RDDs
+
+* Transformations vs Actions
+- **Transformations**
+  - Lazy evaluation
+  - Compute only when an Action requires it
+  - Build a graph of transformations
+
+- **Actions**
+  - Aka "materialize"
+  - Force calculations on RDDs and return values
+
+\center
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_9_image_1.png){width=90%}
+
+* Spark Example: Estimate Pi
+
+::: columns
+:::: {.column width=45%}
+- **Goal**
+  - Estimate $\pi$ using random sampling in the unit square
+  - Fraction of points inside the unit circle approximates $\pi/4$
+
+- `sample` generates one random point
+  - Test membership in the unit circle
+  - Returns $1$ for inside, $0$ for outside
+::::
+:::: {.column width=50%}
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_10_image_1.png)
+::::
+:::
+
+- `parallelize` distributes the sampling task
+  - Each element in the RDD triggers one call to `sample`
+  - "Embarrassingly parallel" computation
+
+- `map` applies sampling across partitions
+  - Each worker independently counts hits inside the circle
+
+- `reduce` aggregates partial sums
+  - Summing $0$ and $1$ values yields total count of hits
+
+* Spark: Architecture
+::: columns
+:::: {.column width=50%}
+- **Architecture** 
+  - Who does what
+  - I.e., responsibilities of each component
+
+- **Spark Application**
+  - Code describing computation
+  - E.g., Python code calling Spark
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_11_image_1.png)
+::::
+:::
+
+- **Spark Driver**
+  - Transform operations into DAG computations
+  - Distribute task execution across _Executors_
+  - Communicate with _Cluster Manager_ for resources
+
+- **Spark Session**
+  - Interface to Spark system
+
+- **Cluster Manager**
+  - Manage and allocate resources
+  - Support Hadoop, YARN, Mesos, Kubernetes
+
+- **Spark Executor**
+  - Run worker node to execute tasks
+  - Typically one executor per node
+  - Relies on JVM
+
+* Spark: Computation Model
+
+::: columns
+:::: {.column width=40%}
+- **Architecture**
+  - Who does what
+- **Computation model**
+  - How are things done
+::::
+:::: {.column width=55%}
+\center
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_12_image_1.png)
+::::
+:::
+
+- **Spark Driver**
+  - Converts _Application_ into _Jobs_
+  - Describes computation with _Transformations_ and triggers with _Actions_
+
+- **Spark Job**
+  - Parallel computation in response to a _Action_
+  - Each _Job_ is a DAG with dependent _Stages_
+
+- **Spark Stage**
+  - Smaller operation within a _Job_
+  - _Stages_ run serially or in parallel
+
+- **Spark Task**
+  - Each _Stage_ has multiple _Tasks_
+  - Single unit of work sent to a _Executor_
+  - Each _Task_ maps to a single core and works on a single data partition
+
+* Distributed Data and Partitions
+::: columns
+:::: {.column width=50%}
+- **Data is distributed** as partitions across physical nodes
+  - Store each partition in memory
+  - Enable efficient parallelism
+
+- **Spark Executors** process data "close" to them
+  - Minimize network bandwidth
+  - Ensure data locality
+  - Similar to Hadoop
+:::: 
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_14_image_1.png)
+
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_14_image_2.png)
+::::
+:::
+
+* Parallelized Collections
+::: columns
+:::: {.column width=45%}
+- Parallelized collections created by calling _SparkContext_ `parallelize()`
+  on an existing collection
+::::
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_9_1/lec_9_1_slide_15_image_1.png)
+::::
+:::
+
+- Data spread across nodes
+
+- Number of _partitions_ to cut dataset into
+  - Spark runs one _Task_ per partition
+  - Aim for 2-4 partitions per CPU
+    - Spark sets partitions automatically based on your cluster
+    - Set manually by passing as a second parameter to `parallelize()`
+
+* Deployment Modes
+- Spark can run on several different configurations
+  - Components (e.g., Driver, Cluster Manager, and Executors) split on different
+    nodes
+
+\scriptsize
+
+| **Deployment Mode** | **Where Components Run** | **Notes** |
+|-----------------|-----------------------|-------|
+| **Local** | Run in a single JVM on one machine | Run Spark on a laptop |
+| **Standalone** | Run in separate JVMs on different machines | Spark’s built-in cluster manager |
+| **YARN / Kubernetes** | Run in different pods/containers | Production clusters |

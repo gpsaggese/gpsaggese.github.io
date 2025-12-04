@@ -16,22 +16,22 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Apache HBase}}$$**
+**$$\text{\blue{Lesson 5.3: Apache HBase}}$$**
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
-- Content in slides
-- Web
-  - 2006, BigTable paper
-  - https://hbase.apache.org/
-  - https://github.com/apache/hbase
-- Good overview:
-  - Seven Databases in Seven Weeks, 2e
+- **References**
+  - Web
+    - 2006, BigTable paper
+    - https://hbase.apache.org/
+    - https://github.com/apache/hbase
+  - Good overview:
+    - Seven Databases in Seven Weeks, 2e
 
 ::::
 :::: {.column width=20%}
