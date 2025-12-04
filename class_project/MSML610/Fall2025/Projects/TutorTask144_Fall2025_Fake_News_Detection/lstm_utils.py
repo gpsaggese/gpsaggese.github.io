@@ -14,9 +14,11 @@ from torch.utils.data import Dataset, DataLoader
 from torch.optim import Adam
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
 from sklearn.preprocessing import LabelEncoder
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 import pickle
+import json
 from pathlib import Path
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -329,20 +331,131 @@ class LSTMModelWrapper:
 
         return pred
 
-    def save_model(self, path: str) -> None:
-        """Save model."""
-        path = Path(path)
-        path.mkdir(parents=True, exist_ok=True)
+    def save_model(
+        self,
+        model_name: str,
+        metrics: Optional[Dict] = None,
+        save_dir: str = "./models"
+    ) -> str:
+        """
+        Save trained LSTM model with metadata.
 
-        torch.save(self.model.state_dict(), path / 'lstm_model.pt')
-        with open(path / 'vocab.pkl', 'wb') as f:
-            pickle.dump(self.vocab, f)
-        logger.info(f"Model saved to {path}")
+        Args:
+            model_name: Name for the saved model
+            metrics: Optional metrics dictionary
+            save_dir: Directory to save models
 
-    def load_model(self, path: str) -> None:
-        """Load model."""
-        path = Path(path)
-        self.model.load_state_dict(torch.load(path / 'lstm_model.pt'))
-        with open(path / 'vocab.pkl', 'rb') as f:
-            self.vocab = pickle.load(f)
-        logger.info(f"Model loaded from {path}")
+        Returns:
+            Model ID (directory name)
+        """
+        save_path = Path(save_dir)
+        save_path.mkdir(parents=True, exist_ok=True)
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        model_id = f"{model_name}_{timestamp}"
+        model_dir = save_path / model_id
+        model_dir.mkdir(parents=True, exist_ok=True)
+
+        try:
+            # Save model weights
+            torch.save(self.model.state_dict(), model_dir / 'lstm_weights.pt')
+            logger.info(f"✓ Saved LSTM weights")
+
+            # Save full model
+            torch.save(self.model, model_dir / 'lstm_model.pt')
+            logger.info(f"✓ Saved full LSTM model")
+
+            # Save vocabulary
+            with open(model_dir / 'vocab.pkl', 'wb') as f:
+                pickle.dump(self.vocab, f)
+            logger.info(f"✓ Saved vocabulary")
+
+            # Save config
+            config_dict = asdict(self.config)
+            with open(model_dir / 'config.json', 'w') as f:
+                json.dump(config_dict, f, indent=2, default=str)
+            logger.info(f"✓ Saved config")
+
+            # Save metadata
+            metadata = {
+                'model_id': model_id,
+                'model_name': model_name,
+                'model_type': 'LSTM',
+                'created_at': timestamp,
+                'config': config_dict,
+                'metrics': metrics or {},
+                'vocab_size': len(self.vocab)
+            }
+
+            with open(model_dir / 'metadata.json', 'w') as f:
+                json.dump(metadata, f, indent=2, default=str)
+            logger.info(f"✓ Saved metadata")
+
+            logger.info(f"✓ Model saved as: {model_id}")
+            return model_id
+
+        except Exception as e:
+            logger.error(f"✗ Failed to save model: {e}")
+            raise
+
+    @classmethod
+    def load_model(
+        cls,
+        model_id: str,
+        save_dir: str = "./models",
+        device: str = 'cpu'
+    ):
+        """
+        Load a saved LSTM model.
+
+        Args:
+            model_id: Model ID to load
+            save_dir: Directory where models are saved
+            device: Device to load to ('cpu' or 'cuda')
+
+        Returns:
+            Tuple of (LSTMModelWrapper, metadata)
+        """
+        model_dir = Path(save_dir) / model_id
+
+        if not model_dir.exists():
+            raise FileNotFoundError(f"Model {model_id} not found in {save_dir}")
+
+        try:
+            # Load metadata
+            with open(model_dir / 'metadata.json', 'r') as f:
+                metadata = json.load(f)
+
+            # Load config
+            with open(model_dir / 'config.json', 'r') as f:
+                config_dict = json.load(f)
+            config = LSTMConfig(**config_dict)
+            config.device = device
+
+            # Load vocabulary
+            with open(model_dir / 'vocab.pkl', 'rb') as f:
+                vocab = pickle.load(f)
+
+            # Create wrapper instance
+            wrapper = cls(config)
+            wrapper.vocab = vocab
+
+            # Load model
+            if (model_dir / 'lstm_model.pt').exists():
+                wrapper.model = torch.load(model_dir / 'lstm_model.pt', map_location=device)
+                logger.info(f"✓ Loaded full LSTM model")
+            elif (model_dir / 'lstm_weights.pt').exists():
+                wrapper.model.load_state_dict(
+                    torch.load(model_dir / 'lstm_weights.pt', map_location=device)
+                )
+                logger.info(f"✓ Loaded LSTM weights")
+            else:
+                raise FileNotFoundError("No model weights found")
+
+            wrapper.model.to(device)
+            logger.info(f"✓ Model loaded: {model_id}")
+            return wrapper, metadata
+
+        except Exception as e:
+            logger.error(f"✗ Failed to load model: {e}")
+            raise

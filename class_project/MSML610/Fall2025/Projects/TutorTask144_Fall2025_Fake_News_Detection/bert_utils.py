@@ -13,11 +13,12 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass, asdict
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader as PyTorchDataLoader
 from torch.optim import AdamW
 from transformers import (
     AutoTokenizer,
@@ -195,12 +196,12 @@ class BertModelWrapper:
             X_val, y_val, self.tokenizer, self.config.max_text_length
         )
 
-        train_loader = DataLoader(
+        train_loader = PyTorchDataLoader(
             train_dataset,
             batch_size=self.config.batch_size,
             shuffle=True
         )
-        val_loader = DataLoader(
+        val_loader = PyTorchDataLoader(
             val_dataset,
             batch_size=self.config.batch_size
         )
@@ -300,7 +301,7 @@ class BertModelWrapper:
         self.training_history = history
         return history
 
-    def _evaluate(self, data_loader: DataLoader) -> ModelMetrics:
+    def _evaluate(self, data_loader: PyTorchDataLoader) -> ModelMetrics:
         """
         Evaluate model on a dataset.
 
@@ -405,7 +406,7 @@ class BertModelWrapper:
         dataset = BertTextDataset(
             texts, [0] * len(texts), self.tokenizer, self.config.max_text_length
         )
-        loader = DataLoader(dataset, batch_size=self.config.batch_size)
+        loader = PyTorchDataLoader(dataset, batch_size=self.config.batch_size)
 
         all_preds = []
         all_probs = []
@@ -559,3 +560,113 @@ class DataLoader:
         logger.info(f"Data split: Train={len(X_train)}, Val={len(X_val)}, Test={len(X_test)}")
 
         return X_train, X_val, X_test, y_train, y_val, y_test
+
+
+    def save_model(
+        self,
+        model_name: str,
+        metrics: Optional[Dict] = None,
+        save_dir: str = "./models"
+    ) -> str:
+        """
+        Save trained model, tokenizer, and metadata.
+
+        Args:
+            model_name: Name for the saved model
+            metrics: Optional metrics dictionary
+            save_dir: Directory to save models
+
+        Returns:
+            Model ID (directory name)
+        """
+        save_path = Path(save_dir)
+        save_path.mkdir(parents=True, exist_ok=True)
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        model_id = f"{model_name}_{timestamp}"
+        model_dir = save_path / model_id
+        model_dir.mkdir(parents=True, exist_ok=True)
+
+        try:
+            # Save model
+            self.model.save_pretrained(str(model_dir / "model"))
+            logger.info(f"✓ Saved BERT model to {model_dir / 'model'}")
+
+            # Save tokenizer
+            self.tokenizer.save_pretrained(str(model_dir / "tokenizer"))
+            logger.info(f"✓ Saved tokenizer to {model_dir / 'tokenizer'}")
+
+            # Save metadata
+            metadata = {
+                'model_id': model_id,
+                'model_name': model_name,
+                'model_type': self.config.model_name,
+                'created_at': timestamp,
+                'config': asdict(self.config),
+                'metrics': metrics or {},
+                'training_history': self.training_history or {}
+            }
+
+            with open(model_dir / "metadata.json", 'w') as f:
+                json.dump(metadata, f, indent=2, default=str)
+            logger.info(f"✓ Saved metadata")
+
+            logger.info(f"✓ Model saved as: {model_id}")
+            return model_id
+
+        except Exception as e:
+            logger.error(f"✗ Failed to save model: {e}")
+            raise
+
+    @classmethod
+    def load_model(
+        cls,
+        model_id: str,
+        save_dir: str = "./models",
+        device: str = 'cpu'
+    ):
+        """
+        Load a saved BERT model.
+
+        Args:
+            model_id: Model ID to load
+            save_dir: Directory where models are saved
+            device: Device to load to ('cpu' or 'cuda')
+
+        Returns:
+            Tuple of (BertModelWrapper, metadata)
+        """
+        model_dir = Path(save_dir) / model_id
+
+        if not model_dir.exists():
+            raise FileNotFoundError(f"Model {model_id} not found in {save_dir}")
+
+        try:
+            # Load metadata
+            with open(model_dir / "metadata.json", 'r') as f:
+                metadata = json.load(f)
+
+            # Recreate config
+            config_dict = metadata.get('config', {})
+            config = TrainingConfig(**config_dict)
+            config.device = device
+
+            # Create wrapper and replace model/tokenizer
+            wrapper = cls(config)
+
+            # Load saved model
+            wrapper.model = AutoModelForSequenceClassification.from_pretrained(
+                str(model_dir / "model")
+            ).to(torch.device(device))
+            logger.info(f"✓ Loaded BERT model")
+
+            # Load saved tokenizer
+            wrapper.tokenizer = AutoTokenizer.from_pretrained(str(model_dir / "tokenizer"))
+            logger.info(f"✓ Loaded tokenizer")
+
+            logger.info(f"✓ Model loaded: {model_id}")
+            return wrapper, metadata
+
+        except Exception as e:
+            logger.error(f"✗ Failed to load model: {e}")
+            raise
