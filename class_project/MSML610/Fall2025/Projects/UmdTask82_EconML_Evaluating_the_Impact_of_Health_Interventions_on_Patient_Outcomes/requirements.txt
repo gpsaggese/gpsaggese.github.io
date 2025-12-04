@@ -1,7 +1,3 @@
 numpy
 pandas
-matplotlib
 seaborn
-scikit-learn
-econml
-jupyter
