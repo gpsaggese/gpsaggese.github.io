@@ -1,11 +1,16 @@
+"""
+data_preprocessing.py
+
+Functions to load and preprocess PJM load data.
+"""
 import pandas as pd
-import numpy as np
 from sklearn.preprocessing import MinMaxScaler
+import joblib
+from pathlib import Path
 
-
-def load_and_engineer(file_path: str):
-    df = pd.read_csv(file_path, parse_dates=['Datetime'], index_col='Datetime')
-    df = df.asfreq('h')
+def load_and_engineer(path, processed_dir=Path("data/processed")):
+    df = pd.read_csv(path, parse_dates=['Datetime'], index_col='Datetime')
+    df = df.sort_index().asfreq('h')
     df['PJM_Load_MW'] = df['PJM_Load_MW'].ffill()
     df['hour'] = df.index.hour
     df['dayofweek'] = df.index.dayofweek
@@ -18,4 +23,8 @@ def load_and_engineer(file_path: str):
     df['hour_norm'] = df['hour'] / 23.0
     df['dayofweek_norm'] = df['dayofweek'] / 6.0
     df['month_norm'] = (df['month'] - 1) / 11.0
+    processed_dir = Path(processed_dir)
+    processed_dir.mkdir(parents=True, exist_ok=True)
+    df.to_csv(processed_dir / "pjm_processed_features.csv")
+    joblib.dump(scaler, processed_dir / "scaler.pkl")
     return df, scaler
