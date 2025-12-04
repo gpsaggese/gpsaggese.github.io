@@ -18,8 +18,13 @@ textblob>=0.17.0
 contractions>=0.1.0
 emoji>=2.8.0
 
-transformers>=4.30.0
+# Model training dependencies
 torch>=2.0.0
+transformers>=4.35.0
+datasets>=2.14.0
+accelerate>=0.24.0
+sentencepiece>=0.1.99
+protobuf>=3.20.0
 
 jupyter>=1.0.0
 notebook>=6.5.0
