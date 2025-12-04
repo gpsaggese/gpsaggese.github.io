@@ -1,0 +1,295 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    EXECUTE PROJECT IN DOCKER                              ║
+║                   Fake News Detection System v2.0                          ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+This guide shows how to run the ENTIRE fake news detection project using Docker.
+
+════════════════════════════════════════════════════════════════════════════════
+                            QUICK START (3 STEPS)
+════════════════════════════════════════════════════════════════════════════════
+
+STEP 1: Build Docker Image
+────────────────────────────────────────────────────────────────────────────────
+$ docker-compose build
+
+This will:
+  • Download Python 3.11 slim base image
+  • Install all system dependencies
+  • Install all Python packages
+  • Download NLTK and spaCy models
+  • Copy entire project into container
+
+Time: ~5-10 minutes (first time, <1 minute cached)
+
+STEP 2: Run the Project
+────────────────────────────────────────────────────────────────────────────────
+$ docker-compose up
+
+This will execute (automatically):
+  1. Accuracy Tests         (~2-5 min)    → accuracy_test_results.json
+  2. Cross-Validation       (~30-60 min)  → CV metrics
+  3. BERT Training          (~45-90 min)  → Models
+  4. LSTM Training          (~45-90 min)  → Models
+  5. Enhanced Training      (~60-120 min) → Enhanced models
+  6. Model Evaluations      (~15-30 min)  → Comparison results
+
+Total Time: 2-4 hours (depends on dataset and hardware)
+
+STEP 3: View Results (in another terminal)
+────────────────────────────────────────────────────────────────────────────────
+$ tail -f logs/*.log                    # Watch real-time logs
+$ cat accuracy_test_results.json        # See accuracy test results
+$ ls -la models/                        # Check trained models
+$ ls -la output/                        # Check output directory
+
+════════════════════════════════════════════════════════════════════════════════
+                        DOCKER FILES CREATED
+════════════════════════════════════════════════════════════════════════════════
+
+1. Dockerfile (1.4 KB)
+   • Multi-stage build (3 stages)
+   • Python 3.11 slim base image
+   • All dependencies pre-installed
+   • NLTK and spaCy models included
+   • Ports: 8000 (API), 5000 (MCP)
+
+2. docker-compose.yml (2.1 KB)
+   • Service orchestration
+   • Volume mounts for persistence
+   • Health checks
+   • Resource limits (2 CPU, 4GB memory)
+   • Network configuration
+
+3. .dockerignore (931 B)
+   • Optimizes build size
+   • Excludes unnecessary files
+
+4. docker-entrypoint.sh (7.4 KB)
+   • Startup script
+   • 9 execution modes
+   • Colored logging with timestamps
+   • Complete project orchestration
+
+5. DOCKER_QUICK_START.md (3.7 KB)
+   • Quick reference guide
+
+6. DOCKER_SETUP.md (3.4 KB)
+   • Comprehensive Docker documentation
+
+7. DOCKER_SUMMARY.md (9.1 KB)
+   • Implementation details
+
+════════════════════════════════════════════════════════════════════════════════
+                        EXECUTION MODES
+════════════════════════════════════════════════════════════════════════════════
+
+RUN EVERYTHING (DEFAULT):
+  $ docker-compose up
+  → Executes all pipelines sequentially
+
+RUN SPECIFIC TASK:
+  $ docker-compose run --rm fake-news-app test
+  → Run accuracy tests only (~2-5 min)
+
+  $ docker-compose run --rm fake-news-app bert
+  → Run BERT training only (~45-90 min)
+
+  $ docker-compose run --rm fake-news-app lstm
+  → Run LSTM training only (~45-90 min)
+
+  $ docker-compose run --rm fake-news-app cv
+  → Run k-fold cross-validation only (~30-60 min)
+
+  $ docker-compose run --rm fake-news-app enhanced
+  → Run enhanced training only (~60-120 min)
+
+  $ docker-compose run --rm fake-news-app eval
+  → Run model evaluations only (~15-30 min)
+
+  $ docker-compose run --rm fake-news-app mcp
+  → Start MCP server (interactive)
+
+  $ docker-compose run --rm fake-news-app bash
+  → Interactive bash shell
+
+════════════════════════════════════════════════════════════════════════════════
+                        MONITORING EXECUTION
+════════════════════════════════════════════════════════════════════════════════
+
+VIEW REAL-TIME LOGS:
+  $ docker-compose logs -f fake-news-app
+
+VIEW SAVED LOGS:
+  $ tail -100 logs/*.log
+  $ cat logs/accuracy_tests_*.log
+  $ cat logs/bert_training_*.log
+  $ cat logs/lstm_training_*.log
+
+CHECK CONTAINER STATUS:
+  $ docker-compose ps
+  $ docker stats fake-news-detection
+
+════════════════════════════════════════════════════════════════════════════════
+                        ACCESSING RESULTS
+════════════════════════════════════════════════════════════════════════════════
+
+TEST RESULTS:
+  $ cat accuracy_test_results.json
+
+TRAINED MODELS:
+  $ ls -la models/
+  $ du -sh models/*
+
+OUTPUT FILES:
+  $ ls -la output/
+
+EXECUTION LOGS:
+  $ ls -la logs/
+  $ tail -f logs/*.log
+
+════════════════════════════════════════════════════════════════════════════════
+                        PORT MAPPINGS
+════════════════════════════════════════════════════════════════════════════════
+
+API Server:        http://localhost:8000
+MCP Server:        localhost:5000
+Jupyter Lab:       http://localhost:8888 (optional)
+
+════════════════════════════════════════════════════════════════════════════════
+                        STOPPING & CLEANUP
+════════════════════════════════════════════════════════════════════════════════
+
+STOP RUNNING CONTAINER:
+  $ docker-compose down
+
+STOP & REMOVE VOLUMES (WARNING: Deletes data!):
+  $ docker-compose down -v
+
+CLEAN UP UNUSED IMAGES:
+  $ docker system prune
+
+RUN IN BACKGROUND:
+  $ docker-compose up -d
+  $ docker-compose logs -f        # Monitor progress
+  $ docker-compose down            # Stop when done
+
+════════════════════════════════════════════════════════════════════════════════
+                        TROUBLESHOOTING
+════════════════════════════════════════════════════════════════════════════════
+
+ISSUE: "Cannot connect to Docker daemon"
+SOLUTION: Start Docker
+  macOS:  open /Applications/Docker.app
+  Linux:  sudo systemctl start docker
+  Windows: Start Docker Desktop
+
+ISSUE: "Port 8000 already in use"
+SOLUTION: Edit docker-compose.yml
+  Change: ports: ["8000:8000"]
+  To:     ports: ["8001:8000"]
+
+ISSUE: "Out of memory"
+SOLUTION: Increase Docker memory
+  Docker Desktop > Preferences > Resources > Memory (4GB+)
+
+ISSUE: Build is very slow
+SOLUTION: Use Docker BuildKit
+  $ DOCKER_BUILDKIT=1 docker-compose build
+
+ISSUE: NLTK data not found during execution
+SOLUTION: Download manually inside container
+  $ docker-compose exec fake-news-app python3 -m nltk.downloader punkt punkt_tab
+
+════════════════════════════════════════════════════════════════════════════════
+                        SYSTEM REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+MINIMUM:
+  • Docker: 20.10+
+  • Docker Compose: 1.29+
+  • Memory: 4 GB available
+  • Disk: 20 GB free space
+  • Time: 2-4 hours for full execution
+
+RECOMMENDED:
+  • Memory: 8 GB available
+  • CPU: 4+ cores
+  • Disk: 50 GB free space
+  • Internet: 500 MB bandwidth (for dependencies)
+
+════════════════════════════════════════════════════════════════════════════════
+                        VOLUME MOUNTS
+════════════════════════════════════════════════════════════════════════════════
+
+Data persists in these directories:
+
+./data/        ← Input datasets (mounted inside container at /app/data)
+./models/      ← Trained models (mounted inside container at /app/models)
+./output/      ← Results (mounted inside container at /app/output)
+./logs/        ← Execution logs (mounted inside container at /app/logs)
+
+All data survives container restart!
+
+════════════════════════════════════════════════════════════════════════════════
+                        DOCKER CONFIGURATION
+════════════════════════════════════════════════════════════════════════════════
+
+BASE IMAGE:       python:3.11-slim (~150 MB)
+FINAL SIZE:       ~2-3 GB (includes models)
+
+SYSTEM PACKAGES:
+  • build-essential (GCC, Make)
+  • Python development tools
+  • Git, curl, wget
+  • Security libraries (OpenSSL, libffi)
+
+PYTHON PACKAGES:
+  • All from requirements.txt
+  • NLTK with tokenizers
+  • spaCy with models
+  • PyTorch, TensorFlow
+  • Transformers, MCP
+  • Data science stack
+
+RESOURCES:
+  CPU Limit:      2 cores
+  Memory Limit:   4 GB
+  CPU Reserve:    1 core (guaranteed)
+  Memory Reserve: 2 GB (guaranteed)
+
+HEALTH CHECK:
+  • Every 30 seconds
+  • 10 second timeout
+  • 3 retries before restart
+
+════════════════════════════════════════════════════════════════════════════════
+                        NEXT STEPS
+════════════════════════════════════════════════════════════════════════════════
+
+1. Ensure Docker is running
+2. Run: docker-compose build
+3. Run: docker-compose up
+4. Monitor: tail -f logs/*.log
+5. View results: cat accuracy_test_results.json
+
+That's it! Your entire project will execute automatically inside Docker.
+
+════════════════════════════════════════════════════════════════════════════════
+                        DOCUMENTATION
+════════════════════════════════════════════════════════════════════════════════
+
+For detailed setup:           See DOCKER_SETUP.md
+For quick reference:          See DOCKER_QUICK_START.md
+For implementation details:   See DOCKER_SUMMARY.md
+For project overview:         See README.md
+For model details:            See MODEL_ACCURACIES.md
+For MCP architecture:         See MCP_ARCHITECTURE.md
+
+════════════════════════════════════════════════════════════════════════════════
+
+✅ DOCKER CONTAINERIZATION COMPLETE
+
+Your entire fake news detection project is now ready to run in Docker!
+
+════════════════════════════════════════════════════════════════════════════════
