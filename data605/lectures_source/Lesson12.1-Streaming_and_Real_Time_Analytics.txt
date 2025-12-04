@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-::: columns
-:::: {.column width=15%}
-![](lectures_source/UMD_Logo.png)
-=======
 // Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
 //
 //
@@ -10,7 +5,6 @@
 ::: columns
 :::: {.column width=15%}
 ![](data605/lectures_source/images/UMD_Logo.png)
->>>>>>> master
 ::::
 :::: {.column width=75%}
 
@@ -24,34 +18,15 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-<<<<<<< HEAD
-**Streaming and Real-Time Analytics**
-=======
 **$$\text{\blue{12.1: Streaming and Real-time Analytics}}$$**
->>>>>>> master
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
-<<<<<<< HEAD
-\vspace{1cm}
-
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`**
-
-**TAs**:
-Krishna Pratardan Taduri, kptaduri@umd.edu
-Prahar Kaushikbhai Modi, pmodi08@umd.edu
-
-**v1.1**
-::::
-:::: {.column width=20%}
-
-=======
 - **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 ::::
 :::: {.column width=20%}
->>>>>>> master
 ::::
 :::
 
@@ -284,32 +259,6 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
   - With multiple stages and parallelism
 
 * Apache Kafka
-<<<<<<< HEAD
-- Open-source distributed streaming platform
-  - Developed at LinkedIn and open-sourced in 2011
-- Producers, brokers, consumers, topics, partitions
-- Persistent storage, replication of data across multiple brokers
-- High-throughput and low-latency messaging
-- Fault tolerance: broker replication, automatic recovery from failures
-- Message delivery semantics:
-  - **At-least-once, at-most-once, exactly-once**
-- Kafka Connect: Integration with various data sources and sinks
-- Kafka Streams: Stream processing library built on Kafka
-
-![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_1.png)
-
-![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_2.png)
-
-* Apache Flink
-- Open-source, distributed data processing framework
-- Focus on stateful computations over data streams
-- Scalability: Horizontal scaling across large clusters
-- Fault tolerance:
-  - **Exactly-once** processing semantics, checkpointing, and state management
-- Batch processing support: **unified API for stream and batch processing**
-- Flexible windowing: time-based, count-based, and session windows
-- Deployment options: standalone, YARN, Mesos, Kubernetes, and cloud environments
-=======
 :::columns
 ::::{.column width=70%}
 - Open-source distributed streaming platform

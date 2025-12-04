@@ -67,11 +67,8 @@ MSML610: Advanced Machine Learning
 
 * AI in Business
 
-<<<<<<< HEAD
-=======
 - You have learned that correlation- and causal-based AI are different
 
->>>>>>> master
 - How do you use (Causal) AI in Business?
 
 \centering
@@ -107,40 +104,6 @@ digraph CausalFlowGrid {
 ```
 
 * Step 1: What Are the Intended Outcomes?
-<<<<<<< HEAD
-- What is the **process** we are interested in analyzing?
-
-- What will happen if a **course of action** is (or not) taken?
-  - What outcomes are positive, negative, unacceptable, optimal?
-
-- What **related data** can be combine / leverage?
-
-- (Causal AI): What are the possible / feasible **interventions**?
-  - What confounding factors might be correlated with outcomes and treatments?
-  - What factors exist but we cannot accurately measure?
-
-* Step 2: What Are the Proposed Interventions?
-- E.g., customer marketing for a product
-
-- (Causal AI)
-  - Should we introduce a **new product**?
-  - Does bundling **multiple products** ...
-    - Improve sales?
-    - Inhibit long-term sales?
-  - Should advertisement focus on quality of our product vs other options?
-  - Should we add more variations of the same product?
-  - Should we discontinue the product?
-  - ...
-  - Should we divest the product line?
-
-* Step 3: What Are the Proposed Interventions?
-- **Identify confounders**
-  - Difficult to understand the relationship between variables
-  - Mute or inflate a relationship
-
-* Step 4: What Factors Create Changes?
-
-=======
 - **90% of AI projects fail** because the project and the business goals are not
   aligned
   - What is the _process_ we are interested in analyzing?
@@ -170,7 +133,6 @@ digraph CausalFlowGrid {
   - Make it difficult to understand the relationship between variables
   - Mute or inflate a relationship
 
->>>>>>> master
 - **Direct effect**
   - Effect introduced through intervention
 
@@ -180,16 +142,6 @@ digraph CausalFlowGrid {
 - **Total causal effect**
   - Effect of all factors in environment or model modifying outcome
 
-<<<<<<< HEAD
-* Step 5: Build Causal DAG
-
-- **Causal models**
-  - _Simplify complex systems_ without losing key relationships
-  - Focus on essential variables and their interactions
-
-- **Visual models** (e.g., DAGs)
-  - Help abstract complexity into interpretable formats
-=======
 * Step 4: Build Causal DAG
 - **Causal models**
   - Simplify complex systems without losing key relationships
@@ -197,19 +149,12 @@ digraph CausalFlowGrid {
 
 - **Visual models**
   - Abstract complexity into interpretable formats
->>>>>>> master
   - Highlight direction and strength of influence between variables
 
 - **Simplicity**
   - Aids communication between technical and non-technical stakeholders
-<<<<<<< HEAD
-  - Promotes shared understanding and collaborative refinement
-  - Reduces cognitive overload by excluding irrelevant details or noise
-  - Guides data collection by identifying the most impactful variables
-=======
   - Reduces cognitive overload by excluding irrelevant details
   - Guides data collection by identifying impactful variables
->>>>>>> master
   - Supports hypothesis testing through counterfactual and intervention
     scenarios
 
@@ -218,29 +163,13 @@ digraph CausalFlowGrid {
   - Too much complexity loses clarity
 
 * Marketing Example: Price Intervention
-<<<<<<< HEAD
-::: columns
-:::: column
-- Assume **price is our intervention**
-
-- What happens to sales when we change the price often?
-- What pricing interventions are optimal?
-=======
 - Assume **price is intervention** and you want to **maximize revenue**
->>>>>>> master
   - Should we increase the price and how much?
   - Should we decrease the price and how much?
   - Should price change in one-time or over time?
   - Should we develop individual pricing model for each customer?
-<<<<<<< HEAD
-::::
-:::: column
-
-- The Causal DAG is:
-=======
 
 - The causal DAG is:
->>>>>>> master
   ```graphviz[height=50%]
   digraph CausalDiagram {
       splines=true;
@@ -257,18 +186,10 @@ digraph CausalFlowGrid {
       CompetitiveOffers [label="Competitive Offers", fillcolor="#C6A6F4"];
       Supply [label="Product Supply", fillcolor="#A6E7F4"];
       StoreDistance [label="Distance to store", fillcolor="#D2B48C"];
-<<<<<<< HEAD
-      Outcome [label="Outcome", fillcolor="#A0D6D1"];
-
-      // Edges
-      Price -> Behavior;
-      Behavior -> Outcome;
-=======
 
       // Edges
       Price -> Behavior;
       Behavior -> Revenue;
->>>>>>> master
       Price -> ProductAmount;
       ProductAmount -> Revenue;
       Price -> CompetitiveOffers;
@@ -277,42 +198,14 @@ digraph CausalFlowGrid {
       StoreDistance -> ProductAmount;
   }
   ```
-<<<<<<< HEAD
-
-- Lots of confounders!
-::::
-:::
-
-* Step 7: Data Acquisition and Integration
-=======
   - Lots of confounders!
 
 * Step 5: Data Acquisition and Integration
->>>>>>> master
 - Use **data collected** for correlation-based ML
 
 - Collect **data specifically** for causal AI
   - Treat, condition, transform data
 
-<<<<<<< HEAD
-* Step 8: Model Modification
-- **After initial DAG** is designed
-  - Refine to reduce bias and improve reliability
-  - Clarify variables as confounders, mediators, or outcomes
-
-- **Avoid common pitfalls**
-  - Do not control for mediators or effects, which can distort results
-  - Control for direct and indirect confounders to prevent biased estimates
-
-- **Test models** against technical and business objectives
-
-- Determines necessary controls to **isolate causal effects**
-  - Ensure causal assumptions align with data and domain logic
-  - Improve model interpretability and predictive power
-
-* Step 10: Data Transformation
-=======
->>>>>>> master
 - Prepare data to match refined causal model
   - Clean, normalize, align data with model assumptions
 
@@ -326,9 +219,6 @@ digraph CausalFlowGrid {
 
 - **Goal**: Ensure data structure supports causal estimation
 
-<<<<<<< HEAD
-* Step 11: Preparing for Deployment in Business
-=======
 * Step 6: Model Modification
 - **After initial DAG** is designed
   - Refine to reduce bias and improve reliability
@@ -345,7 +235,6 @@ digraph CausalFlowGrid {
   - Improve model interpretability and predictive power
 
 * Step 7: Preparing for Deployment in Business
->>>>>>> master
 
 - Transition **from experimentation to decision-making processes**
   - Validate model against real-world business outcomes
@@ -375,12 +264,9 @@ digraph CausalFlowGrid {
     - Work in isolation from domain experts, business users, and data engineers
   - Lack of understanding of problem context leads to irrelevant solutions
 
-<<<<<<< HEAD
-=======
 - **Misalignment with business goals**
   - Models solve the wrong problem or answer irrelevant questions
 
->>>>>>> master
 - **Black-box models** fail to solve real-world problems
   - Models are difficult to interpret or explain to stakeholders
   - Lack of transparency reduces trust and adoption
@@ -395,12 +281,6 @@ digraph CausalFlowGrid {
 - **Lack of feedback loops**
   - No process for monitoring model performance post-deployment
 
-<<<<<<< HEAD
-- **Misalignment with business goals**
-  - Models solve the wrong problem or answer irrelevant questions
-
-=======
->>>>>>> master
 * How to Make ML / AI Project Succeed
 
 1. **Create a hybrid team**
