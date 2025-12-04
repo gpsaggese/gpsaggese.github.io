@@ -1,0 +1,89 @@
+# ============================
+# Python
+# ============================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.joblib
+*.log
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*.ipynb_convert
+
+# ============================
+# macOS / Editor
+# ============================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# VS Code / PyCharm
+.vscode/
+.idea/
+
+# ============================
+# Data folders
+# (DO NOT push large datasets)
+# ============================
+data/raw/*
+data/raw/**
+data/processed/*
+data/processed/**
+data/models/*
+data/models/**
+
+# Allow small sample files
+!data/processed/README.md
+
+# ============================
+# Build / temp folders
+# ============================
+tmp/
+tmp.build/
+*.tmp
+*.cache
+*.bak
+.csv
+# ============================
+# Docker
+# ============================
+*.tar
+docker_build.log
+docker_build.version.log
+docker-bundle.log
+
+# ============================
+# Node (if ever used for frontend)
+# ============================
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# ============================
+# Project-specific ignores
+# ============================
+# Old or irrelevant professor template files
+anaconda_projects/
+bashrc
+etc_sudoers
+
+# If your Streamlit app writes session data
+.streamlit/
+
+# ============================
+# Secrets
+# ============================
+*.env
+.env.*
+secret.json
+token.json
+credentials.json
