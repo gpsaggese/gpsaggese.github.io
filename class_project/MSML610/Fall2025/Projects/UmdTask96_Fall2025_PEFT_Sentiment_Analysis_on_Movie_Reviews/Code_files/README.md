@@ -252,6 +252,7 @@ This is the **complete end-to-end project**.
 After running the complete pipeline, you should observe:
 
 ### **Model Performance**
+
 - **Accuracy**: ~92-95%
 - **Precision**: ~93-96% (low false positive rate)
 - **Recall**: ~91-94% (catches most fake news)
@@ -259,17 +260,21 @@ After running the complete pipeline, you should observe:
 - **ROC-AUC**: ~0.95-0.98 (excellent discrimination ability)
 
 ### **Training Efficiency**
+
 - **Trainable Parameters**: ~0.7% of total (only ~885K out of 125M parameters)
 - **Training Time**: ~5-10 minutes on CPU for 800 steps
 - **Memory Usage**: <4GB RAM (runs comfortably without GPU)
 
 ### **Visualizations**
+
 - Confusion matrix showing true positives/negatives and misclassifications
 - Training loss curve showing convergence
 - SHAP token importance plots highlighting influential words
 
 ### **Sample Predictions**
+
 The model successfully identifies:
+
 - Sensationalist language patterns typical of fake news
 - Credible source citations in true news
 - Emotional manipulation tactics vs factual reporting
@@ -279,7 +284,9 @@ The model successfully identifies:
 # 🏗️ **Architecture & Design Decisions**
 
 ### **Why RoBERTa over BERT?**
+
 RoBERTa improves upon BERT with:
+
 - Better pre-training methodology (dynamic masking)
 - Larger training corpus
 - No Next Sentence Prediction (NSP) task overhead
@@ -287,20 +294,22 @@ RoBERTa improves upon BERT with:
 
 ### **LoRA Configuration Rationale**
 
-| Parameter | Value | Justification |
-|-----------|-------|---------------|
-| `r` (rank) | 8 | Sweet spot: captures sufficient expressiveness without overfitting |
-| `lora_alpha` | 16 | Alpha/r = 2.0 scaling balances learning rate with stability |
-| `target_modules` | ["query", "value"] | Attention Q/V matrices are most impactful for adaptation |
-| `lora_dropout` | 0.1 | Mild regularization prevents overfitting on small dataset |
+| Parameter        | Value              | Justification                                                      |
+| ---------------- | ------------------ | ------------------------------------------------------------------ |
+| `r` (rank)       | 8                  | Sweet spot: captures sufficient expressiveness without overfitting |
+| `lora_alpha`     | 16                 | Alpha/r = 2.0 scaling balances learning rate with stability        |
+| `target_modules` | ["query", "value"] | Attention Q/V matrices are most impactful for adaptation           |
+| `lora_dropout`   | 0.1                | Mild regularization prevents overfitting on small dataset          |
 
 ### **Tokenization Strategy**
+
 - **Max Length**: 256 tokens
   - Captures full context for most news articles (avg ~180 tokens)
   - Balances information retention with computational cost
   - Longer sequences (512) showed diminishing returns (+1% accuracy, +3x time)
 
 ### **Training Hyperparameters**
+
 - **Batch Size**: 8
   - Largest size fitting comfortably in 4GB RAM
   - Provides stable gradient estimates
@@ -310,13 +319,16 @@ RoBERTa improves upon BERT with:
   - Checkpoints every 200 steps allow early stopping if needed
 
 ### **Preprocessing Pipeline**
+
 We use classical NLP preprocessing (lowercase, punctuation removal, lemmatization) despite RoBERTa's robust tokenizer because:
+
 1. Reduces noise in the dataset
 2. Improves SHAP interpretability (cleaner token attributions)
 3. Demonstrates full ML pipeline for educational purposes
 4. Empirically improved accuracy by 2-3% on this specific dataset
 
 ### **Trade-offs Made**
+
 - **CPU vs GPU**: Optimized for CPU to maximize accessibility
 - **Speed vs Accuracy**: Could train 5 epochs for +1-2% accuracy, but 2 epochs offer best time/performance ratio
 - **Simplicity vs Features**: Focused on core PEFT workflow rather than ensemble methods or data augmentation
