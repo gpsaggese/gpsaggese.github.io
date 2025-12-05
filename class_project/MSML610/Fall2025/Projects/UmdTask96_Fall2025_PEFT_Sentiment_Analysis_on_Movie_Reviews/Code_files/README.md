@@ -86,27 +86,106 @@ PEFT_Sentiment_Analysis_on_Movie_Reviews/
 This project is fully containerized.
 No local environment setup needed.
 
-### **1. Build the Docker image**
+### **Prerequisites**
+
+- Docker Desktop installed and running
+- At least 4GB of available RAM
+
+### **Step 1: Start Docker Desktop**
+
+Make sure Docker Desktop is running:
+
+```bash
+open -a Docker
+```
+
+Wait a few seconds for Docker to start, then verify it's running:
+
+```bash
+docker ps
+```
+
+### **Step 2: Build the Docker image**
+
+Navigate to the Code_files directory and build the image:
+
+```bash
+cd Code_files
+docker build -t peft-sentiment-analysis .
+```
+
+This will take a few minutes as it installs all dependencies (PyTorch, Transformers, PEFT, etc.).
+
+### **Step 3: Run the container**
+
+Run the container with volume mounts for both code and data:
+
+```bash
+docker run -d -p 8888:8888 \
+  -v $(pwd):/app \
+  -v $(pwd)/../Data:/app/Data \
+  --name peft-sentiment \
+  peft-sentiment-analysis
+```
+
+**Explanation of flags:**
+
+- `-d`: Run in detached mode (background)
+- `-p 8888:8888`: Map port 8888 for Jupyter access
+- `-v $(pwd):/app`: Mount code files
+- `-v $(pwd)/../Data:/app/Data`: Mount data files
+- `--name peft-sentiment`: Name the container for easy management
+
+### **Step 4: Verify the container is running**
+
+```bash
+docker ps
+```
+
+You should see `peft-sentiment` in the list of running containers.
+
+### **Step 5: Access Jupyter Notebook**
+
+Open your browser and navigate to:
 
 ```
-docker build -t peft_sentiment .
-```
-
-### **2. Run the container**
-
-```
-docker run -p 8888:8888 -v $(pwd):/app peft_sentiment
-```
-
-### **3. Open the notebook**
-
-Navigate to:
-
-```
-http://127.0.0.1:8888
+http://127.0.0.1:8888/tree
 ```
 
 Jupyter will launch automatically with **no token/password required**.
+
+You'll see the complete folder structure with:
+
+- `PEFT_Sentiment_Analysis.example.ipynb` - Full end-to-end example
+- `PEFT_Sentiment_Analysis.API.ipynb` - API demonstration
+- `PEFT_Sentiment_Analysis_utils.py` - Utility functions
+- `Data/` folder with Fake.csv and True.csv
+
+### **Managing the Docker Container**
+
+**Stop the container:**
+
+```bash
+docker stop peft-sentiment
+```
+
+**Start the container again:**
+
+```bash
+docker start peft-sentiment
+```
+
+**Remove the container:**
+
+```bash
+docker rm peft-sentiment
+```
+
+**View container logs:**
+
+```bash
+docker logs peft-sentiment
+```
 
 ---
 
