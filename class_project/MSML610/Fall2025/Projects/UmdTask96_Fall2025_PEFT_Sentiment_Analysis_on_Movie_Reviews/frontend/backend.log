@@ -1,0 +1,82 @@
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at roberta-base and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+============================================================
+🚀 Starting PEFT Fake News Detector Backend API
+============================================================
+
+📦 Loading model...
+Looking for model at: /Users/vikas/src/umd_classes1/class_project/MSML610/Fall2025/Projects/UmdTask96_Fall2025_PEFT_Sentiment_Analysis_on_Movie_Reviews/Code_files/roberta_lora_results/checkpoint-800
+Loading model from checkpoint: /Users/vikas/src/umd_classes1/class_project/MSML610/Fall2025/Projects/UmdTask96_Fall2025_PEFT_Sentiment_Analysis_on_Movie_Reviews/Code_files/roberta_lora_results/checkpoint-800
+✅ Model loaded successfully from checkpoint
+
+============================================================
+✅ Server starting on http://localhost:5001
+============================================================
+
+Available endpoints:
+  GET  /              - API information
+  GET  /api/health    - Health check
+  POST /api/predict   - Predict fake/true news
+
+Press Ctrl+C to stop the server
+============================================================
+
+ * Serving Flask app 'backend'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.173.36.169:5001
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [05/Dec/2025 00:11:07] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:11:07] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:11:12] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:11:13] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:11:14] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:11:16] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:11:17] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:11:18] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:11:45] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:13:09] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:13:09] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:13:09] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:13:38] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:13:38] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:13:38] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:16:18] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:17:04] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:17:23] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:17:27] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:17:28] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:17:40] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:17:40] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:19:32] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:19:41] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:19:42] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:19:42] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:19:46] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:19:47] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:19:47] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:23:21] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:23:29] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:26:46] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:28:28] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:28:46] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:29:03] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:31:35] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:31:45] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:32:45] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:34:00] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:34:02] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:34:58] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:35:02] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:37:05] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:37:11] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:37:31] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:37:50] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:38:02] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:38:13] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:38:16] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:38:19] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:38:24] "POST /api/predict HTTP/1.1" 200 -
+127.0.0.1 - - [05/Dec/2025 00:38:31] "POST /api/predict HTTP/1.1" 200 -
