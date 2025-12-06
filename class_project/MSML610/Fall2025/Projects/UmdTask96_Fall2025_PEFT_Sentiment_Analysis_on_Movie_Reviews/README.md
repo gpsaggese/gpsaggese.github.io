@@ -87,6 +87,29 @@ cd /path/to/UmdTask96_Fall2025_PEFT_Sentiment_Analysis_on_Movie_Reviews
 ./start_app.sh
 ```
 
+**Expected output:**
+
+```
+🚀 Starting Fake News Detector Application...
+
+[+] Running 2/2
+ ✔ Network fake-news-network     Created
+ ✔ Container fake-news-detector  Started
+
+⏳ Waiting for services to be ready...
+
+✅ Backend is ready!
+✅ Streamlit is ready!
+
+🎉 Application is ready!
+
+📱 Opening Streamlit app in your browser...
+   URL: http://localhost:8501
+
+📊 To view logs: docker-compose logs -f
+🛑 To stop: docker-compose down
+```
+
 The script will:
 
 - ✅ Start Docker containers in the background
@@ -100,6 +123,14 @@ To stop the application:
 docker-compose down
 ```
 
+**Expected output:**
+
+```
+[+] Running 2/2
+ ✔ Container fake-news-detector  Removed
+ ✔ Network fake-news-network     Removed
+```
+
 ### Option 2: Docker Compose (Manual)
 
 Run the complete application manually:
@@ -107,22 +138,58 @@ Run the complete application manually:
 ```bash
 # Start the web application
 docker-compose up
+```
 
-# Access the application in your browser:
-# - Streamlit UI: http://localhost:8501
-# - Flask API: http://localhost:5001
+**Expected output:**
 
-# Stop with Ctrl+C, then:
+```
+[+] Running 2/2
+ ✔ Network fake-news-network     Created
+ ✔ Container fake-news-detector  Created
+Attaching to fake-news-detector
+fake-news-detector  |
+fake-news-detector  | Collecting usage statistics...
+fake-news-detector  |
+fake-news-detector  |   You can now view your Streamlit app in your browser.
+fake-news-detector  |   URL: http://0.0.0.0:8501
+fake-news-detector  |
+fake-news-detector  | ============================================================
+fake-news-detector  | 🚀 Starting PEFT Fake News Detector Backend API
+fake-news-detector  | ============================================================
+fake-news-detector  | 📦 Loading model...
+fake-news-detector  | ✅ Model loaded successfully from checkpoint
+fake-news-detector  | ✅ Server starting on http://localhost:5001
+fake-news-detector  |  * Running on all addresses (0.0.0.0)
+fake-news-detector  |  * Running on http://127.0.0.1:5001
+```
+
+**Access the application in your browser:**
+
+- Streamlit UI: http://localhost:8501
+- Flask API: http://localhost:5001
+
+**Stop with Ctrl+C, then:**
+
+```bash
 docker-compose down
 ```
 
-For training environment (optional):
+**For training environment (optional):**
 
 ```bash
 # Start training container with Jupyter
 docker-compose --profile training up
 
 # Access Jupyter: http://localhost:8888
+```
+
+**Expected output:**
+
+```
+[+] Running 1/1
+ ✔ Container fake-news-training  Started
+fake-news-training  | [I 12:00:00.123 NotebookApp] Jupyter Notebook is running at:
+fake-news-training  | [I 12:00:00.123 NotebookApp] http://0.0.0.0:8888/
 ```
 
 ### Option 3: Local Development
