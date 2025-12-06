@@ -1,54 +1,173 @@
-# UmdTask123 – Fashion Product Image Classification with AutoKeras
+# Fashion Product Image Classification – MSML610 Class Project
 
-This project uses the **Fashion Product Images (Small)** dataset from Kaggle to build an image classifier for fashion items using **AutoKeras**.
+This project implements an end-to-end image classification pipeline using the **Fashion Product Images (Small)** dataset.  
+It compares three different modeling strategies:
 
-## Dataset
+- **Baseline CNN** (trained from scratch)  
+- **Transfer Learning** with MobileNetV2 (ImageNet pretrained)  
+- **AutoKeras Search** (small version inside Docker, full version on Colab GPU)
 
-- Source: Kaggle – “Fashion Product Images (Small)”
-- Images are stored as `images/{id}.jpg`
-- Metadata file: `styles.csv`
+All experiments run inside a **Docker container**, following the MSML610 required project structure.
 
-I filtered the dataset to only the following `masterCategory` classes:
+---
 
-- Accessories
-- Apparel
-- Footwear
-- Free Items
-- Personal Care
-- Sporting Goods
+## Project Structure
 
-Missing images were removed, and the dataset was split into train/val/test using stratified sampling.  
-The splits are stored in:
+UmdTask123_Fall2025_Fashion_Product_Image_Classification_AutoKeras/  
+│  
+├── AutoKeras.API.ipynb  
+├── AutoKeras.API.md  
+│  
+├── AutoKeras.example.ipynb  
+├── AutoKeras.example.md  
+│  
+├── utils_data_io.py  
+├── utils_model.py  
+│  
+├── Dockerfile  
+├── docker_build.sh  
+├── docker_bash.sh  
+├── docker_jupyter.sh  
+│  
+├── README.md  
+├── data_readme.md  
+│  
+├── lists/  
+│   ├── train.tsv  
+│   ├── val.tsv  
+│   └── test.tsv  
+│  
+├── images/                  (local only; NOT committed to GitHub)  
+│  
+├── outputs/                 (classification reports, confusion matrices)  
+└── models/                  (saved Keras + AutoKeras models)
 
-lists/train.tsv
-lists/val.tsv
-lists/test.tsv
+---
 
-Each TSV contains:
+## API Utilities
 
-image_path label_idx
+### `utils_data_io.py`
+- `tsv_to_tfds()` — loads images + labels from TSV lists into a `tf.data.Dataset`  
+- `ds_to_numpy()` — extracts up to N samples into NumPy arrays  
 
-## Project Progress
+### `utils_model.py`
+- `make_baseline_cnn()` — factory for the baseline CNN  
+- `make_autokeras_image_classifier()` — wrapper to instantiate AutoKeras ImageClassifier  
 
-So far I have:
+### `AutoKeras.API.ipynb` / `.md`
+Demonstrates how the API layer works (no heavy training).  
+Useful for understanding dataset flow and model construction.
 
-1. Cleaned and filtered `styles.csv`
-2. Verified and linked image IDs to filenames
-3. Created deterministic train/val/test splits
-4. Built data loaders using `utils_data_io.py`
-5. Trained an AutoKeras classifier:
-   - max_trials = 2
-   - epochs = 2
-6. Exported the best model to:
-   - `models/autokeras_best.h5`
-7. Generated evaluation outputs:
-   - `outputs/report_autokeras.txt`
-   - `outputs/confmat_autokeras.png`
+---
 
-## Main Files
+## Full Workflow Notebook
 
-- `AutoKeras.example.ipynb` → End-to-end training and evaluation
-- `AutoKeras.API.md` → Notes on helper API usage
-- `AutoKeras.example.md` → Text version of the notebook flow
-- `utils_data_io.py` → Loads TSV → tf.data.Dataset
-- `utils_model.py` → Wrapper around AutoKeras ImageClassifier
+### `AutoKeras.example.ipynb` / `.md`
+This is the main experimental notebook.  
+It performs the complete pipeline:
+
+- Load dataset via TSV  
+- Apply augmentation  
+- Train Baseline CNN  
+- Train MobileNetV2 transfer learning model  
+- Run a lightweight AutoKeras CPU search  
+- Evaluate: precision, recall, F1, accuracy  
+- Generate confusion matrices  
+- Visualize misclassified samples  
+- Save outputs to `outputs/` and `models/`
+
+---
+
+## How to Reproduce Results (Recommended Workflow)
+
+1. **Build Docker image**
+```bash
+bash docker_build.sh
+```
+
+2. **Start interactive container**
+```bash
+bash docker_bash.sh
+```
+
+3. **Launch JupyterLab**
+```bash
+bash docker_jupyter.sh
+```
+
+4. Open the URL printed in the terminal to access JupyterLab.
+
+5. In the browser:
+- Run **AutoKeras.API.ipynb** (checks API + debugging)
+- Run **AutoKeras.example.ipynb** (full experiments)
+
+---
+
+## Requirements
+
+- An `images/` directory **must exist locally** with the Kaggle dataset extracted  
+- `lists/train.tsv`, `lists/val.tsv`, `lists/test.tsv` must contain correct relative paths  
+- `outputs/` and `models/` are created automatically  
+
+(Important: **images/ is NOT tracked in GitHub**.)
+
+---
+
+## AutoKeras Full Search (Colab GPU)
+
+Since AutoKeras is slow on CPU-only Docker, a **full hyperparameter search** is run on **Colab Pro GPU**, where we can increase:
+
+- `max_trials`  
+- training epochs  
+- model complexity  
+
+Exported Colab models (e.g., `.keras`, `.h5`) can be placed directly into:
+models/
+
+
+Docker notebooks will load them if present.
+
+---
+
+## Outputs Generated
+
+Running `AutoKeras.example.ipynb` produces:
+
+- `outputs/report_baseline.txt`  
+- `outputs/report_mobilenet.txt`  
+- `outputs/report_autokeras.txt`  
+- `outputs/confmat_baseline.png`  
+- `outputs/confmat_mobilenet.png`  
+- `outputs/confmat_autokeras.png`  
+- `models/mobilenetv2_fashion.keras`  
+- `models/autokeras_best_docker.keras`
+
+All these files are used in documentation and the final project video.
+
+---
+
+## Relationship to Other Notebooks
+
+### AutoKeras.API.ipynb  
+Defines the reusable components (dataset loader + model builders).
+
+### AutoKeras.example.ipynb  
+Full experimental pipeline and evaluation.
+
+### Colab Notebook  
+Heavy AutoKeras search + optional fine-tuning of MobileNetV2.
+
+---
+
+## Author
+
+**Lokesh Reddy Konda**  
+MSML610 – Fall 2025  
+University of Maryland  
+
+---
+
+This repository contains all deliverables required for the MSML610 class project:  
+Docker setup, code, documentation, notebooks, saved models, and experiment outputs.
+
+

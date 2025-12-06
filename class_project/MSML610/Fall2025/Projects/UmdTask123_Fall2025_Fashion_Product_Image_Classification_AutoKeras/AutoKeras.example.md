@@ -1,106 +1,236 @@
-# AutoKeras Example Notebook – Baseline CNN Comparison
+# Fashion Product Image Classification – Full Example
 
-## Purpose of this Notebook
+This notebook contains the full end-to-end workflow for the Fashion Product Images (Small) dataset. It uses the helper API implemented in `utils_data_io.py` and `utils_model.py` and demonstrates three modeling approaches:
 
-This notebook builds a **manual baseline CNN model** and compares its performance against the AutoKeras model trained in `AutoKeras.API.ipynb`.  
-The goal is to show that AutoKeras automatically discovered architecture can outperform a **simple hand-designed CNN**, and to evaluate both approaches using the same test data.
+- A baseline CNN trained from scratch  
+- A transfer learning model using MobileNetV2 (ImageNet pretrained)  
+- A small AutoKeras search (CPU-friendly demo)  
 
----
-
-## Dataset
-
-I used the **Fashion Product Images (Small)** dataset from Kaggle.  
-Only six high-level classes were used for classification:
-
-- Accessories
-- Apparel
-- Footwear
-- Free Items
-- Personal Care
-- Sporting Goods
-
-To avoid file-loading crashes in Colab:
-
-- TSV split files (`lists/train.tsv`, `val.tsv`, `test.tsv`) were cleaned to remove any accidental headers.
-- Rows pointing to missing image files were removed.
-- For memory stability, datasets were **converted from `tf.data.Dataset` to NumPy arrays** with capped sample sizes:
-  - ~2000 training images
-  - ~500 validation images
-  - ~500 testing images
-
-This kept GPU memory usage within limits while preserving class diversity.
+All experiments in this notebook are intended to run **inside Docker**, using local TSV lists and an `images/` folder (as described in `data_readme.md`).
 
 ---
 
-## Baseline CNN Design
+## 1. Setup and Dataset Loading
 
-The baseline model was intentionally kept **simple and interpretable**:
+The notebook begins by importing:
 
-**Architecture**
+- TensorFlow, NumPy, Matplotlib  
+- `classification_report` and `confusion_matrix`  
+- Helper functions:  
+  - `tsv_to_tfds`, `ds_to_numpy` from `utils_data_io.py`  
+  - `make_baseline_cnn`, `make_autokeras_image_classifier` from `utils_model.py`
 
-- Input rescaling (1/255 normalization)
-- 3 convolution blocks:
-  - Conv2D → ReLU → MaxPooling
-  - Filters: 32 → 64 → 128
-- Flatten layer
-- Dense(256) + ReLU
-- Dropout(0.5)
-- Dense(6) Softmax output
+A small TF log level is set to avoid clutter.
 
-**Training Setup**
+Class names used throughout:
 
-- Optimizer: Adam
-- Loss: Sparse Categorical Crossentropy
-- Batch size: 32
-- Epochs: 5
+- Accessories  
+- Apparel  
+- Footwear  
+- Free Items  
+- Personal Care  
+- Sporting Goods  
 
-The goal was not to over-engineer the baseline but to create a **reasonable reference point** for comparison with AutoKeras performance.
+The TSV lists:
 
----
+- `lists/train.tsv`  
+- `lists/val.tsv`  
+- `lists/test.tsv`  
 
-## Evaluation
+These map image file paths to numeric labels.  
+`outputs/` and `models/` directories are created if missing.
 
-The baseline CNN was evaluated using:
+Load datasets:
 
-- Accuracy
-- Per-class Precision
-- Recall
-- F1-score
-- Confusion Matrix
-
-Outputs generated and saved:
-
-- `outputs/report_baseline.txt`
-- `outputs/confmat_baseline.png`
-
-Some classes had very small sample sizes (e.g., _Free Items_, _Sporting Goods_), which resulted in unstable precision/recall for those categories.  
-This imbalance highlights one limitation of hand-crafted models on smaller subsets and motivates the use of AutoML approaches.
+Each dataset yields `(224×224×3 image, label)` pairs.
 
 ---
 
-## Comparison with AutoKeras
+## 2. Data Augmentation and tf.data Pipelines
 
-The AutoKeras model (from `AutoKeras.API.ipynb`) achieved:
+A lightweight augmentation function performs:
 
-- **Higher overall validation and test accuracy**
-- Better performance on under-represented classes
-- Automatically selected deeper CNN patterns than the manual baseline
+- horizontal flips  
+- brightness and contrast changes  
+- random 90º rotation (0–3)
 
-Despite using fewer epochs and more constrained memory limits, the AutoKeras architecture consistently matched or exceeded baseline performance.
+Using:
 
----
-
-## Key Takeaways
-
-- A simple CNN baseline is useful for establishing a performance reference.
-- Manual tuning requires careful design choices and still struggles with class imbalance.
-- **AutoKeras provided a stronger model with minimal architecture engineering**, making it better suited for this classification task under limited development time.
-
-Overall, the comparison demonstrates why automated neural architecture search is effective for real-world image classification problems.
+This provides efficient GPU-compatible and CPU-friendly pipelines.
 
 ---
 
-## Colab Constraints
+## 3. Baseline CNN (from scratch)
 
-All experiments were bounded by **Colab memory limits**.  
-For both models, training sizes, epochs, and trial counts were intentionally capped to maintain stability and prevent GPU/CPU crashes.
+### 3.1 Prepare NumPy subsets
+
+To limit training time inside Docker:
+
+- MAX_TRAIN = 2000  
+- MAX_VAL   = 500  
+- MAX_TEST  = 500  
+
+Convert raw datasets to NumPy:
+
+This confirms data loading is correct.
+
+### 3.2 Build baseline model
+
+One function call configures the full CNN:
+
+
+Architecture (defined in utils_model.py):
+
+- Rescaling  
+- Conv2D → MaxPool (x3)  
+- Flatten  
+- Dense(256) + Dropout  
+- Dense(6 softmax)
+
+### 3.3 Train baseline model
+
+Validation accuracy reaches ~93–94%.
+
+### 3.4 Evaluate baseline model
+
+- Predictions made on `X_test`  
+- `classification_report` and confusion matrix generated  
+- Saved to:
+
+
+The baseline performs well on major classes but weak on very rare ones.
+
+---
+
+## 4. Transfer Learning with MobileNetV2
+
+### 4.1 Build model
+
+Using ImageNet pretrained MobileNetV2:
+
+- `include_top=False`  
+- `weights="imagenet"`  
+- Input shape = (224, 224, 3)  
+- Frozen backbone  
+- Classification head: Rescaling → GAP → Dropout → Dense(6)
+
+### 4.2 Train MobileNetV2
+
+
+Despite only 3 epochs on CPU:
+
+- Train accuracy ≈ 0.95  
+- Validation accuracy ≈ 0.97  
+
+MobileNetV2 significantly outperforms the baseline CNN.
+
+### 4.3 Evaluate MobileNetV2
+
+Using helper `predict_on_dataset`, the test scores are:
+
+- Overall accuracy ≈ 0.97  
+- Very strong performance on all major categories
+
+Saved files:
+
+
+The saved model can be reused without retraining.
+
+---
+
+## 5. AutoKeras Search (Docker demo)
+
+AutoKeras is computationally heavy, so inside Docker I run a **tiny search**:
+
+- AK_MAX_TRAIN = 200  
+- AK_MAX_VAL   = 50  
+- MAX_TRIALS_AK = 1  
+- EPOCHS_AK = 1  
+
+Prepare small NumPy subsets:
+
+
+Create classifier:
+
+
+Run minimal search:
+
+
+### 5.1 Evaluate AutoKeras model
+
+
+Accuracy ≈ 0.73 (expected due to tiny training subset).
+
+Saved outputs:
+
+
+A full AutoKeras search will later be run on **Colab Pro GPU**.
+
+---
+
+## 6. Misclassification Visualizations
+
+A helper function shows example failures:
+
+
+Repeated for:
+
+- Baseline CNN  
+- MobileNetV2  
+- AutoKeras  
+
+These plots make the differences between models visually clear:
+
+- Baseline: confuses Accessories ↔ Apparel  
+- MobileNetV2: far fewer mistakes  
+- AutoKeras (tiny search): noticeably weaker  
+
+---
+
+## 7. Running This Notebook in Docker
+
+### Build the image
+bash docker_build.sh
+
+### Run JupyterLab
+bash docker_jupyter.sh
+
+### Open the notebook
+Use the link printed in the terminal, then:
+
+
+### Open the notebook
+Use the link printed in the terminal, then:
+
+
+### Requirements
+`images/` directory must be present locally with the Kaggle dataset extracted.  
+TSV files in `lists/` must point correctly to those images.
+
+---
+
+## 8. Relationship to Other Notebooks
+
+### AutoKeras.API.ipynb
+Defines the reusable API layer:
+- `tsv_to_tfds`, `ds_to_numpy`
+- `make_baseline_cnn`, `make_autokeras_image_classifier`
+
+### AutoKeras.example.ipynb (this notebook)
+Runs the complete workflow:
+- baseline CNN
+- MobileNetV2 transfer learning
+- AutoKeras CPU demo search
+- evaluation + confusion matrices
+- misclassification plots
+
+### Colab GPU Notebook
+Will run:
+- larger AutoKeras search (more trials + epochs)
+- potentially fine-tuned MobileNetV2
+- export best models back into Docker environment
+
+---
+
+This notebook forms the **main experimental pipeline** of the project and provides all saved outputs.
+

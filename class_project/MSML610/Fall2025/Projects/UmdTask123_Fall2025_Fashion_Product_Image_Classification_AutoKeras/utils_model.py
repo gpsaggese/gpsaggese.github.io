@@ -1,55 +1,47 @@
-import os
-from typing import List, Optional
-import autokeras as ak
 import tensorflow as tf
+import autokeras as ak
+
+def make_baseline_cnn(input_shape=(224, 224, 3), num_classes=6):
+    """
+    Build a simple CNN baseline used for comparison with AutoKeras.
+    """
+
+    inputs = tf.keras.Input(shape=input_shape)
+    x = tf.keras.layers.Rescaling(1.0/255)(inputs)
+
+    x = tf.keras.layers.Conv2D(32, 3, activation="relu", padding="same")(x)
+    x = tf.keras.layers.MaxPooling2D()(x)
+
+    x = tf.keras.layers.Conv2D(64, 3, activation="relu", padding="same")(x)
+    x = tf.keras.layers.MaxPooling2D()(x)
+
+    x = tf.keras.layers.Conv2D(128, 3, activation="relu", padding="same")(x)
+    x = tf.keras.layers.MaxPooling2D()(x)
+
+    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.Dense(256, activation="relu")(x)
+    x = tf.keras.layers.Dropout(0.5)(x)
+
+    outputs = tf.keras.layers.Dense(num_classes, activation="softmax")(x)
+
+    model = tf.keras.Model(inputs, outputs)
+    model.compile(
+        optimizer="adam",
+        loss="sparse_categorical_crossentropy",
+        metrics=["accuracy"],
+    )
+    return model
 
 
-class AKImageClassifierAPI:
-    """Wrapper for AutoKeras ImageClassifier."""
+def make_autokeras_image_classifier(num_classes=6, max_trials=2):
+    """
+    Create an AutoKeras ImageClassifier searcher.
+    This does *not* train; training happens via clf.fit().
+    """
 
-    def __init__(
-        self,
-        max_trials: int = 2,
-        project_name: str = "ak_search",
-        directory: str = "ak_search",
-        overwrite: bool = True,
-    ) -> None:
-
-        self._ak_model: ak.ImageClassifier = ak.ImageClassifier(
-            max_trials=max_trials,
-            project_name=project_name,
-            directory=directory,
-            overwrite=overwrite,
-        )
-
-        self._exported: Optional[tf.keras.Model] = None
-
-    def fit(self, train_ds, val_ds, epochs: int = 2):
-        """Runs AutoKeras search + trains the best model."""
-        self._ak_model.fit(train_ds, validation_data=val_ds, epochs=epochs)
-        self._exported = self._ak_model.export_model()
-        return self._exported
-
-    def _ensure_exported(self):
-        if self._exported is None:
-            self._exported = self._ak_model.export_model()
-        return self._exported
-
-    def evaluate(self, test_ds):
-        model = self._ensure_exported()
-        return model.evaluate(test_ds, verbose=0)
-
-    def predict(self, ds):
-        model = self._ensure_exported()
-        return model.predict(ds)
-
-    def save(self, model_path: str, class_names: List[str]):
-        model = self._ensure_exported()
-
-        os.makedirs(os.path.dirname(model_path), exist_ok=True)
-        model.save(model_path)
-
-        class_file = os.path.join(os.path.dirname(model_path), "class_names.txt")
-        with open(class_file, "w", encoding="utf-8") as f:
-            for name in class_names:
-                f.write(name + "\n")
+    clf = ak.ImageClassifier(
+        overwrite=True,
+        max_trials=max_trials,
+        num_classes=num_classes,
+    )
+    return clf
