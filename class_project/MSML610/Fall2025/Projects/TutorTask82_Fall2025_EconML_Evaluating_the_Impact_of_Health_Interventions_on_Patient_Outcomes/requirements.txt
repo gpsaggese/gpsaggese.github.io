@@ -1,3 +1,5 @@
-numpy
 pandas
-seaborn
+numpy
+scikit-learn
+econml
+matplotlib
