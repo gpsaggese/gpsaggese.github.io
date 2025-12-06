@@ -1,39 +1,50 @@
-<!-- toc -->
+# Sentiment Analysis API – Twitter Airline Tweets
 
-- [Tutorial Template for Native API of the tool used](#tutorial-template-for-native-api-of-the-tool-used)
-  * [Table of Contents](#table-of-contents)
-    + [Hierarchy](#hierarchy)
-  * [General Guidelines](#general-guidelines)
+## 1. What this API does
 
-<!-- tocstop -->
+This project builds a small sentiment analysis API for the **Twitter US Airline
+Sentiment** dataset. The idea is:
 
-# Tutorial Template for Native API of the tool used
+- `sentiment.example.ipynb` trains a model (TF–IDF + Logistic Regression),
+  evaluates it, and saves the artifacts.
+- `sentiment.API.ipynb` loads the saved model and behaves like a client or
+  "API user": it takes raw text and returns sentiment labels.
 
-- E.g., Native API for `pycaret`
+The main Python code lives in `sentiment_utils.py`. That file is meant to be
+reusable in other notebooks or services.
 
-## Table of Contents
+---
 
-The markdown code can have a TOC. This can be generated automatically with the
-linter or other tools.
+## 2. Files
 
-### Hierarchy
+Inside this project folder:
 
-Hierarchy of the markdown file should be followed.
-```
-# Level 1 (Used as title)
-All the subheadings should follow the below structure:
-## Level 2
-### Level 3
-```
+- `data/Tweets.csv` – raw dataset of airline tweets.
+- `sentiment_utils.py` – helper functions for loading, cleaning, splitting,
+  training, evaluation, and prediction.
+- `sentiment.example.ipynb` – full training + evaluation notebook.
+- `sentiment.API.ipynb` – notebook that loads the trained model and exposes a
+  simple prediction interface.
+- `tfidf_vectorizer.joblib` – saved TF–IDF vectorizer.
+- `logreg_sentiment_model.joblib` – saved Logistic Regression model.
 
-Level 1 Headings indicate the tile as `# <tool> Tutorial` (e.g.,
-`PyCaret Tutorial`)
+---
 
-## General Guidelines
+## 3. High-level pipeline
 
-- Follow the instructions in [README](/DATA605/DATA605_Spring2025/README.md) on
-  what to write in the API tutorial.
-- Include descriptions of API works based on what is explored in
-  `template.API.py/ipynb`.
-- The file should be name with the following conventions:
-  - If project is based on `pycaret`, it should be `pycaret.API.md`
+The logical pipeline implemented by `sentiment_utils.py` and the notebooks is:
+
+```text
+Tweets.csv
+   ↓
+load_data
+   ↓
+preprocess_dataframe
+   ↓
+split_data
+   ↓
+vectorize_and_train
+   ↓
+evaluate_model
+   ↓
+predict_sentiment / predict_sentiment_api

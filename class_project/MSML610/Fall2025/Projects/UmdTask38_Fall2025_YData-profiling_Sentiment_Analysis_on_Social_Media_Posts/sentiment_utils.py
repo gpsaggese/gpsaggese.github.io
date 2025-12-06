@@ -14,9 +14,8 @@ from sklearn.metrics import (
 
 # ----- Label maps -----------------------------------------------------------
 
-LABEL_MAP = {"negative": 0, "neutral": 1, "positive": 2}
-INV_LABEL_MAP = {v: k for k, v in LABEL_MAP.items()}
-
+LABEL_MAP = {0: "negative", 1: "neutral", 2: "positive"}
+INT_FROM_STR = {v: k for k, v in LABEL_MAP.items()}
 
 # ----- Data loading & cleaning ---------------------------------------------
 
@@ -57,21 +56,36 @@ def clean_text(text: str) -> str:
     return text
 
 
-def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+def preprocess_dataframe(df_raw: pd.DataFrame) -> pd.DataFrame:
     """
-    Apply cleaning and map labels to integers.
-    Output columns:
-        - text (original)
-        - clean_text
-        - label (int)
-    """
-    df = df.copy()
-    df["clean_text"] = df["text"].apply(clean_text)
-    df = df[df["clean_text"].str.len() > 0]
+    Clean raw tweet dataframe and add a numeric label column.
 
-    df["label"] = df["airline_sentiment"].map(LABEL_MAP)
-    df = df[df["label"].notna()].copy()
-    df["label"] = df["label"].astype(int)
+    Parameters
+    ----------
+    df_raw : pd.DataFrame
+        Raw dataframe with columns ["text", "airline_sentiment"].
+
+    Returns
+    -------
+    df_clean : pd.DataFrame
+        Clean dataframe with columns:
+        - "text"  : cleaned tweet text
+        - "label" : numeric label in {0,1,2}
+    """
+    df = df_raw.copy()
+
+    # keep only the columns we need
+    df = df[["text", "airline_sentiment"]]
+
+    # drop rows with missing text or label
+    df = df.dropna(subset=["text", "airline_sentiment"])
+
+    # keep only the three sentiments we care about
+    df = df[df["airline_sentiment"].isin(INT_FROM_STR.keys())]
+
+    # add numeric label column 0/1/2
+    df["label"] = df["airline_sentiment"].map(INT_FROM_STR)
+
     return df
 
 
@@ -162,3 +176,34 @@ def evaluate_model(
         "confusion_matrix": cm,
         "classification_report": report,
     }
+
+def predict_sentiment(texts, vectorizer, model, label_map=LABEL_MAP):
+    """
+    Predict sentiment labels for one or more texts.
+
+    Parameters
+    ----------
+    texts : str or list of str
+        Input text(s) to classify.
+    vectorizer : sklearn.feature_extraction.text.TfidfVectorizer
+        Fitted TF–IDF vectorizer.
+    model : sklearn.linear_model.LogisticRegression
+        Trained classification model.
+    label_map : dict, optional
+        Mapping from numeric labels to human-readable strings.
+
+    Returns
+    -------
+    labels : list of str
+        Predicted labels as strings.
+    """
+    # make sure we always work with a list
+    if isinstance(texts, str):
+        texts = [texts]
+
+    # vectorize and predict
+    X_vec = vectorizer.transform(texts)
+    preds = model.predict(X_vec)
+
+    # map numeric labels -> strings
+    return [label_map[int(p)] for p in preds]
