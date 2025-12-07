@@ -13,7 +13,9 @@ RUN pip install --no-cache-dir \
     torch==2.3.0 \
     transformers==4.44.0 \
     datasets==3.0.0 \
-    accelerate==0.33.0
+    accelerate==0.33.0 \
+    evaluate==0.4.3 \
+    matplotlib==3.9.2
 
 # Expose Jupyter port
 EXPOSE 8888
