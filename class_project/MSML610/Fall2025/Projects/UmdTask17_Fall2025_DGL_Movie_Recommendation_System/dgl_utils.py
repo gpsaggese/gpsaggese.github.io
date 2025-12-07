@@ -27,6 +27,7 @@ import logging
 from collections import defaultdict
 from typing import Dict, Iterable, List, Optional, Set, Tuple, Union
 
+import os
 import dgl
 import dgl.nn as dglnn
 import matplotlib.pyplot as plt
@@ -35,11 +36,20 @@ import pandas as pd
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.utils.data import DataLoader, TensorDataset
 from scipy.sparse import csr_matrix
 from sklearn.decomposition import TruncatedSVD
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MultiLabelBinarizer
+import random
+from typing import Dict, List, Tuple
+from tqdm import tqdm
+
+
+
+
+
 
 _LOG = logging.getLogger(__name__)
 
@@ -878,3 +888,986 @@ class HeteroGraphSAGEEncoder(nn.Module):
         h = {k: F.relu(v) for k, v in h.items()}
         h = self.conv2(blocks[1], h)
         return h
+
+
+
+## UTIL FUNCTIONS FOR DGL.EXAMPLE.IPYNB
+
+
+# ======================================================
+# 1. DATA LOADING
+# ======================================================
+
+def load_movielens_data(raw_dir: str = "data/raw/"):
+    """
+    Load the core MovieLens CSVs from disk.
+
+    Parameters
+    ----------
+    raw_dir : str
+        Path to the folder containing the raw MovieLens CSVs:
+        - ratings.csv with columns [userId, movieId, rating, timestamp]
+        - movies.csv with columns [movieId, title, genres]
+
+    Returns
+    -------
+    ratings : pd.DataFrame
+        User-movie interactions (explicit ratings).
+    movies : pd.DataFrame
+        Movie metadata (title, genres, etc.).
+    """
+
+    ratings_path = os.path.join(raw_dir, "rating.csv")
+    movies_path = os.path.join(raw_dir, "movie.csv")
+
+    # Read CSVs
+    ratings = pd.read_csv(ratings_path)
+    movies = pd.read_csv(movies_path)
+
+    # ---- Basic sanity checks to fail fast if data isn't correct ----
+    expected_ratings_cols = {"userId", "movieId", "rating", "timestamp"}
+    expected_movies_cols = {"movieId", "title", "genres"}
+
+    if not expected_ratings_cols.issubset(ratings.columns):
+        missing = expected_ratings_cols.difference(ratings.columns)
+        raise ValueError(f"ratings.csv missing columns: {missing}")
+
+    if not expected_movies_cols.issubset(movies.columns):
+        missing = expected_movies_cols.difference(movies.columns)
+        raise ValueError(f"movies.csv missing columns: {missing}")
+    
+    # --------- snaity check done ---------
+
+    return ratings, movies
+
+
+# ======================================================
+# 2. SAMPLING USERS
+# ======================================================
+
+
+def sample_users(
+    ratings: pd.DataFrame,
+    movies: pd.DataFrame,
+    n_users: int = 10000,
+    min_ratings_per_user: int = 20,
+    out_dir: str = "data/processed/"
+):
+    """
+    Create a smaller, consistent MovieLens slice by selecting a subset of users
+    and keeping all their ratings + corresponding movies.
+
+    Parameters
+    ----------
+    ratings : pd.DataFrame
+        Raw ratings data with columns [userId, movieId, rating, timestamp].
+    movies : pd.DataFrame
+        Raw movies data with columns [movieId, title, genres].
+    n_users : int, default=5000
+        Number of distinct users to include.
+    min_ratings_per_user : int, default=20
+        Ensure sampled users have at least this many ratings.
+    out_dir : str
+        Directory to save the sampled CSVs.
+
+    Returns
+    -------
+    ratings_sampled, movies_sampled : pd.DataFrame
+        Filtered subsets ready for preprocessing.
+    """
+
+    #  ------ Filter out users with too few ratings first ------
+    user_counts = ratings["userId"].value_counts()
+    eligible_users = user_counts[user_counts >= min_ratings_per_user].index.tolist()
+
+    if len(eligible_users) < n_users:
+        raise ValueError(
+            f"Only {len(eligible_users)} users meet the minimum ratings threshold."
+        )
+
+    # ------ Randomly select N users from the eligible set ------
+    sampled_users = random.sample(eligible_users, n_users)
+    ratings_sampled = ratings[ratings["userId"].isin(sampled_users)].copy()
+ 
+    # ------ Keep only movies that appear in this subset ------
+    sampled_movie_ids = ratings_sampled["movieId"].unique().tolist()
+    movies_sampled = movies[movies["movieId"].isin(sampled_movie_ids)].copy()
+
+    # ------ Create output directory and save ------
+    os.makedirs(out_dir, exist_ok=True)
+    ratings_out = os.path.join(out_dir, "ratings_sampled_raw.csv")
+    movies_out = os.path.join(out_dir, "movies_sampled_raw.csv")
+
+    ratings_sampled.to_csv(ratings_out, index=False)
+    movies_sampled.to_csv(movies_out, index=False)
+
+    print(
+        f"Sampled {len(sampled_users)} users, "
+        f"{len(sampled_movie_ids)} movies, "
+        f"{len(ratings_sampled)} ratings."
+    )
+    print(f"Saved to: {ratings_out} and {movies_out}")
+
+    return ratings_sampled, movies_sampled
+
+
+# ======================================================
+# 3. PREPROCESSING (ID MAPPING + GENRES)
+# ======================================================
+
+def build_id_mappings(ratings: pd.DataFrame, movies: pd.DataFrame) -> Tuple[Dict[int, int], Dict[int, int]]:
+    """
+    Create contiguous integer index mappings for users and movies.
+
+    Parameters
+    ----------
+    ratings : pd.DataFrame
+        Must contain 'userId' and 'movieId' columns from MovieLens.
+
+    Returns
+    -------
+    user2idx : dict[int, int]
+        Maps original userId -> 0..num_users-1
+
+    movie2idx : dict[int, int]
+        Maps original movieId -> 0..num_movies-1
+    """
+    unique_users = ratings["userId"].unique()
+    unique_movies = movies["movieId"].unique()
+
+    user2idx = {uid: i for i, uid in enumerate(sorted(unique_users))} #mapping with the help of dict and enumerate
+    movie2idx = {mid: i for i, mid in enumerate(sorted(unique_movies))}
+
+    return user2idx, movie2idx
+
+
+def apply_id_mappings(ratings: pd.DataFrame, user2idx: Dict[int, int], movie2idx: Dict[int, int]) -> pd.DataFrame:
+    """
+    Add mapped `user_idx` and `movie_idx` columns to the ratings table.
+
+    Any row whose userId/movieId is not found in the mapping will raise,
+    which protects us from silent data drift.
+
+    Returns
+    -------
+    ratings_idx : pd.DataFrame
+        Columns: user_idx, movie_idx, rating, timestamp
+    """
+    ratings_idx = ratings.copy()
+
+    ratings_idx["user_idx"] = ratings_idx["userId"].map(user2idx)
+    ratings_idx["movie_idx"] = ratings_idx["movieId"].map(movie2idx)
+
+    if ratings_idx["user_idx"].isna().any():
+        raise ValueError("Found a rating with userId not in user2idx mapping.")
+    if ratings_idx["movie_idx"].isna().any():
+        raise ValueError("Found a rating with movieId not in movie2idx mapping.")
+
+    # Keep only what we need downstream
+    ratings_idx = ratings_idx[["user_idx", "movie_idx", "rating", "timestamp"]]
+
+    return ratings_idx
+
+
+def explode_genres(movies: pd.DataFrame) -> pd.DataFrame:
+    """
+    Turn pipe-separated 'genres' column into multi-hot indicator columns.
+
+    Example:
+    'Action|Sci-Fi' -> genre_Action=1, genre_Sci-Fi=1, all else=0
+
+    We return a new DataFrame with movieId, title, genres (original string),
+    plus the one-hot columns.
+    """
+    movies_proc = movies.copy()
+
+    # Split "Action|Adventure|Sci-Fi" into lists
+    movies_proc["genre_list"] = movies_proc["genres"].apply(lambda x: x.split("|") if isinstance(x, str) else [])
+
+    # Get full set of unique genres
+    all_genres = sorted({g for glist in movies_proc["genre_list"] for g in glist if g != "(no genres listed)"})
+
+    # For each genre, create a binary column
+    for g in all_genres:
+        col_name = f"genre_{g}"
+        movies_proc[col_name] = movies_proc["genre_list"].apply(lambda gl: 1 if g in gl else 0)
+
+    # Drop helper list
+    movies_proc = movies_proc.drop(columns=["genre_list"])
+
+    return movies_proc, all_genres
+
+
+def attach_movie_indices(movies: pd.DataFrame, movie2idx: Dict[int, int]) -> pd.DataFrame:
+    """
+    Add a `movie_idx` column to the movie metadata table.
+
+    Returns
+    -------
+    movies_idx : pd.DataFrame
+        Contains movie_idx, movieId, title, genres, and genre_* columns.
+    """
+    movies_idx = movies.copy()
+    movies_idx["movie_idx"] = movies_idx["movieId"].map(movie2idx)
+
+    # Some movies in movies.csv might never be rated in ratings.csv.
+    # Those won't have movie_idx and can be dropped for training.
+    movies_idx = movies_idx.dropna(subset=["movie_idx"]).copy()
+    movies_idx["movie_idx"] = movies_idx["movie_idx"].astype(int)
+
+    movies_idx = movies_idx.sort_values("movie_idx").reset_index(drop=True)
+
+
+    return movies_idx
+
+
+def save_processed(users_df: pd.DataFrame, movies_df: pd.DataFrame, ratings_df: pd.DataFrame, out_dir: str = "data/processed/") -> None:
+    """
+    Save cleaned / mapped data to disk for reuse by later pipeline steps.
+    """
+    os.makedirs(out_dir, exist_ok=True)
+
+    users_df.to_csv(os.path.join(out_dir, "users.csv"), index=False)
+    movies_df.to_csv(os.path.join(out_dir, "movies.csv"), index=False)
+    ratings_df.to_csv(os.path.join(out_dir, "ratings.csv"), index=False)
+
+
+
+
+def preprocess_and_save(ratings_raw: pd.DataFrame,
+                        movies_raw: pd.DataFrame,
+                        out_dir: str = "data/processed/") -> None:
+    """
+    Full preprocessing pipeline:
+    - build ID mappings
+    - map ratings to user_idx/movie_idx
+    - build movie genre features
+    - build users table
+    - save everything
+    """
+
+    # 1. Build mappings
+    user2idx, movie2idx = build_id_mappings(ratings_raw, movies_raw)
+
+    # 2. Apply mappings to ratings
+    ratings_idx = apply_id_mappings(ratings_raw, user2idx, movie2idx)
+
+    # 3. Process movie genres into multi-hot
+    movies_genre_expanded, all_genres = explode_genres(movies_raw)
+
+    # 4. Attach movie_idx to the movie table (drop movies with no ratings)
+    movies_idx = attach_movie_indices(movies_genre_expanded, movie2idx)
+
+    # 5. Build users table
+    #    We just need (original userId, user_idx) for reference later.
+    users_df = (
+        pd.DataFrame(list(user2idx.items()), columns=["userId", "user_idx"])
+        .sort_values("user_idx")
+        .reset_index(drop=True)
+    )
+
+    # 6. Save everything
+    save_processed(users_df, movies_idx, ratings_idx, out_dir=out_dir)
+
+    # We also save mappings, genres list, etc. as reusable artifacts)
+    pd.Series(user2idx).to_json(os.path.join(out_dir, "user2idx.json"))
+    pd.Series(movie2idx).to_json(os.path.join(out_dir, "movie2idx.json"))
+    pd.Series(all_genres).to_json(os.path.join(out_dir, "all_genres.json"))
+
+
+
+# ======================================================
+# 4. TRAIN/VAL/TEST SPLIT
+# ======================================================
+
+
+def _split_user_interactions(
+    df_user: pd.DataFrame,
+    train_ratio: float = 0.7,
+    val_ratio: float = 0.1,
+    test_ratio: float = 0.2,
+):
+    """
+    Given all ratings for ONE user (already filtered and sorted by timestamp),
+    break them into train/val/test by time.
+
+    Returns three DataFrames: train_df, val_df, test_df.
+    Some of these can be empty if the user doesn't have enough ratings.
+    """
+
+    assert abs(train_ratio + val_ratio + test_ratio - 1.0) < 1e-6, "splits must sum to 1"
+
+    n = len(df_user)
+    if n == 0:
+        return (
+            df_user.iloc[0:0].copy(),
+            df_user.iloc[0:0].copy(),
+            df_user.iloc[0:0].copy(),
+        )
+
+    # indices for split boundaries
+    train_end = int(n * train_ratio)
+    val_end = train_end + int(n * val_ratio)
+
+    train_df = df_user.iloc[:train_end].copy()
+    val_df = df_user.iloc[train_end:val_end].copy()
+    test_df = df_user.iloc[val_end:].copy()
+
+    # If user is tiny (like 3 ratings total), val/test may end up empty. That's fine.
+    return train_df, val_df, test_df
+
+
+def _generate_negative_samples_for_split(
+    pos_df: pd.DataFrame,
+    all_user_hist: Dict[int, set],
+    all_movie_ids: np.ndarray,
+    num_neg_per_pos: float = 1.0,
+    seed: int = 42,
+):
+    """
+    For a given split (train/val/test), we have a set of positive pairs
+    (user_idx, movie_idx). We generate negative pairs by pairing each user
+    with movies they have NOT interacted with.
+
+    We try to keep roughly `num_neg_per_pos` negatives per positive.
+
+    Returns
+    -------
+    neg_df : pd.DataFrame with columns:
+        user_idx, movie_idx, label (=0)
+    """
+
+    rng = np.random.default_rng(seed)
+
+    neg_rows = []
+
+    # We'll group positives by user to be efficient.
+    grouped = pos_df.groupby("user_idx")["movie_idx"].apply(list)
+
+    for user_idx, pos_movies_for_user in grouped.items():
+        already_seen = all_user_hist[user_idx]  # set of movie_idx
+        num_pos = len(pos_movies_for_user)
+        num_neg = int(num_pos * num_neg_per_pos)
+
+        # sample candidates the user has NOT seen
+        # we sample with replacement if needed to avoid edge cases
+        available_movies = np.setdiff1d(all_movie_ids, np.array(list(already_seen)))
+
+        if len(available_movies) == 0:
+            # weird edge case: user has seen literally all movies in this subset
+            continue
+
+        if num_neg > len(available_movies):
+            sampled_neg_movies = rng.choice(available_movies, size=num_neg, replace=True)
+        else:
+            sampled_neg_movies = rng.choice(available_movies, size=num_neg, replace=False)
+
+        for m in sampled_neg_movies:
+            neg_rows.append(
+                {
+                    "user_idx": user_idx,
+                    "movie_idx": int(m),
+                    "label": 0,
+                }
+            )
+
+    if len(neg_rows) == 0:
+        neg_df = pd.DataFrame(columns=["user_idx", "movie_idx", "label"])
+    else:
+        neg_df = pd.DataFrame(neg_rows)
+
+    return neg_df
+
+
+def make_splits(
+    ratings_path: str = "data/processed/ratings.csv",
+    out_dir: str = "data/processed/",
+    train_ratio: float = 0.7,
+    val_ratio: float = 0.1,
+    test_ratio: float = 0.2,
+    min_interactions_required: int = 5,
+    num_neg_per_pos: float = 1.0,
+):
+    """
+    Main driver for creating train/val/test splits + negative samples.
+
+    Steps:
+    1. Load processed ratings (already has user_idx, movie_idx).
+    2. Sort each user's interactions by timestamp.
+    3. Split by time into train/val/test.
+    4. Build per-user interaction history set (for negative sampling).
+    5. For each split, generate negatives.
+    6. Save all CSVs to disk.
+
+    Output CSV columns:
+      * *_pos.csv: user_idx, movie_idx, rating, timestamp, label=1
+      * *_neg.csv: user_idx, movie_idx, label=0
+    """
+
+    os.makedirs(out_dir, exist_ok=True)
+
+    ratings = pd.read_csv(ratings_path)
+
+    # safety check
+    expected_cols = {"user_idx", "movie_idx", "rating", "timestamp"}
+    if not expected_cols.issubset(ratings.columns):
+        raise ValueError(f"ratings.csv missing columns {expected_cols - set(ratings.columns)}")
+
+    # Sort by timestamp within each user
+    ratings_sorted = ratings.sort_values(["user_idx", "timestamp"]).reset_index(drop=True)
+
+    all_users = ratings_sorted["user_idx"].unique()
+    all_movies = ratings_sorted["movie_idx"].unique()
+
+    train_parts = []
+    val_parts = []
+    test_parts = []
+
+    # We'll also build a dict of full user histories (all movies they've interacted with),
+    # for later negative sampling.
+    user_history = {int(u): set() for u in all_users}
+
+    # We'll populate user_history first using ALL interactions (full timeline).
+    for row in ratings_sorted.itertuples(index=False):
+        user_history[int(row.user_idx)].add(int(row.movie_idx))
+
+    # Now, for each user, split their rows into train/val/test based on timestamp order.
+    for u in all_users:
+        df_user = ratings_sorted[ratings_sorted["user_idx"] == u]
+
+        # skip very cold users
+        if len(df_user) < min_interactions_required:
+            # Put ALL of them into train (model at least learns embedding),
+            # and nothing into val/test for this user.
+            df_user_train = df_user.copy()
+            df_user_val = df_user.iloc[0:0].copy()
+            df_user_test = df_user.iloc[0:0].copy()
+        else:
+            df_user_train, df_user_val, df_user_test = _split_user_interactions(
+                df_user,
+                train_ratio=train_ratio,
+                val_ratio=val_ratio,
+                test_ratio=test_ratio,
+            )
+
+        train_parts.append(df_user_train)
+        val_parts.append(df_user_val)
+        test_parts.append(df_user_test)
+
+    train_df = pd.concat(train_parts, ignore_index=True)
+    val_df = pd.concat(val_parts, ignore_index=True)
+    test_df = pd.concat(test_parts, ignore_index=True)
+
+    # Add label=1 on positives
+    train_pos = train_df.copy()
+    train_pos["label"] = 1
+
+    val_pos = val_df.copy()
+    val_pos["label"] = 1
+
+    test_pos = test_df.copy()
+    test_pos["label"] = 1
+
+    # Generate negatives for each split
+    all_movie_ids = np.array(all_movies)
+
+    train_neg = _generate_negative_samples_for_split(
+        train_pos, user_history, all_movie_ids, num_neg_per_pos=num_neg_per_pos, seed=42
+    )
+    val_neg = _generate_negative_samples_for_split(
+        val_pos, user_history, all_movie_ids, num_neg_per_pos=num_neg_per_pos, seed=123
+    )
+    test_neg = _generate_negative_samples_for_split(
+        test_pos, user_history, all_movie_ids, num_neg_per_pos=num_neg_per_pos, seed=999
+    )
+
+    # Reorder / keep consistent columns for saving
+    cols_pos = ["user_idx", "movie_idx", "rating", "timestamp", "label"]
+    cols_neg = ["user_idx", "movie_idx", "label"]
+
+    train_pos = train_pos[cols_pos]
+    val_pos = val_pos[cols_pos]
+    test_pos = test_pos[cols_pos]
+
+    train_neg = train_neg[cols_neg]
+    val_neg = val_neg[cols_neg]
+    test_neg = test_neg[cols_neg]
+
+    # Save all six CSVs
+    train_pos.to_csv(os.path.join(out_dir, "train_pos.csv"), index=False)
+    train_neg.to_csv(os.path.join(out_dir, "train_neg.csv"), index=False)
+
+    val_pos.to_csv(os.path.join(out_dir, "val_pos.csv"), index=False)
+    val_neg.to_csv(os.path.join(out_dir, "val_neg.csv"), index=False)
+
+    test_pos.to_csv(os.path.join(out_dir, "test_pos.csv"), index=False)
+    test_neg.to_csv(os.path.join(out_dir, "test_neg.csv"), index=False)
+
+    print("Data split complete.")
+    print(f"Train: {len(train_pos)} pos / {len(train_neg)} neg")
+    print(f"Val:   {len(val_pos)} pos / {len(val_neg)} neg")
+    print(f"Test:  {len(test_pos)} pos / {len(test_neg)} neg")
+
+    return {
+        "train_pos": train_pos,
+        "train_neg": train_neg,
+        "val_pos": val_pos,
+        "val_neg": val_neg,
+        "test_pos": test_pos,
+        "test_neg": test_neg,
+    }
+
+
+# ======================================================
+# 5. NEGATIVE SAMPLING
+# ======================================================
+
+# def negative_sampling(pos_df, num_movies=None, num_neg=5):
+#     """
+#     For each positive interaction, sample K negative movies.
+#     """
+#     if num_movies is None:
+#         num_movies = pos_df["movie_idx"].max() + 1
+
+#     neg_samples = []
+#     user_pos = pos_df.groupby("user_idx")["movie_idx"].apply(set).to_dict()
+
+#     for user, group in pos_df.groupby("user_idx"):
+#         pos_movies = user_pos[user]
+#         for movie in pos_movies:
+#             for _ in range(num_neg):
+#                 neg = np.random.randint(0, num_movies)
+#                 while neg in pos_movies:
+#                     neg = np.random.randint(0, num_movies)
+#                 neg_samples.append((user, neg))
+
+#     neg_df = pd.DataFrame(neg_samples, columns=["user_idx", "movie_idx"])
+#     return neg_df
+
+
+# ======================================================
+# 6. DGL GRAPH CONSTRUCTION
+# ======================================================
+
+def build_graph(
+    ratings_path="data/processed/train_pos.csv",
+    movies_path="data/processed/movies.csv",
+    out_path="data/graphs/train_graph.bin"
+):
+    """
+    Build a DGL heterogeneous bipartite graph with *bidirectional* edges:
+
+       user --rates--> movie
+       movie --rev_rates--> user
+
+    using only TRAIN positive edges to avoid data leakage.
+    """
+
+    # === Load data ===
+    train_pos = pd.read_csv(ratings_path)
+    movies = pd.read_csv(movies_path).sort_values("movie_idx").reset_index(drop=True)
+
+    # --- Sanity: dense movie_idx ---
+    num_movies = movies["movie_idx"].max() + 1
+    assert movies["movie_idx"].nunique() == num_movies, (
+        f"movies.csv movie_idx not dense: max={num_movies-1}, "
+        f"nunique={movies['movie_idx'].nunique()}"
+    )
+
+    # Filter edges to valid movies, just in case
+    valid_movie_ids = set(movies["movie_idx"].unique())
+    mask = train_pos["movie_idx"].isin(valid_movie_ids)
+    if (~mask).sum() > 0:
+        print(f"Dropping {(~mask).sum()} train edges with unknown movie_idx.")
+    train_pos = train_pos[mask].copy()
+
+    # === Edge lists ===
+    src_users = torch.tensor(train_pos["user_idx"].values, dtype=torch.int64)
+    dst_movies = torch.tensor(train_pos["movie_idx"].values, dtype=torch.int64)
+
+    num_users = train_pos["user_idx"].max() + 1
+
+    # === Build heterograph with forward + reverse relations ===
+    g = dgl.heterograph(
+        {
+            ("user", "rates", "movie"): (src_users, dst_movies),
+            ("movie", "rev_rates", "user"): (dst_movies, src_users),
+        },
+        num_nodes_dict={
+            "user": num_users,
+            "movie": num_movies,
+        }
+    )
+
+    # === Add movie genre features ===
+    genre_cols = [c for c in movies.columns if c.startswith("genre_")]
+    movie_feats = torch.tensor(movies[genre_cols].values, dtype=torch.float32)
+    assert movie_feats.shape[0] == num_movies
+
+    g.nodes["movie"].data["genre"] = movie_feats
+
+    # Optional: store ratings on edges (only on forward edges)
+    g.edges["rates"].data["rating"] = torch.tensor(
+        train_pos["rating"].values, dtype=torch.float32
+    )
+
+    # === Save graph ===
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    dgl.save_graphs(out_path, g)
+
+    print("Graph construction complete (bidirectional).")
+    print(f"Users:  {num_users}")
+    print(f"Movies: {num_movies}")
+    print(f"Edges (rates):      {g.num_edges(('user','rates','movie'))}")
+    print(f"Edges (rev_rates):  {g.num_edges(('movie','rev_rates','user'))}")
+    print(f"Saved graph to: {out_path}")
+
+    return g
+
+
+
+
+# ======================================================
+# 7. DATA LOADER (FOR TRAINING)
+# ======================================================
+
+def build_dataloader(pos_path, neg_path, batch_size=2048, shuffle=True):
+    pos_df = pd.read_csv(pos_path)
+    neg_df = pd.read_csv(neg_path)
+
+    pos_df["label"] = 1
+    neg_df["label"] = 0
+
+    df = pd.concat([pos_df, neg_df], ignore_index=True)
+
+    user_idx = torch.tensor(df["user_idx"].values, dtype=torch.long)
+    movie_idx = torch.tensor(df["movie_idx"].values, dtype=torch.long)
+    labels = torch.tensor(df["label"].values, dtype=torch.float32)
+
+    dataset = TensorDataset(user_idx, movie_idx, labels)
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+
+    return loader, len(df)
+
+
+
+# ======================================================
+# 8. EVALUATION METRICS
+# ======================================================
+
+def precision_at_k(ranklist, k):
+    """ranklist = list of 0/1 relevance sorted by predicted score descending."""
+    return np.sum(ranklist[:k]) / k
+
+
+def recall_at_k(ranklist, k):
+    """Relevant items divided by total relevant items."""
+    total_pos = np.sum(ranklist)
+    if total_pos == 0:
+        return 0.0
+    return np.sum(ranklist[:k]) / total_pos
+
+
+def ndcg_at_k(ranklist, k):
+    """Discounted gain."""
+    ranklist = np.array(ranklist)
+    dcg = 0.0
+    for i in range(k):
+        if ranklist[i] == 1:
+            dcg += 1.0 / np.log2(i + 2)
+
+    # Ideal DCG
+    ideal = np.sum(ranklist)
+    if ideal == 0:
+        return 0.0
+
+    idcg = 0.0
+    for i in range(int(ideal)):
+        idcg += 1.0 / np.log2(i + 2)
+
+    return dcg / idcg
+
+
+# ======================================================
+# 9. FULL-RANKING EVALUATION
+# ======================================================
+
+def evaluate_full_ranking(
+    model,
+    g,
+    pos_path,
+    k=10,
+    device="cpu"
+):
+    """
+    Full ranking evaluation:
+        For each user in the validation or test set:
+            - score ALL movies
+            - sort by predicted score
+            - compute P@K, R@K, NDCG@K
+
+    Parameters
+    ----------
+    model : GNNRecommender
+    g     : DGLGraph (train graph)
+    pos_path : path to val_pos.csv or test_pos.csv
+               should contain [user_idx, movie_idx]
+    k : cutoff for metrics
+    """
+
+    df = pd.read_csv(pos_path)
+    users = df["user_idx"].unique()
+
+    print(f"Evaluating {len(users)} users with full ranking...")
+
+    model.eval()
+    g = g.to(device)
+
+    # Compute embeddings ONCE
+    with torch.no_grad():
+        user_emb, movie_emb = model.encode(g)
+        user_emb = user_emb.to(device)
+        movie_emb = movie_emb.to(device)
+
+    num_movies = movie_emb.shape[0]
+
+    all_prec, all_rec, all_ndcg = [], [], []
+
+    # Create mapping of user → their positive movies
+    user_pos = {}
+    for u, m in zip(df["user_idx"], df["movie_idx"]):
+        user_pos.setdefault(u, []).append(m)
+
+    for u in tqdm(users):
+        # 1. Score ALL MOVIES for this user
+        u_idx_tensor = torch.tensor([u], dtype=torch.long, device=device).repeat(num_movies)
+        m_idx_tensor = torch.arange(num_movies, device=device)
+
+        with torch.no_grad():
+            logits = model.link_predictor(user_emb, movie_emb, u_idx_tensor, m_idx_tensor)
+            scores = torch.sigmoid(logits).cpu().numpy()
+
+        # 2. Build relevance vector for ranking
+        rel = np.zeros(num_movies, dtype=np.int32)
+        for m in user_pos[u]:
+            rel[m] = 1
+
+        # 3. Sort scores descending
+        sorted_idx = np.argsort(-scores)
+        ranked_rel = rel[sorted_idx]
+
+        # 4. Compute metrics
+        p = precision_at_k(ranked_rel, k)
+        r = recall_at_k(ranked_rel, k)
+        nd = ndcg_at_k(ranked_rel, k)
+
+        all_prec.append(p)
+        all_rec.append(r)
+        all_ndcg.append(nd)
+
+    # Final aggregated metrics
+    return {
+        "precision@k": float(np.mean(all_prec)),
+        "recall@k": float(np.mean(all_rec)),
+        "ndcg@k": float(np.mean(all_ndcg)),
+        "num_users": int(len(users)),
+    }
+
+
+def recommend_for_user(model, g, user_idx, movies_df, k=10, device="cpu"):
+    model.eval()
+    g = g.to(device)
+
+    with torch.no_grad():
+        user_emb, movie_emb = model.encode(g)
+        user_emb = user_emb.to(device)
+        movie_emb = movie_emb.to(device)
+
+    num_movies = movie_emb.shape[0]
+
+    # Score all movies
+    u_tensor = torch.tensor([user_idx], device=device).repeat(num_movies)
+    m_tensor = torch.arange(num_movies, device=device)
+
+    with torch.no_grad():
+        logits = model.link_predictor(user_emb, movie_emb, u_tensor, m_tensor)
+        scores = torch.sigmoid(logits).cpu().numpy()
+
+    # Rank descending
+    ranked = np.argsort(-scores)[:k]
+
+    # Attach titles
+    recs = movies_df.set_index("movie_idx").loc[ranked][["title"]]
+    recs["score"] = scores[ranked]
+
+    return recs.reset_index()
+
+
+def compare_user_preferences(user_idx, val_pos_path, movies_df, recs):
+    """Return which recommended movies were actually liked by the user."""
+    df = pd.read_csv(val_pos_path)
+
+    # Movies user actually interacted with in validation set
+    true_movies = df[df["user_idx"] == user_idx]["movie_idx"].tolist()
+
+    recs["relevant"] = recs["movie_idx"].apply(lambda x: 1 if x in true_movies else 0)
+    return recs
+
+def show_recommendations_with_scores(user_id, model, g, movies_df, k=10, device="cpu"):
+    """
+    Display top-K recommendations WITH predicted scores.
+    Clean demo: does NOT show relevance labels.
+    """
+
+    model.eval()
+    g = g.to(device)
+
+    # Encode users + movies once
+    with torch.no_grad():
+        user_emb, movie_emb = model.encode(g)
+
+    num_movies = movie_emb.shape[0]
+
+    # Build score tensors
+    u_tensor = torch.tensor([user_id], dtype=torch.long, device=device).repeat(num_movies)
+    m_tensor = torch.arange(num_movies, dtype=torch.long, device=device)
+
+    # Predict scores
+    with torch.no_grad():
+        logits = model.link_predictor(
+            user_emb.to(device), 
+            movie_emb.to(device), 
+            u_tensor, 
+            m_tensor
+        )
+        scores = torch.sigmoid(logits).cpu().numpy()
+
+    # Pick top-K
+    topk_idx = scores.argsort()[-k:][::-1]  # descending
+
+    # Build result table
+    recs = movies_df.loc[topk_idx, ["title", "genres"]].copy()
+    recs.insert(0, "rank", range(1, k + 1))
+    recs["score"] = scores[topk_idx].round(4)    # rounded for readability
+
+    return recs.reset_index(drop=True)
+
+
+
+# ======================================================
+# FUNCTIONS FOR BONUS SECTION
+# ======================================================
+
+def load_genome_tags(raw_dir="data/raw/"):
+    """
+    Load MovieLens genome tags and relevance scores.
+
+    Returns:
+        tags_df: tagId -> tag string
+        scores_df: movieId, tagId, relevance
+    """
+    tags_df = pd.read_csv(os.path.join(raw_dir, "genome_tags.csv"))
+    scores_df = pd.read_csv(os.path.join(raw_dir, "genome_scores.csv"))
+
+    expected_cols_tags = {"tagId", "tag"}
+    expected_cols_scores = {"movieId", "tagId", "relevance"}
+
+    if not expected_cols_tags.issubset(tags_df.columns):
+        raise ValueError("genome-tags.csv missing required columns")
+
+    if not expected_cols_scores.issubset(scores_df.columns):
+        raise ValueError("genome-scores.csv missing required columns")
+
+    return tags_df, scores_df
+
+
+
+def build_movie_tag_edges(movies_df, genome_scores_df, relevance_threshold=0.8):
+    """
+    Build movie–tag edges using only movies present in the processed dataset.
+    We drop genome-score rows for movies NOT included in movies.csv.
+    """
+
+    # 1. Keep only tags for our sampled movies
+    valid_movieIds = set(movies_df["movieId"])
+    genome_scores_df = genome_scores_df[genome_scores_df["movieId"].isin(valid_movieIds)].copy()
+
+    # 2. Build tag mapping
+    tag_ids = sorted(genome_scores_df["tagId"].unique())
+    tag2idx = {tid: i for i, tid in enumerate(tag_ids)}
+
+    # 3. Map movieId → movie_idx
+    movieId_to_idx = dict(zip(movies_df["movieId"], movies_df["movie_idx"]))
+    genome_scores_df["movie_idx"] = genome_scores_df["movieId"].map(movieId_to_idx)
+
+    # 4. Filter edges by relevance threshold
+    filtered = genome_scores_df[genome_scores_df["relevance"] >= relevance_threshold].copy()
+
+    # 5. Create final edge dataframe
+    filtered["tag_idx"] = filtered["tagId"].map(tag2idx)
+    movie_tag_edges = filtered[["movie_idx", "tag_idx"]].dropna().copy()
+
+    # Ensure correct types
+    movie_tag_edges["movie_idx"] = movie_tag_edges["movie_idx"].astype(int)
+    movie_tag_edges["tag_idx"] = movie_tag_edges["tag_idx"].astype(int)
+
+    return movie_tag_edges, tag2idx
+
+
+
+
+def build_hetero_graph(train_pos, movies_df, movie_tag_edges):
+    """
+    Build a heterogeneous graph with:
+      • user
+      • movie
+      • tag
+    Node types & relations:
+      (user)  --rates-->   (movie)
+      (movie) --rev_rates-> (user)
+      (movie) --has_tag--> (tag)
+      (tag)   --tag_of-->  (movie)
+    """
+
+    # --- Edge lists for user–movie ---
+    src_users = torch.tensor(train_pos["user_idx"].values, dtype=torch.int64)
+    dst_movies = torch.tensor(train_pos["movie_idx"].values, dtype=torch.int64)
+
+    num_users = train_pos["user_idx"].max() + 1
+    num_movies = movies_df["movie_idx"].max() + 1
+
+    # --- Movie–Tag edges ---
+    mt_src = torch.tensor(movie_tag_edges["movie_idx"].values, dtype=torch.int64)
+    mt_dst = torch.tensor(movie_tag_edges["tag_idx"].values, dtype=torch.int64)
+
+    num_tags = movie_tag_edges["tag_idx"].max() + 1
+
+    # --- Build heterograph ---
+    g = dgl.heterograph(
+        {
+            ("user", "rates", "movie"): (src_users, dst_movies),
+            ("movie", "rev_rates", "user"): (dst_movies, src_users),
+
+            ("movie", "has_tag", "tag"): (mt_src, mt_dst),
+            ("tag", "tag_of", "movie"): (mt_dst, mt_src),
+        },
+        num_nodes_dict={
+            "user": num_users,
+            "movie": num_movies,
+            "tag": num_tags,
+        }
+    )
+
+    # --- Add movie features ---
+    genre_cols = [c for c in movies_df.columns if c.startswith("genre_")]
+    g.nodes["movie"].data["genre"] = torch.tensor(
+        movies_df.sort_values("movie_idx")[genre_cols].values,
+        dtype=torch.float32
+    )
+
+    print("\nHeterogeneous Graph Summary:")
+    print(g)
+
+    return g
+
+
