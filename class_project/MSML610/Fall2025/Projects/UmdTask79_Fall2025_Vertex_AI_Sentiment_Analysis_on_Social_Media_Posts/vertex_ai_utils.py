@@ -576,5 +576,412 @@ def analyze_preprocessing_impact(df: pd.DataFrame, text_column: str = 'text',
         print(f"  Processed: {row[processed_column][:100]}...")
 
 
+#  =================================================================
+# VERTEX AI HYPERPARAMETER TUNING (2025 BEST PRACTICES)
+# =================================================================
+
+def initialize_vertex_ai(
+    project_id: str,
+    location: str,
+    credentials_path: str = 'vertex-ai-key.json',
+    staging_bucket: str = None
+) -> None:
+    """
+    Initialize Vertex AI with credentials and project settings.
+
+    :param project_id: Google Cloud Project ID
+    :param location: GCP region (e.g., 'us-central1')
+    :param credentials_path: Path to service account JSON key
+    :param staging_bucket: GCS bucket for staging (e.g., 'gs://bucket-name/staging')
+    """
+    import os
+    from google.oauth2 import service_account
+
+    # Set up credentials
+    if credentials_path and os.path.exists(credentials_path):
+        credentials = service_account.Credentials.from_service_account_file(credentials_path)
+        print(f"✅ Loaded credentials from: {credentials_path}")
+    else:
+        credentials = None
+        print(f"⚠️  No credentials file found, using default credentials")
+
+    # Initialize Vertex AI
+    aiplatform.init(
+        project=project_id,
+        location=location,
+        credentials=credentials,
+        staging_bucket=staging_bucket
+    )
+
+    print(f"✅ Vertex AI initialized")
+    print(f"   Project: {project_id}")
+    print(f"   Location: {location}")
+    if staging_bucket:
+        print(f"   Staging bucket: {staging_bucket}")
+
+
+def upload_to_gcs(
+    bucket_name: str,
+    source_file_path: str,
+    destination_blob_name: str
+) -> str:
+    """
+    Upload a file to Google Cloud Storage.
+    Uses credentials from initialized Vertex AI session.
+
+    :param bucket_name: Name of the GCS bucket
+    :param source_file_path: Local path to file
+    :param destination_blob_name: Destination path in GCS
+    :return: GCS URI of uploaded file
+    """
+    # Get credentials from initialized Vertex AI session
+    credentials = aiplatform.initializer.global_config.credentials
+    project = aiplatform.initializer.global_config.project
+
+    # Create storage client with the same credentials
+    storage_client = storage.Client(project=project, credentials=credentials)
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(destination_blob_name)
+    blob.upload_from_filename(source_file_path)
+
+    gcs_uri = f"gs://{bucket_name}/{destination_blob_name}"
+    print(f"✅ Uploaded {source_file_path} to {gcs_uri}")
+    return gcs_uri
+
+
+def create_vertex_ai_hyperparameter_tuning_job(
+    display_name: str,
+    training_script_path: str,
+    train_data_gcs_uri: str,
+    val_data_gcs_uri: str,
+    test_data_gcs_uri: str,
+    base_output_dir: str,
+    max_trial_count: int = 10,
+    parallel_trial_count: int = 2,
+    project_id: str = None,
+    location: str = None,
+    credentials_path: str = 'vertex-ai-key.json'
+) -> aiplatform.HyperparameterTuningJob:
+    """
+    Create a hyperparameter tuning job for RoBERTa sentiment analysis.
+
+    **2025 IMPLEMENTATION**:
+    - Uses cloudml-hypertune for metric reporting (CORRECT import: cloudml_hypertune)
+    - Parameters passed as command-line arguments (Vertex AI injects values automatically)
+    - Optimized search space for transformer fine-tuning
+    - T4 GPU for faster training
+
+    :param display_name: Name for the tuning job
+    :param training_script_path: Path to training script
+    :param train_data_gcs_uri: GCS URI to training data
+    :param val_data_gcs_uri: GCS URI to validation data
+    :param test_data_gcs_uri: GCS URI to test data
+    :param base_output_dir: Base GCS directory for tuning outputs
+    :param max_trial_count: Maximum number of trials (default 10)
+    :param parallel_trial_count: Number of parallel trials (default 2, recommended ≤4)
+    :param project_id: Google Cloud Project ID
+    :param location: GCP region
+    :param credentials_path: Path to credentials
+    :return: HyperparameterTuningJob object
+    """
+    # Upload training script to GCS
+    staging_bucket = aiplatform.initializer.global_config.staging_bucket
+    if staging_bucket.startswith('gs://'):
+        bucket_path = staging_bucket.replace('gs://', '')
+        bucket_name = bucket_path.split('/')[0]
+    else:
+        bucket_name = staging_bucket.split('/')[0]
+
+    script_gcs_uri = upload_to_gcs(
+        bucket_name=bucket_name,
+        source_file_path=training_script_path,
+        destination_blob_name=f"hyperparameter_tuning_scripts/{training_script_path}"
+    )
+
+    print(f"🚀 Creating hyperparameter tuning job: {display_name}")
+    print(f"   Max trials: {max_trial_count}")
+    print(f"   Parallel trials: {parallel_trial_count}")
+    print(f"   ⏰ Estimated time: {max_trial_count * 30 // parallel_trial_count} minutes (GPU)")
+    print(f"   💰 Estimated cost: $15-30 USD")
+
+    # ============================================================
+    # OPTIMIZED HYPERPARAMETER SEARCH SPACE (for 2%+ improvement)
+    # ============================================================
+    # Based on transformer fine-tuning best practices
+
+    # Learning rate: Critical parameter, log scale exploration
+    learning_rate = aiplatform.hyperparameter_tuning.DoubleParameterSpec(
+        min=5e-6, max=5e-5, scale="log"  # Wider range for better optimization
+    )
+
+    # Batch size: Discrete values (16, 32 only for stability)
+    batch_size = aiplatform.hyperparameter_tuning.DiscreteParameterSpec(
+        values=[16, 32],
+        scale="linear"
+    )
+
+    # Weight decay: L2 regularization, linear scale
+    weight_decay = aiplatform.hyperparameter_tuning.DoubleParameterSpec(
+        min=0.001, max=0.1, scale="linear"  # Wider range, includes lower values
+    )
+
+    # Warmup ratio: Learning rate warmup, linear scale
+    warmup_ratio = aiplatform.hyperparameter_tuning.DoubleParameterSpec(
+        min=0.0, max=0.3, scale="linear"  # Extended to 0.3 for better warmup
+    )
+
+    # ============================================================
+    # WORKER POOL SPEC (T4 GPU)
+    # ============================================================
+    container_uri = "gcr.io/deeplearning-platform-release/pytorch-gpu.1-13:latest"
+
+    # CORRECT (2025): Parameters are passed as command-line arguments
+    # Vertex AI automatically injects parameter values
+    python_command = f"""
+pip install --upgrade pip && \
+pip install 'transformers==4.35.0' 'datasets==2.14.0' 'accelerate==0.20.3' scikit-learn cloudml-hypertune && \
+pip list | grep cloudml && \
+gsutil cp {script_gcs_uri} /tmp/training_script.py && \
+python /tmp/training_script.py \
+  --train_data_path={train_data_gcs_uri} \
+  --val_data_path={val_data_gcs_uri} \
+  --test_data_path={test_data_gcs_uri} \
+  --model_name=cardiffnlp/twitter-roberta-base-sentiment-latest \
+  --num_epochs=4 \
+  --max_length=128 \
+  --output_dir=/tmp/model_output "$@"
+"""
+    # Note: Hyperparameters (learning_rate, batch_size, weight_decay, warmup_ratio)
+    # are passed automatically by Vertex AI as command-line arguments
+
+    worker_pool_specs = [{
+        "machine_spec": {
+            "machine_type": "n1-standard-4",
+            "accelerator_type": "NVIDIA_TESLA_T4",
+            "accelerator_count": 1,
+        },
+        "replica_count": 1,
+        "container_spec": {
+            "image_uri": container_uri,
+            "command": ["bash", "-c"],
+            "args": [python_command, "--"],
+        },
+    }]
+
+    print(f"   Container: {container_uri}")
+    print(f"   Machine: n1-standard-4 with NVIDIA T4 GPU")
+    print(f"   Training script: {script_gcs_uri}")
+
+    # ============================================================
+    # CREATE HYPERPARAMETER TUNING JOB
+    # ============================================================
+    tuning_job = aiplatform.HyperparameterTuningJob(
+        display_name=display_name,
+        custom_job=aiplatform.CustomJob(
+            display_name=f"{display_name}_custom_job",
+            worker_pool_specs=worker_pool_specs,
+        ),
+        metric_spec={"f1_macro": "maximize"},  # Must match hyperparameter_metric_tag in training script
+        parameter_spec={
+            "learning_rate": learning_rate,
+            "batch_size": batch_size,
+            "weight_decay": weight_decay,
+            "warmup_ratio": warmup_ratio,
+        },
+        max_trial_count=max_trial_count,
+        parallel_trial_count=parallel_trial_count,
+    )
+
+    print(f"✅ Hyperparameter tuning job created: {display_name}")
+    print(f"   Metric to optimize: f1_macro (maximize)")
+    print(f"   Search space:")
+    print(f"     - learning_rate: [5e-6, 5e-5] (log scale)")
+    print(f"     - batch_size: [16, 32]")
+    print(f"     - weight_decay: [0.001, 0.1] (linear)")
+    print(f"     - warmup_ratio: [0.0, 0.3] (linear)")
+    print(f"\n   Call tuning_job.run() to start the job")
+
+    return tuning_job
+
+
+def create_custom_roberta_training_job(
+    display_name: str,
+    script_path: str,
+    train_data_gcs_uri: str,
+    val_data_gcs_uri: str,
+    test_data_gcs_uri: str,
+    project_id: str = None,
+    location: str = None,
+    learning_rate: float = 2e-5,
+    batch_size: int = 32,
+    weight_decay: float = 0.01,
+    warmup_ratio: float = 0.1,
+    num_epochs: int = 4
+) -> aiplatform.CustomJob:
+    """
+    Create a custom training job for RoBERTa sentiment analysis (baseline model).
+
+    **2025 IMPLEMENTATION**:
+    - Uses latest PyTorch GPU container from Google Cloud
+    - Follows worker_pool_specs best practices (Dec 2025)
+    - T4 GPU for efficient training
+    - Returns CustomJob object (use .run() to execute)
+
+    :param display_name: Name for the training job
+    :param script_path: Path to training script
+    :param train_data_gcs_uri: GCS URI to training data
+    :param val_data_gcs_uri: GCS URI to validation data
+    :param test_data_gcs_uri: GCS URI to test data
+    :param project_id: Google Cloud Project ID (optional if initialized)
+    :param location: GCP region (optional if initialized)
+    :param learning_rate: Learning rate for training
+    :param batch_size: Batch size for training
+    :param weight_decay: Weight decay for regularization
+    :param warmup_ratio: Warmup ratio for learning rate scheduler
+    :param num_epochs: Number of training epochs
+    :return: CustomJob object (call .run() to execute)
+    """
+    # Upload training script to GCS
+    staging_bucket = aiplatform.initializer.global_config.staging_bucket
+    if staging_bucket.startswith('gs://'):
+        bucket_path = staging_bucket.replace('gs://', '')
+        bucket_name = bucket_path.split('/')[0]
+    else:
+        bucket_name = staging_bucket.split('/')[0]
+
+    script_gcs_uri = upload_to_gcs(
+        bucket_name=bucket_name,
+        source_file_path=script_path,
+        destination_blob_name=f"training_scripts/{script_path}"
+    )
+
+    print(f"🚀 Creating custom training job: {display_name}")
+    print(f"   ⏰ Estimated time: ~15-20 minutes (GPU)")
+    print(f"   💰 Estimated cost: $2-5 USD")
+
+    # ============================================================
+    # WORKER POOL SPEC (2025 Best Practices)
+    # ============================================================
+    # Using latest PyTorch GPU container from Google Cloud
+    container_uri = "gcr.io/deeplearning-platform-release/pytorch-gpu.1-13:latest"
+
+    # Training command with all parameters
+    python_command = f"""
+pip install --upgrade pip && \
+pip install 'transformers==4.35.0' 'datasets==2.14.0' 'accelerate==0.20.3' scikit-learn && \
+gsutil cp {script_gcs_uri} /tmp/training_script.py && \
+python /tmp/training_script.py \
+  --train_data_path={train_data_gcs_uri} \
+  --val_data_path={val_data_gcs_uri} \
+  --test_data_path={test_data_gcs_uri} \
+  --model_name=cardiffnlp/twitter-roberta-base-sentiment-latest \
+  --learning_rate={learning_rate} \
+  --batch_size={batch_size} \
+  --weight_decay={weight_decay} \
+  --warmup_ratio={warmup_ratio} \
+  --num_epochs={num_epochs} \
+  --max_length=128 \
+  --output_dir=/tmp/model_output
+"""
+
+    # Worker pool specification (2025 standard format)
+    worker_pool_specs = [{
+        "machine_spec": {
+            "machine_type": "n1-standard-4",
+            "accelerator_type": "NVIDIA_TESLA_T4",
+            "accelerator_count": 1,
+        },
+        "replica_count": 1,
+        "container_spec": {
+            "image_uri": container_uri,
+            "command": ["bash", "-c"],
+            "args": [python_command],
+        },
+    }]
+
+    print(f"   Container: {container_uri}")
+    print(f"   Machine: n1-standard-4 with NVIDIA T4 GPU")
+    print(f"   Training script: {script_gcs_uri}")
+    print(f"   Hyperparameters:")
+    print(f"     - learning_rate: {learning_rate}")
+    print(f"     - batch_size: {batch_size}")
+    print(f"     - weight_decay: {weight_decay}")
+    print(f"     - warmup_ratio: {warmup_ratio}")
+    print(f"     - num_epochs: {num_epochs}")
+
+    # ============================================================
+    # CREATE CUSTOM JOB (2025 SDK)
+    # ============================================================
+    custom_job = aiplatform.CustomJob(
+        display_name=display_name,
+        worker_pool_specs=worker_pool_specs,
+    )
+
+    print(f"✅ Custom training job created: {display_name}")
+    print(f"\n   Call job.run() to start training")
+    print(f"   Or call job.run(sync=False) to run asynchronously")
+
+    return custom_job
+
+
+def run_roberta_training_job(
+    job: aiplatform.CustomJob,
+    train_data_gcs_uri: str,
+    val_data_gcs_uri: str,
+    test_data_gcs_uri: str,
+    model_display_name: str = "sentiment-roberta-model",
+    sync: bool = True
+) -> aiplatform.CustomJob:
+    """
+    Run a custom RoBERTa training job and wait for completion.
+
+    **2025 IMPLEMENTATION**:
+    - Uses job.run() with sync parameter (Dec 2025 best practice)
+    - Synchronous by default (waits for completion)
+    - Returns completed job object
+
+    :param job: CustomJob object created by create_custom_roberta_training_job()
+    :param train_data_gcs_uri: GCS URI to training data (for logging)
+    :param val_data_gcs_uri: GCS URI to validation data (for logging)
+    :param test_data_gcs_uri: GCS URI to test data (for logging)
+    :param model_display_name: Display name for the trained model
+    :param sync: If True, wait for job completion. If False, return immediately.
+    :return: CustomJob object (completed if sync=True)
+    """
+    # Note: Can't access job properties until after job.run() creates the resource
+    print(f"🚀 Starting RoBERTa training job")
+    print(f"   Data sources:")
+    print(f"     - Train: {train_data_gcs_uri}")
+    print(f"     - Val: {val_data_gcs_uri}")
+    print(f"     - Test: {test_data_gcs_uri}")
+    print(f"   Model name: {model_display_name}")
+
+    if sync:
+        print(f"\n   ⏳ Running synchronously (will wait for completion)...")
+        print(f"   This will take approximately 15-20 minutes")
+        print(f"   Monitor progress in GCP Console: https://console.cloud.google.com/vertex-ai/training/custom-jobs")
+    else:
+        print(f"\n   🏃 Running asynchronously (will return immediately)")
+        print(f"   Monitor progress in GCP Console: https://console.cloud.google.com/vertex-ai/training/custom-jobs")
+
+    # Run the job (2025 SDK method) - this creates the resource on GCP
+    job.run(sync=sync)
+
+    # Now we can access job properties after the resource is created
+    if sync:
+        print(f"\n✅ Training job completed successfully!")
+        print(f"   Job name: {job.display_name}")
+        print(f"   Job resource name: {job.resource_name}")
+        print(f"   Job state: {job.state}")
+    else:
+        print(f"\n✅ Training job submitted!")
+        print(f"   Job name: {job.display_name}")
+        print(f"   Use job.wait() to wait for completion")
+        print(f"   Use job.state to check current state")
+
+    return job
+
+
 if __name__ == "__main__":
     print("Vertex AI Sentiment Analysis Utilities")
+    print("Includes 2025 hyperparameter tuning with cloudml-hypertune")
