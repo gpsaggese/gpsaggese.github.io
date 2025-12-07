@@ -1,103 +1,304 @@
 
-EconML – Evaluating the Impact of Health Interventions on Patient Outcomes (MSML610 – Fall 2025)
-===============================================================================================
+# EconML – Evaluating the Impact of Health Interventions on Patient Outcomes  
+MSML610 – Fall 2025
 
-**Branch / Folder:** `TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes`
+**Project folder:**  
+`TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes`
 
-Project layout
---------------
+This project uses **NHANES 2021–2023** data and **EconML’s DRLearner** to estimate the effect of
+**any dietary supplement use** on two health outcomes:
+
+- Mean systolic blood pressure (`sbp_mean`)
+- Fasting plasma glucose (`fasting_glucose_mg_dl`)
+
+The goal is to provide a **clear API + example tutorial** that another student can follow in about
+60 minutes.
+
+---
+
+## Project layout
 
 ```text
-UmdTask82_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes/
-├── econml.API.ipynb          # Notebook describing the native API / design of the project
-├── econml.API.md             # Markdown description of the API layer
-├── econml.API.py             # Python API module (functions / classes to be called)
-├── econml.example.ipynb      # End-to-end example notebook using the utils + API
-├── econml.example.md         # Markdown writeup of the example pipeline
-├── econml.example.py         # Python script version of the example
-├── econml_utils.py           # Utility functions for data prep, models, evaluation
-├── MSML610_DataPrepaparation_Karthik.ipynb   # Original data preparation notebook (reference)
-├── Data_Preparation_Sri.ipynb               # Additional data preparation notebook (reference)
-├── how_to_run.md             # Extra notes / instructions (optional)
-├── requirements.txt          # Python dependencies for this project
-├── Dockerfile                # Docker image definition
-├── docker_build.sh           # Build the project Docker image
-├── docker_bash.sh            # Open a shell inside the Docker container
-├── docker_jupyter.sh         # Launch Jupyter Lab inside the container
-├── changelog.txt             # Project version history
-├── __init__.py
+TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes/
+├── econml_utils.py          # Core data utilities (build_analysis_df, get_y_t_x)
+├── econml.API.py            # High-level API wrapper around EconML + OLS
+├── econml.API.md            # Markdown documentation for the API layer
+├── econml.API.ipynb         # Notebook explaining and demoing the API functions
+├── econml.example.py        # Script version of the example tutorial
+├── econml.example.md        # Narrative markdown tutorial
+├── econml.example.ipynb     # Main end-to-end example notebook (student-facing)
 ├── data/
-│   └── raw/
-│       └── .gitkeep          # Placeholder for raw datasets (not tracked by git)
-├── tmp.build/                # Auto-generated helper directory (do not modify)
-└── tutorial_github_data605_style/   # Original template files (do not modify)
+│   ├── BMX_L_meaningful*.csv      # Body measures
+│   ├── BPXO_L_meaningful*.csv     # Blood pressure readings
+│   ├── TCHOL_L_meaningful*.csv    # Total cholesterol
+│   ├── HDL_L_meaningful*.csv      # HDL cholesterol
+│   ├── TRIGLY_L_meaningful*.csv   # Triglycerides
+│   ├── GLU_L_meaningful*.csv      # Fasting glucose
+│   ├── HSCRP_L_meaningful*.csv    # hs-CRP
+│   ├── DSQTOT_L_meaningful*.csv   # Dietary supplements (treatment)
+│   └── DEMO_L_meaningful*.csv     # Demographics (age, sex, etc.)
+├── Dockerfile                # Image used for MSML610 projects
+├── requirements.txt          # Python dependencies (econml, sklearn, pandas, etc.)
+├── docker_build.sh           # Build the Docker image
+├── docker_name.sh            # Common image/container name variables
+├── docker_bash.sh            # Start an interactive shell inside the container
+├── docker_jupyter.sh         # Launch Jupyter inside the container
+├── run_jupyter.sh            # Script called inside the container to run Jupyter
+├── how_to_run.md             # Short “how to run everything” guide
+├── README.md                 # This file
+└── changelog.txt             # Optional project history
 ````
 
-## Quick start (Linux / macOS)
+---
 
-1. **Build Docker image**
+## Quick start (using Docker)
+
+These steps assume you are in the project folder:
+
+```bash
+cd TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
+```
+
+### 1. Build the Docker image (first time)
 
 ```bash
 bash docker_build.sh
 ```
 
-2. **Open a shell in the container**
+This builds the image defined in `Dockerfile`. The image name is managed by
+`docker_name.sh` and is typically:
 
-```bash
-bash docker_bash.sh
-# inside container:
-python -V
-pip list | grep econml
-```
+* Repository: `umd_msml610`
+* Image: `umd_msml610_image`
 
-3. **Launch Jupyter Lab**
+### 2. Launch Jupyter inside the container
 
 ```bash
 bash docker_jupyter.sh
-# open the printed http://127.0.0.1:<PORT>/ URL in your browser
 ```
 
-4. **Run the example notebook**
+This will:
 
-Open `econml.example.ipynb` in Jupyter and run it top-to-bottom.
+1. Start a container using the MSML610 image.
+2. Mount the project directory into `/curr_dir` inside the container.
+3. Run `run_jupyter.sh`, which launches Jupyter Notebook/Lab on port 8888.
 
-It will eventually:
+Then open the URL shown in the terminal (usually `http://127.0.0.1:8888`) in your browser.
 
-* Import functions from `econml_utils.py`
-* Load and preprocess the health dataset
-* Fit causal models using EconML
-* Estimate the impact of specific interventions on patient outcomes
-* Report summary metrics and visualizations
+### 3. Recommended notebooks to run
 
-## What’s included (skeleton code)
+Inside Jupyter, start with:
 
-* `econml_utils.py` – tiny library with placeholders for:
+1. **`econml.API.ipynb`**
 
-  * `load_health_data()` – load the health interventions dataset from `data/raw/`
-  * `preprocess_data()` – clean features, handle missing values, encode categories
-  * `split_train_test()` – create train / validation / test splits
-  * `train_baseline_models()` – baseline predictive models (e.g. logistic regression, random forest)
-  * `train_causal_model()` – EconML-based causal model (e.g. DRLearner, CausalForest)
-  * `estimate_treatment_effects()` – compute ATE/CATE or uplift estimates
-  * `evaluate_model()` – evaluation metrics and plots
+   * Shows how to import:
 
-* `econml.API.ipynb` – documents the API / design (inputs, outputs, assumptions).
+     * `build_analysis_df`, `get_y_t_x` from `econml_utils.py`
+     * `run_sbp_supplement_experiment`, `run_glucose_supplement_experiment`,
+       `run_ols_for_outcome` from `econml.API.py`
+   * Prints ATEs and shows what each API function returns.
+   * Designed as a **reference notebook** for the programming interface.
 
-* `econml.API.md` – text description of the same API and workflow.
+2. **`econml.example.ipynb`**
 
-* `econml.API.py` – Python API surface for calling the project from other code.
+   * The main tutorial notebook (student-facing).
+   * Walks through:
 
-* `econml.example.ipynb` – main runnable example, showing the full pipeline:
+     1. Building the merged NHANES dataset
+     2. Defining treatment and outcomes
+     3. Running DRLearner for SBP and fasting glucose
+     4. Exploring CATEs and heterogeneity by BMI
+     5. Comparing EconML ATE vs a traditional OLS regression (**bonus task**)
 
-  1. Load & preprocess data
-  2. Train causal model(s)
-  3. Estimate treatment effects
-  4. Interpret and visualize results
+If you prefer a pure script, you can also run:
 
-* `econml.example.py` – script version of the example pipeline.
+```bash
+python econml.example.py
+```
 
-* Docker scripts:
+inside the container. This mirrors the main steps from `econml.example.ipynb`.
 
-  * `docker_build.sh`
-  * `docker_bash.sh`
-  * `docker_jupyter.sh`
+---
+
+## Data and treatment definition
+
+* **Source:** NHANES 2021–2023 continuous survey
+  (cleaned CSVs are already placed in `data/`).
+
+* **Treatment** (`treatment_supplement`):
+
+  * 1 if the respondent reported **any dietary supplement use**
+  * 0 otherwise
+
+* **Outcomes:**
+
+  * `sbp_mean` — mean systolic BP (3 oscillometric readings)
+  * `fasting_glucose_mg_dl` — fasting plasma glucose
+
+* **Covariates (used for both EconML and OLS):**
+
+  ```text
+  age_years
+  sex
+  body_mass_index_kg_m2
+  weight_kg
+  waist_circumference_cm
+  total_cholesterol_mg_dl
+  direct_hdl_cholesterol_mg_dl
+  LBXTLG                       # triglycerides
+  fasting_glucose_mg_dl
+  hs_c_reactive_protein_mg_l
+  ```
+
+---
+
+## API vs example layer
+
+* **API layer**
+
+  * `econml_utils.py`
+
+    * `build_analysis_df()` – merges all cleaned NHANES components
+    * `get_y_t_x(analysis_df, outcome_col, treatment_col)` – returns `Y`, `T`, `X`, and covariate names
+  * `econml.API.py`
+
+    * `run_sbp_supplement_experiment(random_state=42)` – DRLearner for SBP
+    * `run_glucose_supplement_experiment(random_state=42)` – DRLearner for fasting glucose
+    * `run_ols_for_outcome(outcome_col, treatment_col="treatment_supplement")` – OLS baseline
+
+* **Example layer**
+
+  * `econml.API.ipynb` – documents the API and shows direct calls.
+  * `econml.example.ipynb` – story-style notebook used as the main tutorial.
+  * `econml.example.md` – markdown version of the tutorial.
+  * `econml.example.py` – script form of the example.
+
+This separation makes it easy for other students to re-use the API in their own
+notebooks without touching the internals.
+
+---
+
+## Results (high-level)
+
+* **SBP (`sbp_mean`)**
+
+  * EconML DRLearner ATE ≈ **–2 mmHg**
+  * OLS treatment coefficient ≈ **–1.98 mmHg**
+  * Interpretation: supplement users have slightly lower systolic BP, on average, after adjustment.
+
+* **Fasting glucose (`fasting_glucose_mg_dl`)**
+
+  * EconML ATE ≈ **0**
+  * OLS treatment coefficient ≈ **0**
+  * Interpretation: no meaningful average effect on fasting plasma glucose.
+
+* **Heterogeneity**
+
+  * For SBP, the mean CATE across BMI quartiles is close to the overall ATE.
+  * No strong heterogeneity by BMI is observed.
+  * For fasting glucose, the CATEs and BMI-bin effects are essentially zero.
+
+These points are explained in more detail inside `econml.example.ipynb`.
+
+````
+
+---
+
+## 2️⃣ New `how_to_run.md` (replace the whole file with this)
+
+```markdown
+# How to run this project
+
+This project is designed to be run **inside the MSML610 Docker image**.  
+All commands below assume you are in the project folder:
+
+```bash
+cd TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
+````
+
+---
+
+## 1. Build the Docker image (first time only)
+
+```bash
+bash docker_build.sh
+```
+
+This uses the provided `Dockerfile` and the MSML610 base image to create a local
+image (name managed by `docker_name.sh`).
+
+---
+
+## 2. Start Jupyter inside the container
+
+```bash
+bash docker_jupyter.sh
+```
+
+What this does:
+
+1. Starts a container from the MSML610 image.
+2. Mounts the current project directory into `/curr_dir` inside the container.
+3. Runs `run_jupyter.sh`, which launches Jupyter Notebook/Lab on port 8888.
+
+Open the printed URL (usually `http://127.0.0.1:8888`) in your browser.
+
+Inside Jupyter you should see:
+
+* `econml.API.ipynb`
+* `econml.example.ipynb`
+* the Python modules (`econml_utils.py`, `econml.API.py`, etc.)
+
+---
+
+## 3. Main notebooks to run
+
+### Option A – Tutorial first (recommended)
+
+1. Open **`econml.example.ipynb`**:
+
+   * Run all cells from top to bottom.
+   * This notebook:
+
+     * Builds the merged NHANES dataset,
+     * Defines treatment and outcomes,
+     * Runs EconML DRLearner for SBP and fasting glucose,
+     * Explores heterogeneity by BMI,
+     * Compares EconML ATE vs OLS (bonus part of the assignment).
+
+2. Optionally open **`econml.API.ipynb`**:
+
+   * Shows the API-level functions in isolation.
+   * Handy as a quick reference if you want to call the API from your own code.
+
+### Option B – Script version
+
+If you prefer a script instead of a notebook:
+
+```bash
+bash docker_bash.sh         # open a shell inside the container
+python econml.example.py    # run the example pipeline as a script
+```
+
+The script mirrors the same steps as `econml.example.ipynb` but without the
+narrative markdown.
+
+---
+
+## 4. Dependencies (inside Docker)
+
+The Docker image already has Python and the required packages installed.
+If you need to reinstall manually inside the container:
+
+```bash
+pip install -r requirements.txt
+```
+
+But in normal use for MSML610, simply building the Docker image and launching
+Jupyter via the provided scripts should be enough.
+
+---
+
+That’s all that is needed to run and reproduce the results for this project.
+
+

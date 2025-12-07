@@ -1,13 +1,28 @@
 """
-High-level API for MSML610 Project 3: EconML experiments on NHANES.
+High-level API for MSML610 Project:
+    TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
 
-Exposes functions like:
-  - run_sbp_supplement_experiment
-  - run_glucose_supplement_experiment
-  - run_ols_for_outcome  (baseline linear regression)
+This module provides a small, opinionated interface on top of EconML
+for our NHANES 2021–2023 causal inference experiments.
 
-that coordinate data preparation, model fitting, and summary outputs.
+Public functions:
+
+    - run_sbp_supplement_experiment
+    - run_glucose_supplement_experiment
+    - run_ols_for_outcome
+
+Each function:
+
+    * Calls `build_analysis_df` from `econml_utils` to construct the
+      merged NHANES analysis dataset.
+    * Uses `get_y_t_x` to extract outcome (Y), treatment (T), and
+      covariates (X).
+    * Drops rows with missing values before fitting models.
+    * Returns a dictionary with clean, easy-to-use results that the
+      notebooks can consume.
 """
+
+from typing import Dict, Any
 
 import numpy as np
 import pandas as pd
@@ -18,283 +33,270 @@ from sklearn.linear_model import LogisticRegression, LinearRegression
 from econml_utils import build_analysis_df, get_y_t_x
 
 
-def run_sbp_supplement_experiment(random_state: int = 42) -> dict:
-    """
-    Project 3 main experiment:
-    Effect of any dietary supplement use on systolic blood pressure (sbp_mean).
+# ---------------------------------------------------------------------
+# Internal helper: DRLearner for a single outcome
+# ---------------------------------------------------------------------
 
-    Pipeline
-    --------
-    1. Build merged NHANES analysis dataframe via `build_analysis_df()`:
-         - Blood pressure outcomes (sbp_mean, dbp_mean)
-         - Anthropometrics (BMI, weight, waist)
-         - Lab values (cholesterol, HDL, triglycerides, glucose, hs-CRP)
-         - Treatment indicator: treatment_supplement (any supplements taken)
-         - Demographics (age_years, sex)
-    2. Extract outcome (Y), treatment (T) and covariates (X) using
-       `get_y_t_x(...)` with:
-         - outcome_col   = "sbp_mean"
-         - treatment_col = "treatment_supplement"
-    3. Drop rows with missing values in Y, T or any X covariate.
-    4. Fit a DRLearner to estimate the causal effect of supplement use on sbp_mean.
-    5. Compute and return:
-         - Overall ATE on sbp_mean.
-         - Individual-level CATEs (tau_hat_sbp).
-         - Average effects by age quartiles and BMI quartiles.
+
+def _fit_drl_for_outcome(
+    outcome_col: str,
+    treatment_col: str = "treatment_supplement",
+    random_state: int = 42,
+) -> Dict[str, Any]:
     """
-    # 1. Build full analysis dataframe (merged NHANES tables)
+    Fit a DRLearner for a given outcome using supplement use as treatment.
+
+    Parameters
+    ----------
+    outcome_col : str
+        Name of the outcome column (e.g., "sbp_mean" or "fasting_glucose_mg_dl").
+    treatment_col : str, default "treatment_supplement"
+        Binary treatment indicator column.
+    random_state : int, default 42
+        Random seed for reproducibility.
+
+    Returns
+    -------
+    dict
+        {
+            "ate": float,
+            "covariates": list[str],
+            "cate_df": pd.DataFrame,
+            "tau_col": str,
+            "age_effects": pd.Series or None,
+            "bmi_effects": pd.Series or None,
+        }
+    """
+    # Build merged NHANES dataset
     analysis_df = build_analysis_df()
 
-    # Sanity check for key columns used later
-    required_cols = [
-        "sbp_mean",
-        "treatment_supplement",
-        "age_years",
-        "body_mass_index_kg_m2",
-    ]
-    missing = [c for c in required_cols if c not in analysis_df.columns]
-    if missing:
-        raise KeyError(
-            f"Missing required columns in analysis_df: {missing}. "
-            "Check econml_utils.build_analysis_df."
+    # Extract outcome, treatment, and covariates
+    y, t, X, covariate_cols = get_y_t_x(
+        analysis_df, outcome_col=outcome_col, treatment_col=treatment_col
+    )
+
+    # Drop rows with any missing data in Y/T/X
+    combined = pd.concat([y, t, X], axis=1)
+    mask = combined.notna().all(axis=1)
+
+    y_clean = y.loc[mask]
+    t_clean = t.loc[mask]
+    X_clean = X.loc[mask]
+
+    # Mirror the cleaned rows back on the full analysis dataframe
+    analysis_df_clean = analysis_df.loc[mask].copy()
+
+    if len(y_clean) == 0:
+        raise ValueError(
+            "After dropping missing values, there are no rows left to fit the model. "
+            "Please check the data preparation steps."
         )
 
-    # 2. Get outcome, treatment and covariates explicitly
-    y, t, X, covariate_cols = get_y_t_x(
-        analysis_df,
+    # Set up and fit DRLearner
+    dr = DRLearner(
+        model_regression=LinearRegression(),
+        model_propensity=LogisticRegression(max_iter=2000, solver="lbfgs"),
+        random_state=random_state,
+    )
+
+    dr.fit(
+        Y=y_clean.to_numpy(),
+        T=t_clean.to_numpy(),
+        X=X_clean.to_numpy(),
+    )
+
+    # Average treatment effect (ATE) and individual CATEs
+    ate = float(dr.ate(X_clean.to_numpy()))
+    tau_hat = dr.effect(X_clean.to_numpy()).ravel()
+
+    tau_col = f"tau_hat_{outcome_col}"
+    analysis_df_clean[tau_col] = tau_hat
+
+    # ------------------------------------------------------------------
+    # Heterogeneity summaries: age and BMI quartiles
+    # ------------------------------------------------------------------
+    age_effects = None
+    bmi_effects = None
+
+    if "age_years" in analysis_df_clean.columns:
+        analysis_df_clean["age_bin"] = pd.qcut(
+            analysis_df_clean["age_years"],
+            q=4,
+            labels=["Q1 (youngest)", "Q2", "Q3", "Q4 (oldest)"],
+            duplicates="drop",
+        )
+        age_effects = (
+            analysis_df_clean.groupby("age_bin")[tau_col]
+            .mean()
+            .sort_index()
+        )
+
+    if "body_mass_index_kg_m2" in analysis_df_clean.columns:
+        analysis_df_clean["bmi_bin"] = pd.qcut(
+            analysis_df_clean["body_mass_index_kg_m2"],
+            q=4,
+            labels=["Q1 (leanest)", "Q2", "Q3", "Q4 (highest BMI)"],
+            duplicates="drop",
+        )
+        bmi_effects = (
+            analysis_df_clean.groupby("bmi_bin")[tau_col]
+            .mean()
+            .sort_index()
+        )
+
+    return {
+        "ate": ate,
+        "covariates": covariate_cols,
+        "cate_df": analysis_df_clean,
+        "tau_col": tau_col,
+        "age_effects": age_effects,
+        "bmi_effects": bmi_effects,
+    }
+
+
+# ---------------------------------------------------------------------
+# Public API: DRLearner experiments for SBP and glucose
+# ---------------------------------------------------------------------
+
+
+def run_sbp_supplement_experiment(random_state: int = 42) -> Dict[str, Any]:
+    """
+    Run the DRLearner experiment with outcome = mean systolic BP (sbp_mean).
+
+    This is the main entry point used in the notebooks for the SBP outcome.
+
+    Returns
+    -------
+    dict
+        {
+            "ate_sbp": float,
+            "covariates": list[str],
+            "cate_df": pd.DataFrame,
+            "tau_col": str,
+            "age_effects": pd.Series or None,
+            "bmi_effects": pd.Series or None,
+        }
+    """
+    results = _fit_drl_for_outcome(
         outcome_col="sbp_mean",
         treatment_col="treatment_supplement",
-    )
-
-    # 3. Drop rows with any missing data in Y, T or X
-    mask = (~y.isna()) & (~t.isna()) & (~X.isna().any(axis=1))
-    y_clean = y[mask]
-    t_clean = t[mask]
-    X_clean = X[mask]
-
-    # 4. Fit DRLearner.
-    #    Use LogisticRegression as the propensity model (treatment model).
-    dr = DRLearner(
-        model_propensity=LogisticRegression(max_iter=2000, solver="lbfgs"),
         random_state=random_state,
     )
-    dr.fit(y_clean, t_clean, X=X_clean)
 
-    # Overall average treatment effect on sbp_mean
-    ate = float(dr.ate(X_clean))
-
-    # Individual-level CATEs tau_hat(X)
-    cate = dr.effect(X_clean)
-
-    # Attach CATEs back to a clean copy of analysis_df
-    analysis_df_clean = analysis_df.loc[mask].copy()
-    analysis_df_clean["tau_hat_sbp"] = cate
-
-    # 5. Heterogeneity summaries: age and BMI quartiles
-
-    # Age bins
-    analysis_df_clean["age_bin"] = pd.qcut(
-        analysis_df_clean["age_years"],
-        4,
-        labels=["Q1 (youngest)", "Q2", "Q3", "Q4 (oldest)"],
-    )
-
-    # BMI bins
-    analysis_df_clean["bmi_bin"] = pd.qcut(
-        analysis_df_clean["body_mass_index_kg_m2"],
-        4,
-        labels=["Q1 (leanest)", "Q2", "Q3", "Q4 (highest BMI)"],
-    )
-
-    age_effects = (
-        analysis_df_clean.groupby("age_bin")["tau_hat_sbp"]
-        .mean()
-        .sort_index()
-    )
-
-    bmi_effects = (
-        analysis_df_clean.groupby("bmi_bin")["tau_hat_sbp"]
-        .mean()
-        .sort_index()
-    )
-
-    results = {
-        "ate_sbp": ate,
-        "covariates": covariate_cols,
-        "cate_df": analysis_df_clean,
-        "age_effects": age_effects,
-        "bmi_effects": bmi_effects,
+    return {
+        "ate_sbp": results["ate"],
+        "covariates": results["covariates"],
+        "cate_df": results["cate_df"],
+        "tau_col": results["tau_col"],
+        "age_effects": results["age_effects"],
+        "bmi_effects": results["bmi_effects"],
     }
-    return results
 
 
-def run_glucose_supplement_experiment(random_state: int = 42) -> dict:
+def run_glucose_supplement_experiment(random_state: int = 42) -> Dict[str, Any]:
     """
-    Secondary experiment:
-    Effect of any dietary supplement use on fasting glucose (fasting_glucose_mg_dl).
+    Run the DRLearner experiment with outcome = fasting_glucose_mg_dl.
 
-    This reuses the same treatment and covariates as the SBP experiment,
-    but changes the outcome to fasting_glucose_mg_dl.
+    This is the main entry point used in the notebooks for the glucose
+    outcome.
 
-    Pipeline
-    --------
-    1. Build merged NHANES analysis dataframe via `build_analysis_df()`.
-    2. Extract outcome (Y), treatment (T) and covariates (X) using
-       `get_y_t_x(...)` with:
-         - outcome_col   = "fasting_glucose_mg_dl"
-         - treatment_col = "treatment_supplement"
-    3. Drop rows with missing values in Y, T or any X covariate.
-    4. Fit a DRLearner to estimate the causal effect of supplement use on glucose.
-    5. Compute and return:
-         - Overall ATE on fasting_glucose_mg_dl.
-         - Individual-level CATEs (tau_hat_glucose).
-         - Average effects by age quartiles and BMI quartiles.
+    Returns
+    -------
+    dict
+        {
+            "ate_glucose": float,
+            "covariates": list[str],
+            "cate_df": pd.DataFrame,
+            "tau_col": str,
+            "age_effects": pd.Series or None,
+            "bmi_effects": pd.Series or None,
+        }
     """
-    # 1. Build full analysis dataframe (merged NHANES tables)
-    analysis_df = build_analysis_df()
-
-    # Sanity check for key columns used later
-    required_cols = [
-        "fasting_glucose_mg_dl",
-        "treatment_supplement",
-        "age_years",
-        "body_mass_index_kg_m2",
-    ]
-    missing = [c for c in required_cols if c not in analysis_df.columns]
-    if missing:
-        raise KeyError(
-            f"Missing required columns in analysis_df: {missing}. "
-            "Check econml_utils.build_analysis_df."
-        )
-
-    # 2. Get outcome, treatment and covariates explicitly
-    y, t, X, covariate_cols = get_y_t_x(
-        analysis_df,
+    results = _fit_drl_for_outcome(
         outcome_col="fasting_glucose_mg_dl",
         treatment_col="treatment_supplement",
-    )
-
-    # 3. Drop rows with any missing data in Y, T or X
-    mask = (~y.isna()) & (~t.isna()) & (~X.isna().any(axis=1))
-    y_clean = y[mask]
-    t_clean = t[mask]
-    X_clean = X[mask]
-
-    # 4. Fit DRLearner with logistic regression as propensity model
-    dr = DRLearner(
-        model_propensity=LogisticRegression(max_iter=2000, solver="lbfgs"),
         random_state=random_state,
     )
-    dr.fit(y_clean, t_clean, X=X_clean)
 
-    # Overall average treatment effect on fasting glucose
-    ate = float(dr.ate(X_clean))
-
-    # Individual-level CATEs
-    cate = dr.effect(X_clean)
-
-    # Attach CATEs back to a clean copy of analysis_df
-    analysis_df_clean = analysis_df.loc[mask].copy()
-    analysis_df_clean["tau_hat_glucose"] = cate
-
-    # Age and BMI bins
-    analysis_df_clean["age_bin"] = pd.qcut(
-        analysis_df_clean["age_years"],
-        4,
-        labels=["Q1 (youngest)", "Q2", "Q3", "Q4 (oldest)"],
-    )
-    analysis_df_clean["bmi_bin"] = pd.qcut(
-        analysis_df_clean["body_mass_index_kg_m2"],
-        4,
-        labels=["Q1 (leanest)", "Q2", "Q3", "Q4 (highest BMI)"],
-    )
-
-    age_effects = (
-        analysis_df_clean.groupby("age_bin")["tau_hat_glucose"]
-        .mean()
-        .sort_index()
-    )
-
-    bmi_effects = (
-        analysis_df_clean.groupby("bmi_bin")["tau_hat_glucose"]
-        .mean()
-        .sort_index()
-    )
-
-    results = {
-        "ate_glucose": ate,
-        "covariates": covariate_cols,
-        "cate_df": analysis_df_clean,
-        "age_effects": age_effects,
-        "bmi_effects": bmi_effects,
+    return {
+        "ate_glucose": results["ate"],
+        "covariates": results["covariates"],
+        "cate_df": results["cate_df"],
+        "tau_col": results["tau_col"],
+        "age_effects": results["age_effects"],
+        "bmi_effects": results["bmi_effects"],
     }
-    return results
+
+
+# ---------------------------------------------------------------------
+# Public API: OLS baseline for a single outcome
+# ---------------------------------------------------------------------
 
 
 def run_ols_for_outcome(
     outcome_col: str,
     treatment_col: str = "treatment_supplement",
-) -> dict:
+) -> Dict[str, Any]:
     """
-    Baseline model: ordinary least squares (OLS) regression.
+    Simple OLS comparison:
 
-    We fit a simple linear regression of:
+        Y ~ treatment + covariates
 
-        outcome ~ treatment + all covariates X
-
-    using the same analysis dataframe and covariates as the EconML
-    experiments. The coefficient on `treatment` is a naive estimate of
-    the treatment effect that we can compare to the DRLearner ATE.
+    We interpret the coefficient of the treatment variable as the
+    "traditional" estimate of the treatment effect, controlling
+    linearly for the covariates.
 
     Parameters
     ----------
     outcome_col : str
-        Name of the outcome column in analysis_df (e.g., "sbp_mean").
-    treatment_col : str, optional
-        Name of the treatment column, default "treatment_supplement".
+        Outcome column name (e.g., "sbp_mean").
+    treatment_col : str, default "treatment_supplement"
+        Binary treatment indicator column.
 
     Returns
     -------
-    results : dict
+    dict
         {
-          "outcome": outcome_col,
-          "treatment_coef": float,
-          "n": int,
-          "model": LinearRegression,
+            "outcome": str,
+            "treatment_coef": float,
+            "covariates": list[str],
+            "n_obs": int,
         }
     """
-    # Build dataset and extract Y, T, X
     analysis_df = build_analysis_df()
+
+    # Use the same helper as for EconML to get Y/T/X
     y, t, X, covariate_cols = get_y_t_x(
-        analysis_df,
-        outcome_col=outcome_col,
-        treatment_col=treatment_col,
+        analysis_df, outcome_col=outcome_col, treatment_col=treatment_col
     )
 
-    # Drop rows with missing data
-    mask = (~y.isna()) & (~t.isna()) & (~X.isna().any(axis=1))
-    y_clean = y[mask]
-    t_clean = t[mask]
-    X_clean = X[mask]
+    # Drop rows with any missing data
+    combined = pd.concat([y, t, X], axis=1)
+    mask = combined.notna().all(axis=1)
 
-    # Design matrix: first column is treatment, then all covariates
-    X_ols = pd.concat(
-        [
-            t_clean.rename(treatment_col).astype(float),
-            X_clean.astype(float),
-        ],
-        axis=1,
-    )
+    y_clean = y.loc[mask]
+    t_clean = t.loc[mask]
+    X_clean = X.loc[mask]
+
+    if len(y_clean) == 0:
+        raise ValueError(
+            "After dropping missing values, there are no rows left to fit the OLS model. "
+            "Please check the data preparation steps."
+        )
+
+    # Build design matrix: [treatment, covariates]
+    T_matrix = t_clean.to_numpy().reshape(-1, 1)
+    X_ols = np.column_stack([T_matrix, X_clean.to_numpy()])
 
     ols = LinearRegression()
-    ols.fit(X_ols, y_clean)
+    ols.fit(X_ols, y_clean.to_numpy())
 
-    # First coefficient corresponds to the treatment column
+    # First coefficient corresponds to the treatment effect
     treatment_coef = float(ols.coef_[0])
 
     return {
         "outcome": outcome_col,
         "treatment_coef": treatment_coef,
-        "n": int(len(y_clean)),
-        "model": ols,
+        "covariates": covariate_cols,
+        "n_obs": int(len(y_clean)),
     }
