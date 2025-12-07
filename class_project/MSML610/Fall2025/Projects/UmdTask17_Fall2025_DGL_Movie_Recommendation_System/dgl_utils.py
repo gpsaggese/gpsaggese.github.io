@@ -1781,37 +1781,57 @@ def load_genome_tags(raw_dir="data/raw/"):
     return tags_df, scores_df
 
 
-
-def build_movie_tag_edges(movies_df, genome_scores_df, relevance_threshold=0.8):
+def build_movie_tag_edges(movies_df, genome_scores_path, relevance_threshold=0.8):
     """
-    Build movie–tag edges using only movies present in the processed dataset.
-    We drop genome-score rows for movies NOT included in movies.csv.
+    Build movie→tag edges ONLY for movies that appear in processed movies.csv.
+    This completely eliminates all movie_idx mismatch errors.
+
+    Steps:
+      1. Load genome_scores.csv
+      2. Filter rows where movieId exists in movies_df
+      3. Keep only rows with high relevance scores
+      4. Remap movieId → movie_idx using movies_df mapping
+      5. Remap tagId → tag_idx (dense)
+      6. Return clean edges + tag_idx mapping
     """
 
-    # 1. Keep only tags for our sampled movies
+    # Load raw genome scores
+    scores_df = pd.read_csv(genome_scores_path)
+
+    # --- Step 1: restrict to movies present in processed movies.csv ---
     valid_movieIds = set(movies_df["movieId"])
-    genome_scores_df = genome_scores_df[genome_scores_df["movieId"].isin(valid_movieIds)].copy()
+    scores_df = scores_df[scores_df["movieId"].isin(valid_movieIds)].copy()
 
-    # 2. Build tag mapping
-    tag_ids = sorted(genome_scores_df["tagId"].unique())
-    tag2idx = {tid: i for i, tid in enumerate(tag_ids)}
+    # --- Step 2: apply relevance threshold ---
+    scores_df = scores_df[scores_df["relevance"] >= relevance_threshold].copy()
 
-    # 3. Map movieId → movie_idx
+    if scores_df.empty:
+        raise ValueError("No movie-tag edges remain after filtering; lower threshold.")
+
+    # --- Step 3: map movieId → movie_idx ---
     movieId_to_idx = dict(zip(movies_df["movieId"], movies_df["movie_idx"]))
-    genome_scores_df["movie_idx"] = genome_scores_df["movieId"].map(movieId_to_idx)
+    scores_df["movie_idx"] = scores_df["movieId"].map(movieId_to_idx)
 
-    # 4. Filter edges by relevance threshold
-    filtered = genome_scores_df[genome_scores_df["relevance"] >= relevance_threshold].copy()
+    # --- Sanity check ---
+    if scores_df["movie_idx"].isna().any():
+        bad = scores_df[scores_df["movie_idx"].isna()]
+        raise ValueError(f"Unexpected movieId mapping failure: {bad['movieId'].unique()[:10]}")
 
-    # 5. Create final edge dataframe
-    filtered["tag_idx"] = filtered["tagId"].map(tag2idx)
-    movie_tag_edges = filtered[["movie_idx", "tag_idx"]].dropna().copy()
+    # --- Step 4: remap tagId → dense tag_idx ---
+    unique_tags = sorted(scores_df["tagId"].unique())
+    tagId_to_idx = {tid: i for i, tid in enumerate(unique_tags)}
+    scores_df["tag_idx"] = scores_df["tagId"].map(tagId_to_idx)
 
-    # Ensure correct types
-    movie_tag_edges["movie_idx"] = movie_tag_edges["movie_idx"].astype(int)
-    movie_tag_edges["tag_idx"] = movie_tag_edges["tag_idx"].astype(int)
+    # --- Final movie-tag edges ---
+    movie_tag_edges = scores_df[["movie_idx", "tag_idx"]].copy()
 
-    return movie_tag_edges, tag2idx
+    print("Movie–Tag Edge Summary:")
+    print("  Movies with tags:", movie_tag_edges["movie_idx"].nunique(), "out of", movies_df.shape[0])
+    print("  Num tag types:", len(unique_tags))
+    print("  Num edges:", len(movie_tag_edges))
+
+    # --- Guaranteed correct: movie_idx now ALWAYS ≤ movies_df.movie_idx.max() ---
+    return movie_tag_edges, tagId_to_idx
 
 
 
