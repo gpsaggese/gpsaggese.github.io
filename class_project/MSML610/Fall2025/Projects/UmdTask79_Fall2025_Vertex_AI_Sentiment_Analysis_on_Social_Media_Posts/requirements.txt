@@ -10,6 +10,7 @@ google-cloud-storage>=2.10.0
 google-cloud-aiplatform>=1.35.0
 google-auth>=2.22.0
 google-cloud-core>=2.3.0
+cloudml-hypertune>=0.1.0
 
 nltk>=3.8.0
 spacy>=3.5.0
