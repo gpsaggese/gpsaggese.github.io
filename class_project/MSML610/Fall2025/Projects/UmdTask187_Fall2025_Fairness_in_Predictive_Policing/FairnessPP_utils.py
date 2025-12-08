@@ -1,95 +1,153 @@
 import pandas as pd
 import numpy as np
-# ML Model: Using Gradient Boosted Trees for better complexity score
-from sklearn.ensemble import GradientBoostingClassifier 
-# Fairlearn: The core fairness mitigation library
-from fairlearn.reductions import ExponentiatedGradient 
-# Fairlearn: Metrics for evaluation
-from fairlearn.metrics import MetricFrame, equalized_odds_difference
+import os
+import warnings
+from dataclasses import dataclass
+from typing import Tuple, Dict, Any, Optional
 
-# --- Data I/O and Feature Engineering ---
+# Native API imports
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import accuracy_score, balanced_accuracy_score
+from fairlearn.reductions import ExponentiatedGradient, EqualizedOdds
+from fairlearn.metrics import MetricFrame, equalized_odds_difference, selection_rate
 
-def load_and_preprocess_data(filepath: str) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
+# Suppress warnings
+warnings.filterwarnings('ignore')
+
+# --- CONFIGURATION OBJECTS ---
+@dataclass
+class ModelConfig:
+    """Stable configuration for model training."""
+    n_estimators: int = 50
+    random_state: int = 42
+    max_iter_mitigation: int = 50
+
+@dataclass
+class EvaluationResult:
+    """Stable return type for evaluations."""
+    accuracy: float
+    balanced_accuracy: float
+    fairness_disparity: float
+    group_metrics: pd.DataFrame
+
+# --- WRAPPER LAYER ---
+class FairnessPredictor:
     """
-    Loads, cleans, and engineers features from the Chicago Crime Data, 
-    preparing the data for model training.
-    
-    In the final version, this will include:
-    1. Loading Chicago Crime Data (from filepath).
-    2. Cleaning and filtering (e.g., focusing on specific crime types).
-    3. Geospatial Binning: Aggregating incidents into grid cells (e.g., hexagons or census tracts).
-    4. Merging Demographic Data: Linking features (e.g., race, income) to each grid cell.
-    5. Creating Target Variable (y): Defining which grid cells are "Hotspots" (e.g., top 10% of incidents).
+    A lightweight wrapper around Scikit-Learn and Fairlearn.
     """
-    
-    # --- For MIDTERM CHECK-IN: Placeholder Structure ---
-    # We must simulate the output structure for the code to run end-to-end (e.g., in a test notebook).
-    N = 100 
+    def __init__(self, config: ModelConfig = ModelConfig()):
+        self.config = config
+        self.model = None
+        self.is_mitigated = False
+
+    def train(self, X, y, A=None, mitigate: bool = False):
+        self.is_mitigated = mitigate
+        
+        # Native Estimator
+        base_estimator = GradientBoostingClassifier(
+            n_estimators=self.config.n_estimators,
+            random_state=self.config.random_state
+        )
+
+        if mitigate:
+            if A is None:
+                raise ValueError("Sensitive attribute 'A' is required for mitigation.")
+            print(f"Training Mitigated Model (Fairlearn ExponentiatedGradient)...")
+            self.model = ExponentiatedGradient(
+                estimator=base_estimator,
+                constraints=EqualizedOdds(),
+                max_iter=self.config.max_iter_mitigation
+            )
+            self.model.fit(X, y, sensitive_features=A)
+        else:
+            print("Training Baseline Model (Native GradientBoosting)...")
+            self.model = base_estimator
+            self.model.fit(X, y)
+
+    def predict(self, X):
+        return self.model.predict(X)
+
+    def evaluate(self, X, y, A) -> EvaluationResult:
+        y_pred = self.predict(X)
+        
+        acc = accuracy_score(y, y_pred)
+        bal_acc = balanced_accuracy_score(y, y_pred)
+        disp = equalized_odds_difference(y, y_pred, sensitive_features=A)
+        
+        mf = MetricFrame(
+            metrics={"Selection Rate": selection_rate, "Accuracy": accuracy_score},
+            y_true=y,
+            y_pred=y_pred,
+            sensitive_features=A
+        )
+        
+        return EvaluationResult(
+            accuracy=acc,
+            balanced_accuracy=bal_acc,
+            fairness_disparity=disp,
+            group_metrics=mf.by_group
+        )
+
+# --- UTILITY FUNCTIONS ---
+API_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json"
+
+def load_chicago_data(local_cache_path="data/chicago_crime_2020_2023.csv") -> Tuple[pd.DataFrame, pd.Series, pd.Series, pd.Series]:
+    """
+    Smart data loader that handles API fetching, caching, and feature engineering.
+    """
+    if os.path.exists(local_cache_path):
+        print(f"Loading cached data from {local_cache_path}...")
+        df = pd.read_csv(local_cache_path)
+    else:
+        print("Fetching multi-year data from Chicago API...")
+        years = [2020, 2021, 2022, 2023] 
+        all_data = []
+        try:
+            for year in years:
+                url = f"{API_URL}?$limit=20000&year={year}&$order=date DESC"
+                print(f" - Fetching {year}...")
+                df_year = pd.read_json(url)
+                all_data.append(df_year)
+            df = pd.concat(all_data, ignore_index=True)
+            os.makedirs(os.path.dirname(local_cache_path), exist_ok=True)
+            df.to_csv(local_cache_path, index=False)
+        except Exception as e:
+            print(f"API Error: {e}. Generating Mock Data.")
+            df = _generate_mock_data(2000)
+
+    # Preprocessing
+    df.rename(columns={'latitude': 'Latitude', 'longitude': 'Longitude', 
+                       'arrest': 'Arrest', 'domestic': 'Domestic', 'date': 'Date'}, inplace=True)
+    df = df.dropna(subset=['Latitude', 'Longitude'])
+    df['Date'] = pd.to_datetime(df['Date'])
+
+    # Feature Engineering
+    df['lat_bin'] = (df['Latitude'] / 0.005).astype(int)
+    df['lon_bin'] = (df['Longitude'] / 0.005).astype(int)
+    df['Grid_ID'] = df['lat_bin'].astype(str) + "_" + df['lon_bin'].astype(str)
+
+    # Simulated Demographics
     np.random.seed(42)
+    regions = df['Grid_ID'].unique()
+    region_demographics = {rid: {'Majority_Race': np.random.choice(['Black', 'White', 'Hispanic'], p=[0.4, 0.3, 0.3]),
+                                 'Income_Level': np.random.choice(['Low', 'High'], p=[0.6, 0.4])} for rid in regions}
     
-    # 1. Features (X): Geospatial/Crime History features
-    X = pd.DataFrame({
-        'Crime_Density_Log': np.random.lognormal(mean=0.5, sigma=0.5, size=N),
-        'Police_Visits_Avg': np.random.randint(5, 50, size=N)
+    df['Majority_Race'] = df['Grid_ID'].map(lambda x: region_demographics[x]['Majority_Race'])
+    df['Income_Level'] = df['Grid_ID'].map(lambda x: region_demographics[x]['Income_Level'])
+    df['Intersectional_Group'] = df['Majority_Race'] + "_" + df['Income_Level']
+
+    X = df[['Latitude', 'Longitude', 'Domestic']] 
+    y = df['Arrest'].astype(int) 
+    A = df['Intersectional_Group']
+    dates = df['Date']
+
+    return X, y, A, dates
+
+def _generate_mock_data(n):
+    return pd.DataFrame({
+        'latitude': np.random.uniform(41.6, 42.0, n),
+        'longitude': np.random.uniform(-87.9, -87.5, n),
+        'arrest': np.random.choice([True, False], n),
+        'domestic': np.random.choice([True, False], n),
+        'date': pd.date_range(start='1/1/2020', periods=n)
     })
-    
-    # 2. Target (y): Hotspot (1) or Not (0)
-    y = pd.Series(np.random.randint(0, 2, size=N))
-    
-    # 3. Sensitive Attributes (A): CRUCIAL FOR INTERSECTIONAL FAIRNESS
-    races = np.random.choice(['Black', 'White', 'Hispanic', 'Asian'], size=N, p=[0.4, 0.3, 0.2, 0.1])
-    incomes = np.random.choice(['Low', 'Medium', 'High'], size=N, p=[0.4, 0.4, 0.2])
-    
-    # Create the Intersectional Feature (e.g., 'Black_Low', 'White_High')
-    A = pd.Series(races + '_' + incomes, name='Race_Income')
-    
-    return X, y, A
-
-# --- Model Training and Fairness Mitigation ---
-
-def train_fair_model(X_train, y_train, sensitive_features):
-    """
-    Trains a Gradient Boosted Tree (GBT) model using Fairlearn's ExponentiatedGradient 
-    to mitigate bias based on the sensitive_features (A).
-    """
-    print("Training Fair Model...")
-    
-    # 1. Base estimator (The algorithm we are training)
-    estimator = GradientBoostingClassifier(n_estimators=100, max_depth=3, random_state=42)
-    
-    # 2. Mitigation Strategy: Enforce Equalized Odds (the constraint)
-    # Equalized Odds aims to equalize True Positive Rate (TPR) and False Positive Rate (FPR)
-    mitigator = ExponentiatedGradient(estimator, constraints="equalized_odds")
-                                      
-    # 3. Fit the model and mitigation wrapper
-    mitigator.fit(X_train, y_train, sensitive_features=sensitive_features)
-    
-    print("Fair model training complete.")
-    return mitigator
-
-def evaluate_fairness(model, X_test, y_test, A_test):
-    """
-    Evaluates model performance and fairness metrics across all sensitive groups.
-    """
-    # 1. Get predictions
-    y_pred = model.predict(X_test)
-    
-    # 2. Define the metrics to track (Performance and Fairness)
-    metrics = {
-        "Accuracy": np.mean,
-        "True Positive Rate (TPR)": lambda y_true, y_pred: np.mean(y_pred[y_true == 1]),
-        "False Positive Rate (FPR)": lambda y_true, y_pred: np.mean(y_pred[y_true == 0]),
-    }
-    
-    # 3. Use MetricFrame to calculate metrics for each group
-    metric_frame = MetricFrame(
-        metrics=metrics,
-        y_true=y_test,
-        y_pred=y_pred,
-        sensitive_features=A_test
-    )
-    
-    # 4. Calculate the overall difference in Equalized Odds (Fairness Metric)
-    eq_odds_diff = equalized_odds_difference(y_test, y_pred, sensitive_features=A_test)
-    
-    return metric_frame.by_group, eq_odds_diff

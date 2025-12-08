@@ -4,7 +4,7 @@
 **GitHub Issue:** #187
 
 ## Project Objective
-Develop a predictive policing model (Gradient Boosted Trees) to forecast crime hotspots while integrating **Fairlearn** to specifically mitigate **intersectional bias** (Race $\times$ Income) in the predictions. This PR serves as the midterm structural check-in.
+Develop a predictive policing model (Gradient Boosted Trees) to forecast crime hotspots while integrating **Fairlearn**  to specifically mitigate **intersectional bias** (Race $\times$ Income) in the predictions. This PR serves as the midterm structural check-in.
 
 ---
 
