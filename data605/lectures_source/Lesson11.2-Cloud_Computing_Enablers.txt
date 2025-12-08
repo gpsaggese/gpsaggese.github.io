@@ -17,7 +17,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{11.2: Technologies behind cloud computing}}$$**
+**$$\text{\blue{11.2: Technologies Enabling Cloud Computing}}$$**
 \endgroup
 
 ::: columns
@@ -32,65 +32,52 @@ UMD DATA605 - Big Data Systems
 
 ## Data centers
 
-* Data Centers
+* Data Centers: Capex
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - Data centers enable cloud computing
-  - Large companies (e.g., AWS, Apple, Google, Facebook) build data centers
-    globally
 
-- Design and construction decisions
+- Large companies (e.g., AWS, Apple, Google, Facebook) build data centers
+  globally
 
-- Research energy-saving for power and cooling
+- Data center costs around 1B USD to build
+  - Capex: Computing, memory, storage, networking
+  - Prices dropping
+  - Size is increasing
 
-![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_1.png)
 ::::
-:::: {.column width=45%}
+:::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_2.png)
-
-![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_3.png)
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_4.png)
 
 ::::
 :::
 
-* Data Centers
+* Data Centers: Opex
 ::: columns
-:::: {.column width=45%}
-- **Equipment cost**
-  - Computing, memory, storage, networking
-  - Data center costs around 1B USD
-  - Prices dropping
+:::: {.column width=55%}
+- **Powering equipment cost**
+  - Focus on energy-efficient computing
 
-- **Powering / cooling cost**
-  - Running equipment cost
-  - High cooling cost
-    - Focus on "energy-efficient computing"
-  - Vent placement is key
-    - Thermal hotspots need management
+- **High cooling cost**
+    - Vent placement is key to manage thermal hotspots
   - PUE (Power Usage Effectiveness)
-    - Power converted to computation; rest is overhead
+    - Some power converted into computation
+    - Rest is overhead
   - Hard to optimize in small data centers
-    - Ideal PUE is 1; current is 1.07-1.22
+    - Ideal PUE is 1
+    - Current is 1.07-1.22
     - May lead to large data centers soon
+
+- **Research on energy-saving**
+
+- **Data centers built**
+  - Close to cheap energy sources
+  - In cold climate
 ::::
-:::: {.column width=50%}
-
-![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_16_image_1.png)
-
-_Meta investment in 18 data centers_
-
-![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_16_image_2.png)
-
-::::
-:::
-
-* Data Centers
-
-::: columns
-:::: {.column width=50%}
+:::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_17_image_1.png)
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_17_image_2.png)
@@ -100,77 +87,104 @@ _Meta investment in 18 data centers_
 :::
 
 * (Modular) Data Centers
-From James Hamilton Presentation
+::: columns
+:::: {.column width=65%}
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_18_image_1.png)
 
+::::
+:::: {.column width=30%}
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_15_image_1.png)
+::::
+:::
+
+* Meta 
+::: columns
+:::: {.column width=50%}
+- Global scale of data centers
+  - 29 dedicated Meta data centers
+  - Hyperscale and AI-optimized facilities
+
+- Investment
+  - $600 billion in U.S. infrastructure by 2028
+  - El Paso data center: $1.5 billion
+  - Louisiana campus: $10 billion for 9 buildings
+  - Power infrastructure upgrades: over $3 billion
+::::
+:::: {.column width=45%}
+\center \small
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_16_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_16_image_2.png)
+::::
+:::
+
 * Amazon Web Services
 
-As of 2022, 28 geographical regions
+- AWS
+  - 2022: 28 geographical regions
+  - 2025: 38 regions
 
-![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_19_image_1.png)
+\center
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_19_image_1.png){width=80%}
 
 * Amazon Web Services (EC2)
 ::: columns
 :::: {.column width=50%}
 - Widely used solution for cloud computing
-  - Alternatives may suit your needs
+  - Many alternatives to suit your needs
   - Prices are low due to competition
-  - See
-    [current on-demand pricing](https://aws.amazon.com/ec2/pricing/on-demand/)
-
-![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_1.png)
-
+  - [Current on-demand pricing](https://aws.amazon.com/ec2/pricing/on-demand/)
 ::::
 :::: {.column width=50%}
-
-![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_2.png)
-
-![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_3.png)
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_20_image_1.png)
 ::::
 :::
 
 * Amazon S3
-- Amazon storage services (Simple Storage Solution)
-  - Pay for what you use
+- Amazon storage services (S3 = Simple Storage Solution)
+  - Pay for storage you use
 
-**S3 Storage Types**
+- Different tiers for reliability, cost, performance
 
-|        | S3 Default | S3 RRS | S3 IA | Glacier |
+\small
+|        | **Default** | **RRS** | **IA** | **Glacier** |
 |---------|---------|---------|---------|---------|
 | Durability | 99.999999999% | 99.99% | 99.999999999% | 99.999999999% |
 | Availability | 99.99% | 99.99% | 99.9% | 99.99% |
-| Extra Fees * | None | None | Retrieval | Retrieval |
+| Extra Fees | None | None | Retrieval | Retrieval |
 | Real-Time Access? | Yes | Yes | Yes | No (mins/hours) |
 | Frequently Accessed? | Yes | Yes | No | No |
 
 * Google App Engine
-::: columns
-:::: {.column width=70%}
-- Google Compute Engine (IaaS)
+- **Google Compute Engine** (IaaS)
   - Competes with AWS EC2
 
-- Google Infrastructure (PaaS)
+- **Google Infrastructure** (PaaS)
   - Run Docker containers on Google resources
-  - Managed services (e.g., SQL and NoSQL DBs)
+  - Managed services (e.g., databases)
 
-- Google Docs (SaaS)
-  - Share documents in the cloud
-  - Includes word processor, spreadsheet, presentations
+- **Google Docs** (SaaS)
+  - Word processor, spreadsheet, presentations in the cloud
 
-- Google Cloud Computing Market Share
-  - Built software infrastructure/data centers before Amazon
+::: columns
+:::: {.column width=55%}
+
+- Google Cloud's **compute market share**
+  - Built software data centers before Amazon
   - Invented cloud technologies (e.g., Google File System, MapReduce, BigTable)
   - Market share 3x smaller than AWS
   - Issues:
     - Developer/customer unfriendliness
     - Lack of commitment (Killed by Google)
     - Poor customer service
-
 ::::
-:::: {.column width=30%}
-
+:::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_22_image_1.png)
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_22_image_2.png)
 ::::
 :::
 
@@ -178,10 +192,9 @@ As of 2022, 28 geographical regions
 
 * Virtualization
 - **Virtual machines have been around for a long time**
-  - E.g., running Windows inside a Mac
-  - Used to be slow (e.g., QEMU)
+  - Processors had support since 1980s
 
-- **Only recently (~2000s) became efficient enough for cloud computing**
+- **In 2000s efficient enough for cloud computing**
 
 - **Basic idea of cloud computing**
   - Run virtual machines on servers and sell time on them
