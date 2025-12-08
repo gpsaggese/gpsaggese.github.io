@@ -1,4 +1,14 @@
 # ##############################################################################
+# Intro
+# ##############################################################################
+
+In this lesson, we will discuss the shortcomings of Hadoop MapReduce, the
+advantages of Apache Spark, and the transition from academic research to
+industry applications. We will explore Spark's architecture, computation model,
+and deployment modes, concluding with the significance of data preprocessing in
+big data analytics.
+
+# ##############################################################################
 # Hadoop MapReduce: Shortcomings
 # ##############################################################################
 
@@ -191,3 +201,12 @@ can be spread out across different machines.
   large-scale data processing.
 
 Now, let's move on to understanding how Spark handles data processing.
+
+# ##############################################################################
+# Outro
+# ##############################################################################
+
+In this lesson, we discussed the challenges of Hadoop MapReduce, including its
+complexity and inefficiencies. We explored Apache Spark as a solution,
+highlighting its versatility, in-memory computation, RDDs, transformations
+versus actions, and deployment modes.
