@@ -4,7 +4,7 @@ This document provides a comprehensive reference for all CrewAI API calls used i
 
 ---
 
-## 📚 Table of Contents
+## Table of Contents
 
 - [Core Imports](#core-imports)
 - [Agent API](#agent-api)
@@ -441,19 +441,19 @@ print(result.tasks_output[1])  # Analyst output
 
 ### 1. Shared LLM Instance
 ```python
-# ✅ Good: Create once, reuse
+# Good: Create once, reuse
 llm = get_llm()
 agent1 = Agent(..., llm=llm)
 agent2 = Agent(..., llm=llm)
 
-# ❌ Bad: Creating multiple instances
+# Bad: Creating multiple instances
 agent1 = Agent(..., llm=get_llm())
 agent2 = Agent(..., llm=get_llm())
 ```
 
 ### 2. Tool Documentation
 ```python
-# ✅ Good: Clear docstring
+# Good: Clear docstring
 @tool("analyze_data")
 def analyze_data(query: str) -> str:
     """
@@ -467,32 +467,32 @@ def analyze_data(query: str) -> str:
     """
     ...
 
-# ❌ Bad: No documentation
+# Bad: No documentation
 @tool("analyze")
 def analyze(q): return "..."
 ```
 
 ### 3. Task Dependencies
 ```python
-# ✅ Good: Clear dependencies
+# Good: Clear dependencies
 task2 = Task(..., context=[task1])
 task3 = Task(..., context=[task2])
 
-# ❌ Bad: Circular or missing dependencies
+# Bad: Circular or missing dependencies
 task2 = Task(..., context=[task3])  # Circular!
 task3 = Task(...)  # Missing dependency
 ```
 
 ### 4. Error Handling
 ```python
-# ✅ Good: Handle errors
+# Good: Handle errors
 try:
     result = crew.kickoff()
 except Exception as e:
     print(f"Error: {e}")
     # Handle gracefully
 
-# ❌ Bad: No error handling
+# Bad: No error handling
 result = crew.kickoff()  # May crash
 ```
 
@@ -545,4 +545,3 @@ task3 = Task(..., agent=agent3)
 - CrewAI Official Docs: https://docs.crewai.com
 - Example Flow: `crewai.example.py`
 - Execution Flow: `EXECUTION_FLOW.md`
-

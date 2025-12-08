@@ -8,7 +8,7 @@ from crewai_utils import create_crew, create_flow_crew, create_analyst_only_crew
 def main():
     # Check if API key is set
     if not os.getenv("OPENAI_API_KEY"):
-        print("⚠️  ERROR: OPENAI_API_KEY not set!")
+        print("ERROR: OPENAI_API_KEY not set!")
         print("\nPlease set it using:")
         print("  export OPENAI_API_KEY='your-api-key-here'")
         print("\nOr set it in this script:")
@@ -46,15 +46,14 @@ def main():
     print("CUSTOM QUERY RESULTS")
     print("=" * 70)
     if hasattr(result, 'tasks_output') and result.tasks_output:
-        print("\n📊 Engineer Output:")
+        print("\nEngineer Output:")
         print(result.tasks_output[0] if len(result.tasks_output) > 0 else "N/A")
-        print("\n📈 Analyst Output:")
+        print("\nAnalyst Output:")
         print(result.tasks_output[1] if len(result.tasks_output) > 1 else "N/A")
-        print("\n📝 Storyteller Output:")
+        print("\nStoryteller Output:")
         print(result.tasks_output[2] if len(result.tasks_output) > 2 else "N/A")
     else:
         print(result)
 
 if __name__ == "__main__":
     main()
-

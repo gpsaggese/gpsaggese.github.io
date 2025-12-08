@@ -77,7 +77,7 @@ class NBAVectorDB:
         # Initialize embedding model (open-source, runs locally)
         print("Loading embedding model...")
         self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-        print("Embedding model loaded!")
+        print("Embedding model loaded.")
         
         # Initialize ChromaDB client
         os.makedirs(persist_directory, exist_ok=True)
@@ -175,7 +175,7 @@ class NBAVectorDB:
                 ids=batch_ids
             )
         
-        print(f"Successfully indexed {len(df)} records in vector database!")
+        print(f"Indexed {len(df)} records in vector database.")
     
     def search(self, query: str, n_results: int = 10) -> List[Dict]:
         """
@@ -482,10 +482,9 @@ def create_engineer_agent(csv_path: str = None) -> Agent:
     return Agent(
         role="Data Engineer",
         goal="Process, clean, and prepare data for analysis. Ensure data quality and create structured datasets.",
-        backstory="""You are an expert data engineer with years of experience in sports analytics. 
-        You specialize in processing large datasets, handling missing values, data validation, 
-        and creating clean, analysis-ready datasets. You understand statistics deeply and 
-        know how to structure data for optimal analysis.""",
+        backstory="""Data engineer specializing in sports analytics. 
+        Responsible for processing datasets, handling missing values, data validation, 
+        and creating clean, analysis-ready datasets.""",
         verbose=True,
         allow_delegation=False,
         llm=_get_llm_instance(),
@@ -509,10 +508,9 @@ def create_analyst_agent(csv_path: str = None) -> Agent:
     return Agent(
         role="Data Analyst",
         goal="Analyze data to extract meaningful insights, identify patterns, and provide actionable recommendations.",
-        backstory="""You are a seasoned data analyst with a passion for analytics. 
-        You excel at finding patterns in data, identifying trends, performing statistical analysis, 
-        and translating complex data into clear, actionable insights. You understand performance 
-        metrics and can provide strategic recommendations based on data.
+        backstory="""Data analyst focused on extracting insights. 
+        Responsible for finding patterns in data, identifying trends, performing statistical analysis, 
+        and translating data into clear insights.
         
         CRITICAL: When asked for aggregations, top N lists, totals, or statistical summaries:
         - ALWAYS use the 'analyze_nba_data' tool with pandas groupby operations
@@ -536,13 +534,9 @@ def create_storyteller_agent() -> Agent:
     return Agent(
         role="Sports Storyteller",
         goal="Transform data analysis results into engaging headlines and compelling storylines that bring statistics to life with narrative and context.",
-        backstory="""You are a creative sports journalist and storyteller with a talent for turning 
-        statistical analysis into captivating headlines and engaging storylines. You know how to make data come alive, 
-        creating headlines that grab attention and writing compelling content that tells the story behind the numbers. 
-        You understand what makes a great sports story and can transform complex analytics into memorable narratives 
-        that connect with readers. You write with flair, using vivid language and storytelling techniques to make 
-        statistics human and relatable. Your stories provide context, explain why the data matters, and bring the 
-        performance metrics to life with engaging prose.""",
+        backstory="""Sports journalist creating headlines and storylines. 
+        Responsible for turning statistical analysis into headlines and storylines. 
+        Provides context and explains why the data matters.""",
         verbose=True,
         allow_delegation=False,
         llm=_get_llm_instance(),
