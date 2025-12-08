@@ -29,7 +29,7 @@ from transformers import (
     DataCollatorWithPadding
 )
 from datasets import Dataset
-from sklearn.metrics import classification_report, confusion_matrix, f1_score
+from sklearn.metrics import classification_report, confusion_matrix, f1_score, accuracy_score, precision_score, recall_score
 
 # CRITICAL: Import cloudml-hypertune for Vertex AI metric reporting
 # CORRECT IMPORT (2025): import hypertune
@@ -222,12 +222,21 @@ def compute_metrics(eval_pred):
     predictions, labels = eval_pred
     predictions = np.argmax(predictions, axis=1)
 
+    # F1 Scores
     f1_macro = f1_score(labels, predictions, average='macro')
     f1_weighted = f1_score(labels, predictions, average='weighted')
+    
+    # Additional metrics for comprehensive comparison
+    accuracy = accuracy_score(labels, predictions)
+    precision_macro = precision_score(labels, predictions, average='macro')
+    recall_macro = recall_score(labels, predictions, average='macro')
 
     return {
         'f1_macro': f1_macro,
-        'f1_weighted': f1_weighted
+        'f1_weighted': f1_weighted,
+        'accuracy': accuracy,
+        'precision_macro': precision_macro,
+        'recall_macro': recall_macro
     }
 
 

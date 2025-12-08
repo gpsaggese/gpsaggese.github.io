@@ -924,6 +924,187 @@ python /tmp/training_script.py \
     return custom_job
 
 
+def create_custom_bert_training_job(
+    display_name: str,
+    script_path: str,
+    train_data_gcs_uri: str,
+    val_data_gcs_uri: str,
+    test_data_gcs_uri: str,
+    project_id: str = None,
+    location: str = None,
+    learning_rate: float = 2e-5,
+    batch_size: int = 32,
+    weight_decay: float = 0.01,
+    warmup_ratio: float = 0.1,
+    num_epochs: int = 4
+) -> aiplatform.CustomJob:
+    """
+    Create a custom training job for BERT baseline sentiment analysis.
+
+    **BONUS REQUIREMENT**: "Explore transfer learning with pre-trained models like BERT"
+    
+    This function trains bert-base-uncased for comparison with Twitter-RoBERTa.
+    The comparison demonstrates that domain-specific pre-training (RoBERTa on tweets)
+    outperforms general-purpose BERT for social media sentiment analysis.
+
+    **2025 IMPLEMENTATION**:
+    - Uses latest PyTorch GPU container from Google Cloud
+    - T4 GPU for efficient training
+    - Returns CustomJob object (use .run() to execute)
+
+    :param display_name: Name for the training job
+    :param script_path: Path to training script
+    :param train_data_gcs_uri: GCS URI to training data
+    :param val_data_gcs_uri: GCS URI to validation data
+    :param test_data_gcs_uri: GCS URI to test data
+    :param project_id: Google Cloud Project ID (optional if initialized)
+    :param location: GCP region (optional if initialized)
+    :param learning_rate: Learning rate for training
+    :param batch_size: Batch size for training
+    :param weight_decay: Weight decay for regularization
+    :param warmup_ratio: Warmup ratio for learning rate scheduler
+    :param num_epochs: Number of training epochs
+    :return: CustomJob object (call .run() to execute)
+    """
+    # Upload training script to GCS
+    staging_bucket = aiplatform.initializer.global_config.staging_bucket
+    if staging_bucket.startswith('gs://'):
+        bucket_path = staging_bucket.replace('gs://', '')
+        bucket_name = bucket_path.split('/')[0]
+    else:
+        bucket_name = staging_bucket.split('/')[0]
+
+    script_gcs_uri = upload_to_gcs(
+        bucket_name=bucket_name,
+        source_file_path=script_path,
+        destination_blob_name=f"training_scripts/{script_path}"
+    )
+
+    print(f"🚀 Creating BERT baseline training job: {display_name}")
+    print(f"   📊 BONUS: BERT comparison for transfer learning demonstration")
+    print(f"   ⏰ Estimated time: ~15-20 minutes (GPU)")
+    print(f"   💰 Estimated cost: $2-5 USD")
+
+    # ============================================================
+    # WORKER POOL SPEC (2025 Best Practices)
+    # ============================================================
+    container_uri = "gcr.io/deeplearning-platform-release/pytorch-gpu.1-13:latest"
+
+    # Training command with BERT model (instead of RoBERTa)
+    python_command = f"""
+pip install --upgrade pip && \
+pip install 'transformers==4.35.0' 'datasets==2.14.0' 'accelerate==0.20.3' scikit-learn && \
+gsutil cp {script_gcs_uri} /tmp/training_script.py && \
+python /tmp/training_script.py \
+  --train_data_path={train_data_gcs_uri} \
+  --val_data_path={val_data_gcs_uri} \
+  --test_data_path={test_data_gcs_uri} \
+  --model_name=bert-base-uncased \
+  --learning_rate={learning_rate} \
+  --batch_size={batch_size} \
+  --weight_decay={weight_decay} \
+  --warmup_ratio={warmup_ratio} \
+  --num_epochs={num_epochs} \
+  --max_length=128 \
+  --output_dir=/tmp/model_output
+"""
+
+    # Worker pool specification
+    worker_pool_specs = [{
+        "machine_spec": {
+            "machine_type": "n1-standard-4",
+            "accelerator_type": "NVIDIA_TESLA_T4",
+            "accelerator_count": 1,
+        },
+        "replica_count": 1,
+        "container_spec": {
+            "image_uri": container_uri,
+            "command": ["bash", "-c"],
+            "args": [python_command],
+        },
+    }]
+
+    print(f"   Model: bert-base-uncased (baseline for comparison)")
+    print(f"   Container: {container_uri}")
+    print(f"   Machine: n1-standard-4 with NVIDIA T4 GPU")
+    print(f"   Training script: {script_gcs_uri}")
+    print(f"   Hyperparameters:")
+    print(f"     - learning_rate: {learning_rate}")
+    print(f"     - batch_size: {batch_size}")
+    print(f"     - weight_decay: {weight_decay}")
+    print(f"     - warmup_ratio: {warmup_ratio}")
+    print(f"     - num_epochs: {num_epochs}")
+
+    # ============================================================
+    # CREATE CUSTOM JOB (2025 SDK)
+    # ============================================================
+    custom_job = aiplatform.CustomJob(
+        display_name=display_name,
+        worker_pool_specs=worker_pool_specs,
+    )
+
+    print(f"✅ BERT baseline training job created: {display_name}")
+    print(f"\n   Call job.run() to start training")
+    print(f"   Or call job.run(sync=False) to run asynchronously")
+
+    return custom_job
+
+
+def run_bert_training_job(
+    job: aiplatform.CustomJob,
+    train_data_gcs_uri: str,
+    val_data_gcs_uri: str,
+    test_data_gcs_uri: str,
+    model_display_name: str = "sentiment-bert-baseline",
+    sync: bool = True
+) -> aiplatform.CustomJob:
+    """
+    Run a custom BERT training job and wait for completion.
+
+    **BONUS REQUIREMENT**: "Explore transfer learning with pre-trained models like BERT"
+
+    :param job: CustomJob object created by create_custom_bert_training_job()
+    :param train_data_gcs_uri: GCS URI to training data (for logging)
+    :param val_data_gcs_uri: GCS URI to validation data (for logging)
+    :param test_data_gcs_uri: GCS URI to test data (for logging)
+    :param model_display_name: Display name for the trained model
+    :param sync: If True, wait for job completion. If False, return immediately.
+    :return: CustomJob object (completed if sync=True)
+    """
+    print(f"🚀 Starting BERT baseline training job")
+    print(f"   📊 BONUS: Comparing BERT vs Twitter-RoBERTa")
+    print(f"   Data sources:")
+    print(f"     - Train: {train_data_gcs_uri}")
+    print(f"     - Val: {val_data_gcs_uri}")
+    print(f"     - Test: {test_data_gcs_uri}")
+    print(f"   Model name: {model_display_name}")
+
+    if sync:
+        print(f"\n   ⏳ Running synchronously (will wait for completion)...")
+        print(f"   This will take approximately 15-20 minutes")
+        print(f"   Monitor progress in GCP Console: https://console.cloud.google.com/vertex-ai/training/custom-jobs")
+    else:
+        print(f"\n   🏃 Running asynchronously (will return immediately)")
+        print(f"   Monitor progress in GCP Console: https://console.cloud.google.com/vertex-ai/training/custom-jobs")
+
+    # Run the job
+    job.run(sync=sync)
+
+    if sync:
+        print(f"\n✅ BERT training job completed successfully!")
+        print(f"   Job name: {job.display_name}")
+        print(f"   Job resource name: {job.resource_name}")
+        print(f"   Job state: {job.state}")
+        print(f"\n   📊 Compare these results with RoBERTa to complete the bonus requirement!")
+    else:
+        print(f"\n✅ BERT training job submitted!")
+        print(f"   Job name: {job.display_name}")
+        print(f"   Use job.wait() to wait for completion")
+        print(f"   Use job.state to check current state")
+
+    return job
+
+
 def run_roberta_training_job(
     job: aiplatform.CustomJob,
     train_data_gcs_uri: str,
