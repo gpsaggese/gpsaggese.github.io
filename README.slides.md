@@ -48,9 +48,10 @@
   ```
 
 ## Reduce all slides
-```
-SRC_NAME=$(ls $DIR/lectures_source/Lesson04.2*); echo $SRC_NAME
-process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $SRC_NAME --use_llm_transform --limit 0:10
+
+```bash
+> SRC_NAME=$(ls $DIR/lectures_source/Lesson04.2*); echo $SRC_NAME
+> process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $SRC_NAME --use_llm_transform --limit 0:10
 ```
 
 ```
@@ -89,12 +90,11 @@ data605/lectures/Lesson01.3-Is_Data_Science_Just_Hype.pdf       14
 
 > gen_msml610.sh 02
 
-
 > FILE=msml610/lectures_source/Lesson05*
 > process_slides.py --in_file $FILE --action slide_format_figures --out_file $FILE --use_llm_transform
 > process_slides.py --in_file $FILE --action slide_check --out_file ${FILE}.check --use_llm_transform --limit None:10
 
-rsync -avz -e "ssh -i ~/.ssh/ck/saggese-cryptomatic.pem" saggese@$DEV1:/data/saggese/src/umd_classes1/msml610/lectures/ msml610/lectures/; open msml610/lectures/*07.1* -a "skim"
+> rsync -avz -e "ssh -i ~/.ssh/ck/saggese-cryptomatic.pem" saggese@$DEV1:/data/saggese/src/umd_classes1/msml610/lectures/ msml610/lectures/; open msml610/lectures/*07.1* -a "skim"
 
 ## To run the tutorials
 > cd msml610/tutorials
@@ -103,7 +103,7 @@ rsync -avz -e "ssh -i ~/.ssh/ck/saggese-cryptomatic.pem" saggese@$DEV1:/data/sag
 
 > open -a "Chrome" http://127.0.0.1:5011/lab/tree/notebooks/Bayesian_Coin.ipynb
 
-##
+## Fix slides
 
-FILE=data605/lectures_source/Lesson09.2-Spark_Primitives.txt
-llm_cli.py --input $FILE -pf "fix_slides.prompt.md" -o improved.md --model "gpt-4o" -b
+> FILE=data605/lectures_source/Lesson09.2-Spark_Primitives.txt
+> llm_cli.py --input $FILE -pf "fix_slides.prompt.md" -o improved.md --model "gpt-4o" -b
