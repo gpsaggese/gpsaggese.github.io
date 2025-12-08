@@ -193,23 +193,22 @@ UMD DATA605 - Big Data Systems
 * Virtualization
 - **Virtual machines have been around for a long time**
   - Processors had support since 1980s
-
-- **In 2000s efficient enough for cloud computing**
+  - In 2000s efficient enough for cloud computing
 
 - **Basic idea of cloud computing**
   - Run virtual machines on servers and sell time on them
-  - E.g., amazon EC2, Microsoft Azure, Google Cloud
+  - E.g., AWS, Microsoft Azure, Google Cloud
 
 - **Many advantages**
-  - Security: virtual machines have almost impenetrable boundary
-  - Multi-tenancy: multiple VMs on the same server
-  - Efficiency: replace many underpowered machines with fewer high-powered
+  - _Security_: virtual machines have almost impenetrable boundary
+  - _Multi-tenancy_: multiple VMs on the same server
+  - _Efficiency_: replace many underpowered machines with fewer high-powered
     machines
 
-* Virtualization
+* Desktop vs Server Virtualization
 ::: columns
-:::: {.column width=45%}
-- **Consumer / desktop virtualization**
+:::: {.column width=50%}
+- **Desktop virtualization**
   - VMWare, Xen, VirtualBox
   - Run on host OS
   - Hypervisor/VM supports guest OS
@@ -218,63 +217,60 @@ UMD DATA605 - Big Data Systems
   - Run hypervisor on hardware
   - Ideal for server farms, cloud computing
   - Amazon used Xen on RedHat
-  - Now uses AWS Nitro
-  - Supports Windows and Linux VMs
+    - Now it uses AWS Nitro
+
+- **Performance are tricky**
+  - Hard to reason about performance
+  - Identical VMs may deliver different performance
+  - Multi-tenancy, different hardware
+  - "Bare-metal" compute to improve performance
 ::::
-:::: {.column width=50%}
+:::: {.column width=45%}
+\center \small
+
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_25_image_1.png)
 
-Consumer / desktop virtualization
+_Consumer / desktop virtualization_
+
+\vspace{0.2cm}
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_25_image_2.png)
 
-Server virtualization
+_Server virtualization_
 ::::
 :::
 
-* Virtualization
-- Performance and tricky things to keep in mind
-  - Hard to reason about performance
-  - Identical VMs may deliver different performance
-    - Multi-tenancy, different hardware
-
-- "Bare-metal" compute to improve performance
-
 * Docker
-::: columns
-:::: {.column width=60%}
-- Enable true independence between application devs and IT ops
+- Package all dependencies in a single object
 
-- Package all dependencies
-
-- Advantages
+- **Advantages**
   - Containers are fast and portable
   - Reduce virtualization overhead
-  - Containers don't require full OS
   - All containers run on a single host
-  - Reduce OS licensing cost
-  - Reduce OS maintenance overhead
-![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_27_image_2.png)
+  - Reduce OS licensing cost / maintenance overhead
 
-::::
+::: columns
 :::: {.column width=40%}
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_27_image_1.png)
 
+::::
+:::: {.column width=40%}
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_27_image_2.png)
 ::::
 :::
 
 ## Programming frameworks
 
 * Programming Frameworks
-- **Programming frameworks emerged from efforts to "scale out" workloads**
+- **Programming frameworks** emerged to:
+  - "scale out" workloads
   - Distribute work over thousands of machines
 
-- Parallelism has been around for a long time
-  - In a single machine and as a cluster of computers
-
-- Parallelism is hard for programmers
-  - Many things to track:
+- **Parallel approach** has existed for a long time to program clusters
+  - Challenging for programmers
+  - Track many things:
     - Parallelize application
     - Distribute data
     - Handle failures
@@ -282,7 +278,7 @@ Server virtualization
     - Race conditions/Heisenbugs
 
 - **The difference is the user interface**
-  - Google developed MapReduce and BigTable, starting a new era
+  - Google developed MapReduce starting a new era
     - Hadoop, Spark
   - AWS services
 
