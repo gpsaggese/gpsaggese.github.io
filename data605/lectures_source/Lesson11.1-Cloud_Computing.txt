@@ -106,16 +106,29 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-* Infrastructure-as-a-Service
+* Infrastructure-as-a-Service (IaaS)
 ::: columns
-:::: {.column width=60%}
-- Cloud provides low-level resources
-- Install and maintain OS and applications
-- E.g.,
+:::: {.column width=70%}
+- Cloud provides low-level resources like virtual machines, storage, networking
+  - Users install and maintain the operating system and applications
+
+- **Examples**
   - AWS EC2
   - Google Compute Engine
+  - Microsoft Azure Virtual Machines
+  - IBM Cloud Infrastructure
+
+- **Benefits**
+  - Flexibility in managing resources
+  - Scalability to meet demand
+  - Cost-effective, pay for what you use
+
+- **Use Cases**
+  - Hosting websites and applications
+  - Data analysis and processing
+  - Development and testing environments
 ::::
-:::: {.column width=35%}
+:::: {.column width=25%}
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_8_image_1.png)
 ::::
@@ -127,27 +140,22 @@ UMD DATA605 - Big Data Systems
 - **Problem**: assembling your own software stack requires work
   - Install
   - Configure
-  - Manage dependencies
-  - Incompatible versions
+  - Manage dependencies (e.g., incompatible versions)
 
 - **Solution**: get a pre-built software stack
-  - Pre-installed OS
-  - Libraries
-  - Application software
-  - As a virtualization solution
-    - E.g., VMware or Docker
-    - Software stack as a large file with system image
-    - **Business model built around this**
+  - Software stack as a virtualization solution (e.g., VMware or Docker)
+    - Pre-installed OS
+    - Libraries
+    - Application software
+
+- **Business model built around this**
+  - E.g.,
+    - Google App Engine
+    - Managed Hadoop
   - E.g., pre-built images for Hadoop
     - Hortonworks, Cloudera
   - E.g., pre-built distributions for Linux
     - RedHat, Gentoo, CentOS
-
-- Cloud provides OS and programming languages
-  - Build application on top of it
-  - E.g.,
-    - Google App Engine
-    - Managed Hadoop
 ::::
 :::: {.column width=25%}
 
@@ -190,7 +198,7 @@ UMD DATA605 - Big Data Systems
 
 * Cloud Deployment Models
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=50%}
 - **Private**
   - Internal cloud hosted on organizational premises
   - E.g., company's data center running virtualized services
@@ -198,24 +206,21 @@ UMD DATA605 - Big Data Systems
 - **Public **
   - External cloud hosted by third-party providers
   - E.g., AWS, Azure, GCP offering compute and storage to clients
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_13_image_1.png)
+::::
+:::
 
-- Hybrid cloud
-  - Combine private and public environments
+- **Hybrid cloud**
+  - Combine private and public environments to optimize cost, security,
+    scalability
   - Sensitive workloads stay internal
-  - scalable tasks move to public cloud
+  - Scalable tasks move to public cloud
 
 - **On-premises resources**
   - E.g., corporate servers in a building
 
 - **Off-premises resources**
-  - Third-party cloud infrastructure
   - E.g., cloud provider's distributed data centers
 
-- **Key idea**: Hybrid architectures optimize cost, security, scalability
-
-::::
-:::: {.column width=25%}
-
-![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_13_image_1.png)
-::::
-:::
