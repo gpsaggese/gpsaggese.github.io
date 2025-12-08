@@ -40,7 +40,9 @@ UMD DATA605 - Big Data Systems
 * Hadoop Ecosystem (aka Hadoop Zoo)
 :::columns
 ::::{.column width=50%}
-- **Hadoop Map-Reduce**
+- **Hadoop MapReduce**
+  - A framework for processing large data sets in parallel across a Hadoop
+    cluster
 
 - **HDFS**
   - Distributed file system
@@ -71,7 +73,7 @@ UMD DATA605 - Big Data Systems
 * Hadoop Distributed File System (HDFS)
 ::: columns
 :::: {.column width=60%}
-- **HDFS** is a **distributed file system**
+- HDFS is a **distributed file system**
   - Designed to store large data sets reliably
   - Part of the Apache Hadoop ecosystem
   - Inspired by the Google File System (GFS)
@@ -96,7 +98,7 @@ UMD DATA605 - Big Data Systems
 
 * HDFS Architecture
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=50%}
 - **NameNode**
   - Store file/dir hierarchy
   - Store file metadata
@@ -112,29 +114,29 @@ UMD DATA605 - Big Data Systems
   - API (e.g., Python, Java) to library
   - Mount HDFS on local filesystem
 ::::
-:::: {.column width=35%}
+:::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_18_image_1.png)
 ::::
 :::
 
 * HDFS: Read / Write Protocols
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=50%}
 
 - **Read**
   - Contact _NameNode_ for _DataNode_ and block pointer
-  - Choose the nearest _DataNode_ for each block
+  - Choose nearest _DataNode_ for each block
   - Connect to _DataNode_ for data access
-  - Reads blocks in parallel to improve performance
-  - Data is reassembled by the client in correct order
+  - Read blocks in parallel to improve performance
+  - Client reassembles data in correct order
 
 - **Write**
   - _NameNode_ creates blocks
   - Assign blocks to multiple _DataNodes_
   - Client sends data to _DataNodes_
   - _DataNodes_ store data
-  - Blocks are pipelined to other replicas
-  - Write is considered successful after all replicas acknowledge
+  - Pipeline blocks to other replicas
+  - Write successful after all replicas acknowledge
 ::::
 :::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_18_image_1.png)
