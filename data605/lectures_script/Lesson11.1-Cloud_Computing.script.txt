@@ -1,133 +1,150 @@
 # ##############################################################################
+# Intro
+# ##############################################################################
+
+In this lesson, we will discuss the essentials of cloud computing, including its
+benefits, the decision between buying and renting infrastructure, and the
+evolution of various service models like IaaS, PaaS, and SaaS. We will also
+explore cloud deployment models to understand their significance in modern
+computing.
+
+# ##############################################################################
 # Cloud Computing
 # ##############################################################################
 
-Cloud computing is about using computing resources as a service instead of
-owning them as a product. This means that storage and computing power are
-accessed over the internet, allowing devices like phones and laptops to interact
-with these resources seamlessly. The main advantages include being device
-agnostic, meaning you can access your data and applications from any device.
-It's also on-demand, efficient, and scalable, thanks to frameworks like Hadoop
-and Spark. Cloud computing is reliable and cost-effective, as you only pay for
-what you use, similar to how you pay for electricity.
+Let's explore cloud computing, which is about using computing as a service
+instead of a product. This means we can store and compute data in the cloud,
+allowing our devices like phones and laptops to interact seamlessly with it. The
+advantages of cloud computing include being device agnostic, meaning it works
+across different devices without issues. It's available on demand, offering
+efficiency and scalability through frameworks like Hadoop and Spark. Cloud
+computing is reliable and cost-effective, as we only pay for what we use, making
+it cheaper than building our own systems.
 
-Transition: Now, let's explore the decision between buying and renting
+Transition: Now, let's consider the decision between buying and renting
 infrastructure.
 
 # ##############################################################################
 # Buying Infrastructure
 # ##############################################################################
 
-When considering buying infrastructure, you need to decide whether to buy or
-rent. Building or buying your own infrastructure requires significant time and
-capital investment, especially at the start when revenues might be low. It's
-often better to have a smooth cash flow with consistent monthly expenses rather
-than large one-time purchases. Buying hardware involves estimating current
-needs, which can be challenging, and updating obsolete equipment. Owning
-hardware also incurs operational costs like data center maintenance,
-electricity, and cooling. Additionally, administering the hardware requires
-installing, updating, and maintaining the software stack.
+When deciding whether to buy or rent infrastructure, we need to consider the
+time and capital investments required for building or buying. This involves
+significant upfront costs, especially when starting without revenue. A smooth
+cash flow with consistent monthly expenses is often preferable to large one-time
+purchases. Buying hardware like computers and storage requires estimating
+current and future needs, which can be challenging. Additionally, owning
+hardware involves ongoing costs for data centers, electricity, and maintenance.
+Administering the hardware also requires installing, updating, and maintaining
+the software stack.
 
-Transition: Let's compare this with the option of renting infrastructure.
+Transition: Let's now look at the benefits of renting infrastructure through
+cloud computing.
 
 # ##############################################################################
 # Renting Infrastructure
 # ##############################################################################
 
-Renting infrastructure, or using cloud computing, allows you to pay only for
-what you use, which means lower initial capital investment. You can access
-ready-to-use systems with just a click, eliminating the need for a multi-year
-resource plan. This flexibility allows you to choose machines that fit your
-specific application and data needs, making it a convenient and efficient option
-for many businesses.
+Renting infrastructure through cloud computing allows us to pay only for what we
+use, minimizing initial capital investment. With cloud services, we can access
+ready systems with just a click, eliminating the need for a multi-year resource
+plan. This flexibility lets us choose machines that fit our specific application
+and data needs, making it a convenient and efficient option for many businesses.
 
 # ##############################################################################
 # Cloud Computing
 # ##############################################################################
 
-Cloud computing has been an evolving concept for decades, starting with
-mainframes and thin clients in the 1960s. Over the years, it has transformed
-through personal computers in the 1980s, grid computing in the 1990s, and
-peer-to-peer architecture in the early 2000s. The client-server model during Web
-1.0 and Web 2.0 also contributed to its development. It wasn't until the 2010s
-that cloud computing truly became practical. This was due to the convergence of
-several technologies, including operating system virtualization, the
-establishment of large data centers, decreasing hardware costs, and the rise of
-big data frameworks.
+Let's explore the evolution of cloud computing. The concept has been around for
+decades, starting with mainframes and thin clients in the 1960s, moving through
+personal computers in the 1980s, and evolving with grid computing in the 1990s.
+The early 2000s saw peer-to-peer architecture, followed by the client-server
+model with Web 1.0 and Web 2.0. Finally, cloud computing became prominent in the
+2010s. Today, it works effectively due to the convergence of technologies like
+OS virtualization, large data centers, decreasing hardware costs, and big data
+frameworks. These advancements have made cloud computing a practical and
+efficient solution.
 
-Transition: Now, let's explore the Infrastructure-as-a-Service model within
-cloud computing.
+Now, let's dive into Infrastructure-as-a-Service (IaaS).
 
 # ##############################################################################
 # Infrastructure-as-a-Service (IaaS)
 # ##############################################################################
 
-IaaS provides users with fundamental computing resources like virtual machines,
-storage, and networking. Users are responsible for installing and maintaining
-their operating systems and applications. Some popular examples of IaaS
-providers include AWS EC2, Google Compute Engine, Microsoft Azure Virtual
-Machines, and IBM Cloud Infrastructure. The benefits of IaaS include flexibility
-in resource management, scalability to handle varying demands, and
-cost-effectiveness since users only pay for what they use. Common use cases for
-IaaS include hosting websites and applications, conducting data analysis and
-processing, and creating development and testing environments.
+We see that IaaS provides essential resources such as virtual machines, storage,
+and networking. Users are responsible for installing and maintaining the
+operating system and applications. Some examples of IaaS providers include AWS
+EC2, Google Compute Engine, Microsoft Azure Virtual Machines, and IBM Cloud
+Infrastructure. The benefits of IaaS include flexibility in managing resources,
+scalability to meet demand, and cost-effectiveness, as users only pay for what
+they use. Common use cases for IaaS are hosting websites and applications, data
+analysis and processing, and creating development and testing environments.
 
-Transition: Moving on, let's discuss the Platform-as-a-Service model.
+Next, let's discuss Platform-as-a-Service (PaaS).
 
 # ##############################################################################
 # Platform-as-a-Service
 # ##############################################################################
 
-Building your own software stack can be labor-intensive, requiring installation,
-configuration, and managing dependencies. Platform-as-a-Service (PaaS) offers a
-solution by providing a pre-built software stack. This includes virtualization
-solutions like VMware or Docker, which come with pre-installed operating
-systems, libraries, and application software. Businesses have developed models
-around PaaS, such as Google App Engine and managed Hadoop services. Pre-built
-images for Hadoop are available from providers like Hortonworks and Cloudera,
-while pre-built Linux distributions include RedHat, Gentoo, and CentOS. PaaS
-simplifies the process of deploying and managing applications by offering
-ready-to-use environments.
+When assembling a software stack, we face challenges like installation,
+configuration, and managing dependencies. PaaS offers a solution by providing a
+pre-built software stack, which includes a pre-installed operating system,
+libraries, and application software. This is often achieved through
+virtualization solutions like VMware or Docker. The business model around PaaS
+includes services like Google App Engine and Managed Hadoop. Additionally, there
+are pre-built images for Hadoop from Hortonworks and Cloudera, as well as
+pre-built Linux distributions like RedHat, Gentoo, and CentOS. PaaS simplifies
+the process and reduces the workload for users.
 
 # ##############################################################################
 # Software-as-a-Service (SaaS)
 # ##############################################################################
 
-SaaS is a cloud-based service where applications are hosted online, eliminating
-the need for local installation. Users can access these applications directly
-from the cloud, making it convenient and efficient. Examples include Dropbox for
-file sharing, Salesforce for customer relationship management, and browser-based
-apps like Google Docs and Microsoft Office 365. The main benefits of SaaS are
-its accessibility from any internet-connected device, automatic updates managed
-by the provider, scalability to accommodate more users, and cost savings by
-reducing the need for physical hardware and software installations.
+Let's discuss how SaaS works and its benefits. With SaaS, the cloud provides the
+application, so there's no need to install anything on your machine. You can use
+it directly from the cloud. Examples include Dropbox for file sharing,
+Salesforce for managing customer relationships, and apps like Google Docs or
+Microsoft Office 365 that run in a browser. The benefits of SaaS are
+significant: you can access it from any device with internet, enjoy automatic
+updates and maintenance, scale it as your needs grow, and save costs by reducing
+the need for physical hardware and software installations.
 
-Let's explore the broader concept of X-as-a-Service next.
+Now, let's explore the broader concept of X-as-a-Service.
 
 # ##############################################################################
 # X-as-a-Service
 # ##############################################################################
 
-Since 2010, the X-as-a-Service (XaaS) model has expanded to various sectors.
-This model includes services like Mobility-as-a-Service, exemplified by Uber,
-and Games-as-a-Service, such as Google Stadia. Storage-as-a-Service is offered
-by platforms like S3 and Google Drive, while Desktop-as-a-Service is available
-through AWS apps. Other examples include Marketing-as-a-Service and
-Banking-as-a-Service. This model allows businesses to offer services over the
-internet, providing flexibility and scalability.
+After 2010, the business model of X-as-a-Service (XaaS) became popular. This
+model includes various services like Mobility-as-a-Service, such as Uber, and
+Games-as-a-Service, like Google Stadia. Storage-as-a-Service includes options
+like S3 and Google Drive, while Desktop-as-a-Service is offered by providers
+like AWS. Other examples include Marketing-as-a-Service and
+Banking-as-a-Service. This model allows businesses to offer a wide range of
+services over the internet, making it easier for users to access and use them
+without needing to manage the underlying infrastructure.
 
-Now, let's look at different cloud deployment models.
+Next, let's look at different cloud deployment models.
 
 # ##############################################################################
 # Cloud Deployment Models
 # ##############################################################################
 
-Cloud deployment models include private, public, and hybrid clouds. A private
-cloud is hosted internally within an organization, like a company's data center
-running virtualized services. Public clouds are hosted by third-party providers
-such as AWS, Azure, and GCP, offering computing and storage services to clients.
-Hybrid clouds combine private and public environments to balance cost, security,
-and scalability, keeping sensitive workloads internal while moving scalable
-tasks to the public cloud. On-premises resources refer to corporate servers
-located in a building, while off-premises resources are hosted in cloud
-provider's distributed data centers.
+We have several cloud deployment models to consider. A private cloud is an
+internal cloud hosted on an organization's premises, like a company's data
+center running virtualized services. A public cloud is hosted by third-party
+providers, such as AWS, Azure, or GCP, offering compute and storage to clients.
+A hybrid cloud combines private and public environments to optimize cost,
+security, and scalability. Sensitive workloads stay internal, while scalable
+tasks move to the public cloud. On-premises resources refer to corporate servers
+in a building, while off-premises resources are the cloud provider's distributed
+data centers.
+
+# ##############################################################################
+# Outro
+# ##############################################################################
+
+In this lesson, we explored cloud computing, its advantages, and the
+decision-making process between buying and renting infrastructure. We covered
+IaaS, PaaS, SaaS, and the X-as-a-Service model, as well as various cloud
+deployment models like private, public, and hybrid cloud solutions.
