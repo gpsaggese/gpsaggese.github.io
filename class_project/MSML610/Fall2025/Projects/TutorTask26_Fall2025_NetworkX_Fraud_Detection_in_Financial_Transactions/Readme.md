@@ -35,7 +35,7 @@ The project begins by importing core libraries:
 
 ## 2. Data Loading
 
-- Transaction data is loaded using `pandas.read_csv()` or generated synthetically
+- Transaction data is loaded using `pd.read_csv()` or generated synthetically
 - Based on **PaySim** dataset format (simulates mobile money transactions)
 - Contains transaction metadata: sender, receiver, amount, type, fraud label
 
@@ -182,9 +182,9 @@ plot_degree_distribution(G)
 
 ### Network Characteristics
 
-- **Fraud networks are ~75x more dense** than normal transaction networks
-- **Hub accounts have 12x higher fraud involvement** than average users
-- **Fraud rings show clustering coefficient > 0.5**
+- **Fraud networks are more dense** than normal transaction networks
+- **Hub accounts have higher fraud involvement** than average users
+- **Fraud rings show high clustering coefficient**
 - **Intermediaries bridge otherwise separate fraud groups**
 
 ### Detection Performance
@@ -199,39 +199,29 @@ plot_degree_distribution(G)
 
 ```
 .
-├── utils.py          # Modular functions for graph analysis
+├── utils.py                   # Modular functions for graph analysis
 ├── NetworkX.API.ipynb         # Native API demonstrations
 ├── NetworkX.API.md            # API documentation
 ├── NetworkX.example.ipynb     # Complete fraud detection application
 ├── NetworkX.example.md        # Application documentation
 ├── README.md                  # Project description
 ├── requirements.txt           # Python dependencies
+├── Dockerfile                 # Docker File
+├── docker_run.sh              # Shell Script to create Docker Image
 ```
 
 ---
 
-## Instructions to Run Project
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run API demonstrations
-jupyter notebook NetworkX.API.ipynb
-
-# Run fraud detection application
-jupyter notebook NetworkX.example.ipynb
-```
-
 ### Prerequisites
 
 ```
-networkx>=3.0
-pandas>=1.5.0
-numpy>=1.23.0
-matplotlib>=3.6.0
-seaborn>=0.12.0
-loguru>=0.6.0
+networkx
+pandas
+numpy
+matplotlib
+seaborn
+loguru
+scipy
 ```
 
 ---
@@ -284,12 +274,12 @@ Traditional fraud detection analyzes transactions in isolation. **Graph analysis
 
 ### Advantages Over Traditional Methods
 
-| Approach | Precision | Fraud Rings | Interpretability |
-|----------|-----------|-------------|------------------|
-| Rule-Based | 30-40% | ❌ | ✅ |
-| Transaction ML | 50-60% | ❌ | ⚠️ |
-| **NetworkX (This)** | **60-80%** | **✅** | **✅** |
-| Graph Neural Networks | 70-90% | ✅ | ❌ |
+| Approach | Fraud Rings | Interpretability |
+|----------|-------------|------------------|
+| Rule-Based | ❌ | ✅ |
+| Transaction ML | ❌ | ⚠️ |
+| **NetworkX** | **✅** | **✅** |
+| Graph Neural Networks | ✅ | ❌ |
 
 ---
 
