@@ -1,0 +1,462 @@
+# ##############################################################################
+# Amazon Web Services (AWS)
+# ##############################################################################
+
+AWS is a comprehensive cloud platform that provides a range of services. It
+offers computing power through services like EC2, storage solutions like S3, and
+networking capabilities. AWS provides different levels of abstraction, such as
+Infrastructure as a Service (IaaS), Platform as a Service (PaaS), and Software
+as a Service (SaaS). This means you can use AWS for hosting websites, running
+enterprise software, or even machine learning applications. You can control AWS
+services using a web interface, command-line interface, or language-specific
+libraries like Python's boto3.
+
+Let's explore AWS's business model and its global impact.
+
+# ##############################################################################
+# AWS as Business
+# ##############################################################################
+
+AWS operates on a pay-per-use pricing model, introducing around 500 new services
+and features each year. Its data centers are spread across the globe, including
+regions in the US, Europe, Asia, and South America. AWS is highly profitable,
+generating $91 billion in revenue in 2023, with a 42% annual growth rate. It
+holds a 30% share of the cloud market. The accompanying images humorously
+reference AWS's success and its founder, Jeff Bezos.
+
+Now, let's delve into the different types of cloud computing.
+
+# ##############################################################################
+# Types of Cloud Computing
+# ##############################################################################
+
+Cloud computing provides a shared pool of configurable resources like servers,
+storage, and applications that can be accessed from anywhere. It's convenient
+and available on-demand. There are three main types of clouds: public, private,
+and hybrid. Public clouds, like AWS, are open to everyone. Private clouds are
+used within a single organization, such as government entities. Hybrid clouds
+combine elements of both public and private clouds, offering flexibility and
+scalability.
+
+# ##############################################################################
+# AWS vs Google Cloud vs Microsoft Azure
+# ##############################################################################
+
+This slide compares the three major cloud service providers: AWS, Google Cloud,
+and Microsoft Azure. They all have a global infrastructure and offer similar
+services like computing, networking, and storage. For instance, AWS has EC2,
+Google Cloud has Compute Engine, and Azure offers VMs. They all follow a
+pay-as-you-go pricing model, which means you only pay for what you use. However,
+they differ in some aspects. AWS is the market leader and uses open-source
+technologies. Azure is known for integrating Microsoft products in the cloud,
+while Google Cloud is tailored for cloud-native applications.
+
+Let's explore how businesses transition from on-premise setups to cloud
+solutions.
+
+# ##############################################################################
+# From On-premise to AWS: 1/3
+# ##############################################################################
+
+This slide introduces the concept of cloud transformation, using a medium-sized
+e-commerce site as an example. In a no-cloud setup, the web server handles
+customer requests, while the database stores product information and orders.
+Static content like images is delivered over a Content Delivery Network (CDN) to
+reduce the load on services. Dynamic content, such as HTML pages with product
+details and prices, is delivered by the web server. This setup is typical for
+businesses that haven't yet moved to the cloud, relying on their own
+infrastructure to manage these tasks.
+
+Now, let's see how this setup changes when moving to the cloud.
+
+# ##############################################################################
+# From On-premise to AWS: 2/3
+# ##############################################################################
+
+In this slide, we discuss the transition to the cloud while maintaining the same
+architecture. The key point is that businesses can move their existing
+components to the cloud without changing their overall structure. This means
+that the web server, database, and content delivery can all be shifted to cloud
+services, allowing businesses to benefit from the scalability and flexibility of
+the cloud. This approach helps in reducing the need for physical infrastructure
+and can lead to cost savings and improved performance. The transition is about
+leveraging cloud resources while keeping the familiar architecture intact.
+
+# ##############################################################################
+# From On-premise to AWS: 3/3
+# ##############################################################################
+
+This slide emphasizes the importance of designing systems specifically for the
+cloud environment. Key components include DNS, databases, and object storage
+like S3. Managed solutions are recommended to simplify operations. Using
+multiple smaller virtual services with a load balancer can enhance reliability
+by distributing workloads and reducing the risk of failure. This approach allows
+for more efficient resource management and can lead to improved system
+performance and uptime.
+
+Transition: Now, let's explore how AWS handles capacity scaling.
+
+# ##############################################################################
+# Capacity Scaling
+# ##############################################################################
+
+AWS eliminates the need to plan for capacity in advance. Instead of predicting
+future needs, you can adjust capacity on-the-fly, adding more virtual machines
+and storage as required. This flexibility means you don't have to worry about
+physical infrastructure like rack space or power supplies. AWS also allows you
+to handle seasonal traffic by scaling resources up or down based on demand, such
+as during holidays or weekends. This adaptability ensures that resources are
+used efficiently, and costs are minimized.
+
+Transition: Next, we'll discuss AWS's global reach and cost structure.
+
+# ##############################################################################
+# Pay-per-use
+# ##############################################################################
+
+AWS operates on a pay-per-use model, similar to an electric bill. You are billed
+based on the actual usage of services, such as the hours of virtual server
+operation, storage used, and data traffic. This model allows for cost-effective
+resource management, as you only pay for what you use. AWS also offers a free
+tier, allowing you to experiment with services like EC2 and S3 for 12 months
+after signing up. However, it's important to monitor usage to avoid unexpected
+charges once limits are exceeded.
+
+# ##############################################################################
+# Pay-per-use
+# ##############################################################################
+
+This slide discusses the benefits of a pay-per-use model in cloud computing.
+
+- Advantages include no need for upfront investments or long-term commitments,
+  which lowers the initial cost of starting a project.
+- The system can be divided into smaller parts, making it flexible. For example,
+  whether you use one big server or two smaller ones, the cost remains the same.
+- It offers affordable fault tolerance and high performance. You can scale your
+  workload efficiently, as buying one server for 1000 hours is equivalent to
+  buying 1000 servers for one hour.
+
+Transition: Now, let's explore how to interact with AWS services effectively.
+
+# ##############################################################################
+# Interacting with AWS
+# ##############################################################################
+
+This slide explains the different ways to interact with AWS services.
+
+- The GUI, or Management Console, allows you to start using services easily and
+  set up cloud infrastructure for development and testing.
+- The Command-line tool (CLI) helps manage and access AWS services and automate
+  tasks that occur repeatedly.
+- SDKs provide libraries in various programming languages to interact with AWS,
+  making it easier to integrate applications. For instance, `boto3` is used for
+  Python.
+- Blueprints describe your system with all its services and dependencies,
+  focusing on what the system is rather than how to build it.
+
+Transition: Next, we'll look at managing accounts and users in AWS.
+
+# ##############################################################################
+# Accounts and Users
+# ##############################################################################
+
+This slide covers the management of accounts and users in AWS.
+
+- Each AWS account has one root user, but you can attach multiple users to it,
+  each with different privileges to isolate workloads.
+- For safety, never use the root account for development, always enable
+  two-factor authentication (2FA), and avoid costly mistakes.
+- A key pair is essential for accessing a virtual server. The public key is
+  stored in AWS and on virtual servers, while the private key is your secret.
+  It's crucial not to lose the private key, as it cannot be retrieved once lost.
+
+# ##############################################################################
+# Create User Account
+# ##############################################################################
+
+When setting up a new user account, it's important not to use the AWS root
+account for development purposes. Instead, use Identity and Access Management
+(IAM) to create a new user. This involves generating an access key ID and a
+secret access key for secure access. For access control, ensure that
+programmatic and console access are enabled. It's also crucial to limit user
+actions by applying specific policies to maintain security and control over what
+users can do within the AWS environment.
+
+Transition: Now, let's explore the concept of AWS Virtual Machines (VMs) and
+their underlying technology.
+
+# ##############################################################################
+# AWS VMs
+# ##############################################################################
+
+AWS uses virtualization to run multiple virtual machines (VMs) on the same
+physical hardware, allowing you to start and stop VMs as needed. The physical
+server, also known as the host machine or bare metal, includes CPUs, memory,
+networking interfaces, and storage. A hypervisor, which is a combination of
+software and CPU hardware, isolates guest VMs and manages hardware requests. AWS
+initially used the Xen hypervisor but has since switched to AWS Nitro, which
+offers hardware-assisted virtualization with performance close to that of bare
+metal. Virtual servers are isolated yet share the same hardware resources.
+
+Transition: Next, we will discuss how to select the appropriate region for your
+AWS resources.
+
+# ##############################################################################
+# Select Region
+# ##############################################################################
+
+When selecting a region for your AWS resources, you might choose a location like
+`us-east-1`, which is situated at 21155 Smith Switch Road, Ashburn, VA, USA.
+This area is a major internet backbone hub, hosting facilities like Equinix,
+Digital Realty, Vantage Data Centers, and H5 Data Centers. Choosing the right
+region is crucial for optimizing performance, reducing latency, and ensuring
+compliance with data regulations. The infrastructure in Ashburn, VA, supports
+robust connectivity and reliability for your AWS services.
+
+# ##############################################################################
+# Starting an EC2 Instance
+# ##############################################################################
+
+When starting an EC2 instance, the first step is to select an operating system
+using an Amazon Machine Image (AMI). This image includes the operating system
+and any pre-installed software, which saves time on setup. Next, you choose the
+instance parameters, such as the instance type like `t2.micro`, which will be
+explained in more detail later. Finally, you configure the instance by setting
+up the network, shutdown behavior, termination protection, and monitoring
+options. These steps ensure that your instance is ready to use with the desired
+settings and capabilities.
+
+Let's move on to understanding the different AWS instance types.
+
+# ##############################################################################
+# AWS Instance Type
+# ##############################################################################
+
+AWS instance types define the computing power of your EC2 instance. They are
+grouped into families based on their purpose. For example, the `T` family is
+cost-effective and suitable for basic tasks, while the `M` family is for general
+purposes. The `C` family is optimized for compute tasks, and the `R` family is
+for memory-intensive applications. Storage-optimized instances are in the `D`
+and `I` families, while `F` instances include FPGAs, and `P`, `G`, and `CG`
+instances come with GPUs. Each instance type, like `t2.micro` or `m4.large`, has
+specific specifications and pricing, which can be found on the AWS EC2 list.
+
+Now, let's discuss the pricing and variety of AWS instance types.
+
+# ##############################################################################
+# AWS Instance Type
+# ##############################################################################
+
+AWS pricing can be complex due to factors like burst mode, vCPUs, multi-tenancy,
+and different purchasing options such as on-demand, spot, reserved, and pre-paid
+instances. As of 2023, there are 642 types of EC2 machines available. The
+cheapest option costs around 37 USD per year, while the most expensive can reach
+up to 1.91 million USD per year, offering 500 CPUs and 24TB of memory. For more
+detailed and updated pricing information, alternative sites like
+instances.vantage.sh can be useful for tracking prices and making informed
+decisions.
+
+# ##############################################################################
+# Starting an EC2 Instance
+# ##############################################################################
+
+When starting an EC2 instance, you need to consider several key aspects. First,
+you must add storage, deciding on the volume size and type, whether it's SSD or
+magnetic HDDs. Tagging your instance helps in organizing and managing resources.
+Configuring the firewall is crucial for security, allowing access via SSH and
+selecting a key-pair for authentication. Monitoring the instance is also
+important, with tools like CloudWatch providing insights into performance and
+usage.
+
+Transition: Once the instance is set up, the next step is to start and connect
+to it.
+
+# ##############################################################################
+# Starting an EC2 Instance
+# ##############################################################################
+
+After setting up the instance, you can start it and find its public IP address.
+This IP is essential for connecting to the machine. To connect, use SSH with the
+appropriate key-pair. Once connected, you can check system information using
+commands like `cat /proc/cpuinfo` and `free -m`. It's also a good practice to
+update the system and install necessary software using `sudo apt-get update` and
+`sudo apt-get install`.
+
+Transition: Understanding the different states of a virtual machine is crucial
+for managing your instance effectively.
+
+# ##############################################################################
+# States of a VM
+# ##############################################################################
+
+Virtual machines can be in different states, each with specific characteristics.
+Starting a stopped VM is straightforward. When stopped, the VM is not billed,
+but network HDDs persist and incur charges, while local disks do not persist.
+Rebooting keeps network HDDs intact, but local disks do not persist, and the VM
+may restart on a different host. Terminating a VM deletes it permanently, with
+network HDDs persisting but local disks wiped out. Understanding these states
+helps in managing costs and data persistence.
+
+# ##############################################################################
+# Moving / Upgrading EC2 Instances
+# ##############################################################################
+
+When you need more computing power, you can scale up by increasing the size of
+your virtual machine (VM). This involves stopping the VM, changing its instance
+type, and then starting it again. Be aware that IP addresses will change during
+this process. AWS regions are groups of data centers that operate independently,
+meaning no data is transferred between them. Moving across regions can be
+beneficial for being closer to users, meeting compliance requirements, accessing
+specific services, ensuring redundancy, and managing costs, which can vary by
+region.
+
+Transition: Now, let's explore how to optimize costs with different EC2 pricing
+models.
+
+# ##############################################################################
+# Optimizing Costs
+# ##############################################################################
+
+On-demand instances offer the most flexibility, allowing you to start and stop
+VMs anytime and pay by the hour. EC2 and Compute saving plans require a
+commitment of one or three years, with payment options ranging from all upfront
+to none. These plans can be up to three times cheaper than on-demand and are
+ideal for development servers. Capacity reservations ensure access to machines
+even during peak hours. Spot instances let you bid for unused capacity, offering
+discounts up to ten times cheaper than on-demand, making them suitable for tasks
+that can be interrupted.
+
+Transition: Next, we'll discuss how to achieve low-cost processing for batch
+jobs.
+
+# ##############################################################################
+# Low-Cost Processing
+# ##############################################################################
+
+Many batch jobs are not time-sensitive and can run on a schedule, such as daily
+data analysis or report generation. You can allocate machines on demand, paying
+only for the time they are running, as AWS bills VMs per minute. AWS Batch
+provides spare capacity at a discount, running jobs when capacity is available,
+saving up to 50%. AWS Lambda offers a serverless option, which means you don't
+need to manage servers, further reducing costs for processing tasks.
+
+# ##############################################################################
+# Programming the Infrastructure
+# ##############################################################################
+
+This slide discusses how AWS allows you to control everything through an API.
+This means you can start a virtual machine, create storage, or even start a
+Hadoop cluster using different methods. You can use the AWS GUI console, make
+HTTP requests to the API, use the command line interface, or write code with the
+software development kit. CloudFormation is also mentioned, which uses templates
+to describe the infrastructure and translates them into API calls. The slide
+also highlights Jeff Bezos's 2002 API mandate, which has been very influential
+in making AWS a $100 billion per year business.
+
+Transition: Now, let's explore how programming languages can be used to manage
+IT systems.
+
+# ##############################################################################
+# Infrastructure-as-Code
+# ##############################################################################
+
+This slide introduces the concept of Infrastructure-as-Code, where you use
+programming languages to manage IT systems. It emphasizes applying software
+development principles like using a code repository, automated tests, and
+continuous integration to infrastructure management. The slide also talks about
+DevOps, which combines developers and operations teams to work closely together.
+This collaboration helps both teams understand each other's challenges, with
+developers taking on operational tasks and operations getting involved in
+software development. The goal is to improve communication and collaboration
+between the two groups.
+
+Transition: Let's look at the benefits of using Infrastructure-as-Code.
+
+# ##############################################################################
+# Infrastructure-as-Code: Advantages
+# ##############################################################################
+
+This slide outlines the advantages of Infrastructure-as-Code. It saves time by
+allowing you to reuse scripts and automate tasks, reducing the need for
+repetitive manual actions. This approach also leads to fewer mistakes because of
+the push-button flow, ensuring consistency in actions with multiple deployments
+per day. The deployment pipeline is streamlined, from committing changes to
+running tests and deploying to production. Scripts serve as detailed
+documentation, explaining what actions are taken and how, though not necessarily
+why. This makes it easier to understand and replicate processes.
+
+# ##############################################################################
+# AWS Command Line Interface (CLI)
+# ##############################################################################
+
+The AWS CLI provides a unified way to interact with all AWS services using the
+command line. It outputs results in JSON format, which is easy to read and
+parse. To get started, you need to install the AWS CLI using a package manager
+like apt-get. Authentication is crucial, and you do this by configuring your AWS
+access key ID, secret access key, and default region name. Once authenticated,
+you can execute commands to interact with AWS services by specifying the
+service, action, and any necessary parameters.
+
+Transition: Now, let's explore how the Software Development Kit (SDK) can
+simplify AWS interactions.
+
+# ##############################################################################
+# Software Development Kit (SDK)
+# ##############################################################################
+
+The SDK is a library that allows you to call AWS APIs directly from your
+programming language, such as Python, Go, C++, or JavaScript. It simplifies
+tasks by handling authentication, retrying on errors, managing HTTPS
+communication, and converting data between XML and JSON formats. However, using
+the SDK requires an imperative approach, meaning you must write detailed
+instructions for each task. Additionally, you need to manage dependencies, which
+can complicate development.
+
+Transition: Moving on, let's discuss how AWS CloudFormation can streamline
+infrastructure management.
+
+# ##############################################################################
+# AWS CloudFormation
+# ##############################################################################
+
+AWS CloudFormation uses templates, written in JSON or YAML, to describe your
+infrastructure. This approach is declarative, meaning you specify the desired
+state of your system rather than the steps to achieve it. CloudFormation
+processes these templates through AWS Stacks. The benefits include consistent
+infrastructure descriptions, automatic handling of dependencies, and the ability
+to customize, test, and update infrastructure easily. CloudFormation templates
+also serve as documentation, allowing you to store them as code in source
+control for better management and collaboration.
+
+# ##############################################################################
+# Securing Your System
+# ##############################################################################
+
+Description of the slide
+
+- Always install software updates to fix security vulnerabilities as they arise.
+  This helps protect your system from potential threats.
+- Restrict access to your AWS account by using separate accounts for individuals
+  and scripts. Apply the "least privilege" principle by granting only the
+  necessary permissions to users.
+- Restrict network traffic by opening only essential ports, such as 80 for HTTP
+  and 443 for HTTPS, and closing others. Encrypt both traffic and data to
+  enhance security.
+- Create a private network using subnets that are not accessible from the
+  Internet to further secure your system.
+
+Transition: Now, let's explore the shared responsibilities between you and AWS.
+
+# ##############################################################################
+# AWS Shared-responsibility Principle
+# ##############################################################################
+
+Description of the slide
+
+- AWS is responsible for protecting the network by monitoring Internet access
+  and preventing DDoS attacks. They also ensure the physical security of data
+  centers and properly decommission storage devices after their end of life.
+- You are responsible for restricting access using Identity and Access
+  Management (IAM), encrypting network traffic with protocols like HTTPS, and
+  configuring firewalls for VPNs. Additionally, you must encrypt data and keep
+  your operating system and software updated to maintain security.
