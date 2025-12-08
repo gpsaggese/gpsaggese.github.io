@@ -1,4 +1,4 @@
-# Training a Custom Transformer Language Model from Scratch
+# Distributed Training of a Transformer Model for Text Generation on BookCorpus Dataset using Horovod
 
 **UMD MSML610 Course Project**
 
