@@ -268,8 +268,10 @@ The frontend is built with **Streamlit**, which provides a simple, reactive web 
 
 * Turn Python scripts into a clean web app with **minimal boilerplate**,
 * Quickly wire UI elements (file upload, text input, buttons, chat layout) into the backend logic,
-* Run everything in the **same environment** as the models (no separate frontend stack), and
-* Share a reproducible demo that graders can launch directly from the container.
+* Run everything in the **same environment** as the models (no separate frontend stack)
+  
+![Multilingual Chatbot Pipeline](./output.png)
+
 
 The interface is designed to feel like a modern support chat window: it keeps track of the **full chat history**, offers an **English translation view** for easier review, and includes a **“Clear chat”** option so users can reset the conversation. Clearing the chat not only gives a fresh session but also helps with **better memory handling**, avoiding very long conversations that can slow things down.
 
@@ -288,4 +290,3 @@ The interface is designed to feel like a modern support chat window: it keeps tr
 
 
 
-```
