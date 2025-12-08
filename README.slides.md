@@ -92,6 +92,8 @@ data605/lectures/Lesson01.3-Is_Data_Science_Just_Hype.pdf       14
 
 > TAG=10.1; gen_data605.sh $TAG; vi $(ls data605/lectures_script/*${TAG}*)
 
+> TAG=08.3; open data605/lectures/Lesson${TAG}*.pdf; vi $(ls data605/lectures_script/*${TAG}*)
+
 # MSML610
 
 > cd $GIT_ROOT

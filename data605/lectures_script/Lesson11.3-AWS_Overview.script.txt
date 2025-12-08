@@ -68,37 +68,20 @@ using AWS.
 # From On-premise to AWS: 1/3
 # ##############################################################################
 
-Cloud transformation involves moving existing systems to the cloud. For example,
-a medium-sized e-commerce site can transition from on-premise to AWS. In a
-no-cloud setup, a web server handles customer requests, a database stores
-product information and orders, and static content like images is delivered over
-a CDN to reduce server load. Dynamic content, such as HTML pages with product
-details and prices, is served by the web server. This setup works well
-on-premise but can be optimized by moving to the cloud.
-
-Let's see how we can move this architecture to the cloud.
-
-# ##############################################################################
-# From On-premise to AWS: 2/3
-# ##############################################################################
-
-When moving to the cloud, we can keep the same architecture but relocate the
-components to AWS. This means the web server, database, and content delivery can
-all be managed through AWS services. By doing this, we can take advantage of the
-scalability, flexibility, and cost-effectiveness of cloud computing while
-maintaining the familiar structure of our existing system. This transition
-allows businesses to focus more on growth and less on managing physical
-infrastructure.
-
-# ##############################################################################
-# From On-premise to AWS: 3/3
-# ##############################################################################
-
-Let's focus on designing for the cloud. We need to consider several components
-like DNS, databases, and object storage such as S3. Managed solutions can
-simplify our operations. By using multiple smaller virtual services with a load
-balancer, we can enhance reliability. This approach helps distribute traffic
-evenly and ensures our services remain available even if one part fails.
+Cloud transformation involves migrating systems to the cloud, like moving a
+medium-sized e-commerce site from on-premise to AWS. Traditionally, a web server
+handles requests, a database stores data, and a CDN delivers static content to
+reduce server load. Dynamic content, such as HTML pages, is served by the web
+server. This setup is effective on-premise but can be optimized in the cloud In
+the cloud, the same architecture can be relocated to AWS, with the web server,
+database, and content delivery managed through AWS services. This shift
+leverages cloud computing's scalability, flexibility, and cost-effectiveness
+while maintaining the existing system's structure. It allows businesses to focus
+on growth rather than managing physical infrastructure Designing for the cloud
+requires considering components like DNS, databases, and object storage such as
+S3. Managed solutions simplify operations. Using multiple smaller virtual
+services with a load balancer enhances reliability by distributing traffic
+evenly, ensuring service availability even if one part fails
 
 Transition: Now, let's explore how AWS helps us manage capacity efficiently.
 
@@ -245,39 +228,17 @@ instance is ready to use and meets our specific needs.
 
 Now, let's explore the different AWS instance types available.
 
-# ##############################################################################
-# AWS Instance Type
-# ##############################################################################
-
 AWS offers various instance types, each designed for different computing needs.
 The instance type determines the computing power available. We have different
 instance families like `T` for cost-effective options, `M` for general purposes,
-`C` for compute-optimized tasks, `R` for memory-intensive applications, `D` for
-HDD storage optimization, `I` for SSD storage, `F` for FPGA use, and `P, G, CG`
-for GPU needs. For example, `t2.micro` is a small, affordable option with 1 vCPU
-and 1GB memory, costing 0.013 USD/hr. In contrast, `m4.large` is a
-general-purpose instance with 2 vCPUs and 8GB memory, costing 0.14 USD/hr.
+`C` for compute-optimized tasks.
 
-Let's delve deeper into the pricing and variety of AWS instance types.
-
-# ##############################################################################
-# AWS Instance Type
-# ##############################################################################
-
-AWS pricing can be a bit confusing due to factors like burst mode, vCPUs,
-multi-tenancy, and different purchasing options such as on-demand, spot,
-reserved, and pre-paid instances. As of 2023, there are 642 types of EC2
-machines available. The cheapest option costs around 37 USD per year, while the
-most expensive can reach up to 1.91 million USD per year, offering 500 CPUs and
-24TB of memory. For those looking to track prices more effectively, alternative
-sites like instances.vantage.sh can be helpful.
-
-With this understanding, we can make informed decisions about which instance
-type best suits our needs.
-
-# ##############################################################################
-# Starting an EC2 Instance
-# ##############################################################################
+AWS pricing is complex due to factors like burst mode, vCPUs, multi-tenancy, and
+purchasing options such as on-demand, spot, reserved, and pre-paid instances. In
+2023, there are 642 EC2 machine types. The cheapest costs about 37 USD annually,
+while the most expensive can reach 1.91 million USD per year, offering 500 CPUs
+and 24TB of memory. To track prices more effectively, sites like
+instances.vantage.sh are useful
 
 Let's discuss the steps to start an EC2 instance. First, we need to add storage
 by selecting the volume size and type, either SSD or magnetic HDDs. Tagging the
@@ -286,19 +247,9 @@ security, allowing access via SSH and selecting a key-pair for authentication.
 Monitoring the instance can be done using tools like CloudWatch, which helps
 track performance and usage.
 
-Now that we've set up the instance, let's move on to starting and connecting to
-it.
-
-# ##############################################################################
-# Starting an EC2 Instance
-# ##############################################################################
-
 After setting up, we start the instance and find its public IP address. This IP
 is essential for connecting to the machine. To connect, we use SSH with a
-command line, specifying the key file and the public IP. Once connected, we can
-check system information using commands like `cat /proc/cpuinfo` and `free -m`.
-It's also important to update the system and install necessary software using
-`sudo apt-get update` and `sudo apt-get install`.
+command line, specifying the key file and the public IP.
 
 With the instance running, let's explore the different states a virtual machine
 can be in.
@@ -404,45 +355,24 @@ enhances efficiency in managing IT infrastructure.
 # AWS Command Line Interface (CLI)
 # ##############################################################################
 
-The AWS CLI provides a unified way to interact with all AWS services using the
-command line. It outputs results in JSON format, which is easy to read and
-process. To get started, we can install the AWS CLI using the command
-`apt-get install awscli`. Authentication is crucial, and we do this by
-configuring the AWS CLI with our access key ID, secret access key, and default
-region name. Once authenticated, we can execute commands using the format
-`aws <service> <action> --key value`, allowing us to manage AWS services
-directly from the terminal.
+The AWS CLI offers a unified interface to interact with all AWS services via the
+command line, outputting results in an easy-to-read and process JSON format
 
-Let's move on to how we can interact with AWS using programming languages.
+The AWS SDK is a library enabling AWS API calls from languages like Python, Go,
+C++, and JavaScript. It simplifies tasks by managing authentication, error
+retries, HTTPS communication, and XML/JSON serialization. It uses an imperative
+approach, requiring detailed instructions and self-managed dependencies. Despite
+these challenges, the SDK is a powerful tool for integrating AWS services into
+applications
 
-# ##############################################################################
-# Software Development Kit (SDK)
-# ##############################################################################
-
-The AWS SDK is a library that allows us to call AWS APIs from various
-programming languages like Python, Go, C++, and JavaScript. It simplifies tasks
-by handling authentication, retrying on errors, managing HTTPS communication,
-and dealing with XML/JSON serialization. However, it follows an imperative
-approach, meaning we need to write detailed instructions, and we must manage
-dependencies ourselves. Despite these challenges, the SDK is a powerful tool for
-integrating AWS services into our applications.
-
-Now, let's explore a different approach to managing AWS infrastructure using
-templates.
-
-# ##############################################################################
-# AWS CloudFormation
-# ##############################################################################
-
-AWS CloudFormation allows us to describe our infrastructure using templates
-written in JSON or YAML. This approach is declarative, meaning we define the
-desired state of our system rather than the steps to achieve it. CloudFormation
-processes these templates through AWS Stacks. The benefits include consistent
-infrastructure descriptions, dependency management, and customization through
-parameters. We can test infrastructure by creating it from a template, running
-tests, and then shutting it down. Updates are straightforward, as changes to the
-template are automatically applied by Stacks. Additionally, CloudFormation
-templates serve as documentation and can be stored in source control.
+AWS CloudFormation enables infrastructure description via JSON or YAML
+templates. This declarative method specifies the desired system state, not the
+steps to reach it. CloudFormation uses AWS Stacks to process these templates.
+Benefits include consistent infrastructure descriptions, dependency management,
+and parameter-based customization. Infrastructure can be tested by creating it
+from a template, running tests, and then shutting it down. Updates are simple;
+template changes are automatically applied by Stacks. Moreover, CloudFormation
+templates act as documentation and can be stored in source control
 
 # ##############################################################################
 # Securing Your System
