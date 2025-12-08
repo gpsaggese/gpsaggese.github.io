@@ -201,6 +201,65 @@ streamlit run src/dashboard.py
 ```
 
 ---
+## 🐳 Running the Project in Docker
+
+This project includes a full Docker setup so the FLAML energy forecasting pipeline can run consistently across environments.
+
+### 1. Build and Start the Container
+
+From the project root:
+
+```bash
+docker compose -f docker/docker-compose.yml up --build
+```
+
+This will:
+
+* Build a Python 3.10 environment
+* Install all dependencies from `requirements.txt`
+* Mount your project into `/workspace` inside the container
+* Start JupyterLab on **port 8888**
+
+### 2. Access JupyterLab
+
+When the container starts, look for a URL such as:
+
+```
+http://127.0.0.1:8888/tree?token=XXXX
+```
+
+Open that in your browser to access the notebooks.
+
+### 3. Run the Notebook Inside Docker
+
+In JupyterLab:
+
+```
+notebooks/Fall2025_FLAML_Energy_Forecasting.ipynb
+```
+
+Run:
+
+```
+Kernel → Restart & Run All
+```
+
+### 4. Stop the Container
+
+Use:
+
+```bash
+CTRL + C
+docker compose -f docker/docker-compose.yml down
+```
+
+### Notes
+
+* Docker isolates all dependencies inside `/venv`.
+* Local file changes sync instantly inside the container due to volume mounting.
+* This setup matches the MSML610 required Docker format.
+
+---
 
 ## 📚 Dependencies
 
