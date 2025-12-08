@@ -1,0 +1,193 @@
+# ##############################################################################
+# Hadoop MapReduce: Shortcomings
+# ##############################################################################
+
+Hadoop MapReduce has several limitations that make it challenging to work with.
+First, it is difficult to manage because it involves multiple components like
+HDFS, Yarn, and Hadoop itself, each requiring extensive configuration.
+Additionally, using Hadoop can be cumbersome due to its verbose API and limited
+language support, primarily favoring Java. Another downside is that MapReduce
+jobs rely heavily on reading and writing data to disk, which can slow down
+processing. The Hadoop ecosystem is large but fragmented, lacking native support
+for machine learning, SQL, streaming, and interactive computing. As a result,
+new systems like Apache Hive and Storm have been developed to address these
+gaps.
+
+Transition: Let's explore how Apache Spark addresses some of these shortcomings.
+
+# ##############################################################################
+# (Apache) Spark
+# ##############################################################################
+
+Apache Spark is an open-source platform that offers a more user-friendly
+alternative to Hadoop. It is monetized by DataBrick, a successful startup. Spark
+is a general processing engine that supports a wide range of operations beyond
+just Map and Reduce, allowing users to combine operations in any order. It
+organizes computations as a Directed Acyclic Graph (DAG) and breaks them into
+parallel tasks, with a scheduler and optimizer for efficient execution. Spark
+supports multiple languages, including Java, Scala, and Python. It introduces
+data abstractions like Resilient Distributed Datasets (RDDs) and DataFrames,
+providing fault tolerance through RDD lineage. In-memory computation is another
+advantage, as it keeps intermediate results in memory when possible.
+
+Transition: Now, let's see how research at Berkeley has led to the creation of
+impactful companies.
+
+# ##############################################################################
+# Berkeley: From Research to Companies
+# ##############################################################################
+
+Berkeley has been instrumental in transforming lab innovations into successful
+startups, particularly in data-intensive systems and machine learning. Students
+and researchers have created companies by leveraging open-source ecosystems,
+which facilitate widespread adoption. The AMPLab at Berkeley has been pivotal in
+developing systems like Spark, with industry engagement ensuring real-world
+relevance. The RISELab continues this tradition by focusing on systems that
+support AI, security, and automation, with platforms like Ray and ML-focused
+infrastructure. These efforts highlight the importance of collaboration between
+academia and industry in driving technological advancements.
+
+# ##############################################################################
+# Berkeley AMPLab Data Analytics Stack
+# ##############################################################################
+
+The Berkeley AMPLab has developed a comprehensive stack of tools for big data
+analytics. This stack is so extensive that it forms its own ecosystem for
+handling big data tasks. You can explore their software offerings on their
+website. This highlights the importance of having a dedicated set of tools to
+manage and analyze large datasets efficiently.
+
+Transition: Now, let's dive into one of the key components of this stack, Apache
+Spark.
+
+# ##############################################################################
+# Apache Spark: Introduction
+# ##############################################################################
+
+Apache Spark is a unified framework that supports various computation models. It
+includes Spark SQL for working with structured data using ANSI SQL, Spark MLlib
+for building machine learning pipelines and supporting popular algorithms, Spark
+Streaming for handling continuously growing data, and GraphX for graph
+manipulation and computation. Spark's extensibility allows it to read from
+multiple sources and write to various backends, making it a versatile tool for
+general-purpose applications.
+
+Transition: A core concept in Spark is the Resilient Distributed Dataset, or
+RDD.
+
+# ##############################################################################
+# Resilient Distributed Dataset (RDD)
+# ##############################################################################
+
+RDDs are collections of data elements distributed across nodes, allowing
+parallel operations. They are fault-tolerant and can be stored in memory or
+serialized. RDDs are ideal for operations applied to all dataset elements but
+are less suitable for tasks requiring asynchronous updates to shared states,
+like updating a single value in a dataframe. You can create RDDs by referencing
+external storage, parallelizing existing collections, or transforming existing
+RDDs into new ones. This flexibility makes RDDs a powerful tool for distributed
+data processing.
+
+# ##############################################################################
+# Transformations vs Actions
+# ##############################################################################
+
+In this slide, we explore the difference between transformations and actions in
+Spark. Transformations are operations that are not immediately executed.
+Instead, they build a graph of transformations that Spark will execute when an
+action is called. This is known as lazy evaluation. Actions, on the other hand,
+are operations that trigger the execution of the transformations and return a
+result. They are also referred to as "materialize" because they force the
+computation on the RDDs and produce output.
+
+Let's see how these concepts apply in a practical example.
+
+# ##############################################################################
+# Spark Example: Estimate Pi
+# ##############################################################################
+
+This slide demonstrates how to estimate the value of pi using Spark. The goal is
+to use random sampling within a unit square to approximate pi. The fraction of
+points that fall inside the unit circle gives an approximation of pi/4. The
+`sample` function generates random points and checks if they are inside the
+circle, returning 1 for inside and 0 for outside. The `parallelize` function
+distributes this task across multiple nodes, making it an "embarrassingly
+parallel" computation. The `map` function applies the sampling to each
+partition, and the `reduce` function aggregates the results to count the total
+number of hits inside the circle.
+
+Now, let's delve into the architecture that makes this computation possible.
+
+# ##############################################################################
+# Spark: Architecture
+# ##############################################################################
+
+This slide outlines the architecture of Spark and the roles of its components.
+The Spark Application is the code that describes the computation, such as Python
+code that calls Spark functions. The Spark Driver is responsible for
+transforming operations into Directed Acyclic Graph (DAG) computations and
+distributing tasks to Executors. It also communicates with the Cluster Manager
+to allocate resources. The Spark Session serves as the interface to the Spark
+system. The Cluster Manager manages resources and supports various platforms
+like Hadoop, YARN, Mesos, and Kubernetes. Finally, the Spark Executor runs tasks
+on worker nodes, typically one executor per node, and relies on the Java Virtual
+Machine (JVM) for execution.
+
+# ##############################################################################
+# Spark: Computation Model
+# ##############################################################################
+
+This slide explains how Spark processes data. The Spark Driver is responsible
+for converting applications into jobs, which are then broken down into smaller
+tasks. Each job is a Directed Acyclic Graph (DAG) with dependent stages. These
+stages can run either in sequence or simultaneously. Within each stage, tasks
+are the smallest units of work, assigned to executors. Each task corresponds to
+a single core and handles a specific data partition. Understanding this
+hierarchy helps in optimizing Spark applications for better performance.
+
+Now, let's see how data is managed across different nodes in Spark.
+
+# ##############################################################################
+# Distributed Data and Partitions
+# ##############################################################################
+
+In Spark, data is divided into partitions and distributed across different
+nodes. This allows for efficient parallel processing, as each partition is
+stored in memory. Executors process data that is close to them, reducing the
+need for data to travel across the network. This concept is similar to Hadoop's
+data locality principle. By minimizing network bandwidth and ensuring data
+locality, Spark can process large datasets more efficiently.
+
+Next, we'll discuss how collections are parallelized in Spark.
+
+# ##############################################################################
+# Parallelized Collections
+# ##############################################################################
+
+Parallelized collections in Spark are created using the `parallelize()` function
+on an existing collection. This function spreads data across different nodes,
+allowing for parallel processing. The number of partitions determines how the
+dataset is divided, with each partition running one task. Ideally, you should
+aim for 2-4 partitions per CPU for optimal performance. Spark automatically sets
+the number of partitions based on your cluster, but you can also set it manually
+by providing a second parameter to `parallelize()`. Understanding how to manage
+partitions can significantly impact the efficiency of your Spark applications.
+
+# ##############################################################################
+# Deployment Modes
+# ##############################################################################
+
+Let's talk about how Spark can be set up to run on different systems. Spark has
+several components like the Driver, Cluster Manager, and Executors, and these
+can be spread out across different machines.
+
+- Local Mode: This is when everything runs on one machine, like your laptop.
+  It's simple and good for testing or learning.
+- Standalone Mode: Here, Spark uses its own cluster manager to run on different
+  machines. It's a step up from local mode and allows for more power and
+  flexibility.
+- YARN / Kubernetes: These are used for running Spark in production
+  environments. They manage resources in clusters, making it suitable for
+  large-scale data processing.
+
+Now, let's move on to understanding how Spark handles data processing.

@@ -247,31 +247,30 @@ Reduce:
 ::: columns
 :::: {.column width=60%}
 - **Goal**:
-  - Log file recording access to a website with format
-    `(date, hour, filename)`
-  - Find how many times each file is accessed during Feb 2013
+  - Log file records website access `(date, hour, filename)`
+  - Count file accesses in Feb 2013
 
 - **Input**
-  - Read file and split into lines
+  - Read file, split into lines
 
 - **Map**
-  - Parse each line into 3 fields
-  - If date is in the required interval `emit(dir_name, 1)`
+  - Parse line into 3 fields
+  - If date is in interval, `emit(dir_name, 1)`
 
 - **GroupBy**
-  - Reduce key is the filename
-  - Accumulate all `(key, value)` with the same filename
+  - Reduce key: filename
+  - Accumulate `(key, value)` with same filename
 
 - **Reduce**
-  - Add values for each list of `(key, value)` with the same filename
-  - Output number of accesses to each file
+  - Sum values for each `(key, value)` list with same filename
+  - Output file access count
 
 - **Output**
-  - Write results on disk separated by newline
+  - Write results to disk, newline-separated
 
 ::::
 :::: {.column width=40%}
-\begingroup \footnotesize
+\scriptsize
 _After Input_
 ```
 2013/02/21 10:31:22.00EST  /slide-dir/11.ppt
@@ -309,7 +308,6 @@ _Output_
 /slide-dir/12.ppt 2
 ...
 ```
-\endgroup
 ::::
 :::
 
@@ -319,22 +317,22 @@ _Output_
 - **Programmer** specifies two methods `map` and `reduce`
 
 - **Map**
-  - `Map(Tuple[k, v]) → List[Tuple[k, v]]`
+  - `Map(Tuple[k, v]) $\rightarrow$ List[Tuple[k, v]]`
   - Take a key-value pair and output a set of key-value pairs
-    - E.g., key is a file, value is the number of occurrences
+    - E.g., key is a file, value is occurrences
     - "One a penny" $\to$ `[("One", 1), ("a", 1), ("penny", 1)]`
-  - There is one `Map` call for every `(k, v)` pair
+  - One `Map` call for every `(k, v)` pair
 
 - **GroupBy**
-  - `GroupBy(List[Tuple[k, v]]) → List[Tuple[k, List[v]]]]`
-  - Group and optionally sort all the records with the reduce key
+  - `GroupBy(List[Tuple[k, v]]) $\rightarrow$ List[Tuple[k, List[v]]]]`
+  - Group and optionally sort records with the reduce key
 
 - **Reduce**
-  - `Reduce(Tuple[k, List[v]]) → Tuple[k, v]`
-  - All values `v'` with same key `k'` are reduced together
-  - There is one `Reduce` call per unique key `*k'`
+  - `Reduce(Tuple[k, List[v]]) $\rightarrow$ Tuple[k, v]`
+  - Reduce all values `v'` with same key `k'`
+  - One `Reduce` call per unique key `*k'`
 
-- **Output**: write key-value pairs `List[Tuple[k, v]]`
+- **Output**: Write key-value pairs `List[Tuple[k, v]]`
 
 * MapReduce: Data Flow
 - Focusing on MapReduce flow of the data to expose the parallelism
@@ -434,9 +432,10 @@ Reduce
   - Notify client
 
 * How Many `Map` and `Reduce` Jobs?
-- Number of map tasks = _M_
-- Number of reduce tasks = _R_
-- Number of worker nodes = _N_
+- Number of:
+  - Map tasks: $M$
+  - Reduce tasks: $R$
+  - Worker nodes: $N$
 
 - Typically $M \gg N$
   - Pros:
@@ -503,19 +502,22 @@ Reduce
     same output file
 
 * Implementations of MapReduce
-- There are many implementations of map reduce
+- There are many implementations of MapReduce:
   - **Google**
-    - Not available outside Google
-
+    - Proprietary implementation
   - **Hadoop**
     - Open-source in Java
     - Uses HDFS for storage
-    - Hadoop Wiki: Intro, Getting Started, Map/Reduce Overview
-
+    - Used by Yahoo, Facebook for large-scale data processing
   - **Amazon Elastic MapReduce (EMR)**
     - Hadoop MapReduce on Amazon EC2
-    - Also runs Spark, HBase, Hive,
-
+    - Supports Spark, HBase, Hive, other big data frameworks
+    - Used for processing large datasets on AWS
   - **Spark**
-
+    - Open-source cluster-computing framework
+    - Known for speed, ease of use
+    - Used by Netflix for real-time analytics
   - **Dask**
+    - Parallel computing with task scheduling
+    - Integrates with Python's ecosystem
+    - Suitable for large datasets on a single machine or cluster
