@@ -45,6 +45,42 @@ This project implements a comprehensive sentiment analysis system for social med
 
 ---
 
+## Docker Setup
+
+### Prerequisites
+- Docker Desktop installed and running
+
+### Quick Start
+
+**Step 1: Build the Docker Image**
+```bash
+./docker_build.sh
+```
+
+**Step 2: Start Jupyter Lab**
+```bash
+./docker_jupyter.sh
+```
+
+**Step 3: Access Jupyter**
+Open your browser to: **http://localhost:8888**
+
+### Alternative: Open Bash Shell
+```bash
+./docker_bash.sh
+```
+
+### Docker Files
+| File | Purpose |
+|------|---------|
+| `Dockerfile` | Container image definition |
+| `docker_build.sh` | Builds the Docker image |
+| `docker_jupyter.sh` | Starts Jupyter Lab in container |
+| `docker_bash.sh` | Opens bash shell in container |
+| `install_common_packages.sh` | Installs all dependencies |
+
+---
+
 ## Implementation Phases
 
 ### Phase 1: Data Ingestion
@@ -147,8 +183,14 @@ This project implements a comprehensive sentiment analysis system for social med
 5. **Model Evaluation**: F1-score (macro & weighted) + confusion matrix
 
 ### Bonus Features ✅
-1. **Dashboard**: Sentiment trends visualization over time
+1. **Dashboard**: Sentiment trends visualization using Google Looker Studio
+   - 📊 **[View Live Dashboard](https://lookerstudio.google.com/reporting/d24baf8b-9481-4447-891c-5ab3b262f55a)**
+   - Daily and hourly sentiment trends
+   - Airline comparison charts
+   - Interactive filters
 2. **Transfer Learning with BERT**: BERT baseline comparison showing improvement
+   - Trained on Vertex AI cloud
+   - RoBERTa outperforms BERT on Twitter data
 
 ## Implementation Approaches
 
@@ -175,12 +217,16 @@ This project demonstrates **TWO approaches** to sentiment analysis:
 **Main Model**: `cardiffnlp/twitter-roberta-base-sentiment-latest`
 - Pre-trained on 124M tweets (domain-optimized)
 - Better than BERT baseline (bonus requirement satisfied)
-- Achieved F1-Macro: 0.7861, F1-Weighted: 0.8334
+- **Metrics**: F1-Macro: 0.8158, F1-Weighted: 0.8551, Accuracy: 85.4%
+- Precision: 81.3%, Recall: 81.9%
 - 3-class classification: positive, neutral, negative
 
 **Baseline**: `bert-base-uncased`
 - For comparison and demonstrating improvement
-- Achieved F1-Macro: 0.7668, F1-Weighted: 0.8195
+- **Metrics**: F1-Macro: 0.8036, F1-Weighted: 0.8437, Accuracy: 84.3%
+- Precision: 80.4%, Recall: 80.4%
+
+**Improvement**: RoBERTa achieves **1.5% higher F1-macro** than BERT, demonstrating the value of domain-specific pre-training on Twitter data.
 
 **Vertex AI AutoML** (configuration shown, not executed due to cost):
 - Fully managed training and deployment
