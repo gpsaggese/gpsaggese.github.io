@@ -18,7 +18,7 @@ Run the preprocessing notebook to download and prepare the BookCorpus dataset:
 jupyter notebook notebooks/00_data_preprocessing.ipynb
 ```
 
-This notebook downloads the BookCorpus dataset, tokenizes it using GPT-2 tokenizer, creates train/validation splits, and saves preprocessed data to `notebooks/data/preprocessed/`.
+This notebook downloads the BookCorpus dataset, tokenizes it using GPT-2 tokenizer, creates train/validation splits, and saves preprocessed data to `notebooks/data/preprocessed/v1/`.
 
 ### 2. Model Training
 
@@ -26,12 +26,6 @@ Submit the training job to the Zaratan HPC cluster:
 
 ```bash
 sbatch scripts/train_zaratan.sh
-```
-
-For local multi-GPU training:
-
-```bash
-bash scripts/train_local.sh
 ```
 
 ### 3. Text Generation
@@ -110,7 +104,7 @@ HOROVOD_GPU_OPERATIONS=NCCL pip install horovod[pytorch]
 
 The preprocessing step downloads and prepares the BookCorpus dataset:
 
-1. Downloads BookCorpus dataset (approximately 7GB)
+1. Downloads BookCorpus dataset (approximately 4GB)
 2. Tokenizes text using GPT-2 tokenizer
 3. Creates train/validation splits (95%/5%)
 4. Packs tokens into fixed-length blocks to reduce padding
@@ -152,8 +146,7 @@ All training parameters are configured in `configs/config.yaml`. Key configurati
 - **Training Parameters**: Number of epochs, batch size, learning rate, optimizer settings
 - **Data Settings**: Path to preprocessed data directory
 - **Hardware Settings**: Mixed precision training, gradient accumulation
-
-Edit this file to customize the model architecture and training hyperparameters.
+- 
 
 ## Model Architecture
 
@@ -302,4 +295,4 @@ This project is developed for educational purposes as part of the UMD MSML610 co
 
 - UMD Division of IT for providing access to the Zaratan HPC cluster
 - HuggingFace for datasets and tokenizer libraries
-- Horovod team for the distributed training framework
+- Uber Horovod team for the distributed training framework
