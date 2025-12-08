@@ -265,12 +265,11 @@ _Server virtualization_
 
 * Programming Frameworks
 - **Programming frameworks** emerged to:
-  - "scale out" workloads
+  - Scale out workloads
   - Distribute work over thousands of machines
 
 - **Parallel approach** has existed for a long time to program clusters
   - Challenging for programmers
-  - Track many things:
     - Parallelize application
     - Distribute data
     - Handle failures
@@ -283,174 +282,120 @@ _Server virtualization_
   - AWS services
 
 * MapReduce Framework
-- Provide a restricted, powerful abstraction for programming distributed
+- Provide a **restricted but powerful abstraction** for programming distributed
   workloads
 
-- Programmers write functions: _map_ and _reduce_
-  - **map** programs
-    - Input: list of "records" (e.g., images, genomes)
-    - Output: set of **(key, value)** pairs for each record
-  - **reduce** programs
-    - Input: list of **(key, [values])** from mapper
-    - Output: flexible
-  - Perform arbitrary computations on input data within structure
+- **Separation of responsibilities**
+  - _Programmers_
+    - Write functions `map` and `reduce`
+    - Perform arbitrary computations on input data within structure
 
-- Framework handles task scheduling, fault tolerance
-
-- **Batch processing of data**
-  - MapReduce and analytics frameworks excel
-
-- **Streaming data**
-  - Large-scale applications need real-time access with low latency
-  - Balance "consistency" and "performance"
+  - _Framework_ handles
+    - Task scheduling
+    - Fault tolerance
 
 * Other Programming Frameworks
-- Many programming frameworks for different applications
-  - Address MapReduce limitations
+- Many programming frameworks for different applications to address MapReduce
+  limitations
+  - **High-performance Computing (HPC) Systems**
+    - Cluster of supercomputers
+    - E.g., GridRPC, MPI
+    - More expressive, efficient
 
-- **High-performance Computing (HPC) Systems**
-  - Cluster of supercomputers
-  - E.g., GridRPC, MPI
-  - More expressive, efficient
+  - **Spark**
+    - Based on Resilient Distributed Data (RDD)
+    - In-memory, efficient
 
-- **Spark**
-  - Based on Resilient Distributed Data (RDD)
-  - In-memory, efficient
-  - Uses Scala, Python, Java
+  - **Apache Storm, Spark Streaming**
+    - Handle real-time streaming data
 
-- **Apache Hive**
-  - SQL-like interface on Hadoop/HDFS
+  - **Giraph, GraphLab, GraphX**
+    - Graph processing systems
 
-- **Apache HBase**
-  - NoSQL column-oriented DB
-  - Random read/write large tables on Hadoop/HDFS
-  - Modeled after Google BigTable
+  - **Apache Hive**
+    - SQL-like interface on Hadoop/HDFS
 
-- **Apache Storm, Spark Streaming**
-  - Handle real-time streaming data
-
-- **Giraph, GraphLab, GraphX**
-  - Graph processing systems
+  - **Apache HBase**
+    - NoSQL column-oriented DB
+    - Random read/write large tables on Hadoop/HDFS
+    - Modeled after Google BigTable
 
 ## Challenges and opportunities
 
-* Advantages of Cloud Computing
-- **Lower edge computer costs**
-  - Applications run in the cloud, reducing desktop processing power/memory/disk
-    needs
+* Cloud Benefits (1/2)
+- **Lower-cost, light end-devices**
+  - Offload compute/storage to cloud $\rightarrow$ PCs/laptops need less
+    memory/disk/CPU
+  - Useful for thin clients, low-cost devices, legacy hardware
 
-- **Improved performance of desktop**
-  - Faster system boot due to less memory usage by large programs
+- **Scalability and elastic storage**
+  - Unlimited storage and dynamic scalability for data/workloads
+  - No need to buy or pre-provision resources
 
-- **Device independence**
-  - Not tethered to a single computer
-  - Applications/documents follow you through the cloud
-  - Access applications/documents on any device
+- **Anywhere access and device independence**
+  - Work from any device (laptop, tablet, phone) with Internet
+  - Documents, apps, data follow user: seamless cross-device continuity
 
-- **Reduced software costs**
-  - Access most software for free(-ish)
-    - Google Docs suite vs Microsoft
-    - Most applications are cloud-based
-  - Rent (monthly payments) instead of buying
+* Cloud Benefits (2/2)
+- **Cloud‑native software and SaaS model**
+  - Access full-featured applications without installation or license
+  - Automatic updates and patching, always-on latest versions
 
-* Advantages of Cloud Computing
-- **Instant software updates**
-  - Avoid obsolete software and high upgrade costs
-  - Web-based apps update automatically
-    - Available next login
-    - Access latest version without paying or downloading
-  - Docker or VMs enable cross-platform software
+- **Improved collaboration and version control**
+  - Real‑time, multi-user editing and sharing from any location
+  - Built-in revision history and conflict avoidance for shared documents
 
-- **Improved document format compatibility**
-  - Ensure document compatibility across users
-  - Eliminate format issues with shared cloud documents
+- **Faster development and deployment cycles**
+  - Containerization, serverless functions, microservices enable rapid
+    provisioning
+  - Ideal for modern workloads (e.g., AI/ML, analytics, distributed apps)
 
-* Advantages of Cloud Computing
-- **"Unlimited" storage capacity**
-  - Cloud computing offers limitless storage
-  - Your computer has ~1TB hard drive
-  - Hundreds of PBs available in the cloud (elastic, on-demand)
+* Modern Opportunities
+- **Cloud‑native support for AI/ML workloads**
+  - Providers offer specialized hardware (GPUs, TPUs) for training/serving
+    models
+  - Enables scaling without owning expensive hardware
 
-- **Increased data reliability**
-  - Hard disk can crash and destroy data
-  - Few users regularly backup data
-  - Cloud computer crash doesn't affect data storage
-    - Data remains accessible in the cloud
-    - Cloud computing is data-safe
+- **Multi-cloud and hybrid-cloud strategies to boost resilience**
+  - Organizations adopt multicloud fallback after major outages
 
-* Advantages of Cloud Computing
-- **Universal document access**
-  - Documents stay in the cloud
-  - Instantly available wherever you are
-  - Requires Internet connection
+- **Improved data sovereignty and regulatory compliance**
+  - New regulations (e.g. EU Data Act of 2025) increase portability
+    and reduce vendor lock-in
+  - "Sovereign cloud" options for jurisdiction and legal control concerns
 
-- **Latest version availability**
-  - Edit at home, see changes at work
-  - Cloud hosts latest version
-  - Built-in revision control
+* Cloud Limitations
+- **Cloud provider dependency and vendor lock‑in**
+  - Reliance on major providers limits flexibility and competition
+  - Switching providers is complex and costly
 
-- **Easier collaboration**
-  - Sharing improves collaboration
-  - Multiple users collaborate easily
+- **Security, privacy, and data‑ownership issues**
+  - Data stored off‑site may be subject to foreign access laws
+  - Sensitive workloads require encryption, strong data governance, or
+    on‑premises solutions
 
-* Disadvantages of Cloud Computing
-- **Using cloud computing means dependence on Big Tech**
-  - AWS, Google, Microsoft monopolize the market
-  - Limits flexibility and innovation
-  - High barriers to enter the market
+- **Outages and service disruptions**
+  - Major outages continue
+  - Even top providers are not immune; "design for failure" remains essential
 
-- **Security is an issue**
-  - Unclear data safety
-  - Unclear data ownership
+- **Latency, bandwidth, and connectivity dependence**
+  - Cloud services require stable, fast Internet (problematic in regions with
+    spotty connectivity)
+  - High-latency workloads (e.g., real-time gaming, low-latency HPC, real‑time
+    control) may suffer
 
-- **Issues relating to policy and access**
-  - Adhere to foreign policies if data stored abroad
-    - Cloud providers store data within borders to comply with restrictions
-    - E.g., TikTok saga
-  - Remote server downtime affects file access
-  - Users may be locked out and lose data access
+* Post‑2025 Challenges
+- **Increasing regulatory burden and data‑sovereignty demands**
+  - Regulations like EU Data Act require cloud providers to support data
+    portability, transparency, restricted cross‑border access
+  - Compliance adds complexity for companies across jurisdictions
 
-* Disadvantages of Cloud Computing
-- **Requires a constant Internet connection**
-  - Cannot access applications or documents without Internet
-  - No Internet means no work
-    - Some applications offer offline capabilities
+- **Cloud sprawl and rising costs**
+  - Multicloud and hybrid setups complicate cost management, egress charges,
+    licensing
+  - Resource usage can increase without careful monitoring
 
-- **Does not work well with low-speed/spotty connections**
-  - Low-speed Internet makes cloud computing difficult
-  - Web-based applications need high bandwidth
-
-- **Web-interface can be slow**
-  - Often slower than desktop even with fast connection
-  - Interface sent between your computer and cloud
-  - Latency is crucial
-
-* Disadvantages of Cloud Computing
-- **Features might be limited**
-  - Web-based apps often lack features compared to desktop apps
-  - Microsoft PowerPoint offers more features than Google Slides
-  - Situation is changing rapidly
-
-- **Stored data might not be secure**
-  - Cloud computing stores data on the cloud
-  - Is the cloud secure?
-    - Likely more secure than your laptop
-  - Can unauthorized users access your data?
-    - Data leaks are frequent
-
-- **Stored data can be lost**
-  - Cloud data is safe, replicated across machines
-  - Local backups are still advisable
-
-* Disadvantages of Cloud Computing
-- **HPC systems**
-  - Run compute-intensive HPC applications using MPI or OpenMP
-  - Require low-latency, high-bandwidth interconnect
-  - Schedule applications effectively
-  - Co-locate nodes to minimize communication latency
-  - Evolving landscape (e.g., MapReduce, AWS EC2)
-
-- **Interoperability**
-  - Cloud systems use different protocols and APIs
-  - Running applications across different cloud systems may be challenging
-  - Solution: Use indirection layer (Terraform, Ansible)
+- **Feature and performance limitations for specialized workloads**
+  - Desktop-level apps and advanced tools often outperform web/cloud versions
+  - Compute‑intensive or latency-sensitive tasks may remain sub‑optimal in the
+    cloud
