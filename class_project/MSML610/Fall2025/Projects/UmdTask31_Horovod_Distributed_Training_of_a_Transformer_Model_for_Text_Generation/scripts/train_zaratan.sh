@@ -3,7 +3,7 @@
 # Slurm Job Script for Zaratan HPC Cluster (UMD) - H100 Optimized
 #
 # Account: msml610-class
-# Partition: gpu# Partition: gpu-h100 (H100 nodes)
+# Partition: gpu
 # GPUs: H100 (80GB VRAM) - 4 GPUs per node, single node only
 #
 # This script is optimized for:
@@ -14,7 +14,7 @@
 #
 # Usage:
 #   sbatch scripts/train_zaratan.sh [config_file]
-#   sbatch scripts/train_zaratan.sh configs/base.yaml
+#   sbatch scripts/train_zaratan.sh configs/config.yaml
 #
 # Monitor:
 #   squeue -u vikranth
@@ -39,7 +39,7 @@
 #SBATCH --output=logs/%x-%j.out         # Output file (%x=job-name, %j=job-id)
 # #SBATCH --exclusive                   # Optional: request exclusive node access
 
-# Optional: Target specific H100 node (uncomment and modify as needed)
+
 # Check available H100 nodes with: sinfo -p gpu-h100 -o "%N %G %t"
 # #SBATCH --nodelist=gpu-a6-3      # Example: target gpu-a6-3 (modify based on availability)
 # #SBATCH --nodelist=gpu-a6-7      # Alternative: gpu-a6-7
@@ -211,38 +211,39 @@ python --version
 echo ""
 
 
-echo "PyTorch and CUDA Information:"
-python -c "
-import torch
-print(f'PyTorch version: {torch.__version__}')
-print(f'CUDA available: {torch.cuda.is_available()}')
-if torch.cuda.is_available():
-    print(f'CUDA version (PyTorch): {torch.version.cuda}')
-    print(f'cuDNN version: {torch.backends.cudnn.version() if torch.backends.cudnn.is_available() else \"N/A\"}')
-    print(f'GPU count: {torch.cuda.device_count()}')
-    for i in range(torch.cuda.device_count()):
-        print(f'  GPU {i}: {torch.cuda.get_device_name(i)}')
-        print(f'    Compute Capability: {torch.cuda.get_device_capability(i)}')
-        print(f'    Total Memory: {torch.cuda.get_device_properties(i).total_memory / 1024**3:.2f} GB')
-    # Check for H100-specific features
-    if torch.cuda.device_count() > 0:
-        props = torch.cuda.get_device_properties(0)
-        if props.major >= 9:  # H100 is compute capability 9.0
-            print('[OK] GPU supports H100 features (Compute Capability 9.0+)')
-        else:
-            print(f'[WARNING] GPU compute capability: {props.major}.{props.minor} (H100 is 9.0)')
-" || echo "[ERROR] PyTorch not found or CUDA not available"
+echo "PyTorch and CUDA Information (env check):"
+python - << 'EOF'
+import sys
+try:
+    import torch
+    print("  sys.executable:", sys.executable)
+    print("  torch version:", torch.__version__)
+    print("  CUDA available:", torch.cuda.is_available())
+    if torch.cuda.is_available():
+        print("  CUDA (PyTorch):", torch.version.cuda)
+        print("  cuDNN version:",
+              torch.backends.cudnn.version() if torch.backends.cudnn.is_available() else "N/A")
+        print("  GPU count:", torch.cuda.device_count())
+except Exception as e:
+    print("  WARNING: torch import failed in env check:", repr(e))
+EOF
 echo ""
 
-echo "Horovod version:"
-python -c "import horovod; import horovod.torch as hvd; print(f'Horovod: {horovod.__version__}'); print(f'NCCL built: {hvd.nccl_built()}'); print(f'MPI built: {hvd.mpi_built()}')" 2>&1 || {
-    echo "[ERROR] Horovod not found!"
-    echo "[ERROR] Please install Horovod following the setup guide:"
-    echo "[ERROR] 1. Allocate interactive node: srun --pty --partition=gpu --gres=gpu:h100:4 --ntasks=4 --cpus-per-task=4 --time=00:30:00 /bin/bash"
-    echo "[ERROR] 2. Load modules and install Horovod from source (see setup documentation)"
-    exit 1
-}
+echo "Horovod version (env check):"
+python - << 'EOF'
+import sys
+try:
+    import horovod
+    import horovod.torch as hvd
+    print("  sys.executable:", sys.executable)
+    print("  horovod version:", horovod.__version__)
+    print("  NCCL built:", hvd.nccl_built())
+    print("  MPI built:", hvd.mpi_built())
+except Exception as e:
+    print("  WARNING: horovod import failed in env check:", repr(e))
+EOF
 echo ""
+echo "[INFO] Finished env check, continuing to training..."
 
 ###############################################################################
 # Environment Variables
@@ -332,8 +333,8 @@ echo ""
 ###############################################################################
 # Configuration
 ###############################################################################
-# Accept config file as first argument, default to base.yaml
-CONFIG_FILE=${1:-configs/base.yaml}
+# Accept config file as first argument, default to config.yaml
+CONFIG_FILE=${1:-configs/config.yaml}
 
 echo "Using configuration: $CONFIG_FILE"
 echo ""

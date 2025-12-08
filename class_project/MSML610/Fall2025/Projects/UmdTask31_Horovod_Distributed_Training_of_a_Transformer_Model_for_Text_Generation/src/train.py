@@ -26,7 +26,7 @@ from .utils.config import load_config
 from .utils.logging import setup_logging, TensorBoardLogger
 from .utils.recorder import RunRecorder
 from .data import get_dataloaders
-from .models.hf_wrapper import get_model_from_config
+from .models.transformer_lm import TransformerLM
 from .metrics import compute_perplexity, MetricsTracker, compute_accuracy_for_allreduce
 
 
@@ -224,7 +224,7 @@ def train_epoch(
     start_time = time.time()
     
     # Gradient accumulation
-    accumulation_steps = config.training.get('gradient_accumulation_steps', 1)
+    accumulation_steps = getattr(config.training, 'gradient_accumulation_steps', 1)
     accumulation_counter = 0
     
     # Track metrics across accumulation steps
@@ -234,7 +234,6 @@ def train_epoch(
     
     for step, batch in enumerate(train_dataloader):
         # Compute update-based global_step for TensorBoard alignment
-        accumulation_steps = config.training.get('gradient_accumulation_steps', 1)
         updates_per_epoch = math.ceil(total_steps / accumulation_steps)
         current_update = (step // accumulation_steps)
         global_step = epoch * updates_per_epoch + current_update
@@ -388,15 +387,16 @@ def train_epoch(
                         )
         
         # Save checkpoint (only on update steps)
-        if is_update_step and rank == 0 and step > 0 and step % config.training.save_interval == 0:
-            accumulation_steps = config.training.get('gradient_accumulation_steps', 1)
-            updates_per_epoch = math.ceil(len(train_dataloader) / accumulation_steps)
-            current_global_step = epoch * updates_per_epoch + (step // accumulation_steps)
-            save_checkpoint(
-                model, optimizer, epoch, step, avg_loss,
-                config.paths.checkpoint_dir, scheduler=scheduler,
-                scaler=scaler, global_step=current_global_step
-            )
+        if is_update_step and rank == 0:
+            update_steps = (step // accumulation_steps) + 1
+            if update_steps % config.training.save_interval == 0:
+                updates_per_epoch = math.ceil(len(train_dataloader) / accumulation_steps)
+                current_global_step = epoch * updates_per_epoch + (step // accumulation_steps)
+                save_checkpoint(
+                    model, optimizer, epoch, step, avg_loss,
+                    config.paths.checkpoint_dir, scheduler=scheduler,
+                    scaler=scaler, global_step=current_global_step
+                )
     
     # Epoch summary
     avg_metrics = metrics_tracker.get_average_metrics()
@@ -441,7 +441,7 @@ def validate(
         pad_token_id: Padding token ID.
         
     Returns:
-        Average validation loss.
+        Tuple of (average validation loss, metrics dictionary).
     """
     model.eval()
     metrics_tracker = MetricsTracker()
@@ -502,7 +502,7 @@ def validate(
         if 'accuracy' in avg_metrics:
             tb_logger.add_scalar('val/accuracy', avg_metrics['accuracy'], global_step)
     
-    return avg_metrics['loss']
+    return avg_metrics['loss'], avg_metrics
 
 
 def run_distributed_training(
@@ -542,7 +542,7 @@ def run_distributed_training(
     logger.info(f"  - Rank: {rank}")
     logger.info(f"  - Local rank: {local_rank}")
     logger.info(f"  - Device: {device}")
-    logger.info(f"  - Model type: {config.model.type}")
+    logger.info(f"  - Model: Custom Transformer (d_model={config.model.d_model}, layers={config.model.n_layers})")
     logger.info(f"  - Epochs: {config.training.epochs}")
     logger.info(f"  - Per-GPU batch size: {config.training.per_gpu_batch_size}")
     logger.info(f"  - Global batch size: {config.training.per_gpu_batch_size * world_size}")
@@ -580,8 +580,18 @@ def run_distributed_training(
     logger.info("All ranks synchronized after data loading.")
     
     # Create model
-    logger.info("Creating model...")
-    model = get_model_from_config(config)
+    logger.info("Creating custom transformer model...")
+    model = TransformerLM(
+        vocab_size=config.model.vocab_size,
+        d_model=config.model.d_model,
+        n_heads=config.model.n_heads,
+        n_layers=config.model.n_layers,
+        d_ff=config.model.d_ff,
+        max_seq_len=config.model.max_seq_len,
+        dropout=config.model.dropout,
+        gradient_checkpointing=getattr(config.training, 'gradient_checkpointing', False)
+    )
+    logger.info(f"Model created with {sum(p.numel() for p in model.parameters()):,} parameters")
     
     # Move model to device
     model = model.to(device)
@@ -621,7 +631,7 @@ def run_distributed_training(
                 logger.info("AMP disabled (amp_dtype set to FP32 or unrecognized)")
         else:
             # Backward compatibility: fp16 boolean at root of config
-            if config.get('fp16', False):
+            if getattr(config, 'fp16', False):
                 use_amp = True
                 amp_dtype = torch.float16
                 from torch.cuda.amp import GradScaler
@@ -634,7 +644,7 @@ def run_distributed_training(
     elif hasattr(model, 'config') and hasattr(model.config, 'pad_token_id'):
         pad_token_id = model.config.pad_token_id
     else:
-        pad_token_id = config.model.get('pad_token_id', 50256)  # GPT-2 default
+        pad_token_id = getattr(config.model, 'pad_token_id', 50256)
     
     logger.info(f"Using pad_token_id: {pad_token_id}")
     
@@ -710,7 +720,7 @@ def run_distributed_training(
     
     # Create learning rate scheduler
     # Account for gradient accumulation: scheduler steps only on optimizer updates
-    accumulation_steps = config.training.get('gradient_accumulation_steps', 1)
+    accumulation_steps = getattr(config.training, 'gradient_accumulation_steps', 1)
     updates_per_epoch = math.ceil(len(train_dataloader) / accumulation_steps)
     num_training_steps = updates_per_epoch * config.training.epochs
     
@@ -762,7 +772,6 @@ def run_distributed_training(
                 logger.info(f"Set sampler epoch to {epoch}")
         
         # Train
-        accumulation_steps = config.training.get('gradient_accumulation_steps', 1)
         updates_per_epoch = math.ceil(len(train_dataloader) / accumulation_steps)
         global_step_offset = epoch * updates_per_epoch
         
@@ -773,7 +782,7 @@ def run_distributed_training(
         )
         
         # Validate every epoch
-        val_loss = validate(
+        val_loss, val_metrics = validate(
             model, val_dataloader, epoch, config,
             logger, tb_logger, rank, device,
             use_amp=use_amp, pad_token_id=pad_token_id, updates_per_epoch=updates_per_epoch, amp_dtype=amp_dtype
@@ -786,8 +795,8 @@ def run_distributed_training(
                 epoch=epoch,
                 global_step=global_step_val,
                 loss=val_loss,
-                perplexity=compute_perplexity(val_loss),
-                accuracy=None,
+                perplexity=val_metrics['perplexity'],
+                accuracy=val_metrics.get('accuracy')
             )
         
         # Save best model (rank 0 only)
@@ -816,7 +825,6 @@ def run_distributed_training(
     if rank == 0:
         # Use the last validation loss if available, otherwise use last train loss
         final_loss = val_loss if val_loss is not None else (train_loss if train_loss is not None else 0.0)
-        accumulation_steps = config.training.get('gradient_accumulation_steps', 1)
         updates_per_epoch = math.ceil(len(train_dataloader) / accumulation_steps)
         final_global_step = config.training.epochs * updates_per_epoch
         save_checkpoint(

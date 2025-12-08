@@ -89,7 +89,9 @@ def save_config(config: Config, save_path: str):
         config: Config object to save.
         save_path: Path where to save the configuration.
     """
-    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    dir_path = os.path.dirname(save_path)
+    if dir_path and not os.path.exists(dir_path):  # Only create directory if path contains a directory
+       os.makedirs(dir_path, exist_ok=True)
     
     config_dict = config.to_dict() if isinstance(config, Config) else config
     

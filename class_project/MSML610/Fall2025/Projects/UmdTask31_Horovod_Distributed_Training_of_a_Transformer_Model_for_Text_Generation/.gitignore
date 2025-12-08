@@ -4,21 +4,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
 
 # Virtual environments
 venv/
@@ -27,24 +12,22 @@ ENV/
 .venv
 
 # Jupyter Notebook
-.ipynb_checkpoints/
-*.ipynb_checkpoints
+.ipynb_checkpoints
 
-# Training outputs
+# PyTorch
+*.pt
+*.pth
+
+# Data (preprocessed data can be large)
+notebooks/data/preprocessed/v1/
+*.h5
+*.hdf5
+
+# Checkpoints and logs
 checkpoints/
 logs/
 runs/
 *.log
-*.pt
-*.pth
-*.ckpt
-
-# Data
-data/
-datasets/
-*.csv
-*.json
-*.txt
 
 # IDE
 .vscode/
@@ -57,34 +40,15 @@ datasets/
 .DS_Store
 Thumbs.db
 
-# HuggingFace cache
-.cache/
-hf_cache/
+# Temporary files
+*.tmp
+*.bak
+*.cache
 
 # Horovod
-timeline.json
+horovod_timeline.json
 
-# Slurm outputs
-slurm-*.out
+# Slurm
+*.out
 *.err
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-
-# Archive files
-*.tar
-*.tar.gz
-*.zip
-*.rar
-
-# OS files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
+class_project/MSML610/Fall2025/Projects/UmdTask31_Horovod_Distributed_Training_of_a_Transformer_Model_for_Text_Generation/notebooks/data/preprocessed/

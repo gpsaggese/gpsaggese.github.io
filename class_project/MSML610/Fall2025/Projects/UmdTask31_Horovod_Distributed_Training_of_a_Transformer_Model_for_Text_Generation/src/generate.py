@@ -1,7 +1,7 @@
 """
-Text generation module.
+Text generation module for custom transformer language model.
 
-Loads trained models and generates text from prompts.
+Loads trained custom transformer models and generates text from prompts.
 """
 
 import argparse
@@ -13,107 +13,65 @@ from transformers import GPT2TokenizerFast
 
 from .utils.config import load_config
 from .models.transformer_lm import TransformerLM
-from .models.hf_wrapper import HFModelWrapper
 
 
 def load_model_for_generation(
-    checkpoint_path: Optional[str] = None,
-    config_path: Optional[str] = None,
-    model_type: str = "custom",
+    checkpoint_path: str,
+    config_path: str,
     device: str = "cuda"
 ):
     """
-    Load a trained model for text generation.
+    Load a trained custom transformer model for text generation.
     
     Args:
         checkpoint_path: Path to model checkpoint.
-        config_path: Path to configuration file (for custom models).
-        model_type: Type of model ('custom', 'gpt2', 'distilgpt2').
+        config_path: Path to configuration file.
         device: Device to load model on.
         
     Returns:
         Tuple of (model, tokenizer, config).
     """
-    # Load tokenizer (use cache_dir to avoid re-downloads on HPC)
+    # Load tokenizer (try to load from preprocessed data, fallback to downloading)
     print("[INFO] Loading tokenizer...")
-    cache_dir = os.environ.get('HF_HOME', None)
-    tokenizer = GPT2TokenizerFast.from_pretrained('gpt2', cache_dir=cache_dir)
+    tokenizer_path = "data/preprocessed/tokenizer"
+    if os.path.exists(tokenizer_path):
+        tokenizer = GPT2TokenizerFast.from_pretrained(tokenizer_path)
+        print(f"[INFO] Loaded tokenizer from: {tokenizer_path}")
+    else:
+        cache_dir = os.environ.get('HF_HOME', None)
+        tokenizer = GPT2TokenizerFast.from_pretrained('gpt2', cache_dir=cache_dir)
+        print("[INFO] Loaded tokenizer from HuggingFace cache")
+    
     tokenizer.pad_token = tokenizer.eos_token
     
-    # Load model based on type
-    if model_type == "custom":
-        if config_path is None:
-            raise ValueError("config_path required for custom models")
-        
-        print(f"[INFO] Loading custom model configuration from: {config_path}")
-        config = load_config(config_path)
-        
-        # Create model
-        model = TransformerLM(
-            vocab_size=config.model.vocab_size,
-            d_model=config.model.d_model,
-            n_heads=config.model.n_heads,
-            n_layers=config.model.n_layers,
-            d_ff=config.model.d_ff,
-            max_seq_len=config.model.max_seq_len,
-            dropout=config.model.dropout
-        )
-        
-        # Load checkpoint if provided
-        if checkpoint_path is not None:
-            print(f"[INFO] Loading checkpoint from: {checkpoint_path}")
-            checkpoint = torch.load(checkpoint_path, map_location=device)
-            
-            # Handle both full checkpoint and state_dict only
-            if 'model_state_dict' in checkpoint:
-                model.load_state_dict(checkpoint['model_state_dict'])
-            else:
-                model.load_state_dict(checkpoint)
-            
-            print(f"[INFO] Loaded checkpoint (epoch: {checkpoint.get('epoch', 'N/A')}, "
-                  f"step: {checkpoint.get('step', 'N/A')})")
-        else:
-            print("[WARN] No checkpoint provided. Using randomly initialized model.")
-        
-    elif model_type in ["gpt2", "distilgpt2", "gpt2-medium", "gpt2-large"]:
-        print(f"[INFO] Loading pretrained {model_type} model...")
-        
-        cache_dir = os.environ.get('HF_HOME', None)
-        
-        if checkpoint_path is not None:
-            # Load fine-tuned model
-            print(f"[INFO] Loading fine-tuned checkpoint from: {checkpoint_path}")
-            
-            # First load the base model (use cache_dir to avoid re-downloads)
-            model = HFModelWrapper(model_name=model_type, cache_dir=cache_dir)
-            
-            # Then load checkpoint
-            checkpoint = torch.load(checkpoint_path, map_location=device)
-            state_dict = checkpoint.get('model_state_dict', checkpoint)
-
-            # Try loading state_dict, handling potential key mismatches
-            try:
-                model.load_state_dict(state_dict, strict=False)
-                print("[INFO] Checkpoint loaded successfully (some keys may be missing)")
-            except Exception as e:
-                print(f"[WARN] Failed to load checkpoint: {e}")
-                print("[INFO] Attempting to load with key remapping...")
-                # Try to handle wrapped model state_dict
-                if any(key.startswith('model.') for key in state_dict.keys()):
-                    # Remove 'model.' prefix if present
-                    new_state_dict = {k.replace('model.', ''): v for k, v in state_dict.items() if k.startswith('model.')}
-                    model.model.load_state_dict(new_state_dict, strict=False)
-                else:
-                    # Fall back to loading directly into inner HF model
-                    model.model.load_state_dict(state_dict, strict=False)
-        else:
-            # Use pretrained model (use cache_dir to avoid re-downloads)
-            model = HFModelWrapper(model_name=model_type, cache_dir=cache_dir)
-        
-        config = None
+    # Load configuration
+    print(f"[INFO] Loading model configuration from: {config_path}")
+    config = load_config(config_path)
     
+    # Create model
+    print("[INFO] Creating custom transformer model...")
+    model = TransformerLM(
+        vocab_size=config.model.vocab_size,
+        d_model=config.model.d_model,
+        n_heads=config.model.n_heads,
+        n_layers=config.model.n_layers,
+        d_ff=config.model.d_ff,
+        max_seq_len=config.model.max_seq_len,
+        dropout=config.model.dropout
+    )
+    
+    # Load checkpoint
+    print(f"[INFO] Loading checkpoint from: {checkpoint_path}")
+    checkpoint = torch.load(checkpoint_path, map_location=device)
+    
+    # Handle both full checkpoint and state_dict only
+    if 'model_state_dict' in checkpoint:
+        model.load_state_dict(checkpoint['model_state_dict'])
+        print(f"[INFO] Loaded checkpoint (epoch: {checkpoint.get('epoch', 'N/A')}, "
+              f"step: {checkpoint.get('step', 'N/A')})")
     else:
-        raise ValueError(f"Unknown model type: {model_type}")
+        model.load_state_dict(checkpoint)
+        print("[INFO] Loaded checkpoint (state_dict only)")
     
     # Move model to device
     model = model.to(device)
@@ -203,7 +161,7 @@ def generate_text(
 def interactive_generation(
     model,
     tokenizer,
-    config=None,
+    config,
     device: str = "cuda"
 ):
     """
@@ -212,7 +170,7 @@ def interactive_generation(
     Args:
         model: Trained model.
         tokenizer: Tokenizer.
-        config: Configuration object (optional).
+        config: Configuration object.
         device: Device to run generation on.
     """
     print("\n" + "="*80)
@@ -221,7 +179,7 @@ def interactive_generation(
     print("Enter a prompt to generate text. Type 'quit' or 'exit' to stop.")
     print("="*80 + "\n")
     
-    # Get default generation parameters
+    # Get default generation parameters from config
     if config is not None and hasattr(config, 'generation'):
         default_max_tokens = config.generation.max_new_tokens
         default_temp = config.generation.temperature
@@ -247,24 +205,17 @@ def interactive_generation(
             print("Please enter a non-empty prompt.")
             continue
         
-        # Get generation parameters (use defaults)
+        # Generate with default parameters
         try:
-            max_tokens = default_max_tokens
-            temperature = default_temp
-            top_k = default_top_k
-            top_p = default_top_p
-            num_samples = default_num_samples
-            
-            # Generate
             generated_texts = generate_text(
                 model=model,
                 tokenizer=tokenizer,
                 prompt=prompt,
-                max_new_tokens=max_tokens,
-                temperature=temperature,
-                top_k=top_k,
-                top_p=top_p,
-                num_samples=num_samples,
+                max_new_tokens=default_max_tokens,
+                temperature=default_temp,
+                top_k=default_top_k,
+                top_p=default_top_p,
+                num_samples=default_num_samples,
                 device=device
             )
             
@@ -280,27 +231,20 @@ def main():
     """
     Main entry point for text generation.
     """
-    parser = argparse.ArgumentParser(description="Generate text using trained Transformer LM")
+    parser = argparse.ArgumentParser(description="Generate text using trained custom Transformer LM")
     
     # Model loading arguments
     parser.add_argument(
         "--checkpoint",
         type=str,
-        default=None,
+        required=True,
         help="Path to model checkpoint"
     )
     parser.add_argument(
         "--config",
         type=str,
-        default=None,
-        help="Path to configuration file (for custom models)"
-    )
-    parser.add_argument(
-        "--model_type",
-        type=str,
-        default="custom",
-        choices=["custom", "gpt2", "distilgpt2", "gpt2-medium", "gpt2-large"],
-        help="Model type"
+        default="configs/config.yaml",
+        help="Path to configuration file"
     )
     
     # Generation arguments
@@ -365,7 +309,6 @@ def main():
     model, tokenizer, config = load_model_for_generation(
         checkpoint_path=args.checkpoint,
         config_path=args.config,
-        model_type=args.model_type,
         device=args.device
     )
     
