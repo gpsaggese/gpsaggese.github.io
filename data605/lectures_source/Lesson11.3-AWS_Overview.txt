@@ -173,22 +173,6 @@ _Beef Jezos_
 ::::
 :::
 
-* Low-Cost Processing
-- Lots of batch jobs are not critical / run on a schedule
-  - Analyze data daily
-  - Generate reports from a database
-
-1) **Allocate machines on demand**
-   - AWS bills VMs per minute
-   - Pay only when running jobs
-
-2) **AWS Batch**
-   - Offers spare capacity at a discount
-   - Runs when capacity is available, saving 50%
-
-3) **AWS Lambda**
-   - Serverless
-
 * Capacity Scaling
 ::: columns
 :::: {.column width=50%}
@@ -203,10 +187,6 @@ _Beef Jezos_
   - Weekday vs weekend
   - Holidays
   - No test system needed when the team is off
-
-- **Worldwide presence**
-  - AWS has many data centers
-  - Deploy applications close to customers
 ::::
 :::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_11_image_1.png)
@@ -214,6 +194,10 @@ _Beef Jezos_
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_11_image_2.png)
 ::::
 :::
+
+- **Worldwide presence**
+  - AWS has many data centers
+  - Deploy applications close to customers
 
 * Pay-per-use
 ::: columns
@@ -225,6 +209,11 @@ _Beef Jezos_
     - Used storage in GB (allocated or real)
     - Data traffic in GB or requests
     - ...
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_12_image_1.png)
+::::
+:::
 
 - **Free tier**
   - Use some AWS services free for 12 months after signing up
@@ -232,11 +221,6 @@ _Beef Jezos_
     - E.g., EC2, S3
   - Exceed limits, start paying (without notice)
     - Set an alarm!
-::::
-:::: {.column width=45%}
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_12_image_1.png)
-::::
-:::
 
 * Pay-per-use
 ::: columns
@@ -316,7 +300,7 @@ _Beef Jezos_
 ::: columns
 :::: {.column width=40%}
 - **Create a new user**
-  - Avoid using AWS root account for development
+  - Do not use AWS root account for development
   - IAM: Identity and Access Management
   - Access key ID + secret access key
 
@@ -327,8 +311,6 @@ _Beef Jezos_
 ::::
 :::: {.column width=55%}
 
-![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_1.png)
-
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_2.png)
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_29_image_3.png)
@@ -338,7 +320,7 @@ _Beef Jezos_
 * AWS VMs
 ::: columns
 :::: {.column width=55%}
-- With virtualization
+- **With virtualization**
   - Multiple VMs run on the same hardware
   - Start and stop VMs on-demand
 
@@ -365,16 +347,23 @@ _Beef Jezos_
 ::::
 :::
 
-* Starting an EC2 Instance
+* Select Region
 ::: columns
 :::: {.column width=55%}
-- **Select region**
-  - E.g., `us-east-1`
+- E.g., `us-east-1`
   - 21155 Smith Switch Road, Ashburn, VA, USA
 
-\vspace{1cm}
+\vspace{0.2cm}
+\center
 
 ![](data605/lectures_source/images/lecture_11_2/lec_11_2_slide_17_image_2.png){width=80%}
+
+- Major internet backbone in Ashburn, VA
+  - Equinix
+  - Digital Realty
+  - Vantage Data Centers
+  - H5 Data Centers
+  - ...
 ::::
 :::: {.column width=40%}
 
@@ -458,8 +447,7 @@ _Beef Jezos_
   - Cheapest: 37 USD/yr
   - Most expensive: 1.91M USD/yr (500 CPUs and 24TB of memory)
 
-- Alternative sites:
-  - E.g., https://instances.vantage.sh
+- [Alternative sites](https://instances.vantage.sh)))))))) tracking prices
 
 * Starting an EC2 Instance
 ::: columns
@@ -579,6 +567,22 @@ _Beef Jezos_
   - Discount: up to 10x cheaper than on-demand
   - Useful for asynchronous tasks
 
+* Low-Cost Processing
+- Lots of batch jobs are not critical / run on a schedule
+  - Analyze data daily
+  - Generate reports from a database
+
+1) **Allocate machines on demand**
+   - AWS bills VMs per minute
+   - Pay only when running jobs
+
+2) **AWS Batch**
+   - Offers spare capacity at a discount
+   - Runs when capacity is available, saving 50%
+
+3) **AWS Lambda**
+   - Serverless
+
 * Programming the Infrastructure
 ::: columns
 :::: {.column width=45%}
@@ -586,15 +590,15 @@ _Beef Jezos_
   - Start a VM
   - Create 1TB of storage
   - Start Hadoop cluster
-  - ...
+  -
 
-- You can use:
+- Use:
   - AWS GUI console
-  - HTTP requests to the API
+  - HTTP requests to API
   - CLI (Command Line Interface)
-    - Call AWS API from your terminal
+    - Call AWS API from terminal
   - SDK (Software Development Kit)
-    - Call AWS API from your code
+    - Call AWS API from code
   - CloudFormation: templates describe infrastructure state, translated into API
     calls
 ::::
@@ -645,7 +649,7 @@ _Beef Jezos_
   - Run acceptance tests in isolation
   - Propagate changes to production
 
-- **The script is detailed documentation**
+- **Script as detailed documentation**
   - Explains what and how, not why
 ::::
 :::: {.column width=40%}
@@ -656,12 +660,13 @@ _Beef Jezos_
 :::
 
 * AWS Command Line Interface (CLI)
-- Provide unified interface to all AWS services
-- Output is in JSON format
+- Provide **unified interface** to all AWS services
+  - Output is in JSON format
   ```bash
   > apt-get install awscli
   ```
-- Authenticate
+
+- **Authenticate**
   ```
   > aws configure
   ```
@@ -671,7 +676,8 @@ _Beef Jezos_
     - E.g., `SSKIng7jkA...enqBj7`
   - Default region name
     - E.g., `us-east-1`
-- Execute command
+
+- **Execute command**
   ```
   > aws <service> <action> --key value
   ```
@@ -679,10 +685,10 @@ _Beef Jezos_
 * Software Development Kit (SDK)
 ::: columns
 :::: {.column width=60%}
-- SDK is a library calling AWS API **from your programming language**
+- **SDK is a library calling AWS API** from your programming language
   - E.g., Python, Go, C++, JavaScript
 
-- **Pros:** handles
+- **Pros**: it handles
   - Authentication
   - Retry on error
   - HTTPS communication
