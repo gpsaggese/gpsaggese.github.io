@@ -105,13 +105,13 @@ docs/_build/
 .streamlit/
 
 # Allow outputs
-!outputs/
 !outputs/**
+!outputs/
 
 # Allow notebooks
-!notebooks/
 !notebooks/**
+!notebooks/
 
 # Allow data
-!data/
 !data/**
+!data/

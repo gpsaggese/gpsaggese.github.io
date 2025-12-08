@@ -5,6 +5,12 @@ set -e
 FILE_NAME="devops/docker_run/run_jupyter_server.sh"
 echo "##> $FILE_NAME"
 
+source /venv/bin/activate
+# source /app/${ENV_NAME}/bin/activate 2>/dev/null || \
+# source /${ENV_NAME}/bin/activate
+
+cd /workspace
+
 # Use the old notebook interface.
 #jupyter_cmd="jupyter notebook"
 # Use Jupyter lab.
@@ -15,8 +21,8 @@ jupyter_cmd="jupyter lab"
 
 #sudo /bin/bash -c "(source /venv/bin/activate; pip install jupytext)"
 
-jupyter labextension list
-jupyter labextension enable jupytext
+# jupyter labextension list
+# jupyter labextension enable jupytext
 
 cmd="$jupyter_cmd --ip=* --port=${PORT} \
     --allow-root \

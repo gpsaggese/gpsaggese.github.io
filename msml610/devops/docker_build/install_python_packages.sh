@@ -43,6 +43,7 @@ if [[ 1 == 1 ]]; then
   source /${ENV_NAME}/bin/activate
   #pip3 install wheel
   poetry install --no-root
+  pip install jupyter jupyterlab jupytext ipykernel
   poetry env list
   # Clean up.
   if [[ $CLEAN_UP_INSTALLATION ]]; then

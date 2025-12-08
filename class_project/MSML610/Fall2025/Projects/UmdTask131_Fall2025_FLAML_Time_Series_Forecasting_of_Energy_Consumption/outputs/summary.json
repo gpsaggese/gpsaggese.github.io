@@ -1,0 +1,23 @@
+{
+  "Dataset": {
+    "Total Records": 2075259,
+    "Training Records": 1129,
+    "Test Records": 283,
+    "Features Created": 32
+  },
+  "Best Model": {
+    "Name": "FLAML AutoML",
+    "Test RMSE": 0.23802024147684528,
+    "Test MAPE": 19.468050060687588,
+    "Accuracy": 80.53194993931241
+  },
+  "FLAML": {
+    "Best Estimator": "lgbm",
+    "Test RMSE": 0.23802024147684528,
+    "Test MAPE": 19.468050060687588
+  },
+  "Prophet": {
+    "Test RMSE": 0.25851363442197245,
+    "Test MAPE": 22.137126113070433
+  }
+}

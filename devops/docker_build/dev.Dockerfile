@@ -74,10 +74,15 @@ RUN chown root:root /etc/sudoers
 # - Create the bashrc file.
 COPY devops/docker_run/bashrc $HOME/.bashrc
 
+# Copy docker_run scripts into the container
+COPY tutorials/devops/docker_run /workspace/msml610/tutorials/devops/docker_run
+
 ENV AM_CONTAINER_VERSION=$AM_CONTAINER_VERSION
 RUN echo "AM_CONTAINER_VERSION=$AM_CONTAINER_VERSION"
 
 # TODO(gp): Is this needed?
 WORKDIR $APP_DIR
 
-ENTRYPOINT ["devops/docker_run/entrypoint.sh"]
+# ENTRYPOINT ["devops/docker_run/entrypoint.sh"]
+ENTRYPOINT ["/workspace/msml610/tutorials/devops/docker_run/entrypoint.sh"]
+
