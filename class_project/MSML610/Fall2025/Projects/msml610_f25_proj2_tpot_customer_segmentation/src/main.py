@@ -3,6 +3,7 @@ from pathlib import Path
 from src.features import load_and_clean, build_customer_features, feature_matrix
 from src.tpot_pipeline import run_tpot_preprocessing, save_preprocess
 from src.clustering import search_models, fit_best, pca_plot
+from src.plot_clusters_size import plot_cluster_sizes
 
 OUT_DIR = Path("outputs")
 DATA_PATH = Path("data/Online Retail.xlsx")
@@ -53,14 +54,15 @@ def main():
     cust_out["segment_name"] = cust_out["cluster"].map(segment_names)
 
     cust_out.to_csv(OUT_DIR / "customer_segments.csv", index=False)
+    plot_cluster_sizes(cust_out, OUT_DIR / "cluster_sizes.png")
     pca_plot(X_t, labels, OUT_DIR / "clusters_pca.png")
 
-    with open(OUT_DIR / "REPORT.txt", "w") as f:
-        f.write("Best clustering model:\n")
-        f.write(str(best.to_dict()) + "\n\n")
-        f.write("Segments:\n")
-        for c, name in segment_names.items():
-            f.write(f"Cluster {c}: {name}\n")
+    # with open(OUT_DIR / "REPORT.txt", "w") as f:
+    #     f.write("Best clustering model:\n")
+    #     f.write(str(best.to_dict()) + "\n\n")
+    #     f.write("Segments:\n")
+    #     for c, name in segment_names.items():
+    #         f.write(f"Cluster {c}: {name}\n")
 
     print("Done! Outputs written to:", OUT_DIR.resolve())
 
