@@ -1,0 +1,295 @@
+# ##############################################################################
+# Data Centers: Capex
+# ##############################################################################
+
+Data centers are crucial for cloud computing, allowing companies like AWS,
+Apple, Google, and Facebook to operate globally. Building a data center is a
+significant investment, costing around 1 billion USD. This cost, known as
+capital expenditure (Capex), includes expenses for computing, memory, storage,
+and networking. However, the prices for these components are decreasing over
+time, while the size of data centers is increasing. This trend suggests that as
+technology advances, building and maintaining data centers may become more
+cost-effective, allowing for larger and more efficient facilities.
+
+Transition: Now, let's explore the operational costs associated with running
+data centers.
+
+# ##############################################################################
+# Data Centers: Opex
+# ##############################################################################
+
+Operating data centers involves significant costs, particularly in powering
+equipment and cooling. Energy-efficient computing is a priority to manage these
+expenses. Cooling is especially costly, and proper vent placement is crucial to
+handle thermal hotspots. Power Usage Effectiveness (PUE) measures how
+efficiently a data center uses energy; ideally, it should be 1, but current
+values range from 1.07 to 1.22. This indicates room for improvement, especially
+in smaller data centers. Research is ongoing to find energy-saving solutions.
+Additionally, data centers are often built near cheap energy sources or in cold
+climates to reduce operational costs.
+
+Transition: Let's take a look at the concept of modular data centers.
+
+# ##############################################################################
+# (Modular) Data Centers
+# ##############################################################################
+
+Modular data centers are an innovative approach to building and expanding data
+center facilities. These centers are designed to be flexible and scalable,
+allowing for easy expansion as demand grows. The modular design means that
+components can be added or removed as needed, making it easier to manage costs
+and resources. This approach can lead to more efficient use of space and energy,
+as well as quicker deployment times. As the demand for data processing and
+storage continues to rise, modular data centers offer a practical solution for
+meeting these needs efficiently.
+
+# ##############################################################################
+# Meta
+# ##############################################################################
+
+Meta is investing heavily in data infrastructure. They have 29 data centers
+worldwide, specifically designed for hyperscale and AI tasks. By 2028, Meta
+plans to invest $600 billion in U.S. infrastructure. This includes a $1.5
+billion data center in El Paso and a $10 billion campus in Louisiana with nine
+buildings. Additionally, they are upgrading power infrastructure with an
+investment of over $3 billion. These investments highlight Meta's commitment to
+expanding and optimizing their data capabilities to support their global
+operations.
+
+Let's move on to Amazon Web Services and their global reach.
+
+# ##############################################################################
+# Amazon Web Services
+# ##############################################################################
+
+Amazon Web Services (AWS) is expanding its global presence. In 2022, AWS had 28
+geographical regions, and by 2025, they plan to increase this number to 38. This
+expansion reflects AWS's commitment to providing reliable cloud services
+worldwide. The growth in regions allows AWS to offer better service availability
+and redundancy, ensuring that users have access to their services with minimal
+downtime. AWS's expansion is a testament to the increasing demand for cloud
+services and the company's ability to meet this demand.
+
+Now, let's explore Amazon Web Services' EC2 offerings.
+
+# ##############################################################################
+# Amazon Web Services (EC2)
+# ##############################################################################
+
+Amazon EC2 is a popular choice for cloud computing, offering a variety of
+options to meet different needs. The competition in the cloud market keeps
+prices low, making it an attractive option for businesses. Users can find the
+current on-demand pricing on AWS's website. EC2's flexibility and affordability
+make it a go-to solution for many organizations looking to leverage cloud
+computing for their operations. This service is part of AWS's broader strategy
+to provide scalable and cost-effective cloud solutions to a diverse range of
+customers.
+
+# ##############################################################################
+# Amazon S3
+# ##############################################################################
+
+Amazon S3 is a storage service where you only pay for what you use. It offers
+different tiers that vary in reliability, cost, and performance. The default
+tier provides the highest durability and availability, while Reduced Redundancy
+Storage (RRS) offers slightly less durability. Infrequent Access (IA) and
+Glacier are for less frequently accessed data, with Glacier being the most
+cost-effective for long-term storage but with slower access times. Extra fees
+apply for data retrieval in IA and Glacier tiers, making them suitable for
+archival purposes.
+
+Let's move on to Google's cloud offerings and their market position.
+
+# ##############################################################################
+# Google App Engine
+# ##############################################################################
+
+Google App Engine provides various cloud services. Google Compute Engine is an
+Infrastructure as a Service (IaaS) competing with AWS EC2. Google Infrastructure
+offers Platform as a Service (PaaS) for running Docker containers, while Google
+Docs is a Software as a Service (SaaS) for cloud-based document editing. Despite
+pioneering cloud technologies, Google's market share is smaller than AWS due to
+issues like developer unfriendliness and poor customer service. Their early
+innovations include the Google File System and MapReduce, but they face
+challenges in maintaining customer trust and commitment.
+
+Now, let's explore the concept of virtualization in cloud computing.
+
+# ##############################################################################
+# Virtualization
+# ##############################################################################
+
+Virtualization allows multiple virtual machines (VMs) to run on a single server,
+a concept supported by processors since the 1980s. By the 2000s, it became
+efficient enough for cloud computing. The basic idea is to run VMs on servers
+and sell time on them, as seen with AWS, Microsoft Azure, and Google Cloud.
+Virtualization offers several advantages: security through strong VM boundaries,
+multi-tenancy by hosting multiple VMs on one server, and efficiency by replacing
+many underpowered machines with fewer high-powered ones. This makes cloud
+computing a flexible and cost-effective solution.
+
+# ##############################################################################
+# Desktop vs Server Virtualization
+# ##############################################################################
+
+Desktop virtualization involves running virtual machines on a host operating
+system using tools like VMWare, Xen, or VirtualBox. This setup allows different
+guest operating systems to run on the same physical machine. On the other hand,
+server virtualization runs a hypervisor directly on the hardware, making it
+suitable for server farms and cloud computing. Amazon initially used Xen on
+RedHat but now uses AWS Nitro. Performance in virtualization can be
+unpredictable due to factors like multi-tenancy and varying hardware. To enhance
+performance, "bare-metal" computing is sometimes used, which runs applications
+directly on the hardware without a hypervisor.
+
+Transition: Now, let's explore Docker and its benefits in virtualization.
+
+# ##############################################################################
+# Docker
+# ##############################################################################
+
+Docker packages all dependencies into a single object, making it easier to
+manage applications. One of the main advantages of Docker is that containers are
+fast and portable, reducing the overhead typically associated with
+virtualization. All containers can run on a single host, which helps in cutting
+down on operating system licensing costs and maintenance efforts. This
+efficiency makes Docker a popular choice for developers looking to streamline
+their deployment processes and ensure consistency across different environments.
+
+Transition: Moving on, let's discuss programming frameworks and their role in
+handling large-scale workloads.
+
+# ##############################################################################
+# Programming Frameworks
+# ##############################################################################
+
+Programming frameworks have been developed to help scale out workloads and
+distribute tasks across thousands of machines. While parallel computing has been
+around for a while, it presents challenges for programmers, such as
+parallelizing applications, distributing data, handling failures, debugging, and
+dealing with race conditions or Heisenbugs. The key difference with modern
+frameworks is the user interface. Google’s development of MapReduce marked a new
+era, leading to the creation of tools like Hadoop and Spark, as well as various
+AWS services, which simplify the process of managing large-scale data processing
+tasks.
+
+# ##############################################################################
+# MapReduce Framework
+# ##############################################################################
+
+The MapReduce framework is a tool for processing large data sets across
+distributed systems. It provides a simple way for programmers to write code that
+can be run on many computers at once. Programmers focus on writing two main
+functions, map and reduce, which handle the data processing. The framework
+itself takes care of the more complex tasks like scheduling the work and dealing
+with any errors that might occur. This separation allows programmers to focus on
+the logic of their data processing without worrying about the underlying
+infrastructure.
+
+Transition: Let's explore other frameworks that address some limitations of
+MapReduce.
+
+# ##############################################################################
+# Other Programming Frameworks
+# ##############################################################################
+
+There are several programming frameworks designed to overcome the limitations of
+MapReduce. High-performance computing systems like GridRPC and MPI use clusters
+of supercomputers for more efficient processing. Spark, which uses Resilient
+Distributed Data (RDD), offers in-memory processing for faster data handling.
+For real-time data, Apache Storm and Spark Streaming are effective. Graph
+processing systems like Giraph, GraphLab, and GraphX are specialized for
+handling graph data. Apache Hive provides a SQL-like interface for Hadoop,
+making it easier to query large datasets. Apache HBase is a NoSQL database that
+allows for quick read and write operations on large tables, similar to Google
+BigTable.
+
+Transition: Now, let's discuss the benefits of using cloud technology.
+
+# ##############################################################################
+# Cloud Benefits (1/2)
+# ##############################################################################
+
+Cloud computing offers several advantages. It allows for lower-cost devices
+because the heavy lifting of computing and storage is done in the cloud. This is
+beneficial for devices with limited resources, like thin clients or older
+hardware. The cloud also provides scalability and elastic storage, meaning you
+can store as much data as needed and scale your computing resources up or down
+without having to buy new hardware. Additionally, cloud services offer anywhere
+access, allowing users to work from any internet-connected device. This ensures
+that documents, applications, and data are always accessible, providing a
+seamless experience across different devices.
+
+# ##############################################################################
+# Cloud Benefits (2/2)
+# ##############################################################################
+
+Cloud-native software and the SaaS model offer significant advantages. Users can
+access full-featured applications without needing to install them or purchase
+licenses. This model ensures that software is always up-to-date with automatic
+updates and patching. Improved collaboration is another benefit, allowing
+real-time, multi-user editing and sharing from any location. Built-in revision
+history helps avoid conflicts in shared documents. Additionally, faster
+development and deployment cycles are possible through technologies like
+containerization and serverless functions. These are particularly beneficial for
+modern workloads such as AI, machine learning, analytics, and distributed
+applications.
+
+Transition: Let's explore the modern opportunities that cloud computing
+presents.
+
+# ##############################################################################
+# Modern Opportunities
+# ##############################################################################
+
+Cloud-native support for AI and machine learning workloads is a significant
+opportunity. Cloud providers offer specialized hardware like GPUs and TPUs,
+which are essential for training and serving models. This allows organizations
+to scale without investing in expensive hardware. Multi-cloud and hybrid-cloud
+strategies enhance resilience, providing a fallback during major outages.
+Improved data sovereignty and regulatory compliance are also crucial. New
+regulations, such as the EU Data Act of 2025, promote data portability and
+reduce vendor lock-in. Sovereign cloud options address jurisdiction and legal
+control concerns.
+
+Transition: While there are many opportunities, it's important to consider the
+limitations of cloud computing.
+
+# ##############################################################################
+# Cloud Limitations
+# ##############################################################################
+
+Cloud computing does have its limitations. One major issue is dependency on
+cloud providers, which can lead to vendor lock-in, limiting flexibility and
+competition. Switching providers can be complex and costly. Security, privacy,
+and data ownership are also concerns, as data stored off-site may be subject to
+foreign access laws. Sensitive workloads may require encryption or on-premises
+solutions. Outages and service disruptions are another limitation, as even top
+providers experience major outages. Designing for failure is essential. Lastly,
+cloud services depend on stable, fast internet, which can be problematic in
+areas with poor connectivity, affecting high-latency workloads like real-time
+gaming and control.
+
+# ##############################################################################
+# Post‑2025 Challenges
+# ##############################################################################
+
+Let's discuss the challenges we might face after 2025.
+
+- Increasing regulatory burden and data-sovereignty demands: New regulations,
+  like the EU Data Act, will require cloud providers to make data more portable
+  and transparent. They will also need to limit cross-border data access. This
+  means companies will have to deal with more complex rules, especially if they
+  operate in different countries.
+
+- Cloud sprawl and rising costs: Using multiple cloud services or a mix of cloud
+  and on-premises solutions can make it hard to manage costs. Without careful
+  monitoring, companies might face unexpected charges for data transfer and
+  licensing.
+
+- Feature and performance limitations for specialized workloads: Some tasks,
+  like those needing a lot of computing power or low delay, might not work as
+  well in the cloud. Desktop applications and advanced tools often perform
+  better than their cloud counterparts.
+
+Now, let's move on to explore how these challenges impact businesses.
