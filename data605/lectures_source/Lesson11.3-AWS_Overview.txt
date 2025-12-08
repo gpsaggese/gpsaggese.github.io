@@ -447,7 +447,7 @@ _Beef Jezos_
   - Cheapest: 37 USD/yr
   - Most expensive: 1.91M USD/yr (500 CPUs and 24TB of memory)
 
-- [Alternative sites](https://instances.vantage.sh)))))))) tracking prices
+- [Alternative sites](https://instances.vantage.sh) tracking prices
 
 * Starting an EC2 Instance
 ::: columns

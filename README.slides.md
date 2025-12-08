@@ -1,25 +1,5 @@
 # DATA605
 
-## Generate the lecture script
-
-- Run from inside a container
-  ```bash
-  > i docker_bash --base-image=623860924167.dkr.ecr.eu-north-1.amazonaws.com/cmamp --skip-pull
-
-  docker> sudo /bin/bash -c "(source /venv/bin/activate; pip install --upgrade openai)"
-
-  docker> generate_slide_script.py \
-    --in_file data605/lectures_source/Lesson01-Intro.txt \
-    --out_file data605/lectures_source/Lesson01-Intro.script.txt \
-    --slides_per_group 3 \
-    --limit 1:5
-  ```
-
-- Run from outside the container
-  ```bash
-  > gen_data605_script.sh 04.3
-  ```
-
 ## Check correctness of all the slides
 
 - Run for one lecture from inside the container
@@ -62,6 +42,32 @@
 
 > process_lessons.py --lectures 0*:1* --class data605 --action pdf
 
+## Generate the lecture script
+
+- Run from inside a container
+  ```bash
+  > i docker_bash --base-image=623860924167.dkr.ecr.eu-north-1.amazonaws.com/cmamp --skip-pull
+
+  docker> sudo /bin/bash -c "(source /venv/bin/activate; pip install --upgrade openai)"
+
+  docker> generate_slide_script.py \
+    --in_file data605/lectures_source/Lesson01-Intro.txt \
+    --out_file data605/lectures_source/Lesson01-Intro.script.txt \
+    --slides_per_group 3 \
+    --limit 1:5
+  ```
+
+- Run from outside the container
+  ```bash
+  > gen_data605_script.sh 04.3
+  ```
+
+- Generate the intro
+  > TAG=08.3; llm_cli.py -i data605/lectures_script/Lesson${TAG}*.script.txt -p "You are a college professor and you need to do an introduction in 50 word the content of the slides" -o -
+
+- Generate the outro
+  > TAG=08.3; llm_cli.py -i data605/lectures_script/Lesson${TAG}*.script.txt -p "You are a college professor and you need to summarize what was discussed in less than 50 word in the slides like We have discussed" -o -
+
 ## Count pages
 
 > find data605/lectures/Lesson0*.pdf -type f -name "*.pdf" -print -exec mdls -name kMDItemNumberOfPages {} \;
@@ -79,6 +85,12 @@ data605/lectures/Lesson01.3-Is_Data_Science_Just_Hype.pdf       14
 ## Count words
 
 > dir="data605/lectures_script/"; for f in "$dir"/*; do [ -f "$f" ] && printf "%s\t%s\n" "$(basename "$f")" "$(wc -w < "$f")"; done
+
+./count_words.sh
+
+## Review scripts
+
+> TAG=10.1; gen_data605.sh $TAG; vi $(ls data605/lectures_script/*${TAG}*)
 
 # MSML610
 

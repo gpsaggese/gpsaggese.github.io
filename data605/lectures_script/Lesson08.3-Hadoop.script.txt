@@ -1,3 +1,11 @@
+# Intro
+
+Welcome to today’s lecture on the Hadoop ecosystem, where we will explore its
+fundamental components, including HDFS and MapReduce. We’ll delve into HDFS
+architecture, its read/write protocols, and fault tolerance mechanisms, while
+also contrasting it with traditional file systems. Let's uncover the intricacies
+of big data management together.
+
 # ##############################################################################
 # Hadoop Ecosystem (aka Hadoop Zoo)
 # ##############################################################################
@@ -107,4 +115,10 @@ for data aggregation. Additionally, Hadoop supports output adapters such as
 Avro, ORC, and Parquet, and can schedule multiple MapReduce jobs to run
 concurrently.
 
-Let's move on to explore how Hadoop handles data storage and retrieval.
+# Outro
+
+We discussed the Hadoop ecosystem, focusing on components like HDFS for large
+data storage, MapReduce for processing, and various tools for analytics and
+database management. HDFS's architecture, read/write protocols, fault tolerance,
+and comparisons with traditional systems were highlighted, emphasizing high
+throughput and reliability in big data contexts.
