@@ -29,12 +29,10 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-# Cloud Computing
-
 * Cloud Computing
 ::: columns
 :::: {.column width=60%}
-- Computing as **"service" rather than "product"**
+- **Computing as "service" instead of "product"**
   - Storage and computing in the cloud
   - Edge devices (e.g., phones, laptops, tablets) interact with the cloud
 ::::
@@ -53,10 +51,12 @@ UMD DATA605 - Big Data Systems
     - Cheaper than building own systems
     - Computing as a commodity (like electricity)
 
-* Buying infrastructure
-- **To buy or to rent?**
+* Buying Infrastructure
+- **To buy or to rent** computers and infrastructure?
+  - Trade-off between time and money
+  - Very difficult to decide objectively
 
-- **Building / buying infrastructure**
+- **Buying / building infrastructure**
   - Require time and capital investments (Capex)
     - Especially at the beginning without revenues
     - Smooth cash flow (constant $/mo) is better than lumpy one (big one-time
@@ -70,7 +70,7 @@ UMD DATA605 - Big Data Systems
   - Administering
     - Install, update, maintain software stack
 
-* Renting infrastructure
+* Renting Infrastructure
 - **Renting infrastructure** (i.e., cloud computing)
   - Pay for what you use
     - Low initial capital investment
