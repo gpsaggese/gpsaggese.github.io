@@ -284,23 +284,20 @@ workloads like real-time gaming and control systems.
 
 Let's discuss the challenges we might face after 2025.
 
-- Increasing regulatory burden and data-sovereignty demands: We need to be aware
-  of new regulations like the EU Data Act. These rules require cloud providers
-  to support data portability, ensure transparency, and restrict cross-border
-  access. This means companies will face more complexity when trying to comply
-  with different regulations across various jurisdictions.
+- There is an increasing regulatory burden and data-sovereignty demands, like the
+  EU Data Act. These rules require cloud providers to support data portability,
+  ensure transparency, and restrict cross-border access. This means companies
+  will face more complexity when trying to comply with different regulations
+  across various jurisdictions.
 
-- Cloud sprawl and rising costs: As we use multiple cloud services and hybrid
-  setups, managing costs becomes more complicated. We need to watch out for
-  egress charges and licensing fees. Without careful monitoring, resource usage
-  can increase, leading to higher expenses.
+- As we use multiple cloud services and hybrid setups, managing costs becomes
+  more complicated. We need to watch out for egress charges and licensing fees.
+  Without careful monitoring, resource usage can increase, leading to higher
+  expenses.
 
-- Feature and performance limitations for specialized workloads: Sometimes,
-  desktop-level applications and advanced tools perform better than their web or
-  cloud counterparts. Tasks that require a lot of computing power or are
-  sensitive to delays might not work as well in the cloud.
-
-Now, let's move on to explore how we can address these challenges.
+- Sometimes, desktop-level applications and advanced tools perform better than
+  their web or cloud counterparts. Tasks that require a lot of computing power or
+  are sensitive to delays might not work as well in the cloud.
 
 # ##############################################################################
 # Outro

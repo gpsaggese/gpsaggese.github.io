@@ -239,8 +239,8 @@ _Pipelining of instructions in microprocessor_
 :::
 
 * Factors Limiting Speed-up and Scale-up
-- Speed-up and scale-up are often sub-linear due to several issues
-  - E.g., some computation is parallel, others sequential 
+- **Speed-up and scale-up are typically sub-linear** due to several issues
+  - E.g., not all computation is parallelizable
 
 :::columns
 ::::{.column width=60%}
@@ -285,7 +285,7 @@ _Pipelining of instructions in microprocessor_
 * Topology of Parallel Systems
 :::columns
 ::::{.column width=35%}
-- Several ways to organize computation and storage
+- Many ways to organize computation and storage
   - $M$ = memory
   - $P$ = processors
   - $D$ = disks
@@ -336,51 +336,42 @@ _Pipelining of instructions in microprocessor_
   - DB stored on nodes at geographically separated sites
   - Communicate through high-speed private networks or Internet
 
-- Done due to necessity, e.g.,
+- **Why needed?**
   - Large corporation with global offices
   - Redundancy and disaster recovery
-  - E.g., natural disasters, power outage, hacker attacks
+  - Natural disasters, power outage, hacker attacks
   - Achieve high-availability despite failures
-
-- Typically not for performance reasons
-  - Use parallel DB for high performance
-
-- Wide-area networks (WAN) vs Local-area networks (LAN)
-  - Lower bandwidth
-  - Higher latency
-  - Greater probability of failures
-  - Network-link failures may cause network partition
-
-- No sharing of memory or disks
-  - Communication delay is dominant
-
-- Nodes can differ in size and functions
-  - Parallel DBs have similar nodes
+  - Typically not for performance
+    - Use parallel DB for high performance
 ::::
 ::::{.column width=30%}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_15_image_2.png)
-
-\vspace{2cm}
-![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_15_image_1.png)
 ::::
 :::
+
+- **Wide-area networks (WAN) vs Local-area networks (LAN)**
+  - Lower bandwidth
+  - Higher latency
+  - Greater probability of failures and network partition
+  - No sharing of memory or disks
+    - Communication delay is dominant
+  - Nodes can differ in size and functions
+    - Parallel DBs have similar nodes
 
 * Consistency Issues in Distributed DB Systems
 :::columns
 ::::{.column width=70%}
-- Parallel and distributed DBs work well for query processing
-  - Only reading data
-
-- Updating a parallel or distributed DB requires consistency enforcement
+- **Parallel and distributed DBs**
+  - Efficient for query processing (read-only)
+  - Requires consistency enforcement
 
 - **Atomicity issues**
-  - _Problem_: Transaction is all-or-nothing across multiple nodes
-  - Two-phase commit (2PC) is a centralized approach
-    - Commit decision delegated to a single coordinator node
-    - Each node executes the transaction, reaching a "ready state"
-    - If each node reaches ready state, coordinator commits
-    - If a node fails in ready state, it can recover from failure (e.g.,
-      write-ahead logs on stable storage)
+  - _Problem_: Transaction is all-or-nothing across nodes
+  - Two-phase commit (2PC) is centralized
+    - Commit decision by a single coordinator node
+    - Each node executes transaction, reaching "ready state"
+    - If all nodes reach ready state, coordinator commits
+    - If a node fails in ready state, it can recover (e.g., write-ahead logs)
     - If a node aborts, coordinator aborts transaction
   - Distributed consensus, e.g.,
     - Paxos
