@@ -1,6 +1,16 @@
+<<<<<<< HEAD
 ::: columns
 :::: {.column width=15%}
 ![](lectures_source/UMD_Logo.png)
+=======
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+//
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 ::::
 :::: {.column width=75%}
 
@@ -14,11 +24,16 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
+<<<<<<< HEAD
 **Streaming and Real-Time Analytics**
+=======
+**$$\text{\blue{12.1: Streaming and Real-time Analytics}}$$**
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
+<<<<<<< HEAD
 \vspace{1cm}
 
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`**
@@ -277,10 +292,359 @@ Computation
     - Exactly-once processing guarantees (i.e., every input record is processed exactly once)
     - Consistent API: same functional semantics as RDDs
     - Fault-tolerance
+=======
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+::::
+:::: {.column width=20%}
+::::
+:::
+
+## Data Streams
+
+* Data Streams: Motivation
+- Big Data is generated as a **continuous, unbounded stream**
+
+- Applications generate data at **high velocity**
+  - Financial transactions and market feeds
+  - Sensor instrumentation, RFID, IoT telemetry
+  - Network and system monitoring
+  - Continuous media (video, audio)
+
+- A **data stream** is a time-ordered sequence of events
+  - Stream processing treats streams as first-class computational objects
+
+- **Requirements**
+  - Ingest and handle high-throughput event streams
+  - Low-latency, near-real-time operations (e.g., time-series analytics)
+  - Efficient dissemination of relevant subsets to consumers
+  - Distributed processing to scale beyond a single machine
+
+* Data Streams: Examples
+- Continuous queries
+  - Any SQL query can be continuous
+  - E.g., _"compute moving average over last hour every 10 mins"_
+
+- Anomaly detection, pattern recognition
+  - E.g., _"alert me when A occurs and then B within 10 mins"_
+  - Correlate events from different streams
+
+- Statistical tasks
+  - E.g., de-noising measured readings
+  - Build an online machine learning model
+
+- Process multimedia data
+  - E.g., online object detection, activity detection
+
+* Why Not Using Standard Solutions?
+::: columns
+:::: {.column width=55%}
+- **Example**
+  - "_Report moving average of XYZ over last hour every 10 minutes_"
+
+- **Solution**
+  - Insert arriving items into a relational table
+  - Re-run query repeatedly
+::::
+:::: {.column width=40%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_3.png)
+
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_1.png){width=60%}
+::::
+:::
+
+\vspace{0.5cm}
+
+:::columns
+::::{.column width=55%}
+- **Problems**
+  - Re-executes full query, not leveraging incremental updates
+  - Many streaming computations are recursive
+  - Complex computations may not be easily expressed incrementally
+  - Real systems may run thousands of continuous queries
+::::
+::::{.column width=40%}
+
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_4_image_2.png){width=80%}
+::::
+:::
+
+## Streaming Concepts
+
+* Pub-Sub Systems: Motivation
+- Modern distributed systems use **small, independent components**
+  - E.g., serverless architectures, microservices (e.g., Uber)
+  - Easier evolution, isolation, scalability
+
+:::columns
+::::{.column width=65%}
+- **Publish-subscribe (pub-sub) systems**
+  - Aka "message queues", "message brokers"
+  - Connect producers and consumers for event distribution
+  - Topics cluster related messages
+  - Typically provide lightweight dissemination rather than complex queries
+  - Examples: AWS SQS, Kinesis, Kafka, RabbitMQ, Redis Streams, Celery, JBoss
+::::
+::::{.column width=35%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_5_image_1.png)
+::::
+:::
+
+* Pub-Sub Systems: Architecture
+::: columns
+:::: {.column width=45%}
+- **Publishers**
+  - Send messages or events
+
+- **Subscribers**
+  - Consume messages
+
+- **Message broker**
+  - Message broker routes event flow between publishers and subscribers, based on
+    topics and subscriptions
+::::
+:::: {.column width=50%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_6_image_1.png)
+::::
+:::
+
+- **Design parameters**
+  - Event distribution model (topics, filters)
+  - Push vs pull consumption
+  - Subscriber interest patterns
+  - Delivery guarantees
+    - At-most-once
+    - At-least-once
+    - Exactly-once
+
+* Delivery Semantics: At-most once
+- **At-most once**: _message may be lost, not redelivered_
+
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_1.png)
+
+- **Pros**
+  - Small implementation overhead, high-performance
+  - Easy to implement: "fire-and-forget"
+
+- Works when occasional loss is acceptable
+  - E.g., monitoring metrics of website
+
+* Delivery Semantics: At-least once
+- **At-least once**: messages retried until acknowledged
+
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_2.png)
+
+- **Pros**
+  - Ensures no loss but duplicates possible
+
+- **Cons**
+  - Requires idempotent operations or deduplication
+
+* Delivery Semantics: Exactly once
+- **Exactly once**: each message processed once globally
+
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_3.png)
+
+- Most consumer-friendly but hardest to guarantee
+  - Complicated by distributed coordination limits (e.g., "Two Generals' Problem")
+
+- Used in financial and mission-critical systems
+  - E.g., mission-critical systems (e.g., payment, trading, accounting)
+
+* Event vs Processing Time
+:::columns
+::::{.column width=50%}
+- In both streaming and pub-sub architectures
+  - **Event time**
+    - Time when each record is generated
+
+  - **Processing time**
+    - Time when each record is received
+    - Ingestion vs processing time: when events are received vs processed
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_8_image_1.png)
+::::
+:::
+
+- **Problems with events**
+  - Events may arrive late or out of order
+  - Determining how long to wait for stragglers is difficult
+  - Systems set bounds on lateness
+    - Extremely late data may be dropped or trigger re-computation
+
+## Apache Streaming Zoo
+
+* Apache Streaming Zoo
+- Many different streaming frameworks in the Apache family
+  - E.g., Apex, Beam, Flink, Kafka, Spark, Storm, NiFi
+  - Built simultaneously at different companies, then open-sourced
+
+- **Different workloads**
+  - Real-time analytics, continuous computation
+  - Streaming ML, ETL pipelines
+  - Messaging and log aggregation
+
+- **Differences arise in**
+  - Batch vs streaming orientation
+  - Delivery semantics
+  - Compute vs pub-sub roles
+  - Throughput, latency, fault tolerance
+  - API and language support
+
+* Apache Storm
+:::columns
+::::{.column width=60%}
+- Open-source distributed real-time computation system
+  - Acquired and open-sourced by Twitter
+::::
+::::{.column width=35%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_10_image_1.png)
+::::
+:::
+
+- **Horizontal scalability**: add machines to handle increasing data
+
+:::columns
+::::{.column width=50%}
+
+- **Directed acyclic graph (DAG)**:
+  - Spouts as data sources (as source nodes)
+  - Bolts as processing units (as nodes)
+  - Data streams (as edges)
+
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_10_image_2.png)
+::::
+:::
+
+- **Fault tolerance**:
+  - At-least-once processing
+  - Automatic task restarts
+  - Workload redistribution
+
+- **Suitable for**
+  - Complex data processing workflows
+  - With multiple stages and parallelism
+
+* Apache Kafka
+:::columns
+::::{.column width=70%}
+- Open-source distributed streaming platform
+  - Developed at LinkedIn, open-sourced in 2011
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_1.png)
+::::
+:::
+
+\vspace{0.5cm}
+
+:::columns
+::::{.column width=60%}
+- **Core components**
+  - Producers
+  - Brokers
+  - Consumers
+  - Topics
+  - Partitions
+
+- **Delivery**: at-least-once, at-most-once, exactly-once
+
+- High throughput, low latency
+  - Persistent, replicated log storage
+::::
+::::{.column width=35%}
+
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_2.png)
+::::
+:::
+
+- _Kafka Connect_ for integration with external systems
+- _Kafka Streams_ for native stream processing
+
+* Apache Flink
+:::columns
+::::{.column width=70%}
+- Open-source, distributed data processing framework
+::::
+::::{.column width=25%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_12_image_1.png)
+::::
+:::
+
+\vspace{1cm}
+
+:::columns
+::::{.column width=50%}
+- Distributed processing engine with strong support for stateful streaming
+- Exactly-once semantics via checkpointing and robust state management
+- Unified API for batch and streaming
+- Rich windowing functions
+- Runs on standalone clusters, YARN, Mesos, Kubernetes, and cloud
+::::
+::::{.column width=45%}
+
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_11_image_2.png)
+::::
+:::
+
+## Processing Styles
+
+* Record-at-a-time Processing
+- **Designed to handle infinite data streams**
+  - Implemented in Apache Kafka
+
+:::columns
+::::{.column width=50%}
+- **Distributed processing over multiple nodes**
+  - Nodes organized in a DAG
+  - Each node continuously:
+    - Receives a single record
+    - Processes the record immediately
+    - Forwards the output to the next node
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_13_image_1.png)
+::::
+:::
+
+- **Pros**
+  - Achieves extremely low latency
+    - Example: sub-millisecond response times
+
+- **Cons**
+  - Poor fault tolerance
+    - Requires extra nodes or redundant paths for failover
+  - Sensitive to stragglers
+    - Slow nodes can delay the entire pipeline
+
+* Micro-Batch Stream Processing
+:::columns
+::::{.column width=50%}
+- Break continuous stream into **small batches** (e.g., 1-second windows)
+  - Implemented in Spark Streaming (aka "DStreams")
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_14_image_1.png)
+::::
+:::
+
+- **Pros**
+  - Recover from failures and stragglers with task scheduling
+    - Schedule same task multiple times
+  - Deterministic tasks
+    - Exactly-once processing
+    - Consistent API: same semantics as RDDs
+    - Fault-tolerance
+
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 - **Cons**
   - Higher latency
     - E.g., seconds
 
+<<<<<<< HEAD
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_14_image_1.png)
 
 * Spark Micro-Batch Processing: Cons
@@ -986,3 +1350,94 @@ object ProcessLiveStream {
 - Spark Streaming uses **micro-batching** and is fundamentally limited in the latencies it can deliver
   - because it is based on a batch analytics platform, i.e., Spark
 
+=======
+* Spark Structured Streaming
+:::columns
+::::{.column width=60%}
+- Unified DataFrame/SQL-based model for both batch and streaming
+- System manages state, faults, incremental computation, and late data
+- Streaming table abstraction
+  - Conceptually an unbounded table continuously appended with new rows
+  - At time T, equivalent to a static DataFrame of all rows up to T
+::::
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_16_image_1.png)
+::::
+:::
+
+* Incrementalization
+:::columns
+::::{.column width=50%}
+- Framework identifies necessary state across micro-batches
+- Uses DAG analysis to compute updated results from prior state
+- Developers specify trigger conditions for updates
+- Results updated incrementally as events arrive
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_17_image_1.png)
+::::
+:::
+
+* Triggering Modes
+- Indicate when to process newly available streaming data
+
+- **Default**
+  - Process micro-batch after previous completes
+- **Trigger interval**
+  - Specify fixed interval for each micro-batch
+  - E.g., "every 10 minutes"
+- **Once**
+  - Wait for external trigger
+  - E.g., "at end of day"
+- **Continuous (experimental)**
+  - Process data continuously
+  - Not all operations available
+  - Lower latency
+
+* Saving Modes
+- Indicate when to save results and where
+  - Each time result table updates, write to external file system
+    - E.g., HDFS, AWS S3 or DB (e.g., MySQL, Cassandra)
+ 
+- **Append mode**
+  - Append new rows since last trigger
+  - Use when existing rows don't change
+- **Update mode**
+  - Write updated rows since last trigger
+  - Update in place
+- **Complete mode**
+  - Write entire updated result table
+  - General but expensive
+
+* Spark Streaming "Hello world"
+:::columns
+::::{.column width=50%}
+\small
+- `lines` is a `DataStreamReader`
+  - Unbounded DataFrame
+  - Set up reading but doesn't start reading
+
+- `words` split data in words
+
+- `counts` is a streaming DataFrame
+  - Running word count
+
+- `select()`, `filter()` are stateless transformations
+- `count()` is stateful transformation
+::::
+::::{.column width=45%}
+![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_20_image_1.png)
+::::
+:::
+
+\small
+- Configuration
+  - How to write processed output
+    - Where to write (e.g., `console`)
+    - How to write (e.g., `complete` for updated word counts)
+  - When to trigger computation (e.g., every 1 second)
+  - Where to save metadata for exactly-once guarantees, failure recovery
+
+- `start()` processing (non-blocking)
+  - `awaitTermination()` blocks until data is available
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4

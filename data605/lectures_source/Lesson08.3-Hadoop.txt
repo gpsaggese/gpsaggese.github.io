@@ -37,6 +37,7 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
+<<<<<<< HEAD
 # Apache Hadoop
 
 ## Hadoop Ecosystem
@@ -45,6 +46,14 @@ UMD DATA605 - Big Data Systems
 :::columns
 ::::{.column width=50%}
 - **Hadoop Map-Reduce**
+=======
+* Hadoop Ecosystem (aka Hadoop Zoo)
+:::columns
+::::{.column width=50%}
+- **Hadoop MapReduce**
+  - A framework for processing large data sets in parallel across a Hadoop
+    cluster
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 
 - **HDFS**
   - Distributed file system
@@ -72,12 +81,19 @@ UMD DATA605 - Big Data Systems
 
 - **YARN, Kafka, Storm, Spark, Solr, ...**
 
+<<<<<<< HEAD
 ## Hadoop Distributed File System
 
 * Hadoop Distributed File System (HDFS)
 ::: columns
 :::: {.column width=60%}
 - **HDFS** is a **distributed file system**
+=======
+* Hadoop Distributed File System (HDFS)
+::: columns
+:::: {.column width=60%}
+- HDFS is a **distributed file system**
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
   - Designed to store large data sets reliably
   - Part of the Apache Hadoop ecosystem
   - Inspired by the Google File System (GFS)
@@ -90,7 +106,10 @@ UMD DATA605 - Big Data Systems
 
 ![](data605/lectures_source/images/lecture_8_3/lec_8_3_slide_1_image_1.png)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 ::::
 :::
 
@@ -103,7 +122,11 @@ UMD DATA605 - Big Data Systems
 
 * HDFS Architecture
 ::: columns
+<<<<<<< HEAD
 :::: {.column width=60%}
+=======
+:::: {.column width=50%}
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 - **NameNode**
   - Store file/dir hierarchy
   - Store file metadata
@@ -119,13 +142,18 @@ UMD DATA605 - Big Data Systems
   - API (e.g., Python, Java) to library
   - Mount HDFS on local filesystem
 ::::
+<<<<<<< HEAD
 :::: {.column width=35%}
+=======
+:::: {.column width=45%}
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_18_image_1.png)
 ::::
 :::
 
 * HDFS: Read / Write Protocols
 ::: columns
+<<<<<<< HEAD
 :::: {.column width=60%}
 
 - **Read**
@@ -134,14 +162,29 @@ UMD DATA605 - Big Data Systems
   - Connect to _DataNode_ for data access
   - Reads blocks in parallel to improve performance
   - Data is reassembled by the client in correct order
+=======
+:::: {.column width=50%}
+
+- **Read**
+  - Contact _NameNode_ for _DataNode_ and block pointer
+  - Choose nearest _DataNode_ for each block
+  - Connect to _DataNode_ for data access
+  - Read blocks in parallel to improve performance
+  - Client reassembles data in correct order
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 
 - **Write**
   - _NameNode_ creates blocks
   - Assign blocks to multiple _DataNodes_
   - Client sends data to _DataNodes_
   - _DataNodes_ store data
+<<<<<<< HEAD
   - Blocks are pipelined to other replicas
   - Write is considered successful after all replicas acknowledge
+=======
+  - Pipeline blocks to other replicas
+  - Write successful after all replicas acknowledge
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 ::::
 :::: {.column width=45%}
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_18_image_1.png)
@@ -171,8 +214,11 @@ UMD DATA605 - Big Data Systems
   - Not suitable for transactional systems (OLTP)
     - E.g., bank
 
+<<<<<<< HEAD
 ## Hadoop MapReduce
 
+=======
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 * MapReduce: Hadoop
 
 ::: columns
@@ -195,6 +241,7 @@ UMD DATA605 - Big Data Systems
   - Output adapters
     - E.g., Avro, ORC, Parquet
   - Schedule multiple _MapReduce_ jobs
+<<<<<<< HEAD
 
 * Data Flow
 - Store input, intermediate, final outputs in HDFS
@@ -241,3 +288,5 @@ UMD DATA605 - Big Data Systems
   - High latency, not suitable for real-time
   - Difficult for complex iterative algorithms
   - Superseded in many cases by Spark and other engines
+=======
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4

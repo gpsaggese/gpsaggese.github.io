@@ -1,0 +1,226 @@
+# ##############################################################################
+# Dataset Size Issues
+# ##############################################################################
+
+When dealing with datasets, size matters. Small datasets, less than 1 GB, can
+easily fit into your computer's RAM, making them quick to process without
+needing to access the disk. Medium datasets, under 1 TB, won't fit into RAM but
+can be stored on a local disk, though this slows down performance. For large
+datasets over 1 TB, neither RAM nor local disk is sufficient, requiring multiple
+servers and specialized frameworks like Hadoop or Spark to manage them. Python
+and Pandas struggle with large, distributed datasets, so using the right tools
+is crucial for efficiency.
+
+Transition: Let's explore how dataset size thresholds and scaling challenges
+impact data processing.
+
+# ##############################################################################
+# Dataset Size Issues
+# ##############################################################################
+
+Dataset size categories are not fixed and evolve as technology advances. Small
+datasets are under 1 GB, medium ones are under 1 TB, and large datasets exceed 1
+TB. As computing power increases, datasets can grow larger, but this brings
+challenges like longer processing times and the need to rewrite code for
+different sizes. Efficient planning is essential to manage these issues. While
+Pandas is user-friendly, frameworks like Hadoop can be complex, highlighting the
+importance of choosing the right tool for the job.
+
+Transition: Now, let's discuss how Dask can help manage these challenges
+effectively.
+
+# ##############################################################################
+# Dask
+# ##############################################################################
+
+Dask is a Python library that scales familiar tools like Numpy, Pandas, and
+sklearn for larger datasets. It wraps these library objects into chunks or
+partitions, allowing them to be processed in parallel across multiple machines.
+This makes it easier to handle large datasets without rewriting code. Dask's
+main advantage is its ability to use familiar interfaces while optimizing for
+parallelism. It simplifies scaling from a local machine to a cluster without
+needing code changes or dealing with cluster-specific issues. Dask works well
+with multi-core systems and integrates with cluster managers like Yarn and
+Kubernetes.
+
+# ##############################################################################
+# Dask Layers
+# ##############################################################################
+
+This slide introduces Dask, a library for parallel computing in Python. It
+highlights the concept of layers in Dask, which help manage complex computations
+by breaking them down into smaller, manageable tasks. This approach allows for
+efficient use of resources and better performance when dealing with large
+datasets. The image likely illustrates how Dask organizes tasks into layers,
+showing the flow of data and computations. Understanding Dask layers is crucial
+for optimizing performance and ensuring that computations are executed
+efficiently.
+
+Transition: Now, let's explore the differences between scaling up and scaling
+out in computing.
+
+# ##############################################################################
+# Scaling Up vs Scaling Out
+# ##############################################################################
+
+This slide explains two strategies for handling increased computational demands:
+scaling up and scaling out.
+
+- Scaling up involves upgrading to more powerful hardware, like buying a larger
+  pot or a faster processor. The advantage is improved performance without
+  changing the code, but it can be costly and eventually hit a limit.
+
+- Scaling out means distributing tasks across multiple workers, akin to hiring
+  more cooks. It's cost-effective and doesn't require specialized hardware, but
+  it requires writing code for parallel processing and managing a cluster.
+
+Transition: Let's delve into how Dask handles computations efficiently.
+
+# ##############################################################################
+# Dask: Computation
+# ##############################################################################
+
+This slide discusses how Dask manages computations using lazy evaluation and
+efficient memory use.
+
+- Lazy computations allow defining data transformations without immediate
+  execution, operating in chunks to avoid memory overload. For example, a 2GB
+  file can be split into smaller chunks, processed in parallel, minimizing
+  memory usage.
+
+- The `compute()` function executes the computation, while `persist()` helps
+  manage memory by discarding intermediate results and keeping necessary data in
+  memory for faster reuse. This approach is beneficial for handling large,
+  complex Directed Acyclic Graphs (DAGs) efficiently.
+
+Understanding these concepts is key to leveraging Dask for big data processing.
+
+# ##############################################################################
+# Dask: Data Structures
+# ##############################################################################
+
+Dask provides different data structures to handle large datasets efficiently.
+The Dask DataFrame is similar to a Pandas DataFrame and is used for tabular or
+relational data. It allows you to work with large datasets that don't fit into
+memory by breaking them into smaller, manageable chunks. The Dask Array is akin
+to a numpy ndarray and is used for multidimensional arrays, enabling operations
+on large arrays that are too big for memory. Lastly, the Dask Bag is useful for
+unstructured or semi-structured data, like lists of Python objects, and helps
+parallelize computations on such data.
+
+Let's move on to how Dask handles reading data efficiently.
+
+# ##############################################################################
+# Dask Reading Data
+# ##############################################################################
+
+Dask's `read_csv()` function is designed to handle large datasets without
+loading them entirely into memory. It reads data in chunks, inferring column
+types by sampling the data. This approach allows Dask to manage memory
+efficiently and handle large files. The data is divided into partitions, which
+are independent chunks of data. For example, a dataset might be split into 33
+partitions, resulting in a task graph with 99 tasks. Each partition is processed
+separately, which allows for parallel processing and efficient data handling.
+
+Next, we'll discuss how Dask handles computations that don't fit into its native
+data structures.
+
+# ##############################################################################
+# Low Level APIs: Delayed
+# ##############################################################################
+
+Dask's Delayed API is useful for computations that don't naturally fit into
+Dask's higher-level data structures like DataFrames or Arrays. It allows you to
+build task graphs for custom computations, enabling parallel execution. This is
+particularly useful when you have operations that can be parallelized but don't
+fit neatly into Dask's existing abstractions. By using Delayed, you can manually
+construct a task graph, allowing Dask to manage the execution efficiently and in
+parallel, optimizing the use of resources and speeding up the computation
+process.
+
+# ##############################################################################
+# Low Level APIs: Futures
+# ##############################################################################
+
+This slide introduces the concept of "futures" in parallel programming. A future
+is a way to handle tasks that run in the background and will give a result
+later. In Python, the `concurrent.futures` module provides a simple way to run
+tasks asynchronously using either threads or processes. Dask, a parallel
+computing library, builds on this by allowing everything to be expressed as
+futures. It also lets you choose whether tasks should block the program or not
+while waiting for results. This flexibility is crucial for efficient parallel
+computing.
+
+Let's move on to understanding different types of parallel workloads.
+
+# ##############################################################################
+# Different Types of Parallel Workload
+# ##############################################################################
+
+This slide discusses how to handle parallel workloads by breaking a program into
+medium-sized tasks. The idea is to divide the work into chunks that are not too
+small or too large, making it easier to manage and execute in parallel. This
+approach helps in efficiently utilizing resources and improving performance. The
+images on the slide likely illustrate different ways to split tasks and how they
+can be executed in parallel. Understanding how to break down tasks is essential
+for optimizing parallel computing processes.
+
+Now, let's see how Dask encodes these tasks.
+
+# ##############################################################################
+# Encoding Task Graph
+# ##############################################################################
+
+Here, the focus is on how Dask represents tasks using Python dictionaries and
+functions. This method of encoding tasks allows Dask to manage and execute them
+efficiently. By using dictionaries, Dask can keep track of dependencies between
+tasks and ensure they are executed in the correct order. This approach
+simplifies the process of parallel computing by providing a clear structure for
+task management. The images on the slide probably show examples of how tasks are
+encoded and executed using Dask, highlighting its capability to handle complex
+workflows.
+
+# ##############################################################################
+# Task Scheduling
+# ##############################################################################
+
+Task scheduling is crucial in managing how data collections and operations are
+executed. These collections, like bags, arrays, and dataframes, create task
+graphs. In these graphs, nodes represent Python functions, and edges show
+dependencies, meaning the output of one task is used as input for another.
+Scheduling these task graphs can be done on a single machine using local
+processes or thread pools, or across a cluster using a distributed scheduler.
+This flexibility allows for efficient execution of tasks based on the available
+resources.
+
+Transition: Let's explore how Dask's dynamic task scheduling offers additional
+benefits.
+
+# ##############################################################################
+# Task Scheduling
+# ##############################################################################
+
+Dask's task scheduler is dynamic, unlike the static scheduling seen in
+relational databases. This means that during computation, Dask continuously
+evaluates which tasks are completed, which are pending, the available CPU
+resources, and where the data is located. This dynamic approach is beneficial in
+handling various issues, such as worker failures, where tasks can be re-run, and
+workers completing tasks at different speeds due to differences in computation,
+hardware, server workloads, or data access speeds. Additionally, network
+unreliability can be managed by re-running or removing isolated nodes.
+
+Transition: Now, let's compare Dask with another popular framework, Spark.
+
+# ##############################################################################
+# Dask vs Spark
+# ##############################################################################
+
+Dask and Spark are both popular frameworks for handling large datasets. Spark is
+an in-memory alternative to MapReduce/Hadoop, which is a significant advantage.
+However, Spark has some drawbacks. It is a Java library that supports Python
+through the PySpark API, meaning Python code runs on the Java Virtual Machine
+(JVM), making debugging challenging since execution occurs outside of Python.
+Additionally, Spark's DataFrame API differs from Pandas, requiring users to
+learn "the Spark way" and potentially implement solutions twice for exploratory
+analysis and production. Spark is optimized for MapReduce operations but can be
+difficult to set up and configure.

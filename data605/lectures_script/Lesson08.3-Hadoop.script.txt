@@ -1,0 +1,110 @@
+# ##############################################################################
+# Hadoop Ecosystem (aka Hadoop Zoo)
+# ##############################################################################
+
+The Hadoop ecosystem is a collection of tools and frameworks that work together
+to process and manage large data sets. Hadoop MapReduce is a key component that
+allows for parallel processing of data across a cluster. HDFS, or Hadoop
+Distributed File System, is the storage system that holds the data. Pig is used
+for high-level data processing, making it easier to handle complex data flows.
+HBase and Cassandra are databases designed for scalability and reliability, with
+HBase focusing on structured data and Cassandra offering a multi-master setup.
+Hive provides a way to query and summarize data, while ZooKeeper helps
+coordinate distributed applications. Other tools like YARN, Kafka, Storm, Spark,
+and Solr add more capabilities to the ecosystem.
+
+Let's dive deeper into HDFS, a crucial part of the Hadoop ecosystem.
+
+# ##############################################################################
+# Hadoop Distributed File System (HDFS)
+# ##############################################################################
+
+HDFS is a distributed file system designed to store large data sets reliably. It
+is a core component of the Apache Hadoop ecosystem and is inspired by the Google
+File System. HDFS is optimized for high-throughput access to large files, making
+it ideal for batch processing tasks rather than tasks requiring low-latency
+access. It is built to be fault-tolerant and scalable, ensuring data
+availability even if some nodes fail. This is achieved through replication,
+where data blocks are stored on different nodes and racks. The primary-secondary
+architecture and replication strategy also help improve read performance.
+
+Now, let's explore the architecture of HDFS to understand how it manages data.
+
+# ##############################################################################
+# HDFS Architecture
+# ##############################################################################
+
+The HDFS architecture consists of several key components. The NameNode is
+responsible for storing the file and directory hierarchy and metadata, such as
+block locations and permissions. DataNodes store the actual data blocks, which
+are split into chunks ranging from 16 to 256MB. These chunks are replicated
+across multiple DataNodes, often in different racks, to ensure data availability
+and fault tolerance. Clients interact with HDFS through APIs, such as Python or
+Java, and can mount HDFS on their local filesystem to access the data. This
+architecture allows HDFS to efficiently manage and store large volumes of data.
+
+# ##############################################################################
+# HDFS: Read / Write Protocols
+# ##############################################################################
+
+This slide explains how data is read and written in HDFS.
+
+- For reading, the client first contacts the NameNode to get information about
+  where the data blocks are stored. It then chooses the closest DataNode for
+  each block to access the data efficiently. The client reads the blocks in
+  parallel to speed up the process and reassembles them in the correct order.
+- For writing, the NameNode creates and assigns blocks to multiple DataNodes.
+  The client sends the data to these DataNodes, which store it and replicate it
+  to other nodes. The write operation is considered successful once all replicas
+  acknowledge the data.
+
+Now, let's move on to how HDFS handles faults and recovery.
+
+# ##############################################################################
+# Fault Tolerance and Recovery
+# ##############################################################################
+
+This slide discusses how HDFS ensures data reliability and integrity.
+
+- The NameNode keeps track of DataNode heartbeat signals to monitor their
+  status. If a DataNode fails, the system re-replicates its blocks to maintain
+  the required replication factor.
+- The NameNode itself can be a single point of failure, which is addressed by
+  implementing HDFS High Availability.
+- Data integrity is maintained using checksums, which help detect and correct
+  errors in the data.
+
+Next, we will compare HDFS with traditional file systems.
+
+# ##############################################################################
+# HDFS vs Traditional File Systems
+# ##############################################################################
+
+This slide highlights the differences between HDFS and traditional file systems.
+
+- HDFS is ideal for storing and processing large-scale files, such as logs,
+  media, and sensor data. It is commonly used in data lakes and ETL pipelines
+  and supports very large files and directories. However, performance can
+  degrade with many small files.
+- It is optimized for a write-once, read-many access pattern, making it suitable
+  for analytics tasks like OLAP.
+- While HDFS provides high throughput, it lacks low-latency access, making it
+  unsuitable for transactional systems like banking (OLTP).
+
+# ##############################################################################
+# MapReduce: Hadoop
+# ##############################################################################
+
+Hadoop is an open-source framework that implements the MapReduce programming
+model. It is designed to process large data sets across distributed computing
+environments. One of its key functionalities is partitioning input data using
+the Hadoop Distributed File System (HDFS). Hadoop supports various input
+adapters, allowing it to work with different data sources like HBase, MongoDB,
+Cassandra, and Amazon Dynamo. It efficiently schedules program execution across
+multiple machines, manages machine failures, and handles inter-machine
+communication. The framework also performs the GroupByKey step, which is crucial
+for data aggregation. Additionally, Hadoop supports output adapters such as
+Avro, ORC, and Parquet, and can schedule multiple MapReduce jobs to run
+concurrently.
+
+Let's move on to explore how Hadoop handles data storage and retrieval.

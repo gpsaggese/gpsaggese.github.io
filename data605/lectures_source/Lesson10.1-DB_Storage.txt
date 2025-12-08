@@ -392,6 +392,7 @@ Western Digital
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_17_image_1.png)
 ::::
 :::
+<<<<<<<< HEAD:data605/lectures_source/Lesson10.1-DB_Storage.txt
 
 * Error Correction Codes
 :::columns
@@ -419,6 +420,8 @@ Western Digital
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_18_image_4.png)
 ::::
 :::
+========
+>>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4:data605/lectures_source/old.Lesson10.1-DB_Storage.txt
 
 * RAID Levels
 :::columns

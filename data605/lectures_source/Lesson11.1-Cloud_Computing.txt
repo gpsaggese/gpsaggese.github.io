@@ -1,6 +1,15 @@
+<<<<<<< HEAD
 ::: columns
 :::: {.column width=15%}
 ![](lectures_source/UMD_Logo.png)
+=======
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 ::::
 :::: {.column width=75%}
 
@@ -14,11 +23,16 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
+<<<<<<< HEAD
 **Cloud Computing**
+=======
+**$$\text{\blue{11.1: Cloud Computing}}$$**
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
+<<<<<<< HEAD
 \vspace{1cm}
 
 **Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`**
@@ -90,22 +104,99 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 * Cloud Computing
 - **Basic ideas of cloud computing around for a long time**
+=======
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+::::
+:::: {.column width=20%}
+::::
+:::
+
+# Cloud Computing
+
+* Cloud Computing
+::: columns
+:::: {.column width=60%}
+- Computing as **"service" rather than "product"**
+  - Storage and computing in the cloud
+  - Edge devices (e.g., phones, laptops, tablets) interact with the cloud
+::::
+:::: {.column width=35%}
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_4_image_1.png)
+::::
+:::
+
+- **Advantages of cloud computing**
+  - Device agnostic: seamless computation across devices
+  - On demand
+  - Efficiency / scalability
+    - Programming frameworks (e.g., Hadoop, Spark, Dask) enable scalability
+  - Reliability
+  - Cost: "pay-as-you-go" for resources
+    - Cheaper than building own systems
+    - Computing as a commodity (like electricity)
+
+* Buying infrastructure
+- **To buy or to rent?**
+
+- **Building / buying infrastructure**
+  - Require time and capital investments (Capex)
+    - Especially at the beginning without revenues
+    - Smooth cash flow (constant $/mo) is better than lumpy one (big one-time
+      purchase)
+  - Buy hardware (e.g., computers, storage, network)
+    - Estimate current hardware size
+    - Difficult to estimate future demands
+  - Update obsolete hardware
+  - Cost of owning hardware (Opex)
+    - Data center, electricity, cooling, handling faults
+  - Administering
+    - Install, update, maintain software stack
+
+* Renting infrastructure
+- **Renting infrastructure** (i.e., cloud computing)
+  - Pay for what you use
+    - Low initial capital investment
+  - Ready systems with a click
+  - No multi-year resource plan needed
+  - Choose machines for your application and data needs
+
+* Cloud Computing
+::: columns
+:::: {.column width=55%}
+- **Ideas of cloud computing around for a long time**
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
   - Mainframes + thin clients (1960s)
   - Personal computers (1980s)
   - Grid computing for supercomputers (1990s)
   - Peer-to-peer architecture (early 2000s)
   - Client-server model (Web 1.0 and Web 2.0)
   - Cloud computing (2010s)
+<<<<<<< HEAD
 - **It finally works**
 - **Why now? A convergence of several key technologies over the last few years**
   - OS virtualization
   - Large data centers
   - Decreasing hardware costs
   - Big data frameworks
+=======
+
+- **Now, it finally works**
+
+- **Why now?**
+  - A convergence of key technologies
+    - OS virtualization
+    - Large data centers
+    - Decreasing hardware costs
+    - Big data frameworks
+::::
+:::: {.column width=40%}
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_1.png)
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_2.png)
+<<<<<<< HEAD
 
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_7_image_3.png)
 
@@ -521,4 +612,126 @@ As of 2022, 28 geographical regions
   - Each cloud systems uses different protocols and different APIs
   - May not be possible to run applications across different cloud-based systems
   - Solution: indirection layer (Terraform, Ansible)
+=======
+::::
+:::
+
+* Infrastructure-as-a-Service (IaaS)
+::: columns
+:::: {.column width=70%}
+- Cloud provides low-level resources like virtual machines, storage, networking
+  - Users install and maintain the operating system and applications
+
+- **Examples**
+  - AWS EC2
+  - Google Compute Engine
+  - Microsoft Azure Virtual Machines
+  - IBM Cloud Infrastructure
+
+- **Benefits**
+  - Flexibility in managing resources
+  - Scalability to meet demand
+  - Cost-effective, pay for what you use
+
+- **Use Cases**
+  - Hosting websites and applications
+  - Data analysis and processing
+  - Development and testing environments
+::::
+:::: {.column width=25%}
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_8_image_1.png)
+::::
+:::
+
+* Platform-as-a-Service
+::: columns
+:::: {.column width=70%}
+- **Problem**: assembling your own software stack requires work
+  - Install
+  - Configure
+  - Manage dependencies (e.g., incompatible versions)
+
+- **Solution**: get a pre-built software stack
+  - Software stack as a virtualization solution (e.g., VMware or Docker)
+    - Pre-installed OS
+    - Libraries
+    - Application software
+
+- **Business model built around this**
+  - E.g.,
+    - Google App Engine
+    - Managed Hadoop
+  - E.g., pre-built images for Hadoop
+    - Hortonworks, Cloudera
+  - E.g., pre-built distributions for Linux
+    - RedHat, Gentoo, CentOS
+::::
+:::: {.column width=25%}
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_9_image_1.png)
+::::
+:::
+
+* Software-as-a-Service (SaaS)
+::: columns
+:::: {.column width=70%}
+- **Cloud provides the application**
+  - No need to install on your machine
+  - Use directly from the cloud
+  - Examples include:
+    - _Dropbox_: Access and share files without local storage
+    - _Salesforce_: Manage customer relationships online
+    - Any app running in a browser: Google Docs or Microsoft Office 365
+
+- **Benefits**
+  - Accessibility from any device with internet connectivity
+  - Automatic updates and maintenance by the provider
+  - Scalability for growing user needs
+  - Cost-effectiveness by reducing physical hardware and software installations
+::::
+:::: {.column width=25%}
+
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_10_image_1.png)
+::::
+:::
+
+* X-as-a-Service
+- After 2010, business model of **X-as-a-service (XaaS)**
+  - Mobility-as-a-service (e.g., Uber)
+  - Games-as-a-service (e.g., Google Stadia)
+  - Storage-as-a-service (e.g., S3, Google Drive)
+  - Desktop-as-a-service (e.g., AWS app)
+  - Marketing-as-a-service
+  - Banking-as-a-service
+  - ...
+
+* Cloud Deployment Models
+::: columns
+:::: {.column width=50%}
+- **Private**
+  - Internal cloud hosted on organizational premises
+  - E.g., company's data center running virtualized services
+
+- **Public **
+  - External cloud hosted by third-party providers
+  - E.g., AWS, Azure, GCP offering compute and storage to clients
+::::
+:::: {.column width=45%}
+![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_13_image_1.png)
+::::
+:::
+
+- **Hybrid cloud**
+  - Combine private and public environments to optimize cost, security,
+    scalability
+  - Sensitive workloads stay internal
+  - Scalable tasks move to public cloud
+
+- **On-premises resources**
+  - E.g., corporate servers in a building
+
+- **Off-premises resources**
+  - E.g., cloud provider's distributed data centers
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 

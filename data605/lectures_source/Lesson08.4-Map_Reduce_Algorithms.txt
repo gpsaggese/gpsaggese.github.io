@@ -55,6 +55,7 @@ UMD DATA605 - Big Data Systems
   - Reorganized datasets for downstream systems
 
 * Cost Measures for Distributed Algorithms
+<<<<<<< HEAD
 - What matter is the real dollar cost not just $O(\cdot)$
   - **Total cost** $\approx \text { CPU + storage + network}$
   - **Communication cost**
@@ -62,6 +63,15 @@ UMD DATA605 - Big Data Systems
   - **Elapsed communication cost**
     - Max I/O along the critical path
   - **Elapsed computation cost**
+=======
+- What matter is the **real dollar cost** not just $O(\cdot)$
+  - _Total cost_ $\approx \text { CPU + storage + network}$
+  - _Communication cost_
+    - Total I/O across all processes, e.g., shuffling 1TB
+  - _Elapsed communication cost_
+    - Max I/O along the critical path
+  - _Elapsed computation cost_
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
     - Wall clock with $p$ workers, sensitive to skew and stragglers
 - **Dominant term heuristic**
   - _"If one cost dominates, ignore the others for first order reasoning"_
@@ -69,29 +79,47 @@ UMD DATA605 - Big Data Systems
   - _"Adding more machines trades \$ for time and may not fix skew"_
 
 * Total Cost Model for MapReduce
+<<<<<<< HEAD
 - **Total cost**
+=======
+- **Total cost** of a computation
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
   $$C_{total} = C_{compute} + C_{io} + C_{network} + C_{storage}$$
 
 - **Notation**
   - $|I|$ input GB, $|S|$ shuffle GB, $|O|$ output GB
   - $p_m$ mappers, $p_r$ reducers
   - $T_m$ map hours, $T_r$ reduce hours
+<<<<<<< HEAD
   - $c_{vm}$ = \$/VM hour, $c_{io}$ = \$/GB I/O, $c_{sh}$ = \$/GB shuffle
 
 - **Compute**
   $$C_{compute} = c_{vm}\left(p_m T_m + p_r T_r\right)$$
+=======
+  - $c_{compute}$ = \$/VM hour, $c_{io}$ = \$/GB I/O, $c_{shuffle}$ = \$/GB shuffle
+
+- **Compute cost**
+  $$C_{compute} = c_{compute}\left(p_m T_m + p_r T_r\right)$$
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
   where $T_m,T_r$ include skew and stragglers
   - Skew effects = a heavy key or hotspot inflates the heaviest task and the
     critical path
 
+<<<<<<< HEAD
 - **I/O**
   $$C_{io} = c_{io}\left(|I| + 2|S| + |O|\right)$$
   - Shuffle often dominates when $\sum_i |S_i| \gg |I|, |O|$
+=======
+- **I/O cost**
+  $$C_{io} = c_{io}\left(|I| + 2|S| + |O|\right)$$
+  - Shuffle often dominates since $\sum_i |S_i| \gg |I|, |O|$
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 
 
 * Total Cost Model for MapReduce
 - **Notation**
   - $|I|$ input GB, $|S|$ shuffle GB, $|O|$ output GB
+<<<<<<< HEAD
   - $c_{sh}$ = \$/GB shuffle $c_{eg}$ = \$/GB egress, $c_{st}$ = \$/GB hour
   - $R$ HDFS replication
 
@@ -109,10 +137,31 @@ UMD DATA605 - Big Data Systems
   - Compression
   - Better partitioning
   - Early filtering to reduce $\sum_i |S_i|$ and stragglers
+=======
+  - $c_{shuffle}$ = \$/GB shuffle $c_{egress}$ = \$/GB egress, $c_{storage}$ = \$/GB hour
+  - $R$ HDFS replication
+
+- **Network cost**
+  $$C_{network} = c_{shuffle} |S| + c_{egress} |O|_{egress}$$
+  where $|O|_{egress}$ is data leaving the provider
+
+- **Storage cost**
+  $$C_{storage} = c_{storage} R (|I| + |O|)$$
+
+- **Putting all together**
+  - Plug in variables and unit prices to get $C_{total}$
+  - Apply the dominant term heuristic to prioritize optimization
+  - Tuning levers
+    - Use Combiners
+    - Compression
+    - Better partitioning
+    - Early filtering to reduce $\sum_i |S_i|$ and stragglers
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 
 * Inverted Index using MapReduce
 
 - **Goal**: build a mapping from words to the list of documents they appear in
+<<<<<<< HEAD
   - Example: `MapReduce is powerful` in `doc1`
     - Output = `[(MapReduce, doc1)`, `(is, doc1)`, `(powerful, doc1)]`
   - Map phase:
@@ -125,11 +174,29 @@ UMD DATA605 - Big Data Systems
 - Useful in search engines and information retrieval
 - Requires tokenization and normalization of content
 - Deduplication of document IDs in reducer
+=======
+
+- **Example**
+    - Input in `doc1` = `MapReduce is powerful`
+    - Output = `[(MapReduce, doc1)`, `(is, doc1)`, `(powerful, doc1)]`
+  - _Map phase_:
+    - Input: `(docID, content)`
+    - Emit: `(word, docID)` for each word in content
+  - _Reduce phase_:
+    - Input: `(word, [docID_1, docID_2, ...])`
+    - Emit: `(word, list of unique docIDs)`
+
+- **Implementation considerations**
+  - Useful in search engines and information retrieval
+  - Requires tokenization and normalization of content
+  - Deduplication of document IDs in reducer
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 
 * Join Operations using MapReduce
 - **Goal**: join two datasets based on a common key
   - Types of joins:
     - Inner join, left/right outer join, full outer join
+<<<<<<< HEAD
   - Example: joining employee records with department data by deptID
   - Map phase:
     - Tag records by source and emit key as join attribute
@@ -138,10 +205,30 @@ UMD DATA605 - Big Data Systems
     - Perform join logic in reducer
 
 - Careful data tagging and partitioning required
+=======
+
+- **Example**
+  - Join `EmployeeRecords(empID, name, deptID)` with
+    `Department(deptID, deptName)`
+  - Join key: `deptID`
+  - _Map phase_:
+    - Emit key as `deptID`, tag each record with source label (e.g., "E" or "D")
+    - Example output: `(deptID, ("E", empRecord))`, `(deptID, ("D", deptRecord))`
+  - _Reduce phase_:
+    - Input: `(deptID, [list of tagged records])`
+    - Cross-product logic based on tags to perform the actual join
+
+- **Implementation considerations**
+  - Use composite values with source tag to distinguish record origin
+  - Optimize data layout to minimize network shuffle
+  - Ensure proper partitioning so all records with the same key go to the same
+    reducer
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 
 * Sorting and Grouping in MapReduce
 
 - **Goal**: organize data by keys or values for further analysis
+<<<<<<< HEAD
   - Map phase:
     - Emit data with key as sort/group criterion
   - Shuffle and sort phase automatically sorts by key
@@ -152,6 +239,18 @@ UMD DATA605 - Big Data Systems
   - Requires partitioning and sampling for global order
 - Partial sort:
   - Sort within each partition
+=======
+
+- **Example**
+  - Sort sales data by date or group by product ID
+  - _Map phase_:
+    - Emit data with key as sort/group criterion
+  - _Shuffle phase_:
+    - Shuffle and sort phase automatically sorts by key
+  - _Reduce phase_:
+    - Receives sorted keys and can perform grouped aggregation
+
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
 - Often used as a preprocessing step for reporting
 
 * Graph Processing with MapReduce
@@ -162,13 +261,20 @@ UMD DATA605 - Big Data Systems
 - PageRank:
   - Compute importance score of web pages
   - Graph is represented as adjacency lists
+<<<<<<< HEAD
   - Map phase:
     - Emit contributions to neighboring nodes
   - Reduce phase:
+=======
+  - _Map phase_:
+    - Emit contributions to neighboring nodes
+  - _Reduce phase_:
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
     - Sum contributions to update PageRank score
 
 * Statistical Aggregation and Log Analysis
 
+<<<<<<< HEAD
 - Statistical Aggregation:
   - Map: emit relevant quantities (e.g., value, 1 for count)
   - Reduce: compute sums, averages, variances
@@ -180,3 +286,20 @@ UMD DATA605 - Big Data Systems
   - Example: `(status code, 1)` $\to$ count occurrences
 - Useful for monitoring, alerting, and trend analysis
 - Can handle large-scale logs from distributed systems
+=======
+- **Statistical Aggregation**
+  - Example: `(sensorID, temperature)` $\to$ compute average temperature per
+    sensor
+  - _Map phase_: emit relevant quantities (e.g., value, 1 for count)
+  - _Reduce phase_: compute sums, averages, variances
+
+- **Log Analysis**
+  - Example: `(status code, 1)` $\to$ count occurrences
+  - _Map phase_: parse logs, extract fields (timestamp, IP, status)
+    and emit `(key, value)` for desired metrics
+  - _Reduce phase_: aggregate (e.g., count errors, hits per IP)
+
+- **Implementation considerations**
+  - Useful for monitoring, alerting, and trend analysis
+  - Can handle large-scale logs from distributed systems
+>>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
