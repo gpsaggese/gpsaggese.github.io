@@ -1,5 +1,11 @@
 # Fake News Detection using PEFT (LoRA)
 
+- **VIKAS PATEL**
+- **University ID (UID) - 120988417**
+- **Project 3: Fake News Detection**
+- **Difficulty: 3 (Hard)**
+- **Project Objective: Develop a robust fake news detection system by fine-tuning a large pre-trained transformer model using PEFT, leveraging a dataset of labeled news articles.**
+
 A full-stack machine learning application that detects fake news using Parameter-Efficient Fine-Tuning (PEFT) with Low-Rank Adaptation (LoRA) on RoBERTa. The project demonstrates state-of-the-art NLP techniques with an accessible web interface.
 
 ## 🎯 Project Overview
@@ -230,62 +236,6 @@ docker run -p 8888:8888 -v $(pwd)/Code_files:/workspace fake-news-training
 # Open PEFT_Sentiment_Analysis.ipynb
 # Train model and save checkpoint
 ```
-
-## 🎓 Academic Context & Rubric Alignment
-
-This project was developed for **MSML610 Fall 2025** and addresses all rubric criteria:
-
-### ✅ All Deliverables Present (10/10)
-
-- [x] README files (main + component-specific)
-- [x] Working code (training + inference)
-- [x] Docker setup (training + frontend)
-- [x] Presentation materials
-- [x] Demo application
-
-### ✅ Working Docker Container (5/5)
-
-- [x] Training Dockerfile (`Code_files/Dockerfile`) - Jupyter on port 8888
-- [x] Frontend Dockerfile (`frontend/Dockerfile`) - Web app
-- [x] docker-compose.yml for orchestration
-- [x] Tested and verified on macOS
-- [x] Health checks implemented
-
-### ✅ Quality of Documentation (5/5)
-
-- [x] Comprehensive README with architecture diagram
-- [x] Installation instructions (3 methods)
-- [x] API documentation
-- [x] All functions have docstrings (13/13 in utils.py)
-- [x] Troubleshooting guide
-- [x] Code comments throughout
-
-### ✅ Complexity/Creativity of Project (5/5)
-
-- [x] **Advanced NLP**: PEFT/LoRA implementation
-- [x] **Full-stack application**: Streamlit + Flask + PyTorch
-- [x] **Parameter efficiency**: 0.32% trainable parameters (400K vs 125M)
-- [x] **Production-ready**: Docker, API, health checks
-- [x] **User experience**: Clean UI with dropdown examples
-
-### ✅ Code Quality (5/5)
-
-- [x] PEP 8 compliant
-- [x] Type hints where applicable
-- [x] Error handling (try/except blocks)
-- [x] Logging (Flask backend logs)
-- [x] Modular design (separation of concerns)
-- [x] No hardcoded paths (uses absolute imports)
-
-### ✅ Quality of Pull Request (5/5)
-
-- [x] Descriptive commit messages
-- [x] Clean git history
-- [x] .gitignore for Python/Jupyter/IDEs
-- [x] No unnecessary files committed
-- [x] Branch: `UmdTask96_Fall2025_PEFT_Sentiment_Analysis_on_Movie_Reviews`
-
-**Total Score: 35/35 (100%)**
 
 ## 🧠 Model Details
 
