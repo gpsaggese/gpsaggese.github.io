@@ -1,415 +1,291 @@
-===BEGIN_README===
 
-Tutor Task 40 – Fall 2025
-Whisper Large V3 Multilingual Customer Support Chatbot
+# Whisper Large V3 Multilingual Customer Support Chatbot
 
-This project implements a multilingual customer support chatbot powered by:
+This repository implements the **core engine** of a multilingual customer support chatbot.  
 
-Whisper Large V3 for speech-to-text (audio → text)
+The system is built around four main capabilities:
 
-XLM-R–based intent classifier for intent detection
+1. **Robust audio loading & preprocessing** (for user voice messages)  
+2. **Speech transcription** using a Whisper model  
+3. **Multilingual intent classification** using XLM-R  
+4. **Multilingual response generation** using Qwen
 
-An LLM-based response generator for answers in the user’s language
+All of that logic lives in **core Python modules under `src/utils/`**.  
+Assignment files like `XYZ.API.md`, `XYZ.API.ipynb`, `XYZ.example.md`, `XYZ.example.ipynb`, and `XYZ_utils.py` are **just thin wrappers**: they import these modules and demonstrate how to use them. The README below focuses on the *real* implementation.
 
-The project is structured to highlight a clean internal API layer, plus a runnable example application:
+---
 
-api_contract.py – stable API contract (dataclasses + interfaces)
+## Core Architecture
 
-multilingual_chatbot_utils.py – wrapper that adapts the real models to that API
+At a high level, the system implements this pipeline:
 
-API.md / API.ipynb – document & demonstrate the API
+1. **Audio ingestion**
+   - Load a user audio file (e.g. `.wav`, `.mp3`) from disk.
+   - Convert to a mono waveform at 16 kHz to provide high quaity audio files
 
-example.md / example.ipynb – end-to-end example, including logging & simple analytics
+2. **Transcription (Whisper)**
+   - Feed the waveform into a Whisper model.
+   - Get back **text + detected language code**.
+   
 
-1. Folder Structure
+3. **Intent classification (XLM-R)**
+   - Take the transcribed text.
+   - Use an XLM-R–based zero-shot classifier to decide which **intent label** best matches the text.
 
-Relative to the course layout, the project is located at:
+4. **Response generation (Qwen)**
+   - Use an LLM (Qwen2.5-1.5B-Instruct) to:
+     - Generate a response **in the user’s language** for all other languages.
+     - Generate a reponse in english for a better understanding acts like subtitlte
+     
 
-MSML610/
-└── Term2025/
-    └── projects/
-        └── TUTORTASK40_FALL2025_WHISPER_LARGE_V3_MULTILINGUAL_CUSTOMER_SUPPORT_CHATBOT/
-            ├── src/
-            │   ├── app/
-            │   │   └── main_pipeline.py
-            │   ├── data/
-            │   │   └── ... (sample audio files, e.g. test_audio.mp3)
-            │   └── utils/
-            │       ├── audio_utils.py
-            │       ├── transcription_utils.py
-            │       ├── intent_utils.py
-            │       ├── response_utils.py
-            │       └── __init__.py
-            ├── api_contract.py
-            ├── multilingual_chatbot_utils.py
-            ├── utils_data_io.py
-            ├── utils_post_processing.py
-            ├── API.md
-            ├── API.ipynb
-            ├── example.md
-            ├── example.ipynb
-            ├── Dockerfile
-            ├── docker-compose.yml
-            ├── requirements.txt
-            ├── streamlit_app.py
-            ├── test_chatbot.py
-            └── README.md
+This pipeline is typically orchestrated in a higher-level component (e.g. `MultilingualChatbot` in `src/app/main_pipeline.py`), which wires together the utility modules described below.
 
+---
 
-High-level roles:
+## Core Modules
 
-src/ – original project code (models, pipeline, utils, sample data).
+### 1. `src/utils/audio_utils.py` – Audio Loading
 
-api_contract.py – contract-only API layer.
+The `load_audio(path, max_duration_sec=60)` function is responsible for **robustly loading audio** and preparing it for Whisper. It:
 
-multilingual_chatbot_utils.py – concrete implementation of the API using src/.
 
-API.* – API documentation and minimal demo.
+- Loads audio using `soundfile` as 32-bit float  
+- Resamples to **16 kHz** using `torchaudio.functional.resample` if the original sample rate differs  
 
-example.* – reference example application using the API.
+It returns:
 
-utils_data_io.py / utils_post_processing.py – logging + analytics helpers.
+- `waveform` – a NumPy `float32` array  
+- `sample_rate` – always `16000` Hz, ready for Whisper
 
-Dockerfile / docker-compose.yml – containerized environment.
+This module encapsulates all the “messy” audio handling so the rest of the code can assume a clean auido
 
-2. Conceptual Architecture
-2.1 Processing pipeline
+---
 
-The chatbot supports text and audio inputs:
+### 2. `src/utils/transcription_utils.py` – Whisper Transcription
 
-Audio path (ChatRequest.audio_path):
+The `transcription_utils` module defines `transcribe_audio(whisper_model, audio_waveform, language=None)`, which handles **speech-to-text** using a Whisper model :contentReference[oaicite:2]{index=2}.
 
-Whisper Large V3 (via transcribe_audio) → transcription text + language.
+Key behaviors:
 
-XLM-R-based intent classifier → intent label.
+- Ensures the input is a NumPy `float32` array  
+- Detects almost-silent audio and returns an empty transcription with a fallback language (`"unknown"` or the provided `language`) instead of crashing Whisper :contentReference[oaicite:3]{index=3}  
+- Uses **GPU if available** (`device = "cuda" if torch.cuda.is_available() else "cpu"`) and moves the Whisper model to that device  
+- Supports an optional `language` parameter to **force** a language; otherwise Whisper’s auto-detection is used  
+- Cleans up the result:
+  - Strips whitespace from `text`  
+  - Normalizes the `language` code to lowercase and trims it  
+- Performs **garbage collection** and empties CUDA cache to avoid memory issues on 4–8 GB systems :contentReference[oaicite:4]{index=4}  
 
-LLM-based response generator → reply in detected language.
+The function returns a dictionary with:
 
-Text input (ChatRequest.text):
+```python
+{
+    "text": "<transcribed text>",
+    "language": "<lang_code or 'unknown'>"
+}
+````
 
-XLM-R-based intent classifier → intent label.
+---
 
-LLM-based response generator → reply in the language_hint or default.
+### 3. `src/utils/intent_utils.py` – Intent Classification (XLM-R)
 
-This logic is encapsulated in:
+The `IntentClassifier` class implements **zero-shot multilingual intent detection** using **XLM-RoBERTa Large** fine-tuned on XNLI .
 
-src/app/main_pipeline.py → MultilingualChatbot
+On initialization, it:
 
-Wrapped by MultilingualChatbotService in multilingual_chatbot_utils.py
+* Loads the model `joeddav/xlm-roberta-large-xnli` from Hugging Face
+* Creates a tokenizer and a sequence classification model for that checkpoint 
+* Defines a configurable list of **intent labels** along with the pre-trained model label list such as:
 
-Exposed through the high-level method:
+  * `greeting`, `goodbye`, `help_request`, `order_issue`, `refund_request`,
+  * `device_control`, `search_query`, `chit_chat`, `general_question`,
+  * `product_question`, `math_question`, `translation_request`,
+  * `travel_information`, `medical_information`, `technical_support`,
+  * `programming_help`, `task_management` 
 
-from api_contract import ChatRequest
-from multilingual_chatbot_utils import create_default_service
+The main method `predict_intent(text: str) -> str`:
 
-service = create_default_service()
-response = service.handle(ChatRequest(user_id="demo", text="Hello!"))
+* Returns `"help_request"` for empty text (defensive default)
+* For each label, constructs a **natural language hypothesis**:
+  `"This text is about {label}."`
+* Runs the text + hypothesis pair through the XNLI model and looks at the **entailment probability** (index 2 in the softmax output, since XNLI uses `[contradiction, neutral, entailment]`)
+* Chooses the label with the highest entailment score as the predicted intent 
 
-2.2 API layer vs example layer
+This design turns the XNLI model into a flexible **zero-shot classifier** that can easily be extended by adding new labels to the list.
 
-API layer (api_contract.py, API.md, API.ipynb)
-Defines the stable programming interface:
+---
 
-Dataclasses: ChatRequest, TranscriptionResult, IntentResult, ChatResponse
+### 4. `src/utils/response_utils.py` – Multilingual Response Generation (Qwen)
 
-Protocols (interfaces): SpeechToTextService, IntentClassifierService, ResponseGeneratorService, MultilingualSupportService
+The `ResponseGenerator` class is a **multilingual response engine** built on top of **Qwen/Qwen2.5-1.5B-Instruct** .
 
-Concrete implementation: MultilingualChatbotService (via multilingual_chatbot_utils.py)
+On initialization:
 
-Example layer (example.md, example.ipynb)
-Shows a realistic usage:
+* Loads the tokenizer and model using `AutoTokenizer` and `AutoModelForCausalLM` with `trust_remote_code=True`
+* Defines a `lang_map` dictionary mapping common ISO language codes (`"en"`, `"de"`, `"es"`, `"fr"`, `"hi"`, `"zh"`, etc.) to human-readable language names 
 
-Simulate several user queries (EN/ES/FR, text + optional audio)
+The main method `generate(text: str, lang_code: str | None)` has **two modes**:
 
-Log each interaction to logs/interactions.jsonl
+1. **Pure English translation mode (`lang_code == "en"`)**
 
-Compute simple summaries: counts per intent, counts per language
+   * Builds a prompt that asks Qwen to *only* produce a **clean English translation** of the input text:
 
-3. Internal API – Key Files
-3.1 api_contract.py
+2. **Same-language reply mode (all other languages)**
 
-Defines the core types and interfaces:
+   * If `lang_code` is recognized, it asks Qwen to:
 
-LanguageCode = str – language codes (e.g., "en", "es", "fr").
+     * Reply **only in that language**
+     * Write clearly and naturally
 
-ChatRequest – one user query (text or audio).
+Generation details:
 
-TranscriptionResult – result of STT.
+* Tokenizes the prompt and moves tensors to the model’s device
+* Calls `model.generate` with:
 
-IntentResult – result of intent classification.
+  * `max_new_tokens=180`, `temperature=0.3`, `top_p=0.7`, `do_sample=True`, `repetition_penalty=1.15`
+* Decodes and cleans the output:
 
-ChatResponse – final bot response to the caller.
+  * Strips the prompt back out from the generated text
+  * Extra cleanup specifically for translation mode (remove “English translation:” prefixes, etc.)
 
-SpeechToTextService, IntentClassifierService, ResponseGeneratorService, MultilingualSupportService – Protocols describing service interfaces.
+This module is where the **“respond in the same language”** logic is enforced.
 
-Any new implementation (e.g., different STT or LLM) can plug in as long as it implements these Protocols.
+---
 
-3.2 multilingual_chatbot_utils.py
+## Setup & Dependencies
 
-Adapters that connect api_contract.py to the real models:
+All Python dependencies are listed in `requirements.txt`:
 
-MultilingualChatbotService(MultilingualSupportService):
+```txt
+transformers>=4.40.0
+accelerate
+sentencepiece
+openai-whisper
+soundfile
+huggingface-hub
+numpy
+torchaudio
+streamlit
+````
 
-Holds an instance of MultilingualChatbot from src/app/main_pipeline.py.
+---
 
-For audio:
+## Environment Setup (Docker)
 
-Calls self._bot.process_audio(audio_path, language=request.language_hint).
+The project is intended to run inside Docker using `docker-compose.yml`:
+Here is a snippet of the code
 
-For text:
+```yaml
+version: "3.9"
 
-Uses self._bot.intent_classifier.predict_intent(text) to get intent.
+services:
+  chatbot:
+    build: .
+    container_name: multilingual_chatbot
+    working_dir: /app
 
-Uses ResponseGenerator().generate(text, lang_code) to produce the reply.
+    # Mount the entire project folder into /app
+    volumes:
+      - .:/ap
+```
 
-Returns the result as a ChatResponse.
+### Steps to Run
 
-create_default_service():
+1. **Go to the project root** (where `Dockerfile` and `docker-compose.yml` live):
 
-Factory function for notebooks/clients:
+   ```bash
+   cd /path/to/TutorTask40_Fall2025_Whisper_Large_V3_Multilingual_Customer_Support_Chatbot
+   ```
 
-service = create_default_service()
+2. **Build the Docker image**:
 
-4. Logging & Post-Processing
-4.1 utils_data_io.py
+   ```bash
+   docker build -t multilingual_chatbot .
+   ```
 
-Provides helpers for logging interactions in JSON Lines (JSONL) format:
+3. **Start the `chatbot` service via docker-compose**:
 
-append_interaction(log_path, request, response)
+   ```bash
+   docker compose up -d chatbot
+   ```
 
-Flattens ChatRequest + ChatResponse into a single dict.
+4. **Attach to the running container and go to `/app`**:
 
-Appends one JSON object per line to log_path.
+   ```bash
+   docker exec -it multilingual_chatbot bash
+   cd /app
+   ```
 
-Automatically creates directories if needed.
+5. **(Optional) Start Jupyter Lab on port 8888**:
 
-read_interactions(log_path)
+   ```bash
+   jupyter lab --ip 0.0.0.0 --port 8888 --no-browser --allow-root
+   ```
 
-Loads all entries from the log file into a list of dicts.
+   Then open the printed URL (or `http://localhost:8888`) in your browser.
 
-Each log record includes:
+6. **Run the Streamlit app from the container**:
 
-timestamp, user_id, request_type ("text" or "audio"), request_text, audio_path
+   ```bash
+   streamlit run streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+   ```
 
-language_hint, reply_text, detected_language
+   If port `8501` is exposed in `docker-compose.yml` (e.g., `- "8501:8501"`), you can open the UI at:
 
-intent_label, intent_score, debug_info
+   ```text
+   http://localhost:8501
+   ```
+## Data Collection
 
-4.2 utils_post_processing.py
+Audio samples for testing are taken online from the **Hugging Face Common Voice** dataset (and any user-provided audio files).
 
-Provides simple analytics:
+---
 
-summarize_by_intent(log_path) → {intent_label: count}
+## Pipeline
 
-summarize_by_language(log_path) → {language_code: count}
+> Audio/Text → Transcription (Whisper) → Intent (XLM-R) → Response (LLM)
 
-load_records(log_path) → full list of logged records
 
-Used inside example.ipynb to generate a quick summary at the end.
+![Multilingual Chatbot Pipeline](./flow.png)
 
-5. Notebooks
-5.1 API.ipynb
+### Core Files 
 
-Purpose: minimal demo of the API layer.
+- `src/app/main_pipeline.py` – Orchestrates the full chatbot pipeline for text and audio requests.  
+- `src/utils/audio_utils.py` – Loads and preprocesses audio into a Whisper-ready waveform.  
+- `src/utils/transcription_utils.py` – Runs Whisper to transcribe audio and detect language.  
+- `src/utils/intent_utils.py` – Uses a multilingual model (XLM-R) to classify user intent.  
+- `src/utils/response_utils.py` – Uses an LLM (Qwen) to generate responses in the user’s language.  
+- `streamlit_app.py` – Launches the Streamlit web UI that calls the chatbot API.  
+- `requirements.txt` – Lists all Python dependencies for the project.  
+- `Dockerfile` – Builds the Docker image containing the chatbot environment.  
+- `docker-compose.yml` – Defines the `chatbot` service, volumes, ports, and GPU settings.
 
-Imports ChatRequest and create_default_service().
+### Multilingual Chat Experience, UI & Core Capabilities
 
-Creates the service:
+The multilingual customer support chatbot provides an **end-to-end conversational experience** that works seamlessly across languages and input types. Customers can **speak** or **type** their queries, and the system will transcribe, understand, and respond appropriately. Under the hood, it combines Whisper Large V3 for speech-to-text, a multilingual intent classifier to understand what the user wants, and an LLM-based responder to generate clear, helpful answers in the customer’s own language.
 
-service = create_default_service()
+The frontend is built with **Streamlit**, which provides a simple, reactive web UI on top of the core Python pipeline. Streamlit is used here because it lets us:
 
+* Turn Python scripts into a clean web app with **minimal boilerplate**,
+* Quickly wire UI elements (file upload, text input, buttons, chat layout) into the backend logic,
+* Run everything in the **same environment** as the models (no separate frontend stack), and
+* Share a reproducible demo that graders can launch directly from the container.
 
-Demonstrates:
+The interface is designed to feel like a modern support chat window: it keeps track of the **full chat history**, offers an **English translation view** for easier review, and includes a **“Clear chat”** option so users can reset the conversation. Clearing the chat not only gives a fresh session but also helps with **better memory handling**, avoiding very long conversations that can slow things down.
 
-A text query (e.g., Spanish customer issue).
+**Key capabilities:**
 
-An audio query (if src/data/test_audio.mp3 exists).
+* **Multimodal input** – accepts both **voice messages** (audio upload) and **typed text** via the Streamlit UI.
+* **Multilingual support** – handles multiple languages end-to-end (speech → intent → response).
+* **Whisper-based transcription** – uses **Whisper Large V3** to convert audio into text and detect the spoken language.
+* **Intent understanding** – uses a multilingual transformer-based classifier to infer user intents (e.g., order issues, refunds, general questions).
+* **LLM-powered responses** – generates concise, context-aware replies using an LLM, aiming to respond in the **same language as the user**.
+* **English translation view** – provides an **English translation** of messages/responses to make evaluation and debugging easier.
+* **Conversation history** – displays the full chat history so users can see how the conversation evolves over multiple turns.
+* **Clear chat for better memory handling** – includes a one-click **“Clear chat history”** button that resets the session and helps keep the system’s memory footprint under control.
 
-Usage pattern:
 
-from api_contract import ChatRequest
-from multilingual_chatbot_utils import create_default_service
 
-service = create_default_service()
 
-req = ChatRequest(
-    user_id="demo-text",
-    text="Hola, mi pedido no ha llegado todavía.",
-    language_hint="es",
-)
-resp = service.handle(req)
-print(resp.reply_text, resp.detected_language, resp.intent)
 
-5.2 example.ipynb
-
-Purpose: end-to-end example application, matching example.md.
-
-Initializes the service and a log path (logs/interactions.jsonl).
-
-Sends several text queries (EN/ES/FR) and optionally one audio query.
-
-Logs each interaction via append_interaction.
-
-Prints individual responses (reply text, language, intent).
-
-Uses summarize_by_intent and summarize_by_language to show simple analytics.
-
-Example snippet from the notebook:
-
-from utils_data_io import append_interaction
-from utils_post_processing import summarize_by_intent, summarize_by_language
-
-log_path = "logs/interactions.jsonl"
-service = create_default_service()
-
-req_en = ChatRequest(user_id="user-1", text="My order is delayed.", language_hint="en")
-resp_en = service.handle(req_en)
-append_interaction(log_path, req_en, resp_en)
-
-intent_counts = summarize_by_intent(log_path)
-lang_counts = summarize_by_language(log_path)
-
-6. Running the Project
-
-You can run this project locally (Python 3.11 with all deps installed) or inside Docker. Since models like Whisper and XLM-R are heavy, Docker is recommended.
-
-6.1 Prerequisites
-
-Docker and Docker Compose installed
-
-(Optional) Local Python 3.11 environment if you prefer to run without Docker
-
-6.2 Running with Docker
-6.2.1 Build the image
-
-From the project root (TUTORTASK40_FALL2025_...):
-
-docker build -t multilingual-chatbot .
-
-6.2.2 Run an interactive container
-docker run -it --rm \
-    -p 8888:8888 \
-    -v "$(pwd)":/workspace \
-    --name multilingual-chatbot-container \
-    multilingual-chatbot \
-    bash
-
-
-This:
-
-Maps the current project into /workspace inside the container.
-
-Gives you a shell to run notebooks or scripts.
-
-6.2.3 Starting Jupyter inside the container (optional)
-
-Inside the container:
-
-cd /workspace
-
-# If Jupyter is not already installed in the image:
-pip install jupyterlab
-
-jupyter lab --ip 0.0.0.0 --port 8888 --no-browser --allow-root
-
-
-Then, on the host, open the Jupyter URL with the token in your browser and:
-
-Open API.ipynb to test the API.
-
-Open example.ipynb to run the end-to-end example.
-
-Expected terminal output when starting Jupyter:
-A URL similar to http://127.0.0.1:8888/?token=...
-
-6.3 Running locally (without Docker)
-
-If you prefer to run directly on your machine:
-
-Create and activate a Python 3.11 virtual environment.
-
-Install dependencies:
-
-pip install -r requirements.txt
-
-
-Start Jupyter:
-
-jupyter lab
-
-
-Open and run:
-
-API.ipynb – API demonstration.
-
-example.ipynb – end-to-end example + logging and summaries.
-
-Note: Running Whisper Large V3 and transformer models locally may be slow without a GPU.
-
-6.4 Running the Streamlit demo (optional)
-
-The repository also includes a streamlit_app.py that can be wired to the same API.
-
-Inside the chosen environment (Docker container or local venv):
-
-streamlit run streamlit_app.py
-
-
-Expected behavior:
-
-A web UI where a user can:
-
-Enter text in different languages.
-
-(Optionally) upload audio (if implemented in the app).
-
-See a response generated by the chatbot.
-
-7. Testing / Quick Sanity Checks
-
-Internal API import test:
-
-python -c "from api_contract import ChatRequest; from multilingual_chatbot_utils import create_default_service; print('OK')"
-
-
-Notebook structure:
-
-API.ipynb and example.ipynb should run top-to-bottom via “Restart & Run All” (given models and deps are installed).
-
-Logs:
-
-After running example.ipynb, logs/interactions.jsonl should exist.
-
-utils_post_processing.summarize_by_intent("logs/interactions.jsonl") should return a non-empty dict after a few interactions.
-
-8. Design Decisions (Summary)
-
-Contract-first design:
-api_contract.py separates interface from implementation. Other teams could re-implement the same contract with different models without touching the notebooks.
-
-Wrapper vs core:
-multilingual_chatbot_utils.py wraps the existing MultilingualChatbot pipeline instead of rewriting it, preserving the original project logic.
-
-Thin notebooks:
-Heavy logic (logging, analytics, service wiring) lives in reusable .py modules:
-
-multilingual_chatbot_utils.py
-
-utils_data_io.py
-
-utils_post_processing.py
-Notebooks only orchestrate calls and display results.
-
-Reproducibility:
-Dockerfile + requirements.txt allow the same environment to be recreated for grading or future runs.
-
-This structure ensures the project is:
-
-Well-documented
-
-API-driven
-
-Runnable end-to-end
-
-Easy to integrate with other frontends or pipelines.
-===END_README===
+```
