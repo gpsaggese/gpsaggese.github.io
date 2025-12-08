@@ -6,7 +6,7 @@ services:
     container_name: house-price-tfx
     image: house-price-tfx:latest
     ports:
-      - "8888:8888"  # Jupyter Notebook
+      - "8889:8889"  # Jupyter Notebook
       - "8501:8501"  # TensorFlow Serving
     volumes:
       # Mount source code for development
@@ -26,9 +26,8 @@ services:
     command: >
       bash -c "
       echo 'House Price TFX Pipeline Container Started' &&
-      echo 'To run Jupyter: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root' &&
-      echo 'To run pipeline: python scripts/api.py' &&
-      /bin/bash
+      echo 'Starting Jupyter Notebook on port 8889...' &&
+      /usr/bin/python -m jupyter notebook --ip=0.0.0.0 --port=8889 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''
       "
     stdin_open: true
     tty: true

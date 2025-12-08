@@ -14,8 +14,9 @@ __author__ = "MSML610 Fall 2025 Project"
 # Import submodules for easier access
 from . import config
 from . import data_utils
-from . import feature_engineering
-from . import model_utils
+# Commenting out feature_engineering and model_utils to avoid tensorflow_transform import at module load time
+# from . import feature_engineering
+# from . import model_utils
 from . import evaluation_utils
 
 # Import optional modules only when explicitly needed
@@ -26,8 +27,8 @@ try:
     __all__ = [
         "config",
         "data_utils",
-        "feature_engineering",
-        "model_utils",
+        # "feature_engineering",  # Available but not auto-imported (requires tensorflow_transform)
+        # "model_utils",  # Available but not auto-imported (requires tensorflow_transform)
         "evaluation_utils",
         "model_comparison",
         "sklearn_trainer",
@@ -37,7 +38,7 @@ except ImportError:
     __all__ = [
         "config",
         "data_utils",
-        "feature_engineering",
-        "model_utils",
+        # "feature_engineering",  # Available but not auto-imported (requires tensorflow_transform)
+        # "model_utils",  # Available but not auto-imported (requires tensorflow_transform)
         "evaluation_utils",
     ]
