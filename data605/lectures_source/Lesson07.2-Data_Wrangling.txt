@@ -19,6 +19,7 @@ UMD DATA605 - Big Data Systems
 
 \begingroup \Large
 <<<<<<< HEAD
+<<<<<<< HEAD
 **$$\text{\blue{7.2: Data Wrangling}}$$**
 \endgroup
 
@@ -40,6 +41,8 @@ UMD DATA605 - Big Data Systems
 ::::
 :::: {.column width=30%}
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 **$$\text{\blue{7.2: Data Wrangling and Cleaning}}$$**
 \endgroup
 
@@ -59,11 +62,15 @@ UMD DATA605 - Big Data Systems
     - Read cover-to-cover and try the examples 2–3 times to really _master_ them
 ::::
 :::: {.column width=20%}
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_16_image_1.png){width=2cm}
 ::::
 :::
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 * Overview
 - **Data wrangling**
@@ -173,6 +180,8 @@ Long format
   - Missing/illegal values, misspellings, wrong fields, extraction issues
   - Duplicated records, contradicting info, referential integrity violations
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 * Data Wrangling and Data Cleaning
 ::: columns
 :::: {.column width=50%}
@@ -417,11 +426,15 @@ digraph DataQualityProblems {
   - Missing/illegal values, misspellings, wrong fields, extraction issues
   - Duplicated records, contradicting information, referential integrity
     violations
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Unclear default/missing values
   - Evolving schemas/classification schemes (categorical attributes)
   - Outliers
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 * Data Quality Problems
 
@@ -458,13 +471,21 @@ digraph DataQualityProblems {
 
 - **Sources of errors in data**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+* Single-Source Problems: Example
+
+- **Sources of errors in data**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Data entry errors: arbitrary values entered
   - Measurement errors: sensor data inaccuracies
   - Distillation errors: processing and summarization issues
   - Data integration errors: inconsistencies across combined sources
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_25_image_1.png)
 
 * Multi-Source Problems
@@ -487,11 +508,15 @@ digraph DataQualityProblems {
   - Contradicting information
   - Mismatched information
 
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 * Univariate Outlier Detection
 ::: columns
 :::: {.column width=50%}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 - A set of values characterized by metrics:
   - Center (e.g., mean)
@@ -506,6 +531,8 @@ digraph DataQualityProblems {
     - k%-trimmed mean (discard lowest and highest k% values)
   - Robust dispersion:
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Problems with outliers**
   - Extreme outliers may alter metrics, masking others
 
@@ -515,7 +542,10 @@ digraph DataQualityProblems {
     - Median
     - k%-trimmed mean (discard lowest and highest k% values)
   - Robust dispersion
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     - Median absolute deviation (MAD)
     - Median distance from median value
 ::::
@@ -525,6 +555,7 @@ digraph DataQualityProblems {
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_28_image_2.png)
 ::::
 :::
+<<<<<<< HEAD
 <<<<<<< HEAD
 * Outlier Detection
 
@@ -569,6 +600,8 @@ digraph DataQualityProblems {
 
 - Often data volume too large
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Outlier Detection
 - **For Gaussian data**
@@ -614,16 +647,23 @@ digraph DataQualityProblems {
     - Recompute mean and covariance
 
 - Data volume often large
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Use approximation techniques
 
 - Try different techniques based on data
 ::::
 <<<<<<< HEAD
+<<<<<<< HEAD
 :::: {.column width=35%}
 =======
 :::: {.column width=25%}
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+:::: {.column width=25%}
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_30_image_1.png)
 
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_30_image_2.png)
@@ -635,10 +675,14 @@ digraph DataQualityProblems {
 :::: {.column width=60%}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Often data is in the form of a time series
 =======
 - Often data is in the form of a **time series**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+- Often data is in the form of a **time series**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - A **time series** is a sequence of data points recorded at regular intervals
   - Stock prices
@@ -650,9 +694,12 @@ digraph DataQualityProblems {
   - Social media engagement
   - Hourly energy usage
 <<<<<<< HEAD
+<<<<<<< HEAD
   - Customer satisfaction ratings
 =======
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Weekly retail foot traffic
   - ...
 ::::
@@ -661,6 +708,7 @@ digraph DataQualityProblems {
 ::::
 :::
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 - Rich literature on _forecasting_ in time series data
 
@@ -697,9 +745,14 @@ digraph DataQualityProblems {
 ::::
 :::
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - Rich literature on **forecasting** in time series data
 
 - Use historical patterns to flag **outliers**
   - Rolling MAD (median absolute variation)
 
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733

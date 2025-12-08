@@ -1,8 +1,11 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ::: columns
 :::: {.column width=15%}
 ![](lectures_source/UMD_Logo.png)
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 // Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
 //
 //
@@ -10,7 +13,10 @@
 ::: columns
 :::: {.column width=15%}
 ![](data605/lectures_source/images/UMD_Logo.png)
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::
 :::: {.column width=75%}
 
@@ -25,15 +31,20 @@ UMD DATA605 - Big Data Systems
 
 \begingroup \Large
 <<<<<<< HEAD
+<<<<<<< HEAD
 **Graph Data Management
 Neo4J**
 =======
 **$$\text{\blue{12.2: Graph Data Management}}$$**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+**$$\text{\blue{12.2: Graph Data Management}}$$**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
+<<<<<<< HEAD
 <<<<<<< HEAD
 \vspace{1cm}
 
@@ -176,6 +187,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_13_image_1.png)
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 ::::
@@ -359,7 +372,10 @@ _Federal funds networks_
 ::::
 ::::{.column width=50%}
 ```xml
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 <movies>
   <movie>
   <title>Top Gun</title>
@@ -373,6 +389,7 @@ _Federal funds networks_
    </actor>
   </actors>
   </movie>
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 * Overview
@@ -444,6 +461,8 @@ _Federal funds networks_
   - Standardized by W3C
 
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ```
 ::::
 :::
@@ -521,7 +540,10 @@ RETURN movie
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_18_image_1.png)
 
 ```sql
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 PREFIX  foaf: <http://xmlns.com/foaf/0.1/>
 SELECT ?name
        ?email
@@ -531,6 +553,7 @@ WHERE
     ?person  foaf:name  ?name .
     ?person  foaf:mbox  ?email .
   }
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_18_image_1.png)
@@ -584,6 +607,8 @@ RETURN movie
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_20_image_2.png)
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ```
 
 ::::
@@ -663,11 +688,15 @@ Graph DB approach
 ```
 \endgroup
   - Provide values and structure only where necessary
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Labeled Property Graphs in Neo4j
 - **Nodes**
   - Main data elements
+<<<<<<< HEAD
 <<<<<<< HEAD
   - Connected to other nodes via *relationships*
   - Can have one or more *properties* (stored as key/value pairs)
@@ -688,6 +717,8 @@ Graph DB approach
 
 * Cypher Example
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Connected via _relationships_
   - Have _properties_ (key/value pairs)
 
@@ -713,7 +744,10 @@ Graph DB approach
 ::::{.column width=50%}
 \footnotesize
 ```sql
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 CREATE (w:Wine
     {name: "Prancing Wolf",
       style: "ice wine",
@@ -728,9 +762,12 @@ MATCH (p:Publication
     vintage: 2015})
     CREATE (p)-[r:reported_on]->(w)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 * Cypher Example
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ```
 ::::
 ::::{.column width=50%}
@@ -741,7 +778,10 @@ MATCH (p:Publication
 * Cypher Example
 \footnotesize
 ```sql
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 MATCH (p:Publication {name: "Wine Expert Monthly"}),
     (w:Wine {name: "Prancing Wolf"})
     CREATE (p)-[r:reported_on {rating: 2}]->(w)
@@ -751,18 +791,24 @@ MATCH (w:Wine {name: "Prancing Wolf"}),
   (g:GrapeType {name: "Riesling"})
   CREATE (w)-[r:grape_type]->(g)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_23_image_1.png)
 
 * Cypher Example
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ```
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_23_image_1.png){width=40%}
 
 * Cypher Example
 \footnotesize
 ```sql
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 CREATE (wr:Winery {name: "Prancing Wolf Winery"})
 MATCH (w:Wine {name: "Prancing Wolf"}),
     (wr:Winery {name: "Prancing Wolf Winery"})
@@ -777,6 +823,7 @@ MATCH (wr:Winery
 MATCH (w:Wine), (g:GrapeType {name: "Riesling"})
     CREATE (w)-[r:grape_type]->(g)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_24_image_1.png)
 
@@ -785,6 +832,8 @@ MATCH (w:Wine), (g:GrapeType {name: "Riesling"})
   - People preference for wine
   - Relationships with one another
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ```
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_24_image_1.png){wdith=80%}
 
@@ -796,7 +845,10 @@ MATCH (w:Wine), (g:GrapeType {name: "Riesling"})
   - Relationships with one another
 
 ```sql
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 CREATE (p:Person {name: "Alice"})
 
 MATCH (p:Person {name: "Alice"}),
@@ -809,12 +861,15 @@ CREATE (p:Person {name: "Patty"})
 MATCH (p1:Person {name: "Patty"}),
     (p2:Person {name: "Tom"})
 <<<<<<< HEAD
+<<<<<<< HEAD
     CREATE (p1)-[r:friends]->(p2)- The changes were made "superimposing" new relationships without changing the previous data
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_25_image_1.png)
 
 * Cypher Example
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     CREATE (p1)-[r:friends]->(p2)
 ```
 
@@ -830,7 +885,10 @@ MATCH (p1:Person {name: "Patty"}),
 :::columns
 ::::{.column width=50%}
 ```sql
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 MATCH (p:Person
   {name: "Alice"})-->(n)
   RETURN n;
@@ -842,11 +900,14 @@ MATCH (p:Person
 MATCH (fof:Person)-[:friends]-(f:Person)-[:friends]-(p:Person {name: "Alice"})
   RETURN fof.name;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_26_image_1.png)
 
 * A general query structure
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ```
 ::::
 ::::{.column width=50%}
@@ -857,12 +918,16 @@ MATCH (fof:Person)-[:friends]-(f:Person)-[:friends]-(p:Person {name: "Alice"})
 * A general query structure
 
 ```sql
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 MATCH [Nodes and relationships]
 WHERE [Boolean filter statement]
 RETURN [DISTINCT] [statements [AS alias]]
 ORDER BY [Properties] [ASC or DESC]
 SKIP [Number] LIMIT [Number]
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 * Simple query
@@ -935,6 +1000,8 @@ Could be used also as:
 
 ```
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ```
 
 * Simple query
@@ -1070,7 +1137,10 @@ RETURN r
 - Collection
 	- Concatenation through +
 	- IN to check if an element exists in a collection
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * More WHERE options
 - WHERE others.name IN ['Andres', 'Peter']
@@ -1094,6 +1164,7 @@ RETURN r
   - RETURN a.array, filter(x IN a.array WHERE length(x)= 3)
     FILTER - returns the elements in a collection that comply to a predicate.
 <<<<<<< HEAD
+<<<<<<< HEAD
   - WHERE ANY      (x IN a.array    WHERE x = "one"  ) – at least one
   - WHERE ALL       (x IN nodes(p) WHERE x.age > 30) – all elements
   - WHERE SINGLE (x IN nodes(p) WHERE var.eyes = "blue") – Only one
@@ -1108,6 +1179,8 @@ RETURN r
 
 * Data access is *programmatic*
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - WHERE ANY (x IN a.array    WHERE x = "one"  ) – at least one
   - WHERE ALL (x IN nodes(p) WHERE x.age > 30) – all elements
   - WHERE SINGLE (x IN nodes(p) WHERE var.eyes = "blue") – Only one
@@ -1122,7 +1195,10 @@ RETURN r
     or write-only
 
 * Data access is programmatic
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - REST API
 - Through the Java APIs
   - JVM languages have bindings to the same APIs
@@ -1133,6 +1209,7 @@ RETURN r
 - Path finding
 - Pattern matching
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 * Overview
 - Motivation
@@ -1170,6 +1247,8 @@ RETURN r
 - Historical queries
   - Given a node, find other nodes that evolved most similarly in the past
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ## Typical graph analysis tasks
 
 * Queries vs Analysis Tasks
@@ -1205,7 +1284,10 @@ RETURN r
 - Historical queries
   - Find nodes with similar evolution to a given node
 
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - Graph algorithms
   - Network flows
   - Spanning trees
@@ -1215,6 +1297,7 @@ RETURN r
   - Query graph can specify restrictions on the graph structure, on values of node attributes, and so on
   - An important variation: *approximate* matching
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_1.png)
 ```
@@ -1278,6 +1361,8 @@ edges
 
 * Bulk Synchronous Parallel (BSP) 
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_1.png){width=70%}
 
 * Queries: Connection Subgraphs
@@ -1347,13 +1432,17 @@ edges
   - E.g., pageRank and Shortest Path
 
 * Bulk Synchronous Parallel (BSP)
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_46_image_1.png)
 
 time
 
 * Pregel System
+<<<<<<< HEAD
 <<<<<<< HEAD
 - Large-scale graph processing system developed by Google
   - Pregel paper, 2010
@@ -1394,6 +1483,8 @@ time
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_49_image_1.png)
 
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - Large-scale graph processing system by Google
   - Pregel paper, 2010
 - Inspired by Bulk Synchronous Parallel (BSP) model
@@ -1441,4 +1532,7 @@ time
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_49_image_1.png)
 ::::
 :::
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733

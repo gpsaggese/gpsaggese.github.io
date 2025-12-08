@@ -35,6 +35,7 @@ UMD DATA605 - Big Data Systems
 
 * Software Testing
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Evaluate functionality, reliability, performance, and security of a product to
   ensure it meets requirements
   - Software testing is critical in development
@@ -73,6 +74,8 @@ UMD DATA605 - Big Data Systems
 - **Compatibility testing**: Check compatibility with browsers, database
   versions, OS, mobile devices
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Goal**
   - Evaluate functionality, reliability, performance, and security of a product
     to ensure it meets requirements
@@ -124,12 +127,16 @@ UMD DATA605 - Big Data Systems
 
 - **Compatibility testing**
   - Check compatibility with browsers, database versions, OS, mobile devices
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * CI / CD
 - **Continuous integration (CI)**
   - Merge code changes into a central repository multiple times a day
   - Automate build and test after each change
+<<<<<<< HEAD
 <<<<<<< HEAD
   - **Goal**: Detect and fix integration errors quickly
   - Add code with unit tests
@@ -137,11 +144,16 @@ UMD DATA605 - Big Data Systems
   - Add code with unit tests
   - _Goal_: Detect and fix integration errors quickly
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+  - Add code with unit tests
+  - _Goal_: Detect and fix integration errors quickly
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - **Continuous deployment (CD)**
   - Automatically deploy code changes to production
     - Without human intervention
     - After build and test phases pass
+<<<<<<< HEAD
 <<<<<<< HEAD
   - **Goal**: Deliver features, bug fixes, and updates continuously
   - E.g., GitHub actions, GitLab workflows, AWS Code, Jenkins
@@ -156,6 +168,8 @@ UMD DATA605 - Big Data Systems
   - Refer to resources (e.g., document, services, URI, persons)
   - Use HTTP methods (`GET`, `POST`, `PUT`, `DELETE`)
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - _Goal_: Deliver features, bug fixes, and updates continuously
 
 - **Examples**
@@ -171,7 +185,10 @@ UMD DATA605 - Big Data Systems
     - E.g., document, services, URI, persons
   - Use HTTP methods
     - E.g., `GET`, `POST`, `PUT`, `DELETE`
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Naming convention, link format
   - Response (XML or JSON)
 
@@ -185,12 +202,17 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=50%}
 - **Cacheable**
 <<<<<<< HEAD
+<<<<<<< HEAD
   - Label response data as cacheable or non-cacheable
   - Reuse cacheable responses
 =======
   - APIs label response data as cacheable or non-cacheable
   - Client can reuse cacheable responses
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+  - APIs label response data as cacheable or non-cacheable
+  - Client can reuse cacheable responses
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Increase scalability and performance
 
 - **Layered system**
@@ -204,15 +226,20 @@ UMD DATA605 - Big Data Systems
 
 * Stages of Deployment
 <<<<<<< HEAD
+<<<<<<< HEAD
 - The deployment of software progresses through several environments
 =======
 - **Software is deployed through several environments**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+- **Software is deployed through several environments**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Each environment tests, validates, and prepares software for release to end
     user
 
 - **Development environment (Dev)**
   - Individual for each developer or feature team
+<<<<<<< HEAD
 <<<<<<< HEAD
   - Goal: Developers write and initially test code
 
@@ -226,6 +253,8 @@ UMD DATA605 - Big Data Systems
 
 - **Production Environment (Prod)**
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - _Goal_: Developers write and initially test code
 
 - **Testing**
@@ -239,12 +268,16 @@ UMD DATA605 - Big Data Systems
   - Replica of production environment for final checks and stakeholder review
 
 - **Production (Prod)**
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Live environment where software is available to end users
   - Optimized for security, performance, and scalability
   - Focus on uptime, user experience, and data integrity
 
 * Semantic Versioning
+<<<<<<< HEAD
 <<<<<<< HEAD
 - **Semantic versioning** is a versioning scheme for software that conveys meaning
   about underlying changes
@@ -271,6 +304,8 @@ UMD DATA605 - Big Data Systems
   - Optional metadata to denote build information or environment specifics
   - E.g., `1.0.0+20210313120000` or `1.0.0+f8a34b3228c`
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Semantic versioning** conveys meaning about changes to software
   - Systematic approach
   - Communicate to users potential impact of updating to a new version
@@ -296,11 +331,15 @@ UMD DATA605 - Big Data Systems
   - Build Metadata
     - Optional metadata to denote build information or environment specifics
     - E.g., `1.0.0+20210313120000` or `1.0.0+f8a34b3228c`
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Microservices vs Monolithic Architecture
 ::: columns
 :::: {.column width=40%}
+<<<<<<< HEAD
 <<<<<<< HEAD
 - Different styles of building complex systems
 - Find the right granularity
@@ -328,6 +367,8 @@ _"Microservice" interest over time_
 - **Resilience**: isolate and address faults; one service failure doesn't affect
   the entire system
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Many styles of building complex systems**
   - _Monolith_: all features in one deployable unit
   - _Microservices_: many small services collaborating over the network
@@ -361,11 +402,15 @@ _"Microservice" interest over time_
 ::: columns
 :::: {.column width=55%}
 - **Microservices** = many small services collaborating over the network
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - **Cons**
   - Complex deployment
   - Requires tooling
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 * Monolithic Architecture
@@ -382,6 +427,8 @@ _"Microservice" interest over time_
 - **Single point of failure**: Issues in any module can affect the entire
   application
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::
 :::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_50_image_1.png)
@@ -413,4 +460,7 @@ _"Microservice" interest over time_
 _"Microservice vs Monolithic" search over time_
 ::::
 :::
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733

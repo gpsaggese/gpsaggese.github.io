@@ -374,6 +374,7 @@ _Commodore 64 cassette player_
 :::
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 * RAID Levels
 :::columns
 ::::{.column width=55%}
@@ -408,6 +409,8 @@ _Commodore 64 cassette player_
 \includegraphics[trim={12cm 4cm 12cm 22cm}, clip]{data605/lectures_source/images/lecture_4_2/lec_4_2_slide_19_image_1.png}
 
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 * Error Correction Codes
 :::columns
 ::::{.column width=70%}
@@ -499,13 +502,17 @@ _Commodore 64 cassette player_
 ::::
 ::::{.column width=70%}
 ![](data605/lectures_source/images/lecture_10_1/lec_10_1_slide_20_image_5.png){width=40%}
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::
 :::
 
 * Choosing a RAID Level
 :::columns
 ::::{.column width=50%}
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 - Main choice: RAID 1 vs. RAID 5
@@ -529,6 +536,8 @@ _Commodore 64 cassette player_
 :::
 
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - Main choice between RAID 0, RAID 1, and RAID 5
 
 - **RAID 0 (striping)**
@@ -559,7 +568,10 @@ _Commodore 64 cassette player_
 
 
 
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 //## DB Internals
 //
 //* (Centralized) DB Internals

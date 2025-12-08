@@ -1,8 +1,11 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ::: columns
 :::: {.column width=15%}
 ![](lectures_source/UMD_Logo.png)
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 // Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
 //
 //
@@ -10,7 +13,10 @@
 ::: columns
 :::: {.column width=15%}
 ![](data605/lectures_source/images/UMD_Logo.png)
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::
 :::: {.column width=75%}
 
@@ -25,14 +31,19 @@ UMD DATA605 - Big Data Systems
 
 \begingroup \Large
 <<<<<<< HEAD
+<<<<<<< HEAD
 **Streaming and Real-Time Analytics**
 =======
 **$$\text{\blue{12.1: Streaming and Real-time Analytics}}$$**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+**$$\text{\blue{12.1: Streaming and Real-time Analytics}}$$**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
+<<<<<<< HEAD
 <<<<<<< HEAD
 \vspace{1cm}
 
@@ -293,6 +304,8 @@ Computation
     - Consistent API: same functional semantics as RDDs
     - Fault-tolerance
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 ::::
@@ -639,11 +652,15 @@ Computation
     - Consistent API: same semantics as RDDs
     - Fault-tolerance
 
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Cons**
   - Higher latency
     - E.g., seconds
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_14_image_1.png)
 
@@ -1351,6 +1368,8 @@ object ProcessLiveStream {
   - because it is based on a batch analytics platform, i.e., Spark
 
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 * Spark Structured Streaming
 :::columns
 ::::{.column width=60%}
@@ -1440,4 +1459,7 @@ object ProcessLiveStream {
 
 - `start()` processing (non-blocking)
   - `awaitTermination()` blocks until data is available
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733

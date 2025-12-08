@@ -7,10 +7,14 @@ shopt -s nullglob   # empty pattern expands to nothing instead of itself
 files=($DIR/lectures_source/Lesson${LESSON}*)
 if (( ${#files[@]} != 1 )); then
 <<<<<<< HEAD
+<<<<<<< HEAD
     echo "Need exactly one file"
 =======
     echo "Need exactly one file. Found file: ${files[*]}"
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+    echo "Need exactly one file. Found file: ${files[*]}"
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     exit 1
 else
     echo "Found file: ${files[*]}"

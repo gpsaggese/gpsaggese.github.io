@@ -22,15 +22,21 @@ UMD DATA605 - Big Data Systems
 \endgroup
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ::: columns
 :::: {.column width=75%}
 \vspace{1cm}
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 \vspace{1cm}
 
 ::: columns
 :::: {.column width=75%}
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
@@ -45,15 +51,20 @@ UMD DATA605 - Big Data Systems
 * Big Data: Storing and Computing
 :::columns
 <<<<<<< HEAD
+<<<<<<< HEAD
 ::::{.column width=60%}
 =======
 ::::{.column width=50%}
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+::::{.column width=50%}
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_4_image_1.png)
 \footnotesize \centering
 _Volume of data in the world_
 ::::
+<<<<<<< HEAD
 <<<<<<< HEAD
 ::::{.column width=40%}
 - Big data **needs 10k-100k machines**
@@ -61,22 +72,31 @@ _Volume of data in the world_
 ::::{.column width=45%}
 - **Big data needs 10k-100k machines**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+::::{.column width=45%}
+- **Big data needs 10k-100k machines**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - **Two problems**
   - Storing big data
   - Processing big data
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Need to **solve together and efficiently**
 =======
 - **Need to solve problems together and efficiently**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+- **Need to solve problems together and efficiently**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - One slow phase slows entire system
 ::::
 :::
 
 * Processing the Web: Example
 :::columns
+<<<<<<< HEAD
 <<<<<<< HEAD
 ::::{.column width=50%}
 
@@ -94,6 +114,8 @@ _Volume of data in the world_
 ::::
 ::::{.column width=50%}
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::{.column width=55%}
 
 - Web contains (in 2024):
@@ -111,7 +133,10 @@ _Volume of data in the world_
   - Much larger time / cost needed!
 ::::
 ::::{.column width=40%}
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ![](data605/lectures_source/images/lecture_8_1/lec_8_1_slide_8_image_1.png)
 ::::
 :::
@@ -119,18 +144,24 @@ _Volume of data in the world_
 * How to Store Big Data?
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Many different solutions to storing big data
   1. **Distributed file systems**
   2. **Sharding across multiple DBs**
   3. **Parallel and distributed DBs**
   4. **Key-value stores**
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Many different solutions to storing big data**
   1. _Distributed file systems_
   2. _Sharding across multiple DBs_
   3. _Parallel and distributed DBs_
   4. _Key-value stores_
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * 1) Distributed File Systems
 
@@ -169,21 +200,29 @@ _Volume of data in the world_
 * 3) Parallel and Distributed DBs
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Store and process data on multiple machines
   (cluster)
 =======
 - **Store and process data on multiple machines (cluster)**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+- **Store and process data on multiple machines (cluster)**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - **Pros**
   - From programmer viewpoint
     - Traditional relational DB interface
     - Appears as a single-machine DB
 <<<<<<< HEAD
+<<<<<<< HEAD
   - Scale to 10s-100s of machines
 =======
   - Approach scales to 10s-100s of machines
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+  - Approach scales to 10s-100s of machines
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Data replication enhances performance and reliability
     - Frequent failures with 100s of machines
     - Queries can restart on different machines
@@ -197,15 +236,20 @@ _Volume of data in the world_
 - **Problem**
   - Applications store billions of small records
 <<<<<<< HEAD
+<<<<<<< HEAD
   - RDBMSs lack multi-machine constraints and transactions
 =======
   - Relational DBs lack multi-machine constraints and transactions
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+  - Relational DBs lack multi-machine constraints and transactions
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - **Solution**
   - Key-value stores / Document / NoSQL systems
   - E.g.,
     - Redis
+<<<<<<< HEAD
 <<<<<<< HEAD
     - Google BigTable
     - Apache HBase (open source BigTable)
@@ -216,6 +260,11 @@ _Volume of data in the world_
     - ...
     - AWS Dynamo, S3
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+    - Apache HBase (open source of Google BigTable)
+    - ...
+    - AWS Dynamo, S3
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     - Azure cloud storage (Microsoft)
     - MongoDB cluster
 
@@ -298,20 +347,30 @@ _Volume of data in the world_
 * Distributed File System
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Reliable distributed file system
 =======
 - **Reliable distributed file system**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+- **Reliable distributed file system**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Data in "chunks" across machines
   - Each chunk replicated on different machines
   - Seamless recovery from disk or machine failure
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Bring computation directly to the data
   - "Chunk servers" also serve as "compute servers"
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Bring computation directly to the data**
   - "Chunk servers" also serve as "compute servers"
 
 - Hadoop and HDFS implement all these ideas
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733

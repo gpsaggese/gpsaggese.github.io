@@ -1,8 +1,11 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ::: columns
 :::: {.column width=15%}
 ![](lectures_source/UMD_Logo.png)
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 // Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
 // 
 // 
@@ -10,7 +13,10 @@
 ::: columns
 :::: {.column width=15%}
 ![](data605/lectures_source/images/UMD_Logo.png)
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::
 :::: {.column width=75%}
 
@@ -25,15 +31,20 @@ UMD DATA605 - Big Data Systems
 
 \begingroup \Large
 <<<<<<< HEAD
+<<<<<<< HEAD
 **Graph Data Processing
 Giraph, GraphX**
 =======
 **$$\text{\blue{12.3: Graph Data Processing}}$$**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+**$$\text{\blue{12.3: Graph Data Processing}}$$**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
+<<<<<<< HEAD
 <<<<<<< HEAD
 \vspace{1cm}
 
@@ -48,15 +59,21 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 :::: {.column width=20%}
 
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 ::::
 :::: {.column width=20%}
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::
 :::
 
 * Options for Processing Graph Data 
+<<<<<<< HEAD
 <<<<<<< HEAD
 - Write your own programs 
   - Extract the relevant data, and construct an in-memory graph 
@@ -119,6 +136,8 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - GraphLab: asynchronous execution
 - GraphX: built on top of Spark
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - Write your own programs
   - Extract relevant data, construct in-memory graph
   - Different storage options help to varying degrees
@@ -191,7 +210,10 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 - GraphLab: asynchronous execution
 
 - GraphX: built on Spark
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Bulk Synchronous Parallel (BSP) 
 
@@ -200,6 +222,7 @@ Prahar Kaushikbhai Modi, pmodi08@umd.edu
 time
 
 * Vertex-centric BSP 
+<<<<<<< HEAD
 <<<<<<< HEAD
 - Each vertex has an id, a value, a list of its adjacent vertex ids and the corresponding edge values 
 - Each vertex is invoked in each superstep, can recompute its value and send messages to other vertices, which are delivered over superstep barriers 
@@ -210,6 +233,8 @@ time
 
 ```markdown
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - Each vertex has an id, value, list of adjacent vertex ids, and edge values
 
 - Each vertex invoked in each superstep, recomputes value, sends messages to
@@ -219,7 +244,10 @@ time
   mutations
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_8_image_1.png)
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Think like a vertex
 - I know my local state
@@ -229,6 +257,7 @@ time
 - I can mutate graph topology
 
 * Option 4: Pregel
+<<<<<<< HEAD
 <<<<<<< HEAD
 - Programmers write one program: **compute()**
 - Typical structure of **compute()**:
@@ -254,6 +283,8 @@ time
   - graph partition via hashing
   - fault tolerance via checkpointing
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - Programmers write one program: `compute()`
 
 - Typical structure of `compute()`:
@@ -276,7 +307,10 @@ time
   - Uses **Apache ZooKeeper** for synchronization
   - Graph partition via hashing
   - Fault tolerance via checkpointing
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Plays well with Hadoop
 
@@ -292,9 +326,13 @@ time
   - global state: #superstep
   - checkpoint paths, aggregator values, statistics
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Master**: responsible for coordination
   - assigns partitions to workers
   - coordinates synchronization
@@ -302,19 +340,26 @@ time
   - aggregates aggregator values
   - collects health statuses
 <<<<<<< HEAD
+<<<<<<< HEAD
 - **Worker**: responsible for vertices
   - invokes active vertices compute() function
   - sends, receives and assigns messages
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - **Worker**: responsible for vertices
   - invokes active vertices compute() function
   - sends, receives, assigns messages
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - computes local aggregation values
 
 * What do you have to implement?
 - Your algorithm as a **Vertex**
+<<<<<<< HEAD
 <<<<<<< HEAD
   - Subclass one of the many existing implementations: *BasicVertex, MutableVertex, EdgeListVertex, HashMapVertex, LongDoubleFloatDoubleVertex*, ...
 - A **VertexInputFormat** to read your graph
@@ -326,6 +371,8 @@ time
 
 ```
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Subclass existing implementations: `BasicVertex, MutableVertex,
     EdgeListVertex, HashMapVertex, LongDoubleFloatDoubleVertex`
 
@@ -335,7 +382,10 @@ time
 
 - A `VertexOutputFormat` to write back the result
   - e.g., _<vertex> <pageRank>_
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * A vertex view 
 
@@ -345,12 +395,15 @@ time
 - Stateful (in-memory)
   - Keep all data in memory if possible
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Only intermediate values (messages) sent
   - To communicate with other vertices 
 - Hits the disk at input, output, checkpoint 
 - Can go out-of-core
   - If the data does not fit into memory 
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - Only intermediate values (messages) sent
   - Communicate with other vertices
@@ -359,12 +412,16 @@ time
 
 - Can go out-of-core
   - If data doesn't fit into memory
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Graph modeling in Giraph 
 - BasicComputation<          I extends WritableComparable, // VertexID -- vertex ref           V extends Writable, // VertexData -- a vertex datum           E extends Writable, // EdgeData -- an edge label           M extends Writable> // MessageData-– message payload 
 
 * Giraph "Hello World" 
+<<<<<<< HEAD
 <<<<<<< HEAD
 public class GiraphHelloWorld extends    BasicComputation<IntWritable, IntWritable, NullWritable, NullWritable> {
 public void compute(Vertex<IntWritable, IntWritable,     NullWritable> vertex, Iterable<NullWritable> messages) { 
@@ -375,6 +432,8 @@ public void compute(Vertex<IntWritable, IntWritable,     NullWritable> vertex, I
 
 * Example: Ping neighbors
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ```java
 public class GiraphHelloWorld extends    
 BasicComputation<IntWritable, IntWritable, NullWritable, NullWritable> {
@@ -390,11 +449,15 @@ public void compute(Vertex<IntWritable, IntWritable,     NullWritable> vertex, I
 * Example: Ping neighbors
 
 ```java
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 public void compute(Vertex<Text, DoubleWritable, DoubleWritable> vertex, Iterable<Text> ms ){ 
    if (getSuperstep() == 0) {        sendMessageToAllEdges(vertex, vertex.getId()); 
    } else {        for (Text m : ms) { 
           if (vertex.getEdgeValue(m) == null) {              vertex.addEdge(EdgeFactory.create(m, SYNTHETIC_EDGE));            }        } 
+<<<<<<< HEAD
 <<<<<<< HEAD
    }     vertex.voteToHalt(); } 
 
@@ -407,6 +470,8 @@ public class PageRankComputation      extends BasicComputation<IntWritable, Floa
 * Giraph PageRank Example
 
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
    }     vertex.voteToHalt(); 
 }
 ```
@@ -420,7 +485,10 @@ public class PageRankComputation      extends BasicComputation<IntWritable, Floa
 
 * Giraph PageRank Example
 ```java
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Iterable<FloatWritable> messages)       throws IOException {
     if (getSuperstep() >= 1) {
       float sum = 0;
@@ -438,9 +506,13 @@ public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Ite
   }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 ```
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+```
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Additional functionality
 - Combiners
@@ -454,11 +526,14 @@ public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Ite
 - PartitionContext
   - executed per partition
 <<<<<<< HEAD
+<<<<<<< HEAD
 ```
 
 ```markdown
 =======
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Giraph scales 
 
@@ -474,6 +549,7 @@ https://www.facebook.com/notes/facebook-engineering/scaling-apache-giraph-to-a-t
 
 * GraphX Motivation
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 Difficult to Program and Use 
 Users must *Learn, Deploy, and *
@@ -507,6 +583,8 @@ Enables users to easily and efficiently express the entire graph analytics pipel
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_30_image_1.png)
 
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - Difficult to Program and Use 
 - Users must ***Learn, Deploy, and Manage*** multiple systems 
 
@@ -538,11 +616,15 @@ Combines Data-Parallel Graph-Parallel Systems
 
 Enables users to easily and efficiently express the entire graph analytics pipeline 
 
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 * Representation 
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_31_image_1.png)
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 Plus optimizations:
 - Distributed join optimization
@@ -565,6 +647,8 @@ String), String]
 * Creating a Graph (Scala)
 type VertexId = Long
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - Plus optimizations:
   - Distributed join optimization
   - Materialized view maintenance
@@ -589,28 +673,40 @@ type VertexId = Long
 ```
 type VertexId = Long
 
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 val vertices: RDD[(VertexId, String)] =
 sc.parallelize(List(
 (1L,"Alice"),
 (2L, "Bob"),
 (3L, "Charlie")))
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 class Edge[ED](
 val srcId: VertexId,
 val dstId: VertexId,
 val attr: ED)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 val edges: RDD[Edge[String]] =
 sc.parallelize(List(
 Edge(1L, 2L, "coworker"),
 Edge(2L, 3L, "friend")))
+<<<<<<< HEAD
 <<<<<<< HEAD
 val graph = Graph(vertices, edges)
 
@@ -618,6 +714,8 @@ val graph = Graph(vertices, edges)
 
 * Hello world in GraphX
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 val graph = Graph(vertices, edges)
 ```
@@ -629,7 +727,10 @@ val graph = Graph(vertices, edges)
 
 * Hello world in GraphX
 ```
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 $ spark*/bin/spark-shell
 scala> val inputFile = sc.textFile("hdfs:///tmp/graph/1.txt")
 scala> val edges = inputFile.flatMap(s => {
@@ -641,20 +742,27 @@ scala> val result = graph.collectNeighborIds(EdgeDirection.Out).map(x =>
 println("Hello world from the: " + x._1 + " : " + x._2.mkString(" ")) )
 scala> result.collect() // don't try this @home
 <<<<<<< HEAD
+<<<<<<< HEAD
 Hello world from the: 1 :
 Hello world from the: 2 : 1 3
 Hello world from the: 3 : 1 2
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 Hello world from the: 1 :
 Hello world from the: 2 : 1 3
 Hello world from the: 3 : 1 2
 ```
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Spark Table Operators
 - GraphX **Table** (RDD) operators are inherited from Spark:
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 map
 filter
@@ -705,6 +813,8 @@ reduceF: (T, T) => T): Graph[T, E]
 
 * Built-in Algorithms (Scala)
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 :::columns
 ::::{.column width=33%}
 - map
@@ -767,16 +877,23 @@ class Graph [ V, E ] {
 * Built-in Algorithms (Scala)
 \footnotesize
 ```
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 def pageRank(tol: Double): Graph[Double, Double]
 def triangleCount(): Graph[Int, ED]
 def connectedComponents(): Graph[VertexId, ED]
 def stronglyConnectedComponents(numIter:Int):Graph[VertexID,ED]
 // ...and more: org.apache.spark.graphx.lib (GraphX libraries)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 ```
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+```
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_37_image_1.png)
 
@@ -797,24 +914,32 @@ Map-Reduce triplets collect information about the neighborhood of each vertex:
 
 * GraphX scales to larger graphs
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_41_image_1.png)
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_41_image_1.png)
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - GraphX is roughly 2x slower than GraphLab
   - Scala + Java overhead: Lambdas, GC time, ...
   - No shared memory parallelism: 2x increase in communication
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_41_image_1.png)
 
 =======
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 * But, a Small Pipeline in GraphX
 Timed end-to-end GraphX is faster than GraphLab (and Giraph)
 
 ![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_42_image_1.png)
 
 * Giraph vs. GraphX
+<<<<<<< HEAD
 <<<<<<< HEAD
 **Giraph**
 - An unconstrained BSP framework
@@ -830,6 +955,8 @@ Timed end-to-end GraphX is faster than GraphLab (and Giraph)
 
 ```
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 :::columns
 ::::{.column width=50%}
 - **Giraph**
@@ -846,4 +973,7 @@ Timed end-to-end GraphX is faster than GraphLab (and Giraph)
   - Genuine part of Spark ecosystem
 ::::
 :::
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733

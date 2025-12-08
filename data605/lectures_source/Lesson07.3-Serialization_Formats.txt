@@ -34,6 +34,7 @@ UMD DATA605 - Big Data Systems
 
 * Serialization Formats
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Programs need to send data to each other (network, disk)
   - E.g., remote Procedure Calls (RPCs)
   - Recent technologies based on schemas
@@ -41,6 +42,8 @@ UMD DATA605 - Big Data Systems
 
 - Serialization formats are data models
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Programs need to send data to each other**
   - Through network, disk
   - Examples:
@@ -59,21 +62,30 @@ UMD DATA605 - Big Data Systems
     - YAML: Human-readable, used for configuration files
     - Protocol Buffers: Efficient, used by Google for internal APIs
     - Python Pickle: Python-specific, used for object serialization
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Comma Separated Values (CSV)
 ::: columns
 :::: {.column width=50%}
 <<<<<<< HEAD
+<<<<<<< HEAD
 - CSV stores data row-wise as text without schema
   - Each line is a data record
   - Records have fields separated by commas
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **CSV stores data row-wise**
   - As text without schema
   - Each line is a data record
   - Fields separated by commas
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - **Pros**
   - Very portable
@@ -101,6 +113,7 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=70%}
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Parquet reads data tiles
 
 - Supports multi-dimensional, nested data
@@ -122,6 +135,8 @@ UMD DATA605 - Big Data Systems
   - Requires ingestion step to convert to Parquet
   - Mainly read-only, hard to modify
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Parquet**
   - Reads data as tiles
   - Supports multi-dimensional, nested data
@@ -130,13 +145,17 @@ UMD DATA605 - Big Data Systems
     - Stores each column together, uniform data type, compressed efficiently
   - IO layer executes queries
     - Reads only necessary data chunks from disk
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::
 :::: {.column width=25%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_36_image_1.png)
 ::::
 :::
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 * JSON
 ::: columns
@@ -150,6 +169,8 @@ UMD DATA605 - Big Data Systems
   - Less boilerplate
   - Executable in JavaScript and Python
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Pros**
   - 10x smaller than CSV
   - 10x faster with multi-threading
@@ -171,7 +192,10 @@ UMD DATA605 - Big Data Systems
   - More human-readable
   - Less boilerplate
   - Sometimes executable in JavaScript and Python
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::
 :::: {.column width=45%}
 \scriptsize
@@ -209,6 +233,7 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=50%}
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Developed by Google
 - Open-source
 =======
@@ -216,16 +241,26 @@ UMD DATA605 - Big Data Systems
   - Developed by Google
 
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+- **Open-source**
+  - Developed by Google
+
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - Represent data structures:
   - Language agnostic
   - Platform agnostic
   - Versioning
+<<<<<<< HEAD
 <<<<<<< HEAD
 - Schema is mostly relational
 =======
 
 - **Schema is mostly relational**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+
+- **Schema is mostly relational**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Optional fields
   - Types
   - Default values
@@ -233,16 +268,22 @@ UMD DATA605 - Big Data Systems
   - Arrays
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Schema specified using a `.proto` file
 
 - Compiled by `protoc` to produce C++, Java, or Python code to initialize, read,
   serialize objects
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Workflow**
   - Schema specified using a `.proto` file
   - Compiled by `protoc` to produce C++, Java, or Python code to initialize,
     read, serialize objects
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::
 :::: {.column width=45%}
 \scriptsize
@@ -283,6 +324,7 @@ message Person {
 ::: columns
 :::: {.column width=50%}
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Avro
   - Richer data structures
   - JSON-specified schema
@@ -290,6 +332,8 @@ message Person {
   - Developed by Facebook
   - Now Apache project
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Avro**
   - Richer data structures
   - JSON-specified schema
@@ -297,7 +341,10 @@ message Person {
 - **Thrift**
   - Developed by Facebook
   - Now an Apache project
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - More languages supported
   - Supports exceptions and sets
 ::::
@@ -316,6 +363,7 @@ message Person {
     {
       "name": "favorite_number",
 <<<<<<< HEAD
+<<<<<<< HEAD
       "type": [
         "int",
         "null"
@@ -328,12 +376,17 @@ message Person {
         "null"
       ]
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
       "type": ["int", "null"]
     },
     {
       "name": "favorite_color",
       "type": ["string", "null"]
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     }
   ]
 }
@@ -344,6 +397,7 @@ message Person {
 * Remote Procedure Call
 ::: columns
 :::: {.column width=65%}
+<<<<<<< HEAD
 <<<<<<< HEAD
 - **Remote Procedure Call** (RPC) requests services from programs on other
   computers, abstracting network communication
@@ -360,6 +414,8 @@ message Person {
 
 - Can be synchronous or asynchronous
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Remote Procedure Call** (RPC)
   - Requests services from programs on other computers
   - Abstracts network communication
@@ -373,7 +429,10 @@ message Person {
   - Can't serialize pointers
   - Handling asynchronous communication
   - Failures and retries
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::
 :::: {.column width=30%}
 ![](data605/lectures_source/images/lecture_7_1/lec_7_1_slide_40_image_1.png)
@@ -385,11 +444,14 @@ message Person {
 :::: {.column width=50%}
 - _Client procedure call_: Client calls stub function with arguments
 <<<<<<< HEAD
+<<<<<<< HEAD
 - _Request marshalling_: Client stub serializes arguments for network
   transmission
 - _Server communication_: Client's RPC runtime sends request to server
 - _Server-side unmarshalling_: Server's RPC runtime deserializes arguments
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - _Request marshalling_: Client stub serializes arguments for network
   transmission
@@ -398,7 +460,10 @@ message Person {
 
 - _Server-side unmarshalling_: Server's RPC runtime deserializes arguments
 
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - _Procedure execution_: Server calls procedure
 ::::
 :::: {.column width=45%}

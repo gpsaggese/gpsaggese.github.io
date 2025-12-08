@@ -1,10 +1,14 @@
 ::: columns
 :::: {.column width=15%}
 <<<<<<< HEAD
+<<<<<<< HEAD
 ![](msml609/lectures_source/figures/UMD_Logo.png)
 =======
 ![](msml610/lectures_source/figures/UMD_Logo.png)
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+![](msml610/lectures_source/figures/UMD_Logo.png)
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 ::::
 :::: {.column width=75%}
 
@@ -1463,12 +1467,17 @@ _Mutilated graph_
   - Represents performing an action that _sets_ $X$ to $x$, not _observing_
     $X = x$
 <<<<<<< HEAD
+<<<<<<< HEAD
   - $\text{do}(X_j = x_j^k)$ removes $\Pr(x_j | \text{parents}(X_j))$ from the
     product and gives a new joint distribution:
 =======
   - $do(X_j = x_j^k)$ removes $\Pr(x_j | \text{parents}(X_j))$ from the product
     and gives a new joint distribution:
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+  - $do(X_j = x_j^k)$ removes $\Pr(x_j | \text{parents}(X_j))$ from the product
+    and gives a new joint distribution:
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     $$
     P_{X_j = x_j^k}(x_1, \ldots, x_n) =
     \begin{cases}
@@ -1480,17 +1489,23 @@ _Mutilated graph_
 - **Difference between observation and intervention**
     $$\Pr(Y | do(X=x) \ne \Pr(Y | X)$$
 <<<<<<< HEAD
+<<<<<<< HEAD
   - Observing $S = \text{true}$ _provides information_ about its causes (e.g.,
     weather)
   - Intervening with $\text{do}(S = \text{true})$ _breaks_ those causal
     dependencies (e.g., it doesn't inform about the weather)
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Observing $S = \text{true}$ _provides information_ about its causes
     - E.g., information about weather (and the Markov blanket)
   - Intervening with $\text{do}(S = \text{true})$ _breaks_ those causal
     dependencies
     - E.g., it doesn't inform about anything
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Intervention
 - **Estimate causal effect** of $X_j$ on $X_i$ with adjustment formula:
@@ -1501,6 +1516,7 @@ _Mutilated graph_
 
 - **Example**
 <<<<<<< HEAD
+<<<<<<< HEAD
   - In the Sprinkler model) $\text{do}(S=\text{true})$ $\rightarrow$ gives the
     new distribution:
     $$
@@ -1510,6 +1526,11 @@ _Mutilated graph_
     $$
     \Pr(c, r, w, g | do(S=true)) = \Pr(c)\Pr(r|c)\Pr(w|r, S=true)\Pr(g|w)
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+  - In the Sprinkler model $do(S=\text{true})$, gives the new distribution:
+    $$
+    \Pr(c, r, w, g | do(S=true)) = \Pr(c)\Pr(r|c)\Pr(w|r, S=true)\Pr(g|w)
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     $$
     - Only descendants of $Sprinkler$ (i.e., $WetGrass$) change
     - $Weather$ and $Rain$ remain unaffected
@@ -1521,6 +1542,7 @@ _Mutilated graph_
 
 * Counterfactuals
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 - A **counterfactual** describes what would have happened under a different
   scenario
@@ -1529,13 +1551,18 @@ _Mutilated graph_
 - **Business examples**
   - _"What if we had two suppliers instead of one? Would we have more sales?"_
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - A **counterfactual** describes what would have happened in the past under a
   different scenario
   - _"What would the outcome have been, if X had been different?"_
 
 - **Business examples**
   - _"What if we had two suppliers instead of one? Would we have fewer delays?"_
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - _"Would customers be more satisfied if we shipped products in one week
     instead of three?"_
   - That's what businesses want, but they can't get it from correlation-based
@@ -1555,9 +1582,12 @@ _Mutilated graph_
 
 * Causal Discovery
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Definition**
   - Causal discovery learns causal network structure from data
   - Identify which variables directly cause others (learn causal directions, not
@@ -1576,10 +1606,14 @@ _Mutilated graph_
 
 - **Dealing with complexity**
 <<<<<<< HEAD
+<<<<<<< HEAD
   - Possible network structures grow superexponentially with the number of
 =======
   - Possible network structures grow super-exponentially with the number of
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+  - Possible network structures grow super-exponentially with the number of
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     variables
   - Complexity penalties to avoid overfitting
 
@@ -1594,10 +1628,14 @@ _Mutilated graph_
 - **RCTs estimate causal effects** by comparing treatment and control groups
   - Randomly assign treatment, not chosen by subjects
 <<<<<<< HEAD
+<<<<<<< HEAD
     - E.g., assign new drug vs placebo by lottery
 =======
     - E.g., assign new drug vs placebo by flipping a coin
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+    - E.g., assign new drug vs placebo by flipping a coin
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Ensure groups are statistically equivalent except for treatment
   - Isolate treatment effect
 
@@ -1621,10 +1659,14 @@ _Mutilated graph_
 
 - **Treatment and control**
 <<<<<<< HEAD
+<<<<<<< HEAD
   - $X = 1$ (treatment): student is offered/assigned to tutoring.
 =======
   - $X = 1$ (treatment): student is offered/assigned to tutoring
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+  - $X = 1$ (treatment): student is offered/assigned to tutoring
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - $X = 0$ (control): student is not offered tutoring
 
 - **Assignment mechanism (RCT)**
@@ -1644,10 +1686,14 @@ _Mutilated graph_
   - E.g., you want to verify if asbestos causes cancer
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Can be **expensive or impractical**
 =======
 - **Can be expensive or impractical**
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+- **Can be expensive or impractical**
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - **It doesn't always work**
   - Non-compliance: some participants may not follow assigned treatment
@@ -1725,6 +1771,7 @@ digraph CausalDAG {
     - Correlation implies causation
   - This is an alternative to randomized controlled experiments
 <<<<<<< HEAD
+<<<<<<< HEAD
     - Foundation of many empirical studies in epidemiology, economics, and social science
   - **Mind blown!**
 
@@ -1762,6 +1809,8 @@ digraph CausalDAG {
 
 - The solution that people use is to "condition on everything"
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - **Mind blown!**
 
 * Back-Door Criterion: Overview
@@ -1881,13 +1930,17 @@ digraph ColliderExample {
   - Say that "correlation IS causation"
 
 - Before this, the solution that researchers used was to "condition on everything"
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - **This is incorrect!**
 
 - **Common mistakes**
   - Conditioning on a descendant of $X$ can bias the estimate
   - Controlling for too many variables can open colliders and introduce bias
   - Forgetting to block all back-door paths
+<<<<<<< HEAD
 <<<<<<< HEAD
   - Using variables that lie on the causal path (blocks the effect)
   - Ignoring unobserved confounders: can make causal effect unidentifiable
@@ -1896,6 +1949,8 @@ digraph ColliderExample {
   - In medicine, economics, social science that use observational study
     incorrectly 
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Using variables that lie on the causal path (blocks the mediator of the
     effect)
   - Ignoring unobserved confounders: can make causal effect unidentifiable
@@ -1903,7 +1958,10 @@ digraph ColliderExample {
 - **1000s of papers and their conclusions are wrong!**
   - In medicine, economics, social science people have used observational study
     incorrectly
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * When Back-Door Adjustment Fails
 - **Back-door is simple but not universally applicable**
@@ -1911,10 +1969,15 @@ digraph ColliderExample {
     - In order to condition on a variable it needs to be observable
     - E.g., an unobserved or unknown confounders
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   - You need to know a good approximation of the true causal graph
     - Very easy to omit variables
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+  - You need to know a good approximation of the true causal graph
+    - Very easy to omit variables
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 - **Alternatives**:
   - _Front-door criterion_: uses mediators
@@ -1972,10 +2035,14 @@ digraph CerealAds {
   $$P(Y \mid do(X)) = \sum_m P(M \mid X) \sum_{x'} P(Y \mid M, X') P(X')$$
   \endgroup
 <<<<<<< HEAD
+<<<<<<< HEAD
   - Intuition: estimate observed link $X \to M$ and $M \to Y$
 =======
   - _Intuition_: estimate observed link $X \to M$ and $M \to Y$
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+  - _Intuition_: estimate observed link $X \to M$ and $M \to Y$
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * Cereal and Ads: Example
 ::: columns
@@ -1983,16 +2050,22 @@ digraph CerealAds {
 - **Research question**: _"Does watching ads (X) make people buy more cereal (Y)?"_
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - **Of course!**
 
 - **Hidden factor**: _"Parents who care about breakfast (U)"_ might:
   - Let kids watch more TV and see ads
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - You might think **yes, of course!**, I say **no, not so fast!**
 
 - **Hidden factor**: _"Parents who care about breakfast (U)"_ might:
   - Let kids watch more TV to have them eat breakfast and see ads
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Buy more cereal anyway
 ::::
 :::: {.column width=45%}
@@ -2006,6 +2079,7 @@ digraph CerealAds {
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     X [label="X\n(Watches ads)", fillcolor="#A6C8F4"];
     U [label="U\n(Cares about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
     Y [label="Y\n(Buys cereal)", fillcolor="#FFD1A6"];
@@ -2014,6 +2088,11 @@ digraph CerealAds {
     U [label="U\n(Care about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
     Y [label="Y\n(Buy cereal)", fillcolor="#FFD1A6"];
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+    X [label="X\n(Watch ads)", fillcolor="#A6C8F4"];
+    U [label="U\n(Care about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
+    Y [label="Y\n(Buy cereal)", fillcolor="#FFD1A6"];
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
     { rank=same; X; Y; }
 
@@ -2026,10 +2105,14 @@ digraph CerealAds {
 :::
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Hidden factor $U$ confounds "watching ads" and "buying cereals"
 =======
 - Hidden factor $U$ confounds "Watch ads" and "Buy cereals"
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+- Hidden factor $U$ confounds "Watch ads" and "Buy cereals"
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Correlation exists even if ads don't cause it
   - Observing $X$ and $Y$ without controlling for $U$ leads to spurious
     association
@@ -2037,6 +2120,7 @@ digraph CerealAds {
 
 - A spurious relationship is **terrible for the business**!
   - It means you spend money on ads and that doesn't matter
+<<<<<<< HEAD
 <<<<<<< HEAD
   - Google and Facebook are worth $3T and it's all predicated on "buy ads" to
     "increase sales"
@@ -2047,6 +2131,8 @@ digraph CerealAds {
     include $U$ as a control variable in analysis
   - Intuition:
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   - Google and Facebook are worth \$3T and it's all predicated on "Watch ads"
     $\implies$ "Buy stuff"
 
@@ -2055,17 +2141,24 @@ digraph CerealAds {
   - If you _know_ and can _measure_ $U$ "how much parents care about breakfast",
     include $U$ as a control variable in analysis
   - _Intuition_:
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     - Compare families with _the same_ breakfast attitudes ($U$ fixed)
     - See if ads ($X$) still change cereal buying ($Y$)
 
 - **Strategy 2: Use randomization**
   - Randomized experiments break link between $X$ and $U$
 <<<<<<< HEAD
+<<<<<<< HEAD
     - Randomly show ads to some families, not others
 =======
     - Randomly show ads to some families and not others
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+    - Randomly show ads to some families and not others
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     - Randomization ignores parental breakfast attitude; differences in buying
       come from ads
   - This is why controlled experiments are gold standard for causal inference
@@ -2092,12 +2185,18 @@ digraph CerealAds {
 :::: {.column width=45%}
 - So the **causal chain** is:
 <<<<<<< HEAD
+<<<<<<< HEAD
   - Ads $(X)$ $\to$ Kids Nagging $(M)$ $\to$ Parents Buy Cereal $(Y)$
 =======
   - Ads $(X)$ $\to$ ...
   - Kids Nagging $(M)$ $\to$ ...
   - Parents Buy Cereal $(Y)$
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+  - Ads $(X)$ $\to$ ...
+  - Kids Nagging $(M)$ $\to$ ...
+  - Parents Buy Cereal $(Y)$
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - The hidden factor _"parents that care about breakfast"_ $U$:
   - Affects how much cereal gets bought
   - Doesn't affect how much kids nag (only ads do that)
@@ -2113,16 +2212,22 @@ digraph CerealAds {
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     U [label="U\n(Cares about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
     X [label="X\n(Watches ads)", fillcolor="#A6C8F4"];
     M [label="M\n(Kids nag)", fillcolor="#C6A6F4"];
     Y [label="Y\n(Buys cereal)", fillcolor="#FFD1A6"];
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     U [label="U\n(Care about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
     X [label="X\n(Watch ads)", fillcolor="#A6C8F4"];
     M [label="M\n(Kids nag)", fillcolor="#C6A6F4"];
     Y [label="Y\n(Buy cereal)", fillcolor="#FFD1A6"];
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
     { rank=same; X; Y; M }
 
@@ -2155,16 +2260,22 @@ digraph CerealAds {
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     U [label="U\n(Cares about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
     X [label="X\n(Watches ads)", fillcolor="#A6C8F4"];
     M [label="M\n(Kids nag)", fillcolor="#C6A6F4"];
     Y [label="Y\n(Buys cereal)", fillcolor="#FFD1A6"];
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
     U [label="U\n(Care about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
     X [label="X\n(Watch ads)", fillcolor="#A6C8F4"];
     M [label="M\n(Kids nag)", fillcolor="#C6A6F4"];
     Y [label="Y\n(Buy cereal)", fillcolor="#FFD1A6"];
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
     { rank=same; X; Y; M }
 
@@ -2181,18 +2292,24 @@ digraph CerealAds {
 
 - Instead of doing an intervention $do(X)$, just observe!
 <<<<<<< HEAD
+<<<<<<< HEAD
   1. Observe how often ads make kids nag ($\Pr(M | X)$)
   2. Observe nagging changes buying ($\Pr(Y | M, X')$)
   3. Combine both to estimate what happens if you _force_ more ads
      $$\Pr(Y | do(X)) = \sum_m \Pr(M | X) \sum_{x'} \Pr(Y | M, X') \Pr(X')$$
      - Intuition: "How ads cause nagging" × "How nagging causes buying"
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   1. Observe how often ads make kids nag, $\Pr(M | X)$
   2. Observe nagging changes buying, $\Pr(Y | M, X')$
   3. Combine both to estimate what happens if you _force_ more ads
      $$\Pr(Y | do(X)) = \sum_m \Pr(M | X) \sum_{x'} \Pr(Y | M, X') \Pr(X')$$
      - _Intuition_: "How ads cause nagging" × "How nagging causes buying"
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 ## Do-Calculus
 
@@ -2200,6 +2317,7 @@ digraph CerealAds {
 - **Do-calculus** is a formal system for reasoning about causal effects in
   graphical models (Judea Pearl, 2000)
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 - Provides algebraic rules to transform intervention expressions (do-operator,
   e.g., do(X = x)) into expressions computable from observational data, given
@@ -2218,6 +2336,8 @@ digraph CerealAds {
   $$
   - This is generally **not equal** to $\Pr(Y | do(X = x))$ due to confounding
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 - **Problem**
   - You care about **causal effects** like:
     $$
@@ -2236,12 +2356,16 @@ digraph CerealAds {
 - **Solution**: do-calculus provides algebraic rules to transform intervention
   expressions (do-operator, i.e.,, $do(X = x)$) into expressions computable from
   observational data, given certain conditions
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
 
 * The Rules of Do-Calculus
 - Do-calculus provides **three transformation rules** for manipulating
   expressions involving $do()$:
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 1. **Insertion/Deletion of Observations:**
    If $Y \perp Z \mid X, W$ in $G_{\overline{X}}$ (where incoming edges to X
@@ -2283,6 +2407,8 @@ digraph CerealAds {
   $$
   P(Y \mid do(X)) = \sum_z P(Z \mid X) \sum_{x'} P(Y \mid Z, X') P(X')
 =======
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   1. **Insertion/Deletion of Observations:**
      If $Y \perp Z \mid X, W$ in $G_{\overline{X}}$ (where incoming edges to X
      are removed), then:
@@ -2321,7 +2447,10 @@ digraph CerealAds {
   then:
   $$
   \Pr(Y | do(X)) = \sum_z \Pr(Z | X) \sum_{x'} \Pr(Y | Z, X') \Pr(X')
+<<<<<<< HEAD
 >>>>>>> acc7434fbbd3a13e7d6fab709755918b215726e4
+=======
+>>>>>>> 641d70d0fd5943e647d36753863ed7313ac79733
   $$
 
 // Propensity score
