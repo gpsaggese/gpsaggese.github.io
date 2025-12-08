@@ -1,0 +1,16 @@
+AUC: 0.7596
+Threshold: 0.50
+
+Confusion matrix:
+27 33
+25 115
+
+Classification report:
+              precision    recall  f1-score   support
+
+         Bad       0.52      0.45      0.48        60
+        Good       0.78      0.82      0.80       140
+
+    accuracy                           0.71       200
+   macro avg       0.65      0.64      0.64       200
+weighted avg       0.70      0.71      0.70       200

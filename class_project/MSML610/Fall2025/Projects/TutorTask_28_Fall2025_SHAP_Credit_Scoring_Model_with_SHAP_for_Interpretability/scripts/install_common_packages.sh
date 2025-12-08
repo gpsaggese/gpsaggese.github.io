@@ -27,7 +27,13 @@ pip3 install --no-cache-dir \
     numpy \
     pandas \
     matplotlib \
-    seaborn 
+    seaborn \
+    scikit-learn \
+    xgboost \
+    shap \
+    ucimlrepo \
+    matplotlib \
+    seaborn
 
 
 
