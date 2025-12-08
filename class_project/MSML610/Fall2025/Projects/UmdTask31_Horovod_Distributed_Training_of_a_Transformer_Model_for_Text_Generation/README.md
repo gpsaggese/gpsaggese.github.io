@@ -1,29 +1,43 @@
 # Training a Custom Transformer Language Model from Scratch
 
-**UMD MSML610 Course Project** — Train a transformer-based language model from scratch on BookCorpus dataset using Horovod for distributed multi-GPU training on the Zaratan HPC cluster.
+**UMD MSML610 Course Project**
 
----
+This project implements distributed training of a custom transformer-based language model from scratch on the BookCorpus dataset using Horovod for multi-GPU training on the Zaratan HPC cluster.
 
-## 🎯 Project Goal
+## Project Overview
 
-Train a **custom transformer language model from scratch** on the BookCorpus dataset. The model is a decoder-only (GPT-like) transformer architecture implemented from scratch.
+This project trains a custom decoder-only transformer architecture (GPT-like) language model from scratch. The implementation includes data preprocessing, distributed training using Horovod, and text generation capabilities. The model is designed to be trained on multiple GPUs for efficient training of large language models.
 
----
+## Quick Start
 
-## 📋 Quick Start
+### 1. Data Preprocessing
 
-### 1. **Preprocess Data** (Run once)
+Run the preprocessing notebook to download and prepare the BookCorpus dataset:
+
 ```bash
 jupyter notebook notebooks/00_data_preprocessing.ipynb
 ```
-This notebook downloads BookCorpus, tokenizes it, and saves preprocessed data to `data/preprocessed/`.
 
-### 2. **Train Model** (On Zaratan HPC)
+This notebook downloads the BookCorpus dataset, tokenizes it using GPT-2 tokenizer, creates train/validation splits, and saves preprocessed data to `notebooks/data/preprocessed/`.
+
+### 2. Model Training
+
+Submit the training job to the Zaratan HPC cluster:
+
 ```bash
 sbatch scripts/train_zaratan.sh
 ```
 
-### 3. **Generate Text**
+For local multi-GPU training:
+
+```bash
+bash scripts/train_local.sh
+```
+
+### 3. Text Generation
+
+Generate text using a trained model:
+
 ```bash
 python -m src.generate \
   --checkpoint checkpoints/best_model.pt \
@@ -32,245 +46,260 @@ python -m src.generate \
   --max_new_tokens 100
 ```
 
----
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 .
 ├── notebooks/
-│   └── 00_data_preprocessing.ipynb    # Data preprocessing (download, tokenize, split)
+│   ├── 00_data_preprocessing.ipynb    # Data preprocessing notebook
+│   ├── 00_data_preprocessing.py       # Preprocessing script
+│   └── data/
+│       └── preprocessed/              # Preprocessed data (generated)
 │
 ├── src/
 │   ├── models/
-│   │   └── transformer_lm.py          # Custom transformer model (GPT-like)
-│   ├── data.py                         # Load preprocessed data
-│   ├── train.py                        # Distributed training script
-│   ├── generate.py                     # Text generation
-│   ├── metrics.py                      # Evaluation metrics
-│   └── utils/                          # Utilities (config, logging, distributed)
+│   │   └── transformer_lm.py          # Custom transformer model implementation
+│   ├── data.py                        # Data loading utilities
+│   ├── train.py                       # Distributed training script
+│   ├── generate.py                    # Text generation script
+│   ├── metrics.py                     # Evaluation metrics
+│   └── utils/                         # Utility modules
+│       ├── config.py                  # Configuration management
+│       ├── distributed.py             # Distributed training utilities
+│       ├── logging.py                 # Logging configuration
+│       └── recorder.py                # Metrics recording
 │
 ├── configs/
-│   └── config.yaml                     # Single configuration file
+│   ├── config.yaml                    # Main configuration file
+│   └── preprocess_zaratan.sh          # Preprocessing job script
 │
 ├── scripts/
-│   ├── train_local.sh                  # Local multi-GPU training
-│   └── train_zaratan.sh                # Slurm job script for Zaratan
+│   └── train_zaratan.sh               # Training job script for Zaratan HPC
 │
-├── data/
-│   └── preprocessed/                   # Preprocessed data (created by notebook)
-│       ├── train/                      # Training data
-│       ├── val/                        # Validation data
-│       └── tokenizer/                  # Saved tokenizer
-│
-├── checkpoints/                        # Model checkpoints (created during training)
-├── logs/                               # Training logs
-└── runs/                               # TensorBoard logs
+├── checkpoints/                       # Model checkpoints (generated during training)
+├── logs/                              # Training logs (generated during training)
+└── runs/                              # TensorBoard logs (generated during training)
 ```
 
----
-
-## 🔧 Installation
+## Installation
 
 ### Prerequisites
-- Python 3.9+
-- CUDA 11.8+ (for GPU training)
-- OpenMPI (for Horovod)
-- NCCL (for multi-GPU training)
 
-### Install Dependencies
+- Python 3.9 or higher
+- CUDA 11.8 or higher (for GPU training)
+- OpenMPI (for Horovod)
+- NCCL (for multi-GPU communication)
+
+### Dependencies
+
+Install Python dependencies:
+
 ```bash
 pip install -r requirements.txt
+```
 
-# Install Horovod with GPU support
+Install Horovod with GPU support:
+
+```bash
 HOROVOD_GPU_OPERATIONS=NCCL pip install horovod[pytorch]
 ```
 
----
-
-## 📊 Workflow
+## Workflow
 
 ### Step 1: Data Preprocessing
 
-Run the Jupyter notebook to prepare data:
-```bash
-jupyter notebook notebooks/00_data_preprocessing.ipynb
-```
+The preprocessing step downloads and prepares the BookCorpus dataset:
 
-This will:
-1. Download BookCorpus dataset (~7GB)
-2. Tokenize with GPT-2 tokenizer
-3. Create train/validation splits (95%/5%)
-4. Pack tokens into fixed-length blocks (reduces padding)
-5. Save to `data/preprocessed/`
+1. Downloads BookCorpus dataset (approximately 7GB)
+2. Tokenizes text using GPT-2 tokenizer
+3. Creates train/validation splits (95%/5%)
+4. Packs tokens into fixed-length blocks to reduce padding
+5. Saves preprocessed data to `notebooks/data/preprocessed/v1/`
 
-**Note**: Run this once before training. The preprocessed data will be reused for all training runs.
+Note: This step needs to be run only once. The preprocessed data can be reused for multiple training runs.
 
-### Step 2: Training
+### Step 2: Model Training
 
-#### Local Training (2+ GPUs)
-```bash
-bash scripts/train_local.sh
-```
+The training process:
 
-#### Zaratan HPC Cluster
-```bash
-sbatch scripts/train_zaratan.sh
-```
+- Loads preprocessed data from `notebooks/data/preprocessed/v1/`
+- Initializes the custom transformer model
+- Trains using Horovod for distributed multi-GPU training
+- Saves model checkpoints to `checkpoints/`
+- Logs training metrics to TensorBoard in `runs/`
 
-The training script will:
-- Load preprocessed data from `data/preprocessed/`
-- Create custom transformer model
-- Train with Horovod distributed training
-- Save checkpoints to `checkpoints/`
-- Log metrics to TensorBoard (`runs/`)
+Training can be performed locally or on the Zaratan HPC cluster using the provided scripts.
 
 ### Step 3: Text Generation
+
+After training, use the generation script to produce text:
 
 ```bash
 python -m src.generate \
   --checkpoint checkpoints/best_model.pt \
   --config configs/config.yaml \
-  --prompt "In a galaxy far, far away" \
+  --prompt "Your prompt text here" \
   --max_new_tokens 150 \
   --temperature 0.8 \
   --interactive
 ```
 
----
+## Configuration
 
-## ⚙️ Configuration
+All training parameters are configured in `configs/config.yaml`. Key configuration sections include:
 
-Edit `configs/config.yaml` to customize:
+- **Model Architecture**: Layer dimensions, number of layers, attention heads, etc.
+- **Training Parameters**: Number of epochs, batch size, learning rate, optimizer settings
+- **Data Settings**: Path to preprocessed data directory
+- **Hardware Settings**: Mixed precision training, gradient accumulation
 
-- **Model**: Architecture (d_model, n_layers, n_heads, etc.)
-- **Training**: Epochs, batch size, learning rate, mixed precision
-- **Data**: Path to preprocessed data directory
+Edit this file to customize the model architecture and training hyperparameters.
 
----
+## Model Architecture
 
-## 🏗️ Model Architecture
+The model implements a decoder-only transformer architecture similar to GPT:
 
-**Custom Transformer Language Model** (Decoder-only, GPT-like):
+**Architecture Components:**
+- Causal self-attention mechanism (autoregressive)
+- Sinusoidal positional encoding
+- Multi-head attention with 12 heads
+- Feed-forward networks with GELU activation
+- Pre-norm layer normalization
+- Weight tying between embedding and output projection layers
 
-- **Causal self-attention** (autoregressive)
-- **Sinusoidal positional encoding**
-- **Multi-head attention** (12 heads)
-- **Feed-forward networks** with GELU activation
-- **Layer normalization** (pre-norm)
-- **Weight tying** (embedding & output projection)
+**Default Model Configuration:**
+- Total parameters: approximately 150 million
+- Model dimension (d_model): 768
+- Number of transformer layers: 12
+- Number of attention heads: 12
+- Feed-forward dimension (d_ff): 3072
+- Maximum sequence length: 512 tokens
+- Vocabulary size: 50,257 (GPT-2 tokenizer)
 
-**Default Configuration**:
-- Parameters: ~150M
-- d_model: 768
-- Layers: 12
-- Heads: 12
-- d_ff: 3072
-- Max sequence length: 512
-
----
-
-## 📈 Monitoring
+## Monitoring and Logging
 
 ### TensorBoard
+
+View training metrics in real-time:
+
 ```bash
 tensorboard --logdir runs/
 ```
 
 ### Training Logs
+
+Monitor training progress:
+
 ```bash
 tail -f logs/train_*.log
 ```
 
 ### Structured Metrics
-Training metrics are saved to `runs/structured/<timestamp>_run/`:
-- `metrics.csv` - Training/validation metrics
-- `run_metadata.json` - Run metadata
-- `config_used.yaml` - Configuration used
 
-Generate HTML report:
-```bash
-python scripts/generate_report.py --run_dir runs/structured/<timestamp>_run
-```
+Training metrics are automatically saved to `runs/structured/<timestamp>_run/`:
 
----
+- `metrics.csv`: Training and validation metrics per epoch
+- `run_metadata.json`: Metadata about the training run
+- `config_used.yaml`: Configuration file used for the run
 
-## 🖥️ Zaratan HPC Setup
+## Zaratan HPC Cluster Setup
 
 ### Cluster Configuration
-- **Account**: `msml610-class`
-- **Partition**: `gpu` (H100 GPUs)
-- **GPUs**: 4x H100 (80GB VRAM each)
-- **User**: `vikranth`
+
+- Account: `msml610-class`
+- Partition: `gpu` (H100 GPUs)
+- GPU Configuration: 4x H100 (80GB VRAM each)
 
 ### Environment Setup
-The training script (`train_zaratan.sh`) automatically:
-- Loads required modules (CUDA, Python, OpenMPI, NCCL)
-- Activates virtual environment
-- Sets up environment variables
-- Configures Horovod for single-node multi-GPU training
 
-### Submit Job
+The training script (`scripts/train_zaratan.sh`) handles:
+
+- Loading required modules (CUDA, Python, OpenMPI, NCCL)
+- Activating the virtual environment
+- Setting up environment variables
+- Configuring Horovod for single-node multi-GPU training
+
+### Job Submission
+
+Submit a training job:
+
 ```bash
 sbatch scripts/train_zaratan.sh
 ```
 
-### Monitor Job
-```bash
-# Check status
-squeue -u vikranth
+### Job Monitoring
 
-# View output
+Check job status:
+
+```bash
+squeue -u <username>
+```
+
+View job output:
+
+```bash
 tail -f logs/horovod_transformer_h100-<JOB_ID>.out
 ```
 
----
+## Troubleshooting
 
-## 🐛 Troubleshooting
+### Preprocessed Data Not Found
 
-### "Preprocessed data not found"
-**Solution**: Run `notebooks/00_data_preprocessing.ipynb` first.
+**Issue**: Training script cannot find preprocessed data.
 
-### "Only 1 GPU detected"
-**Solution**: This project requires 2+ GPUs for distributed training. Allocate more GPUs:
+**Solution**: Run the data preprocessing notebook first:
+```bash
+jupyter notebook notebooks/00_data_preprocessing.ipynb
+```
+
+### Insufficient GPUs
+
+**Issue**: Only 1 GPU detected or insufficient GPUs for distributed training.
+
+**Solution**: This project requires 2 or more GPUs for distributed training. For local testing:
 ```bash
 horovodrun -np 4 -H localhost:4 python -m src.train --config configs/config.yaml
 ```
 
-### "CUDA out of memory"
+### CUDA Out of Memory
+
+**Issue**: GPU runs out of memory during training.
+
 **Solution**: Reduce batch size in `configs/config.yaml`:
 ```yaml
 training:
-  per_gpu_batch_size: 8  # Reduce from 16
+  per_gpu_batch_size: 8  # Reduce from default value
 ```
 
-### "Horovod not found"
-**Solution**: Install Horovod:
+Alternatively, enable gradient accumulation to maintain effective batch size.
+
+### Horovod Installation Issues
+
+**Issue**: Horovod not found or installation fails.
+
+**Solution**: Install Horovod with proper GPU support:
 ```bash
 HOROVOD_GPU_OPERATIONS=NCCL pip install horovod[pytorch]
 ```
 
----
+Ensure CUDA and NCCL are properly installed before installing Horovod.
 
-## 📚 Key Features
+## Key Features
 
-- ✅ **Single custom model** - Train from scratch, no pretrained models
-- ✅ **Data preprocessing in notebook** - All data preparation in one place
-- ✅ **Distributed training** - Horovod for multi-GPU training
-- ✅ **H100 optimized** - BF16 mixed precision, large batches
-- ✅ **Comprehensive logging** - TensorBoard + structured CSV metrics
-- ✅ **Text generation** - Interactive and batch generation
+- **Custom Model Implementation**: Complete transformer architecture implemented from scratch
+- **Data Preprocessing**: Automated preprocessing pipeline for BookCorpus dataset
+- **Distributed Training**: Multi-GPU training using Horovod framework
+- **H100 Optimization**: BF16 mixed precision and optimized batch sizes for H100 GPUs
+- **Comprehensive Logging**: TensorBoard integration and structured CSV metrics
+- **Text Generation**: Interactive and batch text generation capabilities
+- **Modular Design**: Clean separation of data, models, training, and utilities
 
----
+## License
 
-## 📝 License
+This project is developed for educational purposes as part of the UMD MSML610 coursework.
 
-This project is for educational purposes as part of UMD MSML610 coursework.
+## Acknowledgments
 
----
-
-## 🙏 Acknowledgments
-
-- UMD Division of IT for Zaratan HPC cluster access
-- HuggingFace for datasets and tokenizers
-- Horovod team for distributed training framework
+- UMD Division of IT for providing access to the Zaratan HPC cluster
+- HuggingFace for datasets and tokenizer libraries
+- Horovod team for the distributed training framework
