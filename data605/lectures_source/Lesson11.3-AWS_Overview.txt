@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{11.2: AWS Overview}}$$**
+**$$\text{\blue{11.3: AWS Overview}}$$**
 \endgroup
 
 ::: columns
@@ -39,10 +39,10 @@ UMD DATA605 - Big Data Systems
 * Amazon Web Services (AWS)
 - **AWS is a platform offering complete cloud solutions**
   - Computing (e.g., EC2)
-  - Storing (e.g., S3)
+  - Storage (e.g., S3)
   - Networking
 
-- **Offers different levels of abstractions**
+- **Offers different levels of abstraction**
   - IaaS, PaaS, SaaS
   - From virtual hardware to applications, e.g.,
     - Host websites
@@ -52,21 +52,21 @@ UMD DATA605 - Big Data Systems
 - **Control services in different ways**
   - Web interface (console)
   - CLI: `aws` command
-  - Language libraries, SDK (e.g., Python `boto3`)
+  - Language libraries, SDKs (e.g., Python `boto3`)
 
 * AWS as Business
 ::: columns
 :::: {.column width=50%}
-- Services charge pay-per-use pricing model
-  - 500 new services and features annually
+- Services charge a pay-per-use pricing model
+  - 500 new services and features added annually
 
 - Data centers distributed globally
   - US, Europe, Asia, South America
 
-- Insanely profitable
+- Extremely profitable
   - $91B/year in revenue (2023)
   - Grows 42% year-over-year
-  - Controls 30% of cloud business
+  - Controls 30% of the cloud business
 
 ::::
 :::: {.column width=45%}
@@ -286,9 +286,9 @@ _Beef Jezos_
 
 - **Key pair**
   - Create a key pair to access a virtual server
-  - Public key (in AWS and on virtual servers)
+  - Public key (stored in AWS and on virtual servers)
   - Private key is your secret
-    - Don't lose it; can't retrieve it
+    - Don't lose it; it can't be retrieved
 ::::
 :::: {.column width=40%}
 
@@ -300,7 +300,7 @@ _Beef Jezos_
 ::: columns
 :::: {.column width=40%}
 - **Create a new user**
-  - Do not use AWS root account for development
+  - Do not use the AWS root account for development
   - IAM: Identity and Access Management
   - Access key ID + secret access key
 
@@ -334,7 +334,7 @@ _Beef Jezos_
   - Schedules hardware requests
 
 - AWS
-  - Before Xen hypervisor (open-source)
+  - Used Xen hypervisor (open-source) before
   - Switched to AWS Nitro
     - Hardware-assisted virtualization
     - Performance close to bare metal
@@ -432,20 +432,20 @@ _Beef Jezos_
 - E.g., `m4.large`
   - `m`: general purpose
   - `large`: size (2 vCPUs, 8GB memory)
-  - 0.14 USD/hr
+  - 0.10 USD/hr
 ::::
 :::
 
 * AWS Instance Type
-- Price on AWS website is somehow unclear (duh really?)
+- Pricing on the AWS website can be unclear due to various factors:
   - Burst mode
   - vCPUs
   - Multi-tenancy
-  - On-demand vs spot vs reserved vs pre-paid
+  - On-demand vs. spot vs. reserved vs. pre-paid
 
 - 642 types of EC2 machines (as of 2023)
-  - Cheapest: 37 USD/yr
-  - Most expensive: 1.91M USD/yr (500 CPUs and 24TB of memory)
+  - Cheapest: $37 USD/year
+  - Most expensive: $1.91M USD/year (500 CPUs and 24TB of memory)
 
 - [Alternative sites](https://instances.vantage.sh) tracking prices
 
@@ -454,13 +454,13 @@ _Beef Jezos_
 :::: {.column width=45%}
 - Add storage
   - Volume size
-  - Volume type (SSD or magnetic HDDs)
+  - Volume type (SSD or magnetic HDD)
 - Tag
 - Configure firewall
   - How to access using SSH
-  - Select key-pair
+  - Select key pair
 - How to monitor the instance
-  - E.g. CloudWatch
+  - E.g., CloudWatch
 ::::
 :::: {.column width=50%}
 
@@ -497,7 +497,7 @@ _Beef Jezos_
 
 - **Stop**
   - Stopped VM not billed
-  - Network HDD persist and incur charges
+  - Network HDD persists and incurs charges
   - Local disk does not persist
   - VM can restart on a different host (different IP)
 
@@ -505,14 +505,14 @@ _Beef Jezos_
 :::: {.column width=45%}
 
 - **Reboot**
-  - Network HDD persist
+  - Network HDD persists
   - Local disk does not persist
   - Software remains installed
   - VM restarts on a different host
 
 - **Terminate**
   - Delete: cannot restart
-  - Network HDD persist
+  - Network HDD persists
   - Local disk wiped out
 ::::
 :::: {.column width=50%}
@@ -532,7 +532,7 @@ _Beef Jezos_
 - **AWS regions**
   - Regions are collections of data centers
   - Regions are independent
-  - No data transfer across regions
+  - No automatic data transfer across regions
   - Some services (e.g., IAM, CDN, DNS) are global
 
 - **Why move across AWS regions**
@@ -589,8 +589,7 @@ _Beef Jezos_
 - On AWS everything can be **controlled via an API**
   - Start a VM
   - Create 1TB of storage
-  - Start Hadoop cluster
-  -
+  - Start a Hadoop cluster
 
 - Use:
   - AWS GUI console
@@ -621,9 +620,9 @@ _Beef Jezos_
 - **DevOps (SRE in Google parlance)**
   - Mix developers and operations in the same team
   - Use software to bring development and operations closer
-  - Switch roles to experience each other's pain
+  - Switch roles to experience each other's challenges
     - Devs $\to$ responsible for operational tasks (e.g., on-call)
-    - Ops $\to$ involved in software development, making system easier to
+    - Ops $\to$ involved in software development, making systems easier to
       operate
   - Foster communication and collaboration
 
@@ -633,8 +632,7 @@ _Beef Jezos_
 - **Save time**
   - Reuse scripts or blueprints
   - Automate tasks
-  - Copy-paste vs click-click-click
-
+  - Copy-paste vs. click-click-click
 - **Fewer mistakes**
   - Push-button flow
 
@@ -649,7 +647,7 @@ _Beef Jezos_
   - Run acceptance tests in isolation
   - Propagate changes to production
 
-- **Script as detailed documentation**
+- **Scripts as detailed documentation**
   - Explains what and how, not why
 ::::
 :::: {.column width=40%}
@@ -660,14 +658,14 @@ _Beef Jezos_
 :::
 
 * AWS Command Line Interface (CLI)
-- Provide **unified interface** to all AWS services
+- Provides a **unified interface** to all AWS services
   - Output is in JSON format
   ```bash
   > apt-get install awscli
   ```
 
 - **Authenticate**
-  ```
+  ```bash
   > aws configure
   ```
   - AWS access key ID
@@ -678,14 +676,14 @@ _Beef Jezos_
     - E.g., `us-east-1`
 
 - **Execute command**
-  ```
+  ```bash
   > aws <service> <action> --key value
   ```
 
 * Software Development Kit (SDK)
 ::: columns
 :::: {.column width=60%}
-- **SDK is a library calling AWS API** from your programming language
+- **SDK is a library for calling AWS API** from your programming language
   - E.g., Python, Go, C++, JavaScript
 
 - **Pros**: it handles
@@ -696,7 +694,7 @@ _Beef Jezos_
 
 - **Cons**
   - Imperative approach
-  - Deal with dependencies
+  - Dealing with dependencies
 
 ::::
 :::: {.column width=35%}
@@ -716,13 +714,13 @@ _Beef Jezos_
 
 - **Pros**
   - Consistent infrastructure description
-  - Handle dependencies
+  - Handles dependencies
   - Customizable
     - Inject parameters to customize templates
   - Testable
-    - Create infra from a template, test, shut down
+    - Create infrastructure from a template, test, shut down
   - Updatable
-    - Update template, Stacks applies changes automatically
+    - Update template, Stacks apply changes automatically
   - Serves as documentation
     - Use as code in source control
 
@@ -730,11 +728,11 @@ _Beef Jezos_
 ::: columns
 :::: {.column width=50%}
 - **Always install software updates**
-  - Fix security vulnerabilities daily
+  - Fix security vulnerabilities promptly
 
 - **Restrict access to AWS account**
-  - Use different AWS accounts for individuals and scripts
-  - Apply "least privilege": grant necessary permissions only
+  - Use separate AWS accounts for individuals and scripts
+  - Apply "least privilege": grant only necessary permissions
 
 - **Restrict network traffic**
   - Open essential ports
@@ -753,14 +751,14 @@ _Beef Jezos_
 
 * AWS Shared-responsibility Principle
 - **AWS is responsible for**:
-  - Protecting network by monitoring Internet access
-    - Preventing DDoS attacks
-  - Ensuring physical security of data centers
+  - Protecting the network by monitoring Internet access
+  - Preventing DDoS attacks
+  - Ensuring the physical security of data centers
   - Decommissioning storage devices after end of life
 
 - **You are responsible for**:
   - Restricting access using IAM
   - Encrypting network traffic (e.g., HTTPS)
-  - Configuring firewall for VPN
+  - Configuring firewalls and VPNs
   - Encrypting data
-  - Updating OS and software
+  - Updating the OS and software
