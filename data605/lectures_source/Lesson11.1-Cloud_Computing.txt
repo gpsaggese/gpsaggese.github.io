@@ -57,9 +57,9 @@ UMD DATA605 - Big Data Systems
   - Very difficult to decide objectively
 
 - **Buying / building infrastructure**
-  - Require time and capital investments (Capex)
+  - Requires time and capital investments (Capex)
     - Especially at the beginning without revenues
-    - Smooth cash flow (constant $/mo) is better than lumpy one (big one-time
+    - Smooth cash flow (constant $/mo) is better than a lumpy one (big one-time
       purchase)
   - Buy hardware (e.g., computers, storage, network)
     - Estimate current hardware size
@@ -76,7 +76,7 @@ UMD DATA605 - Big Data Systems
     - Low initial capital investment
   - Ready systems with a click
   - No multi-year resource plan needed
-  - Choose machines for your application and data needs
+  - Choose machines based on your application and data needs
 
 * Cloud Computing
 ::: columns
@@ -109,7 +109,8 @@ UMD DATA605 - Big Data Systems
 * Infrastructure-as-a-Service (IaaS)
 ::: columns
 :::: {.column width=70%}
-- Cloud provides low-level resources like virtual machines, storage, networking
+- Cloud provides low-level resources like virtual machines, storage, and
+  networking
   - Users install and maintain the operating system and applications
 
 - **Examples**
@@ -172,7 +173,7 @@ UMD DATA605 - Big Data Systems
   - Examples include:
     - _Dropbox_: Access and share files without local storage
     - _Salesforce_: Manage customer relationships online
-    - Any app running in a browser: Google Docs or Microsoft Office 365
+    - Any app running in a browser: Google Docs or Microsoft 365
 
 - **Benefits**
   - Accessibility from any device with internet connectivity
@@ -181,20 +182,19 @@ UMD DATA605 - Big Data Systems
   - Cost-effectiveness by reducing physical hardware and software installations
 ::::
 :::: {.column width=25%}
-
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_10_image_1.png)
 ::::
 :::
 
 * X-as-a-Service
-- After 2010, business model of **X-as-a-service (XaaS)**
-  - Mobility-as-a-service (e.g., Uber)
-  - Games-as-a-service (e.g., Google Stadia)
-  - Storage-as-a-service (e.g., S3, Google Drive)
-  - Desktop-as-a-service (e.g., AWS app)
-  - Marketing-as-a-service
-  - Banking-as-a-service
-  - ...
+- After 2010, business model of **X-as-a-Service (XaaS)**
+  - Mobility-as-a-Service (e.g., Uber)
+  - Gaming-as-a-Service (e.g., Google Stadia)
+  - Storage-as-a-Service (e.g., S3, Google Drive)
+  - Desktop-as-a-Service (e.g., AWS AppStream)
+  - Marketing-as-a-Service
+  - Banking-as-a-Service
+  - ..
 
 * Cloud Deployment Models
 ::: columns
@@ -213,14 +213,13 @@ UMD DATA605 - Big Data Systems
 :::
 
 - **Hybrid cloud**
-  - Combine private and public environments to optimize cost, security,
+  - Combines private and public environments to optimize cost, security, and
     scalability
   - Sensitive workloads stay internal
-  - Scalable tasks move to public cloud
+  - Scalable tasks move to the public cloud
 
 - **On-premises resources**
   - E.g., corporate servers in a building
 
 - **Off-premises resources**
   - E.g., cloud provider's distributed data centers
-

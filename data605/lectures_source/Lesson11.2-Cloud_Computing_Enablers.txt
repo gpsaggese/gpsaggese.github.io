@@ -40,9 +40,9 @@ UMD DATA605 - Big Data Systems
 - Large companies (e.g., AWS, Apple, Google, Facebook) build data centers
   globally
 
-- Data center costs around 1B USD to build
+- Data centers cost around 1 billion USD to build
   - Capex: Computing, memory, storage, networking
-  - Prices dropping
+  - Prices are dropping
   - Size is increasing
 
 ::::
@@ -62,20 +62,20 @@ UMD DATA605 - Big Data Systems
   - Focus on energy-efficient computing
 
 - **High cooling cost**
-    - Vent placement is key to manage thermal hotspots
+  - Vent placement is key to managing thermal hotspots
   - PUE (Power Usage Effectiveness)
-    - Some power converted into computation
-    - Rest is overhead
+    - Some power is converted into computation
+    - The rest is overhead
   - Hard to optimize in small data centers
     - Ideal PUE is 1
-    - Current is 1.07-1.22
-    - May lead to large data centers soon
+    - Current PUE is 1.07-1.22
+    - May lead to the development of large data centers soon
 
-- **Research on energy-saving**
+- **Lots of research on energy-saving**
 
 - **Data centers built**
   - Close to cheap energy sources
-  - In cold climate
+  - In cold climates
 ::::
 :::: {.column width=40%}
 ![](data605/lectures_source/images/lecture_11_1/lec_11_1_slide_17_image_1.png)
@@ -135,7 +135,7 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=50%}
 - Widely used solution for cloud computing
   - Many alternatives to suit your needs
-  - Prices are low due to competition
+  - Prices are competitive due to competition
   - [Current on-demand pricing](https://aws.amazon.com/ec2/pricing/on-demand/)
 ::::
 :::: {.column width=50%}
@@ -192,16 +192,16 @@ UMD DATA605 - Big Data Systems
 
 * Virtualization
 - **Virtual machines have been around for a long time**
-  - Processors had support since 1980s
-  - In 2000s efficient enough for cloud computing
+  - Processors have had support since the 1980s
+  - In the 2000s, they became efficient enough for cloud computing
 
 - **Basic idea of cloud computing**
   - Run virtual machines on servers and sell time on them
   - E.g., AWS, Microsoft Azure, Google Cloud
 
 - **Many advantages**
-  - _Security_: virtual machines have almost impenetrable boundary
-  - _Multi-tenancy_: multiple VMs on the same server
+  - _Security_: virtual machines have a strong boundary that enhances security
+  - _Multi-tenancy_: multiple VMs can run on the same server
   - _Efficiency_: replace many underpowered machines with fewer high-powered
     machines
 
@@ -209,17 +209,16 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=50%}
 - **Desktop virtualization**
-  - VMWare, Xen, VirtualBox
-  - Run on host OS
+  - VMware, Xen, VirtualBox
+  - Runs on host OS
   - Hypervisor/VM supports guest OS
-
 - **Server virtualization**
-  - Run hypervisor on hardware
+  - Runs hypervisor on hardware
   - Ideal for server farms, cloud computing
-  - Amazon used Xen on RedHat
+  - Amazon used Xen on Red Hat
     - Now it uses AWS Nitro
 
-- **Performance are tricky**
+- **Performance is tricky**
   - Hard to reason about performance
   - Identical VMs may deliver different performance
   - Multi-tenancy, different hardware
@@ -241,13 +240,13 @@ _Server virtualization_
 :::
 
 * Docker
-- Package all dependencies in a single object
+- Package all dependencies in a single container
 
 - **Advantages**
   - Containers are fast and portable
   - Reduce virtualization overhead
-  - All containers run on a single host
-  - Reduce OS licensing cost / maintenance overhead
+  - All containers can run on a single host
+  - Reduce OS licensing costs and maintenance overhead
 
 ::: columns
 :::: {.column width=40%}
@@ -270,14 +269,14 @@ _Server virtualization_
 
 - **Parallel approach** has existed for a long time to program clusters
   - Challenging for programmers
-    - Parallelize application
+    - Parallelize applications
     - Distribute data
     - Handle failures
     - Debugging
     - Race conditions/Heisenbugs
 
 - **The difference is the user interface**
-  - Google developed MapReduce starting a new era
+  - Google developed MapReduce, starting a new era
     - Hadoop, Spark
   - AWS services
 
@@ -295,32 +294,27 @@ _Server virtualization_
     - Fault tolerance
 
 * Other Programming Frameworks
-- Many programming frameworks for different applications to address MapReduce
+- Many programming frameworks for different applications address MapReduce
   limitations
   - **High-performance Computing (HPC) Systems**
-    - Cluster of supercomputers
+    - Clusters of supercomputers
     - E.g., GridRPC, MPI
-    - More expressive, efficient
-
+    - More expressive and efficient
   - **Spark**
-    - Based on Resilient Distributed Data (RDD)
+    - Based on Resilient Distributed Datasets (RDD)
     - In-memory, efficient
-
   - **Apache Storm, Spark Streaming**
     - Handle real-time streaming data
-
   - **Giraph, GraphLab, GraphX**
     - Graph processing systems
-
   - **Apache Hive**
     - SQL-like interface on Hadoop/HDFS
-
   - **Apache HBase**
-    - NoSQL column-oriented DB
-    - Random read/write large tables on Hadoop/HDFS
+    - NoSQL column-oriented database
+    - Supports random read/write of large tables on Hadoop/HDFS
     - Modeled after Google BigTable
 
-## Challenges and opportunities
+## Challenges and Opportunities
 
 * Cloud Benefits (1/2)
 - **Lower-cost, light end-devices**
