@@ -1,25 +1,5 @@
 # DATA605
 
-## Generate the lecture script
-
-- Run from inside a container
-  ```bash
-  > i docker_bash --base-image=623860924167.dkr.ecr.eu-north-1.amazonaws.com/cmamp --skip-pull
-
-  docker> sudo /bin/bash -c "(source /venv/bin/activate; pip install --upgrade openai)"
-
-  docker> generate_slide_script.py \
-    --in_file data605/lectures_source/Lesson01-Intro.txt \
-    --out_file data605/lectures_source/Lesson01-Intro.script.txt \
-    --slides_per_group 3 \
-    --limit 1:5
-  ```
-
-- Run from outside the container
-  ```bash
-  > gen_data605_script.sh 04.3
-  ```
-
 ## Check correctness of all the slides
 
 - Run for one lecture from inside the container
@@ -48,9 +28,10 @@
   ```
 
 ## Reduce all slides
-```
-SRC_NAME=$(ls $DIR/lectures_source/Lesson04.2*); echo $SRC_NAME
-process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $SRC_NAME --use_llm_transform --limit 0:10
+
+```bash
+> SRC_NAME=$(ls $DIR/lectures_source/Lesson04.2*); echo $SRC_NAME
+> process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $SRC_NAME --use_llm_transform --limit 0:10
 ```
 
 ```
@@ -60,6 +41,32 @@ process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $SRC_NAME
 ## Generate all the slides
 
 > process_lessons.py --lectures 0*:1* --class data605 --action pdf
+
+## Generate the lecture script
+
+- Run from inside a container
+  ```bash
+  > i docker_bash --base-image=623860924167.dkr.ecr.eu-north-1.amazonaws.com/cmamp --skip-pull
+
+  docker> sudo /bin/bash -c "(source /venv/bin/activate; pip install --upgrade openai)"
+
+  docker> generate_slide_script.py \
+    --in_file data605/lectures_source/Lesson01-Intro.txt \
+    --out_file data605/lectures_source/Lesson01-Intro.script.txt \
+    --slides_per_group 3 \
+    --limit 1:5
+  ```
+
+- Run from outside the container
+  ```bash
+  > gen_data605_script.sh 04.3
+  ```
+
+- Generate the intro
+  > TAG=08.3; llm_cli.py -i data605/lectures_script/Lesson${TAG}*.script.txt -p "You are a college professor and you need to do an introduction in 50 word the content of the slides starting with In this lesson" -o -
+
+- Generate the outro
+  > TAG=08.3; llm_cli.py -i data605/lectures_script/Lesson${TAG}*.script.txt -p "You are a college professor and you need to summarize what was discussed in less than 50 word in the slides like In this lesson we have discussed" -o -
 
 ## Count pages
 
@@ -79,6 +86,14 @@ data605/lectures/Lesson01.3-Is_Data_Science_Just_Hype.pdf       14
 
 > dir="data605/lectures_script/"; for f in "$dir"/*; do [ -f "$f" ] && printf "%s\t%s\n" "$(basename "$f")" "$(wc -w < "$f")"; done
 
+./count_words.sh
+
+## Review scripts
+
+> TAG=10.1; gen_data605.sh $TAG; vi $(ls data605/lectures_script/*${TAG}*)
+
+> TAG=08.3; open data605/lectures/Lesson${TAG}*.pdf; vi $(ls data605/lectures_script/*${TAG}*)
+
 # MSML610
 
 > cd $GIT_ROOT
@@ -89,12 +104,11 @@ data605/lectures/Lesson01.3-Is_Data_Science_Just_Hype.pdf       14
 
 > gen_msml610.sh 02
 
-
 > FILE=msml610/lectures_source/Lesson05*
 > process_slides.py --in_file $FILE --action slide_format_figures --out_file $FILE --use_llm_transform
 > process_slides.py --in_file $FILE --action slide_check --out_file ${FILE}.check --use_llm_transform --limit None:10
 
-rsync -avz -e "ssh -i ~/.ssh/ck/saggese-cryptomatic.pem" saggese@$DEV1:/data/saggese/src/umd_classes1/msml610/lectures/ msml610/lectures/; open msml610/lectures/*07.1* -a "skim"
+> rsync -avz -e "ssh -i ~/.ssh/ck/saggese-cryptomatic.pem" saggese@$DEV1:/data/saggese/src/umd_classes1/msml610/lectures/ msml610/lectures/; open msml610/lectures/*07.1* -a "skim"
 
 ## To run the tutorials
 > cd msml610/tutorials
@@ -103,7 +117,7 @@ rsync -avz -e "ssh -i ~/.ssh/ck/saggese-cryptomatic.pem" saggese@$DEV1:/data/sag
 
 > open -a "Chrome" http://127.0.0.1:5011/lab/tree/notebooks/Bayesian_Coin.ipynb
 
-##
+## Fix slides
 
-FILE=data605/lectures_source/Lesson09.2-Spark_Primitives.txt
-llm_cli.py --input $FILE -pf "fix_slides.prompt.md" -o improved.md --model "gpt-4o" -b
+> FILE=data605/lectures_source/Lesson09.2-Spark_Primitives.txt
+> llm_cli.py --input $FILE -pf "fix_slides.prompt.md" -o improved.md --model "gpt-4o" -b
