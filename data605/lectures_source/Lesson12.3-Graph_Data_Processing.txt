@@ -30,6 +30,173 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
+## Typical graph analysis tasks
+
+* Queries vs Analysis Tasks
+- **Queries**
+  - Explore data
+  - Result: small graph portion (often a node)
+  - Challenges
+    - Minimize explored graph portion
+    - Use indexes (auxiliary data structures)
+
+- **Analysis tasks**
+  - Process entire graph
+  - Challenges
+    - Handle large data efficiently
+    - Parallelize if data doesn't fit in memory/disk
+
+* Examples of Graph Tasks
+- Subgraph pattern matching
+  - Find matching instances of a small graph in a large graph
+  - Patterns are usually small
+
+- Shortest path queries
+  - Find shortest path between two nodes
+  - E.g., road networks
+
+- Reachability
+  - Determine if a path exists between two nodes
+  - May include edge constraints
+
+- Keyword search
+  - Find smallest subgraph containing all specified keywords
+
+- Historical queries
+  - Find nodes with similar evolution to a given node
+
+- Graph algorithms
+  - Network flows
+  - Spanning trees
+
+* Queries: Subgraph Matching
+- Given a "query" graph, find where it occurs in a given "data" graph
+  - Query graph can specify restrictions on the graph structure, on values of node attributes, and so on
+  - An important variation: *approximate* matching
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_1.png){width=70%}
+
+* Queries: Connection Subgraphs
+- Given a data graph and nodes, find a subgraph that captures the relationship
+
+- Define "best captures"
+  - E.g., "shortest path": may not be most informative
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_41_image_1.png)
+
+* Graph Analysis: Centrality Measures
+
+- Centrality measure: relative importance of a vertex in a graph
+
+- Different centrality measures
+  - Yield different results
+
+:::columns
+::::{.column width=50%}
+- **Degree centrality of a node u**
+  - Number of edges incident on u
+
+- **Betweenness centrality of a node u**
+  - Number of shortest paths between vertex pairs through u
+
+- **Page Rank of a node u**
+  - Probability a random surfer ends up at node u
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_42_image_1.png)
+::::
+:::
+
+* Graph Analysis: Community Detection
+- Goal: partition vertices into (potentially overlapping) groups based on
+  interconnections
+  - More connections within a community than across communities
+  - Insights into network function; identify functional modules; improve Web
+    services
+
+- Techniques for community detection
+  - Graph partitioning-based methods
+  - Maximizing "goodness" function
+  - Recursively removing high centrality edges
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_43_image_1.png){width=40%}
+
+## Executing graph analysis tasks
+
+* Bulk Synchronous Parallel (BSP)
+- BSP model is a computational model for designing parallel algorithms for
+  distributed systems
+
+- Computation is divided into _supersteps_ with three phases
+  - **Local computation phase**
+    - Processing units perform calculations independently and concurrently
+  - **Communication phase**
+    - Processing units exchange information by sending and receiving messages
+      asynchronously
+  - **Synchronization phase**
+    - Aka barrier
+    - Ensures all units complete computations and communication before the next
+      superstep
+    - Guarantees all messages from the previous superstep are processed
+
+- Suitable for iterative graph algorithms
+  - E.g., pageRank and Shortest Path
+
+* Bulk Synchronous Parallel (BSP)
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_46_image_1.png)
+
+time
+
+* Pregel System
+- Large-scale graph processing system by Google
+  - Pregel paper, 2010
+- Inspired by Bulk Synchronous Parallel (BSP) model
+  - Vertex-centric programming
+  - Asynchronous message passing
+- Fault-tolerant with checkpointing
+- Scalable, distributed architecture
+- Processes large graphs with billions of vertices, edges
+- Handles graph mutations, updates during computation
+- Not open-source, internal to Google
+
+* Apache Giraph
+:::columns
+::::{.column width=80%}
+- Apache Giraph
+  - Open-source graph processing framework, inspired by Google's Pregel
+  - Implemented by Facebook, then open-sourced
+  - Built on Apache Hadoop
+  - Fault-tolerant with Hadoop checkpointing
+  - Scalable, distributed architecture
+  - Suitable for large-scale graph analytics, machine learning algorithms
+  - Actively maintained, widely adopted in open-source community
+::::
+::::{.column width=20%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_48_image_1.png)
+::::
+:::
+
+* Apache Spark GraphX
+:::columns
+::::{.column width=80%}
+- Apache Spark GraphX
+  - Graph processing library for Apache Spark
+  - Built on Spark's RDD model
+  - Supports directed and undirected graphs
+  - Flexible graph computation API
+  - Optimized for iterative graph computations
+  - Scalable, fault-tolerant architecture
+  - In-memory graph processing for improved performance
+  - Suitable for large-scale graph analytics, machine learning tasks
+  - Implements various graph algorithms
+    - E.g., PageRank, Connected Components, Shortest Path
+::::
+::::{.column width=20%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_49_image_1.png)
+::::
+:::
+
 * Options for Processing Graph Data 
 - Write your own programs
   - Extract relevant data, construct in-memory graph
