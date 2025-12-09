@@ -70,8 +70,7 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=55%}
 - **Example**
-  - "_Report moving average of XYZ over last hour every 10 minutes_"
-
+  - "_Report moving average of XYZ over the last hour every 10 minutes_"
 - **Solution**
   - Insert arriving items into a relational table
   - Re-run query repeatedly
@@ -129,18 +128,18 @@ UMD DATA605 - Big Data Systems
 - **Subscribers**
   - Consume messages
 
-- **Message broker**
-  - Message broker routes event flow between publishers and subscribers, based on
-    topics and subscriptions
+- **Message Broker**
+  - The message broker routes event flow between publishers and subscribers,
+    based on topics and subscriptions
 ::::
 :::: {.column width=50%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_6_image_1.png)
 ::::
 :::
 
-- **Design parameters**
+- **Design Parameters**
   - Event distribution model (topics, filters)
-  - Push vs pull consumption
+  - Push vs. pull consumption
   - Subscriber interest patterns
   - Delivery guarantees
     - At-most-once
@@ -157,29 +156,29 @@ UMD DATA605 - Big Data Systems
   - Easy to implement: "fire-and-forget"
 
 - Works when occasional loss is acceptable
-  - E.g., monitoring metrics of website
+  - E.g., monitoring metrics of a website
 
 * Delivery Semantics: At-least once
-- **At-least once**: messages retried until acknowledged
+- **At-least once**: messages are retried until acknowledged
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_2.png)
 
 - **Pros**
-  - Ensures no loss but duplicates possible
-
+  - Ensures no loss, but duplicates are possible
 - **Cons**
   - Requires idempotent operations or deduplication
 
 * Delivery Semantics: Exactly once
-- **Exactly once**: each message processed once globally
+- **Exactly once**: each message is processed once globally
 
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_7_image_3.png)
 
 - Most consumer-friendly but hardest to guarantee
-  - Complicated by distributed coordination limits (e.g., "Two Generals' Problem")
+  - Complicated by distributed coordination limits (e.g., "Two Generals'
+    Problem")
 
 - Used in financial and mission-critical systems
-  - E.g., mission-critical systems (e.g., payment, trading, accounting)
+  - E.g., payment, trading, accounting systems
 
 * Event vs Processing Time
 :::columns
@@ -216,9 +215,9 @@ UMD DATA605 - Big Data Systems
   - Messaging and log aggregation
 
 - **Differences arise in**
-  - Batch vs streaming orientation
+  - Batch vs. streaming orientation
   - Delivery semantics
-  - Compute vs pub-sub roles
+  - Compute vs. pub-sub roles
   - Throughput, latency, fault tolerance
   - API and language support
 
@@ -342,7 +341,7 @@ UMD DATA605 - Big Data Systems
 
 - **Pros**
   - Achieves extremely low latency
-    - Example: sub-millisecond response times
+    - E.g., sub-millisecond response times
 
 - **Cons**
   - Poor fault tolerance
@@ -363,7 +362,7 @@ UMD DATA605 - Big Data Systems
 
 - **Pros**
   - Recover from failures and stragglers with task scheduling
-    - Schedule same task multiple times
+    - Schedule the same task multiple times
   - Deterministic tasks
     - Exactly-once processing
     - Consistent API: same semantics as RDDs
@@ -377,7 +376,7 @@ UMD DATA605 - Big Data Systems
 :::columns
 ::::{.column width=60%}
 - Unified DataFrame/SQL-based model for both batch and streaming
-- System manages state, faults, incremental computation, and late data
+- System manages state, fault tolerance, incremental computation, and late data
 - Streaming table abstraction
   - Conceptually an unbounded table continuously appended with new rows
   - At time T, equivalent to a static DataFrame of all rows up to T
@@ -418,17 +417,19 @@ UMD DATA605 - Big Data Systems
 
 * Saving Modes
 - Indicate when to save results and where
-  - Each time result table updates, write to external file system
-    - E.g., HDFS, AWS S3 or DB (e.g., MySQL, Cassandra)
- 
+  - Each time the result table updates, write to an external file system
+    - E.g., HDFS, AWS S3, or a database (e.g., MySQL, Cassandra)
+
 - **Append mode**
-  - Append new rows since last trigger
+  - Append new rows since the last trigger
   - Use when existing rows don't change
+
 - **Update mode**
-  - Write updated rows since last trigger
+  - Write updated rows since the last trigger
   - Update in place
+
 - **Complete mode**
-  - Write entire updated result table
+  - Write the entire updated result table
   - General but expensive
 
 * Spark Streaming "Hello world"
@@ -439,13 +440,11 @@ UMD DATA605 - Big Data Systems
   - Unbounded DataFrame
   - Set up reading but doesn't start reading
 
-- `words` split data in words
-
+- `words` splits data into words
 - `counts` is a streaming DataFrame
   - Running word count
-
 - `select()`, `filter()` are stateless transformations
-- `count()` is stateful transformation
+- `count()` is a stateful transformation
 ::::
 ::::{.column width=45%}
 ![](data605/lectures_source/images/lecture_12_1/lec_12_1_slide_20_image_1.png)
@@ -458,7 +457,7 @@ UMD DATA605 - Big Data Systems
     - Where to write (e.g., `console`)
     - How to write (e.g., `complete` for updated word counts)
   - When to trigger computation (e.g., every 1 second)
-  - Where to save metadata for exactly-once guarantees, failure recovery
+  - Where to save metadata for exactly-once guarantees and failure recovery
 
 - `start()` processing (non-blocking)
   - `awaitTermination()` blocks until data is available

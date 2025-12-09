@@ -35,8 +35,8 @@ UMD DATA605 - Big Data Systems
 ::::{.column width=60%}
 - **Client-server**: Model for distributed applications partitioning tasks
   between:
-  - _Clients_: Request service (e.g., dashboard, GUI, client applications)
-  - _Servers_: Provide resource or service (e.g., database)
+  - _Clients_: Request services (e.g., dashboard, GUI, client applications)
+  - _Servers_: Provide resources or services (e.g., database)
 ::::
 ::::{.column width=35%}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_2_image_2.png)
@@ -48,10 +48,9 @@ UMD DATA605 - Big Data Systems
 :::columns
 ::::{.column width=60%}
 - **Architecture of a database system**:
-  - _Back-end_ (Server): manage access, query evaluation, optimization,
-    concurrency control, recovery
-  - _Front-end_ (Clients): tools like forms, report-writers, GUI
-
+  - _Back-end_ (Server): Manages access, query evaluation, optimization,
+    concurrency control, and recovery
+  - _Front-end_ (Clients): Tools like forms, report-writers, GUI
 - Interface between front-end and back-end:
   - SQL
   - Application programming interface (API)
@@ -66,9 +65,9 @@ UMD DATA605 - Big Data Systems
 ::::{.column width=60%}
 - **Parallel computing**
   - One computer, multiple CPUs
-  - Cluster: many computers, multiple CPUs
-  - Homogenous, geographically close nodes
-  - Work on one task
+  - Cluster: many computers, each with multiple CPUs
+  - Homogeneous, geographically close nodes
+  - Work on one task simultaneously
 
 ::::
 ::::{.column width=35%}
@@ -82,8 +81,8 @@ UMD DATA605 - Big Data Systems
 ::::{.column width=60%}
 - **Distributed computing**
   - Autonomous, geographically separate systems
-  - Heterogeneous and distant
-  - Perform separate tasks
+  - Heterogeneous and distant nodes
+  - Perform separate tasks or parts of a larger task
 ::::
 ::::{.column width=35%}
 ![](data605/lectures_source/images/lecture_10_2/lec_10_2_slide_3_image_1.png)
