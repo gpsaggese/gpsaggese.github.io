@@ -326,6 +326,22 @@ def create_rolling_windows(data: np.ndarray, window_size: int,
     return np.array(X), np.array(y)
 
 
+def calculate_returns(df: pd.DataFrame, price_column: str = 'Close') -> pd.DataFrame:
+    """
+    Calculate percentage returns (percentage change from previous close).
+
+    Args:
+        df: Input DataFrame
+        price_column: Column to calculate returns on
+
+    Returns:
+        DataFrame with Returns column added
+    """
+    df = df.copy()
+    df['Returns'] = df[price_column].pct_change()
+    return df
+
+
 def apply_all_features(df: pd.DataFrame,
                       price_cols: Dict[str, str] = None) -> pd.DataFrame:
     """

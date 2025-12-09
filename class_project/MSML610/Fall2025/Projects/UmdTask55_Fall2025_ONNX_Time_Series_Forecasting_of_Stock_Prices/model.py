@@ -68,7 +68,7 @@ def compile_model(model: keras.Model, learning_rate: float = 0.001) -> keras.Mod
     optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
     model.compile(
         optimizer=optimizer,
-        loss='mse',
+        loss='mae',  # Mean Absolute Error - less sensitive to outliers than MSE
         metrics=['mae', 'mape']
     )
     return model
@@ -119,7 +119,7 @@ def train_lstm_model(
     X_val: Optional[np.ndarray] = None,
     y_val: Optional[np.ndarray] = None,
     config: Optional[LSTMConfig] = None,
-    model_path: str = 'models/lstm_model.h5',
+    model_path: str = 'models/lstm_model.keras',
     verbose: int = 1
 ) -> Tuple[keras.Model, keras.callbacks.History]:
     """
@@ -181,11 +181,8 @@ def save_model_and_history(
     """
     os.makedirs(model_dir, exist_ok=True)
 
-    model_path = os.path.join(model_dir, 'lstm_model.h5')
+    model_path = os.path.join(model_dir, 'lstm_model.keras')
     model.save(model_path)
-
-    tf_model_dir = os.path.join(model_dir, 'lstm_tf_savedmodel')
-    model.save(tf_model_dir, save_format='tf')
 
     history_path = os.path.join(model_dir, 'training_history.json')
     history_dict = {key: [float(val) for val in values]
@@ -194,8 +191,7 @@ def save_model_and_history(
         json.dump(history_dict, f, indent=2)
 
     return {
-        'h5_model': model_path,
-        'tf_model': tf_model_dir,
+        'keras_model': model_path,
         'history': history_path
     }
 
@@ -324,7 +320,7 @@ def create_and_train_lstm(
     model = compile_model(model, learning_rate=config.learning_rate)
 
     print("\nTraining model...")
-    model_path = os.path.join(model_dir, 'lstm_model_best.h5')
+    model_path = os.path.join(model_dir, 'lstm_model_best.keras')
     model, history = train_lstm_model(
         model, X_train, y_train, X_val, y_val,
         config=config, model_path=model_path, verbose=verbose
