@@ -1,10 +1,10 @@
                 precision    recall  f1-score   support
 
-   Accessories       0.97      0.93      0.95      1127
-       Apparel       0.98      0.99      0.98      2139
-      Footwear       0.99      1.00      0.99       922
+   Accessories       0.95      0.94      0.94      1127
+       Apparel       0.98      0.98      0.98      2139
+      Footwear       0.99      1.00      1.00       922
     Free Items       0.00      0.00      0.00        11
- Personal Care       0.91      0.96      0.94       240
+ Personal Care       0.88      0.96      0.92       240
 Sporting Goods       0.50      0.33      0.40         3
 
       accuracy                           0.97      4442

@@ -2,5 +2,5 @@
 docker run --rm -it \
   -p 8888:8888 \
   -v "$PWD":/workspace \
-  msml610_autokeras \
+  msml610_fashion \
   bash

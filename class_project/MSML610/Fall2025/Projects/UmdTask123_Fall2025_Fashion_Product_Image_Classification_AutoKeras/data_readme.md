@@ -16,9 +16,9 @@ Download the ZIP file from Kaggle and extract it. The extracted directory will c
 
 ---
 
-## 2. Required Local Folder Structure
+## 2. Required Local Folder Structure (Docker version)
 
-Place the extracted images inside this folder structure:
+After downloading and extracting the dataset, place **ALL images** into this project folder:
 
 UmdTask123_Fall2025_Fashion_Product_Image_Classification_AutoKeras/  
 │  
@@ -64,14 +64,18 @@ Your local image filenames MUST match exactly those referenced in the TSV files.
 
 After placing the images, inside Docker you can run:
 
+```
 from utils_data_io import tsv_to_tfds  
 ds = tsv_to_tfds("lists/train.tsv", num_classes=6)
+```
 
 If everything is correct, the dataset loads without errors.
 
 If you see:
 
+```
 NOT_FOUND: images/12345.jpg; No such file or directory
+```
 
 then either:
 
@@ -88,8 +92,23 @@ then either:
 - The MSML610 project format expects large datasets to be referenced, not uploaded.
 
 ---
+## 6. Colab Version – Preparing Data for Full AutoKeras Training
+The GPU-intensive notebook: AutoKeras.full_training.ipynb
+expects the dataset in Google Drive as: images.zip
 
-## 6. Quick Checklist for Reviewers (TAs)
+Colab notebook will automatically:
+- Mount Google Drive
+- Unzip images.zip
+- Create the same structure used in Docker:
+
+```
+/content/images/
+lists/train.tsv
+lists/val.tsv
+lists/test.tsv
+```
+---
+## 7. Quick Checklist for Reviewers (Docker Workflow)
 
 Before running the notebooks:
 
@@ -98,11 +117,26 @@ Before running the notebooks:
 3. Ensure filenames match references in `lists/*.tsv`  
 4. Confirm folder structure is correct  
 5. Launch Jupyter using Docker:
-
+```
 bash docker_jupyter.sh
+```
+If data is correctly placed, the entire pipeline runs end-to-end inside Docker.
 
-If the dataset is placed correctly, all notebooks run end-to-end without modification.
+---
+## 8. Quick Checklist for Colab (Full GPU Training)
+
+For running AutoKeras.full_training.ipynb:
+
+1. Upload images.zip to Google Drive
+2. Open the notebook from Drive or via the provided Colab link
+3. Run all cells 
+4. Outputs will appear in: 
+```
+/content/colab_outputs/
+```
+
+These files are also included in the project under colab_outputs/.
 
 ---
 
-This `data_readme.md` ensures the project is fully reproducible even though the dataset itself is not stored in the repository.
+This `data_readme.md` ensures reproducible dataset setup for both Docker and Colab environments.
