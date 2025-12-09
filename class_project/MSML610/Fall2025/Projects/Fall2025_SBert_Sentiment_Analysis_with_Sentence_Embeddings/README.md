@@ -6,8 +6,8 @@ It includes data preprocessing, embedding generation, baseline models, SBERT-bas
 ---
 
 ## 1. Project Structure
-Fall2025_SBert_Sentiment_Analysis_with_Sentence_Embeddings/
-│
+Fall2025_SBert_Sentiment_Analysis_with_Sentence_Embeddings/  
+│  
 ├── README.md  
 ├── LICENSE_DATASET.md  
 ├── config.yaml  
