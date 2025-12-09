@@ -46,628 +46,164 @@ UMD DATA605 - Big Data Systems
     - Handle large data efficiently
     - Parallelize if data doesn't fit in memory/disk
 
-* Examples of Graph Tasks
-- Subgraph pattern matching
-  - Find matching instances of a small graph in a large graph
-  - Patterns are usually small
+* Subgraph Matching
+- Find matching instances of a small pattern in a larger graph
+  - Patterns are typically small and fixed
+  - Matching can be _approximate_
 
-- Shortest path queries
-  - Find shortest path between two nodes
-  - E.g., road networks
+- **Applications**
+  - Fraud detection (e.g., detecting fraudulent transaction patterns)
+  - Bioinformatics (e.g., finding protein interaction motifs)
+  - Social network analysis (e.g., community pattern detection)
 
-- Reachability
-  - Determine if a path exists between two nodes
-  - May include edge constraints
-
-- Keyword search
-  - Find smallest subgraph containing all specified keywords
-
-- Historical queries
-  - Find nodes with similar evolution to a given node
-
-- Graph algorithms
-  - Network flows
-  - Spanning trees
-
-* Queries: Subgraph Matching
-- Given a "query" graph, find where it occurs in a given "data" graph
-  - Query graph can specify restrictions on the graph structure, on values of node attributes, and so on
-  - An important variation: *approximate* matching
-
+\center
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_1.png){width=70%}
 
-* Queries: Connection Subgraphs
-- Given a data graph and nodes, find a subgraph that captures the relationship
+* Shortest Path Queries
+- Find the shortest or optimal path between two nodes
+  - May consider edge weights (e.g., distance, cost)
 
-- Define "best captures"
-  - E.g., "shortest path": may not be most informative
+- **Applications**
+  - GPS navigation (e.g., Google Maps)
+  - Network routing (e.g., Internet traffic routing)
+  - Robotics (e.g., path planning)
 
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_41_image_1.png)
+\center
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_2.png){width=70%}
 
-* Graph Analysis: Centrality Measures
+* Reachability
+- Determine if a path exists between two nodes
+  - May include constraints (e.g., edge types, direction)
 
-- Centrality measure: relative importance of a vertex in a graph
+- **Applications**
+  - Access control (e.g., "can user X reach resource Y?")
+  - Dependency analysis (e.g., package installation)
+  - Workflow engines (e.g., task progression)
 
-- Different centrality measures
-  - Yield different results
+* Keyword Search
+- Find smallest subgraph containing all specified keywords
 
-:::columns
-::::{.column width=50%}
-- **Degree centrality of a node u**
-  - Number of edges incident on u
+- **Applications**
+  - Knowledge graphs (e.g., question answering)
+  - Enterprise search (e.g., documents linked by shared entities)
+  - Academic citation networks
 
-- **Betweenness centrality of a node u**
-  - Number of shortest paths between vertex pairs through u
+\center
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_3.png)
 
-- **Page Rank of a node u**
-  - Probability a random surfer ends up at node u
+* Historical Queries
+- Find nodes with similar evolution or temporal behavior
+  - Typically on dynamic or time-stamped graphs
+
+- **Applications**
+  - Stock market analysis (e.g., similar price movement)
+  - Social media trends (e.g., user behavior over time)
+  - Epidemiology (e.g., disease spread patterns)
+
+* Graph Algorithms
+- General algorithms applicable to various graph types
+  - Network flows (e.g., max flow, min cut)
+  - Spanning trees (e.g., minimal connectivity)
+  - ...
+
+- **Applications**
+  - Logistics and supply chain optimization
+  - Electric grid design
+  - Telecommunications (e.g., bandwidth allocation)
+
+## Graph Data Processing Systems
+
+* Bulk Synchronous Parallel Model
+- BSP is a model for parallel computation using synchronized steps
+
+::: columns
+:::: {.column width=60%}
+
+- **Computation is organized into supersteps**
+  - _Local computation_
+  - _Message passing_ allows parallel processors to exchange data
+    - Messages are sent during a superstep but delivered in the next
+  - _Synchronization barriers_ ensure all processors complete a superstep before
+    moving on
 ::::
-::::{.column width=50%}
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_42_image_1.png)
+:::: {.column width=35%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_4.png)
 ::::
 :::
 
-* Graph Analysis: Community Detection
-- Goal: partition vertices into (potentially overlapping) groups based on
-  interconnections
-  - More connections within a community than across communities
-  - Insights into network function; identify functional modules; improve Web
-    services
+- **Pros**
+  - Deterministic behavior and predictable execution
+  - Simple abstraction for reasoning about parallelism
+  - Suitable for graph computations with regular communication patterns
+- **Cons**
+  - Global synchronization can cause idle time (stragglers)
+  - Inefficient for highly irregular workloads or dynamic computation patterns
 
-- Techniques for community detection
-  - Graph partitioning-based methods
-  - Maximizing "goodness" function
-  - Recursively removing high centrality edges
+* Pregel
+- **Pregel** is a graph processing framework inspired by the BSP model
+  - Pregel = Parallel + Graph + Google
+  - Designed for large-scale distributed graph computations
+  - Uses a vertex-centric programming model
+    - Each vertex performs computation independently in supersteps
+    - Motto: "Think like a vertex"
+  - Vertices send messages to neighbors and update state based on received
+    messages
+  - Vertices can vote to halt; computation ends when all are inactive
 
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_43_image_1.png){width=40%}
+- **PageRank example**
+  - Each vertex divides its rank among neighbors
+  - In each superstep, vertices update rank from incoming messages
 
-## Executing graph analysis tasks
-
-* Bulk Synchronous Parallel (BSP)
-- BSP model is a computational model for designing parallel algorithms for
-  distributed systems
-
-- Computation is divided into _supersteps_ with three phases
-  - **Local computation phase**
-    - Processing units perform calculations independently and concurrently
-  - **Communication phase**
-    - Processing units exchange information by sending and receiving messages
-      asynchronously
-  - **Synchronization phase**
-    - Aka barrier
-    - Ensures all units complete computations and communication before the next
-      superstep
-    - Guarantees all messages from the previous superstep are processed
-
-- Suitable for iterative graph algorithms
-  - E.g., pageRank and Shortest Path
-
-* Bulk Synchronous Parallel (BSP)
-
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_46_image_1.png)
-
-time
-
-* Pregel System
-- Large-scale graph processing system by Google
-  - Pregel paper, 2010
-- Inspired by Bulk Synchronous Parallel (BSP) model
-  - Vertex-centric programming
-  - Asynchronous message passing
-- Fault-tolerant with checkpointing
-- Scalable, distributed architecture
-- Processes large graphs with billions of vertices, edges
-- Handles graph mutations, updates during computation
-- Not open-source, internal to Google
+- **Connected components example**
+  - Each vertex propagates smallest ID seen to neighbors
+  - Repeats until no changes occur
 
 * Apache Giraph
-:::columns
-::::{.column width=80%}
-- Apache Giraph
-  - Open-source graph processing framework, inspired by Google's Pregel
-  - Implemented by Facebook, then open-sourced
-  - Built on Apache Hadoop
-  - Fault-tolerant with Hadoop checkpointing
-  - Scalable, distributed architecture
-  - Suitable for large-scale graph analytics, machine learning algorithms
-  - Actively maintained, widely adopted in open-source community
+::: columns
+:::: {.column width=70%}
+- **Apache Giraph** is an open-source implementation of Pregel
+  - Written in Java for high scalability
+
+- Suitable for batch-processing large graphs
+
+- **Integrates with Hadoop ecosystem**
+  - Runs on Hadoop MapReduce
+  - Uses HDFS for storage and YARN for resource management
 ::::
-::::{.column width=20%}
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_48_image_1.png)
+:::: {.column width=25%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_5.png)
 ::::
 :::
+
+- **Example use cases**:
+  - Social network analysis (e.g., friend recommendation)
+  - Web graph analysis (e.g., PageRank)
+  - Biological network exploration (e.g., gene interaction)
 
 * Apache Spark GraphX
-:::columns
-::::{.column width=80%}
-- Apache Spark GraphX
-  - Graph processing library for Apache Spark
-  - Built on Spark's RDD model
-  - Supports directed and undirected graphs
-  - Flexible graph computation API
-  - Optimized for iterative graph computations
-  - Scalable, fault-tolerant architecture
-  - In-memory graph processing for improved performance
-  - Suitable for large-scale graph analytics, machine learning tasks
-  - Implements various graph algorithms
-    - E.g., PageRank, Connected Components, Shortest Path
+::: columns
+:::: {.column width=70%}
+- **GraphX** is Spark's API for graph-parallel computation
+
+- Seamless integration with Spark ecosystem and pipelines
+
+- Graphs represented using RDDs
+  - Vertices and edges as distributed collections
+
 ::::
-::::{.column width=20%}
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_49_image_1.png)
+:::: {.column width=25%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_6.png)
 ::::
 :::
 
-* Options for Processing Graph Data 
-- Write your own programs
-  - Extract relevant data, construct in-memory graph
-  - Different storage options help to varying degrees
-
-- Write queries in a declarative language
-  - Suitable for some graph queries/tasks
-  - E.g., Cypher for Neo4j
-
-- Use a general-purpose distributed programming framework
-  - E.g., Hadoop or Spark
-  - Difficult for many graph analysis tasks
-
-- Use a graph-specific programming framework
-  - Simplifies writing graph analysis tasks, scales to large volumes
-  - E.g., Giraph or GraphX
-
-* Option 2: Declarative Interfaces 
-- No consensus on declarative, high-level languages for querying or analysis
-  - Variety in query/analysis tasks
-  - Hard to find and exploit commonalities
-
-- Limited, useful solutions:
-  - XQuery for XML
-    - Limited to tree-structured data
-  - SPARQL for RDF
-    - Standardized query language, limited functionality
-  - Cypher by Neo4j
-  - Datalog-based frameworks for analysis tasks
-    - Many prototypes, task-specific
-
-* Option 3: MapReduce 
-- Popular option for processing large datasets
-  - Hadoop or Spark
-
-- Key advantages:
-  - Scalability without scheduling, distributed execution, fault tolerance
-    concerns
-  - Simple programming framework
-
-- Disadvantages:
-  - Difficult for graph analysis tasks
-  - Each traversal requires a new map-reduce phase
-    - Hadoop not ideal for many phases, Spark is better
-
-- Much work on graph analysis tasks using MapReduce
-
-* Option 3: MapReduce 
-- Disadvantages:
-  - Difficult for graph analysis
-  - Each traversal requires a new map-reduce phase
-    - Each job executes _N_ times
-  - Hadoop not ideal for many phases (even with YARN)
-  - Inefficient – redundant work
-    - Mappers send PR values and graph structure
-  - In PageRank: repeated reading and parsing each iteration
-    - Extensive I/O at input, shuffle/sort, output
-
-* Option 4: Graph Programming Frameworks 
-- Frameworks (analogous to MapReduce) for analyzing large graph data
-  - Address MapReduce limitations
-  - Most are _vertex-centric_
-    - Programs from a vertex perspective
-  - Based on message passing between nodes
-
-- Pregel: original framework by Google
-  - Based on "Bulk Synchronous Parallel" (BSP) model
-
-- Giraph: open-source Pregel on Hadoop
-
-- GraphLab: asynchronous execution
-
-- GraphX: built on Spark
-
-* Bulk Synchronous Parallel (BSP) 
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_7_image_1.png)
-
-time
-
-* Vertex-centric BSP 
-- Each vertex has an id, value, list of adjacent vertex ids, and edge values
-
-- Each vertex invoked in each superstep, recomputes value, sends messages to
-  other vertices, delivered over superstep barriers
-
-- Advanced features: termination votes, combiners, aggregators, topology
-  mutations
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_8_image_1.png)
-
-* Think like a vertex
-- I know my local state
-- I know my neighbours
-- I can send messages to vertices
-- I can declare that I am done
-- I can mutate graph topology
-
-* Option 4: Pregel
-- Programmers write one program: `compute()`
-
-- Typical structure of `compute()`:
-  - _Inputs_: current values of the node
-  - _Inputs_: messages from neighboring nodes
-  - Modify current values (if desired)
-  - _Outputs_: send messages to neighbors
-
-- Execution framework:
-  - Execute _compute()_ for all nodes in parallel
-  - Synchronize (wait for all messages)
-  - Repeat
-
-* Apache Giraph
-- Pregel is proprietary, but:
-  - **Apache Giraph**: open source implementation
-  - Runs on standard **Hadoop** infrastructure
-  - Computation executed in memory
-  - Can be a job in a pipeline (**MapReduce, Hive**)
-  - Uses **Apache ZooKeeper** for synchronization
-  - Graph partition via hashing
-  - Fault tolerance via checkpointing
-
-* Plays well with Hadoop
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_13_image_1.png)
-
-* Giraph Execution
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_14_image_1.png)
-
-* Which part is doing what?
-- **ZooKeeper**: responsible for computation state
-  - partition/worker mapping
-  - global state: #superstep
-  - checkpoint paths, aggregator values, statistics
-
-- **Master**: responsible for coordination
-  - assigns partitions to workers
-  - coordinates synchronization
-  - requests checkpoints
-  - aggregates aggregator values
-  - collects health statuses
-
-- **Worker**: responsible for vertices
-  - invokes active vertices compute() function
-  - sends, receives, assigns messages
-  - computes local aggregation values
-
-* What do you have to implement?
-- Your algorithm as a **Vertex**
-  - Subclass existing implementations: `BasicVertex, MutableVertex,
-    EdgeListVertex, HashMapVertex, LongDoubleFloatDoubleVertex`
-
-- A `VertexInputFormat` to read your graph
-  - e.g., from a text file with adjacency lists like _<vertex> <neighbor1>
-    <neighbor2> ..._
-
-- A `VertexOutputFormat` to write back the result
-  - e.g., _<vertex> <pageRank>_
-
-* A vertex view 
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_17_image_1.png)
-
-* Designed for iterations 
-- Stateful (in-memory)
-  - Keep all data in memory if possible
-
-- Only intermediate values (messages) sent
-  - Communicate with other vertices
-
-- Hits disk at input, output, checkpoint
-
-- Can go out-of-core
-  - If data doesn't fit into memory
-
-* Graph modeling in Giraph 
-- BasicComputation<          I extends WritableComparable, // VertexID -- vertex ref           V extends Writable, // VertexData -- a vertex datum           E extends Writable, // EdgeData -- an edge label           M extends Writable> // MessageData-– message payload 
-
-* Giraph "Hello World" 
-```java
-public class GiraphHelloWorld extends    
-BasicComputation<IntWritable, IntWritable, NullWritable, NullWritable> {
-
-public void compute(Vertex<IntWritable, IntWritable,     NullWritable> vertex, Iterable<NullWritable> messages) { 
-   System.out.println("Hello world from the: " + vertex.getId() + " : ");     for (Edge<IntWritable, NullWritable> e : vertex.getEdges()) { 
-      System.out.println(" " + e.getTargetVertexId());     } 
-   System.out.println("");     
-   vertex.voteToHalt(); 
-} 
-}
-```
-* Example: Ping neighbors
-
-```java
-public void compute(Vertex<Text, DoubleWritable, DoubleWritable> vertex, Iterable<Text> ms ){ 
-   if (getSuperstep() == 0) {        sendMessageToAllEdges(vertex, vertex.getId()); 
-   } else {        for (Text m : ms) { 
-          if (vertex.getEdgeValue(m) == null) {              vertex.addEdge(EdgeFactory.create(m, SYNTHETIC_EDGE));            }        } 
-   }     vertex.voteToHalt(); 
-}
-```
-* Giraph PageRank Example
-
-```java
-public class PageRankComputation      extends BasicComputation<IntWritable, FloatWritable, NullWritable, FloatWritable> {
-  //Number of supersteps 
-  public static final String SUPERSTEP_COUNT =              "giraph.pageRank.superstepCount";
-```
-
-* Giraph PageRank Example
-```java
-public void compute(Vertex<IntWritable, FloatWritable, NullWritable> vertex, Iterable<FloatWritable> messages)       throws IOException {
-    if (getSuperstep() >= 1) {
-      float sum = 0;
-      for (FloatWritable message : messages) {
-        sum += message.get();
-      }
-      vertex.getValue().set((0.15f / getTotalNumVertices()) +                              0.85f * sum);
-    }
-    if (getSuperstep()<getConf().getInt(SUPERSTEP_COUNT, 0)) {
-      sendMessageToAllEdges(vertex,
-          new FloatWritable(vertex.getValue().get() /                             vertex.getNumEdges()));
-    } else {
-      vertex.voteToHalt();
-    }
-  }
-}
-```
-
-* Additional functionality
-- Combiners
-  - To minimize messages 
-- Aggregators
-  - global aggregations across vertices 
-- MasterCompute
-  - computation executed on master 
-- WorkerContext
-  - executed per worker task
-- PartitionContext
-  - executed per partition
-
-* Giraph scales 
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_25_image_1.png)
-
-https://www.facebook.com/notes/facebook-engineering/scaling-apache-giraph-to-a-trillion-edges/10151617006153920
-
-* Graphx
-
-* GraphX Motivation
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_27_image_1.png)
-
-* GraphX Motivation
-
-- Difficult to Program and Use 
-- Users must ***Learn, Deploy, and Manage*** multiple systems 
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_28_image_1.png)
-
-- Leads to brittle and often complex interfaces 
-
-* And Inefficient
-
-- Extensive **data movement** and duplication across the network and file system 
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_29_image_1.png)
-
-- Limited reuse of internal data-structures across stages 
-
-* The GraphX Unified Approach 
-:::columns
-::::{.column width=50%}
-New API 
-Blurs the distinction between *Tables* and *Graphs *
-::::
-::::{.column width=50%}
-New System 
-Combines Data-Parallel Graph-Parallel Systems 
-::::
-:::
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_30_image_1.png)
-
-Enables users to easily and efficiently express the entire graph analytics pipeline 
-
-* Representation 
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_31_image_1.png)
-
-- Plus optimizations:
-  - Distributed join optimization
-  - Materialized view maintenance
-
-* Graph modeling in GraphX
-- The property graph is parameterized over the vertex (VD) and edge (ED) types 
-
-```
-     class Graph[VD, ED] {
-       val vertices: VertexRDD[VD] 
-       val edges: EdgeRDD[ED] 
-     }
-``` 
-- Graph[(String, String), String] 
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_32_image_1.png){width=60%}
-
-* Creating a Graph (Scala)
-
-:::columns
-::::{.column width=50%}
-\footnotesize
-```
-type VertexId = Long
-
-val vertices: RDD[(VertexId, String)] =
-sc.parallelize(List(
-(1L,"Alice"),
-(2L, "Bob"),
-(3L, "Charlie")))
-
-class Edge[ED](
-val srcId: VertexId,
-val dstId: VertexId,
-val attr: ED)
-
-val edges: RDD[Edge[String]] =
-sc.parallelize(List(
-Edge(1L, 2L, "coworker"),
-Edge(2L, 3L, "friend")))
-
-val graph = Graph(vertices, edges)
-```
-::::
-::::{.column width=50%}
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_33_image_1.png){width=70%}
-::::
-:::
-
-* Hello world in GraphX
-```
-$ spark*/bin/spark-shell
-scala> val inputFile = sc.textFile("hdfs:///tmp/graph/1.txt")
-scala> val edges = inputFile.flatMap(s => {
-val l = s.split("\t");
-l.drop(1).map(x => (l.head.toLong, x.toLong))
-})
-scala> val graph = Graph.fromEdgeTuples(edges, "")
-scala> val result = graph.collectNeighborIds(EdgeDirection.Out).map(x =>
-println("Hello world from the: " + x._1 + " : " + x._2.mkString(" ")) )
-scala> result.collect() // don't try this @home
-
-Hello world from the: 1 :
-Hello world from the: 2 : 1 3
-Hello world from the: 3 : 1 2
-```
-
-* Spark Table Operators
-- GraphX **Table** (RDD) operators are inherited from Spark:
-
-:::columns
-::::{.column width=33%}
-- map
-- filter
-- groupBy
-- sort
-- union
-- join
-- leftOuterJoin
-- rightOuterJoin
-::::
-::::{.column width=33%}
-- reduce
-- count
-- fold
-- reduceByKey 
-- groupByKey
-- cogroup
-- cross
-- zip
-::::
-::::{.column width=33%}
-- sample
-- take
-- first
-- partitionBy
-- mapWith
-- pipe
-- save
-- ...
-
-::::
-:::
-
-* Graph Operators (Scala)
-\footnotesize
-```
-class Graph [ V, E ] {
-   def Graph(vertices: Table[ (Id, V) ], 
-                    edges: Table[ (Id, Id, E) ]) 
-   // Table Views ----------------- 
-   def vertices: Table[ (Id, V) ]
-   def edges: Table[ (Id, Id, E) ]
-   def triplets: Table [ ((Id, V), (Id, V), E) ]
-   // Transformations ------------------------------ 
-   def reverse: Graph[V, E]
-   def subgraph(pV: (Id, V) => Boolean, 
-                         pE: Edge[V,E] => Boolean): Graph[V,E] 
-   def mapV(m: (Id, V) => T ): Graph[T,E] 
-   def mapE(m: Edge[V,E] => T ): Graph[V,T]
-   // Joins ----------------------------------------
-   def joinV(tbl: Table [(Id, T)]): Graph[(V, T), E ] 
-   def joinE(tbl: Table [(Id, Id, T)]): Graph[V, (E, T)] 
-   // Computation ----------------------------------
-   def mrTriplets(mapF: (Edge[V,E]) => List[(Id, T)], 
-                          reduceF: (T, T) => T): Graph[T, E] 
-} 
-```
-
-* Built-in Algorithms (Scala)
-\footnotesize
-```
-def pageRank(tol: Double): Graph[Double, Double]
-def triangleCount(): Graph[Int, ED]
-def connectedComponents(): Graph[VertexId, ED]
-def stronglyConnectedComponents(numIter:Int):Graph[VertexID,ED]
-// ...and more: org.apache.spark.graphx.lib (GraphX libraries)
-```
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_37_image_1.png)
-
-* Triplets Join Vertices and Edges
-- Triplets capture Gather-Scatter pattern from specialized graph processing systems (like Giraph)
-- **Triplets** operator joins vertices and edges
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_38_image_1.png)
-
-* MapReduce Triplets
-Map-Reduce triplets collect information about the neighborhood of each vertex:
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_39_image_1.png)
-
-* Performance Comparisons
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_40_image_1.png)
-
-* GraphX scales to larger graphs
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_41_image_1.png)
-- GraphX is roughly 2x slower than GraphLab
-  - Scala + Java overhead: Lambdas, GC time, ...
-  - No shared memory parallelism: 2x increase in communication
-
-* But, a Small Pipeline in GraphX
-Timed end-to-end GraphX is faster than GraphLab (and Giraph)
-
-![](data605/lectures_source/images/lecture_12_3/lec_12_3_slide_42_image_1.png)
-
-* Giraph vs. GraphX
-:::columns
-::::{.column width=50%}
-- **Giraph**
-  - An unconstrained BSP framework
-  - Specialized fully mutable, dynamically balanced in-memory graph representation
-  - Procedural, vertex-centric programming model
-  - Part of Hadoop ecosystem
-::::
-::::{.column width=50%}
-- **GraphX**
-  - An RDD framework
-  - Graphs are "views" on RDDs and thus immutable
-  - Functional-like, "declarative" programming model
-  - Genuine part of Spark ecosystem
-::::
-:::
+- Includes a Pregel API
+  - Enables iterative message-passing computations
+  - Preserves immutability and functional programming style
+
+- **Strengths vs traditional graph DBs**
+  - Scalable to very large graphs
+  - Efficient for batch analytics and machine learning workflows
+
+- **Limitations**
+  - Less suitable for real-time queries and transactional workloads
+  - Requires understanding of Spark internals for tuning performance
