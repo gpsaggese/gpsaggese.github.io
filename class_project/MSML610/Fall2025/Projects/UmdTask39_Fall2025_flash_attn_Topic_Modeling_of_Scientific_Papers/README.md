@@ -1,4 +1,6 @@
 # UmdTask39 – FlashAttention Topic Modeling of Scientific Papers
+Name : Gowtham Krishna Tadikamalla
+UID: 121321909
 
 This project implements a complete topic modeling pipeline for scientific papers using FlashAttention-optimized transformer embeddings. The system processes arXiv metadata, generates dense vector embeddings, clusters documents into topics, and provides interpretable topic labels with visualizations.
 
