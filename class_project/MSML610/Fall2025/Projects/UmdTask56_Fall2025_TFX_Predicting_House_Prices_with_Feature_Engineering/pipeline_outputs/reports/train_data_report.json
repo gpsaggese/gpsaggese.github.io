@@ -1,0 +1,152 @@
+{
+  "split": "train",
+  "basic_info": {
+    "shape": [
+      1460,
+      81
+    ],
+    "row_count": 1460,
+    "column_count": 81
+  },
+  "feature_counts": {
+    "numerical": 37,
+    "categorical": 43,
+    "ordinal": 14
+  },
+  "missing_values": [
+    {
+      "column": "PoolQC",
+      "missing_count": 1453,
+      "missing_pct": 99.52054794520548,
+      "dtype": "object"
+    },
+    {
+      "column": "MiscFeature",
+      "missing_count": 1406,
+      "missing_pct": 96.30136986301369,
+      "dtype": "object"
+    },
+    {
+      "column": "Alley",
+      "missing_count": 1369,
+      "missing_pct": 93.76712328767123,
+      "dtype": "object"
+    },
+    {
+      "column": "Fence",
+      "missing_count": 1179,
+      "missing_pct": 80.75342465753424,
+      "dtype": "object"
+    },
+    {
+      "column": "MasVnrType",
+      "missing_count": 872,
+      "missing_pct": 59.726027397260275,
+      "dtype": "object"
+    },
+    {
+      "column": "FireplaceQu",
+      "missing_count": 690,
+      "missing_pct": 47.26027397260274,
+      "dtype": "object"
+    },
+    {
+      "column": "LotFrontage",
+      "missing_count": 259,
+      "missing_pct": 17.73972602739726,
+      "dtype": "float64"
+    },
+    {
+      "column": "GarageType",
+      "missing_count": 81,
+      "missing_pct": 5.5479452054794525,
+      "dtype": "object"
+    },
+    {
+      "column": "GarageYrBlt",
+      "missing_count": 81,
+      "missing_pct": 5.5479452054794525,
+      "dtype": "float64"
+    },
+    {
+      "column": "GarageFinish",
+      "missing_count": 81,
+      "missing_pct": 5.5479452054794525,
+      "dtype": "object"
+    },
+    {
+      "column": "GarageQual",
+      "missing_count": 81,
+      "missing_pct": 5.5479452054794525,
+      "dtype": "object"
+    },
+    {
+      "column": "GarageCond",
+      "missing_count": 81,
+      "missing_pct": 5.5479452054794525,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtFinType2",
+      "missing_count": 38,
+      "missing_pct": 2.6027397260273974,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtExposure",
+      "missing_count": 38,
+      "missing_pct": 2.6027397260273974,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtFinType1",
+      "missing_count": 37,
+      "missing_pct": 2.5342465753424657,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtCond",
+      "missing_count": 37,
+      "missing_pct": 2.5342465753424657,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtQual",
+      "missing_count": 37,
+      "missing_pct": 2.5342465753424657,
+      "dtype": "object"
+    },
+    {
+      "column": "MasVnrArea",
+      "missing_count": 8,
+      "missing_pct": 0.547945205479452,
+      "dtype": "float64"
+    },
+    {
+      "column": "Electrical",
+      "missing_count": 1,
+      "missing_pct": 0.0684931506849315,
+      "dtype": "object"
+    }
+  ],
+  "validation": {
+    "split": "train",
+    "row_count": 1460,
+    "column_count": 81,
+    "issues": [],
+    "is_valid": true
+  },
+  "target_analysis": {
+    "count": 1460,
+    "mean": 180921.19589041095,
+    "median": 163000.0,
+    "std": 79442.50288288662,
+    "min": "34900",
+    "max": "755000",
+    "q25": 129975.0,
+    "q75": 214000.0,
+    "skewness": 1.8828757597682129,
+    "kurtosis": 6.536281860064529,
+    "missing_count": "0"
+  }
+}

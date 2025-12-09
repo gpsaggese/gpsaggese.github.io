@@ -1,0 +1,1121 @@
+feature {
+  name: "1stFlrSF_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "2ndFlrSF_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "3SsnPorch_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BedroomAbvGr_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BldgType_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 4
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtCond_ordinal"
+  type: INT
+  int_domain {
+    min: 0
+    max: 4
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtExposure_ordinal"
+  type: INT
+  int_domain {
+    min: 0
+    max: 4
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtFinSF1_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtFinSF2_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtFullBath_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtHalfBath_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtQual_ordinal"
+  type: INT
+  int_domain {
+    min: 0
+    max: 4
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtUnfSF_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "CentralAir_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 1
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Condition1_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 8
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Condition2_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 6
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Electrical_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 5
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "EnclosedPorch_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "ExterCond_ordinal"
+  type: INT
+  int_domain {
+    min: 0
+    max: 4
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "ExterQual_ordinal"
+  type: INT
+  int_domain {
+    min: 0
+    max: 3
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Exterior1st_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 12
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Exterior2nd_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 14
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "FireplaceQu_ordinal"
+  type: INT
+  int_domain {
+    min: 0
+    max: 5
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Fireplaces_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Foundation_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 5
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "FullBath_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Functional_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 5
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageArea_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageCars_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageCond_ordinal"
+  type: INT
+  int_domain {
+    min: 0
+    max: 5
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageFinish_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 3
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageQual_ordinal"
+  type: INT
+  int_domain {
+    min: 0
+    max: 5
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageType_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 6
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GrLivArea_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "HalfBath_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "HasFireplace"
+  type: INT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "HasGarage"
+  type: INT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "HasPool"
+  type: INT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "HeatingQC_ordinal"
+  type: INT
+  int_domain {
+    min: 0
+    max: 4
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Heating_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 5
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "HouseAge_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "HouseStyle_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 7
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "IsRemodeled"
+  type: INT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "KitchenAbvGr_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "KitchenQual_ordinal"
+  type: INT
+  int_domain {
+    min: 0
+    max: 3
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LandContour_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 3
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LandSlope_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 2
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LotArea_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LotConfig_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 4
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LotShape_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 3
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LowQualFinSF_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "MSZoning_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 4
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "MasVnrType_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 4
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "MiscVal_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "MoSold_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Neighborhood_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 24
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "OpenPorchSF_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "OverallCond_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "OverallQual_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "PavedDrive_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 2
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "PoolArea_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "RoofMatl_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 5
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "RoofStyle_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 5
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "SaleCondition_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 5
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "SalePrice_log"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "SaleType_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 8
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "ScreenPorch_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Street_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 1
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "TotRmsAbvGrd_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "TotalBath_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "TotalBsmtSF_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "TotalSF_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Utilities_encoded"
+  type: INT
+  int_domain {
+    min: 0
+    max: 0
+    is_categorical: true
+  }
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "WoodDeckSF_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "YearBuilt_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "YearRemodAdd_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "YearsSinceRemodel_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "YrSold_scaled"
+  type: FLOAT
+  presence {
+    min_fraction: 1.0
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}

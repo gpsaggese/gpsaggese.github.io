@@ -1,0 +1,1595 @@
+feature {
+  name: "1stFlrSF"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "2ndFlrSF"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "3SsnPorch"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Alley"
+  type: BYTES
+  domain: "Alley"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BedroomAbvGr"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BldgType"
+  type: BYTES
+  domain: "BldgType"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtCond"
+  type: BYTES
+  domain: "BsmtCond"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtExposure"
+  type: BYTES
+  domain: "BsmtExposure"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtFinSF1"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtFinSF2"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtFinType1"
+  type: BYTES
+  domain: "BsmtFinType1"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtFinType2"
+  type: BYTES
+  domain: "BsmtFinType2"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtFullBath"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtHalfBath"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtQual"
+  type: BYTES
+  domain: "BsmtQual"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "BsmtUnfSF"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "CentralAir"
+  type: BYTES
+  domain: "CentralAir"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Condition1"
+  type: BYTES
+  domain: "Condition1"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Condition2"
+  type: BYTES
+  domain: "Condition2"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Electrical"
+  type: BYTES
+  domain: "Electrical"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "EnclosedPorch"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "ExterCond"
+  type: BYTES
+  domain: "ExterCond"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "ExterQual"
+  type: BYTES
+  domain: "ExterQual"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Exterior1st"
+  type: BYTES
+  domain: "Exterior1st"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Exterior2nd"
+  type: BYTES
+  domain: "Exterior2nd"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Fence"
+  type: BYTES
+  domain: "Fence"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "FireplaceQu"
+  type: BYTES
+  domain: "FireplaceQu"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Fireplaces"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Foundation"
+  type: BYTES
+  domain: "Foundation"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "FullBath"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Functional"
+  type: BYTES
+  domain: "Functional"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageArea"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageCars"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageCond"
+  type: BYTES
+  domain: "GarageCond"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageFinish"
+  type: BYTES
+  domain: "GarageFinish"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageQual"
+  type: BYTES
+  domain: "GarageQual"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageType"
+  type: BYTES
+  domain: "GarageType"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GarageYrBlt"
+  type: BYTES
+  domain: "GarageYrBlt"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "GrLivArea"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "HalfBath"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Heating"
+  type: BYTES
+  domain: "Heating"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "HeatingQC"
+  type: BYTES
+  domain: "HeatingQC"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "HouseStyle"
+  type: BYTES
+  domain: "HouseStyle"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Id"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "KitchenAbvGr"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "KitchenQual"
+  type: BYTES
+  domain: "KitchenQual"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LandContour"
+  type: BYTES
+  domain: "LandContour"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LandSlope"
+  type: BYTES
+  domain: "LandSlope"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LotArea"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LotConfig"
+  type: BYTES
+  domain: "LotConfig"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LotFrontage"
+  type: BYTES
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LotShape"
+  type: BYTES
+  domain: "LotShape"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "LowQualFinSF"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "MSSubClass"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "MSZoning"
+  type: BYTES
+  domain: "MSZoning"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "MasVnrArea"
+  type: BYTES
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "MasVnrType"
+  type: BYTES
+  domain: "MasVnrType"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "MiscFeature"
+  type: BYTES
+  domain: "MiscFeature"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "MiscVal"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "MoSold"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Neighborhood"
+  type: BYTES
+  domain: "Neighborhood"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "OpenPorchSF"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "OverallCond"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "OverallQual"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "PavedDrive"
+  type: BYTES
+  domain: "PavedDrive"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "PoolArea"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "PoolQC"
+  type: BYTES
+  domain: "PoolQC"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "RoofMatl"
+  type: BYTES
+  domain: "RoofMatl"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "RoofStyle"
+  type: BYTES
+  domain: "RoofStyle"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "SaleCondition"
+  type: BYTES
+  domain: "SaleCondition"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "SalePrice"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "SaleType"
+  type: BYTES
+  domain: "SaleType"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "ScreenPorch"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Street"
+  type: BYTES
+  domain: "Street"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "TotRmsAbvGrd"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "TotalBsmtSF"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "Utilities"
+  type: BYTES
+  domain: "Utilities"
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "WoodDeckSF"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "YearBuilt"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "YearRemodAdd"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+feature {
+  name: "YrSold"
+  type: INT
+  presence {
+    min_fraction: 1.0
+    min_count: 1
+  }
+  shape {
+    dim {
+      size: 1
+    }
+  }
+}
+string_domain {
+  name: "Alley"
+  value: "Grvl"
+  value: "NA"
+  value: "Pave"
+}
+string_domain {
+  name: "BldgType"
+  value: "1Fam"
+  value: "2fmCon"
+  value: "Duplex"
+  value: "Twnhs"
+  value: "TwnhsE"
+}
+string_domain {
+  name: "BsmtCond"
+  value: "Fa"
+  value: "Gd"
+  value: "NA"
+  value: "Po"
+  value: "TA"
+}
+string_domain {
+  name: "BsmtExposure"
+  value: "Av"
+  value: "Gd"
+  value: "Mn"
+  value: "NA"
+  value: "No"
+}
+string_domain {
+  name: "BsmtFinType1"
+  value: "ALQ"
+  value: "BLQ"
+  value: "GLQ"
+  value: "LwQ"
+  value: "NA"
+  value: "Rec"
+  value: "Unf"
+}
+string_domain {
+  name: "BsmtFinType2"
+  value: "ALQ"
+  value: "BLQ"
+  value: "GLQ"
+  value: "LwQ"
+  value: "NA"
+  value: "Rec"
+  value: "Unf"
+}
+string_domain {
+  name: "BsmtQual"
+  value: "Ex"
+  value: "Fa"
+  value: "Gd"
+  value: "NA"
+  value: "TA"
+}
+string_domain {
+  name: "CentralAir"
+  value: "N"
+  value: "Y"
+}
+string_domain {
+  name: "Condition1"
+  value: "Artery"
+  value: "Feedr"
+  value: "Norm"
+  value: "PosA"
+  value: "PosN"
+  value: "RRAe"
+  value: "RRAn"
+  value: "RRNe"
+  value: "RRNn"
+}
+string_domain {
+  name: "Condition2"
+  value: "Feedr"
+  value: "Norm"
+  value: "PosA"
+  value: "PosN"
+  value: "RRAe"
+  value: "RRAn"
+  value: "RRNn"
+  value: "Artery"
+}
+string_domain {
+  name: "Electrical"
+  value: "FuseA"
+  value: "FuseF"
+  value: "FuseP"
+  value: "Mix"
+  value: "NA"
+  value: "SBrkr"
+}
+string_domain {
+  name: "ExterCond"
+  value: "Ex"
+  value: "Fa"
+  value: "Gd"
+  value: "Po"
+  value: "TA"
+}
+string_domain {
+  name: "ExterQual"
+  value: "Ex"
+  value: "Fa"
+  value: "Gd"
+  value: "TA"
+}
+string_domain {
+  name: "Exterior1st"
+  value: "AsbShng"
+  value: "BrkComm"
+  value: "BrkFace"
+  value: "CBlock"
+  value: "CemntBd"
+  value: "HdBoard"
+  value: "ImStucc"
+  value: "MetalSd"
+  value: "Plywood"
+  value: "Stucco"
+  value: "VinylSd"
+  value: "Wd Sdng"
+  value: "WdShing"
+  value: "AsphShn"
+  value: "Stone"
+}
+string_domain {
+  name: "Exterior2nd"
+  value: "AsbShng"
+  value: "AsphShn"
+  value: "Brk Cmn"
+  value: "BrkFace"
+  value: "CBlock"
+  value: "CmentBd"
+  value: "HdBoard"
+  value: "ImStucc"
+  value: "MetalSd"
+  value: "Plywood"
+  value: "Stone"
+  value: "Stucco"
+  value: "VinylSd"
+  value: "Wd Sdng"
+  value: "Wd Shng"
+  value: "Other"
+}
+string_domain {
+  name: "Fence"
+  value: "GdPrv"
+  value: "GdWo"
+  value: "MnPrv"
+  value: "MnWw"
+  value: "NA"
+}
+string_domain {
+  name: "FireplaceQu"
+  value: "Ex"
+  value: "Fa"
+  value: "Gd"
+  value: "NA"
+  value: "Po"
+  value: "TA"
+}
+string_domain {
+  name: "Foundation"
+  value: "BrkTil"
+  value: "CBlock"
+  value: "PConc"
+  value: "Slab"
+  value: "Stone"
+  value: "Wood"
+}
+string_domain {
+  name: "Functional"
+  value: "Maj1"
+  value: "Maj2"
+  value: "Min1"
+  value: "Min2"
+  value: "Mod"
+  value: "Typ"
+  value: "Sev"
+}
+string_domain {
+  name: "GarageCond"
+  value: "Ex"
+  value: "Fa"
+  value: "Gd"
+  value: "NA"
+  value: "Po"
+  value: "TA"
+}
+string_domain {
+  name: "GarageFinish"
+  value: "Fin"
+  value: "NA"
+  value: "RFn"
+  value: "Unf"
+}
+string_domain {
+  name: "GarageQual"
+  value: "Ex"
+  value: "Fa"
+  value: "Gd"
+  value: "NA"
+  value: "Po"
+  value: "TA"
+}
+string_domain {
+  name: "GarageType"
+  value: "2Types"
+  value: "Attchd"
+  value: "Basment"
+  value: "BuiltIn"
+  value: "CarPort"
+  value: "Detchd"
+  value: "NA"
+}
+string_domain {
+  name: "GarageYrBlt"
+  value: "1908"
+  value: "1910"
+  value: "1914"
+  value: "1915"
+  value: "1916"
+  value: "1918"
+  value: "1920"
+  value: "1921"
+  value: "1922"
+  value: "1924"
+  value: "1925"
+  value: "1926"
+  value: "1928"
+  value: "1929"
+  value: "1930"
+  value: "1931"
+  value: "1932"
+  value: "1934"
+  value: "1935"
+  value: "1936"
+  value: "1937"
+  value: "1938"
+  value: "1939"
+  value: "1940"
+  value: "1941"
+  value: "1942"
+  value: "1945"
+  value: "1946"
+  value: "1947"
+  value: "1948"
+  value: "1949"
+  value: "1950"
+  value: "1951"
+  value: "1952"
+  value: "1953"
+  value: "1954"
+  value: "1955"
+  value: "1956"
+  value: "1957"
+  value: "1958"
+  value: "1959"
+  value: "1960"
+  value: "1961"
+  value: "1962"
+  value: "1963"
+  value: "1964"
+  value: "1965"
+  value: "1966"
+  value: "1967"
+  value: "1968"
+  value: "1969"
+  value: "1970"
+  value: "1971"
+  value: "1972"
+  value: "1973"
+  value: "1974"
+  value: "1975"
+  value: "1976"
+  value: "1977"
+  value: "1978"
+  value: "1979"
+  value: "1980"
+  value: "1981"
+  value: "1983"
+  value: "1984"
+  value: "1985"
+  value: "1986"
+  value: "1987"
+  value: "1988"
+  value: "1989"
+  value: "1990"
+  value: "1991"
+  value: "1992"
+  value: "1993"
+  value: "1994"
+  value: "1995"
+  value: "1996"
+  value: "1997"
+  value: "1998"
+  value: "1999"
+  value: "2000"
+  value: "2001"
+  value: "2002"
+  value: "2003"
+  value: "2004"
+  value: "2005"
+  value: "2006"
+  value: "2007"
+  value: "2008"
+  value: "2009"
+  value: "2010"
+  value: "NA"
+  value: "1900"
+  value: "1906"
+  value: "1923"
+  value: "1927"
+  value: "1933"
+  value: "1982"
+}
+string_domain {
+  name: "Heating"
+  value: "Floor"
+  value: "GasA"
+  value: "GasW"
+  value: "Grav"
+  value: "OthW"
+  value: "Wall"
+}
+string_domain {
+  name: "HeatingQC"
+  value: "Ex"
+  value: "Fa"
+  value: "Gd"
+  value: "Po"
+  value: "TA"
+}
+string_domain {
+  name: "HouseStyle"
+  value: "1.5Fin"
+  value: "1.5Unf"
+  value: "1Story"
+  value: "2.5Fin"
+  value: "2.5Unf"
+  value: "2Story"
+  value: "SFoyer"
+  value: "SLvl"
+}
+string_domain {
+  name: "KitchenQual"
+  value: "Ex"
+  value: "Fa"
+  value: "Gd"
+  value: "TA"
+}
+string_domain {
+  name: "LandContour"
+  value: "Bnk"
+  value: "HLS"
+  value: "Low"
+  value: "Lvl"
+}
+string_domain {
+  name: "LandSlope"
+  value: "Gtl"
+  value: "Mod"
+  value: "Sev"
+}
+string_domain {
+  name: "LotConfig"
+  value: "Corner"
+  value: "CulDSac"
+  value: "FR2"
+  value: "FR3"
+  value: "Inside"
+}
+string_domain {
+  name: "LotShape"
+  value: "IR1"
+  value: "IR2"
+  value: "IR3"
+  value: "Reg"
+}
+string_domain {
+  name: "MSZoning"
+  value: "C (all)"
+  value: "FV"
+  value: "RH"
+  value: "RL"
+  value: "RM"
+}
+string_domain {
+  name: "MasVnrType"
+  value: "BrkCmn"
+  value: "BrkFace"
+  value: "NA"
+  value: "None"
+  value: "Stone"
+}
+string_domain {
+  name: "MiscFeature"
+  value: "Gar2"
+  value: "NA"
+  value: "Othr"
+  value: "Shed"
+  value: "TenC"
+}
+string_domain {
+  name: "Neighborhood"
+  value: "Blmngtn"
+  value: "Blueste"
+  value: "BrDale"
+  value: "BrkSide"
+  value: "ClearCr"
+  value: "CollgCr"
+  value: "Crawfor"
+  value: "Edwards"
+  value: "Gilbert"
+  value: "IDOTRR"
+  value: "MeadowV"
+  value: "Mitchel"
+  value: "NAmes"
+  value: "NPkVill"
+  value: "NWAmes"
+  value: "NoRidge"
+  value: "NridgHt"
+  value: "OldTown"
+  value: "SWISU"
+  value: "Sawyer"
+  value: "SawyerW"
+  value: "Somerst"
+  value: "StoneBr"
+  value: "Timber"
+  value: "Veenker"
+}
+string_domain {
+  name: "PavedDrive"
+  value: "N"
+  value: "P"
+  value: "Y"
+}
+string_domain {
+  name: "PoolQC"
+  value: "Ex"
+  value: "Fa"
+  value: "Gd"
+  value: "NA"
+}
+string_domain {
+  name: "RoofMatl"
+  value: "ClyTile"
+  value: "CompShg"
+  value: "Metal"
+  value: "Tar&Grv"
+  value: "WdShake"
+  value: "WdShngl"
+  value: "Membran"
+  value: "Roll"
+}
+string_domain {
+  name: "RoofStyle"
+  value: "Flat"
+  value: "Gable"
+  value: "Gambrel"
+  value: "Hip"
+  value: "Mansard"
+  value: "Shed"
+}
+string_domain {
+  name: "SaleCondition"
+  value: "Abnorml"
+  value: "AdjLand"
+  value: "Alloca"
+  value: "Family"
+  value: "Normal"
+  value: "Partial"
+}
+string_domain {
+  name: "SaleType"
+  value: "COD"
+  value: "CWD"
+  value: "Con"
+  value: "ConLD"
+  value: "ConLI"
+  value: "ConLw"
+  value: "New"
+  value: "Oth"
+  value: "WD"
+}
+string_domain {
+  name: "Street"
+  value: "Grvl"
+  value: "Pave"
+}
+string_domain {
+  name: "Utilities"
+  value: "AllPub"
+  value: "NoSeWa"
+}

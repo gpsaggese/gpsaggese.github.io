@@ -1,0 +1,45 @@
+{
+  "evalConfig": {
+    "modelSpecs": [
+      {
+        "signatureName": "serving_default",
+        "labelKey": "SalePrice"
+      }
+    ],
+    "slicingSpecs": [
+      {}
+    ],
+    "metricsSpecs": [
+      {
+        "metrics": [
+          {
+            "className": "ExampleCount"
+          },
+          {
+            "className": "MeanSquaredError",
+            "threshold": {
+              "valueThreshold": {
+                "upperBound": 900000000.0
+              }
+            }
+          },
+          {
+            "className": "RootMeanSquaredError"
+          },
+          {
+            "className": "MeanAbsoluteError"
+          }
+        ],
+        "modelNames": [
+          ""
+        ]
+      }
+    ]
+  },
+  "version": "0.45.0",
+  "dataLocation": "<user provided PCollection>",
+  "fileFormat": "<unknown>",
+  "modelLocations": {
+    "": "/app/pipeline_outputs/house_price_prediction_pipeline/Trainer/model/96/Format-Serving"
+  }
+}

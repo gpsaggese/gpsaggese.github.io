@@ -1,0 +1,223 @@
+{
+  "split": "test",
+  "basic_info": {
+    "shape": [
+      1459,
+      80
+    ],
+    "row_count": 1459,
+    "column_count": 80
+  },
+  "feature_counts": {
+    "numerical": 37,
+    "categorical": 43,
+    "ordinal": 14
+  },
+  "missing_values": [
+    {
+      "column": "PoolQC",
+      "missing_count": 1456,
+      "missing_pct": 99.7943797121316,
+      "dtype": "object"
+    },
+    {
+      "column": "MiscFeature",
+      "missing_count": 1408,
+      "missing_pct": 96.50445510623715,
+      "dtype": "object"
+    },
+    {
+      "column": "Alley",
+      "missing_count": 1352,
+      "missing_pct": 92.66620973269363,
+      "dtype": "object"
+    },
+    {
+      "column": "Fence",
+      "missing_count": 1169,
+      "missing_pct": 80.12337217272105,
+      "dtype": "object"
+    },
+    {
+      "column": "MasVnrType",
+      "missing_count": 894,
+      "missing_pct": 61.27484578478409,
+      "dtype": "object"
+    },
+    {
+      "column": "FireplaceQu",
+      "missing_count": 730,
+      "missing_pct": 50.03427004797807,
+      "dtype": "object"
+    },
+    {
+      "column": "LotFrontage",
+      "missing_count": 227,
+      "missing_pct": 15.558601782042494,
+      "dtype": "float64"
+    },
+    {
+      "column": "GarageCond",
+      "missing_count": 78,
+      "missing_pct": 5.346127484578479,
+      "dtype": "object"
+    },
+    {
+      "column": "GarageYrBlt",
+      "missing_count": 78,
+      "missing_pct": 5.346127484578479,
+      "dtype": "float64"
+    },
+    {
+      "column": "GarageQual",
+      "missing_count": 78,
+      "missing_pct": 5.346127484578479,
+      "dtype": "object"
+    },
+    {
+      "column": "GarageFinish",
+      "missing_count": 78,
+      "missing_pct": 5.346127484578479,
+      "dtype": "object"
+    },
+    {
+      "column": "GarageType",
+      "missing_count": 76,
+      "missing_pct": 5.20904729266621,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtCond",
+      "missing_count": 45,
+      "missing_pct": 3.0843043180260454,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtExposure",
+      "missing_count": 44,
+      "missing_pct": 3.015764222069911,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtQual",
+      "missing_count": 44,
+      "missing_pct": 3.015764222069911,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtFinType1",
+      "missing_count": 42,
+      "missing_pct": 2.878684030157642,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtFinType2",
+      "missing_count": 42,
+      "missing_pct": 2.878684030157642,
+      "dtype": "object"
+    },
+    {
+      "column": "MasVnrArea",
+      "missing_count": 15,
+      "missing_pct": 1.0281014393420151,
+      "dtype": "float64"
+    },
+    {
+      "column": "MSZoning",
+      "missing_count": 4,
+      "missing_pct": 0.2741603838245374,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtFullBath",
+      "missing_count": 2,
+      "missing_pct": 0.1370801919122687,
+      "dtype": "float64"
+    },
+    {
+      "column": "BsmtHalfBath",
+      "missing_count": 2,
+      "missing_pct": 0.1370801919122687,
+      "dtype": "float64"
+    },
+    {
+      "column": "Functional",
+      "missing_count": 2,
+      "missing_pct": 0.1370801919122687,
+      "dtype": "object"
+    },
+    {
+      "column": "Utilities",
+      "missing_count": 2,
+      "missing_pct": 0.1370801919122687,
+      "dtype": "object"
+    },
+    {
+      "column": "GarageCars",
+      "missing_count": 1,
+      "missing_pct": 0.06854009595613435,
+      "dtype": "float64"
+    },
+    {
+      "column": "GarageArea",
+      "missing_count": 1,
+      "missing_pct": 0.06854009595613435,
+      "dtype": "float64"
+    },
+    {
+      "column": "TotalBsmtSF",
+      "missing_count": 1,
+      "missing_pct": 0.06854009595613435,
+      "dtype": "float64"
+    },
+    {
+      "column": "KitchenQual",
+      "missing_count": 1,
+      "missing_pct": 0.06854009595613435,
+      "dtype": "object"
+    },
+    {
+      "column": "BsmtUnfSF",
+      "missing_count": 1,
+      "missing_pct": 0.06854009595613435,
+      "dtype": "float64"
+    },
+    {
+      "column": "BsmtFinSF2",
+      "missing_count": 1,
+      "missing_pct": 0.06854009595613435,
+      "dtype": "float64"
+    },
+    {
+      "column": "BsmtFinSF1",
+      "missing_count": 1,
+      "missing_pct": 0.06854009595613435,
+      "dtype": "float64"
+    },
+    {
+      "column": "Exterior2nd",
+      "missing_count": 1,
+      "missing_pct": 0.06854009595613435,
+      "dtype": "object"
+    },
+    {
+      "column": "Exterior1st",
+      "missing_count": 1,
+      "missing_pct": 0.06854009595613435,
+      "dtype": "object"
+    },
+    {
+      "column": "SaleType",
+      "missing_count": 1,
+      "missing_pct": 0.06854009595613435,
+      "dtype": "object"
+    }
+  ],
+  "validation": {
+    "split": "test",
+    "row_count": 1459,
+    "column_count": 80,
+    "issues": [],
+    "is_valid": true
+  }
+}
