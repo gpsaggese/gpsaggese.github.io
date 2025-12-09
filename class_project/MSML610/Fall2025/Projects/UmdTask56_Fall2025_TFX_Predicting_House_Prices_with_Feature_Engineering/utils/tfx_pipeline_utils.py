@@ -148,17 +148,33 @@ class ModelComparisonWrapper:
         Returns:
             Comparison results dictionary
         """
-        from scripts.compare_models import main as compare_main
-        import argparse
+        import subprocess
+        import sys
 
-        # Create args for the script
-        args = argparse.Namespace(
-            cv_folds=cv_folds,
-            save_best_model=True
+        # Get project root
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+        # Run the comparison script as a subprocess with proper arguments
+        result = subprocess.run(
+            [
+                sys.executable,
+                'scripts/compare_models.py',
+                '--cv-folds', str(cv_folds),
+                '--output-dir', 'models/comparison',
+                '--save-best-model'
+            ],
+            cwd=project_root,
+            capture_output=True,
+            text=True
         )
 
-        # Run comparison
-        compare_main(args)
+        # Print output
+        if result.stdout:
+            print(result.stdout)
+
+        if result.returncode != 0:
+            print(f"Error: {result.stderr}")
+            raise RuntimeError("Model comparison failed")
 
         # Load and return results
         return self.load_results()
