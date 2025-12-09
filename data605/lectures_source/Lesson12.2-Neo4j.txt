@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{12.2: Graph Data Management}}$$**
+**$$\text{\blue{12.2: Neo4j}}$$**
 \endgroup
 
 ::: columns
@@ -29,8 +29,6 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=20%}
 ::::
 :::
-
-## Querying graph data
 
 * Query Languages for Graph Databases
 :::columns

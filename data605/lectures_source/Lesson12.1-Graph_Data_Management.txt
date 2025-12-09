@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{12.2: Graph Data Management}}$$**
+**$$\text{\blue{12.1: Graph Data Management}}$$**
 \endgroup
 
 ::: columns
@@ -30,8 +30,6 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-## Motivation
-
 * Graphs: Background
 :::columns
 ::::{.column width=50%}
@@ -39,11 +37,12 @@ UMD DATA605 - Big Data Systems
   - Entities are _vertices_ (or nodes)
   - Connections are _edges_ (or links, arcs, relationships)
 
-- **Applications in various fields**
+- **Applications in many fields**
   - Social networks
   - Biological networks
   - Information networks
   - Infrastructure networks
+  - ...
 ::::
 ::::{.column width=45%}
 \centering
@@ -60,7 +59,9 @@ _A directed, edge-weighted graph_
 * Graph Data Structures: Motivation
 :::columns
 ::::{.column width=45%}
-- Increasing interest in querying and reasoning about **graph data**
+- **Increasing volumes of graph data**
+
+- **Increasing interest in querying and reasoning** about graph data
 
 - **Sectors**
   - Healthcare
@@ -97,13 +98,11 @@ _Social networks_
 * Graph Data Structures: Motivation
 :::columns
 ::::{.column width=50%}
-- Increased data volumes and accessibility
-
-- Traditional tools (e.g., relational DBs) struggle with graph queries
-  - Dedicated solutions: Neo4j
-
-- Existing tools inefficient for processing graph-structured queries
-  - Dedicated solutions: Google Pregel, Apache Giraph, Spark GraphX
+- **Traditional tools** (e.g., relational DBs, NoSQL DBs) struggle with:
+  - Storing and querying graph data
+    - Dedicated solutions: Neo4j
+  - Processing graph-structured queries
+    - Dedicated solutions: Google Pregel, Apache Giraph, Spark GraphX
 ::::
 ::::{.column width=50%}
 \center
@@ -137,10 +136,10 @@ _Federal funds networks_
 
 * Graph Data Models: RDF
 :::columns
-::::{.column width=60%}
+::::{.column width=55%}
 - **Resource Description Framework**
-  - RDF uses triples subject-predicate-object
-  - Connects "subject" and "object" through a "predicate"
+  - RDF uses triples: subject-predicate-object
+  - Connects "subject" and "object" through "predicate"
   - E.g., "TomCruise-acted-TopGun"
 
 - **Used to represent knowledge bases**
@@ -161,48 +160,36 @@ _Federal funds networks_
     - Add new nodes and relationships
     - Support ontologies
 
-- **Example Use Cases**
-  - Linking Open Data project
-  - FOAF (Friend of a Friend) vocabulary
-
 * Graph Data Models: Property Graph
+- Directed graph with nodes and edges having key-values _properties_
+  - Similar expressive power to RDFs
+
 :::columns
 ::::{.column width=45%}
-- Directed graph with nodes and edges having key-values _properties_
-
 - **No universal standard**
-  - Similar expressive power to RDFs
   - Less "schema"
   - Harder to interoperate
 
-- Examples of **query languages**:
-  - Cypher (e.g., Neo4j)
-  - Gremlin (e.g., Apache TinkerPop)
-
-- **Applications** 
-  - Used by many open-source graph data management tools
-  - Logistics and supply chain management
-  - Fraud detection in financial transactions
+- **Examples of query languages**
+  - Cypher for Neo4j
+  - Gremlin for Apache TinkerPop
 ::::
 ::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_1.png)
-
-\vspace{0.5cm}
-
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_2.jpeg)
 ::::
 :::
 
 * Graph Data Models: XML
 - Common data model for flexible data representation
-- Directed labeled tree
-- Popular for non-tabular data exchange
+  - Directed labeled tree
+  - Popular for non-tabular data exchange
 
 :::columns
-::::{.column width=50%}
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_13_image_1.png){width=70%}
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_13_image_1.png)
 ::::
-::::{.column width=50%}
+::::{.column width=45%}
+\small
 ```xml
 <movies>
   <movie>
@@ -221,41 +208,37 @@ _Federal funds networks_
 ::::
 :::
 
-## Storing graph data
-
 * Storing Graph Data
 - **File systems**
-  - Very simple
-  - No support for transactions, ACID compliance
-  - Minimal functionality (e.g., must build the analysis/querying on top)
+  - Simple
+  - No transactions, ACID compliance
+  - Minimal functionality (build analysis/querying on top)
 
 - **Relational databases**
   - Mature technology
-  - All the good stuff (SQL, transactions, ACID compliance, toolchains)
+  - SQL, transactions, ACID compliance, toolchains
   - Minimal functionality for graph data
 
 - **NoSQL key-value stores**
-  - Can handle very large datasets efficiently in a distributed fashion
+  - Handle large datasets efficiently in a distributed fashion
   - Minimal native functionality for graph data
 
 - **Graph databases**
   - Efficiently support complex queries/tasks (e.g., graph traversals)
-  - Not as mature as RDBMSs
-  - Often lack declarative language similar to SQL
-    - You may need to write custom programs
+  - Less mature than RDBMSs
+  - Often lack declarative language like SQL
+    - Write custom programs
 
 * Graph Databases
-- Many specialized graph database systems
+- Many specialized graph DB systems
   - E.g., Neo4j, Titan, OrientDB, AllegroGraph
 
-- Key distinctions from relational databases
+- Key distinctions from relational / NoSQL databases
   - Manage and query graph-structured data
-  - Store graph structure explicitly with pointers
+  - Store graph structure with pointers
     - Avoid joins, simplify graph traversals
-    - Natural to write _queries_ and _graph algorithms_ (reachability, shortest
-      paths)
+    - Write queries and graph algorithms (reachability, shortest paths)
   - Support graph query languages: SPARQL, Cypher, Gremlin
   - Rudimentary declarative interfaces
-  - Applications often require programmatic interfaces
+  - Applications require programmatic interfaces
   - Provide programmatic API for arbitrary graph algorithms
-
