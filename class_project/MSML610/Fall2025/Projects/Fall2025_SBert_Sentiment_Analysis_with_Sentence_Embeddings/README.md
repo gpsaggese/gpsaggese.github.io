@@ -1,31 +1,29 @@
 # SBERT Sentiment Analysis on Financial PhraseBank
 
 This project implements a full sentiment-classification pipeline using **Sentence-BERT (SBERT)** embeddings on the *Financial PhraseBank* dataset.  
-It includes data preprocessing, embedding generation, baseline models, SBERT-based classifiers, and optional transformer fine-tuning.
-
-This project is submitted as part of **MSML610 — Fall 2025**.
+It includes data preprocessing, embedding generation, baseline models, SBERT-based classifiers, and transformer fine-tuning.
 
 ---
 
 ## 1. Project Structure
 Fall2025_SBert_Sentiment_Analysis_with_Sentence_Embeddings/
 │
-├── README.md
-├── LICENSE_DATASET.md
-├── config.yaml
-│
-├── data/
-│   ├── raw/          # raw dataset (not included)
-│   └── processed/    # cleaned CSV, labels.npy, embeddings.npy
-│
-├── src/
-│   ├── preprocess.py
-│   ├── sbert_embed.py
-│   └── SBERT_utils.py
-│
-└── docs/
-├── SBERT_API.md
-└── SBERT_Example.md
+├── README.md  
+├── LICENSE_DATASET.md  
+├── config.yaml  
+│  
+├── data/  
+│   ├── raw/            # raw dataset (not included)  
+│   └── processed/      # cleaned CSV, labels.npy, embeddings.npy  
+│  
+├── src/  
+│   ├── preprocess.py  
+│   ├── sbert_embed.py  
+│   └── SBERT_utils.py  
+│  
+└── docs/  
+├── SBERT_API.md  
+└── SBERT_Example.md  
 
 ---
 
@@ -48,38 +46,38 @@ pip install -r requirements.txt
 ```bash
 python src/preprocess.py --config config.yaml
 ```
-Outputs:
-	•	data/processed/financial_phrasebank_clean.csv
-	•	data/processed/labels.npy
+Outputs:  
+	•	data/processed/financial_phrasebank_clean.csv  
+	•	data/processed/labels.npy  
 
 ### Step 2 — Generate SBERT embeddings
 ```bash
 python src/sbert_embed.py --config config.yaml
 ```
-Outputs:
-	•	data/processed/sbert_embeddings.npy
+Outputs:  
+	•	data/processed/sbert_embeddings.npy  
 (shape: N × 384, where N = number of sentences)
 
 ## 4. Notebooks
 
 Two documentation notebooks are included:
 
-✔ SBERT_API.ipynb / SBERT_API.md
+### SBERT_API.ipynb / SBERT_API.md
 
-Explains:
-	•	configuration usage
-	•	loading cleaned data
-	•	loading embeddings
-	•	how inference works with SBERT
+Explains:  
+	•	configuration usage  
+	•	loading cleaned data  
+	•	loading embeddings  
+	•	how inference works with SBERT  
 
-✔ SBERT_Example.ipynb / SBERT_Example.md
+### SBERT_Example.ipynb / SBERT_Example.md
 
-Covers:
-	•	baseline TF-IDF model
-	•	SBERT + Logistic Regression
-	•	SBERT + Linear SVM
-	•	optional fine-tuned transformer classifier
-	•	metrics, confusion matrix, cross-validation results
+Covers:  
+	•	baseline TF-IDF model  
+	•	SBERT + Logistic Regression  
+	•	SBERT + Linear SVM  
+	•	optional fine-tuned transformer classifier  
+	•	metrics, confusion matrix, cross-validation results  
 
 This notebook demonstrates the full comparison between lexical vs. embedding-based models.
 
