@@ -1,0 +1,261 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+//
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{12.2: Graph Data Management}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+::::
+:::: {.column width=20%}
+::::
+:::
+
+## Motivation
+
+* Graphs: Background
+:::columns
+::::{.column width=50%}
+- A **graph** represents entities and their connections
+  - Entities are _vertices_ (or nodes)
+  - Connections are _edges_ (or links, arcs, relationships)
+
+- **Applications in various fields**
+  - Social networks
+  - Biological networks
+  - Information networks
+  - Infrastructure networks
+::::
+::::{.column width=45%}
+\centering
+\small
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_1.png)
+_An undirected, unweighted graph_
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_2.png)
+_A directed, edge-weighted graph_
+::::
+:::
+
+* Graph Data Structures: Motivation
+:::columns
+::::{.column width=45%}
+- Increasing interest in querying and reasoning about **graph data**
+
+- **Sectors**
+  - Healthcare
+  - Finance
+  - Logistics
+
+- **Example applications**
+  - Fraud detection
+  - Recommendation systems
+  - Network analysis
+::::
+::::{.column width=25%}
+\center
+\small
+
+![](data605/lectures_source/images/lecture_12_2/big_data_graph1.png)
+_Protein-protein interaction network_
+
+![](data605/lectures_source/images/lecture_12_2/big_data_graph2.png)
+_Supreme court citation network_
+::::
+::::{.column width=25%}
+\center
+\small
+
+![](data605/lectures_source/images/lecture_12_2/big_data_graph3.png)
+_Stock trading network_
+
+![](data605/lectures_source/images/lecture_12_2/big_data_graph4.png)
+_Social networks_
+::::
+:::
+
+* Graph Data Structures: Motivation
+:::columns
+::::{.column width=50%}
+- Increased data volumes and accessibility
+
+- Traditional tools (e.g., relational DBs) struggle with graph queries
+  - Dedicated solutions: Neo4j
+
+- Existing tools inefficient for processing graph-structured queries
+  - Dedicated solutions: Google Pregel, Apache Giraph, Spark GraphX
+::::
+::::{.column width=50%}
+\center
+\small
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_1.png)
+_Global virtual trade network_
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_2.png)
+_Federal funds networks_
+::::
+:::
+
+* Knowledge Graphs
+- **Representation of knowledge in the form of graphs**
+  - Capture entities, relationships, properties
+  - Provide structured view of real-world information
+
+- Represent using RDF or Property Graph models
+  - E.g., Google Knowledge Graph, DBpedia, Wikidata
+
+- **Applications**
+  - Enable machine understanding of complex domains
+  - Support semantic search, recommendation, analytics
+  - Used in industries for data integration, knowledge discovery, AI
+    applications
+
+- **Ontologies**
+  - Provide formal representation of knowledge
+  - Promote interoperability across knowledge bases
+
+* Graph Data Models: RDF
+:::columns
+::::{.column width=60%}
+- **Resource Description Framework**
+  - RDF uses triples subject-predicate-object
+  - Connects "subject" and "object" through a "predicate"
+  - E.g., "TomCruise-acted-TopGun"
+
+- **Used to represent knowledge bases**
+  - Queried through SPARQL
+::::
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_11_image_1.png)
+::::
+:::
+
+- **Pros**
+  - Standardization
+    - W3C standard to model data
+    - Subject and object can be URIs in semantic web
+  - Interoperability
+    - Merge RDF data stores
+  - Extensibility
+    - Add new nodes and relationships
+    - Support ontologies
+
+- **Example Use Cases**
+  - Linking Open Data project
+  - FOAF (Friend of a Friend) vocabulary
+
+* Graph Data Models: Property Graph
+:::columns
+::::{.column width=45%}
+- Directed graph with nodes and edges having key-values _properties_
+
+- **No universal standard**
+  - Similar expressive power to RDFs
+  - Less "schema"
+  - Harder to interoperate
+
+- Examples of **query languages**:
+  - Cypher (e.g., Neo4j)
+  - Gremlin (e.g., Apache TinkerPop)
+
+- **Applications** 
+  - Used by many open-source graph data management tools
+  - Logistics and supply chain management
+  - Fraud detection in financial transactions
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_1.png)
+
+\vspace{0.5cm}
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_2.jpeg)
+::::
+:::
+
+* Graph Data Models: XML
+- Common data model for flexible data representation
+- Directed labeled tree
+- Popular for non-tabular data exchange
+
+:::columns
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_13_image_1.png){width=70%}
+::::
+::::{.column width=50%}
+```xml
+<movies>
+  <movie>
+  <title>Top Gun</title>
+  <actors>
+    <actor>
+     <name>Tom Cruise</name>
+     <born>7/3/1962</born>
+    </actor>
+   <actor>
+     ...
+   </actor>
+  </actors>
+  </movie>
+```
+::::
+:::
+
+## Storing graph data
+
+* Storing Graph Data
+- **File systems**
+  - Very simple
+  - No support for transactions, ACID compliance
+  - Minimal functionality (e.g., must build the analysis/querying on top)
+
+- **Relational databases**
+  - Mature technology
+  - All the good stuff (SQL, transactions, ACID compliance, toolchains)
+  - Minimal functionality for graph data
+
+- **NoSQL key-value stores**
+  - Can handle very large datasets efficiently in a distributed fashion
+  - Minimal native functionality for graph data
+
+- **Graph databases**
+  - Efficiently support complex queries/tasks (e.g., graph traversals)
+  - Not as mature as RDBMSs
+  - Often lack declarative language similar to SQL
+    - You may need to write custom programs
+
+* Graph Databases
+- Many specialized graph database systems
+  - E.g., Neo4j, Titan, OrientDB, AllegroGraph
+
+- Key distinctions from relational databases
+  - Manage and query graph-structured data
+  - Store graph structure explicitly with pointers
+    - Avoid joins, simplify graph traversals
+    - Natural to write _queries_ and _graph algorithms_ (reachability, shortest
+      paths)
+  - Support graph query languages: SPARQL, Cypher, Gremlin
+  - Rudimentary declarative interfaces
+  - Applications often require programmatic interfaces
+  - Provide programmatic API for arbitrary graph algorithms
+
