@@ -7,15 +7,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /workspace
 
-# Core Jupyter + libs (avoid the deprecated "jupyter" meta package)
+# Copy requirements first for better layer caching
+COPY requirements.txt /workspace/
+
+# Install PyTorch first with the correct index, then all other deps
 RUN pip install --no-cache-dir \
-      notebook==6.5.7 jupyterlab==4.2.5 \
-      nbconvert==7.16.4 nbclient==0.10.0 jupyter-core==5.7.2 && \
-    pip install --no-cache-dir \
       torch==2.3.0 --index-url https://download.pytorch.org/whl/cpu && \
-    pip install --no-cache-dir \
-      scikit-learn==1.3.2 transformers==4.44.2 sentence-transformers==3.1.1 \
-      umap-learn matplotlib pyarrow==12.0.1 tqdm
+    pip install --no-cache-dir -r requirements.txt
+
 
 # Bring project in
 COPY . /workspace
