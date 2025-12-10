@@ -1,226 +1,229 @@
-# Distributed Vision Transformer Training
+# DeepSpeed for Vision Transformer Fine-Tuning
 
-This project contains scripts for comparing PyTorch DistributedDataParallel (DDP) and DeepSpeed ZeRO Stage 3 for fine-tuning large Vision Transformers on ImageNet-1k.
+A comprehensive project for fine-tuning large Vision Transformers (ViTs) using DeepSpeed ZeRO optimization and PyTorch DistributedDataParallel (DDP). This project demonstrates memory-efficient distributed training strategies for large-scale vision models on multiple GPUs.
+
+## Project Overview
+
+This project provides a complete framework for:
+- **Single-GPU Training**: LoRA-based fine-tuning with gradient checkpointing
+- **Multi-GPU Training**: Distributed training using DDP, DeepSpeed ZeRO Stage 2, ZeRO Stage 3, and ZeRO++
+- **Performance Analysis**: Profiling and trace analysis using PyTorch Profiler and HTA (Holistic Trace Analysis)
+- **Experiment Tracking**: WandB integration for metrics, memory usage, and performance monitoring
 
 ## Project Structure
 
 ```
 .
-├── test_environment.py              # Test script for environment verification
-├── train_standard_ddp.py            # Standard PyTorch DDP training
-├── train_deepspeed_stage3.py        # DeepSpeed ZeRO Stage 3 training
-├── deepspeed_config_stage3.json     # DeepSpeed configuration
-├── submit.slurm                     # Slurm submission script template
-├── requirements.txt                 # Python dependencies
-└── README.md                        # This file
-```
-
-## Prerequisites
-
-1. **Hardware**: Multi-GPU system (tested with 4x GPUs)
-2. **Software**: 
-   - PyTorch with CUDA support
-   - DeepSpeed
-   - Transformers (Hugging Face)
-   - WandB
-3. **Dataset**: ImageNet-1k dataset organized as:
-   ```
-   imagenet/
-   ├── train/
-   │   ├── n01440764/
-   │   ├── n01443537/
-   │   └── ...
-   └── val/
-       ├── n01440764/
-       ├── n01443537/
-       └── ...
-   ```
-
-## Setup
-
-1. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Login to WandB** (run once):
-   ```bash
-   wandb login
-   ```
-
-3. **Download ImageNet dataset** and organize it in the expected directory structure.
-
-## Quick Start
-
-### 1. Test Environment
-
-Verify your environment is set up correctly:
-
-```bash
-# Test without distributed training
-python test_environment.py
-
-# Test with distributed training (using torchrun)
-torchrun --nproc_per_node=4 test_environment.py
-```
-
-### 2. Train with Standard PyTorch DDP
-
-```bash
-# Using torchrun
-torchrun --nproc_per_node=4 train_standard_ddp.py \
-    --data-path /path/to/imagenet \
-    --batch-size 64 \
-    --epochs 2 \
-    --learning-rate 1e-4 \
-    --num-workers 8
-
-# Or using srun (if available)
-srun python train_standard_ddp.py \
-    --data-path /path/to/imagenet \
-    --batch-size 64 \
-    --epochs 2 \
-    --learning-rate 1e-4 \
-    --num-workers 8
-```
-
-### 3. Train with DeepSpeed
-
-```bash
-# Using deepspeed launcher
-deepspeed --num_gpus=4 train_deepspeed_stage3.py \
-    --data-path /path/to/imagenet \
-    --deepspeed-config deepspeed_config_stage3.json \
-    --epochs 2 \
-    --num-workers 8
-
-# Or using srun
-srun deepspeed --num_gpus=4 train_deepspeed_stage3.py \
-    --data-path /path/to/imagenet \
-    --deepspeed-config deepspeed_config_stage3.json \
-    --epochs 2 \
-    --num-workers 8
-```
-
-### 4. Submit via Slurm
-
-Edit `submit.slurm` to:
-1. Update module loading commands for your cluster
-2. Uncomment the training command you want to run
-3. Update the data path
-
-Then submit:
-```bash
-sbatch submit.slurm
-```
-
-Monitor the job:
-```bash
-tail -f logs/slurm_<JOB_ID>.out
+├── DeepSpeed_utils.py                    # Core utility functions for training
+├── DeepSpeed.API.ipynb                   # Interactive API demonstrations
+├── DeepSpeed.API.md                      # API documentation
+├── DeepSpeed.example.md                  # Example notebooks guide
+├── Deepspeed_single_gpu.example.ipynb    # Single-GPU LoRA experiments
+├── DeepSpeed_multi_gpu.example.ipynb     # Multi-GPU distributed experiments
+├── DeepSpeed_trace_analysis.example.ipynb # HTA trace analysis
+├── deepspeed_config_stage3.json          # DeepSpeed ZeRO Stage 3 configuration
+├── requirements.txt                      # Python dependencies
+├── setup_food101.py                      # Food-101 dataset setup script
+├── test_environment.py                  # Environment verification script
+├── train_standard_ddp.py                 # Standalone DDP training script
+├── train_deepspeed_stage3.py            # Standalone DeepSpeed training script
+├── submit.slurm                         # Slurm job submission template
+└── README.md                            # This file
 ```
 
 ## Key Features
 
-### Standard PyTorch DDP (`train_standard_ddp.py`)
+### 1. **Distributed Training Methods**
 
-- Uses `torch.nn.parallel.DistributedDataParallel`
-- BF16 mixed precision with `torch.cuda.amp.autocast`
-- WandB logging for metrics and GPU utilization
-- Supports command-line arguments for flexibility
+- **DDP (DistributedDataParallel)**: Standard PyTorch multi-GPU training with full model replication
+- **ZeRO Stage 2**: Partitions optimizer states and gradients across GPUs
+- **ZeRO Stage 3**: Partitions optimizer states, gradients, and model parameters
+- **ZeRO++**: Enhanced ZeRO Stage 3 with quantized gradient communication
 
-### DeepSpeed Training (`train_deepspeed_stage3.py`)
+### 2. **Memory Optimization Techniques**
 
-- Uses DeepSpeed ZeRO Stage 3 for memory optimization
-- BF16 mixed precision enabled in DeepSpeed config
-- CPU offloading disabled (GPU-only)
-- Gradient accumulation supported
-- AdamW optimizer with learning rate scheduling
+- **Gradient Checkpointing**: Reduces memory during backward pass
+- **Mixed Precision Training**: BF16/FP16 support for faster training and lower memory
+- **CPU Offloading**: Optional offloading of optimizer states and parameters to CPU
+- **Gradient Accumulation**: Supports large effective batch sizes with limited GPU memory
 
-### DeepSpeed Configuration (`deepspeed_config_stage3.json`)
+### 3. **Models and Datasets**
 
-Key settings:
-- **ZeRO Stage 3**: Partitions optimizer states, gradients, and parameters
-- **BF16 enabled**: For better performance on modern GPUs
-- **Micro batch size**: 8 per GPU
-- **Gradient accumulation**: 4 steps
-- **No offloading**: Keeps everything on GPU for better speed
+- **Models**: 
+  - ViT-Base (~86M parameters) for single-GPU experiments
+  - ViT-Huge (~630M parameters) for multi-GPU experiments
+- **Datasets**:
+  - CIFAR-100 (single-GPU experiments)
+  - Food-101 (multi-GPU experiments)
+
+### 4. **Performance Analysis**
+
+- **PyTorch Profiler**: Detailed CPU/GPU activity traces
+- **HTA (Holistic Trace Analysis)**: Advanced performance bottleneck identification
+- **WandB Logging**: Real-time metrics, memory usage, and throughput tracking
+
+## Prerequisites
+
+1. **Hardware**: 
+   - Multi-GPU system (tested with 2x Tesla T4, 1x A100)
+   - CUDA-capable GPUs with sufficient memory
+
+2. **Software**:
+   - Python 3.8+
+   - PyTorch 2.0+ with CUDA support
+   - DeepSpeed 0.10+
+   - NCCL for multi-GPU communication
+
+3. **Dependencies**: Install all requirements:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **WandB Setup**: 
+   - Create account at https://wandb.ai
+   - Run `wandb login` or set `WANDB_API_KEY` environment variable
+   - For Kaggle: Add `WANDB_API_KEY` to Secrets (Add-ons → Secrets)
+
+## Quick Start
+
+### Single-GPU Training
+
+See `Deepspeed_single_gpu.example.ipynb` for:
+- LoRA-based fine-tuning on CIFAR-100
+- Gradient checkpointing
+- Standard PyTorch optimizer (no DeepSpeed)
+
+### Multi-GPU Training
+
+See `DeepSpeed_multi_gpu.example.ipynb` for:
+- DDP training with ViT-Huge on Food-101
+- DeepSpeed ZeRO Stage 2, 3, and ZeRO++ experiments
+- Profiling and trace collection
+
+### API Usage
+
+See `DeepSpeed.API.ipynb` for minimal examples of:
+- Creating DeepSpeed configurations
+- Initializing DeepSpeed models
+- Basic training patterns
+
+### Trace Analysis
+
+See `DeepSpeed_trace_analysis.example.ipynb` for:
+- Extracting and merging profiling traces
+- HTA analysis for performance bottlenecks
+- Visualizing GPU utilization and communication patterns
+
+## Usage Examples
+
+### Using the Utility Functions
+
+```python
+from DeepSpeed_utils import (
+    load_vit_model,
+    create_data_loaders,
+    run_training_experiment
+)
+
+# Load model
+model = load_vit_model(
+    model_name="google/vit-huge-patch14-224-in21k",
+    num_labels=101,
+    enable_gradient_checkpointing=True
+)
+
+# Run experiment
+results = run_training_experiment(
+    method="zero3",
+    model_name="google/vit-huge-patch14-224-in21k",
+    train_loader=train_loader,
+    test_loader=test_loader,
+    world_size=2,
+    num_epochs=1,
+    enable_profiling=True
+)
+```
+
+### Standalone Scripts
+
+**DDP Training:**
+```bash
+torchrun --nproc_per_node=2 train_standard_ddp.py \
+    --data-path /path/to/food101 \
+    --batch-size 16 \
+    --epochs 1
+```
+
+**DeepSpeed Training:**
+```bash
+deepspeed --num_gpus=2 train_deepspeed_stage3.py \
+    --data-path /path/to/food101 \
+    --deepspeed-config deepspeed_config_stage3.json \
+    --epochs 1
+```
+
+## Experiment Tracking
+
+All experiments automatically log to WandB with:
+- Training/validation loss and accuracy
+- GPU memory usage (allocated, reserved, peak)
+- Training throughput (samples/second)
+- Epoch duration
+- System metrics (GPU utilization, temperature)
 
 ## Performance Comparison
 
-The scripts log the following metrics to WandB:
+The project enables comparison of:
+- **Memory Efficiency**: Peak GPU memory usage across methods
+- **Training Speed**: Throughput (samples/second) and epoch duration
+- **Scalability**: Performance scaling with number of GPUs
+- **Communication Overhead**: Communication time vs computation time
 
-- Training loss
-- Validation accuracy  
-- Epoch duration
-- GPU memory usage (allocated and reserved)
-- GPU utilization
+## Configuration Files
 
-Compare these metrics between the two approaches to evaluate:
-- Training speed (epochs/second)
-- Memory efficiency (GPU usage)
-- Final model accuracy
+### DeepSpeed Configuration
 
-## Command Line Arguments
+Example ZeRO Stage 3 config (`deepspeed_config_stage3.json`):
+- ZeRO Stage 3 optimization
+- BF16 mixed precision
+- Gradient accumulation
+- Optimizer and parameter offloading options
 
-### Standard DDP Training
-
-```bash
-python train_standard_ddp.py \
-    --data-path PATH          # Path to ImageNet dataset (required)
-    --batch-size INT          # Batch size per GPU (default: 64)
-    --epochs INT              # Number of epochs (default: 1)
-    --learning-rate FLOAT     # Learning rate (default: 1e-4)
-    --weight-decay FLOAT      # Weight decay (default: 0.01)
-    --num-workers INT         # Data loader workers (default: 4)
-```
-
-### DeepSpeed Training
-
-```bash
-python train_deepspeed_stage3.py \
-    --data-path PATH          # Path to ImageNet dataset (required)
-    --deepspeed-config PATH   # DeepSpeed config file (default: deepspeed_config_stage3.json)
-    --epochs INT              # Number of epochs (default: 1)
-    --num-workers INT         # Data loader workers (default: 4)
-    --local_rank INT          # Local rank (auto-detected, default: -1)
-```
+See `DeepSpeed.API.md` for detailed configuration options.
 
 ## Troubleshooting
 
 ### CUDA Out of Memory
 
-1. **Reduce batch size**: Decrease `--batch-size` for DDP or `train_micro_batch_size_per_gpu` in DeepSpeed config
-2. **Enable gradient accumulation**: DeepSpeed config already includes this
-3. **Use gradient checkpointing**: Add to model configuration
+1. Reduce `micro_batch_size` or `train_micro_batch_size_per_gpu`
+2. Increase `gradient_accumulation_steps`
+3. Enable gradient checkpointing
+4. Use ZeRO Stage 3 with CPU offloading
 
 ### NCCL Errors
 
-1. Check that NCCL is properly installed
-2. Try setting `export NCCL_DEBUG=INFO` for more details
-3. Ensure proper Slurm/SGE configuration for multi-GPU jobs
+1. Ensure NCCL is properly installed
+2. Set `export NCCL_DEBUG=INFO` for detailed logs
+3. Check network connectivity between GPUs
 
-### WandB Connection Issues
+### WandB Authentication
 
-1. Run `wandb login` if not already done
-2. Set `WANDB_MODE=disabled` to run without WandB if needed
+1. Run `wandb login` or set `WANDB_API_KEY`
+2. In Kaggle: Add API key to Secrets
 3. Check network connectivity to WandB servers
-
-## Model Details
-
-- **Model**: `google/vit-large-patch16-224`
-- **Parameters**: ~307M
-- **Input size**: 224x224
-- **Num classes**: 1000 (ImageNet-1k)
 
 ## References
 
-- [PyTorch Distributed Training](https://pytorch.org/tutorials/intermediate/ddp_tutorial.html)
-- [DeepSpeed ZeRO](https://www.deepspeed.ai/tutorials/zero/)
+- [DeepSpeed Documentation](https://www.deepspeed.ai/)
+- [ZeRO Paper](https://arxiv.org/abs/1910.02054)
 - [Vision Transformer Paper](https://arxiv.org/abs/2010.11929)
-- [Transformers Library](https://huggingface.co/docs/transformers/index)
+- [PyTorch Distributed Training](https://pytorch.org/tutorials/intermediate/ddp_tutorial.html)
+- [HTA Documentation](https://github.com/facebookresearch/hta)
 
 ## License
 
 See LICENSE file in the repository.
-Testing.
 
+## Contributing
+
+This is a course project for MSML 610. For questions or issues, please refer to the course materials or contact the instructor.
