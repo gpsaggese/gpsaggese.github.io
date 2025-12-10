@@ -1,22 +1,54 @@
 # End-to-End Predictive Policing Workflow (UmdTask187)
 
-## 1. Workflow Diagram
+# FairnessPP Example: Mitigating Bias in Crime Prediction
 
-The project follows a standard machine learning workflow, with a critical intervention layer:
+## 1. Problem Statement
+Predictive policing algorithms are often criticized for reinforcing historical biases. A standard model trained on arrest data may learn to over-police specific demographic groups (e.g., Low-Income neighborhoods or Minority communities) simply because they are historically over-represented in the training data.
 
+This example demonstrates how **FairnessPP** can be used to:
+1.  **Diagnose** bias in a standard Gradient Boosting model.
+2.  **Mitigate** that bias using Equalized Odds constraints.
+3.  **Evaluate** the trade-off between public safety (Accuracy) and civil rights (Fairness).
 
-## 2. Core Technical Decisions
+## 2. Workflow Overview
+The example notebook (`FairnessPP.example.ipynb`) follows a strict temporal validation approach, simulating a real-world deployment:
+* **Training Data:** Chicago Crime Data (2020–2022).
+* **Testing Data:** Future Crime Data (2023).
 
-### A. Model Selection: Gradient Boosting Trees (GBT)
-We chose GBT over standard Random Forests because GBT generally achieves higher predictive accuracy by sequentially correcting errors. This is crucial as achieving high performance is the *trade-off* we must analyze against fairness.
+We compare two models:
+* **Baseline Model:** Standard Gradient Boosting (Unaware of demographics).
+* **Fair Model:** The same architecture wrapped in the `FairnessPredictor` with mitigation enabled.
 
-### B. The Fairness Constraint: Equalized Odds
-We selected **Equalized Odds** because it is the most relevant metric for policing. It requires that the model's performance metrics—specifically the True Positive Rate (correctly predicting a hotspot) and False Positive Rate (falsely flagging an area as a hotspot)—are equal across all sensitive groups. This directly combats disparate allocation of policing resources.
+## 3. Usage Example
+Below is a simplified view of how the `FairnessPP` API simplifies this workflow:
 
-### C. Addressing Intersectional Bias
-Our data preparation step creates the sensitive attribute ($\mathbf{A}$) by combining Race and Income. The evaluation notebook will present metrics for groups like 'Black\_Low' and 'Hispanic\_Low'. The key finding for the final project will be analyzing whether the mitigation strategy successfully reduces the disparity for the most disadvantaged **intersectional group**.
+```python
+from FairnessPP_utils import FairnessPredictor, load_chicago_data
 
-## 3. Impact Analysis and Trade-Off
-The final analysis will focus on the trade-off curve:
-* **Performance vs. Fairness:** We will compare the overall AUC/Accuracy of the mitigated model against the unmitigated baseline.
-* **Implications for Policing:** We will discuss the findings, concluding whether enforcing Equalized Odds on intersectional groups results in a negligible performance hit while significantly improving equity in predicted hotspot locations.
+# 1. Load Data
+X, y, A, dates = load_chicago_data()
+
+# 2. Train Standard Model (Unmitigated)
+baseline = FairnessPredictor()
+baseline.train(X, y, mitigate=False)
+
+# 3. Train Fair Model (Mitigated) - Just one flag change!
+fair_model = FairnessPredictor()
+fair_model.train(X, y, A=A, mitigate=True)
+
+# 4. Compare
+res_base = baseline.evaluate(X, y, A)
+res_fair = fair_model.evaluate(X, y, A)
+
+## 5 Results & Analysis
+The following results were observed on the full 80,000-row dataset:
+
+| Model | Accuracy | Balanced Accuracy | Fairness Disparity |
+| :--- | :--- | :--- | :--- |
+| **Baseline (Unmitigated)** | ~88.5% | ~62.0% | **High (0.39)** |
+| **Fair (Mitigated)** | ~87.8% | ~50.0% | **Near-Zero (0.003)** |
+
+### Key Findings
+1.  **Majority Class Collapse:** The Fair Model successfully minimized disparate impact to near-zero. However, the `group_metrics` analysis reveals that it achieved this by predicting "No Arrest" for almost everyone (Selection Rate ~0.0).
+2.  **The Trade-off:** We achieved perfect fairness, but at the cost of utility (Balanced Accuracy dropped significantly).
+3.  **Conclusion:** The tool successfully enforced the constraints, highlighting the critical real-world trade-off between strict fairness definitions and predictive power.

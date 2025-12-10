@@ -104,7 +104,8 @@ def load_chicago_data(local_cache_path="data/chicago_crime_2020_2023.csv") -> Tu
         all_data = []
         try:
             for year in years:
-                url = f"{API_URL}?$limit=20000&year={year}&$order=date DESC"
+                # FIXED: Changed space to %20 in URL parameter
+                url = f"{API_URL}?$limit=20000&year={year}&$order=date%20DESC"
                 print(f" - Fetching {year}...")
                 df_year = pd.read_json(url)
                 all_data.append(df_year)
