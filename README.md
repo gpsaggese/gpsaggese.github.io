@@ -213,32 +213,41 @@ cd umd_classes/class_project/MSML610/Fall2025/Projects/sentiment_rl_trader
 ```
 
 ### 2. Create and Activate a Virtual Environment
-
-`python3 -m venv venv`
-`source venv/bin/activate`      # On macOS / Linux
-
+```bash
+python3 -m venv venv
+```
+```bash
+source venv/bin/activate      
+```
 # For Windows (PowerShell):
 # venv\Scripts\Activate.ps1
 
 
 ### 3. Install Python Dependencies
 
-`pip install --upgrade pip`
-`pip install -r requirements.txt`
-
+```bash
+pip install --upgrade pip
+```
+```bash
+pip install -r requirements.txt
+```
 
 ### 4. Environment Setup (API Keys)
 
-`export NEWSAPI_KEY="<your_newsapi_key>"`
-`export OPENAI_API_KEY="<your_openai_api_key_if_used>"`
+```bash
+export NEWSAPI_KEY="<your_newsapi_key>"
+```
+```bash
+export OPENAI_API_KEY="<your_openai_api_key_if_used>"
+```
 
 In Python, these are accessed via:
+```python 
+import os
 
-`import os`
-
-`news_key = os.environ["NEWSAPI_KEY"]`
-`openai_key = os.environ.get("OPENAI_API_KEY", None)`
-
+news_key = os.environ["NEWSAPI_KEY"]
+openai_key = os.environ.get("OPENAI_API_KEY", None)
+```
 
 ### 5. Running the Full Pipeline
 
@@ -260,18 +269,21 @@ This will:
 
 Build Docker Image
 
-`./docker_build.sh`
-
+```bash
+./docker_build.sh
+```
 
 Start a Bash Session Inside the Container
 
-`./docker_bash.sh`
-
+```bash
+./docker_bash.sh
+```
 
 Launch Jupyter Notebook in Docker
 
-`./docker_jupyter.sh`
-
+```bash
+./docker_jupyter.sh
+```
 
 Then open the printed URL in a browser and navigate to:
 
