@@ -1,0 +1,5 @@
+class_project/MSML610/Fall2025/Projects/sentiment_rl_trader/venv/
+wandb_logs/
+*.dylib
+*.so
+__pycache__/
