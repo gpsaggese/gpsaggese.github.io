@@ -1,0 +1,57 @@
+_wandb:
+    value:
+        cli_version: 0.23.0
+        e:
+            nstp81365lmznfm8n1gbyu37kw0aakym:
+                apple:
+                    ecpuCores: 4
+                    gpuCores: 20
+                    memoryGb: 24
+                    name: Apple M4 Pro
+                    pcpuCores: 10
+                    ramTotalBytes: "25769803776"
+                codePath: main.py
+                codePathLocal: main.py
+                cpu_count: 14
+                cpu_count_logical: 14
+                disk:
+                    /:
+                        total: "494384795648"
+                        used: "59660976128"
+                email: siva09@umd.edu
+                executable: /Users/sivaakashramini/sentiment_rl_trader/venv/bin/python3
+                host: Sivas-MacBook-Pro.local
+                memory:
+                    total: "25769803776"
+                os: macOS-15.5-arm64-arm-64bit
+                program: /Users/sivaakashramini/sentiment_rl_trader/main.py
+                python: CPython 3.11.0
+                root: /Users/sivaakashramini/sentiment_rl_trader
+                startedAt: "2025-12-04T06:19:32.945333Z"
+                writerId: nstp81365lmznfm8n1gbyu37kw0aakym
+        m: []
+        python_version: 3.11.0
+        t:
+            "1":
+                - 2
+                - 3
+                - 5
+                - 53
+            "2":
+                - 2
+                - 3
+                - 5
+                - 53
+            "3":
+                - 13
+                - 16
+            "4": 3.11.0
+            "5": 0.23.0
+            "12": 0.23.0
+            "13": darwin-arm64
+lstm_epochs:
+    value: 50
+rl_episodes:
+    value: 500
+ticker:
+    value: AAPL

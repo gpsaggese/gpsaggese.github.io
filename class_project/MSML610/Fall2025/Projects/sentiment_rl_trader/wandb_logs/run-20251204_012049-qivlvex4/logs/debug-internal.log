@@ -1,0 +1,11 @@
+{"time":"2025-12-04T01:20:49.552267-05:00","level":"INFO","msg":"stream: starting","core version":"0.23.0"}
+{"time":"2025-12-04T01:20:49.724434-05:00","level":"INFO","msg":"stream: created new stream","id":"qivlvex4"}
+{"time":"2025-12-04T01:20:49.724485-05:00","level":"INFO","msg":"handler: started","stream_id":"qivlvex4"}
+{"time":"2025-12-04T01:20:49.724665-05:00","level":"INFO","msg":"stream: started","id":"qivlvex4"}
+{"time":"2025-12-04T01:20:49.724675-05:00","level":"INFO","msg":"writer: started","stream_id":"qivlvex4"}
+{"time":"2025-12-04T01:20:49.724675-05:00","level":"INFO","msg":"sender: started","stream_id":"qivlvex4"}
+{"time":"2025-12-04T01:30:59.931822-05:00","level":"INFO","msg":"stream: closing","id":"qivlvex4"}
+{"time":"2025-12-04T01:31:00.275992-05:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-12-04T01:31:00.649198-05:00","level":"INFO","msg":"handler: closed","stream_id":"qivlvex4"}
+{"time":"2025-12-04T01:31:00.650042-05:00","level":"INFO","msg":"sender: closed","stream_id":"qivlvex4"}
+{"time":"2025-12-04T01:31:00.650131-05:00","level":"INFO","msg":"stream: closed","id":"qivlvex4"}

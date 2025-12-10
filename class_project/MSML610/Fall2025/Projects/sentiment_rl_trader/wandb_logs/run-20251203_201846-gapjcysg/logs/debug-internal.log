@@ -1,0 +1,11 @@
+{"time":"2025-12-03T20:18:47.117362-05:00","level":"INFO","msg":"stream: starting","core version":"0.23.0"}
+{"time":"2025-12-03T20:18:47.311415-05:00","level":"INFO","msg":"stream: created new stream","id":"gapjcysg"}
+{"time":"2025-12-03T20:18:47.311457-05:00","level":"INFO","msg":"handler: started","stream_id":"gapjcysg"}
+{"time":"2025-12-03T20:18:47.311606-05:00","level":"INFO","msg":"stream: started","id":"gapjcysg"}
+{"time":"2025-12-03T20:18:47.311618-05:00","level":"INFO","msg":"writer: started","stream_id":"gapjcysg"}
+{"time":"2025-12-03T20:18:47.311622-05:00","level":"INFO","msg":"sender: started","stream_id":"gapjcysg"}
+{"time":"2025-12-03T20:20:48.801505-05:00","level":"INFO","msg":"stream: closing","id":"gapjcysg"}
+{"time":"2025-12-03T20:20:49.085674-05:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-12-03T20:20:49.25171-05:00","level":"INFO","msg":"handler: closed","stream_id":"gapjcysg"}
+{"time":"2025-12-03T20:20:49.252391-05:00","level":"INFO","msg":"sender: closed","stream_id":"gapjcysg"}
+{"time":"2025-12-03T20:20:49.252471-05:00","level":"INFO","msg":"stream: closed","id":"gapjcysg"}
