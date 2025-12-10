@@ -21,11 +21,11 @@ Fall2025_SBert_Sentiment_Analysis_with_Sentence_Embeddings/
 │   ├── sbert_embed.py  
 │   └── SBERT_utils.py  
 │  
-└── docs/  
-├── SBERT_API.md 
-├── SBERT_API.ipynb
-├── SBERT_Example.ipynb
-└── SBERT_Example.md  
+└── docs/    
+├── SBERT_API.md   
+├── SBERT_API.ipynb  
+├── SBERT_Example.ipynb  
+└── SBERT_Example.md    
 
 ---
 
