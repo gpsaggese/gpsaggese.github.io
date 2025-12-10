@@ -8,9 +8,9 @@
 Build a **real-time sentiment analysis pipeline** to predict stock price movements based on news sentiment and use those predictions to drive a trading strategy.  
 
 The project connects to **NewsAPI** and **Yahoo Finance**, computes sentiment on news headlines, aligns that sentiment with stock price data, trains predictive models (LSTM + sentiment features), and finally uses a **reinforcement learning (RL) trader** to optimize decisions such as Buy / Sell / Hold.  
-
-**W&B Project Dashboard**  
-https://wandb.ai/siva09-university-of-maryland/sentiment_rl_trader  
+ 
+**W&B Project Report**  
+https://api.wandb.ai/links/siva09-university-of-maryland/s51yro7n 
 
 ---
 
@@ -239,8 +239,8 @@ cd umd_classes/class_project/MSML610/Fall2025/Projects/sentiment_rl_trader
 
 ### 2. Create and Activate a Virtual Environment
 
-python3 -m venv venv
-source venv/bin/activate      # On macOS / Linux
+`python3 -m venv venv`
+`source venv/bin/activate`      # On macOS / Linux
 
 # For Windows (PowerShell):
 # venv\Scripts\Activate.ps1
@@ -248,57 +248,56 @@ source venv/bin/activate      # On macOS / Linux
 
 ### 3. Install Python Dependencies
 
-pip install --upgrade pip
-pip install -r requirements.txt
+`pip install --upgrade pip`
+`pip install -r requirements.txt`
 
 
 ### 4. Environment Setup (API Keys)
 
-export NEWSAPI_KEY="<your_newsapi_key>"
-export OPENAI_API_KEY="<your_openai_api_key_if_used>"
+`export NEWSAPI_KEY="<your_newsapi_key>"`
+`export OPENAI_API_KEY="<your_openai_api_key_if_used>"`
 
 In Python, these are accessed via:
 
-import os
+`import os`
 
-news_key = os.environ["NEWSAPI_KEY"]
-openai_key = os.environ.get("OPENAI_API_KEY", None)
+`news_key = os.environ["NEWSAPI_KEY"]`
+`openai_key = os.environ.get("OPENAI_API_KEY", None)`
 
 
 ### 5. Running the Full Pipeline
 
 After activating the virtual environment and setting environment variables:
 
-python main.py
+`python main.py`
 
 This will:
-
-Fetch / load news and stock data  
-Compute sentiment features  
-Train the LSTM model  
-Train the RL trader  
-Save plots under plots/  
-Log metrics and artifacts to W&B under the project:  
-siva09-university-of-maryland/sentiment_rl_trader
+* **`Fetch / load news and stock data`**
+* **`Compute sentiment features`**  
+* **`Train the LSTM model`**  
+* **`Train the RL trader`**   
+* **`Save plots under plots/`**   
+* **`Log metrics and artifacts to W&B under the project`**    
+* **`siva09-university-of-maryland/sentiment_rl_trader`**  
 
 
 ### Docker Workflow
 
 Build Docker Image
 
-./docker_build.sh
+`./docker_build.sh`
 
 
 Start a Bash Session Inside the Container
 
-./docker_bash.sh
+`./docker_bash.sh`
 
 
 Launch Jupyter Notebook in Docker
 
-./docker_jupyter.sh
+`./docker_jupyter.sh`
 
 
 Then open the printed URL in a browser and navigate to:
 
-/class_project/MSML610/Fall2025/Projects/sentiment_rl_trader/sentiment_rl_trader_ipynb
+`/class_project/MSML610/Fall2025/Projects/sentiment_rl_trader/sentiment_rl_trader_ipynb`
