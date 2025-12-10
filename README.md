@@ -139,32 +139,7 @@ Step-by-step notebooks walk through the full pipeline:
 - LSTM price prediction training and evaluation  
 - Reinforcement learning trader simulation and analysis
 
-
 ---
-
-## Bonus / Extension Ideas
-
-The current project structure supports several extensions beyond core requirements:
-
-- **Model Comparison**  
-  Evaluate alternative forecasting approaches such as:
-  - XGBoost regression
-  - Linear regression models
-  - Other sequence architectures
-
-- **Expanded Sentiment Sources**  
-  Incorporate alternative text data streams:
-  - Twitter/X posts  
-  - Reddit discussions  
-  - Financial forums
-
-- **Risk Management Enhancements**
-  - Position size limits  
-  - Stop-loss and take-profit logic  
-  - Volatility-adjusted position sizing
-
-- **Advanced RL Algorithms**
-  - Replace the current agent with **DQN**, **PPO**, or other policy-gradient and value-based methods for improved policy learning and stability
 
 # Project Overview: Sentiment-Aware Reinforcement Learning Trader
 
