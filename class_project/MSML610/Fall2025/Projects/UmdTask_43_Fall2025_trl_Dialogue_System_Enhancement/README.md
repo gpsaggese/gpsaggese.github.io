@@ -33,13 +33,6 @@ We extract context–response pairs from the `dialog` field by slicing the last 
 ```text
 UmdTask_43_Fall2025_DialogueSystemEnhancement/
 │
-├── deliverables/                 # Notebooks + documentation for submission
-│   ├── trl.example.md       # Walkthrough of the pipeline
-│   ├── trl.utils.py         # Utils used inside notebooks
-│   ├── trl.API.ipynb        # API demonstration notebook
-│   ├── trl.API.md           # API layer documentation
-│   ├── trl.example.ipynb  # Full training + evaluation demo
-│
 ├── models/
 │   ├── sft_finetuned/            # Output of supervised fine-tuning
 │   ├── fine_tuned_live/          # Updated model during RLHF (PPO)
@@ -65,6 +58,12 @@ UmdTask_43_Fall2025_DialogueSystemEnhancement/
 ├── Dockerfile                    # Image for training/inference
 ├── requirements.txt              # Dependencies
 └── README.md
+├── trl.example.md       # Walkthrough of the pipeline
+├── trl.utils.py         # Utils used inside notebooks
+├── trl.API.ipynb        # API demonstration notebook
+├── trl.API.md           # API layer documentation
+├── trl.example.ipynb  # Full training + evaluation demo
+
 
 ```
 
