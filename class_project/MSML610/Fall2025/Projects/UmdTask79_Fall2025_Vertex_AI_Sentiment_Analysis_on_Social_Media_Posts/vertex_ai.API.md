@@ -2,423 +2,559 @@
 
 ## Overview
 
-This document provides comprehensive documentation for using Google Cloud Vertex AI for sentiment analysis on social media posts. It is structured according to the course submission guidelines, clearly separating the **native Vertex AI SDK** from our **wrapper layer functions**.
+This document explains the API (Application Programming Interface) layer for the Vertex AI sentiment analysis project. Think of an API as a control panel with clearly labeled buttons and dials that make complex operations simple.
+
+The API contract layer is a set of easy-to-use building blocks defined in vertex_ai.API.ipynb. It consists of:
+
+Configuration blocks: These store settings like your Google Cloud project name, which region to use, where to store files, and login credentials
+
+Helper functions: These are shortcuts that make working with Google Cloud easier by hiding complex details
+
+Smart defaults: Pre-filled settings that work well for sentiment analysis, so you only need to change what's different for your specific use
+
+Clean organization: Settings are kept separate from the actual work, making everything easier to understand and maintain
 
 ---
 
-## Section 1: Native Vertex AI SDK
+## Configuration Blocks
 
-### What is Vertex AI?
+### VertexAIConfig
 
-Vertex AI is Google's unified machine learning platform that provides:
+This stores information about your Google Cloud setup.
 
-- **AutoML**: Automated model training without ML expertise
-- **Custom Training**: GPU-accelerated training with custom scripts
-- **Model Deployment**: Production-ready endpoints with auto-scaling
-- **MLOps**: End-to-end ML pipeline management
+What it contains:
 
-### Core SDK Components
+project_id: Your Google Cloud project name (like a unique ID for your workspace)
 
-#### 1. Authentication (`google.auth`)
-```python
-from google.auth import default
-credentials, project = default()
+location: Which region to use (for example, "us-central1" means Central United States)
+
+bucket_name: Name of your storage bucket (a container where files are kept in the cloud)
+
+credentials_path: Location of your login key file (default is "vertex-ai-key.json")
+
+staging_bucket: Optional location for temporary files (automatically created if you don't specify one)
+
+The staging bucket is automatically set to gs://{bucket_name}/staging if you don't provide a specific location.
+
+Example of how to use it:
 ```
-
-#### 2. Vertex AI Initialization (`google.cloud.aiplatform`)
-```python
-import google.cloud.aiplatform as aiplatform
-
-aiplatform.init(
-    project="your-project-id",
+config = VertexAIConfig(
+    project_id="noted-cortex-477800-b7",
     location="us-central1",
-    credentials=credentials
+    bucket_name="my-vertex-ai-bucket"
 )
 ```
 
-#### 3. Dataset Management
-```python
-# Create text dataset
-dataset = aiplatform.TextDataset.create(
-    display_name="sentiment-dataset",
-    gcs_source=["gs://bucket/data.jsonl"],
-    import_schema_uri=aiplatform.schema.dataset.ioformat.text.single_label_classification
+### TrainingJobConfig
+
+This stores all the settings for training a model.
+
+What it contains:
+
+display_name: A human-readable name for your training job
+
+model_name: Which pre-trained model to use (default is "cardiffnlp/twitter-roberta-base-sentiment-latest", a model trained on Twitter data)
+
+learning_rate: How fast the model learns (default is 0.00002, which is slow and careful)
+
+batch_size: How many tweets to process at once (default is 32)
+
+weight_decay: Prevents overfitting by adding a small penalty (default is 0.01)
+
+warmup_ratio: How gradually to start training (default is 0.1, meaning 10 percent warmup)
+
+num_epochs: How many times to go through all the data (default is 4)
+
+max_length: Maximum number of words to consider (default is 128, good for tweets)
+
+machine_type: What kind of computer to use (default is "n1-standard-4", which has 4 processors and 15 GB memory)
+
+accelerator_type: What kind of graphics processor to use (default is "NVIDIA_TESLA_T4", a GPU that speeds up training)
+
+accelerator_count: How many graphics processors to use (default is 1)
+
+Example of how to use it:
+```
+job_config = TrainingJobConfig(
+    display_name="roberta-sentiment-training",
+    learning_rate=2e-5,
+    batch_size=32,
+    num_epochs=4
 )
 ```
 
-#### 4. Custom Training Jobs
-```python
-# Custom training job
-job = aiplatform.CustomTrainingJob(
-    display_name="sentiment-training",
-    script_path="vertex_ai_training.py",
-    container_uri="gcr.io/cloud-aiplatform/training/tf-gpu.2-8:latest",
-    requirements=["transformers", "datasets", "torch"],
-    model_serving_container_image_uri="gcr.io/cloud-aiplatform/prediction/tf2-cpu.2-8:latest"
-)
+### HyperparameterTuningConfig
 
-# Run training
-model = job.run(
-    dataset=dataset,
-    model_display_name="sentiment-model",
-    args=["--epochs", "3", "--batch_size", "16"]
+This stores settings for optimizing the training settings automatically.
+
+What it contains:
+
+display_name: A human-readable name for the optimization job
+
+max_trial_count: Maximum number of different combinations to try (default is 10)
+
+parallel_trial_count: How many to test at the same time (default is 2 to save time)
+
+metric_id: Which measure to optimize (default is "f1_macro", a balanced accuracy measure)
+
+metric_goal: Whether to maximize or minimize the metric (default is "maximize" for accuracy)
+
+search_space: Which settings to test and in what ranges (automatically generated if you don't provide it)
+
+Default search ranges:
+
+learning_rate: Test values between 0.000005 and 0.00005 on a logarithmic scale
+
+batch_size: Test either 16 or 32
+
+weight_decay: Test values between 0.001 and 0.1 on a linear scale
+
+warmup_ratio: Test values between 0.0 and 0.3 on a linear scale
+
+Example of how to use it:
+```
+tuning_config = HyperparameterTuningConfig(
+    display_name="roberta-hp-tuning",
+    max_trial_count=10,
+    parallel_trial_count=2
 )
 ```
 
-#### 5. Model Deployment
-```python
-# Deploy to endpoint
-endpoint = model.deploy(
-    deployed_model_display_name="sentiment-endpoint",
-    machine_type="n1-standard-2",
-    min_replica_count=1,
-    max_replica_count=3
+### ModelType
+
+This is a list of available pre-trained models you can choose from.
+
+Options:
+
+ROBERTA_TWITTER: Twitter-optimized RoBERTa model trained on 124 million tweets, best for social media text
+
+BERT_BASE: Standard BERT model trained on Wikipedia and books, good for formal text
+
+DISTILBERT: Smaller, faster version of BERT that trades some accuracy for speed
+
+---
+
+## Initialization Functions
+
+### initialize_vertex_ai()
+
+This function connects to Google Cloud and sets everything up.
+
+What it needs:
+
+config: A VertexAIConfig with your project information
+
+What it returns:
+
+Nothing (it just sets things up)
+
+This function must be called before you do anything else with Vertex AI. It logs you in using your credentials and tells Google Cloud which project and region to use.
+
+Example:
+```
+config = VertexAIConfig(
+    project_id="noted-cortex-477800-b7",
+    location="us-central1",
+    bucket_name="my-vertex-ai-bucket"
+)
+initialize_vertex_ai(config)
+```
+
+What you will see:
+[SUCCESS] Vertex AI initialized for project: noted-cortex-477800-b7
+
+---
+
+## Data Upload Functions
+
+### upload_dataset()
+
+This function uploads your training, validation, and test data files to Google Cloud Storage.
+
+What it needs:
+
+config: A VertexAIConfig with your storage bucket information
+
+train_path: Location of your training data file on your computer (must be JSONL format)
+
+val_path: Location of your validation data file on your computer (must be JSONL format)
+
+test_path: Location of your test data file on your computer (must be JSONL format)
+
+destination_folder: What to call the folder in cloud storage (default is "sentiment-data")
+
+What it returns:
+
+Three cloud addresses (URIs) where your files are now stored: train_uri, val_uri, and test_uri
+
+This function takes all three data files from your local computer and copies them to Google Cloud Storage so Vertex AI can access them during training.
+
+Example:
+```
+train_uri, val_uri, test_uri = upload_dataset(
+    config=config,
+    train_path="Data/train.jsonl",
+    val_path="Data/val.jsonl",
+    test_path="Data/test.jsonl"
 )
 ```
 
-#### 6. Predictions
-```python
-# Make predictions
-predictions = endpoint.predict([
-    {"content": "Great flight experience!"},
-    {"content": "Terrible customer service"}
-])
+What you will see:
+[UPLOAD] Uploading datasets to gs://my-bucket/sentiment-data/
+[SUCCESS] All datasets uploaded!
 
-for pred in predictions.predictions:
-    print(f"Sentiment: {pred['displayNames'][0]}")
-    print(f"Confidence: {pred['confidences'][0]}")
+---
+
+## Training Job Functions
+
+### create_roberta_training_job()
+
+This function sets up a training job for the Twitter-RoBERTa model.
+
+What it needs:
+
+config: A VertexAIConfig with your project information
+
+job_config: A TrainingJobConfig with your training settings
+
+train_data_uri: Cloud address of your training data
+
+val_data_uri: Cloud address of your validation data
+
+test_data_uri: Cloud address of your test data
+
+training_script_path: Location of the training script (default is "vertex_ai_training.py")
+
+metric_name: What metric to track (default is "f1_macro")
+
+What it returns:
+
+A training job object (not yet started, just configured)
+
+This function prepares everything for training but doesn't actually start it yet. Think of it like programming a coffee maker - you set all the settings, but the coffee won't brew until you press start.
+
+Example:
+```
+job_config = TrainingJobConfig(
+    display_name="roberta-sentiment-v1",
+    learning_rate=2e-5,
+    batch_size=32
+)
+
+job = create_roberta_training_job(
+    config=config,
+    job_config=job_config,
+    train_data_uri=train_uri,
+    val_data_uri=val_uri,
+    test_data_uri=test_uri
+)
 ```
 
-### Advanced Features
+What you will see:
+[INFO] Creating RoBERTa training job: roberta-sentiment-v1
+[SUCCESS] Training job created: roberta-sentiment-v1
 
-#### Hyperparameter Tuning
-```python
-# Hyperparameter tuning job
-tuning_job = aiplatform.HyperparameterTuningJob(
-    display_name="sentiment-hp-tuning",
-    custom_job=job,
-    metric_spec={"accuracy": "maximize"},
-    parameter_spec={
-        "learning_rate": aiplatform.hyperparameter_tuning.DoubleParameterSpec(min=1e-5, max=1e-3, scale="log"),
-        "batch_size": aiplatform.hyperparameter_tuning.DiscreteParameterSpec(values=[8, 16, 32])
+### run_training_job()
+
+This function actually starts the training job.
+
+What it needs:
+
+job: A training job object from create_roberta_training_job() or create_bert_training_job()
+
+sync: Whether to wait for the job to finish (default is True, which means wait)
+
+What it returns:
+
+The same training job object, but now it's completed (if sync was True)
+
+If sync is True, this function will wait (blocking) until training finishes, which takes 15-20 minutes. If sync is False, it starts the job and immediately returns so you can do other things while training runs in the background.
+
+Example:
+```
+job = run_training_job(job, sync=True)
+```
+
+What you will see:
+[START]  Starting training job...
+[WAIT] Running synchronously (will wait for completion)...
+Monitor: https://console.cloud.google.com/vertex-ai/training/custom-jobs
+[SUCCESS] Training job completed!
+
+---
+
+## BERT Baseline Functions (Bonus Feature)
+
+### create_bert_training_job()
+
+This function sets up a training job for the BERT model as a baseline for comparison.
+
+What it needs:
+
+Same as create_roberta_training_job()
+
+What it returns:
+
+A BERT training job object (not yet started)
+
+This function is identical to create_roberta_training_job() but uses the BERT model instead of RoBERTa. We use it to create a baseline so we can prove that Twitter-RoBERTa performs better for tweet analysis.
+
+Example:
+```
+bert_config = TrainingJobConfig(
+    display_name="bert-baseline-v1",
+    model_name="bert-base-uncased",
+    learning_rate=2e-5
+)
+
+bert_job = create_bert_training_job(
+    config=config,
+    job_config=bert_config,
+    train_data_uri=train_uri,
+    val_data_uri=val_uri,
+    test_data_uri=test_uri
+)
+```
+
+What you will see:
+[INFO] Creating BERT baseline job: bert-baseline-v1
+[INFO] BONUS: For transfer learning comparison
+[SUCCESS] BERT training job created: bert-baseline-v1
+
+### run_bert_training_job()
+
+This function starts the BERT training job.
+
+What it needs:
+
+job: A BERT training job object
+
+sync: Whether to wait for completion (default is True)
+
+What it returns:
+
+The completed BERT training job object (if sync was True)
+
+This is the same as run_training_job() but provides BERT-specific status messages.
+
+Example:
+```
+bert_job = run_bert_training_job(bert_job, sync=True)
+```
+
+What you will see:
+[START]  Starting BERT training job...
+[SUCCESS] BERT training job completed!
+
+---
+
+## Hyperparameter Optimization Functions
+
+### create_hyperparameter_tuning_job()
+
+This function sets up a job to automatically find the best training settings.
+
+What it needs:
+
+config: A VertexAIConfig with your project information
+
+tuning_config: A HyperparameterTuningConfig with optimization settings
+
+train_data_uri: Cloud address of your training data
+
+val_data_uri: Cloud address of your validation data
+
+test_data_uri: Cloud address of your test data
+
+training_script_path: Location of the training script (default is "vertex_ai_training.py")
+
+What it returns:
+
+A hyperparameter tuning job object (not yet started)
+
+This function creates a job that will test different combinations of settings to find which ones give the best results. For example, it might try learning rate 0.00001 with batch size 16, then learning rate 0.00003 with batch size 32, and so on.
+
+Example:
+```
+tuning_config = HyperparameterTuningConfig(
+    display_name="roberta-hp-tuning",
+    max_trial_count=10,
+    parallel_trial_count=2
+)
+
+tuning_job = create_hyperparameter_tuning_job(
+    config=config,
+    tuning_config=tuning_config,
+    train_data_uri=train_uri,
+    val_data_uri=val_uri,
+    test_data_uri=test_uri
+)
+```
+
+What you will see:
+[INFO] Creating hyperparameter tuning job: roberta-hp-tuning
+   Max trials: 10
+   Parallel trials: 2
+[SUCCESS] Hyperparameter tuning job created: roberta-hp-tuning
+
+### run_hyperparameter_tuning_job()
+
+This function starts the hyperparameter tuning job.
+
+What it needs:
+
+tuning_job: A hyperparameter tuning job object
+
+sync: Whether to wait for completion (default is False because it takes hours)
+
+What it returns:
+
+The tuning job object
+
+Since hyperparameter tuning takes 2-3 hours, we recommend using sync=False so you don't have to wait. The job will run in the background and you can check the results later.
+
+Example:
+```
+tuning_job = run_hyperparameter_tuning_job(tuning_job, sync=False)
+```
+
+What you will see:
+[START]  Starting hyperparameter tuning...
+[ASYNC] Running asynchronously (recommended)
+[SUCCESS] Hyperparameter tuning job submitted!
+Monitor: https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs
+
+### get_best_hyperparameters()
+
+This function retrieves the best settings found during optimization.
+
+What it needs:
+
+tuning_job: A completed hyperparameter tuning job
+
+What it returns:
+
+A dictionary (collection) containing the best settings and their performance, or None if no results are available
+
+The result looks like this:
+```
+{
+    "trial_id": "1",
+    "parameters": {
+        "learning_rate": 0.0000158,
+        "batch_size": 32,
+        "weight_decay": 0.0505,
+        "warmup_ratio": 0.15
     },
-    max_trial_count=20
-)
+    "metrics": {
+        "f1_macro": 0.8076
+    }
+}
 ```
 
-#### Model Evaluation
-```python
-# Get evaluation metrics
-evaluations = model.list_model_evaluations()
-metrics = evaluations[0].metrics
+Example:
+```
+tuning_job.wait()
+best_params = get_best_hyperparameters(tuning_job)
+```
 
-print("Model Performance:")
-for metric_name, value in metrics.items():
-    print(f"{metric_name}: {value}")
+What you will see:
+[RESULT] Best Trial: 1
+
+   Parameters:
+      learning_rate: 0.0000158
+      batch_size: 32
+      weight_decay: 0.0505
+      warmup_ratio: 0.15
+
+   Metrics:
+      f1_macro: 0.8076
+
+---
+
+## Complete Example Workflow
+
+Here is how to use all the functions together for a complete sentiment analysis project:
+
+```
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple, Any
+import vertex_ai_utils as vai
+from google.cloud import aiplatform
+
+# Step 1: Set up your Google Cloud configuration
+config = VertexAIConfig(
+    project_id="noted-cortex-477800-b7",
+    location="us-central1",
+    bucket_name="my-vertex-ai-bucket"
+)
+
+# Step 2: Connect to Vertex AI
+initialize_vertex_ai(config)
+
+# Step 3: Upload your prepared data files to cloud storage
+train_uri, val_uri, test_uri = upload_dataset(
+    config=config,
+    train_path="Data/train.jsonl",
+    val_path="Data/val.jsonl",
+    test_path="Data/test.jsonl"
+)
+
+# Step 4: Create and run a RoBERTa training job
+job_config = TrainingJobConfig(
+    display_name="roberta-sentiment-v1",
+    learning_rate=2e-5,
+    batch_size=32,
+    num_epochs=4
+)
+
+roberta_job = create_roberta_training_job(
+    config=config,
+    job_config=job_config,
+    train_data_uri=train_uri,
+    val_data_uri=val_uri,
+    test_data_uri=test_uri
+)
+
+roberta_job = run_training_job(roberta_job, sync=True)
+
+# Step 5: Create and run hyperparameter tuning to find better settings
+tuning_config = HyperparameterTuningConfig(
+    display_name="roberta-hp-tuning",
+    max_trial_count=10,
+    parallel_trial_count=2
+)
+
+tuning_job = create_hyperparameter_tuning_job(
+    config=config,
+    tuning_config=tuning_config,
+    train_data_uri=train_uri,
+    val_data_uri=val_uri,
+    test_data_uri=test_uri
+)
+
+tuning_job = run_hyperparameter_tuning_job(tuning_job, sync=False)
+
+# Step 6: Later, after tuning completes, get the best settings
+tuning_job.wait()
+best_params = get_best_hyperparameters(tuning_job)
+
+# Step 7: As a bonus, create BERT baseline for comparison
+bert_config = TrainingJobConfig(
+    display_name="bert-baseline-v1",
+    model_name="bert-base-uncased"
+)
+
+bert_job = create_bert_training_job(
+    config=config,
+    job_config=bert_config,
+    train_data_uri=train_uri,
+    val_data_uri=val_uri,
+    test_data_uri=test_uri
+)
+
+bert_job = run_bert_training_job(bert_job, sync=True)
 ```
 
 ---
 
-## Section 2: Wrapper Functions (`vertex_ai_utils.py`)
-
-### Design Philosophy
-
-Our wrapper functions provide:
-- **Simplified API**: Hide complexity of Vertex AI SDK
-- **Error Handling**: Clear error messages and recovery
-- **Cost Management**: Commented expensive operations
-- **Educational Value**: Show Vertex AI best practices
-
-### Data Processing Wrappers
-
-#### Data Loading & Exploration
-```python
-def load_twitter_data(file_path: str) -> pd.DataFrame
-```
-**Purpose**: Load Twitter sentiment dataset CSV
-**Parameters**: file_path (str) - Path to CSV file
-**Returns**: pandas DataFrame with tweet data
-**Usage**: `df = load_twitter_data("Data/Tweets.csv")`
-
-#### Data Visualization
-```python
-def visualize_sentiment_distribution(df: pd.DataFrame, save_path: Optional[str] = None) -> None
-```
-**Purpose**: Create sentiment distribution charts
-**Parameters**:
-- df: DataFrame with sentiment data
-- save_path: Optional path to save chart
-**Returns**: None (displays/saves chart)
-
-#### Data Preparation
-```python
-def prepare_data_for_vertex_ai(df: pd.DataFrame, text_column: str = 'text',
-                              label_column: str = 'airline_sentiment',
-                              output_path: str = 'data/processed/sentiment_data.jsonl') -> str
-```
-**Purpose**: Convert DataFrame to Vertex AI JSONL format
-**Parameters**:
-- df: Input DataFrame
-- text_column: Column containing text data
-- label_column: Column containing labels
-- output_path: Path for JSONL output
-**Returns**: Path to created JSONL file
-
-### Cloud Integration Wrappers
-
-#### Vertex AI Initialization
-```python
-def initialize_vertex_ai(project_id: str, location: str,
-                        credentials_path: str = 'vertex-ai-key.json') -> None
-```
-**Purpose**: Set up Vertex AI connection and authentication
-**Parameters**:
-- project_id: Google Cloud Project ID
-- location: GCP region (e.g., 'us-central1')
-- credentials_path: Path to service account key
-**Returns**: None
-
-#### Cloud Storage Operations
-```python
-def upload_to_gcs(bucket_name: str, source_file_path: str,
-                 destination_blob_name: str, project_id: str) -> str
-```
-**Purpose**: Upload files to Google Cloud Storage
-**Parameters**:
-- bucket_name: GCS bucket name
-- source_file_path: Local file path
-- destination_blob_name: Destination path in bucket
-- project_id: GCP project ID
-**Returns**: GCS URI (gs://bucket/path)
-
-### Model Training Wrappers
-
-#### Custom Training Job Creation
-```python
-def create_custom_roberta_training_job(project_id: str, location: str,
-                                      job_name: str, model_display_name: str,
-                                      train_data_uri: str, val_data_uri: str) -> aiplatform.CustomTrainingJob
-```
-**Purpose**: Create Vertex AI custom training job for RoBERTa
-**Parameters**:
-- project_id, location: GCP settings
-- job_name: Unique job identifier
-- model_display_name: Name for trained model
-- train_data_uri, val_data_uri: GCS paths to data
-**Returns**: CustomTrainingJob object
-
-#### Model Deployment
-```python
-def deploy_model_to_endpoint(model: aiplatform.Model, endpoint_display_name: str,
-                           machine_type: str = "n1-standard-2",
-                           min_replica_count: int = 1, max_replica_count: int = 1) -> aiplatform.Endpoint
-```
-**Purpose**: Deploy trained model to Vertex AI endpoint
-**Parameters**:
-- model: Trained Model object
-- endpoint_display_name: Name for endpoint
-- machine_type: VM type for serving
-- min/max_replica_count: Auto-scaling settings
-**Returns**: Endpoint object
-
-### Prediction & Evaluation Wrappers
-
-#### Batch Predictions
-```python
-def predict_with_vertex_ai_endpoint(endpoint: aiplatform.Endpoint,
-                                   text_instances: List[str]) -> List[Dict]
-```
-**Purpose**: Make sentiment predictions using deployed endpoint
-**Parameters**:
-- endpoint: Deployed Endpoint object
-- text_instances: List of text strings to classify
-**Returns**: List of prediction results with sentiment and confidence
-
-#### Model Evaluation
-```python
-def evaluate_vertex_ai_model_predictions(endpoint: aiplatform.Endpoint,
-                                       test_texts: List[str],
-                                       true_labels: List[str]) -> Dict
-```
-**Purpose**: Evaluate model performance with F1-score and confusion matrix
-**Parameters**:
-- endpoint: Deployed model endpoint
-- test_texts: Test text samples
-- true_labels: Ground truth labels
-**Returns**: Dictionary with evaluation metrics
-
-### Resource Management Wrappers
-
-#### Cleanup Functions
-```python
-def cleanup_vertex_ai_resources(endpoints: Optional[List[aiplatform.Endpoint]] = None,
-                              models: Optional[List[aiplatform.Model]] = None,
-                              datasets: Optional[List[aiplatform.Dataset]] = None) -> None
-```
-**Purpose**: Clean up Vertex AI resources to prevent charges
-**Parameters**:
-- endpoints, models, datasets: Lists of resources to delete
-**Returns**: None (prints cleanup status)
-
-## Our Helper Functions
-
-We built some wrapper functions in `vertex_ai_utils.py` to make working with Vertex AI easier. Here are the main ones:
-
-### Data Loading & Exploration
-
-```python
-def load_twitter_data(file_path: str) -> pd.DataFrame
-```
-Loads the Twitter dataset CSV file. Pretty straightforward - just reads the CSV and gives you a pandas DataFrame.
-
-```python
-def get_dataset_info(df: pd.DataFrame) -> Dict
-```
-Analyzes your DataFrame and returns stats like:
-- How many rows/columns you have
-- Sentiment distribution (how many positive/neutral/negative tweets)
-- Which airlines are mentioned
-- Memory usage
-
-### Data Visualization
-
-```python
-def visualize_sentiment_distribution(df: pd.DataFrame, save_path: Optional[str] = None) -> None
-```
-Makes charts showing how sentiments are distributed. Creates both a bar chart and pie chart.
-
-```python
-def visualize_airline_sentiment(df: pd.DataFrame, save_path: Optional[str] = None) -> None
-```
-Shows sentiment patterns by airline. Helps see which airlines get more negative feedback.
-
-### Text Analysis
-
-```python
-def analyze_text_statistics(df: pd.DataFrame, text_column: str = 'text') -> pd.DataFrame
-```
-Adds columns to your DataFrame with text stats like:
-- How long each tweet is (character count)
-- How many words
-- Whether it contains URLs, mentions, or hashtags
-
-```python
-def print_text_statistics(df: pd.DataFrame, text_column: str = 'text') -> None
-```
-Prints a nice summary of text statistics, including breakdowns by sentiment type.
-
-### Data Preparation
-
-```python
-def split_train_val_test(df: pd.DataFrame, train_ratio: float = 0.7,
-                        val_ratio: float = 0.15, test_ratio: float = 0.15,
-                        random_state: int = 42, stratify_column: Optional[str] = None)
-```
-Splits your data into training, validation, and test sets. The `stratify_column` parameter ensures each split has the same proportion of positive/neutral/negative tweets as the original data.
-
-```python
-def prepare_data_for_vertex_ai(df: pd.DataFrame, text_column: str = 'text',
-                              label_column: str = 'airline_sentiment',
-                              output_path: str = 'data/processed/sentiment_data.jsonl') -> str
-```
-Converts your pandas DataFrame to the JSONL format that Vertex AI expects. Each line looks like:
-```json
-{"text_content": "This flight was amazing!", "category": "positive"}
-```
-
-### Cloud Storage Helpers
-
-```python
-def upload_to_gcs(local_file_path: str, bucket_name: str,
-                 blob_name: str, project_id: str) -> str
-```
-Uploads a file from your computer to Google Cloud Storage. Returns the GCS path (like `gs://bucket-name/file.jsonl`).
-
-```python
-def create_gcs_bucket(bucket_name: str, project_id: str, location: str = "us-central1") -> None
-```
-Creates a new Google Cloud Storage bucket for storing your data.
-
-## Why We Built These Wrappers
-
-Working directly with Vertex AI APIs can be complex - you need to handle authentication, error checking, data formats, etc. Our wrappers:
-
-- **Handle authentication**: Set up Google Cloud credentials automatically
-- **Add error checking**: Give helpful error messages instead of cryptic API errors
-- **Format conversion**: Convert between pandas DataFrames and Vertex AI formats
-- **Progress updates**: Print status messages so you know what's happening
-- **Resource cleanup**: Close connections and clean up temporary files
-
-## How We Use This in Practice
-
-A typical workflow looks like:
-
-```python
-import vertex_ai_utils as vai
-
-# Load and explore data
-df = vai.load_twitter_data('data/Tweets.csv')
-vai.print_dataset_summary(df)
-
-# Prepare for Vertex AI
-train_df, val_df, test_df = vai.split_train_val_test(df, stratify_column='airline_sentiment')
-train_jsonl = vai.prepare_data_for_vertex_ai(train_df)
-
-# Upload to Google Cloud
-gcs_uri = vai.upload_to_gcs(train_jsonl, 'my-bucket', 'data/train.jsonl', 'my-project')
-```
-
-## Design Decisions We Made
-
-### Keeping It Simple
-We chose AutoML over custom training because:
-- We're learning Vertex AI, not building novel ML architectures
-- AutoML handles model selection, hyperparameter tuning, etc.
-- Easier to get started and still gets good results
-
-### Error Handling
-Added lots of error checking because:
-- Cloud APIs can fail in mysterious ways
-- File operations can fail if paths are wrong
-- Network issues happen
-- Better to give clear error messages than cryptic API responses
-
-### Data Format Choices
-Used JSONL format because:
-- Vertex AI requires it for text classification
-- Easy to generate from pandas DataFrames
-- Human-readable for debugging
-- Efficient for large datasets
-
-## Challenges We Solved
-
-### Authentication Headaches
-Setting up Google Cloud authentication was tricky at first. We ended up using service account keys stored as environment variables.
-
-### Data Format Conversion
-Getting pandas DataFrames into the right JSONL format took some trial and error. The format needs to be exactly right or Vertex AI rejects it.
-
-### Cost Management
-Vertex AI charges by the hour for training. We learned to:
-- Start with small datasets for testing
-- Set reasonable training budgets
-- Monitor costs in the Google Cloud console
-
-## What We Learned
-
-### Vertex AI Strengths
-- Really easy to get started with AutoML
-- Good documentation and examples
-- Scales well for production use
-- Integrates nicely with other Google Cloud services
-
-### Areas That Could Be Better
-- Error messages could be clearer sometimes
-- Pricing can be confusing (training hours vs. prediction costs)
-- The web interface is good but the APIs feel a bit clunky
-
-### Tips for Others
-- Start with the web interface to understand the concepts, then move to APIs
-- Always test with small datasets first to avoid wasting money
-- Use the `gcloud` command-line tool for debugging authentication issues
-- Keep track of your resource usage to avoid surprise bills
