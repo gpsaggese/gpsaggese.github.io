@@ -5,7 +5,7 @@
 - **Course**: MSML610 - Advanced Machine Learning
 - **Semester**: Fall 2025
 - **Project Tag**: `TutorTask64_Fall2025_TPOT_Predicting_Stock_Prices_Using_News_Sentiment`
-- **Difficulty**: Medium
+- **Difficulty**: Hard
 - **Type**: Individual Project
 
 ## Table of Contents
