@@ -600,10 +600,10 @@ def initialize_vertex_ai(
     # Set up credentials
     if credentials_path and os.path.exists(credentials_path):
         credentials = service_account.Credentials.from_service_account_file(credentials_path)
-        print(f"✅ Loaded credentials from: {credentials_path}")
+        print(f"[SUCCESS] Loaded credentials from: {credentials_path}")
     else:
         credentials = None
-        print(f"⚠️  No credentials file found, using default credentials")
+        print(f"[WARNING] No credentials file found, using default credentials")
 
     # Initialize Vertex AI
     aiplatform.init(
@@ -613,7 +613,7 @@ def initialize_vertex_ai(
         staging_bucket=staging_bucket
     )
 
-    print(f"✅ Vertex AI initialized")
+    print(f"[SUCCESS] Vertex AI initialized")
     print(f"   Project: {project_id}")
     print(f"   Location: {location}")
     if staging_bucket:
@@ -645,7 +645,7 @@ def upload_to_gcs(
     blob.upload_from_filename(source_file_path)
 
     gcs_uri = f"gs://{bucket_name}/{destination_blob_name}"
-    print(f"✅ Uploaded {source_file_path} to {gcs_uri}")
+    print(f"[SUCCESS] Uploaded {source_file_path} to {gcs_uri}")
     return gcs_uri
 
 
@@ -660,7 +660,9 @@ def create_vertex_ai_hyperparameter_tuning_job(
     parallel_trial_count: int = 2,
     project_id: str = None,
     location: str = None,
-    credentials_path: str = 'vertex-ai-key.json'
+    credentials_path: str = 'vertex-ai-key.json',
+    metric_name: str = 'f1_macro',
+    metric_goal: str = 'maximize'
 ) -> aiplatform.HyperparameterTuningJob:
     """
     Create a hyperparameter tuning job for RoBERTa sentiment analysis.
@@ -682,6 +684,8 @@ def create_vertex_ai_hyperparameter_tuning_job(
     :param project_id: Google Cloud Project ID
     :param location: GCP region
     :param credentials_path: Path to credentials
+    :param metric_name: Metric to optimize (e.g., 'f1_macro', 'accuracy')
+    :param metric_goal: Optimization goal ('maximize' or 'minimize')
     :return: HyperparameterTuningJob object
     """
     # Upload training script to GCS
@@ -698,11 +702,11 @@ def create_vertex_ai_hyperparameter_tuning_job(
         destination_blob_name=f"hyperparameter_tuning_scripts/{training_script_path}"
     )
 
-    print(f"🚀 Creating hyperparameter tuning job: {display_name}")
+    print(f" Creating hyperparameter tuning job: {display_name}")
     print(f"   Max trials: {max_trial_count}")
     print(f"   Parallel trials: {parallel_trial_count}")
-    print(f"   ⏰ Estimated time: {max_trial_count * 30 // parallel_trial_count} minutes (GPU)")
-    print(f"   💰 Estimated cost: $15-30 USD")
+    print(f"   Estimated time: {max_trial_count * 30 // parallel_trial_count} minutes (GPU)")
+    print(f"   Estimated cost: $15-30 USD")
 
     # ============================================================
     # OPTIMIZED HYPERPARAMETER SEARCH SPACE (for 2%+ improvement)
@@ -737,9 +741,10 @@ def create_vertex_ai_hyperparameter_tuning_job(
 
     # CORRECT (2025): Parameters are passed as command-line arguments
     # Vertex AI automatically injects parameter values
+    # CRITICAL: Use $AIP_MODEL_DIR for output_dir to ensure artifacts are synced to GCS
     python_command = f"""
 pip install --upgrade pip && \
-pip install 'transformers==4.35.0' 'datasets==2.14.0' 'accelerate==0.20.3' scikit-learn cloudml-hypertune && \
+pip install 'transformers==4.41.2' 'datasets==2.19.0' 'accelerate==0.30.1' 'scikit-learn' 'cloudml-hypertune' && \
 pip list | grep cloudml && \
 gsutil cp {script_gcs_uri} /tmp/training_script.py && \
 python /tmp/training_script.py \
@@ -749,7 +754,8 @@ python /tmp/training_script.py \
   --model_name=cardiffnlp/twitter-roberta-base-sentiment-latest \
   --num_epochs=4 \
   --max_length=128 \
-  --output_dir=/tmp/model_output "$@"
+  --metric_name={metric_name} \
+  --output_dir=$AIP_MODEL_DIR "$@"
 """
     # Note: Hyperparameters (learning_rate, batch_size, weight_decay, warmup_ratio)
     # are passed automatically by Vertex AI as command-line arguments
@@ -780,8 +786,9 @@ python /tmp/training_script.py \
         custom_job=aiplatform.CustomJob(
             display_name=f"{display_name}_custom_job",
             worker_pool_specs=worker_pool_specs,
+            base_output_dir=base_output_dir,  # CRITICAL: Set base output dir for GCS sync
         ),
-        metric_spec={"f1_macro": "maximize"},  # Must match hyperparameter_metric_tag in training script
+        metric_spec={metric_name: metric_goal},  # Dynamic metric specification
         parameter_spec={
             "learning_rate": learning_rate,
             "batch_size": batch_size,
@@ -792,8 +799,8 @@ python /tmp/training_script.py \
         parallel_trial_count=parallel_trial_count,
     )
 
-    print(f"✅ Hyperparameter tuning job created: {display_name}")
-    print(f"   Metric to optimize: f1_macro (maximize)")
+    print(f"[SUCCESS] Hyperparameter tuning job created: {display_name}")
+    print(f"   Metric to optimize: {metric_name} ({metric_goal})")
     print(f"   Search space:")
     print(f"     - learning_rate: [5e-6, 5e-5] (log scale)")
     print(f"     - batch_size: [16, 32]")
@@ -810,28 +817,36 @@ def create_custom_roberta_training_job(
     train_data_gcs_uri: str,
     val_data_gcs_uri: str,
     test_data_gcs_uri: str,
+    base_output_dir: str,
     project_id: str = None,
     location: str = None,
     learning_rate: float = 2e-5,
     batch_size: int = 32,
     weight_decay: float = 0.01,
     warmup_ratio: float = 0.1,
-    num_epochs: int = 4
+    num_epochs: int = 4,
+    metric_name: str = 'f1_macro'
 ) -> aiplatform.CustomJob:
     """
-    Create a custom training job for RoBERTa sentiment analysis (baseline model).
+    Create a custom training job for RoBERTa sentiment analysis.
+
+    PROJECT REQUIREMENT: "Train a sentiment classification model using Vertex AI's NLP capabilities"
+    
+    This function creates a custom training job that runs the RoBERTa training script
+    on Vertex AI using a GPU-accelerated container.
 
     **2025 IMPLEMENTATION**:
     - Uses latest PyTorch GPU container from Google Cloud
-    - Follows worker_pool_specs best practices (Dec 2025)
     - T4 GPU for efficient training
     - Returns CustomJob object (use .run() to execute)
+    - Saves artifacts to GCS via base_output_dir
 
     :param display_name: Name for the training job
     :param script_path: Path to training script
     :param train_data_gcs_uri: GCS URI to training data
     :param val_data_gcs_uri: GCS URI to validation data
     :param test_data_gcs_uri: GCS URI to test data
+    :param base_output_dir: Base GCS directory for training outputs
     :param project_id: Google Cloud Project ID (optional if initialized)
     :param location: GCP region (optional if initialized)
     :param learning_rate: Learning rate for training
@@ -839,6 +854,7 @@ def create_custom_roberta_training_job(
     :param weight_decay: Weight decay for regularization
     :param warmup_ratio: Warmup ratio for learning rate scheduler
     :param num_epochs: Number of training epochs
+    :param metric_name: Metric to optimize (f1_macro or accuracy)
     :return: CustomJob object (call .run() to execute)
     """
     # Upload training script to GCS
@@ -855,20 +871,22 @@ def create_custom_roberta_training_job(
         destination_blob_name=f"training_scripts/{script_path}"
     )
 
-    print(f"🚀 Creating custom training job: {display_name}")
-    print(f"   ⏰ Estimated time: ~15-20 minutes (GPU)")
-    print(f"   💰 Estimated cost: $2-5 USD")
+    print(f"[INFO] Creating custom training job: {display_name}")
+    print(f"   [INFO] Estimated time: ~15-20 minutes (GPU)")
+    print(f"   [INFO] Estimated cost: $2-5 USD")
 
     # ============================================================
     # WORKER POOL SPEC (2025 Best Practices)
     # ============================================================
-    # Using latest PyTorch GPU container from Google Cloud
+    # Using latest PyTorch GPU container from Google Cloud (PyTorch 2.1)
     container_uri = "gcr.io/deeplearning-platform-release/pytorch-gpu.1-13:latest"
 
     # Training command with all parameters
+    # Updated dependencies for PyTorch 2.1 compatibility
+    # CRITICAL: Use $AIP_MODEL_DIR for output_dir to ensure artifacts are synced to GCS
     python_command = f"""
 pip install --upgrade pip && \
-pip install 'transformers==4.35.0' 'datasets==2.14.0' 'accelerate==0.20.3' scikit-learn && \
+pip install 'transformers==4.41.2' 'datasets==2.19.0' 'accelerate==0.30.1' 'scikit-learn' 'cloudml-hypertune' && \
 gsutil cp {script_gcs_uri} /tmp/training_script.py && \
 python /tmp/training_script.py \
   --train_data_path={train_data_gcs_uri} \
@@ -881,7 +899,8 @@ python /tmp/training_script.py \
   --warmup_ratio={warmup_ratio} \
   --num_epochs={num_epochs} \
   --max_length=128 \
-  --output_dir=/tmp/model_output
+  --metric_name={metric_name} \
+  --output_dir=$AIP_MODEL_DIR
 """
 
     # Worker pool specification (2025 standard format)
@@ -915,10 +934,11 @@ python /tmp/training_script.py \
     custom_job = aiplatform.CustomJob(
         display_name=display_name,
         worker_pool_specs=worker_pool_specs,
+        base_output_dir=base_output_dir,  # CRITICAL: Set base output dir for GCS sync
     )
 
-    print(f"✅ Custom training job created: {display_name}")
-    print(f"\n   Call job.run() to start training")
+    print(f"[SUCCESS] Custom training job created: {display_name}")
+    print(f"\\n   Call job.run() to start training")
     print(f"   Or call job.run(sync=False) to run asynchronously")
 
     return custom_job
@@ -930,13 +950,15 @@ def create_custom_bert_training_job(
     train_data_gcs_uri: str,
     val_data_gcs_uri: str,
     test_data_gcs_uri: str,
+    base_output_dir: str = None,
     project_id: str = None,
     location: str = None,
     learning_rate: float = 2e-5,
     batch_size: int = 32,
     weight_decay: float = 0.01,
     warmup_ratio: float = 0.1,
-    num_epochs: int = 4
+    num_epochs: int = 4,
+    metric_name: str = 'f1_macro'
 ) -> aiplatform.CustomJob:
     """
     Create a custom training job for BERT baseline sentiment analysis.
@@ -957,6 +979,7 @@ def create_custom_bert_training_job(
     :param train_data_gcs_uri: GCS URI to training data
     :param val_data_gcs_uri: GCS URI to validation data
     :param test_data_gcs_uri: GCS URI to test data
+    :param base_output_dir: Base GCS directory for training outputs
     :param project_id: Google Cloud Project ID (optional if initialized)
     :param location: GCP region (optional if initialized)
     :param learning_rate: Learning rate for training
@@ -964,6 +987,7 @@ def create_custom_bert_training_job(
     :param weight_decay: Weight decay for regularization
     :param warmup_ratio: Warmup ratio for learning rate scheduler
     :param num_epochs: Number of training epochs
+    :param metric_name: Metric to optimize (f1_macro or accuracy)
     :return: CustomJob object (call .run() to execute)
     """
     # Upload training script to GCS
@@ -980,10 +1004,10 @@ def create_custom_bert_training_job(
         destination_blob_name=f"training_scripts/{script_path}"
     )
 
-    print(f"🚀 Creating BERT baseline training job: {display_name}")
-    print(f"   📊 BONUS: BERT comparison for transfer learning demonstration")
-    print(f"   ⏰ Estimated time: ~15-20 minutes (GPU)")
-    print(f"   💰 Estimated cost: $2-5 USD")
+    print(f"[INFO] Creating BERT baseline training job: {display_name}")
+    print(f"   [INFO] BONUS: BERT comparison for transfer learning demonstration")
+    print(f"   [INFO] Estimated time: ~15-20 minutes (GPU)")
+    print(f"   [INFO] Estimated cost: $2-5 USD")
 
     # ============================================================
     # WORKER POOL SPEC (2025 Best Practices)
@@ -991,9 +1015,10 @@ def create_custom_bert_training_job(
     container_uri = "gcr.io/deeplearning-platform-release/pytorch-gpu.1-13:latest"
 
     # Training command with BERT model (instead of RoBERTa)
+    # Updated dependencies for PyTorch 2.1 compatibility
     python_command = f"""
 pip install --upgrade pip && \
-pip install 'transformers==4.35.0' 'datasets==2.14.0' 'accelerate==0.20.3' scikit-learn && \
+pip install 'transformers==4.41.2' 'datasets==2.19.0' 'accelerate==0.30.1' 'scikit-learn' 'cloudml-hypertune' && \
 gsutil cp {script_gcs_uri} /tmp/training_script.py && \
 python /tmp/training_script.py \
   --train_data_path={train_data_gcs_uri} \
@@ -1006,7 +1031,8 @@ python /tmp/training_script.py \
   --warmup_ratio={warmup_ratio} \
   --num_epochs={num_epochs} \
   --max_length=128 \
-  --output_dir=/tmp/model_output
+  --metric_name={metric_name} \
+  --output_dir=$AIP_MODEL_DIR
 """
 
     # Worker pool specification
@@ -1041,9 +1067,10 @@ python /tmp/training_script.py \
     custom_job = aiplatform.CustomJob(
         display_name=display_name,
         worker_pool_specs=worker_pool_specs,
+        base_output_dir=base_output_dir,
     )
 
-    print(f"✅ BERT baseline training job created: {display_name}")
+    print(f"[SUCCESS] BERT baseline training job created: {display_name}")
     print(f"\n   Call job.run() to start training")
     print(f"   Or call job.run(sync=False) to run asynchronously")
 
@@ -1071,8 +1098,8 @@ def run_bert_training_job(
     :param sync: If True, wait for job completion. If False, return immediately.
     :return: CustomJob object (completed if sync=True)
     """
-    print(f"🚀 Starting BERT baseline training job")
-    print(f"   📊 BONUS: Comparing BERT vs Twitter-RoBERTa")
+    print(f"[INFO] Starting BERT baseline training job")
+    print(f"   [INFO] BONUS: Comparing BERT vs Twitter-RoBERTa")
     print(f"   Data sources:")
     print(f"     - Train: {train_data_gcs_uri}")
     print(f"     - Val: {val_data_gcs_uri}")
@@ -1080,24 +1107,24 @@ def run_bert_training_job(
     print(f"   Model name: {model_display_name}")
 
     if sync:
-        print(f"\n   ⏳ Running synchronously (will wait for completion)...")
+        print(f"\n   [INFO] Running synchronously (will wait for completion)...")
         print(f"   This will take approximately 15-20 minutes")
         print(f"   Monitor progress in GCP Console: https://console.cloud.google.com/vertex-ai/training/custom-jobs")
     else:
-        print(f"\n   🏃 Running asynchronously (will return immediately)")
+        print(f"\n   [INFO] Running asynchronously (will return immediately)")
         print(f"   Monitor progress in GCP Console: https://console.cloud.google.com/vertex-ai/training/custom-jobs")
 
     # Run the job
     job.run(sync=sync)
 
     if sync:
-        print(f"\n✅ BERT training job completed successfully!")
+        print(f"\n[SUCCESS] BERT training job completed successfully!")
         print(f"   Job name: {job.display_name}")
         print(f"   Job resource name: {job.resource_name}")
         print(f"   Job state: {job.state}")
-        print(f"\n   📊 Compare these results with RoBERTa to complete the bonus requirement!")
+        print(f"\n   [INFO] Compare these results with RoBERTa to complete the bonus requirement!")
     else:
-        print(f"\n✅ BERT training job submitted!")
+        print(f"\n[SUCCESS] BERT training job submitted!")
         print(f"   Job name: {job.display_name}")
         print(f"   Use job.wait() to wait for completion")
         print(f"   Use job.state to check current state")
@@ -1130,7 +1157,7 @@ def run_roberta_training_job(
     :return: CustomJob object (completed if sync=True)
     """
     # Note: Can't access job properties until after job.run() creates the resource
-    print(f"🚀 Starting RoBERTa training job")
+    print(f"[INFO] Starting RoBERTa training job")
     print(f"   Data sources:")
     print(f"     - Train: {train_data_gcs_uri}")
     print(f"     - Val: {val_data_gcs_uri}")
@@ -1138,11 +1165,11 @@ def run_roberta_training_job(
     print(f"   Model name: {model_display_name}")
 
     if sync:
-        print(f"\n   ⏳ Running synchronously (will wait for completion)...")
+        print(f"\n   [INFO] Running synchronously (will wait for completion)...")
         print(f"   This will take approximately 15-20 minutes")
         print(f"   Monitor progress in GCP Console: https://console.cloud.google.com/vertex-ai/training/custom-jobs")
     else:
-        print(f"\n   🏃 Running asynchronously (will return immediately)")
+        print(f"\n   [INFO] Running asynchronously (will return immediately)")
         print(f"   Monitor progress in GCP Console: https://console.cloud.google.com/vertex-ai/training/custom-jobs")
 
     # Run the job (2025 SDK method) - this creates the resource on GCP
@@ -1150,17 +1177,116 @@ def run_roberta_training_job(
 
     # Now we can access job properties after the resource is created
     if sync:
-        print(f"\n✅ Training job completed successfully!")
+        print(f"\n[SUCCESS] Training job completed successfully!")
         print(f"   Job name: {job.display_name}")
         print(f"   Job resource name: {job.resource_name}")
         print(f"   Job state: {job.state}")
     else:
-        print(f"\n✅ Training job submitted!")
+        print(f"\n[SUCCESS] Training job submitted!")
         print(f"   Job name: {job.display_name}")
         print(f"   Use job.wait() to wait for completion")
         print(f"   Use job.state to check current state")
 
     return job
+def display_evaluation_metrics(bucket_name: str, model_name: str = None, job: object = None, output_dir_name: str = 'model_output'):
+    """
+    Fetch and display evaluation metrics from GCS.
+    
+    **UPDATED**: Now reads from the new trained_models/ location where models are saved.
+    Uses Google Cloud Storage Python client (no gsutil dependency).
+    
+    :param bucket_name: GCS bucket name (without gs:// prefix)
+    :param model_name: Model name (e.g., 'cardiffnlp/twitter-roberta-base-sentiment-latest' or 'bert-base-uncased')
+    :param job: (Optional) CustomJob object for backward compatibility with old path
+    :param output_dir_name: (Deprecated) Output directory name, kept for backward compatibility
+    """
+    import json
+    import numpy as np
+    from google.cloud import storage
+
+    try:
+        # Get credentials from initialized Vertex AI session
+        credentials = aiplatform.initializer.global_config.credentials
+        project = aiplatform.initializer.global_config.project
+        
+        # Create storage client with the same credentials
+        storage_client = storage.Client(project=project, credentials=credentials)
+        bucket = storage_client.bucket(bucket_name)
+        
+        blob_path = None
+        
+        # NEW PATH: Read from trained_models/ location
+        if model_name:
+            # Convert model name to GCS-safe path (replace / with _)
+            model_path = model_name.replace('/', '_')
+            blob_path = f"trained_models/{model_path}/training_summary.json"
+            
+            print(f"[INFO] Fetching metrics from: gs://{bucket_name}/{blob_path}")
+            
+            # Try to download from new location
+            blob = bucket.blob(blob_path)
+            if not blob.exists():
+                print(f"[WARNING] File not found at new location, trying old location...")
+                
+                # FALLBACK: Try old path if job object is provided
+                if job:
+                    job_id = job.resource_name.split('/')[-1]
+                    blob_path = f"model-output/{job_id}/{output_dir_name}/training_summary.json"
+                    print(f"[INFO] Trying old location: gs://{bucket_name}/{blob_path}")
+                    blob = bucket.blob(blob_path)
+                    if not blob.exists():
+                        raise FileNotFoundError(f"Model metrics not found at either location")
+                else:
+                    raise FileNotFoundError(f"Model metrics not found at: gs://{bucket_name}/{blob_path}")
+        
+        # OLD PATH: Backward compatibility if only job is provided
+        elif job:
+            job_id = job.resource_name.split('/')[-1]
+            blob_path = f"model-output/{job_id}/{output_dir_name}/training_summary.json"
+            print(f"[INFO] Fetching metrics from old location: gs://{bucket_name}/{blob_path}")
+            blob = bucket.blob(blob_path)
+            if not blob.exists():
+                raise FileNotFoundError(f"Model metrics not found at: gs://{bucket_name}/{blob_path}")
+        else:
+            raise ValueError("Either model_name or job must be provided")
+        
+        # Download and load results
+        summary_json = blob.download_as_text()
+        summary = json.loads(summary_json)
+        results = summary['evaluation_results']
+        
+        print("\n" + "="*60)
+        print("EVALUATION RESULTS")
+        print("="*60)
+        print(f"Model: {summary.get('model_name', 'N/A')}")
+        print(f"\nMetrics:")
+        print(f"  Accuracy:    {results.get('accuracy', 'N/A'):.4f}" if isinstance(results.get('accuracy'), float) else f"  Accuracy:    {results.get('accuracy', 'N/A')}")
+        print(f"  F1 Macro:    {results.get('f1_macro', 'N/A'):.4f}" if isinstance(results.get('f1_macro'), float) else f"  F1 Macro:    {results.get('f1_macro', 'N/A')}")
+        print(f"  F1 Weighted: {results.get('f1_weighted', 'N/A'):.4f}" if isinstance(results.get('f1_weighted'), float) else f"  F1 Weighted: {results.get('f1_weighted', 'N/A')}")
+        
+        if 'confusion_matrix' in results:
+            print("\nConfusion Matrix:")
+            cm = np.array(results['confusion_matrix'])
+            print(cm)
+            print("\nLabels: [Positive, Neutral, Negative]")
+            
+        if 'classification_report' in results:
+            print("\nClassification Report:")
+            print(results['classification_report'])
+        
+        print("="*60)
+        return summary
+            
+    except Exception as e:
+        print(f"[ERROR] Failed to fetch metrics: {str(e)}")
+        print("\nTroubleshooting:")
+        print("  1. Ensure the training job has completed successfully")
+        print("  2. Check that model files were uploaded to GCS")
+        print(f"  3. Verify the model exists at: gs://{bucket_name}/trained_models/")
+        if model_name:
+            model_path = model_name.replace('/', '_')
+            print(f"  4. Expected path: gs://{bucket_name}/trained_models/{model_path}/training_summary.json")
+        return None
 
 
 if __name__ == "__main__":

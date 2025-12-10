@@ -44,7 +44,7 @@ except ImportError:
     except ImportError:
         HYPERTUNE_AVAILABLE = False
         print("WARNING: cloudml-hypertune not installed - hyperparameter tuning metrics will not be reported!")
-        print("Install with: pip install cloudml-hypertune")
+        print(f"   [INFO] Estimated time: {max_trial_count * 30 // parallel_trial_count} minutes (GPU)")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -243,7 +243,8 @@ def compute_metrics(eval_pred):
 def train_model(train_dataset: Dataset, val_dataset: Dataset,
                model_name: str, output_dir: str, num_epochs: int = 4,
                batch_size: int = 32, learning_rate: float = 2e-5,
-               warmup_ratio: float = 0.1, weight_decay: float = 0.01):
+               warmup_ratio: float = 0.1, weight_decay: float = 0.01,
+               metric_name: str = 'f1_macro'):
     """
     Train the RoBERTa model.
 
@@ -288,7 +289,7 @@ def train_model(train_dataset: Dataset, val_dataset: Dataset,
         evaluation_strategy='epoch',
         save_strategy='epoch',
         load_best_model_at_end=True,
-        metric_for_best_model='f1_macro',
+        metric_for_best_model=metric_name,
         logging_steps=100,
         save_total_limit=2,
         fp16=torch.cuda.is_available(),
@@ -321,6 +322,50 @@ def train_model(train_dataset: Dataset, val_dataset: Dataset,
     return model, trainer, train_result
 
 
+def upload_model_to_gcs(local_dir: str, bucket_name: str, gcs_prefix: str):
+    """
+    Upload model files from local directory to GCS bucket.
+    
+    This ensures model artifacts persist after the training job container terminates.
+    
+    :param local_dir: Local directory containing model files
+    :param bucket_name: GCS bucket name (without gs:// prefix)
+    :param gcs_prefix: Prefix path in GCS bucket (e.g., 'models/roberta-sentiment')
+    """
+    logger.info(f"Uploading model files to GCS...")
+    logger.info(f"  Local dir: {local_dir}")
+    logger.info(f"  GCS bucket: {bucket_name}")
+    logger.info(f"  GCS prefix: {gcs_prefix}")
+    
+    try:
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(bucket_name)
+        
+        # Upload all files in the output directory
+        uploaded_files = []
+        for root, dirs, files in os.walk(local_dir):
+            for file in files:
+                local_path = os.path.join(root, file)
+                # Get relative path from local_dir
+                relative_path = os.path.relpath(local_path, local_dir)
+                # Construct GCS path
+                gcs_path = os.path.join(gcs_prefix, relative_path).replace('\\\\', '/')
+                
+                blob = bucket.blob(gcs_path)
+                blob.upload_from_filename(local_path)
+                uploaded_files.append(f"gs://{bucket_name}/{gcs_path}")
+                logger.info(f"  Uploaded: {relative_path}")
+        
+        logger.info(f"[SUCCESS] Uploaded {len(uploaded_files)} files to GCS")
+        logger.info(f"  Model location: gs://{bucket_name}/{gcs_prefix}/")
+        return uploaded_files
+        
+    except Exception as e:
+        logger.error(f"[ERROR] Failed to upload model to GCS: {str(e)}")
+        logger.error("Model files will only be available in $AIP_MODEL_DIR")
+        return []
+
+
 def evaluate_model(trainer, test_dataset: Dataset, output_dir: str):
     """
     Evaluate the trained model on test data.
@@ -339,9 +384,11 @@ def evaluate_model(trainer, test_dataset: Dataset, output_dir: str):
     # Calculate metrics
     f1_macro = f1_score(y_true, y_pred, average='macro')
     f1_weighted = f1_score(y_true, y_pred, average='weighted')
+    accuracy = accuracy_score(y_true, y_pred)
 
     logger.info(f"F1-Score (Macro): {f1_macro:.4f}")
     logger.info(f"F1-Score (Weighted): {f1_weighted:.4f}")
+    logger.info(f"Accuracy: {accuracy:.4f}")
 
     # Classification report
     report = classification_report(
@@ -359,6 +406,7 @@ def evaluate_model(trainer, test_dataset: Dataset, output_dir: str):
     results = {
         'f1_macro': float(f1_macro),
         'f1_weighted': float(f1_weighted),
+        'accuracy': float(accuracy),
         'classification_report': report,
         'confusion_matrix': cm.tolist()
     }
@@ -404,7 +452,9 @@ def main():
     parser.add_argument('--weight_decay', type=float, default=0.01,
                        help='Weight decay')
     parser.add_argument('--max_length', type=int, default=128,
-                       help='Maximum sequence length')
+                        help='Maximum sequence length')
+    parser.add_argument('--metric_name', type=str, default='f1_macro',
+                        help='Metric to optimize (f1_macro or accuracy)')
 
     args = parser.parse_args()
 
@@ -428,17 +478,17 @@ def main():
         logger.info("Loading training data...")
         train_df = load_data_from_gcs(args.train_data_path)
         train_df = preprocess_data(train_df)
-        logger.info(f"✓ Training data loaded: {len(train_df)} samples")
+        logger.info(f"[SUCCESS] Training data loaded: {len(train_df)} samples")
 
         logger.info("Loading validation data...")
         val_df = load_data_from_gcs(args.val_data_path)
         val_df = preprocess_data(val_df)
-        logger.info(f"✓ Validation data loaded: {len(val_df)} samples")
+        logger.info(f"[SUCCESS] Validation data loaded: {len(val_df)} samples")
 
         logger.info("Loading test data...")
         test_df = load_data_from_gcs(args.test_data_path)
         test_df = preprocess_data(test_df)
-        logger.info(f"✓ Test data loaded: {len(test_df)} samples")
+        logger.info(f"[SUCCESS] Test data loaded: {len(test_df)} samples")
     except Exception as e:
         logger.error(f"Failed to load data from GCS: {str(e)}")
         logger.error(f"Train path: {args.train_data_path}")
@@ -464,7 +514,8 @@ def main():
         batch_size=args.batch_size,
         learning_rate=args.learning_rate,
         warmup_ratio=args.warmup_ratio,
-        weight_decay=args.weight_decay
+        weight_decay=args.weight_decay,
+        metric_name=args.metric_name
     )
 
     # Evaluate model
@@ -491,6 +542,26 @@ def main():
 
     logger.info("Training and evaluation complete!")
     logger.info(f"Model and results saved to {args.output_dir}")
+    
+    # ============================================================
+    # CRITICAL FIX: Upload model files to GCS
+    # ============================================================
+    # Extract bucket name and prefix from training data path
+    try:
+        if args.train_data_path.startswith('gs://'):
+            bucket_name = args.train_data_path.split('/')[2]
+            # Create model path without timestamp for consistent naming
+            model_prefix = f"trained_models/{args.model_name.replace('/', '_')}"
+            
+            logger.info("=" * 60)
+            logger.info("UPLOADING MODEL TO GCS")
+            logger.info("=" * 60)
+            upload_model_to_gcs(args.output_dir, bucket_name, model_prefix)
+        else:
+            logger.info("[INFO] Not uploading to GCS (local training mode)")
+    except Exception as e:
+        logger.error(f"[ERROR] Failed to upload model to GCS: {str(e)}")
+        logger.error("Model files are still available in $AIP_MODEL_DIR")
 
     # ============================================================
     # CRITICAL FIX: Report metric to Vertex AI using cloudml-hypertune
@@ -505,23 +576,35 @@ def main():
         try:
             # CORRECT USAGE (2025): HyperTune() class from cloudml_hypertune
             hpt = hypertune.HyperTune()
+            
+            # Report F1 Macro
             hpt.report_hyperparameter_tuning_metric(
                 hyperparameter_metric_tag='f1_macro',
                 metric_value=f1_macro_score,
                 global_step=args.num_epochs
             )
-            logger.info(f"✓ Successfully reported f1_macro={f1_macro_score:.4f} to Vertex AI")
-            logger.info(f"  Metric tag: 'f1_macro'")
+            
+            # Report Accuracy (Requested by user)
+            accuracy_score_val = results.get('accuracy', 0.0)
+            hpt.report_hyperparameter_tuning_metric(
+                hyperparameter_metric_tag='accuracy',
+                metric_value=accuracy_score_val,
+                global_step=args.num_epochs
+            )
+            
+            logger.info(f"[SUCCESS] Successfully reported metrics to Vertex AI:")
+            logger.info(f"  - f1_macro: {f1_macro_score:.4f}")
+            logger.info(f"  - accuracy: {accuracy_score_val:.4f}")
             logger.info(f"  Global step: {args.num_epochs}")
         except Exception as e:
-            logger.error(f"❌ Failed to report metric via cloudml-hypertune: {str(e)}")
+            #logger.error(f"[ERROR] Failed to report metric via cloudml-hypertune: {str(e)}")
             logger.error(f"This will cause red '!' indicators in Vertex AI console")
             # Fallback to stdout (old method, likely won't work)
             print(f"\nf1_macro={f1_macro_score}")
             raise
     else:
         logger.error("=" * 60)
-        logger.error("❌ cloudml-hypertune NOT AVAILABLE!")
+        #logger.error("[ERROR] cloudml-hypertune NOT AVAILABLE!")
         logger.error("=" * 60)
         logger.error("Trials will show red '!' indicators in Vertex AI console")
         logger.error("Install cloudml-hypertune in your container!")
