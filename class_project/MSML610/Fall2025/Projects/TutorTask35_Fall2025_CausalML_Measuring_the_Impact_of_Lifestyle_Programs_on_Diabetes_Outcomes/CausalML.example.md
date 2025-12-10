@@ -1,9 +1,12 @@
 # Causal Analysis of Lifestyle Interventions on Diabetes Risk
 
 ## 1. Project Objective
-This project estimates the **Heterogeneous Treatment Effect (HTE)** of physical activity on diabetes prevalence using Observational Data. Unlike traditional regression, which gives a single "average" coefficient, we use Causal Machine Learning (X-Learner) to understand **who** benefits most from lifestyle changes.
+This project estimates the **Heterogeneous Treatment Effect (HTE)** of physical activity on diabetes prevalence using Observational Data. Unlike traditional regression, which gives a single "average" coefficient, I use Causal Machine Learning (X-Learner) to understand **who** benefits most from lifestyle changes.
 
 **Research Question:** *Does the protective effect of physical activity vary by Age, Income, or existing Health Status?*
+
+### Constraint Note
+> The original prompt suggested analyzing specific 'Lifestyle Programs' using the 'Diabetes 130-US Hospitals' dataset. Upon inspection, that dataset lacked lifestyle variables. I pivoted to the CDC BRFSS dataset to ensure identifiable causal links. Consequently, my definition of 'Treatment' shifted from 'Clinical Program Enrollment' to 'Self-Reported Physical Activity', and my 'Outcome' shifted from 'Longitudinal Progression' to 'Point-in-Time Prevalence'. This trade-off allowed for a robust demonstration of CausalML methodologies (X-Learner, Sensitivity Analysis) which would have been impossible with the suggested data.
 
 ## 2. Data Source
 *   **Dataset:** CDC Diabetes Health Indicators (BRFSS 2015)
@@ -22,17 +25,17 @@ This project estimates the **Heterogeneous Treatment Effect (HTE)** of physical 
 | `BMI` | Covariate (X / M) | Body mass index (used as confounder in estimation). |
 
 ## 3. Identification Strategy & Assumptions
-Since we cannot randomize people into "exercise" vs "sedentary" groups, we rely on observational causal inference methods.
+Since I cannot randomize people into "exercise" vs "sedentary" groups, I rely on observational causal inference methods.
 
 ### Causal Graphs (DAGs)
 
-We present two DAGs: the **ideal structure** we would have with longitudinal intervention data, and the **actual structure** reflecting our cross-sectional reality.
+I present two DAGs: the **ideal structure** I would have with longitudinal intervention data, and the **actual structure** reflecting the cross-sectional reality.
 
 ---
 
-## DAG 1: Assumed Causal Structure (If We Had Longitudinal Data)
+## DAG 1: Assumed Causal Structure (If I Had Longitudinal Data)
 
-This DAG represents the causal structure we **would** estimate with longitudinal intervention data, where physical activity is measured before diabetes onset and confounders are baseline characteristics.
+This DAG represents the causal structure I **would** estimate with longitudinal intervention data, where physical activity is measured before diabetes onset and confounders are baseline characteristics.
 
 ```mermaid
 %% DAG 1: Assumed Causal Structure (Longitudinal, Ideal Case)
@@ -52,9 +55,9 @@ graph LR
 
 ---
 
-## DAG 2: Actual Cross-Sectional Reality (What We Have)
+## DAG 2: Actual Cross-Sectional Reality (What I Have)
 
-This DAG represents our actual cross-sectional data structure, showing:
+This DAG represents the actual cross-sectional data structure, showing:
 (1) unmeasured confounding (U),
 (2) simultaneous measurement of treatment and outcome, and
 (3) potential reverse causality.
@@ -85,20 +88,20 @@ graph LR
 behavioral response to medical advice) but eventually reduce it 
 (due to complications like neuropathy, fatigue). Cross-sectional 
 data captures both patterns simultaneously across different disease 
-stages, making temporal ordering impossible to establish. Cross-sectional data cannot distinguish these mechanisms. Our implausible age-stratified results (positive effects in young adults) provide empirical evidence of this violation.
+stages, making temporal ordering impossible to establish. Cross-sectional data cannot distinguish these mechanisms. The implausible age-stratified results (positive effects in young adults) provide empirical evidence of this violation.
 
 
 ---
 
 ### Key Assumptions
 
-1. **Unconfoundedness (Selection on Observables):** We assume that by controlling for 15+ variables (Income, Education, General Health, etc.), we isolate the effect of activity.
-2. **Overlap (Positivity):** We verify that there are sedentary and active people in every demographic stratum using Propensity Score checks.
-3. **SUTVA:** We assume no interference (one person's exercise doesn't prevent another's diabetes).
+1. **Unconfoundedness (Selection on Observables):** I assume that by controlling for 15+ variables (Income, Education, General Health, etc.), I isolate the effect of activity.
+2. **Overlap (Positivity):** I verify that there are sedentary and active people in every demographic stratum using Propensity Score checks.
+3. **SUTVA:** I assume no interference (one person's exercise doesn't prevent another's diabetes).
 
 ## 4. Methodology: The X-Learner
 
-We use the **X-Learner** (implemented via our `CausalNavigator` wrapper). To justify this choice, we compared it against other standard meta-learner architectures:
+I use the **X-Learner** (implemented via my `CausalNavigator` wrapper). To justify this choice, I compared it against other standard meta-learner architectures:
 
 ### Meta-Learner Architectures Compared
 
@@ -111,7 +114,7 @@ We use the **X-Learner** (implemented via our `CausalNavigator` wrapper). To jus
 | **DR-Learner** | Propensity + outcome models | Most robust (bias reduction) | High variance if overlap is poor |
 
 **Selection Rationale:**
-We selected the **X-Learner** because our dataset is imbalanced (73% Active vs 27% Sedentary) and observational. S-Learners struggle to detect weak signals in high-dimensional data (as seen in our "Horse Race" results), while T-Learners can be unstable with imbalance. The X-Learner offers the best trade-off for this specific problem structure.
+I selected the **X-Learner** because the dataset is imbalanced (74% Active vs 26% Sedentary) and observational. S-Learners struggle to detect weak signals in high-dimensional data (as seen in my "Horse Race" results), while T-Learners can be unstable with imbalance. The X-Learner offers the best trade-off for this specific problem structure.
 ### How X-Learner Calculates Heterogeneous Treatment Effects (CATE)
 
 The **X-Learner** estimates the **Conditional Average Treatment Effect (CATE)** τ(x) = E[Y(1) - Y(0) | X = x] through a sophisticated 3-stage process:
@@ -152,7 +155,7 @@ Train models to predict treatment effects as a function of covariates:
 
 ## 5. Key Findings & Interpretation
 
-Our analysis reveals critical insights that a standard regression would miss:
+My analysis reveals critical insights that a standard regression would miss:
 
 ### A. The "High Risk" Benefit
 
@@ -162,9 +165,9 @@ The protective effect of physical activity is **strongest for individuals in poo
 
 ### B. The "Age" Anomaly: Understanding the Counterintuitive Results
 
-We observed a near-zero or slightly positive treatment effect (higher diabetes risk for active people) in young adults (Age groups 1–3), which differs from the strong protective effect in older adults.
+I observed a near-zero or slightly positive treatment effect (higher diabetes risk for active people) in young adults (Age groups 1–3), which differs from the strong protective effect in older adults.
 
-* *Diagnostic Results:* Our analysis revealed that diabetics exercise **LESS** than non-diabetics across all age groups:
+* *Diagnostic Results:* My analysis revealed that diabetics exercise **LESS** than non-diabetics across all age groups:
   - Age Group 1 (18-24): 80.8% of diabetics vs 86.5% of non-diabetics exercise  
   - Age Group 2 (25-29): 72.1% of diabetics vs 83.5% of non-diabetics exercise
   - All differences are negative (-5.7% to -12.0%), showing the expected biological pattern
@@ -173,43 +176,43 @@ We observed a near-zero or slightly positive treatment effect (higher diabetes r
   1. **Reactive Behavior**: Young adults rarely develop Type 2 diabetes. Those who do often have severe risk factors and are medically prescribed rigorous exercise regimens.
   2. **The "Healthy Sedentary" Effect**: Many young adults are metabolically healthy despite being sedentary, simply due to youth.
   3. **Result**: In the young demographic, the "Active" group is disproportionately enriched with individuals managing a condition, while the "Sedentary" group remains healthy, biasing the CATE upwards (towards zero or positive).
-  4. **Unmeasured confounding**: Variables not in our dataset (genetics, socioeconomic factors, motivation) that affect both exercise propensity and diabetes risk
+  4. **Unmeasured confounding**: Variables not in the dataset (genetics, socioeconomic factors, motivation) that affect both exercise propensity and diabetes risk
 
 * *Implication:* This highlights why observational analysis requires careful segmentation. The model recovers the expected biological signal (strong negative CATE) only in older populations where lifestyle accumulation outweighs these selection biases. Even sophisticated methods like X-Learner cannot overcome violations of key assumptions.
 
 ## 6. Robustness & Validation (Advanced Analysis)
 
-To validate our findings beyond standard metrics, we implemented two advanced checks:
+To validate my findings beyond standard metrics, I implemented two advanced checks:
 
 ### A. Placebo Test (Refutation)
-We randomized the treatment assignment and re-ran the model 5 times.
-*   **Result:** The "Placebo" effects clustered around 0.001, while our actual effect was -0.002.
+I randomized the treatment assignment and re-ran the model 5 times.
+*   **Result:** The "Placebo" effects clustered around 0.001, while the actual effect was -0.002.
 *   **Conclusion:** The estimated treatment effect is statistically distinguishable from random noise.
 
 ### B. Estimator Tournament ("Horse Race")
-We compared the X-Learner against S, T, R, and DR-Learners using Uplift Curves on held-out test data.
-*   **Result:** The T, X, R, and DR learners performed almost identically, validating the robustness of our X-Learner choice. The S-Learner underperformed, likely due to over-regularization of the weak signal.
+I compared the X-Learner against S, T, R, and DR-Learners using Uplift Curves on held-out test data.
+*   **Result:** The T, X, and R learners performed almost identically, validating the robustness of my X-Learner choice. The DR-Learner showed moderate performance (~7% lower), while the S-Learner substantially underperformed.
 
 ### C. Sensitivity Analysis (Covariate Stability)
-We iteratively removed each covariate to test model stability.
+I iteratively removed each covariate to test model stability.
 *   **Robustness:** The treatment effect remained protective (negative) in all permutation scenarios, confirming the result is not an artifact of variable selection.
-*   **Mechanism Discovery:** Removing **BMI** increased the protective effect size by **5x** (from -0.2% to -1.1%). This confirms BMI's role as a **mediator**: much of the benefit of exercise works *through* weight loss. Our primary model conservatively estimates the direct metabolic benefit independent of weight.
+*   **Mechanism Discovery:** Removing **BMI** increased the protective effect size by **5x** (from -0.2% to -1.1%). This confirms BMI's role as a **mediator**: much of the benefit of exercise works *through* weight loss. My primary model conservatively estimates the direct metabolic benefit independent of weight.
 
 ## 7. Comparison to Gold Standard Evidence (The Scientific Context)
 
-While we use BRFSS data to demonstrate CausalML on observational data, the **Diabetes Prevention Program (DPP)** represents the clinical gold standard for causal inference in this domain.
+While I use BRFSS data to demonstrate CausalML on observational data, the **Diabetes Prevention Program (DPP)** represents the clinical gold standard for causal inference in this domain.
 
 **Key Differences:**
-- **Design:** DPP used Randomization (RCT) to eliminate confounding; we use the X-Learner to mathematically adjust for it.
-- **Outcome:** DPP measured *Incidence* (new cases over 3 years); we measure *Prevalence* (existing cases at a snapshot in time).
-- **Magnitude:** The DPP showed a **58% Relative Risk Reduction** ([Knowler et al., NEJM 2002](https://www.nejm.org/doi/full/10.1056/NEJMoa012512)). Our model estimates a modest **Absolute Risk Reduction (-0.2%)**.
+- **Design:** DPP used Randomization (RCT) to eliminate confounding; I use the X-Learner to mathematically adjust for it.
+- **Outcome:** DPP measured *Incidence* (new cases over 3 years); I measure *Prevalence* (existing cases at a snapshot in time).
+- **Magnitude:** The DPP showed a **58% Relative Risk Reduction** ([Knowler et al., NEJM 2002](https://www.nejm.org/doi/full/10.1056/NEJMoa012512)). My model estimates a modest **Absolute Risk Reduction (-0.2%)**.
 
 **Implication:** 
-The discrepancy highlights the limitation of cross-sectional observational data: we are likely measuring the "survivor bias" and "reverse causality" (sick people exercising) that obscures the true magnitude of the benefit. However, the fact that our model still recovers a protective effect - and correctly identifies that the sickest patients (GenHlth=5) benefit most - demonstrates the utility of CausalML when RCTs are not feasible.
+The discrepancy highlights the limitation of cross-sectional observational data: I am likely measuring the "survivor bias" and "reverse causality" (sick people exercising) that obscures the true magnitude of the benefit. However, the fact that my model still recovers a protective effect - and correctly identifies that the sickest patients (GenHlth=5) benefit most - demonstrates the utility of CausalML when RCTs are not feasible.
 
 ### Key Limitations
 
-1. **Unmeasured Confounding:** Critical variables like genetics, detailed socioeconomic status, motivation, healthcare quality, and social support are not captured in the dataset. The counterintuitive age results suggest our 17 covariates are insufficient for unconfoundedness.
+1. **Unmeasured Confounding:** Critical variables like genetics, detailed socioeconomic status, motivation, healthcare quality, and social support are not captured in the dataset. The counterintuitive age results suggest the 17 covariates are insufficient for unconfoundedness.
 2. **Cross-Sectional Design:** Treatment and outcome are measured simultaneously, preventing establishment of temporal ordering and causal direction.
 3. **Self-Reported Data:** Both physical activity and diabetes status are self-reported, introducing measurement error and potential social desirability bias.
 4. **Population Heterogeneity:** Young adults with diabetes represent a small, potentially very different population with severe underlying conditions not captured by standard health indicators.

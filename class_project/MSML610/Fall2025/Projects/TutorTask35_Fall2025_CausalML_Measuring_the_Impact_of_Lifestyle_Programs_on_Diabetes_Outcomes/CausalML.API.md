@@ -55,7 +55,7 @@ navigator = CausalNavigator(
 **Purpose:** Trains the meta-learner and estimates CATE (Conditional Average Treatment Effect).
 - **Inputs:** Covariates `X`, Treatment `T`, Outcome `Y`.
 - **Output:** `numpy.array` of CATE values for each observation.
-- **Design Choice:** We use XGBoost as the base learner because it handles non-linearities in the response surface effectively, which is crucial for the X-Learner.
+- **Design Choice:** I use XGBoost as the base learner because it handles non-linearities in the response surface effectively, which is crucial for the X-Learner.
 
 #### `get_cate_df(df_original)`
 **Purpose:** Helper to merge the estimated effects back into the original dataframe.
@@ -85,7 +85,7 @@ navigator = CausalNavigator(
 **Purpose:** Advanced model selection ("Horse Race").
 - **Methodology:** Splits data into Train (70%) and Test (30%). Trains S, T, X, R, and DR learners on the training set.
 - **Metric:** Generates a **Cumulative Gain Chart (Uplift Curve)** on the test set.
-- **Why this metric?** Since ground truth CATE is impossible to observe, we cannot use RMSE. The Gain Chart measures how well a model sorts individuals from "High Responder" to "Low Responder."
+- **Why this metric?** Since ground truth CATE is impossible to observe, I cannot use RMSE. The Gain Chart measures how well a model sorts individuals from "High Responder" to "Low Responder."
 - **Visual:** Produces a plot where the highest curve represents the best-performing model for targeting interventions.
 - **Outputs:**
     - **Uplift Curve Plot:** Visual comparison of model performance.
