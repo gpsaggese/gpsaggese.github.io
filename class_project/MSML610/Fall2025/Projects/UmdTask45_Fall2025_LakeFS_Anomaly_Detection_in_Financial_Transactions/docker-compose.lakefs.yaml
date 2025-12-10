@@ -1,0 +1,17 @@
+version: '3'
+services:
+  lakefs:
+    image: treeverse/lakefs:latest
+    container_name: lakefs_server
+    user: root
+    ports:
+      - "8000:8000"
+    environment:
+      LAKEFS_DATABASE_TYPE: "local"
+      LAKEFS_AUTH_ENCRYPT_SECRET_KEY: "secret_key_for_encryption_only"
+      LAKEFS_BLOCKSTORE_TYPE: "local"
+      LAKEFS_BLOCKSTORE_LOCAL_PATH: "/home/lakefs/data"
+    volumes:
+      - lakefs_data:/home/lakefs/data
+volumes:
+  lakefs_data:
