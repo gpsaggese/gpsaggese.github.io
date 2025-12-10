@@ -235,58 +235,70 @@ From your home directory or a chosen workspace:
 ```bash
 git clone [https://github.com/sivaakash09/umd_classes.git](https://github.com/sivaakash09/umd_classes.git)
 cd umd_classes/class_project/MSML610/Fall2025/Projects/sentiment_rl_trader
+```
 
 ### 2. Create and Activate a Virtual Environment
+
 python3 -m venv venv
 source venv/bin/activate      # On macOS / Linux
+
 # For Windows (PowerShell):
 # venv\Scripts\Activate.ps1
 
-### 3. Install Python Dependencies 
+
+### 3. Install Python Dependencies
+
 pip install --upgrade pip
 pip install -r requirements.txt
 
+
 ### 4. Environment Setup (API Keys)
+
 export NEWSAPI_KEY="<your_newsapi_key>"
 export OPENAI_API_KEY="<your_openai_api_key_if_used>"
 
 In Python, these are accessed via:
+
 import os
 
 news_key = os.environ["NEWSAPI_KEY"]
 openai_key = os.environ.get("OPENAI_API_KEY", None)
 
+
 ### 5. Running the Full Pipeline
+
 After activating the virtual environment and setting environment variables:
+
 python main.py
+
 This will:
 
-Fetch / load news and stock data
+Fetch / load news and stock data  
+Compute sentiment features  
+Train the LSTM model  
+Train the RL trader  
+Save plots under plots/  
+Log metrics and artifacts to W&B under the project:  
+siva09-university-of-maryland/sentiment_rl_trader
 
-Compute sentiment features
 
-Train the LSTM model
+### Docker Workflow
 
-Train the RL trader
-
-Save plots under plots/
-
-Log metrics and artifacts to W&B under the project: siva09-university-of-maryland/sentiment_rl_trader
-
-Docker Workflow 
 Build Docker Image
 
-Bash
-
 ./docker_build.sh
+
+
 Start a Bash Session Inside the Container
 
-Bash
-
 ./docker_bash.sh
+
+
 Launch Jupyter Notebook in Docker
 
-Bash
-
 ./docker_jupyter.sh
-Then open the printed URL in a browser and navigate to: /class_project/MSML610/Fall2025/Projects/sentiment_rl_trader/sentiment_rl_trader_ipynb
+
+
+Then open the printed URL in a browser and navigate to:
+
+/class_project/MSML610/Fall2025/Projects/sentiment_rl_trader/sentiment_rl_trader_ipynb
