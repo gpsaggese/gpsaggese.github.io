@@ -1,3 +1,8 @@
+## Name: Venkata Siva Rajesh Vithanala
+## UID: 121330543
+## Diffuclty level: 2 
+
+
 # Dialogue System Enhancement with TRL PPO
 
 This project fine-tunes a pre-trained conversational model using **reinforcement learning with human feedback (RLHF)** to enhance dialogue response quality. The optimization uses **Proximal Policy Optimization (PPO)** from the `trl` library and targets **user satisfaction** as defined by sentiment and fluency metrics.
