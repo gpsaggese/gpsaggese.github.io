@@ -117,7 +117,6 @@ The project uses two main data sources:
 TutorTask64_Fall2025_TPOT_Predicting_Stock_Prices_Using_News_Sentiment/
 ├── README.md                          # This file
 ├── requirements.txt                   # Python dependencies
-├── .gitignore                        # Git ignore rules
 │
 ├── docker/                           # Docker configuration
 │   ├── Dockerfile                    # Container definition
