@@ -100,22 +100,29 @@ def batch_iter(
 
 class SimpleCNN(nn.Module):
     num_classes: int
+    kernel_sizes: Tuple[Tuple[int, int], Tuple[int, int], Tuple[int, int]] = (
+        (3, 3),
+        (3, 3),
+        (3, 3),
+    )
+    dropout_rate: float = 0.5
 
     @nn.compact
     def __call__(self, x, train: bool = True):
-        x = nn.Conv(features=32, kernel_size=(3, 3))(x)
+        ks1, ks2, ks3 = self.kernel_sizes
+        x = nn.Conv(features=32, kernel_size=ks1)(x)
         x = nn.relu(x)
         x = nn.max_pool(x, (2, 2), (2, 2))
-        x = nn.Conv(features=64, kernel_size=(3, 3))(x)
+        x = nn.Conv(features=64, kernel_size=ks2)(x)
         x = nn.relu(x)
         x = nn.max_pool(x, (2, 2), (2, 2))
-        x = nn.Conv(features=128, kernel_size=(3, 3))(x)
+        x = nn.Conv(features=128, kernel_size=ks3)(x)
         x = nn.relu(x)
         x = nn.max_pool(x, (2, 2), (2, 2))
         x = x.reshape((x.shape[0], -1))
         x = nn.Dense(256)(x)
         x = nn.relu(x)
-        x = nn.Dropout(0.5)(x, deterministic=not train)
+        x = nn.Dropout(self.dropout_rate)(x, deterministic=not train)
         x = nn.Dense(self.num_classes)(x)
         return x
 
@@ -128,12 +135,23 @@ class TrainConfig:
     batch_size: int = 64
     num_epochs: int = 5
     seed: int = 0
+    conv_kernel_sizes: Tuple[Tuple[int, int], Tuple[int, int], Tuple[int, int]] = (
+        (3, 3),
+        (3, 3),
+        (3, 3),
+    )
+    dropout_rate: float = 0.5
 
 
 def create_train_state(rng: jax.Array, config: TrainConfig) -> train_state.TrainState:
-    model = SimpleCNN(num_classes=config.num_classes)
+    model = SimpleCNN(
+        num_classes=config.num_classes,
+        kernel_sizes=config.conv_kernel_sizes,
+        dropout_rate=config.dropout_rate,
+    )
+    rng, init_dropout = jax.random.split(rng)
     params = model.init(
-        rng,
+        {"params": rng, "dropout": init_dropout},
         jnp.ones((1, config.image_size[0], config.image_size[1], 3), dtype=jnp.float32),
         train=True,
     )["params"]
