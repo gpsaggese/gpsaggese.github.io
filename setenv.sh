@@ -1,1 +1,0 @@
-./dev_scripts_umd_classes/thin_client/setenv.sh
