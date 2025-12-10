@@ -44,21 +44,22 @@ UmdTask_43_Fall2025_DialogueSystemEnhancement/
 │   ├── sft_finetuned/            # Output of supervised fine-tuning
 │   ├── fine_tuned_live/          # Updated model during RLHF (PPO)
 │
-├── pipeline/                     # Code used by the runnable RLHF feedback system
-│   ├── base_model.py             # Loads the base pretrained model
-│   ├── ppo_model.py              # Loads PPO-trained model
-│   ├── reward.py                 # Custom reward function (toxicity, semantics, coherence…)
-│   ├── evaluation.py             # Metrics (coherence, BLEU, ROUGE, BERTScore…)
-│   ├── user_feedback.py          # Save and track user feedback
-│   ├── run_pipeline.py           # Main RLHF + Gradio app
-│
+|__ project_utils
+|   |── pipeline/                     # Code used by the runnable RLHF feedback system
+│   |  ├── base_model.py             # Loads the base pretrained model
+│   |  ├── ppo_model.py              # Loads PPO-trained model
+│   |  ├── reward.py                 # Custom reward function (toxicity, semantics, coherence…)
+│   |  ├── evaluation.py             # Metrics (coherence, BLEU, ROUGE, BERTScore…)
+│   |  ├── user_feedback.py          # Save and track user feedback
+│   |  ├── run_pipeline.py           # Main RLHF + Gradio app
+│   |
 ├── training/                     # Scripts used during actual model training
-│   ├── preprocess.py             # Data cleaning & template creation
-│   ├── config.py                 # Hyperparameters and paths
-│   ├── evaluate.py               # SFT + PPO evaluation suite
-│   ├── reward_function.py        # Same reward model used in PPO
-│   ├── train_sft.py              # Supervised fine-tuning
-│   ├── test_ppo_setup.py         # PPO smoke test
+│     ├── preprocess.py             # Data cleaning & template creation
+│     ├── config.py                 # Hyperparameters and paths
+│     ├── evaluate.py               # SFT + PPO evaluation suite
+│     ├── reward_function.py        # Same reward model used in PPO
+│     ├── train_sft.py              # Supervised fine-tuning
+│     ├── test_ppo_setup.py         # PPO smoke test
 │
 ├── docker-compose.yml            # Multi-container setup
 ├── Dockerfile                    # Image for training/inference
