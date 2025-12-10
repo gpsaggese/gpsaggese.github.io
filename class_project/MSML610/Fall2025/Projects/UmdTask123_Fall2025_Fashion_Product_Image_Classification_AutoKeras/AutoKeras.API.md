@@ -13,7 +13,7 @@ By centralizing these components, the main experiment notebook stays clean and f
 
 ## 1. API Files Used in This Notebook
 
-### utils_data_io.py — Data Loading Helpers
+### src/utils_data_io.py — Data Loading Helpers
 
 **1. `tsv_to_tfds(tsv_path, num_classes)`**  
 - Reads a TSV file containing `image_path` and `label_idx`.  
@@ -28,7 +28,7 @@ By centralizing these components, the main experiment notebook stays clean and f
 
 ---
 
-## utils_model.py — Model Builder Helpers
+## src/utils_model.py — Model Builder Helpers
 
 **1. `make_baseline_cnn(input_shape, num_classes)`**  
 - Builds a simple CNN with three Conv+Pool blocks, followed by Flatten → Dense → Dropout → Softmax.  
@@ -69,7 +69,7 @@ X_small → (64, 224, 224, 3)
 y_small → (64,)
 
 
-A small image grid is plotted to visually confirm everything is correct.
+An small image grid is plotted to visually confirm everything is correct.
 
 ---
 
@@ -89,7 +89,8 @@ A quick 1-epoch training pass verifies:
 - pipeline runs end-to-end
 - training progresses without errors
 
-Full training is done in AutoKeras.example.ipynb.
+Full light training (Docker) is done in: AutoKeras.example.ipynb.
+Full heavy training (GPU) is done in: AutoKeras.example.full_training.ipynb.
 
 ### Initializing the AutoKeras Classifier
 
@@ -115,7 +116,7 @@ clf.fit(
 )
 
 
-The heavy AutoKeras search runs on Colab with GPU.
+The heavy AutoKeras search runs on Colab GPU.
 
 ## 3. Design Decisions
 ### 1. Clear Separation of Concerns
@@ -158,7 +159,7 @@ Runs the full experiment pipeline:
 - misclassification plots
 - saving models and outputs
 
-Colab Notebook (GPU)
+AutoKeras.example.full_training.ipynb (Colab GPU))
 
 Runs the heavy AutoKeras search with:
 

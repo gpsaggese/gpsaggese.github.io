@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-# Resolve project root (one level up from this script)
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+HOST_DIR="C:/Users/konda/src/umd_classes/class_project/MSML610/Fall2025/Projects/UmdTask123_Fall2025_Fashion_Product_Image_Classification_AutoKeras"
 
 docker run --rm -it \
   -p 8888:8888 \
-  -v "$PROJECT_ROOT":/workspace \
+  -v "$HOST_DIR":/workspace \
   msml610_fashion \
   bash

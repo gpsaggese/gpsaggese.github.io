@@ -6,7 +6,7 @@ This notebook contains the full end-to-end workflow for the Fashion Product Imag
 - A transfer learning model using MobileNetV2 (ImageNet pretrained)  
 - A small AutoKeras search (CPU-friendly demo)  
 
-All experiments in this notebook are intended to run **inside Docker**, using local TSV lists and an `images/` folder (as described in `data_readme.md`).
+All experiments in this notebook are intended to run **inside Docker**, using local TSV lists and an `images/` folder (as described in `README.md`).
 
 ---
 
@@ -224,19 +224,19 @@ Runs the complete workflow:
 - evaluation + confusion matrices
 - misclassification plots
 
-### Colab GPU Notebook
+### AutoKeras.example.full_training.ipynb (Colab GPU Notebook)
 Will run:
 - larger AutoKeras search (more trials + epochs)
 - potentially fine-tuned MobileNetV2
 - export best models back into Docker environment
 
-## 9. Summary (Docker example vs. full Colab run)
+## 9. Summary (Docker example vs. Colab full-training notebook)
 This notebook keeps the Docker workflow lightweight so it runs reliably on CPU:
 - Baseline CNN — trained on a subset (2,000 train / 500 val / 500 test) for 5 epochs.
 - MobileNetV2 — trained on the full tf.data pipeline for 3 epochs.
 - AutoKeras — limited to max_trials=1 and epochs=1 on a very small NumPy subset, mainly to confirm that the search pipeline and export functionality work.
 
-A larger experiment, including more epochs, bigger subsets, stronger augmentation, and a deeper AutoKeras search, is run separately in Autokeras.full_training.ipynb on a GPU environment (Colab).
+A larger experiment, including more epochs, bigger subsets, stronger augmentation, and a deeper AutoKeras search, is run separately in Autokeras.example.full_training.ipynb on a GPU environment (Colab).
 ---
 
 This notebook forms the **main experimental pipeline** of the project and provides all saved outputs.
