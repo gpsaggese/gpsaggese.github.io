@@ -22,7 +22,9 @@ Fall2025_SBert_Sentiment_Analysis_with_Sentence_Embeddings/
 │   └── SBERT_utils.py  
 │  
 └── docs/  
-├── SBERT_API.md  
+├── SBERT_API.md 
+├── SBERT_API.ipynb
+├── SBERT_Example.ipynb
 └── SBERT_Example.md  
 
 ---
