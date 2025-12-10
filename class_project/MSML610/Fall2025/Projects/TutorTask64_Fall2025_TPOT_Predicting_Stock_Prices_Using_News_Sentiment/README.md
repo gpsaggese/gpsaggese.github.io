@@ -62,7 +62,7 @@ Manually doing this work can take weeks or months. TPOT automates this entire pr
 ## Technologies Used
 
 - **TPOT**: Automated machine learning pipeline optimization
-- **Python 3.9+**: Programming language
+- **Python 3.8**: Programming language
 - **scikit-learn**: Machine learning framework (backend for TPOT)
 - **pandas**: Data manipulation and analysis
 - **numpy**: Numerical computing
