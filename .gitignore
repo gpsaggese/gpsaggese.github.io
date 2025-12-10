@@ -3,3 +3,4 @@ wandb_logs/
 *.dylib
 *.so
 __pycache__/
+venv/
