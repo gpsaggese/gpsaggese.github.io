@@ -445,28 +445,9 @@ The 50.80% accuracy is not a failure - it's evidence that the approach was rigor
 - Tetlock, P. C. (2007). "Giving content to investor sentiment: The role of media in the stock market"
 - Bollen, J., Mao, H., & Zeng, X. (2011). "Twitter mood predicts the stock market"
 
-## Acknowledgments
-
-- **Professor**: Dr. Gian Luca Saggese - For project guidance and course instruction
-- **Teaching Assistants**: MSML610 Fall 2025 TAs - For code reviews and feedback
-- **TPOT Team**: For developing and maintaining this excellent AutoML tool
-- **UMD MSML Program**: For providing the opportunity to work on practical projects
-- **Classmates**: For discussions and collaborative learning
-
----
-
-## Contact Information
-
-For questions or issues related to this project:
-
-- **GitHub Issue**: Create an issue in the repository
-- **Course Forum**: Post on the class discussion board
-- **Email**: Contact through official UMD channels
-
-## License
-
-This project is part of the MSML610 coursework at the University of Maryland and follows the academic integrity policies of the institution. The code may be used for educational purposes with proper attribution.
-
+## AI Tools Used
+ - OpenAI (2025). ChatGPT 5.1 (Large Language Model). https://openai.com
+ - Anthropic (2025). Claude Sonnet 4.5 (Large Language Model). https://www.anthropic.com
 ---
 
 **Last Updated**: December 2025  
