@@ -4,8 +4,8 @@ https://huggingface.co/datasets/Zihan1004/FNSPID/tree/main/Stock_news
 
 Created files too large to store on github
 
-df_model_features.parquet
-https://drive.google.com/file/d/1PmZUpnlb1QBFr6-1s0bkk6wdt4uFMCIO/view
+model_data.parquet
+https://drive.google.com/file/d/1G_XxbjahNUKTxEvimbDQFOncGh8J6ihU/view?usp=sharing
 
-ticker_prices.parquet
-https://drive.google.com/file/d/1x4ayM-VwgKBUtaLixmo870-q3ddwLnPE/view
+ticker_price.parquet
+https://drive.google.com/file/d/1U-WQ9H6php72SmF3CYMBiZtev-E2nCWq/view?usp=sharing
