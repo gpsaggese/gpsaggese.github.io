@@ -68,7 +68,7 @@ This project provides a complete framework for:
    - Multi-GPU system (tested with 2x Tesla T4, 1x A100)
    - CUDA-capable GPUs with sufficient memory
 
-2. **Software**:
+2. **Software**: 
    - Python 3.8+
    - PyTorch 2.0+ with CUDA support
    - DeepSpeed 0.10+
