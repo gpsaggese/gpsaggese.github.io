@@ -288,3 +288,16 @@ Launch Jupyter Notebook in Docker
 Then open the printed URL in a browser and navigate to:
 
 `/class_project/MSML610/Fall2025/Projects/sentiment_rl_trader/sentiment_rl_trader_ipynb`
+
+## System Architecture Flowchart
+
+This project follows a fully modular pipeline, combining sentiment modeling, LSTM forecasting, and reinforcement learning.  
+The flowchart below summarizes the complete workflow:
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/sivaakash09/umd_classes/clean_only_trader/rl_sentiment_trader.png" width="700" />
+</p>
+
+**Figure: End-to-end architecture from data ingestion to RL-based trading decisions.**
+
+
