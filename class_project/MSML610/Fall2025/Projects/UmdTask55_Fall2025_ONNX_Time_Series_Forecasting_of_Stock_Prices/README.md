@@ -55,7 +55,7 @@ cd class_project/MSML610/Fall2025/Projects/UmdTask55_Fall2025_ONNX_Time_Series_F
 Download the stock price dataset from Kaggle and extract it to the data folder:
 
 ```bash
-curl -L -o ~/Downloads/price-volume-data-for-all-us-stocks-etfs.zip \
+curl -L -o ~/price-volume-data-for-all-us-stocks-etfs.zip \
   https://www.kaggle.com/api/v1/datasets/download/borismarjanovic/price-volume-data-for-all-us-stocks-etfs
 
 unzip ~/price-volume-data-for-all-us-stocks-etfs.zip -d data/
