@@ -1,15 +1,3 @@
-"""
-Data Preprocessing Script for MAG 7 Stock Forecasting Ensemble
-
-This script handles:
-- Loading and stacking MAG 7 stock data
-- Feature engineering (13 features)
-- Train/Val/Test split (chronological)
-- Normalization with MinMaxScaler
-- Creating 15-day sequences
-- Saving processed data for training scripts
-"""
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -19,6 +7,7 @@ import warnings
 import os
 import sys
 import pickle
+from sklearn.preprocessing import MinMaxScaler
 
 warnings.filterwarnings('ignore')
 
@@ -38,8 +27,6 @@ from onnx_forecasting_utils import (
     split_data_chronological,
     create_rolling_windows
 )
-
-from sklearn.preprocessing import MinMaxScaler
 
 sns.set_style('whitegrid')
 print("All libraries imported successfully!")
@@ -141,9 +128,6 @@ print(f"\nNormalized data range:")
 print(f"  Min: {train_normalized.min():.4f}")
 print(f"  Max: {train_normalized.max():.4f}")
 
-# ============================================================================
-# 6. Create 15-Day Sequences (Input: 15×13, Output: 1)
-# ============================================================================
 
 SEQUENCE_LENGTH = 15
 
@@ -151,7 +135,6 @@ X_train, y_train = create_rolling_windows(train_normalized, window_size=SEQUENCE
 X_val, y_val = create_rolling_windows(val_normalized, window_size=SEQUENCE_LENGTH, step_size=1)
 X_test, y_test = create_rolling_windows(test_normalized, window_size=SEQUENCE_LENGTH, step_size=1)
 
-# Extract target (Close price is first feature)
 y_train = y_train[:, 0:1]  # Shape: (n_samples, 1)
 y_val = y_val[:, 0:1]
 y_test = y_test[:, 0:1]
@@ -174,9 +157,6 @@ print(f"  Train: {train_stock_labels_seq.shape}")
 print(f"  Val:   {val_stock_labels_seq.shape}")
 print(f"  Test:  {test_stock_labels_seq.shape}")
 
-# ============================================================================
-# 7. Save Processed Data
-# ============================================================================
 
 processed_data = {
     # Sequences for LSTM, TCN, XGBoost
@@ -204,7 +184,6 @@ processed_data = {
     'scaler': scaler
 }
 
-# Save to pickle
 output_path = 'ensemble/processed_data.pkl'
 with open(output_path, 'wb') as f:
     pickle.dump(processed_data, f)

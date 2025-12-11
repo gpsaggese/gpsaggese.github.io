@@ -40,9 +40,6 @@ if gpus:
 
 print(f"TensorFlow version: {tf.__version__}")
 
-# ============================================================================
-# 1. Load Preprocessed Data
-# ============================================================================
 
 print("\n" + "="*60)
 print("Loading preprocessed data...")
@@ -65,10 +62,6 @@ print(f"  X_train: {X_train.shape}")
 print(f"  y_train: {y_train.shape}")
 print(f"  X_test: {X_test.shape}")
 print(f"  y_test: {y_test.shape}")
-
-# ============================================================================
-# 2. LSTM Configuration
-# ============================================================================
 
 lstm_config = LSTMConfig(
     sequence_length=15,
@@ -96,10 +89,6 @@ print(f"  Learning Rate: {lstm_config.learning_rate}")
 print(f"  Batch Size: {lstm_config.batch_size}")
 print(f"  Epochs: {lstm_config.epochs}")
 
-# ============================================================================
-# 3. Build and Train LSTM Model
-# ============================================================================
-
 lstm_model = build_lstm_model(lstm_config)
 lstm_model = compile_model(lstm_model, learning_rate=lstm_config.learning_rate)
 
@@ -121,12 +110,7 @@ lstm_model, lstm_history = train_lstm_model(
 
 print("\nLSTM training completed!")
 
-# Plot training history
 plot_training_history(lstm_history, save_path='models/lstm_mag7_training.png')
-
-# ============================================================================
-# 4. Convert LSTM to ONNX
-# ============================================================================
 
 lstm_onnx_path = 'models/lstm_mag7.onnx'
 
@@ -145,9 +129,6 @@ if onnx_path:
     if verification['error']:
         print(f"  Error: {verification['error']}")
 
-# ============================================================================
-# 5. LSTM Predictions (TensorFlow vs ONNX)
-# ============================================================================
 
 print("\n" + "="*60)
 print("Making predictions...")
@@ -175,10 +156,6 @@ print(f"  Max Difference: {max_diff:.6f}")
 print(f"  Mean Difference: {mean_diff:.6f}")
 print(f"  Predictions Match: {np.allclose(lstm_tf_pred, lstm_onnx_pred, rtol=1e-4)}")
 
-# ============================================================================
-# 6. Framework Speed Comparison
-# ============================================================================
-
 print("\n" + "="*60)
 print("LSTM Framework Speed Comparison")
 print("="*60)
@@ -196,10 +173,6 @@ print(f"  Max Difference: {comparison['max_difference']:.6f}")
 print(f"  Mean Difference: {comparison['mean_difference']:.6f}")
 print(f"  Numerically Close: {comparison['numerically_close']}")
 
-# ============================================================================
-# 7. LSTM Evaluation (Per-Stock Metrics)
-# ============================================================================
-
 lstm_metrics_overall = evaluate_forecasts(y_test, lstm_onnx_pred)
 
 print("\n" + "="*60)
@@ -211,7 +184,6 @@ print(f"  MAPE: {lstm_metrics_overall['MAPE']:.2f}%")
 print(f"  R²: {lstm_metrics_overall['R2']:.4f}")
 print(f"  Directional Accuracy: {lstm_metrics_overall['Directional_Accuracy']:.2f}%")
 
-# Per-stock evaluation
 print("\n" + "="*60)
 print("Per-Stock LSTM Performance:")
 print("="*60)
@@ -230,12 +202,7 @@ lstm_per_stock_df = pd.DataFrame(lstm_per_stock)
 print("\n")
 print(lstm_per_stock_df.to_string(index=False))
 
-# Save per-stock metrics
 lstm_per_stock_df.to_csv('models/lstm_per_stock_metrics.csv', index=False)
-
-# ============================================================================
-# 8. Save Predictions for Ensemble
-# ============================================================================
 
 predictions_data = {
     'lstm_predictions': lstm_onnx_pred,

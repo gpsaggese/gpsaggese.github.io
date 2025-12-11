@@ -1,14 +1,3 @@
-"""
-Ensemble Creation and Comprehensive Analysis Script
-
-This script:
-- Loads predictions from all three models (LSTM, TCN, XGBoost)
-- Creates ensemble predictions (simple average)
-- Compares all models across all stocks
-- Generates comprehensive visualizations
-- Produces final analysis and recommendations
-"""
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -58,10 +47,6 @@ print(f"  LSTM: {lstm_onnx_pred.shape}")
 print(f"  TCN: {tcn_onnx_pred.shape}")
 print(f"  XGBoost: {xgb_onnx_pred.shape}")
 
-# ============================================================================
-# 2. Align Predictions for Ensemble
-# ============================================================================
-
 print("\n" + "="*60)
 print("Aligning predictions for ensemble...")
 print("="*60)
@@ -80,10 +65,6 @@ print(f"  LSTM: {lstm_pred_aligned.shape}")
 print(f"  TCN: {tcn_pred_aligned.shape}")
 print(f"  XGBoost: {xgb_pred_aligned.shape}")
 
-# ============================================================================
-# 3. Create Ensemble Predictions (Simple Average)
-# ============================================================================
-
 print("\n" + "="*60)
 print("Creating ensemble predictions...")
 print("="*60)
@@ -96,7 +77,6 @@ ensemble_pred = create_ensemble_predictions(
 
 print(f"Ensemble predictions shape: {ensemble_pred.shape}")
 
-# Evaluate ensemble
 ensemble_metrics = evaluate_forecasts(y_test_aligned, ensemble_pred)
 print(f"Ensemble MAE: {ensemble_metrics['MAE']:.4f}, R²: {ensemble_metrics['R2']:.4f}")
 
@@ -121,7 +101,6 @@ comparison_df = compare_multiple_models(
 comparison_df.to_csv('models/model_comparison_mag7.csv', index=False)
 print("Model comparison table saved to: models/model_comparison_mag7.csv")
 
-# MAE heatmap
 plot_performance_heatmap(
     comparison_df,
     metric='MAE',
@@ -129,7 +108,6 @@ plot_performance_heatmap(
     figsize=(12, 8)
 )
 
-# R² heatmap
 plot_performance_heatmap(
     comparison_df,
     metric='R2',
@@ -150,7 +128,6 @@ print("Ensemble comparison plot saved to: models/ensemble_comparison_all_stocks.
 
 best_models = get_best_model_per_stock(comparison_df, metric='MAE', lower_is_better=True)
 
-# Visualize best models
 stock_model_counts = best_models['Model'].value_counts()
 
 plt.figure(figsize=(10, 6))
@@ -174,10 +151,8 @@ overall_df = pd.DataFrame(overall_comparison)
 overall_df = overall_df[['Model', 'MAE', 'RMSE', 'MAPE', 'R2', 'Directional_Accuracy']]
 overall_df = overall_df.sort_values('MAE')
 
-# Visualize overall performance
 fig, axes = plt.subplots(2, 2, figsize=(15, 12))
 
-# MAE
 axes[0, 0].bar(overall_df['Model'], overall_df['MAE'])
 axes[0, 0].set_title('Mean Absolute Error (Lower is Better)', fontweight='bold')
 axes[0, 0].set_ylabel('MAE')
@@ -357,10 +332,8 @@ if tcn_available:
     print(f"  TCN ONNX vs PyTorch/DARTS: {darts_time/tcn_onnx_time:.2f}x faster")
 print(f"  XGBoost ONNX vs sklearn: {sklearn_time/xgb_onnx_time:.2f}x faster")
 
-# Visualize inference speed comparison
 fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
-# Bar chart: Inference time comparison
 ax1 = axes[0]
 models = speed_df['Model'].tolist()
 times = speed_df['Time (s)'].tolist()
@@ -371,11 +344,9 @@ ax1.set_xlabel('Inference Time (seconds, lower is better)', fontweight='bold')
 ax1.set_title('Inference Speed: Native vs ONNX Runtime', fontsize=14, fontweight='bold')
 ax1.grid(True, alpha=0.3, axis='x')
 
-# Add value labels
 for i, (bar, time_val) in enumerate(zip(bars, times)):
     ax1.text(time_val + 0.001, i, f'{time_val:.4f}s', va='center', fontsize=9)
 
-# Bar chart: Speedup factors
 ax2 = axes[1]
 if tcn_available:
     frameworks = ['LSTM\n(TF→ONNX)', 'TCN\n(DARTS→ONNX)', 'XGBoost\n(sklearn→ONNX)']
@@ -458,11 +429,6 @@ print("Model Size Comparison")
 print(f"{'='*60}")
 print(size_df.to_string(index=False))
 
-
-# ============================================================================
-# 11. Key Findings and Recommendations
-# ============================================================================
-
 print("\n" + "="*80)
 print("KEY FINDINGS AND RECOMMENDATIONS")
 print("="*80)
@@ -520,7 +486,6 @@ print(f"   - ONNX throughput: ./models/onnx_throughput_comparison.png")
 print(f"   - Model sizes: ./models/onnx_model_size_comparison.png")
 print(f"   - All model files: ./models/")
 
-# Save final summary
 summary = {
     'overall_performance': overall_df,
     'best_models_per_stock': best_models,

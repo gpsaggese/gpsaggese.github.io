@@ -1,16 +1,3 @@
-"""
-TCN Training and ONNX Conversion Script
-
-This script:
-- Loads preprocessed data
-- Prepares DARTS TimeSeries format
-- Builds and trains TCN model
-- Converts to ONNX
-- Compares DARTS vs ONNX inference
-- Evaluates per-stock performance
-- Saves predictions for ensemble
-"""
-
 import numpy as np
 import pandas as pd
 import warnings
@@ -44,10 +31,6 @@ print(f"CUDA available in PyTorch: {torch.cuda.is_available()}")
 if torch.cuda.is_available():
     print(f"CUDA device: {torch.cuda.get_device_name(0)}")
 
-# ============================================================================
-# 1. Load Preprocessed Data
-# ============================================================================
-
 print("\n" + "="*60)
 print("Loading preprocessed data...")
 print("="*60)
@@ -73,9 +56,6 @@ print(f"  train_normalized: {train_normalized.shape}")
 print(f"  val_normalized: {val_normalized.shape}")
 print(f"  test_normalized: {test_normalized.shape}")
 
-# ============================================================================
-# 2. Prepare DARTS TimeSeries from Stacked Data
-# ============================================================================
 
 print("\n" + "="*60)
 print("Preparing DARTS TimeSeries...")
@@ -87,7 +67,6 @@ if torch.cuda.is_available():
     torch.cuda.empty_cache()
     print("GPU memory cleared before TCN training")
 
-# Create target (Close price) and features
 train_target = train_normalized[:, 0]  # Close price (first feature)
 train_covariates = train_normalized  # All 13 features
 
@@ -111,10 +90,6 @@ val_target_ts = TimeSeries.from_values(val_target)
 val_cov_ts = TimeSeries.from_values(val_covariates)
 
 print("TimeSeries objects created successfully")
-
-# ============================================================================
-# 3. TCN Configuration and Training
-# ============================================================================
 
 tcn_config = TCNConfig(
     input_chunk_length=15,
@@ -154,11 +129,6 @@ tcn_model = train_tcn_model(
 )
 
 print("\nTCN training completed!")
-
-# ============================================================================
-# 4. Convert TCN to ONNX
-# ============================================================================
-
 tcn_onnx_path = 'models/tcn_mag7.onnx'
 
 print("\n" + "="*60)
@@ -183,9 +153,6 @@ if tcn_onnx_result:
 else:
     print("\nTCN ONNX conversion failed. Will use native DARTS inference.")
 
-# ============================================================================
-# 5. TCN Predictions (DARTS vs ONNX)
-# ============================================================================
 
 print("\n" + "="*60)
 print("Making predictions with DARTS TCN...")
@@ -195,7 +162,6 @@ print("="*60)
 test_cov_ts = TimeSeries.from_values(test_covariates)
 
 # Use historical_forecasts for efficient batched prediction
-# This method internally handles batching and is much faster than looping
 test_target_ts = TimeSeries.from_values(test_target)
 
 tcn_darts_predictions = tcn_model.historical_forecasts(
@@ -207,22 +173,17 @@ tcn_darts_predictions = tcn_model.historical_forecasts(
     verbose=False,
 )
 
-# Convert TimeSeries to numpy array
 tcn_darts_pred = tcn_darts_predictions.values()
-
-# Truncate y_test to match predictions
 y_test_tcn = y_test[:len(tcn_darts_pred)]
 test_stock_labels_tcn = test_stock_labels[:len(tcn_darts_pred)]
 
 print(f"\nTCN DARTS Predictions shape: {tcn_darts_pred.shape}")
 
-# ONNX predictions (if conversion succeeded)
 if tcn_onnx_result:
     print("Making predictions with TCN ONNX...")
     # Note: TCN ONNX model uses wrapper that handles transpose internally
     tcn_onnx_session = ONNXInferenceSession(tcn_onnx_path)
 
-    # Predict on test sequences
     X_test_tcn = X_test[:len(tcn_darts_pred)]
     tcn_onnx_pred = tcn_onnx_session.predict(X_test_tcn)
 
@@ -235,10 +196,6 @@ else:
     tcn_onnx_pred = tcn_darts_pred
     print("Using DARTS predictions (ONNX conversion not available)")
 
-# ============================================================================
-# 6. TCN Evaluation (Per-Stock Metrics)
-# ============================================================================
-
 tcn_metrics_overall = evaluate_forecasts(y_test_tcn, tcn_onnx_pred)
 
 print("\n" + "="*60)
@@ -250,7 +207,6 @@ print(f"  MAPE: {tcn_metrics_overall['MAPE']:.2f}%")
 print(f"  R²: {tcn_metrics_overall['R2']:.4f}")
 print(f"  Directional Accuracy: {tcn_metrics_overall['Directional_Accuracy']:.2f}%")
 
-# Per-stock evaluation
 print("\n" + "="*60)
 print("Per-Stock TCN Performance:")
 print("="*60)
@@ -270,12 +226,7 @@ tcn_per_stock_df = pd.DataFrame(tcn_per_stock)
 print("\n")
 print(tcn_per_stock_df.to_string(index=False))
 
-# Save per-stock metrics
 tcn_per_stock_df.to_csv('models/tcn_per_stock_metrics.csv', index=False)
-
-# ============================================================================
-# 7. Save Predictions for Ensemble
-# ============================================================================
 
 predictions_data = {
     'tcn_predictions': tcn_onnx_pred,

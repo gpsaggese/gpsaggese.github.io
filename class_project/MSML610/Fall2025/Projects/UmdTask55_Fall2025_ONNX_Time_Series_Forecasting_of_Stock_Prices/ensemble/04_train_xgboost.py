@@ -1,16 +1,3 @@
-"""
-XGBoost Training and ONNX Conversion Script
-
-This script:
-- Loads preprocessed data
-- Flattens sequences for XGBoost (15×13 → 195 features)
-- Builds and trains XGBoost model
-- Converts to ONNX
-- Compares sklearn vs ONNX inference
-- Evaluates per-stock performance
-- Saves predictions for ensemble
-"""
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -58,7 +45,6 @@ X_train_flat = flatten_sequences_for_xgboost(X_train)
 X_val_flat = flatten_sequences_for_xgboost(X_val)
 X_test_flat = flatten_sequences_for_xgboost(X_test)
 
-# Flatten target to 1D
 y_train_flat = y_train.flatten()
 y_val_flat = y_val.flatten()
 y_test_flat = y_test.flatten()
@@ -107,11 +93,9 @@ xgb_pipeline = train_xgboost_model(
 
 print("\nXGBoost training completed!")
 
-# Feature importance
 xgb_model = xgb_pipeline.named_steps['xgb']
 feature_importance = xgb_model.feature_importances_
 
-# Plot top 20 feature importances
 top_n = 20
 top_indices = np.argsort(feature_importance)[-top_n:]
 
@@ -138,8 +122,6 @@ xgb_onnx_result = convert_xgboost_to_onnx(
 
 if xgb_onnx_result:
     print("\nXGBoost successfully converted to ONNX!")
-
-    # Verify ONNX model
     verification = verify_onnx(xgb_onnx_path)
     print(f"\nONNX Verification:")
     print(f"  Valid: {verification['is_valid']}")
@@ -168,7 +150,6 @@ print(f"\nPrediction shapes:")
 print(f"  sklearn: {xgb_sklearn_pred.shape}")
 print(f"  ONNX: {xgb_onnx_pred.shape}")
 
-# Compare predictions
 max_diff = np.max(np.abs(xgb_sklearn_pred - xgb_onnx_pred))
 mean_diff = np.mean(np.abs(xgb_sklearn_pred - xgb_onnx_pred))
 
@@ -176,10 +157,6 @@ print(f"\nNumerical Comparison:")
 print(f"  Max Difference: {max_diff:.6f}")
 print(f"  Mean Difference: {mean_diff:.6f}")
 print(f"  Predictions Match: {np.allclose(xgb_sklearn_pred, xgb_onnx_pred, rtol=1e-3)}")
-
-# ============================================================================
-# 6. XGBoost Evaluation (Per-Stock Metrics)
-# ============================================================================
 
 xgb_metrics_overall = evaluate_forecasts(y_test, xgb_onnx_pred)
 
@@ -192,7 +169,6 @@ print(f"  MAPE: {xgb_metrics_overall['MAPE']:.2f}%")
 print(f"  R²: {xgb_metrics_overall['R2']:.4f}")
 print(f"  Directional Accuracy: {xgb_metrics_overall['Directional_Accuracy']:.2f}%")
 
-# Per-stock evaluation
 print("\n" + "="*60)
 print("Per-Stock XGBoost Performance:")
 print("="*60)
@@ -211,12 +187,7 @@ xgb_per_stock_df = pd.DataFrame(xgb_per_stock)
 print("\n")
 print(xgb_per_stock_df.to_string(index=False))
 
-# Save per-stock metrics
 xgb_per_stock_df.to_csv('models/xgb_per_stock_metrics.csv', index=False)
-
-# ============================================================================
-# 7. Save Predictions for Ensemble
-# ============================================================================
 
 predictions_data = {
     'xgb_predictions': xgb_onnx_pred,
