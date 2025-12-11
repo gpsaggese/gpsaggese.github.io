@@ -13,7 +13,7 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
 from utils.utils_data_io import (
-    load_labor_data,
+    load_economic_data,
     prepare_features_for_causal_discovery
 )
 from utils.utils_post_processing import (

@@ -3,14 +3,14 @@ Utility modules for causal inference pipeline.
 """
 
 from utils.utils_data_io import (
-    load_labor_data,
-    merge_labor_datasets,
+    load_economic_data,
     time_align_data,
     create_derived_features,
     handle_missing_values,
     remove_outliers,
     prepare_features_for_causal_discovery,
-    get_data_summary
+    get_data_summary,
+    get_economic_data
 )
 
 from utils.utils_post_processing import (
@@ -23,14 +23,14 @@ from utils.utils_post_processing import (
 )
 
 __all__ = [
-    'load_labor_data',
-    'merge_labor_datasets',
+    'load_economic_data',
     'time_align_data',
     'create_derived_features',
     'handle_missing_values',
     'remove_outliers',
     'prepare_features_for_causal_discovery',
     'get_data_summary',
+    'get_economic_data',
     'discover_causal_structure',
     'estimate_causal_effects',
     'visualize_causal_graph',

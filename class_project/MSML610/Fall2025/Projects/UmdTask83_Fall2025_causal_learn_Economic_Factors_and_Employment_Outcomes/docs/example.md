@@ -36,41 +36,39 @@ This document presents a complete example of using causal-learn to analyze the c
 
 ### Data Loading
 
-The US Labor Statistics dataset contains multiple CSV files that need to be downloaded and processed.
+The economic data is downloaded from FRED (Federal Reserve Economic Data) API.
 
 **First, download the dataset:**
 ```bash
-python Data/download_data.py
+# Set your FRED API key (get free key at https://fred.stlouisfed.org/docs/api/api_key.html)
+export FRED_API_KEY=your_api_key_here
+python data/download_data.py
 ```
 
 Then load and process the data:
 
 ```python
-from utils.utils_data_io import load_labor_data, merge_labor_datasets
+from utils.utils_data_io import load_economic_data, create_derived_features
 
-# Load main dataset
-main_df = load_labor_data('Data/all.data.combined.csv')
+# Load dataset
+df = load_economic_data('data/economic_data.csv')
 
-# Load supporting metadata
-series_df = load_labor_data('Data/ce.series.csv')
-industry_df = load_labor_data('Data/ce.industry.csv')
-
-# Merge datasets
-combined_df = merge_labor_datasets(main_df, series_df, industry_df)
+# Create derived features
+processed_df = create_derived_features(df)
 ```
 
 ### Time Alignment
 
-Economic indicators and employment outcomes must be aligned by time period.
+The data is already time-aligned from FRED (monthly frequency). If needed, you can resample:
 
 ```python
 from utils.utils_data_io import time_align_data, create_derived_features
 
-# Time-align data
+# Time-align data (optional, data is already monthly from FRED)
 aligned_df = time_align_data(
-    combined_df,
-    time_column='period',
-    frequency='monthly'
+    df,
+    time_column='date',
+    frequency='MS'  # Month Start
 )
 
 # Create derived features

@@ -199,17 +199,21 @@ visualize_causal_graph(
 
 ### Example 1: Basic Causal Discovery
 
-**Note**: First download the dataset by running `python Data/download_data.py`
+**Note**: First download the dataset by running `python data/download_data.py`
 
 ```python
 import pandas as pd
 from causallearn.search.ConstraintBased.PC import pc
 
 # Load data (after downloading via download_data.py)
-data = pd.read_csv('Data/all.data.combined.csv')
+data = pd.read_csv('data/economic_data.csv', parse_dates=['date'])
+
+# Select numeric columns for causal discovery
+variables = ['unemployment_rate', 'inflation_rate', 'wage_growth', 'gdp_growth']
+numeric_data = data[variables].dropna()
 
 # Run PC algorithm
-cg = pc(data.values, alpha=0.05, indep_test='fisherz')
+cg = pc(numeric_data.values, alpha=0.05, indep_test='fisherz')
 
 # Get adjacency matrix
 adj_matrix = cg.G.graph
