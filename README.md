@@ -3,6 +3,15 @@
 
 ---
 
+<p align="left">
+  <img src="https://img.shields.io/badge/Python-3.11-blue.svg" />
+  <img src="https://img.shields.io/badge/TensorFlow-2.x-orange.svg" />
+  <img src="https://img.shields.io/badge/Docker-Supported-blue.svg" />
+  <img src="https://img.shields.io/badge/Weights_&_Biases-Tracking-yellow.svg" />
+</p>
+
+---
+
 ## Project Objective  
 
 Build a **real-time sentiment analysis pipeline** to predict stock price movements based on news sentiment and use those predictions to drive a trading strategy.  
@@ -23,8 +32,34 @@ The flowchart below summarizes the complete workflow:
   <img src="https://raw.githubusercontent.com/sivaakash09/umd_classes/clean_only_trader/rl_sentiment_trader.png" width="700" />
 </p>
 
-**Figure: End-to-end architecture from data ingestion to RL-based trading decisions.**
+***Figure: End-to-end architecture from data ingestion to RL-based trading decisions.***
 ---
+
+##  Want to quickly see how this project works?
+
+If you want to *jump straight into the magic* and watch the full Sentiment → LSTM → RL pipeline run automatically, simply execute the commands below.
+
+Otherwise, feel free to continue reading  the same commands will appear again later in the detailed setup section.
+
+### Quickstart
+
+```bash
+# 1. Install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+```bash
+# 2. Set your API keys
+export NEWSAPI_KEY="your_newsapi_key"
+```
+```bash
+# Optional
+export OPENAI_API_KEY="your_openai_api_key"
+```
+```bash
+# 3. Run the entire pipeline
+python main.py
+```
 
 ## Dataset Suggestions & Sources  
 
