@@ -14,7 +14,7 @@
 
 - **Course:** MSML610 – Fall 2025  
 - **Project ID:** TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes  
-- **Author:** Karthik Vakada  
+- **Author:** Karthik Vakada and Sri Akash Kadali 
 - **Date:** 2025-03-15  
 
 This project is a **hands-on tutorial** showing how to use **EconML** to estimate the causal effect
