@@ -1,0 +1,11 @@
+rank,row_index,predicted_leave_prob,top_factors,actual_attrition
+1,688,0.9861893057823181,cat__OverTime_No <= 0.00 (+0.14); num__JobInvolvement <= -1.05 (+0.12); num__StockOptionLevel <= -0.94 (+0.10); num__MonthlyIncome <= -0.77 (+0.09); num__NumCompaniesWorked <= -0.68 (-0.08),1
+2,911,0.9816254377365112,cat__OverTime_No <= 0.00 (+0.13); num__JobInvolvement <= -1.05 (+0.11); num__StockOptionLevel <= -0.94 (+0.10); num__MonthlyIncome <= -0.77 (+0.09); num__DistanceFromHome > 0.57 (+0.08),1
+3,357,0.9113471508026123,cat__OverTime_No <= 0.00 (+0.14); num__JobInvolvement <= -1.05 (+0.11); num__EnvironmentSatisfaction <= -0.66 (+0.10); num__StockOptionLevel <= -0.94 (+0.10); num__MonthlyIncome <= -0.77 (+0.09),1
+4,301,0.8751637935638428,0.00 < cat__OverTime_No <= 1.00 (-0.13); num__JobInvolvement <= -1.05 (+0.11); num__StockOptionLevel <= -0.94 (+0.09); num__MonthlyIncome <= -0.77 (+0.08); num__NumCompaniesWorked <= -0.68 (-0.07),0
+5,711,0.8613678216934204,cat__OverTime_No <= 0.00 (+0.13); num__JobInvolvement <= -1.05 (+0.12); num__NumCompaniesWorked > 0.53 (+0.11); num__StockOptionLevel <= -0.94 (+0.09); num__MonthlyIncome <= -0.77 (+0.09),1
+6,762,0.8165594339370728,cat__OverTime_No <= 0.00 (+0.13); num__NumCompaniesWorked > 0.53 (+0.11); num__EnvironmentSatisfaction <= -0.66 (+0.10); num__MonthlyIncome <= -0.77 (+0.09); -1.05 < num__JobInvolvement <= 0.37 (-0.08),1
+7,514,0.7812085747718811,cat__OverTime_No <= 0.00 (+0.13); num__StockOptionLevel <= -0.94 (+0.10); num__EnvironmentSatisfaction <= -0.66 (+0.10); num__NumCompaniesWorked <= -0.68 (-0.07); -1.05 < num__JobInvolvement <= 0.37 (-0.07),1
+8,1402,0.7258766293525696,cat__OverTime_No <= 0.00 (+0.13); num__JobInvolvement <= -1.05 (+0.12); num__MonthlyIncome <= -0.77 (+0.09); num__NumCompaniesWorked <= -0.68 (-0.07); cat__BusinessTravel_Travel_Frequently <= 0.00 (-0.07),0
+9,946,0.6918854713439941,cat__OverTime_No <= 0.00 (+0.13); num__JobInvolvement <= -1.05 (+0.11); num__StockOptionLevel <= -0.94 (+0.10); num__DistanceFromHome > 0.57 (+0.08); -1.06 < num__WorkLifeBalance <= 0.34 (-0.07),1
+10,2,0.6846175193786621,cat__OverTime_No <= 0.00 (+0.13); num__JobInvolvement <= -1.05 (+0.12); num__NumCompaniesWorked > 0.53 (+0.12); num__StockOptionLevel <= -0.94 (+0.09); num__MonthlyIncome <= -0.77 (+0.08),1
