@@ -1,77 +1,115 @@
-
 # EconML API for NHANES Supplement Effects
 
-MSML610 Project:  
-**TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes**
-
-This document describes the **programming interface** exposed by:
-
-- `econml_utils.py`
-- `econml.API.py`
-
-The goal of this API layer is to provide **simple, high-level functions** that:
-
-1. Build an analysis-ready NHANES dataset.
-2. Extract outcome (`Y`), treatment (`T`), and covariates (`X`).
-3. Run **EconML DRLearner** experiments for:
-   - Mean systolic blood pressure (`sbp_mean`)
-   - Fasting glucose (`fasting_glucose_mg_dl`)
-4. Provide a **baseline OLS comparison** for any chosen outcome.
-
-The notebooks (`econml.API.ipynb` and `econml.example.ipynb`) use only these functions, not raw EconML calls.
-
+MSML610 – Fall 2025
+**Project:** `TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes`
 
 ---
 
-## 1. Data and Utilities
+## 0. Overview and Design Goals
 
-### 1.1. Data location and format
+This project studies the **causal effect of dietary supplement use** on key cardiometabolic outcomes using **NHANES 2021–2023** data and the **EconML** library.
 
-All cleaned NHANES CSVs are expected in the project’s `data/` folder:
+The codebase is organized to follow the MSML610 “API + Example + Utils” tutorial pattern:
 
-- `BPXO_L_meaningful.csv` – blood pressure readings  
-- `BMX_L_meaningful.csv` – body measures (BMI, weight, waist, etc.)  
-- `TCHOL_L_meaningful.csv` – total cholesterol  
-- `HDL_L_meaningful.csv` – direct HDL cholesterol  
-- `TRIGLY_L_meaningful.csv` – triglycerides (`LBXTLG`)  
-- `GLU_L_meaningful.csv` – fasting plasma glucose  
-- `HSCRP_L_meaningful.csv` – high-sensitivity CRP  
-- `DSQTOT_L_meaningful.csv` – dietary supplements (includes `any_dietary_supplements_taken`)  
-- `DEMO_L_meaningful.csv` – demographics (`age_years`, `sex`, etc.)
+* `econml_utils.py`
+  – Handles **data loading**, **cleaning**, **merging**, and **construction of Y/T/X**.
 
-All these files share a common person-level identifier:
+* `econml.API.py`
+  – Exposes a **clean, high-level API** that:
 
-- `respondent_sequence_number`  
-  (renamed from the original NHANES `SEQN` in the data prep step)
+  * Builds an analysis-ready dataset.
+  * Defines treatment and control groups.
+  * Fits **EconML DRLearner** models for causal effect estimation.
+  * Computes **heterogeneous treatment effects** by age and BMI.
+  * Provides a **traditional OLS baseline** for comparison.
 
+* `econml.API.ipynb`
+  – A compact notebook that **demonstrates the API itself** (how to call the functions and interpret outputs).
 
-### 1.2. `econml_utils.build_analysis_df`
+* `econml.example.ipynb`
+  – A full **end-to-end example** (our actual project) that:
+
+  * Introduces the clinical question.
+  * Uses the API to run experiments.
+  * Visualizes results.
+  * Compares EconML vs. OLS.
+
+This document focuses only on the **programming interface** of `econml_utils.py` and `econml.API.py` (notebook usage is described only at a high level).
+
+---
+
+## 1. Data and Utilities (`econml_utils.py`)
+
+### 1.1. Input Data: Cleaned NHANES CSVs
+
+All cleaned NHANES files live in the project’s `data/` folder:
+
+* `BPXO_L_meaningful.csv`
+  – Oscillometric blood pressure readings (3 SBP/DBP measurements).
+
+* `BMX_L_meaningful.csv`
+  – Anthropometrics: BMI, weight, waist, etc.
+
+* `TCHOL_L_meaningful.csv`
+  – Total cholesterol.
+
+* `HDL_L_meaningful.csv`
+  – Direct HDL cholesterol.
+
+* `TRIGLY_L_meaningful.csv`
+  – Triglycerides (`LBXTLG`) and derived LDL measures.
+
+* `GLU_L_meaningful.csv`
+  – Fasting plasma glucose.
+
+* `HSCRP_L_meaningful.csv`
+  – High-sensitivity C-reactive protein (hs-CRP).
+
+* `DSQTOT_L_meaningful.csv`
+  – 24-hour dietary intake and supplement summary, including:
+
+  * `any_dietary_supplements_taken` (used to define treatment).
+
+* `DEMO_L_meaningful.csv`
+  – Demographics and survey design variables, including:
+
+  * `age_in_years_at_screening` (renamed to `age_years`).
+  * `gender` (recoded as `sex`).
+  * Survey weights and design variables (not directly used in this tutorial’s models, but present in the data).
+
+All files share a **common respondent ID**:
+
+* `respondent_sequence_number`
+  (this is the renamed version of original NHANES `SEQN`).
+
+---
+
+### 1.2. `build_analysis_df()`
 
 ```python
 from econml_utils import build_analysis_df
 
 df = build_analysis_df()
-````
+```
 
-**Purpose**
+#### Purpose
 
-Build a single **merged analysis dataframe** that contains:
+Construct a **single, analysis-ready dataframe** that contains:
 
-* Outcomes:
+* **Outcomes**
 
-  * `sbp_mean` – mean systolic BP from 3 oscillometric readings
-  * `dbp_mean` – mean diastolic BP
-  * `fasting_glucose_mg_dl` – fasting plasma glucose
-* Treatment:
+  * `sbp_mean` – mean systolic BP from up to 3 oscillometric readings.
+  * `dbp_mean` – mean diastolic BP.
+  * `fasting_glucose_mg_dl` – fasting plasma glucose.
 
-  * `treatment_supplement` – binary:
+* **Treatment variable**
 
-    * `1` = any dietary supplement use
-    * `0` = no dietary supplement use
-* Covariates:
+  * `treatment_supplement` – binary indicator for **any dietary supplement use**.
+
+* **Covariates (baseline health & risk factors)**
 
   * `age_years`
-  * `sex`
+  * `sex` (1 = Male, 2 = Female in the raw DEMO file; encoded numerically)
   * `body_mass_index_kg_m2`
   * `weight_kg`
   * `waist_circumference_cm`
@@ -80,19 +118,50 @@ Build a single **merged analysis dataframe** that contains:
   * `LBXTLG` (triglycerides)
   * `hs_c_reactive_protein_mg_l`
 
-**Key logic**
+This dataframe is the **single source of truth** for all later modeling functions.
 
-1. Loads each `*_meaningful.csv` from `data/`.
-2. Normalizes the ID column to `respondent_sequence_number`.
-3. Computes `sbp_mean` and `dbp_mean` from the BPXO readings.
-4. Inner-joins all components on `respondent_sequence_number`.
-5. Constructs `treatment_supplement` from `any_dietary_supplements_taken`:
+#### Key Steps (Implementation Logic)
 
-   * `1 → 1`
-   * `2 → 0`
-   * other values → `NaN`
+1. **Load each component dataset**
+   Each `*_meaningful.csv` is read from the `data/` directory with `respondent_sequence_number` as the join key.
 
-### 1.3. `econml_utils.get_y_t_x`
+2. **Compute mean blood pressure** from BPXO:
+
+   * `sbp_mean` is computed as the row-wise mean of:
+
+     * `systolic_1st_oscillometric_reading`
+     * `systolic_2nd_oscillometric_reading`
+     * `systolic_3rd_oscillometric_reading`
+   * `dbp_mean` is computed similarly using the diastolic readings.
+   * Rows with entirely missing readings for SBP/DBP will have `NaN` means.
+
+3. **Merge all tables**
+   All component dataframes are **inner-joined** on `respondent_sequence_number` to ensure that the resulting sample has complete data across the selected domains (BP, labs, demographics, diet/supplements).
+
+4. **Construct the treatment variable**
+   The NHANES variable `any_dietary_supplements_taken` is recoded into a binary treatment:
+
+   * `any_dietary_supplements_taken == 1` → `treatment_supplement = 1`
+   * `any_dietary_supplements_taken == 2` → `treatment_supplement = 0`
+   * Other codes or missing values → `NaN` (these rows are later dropped before modeling).
+
+5. **Expose a clean analysis dataset**
+   The final dataframe includes:
+
+   * ID: `respondent_sequence_number`
+   * Outcomes: `sbp_mean`, `dbp_mean`, `fasting_glucose_mg_dl`
+   * Treatment: `treatment_supplement`
+   * Covariates: age, sex, BMI, weight, waist, lipids, hs-CRP.
+
+#### Return type
+
+```python
+pd.DataFrame
+```
+
+---
+
+### 1.3. `get_y_t_x()`
 
 ```python
 from econml_utils import get_y_t_x
@@ -104,29 +173,31 @@ y, t, X, covariate_cols = get_y_t_x(
 )
 ```
 
-**Purpose**
-
-Given the merged analysis dataframe from `build_analysis_df`, this helper extracts:
-
-* `y` – outcome series
-* `t` – treatment indicator (0/1)
-* `X` – covariate matrix
-* `covariate_cols` – list of covariate column names
-
-**Signature**
+#### Signature
 
 ```python
 def get_y_t_x(
     df: pd.DataFrame,
     outcome_col: str,
     treatment_col: str = "treatment_supplement",
-) -> Tuple[pd.Series, pd.Series, pd.DataFrame, List[str]]:
+) -> tuple[pd.Series, pd.Series, pd.DataFrame, list[str]]:
     ...
 ```
 
-**Covariate set**
+#### Purpose
 
-The function uses a **fixed candidate list** and keeps only those present:
+Given the merged analysis dataframe returned by `build_analysis_df()`, this function extracts:
+
+* `y` – outcome vector (e.g. `sbp_mean`).
+* `t` – treatment indicator (0/1) for supplement use.
+* `X` – matrix of baseline covariates.
+* `covariate_cols` – ordered list of covariate names used in `X`.
+
+This ensures that the **EconML** models and the **OLS baseline** use the **same inputs** for fair comparison.
+
+#### Covariate Set
+
+`get_y_t_x()` selects a fixed, clinically reasonable covariate set (only those present in `df` are kept):
 
 * `age_years`
 * `sex`
@@ -135,55 +206,104 @@ The function uses a **fixed candidate list** and keeps only those present:
 * `waist_circumference_cm`
 * `total_cholesterol_mg_dl`
 * `direct_hdl_cholesterol_mg_dl`
-* `LBXTLG`
-* `fasting_glucose_mg_dl`
+* `LBXTLG` (triglycerides)
+* `fasting_glucose_mg_dl` (used as a covariate when the outcome is NOT glucose)
 * `hs_c_reactive_protein_mg_l`
+
+The function:
+
+1. Validates that `outcome_col` and `treatment_col` exist.
+2. Filters the candidate covariates to those actually present in `df`.
+3. Returns `y`, `t`, `X` and the list of covariate names.
 
 ---
 
-## 2. DRLearner API (EconML)
+## 2. EconML DRLearner API (`econml.API.py`)
 
-All EconML functionality is wrapped inside `econml.API.py`.
+The EconML logic is wrapped in a small set of functions, so that notebooks can stay clean and “tutorial-like.”
 
-We use:
+At a high level, each experiment follows these steps:
 
-* `econml.dr.DRLearner`
-* `sklearn.linear_model.LogisticRegression` for the propensity model
-* `sklearn.linear_model.LinearRegression` for the outcome model
+1. Build the merged dataset (`build_analysis_df()`).
+2. Extract `(Y, T, X)` (`get_y_t_x()`).
+3. Drop rows with any missing values in `Y`, `T`, or `X`.
+4. Fit a **Doubly Robust Learner (DRLearner)**.
+5. Compute:
 
-The main internal helper is `_fit_drl_for_outcome`, and you typically do **not** call it directly from notebooks. Instead, you use the two public functions:
+   * Overall **Average Treatment Effect (ATE)**.
+   * **Conditional Average Treatment Effects (CATEs)** per individual.
+   * Mean CATE by **age quartiles** and **BMI quartiles**.
 
-* `run_sbp_supplement_experiment`
-* `run_glucose_supplement_experiment`
+We also provide an OLS baseline for comparison.
 
-### 2.1. `_fit_drl_for_outcome` (internal)
+---
+
+### 2.1. Internal Helper: `_fit_drl_for_outcome` (notebook users normally don’t call this)
 
 ```python
-from econml.API import _fit_drl_for_outcome  # usually not called directly
+from econml.API import _fit_drl_for_outcome  # internal helper, not the main public API
 ```
 
-**Signature**
+#### Signature
 
 ```python
 def _fit_drl_for_outcome(
     outcome_col: str,
     treatment_col: str = "treatment_supplement",
     random_state: int = 42,
-) -> Dict[str, Any]:
+) -> dict:
     ...
 ```
 
-**Steps**
+#### Purpose
 
-1. Calls `build_analysis_df()` to construct the merged NHANES dataset.
+Encapsulate **all shared DRLearner logic** so that:
 
-2. Calls `get_y_t_x(...)` to get `(Y, T, X, covariates)`.
+* `run_sbp_supplement_experiment(...)` and
+* `run_glucose_supplement_experiment(...)`
 
-3. Drops rows with any missing data in `Y`, `T`, or `X`.
+can be implemented as thin wrappers that pass the appropriate outcome.
 
-4. Fits a `DRLearner`:
+#### Detailed Steps
+
+1. **Build the merged dataset**
 
    ```python
+   analysis_df = build_analysis_df()
+   ```
+
+2. **Extract Y, T, and X**
+
+   ```python
+   y, t, X, covariate_cols = get_y_t_x(
+       analysis_df,
+       outcome_col=outcome_col,
+       treatment_col=treatment_col,
+   )
+   ```
+
+3. **Drop missing observations**
+
+   ```python
+   mask = (~y.isna()) & (~t.isna()) & (~X.isna().any(axis=1))
+   y_clean = y[mask]
+   t_clean = t[mask]
+   X_clean = X[mask]
+   ```
+
+   This simple strategy (complete-case analysis) keeps the tutorial focused on causal methods rather than missing-data techniques.
+
+4. **Fit the DRLearner**
+
+   We use:
+
+   * `LinearRegression()` as the outcome model (`E[Y | X, T]`).
+   * `LogisticRegression(max_iter=2000, solver="lbfgs")` as the propensity model (`P(T=1 | X)`).
+
+   ```python
+   from econml.dr import DRLearner
+   from sklearn.linear_model import LinearRegression, LogisticRegression
+
    dr = DRLearner(
        model_regression=LinearRegression(),
        model_propensity=LogisticRegression(max_iter=2000, solver="lbfgs"),
@@ -192,124 +312,224 @@ def _fit_drl_for_outcome(
    dr.fit(Y=y_clean, T=t_clean, X=X_clean)
    ```
 
-5. Computes:
+5. **Compute ATE and CATE**
 
-   * ATE using `dr.ate(X_clean)`
-   * Individual CATEs using `dr.effect(X_clean)`
+   * **ATE**: average treatment effect among the cleaned sample
 
-6. Stores the CATEs in a copy of the cleaned dataframe as a new column:
+     ```python
+     ate = float(dr.ate(X_clean))
+     ```
+
+   * **CATE** (individual-level effect for each row):
+
+     ```python
+     tau_hat = dr.effect(X_clean)
+     tau_col = f"tau_hat_{outcome_col}"
+     ```
+
+6. **Attach CATEs and build heterogeneity summaries**
 
    ```python
-   tau_col = f"tau_hat_{outcome_col}"
+   analysis_df_clean = analysis_df.loc[mask].copy()
    analysis_df_clean[tau_col] = tau_hat
    ```
 
-7. Creates heterogeneity bins:
+   * **Age bins** (quartiles of `age_years`):
 
-   * `age_bin` – quartiles of `age_years`
-   * `bmi_bin` – quartiles of `body_mass_index_kg_m2`
+     ```python
+     analysis_df_clean["age_bin"] = pd.qcut(
+         analysis_df_clean["age_years"],
+         4,
+         labels=["Q1 (youngest)", "Q2", "Q3", "Q4 (oldest)"],
+     )
+     ```
 
-8. Computes mean CATE per bin:
+   * **BMI bins** (quartiles of `body_mass_index_kg_m2`):
 
-   * `age_effects = mean(tau_hat) by age_bin`
-   * `bmi_effects = mean(tau_hat) by bmi_bin`
+     ```python
+     analysis_df_clean["bmi_bin"] = pd.qcut(
+         analysis_df_clean["body_mass_index_kg_m2"],
+         4,
+         labels=["Q1 (leanest)", "Q2", "Q3", "Q4 (highest BMI)"],
+     )
+     ```
 
-**Return value**
+   * **Mean effect by bin**:
 
-```python
-{
-    "ate": float,
-    "covariates": list[str],
-    "cate_df": pd.DataFrame,    # includes tau_hat_* column
-    "tau_col": str,
-    "age_effects": pd.Series or None,
-    "bmi_effects": pd.Series or None,
-}
-```
+     ```python
+     age_effects = (
+         analysis_df_clean.groupby("age_bin")[tau_col]
+         .mean()
+         .sort_index()
+     )
 
-### 2.2. `run_sbp_supplement_experiment`
+     bmi_effects = (
+         analysis_df_clean.groupby("bmi_bin")[tau_col]
+         .mean()
+         .sort_index()
+     )
+     ```
+
+7. **Return value**
+
+   ```python
+   {
+       "ate": ate,
+       "covariates": covariate_cols,
+       "cate_df": analysis_df_clean,   # includes tau_col, age_bin, bmi_bin
+       "tau_col": tau_col,
+       "age_effects": age_effects,
+       "bmi_effects": bmi_effects,
+   }
+   ```
+
+---
+
+### 2.2. `run_sbp_supplement_experiment(...)`
 
 ```python
 from econml.API import run_sbp_supplement_experiment
 
-results = run_sbp_supplement_experiment(random_state=42)
+results_sbp = run_sbp_supplement_experiment(random_state=42)
 ```
 
-**Signature**
+#### Signature
 
 ```python
-def run_sbp_supplement_experiment(random_state: int = 42) -> Dict[str, Any]:
+def run_sbp_supplement_experiment(random_state: int = 42) -> dict:
     ...
 ```
 
-**Purpose**
+#### Scientific Question
 
-Runs the DRLearner pipeline with:
+> **What is the causal effect of “any dietary supplement use” (`treatment_supplement`) on mean systolic blood pressure (`sbp_mean`)?**
 
-* Outcome: `sbp_mean`
-* Treatment: `treatment_supplement`
+This is the **primary outcome** in the project and maps directly to the assignment’s:
 
-Internally calls `_fit_drl_for_outcome(outcome_col="sbp_mean", ...)`.
+* **Data Preparation**
+* **Defining treatment/control groups**
+* **Causal effect estimation**
+* **Heterogeneity analysis**
 
-**Return value**
+#### Internals
+
+This function is a thin wrapper around `_fit_drl_for_outcome`:
 
 ```python
-{
-    "ate_sbp": float,           # ATE of supplement use on sbp_mean
-    "covariates": list[str],    # covariate names in X
-    "cate_df": pd.DataFrame,    # cleaned df with tau_hat_sbp_mean
-    "tau_col": str,             # "tau_hat_sbp_mean"
-    "age_effects": pd.Series or None,  # mean CATE by age_bin
-    "bmi_effects": pd.Series or None,  # mean CATE by bmi_bin
+core = _fit_drl_for_outcome(
+    outcome_col="sbp_mean",
+    treatment_col="treatment_supplement",
+    random_state=random_state,
+)
+```
+
+It then renames the ATE key to make the dictionary more self-documenting:
+
+```python
+results = {
+    "ate_sbp": core["ate"],
+    "covariates": core["covariates"],
+    "cate_df": core["cate_df"],
+    "tau_col": core["tau_col"],           # "tau_hat_sbp_mean"
+    "age_effects": core["age_effects"],
+    "bmi_effects": core["bmi_effects"],
 }
 ```
 
-This is the main entry point for the **primary outcome** in the tutorial notebook.
+#### Return Value
 
-### 2.3. `run_glucose_supplement_experiment`
+```python
+{
+    "ate_sbp": float,         # Average treatment effect on sbp_mean
+    "covariates": list[str],  # Covariate names used in X
+    "cate_df": pd.DataFrame,  # Cleaned data with tau_hat_sbp_mean, age_bin, bmi_bin
+    "tau_col": str,           # Name of the CATE column ("tau_hat_sbp_mean")
+    "age_effects": pd.Series, # Mean effect per age quartile
+    "bmi_effects": pd.Series, # Mean effect per BMI quartile
+}
+```
+
+These fields are used in `econml.example.ipynb` to:
+
+* Report the **ATE** (supplement vs no supplement on SBP).
+* Plot **heterogeneous effects** by age and BMI.
+* Discuss which subgroups benefit more/less.
+
+---
+
+### 2.3. `run_glucose_supplement_experiment(...)`
 
 ```python
 from econml.API import run_glucose_supplement_experiment
 
-results = run_glucose_supplement_experiment(random_state=42)
+results_glu = run_glucose_supplement_experiment(random_state=42)
 ```
 
-**Signature**
+#### Signature
 
 ```python
-def run_glucose_supplement_experiment(random_state: int = 42) -> Dict[str, Any]:
+def run_glucose_supplement_experiment(random_state: int = 42) -> dict:
     ...
 ```
 
-**Purpose**
+#### Scientific Question
 
-Runs the same DRLearner pipeline with:
+> **What is the causal effect of “any dietary supplement use” on fasting glucose (`fasting_glucose_mg_dl`)?**
 
-* Outcome: `fasting_glucose_mg_dl`
-* Treatment: `treatment_supplement`
+This provides a **secondary cardiometabolic outcome** and demonstrates reuse of the same API for a different `Y`.
 
-Internally calls `_fit_drl_for_outcome(outcome_col="fasting_glucose_mg_dl", ...)`.
+#### Internals
 
-**Return value**
+Exactly the same pipeline as for SBP, but with:
+
+* `outcome_col = "fasting_glucose_mg_dl"`
 
 ```python
-{
-    "ate_glucose": float,       # ATE of supplement use on fasting_glucose_mg_dl
-    "covariates": list[str],
-    "cate_df": pd.DataFrame,    # cleaned df with tau_hat_fasting_glucose_mg_dl
-    "tau_col": str,             # "tau_hat_fasting_glucose_mg_dl"
-    "age_effects": pd.Series or None,
-    "bmi_effects": pd.Series or None,
+core = _fit_drl_for_outcome(
+    outcome_col="fasting_glucose_mg_dl",
+    treatment_col="treatment_supplement",
+    random_state=random_state,
+)
+```
+
+Return dictionary:
+
+```python
+results = {
+    "ate_glucose": core["ate"],
+    "covariates": core["covariates"],
+    "cate_df": core["cate_df"],           # includes tau_hat_fasting_glucose_mg_dl
+    "tau_col": core["tau_col"],           # "tau_hat_fasting_glucose_mg_dl"
+    "age_effects": core["age_effects"],
+    "bmi_effects": core["bmi_effects"],
 }
 ```
 
-This is used for the **secondary outcome** in the example notebook.
+#### Return Value
+
+```python
+{
+    "ate_glucose": float,
+    "covariates": list[str],
+    "cate_df": pd.DataFrame,
+    "tau_col": str,
+    "age_effects": pd.Series,
+    "bmi_effects": pd.Series,
+}
+```
+
+In the example notebook, we:
+
+* Compare the **sign and magnitude** of the ATE for SBP vs glucose.
+* Check whether heterogeneity patterns (by age/BMI) are consistent across outcomes.
 
 ---
 
-## 3. OLS Baseline API
+## 3. OLS Baseline (`run_ols_for_outcome`)
 
-### 3.1. `run_ols_for_outcome`
+To address the assignment’s **“Bonus: compare with traditional methods”** requirement, we provide a simple OLS baseline API.
+
+### 3.1. `run_ols_for_outcome(...)`
 
 ```python
 from econml.API import run_ols_for_outcome
@@ -318,118 +538,212 @@ ols_sbp = run_ols_for_outcome("sbp_mean")
 ols_glu = run_ols_for_outcome("fasting_glucose_mg_dl")
 ```
 
-**Signature**
+#### Signature
 
 ```python
 def run_ols_for_outcome(
     outcome_col: str,
     treatment_col: str = "treatment_supplement",
-) -> Dict[str, Any]:
+) -> dict:
     ...
 ```
 
-**Purpose**
+#### Model
 
-Provides a **traditional OLS baseline** to compare against EconML:
+We fit a standard linear regression:
 
 [
-Y = \beta_0 + \beta_1 \cdot \text{treatment} + \beta_2 X_1 + \dots + \beta_p X_p + \varepsilon
+Y = \beta_0 + \beta_1 \cdot \text{treatment_supplement} + \beta_2 X_1 + \dots + \beta_p X_p + \varepsilon
 ]
 
-We interpret `β₁` (the coefficient on the treatment variable) as the simple regression-based estimate of the treatment effect, controlling linearly for covariates.
+* `Y` = outcome (e.g. `sbp_mean` or `fasting_glucose_mg_dl`)
+* `treatment_supplement` = 1 if any supplement, 0 if none
+* `X` = same covariates returned by `get_y_t_x()`
 
-**Steps**
+We interpret the **coefficient on the treatment variable (`β₁`)** as:
 
-1. Calls `build_analysis_df()`.
+> “OLS estimate of the treatment effect, assuming a **linear model** and no strong violations (e.g. unmeasured confounding, nonlinearity).”
 
-2. Calls `get_y_t_x(df, outcome_col, treatment_col)` to get `(Y, T, X, covariates)`.
+This allows us to directly compare:
 
-3. Drops rows with missing values.
+* `DRLearner ATE` vs `OLS treatment coefficient` for the same outcome and covariates.
 
-4. Builds a design matrix:
+#### Steps
+
+1. Build the analysis dataframe:
+
+   ```python
+   df = build_analysis_df()
+   ```
+
+2. Extract `y`, `t`, `X`:
+
+   ```python
+   y, t, X, covariate_cols = get_y_t_x(
+       df,
+       outcome_col=outcome_col,
+       treatment_col=treatment_col,
+   )
+   ```
+
+3. Drop missing values (same mask strategy as DRLearner).
+
+4. Construct the design matrix with treatment as the **first column**:
 
    ```python
    T_matrix = t_clean.to_numpy().reshape(-1, 1)
    X_ols = np.column_stack([T_matrix, X_clean.to_numpy()])
    ```
 
-5. Fits:
+5. Fit linear regression:
 
    ```python
+   from sklearn.linear_model import LinearRegression
+
    ols = LinearRegression()
    ols.fit(X_ols, y_clean.to_numpy())
-   ```
-
-6. Extracts the **first coefficient** as the treatment effect:
-
-   ```python
    treatment_coef = float(ols.coef_[0])
    ```
 
-**Return value**
+#### Return Value
 
 ```python
 {
-    "outcome": str,             # outcome_col
-    "treatment_coef": float,    # OLS coefficient on treatment
-    "covariates": list[str],    # same covariates as EconML
-    "n_obs": int,               # number of observations used
+    "outcome": outcome_col,     # e.g., "sbp_mean"
+    "treatment_coef": float,    # OLS coefficient on treatment_supplement
+    "covariates": list[str],    # Covariates in the model
+    "n_obs": int,               # Number of observations used after dropping NaNs
 }
 ```
 
-In the example notebook, we place the DRLearner ATE and this OLS treatment coefficient side-by-side in a small comparison table.
+In `econml.example.ipynb` we build a small comparison table like:
+
+| Outcome                 | DRLearner ATE | OLS treatment coef |
+| ----------------------- | ------------- | ------------------ |
+| `sbp_mean`              | …             | …                  |
+| `fasting_glucose_mg_dl` | …             | …                  |
+
+and discuss similarities/differences.
 
 ---
 
-## 4. How the API is used in notebooks
+## 4. How the API Is Used in the Notebooks
 
-### 4.1. `econml.API.ipynb`
+### 4.1. `econml.API.ipynb` – API Demonstration
 
-This notebook:
+This notebook focuses on the **tool API itself** (not the full project story):
 
-* Demonstrates how to import and call the API functions:
+Typical flow:
 
-  * `build_analysis_df`, `get_y_t_x`
-  * `run_sbp_supplement_experiment`
-  * `run_glucose_supplement_experiment`
-  * `run_ols_for_outcome`
-* Shows the structure of the returned dictionaries.
-* Explains the meaning of:
+1. **Import and inspect**:
 
-  * ATE (`ate_sbp`, `ate_glucose`)
-  * CATEs (`tau_hat_*`)
-  * Heterogeneity summaries (`age_effects`, `bmi_effects`)
+   ```python
+   from econml_utils import build_analysis_df, get_y_t_x
+   from econml.API import (
+       run_sbp_supplement_experiment,
+       run_glucose_supplement_experiment,
+       run_ols_for_outcome,
+   )
+   ```
 
-### 4.2. `econml.example.ipynb`
+2. **Show merged dataset structure** using `build_analysis_df()`.
 
-This is the **main tutorial**:
+3. **Show Y/T/X shapes** and covariate names via `get_y_t_x()`.
 
-* Introduces the intervention (“any dietary supplement use”).
-* Uses `build_analysis_df()` to explore the merged NHANES dataset.
-* Uses `get_y_t_x()` to explain `Y`, `T`, and `X`.
-* Calls:
+4. **Run DRLearner experiments** and print ATE + heterogeneity summaries:
 
-  * `run_sbp_supplement_experiment()` for the primary outcome
-  * `run_glucose_supplement_experiment()` for the secondary outcome
-* Visualizes heterogeneity by age and BMI.
-* Calls `run_ols_for_outcome()` for both outcomes.
-* Compares EconML DRLearner ATE and OLS coefficients to close the loop with the assignment tasks.
+   ```python
+   sbp_results = run_sbp_supplement_experiment()
+   glu_results = run_glucose_supplement_experiment()
+   ```
+
+5. **Run OLS baselines**:
+
+   ```python
+   ols_sbp = run_ols_for_outcome("sbp_mean")
+   ols_glu = run_ols_for_outcome("fasting_glucose_mg_dl")
+   ```
+
+This notebook serves as a **mini-reference** for how to program against the API.
 
 ---
 
-## 5. Summary
+### 4.2. `econml.example.ipynb` – Full Project Example
 
-* The **utils layer** (`econml_utils.py`) handles **data preparation** and construction of `Y`, `T`, and `X`.
-* The **API layer** (`econml.API.py`) wraps **EconML DRLearner** and **OLS** into three clean functions:
+This notebook is the **project tutorial** the professor will read:
 
-  * `run_sbp_supplement_experiment`
-  * `run_glucose_supplement_experiment`
-  * `run_ols_for_outcome`
-* Notebooks work only through this API, which keeps the project:
+1. **Motivation & clinical question**
 
-  * Easy to understand,
-  * Easy to reproduce,
-  * Consistent with the MSML610 / Causify-style “API + example” pattern.
+   * Cardiometabolic risk and supplements.
+   * NHANES as a large, representative dataset.
 
-```
-```
+2. **Data preparation and treatment definition** (calls into `econml_utils`):
+
+   * Build dataset via `build_analysis_df()`.
+   * Explain `treatment_supplement` (treatment vs control groups).
+   * Summarize baseline covariates.
+
+3. **Causal effect estimation with EconML**:
+
+   * Call `run_sbp_supplement_experiment()`.
+   * Report `ate_sbp`.
+   * Explain **DRLearner** intuition (doubly robust, machine-learning based).
+
+4. **Heterogeneity analysis**:
+
+   * Plot `age_effects` and `bmi_effects`.
+   * Discuss which subgroups appear to benefit more/less.
+
+5. **Secondary outcome**:
+
+   * Call `run_glucose_supplement_experiment()`.
+   * Compare ATE for SBP vs glucose.
+
+6. **Comparison with traditional OLS**:
+
+   * Call `run_ols_for_outcome("sbp_mean")` and `run_ols_for_outcome("fasting_glucose_mg_dl")`.
+   * Build a simple comparison table.
+   * Interpret differences and discuss why machine-learning based causal methods (DRLearner) can be preferable.
+
+7. **Conclusion**:
+
+   * Summarize the **estimated treatment effects**.
+   * Highlight how the **API layer** made it easy to:
+
+     * Swap outcomes.
+     * Reuse covariate definitions.
+     * Compare DRLearner vs OLS.
+
+---
+
+## 5. Summary of the API Surface
+
+For quick reference, here is the full API surface you use from notebooks:
+
+### From `econml_utils.py`
+
+| Function                                    | Description                                                   |
+| ------------------------------------------- | ------------------------------------------------------------- |
+| `build_analysis_df()`                       | Load, merge, and engineer NHANES features into one dataframe. |
+| `get_y_t_x(df, outcome_col, treatment_col)` | Extract Y, T, X and covariate list for modeling.              |
+
+### From `econml.API.py`
+
+| Function                                 | Outcome                 | Purpose                                         |
+| ---------------------------------------- | ----------------------- | ----------------------------------------------- |
+| `_fit_drl_for_outcome(...)`              | Generic (internal)      | Shared DRLearner pipeline for any outcome.      |
+| `run_sbp_supplement_experiment(...)`     | `sbp_mean`              | Primary causal experiment (SBP vs supplements). |
+| `run_glucose_supplement_experiment(...)` | `fasting_glucose_mg_dl` | Secondary experiment (glucose vs supplements).  |
+| `run_ols_for_outcome(outcome_col, ...)`  | any of the above        | OLS baseline for comparison with EconML.        |
+
+This separation between **utils**, **API**, and **example** keeps the project:
+
+* Aligned with the **MSML610 tutorial template**,
+* Easy to read and review,
+* And directly connected to the assignment tasks:
+
+  * Data preparation,
+  * Treatment group definition,
+  * Causal effect estimation with EconML,
+  * Heterogeneity analysis,
+  * Comparison with traditional methods.
