@@ -1,0 +1,11 @@
+
+wandb:
+  project: "stock_price_forecasting"
+  entity: "othakur"        # your W&B username
+  job_type: "training"
+  group: "time_series_models"
+  log_model: true
+  save_code: true
+  log_plots: true
+  log_predictions: true
+  log_residuals: true
