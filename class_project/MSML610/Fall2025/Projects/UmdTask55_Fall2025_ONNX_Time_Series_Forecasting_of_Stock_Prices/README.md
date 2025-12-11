@@ -1,6 +1,6 @@
 # ONNX Time Series Forecasting of Stock Prices
 
-This project implements an ensemble-based time series forecasting system for stock prices using ONNX Runtime. It features multiple deep learning models (LSTM, TCN, XGBoost) optimized with ONNX for fast inference and includes an interactive Streamlit dashboard for visualization.
+This project implements an ensemble-based time series forecasting system for live stock prices using ONNX Runtime. It features multiple deep learning models (LSTM, TCN, XGBoost) optimized with ONNX for fast inference and includes an interactive Streamlit dashboard for visualization.
 
 ![ONNX Forecasting Dashboard](onnx_forecasting_streamlit.png)
 
