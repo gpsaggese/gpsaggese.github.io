@@ -14,6 +14,18 @@ https://api.wandb.ai/links/siva09-university-of-maryland/s51yro7n
 
 ---
 
+## System Architecture Flowchart
+
+This project follows a fully modular pipeline, combining sentiment modeling, LSTM forecasting, and reinforcement learning.  
+The flowchart below summarizes the complete workflow:
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/sivaakash09/umd_classes/clean_only_trader/rl_sentiment_trader.png" width="700" />
+</p>
+
+**Figure: End-to-end architecture from data ingestion to RL-based trading decisions.**
+---
+
 ## Dataset Suggestions & Sources  
 
 - **Dataset**:  
@@ -289,15 +301,35 @@ Then open the printed URL in a browser and navigate to:
 
 `/class_project/MSML610/Fall2025/Projects/sentiment_rl_trader/sentiment_rl_trader_ipynb`
 
-## System Architecture Flowchart
+--- 
 
-This project follows a fully modular pipeline, combining sentiment modeling, LSTM forecasting, and reinforcement learning.  
-The flowchart below summarizes the complete workflow:
+### Results & Visualizations
+Generated under `/plots/:`
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/sivaakash09/umd_classes/clean_only_trader/rl_sentiment_trader.png" width="700" />
-</p>
+* **`equity_curve.png`** — Overall portfolio growth
 
-**Figure: End-to-end architecture from data ingestion to RL-based trading decisions.**
+* **`AAPL_equity.png`** — Example single-ticker curve
+
+### Equity Curve Behaviour
+
+```yaml
+==============================
+      RL PERFORMANCE SUMMARY
+==============================
+Total Trades:           55
+Long Trades:            14
+Short Trades:           18
+Win Rate:               22.58%
+Final Return:           2.46%
+Max Drawdown:           -0.47%
+Sharpe Ratio:           3.157
+Start Equity:           1.0000
+End Equity:             1.0246
+==============================
+```
+
+
+
+
 
 
