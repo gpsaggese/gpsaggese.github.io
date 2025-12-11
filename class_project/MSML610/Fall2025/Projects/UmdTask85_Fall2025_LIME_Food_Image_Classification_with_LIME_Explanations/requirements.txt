@@ -5,3 +5,5 @@ ipykernel
 matplotlib
 tensorboard
 scikit-image
+notebook
+Pillow
