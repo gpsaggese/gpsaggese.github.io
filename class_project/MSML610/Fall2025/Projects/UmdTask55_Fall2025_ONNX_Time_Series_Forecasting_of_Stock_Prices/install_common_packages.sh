@@ -13,26 +13,15 @@ apt-get install -y --no-install-recommends \
     git \
     vim \
     curl \
-    sudo 
+    sudo
 
-echo ">>> Installing Python packages..."
-pip3 install --no-cache-dir \
-    ipython \
-    tornado==6.1 \
-    jupyter-client==7.3.2 \
-    jupyter-contrib-core \
-    jupyter-contrib-nbextensions \
-    yapf \
-    psycopg2-binary \
-    numpy \
-    pandas \
-    matplotlib \
-    seaborn \
-    scikit-learn \
-    tensorflow \
-    tf2onnx \
-    onnx \
-    onnxruntime 
+echo ">>> Installing uv..."
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="/root/.local/bin:$PATH"
+
+echo ">>> Installing Python packages from pyproject.toml..."
+cd /install
+uv pip install --system . 
 
 
 

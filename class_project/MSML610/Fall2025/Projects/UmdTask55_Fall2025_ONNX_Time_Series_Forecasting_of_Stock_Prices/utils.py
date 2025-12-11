@@ -185,3 +185,170 @@ def compare_frameworks_inference(
         'mean_difference': float(mean_diff),
         'numerically_close': np.allclose(tf_pred, onnx_pred, rtol=1e-4, atol=1e-4)
     }
+
+
+def convert_tcn_to_onnx(
+    model,
+    input_shape: tuple,
+    output_path: str,
+    opset_version: int = 12
+) -> str:
+    """
+    Convert DARTS TCN model to ONNX format.
+
+    Args:
+        model: Trained DARTS TCNModel
+        input_shape: Input shape (sequence_length, n_features)
+        output_path: Path to save ONNX model
+        opset_version: ONNX opset version
+
+    Returns:
+        Path to saved ONNX model
+    """
+    import torch
+    import torch.nn as nn
+
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+    try:
+        # Get the underlying PyTorch model and move to CPU for ONNX export
+        torch_model = model.model
+        torch_model.cpu()  # Move model to CPU to avoid device mismatch
+        torch_model.float()  # Convert to Float32 to match dummy input dtype
+        torch_model.eval()
+
+        # DARTS TCN models with past_covariates expect input as (target + past_covariates)
+        # When trained with target (1 channel) + past_covariates (13 channels) = 14 total channels
+        # We need to create a wrapper that properly formats the input
+        class TCNONNXWrapper(nn.Module):
+            def __init__(self, tcn_module):
+                super().__init__()
+                self.tcn_module = tcn_module
+
+            def forward(self, x):
+                # Input: (batch, seq, features) where features=13 (all features including target)
+                # DARTS TCN expects: (batch, channels, seq) where channels = target + covariates
+                # Since covariates include the target already, we need 14 channels:
+                # - First channel: target (Close price)
+                # - Next 13 channels: all covariates (including Close)
+
+                batch_size, seq_len, n_features = x.shape
+
+                # Transpose to (batch, features, seq)
+                x = x.transpose(1, 2)  # (batch, 13, seq)
+
+                # Extract target (first channel is Close price)
+                target = x[:, 0:1, :]  # (batch, 1, seq)
+
+                # Concatenate target + all covariates to get 14 channels
+                # This matches the training setup: target=Close, past_covariates=all 13 features
+                x = torch.cat([target, x], dim=1)  # (batch, 14, seq)
+
+                # Process through residual blocks
+                for res_block in self.tcn_module.res_blocks:
+                    x = res_block(x)
+
+                # Transpose back to (batch, seq, features)
+                x = x.transpose(1, 2)
+
+                # Extract the last output_chunk_length predictions
+                # Shape: (batch, output_chunk_length, target_size)
+                x = x[:, -self.tcn_module.output_chunk_length:, :self.tcn_module.target_size]
+
+                # If output_chunk_length=1, squeeze to (batch, target_size)
+                if self.tcn_module.output_chunk_length == 1:
+                    x = x.squeeze(1)
+
+                return x
+
+        wrapped_model = TCNONNXWrapper(torch_model)
+        wrapped_model.eval()
+
+        # Create dummy input in standard format (batch, sequence_length, n_features)
+        sequence_length, n_features = input_shape
+        dummy_input = torch.randn(1, sequence_length, n_features, dtype=torch.float32)
+
+        print(f"Debug: Exporting TCN with input shape: {dummy_input.shape}")
+
+        # Export to ONNX
+        torch.onnx.export(
+            wrapped_model,
+            dummy_input,
+            output_path,
+            input_names=['input'],
+            output_names=['output'],
+            dynamic_axes={
+                'input': {0: 'batch_size'},
+                'output': {0: 'batch_size'}
+            },
+            opset_version=opset_version,
+            do_constant_folding=True
+        )
+
+        print(f"TCN model successfully converted to ONNX: {output_path}")
+        return output_path
+
+    except Exception as e:
+        import traceback
+        print(f"Warning: TCN ONNX conversion failed: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        print("The model can still be used with native DARTS inference.")
+        return None
+
+
+def convert_xgboost_to_onnx(
+    pipeline,
+    n_features: int,
+    output_path: str,
+    target_opset: int = 12
+) -> str:
+    """
+    Convert XGBoost pipeline to ONNX format.
+
+    Args:
+        pipeline: Trained sklearn Pipeline with XGBoost
+        n_features: Number of input features (flattened)
+        output_path: Path to save ONNX model
+        target_opset: ONNX opset version
+
+    Returns:
+        Path to saved ONNX model
+    """
+    from skl2onnx import convert_sklearn, update_registered_converter
+    from skl2onnx.common.data_types import FloatTensorType
+    from onnxmltools.convert.xgboost.operator_converters.XGBoost import convert_xgboost
+    from skl2onnx.common.shape_calculator import calculate_linear_regressor_output_shapes
+    from xgboost import XGBRegressor
+
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+    try:
+        # Register XGBoost converter
+        update_registered_converter(
+            XGBRegressor,
+            'XGBoostXGBRegressor',
+            calculate_linear_regressor_output_shapes,
+            convert_xgboost,
+            options={'nocl': [True, False]}
+        )
+
+        # Define initial types
+        initial_type = [('input', FloatTensorType([None, n_features]))]
+        target_opset_dict = {'': target_opset, 'ai.onnx.ml': 3}
+        # Convert to ONNX
+        onnx_model = convert_sklearn(
+            pipeline,
+            initial_types=initial_type,
+            target_opset=target_opset_dict
+        )
+
+        # Save ONNX model
+        with open(output_path, 'wb') as f:
+            f.write(onnx_model.SerializeToString())
+
+        print(f"XGBoost model successfully converted to ONNX: {output_path}")
+        return output_path
+
+    except Exception as e:
+        print(f"Error converting XGBoost to ONNX: {str(e)}")
+        raise

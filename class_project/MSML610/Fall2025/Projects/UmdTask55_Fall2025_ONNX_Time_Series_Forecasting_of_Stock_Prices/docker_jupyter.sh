@@ -14,7 +14,7 @@ export JUPYTER_HOST_PORT=8888
 export JUPYTER_USE_VIM=0
 export TARGET_DIR=""
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TARGET_DIR="$(realpath "$SCRIPT_DIR/../../../MSML610/Fall2025/Projects")"
+TARGET_DIR="$SCRIPT_DIR"
 export VERBOSE=0
 
 OLD_CMD_OPTS=$@

@@ -1,518 +1,259 @@
-# ONNX Time Series Forecasting - API Documentation
+# ONNX API
 
-## Table of Contents
-1. [Introduction to ONNX](#introduction-to-onnx)
-2. [Why ONNX for Time Series Forecasting?](#why-onnx-for-time-series-forecasting)
-3. [ONNX Core Components](#onnx-core-components)
-4. [ONNX Runtime API](#onnx-runtime-api)
-5. [Custom Wrapper API](#custom-wrapper-api)
-6. [Architecture Diagrams](#architecture-diagrams)
-7. [API Reference](#api-reference)
+## Introduction
 
----
+ONNX (Open Neural Network Exchange) is an open format for representing machine learning models that enables interoperability between different frameworks. In the context of time series forecasting for financial data, ONNX provides essential infrastructure for bridging the gap between model development and production deployment.
 
-## Introduction to ONNX
+### What is ONNX?
 
-**ONNX (Open Neural Network Exchange)** is an open format designed to represent machine learning models. It enables interoperability between different AI frameworks, allowing models trained in one framework (e.g., TensorFlow, PyTorch) to be deployed in another.
+At its core, ONNX addresses several critical challenges in machine learning deployment:
 
-### Key Features
-- **Framework Interoperability**: Train in TensorFlow/PyTorch, deploy anywhere
-- **Hardware Optimization**: Optimized runtimes for CPU, GPU, and edge devices
-- **Production Ready**: Enterprise-grade inference performance
-- **Vendor Neutral**: Open-source and community-driven
+- **Framework Independence**: Train models in TensorFlow, PyTorch, or scikit-learn, then deploy anywhere
+- **Performance Optimization**: Execute models with 2-5x faster inference through optimized runtime engines
+- **Hardware Acceleration**: Support for CPU, CUDA GPU, TensorRT, and specialized accelerators
+- **Cross-Platform Deployment**: Deploy on cloud, edge devices, mobile, and browsers with consistent behavior
+- **Model Versioning**: Standardized format for tracking and deploying model versions across environments
 
-### The Problem ONNX Solves
+### Why ONNX for Stock Price Forecasting?
 
-```mermaid
-graph LR
-    A[TensorFlow Model] -->|Without ONNX| B[TensorFlow Runtime Only]
-    C[PyTorch Model] -->|Without ONNX| D[PyTorch Runtime Only]
+Traditional approaches to deploying time series models often lock teams into a specific framework ecosystem. A model trained in TensorFlow requires TensorFlow for inference, creating dependencies and limiting deployment options. ONNX provides a structured, flexible framework that addresses these challenges:
 
-    A2[TensorFlow Model] -->|With ONNX| E[ONNX Format]
-    C2[PyTorch Model] -->|With ONNX| E
-    E --> F[ONNX Runtime]
-    E --> G[TensorRT]
-    E --> H[CoreML]
-    E --> I[Mobile/Edge]
-
-    style E fill:#90EE90
-    style F fill:#87CEEB
-```
-
----
-
-## Why ONNX for Time Series Forecasting?
-
-### 1. **Cross-Framework Compatibility**
-Train LSTM/Transformer models in TensorFlow or PyTorch, deploy with ONNX Runtime for consistent inference across platforms.
-
-### 2. **Performance Optimization**
-ONNX Runtime provides:
-- **Graph Optimizations**: Operator fusion, constant folding
-- **Hardware Acceleration**: CPU (AVX, SSE), GPU (CUDA, ROCm), specialized accelerators
-- **Memory Efficiency**: Reduced memory footprint
-
-### 3. **Production Deployment**
-- Simplified deployment pipeline
-- Consistent inference API
-- Lower latency and higher throughput
-- Smaller model footprint
-
-### 4. **Model Versioning**
-- Standardized model format
-- Version control friendly
-- Easy model updates without code changes
-
----
-
-## ONNX Core Components
-
-### ONNX Model Structure
+- **Production Deployment**: Optimized inference engines reduce latency for real-time trading systems
+- **Model Portability**: Train with the best framework for development, deploy with the best runtime for production
+- **Hardware Flexibility**: Seamlessly switch between CPU and GPU execution without model changes
+- **Integration Simplicity**: Standard format simplifies integration with existing trading infrastructure
 
 ```mermaid
-graph TD
-    A[ONNX Model] --> B[ModelProto]
-    B --> C[Graph]
-    B --> D[Metadata]
-    C --> E[Nodes/Operators]
-    C --> F[Inputs]
-    C --> G[Outputs]
-    C --> H[Initializers/Weights]
-    E --> I[Operator Type]
-    E --> J[Attributes]
-    E --> K[Input/Output Names]
+flowchart LR
+    A[TensorFlow/Keras] --> D[ONNX Format]
+    B[PyTorch/Darts] --> D
+    C[XGBoost] --> D
+    D --> E[ONNX Runtime]
+    E --> F[CPU Inference]
+    E --> G[GPU Inference]
+    E --> H[Edge Devices]
 ```
 
-### Key Classes
+## Native ONNX API Overview
 
-#### 1. **ModelProto**
-The top-level container for an ONNX model.
+The native ONNX ecosystem consists of two primary components that work together to enable framework-independent machine learning.
 
-```python
-import onnx
+### ONNX Model Format
 
-model = onnx.load("model.onnx")
-print(f"IR Version: {model.ir_version}")
-print(f"Producer: {model.producer_name}")
-print(f"Opset Version: {model.opset_import[0].version}")
-```
+The ONNX model format provides a standardized representation of computational graphs. A model consists of nodes representing operations and edges representing data flow between operations. Each node has specific operator types, attributes, and input/output specifications.
 
-#### 2. **Graph**
-Defines the computational graph.
+The format captures the complete computational graph including weights, biases, and layer configurations. This allows any ONNX-compatible runtime to load and execute the model without requiring the original training framework.
 
-```python
-graph = model.graph
-print(f"Nodes: {len(graph.node)}")
-print(f"Inputs: {[input.name for input in graph.input]}")
-print(f"Outputs: {[output.name for output in graph.output]}")
-```
+**Model Structure Components:**
+- **Graph**: The computational structure with nodes and edges
+- **Nodes**: Individual operations like matrix multiplication, convolution, or activation functions
+- **Initializers**: Model parameters like weights and biases
+- **Metadata**: Version information, producer details, and model documentation
 
-#### 3. **Nodes**
-Individual operations in the graph (e.g., LSTM, Dense, Activation).
+### ONNX Runtime Inference Engine
 
-```python
-for node in graph.node:
-    print(f"Op: {node.op_type}, Inputs: {node.input}, Outputs: {node.output}")
-```
+ONNX Runtime is a high-performance inference engine that executes ONNX models across different hardware platforms. It implements graph-level optimizations and operator-level optimizations to maximize throughput and minimize latency.
+
+**Execution Providers:**
+
+ONNX Runtime uses execution providers as pluggable backends for different hardware:
+- **CPU Execution Provider**: Optimized CPU inference using vectorization and multi-threading
+- **CUDA Execution Provider**: NVIDIA GPU acceleration with kernel fusion
+- **TensorRT Execution Provider**: NVIDIA TensorRT integration for maximum GPU performance
+- **DirectML Execution Provider**: Windows GPU acceleration via DirectML
+- **OpenVINO Execution Provider**: Intel hardware optimization
+
+The runtime automatically selects the best execution provider based on availability and falls back gracefully if preferred providers are unavailable.
+
+**Graph Optimization Levels:**
+
+ONNX Runtime performs optimizations at different levels:
+- **Basic**: Constant folding, redundant node elimination, simple algebraic simplifications
+- **Extended**: Layout optimizations, kernel fusion, memory planning
+- **All**: Aggressive optimizations including layout transformations and operator replacements
+
+These optimizations happen transparently during session initialization, requiring no code changes.
+
+### Model Conversion APIs
+
+Different frameworks provide conversion paths to ONNX format, each with framework-specific considerations.
+
+**TensorFlow/Keras to ONNX:**
+
+Keras 3 provides native ONNX export through the model export API. The conversion process translates Keras layers into equivalent ONNX operators. However, certain optimizations like CuDNN-accelerated LSTM layers are not directly compatible with ONNX and require special handling.
+
+The conversion challenge with LSTM models stems from CuDNN's fused implementation, which combines multiple operations into a single optimized kernel. ONNX requires standard LSTM operations without CuDNN fusion. The solution involves recreating the model architecture with CuDNN disabled before conversion.
+
+**PyTorch to ONNX:**
+
+PyTorch provides ONNX export through tracing or scripting. The export process captures the computational graph by running a forward pass with example inputs. For time series models like TCN (Temporal Convolutional Networks), the export must handle dynamic batch sizes and sequence lengths.
+
+**XGBoost to ONNX:**
+
+Tree-based models like XGBoost convert to ONNX through sklearn-onnx converters. The conversion translates decision tree ensembles into ONNX graph structures. When combined with preprocessing pipelines, the entire prediction workflow (scaling, feature transformation, and model inference) can be converted to a single ONNX graph.
+
+### Model Verification
+
+ONNX provides validation tools to ensure converted models conform to the specification. Verification checks include:
+- Graph connectivity ensuring all nodes have valid inputs
+- Type consistency across connections
+- Operator compatibility with specified opset versions
+- Shape inference correctness
+- Attribute validity for each operator type
+
+Verification catches conversion issues before deployment, preventing runtime failures in production systems.
+
+
+## Wrapper Utilities Layer
+
+The wrapper utilities provide a simplified Python interface on top of the native ONNX API, abstracting common patterns and handling framework-specific edge cases.
+
+### Design Philosophy
+
+The wrapper layer follows these principles:
+- **Simplicity**: Single-function interfaces for common operations
+- **Robustness**: Automatic handling of framework-specific issues
+- **Consistency**: Uniform API across different model types
+- **Transparency**: Clear error messages and validation feedback
+
+### Model Conversion Wrapper
+
+The conversion wrapper unifies the conversion process across different frameworks while handling common pitfalls automatically.
+
+**Automatic CuDNN Handling:**
+
+The wrapper detects Keras models with CuDNN LSTM layers and automatically recreates the model architecture with standard LSTM operations. This process:
+1. Loads the original model and extracts its configuration
+2. Modifies LSTM layer configurations to disable CuDNN
+3. Recreates the model from the modified configuration
+4. Transfers weights from the original model
+5. Exports to ONNX format
+
+This automatic handling eliminates a major source of conversion failures.
+
+**Multi-Framework Support:**
+
+The wrapper provides specialized converters for:
+- **LSTM models**: Keras LSTM with automatic CuDNN handling
+- **TCN models**: Darts TCN (PyTorch-based) with proper input/output formatting
+- **XGBoost models**: Pipeline conversion including preprocessing steps
+
+Each converter handles framework-specific requirements while presenting a consistent interface.
+
+### Verification Wrapper
+
+The verification wrapper extends ONNX's validation with structured output suitable for automated testing and logging.
+
+**Structured Results:**
+
+Instead of raising exceptions on validation failure, the wrapper returns a dictionary containing:
+- Validation success/failure status
+- Detailed error messages if validation fails
+- Model metadata (opset version, node count)
+- Additional diagnostic information
+
+This structured approach enables programmatic handling of validation results.
+
+### Inference Session Wrapper
+
+The inference session wrapper simplifies ONNX Runtime usage by eliminating boilerplate and providing convenience methods.
+
+**Automatic Configuration:**
+
+The wrapper handles:
+- Input/output name management (no need to track tensor names)
+- Automatic dtype conversion (ensures float32 for model compatibility)
+- Shape validation and error reporting
+- Provider selection with graceful fallbacks
+
+**Convenience Methods:**
+
+The wrapper provides methods to query model metadata:
+- Expected input shape for validation
+- Output shape for downstream processing
+- Active execution provider for performance monitoring
+
+### Framework Comparison Utility
+
+The comparison utility benchmarks inference performance between the original framework and ONNX Runtime, validating both speed and accuracy.
+
+**Performance Metrics:**
+
+The utility measures:
+- Inference time for both frameworks on identical inputs
+- Speedup factor (framework time / ONNX time)
+- Maximum absolute difference between predictions
+- Mean absolute difference for statistical validation
+- Numerical equivalence within floating-point tolerance
+
+**Validation Approach:**
+
+The comparison runs both models on the same test data and validates:
+1. Numerical correctness (predictions within tolerance)
+2. Performance improvement (speedup measurement)
+3. Consistency across different batch sizes
+
+This dual validation ensures the ONNX model is both correct and performant.
+
+## Production Deployment Considerations
+
+Deploying ONNX models in production requires attention to several operational aspects.
+
+### Performance Optimization
+
+**Execution Provider Selection:**
+
+Choose execution providers based on deployment environment:
+- Cloud deployment: CUDA or TensorRT for GPU instances, optimized CPU for CPU instances
+- Edge devices: CPU provider with appropriate thread configuration
+- Mobile: Platform-specific providers (CoreML, NNAPI)
+
+**Session Configuration:**
+
+Optimize session settings for workload:
+- Thread count: Match available CPU cores for throughput
+- Graph optimization level: Balance initialization time vs inference speed
+- Memory management: Configure arena allocators for memory efficiency
+
+### Model Versioning and Deployment
+
+**Version Management:**
+
+ONNX models should be versioned alongside:
+- Training data version
+- Feature engineering code version
+- Scaler parameters for denormalization
+- Performance metrics on validation data
+
+This comprehensive versioning enables reproducing predictions and rolling back if needed.
+
+**Deployment Pipeline:**
+
+A typical deployment pipeline includes:
+1. Model training and validation
+2. ONNX conversion and verification
+3. Performance benchmarking
+4. Integration testing with production data formats
+5. Gradual rollout with monitoring
+
+### Monitoring and Observability
+
+**Inference Monitoring:**
+
+Production systems should monitor:
+- Inference latency (p50, p95, p99 percentiles)
+- Throughput (requests per second)
+- Error rates (validation failures, runtime errors)
+- Prediction distributions (detect data drift)
+
+**Model Performance Tracking:**
+
+Track model accuracy over time:
+- Compare predictions against actual outcomes
+- Calculate rolling accuracy metrics
+- Alert on performance degradation
+- Trigger retraining when accuracy drops
 
 ---
 
-## ONNX Runtime API
-
-### Core API Components
-
-#### 1. **InferenceSession**
-The main interface for model inference.
-
-```python
-import onnxruntime as ort
-
-session = ort.InferenceSession("model.onnx")
-```
-
-**Constructor Parameters:**
-- `path_or_bytes`: Model file path or bytes
-- `providers`: Execution providers (CPUExecutionProvider, CUDAExecutionProvider)
-- `sess_options`: Session configuration
-
-#### 2. **Session Configuration**
-
-```python
-sess_options = ort.SessionOptions()
-sess_options.intra_op_num_threads = 4
-sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
-
-session = ort.InferenceSession("model.onnx", sess_options=sess_options)
-```
-
-**Optimization Levels:**
-- `ORT_DISABLE_ALL`: No optimizations
-- `ORT_ENABLE_BASIC`: Basic optimizations (default)
-- `ORT_ENABLE_EXTENDED`: Extended optimizations
-- `ORT_ENABLE_ALL`: All optimizations
-
-#### 3. **Running Inference**
-
-```python
-input_name = session.get_inputs()[0].name
-output_name = session.get_outputs()[0].name
-
-outputs = session.run([output_name], {input_name: input_data})
-predictions = outputs[0]
-```
-
-#### 4. **Execution Providers**
-
-```python
-providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
-session = ort.InferenceSession("model.onnx", providers=providers)
-
-print("Available providers:", ort.get_available_providers())
-print("Active provider:", session.get_providers())
-```
-
----
-
-## Custom Wrapper API
-
-We provide a high-level wrapper to simplify ONNX model conversion, verification, and inference.
-
-### Design Principles
-
-```python
-from dataclasses import dataclass
-from typing import Protocol, Dict, Any
-import numpy as np
-
-@dataclass
-class ModelMetadata:
-    """Metadata for ONNX models."""
-    model_name: str
-    version: str
-    input_shape: tuple
-    output_shape: tuple
-    opset_version: int
-
-class ONNXConverter(Protocol):
-    """Protocol for model-to-ONNX converters."""
-    def convert(self, model_path: str, onnx_path: str) -> str:
-        """Convert model to ONNX format."""
-        ...
-
-class ONNXInference(Protocol):
-    """Protocol for ONNX inference engines."""
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        """Run inference on input data."""
-        ...
-```
-
-### Wrapper Implementation
-
-#### 1. **Model Conversion**
-
-```python
-def convert_to_onnx(model_path: str, onnx_path: str, opset: int = 13) -> str:
-    """
-    Convert Keras model to ONNX format.
-
-    Args:
-        model_path: Path to Keras model (.h5 or SavedModel)
-        onnx_path: Path to save ONNX model
-        opset: ONNX opset version (default: 13)
-
-    Returns:
-        Path to saved ONNX model
-
-    Example:
-        onnx_path = convert_to_onnx('lstm_model.h5', 'lstm_model.onnx')
-    """
-```
-
-**Key Features:**
-- Automatic input signature detection
-- Opset version selection
-- Error handling and validation
-
-#### 2. **Model Verification**
-
-```python
-def verify_onnx(onnx_path: str) -> Dict[str, Any]:
-    """
-    Verify ONNX model integrity.
-
-    Args:
-        onnx_path: Path to ONNX model
-
-    Returns:
-        Verification results with:
-        - is_valid: Boolean indicating model validity
-        - error: Error message if invalid
-        - opset_version: ONNX opset version
-        - num_nodes: Number of nodes in graph
-
-    Example:
-        result = verify_onnx('model.onnx')
-        if result['is_valid']:
-            print(f"Valid ONNX model with {result['num_nodes']} nodes")
-    """
-```
-
-#### 3. **Inference Session Wrapper**
-
-```python
-class ONNXInferenceSession:
-    """
-    High-level wrapper for ONNX Runtime inference.
-
-    Attributes:
-        model_path: Path to ONNX model
-        session: ONNX Runtime session
-        input_name: Name of input tensor
-        output_name: Name of output tensor
-
-    Example:
-        session = ONNXInferenceSession('model.onnx')
-        predictions = session.predict(test_data)
-        print(f"Input shape: {session.get_input_shape()}")
-    """
-
-    def __init__(self, model_path: str):
-        """Initialize session with model."""
-
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        """Run inference."""
-
-    def get_input_shape(self):
-        """Get expected input shape."""
-
-    def get_output_shape(self):
-        """Get output shape."""
-```
-
-**Benefits:**
-- Simplified API compared to raw ONNX Runtime
-- Automatic input/output name handling
-- Type conversion (numpy arrays)
-- Error handling
-
-#### 4. **Framework Comparison**
-
-```python
-def compare_frameworks_inference(
-    keras_model_path: str,
-    onnx_model_path: str,
-    test_input: np.ndarray
-) -> Dict[str, Any]:
-    """
-    Compare TensorFlow vs ONNX Runtime inference.
-
-    Args:
-        keras_model_path: Path to Keras model
-        onnx_model_path: Path to ONNX model
-        test_input: Test input array
-
-    Returns:
-        Comparison metrics:
-        - tensorflow_time: TF inference time (seconds)
-        - onnx_time: ONNX inference time (seconds)
-        - speedup: Speed improvement factor
-        - max_difference: Maximum numerical difference
-        - mean_difference: Mean numerical difference
-        - numerically_close: Boolean (within tolerance)
-
-    Example:
-        results = compare_frameworks_inference(
-            'model.h5', 'model.onnx', test_data
-        )
-        print(f"ONNX speedup: {results['speedup']:.2f}x")
-        print(f"Numerically equivalent: {results['numerically_close']}")
-    """
-```
-
----
-
-## Architecture Diagrams
-
-### ONNX Conversion Pipeline
-
-```mermaid
-graph LR
-    A[Training Data] --> B[Train LSTM/TF]
-    B --> C[Keras Model .h5]
-    C --> D[tf2onnx Converter]
-    D --> E[ONNX Model .onnx]
-    E --> F[ONNX Checker]
-    F -->|Valid| G[Deploy with ONNX Runtime]
-    F -->|Invalid| H[Debug & Fix]
-    H --> D
-
-    style E fill:#90EE90
-    style G fill:#87CEEB
-```
-
-### Inference Workflow
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Wrapper
-    participant ONNXRuntime
-    participant Model
-
-    Client->>Wrapper: ONNXInferenceSession(model_path)
-    Wrapper->>ONNXRuntime: Create InferenceSession
-    ONNXRuntime->>Model: Load ONNX model
-    Model-->>ONNXRuntime: Model graph
-    ONNXRuntime-->>Wrapper: Session ready
-
-    Client->>Wrapper: predict(input_data)
-    Wrapper->>Wrapper: Validate and convert to float32
-    Wrapper->>ONNXRuntime: session.run(inputs)
-    ONNXRuntime->>Model: Execute graph
-    Model-->>ONNXRuntime: Output tensors
-    ONNXRuntime-->>Wrapper: Results
-    Wrapper-->>Client: Predictions (numpy array)
-```
-
-### Cross-Framework Deployment
-
-```mermaid
-graph TB
-    A[Model Training] --> B[TensorFlow/Keras]
-    A --> C[PyTorch]
-
-    B --> D[tf2onnx]
-    C --> E[torch.onnx.export]
-
-    D --> F[ONNX Model]
-    E --> F
-
-    F --> G[Deployment Options]
-    G --> H[Cloud<br/>AWS, Azure, GCP]
-    G --> I[Edge<br/>Raspberry Pi, Jetson]
-    G --> J[Mobile<br/>iOS, Android]
-    G --> K[Web<br/>ONNX.js]
-
-    H --> L[ONNX Runtime]
-    I --> L
-    J --> M[CoreML / NNAPI]
-    K --> N[WebGL / WASM]
-
-    style F fill:#90EE90
-    style L fill:#87CEEB
-```
-
----
-
-## API Reference
-
-### Conversion Functions
-
-| Function | Purpose | Input | Output |
-|----------|---------|-------|--------|
-| `convert_to_onnx` | Convert Keras to ONNX | Model path, ONNX path, opset | ONNX path |
-| `verify_onnx` | Validate ONNX model | ONNX path | Verification dict |
-
-### Inference Classes
-
-| Class | Methods | Purpose |
-|-------|---------|---------|
-| `ONNXInferenceSession` | `__init__`, `predict`, `get_input_shape`, `get_output_shape` | High-level inference |
-
-### Comparison Functions
-
-| Function | Purpose | Output Metrics |
-|----------|---------|----------------|
-| `compare_frameworks_inference` | Compare TF vs ONNX | Speed, accuracy, compatibility |
-
-### Configuration Objects
-
-```python
-@dataclass
-class ONNXConfig:
-    """Configuration for ONNX conversion and inference."""
-    opset_version: int = 13
-    optimization_level: str = 'all'
-    providers: List[str] = field(default_factory=lambda: ['CPUExecutionProvider'])
-    intra_op_threads: int = 4
-```
-
----
-
-## Best Practices
-
-### 1. **Opset Version Selection**
-- Use opset 13+ for modern operators
-- Check framework compatibility
-- Verify target runtime support
-
-### 2. **Model Validation**
-- Always run `verify_onnx` after conversion
-- Test numerical equivalence
-- Validate input/output shapes
-
-### 3. **Performance Optimization**
-- Enable graph optimizations
-- Use appropriate execution providers
-- Batch inputs when possible
-- Profile before and after conversion
-
-### 4. **Error Handling**
-```python
-try:
-    onnx_path = convert_to_onnx('model.h5', 'model.onnx')
-    verification = verify_onnx(onnx_path)
-
-    if not verification['is_valid']:
-        raise ValueError(f"Invalid ONNX: {verification['error']}")
-
-except Exception as e:
-    print(f"Conversion failed: {e}")
-```
-
----
-
-## Alternatives to ONNX
-
-| Tool | Pros | Cons | Use Case |
-|------|------|------|----------|
-| **TensorFlow Lite** | Mobile optimized, good TF support | TensorFlow-only | Mobile/embedded TF models |
-| **TorchScript** | Native PyTorch, dynamic graphs | PyTorch-only | PyTorch production |
-| **TensorRT** | Excellent GPU performance | NVIDIA-only | GPU inference |
-| **CoreML** | iOS/macOS native | Apple-only | Apple ecosystem |
-| **ONNX** | ✅ Framework agnostic, wide support | Learning curve | Cross-platform, production |
-
----
-
-## References
-
-1. **ONNX Official Documentation**: https://onnx.ai/
-2. **ONNX Runtime**: https://onnxruntime.ai/
-3. **tf2onnx**: https://github.com/onnx/tensorflow-onnx
-4. **ONNX Model Zoo**: https://github.com/onnx/models
-5. **ONNX Tutorials**: https://github.com/onnx/tutorials
-
----
-
-## Quick Start
-
-```python
-# 1. Convert model
-onnx_path = convert_to_onnx('lstm_model.h5', 'lstm_model.onnx')
-
-# 2. Verify
-result = verify_onnx(onnx_path)
-print(f"Valid: {result['is_valid']}")
-
-# 3. Run inference
-session = ONNXInferenceSession(onnx_path)
-predictions = session.predict(test_data)
-
-# 4. Compare frameworks
-comparison = compare_frameworks_inference(
-    'lstm_model.h5', 'lstm_model.onnx', test_data
-)
-print(f"Speedup: {comparison['speedup']:.2f}x")
-```
-
-This API provides a clean, Pythonic interface for ONNX model conversion and inference, abstracting away low-level details while maintaining full control when needed.
+For a complete implementation example demonstrating this architecture, see `onnx_forecasting.API.md`.

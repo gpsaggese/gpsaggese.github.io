@@ -11,6 +11,7 @@ from utils import *
 from evaluation import *
 
 __all__ = [
+    # Preprocessing
     'load_stock_data',
     'parse_and_sort_dates',
     'handle_missing_values',
@@ -27,6 +28,10 @@ __all__ = [
     'create_lagged_features',
     'create_rolling_windows',
     'apply_all_features',
+    'load_and_stack_mag7_stocks',
+    'prepare_mag7_features',
+
+    # LSTM Model
     'LSTMConfig',
     'build_lstm_model',
     'compile_model',
@@ -37,10 +42,28 @@ __all__ = [
     'plot_training_history',
     'get_model_summary',
     'create_and_train_lstm',
+
+    # TCN Model
+    'TCNConfig',
+    'prepare_darts_timeseries',
+    'build_tcn_model',
+    'train_tcn_model',
+
+    # XGBoost Model
+    'XGBoostConfig',
+    'build_xgboost_model',
+    'train_xgboost_model',
+    'flatten_sequences_for_xgboost',
+
+    # ONNX Conversion
     'convert_to_onnx',
+    'convert_tcn_to_onnx',
+    'convert_xgboost_to_onnx',
     'verify_onnx',
     'ONNXInferenceSession',
     'compare_frameworks_inference',
+
+    # Evaluation
     'calculate_mae',
     'calculate_rmse',
     'calculate_mape',
@@ -52,4 +75,11 @@ __all__ = [
     'create_forecast_report',
     'compare_models',
     'plot_forecast_comparison',
+
+    # Ensemble & Multi-Model Comparison
+    'create_ensemble_predictions',
+    'compare_multiple_models',
+    'plot_ensemble_comparison',
+    'plot_performance_heatmap',
+    'get_best_model_per_stock',
 ]

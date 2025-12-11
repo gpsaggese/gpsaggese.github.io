@@ -376,3 +376,77 @@ def apply_all_features(df: pd.DataFrame,
                                      price_column=price_cols['close'])
 
     return df
+
+
+def load_and_stack_mag7_stocks(
+    stock_paths: Dict[str, str],
+    date_column: str = 'Date',
+    apply_features: bool = True
+) -> pd.DataFrame:
+    """
+    Load all MAG 7 stocks and stack vertically (concatenate rows).
+
+    This creates a single dataset with all stocks combined, where each row
+    maintains a 'stock' label for later per-stock evaluation.
+
+    Args:
+        stock_paths: Dictionary mapping ticker symbols to file paths
+                    e.g., {'GOOG': 'data/Stocks/goog.us.txt', ...}
+        date_column: Name of the date column
+        apply_features: Whether to apply feature engineering
+
+    Returns:
+        DataFrame with all stocks stacked, sorted by date
+    """
+    dfs = []
+
+    for ticker, path in stock_paths.items():
+        print(f"Loading {ticker} from {path}...")
+        df = load_stock_data(path, date_column=date_column)
+        df = parse_and_sort_dates(df, date_column=date_column)
+        df = handle_missing_values(df, method='forward_fill')
+        if apply_features:
+            df = apply_all_features(df)
+        df['stock'] = ticker
+        df = df.dropna()
+
+        dfs.append(df)
+
+        print(f"  Loaded {len(df)} rows for {ticker}")
+    stacked = pd.concat(dfs, axis=0, ignore_index=False)
+
+    stacked = stacked.sort_values(date_column).reset_index(drop=True)
+
+    print(f"\nTotal stacked dataset: {len(stacked)} rows across {len(stock_paths)} stocks")
+
+    return stacked
+
+
+def prepare_mag7_features(
+    stacked_df: pd.DataFrame,
+    feature_cols: Optional[List[str]] = None
+) -> Tuple[pd.DataFrame, List[str]]:
+    """
+    Prepare feature matrix for MAG 7 stacked dataset.
+
+    Args:
+        stacked_df: Stacked DataFrame with all stocks
+        feature_cols: List of feature column names (if None, auto-detect)
+
+    Returns:
+        Tuple of (feature_df, feature_column_names)
+    """
+    if feature_cols is None:
+        feature_cols = [
+            'Close', 'Open', 'High', 'Low', 'Volume',
+            'SMA_20', 'EMA_20', 'RSI', 'MACD', 'MACD_Signal',
+            'BB_Width', 'ATR', 'Volume_Ratio'
+        ]
+
+    missing_cols = [col for col in feature_cols if col not in stacked_df.columns]
+    if missing_cols:
+        raise ValueError(f"Missing columns in DataFrame: {missing_cols}")
+
+    feature_df = stacked_df[feature_cols].copy()
+
+    return feature_df, feature_cols

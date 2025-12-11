@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM ubuntu:20.04
+FROM --platform=$BUILDPLATFORM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update
@@ -36,6 +36,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /install
+
+# Copy project files
+ADD pyproject.toml /install/
+ADD uv.lock /install/
 
 # Install common packages
 ADD install_common_packages.sh /install/
