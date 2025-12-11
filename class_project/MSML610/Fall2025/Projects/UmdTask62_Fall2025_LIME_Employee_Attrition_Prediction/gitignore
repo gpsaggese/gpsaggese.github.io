@@ -1,0 +1,19 @@
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore output directories and files
+artifacts/
+
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+
+
+# Ignore bashrc and sudoers files 
+bashrc
+etc_sudoers
+
+
+# Ignore scripts
+utils.sh
+install_jupyter_extensions.sh
