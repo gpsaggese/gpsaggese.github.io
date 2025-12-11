@@ -7,7 +7,7 @@ TARGET_DIR=$(pwd)   # mount the current folder
 VERBOSE=0
 
 # Docker image and container names
-IMAGE_NAME="umd_msml610/umd_msml610_image"
+IMAGE_NAME="umd_msml610_image"   # <- use your locally built image
 CONTAINER_NAME="umd_msml610_jupyter"
 
 # Parse optional parameters

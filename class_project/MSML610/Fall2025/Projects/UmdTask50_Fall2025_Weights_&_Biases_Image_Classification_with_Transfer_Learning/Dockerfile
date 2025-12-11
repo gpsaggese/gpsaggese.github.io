@@ -38,7 +38,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
         wandb \
         python-dotenv \
         ipywidgets \
-        jupyter
+        jupyter \
+        matplotlib   
 
 # Expose Jupyter Notebook port
 EXPOSE 8888

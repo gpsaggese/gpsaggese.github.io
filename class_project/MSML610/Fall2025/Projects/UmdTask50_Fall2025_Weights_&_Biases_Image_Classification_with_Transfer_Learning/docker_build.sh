@@ -1,12 +1,22 @@
 #!/bin/bash -e
 
-GIT_ROOT=$(git rev-parse --show-toplevel)
-source $GIT_ROOT/class_project/docker_common/utils.sh
+# -------------------------------
+# Docker build script for local use
+# -------------------------------
 
-REPO_NAME=umd_msml610
+# Name of your Docker image
 IMAGE_NAME=umd_msml610_image
 
-# Build container.
+# Get current directory (assumes Dockerfile is here)
+BUILD_CONTEXT=$(pwd)
+
+echo "Building Docker image: $IMAGE_NAME"
+echo "Using build context: $BUILD_CONTEXT"
+
+# Enable Docker BuildKit (optional but faster)
 export DOCKER_BUILDKIT=1
-#export DOCKER_BUILDKIT=0
-build_container_image
+
+# Build the image
+docker build -t $IMAGE_NAME "$BUILD_CONTEXT"
+
+echo "Docker image '$IMAGE_NAME' built successfully!"
