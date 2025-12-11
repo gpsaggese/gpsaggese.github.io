@@ -89,14 +89,14 @@ UmdTask123_Fall2025_Fashion_Product_Image_Classification_AutoKeras/
 │   └── (optionally, other small artifacts)
 │
 └── README.md                            # This file
-
 ```
 Note: Large Colab .keras files are intentionally not tracked because of GitHub’s 100MB limit. They can always be regenerated from the full training notebook.
+
 ---
 
 ## 2. Notebooks and Their Roles
 
-# 2.1 **AutoKeras.API.ipynb** – API demonstration
+### 2.1 **AutoKeras.API.ipynb** – API demonstration
 This notebook is a lightweight demo of the reusable API that I use everywhere else.
 It focuses on showing how to call my helper functions rather than on training big models.
 
@@ -121,7 +121,7 @@ What this notebook does:
 - Instantiates an AutoKeras classifier to confirm the dependency works.
 This notebook is meant as a sanity check and API documentation.
 
-# 2.2 **AutoKeras.example.ipynb** – Main Docker experiment
+### 2.2 **AutoKeras.example.ipynb** – Main Docker experiment
 
 This is the core experimental pipeline that would should run in Docker.
 
@@ -144,7 +144,7 @@ It performs:
      - Visualizes mistakes for each model to highlight differences in behavior
 This notebook is designed to be reproducible on CPU and to finish in a reasonable amount of time.
 
-# 2.3 **AutoKeras.example.full_training.ipynb** – full Colab GPU run + Gradio app
+### 2.3 **AutoKeras.example.full_training.ipynb** – full Colab GPU run + Gradio app
 
 This notebook is meant to run on Google Colab (ideally Pro/Pro+) with a GPU.
 
@@ -172,7 +172,7 @@ I kept the code in this notebook so that the anyone can:
 
 ## 3. Dataset and Data Setup
 
-# 3.1 Dataset Source (Kaggle)
+### 3.1 Dataset Source (Kaggle)
 The project uses:
 
 Fashion Product Images (Small)
@@ -181,7 +181,7 @@ Kaggle link: https://www.kaggle.com/datasets/paramaggarwal/fashion-product-image
 The dataset is not small enough for GitHub, so the images themselves are not committed.
 Only the TSV lists and code are provided; you must download the images locally.
 
-# 3.2 Required Local Structure (Docker)
+### 3.2 Required Local Structure (Docker)
 After downloading and extracting from Kaggle, arrange things like this:
 ```
 UmdTask123_Fall2025_Fashion_Product_Image_Classification_AutoKeras/
@@ -197,7 +197,6 @@ UmdTask123_Fall2025_Fashion_Product_Image_Classification_AutoKeras/
 │   └── test.tsv
 │
 └── (rest of the project)
-
 ```
 
 Important details:
@@ -211,7 +210,6 @@ The TSV layout:
 images/12345.jpg    2
 images/99871.jpg    0
 images/45012.jpg    4
-
 ```
 Where the labels 0–5 correspond to:
 - 0 – Accessories
@@ -221,7 +219,7 @@ Where the labels 0–5 correspond to:
 - 4 – Personal Care
 - 5 – Sporting Goods
 
-# 3.3 Quick Data Sanity Check in Python (Docker)
+### 3.3 Quick Data Sanity Check in Python (Docker)
 Once `images/` and `lists/*.tsv` are set up, inside the container you can run:
 ```
 from src.utils_data_io import tsv_to_tfds
@@ -235,14 +233,13 @@ If the dataset is correctly placed, this runs without errors and prints somethin
 
 ```
 (224, 224, 3)  2
-
 ```
 If you see `NOT_FOUND: images/xxxxx.jpg`, it means:
 - `images/` are in the wrong directory,
 - filenames don’t match, or
 - `lists/*.tsv` paths were modified.
 
-# 3.4 Colab Data Setup for Full Training
+### 3.4 Colab Data Setup for Full Training
 For `AutoKeras.example.full_training.ipynb` on Colab, I assume:
 - You upload the dataset as `images.zip` to your Google Drive.
 
@@ -313,7 +310,7 @@ You can optionally open the `.md` versions (`AutoKeras.API.md`, `AutoKeras.examp
 
 ## 5. Outputs & Models
 
-# 5.1 Outputs from Docker (`AutoKeras.example.ipynb`)
+### 5.1 Outputs from Docker (`AutoKeras.example.ipynb`)
 
 After running the main notebook in Docker, you should see:
 ``` 
@@ -336,7 +333,7 @@ models/
 └── (optional extra models)
 ``` 
 
-# 5.2 Outputs from Colab (`AutoKeras.example.full_training.ipynb`)
+### 5.2 Outputs from Colab (`AutoKeras.example.full_training.ipynb`)
 
 The full GPU run saves only lightweight text metrics (no 300MB .keras files in GitHub) into `colab_outputs/`:
 ``` 
@@ -378,14 +375,26 @@ Because it depends on GPU-trained weights and Colab’s environment, I keep this
 
 ## 7. Screenshots
 
-# 7.1 Gradio App
+### 7.1 Gradio App
 
+Below are three screenshots from the Gradio demo app I built in Colab.  
+I will attach both images here once added to the repository.
+
+#### Screenshot 1 – Upload + Predict Interface  
+![Gradio Screenshot 1](screenshots/gradio_app_1.png)
+
+#### Screenshot 2 – Example Prediction Output  
+![Gradio Screenshot 2](screenshots/gradio_app_2.png)
+
+#### Screenshot 3 – Example Prediction Output  
+![Gradio Screenshot 3](screenshots/gradio_app_3.png)
 
 ---
 
+
 ## 8. Quick Checklists
 
-# 8.1 Docker checklist
+### 8.1 Docker checklist
 
 Before running:
 - `images/` folder present locally with all Kaggle JPGs
@@ -400,7 +409,7 @@ bash docker/docker_jupyter.sh
 ``` 
 Then open notebooks and run all cells.
 
-# 8.2 Colab checklist
+### 8.2 Colab checklist
 
 For `AutoKeras.example.full_training.ipynb`:
 - Upload `images.zip` to Google Drive
