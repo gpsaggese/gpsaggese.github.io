@@ -1,81 +1,113 @@
 # SBERT API Documentation
 
-This document describes how this project uses SBERT (Sentence-BERT) for
-generating fixed-size sentence embeddings, along with the lightweight utility
-functions implemented in `src/SBERT_utils.py`.
+This document describes the internal API used by the SBERT Sentiment Analysis project.  
+It covers:  
+1.	Native programming interface — preprocessing, embedding, and utility functions.  
+2.	Wrapper layer — standardized functions that simplify notebook / script usage.  
+3.	Example usage — minimal code snippets showing how each component is used.  
+4.	Design decisions — why the API is structured this way.   
 
-The goal is to provide a simple and repeatable API that standardizes:
+## 1. Overview
 
-1. Loading configuration
-2. Loading cleaned text and labels
-3. Generating or loading embeddings
-4. Integrating SBERT inside downstream classifiers
+The project uses the Financial PhraseBank dataset and applies the following pipeline: 
 
----
+1.	Preprocessing → Clean text, normalize labels, save clean.csv + labels.npy  
+2.	Embedding → Generate SBERT embeddings using all-MiniLM-L6-v2  
+3.	Modeling → Downstream models operate on the generated embeddings  
+4.	Fine-tuning → Train SBERT end-to-end for better task accuracy  
 
-## 1. Model: SentenceTransformer
+All reusable logic lives inside src/ so notebooks remain clean and minimal.
 
-We use the pretrained model: sentence-transformers/all-MiniLM-L6-v2
+## 2. Native API
 
-Key properties:
-- Embedding dimension: **384**
-- Fast CPU performance
-- Good semantic similarity accuracy for financial text use cases
+### 2.1 load_config(path: str) → dict
 
-### Basic Usage
+Loads YAML configuration controlling paths, SBERT model name, and preprocessing fields.
 
+Example
 ```python
-from sentence_transformers import SentenceTransformer
-```
-
-model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-embeddings = model.encode(list_of_sentences, batch_size=64, show_progress_bar=True)
-
-Outputs a matrix of shape: (num_sentences, 384)
-
-## 2. Utility Functions (SBERT_utils.py)
-
-These helper functions keep your notebooks and scripts clean and consistent.
-
-load_config(path)
-
-Loads config.yaml.
-```python
+from SBERT_utils import load_config
 cfg = load_config("config.yaml")
 ```
-load_clean_data(cfg)
-```python
-df, labels = load_clean_data(cfg)
-```
-load_embeddings(cfg)
-Loads SBERT embeddings from: data/processed/sbert_embeddings.npy
-```python
-X = load_embeddings(cfg)
-```
-### Why this API?
-	•	Avoids rewriting boilerplate in every notebook.
-	•	Standardizes where data and embeddings live.
-	•	Makes the project reproducible for TAs and future contributors.
 
-## 3. End-to-End Example
-```python
-from SBERT_utils import load_config, load_clean_data, load_embeddings
-from sentence_transformers import SentenceTransformer
+### 2.2 load_clean_data(cfg) → pandas.DataFrame
 
+Loads cleaned CSV created by preprocess.py.
+	•	ensures consistent schema
+	•	returns dataframe with text + integer labels
+
+Example
+```pyhton
+df = load_clean_data(cfg)
+print(df.shape)
+```
+
+### 2.3 load_embeddings(cfg) → np.ndarray
+
+Loads precomputed SBERT embeddings from data/processed/sbert_embeddings.npy.
+
+Example
+```python
+embeddings = load_embeddings(cfg)
+```
+
+## 3. Wrapper Layer
+
+The wrapper layer simply standardizes how the notebooks load resources:
+	•	load_config
+	•	load_clean_data
+	•	load_embeddings
+
+This keeps notebooks clean and prevents duplicate code.
+All notebooks import the API through:
+```python
+from src.SBERT_utils import load_config, load_clean_data, load_embeddings
+```
+
+## 4. API Usage Examples
+
+### Example 1: Load data + embeddings
+```python
 cfg = load_config("config.yaml")
-
-df, labels = load_clean_data(cfg)
+df = load_clean_data(cfg)
 X = load_embeddings(cfg)
 
-model = SentenceTransformer(cfg["model"]["name"])
-new_embedding = model.encode(["Market sentiment improved today."])
+print(df.head())
+print(X.shape)
 ```
+### Example 2: Use in a modeling script
+```python
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
 
-## 4. Notes & Limitations
+X_train, X_test, y_train, y_test = train_test_split(
+    X, df["sentiment_int"].values, test_size=0.2, stratify=df["sentiment_int"]
+)
 
-	•	SBERT is used in inference mode only unless fine-tuning is explicitly run.
-	•	Embeddings must be regenerated if the preprocessing logic changes.
-	•	The API is intentionally minimal to support multiple downstream models:
-	•	logistic regression
-	•	linear SVM
-	•	fine-tuned transformer classifier
+clf = LogisticRegression(max_iter=1000)
+clf.fit(X_train, y_train)
+print("Accuracy:", clf.score(X_test, y_test))
+```
+## 5. Architectural Decisions
+
+- Separation of preprocessing, embedding, and modeling
+This avoids re-running expensive embedding steps when experimenting.
+
+- All heavy logic moved out of notebooks
+This makes notebooks easy to grade and read.
+
+- Consistent config-driven design
+Paths, model names, and columns are never hard-coded.
+
+- Embeddings saved as NumPy arrays
+Fast to load, memory-efficient, widely compatible.
+
+## 7. Limitations & Notes
+- The API is intentionally lightweight (not a package).
+- Fine-tuning is demonstrated in notebooks, not wrapped as an API call.
+- The dataset must be placed correctly before running preprocessing.
+
+## 8. Conclusion
+
+This API provides a clean, reproducible interface for SBERT-based classification experiments.
+All notebooks depend only on this utility layer, keeping the project maintainable and extensible.
