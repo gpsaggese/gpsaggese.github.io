@@ -3,7 +3,7 @@
 <!-- toc -->
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
-- [Tetrad's Knowledge Object](#knowledge-object)
+- [Knowledge Object](#knowledge-object)
 - [TetradSearch](#tetradsearch)
 - [Tetrad with JPype](#tetrad-with-jpype)
 - [Simulating Data with Tetrad](#simulating-data-with-tetrad)
