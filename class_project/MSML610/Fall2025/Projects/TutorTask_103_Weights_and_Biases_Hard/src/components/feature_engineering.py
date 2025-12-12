@@ -32,20 +32,34 @@ class FeatureEngineering:
         return df
 
     # ------------ Core features ------------
+    def _close_series(self, df: pd.DataFrame) -> pd.Series:
+        """
+        Return Close as a 1D Series.
+        yfinance can produce Close as a single-column DataFrame in some cases.
+        """
+        close = df["Close"]
+        if isinstance(close, pd.DataFrame):
+            # Single-column DataFrame -> Series
+            close = close.iloc[:, 0]
+        return close
+
     def add_returns(self, df: pd.DataFrame) -> pd.DataFrame:
-        df["return_pct"] = df["Close"].pct_change()
-        df["return_log"] = np.log(df["Close"]).diff()
+        close = self._close_series(df)
+        df["return_pct"] = close.pct_change()
+        df["return_log"] = np.log(close).diff()
         return df
 
     def add_moving_averages(self, df: pd.DataFrame) -> pd.DataFrame:
-        df[f"sma_{self.fe_cfg['short_window']}"] = df["Close"].rolling(self.fe_cfg["short_window"]).mean()
-        df[f"sma_{self.fe_cfg['long_window']}"] = df["Close"].rolling(self.fe_cfg["long_window"]).mean()
-        df[f"sma_{self.fe_cfg['very_long_window']}"] = df["Close"].rolling(self.fe_cfg["very_long_window"]).mean()
+        close = self._close_series(df)
+        df[f"sma_{self.fe_cfg['short_window']}"] = close.rolling(self.fe_cfg["short_window"]).mean()
+        df[f"sma_{self.fe_cfg['long_window']}"] = close.rolling(self.fe_cfg["long_window"]).mean()
+        df[f"sma_{self.fe_cfg['very_long_window']}"] = close.rolling(self.fe_cfg["very_long_window"]).mean()
         return df
 
     def add_rsi(self, df: pd.DataFrame) -> pd.DataFrame:
         window = self.fe_cfg["rsi_period"]
-        delta = df["Close"].diff()
+        close = self._close_series(df)
+        delta = close.diff()
         gain = np.where(delta > 0, delta, 0)
         loss = np.where(delta < 0, -delta, 0)
         roll_up = pd.Series(gain, index=df.index).rolling(window).mean()
@@ -56,8 +70,9 @@ class FeatureEngineering:
 
     def add_macd(self, df: pd.DataFrame) -> pd.DataFrame:
         fast, slow, signal = self.fe_cfg["macd_fast"], self.fe_cfg["macd_slow"], self.fe_cfg["macd_signal"]
-        ema_fast = df["Close"].ewm(span=fast, adjust=False).mean()
-        ema_slow = df["Close"].ewm(span=slow, adjust=False).mean()
+        close = self._close_series(df)
+        ema_fast = close.ewm(span=fast, adjust=False).mean()
+        ema_slow = close.ewm(span=slow, adjust=False).mean()
         macd_line = ema_fast - ema_slow
         signal_line = macd_line.ewm(span=signal, adjust=False).mean()
         df["macd"] = macd_line
@@ -70,15 +85,17 @@ class FeatureEngineering:
         df[f"volatility_{win}"] = df["return_log"].rolling(win).std()
         # Bollinger Bands using long_window
         lw = self.fe_cfg["long_window"]
-        sma = df["Close"].rolling(lw).mean()
-        std = df["Close"].rolling(lw).std()
+        close = self._close_series(df)
+        sma = close.rolling(lw).mean()
+        std = close.rolling(lw).std()
         df[f"bb_upper_{lw}"] = sma + 2 * std
         df[f"bb_lower_{lw}"] = sma - 2 * std
         return df
 
     def add_lags(self, df: pd.DataFrame) -> pd.DataFrame:
+        close = self._close_series(df)
         for lag in self.fe_cfg["lag_features"]:
-            df[f"lag_close_{lag}"] = df["Close"].shift(lag)
+            df[f"lag_close_{lag}"] = close.shift(lag)
             df[f"lag_return_pct_{lag}"] = df["return_pct"].shift(lag)
         return df
 

@@ -27,9 +27,18 @@ class DataIngestion:
         end = self.data_cfg["end_date"]
         interval = self.data_cfg["interval"]
         self.logger.info(f"Fetching {ticker} from {start} to {end or 'now'} @ {interval}")
-        df = yf.download(ticker, start=start, end=end, interval=interval)
+        # yfinance may return MultiIndex columns (e.g. (Price, Ticker)).
+        # We normalize to a flat OHLCV DataFrame with columns like "Open/High/Low/Close/Volume".
+        df = yf.download(ticker, start=start, end=end, interval=interval, auto_adjust=False)
         if df.empty:
             raise ValueError(f"No data returned for ticker {ticker}")
+        if isinstance(df.columns, pd.MultiIndex):
+            # Try to select the requested ticker level if present.
+            try:
+                df = df.xs(ticker, axis=1, level=-1, drop_level=True)
+            except Exception:
+                # Fallback: stringify columns to avoid downstream crashes.
+                df.columns = ["_".join(map(str, c)) for c in df.columns]
         df.index.name = "Date"
         return df
 
@@ -37,8 +46,11 @@ class DataIngestion:
         df = df.copy()
         df = df.sort_index()
         df = df[~df.index.duplicated(keep="first")]
-        if (df.select_dtypes(include=["number"]) <= 0).any().any():
-            self.logger.warning("Found non-positive values; check data sanity.")
+        # Sanity-check only price columns (Volume can be 0; some providers may emit 0s).
+        price_cols = [c for c in ["Open", "High", "Low", "Close", "Adj Close"] if c in df.columns]
+        if price_cols:
+            if (df[price_cols] <= 0).any().any():
+                self.logger.warning("Found non-positive price values; check data sanity.")
         return df
 
     def save(self, df: pd.DataFrame, name: str = "data") -> Tuple[Path, Path]:

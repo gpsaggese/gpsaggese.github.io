@@ -333,38 +333,24 @@ class WandbLogger:
     def log_table(self, table_name: str, data, columns: Optional[list] = None) -> None:
         """
         Log a table to W&B.
-        
-        Tables are useful for predictions, feature importance, etc.
-        Can view, sort, filter in W&B dashboard.
-        
+
         Args:
             table_name: Name for the table
             data: Data to log (pandas DataFrame or list of lists)
             columns: Column names (if data is list of lists)
-            
-        Why tables?
-        - View predictions in tabular format
-        - Sort/filter predictions
-        - Export data from W&B
-        - Debug model predictions
-        
-        Example usage:
-            df = pd.DataFrame({'actual': y_true, 'predicted': y_pred})
-            logger.log_table("predictions", df)
         """
         if self.run:
             # Check if data is pandas DataFrame
-            if hasattr(data, 'to_dict'):  # DataFrames have to_dict() method
-                # Convert DataFrame to W&B table
-                table = wandb.Table(dataframe=data)
-                # Why wandb.Table(dataframe=)? W&B's way to create table from DataFrame
+            if hasattr(data, "to_dict"):
+                # W&B Table requires column names to be simple types (str/int).
+                # yfinance often returns MultiIndex / tuple columns, so we stringify.
+                df = data.copy()
+                df = df.reset_index()
+                df.columns = [str(c) for c in df.columns]
+                table = wandb.Table(dataframe=df)
             else:
-                # Data is list of lists - create table manually
                 table = wandb.Table(columns=columns or [], data=data)
-                # Why columns or []? Use provided columns or empty list
-                # columns must be provided if data is list of lists
-            
-            # Log table to W&B
+
             self.run.log({table_name: table})
             self.logger.info(f"Logged table: {table_name}")
         else:
