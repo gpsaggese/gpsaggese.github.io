@@ -453,6 +453,7 @@ def train_attrition_models(
                 objective="binary",
                 random_state=model_config.random_state,
                 n_jobs=model_config.n_jobs,
+                verbosity=-1, 
             )
             trained["lightgbm"] = _fit_pipeline(lgb_clf)
 
