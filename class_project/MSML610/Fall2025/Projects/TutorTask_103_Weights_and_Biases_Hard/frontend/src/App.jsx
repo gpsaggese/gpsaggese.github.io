@@ -193,8 +193,8 @@ export default function App() {
                   <input value={ticker} onChange={(e) => setTicker(e.target.value)} />
                 </div>
                 <div className="field">
-                  <div className="label">Horizon days (1–30)</div>
-                  <input type="number" min={1} max={30} value={horizonDays} onChange={(e) => setHorizonDays(e.target.value)} />
+                  <div className="label">Horizon days (1–120)</div>
+                  <input type="number" min={1} max={120} value={horizonDays} onChange={(e) => setHorizonDays(e.target.value)} />
                 </div>
               </div>
 

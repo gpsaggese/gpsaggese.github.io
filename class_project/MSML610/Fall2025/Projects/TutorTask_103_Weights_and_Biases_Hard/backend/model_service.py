@@ -65,6 +65,56 @@ class ModelService:
         artifacts = self.load_best()
         return {name: 0.0 for name in artifacts.feature_names}
 
+    def _profit_summary(
+        self,
+        baseline_price: float,
+        predictions: List[Dict[str, Any]],
+        investment_usd: float | None = None,
+        shares: float | None = None,
+    ) -> Dict[str, Any]:
+        """
+        Compute simple profit/loss summaries based on predicted closes.
+
+        This is NOT a guarantee; it's a deterministic summary of the predicted path.
+        """
+        if not np.isfinite(baseline_price) or baseline_price <= 0:
+            return {"note": "baseline_price missing/invalid; profit/loss not computed"}
+
+        if shares is None and investment_usd is not None and investment_usd > 0:
+            shares = float(investment_usd) / float(baseline_price)
+
+        closes = [float(p["predicted_close"]) for p in predictions]
+        best_idx = int(np.argmax(closes))
+        worst_idx = int(np.argmin(closes))
+
+        best_close = closes[best_idx]
+        worst_close = closes[worst_idx]
+        last_close = closes[-1]
+
+        def _pnl(price: float) -> float:
+            if shares is None:
+                return float("nan")
+            return (price - baseline_price) * float(shares)
+
+        return {
+            "baseline_price": float(baseline_price),
+            "shares": float(shares) if shares is not None else None,
+            "best_day": predictions[best_idx]["date"],
+            "best_predicted_close": float(best_close),
+            "best_return_pct": float((best_close - baseline_price) / baseline_price),
+            "best_pnl_usd": _pnl(best_close),
+            "worst_day": predictions[worst_idx]["date"],
+            "worst_predicted_close": float(worst_close),
+            "worst_return_pct": float((worst_close - baseline_price) / baseline_price),
+            "worst_pnl_usd": _pnl(worst_close),
+            "end_day": predictions[-1]["date"],
+            "end_predicted_close": float(last_close),
+            "end_return_pct": float((last_close - baseline_price) / baseline_price),
+            "end_pnl_usd": _pnl(last_close),
+            "signal": "profit_possible" if best_close > baseline_price else "loss_likely",
+            "note": "Uses predicted closes only; ignores transaction costs and uncertainty.",
+        }
+
     def build_features_for_ticker(self, ticker: str, lookback_days: int) -> pd.DataFrame:
         import yfinance as yf
 
@@ -91,7 +141,14 @@ class ModelService:
         Xs = artifacts.scaler.transform(X)
         return float(artifacts.model.predict(Xs).reshape(-1)[0])
 
-    def predict_ticker(self, ticker: str, lookback_days: int, horizon_days: int = 1) -> Dict[str, Any]:
+    def predict_ticker(
+        self,
+        ticker: str,
+        lookback_days: int,
+        horizon_days: int = 1,
+        investment_usd: float | None = None,
+        shares: float | None = None,
+    ) -> Dict[str, Any]:
         artifacts = self.load_best()
         feats = self.build_features_for_ticker(ticker, lookback_days)
 
@@ -160,21 +217,78 @@ class ModelService:
             "model_name": "linear_regression_final",
             "extra": {
                 "note": "Multi-day forecast is iterative; only Close/return-based features are updated each step. Other features are held constant.",
+                "profit_summary": self._profit_summary(last_close, preds, investment_usd=investment_usd, shares=shares),
             },
         }
 
-    def predict_from_features(self, features: Dict[str, float]) -> Dict[str, Any]:
+    def predict_from_features(
+        self,
+        features: Dict[str, float],
+        horizon_days: int = 1,
+        current_price: float | None = None,
+        investment_usd: float | None = None,
+        shares: float | None = None,
+    ) -> Dict[str, Any]:
         artifacts = self.load_best()
         row = pd.Series(features).copy()
-        yhat = self._predict_row(artifacts, row)
+
+        baseline = current_price
+        if baseline is None and "Close" in row.index and pd.notna(row.get("Close")):
+            try:
+                baseline = float(row.get("Close"))
+            except Exception:
+                baseline = None
+
+        # Iterative manual forecasting: update only Close/return-based features each step.
+        preds: List[Dict[str, Any]] = []
+        prev_close = float(baseline) if baseline is not None and np.isfinite(baseline) else float(row.get("Close", np.nan))
+        prev_return = float(row.get("return_pct", 0.0)) if "return_pct" in row.index else 0.0
+
+        for i in range(1, int(horizon_days) + 1):
+            yhat = self._predict_row(artifacts, row)
+            preds.append({"step": i, "date": f"t+{i}", "predicted_close": yhat})
+
+            if "Close" in row.index:
+                row["Close"] = yhat
+            if "return_pct" in row.index and prev_close and np.isfinite(prev_close):
+                new_ret = (yhat - prev_close) / prev_close
+                row["return_pct"] = float(new_ret)
+
+                lag_cols = [c for c in row.index if c.startswith("lag_return_pct_")]
+                lag_pairs = []
+                for c in lag_cols:
+                    try:
+                        k = int(c.split("_")[-1])
+                    except Exception:
+                        continue
+                    lag_pairs.append((k, c))
+                for k, c in sorted(lag_pairs, key=lambda x: x[0], reverse=True):
+                    if k == 1:
+                        row[c] = float(prev_return)
+                    else:
+                        prev_name = f"lag_return_pct_{k-1}"
+                        if prev_name in row.index:
+                            row[c] = float(row[prev_name])
+                prev_return = float(row.get("return_pct", prev_return))
+
+            prev_close = yhat
+
         return {
             "ticker": "MANUAL_FEATURES",
             "last_date": "N/A",
-            "last_close": float("nan"),
-            "horizon_days": 1,
-            "predictions": [{"step": 1, "date": "t+1", "predicted_close": yhat}],
+            "last_close": float(baseline) if baseline is not None and np.isfinite(baseline) else float("nan"),
+            "horizon_days": int(horizon_days),
+            "predictions": preds,
             "model_name": "linear_regression_final",
-            "extra": {"note": "Manual feature mode: provide exactly the trained feature_names (see /feature_names)."},
+            "extra": {
+                "note": "Manual feature mode: provide exactly the trained feature_names (see /feature_names). Multi-step is iterative; Close/return-based features are updated, others held constant.",
+                "profit_summary": self._profit_summary(
+                    float(baseline) if baseline is not None and np.isfinite(baseline) else float("nan"),
+                    preds,
+                    investment_usd=investment_usd,
+                    shares=shares,
+                ),
+            },
         }
 
 

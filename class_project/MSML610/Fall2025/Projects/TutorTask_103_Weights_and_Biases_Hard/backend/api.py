@@ -36,7 +36,13 @@ def create_app() -> FastAPI:
     @app.post("/predict", response_model=PredictResponse)
     def predict(req: PredictRequest):
         try:
-            out = service.predict_ticker(req.ticker, req.lookback_days, req.horizon_days)
+            out = service.predict_ticker(
+                req.ticker,
+                req.lookback_days,
+                req.horizon_days,
+                investment_usd=req.investment_usd,
+                shares=req.shares,
+            )
         except ProjectException as e:
             raise HTTPException(status_code=400, detail=str(e))
         return PredictResponse(**out)
@@ -44,7 +50,13 @@ def create_app() -> FastAPI:
     @app.post("/predict_features", response_model=PredictResponse)
     def predict_features(req: PredictFeaturesRequest):
         try:
-            out = service.predict_from_features(req.features)
+            out = service.predict_from_features(
+                req.features,
+                horizon_days=req.horizon_days,
+                current_price=req.current_price,
+                investment_usd=req.investment_usd,
+                shares=req.shares,
+            )
         except ProjectException as e:
             raise HTTPException(status_code=400, detail=str(e))
         return PredictResponse(**out)
