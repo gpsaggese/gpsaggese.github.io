@@ -1,7 +1,12 @@
-# SBERT Sentiment Analysis on Financial PhraseBank
+# SBERT Sentiment Analysis on Financial PhraseBank (MSML610 – Fall 2025)
 
-This project implements a full sentiment-classification pipeline using **Sentence-BERT (SBERT)** embeddings on the *Financial PhraseBank* dataset.  
-It includes data preprocessing, embedding generation, baseline models, SBERT-based classifiers, and transformer fine-tuning.
+This project implements an end-to-end sentiment classification pipeline using
+**Sentence-BERT (SBERT)** on the **Financial PhraseBank** dataset.
+It includes data preprocessing, embedding generation, baseline lexical models,
+embedding-based classifiers, and transformer fine-tuning.
+
+The project is designed to be **reproducible, modular, and well-documented**,
+with both script-based pipelines and notebook-based demonstrations.
 
 ---
 
@@ -25,15 +30,17 @@ Fall2025_SBert_Sentiment_Analysis_with_Sentence_Embeddings/
 ├── SBERT_API.md   
 ├── SBERT_API.ipynb  
 ├── SBERT_Example.ipynb  
-└── SBERT_Example.md    
+├── SBERT_Example.md  
+├── requirements.txt   
+├── Dockerfile    
 
 ---
 
-## 2. Setup Instructions
+## 2. Environment Setup
 
 ### **Option A — Local Environment (recommended)**
 
-Create and activate the course virtual environment:
+Activate the course helper environment:
 
 ```bash
 source client_venv.helpers/bin/activate
@@ -48,42 +55,41 @@ pip install -r requirements.txt
 ```bash
 python src/preprocess.py --config config.yaml
 ```
-Outputs:  
-	•	data/processed/financial_phrasebank_clean.csv  
-	•	data/processed/labels.npy  
+Outputs:    
+•	data/processed/financial_phrasebank_clean.csv    
+•	data/processed/labels.npy      
 
 ### Step 2 — Generate SBERT embeddings
 ```bash
 python src/sbert_embed.py --config config.yaml
 ```
-Outputs:  
-	•	data/processed/sbert_embeddings.npy  
-(shape: N × 384, where N = number of sentences)
+Outputs:    
+•	data/processed/sbert_embeddings.npy    
+(shape: N × 384, where N = number of sentences)  
 
-## 4. Notebooks
-
-Two documentation notebooks are included:
+## 4. Documentation & Notebooks
 
 ### SBERT_API.ipynb / SBERT_API.md
 
-Explains:  
-	•	configuration usage  
-	•	loading cleaned data  
-	•	loading embeddings  
-	•	how inference works with SBERT  
+Documents the internal API layer used throughout the project:   
+•	configuration handling  
+•	data loading utilities  
+•	embedding generation  
+•	reusable SBERT inference helpers  
 
 ### SBERT_Example.ipynb / SBERT_Example.md
 
-Covers:  
-	•	baseline TF-IDF model  
-	•	SBERT + Logistic Regression  
-	•	SBERT + Linear SVM  
-	•	optional fine-tuned transformer classifier  
-	•	metrics, confusion matrix, cross-validation results  
+Demonstrates the end-to-end sentiment analysis workflow, including:  
+•	TF-IDF + Logistic Regression baseline  
+•	Frozen SBERT + Logistic Regression  
+•	Frozen SBERT + Linear SVM  
+•	End-to-end fine-tuned transformer classifier  
+•	Accuracy, F1-score, and confusion matrices  
 
-This notebook demonstrates the full comparison between lexical vs. embedding-based models.
+These files represent the primary submission artifacts for API usage
+and example-driven documentation.
 
-## 5. Docker Support
+## 5. Docker (Reproducibility)
 
 To build the container:
 ```bash
@@ -94,8 +100,15 @@ Run Jupyter Lab inside Docker:
 ```bash
 docker run -p 8888:8888 sbert-sentiment
 ```
-Then open:
-http://127.0.0.1:8888/lab
+Open a browser and navigate to the Jupyter server exposed on port 8888:
+
+http://localhost:8888
+
+Depending on the Jupyter configuration, this may open:  
+- the JupyterLab interface, or  
+- the classic notebook file browser.  
+
+In either case, the project notebooks can be accessed directly from the browser.
 
 This ensures full reproducibility independent of local Python installations.
 
@@ -109,3 +122,5 @@ SBERT + Linear SVM - Accuracy ~0.76–0.77
 
 Fine-tuned Transformer - Accuracy ~0.78
 
+Embedding-based models consistently outperform lexical baselines,
+with the fine-tuned transformer achieving the strongest overall performance.
