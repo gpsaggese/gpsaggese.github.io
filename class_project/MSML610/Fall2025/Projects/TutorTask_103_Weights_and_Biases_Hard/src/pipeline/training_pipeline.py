@@ -1,4 +1,5 @@
-# src/pipeline/training_pipeline.py
+from src.components.model_trainer import ModelTrainer
+from src.components.model_evaluation import ModelEvaluation
 from typing import Optional, Dict, Any
 
 from src.utils.config import config_manager
@@ -17,6 +18,8 @@ class TrainingPipeline:
         self.ingestor = DataIngestion(config_path, self.logger)
         self.fe = FeatureEngineering(config_path, self.logger)
         self.prep = Preprocessor(config_path, self.logger)
+        self.trainer = ModelTrainer(config_path, self.logger)
+        self.evaluator = ModelEvaluation(config_path, self.logger)  
 
     def run(self) -> Dict[str, Any]:
         # Start W&B run if not already started
@@ -38,7 +41,9 @@ class TrainingPipeline:
             if model_name == "lstm":
                 results["lstm"] = "TODO: call LSTM trainer with seq data"
             elif model_name == "linear_regression":
-                results["linear_regression"] = "TODO: call LR trainer with flat data"
+                tr = self.trainer.train_linear_regression(data["X_train"], data["y_train"], data["X_val"], data["y_val"])
+                test_metrics = self.evaluator.evaluate(tr.model, data["X_test"], data["y_test"], tr.model_name)
+                results["linear_regression"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
             elif model_name == "xgboost":
                 results["xgboost"] = "TODO: call XGBoost trainer with flat data"
             elif model_name == "lightgbm":
