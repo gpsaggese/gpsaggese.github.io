@@ -1,6 +1,0 @@
-Docker version: 28.0.4
-Verified images:
-- umd_msml610/umd_ms:latest
-- hello-world:latest
-System: macOS (Apple Silicon)
-Status: All systems verified and functional.
