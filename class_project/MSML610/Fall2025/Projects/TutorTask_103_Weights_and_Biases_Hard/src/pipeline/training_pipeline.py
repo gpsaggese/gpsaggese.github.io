@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 import json
 import pandas as pd
+import traceback
 
 from src.utils.config import config_manager
 from src.logging.logger import WandbLogger
@@ -56,6 +57,14 @@ class TrainingPipeline:
                 except ImportError as e:
                     self.logger.warning(f"Skipping LSTM: {e}")
                     results["lstm"] = "SKIPPED: missing tensorflow/keras-tuner"
+                except Exception as e:
+                    # Capture traceback for Phase 6 reporting.
+                    tb = traceback.format_exc()
+                    self.logger.error(f"LSTM failed: {e}\n{tb}")
+                    artifacts_dir = Path(self.params.get("evaluation", {}).get("artifacts_dir", "artifacts"))
+                    (artifacts_dir / "metrics").mkdir(parents=True, exist_ok=True)
+                    (artifacts_dir / "metrics" / "lstm_error.txt").write_text(tb)
+                    results["lstm"] = f"ERROR: {e}"
             elif model_name == "linear_regression":
                 tr = self.trainer.train_linear_regression(data["X_train"], data["y_train"], data["X_val"], data["y_val"])
                 test_metrics = self.evaluator.evaluate(tr.model, data["X_test"], data["y_test"], tr.model_name)

@@ -92,6 +92,23 @@ Lower is better for MAE/RMSE/MAPE; higher is better for R2.
 | prophet | 3.908 | 104.206 | 83.559 | 54.986 | -1.254 |
 | ensemble_stacking (test) | - | 4.934 | 3.693 | 2.634 | 0.995 |
 
+## Plots for Phase 6 (to show why LR is best + training curves)
+Generate summary RMSE plots (bar charts across models):
+```bash
+python scripts/plot_rmse_summary.py
+```
+Outputs:
+- `artifacts/plots/rmse_comparison_test.png`
+- `artifacts/plots/rmse_comparison_val.png`
+- `artifacts/metrics/rmse_table.csv`
+
+Training-curve plots (only for models that have iterative training):
+- XGBoost: `artifacts/plots/xgboost_val_rmse_curve.png` (saved during training)
+- LightGBM: `artifacts/plots/lightgbm_val_rmse_curve.png` (saved during training)
+- LSTM: `artifacts/plots/lstm_loss_curve.png` + `artifacts/metrics/lstm_history.csv` (saved during training)
+
+If LSTM fails, the traceback is saved to: `artifacts/metrics/lstm_error.txt`
+
 ## Phase 5: run W&B online (inside Docker)
 Inside the professor Docker container (with `/venv` active + `.env` containing `WANDB_API_KEY`):
 ```bash
@@ -104,6 +121,15 @@ Note: If you `git pull` inside the Docker container, run:
 git pull --recurse-submodules=no
 ```
 This avoids submodule SSH fetch errors inside the container.
+
+### LSTM (optional) and how to run it safely
+Add `"lstm"` to `training.models_to_run` in `config/params.yaml`.
+Then cap resources (recommended for Docker):
+```bash
+export LSTM_MAX_TRIALS=2
+export LSTM_EPOCHS=8
+export LSTM_BATCH_SIZE=32
+```
 
 ## Phase 6: deliverables
 - Metrics: `artifacts/metrics/last_run.json`

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Dict, Any, Optional
 
 import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
@@ -120,7 +121,44 @@ class ModelTrainer:
             random_state=random_state,
             n_jobs=-1,
         )
-        model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
+        evals_result: Dict[str, Dict[str, list]] = {}
+        model.fit(
+            X_train,
+            y_train,
+            eval_set=[(X_val, y_val)],
+            eval_metric="rmse",
+            verbose=False,
+            evals_result=evals_result,
+        )
+
+        # Save training curve (RMSE over boosting rounds) for reporting.
+        try:
+            rmse_curve = evals_result.get("validation_0", {}).get("rmse", [])
+            if rmse_curve:
+                artifacts_dir = Path(self.params.get("evaluation", {}).get("artifacts_dir", "artifacts"))
+                plots_dir = Path(self.params.get("evaluation", {}).get("plots_dir", str(artifacts_dir / "plots")))
+                plots_dir.mkdir(parents=True, exist_ok=True)
+                curve_path = artifacts_dir / "metrics" / "xgboost_rmse_curve.csv"
+                curve_path.parent.mkdir(parents=True, exist_ok=True)
+                pd.DataFrame({"iteration": list(range(1, len(rmse_curve) + 1)), "val_rmse": rmse_curve}).to_csv(
+                    curve_path, index=False
+                )
+                import matplotlib.pyplot as plt
+
+                plt.figure(figsize=(7, 4))
+                plt.plot(range(1, len(rmse_curve) + 1), rmse_curve, label="val_rmse")
+                plt.xlabel("Boosting round")
+                plt.ylabel("RMSE")
+                plt.title("XGBoost training curve (validation RMSE)")
+                plt.tight_layout()
+                plt.savefig(plots_dir / "xgboost_val_rmse_curve.png", dpi=200)
+                plt.close()
+                if self.logger.run:
+                    # log final rmse + the curve file as an artifact-like table
+                    self.logger.log_metrics({"xgboost/val_rmse_last": float(rmse_curve[-1])})
+        except Exception:
+            # Never fail training due to plotting.
+            pass
 
         y_pred = model.predict(X_val)
         mae = float(mean_absolute_error(y_val, y_pred))
@@ -171,7 +209,51 @@ class ModelTrainer:
             random_state=random_state,
             n_jobs=-1,
         )
-        model.fit(X_train, y_train, eval_set=[(X_val, y_val)], eval_metric="rmse")
+        try:
+            import lightgbm as lgb  # type: ignore
+        except Exception:
+            lgb = None  # type: ignore
+
+        evals_result: Dict[str, Dict[str, list]] = {}
+        callbacks = []
+        if lgb is not None:
+            callbacks = [lgb.record_evaluation(evals_result)]  # type: ignore
+
+        model.fit(
+            X_train,
+            y_train,
+            eval_set=[(X_val, y_val)],
+            eval_metric="rmse",
+            callbacks=callbacks,
+        )
+
+        # Save training curve (RMSE over boosting rounds) for reporting.
+        try:
+            # record_evaluation stores under evals_result["valid_0"]["rmse"]
+            rmse_curve = evals_result.get("valid_0", {}).get("rmse", [])
+            if rmse_curve:
+                artifacts_dir = Path(self.params.get("evaluation", {}).get("artifacts_dir", "artifacts"))
+                plots_dir = Path(self.params.get("evaluation", {}).get("plots_dir", str(artifacts_dir / "plots")))
+                plots_dir.mkdir(parents=True, exist_ok=True)
+                curve_path = artifacts_dir / "metrics" / "lightgbm_rmse_curve.csv"
+                curve_path.parent.mkdir(parents=True, exist_ok=True)
+                pd.DataFrame({"iteration": list(range(1, len(rmse_curve) + 1)), "val_rmse": rmse_curve}).to_csv(
+                    curve_path, index=False
+                )
+                import matplotlib.pyplot as plt
+
+                plt.figure(figsize=(7, 4))
+                plt.plot(range(1, len(rmse_curve) + 1), rmse_curve, label="val_rmse")
+                plt.xlabel("Boosting round")
+                plt.ylabel("RMSE")
+                plt.title("LightGBM training curve (validation RMSE)")
+                plt.tight_layout()
+                plt.savefig(plots_dir / "lightgbm_val_rmse_curve.png", dpi=200)
+                plt.close()
+                if self.logger.run:
+                    self.logger.log_metrics({"lightgbm/val_rmse_last": float(rmse_curve[-1])})
+        except Exception:
+            pass
 
         y_pred = model.predict(X_val)
         mae = float(mean_absolute_error(y_val, y_pred))
@@ -454,7 +536,62 @@ class ModelTrainer:
             verbose=0,
         )
 
-        best_model = tuner.get_best_models(num_models=1)[0]
+        # Refit best model once to capture a clean epoch-by-epoch history for reporting.
+        best_hp = tuner.get_best_hyperparameters(1)[0]
+        best_model = build_model(best_hp)
+
+        history = best_model.fit(
+            X_train_seq,
+            y_train_seq,
+            validation_data=(X_val_seq, y_val_seq),
+            epochs=epochs,
+            batch_size=batch_size,
+            callbacks=callbacks,
+            verbose=0,
+        )
+
+        # Save history (CSV + plot) for Phase 6.
+        try:
+            artifacts_dir = Path(self.params.get("evaluation", {}).get("artifacts_dir", "artifacts"))
+            plots_dir = Path(self.params.get("evaluation", {}).get("plots_dir", str(artifacts_dir / "plots")))
+            plots_dir.mkdir(parents=True, exist_ok=True)
+            (artifacts_dir / "metrics").mkdir(parents=True, exist_ok=True)
+            hist_df = pd.DataFrame(history.history)
+            hist_df.insert(0, "epoch", list(range(1, len(hist_df) + 1)))
+            hist_df.to_csv(artifacts_dir / "metrics" / "lstm_history.csv", index=False)
+
+            import matplotlib.pyplot as plt
+
+            plt.figure(figsize=(7, 4))
+            if "loss" in hist_df.columns:
+                plt.plot(hist_df["epoch"], hist_df["loss"], label="train_loss")
+            if "val_loss" in hist_df.columns:
+                plt.plot(hist_df["epoch"], hist_df["val_loss"], label="val_loss")
+            plt.xlabel("Epoch")
+            plt.ylabel("MSE loss")
+            plt.title("LSTM training curve (loss)")
+            plt.legend()
+            plt.tight_layout()
+            plt.savefig(plots_dir / "lstm_loss_curve.png", dpi=200)
+            plt.close()
+        except Exception:
+            pass
+
+        # Log per-epoch metrics to W&B.
+        if self.logger.run:
+            try:
+                for i in range(len(history.history.get("loss", []))):
+                    payload = {}
+                    for k, v in history.history.items():
+                        try:
+                            payload[f"lstm/{k}"] = float(v[i])
+                        except Exception:
+                            continue
+                    if payload:
+                        self.logger.log_metrics(payload, step=i + 1)
+            except Exception:
+                pass
+
         y_pred = best_model.predict(X_val_seq, verbose=0).reshape(-1)
 
         mae = float(mean_absolute_error(y_val_seq, y_pred))
