@@ -1,6 +1,6 @@
 ## Project 3 (Hard): Time Series Forecasting for Stock Prices
 
-### Overview (STAR)
+
 - **Situation**: Need a reproducible forecasting project that runs in the professor Docker environment and logs experiments to Weights & Biases (W&B).
 - **Task**: Fetch stock data (Yahoo Finance), engineer features, train multiple forecasting models, compare results, save the best model, and provide a simple local app (FastAPI + React) to serve predictions.
 - **Action**: Built a modular pipeline (`src/`), added W&B logging, implemented multiple model families (baseline ML + tree + statistical + Prophet), added Optuna Bayesian tuning scripts, saved best model artifacts, and shipped a local API + UI.
@@ -130,6 +130,11 @@ export LSTM_MAX_TRIALS=2
 export LSTM_EPOCHS=8
 export LSTM_BATCH_SIZE=32
 ```
+
+If LSTM is too heavy to run on your machine, use the notebook `610_yfinance_project.ipynb` (it contains an LSTM experiment and prints a direct comparison):
+- Linear Regression RMSE ≈ **2.2798**
+- LSTM RMSE ≈ **74.1561**
+So LR is best on that notebook run as well.
 
 ## Phase 6: deliverables
 - Metrics: `artifacts/metrics/last_run.json`
