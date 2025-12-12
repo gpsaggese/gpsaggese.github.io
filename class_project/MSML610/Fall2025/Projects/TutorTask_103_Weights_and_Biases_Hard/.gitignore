@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+wandb/
+logs/
+data/raw/
+data/processed/
+tmp.precommit_output.txt
