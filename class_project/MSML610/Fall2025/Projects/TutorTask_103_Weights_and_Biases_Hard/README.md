@@ -28,7 +28,7 @@ TutorTask_103_Weights_and_Biases_Hard/
   docs/FINAL_REPORT.md       # Phase 6 report
 ```
 
-## Step-by-step: what we did end-to-end
+## Step-by-step: what I did end-to-end
 
 ### 1) Set up W&B (offline-first, then online)
 - **Why offline-first**: You can run everything in Docker without permissions/API issues and still capture logs; then switch to online when ready.
@@ -57,7 +57,7 @@ Implemented in `src/components/preprocessor.py`:
 - Scaling with `StandardScaler` (fit on train only).
 - True forecasting by shifting the target by `forecast_horizon`.
 
-### 5) Model development (we trained multiple families)
+### 5) Model development ( trained multiple families)
 Implemented in `src/components/model_trainer.py`, orchestrated by `src/pipeline/training_pipeline.py`:
 - **Baseline**: `linear_regression` (strong sanity check).
 - **Tree/boosting**: `random_forest`, `xgboost`, `lightgbm`.
@@ -109,7 +109,7 @@ Training-curve plots (only for models that have iterative training):
 
 If LSTM fails, the traceback is saved to: `artifacts/metrics/lstm_error.txt`
 
-## Phase 5: run W&B online (inside Docker)
+## run W&B online (inside Docker)
 Inside the professor Docker container (with `/venv` active + `.env` containing `WANDB_API_KEY`):
 ```bash
 bash scripts/phase5_wandb_online.sh
@@ -136,7 +136,7 @@ If LSTM is too heavy to run on your machine, use the notebook `610_yfinance_proj
 - LSTM RMSE ≈ **74.1561**
 So LR is best on that notebook run as well.
 
-## Phase 6: deliverables
+## deliverables
 - Metrics: `artifacts/metrics/last_run.json`
 - Best model: `artifacts/best_model/linear_regression_final.joblib` (+ scaler + meta)
 - Plots: `artifacts/plots/*.png`
