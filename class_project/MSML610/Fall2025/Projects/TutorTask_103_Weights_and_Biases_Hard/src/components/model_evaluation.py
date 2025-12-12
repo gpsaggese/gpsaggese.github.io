@@ -62,8 +62,8 @@ class ModelEvaluation:
         if hasattr(model, "predict"):
             try:
                 return np.asarray(model.predict(X))
-            except TypeError:
-                # Some wrappers may require steps
+            except (TypeError, ValueError):
+                # Some wrappers may require steps even if X is None (statsmodels wrapper).
                 return np.asarray(model.predict(X, steps=steps))
         if hasattr(model, "forecast"):
             return np.asarray(model.forecast(steps=steps, exog=X))

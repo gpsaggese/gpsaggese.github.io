@@ -162,6 +162,12 @@ class ModelTrainer:
             feature_fraction=float(cfg.get("feature_fraction", 0.9)),
             bagging_fraction=float(cfg.get("bagging_fraction", 0.9)),
             bagging_freq=int(cfg.get("bagging_freq", 1)),
+            # Avoid std::random_device usage issues inside locked-down containers.
+            deterministic=True,
+            seed=random_state,
+            feature_fraction_seed=random_state,
+            bagging_seed=random_state,
+            data_random_seed=random_state,
             random_state=random_state,
             n_jobs=-1,
         )
