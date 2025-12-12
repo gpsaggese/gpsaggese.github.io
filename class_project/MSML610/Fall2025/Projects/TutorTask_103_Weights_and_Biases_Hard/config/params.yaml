@@ -39,6 +39,7 @@ feature_engineering:
   # Volatility - measures price uncertainty/risk
   volatility_window: 20  # Rolling standard deviation window
   # Why: Measures how much prices fluctuate - higher volatility = more risk
+  corr_drop_threshold: 0.9  # Threshold for dropping highly correlated features
   
   # Lag Features - previous day values as features
   lag_features: [1, 2, 3, 5, 10]  # Days to look back
