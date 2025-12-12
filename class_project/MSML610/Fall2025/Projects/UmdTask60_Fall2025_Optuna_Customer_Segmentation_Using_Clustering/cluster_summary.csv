@@ -1,0 +1,4 @@
+Cluster,Customer_Count,Avg_Recency,Avg_Frequency,Avg_Monetary,Segment_Label
+0,257,12.98,15.6,5858.91,VIP Champions
+1,1221,234.04,1.69,500.28,At-Risk/Lost
+2,2795,40.04,3.41,1199.83,Loyal Customers

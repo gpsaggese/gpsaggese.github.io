@@ -1,0 +1,27 @@
+2025-12-03 06:32:27,760 - INFO - loaded: 541,909 rows x 8 cols
+2025-12-03 06:32:27,772 - INFO - 
+=== starting data cleaning ===
+
+2025-12-03 06:32:27,871 - INFO - removed dups: 5,268 rows
+2025-12-03 06:32:28,407 - INFO - standardized text formatting
+2025-12-03 06:32:29,438 - INFO - removed svc codes: 2,988 rows
+2025-12-03 06:32:29,445 - INFO - zero/neg prices: 2,479 rows
+2025-12-03 06:32:29,489 - INFO - capped qty: 4,840 at 100
+2025-12-03 06:32:29,490 - INFO - capped price: 4,990 at $16.63
+2025-12-03 06:32:29,492 - INFO - flagged returns: 8,771 rows (1.7%)
+2025-12-03 06:32:29,515 - INFO - validated revenue calculations
+2025-12-03 06:32:29,558 - INFO - parsed dates and extracted features
+2025-12-03 06:32:29,579 - INFO - prod master: 942 unique products
+2025-12-03 06:32:29,733 - INFO - 
+final dataset: 391,012 rows
+2025-12-03 06:32:29,737 - INFO - unique customers: 4,334
+2025-12-03 06:32:29,742 - INFO - unique products: 874
+2025-12-03 06:32:29,745 - INFO - date range: 2010-12-01 08:26:00 to 2011-12-09 12:50:00
+2025-12-03 06:32:29,746 - INFO - total revenue: $7,470,780.58
+2025-12-03 06:32:29,966 - INFO - rfm: 4,334 customers
+2025-12-03 06:32:29,999 - INFO - starting optuna: kmeans, 100 trials
+2025-12-03 06:33:16,528 - INFO - optuna kmeans: best=1.4107
+2025-12-03 06:33:32,935 - INFO - running ensemble clustering: 7 clusters
+2025-12-03 06:33:34,260 - INFO - ensemble consensus: 47.24%
+2025-12-03 06:33:34,271 - INFO - assessing stability: 50 bootstrap samples
+2025-12-03 06:33:40,128 - INFO - stability (ari): 0.377 ± 0.053

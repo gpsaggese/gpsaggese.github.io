@@ -1,0 +1,23 @@
+2025-12-03 01:41:08,371 - INFO - loaded: 541,909 rows x 8 cols
+2025-12-03 01:41:08,379 - INFO - 
+=== starting data cleaning ===
+
+2025-12-03 01:41:08,492 - INFO - removed dups: 5,268 rows
+2025-12-03 01:41:08,989 - INFO - standardized text formatting
+2025-12-03 01:41:09,912 - INFO - removed svc codes: 2,988 rows
+2025-12-03 01:41:09,918 - INFO - zero/neg prices: 2,479 rows
+2025-12-03 01:41:09,956 - INFO - capped qty: 4,840 at 100
+2025-12-03 01:41:09,957 - INFO - capped price: 4,990 at $16.63
+2025-12-03 01:41:09,958 - INFO - flagged returns: 8,771 rows (1.7%)
+2025-12-03 01:41:09,959 - INFO - validated revenue calculations
+2025-12-03 01:41:10,021 - INFO - parsed dates and extracted features
+2025-12-03 01:41:10,041 - INFO - prod master: 942 unique products
+2025-12-03 01:41:10,186 - INFO - 
+final dataset: 391,012 rows
+2025-12-03 01:41:10,189 - INFO - unique customers: 4,334
+2025-12-03 01:41:10,193 - INFO - unique products: 874
+2025-12-03 01:41:10,195 - INFO - date range: 2010-12-01 08:26:00 to 2011-12-09 12:50:00
+2025-12-03 01:41:10,196 - INFO - total revenue: $7,470,780.58
+2025-12-03 01:41:10,350 - INFO - rfm: 4,334 customers
+2025-12-03 01:41:10,374 - INFO - starting optuna: kmeans, 100 trials
+2025-12-03 01:41:50,654 - INFO - optuna kmeans: best=1.4107
