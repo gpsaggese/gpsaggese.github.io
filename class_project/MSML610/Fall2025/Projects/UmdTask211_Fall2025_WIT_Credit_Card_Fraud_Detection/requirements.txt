@@ -1,0 +1,12 @@
+jupyterlab==3.*
+ipywidgets==7.*
+ipython<9
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn==1.7.2
+imbalanced-learn==0.14.0
+xgboost
+catboost
+witwidget
