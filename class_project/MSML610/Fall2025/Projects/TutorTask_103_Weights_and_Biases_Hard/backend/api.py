@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 from fastapi import FastAPI
+from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.schemas import PredictRequest, PredictResponse
+from backend.schemas import PredictRequest, PredictResponse, PredictFeaturesRequest
 from backend.model_service import ModelService
 from src.exception import ProjectException
 
@@ -35,10 +36,25 @@ def create_app() -> FastAPI:
     @app.post("/predict", response_model=PredictResponse)
     def predict(req: PredictRequest):
         try:
-            out = service.predict_next_close(req.ticker, req.lookback_days)
+            out = service.predict_ticker(req.ticker, req.lookback_days, req.horizon_days)
         except ProjectException as e:
-            raise RuntimeError(str(e))
+            raise HTTPException(status_code=400, detail=str(e))
         return PredictResponse(**out)
+
+    @app.post("/predict_features", response_model=PredictResponse)
+    def predict_features(req: PredictFeaturesRequest):
+        try:
+            out = service.predict_from_features(req.features)
+        except ProjectException as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        return PredictResponse(**out)
+
+    @app.get("/feature_names")
+    def feature_names():
+        try:
+            return {"feature_names": service.load_best().feature_names}
+        except ProjectException as e:
+            raise HTTPException(status_code=400, detail=str(e))
 
     return app
 

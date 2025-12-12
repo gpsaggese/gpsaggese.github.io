@@ -76,29 +76,98 @@ class ModelService:
         # Do NOT drop columns dynamically at inference. Use training feature set.
         return feats
 
-    def predict_next_close(self, ticker: str, lookback_days: int) -> Dict[str, Any]:
+    def _predict_row(self, artifacts: LoadedArtifacts, row: pd.Series) -> float:
+        missing = [c for c in artifacts.feature_names if c not in row.index]
+        if missing:
+            raise ProjectException(f"Missing required features for inference: {missing}")
+        X = row[artifacts.feature_names].values.reshape(1, -1)
+        Xs = artifacts.scaler.transform(X)
+        return float(artifacts.model.predict(Xs).reshape(-1)[0])
+
+    def predict_ticker(self, ticker: str, lookback_days: int, horizon_days: int = 1) -> Dict[str, Any]:
         artifacts = self.load_best()
         feats = self.build_features_for_ticker(ticker, lookback_days)
 
-        # Align to training feature order.
-        missing = [c for c in artifacts.feature_names if c not in feats.columns]
-        if missing:
-            raise ProjectException(f"Missing required features for inference: {missing}")
+        if len(feats) == 0:
+            raise ProjectException("Feature engineering produced empty features. Increase lookback_days.")
 
-        last_row = feats.iloc[-1]
-        X = last_row[artifacts.feature_names].values.reshape(1, -1)
-        Xs = artifacts.scaler.transform(X)
-        yhat = float(artifacts.model.predict(Xs).reshape(-1)[0])
-
+        last_row = feats.iloc[-1].copy()
         last_date = str(feats.index[-1].date()) if hasattr(feats.index[-1], "date") else str(feats.index[-1])
         last_close = float(last_row["Close"]) if "Close" in feats.columns else float("nan")
+
+        # Multi-step is an iterative approximation: we update only features that depend on Close/returns/lags
+        # and keep other exogenous features constant (Open/High/Low/Volume/RSI/MACD/etc).
+        preds: List[Dict[str, Any]] = []
+        prev_close = last_close
+        if "return_pct" in last_row.index and pd.notna(last_row.get("return_pct")):
+            prev_return = float(last_row["return_pct"])
+        else:
+            prev_return = 0.0
+
+        # business-day dates
+        try:
+            start = pd.to_datetime(last_date) + pd.tseries.offsets.BDay(1)
+            future_dates = pd.bdate_range(start=start, periods=horizon_days)
+            future_dates_str = [d.date().isoformat() for d in future_dates]
+        except Exception:
+            future_dates_str = [f"t+{i}" for i in range(1, horizon_days + 1)]
+
+        for i in range(1, horizon_days + 1):
+            yhat = self._predict_row(artifacts, last_row)
+            preds.append({"step": i, "date": future_dates_str[i - 1], "predicted_close": yhat})
+
+            # Update a minimal set of features for the next step.
+            if "Close" in last_row.index:
+                last_row["Close"] = yhat
+            if "return_pct" in last_row.index and prev_close and np.isfinite(prev_close):
+                new_ret = (yhat - prev_close) / prev_close
+                last_row["return_pct"] = float(new_ret)
+                # shift lag_return_pct_k features if present
+                lag_cols = [c for c in last_row.index if c.startswith("lag_return_pct_")]
+                # shift from largest k -> 1 to avoid overwriting values we still need
+                lag_pairs = []
+                for c in lag_cols:
+                    try:
+                        k = int(c.split("_")[-1])
+                    except Exception:
+                        continue
+                    lag_pairs.append((k, c))
+                for k, c in sorted(lag_pairs, key=lambda x: x[0], reverse=True):
+                    if k == 1:
+                        last_row[c] = float(prev_return)
+                    else:
+                        prev_name = f"lag_return_pct_{k-1}"
+                        if prev_name in last_row.index:
+                            last_row[c] = float(last_row[prev_name])
+
+                prev_return = float(last_row["return_pct"])
+
+            prev_close = yhat
 
         return {
             "ticker": ticker,
             "last_date": last_date,
             "last_close": last_close,
-            "predicted_next_close": yhat,
+            "horizon_days": int(horizon_days),
+            "predictions": preds,
             "model_name": "linear_regression_final",
+            "extra": {
+                "note": "Multi-day forecast is iterative; only Close/return-based features are updated each step. Other features are held constant.",
+            },
+        }
+
+    def predict_from_features(self, features: Dict[str, float]) -> Dict[str, Any]:
+        artifacts = self.load_best()
+        row = pd.Series(features).copy()
+        yhat = self._predict_row(artifacts, row)
+        return {
+            "ticker": "MANUAL_FEATURES",
+            "last_date": "N/A",
+            "last_close": float("nan"),
+            "horizon_days": 1,
+            "predictions": [{"step": 1, "date": "t+1", "predicted_close": yhat}],
+            "model_name": "linear_regression_final",
+            "extra": {"note": "Manual feature mode: provide exactly the trained feature_names (see /feature_names)."},
         }
 
 

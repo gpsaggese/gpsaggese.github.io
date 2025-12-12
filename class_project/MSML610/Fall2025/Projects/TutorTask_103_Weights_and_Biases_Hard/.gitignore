@@ -9,3 +9,6 @@ artifacts/best_model/
 artifacts/metrics/
 artifacts/tuning/
 tmp.precommit_output.txt
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
