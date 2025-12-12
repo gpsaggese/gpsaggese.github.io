@@ -316,7 +316,7 @@ All functions are in `Optuna_utils.py` with docstrings explaining inputs, output
 
 ## 9. Conclusion
 
-This project demonstrates a production-grade customer segmentation pipeline combining modern ML (Optuna hyperparameter tuning) with business fundamentals (RFM framework). The result is **three actionable customer segments with clear revenue implications and strategic recommendations**, backed by rigorous evaluation and reproducible code.
+This project demonstrates a customer segmentation pipeline combining modern ML (Optuna hyperparameter tuning) with business fundamentals (RFM framework). The result is **three actionable customer segments with clear revenue implications and strategic recommendations**, backed by rigorous evaluation and reproducible code.
 
 ---
 
