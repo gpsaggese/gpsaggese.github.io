@@ -58,6 +58,13 @@ class ModelService:
         self._loaded = LoadedArtifacts(model=model, scaler=scaler, feature_names=list(feature_names), metadata=metadata)
         return self._loaded
 
+    def feature_template(self) -> Dict[str, float]:
+        """
+        Return a template dict of feature_name -> 0.0 for manual feature entry.
+        """
+        artifacts = self.load_best()
+        return {name: 0.0 for name in artifacts.feature_names}
+
     def build_features_for_ticker(self, ticker: str, lookback_days: int) -> pd.DataFrame:
         import yfinance as yf
 

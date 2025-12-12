@@ -56,6 +56,17 @@ def create_app() -> FastAPI:
         except ProjectException as e:
             raise HTTPException(status_code=400, detail=str(e))
 
+    @app.get("/feature_template")
+    def feature_template():
+        """
+        Returns a JSON object you can copy/paste for manual prediction.
+        Values default to 0.0; you must fill in meaningful values for best results.
+        """
+        try:
+            return {"features": service.feature_template()}
+        except ProjectException as e:
+            raise HTTPException(status_code=400, detail=str(e))
+
     return app
 
 

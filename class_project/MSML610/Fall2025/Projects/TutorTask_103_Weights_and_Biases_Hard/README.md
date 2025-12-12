@@ -47,8 +47,11 @@ uvicorn backend.api:app --host 0.0.0.0 --port 8000
 
 Endpoints:
 - `GET /health`
-- `POST /predict` body: `{"ticker":"AAPL","lookback_days":365}`
+- `POST /predict` body: `{"ticker":"AAPL","lookback_days":365,"horizon_days":10}`
 - `GET /metrics`
+- `GET /feature_names`
+- `GET /feature_template` (copy/paste starter dict for manual features)
+- `POST /predict_features` body: `{"features":{...},"horizon_days":1}`
 
 ### Frontend (React)
 From `frontend/`:
@@ -56,5 +59,10 @@ From `frontend/`:
 npm install
 npm run dev
 ```
-Then open `http://localhost:5173` and set API Base URL to `http://localhost:8000`.
+Then open `http://localhost:5173`.
+
+Notes:
+- The UI defaults to API Base URL `/api` (Vite proxy -> `http://127.0.0.1:8000`). You can also set it to `http://localhost:8000` directly.
+- If you see **“Failed to fetch”** it means your backend is not reachable from the browser. Verify `http://localhost:8000/health` opens.
+- To use your own background image, save it as: `frontend/public/background.png` (the app will automatically use it).
 
