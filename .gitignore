@@ -1,0 +1,5 @@
+
+# macOS junk
+.DS_Store
+.Trash-*/
+tmp.precommit_output.txt

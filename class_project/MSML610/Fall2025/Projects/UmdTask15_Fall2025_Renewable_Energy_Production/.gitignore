@@ -1,0 +1,18 @@
+# MLflow
+mlruns/
+mlruns_public/
+
+# Generated artifacts/data
+artifacts/
+data/
+feature_importances_rf.csv
+
+# Jupyter
+**/.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+
+# macOS junk
+.DS_Store

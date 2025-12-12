@@ -6,3 +6,4 @@ RUN pip install --no-cache-dir \
     scikit-learn \
     xgboost \
     mlflow
+

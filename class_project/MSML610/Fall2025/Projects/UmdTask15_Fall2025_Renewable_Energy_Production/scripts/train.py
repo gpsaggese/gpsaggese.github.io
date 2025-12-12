@@ -15,23 +15,21 @@ This script:
 from pathlib import Path
 import sys
 from tempfile import TemporaryDirectory
+import json
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-
 
 import mlflow
 import mlflow.sklearn
 import mlflow.tensorflow
 from mlflow.models.signature import infer_signature
 
-
-import tensorflow as tf
+import tensorflow as tf  # noqa: F401
 from tensorflow import keras
 from tensorflow.keras import layers
 
@@ -168,6 +166,10 @@ def build_gru_model(input_shape):
 def run_random_forest(X_train, y_train, X_val, y_val, feature_cols):
     """
     Train and evaluate a RandomForest baseline, logging rich artifacts to MLflow.
+
+    IMPORTANT CHANGE:
+    - Log model with a DataFrame signature/input_example so MLflow serving knows column names.
+    - Save feature columns list to artifacts (metadata/feature_columns.json).
     """
     model_name = "RandomForest_baseline"
 
@@ -202,9 +204,14 @@ def run_random_forest(X_train, y_train, X_val, y_val, feature_cols):
         for name, val in zip(feature_cols, importances):
             mlflow.log_metric(f"fi_{name}", float(val))
 
-        # ----- artifacts (CSV + plots) -----
+        # ----- artifacts (CSV + plots + feature list) -----
         with TemporaryDirectory() as tmpdir:
             tmpdir_path = Path(tmpdir)
+
+            # 0) Save feature columns for reproducible serving requests
+            feature_path = tmpdir_path / "feature_columns.json"
+            feature_path.write_text(json.dumps(feature_cols, indent=2))
+            mlflow.log_artifact(str(feature_path), artifact_path="metadata")
 
             # 1) CSV with predictions vs actuals
             preds_df = pd.DataFrame(
@@ -245,9 +252,11 @@ def run_random_forest(X_train, y_train, X_val, y_val, feature_cols):
             plt.close(fig2)
             mlflow.log_artifact(str(fig2_path), artifact_path="figures")
 
-        # ----- log model with signature + input_example -----
-        input_example = X_val[:5]
-        signature = infer_signature(X_val, y_pred)
+        # ----- log model with signature + input_example (DataFrame with columns!) -----
+        X_val_df = pd.DataFrame(X_val, columns=feature_cols)
+        input_example = X_val_df.head(5)
+        signature = infer_signature(X_val_df, y_pred)
+
         mlflow.sklearn.log_model(
             model,
             artifact_path="model",
@@ -331,10 +340,7 @@ def run_deep_model(model_name, build_fn, X_train, y_train, X_val, y_val):
             mlflow.log_artifact(str(fig2_path), artifact_path="figures")
 
         # Log model
-        # For deep learning, use mlflow.tensorflow
-        mlflow.tensorflow.log_model(
-            model, artifact_path="model"
-        )
+        mlflow.tensorflow.log_model(model, artifact_path="model")
 
     return model, y_pred
 
@@ -374,6 +380,7 @@ def main() -> None:
     print(f"[train] RF X_train: {X_train_rf.shape}, X_val: {X_val_rf.shape}")
     print(f"[train] RF y_train: {y_train_rf.shape}, y_val: {y_val_rf.shape}")
     print(f"[train] Num features        : {len(feature_cols)}")
+    print(f"[train] Feature cols (first 10): {feature_cols[:10]}")
 
     run_random_forest(X_train_rf, y_train_rf, X_val_rf, y_val_rf, feature_cols)
 
