@@ -6,9 +6,13 @@ set -euo pipefail
 
 export WANDB_MODE="${WANDB_MODE:-online}"
 
-# Default to personal entity to avoid org/team permission issues.
-# If your project lives under a TEAM, set WANDB_ENTITY to that team entity before running.
-export WANDB_ENTITY="${WANDB_ENTITY:-othakur}"
+# IMPORTANT (W&B entity):
+# Your W&B org is "University of Maryland", but you must log runs to a TEAM entity.
+# Your team entity (per your dashboard) is:
+#   othakur-university-of-maryland
+#
+# You can still override this by exporting WANDB_ENTITY before running.
+export WANDB_ENTITY="${WANDB_ENTITY:-othakur-university-of-maryland}"
 export WANDB_PROJECT="${WANDB_PROJECT:-time_seires_forecasting}"
 
 echo "WANDB_MODE=$WANDB_MODE"

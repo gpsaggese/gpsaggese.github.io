@@ -99,6 +99,12 @@ bash scripts/phase5_wandb_online.sh
 ```
 Success = a new run appears in W&B under entity `othakur-university-of-maryland-org` and project `time_seires_forecasting`.
 
+Note: If you `git pull` inside the Docker container, run:
+```bash
+git pull --recurse-submodules=no
+```
+This avoids submodule SSH fetch errors inside the container.
+
 ## Phase 6: deliverables
 - Metrics: `artifacts/metrics/last_run.json`
 - Best model: `artifacts/best_model/linear_regression_final.joblib` (+ scaler + meta)
