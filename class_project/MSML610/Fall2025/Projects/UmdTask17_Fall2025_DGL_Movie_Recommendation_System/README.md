@@ -3,6 +3,7 @@
 **Course:** MSML610 (Fall 2025)  
 **Difficulty:** 3 — Hard  
 **Contributors:**  Swattik Maiti (UID: 121079367), Ritik Pratap Singh (UID: 120539527)
+
 **Tool**: DGL
 
 A graph neural network-based movie recommendation system using **Deep Graph Library (DGL)** and **GraphSAGE** for link prediction on bipartite user-movie graphs.
@@ -645,6 +646,7 @@ This is a class project for MSML610. For questions or issues, please refer to th
 ## License
 
 This project is part of a class assignment. Please refer to the course materials for usage guidelines.
+
 
 
 
