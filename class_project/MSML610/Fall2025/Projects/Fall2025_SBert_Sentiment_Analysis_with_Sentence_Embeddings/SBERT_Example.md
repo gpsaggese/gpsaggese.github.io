@@ -1,130 +1,103 @@
+# SBERT Example — End-to-End Sentiment Classification
 
-# SBERT Financial Sentiment Classification — Experimental Summary
+This document walks through a complete example application built using the SBERT internal API.
+It shows how cleaned data, SBERT embeddings, and downstream classifiers come together to produce a sentiment model.  
 
-This document provides a narrative explanation of the experiments performed in
-`SBERT_Example.ipynb`. It compares SBERT sentence embeddings with a traditional
-TF-IDF baseline and evaluates multiple classification models.
+The example covers:  
+1.	Dataset loading  
+2.	Baseline performance  
+3.	SBERT embeddings + classifiers  
+4.	Improvements with tuned models and SVM  
+5.	Fine-tuning SBERT end-to-end  
+6.	Final insights
 
-The dataset used is the **Financial PhraseBank**, a standard benchmark for
-three-way sentiment classification:
-- **0** → Negative  
-- **1** → Neutral  
-- **2** → Positive  
+## 1. Load Data & Embeddings
 
----
+We begin by loading configuration, cleaned text, and precomputed SBERT embeddings.
+```python
+cfg = load_config("config.yaml")
+df = load_clean_data(cfg)
+X = load_embeddings(cfg)
+y = df["sentiment_int"].values
+```
+Dataset summary:  
+•	4,846 sentences   
+•	3 sentiment classes (negative, neutral, positive)  
+•	Embedding dimension: 384  
 
-## 1. Data Preparation
+This verifies preprocessing and embedding stages executed correctly.
 
-### Cleaning
-Using `preprocess.py`, the raw CSV is cleaned by:
-- keeping only text and label columns,
-- removing empty sentences,
-- standardizing whitespace,
-- mapping labels to integer classes.
+## 2. Baseline: Majority Class
 
-Final dataset summary:
-- **Total samples:** 4,846  
-- **Label distribution:** moderately imbalanced, dominated by class 1 (neutral)
+Before using any model, we establish a trivial benchmark.  
+•	Majority class = 1 (neutral)  
+•	Baseline accuracy = ~59%  
 
-### Embedding Generation
-SBERT (`all-MiniLM-L6-v2`) produces a **384-dim embedding** per sentence:
-embedding shape = (4846, 384)
+Any real model must beat this.
 
-These embeddings capture semantic meaning rather than keyword overlap.
+## 3. Logistic Regression on SBERT Embeddings
+```python
+clf = LogisticRegression(max_iter=1000)
+clf.fit(X_train, y_train)
+```
+Performance  
+•	Accuracy: 0.7629  
+•	SBERT embeddings clearly outperform TF-IDF baseline (see next section)  
+•	Confusion matrix shows improved separation between classes 0, 1, 2  
 
----
+## 4. TF-IDF + Logistic Regression (Comparison)
 
-## 2. Baseline: TF-IDF + Logistic Regression
+To validate SBERT’s value, we train the same model on TF-IDF.
 
-A TF-IDF model was built using:
-- unigrams + bigrams  
-- vocabulary capped at 20,000 terms  
-- minimum document frequency = 2  
+Results  
+•	TF-IDF accuracy: 0.7608  
+•	Slightly worse than SBERT  
+•	Higher dimensionality (~15k features) but less semantic representation  
 
-Model performance:
+Conclusion
 
-| Metric | Score |
-|--------|--------|
-| Test Accuracy | **~74%** |
-| Macro F1 | ~0.71 |
+SBERT embeddings are compact and slightly more expressive, confirming expected behavior.
 
-TF-IDF performs reasonably well due to the dataset’s short financial sentences,
-but struggles with semantic nuances and paraphrases.
+## 5. Improved Classifiers on Frozen SBERT
 
----
+### 5.1 Hyperparameter-tuned Logistic Regression
 
-## 3. SBERT + Logistic Regression
+Grid search over C values:
 
-SBERT embeddings were used with the same classifier.
+Best accuracy: 0.7587
+(slightly worse than base logistic regression)
 
-Performance:
+### 5.2 Linear SVM (LinearSVC)
+```python
+svm = LinearSVC(class_weight="balanced")
+svm.fit(X_train, y_train)
+```
+Accuracy: 0.7722
+This becomes the best frozen-embedding model.
 
-| Metric | Score |
-|--------|--------|
-| Test Accuracy | **~76%** |
-| Macro F1 | ~0.72–0.73 |
+## 6. Fine-Tuning SBERT (End-to-End)
 
-Key findings:
-- SBERT improves accuracy by **~2%** over TF-IDF.
-- Neutral sentences remain easiest; positive/negative distinction is harder.
-- Confusion mainly occurs between positive ↔ neutral.
+We train all-MiniLM-L6-v2 directly on the labeled financial text.
 
-SBERT provides cleaner separation because its embeddings encode contextual
-meaning, not just surface-level tokens.
+Pipeline includes:  
+•	Train/validation split  
+•	HuggingFace tokenizer  
+•	PyTorch Dataset + DataLoader  
+•	AdamW optimizer  
+•	1 epoch (demo only, already effective)  
 
----
+Fine-tuning Performance  
+•	Accuracy: 0.7907 (best overall)  
+•	Stronger recall on minority sentiment classes  
+•	Confirms that adapting SBERT to domain-specific text improves performance  
 
-## 4. SBERT + Linear SVM
+## 8. How to Run This Example
+```bash
+python src/preprocess.py --config config.yaml
+python src/sbert_embed.py --config config.yaml
+jupyter notebook SBERT_Example.ipynb
+```
+## 9. Conclusion
 
-A linear SVM performs slightly better on high-dimensional dense embeddings.
-
-Performance:  
-- Accuracy: **76–77%**  
-- Most gains appear in the negative class due to better margin separation.
-
-This model is strong and computationally cheap.
-
----
-
-## 5. Fine-Tuning a Transformer Classifier (Bonus)
-
-A lightweight transformer (`distilbert-base-uncased`) was fine-tuned for
-3-class sentiment.
-
-Training details:
-- 2 epochs  
-- batch size 16  
-- learning rate = 2e-5  
-- AdamW optimizer  
-
-Results:
-- Validation accuracy: **~78%**
-- Slight gains across all classes, especially positive sentiment.
-
-Fine-tuning outperforms frozen SBERT because the model adapts to financial
-domain-specific patterns.
-
----
-
-## 6. Summary of Findings
-
-| Method | Accuracy | Notes |
-|--------|----------|-------|
-| **TF-IDF + LR** | ~74% | strong lexical baseline |
-| **SBERT + LR** | ~76% | improvement via semantic embeddings |
-| **SBERT + Linear SVM** | ~76–77% | better margin-based separation |
-| **Fine-tuned transformer** | ~78% | best performance, domain-adapted |
-
----
-
-## 7. Recommendations & Future Work
-
-- **Try domain-specific SBERT models** (FinBERT or Financial-SBERT).
-- **Perform hyperparameter search** for SVM and logistic regression.
-- **Augment training with unlabeled financial text** (continued pre-training).
-- **Explore contrastive learning** to strengthen embedding quality.
-
----
-
-This document serves as the narrative companion to the example notebook and
-summarizes the experimental outcomes clearly and reproducibly.
+This example demonstrates a complete, reproducible sentiment-analysis workflow using SBERT, including preprocessing, embeddings, classical models, and transformer fine-tuning.
+The project’s modular design allows easy experimentation and extension.
