@@ -25,7 +25,7 @@ The entire workflow is reproducible and produces structured outputs, figures, an
 ## 2. Project Structure
 
 ```
-project_root/
+Fall2025_CausalInference_Evaluating_the_Effect_of_Public_Health_Interventions_on_Disease_Spread/
 │
 ├── Causal_Inference.example.py                          # Unified pipeline runner
 ├── Causal_Inference.example.ipynb                       # Complete project notebook (created for easy explanation)
