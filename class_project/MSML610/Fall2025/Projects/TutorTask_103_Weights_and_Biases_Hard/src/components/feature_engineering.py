@@ -28,21 +28,17 @@ class FeatureEngineering:
     # ------------ Missing value handling ------------
     def fill_missing(self, df: pd.DataFrame) -> pd.DataFrame:
         df = df.sort_index()
-        df = df.ffill().bfill()  # forward then backward fill
+        df = df.ffill().bfill()
         return df
 
-    # ------------ Core features ------------
+    # ------------ Core helpers ------------
     def _close_series(self, df: pd.DataFrame) -> pd.Series:
-        """
-        Return Close as a 1D Series.
-        yfinance can produce Close as a single-column DataFrame in some cases.
-        """
         close = df["Close"]
         if isinstance(close, pd.DataFrame):
-            # Single-column DataFrame -> Series
             close = close.iloc[:, 0]
         return close
 
+    # ------------ Features ------------
     def add_returns(self, df: pd.DataFrame) -> pd.DataFrame:
         close = self._close_series(df)
         df["return_pct"] = close.pct_change()
@@ -83,7 +79,6 @@ class FeatureEngineering:
     def add_volatility(self, df: pd.DataFrame) -> pd.DataFrame:
         win = self.fe_cfg["volatility_window"]
         df[f"volatility_{win}"] = df["return_log"].rolling(win).std()
-        # Bollinger Bands using long_window
         lw = self.fe_cfg["long_window"]
         close = self._close_series(df)
         sma = close.rolling(lw).mean()
@@ -108,14 +103,24 @@ class FeatureEngineering:
         df = self.add_macd(df)
         df = self.add_volatility(df)
         df = self.add_lags(df)
-        # Drop rows with NaNs introduced by rolling/lag
         df = df.dropna()
         return df
 
     def drop_high_corr(self, df: pd.DataFrame, threshold: float = 0.9) -> pd.DataFrame:
+        # Never drop the target column (needed by Preprocessor)
+        target_col = self.training_cfg.get("target_column", "Close")
+        protected = {target_col}
+
         corr = df.select_dtypes(include=[np.number]).corr().abs()
         upper = corr.where(np.triu(np.ones(corr.shape), k=1).astype(bool))
-        to_drop = [column for column in upper.columns if any(upper[column] > threshold)]
+
+        to_drop = []
+        for col in upper.columns:
+            if col in protected:
+                continue
+            if any(upper[col] > threshold):
+                to_drop.append(col)
+
         if to_drop:
             self.logger.info(f"Dropping highly correlated features (>{threshold}): {to_drop}")
             df = df.drop(columns=to_drop)
