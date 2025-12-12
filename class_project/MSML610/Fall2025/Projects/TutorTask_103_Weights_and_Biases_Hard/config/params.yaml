@@ -131,17 +131,6 @@ model:
     # Lower (0.01) = rigid trend, higher (0.5) = very flexible
     # Why: 0.05 balances - allows trend changes but not too wiggly
 
-  # Transformer (PyTorch) - lightweight sequence model
-  transformer:
-    d_model: 64
-    nhead: 4
-    num_layers: 2
-    dim_feedforward: 128
-    dropout: 0.1
-    learning_rate: 0.001
-    batch_size: 64
-    epochs: 10
-
 # ============================================================================
 # TRAINING PARAMETERS
 # ============================================================================
@@ -168,7 +157,6 @@ training:
 
   # Models and training strategy
   models_to_run:
-    - lstm
     - linear_regression
     - xgboost
     - lightgbm
@@ -178,7 +166,6 @@ training:
     - arima
     - sarimax
     - prophet
-    - transformer
 
   ensemble:
     enabled: true
