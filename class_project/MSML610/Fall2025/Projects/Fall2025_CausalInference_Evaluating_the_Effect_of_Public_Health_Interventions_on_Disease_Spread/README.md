@@ -112,7 +112,52 @@ The script automatically:
 
 ---
 
-## 4. Key Features of the Pipeline
+## 4. What has been Implemented:
+
+Task 1: Data Acquisition and Preparation
+- Automated download of the OWID dataset
+- Extensive cleaning and filtering
+- Construction of a validated weekly panel dataset
+- Standardized per-capita normalization and treatment variable definition
+
+Task 2: Feature Engineering and Exploration
+- Temporal lag construction
+- Rolling averages for cases, deaths, and vaccination
+- Confounder exploration and correlation assessment
+- Continental and country-level vaccination trend analysis
+- Multiple diagnostic visualizations
+
+Task 3: Causal Inference Methods
+- Propensity score estimation and matching
+- Inverse probability weighting
+- Covariate balance diagnostics
+- Instrumental variable analysis using continental vaccination intensity
+- Sensitivity and robustness checks
+- Interim causal interpretation
+
+Task 4: Advanced Methods, Validation, and Heterogeneous Effects
+- Difference-in-Differences estimation
+- Model validation procedures
+- Subgroup analyses across continents and healthcare capacity
+- Consolidated causal interpretation and policy-relevant conclusions
+
+Bonus Task: Healthcare System Capacity and Policy Analysis
+- Extended analysis linking vaccination effects to healthcare infrastructure differences
+- Comparison of causal estimates across countries grouped by hospital-bed availability and income levels
+- Examination of whether healthcare capacity moderates the vaccination–outcome relationship
+- Policy-oriented synthesis describing which countries benefit most and why
+- Additional visualizations saved to the results folder, reinforcing interpretation
+
+**Additional Deliverables**
+- Comprehensive README explaining setup, execution, methodology, and project structure
+- Complete API documentation set as required
+- Fully containerized execution using Docker
+- Jupyter notebook for interactive exploration
+- Final script for video walkthrough
+
+---
+
+## 5. Key Features of the Pipeline
 
 ###  Automated Data Acquisition  
 Downloads OWID compact dataset and stores it locally for reproducibility.
@@ -161,7 +206,7 @@ This ensures the final log matches the full console run exactly.
 
 ---
 
-## 5. Outputs Produced
+## 6. Outputs Produced
 
 ### Text Output  
 **`results/output_results.txt`**  
@@ -193,7 +238,7 @@ Saved as:
 
 ---
 
-## 6. Dependencies
+## 7. Dependencies
 
 See `requirements.txt` for full versions.  
 Major libraries include:
@@ -212,7 +257,7 @@ pyarrow
 
 ---
 
-## 7. API Documentation
+## 8. API Documentation
 
 This project includes a complete lightweight API layer with:
 
@@ -224,7 +269,7 @@ This ensures the pipeline is modular, reusable, and extendable.
 
 ---
 
-## 8. Limitations & Considerations
+## 9. Limitations & Considerations
 
 - Observational data cannot guarantee full confounder control.  
 - Some IVs may violate exclusion restrictions.  
@@ -235,7 +280,7 @@ These limitations are documented and discussed in the log output.
 
 ---
 
-## 9. Conclusion
+## 10. Conclusion
 
 This repository provides a fully functioning causal inference engine for analyzing public health interventions using global COVID-19 data.  
 It is:
