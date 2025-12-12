@@ -1,6 +1,6 @@
 # UmdTask62 – Employee Attrition Prediction with LIME
 
-Name: Dhanush Garikapati  
+Author Name: Dhanush Garikapati  
 UID: 121324924
 
 This project implements a complete, explainable machine learning pipeline for **employee attrition prediction** using **LIME (Local Interpretable Model-agnostic Explanations)**. The system:
@@ -36,6 +36,36 @@ From a user’s perspective, there are two main entry points:
 2. `lime_attrition.API.ipynb` + `lime_attrition.API.md` – **API-focused artifacts**, documenting and demonstrating the internal tools defined in `lime_attrition_utils.py`.
 
 Everything is designed to be run either in a standard Python environment (venv) or inside Docker. No Colab setup is required.
+
+### 1.1 Dataset
+
+This project uses the **IBM HR Employee Attrition** dataset (commonly distributed as `WA_Fn-UseC_-HR-Employee-Attrition.csv`) and expects it under `data/` by default.
+
+**Primary target**
+- `Attrition` *(categorical: Yes/No)* is converted into a binary label `AttritionTarget ∈ {0,1}` for modelling.
+
+**Feature columns (original schema)**
+- **Identifiers / quasi-identifiers**
+  - `EmployeeNumber` *(int)*: unique employee identifier (useful for indexing, but typically not predictive; often excluded from modelling).
+- **Likely constant / low-variance columns**
+  - `EmployeeCount` *(int)*, `StandardHours` *(int)*, `Over18` *(categorical)*: often constant in this dataset; typically removed to avoid zero-variance features.
+- **Categorical (one-hot encoded)**
+  - `BusinessTravel`, `Department`, `EducationField`, `Gender`, `JobRole`, `MaritalStatus`, `OverTime` *(categorical strings)*.
+- **Numeric (scaled)**
+  - `Age`, `DailyRate`, `DistanceFromHome`, `HourlyRate`, `MonthlyIncome`, `MonthlyRate`,
+    `NumCompaniesWorked`, `PercentSalaryHike`, `TotalWorkingYears`, `TrainingTimesLastYear`,
+    `YearsAtCompany`, `YearsInCurrentRole`, `YearsSinceLastPromotion`, `YearsWithCurrManager` *(mostly ints)*.
+- **Ordinal / rating-style (treated as numeric in this project)**
+  - `Education`, `EnvironmentSatisfaction`, `JobInvolvement`, `JobLevel`, `JobSatisfaction`,
+    `PerformanceRating`, `RelationshipSatisfaction`, `StockOptionLevel`, `WorkLifeBalance` *(ints with small discrete ranges)*.
+
+**How the dataset is used**
+- The raw dataset is loaded, validated, and split into features `X` and target `y` with a stratified train/test split.
+- A scikit-learn preprocessing pipeline standardizes numeric features and one-hot encodes categorical features.
+- Additional engineered features are created (e.g., `IncomePerYearAtCompany`, `TenureRatio`, `LongCommute`, `EarlyCareer`) and are included alongside the original predictors.
+
+**Note on JSON input**
+- Training is performed from the canonical CSV file, but the inference/explanation pipeline can accept **JSON** (single record or list-of-records) as long as the JSON fields match the expected feature schema.
 
 ---
 
@@ -151,11 +181,106 @@ Key files and directories:
 - `README.md`  
   This file. High-level entry point for anyone viewing the repository.
 
+### 2.1 Project structure (how files connect)
+
+```mermaid
+flowchart TB
+  R["README.md<br/>(overview, setup, diagrams, usage)"]
+
+  subgraph NB["Notebooks (User-facing)"]
+    N1["lime_attrition.example.ipynb<br/>(end-to-end workflow)"]
+    N2["lime_attrition.API.ipynb<br/>(API usage examples)"]
+  end
+
+  subgraph DOC["Documentation"]
+    D1["lime_attrition.example.md<br/>(narrative walkthrough)"]
+    D2["lime_attrition.API.md<br/>(API reference)"]
+  end
+
+  subgraph CORE["Core Code"]
+    U1["lime_attrition_utils.py<br/>(data → preprocess → train → eval → LIME)"]
+  end
+
+  subgraph ENV["Environment / Reproducibility"]
+    E1["requirements.txt"]
+    E2["Dockerfile"]
+    E3["docker-compose.yml"]
+  end
+
+  R --> NB
+  R --> DOC
+  NB --> U1
+  DOC --> U1
+  U1 --> E1
+  E2 --> E1
+  E3 --> E2
+```
+
 ---
 
 ## 3. Workflow Overview
 
 The project follows a clear pipeline from raw HR data to LIME-based insights:
+
+### 3.1 Workflow diagram (phased, end-to-end)
+
+```mermaid
+flowchart TB
+
+%% =========================
+%% Phase 1: Data Preparation
+%% =========================
+subgraph P1["Phase 1: Data Preparation"]
+  A[(IBM HR Dataset<br/>CSV)]
+  B["Load + Validate Schema<br/>(types, missingness, ranges)"]
+  C["Clean + Label Target<br/>(Attrition → AttritionTarget)"]
+  D["EDA (optional)<br/>(attrition rate, correlations)"]
+  E["Feature Engineering<br/>(tenure, income, commute)"]
+  A --> B --> C --> D --> E
+end
+
+%% =========================
+%% Phase 2: Preprocessing
+%% =========================
+subgraph P2["Phase 2: Preprocessing"]
+  F["Train/Test Split<br/>(stratified)"]
+  G["Fit Preprocessor on Train<br/>(impute, encode, scale)"]
+  H[(Fitted Preprocessor)]
+  E --> F --> G --> H
+end
+
+%% =========================
+%% Phase 3: Model Training & Selection
+%% =========================
+subgraph P3["Phase 3: Model Training & Selection"]
+  I["Train Candidate Models<br/>(GB, XGB, LGBM, RF)"]
+  J["Evaluate on Test<br/>(PR AUC primary + ROC AUC, F1, etc.)"]
+  K["Select Best Model<br/>(by PR AUC)"]
+  L[(Best Model + Pipeline)]
+  H --> I --> J --> K --> L
+end
+
+%% =========================
+%% Phase 4: Explainability (LIME)
+%% =========================
+subgraph P4["Phase 4: Explainability (LIME)"]
+  M["Choose Employee(s) to Explain"]
+  N["Predict Attrition Probability"]
+  O["LIME Explanation<br/>(top positive/negative drivers)"]
+  P["Aggregate Explanations (optional)<br/>(global drivers)"]
+  Q[(Output<br/>probability + explanation)]
+  L --> M --> N --> O --> Q
+  O --> P
+end
+
+classDef datastore fill:#ffe0b2,stroke:#d97706,color:#111;
+classDef artifact fill:#e0f2fe,stroke:#0284c7,color:#111;
+classDef explain fill:#dcfce7,stroke:#16a34a,color:#111;
+
+class A datastore
+class H,L artifact
+class O explain
+```
 
 1. **Data Loading & Cleaning**
    - Load the IBM HR Employee Attrition CSV.
@@ -421,6 +546,18 @@ For new users, a recommended order is:
   - Local (per employee).
   - Model-agnostic (work with any fitted pipeline).
   - Expressed in terms of human-readable feature names (including engineered features and one-hot encoded categories).
+
+#### LIME internals (how the explanation is produced)
+
+```mermaid
+flowchart LR
+  X["Employee record to explain"] --> A["Create perturbations<br/>(sample around this record)"]
+  A --> B["Model predicts probabilities<br/>for each perturbation"]
+  B --> C["Weight samples by proximity<br/>(local neighborhood)"]
+  C --> D["Fit local surrogate model<br/>(interpretable linear model)"]
+  D --> E["Rank feature contributions<br/>(top positive/negative drivers)"]
+  E --> F["Return explanation<br/>(human-readable feature impacts)"]
+```
 
 ### 8.3 Feature Subset Experiments
 
