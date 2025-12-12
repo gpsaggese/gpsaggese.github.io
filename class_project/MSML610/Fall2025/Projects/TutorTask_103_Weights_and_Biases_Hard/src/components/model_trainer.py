@@ -5,6 +5,7 @@ from typing import Dict, Any, Optional
 import os
 import numpy as np
 import pandas as pd
+import math
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor
@@ -423,6 +424,191 @@ class ModelTrainer:
                 return self._m.predict(X, verbose=0).reshape(-1)
 
         return TrainResult(model_name="lstm", metrics=metrics, model=_KerasWrapper(best_model))
+
+    # ---------------------------------------------------------------------
+    # Prophet
+    # ---------------------------------------------------------------------
+    def train_prophet(self, y_train: "pd.Series", y_val: "pd.Series") -> TrainResult:
+        """
+        Prophet baseline: fits on (ds, y) where ds is the datetime index.
+        Notes:
+        - This ignores exogenous regressors for simplicity and stability.
+        - Works with our shifted target series (y_{t+h}).
+        """
+        try:
+            from prophet import Prophet  # type: ignore
+        except Exception as e:  # pragma: no cover
+            raise ImportError(
+                "prophet is required. Inside the Docker container (venv active) run:\n"
+                "  pip install prophet\n"
+            ) from e
+
+        df_train = pd.DataFrame({"ds": pd.to_datetime(y_train.index), "y": y_train.astype(float).values})
+        df_val = pd.DataFrame({"ds": pd.to_datetime(y_val.index)})
+
+        cfg = self.params.get("model", {}).get("prophet", {})
+        model = Prophet(
+            yearly_seasonality=bool(cfg.get("yearly_seasonality", True)),
+            weekly_seasonality=bool(cfg.get("weekly_seasonality", True)),
+            daily_seasonality=bool(cfg.get("daily_seasonality", False)),
+            seasonality_mode=str(cfg.get("seasonality_mode", "multiplicative")),
+            changepoint_prior_scale=float(cfg.get("changepoint_prior_scale", 0.05)),
+        )
+        model.fit(df_train)
+
+        pred_val = model.predict(df_val)
+        y_pred = pred_val["yhat"].values.astype(float)
+        y_val_arr = np.asarray(y_val.values, dtype=float)
+
+        metrics = {
+            "MAE": float(mean_absolute_error(y_val_arr, y_pred)),
+            "RMSE": float(np.sqrt(mean_squared_error(y_val_arr, y_pred))),
+            "MAPE": _mape(y_val_arr, y_pred),
+            "R2": float(r2_score(y_val_arr, y_pred)),
+        }
+        self.logger.info(f"Prophet validation metrics: {metrics}")
+        if self.logger.run:
+            self.logger.log_metrics({f"prophet/{k}": v for k, v in metrics.items()})
+
+        class _ProphetWrapper:
+            def __init__(self, m):
+                self._m = m
+
+            def predict(self, X):
+                # X is expected to be a pandas DataFrame with ds column.
+                pred = self._m.predict(X)
+                return pred["yhat"].values.astype(float)
+
+        return TrainResult(model_name="prophet", metrics=metrics, model=_ProphetWrapper(model))
+
+    # ---------------------------------------------------------------------
+    # Transformer (PyTorch) - lightweight sequence regressor
+    # ---------------------------------------------------------------------
+    def train_transformer(
+        self,
+        X_train_seq: np.ndarray,
+        y_train_seq: np.ndarray,
+        X_val_seq: np.ndarray,
+        y_val_seq: np.ndarray,
+    ) -> TrainResult:
+        """
+        Minimal TransformerEncoder regression model using PyTorch.
+        Keeps it small so it runs on CPU inside the professor container.
+        """
+        try:
+            import torch
+            import torch.nn as nn
+            from torch.utils.data import DataLoader, TensorDataset
+        except Exception as e:  # pragma: no cover
+            raise ImportError(
+                "torch is required for transformer model. Inside Docker:\n"
+                "  pip install torch\n"
+            ) from e
+
+        cfg = self.params.get("model", {}).get("transformer", {})
+        seed = int(self.params.get("training", {}).get("random_state", 42))
+        torch.manual_seed(seed)
+
+        d_model = int(cfg.get("d_model", 64))
+        nhead = int(cfg.get("nhead", 4))
+        num_layers = int(cfg.get("num_layers", 2))
+        dim_ff = int(cfg.get("dim_feedforward", 128))
+        dropout = float(cfg.get("dropout", 0.1))
+        lr = float(cfg.get("learning_rate", 1e-3))
+        batch_size = int(cfg.get("batch_size", 64))
+        epochs = int(cfg.get("epochs", 10))
+
+        device = torch.device("cpu")
+
+        class PositionalEncoding(nn.Module):
+            def __init__(self, d_model: int, max_len: int = 512):
+                super().__init__()
+                pe = torch.zeros(max_len, d_model)
+                position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+                div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
+                pe[:, 0::2] = torch.sin(position * div_term)
+                pe[:, 1::2] = torch.cos(position * div_term)
+                self.register_buffer("pe", pe.unsqueeze(0))  # (1, max_len, d_model)
+
+            def forward(self, x: torch.Tensor) -> torch.Tensor:
+                return x + self.pe[:, : x.size(1), :]
+
+        class TransformerRegressor(nn.Module):
+            def __init__(self, n_features: int, seq_len: int):
+                super().__init__()
+                self.inp = nn.Linear(n_features, d_model)
+                self.pos = PositionalEncoding(d_model, max_len=seq_len + 1)
+                enc_layer = nn.TransformerEncoderLayer(
+                    d_model=d_model,
+                    nhead=nhead,
+                    dim_feedforward=dim_ff,
+                    dropout=dropout,
+                    batch_first=True,
+                )
+                self.enc = nn.TransformerEncoder(enc_layer, num_layers=num_layers)
+                self.out = nn.Linear(d_model, 1)
+
+            def forward(self, x: torch.Tensor) -> torch.Tensor:
+                z = self.inp(x)
+                z = self.pos(z)
+                z = self.enc(z)
+                z_last = z[:, -1, :]
+                return self.out(z_last).squeeze(-1)
+
+        n_features = int(X_train_seq.shape[2])
+        seq_len = int(X_train_seq.shape[1])
+        model = TransformerRegressor(n_features, seq_len).to(device)
+
+        opt = torch.optim.Adam(model.parameters(), lr=lr)
+        loss_fn = torch.nn.MSELoss()
+
+        train_ds = TensorDataset(torch.tensor(X_train_seq, dtype=torch.float32), torch.tensor(y_train_seq, dtype=torch.float32))
+        val_ds = TensorDataset(torch.tensor(X_val_seq, dtype=torch.float32), torch.tensor(y_val_seq, dtype=torch.float32))
+        train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
+        val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False)
+
+        model.train()
+        for _ in range(epochs):
+            for xb, yb in train_loader:
+                xb = xb.to(device)
+                yb = yb.to(device)
+                opt.zero_grad()
+                pred = model(xb)
+                loss = loss_fn(pred, yb)
+                loss.backward()
+                opt.step()
+
+        # Validation metrics
+        model.eval()
+        preds = []
+        with torch.no_grad():
+            for xb, _ in val_loader:
+                xb = xb.to(device)
+                preds.append(model(xb).cpu().numpy())
+        y_pred = np.concatenate(preds).astype(float)
+
+        y_val_arr = np.asarray(y_val_seq, dtype=float)
+        metrics = {
+            "MAE": float(mean_absolute_error(y_val_arr, y_pred)),
+            "RMSE": float(np.sqrt(mean_squared_error(y_val_arr, y_pred))),
+            "MAPE": _mape(y_val_arr, y_pred),
+            "R2": float(r2_score(y_val_arr, y_pred)),
+        }
+        self.logger.info(f"Transformer validation metrics: {metrics}")
+        if self.logger.run:
+            self.logger.log_metrics({f"transformer/{k}": v for k, v in metrics.items()})
+
+        class _TorchWrapper:
+            def __init__(self, m):
+                self._m = m.eval()
+
+            def predict(self, X):
+                import torch
+                x = torch.tensor(X, dtype=torch.float32)
+                with torch.no_grad():
+                    return self._m(x).cpu().numpy().astype(float)
+
+        return TrainResult(model_name="transformer", metrics=metrics, model=_TorchWrapper(model))
 
 
 class _StatsForecastWrapper:

@@ -93,6 +93,21 @@ class TrainingPipeline:
                 test_metrics = self.evaluator.evaluate(tr.model, data["X_test_df"], data["y_test_s"], tr.model_name)
                 results["sarimax"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
                 trained_models[tr.model_name] = tr.model
+            elif model_name == "prophet":
+                tr = self.trainer.train_prophet(data["y_train_s"], data["y_val_s"])
+                # Prophet needs a ds dataframe for prediction.
+                import pandas as pd
+                X_test_prophet = pd.DataFrame({"ds": pd.to_datetime(data["y_test_s"].index)})
+                test_metrics = self.evaluator.evaluate(tr.model, X_test_prophet, data["y_test_s"].values, tr.model_name)
+                results["prophet"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                trained_models[tr.model_name] = tr.model
+            elif model_name == "transformer":
+                tr = self.trainer.train_transformer(
+                    data["X_train_seq"], data["y_train_seq"], data["X_val_seq"], data["y_val_seq"]
+                )
+                test_metrics = self.evaluator.evaluate(tr.model, data["X_test_seq"], data["y_test_seq"], tr.model_name)
+                results["transformer"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                trained_models[tr.model_name] = tr.model
             elif model_name == "cnn":
                 results["cnn"] = "TODO: call CNN trainer with seq data"
             else:
