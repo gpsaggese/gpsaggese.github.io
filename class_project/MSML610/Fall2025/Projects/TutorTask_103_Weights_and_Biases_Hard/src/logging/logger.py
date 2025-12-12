@@ -13,6 +13,7 @@ Why combine both?
 - Best of both worlds!
 """
 
+import os
 import wandb  # Weights & Biases library for experiment tracking
 import logging  # Python's built-in logging module
 from pathlib import Path  # For file path handling
@@ -186,14 +187,24 @@ class WandbLogger:
         # **params = "unpack" dictionary (spread operator)
         # Example: {**{'a': 1}, **{'b': 2}} = {'a': 1, 'b': 2}
         
+        # Allow environment-variable overrides (useful in Docker / CI).
+        # - If you belong to an organization, W&B may require using a TEAM entity.
+        # - Setting WANDB_ENTITY/WANDB_PROJECT here avoids hardcoding org/team names in files.
+        env_project = os.getenv("WANDB_PROJECT")
+        env_entity = os.getenv("WANDB_ENTITY")
+        project = env_project or wandb_config.get('project', 'stock_price_forecasting')
+        entity = env_entity or wandb_config.get('entity')
+        if isinstance(entity, str) and entity.strip().lower() in {"", "none", "null"}:
+            entity = None
+
         # Initialize W&B run
         self.run = wandb.init(
             # Project name from wandb.yaml
-            project=wandb_config.get('project', 'stock_price_forecasting'),
+            project=project,
             # Why .get() with default? Safe access - uses default if key missing
             
             # Entity (username/team) from wandb.yaml
-            entity=wandb_config.get('entity'),
+            entity=entity,
             # Why None allowed? W&B uses your personal account if None
             
             # Run name - use custom name or default from params.yaml

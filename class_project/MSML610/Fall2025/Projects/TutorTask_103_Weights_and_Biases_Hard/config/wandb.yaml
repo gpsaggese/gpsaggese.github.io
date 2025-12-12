@@ -1,7 +1,10 @@
 
 wandb:
   project: "time_seires_forecasting"
-  entity: "othakur-university-of-maryland-org"        # your W&B username
+  # IMPORTANT:
+  # - If you get: "you may not log runs directly to your organization..."
+  #   set WANDB_ENTITY to your TEAM entity or use your personal entity.
+  entity: "othakur"
   job_type: "training"
   group: "time_series_models"
   log_model: true

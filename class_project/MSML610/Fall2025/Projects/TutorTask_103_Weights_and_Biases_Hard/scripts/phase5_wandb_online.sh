@@ -6,8 +6,9 @@ set -euo pipefail
 
 export WANDB_MODE="${WANDB_MODE:-online}"
 
-# These defaults match config/wandb.yaml. You can override by exporting before running.
-export WANDB_ENTITY="${WANDB_ENTITY:-othakur-university-of-maryland-org}"
+# Default to personal entity to avoid org/team permission issues.
+# If your project lives under a TEAM, set WANDB_ENTITY to that team entity before running.
+export WANDB_ENTITY="${WANDB_ENTITY:-othakur}"
 export WANDB_PROJECT="${WANDB_PROJECT:-time_seires_forecasting}"
 
 echo "WANDB_MODE=$WANDB_MODE"
