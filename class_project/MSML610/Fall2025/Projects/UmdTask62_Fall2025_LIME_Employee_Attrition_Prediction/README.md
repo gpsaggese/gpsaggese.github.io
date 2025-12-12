@@ -198,7 +198,7 @@ flowchart TB
   end
 
   subgraph CORE["Core Code"]
-    U1["lime_attrition_utils.py<br/>(data → preprocess → train → eval → LIME)"]
+    U1["lime_attrition_utils.py<br/>(Core Functionalities)"]
   end
 
   subgraph ENV["Environment"]
@@ -547,16 +547,16 @@ This project includes multiple layers of documentation:
   - Model-agnostic (work with any fitted pipeline).
   - Expressed in terms of human-readable feature names (including engineered features and one-hot encoded categories).
 
-#### LIME internals (how the explanation is produced)
+#### LIME Internal Pipeline: How explanation is produced
 
 ```mermaid
 flowchart LR
   X["Employee record to explain"] --> A["Create perturbations<br/>(sample around this record)"]
   A --> B["Model predicts probabilities<br/>for each perturbation"]
   B --> C["Weight samples by proximity<br/>(local neighborhood)"]
-  C --> D["Fit local surrogate model<br/>(interpretable linear model)"]
-  D --> E["Rank feature contributions<br/>(top positive/negative drivers)"]
-  E --> F["Return explanation<br/>(human-readable feature impacts)"]
+  C --> D["Fit local surrogate model<br/>(interpretabl linear model)"]
+  D --> E["Rank feature contributions<br/>(top +ve/-ve drivers)"]
+  E --> F["Return explanation<br/>(readable feature impacts)"]
 ```
 
 ### 8.3 Feature Subset Experiments
@@ -572,7 +572,7 @@ flowchart LR
 
 ---
 
-## 9. Typical Results (Qualitative)
+## 9. Results
 
 Exact metrics may vary by random seed and environment, but in a representative run:
 
