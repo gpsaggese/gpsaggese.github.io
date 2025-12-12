@@ -1,7 +1,7 @@
 # UmdTask62 – Employee Attrition Prediction with LIME
 
-Author Name: Dhanush Garikapati  
-UID: 121324924
+**Author Name: Dhanush Garikapati**  
+**UID: 121324924**
 
 This project implements a complete, explainable machine learning pipeline for **employee attrition prediction** using **LIME (Local Interpretable Model-agnostic Explanations)**. The system:
 
@@ -254,7 +254,7 @@ end
 %% =========================
 subgraph P3["Phase 3: Model Training"]
   I["Train Models<br/>(GB, XGB, LGBM, RF)"]
-  J["Evaluate on Test<br/>(PR AUC primary + ROC AUC, F1, etc.)"]
+  J["Evaluate on Test<br/>(PR AUC, ROC AUC, F1)"]
   K["Select Best Model<br/>(By PR AUC)"]
   L[(Best Model + Pipeline)]
   H --> I --> J --> K --> L
@@ -263,7 +263,7 @@ end
 %% =========================
 %% Phase 4: LIME Explainability 
 %% =========================
-subgraph P4["Phase 4: Explainability (LIME)"]
+subgraph P4["Phase 4: LIME Explainability"]
   M["Choose Employee(s)"]
   N["Predict Attrition Probability"]
   O["LIME Explanation<br/>(top +ve/-ve drivers)"]
