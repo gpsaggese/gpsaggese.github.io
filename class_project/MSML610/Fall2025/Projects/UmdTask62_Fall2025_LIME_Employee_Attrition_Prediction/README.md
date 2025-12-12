@@ -35,7 +35,7 @@ From a user’s perspective, there are two main entry points:
 1. `lime_attrition.example.ipynb` – the **main end-to-end notebook**, showing the full workflow.
 2. `lime_attrition.API.ipynb` + `lime_attrition.API.md` – **API-focused artifacts**, documenting and demonstrating the internal tools defined in `lime_attrition_utils.py`.
 
-Everything is designed to be run either in a standard Python environment (venv) or inside Docker. No Colab setup is required.
+Everything is designed to be run either in a standard Python environment (venv) or inside Docker.
 
 ### 1.1 Dataset
 
@@ -46,18 +46,18 @@ This project uses the **IBM HR Employee Attrition** dataset (commonly distribute
 
 **Feature columns (original schema)**
 - **Identifiers / quasi-identifiers**
-  - `EmployeeNumber` *(int)*: unique employee identifier (useful for indexing, but typically not predictive; often excluded from modelling).
+  - `EmployeeNumber` *(int)*: unique employee identifier. This is useful for indexing, but typically not predictive can be excluded from modelling.
 - **Likely constant / low-variance columns**
-  - `EmployeeCount` *(int)*, `StandardHours` *(int)*, `Over18` *(categorical)*: often constant in this dataset; typically removed to avoid zero-variance features.
+  - `EmployeeCount` *(int)*, `StandardHours` *(int)*, `Over18` *(categorical)*: These are constant in this dataset and removed to avoid zero-variance features.
 - **Categorical (one-hot encoded)**
-  - `BusinessTravel`, `Department`, `EducationField`, `Gender`, `JobRole`, `MaritalStatus`, `OverTime` *(categorical strings)*.
+  - `BusinessTravel`, `Department`, `EducationField`, `Gender`, `JobRole`, `MaritalStatus`, `OverTime` are *categorical strings*.
 - **Numeric (scaled)**
   - `Age`, `DailyRate`, `DistanceFromHome`, `HourlyRate`, `MonthlyIncome`, `MonthlyRate`,
     `NumCompaniesWorked`, `PercentSalaryHike`, `TotalWorkingYears`, `TrainingTimesLastYear`,
-    `YearsAtCompany`, `YearsInCurrentRole`, `YearsSinceLastPromotion`, `YearsWithCurrManager` *(mostly ints)*.
+    `YearsAtCompany`, `YearsInCurrentRole`, `YearsSinceLastPromotion`, `YearsWithCurrManager` are *mostly ints*.
 - **Ordinal / rating-style (treated as numeric in this project)**
   - `Education`, `EnvironmentSatisfaction`, `JobInvolvement`, `JobLevel`, `JobSatisfaction`,
-    `PerformanceRating`, `RelationshipSatisfaction`, `StockOptionLevel`, `WorkLifeBalance` *(ints with small discrete ranges)*.
+    `PerformanceRating`, `RelationshipSatisfaction`, `StockOptionLevel`, `WorkLifeBalance` are *ints with small discrete ranges*.
 
 **How the dataset is used**
 - The raw dataset is loaded, validated, and split into features `X` and target `y` with a stratified train/test split.
@@ -181,7 +181,7 @@ Key files and directories:
 - `README.md`  
   This file. High-level entry point for anyone viewing the repository.
 
-### 2.1 Project structure (how files connect)
+### 2.1 Project Structure: How files connect
 
 ```mermaid
 flowchart TB
@@ -201,7 +201,7 @@ flowchart TB
     U1["lime_attrition_utils.py<br/>(data → preprocess → train → eval → LIME)"]
   end
 
-  subgraph ENV["Environment / Reproducibility"]
+  subgraph ENV["Environment"]
     E1["requirements.txt"]
     E2["Dockerfile"]
     E3["docker-compose.yml"]
@@ -222,7 +222,7 @@ flowchart TB
 
 The project follows a clear pipeline from raw HR data to LIME-based insights:
 
-### 3.1 Workflow diagram (phased, end-to-end)
+### 3.1 Workflow diagram
 
 ```mermaid
 flowchart TB
@@ -233,8 +233,8 @@ flowchart TB
 subgraph P1["Phase 1: Data Preparation"]
   A[(IBM HR Dataset<br/>CSV)]
   B["Load + Validate Schema<br/>(types, missingness, ranges)"]
-  C["Clean + Label Target<br/>(Attrition → AttritionTarget)"]
-  D["EDA (optional)<br/>(attrition rate, correlations)"]
+  C["Clean + Label Target"]
+  D["EDA<br/>(attrition rate, correlations)"]
   E["Feature Engineering<br/>(tenure, income, commute)"]
   A --> B --> C --> D --> E
 end
@@ -252,22 +252,22 @@ end
 %% =========================
 %% Phase 3: Model Training & Selection
 %% =========================
-subgraph P3["Phase 3: Model Training & Selection"]
-  I["Train Candidate Models<br/>(GB, XGB, LGBM, RF)"]
+subgraph P3["Phase 3: Model Training"]
+  I["Train Models<br/>(GB, XGB, LGBM, RF)"]
   J["Evaluate on Test<br/>(PR AUC primary + ROC AUC, F1, etc.)"]
-  K["Select Best Model<br/>(by PR AUC)"]
+  K["Select Best Model<br/>(By PR AUC)"]
   L[(Best Model + Pipeline)]
   H --> I --> J --> K --> L
 end
 
 %% =========================
-%% Phase 4: Explainability (LIME)
+%% Phase 4: LIME Explainability 
 %% =========================
 subgraph P4["Phase 4: Explainability (LIME)"]
-  M["Choose Employee(s) to Explain"]
+  M["Choose Employee(s)"]
   N["Predict Attrition Probability"]
-  O["LIME Explanation<br/>(top positive/negative drivers)"]
-  P["Aggregate Explanations (optional)<br/>(global drivers)"]
+  O["LIME Explanation<br/>(top +ve/-ve drivers)"]
+  P["Aggregate Explanations<br/>(global drivers)"]
   Q[(Output<br/>probability + explanation)]
   L --> M --> N --> O --> Q
   O --> P
@@ -491,7 +491,7 @@ docker compose down
 
 ---
 
-## 7. Documentation and Entry Points
+## 7. Documentation
 
 This project includes multiple layers of documentation:
 
@@ -506,17 +506,17 @@ This project includes multiple layers of documentation:
   - How to call the `lime_attrition_utils` wrapper layer.
 - **`lime_attrition.example.ipynb`** – Main narrative notebook:
   - End-to-end pipeline with EDA, feature engineering, model training, LIME, and bonus analysis.
-- **`lime_attrition.example.md`** – Prose description of:
+- **`lime_attrition.example.md`** – Description of:
   - The entire pipeline and design.
   - Model and LIME interpretation.
   - Feature subset experiment and results.
 
-For new users, a recommended order is:
+**For new users/learners**, a recommended order is:
 
-1. Read `README.md` (this file) to understand the big picture and setup.
+1. Read `README.md` to understand the big picture and setup.
 2. Run `lime_attrition.example.ipynb` (via venv or Docker) to see the full workflow end-to-end.
 3. Refer to `lime_attrition.API.md` and `lime_attrition.API.ipynb` for details on individual functions and configuration patterns.
-4. Optionally, read `lime_attrition.example.md` for a narrative explanation to accompany the notebook.
+4. Read `lime_attrition.example.md` for a narrative explanation to accompany the notebook.
 
 ---
 
@@ -608,7 +608,6 @@ These align well with intuitive HR hypotheses about attrition drivers.
 
 **Future improvements could include:**
 
-- Temporal modelling or survival analysis for time-to-attrition.
 - Fairness and bias audits across demographic groups.
 - Causal modelling or uplift analysis for HR interventions.
 - Richer dashboard-style front-ends for consuming explanations.
@@ -617,7 +616,7 @@ These align well with intuitive HR hypotheses about attrition drivers.
 
 ## 11. Getting Started Checklist
 
-If you are new to this repository and want to confirm that everything is self-contained and executable:
+If you are **new to this repository** and want to confirm that everything is self-contained and executable:
 
 1. Check that the following files exist at the project root:
    - `lime_attrition_utils.py`
