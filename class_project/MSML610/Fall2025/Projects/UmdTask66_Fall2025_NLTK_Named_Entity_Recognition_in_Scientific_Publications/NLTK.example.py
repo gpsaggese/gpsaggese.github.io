@@ -72,9 +72,9 @@ spacy.cli.download("en_core_web_sm")
 download_dataset(CORD19_URL, CORD19_FILE_PATH)
 
 # %% [markdown]
-# ## 3. Hyper parameters configuration
+# ## 3. Hyperparameters configuration
 #
-# There are 2 hyper parameters:
+# There are 2 hyperparameters:
 # - **MAX_NUMBER:** indicates the total number of articles that are to be analyzed. The dataset is very big and contains thousands of articles. Therefore, it is nearly impossible to analyze the whole dataset and we only choose the first **MAX_NUMBER** articles to analyze.
 # - **MAX_LENGTH:** indicates where to truncate the `cleaned_text`. Because the main texts of published articles are usually long, it is a useful trick to only analyze the first **MAX_LENGTH** cleaned characters in order to get a quicker demonstration. Besides, if **MAX_LENGTH** is set to `None`, our analysis code would analyze the whole text.
 #
