@@ -478,7 +478,7 @@ def plot_rfm_distributions(rfm):
     # Monetary
     axes[2].hist(rfm['Monetary'], bins=50, alpha=0.7, color='#e74c3c', edgecolor='black')
     axes[2].set_title('Monetary Distribution', fontweight='bold', fontsize=12)
-    axes[2].set_xlabel('Total Revenue ($)', fontsize=10)
+    axes[2].set_xlabel('Total Revenue (£)', fontsize=10)
     axes[2].set_ylabel('Frequency', fontsize=10)
     axes[2].grid(alpha=0.3, axis='y')
     
