@@ -36,3 +36,25 @@ python main.py train
 - Best model: `artifacts/best_model/linear_regression_final.joblib`
 - Plots: `artifacts/plots/*.png`
 
+## FastAPI + React (local deployment, no cloud)
+
+### Backend (FastAPI)
+From project root:
+```bash
+export WANDB_MODE=offline
+uvicorn backend.api:app --host 0.0.0.0 --port 8000
+```
+
+Endpoints:
+- `GET /health`
+- `POST /predict` body: `{"ticker":"AAPL","lookback_days":365}`
+- `GET /metrics`
+
+### Frontend (React)
+From `frontend/`:
+```bash
+npm install
+npm run dev
+```
+Then open `http://localhost:5173` and set API Base URL to `http://localhost:8000`.
+
