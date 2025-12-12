@@ -63,7 +63,7 @@ def test_wandb_connection(timeout: int = 30) -> bool:
     try:
         import wandb
         
-        print("[DEBUG] Testing WandB connection...")
+        print(" Testing WandB connection...")
         
         # Finish any existing runs first
         try:
@@ -73,33 +73,33 @@ def test_wandb_connection(timeout: int = 30) -> bool:
         
         # Check if already logged in by trying to access API
         try:
-            print("[DEBUG] Checking WandB login status...")
+            print("Checking WandB login status...")
             # Try to get API - this will fail if not logged in
             api = wandb.Api(timeout=timeout)
             # Try a simple API call to verify connection
             try:
                 api.viewer()
-                print("[DEBUG] WandB API connection verified")
+                print("WandB API connection verified")
             except:
                 # If viewer() fails, try login
-                print("[INFO] WandB API available but not authenticated. Attempting login...")
+                print("WandB API available but not authenticated. Attempting login...")
                 wandb.login(timeout=timeout)
                 print("[OK] WandB login successful")
         except Exception as e:
-            print(f"[WARNING] WandB API check failed: {e}")
-            print("[INFO] Attempting to login...")
+            print(f" WandB API check failed: {e}")
+            print("Attempting to login...")
             try:
                 wandb.login(timeout=timeout)
-                print("[OK] WandB login successful")
+                print(" WandB login successful")
             except Exception as e2:
-                print(f"[ERROR] WandB login failed: {e2}")
-                print("[INFO] Please run: wandb login")
-                print("[INFO] Or set WANDB_API_KEY environment variable")
+                print(f" WandB login failed: {e2}")
+                print(" Please run: wandb login")
+                print("Or set WANDB_API_KEY environment variable")
                 return False
         
         # Test a simple init/finish cycle
         try:
-            print("[DEBUG] Testing WandB init/finish cycle...")
+            print("Testing WandB init/finish cycle...")
             run = wandb.init(
                 project="wandb-connection-test",
                 name="test-connection",
@@ -108,22 +108,22 @@ def test_wandb_connection(timeout: int = 30) -> bool:
             )
             if run is not None:
                 wandb.finish()
-                print("[OK] WandB connection test successful!")
+                print(" WandB connection test successful!")
                 return True
             else:
-                print("[WARNING] WandB init returned None")
+                print("WandB init returned None")
                 return False
         except Exception as e:
-            print(f"[ERROR] WandB init/finish test failed: {e}")
+            print(f" WandB init/finish test failed: {e}")
             import traceback
             traceback.print_exc()
             return False
             
     except ImportError:
-        print("[ERROR] wandb package not installed. Install with: pip install wandb")
+        print("wandb package not installed. Install with: pip install wandb")
         return False
     except Exception as e:
-        print(f"[ERROR] WandB connection test failed: {e}")
+        print(f" WandB connection test failed: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -710,9 +710,9 @@ def train_epoch_deepspeed(
         profiler.stop()
         if rank == 0:
             if experiment_name:
-                print(f"[OK] Profiling data saved for {experiment_name} epoch {epoch} in ./profiling_traces/{experiment_name}/")
+                print(f"Profiling data saved for {experiment_name} epoch {epoch} in ./profiling_traces/{experiment_name}/")
             else:
-                print(f"[OK] Profiling data saved for epoch {epoch}")
+                print(f"Profiling data saved for epoch {epoch}")
     
     avg_loss = total_loss / num_batches if num_batches > 0 else 0.0
     return avg_loss
@@ -818,9 +818,9 @@ def train_epoch_standard(
     if enable_profiling and profiler is not None:
         profiler.stop()
         if experiment_name:
-            print(f"[OK] Profiling data saved for {experiment_name} epoch {epoch} in ./profiling_traces/{experiment_name}/")
+            print(f" Profiling data saved for {experiment_name} epoch {epoch} in ./profiling_traces/{experiment_name}/")
         else:
-            print(f"[OK] Profiling data saved for epoch {epoch}")
+            print(f" Profiling data saved for epoch {epoch}")
     
     avg_loss = total_loss / num_batches if num_batches > 0 else 0.0
     return avg_loss
@@ -1011,7 +1011,7 @@ def run_training_experiment(
     except ImportError:
         wandb = None
         if rank == 0:
-            print("[WARNING] wandb not available. Continuing without logging.")
+            print(" wandb not available. Continuing without logging.")
     
     # Auto-generate experiment name if not provided
     if experiment_name is None:
@@ -1035,10 +1035,10 @@ def run_training_experiment(
         use_data_parallel = True
         effective_world_size = available_gpus
         if rank == 0:
-            print(f"[INFO] Using DataParallel with {effective_world_size} GPUs (single-process environment).")
+            print(f" Using DataParallel with {effective_world_size} GPUs (single-process environment).")
     elif world_size == 1 and available_gpus > 1 and method != 'ddp':
         if rank == 0:
-            print(f"[WARN] Multiple GPUs detected ({available_gpus}) but method '{method}' requires multi-process launch; continuing with single GPU.")
+            print(f" Multiple GPUs detected ({available_gpus}) but method '{method}' requires multi-process launch; continuing with single GPU.")
     
     # Align world_size for downstream logic
     world_size = effective_world_size
@@ -1054,28 +1054,28 @@ def run_training_experiment(
     
     # Initialize WandB (only on rank 0)
     if rank == 0:
-        print("\n[WANDB] Checking WandB availability and authentication...")
+        print("\n Checking WandB availability and authentication...")
         if wandb is None:
-            print("[ERROR] WandB package not installed!")
+            print(" WandB package not installed!")
             raise ImportError("WandB is required but not installed. Install with: pip install wandb")
         else:
             # Check if WandB is authenticated before trying to init
-            print("[WANDB] Verifying authentication status...")
+            print(" Verifying authentication status...")
             if not is_wandb_authenticated():
                 print("\n" + "="*80)
-                print("[ERROR] WandB is NOT authenticated!")
+                print(" WandB is NOT authenticated!")
                 print("="*80)
-                print("\n[ACTION REQUIRED] Please authenticate WandB before running experiments:")
+                print("\n Please authenticate WandB before running experiments:")
                 print("  1. Set WANDB_API_KEY environment variable:")
                 print("     export WANDB_API_KEY=your_api_key_here")
                 print("  2. OR run: wandb login")
                 print("  3. OR in Kaggle: Add WANDB_API_KEY to Secrets (Add-ons → Secrets)")
-                print("\n[INFO] Get your API key from: https://wandb.ai/authorize")
+                print("\n Get your API key from: https://wandb.ai/authorize")
                 print("="*80 + "\n")
                 raise RuntimeError("WandB authentication required. Please login to WandB before running experiments.")
             else:
-                print("[OK] WandB is authenticated ✓")
-                print("[WANDB] Initializing WandB run...")
+                print(" WandB is authenticated")
+                print(" Initializing WandB run...")
                 try:
                     wandb.init(
                         project=wandb_project,
@@ -1093,7 +1093,7 @@ def run_training_experiment(
                         },
                         reinit=True
                     )
-                    print(f"[OK] WandB initialized successfully ✓")
+                    print(f"[OK] WandB initialized successfully")
                     print(f"[WANDB] Project: {wandb_project}")
                     print(f"[WANDB] Run name: {experiment_name}")
                 except Exception as e:
@@ -1104,10 +1104,10 @@ def run_training_experiment(
     try:
         # Load model
         if rank == 0:
-            print(f"[DEBUG] Loading model: {model_name}...")
+            print(f" Loading model: {model_name}...")
         num_labels = len(trainset.classes)
         if rank == 0:
-            print(f"[DEBUG] Number of classes: {num_labels}")
+            print(f" Number of classes: {num_labels}")
         model = load_vit_model(
             model_name=model_name,
             num_labels=num_labels,
@@ -1115,23 +1115,23 @@ def run_training_experiment(
             enable_gradient_checkpointing=True
         )
         if rank == 0:
-            print("[OK] Model loaded successfully")
+            print(" Model loaded successfully")
         
         # Get initial memory stats
         if rank == 0:
-            print("[DEBUG] Getting initial GPU memory stats...")
+            print(" Getting initial GPU memory stats...")
         initial_memory = get_gpu_memory_stats(rank) if torch.cuda.is_available() else {}
         if rank == 0:
-            print("[OK] Initial memory stats collected")
+            print(" Initial memory stats collected")
         
         # Run training based on method
         if method == 'single_gpu_simple':
             # Single-GPU simple training (standard PyTorch)
             if rank == 0:
-                print("[DEBUG] Setting up single-GPU simple training...")
+                print(" Setting up single-GPU simple training...")
             model = model.to(device)
             if rank == 0:
-                print("[DEBUG] Model moved to device")
+                print(" Model moved to device")
             optimizer = torch.optim.AdamW(
                 model.parameters(),
                 lr=learning_rate,
@@ -1391,7 +1391,7 @@ def run_training_experiment(
         
     except Exception as e:
         if rank == 0:
-            print(f"[ERROR] Experiment {experiment_name} failed: {e}")
+            print(f" Experiment {experiment_name} failed: {e}")
             import traceback
             traceback.print_exc()
             if wandb is not None:
@@ -1507,12 +1507,12 @@ def setup_distributed() -> Tuple[torch.device, int, int, int]:
     if 'WORLD_SIZE' in os.environ:
         world_size = int(os.environ.get('WORLD_SIZE', 1))
         if world_size > 1:
-            print(f"[DEBUG] Using WORLD_SIZE={world_size} from environment")
+            print(f" Using WORLD_SIZE={world_size} from environment")
     elif torch.cuda.is_available():
         world_size = torch.cuda.device_count()
         os.environ['WORLD_SIZE'] = str(world_size)
         if world_size > 1:
-            print(f"[DEBUG] Auto-detected {world_size} GPUs, set WORLD_SIZE={world_size}")
+            print(f" Auto-detected {world_size} GPUs, set WORLD_SIZE={world_size}")
     else:
         world_size = 1
     
@@ -1575,14 +1575,14 @@ def calculate_speedup_metrics(
             baseline = non_profiling[non_profiling['method'] == 'ddp'].iloc[0:1]
             baseline_method = 'ddp'
         else:
-            print(f"[WARNING] Baseline method '{baseline_method}' not found. Using first method.")
+            print(f" Baseline method '{baseline_method}' not found. Using first method.")
             baseline = non_profiling.iloc[0:1]
             baseline_method = non_profiling.iloc[0]['method'] if len(non_profiling) > 0 else None
     else:
         baseline = baseline.iloc[0:1]
     
     if len(baseline) == 0 or baseline_method is None:
-        print("[ERROR] No baseline found. Cannot calculate speedup metrics.")
+        print(" No baseline found. Cannot calculate speedup metrics.")
         return results_df
     
     baseline_time = baseline.iloc[0].get('total_time', 0)
@@ -1863,7 +1863,7 @@ def create_performance_visualizations(
         import matplotlib.pyplot as plt
         import seaborn as sns
     except ImportError:
-        print("[WARNING] matplotlib/seaborn not available. Skipping visualizations.")
+        print(" matplotlib/seaborn not available. Skipping visualizations.")
         return
     
     os.makedirs(output_dir, exist_ok=True)
@@ -1872,7 +1872,7 @@ def create_performance_visualizations(
     non_profiling = results_df[~results_df['method'].str.contains('profiling', case=False, na=False)].copy()
     
     if len(non_profiling) == 0:
-        print("[WARNING] No data available for visualization")
+        print(" No data available for visualization")
         return
     
     # Set style
@@ -1955,11 +1955,11 @@ def run_hta_analysis(
     
     # Load results
     if not os.path.exists(csv_path):
-        print(f"[ERROR] Results file not found: {csv_path}")
+        print(f" Results file not found: {csv_path}")
         return {}
     
     results_df = pd.read_csv(csv_path)
-    print(f"[OK] Loaded {len(results_df)} experiment results from {csv_path}")
+    print(f" Loaded {len(results_df)} experiment results from {csv_path}")
     
     # Generate report
     report = generate_hta_report(results_df, output_report)

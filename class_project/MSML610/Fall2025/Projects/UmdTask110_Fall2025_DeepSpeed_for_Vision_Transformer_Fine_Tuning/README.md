@@ -21,13 +21,8 @@ This project provides a complete framework for:
 ├── Deepspeed_single_gpu.example.ipynb    # Single-GPU LoRA experiments
 ├── DeepSpeed_multi_gpu.example.ipynb     # Multi-GPU distributed experiments
 ├── DeepSpeed_trace_analysis.example.ipynb # HTA trace analysis
-├── deepspeed_config_stage3.json          # DeepSpeed ZeRO Stage 3 configuration
+├── Dockerfile                            # Docker container configuration
 ├── requirements.txt                      # Python dependencies
-├── setup_food101.py                      # Food-101 dataset setup script
-├── test_environment.py                  # Environment verification script
-├── train_standard_ddp.py                 # Standalone DDP training script
-├── train_deepspeed_stage3.py            # Standalone DeepSpeed training script
-├── submit.slurm                         # Slurm job submission template
 └── README.md                            # This file
 ```
 
@@ -52,6 +47,7 @@ This project provides a complete framework for:
 - **Models**: 
   - ViT-Base (~86M parameters) for single-GPU experiments
   - ViT-Huge (~630M parameters) for multi-GPU experiments
+  - All models are trained from scratch (not fine-tuned from pre-trained weights)
 - **Datasets**:
   - CIFAR-100 (single-GPU experiments)
   - Food-101 (multi-GPU experiments)
@@ -83,6 +79,10 @@ This project provides a complete framework for:
    - Create account at https://wandb.ai
    - Run `wandb login` or set `WANDB_API_KEY` environment variable
    - For Kaggle: Add `WANDB_API_KEY` to Secrets (Add-ons → Secrets)
+
+## Note on Experiment Runtime
+
+**Important**: Both Single-GPU and Multi-GPU experiments take several hours to complete due to the large scale of Vision Transformer models used (ranging from ~86 million parameters to ~630 million parameters) and the fact that all models are trained from scratch (not fine-tuned from pre-trained weights). During video presentations and demonstrations, pre-run experimental results will be shown instead of executing the notebooks step-by-step in real-time.
 
 ## Quick Start
 
@@ -144,23 +144,9 @@ results = run_training_experiment(
 )
 ```
 
-### Standalone Scripts
+### Running Experiments
 
-**DDP Training:**
-```bash
-torchrun --nproc_per_node=2 train_standard_ddp.py \
-    --data-path /path/to/food101 \
-    --batch-size 16 \
-    --epochs 1
-```
-
-**DeepSpeed Training:**
-```bash
-deepspeed --num_gpus=2 train_deepspeed_stage3.py \
-    --data-path /path/to/food101 \
-    --deepspeed-config deepspeed_config_stage3.json \
-    --epochs 1
-```
+All training experiments are contained within the Jupyter notebooks. The notebooks use the utility functions from `DeepSpeed_utils.py` to run distributed training experiments. For command-line usage, refer to the examples within the notebooks and the API documentation in `DeepSpeed.API.md`.
 
 ## Experiment Tracking
 
@@ -183,13 +169,13 @@ The project enables comparison of:
 
 ### DeepSpeed Configuration
 
-Example ZeRO Stage 3 config (`deepspeed_config_stage3.json`):
-- ZeRO Stage 3 optimization
-- BF16 mixed precision
+DeepSpeed configurations are created programmatically within the notebooks using the utility functions. Configuration options include:
+- ZeRO Stage 2, 3, and ZeRO++ optimization
+- BF16/FP16 mixed precision
 - Gradient accumulation
 - Optimizer and parameter offloading options
 
-See `DeepSpeed.API.md` for detailed configuration options.
+See `DeepSpeed.API.md` for detailed configuration options and examples.
 
 ## Troubleshooting
 
