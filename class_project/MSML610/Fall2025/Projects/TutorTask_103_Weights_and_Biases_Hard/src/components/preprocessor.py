@@ -72,17 +72,27 @@ class Preprocessor:
         X_test_seq, y_test_seq = self.build_sequences(X_test, y_test)
 
         self.logger.info(
-            f"Sequences shapes -> "
-            f"train: {X_train_seq.shape}, val: {X_val_seq.shape}, test: {X_test_seq.shape}"
+            f"Flat shapes -> train: {X_train.shape}, val: {X_val.shape}, test: {X_test.shape}"
+        )
+        self.logger.info(
+            f"Seq shapes  -> train: {X_train_seq.shape}, val: {X_val_seq.shape}, test: {X_test_seq.shape}"
         )
 
         return {
-            "X_train": X_train_seq,
-            "y_train": y_train_seq,
-            "X_val": X_val_seq,
-            "y_val": y_val_seq,
-            "X_test": X_test_seq,
-            "y_test": y_test_seq,
+            # Flat arrays for classical models (linear/trees/boosting)
+            "X_train": X_train,
+            "y_train": y_train,
+            "X_val": X_val,
+            "y_val": y_val,
+            "X_test": X_test,
+            "y_test": y_test,
+            # Sequence arrays for LSTM/CNN/seq models
+            "X_train_seq": X_train_seq,
+            "y_train_seq": y_train_seq,
+            "X_val_seq": X_val_seq,
+            "y_val_seq": y_val_seq,
+            "X_test_seq": X_test_seq,
+            "y_test_seq": y_test_seq,
             "feature_names": meta["feature_names"],
             "scaler": meta["scaler"],
         }
