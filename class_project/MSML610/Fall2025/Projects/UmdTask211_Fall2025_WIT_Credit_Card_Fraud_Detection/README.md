@@ -110,338 +110,48 @@ graph TB
     style Output fill:#e0f2f1
 ```
 
-### Complete Data Flow Pipeline
 
-```mermaid
-flowchart LR
-    A["Raw Data<br/>284,807 rows<br/>0.17% fraud"] -->|load_raw_data| B["Load & Explore"]
-    B -->|clean_data| C["Remove Duplicates<br/>Handle Nulls"]
-    C -->|engineer_features| D["Add Features<br/>Hour, Amount_log1p<br/>Amount_per_hour"]
-    D -->|split_features_target| E["Train/Val/Test Split<br/>80/10/10<br/>Stratified"]
-    
-    E -->|scale_features| F["Scale Features<br/>Train fit only<br/>Apply to all"]
-    
-    F -->|Training Data| G["Anomaly Models"]
-    F -->|Training Data| H["Supervised Models"]
-    F -->|Training Data| I["balance_with_smote_tomek"]
-    
-    I -->|Balanced Train| J["Resampled Training<br/>~50% fraud ratio"]
-    
-    J -->|IF, AE training| G
-    J -->|LogReg, RF, XGB, CatBoost| H
-    
-    G -->|Predictions + Scores| K["Ensemble"]
-    H -->|Probabilities| K
-    
-    K -->|optimize_threshold| L["Threshold Tuning<br/>On Validation Data"]
-    
-    L -->|Frozen Threshold| M["evaluate_<br/>binary_<br/>classification"]
-    
-    F -->|Test Data| M
-    
-    M -->|Metrics + Visualizations| N["Performance Report"]
-    
-    N -->|WIT Widget| O["Interactive Analysis<br/>FP/FN Exploration<br/>Feature Sensitivity"]
-    
-    O -->|Acceptance Testing| P["Deployment"]
-    
-    P -->|save_processed| Q["Artifacts"]
-    P -->|joblib.dump| R["Serialized Models"]
-    
-    style A fill:#ffebee
-    style E fill:#fff9c4
-    style F fill:#fff3e0
-    style I fill:#f3e5f5
-    style K fill:#e8f5e9
-    style L fill:#e0f2f1
-    style M fill:#fce4ec
-    style O fill:#f1f8e9
-    style P fill:#e0f2f1
-```
-
-### Model Training and Ensemble Construction Workflow
-
-```mermaid
-graph TB
-    Train["Training Data<br/>(balanced via SMOTE-Tomek)"]
-    
-    Train --> IF["train_isolation_forest<br/>contamination=0.00172<br/>n_estimators=300"]
-    Train --> AE["train_autoencoder<br/>encoding_dim=16<br/>epochs=10<br/>threshold at 99.5%"]
-    Train --> LR["train LogisticRegression<br/>class_weight='balanced'<br/>max_iter=800"]
-    Train --> RF["train RandomForest<br/>class_weight='balanced'<br/>n_estimators=500"]
-    Train --> XGB["train XGBoost<br/>scale_pos_weight tuned<br/>learning_rate=0.06"]
-    Train --> CB["train CatBoost<br/>class_weights<br/>iterations=400"]
-    
-    IF -->|predict_isolation_forest| IFPred["Anomaly Scores<br/>normalized 0-1"]
-    AE -->|predict_autoencoder| AEPred["Reconstruction Errors<br/>0-1 range"]
-    LR -->|predict_proba| LRProba["Fraud Probabilities"]
-    RF -->|predict_proba| RFProba["Fraud Probabilities"]
-    XGB -->|predict_proba| XGBProba["Fraud Probabilities"]
-    CB -->|predict_proba| CBProba["Fraud Probabilities"]
-    
-    IFPred -.->|Optional| Fusion["Hybrid Fusion<br/>Weighted Combination"]
-    AEPred -.->|Optional| Fusion
-    LRProba --> Ensemble["build_soft_voting_ensemble<br/>Weights: XGB/CB=3, RF=2, LR=1"]
-    RFProba --> Ensemble
-    XGBProba --> Ensemble
-    CBProba --> Ensemble
-    
-    Ensemble -->|predict_proba| EnsembleProba["Ensemble Probabilities<br/>0-1 range"]
-    Fusion -->|weighted avg| FusionScore["Fused Anomaly+Supervised<br/>Score"]
-    
-    EnsembleProba --> Threshold["optimize_threshold<br/>on validation set<br/>maximize F1-score"]
-    FusionScore --> Threshold
-    
-    Threshold -->|Frozen Decision Rule| Decision["if probability > threshold<br/>then FRAUD<br/>else LEGITIMATE"]
-    
-    Decision -->|Test Set| Eval["evaluate_<br/>binary_<br/>classification"]
-    
-    Eval --> Metrics["Precision, Recall, F1<br/>ROC-AUC, PR-AUC<br/>Confusion Matrix"]
-    
-    style Train fill:#c8e6c9
-    style Ensemble fill:#bbdefb
-    style Decision fill:#ffe0b2
-    style Metrics fill:#f8bbd0
-    style Fusion fill:#e1bee7
-```
-
-### Threshold Optimization Visualization
-
-```mermaid
-graph LR
-    ValData["Validation Set<br/>Predictions & Ground Truth"]
-    
-    ValData --> Sweep["Sweep Thresholds<br/>0.0 to 1.0<br/>step 0.01"]
-    
-    Sweep --> Metrics["For each threshold<br/>calculate:<br/>Precision<br/>Recall<br/>F1-Score"]
-    
-    Metrics --> Selection["Select Threshold<br/>Maximizing F1"]
-    
-    Selection --> Frozen["Freeze Threshold<br/>e.g., 0.35"]
-    
-    Frozen --> Apply["Apply to Test Set<br/>if prob > 0.35<br/>predict FRAUD"]
-    
-    Apply --> Eval["Evaluate on Test<br/>Get final metrics"]
-    
-    style ValData fill:#fff9c4
-    style Frozen fill:#ffe0b2
-    style Eval fill:#f8bbd0
-```
-
-### What-If Tool (WIT) Analysis Workflow
-
-```mermaid
-graph TB
-    Test["Test Set Sample<br/>400-500 transactions"]
-    
-    Test -->|build_predict_fn| PredFn["Prediction Wrapper<br/>returns probabilities 0-1"]
-    
-    PredFn -->|build_wit_widget| WIT["WIT Widget<br/>Interactive Exploration"]
-    
-    WIT -->|Feature Sliders| Sliders["Adjust Features<br/>Amount, Hour<br/>V1-V28"]
-    
-    WIT -->|Filtering| Filters["Filter Examples<br/>False Positives<br/>False Negatives<br/>High Uncertainty"]
-    
-    WIT -->|Real-time| Predict["Observe Prediction<br/>Probability Changes<br/>Decision Boundary"]
-    
-    Sliders --> Analysis["Sensitivity Analysis<br/>How robust is model?<br/>What triggers fraud flag?"]
-    
-    Filters --> Investigation["Failure Mode Analysis<br/>Why are FP/FN missed?<br/>What patterns?"]
-    
-    Predict --> Understanding["Decision Boundary<br/>Characterization<br/>Confidence Calibration"]
-    
-    Analysis --> Report["Acceptance Testing<br/>Report"]
-    Investigation --> Report
-    Understanding --> Report
-    
-    Report -->|Pass| Deploy["Proceed to Deployment"]
-    Report -->|Fail| Retune["Adjust Hyperparameters<br/>or Retrain Models"]
-    
-    Retune --> WIT
-    
-    style Test fill:#fff3e0
-    style WIT fill:#f1f8e9
-    style Analysis fill:#e0f2f1
-    style Investigation fill:#fce4ec
-    style Understanding fill:#f3e5f5
-    style Deploy fill:#c8e6c9
-```
-
-### Data Leakage Prevention: Strict Workflow
-
-```mermaid
-graph LR
-    Raw["Raw Data<br/>n=284,807"]
-    
-    Raw -->|load + clean| Cleaned["Cleaned Data<br/>n=284,456"]
-    
-    Cleaned -->|engineer_features| Featured["Featured Data<br/>Added: Hour, Amount_log1p<br/>Amount_per_hour"]
-    
-    Featured -->|stratified split| Split["STRICT SEPARATION"]
-    
-    Split -->|80%| Train["TRAINING SET<br/>n=227,565"]
-    Split -->|10%| Val["VALIDATION SET<br/>n=28,445"]
-    Split -->|10%| Test["TEST SET<br/>n=28,446"]
-    
-    Train -->|fit StandardScaler| Scaler["Scaler Statistics<br/>mean, std from train only"]
-    
-    Scaler -->|transform train| TrainScaled["Scaled Training<br/>using train stats"]
-    Scaler -->|transform val| ValScaled["Scaled Validation<br/>using train stats"]
-    Scaler -->|transform test| TestScaled["Scaled Test<br/>using train stats"]
-    
-    TrainScaled -->|fit SMOTE-Tomek| SMOTE["Resampler<br/>fit on train only"]
-    
-    SMOTE -->|resample train| TrainBal["Balanced Training<br/>~50% fraud ratio<br/>n~250,000"]
-    
-    TrainBal -->|Train Models| Models["Isolation Forest<br/>Autoencoder<br/>LogReg, RF, XGB, CatBoost"]
-    
-    Models -->|validate on Val| Tuning["Threshold Tuning<br/>on VALIDATION only<br/>Freeze threshold"]
-    
-    Tuning -->|apply to Test| TestEval["Evaluate on TEST<br/>Final metrics<br/>NO CHANGES"]
-    
-    style Train fill:#c8e6c9
-    style Val fill:#fff9c4
-    style Test fill:#ffccbc
-    style TrainScaled fill:#c8e6c9
-    style ValScaled fill:#fff9c4
-    style TestScaled fill:#ffccbc
-    style Tuning fill:#ffe0b2
-    style TestEval fill:#ffccbc
-```
-
-### Anomaly Detection vs Supervised Learning Comparison
-
-```mermaid
-graph TB
-    subgraph Unsupervised["UNSUPERVISED ANOMALY DETECTION"]
-        IF["Isolation Forest<br/>- No labels required<br/>- Fast training<br/>- Isolation mechanism<br/>ROC-AUC ~0.95"]
-        AE["Autoencoder<br/>- Learns normal patterns<br/>- Reconstruction error<br/>- Neural network based<br/>ROC-AUC ~0.94"]
-    end
-    
-    subgraph Supervised["SUPERVISED LEARNING"]
-        LR["LogisticRegression<br/>- Class weights<br/>- Linear boundary<br/>- Fast, interpretable<br/>ROC-AUC ~0.97"]
-        RF["RandomForest<br/>- Class weights<br/>- Non-linear<br/>- Feature importance<br/>ROC-AUC ~0.98"]
-        XGB["XGBoost<br/>- scale_pos_weight<br/>- Gradient boosting<br/>- Strong generalization<br/>ROC-AUC ~0.99"]
-        CB["CatBoost<br/>- Class weights<br/>- Reduced overfitting<br/>- Categorical aware<br/>ROC-AUC ~0.99"]
-    end
-    
-    Unsupervised -->|Complementary Signals| Ensemble["WEIGHTED SOFT-VOTING<br/>ENSEMBLE<br/>ROC-AUC ~0.99+<br/>F1 ~0.70-0.80"]
-    Supervised -->|Ensemble Vote| Ensemble
-    
-    Ensemble -->|Optional| Fusion["HYBRID FUSION<br/>Anomaly + Supervised<br/>ROC-AUC ~0.9920<br/>F1 ~0.68-0.75"]
-    
-    style Unsupervised fill:#e1f5ff
-    style Supervised fill:#f3e5f5
-    style Ensemble fill:#e8f5e9
-    style Fusion fill:#fff3e0
-```
-
-### Class Imbalance Handling: Before and After SMOTE-Tomek
-
-```mermaid
-graph LR
-    Original["Original Training Data<br/>n=227,565<br/>Fraud: 398 (0.17%)<br/>Legit: 227,167 (99.83%)"]
-    
-    Original -->|SMOTE| Balanced["After SMOTE-Tomek<br/>n~250,000<br/>Fraud: ~125,000 (50%)<br/>Legit: ~125,000 (50%)"]
-    
-    Balanced -->|Train Models| Better["Models Learn Better<br/>- Balanced representations<br/>- Fewer false negatives<br/>- Better generalization"]
-    
-    Better -->|Eval on Unbalanced Test| Final["Test Set (Unbalanced)<br/>n=28,446<br/>Fraud: 50 (0.176%)<br/>Legit: 28,396 (99.824%)<br/><br/>Realistic Evaluation<br/>Represents Production"]
-    
-    style Original fill:#ffcdd2
-    style Balanced fill:#c8e6c9
-    style Better fill:#bbdefb
-    style Final fill:#ffccbc
-```
-
-### Feature Engineering Pipeline
-
-```mermaid
-graph TB
-    Raw["Raw Features<br/>Time (seconds from start)<br/>Amount (transaction $)<br/>V1-V28 (PCA anonymized)"]
-    
-    Raw -->|Engineer 1| Hour["Hour of Day<br/>= (Time // 3600) % 24<br/>Captures temporal patterns<br/>Values: 0-23"]
-    
-    Raw -->|Engineer 2| AmountLog["Amount Log Transform<br/>= log1p(Amount)<br/>Handles skewed distribution<br/>Reduces outlier impact"]
-    
-    Raw -->|Engineer 3| AmountPerHour["Amount per Hour<br/>= Amount / (Hour + 1)<br/>Normalized spending rate<br/>Identifies bursts"]
-    
-    Hour --> Combined["Final Feature Set<br/>30 features:<br/>V1-V28 + Hour<br/>+ Amount_log1p<br/>+ Amount_per_hour"]
-    AmountLog --> Combined
-    AmountPerHour --> Combined
-    
-    Combined -->|StandardScaler| Scaled["Scaled Features<br/>Mean=0, Std=1<br/>Ready for modeling"]
-    
-    style Hour fill:#fff3e0
-    style AmountLog fill:#fff3e0
-    style AmountPerHour fill:#fff3e0
-    style Combined fill:#e8f5e9
-    style Scaled fill:#bbdefb
-```
-
-### Production Deployment Workflow
-
-```mermaid
-graph LR
-    Models["Trained Models<br/>Ensemble + Scaler"]
-    
-    Models -->|joblib.dump| Artifacts["artifacts/<br/>ensemble.joblib<br/>scaler.joblib"]
-    
-    Artifacts -->|Load in Production| Prod["Production System"]
-    
-    Prod -->|New Transaction| Receive["Receive Transaction<br/>[Time, Amount, V1-V28]"]
-    
-    Receive -->|engineer_features| Features["Engineer Features<br/>Hour, Amount_log1p<br/>Amount_per_hour"]
-    
-    Features -->|scaler.transform| Scale["Scale Transaction<br/>Using saved mean/std"]
-    
-    Scale -->|ensemble.predict_proba| Proba["Get Fraud Probability<br/>0-1 range"]
-    
-    Proba -->|apply threshold| Decision["Decision<br/>if prob > 0.35<br/>FRAUD<br/>else<br/>LEGITIMATE"]
-    
-    Decision -->|Log| Output["Output Decision<br/>Store prediction<br/>Monitor metrics"]
-    
-    Output -->|Daily Check| Monitor["Monitor Drift<br/>Track Precision/Recall<br/>Alert on degradation"]
-    
-    Monitor -->|If Drift| Retrain["Retrain Ensemble<br/>With recent data<br/>Reoptimize threshold"]
-    
-    Retrain -->|Save New| Artifacts
-    
-    style Artifacts fill:#c8e6c9
-    style Prod fill:#bbdefb
-    style Decision fill:#ffe0b2
-    style Monitor fill:#fce4ec
-    style Retrain fill:#fff3e0
-```
 
 ## Key Features & Task Fulfillment
 
-- **Preprocessing:** Train-only scaling, simple feature engineering (Hour, log Amount, Amount-per-hour), and SMOTE-Tomek on training data.
-- **Models:** Isolation Forest and autoencoder (anomaly) plus LogReg, RandomForest, XGBoost, and CatBoost (supervised).
-- **Ensembles:** Weighted soft voting with validation threshold tuning; optional fusion of anomaly scores with ensemble probabilities.
-- **Evaluation:** Precision, recall, F1, ROC-AUC, PR-AUC, confusion matrices.
-- **WIT:** Interactive FP/FN inspection and feature sliders (Amount, Hour) on held-out samples.
+### 1. Data Preprocessing
+- Feature normalization using `StandardScaler` (fit on training data only to prevent leakage)
+- Address severe class imbalance (0.17% fraud) using SMOTE-Tomek: over-sample minority class then remove Tomek links at decision boundaries
+- Feature engineering: extract hour-of-day from transaction timestamp, log-transform transaction amount, compute amount-per-hour ratios
+- Stratified train/test/validation splits to preserve fraud ratio across all folds
 
-## Quick Start Guide
+### 2. Anomaly Detection Models
+- **Isolation Forest**: Unsupervised baseline tuned to dataset fraud rate; returns normalized anomaly scores
+- **Autoencoder**: Dense Keras neural network trained on normal transactions; identifies anomalies via reconstruction error exceeding 99.5th percentile threshold
 
-### Option 1: Local Installation
+### 3. Supervised Baselines
+- Logistic Regression with class weighting for imbalanced data
+- RandomForest with class weighting and tuned hyperparameters
+- XGBoost with `scale_pos_weight` parameter to handle class imbalance
+- CatBoost with balanced class weight vectors
 
-1. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 4. Ensemble Methods
+- Soft-voting ensemble combining all supervised models with learned weights
+- Heavier weights on gradient boosting models (XGBoost, CatBoost) and RandomForest
+- Validation-based threshold optimization to maximize F1-score
 
-2. **Launch Jupyter Lab:**
-   ```bash
-   jupyter lab
-   ```
+### 5. Hybrid Fusion Approach
+- Blend anomaly detection scores (Isolation Forest, autoencoder) with supervised ensemble probabilities
+- Provides stronger separation and captures both unsupervised and supervised signals
 
-3. **Open and explore the notebooks:**
-   - Start with `WIT.API.ipynb` to understand the API layer and see minimal examples of each function
-   - Progress to `WIT.example.ipynb` for the full end-to-end workflow
-   - For faster iteration during development, set `N_SAMPLE` parameter in notebooks to load only a subset of data (e.g., 50,000 rows instead of full 284,807)
+### 6. Performance Evaluation
+- Precision, Recall, F1-Score for binary classification
+- ROC-AUC and PR-AUC (Area Under Precision-Recall Curve)
+- Confusion matrices and detailed classification reports
+- Threshold tuning swept across precision-recall curves to optimize for production requirements
 
-### Option 2: Docker (Containerized Environment)
+### 7. What-If Tool (WIT) Analysis
+- Interactive exploration of decision boundaries on held-out test samples
+- Feature manipulation: adjust transaction amount, hour-of-day to observe model response
+- False positive/negative investigation: filter examples and understand failure modes
+- Model sensitivity analysis: evaluate robustness to realistic feature perturbations
+
+## Docker Setup Guide (Containerized Environment)
 
 1. **Build the Docker image:**
    ```bash
@@ -462,23 +172,126 @@ graph LR
 
 ## Complete Workflow Overview
 
-The workflow in short:
-- Load and clean the raw CSV; engineer Hour/log Amount/Amount-per-hour.
-- Split train/validation/test with stratification; scale using train-only stats.
-- Balance training with SMOTE-Tomek; keep validation/test untouched.
-- Train anomaly models (Isolation Forest, autoencoder) and supervised models (LogReg, RF, XGB, CatBoost); build the soft-voting ensemble and optional fusion.
-- Tune the decision threshold on validation; evaluate on test with PR/ROC, F1, and confusion matrix; explore FP/FN with WIT.
-- Save processed data and serialized models in `artifacts/`.
+The fraud detection pipeline follows a carefully orchestrated sequence to ensure reproducibility and prevent data leakage:
 
-## Notebook Structure
+### Phase 1: Data Loading and Exploration
+1. Load raw credit card data using `load_raw_data()` from `WIT_utils`
+2. Clean data: remove duplicates, handle missing values, ensure correct data types
+3. Perform exploratory data analysis (EDA) to understand class imbalance, feature distributions, and temporal patterns
+4. Visualize imbalance ratio, transaction amount distributions, and hourly activity patterns
+
+### Phase 2: Feature Engineering and Data Preparation
+1. Engineer features:
+   - Extract hour-of-day from transaction timestamp (captures temporal fraud patterns)
+   - Log-transform transaction amounts to reduce skewness
+   - Compute amount-per-hour ratio to identify bursty spending behavior
+2. Perform stratified train/test split (80/20) preserving fraud ratio
+3. Create validation fold from training set for threshold optimization
+4. Apply StandardScaler normalization to features (fit on training data only)
+
+### Phase 3: Address Class Imbalance
+1. Apply SMOTE-Tomek on training data only:
+   - SMOTE over-samples minority (fraudulent) transactions
+   - Tomek link removal cleans boundary instances that sit on decision margins
+2. Verify balanced class distribution in resampled training set
+3. Keep test and validation sets unmodified for unbiased evaluation
+
+### Phase 4: Train Anomaly Detection Models
+1. **Isolation Forest**: Unsupervised baseline that isolates anomalies in feature space
+   - Contamination parameter set to dataset fraud rate (0.17%)
+   - Returns binary predictions and normalized anomaly scores
+2. **Autoencoder**: Keras neural network trained on normal transactions
+   - Learns reconstruction patterns of legitimate transactions
+   - Flags transactions with high reconstruction error as anomalies
+   - Threshold set at 99.5th percentile of reconstruction error distribution
+
+### Phase 5: Train Supervised Baseline Models
+1. **Logistic Regression**: Class-weighted linear classifier
+2. **RandomForest**: Class-weighted ensemble of decision trees
+3. **XGBoost**: Gradient boosting with scale_pos_weight for imbalance
+4. **CatBoost**: Gradient boosting with native class weight handling
+5. All supervised models use balanced class weights to emphasize minority class
+
+### Phase 6: Build and Tune Ensemble
+1. Construct soft-voting ensemble from supervised models
+2. Assign weights: heavier weights to gradient boosting models (XGBoost, CatBoost) and RandomForest
+3. Perform threshold optimization on validation set:
+   - Sweep decision thresholds from 0 to 1
+   - Compute precision, recall, and F1 at each threshold
+   - Select threshold that maximizes F1-score (balances precision and recall)
+4. Freeze tuned threshold and apply to test set
+
+### Phase 7: Hybrid Fusion (Optional Advanced Technique)
+1. Combine anomaly signals (Isolation Forest score + autoencoder reconstruction error) with supervised ensemble probability
+2. Creates a multi-signal fraud indicator that captures both unsupervised and supervised perspectives
+3. Improves separation and often achieves better overall performance
+
+### Phase 8: Performance Evaluation
+1. Compute comprehensive metrics on test set:
+   - Precision: ratio of true positives to all positive predictions
+   - Recall: ratio of true positives to all actual positives
+   - F1-Score: harmonic mean balancing precision and recall
+   - ROC-AUC: area under receiver operating characteristic curve
+   - PR-AUC: area under precision-recall curve
+2. Generate confusion matrices showing true/false positives and negatives
+3. Visualize decision boundaries and metric curves
+
+### Phase 9: WIT Analysis and Feature Impact Exploration
+1. Build WIT widget with ensemble model on 400-500 held-out test examples
+2. Interactive exploration capabilities:
+   - Filter and examine false positives (legitimate transactions flagged as fraud)
+   - Filter and examine false negatives (fraudulent transactions missed)
+   - Use feature sliders to adjust Amount, Hour, and other features
+   - Observe model predictions change in real-time
+3. Understand feature sensitivity and model robustness
+4. Identify edge cases and decision boundary characteristics
+
+### Phase 10: Persistence and Productionization
+1. Save processed dataset to `data/processed/creditcard_processed.csv`
+2. Serialize trained models and scaler:
+   - `artifacts/ensemble.joblib` – trained ensemble model
+   - `artifacts/scaler.joblib` – fitted StandardScaler for new predictions
+3. Document decision threshold and other tuning parameters
+4. Prepare deployment checklist including WIT validation results
+
+## Notebook Structure and Reading Guide
 
 ### WIT.API.ipynb – API Reference Layer
 
-Run first to see each utility function in isolation. It covers setup/imports, data IO, preprocessing, anomaly and supervised models, ensemble construction, evaluation helpers, and WIT wiring.
+This notebook serves as the technical reference and API documentation in executable form. It demonstrates each utility function in isolation with minimal, focused examples.
 
-### WIT.example.ipynb – Complete Workflow
+**Contents by section:**
+- Setup and imports: Load utility modules and configure logging
+- Data IO layer: `load_raw_data()`, `clean_data()`, `engineer_features()`, `save_processed()`
+- Preprocessing: `split_features_target()`, `scale_features()`, `balance_with_smote_tomek()`
+- Anomaly detection: `train_isolation_forest()`, `predict_isolation_forest()`, `train_autoencoder()`, `predict_autoencoder()`
+- Supervised models: `train_supervised_models()`, individual model inspection
+- Ensemble: `build_soft_voting_ensemble()`, `optimize_threshold()` on validation data
+- Evaluation: `evaluate_binary_classification()`, metric interpretation
+- WIT integration: `build_predict_fn()`, `build_wit_widget()` configuration
+- Feature importance: `collect_feature_importance()` aggregation
 
-Run start-to-finish for the full pipeline: EDA, preprocessing, splitting, scaling, SMOTE-Tomek, anomaly and supervised training, ensemble + fusion, evaluation plots, WIT widget exploration, and saving artifacts.
+**How to use:** Run this notebook first to understand the API contract. Each cell is self-contained; you can execute them independently or sequentially. Use this as a reference when building your own fraud detection workflows.
+
+### WIT.example.ipynb – Complete End-to-End Workflow
+
+This notebook demonstrates the full fraud detection pipeline with detailed markdown explanations, rich visualizations, and interpretation guidance. It shows the complete journey from raw data to deployed model.
+
+**Contents by section:**
+1. EDA and data exploration: Class imbalance visualization, feature distributions, temporal patterns
+2. Data preprocessing: Loading, cleaning, feature engineering with explanations
+3. Train/validation/test splitting with fraud ratio preservation
+4. Feature scaling with leakage prevention (training-only fit)
+5. SMOTE-Tomek balancing on training data only
+6. Anomaly model training and evaluation
+7. Supervised model training with hyperparameter details
+8. Ensemble construction and validation-based threshold optimization
+9. Comprehensive evaluation: confusion matrices, PR/ROC curves, metric summaries
+10. Hybrid fusion score combining anomaly and supervised signals
+11. WIT widget for interactive decision-boundary exploration
+12. Model persistence: saving ensemble, scaler, and predictions for deployment
+
+**How to use:** Run this notebook start-to-finish to see the complete pipeline. Pay attention to markdown cells explaining intent, assumptions, and interpretation at each stage. Adjust `N_SAMPLE` parameter for faster development iterations (smaller subset) or `N_SAMPLE=None` for full-data runs.
 
 ## Data Leakage Prevention
 
@@ -490,49 +303,7 @@ This project implements strict validation discipline to prevent data leakage:
 - **Threshold optimization**: Performed on validation data; threshold frozen before test evaluation
 - **Feature engineering**: Performed before split to avoid temporal leakage within transactions, but split timing ensures no information leaks between folds
 
-## Important Notes for Reviewers
 
-### Notebook Execution and Performance
-- Both notebooks are designed to be "restart-and-run-all clean": no manual setup or intermediate state required
-- Default `N_SAMPLE` values keep execution practical (~60,000 rows for quick testing):
-  - Set `N_SAMPLE = None` in notebooks to run on full dataset (284,807 rows) for production results
-  - Full runs take longer but provide more stable metrics and better model generalization
-- Heavy lifting is centralized in the unified utility module (`WIT_utils.py`) to keep notebooks readable and maintainable
-
-### What-If Tool (WIT) Requirements and Setup
-- WIT requires: `witwidget`, `ipywidgets==7.*`, `tensorflow`, and a Jupyter kernel with these packages installed
-- Provided `Dockerfile` includes all dependencies pre-configured
-- Local installation may require additional setup; see troubleshooting section below
-- On successful setup, WIT widget will display interactively in the notebook; feature sliders allow real-time model response visualization
-
-### Model Training Notes
-- Autoencoder and boosting models run quickly on modern hardware; ensure `tensorflow` is installed
-- XGBoost on macOS requires libomp library; the code handles this automatically via environment variable configuration
-- CatBoost and XGBoost support multi-threading via `n_jobs=-1` (use all CPU cores)
-- Logistic Regression uses `solver='lbfgs'` with `max_iter=800` for stability on scaled, imbalanced data
-
-### Threshold Optimization
-- Threshold optimization occurs on validation data only; the selected threshold is then frozen and applied to test set
-- Optimization targets F1-score (harmonic mean of precision and recall), balancing both metrics
-- If your use case prioritizes recall over precision (catch all fraud, accept false alarms) or vice versa, adjust the `metric='f1'` parameter in `optimize_threshold()` to use a different objective
-- Thresholds must be retuned when fraud class prior shifts in production
-
-### Platform-Specific Configuration
-- **macOS with Apple Silicon (M1/M2/M3)**: Use Python 3.11+ ARM interpreter with `tensorflow-macos==2.13.0` for TensorFlow + WIT support
-- **macOS with Intel**: Standard `tensorflow==2.13.0` works; XGBoost requires `brew install libomp`
-- **Linux**: Standard pip installation; ensure `libssl-dev` and build tools available
-- **Docker**: All platform-specific issues handled inside container; recommended for reproducible environment
-
-### Troubleshooting Common Issues
-
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| `ModuleNotFoundError: No module named 'witwidget'` | WIT not installed | Run `pip install witwidget ipywidgets==7.* tensorflow` or use Docker |
-| TensorFlow fails to load on macOS | x86/Rosetta Python lacks AVX support | Switch Jupyter kernel to ARM Python 3.11+ or install `tensorflow-macos` |
-| XGBoost crashes on macOS | Missing libomp | Run `brew install libomp` |
-| SMOTE-Tomek produces unchanged results | Random state not set consistently | Check `RANDOM_STATE=42` in utility files |
-| Threshold optimization produces threshold > 1.0 or < 0.0 | Edge case in precision-recall curve | Adjust validation set size or check for degenerate probability distributions |
-| WIT widget not rendering | JavaScript/WebSocket issue | Ensure JupyterLab v3.x installed; disable extensions if needed |
 
 ## Expected Performance Metrics
 
@@ -549,250 +320,3 @@ Based on representative runs (full dataset, various random seeds):
 
 Note: Exact numbers depend on data subset size, random seed, and hyperparameter choices. Full runs generally show better stability.
 
-## Visual Model Performance Comparison
-
-### ROC-AUC and F1-Score Progression Across Models
-
-```mermaid
-graph LR
-    IF["Isolation Forest<br/>ROC-AUC: 0.95<br/>F1: 0.55"]
-    AE["Autoencoder<br/>ROC-AUC: 0.94<br/>F1: 0.50"]
-    LR["LogisticRegression<br/>ROC-AUC: 0.97<br/>F1: 0.62"]
-    RF["RandomForest<br/>ROC-AUC: 0.98<br/>F1: 0.68"]
-    XGB["XGBoost<br/>ROC-AUC: 0.99<br/>F1: 0.72"]
-    CB["CatBoost<br/>ROC-AUC: 0.99<br/>F1: 0.73"]
-    ENS["Ensemble<br/>ROC-AUC: 0.9920<br/>F1: 0.76"]
-    FUS["Hybrid Fusion<br/>ROC-AUC: 0.9925<br/>F1: 0.78"]
-    
-    IF --> LR
-    AE --> LR
-    LR --> RF
-    RF --> XGB
-    XGB --> CB
-    CB --> ENS
-    ENS --> FUS
-    
-    style IF fill:#ffccbc
-    style AE fill:#ffccbc
-    style LR fill:#ffe0b2
-    style RF fill:#fff9c4
-    style XGB fill:#f1f8e9
-    style CB fill:#c8e6c9
-    style ENS fill:#bbdefb
-    style FUS fill:#b2dfdb
-```
-
-### Precision-Recall Tradeoff and Threshold Selection
-
-```mermaid
-graph TB
-    Default["Default Threshold: 0.5<br/>Precision: 0.75<br/>Recall: 0.55<br/>F1: 0.63"]
-    
-    Sweep["Sweep Thresholds<br/>on Validation Set"]
-    
-    Optimized["Optimized Threshold: 0.35<br/>Precision: 0.70<br/>Recall: 0.62<br/>F1: 0.66"]
-    
-    Default --> Sweep
-    Sweep --> Optimized
-    
-    Optimized -->|Trade-off| Tradeoff["Slight precision loss<br/>for better recall<br/>catches more fraud"]
-    
-    style Default fill:#ffccbc
-    style Optimized fill:#c8e6c9
-    style Tradeoff fill:#f1f8e9
-```
-
-### Confusion Matrix Interpretation at Optimized Threshold
-
-```mermaid
-graph TB
-    subgraph CM["Confusion Matrix"]
-        TN["True Negatives<br/>28,326<br/>(Legit, Correct)"]
-        FP["False Positives<br/>70<br/>(Legit, Wrong Flag)"]
-        FN["False Negatives<br/>19<br/>(Fraud, Missed)"]
-        TP["True Positives<br/>31<br/>(Fraud, Correct)"]
-    end
-    
-    CM --> Metrics["Metrics Derived"]
-    
-    Metrics --> Precision["Precision = TP/(TP+FP)<br/>= 31/(31+70)<br/>= 0.307 or 30.7%<br/>Of predicted fraud<br/>30.7% are correct"]
-    
-    Metrics --> Recall["Recall = TP/(TP+FN)<br/>= 31/(31+19)<br/>= 0.620 or 62%<br/>Of actual fraud<br/>62% were caught"]
-    
-    Metrics --> F1["F1 = 2*(P*R)/(P+R)<br/>= 2*(0.307*0.620)/0.927<br/>= 0.412 or 41.2%<br/>Balanced metric"]
-    
-    style TN fill:#c8e6c9
-    style TP fill:#c8e6c9
-    style FP fill:#ffccbc
-    style FN fill:#ffccbc
-    style Precision fill:#fff9c4
-    style Recall fill:#fff9c4
-    style F1 fill:#f1f8e9
-```
-
-### Workflow Execution Timeline
-
-```mermaid
-timeline
-    title Complete Fraud Detection Workflow
-    section Data Phase
-        Load Raw Data: 284,807 transactions
-        Clean & Explore: Remove duplicates
-        Engineer Features: Hour, Amount_log1p, Amount_per_hour
-        Stratified Split: 80% train, 10% val, 10% test
-    section Preprocessing Phase
-        Scale Features: StandardScaler on train only
-        Apply to Val/Test: Using train statistics
-        Balance Training: SMOTE-Tomek resampling
-    section Model Training Phase
-        Train Anomaly: Isolation Forest, Autoencoder
-        Train Supervised: LogReg, RF, XGB, CatBoost
-        Build Ensemble: Weighted soft-voting
-    section Tuning Phase
-        Optimize Threshold: On validation set
-        Freeze Decision: threshold = 0.35
-        Prepare for Test: No further tuning
-    section Evaluation Phase
-        Evaluate on Test: Compute all metrics
-        Confusion Matrix: TP, FP, TN, FN analysis
-        PR/ROC Curves: Visualize performance
-    section Analysis & Deployment
-        WIT Analysis: Decision boundary exploration
-        Acceptance Testing: Validate robustness
-        Save Artifacts: ensemble.joblib, scaler.joblib
-        Production Deploy: Monitor for drift
-```
-
-### Decision Boundary Visualization Concept
-
-```mermaid
-graph TB
-    FN["False Negatives<br/>Fraud Missed<br/>(Too Conservative)"]
-    
-    Normal["Decision Boundary"]
-    
-    FP["False Positives<br/>Legitimate Flagged<br/>(Too Aggressive)"]
-    
-    Threshold["Threshold Position<br/>determines balance<br/>between FP and FN"]
-    
-    Lower["Lower Threshold<br/>0.25<br/>More FP<br/>Fewer FN<br/>Higher Recall"]
-    Higher["Higher Threshold<br/>0.45<br/>Fewer FP<br/>More FN<br/>Higher Precision"]
-    Optimal["Optimal Threshold<br/>0.35<br/>Balanced F1<br/>~62% Recall<br/>~31% Precision"]
-    
-    FN --> Threshold
-    FP --> Threshold
-    Normal --> Threshold
-    
-    Threshold --> Lower
-    Threshold --> Higher
-    Threshold --> Optimal
-    
-    style FN fill:#ffccbc
-    style FP fill:#ffccbc
-    style Normal fill:#e0f2f1
-    style Optimal fill:#c8e6c9
-    style Lower fill:#fff9c4
-    style Higher fill:#fff9c4
-```
-
-### WIT Interactive Analysis Pathways
-
-```mermaid
-graph TB
-    Widget["What-If Tool Widget"]
-    
-    Widget -->|Pathway 1| FPInv["False Positive Investigation"]
-    Widget -->|Pathway 2| FNInv["False Negative Investigation"]
-    Widget -->|Pathway 3| Sensitivity["Feature Sensitivity"]
-    Widget -->|Pathway 4| Boundary["Boundary Exploration"]
-    
-    FPInv --> FPSteps["1. Filter: pred=fraud, true=legit<br/>2. Inspect: which features unusual?<br/>3. Adjust: move sliders to see changes<br/>4. Outcome: why model over-flagged?"]
-    
-    FNInv --> FNSteps["1. Filter: pred=legit, true=fraud<br/>2. Inspect: what fraud patterns?<br/>3. Adjust: find threshold where flip<br/>4. Outcome: model blindspots?"]
-    
-    Sensitivity --> SensitivitySteps["1. Pick legitimate transaction<br/>2. Increase Amount by 20%<br/>3. Observe prob change<br/>4. Assess robustness"]
-    
-    Boundary --> BoundarySteps["1. Sort by uncertainty (near 0.5)<br/>2. Inspect edge cases<br/>3. Use sliders to find exact flip<br/>4. Understand confidence"]
-    
-    FPSteps --> Insights["Insights for<br/>Deployment"]
-    FNSteps --> Insights
-    SensitivitySteps --> Insights
-    BoundarySteps --> Insights
-    
-    Insights -->|Acceptance| Deploy["Deploy Model"]
-    Insights -->|Issues Found| Retune["Retune Hyperparameters"]
-    
-    style Widget fill:#f1f8e9
-    style Insights fill:#bbdefb
-    style Deploy fill:#c8e6c9
-    style Retune fill:#fff9c4
-```
-
-### Feature Engineering Impact
-
-```mermaid
-graph TB
-    Original["Original Features<br/>V1-V28 (anonymized)<br/>Time (seconds)<br/>Amount ($)"]
-    
-    Hour["Hour Engineering<br/>Extracts time-of-day<br/>0-23 range<br/>Captures temporal patterns"]
-    
-    AmountLog["Amount Log Transform<br/>log1p(Amount)<br/>Handles skew<br/>Reduces outlier impact"]
-    
-    AmountPerHour["Amount Per Hour<br/>Amount / (Hour+1)<br/>Spending rate<br/>Identifies bursts"]
-    
-    Combined["Combined Features<br/>30 total:<br/>V1-V28<br/>Hour<br/>Amount_log1p<br/>Amount_per_hour"]
-    
-    Original --> Hour
-    Original --> AmountLog
-    Original --> AmountPerHour
-    
-    Hour --> Combined
-    AmountLog --> Combined
-    AmountPerHour --> Combined
-    
-    Combined -->|StandardScaler| Scaled["Scaled Features<br/>Mean=0, Std=1<br/>Ready for modeling"]
-    
-    Scaled -->|Improves| Performance["Model Performance<br/>Better generalization<br/>Faster convergence<br/>Stable predictions"]
-    
-    style Original fill:#fff3e0
-    style Hour fill:#ffe0b2
-    style AmountLog fill:#ffe0b2
-    style AmountPerHour fill:#ffe0b2
-    style Combined fill:#f1f8e9
-    style Scaled fill:#bbdefb
-    style Performance fill:#c8e6c9
-```
-
-### Production Monitoring Strategy
-
-```mermaid
-graph LR
-    Deployed["Deployed Model<br/>ensemble.joblib<br/>scaler.joblib"]
-    
-    Deployed -->|Daily Transactions| Monitor["Monitoring Dashboard"]
-    
-    Monitor -->|Track Metrics| Drift["Metric Tracking<br/>Precision: baseline 0.70<br/>Recall: baseline 0.62<br/>F1: baseline 0.66<br/>ROC-AUC: baseline 0.99"]
-    
-    Monitor -->|Track Distributions| Features["Feature Distribution<br/>Amount: check range<br/>Hour: check patterns<br/>V1-V28: check bounds"]
-    
-    Drift -->|Degradation?| Alert1["Alert: Metric Drift<br/>Precision down 20%?<br/>Recall down 15%?<br/>Action: Investigate"]
-    
-    Features -->|Shift?| Alert2["Alert: Data Drift<br/>Unusual Amount dist?<br/>Time patterns change?<br/>Action: Retrain"]
-    
-    Alert1 -->|No Issue| Continue["Continue Production"]
-    Alert2 -->|No Issue| Continue
-    
-    Alert1 -->|Confirmed| Retrain["Retrain on Recent Data<br/>Re-optimize threshold<br/>Update artifacts"]
-    Alert2 -->|Confirmed| Retrain
-    
-    Retrain --> Deployed
-    Continue --> Monitor
-    
-    style Deployed fill:#c8e6c9
-    style Monitor fill:#bbdefb
-    style Drift fill:#fff9c4
-    style Features fill:#fff9c4
-    style Alert1 fill:#ffccbc
-    style Alert2 fill:#ffccbc
-    style Retrain fill:#f1f8e9
-```
