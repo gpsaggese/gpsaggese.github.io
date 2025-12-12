@@ -1,10 +1,6 @@
 
 wandb:
   project: "time_seires_forecasting"
-  # IMPORTANT:
-  # - If you get: "you may not log runs directly to your organization..."
-  #   set WANDB_ENTITY to your TEAM entity or use your personal entity.
-  # Team entity (recommended for your setup):
   entity: "othakur-university-of-maryland"
   job_type: "training"
   group: "time_series_models"
