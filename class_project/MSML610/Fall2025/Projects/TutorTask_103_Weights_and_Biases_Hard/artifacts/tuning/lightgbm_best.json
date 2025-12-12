@@ -1,0 +1,25 @@
+{
+  "primary_metric": "RMSE",
+  "direction": "minimize",
+  "best_params": {
+    "num_leaves": 31,
+    "max_depth": 10,
+    "learning_rate": 0.1,
+    "feature_fraction": 0.9,
+    "bagging_fraction": 1.0,
+    "n_estimators": 200
+  },
+  "best_val_metrics": {
+    "MAE": 2.763693713776139,
+    "RMSE": 3.838306811268674,
+    "MAPE": 9.731225419382868,
+    "R2": 0.38714016073803204
+  },
+  "best_test_metrics": {
+    "MAE": 101.51464320465887,
+    "RMSE": 122.9990105174509,
+    "MAPE": 71.04850566589681,
+    "R2": -2.139671694465349
+  },
+  "n_trials": 20
+}

@@ -11,6 +11,7 @@ from src.logging.logger import WandbLogger
 from src.components.data_ingestion import DataIngestion
 from src.components.feature_engineering import FeatureEngineering
 from src.components.preprocessor import Preprocessor
+from src.components.model_registry import ModelRegistry
 
 
 class TrainingPipeline:
@@ -24,6 +25,7 @@ class TrainingPipeline:
         self.prep = Preprocessor(config_path, self.logger)
         self.trainer = ModelTrainer(config_path, self.logger)
         self.evaluator = ModelEvaluation(config_path, self.logger)  
+        self.registry = ModelRegistry(config_path, self.logger)
 
     def run(self) -> Dict[str, Any]:
         # Start W&B run if not already started
@@ -167,6 +169,34 @@ class TrainingPipeline:
         }
         (metrics_dir / "last_run.json").write_text(json.dumps(out, indent=2))
         (metrics_dir / f"run_{ts}.json").write_text(json.dumps(out, indent=2))
+
+        # Phase 4: finalize and save the best model (retrain on train+val, then evaluate on test).
+        if best["model"] == "linear_regression":
+            try:
+                import numpy as np
+                from sklearn.linear_model import LinearRegression
+                from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+            except Exception:
+                self.logger.warning("Could not import sklearn/numpy to finalize best model; skipping save_best_only.")
+            else:
+                X_tv = np.vstack([data["X_train"], data["X_val"]])
+                y_tv = np.concatenate([data["y_train"], data["y_val"]])
+                final_model = LinearRegression()
+                final_model.fit(X_tv, y_tv)
+                final_test_metrics = self.evaluator.evaluate(final_model, data["X_test"], data["y_test"], "linear_regression_final")
+                self.registry.save(
+                    "linear_regression_final",
+                    final_model,
+                    scaler=data.get("scaler"),
+                    metadata={
+                        "trained_on": "train+val",
+                        "primary_metric": primary,
+                        "best_by_val": best,
+                        "final_test_metrics": final_test_metrics,
+                        "feature_names": data.get("feature_names"),
+                    },
+                )
+                results["linear_regression_final"] = {"test_metrics": final_test_metrics}
 
         # Finish W&B
         self.logger.finish()

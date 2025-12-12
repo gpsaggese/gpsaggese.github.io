@@ -1,0 +1,31 @@
+{
+  "trained_on": "train+val",
+  "primary_metric": "RMSE",
+  "best_by_val": {
+    "model": "linear_regression",
+    "metric": "RMSE",
+    "value": 0.4697014868440983
+  },
+  "final_test_metrics": {
+    "MAE": 1.5938047240531124,
+    "RMSE": 2.5071762893444074,
+    "MAPE": 1.2846071437286084,
+    "R2": 0.9986954799868554
+  },
+  "feature_names": [
+    "Adj Close",
+    "Close",
+    "Volume",
+    "return_pct",
+    "rsi_14",
+    "macd",
+    "macd_hist",
+    "volatility_20",
+    "lag_return_pct_1",
+    "lag_return_pct_2",
+    "lag_return_pct_3",
+    "lag_return_pct_5",
+    "lag_return_pct_10"
+  ],
+  "model_name": "linear_regression_final"
+}

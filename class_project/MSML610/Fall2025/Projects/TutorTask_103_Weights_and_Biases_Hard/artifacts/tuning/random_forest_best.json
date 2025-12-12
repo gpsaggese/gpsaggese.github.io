@@ -1,0 +1,22 @@
+{
+  "primary_metric": "RMSE",
+  "direction": "minimize",
+  "best_params": {
+    "n_estimators": 200,
+    "max_depth": 10,
+    "max_features": "auto"
+  },
+  "best_val_metrics": {
+    "MAE": 2.2111437130143607,
+    "RMSE": 3.247580016417078,
+    "MAPE": 7.669189090600145,
+    "R2": 0.5612657791344056
+  },
+  "best_test_metrics": {
+    "MAE": 100.56452869032996,
+    "RMSE": 122.19755390570357,
+    "MAPE": 69.93844890508836,
+    "R2": -2.0988890485209057
+  },
+  "n_trials": 20
+}
