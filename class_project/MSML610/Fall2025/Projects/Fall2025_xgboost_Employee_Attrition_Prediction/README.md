@@ -1,6 +1,6 @@
 # Employee Attrition Prediction (IBM HR Analytics)
 
-This project is a beginner-friendly tutorial that walks through building and evaluating machine-learning models to predict employee attrition using the **IBM HR Analytics Employee Attrition** dataset.
+This project trains and evaluates an **XGBoost-based classifier** to predict whether an employee is likely to leave the company, using the **IBM HR Analytics Employee Attrition** dataset from Kaggle.
 
 The goal is to show how to:
 - Load and preprocess the dataset (with automatic download from Kaggle)
@@ -11,144 +11,201 @@ The goal is to show how to:
 
 ---
 
-## Dataset
+## 1. Folder structure (inside this project directory)
 
-- **Source**: [IBM HR Analytics Employee Attrition dataset](https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset)  
-- The dataset is **automatically downloaded** via [`kagglehub`](https://github.com/Kaggle/kagglehub) inside `utils_data_io.py`.
-- Main file used: `WA_Fn-UseC_-HR-Employee-Attrition.csv`
-
-No manual CSV download is required as long as `kagglehub` is installed and configured.
-
----
-
-## Project Structure
-
-```text
-.
-├── employee_attrition_eda.ipynb   # Main tutorial / analysis notebook
-├── employee_attrition_main.py     # Main Python entry point
-├── utils_data_io.py               # Data loading, cleaning & preprocessing utilities
-├── utils_post_processing.py       # Evaluation, feature names, and feature importance plotting
-├── requirements.txt               # Python dependencies
-└── README.md
+```
+Fall2025_xgboost_Employee_Attrition_Prediction/docker_build.sh
+|
+├── docker_build.sh          # Build Docker image
+├── docker_bash.sh           # Optional: open bash shell inside container
+├── docker_jupyter.sh        # Run Jupyter Notebook in container
+├── Dockerfile               # Image definition (Python 3.10 + libs + Jupyter)
+├── README.md                # This file
+├── requirements.txt         # Python dependencies
+├── xgboost.API.ipynb        # Small notebook showing XGBoost API + wrapper usage
+├── xgboost.API.md           # Text documentation of XGBoost API + wrapper
+├── xgboost.example.ipynb    # MAIN notebook: full E2E project (EDA + models)
+└── xgboost.example.md       # Text summary of the example and results
 ```
 
-### `utils_data_io.py`
-
-- `load_hr_dataset()`  
-  - Downloads the IBM HR dataset from Kaggle using `kagglehub`.
-  - Drops non-informative columns (`EmployeeCount`, `Over18`, `StandardHours`, `EmployeeNumber`).
-  - Maps `Attrition` to a binary target `AttritionFlag` (`No`→0, `Yes`→1).
-  - Returns: `X`, `y`, `categorical_cols`, `numeric_cols`.
-
-- `train_test_split_stratified(...)`  
-  - Wrapper around `train_test_split` with stratification on `y`.
-
-- `build_preprocessor(...)`  
-  - Builds a `ColumnTransformer`:
-    - `StandardScaler` for numeric features
-    - `OneHotEncoder(handle_unknown="ignore")` for categorical features
-
-### `utils_post_processing.py`
-
-- `evaluate_classifier(...)`  
-  - Computes **Accuracy**, **F1-score**, **ROC-AUC** and prints a classification report.
-
-- `get_feature_names_from_preprocessor(...)`  
-  - Extracts transformed feature names from the fitted `ColumnTransformer`
-    (numeric + one-hot encoded categorical features).
-
-- `plot_feature_importance(...)`  
-  - Plots and saves top-N feature importances for a fitted `XGBClassifier` to  
-    `xgb_feature_importance.png`.
+All grading-relevant work is in **`xgboost.example.ipynb`**.
 
 ---
 
-## Installation & Setup
+## 2. Prerequisites
 
-1. **Clone this repo** (or download the project folder):
-
-   ```bash
-   git clone <your-repo-url>.git
-   cd <your-repo-folder>
-   ```
-
-2. **Create and activate a virtual environment** (optional but recommended):
-
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate      # macOS / Linux
-   # .venv\Scripts\activate     # Windows
-   ```
-
-3. **Install dependencies**:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Run the project**
-
-   - To start the pipeline, simply run the main script:
-   
-   ```bash
-   python3 employee_attrition_main.py
-   ```
-
+- Docker installed and running (Docker Desktop or equivalent).
+- Internet access (first run downloads the Kaggle dataset via `kagglehub`).
+- Port **8888** free on the host.
 
 ---
 
-## How to Run the Notebook
+## 3. Getting the project & one-time setup
 
-1. Start Jupyter:
+All commands below are meant to be run in a terminal.
 
-   ```bash
-   jupyter notebook
-   ```
+### 3.1 Clone the repository and go to the project folder
 
-2. Open **`employee_attrition_eda.ipynb`**.
+```bash
+git clone https://github.com/gpsaggese-org/umd_classes.git
+cd umd_classes/class_project/MSML610/Fall2025/Projects/Fall2025_xgboost_Employee_Attrition_Prediction
+```
 
-3. Run the cells in order. The notebook will:
+Make sure you see files like `Dockerfile`, `docker_build.sh`, `xgboost.example.ipynb`, etc. in this directory.
 
-   - Import `load_hr_dataset`, `build_preprocessor`, and `train_test_split_stratified`  
-     from `utils_data_io.py`.
-   - Build preprocessing pipelines and split into train/test sets.
-   - Train models such as XGBoost, Random Forest, and Logistic Regression.
-   - Use functions from `utils_post_processing.py` to:
-     - Evaluate models (`evaluate_classifier`)
-     - Inspect feature names (`get_feature_names_from_preprocessor`)
-     - Plot feature importances for XGBoost (`plot_feature_importance`)
+### 3.2 Make the Docker helper scripts executable (first time only)
 
----
+```bash
+chmod +x docker_build.sh docker_bash.sh docker_jupyter.sh
+```
 
-## Results (Example)
+### 3.3 Build the Docker image
 
-You can customize this section with your own final numbers from the notebook, for example:
+```bash
+./docker_build.sh
+```
 
-- **XGBoost**: Accuracy ≈ 0.83, ROC-AUC ≈ 0.77  
-- **Random Forest**: Accuracy ≈ 0.85, ROC-AUC ≈ 0.79  
-- **Logistic Regression**: Accuracy ≈ 0.74, ROC-AUC ≈ 0.80  
+This builds an image called:
 
-(Replace with your actual results from the latest run.)
+```text
+xgboost-docker-image
+```
 
----
+The image is based on `python:3.10-slim` and installs everything in `requirements.txt` plus Jupyter.
 
 ---
 
-## Future Improvements / Work in Progress
+## 4. Running the notebooks in Docker
 
-The following features and enhancements are planned for upcoming updates:
+### 4.1 Start Jupyter in the container
 
-- **Model Comparison**  
-  Extend the evaluation pipeline to include a detailed comparison of **XGBoost**, **Logistic Regression**, and **Random Forest** models — highlighting trade-offs in accuracy, interpretability, and computational cost.
+From the **same project folder**:
 
-- **Class Imbalance Handling**  
-  Implement **class weighting** and alternative sampling techniques (e.g., SMOTE, Random Undersampling) to better handle the imbalance between “Attrition” and “No Attrition” cases.
+```bash
+./docker_jupyter.sh
+```
 
-These improvements will help make the predictions more balanced and interpretable while providing a fair benchmark across models.
+This will:
 
+- Start a container named `attrition-ml-jupyter`
+- Mount the **current folder** into `/workspace` inside the container
+- Expose Jupyter on **http://127.0.0.1:8888/**
+- Launch Jupyter Notebook **without a token** (no password)
 
+Leave this terminal **open** while using the notebook.
 
+You should see output similar to:
 
+```text
+Serving notebooks from local directory: /workspace
+Jupyter Server 2.x is running at:
+    http://127.0.0.1:8888/tree
+```
+
+### 4.2 Open Jupyter in the browser
+
+1. Open a web browser.
+2. Go to: **http://127.0.0.1:8888/**
+3. You should see the contents of `/workspace`, which is the same as this project folder.
+
+---
+
+## 5. What to run 
+
+### 5.1 Main notebook
+
+Open **`xgboost.example.ipynb`** and run:
+
+- Menu: **Kernel → Restart & Run All**
+
+The notebook will:
+
+1. **Load the IBM HR dataset** via `kagglehub`  
+   - Downloads `WA_Fn-UseC_-HR-Employee-Attrition.csv` from Kaggle on the first run and caches it.
+
+2. **Perform EDA**  
+   - Overall attrition rate and class imbalance  
+   - Attrition by age group, job role, work–life balance, overtime  
+   - Monthly income distribution and simple clustering
+
+3. **Preprocess the data**  
+   - Split into train/test with stratification  
+   - Separate categorical and numeric features  
+   - Apply `OneHotEncoder` + `StandardScaler` via a `ColumnTransformer`
+
+4. **Train the main model (XGBoost)**  
+   - `XGBClassifier` with `scale_pos_weight` to handle imbalanced labels  
+   - Evaluate with Accuracy, F1-score, ROC-AUC and confusion matrix
+
+5. **Tune the decision threshold**  
+   - Sweep thresholds 0.1–0.9  
+   - Compare **0.4** (best F1, better accuracy) vs **0.3** (higher recall for leavers)
+
+6. **Compare with other models**  
+   - Logistic Regression (class_weight="balanced")  
+   - Random Forest (class_weight="balanced")
+
+7. **Interpret the model**  
+   - XGBoost feature importances  
+   - SHAP summary plot for key drivers of attrition
+
+### 5.2 API demo notebook 
+
+Open **`xgboost.API.ipynb`** to see a compact demo of:
+
+- Native XGBoost API calls  
+- The lightweight wrapper layer used in the main notebook
+
+This notebook is for API demonstration only; the full analysis lives in `xgboost.example.ipynb`.
+
+### 5.3 API demo notebook 
+- `xgboost.API.md` – Text documentation of the native XGBoost API and the wrapper layer.
+
+### 5.4 API demo notebook 
+- `xgboost.example.md` – Markdown description of the full example, results, and conclusions.
+
+### 5.5 API demo notebook 
+- `requirements.txt` – Python dependencies.
+
+### 5.6 Dockerfile 
+- `Dockerfile` – Lightweight image (Python 3.10 + requirements + Jupyter).
+
+### 5.7 docker_build.sh
+- `docker_build.sh` – Builds the Docker image.
+
+### 5.8 docker_jupyter.sh
+- `docker_jupyter.sh` – Starts Jupyter Notebook inside the container.
+
+### 5.8 docker_bash.sh
+- `docker_bash.sh` – Opens an interactive bash shell inside the container.
+
+---
+
+## 6. Optional: interactive shell inside the container
+
+If you prefer a terminal **inside** the same environment:
+
+```bash
+./docker_bash.sh
+```
+
+This starts a container named `attrition-ml-bash` and drops you into `/workspace`.  
+From there you can run, for example:
+
+```bash
+python
+# or
+jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+```
+
+---
+
+## 7. Stopping the environment
+
+- To stop Jupyter: press `Ctrl + C` in the terminal where `./docker_jupyter.sh` is running.
+- Containers are run with `--rm`, so they are automatically removed when stopped.  
+  The project files remain on the host in the cloned folder.
+
+---
 
 
