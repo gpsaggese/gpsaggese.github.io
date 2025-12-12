@@ -54,6 +54,13 @@ model:
   linear_regression:
     normalize: true        # or false; set based on your scaler
     fit_intercept: true    # standard LR intercept
+  # Simple statistical models (special cases of ARIMA)
+  ma:
+    q: 5
+    d: 0
+  ar:
+    p: 5
+    d: 0
   # LSTM (Long Short-Term Memory) - Deep learning for sequences
   lstm:
     sequence_length: 60  # Number of days to look back for prediction
@@ -155,7 +162,10 @@ training:
     - xgboost
     - lightgbm
     - random_forest
-    - cnn
+    - ma
+    - ar
+    - arima
+    - sarimax
 
   ensemble:
     enabled: true

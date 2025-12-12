@@ -17,6 +17,7 @@ class Preprocessor:
         self.train_cfg = self.params["training"]
         self.logger = wandb_logger or WandbLogger(config_path)
         self.target_col = self.train_cfg["target_column"]
+        self.horizon = int(self.train_cfg.get("forecast_horizon", 1))
         self.seq_len = self.params["model"]["lstm"]["sequence_length"]
 
     def time_split(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -34,15 +35,22 @@ class Preprocessor:
         self.logger.info(f"Split: train={len(train)}, val={len(val)}, test={len(test)}")
         return train, val, test
 
-    def scale(self, train: pd.DataFrame, val: pd.DataFrame, test: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Dict[str, Any]]:
-        # Separate target and features
-        y_train = train[self.target_col].values
-        y_val = val[self.target_col].values
-        y_test = test[self.target_col].values
+    def scale(
+        self,
+        train: pd.DataFrame,
+        val: pd.DataFrame,
+        test: pd.DataFrame,
+        target_col: str,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, Dict[str, Any]]:
+        # Separate target and features.
+        y_train = train[target_col].values
+        y_val = val[target_col].values
+        y_test = test[target_col].values
 
-        X_train_df = train.drop(columns=[self.target_col])
-        X_val_df = val.drop(columns=[self.target_col])
-        X_test_df = test.drop(columns=[self.target_col])
+        # Important: keep current Close as a feature, unless it is the target_col.
+        X_train_df = train.drop(columns=[target_col])
+        X_val_df = val.drop(columns=[target_col])
+        X_test_df = test.drop(columns=[target_col])
 
         scaler = StandardScaler()
         X_train = scaler.fit_transform(X_train_df)
@@ -64,8 +72,25 @@ class Preprocessor:
         return np.array(X_seq), np.array(y_seq)
 
     def run(self, df: pd.DataFrame) -> Dict[str, Any]:
+        df = df.copy()
+        if self.horizon < 1:
+            raise ValueError("forecast_horizon must be >= 1")
+
+        # Supervised forecasting: features at time t -> target at time t+h.
+        target_next_col = "__target__"
+        df[target_next_col] = df[self.target_col].shift(-self.horizon)
+        df = df.iloc[: -self.horizon]
+
         train, val, test = self.time_split(df)
-        X_train, X_val, X_test, y_train, y_val, y_test, meta = self.scale(train, val, test)
+        X_train, X_val, X_test, y_train, y_val, y_test, meta = self.scale(train, val, test, target_col=target_next_col)
+
+        # Unscaled DataFrames/Series for statsmodels.
+        X_train_df = train.drop(columns=[target_next_col])
+        X_val_df = val.drop(columns=[target_next_col])
+        X_test_df = test.drop(columns=[target_next_col])
+        y_train_s = train[target_next_col]
+        y_val_s = val[target_next_col]
+        y_test_s = test[target_next_col]
 
         X_train_seq, y_train_seq = self.build_sequences(X_train, y_train)
         X_val_seq, y_val_seq = self.build_sequences(X_val, y_val)
@@ -95,4 +120,15 @@ class Preprocessor:
             "y_test_seq": y_test_seq,
             "feature_names": meta["feature_names"],
             "scaler": meta["scaler"],
+            # Unscaled frames/series (time-indexed) for statsmodels.
+            "train_df": train,
+            "val_df": val,
+            "test_df": test,
+            "X_train_df": X_train_df,
+            "X_val_df": X_val_df,
+            "X_test_df": X_test_df,
+            "y_train_s": y_train_s,
+            "y_val_s": y_val_s,
+            "y_test_s": y_test_s,
+            "target_next_col": target_next_col,
         }

@@ -53,14 +53,31 @@ class ModelEvaluation:
         plt.close(fig)
         return out
 
-    def evaluate(self, model: Any, X_test: np.ndarray, y_test: np.ndarray, name: str) -> Dict[str, float]:
-        y_pred = model.predict(X_test)
-        metrics = self.compute_metrics(y_test, y_pred)
+    def _predict(self, model: Any, X: Any, steps: int) -> np.ndarray:
+        """
+        Unified prediction helper:
+        - sklearn/xgb/lgbm: model.predict(X)
+        - statsmodels wrappers: model.predict(X, steps=steps) or model.forecast(steps=steps, exog=X)
+        """
+        if hasattr(model, "predict"):
+            try:
+                return np.asarray(model.predict(X))
+            except TypeError:
+                # Some wrappers may require steps
+                return np.asarray(model.predict(X, steps=steps))
+        if hasattr(model, "forecast"):
+            return np.asarray(model.forecast(steps=steps, exog=X))
+        raise TypeError("Model does not support predict() or forecast().")
+
+    def evaluate(self, model: Any, X_test: Any, y_test: Any, name: str) -> Dict[str, float]:
+        y_test_arr = np.asarray(y_test)
+        y_pred = self._predict(model, X_test, steps=len(y_test_arr))
+        metrics = self.compute_metrics(y_test_arr, y_pred)
 
         self.logger.info(f"{name} test metrics: {metrics}")
 
-        avp = self.plot_actual_vs_pred(y_test, y_pred, name)
-        res = self.plot_residuals(y_test, y_pred, name)
+        avp = self.plot_actual_vs_pred(y_test_arr, y_pred, name)
+        res = self.plot_residuals(y_test_arr, y_pred, name)
 
         if self.logger.run:
             self.logger.log_metrics({f"{name}/test_{k}": v for k, v in metrics.items()})
