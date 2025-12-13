@@ -7,5 +7,6 @@ lime
 matplotlib
 seaborn
 flask
-
-
+jupyterlab
+notebook
+ipykernel
