@@ -231,6 +231,7 @@ For each window and the aggregated run, I calculate:
 - **Sharpe Ratio**: Risk-adjusted return ($Mean(R) / Std(R) * \sqrt{252}$).
 - **Sortino Ratio**: Similar to Sharpe but only penalizes downside volatility.
 - **Jensen's Alpha**: Excess return over the benchmark adjusted for beta.
+- **Plot return vs Bench**: 2 graphs show strategy's return vs the benchmark buy and hold asset return along with a drawdown graph
 
 ### Computational Cost
 
@@ -238,8 +239,9 @@ For each window and the aggregated run, I calculate:
 
 - **Data Prep**: ~2-3 minutes (fetching 1.5 years of data).
 - **Forecaster/Interpreter**: ~1 minute per window.
-- **RL Training**: ~10-20 seconds per window (thanks to pre-computation).
-- **Total**: A full backtest over 1.5 years takes about 5-10 minutes on a standard laptop (e.g., M1 Mac).
+- **RL Training**: ~1-5 min per window (thanks to pre-computation).
+- **Total**: A full backtest over 1.5 years takes about 10-15 minutes due to dockerized jupyter notebook environment.
+  Note: the above values show much can done to speedup training using parallelization, gpu acceleration etc.
 
 ## Conclusion
 

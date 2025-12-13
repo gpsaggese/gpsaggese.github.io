@@ -44,3 +44,11 @@ for the CleanRL.example.ipynb specifically open:
 http://localhost:8888/notebooks/UmdTask49_Fall2025_CleanRL_Reinforcement_Learning_for_Stock_Trading/CleanRL.example.ipynb
 
 run the notebook end to end to see the whole workflow. refer to CleanRL.example.md and CleanRL.API.md for in-depth workflow details
+
+NOTE: if this docker error occurs:
+
+```
+docker: Error response from daemon: Conflict. The container name "/umd_msml610_image" is already in use by container "96921a576685f7153bb03af79142c1cab7fb1c259242d55a9bec987113244003". You have to remove (or rename) that container to be able to reuse that name.
+```
+
+please delete the umd_msml610_image in your docker and run docker build command again
