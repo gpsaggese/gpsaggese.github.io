@@ -10,6 +10,12 @@ else
     echo "Starting Jupyter in / (fallback)"
 fi
 
+# DAMIAN - Added to fix issue with Scikit-learn and ARM architecture
+GOMP_PATH=$(ldconfig -p | grep libgomp)
+echo "GOMP_PATH: $GOMP_PATH"
+export LD_PRELOAD=/lib/aarch64-linux-gnu/libgomp.so.1:$LD_PRELOAD
+
+
 jupyter-notebook \
     --port=8888 \
     --no-browser --ip=0.0.0.0 \

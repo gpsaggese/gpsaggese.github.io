@@ -1,4 +1,5 @@
-FROM --platform=$BUILDPLATFORM ubuntu:20.04
+# DAMIAN - Updated to Ubuntu 24.04. Ax requires Python 3.10 or above.
+FROM --platform=$BUILDPLATFORM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -y update
@@ -19,7 +20,7 @@ RUN apt install -y --no-install-recommends \
     python3-pip \
     python3-dev
 
-RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install --upgrade --ignore-installed pip --break-system-packages
     
 # Install Python packages.
 # There is a bug:

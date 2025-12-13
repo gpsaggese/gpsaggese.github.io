@@ -16,7 +16,7 @@ apt-get install -y --no-install-recommends \
     sudo 
 
 echo ">>> Installing Python packages..."
-pip3 install --no-cache-dir \
+pip3 install --no-cache-dir --break-system-packages \
     ipython \
     tornado==6.1 \
     jupyter-client==7.3.2 \
@@ -29,5 +29,9 @@ pip3 install --no-cache-dir \
     matplotlib \
     seaborn 
 
+# DAMIAN - Uninstall Scikit-learn and reinstall without OpenMP (It will be much slower but I have an issue with the ARM architecture)
+# pip3 uninstall -y scikit-learn --break-system-packages
+# export SKLEARN_NO_OPENMP=1
+# pip3 install --no-binary scikit-learn scikit-learn --break-system-packages
 
 
