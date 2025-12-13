@@ -15,7 +15,7 @@ There are two layers:
 1. **Native LIME API (tool layer)**  
    LIME provides `LimeTabularExplainer` to generate local explanations for a trained model’s prediction.
 
-2. **Wrapper layer (our API)**  
+2. **Wrapper layer**  
    `lime_attrition_utils.py` provides reusable functions for:
    - loading/cleaning the IBM HR Attrition dataset
    - preprocessing with `ColumnTransformer`
@@ -60,7 +60,7 @@ Key idea:
 - IBM HR Attrition dataset CSV under `./data/`
 
 ### Optional dependencies
-The wrapper can optionally train XGBoost/LightGBM models if installed, but the API notebook can run using only scikit-learn models for maximum reproducibility.
+The wrapper can optionally train XGBoost/LightGBM models, but the API notebook ran using only scikit-learn models for maximum reproducibility.
 
 ---
 
@@ -119,6 +119,35 @@ The returned `exp` supports:
 ---
 
 ## 5. Wrapper layer API (`lime_attrition_utils.py`)
+
+
+### 5.0 Wrapper API quick reference (exported symbols)
+
+The table below summarizes the main “exported” wrapper interfaces provided by `lime_attrition_utils.py`.  
+These are the functions/classes you will typically use from notebooks.
+
+| Category | Name | Type | One-line purpose |
+|---|---|---|---|
+| Config | `AttritionDataConfig` | dataclass | Controls target column, ID columns, and train/test split settings. |
+| Config | `ModelConfig` | dataclass | Toggles optional models and sets shared hyperparameters. |
+| Config | `LimeConfig` | dataclass | Controls explanation size (`num_features`, `num_samples`). |
+| Artifacts | `ModelArtifacts` | dataclass | Container for split data, fitted preprocessor, trained models, and metrics. |
+| Data | `load_raw_attrition_data(csv_path)` | function | Loads the raw IBM HR Attrition CSV into a DataFrame. |
+| Data | `clean_attrition_data(df, config)` | function | Drops ID/constant columns, standardizes target to 0/1, and removes missing rows. |
+| Data | `split_features_target(df, config)` | function | Separates `X` features and `y` target using `config.target_column`. |
+| Data | `train_test_split_attrition(X, y, config)` | function | Stratified train/test split to preserve attrition rate. |
+| Features | `build_preprocessor(X)` | function | Builds a `ColumnTransformer` (OHE + scaling) compatible with LIME. |
+| Models | `train_attrition_models(X_train, y_train, preprocessor, model_config)` | function | Trains one or more sklearn Pipelines (preprocess + model). |
+| Models | `evaluate_models(models, X_test, y_test)` | function | Computes classification + probability-based metrics for each model. |
+| LIME | `build_lime_explainer(preprocessor, X_train, class_names)` | function | Builds `LimeTabularExplainer` in the *model feature space*. |
+| LIME | `explain_single_employee(explainer, model_pipeline, raw_row, preprocessor, lime_config)` | function | Generates a native LIME `Explanation` for one employee record. |
+| LIME | `batch_lime_explanations(...)` | function | Explains the top-N highest-risk employees and returns a compact summary table. |
+| LIME | `lime_explanation_to_long_df(explanation, ...)` | function | Converts one LIME explanation into a long-form tabular representation. |
+| LIME | `batch_lime_explanations_long(...)` | function | Produces long-form explanation tables for multiple high-risk employees. |
+| LIME | `translate_lime_feature(feature_str)` | function | Converts LIME’s encoded feature strings into more readable text. |
+| LIME | `aggregate_lime_features(long_df)` | function | Aggregates local explanations to estimate common “drivers” across employees. |
+| LIME | `plot_lime_aggregate_bar(agg_df, ...)` | function | Visualizes aggregated LIME contributions as a bar chart. |
+
 
 This section documents the lightweight wrapper layer written on top of LIME + scikit-learn.  
 The notebooks are expected to call these helpers instead of embedding long logic inline.
@@ -276,7 +305,50 @@ Simple matplotlib horizontal bar chart of aggregated LIME importance.
 
 ---
 
-## 6. How native API maps to wrapper
+## 6. Native API → Wrapper layer: Architecture and Mapping 
+
+
+### 6.0 Architecture diagram
+
+```mermaid
+flowchart TB
+  subgraph Inputs["Inputs (notebooks)"]
+    X0["Raw employee features<br/>(DataFrame rows)"]
+  end
+
+  subgraph Wrapper["Wrapper layer (lime_attrition_utils.py)"]
+    W1["Validate + clean data<br/>(schema, target mapping, ID drops)"]
+    W2["Fit/Reuse preprocessor<br/>(OHE + scaling)"]
+    W3["Train pipeline(s)<br/>(preprocess + model)"]
+    W4["Build LIME explainer<br/>(in transformed feature space)"]
+    W5["Explain instances / batches<br/>(tables + translations)"]
+  end
+
+  subgraph Native["Native tool APIs"]
+    S1["scikit-learn<br/>Pipeline + predict_proba"]
+    L1["LIME<br/>LimeTabularExplainer + explain_instance"]
+  end
+
+  X0 --> W1 --> W2 --> W3
+  W3 --> S1
+  W2 --> W4
+  W4 --> L1
+  S1 --> W5
+  L1 --> W5
+```
+
+### 6.1 Design decisions and trade-offs
+
+- **LIME feature-space alignment:** We build the explainer using *transformed* training data (after one-hot encoding + scaling), because the model’s `predict_proba` expects that space.  
+  Trade-off: explanation strings are less human-readable, so the wrapper includes translation helpers and long-form tables.
+
+- **Dense one-hot encoding:** The preprocessor forces dense output to avoid sparse-matrix edge cases in LIME.  
+  Trade-off: higher memory usage, but better reliability for explainability demos.
+
+- **Stratified split:** Attrition is typically imbalanced; stratification keeps train/test class rates comparable and reduces evaluation volatility.
+
+- **Single “final model” for explanations:** The wrapper supports training multiple models for comparison, but you should pick one final pipeline for LIME reporting so your “why” is consistent.
+
 
 ### Data + modeling flow
 1. Load CSV → clean → split
