@@ -58,6 +58,42 @@ The key insight: by giving the RL agent a distribution of possible futures rathe
 
 ## The Full Pipeline: From Data to Signals
 
+The following diagram illustrates the complete end-to-end workflow, from raw data ingestion to signal generation and evaluation.
+
+```mermaid
+flowchart TD
+    subgraph DataPrep [Step 1: Data Preparation]
+        A[Alpaca API] -->|OHLCV| B(rl_utils/data.py)
+        C[Polygon API] -->|News| B
+        B -->|Technical Indicators| D[Enriched Data]
+        B -->|News Text| D
+    end
+
+    subgraph RollingWindow [Step 2: Rolling Window Validation]
+        D --> E{Split Data}
+        E -->|Train Window 200d| F[Train Data]
+        E -->|Test Window 30d| G[Test Data]
+    end
+
+    subgraph ModelTraining [Step 3: Component Training]
+        F --> H[Model A-L: LSTM Forecaster]
+        F --> I[Model B-L: News Interpreter]
+        H -->|Uncertainty Cones| J[Pre-computed State]
+        I -->|Sentiment & Topics| J
+    end
+
+    subgraph RLTraining [Step 4: RL Agent Training]
+        J --> K[Register SignalTesterEnv]
+        K --> L[Train PPO/SAC Agent]
+    end
+
+    subgraph Evaluation [Step 5: Evaluation]
+        L --> M[Evaluate on Test Data]
+        G --> M
+        M --> N[Calculate Metrics]
+    end
+```
+
 Let me walk through each step and where the code lives:
 
 ### Step 1: Data Preparation (`rl_utils/data.py`)
@@ -147,43 +183,68 @@ Now `gym.make('SignalTester-v0')` creates environments that share the precompute
 
 ### Step 5: RL Training
 
-TODO
+I use the `CleanRL_API` modules to train the agent. The training loop is adaptive:
+
+1.  **Algorithm Selection**: I can switch between **SAC** (Soft Actor-Critic) and **PPO** (Proximal Policy Optimization) by setting the `ALGO` flag.
+    - **SAC**: Sample-efficient, good for continuous control.
+    - **PPO**: Stable, robust, standard baseline.
+2.  **Hyperparameters**:
+    - `total_timesteps`: 5000 (short training per window)
+    - `hidden_size`: 256 (deeper network for 138-dim state)
+    - `learning_starts`: 1000 (for SAC)
+3.  **Execution**: The agent interacts with the `SignalTesterEnv` using the pre-computed features, making training extremely fast (seconds per window).
 
 ## Strategy Validation and Performance
 
-TODO
+To ensure the strategy isn't just memorizing the past, I use a **Adaptive Rolling Window** approach.
 
 ### How I Test Signals
 
-TODO
+The pipeline iterates through the data in chunks:
+
+- **Train Window**: 200 days. The Forecaster, Interpreter, and RL Agent are trained on this data.
+- **Test Window**: 30 days. The trained agent is evaluated on unseen data immediately following the training window.
+- **Slide**: The window moves forward by 30 days, and the process repeats.
 
 **Validation approach:**
 
-1. **Out-of-sample testing**: Train on first 70% of data, test on last 30%
-2. **Walk-forward validation**: Retrain periodically and test on next unseen window
-3. **Signal quality metrics**: Measure signal consistency, turnover, and execution cost
+1.  **Out-of-sample testing**: Performance is only measured on the Test Window.
+2.  **Walk-forward validation**: Simulates how the strategy would perform in real-time as models are retrained.
+3.  **Signal quality metrics**: I track not just returns, but risk-adjusted metrics.
 
-**Code location:** `rl_env.py::SignalTesterEnv._calculate_reward()`
+**Code location:** `CleanRL.example.ipynb` (Main Loop) and `rl_env.py` (Reward Calculation).
 
 The environment calculates realized metrics during testing:
 
 ```python
-# For each signal, measure actual outcomes:
-actual_sharpe = (mean_return / std_return) * sqrt(252)  # Annualized
-max_drawdown = max(cumulative_peak - cumulative_return)
-win_rate = (profitable_signals / total_signals)
+# Reward Function in rl_env.py
+# Reward = Directional_Bias * Actual_Sharpe * (1 + Volatility_Bias * Vol_Change)
 ```
 
 ### Performance Metrics I Track
 
-TODO
+For each window and the aggregated run, I calculate:
+
+- **Cumulative Return**: Total profit/loss.
+- **Benchmark Return**: Buy-and-hold return of the underlying asset (e.g., AAPL).
+- **Win Rate**: Percentage of days with positive PnL.
+- **Sharpe Ratio**: Risk-adjusted return ($Mean(R) / Std(R) * \sqrt{252}$).
+- **Sortino Ratio**: Similar to Sharpe but only penalizes downside volatility.
+- **Jensen's Alpha**: Excess return over the benchmark adjusted for beta.
 
 ### Computational Cost
 
-**Training time:** (on M1 Mac, CPU only)
+**Training time:**
 
-TODO
+- **Data Prep**: ~2-3 minutes (fetching 1.5 years of data).
+- **Forecaster/Interpreter**: ~1 minute per window.
+- **RL Training**: ~10-20 seconds per window (thanks to pre-computation).
+- **Total**: A full backtest over 1.5 years takes about 5-10 minutes on a standard laptop (e.g., M1 Mac).
 
 ## Conclusion
 
-TODO
+This project demonstrates a **Ensemble RL** approach to algorithmic trading. By decomposing the problem into **Forecasting** (LSTM), **Interpretation** (NLP), and **Decision Making** (RL), we create a system that is more robust and interpretable than a "black box" end-to-end RL agent. The use of **CleanRL** ensures the RL component is using transparent, verified implementations, while the custom `SignalTesterEnv` bridges the gap between financial data and reinforcement learning.
+
+Though the results might seem, not up to standard of a production ready strategy, further optimizations can be made in hyperparameter tuning, changing from a adaptive rolling window to a online learning approach i.e the model is never re-trained rather learns on the go "online", another straight forward update would be to feed in the previous actions the model took on test data into the next run or learning period to promote robustness.
+
+A single RL agent that follows the Markov Decision Process will be contrained by its own fundamentals i.e we're trying to use more data to train and optimize a singular policy function. the underlying nature of ohlcv data is a brownian motion with the market having many layers like regimes, macro economics, seasonality etc. feeding more data to a singular model will not yeild a optimal approach but cutting edge research shows Hierarchical RL frameworks which consist of multiple RL "meta" agents, with each agent specialized, are far more robust than a single ensemble RL agent.

@@ -4,28 +4,44 @@ This project uses cleanRL's (https://docs.cleanrl.dev/) single-file RL implement
 
 What you'll find here
 
-- `CleanRL_API/ppo.py`, `CleanRL_API/sac_continuous_action.py`: single-file, canonical cleanRL algorithm implementations adapted for our environment shapes.
+- `CleanRL_API/ppo_continuous_action.py`, `CleanRL_API/sac_continuous_action.py`: single-file, canonical cleanRL algorithm implementations adapted for our environment shapes.
 - `rl_env.py`: the `SignalTesterEnv` environment used by the agents. This file now exposes a helper to register a gym id so cleanRL scripts (which expect an env id) can call `gym.make("SignalTester-v0")`.
+- NOTE: both `ppo_continuous_action.py` and `sac_continuous_action.py` were sligthly updated to ensure they fit into our workflow.
 
 Usage
 
-The PPO and SAC scripts can be used by spawning a subprocess command. After training, models are automatically saved to `runs/{run_name}/`.
-NOTE: debugging Usage
+The PPO and SAC scripts are designed to be imported and run directly from Python code, allowing for seamless integration with the data pipeline and environment registration.
 
 ```python
-cmd = [
-    sys.executable,  # Python interpreter
-    str(ppo_script),
-    "--env-id", env_id_train,
-    "--total-timesteps", str(total_timesteps),
-    "--seed", str(SEED),
-    "--hidden-size", "256",  # Large network for 138-dim state
-    "--track", "False",  # Disable wandb tracking
-    "--capture-video", "False",
-]
+from CleanRL_API.sac_continuous_action import train as train_sac, Args as SACArgs
+# or for PPO:
+# from CleanRL_API.ppo_continuous_action import train as train_ppo, Args as PPOArgs
 
-result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
-# Models saved to runs/{run_name}/actor.pth, qf1.pth, qf2.pth
+# Define training arguments
+args = SACArgs(
+    env_id="SignalTester-v0",
+    total_timesteps=5000,
+    policy_lr=3e-4,
+    q_lr=1e-3,
+    buffer_size=10000,
+    gamma=0.99,
+    tau=0.005,
+    batch_size=256,
+    learning_starts=1000,
+    policy_frequency=2,
+    target_network_frequency=1,
+    alpha=0.2,
+    autotune=True,
+    run_name="my_sac_run",
+    seed=42,
+    hidden_size=256,  # Use 512+ for high-dim states
+)
+
+# Run training
+# The train function returns the trained agent
+agent = train_sac(args)
+
+# Models are automatically saved to runs/{run_name}/
 ```
 
 Key points
@@ -36,5 +52,3 @@ Key points
 - `CleanRL_API/cleanrl_utils/`: small helpers (buffers, wrappers) used by the algorithms.
 
 `SignalTesterEnv` exposes a 138-dimensional state (uncertainty cones + news context). Both `ppo.py` and `sac_continuous_action.py` use deeper networks with LayerNorm when `obs_dim > 60`: PPO uses a 4-layer architecture (default `--hidden_size 128`), while SAC uses deeper actor/critic networks (default `--hidden_size 256`). For even more capacity, use `--hidden_size 512`. The networks fall back to standard shallow architectures for simple environments, maintaining backward compatibility.
-
-TODO: add more info and any diagrams here

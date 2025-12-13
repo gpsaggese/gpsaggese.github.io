@@ -13,13 +13,15 @@ import torch.optim as optim
 import tyro
 from torch.utils.tensorboard import SummaryWriter
 
-from cleanrl_utils.buffers import ReplayBuffer
+from .cleanrl_utils.buffers import ReplayBuffer
 
 
 @dataclass
 class Args:
     exp_name: str = os.path.basename(__file__)[: -len(".py")]
     """the name of this experiment"""
+    run_name: str = None
+    """the name of the run (if None, it will be generated based on the experiment name and timestamp)"""
     seed: int = 1
     """seed of the experiment"""
     torch_deterministic: bool = True
@@ -190,10 +192,11 @@ class Actor(nn.Module):
         return action, log_prob, mean
 
 
-if __name__ == "__main__":
-
-    args = tyro.cli(Args)
-    run_name = f"{args.env_id}__{args.exp_name}__{args.seed}__{int(time.time())}"
+def train(args: Args):
+    if args.run_name:
+        run_name = args.run_name
+    else:
+        run_name = f"{args.env_id}__{args.exp_name}__{args.seed}__{int(time.time())}"
     if args.track:
         import wandb
 
@@ -365,6 +368,15 @@ if __name__ == "__main__":
     torch.save(actor.state_dict(), f"{model_path}/actor.pth")
     torch.save(qf1.state_dict(), f"{model_path}/qf1.pth")
     torch.save(qf2.state_dict(), f"{model_path}/qf2.pth")
+    envs.close()
+    writer.close()
+    
+    return actor
+
+
+if __name__ == "__main__":
+    args = tyro.cli(Args)
+    train(args)
     print(f"Model saved to {model_path}/")
 
     envs.close()

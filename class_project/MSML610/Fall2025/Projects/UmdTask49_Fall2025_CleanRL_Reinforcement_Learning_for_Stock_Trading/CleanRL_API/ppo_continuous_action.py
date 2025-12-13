@@ -1,4 +1,4 @@
-# docs and experiment results can be found at https://docs.cleanrl.dev/rl-algorithms/ppo/#ppopy
+# docs and experiment results can be found at https://docs.cleanrl.dev/rl-algorithms/ppo/#ppo_continuous_actionpy
 import os
 import random
 import time
@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import tyro
-from torch.distributions.categorical import Categorical
+from torch.distributions.normal import Normal
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -18,6 +18,8 @@ from torch.utils.tensorboard import SummaryWriter
 class Args:
     exp_name: str = os.path.basename(__file__)[: -len(".py")]
     """the name of this experiment"""
+    run_name: str = None
+    """the name of the run (if None, it will be generated based on the experiment name and timestamp)"""
     seed: int = 1
     """seed of the experiment"""
     torch_deterministic: bool = True
@@ -34,15 +36,15 @@ class Args:
     """whether to capture videos of the agent performances (check out `videos` folder)"""
 
     # Algorithm specific arguments
-    env_id: str = "CartPole-v1"
+    env_id: str = "HalfCheetah-v4"
     """the id of the environment"""
-    total_timesteps: int = 500000
+    total_timesteps: int = 1000000
     """total timesteps of the experiments"""
-    learning_rate: float = 2.5e-4
+    learning_rate: float = 3e-4
     """the learning rate of the optimizer"""
-    num_envs: int = 4
+    num_envs: int = 1
     """the number of parallel game environments"""
-    num_steps: int = 128
+    num_steps: int = 2048
     """the number of steps to run in each environment per policy rollout"""
     anneal_lr: bool = True
     """Toggle learning rate annealing for policy and value networks"""
@@ -50,9 +52,9 @@ class Args:
     """the discount factor gamma"""
     gae_lambda: float = 0.95
     """the lambda for the general advantage estimation"""
-    num_minibatches: int = 4
+    num_minibatches: int = 32
     """the number of mini-batches"""
-    update_epochs: int = 4
+    update_epochs: int = 10
     """the K epochs to update the policy"""
     norm_adv: bool = True
     """Toggles advantages normalization"""
@@ -60,7 +62,7 @@ class Args:
     """the surrogate clipping coefficient"""
     clip_vloss: bool = True
     """Toggles whether or not to use a clipped loss for the value function, as per the paper."""
-    ent_coef: float = 0.01
+    ent_coef: float = 0.0
     """coefficient of the entropy"""
     vf_coef: float = 0.5
     """coefficient of the value function"""
@@ -68,8 +70,8 @@ class Args:
     """the maximum norm for the gradient clipping"""
     target_kl: float = None
     """the target KL divergence threshold"""
-    hidden_size: int = 128
-    """the hidden size for actor and critic networks (default: 128, use 256+ for high-dim states)"""
+    hidden_size: int = 64
+    """the hidden size for actor and critic networks"""
 
     # to be filled in runtime
     batch_size: int = 0
@@ -88,6 +90,14 @@ def make_env(env_id, idx, capture_video, run_name):
         else:
             env = gym.make(env_id)
         env = gym.wrappers.RecordEpisodeStatistics(env)
+        env = gym.wrappers.ClipAction(env)
+        env = gym.wrappers.NormalizeObservation(env)
+        try:
+            env = gym.wrappers.TransformObservation(env, lambda obs: np.clip(obs, -10, 10), env.observation_space)
+        except TypeError:
+            env = gym.wrappers.TransformObservation(env, lambda obs: np.clip(obs, -10, 10))
+        env = gym.wrappers.NormalizeReward(env)
+        env = gym.wrappers.TransformReward(env, lambda reward: np.clip(reward, -10, 10))
         return env
 
     return thunk
@@ -100,15 +110,14 @@ def layer_init(layer, std=np.sqrt(2), bias_const=0.0):
 
 
 class Agent(nn.Module):
-    def __init__(self, envs, hidden_size=128):
+    def __init__(self, envs, hidden_size=64):
         super().__init__()
         obs_dim = np.array(envs.single_observation_space.shape).prod()
+        action_dim = np.prod(envs.single_action_space.shape)
         
-        # Use larger network for high-dimensional states (e.g., 138-dim from SignalTesterEnv)
-        # Architecture similar to LargeFeatureExtractor: deeper with layer norm and dropout
+        # Use larger network for high-dimensional states if needed
         if obs_dim > 60:
-            # Deep network with normalization for complex feature extraction
-            self.critic = nn.Sequential(
+             self.critic = nn.Sequential(
                 layer_init(nn.Linear(obs_dim, hidden_size * 4)),
                 nn.LayerNorm(hidden_size * 4),
                 nn.Tanh(),
@@ -121,7 +130,7 @@ class Agent(nn.Module):
                 nn.Tanh(),
                 layer_init(nn.Linear(hidden_size, 1), std=1.0),
             )
-            self.actor = nn.Sequential(
+             self.actor_mean = nn.Sequential(
                 layer_init(nn.Linear(obs_dim, hidden_size * 4)),
                 nn.LayerNorm(hidden_size * 4),
                 nn.Tanh(),
@@ -132,10 +141,9 @@ class Agent(nn.Module):
                 nn.Dropout(0.1),
                 layer_init(nn.Linear(hidden_size * 2, hidden_size)),
                 nn.Tanh(),
-                layer_init(nn.Linear(hidden_size, envs.single_action_space.n), std=0.01),
+                layer_init(nn.Linear(hidden_size, action_dim), std=0.01),
             )
         else:
-            # Standard shallow network for simple envs (backward compatible)
             self.critic = nn.Sequential(
                 layer_init(nn.Linear(obs_dim, hidden_size)),
                 nn.Tanh(),
@@ -143,31 +151,42 @@ class Agent(nn.Module):
                 nn.Tanh(),
                 layer_init(nn.Linear(hidden_size, 1), std=1.0),
             )
-            self.actor = nn.Sequential(
+            self.actor_mean = nn.Sequential(
                 layer_init(nn.Linear(obs_dim, hidden_size)),
                 nn.Tanh(),
                 layer_init(nn.Linear(hidden_size, hidden_size)),
                 nn.Tanh(),
-                layer_init(nn.Linear(hidden_size, envs.single_action_space.n), std=0.01),
+                layer_init(nn.Linear(hidden_size, action_dim), std=0.01),
             )
+            
+        self.actor_logstd = nn.Parameter(torch.zeros(1, action_dim))
 
     def get_value(self, x):
         return self.critic(x)
 
     def get_action_and_value(self, x, action=None):
-        logits = self.actor(x)
-        probs = Categorical(logits=logits)
+        action_mean = self.actor_mean(x)
+        action_logstd = self.actor_logstd.expand_as(action_mean)
+        action_std = torch.exp(action_logstd)
+        probs = Normal(action_mean, action_std)
         if action is None:
             action = probs.sample()
-        return action, probs.log_prob(action), probs.entropy(), self.critic(x)
+        return action, probs.log_prob(action).sum(1), probs.entropy().sum(1), self.critic(x)
+    
+    # Helper for inference
+    def get_action(self, x):
+        action_mean = self.actor_mean(x)
+        return None, None, action_mean
 
 
-if __name__ == "__main__":
-    args = tyro.cli(Args)
+def train(args: Args):
     args.batch_size = int(args.num_envs * args.num_steps)
     args.minibatch_size = int(args.batch_size // args.num_minibatches)
     args.num_iterations = args.total_timesteps // args.batch_size
-    run_name = f"{args.env_id}__{args.exp_name}__{args.seed}__{int(time.time())}"
+    if args.run_name:
+        run_name = args.run_name
+    else:
+        run_name = f"{args.env_id}__{args.exp_name}__{args.seed}__{int(time.time())}"
     if args.track:
         import wandb
 
@@ -198,7 +217,7 @@ if __name__ == "__main__":
     envs = gym.vector.SyncVectorEnv(
         [make_env(args.env_id, i, args.capture_video, run_name) for i in range(args.num_envs)],
     )
-    assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
+    assert isinstance(envs.single_action_space, gym.spaces.Box), "only continuous action space is supported"
 
     agent = Agent(envs, hidden_size=args.hidden_size).to(device)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
@@ -283,7 +302,7 @@ if __name__ == "__main__":
                 end = start + args.minibatch_size
                 mb_inds = b_inds[start:end]
 
-                _, newlogprob, entropy, newvalue = agent.get_action_and_value(b_obs[mb_inds], b_actions.long()[mb_inds])
+                _, newlogprob, entropy, newvalue = agent.get_action_and_value(b_obs[mb_inds], b_actions[mb_inds])
                 logratio = newlogprob - b_logprobs[mb_inds]
                 ratio = logratio.exp()
 
@@ -348,7 +367,11 @@ if __name__ == "__main__":
     model_path = f"runs/{run_name}"
     os.makedirs(model_path, exist_ok=True)
     torch.save(agent.state_dict(), f"{model_path}/agent.pth")
-    print(f"Model saved to {model_path}/agent.pth")
-
     envs.close()
     writer.close()
+    return agent
+
+
+if __name__ == "__main__":
+    args = tyro.cli(Args)
+    train(args)
