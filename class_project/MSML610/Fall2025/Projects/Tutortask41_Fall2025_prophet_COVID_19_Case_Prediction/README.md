@@ -3,7 +3,7 @@
 A comprehensive time series forecasting project using Facebook Prophet to predict daily COVID-19 cases, with comparisons to ARIMA/SARIMA baselines.
 
 **Author**: Ibrahim Ahmed Mohammed  
-**Course**: DATA607-PCS2  
+**Course**: DATA610 
 **Date**: December 2024
 
 ---
