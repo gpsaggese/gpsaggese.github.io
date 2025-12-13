@@ -1,0 +1,49 @@
+
+services:
+  jupyter:
+    image: umd-dev:latest
+    working_dir: /work/class_project/MSML610/Fall2025/Projects/UmdTask15_Fall2025_Renewable_Energy_Production
+    volumes:
+      - ${HOME}/src/umd_classes1:/work
+    ports:
+      - "8893:8890"
+    environment:
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+    command: >
+      bash -lc "jupyter notebook --ip=0.0.0.0 --port=8890 --no-browser --NotebookApp.token= --allow-root"
+
+  mlflow-ui:
+    image: umd-dev:latest
+    working_dir: /work/class_project/MSML610/Fall2025/Projects/UmdTask15_Fall2025_Renewable_Energy_Production
+    volumes:
+      - ${HOME}/src/umd_classes1:/work
+    ports:
+      - "5001:5000"
+    command: >
+      bash -lc "mlflow ui --host 0.0.0.0 --port 5000"
+
+  streamlit:
+    image: umd-dev:latest
+    working_dir: /work/class_project/MSML610/Fall2025/Projects/UmdTask15_Fall2025_Renewable_Energy_Production
+    volumes:
+      - ${HOME}/src/umd_classes1:/work
+    ports:
+      - "8890:8891"
+    environment:
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+    command: >
+      bash -lc "python3 -m streamlit run app/streamlit_app.py --server.port 8891 --server.address 0.0.0.0"
+
+  mlflow-serve:
+    image: umd-dev:latest
+    working_dir: /work/class_project/MSML610/Fall2025/Projects/UmdTask15_Fall2025_Renewable_Energy_Production
+    volumes:
+      - ${HOME}/src/umd_classes1:/work
+    ports:
+      - "1234:1234"
+    environment:
+      - MODEL_URI=${MODEL_URI}
+    command: >
+      bash -lc "mlflow models serve -m ${MODEL_URI} -p 1234 --host 0.0.0.0 --no-conda"
+
+
