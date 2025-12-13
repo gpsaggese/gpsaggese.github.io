@@ -14,7 +14,7 @@ The goal is to show how to:
 ## 1. Folder structure (inside this project directory)
 
 ```
-Fall2025_xgboost_Employee_Attrition_Prediction/docker_build.sh
+Fall2025_xgboost_Employee_Attrition_Prediction
 |
 ├── docker_build.sh          # Build Docker image
 ├── docker_bash.sh           # Optional: open bash shell inside container
