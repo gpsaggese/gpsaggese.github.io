@@ -29,6 +29,7 @@ This project implements a complete time series forecasting system for stock pric
 - Backtesting with trading simulation
 - Direction accuracy evaluation
 - Comprehensive error analysis
+- Optional news sentiment features (NewsAPI + VADER)
 - Docker containerization
 
 ## Quick Start
@@ -129,6 +130,35 @@ X, y, scaler = preprocessor.preprocess_data(stock_data)
 forecaster = TimeSeriesForecaster(config)
 forecaster.train_model(X, y)
 predictions = forecaster.predict(X_test, scaler)
+
+### News Sentiment Augmentation
+
+Integrate headline sentiment to provide extra alpha for the tsai/FastAI pipelines. Enable it by providing a
+NewsAPI key (or set `include_sentiment=False` to skip it):
+
+```python
+import os
+
+config = ModelConfig(
+    sequence_length=60,
+    prediction_horizon=1,
+    news_api_key='',
+    sentiment_window=3,
+)
+
+results = create_pipeline(
+    symbol="AAPL",
+    start_date="2018-01-01",
+    end_date="2024-01-01",
+    config=config,
+)
+```
+
+The pipeline automatically downloads the latest headlines for the ticker, scores them with the
+[VADER](https://github.com/cjhutto/vaderSentiment) lexicon via `nltk`, and engineers daily features
+(`Sentiment_Mean`, `Sentiment_Volatility`, `Sentiment_Count`, etc.) that are merged with the price history.
+If you already have curated sentiment data, pass it through the optional `sentiment_df` argument on
+`create_pipeline()`.
 ```
 
 ## Model Performance

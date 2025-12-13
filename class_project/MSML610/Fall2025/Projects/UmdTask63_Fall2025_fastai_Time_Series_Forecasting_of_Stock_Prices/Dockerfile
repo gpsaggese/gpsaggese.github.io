@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
+COPY .env .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip && \
@@ -25,12 +26,17 @@ COPY fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.API.md .
 COPY fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.API.ipynb .
 COPY fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.example.md .
 COPY fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.example.ipynb .
+COPY fastai/fastai_Time_Series_Forecasting_of_Stock_Prices_Sentiment.example.ipynb .
+
+COPY tsai/tsai_Time_Series_Forecasting_of_Stock_Prices_utils.py .
+COPY tsai/tsai_Time_Series_Forecasting_of_Stock_Prices.API.md .
+COPY tsai/tsai_Time_Series_Forecasting_of_Stock_Prices.API.ipynb .
+COPY tsai/tsai_Time_Series_Forecasting_of_Stock_Prices.example.md .
+COPY tsai/tsai_Time_Series_Forecasting_of_Stock_Prices.example.ipynb .
+
 COPY README.md .
 
 RUN mkdir -p /app/data /app/outputs /app/notebooks
-
-RUN cp fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.API.ipynb notebooks/API.ipynb
-RUN cp fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.example.ipynb notebooks/example.ipynb
 
 EXPOSE 8888
 
