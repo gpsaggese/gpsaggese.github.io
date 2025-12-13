@@ -29,3 +29,14 @@ All notebooks act only as **consumers** of this API.
 
 ## API Architecture
 
+This API defines a **stable internal interface** for Reddit topic modeling.
+All functions are designed to be reusable and independent of notebooks.
+
+The API does NOT:
+- Perform visualization inline
+- Contain notebook-specific logic
+- Depend on interactive input
+
+All runtime execution and experimentation is handled in `reddit.example.ipynb`.
+
+
