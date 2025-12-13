@@ -1,8 +1,0 @@
-numpy
-pandas
-seaborn
-faiss
-requests
-streamlit
-pillow
-
