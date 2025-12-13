@@ -46,38 +46,29 @@ This project demonstrates how **machine learning models** can learn temporal and
 
 ---
 
-## Project Structure
+## Project structure
 
+```text
 UmdTask15_Fall2025_Renewable_Energy_Production/
-│
 ├── README.md
 ├── Dockerfile
 ├── compose.yaml
 ├── RenewableEnergy_utils.py
-│
 ├── api/
-│ ├── API.md
-│ └── API.ipynb
-│
+│   ├── API.md
+│   └── API.ipynb
 ├── examples/
-│ ├── example.md
-│ └── example.ipynb
-│
+│   ├── example.md
+│   └── example.ipynb
 ├── scripts/
-│ ├── make_features.py
-│ ├── train.py
-│ ├── live_predict.py # bonus
-│ └── openweather_client.py # bonus
-│
+│   ├── make_features.py
+│   ├── train.py
+│   ├── live_predict.py
+│   └── openweather_client.py
 ├── app/
-│ └── streamlit_app.py
-│
-└── (not committed)
-├── data/
-├── mlruns/
-├── artifacts/
-
----
+│   └── streamlit_app.py
+```
+----
 
 ## Dataset Description
 
@@ -173,6 +164,7 @@ http://localhost:5001
 ### Dockerized Environment
 The project runs entirely inside Docker to ensure full reproducibility across systems.
 Build & Run the Container
+```
 docker run --rm -it \
   -p 8893:8890 \
   -p 5001:5000 \
@@ -182,6 +174,7 @@ docker run --rm -it \
   -w /work/class_project/MSML610/Fall2025/projects/UmdTask15_Fall2025_Renewable_Energy_Production \
   umd-dev:latest \
   bash
+```
 ### Training the Models
 python3 scripts/train.py
 This command:
@@ -249,12 +242,13 @@ This allows the full system to be launched with a single command:
 docker compose up
 
 ### Summary
-This project delivers:
-A clean API layer
-A complete example workflow
-Strong forecasting performance
-MLflow-based experiment tracking
-Docker-based reproducibility
-An interactive Streamlit dashboard
-A bonus real-time inference pipeline
-Overall, it demonstrates practical machine learning, MLOps, and software engineering practices aligned with modern data science workflows.
+## Project Highlights
+
+- Clean and well-documented **API layer** for model inference  
+- Complete **end-to-end example workflow**, from data preprocessing to prediction  
+- Strong **forecasting performance** using engineered temporal and weather features  
+- **MLflow-based experiment tracking** for reproducibility and model comparison  
+- Fully **Dockerized pipeline** ensuring consistent environments across systems  
+- Interactive **Streamlit dashboard** for visualization and live predictions  
+- **Bonus real-time inference pipeline** integrating live weather data  
+- Demonstrates practical **machine learning, MLOps, and software engineering** best practices aligned with modern data science workflows  
