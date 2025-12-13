@@ -12,13 +12,19 @@ This file contains utility functions that support the tutorial notebooks.
 import logging
 from abc import ABC, abstractmethod
 from typing import Optional
-
 import numpy as np
-
+import pandas as pd
+import joblib
+from datetime import datetime, timedelta
 from ax import Client, RangeParameterConfig
+import json
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# ===============================
+# Example section
+# ===============================
 
 # Definition of the Hartmann function for the API example
 
@@ -44,6 +50,109 @@ def hartmann6(x1, x2, x3, x4, x5, x6):
             inner += A[i, j] * (x - P[i, j])**2
         outer += alpha[i] * np.exp(-inner)
     return -outer
+
+
+# ===============================
+# DSP Simulation section
+# ===============================
+
+def get_avg_spent_per_day(date: str):
+    """
+    This method retrieves the known daily average spent at the moment
+    """
+    date = datetime.strptime(date, "%Y%m%d")
+    prev_date = date - timedelta(days=1)
+    prev_date_str = prev_date.strftime('%Y%m%d')
+    return json.load(open(f"models/average_ctr_and_bid_to_pay_ratio_{prev_date_str}.json"))["avg_spent_per_day"]
+
+def load_pctr_prediction_model(date: str):
+    """
+    This method loads the CTR prediction model. It receives the date and looks for the model file with the previous date.
+    """
+    date = datetime.strptime(date, "%Y%m%d")
+    prev_date = date - timedelta(days=1)
+    prev_date_str = prev_date.strftime('%Y%m%d')
+    date_str = date.strftime('%Y%m%d')
+
+    # Load the model and the features
+    model = joblib.load(f"models/xgb_model_{prev_date_str}.joblib")
+    features = open(f"models/features_{prev_date_str}.txt", "r").read().splitlines()
+
+    # Load the average CTR and the bid to pay ratio
+    average_ctr_and_bid_to_pay_ratio = json.load(open(f"models/average_ctr_and_bid_to_pay_ratio_{prev_date_str}.json"))
+    average_ctr = average_ctr_and_bid_to_pay_ratio["average_ctr"]
+    bid_to_pay_ratio = average_ctr_and_bid_to_pay_ratio["bid_to_pay_ratio"]
+    return model, features, average_ctr, bid_to_pay_ratio
+
+
+def dsp_simulation(date: str, base_bid: float, budget: float, ctr_reg_coef: float, bid_to_pay_ratio_reg_coef: float, pacing_reg_coef: float, offset: int = 0, limit: Optional[int] = None):
+    """
+    This method processes the dataset for a given date, loads the ctr prediction model, simulates the bidding strategy and returns the results.
+    """
+    # Load the dataset for the given date
+    df_bids = pd.read_csv(f"dataset/bid_with_features_{date}.csv").iloc[offset:offset+limit] if limit is not None else pd.read_csv(f"dataset/bid_with_features_{date}.csv").iloc[offset:]
+    if len(df_bids) == 0:
+        return 0, 0, 0, 0, 0
+    # Load the ctr prediction model
+    model, features, average_ctr, bid_to_pay_ratio = load_pctr_prediction_model(date)
+    # Predict the CTR for each bid
+    df_bids["sim_pctr"] = model.predict_proba(df_bids[features])[:, 1]
+    # Calculate the rawbid amount
+    df_bids["sim_ctr_ratio"] = (df_bids["sim_pctr"] / average_ctr)
+    df_bids["sim_raw_bid"] = base_bid * (1 + ctr_reg_coef * (df_bids["sim_ctr_ratio"] - 1))
+    # Calculate the pay to bid ratio
+    df_bids["sim_final_bid"] = df_bids["sim_raw_bid"] * (1 + bid_to_pay_ratio_reg_coef * (bid_to_pay_ratio - 1))
+
+    # The pacing coefficient has to be calculated based on the on going budget spent as the simulation runs
+
+    # Prepare accumulation variables for simulation loop
+    budget_remaining = budget
+    total_bids = 0
+    total_bids_done = 0
+    total_bids_won = 0
+    total_budget_spent = 0.0
+    total_clicks = 0
+
+    # Iterate through each record in df_bids
+    for idx, row in df_bids.iterrows():
+        hour = row['hour']
+        
+        # Calculate pacing coefficient
+        expected_budget_spent = (budget / 24.0) * (hour + 1)
+        actual_budget_spent = budget - budget_remaining if budget > 0 else 0
+        pacing_coef = np.clip(
+            expected_budget_spent / (actual_budget_spent + 1e-9),
+            0.5, 2.0
+        )
+
+        # Apply pacing coefficient
+        sim_final_bid = row['sim_final_bid'] * (1 + pacing_reg_coef * (pacing_coef - 1))
+        row['sim_final_bid_paced'] = sim_final_bid
+
+        # Verify that the budget is not exhausted
+        if budget_remaining <= 0:
+            break
+
+        pay_price = 0
+        total_bids += 1
+        # Verify if the bid is done
+        if (sim_final_bid >= row['slot_floor_price']):
+            total_bids_done += 1
+            # The DSP wins if the bid is greated than the paid price
+            if sim_final_bid >= row['pay_price']:
+                total_bids_won += 1
+                pay_price = row['pay_price']
+                budget_remaining -= pay_price
+                total_budget_spent += pay_price
+                # Verify if the bid was clicked
+                if row['clicked'] == 1:
+                    total_clicks += 1
+
+    return total_bids, total_bids_done, total_bids_won, total_budget_spent, total_clicks, 
+
+# ===============================
+# Multi-Armed Bandit section
+# ===============================
 
 class MultiArmedBanditAlgorithm(ABC):
     """Abstract class to be implemented by the A/B Testing, UCB1, Thompson Sampling, and GP-Bandit algorithms."""
