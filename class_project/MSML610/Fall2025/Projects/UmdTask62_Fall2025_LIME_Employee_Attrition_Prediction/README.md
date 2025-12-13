@@ -129,6 +129,7 @@ Key files and directories:
     - Engineer features.
     - Train and evaluate multiple models.
     - Plot ROC and PR curves.
+    - Perform error analysis (confusion matrix, FP/FN inspection, and threshold trade-offs).
     - Generate individual, comparative, and aggregate LIME explanations.
     - Perform the feature subset bonus experiment and analyze Jaccard similarity of top LIME features.
   - This is the notebook that tells the full “story” of the project in code.
@@ -174,9 +175,8 @@ Key files and directories:
   Standard ignore rules (e.g., `__pycache__`, `.venv`, `.ipynb_checkpoints`, etc.).
 
 - `data/`  
-  Directory expected to hold the dataset and any generated artifacts:
+  Directory expected to hold the dataset:
   - `WA_Fn-UseC_-HR-Employee-Attrition.csv` (IBM HR dataset).
-  - Any intermediate CSVs or figures produced by the notebooks (optional).
 
 - `README.md`  
   This file. High-level entry point for anyone viewing the repository.
@@ -417,6 +417,7 @@ Expected behavior:
 - Models are trained; a metrics table is displayed with accuracy/F1/ROC AUC/PR AUC per model.
 - A best model is chosen (typically one of the boosting models, often XGBoost or LightGBM).
 - ROC and precision–recall curves are plotted for the best model.
+- Error analysis is shown (confusion matrix, FP/FN examples, and an illustrative threshold adjustment).
 - LIME explanations are generated for:
   - The highest-risk employee.
   - A comparison between “leave” vs “stay” examples.
@@ -554,7 +555,7 @@ flowchart LR
   X["Employee record to explain"] --> A["Create perturbations<br/>(sample around this record)"]
   A --> B["Model predicts probabilities<br/>for each perturbation"]
   B --> C["Weight samples by proximity<br/>(local neighborhood)"]
-  C --> D["Fit local surrogate model<br/>(interpretabl linear model)"]
+  C --> D["Fit local surrogate model<br/>(linear model)"]
   D --> E["Rank feature contributions<br/>(top +ve/-ve drivers)"]
   E --> F["Return explanation<br/>(readable feature impacts)"]
 ```
@@ -633,9 +634,9 @@ If you are **new to this repository** and want to confirm that everything is sel
    - Local venv route (Section 5), **or**
    - Docker route (Section 6).
 4. Run `lime_attrition.example.ipynb` from top to bottom.
-5. Optionally run `lime_attrition.API.ipynb` for API-level examples.
+5. Run `lime_attrition.API.ipynb` for API-level examples.
 
-If these steps complete without errors, then:
+These steps complete without errors, so:
 
 - The project is **self-contained**.
 - All required deliverables (`*_API.md`, `*_API.ipynb`, `*_example.md`, `*_example.ipynb`, `*_utils.py`) are present and connected.

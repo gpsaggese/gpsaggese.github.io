@@ -1,8 +1,8 @@
 # lime_attrition.API.md
 
-This document describes the **native programming interface** (API) of **LIME** for tabular classification and the **lightweight wrapper layer** implemented in `lime_attrition_utils.py` for the Employee Attrition Prediction project.
+This document describes the **native programming interface** (API) of **LIME** for classification and the **lightweight wrapper layer** implemented in `lime_attrition_utils.py` for the Employee Attrition Prediction project.
 
-> Important: “API” here refers to the tool’s **internal interface** (LIME’s programming objects and our wrapper functions), not an external service API.
+> Important: “API” here refers to the tool’s **internal interface** like LIME’s programming objects and our wrapper functions, not an external service API.
 
 ---
 
@@ -19,7 +19,7 @@ There are two layers:
    `lime_attrition_utils.py` provides reusable functions for:
    - loading/cleaning the IBM HR Attrition dataset
    - preprocessing with `ColumnTransformer`
-   - training one or more models (baseline + optional models)
+   - training one or more models (baseline + models)
    - evaluating metrics
    - building a LIME explainer in the correct feature space
    - generating single-employee and batch explanations
@@ -59,8 +59,8 @@ Key idea:
 ### Data
 - IBM HR Attrition dataset CSV under `./data/`
 
-### Optional dependencies
-The wrapper can optionally train XGBoost/LightGBM models, but the API notebook ran using only scikit-learn models for maximum reproducibility.
+### Dependencies
+The wrapper can train XGBoost/LightGBM models, but the API notebook ran using only scikit-learn models for maximum reproducibility.
 
 ---
 
@@ -104,7 +104,7 @@ exp = explainer.explain_instance(
 ```
 
 **Key parameters:**
-- `data_row`: the single instance to explain (in the explainer feature space)
+- `data_row`: the single instance to explain in the explainer feature space
 - `predict_fn`: function returning class probabilities
 - `num_features`: number of top contributing features to display
 - `num_samples`: number of perturbed samples LIME generates
@@ -214,8 +214,8 @@ Loads the raw CSV.
 #### `clean_attrition_data(df, config) -> pd.DataFrame`
 Normalizes the dataset for modeling:
 - drops identifier/constant columns (from `config.id_columns`)
-- maps target `"Yes"/"No"` to `1/0` (when needed)
-- drops rows with missing values (simple baseline handling)
+- maps target `"Yes"/"No"` to `1/0`
+- drops rows with missing values
 
 ---
 
@@ -227,7 +227,7 @@ Separates features and target.
 #### `train_test_split_attrition(X, y, config) -> (X_train, X_test, y_train, y_test)`
 Train/test split using:
 - `config.test_size`, `config.random_state`
-- stratification on `y` (attrition is typically imbalanced)
+- stratification on `y` because attrition is typically imbalanced
 
 #### `build_preprocessor(X) -> ColumnTransformer`
 Creates a preprocessing transformer:
@@ -256,7 +256,7 @@ Evaluates pipelines using probability-based and classification metrics:
 
 Recommended pattern:
 - compare models in `lime_attrition.example.*`
-- pick **one** final model for LIME reporting (to avoid mixing “why” across different models)
+- pick **one** best final model for LIME reporting
 
 ---
 
@@ -293,7 +293,7 @@ Converts one explanation into a long-form table for analysis/aggregation.
 Generates long-form explanations for multiple employees.
 
 #### `translate_lime_feature(feature_str) -> str`
-Translates encoded LIME feature strings into more human-readable text (helpful for HR-facing summaries).
+Translates encoded LIME feature strings for better readability.
 
 #### `aggregate_lime_features(long_df) -> pd.DataFrame`
 Aggregates local explanations across many employees to estimate:
@@ -316,17 +316,17 @@ flowchart TB
     X0["Raw employee features<br/>(DataFrame rows)"]
   end
 
-  subgraph Wrapper["Wrapper layer (lime_attrition_utils.py)"]
-    W1["Validate + clean data<br/>(schema, target mapping, ID drops)"]
+  subgraph Wrapper["Wrapper layer (utils.py)"]
+    W1["Validate + clean data"]
     W2["Fit/Reuse preprocessor<br/>(OHE + scaling)"]
     W3["Train pipeline(s)<br/>(preprocess + model)"]
-    W4["Build LIME explainer<br/>(in transformed feature space)"]
+    W4["Build LIME explainer"]
     W5["Explain instances / batches<br/>(tables + translations)"]
   end
 
   subgraph Native["Native tool APIs"]
     S1["scikit-learn<br/>Pipeline + predict_proba"]
-    L1["LIME<br/>LimeTabularExplainer + explain_instance"]
+    L1["LIME<br/>LimeTabularExplainer"]
   end
 
   X0 --> W1 --> W2 --> W3
@@ -339,11 +339,11 @@ flowchart TB
 
 ### 6.1 Design decisions and trade-offs
 
-- **LIME feature-space alignment:** We build the explainer using *transformed* training data (after one-hot encoding + scaling), because the model’s `predict_proba` expects that space.  
+- **LIME feature-space alignment:** We build the explainer using **transformed** training data (after one-hot encoding and scaling), because the model’s `predict_proba` expects that space.  
   Trade-off: explanation strings are less human-readable, so the wrapper includes translation helpers and long-form tables.
 
 - **Dense one-hot encoding:** The preprocessor forces dense output to avoid sparse-matrix edge cases in LIME.  
-  Trade-off: higher memory usage, but better reliability for explainability demos.
+  **Trade-off**: higher memory usage, but better reliability for explainability demos.
 
 - **Stratified split:** Attrition is typically imbalanced; stratification keeps train/test class rates comparable and reduces evaluation volatility.
 
@@ -354,10 +354,10 @@ flowchart TB
 1. Load CSV → clean → split
 2. Build preprocessor
 3. Train pipeline(s): preprocessor + classifier
-4. Choose final pipeline (for explanation)
+4. Choose final pipeline for explanation
 5. Build LIME explainer in the **pipeline’s feature space**
 6. Explain one employee or many employees
-7. Optionally aggregate explanations for HR insights
+7. Aggregate explanations for HR insights
 
 ### Why “feature space alignment” matters
 LIME only needs a `predict_fn`, but the explainer’s `training_data` and the `predict_fn` input must match.
