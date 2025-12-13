@@ -1,11 +1,31 @@
 # Reddit Topic Modeling API
 
-This document describes the internal API used for the Reddit Topic Modeling project.
+## Overview
 
-## Core Functions (from reddit_utils.py)
-1. **clean_text(text)** – Tokenizes and removes stopwords/punctuation.
-2. **generate_embeddings(texts)** – Uses fastText to get text embeddings.
-3. **run_kmeans(vectors, n_clusters)** – Clusters embeddings to discover topics.
-4. **visualize_tsne(vectors, labels)** – Visualizes clusters using t-SNE.
+This document describes the internal **API layer** for the project  
+**“Topic Modeling on Reddit Comments (r/worldnews)”** developed for **MSML610 – Fall 2025**.
 
-These abstractions make it easier to reuse the same NLP pipeline for different subreddits.
+The API is implemented in `reddit_utils.py` and provides reusable, modular building blocks for:
+
+- Loading and preprocessing Reddit comment data
+- Training **unsupervised fastText** embeddings
+- Generating document-level embeddings
+- Performing topic modeling using K-Means clustering
+- Visualizing topics using t-SNE
+
+This API is intentionally decoupled from notebooks.  
+All notebooks act only as **consumers** of this API.
+
+---
+
+## Design Goals
+
+- **Modularity**: Core logic is isolated from notebooks
+- **Reproducibility**: Deterministic sampling and clustering
+- **Scalability**: Efficient handling of thousands of comments
+- **Clarity**: Simple interfaces aligned with fastText and sklearn APIs
+
+---
+
+## API Architecture
+
