@@ -6,6 +6,8 @@ The notebook demonstrates a complete, practical walkthrough of how to
 use the project utilities to explore the dataset, engineer features,
 train a baseline model, and evaluate forecasting performance.
 
+The dataset consists of hourly solar energy production paired with weather variables (temperature, cloud cover, wind speed, solar radiation) over a multi-month period.
+
 The goal of the example notebook is to show a **typical end-to-end
 workflow** that a user or teammate could follow when working with the
 forecasting system.

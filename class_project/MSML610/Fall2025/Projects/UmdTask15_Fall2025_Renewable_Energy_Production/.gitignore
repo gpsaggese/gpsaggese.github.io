@@ -16,3 +16,13 @@ __pycache__/
 
 # macOS junk
 .DS_Store
+
+# secrets
+.env
+
+# logs
+*.log
+
+# python cache
+__pycache__/
+*.pyc

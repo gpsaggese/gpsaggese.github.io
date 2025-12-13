@@ -1,9 +1,13 @@
 FROM umd-dev:latest
 
-# Install all project-specific Python dependencies 
-# pip install them every time a container starts.
 RUN pip install --no-cache-dir \
+    numpy \
+    pandas \
+    matplotlib \
     scikit-learn \
-    xgboost \
-    mlflow
+    mlflow \
+    tensorflow \
+    streamlit \
+    requests
+
 

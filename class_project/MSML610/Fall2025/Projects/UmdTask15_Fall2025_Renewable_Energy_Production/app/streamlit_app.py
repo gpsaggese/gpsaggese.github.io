@@ -68,7 +68,8 @@ def load_processed_data():
         st.warning("Processed data not found. Run scripts/make_features.py first.")
         return None
 
-    df = pd.read_csv(PROCESSED_PATH, parse_dates=True, index_col=0)
+    df = pd.read_csv(PROCESSED_PATH, parse_dates=[0], index_col=0)
+
     return df
 
 
