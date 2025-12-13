@@ -1,35 +1,99 @@
-# Midterm Project Report: Topic Modeling on Reddit Comments (r/worldnews)
+# Reddit Topic Modeling Example: r/worldnews
 
-## Overview
-This project applies topic modeling techniques to Reddit comments to uncover key discussion themes in the r/worldnews subreddit. The main objective was to identify, cluster, and visualize dominant global news topics using unsupervised learning.
+This document presents a complete, end-to-end example of **topic modeling on Reddit comments** using the **r/worldnews** subreddit.  
+The goal of this example is to demonstrate how unsupervised text embeddings and clustering techniques can be combined to discover dominant discussion themes in large-scale social media data.
 
-## Data Source and Sampling
-Originally, the plan was to collect Reddit comments via the Pushshift API as described in the project instructions. However, due to recent access restrictions on Pushshift (API now limited to moderators), I used a **similar public dataset** from **Kaggle — “1 Million Reddit Comments from 40 Subreddits”**.
-
-From this dataset, I filtered comments belonging to **r/worldnews** and randomly sampled **5,000 comments** (for faster runtime and cleaner visualization).  
-A larger 10,000-comment version was also tested later for better topic diversity.
-
-## Methodology
-1. **Text Cleaning** – removed URLs, punctuation, stopwords, and deleted/removed markers.  
-2. **Embedding Generation** – generated dense text representations using **fastText (cc.en.300.bin)** embeddings.  
-3. **Clustering** – applied **K-Means (k=8)** to group similar comments into topic clusters.  
-4. **Topic Labeling** – used **Zero-Shot Classification (BART-large-MNLI)** to automatically assign human-readable topic labels (e.g., *Politics*, *Society*, *Economy*, *Climate Change*).  
-5. **Visualization** – used **t-SNE** for dimensionality reduction and plotted clusters; created a **bar chart** to show topic frequency.  
-
-## Results
-- The most prominent topics in r/worldnews were **Politics**, **Society**, and **Economy**, showing the strong dominance of political discussions.  
-- Smaller clusters represented themes like **War & Conflict** and **Climate Change**.  
-- The t-SNE visualization clearly separated clusters by semantic similarity, while the bar chart quantified their frequency.
-
-## Limitations
-- Due to API access issues, the dataset was pre-collected rather than live-scraped.  
-- The Kaggle dataset may not fully reflect current Reddit activity.  
-- Only 5,000–10,000 comments were analyzed for runtime efficiency; a full million-comment run would require distributed computing.
-
-## Conclusion
-Even with a limited sample, the fastText + K-Means + t-SNE pipeline effectively revealed coherent topics and thematic boundaries within r/worldnews. This demonstrates how unsupervised text embeddings can uncover high-level structures in large-scale social media discussions.
+All reusable logic is implemented in `reddit_utils.py`.  
+This notebook (`reddit.example.ipynb`) focuses on execution, results, and interpretation.
 
 ---
 
-**Author:** Saanvi Joginipally  
-**Course:** MSML610 – Midterm Project  
+## Problem Statement
+
+Reddit generates massive volumes of unstructured text through user comments.  
+Understanding the dominant topics within a subreddit such as **r/worldnews** is challenging due to the scale and diversity of discussions.
+
+This example demonstrates how to:
+- Clean raw Reddit comments
+- Learn semantic word representations using **fastText**
+- Cluster comments into topics using **K-Means**
+- Visualize topic structure using **t-SNE**
+
+---
+
+## Dataset
+
+Originally, the project intended to use the **Pushshift API** to collect Reddit comments.  
+However, due to recent API access restrictions, a public Kaggle dataset was used instead:
+
+**Dataset:**  
+*1 Million Reddit Comments from 40 Subreddits* (Kaggle)
+
+From this dataset:
+- Only comments from **r/worldnews** were selected
+- A random sample of **5,000–10,000 comments** was used to balance runtime and topic quality
+
+The dataset contains at least the following required fields:
+- `subreddit`
+- `body`
+
+---
+
+## Pipeline Overview
+
+The example follows these steps:
+
+1. **Load and Filter Data**
+   - Filter comments belonging to `r/worldnews`
+   - Randomly sample comments
+   - Remove empty or deleted entries
+
+2. **Text Cleaning**
+   - Remove URLs, punctuation, and stopwords
+   - Convert text to lowercase
+   - Retain meaningful tokens only
+
+3. **fastText Embedding Training**
+   - Train an **unsupervised fastText model** (`skipgram`)
+   - Training is performed on the cleaned Reddit comments
+   - This avoids downloading large pretrained models
+
+4. **Document Embedding Generation**
+   - Each comment is represented as the average of its word vectors
+
+5. **Topic Modeling**
+   - Apply **K-Means clustering** to document embeddings
+   - Each cluster represents a topic
+
+6. **Topic Interpretation**
+   - Extract top keywords per cluster
+   - Display example comments for interpretability
+
+7. **Visualization**
+   - Reduce embeddings to 2D using **t-SNE**
+   - Plot clustered comments
+   - Save visualization as `tsne_plot.png`
+
+---
+
+## Results
+
+The discovered topics reveal clear thematic structure in **r/worldnews** discussions:
+
+- Dominant clusters focus on **Politics**, **Government**, and **International Affairs**
+- Secondary topics include **Economic Issues**, **Conflicts**, and **Regional Crises**
+- Automated moderation and bot-generated comments form a distinct cluster
+
+The **t-SNE visualization** shows strong separation between clusters, indicating that fastText embeddings capture meaningful semantic differences between discussion topics.
+
+---
+
+## Output Artifacts
+
+Running the example produces the following outputs:
+
+- Trained fastText model (`.bin`)
+- Topic assignments for each comment
+- A topic summary table with keywords and example comments
+- A 2D visualization saved as:
+
