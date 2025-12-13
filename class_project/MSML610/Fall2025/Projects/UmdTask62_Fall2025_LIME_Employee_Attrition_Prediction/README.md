@@ -330,6 +330,12 @@ class O explain
    - Train a model per subset and generate LIME explanations for the same employee.
    - Compute **Jaccard similarity** between top-k LIME features of each subset model and the full model.
    - Analyze both performance and explanation stability across subsets.
+     
+8. **What Jaccard similarity means:**
+     We treat the “top-k LIME features” from each model as a set of feature names and measure how much the sets overlap.
+     A score near **1.0** means the subset-model and full-model explanations highlight **nearly the same features** meaning stable explanation story,
+     while a score near **0.0** means they highlight **different features** so the explanation story changes significantly when the feature set changes.
+
 
 For a narrative, human-readable explanation of this workflow, see `lime_attrition.example.md`.
 
@@ -642,3 +648,8 @@ These steps complete without errors, so:
 - All required deliverables (`*_API.md`, `*_API.ipynb`, `*_example.md`, `*_example.ipynb`, `*_utils.py`) are present and connected.
 - The analysis and explanations are reproducible on any machine with Docker or a compatible Python environment.
 
+## References
+
+- Ribeiro, M. T., Singh, S., & Guestrin, C. (2016). *"Why Should I Trust You?": Explaining the Predictions of Any Classifier.* (LIME)
+- scikit-learn documentation: Pipelines, ColumnTransformer, GradientBoostingClassifier
+- IBM HR Attrition dataset (commonly hosted on Kaggle as "Employee Attrition and Performance")
