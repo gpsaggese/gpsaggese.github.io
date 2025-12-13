@@ -96,4 +96,5 @@ Running the example produces the following outputs:
 - Topic assignments for each comment
 - A topic summary table with keywords and example comments
 - A 2D visualization saved as:
+  tsne_plot.png
 
