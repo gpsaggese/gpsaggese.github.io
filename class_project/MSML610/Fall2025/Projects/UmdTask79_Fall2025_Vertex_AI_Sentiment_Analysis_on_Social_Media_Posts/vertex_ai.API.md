@@ -4,15 +4,110 @@
 
 This document explains the API (Application Programming Interface) layer for the Vertex AI sentiment analysis project. Think of an API as a control panel with clearly labeled buttons and dials that make complex operations simple.
 
-The API contract layer is a set of easy-to-use building blocks defined in vertex_ai.API.ipynb. It consists of:
+### What is an API Contract Layer?
 
-Configuration blocks: These store settings like your Google Cloud project name, which region to use, where to store files, and login credentials
+The API contract layer is a **stable, type-safe interface** that defines HOW to interact with our system WITHOUT implementing the actual functionality. Think of it like a restaurant menu - it tells you what's available and what to expect, but it doesn't cook the food.
 
-Helper functions: These are shortcuts that make working with Google Cloud easier by hiding complex details
+**Key principle**: This layer contains ONLY dataclasses, type definitions, and function signatures. The actual implementation lives in vertex_ai.example.ipynb and vertex_ai_utils.py.
 
-Smart defaults: Pre-filled settings that work well for sentiment analysis, so you only need to change what's different for your specific use
+### Why Separate Contract from Implementation?
 
-Clean organization: Settings are kept separate from the actual work, making everything easier to understand and maintain
+1. **Stability**: The contract rarely changes, even when implementation details evolve
+2. **Type Safety**: Dataclasses catch configuration errors before runtime
+3. **Clear Interface**: Anyone can understand what the system needs without reading implementation code
+4. **Easy Integration**: Other developers can write their own implementations that satisfy this contract
+5. **Maintainability**: Changes to how things work internally don't break the external interface
+
+### API Structure Diagram
+
+The following diagram shows how the contract layer organizes our configuration objects and function signatures:
+
+```mermaid
+classDiagram
+    class VertexAIConfig {
+        +string project_id
+        +string location
+        +string bucket_name
+        +string credentials_path
+        +string staging_bucket
+    }
+
+    class TrainingJobConfig {
+        +string display_name
+        +string model_name
+        +float learning_rate
+        +int batch_size
+        +float weight_decay
+        +float warmup_ratio
+        +int num_epochs
+        +int max_length
+        +string machine_type
+        +string accelerator_type
+        +int accelerator_count
+    }
+
+    class HyperparameterTuningConfig {
+        +string display_name
+        +int max_trial_count
+        +int parallel_trial_count
+        +string metric_id
+        +string metric_goal
+        +dict search_space
+    }
+
+    class ModelType {
+        <<enumeration>>
+        ROBERTA_TWITTER
+        BERT_BASE
+        DISTILBERT
+    }
+
+    class VertexAIService {
+        <<interface>>
+        +initialize_vertex_ai(config)
+        +upload_dataset(config, paths)
+        +create_roberta_training_job(config, job_config, data_uris)
+        +create_bert_training_job(config, job_config, data_uris)
+        +run_training_job(job, sync)
+        +create_hyperparameter_tuning_job(config, tuning_config, data_uris)
+        +run_hyperparameter_tuning_job(tuning_job, sync)
+        +get_best_hyperparameters(tuning_job)
+    }
+
+    VertexAIService ..> VertexAIConfig : uses
+    VertexAIService ..> TrainingJobConfig : uses
+    VertexAIService ..> HyperparameterTuningConfig : uses
+    TrainingJobConfig ..> ModelType : references
+```
+
+### API Workflow
+
+The following flowchart shows the typical sequence of API calls for a complete sentiment analysis project:
+
+```mermaid
+flowchart TD
+    Start([Start Project]) --> A[Create VertexAIConfig]
+    A --> B[initialize_vertex_ai]
+    B --> C[upload_dataset]
+    C --> D[Create Baseline TrainingJobConfig]
+    D --> E[create_roberta_training_job<br/>Baseline]
+    E --> F[run_training_job<br/>Baseline Training]
+    F --> G[Baseline Evaluation]
+    G --> H[Create HyperparameterTuningConfig]
+    H --> I[create_hyperparameter_tuning_job]
+    I --> J[run_hyperparameter_tuning_job]
+    J --> K[get_best_hyperparameters]
+    K --> L[Create Final TrainingJobConfig<br/>with best parameters]
+    L --> M[create_roberta_training_job<br/>Final Model]
+    M --> N[run_training_job<br/>Final Training]
+    N --> O[Final Model Evaluation]
+    O --> P{Bonus: BERT Comparison?}
+    P -->|Yes| Q[create_bert_training_job]
+    P -->|No| R[End Project]
+    Q --> S[run_bert_training_job]
+    S --> T[BERT Evaluation & Comparison]
+    T --> R([End Project])
+```
 
 ---
 

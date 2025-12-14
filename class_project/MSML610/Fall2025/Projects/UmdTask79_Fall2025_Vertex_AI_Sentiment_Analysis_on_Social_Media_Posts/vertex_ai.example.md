@@ -19,11 +19,78 @@ Our system works through these steps:
 7. Evaluate Performance - Measure how well the model works using accuracy and other metrics
 8. Compare Models - Train a BERT baseline model to prove Twitter-specific models work better
 
+
+### Data Flow Through Processing Stages
+
+This diagram shows how raw tweet data transforms through each processing stage:
+
+```mermaid
+flowchart LR
+    subgraph Stage1[Stage 1: Data Loading]
+        A[Tweets.csv<br/>14,640 rows] --> B[pandas DataFrame]
+    end
+
+    subgraph Stage2[Stage 2: Preprocessing]
+        B --> C[Remove URLs<br/>@mentions]
+        C --> D[Tokenize<br/>Lemmatize]
+        D --> E[Remove Stop Words<br/>Keep Negations]
+    end
+
+    subgraph Stage3[Stage 3: Splitting]
+        E --> F[Stratified Split]
+        F --> G[Train: 10,248]
+        F --> H[Val: 2,196]
+        F --> I[Test: 2,196]
+    end
+
+    subgraph Stage4[Stage 4: JSONL Conversion]
+        G --> J[train.jsonl]
+        H --> K[val.jsonl]
+        I --> L[test.jsonl]
+    end
+
+    subgraph Stage5[Stage 5: Cloud Upload]
+        J --> M[gs://bucket/train.jsonl]
+        K --> N[gs://bucket/val.jsonl]
+        L --> O[gs://bucket/test.jsonl]
+    end
+
+    subgraph Stage6[Stage 6: Baseline Training]
+        M --> P[RoBERTa Training<br/>Default Parameters]
+        N --> P
+        O --> P
+        P --> Q[Baseline Model<br/>84.74% Accuracy]
+    end
+
+    subgraph Stage7[Stage 7: Hyperparameter Tuning]
+        Q --> R[Test 10 Trials<br/>2 Parallel]
+        R --> S[Best Parameters<br/>LR: 1.58e-5, WD: 0.0505]
+    end
+
+    subgraph Stage8[Stage 8: Final Training]
+        S --> T[RoBERTa Training<br/>Optimized Parameters]
+        M --> T
+        N --> T
+        O --> T
+        T --> U[Final Model<br/>85.15% Accuracy]
+    end
+
+    subgraph Stage9[Stage 9: BERT Comparison]
+        M --> V[BERT Training<br/>Baseline]
+        N --> V
+        O --> V
+        V --> W[BERT Model<br/>83.33% Accuracy]
+    end
+
+    U --> X[Model Evaluation<br/>F1-Score & Confusion Matrix]
+    W --> X
+```
+
 ## Our Dataset
 
 Twitter US Airline Sentiment Dataset
 
-Source: Available on Kaggle (a website where people share datasets)
+Source: Available on Kaggle: https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment (a website where people share datasets)
 
 Size: 14,640 tweets
 

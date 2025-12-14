@@ -8,6 +8,7 @@ Project Difficulty: Level 3 (Hard)
 
 Live Dashboard: https://lookerstudio.google.com/reporting/d24baf8b-9481-4447-891c-5ab3b262f55a
 
+
 ---
 
 ## What This Project Does
@@ -33,6 +34,8 @@ Airlines receive thousands of tweets every day. Reading each one manually to und
 ## The Data We Used
 
 We worked with a dataset of tweets about airlines from Kaggle (a website where people share datasets).
+You can download the tweets.csv from the below link from Kaggle:
+Link to the Dataset: https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment
 
 Dataset Details:
 - Total tweets: 14,640
@@ -281,7 +284,10 @@ Before running this project, you need to prepare a few things on your computer. 
 
 Step 1: Prepare the Data Folder
 
-Create a folder named "Data" in the project directory if it does not already exist. Inside this Data folder, you need to place a file called Tweets.csv. This file contains all 14,640 tweets that the system will analyze.
+Create a folder named "Data" in the project directory if it does not already exist. Inside this Data folder, you need to place a file called Tweets.csv.
+You can download the tweets.csv from the below link from Kaggle:
+Link to the Dataset: https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment
+This file contains all 14,640 tweets that the system will analyze.
 
 You can download this file from Kaggle (search for "Twitter US Airline Sentiment" dataset).
 
@@ -305,27 +311,58 @@ Step 4: Build the Docker Container
 
 Open a terminal (command prompt on Windows, terminal on Mac or Linux) and navigate to the project folder. Then run this command:
 
-```
+```bash
 ./docker_build.sh
 ```
 
 This command creates a Docker container with all the necessary software installed. It will take 5-10 minutes the first time you run it.
 
+Expected output:
+```
+[+] Building 245.3s (12/12) FINISHED
+ => [internal] load build definition from Dockerfile
+ => => transferring dockerfile: 1.2kB
+ => [internal] load .dockerignore
+ => [1/7] FROM python:3.9-slim
+ => [2/7] WORKDIR /app
+ => [3/7] RUN apt-get update && apt-get install -y git
+ => [4/7] COPY requirements.txt .
+ => [5/7] RUN pip install --no-cache-dir -r requirements.txt
+ => [6/7] COPY . .
+ => [7/7] EXPOSE 8888
+ => exporting to image
+ => => exporting layers
+ => => writing image sha256:abc123...
+ => => naming to docker.io/library/vertex-ai-sentiment
+Successfully built vertex-ai-sentiment
+```
+
 Step 5: Start the Jupyter Notebook Server
 
 After the build completes successfully, start the Jupyter notebook server inside Docker by running:
 
-```
+```bash
 ./docker_jupyter.sh
 ```
 
 This command starts a web server that lets you run the code in your browser.
 
+Expected output:
+```
+[I 2025-12-11 10:30:15.123 ServerApp] Jupyter Server 2.7.0 is running at:
+[I 2025-12-11 10:30:15.124 ServerApp] http://localhost:8888/lab?token=<jupyter_token>
+[I 2025-12-11 10:30:15.124 ServerApp]  or http://127.0.0.1:8888/lab?token=<jupyter_token>
+[I 2025-12-11 10:30:15.124 ServerApp] Use Control-C to stop this server
+```
+
 Step 6: Open Jupyter Notebook
 
-The previous command will show you a URL in the terminal that looks like http://localhost:8888 or similar. Copy this URL and paste it into your web browser.
+The previous command will show you a URL in the terminal that looks like:
+```
+http://localhost:8888/lab?token=<jupyter_token>
+```
 
-You will see the Jupyter notebook interface with a list of files.
+Copy this entire URL (including the token) and paste it into your web browser. You will see the Jupyter notebook interface with a list of files.
 
 Step 7: Run the Main Notebook
 
@@ -405,6 +442,66 @@ Bonus Features:
    - Improvement of 1.82 percentage points
 
 ## Architecture Overview
+
+### System Pipeline Flowchart
+
+The following diagram shows how data flows through our complete sentiment analysis system:
+
+```mermaid
+flowchart TD
+    A[Raw Twitter Data<br/>14,640 tweets] --> B[Data Ingestion<br/>Load CSV file]
+    B --> C[Exploratory Analysis<br/>Visualize distribution]
+    C --> D[Text Preprocessing<br/>Clean & Tokenize]
+    D --> E[Stratified Split<br/>70% Train / 15% Val / 15% Test]
+    E --> F[Convert to JSONL<br/>Format for Vertex AI]
+    F --> G[Upload to GCS<br/>gs://bucket/sentiment-data/]
+    G --> H{Training Path}
+    H -->|Main Model| I[RoBERTa Training<br/>n1-standard-4 + T4 GPU]
+    H -->|Baseline| J[BERT Training<br/>n1-standard-4 + T4 GPU]
+    I --> K[Hyperparameter Tuning<br/>10 trials, 2 parallel]
+    K --> L[Final Training<br/>Optimized Parameters]
+    L --> M[Model Evaluation<br/>F1-Score & Confusion Matrix]
+    J --> M
+    M --> N[Results Dashboard<br/>Looker Studio]
+```
+
+### Data Structure
+
+Our data follows a structured format through each processing stage:
+
+```mermaid
+erDiagram
+    RAW_TWEETS {
+        int tweet_id PK
+        varchar text
+        varchar airline_sentiment
+        varchar airline
+        timestamp tweet_created
+        varchar name
+    }
+
+    PROCESSED_DATA {
+        int id PK
+        varchar text_processed
+        varchar airline_sentiment FK
+        varchar airline FK
+    }
+
+    JSONL_FORMAT {
+        varchar text_content
+        varchar category
+    }
+
+    SENTIMENT_LABELS {
+        varchar label PK
+        int count
+        float percentage
+    }
+
+    RAW_TWEETS ||--o{ PROCESSED_DATA : "preprocessing"
+    PROCESSED_DATA ||--o{ JSONL_FORMAT : "conversion"
+    PROCESSED_DATA }o--|| SENTIMENT_LABELS : "labeled_as"
+```
 
 The system works in five stages:
 
