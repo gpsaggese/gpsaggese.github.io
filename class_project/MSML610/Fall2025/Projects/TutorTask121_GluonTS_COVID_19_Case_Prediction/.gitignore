@@ -9,8 +9,10 @@ __pycache__/
 .ipynb_checkpoints/
 *-checkpoint.ipynb
 
-# Data files
-data/
+# ignore data files
+*.csv
+
+
 
 # PyTorch Lightning logs
 lightning_logs/
