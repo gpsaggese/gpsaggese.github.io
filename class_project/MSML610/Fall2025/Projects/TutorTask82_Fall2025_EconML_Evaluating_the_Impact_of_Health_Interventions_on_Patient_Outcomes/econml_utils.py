@@ -1,31 +1,37 @@
 """
 econml_utils.py
 
-Helper functions for the MSML610 Project:
+Reusable utilities + lightweight wrapper helpers for:
 
-    TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
+TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
 
-This module is responsible for:
+What this module is for
+-----------------------
+- Load cleaned NHANES 2021–2023 "meaningful" CSVs from ./data
+- Build a merged, analysis-ready dataframe (one row per respondent)
+- Construct:
+    Outcomes: sbp_mean, dbp_mean, fasting_glucose_mg_dl
+    Treatment: treatment_supplement (1 = any supplement use, 0 = none)
+    Covariates: BMI, waist, lipids, hs-CRP, etc.
+- Provide get_y_t_x() to safely return (Y, T, X, covariate_cols)
 
-1. Loading the cleaned NHANES 2021–2023 CSV files from the local `data/` directory.
-2. Building a merged, analysis-ready dataframe with:
-   - Outcomes: sbp_mean, dbp_mean, fasting_glucose_mg_dl
-   - Treatment: treatment_supplement (binary; 1 = any supplement use, 0 = none)
-   - Baseline covariates: age, sex, BMI, lipids, glucose, hs-CRP, etc.
-3. Providing a simple helper, `get_y_t_x`, that returns (Y, T, X, covariate_cols)
-   for EconML and OLS experiments.
-
-This module does NOT run any models directly. All modeling is done in
-`econml.API.py`, which imports `build_analysis_df` and `get_y_t_x`.
+Project convention
+------------------
+Notebooks (econml.API.ipynb, econml.example.ipynb) should import and call these
+utilities instead of embedding preprocessing logic inline.
 """
 
-from pathlib import Path
-from typing import List, Tuple
+from __future__ import annotations
 
+from pathlib import Path
+from typing import Dict, List, Tuple
+
+import warnings
 import pandas as pd
 
+
 # ---------------------------------------------------------------------
-# Base paths
+# Paths / constants
 # ---------------------------------------------------------------------
 
 PROJECT_DIR = Path(__file__).resolve().parent
@@ -34,144 +40,258 @@ DATA_DIR = PROJECT_DIR / "data"
 ID_COL = "respondent_sequence_number"
 ID_CANDIDATES = [ID_COL, "SEQN", "seqn"]
 
+DEFAULT_FILES: Dict[str, str] = {
+    "BPXO": "BPXO_L_meaningful.csv",
+    "BMX": "BMX_L_meaningful.csv",
+    "TCHOL": "TCHOL_L_meaningful.csv",
+    "HDL": "HDL_L_meaningful.csv",
+    "TRIGLY": "TRIGLY_L_meaningful.csv",
+    "GLU": "GLU_L_meaningful.csv",
+    "HSCRP": "HSCRP_L_meaningful.csv",
+    "DSQTOT": "DSQTOT_L_meaningful.csv",
+    "DEMO": "DEMO_L_meaningful.csv",
+}
+
+NA_STRINGS = ["", " ", ".", "NA", "NaN", "nan", "N/A", "missing", "Missing"]
+
 
 # ---------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------
 
-
 def _normalize_id_column(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Ensure that the participant identifier column is named
-    `respondent_sequence_number` in every dataframe.
+    Ensure the participant identifier column is named `respondent_sequence_number`.
 
-    The upstream "meaningful" CSVs already rename SEQN, but this helper
-    makes the merge logic robust in case any file still uses `SEQN` or
-    a slightly different variant.
+    Raises a clear error if no ID column is found.
     """
+    found = None
     for candidate in ID_CANDIDATES:
         if candidate in df.columns:
-            if candidate != ID_COL:
-                df = df.rename(columns={candidate: ID_COL})
+            found = candidate
             break
+
+    if found is None:
+        raise KeyError(
+            "No respondent ID column found. Expected one of: "
+            f"{ID_CANDIDATES}. Found columns: {list(df.columns)[:30]}..."
+        )
+
+    if found != ID_COL:
+        df = df.rename(columns={found: ID_COL})
     return df
 
 
-def _read_meaningful_csv(name: str) -> pd.DataFrame:
-    """
-    Convenience wrapper to load a CSV from the `data/` folder and apply
-    common NA handling + ID normalization.
+def _require_file(path: Path) -> None:
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Required file not found: {path}\n"
+            f"Expected it inside: {DATA_DIR}\n"
+            f"Tip: confirm your cleaned CSVs are copied into ./data/"
+        )
 
-    Parameters
-    ----------
-    name : str
-        File name inside `data/`, e.g. "BPXO_L_meaningful.csv".
 
-    Returns
-    -------
-    pd.DataFrame
-    """
-    csv_path = DATA_DIR / name
-    df = pd.read_csv(csv_path, na_values=[".", " "])
+def _read_meaningful_csv(filename: str) -> pd.DataFrame:
+    """Read a CSV from ./data with robust NA handling + ID normalization."""
+    csv_path = DATA_DIR / filename
+    _require_file(csv_path)
+
+    df = pd.read_csv(
+        csv_path,
+        na_values=NA_STRINGS,
+        keep_default_na=True,
+        low_memory=False,
+    )
     df = _normalize_id_column(df)
     return df
 
 
-# ---------------------------------------------------------------------
-# Loaders for each NHANES component
-# ---------------------------------------------------------------------
+def _dedupe_on_id(df: pd.DataFrame, name: str) -> pd.DataFrame:
+    """If any component unexpectedly has duplicate respondent IDs, keep the first row."""
+    if ID_COL not in df.columns:
+        return df
+    if df[ID_COL].duplicated().any():
+        n_dup = int(df[ID_COL].duplicated().sum())
+        warnings.warn(
+            f"{name} has {n_dup} duplicate {ID_COL} rows. Keeping first occurrence per ID.",
+            RuntimeWarning,
+        )
+        df = df.drop_duplicates(subset=[ID_COL], keep="first").copy()
+    return df
 
+
+def _to_numeric_safe(s: pd.Series) -> pd.Series:
+    """Convert a Series to numeric where possible (errors -> NaN)."""
+    return pd.to_numeric(s, errors="coerce")
+
+
+def _encode_sex(series: pd.Series) -> pd.Series:
+    """
+    Encode sex to numeric:
+      - NHANES common coding: 1=Male, 2=Female
+      - or strings ("Male"/"Female")
+    Output: 0=Male, 1=Female, NaN otherwise
+    """
+    if series is None:
+        return series
+
+    if pd.api.types.is_numeric_dtype(series):
+        return series.map({1: 0, 2: 1})
+
+    cleaned = series.astype(str).str.strip().str.lower()
+    mapping = {
+        "male": 0, "m": 0, "1": 0,
+        "female": 1, "f": 1, "2": 1,
+    }
+    return cleaned.map(mapping)
+
+
+def _encode_treatment(series: pd.Series) -> pd.Series:
+    """
+    Encode treatment to numeric:
+      - expected: 1=yes, 2=no  -> 1/0
+      - robust to strings "Yes"/"No"
+    """
+    if pd.api.types.is_numeric_dtype(series):
+        return series.map({1: 1, 2: 0})
+
+    cleaned = series.astype(str).str.strip().str.lower()
+    mapping = {
+        "1": 1, "yes": 1, "y": 1, "true": 1,
+        "2": 0, "no": 0, "n": 0, "false": 0,
+    }
+    return cleaned.map(mapping)
+
+
+def _standardize_demographics(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Create consistent demographic columns WITHOUT breaking the original columns.
+
+    - If `age_in_years_at_screening` exists, create `age_years`
+    - If `gender` exists, create `sex` (0=Male, 1=Female)
+
+    This makes downstream API logic more reliable (age bins, etc.).
+    """
+    df = df.copy()
+
+    # Age
+    if "age_years" not in df.columns:
+        if "age_in_years_at_screening" in df.columns:
+            df["age_years"] = _to_numeric_safe(df["age_in_years_at_screening"])
+        elif "age" in df.columns:
+            df["age_years"] = _to_numeric_safe(df["age"])
+
+    # Sex
+    if "sex" not in df.columns:
+        if "gender" in df.columns:
+            df["sex"] = _encode_sex(df["gender"])
+        elif "riagendr" in df.columns:  # sometimes seen in raw NHANES
+            df["sex"] = _encode_sex(df["riagendr"])
+
+    return df
+
+
+def _basic_range_cleaning(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Lightweight cleaning steps:
+    - Numeric coercion for key fields
+    - Replace clearly impossible values with NaN
+    """
+    df = df.copy()
+
+    # Outcomes
+    for c in ["sbp_mean", "dbp_mean", "fasting_glucose_mg_dl"]:
+        if c in df.columns:
+            df[c] = _to_numeric_safe(df[c])
+
+    # Numeric covariates (keep broad; missing ones are skipped)
+    numeric_covs = [
+        "age_years",
+        "age_in_years_at_screening",
+        "body_mass_index_kg_m2",
+        "weight_kg",
+        "waist_circumference_cm",
+        "total_cholesterol_mg_dl",
+        "direct_hdl_cholesterol_mg_dl",
+        "LBXTLG",
+        "triglycerides_mg_dl",
+        "hs_c_reactive_protein_mg_l",
+    ]
+    for c in numeric_covs:
+        if c in df.columns:
+            df[c] = _to_numeric_safe(df[c])
+
+    # Plausibility filters
+    if "age_years" in df.columns:
+        df.loc[(df["age_years"] < 0) | (df["age_years"] > 120), "age_years"] = pd.NA
+
+    if "body_mass_index_kg_m2" in df.columns:
+        df.loc[
+            (df["body_mass_index_kg_m2"] <= 0) | (df["body_mass_index_kg_m2"] > 80),
+            "body_mass_index_kg_m2",
+        ] = pd.NA
+
+    if "fasting_glucose_mg_dl" in df.columns:
+        df.loc[
+            (df["fasting_glucose_mg_dl"] <= 0) | (df["fasting_glucose_mg_dl"] > 600),
+            "fasting_glucose_mg_dl",
+        ] = pd.NA
+
+    if "sbp_mean" in df.columns:
+        df.loc[(df["sbp_mean"] < 50) | (df["sbp_mean"] > 300), "sbp_mean"] = pd.NA
+    if "dbp_mean" in df.columns:
+        df.loc[(df["dbp_mean"] < 30) | (df["dbp_mean"] > 200), "dbp_mean"] = pd.NA
+
+    return df
+
+
+# ---------------------------------------------------------------------
+# Component loaders
+# ---------------------------------------------------------------------
 
 def load_bpxo_meaningful() -> pd.DataFrame:
-    """Oscillometric blood pressure readings (BPXO)."""
-    return _read_meaningful_csv("BPXO_L_meaningful.csv")
+    return _dedupe_on_id(_read_meaningful_csv(DEFAULT_FILES["BPXO"]), "BPXO")
 
 
 def load_bmx_meaningful() -> pd.DataFrame:
-    """Body measures (BMX) – BMI, weight, waist, etc."""
-    return _read_meaningful_csv("BMX_L_meaningful.csv")
+    return _dedupe_on_id(_read_meaningful_csv(DEFAULT_FILES["BMX"]), "BMX")
 
 
 def load_tchol_meaningful() -> pd.DataFrame:
-    """Total cholesterol (TCHOL)."""
-    return _read_meaningful_csv("TCHOL_L_meaningful.csv")
+    return _dedupe_on_id(_read_meaningful_csv(DEFAULT_FILES["TCHOL"]), "TCHOL")
 
 
 def load_hdl_meaningful() -> pd.DataFrame:
-    """Direct HDL cholesterol (HDL)."""
-    return _read_meaningful_csv("HDL_L_meaningful.csv")
+    return _dedupe_on_id(_read_meaningful_csv(DEFAULT_FILES["HDL"]), "HDL")
 
 
 def load_trigly_meaningful() -> pd.DataFrame:
-    """Triglycerides (TRIGLY) including LBXTLG."""
-    return _read_meaningful_csv("TRIGLY_L_meaningful.csv")
+    return _dedupe_on_id(_read_meaningful_csv(DEFAULT_FILES["TRIGLY"]), "TRIGLY")
 
 
 def load_glu_meaningful() -> pd.DataFrame:
-    """Fasting plasma glucose (GLU)."""
-    return _read_meaningful_csv("GLU_L_meaningful.csv")
+    return _dedupe_on_id(_read_meaningful_csv(DEFAULT_FILES["GLU"]), "GLU")
 
 
 def load_hscrp_meaningful() -> pd.DataFrame:
-    """High-sensitivity C-reactive protein (HSCRP)."""
-    return _read_meaningful_csv("HSCRP_L_meaningful.csv")
+    return _dedupe_on_id(_read_meaningful_csv(DEFAULT_FILES["HSCRP"]), "HSCRP")
 
 
 def load_dsqtot_meaningful() -> pd.DataFrame:
-    """
-    Dietary supplements totals (DSQTOT).
-
-    Expected to contain a column
-        `any_dietary_supplements_taken`
-    derived during data preparation.
-    """
-    return _read_meaningful_csv("DSQTOT_L_meaningful.csv")
+    return _dedupe_on_id(_read_meaningful_csv(DEFAULT_FILES["DSQTOT"]), "DSQTOT")
 
 
 def load_demo_meaningful() -> pd.DataFrame:
-    """
-    Demographics (DEMO).
-
-    Expected to contain:
-        - age_years
-        - sex
-        - survey weights (not used directly in this module)
-    """
-    return _read_meaningful_csv("DEMO_L_meaningful.csv")
+    return _dedupe_on_id(_read_meaningful_csv(DEFAULT_FILES["DEMO"]), "DEMO")
 
 
 # ---------------------------------------------------------------------
 # Blood pressure outcome construction
 # ---------------------------------------------------------------------
 
-
 def build_bp_outcomes(bpxo: pd.DataFrame) -> pd.DataFrame:
-    """
-    Compute mean systolic and diastolic blood pressure from three
-    oscillometric readings.
-
-    Parameters
-    ----------
-    bpxo : pd.DataFrame
-        Raw BPXO component with individual readings.
-
-        Expected columns:
-            systolic_1st_oscillometric_reading
-            systolic_2nd_oscillometric_reading
-            systolic_3rd_oscillometric_reading
-            diastolic_1st_oscillometric_reading
-            diastolic_2nd_oscillometric_reading
-            diastolic_3rd_oscillometric_reading
-
-    Returns
-    -------
-    pd.DataFrame
-        Columns:
-            respondent_sequence_number
-            sbp_mean
-            dbp_mean
-    """
-    bpxo = _normalize_id_column(bpxo)
+    """Compute mean systolic and diastolic BP from oscillometric readings."""
+    bpxo = _normalize_id_column(bpxo).copy()
 
     sbp_cols = [
         "systolic_1st_oscillometric_reading",
@@ -184,16 +304,18 @@ def build_bp_outcomes(bpxo: pd.DataFrame) -> pd.DataFrame:
         "diastolic_3rd_oscillometric_reading",
     ]
 
-    # Only average over columns that actually exist to be slightly robust.
     sbp_cols = [c for c in sbp_cols if c in bpxo.columns]
     dbp_cols = [c for c in dbp_cols if c in bpxo.columns]
 
     if not sbp_cols or not dbp_cols:
         raise ValueError(
-            "BPXO dataframe is missing expected systolic/diastolic reading columns."
+            "BPXO dataframe is missing expected systolic/diastolic reading columns.\n"
+            f"Found columns: {list(bpxo.columns)[:40]}..."
         )
 
-    bpxo = bpxo.copy()
+    for c in sbp_cols + dbp_cols:
+        bpxo[c] = _to_numeric_safe(bpxo[c])
+
     bpxo["sbp_mean"] = bpxo[sbp_cols].mean(axis=1)
     bpxo["dbp_mean"] = bpxo[dbp_cols].mean(axis=1)
 
@@ -204,29 +326,29 @@ def build_bp_outcomes(bpxo: pd.DataFrame) -> pd.DataFrame:
 # Build merged analysis dataframe
 # ---------------------------------------------------------------------
 
-
-def build_analysis_df() -> pd.DataFrame:
+def build_analysis_df(
+    join: str = "inner",
+    clean: bool = True,
+) -> pd.DataFrame:
     """
     Build the merged NHANES analysis table for EconML.
 
-    This function:
-
-    1. Loads all required NHANES components from `data/`.
-    2. Computes sbp_mean and dbp_mean from BPXO readings.
-    3. Merges anthropometrics, lipids, glucose, hs-CRP, supplements, and
-       demographics on `respondent_sequence_number`.
-    4. Constructs a binary treatment variable:
-
-           treatment_supplement = 1  if any_dietary_supplements_taken == 1
-                                   0  if any_dietary_supplements_taken == 2
-                                   NaN otherwise
+    Parameters
+    ----------
+    join : {"inner","left"}
+        - "inner" (default): complete-case merge across components
+        - "left": keep BP sample and attach other components where available
+    clean : bool
+        Apply lightweight cleaning and plausibility checks.
 
     Returns
     -------
     pd.DataFrame
-        One row per respondent, with all outcomes, treatment, and
-        covariates used in the project.
+        One row per respondent.
     """
+    if join not in {"inner", "left"}:
+        raise ValueError("join must be one of {'inner','left'}")
+
     # Load components
     bpxo = load_bpxo_meaningful()
     bmx = load_bmx_meaningful()
@@ -238,127 +360,120 @@ def build_analysis_df() -> pd.DataFrame:
     dsqtot = load_dsqtot_meaningful()
     demo = load_demo_meaningful()
 
-    # Blood pressure outcomes
+    # BP outcomes
     bp_outcomes = build_bp_outcomes(bpxo)
 
-    # Start from BP outcomes as the "core" sample and inner-join
-    # everything else so that all variables are observed.
-    df = bp_outcomes
-
+    # Merge to one row per respondent
+    df = bp_outcomes.copy()
     components = [bmx, tchol, hdl, trigly, glu, hscrp, dsqtot, demo]
     for comp in components:
-        df = df.merge(comp, on=ID_COL, how="inner")
+        df = df.merge(comp, on=ID_COL, how=join)
 
-    # Construct treatment indicator from DSQTOT
-    # The data-prep notebooks should have created a clean binary variable:
-    #   any_dietary_supplements_taken == 1  -> "Yes"
-    #   any_dietary_supplements_taken == 2  -> "No"
-    if "any_dietary_supplements_taken" in df.columns:
-        raw = df["any_dietary_supplements_taken"]
-        df["treatment_supplement"] = raw.map({1: 1, 2: 0})
-    else:
-        # Fallback: if the column is missing, raise a clear error so that
-        # it is obvious where to fix the data preparation.
+    # Treatment indicator
+    if "any_dietary_supplements_taken" not in df.columns:
         raise KeyError(
-            "Column `any_dietary_supplements_taken` not found in merged dataframe. "
-            "Please check the DSQTOT_L_meaningful.csv data-prep step."
+            "Column `any_dietary_supplements_taken` not found after merging DSQTOT.\n"
+            "Fix: confirm DSQTOT_L_meaningful.csv contains that column."
         )
+    df["treatment_supplement"] = _encode_treatment(df["any_dietary_supplements_taken"])
+
+    # Triglycerides normalization (support either name)
+    if "LBXTLG" not in df.columns and "triglycerides_mg_dl" in df.columns:
+        df["LBXTLG"] = df["triglycerides_mg_dl"]
+
+    # Standardize demographics into age_years / sex (does not change existing cols)
+    df = _standardize_demographics(df)
+
+    # Encode sex if present (0/1). If already numeric, safe.
+    if "sex" in df.columns:
+        df["sex"] = _encode_sex(df["sex"])
+
+    if clean:
+        df = _basic_range_cleaning(df)
 
     return df
 
 
 # ---------------------------------------------------------------------
-# Helper to extract Y (outcome), T (treatment), and X (covariates)
+# Helper to extract Y, T, X safely
 # ---------------------------------------------------------------------
-
 
 def get_y_t_x(
     df: pd.DataFrame,
     outcome_col: str,
     treatment_col: str = "treatment_supplement",
+    dropna: bool = True,
+    include_demographics: bool = False,
 ) -> Tuple[pd.Series, pd.Series, pd.DataFrame, List[str]]:
     """
     Extract (Y, T, X) for modeling from the merged analysis dataframe.
 
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Output of `build_analysis_df()`.
-    outcome_col : str
-        Name of the outcome column, e.g. "sbp_mean" or "fasting_glucose_mg_dl".
-    treatment_col : str, default "treatment_supplement"
-        Name of the binary treatment indicator column.
+    Defaults are chosen to match your current notebook outputs:
+    - include_demographics=False keeps X focused on the core biomarker covariates.
 
-    Returns
-    -------
-    y : pd.Series
-        Outcome values.
-    t : pd.Series
-        Treatment indicator (0/1).
-    X : pd.DataFrame
-        Covariate matrix.
-    covariate_cols : list of str
-        Names of covariate columns used in X.
-
-    Notes
-    -----
-    We follow the project write-up and use a fixed set of baseline
-    covariates. If a covariate is missing from the dataframe (for
-    example if a lab component was not merged correctly), it will be
-    silently dropped from `covariate_cols`. This makes the code a bit
-    more robust while keeping the API stable.
+    Safety behavior:
+    - Never includes the outcome itself in X (prevents leakage).
+    - Coerces Y/T/X to numeric.
+    - Optionally drops rows with any missing values in Y/T/X.
     """
-    # Candidate covariates (project standard)
-    candidate_covariates = [
-        "age_years",
-        "sex",
+    if outcome_col not in df.columns:
+        raise KeyError(f"Outcome column `{outcome_col}` not found in dataframe.")
+    if treatment_col not in df.columns:
+        raise KeyError(f"Treatment column `{treatment_col}` not found in dataframe.")
+
+    # Core covariates (matches the 8-column X you printed in your API notebook)
+    core_covariates = [
         "body_mass_index_kg_m2",
         "weight_kg",
         "waist_circumference_cm",
         "total_cholesterol_mg_dl",
         "direct_hdl_cholesterol_mg_dl",
-        "LBXTLG",  # triglycerides (mg/dL)
+        "LBXTLG",
         "fasting_glucose_mg_dl",
         "hs_c_reactive_protein_mg_l",
     ]
 
-    # Keep only covariates that are actually present
-    covariate_cols = [c for c in candidate_covariates if c in df.columns]
+    demographic_covariates = [
+        "age_years",
+        "sex",
+    ]
 
+    candidate_covariates = core_covariates + (demographic_covariates if include_demographics else [])
+
+    # Prevent leakage if outcome appears in covariates
+    candidate_covariates = [c for c in candidate_covariates if c != outcome_col]
+
+    covariate_cols = [c for c in candidate_covariates if c in df.columns]
     if not covariate_cols:
         raise ValueError(
-            "No covariate columns were found in the dataframe. "
-            "Check that build_analysis_df() merged all required components."
+            "No covariate columns were found. Check build_analysis_df() merges and column names."
         )
 
-    if outcome_col not in df.columns:
-        raise KeyError(f"Outcome column `{outcome_col}` not found in dataframe.")
+    y = _to_numeric_safe(df[outcome_col])
+    t = _to_numeric_safe(df[treatment_col])
 
-    if treatment_col not in df.columns:
-        raise KeyError(f"Treatment column `{treatment_col}` not found in dataframe.")
+    X = df[covariate_cols].copy()
+    for c in X.columns:
+        X[c] = _to_numeric_safe(X[c])
 
-    y = df[outcome_col]
-    t = df[treatment_col]
-    X = df[covariate_cols]
+    if dropna:
+        mask = y.notna() & t.notna()
+        for c in X.columns:
+            mask &= X[c].notna()
+
+        y = y[mask]
+        t = t[mask]
+        X = X.loc[mask, :]
 
     return y, t, X, covariate_cols
 
 
 # ---------------------------------------------------------------------
-# (Optional) quick sanity-check helper
+# Quick sanity summary (optional helper for notebooks)
 # ---------------------------------------------------------------------
 
-
-def quick_summary() -> pd.DataFrame:
-    """
-    Small convenience function for notebooks: build the analysis
-    dataframe and return basic descriptive statistics for the key
-    variables (outcomes, treatment, and covariates).
-
-    This is not used by the API, but is handy for exploratory checks
-    in `econml.example.ipynb`.
-    """
-    df = build_analysis_df()
+def quick_summary(join: str = "inner") -> pd.DataFrame:
+    df = build_analysis_df(join=join, clean=True)
 
     cols_of_interest = [
         "sbp_mean",
@@ -374,5 +489,4 @@ def quick_summary() -> pd.DataFrame:
         "hs_c_reactive_protein_mg_l",
     ]
     cols_present = [c for c in cols_of_interest if c in df.columns]
-
     return df[cols_present].describe(include="all")

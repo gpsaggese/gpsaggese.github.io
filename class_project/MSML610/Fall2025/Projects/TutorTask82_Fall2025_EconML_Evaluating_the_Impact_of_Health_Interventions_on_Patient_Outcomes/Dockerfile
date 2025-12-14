@@ -1,11 +1,12 @@
 FROM --platform=$BUILDPLATFORM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get -y update
-RUN apt-get -y upgrade
+# Basic system update
+RUN apt-get -y update && \
+    apt-get -y upgrade
 
-# Install system utilities.
-RUN apt install -y --no-install-recommends \
+# Install system utilities
+RUN apt-get install -y --no-install-recommends \
     sudo \
     curl \
     systemctl \
@@ -13,20 +14,15 @@ RUN apt install -y --no-install-recommends \
     git \
     vim
 
-# Install Python.
-RUN apt install -y --no-install-recommends \
+# Install Python
+RUN apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
     python3-dev
 
 RUN python3 -m pip install --upgrade pip
-    
-# Install Python packages.
-# There is a bug:
-#   File "/opt/homebrew/lib/python3.10/site-packages/tornado/iostream.py", line 182, in advance
-#   assert 0 < size <= self._size
-# for tornado==6.2 and jupyter-client==8.0.2.
-# https://discourse.jupyter.org/t/jupyter-notebook-zmq-message-arrived-on-closed-channel-error/17869/10
+
+# Extra build deps for scientific Python stacks
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     python3-dev \
@@ -37,23 +33,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN mkdir /install
 
-# Install common packages
+# Install common packages (course script)
 ADD install_common_packages.sh /install/
 RUN chmod +x /install/install_common_packages.sh && /install/install_common_packages.sh
 
-# Install Jupyter extensions.
-ADD install_jupyter_extensions.sh /install
+# Install Jupyter extensions (course script)
+ADD install_jupyter_extensions.sh /install/
 RUN chmod +x /install/install_jupyter_extensions.sh
 RUN /install/install_jupyter_extensions.sh
 
-# Config.
+# Install project-specific Python requirements
+COPY requirements.txt /install/requirements.txt
+RUN python3 -m pip install --no-cache-dir -r /install/requirements.txt
+
+# Shell / sudo config
 ADD etc_sudoers /install/
 COPY etc_sudoers /etc/sudoers
 COPY bashrc /root/.bashrc
 
-# Report package versions.
+# Report package versions (course script)
 ADD version.sh /install/
 RUN /install/version.sh 2>&1 | tee version.log
 
-# Jupyter.
+# Expose Jupyter port
 EXPOSE 8888

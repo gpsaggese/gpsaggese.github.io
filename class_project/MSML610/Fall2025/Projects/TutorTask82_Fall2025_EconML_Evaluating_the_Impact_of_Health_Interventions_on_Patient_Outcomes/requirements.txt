@@ -3,3 +3,4 @@ numpy
 scikit-learn
 econml
 matplotlib
+statsmodels>=0.14

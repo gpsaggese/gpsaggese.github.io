@@ -1,302 +1,382 @@
 """
-High-level API for MSML610 Project:
-    TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
+econml.API.py
 
-This module provides a small, opinionated interface on top of EconML
-for our NHANES 2021–2023 causal inference experiments.
+Project-level API wrapper for EconML DRLearner experiments on NHANES (2021–2023).
 
-Public functions:
+Internal API for the MSML610 project:
+TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
 
-    - run_sbp_supplement_experiment
-    - run_glucose_supplement_experiment
-    - run_ols_for_outcome
+Public entry points:
+- run_sbp_supplement_experiment()
+- run_glucose_supplement_experiment()
+- run_ols_for_outcome()
 
-Each function:
-
-    * Calls `build_analysis_df` from `econml_utils` to construct the
-      merged NHANES analysis dataset.
-    * Uses `get_y_t_x` to extract outcome (Y), treatment (T), and
-      covariates (X).
-    * Drops rows with missing values before fitting models.
-    * Returns a dictionary with clean, easy-to-use results that the
-      notebooks can consume.
+Design goals:
+- Keep notebooks clean (notebooks call these functions, not raw EconML).
+- Return plain Python objects / DataFrames so reuse is safe and obvious.
 """
 
-from typing import Dict, Any
+from __future__ import annotations
+
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 
+from sklearn.linear_model import LinearRegression, LogisticRegression
 from econml.dr import DRLearner
-from sklearn.linear_model import LogisticRegression, LinearRegression
 
 from econml_utils import build_analysis_df, get_y_t_x
 
 
-# ---------------------------------------------------------------------
-# Internal helper: DRLearner for a single outcome
-# ---------------------------------------------------------------------
+# -----------------------------
+# Small internal helpers
+# -----------------------------
 
+def _pick_first_existing_col(df: pd.DataFrame, candidates: List[str]) -> Optional[str]:
+    """Return the first column name from `candidates` that exists in `df`, else None."""
+    for c in candidates:
+        if c in df.columns:
+            return c
+    return None
+
+
+def _make_quartile_bins(
+    s: pd.Series,
+    labels: Tuple[str, str, str, str],
+) -> Optional[pd.Series]:
+    """
+    Make quartile bins with stable labels.
+
+    Robust to:
+    - non-numeric input
+    - many duplicate values
+    - qcut dropping bins (duplicates="drop")
+
+    Returns:
+      categorical Series or None if binning isn't possible.
+    """
+    try:
+        s_num = pd.to_numeric(s, errors="coerce")
+        if s_num.notna().sum() < 10:
+            return None
+
+        # qcut without labels first (more robust), then rename categories
+        binned = pd.qcut(s_num, q=4, duplicates="drop")
+
+        if not pd.api.types.is_categorical_dtype(binned):
+            return None
+
+        k = len(binned.cat.categories)
+        if k == 0:
+            return None
+
+        new_labels = list(labels)[:k]
+        binned = binned.cat.rename_categories(new_labels)
+        return binned
+    except Exception:
+        return None
+
+
+def _ensure_binary_treatment(t: np.ndarray) -> None:
+    """
+    Validate treatment is binary {0,1} (or very close, float).
+    Raises a clear error if unexpected codes appear.
+    """
+    uniq = np.unique(t[~np.isnan(t)])
+    uniq_rounded = np.unique(np.round(uniq, 6))
+    ok = set(uniq_rounded.tolist()).issubset({0.0, 1.0})
+    if not ok:
+        raise ValueError(
+            f"Treatment is not binary 0/1. Found unique values: {uniq_rounded.tolist()}. "
+            "Fix: check treatment encoding in econml_utils.build_analysis_df()."
+        )
+
+
+def _bootstrap_ate_ci(
+    y: np.ndarray,
+    t: np.ndarray,
+    X: np.ndarray,
+    random_state: int,
+    n_bootstrap: int = 200,
+    alpha: float = 0.05,
+) -> Tuple[float, float]:
+    """
+    Nonparametric bootstrap CI for ATE.
+    Refit DRLearner on bootstrap samples and compute ATE each time.
+    """
+    rng = np.random.default_rng(random_state)
+    n = X.shape[0]
+    ates: List[float] = []
+
+    for _ in range(n_bootstrap):
+        idx = rng.integers(0, n, size=n)  # sample with replacement
+        seed = int(rng.integers(0, 2**31 - 1))
+
+        dr = DRLearner(
+            model_regression=LinearRegression(),
+            model_propensity=LogisticRegression(max_iter=2000, solver="lbfgs"),
+            random_state=seed,
+        )
+        dr.fit(Y=y[idx], T=t[idx], X=X[idx])
+        ates.append(float(dr.ate(X[idx])))
+
+    low = float(np.quantile(ates, alpha / 2))
+    high = float(np.quantile(ates, 1 - alpha / 2))
+    return low, high
+
+
+# -----------------------------
+# Core DRLearner internal runner
+# -----------------------------
 
 def _fit_drl_for_outcome(
     outcome_col: str,
     treatment_col: str = "treatment_supplement",
     random_state: int = 42,
+    n_bootstrap: int = 200,
+    include_demographics: bool = False,
+    join: str = "inner",
 ) -> Dict[str, Any]:
     """
-    Fit a DRLearner for a given outcome using supplement use as treatment.
+    Fit DRLearner for a given outcome and return a reusable result bundle.
 
-    Parameters
-    ----------
-    outcome_col : str
-        Name of the outcome column (e.g., "sbp_mean" or "fasting_glucose_mg_dl").
-    treatment_col : str, default "treatment_supplement"
-        Binary treatment indicator column.
-    random_state : int, default 42
-        Random seed for reproducibility.
-
-    Returns
-    -------
-    dict
-        {
-            "ate": float,
-            "covariates": list[str],
-            "cate_df": pd.DataFrame,
-            "tau_col": str,
-            "age_effects": pd.Series or None,
-            "bmi_effects": pd.Series or None,
-        }
+    Returns a dict with:
+      - ate, ate_ci_low, ate_ci_high
+      - n_obs
+      - covariates
+      - cate_df (cleaned df with individual tau_hat_* column)
+      - tau_col
+      - age_effects (Series or None)
+      - bmi_effects (Series or None)
+      - model (fitted DRLearner)
     """
-    # Build merged NHANES dataset
-    analysis_df = build_analysis_df()
+    df = build_analysis_df(join=join)
 
-    # Extract outcome, treatment, and covariates
     y, t, X, covariate_cols = get_y_t_x(
-        analysis_df, outcome_col=outcome_col, treatment_col=treatment_col
+        df,
+        outcome_col=outcome_col,
+        treatment_col=treatment_col,
+        include_demographics=include_demographics,
     )
 
-    # Drop rows with any missing data in Y/T/X
-    combined = pd.concat([y, t, X], axis=1)
-    mask = combined.notna().all(axis=1)
+    # Safety: never allow the outcome itself to leak into X
+    if outcome_col in covariate_cols:
+        covariate_cols = [c for c in covariate_cols if c != outcome_col]
+        X = X[covariate_cols].copy()
 
-    y_clean = y.loc[mask]
-    t_clean = t.loc[mask]
-    X_clean = X.loc[mask]
+    # Clean rows with any missingness in (Y, T, X)
+    combined = pd.concat([y.rename("Y"), t.rename("T"), X], axis=1).dropna()
+    y_clean = combined["Y"].to_numpy(dtype=float)
+    t_clean = combined["T"].to_numpy(dtype=float)
+    X_clean = combined[covariate_cols].to_numpy(dtype=float)
 
-    # Mirror the cleaned rows back on the full analysis dataframe
-    analysis_df_clean = analysis_df.loc[mask].copy()
+    _ensure_binary_treatment(t_clean)
 
-    if len(y_clean) == 0:
-        raise ValueError(
-            "After dropping missing values, there are no rows left to fit the model. "
-            "Please check the data preparation steps."
-        )
-
-    # Set up and fit DRLearner
+    # Fit DRLearner
     dr = DRLearner(
         model_regression=LinearRegression(),
         model_propensity=LogisticRegression(max_iter=2000, solver="lbfgs"),
         random_state=random_state,
     )
+    dr.fit(Y=y_clean, T=t_clean, X=X_clean)
 
-    dr.fit(
-        Y=y_clean.to_numpy(),
-        T=t_clean.to_numpy(),
-        X=X_clean.to_numpy(),
+    ate = float(dr.ate(X_clean))
+
+    ate_ci_low, ate_ci_high = _bootstrap_ate_ci(
+        y=y_clean,
+        t=t_clean,
+        X=X_clean,
+        random_state=random_state,
+        n_bootstrap=n_bootstrap,
+        alpha=0.05,
     )
 
-    # Average treatment effect (ATE) and individual CATEs
-    ate = float(dr.ate(X_clean.to_numpy()))
-    tau_hat = dr.effect(X_clean.to_numpy()).ravel()
-
+    # Individual effects
+    tau_hat = dr.effect(X_clean).reshape(-1)
     tau_col = f"tau_hat_{outcome_col}"
-    analysis_df_clean[tau_col] = tau_hat
 
-    # ------------------------------------------------------------------
-    # Heterogeneity summaries: age and BMI quartiles
-    # ------------------------------------------------------------------
+    cate_df = df.loc[combined.index].copy()
+    cate_df[tau_col] = tau_hat
+
+    # Heterogeneity bins (best-effort)
+    age_col = _pick_first_existing_col(
+        cate_df,
+        candidates=[
+            "age_years",
+            "age_in_years_at_screening",
+            "age",
+            "ridageyr",
+            "respondent_age_years",
+        ],
+    )
+    bmi_col = _pick_first_existing_col(
+        cate_df,
+        candidates=[
+            "body_mass_index_kg_m2",
+            "bmi",
+            "bmx_bmi",
+        ],
+    )
+
     age_effects = None
+    if age_col is not None:
+        age_bin = _make_quartile_bins(
+            cate_df[age_col],
+            labels=("Q1 (youngest)", "Q2", "Q3", "Q4 (oldest)"),
+        )
+        if age_bin is not None:
+            cate_df["age_bin"] = age_bin
+            age_effects = cate_df.groupby("age_bin", observed=True)[tau_col].mean()
+
     bmi_effects = None
-
-    if "age_years" in analysis_df_clean.columns:
-        analysis_df_clean["age_bin"] = pd.qcut(
-            analysis_df_clean["age_years"],
-            q=4,
-            labels=["Q1 (youngest)", "Q2", "Q3", "Q4 (oldest)"],
-            duplicates="drop",
+    if bmi_col is not None:
+        bmi_bin = _make_quartile_bins(
+            cate_df[bmi_col],
+            labels=("Q1 (leanest)", "Q2", "Q3", "Q4 (highest BMI)"),
         )
-        age_effects = (
-            analysis_df_clean.groupby("age_bin")[tau_col]
-            .mean()
-            .sort_index()
-        )
-
-    if "body_mass_index_kg_m2" in analysis_df_clean.columns:
-        analysis_df_clean["bmi_bin"] = pd.qcut(
-            analysis_df_clean["body_mass_index_kg_m2"],
-            q=4,
-            labels=["Q1 (leanest)", "Q2", "Q3", "Q4 (highest BMI)"],
-            duplicates="drop",
-        )
-        bmi_effects = (
-            analysis_df_clean.groupby("bmi_bin")[tau_col]
-            .mean()
-            .sort_index()
-        )
+        if bmi_bin is not None:
+            cate_df["bmi_bin"] = bmi_bin
+            bmi_effects = cate_df.groupby("bmi_bin", observed=True)[tau_col].mean()
 
     return {
         "ate": ate,
+        "ate_ci_low": ate_ci_low,
+        "ate_ci_high": ate_ci_high,
+        "n_obs": int(len(y_clean)),
         "covariates": covariate_cols,
-        "cate_df": analysis_df_clean,
+        "cate_df": cate_df,
         "tau_col": tau_col,
         "age_effects": age_effects,
         "bmi_effects": bmi_effects,
+        "model": dr,
     }
 
 
-# ---------------------------------------------------------------------
-# Public API: DRLearner experiments for SBP and glucose
-# ---------------------------------------------------------------------
+# -----------------------------
+# Public API functions
+# -----------------------------
 
-
-def run_sbp_supplement_experiment(random_state: int = 42) -> Dict[str, Any]:
+def run_sbp_supplement_experiment(
+    random_state: int = 42,
+    n_bootstrap: int = 200,
+    include_demographics: bool = False,
+    join: str = "inner",
+) -> Dict[str, Any]:
     """
-    Run the DRLearner experiment with outcome = mean systolic BP (sbp_mean).
-
-    This is the main entry point used in the notebooks for the SBP outcome.
-
-    Returns
-    -------
-    dict
-        {
-            "ate_sbp": float,
-            "covariates": list[str],
-            "cate_df": pd.DataFrame,
-            "tau_col": str,
-            "age_effects": pd.Series or None,
-            "bmi_effects": pd.Series or None,
-        }
+    DRLearner experiment:
+      Outcome  : sbp_mean
+      Treatment: treatment_supplement (0/1)
     """
-    results = _fit_drl_for_outcome(
+    res = _fit_drl_for_outcome(
         outcome_col="sbp_mean",
         treatment_col="treatment_supplement",
         random_state=random_state,
+        n_bootstrap=n_bootstrap,
+        include_demographics=include_demographics,
+        join=join,
     )
-
     return {
-        "ate_sbp": results["ate"],
-        "covariates": results["covariates"],
-        "cate_df": results["cate_df"],
-        "tau_col": results["tau_col"],
-        "age_effects": results["age_effects"],
-        "bmi_effects": results["bmi_effects"],
+        "ate_sbp": res["ate"],
+        "ate_ci_low": res["ate_ci_low"],
+        "ate_ci_high": res["ate_ci_high"],
+        "n_obs": res["n_obs"],
+        "covariates": res["covariates"],
+        "cate_df": res["cate_df"],
+        "tau_col": res["tau_col"],
+        "age_effects": res["age_effects"],
+        "bmi_effects": res["bmi_effects"],
+        "model": res["model"],
     }
 
 
-def run_glucose_supplement_experiment(random_state: int = 42) -> Dict[str, Any]:
+def run_glucose_supplement_experiment(
+    random_state: int = 42,
+    n_bootstrap: int = 200,
+    include_demographics: bool = False,
+    join: str = "inner",
+) -> Dict[str, Any]:
     """
-    Run the DRLearner experiment with outcome = fasting_glucose_mg_dl.
-
-    This is the main entry point used in the notebooks for the glucose
-    outcome.
-
-    Returns
-    -------
-    dict
-        {
-            "ate_glucose": float,
-            "covariates": list[str],
-            "cate_df": pd.DataFrame,
-            "tau_col": str,
-            "age_effects": pd.Series or None,
-            "bmi_effects": pd.Series or None,
-        }
+    DRLearner experiment:
+      Outcome  : fasting_glucose_mg_dl
+      Treatment: treatment_supplement (0/1)
     """
-    results = _fit_drl_for_outcome(
+    res = _fit_drl_for_outcome(
         outcome_col="fasting_glucose_mg_dl",
         treatment_col="treatment_supplement",
         random_state=random_state,
+        n_bootstrap=n_bootstrap,
+        include_demographics=include_demographics,
+        join=join,
     )
-
     return {
-        "ate_glucose": results["ate"],
-        "covariates": results["covariates"],
-        "cate_df": results["cate_df"],
-        "tau_col": results["tau_col"],
-        "age_effects": results["age_effects"],
-        "bmi_effects": results["bmi_effects"],
+        "ate_glucose": res["ate"],
+        "ate_ci_low": res["ate_ci_low"],
+        "ate_ci_high": res["ate_ci_high"],
+        "n_obs": res["n_obs"],
+        "covariates": res["covariates"],
+        "cate_df": res["cate_df"],
+        "tau_col": res["tau_col"],
+        "age_effects": res["age_effects"],
+        "bmi_effects": res["bmi_effects"],
+        "model": res["model"],
     }
-
-
-# ---------------------------------------------------------------------
-# Public API: OLS baseline for a single outcome
-# ---------------------------------------------------------------------
 
 
 def run_ols_for_outcome(
     outcome_col: str,
     treatment_col: str = "treatment_supplement",
+    include_demographics: bool = False,
+    join: str = "inner",
 ) -> Dict[str, Any]:
     """
-    Simple OLS comparison:
+    OLS baseline comparison using statsmodels with robust (HC3) standard errors.
 
-        Y ~ treatment + covariates
-
-    We interpret the coefficient of the treatment variable as the
-    "traditional" estimate of the treatment effect, controlling
-    linearly for the covariates.
-
-    Parameters
-    ----------
-    outcome_col : str
-        Outcome column name (e.g., "sbp_mean").
-    treatment_col : str, default "treatment_supplement"
-        Binary treatment indicator column.
-
-    Returns
-    -------
-    dict
-        {
-            "outcome": str,
-            "treatment_coef": float,
-            "covariates": list[str],
-            "n_obs": int,
-        }
+    Returns:
+      outcome, treatment_coef, treatment_ci_low, treatment_ci_high,
+      covariates, n_obs, method
     """
-    analysis_df = build_analysis_df()
+    try:
+        import statsmodels.api as sm
+    except ImportError as e:
+        raise ImportError(
+            "statsmodels is required for run_ols_for_outcome(). "
+            "Add it to requirements.txt (e.g., statsmodels>=0.14)."
+        ) from e
 
-    # Use the same helper as for EconML to get Y/T/X
+    df = build_analysis_df(join=join)
     y, t, X, covariate_cols = get_y_t_x(
-        analysis_df, outcome_col=outcome_col, treatment_col=treatment_col
+        df,
+        outcome_col=outcome_col,
+        treatment_col=treatment_col,
+        include_demographics=include_demographics,
     )
 
-    # Drop rows with any missing data
-    combined = pd.concat([y, t, X], axis=1)
-    mask = combined.notna().all(axis=1)
+    # Prevent outcome leakage
+    if outcome_col in covariate_cols:
+        covariate_cols = [c for c in covariate_cols if c != outcome_col]
+        X = X[covariate_cols].copy()
 
-    y_clean = y.loc[mask]
-    t_clean = t.loc[mask]
-    X_clean = X.loc[mask]
+    combined = pd.concat([y.rename("Y"), t.rename("T"), X], axis=1).dropna()
+    y_clean = combined["Y"].astype(float)
+    t_clean = combined["T"].astype(float)
+    X_clean = combined[covariate_cols].astype(float)
 
-    if len(y_clean) == 0:
-        raise ValueError(
-            "After dropping missing values, there are no rows left to fit the OLS model. "
-            "Please check the data preparation steps."
-        )
+    X_ols = pd.concat([t_clean.rename(treatment_col), X_clean], axis=1)
+    X_ols = sm.add_constant(X_ols, has_constant="add")
 
-    # Build design matrix: [treatment, covariates]
-    T_matrix = t_clean.to_numpy().reshape(-1, 1)
-    X_ols = np.column_stack([T_matrix, X_clean.to_numpy()])
+    model = sm.OLS(y_clean, X_ols).fit(cov_type="HC3")
 
-    ols = LinearRegression()
-    ols.fit(X_ols, y_clean.to_numpy())
-
-    # First coefficient corresponds to the treatment effect
-    treatment_coef = float(ols.coef_[0])
+    treatment_coef = float(model.params[treatment_col])
+    ci = model.conf_int().loc[treatment_col]
+    ci_low, ci_high = float(ci[0]), float(ci[1])
 
     return {
         "outcome": outcome_col,
         "treatment_coef": treatment_coef,
+        "treatment_ci_low": ci_low,
+        "treatment_ci_high": ci_high,
         "covariates": covariate_cols,
         "n_obs": int(len(y_clean)),
+        "method": "OLS (statsmodels HC3)",
     }
