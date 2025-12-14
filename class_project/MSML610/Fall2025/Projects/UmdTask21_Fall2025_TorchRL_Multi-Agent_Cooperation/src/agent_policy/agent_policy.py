@@ -1,15 +1,21 @@
+"""Shared multi-agent policy network for discrete MPE actions."""
+
+from __future__ import annotations
+
+from typing import Iterable, List
+
 import torch
 import torch.nn as nn
 
-class SharedMLPPolicy(nn.Module):
-    """
-    Shared policy: same network used for all agents.
-    Input: observations [num_agents, obs_dim]
-    Output: Categorical actions for each agent.
-    """
+__all__ = ["SharedMLPPolicy"]
 
-    def __init__(self, obs_dim, act_dim, hidden_dims=[128, 64]):
+
+class SharedMLPPolicy(nn.Module):
+    """Parameter-shared MLP policy for all agents (discrete actions)."""
+
+    def __init__(self, obs_dim: int, act_dim: int, hidden_dims: Iterable[int] | None = None):
         super().__init__()
+        hidden_dims = list(hidden_dims) if hidden_dims is not None else [128, 64]
         layers = []
         input_dim = obs_dim
         for hidden_dim in hidden_dims:
@@ -19,16 +25,13 @@ class SharedMLPPolicy(nn.Module):
         layers.append(nn.Linear(input_dim, act_dim))
         self.net = nn.Sequential(*layers)
 
-    def forward(self, obs):
-        # obs: [num_agents, obs_dim]
+    def forward(self, obs: torch.Tensor) -> torch.Tensor:
+        """Return action logits for each agent given observations [num_agents, obs_dim]."""
         logits = self.net(obs)
         return logits  # [num_agents, act_dim]
 
-    def act(self, obs):
-        """
-        Returns integer actions for each agent as a tensor [num_agents].
-        Currently: random-ish, because network is untrained.
-        """
+    def act(self, obs: torch.Tensor) -> torch.Tensor:
+        """Sample integer actions for each agent; returns tensor [num_agents]."""
         logits = self.forward(obs)
         probs = torch.softmax(logits, dim=-1)
         dist = torch.distributions.Categorical(probs)

@@ -1,10 +1,22 @@
 # src/envs/mpe_env.py
+"""Environment factory and quick sanity helpers for the MPE simple_spread task."""
+
+from __future__ import annotations
+
+from typing import Any, Dict, Tuple
+
 from mpe2 import simple_spread_v3
 
-def make_mpe_env(render_mode=None, N=3, local_ratio=0.5, max_cycles=25):
-    """
-    Creates and returns the parallel Simple Spread environment.
-    """
+__all__ = ["make_mpe_env", "run_random_episode", "print_env_specs"]
+
+
+def make_mpe_env(
+    render_mode: str | None = None,
+    N: int = 3,
+    local_ratio: float = 0.5,
+    max_cycles: int = 25,
+):
+    """Create and return the PettingZoo parallel simple_spread environment."""
     env = simple_spread_v3.parallel_env(
         N=N,
         local_ratio=local_ratio,
@@ -15,33 +27,27 @@ def make_mpe_env(render_mode=None, N=3, local_ratio=0.5, max_cycles=25):
     env.reset(seed=0)
     return env
 
-def run_random_episode():
-    """
-    Runs one full episode using random actions for all agents
-    Sanity check
-    """
+
+def run_random_episode() -> Dict[str, float]:
+    """Run one random-policy episode as a manual sanity check (not executed on import)."""
     env = make_mpe_env()
     observations, infos = env.reset()
 
-    total_rewards = {agent: 0.0 for agent in env.agents}
+    total_rewards: Dict[str, float] = {agent: 0.0 for agent in env.agents}
 
-    # looping until there are no active agents left
     while env.agents:
-        actions = {
-            agent: env.action_space(agent).sample()
-            for agent in env.agents
-        }
+        actions = {agent: env.action_space(agent).sample() for agent in env.agents}
         observations, rewards, terminations, truncations, infos = env.step(actions)
 
-        # reward accumulation
         for agent in rewards:
             total_rewards[agent] += float(rewards[agent])
 
-    print("Episode finished. Total rewards:", total_rewards)
     env.close()
+    return total_rewards
 
-# policy making guidance helper function
-def print_env_specs():
+
+def print_env_specs() -> None:
+    """Print observation and action space details for one agent (manual helper)."""
     env = make_mpe_env()
     print("Agents:", env.agents)
 
@@ -54,5 +60,7 @@ def print_env_specs():
 
     env.close()
 
+
 if __name__ == "__main__":
-    run_random_episode()
+    rewards = run_random_episode()
+    print("Episode finished. Total rewards:", rewards)

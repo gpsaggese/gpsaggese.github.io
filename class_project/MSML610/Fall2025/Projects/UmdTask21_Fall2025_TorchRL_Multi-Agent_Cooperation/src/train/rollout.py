@@ -1,29 +1,29 @@
-from mpe2 import simple_spread_v3
+"""Minimal rollout harness to sanity-check env + shared policy wiring (no learning)."""
+
+from __future__ import annotations
 
 import torch
+from mpe2 import simple_spread_v3
 
-from src.train.mpe_wrapper import MPEWrapper
-from src.train.policy import SharedMLPPolicy
+from src.agent_policy.agent_policy import SharedMLPPolicy
+from src.wrappers.wrapper import MPEWrapper
+
+__all__ = ["run_rollout"]
 
 
-def run_rollout(num_episodes=3):
-    """
-    Run a few episodes using the shared policy.
-    NOTE: No learning is happening here yet.
-    This is just to prove all components connect correctly.
-    """
+def run_rollout(num_episodes: int = 3) -> None:
+    """Run a few episodes using the shared policy (stateless sanity check)."""
     device = "cpu"
     env = MPEWrapper(device=device)
 
-    # Get obs_dim from one reset
     obs = env.reset()
     num_agents, obs_dim = obs.shape
 
-    # Get act_dim from raw env once
     tmp_env = simple_spread_v3.parallel_env()
     tmp_env.reset()
     sample_agent = tmp_env.agents[0]
     act_dim = tmp_env.action_space(sample_agent).n
+    tmp_env.close()
 
     policy = SharedMLPPolicy(obs_dim, act_dim).to(device)
 
@@ -33,7 +33,7 @@ def run_rollout(num_episodes=3):
         ep_rewards = torch.zeros(num_agents, device=device)
 
         while not done:
-            actions = policy.act(obs)          # [num_agents]
+            actions = policy.act(obs)
             obs, rewards, done = env.step(actions)
             ep_rewards += rewards
 

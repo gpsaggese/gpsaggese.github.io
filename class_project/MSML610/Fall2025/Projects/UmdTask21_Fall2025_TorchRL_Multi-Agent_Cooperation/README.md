@@ -197,6 +197,12 @@ C joins after baselines are stable to add communication and analysis.
 - **Short video/GIF:** show coordination improvement after training  
 - **Final report (4–6 pages):** method, results, limitations, and possible extensions (e.g., MAPPO, attention-based comm)
 
+## TorchRL_MAC Submission Artifacts
+- TorchRL_MAC_utils.py: helper entry points to build the wrapped env, infer shapes, and run stateless rollouts.
+- TorchRL_MAC.API.md / TorchRL_MAC.API.ipynb: quick API reference and import/shape sanity checks.
+- TorchRL_MAC.example.md / TorchRL_MAC.example.ipynb: runnable minimal example wiring env → shared policy → rollout.
+- Dockerfile, docker_build.sh, docker_bash.sh: containerized runtime; build with `./docker_build.sh` and open a shell with `./docker_bash.sh` (image tag `torchrl_mac:latest`).
+
 ---
 
 ## Reading List (Short & Targeted)
@@ -299,3 +305,198 @@ Use it for:
 - structuring milestones,
 - writing your report,
 - and ensuring everyone understands the “why” behind each design choice.
+---
+
+## Getting Started
+
+### Prerequisites
+- Python 3.10 or 3.11
+- pip or conda package manager
+- (Optional) Docker for containerized environment
+
+### Local Setup with Virtual Environment
+
+**1. Create and activate virtual environment:**
+
+```bash
+# Using venv
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Or using conda
+conda create -n torchrl_mac python=3.10
+conda activate torchrl_mac
+```
+
+**2. Install dependencies:**
+
+```bash
+pip install -r requirements.txt
+```
+
+**3. Verify installation:**
+
+```python
+python -c "import torch; from src.envs import mpe_env; print('Setup OK')"
+```
+
+---
+
+### Running Notebooks
+
+**API Demonstration (no training):**
+
+```bash
+jupyter notebook TorchRL_MAC.API.ipynb
+# or
+jupyter lab TorchRL_MAC.API.ipynb
+```
+
+This notebook demonstrates the two-layer API without training:
+- Native API (src modules)
+- Wrapper layer (TorchRL_MAC_utils)
+- Forward passes and action selection
+
+**Training Example (full A2C loop):**
+
+```bash
+jupyter notebook TorchRL_MAC.example.ipynb
+# or
+jupyter lab TorchRL_MAC.example.ipynb
+```
+
+This notebook trains a CTDE A2C baseline and plots learning curves. Expected runtime: 5-15 minutes for 300 episodes.
+
+**Expected output:**
+```
+Starting training...
+Training complete! Final episode return: -8.34
+```
+
+---
+
+### Docker Setup
+
+**Build the image:**
+
+```bash
+chmod +x docker_build.sh docker_bash.sh
+./docker_build.sh
+```
+
+Expected output:
+```
+Building image torchrl_mac:latest from .
+[+] Building 45.2s (12/12) FINISHED
+...
+```
+
+**Run Jupyter Lab in container:**
+
+```bash
+./docker_bash.sh
+```
+
+Expected output:
+```
+Starting Jupyter Lab container (image: torchrl_mac:latest)
+Access at: http://localhost:8888
+Press Ctrl+C to stop
+
+[I 2025-12-14 12:34:56.789 ServerApp] Jupyter Server 2.x.x is running at:
+[I 2025-12-14 12:34:56.789 ServerApp] http://0.0.0.0:8888/lab
+```
+
+Open browser to `http://localhost:8888` and run notebooks.
+
+**Stop container:** Press `Ctrl+C` in terminal.
+
+---
+
+## Project Deliverables
+
+### Core Files
+
+1. **TorchRL_MAC_utils.py** — Single reusable module with:
+   - Contract layer (EnvConfig, TrainConfig, RolloutBatch dataclasses)
+   - Network builders (shared actor, centralized critic)
+   - Training loop (train_ctde_a2c)
+   - Backward-compatible helpers
+
+2. **TorchRL_MAC.API.md** — API reference documentation:
+   - Layer 1: Native API (src modules)
+   - Layer 2: Wrapper utilities
+   - CTDE concept explanation
+   - Mermaid dataflow diagram
+
+3. **TorchRL_MAC.API.ipynb** — Interactive API demonstration:
+   - Environment and wrapper usage
+   - Actor/critic construction
+   - Forward passes without training
+
+4. **TorchRL_MAC.example.md** — Training guide:
+   - End-to-end CTDE A2C explanation
+   - Loss components and design rationale
+   - Training loop flowchart (mermaid)
+   - Extension roadmap (GAE → TorchRL → MAPPO)
+
+5. **TorchRL_MAC.example.ipynb** — Runnable training notebook:
+   - Full A2C training loop (300 episodes)
+   - Learning curve visualization (4-panel matplotlib)
+   - Greedy evaluation pattern
+
+### Supporting Files
+
+- **requirements.txt** — Python dependencies (torch, mpe2, pettingzoo, numpy)
+- **Dockerfile** — Container definition with Jupyter Lab
+- **docker_build.sh** — Image build script
+- **docker_bash.sh** — Container launch script with volume mount
+- **src/** — Project source modules (envs, wrappers, agent_policy, train)
+- **tests/** — Basic environment sanity tests
+
+---
+
+## Quick Reference
+
+**Train baseline from Python:**
+```python
+from TorchRL_MAC_utils import EnvConfig, TrainConfig, train_ctde_a2c
+
+env_cfg = EnvConfig(seed=42, max_steps=25)
+train_cfg = TrainConfig(n_episodes=500, log_every=50)
+history = train_ctde_a2c(env_cfg, train_cfg)
+```
+
+**Inspect rollout without training:**
+```python
+from TorchRL_MAC_utils import make_env, build_shared_actor, build_central_critic, collect_episode
+
+env = make_env(env_cfg)
+obs = env.reset()
+actor = build_shared_actor(obs.shape[1], env.n_actions)
+critic = build_central_critic(env.num_agents * obs.shape[1])
+batch = collect_episode(env, actor, critic, env_cfg)
+```
+
+---
+
+## Troubleshooting
+
+**Import errors:**
+- Ensure virtual environment is activated
+- Check `PYTHONPATH` includes project root
+- Verify all requirements installed: `pip list | grep -E "torch|pettingzoo|mpe"`
+
+**Training diverges (NaN losses):**
+- Reduce learning rates in TrainConfig
+- Check max_grad_norm (default 0.5)
+- Verify environment reset seeding
+
+**Docker port conflicts:**
+- Change port mapping in docker_bash.sh: `-p 8889:8888`
+- Or stop conflicting services on port 8888
+
+**Slow training:**
+- Reduce n_episodes for quick tests
+- Check CPU usage (no GPU acceleration by default)
+- Consider vectorized environments for production runs

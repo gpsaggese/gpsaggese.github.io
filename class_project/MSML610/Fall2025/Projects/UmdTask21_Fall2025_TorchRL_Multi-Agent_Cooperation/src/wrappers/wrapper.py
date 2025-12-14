@@ -1,45 +1,41 @@
- # src/train/mpe_wrapper.py
+"""Wrapper to expose PettingZoo MPE env as fixed-order PyTorch tensors."""
+
+from __future__ import annotations
+
+from typing import Dict, Iterable, List
+
 import torch
-from src.envs.mpe_env import make_mpe_env  # should create a PettingZoo MPE env (parallel or aec with .step(actions_dict))
+from src.envs.mpe_env import make_mpe_env
+
+__all__ = ["MPEWrapper"]
+
 
 class MPEWrapper:
-    """
-    Adapter around the PettingZoo MPE environment.
-    - Internally: dict[agent] obs/reward from PettingZoo.
-    - Externally: PyTorch tensors with fixed agent ordering.
-    Assumes discrete actions (set continuous_actions=False in make_mpe_env()).
-    """
+    """Adapter around the PettingZoo MPE environment with stable agent ordering."""
 
-    def __init__(self, device: str = "cpu"):
+    def __init__(self, device: str = "cpu", **mpe_kwargs):
         self.device = torch.device(device)
-        self.env = make_mpe_env()
-        self.agents = list(self.env.agents)  # fixed order snapshot
+        self.env = make_mpe_env(**mpe_kwargs)
+        self.agents = list(self.env.agents)
         first_obs, _ = self.env.reset(seed=None)
         self.num_agents = len(self.agents)
         self.obs_dim = len(first_obs[self.agents[0]])
-        # Discrete action count (PettingZoo action_space has .n)
         try:
             self.n_actions = int(self.env.action_space(self.agents[0]).n)
         except Exception:
-            self.n_actions = None  
+            self.n_actions = None
 
-    def reset(self, seed: int | None = None):
+    def reset(self, seed: int | None = None) -> torch.Tensor:
+        """Reset env and return observations as tensor [num_agents, obs_dim]."""
         obs_dict, _ = self.env.reset(seed=seed)
         return self._obs_dict_to_tensor(obs_dict)
 
     def step(self, actions_tensor: torch.Tensor):
-        """
-        actions_tensor: Long/int tensor [num_agents] with discrete actions.
-        Returns:
-          obs_tensor: [num_agents, obs_dim] float32
-          rewards_tensor: [num_agents] float32
-          done_all: bool
-        """
+        """Step env with discrete actions [num_agents]; return (obs, rewards, done_all)."""
         if actions_tensor.ndim != 1 or actions_tensor.shape[0] != self.num_agents:
             raise ValueError(f"actions shape must be [{self.num_agents}], got {tuple(actions_tensor.shape)}")
-        actions_tensor = actions_tensor.to("cpu").long()  # env expects Python ints
+        actions_tensor = actions_tensor.to("cpu").long()
 
-        # validating range for discrete actions
         if self.n_actions is not None:
             if not bool(((0 <= actions_tensor) & (actions_tensor < self.n_actions)).all()):
                 raise ValueError(f"actions must be in [0, {self.n_actions-1}]")
@@ -52,11 +48,10 @@ class MPEWrapper:
         done_all = all(dones_dict[a] or truncs_dict[a] for a in self.agents)
         return obs_tensor, rewards_tensor, done_all
 
-    # helpers 
-    def _obs_dict_to_tensor(self, obs_dict):
+    def _obs_dict_to_tensor(self, obs_dict: Dict[str, Iterable[float]]) -> torch.Tensor:
         obs_list = [obs_dict[a] for a in self.agents]
         return torch.tensor(obs_list, dtype=torch.float32, device=self.device)
 
-    def _rewards_dict_to_tensor(self, rewards_dict):
+    def _rewards_dict_to_tensor(self, rewards_dict: Dict[str, float]) -> torch.Tensor:
         rew_list = [rewards_dict[a] for a in self.agents]
         return torch.tensor(rew_list, dtype=torch.float32, device=self.device)
