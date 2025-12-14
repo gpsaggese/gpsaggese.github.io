@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Dict, Iterable, List
 
+import numpy as np
 import torch
 from src.envs.mpe_env import make_mpe_env
 
@@ -31,13 +32,19 @@ class MPEWrapper:
         return self._obs_dict_to_tensor(obs_dict)
 
     def step(self, actions_tensor: torch.Tensor):
-        """Step env with discrete actions [num_agents]; return (obs, rewards, done_all)."""
+        """
+        Step env with discrete actions [num_agents]; return (obs, rewards, done_all).
+        
+        done_all semantics: episode ends when ALL agents are done/truncated (not any).
+        Uses fast tensor conversion with .item() for boolean checks.
+        """
         if actions_tensor.ndim != 1 or actions_tensor.shape[0] != self.num_agents:
             raise ValueError(f"actions shape must be [{self.num_agents}], got {tuple(actions_tensor.shape)}")
         actions_tensor = actions_tensor.to("cpu").long()
 
         if self.n_actions is not None:
-            if not bool(((0 <= actions_tensor) & (actions_tensor < self.n_actions)).all()):
+            # Use .item() for fast boolean conversion
+            if not ((0 <= actions_tensor) & (actions_tensor < self.n_actions)).all().item():
                 raise ValueError(f"actions must be in [0, {self.n_actions-1}]")
 
         actions = {agent: int(actions_tensor[i].item()) for i, agent in enumerate(self.agents)}
@@ -45,13 +52,17 @@ class MPEWrapper:
 
         obs_tensor = self._obs_dict_to_tensor(obs_dict)
         rewards_tensor = self._rewards_dict_to_tensor(rewards_dict)
+        # done_all = True when ALL agents are done or truncated
         done_all = all(dones_dict[a] or truncs_dict[a] for a in self.agents)
         return obs_tensor, rewards_tensor, done_all
 
     def _obs_dict_to_tensor(self, obs_dict: Dict[str, Iterable[float]]) -> torch.Tensor:
-        obs_list = [obs_dict[a] for a in self.agents]
-        return torch.tensor(obs_list, dtype=torch.float32, device=self.device)
+        """Convert obs dict to tensor [num_agents, obs_dim] using numpy for speed."""
+        obs_list = [np.asarray(obs_dict[a], dtype=np.float32) for a in self.agents]
+        obs_array = np.stack(obs_list, axis=0)
+        return torch.from_numpy(obs_array).to(self.device)
 
     def _rewards_dict_to_tensor(self, rewards_dict: Dict[str, float]) -> torch.Tensor:
-        rew_list = [rewards_dict[a] for a in self.agents]
-        return torch.tensor(rew_list, dtype=torch.float32, device=self.device)
+        """Convert rewards dict to tensor [num_agents] using numpy for speed."""
+        rew_array = np.array([rewards_dict[a] for a in self.agents], dtype=np.float32)
+        return torch.from_numpy(rew_array).to(self.device)

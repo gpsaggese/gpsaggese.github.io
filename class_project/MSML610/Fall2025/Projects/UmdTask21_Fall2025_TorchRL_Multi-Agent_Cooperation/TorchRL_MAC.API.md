@@ -1,6 +1,6 @@
 # TorchRL_MAC API Reference
 
-This document describes the two-layer architecture for multi-agent cooperation on MPE environments using CTDE (Centralized Training, Decentralized Execution) with an A2C baseline.
+This document describes the two-layer architecture for multi-agent cooperation on MPE environments using CTDE (Centralized Training, Decentralized Execution) with an A3C (Asynchronous Advantage Actor-Critic) implementation.
 
 ---
 
@@ -68,7 +68,8 @@ step(actions: Tensor) -> Tuple[Tensor, Tensor, bool]
 
 **Done Semantics:**
 - `done_all = all(dones[a] or truncs[a] for a in agents)`
-- Episode ends when ANY agent terminates or max_cycles reached
+- Episode ends when ALL agents terminate/truncate or max_cycles reached
+- Fixed: uses `.item()` for fast tensor-to-bool conversion
 
 **Validation:**
 - Checks action shape `[num_agents]`
@@ -145,12 +146,14 @@ class TrainConfig:
     gamma: float = 0.99
     lr_actor: float = 3e-4
     lr_critic: float = 3e-4
-    entropy_coef: float = 0.01
+    entropy_coef: float = 0.005  # Reduced for convergence
     value_coef: float = 0.5
     max_grad_norm: float = 0.5
     n_episodes: int = 500
     log_every: int = 25
-    device: str = "cpu"
+    device: str | None = None  # None = auto-detect MPS/CPU
+    n_workers: int = 4  # A3C: number of parallel workers
+    t_max: int = 20  # A3C: max steps per worker update
 ```
 
 **`RolloutBatch`**
@@ -160,15 +163,21 @@ class RolloutBatch:
     obs: Tensor        # [T, num_agents, obs_dim]
     actions: Tensor    # [T, num_agents]
     rewards: Tensor    # [T, num_agents]
-    dones: Tensor      # [T]
-    logprobs: Tensor   # [T] mean over agents
-    values: Tensor     # [T] central critic V(s)
-    entropies: Tensor  # [T] mean over agents
+    dones: Tensor      # [T] (boolean as floats)
 ```
+**Note:** Logprobs, values, and entropies are NOT stored during rollout. They are recomputed during update from stored obs/actions.
 
 ---
 
 ### Core Functions
+
+**Device Detection**
+```python
+get_device(device: str | None = None) -> str
+```
+- Auto-detects best available device: MPS (Apple Silicon) > CPU
+- If `device` is provided, returns it as-is
+- Used throughout to enable MPS acceleration with CPU fallback
 
 **Environment Creation**
 ```python
@@ -176,6 +185,7 @@ make_env(cfg: EnvConfig) -> MPEWrapper
 ```
 - Seeds torch RNG and env
 - Returns wrapper with `max_cycles=cfg.max_steps`
+- Auto-detects device via `get_device(cfg.device)`
 
 **Network Builders**
 ```python
@@ -201,53 +211,90 @@ select_actions(actor: nn.Module, obs: Tensor) -> Tuple[Tensor, Tensor, Tensor]
 
 **Rollout Collection**
 ```python
-collect_episode(wrapper, actor, critic, env_cfg) -> RolloutBatch
+collect_episode(wrapper, actor, env_cfg, max_steps=None) -> RolloutBatch
 ```
-- Resets env with `env_cfg.seed`
-- Loops until `done_all` or `max_steps`
+- Resets env (no fixed seed for diverse episodes)
+- Loops until `done_all` or `max_steps` (defaults to `env_cfg.max_steps`)
 - For each step:
-  - Samples actions via `select_actions`
-  - Computes value via `critic.value(joint_obs)` where `joint_obs = obs.reshape(-1)`
-  - Steps env and stores tensors
+  - Samples actions via `select_actions` (with `torch.no_grad()`)
+  - Steps env and stores obs, actions, rewards, dones
+  - **Does NOT store logprobs/values/entropies** (recomputed in update)
+  - Uses `.item()` for fast tensor-to-bool conversion in done check
 - Returns `RolloutBatch` with episode trajectory
 
 **Returns and Advantages**
 ```python
 compute_returns_advantages(
-    rewards_mean: Tensor,  # [T]
+    rewards_team: Tensor,  # [T] (sum over agents)
     values: Tensor,        # [T]
     dones: Tensor,         # [T]
     gamma: float
 ) -> Tuple[Tensor, Tensor]
 ```
+- Uses consistent team reward aggregation (sum over agents)
 - Computes discounted returns backward from episode end
+- Uses `.item()` for proper conditional check on dones
 - `advantages = returns - values`
 - **No GAE** (simple TD-λ with λ=1)
 
-**A2C Update**
+**A3C Update**
 ```python
-a2c_update(actor, critic, batch, cfg, optim_actor, optim_critic) -> Dict[str, float]
+a3c_update(actor, critic, batch, cfg, optim_actor, optim_critic) -> Dict[str, float]
 ```
+- **Key difference from A2C:** Recomputes logits/logprobs/entropy/values from stored obs/actions
+- Aggregates rewards as team reward (sum over agents) for consistent returns and logging
 - Computes losses:
   - Policy: `-(logprobs * advantages.detach()).mean()`
   - Value: `MSE(values, returns)`
   - Entropy: `-entropy_coef * entropies.mean()`
 - Total loss: `policy + value_coef * value + entropy_term`
 - Clips gradients to `max_grad_norm`
-- Returns metrics dict: `policy_loss`, `value_loss`, `entropy`
+- Returns metrics dict: `policy_loss`, `value_loss`, `entropy`, `team_reward`
 
-**Training Loop**
+**Training Loop (A3C)**
 ```python
-train_ctde_a2c(env_cfg: EnvConfig, train_cfg: TrainConfig) -> Dict[str, List[float]]
+train_ctde_a3c(env_cfg: EnvConfig, train_cfg: TrainConfig) -> Dict[str, List[float]]
 ```
-- Creates env, actor, critic, optimizers
-- For each episode:
-  - Collects trajectory via `collect_episode`
-  - Computes returns/advantages
-  - Updates networks via `a2c_update`
-  - Logs episode return and losses
-- **Returns:** `history` dict with arrays for plotting:
-  - `episode_return`, `policy_loss`, `value_loss`, `entropy`
+
+**Parameters:**
+- `env_cfg: EnvConfig` — Environment configuration (seed, max_steps, device)
+- `train_cfg: TrainConfig` — Training configuration with A3C-specific fields:
+  - `max_episodes: int` (e.g., 300) — Total episodes to run across all workers
+  - `num_workers: int` (e.g., 4) — Number of parallel worker processes
+  - `n_steps: int` (e.g., 10) — Steps per worker rollout before update
+  - `device: str` (default "mps") — Global network device for gradient updates
+  - `sync_every: int` (default 1) — Frequency of weight sync from global to workers
+
+**Device Behavior:**
+- `device="mps"` or `device="cpu"` specified in config applies to **global networks** (gradient computation)
+- Worker processes **always use CPU** for rollout collection and local networks
+- MPS incompatible with `torch.multiprocessing` shared memory, so workers forced to CPU for correctness
+- This design: MPS handles gradients (fast), CPU workers handle environment interaction (stable)
+
+**Workflow:**
+1. Creates shared actor/critic networks on specified device
+2. Spawns `num_workers` processes with `mp.set_start_method('spawn')`
+3. Each worker:
+   - Maintains local network copy on CPU
+   - Collects `n_steps`-step rollout (no gradients)
+   - Recomputes logits/values/entropy from stored obs/actions
+   - Computes policy/value/entropy losses
+   - Acquires lock, updates global networks, releases lock
+   - Periodically syncs weights from global networks
+4. Main process:
+   - Monitors worker processes
+   - Collects episode metrics from shared queue
+   - Logs returns and losses
+5. Returns `history` dict:
+   - `episode_return`, `policy_loss`, `value_loss`, `entropy` — arrays for plotting
+
+**Key Differences from A2C:**
+- **Asynchronous:** Workers update global networks independently without waiting for others
+- **CPU Workers:** All environment interaction on CPU; only gradient updates on specified device
+- **No Replay Buffer:** On-policy learning from fresh worker rollouts
+- **Lock-Protected Updates:** Each worker acquires lock before modifying global networks
+
+**Multiprocessing:** Uses `spawn` method for compatibility with GPU memory sharing (MPS/CUDA).
 
 ---
 
@@ -304,11 +351,13 @@ graph LR
 
 ## Design Decisions
 
-### Minimal A2C First
+### A3C with Fixed Learning Issues
+- Asynchronous parallel workers for better exploration
+- Recompute logits/values during update (no stale gradients)
+- Consistent team reward aggregation (sum over agents)
+- Fixed done semantics: ALL agents must be done (not any)
+- MPS device support with automatic CPU fallback
 - No GAE (λ=1 returns) for simplicity and debuggability
-- Synchronous updates (A2C) before async (A3C)
-- Single-env rollout before vectorization
-- CPU-safe defaults (no GPU assumptions)
 
 ### Debuggability
 - Explicit tensor shapes in docstrings
@@ -327,11 +376,26 @@ graph LR
 
 ### Quick Training Run
 ```python
-from TorchRL_MAC_utils import EnvConfig, TrainConfig, train_ctde_a2c
+from TorchRL_MAC_utils import EnvConfig, TrainConfig, train_ctde_a3c
 
-env_cfg = EnvConfig(seed=42, max_steps=25)
-train_cfg = TrainConfig(n_episodes=100, log_every=10)
-history = train_ctde_a2c(env_cfg, train_cfg)
+env_cfg = EnvConfig(seed=42, max_steps=25, device=None)  # Auto-detect MPS/CPU
+train_cfg = TrainConfig(
+    max_episodes=300,    # Total episodes across all workers
+    log_every=10,
+    device="mps",        # Global networks device (workers always use CPU)
+    num_workers=4,       # Number of parallel A3C workers
+    n_steps=10,          # Steps per worker rollout
+    lr=3e-4
+)
+history = train_ctde_a3c(env_cfg, train_cfg)
+
+# Plot results
+import matplotlib.pyplot as plt
+plt.plot(history["episode_return"])
+plt.xlabel("Episode")
+plt.ylabel("Return")
+plt.title("A3C Training")
+plt.show()
 ```
 
 ### Custom Hyperparameters
@@ -339,24 +403,29 @@ history = train_ctde_a2c(env_cfg, train_cfg)
 train_cfg = TrainConfig(
     gamma=0.95,
     lr_actor=1e-4,
-    entropy_coef=0.02,
-    n_episodes=1000
+    entropy_coef=0.005,
+    max_episodes=500,
+    num_workers=8,       # More workers for parallel exploration
+    n_steps=15,          # Longer rollouts per worker
+    sync_every=1,        # Sync weights after each worker update
+    device="mps"         # Global networks on MPS (workers use CPU)
 )
 ```
 
 ### Inspect Rollout
 ```python
-from TorchRL_MAC_utils import make_env, build_shared_actor, build_central_critic, collect_episode
+from TorchRL_MAC_utils import make_env, build_shared_actor, collect_episode
 
 env = make_env(env_cfg)
 obs = env.reset()
 n_agents, obs_dim = obs.shape
 
 actor = build_shared_actor(obs_dim, env.n_actions)
-critic = build_central_critic(n_agents * obs_dim)
 
-batch = collect_episode(env, actor, critic, env_cfg)
+# Note: collect_episode no longer needs critic (recomputed in update)
+batch = collect_episode(env, actor, env_cfg)
 print(batch.rewards.shape, batch.obs.shape)
+print(f"Stored: obs, actions, rewards, dones (no logprobs/values)")
 ```
 
 ---
