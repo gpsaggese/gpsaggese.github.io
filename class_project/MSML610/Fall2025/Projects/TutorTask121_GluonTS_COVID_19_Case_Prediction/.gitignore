@@ -1,15 +1,49 @@
-# Virtual environments
-venv/
-.venv/
-
-# Python caches and bytecode
+# Python
 __pycache__/
 *.py[cod]
-*.pyc
+*$py.class
+*.so
+.Python
 
-# Jupyter
+# Jupyter Notebooks
 .ipynb_checkpoints/
+*-checkpoint.ipynb
 
-# Local data (do not commit large CSVs)
+# Data files
 data/
 
+# PyTorch Lightning logs
+lightning_logs/
+*.ckpt
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# Development files (optional)
+PHASE*.md
+*_PLAN*.md
+*_SUMMARY*.md
+*_COMPLETE*.md
+*_VERIFIED*.md
+*_FIXED*.md
+generate_*.py
+fix_*.py
