@@ -2,33 +2,28 @@
 
 ## 1. Overview
 
-This document describes the API surface provided by `econml_utils.py` for working with EconML estimators in the context of student performance analysis.
+This project uses the [EconML](https://www.pywhy.org/EconML/) library to estimate causal treatment effects from observational data. EconML is designed for **heterogeneous treatment effect** estimation using modern machine learning methods. 
 
-The goal is to offer a small wrapper over EconML that:
-- Standardizes how we configure and fit estimators,
-- Provides helper functions for estimating average and heterogeneous treatment effects,
-- Keeps the main notebooks readable and focused on the analysis logic.
+The file `econml_utils.py` provides a small, project-specific wrapper on top of EconML. The goals of this wrapper are to:
 
-## 2. Core Concepts
+- Standardize how we configure and fit EconML estimators,
+- Reduce boilerplate in the notebooks,
+- Make it easier to compare different Double Machine Learning (DML) estimators.
 
-- **Outcome (Y)**: Target variable we want to improve (such as final grade).
-- **Treatment (T)**: Binary variable indicating participation in an educational program.
-- **Features (X)**: Student and family characteristics used to model treatment heterogeneity.
-- **Controls (W)**: Additional covariates used for adjustment of confounding.
+The companion notebook `econml.API.ipynb` walks through the native EconML API and then demonstrates this wrapper in action.
 
-## 3. API Surface
+## 2. Core causal concepts
 
-The following objects and functions will be implemented in `econml_utils.py`:
+To use EconML, we must specify four key components:
 
-- `EconMLEducationConfig` – configuration dataclass for specifying outcome, treatment, feature, and control columns, as well as the estimator type.
-- `build_econml_estimator(config)` – creates an EconML estimator based on the config.
-- `fit_econml_estimator(df, config)` – fits the estimator using data from a pandas DataFrame.
-- `estimate_ate(model, df, config)` – estimates the Average Treatment Effect (ATE).
-- `estimate_cate_by_subgroup(model, df, config, subgroup_col)` – computes subgroup level Conditional Average Treatment Effects (CATEs).
+- **Outcome (Y)** – the variable whose causal response we want to measure (here: final grade `G3` in the Student Performance dataset).
+- **Treatment (T)** – a binary indicator of whether a unit received the intervention (school support program, `schoolsup`).
+- **Features (X)** – covariates that may drive **heterogeneity** in the treatment effect (e.g., demographics, parental education, study habits).
+- **Controls (W)** – additional covariates used primarily to adjust for confounding (e.g., prior grades `G1`, `G2`, and other support flags).
 
-Further details and examples of usage are shown in `econml.API.ipynb`.
+Double Machine Learning estimators in EconML assume **unconfoundedness**: once we condition on a rich set of observed covariates (X, W), treatment assignment is “as good as random.”
 
-## 4. Estimator choices for the Student Performance dataset
+## 3. Estimator choices for the Student Performance dataset
 
 For this project we work with **observational** student data rather than a randomized experiment. The educational support program (`schoolsup`) was not randomly assigned, and many observed variables (family background, prior performance, study behavior) can influence **both** program participation and final grades. At the same time, the dataset is fairly rich, with 30+ features that can serve as potential confounders.
 
@@ -63,3 +58,74 @@ All three estimators share the same high-level DML workflow:
 3. **Effect estimation**: fit a final-stage model on residuals to estimate causal effects that are robust to small errors in the nuisance models.
 
 Because they all follow the same EconML API (`fit`, `effect`, `ate`, etc.), the project’s wrapper functions (`build_econml_estimator`, `fit_econml_estimator`,`estimate_ate`, `estimate_cate_by_subgroup`) can switch between estimators with a single configuration flag.
+
+
+## 4. API surface in `econml_utils.py`
+
+### 4.1 `EconMLEducationConfig`
+
+```
+python
+@dataclass
+class EconMLEducationConfig:
+    outcome_col: str
+    treatment_col: str
+    x_cols: List[str]
+    w_cols: Optional[List[str]] = None
+    estimator_type: str = "linear_dml"
+```
+Configuration object capturing all project-specific modeling choices:
+
+-   `outcome_col`: name of the outcome column (e.g., `"G3"`).
+-   `treatment_col`: name of the treatment column (e.g., `"schoolsup"`).
+-   `x_cols`: list of feature columns used for CATE heterogeneity.
+-   `w_cols`: optional list of control columns used for confounding adjustment.
+-   `estimator_type`: which EconML estimator to use:
+    -   `"linear_dml"`, `"causal_forest"`, or `"sparse_linear_dml"`.
+A helper function, `make_default_config()`, returns a reasonable default configuration for the Student Performance dataset.
+
+### 4.2 Model construction and fitting
+
+-   `build_econml_estimator(config)`: Creates an unfit EconML estimator instance based on `config.estimator_type`.
+-   `fit_econml_estimator(df, config, estimator=None)`: Splits the DataFrame into `(Y, T, X, W)` and calls `.fit(...)` on the estimator. If `estimator` is `None`, it calls `build_econml_estimator` internally.
+
+### 4.3 Effect estimation helpers
+
+-   `estimate_ate(model, df, config)`: Returns a dictionary with the ATE estimate and 95% confidence interval, based on the model's `.ate(...)` and `.ate_interval(...)` methods.
+-   `estimate_cate_by_subgroup(model, df, config, subgroup_col)`: Computes individual-level treatment effects via `.effect(X)` and then aggregates them by `subgroup_col`, returning group-level CATE summaries.
+
+### 4.4 Data-related utilities
+
+-   `load_student_data(source="ucimlrepo", local_path=None)`: Loads the Student Performance dataset either via the `ucimlrepo` package (dataset ID 320) or from a local CSV file. [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/320/student+performance)
+-   `clean_student_data(df)`: Applies light cleaning and encoding (e.g., mapping `yes`/`no` to 0/1).
+-   `summarize_treatment(df, config)`: Returns a small table summarizing counts and average outcomes by treatment status.
+
+## 5. Typical usage patterns (as used in the notebook)
+
+### 5.1 Native EconML pattern
+
+```
+est = LinearDML(discrete_treatment=True, random_state=42)
+est.fit(Y, T, X=X, W=W)
+ate = est.ate(X=X)
+```
+
+### 5.2 Wrapper-based pattern
+
+```
+df_raw = load_student_data(source="ucimlrepo")
+df = clean_student_data(df_raw)
+config = make_default_config()            # defines Y, T, X, W
+config.estimator_type = "linear_dml"      # or "causal_forest", "sparse_linear_dml"
+model = fit_econml_estimator(df, config)
+ate_result = estimate_ate(model, df, config)
+cate_by_sex = estimate_cate_by_subgroup(model, df, config, subgroup_col="sex")
+```
+This allows the **analysis notebooks** to switch between estimators by only changing `config.estimator_type`, without rewriting the fitting and post-processing logic.
+
+## 6. Design decisions and limitations
+
+-   The API is intentionally **minimal** and tailored to this project, as a result, it does not expose every EconML feature.
+-   All estimators are configured with `discrete_treatment=True` to reflect the binary nature of the education program indicator.
+-   The validity of the causal conclusions still depends on the usual DML assumptions, especially that we have measured all major confounders.
+-   Additional extensions (e.g., custom nuisance models, cross-fitting options, alternative estimators like DR Learners) could be added in future work if more flexibility is needed.

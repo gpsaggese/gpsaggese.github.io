@@ -8,8 +8,6 @@ This module wraps a few common operations needed in the notebooks:
 * Splitting a pandas.DataFrame into (Y, T, X, W) blocks
 * Simple summaries of the treatment vs. control groups
 
-The actual EconML model construction and fitting will be implemented
-in a later phase.
 """
 
 from __future__ import annotations
@@ -20,6 +18,7 @@ from typing import Any, Dict, List, Optional
 import pandas as pd
 import numpy as np
 
+from sklearn.linear_model import LogisticRegression
 from econml.dml import LinearDML, CausalForestDML, SparseLinearDML
 
 
@@ -212,7 +211,7 @@ def make_default_config() -> EconMLEducationConfig:
         "absences",
     ]
 
-    # Additional controls for confounding (e.g., previous grades).
+    # Additional controls for confounding (such as previous grades).
     w_cols = [
         "G1",
         "G2",
@@ -299,32 +298,16 @@ def summarize_treatment(
     summary = summary.rename(columns={config.treatment_col: "treatment"})
     return summary
 
-
-# ---------------------------------------------------------------------
-# Placeholders for later phases (EconML estimators)
-# ---------------------------------------------------------------------
-
 def build_econml_estimator(config: EconMLEducationConfig) -> Any:
     """Build an EconML Double Machine Learning estimator.
 
     This function centralizes which EconML estimator we use for this project.
     It maps a simple string in ``config.estimator_type`` to a concrete DML
-    estimator class.
+    estimator class and configures a treatment model with enough iterations
+    to avoid L-BFGS convergence warnings.
 
-    Mapping
-    -------
-    - ``"linear_dml"``:
-        :class:`econml.dml.LinearDML`
-        Linear CATE model; most interpretable for understanding how
-        treatment effects vary with student characteristics.
-    - ``"causal_forest"``:
-        :class:`econml.dml.CausalForestDML`
-        Forest-based DML; flexible non-linear heterogeneity, good for
-        discovering complex subgroups.
-    - ``"sparse_linear_dml"``:
-        :class:`econml.dml.SparseLinearDML`
-        Linear CATE with L1-type regularization to select the most
-        important heterogeneity features.
+    See the API docs for a detailed discussion of why these estimators are
+    appropriate for observational data with rich covariates.
 
     All of these estimators:
     - Implement Double Machine Learning under the **unconfoundedness**
@@ -346,21 +329,31 @@ def build_econml_estimator(config: EconMLEducationConfig) -> Any:
     """
     est_type = config.estimator_type.lower()
 
+    # Logistic regression model for the binary treatment (schoolsup).
+    # Explicitly increased max_iter so that the lbfgs solver has room to converge.
+    logit_t = LogisticRegression(
+        max_iter=2000,
+        solver="lbfgs",
+    )
     if est_type == "linear_dml":
         estimator = LinearDML(
+            model_t=logit_t,
             discrete_treatment=True,
             random_state=42,
         )
     elif est_type == "causal_forest":
         estimator = CausalForestDML(
+            model_t=logit_t,
             discrete_treatment=True,
             random_state=42,
         )
     elif est_type == "sparse_linear_dml":
         estimator = SparseLinearDML(
+            model_t=logit_t,
             discrete_treatment=True,
             random_state=42,
         )
+
     else:
         raise ValueError(
             f"Unknown estimator_type '{config.estimator_type}'. "
