@@ -18,6 +18,9 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
+import numpy as np
+
+from econml.dml import LinearDML, CausalForestDML, SparseLinearDML
 
 
 # ---------------------------------------------------------------------
@@ -301,32 +304,151 @@ def summarize_treatment(
 # Placeholders for later phases (EconML estimators)
 # ---------------------------------------------------------------------
 
-
 def build_econml_estimator(config: EconMLEducationConfig) -> Any:
-    """Build an EconML estimator based on the provided configuration.
+    """Build an EconML Double Machine Learning estimator.
 
-    This is a placeholder that will be implemented in a later phase.
+    This function centralizes which EconML estimator we use for this project.
+    It maps a simple string in ``config.estimator_type`` to a concrete DML
+    estimator class.
+
+    Mapping
+    -------
+    - ``"linear_dml"``:
+        :class:`econml.dml.LinearDML`
+        Linear CATE model; most interpretable for understanding how
+        treatment effects vary with student characteristics.
+    - ``"causal_forest"``:
+        :class:`econml.dml.CausalForestDML`
+        Forest-based DML; flexible non-linear heterogeneity, good for
+        discovering complex subgroups.
+    - ``"sparse_linear_dml"``:
+        :class:`econml.dml.SparseLinearDML`
+        Linear CATE with L1-type regularization to select the most
+        important heterogeneity features.
+
+    All of these estimators:
+    - Implement Double Machine Learning under the **unconfoundedness**
+      assumption (all confounders are measured).
+    - Support **binary treatments** via ``discrete_treatment=True``.
+    - Use ML models internally to learn the nuisance functions
+      (treatment and outcome models) and then estimate treatment effects
+      on residualized data.
+
+    Parameters
+    ----------
+    config : EconMLEducationConfig
+        Configuration specifying the estimator type.
+
+    Returns
+    -------
+    Any
+        An unfit EconML estimator instance.
     """
-    raise NotImplementedError("build_econml_estimator is not implemented yet.")
+    est_type = config.estimator_type.lower()
 
+    if est_type == "linear_dml":
+        estimator = LinearDML(
+            discrete_treatment=True,
+            random_state=42,
+        )
+    elif est_type == "causal_forest":
+        estimator = CausalForestDML(
+            discrete_treatment=True,
+            random_state=42,
+        )
+    elif est_type == "sparse_linear_dml":
+        estimator = SparseLinearDML(
+            discrete_treatment=True,
+            random_state=42,
+        )
+    else:
+        raise ValueError(
+            f"Unknown estimator_type '{config.estimator_type}'. "
+            "Use 'linear_dml', 'causal_forest', or 'sparse_linear_dml'."
+        )
 
-def fit_econml_estimator(df: pd.DataFrame, config: EconMLEducationConfig) -> Any:
+    return estimator
+
+def fit_econml_estimator(
+    df: pd.DataFrame,
+    config: EconMLEducationConfig,
+    estimator: Optional[Any] = None,
+) -> Any:
     """Fit an EconML estimator using the given DataFrame and configuration.
 
-    This function will split the data into (Y, T, X, W) and call
-    ``.fit`` on the appropriate EconML estimator.
+    This helper:
+    1. Builds an estimator (if one is not provided),
+    2. Uses :func:`split_y_t_x_w` to construct (Y, T, X, W),
+    3. Calls ``estimator.fit(Y, T, X=X, W=W)`` as per the EconML API.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Student data containing outcome, treatment, heterogeneity features,
+        and (optionally) controls.
+    config : EconMLEducationConfig
+        Configuration defining Y, T, X, W, and estimator type.
+    estimator : Any, optional
+        Pre-constructed EconML estimator. If ``None``, a new estimator
+        is created via :func:`build_econml_estimator`.
+
+    Returns
+    -------
+    Any
+        A fitted EconML estimator.
     """
-    raise NotImplementedError("fit_econml_estimator is not implemented yet.")
+    if estimator is None:
+        estimator = build_econml_estimator(config)
 
+    arrays = split_y_t_x_w(df, config)
+    y, t, X, W = arrays["y"], arrays["t"], arrays["X"], arrays["W"]
 
-def estimate_ate(model: Any, df: pd.DataFrame, config: EconMLEducationConfig) -> float:
-    """Estimate the Average Treatment Effect (ATE) using a fitted model.
+    estimator.fit(y, t, X=X, W=W)
+    return estimator
 
-    The implementation will call ``model.ate`` (or an equivalent
-    method) and return a scalar effect estimate.
+def estimate_ate(
+    model: Any,
+    df: pd.DataFrame,
+    config: EconMLEducationConfig,
+) -> Dict[str, float]:
+    """Estimate the Average Treatment Effect (ATE) and its confidence interval.
+
+    This helper calls the EconML model's ``ate`` and ``ate_interval`` methods
+    and normalizes the result into a simple dictionary.
+
+    Parameters
+    ----------
+    model : Any
+        A fitted EconML estimator (LinearDML, SparseLinearDML or CausalForestDML).
+    df : pandas.DataFrame
+        Data used for querying the ATE (usually the evaluation or full sample).
+    config : EconMLEducationConfig
+        Configuration defining which columns form X.
+
+    Returns
+    -------
+    dict
+        Dictionary with keys:
+
+        - ``"ate"``: point estimate of the ATE
+        - ``"ate_ci_lower"``: lower bound of 95% CI
+        - ``"ate_ci_upper"``: upper bound of 95% CI
     """
-    raise NotImplementedError("estimate_ate is not implemented yet.")
+    X = df[config.x_cols].to_numpy()
 
+    # `ate` can return a scalar or a 1D array; convert safely to a float.
+    ate_value = model.ate(X=X)
+    ate_value = float(np.asarray(ate_value).ravel()[0])
+
+    ci_low, ci_high = model.ate_interval(X=X)
+    ci_low = float(np.asarray(ci_low).ravel()[0])
+    ci_high = float(np.asarray(ci_high).ravel()[0])
+
+    return {
+        "ate": ate_value,
+        "ate_ci_lower": ci_low,
+        "ate_ci_upper": ci_high,
+    }
 
 def estimate_cate_by_subgroup(
     model: Any,
@@ -334,14 +456,48 @@ def estimate_cate_by_subgroup(
     config: EconMLEducationConfig,
     subgroup_col: str,
 ) -> pd.DataFrame:
-    """Estimate subgroup-level CATEs by averaging individual effects.
+    """Estimate subgroup-level Conditional Average Treatment Effects (CATEs).
 
-    The implementation will:
+    Steps:
+    1. Use the fitted EconML model to compute **individual-level**
+       treatment effects via ``model.effect(X)``.
+    2. Attach those effects back to the DataFrame.
+    3. Group by ``subgroup_col`` (e.g., ``"sex"`` or ``"Medu"``) and
+       compute mean, standard deviation, and count.
 
-    1. Use the EconML model to compute individual-level treatment
-       effects for each student.
-    2. Group those effects by the provided ``subgroup_col`` (e.g.,
-       "sex" or "Medu").
-    3. Return a small DataFrame of subgroup averages and counts.
+    Parameters
+    ----------
+    model : Any
+        A fitted EconML estimator.
+    df : pandas.DataFrame
+        Data containing the subgroup column and heterogeneity features X.
+    config : EconMLEducationConfig
+        Configuration specifying which columns form X.
+    subgroup_col : str
+        Column name to group by when aggregating individual treatment effects.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame with one row per subgroup and columns:
+
+        - ``subgroup``: subgroup label (e.g., 'F' vs 'M' or education level)
+        - ``cate_mean``: mean estimated treatment effect for that subgroup
+        - ``cate_std``: standard deviation of individual effects
+        - ``n``: number of students in the subgroup
     """
-    raise NotImplementedError("estimate_cate_by_subgroup is not implemented yet.")
+    df = df.copy()
+    X = df[config.x_cols].to_numpy()
+
+    # Individual-level treatment effect estimates (CATE_i).
+    te = model.effect(X=X)
+    df["_individual_te"] = np.asarray(te).ravel()
+
+    grouped = (
+        df.groupby(subgroup_col)["_individual_te"]
+        .agg(cate_mean="mean", cate_std="std", n="count")
+        .reset_index()
+        .rename(columns={subgroup_col: "subgroup"})
+    )
+
+    return grouped
