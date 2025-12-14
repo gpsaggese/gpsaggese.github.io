@@ -509,14 +509,13 @@ The **macro F1 score** is used as the primary metric, as it accounts for class-l
 
 The table below summarizes the performance of each model.
 
-| Model | Accuracy | Precision | Recall | Weighted F1 | Notes |
-|------|----------|-----------|--------|----------|-------|
-| DistilBERT (Fine-Tuned) |  |  |  |  | Primary model |
-| Logistic Regression (TF-IDF) |  |  |  |  | Linear baseline |
-| Linear SVM (TF-IDF) |  |  |  |  | Strong classical model |
-| Random Forest |  |  |  |  | Non-linear baseline |
+| Model                         | Accuracy | Weighted F1 | Notes                  |
+|-------------------------------|----------|-------------|------------------------|
+| DistilBERT (Fine-Tuned)       | 0.853943 | 0.853914    | Primary model          |
+| Logistic Regression (TF-IDF)  | 0.813350 | 0.813328    | Linear baseline        |
+| Linear SVM (TF-IDF)           | 0.812298 | 0.812258    | Strong classical model |
+| Random Forest                 | 0.791787 | 0.791746    | Non-linear baseline    |
 
-> *Note:* Exact metric values will be filled in after after verification.
 
 ---
 
