@@ -166,7 +166,7 @@ Before starting this project, make sure the following prerequisites are in place
 > No managed cloud services, hosted APIs, or external inference endpoints are used —  
 > Colab was used **only as a compute environment**, not as a dependency of the system.
 
-## 5. Download Dataset from Kaggle
+## 5. Download Dataset 
 
 This project uses the **Sentiment140** dataset, which contains 1.6 million labeled tweets for sentiment analysis.
 
@@ -180,51 +180,18 @@ This project uses the **Sentiment140** dataset, which contains 1.6 million label
   - `2` → Neutral
   - `4` → Positive
 
-> ⚠️ The raw dataset is **not tracked in this repository** due to its size.  
-> You must download it locally before proceeding.
+> The raw dataset is **not tracked** in this repo. Run the helper script below **from the project root** to download and place it locally:
+
+```bash
+python download_sentiment140.py
+```
+After it finishes, you should have this file at the project root:
+
+`Sentiment140_raw.csv`
+
+Run this before building/running Docker so the dataset is available inside the container via the mounted volume.
 
 ---
-
-#### Option A: Download via Kaggle Website
-
-1. Go to the Kaggle dataset page:
-   - https://www.kaggle.com/datasets/kazanova/sentiment140
-2. Click **Download**
-3. Unzip the downloaded file
-4. Locate the file:
-   - `training.1600000.processed.noemoticon.csv`
-5. Place it in a local directory such as:
-```
-data/raw/training.1600000.processed.noemoticon.csv
-```
-
-#### Option B: Download Dataset via Kaggle CLI
-
-Follow the steps below to download the **Sentiment140** dataset using the Kaggle command-line interface.
-
-1. Install the Kaggle CLI:
-   ```bash
-   pip install kaggle
-
-2. Create an API token:
-   - Log in to your Kaggle account
-   - Navigate to **Account**
-   - Click **Create New API Token**
-   - This will download a file named `kaggle.json`
-
-3. Move the token to the correct location:
-   ```bash
-   mkdir -p ~/.kaggle
-   mv kaggle.json ~/.kaggle/
-   chmod 600 ~/.kaggle/kaggle.json
-
-4. Download the Sentiment140 dataset:
-   ```bash
-   kaggle datasets download -d kazanova/sentiment140
-
-5. Unzip the downloaded archive into a raw data directory:
-   ```bash
-   unzip sentiment140.zip -d data/raw
 
 ## 6. Data Cleaning and Feature Engineering with OpenRefine
 
@@ -542,14 +509,13 @@ The **macro F1 score** is used as the primary metric, as it accounts for class-l
 
 The table below summarizes the performance of each model.
 
-| Model | Accuracy | Precision | Recall | Weighted F1 | Notes |
-|------|----------|-----------|--------|----------|-------|
-| DistilBERT (Fine-Tuned) |  |  |  |  | Primary model |
-| Logistic Regression (TF-IDF) |  |  |  |  | Linear baseline |
-| Linear SVM (TF-IDF) |  |  |  |  | Strong classical model |
-| Random Forest |  |  |  |  | Non-linear baseline |
+| Model                         | Accuracy | Weighted F1 | Notes                  |
+|-------------------------------|----------|-------------|------------------------|
+| DistilBERT (Fine-Tuned)       | 0.853943 | 0.853914    | Primary model          |
+| Logistic Regression (TF-IDF)  | 0.813350 | 0.813328    | Linear baseline        |
+| Linear SVM (TF-IDF)           | 0.812298 | 0.812258    | Strong classical model |
+| Random Forest                 | 0.791787 | 0.791746    | Non-linear baseline    |
 
-> *Note:* Exact metric values will be filled in after after verification.
 
 ---
 
@@ -808,7 +774,7 @@ Before starting this project, make sure the following prerequisites are in place
 > As required by the course guidelines, all components of this project run **locally**.  
 > No external cloud compute or managed services are used.
 
-## 5. Download Dataset from Kaggle
+## 5. Download Dataset 
 
 This project uses the **Sentiment140** dataset, which contains 1.6 million labeled tweets for sentiment analysis.
 
@@ -822,51 +788,16 @@ This project uses the **Sentiment140** dataset, which contains 1.6 million label
   - `2` → Neutral
   - `4` → Positive
 
-> ⚠️ The raw dataset is **not tracked in this repository** due to its size.  
-> You must download it locally before proceeding.
+> The raw dataset is **not tracked** in this repo. Run the helper script below **from the project root** to download and place it locally:
+
+```bash
+python download_sentiment140.py
+```
+After it finishes, you should have this file at the project root: `Sentiment140_raw.csv`
+
+Run this before building/running Docker so the dataset is available inside the container via the mounted volume.
 
 ---
-
-### Option A: Download via Kaggle Website (Recommended)
-
-1. Go to the Kaggle dataset page:
-   - https://www.kaggle.com/datasets/kazanova/sentiment140
-2. Click **Download**
-3. Unzip the downloaded file
-4. Locate the file:
-   - `training.1600000.processed.noemoticon.csv`
-5. Place it in a local directory such as:
-```
-data/raw/training.1600000.processed.noemoticon.csv
-```
-
-### Option B: Download Dataset via Kaggle CLI
-
-Follow the steps below to download the **Sentiment140** dataset using the Kaggle command-line interface.
-
-1. Install the Kaggle CLI:
-   ```bash
-   pip install kaggle
-
-2. Create an API token:
-   - Log in to your Kaggle account
-   - Navigate to **Account**
-   - Click **Create New API Token**
-   - This will download a file named `kaggle.json`
-
-3. Move the token to the correct location:
-   ```bash
-   mkdir -p ~/.kaggle
-   mv kaggle.json ~/.kaggle/
-   chmod 600 ~/.kaggle/kaggle.json
-
-4. Download the Sentiment140 dataset:
-   ```bash
-   kaggle datasets download -d kazanova/sentiment140
-
-5. Unzip the downloaded archive into a raw data directory:
-   ```bash
-   unzip sentiment140.zip -d data/raw
 
 ## 6. Data Cleaning and Feature Engineering with OpenRefine
 
