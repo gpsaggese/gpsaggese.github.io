@@ -1,13 +1,10 @@
-# Core libraries
-numpy
+numpy<2.0.0
 pandas
 scikit-learn
 matplotlib
 seaborn
-
-# Main project library
 auto-sklearn
-
-# Jupyter environment (already in base, but good to list)
 jupyterlab
 notebook
+streamlit
+plotly
