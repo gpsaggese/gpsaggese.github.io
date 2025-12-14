@@ -244,6 +244,7 @@ Isolated components may represent separate fraud operations - helps identify dis
 ---
 
 # Wrapper Functions for Fraud Detection
+Wrapper functions are basically the native functions only, we just have put few conditional statements to handle the edge cases and exceptions. All functions skeleton can be found in utils.py.
 
 ## Wrapper Function: `create_transaction_graph()`
 

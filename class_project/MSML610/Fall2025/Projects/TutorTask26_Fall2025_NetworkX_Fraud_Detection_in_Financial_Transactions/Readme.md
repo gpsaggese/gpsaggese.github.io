@@ -171,10 +171,10 @@ plot_degree_distribution(G)
 
 ## Business Applications
 
-- **Fraud Investigation:** Identify suspicious accounts for review
-- **Risk Management:** Prioritize high-risk accounts
-- **Compliance:** Detect and document fraud rings
-- **Pattern Discovery:** Uncover new fraud tactics
+- **Fraud Investigation:** Identify suspicious accounts for review (Fraud Detection)
+- **Risk Management:** Prioritize high-risk accounts (Risk Scoring)
+- **Compliance:** Detect and document fraud rings (Visualization)
+- **Pattern Discovery:** Uncover new fraud tactics (Visualization)
 
 ---
 
