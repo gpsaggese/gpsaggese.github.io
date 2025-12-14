@@ -1,134 +1,239 @@
-Airport Congestion Level Prediction
+# Airport Congestion Level Prediction  
+## Using XGBoost and Flight Operations Data
 
-MSML 610 – Final Project
-Author: Varun Parashar
+---
 
-⸻
+## Project Overview
 
-Overview
+Airports experience congestion when too many flights arrive and depart within a short time window.  
+This project predicts **hourly airport congestion levels** at major U.S. airports using historical flight operations data and machine learning.
 
-This repository contains a complete machine learning pipeline to predict hourly airport congestion levels (Low, Medium, High) using the U.S. DOT Airline On-Time Performance Dataset.
+The final output is an **interactive web application** where users can:
+- Select an airport
+- Select a date
+- View hourly congestion levels
+- Identify peak congestion hours
 
-The project includes:
-    •    Data preprocessing
-    •    Feature engineering
-    •    XGBoost multi-class classifier
-    •    Jupyter notebooks for EDA and modeling
-    •    Streamlit dashboard for interactive visualization
+---
 
-⸻
+## Project Objective
 
-Repository Structure
+The main objectives of this project are:
 
- project_root/
+- Aggregate flight-level data into **hourly airport summaries**
+- Engineer traffic and delay-based features
+- Train an **XGBoost multi-class classifier**
+- Predict congestion levels: **Low, Medium, High**
+- Visualize results through a **Streamlit web dashboard**
+
+---
+
+## Dataset Description
+
+This project uses the **U.S. Airline On-Time Performance Dataset**.
+
+### Raw files used (not included in GitHub due to size limits):
+
+- `flights.csv` – Flight-level records (500MB+)
+- `airlines.csv` – Airline metadata
+- `airports.csv` – Airport metadata
+
+Due to GitHub’s 100MB file size restriction, raw datasets are **excluded from the repository**.
+
+---
+
+## Project Folder Structure
+UmdTask248_Fall2025_XGBoost_Airport_Congestion_Prediction/
+│
+├── app/                     # Web application
+│   └── app.py
+│
+├── src/                     # Core ML scripts
+│   ├── preprocess_hourly.py
+│   └── train_model.py
 │
 ├── data/
-│   ├── raw/                     # flights.csv, airlines.csv, airports.csv
-│   ├── processed/               # hourly_congestion.csv
-│   └── models/                  # model.pkl
+│   ├── raw/                 # Raw Kaggle CSVs (ignored in Git)
+│   │   └── README.md
+│   ├── processed/           # Generated datasets (ignored in Git)
+│   └── models/              # Saved ML models (ignored in Git)
 │
-├── src/
-│   ├── preprocess_hourly.py     # Create hourly congestion dataset
-│   └── train_model.py           # Train and save XGBoost model
+├── notebooks/               # Jupyter notebooks
+│   ├── 01_eda_flights.ipynb
+│   ├── 02_feature_engineering.ipynb
+│   └── 03_training_xgboost.ipynb
 │
-├── app/
-│   └── app.py                   # Streamlit dashboard
-│
-└── notebooks/
-    ├── 01_eda_flights.ipynb
-    ├── 02_feature_engineering.ipynb
-    └── 03_training_xgboost.ipynb
-    
-    
-Dataset
+├── .gitignore
+├── .dockerignore
+├── README.md
+└── requirements.txt
 
-Source:
-U.S. DOT Airline On-Time Performance Dataset (Kaggle)
+---
 
-Files Required:
-    •    flights.csv
-    •    airlines.csv
-    •    airports.csv
+## Explanation of Each Folder and File
 
-Place these inside:  data/raw/
+### app/app.py — Streamlit Web Application
 
-Installation
+This file creates the **interactive web dashboard**.
 
-Clone the repository
+Responsibilities:
+- Loads processed hourly data
+- Allows users to select an airport and date
+- Displays hourly congestion levels
+- Highlights peak congestion hour
+- Updates results dynamically based on user input
 
-git clone https://github.com/Varun-22/umd_classes
-cd umd_classes
+---
 
-Create a virtual environment (recommended)
+### src/preprocess_hourly.py — Data Preprocessing
 
-python3 -m venv venv
-source venv/bin/activate     # macOS / Linux
-venv\Scripts\activate        # Windows
+This script converts raw flight-level data into an **hourly congestion dataset**.
 
-Install dependencies
+Steps performed:
+1. Load raw CSV files
+2. Extract date and hour from timestamps
+3. Aggregate flights by airport and hour
+4. Compute traffic and delay metrics
+5. Label congestion levels (Low / Medium / High)
+6. Save processed data to data/processed/hourly_congestion.csv
 
-If using a requirements file:
+---
 
-pip install -r requirements.txt
+### src/train_model.py — Model Training
 
-1. Preprocessing
+This script trains the machine learning model.
 
-Generates hourly congestion data by computing:
-    •    Departures per hour
-    •    Arrivals per hour
-    •    Total flights per hour
-    •    Congestion level label
+Steps:
+1. Load processed hourly dataset
+2. Encode congestion categories numerically
+3. Train an XGBoost multi-class classifier
+4. Evaluate performance metrics
+5. Save trained model to data/models/model.pkl
 
-Run the preprocessing script: python3 src/preprocess_hourly.py
+---
 
-Output:  data/processed/hourly_congestion.csv
+## Notebooks
 
-2. Model Training
+### 01_eda_flights.ipynb
 
-Trains an XGBoost classifier using engineered features.
+- Initial exploration of flight data
+- Distribution of delays
+- Traffic volume across airports
 
-Run:  python3 src/train_model.py
+---
 
-Output: data/models/model.pkl
+### 02_feature_engineering.ipynb
 
-3. Streamlit Dashboard
+- Creation of congestion-related features
+- Delay thresholds
+- Hourly aggregation analysis
 
-Launch the dashboard:
+---
+
+### 03_training_xgboost.ipynb
+
+- Model training experiments
+- Hyperparameter tuning
+- Performance evaluation
+
+---
+
+## data/raw/README.md
+
+This file explains how to obtain the dataset.
+
+Raw data files must be downloaded manually and placed in data/raw/
+
+These files are ignored by GitHub.
+
+---
+
+## Git Ignore Files
+
+### .gitignore
+
+Prevents the following from being uploaded:
+- Raw CSV datasets
+- Processed data
+- Model files
+- Temporary files and caches
+
+---
+
+### .dockerignore
+
+Excludes unnecessary files during Docker image creation:
+- Data folders
+- Notebooks
+- Git metadata
+- Cache files
+
+---
+
+## How the Website Works
+
+1. User opens the Streamlit web app
+2. Selects an airport
+3. Selects a date
+4. Application filters hourly data
+5. Displays:
+   - Hourly congestion levels
+   - Peak congestion time
+6. Results update instantly
+
+---
+
+## How to Run the Project Locally
+
+### Step 1: Install dependencies pip install -r requirements.txt
+
+---
+
+### Step 2: Place raw datasets
+
+data/raw/flights.csv
+data/raw/airlines.csv
+data/raw/airports.csv
+
+---
+
+### Step 3: Preprocess data
+
+python src/preprocess_hourly.py
+
+---
+
+### Step 4: Train the model
+
+python src/train_model.py
+
+---
+
+### Step 5: Run the Streamlit app
 
 streamlit run app/app.py
 
-Features:
-    •    Airport selection
-    •    Date selection
-    •    Predicted hourly congestion levels
-    •    Peak congestion hour
-    •    Interactive bar chart
-    •    Flight details table
+---
 
-⸻
+## Output
 
-Notebooks
+- Hourly congestion predictions
+- Interactive dashboard
+- Clear visualization of peak congestion hours
 
-Three Jupyter notebooks document the full workflow:
-    1.    01_eda_flights.ipynb – dataset exploration
-    2.    02_feature_engineering.ipynb – build hourly dataset
-    3.    03_training_xgboost.ipynb – model fitting and evaluation
+---
 
-⸻
+## Key Takeaways
 
-Model Details
-    •    Algorithm: XGBoost (multi-class classification)
-    •    Label Encoding:
-    •    Low = 0
-    •    Medium = 1
-    •    High = 2
-    •    Airport encoded using OneHotEncoder
-    •    Evaluation metrics: precision, recall, F1-score
+- Large datasets require careful preprocessing
+- Hourly aggregation reveals congestion patterns
+- XGBoost performs well for multi-class classification
+- Streamlit enables rapid deployment of ML applications
 
-⸻
+---
 
-Author
+## Author
 
-Varun Parashar
-Master of Science in Artificial Intelligence
-University of Maryland, College Park
+**Varun Parashar**  
+MSML610 — Fall 2025  
+University of Maryland
