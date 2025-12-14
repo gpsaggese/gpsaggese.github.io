@@ -1,41 +1,86 @@
 # COVID-19 Case Prediction with Prophet
 
-A comprehensive time series forecasting project using Facebook Prophet to predict daily COVID-19 cases, with comparisons to ARIMA/SARIMA baselines.
+A comprehensive time series forecasting project comparing **Prophet**, **ARIMA**, **SARIMA**, and **LSTM** models to predict daily COVID-19 cases during the Omicron surge.
 
 **Author**: Ibrahim Ahmed Mohammed  
-**Course**: DATA610 
-**Date**: December 2024
+**Course**: DATA610  
+**Date**: December 2025
 
 ---
 
 ## 📋 Project Overview
 
-This project implements a COVID-19 case forecasting system to support healthcare planning and resource allocation. It demonstrates:
+This project implements a COVID-19 case forecasting system to support healthcare planning and resource allocation. The key challenge: **predicting the Omicron surge** (January 2022) - when daily cases exploded to 500,000-800,000.
 
-- **Prophet** for time series forecasting with seasonality and intervention effects
-- **ARIMA/SARIMA** baseline models for comparison
-- **Custom wrapper layer** for simplified, reusable forecasting workflows
-- **Multi-region analysis** across different countries
+### Models Implemented
+
+| Model | Type | Description |
+|-------|------|-------------|
+| **Prophet** | Additive | Facebook's decomposable model with seasonality & holidays |
+| **ARIMA** | Statistical | AutoRegressive Integrated Moving Average baseline |
+| **SARIMA** | Statistical | Seasonal ARIMA with weekly patterns (s=7) |
+| **LSTM** | Deep Learning | Long Short-Term Memory neural network |
 
 ### Key Features
 
-- 📈 4-week ahead daily case forecasting
-- 🏥 Incorporation of policy interventions (lockdowns, vaccine rollout, etc.)
-- 📊 Weekly seasonality to capture reporting cycles
-- 🌍 Multi-country comparison (US, Germany, Brazil, India)
-- 📉 Model evaluation with RMSE, MAE, and SMAPE metrics
+- 📈 **4-week ahead forecasting** of the Omicron surge (Jan 2022)
+- 🏥 **9 policy interventions** (lockdowns, vaccine rollout, variant surges)
+- 📊 **Weekly seasonality** to capture reporting cycles (~40% weekend drop)
+- 🌍 **Multi-country comparison** (US, Germany, Brazil, India)
+- 📉 **Model evaluation** with RMSE, MAE, and SMAPE metrics
+- 🛡️ **Non-negative predictions** guaranteed for all models
+
+---
+
+## 📊 Results Summary
+
+### Forecasting Challenge: Omicron Surge Prediction
+
+- **Training**: 710 days (2020-01-22 to 2021-12-31)
+- **Test**: 28 days (2022-01-01 to 2022-01-28) - **Omicron Surge!**
+- **Actual cases**: ~500,000 - 800,000+ per day
+
+### Model Comparison Results
+
+| Model | RMSE | MAE | SMAPE | Rank |
+|-------|------|-----|-------|------|
+| **ARIMA** | **338,340** | **271,519** | 42.60% | 🥇 Best RMSE/MAE |
+| LSTM | 385,830 | 311,702 | 50.58% | 🥈 |
+| SARIMA | 387,957 | 312,909 | **40.73%** | 🥉 Best SMAPE |
+| Prophet | 583,947 | 526,183 | 116.74% | 4th |
+
+### Best Model by Metric
+
+| Metric | Winner | Value |
+|--------|--------|-------|
+| **RMSE** | ARIMA | 338,340 |
+| **MAE** | ARIMA | 271,519 |
+| **SMAPE** | SARIMA | 40.73% |
+
+### Key Insight
+
+**ARIMA outperformed Prophet** on this challenging task because:
+- Prophet underpredicted the surge (73K-259K vs actual 500K-800K)
+- Simpler statistical models captured the explosive trend better
+- No model perfectly predicted the unprecedented Omicron explosion
 
 ---
 
 ## 📁 Project Structure
 
 ```
-├── prophet_utils.py          # Utility module with wrapper classes and helper functions
-├── Prophet.API.md            # API documentation (native + wrapper layer)
+├── utils.py                  # Complete utility module with all models
+│   ├── ProphetWrapper        # Prophet model wrapper class
+│   ├── fit_arima/sarima      # Statistical model functions
+│   ├── LSTMForecaster        # LSTM neural network class
+│   └── Evaluation metrics    # RMSE, MAE, SMAPE, compare_models
+│
+├── Prophet_example.ipynb     # Main notebook with full pipeline
+├── Prophet_example.md        # Markdown documentation
 ├── Prophet.API.ipynb         # API demonstration notebook
-├── Prophet.example.md        # COVID-19 application walkthrough
-├── Prophet.example.ipynb     # Complete forecasting pipeline
-├── jhu_confirmed_global.csv  # Johns Hopkins COVID-19 time series data
+├── Prophet.API.md            # API documentation
+│
+├── jhu_confirmed_global.csv  # Johns Hopkins COVID-19 data
 ├── Dockerfile                # Docker container configuration
 └── README.md                 # This file
 ```
@@ -73,8 +118,7 @@ docker build -t covid-prophet .
 # Run with your project files mounted
 docker run -p 8888:8888 -v $(pwd):/app covid-prophet
 
-# Open in browser
-# http://localhost:8888
+# Open in browser: http://localhost:8888
 ```
 
 ### Option 2: Local Installation
@@ -86,106 +130,159 @@ source venv/bin/activate  # Linux/Mac
 # or: venv\Scripts\activate  # Windows
 
 # Install dependencies
-pip install prophet pandas numpy matplotlib scikit-learn statsmodels
+pip install prophet pandas numpy matplotlib scikit-learn statsmodels tensorflow
 
 # Run Jupyter
-jupyter notebook
+jupyter notebook Prophet_example.ipynb
 ```
 
 ---
 
 ## 📖 Usage
 
-### Loading Data
+### 1. Loading Data
 
 ```python
-from prophet_utils import load_jhu_timeseries
+from utils import load_jhu_timeseries
 
 # Load US COVID-19 data
-prophet_df = load_jhu_timeseries('jhu_confirmed_global.csv', country='US')
+df = load_jhu_timeseries('jhu_confirmed_global.csv', country='US')
 
-print(f"Date range: {prophet_df['ds'].min().date()} to {prophet_df['ds'].max().date()}")
-print(f"Total days: {len(prophet_df)}")
+print(f"Date range: {df['ds'].min().date()} to {df['ds'].max().date()}")
+print(f"Total days: {len(df)}")
 ```
 
-### Basic Forecasting
+### 2. Train/Test Split for Omicron Prediction
 
 ```python
-from prophet_utils import ProphetWrapper, get_us_covid_interventions, create_intervention_dataframe
+import pandas as pd
 
-# Get intervention dates
+CUTOFF_DATE = '2022-01-01'
+FORECAST_HORIZON = 28
+
+train_df = df[df['ds'] < CUTOFF_DATE].copy()
+test_df = df[(df['ds'] >= CUTOFF_DATE) & 
+             (df['ds'] < pd.to_datetime(CUTOFF_DATE) + pd.Timedelta(days=FORECAST_HORIZON))].copy()
+
+print(f"Training: {len(train_df)} days")  # 710 days
+print(f"Test: {len(test_df)} days")        # 28 days (Omicron surge!)
+```
+
+### 3. Prophet Model
+
+```python
+from utils import ProphetWrapper, get_us_covid_interventions, create_intervention_dataframe
+
+# Setup interventions
 interventions = get_us_covid_interventions()
 holidays_df = create_intervention_dataframe(interventions)
 
 # Fit model with method chaining
-model = (ProphetWrapper(weekly_seasonality=True, yearly_seasonality=True)
+prophet = (ProphetWrapper(weekly_seasonality=True, yearly_seasonality=True)
     .set_holidays(holidays_df)
-    .fit(prophet_df)
+    .fit(train_df)
 )
 
-# Forecast 4 weeks ahead
-forecast = model.predict(periods=28)
+# Forecast
+prophet_forecast = prophet.predict(periods=28)
 ```
 
-### Model Evaluation
+### 4. ARIMA Model
 
 ```python
-from prophet_utils import calculate_rmse, calculate_mae, calculate_smape
+from utils import fit_arima, forecast_arima
 
-rmse = calculate_rmse(actual, predicted)
-mae = calculate_mae(actual, predicted)
-smape = calculate_smape(actual, predicted)
+# Fit ARIMA(5,1,0)
+arima_model, arima_fitted = fit_arima(train_df, order=(5, 1, 0))
 
-print(f"RMSE: {rmse:,.0f}")
-print(f"MAE: {mae:,.0f}")
-print(f"SMAPE: {smape:.1f}%")
+# Forecast
+arima_predictions = forecast_arima(arima_model, periods=28)
 ```
 
-### Visualization
+### 5. SARIMA Model
 
 ```python
-from prophet_utils import plot_forecast, plot_intervention_effects
+from utils import fit_sarima, forecast_sarima
 
-# Plot forecast with confidence intervals
-fig = plot_forecast(prophet_df, forecast, title='COVID-19 Forecast - US')
+# Fit SARIMA with weekly seasonality (s=7)
+sarima_model, sarima_fitted = fit_sarima(
+    train_df, 
+    order=(1, 1, 1),
+    seasonal_order=(1, 1, 1, 7)
+)
 
-# Plot intervention effects on trend
-fig = plot_intervention_effects(forecast, interventions)
+# Forecast
+sarima_predictions = forecast_sarima(sarima_model, periods=28)
+```
+
+### 6. LSTM Model
+
+```python
+from utils import LSTMForecaster
+
+# Initialize LSTM
+lstm = LSTMForecaster(
+    sequence_length=14,      # 2 weeks lookback
+    lstm_units=[64, 32],     # Two LSTM layers
+    dropout_rate=0.2
+)
+
+# Fit
+lstm.fit(train_df, epochs=100, batch_size=32, verbose=0)
+
+# Forecast
+lstm_predictions = lstm.forecast(train_df, periods=28)
+```
+
+### 7. Model Comparison
+
+```python
+from utils import compare_models
+
+actual_values = test_df['y'].values
+
+all_predictions = {
+    'Prophet': prophet_predictions,
+    'ARIMA': arima_predictions,
+    'SARIMA': sarima_predictions,
+    'LSTM': lstm_predictions
+}
+
+comparison_df = compare_models(actual_values, all_predictions)
+print(comparison_df)
 ```
 
 ---
 
 ## 🔧 API Reference
 
-### Core Functions
+### Data Loading
 
 | Function | Description |
 |----------|-------------|
-| `load_jhu_timeseries(filepath, country)` | Load JHU COVID-19 data for a specific country |
-| `get_available_countries(filepath)` | List all countries in the dataset |
-| `create_intervention_dataframe(interventions)` | Convert intervention dict to Prophet holidays format |
-| `get_us_covid_interventions()` | Get pre-defined US intervention dates |
-| `get_country_interventions(country)` | Get intervention dates for other countries |
+| `load_jhu_timeseries(filepath, country)` | Load JHU COVID-19 data for a country |
+| `get_available_countries(filepath)` | List all countries in dataset |
+| `train_test_split_temporal(df, test_size)` | Time-based train/test split |
 
-### ProphetWrapper Class
+### Interventions
 
-```python
-wrapper = ProphetWrapper(
-    weekly_seasonality=True,      # Capture reporting cycles
-    yearly_seasonality=True,      # Seasonal patterns
-    changepoint_prior_scale=0.1,  # Trend flexibility (higher = more flexible)
-    interval_width=0.95           # Confidence interval width
-)
+| Function | Description |
+|----------|-------------|
+| `get_us_covid_interventions()` | Pre-defined US intervention dates |
+| `create_intervention_dataframe(interventions)` | Convert to Prophet holidays format |
 
-# Method chaining
-wrapper.set_holidays(holidays_df)  # Add interventions
-wrapper.add_regressor('name')       # Add external regressor
-wrapper.fit(df)                     # Fit model
-wrapper.predict(periods=28)         # Generate forecast
-wrapper.cross_validate(...)         # Time series CV
-```
+### Models
 
-### Evaluation Metrics
+| Class/Function | Description |
+|----------------|-------------|
+| `ProphetWrapper` | Prophet model with method chaining |
+| `fit_arima(df, order)` | Fit ARIMA model |
+| `fit_sarima(df, order, seasonal_order)` | Fit SARIMA model |
+| `forecast_arima(model, periods)` | Generate ARIMA forecast |
+| `forecast_sarima(model, periods)` | Generate SARIMA forecast |
+| `LSTMForecaster` | LSTM neural network class |
+
+### Evaluation
 
 | Function | Description |
 |----------|-------------|
@@ -194,48 +291,29 @@ wrapper.cross_validate(...)         # Time series CV
 | `calculate_smape(actual, predicted)` | Symmetric Mean Absolute Percentage Error |
 | `compare_models(actual, predictions_dict)` | Compare multiple models |
 
----
+### Visualization
 
-## 📈 Results
-
-### Model Comparison (28-day forecast)
-
-| Model | RMSE | MAE | SMAPE |
-|-------|------|-----|-------|
-| **Prophet** | ~110,000 | ~72,000 | ~65% |
-| ARIMA(5,1,0) | ~125,000 | ~85,000 | ~75% |
-| SARIMA(1,1,1)(1,1,1,7) | ~120,000 | ~80,000 | ~70% |
-
-### Cross-Validation Metrics
-
-| Horizon | RMSE | MAE | SMAPE | Coverage |
-|---------|------|-----|-------|----------|
-| 3 days | 113,390 | 67,882 | 65.5% | 71.7% |
-| 14 days | 124,300 | 74,964 | 68.0% | 70.9% |
-| 28 days | 110,502 | 72,363 | 65.1% | 67.7% |
-
-### Key Findings
-
-1. **Weekly Seasonality**: COVID-19 reporting shows strong weekly patterns with lower counts on weekends
-2. **Intervention Effects**: Major policy changes create visible trend changepoints
-3. **Model Performance**: Prophet outperforms traditional ARIMA for volatile COVID data
-4. **Omicron Surge**: December 2021 shows the largest spike in US cases
+| Function | Description |
+|----------|-------------|
+| `plot_forecast(df, forecast)` | Plot forecast with confidence intervals |
+| `plot_model_comparison(dates, actual, predictions)` | Compare model predictions |
+| `plot_training_history(history)` | Plot LSTM training loss |
 
 ---
 
 ## 🗓️ US COVID-19 Interventions
 
-| Intervention | Date |
-|--------------|------|
-| National Emergency | 2020-03-13 |
-| Lockdowns Begin | 2020-03-19 |
-| Reopening Phase 1 | 2020-05-01 |
-| Summer Surge | 2020-07-01 |
-| Fall Surge | 2020-10-15 |
-| Vaccine Authorization | 2020-12-11 |
-| Vaccine Rollout | 2021-01-15 |
-| Delta Surge | 2021-07-01 |
-| Omicron Surge | 2021-12-15 |
+| Intervention | Date | Effect Window |
+|--------------|------|---------------|
+| National Emergency | 2020-03-13 | 14 days |
+| Lockdowns Begin | 2020-03-19 | 14 days |
+| Reopening Phase 1 | 2020-05-01 | 14 days |
+| Summer Surge | 2020-07-01 | 14 days |
+| Fall Surge | 2020-10-15 | 14 days |
+| Vaccine Authorization | 2020-12-11 | 14 days |
+| Vaccine Rollout | 2021-01-15 | 14 days |
+| Delta Surge | 2021-07-01 | 14 days |
+| Omicron Surge | 2021-12-15 | 14 days |
 
 ---
 
@@ -251,7 +329,7 @@ RUN apt-get update && \
 WORKDIR /app
 
 RUN pip install --upgrade pip && \
-    pip install prophet pandas numpy matplotlib scikit-learn statsmodels jupyter
+    pip install prophet pandas numpy matplotlib scikit-learn statsmodels tensorflow jupyter
 
 COPY . /app
 
@@ -262,18 +340,42 @@ CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--al
 
 ---
 
+## 📈 Exploratory Data Analysis Highlights
+
+### Weekly Seasonality
+
+| Day | Avg Cases | % of Peak |
+|-----|-----------|-----------|
+| Wednesday | ~110,000 | 100% |
+| Sunday | ~60,000 | 55% |
+
+**Finding**: Weekend reporting is ~40% lower than midweek peaks.
+
+### Stationarity
+
+- Original series: **Non-stationary** (has trend)
+- First difference: **Stationary** (suitable for ARIMA)
+
+### Autocorrelation
+
+- **Lag 7** spike confirms weekly seasonality
+- PACF suggests AR(5) or AR(7) for ARIMA
+
+---
+
 ## 📚 References
 
 1. Taylor, S.J. and Letham, B. (2018). *Forecasting at Scale*. The American Statistician, 72(1), 37-45.
 2. Johns Hopkins University COVID-19 Data Repository: https://github.com/CSSEGISandData/COVID-19
 3. Prophet Documentation: https://facebook.github.io/prophet/
-4. Prophet GitHub: https://github.com/facebook/prophet
+4. Box, G.E.P. and Jenkins, G.M. (1976). *Time Series Analysis: Forecasting and Control*.
+5. Hochreiter, S. and Schmidhuber, J. (1997). *Long Short-Term Memory*. Neural Computation, 9(8), 1735-1780.
 
 ---
 
 ## 📄 License
 
-This project is for educational purposes as part of DATA607-PCS2 coursework.
+This project is for educational purposes as part of DATA610 coursework at University of Maryland.
 
 ---
 
@@ -281,4 +383,21 @@ This project is for educational purposes as part of DATA607-PCS2 coursework.
 
 - **Johns Hopkins University** for the COVID-19 dataset
 - **Meta (Facebook)** for the Prophet library
-- **University of Maryland** DATA607-PCS2 course
+- **University of Maryland** DATA610 course
+
+---
+
+## ✅ Project Requirements Checklist
+
+| Requirement | Status |
+|-------------|--------|
+| Data Preparation (JHU data) | ✅ |
+| Prophet with weekly seasonality | ✅ |
+| Interventions as holidays | ✅ (9 events) |
+| 4-week forecast | ✅ (28 days) |
+| ARIMA baseline | ✅ ARIMA(5,1,0) |
+| SARIMA with seasonality | ✅ SARIMA(1,1,1)(1,1,1,7) |
+| LSTM Neural Network | ✅ 64+32 units |
+| RMSE, MAE, SMAPE metrics | ✅ |
+| Actual vs Predicted plot | ✅ |
+| Multi-region comparison | ✅ (Bonus) |
