@@ -1,4 +1,5 @@
 econml
+ucimlrepo
 pandas
 scikit-learn
 matplotlib
