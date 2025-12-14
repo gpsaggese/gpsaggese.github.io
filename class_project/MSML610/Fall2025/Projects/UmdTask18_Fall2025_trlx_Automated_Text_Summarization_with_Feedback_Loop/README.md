@@ -3,180 +3,232 @@
 A production-ready news summarization system using Direct Preference Optimization (DPO) to align T5-large with human preferences. The system provides intelligent text summarization with support for multiple input formats, hierarchical processing, and iterative refinement through a modern web interface.
 
 ## Table of Contents
+1. [Author](#author)
+2. [Overview](#overview)
+3. [Project Structure](#project-structure)
+4. [How to Run the Project](#how-to-run-the-project)
+5. [Python Dependencies](#python-dependencies)
+6. [Documentation Links](#documentation-links)
+7. [Final Notes and Disclaimers](#final-notes-and-disclaimers)
 
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [System Architecture](#system-architecture)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Usage Examples](#usage-examples)
-- [Project Structure](#project-structure)
-- [Training Pipeline](#training-pipeline)
-- [Web Interface](#web-interface)
-- [API Reference](#api-reference)
-- [Performance](#performance)
-- [Development](#development)
-- [Troubleshooting](#troubleshooting)
-- [References](#references)
+---
+
+## Authors
+**Anvesh Chitturi**, **Sai Dhruv Yellanki Hanmanthrao** 
+Email: achittu1@umd.edu, dhruvsai@umd.edu
+
+---
 
 ## Overview
 
-This project implements a complete Reinforcement Learning from Human Feedback (RLHF) pipeline for news summarization. The system trains a T5-large model using:
+This project implements a complete Reinforcement Learning from Human Feedback (RLHF) pipeline for news summarization. The system demonstrates how to build an explainable, production-ready summarization system using state-of-the-art techniques.
+
+The project includes both:
+- **Training notebooks** explaining the complete RLHF pipeline from data preparation to DPO optimization
+- **Production system** with modular Python scripts and web interface for real-world deployment
+
+### What This System Does
+
+- **Summarizes text** from multiple sources (direct text, URLs, PDF/DOCX files)
+- **Generates human-aligned summaries** using DPO-optimized T5-large model
+- **Handles long documents** with intelligent chunking and hierarchical aggregation
+- **Follows instructions** like "make it brief" or "detailed summary"
+- **Provides web interface** for easy interaction
+- **Achieves 72% preference accuracy** on human preference alignment
+
+### Training Pipeline
 
 1. **Supervised Fine-Tuning (SFT)** on CNN/DailyMail dataset
-2. **LoRA** (Low-Rank Adaptation) for parameter-efficient training
+2. **LoRA** (Low-Rank Adaptation) for parameter-efficient training (99.7% parameter reduction)
 3. **DPO** (Direct Preference Optimization) for human alignment
+4. **Final model**: ROUGE-L score of 0.33 (33%), competitive with state-of-the-art
 
-The final model achieves **72% preference accuracy** and provides a modular, production-ready API with web interface for real-world deployment.
+---
 
-### Why This Project?
+## Project Structure
 
-- **Human-Aligned Summaries**: DPO training ensures outputs match human preferences
-- **Production Ready**: Clean API, error handling, comprehensive logging
-- **Multi-Format Support**: Text, URLs, PDF, DOCX, TXT files
-- **Intelligent Processing**: Hierarchical summarization for long documents
-- **User Refinement**: Iterative improvement with natural language feedback
-- **Modern Web UI**: FastAPI backend + responsive frontend
+| File / Folder | Description |
+|---------------|-------------|
+| `scripts/` | Modular Python scripts for the production summarization pipeline |
+| `scripts/input_processing/` | URL, PDF, DOCX extractors and text cleaning |
+| `scripts/summarization/` | Model loader, chunker, summarizer, aggregator |
+| `scripts/refinement/` | Instruction parser and prompt builder |
+| `scripts/pipeline/` | End-to-end pipeline orchestration |
+| `scripts/utils.py` | High-level API wrapper functions |
+| `notebooks/` | Jupyter notebooks demonstrating the complete training pipeline |
+| `notebooks/RLHF_News_Summarization_System.Example.ipynb` | Main demo notebook |
+| `notebooks/data_preparation_and_baseline_t5.ipynb` | Stage 1-2: Data prep and SFT |
+| `notebooks/lora_comparison.ipynb` | Stage 3: LoRA training |
+| `notebooks/RLHF_DPO.ipynb` | Stage 4-5: DPO training |
+| `notebooks/trlx.API.ipynb` | TRLX library tutorial |
+| `web/` | Web interface (FastAPI backend + responsive frontend) |
+| `web/backend.py` | FastAPI server with REST API endpoints |
+| `web/index.html` | Frontend UI with tabbed interface |
+| `web/script.js` | Client-side JavaScript |
+| `web/styles.css` | Modern CSS styling |
+| `data/` | Datasets and trained model checkpoints |
+| `data/models/RLHF-t5-large-merged-dpo/` | Final DPO-optimized model |
+| `data/processed/` | Preprocessed CNN/DailyMail dataset |
+| `data/rlhf/` | DPO training preference pairs |
+| `trlx_custom/` | Custom TRLX components for DPO training |
+| `requirements.txt` | Python dependencies |
+| `Dockerfile` | Docker configuration for containerized deployment |
+| `README.md` | This file |
+| `RLHF_News_Summarization_System.Example.md` | Detailed notebook documentation |
 
-## Key Features
+---
 
-### Core Capabilities
+## How to Run the Project
 
-- **Multi-Format Input**: Direct text, URLs (with trafilatura), PDF/DOCX/TXT files
-- **Intelligent Chunking**: Sentence-aware splitting with configurable token limits
-- **Hierarchical Summarization**: Recursive aggregation for documents >900 tokens
-- **Instruction Following**: Natural language commands (e.g., "make it brief", "3 detailed paragraphs", "500 words")
-- **Iterative Refinement**: Improve summaries with feedback without retraining
-- **Batch Processing**: Multiple URLs or files with combined/separate outputs
+We provide multiple ways to run the project: Docker (recommended for consistency) or local Python environment.
 
-### Technical Highlights
+### Option 1: Docker (Recommended)
 
-- **DPO-Optimized Model**: T5-large trained with Direct Preference Optimization
-- **Parameter Efficiency**: LoRA reduces trainable parameters by 99.7%
-- **Device Flexibility**: MPS (Apple Silicon), CUDA, or CPU with automatic fallback
-- **Modular Architecture**: 12 Python modules with clean separation of concerns
-- **Comprehensive Testing**: Example notebook with all functions demonstrated
+Docker ensures consistent environment setup across all platforms.
 
-## System Architecture
+#### Build and start all services
 
-```
-RLHF_News_Summarization_System/
-|
-|-- data/                          # Datasets and trained models
-|   |-- models/                    # Model checkpoints
-|   |   |-- t5-small/              # SFT baseline (T5-small)
-|   |   |-- t5-large/              # LoRA T5-large checkpoints
-|   |   |-- BART-large/            # LoRA BART (comparison)
-|   |   `-- RLHF-t5-large-merged-dpo/  # Final DPO model
-|   |-- processed/                 # Preprocessed CNN/DailyMail
-|   `-- rlhf/                      # RLHF training data
-|
-|-- scripts/                       # Modular summarization pipeline
-|   |-- input_processing/          # URL, PDF, DOCX extractors
-|   |-- summarization/             # Model loader, chunker, summarizer
-|   |-- refinement/                # Instruction parser, prompt builder
-|   |-- pipeline/                  # End-to-end orchestration
-|   `-- examples/                  # Example usage scripts
-|
-|-- notebooks/                     # Jupyter notebooks
-|   |-- RLHF_News_Summarization_System.Example.ipynb  # Main demo
-|   |-- data_preparation_and_baseline_t5.ipynb        # Stage 1-2
-|   |-- lora_comparison.ipynb                         # Stage 3
-|   |-- RLHF_DPO.ipynb                                # Stage 4-5
-|   `-- trlx.API.ipynb                                # TRLX tutorial
-|
-|
-|-- web/                           # Web interface
-|   |-- backend.py                 # FastAPI server
-|   |-- index.html                 # Frontend UI
-|   |-- script.js                  # Client logic
-|   |-- styles.css                 # Styling
-|   `-- src/                       # Additional web assets
-|
-|-- trlx_custom/                   # Custom TRLX components
-|   |-- pipeline/                  # Custom DPO pipeline
-|   `-- trainer/                   # Custom DPO trainer
-|
-|-- utils.py                       # Main API (high-level functions)
-|-- requirements.txt               # Python dependencies
-|-- docker_build.sh                # Docker build script
-|-- docker_bash.sh                 # Docker bash access
-|-- docker_jupyter.sh              # Docker Jupyter launcher
-|-- README.md                      # This file
-|-- RLHF_News_Summarization_System.Example.md  # Notebook documentation
-`-- trlx.API.md                    # TRLX API documentation
+```bash
+docker-compose up --build
 ```
 
+This single command will:
+- Build the Docker image
+- Start all services (Jupyter, Backend API, Web Interface)
+- Mount your local `notebooks/` and `data/` directories
 
-### Pipeline Flow
+#### Access the services
 
+Once running, you can access:
+- **Web Interface**: http://localhost:8080
+- **Backend API Docs**: http://localhost:8000/docs
+- **Jupyter Notebooks**: http://localhost:8888
+
+Press `Ctrl+C` to stop all services.
+
+#### Optional: Run in background
+
+If you want to run services in the background:
+
+```bash
+docker-compose up -d
 ```
-Input (Text/URL/File)
-    |
-    v
-[Input Processing] --> Extract & Clean Text
-    |
-    v
-[Chunking] --> Sentence-aware splitting (~900 tokens)
-    |
-    v
-[Summarization] --> DPO T5-large generates summaries
-    |
-    v
-[Aggregation] --> Hierarchical combination (if >1 chunk)
-    |
-    v
-Output (Summary + Metadata)
+
+View logs:
+```bash
+docker-compose logs -f
 ```
 
-## Installation
+Stop background services:
+```bash
+docker-compose down
+```
 
-### Prerequisites
+### Option 2: Local Python Environment
+
+#### Prerequisites
 
 - Python 3.10 or higher
 - 16GB+ RAM recommended
 - GPU/MPS optional (3-5x faster than CPU)
 - 10GB+ disk space for models
 
-### Setup
+#### Step 1: Create virtual environment
 
-1. **Clone the repository**:
-```bash
-git clone <repository-url>
-cd RLHF_News_Summarization_System
-```
-
-2. **Create virtual environment**:
 ```bash
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-3. **Install dependencies**:
+#### Step 2: Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Download NLTK data** (for sentence tokenization):
+#### Step 3: Download NLTK data
+
 ```python
 python -c "import nltk; nltk.download('punkt')"
 ```
 
-### Optional Dependencies
+#### Step 4: Start the backend
 
-For full functionality:
 ```bash
-pip install trafilatura      # URL extraction
-pip install pdfplumber        # PDF support
-pip install python-docx       # DOCX support
+python web/backend.py
 ```
 
-## Quick Start
+The backend will:
+- Load the DPO-optimized T5-large model
+- Auto-detect device (MPS/CUDA/CPU)
+- Start FastAPI server on http://localhost:8000
 
-### Python API
+#### Step 5: Start the frontend (in a new terminal)
+
+```bash
+cd web
+python -m http.server 8080
+```
+
+Access the web interface at http://localhost:8080
+
+### Option 3: Jupyter Notebooks
+
+To explore the training pipeline:
+
+```bash
+jupyter notebook notebooks/RLHF_News_Summarization_System.Example.ipynb
+```
+
+**Note**: Models are already trained. The notebook demonstrates the pipeline and can load pre-trained checkpoints.
+
+---
+
+## Python Dependencies
+
+All required Python libraries are listed in `requirements.txt`. Key dependencies include:
+
+### Core Libraries
+- `torch==2.1.2` – PyTorch for deep learning
+- `transformers==4.44.2` – Hugging Face Transformers
+- `datasets==4.4.1` – Dataset loading and processing
+- `peft==0.10.0` – Parameter-Efficient Fine-Tuning (LoRA)
+- `trlx` – TRLX library for RLHF/DPO training
+
+### Summarization Pipeline
+- `trafilatura==1.6.3` – URL text extraction
+- `pdfplumber==0.10.3` – PDF text extraction
+- `python-docx==1.1.0` – DOCX text extraction
+- `nltk==3.8.1` – Sentence tokenization
+- `rouge-score==0.1.2` – ROUGE metrics for evaluation
+
+### Web Interface
+- `fastapi==0.110.0` – Backend API framework
+- `uvicorn==0.29.0` – ASGI server
+- `aiofiles==23.2.1` – Async file handling
+
+### Full Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+**Note**: Some dependencies (like `deepspeed`) are platform-specific and will only install on Linux.
+
+---
+
+## Documentation Links
+
+- [System Architecture Diagram](./RLHF_News_Summarization_System.Example.md#system-architecture) – Visual representation of the complete system
+- [Example Notebook Documentation](./RLHF_News_Summarization_System.Example.md) – Comprehensive guide to the training pipeline
+- [TRLX API Tutorial](./trlx.API.md) – How to use TRLX for RLHF training
+
+### Quick Start Guides
+
+#### Python API Usage
 
 ```python
-from utils import summarize_text, summarize_url, summarize_file
+from scripts.utils import summarize_text, summarize_url, summarize_file
 
 # Summarize text
 result = summarize_text("Your long article text here...")
@@ -191,208 +243,14 @@ result = summarize_file("document.pdf", instructions="brief")
 print(result["summary"])
 ```
 
-### Web Interface
+#### Web Interface
 
-1. **Start the backend**:
-```bash
-python web/backend.py
-```
+1. Start backend: `python web/backend.py`
+2. Start frontend: `cd web && python -m http.server 8080`
+3. Open browser: http://localhost:8080
+4. Choose input type (Text/URL/File) and click "Generate Summary"
 
-2. **Open frontend**:
-```bash
-# In a new terminal
-cd web
-python -m http.server 8080
-```
-
-3. **Access**: Navigate to `http://localhost:8080` in your browser
-
-## Usage Examples
-
-### Basic Summarization
-
-```python
-from utils import summarize_text
-
-article = """
-Artificial intelligence has made remarkable progress in recent years.
-Machine learning algorithms can now perform tasks that were once thought
-to require human intelligence. Deep learning has been particularly successful
-in areas like computer vision and natural language processing.
-"""
-
-result = summarize_text(article)
-print(result["summary"])
-# Output: "AI has advanced significantly, with ML algorithms performing complex tasks..."
-```
-
-### With Instructions
-
-```python
-# Brief summary
-result = summarize_text(article, instructions="make it brief, one sentence")
-
-# Detailed paragraphs
-result = summarize_text(article, instructions="3 detailed paragraphs")
-
-# Specific word count
-result = summarize_text(article, instructions="500 words")
-
-# Bullet points
-result = summarize_text(article, instructions="format as bullet points")
-```
-
-### Multiple URLs
-
-```python
-from utils import summarize_urls
-
-urls = [
-    "https://site1.com/article1",
-    "https://site2.com/article2",
-    "https://site3.com/article3"
-]
-
-# Combined summary
-result = summarize_urls(urls, instructions="compare key themes", combine=True)
-print(result["summary"])
-
-# Separate summaries
-result = summarize_urls(urls, combine=False)
-for i, summary in enumerate(result["summaries"]):
-    print(f"Article {i+1}: {summary}")
-```
-
-### Iterative Refinement
-
-```python
-from utils import summarize_text, refine_summary
-
-# Initial summary
-result = summarize_text(article)
-original = result["summary"]
-
-# Refine with feedback
-refined = refine_summary(original, "make it shorter and use bullet points")
-print(refined["refined_summary"])
-
-# Further refinement
-refined2 = refine_summary(refined["refined_summary"], "add more specific details")
-print(refined2["refined_summary"])
-```
-
-### Batch File Processing
-
-```python
-from utils import summarize_files
-
-files = ["report1.pdf", "report2.pdf", "notes.txt"]
-
-# Combined summary of all files
-result = summarize_files(files, instructions="executive summary", combine=True)
-print(result["summary"])
-```
-
-## Project Structure
-
-### Core Modules
-
-#### `scripts/input_processing/`
-- **url_extractor.py**: Extract article text from URLs using trafilatura
-- **pdf_extractor.py**: Extract text from PDFs using pdfplumber
-- **docx_extractor.py**: Extract text from DOCX files using python-docx
-- **text_cleaner.py**: Normalize whitespace, remove special characters
-
-#### `scripts/summarization/`
-- **model_loader.py**: Load DPO T5-large with device auto-detection
-- **chunker.py**: Sentence-aware text splitting with overlap
-- **summarizer.py**: Generate summaries with instruction parsing
-- **aggregator.py**: Hierarchical combination of chunk summaries
-
-#### `scripts/refinement/`
-- **instruction_parser.py**: Parse natural language instructions
-- **prompt_builder.py**: Build T5-compatible prompts
-
-#### `scripts/pipeline/`
-- **summarization_pipeline.py**: End-to-end orchestration
-
-### Web Interface
-
-- **backend.py**: FastAPI server with CORS, endpoints for all functions
-- **index.html**: Responsive UI with tabbed interface (Text/URL/File)
-- **script.js**: Client-side logic, API calls, message rendering
-- **style.css**: Modern styling with glassmorphism effects
-
-## Training Pipeline
-
-### Stage 1: Data Preparation
-
-```bash
-# Covered in: notebooks/data_preparation_and_baseline_t5.ipynb
-```
-
-- Load CNN/DailyMail from Hugging Face (287k training examples)
-- Tokenize with T5 tokenizer
-- Create train/val/test splits
-- Save processed dataset
-
-### Stage 2: Supervised Fine-Tuning (SFT)
-
-```bash
-# Train T5-small baseline (in data_preparation_and_baseline_t5.ipynb)
-```
-
-- Full fine-tuning on CNN/DailyMail
-- 50 examples, 3 epochs (demo)
-- ROUGE-L: ~0.29
-- Checkpoint: `data/models/t5-small/`
-
-### Stage 3: LoRA Fine-Tuning
-
-```bash
-# Covered in: notebooks/lora_comparison.ipynb
-```
-
-- Apply LoRA to T5-large (rank=8, alpha=32)
-- Train only 0.3% of parameters
-- Compare with BART-large
-- ROUGE-L: 0.32 (T5) vs 0.31 (BART)
-- Merge LoRA weights: `data/models/t5-large/`
-
-### Stage 4: Preference Pair Generation
-
-```python
-# Generate DPO training data (in notebooks/RLHF_DPO.ipynb)
-```
-
-- T5-large summaries = "chosen" (higher quality)
-- T5-small summaries = "rejected" (lower quality)
-- 400 preference pairs
-- Save as JSONL: `data/rlhf/dpo_pairs.jsonl`
-
-### Stage 5: DPO Training
-
-```bash
-# Covered in: notebooks/RLHF_DPO.ipynb
-```
-
-- TRLX library with custom DPO trainer (trlx_custom/)
-- Optimize for human-aligned outputs
-- Final model: `data/models/RLHF-t5-large-merged-dpo/`
-- **72% preference accuracy**
-
-## Web Interface
-
-### Features
-
-- **Three Input Modes**: Text, URL, File upload
-- **Instructions Field**: Natural language commands
-- **Real-time Processing**: Loading indicators, error handling
-- **Metadata Display**: Chunks, input/output lengths, processing time
-- **Responsive Design**: Works on desktop and mobile
-- **Multiple File Support**: Upload and process multiple files at once
-
-### API Endpoints
+#### API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -400,241 +258,87 @@ print(result["summary"])
 | `/model/info` | GET | Model information |
 | `/summarize/text` | POST | Summarize text |
 | `/summarize/url` | POST | Summarize from URL |
-| `/summarize/urls` | POST | Summarize multiple URLs |
 | `/summarize/file` | POST | Summarize uploaded file |
-| `/summarize/files` | POST | Summarize multiple files |
 | `/refine` | POST | Refine existing summary |
 
-### Starting the Web Interface
+Full API documentation available at: http://localhost:8000/docs
 
-```bash
-# Terminal 1: Backend
-python web/backend.py
-# Server runs on http://localhost:8000
+---
 
-# Terminal 2: Frontend
-cd web && python -m http.server 8080
-# UI available at http://localhost:8080
+## Final Notes and Disclaimers
+
+### Model Configuration
+
+The system uses carefully tuned parameters for high-quality output:
+
+```python
+max_length = 400          # ~250-300 words
+min_length = 150          # ~6-8 lines minimum
+repetition_penalty = 1.5  # Prevents repetitive output
+length_penalty = 2.0      # Encourages complete sentences
+early_stopping = True     # Stops when quality degrades
 ```
 
-## API Reference
+These parameters ensure grammatically correct, coherent summaries without repetition.
 
-### `summarize_text(text, instructions=None, clean_text=True)`
 
-Summarize raw text.
-
-**Parameters:**
-- `text` (str): Input text to summarize
-- `instructions` (str, optional): User instructions (e.g., "brief", "500 words")
-- `clean_text` (bool): Whether to clean text first (default: True)
-
-**Returns:** Dictionary with:
-- `summary` (str): Generated summary
-- `num_chunks` (int): Number of chunks processed
-- `input_length` (int): Input character count
-- `summary_length` (int): Output character count
-
-### `summarize_url(url, instructions=None)`
-
-Summarize article from URL.
-
-**Parameters:**
-- `url` (str): URL to summarize
-- `instructions` (str, optional): User instructions
-
-**Returns:** Dictionary with summary + metadata (title, author, date)
-
-### `summarize_urls(urls, instructions=None, combine=True)`
-
-Summarize multiple URLs.
-
-**Parameters:**
-- `urls` (List[str]): List of URLs
-- `instructions` (str, optional): User instructions
-- `combine` (bool): Combine into single summary or separate (default: True)
-
-**Returns:** Dictionary with combined or individual summaries
-
-### `summarize_file(filepath, instructions=None)`
-
-Summarize from file (PDF, DOCX, TXT).
-
-**Parameters:**
-- `filepath` (str): Path to file
-- `instructions` (str, optional): User instructions
-
-**Returns:** Dictionary with summary + file metadata
-
-### `summarize_files(filepaths, instructions=None, combine=True)`
-
-Summarize multiple files.
-
-**Parameters:**
-- `filepaths` (List[str]): List of file paths
-- `instructions` (str, optional): User instructions
-- `combine` (bool): Combine into single summary (default: True)
-
-**Returns:** Dictionary with combined or individual summaries
-
-### `refine_summary(summary, feedback, original_text=None)`
-
-Refine existing summary based on feedback.
-
-**Parameters:**
-- `summary` (str): Original summary
-- `feedback` (str): User feedback (e.g., "make it shorter")
-- `original_text` (str, optional): Original text for context
-
-**Returns:** Dictionary with refined summary
-
-### `get_model_info()`
-
-Get model information.
-
-**Returns:** Dictionary with model type, name, device, max_length, vocab_size
-
-## Performance
 
 ### Model Comparison
 
-| Model | ROUGE-1 | ROUGE-2 | ROUGE-L | Trainable Params |
-|-------|---------|---------|---------|------------------|
-| T5-small (SFT) | 0.41 | 0.19 | 0.29 | 60M (100%) |
-| T5-large (LoRA) | 0.45 | 0.22 | 0.32 | 2M (0.3%) |
-| BART-large (LoRA) | 0.44 | 0.21 | 0.31 | 2M (0.3%) |
-| **T5-large (DPO)** | **0.46** | **0.23** | **0.33** | **2M (0.3%)** |
+| Model | ROUGE-L | Trainable Params |
+|-------|---------|------------------|
+| T5-small (SFT) | 0.29 | 60M (100%) |
+| T5-large (LoRA) | 0.32 | 2M (0.3%) |
+| **T5-large (DPO)** | **0.33** | **2M (0.3%)** |
 
-### Speed Benchmarks
+### Key Achievements
 
-| Device | Summarization Time (1000 tokens) |
-|--------|----------------------------------|
-| MPS (Apple M1) | ~2-3 seconds |
-| CUDA (RTX 3090) | ~1-2 seconds |
-| CPU (Intel i7) | ~8-12 seconds |
+- **72% preference accuracy** on human alignment
+- **99.7% parameter reduction** with LoRA
+- **+3% ROUGE-L improvement** from DPO over LoRA baseline
+- **Production-ready** modular system with web interface
+- **Multi-format support** (text, URL, PDF, DOCX)
+- **Quality output** with anti-repetition mechanisms
 
-### Key Findings
+### Troubleshooting
 
-1. **DPO Improvement**: +3% ROUGE-L over LoRA baseline
-2. **T5 vs BART**: T5-large outperforms BART-large across all metrics
-3. **Parameter Efficiency**: LoRA achieves 99.7% parameter reduction with minimal performance loss
-4. **Preference Accuracy**: 72% on held-out preference pairs
+**Common Issues:**
 
-## Development
+1. **Out of Memory**: Reduce chunk size or use CPU instead of GPU
+2. **URL Extraction Fails**: Install `trafilatura` or try different URLs
+3. **Slow Performance**: Use GPU/MPS if available
+4. **Repetitive Output**: Ensure `repetition_penalty=1.5` in `scripts/summarization/summarizer.py`
 
-### Running Tests
+**Parameter Changes Not Taking Effect:**
 
+The backend automatically disables Python bytecode caching. If issues persist:
 ```bash
-# Test individual components
-python scripts/summarization/model_loader.py
-python scripts/summarization/chunker.py
-python scripts/pipeline/summarization_pipeline.py
-
-# Test utils API
-python utils.py
+python web/backend.py
 ```
 
-### Example Notebook
+### Dataset and Training
 
-The complete example notebook demonstrates all functionality:
+- **Dataset**: CNN/DailyMail (287k article-summary pairs)
+- **Training Time**: ~7-9 hours for complete pipeline (SFT + LoRA + DPO)
+- **Preference Pairs**: 400 pairs (T5-large vs T5-small summaries)
 
-```bash
-jupyter notebook notebooks/RLHF_News_Summarization_System.Example.ipynb
-```
+### References
 
-**Sections:**
-1. Data preparation
-2. SFT training (T5-small)
-3. LoRA training (T5-large, BART-large)
-4. Preference pair generation
-5. DPO training
-6. Evaluation and comparison
-7. **Modular pipeline demo** (Stage 7) - Can run independently!
+**Papers:**
+- T5: Raffel et al. (2020) - [Exploring the Limits of Transfer Learning](https://arxiv.org/abs/1910.10683)
+- DPO: Rafailov et al. (2023) - [Direct Preference Optimization](https://arxiv.org/abs/2305.18290)
+- LoRA: Hu et al. (2021) - [Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)
 
-**Additional Notebooks:**
-- `notebooks/data_preparation_and_baseline_t5.ipynb` - Detailed data prep and SFT
-- `notebooks/lora_comparison.ipynb` - LoRA implementation and T5 vs BART
-- `notebooks/RLHF_DPO.ipynb` - Complete DPO training workflow
-- `notebooks/trlx.API.ipynb` - TRLX library tutorial
+**Libraries:**
+- [Hugging Face Transformers](https://github.com/huggingface/transformers)
+- [PEFT (Parameter-Efficient Fine-Tuning)](https://github.com/huggingface/peft)
+- [TRLX (CarperAI)](https://github.com/CarperAI/trlx)
 
-### Code Style
+### License
 
-- **Modular**: Each component has single responsibility
-- **Documented**: Comprehensive docstrings
-- **Typed**: Type hints for all functions
-- **Logged**: Informative logging throughout
-- **Error Handling**: Graceful degradation
+This project is part of the MSML 610 course.
 
-## Troubleshooting
-
-### Common Issues
-
-#### Import Errors
-
-```bash
-# Ensure you're in project root
-cd /path/to/RLHF_News_Summarization_System
-python -c "from utils import summarize_text; print('Success!')"
-```
-
-#### Model Not Found
-
-```bash
-# Check model exists
-ls data/models/RLHF-t5-large-merged-dpo/
-# Should contain: config.json, pytorch_model.bin, tokenizer files
-```
-
-#### Out of Memory
-
-- Reduce chunk size in `scripts/summarization/chunker.py`
-- Use CPU instead of GPU: Set `device="cpu"` in model_loader.py
-- Process smaller batches
-
-#### URL Extraction Fails
-
-- Install trafilatura: `pip install trafilatura`
-- Some websites block automated access
-- Try different URLs or use PDF/text export
-
-#### Slow Performance
-
-- Use GPU/MPS if available
-- Check device: `python -c "from utils import get_model_info; print(get_model_info())"`
-- Ensure MPS fallback is enabled (set in backend.py)
-
-### Word Count Issues
-
-If requested word count doesn't match output:
-- System uses token-based generation (1 word ≈ 1.3 tokens)
-- T5 may stop early if input is too short
-- Use "detailed" or "comprehensive" for longer outputs
-- Avoid requesting more words than input contains
-
-## References
-
-### Papers
-
-- **T5**: Raffel et al. (2020) - [Exploring the Limits of Transfer Learning](https://arxiv.org/abs/1910.10683)
-- **DPO**: Rafailov et al. (2023) - [Direct Preference Optimization](https://arxiv.org/abs/2305.18290)
-- **LoRA**: Hu et al. (2021) - [Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)
-- **ROUGE**: Lin (2004) - Automatic Evaluation of Summaries
-
-### Datasets
-
-- **CNN/DailyMail**: Hermann et al. (2015) - [Hugging Face](https://huggingface.co/datasets/abisee/cnn_dailymail)
-
-### Libraries
-
-- **Transformers**: [Hugging Face](https://github.com/huggingface/transformers)
-- **PEFT**: [Parameter-Efficient Fine-Tuning](https://github.com/huggingface/peft)
-- **TRLX**: [CarperAI](https://github.com/CarperAI/trlx)
-- **Trafilatura**: [Web Scraping](https://github.com/adbar/trafilatura)
-
-## License
-
-This project is part of the RLHF News Summarization System coursework.
-
-## Acknowledgments
+### Acknowledgments
 
 - CNN/DailyMail dataset creators
 - Hugging Face for Transformers library
@@ -643,6 +347,6 @@ This project is part of the RLHF News Summarization System coursework.
 
 ---
 
-**For detailed implementation guides, see:**
-- [scripts/README.md](scripts/README.md) - Modular pipeline documentation
-- [RLHF_News_Summarization_System.example.md](RLHF_News_Summarization_System.example.md) - Notebook documentation
+**For detailed technical documentation, see:**
+- [RLHF_News_Summarization_System.Example.md](./RLHF_News_Summarization_System.Example.md) – Complete training pipeline walkthrough
+- [trlx.API.md](./trlx.API.md) – TRLX library usage guide

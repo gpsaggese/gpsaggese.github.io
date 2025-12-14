@@ -609,3 +609,60 @@ fetch(`${API_BASE_URL}/health`)
         console.warn('Backend not available:', err.message);
         console.log('Start backend with: python web/backend.py');
     });
+
+// ============================================
+// Example/Demo Functions
+// ============================================
+
+function loadExampleText() {
+    const exampleText = `Artificial intelligence has made remarkable progress in recent years, with large language models demonstrating unprecedented capabilities in natural language understanding and generation. These models, trained on vast amounts of text data, can perform a wide range of tasks including translation, summarization, question answering, and creative writing.
+
+However, challenges remain in ensuring these models are aligned with human values and preferences. Techniques like Reinforcement Learning from Human Feedback (RLHF) and Direct Preference Optimization (DPO) have emerged as promising approaches to fine-tune models based on human preferences, making them more helpful, harmless, and honest.
+
+The development of these alignment techniques represents a significant shift in how we approach AI safety. Rather than relying solely on pre-training objectives, researchers now recognize the importance of incorporating human feedback directly into the training process. This allows models to learn not just what is statistically likely, but what humans actually find valuable and appropriate.
+
+One of the key innovations in this space is the use of preference learning, where models are trained on pairs of outputs ranked by human evaluators. This approach has proven more effective than traditional reward modeling, as it directly captures the nuances of human judgment without requiring explicit reward functions.
+
+The field continues to evolve rapidly, with researchers exploring new architectures, training methods, and applications. Recent advances include more efficient fine-tuning techniques like LoRA (Low-Rank Adaptation), which allows large models to be adapted with minimal computational resources, and improvements in evaluation metrics that better capture model quality beyond simple accuracy scores.
+
+As these technologies become more powerful and accessible, questions about their societal impact become increasingly urgent. Issues of bias, fairness, transparency, and accountability must be addressed to ensure that AI systems serve the broader public interest rather than narrow commercial or political goals.
+
+The integration of AI into critical domains like healthcare, education, and governance requires careful consideration of both technical capabilities and ethical implications. Stakeholders from diverse backgrounds must be involved in shaping the development and deployment of these systems to ensure they reflect a wide range of perspectives and values.
+
+Looking forward, the challenge is not just to build more capable AI systems, but to ensure they remain aligned with human values as they grow in power and influence. This requires ongoing research, thoughtful regulation, and sustained public engagement to navigate the complex tradeoffs between innovation, safety, and societal benefit.`;
+
+    textInput.value = exampleText;
+    instructionsInput.value = "Please summarize this article";
+
+    // Trigger input event to enable the Generate Summary button
+    textInput.dispatchEvent(new Event('input', { bubbles: true }));
+    instructionsInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+    // Switch to text tab if not already there
+    if (currentTab !== 'text') {
+        switchTab('text');
+    }
+
+    // Scroll to input
+    textInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function loadExampleURL() {
+    const exampleURL = "https://theconversation.com/more-than-half-of-new-articles-on-the-internet-are-being-written-by-ai-is-human-writing-headed-for-extinction-268354";
+
+    urlInput.value = exampleURL;
+    instructionsInput.value = "Please summarize this article";
+
+    // Trigger input event to enable the Generate Summary button
+    urlInput.dispatchEvent(new Event('input', { bubbles: true }));
+    instructionsInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+    // Switch to URL tab if not already there
+    if (currentTab !== 'url') {
+        switchTab('url');
+    }
+
+    // Scroll to input
+    urlInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+

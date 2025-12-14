@@ -5,8 +5,9 @@ FastAPI backend that integrates with the modular summarization pipeline.
 Supports text, URL, and file-based summarization with refinement.
 """
 
-# CRITICAL: Set MPS fallback BEFORE any PyTorch imports
+# CRITICAL: Set environment variables BEFORE any imports
 import os
+os.environ['PYTHONDONTWRITEBYTECODE'] = '1'  
 os.environ['PYTORCH_ENABLE_MPS_FALLBACK'] = '1'
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
@@ -23,7 +24,7 @@ import logging
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from utils import (
+from scripts.utils import (
     summarize_text,
     summarize_url,
     summarize_urls,
@@ -321,6 +322,10 @@ if __name__ == "__main__":
     
     print("Starting RLHF News Summarization API...")
     print("Loading model...")
+    
+    # Reset pipeline to force reload with latest parameters
+    from scripts.pipeline.summarization_pipeline import reset_pipeline
+    reset_pipeline()
     
     # Pre-load model
     try:

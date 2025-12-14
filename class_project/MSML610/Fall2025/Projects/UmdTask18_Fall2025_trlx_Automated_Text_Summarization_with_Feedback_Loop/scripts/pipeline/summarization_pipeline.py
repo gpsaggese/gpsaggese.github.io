@@ -446,6 +446,13 @@ def get_pipeline(model_path=None):
     return _pipeline_instance
 
 
+def reset_pipeline():
+    """Reset pipeline singleton - forces recreation with new parameters."""
+    global _pipeline_instance
+    _pipeline_instance = None
+    logger.info("Pipeline singleton reset")
+
+
 if __name__ == "__main__":
     # Test pipeline
     pipeline = SummarizationPipeline()

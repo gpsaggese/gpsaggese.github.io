@@ -77,10 +77,11 @@ class HierarchicalAggregator:
         # Create prompt for aggregation
         prompt = f"summarize: {combined_text}"
         
-        # Generate aggregated summary
+        # Generate aggregated summary with optimal parameters
         final_summary = self.summarizer.summarize(
             prompt,
-            max_length=200,  # Longer for aggregated summaries
+            max_length=400,
+            min_length=150,  # Natural stopping point
             instructions=instructions
         )
         

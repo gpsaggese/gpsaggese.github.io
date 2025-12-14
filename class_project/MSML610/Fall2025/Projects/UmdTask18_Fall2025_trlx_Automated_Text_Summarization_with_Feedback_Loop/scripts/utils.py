@@ -5,7 +5,7 @@ This module provides a clean API for the modular news summarization system
 using the DPO-trained T5-large model.
 
 Example Usage:
-    from utils import summarize_text, summarize_url, summarize_file, refine_summary
+    from scripts.utils import summarize_text, summarize_url, summarize_file, refine_summary
     
     # Summarize text
     result = summarize_text("Your article text here...")
@@ -27,8 +27,8 @@ Example Usage:
 import sys
 from pathlib import Path
 
-# Add scripts directory to path
-SCRIPTS_DIR = Path(__file__).parent / "scripts"
+# Add scripts directory to path (we're already in scripts/)
+SCRIPTS_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 from typing import Optional, List, Dict, Union

@@ -36,6 +36,13 @@ beautifulsoup4==4.12.3
 duckduckgo-search==5.2.2
 requests==2.32.3
 
+# URL and file extraction
+trafilatura==1.6.3
+lxml_html_clean==0.1.1  # Required by trafilatura
+pdfplumber==0.10.3
+python-docx==1.1.0
+
+
 langchain==0.1.12
 langchain-core==0.1.52
 langchain-community==0.0.30
