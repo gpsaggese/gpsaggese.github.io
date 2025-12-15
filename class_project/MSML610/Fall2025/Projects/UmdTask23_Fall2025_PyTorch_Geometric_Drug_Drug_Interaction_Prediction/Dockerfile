@@ -1,10 +1,18 @@
-FROM python:3.10-slim
+FROM mambaorg/micromamba:latest
 
 WORKDIR /workspace
 
-COPY . /workspace
+# Copy project into container (micromamba image runs as non-root user by default)
+COPY --chown=$MAMBA_USER:$MAMBA_USER . /workspace
 
-RUN pip install --no-cache-dir \
-    jupyter notebook pandas numpy scikit-learn
+# Install everything in the base env (CPU versions)
+RUN micromamba install -y -n base -c conda-forge -c pytorch -c pyg \
+    python=3.11 \
+    numpy pandas scikit-learn matplotlib \
+    jupyter notebook \
+    rdkit \
+    pytorch cpuonly \
+    pyg \
+    && micromamba clean -a -y
 
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--no-browser", "--allow-root"]
+CMD ["python", "-c", "print('Container ready. Use docker run ... jupyter notebook to launch.')"]

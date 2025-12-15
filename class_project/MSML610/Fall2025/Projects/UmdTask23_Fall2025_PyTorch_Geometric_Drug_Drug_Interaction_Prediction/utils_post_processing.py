@@ -1,15 +1,14 @@
-"""
-Utility functions for post-processing model outputs.
-Phase 1 version — minimal placeholder.
-"""
+# utils_post_processing.py
 
-def summarize_results(results):
-    """
-    Placeholder summary function.
-    """
-    print("[utils_post_processing] summarize_results() called.")
+from typing import Dict
+import numpy as np
+from sklearn.metrics import roc_auc_score, average_precision_score
+
+def compute_metrics(y_true, y_prob) -> Dict[str, float]:
+    y_true = np.asarray(y_true).astype(int)
+    y_prob = np.asarray(y_prob).astype(float)
+
     return {
-        "status": "ok",
-        "note": "Real post-processing will be added in a later phase.",
-        "input_keys": list(results.keys())
+        "roc_auc": float(roc_auc_score(y_true, y_prob)),
+        "pr_auc": float(average_precision_score(y_true, y_prob)),
     }
