@@ -37,7 +37,7 @@ docker run -p 8888:8888 -v "$(pwd)":/app causalml_project
 
 ## Resources :
 
-- [Diabetes 130-US Hospitals for Years 1999-2008](https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008)
+- [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators)
 
 - [CausalML Library Documentation](https://causalml.readthedocs.io/en/latest/)
 
