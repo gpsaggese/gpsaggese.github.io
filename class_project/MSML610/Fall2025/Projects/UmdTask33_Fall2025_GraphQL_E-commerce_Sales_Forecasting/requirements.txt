@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+graphene==3.3
+starlette-graphene3
+pandas
+numpy
+scikit-learn
+joblib
