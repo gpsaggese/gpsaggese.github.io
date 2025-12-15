@@ -1,5 +1,4 @@
 
-
 # Anomaly Detection in Financial Transactions
 
 **Statistical Modeling and Anomaly Detection for Fraud Detection**
@@ -59,7 +58,7 @@ AnomalyDetection/
 ├── AnomalyDetection.example.ipynb # End-to-end fraud detection workflow
 ├── AnomalyDetection.example.md    # Narrative explanation of the workflow
 │
-├── Dockerfile                     # Docker environment for reproducibility
+├── Dockerfile                     # Docker environment (used by class Docker scripts)
 └── README.md                      # Project overview and instructions
 
 ````
@@ -68,42 +67,64 @@ AnomalyDetection/
 
 ## Running the Project (Docker)
 
-This project is designed to run **entirely inside Docker** to ensure
-consistent dependencies and reproducibility.
+This project is designed to run **entirely inside Docker** using the
+**class-provided simple Docker setup**, which is the recommended workflow
+used in the course tutorials.
 
-### 1. Build the Docker image
+### 1. Navigate to the Docker template directory
 
-From the project root directory:
+From the repository root, navigate to:
 
 ```bash
-docker build -t anomaly-detection .
+cd class_project/instructions/tutorial_template/docker_simple
 ````
 
-### 2. Run the Docker container
+### 2. Build the Docker container
 
-Mount the project directory into the container and expose Jupyter:
+Run the provided build script:
 
 ```bash
-docker run -it \
-  -p 8888:8888 \
-  -v $(pwd):/workspace \
-  anomaly-detection
+./docker_build.sh
 ```
 
-### 3. Access Jupyter Notebook
+This script builds a Docker image with Python, Jupyter, and all required
+dependencies for the project.
 
-The container will start Jupyter Notebook and print a URL such as:
+### 3. Start Jupyter Notebook inside the container
+
+Run:
+
+```bash
+./docker_jupyter.sh
+```
+
+This starts Jupyter Notebook inside the Docker container and exposes it on port `8888`.
+
+### 4. Open Jupyter in the browser
+
+Open the following URL in your web browser:
 
 ```
-http://127.0.0.1:8888/?token=...
+http://localhost:8888
 ```
 
-Open the URL in your browser, then run the notebooks:
+The Jupyter Notebook interface will open at the path:
+
+```
+class_project/MSML610/Fall2025/Projects
+```
+
+From there, run the notebooks:
 
 * `AnomalyDetection.API.ipynb`
 * `AnomalyDetection.example.ipynb`
 
 Both notebooks are designed to run **top-to-bottom** without modification.
+
+**Note:**
+There is a minor typo in the template documentation regarding directory names.
+The correct directory is `tutorial_github_data605_style`, not `docker_simple`.
+The Docker setup functions correctly when following the actual repository structure.
 
 ---
 
@@ -118,8 +139,9 @@ Both notebooks are designed to run **top-to-bottom** without modification.
 ## Author
 
 **Harshini Karella**
-Masters in Data Science
+Master’s in Data Science
 University of Maryland, College Park
 
 ---
+
 
