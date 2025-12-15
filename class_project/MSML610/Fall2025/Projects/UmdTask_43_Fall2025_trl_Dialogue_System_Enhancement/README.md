@@ -38,7 +38,6 @@ This dataset provides a strong foundation for supervised fine-tuning and reinfor
 
 ---
 
-##  Model
 
 ## Model
 
