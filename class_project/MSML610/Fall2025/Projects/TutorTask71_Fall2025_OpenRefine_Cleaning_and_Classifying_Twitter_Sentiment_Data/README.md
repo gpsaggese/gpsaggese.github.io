@@ -192,7 +192,7 @@ The raw dataset is **not tracked** in this repository due to size constraints.
 From the **project root directory**, run the following helper script:
 
 ```bash
-python download_sentiment140.py
+python3 download_sentiment140.py
 ```
 
 This script:
