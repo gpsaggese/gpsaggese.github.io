@@ -17,7 +17,7 @@ def _ensure_reports_dir(cfg: TrainingConfig) -> Path:
 def plot_confusion_matrix(
     cm: np.ndarray,
     cfg: TrainingConfig,
-    class_names=("Bad", "Good"),
+    class_names=("Good", "Bad"),
     filename: str = "confusion_matrix.png",
 ) -> None:
     """

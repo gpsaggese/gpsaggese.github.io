@@ -14,3 +14,10 @@ docker run --rm -ti \
     -v $(pwd):/workspace \
     $FULL_IMAGE_NAME \
     bash
+
+# docker run --rm \
+# -p 8888:8888 \
+# -v $(pwd):/workspace \
+# -e PORT=8888 \
+# final_project_shap_credit_image \
+# bash /workspace/run_jupyter.sh

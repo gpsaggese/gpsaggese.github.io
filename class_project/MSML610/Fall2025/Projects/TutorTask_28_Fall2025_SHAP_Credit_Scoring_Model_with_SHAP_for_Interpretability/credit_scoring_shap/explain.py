@@ -18,8 +18,9 @@ def build_shap_explainer(
     """
     Build a SHAP TreeExplainer and pre-compute SHAP values on background data.
 
-    For binary classification, returns SHAP values for the positive class.
-    """
+    For binary classification, returns SHAP values for the positive class (Bad / default risk).
+
+"""
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(X_background)
 

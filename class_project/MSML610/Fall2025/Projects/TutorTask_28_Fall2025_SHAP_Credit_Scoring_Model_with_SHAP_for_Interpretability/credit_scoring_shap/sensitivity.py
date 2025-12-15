@@ -21,8 +21,8 @@ def _vary_numeric_feature(
     num_points: int = 20,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Create a 1D sweep for a single numeric feature and record changes
-    in predicted probability of 'good credit'.
+    Create a 1D sweep for a single numeric feature and record changes in 
+    predicted probability of default (bad credit)
     """
     row = X.iloc[instance_idx].copy()
     f_min, f_max = X[feature].min(), X[feature].max()
@@ -72,7 +72,7 @@ def run_sensitivity_for_instance(
         ax.plot(values, probs, marker="o")
         ax.set_title(f"Sensitivity for '{feat}' (instance {instance_idx})")
         ax.set_xlabel(feat)
-        ax.set_ylabel("P(good credit)")
+        ax.set_ylabel("P(bad credit)")
         fig.tight_layout()
         fname = f"sensitivity_{feat.replace(' ', '_')}_{instance_idx}.png"
         fig.savefig(reports_dir / fname, bbox_inches="tight")

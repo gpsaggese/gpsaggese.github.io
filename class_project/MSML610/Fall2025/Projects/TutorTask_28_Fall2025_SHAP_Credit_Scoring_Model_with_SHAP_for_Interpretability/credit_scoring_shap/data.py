@@ -31,7 +31,6 @@ def load_raw_data(cfg: DataConfig) -> pd.DataFrame:
 
     df = pd.concat([X, y], axis=1)
 
-    # ---- NEW PART: give features human-readable names ----
     rename_map = {
         "Attribute1":  "status_checking_account",
         "Attribute2":  "duration_months",
@@ -59,12 +58,24 @@ def load_raw_data(cfg: DataConfig) -> pd.DataFrame:
     # Standardize target column name (UCI uses "class" or similar)
     df = df.rename(columns={df.columns[-1]: cfg.target_col})
 
-    # UCI labels: 1 = good, 2 = bad → 1 = good, 0 = bad
-    df[cfg.target_col] = df[cfg.target_col].map({1: 1, 2: 0})
+    # UCI labels: 1 = good, 2 = bad → 0 = good, 1 = bad
+    df[cfg.target_col] = df[cfg.target_col].map({1: 0, 2: 1})
+
 
     return df
 
 def _prepare_features_and_target(df: pd.DataFrame, target_col: str):
+    """
+    Split features and target.
+
+    Assumptions:
+    - Target has already been semantically encoded upstream as:
+        0 = Good
+        1 = Bad (positive class)
+
+    This function does NOT perform label remapping.
+    It only validates and enforces numeric correctness.
+    """
     if target_col not in df.columns:
         raise ValueError(f"Target column '{target_col}' not found in DataFrame.")
 
@@ -74,17 +85,25 @@ def _prepare_features_and_target(df: pd.DataFrame, target_col: str):
     y_raw = df[target_col]
     X = df.drop(columns=[target_col])
 
-    # Map common 'good'/'bad' labels to 1/0
-    if y_raw.dtype == object:
-        mapping = {"good": 1, "Good": 1, "GOOD": 1, "bad": 0, "Bad": 0, "BAD": 0}
-        y = y_raw.map(mapping)
-        if y.isna().any():
-            # Fallback: factorize arbitrary labels
-            y, _ = pd.factorize(y_raw)
-    else:
-        y = y_raw
+    # Enforce numeric target with correct semantics
+    if not np.issubdtype(y_raw.dtype, np.number):
+        raise ValueError(
+            "Target column must be numeric at this stage. "
+            "Expected encoding: 0 = Good, 1 = Bad."
+        )
+
+    # Enforce binary values
+    unique_vals = set(y_raw.unique())
+    if not unique_vals.issubset({0, 1}):
+        raise ValueError(
+            f"Unexpected target values {unique_vals}. "
+            "Expected only {0, 1} where 1 = Bad."
+        )
+
+    y = y_raw.astype(int)
 
     return X, y
+
 
 
 def _build_preprocessor(
@@ -98,10 +117,9 @@ def _build_preprocessor(
     num_cols = [c for c in X.columns if X[c].dtype != "object"]
 
     numeric_transformer = StandardScaler()
-    # sparse=False works for older sklearn versions too
     categorical_transformer = OneHotEncoder(
         handle_unknown="ignore",
-        sparse=False,
+        sparse_output=False,
     )
 
     preprocessor = ColumnTransformer(
@@ -126,7 +144,7 @@ def load_and_preprocess(
     df = load_raw_data(cfg)
     X, y = _prepare_features_and_target(df, cfg.target_col)
 
-    # Handle missing values: numeric -> median, categorical -> 'Unknown'
+    # Handle missing values, numeric to median, categorical to 'Unknown'
     num_cols = [c for c in X.columns if X[c].dtype != "object"]
     cat_cols = [c for c in X.columns if X[c].dtype == "object"]
 

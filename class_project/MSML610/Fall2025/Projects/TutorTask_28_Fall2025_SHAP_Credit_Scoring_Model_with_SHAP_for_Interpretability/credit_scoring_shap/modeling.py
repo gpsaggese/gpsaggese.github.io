@@ -53,8 +53,10 @@ def evaluate_model(
     """
     Compute AUC, confusion matrix, classification report and return predictions.
 
-    Returns:
-        metrics (dict), y_proba (np.ndarray), y_pred (np.ndarray)
+    Conventions:
+    - y = 1 means Bad (default risk, positive class)
+    - y = 0 means Good
+    - y_proba = P(Bad)
     """
     y_proba = model.predict_proba(X_test)[:, 1]
     y_pred = (y_proba >= threshold).astype(int)
@@ -62,7 +64,7 @@ def evaluate_model(
     auc = roc_auc_score(y_test, y_proba)
     cm = confusion_matrix(y_test, y_pred)
     report_text = classification_report(
-        y_test, y_pred, target_names=["Bad", "Good"]
+        y_test, y_pred, target_names=["Good", "Bad"]
     )
 
     metrics = {

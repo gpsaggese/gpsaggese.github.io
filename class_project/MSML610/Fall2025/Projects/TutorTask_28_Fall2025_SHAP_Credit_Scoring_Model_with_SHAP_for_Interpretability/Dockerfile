@@ -38,22 +38,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN mkdir /install
 
 # Install common packages
-ADD scripts/install_common_packages.sh /install/
+ADD install_common_packages.sh /install/
 RUN chmod +x /install/install_common_packages.sh && /install/install_common_packages.sh
 
 # Install Jupyter extensions.
-ADD scripts/install_jupyter_extensions.sh /install
+ADD install_jupyter_extensions.sh /install
 RUN chmod +x /install/install_jupyter_extensions.sh
 RUN /install/install_jupyter_extensions.sh
 
 # Config.
-ADD scripts/etc_sudoers /install/
-COPY scripts/etc_sudoers /etc/sudoers
-COPY docker/bashrc /root/.bashrc
+ADD  etc_sudoers /install/
+COPY etc_sudoers /etc/sudoers
+COPY bashrc /root/.bashrc
 
 # Report package versions.
-ADD scripts/version.sh /install/
+ADD version.sh /install/
 RUN /install/version.sh 2>&1 | tee version.log
 
 # Jupyter.
 EXPOSE 8888
+
