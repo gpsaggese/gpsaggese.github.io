@@ -1,6 +1,6 @@
 # CausalML API Documentation
 
-## 🐳 Installation & Docker Setup
+## Installation & Docker Setup
 To ensure reproducibility, this project is containerized. Follow these steps to build and run the analysis.
 
 ### 1. Build the Image

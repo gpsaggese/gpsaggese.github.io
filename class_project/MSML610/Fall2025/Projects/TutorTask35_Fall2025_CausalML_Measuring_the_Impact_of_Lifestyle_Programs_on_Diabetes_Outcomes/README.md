@@ -1,4 +1,4 @@
-# Measuring_the_Impact_of_Lifestyle_Programs_on_Diabetes_Outcomes
+# Measuring the Impact of Lifestyle Programs on Diabetes Outcomes
 
 ## Overview :
 ### Project Objective :
@@ -29,8 +29,8 @@ docker run -p 8888:8888 -v "$(pwd)":/app causalml_project
 - `data/` : Contains datasets used for analysis. 
 - CausalML.API.ipynb : Jupyter notebook demonstrating the application of CausalML methods to measure the impact of lifestyle programs on diabetes outcomes.
 - CausalML.API.md : Documentation for the CausalML API used in the notebook.
-- CausalML.Examples.ipynb : Additional examples of CausalML applications.
-- CausalML.Examples.md : Documentation for the examples provided.
+- CausalML.examples.ipynb : Additional examples of CausalML applications.
+- CausalML.examples.md : Documentation for the examples provided.
 - utils.py : Utility functions to support data processing and analysis.
 - Dockerfile : Configuration file for building the Docker image.
 - README.md : This file, providing an overview and setup instructions for the project.
