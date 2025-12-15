@@ -1,48 +1,23 @@
-# TO DO: 
-- (Document the native programming interface &#40;classes, functions, configuration objects&#41; of your chosen tool or library.)
-- (Describe the lightweight wrapper layer you have written on top of this native API.)
+# Theoretical Guide & API Documentation
 
------
+## Overview
+This document summarizes the **`HMMlearn.API.ipynb`** notebook, which I designed to provide some theory on Markov Chains and Hidden Markov Models (HMMs) for a reader unfamiliar with the topic.
+It also documents the usage and core functions of the tool I used in my porject, the Python `hmmlearn` library.
 
-HMMlearn is a Python library designed for Hidden Markov Models &#40;HMM&#41;, which are statistical models that assume an underlying process generating observable events is a Markov process with unobserved &#40;hidden&#41; states. It is particularly useful for sequential data analysis and time-series prediction. 
+My key focus was not just show *how* HMMs work, but *when* they are theoretically unsuited for a given task, specifically for Anomaly Detection in complex, real-world data like network traffic.
 
-Technologies Used
-HMMlearn
+## Key Topics Covered in `HMMlearn.API.ipynb`
 
-- Provides implementations of various HMM algorithms, including Gaussian HMMs and Multinomial HMMs.
-- Supports training, evaluation, and prediction on sequences of data.
-- Offers functionality for model fitting and state inference.
+-  Markov Chains: introduces the memory-1 and the stationarity assumptions. These are the two constraints network traffic data may violate
+- HMMs: defines the three core problems solved by HMMs
+- The `hmmlearn` API: basic examples using `hmmlearn`, including the `GaussianHMM` (for continuous data) used in my project
 
+## Critical Insight: Why HMMs Struggle with Network Traffic
 
-**Project Objective**: Build an anomaly detection system for network traffic data using a Hidden Markov Model. The aim is to identify unusual patterns that may indicate security threats or breaches.
+Notebook provides the core justification for the experimental results we will see in the main project (`HMMlearn.example.ipynb`), such as memory-1 violation, overlapping states, and non-stationarity.
 
-**Dataset Suggestions**: 
-- Use the "UNSW-NB15" dataset available on Kaggle.
-- Alternatively, utilize the "CICIDS 2017" dataset, which is also available on Kaggle.
-> [!NOTE] 
-> These datasets are not time series or sequential data. Therefore, they are NOT suitable for HMMs. I show this in the first part of my project notebook. Then, when I make it obvious, I use a similar dataset that is appropriate for this task:CESNET-TimeSeries24: Time Series Dataset for Network Traffic Anomaly Detection and Forecasting (https://zenodo.org/records/13382427)
+## Usage
 
-**Tasks**:
-- Data Preparation:
-    - Preprocess the network traffic data, handling missing values and normalizing features.
-  
-- Feature Engineering:
-    - Create time-series features such as packet counts, bytes transferred, and connection durations.
-  
-- Model Training:
-    - Implement a Gaussian HMM using HMMlearn to model normal network behavior.
-  
-- Anomaly Detection:
-    - Use the trained model to detect anomalies in live or historical network traffic data.
-  
-- Evaluation:
-    - Assess the performance of the anomaly detection system using precision, recall, and F1-score metrics.
-  
-- Visualization:
-    - Visualize detected anomalies and normal traffic patterns using Seaborn or Matplotlib.
-
-**Bonus Ideas (Optional)**: 
-- For Project 3, implement a feedback loop that retrains the model based on new traffic data to improve accuracy over time.
-
-
-
+To run the theoretical examples and verify the library installation:
+1.  Ensure `hmmlearn`, `numpy`, and `matplotlib` are installed (see `requirements.txt`)
+2.  Execute all cells sequentially in the **`HMMlearn.API.ipynb`** notebook
