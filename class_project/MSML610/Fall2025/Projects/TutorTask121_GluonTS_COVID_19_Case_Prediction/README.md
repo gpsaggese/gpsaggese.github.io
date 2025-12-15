@@ -33,7 +33,6 @@ If automatic download fails (e.g., network restrictions), download manually:
 - [US COVID-19 Cases](https://drive.google.com/file/d/1ZfZtoV3PpZblZYES0A5LHCwp54cR8RJL/view) → save as `data/cases.csv`
 - [US COVID-19 Deaths](https://drive.google.com/file/d/1kYC9nrCnKbNpnoZKz8o6TDMM371gyxbl/view) → save as `data/deaths.csv`
 - [US Mobility Report](https://drive.google.com/file/d/1TMqG8Z8vbxmQAv1rNKczYYPCzwT4ZS_q/view) → save as `data/mobility.csv`
-- [US Vaccine Data](https://drive.google.com/drive/folders/1qMDGBstdY8H2hYpz8xSolhzNOsVxNHMA) → save as `data/vaccine.csv` (optional)
 
 Or run: `python GluonTS_utils_data_download.py`
 
@@ -337,7 +336,6 @@ The following data files should be in the `data/` directory:
 - `cases.csv` (17 MB) - JHU COVID-19 confirmed cases
 - `deaths.csv` (11 MB) - JHU COVID-19 deaths  
 - `mobility.csv` (97 MB) - Google Mobility Reports
-- `vaccine.csv` (3 MB) - CDC vaccination data (kept for future use)
 
 Download from: https://drive.google.com/drive/folders/1qMDGBstdY8H2hYpz8xSolhzNOsVxNHMA
 
