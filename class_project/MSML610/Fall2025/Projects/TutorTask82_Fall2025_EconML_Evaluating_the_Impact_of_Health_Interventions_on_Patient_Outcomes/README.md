@@ -1,25 +1,27 @@
 # Evaluating the Impact of Dietary Supplement Use on Health Outcomes with EconML (NHANES 2021–2023)
 
-**Course**: MSML610 — Fall 2025  
-**Project**: TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes  
-**Author(s)**: Karthik Vakada, Sri Akash Kadali  
-**Last Updated**: 2025-12-14  
+**Course**: MSML610 — Fall 2025
+**Project**: TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
+**Author(s)**: Karthik Vakada, Sri Akash Kadali
+**Last Updated**: 2025-12-14
 
 ---
 
 ## Table of Contents
-- [Project Overview and Goals](#project-overview-and-goals)
-- [Project Structure](#project-structure)
-- [How It Works](#how-it-works)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Setup Instructions (Docker - Recommended)](#setup-instructions-docker---recommended)
-  - [Setup Instructions (Local - Optional)](#setup-instructions-local---optional)
-- [Usage](#usage)
-- [API vs Example Layers](#api-vs-example-layers)
-- [Reproducibility Notes](#reproducibility-notes)
-- [Troubleshooting](#troubleshooting)
-- [References](#references)
+
+* [Project Overview and Goals](#project-overview-and-goals)
+* [Project Structure](#project-structure)
+* [How It Works](#how-it-works)
+* [Getting Started](#getting-started)
+
+  * [Prerequisites](#prerequisites)
+  * [Setup Instructions (Docker – Recommended)](#setup-instructions-docker--recommended)
+  * [Setup Instructions (Local – Optional)](#setup-instructions-local--optional)
+* [Usage](#usage)
+* [API vs Example Layers](#api-vs-example-layers)
+* [Reproducibility Notes](#reproducibility-notes)
+* [Troubleshooting](#troubleshooting)
+* [References](#references)
 
 <!-- tocstop -->
 
@@ -27,28 +29,31 @@
 
 ## Project Overview and Goals
 
-This project is a **hands-on tutorial** that demonstrates how to use **EconML** to estimate the causal effect of a health intervention using **NHANES (2021–2023)** data.
+This project is a **hands-on tutorial** showing how to estimate causal effects using **EconML** on real-world observational health data from **NHANES (2021–2023)**.
 
 ### Main causal question
-> Does **any dietary supplement use** (binary treatment) have a measurable causal effect on:
-- **Mean systolic blood pressure** (`sbp_mean`)
-- **Fasting plasma glucose** (`fasting_glucose_mg_dl`)?
 
-### Goals
-- Build a clean, merged **analysis dataset** from multiple NHANES component CSVs.
-- Estimate causal effects using **DRLearner (Double Robust Learner)** from EconML.
-- Report:
-  - **ATE** (Average Treatment Effect)
-  - **Bootstrap CI** for ATE
-  - **CATE** (individual-level effects) and simple heterogeneity summaries (age/BMI bins)
-- Compare with a transparent baseline:
-  - **OLS with robust (HC3) SEs** using statsmodels
+> Does **any dietary supplement use** (binary treatment) have a causal effect on:
+
+* **Mean systolic blood pressure** (`sbp_mean`)
+* **Fasting plasma glucose** (`fasting_glucose_mg_dl`)?
+
+### Project goals
+
+* Construct a clean, merged **analysis-ready dataset** from multiple NHANES component files
+* Estimate causal effects using **DRLearner (Double Robust Learner)**
+* Report:
+
+  * **ATE** (Average Treatment Effect)
+  * **Bootstrap confidence intervals**
+  * **CATE** (individual-level treatment effects) with simple heterogeneity analysis
+* Compare results against a transparent baseline:
+
+  * **OLS with HC3 robust standard errors** using `statsmodels`
 
 ---
 
 ## Project Structure
-
-This project lives under the MSML610 projects directory:
 
 ```text
 Projects/
@@ -79,7 +84,7 @@ Projects/
     ├── tables/
     ├── tmp_build/
     └── changelog.txt
-````
+```
 
 ---
 
@@ -89,83 +94,139 @@ Projects/
 
 ```mermaid
 flowchart TD
-    A[Start] --> B[Load cleaned NHANES component CSVs from data/]
-    B --> C[Merge into single analysis DataFrame by respondent id (SEQN)]
-    C --> D[Derive variables: sbp_mean, treatment_supplement, covariates]
-    D --> E[Create (Y, T, X) via econml_utils.get_y_t_x()]
-    E --> F[Fit DRLearner (regression + propensity)]
-    F --> G[Compute ATE + bootstrap CI]
-    F --> H[Compute individual effects (CATE / tau_hat)]
-    H --> I[Summarize heterogeneity by age/BMI quartiles]
-    D --> J[Run OLS baseline with HC3 SE]
-    G --> K[Return results as plain dict/DataFrame]
+    A[Start] --> B[Load cleaned NHANES CSVs from data/]
+    B --> C[Merge by respondent ID (SEQN)]
+    C --> D[Derive outcomes, treatment, covariates]
+    D --> E[Create (Y, T, X)]
+    E --> F[Fit DRLearner]
+    F --> G[Estimate ATE + CI]
+    F --> H[Estimate CATE]
+    H --> I[Heterogeneity summaries]
+    D --> J[OLS baseline with HC3 SE]
+    G --> K[Collect results]
     I --> K
     J --> K
     K --> L[End]
 ```
 
-### “Schema” of the structured inputs (what gets merged)
+### NHANES components used
 
-The analysis dataset is built by joining multiple NHANES component files on respondent id (`SEQN`). Typical components used here include:
+Merged on `SEQN`:
 
-* `DEMO_*` (demographics: age/sex)
-* `BMX_*` (body measures: BMI, weight, waist)
-* `BPXO_*` (blood pressure readings → `sbp_mean`)
-* `GLU_*` (fasting glucose)
-* `TCHOL_*`, `HDL_*`, `TRIGLY_*` (lipids)
-* `HSCRP_*` (hs-CRP)
-* `DSQTOT_*` (dietary supplement use → `treatment_supplement`)
+* `DEMO_*`: demographics
+* `BMX_*`: body measures (BMI, weight)
+* `BPXO_*`: blood pressure → `sbp_mean`
+* `GLU_*`: fasting glucose
+* `TCHOL_*`, `HDL_*`, `TRIGLY_*`: lipids
+* `HSCRP_*`: hs-CRP
+* `DSQTOT_*`: dietary supplement use → treatment indicator
 
-Exact file names/columns are implemented in `econml_utils.py`.
+All cleaning and feature construction lives in `econml_utils.py`.
 
 ---
 
 ## Getting Started
 
-### Prerequisites
+## Prerequisites
 
-* **Docker Desktop** installed and running
-* Enough disk space (image is ~1–2GB once built)
-* macOS is supported (Apple Silicon is fine)
+### All platforms
 
-### Setup Instructions (Docker - Recommended)
+* Docker Desktop installed and running
+* ~1–2 GB free disk space
 
-From the project folder:
+### Windows-specific
+
+* Docker Desktop **with WSL 2 backend enabled**
+* Git Bash or WSL recommended for running `.sh` scripts
+
+---
+
+## Setup Instructions (Docker – Recommended)
+
+> Docker is the **official and graded execution path**.
+> These steps work on **both macOS and Windows**.
+
+---
+
+### Step 1: Navigate to the project directory
+
+#### macOS / Linux
 
 ```bash
 cd /Users/karthikvakada/src/umd_classes1/class_project/MSML610/Fall2025/Projects/TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
 ```
 
-Make scripts executable (one-time):
+#### Windows (PowerShell)
+
+```powershell
+cd C:\Users\karthikvakada\src\umd_classes1\class_project\MSML610\Fall2025\Projects\TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
+```
+
+If using WSL, use Linux-style paths inside WSL.
+
+---
+
+### Step 2: Make scripts executable (one-time)
+
+#### macOS / Linux / WSL
 
 ```bash
 chmod +x docker_*.sh run_jupyter.sh install_*.sh version.sh
 ```
 
-Build the Docker image:
+#### Windows (no chmod)
+
+* Use **Git Bash or WSL**
+* Native PowerShell is not recommended for `.sh` scripts
+
+---
+
+### Step 3: Build the Docker image
+
+#### macOS / Linux / WSL
 
 ```bash
 ./docker_build.sh
 ```
 
-Start Jupyter (inside container):
+#### Windows (Git Bash or WSL)
+
+```bash
+bash docker_build.sh
+```
+
+---
+
+### Step 4: Launch Jupyter
+
+#### macOS / Linux / WSL
 
 ```bash
 ./docker_jupyter.sh
 ```
 
-Expected output looks like:
+#### Windows (Git Bash or WSL)
+
+```bash
+bash docker_jupyter.sh
+```
+
+Expected output:
 
 ```text
 Starting Jupyter in /curr_dir on port 8888 ...
 You should be able to open it at: http://localhost:8888
 ```
 
-Open the printed URL in your browser.
+Open the URL in your browser.
 
-### Setup Instructions (Local - Optional)
+---
 
-Docker is the expected path for grading. If you still want local execution:
+## Setup Instructions (Local – Optional)
+
+> Not recommended for grading. Use Docker unless explicitly required.
+
+### macOS / Linux
 
 ```bash
 python3 -m venv venv
@@ -174,44 +235,51 @@ pip install -r requirements.txt
 jupyter lab
 ```
 
+### Windows
+
+```powershell
+python -m venv venv
+venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+jupyter lab
+```
+
 ---
 
 ## Usage
 
-### 1) Run the API notebook (minimal, “how to call functions”)
+### Option 1: API notebook (minimal)
 
-Open and run:
+Run:
 
 * `econml.API.ipynb`
 
-This notebook demonstrates:
+Shows:
 
-* `build_analysis_df()` and `get_y_t_x()` from `econml_utils.py`
-* DRLearner experiments and OLS baseline from `econml.API.py`
+* Data construction
+* DRLearner calls
+* OLS baseline
 
-### 2) Run the example notebook (end-to-end tutorial)
+---
 
-Open and run:
+### Option 2: Example notebook (recommended)
+
+Run:
 
 * `econml.example.ipynb`
 
-This notebook is the recommended “start here” path:
+Covers:
 
-* Builds the analysis dataset
-* Runs DRLearner for SBP + glucose
-* Shows ATE/CATE summaries + compares to OLS
+* End-to-end workflow
+* SBP and glucose experiments
+* ATE, CATE, and comparisons
 
-### 3) (Optional) Run the script version
+---
 
-Start a shell in the container:
+### Option 3: Script execution
 
 ```bash
 ./docker_bash.sh
-```
-
-Then run:
-
-```bash
 python econml.example.py
 ```
 
@@ -219,75 +287,73 @@ python econml.example.py
 
 ## API vs Example Layers
 
-### API / Core utilities (stable “contract”)
+### Core API (stable)
 
-* `econml_utils.py`
+**`econml_utils.py`**
 
-  * `build_analysis_df()`: loads + merges NHANES component CSVs and creates derived variables
-  * `get_y_t_x(df, outcome_col, treatment_col)`: returns `(Y, T, X, covariates)` consistently
+* `build_analysis_df()`
+* `get_y_t_x()`
 
-* `econml.API.py`
+**`econml.API.py`**
 
-  * `run_sbp_supplement_experiment(...)`
-  * `run_glucose_supplement_experiment(...)`
-  * `run_ols_for_outcome(...)`
+* `run_sbp_supplement_experiment()`
+* `run_glucose_supplement_experiment()`
+* `run_ols_for_outcome()`
 
-These functions return **plain Python objects / DataFrames** so notebooks stay clean and reusable.
+All return plain Python objects or DataFrames.
 
-### Example / Tutorial layer (student-facing)
+---
 
-* `econml.API.ipynb`: API demonstration
-* `econml.example.ipynb`: end-to-end walkthrough
-* `econml.example.py`: script equivalent for quick regression testing
+### Example layer
+
+* `econml.API.ipynb`
+* `econml.example.ipynb`
+* `econml.example.py`
 
 ---
 
 ## Reproducibility Notes
 
-* Notebooks are designed to be run top-to-bottom using **Restart & Run All**
-* DRLearner uses a fixed `random_state` by default
-* ATE confidence intervals are computed with a simple nonparametric bootstrap
-* The project expects cleaned `*_meaningful*.csv` inputs to exist in `data/`
+* Notebooks support **Restart & Run All**
+* Fixed random seeds where applicable
+* Bootstrap used for ATE confidence intervals
+* Requires cleaned `*_meaningful*.csv` files in `data/`
 
 ---
 
 ## Troubleshooting
 
-### 1) “Jupyter command `jupyter-notebook` not found”
-
-Some environments include JupyterLab but not the classic `notebook` package.
-Use JupyterLab:
-
-* Inside container: make sure `run_jupyter.sh` launches `jupyter lab` (not `jupyter-notebook`)
-* If you’re running manually in the container, use:
+### Jupyter not found
 
 ```bash
-jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token='' --NotebookApp.password=''
+jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token=''
 ```
 
-### 2) “exec format error” when running `run_jupyter.sh`
+---
 
-This usually means `run_jupyter.sh` has Windows CRLF line endings or a broken shebang.
-Fix line endings on macOS:
+### `exec format error` (Windows)
+
+Convert line endings:
 
 ```bash
-sed -i '' $'s/\r$//' run_jupyter.sh
-chmod +x run_jupyter.sh
+sed -i 's/\r$//' run_jupyter.sh
 ```
 
-Also ensure the first line of `run_jupyter.sh` is:
+Ensure first line:
 
 ```bash
 #!/usr/bin/env bash
 ```
 
-### 3) Port 8888 already in use
+---
 
-Either stop the process using it, or change the port mapping in `docker_jupyter.sh` (e.g., host 8889 → container 8888).
+### Port 8888 already in use
 
-### 4) Apple Silicon note
+Edit `docker_jupyter.sh` and change host port mapping.
 
-If you ever hit a wheel/build issue on Apple Silicon, rebuild forcing amd64:
+---
+
+### Apple Silicon issues
 
 ```bash
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
@@ -298,11 +364,7 @@ export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
 ## References
 
-* EconML documentation: [https://econml.azurewebsites.net/](https://econml.azurewebsites.net/)
-* NHANES Continuous (2021–2023): [https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2021-2023](https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2021-2023)
+* EconML: [https://econml.azurewebsites.net/](https://econml.azurewebsites.net/)
+* NHANES 2021–2023: [https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2021-2023](https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2021-2023)
 * scikit-learn: [https://scikit-learn.org/](https://scikit-learn.org/)
 * statsmodels: [https://www.statsmodels.org/](https://www.statsmodels.org/)
-
-```
-
-
