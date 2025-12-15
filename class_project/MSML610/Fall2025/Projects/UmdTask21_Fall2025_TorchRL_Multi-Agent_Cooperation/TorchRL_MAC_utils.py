@@ -345,6 +345,10 @@ def compute_returns_advantages(
 # Loss and update
 # ---------------------------------------------------------------------------
 
+def _param_stats(model: torch.nn.Module) -> tuple[float, float]:
+    with torch.no_grad():
+        flat = torch.cat([p.data.flatten() for p in model.parameters()])
+        return float(flat.mean().cpu()), float(flat.std().cpu())
 
 def a3c_update(
     actor: nn.Module,
@@ -382,13 +386,14 @@ def a3c_update(
     values = critic.value(joint_obs)  # [T]
     
     # Aggregate rewards as team reward (sum over agents)
-    rewards_team = batch.rewards.sum(dim=1)  # [T]
+    # rewards_team = batch.rewards.sum(dim=1)  # [T]
+    rewards_team = batch.rewards.mean(dim = 1)
     
     # Compute returns and advantages
     returns, advantages = compute_returns_advantages(rewards_team, values, batch.dones, cfg.gamma)
     
     # Normalize advantages for stable gradients
-    advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+    advantages = (advantages - advantages.mean()) / (advantages.std().clamp_min(1e-3))
     
     # Compute losses (keep gradients!)
     policy_loss = -(logprob_mean * advantages.detach()).mean()
@@ -492,6 +497,7 @@ def _a3c_worker(
         local_critic.load_state_dict(global_critic.state_dict())
     
     episode_count = 0
+    ep_return_accum = 0.0
     obs = None  # Will trigger reset on first collect_n_steps
     
     while True:
@@ -527,7 +533,8 @@ def _a3c_worker(
         joint_obs = batch.obs.reshape(T, -1)
         values = local_critic.value(joint_obs)
         
-        rewards_team = batch.rewards.sum(dim=1)
+        rewards_team = batch.rewards.mean(dim=1)          # [T]
+        ep_return_accum += float(rewards_team.sum().item())  # accumulate this chunk
         # Bootstrap with value of next joint observation if rollout truncated by n_steps
         bootstrap = None
         if not done:
@@ -537,7 +544,7 @@ def _a3c_worker(
         returns, advantages = compute_returns_advantages(
             rewards_team, values, batch.dones, train_cfg.gamma, bootstrap
         )
-        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+        advantages = (advantages - advantages.mean()) / (advantages.std().clamp_min(1e-3))
         
         # Compute loss
         policy_loss = -(logprob_mean * advantages.detach()).mean()
@@ -570,12 +577,21 @@ def _a3c_worker(
             # Clear existing grads on global parameters
             optimizer.zero_grad(set_to_none=True)
             # Copy gradients from local to global (assign to .grad)
-            for local_param, global_param in zip(local_actor.parameters(), global_actor.parameters()):
-                if local_param.grad is not None:
-                    global_param.grad = local_param.grad
-            for local_param, global_param in zip(local_critic.parameters(), global_critic.parameters()):
-                if local_param.grad is not None:
-                    global_param.grad = local_param.grad
+            for lp, gp in zip(local_actor.parameters(), global_actor.parameters()):
+                if lp.grad is None:
+                    continue
+                if gp.grad is None:
+                    gp.grad = lp.grad.detach().clone()
+                else:
+                    gp.grad.copy_(lp.grad.detach())
+
+            for lp, gp in zip(local_critic.parameters(), global_critic.parameters()):
+                if lp.grad is None:
+                    continue
+                if gp.grad is None:
+                    gp.grad = lp.grad.detach().clone()
+                else:
+                    gp.grad.copy_(lp.grad.detach())
             # Clip and step optimizer
             torch.nn.utils.clip_grad_norm_(
                 list(global_actor.parameters()) + list(global_critic.parameters()),
@@ -584,19 +600,29 @@ def _a3c_worker(
             optimizer.step()
             
             # If episode ended, increment counter and log
+            # if done:
+            #     episode_return = rewards_team.sum().item()
+            #     counter.value += 1
+            #     queue.put({
+            #         "episode_return": episode_return,
+            #         "policy_loss": policy_loss.item(),
+            #         "value_loss": value_loss.item(),
+            #         "entropy": entropy_mean.mean().item(),
+            #         "rank": rank,
+            #     })
             if done:
-                episode_return = rewards_team.sum().item()
                 counter.value += 1
                 queue.put({
-                    "episode_return": episode_return,
-                    "policy_loss": policy_loss.item(),
-                    "value_loss": value_loss.item(),
-                    "entropy": entropy_mean.mean().item(),
+                    "episode_return": ep_return_accum,   # TRUE episodic return
+                    "policy_loss": float(policy_loss.item()),
+                    "value_loss": float(value_loss.item()),
+                    "entropy": float(entropy_mean.mean().item()),
                     "rank": rank,
                 })
+                ep_return_accum = 0.0
             
             # Sync local weights from global every sync_every episodes
-            if episode_count % train_cfg.sync_every == 0:
+            if done and (episode_count % train_cfg.sync_every == 0):
                 local_actor.load_state_dict(global_actor.state_dict())
                 local_critic.load_state_dict(global_critic.state_dict())
 
@@ -640,9 +666,15 @@ def train_ctde_a3c(env_cfg: EnvConfig, train_cfg: TrainConfig) -> Dict[str, List
     global_critic.share_memory()
     
     # Create shared optimizer
+    # optimizer = SharedAdam(
+    #     list(global_actor.parameters()) + list(global_critic.parameters()),
+    #     lr=train_cfg.lr_actor
+    # )
     optimizer = SharedAdam(
-        list(global_actor.parameters()) + list(global_critic.parameters()),
-        lr=train_cfg.lr_actor
+    [
+        {"params": global_actor.parameters(), "lr": train_cfg.lr_actor},
+        {"params": global_critic.parameters(), "lr": train_cfg.lr_critic},
+    ],
     )
     
     # Shared counters and queues
@@ -706,6 +738,11 @@ def train_ctde_a3c(env_cfg: EnvConfig, train_cfg: TrainConfig) -> Dict[str, List
                 entropy_trend = "(steady)" if len(history["entropy"]) < 2 else \
                     ("(decreasing)" if history["entropy"][-1] < history["entropy"][max(0, len(history["entropy"])-train_cfg.log_every-1)] else "(increasing)")
                 
+                wmean, wstd = _param_stats(global_actor)
+                cmean, cstd = _param_stats(global_critic)
+
+                print(f"... | Actor μ/σ: {wmean:+.3e}/{wstd:.3e} | Critic μ/σ: {cmean:+.3e}/{cstd:.3e}")
+
                 print(f"Episode {episodes_done:3d}/{train_cfg.max_episodes} | "
                       f"Avg Return: {avg_return:8.2f} | "
                       f"Entropy: {avg_entropy:.4f} {entropy_trend}")
