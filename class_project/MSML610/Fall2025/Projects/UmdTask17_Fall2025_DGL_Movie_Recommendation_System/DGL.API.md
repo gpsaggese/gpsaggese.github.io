@@ -12,8 +12,6 @@
     + [Edge Splits & Training Utilities](#edge-splits--training-utilities)
     + [Models & Training Loop](#models--training-loop)
     + [Evaluation & Recommendation Utilities](#evaluation--recommendation-utilities)
-  * [How to Run](#how-to-run)
-  * [Evaluation](#evaluation)
   * [Design Decisions & Trade-offs](#design-decisions--trade-offs)
   * [Limitations & Next Steps](#limitations--next-steps)
   * [References](#references)
@@ -221,70 +219,14 @@ These embeddings are used for both **top‑N link prediction** and **rating regr
   - Converts internal movie indices back to **human‑readable titles** for display.
 
 ---
+### Using This API in the Project
 
-### How to Run
+This API tutorial focuses on demonstrating the DGL utilities (`dgl_utils.py`) on a small, didactic link‑prediction example.
 
-**Data Validation**:
-Before running, validate your data files:
-```bash
-python -c "from validate_data import validate_movielens_data; validate_movielens_data('data/raw')"
-```
+For full project setup, end‑to‑end training commands, and evaluation of the production‑style recommender, see:
 
-
-You can run the full API demo either via notebook or script.
-
-- **Notebook**: `DGL.API.ipynb`
-  - Walks cell‑by‑cell through:
-    - Data loading (real MovieLens or dummy).
-    - Graph construction and feature attachment.
-    - Temporal edge splits.
-    - GraphSAGE training.
-    - Evaluation (P@K, R@K, RMSE).
-    - Generating top‑N recommendations for a sample user.
-
-- **Script**: `DGL.API.py` 
-
-
-```bash
-  python DGL.API.py \
-    --ratings data/raw/rating.csv \
-    --movies data/raw/movie.csv \
-    --max-edges 200000 \
-    --epochs 40 \
-    --embed-dim 64 \
-    --k 10 \
-    --device cpu \
-    --sample-user 0
-```
-  - **Fallback behavior**:
-  - If `--ratings` / `--movies` are omitted or files are missing, the script calls
-    `load_dummy_data()` so the **entire pipeline still runs**.
-
----
-
-### Evaluation
-
-The API supports two main evaluation modes:
-
-- **Implicit feedback / Top‑N quality**:
-  - Metrics: **Precision@K** and **Recall@K** on held‑out user–movie edges.
-  - Implementation: `evaluate_precision_recall_at_k(...)` using dot‑product scores
-    between user and movie embeddings.
-
-- **Explicit feedback / Rating prediction**:
-  - Embeddings from GraphSAGE are frozen.
-  - A **Ridge regressor** is trained on train edges to predict ratings.
-  - Metric: **RMSE** on test edges via:
-    - `fit_edge_regressor_ridge(...)`
-    - `rmse_from_regressor(...)`.
-
-The script prints a compact JSON summary at the end, including:
-
-- Number of users, movies, and edges.
-- `P@K`, `R@K`.
-- Test **RMSE**.
-- A sample user’s **top‑N recommended titles**.
-
+- The main project `README.md`
+- `DGL.example.md` / `DGL.example.ipynb`
 ---
 
 ### Design Decisions & Trade-offs
