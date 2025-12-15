@@ -1,11 +1,19 @@
-pandas
-numpy
-scikit-learn
-xgboost
-joblib
-fastapi
-uvicorn
-pydantic
-python-multipart
-kaggle
+# Core data + ML
+numpy>=2.0
+pandas>=2.2
+scikit-learn>=1.4
+joblib>=1.3
+
+# Modeling
+xgboost>=2.0
+
+# Download dataset
+kagglehub[pandas-datasets]>=0.3.10
+
+# Plotting + progress
+matplotlib>=3.8
+tqdm>=4.66
+
+# Notebook progress bar widgets (removes IProgress warning)
+ipywidgets>=8.1
 
