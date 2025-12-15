@@ -705,9 +705,9 @@ By the end of this tutorial, you will be able to:
 
 ## 3. Repository Structure
 ```
-COURSE_CODE/
-└── Term20xx/
-    └── projects/
+MSML610/
+└── Fall2025/
+    └── Projects/
         └── TutorTask71_Fall2025_OpenRefine_Cleaning_and_Classifying_Twitter_Sentiment_Data/
             ├── utils_data_io.py
             ├── utils_post_processing.py
@@ -1074,9 +1074,7 @@ Each baseline model is trained using:
 
 #### Metrics Reported
 - Accuracy
-- Precision
-- Recall
-- Macro F1 score
+- Weighted F1 score
 - Confusion matrix
 
 ---
@@ -1099,9 +1097,7 @@ The goal of this comparison is to:
 All models are evaluated using the same set of metrics to ensure a fair comparison:
 
 - **Accuracy**: Overall proportion of correctly classified tweets
-- **Precision**: Correct positive predictions divided by total positive predictions
-- **Recall**: Correct positive predictions divided by total actual positives
-- **Macro F1 Score**: Unweighted average of F1 scores across sentiment classes
+- **Weighted F1 Score**: Weighted average of F1 scores across sentiment classes
 - **Confusion Matrix**: Class-wise prediction breakdown
 
 The **macro F1 score** is used as the primary metric, as it accounts for class-level performance without being biased toward majority classes.
@@ -1212,9 +1208,9 @@ The goal is to clearly illustrate how each component fits together in the overal
 
 The project follows the steps below:
 
-1. Download the raw Sentiment140 dataset from Kaggle  
+1. Download the raw Sentiment140 dataset using the helper script (`download_sentiment140.py`)  
 2. Perform data cleaning and feature engineering using OpenRefine  
-3. Export the cleaned dataset as a CSV file  
+3. Export the cleaned dataset as a CSV file  (`sentiment140-final-fixed.csv`)
 4. Load and inspect the cleaned data in Python  
 5. Fine-tune a pre-trained DistilBERT model for sentiment classification  
 6. Train traditional machine learning baseline models for comparison  
