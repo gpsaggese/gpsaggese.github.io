@@ -19,6 +19,18 @@ This API tutorial introduces a lightweight wrapper layer for training and evalua
 
 We integrate PettingZoo's MPE environments through TorchRL's PettingZoo wrappers when available, and fall back to raw PettingZoo parallel environments when needed. This keeps the tutorial robust to version differences while still focusing on core concepts: reset/step loops, observation/action formats, and multi-agent ordering.
 
+## High-level architecture (API layer)
+
+```mermaid
+flowchart LR
+  NB[Notebook<br/>API or Example] --> UTIL[torchrl_mac_utils<br/>Wrapper and helpers]
+  UTIL --> ENV[MPE environment<br/>simple_reference_v3]
+  ENV --> WRAP[TorchRL wrapper<br/>TensorDict IO]
+  UTIL --> ACT[Actor policy<br/>shared or per agent]
+  UTIL --> CRI[Central critic<br/>V of state]
+  UTIL --> EVAL[Evaluation and metrics<br/>success and comm stats]
+```
+
 ### Key design decision: stable agent ordering
 
 Multi-agent training is sensitive to consistent agent ordering. The API enforces a fixed ordering of agents so that:
@@ -59,3 +71,4 @@ By the end of `TorchRL_MAC.API.ipynb`, you should be able to:
 - TorchRL wrapper version differences → wrapper fallback path
 - Silent shape bugs → consistent tensor shapes and sanity checks
 - Communication not actually being used → "no-comm" ablation to verify causality
+

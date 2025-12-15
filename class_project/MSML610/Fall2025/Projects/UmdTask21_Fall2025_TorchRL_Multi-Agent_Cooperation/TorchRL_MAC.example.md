@@ -191,6 +191,23 @@ After repeatedly seeing A3C stability issues and unstructured communication, we 
 
 This final configuration is what the example notebook (`TorchRL_MAC.example.ipynb`) runs end-to-end and is the version we recommend as a starting point for future students.
 
+### End-to-end training loop
+
+```mermaid
+flowchart LR
+  RST[Reset env] --> OBS[Get obs and state]
+  OBS --> POL[Actor policy]
+  POL --> ACT[Sample actions]
+  ACT --> STP[Step env]
+  STP --> COL[Collect rewards done obs state]
+  COL --> VAL[Central critic]
+  VAL --> RET[Compute n step return]
+  RET --> ADV[Compute advantage]
+  ADV --> LOSS[Total loss<br/>policy value entropy]
+  LOSS --> UPD[Optimizer step]
+  UPD --> OBS
+  ```
+
 ## Evaluation methodology: proving cooperation and communication
 
 To evaluate cooperation and communication rigorously, we report:
