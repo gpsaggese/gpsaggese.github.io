@@ -1,0 +1,24 @@
+{
+  "dataset": {
+    "total_articles": 44889,
+    "real_articles": 21417,
+    "fake_articles": 23472
+  },
+  "tfidf": {
+    "shape": [
+      44889,
+      5000
+    ],
+    "max_features": 5000,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "sparsity_pct": 98.10116286840874
+  },
+  "bert": {
+    "model": "bert-base-uncased",
+    "embedding_dim": 768,
+    "pooling": "mean"
+  }
+}
