@@ -14,6 +14,10 @@ kagglehub[pandas-datasets]>=0.3.10
 matplotlib>=3.8
 tqdm>=4.66
 
+# Notebook
+jupyterlab>=4.0
+ipykernel>=6.0
+
 # Notebook progress bar widgets (removes IProgress warning)
 ipywidgets>=8.1
 
