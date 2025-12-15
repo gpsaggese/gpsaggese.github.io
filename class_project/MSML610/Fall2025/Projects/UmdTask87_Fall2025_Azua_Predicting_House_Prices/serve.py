@@ -53,6 +53,10 @@ def root():
 def schema():
     return {"numeric": EXPECTED_NUM, "categorical": EXPECTED_CAT}
 
+@app.get("/health")
+def health() -> dict:
+    return {"status": "ok", "model_loaded": model is not None}
+
 @app.post("/predict")
 def predict(house: House):
     try:
@@ -61,3 +65,4 @@ def predict(house: House):
         return {"predicted_price": float(yhat)}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+

@@ -21,3 +21,8 @@ ipykernel>=6.0
 # Notebook progress bar widgets (removes IProgress warning)
 ipywidgets>=8.1
 
+# REST API (deployment)
+fastapi>=0.110
+uvicorn[standard]>=0.27
+pydantic>=2.0
+
