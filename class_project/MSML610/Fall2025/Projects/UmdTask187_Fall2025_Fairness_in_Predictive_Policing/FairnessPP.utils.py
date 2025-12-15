@@ -142,8 +142,7 @@ class FairnessPredictor:
         self.feature_names = None
         self._base_model_for_postprocessing = None
 
-    def train(self, X, y, A=None, mitigate: bool = False, 
-              mitigation_strategy: str = "inprocessing", class_weight: str = "balanced"):
+    def train(self, X, y, A=None, mitigate: bool = False, mitigation_strategy: str = "inprocessing", class_weight: str = "balanced"):
         """
         Train the model with optional fairness mitigation.
         

@@ -51,7 +51,7 @@ Biased Historical Data → Biased Model → Biased Policing → More Biased Data
 docker build -t fairness-pp .
 
 # Run Jupyter Lab
-docker run -p 8888:8888 -v $(pwd):/workspace fairness-pp
+docker run -p 8888:8888 -v "${PWD}:/workspace" fairness-pp
 
 # Open http://localhost:8888 in browser
 ```
