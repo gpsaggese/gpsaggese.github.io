@@ -28,7 +28,7 @@ def load_and_clean_air_quality_data(csv_path):
     series = df[target_col].replace(-200, np.nan)
     
     # Enforce Hourly Frequency (Interpolate gaps)
-    series = series.resample('H').asfreq()
+    series = series.resample('h').asfreq()
     series = series.interpolate(method='linear')
     
     return series
