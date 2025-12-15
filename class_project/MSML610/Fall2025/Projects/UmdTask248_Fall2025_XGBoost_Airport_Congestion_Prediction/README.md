@@ -42,31 +42,53 @@ Due to GitHub’s 100MB file size restriction, raw datasets are **excluded from 
 
 ---
 
-## Project Folder Structure
 UmdTask248_Fall2025_XGBoost_Airport_Congestion_Prediction/
 │
-├── app/                     # Web application
+├── app/
 │   └── app.py
+│       # Streamlit web application for hourly congestion visualization
 │
-├── src/                     # Core ML scripts
+├── src/
 │   ├── preprocess_hourly.py
+│   │   # Aggregates raw flight-level data into hourly airport summaries
+│   │
 │   └── train_model.py
+│       # Trains the XGBoost multi-class congestion model
 │
 ├── data/
-│   ├── raw/                 # Raw Kaggle CSVs (ignored in Git)
+│   ├── raw/
 │   │   └── README.md
-│   ├── processed/           # Generated datasets (ignored in Git)
-│   └── models/              # Saved ML models (ignored in Git)
+│   │       # Instructions for downloading Kaggle datasets
+│   │       # (CSV files are ignored in GitHub due to size limits)
+│   │
+│   ├── processed/
+│   │   └── hourly_congestion.csv
+│   │       # Generated hourly dataset (ignored in Git)
+│   │
+│   └── models/
+│       └── model.pkl
+│           # Trained XGBoost model (ignored in Git)
 │
-├── notebooks/               # Jupyter notebooks
+├── notebooks/
 │   ├── 01_eda_flights.ipynb
+│   │   # Exploratory data analysis
+│   │
 │   ├── 02_feature_engineering.ipynb
+│   │   # Feature creation and congestion logic
+│   │
 │   └── 03_training_xgboost.ipynb
+│       # Model training and evaluation
 │
 ├── .gitignore
+│   # Prevents large datasets, models, and cache files from being committed
+│
 ├── .dockerignore
+│   # Excludes unnecessary files from Docker images
+│
 ├── README.md
-└── requirements.txt
+│   # Project overview and documentation
+│
+└── requirements.txt  # Python dependencies
 
 ---
 
