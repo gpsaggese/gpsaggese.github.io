@@ -1,4 +1,4 @@
-# RLHF News Summarization System
+# RLHF News Summarization System using trlX (Difficulty Level: Hard)
 
 A production-ready news summarization system using Direct Preference Optimization (DPO) to align T5-large with human preferences. The system provides intelligent text summarization with support for multiple input formats, hierarchical processing, and iterative refinement through a modern web interface.
 
@@ -15,8 +15,9 @@ A production-ready news summarization system using Direct Preference Optimizatio
 
 ## Authors
 **Anvesh Chitturi**, **Sai Dhruv Yellanki Hanmanthrao** 
-Email: achittu1@umd.edu, dhruvsai@umd.edu
 
+- Email: achittu1@umd.edu, dhruvsai@umd.edu
+- UID's: 121332790, 120998607
 ---
 
 ## Overview
