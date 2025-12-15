@@ -40,35 +40,6 @@ This project uses the **U.S. Airline On-Time Performance Dataset**.
 
 Due to GitHub’s 100MB file size restriction, raw datasets are **excluded from the repository**.
 
-## Project Folder Structure
-
-```text
-UmdTask248_Fall2025_XGBoost_Airport_Congestion_Prediction/
-│
-├── app/
-│   └── app.py
-│
-├── src/
-│   ├── preprocess_hourly.py
-│   └── train_model.py
-│
-├── data/
-│   ├── raw/
-│   │   └── README.md
-│   ├── processed/
-│   └── models/
-│
-├── notebooks/
-│   ├── 01_eda_flights.ipynb
-│   ├── 02_feature_engineering.ipynb
-│   └── 03_training_xgboost.ipynb
-│
-├── .gitignore
-├── .dockerignore
-├── README.md
-└── requirements.txt
-```
-
 ## Explanation of Each Folder and File
 
 ### app/app.py — Streamlit Web Application
@@ -230,6 +201,34 @@ streamlit run app/app.py
 - Streamlit enables rapid deployment of ML applications
 
 ---
+## Project Folder Structure
+
+```text
+UmdTask248_Fall2025_XGBoost_Airport_Congestion_Prediction/
+│
+├── app/
+│   └── app.py
+│
+├── src/
+│   ├── preprocess_hourly.py
+│   └── train_model.py
+│
+├── data/
+│   ├── raw/
+│   │   └── README.md
+│   ├── processed/
+│   └── models/
+│
+├── notebooks/
+│   ├── 01_eda_flights.ipynb
+│   ├── 02_feature_engineering.ipynb
+│   └── 03_training_xgboost.ipynb
+│
+├── .gitignore
+├── .dockerignore
+├── README.md
+└── requirements.txt
+```
 
 ## Author
 
