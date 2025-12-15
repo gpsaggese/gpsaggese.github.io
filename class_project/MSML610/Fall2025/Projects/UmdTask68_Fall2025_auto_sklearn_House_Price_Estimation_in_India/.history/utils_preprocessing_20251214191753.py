@@ -6,7 +6,6 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
-import inspect
 
 from utils_transformers import AmenitiesEncoder
 from utils_data_io import load_housing_data
@@ -31,20 +30,6 @@ def create_preprocessor(column_groups: Dict[str, list]) -> ColumnTransformer:
     numeric_cols = column_groups["numeric"]
     categorical_cols = column_groups["categorical"]
     text_cols = column_groups["text"]
-
-    # OneHotEncoder API changed across sklearn versions:
-    # - older versions: sparse=
-    # - newer versions: sparse_output=
-    ohe_kwargs = {"handle_unknown": "ignore"}
-    try:
-        ohe_params = set(inspect.signature(OneHotEncoder).parameters.keys())
-        if "sparse_output" in ohe_params:
-            ohe_kwargs["sparse_output"] = False
-        else:
-            ohe_kwargs["sparse"] = False
-    except Exception:
-        # Best-effort fallback (older sklearn)
-        ohe_kwargs["sparse"] = False
     
     preprocessor = ColumnTransformer(
         transformers=[
@@ -57,7 +42,7 @@ def create_preprocessor(column_groups: Dict[str, list]) -> ColumnTransformer:
             # categorical: impute with most frequent and one-hot encode
             ("cat", Pipeline(steps=[
                 ("impute", SimpleImputer(strategy="most_frequent")),
-                ("onehot", OneHotEncoder(**ohe_kwargs))
+                ("onehot", OneHotEncoder(handle_unknown="ignore", sparse=False))
             ]), categorical_cols),
             
             # amenities: expand into multiple binary columns
@@ -120,65 +105,22 @@ def prepare_data(
     X_train_processed = preprocessor.fit_transform(X_train)
     X_test_processed = preprocessor.transform(X_test)
     
-    # get feature names for interpretability
-    #
-    # sklearn >= 1.0: ColumnTransformer.get_feature_names_out() generally works
-    # sklearn 0.24.x (auto-sklearn compatible): ColumnTransformer doesn't expose
-    # get_feature_names_out, and Pipelines don't expose stable feature-name APIs.
-    # We therefore build names manually from each fitted sub-transformer.
+    # get feature names for interpretability (handling older sklearn versions)
     if hasattr(preprocessor, "get_feature_names_out"):
         feature_names = preprocessor.get_feature_names_out()
     else:
-        ct = preprocessor  # fitted ColumnTransformer
-
-        # NUM: original numeric columns + missing-indicator columns (from SimpleImputer(add_indicator=True))
-        num_cols = list(column_groups["numeric"])
-        num_pipe = ct.named_transformers_.get("num")
-        if num_pipe is None:
-            num_feature_names = []
-        else:
-            imp = num_pipe.named_steps.get("impute")
-            num_feature_names = list(num_cols)
-            if getattr(imp, "add_indicator", False) and getattr(imp, "indicator_", None) is not None:
-                miss_idx = getattr(imp.indicator_, "features_", [])
-                miss_cols = [num_cols[i] for i in miss_idx]
-                num_feature_names += [f"{c}__missing" for c in miss_cols]
-
-        # CAT: OneHotEncoder feature names
-        cat_cols = list(column_groups["categorical"])
-        cat_pipe = ct.named_transformers_.get("cat")
-        if cat_pipe is None or not cat_cols:
-            cat_feature_names = []
-        else:
-            ohe = cat_pipe.named_steps.get("onehot")
-            if ohe is None:
-                cat_feature_names = []
-            elif hasattr(ohe, "get_feature_names_out"):
-                cat_feature_names = list(ohe.get_feature_names_out(cat_cols))
+        # Fallback for sklearn < 1.0
+        # This is a best-effort approximation for feature names
+        feature_names = []
+        for name, trans, _ in preprocessor.transformers_:
+            if name == "remainder":
+                continue
+            if hasattr(trans, "get_feature_names"):
+                feature_names.extend(trans.get_feature_names())
+            elif hasattr(trans, "get_feature_names_out"):
+                feature_names.extend(trans.get_feature_names_out())
             else:
-                # sklearn 0.24.x
-                cat_feature_names = list(ohe.get_feature_names(cat_cols))
-
-        # AMENITIES: names from the custom transformer
-        amen_pipe = ct.named_transformers_.get("amenities")
-        if amen_pipe is None:
-            amen_feature_names = []
-        else:
-            amen_enc = amen_pipe.named_steps.get("bin")
-            if amen_enc is None:
-                amen_feature_names = []
-            elif hasattr(amen_enc, "get_feature_names_out"):
-                amen_feature_names = list(amen_enc.get_feature_names_out())
-            else:
-                amen_feature_names = ["amenities"]
-
-        feature_names = np.array(num_feature_names + cat_feature_names + amen_feature_names, dtype=object)
-
-        # sanity check: names length should match transformed feature count
-        if X_train_processed.shape[1] != len(feature_names):
-            raise ValueError(
-                f"Feature name count mismatch: X has {X_train_processed.shape[1]} columns "
-                f"but feature_names has {len(feature_names)} entries."
-            )
+                # If we can't get names, just append the transformer name
+                feature_names.append(name)
     
     return X_train_processed, X_test_processed, y_train, y_test, preprocessor, feature_names
