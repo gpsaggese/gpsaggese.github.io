@@ -1,263 +1,239 @@
-# MAC Example: End-to-End Guide
+# Goal
 
-## Project Overview
+This tutorial walks through a complete, runnable example of multi-agent reinforcement learning (MARL) in the Multi-Agent Particle Environment (MPE) using TorchRL. The emphasis is on:
 
-This project implements **Multi-Agent Communication (MAC)** for the PettingZoo MPE `simple_reference` environment using centralized training with decentralized execution (CTDE).
+- building an end-to-end MARL pipeline (env → policy/critic → training → evaluation)
+- training agents to collaborate on a shared objective
+- validating that communication is actually being used, not just "happening"
+- documenting real engineering iteration: what failed, how we diagnosed it, and why the final setup was chosen
 
-**Environment:** `simple_reference_v3`
-- **Agents:** Speaker (agent 0) and Listener (agent 1)
-- **Task:** Speaker observes target landmarks and must guide the Listener to the correct one through communication
-- **Challenge:** Communication is costly—agents must learn efficient signaling
+## Problem setup: MPE simple_reference
 
-**Architecture:** Separate actor networks per agent + centralized critic (Option B)
+We use MPE `simple_reference` / `simple_reference_v3`, a classic communication task:
 
----
+- Agents must coordinate to reach the correct goal/landmark.
+- One agent can "speak" (send a message token).
+- Another agent "listens" and moves based on its observation (which includes received communication).
 
-## How Agents Cooperate
+This environment is ideal because it forces coordination + emergent communication: if messages are useful, performance should improve; if messages are random, agents fail.
 
-### Speaker's Role
-- Observes all landmarks and knows which is the target
-- Takes a communication action (discrete: 0-4 or continuous: vector)
-- Does not directly control navigation
-- Goal: Send informative signals to guide the Listener
+## System design: CTDE (Centralized Training, Decentralized Execution)
 
-### Listener's Role
-- Observes landmarks but doesn't know which is the target
-- Receives communication from Speaker
-- Takes navigation actions to move toward landmarks
-- Goal: Use Speaker's signals to reach the correct landmark
+Our training pipeline follows the standard CTDE pattern used in cooperative MARL:
 
-### Cooperation Mechanism
-Success requires **emergent communication protocol**:
-1. Speaker learns to encode target information in actions
-2. Listener learns to decode signals and navigate accordingly
-3. Both must coordinate to minimize communication cost while maximizing success
+### Decentralized execution
 
----
+Each agent selects actions from its local observation (no access to full global state at inference).
 
-## Centralized Training, Decentralized Execution
+### Centralized training signal
 
-### Training (Centralized)
-- **Actors (Decentralized):** Each agent has its own policy network
-  - Speaker actor: `π_speaker(a_speaker | o_speaker)`
-  - Listener actor: `π_listener(a_listener | o_listener)`
-  - Each sees only its local observation
-  
-- **Critic (Centralized):** Single value network with full information
-  - `V(s_global)` where `s_global = concat(o_speaker, o_listener)`
-  - Critic sees the "big picture" during training
-  
-- **Advantage:** All agents share the same advantage signal
-  - `A = R - V(s_global)` computed using team reward `R = r_speaker + r_listener`
+A centralized critic (value function) can use a global state (or concatenated observations) during training to reduce variance and improve stability.
 
-### Execution (Decentralized)
-- At test time, only actors are used
-- Each agent acts based on its local observation independently
-- No communication between actor networks—only through environment actions
+### Why CTDE matters
 
-### A3C-Style Loss
+- In MARL, the environment is non-stationary because other agents' policies change during learning.
+- A centralized critic helps stabilize advantage estimation and reduces noisy learning signals.
+
+## What we tried first: A3C (single-worker and multi-worker)
+
+The project began by directly implementing A3C-style learning, because it is a canonical on-policy approach and matches the provided project description.
+
+### Attempt 1: Single-worker A3C (CTDE)
+
+We first built a single-worker A3C loop to validate:
+
+- action sampling
+- stepping TorchRL-wrapped PettingZoo envs
+- centralized critic wiring
+- advantage/return computation
+- gradient updates
+
+This step was important because it gave us a stable base to verify pipeline correctness before adding multi-process complexity.
+
+### Attempt 2: Multi-worker A3C (asynchronous)
+
+We then implemented multi-worker A3C (spawned processes, shared models, asynchronous-style updates). In practice, this caused stability issues that are common when combining:
+
+- MARL + communication (hard exploration + credit assignment early)
+- on-policy high-variance updates
+- asynchronous / policy-lag effects
+- macOS + notebooks constraints (spawn + device limitations)
+
+We tried many tuning passes, but repeatedly observed failure modes where optimization proceeds (loss changes) without actual policy learning.
+
+## Diagnostics: how we proved A3C wasn't learning
+
+We did not treat "loss decreasing" as success. We inspected the actual coordination signals.
+
+### 1) Success rate stayed at 0.0
+
+In a representative run, evaluation success was flat:
+
+- `success = 0.0` across evaluation episodes
+- evaluation plot "Eval success" remained at 0.0 across training
+
+This means: regardless of noise in returns, the agents are not achieving the goal.
+
+### 2) Success debugging confirmed the policy is far from goals
+
+We directly inspected distances to each agent's assigned goal landmark:
+
+**Example debug outputs:**
+
+```text
+distances=[1.568, 1.887], threshold=0.35
+distances=[2.157, 2.993], threshold=0.35
 ```
-actor_loss = -mean(log π_speaker(a|o) × A + log π_listener(a|o) × A)
-critic_loss = MSE(V(s), R)
-loss = actor_loss + 0.5 × critic_loss - 0.01 × entropy
+
+Because success requires all distances ≤ 0.35, these values show agents are not even close to reliably reaching goals.
+
+### 3) Communication appeared random (high entropy + high change rate)
+
+We measured message usage two ways:
+
+- **Action-derived**: decode the `SAY` token from the discrete action index
+  → `message_entropy`, `message_change_rate`
+- **Observation-derived**: infer message token from the comm slice of the next observation
+  → `message_entropy_obs`, `message_change_rate_obs`
+
+In the failing A3C setup, both matched closely:
+
+- `message_change_rate ≈ 0.89–0.91`
+- `message_entropy ≈ 2.20–2.21`
+- obs-derived metrics were consistent (`*_obs`)
+
+**Interpretation:**
+
+- A ~0.9 message change rate means the speaker changes message almost every step.
+- Entropy near ~2.2 is close to a near-uniform distribution over ~9–10 symbols.
+- Together, this indicates random / unstructured communication, not meaningful signaling.
+
+We even added an automated warning when entropy didn't drop:
+
+```text
+[WARNING ep 200] Communication entropy not decreasing!
+  Early (ep ~20): 2.199, Late (ep ~200): 2.201
+  Agents may not be learning task-relevant messages
 ```
 
----
+### 4) Returns alone were misleading
 
-## Running Training
+We observed occasional spikes in episode return, but they did not correlate with success. Since we experimented with reward shaping (distance-to-goal terms), raw returns can fluctuate without reflecting actual task completion.
 
-### Minimal Example
+For this task, we treat:
+
+- success rate
+- goal distance debug
+- communication structure metrics
+
+as the primary indicators of meaningful learning.
+
+## Engineering iteration: what we changed while debugging
+
+Before moving to the final setup, we invested significant effort in ensuring the system was correctly wired and that the failure was truly due to learning instability (not bugs).
+
+### Communication wiring validation
+
+We implemented a deterministic sanity check:
+
+- Vary `SAY` while holding `MOVE` constant → comm slice in next obs must change
+- Vary `MOVE` while holding `SAY` constant → comm slice should not change
+
+This ensured action encoding/decoding and comm injection into observations were correct.
+
+### Codec and comm consistency checks
+
+We compared action-derived vs observation-derived comm metrics and flagged divergence:
+
+- large mismatch suggests codec errors or comm not entering obs properly
+
+### Hyperparameter tuning
+
+We ran multiple tuning rounds on:
+
+- learning rate
+- entropy coefficient (including decay schedules)
+- rollout horizon (`n_steps`)
+- episode horizon (`max_cycles`)
+- value loss coefficient and grad clipping
+
+### Reward shaping experiments
+
+We tried shaping using goal distance:
 
 ```python
-from mac_utils import default_cfg, train
-
-# Configure training
-cfg = default_cfg()
-cfg.num_iters = 500       # Number of training iterations
-cfg.rollout_len = 16      # Steps per rollout
-cfg.num_envs = 4          # Parallel environments
-cfg.lr = 3e-4             # Learning rate
-cfg.hidden_dim = 128      # Network hidden dimension
-
-# Train
-checkpoint_path, stats = train(cfg)
-
-# Check training progress
-print(f"Checkpoint saved to: {checkpoint_path}")
-print(f"Final mean return: {stats['returns'][-1]:.2f}")
+reward = reward_base - α * goal_dist
 ```
 
-**Expected Output:**
-```
-Starting training with config:
-MacConfig(num_iters=500, rollout_len=16, ...)
-Iter 10/500 | Loss: 245.123 | Return: -18.456 | Entropy: 1.234
-...
-Training complete! Checkpoint saved to: ./checkpoints/mac_checkpoint_iter500.pt
-```
+to densify early learning signals.
 
----
+We also validated shaping carefully using success + comm metrics, not returns alone.
 
-## Running Evaluation
+### Behavior inspection
 
-### Normal vs No-Communication Modes
+We printed decoded (`say`, `move`) tokens and visually inspected whether:
 
-**Normal Mode:** Agents use learned communication protocol
-```python
-from mac_utils import evaluate
+- messages stabilized
+- movement became directed
+- listener behavior changed under message manipulations
 
-cfg = default_cfg()
-cfg.eval_episodes = 100
+These checks gave us confidence the system wiring was correct and the limitation was primarily optimization stability for A3C in this MARL communication setting.
 
-# Evaluate with communication
-metrics_normal = evaluate(cfg, checkpoint_path, mode="normal")
-```
+## Final approach: stable configuration that produced results
 
-**No-Communication Mode:** Speaker actions forced to zero/null
-```python
-# Evaluate without communication (speaker silenced)
-metrics_no_comm = evaluate(cfg, checkpoint_path, mode="no_comm")
-```
+After repeatedly seeing A3C stability issues and unstructured communication, we transitioned to the current stable setup used for our final results.
 
-**Comparison:** Compute communication efficiency
-```python
-from mac_utils import evaluate_with_comparison
+**Key characteristics of the final approach:**
 
-# Runs both modes and computes all metrics
-metrics = evaluate_with_comparison(cfg, checkpoint_path)
+- end-to-end training remained on-policy and CTDE-aligned
+- we prioritized stability, measurable progress, and interpretable communication behavior
+- evaluation emphasized success and communication evidence, not just return curves
 
-print(f"Success (normal): {metrics['success_rate']:.3f}")
-print(f"Success (no comm): {metrics['success_rate_no_comm']:.3f}")
-print(f"Comm cost: {metrics['comm_cost']:.4f}")
-print(f"Comm gain: {metrics['comm_gain']:.3f}")
-print(f"Comm efficiency: {metrics['comm_efficiency']:.3f}")
-```
+This final configuration is what the example notebook (`TorchRL_MAC.example.ipynb`) runs end-to-end and is the version we recommend as a starting point for future students.
 
----
+## Evaluation methodology: proving cooperation and communication
 
-## Metrics Computation
+To evaluate cooperation and communication rigorously, we report:
 
-### Success Rate
-**Definition:** Fraction of episodes where the Listener reaches the correct landmark
+### Core task metrics
 
-**Determination:**
-1. Check `info['is_success']` or `info['success']` if available
-2. Fallback: Episode reward > `-success_threshold` (default: -5.0)
+- **Return**: sum of shaped rewards (useful for monitoring but not sufficient)
+- **Success**: binary success based on all agents being within `success_dist` of their assigned goals
+- **Goal distances**: inspected directly for debugging and interpretability
 
-```python
-success = (episode_reward > -cfg.success_threshold) or info.get('is_success', False)
-success_rate = mean(successes over all episodes)
-```
+### Communication metrics (two independent sources)
 
-### Communication Cost
-**Definition:** Average cost of Speaker's actions per timestep
+#### Action-derived
 
-**Discrete Actions:**
-```python
-comm_cost = fraction of steps where speaker_action ≠ 0
-```
+- `message_entropy`
+- `message_change_rate`
 
-**Continuous Actions:**
-```python
-comm_cost = mean(||speaker_action||_2 over all steps)
-```
+#### Observation-derived
 
-### Communication Gain
-**Definition:** How much communication helps
-```python
-comm_gain = success_rate(normal) - success_rate(no_comm)
-```
+- `message_entropy_obs`
+- `message_change_rate_obs`
 
-### Communication Efficiency
-**Definition:** Success improvement per unit of communication cost
-```python
-comm_efficiency = comm_gain / (comm_cost + ε)
-```
-- High efficiency: agents achieve large gains with minimal communication
-- Low/negative efficiency: communication is wasteful or harmful
+**Why both matter:**
 
----
+- agreement between these indicates comm wiring is correct
+- decreasing entropy/change-rate indicates emerging structure and stable signalling
 
-## Expected Outputs
+## Expected outputs
 
-### Training Stats Dictionary
-```python
-{
-    'losses': [float, ...],      # Loss per iteration
-    'returns': [float, ...],     # Mean return per iteration
-    'entropies': [float, ...]    # Mean entropy per iteration
-}
-```
+When you run the example notebook end-to-end, you should see:
 
-### Evaluation Metrics Dictionary
-```python
-{
-    'success_rate': float,           # Success rate in evaluated mode
-    'comm_cost': float,              # Mean communication cost
-    'comm_gain': float,              # Difference in success rates
-    'comm_efficiency': float,        # Gain per unit cost
-    'success_rate_no_comm': float    # (only in evaluate_with_comparison)
-}
-```
+- training curves (return/loss/entropy depending on setup)
+- evaluation success statistics
+- message entropy + message change rate curves
+- printed debug summaries for goal distances and comm metrics
 
-**Example Keys (values will vary by training quality):**
-- All metrics are floats between 0 and 1 (except efficiency, which can be negative)
-- `success_rate`: typically 0.0-1.0
-- `comm_cost`: 0.0 (no comm mode) or 0.0-1.0+ (normal mode)
-- `comm_gain`: -1.0 to 1.0 (negative if communication hurts)
-- `comm_efficiency`: can be any real number
+## Takeaways
 
----
+This project demonstrates a practical MARL workflow:
 
-## Quick Verification
-
-To verify the implementation works correctly:
-
-```python
-# Quick acceptance test
-from mac_utils import default_cfg, train, evaluate
-
-cfg = default_cfg()
-cfg.num_iters = 2
-cfg.rollout_len = 8
-cfg.num_envs = 2
-
-# Should complete in < 1 minute on CPU
-ckpt_path, _ = train(cfg)
-
-# Test evaluation
-cfg.eval_episodes = 5
-metrics = evaluate(cfg, ckpt_path, mode="normal")
-
-# Verify required keys exist
-assert 'success_rate' in metrics
-assert 'comm_cost' in metrics
-assert 'comm_gain' in metrics
-assert 'comm_efficiency' in metrics
-
-print("✓ All checks passed!")
-```
-
----
-
-## Grading Notes
-
-**Key Implementation Points to Verify:**
-1. ✓ Separate actor networks per agent (not shared)
-2. ✓ Single centralized critic taking concatenated observations
-3. ✓ Team reward used for advantage computation
-4. ✓ Evaluation supports both normal and no-comm modes
-5. ✓ Speaker actions correctly suppressed in no-comm mode
-6. ✓ Communication metrics properly computed
-
-**Files to Review:**
-- `mac_utils.py`: Main implementation (all wrapper APIs)
-- `mac.API.md`: API documentation
-- `README_MAC.md`: Usage instructions
-- Checkpoint files in `./checkpoints/`
-
-**Expected Behavior:**
-- Training completes without errors
-- Checkpoint saved successfully
-- Evaluation returns all required metrics
-- No-comm mode produces lower communication cost (≈0)
+- implement the algorithm suggested by the prompt (A3C)
+- measure learning using task-grounded metrics (success + distances)
+- verify communication is real (entropy/change-rate + wiring checks + ablations)
+- recognize instability patterns (loss changes without success)
+- iterate with tuning, shaping, and debugging
+- converge to a stable final setup that produces interpretable results
