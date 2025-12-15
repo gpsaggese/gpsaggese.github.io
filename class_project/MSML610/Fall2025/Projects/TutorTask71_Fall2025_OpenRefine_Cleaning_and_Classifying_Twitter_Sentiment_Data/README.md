@@ -103,8 +103,7 @@ COURSE_CODE/
             ├── models/
             │   ├── baseline_models.ipynb
             │   ├── bert_model.ipynb
-            │   └── saved_models/
-            │       └── bert_output/
+            │   └── wandb_train_loss_distilbert_comparison.jpeg
             └── README.md
 ```
 ## 4. Prerequisites
@@ -173,25 +172,42 @@ This project uses the **Sentiment140** dataset, which contains 1.6 million label
 ### Dataset Information
 - Name: **Sentiment140**
 - Source: Kaggle
-- File used:
+- Original file:
   - `training.1600000.processed.noemoticon.csv`
 - Labels:
   - `0` → Negative
   - `2` → Neutral
   - `4` → Positive
 
-> The raw dataset is **not tracked** in this repo. Run the helper script below **from the project root** to download and place it locally:
+> **Note on labels:**  
+> While the Sentiment140 dataset documentation specifies three sentiment labels (0 = negative, 2 = neutral, 4 = positive), the released Kaggle dataset used in this project contains only labels 0 and 4; neutral (2) examples are not present in the raw data.
+> The pipeline is nevertheless implemented as a three-class sentiment classifier (negative / neutral / positive). 
+> This design choice ensures that the models and training code remain directly applicable if future versions of the dataset or other compatible datasets include neutral-labeled instances, without requiring changes to the modeling logic.
+
+---
+
+### Download via Helper Script (Recommended)
+
+The raw dataset is **not tracked** in this repository due to size constraints.
+
+From the **project root directory**, run the following helper script:
 
 ```bash
 python download_sentiment140.py
 ```
-After it finishes, you should have this file at the project root:
 
-`Sentiment140_raw.csv`
+This script:
+- Downloads the Sentiment140 archive
+- Extracts the training file
+- Renames it to a standardized filename
+- Places it at the project root for easy access
 
-Run this before building/running Docker so the dataset is available inside the container via the mounted volume.
+After the script completes, you should have:
+`Sentiment140_raw.csv` 
 
----
+Important:
+Run this step before building or running Docker so the dataset is available inside the container via the mounted volume.
+
 
 ## 6. Data Cleaning and Feature Engineering with OpenRefine
 
@@ -219,12 +235,12 @@ In this project, OpenRefine is used to:
 
 1. Launch OpenRefine.
 2. Click **Create Project**.
-3. Import the raw CSV file:
-   - `training.1600000.processed.noemoticon.csv`
+3. Import the raw CSV file (downloaded via python script as mentioned above):
+   - `Sentiment140_raw.csv`
 4. Verify that the dataset loads with the following columns:
    ```text
    target, id, date, flag, user, text
-
+   ```
 ### 6.3 Apply the OpenRefine Recipe (API)
 
 All preprocessing steps in this project are captured in a **reproducible OpenRefine recipe**, allowing the entire cleaning and feature engineering pipeline to be applied consistently.
@@ -272,11 +288,6 @@ After applying the recipe:
 2. Select **Comma-separated value (CSV)**.
 3. Save the file as:
    - `sentiment140-final-fixed.csv`
-
-Recommended location:
-```{text}
-data/processed/sentiment140-final-fixed.csv
-```
 
 > **Note:**  
 > The cleaned dataset is not tracked in this repository.
@@ -342,17 +353,25 @@ No handcrafted features are provided to the transformer model; it learns represe
 
 ### 8.3 Training Configuration
 
-The model is fine-tuned using the following configuration:
+The base model is trained using the following configuration:
 
 - Optimizer: AdamW
 - Learning rate: `2e-5`
 - Batch size: `32`
-- Number of epochs: `3`
-- Warmup steps: `10%` of total training steps
+- Number of epochs: `2`
 - Weight decay: `0.01`
 - Validation performed at the end of each epoch
 - Early stopping enabled
-- Best model selected based on **macro F1 score**
+
+The model was fine-tuned using the following configuration:
+
+- Optimizer: AdamW
+- Learning rate: `1e-5`
+- Batch size: `32`
+- Number of epochs: `4`
+- Weight decay: `0.01`
+- Validation performed at the end of each epoch
+- Early stopping enabled
 
 ---
 
@@ -371,21 +390,7 @@ Each training run appears as a separate experiment in the W&B dashboard, allowin
 
 ---
 
-### 8.5 Model Checkpoints and Outputs
-
-- The best-performing model checkpoint is saved during training.
-- Model artifacts are stored under:
-  ```{text}
-      models/saved_models/bert_output/
-  ```
-- The saved model can be reloaded for:
-- Evaluation
-- Inference
-- Comparison with baseline models
-
----
-
-### 8.6 Evaluation
+### 8.5 Evaluation
 
 After fine-tuning, the DistilBERT model is evaluated on a held-out test set.
 
@@ -604,21 +609,13 @@ The goal is to clearly illustrate how each component fits together in the overal
 
 ---
 
-## 12. End-to-End Workflow
-
-This section summarizes the complete end-to-end workflow of the project, from raw data ingestion to model evaluation and comparison.
-
-The goal is to clearly illustrate how each component fits together in the overall sentiment analysis pipeline.
-
----
-
 ### 12.1 Workflow Overview
 
 The project follows the steps below:
 
-1. Download the raw Sentiment140 dataset from Kaggle  
+1. Download the raw Sentiment140 dataset using the helper script (`download_sentiment140.py`)  
 2. Perform data cleaning and feature engineering using OpenRefine  
-3. Export the cleaned dataset as a CSV file  
+3. Export the cleaned dataset as a CSV file  (`sentiment140-final-fixed.csv`)
 4. Load and inspect the cleaned data in Python  
 5. Fine-tune a pre-trained DistilBERT model for sentiment classification  
 6. Train traditional machine learning baseline models for comparison  
@@ -1211,14 +1208,6 @@ The goal is to clearly illustrate how each component fits together in the overal
 
 ---
 
-## 12. End-to-End Workflow
-
-This section summarizes the complete end-to-end workflow of the project, from raw data ingestion to model evaluation and comparison.
-
-The goal is to clearly illustrate how each component fits together in the overall sentiment analysis pipeline.
-
----
-
 ### 12.1 Workflow Overview
 
 The project follows the steps below:
@@ -1261,7 +1250,7 @@ H --> I;
 
 ### 12.3 Reproducibility
 
-- All preprocessing steps are captured in a reproducible OpenRefine JSON recipe
+- All preprocessing steps are captured in a reproducible OpenRefine JSON recipe (API.md)
 - All modeling experiments are executed inside a Docker container
 - Notebooks can be run end-to-end using **Restart and Run All**
 - The workflow adheres to course guidelines requiring local execution

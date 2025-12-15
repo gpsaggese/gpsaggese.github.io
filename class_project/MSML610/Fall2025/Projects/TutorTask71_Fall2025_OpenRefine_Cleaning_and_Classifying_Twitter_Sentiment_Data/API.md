@@ -1,7 +1,7 @@
 # API for Data Cleaning (OpenRefine)
 
 ## 1) Create an OpenRefine project
-- Import the raw CSV: `training.1600000.processed.noemoticon.csv`
+- Import the raw CSV: `Sentiment140_raw.csv`
 - Columns expected: `target,id,date,flag,user,text`
 
 ## 2) Apply the recipe
