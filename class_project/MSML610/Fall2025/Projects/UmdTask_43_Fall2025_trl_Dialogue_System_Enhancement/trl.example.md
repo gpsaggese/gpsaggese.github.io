@@ -9,10 +9,11 @@
     - [Cell 2: Code — Checking Required Library Versions](#cell-2-code--checking-required-library-versions)
     - [Cell 3: Code — Import Project Configuration](#cell-3-code--import-project-configuration)
     - [Cell 4: Code — Import Preprocessing Utilities](#cell-4-code--import-preprocessing-utilities)
+    - [cell 5: Code — Supervised Finetuning](#cell-5-code--supervied-finetuning)
     - [Cell 5: Code — Import Reward Function Module](#cell-5-code--import-reward-function-module)
     - [Cell 6: Code — Initialize PPO Setup and Trainer](#cell-6-code--initialize-ppo-setup-and-trainer)
     - [Cell 7: Code — Run Main PPO Training Loop](#cell-7-code--run-main-ppo-training-loop)
-    - [Cell 8: Code — Pre-Training Evaluation](#cell-8-code--pretraining-evaluation)
+    - [Cell 8: Code — Evaluation](#cell-8-code--pretraining-evaluation)
     - [Cell 9: Code — Post-Training Evaluation](#cell-9-code--posttraining-evaluation)
     - [Cell 10: Code — Launch Gradio Chatbot](#cell-10-code--launch-gradio-chatbot)
   - [4. What This Example Demonstrates](#4-what-this-example-demonstrates)
@@ -23,7 +24,7 @@
 # Dialogue System Enhancement — Full Example Walkthrough
 
 ## Table of Contents
-This file explains every major step in `Dialogue.example.ipynb`, describing the intent, logic, and design decisions behind the notebook cells. It also shows how each cell uses reusable functions from the utils module.
+This file explains every major step in `trl.example.ipynb`, describing the intent, logic, and design decisions behind the notebook cells. It also shows how each cell uses reusable functions from the utils module.
 
 ---
 
@@ -44,6 +45,13 @@ This file explains every major step in `Dialogue.example.ipynb`, describing the 
                          +-----------------------------+
                                      |
                                      v
+                         +-----------------------------+
+                         |    Supervised Finetuning    |
+                         +-----------------------------+
+                                     |
+                                     |
+                                     v
+
                          +-----------------------------+
                          |        PPO Trainer          |
                          |  (DialoGPT with TRL PPO)    |

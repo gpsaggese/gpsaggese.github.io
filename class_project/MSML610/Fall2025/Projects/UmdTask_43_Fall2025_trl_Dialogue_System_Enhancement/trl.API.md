@@ -5,39 +5,29 @@
 
 ## Overview
 
-This document describes the **internal programming interface (API)** used in the DialogueRL system, which enhances a DialoGPT-based conversational model using reinforcement learning (TRL + PPO).  
-It includes:
+# TRL API Documentation
 
-- Native low-level APIs  
-- Reward model APIs  
-- PPO training APIs  
-- Wrapper layer APIs  
-- Alternatives & comparisons  
-- Recommendation  
+This document explains the TRL and supporting APIs used in the `trl.api.ipynb` notebook. Each section corresponds to a code cell in the notebook and describes the purpose of the APIs demonstrated.
 
 
+## TRL (Transformer Reinforcement Learning)
 
-## 🧠 Reinforcement Learning from Human Feedback (RLHF)
+TRL (Transformer Reinforcement Learning) is an open-source library designed to apply reinforcement learning algorithms to transformer-based language models. Built on top of Hugging Face Transformers, TRL provides high-level abstractions that simplify integrating reinforcement learning methods with large language models.
+
+The library supports policy optimization techniques such as **Proximal Policy Optimization (PPO)** by extending language models with value heads and managing the reinforcement learning training loop. This enables models to be optimized using custom reward functions rather than relying solely on supervised objectives.
+
+TRL is commonly used in reinforcement learning from human feedback (RLHF) pipelines, where language models are refined using reward signals derived from human preferences, classifiers, or heuristic metrics. By abstracting low-level reinforcement learning components, TRL allows researchers and practitioners to focus on reward design and model behavior while leveraging stable and scalable training implementations.
+
+
+##  Reinforcement Learning from Human Feedback (RLHF)
  
 What it is (general):
 RLHF is a training approach where a model learns not just from static datasets, but also from human preferences.
 Instead of optimizing only likelihood (as in supervised fine-tuning), RLHF gives the model a reward signal based on what humans consider a good response. The model gradually improves by aligning its output with human intent, tone, and safety expectations.
 
-How it is used in this project:
-In this dialogue system, RLHF was applied after the initial initial ppo tuning.
-Users interact with the model through a feedback interface (thumbs-up, thumbs-down, skip).
-Each piece of feedback becomes a reinforcement signal:
-
-- 👍 → positive reward
-
-- 👎 → negative reward
-
-- ⏭ → no update
-
-The model uses this reward to refine its behavior in real time and learn conversational preferences directly from users.
 
 
-## 🌀 Proximal Policy Optimization (PPO)
+##  Proximal Policy Optimization (PPO)
 
 What it is (general):
 PPO is a reinforcement learning algorithm widely used in language model alignment.
@@ -51,10 +41,9 @@ It updates the model's weights in small, controlled steps so that:
 
 PPO is the standard for RLHF because it prevents the model from collapsing or overfitting after a few noisy feedback samples.
 
-How it is used in this project:
-This project uses TRL’s PPOTrainer to apply updates after each human interaction.
 
-Workflow inside the system:
+
+### Workflow in general:
 
 1.User sends a prompt → model generates a response.
 
@@ -62,7 +51,6 @@ Workflow inside the system:
 
 3.PPO updates the model with (prompt, response, reward) triplets.
 
-4.The model is saved back to /ppo_dialogpt_model and improves incrementally.
 
 This allows the model to learn conversational quality, coherence, and safety directly from the evaluator.
 
@@ -70,14 +58,14 @@ This allows the model to learn conversational quality, coherence, and safety dir
 
 
 
-Training pipeline:
+## RLHF Training pipeline:
 
 SFT Stage:
-DialoGPT is fine-tuned on the pixelsandpointers/daily_dialog_w_turn_templates dataset to learn clean two-turn conversations.
+Model is fine-tuned on the  dataset to learn clean two-turn conversations.
 
 RLHF Stage:
 The SFT model is wrapped inside AutoModelForCausalLMWithValueHead so PPO can compute value estimates.
-The Gradio interface allows human feedback to continuously adapt DialoGPT to:
+The Gradio interface allows human feedback to continuously adapt model to:
 
 - reduce echoing,
 
@@ -87,253 +75,130 @@ The Gradio interface allows human feedback to continuously adapt DialoGPT to:
 
 - maintain context coherence.
 
-In short, DialoGPT is the backbone, and PPO + RLHF provide the alignment layer on top.
 
-# 1. Native Programming Interface (Core Internal APIs)
 
-This section documents the raw internal functions, classes, and config objects used in the project.
+# TRL API Documentation
 
----
-
-## 1.1 Model Initialization API
-
-### **load_base_model(model_name: str) → (tokenizer, model)**
-
-Loads a pre-trained conversational model from HuggingFace.
-
-**Parameters**
-- `model_name` — e.g., `"microsoft/DialoGPT-small"`
-
-**Returns**
-- `tokenizer` — HuggingFace tokenizer  
-- `model` — causal LM
-
-**Notes**
-- EOS token is used as pad token  
-- Model automatically moved to CPU/GPU device  
+This document explains the TRL and supporting APIs used in the `trl.api.ipynb` notebook. Each section corresponds to a code cell in the notebook and describes the purpose of the APIs demonstrated.
 
 ---
 
-## 1.2 Response Generation API
+## Cell 1 — Install & Import Dependencies
+Installs (optionally) and imports the core libraries required for this notebook: **PyTorch** for tensor compute, **Transformers** for tokenization, and **TRL** for PPO-based RL training APIs.
 
-### **generate(model, tokenizer, prompt: str, max_new_tokens=60, history=None) → str**
-
-Generates text using the language model.
-
-**Parameters**
-- `model`
-- `tokenizer`
-- `prompt`
-- `max_new_tokens`
-- `history` — conversation list for multi-turn chat
-
-**Returns**
-- Cleaned model reply (without echoing the prompt)
-
-**Features**
-- Supports one-shot & multi-turn dialogue  
-- Removes DialoGPT prompt-attachment artifact  
+## Cell 2 — Check Library Versions (Optional but Useful)
+Prints the installed versions of key libraries (**torch, transformers, tokenizers, datasets, accelerate, trl**) to ensure environment consistency and reproducibility.
 
 ---
 
+## Cell 3 — Load Tokenizer
+This cell demonstrates how to load a tokenizer associated with a pre-trained language model.  
+Tokenizers convert raw text into token IDs that can be processed by transformer models.  
+When a padding token is not predefined, assigning an end-of-sequence token as the padding token ensures proper batching and alignment of variable-length inputs.
 
-## 1.3 Reward Model APIs
-
-### **sentiment_score(text: str) → float**
-- Uses `cardiffnlp/twitter-roberta-base-sentiment`
-- Reward = positive − negative sentiment
-
-### **toxicity_score(text: str) → float**
-- Uses `unitary/unbiased-toxic-roberta`
-- Reward = toxicity probability (penalty)
-
-### **coherence_score(prompt: str, reply: str) → float**
-- Uses SentenceTransformer (`all-MiniLM-L6-v2`)
-- Reward = cosine similarity
-
-### **compute_reward(prompt, reply) → float**
-Weighted combination of:
-- **sentiment**
-- **coherence**
-- **toxicity**
-
-
+**API used:**  
+- `transformers.AutoTokenizer.from_pretrained`
 
 ---
 
-## 1.4 PPO Fine-Tuning API (TRL Core)
+## Cell 4 — Load PPO-Compatible Model
+This cell shows how to load a causal language model augmented with a value head.  
+The additional value head enables reinforcement learning algorithms, such as PPO, to estimate value functions alongside text generation.  
+Setting the model to evaluation mode disables training-specific behaviors during inference or controlled execution.
 
-### **PPOTrainer(config, model, tokenizer, reward_fn)**
-
-Handles:
-- rollout generation  
-- reward computation  
-- PPO gradient update  
-- KL penalty  
-- Value function training  
+**API used:**  
+- `trl.AutoModelForCausalLMWithValueHead.from_pretrained`
+- `torch.nn.Module.eval`
 
 ---
 
-### **trainer.generate(tokenized_prompt, max_new_tokens)**
+## Cell 5 — Move Model to Device
+This cell illustrates how to select an available computation device and move a model to that device.  
+Using GPU acceleration when available improves performance, while maintaining CPU compatibility ensures portability across environments.
 
-Generates responses for rollouts.
+**API used:**  
+- `torch.device`
+- `torch.cuda.is_available`
+- `torch.nn.Module.to`
 
----
+## Cell 6 — Create PPO Configuration
+This cell defines a configuration object that controls the behavior of Proximal Policy Optimization (PPO).  
+The configuration specifies optimization hyperparameters such as learning rate, batch sizes, gradient accumulation, and GPU memory handling, which together determine how PPO updates are applied during training.
 
-### **trainer.step(queries, responses, rewards)**
-
-Performs a PPO optimization step.
-
-**Inputs**
-- `queries` — tokenized prompts  
-- `responses` — generated tokens  
-- `rewards` — reward floats  
-
-**Output**
-- PPO statistics (`objective`, `kl`, `value_loss`, etc.)
+**API used:**  
+- `trl.PPOConfig`
 
 ---
 
-## 1.5 Evaluation API
+## Cell 7 — Initialize PPOTrainer
+This cell initializes the PPO training controller that coordinates reinforcement learning for language models.  
+The trainer connects the PPO configuration, a PPO-compatible model, and a tokenizer to manage rollout generation, reward integration, and policy updates.
 
-### **BLEU / ROUGE / BERTScore**
-- **compute_bleu(pred, ref)**
-- **compute_rouge(pred, ref)**
-- **compute_bertscore(pred, ref)**
-
-
-
-### **distinct_2(text) → float**
-Measures diversity.
+**API used:**  
+- `trl.PPOTrainer`
 
 ---
 
-# 2. Wrapper Layer API (Lightweight Abstraction)
+## Cell 8 — Hugging Face Transformers (Core APIs Used)
+This cell imports core Hugging Face Transformers APIs used for text processing, language modeling, classification, and pipeline-based inference.  
+These APIs provide standardized interfaces for loading pre-trained models and performing downstream NLP tasks.
 
-The wrapper simplifies the raw APIs into a usable interface for training and feedback.
-
----
-
-## 2.1 Class: **DialogueRLModel**
-
-### **Attributes**
-- `model`
-- `tokenizer`
-- `ppo_trainer`
-- `reward_fn`
+**API used:**  
+- `transformers.AutoTokenizer`
+- `transformers.AutoModelForCausalLM`
+- `transformers.AutoModelForSequenceClassification`
+- `transformers.pipeline`
 
 ---
 
-## 2.2 Methods
+## Cell 9 — Sentiment Model APIs (Reward Function)
+This cell demonstrates how to load a pre-trained sequence classification model and tokenizer for sentiment analysis using Hugging Face Transformers.  
+The `pipeline` API wraps the model and tokenizer into a high-level interface that converts text into sentiment scores, which are commonly used as reward signals in reinforcement learning workflows.
 
-### **generate_reply(prompt: str, history=None) → str**
-User-facing text generation.
-
-### **apply_feedback(prompt: str, reply: str, score: int) → dict**
-Used for human-feedback-based PPO updates.
-
-Process:
-1. Tokenize prompt + reply  
-2. Compute reward  
-3. PPO update  
-4. Return PPO logs  
-
-### **save_model(path)**
-Save trained PPO policy.
-
-### **load_model(path)**
-Load PPO policy.
+**API used:**  
+- `transformers.AutoTokenizer.from_pretrained`  
+- `transformers.AutoModelForSequenceClassification.from_pretrained`  
+- `transformers.pipeline`
 
 ---
 
-## 3. Alternatives and Comparisons
+## Cell 10 — Sentence Embeddings (Coherence Evaluation)
+This cell introduces sentence embedding models that convert text into fixed-length vector representations capturing semantic meaning.  
+Cosine similarity between embeddings is commonly used to measure semantic coherence or relevance between pairs of sentences.
 
-### **Alternative 1: DialoGPT Without RL**
-
-#### Advantages
-- Lightweight  
-- Easy to run locally  
-- No PPO overhead  
-
-#### Limitations
-- Repeats prompt  
-- No optimization  
-- No safety controls  
-
-
-### **Alternative 2: Supervised Fine-Tuning**
-
-#### Advantages
-- Simple training  
-- Works well with labeled datasets  
-
-#### Limitations
-- Requires labeled data  
-- Cannot optimize sentiment or safety directly  
-
-
-### **Alternative 3: TRL PPO (Our Method)**
-
-#### Advantages
-- Learns from reward functions  
-- Works with human feedback  
-- Improves coherence, sentiment & toxicity  
-- No labeled dataset required  
-
-#### Limitations
-- Higher memory usage  
-- Requires careful tuning  
-
-
-### **Alternative 4: Larger Chat Models (LLaMA, Mistral)**
-
-#### Advantages
-- Higher conversational quality  
-- Context-rich replies  
-
-#### Limitations
-- Requires 16–48GB GPU  
-- Not suitable for Docker/CPU setups  
-
+**API used:**  
+- `sentence_transformers.SentenceTransformer`  
+- `sklearn.metrics.pairwise.cosine_similarity`
 
 ---
 
-## 4. Recommendation
+## Cell 11 — BLEU Score APIs
+This cell imports BLEU score utilities used to compute n-gram overlap between generated text and reference text.  
+Smoothing functions are applied to handle short sequences and improve the stability of BLEU scores in sentence-level evaluation.
 
-For RL experimentation in constrained environments, DialoGPT + TRL PPO achieves the optimal trade-off between:
+**API used:**  
+- `nltk.translate.bleu_score.sentence_bleu`  
+- `nltk.translate.bleu_score.SmoothingFunction`
 
-- customizability  
-- low resource requirements  
-- reward experimentation  
-- measurable improvements  
+## Cell 12 — ROUGE Score APIs
+This cell introduces ROUGE scoring utilities used to evaluate text overlap between generated and reference sequences.  
+ROUGE metrics measure recall-oriented n-gram and sequence-level similarity and are widely used for evaluating summarization and text generation systems.
 
-This method is ideal when:
-
-- you want RLHF-style fine-tuning  
-- labeled data is limited  
-- safety and coherence improvements matter  
-
-
-## Our Integration Layer
-
-### Goals
-
-1. **Unified Dialogue Pipeline:** Provide a single interface to load the model, tokenizer, reward functions, and PPO trainer without exposing low-level TRL configuration.
-2. **Modular Reward Design:** Allow sentiment, coherence, and toxicity rewards to be combined, extended, or replaced with minimal code changes.
-3. **Seamless Human Feedback Loop:** Enable users to generate a reply, apply feedback, and update PPO weights in one consistent workflow.
-4. **Simple Model Management:** One-line functions to save, load, and resume PPO-trained checkpoints for classroom and research use.
-5. **Structured Outputs:** Ensure clean return types (reply, score logs, PPO stats) for integration with evaluation pipelines and UI tools (e.g., Gradio).
+**API used:**  
+- `rouge_score.rouge_scorer.RougeScorer`
 
 ---
 
+## Cell 13 — BERTScore APIs
+This cell imports the BERTScore API, which evaluates semantic similarity between generated and reference text using contextual embeddings from transformer models.  
+BERTScore captures meaning-level similarity beyond surface n-gram overlap, making it useful for evaluating natural language generation quality.
 
+**API used:**  
+- `bert_score.score`
 
 
 ## Conclusion
 
-This integration layer transforms TRL’s low-level PPO training flow into a streamlined, student-friendly interface suitable for dialogue enhancement tasks.  
-By wrapping model loading, reward computation, feedback application, and PPO updates into a cohesive API, it simplifies experimentation and reduces overhead for educational environments.
+This document presented the key APIs used for reinforcement learning–based language model optimization and evaluation. The covered libraries span policy optimization with TRL, model and tokenizer management with Hugging Face Transformers, reward modeling through sentiment analysis, and comprehensive evaluation using both lexical and semantic metrics.
 
-The layer supports modular reward-function design, enables rapid testing with human feedback, and ensures model outputs remain structured and consistent.  
-Overall, this integration provides a clear, extensible foundation for reinforcement-learning–based dialogue improvement projects such as DialoGPT + TRL PPO.
-
+Together, these APIs provide a modular and extensible foundation for building, optimizing, and assessing language models. By separating policy optimization, reward computation, and evaluation into well-defined components, the workflow supports flexible experimentation and reproducible analysis in modern natural language processing systems.
