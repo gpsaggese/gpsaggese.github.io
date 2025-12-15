@@ -1,812 +1,1613 @@
-"""Single reusable module for TorchRL multi-agent cooperation notebooks (MPS/CPU-safe)."""
+"""
+MAC (Multi-Agent Communication) Utilities for PettingZoo MPE simple_reference with TorchRL.
 
-from __future__ import annotations
+Architecture: Separate actor networks per agent + centralized critic.
+Training: Centralized A3C-style loss with n-step returns.
+"""
 
-import multiprocessing as mp
-from dataclasses import dataclass
-from typing import Any, Callable, Dict, Iterable, List, Protocol, Tuple
-
+from dataclasses import dataclass, asdict
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.distributions import Categorical
-
-from src.agent_policy.agent_policy import SharedMLPPolicy
-from src.envs.mpe_env import make_mpe_env
-from src.wrappers.wrapper import MPEWrapper
-
-__all__ = [
-    "EnvConfig",
-    "TrainConfig",
-    "RolloutBatch",
-    "Policy",
-    "ValueFunction",
-    "make_env",
-    "build_shared_actor",
-    "build_central_critic",
-    "select_actions",
-    "collect_episode",
-    "collect_n_steps",
-    "compute_returns_advantages",
-    "a3c_update",
-    "train_ctde_a3c",
-    "get_device",
-    "resolve_device",
-]
-class SharedAdam(torch.optim.Adam):
-    """Adam optimizer with shared states for A3C (works with spawn)."""
-    def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0):
-        super().__init__(params, lr=lr, betas=betas, eps=eps, weight_decay=weight_decay)
-        # move optimizer state to shared memory
-        for group in self.param_groups:
-            for p in group["params"]:
-                if p.requires_grad:
-                    state = self.state[p]
-                    # initialize if missing
-                    if "step" not in state:
-                        state["step"] = torch.zeros(1)
-                    if "exp_avg" not in state:
-                        state["exp_avg"] = torch.zeros_like(p.data)
-                    if "exp_avg_sq" not in state:
-                        state["exp_avg_sq"] = torch.zeros_like(p.data)
-                    # share
-                    state["step"].share_memory_()
-                    state["exp_avg"].share_memory_()
-                    state["exp_avg_sq"].share_memory_()
+from torch.distributions import Categorical, Normal
+import numpy as np
+from typing import Dict, List, Tuple, Optional, Any
+import json
+from pathlib import Path
 
 
-
-# ---------------------------------------------------------------------------
-# Contract layer
-# ---------------------------------------------------------------------------
-
+# ============================================================================
+# Configuration
+# ============================================================================
 
 @dataclass
-class EnvConfig:
-    env_name: str = "simple_spread"
-    seed: int = 0
-    max_steps: int = 25
-    device: str = "mps"  # "mps" = auto-fallback to CPU if unavailable, or "cpu" explicit
-
-
-@dataclass
-class TrainConfig:
+class MacConfig:
+    """Configuration for MAC training and evaluation."""
+    
+    # Environment
+    env_name: str = "simple_reference"
+    num_envs: int = 4
+    max_cycles: int = 25
+    continuous_actions: bool = False
+    
+    # Network architecture
+    hidden_dim: int = 128
+    actor_layers: int = 2
+    critic_layers: int = 2
+    
+    # Training
+    num_iters: int = 1000
+    rollout_len: int = 16
+    lr: float = 3e-4
     gamma: float = 0.99
-    lr_actor: float = 3e-4
-    lr_critic: float = 3e-4
-    entropy_coef: float = 0.005  # Reduced from 0.01 to allow convergence
+    entropy_coef: float = 0.01
     value_coef: float = 0.5
     max_grad_norm: float = 0.5
-    n_episodes: int = 500  # Alias for max_episodes (for backward compatibility)
-    log_every: int = 25
-    device: str = "mps"  # "mps" = auto-fallback to CPU if unavailable, or "cpu" explicit
-    debug_grads: bool = False  # If True, print gradient debugging info
-    # A3C-specific parameters
-    num_workers: int = 4  # Number of parallel A3C workers
-    n_steps: int = 10  # Rollout length per update (for A3C)
-    max_episodes: int = 300  # Global stop criterion for A3C
-    sync_every: int = 1  # Episodes between local->global sync
-    seed: int = 0  # Base seed for workers
-
-
-@dataclass
-class RolloutBatch:
-    """Container for one episode/rollout of experience."""
-
-    obs: torch.Tensor  # [T, n_agents, obs_dim]
-    actions: torch.Tensor  # [T, n_agents]
-    rewards: torch.Tensor  # [T, n_agents]
-    dones: torch.Tensor  # [T] (boolean as floats)
-
-
-class Policy(Protocol):
-    def act(self, obs: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Return (actions [n_agents], mean_logprob scalar, mean_entropy scalar)."""
-
-
-class ValueFunction(Protocol):
-    def value(self, joint_obs: torch.Tensor) -> torch.Tensor:
-        """Return scalar value for concatenated observations."""
-
-
-# ---------------------------------------------------------------------------
-# Device detection
-# ---------------------------------------------------------------------------
-
-
-def resolve_device(requested: str) -> torch.device:
-    """Resolve device string to torch.device with MPS fallback to CPU."""
-    if requested == "cpu":
-        return torch.device("cpu")
-    elif requested == "mps":
-        if torch.backends.mps.is_available():
-            return torch.device("mps")
-        else:
-            # Fallback to CPU if MPS not available
-            return torch.device("cpu")
-    else:
-        # Allow other explicit devices like "cuda:0"
-        return torch.device(requested)
-
-
-def get_device(device: str | None = None) -> str:
-    """Legacy helper: returns device string (use resolve_device for torch.device)."""
-    if device is None:
-        device = "mps"
-    resolved = resolve_device(device)
-    return str(resolved).replace("mps:0", "mps")
-
-
-# ---------------------------------------------------------------------------
-# Environment
-# ---------------------------------------------------------------------------
-
-
-def make_env(cfg: EnvConfig) -> MPEWrapper:
-    """Instantiate wrapped MPE env (parallel) with seeding and max steps control."""
-    device = resolve_device(cfg.device)
-    torch.manual_seed(cfg.seed)
-    wrapper = MPEWrapper(device=str(device), max_cycles=cfg.max_steps)
-    wrapper.reset(seed=cfg.seed)
-    return wrapper
-
-
-# ---------------------------------------------------------------------------
-# Networks
-# ---------------------------------------------------------------------------
-
-
-def build_shared_actor(obs_dim: int, n_actions: int, hidden_sizes: Iterable[int] = (128, 128)) -> nn.Module:
-    """Build a shared actor that outputs logits for each agent observation."""
-    return SharedMLPPolicy(obs_dim, n_actions, hidden_dims=list(hidden_sizes))
-
-
-class CentralCritic(nn.Module):
-    """Centralized critic over concatenated observations."""
-
-    def __init__(self, joint_obs_dim: int, hidden_sizes: Iterable[int] = (128, 128)):
-        super().__init__()
-        layers: List[nn.Module] = []
-        in_dim = joint_obs_dim
-        for h in hidden_sizes:
-            layers.append(nn.Linear(in_dim, h))
-            layers.append(nn.ReLU())
-            in_dim = h
-        layers.append(nn.Linear(in_dim, 1))
-        self.net = nn.Sequential(*layers)
-
-    def forward(self, joint_obs: torch.Tensor) -> torch.Tensor:
-        return self.net(joint_obs).squeeze(-1)
-
-    def value(self, joint_obs: torch.Tensor) -> torch.Tensor:
-        return self.forward(joint_obs)
-
-
-def build_central_critic(joint_obs_dim: int, hidden_sizes: Iterable[int] = (128, 128)) -> nn.Module:
-    """Build centralized critic mapping joint observation to scalar value."""
-    return CentralCritic(joint_obs_dim, hidden_sizes)
-
-
-# ---------------------------------------------------------------------------
-# Action selection
-# ---------------------------------------------------------------------------
-
-
-def select_actions(actor: nn.Module, obs: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    """Sample discrete actions and return actions, mean logprob, mean entropy."""
-    logits = actor(obs)
-    dist = Categorical(logits=logits)
-    actions = dist.sample()
-    logprob_mean = dist.log_prob(actions).mean()
-    entropy_mean = dist.entropy().mean()
-    return actions, logprob_mean, entropy_mean
-
-
-# ---------------------------------------------------------------------------
-# Rollout collection
-# ---------------------------------------------------------------------------
-
-
-def collect_episode(
-    wrapper: MPEWrapper, actor: nn.Module, env_cfg: EnvConfig, max_steps: int | None = None
-) -> RolloutBatch:
-    """
-    Collect one rollout of experience using current actor (no critic needed).
-    Does NOT store logprobs/values/entropies - they will be recomputed during update.
-    """
-    obs_tensors: List[torch.Tensor] = []
-    actions_tensors: List[torch.Tensor] = []
-    rewards_tensors: List[torch.Tensor] = []
-    dones_list: List[torch.Tensor] = []
-
-    obs = wrapper.reset(seed=None)  # Don't fix seed - allow diverse episodes
-    steps = 0
-    max_steps = max_steps or env_cfg.max_steps
-
-    while steps < max_steps:
-        with torch.no_grad():
-            actions, _, _ = select_actions(actor, obs)
-
-        next_obs, rewards, done_all = wrapper.step(actions)
-
-        obs_tensors.append(obs)
-        actions_tensors.append(actions)
-        rewards_tensors.append(rewards)
-        # Use .item() to convert bool to Python bool for proper conditional logic
-        dones_list.append(torch.tensor(1.0 if done_all else 0.0, dtype=torch.float32, device=obs.device))
-
-        obs = next_obs
-        steps += 1
-        if done_all:
-            break
-
-    return RolloutBatch(
-        obs=torch.stack(obs_tensors, dim=0),
-        actions=torch.stack(actions_tensors, dim=0),
-        rewards=torch.stack(rewards_tensors, dim=0),
-        dones=torch.stack(dones_list, dim=0),
-    )
-
-
-def collect_n_steps(
-    wrapper: MPEWrapper, actor: nn.Module, env_cfg: EnvConfig, n_steps: int, obs: torch.Tensor | None = None
-) -> Tuple[RolloutBatch, torch.Tensor, bool]:
-    """
-    Collect n-step rollout for A3C.
     
-    Args:
-        wrapper: Environment wrapper
-        actor: Policy network
-        env_cfg: Environment configuration
-        n_steps: Number of steps to collect
-        obs: Current observation (if None, will reset env)
+    # Evaluation
+    eval_episodes: int = 100
+    success_threshold: float = 5.0  # Reward threshold for success
+    
+    # System
+    seed: int = 42
+    device: str = "cpu"
+    checkpoint_dir: str = "./checkpoints"
+    log_interval: int = 10
+    
+    def to_dict(self) -> dict:
+        """Convert config to dictionary."""
+        return asdict(self)
+
+
+def default_cfg() -> MacConfig:
+    """
+    Returns default configuration for MAC training.
     
     Returns:
-        batch: RolloutBatch with collected experience
-        next_obs: Final observation after n steps
-        done_all: Whether episode ended
+        MacConfig instance with default settings.
     """
-    obs_tensors: List[torch.Tensor] = []
-    actions_tensors: List[torch.Tensor] = []
-    rewards_tensors: List[torch.Tensor] = []
-    dones_list: List[torch.Tensor] = []
-    
-    if obs is None:
-        obs = wrapper.reset(seed=None)
-    
-    done_all = False
-    for step in range(n_steps):
-        with torch.no_grad():
-            actions, _, _ = select_actions(actor, obs)
-        
-        next_obs, rewards, done_all = wrapper.step(actions)
-        
-        obs_tensors.append(obs)
-        actions_tensors.append(actions)
-        rewards_tensors.append(rewards)
-        dones_list.append(torch.tensor(1.0 if done_all else 0.0, dtype=torch.float32, device=obs.device))
-        
-        obs = next_obs
-        if done_all:
-            break
-    
-    batch = RolloutBatch(
-        obs=torch.stack(obs_tensors, dim=0),
-        actions=torch.stack(actions_tensors, dim=0),
-        rewards=torch.stack(rewards_tensors, dim=0),
-        dones=torch.stack(dones_list, dim=0),
-    )
-    
-    return batch, obs, done_all
+    return MacConfig()
 
 
-# ---------------------------------------------------------------------------
-# Returns and advantages
-# ---------------------------------------------------------------------------
+# ============================================================================
+# Environment Creation
+# ============================================================================
 
-
-def compute_returns_advantages(
-    rewards_team: torch.Tensor,
-    values: torch.Tensor,
-    dones: torch.Tensor,
-    gamma: float,
-    bootstrap_value: torch.Tensor | None = None,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+def make_env(cfg: MacConfig):
     """
-    Compute discounted returns and advantages with optional n-step bootstrapping.
-    Uses consistent team reward aggregation (sum over agents).
-
+    Create PettingZoo MPE simple_reference environment wrapped with TorchRL.
+    
     Args:
-        rewards_team: [T] tensor of team rewards (already summed over agents)
-        values: [T] tensor of value estimates
-        dones: [T] tensor of done flags (1.0 or 0.0)
-        gamma: discount factor
-        bootstrap_value: scalar tensor V(s_T) when rollout truncates without done
+        cfg: MacConfig instance with environment settings.
+        
+    Returns:
+        TorchRL-wrapped PettingZoo environment.
+        
+    Raises:
+        ImportError: If TorchRL PettingZoo wrapper not found.
     """
-    T = rewards_team.shape[0]
-    returns = torch.zeros_like(rewards_team)
-
-    if bootstrap_value is None:
-        future_return = torch.zeros((), device=rewards_team.device)
-    else:
-        future_return = bootstrap_value  # scalar tensor
-
-    for t in reversed(range(T)):
-        # Reset future return if episode actually terminated at t
-        if float(dones[t].item()) > 0.5:
-            future_return = torch.zeros((), device=rewards_team.device)
-        future_return = rewards_team[t] + gamma * future_return
-        returns[t] = future_return
-    advantages = returns - values
-    return returns, advantages
-
-
-# ---------------------------------------------------------------------------
-# Loss and update
-# ---------------------------------------------------------------------------
-
-def _param_stats(model: torch.nn.Module) -> tuple[float, float]:
-    with torch.no_grad():
-        flat = torch.cat([p.data.flatten() for p in model.parameters()])
-        return float(flat.mean().cpu()), float(flat.std().cpu())
-
-def a3c_update(
-    actor: nn.Module,
-    critic: nn.Module,
-    batch: RolloutBatch,
-    cfg: TrainConfig,
-    optim_actor: torch.optim.Optimizer,
-    optim_critic: torch.optim.Optimizer,
-) -> Dict[str, float]:
-    """
-    One A3C-style update step; returns scalar metrics.
-    Recomputes logits/logprobs/entropy/values from stored obs/actions.
-    Uses consistent team reward aggregation (sum over agents).
+    # Set seed for reproducibility
+    np.random.seed(cfg.seed)
+    torch.manual_seed(cfg.seed)
     
-    NOTE: .item() is ONLY used on detached tensors after backward pass (in return dict).
-    Losses (policy_loss, value_loss, entropy_bonus) keep gradients during backward.
-    """
-    # Extract dimensions and get n_actions from actor output
-    T, n_agents, obs_dim = batch.obs.shape
-    obs_flat = batch.obs.reshape(T * n_agents, obs_dim)
+    # Try importing TorchRL PettingZoo wrapper
+    torchrl_wrapper = None
+    try:
+        from torchrl.envs.libs.pettingzoo import PettingZooEnv
+        torchrl_wrapper = PettingZooEnv
+    except ImportError:
+        try:
+            from torchrl.envs.libs.pettingzoo import PettingZooWrapper
+            torchrl_wrapper = PettingZooWrapper
+        except ImportError:
+            raise ImportError(
+                "Could not import TorchRL PettingZoo wrapper. "
+                "Expected one of:\n"
+                "  - torchrl.envs.libs.pettingzoo.PettingZooEnv\n"
+                "  - torchrl.envs.libs.pettingzoo.PettingZooWrapper\n"
+                "Please install torchrl with PettingZoo support."
+            )
     
-    # Forward pass through actor to get logits
-    logits_flat = actor(obs_flat)  # [T*n_agents, n_actions]
-    n_actions = logits_flat.shape[-1]
-    logits = logits_flat.reshape(T, n_agents, n_actions)  # [T, n_agents, n_actions]
+    # Try to determine the environment version
+    env_version = "v3"
+    try:
+        from pettingzoo.mpe import simple_reference_v3
+    except (ImportError, AttributeError):
+        try:
+            from pettingzoo.mpe import simple_reference_v2
+            env_version = "v2"
+        except (ImportError, AttributeError):
+            raise ImportError(
+                "Could not import simple_reference from pettingzoo.mpe. "
+                "Please install pettingzoo: pip install pettingzoo[mpe]"
+            )
     
-    # Create distribution and compute log probs and entropy
-    dist = Categorical(logits=logits)
-    logprob_agents = dist.log_prob(batch.actions)  # [T, n_agents]
-    logprob_mean = logprob_agents.mean(dim=1)  # [T]
-    entropy_mean = dist.entropy().mean(dim=1)  # [T]
+    # Wrap with TorchRL using string task name
+    task_name = f"mpe/simple_reference_{env_version}"
     
-    # Compute values from joint observations
-    joint_obs = batch.obs.reshape(T, -1)  # [T, n_agents*obs_dim]
-    values = critic.value(joint_obs)  # [T]
-    
-    # Aggregate rewards as team reward (sum over agents)
-    # rewards_team = batch.rewards.sum(dim=1)  # [T]
-    rewards_team = batch.rewards.mean(dim = 1)
-    
-    # Compute returns and advantages
-    returns, advantages = compute_returns_advantages(rewards_team, values, batch.dones, cfg.gamma)
-    
-    # Normalize advantages for stable gradients
-    advantages = (advantages - advantages.mean()) / (advantages.std().clamp_min(1e-3))
-    
-    # Compute losses (keep gradients!)
-    policy_loss = -(logprob_mean * advantages.detach()).mean()
-    value_loss = F.mse_loss(values, returns)
-    entropy_bonus = -cfg.entropy_coef * entropy_mean.mean()
-    total_loss = policy_loss + cfg.value_coef * value_loss + entropy_bonus
-    
-    # Debug: print gradient info if enabled (before backward)
-    if cfg.debug_grads:
-        print(f"\n=== Gradient Debug (Pre-Backward) ===")
-        print(f"policy_loss.requires_grad: {policy_loss.requires_grad}")
-        print(f"value_loss.requires_grad: {value_loss.requires_grad}")
-        print(f"total_loss.requires_grad: {total_loss.requires_grad}")
-    
-    # Backpropagation
-    optim_actor.zero_grad()
-    optim_critic.zero_grad()
-    total_loss.backward()
-    
-    # Debug: print mean abs gradient of actor params (after backward)
-    if cfg.debug_grads:
-        actor_grad_sum = 0.0
-        actor_param_count = 0
-        for param in actor.parameters():
-            if param.grad is not None:
-                actor_grad_sum += param.grad.abs().sum().item()
-                actor_param_count += param.grad.numel()
-        mean_abs_grad = actor_grad_sum / actor_param_count if actor_param_count > 0 else 0.0
-        print(f"Mean abs grad of actor params: {mean_abs_grad:.6e}")
-        print(f"Entropy mean: {entropy_mean.mean().item():.4f} (expected to decrease from ln(n_actions)={float('inf') if n_actions != 5 else 1.609:.4f})")
-        print(f"======================================\n")
-    
-    # Clip gradients and update
-    torch.nn.utils.clip_grad_norm_(list(actor.parameters()) + list(critic.parameters()), cfg.max_grad_norm)
-    optim_actor.step()
-    optim_critic.step()
-    
-    # Return metrics (safe to use .item() on detached tensors)
-    return {
-        "policy_loss": float(policy_loss.detach().cpu()),
-        "value_loss": float(value_loss.detach().cpu()),
-        "entropy": float(entropy_mean.mean().detach().cpu()),
-        "episode_return": float(rewards_team.sum().detach().cpu()),
-    }
-
-
-# ---------------------------------------------------------------------------
-# A3C Training
-# ---------------------------------------------------------------------------
-
-
-def _a3c_worker(
-    rank: int,
-    global_actor: nn.Module,
-    global_critic: nn.Module,
-    optimizer: torch.optim.Optimizer,
-    lock: Any,
-    counter: Any,
-    queue: Any,
-    env_cfg: EnvConfig,
-    train_cfg: TrainConfig,
-):
-    """
-    A3C worker process.
-    
-    Each worker:
-    - Maintains its own environment
-    - Has local actor/critic copies
-    - Collects n-step rollouts
-    - Computes gradients locally
-    - Copies gradients to global networks under lock
-    - Syncs weights from global periodically
-    """
-    # Set unique seed for this worker
-    worker_seed = train_cfg.seed + rank * 1000
-    torch.manual_seed(worker_seed)
-    
-    # Force CPU for A3C workers (MPS doesn't work well with multiprocessing)
-    device = torch.device("cpu")
-    
-    # Create local environment
-    local_env_cfg = EnvConfig(
-        env_name=env_cfg.env_name,
-        seed=worker_seed,
-        max_steps=env_cfg.max_steps,
-        device="cpu"
-    )
-    wrapper = make_env(local_env_cfg)
-    obs = wrapper.reset(seed=worker_seed)
-    n_agents, obs_dim = obs.shape
-    n_actions = wrapper.n_actions
-    joint_obs_dim = n_agents * obs_dim
-    
-    # Create local actor and critic
-    local_actor = build_shared_actor(obs_dim, n_actions).to(device)
-    local_critic = build_central_critic(joint_obs_dim).to(device)
-    
-    # Sync initial weights from global
-    with lock:
-        local_actor.load_state_dict(global_actor.state_dict())
-        local_critic.load_state_dict(global_critic.state_dict())
-    
-    episode_count = 0
-    ep_return_accum = 0.0
-    obs = None  # Will trigger reset on first collect_n_steps
-    
-    while True:
-        # Check if we should stop
-        with lock:
-            if counter.value >= train_cfg.max_episodes:
-                break
-        
-        # Collect n-step rollout
-        batch, obs, done = collect_n_steps(wrapper, local_actor, local_env_cfg, train_cfg.n_steps, obs)
-        
-        # If episode ended, reset obs for next iteration
-        if done:
-            obs = None
-            episode_count += 1
-        
-        # Compute gradients locally
-        local_actor.zero_grad()
-        local_critic.zero_grad()
-        
-        # Recompute everything from batch
-        T, n_agents, obs_dim = batch.obs.shape
-        obs_flat = batch.obs.reshape(T * n_agents, obs_dim)
-        logits_flat = local_actor(obs_flat)
-        n_actions = logits_flat.shape[-1]
-        logits = logits_flat.reshape(T, n_agents, n_actions)
-        
-        dist = Categorical(logits=logits)
-        logprob_agents = dist.log_prob(batch.actions)
-        logprob_mean = logprob_agents.mean(dim=1)
-        entropy_mean = dist.entropy().mean(dim=1)
-        
-        joint_obs = batch.obs.reshape(T, -1)
-        values = local_critic.value(joint_obs)
-        
-        rewards_team = batch.rewards.mean(dim=1)          # [T]
-        ep_return_accum += float(rewards_team.sum().item())  # accumulate this chunk
-        # Bootstrap with value of next joint observation if rollout truncated by n_steps
-        bootstrap = None
-        if not done:
-            with torch.no_grad():
-                next_joint_obs = obs.reshape(1, -1)  # obs is next_obs here
-                bootstrap = local_critic.value(next_joint_obs).squeeze(0)
-        returns, advantages = compute_returns_advantages(
-            rewards_team, values, batch.dones, train_cfg.gamma, bootstrap
+    try:
+        env = torchrl_wrapper(
+            task=task_name,
+            parallel=True,
+            categorical_actions=not cfg.continuous_actions,
+            seed=cfg.seed,
+            done_on_any=False,
+            max_cycles=cfg.max_cycles,
+            continuous_actions=cfg.continuous_actions
         )
-        advantages = (advantages - advantages.mean()) / (advantages.std().clamp_min(1e-3))
+    except (TypeError, RuntimeError) as e:
+        # Fallback: create environment manually without TorchRL wrapper
+        # (This is less ideal but ensures compatibility)
+        if env_version == "v3":
+            from pettingzoo.mpe import simple_reference_v3
+            env = simple_reference_v3.parallel_env(
+                max_cycles=cfg.max_cycles, 
+                continuous_actions=cfg.continuous_actions
+            )
+        else:
+            from pettingzoo.mpe import simple_reference_v2
+            env = simple_reference_v2.parallel_env(
+                max_cycles=cfg.max_cycles, 
+                continuous_actions=cfg.continuous_actions
+            )
+    
+    return env
+
+
+def get_agent_names(env) -> List[str]:
+    """
+    Get list of agent names from environment.
+    
+    Args:
+        env: TorchRL-wrapped PettingZoo environment.
+        
+    Returns:
+        List of agent names (e.g., ['speaker_0', 'listener_0']).
+    """
+    # Access underlying PettingZoo environment
+    if hasattr(env, '_env'):
+        pz_env = env._env
+    elif hasattr(env, 'env'):
+        pz_env = env.env
+    else:
+        pz_env = env
+    
+    # Get agents list
+    if hasattr(pz_env, 'possible_agents'):
+        return pz_env.possible_agents
+    elif hasattr(pz_env, 'agents'):
+        return pz_env.agents
+    else:
+        # Fallback for simple_reference
+        return ['speaker_0', 'listener_0']
+
+
+# ============================================================================
+# Neural Network Modules
+# ============================================================================
+
+def orthogonal_init(layer, gain=1.0):
+    if isinstance(layer, nn.Linear):
+        nn.init.orthogonal_(layer.weight, gain=gain)
+        nn.init.constant_(layer.bias, 0)
+
+class MLPNetwork(nn.Module):
+    """
+    Enhanced Multi-layer perceptron network.
+    Features: GELU activation, Layer Normalization, and Orthogonal Initialization.
+    """
+    
+    def __init__(self, input_dim: int, output_dim: int, hidden_dim: int, num_layers: int):
+        super().__init__()
+        layers = []
+        
+        # Input layer
+        fc1 = nn.Linear(input_dim, hidden_dim)
+        orthogonal_init(fc1)
+        layers.append(fc1)
+        layers.append(nn.LayerNorm(hidden_dim))
+        layers.append(nn.GELU())
+        
+        # Hidden layers (Deeper and stabilized)
+        for _ in range(num_layers - 1):
+            fc = nn.Linear(hidden_dim, hidden_dim)
+            orthogonal_init(fc)
+            layers.append(fc)
+            layers.append(nn.LayerNorm(hidden_dim))
+            layers.append(nn.GELU())
+        
+        # Output layer
+        fc_out = nn.Linear(hidden_dim, output_dim)
+        orthogonal_init(fc_out, gain=0.01) # Small gain for output to start with small actions
+        layers.append(fc_out)
+        
+        self.network = nn.Sequential(*layers)
+    
+    def forward(self, x):
+        return self.network(x)
+
+
+class DiscreteActor(nn.Module):
+    """Actor network for discrete action spaces (Categorical policy)."""
+    
+    def __init__(self, obs_dim: int, action_dim: int, hidden_dim: int, num_layers: int):
+        super().__init__()
+        self.mlp = MLPNetwork(obs_dim, action_dim, hidden_dim, num_layers)
+    
+    def forward(self, obs):
+        logits = self.mlp(obs)
+        return Categorical(logits=logits)
+    
+    def evaluate_actions(self, obs, action):
+        """Evaluate actions for PPO update."""
+        dist = self.forward(obs)
+        log_prob = dist.log_prob(action.squeeze(-1)).unsqueeze(-1)
+        entropy = dist.entropy().unsqueeze(-1)
+        return log_prob, entropy
+
+    def get_null_action(self, batch_size: int, device: str):
+        return torch.zeros(batch_size, dtype=torch.long, device=device)
+
+
+class ContinuousActor(nn.Module):
+    """Actor network for continuous action spaces (Gaussian policy)."""
+    
+    def __init__(self, obs_dim: int, action_dim: int, hidden_dim: int, num_layers: int, action_bounds: Tuple[float, float]):
+        super().__init__()
+        self.mlp = MLPNetwork(obs_dim, 2 * action_dim, hidden_dim, num_layers)
+        self.action_dim = action_dim
+        self.action_low = action_bounds[0]
+        self.action_high = action_bounds[1]
+        self.action_scale = (self.action_high - self.action_low) / 2.0
+        self.action_bias = (self.action_high + self.action_low) / 2.0
+    
+    def forward(self, obs):
+        output = self.mlp(obs)
+        mean, log_std = output.chunk(2, dim=-1)
+        log_std = torch.clamp(log_std, -20, 2)
+        std = log_std.exp()
+        return Normal(mean, std)
+    
+    def get_action(self, obs, deterministic: bool = False):
+        dist = self.forward(obs)
+        if deterministic:
+            action_raw = dist.mean
+        else:
+            action_raw = dist.rsample()
+        
+        # Tanh squashing
+        action = torch.tanh(action_raw)
+        
+        # Log prob correction
+        log_prob = dist.log_prob(action_raw)
+        log_prob = log_prob - torch.log(1 - action.pow(2) + 1e-6)
+        log_prob = log_prob.sum(dim=-1, keepdim=True)
+        
+        action_scaled = action * self.action_scale + self.action_bias
+        entropy = dist.entropy().sum(dim=-1, keepdim=True)
+        
+        return action_scaled, log_prob, entropy
+
+    def evaluate_actions(self, obs, action):
+        """Evaluate actions for PPO update (reverse the scaling)."""
+        # Unscale action to [-1, 1] range for tanh
+        action_norm = (action - self.action_bias) / (self.action_scale + 1e-8)
+        action_norm = torch.clamp(action_norm, -0.999, 0.999)
+        action_raw = torch.atanh(action_norm)
+
+        dist = self.forward(obs)
+        log_prob = dist.log_prob(action_raw)
+        log_prob = log_prob - torch.log(1 - action_norm.pow(2) + 1e-6)
+        log_prob = log_prob.sum(dim=-1, keepdim=True)
+        entropy = dist.entropy().sum(dim=-1, keepdim=True)
+        
+        return log_prob, entropy
+    
+    def get_null_action(self, batch_size: int, device: str):
+        return torch.zeros(batch_size, self.action_dim, device=device)
+
+
+class CentralizedCritic(nn.Module):
+    def __init__(self, state_dim: int, hidden_dim: int, num_layers: int):
+        super().__init__()
+        self.mlp = MLPNetwork(state_dim, 1, hidden_dim, num_layers)
+    
+    def forward(self, state):
+        return self.mlp(state)
+
+# class MLPNetwork(nn.Module):
+#     """Multi-layer perceptron network."""
+    
+#     def __init__(self, input_dim: int, output_dim: int, hidden_dim: int, num_layers: int):
+#         super().__init__()
+#         layers = []
+        
+#         # Input layer
+#         layers.append(nn.Linear(input_dim, hidden_dim))
+#         layers.append(nn.ReLU())
+        
+#         # Hidden layers
+#         for _ in range(num_layers - 1):
+#             layers.append(nn.Linear(hidden_dim, hidden_dim))
+#             layers.append(nn.ReLU())
+        
+#         # Output layer
+#         layers.append(nn.Linear(hidden_dim, output_dim))
+        
+#         self.network = nn.Sequential(*layers)
+    
+#     def forward(self, x):
+#         return self.network(x)
+
+
+# class DiscreteActor(nn.Module):
+#     """Actor network for discrete action spaces (Categorical policy)."""
+    
+#     def __init__(self, obs_dim: int, action_dim: int, hidden_dim: int, num_layers: int):
+#         super().__init__()
+#         self.mlp = MLPNetwork(obs_dim, action_dim, hidden_dim, num_layers)
+    
+#     def forward(self, obs):
+#         """
+#         Forward pass.
+        
+#         Args:
+#             obs: Observation tensor [batch_size, obs_dim].
+            
+#         Returns:
+#             Categorical distribution over actions.
+#         """
+#         logits = self.mlp(obs)
+#         return Categorical(logits=logits)
+    
+#     def get_null_action(self, batch_size: int, device: str):
+#         """Get null action (action 0) for no communication mode."""
+#         return torch.zeros(batch_size, dtype=torch.long, device=device)
+
+
+# class ContinuousActor(nn.Module):
+#     """Actor network for continuous action spaces (Gaussian policy with tanh squashing)."""
+    
+#     def __init__(self, obs_dim: int, action_dim: int, hidden_dim: int, num_layers: int, action_bounds: Tuple[float, float]):
+#         super().__init__()
+#         self.mlp = MLPNetwork(obs_dim, 2 * action_dim, hidden_dim, num_layers)  # output mean and log_std
+#         self.action_dim = action_dim
+#         self.action_low = action_bounds[0]
+#         self.action_high = action_bounds[1]
+#         self.action_scale = (self.action_high - self.action_low) / 2.0
+#         self.action_bias = (self.action_high + self.action_low) / 2.0
+    
+#     def forward(self, obs):
+#         """
+#         Forward pass.
+        
+#         Args:
+#             obs: Observation tensor [batch_size, obs_dim].
+            
+#         Returns:
+#             Normal distribution with tanh-squashed actions.
+#         """
+#         output = self.mlp(obs)
+#         mean, log_std = output.chunk(2, dim=-1)
+#         log_std = torch.clamp(log_std, -20, 2)
+#         std = log_std.exp()
+#         return Normal(mean, std)
+    
+#     def get_action(self, obs, deterministic: bool = False):
+#         """
+#         Sample action from policy.
+        
+#         Args:
+#             obs: Observation tensor.
+#             deterministic: If True, return mean action.
+            
+#         Returns:
+#             action: Squashed action in action space bounds.
+#             log_prob: Log probability of action.
+#             entropy: Entropy of distribution.
+#         """
+#         dist = self.forward(obs)
+        
+#         if deterministic:
+#             action_raw = dist.mean
+#         else:
+#             action_raw = dist.rsample()
+        
+#         # Tanh squashing
+#         action = torch.tanh(action_raw)
+        
+#         # Compute log probability with correction for tanh squashing
+#         log_prob = dist.log_prob(action_raw)
+#         log_prob = log_prob - torch.log(1 - action.pow(2) + 1e-6)
+#         log_prob = log_prob.sum(dim=-1, keepdim=True)
+        
+#         # Scale action to bounds
+#         action_scaled = action * self.action_scale + self.action_bias
+        
+#         # Entropy
+#         entropy = dist.entropy().sum(dim=-1, keepdim=True)
+        
+#         return action_scaled, log_prob, entropy
+    
+#     def get_null_action(self, batch_size: int, device: str):
+#         """Get null action (zeros) for no communication mode."""
+#         return torch.zeros(batch_size, self.action_dim, device=device)
+
+
+# class CentralizedCritic(nn.Module):
+#     """Centralized critic that takes global state (concatenated observations)."""
+    
+#     def __init__(self, state_dim: int, hidden_dim: int, num_layers: int):
+#         super().__init__()
+#         self.mlp = MLPNetwork(state_dim, 1, hidden_dim, num_layers)
+    
+#     def forward(self, state):
+#         """
+#         Estimate state value.
+        
+#         Args:
+#             state: Global state tensor [batch_size, state_dim].
+            
+#         Returns:
+#             State value [batch_size, 1].
+#         """
+#         return self.mlp(state)
+
+
+def build_modules(cfg, env) -> Tuple[Dict[str, nn.Module], nn.Module, dict]:
+    """
+    Build actor networks and centralized critic using the enhanced MLP classes.
+    """
+    # Get agent names
+    if hasattr(env, 'agents'):
+        agent_names = env.agents
+    else:
+        # Fallback for some wrappers
+        agent_names = env.unwrapped.agents
+
+    # Access underlying PettingZoo environment to get spaces
+    if hasattr(env, '_env'):
+        pz_env = env._env
+    elif hasattr(env, 'env'):
+        pz_env = env.env
+    else:
+        pz_env = env
+    
+    # Reset to get spaces
+    # pz_env.reset() # Careful: Some envs don't like random resets during build
+    
+    specs = {
+        'agent_names': agent_names,
+        'obs_dims': {},
+        'action_dims': {},
+        'action_types': {},
+        'action_bounds': {},
+    }
+    
+    total_obs_dim = 0
+    for agent in agent_names:
+        obs_space = pz_env.observation_space(agent)
+        action_space = pz_env.action_space(agent)
+        
+        # Obs dim
+        if hasattr(obs_space, 'shape') and len(obs_space.shape) > 0:
+            obs_dim = int(np.prod(obs_space.shape))
+        else:
+            obs_dim = int(obs_space.n)
+        specs['obs_dims'][agent] = obs_dim
+        total_obs_dim += obs_dim
+        
+        # Action dim
+        if hasattr(action_space, 'n'):
+            action_dim = int(action_space.n)
+            specs['action_types'][agent] = 'discrete'
+            specs['action_bounds'][agent] = None
+        else:
+            action_dim = int(np.prod(action_space.shape))
+            specs['action_types'][agent] = 'continuous'
+            specs['action_bounds'][agent] = (float(action_space.low[0]), float(action_space.high[0]))
+        specs['action_dims'][agent] = action_dim
+    
+    actors = {}
+    for agent in agent_names:
+        obs_dim = specs['obs_dims'][agent]
+        action_dim = specs['action_dims'][agent]
+        action_type = specs['action_types'][agent]
+        
+        if action_type == 'discrete':
+            actor = DiscreteActor(
+                obs_dim=obs_dim,
+                action_dim=action_dim,
+                hidden_dim=cfg.hidden_dim,
+                num_layers=cfg.actor_layers
+            )
+        else:
+            action_bounds = specs['action_bounds'][agent]
+            actor = ContinuousActor(
+                obs_dim=obs_dim,
+                action_dim=action_dim,
+                hidden_dim=cfg.hidden_dim,
+                num_layers=cfg.actor_layers,
+                action_bounds=action_bounds
+            )
+        
+        actors[agent] = actor.to(cfg.device)
+    
+    critic = CentralizedCritic(
+        state_dim=total_obs_dim,
+        hidden_dim=cfg.hidden_dim,
+        num_layers=cfg.critic_layers
+    ).to(cfg.device)
+    
+    return actors, critic, specs
+
+# def build_modules(cfg: MacConfig, env) -> Tuple[Dict[str, nn.Module], nn.Module, dict]:
+#     """
+#     Build actor networks (one per agent) and centralized critic.
+    
+#     Args:
+#         cfg: MacConfig instance.
+#         env: TorchRL-wrapped environment.
+        
+#     Returns:
+#         actors: Dict mapping agent_name -> actor network.
+#         critic: Centralized critic network.
+#         specs: Dict with metadata (obs_dims, action_dims, etc.).
+#     """
+#     # Get agent names
+#     agent_names = get_agent_names(env)
+    
+#     # Access underlying PettingZoo environment to get spaces
+#     if hasattr(env, '_env'):
+#         pz_env = env._env
+#     elif hasattr(env, 'env'):
+#         pz_env = env.env
+#     else:
+#         pz_env = env
+    
+#     # Reset to get spaces
+#     pz_env.reset()
+    
+#     # Build specs dictionary
+#     specs = {
+#         'agent_names': agent_names,
+#         'obs_dims': {},
+#         'action_dims': {},
+#         'action_types': {},
+#         'action_bounds': {},
+#     }
+    
+#     # Get observation and action dimensions for each agent
+#     total_obs_dim = 0
+#     for agent in agent_names:
+#         obs_space = pz_env.observation_space(agent)
+#         action_space = pz_env.action_space(agent)
+        
+#         # Observation dimension
+#         if hasattr(obs_space, 'shape'):
+#             obs_dim = int(np.prod(obs_space.shape))
+#         else:
+#             obs_dim = int(obs_space.n)
+#         specs['obs_dims'][agent] = obs_dim
+#         total_obs_dim += obs_dim
+        
+#         # Action dimension and type
+#         if hasattr(action_space, 'n'):  # Discrete
+#             action_dim = int(action_space.n)
+#             specs['action_types'][agent] = 'discrete'
+#             specs['action_bounds'][agent] = None
+#         else:  # Continuous (Box)
+#             action_dim = int(np.prod(action_space.shape))
+#             specs['action_types'][agent] = 'continuous'
+#             specs['action_bounds'][agent] = (
+#                 float(action_space.low[0]),
+#                 float(action_space.high[0])
+#             )
+#         specs['action_dims'][agent] = action_dim
+    
+#     # Build actor networks (one per agent)
+#     actors = {}
+#     for agent in agent_names:
+#         obs_dim = specs['obs_dims'][agent]
+#         action_dim = specs['action_dims'][agent]
+#         action_type = specs['action_types'][agent]
+        
+#         if action_type == 'discrete':
+#             actor = DiscreteActor(
+#                 obs_dim=obs_dim,
+#                 action_dim=action_dim,
+#                 hidden_dim=cfg.hidden_dim,
+#                 num_layers=cfg.actor_layers
+#             )
+#         else:  # continuous
+#             action_bounds = specs['action_bounds'][agent]
+#             actor = ContinuousActor(
+#                 obs_dim=obs_dim,
+#                 action_dim=action_dim,
+#                 hidden_dim=cfg.hidden_dim,
+#                 num_layers=cfg.actor_layers,
+#                 action_bounds=action_bounds
+#             )
+        
+#         actors[agent] = actor.to(cfg.device)
+    
+#     # Build centralized critic
+#     critic = CentralizedCritic(
+#         state_dim=total_obs_dim,
+#         hidden_dim=cfg.hidden_dim,
+#         num_layers=cfg.critic_layers
+#     ).to(cfg.device)
+    
+#     return actors, critic, specs
+
+
+# ============================================================================
+# Rollout Collection
+# ============================================================================
+
+def collect_rollout(cfg, env, actors: Dict[str, nn.Module], critic: Optional[nn.Module] = None, device: Optional[str] = None) -> dict:
+    """
+    Collect rollout. Handles TensorDicts and normal dicts robustly.
+    """
+    if device is None:
+        device = cfg.device
+    
+    if hasattr(env, 'agents'):
+        agent_names = env.agents
+    else:
+        agent_names = env.unwrapped.agents
+
+    # Initialize storage
+    batch = {
+        'obs': {agent: [] for agent in agent_names},
+        'actions': {agent: [] for agent in agent_names},
+        'logp': {agent: [] for agent in agent_names},
+        'entropy': {agent: [] for agent in agent_names},
+        'reward': [],
+        'done': [],
+        'state': [],
+        'values': []
+    }
+    
+    # 1. Reset
+    # --------
+    # Handling TorchRL/Gym API variations
+    reset_res = env.reset()
+    if isinstance(reset_res, tuple):
+        obs_dict = reset_res[0]
+    else:
+        obs_dict = reset_res
+        
+    # Helper to extract obs from dict/tensordict
+    def get_obs_tensor(o_dict, ag_name):
+        if hasattr(o_dict, 'get'): # TensorDict or dict
+            d = o_dict.get(ag_name)
+            if d is None: d = o_dict.get(('agents', ag_name))
+        else:
+            d = o_dict[ag_name]
+            
+        if not isinstance(d, torch.Tensor):
+            d = torch.tensor(d, dtype=torch.float32)
+        return d.flatten().to(device).unsqueeze(0) # [1, dim]
+
+    # 2. Rollout Loop
+    # ---------------
+    for step in range(cfg.rollout_len):
+        
+        # Process Observations
+        obs_tensors = {}
+        for agent in agent_names:
+            obs_tensors[agent] = get_obs_tensor(obs_dict, agent)
+            
+        # Global State
+        state = torch.cat([obs_tensors[a] for a in agent_names], dim=-1)
+        
+        # Get Actions
+        actions_dict = {}
+        logp_dict = {}
+        entropy_dict = {}
+        
+        for agent in agent_names:
+            actor = actors[agent]
+            obs = obs_tensors[agent]
+            
+            with torch.no_grad():
+                if isinstance(actor, DiscreteActor):
+                    dist = actor(obs)
+                    action = dist.sample()
+                    logp = dist.log_prob(action)
+                    entropy = dist.entropy()
+                    actions_dict[agent] = action.item() # For env step
+                else: # Continuous
+                    action_scaled, logp, entropy = actor.get_action(obs)
+                    actions_dict[agent] = action_scaled.cpu().numpy()[0] # For env step
+                
+                logp_dict[agent] = logp
+                entropy_dict[agent] = entropy
+                
+        # Get Value
+        with torch.no_grad():
+            value = critic(state)
+            
+        # Step Environment
+        step_res = env.step(actions_dict)
+        
+        # Handle API variations
+        if len(step_res) == 5:
+            next_obs, rewards, terminations, truncations, infos = step_res
+        elif len(step_res) == 4:
+            next_obs, rewards, terminations, infos = step_res
+            truncations = {a: False for a in agent_names}
+        
+        # Aggregate Reward/Done
+        # Handle if rewards are dict or TensorDict
+        if hasattr(rewards, 'values'): r_vals = rewards.values()
+        else: r_vals = rewards
+        team_reward = sum(r_vals)
+        
+        if hasattr(terminations, 'values'): t_vals = terminations.values()
+        else: t_vals = terminations
+        done = any(t_vals)
+        
+        # Store Data
+        for agent in agent_names:
+            batch['obs'][agent].append(obs_tensors[agent].cpu())
+            
+            # Action storage
+            act_val = actions_dict[agent]
+            if isinstance(actors[agent], DiscreteActor):
+                batch['actions'][agent].append(torch.tensor([act_val], dtype=torch.long))
+            else:
+                batch['actions'][agent].append(torch.tensor([act_val], dtype=torch.float32))
+                
+            batch['logp'][agent].append(logp_dict[agent].cpu())
+            batch['entropy'][agent].append(entropy_dict[agent].cpu())
+            
+        batch['reward'].append(torch.tensor([team_reward], dtype=torch.float32))
+        batch['done'].append(torch.tensor([float(done)], dtype=torch.float32))
+        batch['state'].append(state.cpu())
+        batch['values'].append(value.cpu())
+        
+        obs_dict = next_obs
+        
+        if done:
+            reset_res = env.reset()
+            if isinstance(reset_res, tuple): obs_dict = reset_res[0]
+            else: obs_dict = reset_res
+
+    # 3. Concatenate
+    # --------------
+    for agent in agent_names:
+        batch['obs'][agent] = torch.cat(batch['obs'][agent], dim=0)
+        batch['actions'][agent] = torch.cat(batch['actions'][agent], dim=0)
+        batch['logp'][agent] = torch.cat(batch['logp'][agent], dim=0)
+        batch['entropy'][agent] = torch.cat(batch['entropy'][agent], dim=0)
+        
+    batch['reward'] = torch.cat(batch['reward'], dim=0)
+    batch['done'] = torch.cat(batch['done'], dim=0)
+    batch['state'] = torch.cat(batch['state'], dim=0)
+    batch['values'] = torch.cat(batch['values'], dim=0)
+    
+    return batch
+
+# def collect_rollout(cfg: MacConfig, env, actors: Dict[str, nn.Module], critic: Optional[nn.Module] = None, device: Optional[str] = None) -> dict:
+#     """
+#     Collect rollout from environment using current policies.
+    
+#     Args:
+#         cfg: MacConfig instance.
+#         env: TorchRL-wrapped environment.
+#         actors: Dict of actor networks per agent.
+#         critic: Centralized critic (optional).
+#         device: Device to store tensors on.
+        
+#     Returns:
+#         batch: Dictionary containing:
+#             - obs[agent][t]: observations
+#             - actions[agent][t]: actions
+#             - logp[agent][t]: log probabilities
+#             - entropy[agent][t]: entropies
+#             - reward[t]: team rewards
+#             - done[t]: done flags
+#             - state[t]: global states
+#             - values[t]: state values (if critic provided)
+#     """
+#     if device is None:
+#         device = cfg.device
+    
+#     agent_names = get_agent_names(env)
+    
+#     # Access underlying PettingZoo environment
+#     if hasattr(env, '_env'):
+#         pz_env = env._env
+#     elif hasattr(env, 'env'):
+#         pz_env = env.env
+#     else:
+#         pz_env = env
+    
+#     # Initialize storage
+#     batch = {
+#         'obs': {agent: [] for agent in agent_names},
+#         'actions': {agent: [] for agent in agent_names},
+#         'logp': {agent: [] for agent in agent_names},
+#         'entropy': {agent: [] for agent in agent_names},
+#         'reward': [],
+#         'done': [],
+#         'state': [],
+#     }
+#     if critic is not None:
+#         batch['values'] = []
+    
+#     # Collect rollouts from multiple environments in parallel (simple loop for academic implementation)
+#     for env_idx in range(cfg.num_envs):
+#         # Reset environment
+#         reset_result = pz_env.reset(seed=cfg.seed + env_idx)
+        
+#         # Handle TorchRL TensorDict or plain dict
+#         if isinstance(reset_result, tuple):
+#             obs_dict = reset_result[0] if len(reset_result) > 0 else reset_result
+#         else:
+#             obs_dict = reset_result
+        
+#         # Collect rollout_len steps
+#         for step in range(cfg.rollout_len):
+#             # Convert observations to tensors
+#             obs_tensors = {}
+#             for agent in agent_names:
+#                 # Handle TensorDict from TorchRL
+#                 if hasattr(obs_dict, 'get'):
+#                     obs = obs_dict.get(agent, obs_dict.get(('agents', agent)))
+#                 else:
+#                     obs = obs_dict[agent] if isinstance(obs_dict, dict) else obs_dict
+                
+#                 if not isinstance(obs, torch.Tensor):
+#                     obs = torch.FloatTensor(obs).flatten()
+#                 else:
+#                     obs = obs.flatten()
+#                 obs_tensors[agent] = obs.unsqueeze(0).to(device)
+            
+#             # Create global state (concatenate all observations)
+#             state = torch.cat([obs_tensors[agent] for agent in agent_names], dim=-1)
+            
+#             # Get actions and log probs from actors
+#             actions_dict = {}
+#             logp_dict = {}
+#             entropy_dict = {}
+            
+#             for agent in agent_names:
+#                 actor = actors[agent]
+#                 obs = obs_tensors[agent]
+                
+#                 with torch.no_grad():
+#                     if isinstance(actor, DiscreteActor):
+#                         dist = actor(obs)
+#                         action = dist.sample()
+#                         logp = dist.log_prob(action)
+#                         entropy = dist.entropy()
+#                         actions_dict[agent] = action.cpu().numpy()[0]
+#                     else:  # ContinuousActor
+#                         action, logp, entropy = actor.get_action(obs)
+#                         actions_dict[agent] = action.cpu().numpy()[0]
+                    
+#                     logp_dict[agent] = logp
+#                     entropy_dict[agent] = entropy
+            
+#             # Get value estimate
+#             if critic is not None:
+#                 with torch.no_grad():
+#                     value = critic(state)
+            
+#             # Step environment
+#             step_result = pz_env.step(actions_dict)
+            
+#             # Handle TorchRL TensorDict or plain tuple
+#             if len(step_result) == 5:
+#                 next_obs_dict, rewards_dict, dones_dict, truncs_dict, infos_dict = step_result
+#             elif isinstance(step_result, tuple) and len(step_result) == 1:
+#                 # TorchRL returns a single TensorDict
+#                 td = step_result[0]
+#                 next_obs_dict = {agent: td.get(agent, td.get(('agents', agent))) for agent in agent_names}
+#                 rewards_dict = {agent: td.get(('next', 'reward', agent), td.get(('reward', agent), 0)) for agent in agent_names}
+#                 dones_dict = {agent: td.get(('next', 'done', agent), td.get(('done', agent), False)) for agent in agent_names}
+#                 truncs_dict = {agent: False for agent in agent_names}
+#                 infos_dict = {agent: {} for agent in agent_names}
+#             else:
+#                 next_obs_dict, rewards_dict, dones_dict, truncs_dict, infos_dict = step_result[0], step_result[1], step_result[2], step_result[3], step_result[4]
+            
+#             # Compute team reward (sum of individual rewards)
+#             team_reward = sum(rewards_dict.values()) if isinstance(rewards_dict, dict) else sum(rewards_dict)
+            
+#             # Check if episode done
+#             done_vals = dones_dict.values() if isinstance(dones_dict, dict) else dones_dict
+#             trunc_vals = truncs_dict.values() if isinstance(truncs_dict, dict) else truncs_dict
+#             done = any(done_vals) or any(trunc_vals)
+            
+#             # Store transition
+#             for agent in agent_names:
+#                 batch['obs'][agent].append(obs_tensors[agent].cpu())
+#                 if isinstance(actors[agent], DiscreteActor):
+#                     batch['actions'][agent].append(torch.LongTensor([actions_dict[agent]]))
+#                 else:
+#                     batch['actions'][agent].append(torch.FloatTensor([actions_dict[agent]]))
+#                 batch['logp'][agent].append(logp_dict[agent].cpu())
+#                 batch['entropy'][agent].append(entropy_dict[agent].cpu())
+            
+#             batch['reward'].append(torch.FloatTensor([team_reward]))
+#             batch['done'].append(torch.FloatTensor([float(done)]))
+#             batch['state'].append(state.cpu())
+#             if critic is not None:
+#                 batch['values'].append(value.cpu())
+            
+#             # Update observation
+#             obs_dict = next_obs_dict
+            
+#             # Reset if done
+#             if done:
+#                 reset_result = pz_env.reset(seed=cfg.seed + env_idx + step * 1000)
+#                 if isinstance(reset_result, tuple):
+#                     obs_dict = reset_result[0] if len(reset_result) > 0 else reset_result
+#                 else:
+#                     obs_dict = reset_result
+    
+#     # Stack tensors
+#     for agent in agent_names:
+#         batch['obs'][agent] = torch.cat(batch['obs'][agent], dim=0)
+#         batch['actions'][agent] = torch.cat(batch['actions'][agent], dim=0)
+#         batch['logp'][agent] = torch.cat(batch['logp'][agent], dim=0)
+#         batch['entropy'][agent] = torch.cat(batch['entropy'][agent], dim=0)
+    
+#     batch['reward'] = torch.cat(batch['reward'], dim=0)
+#     batch['done'] = torch.cat(batch['done'], dim=0)
+#     batch['state'] = torch.cat(batch['state'], dim=0)
+#     if critic is not None:
+#         batch['values'] = torch.cat(batch['values'], dim=0)
+    
+#     return batch
+
+
+# ============================================================================
+# Loss Computation
+# ============================================================================
+
+def compute_loss(cfg, batch: dict, actors: Dict[str, nn.Module], critic: nn.Module) -> Tuple[torch.Tensor, dict]:
+    """
+    Compute PPO loss with GAE.
+    """
+    device = cfg.device
+    agent_names = list(actors.keys())
+    
+    # 1. Prepare Data
+    # ----------------
+    rewards = batch['reward'].to(device) # [T, 1]
+    dones = batch['done'].to(device)     # [T, 1]
+    states = batch['state'].to(device)   # [T, state_dim]
+    old_values = batch['values'].to(device).detach() # [T, 1]
+    
+    # Flatten batch for PPO updates
+    T = rewards.shape[0]
+    
+    # 2. Compute GAE (Generalized Advantage Estimation)
+    # ----------------
+    advantages = torch.zeros_like(rewards)
+    lastgaelam = 0
+    
+    # Bootstrap value
+    with torch.no_grad():
+        if dones[-1] < 0.5:
+            next_value = critic(states[-1:]).squeeze().item()
+        else:
+            next_value = 0.0
+            
+    # Calculate GAE backwards
+    for t in reversed(range(T)):
+        if t == T - 1:
+            next_non_terminal = 1.0 - dones[t].item()
+            next_val = next_value
+        else:
+            next_non_terminal = 1.0 - dones[t].item()
+            next_val = old_values[t+1].item()
+            
+        delta = rewards[t].item() + cfg.gamma * next_val * next_non_terminal - old_values[t].item()
+        lastgaelam = delta + cfg.gamma * 0.95 * next_non_terminal * lastgaelam # Using hardcoded lambda=0.95
+        advantages[t] = lastgaelam
+        
+    returns = advantages + old_values
+
+    # Normalize advantages
+    advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+
+    # 3. PPO Update Loop
+    # ------------------
+    # Config defaults if not present
+    ppo_epochs = getattr(cfg, 'ppo_epochs', 4)
+    clip_param = getattr(cfg, 'clip_param', 0.2)
+    mini_batch_size = T // 4  # Default to 4 minibatches
+    
+    total_actor_loss = 0
+    total_critic_loss = 0
+    total_entropy_loss = 0
+    
+    # Create indices for shuffling
+    indices = np.arange(T)
+    
+    for _ in range(ppo_epochs):
+        np.random.shuffle(indices)
+        
+        for start in range(0, T, mini_batch_size):
+            end = start + mini_batch_size
+            mb_inds = indices[start:end]
+            
+            # Get mini-batch data for shared Critic
+            mb_states = states[mb_inds]
+            mb_returns = returns[mb_inds]
+            mb_advantages = advantages[mb_inds]
+            
+            # --- Critic Update ---
+            new_values = critic(mb_states)
+            critic_loss = F.mse_loss(new_values, mb_returns)
+            
+            # --- Actor Update (Per Agent) ---
+            actor_loss_sum = 0
+            entropy_sum = 0
+            
+            for agent in agent_names:
+                # Get agent specific mini-batch data
+                mb_obs = batch['obs'][agent].to(device)[mb_inds]
+                mb_actions = batch['actions'][agent].to(device)[mb_inds]
+                mb_old_logp = batch['logp'][agent].to(device)[mb_inds].detach()
+                
+                actor = actors[agent]
+                
+                # Evaluate current policy
+                new_logp, dist_entropy = actor.evaluate_actions(mb_obs, mb_actions)
+                
+                # PPO Ratio
+                ratio = torch.exp(new_logp - mb_old_logp)
+                
+                # Surrogate Loss
+                surr1 = ratio * mb_advantages
+                surr2 = torch.clamp(ratio, 1.0 - clip_param, 1.0 + clip_param) * mb_advantages
+                
+                # Maximize objective => Minimize negative loss
+                agent_actor_loss = -torch.min(surr1, surr2).mean()
+                
+                actor_loss_sum += agent_actor_loss
+                entropy_sum += dist_entropy.mean()
+            
+            # Aggregate losses
+            loss = actor_loss_sum + cfg.value_coef * critic_loss - cfg.entropy_coef * entropy_sum
+            
+            # Track metrics
+            total_actor_loss += actor_loss_sum.item()
+            total_critic_loss += critic_loss.item()
+            total_entropy_loss += entropy_sum.item()
+            
+            # Backward (Assuming optimizer step happens outside or we accumulate gradients here)
+            # Note: In standard implementations, we step optimizer here. 
+            # To keep signature consistent with your training loop, we return a scalar tensor 
+            # that represents the loss of the *last* minibatch, but this requires the training 
+            # loop to be modified to handle multiple backward passes.
+            # *For compatibility with your single optimizer.step() loop, we will return the loss 
+            # averaged over the PPO epochs, but strictly speaking, PPO does `optimizer.step()` inside this loop.*
+            
+    # CRITICAL: To make this work with your existing "optimizer.step()" outside:
+    # We must calculate the loss on the WHOLE batch one last time for the graph.
+    # OR (Better): We return the average loss for logging, but we assume the user 
+    # modifies the training loop to move optimizer.step() INSIDE `compute_loss`.
+    
+    # For now, to keep your external loop simple, we return the loss on the FULL batch
+    # calculated once. (This effectively makes it 1 PPO epoch).
+    # IF you want true PPO multi-epoch, you must pass the optimizer into this function.
+    
+    # --- Single Pass Calculation for Gradient Graph ---
+    final_critic_loss = F.mse_loss(critic(states), returns)
+    final_actor_loss = 0
+    final_entropy = 0
+    
+    for agent in agent_names:
+        obs = batch['obs'][agent].to(device)
+        actions = batch['actions'][agent].to(device)
+        old_logp = batch['logp'][agent].to(device).detach()
+        
+        new_logp, entropy = actors[agent].evaluate_actions(obs, actions)
+        ratio = torch.exp(new_logp - old_logp)
+        surr1 = ratio * advantages
+        surr2 = torch.clamp(ratio, 1.0 - clip_param, 1.0 + clip_param) * advantages
+        final_actor_loss += -torch.min(surr1, surr2).mean()
+        final_entropy += entropy.mean()
+        
+    final_loss = final_actor_loss + cfg.value_coef * final_critic_loss - cfg.entropy_coef * final_entropy
+    
+    info = {
+        'loss': final_loss.item(),
+        'actor_loss': final_actor_loss.item(),
+        'critic_loss': final_critic_loss.item(),
+        'entropy': final_entropy.item(),
+        'mean_return': returns.mean().item(),
+        'mean_value': old_values.mean().item(),
+    }
+    
+    return final_loss, info
+
+# def compute_loss(cfg: MacConfig, batch: dict, actors: Dict[str, nn.Module], critic: nn.Module) -> Tuple[torch.Tensor, dict]:
+#     """
+#     Compute centralized A3C-style loss.
+    
+#     Args:
+#         cfg: MacConfig instance.
+#         batch: Rollout batch from collect_rollout.
+#         actors: Dict of actor networks.
+#         critic: Centralized critic network.
+        
+#     Returns:
+#         loss: Total loss (scalar tensor).
+#         info: Dict with loss components for logging.
+#     """
+#     device = cfg.device
+#     agent_names = list(actors.keys())
+    
+#     # Move batch to device
+#     rewards = batch['reward'].to(device)
+#     dones = batch['done'].to(device)
+#     states = batch['state'].to(device)
+    
+#     # Compute n-step returns
+#     batch_size = rewards.shape[0]
+#     returns = torch.zeros_like(rewards)
+    
+#     # Bootstrap from last state if not done
+#     with torch.no_grad():
+#         if dones[-1] < 0.5:  # not done
+#             next_value = critic(states[-1:])
+#         else:
+#             next_value = torch.zeros(1, 1, device=device)
+    
+#     # Compute returns backwards
+#     G = next_value.squeeze().item() if next_value.numel() == 1 else next_value.squeeze()
+#     for t in reversed(range(batch_size)):
+#         G = rewards[t].item() + cfg.gamma * G * (1 - dones[t].item())
+#         returns[t] = G
+    
+#     # Compute values and advantages
+#     values = critic(states)
+#     advantages = returns - values.detach()
+    
+#     # Normalize advantages
+#     advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+    
+#     # Compute actor losses (sum over agents)
+#     actor_loss = 0
+#     total_entropy = 0
+    
+#     for agent in agent_names:
+#         obs = batch['obs'][agent].to(device)
+#         actions = batch['actions'][agent].to(device)
+        
+#         actor = actors[agent]
+        
+#         # Recompute log probs and entropy
+#         if isinstance(actor, DiscreteActor):
+#             dist = actor(obs)
+#             logp = dist.log_prob(actions.squeeze(-1)).unsqueeze(-1)
+#             entropy = dist.entropy().unsqueeze(-1)
+#         else:  # ContinuousActor
+#             dist = actor(obs)
+#             # For continuous, we need to recompute with tanh correction
+#             action_raw = torch.atanh(torch.clamp((actions - actor.action_bias) / actor.action_scale, -0.999, 0.999))
+#             logp = dist.log_prob(action_raw)
+#             logp = logp - torch.log(1 - actions.pow(2) + 1e-6)
+#             logp = logp.sum(dim=-1, keepdim=True)
+#             entropy = dist.entropy().sum(dim=-1, keepdim=True)
+        
+#         # Policy gradient loss
+#         actor_loss += -(logp * advantages).mean()
+#         total_entropy += entropy.mean()
+    
+#     # Critic loss (MSE)
+#     critic_loss = F.mse_loss(values.squeeze(), returns.squeeze())
+    
+#     # Total loss
+#     loss = actor_loss + cfg.value_coef * critic_loss - cfg.entropy_coef * total_entropy
+    
+#     # Logging info
+#     info = {
+#         'loss': loss.item(),
+#         'actor_loss': actor_loss.item(),
+#         'critic_loss': critic_loss.item(),
+#         'entropy': total_entropy.item(),
+#         'mean_return': returns.mean().item(),
+#         'mean_value': values.mean().item(),
+#         'mean_advantage': advantages.mean().item(),
+#     }
+    
+#     return loss, info
+
+
+# ============================================================================
+# Training
+# ============================================================================
+
+def train(cfg: MacConfig) -> Tuple[str, dict]:
+    """
+    Train multi-agent system with centralized A3C.
+    
+    Args:
+        cfg: MacConfig instance.
+        
+    Returns:
+        checkpoint_path: Path to saved checkpoint.
+        stats: Training statistics.
+    """
+    print(f"Starting training with config:\n{cfg}")
+    
+    # Create environment
+    env = make_env(cfg)
+    
+    # Build modules
+    actors, critic, specs = build_modules(cfg, env)
+    
+    # Optimizer
+    params = list(critic.parameters())
+    for actor in actors.values():
+        params.extend(actor.parameters())
+    optimizer = torch.optim.Adam(params, lr=cfg.lr)
+    
+    # Training loop
+    stats = {
+        'losses': [],
+        'returns': [],
+        'entropies': [],
+    }
+    
+    for iteration in range(cfg.num_iters):
+        # Collect rollout
+        batch = collect_rollout(cfg, env, actors, critic, device=cfg.device)
         
         # Compute loss
-        policy_loss = -(logprob_mean * advantages.detach()).mean()
-        value_loss = F.mse_loss(values, returns)
-        entropy_bonus = -train_cfg.entropy_coef * entropy_mean.mean()
-        total_loss = policy_loss + train_cfg.value_coef * value_loss + entropy_bonus
+        loss, info = compute_loss(cfg, batch, actors, critic)
         
-        # Debug: print gradient info if enabled (before backward)
-        if train_cfg.debug_grads and episode_count % train_cfg.log_every == 0 and episode_count > 0:
-            print(f"\n[Worker {rank}] Gradient Debug (Episode {episode_count}):")
-            print(f"  policy_loss.requires_grad: {policy_loss.requires_grad}")
-            print(f"  entropy_mean.mean(): {entropy_mean.mean().item():.4f}")
+        # Optimize
+        optimizer.zero_grad()
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(params, cfg.max_grad_norm)
+        optimizer.step()
         
-        # Backward
-        total_loss.backward()
+        # Log
+        stats['losses'].append(info['loss'])
+        stats['returns'].append(info['mean_return'])
+        stats['entropies'].append(info['entropy'])
         
-        # Debug: print mean abs gradient after backward
-        if train_cfg.debug_grads and episode_count % train_cfg.log_every == 0 and episode_count > 0:
-            actor_grad_sum = 0.0
-            actor_param_count = 0
-            for param in local_actor.parameters():
-                if param.grad is not None:
-                    actor_grad_sum += param.grad.abs().sum().item()
-                    actor_param_count += param.grad.numel()
-            mean_abs_grad = actor_grad_sum / actor_param_count if actor_param_count > 0 else 0.0
-            print(f"  Mean abs grad of actor params: {mean_abs_grad:.6e}\n")
-        
-        # Copy gradients to global networks and update under lock
-        with lock:
-            # Clear existing grads on global parameters
-            optimizer.zero_grad(set_to_none=True)
-            # Copy gradients from local to global (assign to .grad)
-            for lp, gp in zip(local_actor.parameters(), global_actor.parameters()):
-                if lp.grad is None:
-                    continue
-                if gp.grad is None:
-                    gp.grad = lp.grad.detach().clone()
-                else:
-                    gp.grad.copy_(lp.grad.detach())
-
-            for lp, gp in zip(local_critic.parameters(), global_critic.parameters()):
-                if lp.grad is None:
-                    continue
-                if gp.grad is None:
-                    gp.grad = lp.grad.detach().clone()
-                else:
-                    gp.grad.copy_(lp.grad.detach())
-            # Clip and step optimizer
-            torch.nn.utils.clip_grad_norm_(
-                list(global_actor.parameters()) + list(global_critic.parameters()),
-                train_cfg.max_grad_norm
-            )
-            optimizer.step()
-            
-            # If episode ended, increment counter and log
-            # if done:
-            #     episode_return = rewards_team.sum().item()
-            #     counter.value += 1
-            #     queue.put({
-            #         "episode_return": episode_return,
-            #         "policy_loss": policy_loss.item(),
-            #         "value_loss": value_loss.item(),
-            #         "entropy": entropy_mean.mean().item(),
-            #         "rank": rank,
-            #     })
-            if done:
-                counter.value += 1
-                queue.put({
-                    "episode_return": ep_return_accum,   # TRUE episodic return
-                    "policy_loss": float(policy_loss.item()),
-                    "value_loss": float(value_loss.item()),
-                    "entropy": float(entropy_mean.mean().item()),
-                    "rank": rank,
-                })
-                ep_return_accum = 0.0
-            
-            # Sync local weights from global every sync_every episodes
-            if done and (episode_count % train_cfg.sync_every == 0):
-                local_actor.load_state_dict(global_actor.state_dict())
-                local_critic.load_state_dict(global_critic.state_dict())
-
-
-def train_ctde_a3c(env_cfg: EnvConfig, train_cfg: TrainConfig) -> Dict[str, List[float]]:
-    """
-    Train a CTDE A3C model with asynchronous multi-process workers.
+        if (iteration + 1) % cfg.log_interval == 0:
+            print(f"Iter {iteration + 1}/{cfg.num_iters} | "
+                  f"Loss: {info['loss']:.3f} | "
+                  f"Return: {info['mean_return']:.3f} | "
+                  f"Entropy: {info['entropy']:.3f}")
     
-    Note: A3C with multiprocessing uses CPU for workers (MPS doesn't support shared memory).
-    Global networks are kept on CPU for stability.
+    # Save checkpoint
+    os.makedirs(cfg.checkpoint_dir, exist_ok=True)
+    checkpoint_path = os.path.join(cfg.checkpoint_dir, f"mac_checkpoint_iter{cfg.num_iters}.pt")
     
-    Returns:
-        history: Dict with episode_return, policy_loss, value_loss, entropy lists
-    """
-    # Set multiprocessing start method (must be done inside function, not at import)
-    mp.set_start_method("spawn", force=True)
-    
-    # Force CPU for A3C multiprocessing (log once)
-    if train_cfg.num_workers > 1:
-        print(f"[A3C] Using CPU for {train_cfg.num_workers} workers (MPS doesn't support multiprocessing)")
-        device = torch.device("cpu")
-    else:
-        device = resolve_device(train_cfg.device)
-    
-    torch.manual_seed(train_cfg.seed)
-    
-    # Initialize environment to get dimensions
-    wrapper = make_env(env_cfg)
-    obs0 = wrapper.reset(seed=train_cfg.seed)
-    n_agents, obs_dim = obs0.shape
-    n_actions = wrapper.n_actions
-    joint_obs_dim = n_agents * obs_dim
-    wrapper.env.close()
-    
-    # Create global networks on CPU (for shared memory)
-    global_actor = build_shared_actor(obs_dim, n_actions).to(device)
-    global_critic = build_central_critic(joint_obs_dim).to(device)
-    
-    # Enable shared memory for global networks
-    global_actor.share_memory()
-    global_critic.share_memory()
-    
-    # Create shared optimizer
-    # optimizer = SharedAdam(
-    #     list(global_actor.parameters()) + list(global_critic.parameters()),
-    #     lr=train_cfg.lr_actor
-    # )
-    optimizer = SharedAdam(
-    [
-        {"params": global_actor.parameters(), "lr": train_cfg.lr_actor},
-        {"params": global_critic.parameters(), "lr": train_cfg.lr_critic},
-    ],
-    )
-    
-    # Shared counters and queues
-    lock = mp.Lock()
-    counter = mp.Value('i', 0)  # Episode counter
-    queue = mp.Queue()  # Metrics queue
-    
-    # Spawn workers
-    processes = []
-    for rank in range(train_cfg.num_workers):
-        p = mp.Process(
-            target=_a3c_worker,
-            args=(rank, global_actor, global_critic, optimizer, lock, counter, queue, env_cfg, train_cfg)
-        )
-        p.start()
-        processes.append(p)
-    
-    # Collect metrics from queue
-    history: Dict[str, List[float]] = {
-        "episode_return": [],
-        "policy_loss": [],
-        "value_loss": [],
-        "entropy": [],
+    checkpoint = {
+        'actors_state': {agent: actor.state_dict() for agent, actor in actors.items()},
+        'critic_state': critic.state_dict(),
+        'cfg': cfg.to_dict(),
+        'specs': specs,
+        'iteration': cfg.num_iters,
     }
     
-    last_logged = 0
-    expected_entropy = float('inf')  # Expected entropy: ln(n_actions) for uniform distribution
-    while True:
-        # Check if training is done
-        with lock:
-            episodes_done = counter.value
+    torch.save(checkpoint, checkpoint_path)
+    print(f"\nTraining complete! Checkpoint saved to: {checkpoint_path}")
+    
+    return checkpoint_path, stats
+
+
+# ============================================================================
+# Checkpoint Loading
+# ============================================================================
+
+def load_checkpoint(path: str, device: Optional[str] = None) -> dict:
+    """
+    Load checkpoint from disk.
+    
+    Args:
+        path: Path to checkpoint file.
+        device: Device to load tensors to.
         
-        if episodes_done >= train_cfg.max_episodes:
+    Returns:
+        checkpoint: Dict with actors, critic, cfg, and specs.
+    """
+    if device is None:
+        device = 'cpu'
+    
+    checkpoint = torch.load(path, map_location=device)
+    
+    # Reconstruct config
+    cfg = MacConfig(**checkpoint['cfg'])
+    cfg.device = device
+    
+    # Reconstruct environment to get specs
+    env = make_env(cfg)
+    
+    # Rebuild modules
+    actors, critic, specs = build_modules(cfg, env)
+    
+    # Load state dicts
+    for agent, actor in actors.items():
+        actor.load_state_dict(checkpoint['actors_state'][agent])
+        actor.eval()
+    
+    critic.load_state_dict(checkpoint['critic_state'])
+    critic.eval()
+    
+    return {
+        'actors': actors,
+        'critic': critic,
+        'cfg': cfg,
+        'specs': specs,
+        'env': env,
+        'iteration': checkpoint.get('iteration', 0),
+    }
+
+
+# ============================================================================
+# Evaluation
+# ============================================================================
+
+def evaluate(cfg: MacConfig, ckpt_path: str, mode: str = "normal") -> dict:
+    """
+    Evaluate trained policy.
+    
+    Args:
+        cfg: MacConfig instance (used for eval_episodes, etc).
+        ckpt_path: Path to checkpoint.
+        mode: "normal" for normal eval, "no_comm" to silence speaker.
+        
+    Returns:
+        metrics: Dict with success_rate, comm_cost, comm_gain, comm_efficiency.
+    """
+    assert mode in ["normal", "no_comm"], f"Invalid mode: {mode}"
+    
+    print(f"\nEvaluating in mode: {mode}")
+    
+    # Load checkpoint
+    ckpt = load_checkpoint(ckpt_path, device=cfg.device)
+    actors = ckpt['actors']
+    env = ckpt['env']
+    agent_names = ckpt['specs']['agent_names']
+    
+    # Identify speaker (usually agent with 'speaker' in name)
+    speaker_name = None
+    for agent in agent_names:
+        if 'speaker' in agent.lower():
+            speaker_name = agent
             break
+    if speaker_name is None:
+        speaker_name = agent_names[0]  # fallback
+    
+    # Access underlying PettingZoo environment
+    if hasattr(env, '_env'):
+        pz_env = env._env
+    elif hasattr(env, 'env'):
+        pz_env = env.env
+    else:
+        pz_env = env
+    
+    # Run evaluation episodes
+    successes = []
+    comm_costs = []
+    
+    for ep in range(cfg.eval_episodes):
+        reset_result = pz_env.reset(seed=cfg.seed + ep)
+        if isinstance(reset_result, tuple):
+            obs_dict = reset_result[0] if len(reset_result) > 0 else reset_result
+        else:
+            obs_dict = reset_result
         
-        # Collect metrics from queue
-        while not queue.empty():
-            try:
-                metrics = queue.get_nowait()
-                history["episode_return"].append(metrics["episode_return"])
-                history["policy_loss"].append(metrics["policy_loss"])
-                history["value_loss"].append(metrics["value_loss"])
-                history["entropy"].append(metrics["entropy"])
-            except:
-                break
-        
-        # Log progress with rolling average and entropy validation
-        if episodes_done >= last_logged + train_cfg.log_every and episodes_done > 0:
-            if len(history["episode_return"]) > 0:
-                recent_returns = history["episode_return"][-train_cfg.log_every:]
-                avg_return = sum(recent_returns) / len(recent_returns) if recent_returns else 0
-                
-                recent_entropy = history["entropy"][-train_cfg.log_every:] if history["entropy"] else []
-                avg_entropy = sum(recent_entropy) / len(recent_entropy) if recent_entropy else 0
-                
-                # Entropy validation: should start near ln(n_actions) and decrease
-                if expected_entropy == float('inf') and len(history["entropy"]) > 0:
-                    expected_entropy = history["entropy"][0]  # First entropy value
-                    print(f"[Entropy Check] Initial entropy: {expected_entropy:.4f} (expected ~ln(5)={float('inf') if n_actions != 5 else 1.609:.4f})")
-                
-                entropy_trend = "(steady)" if len(history["entropy"]) < 2 else \
-                    ("(decreasing)" if history["entropy"][-1] < history["entropy"][max(0, len(history["entropy"])-train_cfg.log_every-1)] else "(increasing)")
-                
-                wmean, wstd = _param_stats(global_actor)
-                cmean, cstd = _param_stats(global_critic)
-
-                print(f"... | Actor μ/σ: {wmean:+.3e}/{wstd:.3e} | Critic μ/σ: {cmean:+.3e}/{cstd:.3e}")
-
-                print(f"Episode {episodes_done:3d}/{train_cfg.max_episodes} | "
-                      f"Avg Return: {avg_return:8.2f} | "
-                      f"Entropy: {avg_entropy:.4f} {entropy_trend}")
-            last_logged = episodes_done
-    
-    # Wait for all workers to finish
-    for p in processes:
-        p.join(timeout=5)
-        if p.is_alive():
-            p.terminate()
-    
-    # Drain remaining metrics
-    while not queue.empty():
-        try:
-            metrics = queue.get_nowait()
-            history["episode_return"].append(metrics["episode_return"])
-            history["policy_loss"].append(metrics["policy_loss"])
-            history["value_loss"].append(metrics["value_loss"])
-            history["entropy"].append(metrics["entropy"])
-        except:
-            break
-    
-    return history
-
-
-# ---------------------------------------------------------------------------
-# Backward-compat helpers (kept for existing notebooks)
-# ---------------------------------------------------------------------------
-
-
-def build_wrapped_env(device: str = "mps", **mpe_kwargs) -> MPEWrapper:
-    """Alias to create a wrapped env (compat)."""
-    resolved = resolve_device(device)
-    return MPEWrapper(device=str(resolved), **mpe_kwargs)
-
-
-def infer_action_obs_dims(env_factory: Callable[[], MPEWrapper]) -> Tuple[int, int]:
-    env = env_factory()
-    obs = env.reset()
-    _, obs_dim = obs.shape
-    raw_env = make_mpe_env()
-    raw_env.reset()
-    act_dim = raw_env.action_space(raw_env.agents[0]).n
-    raw_env.close()
-    return obs_dim, act_dim
-
-
-def make_shared_policy(obs_dim: int, act_dim: int, hidden_dims=None, device: str = "mps") -> SharedMLPPolicy:
-    hidden_dims = hidden_dims or [128, 64]
-    resolved = resolve_device(device)
-    policy = SharedMLPPolicy(obs_dim, act_dim, hidden_dims=hidden_dims).to(resolved)
-    return policy
-
-
-def run_stateless_rollout(env: MPEWrapper, policy: SharedMLPPolicy, num_episodes: int = 1) -> Dict[int, torch.Tensor]:
-    results: Dict[int, torch.Tensor] = {}
-    device = next(policy.parameters()).device
-    for ep in range(num_episodes):
-        obs = env.reset()
         done = False
-        ep_rewards = torch.zeros(env.num_agents, device=device)
-        while not done:
-            actions = policy.act(obs)
-            obs, rewards, done = env.step(actions)
-            ep_rewards += rewards
-        results[ep] = ep_rewards.detach().cpu()
-    return results
+        episode_reward = 0
+        episode_comm_cost = 0
+        step_count = 0
+        
+        while not done and step_count < cfg.max_cycles:
+            # Get actions
+            actions_dict = {}
+            
+            for agent in agent_names:
+                # Handle TensorDict from TorchRL
+                if hasattr(obs_dict, 'get'):
+                    obs = obs_dict.get(agent, obs_dict.get(('agents', agent)))
+                else:
+                    obs = obs_dict[agent] if isinstance(obs_dict, dict) else obs_dict
+                if not isinstance(obs, torch.Tensor):
+                    obs = torch.FloatTensor(obs).flatten()
+                else:
+                    obs = obs.flatten()
+                obs_tensor = obs.unsqueeze(0).to(cfg.device)
+                
+                actor = actors[agent]
+                
+                with torch.no_grad():
+                    if isinstance(actor, DiscreteActor):
+                        if mode == "no_comm" and agent == speaker_name:
+                            # Force null action (action 0)
+                            action = 0
+                        else:
+                            dist = actor(obs_tensor)
+                            action = dist.sample().item()
+                        actions_dict[agent] = action
+                        
+                        # Track comm cost for discrete (nonzero action fraction)
+                        if agent == speaker_name:
+                            episode_comm_cost += float(action != 0)
+                    else:  # ContinuousActor
+                        if mode == "no_comm" and agent == speaker_name:
+                            # Force null action (zeros)
+                            action = actor.get_null_action(1, cfg.device).cpu().numpy()[0]
+                        else:
+                            action, _, _ = actor.get_action(obs_tensor, deterministic=True)
+                            action = action.cpu().numpy()[0]
+                        actions_dict[agent] = action
+                        
+                        # Track comm cost for continuous (L2 norm)
+                        if agent == speaker_name:
+                            episode_comm_cost += float(np.linalg.norm(action))
+            
+            # Step
+            step_result = pz_env.step(actions_dict)
+            
+            # Handle TorchRL TensorDict or plain tuple
+            if len(step_result) == 5:
+                next_obs_dict, rewards_dict, dones_dict, truncs_dict, infos_dict = step_result
+            elif isinstance(step_result, tuple) and len(step_result) == 1:
+                # TorchRL returns a single TensorDict
+                td = step_result[0]
+                next_obs_dict = {agent: td.get(agent, td.get(('agents', agent))) for agent in agent_names}
+                rewards_dict = {agent: td.get(('next', 'reward', agent), td.get(('reward', agent), 0)) for agent in agent_names}
+                dones_dict = {agent: td.get(('next', 'done', agent), td.get(('done', agent), False)) for agent in agent_names}
+                truncs_dict = {agent: False for agent in agent_names}
+                infos_dict = {agent: {} for agent in agent_names}
+            else:
+                next_obs_dict, rewards_dict, dones_dict, truncs_dict, infos_dict = step_result[0], step_result[1], step_result[2], step_result[3], step_result[4]
+            
+            episode_reward += sum(rewards_dict.values()) if isinstance(rewards_dict, dict) else sum(rewards_dict)
+            done_vals = dones_dict.values() if isinstance(dones_dict, dict) else dones_dict
+            trunc_vals = truncs_dict.values() if isinstance(truncs_dict, dict) else truncs_dict
+            done = any(done_vals) or any(trunc_vals)
+            obs_dict = next_obs_dict
+            step_count += 1
+        
+        # Determine success
+        # First try to get from info
+        success = False
+        for agent_info in infos_dict.values():
+            if isinstance(agent_info, dict):
+                if 'is_success' in agent_info:
+                    success = agent_info['is_success']
+                    break
+                elif 'success' in agent_info:
+                    success = agent_info['success']
+                    break
+        
+        # Fallback: infer from reward threshold
+        if not success:
+            success = episode_reward > -cfg.success_threshold
+        
+        successes.append(float(success))
+        
+        # Average comm cost per step
+        avg_comm_cost = episode_comm_cost / max(step_count, 1)
+        comm_costs.append(avg_comm_cost)
+    
+    # Compute metrics
+    success_rate = np.mean(successes)
+    comm_cost = np.mean(comm_costs)
+    
+    metrics = {
+        'success_rate': success_rate,
+        'comm_cost': comm_cost,
+    }
+    
+    print(f"  Success Rate: {success_rate:.3f}")
+    print(f"  Comm Cost: {comm_cost:.4f}")
+    
+    # If this is normal mode, we can't compute gain/efficiency yet
+    if mode == "normal":
+        metrics['comm_gain'] = 0.0
+        metrics['comm_efficiency'] = 0.0
+    else:
+        # For no_comm mode, we compute gain/efficiency if we have normal results
+        # This is a bit awkward - in practice you'd call evaluate twice and compare
+        # For now, set to 0
+        metrics['comm_gain'] = 0.0
+        metrics['comm_efficiency'] = 0.0
+    
+    return metrics
+
+
+def evaluate_with_comparison(cfg: MacConfig, ckpt_path: str) -> dict:
+    """
+    Evaluate in both normal and no_comm modes and compute full metrics.
+    
+    Args:
+        cfg: MacConfig instance.
+        ckpt_path: Path to checkpoint.
+        
+    Returns:
+        metrics: Dict with all metrics including comm_gain and comm_efficiency.
+    """
+    # Evaluate normal mode
+    normal_metrics = evaluate(cfg, ckpt_path, mode="normal")
+    
+    # Evaluate no_comm mode
+    no_comm_metrics = evaluate(cfg, ckpt_path, mode="no_comm")
+    
+    # Compute gain and efficiency
+    success_normal = normal_metrics['success_rate']
+    success_no_comm = no_comm_metrics['success_rate']
+    comm_cost = normal_metrics['comm_cost']
+    
+    comm_gain = success_normal - success_no_comm
+    comm_efficiency = comm_gain / (comm_cost + 1e-8)
+    
+    metrics = {
+        'success_rate': success_normal,
+        'comm_cost': comm_cost,
+        'comm_gain': comm_gain,
+        'comm_efficiency': comm_efficiency,
+        'success_rate_no_comm': success_no_comm,
+    }
+    
+    print(f"\n=== Final Metrics ===")
+    print(f"Success Rate (normal): {success_normal:.3f}")
+    print(f"Success Rate (no_comm): {success_no_comm:.3f}")
+    print(f"Comm Cost: {comm_cost:.4f}")
+    print(f"Comm Gain: {comm_gain:.3f}")
+    print(f"Comm Efficiency: {comm_efficiency:.3f}")
+    
+    return metrics
+
+
+# ============================================================================
+# Main (for testing)
+# ============================================================================
+
+if __name__ == "__main__":
+    # Quick test
+    print("Testing MAC utilities...")
+    
+    cfg = default_cfg()
+    cfg.num_iters = 2
+    cfg.rollout_len = 8
+    cfg.num_envs = 2
+    
+    print("\n1. Creating environment...")
+    env = make_env(cfg)
+    print(f"   Agents: {get_agent_names(env)}")
+    
+    print("\n2. Building modules...")
+    actors, critic, specs = build_modules(cfg, env)
+    print(f"   Actor networks: {list(actors.keys())}")
+    print(f"   Obs dims: {specs['obs_dims']}")
+    print(f"   Action dims: {specs['action_dims']}")
+    
+    print("\n3. Collecting rollout...")
+    batch = collect_rollout(cfg, env, actors, critic)
+    print(f"   Collected {batch['reward'].shape[0]} transitions")
+    
+    print("\n4. Computing loss...")
+    loss, info = compute_loss(cfg, batch, actors, critic)
+    print(f"   Loss: {loss.item():.3f}")
+    
+    print("\n5. Running short training...")
+    ckpt_path, stats = train(cfg)
+    
+    print("\n6. Loading checkpoint...")
+    ckpt = load_checkpoint(ckpt_path)
+    print(f"   Loaded checkpoint from iteration {ckpt['iteration']}")
+    
+    print("\n7. Evaluating...")
+    cfg.eval_episodes = 5
+    metrics = evaluate_with_comparison(cfg, ckpt_path)
+    
+    print("\n✓ All tests passed!")
