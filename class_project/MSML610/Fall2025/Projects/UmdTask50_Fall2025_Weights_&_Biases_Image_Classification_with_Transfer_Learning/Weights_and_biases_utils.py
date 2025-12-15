@@ -254,7 +254,7 @@ def train_model(
     architecture="ResNet50",
     epochs=10,
     lr=0.0001,
-    trainable_layers=20,
+    trainable_layers=50,
     unique_name=None,
 ):
     """
