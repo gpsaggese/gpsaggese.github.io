@@ -10,11 +10,11 @@ This document explains the **internal project API** (your reusable code layer), 
 
 If a beginner opens this repo, they should be able to answer:
 
-✅ What is the treatment?  
-✅ What are the outcomes?  
-✅ What do the API functions do?  
-✅ What do they return?  
-✅ How do I reuse them safely?
+What is the treatment?  
+What are the outcomes?  
+What do the API functions do?  
+What do they return?  
+How do I reuse them safely?
 
 ---
 
