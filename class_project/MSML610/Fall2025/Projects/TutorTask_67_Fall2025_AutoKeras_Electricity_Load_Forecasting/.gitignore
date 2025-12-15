@@ -1,0 +1,40 @@
+# AutoKeras & Models
+trial_*/
+*.keras
+*.h5
+*.pb
+checkpoint/
+saved_models/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+
+# Jupyter
+.ipynb_checkpoints
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temp
+tmp/
+*.tmp
+*.bak
