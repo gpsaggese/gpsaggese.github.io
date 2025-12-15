@@ -1,0 +1,81 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.55kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:20.04
+#2 DONE 2.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/18] FROM docker.io/library/ubuntu:20.04@sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214
+#4 resolve docker.io/library/ubuntu:20.04@sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214 done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 3.04kB done
+#5 DONE 0.0s
+
+#6 [12/18] RUN chmod +x /install/install_jupyter_extensions.sh
+#6 CACHED
+
+#7 [17/18] ADD version.sh /install/
+#7 CACHED
+
+#8 [13/18] RUN /install/install_jupyter_extensions.sh
+#8 CACHED
+
+#9 [ 4/18] RUN apt install -y --no-install-recommends     sudo     curl     systemctl     gnupg     git     vim
+#9 CACHED
+
+#10 [ 6/18] RUN python3 -m pip install --upgrade pip
+#10 CACHED
+
+#11 [ 3/18] RUN apt-get -y upgrade
+#11 CACHED
+
+#12 [11/18] ADD install_jupyter_extensions.sh /install
+#12 CACHED
+
+#13 [ 9/18] ADD install_common_packages.sh /install/
+#13 CACHED
+
+#14 [ 7/18] RUN apt-get update && apt-get install -y --no-install-recommends     build-essential     python3-dev     libxml2-dev     libxslt-dev     zlib1g-dev     && rm -rf /var/lib/apt/lists/*
+#14 CACHED
+
+#15 [ 5/18] RUN apt install -y --no-install-recommends     python3     python3-pip     python3-dev
+#15 CACHED
+
+#16 [14/18] ADD etc_sudoers /install/
+#16 CACHED
+
+#17 [ 8/18] RUN mkdir /install
+#17 CACHED
+
+#18 [10/18] RUN chmod +x /install/install_common_packages.sh && /install/install_common_packages.sh
+#18 CACHED
+
+#19 [ 2/18] RUN apt-get -y update
+#19 CACHED
+
+#20 [15/18] COPY etc_sudoers /etc/sudoers
+#20 CACHED
+
+#21 [16/18] COPY bashrc /root/.bashrc
+#21 CACHED
+
+#22 [18/18] RUN /install/version.sh 2>&1 | tee version.log
+#22 CACHED
+
+#23 exporting to image
+#23 exporting layers done
+#23 exporting manifest sha256:790259592b07ec85e15ae76805d3eef442b9d79918a34a39c34426051452caf9 done
+#23 exporting config sha256:1161989ab8a7f2a53061821972cdaa3889374038d0a90ccfa1c658caf9f11d64 done
+#23 exporting attestation manifest sha256:ad0323d199ce93cfb10185168d2b3923f512f172947fa959d545b66c23323173 0.0s done
+#23 exporting manifest list sha256:7ef14ad92ee7b3aa01d726f6df1c691ba28c7e877b15d5d2f213eac7f9c5b1d5 done
+#23 naming to docker.io/umd_msml610/umd_msml610_image:latest done
+#23 unpacking to docker.io/umd_msml610/umd_msml610_image:latest done
+#23 DONE 0.0s
