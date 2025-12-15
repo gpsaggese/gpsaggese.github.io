@@ -1,8 +1,12 @@
 # Twitter Airline Sentiment Analysis
 
+Name : Charan Kankanala
+UID : 120983184
+Course : MSML 610
+
 Sentiment classification on airline tweets using TF-IDF + Logistic Regression.
 
-**Difficulty:** Hard | **Classes:** 3 (negative, neutral, positive) | **Samples:** 14,640
+**Difficulty:** Hard | **Classes:** 3 (negative, neutral, positive) | **Samples:** 14,640 | **Tool:** YData Profiling
 
 ## Quick Start (Docker)
 
