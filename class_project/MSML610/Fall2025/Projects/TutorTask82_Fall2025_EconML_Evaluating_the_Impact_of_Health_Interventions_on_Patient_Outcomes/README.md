@@ -23,13 +23,15 @@
 * [Troubleshooting](#troubleshooting)
 * [References](#references)
 
-<!-- tocstop -->
-
 ---
 
 ## Project Overview and Goals
 
-This project is a **hands-on tutorial** showing how to estimate causal effects using **EconML** on real-world observational health data from **NHANES (2021–2023)**.
+This project is a **hands-on causal inference tutorial** demonstrating how to estimate treatment effects using **EconML** on real-world observational health data from **NHANES (2021–2023)**.
+
+The focus is not prediction. The focus is **causal estimation under confounding** using modern double-robust methods.
+
+---
 
 ### Main causal question
 
@@ -38,16 +40,18 @@ This project is a **hands-on tutorial** showing how to estimate causal effects u
 * **Mean systolic blood pressure** (`sbp_mean`)
 * **Fasting plasma glucose** (`fasting_glucose_mg_dl`)?
 
+---
+
 ### Project goals
 
-* Construct a clean, merged **analysis-ready dataset** from multiple NHANES component files
+* Build a **clean, merged, analysis-ready dataset** from multiple NHANES component files
 * Estimate causal effects using **DRLearner (Double Robust Learner)**
 * Report:
 
   * **ATE** (Average Treatment Effect)
   * **Bootstrap confidence intervals**
-  * **CATE** (individual-level treatment effects) with simple heterogeneity analysis
-* Compare results against a transparent baseline:
+  * **CATE** (individual-level treatment effects) with basic heterogeneity analysis
+* Compare EconML estimates against a transparent baseline:
 
   * **OLS with HC3 robust standard errors** using `statsmodels`
 
@@ -95,9 +99,9 @@ Projects/
 ```mermaid
 flowchart TD
     A[Start] --> B[Load cleaned NHANES CSVs from data/]
-    B --> C[Merge by respondent ID (SEQN)]
+    B --> C[Merge by respondent ID SEQN]
     C --> D[Derive outcomes, treatment, covariates]
-    D --> E[Create (Y, T, X)]
+    D --> E[Create Y, T, X matrices]
     E --> F[Fit DRLearner]
     F --> G[Estimate ATE + CI]
     F --> H[Estimate CATE]
@@ -109,19 +113,21 @@ flowchart TD
     K --> L[End]
 ```
 
+---
+
 ### NHANES components used
 
-Merged on `SEQN`:
+All datasets are merged using the respondent identifier `SEQN`.
 
-* `DEMO_*`: demographics
-* `BMX_*`: body measures (BMI, weight)
-* `BPXO_*`: blood pressure → `sbp_mean`
-* `GLU_*`: fasting glucose
-* `TCHOL_*`, `HDL_*`, `TRIGLY_*`: lipids
-* `HSCRP_*`: hs-CRP
-* `DSQTOT_*`: dietary supplement use → treatment indicator
+* `DEMO_*` — demographics
+* `BMX_*` — body measures (BMI, weight)
+* `BPXO_*` — blood pressure readings → `sbp_mean`
+* `GLU_*` — fasting plasma glucose
+* `TCHOL_*`, `HDL_*`, `TRIGLY_*` — lipid profile
+* `HSCRP_*` — high-sensitivity C-reactive protein
+* `DSQTOT_*` — dietary supplement use → treatment indicator
 
-All cleaning and feature construction lives in `econml_utils.py`.
+All cleaning, feature engineering, and consistency checks are implemented in **`econml_utils.py`**.
 
 ---
 
@@ -132,19 +138,20 @@ All cleaning and feature construction lives in `econml_utils.py`.
 ### All platforms
 
 * Docker Desktop installed and running
-* ~1–2 GB free disk space
+* Approximately **1–2 GB** of free disk space
 
 ### Windows-specific
 
-* Docker Desktop **with WSL 2 backend enabled**
+* Docker Desktop with **WSL 2 backend enabled**
 * Git Bash or WSL recommended for running `.sh` scripts
+  (Native PowerShell is not ideal for shell scripts)
 
 ---
 
 ## Setup Instructions (Docker – Recommended)
 
-> Docker is the **official and graded execution path**.
-> These steps work on **both macOS and Windows**.
+Docker is the **official and graded execution path**.
+These steps work on **macOS, Linux, Windows (WSL/Git Bash)**.
 
 ---
 
@@ -162,7 +169,7 @@ cd /Users/karthikvakada/src/umd_classes1/class_project/MSML610/Fall2025/Projects
 cd C:\Users\karthikvakada\src\umd_classes1\class_project\MSML610\Fall2025\Projects\TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
 ```
 
-If using WSL, use Linux-style paths inside WSL.
+If using WSL, use Linux-style paths inside the WSL environment.
 
 ---
 
@@ -174,41 +181,27 @@ If using WSL, use Linux-style paths inside WSL.
 chmod +x docker_*.sh run_jupyter.sh install_*.sh version.sh
 ```
 
-#### Windows (no chmod)
+#### Windows
 
 * Use **Git Bash or WSL**
-* Native PowerShell is not recommended for `.sh` scripts
+* No `chmod` needed in native PowerShell
 
 ---
 
 ### Step 3: Build the Docker image
 
-#### macOS / Linux / WSL
-
 ```bash
 ./docker_build.sh
 ```
 
-#### Windows (Git Bash or WSL)
-
-```bash
-bash docker_build.sh
-```
+(On Windows, run the same command from Git Bash or WSL.)
 
 ---
 
 ### Step 4: Launch Jupyter
 
-#### macOS / Linux / WSL
-
 ```bash
 ./docker_jupyter.sh
-```
-
-#### Windows (Git Bash or WSL)
-
-```bash
-bash docker_jupyter.sh
 ```
 
 Expected output:
@@ -224,7 +217,7 @@ Open the URL in your browser.
 
 ## Setup Instructions (Local – Optional)
 
-> Not recommended for grading. Use Docker unless explicitly required.
+Not recommended for grading. Use Docker unless explicitly required.
 
 ### macOS / Linux
 
@@ -254,11 +247,11 @@ Run:
 
 * `econml.API.ipynb`
 
-Shows:
+Demonstrates:
 
-* Data construction
+* Dataset construction
 * DRLearner calls
-* OLS baseline
+* OLS baseline comparison
 
 ---
 
@@ -270,9 +263,9 @@ Run:
 
 Covers:
 
-* End-to-end workflow
+* Full end-to-end workflow
 * SBP and glucose experiments
-* ATE, CATE, and comparisons
+* ATE, CATE, and model comparisons
 
 ---
 
@@ -287,7 +280,7 @@ python econml.example.py
 
 ## API vs Example Layers
 
-### Core API (stable)
+### Core API (stable, reusable)
 
 **`econml_utils.py`**
 
@@ -300,30 +293,32 @@ python econml.example.py
 * `run_glucose_supplement_experiment()`
 * `run_ols_for_outcome()`
 
-All return plain Python objects or DataFrames.
+All functions return plain Python objects or pandas DataFrames.
 
 ---
 
-### Example layer
+### Example layer (educational)
 
 * `econml.API.ipynb`
 * `econml.example.ipynb`
 * `econml.example.py`
 
+These scripts orchestrate experiments and visualization but do not introduce new logic.
+
 ---
 
 ## Reproducibility Notes
 
-* Notebooks support **Restart & Run All**
-* Fixed random seeds where applicable
-* Bootstrap used for ATE confidence intervals
+* All notebooks support **Restart & Run All**
+* Random seeds are fixed where applicable
+* Bootstrap is used for ATE confidence intervals
 * Requires cleaned `*_meaningful*.csv` files in `data/`
 
 ---
 
 ## Troubleshooting
 
-### Jupyter not found
+### Jupyter not reachable
 
 ```bash
 jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token=''
@@ -331,7 +326,7 @@ jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token=''
 
 ---
 
-### `exec format error` (Windows)
+### `exec format error` on Windows
 
 Convert line endings:
 
@@ -339,7 +334,7 @@ Convert line endings:
 sed -i 's/\r$//' run_jupyter.sh
 ```
 
-Ensure first line:
+Ensure the first line is:
 
 ```bash
 #!/usr/bin/env bash
@@ -349,11 +344,11 @@ Ensure first line:
 
 ### Port 8888 already in use
 
-Edit `docker_jupyter.sh` and change host port mapping.
+Edit `docker_jupyter.sh` and change the host port mapping.
 
 ---
 
-### Apple Silicon issues
+### Apple Silicon (M1/M2/M3)
 
 ```bash
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
