@@ -173,7 +173,7 @@ Because PPO and Transformer models are sensitive to incompatibilities (CUDA, TRL
 **Cell 3: Code — Import Project Configuration**
 **Original Content:**
 ```python
-from Dialogue_utils import config
+from trl.Dialogue_utils import config
 config()
 ```
 **Explanation**:
@@ -193,7 +193,7 @@ This abstraction keeps the notebook clean and ensures reproducibility.
 **Cell 4: Code — Import Preprocessing Utilities**
 **Original Content:**
 ```python
-from Dialogue_utils import preprocess
+from trl.Dialogue_utils import preprocess
 preprocess()
 ```
 **Explanation**:
@@ -212,12 +212,36 @@ This ensures the dataset is in a stable format so the PPO trainer receives relia
 
 ---
 
-**Cell 5: Code — Import Reward Function Module**
+**Cell 5 — Supervised Fine-Tuning**
+
+This cell demonstrates how supervised fine-tuning (SFT) is performed using a custom utility function.  
+Supervised fine-tuning adapts a pre-trained language model to a target data distribution by optimizing it with labeled input–output pairs using a standard causal language modeling objective.
+
+During this process:
+- A dataset is loaded and split into training, validation, and test partitions.
+- The model is fine-tuned using a supervised loss function.
+- Training progress is monitored through loss values.
+- The resulting fine-tuned model is saved for later evaluation or comparison.
+
+Supervised fine-tuning is commonly used to establish a strong baseline before applying reinforcement learning–based optimization methods.
+
+**API used:**  
+- Custom fine-tuning utility function  
+- Hugging Face Transformers training APIs  
+- PyTorch optimization and model-saving utilities
+
+---
+
+
+
+
+
+**Cell 6: Code — Import Reward Function Module**
 
 **Original Content**:
 ```python
-from Dialogue_utils import reward
-reward()
+from trl.Dialogue_utils import reward_function
+reward_function()
 ```
 **Explanation**:
 
@@ -234,9 +258,10 @@ The reward module assembles all reward components:
 This modular reward is central to PPO’s optimization signal.
 
 ---
-**Cell 6: Code — Initialize PPO Setup and Trainer**
+
+**Cell 7: Code — Initialize PPO Setup and Trainer**
 ```Python
-from Dialogue_utils import test_ppo_setup
+from trl.Dialogue_utils import test_ppo_setup
 test_ppo_setup()
 ```
 **Explanation**:
@@ -253,10 +278,10 @@ The cell prints a confirmation when the trainer is initialized successfully.
 This keeps the PPO initialization logic out of the notebook
 
 ---
-**Cell 7: Code — Run Main PPO Training Loop**
+**Cell 8: Code — Run Main PPO Training Loop**
 ```python
-from Dialogue_utils import main
-main()
+from trl.Dialogue_utils import finetune
+finetune()
 ```
 **Explanation**:
 
@@ -276,10 +301,10 @@ This cell represents the core enhancement of the dialogue system.
 
 ---
 
-**Cell 8: Code — Pre-Training Evaluation**
+**Cell 9: Code — Pre-Training Evaluation**
 ```python
-from Dialogue_utils import pre_evaluate
-pre_evaluate()
+from trl.Dialogue_utils import evaluate
+evaluate()
 ```
 **Explanation**:
 
@@ -297,32 +322,12 @@ Before training, the base model is evaluated for:
 
 This creates a baseline against which improvements are measured.
 
----
-**Cell 9: Code — Post-Training Evaluation**
-```python
-from Dialogue_utils import post_evaluate
-post_evaluate()
-```
-**Explanation**:
-
-After PPO training, evaluation is repeated.
-This highlights improvements such as:
-
-- Safer responses
-
-- Higher sentiment scores
-
-- Reduced toxicity
-
-- Better alignment with conversational intent
-
-Side-by-side examples demonstrate the transformation clearly.
 
 ---
 **Cell 10: Code — Launch Gradio Chatbot**
 ```python
-from Dialogue_utils import feedback
-feedback()
+from trl.Dialogue_utils import user_feedback
+user_feedback()
 ```
 
 **Explanation**:

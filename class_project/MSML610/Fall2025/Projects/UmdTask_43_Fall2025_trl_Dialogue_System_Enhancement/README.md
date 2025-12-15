@@ -232,13 +232,15 @@ docker compose up
 ```
 
 ### 4.Output
+Once container runs:
  - Loads base model
  - Loads Fine tunde model
  - Runs Evaluation
  - Generates link to gradio
 
 ###  Open Gradio:
-- open the public URL and start interacting
+- Open the public Gradio URL displayed in the terminal
+- Start interacting with the dialogue system through the web interface
 
 ---
 
