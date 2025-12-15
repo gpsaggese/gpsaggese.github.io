@@ -1,1 +1,0 @@
-Placeholder - please add US covid deaths called "deaths.csv"

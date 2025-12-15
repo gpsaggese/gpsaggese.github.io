@@ -9,11 +9,6 @@ __pycache__/
 .ipynb_checkpoints/
 *-checkpoint.ipynb
 
-# ignore data files
-*.csv
-
-
-
 # PyTorch Lightning logs
 lightning_logs/
 *.ckpt
@@ -39,6 +34,14 @@ Thumbs.db
 *.tmp
 *.bak
 *.log
+
+# Data files (download separately from Google Drive)
+data/*.csv
+data/*.tsv
+data/*.xlsx
+
+# Keep data directory structure
+!data/.gitkeep
 
 # Development files (optional)
 PHASE*.md

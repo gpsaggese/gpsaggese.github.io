@@ -11,6 +11,31 @@ Probabilistic forecasting of COVID-19 daily cases using three GluonTS models: De
 ### Prerequisites
 - Docker installed and running
 - 8GB RAM minimum
+- Data files (see Data Setup below)
+
+### Data Setup
+
+The data files are **not included** in the repository. They will be **automatically downloaded** when you run the notebooks.
+
+**Automatic Download (Default)**
+
+When you open and run the notebooks (`GluonTS.API.ipynb` or `GluonTS.example.ipynb`), they will:
+1. Check if data files exist in the `data/` directory
+2. Automatically download missing files from Google Drive
+3. Show progress for each download
+4. Continue with the analysis
+
+No manual intervention needed!
+
+**Manual Download (Optional)**
+
+If automatic download fails (e.g., network restrictions), download manually:
+- [US COVID-19 Cases](https://drive.google.com/file/d/1ZfZtoV3PpZblZYES0A5LHCwp54cR8RJL/view) → save as `data/cases.csv`
+- [US COVID-19 Deaths](https://drive.google.com/file/d/1kYC9nrCnKbNpnoZKz8o6TDMM371gyxbl/view) → save as `data/deaths.csv`
+- [US Mobility Report](https://drive.google.com/file/d/1TMqG8Z8vbxmQAv1rNKczYYPCzwT4ZS_q/view) → save as `data/mobility.csv`
+- [US Vaccine Data](https://drive.google.com/drive/folders/1qMDGBstdY8H2hYpz8xSolhzNOsVxNHMA) → save as `data/vaccine.csv` (optional)
+
+Or run: `python GluonTS_utils_data_download.py`
 
 ### Build and Run
 
@@ -282,7 +307,10 @@ ls data/
 ## Quick Command Reference
 
 ```bash
-# Build
+# Check data files
+python GluonTS_utils_data_download.py
+
+# Build Docker image
 ./docker_build.sh
 
 # Run Jupyter (default)
@@ -300,6 +328,18 @@ docker ps
 # Remove all containers
 docker rm $(docker ps -aq)
 ```
+
+---
+
+## Data Files
+
+The following data files should be in the `data/` directory:
+- `cases.csv` (17 MB) - JHU COVID-19 confirmed cases
+- `deaths.csv` (11 MB) - JHU COVID-19 deaths  
+- `mobility.csv` (97 MB) - Google Mobility Reports
+- `vaccine.csv` (3 MB) - CDC vaccination data (kept for future use)
+
+Download from: https://drive.google.com/drive/folders/1qMDGBstdY8H2hYpz8xSolhzNOsVxNHMA
 
 ---
 

@@ -62,7 +62,7 @@ Make sure you've completed the setup from the main README:
 3. **Run it**:
    - Click "Restart & Run All" to execute the entire pipeline
    - Or run cells one by one to follow along step-by-step
-   - **Expected runtime**: 10-15 minutes on CPU
+   - **Expected runtime**: 1-2 minutes on CPU
 
 4. **Explore the results**:
    - Beautiful visualizations of data and forecasts
@@ -628,5 +628,3 @@ Actionable insights you'll discover:
    - This is actually a feature, not a bug
 
 **Pro tip**: Sometimes poor forecasts reveal real changes in the underlying process (new variant, behavioral shift). Investigate why, don't just tune blindly!
-
----

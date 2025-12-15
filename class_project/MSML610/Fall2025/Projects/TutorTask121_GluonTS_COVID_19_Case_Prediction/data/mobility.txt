@@ -1,1 +1,0 @@
-Placeholder - please add US mobility (during Covid) data and call it "mobility.csv"
