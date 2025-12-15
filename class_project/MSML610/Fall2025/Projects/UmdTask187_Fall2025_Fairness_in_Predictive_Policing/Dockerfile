@@ -20,7 +20,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project files
-COPY FairnessPP.utils.py .
+COPY FairnessPP_utils.py .
 COPY FairnessPP.API.ipynb .
 COPY FairnessPP.API.md .
 COPY FairnessPP.example.ipynb .
