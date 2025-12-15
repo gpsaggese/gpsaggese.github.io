@@ -89,9 +89,9 @@ By the end of this tutorial, you will be able to:
 
 ## 3. Repository Structure
 ```
-COURSE_CODE/
-└── Term20xx/
-    └── projects/
+MSML610/
+└── Fall2025/
+    └── Projects/
         └── TutorTask71_Fall2025_OpenRefine_Cleaning_and_Classifying_Twitter_Sentiment_Data/
             ├── utils_data_io.py
             ├── utils_post_processing.py
