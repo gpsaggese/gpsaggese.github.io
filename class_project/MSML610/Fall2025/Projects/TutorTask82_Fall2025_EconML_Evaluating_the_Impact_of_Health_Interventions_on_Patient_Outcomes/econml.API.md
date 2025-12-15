@@ -18,7 +18,7 @@ How do I reuse them safely?
 
 ---
 
-## 0. Quick glossary (plain English)
+## 0. Quick glossary
 
 **Treatment (T):** the “intervention” indicator (0/1).  
 In this project: *any dietary supplement use*.
@@ -35,7 +35,7 @@ In this project: *any dietary supplement use*.
 
 ---
 
-## 1. Project structure (why it’s organized this way)
+## 1. Project structure 
 
 This repo follows the “API + Example + Utils” pattern:
 
@@ -55,7 +55,6 @@ This repo follows the “API + Example + Utils” pattern:
 - **`econml.example.ipynb`**
   - The full end-to-end tutorial/story (results + plots + interpretation)
 
-This file (`econml.API.md`) documents only the **programming interface** (the internal API).
 
 ---
 
