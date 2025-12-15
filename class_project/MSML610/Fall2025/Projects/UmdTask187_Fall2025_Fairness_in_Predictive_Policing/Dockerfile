@@ -1,39 +1,41 @@
-# # Use a slim Python image for efficiency and stability
-# FROM python:3.10-slim
+# FairnessPP Docker Configuration
+# Course: MSML610 Fall 2025
+# Project: Fairness in Predictive Policing
 
-# # Set the working directory inside the container
-# WORKDIR /app
+FROM python:3.10-slim
 
-# # Copy the Python dependencies file
-# COPY requirements.txt .
-
-# # Install Python packages defined in requirements.txt (Fairlearn, pandas, etc.)
-# RUN pip install --no-cache-dir -r requirements.txt
-
-# # Expose port for Jupyter Notebooks
-# EXPOSE 8888
-
-# # Copy all project files into the container (including your .py and .ipynb files)
-# COPY . /app
-
-# # Set default command to bash for easy execution and debugging
-# CMD ["bash"]
-
-FROM python:3.9-slim
-
-WORKDIR /app
+# Set working directory
+WORKDIR /workspace
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python libraries
+# Copy requirements first for caching
 COPY requirements.txt .
+
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project files
-COPY . .
+COPY FairnessPP_utils.py .
+COPY FairnessPP_API.ipynb .
+COPY FairnessPP_API.md .
+COPY FairnessPP_example.ipynb .
+COPY FairnessPP_example.md .
+COPY README.md .
 
-# Default command
-CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root"]
+# Create data directory
+RUN mkdir -p data
+
+# Expose Jupyter port
+EXPOSE 8888
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV JUPYTER_ENABLE_LAB=yes
+
+# Default command: Start Jupyter Lab
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''"]
