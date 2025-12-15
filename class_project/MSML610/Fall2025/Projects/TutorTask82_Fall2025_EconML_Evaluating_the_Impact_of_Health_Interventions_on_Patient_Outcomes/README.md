@@ -10,18 +10,19 @@
 ## Table of Contents
 
 * [Project Overview and Goals](#project-overview-and-goals)
+* [Causal Question and Scope](#causal-question-and-scope)
+* [Methodological Framing](#methodological-framing)
 * [Project Structure](#project-structure)
-* [How It Works](#how-it-works)
+* [Data Sources and Feature Construction](#data-sources-and-feature-construction)
+* [End-to-End Pipeline](#end-to-end-pipeline)
 * [Getting Started](#getting-started)
-
-  * [Prerequisites](#prerequisites)
-  * [Setup Instructions (Docker – Recommended)](#setup-instructions-docker--recommended)
-  * [Setup Instructions (Local – Optional)](#setup-instructions-local--optional)
 * [Usage](#usage)
-* [Results (Placeholder)](#results-placeholder)
+* [Results Summary](#results-summary)
+* [Heterogeneity Analysis](#heterogeneity-analysis)
+* [Baseline Comparison (OLS vs EconML)](#baseline-comparison-ols-vs-econml)
 * [API vs Example Layers](#api-vs-example-layers)
-* [Reproducibility Notes](#reproducibility-notes)
-* [Rubric-Based Grading Simulation](#rubric-based-grading-simulation)
+* [Reproducibility and Assumptions](#reproducibility-and-assumptions)
+* [Limitations](#limitations)
 * [TA-Facing Design Summary](#ta-facing-design-summary)
 * [Troubleshooting](#troubleshooting)
 * [References](#references)
@@ -30,34 +31,59 @@
 
 ## Project Overview and Goals
 
-This project is a **hands-on causal inference study** demonstrating how to estimate treatment effects using **EconML** on real-world observational health data from **NHANES (2021–2023)**.
+This project is a **causal inference study**, not a predictive modeling task.
 
-This is **not a prediction task**.
-The goal is to estimate **causal effects under confounding**, using modern double-robust methods and transparent baselines.
+We estimate the **causal effect of dietary supplement use** on selected health outcomes using **observational data** from the **National Health and Nutrition Examination Survey (NHANES) 2021–2023**, applying **double-robust machine learning methods** implemented via **EconML**.
+
+The primary objective is to demonstrate **correct causal reasoning under confounding**, including:
+
+* Explicit treatment definition
+* Separation of nuisance models and causal estimands
+* Estimation of treatment effect heterogeneity
+* Transparent comparison against classical statistical baselines
 
 ---
+
+## Causal Question and Scope
 
 ### Main causal question
 
-> Does **any dietary supplement use** (binary treatment) have a causal effect on:
+> What is the causal effect of **dietary supplement use** on selected cardiometabolic health outcomes, after adjusting for observed confounders?
+
+### Treatment definition
+
+* **Treatment (`T`)**: Binary indicator of **any dietary supplement use**
+* Derived from NHANES dietary supplement questionnaire data (`DSQTOT_*`)
+* This project intentionally treats supplement use as a **coarse intervention**, reflecting real-world observational ambiguity
+
+### Outcomes analyzed
 
 * **Mean systolic blood pressure** (`sbp_mean`)
-* **Fasting plasma glucose** (`fasting_glucose_mg_dl`)?
+* **Fasting plasma glucose** (`fasting_glucose_mg_dl`)
 
 ---
 
-### Project goals
+## Methodological Framing
 
-* Build a **clean, merged, analysis-ready dataset** from multiple NHANES components
-* Estimate causal effects using **DRLearner (Double Robust Learner)**
-* Report:
+This project follows a **potential outcomes framework**:
 
-  * **ATE** (Average Treatment Effect)
-  * **Bootstrap confidence intervals**
-  * **CATE** (individual-level treatment effects) with basic heterogeneity analysis
-* Compare EconML estimates against a transparent baseline:
+* Target estimands:
 
-  * **OLS with HC3 robust standard errors** using `statsmodels`
+  * **ATE**: Average Treatment Effect
+  * **CATE**: Conditional Average Treatment Effect
+* Identification strategy:
+
+  * Conditional unconfoundedness given observed covariates
+  * Overlap assumed and empirically checked
+* Estimator:
+
+  * **DRLearner (Double Robust Learner)** from EconML
+
+Double robustness ensures consistent estimation if **either**:
+
+* the outcome model **or**
+* the treatment (propensity) model
+  is correctly specified.
 
 ---
 
@@ -103,135 +129,82 @@ TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Pat
 
 ---
 
-## How It Works
+## Data Sources and Feature Construction
 
-### High-level pipeline
-
-```mermaid
-flowchart TD
-    A[Start] --> B[Load cleaned NHANES CSVs from data/]
-    B --> C[Merge by respondent ID SEQN]
-    C --> D[Derive outcomes, treatment, covariates]
-    D --> E[Create Y, T, X matrices]
-    E --> F[Fit DRLearner]
-    F --> G[Estimate ATE + Confidence Intervals]
-    F --> H[Estimate CATE]
-    H --> I[Summarize treatment effect heterogeneity]
-    D --> J[Run OLS baseline with HC3 robust SE]
-    G --> K[Collect and compare results]
-    I --> K
-    J --> K
-    K --> L[End]
-```
-
----
+All NHANES components are merged using the respondent identifier `SEQN`.
 
 ### NHANES components used
 
-All datasets are merged using the respondent identifier `SEQN`.
-
-* `DEMO_*` — demographics
-* `BMX_*` — body measures (BMI, weight)
-* `BPXO_*` — blood pressure readings → `sbp_mean`
+* `DEMO_*` — age, sex, race/ethnicity, income
+* `BMX_*` — BMI and body measures
+* `BPXO_*` — blood pressure readings
 * `GLU_*` — fasting plasma glucose
 * `TCHOL_*`, `HDL_*`, `TRIGLY_*` — lipid profile
-* `HSCRP_*` — high-sensitivity C-reactive protein
-* `DSQTOT_*` — dietary supplement use (treatment indicator)
+* `HSCRP_*` — inflammation marker
+* `DSQTOT_*` — dietary supplement use
 
-All feature construction and validation logic is implemented in **`econml_utils.py`**.
+### Feature handling
+
+* Outcomes computed **before** causal modeling
+* Covariates selected to avoid post-treatment leakage
+* All feature construction centralized in `econml_utils.py`
+
+---
+
+## End-to-End Pipeline
+
+```mermaid
+flowchart TD
+    A[Load cleaned NHANES CSVs] --> B[Merge by SEQN]
+    B --> C[Define treatment, outcomes, covariates]
+    C --> D[Construct Y, T, X matrices]
+    D --> E[Fit DRLearner]
+    E --> F[Estimate ATE + bootstrap CI]
+    E --> G[Estimate CATE]
+    G --> H[Heterogeneity summaries]
+    C --> I[OLS baseline with HC3 SE]
+    F --> J[Compare results]
+    H --> J
+    I --> J
+```
 
 ---
 
 ## Getting Started
 
-## Prerequisites
+### Prerequisites
 
-### All platforms
-
-* Docker Desktop installed and running
-* Approximately **1–2 GB** of free disk space
-
-### Windows-specific
-
-* Docker Desktop with **WSL 2 backend enabled**
-* Git Bash or WSL recommended for running `.sh` scripts
+* Docker Desktop (WSL2 backend on Windows)
+* 1–2 GB free disk space
 
 ---
 
-## Setup Instructions (Docker – Recommended)
-
-Docker is the **official and graded execution path**.
-
-### Step 1: Navigate to the project directory
+### Docker Setup (Recommended and Graded Path)
 
 ```bash
 cd TutorTask82_Fall2025_EconML_Evaluating_the_Impact_of_Health_Interventions_on_Patient_Outcomes
-```
-
----
-
-### Step 2: Make scripts executable (one-time)
-
-```bash
 chmod +x docker_*.sh run_jupyter.sh install_*.sh version.sh
-```
-
-(Windows users should run this in Git Bash or WSL.)
-
----
-
-### Step 3: Build the Docker image
-
-```bash
 ./docker_build.sh
-```
-
----
-
-### Step 4: Launch Jupyter
-
-```bash
 ./docker_jupyter.sh
 ```
 
-Open `http://localhost:8888` in your browser.
-
----
-
-## Setup Instructions (Local – Optional)
-
-Not recommended for grading.
-
-```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-jupyter lab
-```
+Open: `http://localhost:8888`
 
 ---
 
 ## Usage
 
-### Recommended workflow
+### Primary analysis
 
-* Open `econml.example.ipynb`
+* Open **`econml.example.ipynb`**
 * Restart kernel
 * Run all cells top to bottom
 
-This executes the full causal pipeline.
-
----
-
-### Minimal API demonstration
+### Minimal API demo
 
 * `econml.API.ipynb`
 
-Focuses only on reusable APIs.
-
----
-
-### Script execution
+### Script-based execution
 
 ```bash
 ./docker_bash.sh
@@ -240,26 +213,56 @@ python econml.example.py
 
 ---
 
-## API vs Example Layers
+## Results Summary
 
-### Core API (stable)
+The project reports:
 
-**`econml_utils.py`**
+* **ATE estimates** with bootstrap confidence intervals
+* Directional consistency across outcomes
+* Differences between causal and naive regression estimates
 
-* `build_analysis_df()`
-* `get_y_t_x()`
-
-**`econml.API.py`**
-
-* `run_sbp_supplement_experiment()`
-* `run_glucose_supplement_experiment()`
-* `run_ols_for_outcome()`
-
-All functions return plain Python objects or pandas DataFrames.
+Exact numeric values depend on NHANES sampling weights and preprocessing decisions and are reproducible using Docker.
 
 ---
 
-### Example layer (educational)
+## Heterogeneity Analysis
+
+Treatment effect heterogeneity is examined via:
+
+* Individual-level CATE estimates
+* Subgroup summaries by:
+
+  * Age group
+  * Sex
+  * Baseline health status
+
+This analysis highlights that **average effects mask meaningful variation**, reinforcing the importance of causal ML methods over single-point estimates.
+
+---
+
+## Baseline Comparison (OLS vs EconML)
+
+A classical OLS regression with **HC3 robust standard errors** is used as a baseline.
+
+Observed differences arise because:
+
+* OLS conflates treatment assignment with confounding
+* DRLearner orthogonalizes nuisance estimation from causal estimation
+
+This comparison is included to **demonstrate why causal ML is necessary**, not to dismiss traditional methods.
+
+---
+
+## API vs Example Layers
+
+### Stable API layer
+
+* `econml_utils.py`
+* `econml.API.py`
+
+Reusable, deterministic, side-effect-free functions.
+
+### Example / teaching layer
 
 * `econml.example.ipynb`
 * `econml.example.py`
@@ -267,40 +270,51 @@ All functions return plain Python objects or pandas DataFrames.
 
 ---
 
-## Reproducibility Notes
+## Reproducibility and Assumptions
 
-* Notebooks support **Restart & Run All**
+* Docker ensures environment reproducibility
 * Random seeds fixed where applicable
-* Bootstrap used for ATE confidence intervals
-* Cleaned CSV inputs are versioned in `data/`
+* Bootstrap used for uncertainty estimation
+
+### Key assumptions
+
+* Conditional unconfoundedness given observed covariates
+* Sufficient overlap between treated and untreated groups
+* No interference between units (SUTVA)
+
+---
+
+## Limitations
+
+* Observational data cannot eliminate unmeasured confounding
+* Supplement use is coarsely defined
+* Results are not clinical recommendations
+* NHANES sampling weights are not fully exploited
+
+These limitations are acknowledged explicitly.
 
 ---
 
 ## TA-Facing Design Summary
 
-This project emphasizes **causal correctness over tooling complexity**.
+This project prioritizes:
 
-Key design choices:
+* Correct causal framing
+* Transparent baselines
+* Reproducibility
+* Separation of concerns (data, estimation, interpretation)
 
-* Separate data preparation notebooks to validate NHANES preprocessing
-* Explicit Y, T, X construction to prevent post-treatment leakage
-* DRLearner chosen for double robustness under confounding
-* OLS retained as a transparent baseline
-* Docker used to guarantee reproducibility across machines
-
-This design aligns directly with MSML610 learning objectives.
+Design choices align directly with **MSML610 learning objectives**.
 
 ---
 
 ## Troubleshooting
 
-### `exec format error` (Windows)
+### Windows line ending issue
 
 ```bash
 sed -i 's/\r$//' run_jupyter.sh
 ```
-
----
 
 ### Apple Silicon
 
