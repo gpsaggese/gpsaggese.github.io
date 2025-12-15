@@ -76,7 +76,7 @@ used in the course tutorials.
 From the repository root, navigate to:
 
 ```bash
-cd class_project/instructions/tutorial_template/docker_simple
+cd class_project/instructions/tutorial_template/tutorial_github_data605_style
 ````
 
 ### 2. Build the Docker container
