@@ -41,7 +41,7 @@ This project uses the **U.S. Airline On-Time Performance Dataset**.
 Due to GitHub’s 100MB file size restriction, raw datasets are **excluded from the repository**.
 
 ## Explanation of Each Folder and File
-
+**Refer to the Text Tree format project folder structure at the bottom!**
 ### app/app.py — Streamlit Web Application
 
 This file creates the **interactive web dashboard**.
