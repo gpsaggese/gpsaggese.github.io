@@ -240,39 +240,6 @@ python econml.example.py
 
 ---
 
-## Results (Placeholder)
-
-> Numerical values are intentionally omitted.
-> Results are fully reproducible by running `econml.example.ipynb`.
-
-### Average Treatment Effects (ATE)
-
-**Outcome: Mean Systolic Blood Pressure**
-
-| Method    | ATE | 95% CI (Lower) | 95% CI (Upper) |
-| --------- | --- | -------------- | -------------- |
-| DRLearner | TBD | TBD            | TBD            |
-| OLS (HC3) | TBD | TBD            | TBD            |
-
-**Outcome: Fasting Plasma Glucose**
-
-| Method    | ATE | 95% CI (Lower) | 95% CI (Upper) |
-| --------- | --- | -------------- | -------------- |
-| DRLearner | TBD | TBD            | TBD            |
-| OLS (HC3) | TBD | TBD            | TBD            |
-
----
-
-### Conditional Average Treatment Effects (CATE)
-
-| Subgroup | Low Quantile | Median | High Quantile |
-| -------- | ------------ | ------ | ------------- |
-| Age      | TBD          | TBD    | TBD           |
-| BMI      | TBD          | TBD    | TBD           |
-| Gender   | TBD          | TBD    | TBD           |
-
----
-
 ## API vs Example Layers
 
 ### Core API (stable)
