@@ -94,10 +94,9 @@ MSML610/
         └── TutorTask71_Fall2025_OpenRefine_Cleaning_and_Classifying_Twitter_Sentiment_Data/
             ├── utils_data_io.py
             ├── utils_post_processing.py
-            ├── API.ipynb
+            ├── OpenRefine.API.ipynb
             ├── API.md
-            ├── example.ipynb
-            ├── example.md
+            ├── OpenRefine.example.ipynb
             ├── Dockerfile
             ├── models/
             │   ├── baseline_models.ipynb
@@ -581,8 +580,8 @@ Once the container is running, open a browser and navigate to:
 For convenience, authentication tokens are disabled.
 
 From here, you can run:
-- API.ipynb
-- example.ipynb
+- OpenRefine.API.ipynb
+- OpenRefine.example.ipynb
 - models/baseline_models.ipynb
 - models/bert_model.ipynb
 
