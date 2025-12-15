@@ -1,5 +1,8 @@
 import streamlit as st
-st.set_page_config(page_title="Airport Congestion Dashboard", layout="wide")
+st.set_page_config(
+    page_title="Airport Congestion Dashboard",
+    layout="wide"
+)
 
 import pandas as pd
 import plotly.express as px
@@ -19,109 +22,184 @@ MODELS = ROOT / "data" / "models"
 @st.cache_data
 def load_data():
     df = pd.read_csv(DATA / "hourly_congestion.csv")
+
     df["DATE"] = pd.to_datetime(df["DATE"])
     df["date_only"] = df["DATE"].dt.date
     df["AIRPORT"] = df["AIRPORT"].astype(str)
+
     return df
+
 
 @st.cache_resource
 def load_model():
     return joblib.load(MODELS / "model.pkl")
 
+
 df = load_data()
 model = load_model()
 
 # Label decoding
-rev_label_map = {0: "Low", 1: "Medium", 2: "High"}
+rev_label_map = {
+    0: "Low",
+    1: "Medium",
+    2: "High"
+}
 
 # --------------------------------
-# Streamlit UI
+# UI Header
 # --------------------------------
 st.title("✈️ Airport Hourly Congestion Dashboard")
-st.markdown("Explore predicted congestion levels using an XGBoost model.")
+st.markdown(
+    "This dashboard shows **predicted airport congestion by hour**, "
+    "helping travelers identify the **best and busiest times** to fly."
+)
 
-# Sidebar
+# --------------------------------
+# Sidebar Controls
+# --------------------------------
 airport_list = sorted(df["AIRPORT"].unique())
-selected_airport = st.sidebar.selectbox("Select Airport", airport_list)
+selected_airport = st.sidebar.selectbox(
+    "Select Airport",
+    airport_list
+)
 
 airport_df = df[df["AIRPORT"] == selected_airport]
 
 date_list = sorted(airport_df["date_only"].unique())
-selected_date = st.sidebar.selectbox("Select Date", date_list)
+selected_date = st.sidebar.selectbox(
+    "Select Date",
+    date_list
+)
+
+st.caption(f"📅 Selected Date: **{selected_date}**")
 
 day_df = airport_df[airport_df["date_only"] == selected_date].copy()
 
 # --------------------------------
-# SAFETY CHECK 1 — No data for this airport/date
+# Safety Check — No data
 # --------------------------------
 if day_df.empty:
-    st.warning("⚠️ No flights found for this airport on the selected date.")
+    st.warning("⚠️ No flight data available for this airport on the selected date.")
     st.stop()
 
 # --------------------------------
 # Predict congestion
 # --------------------------------
-feature_cols = ["departures", "arrivals", "total_flights", "HOUR", "AIRPORT"]
+feature_cols = [
+    "departures",
+    "arrivals",
+    "total_flights",
+    "HOUR",
+    "AIRPORT"
+]
+
 day_df["AIRPORT"] = day_df["AIRPORT"].astype(str)
 
 try:
     preds = model.predict(day_df[feature_cols])
-    day_df["predicted"] = [rev_label_map[p] for p in preds]
+    day_df["Congestion Level"] = [rev_label_map[p] for p in preds]
 except Exception as e:
     st.error(f"Prediction failed: {e}")
     st.stop()
 
 # --------------------------------
-# SAFETY CHECK 2 — total_flights missing or all zero
+# Safety Check — No flights
 # --------------------------------
-if "total_flights" not in day_df.columns or day_df["total_flights"].isna().all():
-    st.warning("⚠️ No total flight data available for this day.")
-    st.stop()
-
 if day_df["total_flights"].max() == 0:
     st.warning("⚠️ No flights scheduled for this airport on this date.")
     st.stop()
 
 # --------------------------------
-# Peak Hour Section
+# Create user-friendly time column
 # --------------------------------
-peak_index = day_df["total_flights"].idxmax()
+day_df["Time"] = day_df["HOUR"].apply(lambda h: f"{int(h):02d}:00")
 
-if pd.isna(peak_index):
-    st.warning("⚠️ Peak hour cannot be determined.")
+# --------------------------------
+# DAILY SUMMARY 
+# --------------------------------
+st.subheader("📊 Daily Congestion Summary")
+
+busy_hours = day_df[day_df["Congestion Level"] != "Low"].shape[0]
+
+if busy_hours == 0:
+    st.success(
+        "🟢 **Low congestion day** — flights are evenly distributed "
+        "with no significant peak hours."
+    )
 else:
-    peak = day_df.loc[peak_index]
-    st.subheader("🔥 Peak Congestion Hour")
-    st.metric(
-        "Peak Hour",
-        f"{int(peak['HOUR']):02d}:00",
-        f"{peak['total_flights']} flights"
+    st.warning(
+        f"⚠️ **{busy_hours} hour(s)** show moderate or high congestion. "
+        "Consider avoiding those times."
     )
 
 # --------------------------------
-# Plot Congestion Bar Chart
+# Peak Hour
 # --------------------------------
-st.subheader("Hourly Congestion Prediction")
+peak_index = day_df["total_flights"].idxmax()
+peak = day_df.loc[peak_index]
+
+st.subheader("🔥 Busiest Hour of the Day")
+
+st.metric(
+    label="Peak Time",
+    value=peak["Time"],
+    delta=f"{int(peak['total_flights'])} flights"
+)
+
+# --------------------------------
+# Congestion Chart (Simplified)
+# --------------------------------
+st.subheader("⏰ Flights by Time of Day")
 
 fig = px.bar(
     day_df,
-    x="HOUR",
+    x="Time",
     y="total_flights",
-    color="predicted",
-    text="predicted",
-    title=f"{selected_airport} — {selected_date}",
-    color_discrete_map={"Low": "green", "Medium": "orange", "High": "red"}
+    color="Congestion Level",
+    title="How busy the airport is at different times",
+    labels={
+        "total_flights": "Number of Flights",
+        "Time": "Time of Day"
+    },
+    color_discrete_map={
+        "Low": "#2ecc71",
+        "Medium": "#f39c12",
+        "High": "#e74c3c"
+    }
 )
 
-fig.update_traces(textposition="outside")
+fig.update_layout(
+    legend_title_text="Congestion Level",
+    xaxis_tickangle=0
+)
 
 st.plotly_chart(fig, use_container_width=True)
 
 # --------------------------------
-# Data Table
+st.subheader("📋 Hourly Flight Summary")
+
+display_df = day_df.rename(columns={
+    "total_flights": "Total Flights"
+})[["Time", "Total Flights", "Congestion Level"]]
+
+# Remove index so no empty top-left cell
+display_df = display_df.reset_index(drop=True)
+
+styled_df = (
+    display_df.style
+    .set_properties(**{"text-align": "center"})
+    .set_table_styles([
+        {"selector": "th", "props": [("text-align", "center")]}
+    ])
+)
+
+st.dataframe(styled_df, use_container_width=True)
+
 # --------------------------------
-st.subheader("Hourly Details")
-st.dataframe(
-    day_df[["DATE", "HOUR", "departures", "arrivals", "total_flights", "predicted"]],
-    use_container_width=True
+
+st.info(
+    "ℹ️ **How congestion is predicted:**\n\n"
+    "Predictions are generated using an XGBoost machine learning model "
+    "trained on historical flight data, considering hourly arrivals, "
+    "departures, and total flight volume."
 )
