@@ -1,0 +1,11 @@
+numpy
+pandas
+matplotlib
+scikit-learn
+jax
+jaxlib
+flax
+optax
+orbax-checkpoint
+jupyterlab
+
