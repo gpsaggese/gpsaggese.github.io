@@ -914,7 +914,7 @@ def create_signal_tester_env(
         return env
 
 
-# TODO: Debugging helper to register env id and using cleanRL trained models
+# Deprecated: we use gym.register directly now in CleanRL.example.ipynb
 def register_cleanrl_env(
     env_id: str,
     data: pd.DataFrame,

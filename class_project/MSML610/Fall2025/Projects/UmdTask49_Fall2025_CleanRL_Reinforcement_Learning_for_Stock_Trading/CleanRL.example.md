@@ -141,45 +141,39 @@ The interpreter is fitted once on all available news and then used for fast infe
 - LDA with 15 topics (emperically, more topics led to noise)
 - LM Dictionary for sentiment (pre-defined lists of positive/negative/uncertain financial words)
 
-### Step 3: Feature Pre-computation (`rl_env.py::prepare_forecasts_and_context()`)
+### Step 3: Feature Pre-computation (`generate_env_inputs()`)
 
-**Critical optimization:** Instead of computing forecasts on-the-fly during RL training (which would be impossibly slow), I pre-compute everything once:
-
-```python
-for t in range(lookback_window, len(data) - forecast_horizon):
-    # Generate MC Dropout samples (100 forward passes)
-    uncertainty_cone = forecaster.predict_with_uncertainty(window_t)
-
-    # Extract news context
-    news_context = interpreter.get_full_context(news_t)
-
-    # Cache both
-    cache[t] = (uncertainty_cone, news_context)
-```
-
-This takes time upfront (a few minutes for 200 days) but makes training instant. The RL agent just loads precomputed features.
-
-### Step 4: Environment Registration (`rl_env.py::register_cleanrl_env()`)
-
-This is the glue that makes everything work with cleanRL:
+**Critical optimization:** Instead of computing forecasts on-the-fly during RL training (which would be impossibly slow), I pre-compute everything once using `generate_env_inputs()`:
 
 ```python
-def register_cleanrl_env(env_id, data, news_documents, ...):
-    # 1. Pre-compute all forecasts and contexts
-    uncertainty_forecasts, news_contexts = prepare_forecasts_and_context(...)
-
-    # 2. Register a gym id that closes over these precomputed features
-    def _entry_point():
-        return SignalTesterEnv(
-            data=data,
-            uncertainty_forecasts=uncertainty_forecasts,  # Shared reference
-            news_contexts=news_contexts  # Shared reference
-        )
-
-    gym.register(id=env_id, entry_point=_entry_point)
+# Pre-compute inputs for the entire window
+uncertainty_forecasts, news_contexts = generate_env_inputs(
+    data_slice, full_data, start_idx,
+    forecaster, interpreter, ...
+)
 ```
 
-Now `gym.make('SignalTester-v0')` creates environments that share the precomputed features (memory efficient).
+This takes time upfront (a few minutes for 200 days) but makes training instant. The RL agent just loads precomputed features from memory.
+
+### Step 4: Dynamic Environment Registration
+
+To make the custom environment compatible with CleanRL's `gym.make()` interface while passing in our complex pre-computed data, I register a unique environment ID for each rolling window:
+
+```python
+# Register a specific environment for this window (e.g., "SignalTester-w0-v0")
+register(
+    id=env_id,
+    entry_point="rl_env:SignalTesterEnv",
+    kwargs={
+        "data": train_data,
+        "uncertainty_forecasts": train_forecasts, # Pass pre-computed forecasts
+        "news_contexts": news_contexts,           # Pass pre-computed news
+        "episode_length": 252,
+    }
+)
+```
+
+Now `gym.make(env_id)` creates an environment that already has all the heavy lifting done, allowing the RL agent to step through it extremely fast.
 
 ### Step 5: RL Training
 
