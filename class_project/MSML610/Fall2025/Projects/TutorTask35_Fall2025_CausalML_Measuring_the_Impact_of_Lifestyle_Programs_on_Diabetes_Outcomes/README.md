@@ -4,15 +4,27 @@
 ### Project Objective :
 To estimate the causal impact of lifestyle interventions such as dietary modifications and structured exercise programs on diabetes-related health outcomes (for example, HbA1c levels and disease progression), while rigorously accounting for confounding variables to ensure credible and unbiased effect estimates.
 
-## Setup Instructions :
-1. Build the Docker image using the provided Dockerfile:
-   ```bash
-   docker build -t causalml-tutorial .
-   ```
-2. Run the Docker container:
-    ```bash
-    docker run --rm -it \ -p 8888:8888 \ -v "$PWD":/app \ -w /app \ causalml-tutorial \ jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
-    ```
+## Installation & Docker Setup
+To ensure reproducibility, this project is containerized. Follow these steps to build and run the analysis.
+
+### 1. Build the Image
+Run this command in the project root (where the `Dockerfile` is located):
+```bash
+docker build -t causalml_project .
+```
+
+### 2. Run the Container
+Start the Jupyter environment with volume mounting (to save your notebook changes):
+```bash
+# Mac/Linux/WSL
+docker run -p 8888:8888 -v "$(pwd)":/app causalml_project
+```
+
+### 3. Access the Project
+- Click the `http://127.0.0.1:8888...` link in your terminal to open JupyterLab.
+- Open `CausalML.API.ipynb` to test the tool.
+- Open `CausalML.example.ipynb` to see the full Diabetes analysis.
+
 ## Folder Structure :
 - `data/` : Contains datasets used for analysis. 
 - CausalML.API.ipynb : Jupyter notebook demonstrating the application of CausalML methods to measure the impact of lifestyle programs on diabetes outcomes.
@@ -26,3 +38,7 @@ To estimate the causal impact of lifestyle interventions such as dietary modific
 ## Resources :
 
 - [Diabetes 130-US Hospitals for Years 1999-2008](https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008)
+
+- [CausalML Library Documentation](https://causalml.readthedocs.io/en/latest/)
+
+- [MSML610 Advanced Machine Learning - Fall 2025](https://github.com/gpsaggese-org/umd_classes)

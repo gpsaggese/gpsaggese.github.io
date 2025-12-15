@@ -17,6 +17,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import logging
 from typing import List, Dict, Optional, Tuple, Union
 
 # CausalML Imports
@@ -31,6 +32,11 @@ from sklearn.preprocessing import StandardScaler
 
 # Set generic style for plots
 sns.set_theme(style="whitegrid")
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 
 
 # #############################################################################
@@ -49,13 +55,13 @@ def load_cdc_data(filepath: str) -> pd.DataFrame:
     """
     if not os.path.exists(filepath):
         raise FileNotFoundError(f"❌ Could not find file at: {filepath}")
-    print(f"Loading data from: {filepath}")
+    logger.info(f"Loading data from: {filepath}")
     df = pd.read_csv(filepath)
     # Drop duplicates
     initial_len = len(df)
     df = df.drop_duplicates()
     if len(df) < initial_len:
-        print(f"Dropped {initial_len - len(df)} duplicate rows.")
+        logger.info(f"Dropped {initial_len - len(df)} duplicate rows.")
     # Ensure all data is float for XGBoost compatibility
     df = df.astype(float)
     
@@ -139,7 +145,7 @@ class CausalNavigator:
             X (pd.DataFrame): Covariates.
             T (pd.Series): Treatment vector.
         """
-        print("Calculating Propensity Scores for Overlap Check...")
+        logger.info("Calculating Propensity Scores for Overlap Check...")
         ps_model = XGBClassifier(n_estimators=50, max_depth=3, eval_metric='logloss', random_state=42)
         ps_model.fit(X, T)
         p_scores = ps_model.predict_proba(X)[:, 1]
@@ -152,9 +158,9 @@ class CausalNavigator:
         plt.legend()
         plt.show()
         # Interpretation text
-        print("--- Diagnostic Interpretation ---")
-        print("Good Overlap: The red and blue distributions share the same x-axis range.")
-        print("Bad Overlap: One group is clustered at 0 and the other at 1 (Positivity Violation).\n")
+        logger.info("--- Diagnostic Interpretation ---")
+        logger.info("Good Overlap: The red and blue distributions share the same x-axis range.")
+        logger.info("Bad Overlap: One group is clustered at 0 and the other at 1 (Positivity Violation).\n")
 
     def fit_estimate(self, X: pd.DataFrame, T: pd.Series, Y: pd.Series):
         """
@@ -169,11 +175,11 @@ class CausalNavigator:
         T_proc = T.copy()
         unique_vals = sorted(T_proc.unique())
         if self.control_name not in unique_vals:
-            print(f"Mapping labels: 0.0 -> {self.control_name}, 1.0 -> {self.treatment_name}")
+            logger.info(f"Mapping labels: 0.0 -> {self.control_name}, 1.0 -> {self.treatment_name}")
             map_dict = {0: self.control_name, 1: self.treatment_name, 
                         0.0: self.control_name, 1.0: self.treatment_name}
             T_proc = T_proc.map(lambda x: map_dict.get(x, x))
-        print(f"Training {self.learner_type}-Learner with XGBoost base models...")
+        logger.info(f"Training {self.learner_type}-Learner with XGBoost base models...")
         # fit_predict returns the CATE (difference in potential outcomes)
         # Note: causalml's API varies slightly by version; fit_predict is standard for BaseX/T/S.
         cate = self.learner.fit_predict(X=X, treatment=T_proc, y=Y)
@@ -182,7 +188,7 @@ class CausalNavigator:
             cate = cate.flatten()  
         self.cate_estimates = cate
         ate = cate.mean()
-        print(f"Done. Estimated Average Treatment Effect (ATE): {ate:.4f}")
+        logger.info(f"Done. Estimated Average Treatment Effect (ATE): {ate:.4f}")
         return cate
 
     def get_cate_df(self, df_original: pd.DataFrame) -> pd.DataFrame:
@@ -240,7 +246,7 @@ class CausalNavigator:
             n_simulations (int): How many times to shuffle and retrain. 
                                  Keep low (e.g. 5-10) for speed on large data.
         """
-        print(f"Running Placebo Test ({n_simulations} permutations)...")    
+        logger.info(f"Running Placebo Test ({n_simulations} permutations)...")    
         if self.cate_estimates is None:
             raise ValueError("Run fit_estimate() first to establish a baseline.")    
         original_ate = self.cate_estimates.mean()
@@ -267,7 +273,7 @@ class CausalNavigator:
             cate_placebo = temp_learner.fit_predict(X=X, treatment=T_shuffled, y=Y)
             if cate_placebo.ndim > 1: cate_placebo = cate_placebo.flatten()
             placebo_ates.append(cate_placebo.mean())
-            print(f"   Sim {i+1}/{n_simulations}: Placebo ATE = {cate_placebo.mean():.5f}")
+            logger.info(f"   Sim {i+1}/{n_simulations}: Placebo ATE = {cate_placebo.mean():.5f}")
         # Visualization
         plt.figure(figsize=(10, 6))
         sns.histplot(placebo_ates, color='grey', kde=True, label='Placebo Estimates (Random T)')
@@ -286,12 +292,12 @@ class CausalNavigator:
         drastically changes the ATE, the result is highly sensitive to that variable.
         If the ATE remains stable across removals, the causal finding is robust.
         """
-        print("Running Sensitivity Analysis (Covariate Removal)...")
+        logger.info("Running Sensitivity Analysis (Covariate Removal)...")
         # Establish Baseline
         if self.cate_estimates is None:
             self.fit_estimate(X, T, Y)
         baseline_ate = self.cate_estimates.mean()
-        print(f"   Baseline ATE: {baseline_ate:.5f}")
+        logger.info(f"   Baseline ATE: {baseline_ate:.5f}")
         sensitivity_results = {}
         # Iterate through covariates
         T_proc = T.copy()
@@ -302,7 +308,7 @@ class CausalNavigator:
             T_proc = T_proc.map(lambda x: map_dict.get(x, x))
         # We create a new learner instance for each iteration to ensure a clean state
         for feature in X.columns:
-            print(f"   ... testing robustness without '{feature}'")
+            logger.info(f"   ... testing robustness without '{feature}'")
             X_drop = X.drop(columns=[feature])        
             # Re-initialize learner (same type as original)
             if self.learner_type == 'X':
@@ -331,7 +337,7 @@ class CausalNavigator:
         plt.legend()
         plt.tight_layout()
         plt.show()
-        print("Interpretation: Variables causing large shifts from the red line are critical confounders.")
+        logger.info("Interpretation: Variables causing large shifts from the red line are critical confounders.")
 
     def compare_estimators(self, X: pd.DataFrame, T: pd.Series, Y: pd.Series):
         """
@@ -341,7 +347,7 @@ class CausalNavigator:
         The model with the highest area under the curve (AUUC) is best at ranking 
         patients from 'highest benefit' to 'lowest benefit'.
         """
-        print("Starting Estimator Tournament...")
+        logger.info("Starting Estimator Tournament...")
         # Split Data 
         X_train, X_test, T_train, T_test, y_train, y_test = train_test_split(
             X, T, Y, test_size=0.3, random_state=42
@@ -358,7 +364,7 @@ class CausalNavigator:
         pred_results = pd.DataFrame()
         # Train and Predict loop
         for name, model in learners.items():
-            print(f"Training {name}...")
+            logger.info(f"Training {name}...")
             # We assume numeric T (0/1) which we ensured in preprocessing
             try:
                 # Fit on Train
@@ -369,9 +375,9 @@ class CausalNavigator:
                 if cate_test.ndim > 1: cate_test = cate_test.flatten()
                 pred_results[name] = cate_test
             except Exception as e:
-                print(f"{name} failed: {e}")
+                logger.error(f"{name} failed: {e}")
         # Evaluate using Cumulative Gain (Qini Curve)
-        print("Generating Uplift Curves (Metrics on Test Set)...")
+        logger.info("Generating Uplift Curves (Metrics on Test Set)...")
         # plot_gain expects a DataFrame containing the predictions, outcome, and treatment
         df_preds = pred_results.copy()
         df_preds['y'] = y_test.values
@@ -384,8 +390,8 @@ class CausalNavigator:
             normalize=True
         )
         # Display Table
-        print("--- Qini / AUUC Scores (Higher is Better) ---")
-        print(auuc.sort_values(ascending=False))
+        logger.info("--- Qini / AUUC Scores (Higher is Better) ---")
+        logger.info("\n" + str(auuc.sort_values(ascending=False)))
         plot_gain(
             df_preds,
             outcome_col='y',
@@ -396,4 +402,4 @@ class CausalNavigator:
         )
         plt.title("Estimator Comparison: Cumulative Gain (Uplift)")
         plt.show()
-        print("Interpretation: The line that stays highest on the Y-axis sorts patients best.")
+        logger.info("Interpretation: The line that stays highest on the Y-axis sorts patients best.")
