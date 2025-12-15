@@ -2,6 +2,9 @@
 
 This project aims to build an object detection system using the original Faster R-CNN implementation in Caffe. The goal is to detect and classify objects in images using a VGG16 backbone pre-trained on ImageNet and fine-tuned on the Pascal VOC dataset.
 
+- **UID: 121333988**
+- **Name: Hairui Yin**
+
 ## Prerequisites
 1. Linux Host (Ubuntu recommended)
 
@@ -90,6 +93,8 @@ We finetuned an ImageNet-pretrained VGG16 model using the VOC 2012 TrainVal data
 
     ```Shell
     cd data
+    # delete old link
+    rm -rf VOCdevkit2012
     ln -s /shared_folder/VOCdevkit VOCdevkit2012
     cd ..
     ```
@@ -132,8 +137,8 @@ We finetuned an ImageNet-pretrained VGG16 model using the VOC 2012 TrainVal data
       --proto models/pascal_voc/VGG16/faster_rcnn_end2end/test.prototxt \
       --base data/faster_rcnn_models/VGG16_faster_rcnn_final.caffemodel \
       --new output/faster_rcnn_end2end/voc_2012_trainval/vgg16_faster_rcnn_iter_70000.caffemodel \
-      --data /data/VOCdevkit/VOC2007/JPEGImages \
-      --out comparison_results \
+      --data /shared_folder/VOCdevkit/VOC2007/JPEGImages \
+      --out /shared_folder/comparison_results \
       --num 20
       ```
 

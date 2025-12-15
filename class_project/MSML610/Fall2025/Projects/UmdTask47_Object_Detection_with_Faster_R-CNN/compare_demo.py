@@ -14,10 +14,6 @@ import caffe, os, sys, cv2
 import glob
 import argparse
 
-
-IMG_DIR = '/shared_folder/VOC2012_test/JPEGImages' 
-OUTPUT_DIR = 'comparison_results'
-
 CLASSES = ('__background__',
            'aeroplane', 'bicycle', 'bird', 'boat',
            'bottle', 'bus', 'car', 'cat', 'chair',
@@ -73,6 +69,9 @@ def parse_args():
     parser.add_argument('--base', dest='base_model', required=True, help='Original .caffemodel')
     parser.add_argument('--new', dest='new_model', required=True, help='Finetuned .caffemodel')
     parser.add_argument('--num', dest='num_imgs', default=10, type=int, help='Number of images to visualize')
+    parser.add_argument('--data', dest='img_dir', required=True, help='Path to input images directory')
+    parser.add_argument('--out', dest='out_dir', default='comparison_results', help='Path to save output results')
+    
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -83,8 +82,8 @@ if __name__ == '__main__':
     caffe.set_device(args.gpu_id)
     cfg.GPU_ID = args.gpu_id
 
-    if not os.path.exists(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
+    if not os.path.exists(args.out_dir):
+        os.makedirs(args.out_dir)
 
     print("Loading Baseline Model: {}".format(args.base_model))
     net_base = caffe.Net(args.prototxt, args.base_model, caffe.TEST)
@@ -92,7 +91,13 @@ if __name__ == '__main__':
     print("Loading Finetuned Model: {}".format(args.new_model))
     net_new = caffe.Net(args.prototxt, args.new_model, caffe.TEST)
 
-    img_list = glob.glob(os.path.join(IMG_DIR, '*.jpg'))
+    print("Reading images from: {}".format(args.img_dir))
+    img_list = glob.glob(os.path.join(args.img_dir, '*.jpg'))
+    
+    if len(img_list) == 0:
+        print("Error: No .jpg images found in {}".format(args.img_dir))
+        sys.exit(1)
+
     np.random.shuffle(img_list) 
     process_list = img_list[:args.num_imgs]
 
@@ -111,8 +116,9 @@ if __name__ == '__main__':
         draw_bbox(axes[1], im, dets_new, "Finetuned Model")
         
         plt.tight_layout()
-        save_path = os.path.join(OUTPUT_DIR, 'compare_{}'.format(os.path.basename(img_path)))
+        
+        save_path = os.path.join(args.out_dir, 'compare_{}'.format(os.path.basename(img_path)))
         plt.savefig(save_path)
         plt.close()
         
-    print("Comparison done! Check results in '{}' folder.".format(OUTPUT_DIR))
+    print("Comparison done! Check results in '{}' folder.".format(args.out_dir))
