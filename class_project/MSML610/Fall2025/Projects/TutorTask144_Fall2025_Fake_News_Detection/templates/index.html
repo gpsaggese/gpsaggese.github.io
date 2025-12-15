@@ -1,1 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BERT Fake News Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .model-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-predict {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-predict:active {
+            transform: translateY(0);
+        }
+
+        .btn-clear {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-clear:hover {
+            background: #e0e0e0;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loader {
+            display: none;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            display: none;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result.real {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .result.fake {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .result-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .result-content {
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .confidence {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .result.fake .confidence-fill {
+            background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .examples {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            color: #666;
+        }
+
+        .examples p {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .example-btn {
+            display: inline-block;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-right: 5px;
+            transition: all 0.3s;
+        }
+
+        .example-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>[SEARCH] Fake News Detector</h1>
+            <p>Powered by BERT Machine Learning Model</p>
+            <div class="model-badge">BERT Classifier • 84.74% Accuracy</div>
+        </div>
+
+        <form id="predictionForm">
+            <div class="form-group">
+                <label for="textInput">Enter news text to analyze:</label>
+                <textarea id="textInput" placeholder="Paste or type the news article text here..." required></textarea>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-predict" id="predictBtn">Analyze News</button>
+                <button type="button" class="btn-clear" id="clearBtn">Clear</button>
+            </div>
+        </form>
+
+        <div class="loader" id="loader"></div>
+
+        <div class="result" id="result"></div>
+
+        <div class="examples">
+            <p><strong>Quick Examples:</strong></p>
+            <button type="button" class="example-btn" onclick="loadExample(0)">Example 1: Real News</button>
+            <button type="button" class="example-btn" onclick="loadExample(1)">Example 2: Fake News</button>
+            <button type="button" class="example-btn" onclick="loadExample(2)">Example 3: Real News</button>
+        </div>
+
+        <div class="footer">
+            <p>This model analyzes news text to determine authenticity. Results are based on machine learning patterns and should be considered as analysis support, not definitive truth.</p>
+        </div>
+    </div>
+
+    <script>
+        const examples = [
+            "The government announced new policies for renewable energy development. Scientists and industry leaders have praised the initiative for its comprehensive approach to reducing carbon emissions and promoting sustainable energy sources.",
+            "SHOCKING: Local man's shocking discovery will BLOW YOUR MIND! This one weird trick that doctors HATE reveals the secret that BIG PHARMA doesn't want you to know! Click now for more!",
+            "A recent study published in Nature Journal reveals new insights into climate patterns. Researchers analyzed data from multiple sources and found evidence supporting existing climate models, providing more accurate predictions for future trends."
+        ];
+
+        const resultMessages = {
+            real: "[OK] LIKELY REAL NEWS",
+            fake: "[WARNING] LIKELY FAKE NEWS"
+        };
+
+        const form = document.getElementById('predictionForm');
+        const textInput = document.getElementById('textInput');
+        const predictBtn = document.getElementById('predictBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const loader = document.getElementById('loader');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await makePrediction();
+        });
+
+        clearBtn.addEventListener('click', () => {
+            textInput.value = '';
+            resultDiv.classList.remove('show');
+            textInput.focus();
+        });
+
+        async function makePrediction() {
+            const text = textInput.value.trim();
+
+            if (!text) {
+                alert('Please enter some text to analyze');
+                return;
+            }
+
+            predictBtn.disabled = true;
+            loader.style.display = 'block';
+            resultDiv.classList.remove('show');
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    displayResult(data);
+                } else {
+                    displayError(data.error || 'Unknown error occurred');
+                }
+            } catch (error) {
+                displayError('Connection error: ' + error.message);
+            } finally {
+                predictBtn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+
+        function displayResult(data) {
+            const label = data.label;
+            const confidence = data.confidence;
+            const confidencePercent = (confidence * 100).toFixed(2);
+
+            const resultClass = label === 'REAL' ? 'real' : 'fake';
+            const resultTitle = label === 'REAL' ? resultMessages.real : resultMessages.fake;
+
+            let html = `
+                <div class="result-title">${resultTitle}</div>
+                <div class="result-content">
+                    <p><strong>Classification:</strong> ${label}</p>
+                    <div class="confidence">
+                        <div><strong>Confidence Score:</strong> ${confidencePercent}%</div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: ${confidencePercent}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            resultDiv.innerHTML = html;
+            resultDiv.className = `result show ${resultClass}`;
+        }
+
+        function displayError(error) {
+            resultDiv.innerHTML = `
+                <div class="result-title">[ERROR] Error</div>
+                <div class="result-content">
+                    <p>${error}</p>
+                </div>
+            `;
+            resultDiv.className = 'result show error';
+        }
+
+        function loadExample(index) {
+            textInput.value = examples[index];
+            textInput.focus();
+        }
+
+        // Load first example on page load
+        window.addEventListener('load', () => {
+            loadExample(0);
+        });
+    </script>
+</body>
+</html>
