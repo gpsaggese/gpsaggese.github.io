@@ -1,70 +1,114 @@
-# electricity_forecast.API.md
+# Keras Tuner API Documentation
 
-This file documents the small helper layer used in the electricity
-forecasting project. The goal of this layer is to keep the notebooks
-clean and to separate basic data preparation and model setup from the
-main analysis.
+## Overview
 
-The functions below wrap common operations (resampling, scaling,
-windowing, baseline LSTM model creation, inverse-scaling of outputs).
-Each function is designed to behave predictably with simple inputs and
-minimal configuration.
+Keras Tuner is a hyperparameter optimization library designed to integrate
+seamlessly with TensorFlow and Keras. It automates the process of selecting
+optimal hyperparameters for deep learning models, enabling systematic and
+reproducible experimentation.
 
----
-
-## load_first_csv_in_data(data_dir="data")
-Searches the `data/` directory for the first CSV file and loads it
-as a pandas DataFrame.
-
-**Args**
-- `data_dir` (str)
-
-**Returns**
-- `pd.DataFrame`
+Keras Tuner is model-agnostic and supports a wide range of neural network
+architectures, including fully connected networks, convolutional models,
+and recurrent models.
 
 ---
 
-## prepare_data_from_df(df, timestamp_col, value_col, freq="H", window_size=24, horizon=1, val_fraction=0.2)
+## Motivation
 
-Converts a raw dataframe into supervised learning windows.
-Performs sorting, resampling, forward-fill, scaling, then builds sliding
-windows for LSTM-style models.
+Training deep learning models typically requires selecting multiple
+hyperparameters such as:
 
-**Args**
-- df : input DataFrame with timestamp and value
-- timestamp_col (str)
-- value_col (str)
-- freq (str): resample frequency
-- window_size (int)
-- horizon (int)
-- val_fraction (float)
+- number of hidden units
+- learning rate
+- dropout rate
+- number of layers
 
-**Returns**
-- X_train, y_train, X_val, y_val, scaler
+Manual tuning of these parameters is inefficient and often leads to
+suboptimal results. Keras Tuner provides a structured framework to explore
+hyperparameter spaces using well-defined search strategies.
 
 ---
 
-## build_lstm_model(input_shape, units=64, dropout=0.1, lr=1e-3)
-Builds a simple LSTM model for 1-step forecasting.
+## Core Concepts
+
+### HyperModel
+
+A HyperModel defines how a Keras model is constructed given a set of
+hyperparameters. In practice, this is implemented as a function that
+accepts a `HyperParameters` object and returns a compiled Keras model.
+
+The HyperModel is responsible for:
+- defining the network architecture
+- selecting optimizer configurations
+- specifying training-related parameters
 
 ---
 
-## build_multistep_model(input_shape, units=64, dropout=0.1, lr=1e-3, horizon=24)
-LSTM whose Dense layer outputs multiple future steps.
+### HyperParameters
+
+The `HyperParameters` object represents the search space. It allows users
+to declare tunable parameters using common types such as:
+
+- integers (e.g., number of units)
+- floats (e.g., learning rate)
+- categorical choices
+
+During the search process, Keras Tuner samples values from this space
+to generate candidate models.
 
 ---
 
-## train_model(...)
-Thin wrapper around model.fit() with early stopping.
+### Tuner
+
+A `Tuner` manages the execution of the hyperparameter search. It trains
+multiple model configurations and tracks their performance on a validation
+set.
+
+Keras Tuner provides several built-in tuners:
+
+- **RandomSearch**: randomly samples configurations from the search space
+- **Hyperband**: allocates resources adaptively to promising configurations
+- **BayesianOptimization**: uses probabilistic modeling to guide the search
+
+Each tuner records trial results and identifies the best-performing models.
 
 ---
 
-## invert_and_eval(...)
-Inverse transform + compute MAE/RMSE.
+## Typical Workflow
+
+A standard Keras Tuner workflow consists of the following steps:
+
+1. Define a model-building function
+2. Specify the hyperparameter search space
+3. Initialize a tuner with a search strategy
+4. Run the search on training data
+5. Retrieve the best model(s)
+
+This workflow enables systematic exploration of model configurations while
+maintaining reproducibility.
 
 ---
 
-## Notes
-The wrapper is intentionally light. The notebook still exposes the
-Keras and Keras-Tuner APIs. This file helps avoid repeated boilerplate
-and keeps the example notebook cleaner.
+## Lightweight Wrapper Layer
+
+This project includes a small utility module that wraps commonly used Keras
+and Keras Tuner functionality. The purpose of this wrapper is to:
+
+- standardize model construction
+- simplify training with early stopping
+- reduce repetitive boilerplate code
+
+The wrapper does not alter the behavior of Keras Tuner or Keras APIs. It
+serves only as a convenience layer to keep notebooks concise and readable.
+
+---
+
+## Scope of This Document
+
+This document focuses exclusively on **Keras Tuner as a tool and API**.
+
+All project-specific datasets, modeling decisions, experiments, and
+evaluation results are documented separately in:
+
+- `keras_tuner_example.md`
+- `keras_tuner_example.ipynb`

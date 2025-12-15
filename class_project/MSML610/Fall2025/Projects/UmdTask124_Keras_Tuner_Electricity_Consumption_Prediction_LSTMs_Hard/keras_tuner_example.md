@@ -1,49 +1,107 @@
-# electricity_forecast.example.md
+# Electricity Consumption Forecasting Using LSTMs
 
-This file describes the example pipeline used in the project notebook.
-The goal is to build and evaluate LSTM models for hourly electricity
-consumption using historical load values.
+## Problem Description
 
-The notebook follows these steps:
+Accurate electricity consumption forecasting is critical for power grid
+planning and energy management. The goal of this project is to predict
+hourly electricity consumption using historical load data.
 
-### 1. Data loading and preparation
-- Load the raw CSV (AEP hourly load).
-- Convert timestamps to datetime, sort by time.
-- Resample to hourly and fill any gaps.
-- Split into train / validation / test based on time.
-- Build sliding-window sequences for LSTM input.
+This example demonstrates how recurrent neural networks, specifically
+LSTM models, can be applied to time series forecasting and how
+hyperparameter tuning improves model performance.
 
-### 2. Baseline LSTM model
-A simple one-layer LSTM is trained to predict the next hour of load.
-The results (MAE/RMSE) form a baseline against which tuned models are
-compared.
+---
 
-### 3. Hyperparameter tuning
-Keras Tuner is used to search over:
-- number of LSTM units  
-- dropout  
-- learning rate  
+## Dataset Description
 
-The tuned model improves over the baseline.
+The dataset used in this project contains hourly electricity consumption
+measurements from the PJM Interconnection. Each record consists of:
 
-### 4. Multi-step forecasting (bonus)
-A separate model is trained to predict the next 24 hours at once.
-Errors are higher, which is expected for longer horizons.
+- a timestamp
+- electricity load in megawatts (MW)
 
-### 5. Classical baseline: Prophet
-Prophet is fit as a reference model. It performs worse than LSTM on
-high-frequency hourly load, but provides a useful comparison.
+The data spans multiple years and exhibits strong daily and seasonal
+patterns, making it well-suited for sequence-based models.
 
-### 6. Model comparison
-The notebook ends with a table comparing:
+---
 
-- Baseline LSTM  
-- Tuned LSTM  
-- 24-step multi-output LSTM  
-- Prophet baseline  
+## Data Preparation
 
-The tuned 1-step LSTM is the best-performing model.
+The raw data is resampled to a consistent hourly frequency and missing
+values are handled using forward filling. The series is normalized
+using Min-Max scaling to improve neural network training stability.
 
-### How to run
-Simply run the cells in `electricity_forecast.example.ipynb`.  
-All data preparation, training, and evaluation steps are contained there.
+Sliding windows are constructed from the time series so that the model
+learns to predict future values based on a fixed-length history.
+
+---
+
+## Baseline LSTM Model
+
+A baseline LSTM model is first trained using a fixed architecture.
+This model serves as a reference point to evaluate the benefit of
+hyperparameter tuning.
+
+The baseline model captures general temporal patterns but is limited
+by manually chosen hyperparameters.
+
+---
+
+## Hyperparameter Tuning with Keras Tuner
+
+To improve performance, Keras Tuner is used to automatically search
+for better hyperparameters. The tuning process explores variations in:
+
+- number of LSTM units
+- learning rate
+- dropout rate
+
+Each configuration is evaluated using validation loss, and the best
+model is selected based on this metric.
+
+---
+
+## Tuned LSTM Model
+
+The best hyperparameters identified by Keras Tuner are used to train
+a final LSTM model. This tuned model demonstrates improved forecasting
+accuracy compared to the baseline.
+
+Early stopping is applied to prevent overfitting.
+
+---
+
+## Multi-Step Forecasting
+
+The project is extended to multi-step forecasting, where the model
+predicts multiple future time steps instead of a single hour ahead.
+This provides a more realistic forecasting scenario for real-world
+applications.
+
+---
+
+## Baseline Comparison with Prophet
+
+To provide a non-neural baseline, a Prophet model is trained on the
+same dataset. The performance of Prophet is compared against the
+LSTM-based approaches using standard error metrics.
+
+---
+
+## Evaluation and Results
+
+Models are evaluated using Mean Absolute Error (MAE) and Root Mean
+Squared Error (RMSE) on a held-out test set.
+
+Overall, the tuned LSTM model achieves the best performance, followed
+by the baseline LSTM. The Prophet model performs worse on this dataset,
+highlighting the benefit of sequence-based neural models for this task.
+
+---
+
+## Conclusion
+
+This example demonstrates the effectiveness of LSTM models for
+electricity consumption forecasting and the importance of systematic
+hyperparameter tuning. Keras Tuner provides a clean and efficient
+framework for optimizing deep learning models in time series settings.
