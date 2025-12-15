@@ -104,10 +104,10 @@ UmdTask38_Fall2025_YData-profiling_Sentiment_Analysis.../
 ## Results
 
 **Test Set Performance:**
-- Accuracy: ~0.80
-- Precision (macro): ~0.80
-- Recall (macro): ~0.78
-- F1-Score (macro): ~0.78
+- Accuracy: ~0.776
+- Precision (macro): ~0.725
+- Recall (macro): ~0.744
+- F1-Score (macro): ~0.731
 
 **Per-Class:**
 - Negative: Precision 0.83, Recall 0.82
