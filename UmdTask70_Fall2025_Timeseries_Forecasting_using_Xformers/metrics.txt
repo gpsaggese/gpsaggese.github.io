@@ -1,0 +1,3 @@
+RMSE_Close: 4.0744
+MAE_Xformers: 3.2500
+MAE_ARIMA: 9.2321
