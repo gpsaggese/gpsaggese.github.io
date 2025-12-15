@@ -1,59 +1,37 @@
-FROM --platform=$BUILDPLATFORM ubuntu:20.04
-ENV DEBIAN_FRONTEND=noninteractive
+FROM python:3.10-slim
 
-RUN apt-get -y update
-RUN apt-get -y upgrade
+WORKDIR /data
 
-# Install system utilities.
-RUN apt install -y --no-install-recommends \
-    sudo \
-    curl \
-    systemctl \
-    gnupg \
-    git \
-    vim
-
-# Install Python.
-RUN apt install -y --no-install-recommends \
-    python3 \
-    python3-pip \
-    python3-dev
-
-RUN python3 -m pip install --upgrade pip
-    
-# Install Python packages.
-# There is a bug:
-#   File "/opt/homebrew/lib/python3.10/site-packages/tornado/iostream.py", line 182, in advance
-#   assert 0 < size <= self._size
-# for tornado==6.2 and jupyter-client==8.0.2.
-# https://discourse.jupyter.org/t/jupyter-notebook-zmq-message-arrived-on-closed-channel-error/17869/10
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
     build-essential \
-    python3-dev \
-    libxml2-dev \
-    libxslt-dev \
-    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /install
+# Copy project files
+COPY requirements.txt .
+COPY sentiment_utils.py .
+COPY README.md .
 
-# Install common packages
-ADD install_common_packages.sh /install/
-RUN chmod +x /install/install_common_packages.sh && /install/install_common_packages.sh
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Install Jupyter extensions.
-ADD install_jupyter_extensions.sh /install
-RUN chmod +x /install/install_jupyter_extensions.sh
-RUN /install/install_jupyter_extensions.sh
-
-# Config.
-ADD etc_sudoers /install/
-COPY etc_sudoers /etc/sudoers
-COPY bashrc /root/.bashrc
-
-# Report package versions.
-ADD version.sh /install/
-RUN /install/version.sh 2>&1 | tee version.log
-
-# Jupyter.
+# Expose Jupyter port
 EXPOSE 8888
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8888/ || exit 1
+
+# Start Jupyter notebook server
+CMD ["jupyter", "notebook", \
+     "--ip=0.0.0.0", \
+     "--port=8888", \
+     "--no-browser", \
+     "--allow-root", \
+     "--ServerApp.token=''", \
+     "--ServerApp.password=''", \
+     "--ServerApp.disable_check_xsrf=True", \
+     "--ServerApp.allow_origin='*'"]

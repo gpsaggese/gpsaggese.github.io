@@ -1,12 +1,13 @@
-#!/bin/bash -e
+#!/bin/bash
 
-GIT_ROOT=$(git rev-parse --show-toplevel)
-source $GIT_ROOT/class_project/docker_common/utils.sh
+# Build Docker image for Sentiment Analysis project
+echo "Building Docker image..."
+docker build -t umd_msml610_sentiment:latest .
 
-REPO_NAME=umd_msml610
-IMAGE_NAME=umd_msml610_image
-
-# Build container.
-export DOCKER_BUILDKIT=1
-#export DOCKER_BUILDKIT=0
-build_container_image
+if [ $? -eq 0 ]; then
+    echo "✓ Docker image built successfully!"
+    echo "Image name: umd_msml610_sentiment:latest"
+else
+    echo "✗ Docker build failed"
+    exit 1
+fi
