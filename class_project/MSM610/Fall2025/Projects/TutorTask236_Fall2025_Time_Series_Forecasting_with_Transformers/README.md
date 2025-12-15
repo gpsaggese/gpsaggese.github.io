@@ -14,16 +14,27 @@ Amazon (AMZN) historical stock price data is used as the primary example dataset
 ### Repository Structure
 .
 ├── transformer_utils.py          # Core API + wrapper utilities
+
 ├── transformer.API.md            # Native API documentation
+
 ├── transformer.API.ipynb         # Minimal API usage notebook
+
 ├── transformer.example.md        # End-to-end application description
+
 ├── transformer.example.ipynb     # Executable example notebook
+
 ├── README.md                     # This file
+
 ├── Dockerfile
+
 ├── requirements.txt
+
 ├── data/
+
 │   └── AMZN.csv
+
 ├── checkpoints/
+
 └── *.npy                         # Saved prediction outputs
 
 
