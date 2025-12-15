@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # MCP API Server
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    image: bert-fake-news-mcp:latest
+    container_name: bert-mcp-server
+    ports:
+      - "9090:9090"
+    environment:
+      - MCP_PORT=9090
+      - MCP_HOST=0.0.0.0
+      - MCP_MODELS_DIR=models
+      - MCP_DEVICE=mps
+    volumes:
+      - ./models:/app/models:ro
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; socket.create_connection(('localhost', 9090), timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - bert-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  bert-network:
+    driver: bridge

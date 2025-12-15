@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-12-14T20:07:13.378649",
+  "dataset": "unseen_test_data (65,698 articles)",
+  "test_samples": 64951,
+  "fake_samples": 33148,
+  "real_samples": 31803,
+  "label_mapping": {
+    "model_convention": "label=0 (FAKE), label=1 (REAL)",
+    "test_data_convention": "unreliable=0 (REAL), unreliable=1 (FAKE)",
+    "note": "Test labels were flipped before evaluation to match model convention"
+  },
+  "metrics": {
+    "accuracy": 0.8594170990438946,
+    "precision": 0.8766363213502558,
+    "recall": 0.8296387133289312,
+    "f1": 0.8524902667162081,
+    "roc_auc": 0.9343318561607215
+  },
+  "confusion_matrix": {
+    "true_negatives": 29435,
+    "false_positives": 3713,
+    "false_negatives": 5418,
+    "true_positives": 26385
+  },
+  "model_path": "models/bert_fake_news/"
+}
