@@ -19,6 +19,7 @@ The API supports:
 - Computing GLM residual and influence diagnostics for anomaly detection
 - Evaluating supervised performance (precision, recall, F1, ROC, PR)
 - Running an unsupervised baseline using Isolation Forest
+- Performing a statistical test to assess whether anomaly flags are associated with fraud labels
 
 For executable demonstrations of these utilities, see:
 - `AnomalyDetection.API.ipynb`
@@ -118,7 +119,10 @@ Processing steps:
 - Scaled training features before SMOTE
 - Original training labels
 
-This design preserves a realistic evaluation setting while enabling supervised model training.
+**Note:**  
+In `AnomalyDetection.API.ipynb`, this function is demonstrated primarily as an API reference.
+The full end-to-end modeling and final evaluation using this pipeline are shown in
+`AnomalyDetection.example.ipynb`.
 
 ---
 
@@ -133,6 +137,10 @@ The GLM provides:
 - predicted fraud probabilities
 - access to classical statistical diagnostics
 - a supervised baseline for comparison with anomaly detection methods
+
+**Note:**  
+In the API notebook, the GLM is fitted on a lightweight pipeline for demonstration purposes.
+The final SMOTE-based training and evaluation workflow is presented in `AnomalyDetection.example.ipynb`.
 
 ---
 
@@ -197,7 +205,10 @@ Evaluates anomaly flags as if they were fraud predictions.
 - True positives, false positives, false negatives, true negatives
 - Precision and recall for the fraud class
 
-This evaluates the diagnostic rule itself, not a calibrated classifier.
+**Important:**  
+This function evaluates the **diagnostic rule itself**, not a calibrated classifier.
+In the API notebook, this evaluation is shown as a functional demonstration; realistic
+held-out evaluation is performed in `AnomalyDetection.example.ipynb`.
 
 ---
 
@@ -249,9 +260,24 @@ Outputs include:
 
 ---
 
-## 10. Related Project Files
+## 10. Statistical Test Utility
+
+### 10.1 `two_proportion_ztest_flag_rate(y_true, flags, alternative="larger")`
+
+Performs a **two-proportion z-test** to assess whether fraud transactions are flagged
+at a higher rate than legitimate transactions.
+
+**Null hypothesis:** Fraud and legitimate transactions are flagged at the same rate.  
+**Alternative hypothesis:** Fraud transactions are flagged more frequently.
+
+This test does not improve model performance; it provides a formal statistical check
+that anomaly flagging behavior is associated with fraud labels rather than random chance.
+
+---
+
+## 11. Related Project Files
 
 - `AnomalyDetection.API.ipynb` — executable API usage demonstrations
-- `AnomalyDetection.example.ipynb` — full end-to-end workflow
+- `AnomalyDetection.example.ipynb` — full end-to-end workflow and final evaluation
 - `AnomalyDetection.example.md` — narrative explanation of the workflow
 - `README.md` — project setup, structure, and execution instructions

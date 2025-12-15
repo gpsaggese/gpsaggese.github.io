@@ -1,7 +1,7 @@
 
 # Anomaly Detection in Financial Transactions
 
-**Statistical Modeling and Anomaly Detection for Fraud Detection**
+**Using statsmodels**
 
 ---
 
@@ -40,14 +40,14 @@ The project uses the **Credit Card Fraud Detection** dataset from Kaggle
   - `Class = 0`: legitimate
 
 The dataset is **not included** in this repository due to licensing.
-Download `creditcard.csv` from Kaggle and place it in the project root directory.
+Download `creditcard.csv` from Kaggle and place it in the **same directory where you run the notebooks**
+(so `os.getcwd()` in the notebook resolves to the location containing `creditcard.csv`).
 
 ---
 
 ## Repository Structure
 
-```
-
+```text
 AnomalyDetection/
 │
 ├── AnomalyDetection_utils.py      # Reusable utility functions and API logic
@@ -60,16 +60,14 @@ AnomalyDetection/
 │
 ├── Dockerfile                     # Docker environment (used by class Docker scripts)
 └── README.md                      # Project overview and instructions
-
 ````
 
 ---
 
 ## Running the Project (Docker)
 
-This project is designed to run **entirely inside Docker** using the
-**class-provided simple Docker setup**, which is the recommended workflow
-used in the course tutorials.
+This project is designed to run **inside Docker** using the **class-provided Docker setup**
+from the tutorial template.
 
 ### 1. Navigate to the Docker template directory
 
@@ -77,7 +75,7 @@ From the repository root, navigate to:
 
 ```bash
 cd class_project/instructions/tutorial_template/tutorial_github_data605_style
-````
+```
 
 ### 2. Build the Docker container
 
@@ -102,29 +100,29 @@ This starts Jupyter Notebook inside the Docker container and exposes it on port 
 
 ### 4. Open Jupyter in the browser
 
-Open the following URL in your web browser:
+Open:
 
-```
+```text
 http://localhost:8888
 ```
 
-The Jupyter Notebook interface will open at the path:
-
-```
-class_project/MSML610/Fall2025/Projects
-```
-
-From there, run the notebooks:
+In the Jupyter file browser, navigate to the project directory (where this repository is mounted),
+ensure `creditcard.csv` is in the same working directory as the notebooks, and then run:
 
 * `AnomalyDetection.API.ipynb`
 * `AnomalyDetection.example.ipynb`
 
-Both notebooks are designed to run **top-to-bottom** without modification.
+Both notebooks are designed to run **top-to-bottom** (Kernel → Restart & Run All) without code changes.
 
-**Note:**
-There is a minor typo in the template documentation regarding directory names.
-The correct directory is `tutorial_github_data605_style`, not `docker_simple`.
-The Docker setup functions correctly when following the actual repository structure.
+---
+
+## Recommended Run Order
+
+1. **API demo:** `AnomalyDetection.API.ipynb`
+   Demonstrates the reusable functions (loading, preprocessing, GLM, diagnostics, evaluation, Isolation Forest, and the z-test utility) on a smaller subset for speed.
+
+2. **Full workflow:** `AnomalyDetection.example.ipynb`
+   Runs the full end-to-end workflow and reports the main evaluation metrics and plots.
 
 ---
 

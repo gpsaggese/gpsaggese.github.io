@@ -123,6 +123,11 @@ Reported metrics include:
 Rather than optimizing a single metric, the analysis emphasizes how **threshold selection**
 controls the trade-off between catching fraud (recall) and limiting false positives (precision).
 
+**Note on thresholding in the notebook:** In addition to the default threshold (e.g., 0.5),
+the notebook also demonstrates a **recall-constrained threshold selection** procedure to illustrate
+how an operating point can be chosen under practical constraints (for example, ensuring recall is at
+least a target value).
+
 ---
 
 ## 8. Unsupervised Anomaly Detection with Isolation Forest
@@ -141,30 +146,50 @@ but it may flag a large number of legitimate transactions in highly imbalanced s
 
 ---
 
-## 9. Comparative Interpretation
+## 9. Statistical Test of Flagging Rates (Two-Proportion Z-Test)
+
+To quantify whether anomaly flags are meaningfully associated with fraud labels, the notebook applies a
+**two-proportion z-test** comparing:
+
+- Flag rate among fraud transactions (`Class = 1`)
+- Flag rate among legitimate transactions (`Class = 0`)
+
+**Null hypothesis:** Fraud and legitimate transactions are flagged at the same rate.  
+**Alternative (one-sided):** Fraud transactions are flagged at a higher rate.
+
+This test is applied to both:
+- Diagnostics-based flags from the GLM residual/influence measures
+- Isolation Forest anomaly flags
+
+Very small p-values provide evidence that flagged anomalies occur disproportionately in fraud transactions,
+supporting that the anomaly detection signals are not random.
+
+---
+
+## 10. Comparative Interpretation
 
 The results highlight complementary strengths:
 
-- **GLM residual diagnostics**
-  - High interpretability
-  - High precision
-  - Lower recall
-  - Identifies statistically extreme observations
+- **GLM residual diagnostics (rule-based anomaly flags)**
+  - High interpretability (residuals, leverage, influence)
+  - In this run, diagnostics-based thresholding can produce **many false positives** on the imbalanced test set (low precision),
+    while still identifying a subset of fraud cases (moderate recall).
+  - Most useful as an explainable **triage signal** that can feed manual review or downstream decision logic.
 
 - **Supervised GLM classification**
   - Strong ranking performance (ROC-AUC / PR-AUC)
-  - Sensitive to decision threshold
+  - Sensitive to decision threshold, and the notebook demonstrates both default evaluation and operational threshold selection.
 
 - **Isolation Forest**
-  - Higher recall
-  - Lower precision
-  - Effective at detecting unusual patterns without labels
+  - Higher recall in many settings
+  - Lower precision, often flagging many legitimate transactions as anomalies in extremely imbalanced data
+  - Effective at detecting unusual patterns without labels, but typically requires careful tuning and review workflows
 
 These differences reflect the fundamental **precision–recall trade-off** inherent in fraud detection.
 
 ---
 
-## 10. Conclusion
+## 11. Conclusion
 
 This example demonstrates that effective fraud detection benefits from
 **multiple complementary modeling perspectives**:
@@ -179,7 +204,7 @@ key requirements in financial risk and fraud analytics.
 
 ---
 
-## 11. Related Files
+## 12. Related Files
 
 - **End-to-end analysis:** `AnomalyDetection.example.ipynb`
 - **API reference:** `AnomalyDetection.API.ipynb`
