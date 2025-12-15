@@ -1,10 +1,10 @@
 # MCP BERT Fake News Detection
 
-**Author:** Dhanush Vasa
-**UID:** 121227645
-**Course:** MSML610 Advanced Machine Learning
-**Institution:** University of Maryland, College Park
-**Semester:** Fall 2025
+- **Author:** Dhanush Vasa
+- **UID:** 121227645
+- **Course:** MSML610 Advanced Machine Learning
+- **Institution:** University of Maryland, College Park
+- **Semester:** Fall 2025
 
 ---
 
