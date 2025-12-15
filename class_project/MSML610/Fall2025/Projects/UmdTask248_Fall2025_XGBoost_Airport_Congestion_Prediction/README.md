@@ -210,14 +210,19 @@ UmdTask248_Fall2025_XGBoost_Airport_Congestion_Prediction/
 │   └── app.py
 │
 ├── src/
-│   ├── preprocess_hourly.py
-│   └── train_model.py
+│   ├──init.py
+│   └──train_model.py
+│   └──preprocess_hourly.py
 │
 ├── data/
 │   ├── raw/
-│   │   └── README.md
+│   │   └──flights.csv #(not uploaded on github as File size 592.4 MB)
+│   │   └──airports.csv
+│   │   └──airlines.csv 
 │   ├── processed/
+│   │   └──hourly_congestion.csv
 │   └── models/
+│   │   └──model.pkl
 │
 ├── notebooks/
 │   ├── 01_eda_flights.ipynb
