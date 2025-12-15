@@ -140,17 +140,18 @@ UmdTask50_Fall2025_Weights_&_Biases_Image_Classification_with_Transfer_Learning/
 ├── Dockerfile
 ├── docker_build.sh          # Build Docker image
 ├── docker_jupyter.sh        # Launch Jupyter in Docker
-├── example.ipynb            # Example/demo notebook
-├── train.ipynb              # Main training notebook (run on Google Colab with T4 GPU)
-├── README.md                # This file
-├── utils.py                 # All utility functions (data prep, training, evaluation)
-└── models/                  # Saved models (generated)
-    └── model_checkpoint.keras
+├── Weights_and_biases.example.ipynb            # Example/demo notebook
+├── Weights_and_biases.train.ipynb              # Main training notebook (run on Google Colab with T4 GPU)
+├── Weights_and_biases_utils.py                 # All utility functions (data prep, training, evaluation)
+├── __init__.py              # Main training notebook (run on Google Colab with T4 GPU)
+├── README.md                # This file is the main documentation of the project
+└── Weights_and_biases.example.md # Exaplains the example/inference script of the project
+
 ```
 
 ### Key Files
 
-**`utils.py`**: Complete utility module containing:
+**`Weights_and_biases_utils.py`**: Complete utility module containing:
 - **Data Preparation Functions**:
   - `download_dataset()`: Downloads AFHQ dataset from Kaggle
   - `collect_image_dataframes()`: Creates train/validation DataFrames from directory structure
@@ -165,7 +166,7 @@ UmdTask50_Fall2025_Weights_&_Biases_Image_Classification_with_Transfer_Learning/
   - `heterogeneous_ensemble()`: Trains different architectures and combines predictions
   - `download_wandb_models_only()`: Downloads trained models from W&B artifacts
 
-**`train.ipynb`**: Main training notebook
+**`Weights_and_biases.train.ipynb`**: Main training notebook
 - GPU configuration
 - W&B authentication
 - Complete training pipeline execution
@@ -183,7 +184,7 @@ wandb login
 ```
 
 2. **Run Complete Training Pipeline**
-   - Open `train.ipynb` in Google Colab or Jupyter
+   - Open `Weights_and_biases.train.ipynb` in Google Colab or Jupyter
    - Execute all cells to run the full pipeline
    - The notebook handles preprocessing, training, and logging automatically
 
@@ -191,7 +192,7 @@ wandb login
 
 ### Training Pipeline
 
-The `utils.py` module provides a complete training pipeline:
+The `Weights_and_biases_utils.py` module provides a complete training pipeline:
 
 1. **Data Preparation** (`main_prep()`)
    - Download AFHQ dataset from Kaggle
@@ -216,7 +217,7 @@ The `utils.py` module provides a complete training pipeline:
 
 ### Training Configuration
 ```python
-# Default configuration in utils.py
+# Default configuration in Weights_and_biases_utils.py
 DATASET_REF = "andrewmvd/animal-faces"
 BASE_SUBDIR = 'afhq'
 CLASSES = ['cat', 'dog', 'wild']
@@ -303,7 +304,7 @@ MobileNetV2 outperforms both single ResNet50/EfficientNetB0 models and the ensem
 ### Model Hyperparameters
 ```python
 # When calling training functions
-import utils
+import Weights_and_biases_utils as utils
 
 model, acc = utils.train_model(
     train_gen, val_gen,
@@ -317,7 +318,7 @@ model, acc = utils.train_model(
 
 ### Data Processing Constants
 ```python
-# In utils.py
+# In Weights_and_biases_utils.py
 DATASET_REF = "andrewmvd/animal-faces"
 BASE_SUBDIR = 'afhq'
 CLASSES = ['cat', 'dog', 'wild']
@@ -328,7 +329,7 @@ num_workers = 16
 
 ### Augmentation Parameters
 ```python
-# Training data augmentation (in utils.py)
+# Training data augmentation (in Weights_and_biases_utils.py)
 train_datagen = ImageDataGenerator(
     rescale=1./255,
     shear_range=0.2,
@@ -342,15 +343,13 @@ val_datagen = ImageDataGenerator(rescale=1./255)
 
 ##  Notes
 
-- `train.ipynb` is currently used for training, not a demo/tutorial
-- `example.ipynb` can be used for demonstration purposes
-- `utils.py` contains all utility functions in a single module for simplicity
+- `Weights_and_biases.train.ipynb` is currently used for training, not a demo/tutorial
+- `Weights_and_biases.example.ipynb` can be used for demonstration purposes
+- `Weights_and_biases_utils.py` contains all utility functions in a single module for simplicity
 - Training on Google Colab with T4 GPU is recommended for efficiency
-- All imports should use `import utils` rather than `from utils import ...`
 
 ## Acknowledgments
 
 - **Dataset**: AFHQ (Animal Faces-HQ) by andrewmvd on Kaggle
 - **Frameworks**: TensorFlow/Keras, Weights & Biases
 - **Pre-trained Models**: ImageNet weights
-- **Template**: MSML610 Fall2025 class project template
