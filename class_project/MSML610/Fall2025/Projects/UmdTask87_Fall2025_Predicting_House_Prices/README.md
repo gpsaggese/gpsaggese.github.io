@@ -133,6 +133,66 @@ You can leave missing fields as `np.nan`; the pipeline imputers handle them.
 
 ---
 
+## REST API (Deployment)
+
+This project includes a lightweight REST API for real-time house price predictions using the trained model artifacts.
+
+### Prerequisites
+1) Run `AzuaHousing.API.ipynb` first to generate:
+- `artifacts/model.joblib`
+- `artifacts/metrics.json`
+
+2) Install dependencies:
+```bash
+pip install -r requirements.txt
+````
+
+### Start the API server
+
+Run the server from the project environment:
+
+```bash
+python -m uvicorn serve:app --host 0.0.0.0 --port 8000
+```
+
+### Health check
+
+```bash
+curl -s http://127.0.0.1:8000/health
+```
+
+Expected response includes `status: "ok"` and confirms the model is loaded.
+
+### Make a prediction
+
+Send a JSON payload containing a `features` object. You can provide only a subset of features; missing values are handled by the pipeline imputers.
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "features": {
+      "Suburb": "Abbotsford",
+      "Type": "h",
+      "Method": "S",
+      "Rooms": 2,
+      "Distance": 2.5,
+      "Postcode": 3067,
+      "Landsize": 202,
+      "Regionname": "Northern Metropolitan",
+      "Year": 2016,
+      "Month": 3
+    }
+  }'
+```
+
+The response returns:
+
+* `predicted_price`: predicted house price
+* `model_name`: model selected during training (from `metrics.json`)
+
+---
+
 ## Reproducibility
 
 * Train/test split uses `random_state=42`
