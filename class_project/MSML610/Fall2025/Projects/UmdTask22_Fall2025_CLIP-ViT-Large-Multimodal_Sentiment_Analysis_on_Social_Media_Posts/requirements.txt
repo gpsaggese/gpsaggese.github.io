@@ -1,0 +1,18 @@
+# Core ML
+torch
+torchvision
+
+# CLIP 
+clip-anytorch
+open-clip-torch
+
+# Utilities
+numpy
+pandas
+pyarrow
+tqdm
+Pillow
+ftfy
+regex
+matplotlib
+scikit-learn
