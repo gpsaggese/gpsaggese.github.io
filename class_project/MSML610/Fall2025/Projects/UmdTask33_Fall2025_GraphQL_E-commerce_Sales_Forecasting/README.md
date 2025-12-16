@@ -1,4 +1,8 @@
-# E-commerce Monthly Sales Forecasting with GraphQL
+Mihir Chotneeru 
+
+UID : 121301635
+
+# MSML610 - E-commerce Monthly Sales Forecasting with GraphQL (Difficulty : Hard)
 given a shop, an item and a month, we predict how many units will be sold in that month**.  
 Then we put that prediction behind a **GraphQL API** and also make it run inside a **Docker** container.
 
@@ -105,7 +109,7 @@ and "GraphQL_API.py" is the file that uvicorn runs to expose GraphQL.
 
 ## 2. Data and feature engineering
 
-The dataset is the classic Kaggle **Predict Future Sales** data.
+The dataset is the classic Kaggle **Predict Future Sales** data
 Each row in the raw file is a single day sale:
 
 * `date` – day as string
@@ -124,7 +128,7 @@ Steps (implemented in `GraphQL_utils.py` and used in the notebook):
 
    * sum of `item_cnt_day` → `item_cnt_month`
    * mean of `item_price` → `avg_item_price`
-3. create calendar columns from the date
+3. create calender columns from the date
 
    * `year`
    * `month`
@@ -133,7 +137,7 @@ Steps (implemented in `GraphQL_utils.py` and used in the notebook):
    * `lag_1`, `lag_2`, `lag_3` = `item_cnt_month` shifted by 1, 2, 3 months
    * rows where any lag is missing are dropped
 
-Final set of features used to train:
+Final set of features used to train
 
 ["shop_id", "item_id", "avg_item_price", "year", "month", "lag_1", "lag_2", "lag_3"]
 
@@ -141,7 +145,7 @@ Target variable is:
 
 "item_cnt_month"
 
-This same feature list gets written to `models/model_meta.json` so the API knows
+This same feature list gets writen to `models/model_meta.json` so the API knows
 exactly which columns and order to use later.
 
 
@@ -155,7 +159,7 @@ The notebook follows a natural order:
 
 3. **add lagged features** with `make_lagged_features(monthly, lags=(1, 2, 3))`
 
-4. **make train and validation sets**
+4. **make train and validaton sets**
 
    * most months go into training
    * the last month becomes the validation month
@@ -196,7 +200,7 @@ The notebook follows a natural order:
 7. **train final model on all data**
 
    After we are happy with validation performance, we rebuild `X_full` and `y_full`
-   using all allowed months, and train a slightly bigger forest for stability.
+   using all all allowed months, and train a slightly bigger forest for stability.
    This becomes the **production model**.
 
 8. **save model and metadata**

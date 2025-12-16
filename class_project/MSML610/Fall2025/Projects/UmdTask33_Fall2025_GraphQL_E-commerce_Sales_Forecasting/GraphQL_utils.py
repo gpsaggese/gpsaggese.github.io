@@ -58,7 +58,6 @@ def make_monthly_shop_item_sales(sales_df: pd.DataFrame) -> pd.DataFrame:
     Aggregate daily sales to monthly shop-item level.
 
     Parameters
-    ----------
     sales_df : pandas.DataFrame
         Raw sales data as loaded from 'sales_train.csv'. Must contain at least
         the columns:
@@ -69,7 +68,6 @@ def make_monthly_shop_item_sales(sales_df: pd.DataFrame) -> pd.DataFrame:
             - 'item_price'
 
     Returns
-    -------
     pandas.DataFrame
         DataFrame with one row per (date_block_num, shop_id, item_id) and
         the following columns:
@@ -348,12 +346,11 @@ def load_trained_model_and_features(
       2. Reload raw Kaggle data (and calendar), rebuild monthly + lagged features.
 
     Returns
-    -------
     model : RandomForestRegressor
     lagged : pandas.DataFrame
     feature_cols : list[str]
     """
-    # --- 1) model + meta ---
+    # 1) model + meta 
     assert os.path.exists(model_path), f"Model file not found: {model_path}"
     assert os.path.exists(meta_path), f"Meta file not found: {meta_path}"
 
@@ -364,7 +361,7 @@ def load_trained_model_and_features(
     feature_cols: list[str] = meta["feature_cols"]
     lags: list[int] = meta["lags"]
 
-    # --- 2) rebuild monthly + lagged ---
+    # 2) rebuild monthly + lagged
     raw = load_raw_kaggle_data(base_path=raw_path)
     sales = raw["sales_train"]
     calendar = raw.get("calendar", None)
@@ -431,7 +428,7 @@ def predict_sales(
 
     We combine:
       - RandomForest prediction
-      - simple moving-average baseline from lag_1..lag_3
+      - simple moving-average baseline from lag_1 ,...lag_3
     into a small ensemble.
     """
     # 1) build feature row

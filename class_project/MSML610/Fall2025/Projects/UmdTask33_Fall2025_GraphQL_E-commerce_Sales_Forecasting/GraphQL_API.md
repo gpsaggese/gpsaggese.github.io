@@ -149,7 +149,7 @@ class Query(graphene.ObjectType):
         )
 ```
 
-From GraphQL’s point of view this looks like:
+From GraphQL’s point of view this looks like
 
 ```graphql
 type SalesPrediction {
@@ -185,7 +185,7 @@ Now we make the web app:
 app = FastAPI(title="E-commerce Sales Forecasting API")
 ```
 
-A tiny root endpoint for a quick check:
+A tiny root endpoint for quick check
 
 ```python
 @app.get("/")
@@ -273,7 +273,7 @@ Now:
 
 ## 7. Calling the API from Python (GraphQL client)
 
-If you don’t want to use the browser, you can call the same endpoint from a notebook or script:
+If you don’t want to use the browser, you can call the same endpoint from a a  notebook or script:
 
 ```python
 import requests
@@ -297,7 +297,7 @@ print(response.status_code)
 print(json.dumps(response.json(), indent=2))
 ```
 
-This is the same query as before, just wrapped in a Python string and sent as JSON. It is nice for unit tests or integration tests later.
+This is the same query as before, just wrapped in a Python string and sent as JSON. It is nice for unit tests or integraion tests later.
 
 
 ## 8. How this fits with Docker
@@ -308,7 +308,7 @@ The **Dockerfile** uses `GraphQL_API.py` as the entrypoint command:
 CMD ["uvicorn", "GraphQL_API:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-So when the container starts, it basically runs the exact same uvicorn command you use locally, just inside the image.
+So when the container starts, it basically runs the exact same uvicorn command you use localy, just inside the image.
 
 From the project root:
 
@@ -323,7 +323,7 @@ Then again you hit:
 * [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 * [http://127.0.0.1:8000/graphql](http://127.0.0.1:8000/graphql)
 
-The behaviour is identical, only difference is that now it is fully self-contained inside Docker.
+The behaviour is identical, only difference is that now it is fully self contained inside Docker.
 
 
 ## 9. Summary
@@ -335,4 +335,4 @@ So `GraphQL_API.py` is the “production” face of the project:
 * it exposes everything through FastAPI at `/graphql`,
 * it is ready to run both on your machine and in a Docker container.
 
-The training notebook prepares the brain, this file gives it a mouth. 🙂
+
