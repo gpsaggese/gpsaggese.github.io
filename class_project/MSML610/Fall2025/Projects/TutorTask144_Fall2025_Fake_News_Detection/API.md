@@ -788,7 +788,3 @@ def test_predict_missing_field(client):
 - [Flask Documentation](https://flask.palletsprojects.com/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 
----
-
-*Last Updated: 2025-12-15*
-*Version: 1.0*
