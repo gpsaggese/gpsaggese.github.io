@@ -152,23 +152,40 @@ graph TB
 - Model sensitivity analysis: evaluate robustness to realistic feature perturbations
 
 ## Docker Setup Guide (Containerized Environment)
+This project includes a fully containerized environment with all dependencies (TensorFlow, WIT, XGBoost, CatBoost, JupyterLab) pre-installed.
 
 1. **Build the Docker image:**
+From the project root directory:
    ```bash
    docker build -t wit-fraud:latest .
    ```
+This command builds the Docker image using the provided `Dockerfile`.
 
-2. **Run the container:**
+2. **Run the Docker container:**
    ```bash
    docker run -it -p 8888:8888 -v "$PWD":/work wit-fraud:latest
    ```
+Port 8888 is exposed for JupyterLab
+The current project directory is mounted inside the container at `/work`
 
-3. **Start Jupyter Lab inside container:**
+3. **JupyterLab startup (automatic):**
+JupyterLab starts automatically when the container runs.
+You should see console output similar to:
    ```bash
-   jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+   Jupyter Server is running at:
+   http://127.0.0.1:8888/lab
    ```
+No additional commands are required inside the container.
 
-4. **Access via browser:** http://localhost:8888
+4. **Access JupyterLab in your browser:**
+  [http://localhost:8888](http://localhost:8888)
+
+You can now open and run:
+
+- WIT.API.ipynb
+- WIT.example.ipynb
+
+Both notebooks are designed to be restart-and-run-all clean.
 
 ## Complete Workflow Overview
 
