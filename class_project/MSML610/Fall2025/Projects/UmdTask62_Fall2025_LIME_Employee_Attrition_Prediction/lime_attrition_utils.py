@@ -62,6 +62,131 @@ def _ensure_1d_row(x: Any) -> np.ndarray:
     return x.ravel()
 
 # ---------------------------------------------------------------------
+# 0A. TOOL-ONLY LIME HELPERS 
+# ---------------------------------------------------------------------
+def lime_predict_proba_fn(model: Any):
+    """Return a `predict_fn` compatible with LIME for a probabilistic classifier.
+
+    Parameters
+    ----------
+    model : Any
+        Any object exposing `predict_proba(X)` that returns shape (n_samples, n_classes).
+
+    Returns
+    -------
+    callable
+        A function `predict_fn(X)` returning class probabilities as a numpy array.
+    """
+    def predict_fn(x: Any) -> np.ndarray:
+        x2 = _ensure_2d(x)
+        probs = model.predict_proba(x2)
+        return np.asarray(probs)
+    return predict_fn
+
+
+def lime_build_tabular_explainer(
+    training_data: Any,
+    feature_names: List[str],
+    class_names: List[str],
+    discretize_continuous: bool = True,
+    mode: str = "classification",
+    **kwargs: Any,
+) -> LimeTabularExplainer:
+    """Create a `LimeTabularExplainer` for tabular classification.
+
+    This is a thin convenience wrapper around the native LIME constructor.
+
+    Notes
+    -----
+    - `training_data` must be in the same feature space as the `predict_fn` you pass to
+      `explainer.explain_instance(...)`.
+    """
+    training_data = _to_dense(training_data)
+    return LimeTabularExplainer(
+        training_data=training_data,
+        feature_names=feature_names,
+        class_names=class_names,
+        mode=mode,
+        discretize_continuous=discretize_continuous,
+        **kwargs,
+    )
+
+
+def lime_explain_instance(
+    explainer: LimeTabularExplainer,
+    data_row: Any,
+    predict_fn: Any,
+    num_features: int = 10,
+    num_samples: int = 5000,
+    **kwargs: Any,
+):
+    """Explain a single instance using native LIME `explainer.explain_instance`.
+
+    Parameters
+    ----------
+    explainer : LimeTabularExplainer
+        Fitted explainer.
+    data_row : Any
+        1D feature vector in the explainer's feature space.
+    predict_fn : callable
+        Function returning probabilities of shape (n_samples, n_classes).
+    num_features : int
+        Number of top features in the explanation.
+    num_samples : int
+        Number of perturbed samples LIME generates.
+
+    Returns
+    -------
+    lime.explanation.Explanation
+        Native LIME explanation object.
+    """
+    row = _ensure_1d_row(data_row)
+    return explainer.explain_instance(
+        data_row=row,
+        predict_fn=predict_fn,
+        num_features=num_features,
+        num_samples=num_samples,
+        **kwargs,
+    )
+
+
+def lime_explanation_to_df(explanation: Any, top_k: Optional[int] = None) -> pd.DataFrame:
+    """Convert a native LIME `Explanation` into a compact table.
+
+    Returns a DataFrame with columns: feature, weight, abs_weight.
+    """
+    pairs = explanation.as_list()
+    if top_k is not None:
+        pairs = pairs[: int(top_k)]
+    df = pd.DataFrame(pairs, columns=["feature", "weight"])
+    df["abs_weight"] = df["weight"].abs()
+    return df
+
+
+class LimeTabularWrapper:
+    """A lightweight, generic wrapper around the native LIME tabular API.
+
+    This wrapper is *tool-only*. It simply
+    standardizes a few common steps and returns a pandas DataFrame for readability.
+    """
+
+    def __init__(self, explainer: LimeTabularExplainer, predict_fn: Any, class_names: List[str]):
+        self.explainer = explainer
+        self.predict_fn = predict_fn
+        self.class_names = class_names
+
+    def explain(self, data_row: Any, top_k: int = 10, num_samples: int = 5000) -> pd.DataFrame:
+        exp = lime_explain_instance(
+            explainer=self.explainer,
+            data_row=data_row,
+            predict_fn=self.predict_fn,
+            num_features=top_k,
+            num_samples=num_samples,
+        )
+        df = lime_explanation_to_df(exp, top_k=top_k)
+        return df
+
+# ---------------------------------------------------------------------
 # 1. CONFIG DATA CLASSES
 # ---------------------------------------------------------------------
 

@@ -33,7 +33,7 @@ This repository demonstrates how to combine:
 From a user’s perspective, there are two main entry points:
 
 1. `lime_attrition.example.ipynb` – the **main end-to-end notebook**, showing the full workflow.
-2. `lime_attrition.API.ipynb` + `lime_attrition.API.md` – **API-focused artifacts**, documenting and demonstrating the internal tools defined in `lime_attrition_utils.py`.
+2. `lime_attrition.API.ipynb` + `lime_attrition.API.md` – **tool-focused LIME artifacts**, explaining and demonstrating the native LIME tabular API (on a synthetic dataset) plus a small, generic helper layer for common usage patterns.
 
 Everything is designed to be run either in a standard Python environment (venv) or inside Docker.
 
@@ -110,16 +110,23 @@ Key files and directories:
     - Utilities for feature-subset experiments and consistent feature-name handling.
 
 - `lime_attrition.API.md`  
-  Text documentation describing:
-  - The **native APIs** used from libraries such as pandas, scikit-learn, XGBoost, LightGBM, and LIME.
-  - The wrapper layer in `lime_attrition_utils.py` (configuration dataclasses, training/evaluation functions, and explanation utilities).
-  - How the example notebooks are expected to interact with this API.
+  Tool-only documentation describing:
+  - What LIME is (local, model-agnostic explanations) and when it is appropriate to use.
+  - The **native LIME tabular API**:
+    - `lime.lime_tabular.LimeTabularExplainer`
+    - `explainer.explain_instance(...)`
+    - `lime.explanation.Explanation` outputs (`as_list`, `as_pyplot_figure`, `save_to_file`)
+  - Key implementation considerations (feature-space alignment, `predict_fn` probability shape, stability knobs like `num_samples` and discretization).
+  - A short Mermaid flowchart showing the LIME explanation pipeline.
+  - A lightweight, **generic helper layer** (thin wrappers) that standardizes common patterns while preserving LIME semantics.
 
 - `lime_attrition.API.ipynb`  
-  API demonstration notebook:
-  - Shows direct usage of native library APIs.
-  - Demonstrates how to call wrapper functions in `lime_attrition_utils.py`.
-  - Contains small, focused examples (clean cells, minimal boilerplate).
+  Tool-only API demonstration notebook:
+  - Uses a **synthetic tabular dataset** not the Employee Attrition dataset.
+  - Trains a simple probabilistic classifier and demonstrates end-to-end LIME usage:
+    - build an explainer, explain a single instance, and render outputs (table/plot/HTML).
+  -  uses the generic helper utilities to keep cells minimal and readable.
+
 
 - `lime_attrition.example.ipynb`  
   Main end-to-end example notebook:
@@ -189,12 +196,12 @@ flowchart TB
 
   subgraph NB["Notebooks (User-facing)"]
     N1["lime_attrition.example.ipynb<br/>(end-to-end workflow)"]
-    N2["lime_attrition.API.ipynb<br/>(API usage examples)"]
+    N2["lime_attrition.API.ipynb<br/>(tool-only LIME demo)"]
   end
 
   subgraph DOC["Documentation"]
     D1["lime_attrition.example.md<br/>(narrative walkthrough)"]
-    D2["lime_attrition.API.md<br/>(API reference)"]
+    D2["lime_attrition.API.md<br/>(LIME tool reference)"]
   end
 
   subgraph CORE["Core Code"]
@@ -430,7 +437,7 @@ Expected behavior:
 - Batch LIME explanations and aggregated driver plots are shown, summarizing global drivers.
 - The feature subset bonus experiment runs, producing a table and/or plot of Jaccard similarity vs subset along with associated performance metrics.
 
-You can also open `lime_attrition.API.ipynb` to see smaller, focused API usage examples.
+You can also open `lime_attrition.API.ipynb` to see smaller, focused **tool-only** LIME usage examples (on a synthetic dataset).
 
 To deactivate the virtual environment:
 
@@ -475,7 +482,7 @@ In your browser, go to:
 You should see the Jupyter file browser for the `/workspace` directory. From there:
 
 - Open `lime_attrition.example.ipynb` and run all cells as described above.
-- Open `lime_attrition.API.ipynb` for the API examples.
+- Open `lime_attrition.API.ipynb` for **tool-only** LIME API examples (synthetic dataset).
 
 Because the project directory is mounted as a volume:
 
@@ -503,14 +510,14 @@ docker compose down
 This project includes multiple layers of documentation:
 
 - **`README.md`** (this file) – High-level overview, environment setup, and how to run everything.
-- **`lime_attrition.API.md`** – API reference:
-  - Configuration objects (`AttritionDataConfig`, `ModelConfig`, `LimeConfig`, etc.).
-  - Data loading and cleaning utilities.
-  - Preprocessing and model training functions.
-  - LIME explanation helpers and aggregation functions.
-- **`lime_attrition.API.ipynb`** – Executable demonstration of:
-  - Native library usage.
-  - How to call the `lime_attrition_utils` wrapper layer.
+- **`lime_attrition.API.md`** – Tool-only LIME reference:
+  - Explains what LIME does for tabular classification and the core assumptions behind local surrogate explanations.
+  - Documents the native LIME programming interface (`LimeTabularExplainer`, `explain_instance`, and `Explanation` outputs).
+  - Summarizes a small, generic helper layer that standardizes common LIME usage patterns.
+
+- **`lime_attrition.API.ipynb`** – Tool-only executable demonstration of:
+  - Building a tabular LIME explainer and explaining individual predictions on a **synthetic dataset**.
+  - Rendering explanations as a list, plot.
 - **`lime_attrition.example.ipynb`** – Main narrative notebook:
   - End-to-end pipeline with EDA, feature engineering, model training, LIME, and bonus analysis.
 - **`lime_attrition.example.md`** – Description of:
@@ -522,7 +529,7 @@ This project includes multiple layers of documentation:
 
 1. Read `README.md` to understand the big picture and setup.
 2. Run `lime_attrition.example.ipynb` (via venv or Docker) to see the full workflow end-to-end.
-3. Refer to `lime_attrition.API.md` and `lime_attrition.API.ipynb` for details on individual functions and configuration patterns.
+3. Refer to `lime_attrition.API.md` and `lime_attrition.API.ipynb` for tool-only LIME concepts, native API usage, and generic usage patterns.
 4. Read `lime_attrition.example.md` for a narrative explanation to accompany the notebook.
 
 ---
