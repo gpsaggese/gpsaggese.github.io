@@ -1,5 +1,7 @@
 # FairnessPP: Fairness in Predictive Policing
 
+**Name:** Pranav Srinivasan K N  
+**UID:** 121334572  
 **Project Tag:** Fall2025_Fairness_in_Predictive_Policing  
 **GitHub Issue:** #187  
 **Course:** MSML610 Fall 2025  
