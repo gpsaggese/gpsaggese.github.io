@@ -1,6 +1,5 @@
 # EconML Example: Analyzing the Effects of Education Programs on Student Performance
 
-
 ## Problem Statement
 We analyze the impact of a student education program on final course grades using the UCI Student Performance dataset. The main goal is to estimate:
 - The overall impact of participating in the program on the population's final grades (ATE),
@@ -38,15 +37,45 @@ The strength of EconML lies in explicitly defining the components of the causal 
 
 **Causal Question:** What is the causal effect, τ, of receiving educational support on a student's final grade (G3), and how does this effect τ(X) vary across observable student characteristics X?
 
+### Wrapper-based pattern
+
+```
+df_raw = load_student_data(source="ucimlrepo")
+df = clean_student_data(df_raw)
+config = make_default_config()            # defines Y, T, X, W
+config.estimator_type = "linear_dml"      # or "causal_forest", "sparse_linear_dml"
+model = fit_econml_estimator(df, config)
+ate_result = estimate_ate(model, df, config)
+cate_by_sex = estimate_cate_by_subgroup(model, df, config, subgroup_col="sex")
+```
+This allows the **analysis notebooks** to switch between estimators by only changing `config.estimator_type`, without rewriting the fitting and post-processing logic.
+
 ### Estimator Selection: Double Machine Learning (DML)
-**Design Decision:** The **Double Machine Learning (DML) Estimator** (`LinearDML` and `CausalForestDML`) was chosen for robustness.
 
-**Reasoning:**
-1.  **Confounder Control:** The dataset is high-dimensional with many potential confounders (W). DML allows us to use flexible machine learning models (like Gradient Boosting or Lasso) to model the nuisance parameters (the outcome and treatment propensity), effectively controlling for W without requiring us to specify a complex parametric model.
+For this project we work with **observational** student data rather than a randomized experiment. The educational support program (`schoolsup`) was not randomly assigned, and many observed variables (family background, prior performance, study behavior) can influence **both** program participation and final grades. At the same time, the dataset is fairly rich, with 30+ features that can serve as potential confounders.
 
-2.  **Orthogonality:** DML's "double-debiasing" technique guards against potential regularization bias that can occur when machine learning models are used directly on the treatment effect equation.
+Given this setup, we use **Double Machine Learning (DML)** estimators from EconML for: 
 
-3.  **Heterogeneity Modeling:** Both `LinearDML` and `CausalForestDML` allow for the estimation of the Conditional Average Treatment Effect (CATE), τ(X), which is essential for identifying which student groups benefit. **`CausalForestDML`** was specifically included for its non-parametric flexibility in modeling complex, non-linear heterogeneity.
+- **Observational data under unconfoundedness**: DML assumes that, conditional on a rich set of observed covariates, treatment assignment is “as good as random.” This fits our setting where demographics, family variables and prior grades are all measured.
+- **High-dimensional controls**: DML can flexibly model the relationship between covariates and both treatment and outcome using machine learning (e.g., forests, regularized regression) and then estimate treatment effects on residualized targets.
+- **Heterogeneous treatment effects (CATE)**: all chosen estimators directly target CATEs, which matches our goal of finding which student demographics benefit the most from the program.
+
+1. **LinearDML (primary / baseline)**
+   - Models the CATE as a **linear function** of student characteristics.
+   - Very **interpretable**: coefficients tell us how the program effect changes with features like parent education, study time, or absences.
+   - Supports inference: standard errors and confidence intervals for the estimated effects.
+   - Well-suited as a first pass for explaining results to non-technical stakeholders (e.g., educators and policy makers).
+
+2. **CausalForestDML (flexible non-linear alternative)**
+   - Uses a **forest-based** final stage to model complex, non-linear heterogeneity in treatment effects.
+   - Can automatically discover subgroups with different responses to the program, without specifying an explicit functional form.
+   - Useful to check whether the linear assumptions of LinearDML are overly restrictive on this dataset.
+
+Both estimators share the same high-level DML workflow:
+
+1. **Nuisance modeling**: use ML models to predict treatment and outcome from covariates.
+2. **Orthogonalization / residualization**: subtract these predictions to get “residual” treatment and outcome.
+3. **Effect estimation**: fit a final-stage model on residuals to estimate causal effects that are robust to small errors in the nuisance models.
 
 ## Results
 
