@@ -1,3 +1,0 @@
-REPO_NAME=msml610
-IMAGE_NAME=retail_sales_forecasting_lstms
-FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME
