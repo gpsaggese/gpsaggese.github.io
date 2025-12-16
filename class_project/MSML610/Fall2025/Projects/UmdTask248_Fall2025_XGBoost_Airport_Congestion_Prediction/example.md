@@ -1,174 +1,142 @@
-{
- "cells": [
-  {
-   "cell_type": "markdown",
-   "id": "623b718f-272c-4f88-bd34-fd3a7e2518cd",
-   "metadata": {},
-   "source": [
-    "# example.ipynb — Exploratory Data Analysis (EDA)\n",
-    "\n",
-    "This notebook performs **Exploratory Data Analysis (EDA)** on U.S. airline flight data to understand **traffic patterns, delays, and congestion signals** before any feature engineering or model training.\n",
-    "\n",
-    "The purpose of this notebook is **data understanding only**.  \n",
-    "No modeling or prediction is performed here.\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Notebook Objective\n",
-    "\n",
-    "The goals of `example.ipynb` are to:\n",
-    "- Inspect raw flight datasets and their structure\n",
-    "- Identify missing values and data quality issues\n",
-    "- Understand delay distributions and skewness\n",
-    "- Analyze traffic patterns by **hour of day** and **airport**\n",
-    "- Motivate hourly congestion-based feature engineering\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Libraries Used\n",
-    "\n",
-    "The notebook uses standard Python data science libraries:\n",
-    "- **pandas, numpy** — data manipulation and numerical analysis\n",
-    "- **matplotlib, seaborn** — data visualization\n",
-    "- **os, pathlib** — file and path handling\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Data Loading\n",
-    "\n",
-    "The notebook loads airline-related CSV files that include:\n",
-    "- Flight-level records (departure and arrival delays, schedules, cancellations)\n",
-    "- Airport metadata\n",
-    "- Airline identifiers\n",
-    "\n",
-    "The datasets are read using `pandas.read_csv()` with memory-efficient options suitable for large files.\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Initial Data Inspection\n",
-    "\n",
-    "Basic inspection steps include:\n",
-    "- Viewing sample records using `.head()`\n",
-    "- Checking dataset dimensions using `.shape`\n",
-    "- Reviewing column names and data types\n",
-    "\n",
-    "This confirms that the data is loaded correctly and ready for analysis.\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Missing Value Analysis\n",
-    "\n",
-    "The notebook examines missing values in key columns such as:\n",
-    "- Departure delay\n",
-    "- Arrival delay\n",
-    "- Scheduling fields\n",
-    "\n",
-    "Missing values are interpreted carefully, recognizing that:\n",
-    "- Some delays are missing due to cancellations or diversions\n",
-    "- Not all missing data should be removed blindly\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Delay Distribution Analysis\n",
-    "\n",
-    "### Departure Delay\n",
-    "\n",
-    "A histogram is plotted for departure delays:\n",
-    "- The distribution is **right-skewed**\n",
-    "- Most flights experience small or zero delays\n",
-    "- A small number of flights show extreme delays\n",
-    "\n",
-    "This indicates that raw delay values are not normally distributed.\n",
-    "\n",
-    "### Arrival Delay\n",
-    "\n",
-    "Arrival delay analysis shows:\n",
-    "- Strong alignment with departure delays\n",
-    "- Propagation of congestion effects across flights\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Hourly Traffic Patterns\n",
-    "\n",
-    "Flights are grouped by **scheduled departure hour**:\n",
-    "- Clear morning and evening peak periods are observed\n",
-    "- Off-peak hours show reduced traffic\n",
-    "- Hour of day emerges as a strong predictor of congestion\n",
-    "\n",
-    "This motivates **hour-level aggregation** rather than per-flight modeling.\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Airport-Level Analysis\n",
-    "\n",
-    "Flights are grouped by **origin airport** to analyze traffic concentration:\n",
-    "- A small number of hub airports dominate traffic volume\n",
-    "- High-traffic airports are more susceptible to congestion\n",
-    "- Airport identity is a key feature for downstream modeling\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Traffic Volume vs Delay\n",
-    "\n",
-    "The notebook evaluates whether higher traffic volume corresponds to higher delays:\n",
-    "- Airports with heavier traffic show increased average delays\n",
-    "- Congestion appears systemic rather than random\n",
-    "- Volume-based congestion metrics are justified\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Cancellations and Diversions\n",
-    "\n",
-    "Cancellation and diversion indicators are explored:\n",
-    "- Cancellations increase during congestion periods\n",
-    "- Diversions are rare but signal severe disruption\n",
-    "- These variables provide important congestion context\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Key Insights from EDA\n",
-    "\n",
-    "From this exploratory analysis:\n",
-    "- Congestion is time-dependent and airport-specific\n",
-    "- Delay distributions are heavily skewed\n",
-    "- Hourly aggregation is more meaningful than flight-level prediction\n",
-    "- Binary congestion labels are more practical than raw delay values\n",
-    "\n",
-    "---\n",
-    "\n",
-    "## Outcome of This Notebook\n",
-    "\n",
-    "`example.ipynb` establishes the analytical foundation for:\n",
-    "- Feature engineering\n",
-    "- Hourly congestion labeling\n",
-    "- Model training in subsequent notebooks\n",
-    "\n",
-    "This notebook **does not train models** and **does not generate predictions**.  \n",
-    "Its sole purpose is **exploratory analysis and insight generation**.\n",
-    "\n",
-    "---"
-   ]
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python [conda env:base] *",
-   "language": "python",
-   "name": "conda-base-py"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.12.7"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
-}
+# example.ipynb — Exploratory Data Analysis (EDA)
+
+This notebook performs **Exploratory Data Analysis (EDA)** on U.S. airline flight data to understand **traffic patterns, delays, and congestion signals** before any feature engineering or model training.
+
+The purpose of this notebook is **data understanding only**.  
+No modeling or prediction is performed here.
+
+---
+
+## Notebook Objective
+
+The goals of `example.ipynb` are to:
+- Inspect raw flight datasets and their structure
+- Identify missing values and data quality issues
+- Understand delay distributions and skewness
+- Analyze traffic patterns by **hour of day** and **airport**
+- Motivate hourly congestion-based feature engineering
+
+---
+
+## Libraries Used
+
+The notebook uses standard Python data science libraries:
+- **pandas, numpy** — data manipulation and numerical analysis
+- **matplotlib, seaborn** — data visualization
+- **os, pathlib** — file and path handling
+
+---
+
+## Data Loading
+
+The notebook loads airline-related CSV files that include:
+- Flight-level records (departure and arrival delays, schedules, cancellations)
+- Airport metadata
+- Airline identifiers
+
+The datasets are read using `pandas.read_csv()` with memory-efficient options suitable for large files.
+
+---
+
+## Initial Data Inspection
+
+Basic inspection steps include:
+- Viewing sample records using `.head()`
+- Checking dataset dimensions using `.shape`
+- Reviewing column names and data types
+
+This confirms that the data is loaded correctly and ready for analysis.
+
+---
+
+## Missing Value Analysis
+
+The notebook examines missing values in key columns such as:
+- Departure delay
+- Arrival delay
+- Scheduling fields
+
+Missing values are interpreted carefully, recognizing that:
+- Some delays are missing due to cancellations or diversions
+- Not all missing data should be removed blindly
+
+---
+
+## Delay Distribution Analysis
+
+### Departure Delay
+
+A histogram is plotted for departure delays:
+- The distribution is **right-skewed**
+- Most flights experience small or zero delays
+- A small number of flights show extreme delays
+
+This indicates that raw delay values are not normally distributed.
+
+### Arrival Delay
+
+Arrival delay analysis shows:
+- Strong alignment with departure delays
+- Propagation of congestion effects across flights
+
+---
+
+## Hourly Traffic Patterns
+
+Flights are grouped by **scheduled departure hour**:
+- Clear morning and evening peak periods are observed
+- Off-peak hours show reduced traffic
+- Hour of day emerges as a strong predictor of congestion
+
+This motivates **hour-level aggregation** rather than per-flight modeling.
+
+---
+
+## Airport-Level Analysis
+
+Flights are grouped by **origin airport** to analyze traffic concentration:
+- A small number of hub airports dominate traffic volume
+- High-traffic airports are more susceptible to congestion
+- Airport identity is a key feature for downstream modeling
+
+---
+
+## Traffic Volume vs Delay
+
+The notebook evaluates whether higher traffic volume corresponds to higher delays:
+- Airports with heavier traffic show increased average delays
+- Congestion appears systemic rather than random
+- Volume-based congestion metrics are justified
+
+---
+
+## Cancellations and Diversions
+
+Cancellation and diversion indicators are explored:
+- Cancellations increase during congestion periods
+- Diversions are rare but signal severe disruption
+- These variables provide important congestion context
+
+---
+
+## Key Insights from EDA
+
+From this exploratory analysis:
+- Congestion is time-dependent and airport-specific
+- Delay distributions are heavily skewed
+- Hourly aggregation is more meaningful than flight-level prediction
+- Binary congestion labels are more practical than raw delay values
+
+---
+
+## Outcome of This Notebook
+
+`example.ipynb` establishes the analytical foundation for:
+- Feature engineering
+- Hourly congestion labeling
+- Model training in subsequent notebooks
+
+This notebook **does not train models** and **does not generate predictions**.  
+Its sole purpose is **exploratory analysis and insight generation**.
+
+---
