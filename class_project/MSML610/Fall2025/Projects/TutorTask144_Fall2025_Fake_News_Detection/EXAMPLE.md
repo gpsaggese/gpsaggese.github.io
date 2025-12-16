@@ -558,48 +558,38 @@ Why?
 
 ---
 
-## MCP Server
+## MCP Server Deployment
 
-### What is MCP?
+This project uses the **Model Context Protocol (MCP)** to serve the fake news detection model via REST API. For detailed information about how MCP works, what endpoints it provides, and how to integrate with it, see [API.md](API.md).
 
-**MCP (Model Context Protocol)** is a standardized protocol for serving ML models via HTTP/REST.
+### Project-Specific Usage
 
-**Problem it solves:**
+The fake news detection model is deployed as an MCP server that exposes the following endpoints:
+
+| Endpoint | Purpose | Project Example |
+|----------|---------|-----------------|
+| `/health` | Server health check | Verify API is running |
+| `/models` | List available models | Check "bert_fake_news" model |
+| `/api/predict` | Single article classification | Classify one article at a time |
+| `/predict-batch` | Batch article classification | Classify multiple articles |
+| `/statistics` | Server metrics | Monitor prediction statistics |
+
+### Example: Classifying a Single Article
+
+**User Input:**
 ```
-Without MCP:
-  Web app writes custom code → calls model
-  Mobile app writes different code → calls model
-  CLI tool writes different code → calls model
-  → Confusing, hard to maintain
-
-With MCP:
-  All clients use same REST API
-  Clear contracts and conventions
-  Easy to scale and maintain
+Article: "Breaking News: Scientists announce major discovery.
+Researchers published findings in peer-reviewed journal."
 ```
 
-### The 5 Core Endpoints
-
-| Endpoint | Method | Purpose | Use Case |
-|----------|--------|---------|----------|
-| `/health` | GET | Is server running? | Monitoring, load balancing |
-| `/models` | GET | What models available? | Auto-discovery |
-| `/api/predict` | POST | Classify one article | Web UI, quick requests |
-| `/predict-batch` | POST | Classify many articles | Bulk processing, batch jobs |
-| `/statistics` | GET | Server performance stats | Dashboards, monitoring |
-
-### Example: Single Prediction
-
-**Request:**
+**Request to API:**
 ```bash
 curl -X POST http://localhost:9090/api/predict \
   -H "Content-Type: application/json" \
-  -d '{
-    "text": "Breaking News: Scientists announce major discovery. Researchers published findings in peer-reviewed journal."
-  }'
+  -d '{"text": "Breaking News: Scientists announce major discovery. Researchers published findings in peer-reviewed journal."}'
 ```
 
-**Response:**
+**API Response:**
 ```json
 {
   "status": "success",
@@ -611,9 +601,16 @@ curl -X POST http://localhost:9090/api/predict \
 }
 ```
 
-### Example: Batch Prediction
+**Result:** Model classifies article as REAL news with 87.54% confidence
 
-**Request:**
+### Example: Batch Processing Articles
+
+**User Input:**
+```
+3 articles to classify
+```
+
+**Request to API:**
 ```bash
 curl -X POST http://localhost:9090/predict-batch \
   -H "Content-Type: application/json" \
@@ -626,10 +623,9 @@ curl -X POST http://localhost:9090/predict-batch \
   }'
 ```
 
-**Response:**
+**API Response:**
 ```json
 {
-  "model_id": "bert_fake_news",
   "total": 3,
   "real_count": 2,
   "fake_count": 1,
@@ -637,27 +633,9 @@ curl -X POST http://localhost:9090/predict-batch \
   "fake_percent": "33.3%",
   "avg_confidence": 0.8234,
   "predictions": [
-    {
-      "prediction": {
-        "class": "REAL",
-        "confidence": 0.8754,
-        "confidence_percent": "87.54%"
-      }
-    },
-    {
-      "prediction": {
-        "class": "FAKE",
-        "confidence": 0.7123,
-        "confidence_percent": "71.23%"
-      }
-    },
-    {
-      "prediction": {
-        "class": "REAL",
-        "confidence": 0.8234,
-        "confidence_percent": "82.34%"
-      }
-    }
+    {"prediction": {"class": "REAL", "confidence": 0.8754, "confidence_percent": "87.54%"}},
+    {"prediction": {"class": "FAKE", "confidence": 0.7123, "confidence_percent": "71.23%"}},
+    {"prediction": {"class": "REAL", "confidence": 0.8234, "confidence_percent": "82.34%"}}
   ],
   "metadata": {
     "total_processing_time_s": 0.131,
@@ -666,15 +644,17 @@ curl -X POST http://localhost:9090/predict-batch \
 }
 ```
 
-### Performance Characteristics
+**Result:** 2 real, 1 fake, average confidence 82.34%
+
+### Performance in This Project
 
 | Metric | Value |
 |--------|-------|
-| Response time (single) | 40-50 ms |
-| Response time (batch/article) | ~40 ms |
+| Response time per article | 40-50 ms |
+| Batch processing | ~40 ms per article |
 | Model size | 440 MB |
 | Memory usage | ~2 GB |
-| GPU acceleration | Yes (if available) |
+| GPU acceleration | Supported |
 
 ---
 
@@ -1073,7 +1053,7 @@ result = fnu.predict(text, model, vectorizer)
 
 ## Further Reading
 
-- **API Documentation**: See `API_DOCUMENTATION.md` for complete endpoint reference
+- **MCP Framework**: See [API.md](API.md) for complete Model Context Protocol reference
 - **BERT Paper**: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding" (Devlin et al., 2019)
 - **Fake News Detection**: Research on automated misinformation detection
 - **Model Deployment**: Kubernetes, Docker, Cloud Run best practices
