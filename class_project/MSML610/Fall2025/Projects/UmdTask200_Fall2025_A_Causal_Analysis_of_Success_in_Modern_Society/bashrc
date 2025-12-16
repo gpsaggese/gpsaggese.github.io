@@ -1,0 +1,7 @@
+# Bash configuration for Causal Success Analysis Docker environment
+
+# Ensure project root is available for Python imports
+export PYTHONPATH="/app:${PYTHONPATH}"
+
+# Optional: add project root to PATH (safe, minimal)
+export PATH="/app:${PATH}"
