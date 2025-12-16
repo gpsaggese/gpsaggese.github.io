@@ -30,7 +30,7 @@ flowchart TB
 
   class C model
   class B,D,E,F,G lime
-
+```
 
 Key properties:
 - **Local**: explanations are instance-specific not global feature importance.
