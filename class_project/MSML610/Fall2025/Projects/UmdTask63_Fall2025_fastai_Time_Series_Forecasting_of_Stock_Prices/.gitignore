@@ -12,6 +12,7 @@ ENV/
 pip-wheel-metadata/
 python-env/
 venv.bak/
+.env
 
 # Packaging / build
 build/
