@@ -1,4 +1,4 @@
-## 🛠️ Phase 1: The Debugging Gateway & Initial Connection
+## Phase 1: The Debugging Gateway & Initial Connection
 
 This first step is crucial for establishing a robust connection with the FastMCP client and, most importantly, ensuring that any low-level errors (especially those tricky `subprocess` issues common in Jupyter environments) are captured in a real file on disk.
 
@@ -89,7 +89,7 @@ Based on the EDA finding of strong right-skewness, we apply logarithmic transfor
       * $\text{log\_sqft\_living}$
       * $\text{log\_sqft\_lot}$
 
-### 3.3. ⏳ Age and Renovation Metrics
+### 3.3. Age and Renovation Metrics
 
 These features replace raw year data with meaningful time-based metrics that capture depreciation and added value.
 
@@ -195,6 +195,47 @@ The baseline model provides a solid starting point for the project.
 | **Features Used** | Original, non-engineered features (e.g., `sqft_living`, `grade`). | Serves as the key benchmark for all future models. |
 | **Test $\mathbf{R^2}$** | $\mathbf{0.7026}$ | The model explains about $70.3\%$ of the variance in house prices. |
 | **Test RMSE** | $\mathbf{212,040}$ | The average prediction error is approximately **\$212k**. |
+
+### Helper Function: `_get_model_artifact`
+
+This internal function acts as a factory, initializing the correct model or Scikit-learn Pipeline based on the `model_name` provided in the configuration.
+
+#### Model Initialization Summary
+
+| Model Name Contains | Class Used | Note |
+| :--- | :--- | :--- |
+| `LinearRegression` | `LinearRegression()` | Direct instantiation. |
+| `ScaledLinearRegression` | `Pipeline(StandardScaler(), LinearRegression())` | **Encapsulated in a Pipeline** for automatic feature scaling. |
+| `Ridge` | `Pipeline(StandardScaler(), Ridge())` | Uses **L2 regularization** and is scaled. |
+| `Lasso` | `Pipeline(StandardScaler(), Lasso(max_iter=10000))` | Uses **L1 regularization** and is scaled. |
+| `RandomForest` | `RandomForestRegressor(**hyperparameters)` | Accepts hyperparameters directly. |
+| `XGBoost` | `XGBRegressor(**hyperparameters)` | Accepts hyperparameters directly. |
+
+### `get_model_coefficients`
+
+This component is crucial for model explainability. It loads a specific linear model artifact from the disk using its `run_id` and extracts the feature coefficients, allowing users to understand the feature importance and directionality of the model's predictions.
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `run_id` | `str` | The unique ID of the experiment run whose model coefficients are requested. |
+
+| Returns | Type | Description |
+| :--- | :--- | :--- |
+| **Success** | `Dict[str, Any]` | A dictionary containing a list of `coefficients` and the corresponding list of `features` used in training. |
+| **Error** | `str` | An error message if the run ID is not found, the artifact file is missing, or the model type does not support coefficients. |
+
+### Logic Summary
+
+1.  **Registry Lookup:** Queries the `ExperimentRegistry` to find the full record matching the `run_id`, specifically retrieving the `artifact_path` and `features_used`.
+2.  **Artifact Loading:** Loads the serialized model artifact (`.pkl` file) using `pickle.load()`.
+3.  **Model Extraction:**
+      * Since models using scaling (`ScaledLinearRegression`, `Ridge`, `Lasso`) are saved as Scikit-learn **Pipelines**, the code checks the `model_name` and extracts the final estimator (the actual regressor) from the `named_steps` within the Pipeline object.
+      * For simple models, the loaded artifact is the model itself.
+4.  **Coefficient Retrieval:** The code verifies that the extracted model has a `coef_` attribute (indicating a linear model) and retrieves the coefficients and the corresponding feature names (`features_used` from the record).
+5.  **Output:** Returns a dictionary mapping the list of coefficients to the list of features.
+
+-----
+
 
 ### 4.2. Top 10 Feature Coefficients
 
