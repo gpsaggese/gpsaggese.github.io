@@ -1,12 +1,12 @@
 # EconML Example: Analyzing the Effects of Education Programs on Student Performance
 
 
-## 1. Problem Statement
+## Problem Statement
 We analyze the impact of a student education program on final course grades using the UCI Student Performance dataset. The main goal is to estimate:
 - The overall impact of participating in the program on the population's final grades (ATE),
 - How this effect varies across different demographic and socioeconomic groups (CATEs).
 
-## 2. Dataset Summary
+## Dataset Summary
 We use the **Student Performance** dataset (from UCI ML Repository + Portuguese secondary school, math or Portuguese course).  
 The dataset includes:
 - Student demographics (sex, age, family structure),
@@ -14,15 +14,7 @@ The dataset includes:
 - Study related and behavioral attributes,
 - Final grades (G1, G2, G3) where G1 and G2 are 1st and 2nd period grades, and G3 is the final grade issued at the end of the 3rd period.
 
-## 3. Plannned Causal Framing
-- **Outcome (Y)**: final grade (G3).
-- **Treatment (T)**: participation in an additional education program (interpreted from one of the support variables).
-- **Features (X)**: selected demographic and socioeconomic attributes.
-- **Controls (W)**: additional covariates to help adjust for confounding.
-
-Details of the exact column choices and assumptions will be documented in this file and in `econml.example.ipynb`.
-
-## 4. Planned Analysis Workflow
+## Planned Analysis Workflow
 1. Load and clean the student performance data.
 2. Define treatment and outcome variables.
 3. Fit EconML estimators using the wrapper functions in `econml_utils.py`.
@@ -31,3 +23,127 @@ Details of the exact column choices and assumptions will be documented in this f
 6. Discuss robustness and limitations.
 
 The complete implementation is in `econml.example.ipynb`.
+
+## Data Model and Design Decisions
+
+### Defining Causal Components (Y, T, W, X)
+The strength of EconML lies in explicitly defining the components of the causal model based on observed data:
+-   **Outcome (Y):** The final grade in the subject, G3. This is the variable we aim to affect.
+
+-   **Treatment (T):** A binary variable representing participation in the educational support program (derived from variables like `extra_educational_support`).
+
+-   **Control Variables (W):** A comprehensive set of variables used to *control* for confounding factors and satisfy the unconfoundedness assumption. This included student context (e.g., `famsize`, `Pstatus`, parents' jobs) and school-related variables (e.g., `school_support`, `studytime`).
+
+-   **Heterogeneity Variables (X):** The specific student characteristics used to model the variation in the treatment effect τ(X). For this project, a small, impactful set was selected, likely including key metrics like the number of previous **failures** and **age**, as these are strong proxies for a student's at-risk status.
+
+**Causal Question:** What is the causal effect, τ, of receiving educational support on a student's final grade (G3), and how does this effect τ(X) vary across observable student characteristics X?
+
+### Estimator Selection: Double Machine Learning (DML)
+**Design Decision:** The **Double Machine Learning (DML) Estimator** (`LinearDML` and `CausalForestDML`) was chosen for robustness.
+
+**Reasoning:**
+1.  **Confounder Control:** The dataset is high-dimensional with many potential confounders (W). DML allows us to use flexible machine learning models (like Gradient Boosting or Lasso) to model the nuisance parameters (the outcome and treatment propensity), effectively controlling for W without requiring us to specify a complex parametric model.
+
+2.  **Orthogonality:** DML's "double-debiasing" technique guards against potential regularization bias that can occur when machine learning models are used directly on the treatment effect equation.
+
+3.  **Heterogeneity Modeling:** Both `LinearDML` and `CausalForestDML` allow for the estimation of the Conditional Average Treatment Effect (CATE), τ(X), which is essential for identifying which student groups benefit. **`CausalForestDML`** was specifically included for its non-parametric flexibility in modeling complex, non-linear heterogeneity.
+
+## Results
+
+### Figure 1. Unadjusted grades by treatment group (schoolsup)
+
+(INSERT PLOT HERE!)
+
+This boxplot compares the distribution of final grades `G3` between:
+- `schoolsup = 0` (no extra support)
+- `schoolsup = 1` (extra support)
+
+Visually, the **median** and overall distribution for the extra-support group (`schoolsup = 1`) appear slightly **lower** than the no-support group. If we stopped here, we might incorrectly conclude that the program “hurts” performance.
+
+However, this plot reflects an **unadjusted observational comparison**. In real settings, extra support is often **targeted** toward students who are already at academic risk. That means treated students may differ systematically from controls (selection / confounding). This motivates using EconML’s DML estimators to adjust for confounders and estimate a causal effect rather than a raw association.
+
+### Figure 2. Estimated Average Treatment Effect (ATE) of school support on final grade
+
+(INSERT PLOT HERE!)
+
+We estimate the **average causal effect** of extra support (`schoolsup`) on `G3` using two Double ML estimators:
+
+- **LinearDML:** ATE = **0.015**
+  - 95% CI: **[-0.364, 0.395]**
+- **CausalForestDML:** ATE = **0.038**
+  - 95% CI: **[-1.007, 1.083]**
+
+**Interpretation (grade scale):** `G3` is on a 0–20 scale. An ATE of **0.015 – 0.038** corresponds to far less than **0.1 grade point**, which is practically negligible.
+
+**Interpretation (percent scale):**
+- As a fraction of the full 0–20 grade scale, the estimated average effect is approximately:
+  - LinearDML: **0.015 / 20 ≈ 0.08%**
+  - CausalForestDML: **0.038 / 20 ≈ 0.19%**
+
+**Conclusion:** Both estimators are centered very close to zero and their confidence intervals include 0, meaning we do **not** find strong evidence that the support program has a large average effect on final grades in this dataset. The wide CI (especially for the forest) also suggests limited precision, which is plausible given that the treated group is relatively small.
+
+### Figure 3. Heterogeneous effects by mother’s education (Medu)
+
+(INSERT PLOT HERE!)
+
+To identify **which demographics benefit most**, we examine heterogeneity by mother’s education (`Medu`, 0 – 4), a common proxy for socioeconomic background.
+
+Both estimators show a clear **gradient**:
+- Students with **lower maternal education** (Medu = 0–1) show **more positive** estimated effects.
+- Students with **higher maternal education** (Medu = 4) show **near-zero or negative** effects.
+
+Using the subgroup summary (CausalForestDML), the estimated mean CATEs are approximately:
+- Medu = 0: **+0.388** (n = 6)
+- Medu = 1: **+0.310** (n = 143)
+- Medu = 2: **+0.047** (n = 186)
+- Medu = 3: **+0.073** (n = 139)
+- Medu = 4: **–0.235** (n = 175)
+
+**Interpretation:** This pattern suggests the program may be **most beneficial for students from lower-education household backgrounds**, consistent with a policy intuition: students with less academic support at home may gain slightly more from school provided support.
+
+**Caution:** The Medu = 0 subgroup has **very small sample size (n=6)**, so its estimate is especially noisy. The most reliable positive signal comes from Medu = 1 (n=143), which still shows a meaningful positive estimated effect relative to other groups.
+
+### Figure 4. Heterogeneous effects by higher-education plans (higher)
+
+(INSERT PLOT HERE!)
+
+We also examine heterogeneity by students’ plans for higher education (`higher`, 0 = no, 1 = yes). This variable is useful because it can reflect motivation, academic trajectory, and baseline risk.
+
+The subgroup CATEs suggest a strong split:
+- **higher = 0 (no plans for higher education):** positive effect
+- **higher = 1 (plans for higher education):** near zero effect
+
+From the subgroup summary (CausalForestDML):
+- higher = 0: **+0.413** (n = 69)
+- higher = 1: **–0.007** (n = 580)
+
+**Interpretation:** Students who **do not plan to pursue higher education** appear to benefit more from extra support (on the order of ~0.4 grade points on average). For students already on a higher-education track, the estimated effect is essentially zero.
+
+This result directly supports the project goal of “optimizing for identifying who benefits most,” because it points to a concrete group that may be prioritized if resources are limited, while still acknowledging that estimates are model based and depend on the observational assumptions.
+
+### Table 1. Ranked subgroup benefits (CATE ranking)
+
+(INSERT PLOT HERE!)
+
+To explicitly answer “which demographics benefit most,” we aggregate subgroup CATE summaries across multiple features (`higher`, `Medu`, `address`, `sex`) and **rank subgroups by estimated mean CATE** (highest to lowest).
+
+Top-ranked subgroups include:
+1. `higher = 0` -> **+0.413** (n = 69)  
+2. `Medu = 1` -> **+0.310** (n = 143)  
+3. `address = 0` (rural) -> **+0.143** (n = 197)  
+4. `sex = 1` -> **+0.064** (n = 266)  
+
+(An even higher CATE appears for `Medu = 0` at +0.388, but it has **n = 6**, so it is not as reliable.)
+
+**What this means:** The most practically actionable “benefit signals” come from subgroups that combine:
+- **positive mean CATE**, and
+- **reasonable subgroup size**.
+
+By that standard, the strongest candidates for “who benefits most” are:
+- students with **no higher-education plans** (`higher = 0`),
+- students with **lower maternal education** (`Medu = 1`), and
+- **rural** students (`address = 0`).
+
+**Uncertainty note:** The subgroup CATE standard deviations (≈0.36–0.45) are larger than many mean effects, indicating substantial individual-level variation. These subgroup rankings should be interpreted as **suggestive prioritization directions**, not definitive targeting rules.
+
+**Objective answer:** On average, extra school support shows a near-zero ATE on final grades, but heterogeneity analysis suggests the program may be most beneficial for students with **no higher-education plans**, those from **lower maternal education** backgrounds, and **rural** students, i.e., groups plausibly at higher academic risk.
