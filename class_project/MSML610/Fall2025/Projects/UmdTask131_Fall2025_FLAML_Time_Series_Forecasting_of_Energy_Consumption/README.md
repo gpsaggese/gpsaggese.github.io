@@ -1,341 +1,406 @@
-# MSML610 - Midterm Project Submission
+# FLAML AutoML Project: API Tutorial & Energy Forecasting Application
 
-**Project Title:** Time-Series Forecasting of Energy Consumption using FLAML  
-**Student Name:** Anisha Katiyar  
-**Issue Number:** #131  
-**Branch Name:** `UmdTask131_Fall2025_FLAML_Time_Series_Forecasting_of_Energy_Consumption`  
-**Date:** November 10, 2025
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![FLAML](https://img.shields.io/badge/FLAML-2.1+-green.svg)](https://microsoft.github.io/FLAML/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
----
+## Overview
 
-## 📋 Project Overview
+This project provides a comprehensive exploration of **FLAML (Fast and Lightweight AutoML)** through two complementary Jupyter notebooks:
 
-This project implements automated time-series forecasting for household energy consumption using **FLAML (Fast and Lightweight AutoML)**. It compares the AutoML-generated model with **Facebook Prophet** and a **hybrid ensemble**, analyzing forecast accuracy, robustness, and business impact.
+| Notebook | Purpose | Focus |
+|----------|---------|-------|
+| **FLAML_API.ipynb** | Tool Introduction | Learn FLAML's interface, capabilities, and usage patterns |
+| **FLAML_Example.ipynb** | Real-World Application | Apply FLAML to energy consumption forecasting |
 
-**Project Difficulty:** 3 (Hard)
-
-### Objectives
-- Forecast household energy consumption using historical usage data  
-- Automate model selection through FLAML  
-- Compare multiple forecasting approaches (FLAML AutoML vs Prophet vs Ensemble)  
-- Analyze seasonality and volatility handling capabilities  
-- Implement bonus features (rolling forecast, ensemble averaging, business impact)
+Together, these notebooks offer both **conceptual understanding** and **practical implementation** of AutoML for time series forecasting.
 
 ---
 
-## 📊 Dataset
+## Quick Start
 
-**Source:** UCI Machine Learning Repository – Household Electric Power Consumption  
-**Link:** [https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption](https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption)
-
-**Dataset Characteristics:**
-- **Time Period:** December 2006 – November 2010 (47 months)  
-- **Frequency:** Originally 1-minute, resampled to daily  
-- **Records:** ~2 million observations  
-- **Target Variable:** Global Active Power (kW)  
-- **Features:** Date, Time, Voltage, Sub-metering readings, etc.  
-
----
-
-## 🗂️ Folder Structure
-
-```
-Fall2025_FLAML_Time_Series_Forecasting_of_Energy_Consumption/
-│
-├── README.md                          # Main project documentation
-├── README_MIDTERM.md                  # This midterm submission document
-│
-├── notebooks/
-│   └── Fall2025_FLAML_Energy_Forecasting.ipynb
-│
-├── src/
-│   ├── __init__.py
-│   ├── energy_forecasting.py
-│   ├── enhanced_analysis.py
-│   ├── dashboard.py
-│   └── config.py
-│
-├── data/
-│   └── household_power_consumption.txt
-│
-├── outputs/
-│   ├── cleaned_timeseries.png
-│   ├── exploratory_analysis.png
-│   ├── feature_importance.png
-│   ├── model_comparison_results.csv
-│   ├── performance_comparison.png
-│   ├── predictions_comparison.png
-│   ├── rolling_forecast.png
-│   ├── predictions.csv
-│   ├── summary.json
-│   └── README.md
-│
-├── requirements.txt
-└── .gitignore
-```
-
----
-
-## 📓 Midterm Submission Content
-
-### Primary Deliverable: Jupyter Notebook
-
-**File:** `notebooks/Fall2025_FLAML_Energy_Forecasting.ipynb`
-
-This notebook implements a full pipeline for automated energy forecasting.
-
-#### 1. **Data Loading & Exploration**
-- Loaded and cleaned UCI dataset  
-- Visualized consumption trends and seasonal cycles  
-- Identified missing values (~1.2%) and interpolated them  
-
-#### 2. **Data Preparation**
-- Parsed timestamps, indexed by date  
-- Resampled to daily averages  
-- Applied forward fill and interpolation for missing data  
-- Split into 80/20 train-test (chronological order)
-
-#### 3. **Feature Engineering**
-- **Temporal:** Day of week, month, quarter  
-- **Cyclical Encoding:** sin/cos transformations for periodic features  
-- **Lag Features:** 1, 7, 14, and 30-day lags  
-- **Rolling Windows:** 7/14/30-day mean and std  
-- **Calendar Flags:** Weekend, holiday, and seasonal indicators  
-
-#### 4. **Model Training**
-- **FLAML AutoML:**
-  - Best estimator: **LightGBM**
-  - Time budget: 300 seconds  
-  - Test RMSE: **0.2380**, Test MAPE: **19.47%**
-- **Prophet:**
-  - Test RMSE: **0.2585**, Test MAPE: **22.14%**
-- **Ensemble (60% FLAML + 40% Prophet):**
-  - Test RMSE: **0.2356**, Test MAPE: **19.62%**
-
-#### 5. **Evaluation & Visualizations**
-- Model comparison (FLAML vs Prophet vs Ensemble)  
-- Feature importance plots  
-- Rolling forecast stability analysis  
-- Seasonal error decomposition (weekday/month trends)
-
-#### 6. **Bonus Analyses**
-- Rolling forecast evaluation (30-day window, 7-day stride)  
-- Ensemble averaging  
-- Business cost impact estimation based on predictive error  
-
----
-
-## 🎯 Key Tasks Completed
-
-### ✅ Required Tasks
-
-| Task | Status | Description |
-|------|--------|-------------|
-| Data Preparation | ✅ | Cleaned, resampled, interpolated missing data |
-| Feature Engineering | ✅ | Lag, rolling stats, cyclical features |
-| FLAML Model Training | ✅ | AutoML with LightGBM as best model |
-| Prophet Baseline | ✅ | Seasonal trend modeling |
-| Model Comparison | ✅ | Comprehensive RMSE & MAPE analysis |
-| Visualization | ✅ | Predictions, feature importance, and error plots |
-| Discussion | ✅ | Interpreted seasonality and volatility patterns |
-
-### ⭐ Bonus Tasks
-
-| Task | Status | Description |
-|------|--------|-------------|
-| Rolling Forecast | ✅ | 30-day window, 7-day step |
-| Ensemble Model | ✅ | 60-40 weighted average |
-| Feature Importance | ✅ | LightGBM feature ranking visualization |
-| Business Impact | ✅ | Estimated cost savings from forecast accuracy |
-
----
-
-## 📈 Results Summary
-
-### Model Performance
-
-| Model | Train RMSE | Test RMSE | Test MAPE | Notes |
-|-------|-------------|-----------|-----------|-------|
-| **FLAML AutoML (LightGBM)** | 0.2256 | 0.2380 | 19.47% | Best overall performer |
-| **Prophet** | 0.2912 | 0.2585 | 22.14% | Baseline model |
-| **Ensemble** | 0.2423 | 0.2356 | 19.62% | Slightly improved RMSE over FLAML |
-
-### Rolling Forecast Stability
-
-| Model | Avg RMSE | Std Dev | Comment |
-|-------|-----------|----------|----------|
-| FLAML | 0.2188 | ±0.066 | Strong stability across windows |
-| Prophet | 0.2421 | ±0.055 | Higher variability |
-
-### Key Findings
-
-1. **FLAML’s LightGBM** outperformed Prophet by ~8% in RMSE and 12% in MAPE.  
-2. **Ensemble averaging** yielded marginal improvement in generalization.  
-3. **Weekday-weekend differences** were significant; weekend consumption patterns more volatile.  
-4. **FLAML’s rolling performance** showed high temporal stability.  
-5. **Economic analysis** indicated potential **annual cost reduction of ~$4.7 per household** with improved accuracy.
-
----
-
-## 🚀 How to Run
-
-### Setup
+### 1. Clone and Setup
 
 ```bash
-cd Fall2025_FLAML_Time_Series_Forecasting_of_Energy_Consumption/
-python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
+# Clone the repository
+git clone <repository-url>
+cd UMDTASK131_FALL2025_FLAML
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### Run Notebook
+### 2. Download Dataset
+
+Download the UCI Household Electric Power Consumption dataset and place it in the `data/` folder:
+
+```
+data/household_power_consumption.txt
+```
+
+**Source:** [UCI ML Repository](https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption)
+
+### 3. Run Notebooks
 
 ```bash
-jupyter notebook notebooks/Fall2025_FLAML_Energy_Forecasting.ipynb
+# Option 1: Jupyter Notebook
+jupyter notebook
+
+# Option 2: JupyterLab
+jupyter lab
+
+# Option 3: Docker
+cd docker/ && docker compose up --build
 ```
 
-### Optional Dashboard (later)
+### 4. Explore Results
+
+After running `FLAML_Example.ipynb`:
+- Visualizations saved to `outputs/` directory
+- Interactive dashboard: `streamlit run dashboard.py`
+
+---
+
+## Project Structure
+
+```
+UMDTASK131_FALL2025_FLAML/
+│
+├── 📓 FLAML_API.ipynb           # Tutorial notebook - Learn FLAML
+├── 📓 FLAML_Example.ipynb       # Application notebook - Energy forecasting
+│
+├── 📄 FLAML_API.md              # Detailed README for API notebook
+├── 📄 FLAML_Example.md          # Detailed README for Example notebook
+├── 📄 README.md                 # This file - Project overview
+│
+├── 🐍 utils.py                  # Reusable utility functions
+├── 🐍 dashboard.py              # Streamlit interactive dashboard
+├── 📋 requirements.txt          # Python dependencies
+│
+├── 📁 data/                     # Dataset directory
+│   └── household_power_consumption.txt
+│
+├── 📁 outputs/                  # Generated outputs
+│   ├── *.png                    # Visualizations (6 files)
+│   ├── *.csv                    # Data files (3 files)
+│   └── summary.json             # Results summary
+│
+└── 📁 docker/                   # Docker configuration
+    ├── Dockerfile
+    ├── docker-compose.yml
+    └── run_jupyter_server.sh
+```
+
+---
+
+## Notebooks Overview
+
+### 📘 FLAML_API.ipynb — Learn the Tool
+
+**Purpose:** Understand FLAML's interface and capabilities without project-specific complexity.
+
+**What You'll Learn:**
+- AutoML concepts and FLAML's design philosophy
+- Classification, regression, and forecasting examples
+- Model persistence and pipeline integration
+- Best practices and limitations
+
+**Key Topics:**
+
+| Section | Content |
+|---------|---------|
+| Introduction | AutoML concepts, FLAML overview |
+| Example 1 | Classification (Iris dataset) |
+| Example 2 | Regression (California Housing) |
+| Example 3 | Time Series Forecasting (Synthetic) |
+| Integration | Scikit-learn pipeline integration |
+| Best Practices | Tips and recommendations |
+
+**Runtime:** ~5 minutes
+
+📖 **Detailed Documentation:** [FLAML_API.md](FLAML_API.md)
+
+---
+
+### 📗 FLAML_Example.ipynb — Apply the Tool
+
+**Purpose:** Apply FLAML to a real-world energy consumption forecasting problem.
+
+**What You'll Achieve:**
+- 96.64% prediction accuracy with XGBoost
+- Comparison of 7 models (4 FLAML + Prophet + ARIMA + Ensemble)
+- 41 engineered features from raw data
+- Production-ready forecasting pipeline
+
+**Key Results:**
+
+| Model | Test RMSE | Test MAPE | Accuracy |
+|-------|-----------|-----------|----------|
+| **FLAML (XGBoost)** | **0.0388** | **3.36%** | **96.64%** |
+| FLAML (LightGBM) | 0.0422 | 3.59% | 96.41% |
+| Prophet | 0.2585 | 22.14% | 77.86% |
+| ARIMA | 0.3344 | 37.86% | 62.14% |
+
+**Sections:**
+
+| # | Section | Content |
+|---|---------|---------|
+| 1 | Setup | Configuration, imports |
+| 2 | EDA | Data exploration, visualizations |
+| 3 | Preprocessing | Resampling, cleaning |
+| 4 | Feature Engineering | 41 features created |
+| 5 | Train-Test Split | Temporal split (80/20) |
+| 6 | Model Training | FLAML, Prophet, ARIMA |
+| 7 | Advanced Analysis | Feature importance, ensemble, rolling eval |
+| 8 | Summary | Business impact, conclusions |
+
+**Runtime:** ~10-15 minutes
+
+📖 **Detailed Documentation:** [FLAML_Example.md](FLAML_Example.md)
+
+---
+
+## Key Features
+
+### 🤖 AutoML with FLAML
+
+- Automated model selection from LightGBM, XGBoost, Random Forest, Extra Trees
+- Hyperparameter tuning with cost-aware optimization
+- Time budget control (120 seconds per model)
+- 3-fold cross-validation
+
+### 📊 Comprehensive Feature Engineering
+
+| Category | Count | Examples |
+|----------|-------|----------|
+| Temporal | 13 | day_of_week, month, season, cyclical encodings |
+| Lag | 6 | lag_1, lag_7, lag_30 |
+| Rolling | 12 | rolling_mean_7, rolling_std_14 |
+| EMA | 2 | ema_7, ema_30 |
+| Difference | 2 | diff_1, diff_7 |
+| **Total** | **41** | |
+
+### 📈 Multiple Baselines
+
+- **Prophet:** Facebook's decomposition-based forecasting
+- **ARIMA:** Classical statistical baseline
+- **Ensemble:** 60% FLAML + 40% Prophet weighted combination
+
+### 🎯 Bonus Features
+
+- ✅ Rolling forecast evaluation (30-day windows)
+- ✅ Ensemble forecasting (60-40 weighted)
+- ✅ Feature importance analysis
+- ✅ Seasonality & volatility analysis
+
+### 🖥️ Interactive Dashboard
 
 ```bash
-streamlit run src/dashboard.py
+streamlit run dashboard.py
 ```
 
+Explore results interactively with:
+- Model comparison charts
+- Prediction visualizations
+- Feature importance explorer
+- Performance metrics
+
 ---
-## 🐳 Running the Project in Docker
 
-This project includes a full Docker setup so the FLAML energy forecasting pipeline can run consistently across environments.
+## Requirements
 
-### 1. Build and Start the Container
+### Python Version
 
-From the project root:
+- Python 3.8 or higher
+
+### Core Dependencies
+
+```
+flaml>=2.1.0
+prophet>=1.1.5
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+lightgbm>=4.0.0
+xgboost>=2.0.0
+statsmodels>=0.14.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+streamlit>=1.28.0
+```
+
+### Installation
 
 ```bash
-docker compose -f docker/docker-compose.yml up --build
+pip install -r requirements.txt
 ```
 
-This will:
+---
 
-* Build a Python 3.10 environment
-* Install all dependencies from `requirements.txt`
-* Mount your project into `/workspace` inside the container
-* Start JupyterLab on **port 8888**
+## Output Files
 
-### 2. Access JupyterLab
+After running `FLAML_Example.ipynb`, the following files are generated:
 
-When the container starts, look for a URL such as:
+### Visualizations (6 PNG files)
 
+| File | Description |
+|------|-------------|
+| `exploratory_analysis.png` | 9-panel EDA visualization |
+| `cleaned_timeseries.png` | Daily consumption with moving averages |
+| `feature_correlations.png` | Feature correlation heatmap |
+| `train_test_split.png` | Train/test split visualization |
+| `feature_importance.png` | XGBoost feature importance |
+| `rolling_forecast.png` | Rolling evaluation results |
+
+### Data Files (3 CSV files)
+
+| File | Description |
+|------|-------------|
+| `predictions.csv` | Actual vs predicted for all models |
+| `model_comparison.csv` | Final model performance metrics |
+| `flaml_candidates_comparison.csv` | 4 FLAML models comparison |
+
+### Summary (1 JSON file)
+
+| File | Description |
+|------|-------------|
+| `summary.json` | Complete project results and configuration |
+
+---
+
+## Utility Functions
+
+The `utils.py` module provides reusable functions:
+
+```python
+from utils import (
+    add_temporal_features,    # 13 calendar features
+    add_lag_features,         # 6 lag features
+    add_rolling_features,     # 12 rolling statistics
+    add_ema_features,         # 2 EMA features
+    calculate_metrics         # RMSE, MAE, MAPE, R²
+)
 ```
-http://127.0.0.1:8888/tree?token=XXXX
-```
 
-Open that in your browser to access the notebooks.
+---
 
-### 3. Run the Notebook Inside Docker
+## Docker Support
 
-In JupyterLab:
-
-```
-notebooks/Fall2025_FLAML_Energy_Forecasting.ipynb
-```
-
-Run:
-
-```
-Kernel → Restart & Run All
-```
-
-### 4. Stop the Container
-
-Use:
+Run the entire project in a containerized environment:
 
 ```bash
-CTRL + C
-docker compose -f docker/docker-compose.yml down
+cd docker/
+docker compose up --build
 ```
 
-### Notes
-
-* Docker isolates all dependencies inside `/venv`.
-* Local file changes sync instantly inside the container due to volume mounting.
-* This setup matches the MSML610 required Docker format.
+Access JupyterLab at: `http://localhost:8888`
 
 ---
 
-## 📚 Dependencies
+## Educational Value
 
-Core packages:
-- Python 3.8+
-- pandas, numpy, matplotlib, seaborn  
-- scikit-learn, lightgbm  
-- flaml, prophet  
-- jupyter, streamlit  
+### Learning Path
 
----
+```
+1. Start with FLAML_API.ipynb
+   └── Understand FLAML interface and concepts
+   
+2. Progress to FLAML_Example.ipynb
+   └── Apply knowledge to real-world forecasting
+   
+3. Explore dashboard.py
+   └── Interactive result exploration
+   
+4. Extend with your own data
+   └── Use utils.py for new projects
+```
 
-## 🔄 Current Status
+### Concepts Covered
 
-### Completed for Midterm:
-- [x] Data pipeline and EDA  
-- [x] FLAML and Prophet implementation  
-- [x] Rolling evaluation and ensembling  
-- [x] Key results visualizations  
-- [x] Cost impact analysis  
+| Topic | FLAML_API | FLAML_Example |
+|-------|-----------|---------------|
+| AutoML basics | ✅ | ✅ |
+| Classification | ✅ | |
+| Regression | ✅ | |
+| Time Series Forecasting | ✅ | ✅ |
+| Feature Engineering | | ✅ |
+| Model Comparison | | ✅ |
+| Rolling Evaluation | | ✅ |
+| Business Impact | | ✅ |
 
-### In Progress:
-- [ ] Extended parameter tuning  
-- [ ] Dashboard UI refinements  
-- [ ] Final report polishing  
+### Skills Developed
 
-### Planned for Final:
-- [ ] Deep learning baseline (LSTM)  
-- [ ] Multistep forecasting evaluation  
-- [ ] Deployment pipeline integration  
-
----
-
-## 💡 Challenges & Learnings
-
-### Challenges:
-1. Managing large dataset (2M+ records) efficiently  
-2. Handling gaps and irregular timestamps  
-3. Balancing feature complexity with compute limits  
-4. Prophet tuning for daily-level granularity  
-
-### Learnings:
-1. AutoML can drastically reduce experimentation time.  
-2. Lag-based temporal features are crucial for high accuracy.  
-3. Model ensembling smooths extreme variations.  
-4. Rolling forecasts provide realistic robustness estimates.  
+- Automated machine learning workflows
+- Time series preprocessing and feature engineering
+- Model evaluation and comparison
+- Python libraries: pandas, scikit-learn, FLAML, Prophet
+- Documentation and reproducibility best practices
 
 ---
 
-## 📝 Next Steps
+## Project Requirements Status
 
-### For Final Submission:
-1. Integrate weather/temperature data as exogenous features.  
-2. Add more model baselines (ARIMA, LSTM).  
-3. Perform cross-validation for temporal consistency.  
-4. Expand business metric analysis.  
-5. Finalize dashboard and documentation.  
+### Core Requirements
 
----
+| Requirement | Status |
+|-------------|--------|
+| Data Preparation (cleaning, resampling, missing values) | ✅ |
+| Feature Engineering (lags, rolling, temporal, EMA) | ✅ |
+| Model Training with FLAML (LightGBM, XGBoost, RF, Extra Trees) | ✅ |
+| Model Comparison (RMSE, MAPE, R² for all models) | ✅ |
+| Visualization (predicted vs actual) | ✅ |
+| Analysis (seasonality and volatility) | ✅ |
 
-## 🎓 Academic Integrity Statement
+### Bonus Requirements ✅
 
-This project is completed individually as part of MSML610 coursework.  
-All code is original or properly cited.  
-Dataset sourced from UCI Machine Learning Repository (acknowledged below).
-
----
-
-## 🔗 References
-
-1. UCI Machine Learning Repository – Household Electric Power Consumption Dataset  
-2. Microsoft FLAML Documentation – https://microsoft.github.io/FLAML/  
-3. Facebook Prophet Documentation – https://facebook.github.io/prophet/  
-4. Scikit-learn User Guide – https://scikit-learn.org/  
+| Requirement | Status |
+|-------------|--------|
+| Rolling forecast evaluation | ✅ |
+| Ensemble forecasting | ✅ |
 
 ---
 
-**Last Updated:** November 10, 2025  
-**Status:** Midterm Submission – Completed ✅
+## References
+
+### Academic Papers
+
+1. Wang, C., et al. (2021). "FLAML: A Fast and Lightweight AutoML Library." *MLSys 2021*.
+2. Taylor, S. J., & Letham, B. (2018). "Forecasting at scale." *The American Statistician*.
+3. Chen, T., & Guestrin, C. (2016). "XGBoost: A scalable tree boosting system." *KDD 2016*.
+4. Ke, G., et al. (2017). "LightGBM: A highly efficient gradient boosting decision tree." *NIPS 2017*.
+
+### Documentation
+
+- [FLAML Documentation](https://microsoft.github.io/FLAML/)
+- [Prophet Documentation](https://facebook.github.io/prophet/)
+- [Scikit-learn Documentation](https://scikit-learn.org/)
+
+### Dataset
+
+- [UCI ML Repository: Household Electric Power Consumption](https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption)
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+## Author
+
+**Anisha Katiyar**  
+MSML610 - Advanced Machine Learning  
+University of Maryland  
+Fall 2025
+
+---
+
+## Acknowledgments
+
+- **Microsoft Research** — FLAML library development
+- **Meta Research** — Prophet library development
+- **UCI ML Repository** — Dataset hosting
+- **Course Instructors & TAs** — MSML610 guidance
+
+---
