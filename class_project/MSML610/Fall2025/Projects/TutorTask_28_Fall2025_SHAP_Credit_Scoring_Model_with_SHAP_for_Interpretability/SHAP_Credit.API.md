@@ -4,7 +4,7 @@
 
 The `shap_credit_API.ipynb` notebook is a foundational companion to the credit scoring project. This notebook focuses on demonstrating the core APIs—**XGBoost** for gradient boosting and **SHAP** for explainability—before applying them to the full pipeline. It serves as a technical deep-dive into the tools and the `credit_scoring_shap` package structure.
 
-Designed with beginners and code-explorers in mind, this notebook breaks down how XGBoost and SHAP work on simple toy data first, then introduces the German Credit dataset and shows how the project's modular API wraps these tools for production use. It's the perfect starting point for understanding the building blocks before seeing the complete system in `SHAP_Credit.example.ipynb`.
+Designed with beginners and code-explorers in mind, this notebook breaks down how XGBoost and SHAP work on simple toy data first, then introduces the credit dataset and shows how the project's modular API wraps these tools for production use. It's the perfect starting point for understanding the building blocks before seeing the complete system in `SHAP_Credit.example.ipynb`.
 
 ## Purpose
 
@@ -12,7 +12,7 @@ The primary purpose of `shap_credit_API.ipynb` is to introduce and demonstrate t
 
 - Showcase XGBoost's capabilities on synthetic toy data to build intuition about gradient boosting.
 - Demonstrate native SHAP TreeExplainer usage and visualizations (summary plots) on simple data.
-- Introduce the German Credit dataset and show the preprocessing pipeline that transforms raw features into model-ready inputs.
+- Introduce the credit dataset and show the preprocessing pipeline that transforms raw features into model-ready inputs.
 - Explain the `credit_scoring_shap` package structure: how data, modeling, evaluation, and explanation modules separate concerns cleanly.
 - Provide docstring references and usage patterns so you can extend or customize the pipeline.
 - Connect the dots between individual APIs (XGBoost, SHAP) and the integrated pipeline (how they work together).
@@ -44,14 +44,14 @@ This notebook is an educational resource focused on API understanding, preparing
 
 The notebook is organized into six conceptual sections, building from motivation to full API documentation:
 
-### Section 1: Why Credit Scoring Needs Explainability
+### Section 1: Introduction to XGBoost
 
-- **Purpose**: Set context before diving into code—understand *why* explainability matters in finance.
-- **Process**: Discusses stakeholder needs: regulators require fair, transparent decisions; customers want to know why they were denied; model owners need to validate that models are sensible.
-- **Output**: Conceptual framing—XGBoost provides accuracy (strong tabular performance), SHAP provides explanations (feature attributions), and together they meet the dual requirements of performance and interpretability.
-- **Insights**: In regulated industries like banking, explainability isn't optional. Laws like ECOA (Equal Credit Opportunity Act) require lenders to explain adverse decisions. A model that's 99% accurate but unexplainable may be legally unusable.
+- **Purpose**: Set context before diving into code—understand how gradient boosting works and when to use XGBoost.
+- **Process**: Discusses what makes XGBoost special (speed, handling messy data, built-in regularization) and explains key hyperparameters (n_estimators, learning_rate, max_depth, subsample, colsample_bytree).
+- **Output**: Conceptual framing—XGBoost provides accuracy (strong tabular performance) through ensemble learning where each tree learns from previous errors.
+- **Insights**: XGBoost excels on structured/tabular data and provides both accuracy and interpretability. Understanding the boosting process (building trees iteratively to correct errors) is fundamental to using the tool effectively.
 
-### Section 2: Quick XGBoost Model on Toy Data (Cells 1-4)
+### Section 2: XGBoost on Toy Data (Cells 1-4)
 
 #### Imports and Setup
 
@@ -81,7 +81,7 @@ The notebook is organized into six conceptual sections, building from motivation
 - **Output**: Something like `x0: 0.267, x5: 0.153, x1: 0.138, ...`
 - **Insights**: Feature importances tell you *which* features matter but not *how*—does high x0 increase or decrease predictions? Are effects consistent across samples? This limitation is why we need SHAP.
 
-### Section 3: Native SHAP Demonstration
+### Section 3: Native SHAP TreeExplainer on the Toy Model
 
 #### SHAP Summary Plot on Toy Model
 
@@ -90,23 +90,8 @@ The notebook is organized into six conceptual sections, building from motivation
 - **Output**: A SHAP summary plot saved to `reports/api_toy_shap_summary.png` and displayed inline. Shows features on y-axis (ranked by importance), SHAP values on x-axis (negative pushes toward class 0, positive toward class 1), with dots colored by feature value (blue=low, red=high).
 - **Insights**: The summary plot is SHAP's signature visualization. Each dot is a sample—wide spread means variable impact. Color reveals directionality: if red dots (high feature value) cluster on the right (positive SHAP), then high values increase predictions. This single plot combines feature importance, effect direction, and distribution—far richer than XGBoost's scalar importances.
 
-### Section 4: German Credit Dataset (Cells 6-7)
+### Section 4: Project Modeling API (Cells 8-11)
 
-#### Load Raw German Credit Data
-
-- **Purpose**: Switch from toy data to the real dataset used in the main pipeline.
-- **Process**: Calls `load_raw_data(cfg.data)` which fetches the German Credit dataset from UCI ML Repository and returns a pandas DataFrame.
-- **Output**: Raw shape `(1000, 21)`. First 5 rows displayed showing columns like `status_checking_account`, `duration_months`, `credit_amount`, `purpose`, etc.
-- **Insights**: The 1000 rows represent loan applications. The 21 features include categorical (checking account status, credit history, employment) and numerical (credit amount, duration, age). The target is binary: 1=Good (loan repaid), 0=Bad (defaulted). Scanning the raw data builds intuition about what the model will see after preprocessing.
-
-#### Load Preprocessed Data
-
-- **Purpose**: Show the transformation from raw to model-ready data.
-- **Process**: Calls `load_and_preprocess(cfg.data)` which one-hot encodes categorical features, standardizes numerical features, and splits 80-20 into train/test with stratification.
--- **Output**: Encoded training shape `(800, 61)`, test shape `(200, 61)`. Train positive rate: ~30% (Bad), test positive rate: ~30% (Bad). First 10 feature names displayed (mix of numerical like `duration_months` and one-hot encoded like `status_checking_account_A11`).
-- **Insights**: The 21→61 feature explosion is normal with one-hot encoding. For example, `status_checking_account` with 4 categories becomes 4 binary indicators. The 70-30 class imbalance (70% good loans) will challenge models later. The preprocessing pipeline encapsulates all transformations in a reusable object.
-
-### Section 5: Project Modeling API (Cells 8-10)
 ### The `credit_scoring_shap` Package
 
 The project is organized as a Python package with clear separation of concerns:
@@ -115,7 +100,7 @@ The project is organized as a Python package with clear separation of concerns:
 - **`config.py`**: Defines `DataConfig`, `ModelConfig`, and `TrainingConfig` dataclasses that centralize all configuration parameters (test size, random seeds, hyperparameters, report paths)
 
 - **`data.py`**: Handles data loading and preprocessing
-  - `load_raw_data()`: Fetches German Credit dataset from UCI via `ucimlrepo`
+  - `load_raw_data()`: Fetches credit dataset
   - `load_and_preprocess()`: Performs one-hot encoding, standardization, and stratified train/test split
   - Returns preprocessed DataFrames and fitted preprocessing pipeline
 
@@ -147,10 +132,10 @@ The project is organized as a Python package with clear separation of concerns:
 
 #### Train and Evaluate with Project API
 
-- **Purpose**: Show the complete train-evaluate cycle using project wrapper functions.
-- **Process**: Calls `train_model(model, X_train, y_train)` to fit, then `evaluate_model(model, X_test, y_test, threshold=0.5)` to compute AUC, confusion matrix, and classification report.
-- **Output**: AUC ~0.755, confusion matrix `[[27, 33], [23, 117]]`, classification report with precision/recall for both classes.
-- **Insights**: These wrapper functions encapsulate best practices (proper train/test workflow, comprehensive metrics). The baseline AUC (0.755) establishes that credit scoring is moderately difficult—much harder than toy data (0.97) but solvable. The confusion matrix reveals the model's weakness: only 27/60 bad loans caught (45% recall).
+- **Purpose**: Show the complete train-evaluate cycle using project wrapper functions on toy data.
+- **Process**: Calls `train_model(model, X_train_toy, y_train_toy)` to fit, then `evaluate_model(model, X_test_toy, y_test_toy, threshold=0.5)` to compute AUC, confusion matrix, and classification report.
+- **Output**: AUC ~0.968, confusion matrix showing classification results, classification report with precision/recall for both classes.
+- **Insights**: These wrapper functions encapsulate best practices (proper train/test workflow, comprehensive metrics). The evaluation function centralizes metric computation, making it easy to extend with calibration metrics, stability metrics, or fairness metrics.
 
 #### Examine Function Docstrings
 
@@ -159,21 +144,30 @@ The project is organized as a Python package with clear separation of concerns:
 - **Output**: Text documentation showing function signatures, parameter descriptions, and return values.
 - **Insights**: Good APIs are self-documenting. Each function has a docstring explaining what it does, what inputs it expects, and what outputs it produces. This is your reference when extending the code. Want to know what `evaluate_model` returns? Check its docstring.
 
-### Section 6: Explainability and Sensitivity APIs
+### Section 5: Explainability and Sensitivity APIs
 
-#### Build SHAP Explainer with Project API
+#### Explainability Module Overview
 
-- **Purpose**: Show how the project wraps SHAP TreeExplainer for convenience.
-- **Process**: Calls `build_shap_explainer(model, X_train, feature_names, cfg.reports_dir)` which creates the explainer, pre-computes SHAP values on training data, and handles binary classification quirks.
-- **Output**: Returns `(explainer, shap_values)` tuple. The explainer can be reused for new samples; the shap_values are pre-computed for visualization.
-- **Insights**: Pre-computing SHAP values on the full training set (800 samples) takes a few seconds but saves time when making multiple plots. The function handles the binary classification edge case where `shap_values` can be a list or array, simplifying downstream code.
+- **Purpose**: Show how the project wraps SHAP for convenience and provide documentation for explanation functions.
+- **Process**: Documents the `explain.py` module which provides SHAP helpers: `build_shap_explainer`, `plot_global_shap_summary`, `plot_shap_dependence_for_top_feature`, and `plot_shap_decision_for_index`.
+- **Output**: API documentation showing how these functions wrap SHAP TreeExplainer and visualization capabilities.
+- **Insights**: The explanation module makes SHAP accessible without requiring deep knowledge of the library. Pre-computing SHAP values saves time when making multiple plots. The functions handle binary classification edge cases automatically.
 
-#### Print API Docstrings for Explanation Functions
+#### Sensitivity Analysis Module
 
-- **Purpose**: Document the explanation and sensitivity modules' APIs.
-- **Process**: Prints docstrings for `build_shap_explainer`, `run_sensitivity_for_instance`.
-- **Output**: Text showing these functions' signatures and purposes.
-- **Insights**: The sensitivity function is powerful but niche—most users only need global SHAP summaries. For edge cases (explaining specific denials to customers), sensitivity analysis shows "what would need to change" for approval. The API makes this accessible without deep SHAP knowledge.
+- **Purpose**: Document the "what-if" analysis capabilities.
+- **Process**: Introduces the `sensitivity.py` module and its `run_sensitivity_for_instance` function which varies top features and shows how predicted probability responds.
+- **Output**: API documentation for sensitivity analysis.
+- **Insights**: Sensitivity analysis is powerful but niche—most users only need global SHAP summaries. For edge cases (explaining specific decisions), sensitivity shows "what would need to change" for a different outcome. The API makes this accessible without deep SHAP knowledge.
+
+### Section 6: Typical Usage Pattern
+
+#### Complete Pipeline Example
+
+- **Purpose**: Show how all the pieces fit together in a typical workflow.
+- **Process**: Provides code template showing the standard sequence: (1) Train and evaluate model, (2) Build SHAP explainer, (3) Generate global SHAP plots, (4) Run local sensitivity analysis.
+- **Output**: Complete code pattern that connects data loading → modeling → evaluation → explanation.
+- **Insights**: This pattern is what you'll see in `SHAP_Credit.example.ipynb`. Understanding each step individually (from previous sections) makes the complete pipeline comprehensible. The modular design means you can skip steps (e.g., skip sensitivity if not needed) or add new ones (e.g., add LIME alongside SHAP).
 
 ## Common pitfalls
 
@@ -201,7 +195,7 @@ To run this notebook:
 
 1. Install dependencies (same as main project):
    ```bash
-   pip install pandas numpy scikit-learn xgboost shap matplotlib jupyter # add this in the scripts/install_common_packages.sh
+   pip install pandas numpy scikit-learn xgboost shap matplotlib jupyter
    ```
 
 2. Open the notebook:
@@ -212,7 +206,7 @@ To run this notebook:
 3. Run cells sequentially.
 
 4. **Recommended Path**:
-   - **Beginners**: Read Section 1 (motivation), run Sections 2-3 (toy examples), skim 4-6 on first pass, return after the main notebook.
+   - **Beginners**: Read Section 1 (XGBoost intro), run Sections 2-3 (toy examples), skim 4-6 on first pass, return after the main notebook.
    - **Experienced users**: Skim 1-3, focus on 4-6 (project-specific API details), read docstrings carefully.
 
 ### Requirements
@@ -270,13 +264,9 @@ For the complete credit scoring story with business context and real-world chall
 8. SHAP summary plots
    https://shap.readthedocs.io/en/latest/example_notebooks/api_examples/plots/summary_plot.html
 
-### Dataset
-9. Statlog German Credit Data (UCI)
-   https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data
-
 ### Background papers
-10. XGBoost paper: Chen and Guestrin, "XGBoost: A Scalable Tree Boosting System" (2016)
+9. XGBoost paper: Chen and Guestrin, "XGBoost: A Scalable Tree Boosting System" (2016)
     https://arxiv.org/abs/1603.02754
 
-11. SHAP paper: Lundberg and Lee, "A Unified Approach to Interpreting Model Predictions" (2017)
+10. SHAP paper: Lundberg and Lee, "A Unified Approach to Interpreting Model Predictions" (2017)
     https://arxiv.org/abs/1705.07874
