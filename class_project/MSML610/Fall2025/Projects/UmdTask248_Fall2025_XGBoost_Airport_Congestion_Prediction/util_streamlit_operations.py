@@ -21,7 +21,7 @@ MODELS = ROOT / "data" / "models"
 # --------------------------------
 @st.cache_data
 def load_data():
-    df = pd.read_csv(DATA / "hourly_congestion.csv")
+    df = pd.read_csv("hourly_congestion.csv")
 
     df["DATE"] = pd.to_datetime(df["DATE"])
     df["date_only"] = df["DATE"].dt.date
@@ -32,7 +32,7 @@ def load_data():
 
 @st.cache_resource
 def load_model():
-    return joblib.load(MODELS / "model.pkl")
+    return joblib.load("model.pkl")
 
 
 df = load_data()
