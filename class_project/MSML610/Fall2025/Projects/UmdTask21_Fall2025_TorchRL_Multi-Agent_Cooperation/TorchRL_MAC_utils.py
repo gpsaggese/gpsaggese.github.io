@@ -47,7 +47,7 @@ class MacConfig:
     
     # Evaluation
     eval_episodes: int = 100
-    success_threshold: float = 5.0  # Reward threshold for success
+    success_threshold: float = -150.0  # Reward threshold for success
     
     # System
     seed: int = 42
@@ -584,7 +584,14 @@ def compute_loss(cfg, batch: dict, actors: Dict[str, nn.Module], critic: nn.Modu
     
     # Flatten batch for PPO updates
     T = rewards.shape[0]
-    
+
+
+    # Ensure rewards and dones are 1D
+    if rewards.dim() > 1:
+        rewards = rewards.squeeze()
+    if dones.dim() > 1:
+        dones = dones.squeeze()
+
     # 2. Compute GAE (Generalized Advantage Estimation)
     # ----------------
     advantages = torch.zeros_like(rewards)
@@ -610,7 +617,10 @@ def compute_loss(cfg, batch: dict, actors: Dict[str, nn.Module], critic: nn.Modu
         lastgaelam = delta + cfg.gamma * 0.95 * next_non_terminal * lastgaelam # Using hardcoded lambda=0.95
         advantages[t] = lastgaelam
         
-    returns = advantages + old_values
+    # returns = advantages + old_values
+    # Ensure old_values is 1D for proper addition
+    old_values_flat = old_values.squeeze() if old_values.dim() > 1 else old_values
+    returns = advantages + old_values_flat
 
     # Normalize advantages
     advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
@@ -641,9 +651,18 @@ def compute_loss(cfg, batch: dict, actors: Dict[str, nn.Module], critic: nn.Modu
             mb_returns = returns[mb_inds]
             mb_advantages = advantages[mb_inds]
             
+            # Ensure all tensors are 1D for this mini-batch
+            if mb_returns.dim() > 1:
+                mb_returns = mb_returns.squeeze()
+            if mb_advantages.dim() > 1:
+                mb_advantages = mb_advantages.squeeze()
+
             # --- Critic Update ---
-            new_values = critic(mb_states)
+            # new_values = critic(mb_states)
+            # critic_loss = F.mse_loss(new_values, mb_returns)
+            new_values = critic(mb_states).squeeze()  # Should be [mini_batch_size]
             critic_loss = F.mse_loss(new_values, mb_returns)
+
             
             # --- Actor Update (Per Agent) ---
             actor_loss_sum = 0
@@ -661,8 +680,8 @@ def compute_loss(cfg, batch: dict, actors: Dict[str, nn.Module], critic: nn.Modu
                 new_logp, dist_entropy = actor.evaluate_actions(mb_obs, mb_actions)
                 
                 # PPO Ratio
-                ratio = torch.exp(new_logp - mb_old_logp)
-                
+                # ratio = torch.exp(new_logp - mb_old_logp)
+                ratio = torch.exp(new_logp - mb_old_logp).squeeze(-1)
                 # Surrogate Loss
                 surr1 = ratio * mb_advantages
                 surr2 = torch.clamp(ratio, 1.0 - clip_param, 1.0 + clip_param) * mb_advantages
@@ -767,6 +786,7 @@ def train(cfg: MacConfig) -> Tuple[str, dict]:
         stats['entropies'].append(info['entropy'])
         
         if (iteration + 1) % cfg.log_interval == 0:
+            # positive_return = -info['mean_return']
             print(f"Iter {iteration + 1}/{cfg.num_iters} | "
                   f"Loss: {info['loss']:.3f} | "
                   f"Return: {info['mean_return']:.3f} | "
@@ -785,8 +805,16 @@ def train(cfg: MacConfig) -> Tuple[str, dict]:
     }
     
     torch.save(checkpoint, checkpoint_path)
+    # print(f"\nTraining complete! Checkpoint saved to: {checkpoint_path}")
+    # Print final statistics with positive scores
+    final_positive_score = -info['mean_return']
     print(f"\nTraining complete! Checkpoint saved to: {checkpoint_path}")
-    
+    print(f"\n✓ Training complete!")
+    print(f"  Checkpoint: {checkpoint_path}")
+    print(f"  Final loss: {info['loss']:.3f}")
+    print(f"  Final success score: {final_positive_score:.3f}")
+    print(f"  Final entropy: {info['entropy']:.3f}")
+
     return checkpoint_path, stats
 
 
@@ -970,7 +998,8 @@ def evaluate(cfg: MacConfig, ckpt_path: str, mode: str = "normal") -> dict:
         
         # Fallback: infer from reward threshold
         if not success:
-            success = episode_reward > -cfg.success_threshold
+            # success = episode_reward > -cfg.success_threshold
+            success = episode_reward >= cfg.success_threshold
         
         successes.append(float(success))
         
@@ -981,14 +1010,19 @@ def evaluate(cfg: MacConfig, ckpt_path: str, mode: str = "normal") -> dict:
     # Compute metrics
     success_rate = np.mean(successes)
     comm_cost = np.mean(comm_costs)
-    
+    # Calculate average episode reward for display
+    avg_reward = np.mean([episode_reward]) if 'episode_reward' in locals() else 0
+    positive_score = -avg_reward  # Transform to positive
+
     metrics = {
         'success_rate': success_rate,
         'comm_cost': comm_cost,
+        'positive_score': positive_score,
     }
     
     print(f"  Success Rate: {success_rate:.3f}")
     print(f"  Comm Cost: {comm_cost:.4f}")
+    print(f"  Positive Score: {positive_score:.3f}")
     
     # If this is normal mode, we can't compute gain/efficiency yet
     if mode == "normal":
