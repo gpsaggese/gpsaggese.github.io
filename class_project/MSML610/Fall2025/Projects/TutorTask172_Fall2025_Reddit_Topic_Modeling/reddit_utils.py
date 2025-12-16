@@ -56,7 +56,7 @@ def clean_text(text: str, stopwords_set: Optional[set] = None, min_token_len: in
     - remove URLs
     - remove non-alphabetic characters
     - lowercase + split
-    - remove stopwords (optional)
+    - remove stopwords 
     - remove short tokens
     """
     if not isinstance(text, str):
