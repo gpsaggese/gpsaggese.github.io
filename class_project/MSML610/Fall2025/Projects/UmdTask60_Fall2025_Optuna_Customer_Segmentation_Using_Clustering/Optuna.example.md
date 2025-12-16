@@ -1,4 +1,4 @@
-# utils.py & Optuna_segmentation.example.ipynb Reference
+# Utils.py & Optuna_segmentation.example.ipynb Reference
 
 ## Quick Overview
 
