@@ -1,10 +1,9 @@
 # Distributed Training of a Transformer Model for Text Generation using Horovod
 
-UMD MSML610 Course Project
-Name: Vikranth Reddimasu
-UID: 121058355
-Tool: Horovod
-Difficulty Level: Hard
+Name: Vikranth Reddimasu  
+UID: 121058355  
+Tool: Horovod  
+Difficulty Level: Hard 
 
 ## Project Overview
 
