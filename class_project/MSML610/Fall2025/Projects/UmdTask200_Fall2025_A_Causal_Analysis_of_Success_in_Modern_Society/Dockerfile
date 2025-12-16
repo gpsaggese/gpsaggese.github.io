@@ -22,12 +22,4 @@ COPY . /app
 RUN mkdir -p /app/notebooks /app/data
 
 EXPOSE 8888
-
-# Use ServerApp flags (preferred for JupyterLab 4 / modern Jupyter Server)
-CMD ["jupyter", "lab",
-     "--ip=0.0.0.0",
-     "--port=8888",
-     "--no-browser",
-     "--allow-root",
-     "--ServerApp.token=",
-     "--ServerApp.password="]
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--ServerApp.token=", "--ServerApp.password="]
