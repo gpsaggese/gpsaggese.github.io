@@ -1,8 +1,8 @@
 """
 MAC (Multi-Agent Communication) Utilities for PettingZoo MPE simple_reference with TorchRL.
 
-Architecture: Separate actor networks per agent + centralized critic.
-Training: Centralized A3C-style loss with n-step returns.
+Actor and Critic Neural Net Model Setup
+
 """
 
 from dataclasses import dataclass, asdict
@@ -18,12 +18,12 @@ from pathlib import Path
 
 
 # ============================================================================
-# Configuration
+# Configuration Setup
 # ============================================================================
 
 @dataclass
 class MacConfig:
-    """Configuration for MAC training and evaluation."""
+    """Configuration for Multi Agent training and evaluation."""
     
     # Environment
     env_name: str = "simple_reference"
@@ -61,12 +61,6 @@ class MacConfig:
 
 
 def default_cfg() -> MacConfig:
-    """
-    Returns default configuration for MAC training.
-    
-    Returns:
-        MacConfig instance with default settings.
-    """
     return MacConfig()
 
 
@@ -87,11 +81,10 @@ def make_env(cfg: MacConfig):
     Raises:
         ImportError: If TorchRL PettingZoo wrapper not found.
     """
-    # Set seed for reproducibility
+    # seed for reproducibility
     np.random.seed(cfg.seed)
     torch.manual_seed(cfg.seed)
     
-    # Try importing TorchRL PettingZoo wrapper
     torchrl_wrapper = None
     try:
         from torchrl.envs.libs.pettingzoo import PettingZooEnv
@@ -109,7 +102,6 @@ def make_env(cfg: MacConfig):
                 "Please install torchrl with PettingZoo support."
             )
     
-    # Try to determine the environment version
     env_version = "v3"
     try:
         from pettingzoo.mpe import simple_reference_v3
@@ -123,7 +115,6 @@ def make_env(cfg: MacConfig):
                 "Please install pettingzoo: pip install pettingzoo[mpe]"
             )
     
-    # Wrap with TorchRL using string task name
     task_name = f"mpe/simple_reference_{env_version}"
     
     try:
@@ -138,7 +129,6 @@ def make_env(cfg: MacConfig):
         )
     except (TypeError, RuntimeError) as e:
         # Fallback: create environment manually without TorchRL wrapper
-        # (This is less ideal but ensures compatibility)
         if env_version == "v3":
             from pettingzoo.mpe import simple_reference_v3
             env = simple_reference_v3.parallel_env(
@@ -165,7 +155,6 @@ def get_agent_names(env) -> List[str]:
     Returns:
         List of agent names (e.g., ['speaker_0', 'listener_0']).
     """
-    # Access underlying PettingZoo environment
     if hasattr(env, '_env'):
         pz_env = env._env
     elif hasattr(env, 'env'):
@@ -173,7 +162,7 @@ def get_agent_names(env) -> List[str]:
     else:
         pz_env = env
     
-    # Get agents list
+    # Agents list
     if hasattr(pz_env, 'possible_agents'):
         return pz_env.possible_agents
     elif hasattr(pz_env, 'agents'):
@@ -219,7 +208,7 @@ class MLPNetwork(nn.Module):
         
         # Output layer
         fc_out = nn.Linear(hidden_dim, output_dim)
-        orthogonal_init(fc_out, gain=0.01) # Small gain for output to start with small actions
+        orthogonal_init(fc_out, gain=0.01) 
         layers.append(fc_out)
         
         self.network = nn.Sequential(*layers)
@@ -276,10 +265,8 @@ class ContinuousActor(nn.Module):
         else:
             action_raw = dist.rsample()
         
-        # Tanh squashing
         action = torch.tanh(action_raw)
         
-        # Log prob correction
         log_prob = dist.log_prob(action_raw)
         log_prob = log_prob - torch.log(1 - action.pow(2) + 1e-6)
         log_prob = log_prob.sum(dim=-1, keepdim=True)
@@ -316,145 +303,6 @@ class CentralizedCritic(nn.Module):
     def forward(self, state):
         return self.mlp(state)
 
-# class MLPNetwork(nn.Module):
-#     """Multi-layer perceptron network."""
-    
-#     def __init__(self, input_dim: int, output_dim: int, hidden_dim: int, num_layers: int):
-#         super().__init__()
-#         layers = []
-        
-#         # Input layer
-#         layers.append(nn.Linear(input_dim, hidden_dim))
-#         layers.append(nn.ReLU())
-        
-#         # Hidden layers
-#         for _ in range(num_layers - 1):
-#             layers.append(nn.Linear(hidden_dim, hidden_dim))
-#             layers.append(nn.ReLU())
-        
-#         # Output layer
-#         layers.append(nn.Linear(hidden_dim, output_dim))
-        
-#         self.network = nn.Sequential(*layers)
-    
-#     def forward(self, x):
-#         return self.network(x)
-
-
-# class DiscreteActor(nn.Module):
-#     """Actor network for discrete action spaces (Categorical policy)."""
-    
-#     def __init__(self, obs_dim: int, action_dim: int, hidden_dim: int, num_layers: int):
-#         super().__init__()
-#         self.mlp = MLPNetwork(obs_dim, action_dim, hidden_dim, num_layers)
-    
-#     def forward(self, obs):
-#         """
-#         Forward pass.
-        
-#         Args:
-#             obs: Observation tensor [batch_size, obs_dim].
-            
-#         Returns:
-#             Categorical distribution over actions.
-#         """
-#         logits = self.mlp(obs)
-#         return Categorical(logits=logits)
-    
-#     def get_null_action(self, batch_size: int, device: str):
-#         """Get null action (action 0) for no communication mode."""
-#         return torch.zeros(batch_size, dtype=torch.long, device=device)
-
-
-# class ContinuousActor(nn.Module):
-#     """Actor network for continuous action spaces (Gaussian policy with tanh squashing)."""
-    
-#     def __init__(self, obs_dim: int, action_dim: int, hidden_dim: int, num_layers: int, action_bounds: Tuple[float, float]):
-#         super().__init__()
-#         self.mlp = MLPNetwork(obs_dim, 2 * action_dim, hidden_dim, num_layers)  # output mean and log_std
-#         self.action_dim = action_dim
-#         self.action_low = action_bounds[0]
-#         self.action_high = action_bounds[1]
-#         self.action_scale = (self.action_high - self.action_low) / 2.0
-#         self.action_bias = (self.action_high + self.action_low) / 2.0
-    
-#     def forward(self, obs):
-#         """
-#         Forward pass.
-        
-#         Args:
-#             obs: Observation tensor [batch_size, obs_dim].
-            
-#         Returns:
-#             Normal distribution with tanh-squashed actions.
-#         """
-#         output = self.mlp(obs)
-#         mean, log_std = output.chunk(2, dim=-1)
-#         log_std = torch.clamp(log_std, -20, 2)
-#         std = log_std.exp()
-#         return Normal(mean, std)
-    
-#     def get_action(self, obs, deterministic: bool = False):
-#         """
-#         Sample action from policy.
-        
-#         Args:
-#             obs: Observation tensor.
-#             deterministic: If True, return mean action.
-            
-#         Returns:
-#             action: Squashed action in action space bounds.
-#             log_prob: Log probability of action.
-#             entropy: Entropy of distribution.
-#         """
-#         dist = self.forward(obs)
-        
-#         if deterministic:
-#             action_raw = dist.mean
-#         else:
-#             action_raw = dist.rsample()
-        
-#         # Tanh squashing
-#         action = torch.tanh(action_raw)
-        
-#         # Compute log probability with correction for tanh squashing
-#         log_prob = dist.log_prob(action_raw)
-#         log_prob = log_prob - torch.log(1 - action.pow(2) + 1e-6)
-#         log_prob = log_prob.sum(dim=-1, keepdim=True)
-        
-#         # Scale action to bounds
-#         action_scaled = action * self.action_scale + self.action_bias
-        
-#         # Entropy
-#         entropy = dist.entropy().sum(dim=-1, keepdim=True)
-        
-#         return action_scaled, log_prob, entropy
-    
-#     def get_null_action(self, batch_size: int, device: str):
-#         """Get null action (zeros) for no communication mode."""
-#         return torch.zeros(batch_size, self.action_dim, device=device)
-
-
-# class CentralizedCritic(nn.Module):
-#     """Centralized critic that takes global state (concatenated observations)."""
-    
-#     def __init__(self, state_dim: int, hidden_dim: int, num_layers: int):
-#         super().__init__()
-#         self.mlp = MLPNetwork(state_dim, 1, hidden_dim, num_layers)
-    
-#     def forward(self, state):
-#         """
-#         Estimate state value.
-        
-#         Args:
-#             state: Global state tensor [batch_size, state_dim].
-            
-#         Returns:
-#             State value [batch_size, 1].
-#         """
-#         return self.mlp(state)
-
-
 def build_modules(cfg, env) -> Tuple[Dict[str, nn.Module], nn.Module, dict]:
     """
     Build actor networks and centralized critic using the enhanced MLP classes.
@@ -473,9 +321,6 @@ def build_modules(cfg, env) -> Tuple[Dict[str, nn.Module], nn.Module, dict]:
         pz_env = env.env
     else:
         pz_env = env
-    
-    # Reset to get spaces
-    # pz_env.reset() # Careful: Some envs don't like random resets during build
     
     specs = {
         'agent_names': agent_names,
@@ -542,113 +387,13 @@ def build_modules(cfg, env) -> Tuple[Dict[str, nn.Module], nn.Module, dict]:
     
     return actors, critic, specs
 
-# def build_modules(cfg: MacConfig, env) -> Tuple[Dict[str, nn.Module], nn.Module, dict]:
-#     """
-#     Build actor networks (one per agent) and centralized critic.
-    
-#     Args:
-#         cfg: MacConfig instance.
-#         env: TorchRL-wrapped environment.
-        
-#     Returns:
-#         actors: Dict mapping agent_name -> actor network.
-#         critic: Centralized critic network.
-#         specs: Dict with metadata (obs_dims, action_dims, etc.).
-#     """
-#     # Get agent names
-#     agent_names = get_agent_names(env)
-    
-#     # Access underlying PettingZoo environment to get spaces
-#     if hasattr(env, '_env'):
-#         pz_env = env._env
-#     elif hasattr(env, 'env'):
-#         pz_env = env.env
-#     else:
-#         pz_env = env
-    
-#     # Reset to get spaces
-#     pz_env.reset()
-    
-#     # Build specs dictionary
-#     specs = {
-#         'agent_names': agent_names,
-#         'obs_dims': {},
-#         'action_dims': {},
-#         'action_types': {},
-#         'action_bounds': {},
-#     }
-    
-#     # Get observation and action dimensions for each agent
-#     total_obs_dim = 0
-#     for agent in agent_names:
-#         obs_space = pz_env.observation_space(agent)
-#         action_space = pz_env.action_space(agent)
-        
-#         # Observation dimension
-#         if hasattr(obs_space, 'shape'):
-#             obs_dim = int(np.prod(obs_space.shape))
-#         else:
-#             obs_dim = int(obs_space.n)
-#         specs['obs_dims'][agent] = obs_dim
-#         total_obs_dim += obs_dim
-        
-#         # Action dimension and type
-#         if hasattr(action_space, 'n'):  # Discrete
-#             action_dim = int(action_space.n)
-#             specs['action_types'][agent] = 'discrete'
-#             specs['action_bounds'][agent] = None
-#         else:  # Continuous (Box)
-#             action_dim = int(np.prod(action_space.shape))
-#             specs['action_types'][agent] = 'continuous'
-#             specs['action_bounds'][agent] = (
-#                 float(action_space.low[0]),
-#                 float(action_space.high[0])
-#             )
-#         specs['action_dims'][agent] = action_dim
-    
-#     # Build actor networks (one per agent)
-#     actors = {}
-#     for agent in agent_names:
-#         obs_dim = specs['obs_dims'][agent]
-#         action_dim = specs['action_dims'][agent]
-#         action_type = specs['action_types'][agent]
-        
-#         if action_type == 'discrete':
-#             actor = DiscreteActor(
-#                 obs_dim=obs_dim,
-#                 action_dim=action_dim,
-#                 hidden_dim=cfg.hidden_dim,
-#                 num_layers=cfg.actor_layers
-#             )
-#         else:  # continuous
-#             action_bounds = specs['action_bounds'][agent]
-#             actor = ContinuousActor(
-#                 obs_dim=obs_dim,
-#                 action_dim=action_dim,
-#                 hidden_dim=cfg.hidden_dim,
-#                 num_layers=cfg.actor_layers,
-#                 action_bounds=action_bounds
-#             )
-        
-#         actors[agent] = actor.to(cfg.device)
-    
-#     # Build centralized critic
-#     critic = CentralizedCritic(
-#         state_dim=total_obs_dim,
-#         hidden_dim=cfg.hidden_dim,
-#         num_layers=cfg.critic_layers
-#     ).to(cfg.device)
-    
-#     return actors, critic, specs
-
-
 # ============================================================================
 # Rollout Collection
 # ============================================================================
 
 def collect_rollout(cfg, env, actors: Dict[str, nn.Module], critic: Optional[nn.Module] = None, device: Optional[str] = None) -> dict:
     """
-    Collect rollout. Handles TensorDicts and normal dicts robustly.
+    Collects rollout from env, storing observations, actions, log probabilities, entropies, rewards, and done flags
     """
     if device is None:
         device = cfg.device
@@ -791,181 +536,6 @@ def collect_rollout(cfg, env, actors: Dict[str, nn.Module], critic: Optional[nn.
     
     return batch
 
-# def collect_rollout(cfg: MacConfig, env, actors: Dict[str, nn.Module], critic: Optional[nn.Module] = None, device: Optional[str] = None) -> dict:
-#     """
-#     Collect rollout from environment using current policies.
-    
-#     Args:
-#         cfg: MacConfig instance.
-#         env: TorchRL-wrapped environment.
-#         actors: Dict of actor networks per agent.
-#         critic: Centralized critic (optional).
-#         device: Device to store tensors on.
-        
-#     Returns:
-#         batch: Dictionary containing:
-#             - obs[agent][t]: observations
-#             - actions[agent][t]: actions
-#             - logp[agent][t]: log probabilities
-#             - entropy[agent][t]: entropies
-#             - reward[t]: team rewards
-#             - done[t]: done flags
-#             - state[t]: global states
-#             - values[t]: state values (if critic provided)
-#     """
-#     if device is None:
-#         device = cfg.device
-    
-#     agent_names = get_agent_names(env)
-    
-#     # Access underlying PettingZoo environment
-#     if hasattr(env, '_env'):
-#         pz_env = env._env
-#     elif hasattr(env, 'env'):
-#         pz_env = env.env
-#     else:
-#         pz_env = env
-    
-#     # Initialize storage
-#     batch = {
-#         'obs': {agent: [] for agent in agent_names},
-#         'actions': {agent: [] for agent in agent_names},
-#         'logp': {agent: [] for agent in agent_names},
-#         'entropy': {agent: [] for agent in agent_names},
-#         'reward': [],
-#         'done': [],
-#         'state': [],
-#     }
-#     if critic is not None:
-#         batch['values'] = []
-    
-#     # Collect rollouts from multiple environments in parallel (simple loop for academic implementation)
-#     for env_idx in range(cfg.num_envs):
-#         # Reset environment
-#         reset_result = pz_env.reset(seed=cfg.seed + env_idx)
-        
-#         # Handle TorchRL TensorDict or plain dict
-#         if isinstance(reset_result, tuple):
-#             obs_dict = reset_result[0] if len(reset_result) > 0 else reset_result
-#         else:
-#             obs_dict = reset_result
-        
-#         # Collect rollout_len steps
-#         for step in range(cfg.rollout_len):
-#             # Convert observations to tensors
-#             obs_tensors = {}
-#             for agent in agent_names:
-#                 # Handle TensorDict from TorchRL
-#                 if hasattr(obs_dict, 'get'):
-#                     obs = obs_dict.get(agent, obs_dict.get(('agents', agent)))
-#                 else:
-#                     obs = obs_dict[agent] if isinstance(obs_dict, dict) else obs_dict
-                
-#                 if not isinstance(obs, torch.Tensor):
-#                     obs = torch.FloatTensor(obs).flatten()
-#                 else:
-#                     obs = obs.flatten()
-#                 obs_tensors[agent] = obs.unsqueeze(0).to(device)
-            
-#             # Create global state (concatenate all observations)
-#             state = torch.cat([obs_tensors[agent] for agent in agent_names], dim=-1)
-            
-#             # Get actions and log probs from actors
-#             actions_dict = {}
-#             logp_dict = {}
-#             entropy_dict = {}
-            
-#             for agent in agent_names:
-#                 actor = actors[agent]
-#                 obs = obs_tensors[agent]
-                
-#                 with torch.no_grad():
-#                     if isinstance(actor, DiscreteActor):
-#                         dist = actor(obs)
-#                         action = dist.sample()
-#                         logp = dist.log_prob(action)
-#                         entropy = dist.entropy()
-#                         actions_dict[agent] = action.cpu().numpy()[0]
-#                     else:  # ContinuousActor
-#                         action, logp, entropy = actor.get_action(obs)
-#                         actions_dict[agent] = action.cpu().numpy()[0]
-                    
-#                     logp_dict[agent] = logp
-#                     entropy_dict[agent] = entropy
-            
-#             # Get value estimate
-#             if critic is not None:
-#                 with torch.no_grad():
-#                     value = critic(state)
-            
-#             # Step environment
-#             step_result = pz_env.step(actions_dict)
-            
-#             # Handle TorchRL TensorDict or plain tuple
-#             if len(step_result) == 5:
-#                 next_obs_dict, rewards_dict, dones_dict, truncs_dict, infos_dict = step_result
-#             elif isinstance(step_result, tuple) and len(step_result) == 1:
-#                 # TorchRL returns a single TensorDict
-#                 td = step_result[0]
-#                 next_obs_dict = {agent: td.get(agent, td.get(('agents', agent))) for agent in agent_names}
-#                 rewards_dict = {agent: td.get(('next', 'reward', agent), td.get(('reward', agent), 0)) for agent in agent_names}
-#                 dones_dict = {agent: td.get(('next', 'done', agent), td.get(('done', agent), False)) for agent in agent_names}
-#                 truncs_dict = {agent: False for agent in agent_names}
-#                 infos_dict = {agent: {} for agent in agent_names}
-#             else:
-#                 next_obs_dict, rewards_dict, dones_dict, truncs_dict, infos_dict = step_result[0], step_result[1], step_result[2], step_result[3], step_result[4]
-            
-#             # Compute team reward (sum of individual rewards)
-#             team_reward = sum(rewards_dict.values()) if isinstance(rewards_dict, dict) else sum(rewards_dict)
-            
-#             # Check if episode done
-#             done_vals = dones_dict.values() if isinstance(dones_dict, dict) else dones_dict
-#             trunc_vals = truncs_dict.values() if isinstance(truncs_dict, dict) else truncs_dict
-#             done = any(done_vals) or any(trunc_vals)
-            
-#             # Store transition
-#             for agent in agent_names:
-#                 batch['obs'][agent].append(obs_tensors[agent].cpu())
-#                 if isinstance(actors[agent], DiscreteActor):
-#                     batch['actions'][agent].append(torch.LongTensor([actions_dict[agent]]))
-#                 else:
-#                     batch['actions'][agent].append(torch.FloatTensor([actions_dict[agent]]))
-#                 batch['logp'][agent].append(logp_dict[agent].cpu())
-#                 batch['entropy'][agent].append(entropy_dict[agent].cpu())
-            
-#             batch['reward'].append(torch.FloatTensor([team_reward]))
-#             batch['done'].append(torch.FloatTensor([float(done)]))
-#             batch['state'].append(state.cpu())
-#             if critic is not None:
-#                 batch['values'].append(value.cpu())
-            
-#             # Update observation
-#             obs_dict = next_obs_dict
-            
-#             # Reset if done
-#             if done:
-#                 reset_result = pz_env.reset(seed=cfg.seed + env_idx + step * 1000)
-#                 if isinstance(reset_result, tuple):
-#                     obs_dict = reset_result[0] if len(reset_result) > 0 else reset_result
-#                 else:
-#                     obs_dict = reset_result
-    
-#     # Stack tensors
-#     for agent in agent_names:
-#         batch['obs'][agent] = torch.cat(batch['obs'][agent], dim=0)
-#         batch['actions'][agent] = torch.cat(batch['actions'][agent], dim=0)
-#         batch['logp'][agent] = torch.cat(batch['logp'][agent], dim=0)
-#         batch['entropy'][agent] = torch.cat(batch['entropy'][agent], dim=0)
-    
-#     batch['reward'] = torch.cat(batch['reward'], dim=0)
-#     batch['done'] = torch.cat(batch['done'], dim=0)
-#     batch['state'] = torch.cat(batch['state'], dim=0)
-#     if critic is not None:
-#         batch['values'] = torch.cat(batch['values'], dim=0)
-    
-#     return batch
-
-
 # ============================================================================
 # Loss Computation
 # ============================================================================
@@ -1082,23 +652,6 @@ def compute_loss(cfg, batch: dict, actors: Dict[str, nn.Module], critic: nn.Modu
             total_actor_loss += actor_loss_sum.item()
             total_critic_loss += critic_loss.item()
             total_entropy_loss += entropy_sum.item()
-            
-            # Backward (Assuming optimizer step happens outside or we accumulate gradients here)
-            # Note: In standard implementations, we step optimizer here. 
-            # To keep signature consistent with your training loop, we return a scalar tensor 
-            # that represents the loss of the *last* minibatch, but this requires the training 
-            # loop to be modified to handle multiple backward passes.
-            # *For compatibility with your single optimizer.step() loop, we will return the loss 
-            # averaged over the PPO epochs, but strictly speaking, PPO does `optimizer.step()` inside this loop.*
-            
-    # CRITICAL: To make this work with your existing "optimizer.step()" outside:
-    # We must calculate the loss on the WHOLE batch one last time for the graph.
-    # OR (Better): We return the average loss for logging, but we assume the user 
-    # modifies the training loop to move optimizer.step() INSIDE `compute_loss`.
-    
-    # For now, to keep your external loop simple, we return the loss on the FULL batch
-    # calculated once. (This effectively makes it 1 PPO epoch).
-    # IF you want true PPO multi-epoch, you must pass the optimizer into this function.
     
     # --- Single Pass Calculation for Gradient Graph ---
     final_critic_loss = F.mse_loss(critic(states), returns)
@@ -1129,99 +682,6 @@ def compute_loss(cfg, batch: dict, actors: Dict[str, nn.Module], critic: nn.Modu
     }
     
     return final_loss, info
-
-# def compute_loss(cfg: MacConfig, batch: dict, actors: Dict[str, nn.Module], critic: nn.Module) -> Tuple[torch.Tensor, dict]:
-#     """
-#     Compute centralized A3C-style loss.
-    
-#     Args:
-#         cfg: MacConfig instance.
-#         batch: Rollout batch from collect_rollout.
-#         actors: Dict of actor networks.
-#         critic: Centralized critic network.
-        
-#     Returns:
-#         loss: Total loss (scalar tensor).
-#         info: Dict with loss components for logging.
-#     """
-#     device = cfg.device
-#     agent_names = list(actors.keys())
-    
-#     # Move batch to device
-#     rewards = batch['reward'].to(device)
-#     dones = batch['done'].to(device)
-#     states = batch['state'].to(device)
-    
-#     # Compute n-step returns
-#     batch_size = rewards.shape[0]
-#     returns = torch.zeros_like(rewards)
-    
-#     # Bootstrap from last state if not done
-#     with torch.no_grad():
-#         if dones[-1] < 0.5:  # not done
-#             next_value = critic(states[-1:])
-#         else:
-#             next_value = torch.zeros(1, 1, device=device)
-    
-#     # Compute returns backwards
-#     G = next_value.squeeze().item() if next_value.numel() == 1 else next_value.squeeze()
-#     for t in reversed(range(batch_size)):
-#         G = rewards[t].item() + cfg.gamma * G * (1 - dones[t].item())
-#         returns[t] = G
-    
-#     # Compute values and advantages
-#     values = critic(states)
-#     advantages = returns - values.detach()
-    
-#     # Normalize advantages
-#     advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-    
-#     # Compute actor losses (sum over agents)
-#     actor_loss = 0
-#     total_entropy = 0
-    
-#     for agent in agent_names:
-#         obs = batch['obs'][agent].to(device)
-#         actions = batch['actions'][agent].to(device)
-        
-#         actor = actors[agent]
-        
-#         # Recompute log probs and entropy
-#         if isinstance(actor, DiscreteActor):
-#             dist = actor(obs)
-#             logp = dist.log_prob(actions.squeeze(-1)).unsqueeze(-1)
-#             entropy = dist.entropy().unsqueeze(-1)
-#         else:  # ContinuousActor
-#             dist = actor(obs)
-#             # For continuous, we need to recompute with tanh correction
-#             action_raw = torch.atanh(torch.clamp((actions - actor.action_bias) / actor.action_scale, -0.999, 0.999))
-#             logp = dist.log_prob(action_raw)
-#             logp = logp - torch.log(1 - actions.pow(2) + 1e-6)
-#             logp = logp.sum(dim=-1, keepdim=True)
-#             entropy = dist.entropy().sum(dim=-1, keepdim=True)
-        
-#         # Policy gradient loss
-#         actor_loss += -(logp * advantages).mean()
-#         total_entropy += entropy.mean()
-    
-#     # Critic loss (MSE)
-#     critic_loss = F.mse_loss(values.squeeze(), returns.squeeze())
-    
-#     # Total loss
-#     loss = actor_loss + cfg.value_coef * critic_loss - cfg.entropy_coef * total_entropy
-    
-#     # Logging info
-#     info = {
-#         'loss': loss.item(),
-#         'actor_loss': actor_loss.item(),
-#         'critic_loss': critic_loss.item(),
-#         'entropy': total_entropy.item(),
-#         'mean_return': returns.mean().item(),
-#         'mean_value': values.mean().item(),
-#         'mean_advantage': advantages.mean().item(),
-#     }
-    
-#     return loss, info
 
 
 # ============================================================================
@@ -1309,13 +769,6 @@ def train(cfg: MacConfig) -> Tuple[str, dict]:
 def load_checkpoint(path: str, device: Optional[str] = None) -> dict:
     """
     Load checkpoint from disk.
-    
-    Args:
-        path: Path to checkpoint file.
-        device: Device to load tensors to.
-        
-    Returns:
-        checkpoint: Dict with actors, critic, cfg, and specs.
     """
     if device is None:
         device = 'cpu'
@@ -1376,14 +829,13 @@ def evaluate(cfg: MacConfig, ckpt_path: str, mode: str = "normal") -> dict:
     env = ckpt['env']
     agent_names = ckpt['specs']['agent_names']
     
-    # Identify speaker (usually agent with 'speaker' in name)
     speaker_name = None
     for agent in agent_names:
         if 'speaker' in agent.lower():
             speaker_name = agent
             break
     if speaker_name is None:
-        speaker_name = agent_names[0]  # fallback
+        speaker_name = agent_names[0]  
     
     # Access underlying PettingZoo environment
     if hasattr(env, '_env'):
@@ -1453,10 +905,10 @@ def evaluate(cfg: MacConfig, ckpt_path: str, mode: str = "normal") -> dict:
                         if agent == speaker_name:
                             episode_comm_cost += float(np.linalg.norm(action))
             
-            # Step
+            # Environment step
             step_result = pz_env.step(actions_dict)
             
-            # Handle TorchRL TensorDict or plain tuple
+            # Handle TorchRL TensorDict
             if len(step_result) == 5:
                 next_obs_dict, rewards_dict, dones_dict, truncs_dict, infos_dict = step_result
             elif isinstance(step_result, tuple) and len(step_result) == 1:
@@ -1478,7 +930,6 @@ def evaluate(cfg: MacConfig, ckpt_path: str, mode: str = "normal") -> dict:
             step_count += 1
         
         # Determine success
-        # First try to get from info
         success = False
         for agent_info in infos_dict.values():
             if isinstance(agent_info, dict):
@@ -1610,4 +1061,4 @@ if __name__ == "__main__":
     cfg.eval_episodes = 5
     metrics = evaluate_with_comparison(cfg, ckpt_path)
     
-    print("\n✓ All tests passed!")
+    print("\n All tests passed!")
