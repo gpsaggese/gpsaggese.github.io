@@ -52,7 +52,7 @@ The strength of EconML lies in explicitly defining the components of the causal 
 
 ### Figure 1. Unadjusted grades by treatment group (schoolsup)
 
-(INSERT PLOT HERE!)
+<img width="590" height="380" alt="figure1" src="https://github.com/user-attachments/assets/62026cc2-c910-46ef-9e00-abec31a71ef9" />
 
 This boxplot compares the distribution of final grades `G3` between:
 - `schoolsup = 0` (no extra support)
@@ -64,7 +64,7 @@ However, this plot reflects an **unadjusted observational comparison**. In real 
 
 ### Figure 2. Estimated Average Treatment Effect (ATE) of school support on final grade
 
-(INSERT PLOT HERE!)
+<img width="680" height="487" alt="figure2" src="https://github.com/user-attachments/assets/3f4fed9a-f22d-4d74-b754-c9e56807338f" />
 
 We estimate the **average causal effect** of extra support (`schoolsup`) on `G3` using two Double ML estimators:
 
@@ -84,7 +84,7 @@ We estimate the **average causal effect** of extra support (`schoolsup`) on `G3`
 
 ### Figure 3. Heterogeneous effects by mother’s education (Medu)
 
-(INSERT PLOT HERE!)
+<img width="697" height="386" alt="figure3" src="https://github.com/user-attachments/assets/7615158b-9bc0-43b0-ae5b-3306e4577a4b" />
 
 To identify **which demographics benefit most**, we examine heterogeneity by mother’s education (`Medu`, 0 – 4), a common proxy for socioeconomic background.
 
@@ -105,7 +105,7 @@ Using the subgroup summary (CausalForestDML), the estimated mean CATEs are appro
 
 ### Figure 4. Heterogeneous effects by higher-education plans (higher)
 
-(INSERT PLOT HERE!)
+<img width="697" height="386" alt="figure4" src="https://github.com/user-attachments/assets/9b529e86-9885-4010-a119-a5ffd5bea785" />
 
 We also examine heterogeneity by students’ plans for higher education (`higher`, 0 = no, 1 = yes). This variable is useful because it can reflect motivation, academic trajectory, and baseline risk.
 
@@ -123,7 +123,7 @@ This result directly supports the project goal of “optimizing for identifying 
 
 ### Table 1. Ranked subgroup benefits (CATE ranking)
 
-(INSERT PLOT HERE!)
+<img width="368" height="358" alt="table1" src="https://github.com/user-attachments/assets/33680f98-fc9a-48fb-a4d9-e1c5d1f99960" />
 
 To explicitly answer “which demographics benefit most,” we aggregate subgroup CATE summaries across multiple features (`higher`, `Medu`, `address`, `sex`) and **rank subgroups by estimated mean CATE** (highest to lowest).
 
