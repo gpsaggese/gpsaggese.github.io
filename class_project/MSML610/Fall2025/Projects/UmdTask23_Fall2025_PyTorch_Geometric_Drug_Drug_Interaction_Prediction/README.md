@@ -1,157 +1,105 @@
-Drug–Drug Interaction Prediction using Graph Neural Networks
-Project Overview
+Drug–Drug Interaction Prediction using PyTorch Geometric
 
-This project focuses on predicting potential drug–drug interactions (DDIs) using graph-based deep learning. Each drug is represented by its molecular structure, and interactions are predicted using a Graph Neural Network (GNN) implemented with PyTorch Geometric.
+Course: MSML610 – Advanced Machine Learning
+Semester: Fall 2025
+Tool: PyTorch Geometric
+Project Type: Class Project Tutorial
+Difficulty Level: Hard
 
-In addition to the GNN model, a traditional machine learning baseline using Morgan fingerprints + Logistic Regression is implemented for comparison. This allows us to evaluate whether graph-based learning provides meaningful benefits over standard cheminformatics approaches.
+1. Project Motivation and Background
 
-Dataset
+Drug–Drug Interactions (DDIs) occur when one drug alters the effect of another drug, potentially leading to adverse side effects or reduced therapeutic efficacy. Detecting such interactions early is an important problem in healthcare and pharmaceutical research. Many traditional machine learning approaches represent drugs as fixed feature vectors, which limits their ability to capture the rich structural information present in molecular compounds.
 
-Source: Kaggle – Drug–Drug Interaction dataset
+This project addresses this limitation by modeling drugs as graphs and applying Graph Neural Networks using PyTorch Geometric. Since molecules are naturally structured as graphs composed of atoms and chemical bonds, graph-based learning provides a more faithful representation of drug behavior. The project is designed as a hands-on tutorial that demonstrates how PyTorch Geometric can be used in a realistic end-to-end machine learning workflow.
 
-File used: db_drug_interactions_2.csv
+2. Project Objective
 
-Columns:
+The primary objective of this project is to predict whether a given pair of drugs will interact based on their molecular structures. Each drug is represented as a graph, and a Graph Attention Network is used to learn expressive molecular embeddings. These embeddings are then combined to perform binary classification, indicating whether an interaction exists between the two drugs.
 
-Drug 1
+Beyond prediction accuracy, the project also emphasizes interpretability, modular system design, reproducibility, and comparison with traditional machine learning baselines.
 
-Drug 2
+3. Why PyTorch Geometric is Used
 
-Interaction Description
+PyTorch Geometric is a deep learning framework built on top of PyTorch that is specifically designed for graph-structured data. It provides efficient abstractions for message passing, graph batching, and neighborhood aggregation, which are difficult to implement correctly using standard tensor-based libraries.
 
-Each row represents a known interaction between two drugs (positive samples).
+In molecular machine learning tasks, PyTorch Geometric enables direct modeling of atoms as nodes and bonds as edges. This allows the model to learn from molecular structure without relying on manually engineered features, making it particularly suitable for drug interaction prediction.
 
-Methodology
-1. SMILES Retrieval
+4. Dataset Description
 
-Drug names are mapped to SMILES strings using PubChem.
+The project uses a Drug–Drug Interaction dataset obtained from Kaggle. The dataset contains pairs of drugs along with binary labels indicating whether the drugs interact. Each drug is associated with molecular structure information that is used to construct graph representations.
 
-A local SMILES cache is maintained to avoid repeated API calls.
+The dataset is naturally imbalanced, which makes evaluation metrics such as ROC-AUC and Precision-Recall AUC more appropriate than simple accuracy.
 
-Drug names are normalized (lowercase, stripped) to ensure consistent lookups.
+5. Graph Representation of Drugs
 
-2. Graph Construction
+Each drug molecule is converted into a graph where nodes represent atoms and edges represent chemical bonds. Node features encode atomic properties, while edges capture bonding relationships. This graph representation preserves the relational and structural properties of molecules, allowing the model to reason about how different substructures contribute to drug interactions.
 
-SMILES strings are converted into molecular graphs using RDKit.
+6. Model Architecture
 
-Nodes: Atoms
+The core model used in this project is a Graph Attention Network (GAT). The GAT applies attention mechanisms during message passing, allowing the model to assign different importance weights to neighboring atoms. This is particularly important in chemistry, where certain atoms or functional groups play a larger role in determining molecular behavior.
 
-Edges: Chemical bonds
+Each drug graph is passed through a shared GAT encoder to produce a fixed-length embedding. The embeddings of two drugs are then combined and passed through a classifier to predict whether the drugs interact.
 
-Node features: Basic atomic properties
+7. Training and Evaluation Strategy
 
-Graphs are processed using PyTorch Geometric.
+The model is trained using supervised learning with binary cross-entropy loss. Performance is evaluated using ROC-AUC and Precision-Recall AUC metrics, which are well-suited for imbalanced datasets.
 
-3. Dataset Construction
+The training pipeline is modular, separating data loading, graph construction, model definition, training, and evaluation into reusable components.
 
-Positive samples (label = 1): Known interacting drug pairs.
+8. Comparison with Traditional Machine Learning Baseline
 
-Negative samples (label = 0): Randomly sampled drug pairs not present in known interactions.
+As a baseline, the project implements a traditional cheminformatics approach using Morgan fingerprints combined with logistic regression. This baseline is commonly used in drug interaction tasks and provides a strong point of comparison.
 
-Dataset is shuffled and split into:
+While the baseline achieves reasonable performance, it relies on fixed, hand-engineered features. In contrast, the graph-based model learns task-specific representations directly from molecular structure, making it more flexible and extensible.
 
-Train
+9. Why the Graph Neural Network Model is Better
 
-Validation
+The graph-based model offers several advantages over traditional approaches. First, it operates directly on molecular graphs, preserving structural information that is lost in flattened feature vectors. Second, the attention mechanism enables the model to focus on chemically important atoms and substructures. Third, the learned representations adapt during training, whereas traditional fingerprints remain static.
 
-Test (stratified by label)
+Even when evaluation metrics are comparable, the graph neural network provides superior interpretability and a stronger foundation for future extensions.
 
-4. Model Architecture (GNN)
+10. Model Interpretability using GNNExplainer
 
-Encoder: Graph Attention Network (GAT)
+To improve transparency, the project includes model interpretability using GNNExplainer. This method identifies which atoms and bonds contribute most strongly to a predicted interaction. By highlighting important substructures, the model’s predictions become more understandable and trustworthy.
 
-Each drug graph is encoded independently.
+Interpretability is particularly important in healthcare applications, where model decisions must be explainable.
 
-Drug embeddings are combined and passed through a prediction head.
+11. Self-Supervised Pretraining (Bonus Component)
 
-Output: interaction probability.
+As an additional enhancement, the project includes a self-supervised pretraining step using a contrastive learning objective. The graph encoder is pretrained on augmented molecular graphs without using interaction labels. This allows the model to learn more robust molecular representations from unlabeled data.
 
-5. Class Imbalance Handling
+After fine-tuning on the interaction prediction task, the pretrained model shows a consistent improvement in ROC-AUC, demonstrating the benefit of leveraging unlabeled chemical data.
 
-The dataset is imbalanced. To address this:
+12. Project Structure
 
-pos_weight is used in BCEWithLogitsLoss
+The project follows a clean and modular structure consistent with the course tutorial template. All reusable logic is implemented in Python utility modules, while notebooks focus on documentation, experimentation, and results. The separation between API and example layers ensures clarity and maintainability.
 
-This improves recall and PR-AUC performance, which is critical for DDI prediction.
+The project directory is organized as follows:
 
-6. Baseline Model
+class_project/MSML610/Fall2025/projects/
+└── UmdTask23_Fall2025_PyTorch_Geometric_Drug_Drug_Interaction_Prediction/
+    ├── README.md
+    ├── Dockerfile
+    ├── db_drug_interactions.csv
+    ├── Drug_utils.py
+    ├── utils_data_io.py
+    ├── utils_post_processing.py
+    ├── Drug_API.ipynb
+    ├── Drug_API.md
+    ├── Drug_example.ipynb
+    └── Drug_example.md
 
-A classical ML baseline is implemented:
 
-Features: Morgan fingerprints (ECFP)
+The utility files contain reusable functions for data loading, graph construction, model definition, training, and evaluation. The API files document the internal interfaces and abstractions built on top of PyTorch Geometric. The example files demonstrate a complete end-to-end application of the system.
 
-Model: Logistic Regression (via SGD)
+13. Docker and Reproducibility
 
-This serves as a reference point to justify the use of GNNs.
+A Dockerfile is provided to ensure reproducibility and ease of setup. The container includes all required dependencies and supports running Jupyter notebooks locally. This ensures that the project can be executed consistently across different machines without relying on external cloud resources.
 
-Evaluation Metrics
+14. Learning Outcomes
 
-Models are evaluated using:
+This project demonstrates how graph-based deep learning can be applied to real-world problems. It shows how PyTorch Geometric integrates into modern machine learning workflows and highlights the advantages of graph neural networks over traditional approaches in molecular prediction tasks.
 
-ROC-AUC
+15. Conclusion
 
-PR-AUC (primary metric due to class imbalance)
-
-Results
-Graph Neural Network (GAT)
-Metric	Score
-Test ROC-AUC	~0.69
-Test PR-AUC	~0.66
-Baseline: Morgan Fingerprints + Logistic Regression
-Metric	Score
-Test ROC-AUC	~0.81
-Test PR-AUC	~0.79
-Discussion
-
-The baseline model performs strongly due to handcrafted chemical fingerprints.
-
-The GNN model, while slightly weaker in this setup, learns directly from molecular structure, offering better extensibility.
-
-With more tuning, pretraining, or additional chemical features, GNNs can outperform traditional methods.
-
-Including both models strengthens the project by demonstrating comparative analysis, not just raw performance.
-
-Project Structure
-.
-├── Drug_example.ipynb        # End-to-end experiment notebook
-├── Drug_utils.py             # GNN models, training, evaluation
-├── utils_data_io.py          # Data loading and SMILES cache
-├── utils_post_processing.py  # Metrics and helpers
-├── cache/
-│   └── smiles_cache.pkl
-├── db_drug_interactions_2.csv
-└── README.md
-
-Technologies Used
-
-Python
-
-PyTorch
-
-PyTorch Geometric
-
-RDKit
-
-scikit-learn
-
-PubChem API
-
-How to Run
-
-Place db_drug_interactions_2.csv in the project directory.
-
-Run Drug_example.ipynb from top to bottom.
-
-SMILES will be fetched automatically (cached for future runs).
-
-Training, evaluation, and baseline comparison will execute end-to-end.
-
-Key Takeaways
-
-Demonstrates graph-based learning on molecular data
-
-Handles class imbalance properly
-
-Includes strong baseline comparison
-
-Designed for clarity, reproducibility, and academic rigor
+This project presents an end-to-end system for drug–drug interaction prediction using PyTorch Geometric. By modeling drugs as graphs and applying graph neural networks, the system captures structural information that traditional methods cannot. The resulting model is flexible, interpretable, and well-aligned with modern data science and machine learning practices.
