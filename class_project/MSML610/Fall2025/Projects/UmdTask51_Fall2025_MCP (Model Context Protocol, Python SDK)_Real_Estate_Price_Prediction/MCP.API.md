@@ -235,18 +235,6 @@ This component executes a predefined set of feature engineering transformations 
 | **Success** | `str` | A confirmation message including the shape of the newly engineered DataFrame. |
 | **Error** | `str` | An error message indicating missing input data (`date` column), or a general processing error. |
 
-### Logic Summary
-
-The function performs several groups of transformations and stores the resulting DataFrame in the **feature-engineered context (`_fe_data`)**:
-
-1.  **Date Feature Extraction:** Converts the original `date` column to a datetime format and extracts new features: `year_sold`, `month_sold`, and `day_of_week`. The original `date` column is dropped.
-2.  **Renovation Features:** Creates categorical and binary features from `yr_renovated` (e.g., `was_renovated`, `renovation_period`).
-3.  **Area/Ratio Features:** Calculates various derived metrics, such as `total_sqft`, `living_to_lot_ratio`, and `basement_share`, as well as log transformations for highly skewed variables (`log_price`, etc.).
-4.  **Age/Quality Features:** Calculates the `house_age` and `since_renovation`, and combines `condition` and `grade` into a single `quality_score`.
-5.  **Context Update:** The final transformed DataFrame is saved using `data_context.set_fe_data(data)`.
-
-
-
 ### `add_features`
 
 This component performs a secondary, specific set of feature engineering tasks, focusing on creating ratio-based and combined-area features using the already prepared dataset from the `_fe_data` context.
@@ -255,36 +243,6 @@ This component performs a secondary, specific set of feature engineering tasks, 
 | :--- | :--- | :--- |
 | **Success** | `str` | A confirmation message indicating the successful completion of the feature creation. |
 | **Error** | `str` | An error message indicating issues with the input data (e.g., `_fe_data` is empty) or a runtime error during calculation. |
-
-### Logic Summary
-
-The function retrieves the existing feature-engineered data (`data_context.get_fe_data()`) and calculates several new features, paying attention to **division by zero** scenarios using `np.where`:
-
-  * **`total_sqft`**: Sum of living area and basement area.
-  * **`living_to_lot_ratio`**: Ratio of living area (`sqft_living`) to lot size (`sqft_lot`).
-  * **`bath_per_bed`**: Ratio of `bathrooms` to `bedrooms`.
-  * **`living15_diff`**: The difference between the house's living area and the neighborhood's average living area (`sqft_living15`).
-  * **`basement_share`**: The proportion of the basement area to the total livable area (above-ground + basement).
-  * **`has_basement`**: A binary (0/1) indicator of whether the house has a basement.
-
-Finally, the modified DataFrame is saved back into the feature-engineered context using `data_context.set_fe_data(data)`.
-
-
-
-### Helper Function: `_get_model_artifact`
-
-This internal function acts as a factory, initializing the correct model or Scikit-learn Pipeline based on the `model_name` provided in the configuration.
-
-#### Model Initialization Summary
-
-| Model Name Contains | Class Used | Note |
-| :--- | :--- | :--- |
-| `LinearRegression` | `LinearRegression()` | Direct instantiation. |
-| `ScaledLinearRegression` | `Pipeline(StandardScaler(), LinearRegression())` | **Encapsulated in a Pipeline** for automatic feature scaling. |
-| `Ridge` | `Pipeline(StandardScaler(), Ridge())` | Uses **L2 regularization** and is scaled. |
-| `Lasso` | `Pipeline(StandardScaler(), Lasso(max_iter=10000))` | Uses **L1 regularization** and is scaled. |
-| `RandomForest` | `RandomForestRegressor(**hyperparameters)` | Accepts hyperparameters directly. |
-| `XGBoost` | `XGBRegressor(**hyperparameters)` | Accepts hyperparameters directly. |
 
 ### `run_experiment`
 
@@ -317,36 +275,6 @@ The function follows a strict, traceable workflow:
       * The trained model object (`model_artifact`) is serialized using `pickle` and saved to the `artifacts/` directory.
 6.  **Metadata Registration:** A complete `ExperimentRecord` is created using all inputs, outputs, and metadata, and is then persisted to the `ExperimentRegistry` JSON file.
 7.  **Summary Return:** Retrieves and returns the final run summary for immediate client use.
-
-
-### `get_model_coefficients`
-
-This component is crucial for model explainability. It loads a specific linear model artifact from the disk using its `run_id` and extracts the feature coefficients, allowing users to understand the feature importance and directionality of the model's predictions.
-
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `run_id` | `str` | The unique ID of the experiment run whose model coefficients are requested. |
-
-| Returns | Type | Description |
-| :--- | :--- | :--- |
-| **Success** | `Dict[str, Any]` | A dictionary containing a list of `coefficients` and the corresponding list of `features` used in training. |
-| **Error** | `str` | An error message if the run ID is not found, the artifact file is missing, or the model type does not support coefficients. |
-
-### Logic Summary
-
-1.  **Registry Lookup:** Queries the `ExperimentRegistry` to find the full record matching the `run_id`, specifically retrieving the `artifact_path` and `features_used`.
-2.  **Artifact Loading:** Loads the serialized model artifact (`.pkl` file) using `pickle.load()`.
-3.  **Model Extraction:**
-      * Since models using scaling (`ScaledLinearRegression`, `Ridge`, `Lasso`) are saved as Scikit-learn **Pipelines**, the code checks the `model_name` and extracts the final estimator (the actual regressor) from the `named_steps` within the Pipeline object.
-      * For simple models, the loaded artifact is the model itself.
-4.  **Coefficient Retrieval:** The code verifies that the extracted model has a `coef_` attribute (indicating a linear model) and retrieves the coefficients and the corresponding feature names (`features_used` from the record).
-5.  **Output:** Returns a dictionary mapping the list of coefficients to the list of features.
-
------
-
-I noticed a few new dependencies that need to be accounted for: `apply_feature_engineering` (which is a core prediction step) and the final tool `set_production_model`. I will document the final prediction tool, then assume you'll provide the last tool and the helper function.
-
-Let's document the prediction tool, assuming the helper `apply_feature_engineering` is a defined function:
 
 
 ### `predict_house_price`
