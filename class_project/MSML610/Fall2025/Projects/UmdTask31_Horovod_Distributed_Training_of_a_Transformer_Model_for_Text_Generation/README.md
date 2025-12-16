@@ -15,6 +15,17 @@ The project demonstrates practical understanding of distributed systems, large-s
 
 ---
 
+## Documentation
+
+For detailed API documentation and usage examples, see:
+
+* **API Tutorial**: [`horovod_transformer.API.md`](horovod_transformer.API.md) - Complete API reference
+* **API Examples**: [`horovod_transformer.API.py`](horovod_transformer.API.py) - Interactive API exploration
+* **Project Example**: [`horovod_transformer.example.md`](horovod_transformer.example.md) - Project documentation
+* **Workflow Example**: [`horovod_transformer.example.py`](horovod_transformer.example.py) - End-to-end workflow
+
+---
+
 ## Quick Start
 
 ### 1. Data Preprocessing
@@ -99,10 +110,54 @@ python -m src.generate \
 ├── scripts/
 │   └── train_zaratan.sh               # HPC training script
 │
+├── horovod_transformer.API.py         # API exploration script
+├── horovod_transformer.API.md         # API documentation/tutorial
+├── horovod_transformer.example.py     # End-to-end workflow example
+├── horovod_transformer.example.md     # Project example documentation
+│
 ├── checkpoints/                       # Model checkpoints
 ├── logs/                              # Training logs
 └── runs/                              # TensorBoard logs
 ```
+
+---
+
+## Documentation and Examples
+
+### API Documentation
+
+The project includes comprehensive API documentation and examples:
+
+* **`horovod_transformer.API.md`**: Complete API tutorial covering all modules and functions
+* **`horovod_transformer.API.py`**: Interactive script exploring the API with examples
+
+To explore the API:
+
+```bash
+python horovod_transformer.API.py
+```
+
+### Usage Examples
+
+* **`horovod_transformer.example.md`**: Detailed project documentation with architecture, data pipeline, and usage examples
+* **`horovod_transformer.example.py`**: Complete end-to-end workflow example demonstrating the full training pipeline
+
+To run the example workflow:
+
+```bash
+# For distributed training (requires 2+ GPUs)
+horovodrun -np 4 python horovod_transformer.example.py
+
+# For API exploration (single process)
+python horovod_transformer.example.py
+```
+
+These files demonstrate:
+- Model creation and configuration
+- Data loading and preprocessing workflow
+- Distributed training setup and execution
+- Text generation from trained models
+- Complete end-to-end pipeline integration
 
 ---
 
@@ -229,9 +284,26 @@ Reduce batch size or increase gradient accumulation.
 * Fault-tolerant checkpointing
 * Structured logging and metrics
 * Text generation utilities
+* Comprehensive API documentation and examples
 * Modular, extensible design
 
 All components required for large-scale distributed training were fully implemented and validated, even though full training execution was limited by hardware availability.
+
+## API and Examples
+
+This project includes comprehensive documentation and examples:
+
+* **API Tutorial** (`horovod_transformer.API.md`): Complete guide to all API functions and classes
+* **API Exploration** (`horovod_transformer.API.py`): Interactive script demonstrating API usage
+* **Project Example** (`horovod_transformer.example.md`): Detailed project documentation with architecture and workflow
+* **Workflow Example** (`horovod_transformer.example.py`): End-to-end example showing complete training pipeline
+
+These files provide:
+- Detailed API reference for all modules
+- Step-by-step usage examples
+- Architecture and design documentation
+- Complete workflow demonstrations
+- Best practices and integration patterns
 
 ---
 

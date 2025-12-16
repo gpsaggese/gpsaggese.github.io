@@ -41,7 +41,7 @@
 
 
 # Check available H100 nodes with: sinfo -p gpu-h100 -o "%N %G %t"
-# #SBATCH --nodelist=gpu-a6-3      # Example: target gpu-a6-3 (modify based on availability)
+# #SBATCH --nodelist=gpu-a6-3      # Example: target gpu-a6-3
 # #SBATCH --nodelist=gpu-a6-7      # Alternative: gpu-a6-7
 
 # Email notifications (optional)

@@ -52,3 +52,4 @@ horovod_timeline.json
 *.out
 *.err
 class_project/MSML610/Fall2025/Projects/UmdTask31_Horovod_Distributed_Training_of_a_Transformer_Model_for_Text_Generation/notebooks/data/preprocessed/
+.DS_Store
