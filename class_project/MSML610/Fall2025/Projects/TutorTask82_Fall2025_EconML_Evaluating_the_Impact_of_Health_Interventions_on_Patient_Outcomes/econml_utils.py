@@ -468,9 +468,6 @@ def get_y_t_x(
     return y, t, X, covariate_cols
 
 
-# ---------------------------------------------------------------------
-# Quick sanity summary (optional helper for notebooks)
-# ---------------------------------------------------------------------
 
 def quick_summary(join: str = "inner") -> pd.DataFrame:
     df = build_analysis_df(join=join, clean=True)
