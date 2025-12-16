@@ -7,7 +7,7 @@ import time
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="Traffic Anomaly Detection", layout="wide")
-st.title("🚗 Metro Interstate Traffic Anomaly Detection")
+st.title(" Metro Interstate Traffic Anomaly Detection")
 st.markdown("""
 This dashboard visualizes traffic patterns, detects anomalies using unsupervised logic, 
 and simulates real-time traffic monitoring.
