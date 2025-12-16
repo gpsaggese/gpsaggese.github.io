@@ -15,22 +15,25 @@ The project includes:
 ---
 
 ## Repository Structure
-
-project/
-│
-├── anomaly_API.ipynb # Preprocessing & feature-selection API build
-├── anomaly_example.ipynb # Full ML pipeline, models, evaluation, plots
-├── anomaly_utils.py # Helper functions (loading/preprocessing/EFS)
+.
+├── anomaly_API.ipynb          # Preprocessing & feature-selection API build
+├── anomaly_API.md             # API documentation (tool-focused)
+├── anomaly_example.ipynb      # Full ML pipeline, models, evaluation, plots
+├── anomaly_example.md         # Project workflow, results, interpretation
+├── anomaly_utils.py           # Helper functions (loading, preprocessing, EFS)
 │
 ├── outputs/
-│ ├── selected_numeric.json
-│ ├── metrics_supervised_efs.csv
-│ ├── metrics_unsupervised.csv
-│ ├── metrics_final_comparison.csv
-│ └── plots/
+│   ├── selected_numeric.json
+│   ├── metrics_supervised_efs.csv
+│   ├── metrics_unsupervised.csv
+│   ├── metrics_final_comparison.csv
+│   └── plots/
 │
+├── Dockerfile
+├── docker_build.sh
+├── docker_jupyter.sh
+├── requirements.txt
 └── README.md
-
 
 ---
 
