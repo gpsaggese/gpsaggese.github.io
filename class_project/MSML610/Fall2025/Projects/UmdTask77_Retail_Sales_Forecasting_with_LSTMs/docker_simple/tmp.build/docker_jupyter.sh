@@ -50,7 +50,7 @@ DOCKER_RUN_OPTS="-p $JUPYTER_HOST_PORT:$JUPYTER_HOST_PORT"
 HOST_PROJECT_DIR=${TARGET_DIR:-$GIT_ROOT}
 DOCKER_RUN_OPTS="$DOCKER_RUN_OPTS -v $HOST_PROJECT_DIR:/app/project"
 DOCKER_RUN_OPTS="$DOCKER_RUN_OPTS -v $(pwd):/curr_dir"
-CMD="/curr_dir/run_jupyter.sh $OLD_CMD_OPTS"
+CMD="/curr_dir/run_jupyter.sh"
 
 # From docker_cmd.sh passing DOCKER_OPTS.
 run "docker image ls $FULL_IMAGE_NAME"
