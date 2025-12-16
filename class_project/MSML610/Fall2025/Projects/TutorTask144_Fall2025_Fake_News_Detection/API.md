@@ -1,589 +1,330 @@
-# BERT Fake News Detection - MCP API Documentation
+# Model Context Protocol (MCP) - REST API Framework
 
-## Overview
+## What is MCP?
 
-The BERT Fake News Detection system exposes a complete REST API through the Model Context Protocol (MCP) server. The server runs on **port 9090** and provides standardized endpoints for:
+**MCP (Model Context Protocol)** is a standardized protocol for serving machine learning models over HTTP/REST. It provides a consistent interface for different applications to interact with ML models without needing custom integration code.
 
-- Health monitoring
-- Model information and discovery
-- Single article classification
-- Batch article classification
-- Server statistics and metrics
+### The Problem MCP Solves
+
+**Without Standardization:**
+```
+Model Developer                 Different Clients
+     ↓                          ├─ Web App
+  Trained Model           →     ├─ Mobile App
+     ↓                          ├─ CLI Tool
+  Save to disk                  ├─ Python Script
+                                └─ External Services
+
+Result: Each client writes custom code
+        → Confusing, hard to maintain, inconsistent APIs
+```
+
+**With MCP:**
+```
+Model Developer                 Different Clients
+     ↓                          ├─ Web App
+  Trained Model                 ├─ Mobile App
+     ↓                          ├─ CLI Tool
+  MCP REST Server       →       ├─ Python Script
+     ↓                          └─ External Services
+  Standardized API
+
+Result: All clients use same REST endpoints
+        → Consistent, maintainable, predictable behavior
+```
 
 ---
 
-## API Base URL
+## MCP Architecture
+
+### Core Components
 
 ```
-http://localhost:9090
+┌─────────────────────────────────────────────────┐
+│         MCP Server (e.g., port 9090)            │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│  ┌─────────────────────────────────────────┐   │
+│  │      Flask/FastAPI HTTP Server          │   │
+│  └──────────────────┬──────────────────────┘   │
+│                     │                           │
+│  ┌──────────────────▼──────────────────────┐   │
+│  │   MCP Server Class (Standardized)       │   │
+│  │                                          │   │
+│  │  - predict(text)                        │   │
+│  │  - predict_batch(texts)                 │   │
+│  │  - list_models()                        │   │
+│  │  - get_statistics()                     │   │
+│  └──────────────────┬──────────────────────┘   │
+│                     │                           │
+│  ┌──────────────────▼──────────────────────┐   │
+│  │      Loaded ML Model(s)                 │   │
+│  │                                          │   │
+│  │  (BERT, XGBoost, Neural Net, etc.)      │   │
+│  └─────────────────────────────────────────┘   │
+│                                                 │
+└─────────────────────────────────────────────────┘
+         ↑
+         │ HTTP/REST
+         │
+    ┌────┴────┬──────────────┬─────────────┐
+    │          │              │             │
+    ▼          ▼              ▼             ▼
+  Web UI   Mobile App    Python CLI    Other Services
 ```
 
 ---
 
-## API Endpoints
+## Standard MCP Endpoints
+
+MCP defines a standard set of endpoints that every server should expose:
 
 ### 1. Health Check
 
 **Endpoint:** `GET /health`
 
-**Purpose:** Verify that the MCP server is running and healthy
+**Purpose:** Verify server is running and ready
 
 **Request:**
 ```bash
 curl http://localhost:9090/health
 ```
 
-**Response (Success - 200):**
+**Response:**
 ```json
 {
-  "status": "healthy",
-  "server": "MCP Server running"
+  "status": "healthy"
 }
 ```
 
-**Response (Error - 503):**
-```json
-{
-  "status": "unhealthy",
-  "error": "Server not initialized"
-}
-```
-
-**Use Cases:**
-- Monitoring and load balancing
-- Kubernetes readiness probes
-- Health dashboards
-- Server startup verification
+**Use Case:** Load balancing, Kubernetes probes, monitoring
 
 ---
 
-### 2. List Available Models
+### 2. List Models
 
 **Endpoint:** `GET /models`
 
-**Purpose:** Discover which models are available on the server
+**Purpose:** Discover available models
 
-**Request:**
-```bash
-curl http://localhost:9090/models
-```
-
-**Response (Success - 200):**
+**Response:**
 ```json
 [
   {
-    "id": "bert_fake_news",
-    "type": "bert-fake-news-detector",
-    "accuracy": 0.8474,
-    "version": "1.0"
+    "id": "model_v1",
+    "type": "classifier",
+    "version": "1.0",
+    "accuracy": 0.95
   }
 ]
 ```
 
-**Use Cases:**
-- Auto-discovery of available models
-- Integration with client applications
-- Capability checking
-- Version management
+**Use Case:** Auto-discovery, capability checking
 
 ---
 
-### 3. Get Model Information
+### 3. Get Model Info
 
 **Endpoint:** `GET /models/<model_id>`
 
-**Purpose:** Retrieve detailed information about a specific model
+**Purpose:** Retrieve model metadata and performance metrics
 
-**Parameters:**
-- `model_id` (path): The model identifier (e.g., "bert_fake_news")
+**Response:**
+```json
+{
+  "id": "model_v1",
+  "type": "classifier",
+  "version": "1.0",
+  "accuracy": 0.95,
+  "precision": 0.93,
+  "recall": 0.92,
+  "parameters": 50000000,
+  "training_samples": 10000
+}
+```
+
+**Use Case:** Model evaluation, auditing, transparency
+
+---
+
+### 4. Single Prediction
+
+**Endpoint:** `POST /predict` or `POST /api/predict`
+
+**Purpose:** Classify/predict on a single sample
 
 **Request:**
-```bash
-curl http://localhost:9090/models/bert_fake_news
-```
-
-**Response (Success - 200):**
 ```json
 {
-  "id": "bert_fake_news",
-  "type": "bert-fake-news-detector",
-  "version": "1.0",
-  "training_accuracy": 0.9991,
-  "unseen_accuracy": 0.8474,
-  "precision": 0.8213,
-  "recall": 0.8797,
-  "f1_score": 0.8495,
-  "roc_auc": 0.9360,
-  "parameters": 110000000,
-  "model_type": "bert-base-uncased",
-  "test_samples": 6734,
-  "unseen_samples": 64951,
-  "gpu_acceleration": true
+  "text": "Input data here...",
+  "model_id": "model_v1"
 }
 ```
 
-**Response (Error - 500):**
+**Response:**
 ```json
 {
-  "error": "Model bert_unknown not found"
-}
-```
-
-**Model Metrics Explained:**
-| Metric | Value | Meaning |
-|--------|-------|---------|
-| `training_accuracy` | 99.91% | Accuracy on training data |
-| `unseen_accuracy` | 84.74% | Accuracy on completely unseen data |
-| `precision` | 82.13% | False positive rate |
-| `recall` | 87.97% | False negative rate |
-| `f1_score` | 84.95% | Harmonic mean of precision & recall |
-| `roc_auc` | 93.60% | Area under ROC curve |
-| `parameters` | 110M | Total model parameters |
-
-**Use Cases:**
-- Model evaluation and selection
-- Performance transparency
-- Auditing and compliance
-- Client-side validation
-
----
-
-### 4. Single Article Prediction (Web API)
-
-**Endpoint:** `POST /api/predict`
-
-**Purpose:** Classify a single news article as REAL or FAKE (recommended for web UI)
-
-**Request Headers:**
-```
-Content-Type: application/json
-```
-
-**Request Body:**
-```json
-{
-  "text": "Breaking News: Scientists announce major discovery. Researchers at the university announced today a significant breakthrough in their research."
-}
-```
-
-**Response (Success - 200):**
-```json
-{
-  "status": "success",
-  "label": "REAL",
-  "confidence": 0.8754,
-  "confidence_percent": 87.54,
-  "processing_time_ms": 45.32,
-  "text_length": 145
-}
-```
-
-**Response (Error - 400, Missing Text):**
-```json
-{
-  "error": "Missing required field: text",
-  "status": "error"
-}
-```
-
-**Response (Error - 400, Empty Text):**
-```json
-{
-  "error": "Text field cannot be empty",
-  "status": "error"
-}
-```
-
-**Response (Error - 500, Server Error):**
-```json
-{
-  "error": "Internal server error",
-  "status": "error"
-}
-```
-
-**Field Descriptions:**
-| Field | Type | Description |
-|-------|------|-------------|
-| `label` | string | "REAL" or "FAKE" |
-| `confidence` | float | Confidence score (0.0 - 1.0) |
-| `confidence_percent` | float | Confidence as percentage (0.0 - 100.0) |
-| `processing_time_ms` | float | Time taken to process (milliseconds) |
-| `text_length` | integer | Length of input text (characters) |
-
-**curl Example:**
-```bash
-curl -X POST http://localhost:9090/api/predict \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Article text here..."}'
-```
-
-**Python Example:**
-```python
-import requests
-
-response = requests.post(
-    'http://localhost:9090/api/predict',
-    json={'text': 'Your article text here...'}
-)
-
-result = response.json()
-print(f"Label: {result['label']}")
-print(f"Confidence: {result['confidence_percent']}%")
-```
-
-**JavaScript Example:**
-```javascript
-fetch('http://localhost:9090/api/predict', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({text: 'Article text here...'})
-})
-.then(r => r.json())
-.then(data => {
-  console.log(`${data.label} (${data.confidence_percent}%)`);
-});
-```
-
-**Use Cases:**
-- Web UI integration
-- Single article classification
-- User submissions
-- One-off predictions
-
----
-
-### 5. Single Article Prediction (MCP Standard)
-
-**Endpoint:** `POST /predict`
-
-**Purpose:** Classify a single article (MCP protocol compliant, returns full metadata)
-
-**Request Headers:**
-```
-Content-Type: application/json
-```
-
-**Request Body:**
-```json
-{
-  "text": "Article text here...",
-  "model_id": "bert_fake_news"
-}
-```
-
-**Response (Success - 200):**
-```json
-{
-  "model_id": "bert_fake_news",
-  "text": "Article text here...",
   "prediction": {
-    "label": 1,
-    "class": "REAL",
-    "confidence": 0.8754,
-    "confidence_percent": "87.54%"
+    "label": "class_A",
+    "confidence": 0.85
   },
   "metadata": {
-    "processing_time_ms": 45.32,
-    "text_length": 145,
-    "timestamp": 1702650845.234
+    "processing_time_ms": 45
   }
 }
 ```
 
-**Field Descriptions:**
-| Field | Description |
-|-------|-------------|
-| `model_id` | The model used for prediction |
-| `text` | First 200 chars of input (truncated for long texts) |
-| `prediction.label` | 0 = FAKE, 1 = REAL |
-| `prediction.class` | "FAKE" or "REAL" |
-| `prediction.confidence` | Confidence score (0.0 - 1.0) |
-| `prediction.confidence_percent` | Confidence as percentage string |
-| `metadata.timestamp` | Unix timestamp of prediction |
-
-**curl Example:**
-```bash
-curl -X POST http://localhost:9090/predict \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Article text here...",
-    "model_id": "bert_fake_news"
-  }'
-```
-
-**Use Cases:**
-- Programmatic integration
-- ML pipeline integration
-- Batch processing systems
-- Cross-system compatibility
+**Use Case:** Web UI, interactive requests, one-off predictions
 
 ---
 
-### 6. Batch Article Prediction
+### 5. Batch Prediction
 
 **Endpoint:** `POST /predict-batch`
 
-**Purpose:** Classify multiple articles in a single request (up to 100+ articles)
+**Purpose:** Classify/predict on multiple samples efficiently
 
-**Request Headers:**
-```
-Content-Type: application/json
-```
-
-**Request Body:**
+**Request:**
 ```json
 {
   "texts": [
-    "First article text here...",
-    "Second article text here...",
-    "Third article text here..."
+    "Sample 1...",
+    "Sample 2...",
+    "Sample 3..."
   ],
-  "model_id": "bert_fake_news"
+  "model_id": "model_v1"
 }
 ```
 
-**Response (Success - 200):**
+**Response:**
 ```json
 {
-  "model_id": "bert_fake_news",
   "total": 3,
-  "real_count": 2,
-  "fake_count": 1,
-  "real_percent": "66.7%",
-  "fake_percent": "33.3%",
-  "avg_confidence": 0.8234,
   "predictions": [
-    {
-      "model_id": "bert_fake_news",
-      "text": "First article text here...",
-      "prediction": {
-        "label": 1,
-        "class": "REAL",
-        "confidence": 0.8754,
-        "confidence_percent": "87.54%"
-      },
-      "metadata": {
-        "processing_time_ms": 45.32,
-        "text_length": 125,
-        "timestamp": 1702650845.234
-      }
-    },
-    {
-      "model_id": "bert_fake_news",
-      "text": "Second article text here...",
-      "prediction": {
-        "label": 0,
-        "class": "FAKE",
-        "confidence": 0.7123,
-        "confidence_percent": "71.23%"
-      },
-      "metadata": {
-        "processing_time_ms": 42.15,
-        "text_length": 135,
-        "timestamp": 1702650845.280
-      }
-    },
-    {
-      "model_id": "bert_fake_news",
-      "text": "Third article text here...",
-      "prediction": {
-        "label": 1,
-        "class": "REAL",
-        "confidence": 0.8234,
-        "confidence_percent": "82.34%"
-      },
-      "metadata": {
-        "processing_time_ms": 43.87,
-        "text_length": 142,
-        "timestamp": 1702650845.325
-      }
-    }
+    {"prediction": {"label": "A", "confidence": 0.85}},
+    {"prediction": {"label": "B", "confidence": 0.72}},
+    {"prediction": {"label": "A", "confidence": 0.91}}
   ],
   "metadata": {
-    "total_processing_time_s": 0.131,
-    "avg_time_per_article_ms": 43.78,
-    "timestamp": 1702650845.325
+    "total_processing_time_s": 0.15,
+    "avg_time_per_sample_ms": 50
   }
 }
 ```
 
-**Response (Error - 400, Missing Texts):**
-```json
-{
-  "error": "Missing required field: texts",
-  "status": "error"
-}
-```
-
-**Response (Error - 400, Invalid Format):**
-```json
-{
-  "error": "texts must be a list",
-  "status": "error"
-}
-```
-
-**Field Descriptions:**
-| Field | Description |
-|-------|-------------|
-| `total` | Number of articles classified |
-| `real_count` | Count of articles classified as REAL |
-| `fake_count` | Count of articles classified as FAKE |
-| `real_percent` | Percentage classified as REAL |
-| `fake_percent` | Percentage classified as FAKE |
-| `avg_confidence` | Average confidence across all predictions |
-| `predictions` | Array of individual predictions |
-| `metadata.total_processing_time_s` | Total processing time (seconds) |
-| `metadata.avg_time_per_article_ms` | Average time per article (milliseconds) |
-
-**curl Example:**
-```bash
-curl -X POST http://localhost:9090/predict-batch \
-  -H "Content-Type: application/json" \
-  -d '{
-    "texts": [
-      "Article 1 text...",
-      "Article 2 text...",
-      "Article 3 text..."
-    ],
-    "model_id": "bert_fake_news"
-  }'
-```
-
-**Python Example:**
-```python
-import requests
-
-texts = [
-    "Article 1 text...",
-    "Article 2 text...",
-    "Article 3 text..."
-]
-
-response = requests.post(
-    'http://localhost:9090/predict-batch',
-    json={'texts': texts}
-)
-
-result = response.json()
-print(f"Total: {result['total']}")
-print(f"Real: {result['real_count']} ({result['real_percent']})")
-print(f"Fake: {result['fake_count']} ({result['fake_percent']})")
-print(f"Avg Confidence: {result['avg_confidence']:.2%}")
-
-for pred in result['predictions']:
-    label = pred['prediction']['class']
-    conf = pred['prediction']['confidence_percent']
-    print(f"  - {label} ({conf})")
-```
-
-**Use Cases:**
-- News aggregators
-- Bulk classification
-- CSV/database imports
-- Content moderation
-- Research analysis
-- Performance testing
+**Use Case:** Bulk processing, data pipelines, batch jobs
 
 ---
 
-### 7. Server Statistics
+### 6. Statistics
 
 **Endpoint:** `GET /statistics`
 
-**Purpose:** Retrieve server usage statistics and prediction metrics
+**Purpose:** Server performance and usage metrics
 
-**Request:**
-```bash
-curl http://localhost:9090/statistics
-```
-
-**Response (Success - 200, With Predictions):**
+**Response:**
 ```json
 {
   "total_predictions": 1234,
-  "real_predictions": 756,
-  "fake_predictions": 478,
-  "avg_confidence": 0.8345,
-  "min_confidence": 0.5123,
-  "max_confidence": 0.9876
+  "uptime_seconds": 3600,
+  "avg_processing_time_ms": 45,
+  "min_processing_time_ms": 20,
+  "max_processing_time_ms": 150
 }
 ```
 
-**Response (Success - 200, No Predictions):**
-```json
-{
-  "total_predictions": 0,
-  "message": "No predictions made yet"
-}
-```
-
-**Field Descriptions:**
-| Field | Description |
-|-------|-------------|
-| `total_predictions` | Total number of predictions made |
-| `real_predictions` | Count of articles classified as REAL |
-| `fake_predictions` | Count of articles classified as FAKE |
-| `avg_confidence` | Average confidence across all predictions |
-| `min_confidence` | Lowest confidence score |
-| `max_confidence` | Highest confidence score |
-
-**Use Cases:**
-- Monitoring and dashboards
-- Performance metrics
-- Usage analytics
-- Load balancing decisions
-- Auditing and compliance
+**Use Case:** Monitoring dashboards, performance tracking
 
 ---
 
-## Common Response Codes
+## Standard Response Format
 
-| Code | Meaning | Example |
-|------|---------|---------|
-| 200 | Success | Prediction completed successfully |
-| 400 | Bad Request | Missing or invalid JSON fields |
-| 404 | Not Found | Endpoint does not exist |
-| 500 | Server Error | Model not loaded, processing error |
-| 503 | Unavailable | Server not initialized (unhealthy) |
+All MCP endpoints follow a consistent response structure:
 
----
-
-## Error Handling
-
-### Example Error Response:
+### Success Response (200)
 
 ```json
 {
-  "error": "Text field cannot be empty",
-  "status": "error"
+  "status": "success",
+  "data": { /* endpoint-specific data */ },
+  "metadata": {
+    "timestamp": 1702650845.234,
+    "processing_time_ms": 45.32
+  }
 }
 ```
 
-### Best Practices:
+### Error Response (400/500)
 
-1. Always check response status code first
-2. Handle 400-level errors (client mistakes) with user feedback
-3. Handle 500-level errors (server issues) with retry logic
-4. Validate input before sending to server
-5. Set reasonable request timeouts (e.g., 30 seconds)
-6. Implement exponential backoff for retries
+```json
+{
+  "status": "error",
+  "error": "Description of what went wrong",
+  "error_code": "INVALID_INPUT"
+}
+```
+
+### Common Error Codes
+
+| Code | Status | Meaning |
+|------|--------|---------|
+| `MISSING_REQUIRED_FIELD` | 400 | Required JSON field missing |
+| `INVALID_INPUT` | 400 | Input validation failed |
+| `MODEL_NOT_FOUND` | 404 | Requested model doesn't exist |
+| `SERVER_ERROR` | 500 | Internal server error |
+| `MODEL_OVERLOADED` | 503 | Server busy, try again |
+
+---
+
+## HTTP Status Codes
+
+| Code | Meaning | When to Use |
+|------|---------|------------|
+| 200 | Success | Request processed successfully |
+| 400 | Bad Request | Client error (validation, format) |
+| 404 | Not Found | Endpoint or resource doesn't exist |
+| 429 | Too Many Requests | Rate limit exceeded |
+| 500 | Server Error | Model or server error |
+| 503 | Unavailable | Server not ready/overloaded |
 
 ---
 
 ## Request/Response Examples
 
-### Example 1: Classify a Single Article
-
-**Task:** Determine if an article is real or fake
+### Example 1: Single Prediction
 
 **Request:**
 ```bash
 curl -X POST http://localhost:9090/api/predict \
   -H "Content-Type: application/json" \
+  -d '{"text": "Sample input data"}'
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "prediction": {
+    "label": "class_A",
+    "confidence": 0.87
+  },
+  "metadata": {
+    "processing_time_ms": 42.5,
+    "input_length": 18
+  }
+}
+```
+
+---
+
+### Example 2: Batch Prediction
+
+**Request:**
+```bash
+curl -X POST http://localhost:9090/predict-batch \
+  -H "Content-Type: application/json" \
   -d '{
-    "text": "Reuters Reports: Government Announces New Education Policy Officials confirmed today that a new comprehensive education reform will begin next year, focusing on STEM subjects and teacher training."
+    "texts": ["Sample 1", "Sample 2", "Sample 3"]
   }'
 ```
 
@@ -591,159 +332,93 @@ curl -X POST http://localhost:9090/api/predict \
 ```json
 {
   "status": "success",
-  "label": "REAL",
-  "confidence": 0.9234,
-  "confidence_percent": 92.34,
-  "processing_time_ms": 52.45,
-  "text_length": 195
-}
-```
-
----
-
-### Example 2: Batch Process News Feed
-
-**Task:** Classify 5 articles from a news feed
-
-**Request:**
-```bash
-curl -X POST http://localhost:9090/predict-batch \
-  -H "Content-Type: application/json" \
-  -d '{
-    "texts": [
-      "Breaking: Company releases quarterly earnings report...",
-      "SHOCKING: Celebrity reveals SECRET...",
-      "Study finds link between exercise and health...",
-      "UNBELIEVABLE: You wont believe what happened...",
-      "Scientists publish peer-reviewed findings..."
-    ]
-  }'
-```
-
-**Response:**
-```json
-{
-  "model_id": "bert_fake_news",
-  "total": 5,
-  "real_count": 3,
-  "fake_count": 2,
-  "real_percent": "60.0%",
-  "fake_percent": "40.0%",
-  "avg_confidence": 0.7856,
+  "total": 3,
+  "class_a_count": 2,
+  "class_b_count": 1,
   "predictions": [
-    {"prediction": {"class": "REAL", "confidence": 0.8754, "confidence_percent": "87.54%"}},
-    {"prediction": {"class": "FAKE", "confidence": 0.6234, "confidence_percent": "62.34%"}},
-    {"prediction": {"class": "REAL", "confidence": 0.8123, "confidence_percent": "81.23%"}},
-    {"prediction": {"class": "FAKE", "confidence": 0.5847, "confidence_percent": "58.47%"}},
-    {"prediction": {"class": "REAL", "confidence": 0.9234, "confidence_percent": "92.34%"}}
+    {"prediction": {"label": "A", "confidence": 0.85}},
+    {"prediction": {"label": "B", "confidence": 0.72}},
+    {"prediction": {"label": "A", "confidence": 0.91}}
   ],
   "metadata": {
-    "total_processing_time_s": 0.245,
-    "avg_time_per_article_ms": 49.0,
-    "timestamp": 1702650900.500
+    "total_processing_time_s": 0.145,
+    "avg_time_per_sample_ms": 48.3
   }
 }
 ```
 
 ---
 
-### Example 3: Monitor Server Health
+### Example 3: Error Handling
 
-**Task:** Check if server is healthy and get statistics
-
-**Request:**
+**Request (Invalid - missing required field):**
 ```bash
-# Health check
-curl http://localhost:9090/health
-
-# Get statistics
-curl http://localhost:9090/statistics
+curl -X POST http://localhost:9090/api/predict \
+  -H "Content-Type: application/json" \
+  -d '{}'
 ```
 
-**Response (Health):**
+**Response (400):**
 ```json
 {
-  "status": "healthy",
-  "server": "MCP Server running"
-}
-```
-
-**Response (Statistics):**
-```json
-{
-  "total_predictions": 5,
-  "real_predictions": 3,
-  "fake_predictions": 2,
-  "avg_confidence": 0.7856,
-  "min_confidence": 0.5847,
-  "max_confidence": 0.9234
+  "status": "error",
+  "error": "Missing required field: text",
+  "error_code": "MISSING_REQUIRED_FIELD"
 }
 ```
 
 ---
 
-## Integration Examples
+## Client Integration Patterns
 
-### Python Integration
+### Pattern 1: Python Client Library
 
 ```python
 import requests
 
-class FakeNewsDetector:
-    def __init__(self, api_url='http://localhost:9090'):
-        self.api_url = api_url
-
-    def is_healthy(self):
-        """Check if server is running."""
-        response = requests.get(f'{self.api_url}/health')
-        return response.json()['status'] == 'healthy'
+class MCPClient:
+    def __init__(self, base_url='http://localhost:9090'):
+        self.base_url = base_url
 
     def predict(self, text):
-        """Classify a single article."""
+        """Single prediction."""
         response = requests.post(
-            f'{self.api_url}/api/predict',
+            f'{self.base_url}/api/predict',
             json={'text': text}
         )
-        data = response.json()
-        return {
-            'label': data['label'],
-            'confidence': data['confidence_percent']
-        }
+        return response.json()
 
     def predict_batch(self, texts):
-        """Classify multiple articles."""
+        """Batch prediction."""
         response = requests.post(
-            f'{self.api_url}/predict-batch',
+            f'{self.base_url}/predict-batch',
             json={'texts': texts}
         )
         return response.json()
 
-    def get_stats(self):
-        """Get server statistics."""
-        response = requests.get(f'{self.api_url}/statistics')
+    def health_check(self):
+        """Check server health."""
+        response = requests.get(f'{self.base_url}/health')
         return response.json()
 
 # Usage
-detector = FakeNewsDetector()
-
-if detector.is_healthy():
-    result = detector.predict("Article text here...")
-    print(f"Result: {result['label']} ({result['confidence']}%)")
-
-    stats = detector.get_stats()
-    print(f"Total predictions: {stats['total_predictions']}")
+client = MCPClient()
+result = client.predict("Sample input")
+print(result['prediction']['label'])
 ```
 
-### JavaScript Integration
+---
+
+### Pattern 2: JavaScript/Node.js Client
 
 ```javascript
-class FakeNewsDetector {
-  constructor(apiUrl = 'http://localhost:9090') {
-    this.apiUrl = apiUrl;
+class MCPClient {
+  constructor(baseUrl = 'http://localhost:9090') {
+    this.baseUrl = baseUrl;
   }
 
   async predict(text) {
-    const response = await fetch(`${this.apiUrl}/api/predict`, {
+    const response = await fetch(`${this.baseUrl}/api/predict`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text })
@@ -752,7 +427,7 @@ class FakeNewsDetector {
   }
 
   async predictBatch(texts) {
-    const response = await fetch(`${this.apiUrl}/predict-batch`, {
+    const response = await fetch(`${this.baseUrl}/predict-batch`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ texts })
@@ -760,117 +435,360 @@ class FakeNewsDetector {
     return await response.json();
   }
 
-  async getStats() {
-    const response = await fetch(`${this.apiUrl}/statistics`);
+  async healthCheck() {
+    const response = await fetch(`${this.baseUrl}/health`);
     return await response.json();
   }
 }
 
 // Usage
-const detector = new FakeNewsDetector();
+const client = new MCPClient();
+const result = await client.predict('Sample input');
+console.log(result.prediction.label);
+```
 
-detector.predict("Article text...").then(result => {
-  console.log(`${result.label} (${result.confidence_percent}%)`);
-});
+---
+
+### Pattern 3: Streaming/Generator Pattern (for large batches)
+
+```python
+def predict_large_dataset(texts, batch_size=100):
+    """Process large dataset in batches."""
+    for i in range(0, len(texts), batch_size):
+        batch = texts[i:i+batch_size]
+        response = client.predict_batch(batch)
+
+        for pred in response['predictions']:
+            yield pred
+```
+
+---
+
+## Performance Considerations
+
+### Single vs Batch
+
+| Aspect | Single Prediction | Batch Prediction |
+|--------|------------------|------------------|
+| **Latency** | ~40-50ms | ~40-50ms per item |
+| **Throughput** | Low | High |
+| **Best For** | Real-time, interactive | Bulk processing |
+| **Network Overhead** | Low | Amortized |
+
+### Optimization Tips
+
+1. **Batching**: Send multiple items together
+   ```python
+   # Bad: N requests
+   for text in texts:
+       client.predict(text)
+
+   # Good: 1 request
+   client.predict_batch(texts)
+   ```
+
+2. **Connection pooling**: Reuse HTTP connections
+   ```python
+   session = requests.Session()
+   client = MCPClient(session=session)
+   ```
+
+3. **Async requests**: Process requests concurrently
+   ```python
+   import asyncio
+   tasks = [client.predict_async(t) for t in texts]
+   results = await asyncio.gather(*tasks)
+   ```
+
+---
+
+## Error Handling Best Practices
+
+### Pattern: Retry with Backoff
+
+```python
+import time
+
+def predict_with_retry(client, text, max_retries=3):
+    for attempt in range(max_retries):
+        try:
+            return client.predict(text)
+        except requests.RequestException as e:
+            if attempt == max_retries - 1:
+                raise
+            wait_time = 2 ** attempt  # Exponential backoff
+            time.sleep(wait_time)
+```
+
+### Pattern: Graceful Degradation
+
+```python
+def predict_with_fallback(client, text):
+    try:
+        return client.predict(text)
+    except Exception as e:
+        # Fallback behavior
+        return {
+            'status': 'error',
+            'fallback': True,
+            'prediction': {'label': 'UNKNOWN', 'confidence': 0.0},
+            'error': str(e)
+        }
+```
+
+---
+
+## Deployment Models
+
+### Standalone Server
+
+```bash
+python mcp_server.py --host 0.0.0.0 --port 9090
+```
+
+### Docker Container
+
+```bash
+docker run -p 9090:9090 mcp-server:latest
+```
+
+### Load Balanced (Multiple Instances)
+
+```
+    ┌─────────────────┐
+    │  Load Balancer  │
+    │   (Port 9090)   │
+    └────────┬────────┘
+             │
+        ┌────┼────┐
+        │    │    │
+        ▼    ▼    ▼
+      MCP  MCP  MCP
+      S1   S2   S3
+```
+
+### Kubernetes Deployment
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-server
+spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+      - name: mcp
+        image: mcp-server:latest
+        ports:
+        - containerPort: 9090
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 9090
+          initialDelaySeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 9090
 ```
 
 ---
 
 ## Configuration
 
-The server reads configuration from environment variables:
+Standard environment variables for MCP servers:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `MCP_HOST` | 0.0.0.0 | Server host address |
-| `MCP_PORT` | 9090 | Server port |
-| `MCP_DEBUG` | false | Enable debug mode |
-
-**Setting Environment Variables:**
-
-```bash
-# Bash
-export MCP_PORT=9090
-export MCP_HOST=localhost
-python mcp_server.py
-
-# Docker
-docker run -e MCP_PORT=9090 -e MCP_HOST=0.0.0.0 bert-fake-news-api
-```
+| `MCP_HOST` | `0.0.0.0` | Server bind address |
+| `MCP_PORT` | `9090` | Server port |
+| `MCP_DEBUG` | `false` | Enable debug logging |
+| `MCP_LOG_LEVEL` | `INFO` | Logging verbosity |
+| `MCP_WORKERS` | `4` | Number of worker threads |
+| `MCP_TIMEOUT` | `30` | Request timeout (seconds) |
 
 ---
 
-## Performance Characteristics
+## Monitoring & Observability
 
-| Metric | Value |
-|--------|-------|
-| Avg Response Time | 40-50 ms per article |
-| Batch Processing | ~40 ms per article (parallel) |
-| Model Size | 440 MB (BERT base) |
-| Memory Usage | ~2 GB at startup |
-| GPU Acceleration | Yes (if available) |
-| Max Batch Size | Unlimited (limited by memory) |
+### Metrics to Track
+
+```
+GET /statistics
+
+Response includes:
+- total_predictions: Total requests processed
+- avg_processing_time_ms: Average latency
+- min_processing_time_ms: Minimum latency
+- max_processing_time_ms: Maximum latency
+- error_count: Failed requests
+```
+
+### Logging
+
+Log all requests with:
+- Timestamp
+- Method and endpoint
+- Request payload size
+- Response status
+- Processing time
+
+### Health Checks
+
+```bash
+# Every 10 seconds
+curl http://localhost:9090/health
+
+# Alert if not healthy
+```
 
 ---
 
 ## Authentication & Security
 
-Currently, the API has **no authentication**. For production deployment:
+### Basic Authentication
 
-1. Add API key validation
-2. Implement rate limiting
-3. Use HTTPS/TLS
-4. Add CORS headers if needed
-5. Implement request signing
-6. Add request logging and monitoring
+```python
+from flask_httpauth import HTTPBasicAuth
+
+auth = HTTPBasicAuth()
+
+@auth.verify_password
+def verify_password(username, password):
+    return username == 'user' and password == 'pass'
+
+@app.route('/predict', methods=['POST'])
+@auth.login_required
+def predict():
+    # Handle prediction
+    pass
+```
+
+### API Key Authentication
+
+```python
+def check_api_key(request):
+    key = request.headers.get('X-API-Key')
+    return key == os.getenv('MCP_API_KEY')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    if not check_api_key(request):
+        return {'error': 'Invalid API key'}, 401
+    # Handle prediction
+```
+
+### Rate Limiting
+
+```python
+from flask_limiter import Limiter
+
+limiter = Limiter(app, key_func=lambda: request.remote_addr)
+
+@app.route('/predict', methods=['POST'])
+@limiter.limit("100 per hour")
+def predict():
+    # Handle prediction
+    pass
+```
 
 ---
 
-## Troubleshooting
+## Testing
 
-### Server won't start
-- Check that port 9090 is not in use: `lsof -i :9090`
-- Verify BERT model is in `models/bert_fake_news/` directory
-- Check logs for errors
+### Unit Test Example
 
-### Predictions are slow
-- Ensure GPU is available: `nvidia-smi`
-- Check server load and available memory
-- Consider implementing caching
+```python
+import pytest
+from mcp_server import app
 
-### High error rate
-- Validate input text is not empty
-- Check text encoding (UTF-8)
-- Review server logs for specific errors
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+    with app.test_client() as client:
+        yield client
 
-### Model accuracy is lower than expected
-- Confirm correct model version is loaded
-- Check if input text preprocessing matches training
-- Review confidence scores (may be overly conservative)
+def test_health_check(client):
+    response = client.get('/health')
+    assert response.status_code == 200
+    assert response.json['status'] == 'healthy'
+
+def test_predict_success(client):
+    response = client.post('/api/predict',
+        json={'text': 'Sample input'})
+    assert response.status_code == 200
+    assert 'prediction' in response.json
+
+def test_predict_missing_field(client):
+    response = client.post('/api/predict', json={})
+    assert response.status_code == 400
+    assert 'error' in response.json
+```
 
 ---
 
-## API Specification Summary
+## Best Practices
+
+### Server Implementation
+
+✅ **DO:**
+- Implement all standard endpoints
+- Use consistent response format
+- Include detailed error messages
+- Log all requests and errors
+- Add request validation
+- Use appropriate HTTP status codes
+
+❌ **DON'T:**
+- Change response format between versions
+- Silently fail requests
+- Return 200 for errors
+- Overload single endpoints
+- Skip input validation
+
+### Client Usage
+
+✅ **DO:**
+- Check HTTP status codes
+- Implement retry logic
+- Batch requests when possible
+- Set reasonable timeouts
+- Handle errors gracefully
+- Validate responses
+
+❌ **DON'T:**
+- Ignore error responses
+- Assume requests succeed
+- Send unbounded batches
+- Retry indefinitely
+- Panic on occasional failures
+
+---
+
+## Summary
 
 | Aspect | Details |
 |--------|---------|
+| **Purpose** | Standardized ML model serving |
 | **Protocol** | HTTP/REST |
-| **Base URL** | `http://localhost:9090` |
-| **Content Type** | JSON |
-| **Authentication** | None (requires addition for production) |
-| **Rate Limiting** | None (requires addition for production) |
-| **Endpoints** | 7 (health, models, predict, predict-batch, statistics, get-model-info, list-models) |
+| **Core Endpoints** | 6 (health, models, predict, predict-batch, statistics, model-info) |
 | **Response Format** | JSON with status codes |
-| **Error Handling** | HTTP status codes + error messages |
-| **Performance** | ~45ms per prediction, batch processing supported |
+| **Error Handling** | HTTP codes + error messages |
+| **Authentication** | Optional (API key, basic auth) |
+| **Deployment** | Docker, Kubernetes, standalone |
 
 ---
 
-## Additional Resources
+## References
 
-- **Notebook Example**: `mcp_fake_news_example.ipynb` - Complete end-to-end project walkthrough
-- **Server Implementation**: `mcp_server.py` - Flask REST API server
-- **Server Class**: `mcp_server_class.py` - MCP server logic
-- **Model Utils**: `bert_utils.py` - BERT loading and prediction utilities
-- **Web UI**: `templates/index.html` - Interactive web interface
+- [REST API Best Practices](https://restfulapi.net/)
+- [HTTP Status Codes](https://httpwg.org/specs/rfc7231.html#status.codes)
+- [Flask Documentation](https://flask.palletsprojects.com/)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
 
+---
+
+*Last Updated: 2025-12-15*
+*Version: 1.0*
