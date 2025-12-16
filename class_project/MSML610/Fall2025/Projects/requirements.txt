@@ -1,0 +1,10 @@
+torch
+transformers
+openai-whisper
+ffmpeg-python
+sounddevice
+streamlit
+numpy
+pandas
+sentencepiece
+accelerate
