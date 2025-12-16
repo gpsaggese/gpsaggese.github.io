@@ -123,12 +123,15 @@ FairnessPP/
 
 Experiments on Chicago Crime Data (80,000 records, 2020-2023):
 
+
 | Model | Balanced Acc | Recall | EO Disparity | Fairness Improvement |
 |-------|--------------|--------|--------------|---------------------|
 | Baseline (Unmitigated) | 0.501 | 0.003 | 0.045 | N/A (collapsed) |
 | Balanced Baseline | 0.565 | 0.568 | 0.413 | Reference |
 | **Fair (In-Processing)** | 0.516 | 0.474 | 0.187 | **55% reduction** |
 | **Fair (Post-Processing)** | 0.554 | 0.551 | 0.154 | **63% reduction** |
+
+*Note: Model results may vary slightly between runs due to threshold optimization. Improvements typically range from 35-65%.*
 
 ### Key Findings
 
