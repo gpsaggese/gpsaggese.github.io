@@ -1,12 +1,29 @@
 """Utility helpers for MSML610 class project.
 
-This module wraps a few common operations needed in the notebooks:
+This module wraps common operations needed for the causal inference
+analysis in the project notebooks, specifically using EconML's
+Double Machine Learning (DML) framework on the **Student Performance**
+dataset.
 
-* Fetching the **Student Performance** dataset from the UCI ML Repository
-* Applying light cleaning and type conversions
-* Defining a configuration object for EconML estimators
-* Splitting a pandas.DataFrame into (Y, T, X, W) blocks
-* Simple summaries of the treatment vs. control groups
+The module provides helpers for:
+
+* **Data Management**:
+    * Fetching and applying light cleaning to the **Student Performance**
+      dataset from the UCI ML Repository.
+    * Splitting a pandas.DataFrame into the required (Y, T, X, W) blocks
+      for EconML estimators.
+    * Defining a configuration object (`EconMLEducationConfig`) to specify
+      the outcome (Y), treatment (T), heterogeneity features (X), and
+      optional controls (W).
+    * Simple summaries of the treatment vs. control groups.
+
+* **Causal Estimation**:
+    * Building an unfitted DML estimator (LinearDML, CausalForestDML,
+      SparseLinearDML) based on the configuration.
+    * Fitting the chosen DML estimator with a binary treatment model.
+    * Estimating the **Average Treatment Effect (ATE)** and its confidence interval.
+    * Estimating the **Conditional Average Treatment Effect (CATE)** by
+      specified subgroups.
 
 """
 
