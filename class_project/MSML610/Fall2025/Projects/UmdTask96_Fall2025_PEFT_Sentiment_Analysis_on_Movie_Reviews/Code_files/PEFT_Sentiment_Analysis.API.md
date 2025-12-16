@@ -1,325 +1,365 @@
-# **PEFT Sentiment Analysis on Movie Reviews — API Documentation**
+# **PEFT Sentiment Analysis — API Documentation**
 
-This document explains the _application programming interface (API)_ for the tutorial project
-**PEFT_Sentiment_Analysis_on_Movie_Reviews**, which demonstrates:
+This document explains the core technologies and APIs used for **Parameter-Efficient Fine-Tuning (PEFT)** of transformer models for sentiment analysis and text classification tasks.
 
-- Efficient fine-tuning of RoBERTa using **PEFT (Parameter-Efficient Fine-Tuning)**
-- Lightweight wrapper utilities for data preparation, preprocessing, tokenization, and model loading
-- A minimal and stable API layer that supports any downstream sentiment analysis or text classification task
+This is a tool-focused guide that explains:
 
-This API layer is meant to serve as the _stable interface_ that a developer can interact with
-**without needing to know implementation details** of tokenization, dataset handling, LoRA adaptation, or HuggingFace internals.
+- What PEFT and LoRA are
+- How to use HuggingFace Transformers APIs
+- How to apply PEFT/LoRA to any text classification task
+- Key APIs and their usage patterns
 
----
-
-# 🔍 **1. What Technology This Tutorial Covers**
-
-This tutorial introduces three powerful components:
+For a complete project implementation example, see [PEFT_Sentiment_Analysis.example.md](PEFT_Sentiment_Analysis.example.md).
 
 ---
 
-## **1.1 HuggingFace Transformers**
+# 🔍 **1. What is PEFT?**
 
-A library for state-of-the-art NLP models.
+**PEFT (Parameter-Efficient Fine-Tuning)** enables training large language models by updating only a small fraction of parameters, rather than fine-tuning the entire model.
 
-We use:
+**Why use PEFT?**
 
-- `RobertaTokenizer` — to convert text to token IDs
-- `RobertaForSequenceClassification` — a pretrained encoder for binary classification
-- `Dataset` — lightweight data handling
-- `Trainer` & `TrainingArguments` — high-level training API
-
----
-
-## **1.2 PEFT (Parameter Efficient Fine-Tuning)**
-
-PEFT enables training large language models **without updating all weights**.
-
-We specifically use **LoRA (Low-Rank Adapters)**:
-
-- Only injects small trainable matrices into attention heads
-- Reduces trainable parameters from ~125M → ~800K
-- Fast, low-cost, and GPU/CPU friendly
+- Reduces trainable parameters by 90-99%
+- Significantly lower memory requirements
+- Faster training times
+- Maintains model performance
+- Enables fine-tuning on consumer hardware
 
 ---
 
-## **1.3 HuggingFace Datasets Library**
+# 🛠️ **2. Technologies Covered**
 
-Provides clean, memory-efficient datasets for PyTorch models.
+# 🛠️ **2. Technologies Covered**
 
----
-
-# 📦 **2. What This API Solves**
-
-Fine-tuning transformer models normally requires:
-
-- Large compute
-- Large memory
-- Long training time
-- Managing many internal APIs (tokenizer, datasets, Trainer, metrics)
-
-Our wrapper API abstracts these complexities so developers can:
-
-- Load and preprocess their dataset
-- Convert it to HF Dataset
-- Apply LoRA
-- Train using Trainer
-- Evaluate
-- Explain predictions
-
-…with minimal effort and clean code.
+This tutorial introduces three powerful components for text classification:
 
 ---
 
-# 🔧 **3. Native APIs Used in This Project**
+## **2.1 HuggingFace Transformers**
 
-This section explains the most important native classes and functions that your pipeline uses.
+A library providing state-of-the-art NLP models with a unified API.
 
----
+**Key Components:**
 
-## **3.1 Tokenization API**
+- **`RobertaTokenizer`** — Converts text to token IDs using Byte-Pair Encoding (BPE)
+- **`RobertaForSequenceClassification`** — Pre-trained encoder with classification head
+- **`Dataset`** — Lightweight, memory-efficient data handling
+- **`Trainer`** & **`TrainingArguments`** — High-level training API
 
-```python
-RobertaTokenizer.from_pretrained("roberta-base")
+**Installation:**
+
+```bash
+pip install transformers
 ```
 
-Key features:
-
-- Byte-Pair Encoding (BPE)
-- Automatic padding/truncation
-- Converts text → token IDs, masks
-
 ---
 
-## **3.2 Dataset API**
+## **2.2 PEFT (Parameter-Efficient Fine-Tuning)**
 
-```python
-Dataset.from_dict({"text": [...], "label": [...]})
-dataset.map(tokenize_fn)
+PEFT enables training large models without updating all weights.
+
+**LoRA (Low-Rank Adapters)** - The specific PEFT method used:
+
+- Injects small trainable matrices into attention layers
+- Reduces trainable parameters from ~125M → ~800K (99.4% reduction)
+- Fast, low-cost, GPU/CPU friendly
+
+**Installation:**
+
+```bash
+pip install peft
 ```
 
-Provides:
+---
 
-- Efficient storage
-- Support for map operations
-- Easy formatting for PyTorch
+## **2.3 HuggingFace Datasets**
+
+Provides clean, memory-efficient datasets for PyTorch models with automatic batching and preprocessing.
+
+**Installation:**
+
+```bash
+pip install datasets
+```
 
 ---
 
-## **3.3 Model API**
+# 📦 **3. What Problems Does This Solve?**
+
+# 📦 **3. What Problems Does This Solve?**
+
+Traditional transformer fine-tuning requires:
+
+- Large compute resources (powerful GPUs)
+- High memory usage (storing gradients for all parameters)
+- Long training times
+- Complex API management
+
+**PEFT with LoRA solves these problems by:**
+
+- Training only 0.7% of parameters
+- Reducing memory footprint by 90%+
+- Enabling CPU-based fine-tuning
+- Maintaining competitive model performance
+- Simplifying deployment (small adapter files vs. full model weights)
+
+---
+
+# 🔧 **4. Core APIs Used**
+
+# 🔧 **4. Core APIs Used**
+
+---
+
+## **4.1 Tokenization API**
+
+**Purpose:** Convert raw text into numerical token IDs that models can process.
 
 ```python
-RobertaForSequenceClassification.from_pretrained(
-    "roberta-base",
-    num_labels=2
+from transformers import RobertaTokenizer
+
+# Load tokenizer
+tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
+
+# Tokenize text
+encoded = tokenizer(
+    "This movie was excellent!",
+    padding="max_length",
+    truncation=True,
+    max_length=128
 )
 ```
 
-Provides:
+**Key Parameters:**
 
-- RoBERTa encoder
-- Classification head
-- Output logits
+- `padding`: Pad sequences to same length ("max_length", "longest", or False)
+- `truncation`: Cut off sequences longer than max_length
+- `max_length`: Maximum sequence length
+
+**Returns:**
+
+- `input_ids`: Token IDs
+- `attention_mask`: Mask indicating real tokens vs. padding
 
 ---
 
-## **3.4 Training API**
+## **4.2 Dataset API**
+
+**Purpose:** Efficient data handling with built-in batching and preprocessing.
 
 ```python
-Trainer(model, args, train_dataset, eval_dataset)
+from datasets import Dataset
+
+# Create dataset from dictionary
+dataset = Dataset.from_dict({
+    "text": ["Sample text 1", "Sample text 2"],
+    "label": [0, 1]
+})
+
+# Apply preprocessing
+def tokenize_fn(examples):
+    return tokenizer(examples["text"], padding="max_length", truncation=True)
+
+tokenized_dataset = dataset.map(tokenize_fn, batched=True)
 ```
 
-Automatically handles:
+**Key Methods:**
 
-- Training loop
-- Evaluation
-- Batch generation
-- Checkpointing
-- GPU/CPU mapping
-
----
-
-## **3.5 PEFT / LoRA API**
-
-```python
-LoraConfig(...)
-get_peft_model(model, config)
-```
-
-This wraps a transformer model with low-rank adapters.
-
----
-
-# 📁 **4. API Wrapper Layer (Our Functions)**
-
-These are the **stable** functions exposed by the project.
-Any developer can use these without touching internal details.
-
----
-
-## **4.1 Data API**
-
-### `load_fake_true(fake_path, true_path)`
-
-Loads Fake.csv + True.csv into a labeled dataframe.
-
-### `preprocess_text(df)`
-
-Applies:
-
-- punctuation removal
-- lowercasing
-- tokenization
-- stopword removal
-- lemmatization
-- join tokens → `text_final`
-
-### `split_data(df)`
-
-Returns:
-
-- train_texts
-- test_texts
-- train_labels
-- test_labels
-
----
-
-## **4.2 HF Dataset Preparation API**
-
-### `prepare_hf_dataset(train_texts, test_texts, train_labels, test_labels)`
-
-Returns:
-
-- `train_dataset`
-- `test_dataset`
-- `tokenizer`
-
-…and applies HF tokenization with RoBERTa.
+- `from_dict()`: Create dataset from Python dictionary
+- `map()`: Apply function to all examples (supports batching)
+- `train_test_split()`: Split into train/test sets
 
 ---
 
 ## **4.3 Model API**
 
-### `load_roberta_lora()`
+**Purpose:** Load pre-trained models for text classification.
 
-Loads:
+```python
+from transformers import RobertaForSequenceClassification
 
-1. RoBERTa base model
-2. Wraps it with LoRA adapters
-3. Prints trainable parameters
+# Load model
+model = RobertaForSequenceClassification.from_pretrained(
+    "roberta-base",
+    num_labels=2  # Binary classification
+)
+```
 
-This is the main entry point for creating a trainable model.
+**Key Parameters:**
 
----
-
-## **4.4 Training API**
-
-### `get_training_args()`
-
-Creates a configured `TrainingArguments` instance (with max 800 steps).
-
-### `get_trainer(model, train_dataset, test_dataset, training_args)`
-
-Returns a configured `Trainer`.
+- `model_name`: Pre-trained model identifier (e.g., "roberta-base", "bert-base-uncased")
+- `num_labels`: Number of classification categories
 
 ---
 
-## **4.5 Evaluation API**
+## **4.4 PEFT / LoRA API**
 
-### `evaluate_model(trainer, test_dataset, test_labels)`
+**Purpose:** Apply parameter-efficient fine-tuning adapters to models.
 
-Returns metrics:
+```python
+from peft import LoraConfig, TaskType, get_peft_model
 
-- Accuracy
-- Precision
-- Recall
-- F1
-- AUC
-- Confusion matrix
-- Classification report
+# Configure LoRA
+lora_config = LoraConfig(
+    task_type=TaskType.SEQ_CLS,      # Sequence classification
+    r=8,                              # Rank (adapter dimension)
+    lora_alpha=16,                    # Scaling factor
+    lora_dropout=0.1,                 # Dropout for regularization
+    bias="none",                      # Don't train bias terms
+    target_modules=["query", "value"] # Which layers to adapt
+)
 
----
+# Apply LoRA to model
+peft_model = get_peft_model(model, lora_config)
+peft_model.print_trainable_parameters()  # Shows parameter reduction
+```
 
-## **4.6 Explainability API**
+**Key Parameters:**
 
-### `setup_shap(model, tokenizer)`
-
-Creates a SHAP explainer using HF pipeline.
-
-### `shap_explain(explainer, text)`
-
-Returns SHAP values for an input text.
-
----
-
-# 📊 **5. Architecture Overview**
-
-Below are the diagrams instructors expect.
+- `r`: Rank of adaptation matrices (typical: 4, 8, 16)
+- `lora_alpha`: Scaling factor (typically 2\*r)
+- `target_modules`: Which attention layers to modify (["query", "value"] is common)
 
 ---
 
-## **5.1 Data Processing Pipeline**
+## **4.5 Training API**
 
-```mermaid
-flowchart TD
-    A[Load Fake.csv + True.csv] --> B[Clean & Preprocess Text]
-    B --> C[Tokenize with RoBERTa Tokenizer]
-    C --> D[HuggingFace Dataset]
-    D --> E[Split Train/Test]
+**Purpose:** Simplify the training loop with automatic batching and optimization.
+
+```python
+from transformers import TrainingArguments, Trainer
+
+# Configure training
+training_args = TrainingArguments(
+    output_dir="./results",
+    num_train_epochs=3,
+    per_device_train_batch_size=8,
+    learning_rate=2e-5,
+    evaluation_strategy="epoch",
+    save_strategy="epoch",
+    logging_steps=10,
+)
+
+# Create trainer
+trainer = Trainer(
+    model=peft_model,
+    args=training_args,
+    train_dataset=train_dataset,
+    eval_dataset=test_dataset,
+)
+
+# Train
+trainer.train()
+```
+
+**Key Parameters:**
+
+- `num_train_epochs`: Number of complete passes through dataset
+- `per_device_train_batch_size`: Samples per batch (adjust for memory)
+- `learning_rate`: Optimizer learning rate (typical: 1e-5 to 5e-5)
+- `evaluation_strategy`: When to evaluate ("epoch", "steps", or "no")
+
+---
+
+# 📊 **5. Complete Workflow Example**
+
+Here's how all the APIs work together:
+
+```python
+# 1. Load tokenizer and model
+tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
+model = RobertaForSequenceClassification.from_pretrained("roberta-base", num_labels=2)
+
+# 2. Prepare dataset
+dataset = Dataset.from_dict({"text": texts, "label": labels})
+dataset = dataset.map(lambda x: tokenizer(x["text"], truncation=True), batched=True)
+
+# 3. Apply LoRA
+lora_config = LoraConfig(task_type=TaskType.SEQ_CLS, r=8, lora_alpha=16)
+model = get_peft_model(model, lora_config)
+
+# 4. Train
+training_args = TrainingArguments(output_dir="./results", num_train_epochs=3)
+trainer = Trainer(model=model, args=training_args, train_dataset=dataset)
+trainer.train()
+
+# 5. Evaluate
+predictions = trainer.predict(test_dataset)
 ```
 
 ---
 
-## **5.2 Model Training Pipeline**
+# 🎯 **6. Use Cases**
 
-```mermaid
-flowchart LR
-    A[RoBERTa Base Model] --> B[Apply LoRA Adapters]
-    B --> C[TrainingArguments]
-    C --> D[Trainer API]
-    D --> E[Train Model]
-    E --> F[Evaluate Model]
+This API approach is ideal for:
+
+- **Sentiment Analysis**: Movie reviews, product reviews, social media
+- **Text Classification**: News categorization, spam detection, topic labeling
+- **Binary Classification**: Fake news detection, toxicity detection
+- **Multi-class Classification**: Emotion detection, intent classification
+
+---
+
+# 🧠 **7. LoRA vs. Other Approaches**
+
+| Approach               | Trainable Params  | Memory Usage | Training Time | Accuracy |
+| ---------------------- | ----------------- | ------------ | ------------- | -------- |
+| **Full Fine-Tuning**   | 100% (~125M)      | Very High    | Slow          | Highest  |
+| **Feature Extraction** | ~0.1% (head only) | Low          | Fast          | Lower    |
+| **Adapter Layers**     | ~3-5%             | Medium       | Medium        | High     |
+| **Prompt Tuning**      | ~0.01%            | Very Low     | Very Fast     | Medium   |
+| **LoRA** ⭐            | ~0.7%             | Low          | Fast          | High     |
+
+**LoRA provides the best balance** of efficiency, performance, and ease of use.
+
+---
+
+# 📚 **8. References & Resources**
+
+**Documentation:**
+
+- [HuggingFace Transformers](https://huggingface.co/docs/transformers)
+- [PEFT Library](https://huggingface.co/docs/peft)
+- [HuggingFace Datasets](https://huggingface.co/docs/datasets)
+
+**Papers:**
+
+- LoRA: [Low-Rank Adaptation of Large Language Models](https://arxiv.org/abs/2106.09685)
+- RoBERTa: [A Robustly Optimized BERT Pretraining Approach](https://arxiv.org/abs/1907.11692)
+
+**Tutorials:**
+
+- [PEFT Examples](https://github.com/huggingface/peft/tree/main/examples)
+- [Fine-tuning with Trainer](https://huggingface.co/docs/transformers/training)
+
+---
+
+# 🚀 **9. Getting Started**
+
+**Installation:**
+
+```bash
+pip install transformers peft datasets torch
 ```
 
----
+**Quick Start:**
 
-## **5.3 Explainability Pipeline**
+```python
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from peft import LoraConfig, get_peft_model
+from datasets import Dataset
 
-```mermaid
-flowchart TD
-    A[Fine-Tuned LoRA Model] --> B[HF Pipeline]
-    B --> C[SHAP Explainer]
-    C --> D[SHAP Token-Level Interpretation]
+# 1. Load model & tokenizer
+tokenizer = AutoTokenizer.from_pretrained("roberta-base")
+model = AutoModelForSequenceClassification.from_pretrained("roberta-base", num_labels=2)
+
+# 2. Apply LoRA
+config = LoraConfig(task_type="SEQ_CLS", r=8)
+model = get_peft_model(model, config)
+
+# 3. Prepare your data and train (see example notebook)
 ```
 
----
-
-# 🧠 **6. Alternative Approaches**
-
-| Approach               | Pros                      | Cons                                    |
-| ---------------------- | ------------------------- | --------------------------------------- |
-| **Full Fine-Tuning**   | Highest accuracy          | Expensive, slow, 100M+ params trainable |
-| **Feature Extraction** | Fast                      | Lower accuracy                          |
-| **Adapter Layers**     | Modular                   | Slightly slower than LoRA               |
-| **Prompt-Tuning**      | Very lightweight          | Lower performance on long texts         |
-| **LoRA (our choice)**  | Fast, stable, low compute | Slightly more integration complexity    |
-
-LoRA is the best compromise between:
-
-- accuracy
-- compute efficiency
-- ease of deployment
+For a complete end-to-end implementation, see [PEFT_Sentiment_Analysis.example.md](PEFT_Sentiment_Analysis.example.md).
 
 ---
-
-# 📚 **7. References**
-
-- HuggingFace Transformers Documentation
-- PEFT: [https://huggingface.co/docs/peft](https://huggingface.co/docs/peft)
-- RoBERTa Paper: _Liu et al., 2019_
-- SHAP Explainability Library: [https://shap.readthedocs.io](https://shap.readthedocs.io)
-- HuggingFace Datasets Documentation
-
----
-

@@ -1,22 +1,33 @@
-# 📘 **PEFT_Sentiment_Analysis_on_Movie_Reviews.example.md**
+# 📘 **PEFT Sentiment Analysis — End-to-End Project Example**
 
-# **PEFT Sentiment Analysis on Movie Reviews — End-to-End Example**
+This document provides a **complete project implementation** using PEFT (Parameter-Efficient Fine-Tuning) for fake news detection.
 
-This document provides a complete walkthrough of the example application for the tutorial project
-**PEFT_Sentiment_Analysis_on_Movie_Reviews**.
+**What's in this document:**
 
-The goal of this example is to demonstrate how to apply:
+- Project-specific implementation details
+- Complete pipeline from data loading to model evaluation
+- Fake vs True News classification example
+- SHAP explainability implementation
+- All code and results for the complete project
 
-* HuggingFace Transformer models
-* Parameter-Efficient Fine-Tuning (PEFT) using LoRA
-* A clean and reusable training pipeline
-* Explainability methods such as SHAP
+**For tool/API documentation**, see [PEFT_Sentiment_Analysis.API.md](PEFT_Sentiment_Analysis.API.md).
 
-…to build a full end-to-end binary text classification system.
+---
 
-Although the project title references movie reviews, this example uses the **Fake vs True News dataset**, which follows the same sentiment-style binary classification structure.
+# **Project: Fake News Detection using PEFT**
 
-The example notebook (`PEFT_Sentiment_Analysis_on_Movie_Reviews.example.ipynb`) runs this workflow entirely, with all detailed logic contained inside `PEFT_Sentiment_Analysis_on_Movie_Reviews_utils.py`.
+This example demonstrates how to apply:
+
+- HuggingFace Transformer models (RoBERTa)
+- Parameter-Efficient Fine-Tuning (PEFT) using LoRA
+- A clean and reusable training pipeline
+- Explainability methods such as SHAP
+
+…to build a full end-to-end binary text classification system for detecting fake news.
+
+The project uses the **Fake vs True News dataset** to classify articles as fake or credible using sentiment analysis techniques.
+
+All implementation logic is contained in `PEFT_Sentiment_Analysis_utils.py` and executed in `PEFT_Sentiment_Analysis.example.ipynb`.
 
 ---
 
@@ -41,16 +52,16 @@ The entire example is designed to run start-to-finish in under ~10 minutes with 
 
 The dataset consists of two CSV files:
 
-* **Fake.csv** — Fake or misleading articles
-* **True.csv** — Credible news articles
+- **Fake.csv** — Fake or misleading articles
+- **True.csv** — Credible news articles
 
 Each file contains:
 
-* **title** – headline text
-* **text** – body text
-* **subject** – news topic
-* **date** – publication date
-* **label** – added during preprocessing (1 for fake, 0 for true)
+- **title** – headline text
+- **text** – body text
+- **subject** – news topic
+- **date** – publication date
+- **label** – added during preprocessing (1 for fake, 0 for true)
 
 After labeling, the data is merged into a single DataFrame of nearly 45,000 records.
 
@@ -81,8 +92,8 @@ This is essential because RoBERTa performs best with clean input sequences.
 
 The dataset is split using stratified sampling:
 
-* **80% training**
-* **20% testing**
+- **80% training**
+- **20% testing**
 
 This ensures both classes (fake/true) are balanced across sets.
 
@@ -94,9 +105,9 @@ The example converts raw lists into HuggingFace `Dataset` objects.
 
 Benefits:
 
-* Memory-efficient
-* Supports multiprocessing with `.map()`
-* Integrates seamlessly with the HF Trainer API
+- Memory-efficient
+- Supports multiprocessing with `.map()`
+- Integrates seamlessly with the HF Trainer API
 
 Tokenization is performed with:
 
@@ -115,10 +126,10 @@ Rather than fine-tuning the full 125M-parameter RoBERTa model, we apply **LoRA a
 
 ### Why LoRA?
 
-* Only ~0.7% of parameters are trained
-* Much faster
-* Lower memory requirements
-* Ideal for CPU or small GPU environments
+- Only ~0.7% of parameters are trained
+- Much faster
+- Lower memory requirements
+- Ideal for CPU or small GPU environments
 
 LoRA modifies only the attention layers (`query`, `value` matrices), injecting small rank-8 adapters.
 
@@ -130,19 +141,19 @@ The rest of the RoBERTa model remains frozen.
 
 The example uses:
 
-* **Batch size:** 8
-* **Max optimizer steps:** 800
-* **Epochs:** 2
-* **Evaluation during training**
-* **Logging every 50 steps**
-* **Saving every 200 steps**
+- **Batch size:** 8
+- **Max optimizer steps:** 800
+- **Epochs:** 2
+- **Evaluation during training**
+- **Logging every 50 steps**
+- **Saving every 200 steps**
 
 These choices ensure training is:
 
-* fast
-* deterministic
-* reproducible in Docker
-* passes the "Restart & Run All" requirement
+- fast
+- deterministic
+- reproducible in Docker
+- passes the "Restart & Run All" requirement
 
 ---
 
@@ -150,13 +161,13 @@ These choices ensure training is:
 
 After training, the example computes:
 
-* **Accuracy**
-* **Precision**
-* **Recall**
-* **F1-score**
-* **ROC-AUC**
-* **Classification report**
-* **Confusion matrix**
+- **Accuracy**
+- **Precision**
+- **Recall**
+- **F1-score**
+- **ROC-AUC**
+- **Classification report**
+- **Confusion matrix**
 
 These metrics give a full picture of model performance.
 
@@ -212,14 +223,13 @@ The model is fully reproducible using the provided Docker environment.
 
 This example illustrates:
 
-* How to structure a PEFT-based training pipeline
-* How to efficiently fine-tune transformer models
-* How preprocessing affects downstream performance
-* How to produce explainable NLP models
-* How to package and document a tutorial project for others
+- How to structure a PEFT-based training pipeline
+- How to efficiently fine-tune transformer models
+- How preprocessing affects downstream performance
+- How to produce explainable NLP models
+- How to package and document a tutorial project for others
 
 This aligns with the course’s learning goal:
 **“Learn X in 60 Minutes” — with hands-on, reproducible, beginner-friendly guidance.**
 
 ---
-
