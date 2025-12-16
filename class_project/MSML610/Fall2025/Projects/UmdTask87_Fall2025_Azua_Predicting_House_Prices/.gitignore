@@ -4,3 +4,6 @@ artifacts/*
 __pycache__/
 .ipynb_checkpoints/
 .DS_Store
+
+# OS trash folders
+.Trash-*
