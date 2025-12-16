@@ -94,7 +94,58 @@ The utility files contain reusable functions for data loading, graph constructio
 
 13. Docker and Reproducibility
 
-A Dockerfile is provided to ensure reproducibility and ease of setup. The container includes all required dependencies and supports running Jupyter notebooks locally. This ensures that the project can be executed consistently across different machines without relying on external cloud resources.
+Step 1: Build the Docker Image
+
+From the project root directory (where the Dockerfile is located), run:
+
+docker build -t drug-ddi-project .
+
+
+This command:
+
+Installs all required Python packages
+
+Sets up RDKit, PyTorch, and PyTorch Geometric
+
+Prepares the environment for running the project
+
+Step 2: Run the Docker Container
+
+After the image is built successfully, run:
+
+docker run -it --rm drug-ddi-project
+
+
+This will:
+
+Start the container
+
+Execute the project in the configured environment
+
+Run the pipeline exactly as intended by the project setup
+
+Optional: Running with Jupyter Notebook
+
+If you want to interact with the notebook inside Docker, you can expose a port:
+
+docker run -it -p 8888:8888 drug-ddi-project
+
+
+Then open the Jupyter URL printed in the terminal in your browser.
+
+Notes on Reproducibility
+
+Docker ensures that the same versions of libraries are used across different systems
+
+This avoids issues related to local environment differences
+
+The project can be run consistently on any machine that supports Docker
+
+Common Issues
+
+If Docker reports permission errors, ensure Docker is running and your user has access
+
+If the dataset is missing, Docker will raise an error indicating the file path
 
 14. Learning Outcomes
 
