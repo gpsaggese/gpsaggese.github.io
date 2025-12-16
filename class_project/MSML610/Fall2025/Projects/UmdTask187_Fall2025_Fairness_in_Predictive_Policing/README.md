@@ -148,12 +148,12 @@ Experiments on Chicago Crime Data (80,000 records, 2020-2023):
 ## Documentation
 
 ### For API Users
-- **[FairnessPP_API.md](FairnessPP_API.md)**: Complete API reference with examples
-- **[FairnessPP_API.ipynb](FairnessPP_API.ipynb)**: Interactive API demonstration
+- **[FairnessPP_API.md](FairnessPP.API.md)**: Complete API reference with examples
+- **[FairnessPP_API.ipynb](FairnessPP.API.ipynb)**: Interactive API demonstration
 
 ### For Understanding Results
-- **[FairnessPP_example.md](FairnessPP_example.md)**: Interpretation guide and policy implications
-- **[FairnessPP_example.ipynb](FairnessPP_example.ipynb)**: Full end-to-end workflow
+- **[FairnessPP_example.md](FairnessPP.example.md)**: Interpretation guide and policy implications
+- **[FairnessPP_example.ipynb](FairnessPP.example.ipynb)**: Full end-to-end workflow
 
 ### For Developers
 - **[FairnessPP_utils.py](FairnessPP_utils.py)**: Well-documented source code
