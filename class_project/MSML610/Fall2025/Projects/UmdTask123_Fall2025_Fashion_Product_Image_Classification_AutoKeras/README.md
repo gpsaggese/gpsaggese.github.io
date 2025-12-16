@@ -96,30 +96,56 @@ Note: Large Colab .keras files are intentionally not tracked because of GitHub�
 
 ## 2. Notebooks and Their Roles
 
-### 2.1 **AutoKeras.API.ipynb** – API demonstration
-This notebook is a lightweight demo of the reusable API that I use everywhere else.
-It focuses on showing how to call my helper functions rather than on training big models.
+### 2.1 **AutoKeras.API.ipynb** – Tool API Demonstration
 
-It uses:
-- `src/utils_data_io.py`
-    - `tsv_to_tfds(tsv_path, num_classes)`
-        - Reads TSVs with `image_path` + `label_idx`
-        - Loads and decodes images, resizes to 224×224, returns `tf.data.Dataset`
-    - `ds_to_numpy(ds, max_samples)`
-        - Converts a small dataset slice into NumPy arrays (X, y) for AutoKeras
+This notebook is a **tool-only demonstration of AutoKeras** for image classification.  
+It is intentionally **independent of this project’s dataset and pipeline**.
 
-- `src/utils_model.py`
-    - `make_baseline_cnn(input_shape, num_classes)`
-        - Simple 3-block CNN + Dense + Dropout + Softmax
-    - `make_autokeras_image_classifier(num_classes, max_trials)`
-        - Helper that constructs an `autokeras.ImageClassifier` with consistent settings
+The goal is to explain:
+- what AutoKeras is,
+- how the `ak.ImageClassifier` API works,
+- and how to train, evaluate, and export a model using AutoKeras.
 
-What this notebook does:
-- Checks TensorFlow version and available devices (CPU in Docker).
-- Loads a tiny subset of the data (e.g. 64 images) using the API.
-- Builds the baseline CNN with one function call.
-- Instantiates an AutoKeras classifier to confirm the dependency works.
-This notebook is meant as a sanity check and API documentation.
+This notebook is meant to document the **AutoKeras tool itself**, not the project implementation.
+
+---
+
+#### What this notebook covers
+
+- Verifies the TensorFlow and AutoKeras installation and device availability  
+  (CPU-only execution is expected in Docker).
+- Loads a **small built-in dataset (CIFAR-10)** for demonstration purposes.
+- Creates an `ak.ImageClassifier` with a very small search budget.
+- Runs a minimal training loop (`max_trials` and `epochs` kept small).
+- Evaluates the trained model on a small test set.
+- Exports the best discovered architecture as a standard Keras model.
+- Saves the exported model to disk.
+
+---
+
+#### Key AutoKeras functionality demonstrated
+
+- `ak.ImageClassifier`
+    - Automatically performs neural architecture search (NAS).
+    - Tries multiple CNN architectures.
+    - Selects the best model based on validation performance.
+- `fit()` / `evaluate()`
+    - Standard training and evaluation workflow.
+- `export_model()`
+    - Converts the best AutoKeras pipeline into a reusable `tf.keras.Model`.
+- `model.save()`
+    - Saves the trained model in `.keras` format for reuse or deployment.
+
+---
+
+#### Design notes
+
+- Training uses **very small datasets and few epochs** so the notebook runs quickly on CPU.
+- Accuracy is not the objective here — demonstrating **correct API usage** is.
+- No project-specific code, datasets, or TSV pipelines are used in this notebook.
+
+---
+
 
 ### 2.2 **AutoKeras.example.ipynb** – Main Docker experiment
 

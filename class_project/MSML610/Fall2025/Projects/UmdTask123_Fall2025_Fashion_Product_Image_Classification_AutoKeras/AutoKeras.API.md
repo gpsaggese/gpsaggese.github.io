@@ -1,171 +1,96 @@
-# AutoKeras API – Fashion Product Image Classification
+# AutoKeras API (Tool Overview)
 
-This notebook does not aim to train the strongest model.  
-Instead, it defines the **API layer** used across the entire project — a simple, reusable interface for:
-
-- loading the Fashion Product Images dataset  
-- building the baseline CNN  
-- initializing the AutoKeras ImageClassifier  
-
-By centralizing these components, the main experiment notebook stays clean and focused, while this notebook documents how the API works.
+This document explains **AutoKeras** as a tool for image classification, focusing on what it is, how to use it, and its core functionality.  
+It is **tool-only** (not tied to any specific project dataset or pipeline).
 
 ---
 
-## 1. API Files Used in This Notebook
+## 1. What is AutoKeras?
 
-### src/utils_data_io.py — Data Loading Helpers
+**AutoKeras** is an AutoML library built on top of TensorFlow/Keras. For image tasks, it can automatically search for a good neural network architecture and training pipeline, so you don’t have to manually design a CNN from scratch.
 
-**1. `tsv_to_tfds(tsv_path, num_classes)`**  
-- Reads a TSV file containing `image_path` and `label_idx`.  
-- Loads and decodes each image.  
-- Resizes everything to **224×224**.  
-- Returns a `tf.data.Dataset` of `(image, label)`.
+For image classification, the main high-level tool is:
 
-**2. `ds_to_numpy(ds, max_samples)`**  
-- Iterates through a dataset and collects up to `max_samples`.  
-- Returns `(X, y)` as NumPy arrays.  
-- Useful because AutoKeras prefers NumPy input.
+- **`ak.ImageClassifier`** — runs a small Neural Architecture Search (NAS) / AutoML search over candidate models and picks the best one based on validation performance.
 
 ---
 
-## src/utils_model.py — Model Builder Helpers
+## 2. Key AutoKeras Objects and Methods
 
-**1. `make_baseline_cnn(input_shape, num_classes)`**  
-- Builds a simple CNN with three Conv+Pool blocks, followed by Flatten → Dense → Dropout → Softmax.  
-- Compiles with Adam and sparse categorical cross-entropy.  
-- Serves as the baseline for comparison.
+### `ak.ImageClassifier(...)`
+Creates an AutoKeras image classifier that will:
+- try multiple candidate model architectures (`max_trials`)
+- train each candidate for a limited number of epochs
+- select the best model using validation metrics
 
-**2. `make_autokeras_image_classifier(num_classes, max_trials)`**  
-- Returns a configured AutoKeras ImageClassifier.  
-- Keeps the search budget (`max_trials`) consistent across notebooks.
+Common parameters:
+- **`max_trials`**: how many candidate models to try  
+- **`overwrite`**: whether to overwrite previous search results
 
----
+### `fit(...)`
+Trains the search:
+- AutoKeras runs training for each trial and tracks validation performance.
 
-## 2. What This Notebook Demonstrates
+### `evaluate(...)`
+Evaluates the best found pipeline/model on a held-out test set.
 
-### TensorFlow Environment Check
-The notebook confirms TensorFlow installation and device availability.  
-In Docker, expected output is:
+### `export_model()`
+Exports the best discovered model as a standard Keras model (`tf.keras.Model`) so you can:
+- view `model.summary()`
+- save it to disk
+- deploy it like any other Keras model
 
-TensorFlow version: 2.20.0
-Available GPUs: [] 
-
-CPU-only Docker is normal here.
-
----
-
-### Loading a Small Demo Batch Using the API
-
-To keep this API notebook lightweight, only **64 samples** are loaded.  
-This validates that:
-
-- TSV parsing works  
-- image decoding and resizing work  
-- labels map correctly  
-
-Shapes:
-
-X_small → (64, 224, 224, 3)
-y_small → (64,)
-
-
-An small image grid is plotted to visually confirm everything is correct.
+### `model.save(...)`
+Saves the exported model in a portable `.keras` format.
 
 ---
 
-### Building the Baseline CNN
+## 3. Minimal Usage Example (Image Classification)
 
-The baseline model is created with one function call:
+Below is a small end-to-end example demonstrating the AutoKeras workflow:
 
 ```python
-baseline_model = make_baseline_cnn(
-    input_shape=X_small.shape[1:], 
-    num_classes=NUM_CLASSES,
-)
+import tensorflow as tf
+import autokeras as ak
 
-A quick 1-epoch training pass verifies:
+# 1) Load data (example: CIFAR-10)
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
 
-- model compiles successfully
-- pipeline runs end-to-end
-- training progresses without errors
+# 2) Keep the demo small (so it runs quickly even on CPU)
+x_train_small, y_train_small = x_train[:500], y_train[:500]
+x_val_small, y_val_small = x_train[500:600], y_train[500:600]
+x_test_small, y_test_small = x_test[:200], y_test[:200]
 
-Full light training (Docker) is done in: AutoKeras.example.ipynb.
-Full heavy training (GPU) is done in: AutoKeras.example.full_training.ipynb.
+# 3) Create the AutoKeras classifier
+clf = ak.ImageClassifier(max_trials=2, overwrite=True)
 
-### Initializing the AutoKeras Classifier
-
-```python
-    clf = make_autokeras_image_classifier(
-    num_classes=NUM_CLASSES,
-    max_trials=2
-)
-
-This confirms:
-
-- AutoKeras is installed
-- the wrapper function returns a valid classifier
-
-A full neural architecture search is not performed here because CPU-only Docker is slow.
-A usage template is provided:
-
-```python
+# 4) Run a small search + training
 clf.fit(
-    train_ds.batch(32),
-    epochs=5,
-    validation_data=val_ds.batch(32),
+    x_train_small, y_train_small,
+    validation_data=(x_val_small, y_val_small),
+    epochs=2
 )
 
+# 5) Evaluate
+test_loss, test_acc = clf.evaluate(x_test_small, y_test_small, verbose=0)
+print("Demo test accuracy:", test_acc)
 
-The heavy AutoKeras search runs on Colab GPU.
+# 6) Export and save the best model
+best_model = clf.export_model()
+best_model.summary()
+best_model.save("autokeras_image_classifier_demo.keras")
+```
 
-## 3. Design Decisions
-### 1. Clear Separation of Concerns
+Notes:
+- If you see Available GPUs: [] or CUDA warnings, that just means the environment is CPU-only. AutoKeras still works on CPU.
+- In a demo notebook, max_trials and epochs are intentionally kept small to minimize runtime. Accuracy is not the goal in a tiny demo—showing the workflow is.
 
-- Data logic in utils_data_io.py
-- Model logic in utils_model.py
-- API demonstration here
-
-### 2. Docker-Friendly Workflow
-
-- Very small data subset
-- Minimal runtime
-- Ensures anyone can run everything quickly and reliably
-
-### 3. Minimal but Complete API Surface
-
-The entire project pipeline relies on just four functions:
-- tsv_to_tfds
-- ds_to_numpy
-- make_baseline_cnn
-- make_autokeras_image_classifier
-
-### 4. Robust and Notebook-Safe
-
-AutoKeras loading is wrapped in try/except to avoid environment-related crashes.
-
-## 4. How This Notebook Fits Into the Full Project
-AutoKeras.API.ipynb (this notebook)
-
-Defines and demonstrates the reusable API layer.
-
-AutoKeras.example.ipynb (Docker notebook)
-
-Runs the full experiment pipeline:
-- baseline CNN training
-- MobileNetV2 transfer learning
-- lightweight AutoKeras search
-- evaluation: accuracy, precision, recall, F1
-- confusion matrices
-- misclassification plots
-- saving models and outputs
-
-AutoKeras.example.full_training.ipynb (Colab GPU))
-
-Runs the heavy AutoKeras search with:
-
-- higher max_trials
-- more epochs
-- data augmentation
-- GPU acceleration
-
-Best models can be exported back to Docker for evaluation.
+4) Common AutoKeras Workflow Summary
+Typical workflow for AutoKeras image classification:
+1. Prepare data (NumPy arrays are the simplest for AutoKeras demos)
+2. Create ak.ImageClassifier(max_trials=...)
+3. Fit with clf.fit(...) and validation data
+4. Evaluate using clf.evaluate(...)
+5. Export best model via clf.export_model()
+6. Save the Keras model for reuse/deployment
+This is the core set of AutoKeras functionalities used in most practical image-classification tasks.
