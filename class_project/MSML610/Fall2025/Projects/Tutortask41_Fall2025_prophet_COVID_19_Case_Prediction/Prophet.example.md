@@ -20,6 +20,28 @@ A complete end-to-end forecasting application demonstrating data analysis, featu
 8. [Summary](#8-summary)
 
 ---
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Time Series Forecasting Pipeline             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────────────┐ │
+│  │ Data Prep   │───▶│   Models    │───▶│    Evaluation       │ │
+│  │   Layer     │    │   Layer     │    │    & Comparison     │ │
+│  └─────────────┘    └─────────────┘    └─────────────────────┘ │
+│        │                  │                      │              │
+│        ▼                  ▼                      ▼              │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────────────┐ │
+│  │ load_jhu_   │    │ Prophet     │    │   RMSE, MAE, SMAPE  │ │
+│  │ timeseries  │    │ ARIMA       │    │   compare_models()  │ │
+│  │ summarize   │    │ SARIMA      │    │   plot_forecast()   │ │
+│  │ train_test  │    │ LSTM        │    │   plot_comparison() │ │
+│  └─────────────┘    └─────────────┘    └─────────────────────┘ │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ## 1. Setup and Imports
 
