@@ -822,12 +822,10 @@ PHASE 1: TRAINING (Offline - One Time)
 │ Model Training           │
 │                          │
 │ Algorithm:               │
-│ • Logistic Regression    │
-│ • OR                     │
-│ • PassiveAggressive      │
+│ Bert model               │
 │                          │
 │ Parameters:              │
-│ • Epochs: 10             │
+│ • Epochs: 3              │
 │ • Batch: 16              │
 │ • LR: varies             │
 └──────────────────────────┘
