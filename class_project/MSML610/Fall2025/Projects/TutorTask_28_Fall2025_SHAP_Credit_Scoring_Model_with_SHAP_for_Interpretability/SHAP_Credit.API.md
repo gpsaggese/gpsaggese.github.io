@@ -1,14 +1,14 @@
-# XGBoost and SHAP API Demonstration: A Walkthrough of `shap_credit_API.ipynb`
+# XGBoost and SHAP API Demonstration: A Walkthrough of `SHAP_Credit.API.ipynb`
 
 ## Overview
 
-The `shap_credit_API.ipynb` notebook is a foundational companion to the credit scoring project. This notebook focuses on demonstrating the core APIs—**XGBoost** for gradient boosting and **SHAP** for explainability—before applying them to the full pipeline. It serves as a technical deep-dive into the tools and the `credit_scoring_shap` package structure.
+The `SHAP_Credit.API.ipynb` notebook is a foundational companion to the credit scoring project. This notebook focuses on demonstrating the core APIs—**XGBoost** for gradient boosting and **SHAP** for explainability—before applying them to the full pipeline. It serves as a technical deep-dive into the tools and the `credit_scoring_shap` package structure.
 
 Designed with beginners and code-explorers in mind, this notebook breaks down how XGBoost and SHAP work on simple toy data first, then introduces the credit dataset and shows how the project's modular API wraps these tools for production use. It's the perfect starting point for understanding the building blocks before seeing the complete system in `SHAP_Credit.example.ipynb`.
 
 ## Purpose
 
-The primary purpose of `shap_credit_API.ipynb` is to introduce and demonstrate the core API functions used in the credit scoring pipeline. Its key objectives are to:
+The primary purpose of `SHAP_Credit.API.ipynb` is to introduce and demonstrate the core API functions used in the credit scoring pipeline. Its key objectives are to:
 
 - Showcase XGBoost's capabilities on synthetic toy data to build intuition about gradient boosting.
 - Demonstrate native SHAP TreeExplainer usage and visualizations (summary plots) on simple data.
@@ -200,7 +200,7 @@ To run this notebook:
 
 2. Open the notebook:
    ```bash
-   jupyter notebook shap_credit_API.ipynb
+   jupyter notebook SHAP_Credit.API.ipynb
    ```
 
 3. Run cells sequentially.
