@@ -1,27 +1,27 @@
 # Weights & Biases (W&B) Core API Documentation
 
-This document describes the core functionality of the Weights & Biases Python SDK for experiment tracking, independent of any specific machine learning project. The use case is a generic simulation of a training run.
+This document describes the essential functionality of the W&B Python SDK (`wandb`) for experiment tracking. The use case is a generic simulation of a training run, independent of any specific machine learning project.
 
 ## Core API Steps
 
-The process of logging an experiment with W&B involves three fundamental steps centered around the concept of a **Run** .
+The process of logging an experiment with W&B is defined by the lifecycle of a **Run**. 
 
 ### 1. Authentication (`wandb.login()`)
 
-**What's Happening:** This step authenticates the local environment with the W&B cloud service, typically by reading the user's API key from an environment variable (`WANDB_API_KEY`). This is the gateway to logging data.
+This step connects your local script to your W&B account, verifying your identity.
 
 ### 2. Initialization and Configuration (`wandb.init()`)
 
-**What's Happening:** A new experiment **Run** is started. When calling `wandb.init()`, static metadata, such as hyperparameters (e.g., learning rate, batch size), is logged to the `config` object. These settings define the experiment's parameters.
+A new experiment **Run** is started. This function is used to define and log the *static* settings of your experiment. All hyperparameters (e.g., learning rate, model type) are saved to the `config` object.
 
 ### 3. Logging Metrics (`wandb.log()`)
 
-**What's Happening:** This is the primary function used *inside* the simulated training loop. Dynamic metrics (like loss and accuracy) are streamed to the W&B dashboard in real-time. Each call to `wandb.log()` records a new step or epoch of the experiment.
+Used repeatedly inside the loop, this function streams dynamic data in real-time. Each call records a new data point or *step* to the dashboard, visualizing metrics like loss and accuracy as they progress.
 
 ### 4. Finalization (`run.finish()`)
 
-**What's Happening:** The run is explicitly closed, ensuring all buffered data and final system metrics are synced to the W&B cloud.
+This is the required closing call. It formally terminates the run and ensures all buffered data, code, and final system details are successfully synced to the W&B dashboard.
 
 ## Python Usage (The entire process run as a single script)
 
-The accompanying Python code `Weights_and_biases.api.ipynb` combines these steps to simulate a 10-epoch training proce
+The accompanying Python code, which you can save as `Weights_and_biases.API.py`, executes this entire workflow to simulate a 10-epoch training process, logging configuration and streaming metrics.
