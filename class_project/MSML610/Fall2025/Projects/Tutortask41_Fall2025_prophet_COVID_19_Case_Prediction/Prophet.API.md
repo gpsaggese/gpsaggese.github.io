@@ -1,81 +1,170 @@
-# Prophet API Documentation
+# Prophet API & Wrapper Functions Documentation
+
+## Overview
+
+This document provides comprehensive API documentation for **Facebook Prophet** and the custom **`utils.py`** wrapper module that extends Prophet's functionality with additional models, metrics, and utilities.
+
+**Author**: Ibrahim Ahmed Mohammed  
+**Course**: DATA610
+
+---
 
 ## 🐳 Installation & Docker Setup
-To ensure reproducibility, this project is containerized. Follow these steps to build and run the analysis.
+
+To ensure reproducibility, this project is containerized.
 
 ### 1. Build the Image
-Run this command in the project root (where the `Dockerfile` is located):
 ```bash
 docker build -t prophet_project .
 ```
 
 ### 2. Run the Container
-Start the Jupyter environment with volume mounting (to save your notebook changes):
 ```bash
 # Mac/Linux/WSL
 docker run -p 8888:8888 -v "$(pwd)":/app prophet_project
 ```
 
 ### 3. Access the Project
-- Click the `http://127.0.0.1:8888...` link in your terminal to open JupyterLab.
-- Open `Prophet_API.ipynb` to test the tool.
-- Open `Prophet_example.ipynb` to see the full COVID-19 analysis with multi-model comparison.
+- Click the `http://127.0.0.1:8888...` link in your terminal
+- Open `Prophet_API.ipynb` for tool demonstrations
+- Open `Prophet_example.ipynb` for the COVID-19 project implementation
 
 ---
 
-## Overview
-The Prophet utilities module (`utils.py`) provides a high-level wrapper around Facebook Prophet and comparison models for time series forecasting. It is designed to simplify the workflow of COVID-19 case prediction, specifically focusing on incorporating interventions and comparing multiple forecasting approaches.
+## What is Prophet?
 
-While Prophet provides powerful decomposable time series modeling, the native API requires significant boilerplate code for data preprocessing, intervention handling, non-negative constraints, and visualization. This API standardizes that workflow into a single `ProphetWrapper` class with additional support for ARIMA, SARIMA, and LSTM models.
+**Prophet** is an open-source forecasting tool developed by Facebook (Meta) designed for:
+- Business time series with **strong seasonal effects**
+- Data with **multiple seasons** (daily, weekly, yearly)
+- Series affected by **holidays and special events**
+- **Missing data** and **outliers**
 
-**Author**: Ibrahim Ahmed Mohammed  
-**Course**: DATA610  
-**Dataset**: Johns Hopkins University COVID-19 Time Series (Jan 2020 - March 2023)
+### Prophet Model Equation
+
+Prophet uses an additive decomposition model:
+
+```
+y(t) = g(t) + s(t) + h(t) + ε(t)
+```
+
+Where:
+- `g(t)` = trend (linear or logistic growth)
+- `s(t)` = seasonality (Fourier series)
+- `h(t)` = holiday/intervention effects
+- `ε(t)` = error term
+
+---
+
+## What does `utils.py` provide?
+
+Our custom utilities module extends Prophet with:
+
+| Component | Description |
+|-----------|-------------|
+| **ProphetWrapper** | Simplified interface with method chaining |
+| **ARIMA/SARIMA** | Statistical baseline models |
+| **LSTMForecaster** | Deep learning model |
+| **Evaluation metrics** | RMSE, MAE, SMAPE |
+| **Visualization** | Forecast plots, model comparisons |
+| **Data utilities** | Loading, preprocessing, splitting |
 
 ---
 
 ## Architecture
-The core component is the `ProphetWrapper` class, which orchestrates the following pipeline:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    COVID-19 Forecasting Pipeline                │
+│                    Time Series Forecasting Pipeline             │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌─────────────┐    ┌─────────────┐    ┌─────────────────────┐ │
-│  │ Data Prep   │───▶│   Prophet   │───▶│    Evaluation       │ │
-│  │   Layer     │    │   Model     │    │    & Comparison     │ │
+│  │ Data Prep   │───▶│   Models    │───▶│    Evaluation       │ │
+│  │   Layer     │    │   Layer     │    │    & Comparison     │ │
 │  └─────────────┘    └─────────────┘    └─────────────────────┘ │
 │        │                  │                      │              │
 │        ▼                  ▼                      ▼              │
 │  ┌─────────────┐    ┌─────────────┐    ┌─────────────────────┐ │
-│  │ Baseline    │    │ Interven-   │    │   Visualization     │ │
-│  │ Models      │    │ tions       │    │   & Reporting       │ │
+│  │ load_jhu_   │    │ Prophet     │    │   RMSE, MAE, SMAPE  │ │
+│  │ timeseries  │    │ ARIMA       │    │   compare_models()  │ │
+│  │ summarize   │    │ SARIMA      │    │   plot_forecast()   │ │
+│  │ train_test  │    │ LSTM        │    │   plot_comparison() │ │
 │  └─────────────┘    └─────────────┘    └─────────────────────┘ │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-1. **Data Preparation Layer:** Loads JHU time series data, converts cumulative to daily cases, and formats for Prophet (`ds`, `y` columns).
-2. **Modeling Layer:** Wraps Prophet with sensible defaults (weekly seasonality, non-negative constraints) and provides ARIMA/SARIMA/LSTM baselines.
-3. **Evaluation Layer:** Provides RMSE, MAE, SMAPE metrics and multi-model comparison utilities.
-4. **Visualization Layer:** Built-in methods for forecast plots, intervention effects, and model comparisons.
+---
+
+## Native Prophet API
+
+### Basic Usage
+
+```python
+from prophet import Prophet
+
+# Initialize
+model = Prophet(
+    yearly_seasonality=True,
+    weekly_seasonality=True,
+    daily_seasonality=False,
+    interval_width=0.95
+)
+
+# Fit (requires df with 'ds' and 'y' columns)
+model.fit(df)
+
+# Create future dataframe
+future = model.make_future_dataframe(periods=30)
+
+# Generate predictions
+forecast = model.predict(future)
+
+# Key output columns: ds, yhat, yhat_lower, yhat_upper
+```
+
+### Prophet Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `growth` | 'linear' | 'linear' or 'logistic' |
+| `yearly_seasonality` | 'auto' | Yearly seasonal component |
+| `weekly_seasonality` | 'auto' | Weekly seasonal component |
+| `daily_seasonality` | 'auto' | Daily seasonal component |
+| `changepoint_prior_scale` | 0.05 | Trend flexibility |
+| `seasonality_prior_scale` | 10.0 | Seasonality strength |
+| `holidays_prior_scale` | 10.0 | Holiday effect strength |
+| `interval_width` | 0.80 | Confidence interval width |
+
+### Built-in Plotting
+
+```python
+# Forecast plot
+fig1 = model.plot(forecast)
+
+# Component plot (trend, seasonality)
+fig2 = model.plot_components(forecast)
+```
 
 ---
 
 ## Class Reference: `ProphetWrapper`
 
+Enhanced Prophet interface with method chaining and automatic non-negative predictions.
+
 ### Initialization
+
 ```python
+from utils import ProphetWrapper
+
 wrapper = ProphetWrapper(
-    growth='linear',              # Options: 'linear', 'logistic'
-    weekly_seasonality=True,      # Capture Mon-Sun reporting patterns
-    yearly_seasonality=True,      # Seasonal disease patterns
-    daily_seasonality=False,      # Not needed for daily aggregates
-    changepoint_prior_scale=0.05, # Trend flexibility (higher = more flexible)
+    growth='linear',              # 'linear' or 'logistic'
+    weekly_seasonality=True,      # Weekly patterns
+    yearly_seasonality=True,      # Yearly patterns
+    daily_seasonality=False,      # Usually False for daily data
+    changepoint_prior_scale=0.05, # Trend flexibility
     seasonality_prior_scale=10.0, # Seasonality strength
-    holidays_prior_scale=10.0,    # Intervention effect strength
-    interval_width=0.95,          # Confidence interval width
+    holidays_prior_scale=10.0,    # Holiday effect strength
+    interval_width=0.95,          # 95% confidence intervals
     floor=0.0,                    # Minimum prediction value
     cap=None                      # Maximum for logistic growth
 )
@@ -83,203 +172,606 @@ wrapper = ProphetWrapper(
 
 ### Methods
 
-#### `set_holidays(holidays_df)`
-**Purpose:** Register interventions/holidays that affect the time series.
-- **Inputs:** DataFrame with columns `holiday`, `ds`, `lower_window`, `upper_window`.
-- **Output:** Returns `self` for method chaining.
-- **Why use this:** COVID-19 cases are heavily influenced by policy interventions (lockdowns, vaccine rollouts). This method allows Prophet to model these effects explicitly.
+#### `set_holidays(holidays_df)` → `ProphetWrapper`
 
-#### `fit(df)`
-**Purpose:** Train the Prophet model on historical data.
-- **Inputs:** DataFrame with `ds` (date) and `y` (target) columns.
-- **Output:** Returns `self` for method chaining.
-- **Design Choice:** Automatically adds floor constraint to training data to ensure non-negative predictions, which is essential for count data like COVID cases.
+Register holidays/interventions that affect the time series.
 
-#### `predict(periods=28, freq='D', include_history=True)`
-**Purpose:** Generate forecasts for future periods.
-- **Inputs:** 
-  - `periods`: Number of days to forecast (default 28 = 4 weeks)
-  - `freq`: Frequency ('D' for daily)
-  - `include_history`: Whether to include historical predictions
-- **Output:** DataFrame with `ds`, `yhat`, `yhat_lower`, `yhat_upper`, `trend`, `weekly`, `yearly` columns.
-- **Critical Feature:** All predictions are automatically clipped to be ≥ floor (default 0), preventing nonsensical negative case counts.
+```python
+holidays = pd.DataFrame({
+    'holiday': ['event_1', 'event_2'],
+    'ds': pd.to_datetime(['2022-03-15', '2022-07-04']),
+    'lower_window': 0,
+    'upper_window': 7
+})
 
-#### `cross_validate(initial='365 days', period='30 days', horizon='28 days')`
-**Purpose:** Perform time series cross-validation for robust model evaluation.
-- **Inputs:** Initial training period, spacing between cutoffs, forecast horizon.
-- **Output:** DataFrame with predictions and actuals for each CV fold.
-- **Why use this:** Standard train/test splits can be misleading for time series. CV provides more reliable performance estimates.
+wrapper.set_holidays(holidays)
+```
 
-#### `get_performance_metrics(cv_results)`
-**Purpose:** Calculate performance metrics from cross-validation results.
-- **Inputs:** Output from `cross_validate()`.
-- **Output:** DataFrame with RMSE, MAE, MAPE, SMAPE by horizon.
-
-#### `get_components()`
-**Purpose:** Extract trend and seasonal components from the fitted model.
-- **Inputs:** None (uses stored forecast).
-- **Output:** Dictionary with `trend`, `weekly`, `yearly`, and `holidays` DataFrames.
-- **Interpretation:** Useful for understanding what drives the forecast.
+**Returns:** `self` for method chaining
 
 ---
 
-## Baseline Model Functions
+#### `add_regressor(name, prior_scale=10.0, mode='additive')` → `ProphetWrapper`
 
-#### `fit_arima(df, order=(5,1,0), enforce_non_negative=True)`
-**Purpose:** Fit ARIMA model for statistical baseline comparison.
-- **Inputs:** Prophet-formatted DataFrame, ARIMA order tuple.
-- **Output:** Tuple of (fitted_model, fitted_values).
-- **Design Choice:** Default order (5,1,0) captures short-term autocorrelation with first differencing for stationarity.
+Add an external regressor to the model.
 
-#### `fit_sarima(df, order=(1,1,1), seasonal_order=(1,1,1,7))`
-**Purpose:** Fit Seasonal ARIMA with weekly seasonality.
-- **Inputs:** DataFrame, ARIMA order, seasonal order (P,D,Q,s).
-- **Output:** Tuple of (fitted_model, fitted_values).
-- **Why s=7:** COVID reporting follows strong weekly cycles (lower weekend reporting). SARIMA explicitly models this.
+```python
+wrapper.add_regressor('temperature', prior_scale=10.0, mode='additive')
+```
 
-#### `forecast_arima(model, periods=28)` / `forecast_sarima(model, periods=28)`
-**Purpose:** Generate multi-step ahead forecasts from fitted ARIMA/SARIMA models.
-- **Inputs:** Fitted model, number of periods.
-- **Output:** NumPy array of forecasted values (non-negative).
+**Parameters:**
+- `name`: Column name in the training data
+- `prior_scale`: Regularization strength
+- `mode`: 'additive' or 'multiplicative'
+
+**Returns:** `self` for method chaining
+
+---
+
+#### `fit(df)` → `ProphetWrapper`
+
+Fit the Prophet model to training data.
+
+```python
+wrapper.fit(df)  # df must have 'ds' and 'y' columns
+```
+
+**Returns:** `self` for method chaining
+
+---
+
+#### `predict(periods=28, freq='D', include_history=True)` → `pd.DataFrame`
+
+Generate forecasts for future periods.
+
+```python
+forecast = wrapper.predict(periods=30)
+# Returns: ds, yhat, yhat_lower, yhat_upper, trend, weekly, yearly
+```
+
+**Critical Feature:** All predictions are automatically clipped to be ≥ floor (default 0).
+
+---
+
+#### `cross_validate(initial, period, horizon)` → `pd.DataFrame`
+
+Perform time series cross-validation.
+
+```python
+cv_results = wrapper.cross_validate(
+    initial='365 days',  # Initial training period
+    period='30 days',    # Spacing between cutoffs
+    horizon='28 days'    # Forecast horizon
+)
+```
+
+---
+
+#### `get_performance_metrics(cv_results)` → `pd.DataFrame`
+
+Calculate metrics from cross-validation results.
+
+```python
+metrics = wrapper.get_performance_metrics(cv_results)
+# Returns: horizon, rmse, mae, smape, coverage
+```
+
+---
+
+### Method Chaining Example
+
+```python
+from utils import ProphetWrapper, create_intervention_dataframe
+
+# Complete workflow in one chain
+wrapper = (
+    ProphetWrapper(weekly_seasonality=True, yearly_seasonality=True)
+    .set_holidays(holidays_df)
+    .add_regressor('temperature')
+    .fit(train_df)
+)
+
+forecast = wrapper.predict(periods=28)
+```
+
+---
+
+## Data Loading Functions
+
+### `load_jhu_timeseries(filepath, country='US')` → `pd.DataFrame`
+
+Load Johns Hopkins COVID-19 time series data.
+
+```python
+from utils import load_jhu_timeseries
+
+df = load_jhu_timeseries('jhu_confirmed_global.csv', country='US')
+# Returns: DataFrame with 'ds' and 'y' columns (daily new cases)
+```
+
+**Behavior:**
+1. Filters to specified country
+2. Sums across provinces/states
+3. Converts cumulative to daily new cases
+4. Clips negative values to zero
+
+---
+
+### `get_available_countries(filepath)` → `List[str]`
+
+List all countries available in the dataset.
+
+```python
+from utils import get_available_countries
+
+countries = get_available_countries('jhu_confirmed_global.csv')
+# Returns: ['Afghanistan', 'Albania', ..., 'Zimbabwe']
+```
+
+---
+
+### `summarize_data(df, date_col='ds', value_col='y')` → `Dict`
+
+Generate summary statistics for time series data.
+
+```python
+from utils import summarize_data
+
+summary = summarize_data(df)
+# Returns: {
+#   'start_date': ...,
+#   'end_date': ...,
+#   'n_observations': ...,
+#   'mean': ...,
+#   'std': ...,
+#   'min': ...,
+#   'max': ...,
+#   'missing_values': ...
+# }
+```
+
+---
+
+### `train_test_split_temporal(df, test_size=28)` → `Tuple[pd.DataFrame, pd.DataFrame]`
+
+Split time series data chronologically (no data leakage).
+
+```python
+from utils import train_test_split_temporal
+
+train_df, test_df = train_test_split_temporal(df, test_size=28)
+# train_df: all but last 28 days
+# test_df: last 28 days
+```
+
+---
+
+## Intervention/Holiday Functions
+
+### `create_intervention_dataframe(interventions)` → `pd.DataFrame`
+
+Convert a dictionary of events to Prophet's holiday format.
+
+```python
+from utils import create_intervention_dataframe
+
+interventions = {
+    'product_launch': '2022-04-01',
+    'marketing_campaign': '2022-06-15',
+    'holiday_season': '2022-12-01'
+}
+
+holidays_df = create_intervention_dataframe(interventions)
+# Returns DataFrame with: holiday, ds, lower_window, upper_window
+```
+
+**Default:** `upper_window=14` (effect lasts 2 weeks)
+
+---
+
+### `get_us_covid_interventions()` → `Dict[str, str]`
+
+Get pre-defined US COVID-19 intervention dates.
+
+```python
+from utils import get_us_covid_interventions
+
+interventions = get_us_covid_interventions()
+# Returns:
+# {
+#   'national_emergency': '2020-03-13',
+#   'lockdowns_begin': '2020-03-19',
+#   'reopening_phase1': '2020-05-01',
+#   'summer_surge': '2020-07-01',
+#   'fall_surge': '2020-10-15',
+#   'vaccine_auth': '2020-12-11',
+#   'vaccine_rollout': '2021-01-15',
+#   'delta_surge': '2021-07-01',
+#   'omicron_surge': '2021-12-15'
+# }
+```
+
+---
+
+### `get_country_interventions(country)` → `Dict[str, str]`
+
+Get intervention dates for specific countries.
+
+```python
+from utils import get_country_interventions
+
+# Available: 'US', 'Germany', 'Brazil', 'India'
+interventions = get_country_interventions('Germany')
+```
+
+---
+
+## ARIMA/SARIMA Functions
+
+### `fit_arima(df, order=(5,1,0), enforce_non_negative=True)` → `Tuple`
+
+Fit ARIMA model for baseline comparison.
+
+```python
+from utils import fit_arima
+
+model, fitted_values = fit_arima(df, order=(5, 1, 0))
+print(f"AIC: {model.aic:.2f}")
+```
+
+**Parameters:**
+- `order`: (p, d, q) - AR terms, differencing, MA terms
+- `enforce_non_negative`: Clip predictions to ≥ 0
+
+**Returns:** `(fitted_model, fitted_values)`
+
+---
+
+### `fit_sarima(df, order, seasonal_order)` → `Tuple`
+
+Fit Seasonal ARIMA with specified seasonality.
+
+```python
+from utils import fit_sarima
+
+model, fitted_values = fit_sarima(
+    df,
+    order=(1, 1, 1),
+    seasonal_order=(1, 1, 1, 7)  # Weekly seasonality (s=7)
+)
+```
+
+**Returns:** `(fitted_model, fitted_values)`
+
+---
+
+### `forecast_arima(model, periods=28)` → `np.ndarray`
+
+Generate ARIMA forecasts.
+
+```python
+from utils import forecast_arima
+
+predictions = forecast_arima(model, periods=28)
+# Returns: numpy array of non-negative predictions
+```
+
+---
+
+### `forecast_sarima(model, periods=28)` → `np.ndarray`
+
+Generate SARIMA forecasts.
+
+```python
+from utils import forecast_sarima
+
+predictions = forecast_sarima(model, periods=28)
+# Returns: numpy array of non-negative predictions
+```
 
 ---
 
 ## Class Reference: `LSTMForecaster`
 
+LSTM neural network for time series forecasting.
+
 ### Initialization
+
 ```python
+from utils import LSTMForecaster
+
 lstm = LSTMForecaster(
-    sequence_length=14,       # Lookback window (2 weeks)
-    n_features=1,             # Univariate time series
-    lstm_units=[64, 32],      # Units per LSTM layer
-    dropout_rate=0.2,         # Regularization
-    learning_rate=0.001       # Adam optimizer LR
+    sequence_length=14,    # Lookback window (time steps)
+    n_features=1,          # Number of input features
+    lstm_units=[64, 32],   # Units per LSTM layer
+    dropout_rate=0.2,      # Dropout for regularization
+    learning_rate=0.001    # Adam optimizer learning rate
 )
 ```
 
 ### Methods
 
-#### `fit(df, epochs=100, batch_size=32, validation_split=0.1)`
-**Purpose:** Train the LSTM neural network.
-- **Inputs:** DataFrame, training parameters.
-- **Output:** Returns `self` for method chaining.
-- **Design Choice:** Uses early stopping with patience=10 to prevent overfitting.
+#### `fit(df, epochs, batch_size, validation_split, early_stopping_patience, verbose)` → `LSTMForecaster`
 
-#### `forecast(df, periods=28)`
-**Purpose:** Generate multi-step recursive forecasts.
-- **Inputs:** Historical DataFrame, forecast horizon.
-- **Output:** NumPy array of forecasted values.
-- **Logic:** Each prediction is fed back as input for the next step (recursive forecasting).
+Train the LSTM model.
 
-#### `get_training_history()`
-**Purpose:** Retrieve training metrics for diagnostics.
-- **Output:** Dictionary with `loss`, `val_loss`, `mae`, `val_mae` per epoch.
+```python
+lstm.fit(
+    train_df,
+    epochs=100,
+    batch_size=32,
+    validation_split=0.1,
+    early_stopping_patience=10,
+    verbose=0
+)
+```
+
+**Returns:** `self` for method chaining
 
 ---
 
-## Evaluation Functions
+#### `predict(df, enforce_non_negative=True)` → `np.ndarray`
 
-#### `calculate_rmse(actual, predicted)`
-**Purpose:** Compute Root Mean Squared Error.
-- **Formula:** `sqrt(mean((actual - predicted)²))`
-- **Interpretation:** Penalizes large errors heavily. Same units as target variable.
+Generate predictions for given data.
 
-#### `calculate_mae(actual, predicted)`
-**Purpose:** Compute Mean Absolute Error.
-- **Formula:** `mean(|actual - predicted|)`
-- **Interpretation:** Average absolute deviation. More robust to outliers than RMSE.
-
-#### `calculate_smape(actual, predicted)`
-**Purpose:** Compute Symmetric Mean Absolute Percentage Error.
-- **Formula:** `100 × mean(|F - A| / ((|A| + |F|) / 2))`
-- **Interpretation:** Scale-independent percentage error. Bounded [0, 200%].
-
-#### `compare_models(actual, predictions_dict)`
-**Purpose:** Compare multiple models side-by-side.
-- **Inputs:** Actual values, dictionary mapping model names to predictions.
-- **Output:** DataFrame with RMSE, MAE, SMAPE for each model.
-- **Example:**
 ```python
+predictions = lstm.predict(test_df)
+```
+
+---
+
+#### `forecast(df, periods=28)` → `np.ndarray`
+
+Generate multi-step recursive forecasts.
+
+```python
+future_predictions = lstm.forecast(train_df, periods=28)
+```
+
+**Logic:** Each prediction is fed back as input for the next step.
+
+---
+
+#### `get_training_history()` → `Dict`
+
+Get training metrics for diagnostics.
+
+```python
+history = lstm.get_training_history()
+# Returns: {'loss': [...], 'val_loss': [...], 'mae': [...], 'val_mae': [...]}
+```
+
+---
+
+## Evaluation Metrics
+
+### `calculate_rmse(actual, predicted)` → `float`
+
+Root Mean Squared Error.
+
+```python
+from utils import calculate_rmse
+
+rmse = calculate_rmse(actual, predicted)
+# Formula: sqrt(mean((actual - predicted)²))
+```
+
+---
+
+### `calculate_mae(actual, predicted)` → `float`
+
+Mean Absolute Error.
+
+```python
+from utils import calculate_mae
+
+mae = calculate_mae(actual, predicted)
+# Formula: mean(|actual - predicted|)
+```
+
+---
+
+### `calculate_smape(actual, predicted)` → `float`
+
+Symmetric Mean Absolute Percentage Error.
+
+```python
+from utils import calculate_smape
+
+smape = calculate_smape(actual, predicted)
+# Formula: 100 × mean(|F - A| / ((|A| + |F|) / 2))
+# Range: 0% to 200%
+```
+
+---
+
+### `evaluate_forecast(actual, predicted, model_name='Model')` → `Dict`
+
+Calculate all metrics at once.
+
+```python
+from utils import evaluate_forecast
+
+metrics = evaluate_forecast(actual, predicted, model_name='ARIMA')
+# Returns: {'model': 'ARIMA', 'rmse': ..., 'mae': ..., 'smape': ...}
+
+# Print metrics
+for metric, value in metrics.items():
+    if metric == 'model':
+        print(f"  {metric}: {value}")
+    else:
+        print(f"  {metric}: {value:.2f}")
+```
+
+---
+
+### `compare_models(actual, predictions_dict)` → `pd.DataFrame`
+
+Compare multiple models side-by-side.
+
+```python
+from utils import compare_models
+
 comparison = compare_models(actual, {
     'Prophet': prophet_pred,
     'ARIMA': arima_pred,
     'SARIMA': sarima_pred,
     'LSTM': lstm_pred
 })
+
+print(comparison)
+#              rmse       mae     smape
+# model
+# Prophet  583947.26  526183.46  116.74
+# ARIMA    338340.00  271519.00   42.60
+# ...
 ```
-
----
-
-## Helper Functions
-
-#### `load_jhu_timeseries(filepath, country='US')`
-**Purpose:** Load and transform Johns Hopkins COVID-19 time series data.
-- **Inputs:** Path to CSV file, country name.
-- **Behavior:** 
-  1. Filters to specified country
-  2. Sums across provinces/states
-  3. Converts cumulative to daily new cases
-  4. Clips negative values (data corrections) to zero
-- **Output:** Prophet-formatted DataFrame with `ds` and `y` columns.
-
-#### `get_available_countries(filepath)`
-**Purpose:** List all countries available in the JHU dataset.
-- **Output:** Sorted list of 200+ country names.
-
-#### `create_intervention_dataframe(interventions)`
-**Purpose:** Convert intervention dictionary to Prophet holidays format.
-- **Inputs:** Dictionary mapping intervention names to dates.
-- **Output:** DataFrame with `holiday`, `ds`, `lower_window`, `upper_window`.
-- **Design Choice:** Default `upper_window=14` assumes intervention effects last ~2 weeks.
-
-#### `get_us_covid_interventions()`
-**Purpose:** Pre-defined dictionary of major US COVID-19 policy dates.
-- **Output:** Dictionary with 9 key interventions:
-  - `national_emergency`: 2020-03-13
-  - `lockdowns_begin`: 2020-03-19
-  - `reopening_phase1`: 2020-05-01
-  - `vaccine_auth`: 2020-12-11
-  - `omicron_surge`: 2021-12-15
-  - *(and 4 more)*
-
-#### `get_country_interventions(country)`
-**Purpose:** Get intervention dates for US, Germany, Brazil, or India.
-- **Output:** Country-specific intervention dictionary.
-
-#### `train_test_split_temporal(df, test_size=28)`
-**Purpose:** Split time series data preserving temporal order.
-- **Inputs:** DataFrame, number of days for test set.
-- **Output:** Tuple of (train_df, test_df).
-- **Why use this:** Random splits cause data leakage in time series. This function ensures test data is always *after* training data.
 
 ---
 
 ## Visualization Functions
 
-#### `plot_forecast(df, forecast, title, ylabel, figsize, show_intervals=True)`
-**Purpose:** Plot actual vs forecasted values with confidence intervals.
-- **Output:** Matplotlib Figure with actual points, forecast line, and shaded CI.
+### `plot_forecast(df, forecast, title, ylabel, figsize, show_intervals=True)` → `plt.Figure`
 
-#### `plot_intervention_effects(forecast, interventions)`
-**Purpose:** Visualize how interventions affected the trend.
-- **Output:** Trend line with vertical markers at each intervention date.
+Plot actual vs forecasted values with confidence intervals.
 
-#### `plot_model_comparison(actual_dates, actual_values, predictions_dict)`
-**Purpose:** Overlay multiple model predictions against actuals.
-- **Output:** Line plot comparing all models.
+```python
+from utils import plot_forecast
 
-#### `plot_training_history(history)`
-**Purpose:** Plot LSTM training loss curves.
-- **Output:** Two-panel figure with Loss and MAE over epochs.
+fig = plot_forecast(
+    df=df,
+    forecast=forecast,
+    title='Forecast with Confidence Intervals'
+)
+plt.show()
+```
 
-#### `plot_forecast_comparison(df, periods, prophet, arima, sarima, lstm)`
-**Purpose:** Multi-model future forecast visualization.
-- **Output:** Historical data with all four model forecasts extending into the future.
+---
+
+### `plot_model_comparison(actual_dates, actual_values, predictions, title)` → `plt.Figure`
+
+Overlay multiple model predictions against actuals.
+
+```python
+from utils import plot_model_comparison
+
+fig = plot_model_comparison(
+    actual_dates=test_df['ds'],
+    actual_values=actual,
+    predictions={
+        'Prophet': prophet_pred,
+        'ARIMA': arima_pred,
+        'SARIMA': sarima_pred,
+        'LSTM': lstm_pred
+    },
+    title='Model Comparison'
+)
+plt.show()
+```
+
+---
+
+### `plot_training_history(history)` → `plt.Figure`
+
+Plot LSTM training loss curves.
+
+```python
+from utils import plot_training_history
+
+history = lstm.get_training_history()
+fig = plot_training_history(history)
+plt.show()
+```
+
+---
+
+### `plot_intervention_effects(forecast, interventions)` → `plt.Figure`
+
+Visualize how interventions affected the trend.
+
+```python
+from utils import plot_intervention_effects
+
+fig = plot_intervention_effects(forecast, interventions)
+plt.show()
+```
+
+---
+
+### `plot_components(wrapper)` → `plt.Figure`
+
+Plot trend and seasonal components.
+
+```python
+from utils import plot_components
+
+fig = plot_components(wrapper)
+plt.show()
+```
+
+---
+
+## Complete API Reference Table
+
+### Classes
+
+| Class | Description |
+|-------|-------------|
+| `ProphetWrapper` | Enhanced Prophet with method chaining, non-negative predictions |
+| `LSTMForecaster` | LSTM neural network for time series |
+
+### Data Functions
+
+| Function | Returns | Description |
+|----------|---------|-------------|
+| `load_jhu_timeseries()` | `DataFrame` | Load JHU COVID-19 data |
+| `get_available_countries()` | `List[str]` | List available countries |
+| `prepare_prophet_data()` | `DataFrame` | Transform to Prophet format |
+| `summarize_data()` | `Dict` | Summary statistics |
+| `train_test_split_temporal()` | `Tuple[DataFrame, DataFrame]` | Time-based split |
+
+### Intervention Functions
+
+| Function | Returns | Description |
+|----------|---------|-------------|
+| `create_intervention_dataframe()` | `DataFrame` | Convert dict to Prophet holidays |
+| `get_us_covid_interventions()` | `Dict` | US intervention dates |
+| `get_country_interventions()` | `Dict` | Country-specific interventions |
+
+### Model Functions
+
+| Function | Returns | Description |
+|----------|---------|-------------|
+| `fit_arima()` | `Tuple` | Fit ARIMA model |
+| `fit_sarima()` | `Tuple` | Fit SARIMA model |
+| `forecast_arima()` | `ndarray` | ARIMA forecast |
+| `forecast_sarima()` | `ndarray` | SARIMA forecast |
+
+### Evaluation Functions
+
+| Function | Returns | Description |
+|----------|---------|-------------|
+| `calculate_rmse()` | `float` | Root Mean Squared Error |
+| `calculate_mae()` | `float` | Mean Absolute Error |
+| `calculate_smape()` | `float` | Symmetric MAPE |
+| `evaluate_forecast()` | `Dict` | All metrics for one model |
+| `compare_models()` | `DataFrame` | Compare multiple models |
+
+### Visualization Functions
+
+| Function | Returns | Description |
+|----------|---------|-------------|
+| `plot_forecast()` | `Figure` | Forecast with confidence intervals |
+| `plot_components()` | `Figure` | Trend and seasonality |
+| `plot_model_comparison()` | `Figure` | Multi-model comparison |
+| `plot_training_history()` | `Figure` | LSTM training curves |
+| `plot_intervention_effects()` | `Figure` | Intervention impact |
 
 ---
 
 ## References
 
-1. Taylor, S.J. and Letham, B. (2018). *Forecasting at Scale*. The American Statistician.
-2. Johns Hopkins University COVID-19 Data Repository: https://github.com/CSSEGISandData/COVID-19
-3. Prophet Documentation: https://facebook.github.io/prophet/
+1. Taylor, S.J. and Letham, B. (2018). *Forecasting at Scale*. The American Statistician, 72(1), 37-45.
+2. Prophet Documentation: https://facebook.github.io/prophet/
+3. Box, G.E.P. and Jenkins, G.M. (1976). *Time Series Analysis: Forecasting and Control*.
+4. Hochreiter, S. and Schmidhuber, J. (1997). *Long Short-Term Memory*. Neural Computation, 9(8), 1735-1780.
