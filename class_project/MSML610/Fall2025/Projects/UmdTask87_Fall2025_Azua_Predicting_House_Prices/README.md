@@ -1,21 +1,40 @@
-# UmdTask87 — Predicting House Prices
+# UmdTask87 — Tabular Regression AutoML Tool (Demo on House Prices)
 
-This project trains and evaluates regression models to predict house prices using the Kaggle **Melbourne Housing Snapshot** dataset (`melb_data.csv`). The workflow is notebook-driven and uses a small internal Python API (`azua_utils.py`) for data loading, preprocessing, cross-validation model selection, and artifact saving.
+This repository contains a lightweight **Azua tool** (`azua_utils.py`) plus a concrete **house-price prediction demo** using the Kaggle **Melbourne Housing Snapshot** dataset (`melb_data.csv`).
+
+The project is notebook-driven:
+
+* `AzuaHousing.API.ipynb` demonstrates the **tooling API** in `azua_utils.py`.
+* `AzuaHousing.Example.ipynb` uses the tool to train/evaluate models on the Melbourne housing dataset and produces deployable artifacts.
+
+---
 
 ## What’s included
 
-- **`AzuaHousing.API.ipynb`**: end-to-end training + evaluation notebook
-  - Download dataset into `data/`
-  - Load → compute stats → clean → compute stats
-  - Cross-validation model comparison (RMSE, R²) with progress bars
-  - Fit best model and evaluate on held-out test set
-  - Save artifacts to `artifacts/`
-- **`AzuaHousing.Example.ipynb`**: consumer example notebook
-  - Load saved artifacts (`model.joblib`, `metrics.json`)
-  - Run inference + evaluation
-  - Manual input prediction (edit a dict → predict)
-- **`azua_utils.py`**: internal API used by both notebooks
-- **`requirements.txt`**: dependencies (install once; no in-notebook installs)
+* **`azua_utils.py`**: internal AutoML-style API for tabular regression
+
+  * CSV loading (optional date-part derivation)
+  * Mixed numeric/categorical preprocessing (impute + scale + one-hot)
+  * K-fold cross-validation model comparison (RMSE, R²)
+  * Train best model on full data
+  * Save/load deployable sklearn pipelines + metadata artifacts
+
+* **`AzuaHousing.API.ipynb`**: API/tool demonstration notebook
+
+  * Shows how to call the functions/classes in `azua_utils.py`
+
+* **`AzuaHousing.Example.ipynb`**: Melbourne housing end-to-end demo
+
+  * Download dataset into `data/`
+  * Load → compute stats → clean → compute stats
+  * Cross-validation model comparison (RMSE, R²) with progress bars
+  * Fit best model and evaluate on a held-out test split
+  * Save artifacts to `artifacts/`
+  * Reload artifacts and run inference + evaluation
+  * Error analysis + visualization
+  * Manual input prediction (edit a dict → predict)
+
+* **`requirements.txt`**: dependencies (install once; no in-notebook installs)
 
 ---
 
@@ -36,9 +55,8 @@ This project trains and evaluates regression models to predict house prices usin
     ├── metrics.json
     ├── cv_results.csv
     ├── cv_rmse_by_model.png
-    ├── cv_r2_by_model.png
-    └── cv_rmse_vs_r2.png (optional)
-````
+    └── cv_r2_by_model.png
+```
 
 ---
 
@@ -50,32 +68,32 @@ This project trains and evaluates regression models to predict house prices usin
 pip install -r requirements.txt
 ```
 
-### 2) Run training + evaluation
-
-Open and run all cells in:
-
-* `AzuaHousing.API.ipynb`
-
-This will create:
-
-* `data/melb_data.csv`
-* `artifacts/` with the trained model and metrics
-
-### 3) Run the consumer example
+### 2) Run the housing demo
 
 Open and run all cells in:
 
 * `AzuaHousing.Example.ipynb`
 
-This notebook assumes `artifacts/model.joblib` and `artifacts/metrics.json` already exist.
+This will create:
+
+* `data/melb_data.csv`
+* `artifacts/` (trained pipeline + metadata + plots)
+
+### 3) Run the API/tool demo notebook
+
+Open and run all cells in:
+
+* `AzuaHousing.API.ipynb`
+
+This notebook is intended to demonstrate how to use `azua_utils.py` as a generic tabular regression tool.
 
 ---
 
-## Dataset
+## Dataset (Example notebook only)
 
-The API notebook downloads the dataset via `kagglehub` and copies `melb_data.csv` into `./data`.
+The example notebook downloads the dataset via `kagglehub` and copies `melb_data.csv` into `./data`.
 
-Default dataset path used by notebooks:
+Default dataset path:
 
 * `data/melb_data.csv`
 
@@ -87,37 +105,48 @@ export DATA_PATH=/path/to/melb_data.csv
 
 ---
 
-## Internal API (`azua_utils.py`)
+## Internal tool API (`azua_utils.py`)
 
-Key functions used by notebooks:
+Key functions used across notebooks:
 
-* `load_melbourne(csv_path) -> pd.DataFrame`
-  Loads and lightly processes the dataset (drops missing target, derives `Year` and `Month` if date exists).
+* `load_csv(csv_path, target="Price", date_cols=None, derive_date_parts=False, drop_cols=None) -> pd.DataFrame`
+  Loads a CSV, optionally drops rows missing the target, and can derive date-part features.
 
-* `train_select_best(df, folds=5, ...) -> dict`
-  Runs K-fold CV across several models and selects the best by lowest CV RMSE. Fits the best pipeline on the full training split.
+  **Date-part naming convention** (matches the tool):
+  For a date column named `Date`, the derived features are:
+
+  * `Date_Year`
+  * `Date_Month`
+
+* `train_select_best(df, target="Price", folds=5, ...) -> dict`
+  Runs K-fold CV across candidate regressors and selects the best by lowest CV RMSE. Fits the best pipeline on the full provided dataset.
 
 * `save_artifacts(bundle, outdir="artifacts")`
-  Saves `model.joblib`, `metrics.json`, and `cv_results.csv`.
+  Saves:
+
+  * `model.joblib` (sklearn `Pipeline`: preprocessing + model)
+  * `metrics.json` (best model name + CV metrics + feature metadata)
+  * `cv_results.csv` (all model CV summaries)
 
 * `load_model("artifacts/model.joblib")`
   Loads the fitted sklearn pipeline for inference.
 
 ---
 
-## Metrics and expected outputs
+## Metrics and outputs
 
-The notebooks report:
+The demo tracks:
 
 * **RMSE** (lower is better)
 * **R²** (higher is better)
-* Fold variability: `rmse_std`, `r2_std`
+* fold variability: `rmse_std`, `r2_std`
 
-Artifacts saved:
+Artifacts written to `artifacts/` include:
 
-* `artifacts/model.joblib`: preprocessing + model pipeline (ready for inference)
-* `artifacts/metrics.json`: selected model + CV metrics + feature metadata
-* `artifacts/cv_results.csv`: comparison table across candidate models
+* `model.joblib`: deployable preprocessing + model pipeline
+* `metrics.json`: selected model name, CV metrics, and feature schema (`num_cols`, `cat_cols`, `drop_cols`)
+* `cv_results.csv`: comparison table across candidate models
+* plots: `cv_rmse_by_model.png`, `cv_r2_by_model.png`, `cv_rmse_vs_r2.png`
 
 ---
 
@@ -126,30 +155,22 @@ Artifacts saved:
 `AzuaHousing.Example.ipynb` includes a manual-input workflow:
 
 1. Edit a Python dict (`example_input`) with feature values.
-2. Convert it to a one-row `DataFrame`.
+2. Convert it to a one-row `DataFrame` using the feature schema stored in `artifacts/metrics.json`.
 3. Call `model.predict(X_one)` and print the predicted price.
 
-You can leave missing fields as `np.nan`; the pipeline imputers handle them.
+Missing fields can be set to `np.nan`; pipeline imputers handle them.
 
 ---
 
 ## REST API (Deployment)
 
-This project includes a lightweight REST API for real-time house price predictions using the trained model artifacts.
+The repo includes a lightweight REST API for real-time predictions using the trained artifacts.
 
-### Prerequisites
-1) Run `AzuaHousing.API.ipynb` first to generate:
-- `artifacts/model.joblib`
-- `artifacts/metrics.json`
+### Prerequisite
 
-2) Install dependencies:
-```bash
-pip install -r requirements.txt
-````
+Run `AzuaHousing.Example.ipynb` first (to generate `artifacts/model.joblib` and `artifacts/metrics.json`).
 
 ### Start the API server
-
-Run the server from the project environment:
 
 ```bash
 python -m uvicorn serve:app --host 0.0.0.0 --port 8000
@@ -161,11 +182,9 @@ python -m uvicorn serve:app --host 0.0.0.0 --port 8000
 curl -s http://127.0.0.1:8000/health
 ```
 
-Expected response includes `status: "ok"` and confirms the model is loaded.
-
 ### Make a prediction
 
-Send a JSON payload containing a `features` object. You can provide only a subset of features; missing values are handled by the pipeline imputers.
+Provide a JSON body containing a `features` object. You may provide only a subset of features.
 
 ```bash
 curl -s -X POST http://127.0.0.1:8000/predict \
@@ -180,16 +199,16 @@ curl -s -X POST http://127.0.0.1:8000/predict \
       "Postcode": 3067,
       "Landsize": 202,
       "Regionname": "Northern Metropolitan",
-      "Year": 2016,
-      "Month": 3
+      "Date_Year": 2016,
+      "Date_Month": 3
     }
   }'
 ```
 
 The response returns:
 
-* `predicted_price`: predicted house price
-* `model_name`: model selected during training (from `metrics.json`)
+* `predicted_price`
+* `model_name` (from `metrics.json`)
 
 ---
 
@@ -198,3 +217,4 @@ The response returns:
 * Train/test split uses `random_state=42`
 * K-fold CV uses shuffle + `random_state=42`
 * Stochastic models use the same seed where applicable
+

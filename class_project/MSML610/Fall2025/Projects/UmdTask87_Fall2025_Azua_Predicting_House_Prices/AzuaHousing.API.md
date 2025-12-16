@@ -1,133 +1,157 @@
-# AzuaHousing.API
+# Azua Tool API (`azua_utils.py`)
 
-This notebook (`AzuaHousing.API.ipynb`) is the **training and evaluation driver** for the Azua Housing project. It demonstrates how to use the internal Python API (`azua_utils.py`) to:
+This document describes the **Azua internal Python API** implemented in `azua_utils.py`.  
+It is written as **tool documentation** and is independent of any project-specific dataset.
 
-- Download the Melbourne Housing Snapshot dataset
-- Load and clean data
-- Compute dataset statistics (before and after cleaning)
-- Run cross-validation model comparison **with progress bars**
-- Fit the best model on the full training split
-- Evaluate on a held-out test split
-- Save model artifacts to `artifacts/`
+---
 
-## Repository layout
+## What the tool does
 
-Expected files:
+`azua_utils.py` provides a lightweight AutoML-style workflow for **tabular regression**:
 
-- `azua_utils.py` — internal API (data loading, preprocessing, model selection, artifact IO)
-- `AzuaHousing.API.ipynb` — training + evaluation notebook (this doc)
-- `requirements.txt` — Python dependencies
-- `data/` — dataset folder (created by the notebook)
-- `artifacts/` — output folder (created by the notebook)
+- Automatic feature typing (numeric vs categorical)
+- Automated preprocessing:
+  - numeric: median imputation + standard scaling
+  - categorical: most-frequent imputation + one-hot encoding
+- Model selection across multiple regressors using **K-fold cross-validation**
+- Evaluation with standard metrics: **RMSE** and **R²**
+- Artifact export (`model.joblib`, `metrics.json`, `cv_results.csv`) for reuse and deployment
+- Deployment-ready inference because preprocessing is embedded in the saved pipeline
 
-## Setup
+The API is dataset-agnostic. Callers supply:
+- a pandas DataFrame
+- the target column name (default is `"Price"`)
+- optional columns to drop from features
 
-Install dependencies once (outside the notebook):
+---
 
-```bash
-pip install -r requirements.txt
+## Installation
+
+Dependencies are managed via `requirements.txt`.
+
+Typical setup:
+- `pip install -r requirements.txt`
+
+---
+
+## Public API
+
+### `load_csv(csv_path, target="Price", date_cols=None, derive_date_parts=False, drop_cols=None) -> pd.DataFrame`
+
+Loads tabular data from a CSV file and optionally performs light feature derivation for date columns.
+
+- Drops rows with missing target (if `target` exists in the CSV)
+- If `derive_date_parts=True`, derives `<col>_Year` and `<col>_Month` for each column in `date_cols`
+- Optionally drops columns via `drop_cols`
+
+Use this when you want a standard CSV ingestion path.
+
+---
+
+### `split_features(df, target="Price", drop_cols=None) -> (num_cols, cat_cols)`
+
+Automatically detects:
+- numeric feature columns (based on pandas numeric dtypes)
+- categorical feature columns (everything else)
+
+It excludes:
+- the `target` column
+- any columns listed in `drop_cols`
+
+---
+
+### `build_preprocessor(num_cols, cat_cols) -> ColumnTransformer`
+
+Builds a preprocessing transformer for mixed-type tabular data:
+
+- numeric pipeline: `SimpleImputer(median)` → `StandardScaler`
+- categorical pipeline: `SimpleImputer(most_frequent)` → `OneHotEncoder(handle_unknown="ignore")`
+
+This transformer is intended to be used inside a sklearn `Pipeline`.
+
+---
+
+### `candidate_models(random_state=42) -> Dict[str, estimator]`
+
+Returns the default model search space used by the tool.
+
+**Included models**
+- `linreg`: Linear Regression (baseline)
+- `elastic`: ElasticNet (regularized linear model)
+- `rf`: Random Forest Regressor
+- `xgb`: XGBoost Regressor
+
+---
+
+### `cv_scores(pipe, X, y, folds=5, random_state=42, fold_progress=False) -> (rmse, r2)`
+
+Evaluates a full sklearn pipeline (preprocessing + model) using K-fold cross-validation and returns:
+
+- mean RMSE
+- mean R²
+
+Use this when you want to evaluate a single pipeline without running the full model selection loop.
+
+---
+
+### `train_select_best(df, target="Price", folds=5, random_state=42, drop_cols=None, progress=True, fold_progress=True, return_folds=False, models=None) -> Dict[str, Any]`
+
+Runs AutoML-style model selection:
+
+1) Split `df` into features `X` and target `y`  
+2) Detect numeric/categorical columns  
+3) Build preprocessing transformer  
+4) Train/evaluate candidate pipelines using K-fold CV  
+5) Select best model by **lowest RMSE**  
+6) Fit the best pipeline on all provided data  
+7) Return a bundle containing results and the fitted pipeline
+
+Returned bundle includes:
+- `bundle["best"]`: `{name, rmse, r2, pipeline}`
+- `bundle["all_results"]`: list of per-model CV results (includes std; optionally per-fold lists)
+- `bundle["num_cols"]`, `bundle["cat_cols"]`, `bundle["drop_cols"]`, `bundle["folds"]`, `bundle["random_state"]`, `bundle["target"]`
+
+Progress bars:
+- `progress=True` shows progress across models
+- `fold_progress=True` shows progress across folds (per model)
+
+---
+
+### `save_artifacts(best_bundle, outdir="artifacts") -> None`
+
+Persists deployment-ready artifacts:
+
+- `model.joblib`: fitted sklearn Pipeline (preprocessing + model)
+- `metrics.json`: summary metadata (best model name, RMSE/R², columns, config)
+- `cv_results.csv`: per-model CV results table (best-effort)
+
+---
+
+### `load_model(path="artifacts/model.joblib") -> Pipeline`
+
+Loads the serialized pipeline for inference or deployment.
+
+---
+
+## Typical usage pattern (end-to-end)
+
+```python
+import pandas as pd
+from azua_utils import train_select_best, save_artifacts, load_model
+
+# df must contain features and a numeric target column (default name: "Price")
+bundle = train_select_best(df, target="Price", folds=5, progress=True, fold_progress=True)
+
+# Inspect model comparison
+results = pd.DataFrame(bundle["all_results"]).sort_values("rmse")
+print(results)
+
+# Save artifacts
+save_artifacts(bundle, outdir="artifacts_demo")
+
+# Load for inference
+pipe = load_model("artifacts_demo/model.joblib")
+pred = pipe.predict(df.drop(columns=["Price"]).head(1))
+print(pred)
 ````
 
-## Dataset
-
-Default dataset path:
-
-* `data/melb_data.csv`
-
-The notebook uses:
-
-* `DATA_PATH` environment variable if set
-* otherwise defaults to `data/melb_data.csv`
-
-Example:
-
-```bash
-export DATA_PATH=data/melb_data.csv
-```
-
-The dataset is downloaded using `kagglehub` and copied into `data/`.
-
-## Notebook flow
-
-The notebook is structured to show a clear, repeatable pipeline:
-
-### 1) Load data
-
-* Reads `melb_data.csv`
-* Drops rows where `Price` is missing
-* If the dataset contains a sale date, derives `Year` and `Month`
-
-### 2) Compute stats (raw)
-
-Produces basic health checks, including:
-
-* row/column counts
-* duplicate rows
-* missingness report (top missing columns)
-* target distribution summary and histogram
-
-### 3) Clean data
-
-Applies conservative cleaning designed to be compatible with downstream imputation:
-
-* drops exact duplicate rows
-* coerces known numeric columns to numeric
-* replaces invalid negative values with `NaN`
-* sanity-checks `YearBuilt` and sets invalid values to `NaN`
-
-### 4) Compute stats (cleaned)
-
-Recomputes the same stats to verify that cleaning behaves as intended.
-
-### 5) Do analysis
-
-* Train/test split (held-out test set)
-* Cross-validation model selection across several regressors:
-
-  * Linear Regression
-  * ElasticNet
-  * Random Forest
-  * XGBoost
-* Metrics tracked:
-
-  * RMSE (lower is better)
-  * R² (higher is better)
-  * per-fold variability (`rmse_std`, `r2_std`)
-
-Progress bars appear during:
-
-* model iteration
-* fold iteration (per model)
-
-### 6) Show results
-
-* Evaluates the selected best model on the held-out test split
-* Saves artifacts to disk
-
-## Outputs
-
-After a successful run, `artifacts/` contains:
-
-* `model.joblib` — fitted sklearn `Pipeline` (preprocessing + model)
-* `metrics.json` — metadata, including selected model name and CV metrics
-* `cv_results.csv` — CV summary for all candidate models
-* `cv_rmse_by_model.png` — bar chart of CV RMSE
-* `cv_r2_by_model.png` — bar chart of CV R²
-* 
-## Recommended usage order
-
-1. Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-2. Run training notebook:
-
-* Open `AzuaHousing.API.ipynb`
-* Run all cells
-* Confirm `artifacts/` is created and populated
-
-3. Then run the example notebook:
-
-* `AzuaHousing.Example.ipynb`
