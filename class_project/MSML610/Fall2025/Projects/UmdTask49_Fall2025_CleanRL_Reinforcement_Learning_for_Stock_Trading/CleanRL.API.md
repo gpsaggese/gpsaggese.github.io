@@ -1,54 +1,57 @@
-# CleanRL integration and API
+# CleanRL API
 
-This project uses cleanRL's (https://docs.cleanrl.dev/) single-file RL implementations to train agents on a custom signal-generation environment. The repository contains a small `CleanRL_API/` folder with compact Rl agent scripts and utilities (PPO, SAC, buffers, etc.) copied over from cleanRL's repository.
+CleanRL is a Deep Reinforcement Learning library that provides high-quality single-file implementations with research-friendly features. The implementation is clean and simple, yet scalable.
 
-What you'll find here
+## Core Philosophy
 
-- `CleanRL_API/ppo_continuous_action.py`, `CleanRL_API/sac_continuous_action.py`: single-file, canonical cleanRL algorithm implementations adapted for our environment shapes.
-- `rl_env.py`: the `SignalTesterEnv` environment used by the agents. This file now exposes a helper to register a gym id so cleanRL scripts (which expect an env id) can call `gym.make("SignalTester-v0")`.
-- NOTE: both `ppo_continuous_action.py` and `sac_continuous_action.py` were sligthly updated to ensure they fit into our workflow.
+- **Single-file implementation**: Every detail about an algorithm variant is put into a single standalone file. This makes it easy to understand and modify.
+- **No shared core**: Unlike modular libraries, CleanRL does not have a shared base class. This prevents complex inheritance chains.
 
-Usage
+## Key Features
 
-The PPO and SAC scripts are designed to be imported and run directly from Python code, allowing for seamless integration with the data pipeline and environment registration.
+- **Single-file implementation**
+- **Benchmarked Implementation** (7+ algorithms and 34+ games)
+- **Tensorboard Logging**
+- **Local Reproducibility via Seeding**
+- **Videos of Gameplay Capturing**
+- **Experiment Management with Weights and Biases**
+
+## Usage Pattern
+
+CleanRL is not meant to be imported as a traditional library. The intended workflow is to copy the specific algorithm file into your project and modify it directly.
+
+The `CleanRL_API` folder contains the following implementations:
+
+- `ppo_continuous_action.py`: Proximal Policy Gradient for continuous action spaces.
+- `sac_continuous_action.py`: Soft Actor-Critic for continuous action spaces.
+- `cleanrl_utils/`: A collection of small utility functions (e.g., Replay Buffers) used by some algorithms like SAC.
+
+The algorithms are typically run as scripts with command-line arguments:
+
+```bash
+python CleanRL_API/ppo_continuous_action.py --env-id Hopper-v4 --total-timesteps 50000
+```
+
+Alternatively, the scripts in this repository have been adapted to expose a `train` function and an `Args` class, allowing them to be used programmatically (e.g., in a Jupyter Notebook):
 
 ```python
 from CleanRL_API.sac_continuous_action import train as train_sac, Args as SACArgs
-# or for PPO:
-# from CleanRL_API.ppo_continuous_action import train as train_ppo, Args as PPOArgs
 
-# Define training arguments
 args = SACArgs(
-    env_id="SignalTester-v0",
+    env_id="Hopper-v4",
     total_timesteps=5000,
-    policy_lr=3e-4,
-    q_lr=1e-3,
-    buffer_size=10000,
-    gamma=0.99,
-    tau=0.005,
-    batch_size=256,
-    learning_starts=1000,
-    policy_frequency=2,
-    target_network_frequency=1,
-    alpha=0.2,
-    autotune=True,
-    run_name="my_sac_run",
-    seed=42,
-    hidden_size=256,  # Use 512+ for high-dim states
+    seed=42
 )
-
-# Run training
-# The train function returns the trained agent
 agent = train_sac(args)
-
-# Models are automatically saved to runs/{run_name}/
 ```
 
-Key points
+## Algorithms
 
-- CleanRL expects either an environment id (string) or a vectorized environment built from a callable. To keep the cleanRL scripts untouched we register a short-lived gym id that returns a `SignalTesterEnv` instance with precomputed forecasts and news contexts. Use `register_cleanrl_env(...)` inside our experiment startup to make the id available to `gym.make()`.
-- The provided PPO and SAC scripts are updated to now automatically use deeper networks as described below;This update made to handle higher dimensional input features. We can train with our environment by running the scripts with `--env_id SignalTester-v0 --num_envs 4 ...` after registering the id.
-- The provided PPO and SAC scripts were updated store trained models to `runs/{run_name}/actor.pth`, `runs/{run_name}/qf1.pth`, `runs/{run_name}/qf2.pth` after training completes.
-- `CleanRL_API/cleanrl_utils/`: small helpers (buffers, wrappers) used by the algorithms.
+CleanRL supports many popular algorithms. The ones included in this API folder are:
 
-`SignalTesterEnv` exposes a 138-dimensional state (uncertainty cones + news context). Both `ppo.py` and `sac_continuous_action.py` use deeper networks with LayerNorm when `obs_dim > 60`: PPO uses a 4-layer architecture (default `--hidden_size 128`), while SAC uses deeper actor/critic networks (default `--hidden_size 256`). For even more capacity, use `--hidden_size 512`. The networks fall back to standard shallow architectures for simple environments, maintaining backward compatibility.
+- **Proximal Policy Gradient (PPO)**: A policy gradient method that alternates between sampling data through interaction with the environment and optimizing a "surrogate" objective function.
+- **Soft Actor-Critic (SAC)**: An off-policy actor-critic deep RL algorithm based on the maximum entropy reinforcement learning framework.
+
+## Documentation
+
+For full documentation and examples, visit the [official CleanRL documentation](https://docs.cleanrl.dev/).
