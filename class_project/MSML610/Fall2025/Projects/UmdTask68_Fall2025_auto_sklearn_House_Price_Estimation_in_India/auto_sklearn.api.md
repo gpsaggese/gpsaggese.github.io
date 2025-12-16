@@ -1,6 +1,6 @@
-## Auto-sklearn API (Native interface + how this project uses it)
+## Auto-sklearn API (Native interface)
 
-This document explains the **native programming interface** used from auto-sklearn in `auto_sklearn.api.ipynb`, and how that relates to this project’s lightweight wrapper layer.
+This document explains the **native programming interface** used from auto-sklearn in `auto_sklearn.api.ipynb`.
 
 > Setup/Docker instructions are intentionally not duplicated here; see `README.md`.
 
@@ -72,20 +72,6 @@ In practice, auto-sklearn explores many candidate pipelines (preprocessing + est
 
 ---
 
-## The lightweight wrapper layer in this project (and how it fits)
-
-This project’s wrapper layer is **not** a re-implementation of auto-sklearn. Instead, it wraps the **project-specific data preparation** so that every model (auto-sklearn or baseline) receives the same clean, consistent feature matrix.
-
-- **`auto_sklearn_utils.py`** is the “single import surface” for notebooks.
-- It re-exports the preprocessing entrypoint **`prepare_data(...)`** implemented in `utils_preprocessing.py` (plus supporting helpers).
-
-Why this matters:
-
-- auto-sklearn expects numeric matrices (or properly encoded features). Real datasets typically require non-trivial preprocessing.
-- centralizing preprocessing prevents “copy-paste feature engineering” across notebooks and keeps the example notebooks concise.
-
----
-
 ## Notebook walkthrough: `auto_sklearn.api.ipynb` (what each cell does)
 
 This notebook is intentionally a set of **minimal native API usage patterns**, each centered on one concept.
@@ -145,7 +131,6 @@ This notebook is intentionally a set of **minimal native API usage patterns**, e
   - encodes it using `OneHotEncoder` inside a `ColumnTransformer`
   - trains `AutoSklearnClassifier` on the transformed matrix
 - **Key APIs**: sklearn `ColumnTransformer`, `OneHotEncoder`, auto-sklearn `fit`/`score`.
-- **Connection to this project**: this is the same overall pattern your project formalizes inside `prepare_data(...)`.
 
 ### Cells 11–12 — Save and load a fitted model
 
@@ -164,12 +149,3 @@ This notebook is intentionally a set of **minimal native API usage patterns**, e
   - fits a classifier with a non-default `ensemble_kwargs` (larger ensemble)
   - prints `leaderboard()`
 - **Key APIs**: `ensemble_kwargs`, `leaderboard()`.
-
----
-
-## How to use this API knowledge in the main project notebook
-
-- Use `auto_sklearn_utils.prepare_data(...)` to produce `(X_train, X_test, y_train, y_test, preprocessor, feature_names)`.
-- Then apply the patterns above with `AutoSklearnRegressor(...)` for your housing price regression task.
-
-(That end-to-end application is documented in `auto_sklearn.example.md`.)

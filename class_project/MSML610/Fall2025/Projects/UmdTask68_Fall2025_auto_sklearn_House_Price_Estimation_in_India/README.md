@@ -15,7 +15,7 @@ Estimate residential prices across India using structured tabular data (location
 - **Modeling**:
   - `auto_sklearn.example.ipynb`: End-to-end notebook for preprocessing, training, and evaluation.
   - Implements `AutoSklearnRegressor`, `RandomForestRegressor`, and `XGBRegressor`.
-  - `auto_sklearn.api.ipynb`: Small native API snippets (classification/regression/metrics/leaderboard) + wrapper-layer usage.
+- `auto_sklearn.api.ipynb`: Small native API snippets (classification/regression/metrics/leaderboard).
 - **Infrastructure**:
   - `Dockerfile`: Linux-based environment for running auto-sklearn.
 - **Analysis**:
