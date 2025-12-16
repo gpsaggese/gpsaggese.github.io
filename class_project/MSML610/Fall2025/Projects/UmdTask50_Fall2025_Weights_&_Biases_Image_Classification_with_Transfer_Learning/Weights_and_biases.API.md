@@ -1,12 +1,3 @@
-I understand. You want the markdown file (Weights_and_biases.API.md) to be concise and focused purely on describing the API functionality, and you want the Python code to be presented separately.
-
-Here are the contents for the two files, satisfying all your requirements.
-
-1. Weights & Biases API Documentation (Weights_and_biases.API.md)
-This markdown file is structured to state what's happening with the core W&B functions.
-
-Markdown
-
 # Weights & Biases (W&B) Core API Documentation
 
 This document describes the core functionality of the Weights & Biases Python SDK for experiment tracking, independent of any specific machine learning project. The use case is a generic simulation of a training run.
