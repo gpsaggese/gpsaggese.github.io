@@ -26,11 +26,11 @@ A production-ready sentiment analysis system using Direct Preference Optimizatio
 
 ---
 
-## ✈️ Project Overview
+## Project Overview
 
 This project implements a sentiment analysis system that adapts over time using **Reinforcement Learning (RL)** and **Active Learning**. Unlike traditional static classifiers, this model optimizes its accuracy based on feedback loops, moving from a standard supervised baseline to a preference-tuned model aligned with human judgment.
 
-## 🏗️ System Architecture
+## System Architecture
 
 The following diagram illustrates the multi-stage training pipeline, specifically highlighting the data splitting strategy and the active learning loop.
 
@@ -76,7 +76,7 @@ graph TD
 
 ---
 
-## 🎯 Design Decisions & Intent
+## Design Decisions & Intent
 
 ### 1\. Model Choice: Why GPT-2 over BERT?
 
@@ -101,7 +101,7 @@ To prevent data leakage and bias, we use a stratified splitting strategy:
 
 ---
 
-## 💾 Data Schema
+## Data Schema
 
 The project expects a dataset file named `Tweets.csv` with the following structure:
 
@@ -159,7 +159,7 @@ docker-compose up
 
 ---
 
-## 🚀 Usage Guide
+## Usage Guide
 
 ### 1\. Running the Benchmark (Notebook)
 
@@ -179,7 +179,7 @@ Launch the Streamlit app to test the feedback loop.
 
 ---
 
-## 🔮 Future Work
+## Future Work
 
 - **Model Scale**: Upgrade from GPT-2 (Small) to a larger model like **Llama-2-7b** or **Mistral-7b** to improve reasoning capabilities on complex tweets.
 - **Reward Modeling**: Implement a separate Reward Model (RM) to provide more granular signals during RL training, rather than relying solely on the reference model divergence.
