@@ -17,13 +17,11 @@ adhering to the required project structure.
 - `docker_simple/`: the DATA605-style container scripts for development. These
   will be customized with JAX, pandas, and plotting dependencies during
   implementation.
-- `docker_causify_dev_system/`: placeholder for the thin-environment setup if we
-  migrate to the advanced docker workflow later in the semester.
 
 ## Running the Project (Simple Docker)
 
 ```bash
-cd /Users/mns/Documents/umd_classes/class_project/MSML610/Fall2025/projects/UmdTask77_Retail_Sales_Forecasting_with_LSTMs/docker_simple
+cd /Users/mns/Documents/msml610/umd_classes/class_project/MSML610/Fall2025/Projects/UmdTask77_Retail_Sales_Forecasting_with_LSTMs/docker_simple
 bash docker_build.sh   # builds the Jupyter-ready image with JAX/Flax dependencies
 bash docker_jupyter.sh # launches JupyterLab with the project mounted at /app/project
 ```
@@ -49,4 +47,3 @@ the appropriate `jaxlib` wheel before rebuilding.
 - Add store/family-level aggregation metrics and baseline comparisons.
 - Expand exploratory plots (holiday overlays, per-store drill-downs).
 - Package trained parameters and scalers for reuse outside the notebooks.
-
