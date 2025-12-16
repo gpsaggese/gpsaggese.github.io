@@ -28,12 +28,6 @@ COPY fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.example.md .
 COPY fastai/fastai_Time_Series_Forecasting_of_Stock_Prices.example.ipynb .
 COPY fastai/fastai_Time_Series_Forecasting_of_Stock_Prices_Sentiment.example.ipynb .
 
-COPY tsai/tsai_Time_Series_Forecasting_of_Stock_Prices_utils.py .
-COPY tsai/tsai_Time_Series_Forecasting_of_Stock_Prices.API.md .
-COPY tsai/tsai_Time_Series_Forecasting_of_Stock_Prices.API.ipynb .
-COPY tsai/tsai_Time_Series_Forecasting_of_Stock_Prices.example.md .
-COPY tsai/tsai_Time_Series_Forecasting_of_Stock_Prices.example.ipynb .
-
 COPY README.md .
 
 RUN mkdir -p /app/data /app/outputs /app/notebooks
