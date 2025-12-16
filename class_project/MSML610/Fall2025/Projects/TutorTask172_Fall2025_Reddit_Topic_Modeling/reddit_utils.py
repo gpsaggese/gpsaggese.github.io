@@ -287,7 +287,7 @@ def run_tsne(
         n_components=2,
         perplexity=perplexity,
         learning_rate=learning_rate,
-        n_iter=n_iter,
+        max_iter=n_iter,
         random_state=random_state,
         init="random",
     )
