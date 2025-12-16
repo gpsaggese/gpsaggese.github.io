@@ -1,4 +1,4 @@
-# UmdTask87 — Tabular Regression AutoML Tool (Demo on House Prices)
+# UmdTask87 — Azua Predicting House Prices
 
 This repository contains a lightweight **Azua tool** (`azua_utils.py`) plus a concrete **house-price prediction demo** using the Kaggle **Melbourne Housing Snapshot** dataset (`melb_data.csv`).
 
