@@ -1,5 +1,8 @@
 # ⚡ Energy Consumption Forecasting with Darts
 
+# Name: Manan Ambaliya
+# UID: 121118776
+
 A comprehensive time series forecasting project for predicting energy consumption in the PJM East region using the Darts library.
 
 ---
