@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  chatbot:
+    build: .
+    container_name: multilingual_chatbot
+    working_dir: /app
+
+    # Mount the entire project folder into /app
+    volumes:
+      - .:/app
+
+    ports:
+      - "8888:8888"
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+    environment:
+      HF_HOME: /app/.cache/huggingface
+      TRANSFORMERS_CACHE: /app/.cache/huggingface/transformers
+      PYTHONUNBUFFERED: "1"
+
+    command: ["tail", "-f", "/dev/null"]
+
+    restart: unless-stopped
