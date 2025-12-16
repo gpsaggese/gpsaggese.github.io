@@ -1,4 +1,4 @@
-## Phase 1: The Debugging Gateway & Initial Connection
+## 🛠️ Phase 1: The Debugging Gateway & Initial Connection
 
 This first step is crucial for establishing a robust connection with the FastMCP client and, most importantly, ensuring that any low-level errors (especially those tricky `subprocess` issues common in Jupyter environments) are captured in a real file on disk.
 
@@ -72,12 +72,13 @@ The goal here is to create features that represent the *efficiency* and *context
 
 | New Feature | Formula | Purpose |
 | :--- | :--- | :--- |
-| `total_sqft` | $\text{sqft\_living} + \text{sqft\_basement}$ | Captures the entire heated/usable square footage. |
-| `living_to_lot_ratio` | $\text{sqft\_living} / \text{sqft\_lot}$ | Indicates the intensity of lot use (e.g., dense urban vs. sprawling suburban).  |
-| `bath_per_bed` | $\text{bathrooms} / \text{bedrooms}$ | Captures modern utility/luxury versus number of bedrooms. |
-| `living15_diff` | $\text{sqft\_living} - \text{sqft\_living15}$ | Measures relative size difference from nearby neighbors, capturing neighborhood conformity/uniqueness. |
-| `basement_share` | $\text{sqft\_basement} / (\text{total\_sqft} + 1)$ | Expresses the basement's contribution to the total living space. |
-| `has_basement` | $(\text{sqft\_basement} > 0).\text{astype}(\text{int})$ | Binary indicator for the presence of a basement. |
+| `total_sqft` | `sqft_living + sqft_basement` | Captures the entire heated/usable square footage. |
+| `living_to_lot_ratio` | `sqft_living / sqft_lot` | Indicates intensity of lot use. |
+| `bath_per_bed` | `bathrooms / bedrooms` | Captures utility vs bedroom count. |
+| `living15_diff` | `sqft_living - sqft_living15` | Measures difference from neighbors. |
+| `basement_share` | `sqft_basement / (total_sqft + 1)` | Basement contribution to total area. |
+| `has_basement` | `(sqft_basement > 0)` | Binary basement indicator. |
+
 
 
 ### 3.2. Skewness Transformation
@@ -85,9 +86,9 @@ The goal here is to create features that represent the *efficiency* and *context
 Based on the EDA finding of strong right-skewness, we apply logarithmic transformations to the target variable (`price`) and the most skewed predictors (`sqft_living`, `sqft_lot`) to achieve a more Gaussian distribution, which improves the performance of many linear and distance-based models.
 
   * **Variables to be Log-Transformed:**
-      * $\text{log\_price}$
-      * $\text{log\_sqft\_living}$
-      * $\text{log\_sqft\_lot}$
+      * `log_price`
+      * `log_sqft_living`
+      * `log_sqft_lot`
 
 ### 3.3. Age and Renovation Metrics
 
@@ -95,8 +96,9 @@ These features replace raw year data with meaningful time-based metrics that cap
 
 | New Feature | Formula | Purpose |
 | :--- | :--- | :--- |
-| `house_age` | $\text{year\_sold} - \text{yr\_built}$ | Measures total age, a proxy for depreciation. |
-| `since\_renovation` | $\text{year\_sold} - \text{yr\_renovated}$ (if $\text{yr\_renovated} > 0$, else $\text{house\_age}$) | Measures the time elapsed since the last major value-adding event (renovation or build). |
+| `house_age` | `year_sold - yr_built` | Measures total age, a proxy for depreciation. |
+| `since_renovation` | `year_sold - yr_renovated (if yr_renovated > 0 else house_age)` | Measures time elapsed since the last major value-adding event (renovation or build). |
+
 
 ---
 That's an excellent clarification. To create a highly intuitive and creative Markdown file, we will shift the focus entirely to the **Logical Workflow** driven by the **FastMCP Tools**, treating the code as the execution layer that makes the workflow happen. We will **remove the full code blocks** and use **tables and headings** to emphasize the tools and their purpose.
