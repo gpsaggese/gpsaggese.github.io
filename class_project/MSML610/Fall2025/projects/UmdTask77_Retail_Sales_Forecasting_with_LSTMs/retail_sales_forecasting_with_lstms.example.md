@@ -1,90 +1,134 @@
 # Retail Sales Forecasting with LSTMs — Example Walkthrough
 
-This document explains the end-to-end tutorial accompanying the midterm PR.
-It aligns with the MSML610 Fall 2025 project brief (Difficulty 3) and
-demonstrates how to apply the utilities in
-`retail_sales_forecasting_utils.py` to the Kaggle **Store Sales – Time Series
-Forecasting** dataset (or the bundled synthetic fallback).
+This document mirrors the notebook/script pair in `retail_sales_forecasting_with_lstms.example.*`.
+It explains the end-to-end workflow shown in the final video: from loading the
+Kaggle Store Sales dataset to generating the plots and metrics bundled under
+`artifacts/run_20251215_212247/`.
 
 ## Storyboard
 
-1. **Frame the business problem**: provide weekly demand forecasts per
-   `(store_nbr, family)` while accounting for seasonal effects and promotions.
-2. **Ingest production-like data**: pull parquet and CSV files into a unified
-   feature table, preserving hierarchical indices.
-3. **Engineer temporal signals**: encode seasonalities, promotions, and optional
-   external regressors (oil price, transactions).
-4. **Train RNN models in JAX**: leverage a Flax LSTM/GRU backbone with JIT-compiled
-   optimization for fast experimentation.
-5. **Evaluate and visualize**: compare MAE/RMSE/MAPE across validation windows,
-   and plot forecast curves to highlight holiday/promotion effects.
-6. **Extend to multivariate regressors**: demonstrate optional inclusion of
-   macroeconomic drivers in the same workflow.
+1. **Frame the problem** – predict weekly demand per `(store_nbr, family)` so
+   the retailer can plan promotions, staffing, and inventory while respecting
+   holidays and oil-price shocks.
+2. **Engineer retail-aware features** – merge transactions, promotions, weekend
+   flags, and cyclical encodings to capture seasonality.
+3. **Train LSTM/GRU baselines in JAX** – leverage a shared data loader, Optax
+   optimizer, and best-checkpoint tracking.
+4. **Evaluate & visualize** – compare metrics in normalized vs sales units,
+   inspect per-store/per-family breakdowns, and plot holiday/promotion effects.
+5. **Package artifacts** – save config/params/plots for reviewers and record the
+   video without re-running expensive training.
 
-## Data Pipeline
+## 1. Environment + Data
 
-- **Raw Files** (downloaded locally or via Kaggle API):
-  - `train.csv`, `test.csv`, `oil.csv`, `holidays_events.csv`,
-    `transactions.csv`.
-- **Preprocessing Steps**:
-  1. Normalize column names and parse dates.
-  2. Join auxiliary tables on `date` and `store_nbr`.
-  3. Aggregate to daily totals per `(store_nbr, family)`.
-  4. Generate supervised learning windows using sliding look-back sequences.
-  5. Split into training/validation sets respecting chronological order.
+```python
+from pathlib import Path
+from retail_sales_forecasting_with_lstms.API import TrainingConfig
 
-```mermaid
-flowchart TD
-  A[Raw Kaggle Files] --> B[Clean & Join]
-  B --> C[Aggregate by Store + Family]
-  C --> D[Window Generation]
-  D --> E1[Train Dataset]
-  D --> E2[Validation Dataset]
+DATA_DIR = Path("data/store-sales-time-series-forecasting")
+ARTIFACTS_DIR = Path("artifacts")
+
+cfg = TrainingConfig(
+    data_dir=DATA_DIR,
+    families=("GROCERY I", "BEVERAGES", "PRODUCE", "CLEANING", "DAIRY"),
+    max_stores=10,
+    context_length=30,
+    horizon=7,
+    epochs=6,
+)
 ```
+- If `DATA_DIR` does not contain the Kaggle CSVs the notebooks fall back to the
+  synthetic generator so that the workflow remains runnable on any laptop.
 
-## Modeling Blueprint
+## 2. Data Snapshot
 
-- **Architecture**: stacked LSTM or GRU layers with layer normalization and
-  dropout. Sequence length defaults to 120 days; prediction horizon is 28 days.
-- **Loss Function**: SMAPE baseline with optional quantile loss extension.
-- **Optimizer**: AdamW via `optax` with cosine decay schedule.
-- **Metrics**: MAE, RMSE, and MAPE computed per `(store_nbr, family)` and
-  aggregated at the national level.
+```python
+from retail_sales_forecasting_with_lstms.API import prepare_dataset
 
-```text
-Input: [batch_size, time_steps, feature_dim]
-RNN -> Dense(projection) -> Forecast Horizon
+dataset = prepare_dataset(cfg)
+print(dataset.train_inputs.shape, dataset.val_inputs.shape)
 ```
+- Inspect `dataset.train_inputs[:3]` to show the engineered columns (promo,
+  transactions, sine/cosine features, entity embeddings).
+- Display a few rows from `dataset.val_store_ids` and `dataset.val_family_ids`
+  to highlight the coverage.
 
-## Notebook Outline
+## 3. Train Both Models
 
-1. **Section 1 — Environment Setup**
-   - Confirm JAX backend, ensure deterministic seeds, import helpers.
-2. **Section 2 — Data Download & Caching**
-   - Call `ensure_kaggle_dataset()` (to be implem.) to fetch data if missing.
-3. **Section 3 — Feature Engineering**
-   - Use `build_feature_pipeline()` to transform raw DataFrames.
-   - Visualize seasonal features and holiday encodings.
-4. **Section 4 — Model Training**
-   - Instantiate `ModelConfig`, run `train_model()` with training curves plot.
-5. **Section 5 — Evaluation & Visualization**
-   - Render metrics table, confusion-style matrix of error per store, and line
-     charts around major holidays.
-6. **Section 6 — What-If Scenarios**
-   - Toggle promotions or oil price regressors to show impact on metrics.
+```python
+from retail_sales_forecasting_with_lstms.API import run_training_pipeline
 
-## Current Progress (Midterm PR)
+run_dir, results, dataset = run_training_pipeline(
+    cfg,
+    output_dir=ARTIFACTS_DIR,
+    run_name="run_20251215_212247",
+)
+for result in results:
+    print(result.name, result.normalized_metrics)
+```
+- LSTM validation RMSE (normalized) ≈ 0.138 | sales RMSE ≈ 1,231 units.
+- GRU validation RMSE (normalized) ≈ 0.144 | sales RMSE ≈ 1,305 units.
+- The script automatically persists `config.json`, model metrics, and pickled
+  parameters under `artifacts/run_20251215_212247/`.
 
-- ✅ Repository structure aligned to course template.
-- ✅ Full data ingestion, feature pipeline, and sequence generator implemented.
-- ✅ Flax LSTM/GRU model, Optax training loop, and evaluation metrics operational.
-- ✅ Example notebook executes end-to-end on synthetic fallback data and produces
-  plots plus metrics.
-- 🔄 Next milestone will connect to the real Kaggle dataset and expand event-driven
-  feature coverage.
+## 4. Evaluation & Visualization
 
-## Next Steps
+```python
+from retail_sales_forecasting_with_lstms.API import (
+    load_run_metrics,
+    plot_training_curves,
+    plot_final_metrics_comparison,
+    plot_sales_metrics,
+    plot_breakdowns,
+)
 
-- Benchmark against naive baselines and add hierarchical roll-up metrics.
-- Enhance visualizations (per-store panels, residual diagnostics).
-- Integrate holiday calendars and additional regressors from the Kaggle metadata.
+metrics = load_run_metrics(run_dir)
+plot_training_curves(metrics, run_dir)
+plot_final_metrics_comparison(metrics, run_dir)
+plot_sales_metrics(metrics, run_dir)
+plot_breakdowns(metrics, run_dir, model_name="lstm")
+plot_breakdowns(metrics, run_dir, model_name="gru")
+```
+- `training_curves.png` shows both models converging within ~6 epochs.
+- `final_metrics_comparison.png` highlights the LSTM beating the GRU in every
+  normalized metric, albeit by a narrow margin.
+- `sales_metrics.png` translates the errors back to original currency for a
+  business-friendly story.
+- Breakdown plots highlight which stores/families drive the residual error:
+  promotions-heavy weeks remain challenging, whereas Grocery I performs best.
+
+## 5. Forecast Visualization
+
+```python
+from retail_sales_forecasting_with_lstms.API import run_inference, plot_predictions_sample
+
+inference = run_inference(run_dir, "lstm", dataset=dataset)
+plot_predictions_sample(
+    inference["predictions"],
+    inference["targets"],
+    dataset,
+    run_dir / "lstm_test_predictions.png",
+)
+```
+- Overlay actual vs predicted sales for a validation horizon, annotating holiday
+  spikes and promotion periods (see `lstm_test_predictions.png`).
+
+## 6. Storytelling Notes
+
+- Holidays introduce higher variance but the model still keeps RMSE under 204
+  normalized units for those windows.
+- Promotions remain the top driver of error → next steps include richer promo
+  features or exogenous regressors (oil, transactions lag).
+- Despite shared weights across entities, the scaled store/family embeddings let
+  the model tailor behaviour: clusters with similar traffic share similar errors.
+
+## 7. Wrap-up for the Video
+
+1. **Files overview** – show API/example notebooks, utils module, docs, and the
+   `artifacts/` folder.
+2. **Docker + notebooks** – open the container, run notebooks (Restart & Run All)
+   to recreate the key tables/plots.
+3. **Results discussion** – walk through the generated PNGs, call out LSTM vs
+   GRU performance, and highlight the holiday/promotion analysis.
+4. **Documentation** – point reviewers to `docs/architecture_notes.md` for the
+   narrative and `README.md` for reproduction instructions.

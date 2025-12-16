@@ -1,126 +1,139 @@
 # Retail Sales Forecasting API Tutorial (JAX)
 
-# Retail Sales Forecasting API Tutorial (JAX)
+The API surface is intentionally thin: notebooks/scripts only need to import a
+handful of dataclasses and helper functions from
+`retail_sales_forecasting_with_lstms.API`. The underlying implementation lives
+in `retail_sales_forecasting_utils.py` and exposes the full lifecycle for the
+project:
 
-This document captures the interface-first view of the toolkit being developed
-for the MSML610 project **Retail Sales Forecasting with LSTMs**. The API is
-implemented in `retail_sales_forecasting_utils.py` and consumed by the
-companion notebooks. The intent of the API tutorial is to explain how a user
-should interact with the module without needing to read the notebook cells.
+```
+TrainingConfig -> prepare_dataset -> train_models/run_training_pipeline ->
+load_run_metrics/run_inference/plot_* helpers
+```
 
-## High-Level Goals
+## Key Dataclasses
 
-- Provide a typed JAX pipeline that handles data loading, feature creation,
-  sequence generation, model training, and evaluation for multi-store retail
-  sales data.
-- Support both LSTM and GRU recurrent architectures through a shared contract.
-- Keep the API notebook focused on explaining configurations while the
-  utilities deliver reusable functions.
+| Object | Description |
+| --- | --- |
+| `TrainingConfig` | Controls dataset filters (families, stores, windows), RNN hyper-parameters, and whether to fall back to synthetic data when Kaggle CSVs are missing. |
+| `DatasetSplits` | Holds the prepared train/validation windows plus metadata arrays used for breakdown metrics. |
+| `TrainingResult` | Stores the history, metrics, and pickled parameters for an individual model run (LSTM or GRU). |
 
-## Module Overview
+Example configuration:
+```python
+from pathlib import Path
+from retail_sales_forecasting_with_lstms.API import TrainingConfig
 
-| Component | Responsibility | Status |
-|-----------|----------------|--------|
-| `DataSourceConfig` | Dataset locations, schema metadata | ✅ Implemented |
-| `TemporalFeatureConfig` | Seasonalities + feature toggles | ✅ Implemented |
-| `ModelConfig` | RNN hyperparameters and optimizer knobs | ✅ Implemented |
-| `load_sales_data()` | Loads Kaggle files or synthetic fallback | ✅ Implemented |
-| `build_feature_pipeline()` | Ordered callables to add temporal/event features | ✅ Implemented |
-| `prepare_dataloader()` | Generates scaled sliding windows for train/val splits | ✅ Implemented |
-| `create_rnn_model()` | Builds a Flax LSTM/GRU backbone with dense head | ✅ Implemented |
-| `train_model()` | Optax-powered training loop with mini-batching | ✅ Implemented |
-| `evaluate_model()` | Computes MAE/RMSE/MAPE and tidy prediction frame | ✅ Implemented |
-| `ForecastArtifacts` | Wraps metrics, predictions, params, metadata | ✅ Implemented |
+cfg = TrainingConfig(
+    data_dir=Path("data/store-sales-time-series-forecasting"),
+    families=("GROCERY I", "BEVERAGES", "PRODUCE", "CLEANING", "DAIRY"),
+    max_stores=10,
+    context_length=30,
+    horizon=7,
+    epochs=6,
+    batch_size=256,
+    synthetic_if_missing=True,
+)
+```
 
-## Usage Workflow
+## Dataset Preparation
 
-1. **Configure Data Sources**
+```python
+from retail_sales_forecasting_with_lstms.API import prepare_dataset
 
-   ```python
-   from retail_sales_forecasting_with_lstms.API import DataSourceConfig
+dataset = prepare_dataset(cfg)
+print(dataset.train_inputs.shape)  # (num_windows, context, feature_dim)
+print(dataset.val_targets.shape)   # (num_windows, horizon)
+```
+- Automatically merges holidays, transactions, promotions, cyclical encodings,
+  and entity embeddings.
+- If CSV files are absent the helper generates a reproducible synthetic dataset
+  so notebooks/tests can run anywhere.
 
-   data_cfg = DataSourceConfig(
-       root_dir="/data/store_sales",
-       sales_file="train.parquet",
-       calendar_file="holidays_events.csv",
-       oil_file="oil.csv",
-       transactions_file="transactions.csv",
-       id_columns=("store_nbr", "family"),
-       date_column="date",
-       target_column="sales",
-       frequency="D",
-       horizon_days=28,
-   )
-   ```
+## Training Workflow
 
-2. **Specify Temporal Features and Model Hyperparameters**
+### 1. Train models inside the notebook
+```python
+from retail_sales_forecasting_with_lstms.API import train_models
 
-   ```python
-   feature_cfg = TemporalFeatureConfig(
-       include_holidays=True,
-       include_promotions=True,
-       include_external_regressors=True,
-       seasonalities=(7, 28, 365),
-   )
+results, dataset = train_models(cfg, model_names=("lstm", "gru"))
+for result in results:
+    print(result.name, result.normalized_metrics)
+```
+- Returns both the list of `TrainingResult` objects and the dataset used for
+  evaluation so that downstream cells can reuse it.
 
-   model_cfg = ModelConfig(
-       cell_type="lstm",
-       hidden_size=128,
-       num_layers=2,
-       dropout_rate=0.1,
-       learning_rate=3e-4,
-       weight_decay=1e-4,
-       gradient_clip=1.0,
-       epochs=5,
-       batch_size=64,
-   )
-   ```
+### 2. Persist a full run for documentation/video
+```python
+from pathlib import Path
+from retail_sales_forecasting_with_lstms.API import run_training_pipeline
 
-3. **Prepare Features, Train, and Evaluate**
+run_dir, results, dataset = run_training_pipeline(
+    cfg,
+    output_dir=Path("artifacts"),
+    run_name="run_20251215_212247",
+)
+```
+Outputs stored inside `run_dir`:
+- `config.json` – serialized `TrainingConfig` used for the run.
+- `{model}_metrics.json` – history, metrics (normalized + sales space), and
+  breakdowns grouped by store/family/holiday/promotion.
+- `{model}_params.pkl` – pickled JAX parameter PyTree for inference.
+- `summary.json` – quick reference for the video.
 
-   ```python
-   pipeline = build_feature_pipeline(data_cfg, feature_cfg)
-   train_ds, val_ds, metadata = prepare_dataloader(
-       data_cfg,
-       pipeline,
-       feature_cfg=feature_cfg,
-   )
-   training_state = train_model(train_ds, val_ds, model_cfg, metadata)
-   artifacts = evaluate_model(training_state, val_ds, metadata, metrics=("mae", "rmse", "mape"))
-   ```
+## Inference Helpers
 
-4. **Consume Outputs**
+```python
+from retail_sales_forecasting_with_lstms.API import run_inference
 
-   - `artifacts.metrics` contains metric dictionaries keyed by scope (currently `overall`).
-   - `artifacts.predictions` is a tidy DataFrame with `(store_nbr, family, horizon_step)` rows.
-   - `artifacts.model_params` exposes the trained Flax parameter PyTree for serialization.
+inference = run_inference(run_dir, model_name="lstm", dataset=dataset)
+print(inference["mse"], inference["mae"])
+```
+- Loads the saved config + parameters and runs validation predictions on CPU or
+  GPU (`device="cpu"|"gpu"`).
+- Returns numpy arrays so notebooks can slice and visualize forecast horizons.
+
+## Plotting Helpers
+
+```python
+from retail_sales_forecasting_with_lstms.API import (
+    load_run_metrics,
+    plot_training_curves,
+    plot_final_metrics_comparison,
+    plot_sales_metrics,
+    plot_breakdowns,
+    plot_predictions_sample,
+)
+
+metrics = load_run_metrics(run_dir)
+plot_training_curves(metrics, run_dir)
+plot_final_metrics_comparison(metrics, run_dir)
+plot_sales_metrics(metrics, run_dir)
+plot_breakdowns(metrics, run_dir, model_name="lstm")
+plot_predictions_sample(
+    inference["predictions"],
+    inference["targets"],
+    dataset,
+    run_dir / "lstm_test_predictions.png",
+)
+```
+The generated PNGs are the same ones embedded in the `artifacts/` folder and in
+the tutorial markdown.
 
 ## Error Handling Strategy
 
-- `ensure_data_root()` warns when Kaggle files are missing and the utilities
-  transparently switch to a reproducible synthetic dataset for notebook demos.
-- Sliding-window creation raises informative `ValueError`s when the dataset is
-  too short to satisfy the requested context window or horizon.
-- Training leverages gradient clipping to avoid exploding gradients and logs the
-  training/validation losses every epoch for traceability.
+- `prepare_dataset` raises a clear `ValueError` if the requested windows/horizon
+  cannot be satisfied (e.g., filtering too aggressively).
+- `run_training_pipeline` logs any horizon mismatch and updates the config to
+  the dataset-derived horizon to keep the run stable.
+- All file loaders fail fast with descriptive messages so students immediately
+  know whether they forgot to download the Kaggle CSVs.
 
-## Dependencies
+## Testing
 
-- `jax`, `flax`, and `optax` for differentiable modeling and optimization.
-- `pandas`, `numpy`, and `scikit-learn` for preprocessing and scaling.
-- Optional Kaggle CSV/Parquet assets; notebooks run even without them via the
-  synthetic generator.
-
-## Testing Plan
-
-- Unit tests validate feature pipeline outputs, sequence generation shapes, and
-  metric computations using small synthetic fixtures.
-- Smoke tests execute the end-to-end training loop to guarantee JIT compilation
-  and inference on CPU-only environments.
-
-## Open Items
-
-- Incorporate real holiday calendars (e.g., Ecuador-specific events) once raw
-  files are available.
-- Extend the evaluation module with hierarchical roll-ups (store vs family) and
-  add forecast visualizations for each major event period.
+`tests/test_retail_sales_forecasting_utils.py` validates:
+- Synthetic fallback data generation and sliding-window creation.
+- A CPU-only training pass with `epochs=2` that saves a run directory.
+- Metric JSON parsing via `load_run_metrics`.
+These tests run quickly inside CI (no GPU required) and guard against refactors
+breaking the notebooks or the scripted tutorial.

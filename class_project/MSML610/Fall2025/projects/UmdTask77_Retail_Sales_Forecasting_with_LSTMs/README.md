@@ -1,49 +1,104 @@
-# Retail Sales Forecasting with LSTMs — Project Workspace
+# Retail Sales Forecasting with LSTMs (JAX)
 
-This directory tracks the MSML610 Fall 2025 class project focused on multi-store,
-multi-product retail sales forecasting using recurrent neural networks in JAX.
-The goal for the midterm PR is to demonstrate working scaffolding **with runnable
-code** that trains a JAX LSTM on a synthetic replica of the Kaggle dataset while
-adhering to the required project structure.
+This directory contains my MSML610 Fall 2025 class project. The deliverable is a
+complete JAX/Flax forecasting toolkit that ingests the Kaggle **Store Sales –
+Time Series Forecasting** dataset, engineers retail-aware features, trains LSTM
+and GRU baselines, evaluates per-store/per-family accuracy, and ships charts,
+metrics, and documentation ready for a PR/video walkthrough.
 
 ## Directory Layout
 
-- `retail_sales_forecasting_with_lstms.API.*`: interface-first documentation,
-  notebook, and helper module describing the reusable forecasting API surface.
-- `retail_sales_forecasting_with_lstms.example.*`: end-to-end tutorial material
-  showing how to pull data, train the JAX LSTM/GRU models, and evaluate results.
-- `retail_sales_forecasting_utils.py`: shared utility functions (data loading,
-  feature engineering, model builders) imported by the notebooks.
-- `docker_simple/`: the DATA605-style container scripts for development. These
-  will be customized with JAX, pandas, and plotting dependencies during
-  implementation.
+- `retail_sales_forecasting_with_lstms.API.*` – interface-first markdown and
+  notebook that document the reusable API surface.
+- `retail_sales_forecasting_with_lstms.example.*` – tutorial markdown/notebook +
+  the runnable script that mirrors the 60-minute walkthrough.
+- `retail_sales_forecasting_utils.py` – all shared logic: dataclasses,
+  preprocessing, model builders, Optax training loop, inference helpers, and
+  plotting utilities.
+- `artifacts/run_20251215_212247/` – saved `config.json`, model metrics, and the
+  plots referenced in the docs/video.
+- `docs/architecture_notes.md` & `docs/instructions.md` – high-level story and
+  the original project description for grading reference.
+- `docker_simple/` – lightweight Docker workflow used for development/testing.
+- `tests/` – regression tests that exercise the synthetic data fallback, model
+  training, and artifact generation on CPU-only CI.
 
-## Running the Project (Simple Docker)
+## Data and Environment
 
+1. Download the Kaggle dataset into `data/store-sales-time-series-forecasting/`
+   (same layout as the competition ZIP). The utilities automatically fall back
+   to the bundled synthetic generator if the CSVs are missing, which keeps the
+   notebooks/test suite runnable anywhere.
+2. Build the Docker image once:
+   ```bash
+   cd class_project/MSML610/Fall2025/Projects/UmdTask77_Retail_Sales_Forecasting_with_LSTMs/docker_simple
+   bash docker_build.sh
+   ```
+   *Why JAX 0.4.13?* Ubuntu 20.04 ships Python 3.8, and the Dockerfile pins the
+   matching `jax[cpu]` wheel from the Google-hosted index. On Apple/ARM hosts
+   the build script automatically targets `linux/amd64` so the wheel resolves
+   cleanly (even though you’re running on ARM hardware).
+3. Launch a shell or JupyterLab via `bash docker_bash.sh` / `bash docker_jupyter.sh`.
+   Pass `-d /Users/.../umd_classes` (or let it default to the repo root) so the
+   script mounts your workspace at `/app/project`; otherwise the notebook file
+   browser will appear empty.
+
+## Quick Start Recipes
+
+### Run the scripted tutorial
 ```bash
-cd /Users/mns/Documents/msml610/umd_classes/class_project/MSML610/Fall2025/Projects/UmdTask77_Retail_Sales_Forecasting_with_LSTMs/docker_simple
-bash docker_build.sh   # builds the Jupyter-ready image with JAX/Flax dependencies
-bash docker_jupyter.sh # launches JupyterLab with the project mounted at /app/project
+cd class_project/MSML610/Fall2025/Projects/UmdTask77_Retail_Sales_Forecasting_with_LSTMs
+python retail_sales_forecasting_with_lstms.example.py
 ```
+This trains both models (synthetic fallback if needed), saves a run directory
+under `artifacts/`, generates all plots (training curves, breakdowns, prediction
+samples), and prints the validation metrics used in the presentation.
 
-The Dockerfile already bundles CPU-enabled JAX, Flax, Optax, pandas/polars,
-scikit-learn, and plotting libraries. If you have an NVIDIA GPU available add
-the appropriate `jaxlib` wheel before rebuilding.
+### Programmatic training from a notebook
+```python
+from pathlib import Path
+from retail_sales_forecasting_with_lstms.API import TrainingConfig, run_training_pipeline, load_run_metrics, plot_training_curves
 
-## Midterm PR Deliverables (In Progress)
+cfg = TrainingConfig(
+    data_dir=Path("data/store-sales-time-series-forecasting"),
+    families=("GROCERY I", "BEVERAGES", "PRODUCE", "CLEANING", "DAIRY"),
+    max_stores=10,
+    context_length=30,
+    horizon=7,
+    epochs=6,
+)
+run_dir, results, dataset = run_training_pipeline(cfg, output_dir=Path("artifacts"))
+metrics = load_run_metrics(run_dir)
+plot_training_curves(metrics, run_dir)
+```
+### Inspect saved metrics/plots
+The shipped run under `artifacts/run_20251215_212247/` already contains:
+- `lstm_metrics.json` / `gru_metrics.json` with history, normalized & sales-space
+  metrics, and breakdowns (store/family/holiday/promotion).
+- `training_curves.png`, `final_metrics_comparison.png`, `sales_metrics.png`,
+  and eight breakdown plots along with `*_test_predictions.png` overlays.
+These assets are copied directly into the final PR/video so reviewers can verify
+results without re-running training.
 
-1. **Planning & Scope** — documented in `retail_sales_forecasting_with_lstms.API.md`
-   and `retail_sales_forecasting_with_lstms.example.md`.
-2. **Executable Notebooks** — run end-to-end using the synthetic dataset, including
-   feature engineering, training, metrics, and visualizations.
-3. **Utility Module** — delivers reusable functions for data ingestion, feature
-   creation, LSTM/GRU modeling, training, and evaluation.
-4. **Docker Scripts** — customized names plus dependency set aligned with the project.
+## What’s Implemented
 
-## Next Milestone Checklist
+- **Data pipeline** – merges transactions, holiday calendars, promotion flags,
+  cyclical encodings, and entity embeddings. Synthetic fallback keeps tests
+  deterministic.
+- **Model zoo** – Flax-based LSTM and GRU forecasters with Adam optimizer,
+  mini-batching, validation tracking, and best-checkpoint selection.
+- **Evaluation** – normalized vs sales-space metrics plus grouped diagnostics by
+  store, product family, holiday, and promotion status.
+- **Artifacts** – automatic run directory creation, parameter serialization,
+  inference helper, and Matplotlib figure factories for all documentation plots.
+- **Documentation** – API/example markdowns, notebooks, and architecture notes
+  that map directly to the video storyline.
 
-- Integrate the Kaggle Store Sales dataset ingestion pipeline with holiday and
-  promotion feature encoding.
-- Add store/family-level aggregation metrics and baseline comparisons.
-- Expand exploratory plots (holiday overlays, per-store drill-downs).
-- Package trained parameters and scalers for reuse outside the notebooks.
+## Next Steps
+
+- Extend experiments to include additional external regressors (oil price,
+  transactions lag features) and more product families once GPU time allows.
+- Package inference-ready checkpoints (pickled JAX params) alongside a Kaggle
+  submission script for leaderboard testing.
+- Add Optuna sweeps for hyper-parameter tuning plus richer SHAP-style analysis
+  in the notebooks.

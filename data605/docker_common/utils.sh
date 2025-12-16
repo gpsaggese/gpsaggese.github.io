@@ -91,3 +91,29 @@ exec_container() {
     echo "CONTAINER_ID=$CONTAINER_ID"
     docker exec -it $CONTAINER_ID bash
 }
+
+
+get_docker_vars_script() {
+    local local_dir=$1
+    SCRIPT_DIR=$(cd -- "$(dirname -- "$local_dir")" &> /dev/null && pwd)
+    DOCKER_NAME="$SCRIPT_DIR/docker_name.sh"
+    if [[ ! -f $DOCKER_NAME ]]; then
+        echo "Can't find $DOCKER_NAME"
+        exit 1
+    fi
+    source $DOCKER_NAME
+}
+
+
+print_docker_vars() {
+    echo "REPO_NAME=$REPO_NAME"
+    echo "IMAGE_NAME=$IMAGE_NAME"
+    echo "FULL_IMAGE_NAME=$FULL_IMAGE_NAME"
+}
+
+
+run() {
+    cmd="$*"
+    echo "> $cmd"
+    eval "$cmd"
+}

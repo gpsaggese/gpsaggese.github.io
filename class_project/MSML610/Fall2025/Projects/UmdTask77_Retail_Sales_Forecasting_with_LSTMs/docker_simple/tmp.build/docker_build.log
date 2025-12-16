@@ -1,0 +1,72 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.71kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/ubuntu:20.04
+#2 DONE 0.2s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [ 1/16] FROM docker.io/library/ubuntu:20.04@sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214
+#4 resolve docker.io/library/ubuntu:20.04@sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214 done
+#4 DONE 0.0s
+
+#5 [ 2/16] RUN apt-get -y update
+#5 CACHED
+
+#6 [ 3/16] RUN apt-get -y upgrade
+#6 CACHED
+
+#7 [ 4/16] RUN apt install -y --no-install-recommends     sudo     curl     systemctl     gnupg     git     vim     build-essential
+#7 CACHED
+
+#8 [ 5/16] RUN apt install -y --no-install-recommends     python3     python3-pip     python3-dev     python3-venv
+#8 CACHED
+
+#9 [ 6/16] RUN python3 -m pip install --upgrade pip
+#9 CACHED
+
+#10 [internal] load build context
+#10 transferring context: 2.53kB done
+#10 DONE 0.0s
+
+#11 [ 7/16] RUN pip3 install --no-cache-dir     --find-links https://storage.googleapis.com/jax-releases/jax_releases.html     jaxlib==0.4.13     jax==0.4.13     ipython     tornado==6.1     jupyter-client==7.3.2     jupyter-contrib-core     jupyter-contrib-nbextensions     numpy     pandas     polars     scikit-learn     matplotlib     seaborn     flax     optax     psycopg2-binary     yapf
+#11 0.376 Looking in links: https://storage.googleapis.com/jax-releases/jax_releases.html
+#11 0.590 ERROR: Could not find a version that satisfies the requirement jaxlib==0.4.13 (from versions: none)
+#11 0.716 ERROR: No matching distribution found for jaxlib==0.4.13
+#11 ERROR: process "/bin/sh -c pip3 install --no-cache-dir     --find-links https://storage.googleapis.com/jax-releases/jax_releases.html     jaxlib==0.4.13     jax==0.4.13     ipython     tornado==6.1     jupyter-client==7.3.2     jupyter-contrib-core     jupyter-contrib-nbextensions     numpy     pandas     polars     scikit-learn     matplotlib     seaborn     flax     optax     psycopg2-binary     yapf" did not complete successfully: exit code: 1
+------
+ > [ 7/16] RUN pip3 install --no-cache-dir     --find-links https://storage.googleapis.com/jax-releases/jax_releases.html     jaxlib==0.4.13     jax==0.4.13     ipython     tornado==6.1     jupyter-client==7.3.2     jupyter-contrib-core     jupyter-contrib-nbextensions     numpy     pandas     polars     scikit-learn     matplotlib     seaborn     flax     optax     psycopg2-binary     yapf:
+0.376 Looking in links: https://storage.googleapis.com/jax-releases/jax_releases.html
+0.590 ERROR: Could not find a version that satisfies the requirement jaxlib==0.4.13 (from versions: none)
+0.716 ERROR: No matching distribution found for jaxlib==0.4.13
+------
+Dockerfile:32
+--------------------
+  31 |     # https://discourse.jupyter.org/t/jupyter-notebook-zmq-message-arrived-on-closed-channel-error/17869/10
+  32 | >>> RUN pip3 install --no-cache-dir \
+  33 | >>>     --find-links https://storage.googleapis.com/jax-releases/jax_releases.html \
+  34 | >>>     jaxlib==0.4.13 \
+  35 | >>>     jax==0.4.13 \
+  36 | >>>     ipython \
+  37 | >>>     tornado==6.1 \
+  38 | >>>     jupyter-client==7.3.2 \
+  39 | >>>     jupyter-contrib-core \
+  40 | >>>     jupyter-contrib-nbextensions \
+  41 | >>>     numpy \
+  42 | >>>     pandas \
+  43 | >>>     polars \
+  44 | >>>     scikit-learn \
+  45 | >>>     matplotlib \
+  46 | >>>     seaborn \
+  47 | >>>     flax \
+  48 | >>>     optax \
+  49 | >>>     psycopg2-binary \
+  50 | >>>     yapf
+  51 |     
+--------------------
+ERROR: failed to solve: process "/bin/sh -c pip3 install --no-cache-dir     --find-links https://storage.googleapis.com/jax-releases/jax_releases.html     jaxlib==0.4.13     jax==0.4.13     ipython     tornado==6.1     jupyter-client==7.3.2     jupyter-contrib-core     jupyter-contrib-nbextensions     numpy     pandas     polars     scikit-learn     matplotlib     seaborn     flax     optax     psycopg2-binary     yapf" did not complete successfully: exit code: 1
