@@ -38,3 +38,19 @@ def evaluate(model, X_test, y_test):
     preds = model.predict(X_test)
     report = classification_report(y_test, preds, output_dict=True)
     return report
+class SentimentModel:
+    def __init__(self, max_features=5000):
+        self.vectorizer = TfidfVectorizer(max_features=max_features)
+        self.model = LogisticRegression(max_iter=500)
+
+    def fit(self, texts, labels):
+        X = self.vectorizer.fit_transform(texts)
+        self.model.fit(X, labels)
+
+    def predict(self, texts):
+        X = self.vectorizer.transform(texts)
+        return self.model.predict(X)
+
+    def evaluate(self, texts, labels):
+        preds = self.predict(texts)
+        return classification_report(labels, preds)

@@ -1,28 +1,79 @@
+# 📗 Sentiment Analysis on Amazon Product Reviews  
+### Example Walkthrough (End-to-End Tutorial)
 
----
+This document accompanies `sentiment.example.ipynb` and demonstrates a **complete, runnable sentiment analysis application** built using the internal Sentiment Analysis API defined in this project.
 
-## 📘 5. sentiment.example.md
-```markdown
-# 📗 Sentiment Analysis Tutorial – Example Walkthrough
-
-This markdown complements the `sentiment.example.ipynb` notebook and provides context for each step.
+The goal of this example is to show how the API can be used in practice to load data, preprocess text, train a model, evaluate performance, and make predictions on new product reviews.
 
 ---
 
 ## 🎯 Objective
-Train a sentiment classifier on product reviews using TF-IDF and Logistic Regression.
+
+Build and evaluate a sentiment classifier for product reviews that categorizes text into:
+
+- **Positive**
+- **Negative**
+- **Neutral**
+
+The example focuses on clarity and reproducibility rather than maximum model complexity.
 
 ---
 
-## 🧩 Workflow Summary
-1. **Data Ingestion:** load review data  
-2. **Preprocessing:** clean and normalize text  
-3. **Vectorization:** convert text to numeric TF-IDF features  
-4. **Model Training:** fit logistic regression  
-5. **Evaluation:** measure accuracy and F1-score  
-6. **Prediction:** test on unseen reviews
+## 📦 Dataset Overview
+
+We use a subset of the **Amazon Product Reviews** dataset from Kaggle.
+
+Each record typically contains:
+- Review text
+- Rating score (1–5 stars)
+- Product metadata
+
+For this tutorial, we focus only on:
+- **Review text**
+- **Derived sentiment label**
 
 ---
 
-## 🪄 Expected Output
-You’ll see a classification report with metrics around ~85-90% accuracy on small samples.
+## 🧭 Sentiment Labeling Strategy
+
+To align with the project objective of **three-class sentiment classification**, we define labels as follows:
+
+| Rating | Sentiment |
+|------|----------|
+| 1–2 | Negative |
+| 3 | Neutral |
+| 4–5 | Positive |
+
+This mapping reflects common sentiment conventions and allows the classifier to handle ambiguous or mixed opinions.
+
+> **Note**:  
+> While the API fully supports multi-class sentiment classification, the example notebook may also demonstrate a **binary setup (positive vs negative)** for simplicity. The same pipeline extends naturally to three classes.
+
+---
+
+## 🧩 Workflow Overview
+
+The end-to-end workflow demonstrated in this example is:
+
+```mermaid
+flowchart TD
+    A[Raw Reviews] --> B[Text Cleaning]
+    B --> C[TF-IDF Vectorization]
+    C --> D[Logistic Regression Training]
+    D --> E[Evaluation]
+    E --> F[Prediction on New Reviews]
+
+
+## 🚀 Deployment with Haiku (Real-Time Inference)
+
+To enable real-time sentiment prediction, we wrap the trained
+SentimentModel using Haiku.
+
+The model is loaded once and reused for incoming text inputs.
+Each request performs:
+1. text cleaning
+2. TF-IDF transformation
+3. sentiment prediction
+
+This design enables low-latency inference suitable for interactive
+applications.
