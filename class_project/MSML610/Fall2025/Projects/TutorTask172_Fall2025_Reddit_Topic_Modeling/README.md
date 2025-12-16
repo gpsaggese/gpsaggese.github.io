@@ -11,7 +11,7 @@ This project performs topic modeling on Reddit discussions from the **r/worldnew
 
 ### Dataset
 Since the Pushshift API was unavailable, a **Kaggle dataset** ("1 Million Reddit Comments from 40 Subreddits") was used instead.
-A random sample of **5K–10K comments** from r/worldnews was selected for efficient runtime.
+A random sample of **5000–10000 comments** from r/worldnews was selected for efficient runtime.
 
 ## Project Structure
 - `reddit_utils.py`: helper functions
