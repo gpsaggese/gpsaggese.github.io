@@ -94,11 +94,4 @@ results without re-running training.
 - **Documentation** – API/example markdowns, notebooks, and architecture notes
   that map directly to the video storyline.
 
-## Next Steps
 
-- Extend experiments to include additional external regressors (oil price,
-  transactions lag features) and more product families once GPU time allows.
-- Package inference-ready checkpoints (pickled JAX params) alongside a Kaggle
-  submission script for leaderboard testing.
-- Add Optuna sweeps for hyper-parameter tuning plus richer SHAP-style analysis
-  in the notebooks.
