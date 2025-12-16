@@ -85,7 +85,9 @@ Notes:
 - If you see Available GPUs: [] or CUDA warnings, that just means the environment is CPU-only. AutoKeras still works on CPU.
 - In a demo notebook, max_trials and epochs are intentionally kept small to minimize runtime. Accuracy is not the goal in a tiny demo—showing the workflow is.
 
-4) Common AutoKeras Workflow Summary
+---
+
+## 4. Common AutoKeras Workflow Summary
 Typical workflow for AutoKeras image classification:
 1. Prepare data (NumPy arrays are the simplest for AutoKeras demos)
 2. Create ak.ImageClassifier(max_trials=...)
