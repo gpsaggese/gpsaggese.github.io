@@ -1,8 +1,8 @@
-# Optuna_utils.py API Reference
+# utils.py & Optuna_segmentation.example.ipynb Reference
 
 ## Quick Overview
 
-`Optuna_utils.py` provides 11 reusable functions across data processing, RFM feature engineering, Optuna-based hyperparameter optimization, evaluation, and visualization. All functions follow a consistent pattern: clear inputs, meaningful outputs, documented rationale.
+`utils.py` & `Optuna_Segmentation.example.ipynb` provides reusable functions across data processing, RFM feature engineering, Optuna-based hyperparameter optimization, evaluation, and visualization. All functions follow a consistent pattern: clear inputs, meaningful outputs, documented rationale.
 
 **Function Categories:**
 - **Data** (2): load_data, clean_data
