@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `SHAP_Credit.API.ipynb` notebook is a foundational companion to the credit scoring project. This notebook focuses on demonstrating the core APIs—**XGBoost** for gradient boosting and **SHAP** for explainability—before applying them to the full pipeline. It serves as a technical deep-dive into the tools and the `credit_scoring_shap` package structure.
+The `SHAP_Credit.API.ipynb` notebook is a foundational companion to the credit scoring project. This notebook focuses on demonstrating the core APIs-**XGBoost** for gradient boosting and **SHAP** for explainability-before applying them to the full pipeline. It serves as a technical deep-dive into the tools and the `credit_scoring_shap` package structure.
 
 Designed with beginners and code-explorers in mind, this notebook breaks down how XGBoost and SHAP work on simple toy data first, then introduces the credit dataset and shows how the project's modular API wraps these tools for production use. It's the perfect starting point for understanding the building blocks before seeing the complete system in `SHAP_Credit.example.ipynb`.
 
@@ -46,9 +46,9 @@ The notebook is organized into six conceptual sections, building from motivation
 
 ### Section 1: Introduction to XGBoost
 
-- **Purpose**: Set context before diving into code—understand how gradient boosting works and when to use XGBoost.
+- **Purpose**: Set context before diving into code-understand how gradient boosting works and when to use XGBoost.
 - **Process**: Discusses what makes XGBoost special (speed, handling messy data, built-in regularization) and explains key hyperparameters (n_estimators, learning_rate, max_depth, subsample, colsample_bytree).
-- **Output**: Conceptual framing—XGBoost provides accuracy (strong tabular performance) through ensemble learning where each tree learns from previous errors.
+- **Output**: Conceptual framing-XGBoost provides accuracy (strong tabular performance) through ensemble learning where each tree learns from previous errors.
 - **Insights**: XGBoost excels on structured/tabular data and provides both accuracy and interpretability. Understanding the boosting process (building trees iteratively to correct errors) is fundamental to using the tool effectively.
 
 ### Section 2: XGBoost on Toy Data (Cells 1-4)
@@ -58,14 +58,14 @@ The notebook is organized into six conceptual sections, building from motivation
 - **Purpose**: Load all necessary libraries and configure paths for the project.
 - **Process**: Imports pandas, numpy, scikit-learn, XGBoost, SHAP, matplotlib, and project-specific modules from `credit_scoring_shap`. Sets up plot defaults and creates a `TrainingConfig` object.
 - **Output**: Config object displayed showing `DataConfig`, `ModelConfig`, and paths.
-- **Insights**: The `TrainingConfig` centralizes all hyperparameters and paths—changing learning rate or max_depth happens in one place, not scattered across code. This is production best practice.
+- **Insights**: The `TrainingConfig` centralizes all hyperparameters and paths-changing learning rate or max_depth happens in one place, not scattered across code. This is production best practice.
 
 #### Create Synthetic Dataset
 
 - **Purpose**: Generate a simple 10-feature, 500-sample binary classification dataset to demonstrate XGBoost's basic API.
 - **Process**: Uses `make_classification` with controlled parameters (5 informative features, 2 redundant, 2 clusters per class) and splits 80-20 into train/test with stratification.
 - **Output**: Training shape `(400, 10)`, test shape `(100, 10)`.
-- **Insights**: Toy data is pedagogically powerful—it runs in seconds, patterns are interpretable, and you can validate that APIs work correctly before tackling messy real data. The 10 features are just named `x0` through `x9` so there's no domain confusion.
+- **Insights**: Toy data is pedagogically powerful-it runs in seconds, patterns are interpretable, and you can validate that APIs work correctly before tackling messy real data. The 10 features are just named `x0` through `x9` so there's no domain confusion.
 
 #### Train Native XGBoost Classifier
 
@@ -79,7 +79,7 @@ The notebook is organized into six conceptual sections, building from motivation
 - **Purpose**: Show XGBoost's built-in feature importance scores as a baseline before introducing SHAP.
 - **Process**: Extracts `model.feature_importances_`, sorts descending, and prints the top 5 features.
 - **Output**: Something like `x0: 0.267, x5: 0.153, x1: 0.138, ...`
-- **Insights**: Feature importances tell you *which* features matter but not *how*—does high x0 increase or decrease predictions? Are effects consistent across samples? This limitation is why we need SHAP.
+- **Insights**: Feature importances tell you *which* features matter but not *how*-does high x0 increase or decrease predictions? Are effects consistent across samples? This limitation is why we need SHAP.
 
 ### Section 3: Native SHAP TreeExplainer on the Toy Model
 
@@ -88,7 +88,7 @@ The notebook is organized into six conceptual sections, building from motivation
 - **Purpose**: Introduce SHAP by creating a summary plot that shows both importance and directionality.
 - **Process**: Creates a `shap.TreeExplainer` for the toy XGBoost model, computes SHAP values on a 200-sample background dataset, and generates a beeswarm summary plot. Handles the binary classification quirk where `shap_values` returns a list (picks positive class).
 - **Output**: A SHAP summary plot saved to `reports/api_toy_shap_summary.png` and displayed inline. Shows features on y-axis (ranked by importance), SHAP values on x-axis (negative pushes toward class 0, positive toward class 1), with dots colored by feature value (blue=low, red=high).
-- **Insights**: The summary plot is SHAP's signature visualization. Each dot is a sample—wide spread means variable impact. Color reveals directionality: if red dots (high feature value) cluster on the right (positive SHAP), then high values increase predictions. This single plot combines feature importance, effect direction, and distribution—far richer than XGBoost's scalar importances.
+- **Insights**: The summary plot is SHAP's signature visualization. Each dot is a sample-wide spread means variable impact. Color reveals directionality: if red dots (high feature value) cluster on the right (positive SHAP), then high values increase predictions. This single plot combines feature importance, effect direction, and distribution-far richer than XGBoost's scalar importances.
 
 ### Section 4: Project Modeling API (Cells 8-11)
 
@@ -158,7 +158,7 @@ The project is organized as a Python package with clear separation of concerns:
 - **Purpose**: Document the "what-if" analysis capabilities.
 - **Process**: Introduces the `sensitivity.py` module and its `run_sensitivity_for_instance` function which varies top features and shows how predicted probability responds.
 - **Output**: API documentation for sensitivity analysis.
-- **Insights**: Sensitivity analysis is powerful but niche—most users only need global SHAP summaries. For edge cases (explaining specific decisions), sensitivity shows "what would need to change" for a different outcome. The API makes this accessible without deep SHAP knowledge.
+- **Insights**: Sensitivity analysis is powerful but niche-most users only need global SHAP summaries. For edge cases (explaining specific decisions), sensitivity shows "what would need to change" for a different outcome. The API makes this accessible without deep SHAP knowledge.
 
 ### Section 6: Typical Usage Pattern
 
@@ -186,7 +186,7 @@ This notebook is valuable for several reasons:
 - **Bottom-Up Learning**: Starts with toy examples where everything is transparent, then graduates to real complexity. This builds solid foundations.
 - **Native vs. Wrapped APIs**: Shows both XGBoost's raw API and the project's wrappers, so you understand what the wrappers provide (convenience) and hide (boilerplate).
 - **Code Architecture**: Explains the modular structure (data, modeling, evaluation, explanation as separate modules), teaching software engineering principles alongside ML.
-- **Documentation Practices**: Emphasizes docstrings, configuration objects, and clear function signatures—production code skills often missing from tutorials.
+- **Documentation Practices**: Emphasizes docstrings, configuration objects, and clear function signatures-production code skills often missing from tutorials.
 - **Preparation for Main Pipeline**: After this notebook, the main `SHAP_Credit.example.ipynb` makes sense because you already understand the building blocks.
 
 ## How to Use
@@ -226,12 +226,12 @@ To run this notebook:
 ## Connection to Main Notebook
 
 Think of the two notebooks as:
-- **This notebook (API)**: "Here are the tools in your toolkit—XGBoost, SHAP, and project modules"
+- **This notebook (API)**: "Here are the tools in your toolkit-XGBoost, SHAP, and project modules"
 - **Main notebook (Example)**: "Here's how to use those tools to build a complete credit scoring system"
 
 You can learn the tools first (this notebook) then see the application (main notebook), or see the application first then come back to understand the tools. Both paths work.
 
-**API as Foundation**: Everything in `SHAP_Credit.example.ipynb` rests on this API—`load_and_preprocess` provides clean data, `build_model` and `train_model` provide trained XGBoost, `evaluate_model` provides metrics, `build_shap_explainer` provides explanations. If the API is broken, the pipeline fails. That's why we validate it separately on simpler data.
+**API as Foundation**: Everything in `SHAP_Credit.example.ipynb` rests on this API-`load_and_preprocess` provides clean data, `build_model` and `train_model` provide trained XGBoost, `evaluate_model` provides metrics, `build_shap_explainer` provides explanations. If the API is broken, the pipeline fails. That's why we validate it separately on simpler data.
 
 For the complete credit scoring story with business context and real-world challenges, proceed to `SHAP_Credit.example.ipynb`.
 
