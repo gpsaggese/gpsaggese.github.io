@@ -6,7 +6,8 @@ __pycache__/
 .venv/
 .mypy_cache/
 .pyright/
+.pytest_cache/
+.ipynb_checkpoints/
 **/data/raw/
 **/data/processed/
 **/artifacts/
-

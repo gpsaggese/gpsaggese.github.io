@@ -8,7 +8,8 @@ data:
   sample_frac: 0.25          # for fast Phase 1 runs; set to 1.0 later
   random_state: 42
 splits:
-  val_days: 3               # last 10 days for validation (by TransactionDT)
+  val_days: 10              # validation window (TransactionDT units; ~days)
+  test_days: 10
 graph:
   account_key: "card1"       # proxy for “user/account”
   save_path: "data/artifacts/hetero_graph.pt"
@@ -16,4 +17,3 @@ tabular:
   target: "isFraud"
   features_out: "data/processed/features.parquet"
   report_dir: "data/artifacts"
-

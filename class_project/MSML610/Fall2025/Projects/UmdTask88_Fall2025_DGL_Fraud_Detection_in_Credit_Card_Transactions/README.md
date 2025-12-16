@@ -1,96 +1,67 @@
-# Fraud Detection in Credit Card Transactions 
+# Fraud Detection in Credit Card Transactions (IEEE-CIS)
 
-## What Has Been Done So Far
+Graph-aware fraud detection for the IEEE-CIS dataset. The project builds a leak-free tabular feature store, constructs a transaction↔account heterograph, and trains both tabular baselines and a GraphSAGE GNN. Everything is runnable via `make`/Docker or the slim demo notebooks.
 
-**Phase 1 (Completed)**
+## Architecture at a glance
+- **Data prep**: `src/data/load_data.py` merges transaction/identity CSVs → `data/processed/merged.parquet`.
+- **Features**: `src/features/make_features.py` adds temporal encodings + cumulative account aggregates (leak-free) → `data/processed/features.parquet`.
+- **Graph**: `src/graph/construct_hetero_graph.py` builds a bipartite `transaction ↔ account` heterograph (DGL/PyG compatible) → `data/artifacts/hetero_graph.pt`.
+- **Models**
+  - Tabular: class-weighted Logistic Regression + LightGBM (time/group-aware splits, threshold tuned on validation).
+  - GNN: GraphSAGE over the heterograph using engineered features on transaction nodes and learnable account embeddings; positive class weight scaled for recall/PR-AUC.
+- **Outputs**: metrics JSONs + prediction/error tables under `data/artifacts/` for reporting.
 
-1. **Environment Setup**
+## Quickstart (local)
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
 
-   * Created project folder with modular structure (`configs/`, `src/`, `data/`, `tests/`, `Makefile`).
-   * Installed and configured dependencies including `pandas`, `torch`, and `torch-geometric`.
-   * Resolved compatibility issues between `numpy`, `torch`, and PyG on macOS.
-     
+# end-to-end pipeline
+make data features graph train_tabular train_tabular_lgbm train_gnn
 
-2. **Dataset Used**
+# tests
+pytest -q
+```
 
-This project uses the IEEE-CIS Fraud Detection dataset from Kaggle
-.
-It combines transactional and identity-level information to simulate real-world credit card fraud detection scenarios.
+## Docker
+```bash
+./docker_build.sh      # build image
+./docker_bash.sh       # shell with repo mounted
+./docker_jupyter.sh    # Jupyter on http://localhost:8888 (no token)
+```
 
-Key Files Used
+## Notebooks / API surface
+- `DGL_Fraud_Detection_in_Credit_Card_Transactions.API.ipynb`: minimal API demo using only helpers in `utils_data_io.py` / `utils_post_processing.py`. Shows build → baselines → GNN → metrics/plots.
+- `DGL_Fraud_Detection_in_Credit_Card_Transactions.example.ipynb`: narrated walkthrough with light defaults for quick runs.
+- `DGL_Fraud_Detection_in_Credit_Card_Transactions.API.md` / `...example.md`: text companions with the same flow.
 
-train_transaction.csv: contains transaction details such as TransactionID, TransactionDT, TransactionAmt, card1–card6, addr1–addr2, and the fraud label isFraud.
+## Key scripts & helpers
+- `utils_data_io.py`: `load_config`, `build_dataset`, `build_features`, `build_graph`, `train_tabular_baseline`, `train_lgbm_baseline`, `train_gnn_model`.
+- `utils_post_processing.py`: `compare_models_table`, `precision_recall_at_k`, `load_gnn_error_table`, `load_*_metrics`.
+- `src/train/train_gnn.py`: GraphSAGE training loop (pos_weight scaling, threshold tuning, metrics/predictions saved to artifacts).
+- `Makefile`: `make data`, `make features`, `make graph`, `make train_tabular`, `make train_tabular_lgbm`, `make train_gnn`.
 
-train_identity.csv: provides identity features linked to transactions by TransactionID, such as DeviceInfo, DeviceType, and email domains.
+## Artifacts
+- Tabular metrics: `data/artifacts/baseline_metrics.json`, `lgbm_metrics.json`
+- GNN: `gnn_metrics.json`, `gnn_model.pt`, `gnn_val_test_preds.parquet`
+- Graph: `data/artifacts/hetero_graph.pt`
+- Features: `data/processed/features.parquet`
 
-Both files are joined on TransactionID to form a unified dataset stored as data/processed/merged.parquet.
-3. **Data Integration**
+## Repository layout
+```
+├── DGL_Fraud_Detection_in_Credit_Card_Transactions.API.ipynb / .md
+├── DGL_Fraud_Detection_in_Credit_Card_Transactions.example.ipynb / .md
+├── utils_data_io.py, utils_post_processing.py
+├── src/ (data, features, graph, models, train)
+├── configs/default.yaml
+├── data/ (raw, processed, artifacts)
+├── tests/
+├── Dockerfile, docker_*.sh
+└── MODEL_CARD.md
+```
 
-   * Joined `train_transaction.csv` and `train_identity.csv` into a unified dataset (`merged.parquet`).
-   * Implemented `src/data/load_data.py` to clean and optimize data types for memory efficiency.
-
-4. **Feature Engineering**
-
-   * Built a feature pipeline (`src/features/`) that generates:
-
-     * Transaction-level features (log-transformed amount, hour-of-day, day-of-week).
-     * Account-level aggregated statistics (mean, std, count of transactions).
-   * Saved engineered features to `data/processed/features.parquet`.
-
-5. **Graph Construction**
-
-   * Implemented a bipartite heterogeneous graph (`src/graph/construct_hetero_graph.py`) linking **transaction ↔ account** nodes.
-   * Saved the graph as a PyTorch Geometric `HeteroData` object (`data/artifacts/hetero_graph.pt`).
-
-6. **Baseline Model**
-
-   * Implemented `src/models/tabular_baselines.py` using Logistic Regression (balanced).
-   * Trained and evaluated with proper data split, producing precision/recall/F1/PR-AUC.
-   * Stored results in `data/artifacts/baseline_metrics.json`.
-
-7. **Automation and Testing**
-
-   * Created a reproducible `Makefile` for the full pipeline:
-
-     ```
-     make data → make features → make graph → make train_tabular
-     ```
-   * Added unit tests (`tests/`) to verify graph construction and data split integrity.
-   * Confirmed the full pipeline runs successfully end-to-end.
-
-8. **Version Control**
-
-   * Cleaned nested `.git` repo and committed all code under the main repository branch:
-     `UmdTask88_Fall2025_DGL_Fraud_Detection_in_Credit_Card_Transactions`.
-
----
-
-## What’s Next (Planned Work)
-
-**Phase 2 and Beyond**
-
-1. **Leakage-Free Features**
-
-   * Recompute account-level aggregates using train-only data to avoid data leakage.
-
-2. **Graph Neural Network Modeling**
-
-   * Implement and train a GNN (GraphSAGE or GAT) to classify transaction nodes as fraudulent or not.
-   * Compare performance against the logistic regression baseline.
-
-3. **Temporal and Structural Enhancements**
-
-   * Incorporate temporal encoding or edge features to capture evolving transaction patterns.
-   * Experiment with edge classification as an alternative fraud detection approach.
-
-4. **Performance Benchmarking and Error Analysis**
-
-   * Perform detailed precision–recall and confusion matrix analysis.
-   * Investigate misclassified transactions to understand fraud behavior.
-
-5. **MLOps Integration**
-
-   * Containerize the project using Docker.
-   * Integrate with ClearML or W&B for experiment tracking and reproducibility.
-
-
+## Notes for demo
+- Use the notebooks’ run-settings cell to keep runs light (`SAMPLE_FRAC`, `MAX_ROWS`, `EPOCHS`).
+- Precision/Recall/PR-AUC are the primary metrics (fraud is imbalanced). Use the provided charts + Precision@k.
+- If LightGBM is missing (macOS), install `libomp` or skip; the code handles that gracefully.
