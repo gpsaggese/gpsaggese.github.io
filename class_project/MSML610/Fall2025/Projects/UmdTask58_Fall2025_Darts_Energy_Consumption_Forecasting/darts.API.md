@@ -1,3 +1,7 @@
+---
+
+## Table of Contents
+
 <!-- toc -->
 
 - [Darts API Tutorial](#darts-api-tutorial)
