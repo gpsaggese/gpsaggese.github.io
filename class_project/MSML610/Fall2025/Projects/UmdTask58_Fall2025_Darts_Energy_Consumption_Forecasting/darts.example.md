@@ -1,3 +1,6 @@
+---
+
+## Table of Contents
 <!-- toc -->
 
 - [Energy Consumption Forecasting](#energy-consumption-forecasting)
