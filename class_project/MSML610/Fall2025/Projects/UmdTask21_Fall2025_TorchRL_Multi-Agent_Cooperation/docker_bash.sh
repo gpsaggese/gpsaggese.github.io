@@ -8,12 +8,12 @@ PORT="${PORT:-8888}"
 echo "Starting Jupyter Lab container (image: ${IMAGE_TAG})"
 echo "Open: http://localhost:${PORT}"
 
-platform_args=()
+PLATFORM_FLAG=""
 if [ -n "${DOCKER_PLATFORM}" ]; then
-  platform_args+=(--platform="${DOCKER_PLATFORM}")
+  PLATFORM_FLAG="--platform=${DOCKER_PLATFORM}"
 fi
 
-docker run --rm -it "${platform_args[@]}" \
+docker run --rm -it ${PLATFORM_FLAG} \
   -p "${PORT}:8888" \
   -v "$(pwd)":/workspace \
   -w /workspace \
@@ -21,3 +21,4 @@ docker run --rm -it "${platform_args[@]}" \
   -e HOME=/tmp \
   --shm-size=1g \
   "${IMAGE_TAG}"
+

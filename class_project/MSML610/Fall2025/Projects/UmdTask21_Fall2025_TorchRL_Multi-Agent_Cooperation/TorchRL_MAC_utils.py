@@ -15,7 +15,7 @@ import numpy as np
 from typing import Dict, List, Tuple, Optional, Any
 import json
 from pathlib import Path
-
+import matplotlib.pyplot as plt
 
 # ============================================================================
 # Configuration Setup
@@ -390,19 +390,41 @@ def build_modules(cfg, env) -> Tuple[Dict[str, nn.Module], nn.Module, dict]:
 # ============================================================================
 # Rollout Collection
 # ============================================================================
-
-def collect_rollout(cfg, env, actors: Dict[str, nn.Module], critic: Optional[nn.Module] = None, device: Optional[str] = None) -> dict:
+def collect_rollout(cfg: MacConfig, env, actors: Dict[str, nn.Module], critic: Optional[nn.Module] = None, device: Optional[str] = None) -> dict:
     """
-    Collects rollout from env, storing observations, actions, log probabilities, entropies, rewards, and done flags
+    Collect rollout from environment using current policies.
+    
+    Args:
+        cfg: MacConfig instance.
+        env: TorchRL-wrapped environment.
+        actors: Dict of actor networks per agent.
+        critic: Centralized critic (optional).
+        device: Device to store tensors on.
+        
+    Returns:
+        batch: Dictionary containing:
+            - obs[agent][t]: observations
+            - actions[agent][t]: actions
+            - logp[agent][t]: log probabilities
+            - entropy[agent][t]: entropies
+            - reward[t]: team rewards
+            - done[t]: done flags
+            - state[t]: global states
+            - values[t]: state values (if critic provided)
     """
     if device is None:
         device = cfg.device
     
-    if hasattr(env, 'agents'):
-        agent_names = env.agents
+    agent_names = get_agent_names(env)
+    
+    # Access underlying PettingZoo environment
+    if hasattr(env, '_env'):
+        pz_env = env._env
+    elif hasattr(env, 'env'):
+        pz_env = env.env
     else:
-        agent_names = env.unwrapped.agents
-
+        pz_env = env
+    
     # Initialize storage
     batch = {
         'obs': {agent: [] for agent in agent_names},
@@ -412,127 +434,133 @@ def collect_rollout(cfg, env, actors: Dict[str, nn.Module], critic: Optional[nn.
         'reward': [],
         'done': [],
         'state': [],
-        'values': []
     }
+    if critic is not None:
+        batch['values'] = []
     
-    # 1. Reset
-    # --------
-    # Handling TorchRL/Gym API variations
-    reset_res = env.reset()
-    if isinstance(reset_res, tuple):
-        obs_dict = reset_res[0]
-    else:
-        obs_dict = reset_res
+    # Collect rollouts from multiple environments in parallel (simple loop for academic implementation)
+    for env_idx in range(cfg.num_envs):
+        # Reset environment
+        reset_result = pz_env.reset(seed=cfg.seed + env_idx)
         
-    # Helper to extract obs from dict/tensordict
-    def get_obs_tensor(o_dict, ag_name):
-        if hasattr(o_dict, 'get'): # TensorDict or dict
-            d = o_dict.get(ag_name)
-            if d is None: d = o_dict.get(('agents', ag_name))
+        # Handle TorchRL TensorDict or plain dict
+        if isinstance(reset_result, tuple):
+            obs_dict = reset_result[0] if len(reset_result) > 0 else reset_result
         else:
-            d = o_dict[ag_name]
-            
-        if not isinstance(d, torch.Tensor):
-            d = torch.tensor(d, dtype=torch.float32)
-        return d.flatten().to(device).unsqueeze(0) # [1, dim]
-
-    # 2. Rollout Loop
-    # ---------------
-    for step in range(cfg.rollout_len):
+            obs_dict = reset_result
         
-        # Process Observations
-        obs_tensors = {}
-        for agent in agent_names:
-            obs_tensors[agent] = get_obs_tensor(obs_dict, agent)
-            
-        # Global State
-        state = torch.cat([obs_tensors[a] for a in agent_names], dim=-1)
-        
-        # Get Actions
-        actions_dict = {}
-        logp_dict = {}
-        entropy_dict = {}
-        
-        for agent in agent_names:
-            actor = actors[agent]
-            obs = obs_tensors[agent]
-            
-            with torch.no_grad():
-                if isinstance(actor, DiscreteActor):
-                    dist = actor(obs)
-                    action = dist.sample()
-                    logp = dist.log_prob(action)
-                    entropy = dist.entropy()
-                    actions_dict[agent] = action.item() # For env step
-                else: # Continuous
-                    action_scaled, logp, entropy = actor.get_action(obs)
-                    actions_dict[agent] = action_scaled.cpu().numpy()[0] # For env step
+        # Collect rollout_len steps
+        for step in range(cfg.rollout_len):
+            # Convert observations to tensors
+            obs_tensors = {}
+            for agent in agent_names:
+                # Handle TensorDict from TorchRL
+                if hasattr(obs_dict, 'get'):
+                    obs = obs_dict.get(agent, obs_dict.get(('agents', agent)))
+                else:
+                    obs = obs_dict[agent] if isinstance(obs_dict, dict) else obs_dict
                 
-                logp_dict[agent] = logp
-                entropy_dict[agent] = entropy
+                if not isinstance(obs, torch.Tensor):
+                    obs = torch.FloatTensor(obs).flatten()
+                else:
+                    obs = obs.flatten()
+                obs_tensors[agent] = obs.unsqueeze(0).to(device)
+            
+            # Create global state (concatenate all observations)
+            state = torch.cat([obs_tensors[agent] for agent in agent_names], dim=-1)
+            
+            # Get actions and log probs from actors
+            actions_dict = {}
+            logp_dict = {}
+            entropy_dict = {}
+            
+            for agent in agent_names:
+                actor = actors[agent]
+                obs = obs_tensors[agent]
                 
-        # Get Value
-        with torch.no_grad():
-            value = critic(state)
+                with torch.no_grad():
+                    if isinstance(actor, DiscreteActor):
+                        dist = actor(obs)
+                        action = dist.sample()
+                        logp = dist.log_prob(action)
+                        entropy = dist.entropy()
+                        actions_dict[agent] = action.cpu().numpy()[0]
+                    else:  # ContinuousActor
+                        action, logp, entropy = actor.get_action(obs)
+                        actions_dict[agent] = action.cpu().numpy()[0]
+                    
+                    logp_dict[agent] = logp
+                    entropy_dict[agent] = entropy
             
-        # Step Environment
-        step_res = env.step(actions_dict)
-        
-        # Handle API variations
-        if len(step_res) == 5:
-            next_obs, rewards, terminations, truncations, infos = step_res
-        elif len(step_res) == 4:
-            next_obs, rewards, terminations, infos = step_res
-            truncations = {a: False for a in agent_names}
-        
-        # Aggregate Reward/Done
-        # Handle if rewards are dict or TensorDict
-        if hasattr(rewards, 'values'): r_vals = rewards.values()
-        else: r_vals = rewards
-        team_reward = sum(r_vals)
-        
-        if hasattr(terminations, 'values'): t_vals = terminations.values()
-        else: t_vals = terminations
-        done = any(t_vals)
-        
-        # Store Data
-        for agent in agent_names:
-            batch['obs'][agent].append(obs_tensors[agent].cpu())
+            # Get value estimate
+            if critic is not None:
+                with torch.no_grad():
+                    value = critic(state)
             
-            # Action storage
-            act_val = actions_dict[agent]
-            if isinstance(actors[agent], DiscreteActor):
-                batch['actions'][agent].append(torch.tensor([act_val], dtype=torch.long))
+            # Step environment
+            step_result = pz_env.step(actions_dict)
+            
+            # Handle TorchRL TensorDict or plain tuple
+            if len(step_result) == 5:
+                next_obs_dict, rewards_dict, dones_dict, truncs_dict, infos_dict = step_result
+            elif isinstance(step_result, tuple) and len(step_result) == 1:
+                # TorchRL returns a single TensorDict
+                td = step_result[0]
+                next_obs_dict = {agent: td.get(agent, td.get(('agents', agent))) for agent in agent_names}
+                rewards_dict = {agent: td.get(('next', 'reward', agent), td.get(('reward', agent), 0)) for agent in agent_names}
+                dones_dict = {agent: td.get(('next', 'done', agent), td.get(('done', agent), False)) for agent in agent_names}
+                truncs_dict = {agent: False for agent in agent_names}
+                infos_dict = {agent: {} for agent in agent_names}
             else:
-                batch['actions'][agent].append(torch.tensor([act_val], dtype=torch.float32))
-                
-            batch['logp'][agent].append(logp_dict[agent].cpu())
-            batch['entropy'][agent].append(entropy_dict[agent].cpu())
+                next_obs_dict, rewards_dict, dones_dict, truncs_dict, infos_dict = step_result[0], step_result[1], step_result[2], step_result[3], step_result[4]
             
-        batch['reward'].append(torch.tensor([team_reward], dtype=torch.float32))
-        batch['done'].append(torch.tensor([float(done)], dtype=torch.float32))
-        batch['state'].append(state.cpu())
-        batch['values'].append(value.cpu())
-        
-        obs_dict = next_obs
-        
-        if done:
-            reset_res = env.reset()
-            if isinstance(reset_res, tuple): obs_dict = reset_res[0]
-            else: obs_dict = reset_res
-
-    # 3. Concatenate
-    # --------------
+            # Compute team reward (sum of individual rewards)
+            team_reward = sum(rewards_dict.values()) if isinstance(rewards_dict, dict) else sum(rewards_dict)
+            
+            # Check if episode done
+            done_vals = dones_dict.values() if isinstance(dones_dict, dict) else dones_dict
+            trunc_vals = truncs_dict.values() if isinstance(truncs_dict, dict) else truncs_dict
+            done = any(done_vals) or any(trunc_vals)
+            
+            # Store transition
+            for agent in agent_names:
+                batch['obs'][agent].append(obs_tensors[agent].cpu())
+                if isinstance(actors[agent], DiscreteActor):
+                    batch['actions'][agent].append(torch.LongTensor([actions_dict[agent]]))
+                else:
+                    batch['actions'][agent].append(torch.FloatTensor([actions_dict[agent]]))
+                batch['logp'][agent].append(logp_dict[agent].cpu())
+                batch['entropy'][agent].append(entropy_dict[agent].cpu())
+            
+            batch['reward'].append(torch.FloatTensor([team_reward]))
+            batch['done'].append(torch.FloatTensor([float(done)]))
+            batch['state'].append(state.cpu())
+            if critic is not None:
+                batch['values'].append(value.cpu())
+            
+            # Update observation
+            obs_dict = next_obs_dict
+            
+            # Reset if done
+            if done:
+                reset_result = pz_env.reset(seed=cfg.seed + env_idx + step * 1000)
+                if isinstance(reset_result, tuple):
+                    obs_dict = reset_result[0] if len(reset_result) > 0 else reset_result
+                else:
+                    obs_dict = reset_result
+    
+    # Stack tensors
     for agent in agent_names:
         batch['obs'][agent] = torch.cat(batch['obs'][agent], dim=0)
         batch['actions'][agent] = torch.cat(batch['actions'][agent], dim=0)
         batch['logp'][agent] = torch.cat(batch['logp'][agent], dim=0)
         batch['entropy'][agent] = torch.cat(batch['entropy'][agent], dim=0)
-        
+    
     batch['reward'] = torch.cat(batch['reward'], dim=0)
     batch['done'] = torch.cat(batch['done'], dim=0)
     batch['state'] = torch.cat(batch['state'], dim=0)
-    batch['values'] = torch.cat(batch['values'], dim=0)
+    if critic is not None:
+        batch['values'] = torch.cat(batch['values'], dim=0)
     
     return batch
 
@@ -1062,3 +1090,36 @@ if __name__ == "__main__":
     metrics = evaluate_with_comparison(cfg, ckpt_path)
     
     print("\n All tests passed!")
+
+def train_wrapper(cfg):
+    checkpoint_path, stats = train(cfg)
+
+    # Plot training curves
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+
+    # Loss
+    axes[0].plot(stats['losses'], 'b-', linewidth=2)
+    axes[0].set_xlabel('Iteration')
+    axes[0].set_ylabel('Loss')
+    axes[0].set_title('Training Loss')
+    axes[0].grid(True, alpha=0.3)
+
+    # Returns
+    axes[1].plot(stats['returns'], 'g-', linewidth=2)
+    axes[1].set_xlabel('Iteration')
+    axes[1].set_ylabel('Mean Return')
+    axes[1].set_title('Episode Returns')
+    axes[1].grid(True, alpha=0.3)
+
+    # Entropy
+    axes[2].plot(stats['entropies'], 'r-', linewidth=2)
+    axes[2].set_xlabel('Iteration')
+    axes[2].set_ylabel('Mean Entropy')
+    axes[2].set_title('Policy Entropy')
+    axes[2].grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig('mac_training_curves.png', dpi=100, bbox_inches='tight')
+    plt.show()
+
+    print("Training curves saved to: mac_training_curves.png")
