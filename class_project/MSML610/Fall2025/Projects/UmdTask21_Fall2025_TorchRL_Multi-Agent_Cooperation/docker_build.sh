@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-tag="torchrl_mac:latest"
-context_dir="$(dirname "$0")"
+IMAGE_TAG="${IMAGE_TAG:-torchrl_mac:latest}"
+DOCKER_PLATFORM="${DOCKER_PLATFORM:-}"
 
-echo "Building image ${tag} from ${context_dir}"
-docker build -t "${tag}" "${context_dir}"
+echo "Building image ${IMAGE_TAG}"
+if [ -n "${DOCKER_PLATFORM}" ]; then
+  docker build --platform="${DOCKER_PLATFORM}" -t "${IMAGE_TAG}" .
+else
+  docker build -t "${IMAGE_TAG}" .
+fi
+echo "Done."

@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-tag="torchrl_mac:latest"
-context_dir="$(dirname "$0")"
+IMAGE_TAG="${IMAGE_TAG:-torchrl_mac:latest}"
+DOCKER_PLATFORM="${DOCKER_PLATFORM:-}"
+PORT="${PORT:-8888}"
 
-# Build if missing
-if ! docker image inspect "${tag}" >/dev/null 2>&1; then
-  "${context_dir}/docker_build.sh"
+echo "Starting Jupyter Lab container (image: ${IMAGE_TAG})"
+echo "Open: http://localhost:${PORT}"
+
+platform_args=()
+if [ -n "${DOCKER_PLATFORM}" ]; then
+  platform_args+=(--platform="${DOCKER_PLATFORM}")
 fi
 
-echo "Starting Jupyter Lab container (image: ${tag})"
-echo "Access at: http://localhost:8888"
-echo "Press Ctrl+C to stop"
-docker run -it --rm \
-  -p 8888:8888 \
-  -v "${context_dir}:/app" \
-  "${tag}"
+docker run --rm -it "${platform_args[@]}" \
+  -p "${PORT}:8888" \
+  -v "$(pwd)":/workspace \
+  -w /workspace \
+  --user "$(id -u):$(id -g)" \
+  -e HOME=/tmp \
+  --shm-size=1g \
+  "${IMAGE_TAG}"
