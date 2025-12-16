@@ -155,11 +155,11 @@ SERVING:
 
 ### Why This Dataset Works
 
-✅ **Balanced**: Close to 50-50 real/fake ratio (realistic distribution)
-✅ **Large**: 44K samples sufficient for robust learning
-✅ **Labeled**: Every article has a known label for supervised learning
-✅ **Clean**: Pre-processed and ready to use
-✅ **Realistic**: Real examples of both fake and real news
+- **Balanced**: Close to 50-50 real/fake ratio (realistic distribution)
+- **Large**: 44K samples sufficient for robust learning
+- **Labeled**: Every article has a known label for supervised learning
+- **Clean**: Pre-processed and ready to use
+- **Realistic**: Real examples of both fake and real news
 
 ### Data Loading
 
@@ -457,10 +457,10 @@ results_val = fnu.evaluate_model(model, X_val_vectors, y_val)
 ```
 
 **Interpretation:**
-- ✅ Model correctly classifies 99.36% of validation articles
-- ✅ When we predict REAL, we're right 99.48% of the time
-- ✅ We catch 99.18% of actual REAL articles
-- ✅ Excellent overall performance
+-  Model correctly classifies 99.36% of validation articles
+-  When we predict REAL, we're right 99.48% of the time
+-  We catch 99.18% of actual REAL articles
+-  Excellent overall performance
 
 ### Test Results
 
@@ -475,10 +475,10 @@ results_test = fnu.evaluate_model(model, X_test_vectors, y_test)
 ```
 
 **Interpretation:**
-- ✅ **99.64% accuracy** on completely unseen test data
-- ✅ Perfect balance between precision and recall (both 99.63%)
-- ✅ Model generalizes extremely well
-- ✅ Ready for production deployment
+-  **99.64% accuracy** on completely unseen test data
+-  Perfect balance between precision and recall (both 99.63%)
+-  Model generalizes extremely well
+-  Ready for production deployment
 
 ---
 
@@ -531,10 +531,10 @@ print(f"Prediction: {label} ({confidence:.2%})")
 ### Key Principle: Consistency
 
 **Critical**: Must use EXACT same preprocessing for production as training:
-- ✅ Same cleaning steps (lowercase, remove URLs, etc.)
-- ✅ Same vectorizer (vocabulary from training)
-- ✅ Same model (saved artifacts)
-- ✅ Same feature extraction
+-  Same cleaning steps (lowercase, remove URLs, etc.)
+-  Same vectorizer (vocabulary from training)
+-  Same model (saved artifacts)
+-  Same feature extraction
 
 **Why**: Model learned patterns based on specific features. Changing preprocessing changes features → unpredictable results.
 
@@ -663,11 +663,11 @@ curl -X POST http://localhost:9090/predict-batch \
 ### Option 1: Docker (Recommended for Production)
 
 **Benefits:**
-- ✅ Isolated environment
-- ✅ Reproducible across machines
-- ✅ Easy cloud deployment
-- ✅ Version control
-- ✅ No dependency conflicts
+-  Isolated environment
+-  Reproducible across machines
+-  Easy cloud deployment
+-  Version control
+-  No dependency conflicts
 
 **Steps:**
 
@@ -711,9 +711,9 @@ kubectl apply -f deployment.yaml
 ### Option 2: Local Python (Development)
 
 **Benefits:**
-- ✅ Fast for testing
-- ✅ Easy debugging
-- ✅ No containerization overhead
+-  Fast for testing
+-  Easy debugging
+-  No containerization overhead
 
 **Steps:**
 
@@ -730,10 +730,10 @@ python mcp_server.py
 ### Option 3: Jupyter Notebook (Interactive)
 
 **Benefits:**
-- ✅ Interactive exploration
-- ✅ Educational
-- ✅ Easy visualization
-- ✅ Good for debugging
+-  Interactive exploration
+-  Educational
+-  Easy visualization
+-  Good for debugging
 
 **Usage:**
 ```python
@@ -910,59 +910,59 @@ Step 4: Format Response
 ## Key Takeaways
 
 ### 1. Problem Definition
-- ✅ Understand the real-world problem (fake news)
-- ✅ Define clear success metrics (accuracy, precision, recall)
-- ✅ Know your constraints (speed, cost, interpretability)
+-  Understand the real-world problem (fake news)
+-  Define clear success metrics (accuracy, precision, recall)
+-  Know your constraints (speed, cost, interpretability)
 
 ### 2. Data is Everything
-- ✅ Quality data > complex models
-- ✅ ~44K examples sufficient for BERT
-- ✅ Balance matters (50-50 real/fake)
-- ✅ Stratified split maintains distribution
+-  Quality data > complex models
+-  ~44K examples sufficient for BERT
+-  Balance matters (50-50 real/fake)
+-  Stratified split maintains distribution
 
 ### 3. Preprocessing is Critical
-- ✅ Garbage in, garbage out
-- ✅ Apply same preprocessing in production as training
-- ✅ Document all steps clearly
+-  Garbage in, garbage out
+-  Apply same preprocessing in production as training
+-  Document all steps clearly
 
 ### 4. Feature Engineering
-- ✅ TF-IDF simple but effective
-- ✅ Numerical features required for ML
-- ✅ Vocabulary matters (remove stop words, set min/max frequency)
+-  TF-IDF simple but effective
+-  Numerical features required for ML
+-  Vocabulary matters (remove stop words, set min/max frequency)
 
 ### 5. Model Selection
-- ✅ BERT powerful for text understanding
-- ✅ Consider interpretability vs performance tradeoff
-- ✅ Validate on held-out test set (never tune on test data)
+-  BERT powerful for text understanding
+-  Consider interpretability vs performance tradeoff
+-  Validate on held-out test set (never tune on test data)
 
 ### 6. Evaluation Metrics
-- ✅ Don't rely on accuracy alone
-- ✅ Precision/Recall important (depends on use case)
-- ✅ Confusion matrix shows where errors occur
-- ✅ F1 score balances precision and recall
+-  Don't rely on accuracy alone
+-  Precision/Recall important (depends on use case)
+-  Confusion matrix shows where errors occur
+-  F1 score balances precision and recall
 
 ### 7. Production Readiness
-- ✅ Save artifacts (model + vectorizer)
-- ✅ Use same preprocessing pipeline
-- ✅ REST API for easy integration
-- ✅ Version control for reproducibility
+-  Save artifacts (model + vectorizer)
+-  Use same preprocessing pipeline
+-  REST API for easy integration
+-  Version control for reproducibility
 
 ### 8. Deployment Options
-- ✅ Docker for production
-- ✅ Kubernetes for scale
-- ✅ Cloud services for infrastructure
+-  Docker for production
+-  Kubernetes for scale
+-  Cloud services for infrastructure
 
 ### 9. Monitoring & Maintenance
-- ✅ Track prediction accuracy over time
-- ✅ Monitor API performance
-- ✅ Retrain periodically (news language changes)
-- ✅ Handle edge cases and errors gracefully
+-  Track prediction accuracy over time
+-  Monitor API performance
+-  Retrain periodically (news language changes)
+-  Handle edge cases and errors gracefully
 
 ### 10. Ethical Considerations
-- ✅ Transparency: Users should know they're using ML
-- ✅ Fairness: Test on diverse news sources
-- ✅ Accountability: Errors should be explainable
-- ✅ Privacy: Don't store raw text longer than needed
+-  Transparency: Users should know they're using ML
+-  Fairness: Test on diverse news sources
+-  Accountability: Errors should be explainable
+-  Privacy: Don't store raw text longer than needed
 
 ---
 
@@ -1057,4 +1057,3 @@ result = fnu.predict(text, model, vectorizer)
 - **BERT Paper**: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding" (Devlin et al., 2019)
 - **Fake News Detection**: Research on automated misinformation detection
 - **Model Deployment**: Kubernetes, Docker, Cloud Run best practices
-
