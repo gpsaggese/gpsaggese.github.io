@@ -112,6 +112,14 @@ The project expects a dataset file named `Tweets.csv` with the following structu
 
 ---
 
+## Navigate to the Project Folder
+
+umd_classes/class_project/MSML610/Fall2025/Projects/UmdTask20_Fall2025_trl_Sentiment_Analysis_with_Reinforcement_Learning
+
+```bash
+cd "umd_classes/class_project/MSML610/Fall2025/Projects/UmdTask20_Fall2025_trl_Sentiment_Analysis_with_Reinforcement_Learning"
+```
+
 ## 🐳 Docker Setup
 
 This project includes a containerized environment to ensure reproducibility.
