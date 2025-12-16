@@ -1,4 +1,4 @@
-## 🛠️ Phase 1: The Debugging Gateway & Initial Connection
+## Phase 1: The Debugging Gateway & Initial Connection
 
 This first step is crucial for establishing a robust connection with the FastMCP client and, most importantly, ensuring that any low-level errors (especially those tricky `subprocess` issues common in Jupyter environments) are captured in a real file on disk.
 
@@ -736,3 +736,4 @@ The iterative MLOps process successfully led to the selection and deployment of 
 The **Regularized XGBoost Regressor (Experiment 10)** is confirmed as the definitive production model.
 
 ---
+
