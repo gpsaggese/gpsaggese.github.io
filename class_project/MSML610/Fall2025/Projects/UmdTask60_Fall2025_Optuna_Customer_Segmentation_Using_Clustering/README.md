@@ -2,6 +2,16 @@
 
 This project segments customers from the UCI Online Retail dataset into three actionable business groups using RFM (Recency, Frequency, Monetary) analysis and machine learning. The segmentation pipeline combines data cleaning, feature engineering, hyperparameter optimization with Optuna, and multi-algorithm comparison to identify the best clustering approach.
 
+### What is Optuna? 
+
+**Optuna** is a Bayesian hyperparameter optimization framework that intelligently searches the hyperparameter space instead of using exhaustive grid search or random guessing. Rather than testing all combinations (slow) or random combinations (inefficient), Optuna **learns from past trials** and suggests promising hyperparameters to test next.
+
+**Why Optuna over Manual Tuning?**
+- **Grid Search:** Test every combination (e.g., 6 choices × 3 choices × 20 choices = 360 trials) — exhaustive but slow
+- **Random Search:** Randomly pick combinations — faster but inefficient sampling
+- **Optuna (Bayesian):** Learn which regions are promising, sample densely there — fast AND accurate
+
+
 ## 1. Project Overview
 
 The project addresses a common business problem: **How do we identify and target customer groups with different engagement and value patterns?** By analyzing transactional data, we compute RFM metrics—a proven framework in retail marketing—and use clustering algorithms optimized via Optuna to discover natural customer segments.
@@ -13,9 +23,11 @@ The project addresses a common business problem: **How do we identify and target
 
 ```
 UmdTask60_Optuna_Clustering/
-├── Optuna_Segmentation.API.ipynb
+├── Optuna_Segmentation.example.ipynb
+├── Optuna.API.ipynb
 ├── requirements.txt
 ├── Optuna.API.md
+├── Optuna.example.md
 ├── Optuna_utils.py
 ├── README.md
 ├── online_retail.xlsx
@@ -29,13 +41,14 @@ UmdTask60_Optuna_Clustering/
 
 **Core Implementation:**
 - `Optuna_utils.py` — Reusable module with data pipelines, RFM computation, three clustering algorithms (K-Means, DBSCAN, Hierarchical), evaluation metrics, and visualization functions.
-- `Optuna_Segmentation.ipynb` — End-to-end analysis notebook orchestrating the full workflow with markdown explanations and outputs.
+- `Optuna_Segmentation.example.ipynb` — End-to-end analysis notebook orchestrating the full workflow with markdown explanations and outputs.
 
 **Documentation & Configuration:**
-- `Optuna.API.md` — Comprehensive API reference for all functions with parameter descriptions, design rationale, and usage examples.
+- `Optuna.example.md` — Comprehensive API reference for all functions with parameter descriptions, design rationale, and usage examples.
 - `README.md` — This file; methodology, results, and setup instructions.
 - `requirements.txt` — Pinned Python dependencies for reproducibility.
-
+- `Optuna.API.ipynb` - Interactive Jupyter notebook demonstrating Optuna with live examples.
+- - `Optuna.API.md` - Comprehensive Optuna framework reference covering concepts. 
 **Data & Results:**
 - `online_retail.xlsx` — UCI Online Retail dataset (541,909 transactions, Dec 2010–Dec 2011).
 - `cluster_summary.csv` — Final segmentation summary with cluster statistics and business labels.
