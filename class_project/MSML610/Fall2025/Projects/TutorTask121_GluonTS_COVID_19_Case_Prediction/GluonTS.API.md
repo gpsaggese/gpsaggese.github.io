@@ -6,7 +6,9 @@ A reference guide for using GluonTS time series forecasting models.
 
 ## Overview
 
-GluonTS is a Python library for probabilistic time series forecasting. This document explains how to use the three models demonstrated in `GluonTS.API.ipynb`:
+GluonTS is an open-source Python library for probabilistic time series forecasting. It provides a consistent API and utilities for preparing time series data, defining estimators (model + training code), producing probabilistic forecasts, and evaluating models. GluonTS supports a range of models (classical and neural), convenient dataset wrappers such as `ListDataset`, and evaluation helpers like `make_evaluation_predictions` to generate forecasts and compute metrics.
+
+This document explains how to use three models demonstrated in `GluonTS.API.ipynb`:
 - **DeepAR**: Autoregressive RNN for complex temporal patterns
 - **SimpleFeedForward**: Fast baseline for stable trends
 - **DeepNPTS**: Non-parametric learner for changing distributions

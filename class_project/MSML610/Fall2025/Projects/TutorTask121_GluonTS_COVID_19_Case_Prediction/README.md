@@ -2,7 +2,7 @@
 
 **Time Series Forecasting**
 
-Probabilistic forecasting of COVID-19 daily cases using three GluonTS models: DeepAR, SimpleFeedForward, and DeepNPTS.
+This project provides a reproducible pipeline and interactive notebooks for probabilistic forecasting of U.S. daily COVID-19 cases. It walks through data ingestion (JHU case/death time series and Google Mobility), preprocessing and feature engineering (7‑day moving averages, CFR, mobility metrics), and model training/evaluation with three GluonTS models: DeepAR, SimpleFeedForward, and DeepNPTS. The notebooks show end‑to‑end steps — automatic data download, model fitting, posterior/predictive checks, and probabilistic evaluation metrics (MAE, RMSE, CRPS).
 
 ---
 
@@ -25,16 +25,16 @@ When you open and run the notebooks (`GluonTS.API.ipynb` or `GluonTS.example.ipy
 3. Show progress for each download
 4. Continue with the analysis
 
-No manual intervention needed!
-
 **Manual Download (Optional)**
 
-If automatic download fails (e.g., network restrictions), download manually:
+If automatic download fails (e.g., network restrictions), don't panic you can download the data manually. We have stored them in a public Google Drive that you can access from the links below:
 - [US COVID-19 Cases](https://drive.google.com/file/d/1ZfZtoV3PpZblZYES0A5LHCwp54cR8RJL/view) → save as `data/cases.csv`
 - [US COVID-19 Deaths](https://drive.google.com/file/d/1kYC9nrCnKbNpnoZKz8o6TDMM371gyxbl/view) → save as `data/deaths.csv`
 - [US Mobility Report](https://drive.google.com/file/d/1TMqG8Z8vbxmQAv1rNKczYYPCzwT4ZS_q/view) → save as `data/mobility.csv`
 
 Or run: `python GluonTS_utils_data_download.py`
+
+You may need to use `python3` if you run into problems running the above command.
 
 ### Build and Run
 
@@ -70,7 +70,7 @@ Next steps:
   Run bash: ./docker_bash.sh
 ```
 
-**Build time:** 1-2 minutes for the first time, <30 seconds for subsequent builds
+**Build time:** Roughly 1-2 minutes for the first time, <30 seconds for subsequent builds
 
 ---
 
@@ -95,7 +95,7 @@ Press Ctrl+C to stop
 
 **Open your browser** to `http://localhost:8888` and navigate to:
 - `GluonTS.API.ipynb` - Learn model APIs
-- `GluonTS.example.ipynb` - Complete application
+- `GluonTS.example.ipynb` - Complete application with a real world use case
 
 ---
 
@@ -116,7 +116,7 @@ Type 'exit' to leave
 root@abc123:/workspace#
 ```
 
-Useful for running Python scripts directly or debugging.
+These are useful for running Python scripts directly or debugging.
 
 ---
 
@@ -143,8 +143,7 @@ TutorTask121_GluonTS_COVID_19_Case_Prediction/
 │   └── data/
 │       ├── cases.csv               # JHU COVID-19 cases
 │       ├── deaths.csv              # JHU COVID-19 deaths
-│       ├── mobility.csv            # Google Mobility data
-│       └── vaccine.csv             # CDC vaccines (not used)
+│       └── mobility.csv            # Google Mobility data
 │
 ├── Docker Setup
 │   ├── Dockerfile                  # Container configuration
@@ -173,11 +172,9 @@ TutorTask121_GluonTS_COVID_19_Case_Prediction/
 flowchart TB
     A[Raw Data Sources] --> B[JHU Cases & Deaths]
     A --> C[Google Mobility]
-    A --> D[CDC Vaccines]
-    
+
     B --> E[Load & Parse]
     C --> E
-    D --> F[Keep for Future]
     
     E --> G[Aggregate to National Level]
     G --> H[Calculate Moving Averages]
@@ -243,7 +240,7 @@ docker info
 
 **Problem:** MPS (Apple GPU) not supported error
 
-**Solution:** Should already be handled! The shell scripts set `PYTORCH_ENABLE_MPS_FALLBACK=1` to use CPU for unsupported operations.
+**Solution:** This should already be handled! The shell scripts set `PYTORCH_ENABLE_MPS_FALLBACK=1` to use CPU for unsupported operations.
 
 **Expected message:**
 ```
@@ -271,8 +268,10 @@ batch_size = 16  # Instead of 32
 **Solution:** Verify data directory:
 ```bash
 ls data/
-# Should show: cases.csv, deaths.csv, mobility.csv, vaccine.csv
+# Should show: cases.csv, deaths.csv, mobility.csv
 ```
+
+Initially when you clone this repo you will not see any data files in this folder. Do not panic this is normal. Please go back to the `Data Setup` section above if you do not see any of those CSV data files as it has a guide on how to get them.
 
 ---
 
