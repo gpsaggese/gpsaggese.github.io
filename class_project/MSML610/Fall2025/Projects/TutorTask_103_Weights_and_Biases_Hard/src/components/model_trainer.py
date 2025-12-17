@@ -121,15 +121,34 @@ class ModelTrainer:
             random_state=random_state,
             n_jobs=-1,
         )
+        # XGBoost's sklearn API has changed across versions (and the professor's Docker
+        # image may ship a different one). Some versions reject eval_metric/evals_result
+        # in `.fit()`. We therefore pass only kwargs supported by the installed version.
         evals_result: Dict[str, Dict[str, list]] = {}
-        model.fit(
-            X_train,
-            y_train,
-            eval_set=[(X_val, y_val)],
-            eval_metric="rmse",
-            verbose=False,
-            evals_result=evals_result,
-        )
+        try:
+            import inspect
+
+            fit_sig = inspect.signature(model.fit)
+            fit_kwargs: Dict[str, Any] = {}
+            if "eval_set" in fit_sig.parameters:
+                fit_kwargs["eval_set"] = [(X_val, y_val)]
+            if "eval_metric" in fit_sig.parameters:
+                fit_kwargs["eval_metric"] = "rmse"
+            if "verbose" in fit_sig.parameters:
+                fit_kwargs["verbose"] = False
+            if "evals_result" in fit_sig.parameters:
+                fit_kwargs["evals_result"] = evals_result
+
+            model.fit(X_train, y_train, **fit_kwargs)
+        except Exception:
+            # Fall back to the simplest fit if signature inspection fails.
+            model.fit(X_train, y_train)
+
+        # Best-effort: fetch eval history if available.
+        try:
+            evals_result = model.evals_result()  # type: ignore[attr-defined]
+        except Exception:
+            pass
 
         # Save training curve (RMSE over boosting rounds) for reporting.
         try:

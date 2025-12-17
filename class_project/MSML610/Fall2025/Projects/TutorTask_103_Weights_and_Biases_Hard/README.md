@@ -76,21 +76,22 @@ Implemented in `src/components/model_evaluation.py` + `src/pipeline/training_pip
 From `artifacts/metrics/last_run.json`, the best-by-validation model is:
 - **Best model**: `linear_regression`
 
-## Model comparison (from `artifacts/metrics/last_run.json`)
+## Model comparison (from `artifacts/metrics/rmse_table.csv`)
 Lower is better for MAE/RMSE/MAPE; higher is better for R2.
 
 | Model | Val RMSE | Test RMSE | Test MAE | Test MAPE | Test R2 |
 |---|---:|---:|---:|---:|---:|
-| linear_regression | 0.470 | 4.939 | 3.773 | 2.822 | 0.995 |
-| xgboost | 3.913 | 123.119 | 101.677 | 71.260 | -2.146 |
-| lightgbm | 3.854 | 122.974 | 101.491 | 71.034 | -2.138 |
-| random_forest | 5.254 | 124.452 | 103.298 | 73.232 | -2.214 |
-| ma | 22.974 | 141.244 | 122.996 | 97.096 | -3.140 |
-| ar | 11.237 | 132.089 | 111.685 | 82.538 | -2.621 |
-| arima | 10.254 | 129.697 | 109.558 | 80.844 | -2.491 |
-| sarimax | 4.839 | 86.289 | 72.785 | 53.680 | -0.545 |
-| prophet | 3.908 | 104.206 | 83.559 | 54.986 | -1.254 |
-| ensemble_stacking (test) | - | 4.934 | 3.693 | 2.634 | 0.995 |
+| linear_regression | 0.464 | 4.800 | 3.654 | 2.730 | 0.995 |
+| ensemble_stacking | - | 4.874 | 3.646 | 2.598 | 0.995 |
+| sarimax | 4.176 | 78.414 | 65.803 | 48.040 | -0.269 |
+| lightgbm | 3.882 | 123.457 | 101.953 | 71.220 | -2.147 |
+| xgboost | 3.936 | 123.558 | 102.088 | 71.391 | -2.152 |
+| random_forest | 5.277 | 124.895 | 103.702 | 73.323 | -2.221 |
+| arima | 10.283 | 130.124 | 109.949 | 80.914 | -2.496 |
+| ar | 12.123 | 134.289 | 113.703 | 83.949 | -2.723 |
+| ma | 23.010 | 141.670 | 123.385 | 97.106 | -3.144 |
+
+Note: Prophet may be skipped inside Docker unless you install it (`pip install prophet`).
 
 ## Plots for Phase 6 (to show why LR is best + training curves)
 Generate summary RMSE plots (bar charts across models):
@@ -114,7 +115,7 @@ Inside the professor Docker container (with `/venv` active + `.env` containing `
 ```bash
 bash scripts/phase5_wandb_online.sh
 ```
-Success = a new run appears in W&B under entity `othakur-university-of-maryland-org` and project `time_seires_forecasting`.
+Success = a new run appears in W&B under entity `othakur-university-of-maryland` and project `stock_price_forecasting`.
 
 Note: If you `git pull` inside the Docker container, run:
 ```bash
@@ -146,12 +147,15 @@ So LR is best on that notebook run as well.
 
 ### Backend (FastAPI) — in Docker (host terminal from `.../umd_classes/`)
 ```bash
-docker run --rm --entrypoint "" -p 8000:8000 \
+# Recommended: reuse a persistent container (NO --rm) so you don't reinstall packages.
+docker run -d --name tutortask103 --entrypoint "" -p 8000:8000 \
   --env-file class_project/MSML610/Fall2025/Projects/TutorTask_103_Weights_and_Biases_Hard/.env \
   -v "$(pwd)":/workspace \
   -w /workspace/class_project/MSML610/Fall2025/Projects/TutorTask_103_Weights_and_Biases_Hard \
   -e PYTHONPATH=/workspace/class_project/MSML610/Fall2025/Projects/TutorTask_103_Weights_and_Biases_Hard:/workspace/helpers_root \
-  msml610assignmentimage /bin/bash -lc "source /venv/bin/activate && pip install -q -r requirements.txt && python -m uvicorn backend.api:app --host 0.0.0.0 --port 8000"
+  msml610assignmentimage sleep infinity
+
+docker exec tutortask103 bash -lc "source /venv/bin/activate && python -m uvicorn backend.api:app --host 0.0.0.0 --port 8000"
 ```
 Endpoints:
 - `GET /health`

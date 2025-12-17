@@ -1,0 +1,7 @@
+# Workspace noise
+**/__pycache__/
+**/*.pyc
+
+# Ignore unrelated course project generated folders (not part of TutorTask_103 deliverables)
+class_project/DATA605/**/data/
+class_project/DATA605/**/sh_nw/

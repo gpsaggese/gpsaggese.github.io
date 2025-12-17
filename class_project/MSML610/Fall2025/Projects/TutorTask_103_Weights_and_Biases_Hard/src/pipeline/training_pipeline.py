@@ -46,74 +46,89 @@ class TrainingPipeline:
         results = {}
         trained_models: Dict[str, Any] = {}
         for model_name in self.models_to_run:
-            if model_name == "lstm":
-                try:
-                    tr = self.trainer.train_lstm_keras_tuner(
-                        data["X_train_seq"], data["y_train_seq"], data["X_val_seq"], data["y_val_seq"]
+            # Many models are optional in the professor Docker image (prophet, lightgbm, xgboost, tensorflow).
+            # For Phase 5/6, we prefer completing the full pipeline and recording "SKIPPED" rather than hard-failing.
+            try:
+                if model_name == "lstm":
+                    try:
+                        tr = self.trainer.train_lstm_keras_tuner(
+                            data["X_train_seq"], data["y_train_seq"], data["X_val_seq"], data["y_val_seq"]
+                        )
+                        test_metrics = self.evaluator.evaluate(
+                            tr.model, data["X_test_seq"], data["y_test_seq"], tr.model_name
+                        )
+                        results["lstm"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                        trained_models[tr.model_name] = tr.model
+                    except ImportError as e:
+                        self.logger.warning(f"Skipping LSTM: {e}")
+                        results["lstm"] = "SKIPPED: missing tensorflow/keras-tuner"
+                    except Exception as e:
+                        # Capture traceback for Phase 6 reporting.
+                        tb = traceback.format_exc()
+                        self.logger.error(f"LSTM failed: {e}\n{tb}")
+                        artifacts_dir = Path(self.params.get("evaluation", {}).get("artifacts_dir", "artifacts"))
+                        (artifacts_dir / "metrics").mkdir(parents=True, exist_ok=True)
+                        (artifacts_dir / "metrics" / "lstm_error.txt").write_text(tb)
+                        results["lstm"] = f"ERROR: {e}"
+                elif model_name == "linear_regression":
+                    tr = self.trainer.train_linear_regression(
+                        data["X_train"], data["y_train"], data["X_val"], data["y_val"]
                     )
-                    test_metrics = self.evaluator.evaluate(tr.model, data["X_test_seq"], data["y_test_seq"], tr.model_name)
-                    results["lstm"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                    test_metrics = self.evaluator.evaluate(tr.model, data["X_test"], data["y_test"], tr.model_name)
+                    results["linear_regression"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
                     trained_models[tr.model_name] = tr.model
-                except ImportError as e:
-                    self.logger.warning(f"Skipping LSTM: {e}")
-                    results["lstm"] = "SKIPPED: missing tensorflow/keras-tuner"
-                except Exception as e:
-                    # Capture traceback for Phase 6 reporting.
-                    tb = traceback.format_exc()
-                    self.logger.error(f"LSTM failed: {e}\n{tb}")
-                    artifacts_dir = Path(self.params.get("evaluation", {}).get("artifacts_dir", "artifacts"))
-                    (artifacts_dir / "metrics").mkdir(parents=True, exist_ok=True)
-                    (artifacts_dir / "metrics" / "lstm_error.txt").write_text(tb)
-                    results["lstm"] = f"ERROR: {e}"
-            elif model_name == "linear_regression":
-                tr = self.trainer.train_linear_regression(data["X_train"], data["y_train"], data["X_val"], data["y_val"])
-                test_metrics = self.evaluator.evaluate(tr.model, data["X_test"], data["y_test"], tr.model_name)
-                results["linear_regression"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
-                trained_models[tr.model_name] = tr.model
-            elif model_name == "xgboost":
-                tr = self.trainer.train_xgboost(data["X_train"], data["y_train"], data["X_val"], data["y_val"])
-                test_metrics = self.evaluator.evaluate(tr.model, data["X_test"], data["y_test"], tr.model_name)
-                results["xgboost"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
-                trained_models[tr.model_name] = tr.model
-            elif model_name == "lightgbm":
-                tr = self.trainer.train_lightgbm(data["X_train"], data["y_train"], data["X_val"], data["y_val"])
-                test_metrics = self.evaluator.evaluate(tr.model, data["X_test"], data["y_test"], tr.model_name)
-                results["lightgbm"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
-                trained_models[tr.model_name] = tr.model
-            elif model_name == "random_forest":
-                tr = self.trainer.train_random_forest(data["X_train"], data["y_train"], data["X_val"], data["y_val"])
-                test_metrics = self.evaluator.evaluate(tr.model, data["X_test"], data["y_test"], tr.model_name)
-                results["random_forest"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
-                trained_models[tr.model_name] = tr.model
-            elif model_name == "ma":
-                tr = self.trainer.train_ma(data["y_train_s"], data["y_val_s"])
-                test_metrics = self.evaluator.evaluate(tr.model, None, data["y_test_s"], tr.model_name)
-                results["ma"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
-                trained_models[tr.model_name] = tr.model
-            elif model_name == "ar":
-                tr = self.trainer.train_ar(data["y_train_s"], data["y_val_s"])
-                test_metrics = self.evaluator.evaluate(tr.model, None, data["y_test_s"], tr.model_name)
-                results["ar"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
-                trained_models[tr.model_name] = tr.model
-            elif model_name == "arima":
-                tr = self.trainer.train_arima(data["y_train_s"], data["y_val_s"])
-                test_metrics = self.evaluator.evaluate(tr.model, None, data["y_test_s"], tr.model_name)
-                results["arima"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
-                trained_models[tr.model_name] = tr.model
-            elif model_name == "sarimax":
-                tr = self.trainer.train_sarimax(data["y_train_s"], data["y_val_s"], data["X_train_df"], data["X_val_df"])
-                test_metrics = self.evaluator.evaluate(tr.model, data["X_test_df"], data["y_test_s"], tr.model_name)
-                results["sarimax"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
-                trained_models[tr.model_name] = tr.model
-            elif model_name == "prophet":
-                tr = self.trainer.train_prophet(data["y_train_s"], data["y_val_s"])
-                X_test_ds = pd.DataFrame({"ds": pd.to_datetime(data["y_test_s"].index)})
-                test_metrics = self.evaluator.evaluate(tr.model, X_test_ds, data["y_test_s"], tr.model_name)
-                results["prophet"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
-            elif model_name == "cnn":
-                results["cnn"] = "TODO: call CNN trainer with seq data"
-            else:
-                self.logger.warning(f"Unknown model '{model_name}', skipping.")
+                elif model_name == "xgboost":
+                    tr = self.trainer.train_xgboost(data["X_train"], data["y_train"], data["X_val"], data["y_val"])
+                    test_metrics = self.evaluator.evaluate(tr.model, data["X_test"], data["y_test"], tr.model_name)
+                    results["xgboost"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                    trained_models[tr.model_name] = tr.model
+                elif model_name == "lightgbm":
+                    tr = self.trainer.train_lightgbm(data["X_train"], data["y_train"], data["X_val"], data["y_val"])
+                    test_metrics = self.evaluator.evaluate(tr.model, data["X_test"], data["y_test"], tr.model_name)
+                    results["lightgbm"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                    trained_models[tr.model_name] = tr.model
+                elif model_name == "random_forest":
+                    tr = self.trainer.train_random_forest(
+                        data["X_train"], data["y_train"], data["X_val"], data["y_val"]
+                    )
+                    test_metrics = self.evaluator.evaluate(tr.model, data["X_test"], data["y_test"], tr.model_name)
+                    results["random_forest"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                    trained_models[tr.model_name] = tr.model
+                elif model_name == "ma":
+                    tr = self.trainer.train_ma(data["y_train_s"], data["y_val_s"])
+                    test_metrics = self.evaluator.evaluate(tr.model, None, data["y_test_s"], tr.model_name)
+                    results["ma"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                    trained_models[tr.model_name] = tr.model
+                elif model_name == "ar":
+                    tr = self.trainer.train_ar(data["y_train_s"], data["y_val_s"])
+                    test_metrics = self.evaluator.evaluate(tr.model, None, data["y_test_s"], tr.model_name)
+                    results["ar"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                    trained_models[tr.model_name] = tr.model
+                elif model_name == "arima":
+                    tr = self.trainer.train_arima(data["y_train_s"], data["y_val_s"])
+                    test_metrics = self.evaluator.evaluate(tr.model, None, data["y_test_s"], tr.model_name)
+                    results["arima"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                    trained_models[tr.model_name] = tr.model
+                elif model_name == "sarimax":
+                    tr = self.trainer.train_sarimax(
+                        data["y_train_s"], data["y_val_s"], data["X_train_df"], data["X_val_df"]
+                    )
+                    test_metrics = self.evaluator.evaluate(tr.model, data["X_test_df"], data["y_test_s"], tr.model_name)
+                    results["sarimax"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                    trained_models[tr.model_name] = tr.model
+                elif model_name == "prophet":
+                    tr = self.trainer.train_prophet(data["y_train_s"], data["y_val_s"])
+                    X_test_ds = pd.DataFrame({"ds": pd.to_datetime(data["y_test_s"].index)})
+                    test_metrics = self.evaluator.evaluate(tr.model, X_test_ds, data["y_test_s"], tr.model_name)
+                    results["prophet"] = {"val_metrics": tr.metrics, "test_metrics": test_metrics}
+                elif model_name == "cnn":
+                    results["cnn"] = "TODO: call CNN trainer with seq data"
+                else:
+                    self.logger.warning(f"Unknown model '{model_name}', skipping.")
+                    continue
+            except ImportError as e:
+                self.logger.warning(f"Skipping {model_name}: {e}")
+                results[model_name] = f"SKIPPED: {e}"
                 continue
 
         # 5) Ensemble (stacking) - train meta-model on validation preds only (no test leakage).

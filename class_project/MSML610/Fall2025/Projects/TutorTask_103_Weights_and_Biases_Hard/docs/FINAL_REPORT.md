@@ -29,10 +29,21 @@ We need an end-to-end, reproducible stock forecasting project that runs in the p
 ## Result
 - Produced artifacts for reporting and serving:
   - `artifacts/metrics/last_run.json` (all-model metrics + best-by-validation)
+  - `artifacts/metrics/rmse_table.csv` (flattened comparison table)
   - `artifacts/best_model/*` (best saved model artifacts)
   - `artifacts/plots/*.png` (evaluation plots)
 - Best-by-validation model is typically **Linear Regression** on this configuration; stacking ensemble can match it on test metrics depending on run.
 - Full-stack local app runs in Docker with port mapping and provides multi-day forecasts (up to 120 steps) with a simple profit/loss summary.
+
+### Model comparison (summary)
+From `artifacts/metrics/rmse_table.csv` (lower is better for RMSE):
+- `linear_regression`: **val_rmse=0.464**, test_rmse=4.800
+- `ensemble_stacking`: test_rmse=4.874
+- `sarimax`: val_rmse=4.176, test_rmse=78.414
+- `lightgbm`: val_rmse=3.882, test_rmse=123.457
+- `xgboost`: val_rmse=3.936, test_rmse=123.558
+
+Note: Prophet is optional and may be skipped in Docker unless installed (`pip install prophet`). LSTM is demonstrated in the notebook and may fail in the professor image; failures are captured to `artifacts/metrics/lstm_error.txt`.
 
 ## Limitations / Notes
 - Long-horizon forecasts (30/60/120) are **iterative**, so error compounds with horizon.
