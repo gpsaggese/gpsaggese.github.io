@@ -15,7 +15,7 @@ Native API demonstration for the `pmdarima` library.
 ## Table of Contents
 
 This document provides a structured overview of the PMDARIMA API demonstration notebook,  
-including model training and forecast visualization using a preprocessed univariate time series.
+including model training and forecast visualization using a synthetic univariate time series.
 
 ---
 
@@ -42,11 +42,11 @@ This document focuses only on demonstrating the PMDARIMA API; all project-specif
 
 ---
 
-## 2️⃣ Load and Preprocess Data
+## 2️⃣ Create a Univariate Time Series
 
-For demonstration purposes, a preprocessed univariate time-series is assumed.
+For demonstration purposes, a synthetic univariate time series is created directly in the notebook.
 
-The time series is provided as a pandas Series indexed by datetime.
+The time series is represented as a pandas Series indexed by datetime.
 
 ---
 
@@ -58,14 +58,14 @@ The time series is split chronologically into training and testing segments.
 
 ## 4️⃣ Train the Auto-ARIMA Model
 
-We train a univariate Auto-ARIMA model on the univariate time series.
+We train a univariate Auto-ARIMA model on the time series.
 The primary entry point of the PMDARIMA API is the `auto_arima()` function.
 It automatically selects the optimal ARIMA `(p, d, q)` parameters based on information criteria.
 
 ```python
 import pmdarima as pm
 
-# Assume `train` is a preprocessed univariate pandas Series
+# Assume `train` is a univariate pandas Series
 model = pm.auto_arima(
     train,
     seasonal=False,
@@ -119,4 +119,3 @@ This tutorial demonstrates the **complete PMDARIMA workflow** for univariate tim
 ## References
 
 - [PMDARIMA Documentation](https://alkaline-ml.com/pmdarima/)
-- [pmdarima.API.ipynb](./pmdarima.API.ipynb)
