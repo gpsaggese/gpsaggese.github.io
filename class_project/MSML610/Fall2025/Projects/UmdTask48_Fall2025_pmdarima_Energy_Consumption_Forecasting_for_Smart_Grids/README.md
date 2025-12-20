@@ -16,15 +16,18 @@ The goal is to optimize the model for accuracy while handling large-scale and no
 *Note*: The dataset is automatically downloaded from the UCI repository by `load_energy_data()` if not present locally.
 
 ## Project Structure
-class_project/MSML610/Fall2025/Projects/UmdTask48_Fall2025_pmdarima_Energy_Consumption_Forecasting_for_Smart_Grids/  
-├── pmdarima.API.ipynb  # PMDARIMA API demonstration  
-├── pmdarima.API.md  # API documentation and explanation  
-├── pmdarima.example.ipynb  # End-to-end forecasting example  
-├── pmdarima.example.md  # Example explanation and evaluation  
-├── pmdarima_utils.py  # Utility functions for data loading and metrics  
-├── requirements.txt  # Python dependencies 
-├── Dockerfile # Docker configuration  
-└── README.md  # Project overview
+
+```
+class_project/MSML610/Fall2025/Projects/UmdTask48_Fall2025_pmdarima_Energy_Consumption_Forecasting_for_Smart_Grids/
+├── pmdarima.API.ipynb        # PMDARIMA API demonstration
+├── pmdarima.API.md           # API documentation and explanation
+├── pmdarima.example.ipynb    # End-to-end project implementation
+├── pmdarima.example.md       # Example explanation and evaluation
+├── pmdarima_utils.py         # Utility functions for data loading and metrics
+├── requirements.txt          # Python dependencies
+├── Dockerfile                # Docker configuration
+└── README.md                 # Project overview
+```
 
 ## Project Status
 ✅ Completed 
