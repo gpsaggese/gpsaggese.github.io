@@ -22,7 +22,8 @@ class_project/MSML610/Fall2025/Projects/UmdTask48_Fall2025_pmdarima_Energy_Consu
 ├── pmdarima.example.ipynb  # End-to-end forecasting example  
 ├── pmdarima.example.md  # Example explanation and evaluation  
 ├── pmdarima_utils.py  # Utility functions for data loading and metrics  
-├── requirements.txt  # Python dependencies   
+├── requirements.txt  # Python dependencies 
+├── Dockerfile # Docker configuration  
 └── README.md  # Project overview
 
 ## Project Status
@@ -58,6 +59,14 @@ class_project/MSML610/Fall2025/Projects/UmdTask48_Fall2025_pmdarima_Energy_Consu
 
 - Integrated weather data as exogenous regressors
 - Implemented Hybrid ARIMA + ML (Random Forest residual model)
+
+## How to Run
+```bash
+docker build -t pmdarima-energy-forecast .
+docker run -p 8888:8888 pmdarima-energy-forecast
+```
+
+Then open Jupyter in your browser and run the notebooks sequentially.
   
 ## Dependencies
 - numpy
