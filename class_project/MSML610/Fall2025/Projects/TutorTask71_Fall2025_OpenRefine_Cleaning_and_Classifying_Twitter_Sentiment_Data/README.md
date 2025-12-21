@@ -96,12 +96,11 @@ MSML610/
             ├── utils_post_processing.py
             ├── OpenRefine.API.ipynb
             ├── API.md
-            ├── OpenRefine.example.ipynb
+            ├── example.md
+            ├── OpenRefine.example_1.ipynb
+            ├── OpenRefine.example_2.ipynb
             ├── Dockerfile
-            ├── models/
-            │   ├── baseline_models.ipynb
-            │   ├── bert_model.ipynb
-            │   └── wandb_train_loss_distilbert_comparison.jpeg
+            │── wandb_train_loss_distilbert_comparison.jpeg
             └── README.md
 ```
 ## 4. Prerequisites
@@ -318,7 +317,7 @@ This cleaned dataset serves as the common input for all downstream modeling step
 The primary modeling objective of this project is to **train and evaluate a pre-trained transformer model** for tweet-level sentiment classification using the cleaned Sentiment140 dataset.
 
 All transformer-based experiments are implemented in:
-- `models/bert_model.ipynb`
+- `OpenRefine.example_1.ipynb`
 
 This section describes the motivation, training setup, and evaluation of the **DistilBERT** model.
 
@@ -409,7 +408,7 @@ In addition to the transformer-based approach, this project includes a **compara
 These models are explored as part of the **optional bonus objective** to understand how classical NLP pipelines compare to a fine-tuned BERT model.
 
 All baseline experiments are implemented in:
-- `models/baseline_models.ipynb`
+- `OpenRefine.example_2.ipynb`
 
 ---
 
@@ -581,9 +580,8 @@ For convenience, authentication tokens are disabled.
 
 From here, you can run:
 - OpenRefine.API.ipynb
-- OpenRefine.example.ipynb
-- models/baseline_models.ipynb
-- models/bert_model.ipynb
+- OpenRefine.example_1.ipynb (BERT model)
+- OpenRefine.example_2.ipynb (Baseline ML models)
 
 ---
 ### 11.4 Stopping the Container
