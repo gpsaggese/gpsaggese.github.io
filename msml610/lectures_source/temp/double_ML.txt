@@ -1,0 +1,11 @@
+* ATE
+- Average Treatment Effect is the mean effect of the treatment across the entire
+  population
+  $$ATE = E[Y(1) - Y(0)]$$
+
+* CATE
+  $$CATE(x) = \EE[Y(1) - Y(0) | X=x]$$
+
+* ATT (Average Treatment Effect on the Treated)
+  $$ATT = \EE[Y(1) - Y(0) | D=1]$$
+
