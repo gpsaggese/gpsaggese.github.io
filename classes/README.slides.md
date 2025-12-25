@@ -2,7 +2,7 @@
 
 ## Check correctness of all the slides
 
-- Run for one lecture from inside the container
+- Check one lecture from inside the container
   ```
   > SRC_NAME=$(ls $DIR/lectures_source/Lesson02*); echo $SRC_NAME
   > DST_NAME=process_slides.txt
@@ -10,12 +10,12 @@
   > vimdiff $SRC_NAME process_slides.txt
   ```
 
-- Run for one lecture outside the container
+- Check one lecture outside the container
   ```
   > slide_check.sh 01.2
   ```
 
-- Run for several lessons
+- Check several lessons
   ```
   > process_lessons.py --lectures 01.1* --class data605 --action slide_check --limit 0:2
   ```
@@ -29,18 +29,22 @@
 
 ## Reduce all slides
 
-```bash
-> SRC_NAME=$(ls $DIR/lectures_source/Lesson04.2*); echo $SRC_NAME
-> process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $SRC_NAME --use_llm_transform --limit 0:10
-```
+- Run
+  ```bash
+  > SRC_NAME=$(ls $DIR/lectures_source/Lesson04.2*); echo $SRC_NAME
+  > process_slides.py --in_file $SRC_NAME --action slide_reduce --out_file $SRC_NAME --use_llm_transform --limit 0:10
+  ```
+  or
+  ```
+  > slide_reduce.sh 01.1*
+  ```
 
-```
-> slide_reduce.sh 01.1*
-```
+## Generate the PDF for all the slides
 
-## Generate all the slides
-
-> process_lessons.py --lectures 0*:1* --class data605 --action pdf
+- Run
+  ```
+  > process_lessons.py --lectures 0*:1* --class data605 --action pdf
+  ```
 
 ## Generate the lecture script
 

@@ -12,11 +12,10 @@ else
     echo "Found file: ${files[*]}"
 fi
 
+# Generate script.
 OPTS=${@:2}
-
 SRC_NAME=$(cd $DIR/lectures_source; ls Lesson${LESSON}*)
 DST_NAME=$(echo $SRC_NAME | sed 's/\.txt$/.script.txt/')
-
 OUT_FILE="data605/lectures_script/$DST_NAME"
 
 uv run generate_slide_script.py \
@@ -25,6 +24,7 @@ uv run generate_slide_script.py \
   --slides_per_group 3 \
   $OPTS
 
+# Add intro and outro.
 PROMPT="You are a college professor and you need to do an introduction in 50 word the content of the slides starting with In this lesson we will discuss"
 llm_cli.py -i $OUT_FILE -p "$PROMPT" -o intro.txt
 
@@ -40,6 +40,7 @@ llm_cli.py -i $OUT_FILE -p "$PROMPT" -o outro.txt
     cat outro.txt
 } > script.tmp && mv script.tmp $OUT_FILE
 
+# Lint.
 lint_txt.py \
     -i $OUT_FILE \
     -o $OUT_FILE \
