@@ -14,7 +14,7 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Machine Learning Techniques}}$$**
+**$$\text{\blue{Lesson 02.5: ML Techniques - Model Evaluation}}$$**
 \endgroup
 \vspace{1cm}
 

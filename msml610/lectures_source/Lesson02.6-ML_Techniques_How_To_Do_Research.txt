@@ -14,7 +14,7 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Machine Learning Techniques}}$$**
+**$$\text{\blue{Lesson 02.6: ML Techniques - How to Do Research}}$$**
 \endgroup
 \vspace{1cm}
 
