@@ -1,8 +1,24 @@
 #!/bin/bash -xe
-LESSON=$1
-DIR=data605
 
-shopt -s nullglob   # empty pattern expands to nothing instead of itself
+# Check that exactly two arguments are provided.
+if [ "$#" -ne 2 ]; then
+    echo "Error: Expected exactly 2 arguments, got $#"
+    echo ""
+    echo "Usage: $0 <DIR> <LESSON>"
+    echo ""
+    echo "Arguments:"
+    echo "  DIR     - Course directory (e.g., data605, msml610)"
+    echo "  LESSON  - Lesson number (e.g., 01.1, 02.3)"
+    echo ""
+    echo "Example:"
+    echo "  $0 data605 0.1"
+    exit 1
+fi
+
+# E.g., data605, msml610
+DIR=$1
+# E.g., 01.1
+LESSON=$2
 
 files=($DIR/lectures_source/Lesson${LESSON}*)
 if (( ${#files[@]} != 1 )); then

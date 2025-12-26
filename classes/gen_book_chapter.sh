@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -e
 
 # Check that exactly two arguments are provided
 if [ "$#" -ne 2 ]; then
@@ -15,13 +15,17 @@ if [ "$#" -ne 2 ]; then
     exit 1
 fi
 
-LESSON=$1
 # E.g., data605, msml610
-DIR=$2
+DIR=$1
+# E.g., 01.1
+LESSON=$2
 
 shopt -s nullglob   # empty pattern expands to nothing instead of itself
 
-files=($DIR/lectures_source/Lesson${LESSON}*)
+FILES_DIR="$DIR/lectures_source/Lesson${LESSON}*"
+echo "FILES_DIR=$FILES_DIR"
+
+files=$(ls -1 $FILES_DIR)
 if (( ${#files[@]} != 1 )); then
     echo "Need exactly one file"
     exit 1
@@ -29,24 +33,32 @@ else
     echo "Found file: ${files[*]}"
 fi
 
-# E.g., data605/lectures_source/Lesson01.1-Intro.txt
-INPUT_FILE="${files[0]}"
-# E.g., data605/lectures/Lesson01.1-Intro.pdf
-INPUT_PDF_FILE="${INPUT_FILE/lectures_source/lectures}"
-INPUT_PDF_FILE="${INPUT_PDF_FILE/.txt/.pdf}"
-OUT_DIR="data605/book"
-echo "OUT_DIR=$OUT_DIR"
+# 1) Generate the PDF.
+SRC_NAME=$(cd $DIR/lectures_source; ls Lesson${LESSON}*)
+DST_NAME=$(echo $SRC_NAME | sed 's/\.txt$/.pdf/')
+notes_to_pdf.py \
+    --input $DIR/lectures_source/$SRC_NAME \
+    --output $DST_NAME \
+    --type slides \
+    --toc_type remove_headers 
 
-BASENAME=$(basename "$INPUT_FILE" .txt)
-
+# 2) Generate book chapter.
 HELPERS_ROOT_DIR=$(find . -type d -path "./helpers_root/dev_scripts_helpers")
 echo "HELPERS_ROOT_DIR=$HELPERS_ROOT_DIR"
 
+# E.g., Lesson01.1-Intro.txt
+INPUT_FILE="${files[0]}"
+
+OUT_DIR="$DIR/book"
+echo "OUT_DIR=$OUT_DIR"
+
 $HELPERS_ROOT_DIR/slides/generate_book_chapter.py \
     --input_file "$INPUT_FILE" \
-    --input_pdf_file "$INPUT_PDF_FILE" \
+    --input_pdf_file $DST_NAME \
     --output_dir $OUT_DIR
 
+# 3) Convert to PDF.
+BASENAME=$(basename "$INPUT_FILE" .txt)
 pandoc "$OUT_DIR/${BASENAME}.book_chapter.txt" \
     -o "$OUT_DIR/${BASENAME}.pdf" \
     --pdf-engine=xelatex \
@@ -55,4 +67,5 @@ pandoc "$OUT_DIR/${BASENAME}.book_chapter.txt" \
     --highlight-style=tango \
     --include-in-header=$HELPERS_ROOT_DIR/slides/header-style.tex
 
+# 4) Open the PDF.
 open -a /Applications/Skim.app "$OUT_DIR/${BASENAME}.pdf"
