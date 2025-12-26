@@ -1,7 +1,7 @@
 # Classes Directory
 
 This directory contains tools for processing and generating lecture materials for
-university courses (data605 and msml610).
+university courses (`data605` and `msml610`).
 
 ## Description of Files
 
@@ -24,17 +24,15 @@ university courses (data605 and msml610).
 
 #### Examples
 
-Count pages in all data605 lecture PDFs:
+- Count pages in all data605 lecture PDFs:
+  ```bash
+  > count_pages.sh
+  ```
 
-```bash
-> count_pages.sh
-```
-
-Copy page counts to clipboard:
-
-```bash
-> count_pages.sh | pbcopy
-```
+- Copy page counts to clipboard:
+  ```bash
+  > count_pages.sh | pbcopy
+  ```
 
 ### `count_words.sh`
 
@@ -46,11 +44,10 @@ Copy page counts to clipboard:
 
 #### Examples
 
-Count words in all lecture scripts:
-
-```bash
-> count_words.sh
-```
+- Count words in all lecture scripts:
+  ```bash
+  > count_words.sh
+  ```
 
 ### `gen_data605_script.sh`
 
@@ -64,23 +61,20 @@ Count words in all lecture scripts:
 
 #### Examples
 
-Generate script for lesson 1:
+- Generate script for lesson 1:
+  ```bash
+  > gen_data605_script.sh 1
+  ```
 
-```bash
-> gen_data605_script.sh 1
-```
+- Generate script for lesson 4.3:
+  ```bash
+  > gen_data605_script.sh 04.3
+  ```
 
-Generate script for lesson 4.3:
-
-```bash
-> gen_data605_script.sh 04.3
-```
-
-Generate script for lesson 5 with custom options:
-
-```bash
-> gen_data605_script.sh 5 --custom-option
-```
+- Generate script for lesson 5 with custom options:
+  ```bash
+  > gen_data605_script.sh 5 --custom-option
+  ```
 
 ### `gen_data605.sh`
 
@@ -92,23 +86,20 @@ Generate script for lesson 5 with custom options:
 
 #### Examples
 
-Generate PDF for lesson 1:
+- Generate PDF for lesson 1:
+  ```bash
+  > gen_data605.sh 1
+  ```
 
-```bash
-> gen_data605.sh 1
-```
+- Generate PDF for lesson 1 with specific tag:
+  ```bash
+  > TAG=01; gen_data605.sh $TAG
+  ```
 
-Generate PDF for lesson 1 with specific tag:
-
-```bash
-> TAG=01; gen_data605.sh $TAG
-```
-
-Generate PDF for lesson 3 with additional options:
-
-```bash
-> gen_data605.sh 3 --skip_action open
-```
+- Generate PDF for lesson 3 with additional options:
+  ```bash
+  > gen_data605.sh 3 --skip_action open
+  ```
 
 ### `gen_msml610.sh`
 
@@ -120,17 +111,15 @@ Generate PDF for lesson 3 with additional options:
 
 #### Examples
 
-Generate PDF for lesson 2:
+- Generate PDF for lesson 2:
+  ```bash
+  > gen_msml610.sh 02
+  ```
 
-```bash
-> gen_msml610.sh 02
-```
-
-Generate PDF with custom options:
-
-```bash
-> gen_msml610.sh 2 --skip_action cleanup_after
-```
+- Generate PDF with custom options:
+  ```bash
+  > gen_msml610.sh 2 --skip_action cleanup_after
+  ```
 
 ### `get_data605.sh`
 
@@ -142,17 +131,15 @@ Generate PDF with custom options:
 
 #### Examples
 
-Find lesson 1 source file:
+- Find lesson 1 source file:
+  ```bash
+  > get_data605.sh 1
+  ```
 
-```bash
-> get_data605.sh 1
-```
-
-Find lesson 3.2 source file:
-
-```bash
-> get_data605.sh 3.2
-```
+- Find lesson 3.2 source file:
+  ```bash
+  > get_data605.sh 3.2
+  ```
 
 ### `get_msml610.sh`
 
@@ -164,17 +151,15 @@ Find lesson 3.2 source file:
 
 #### Examples
 
-Find lesson 1 source file:
+- Find lesson 1 source file:
+  ```bash
+  > get_msml610.sh 1
+  ```
 
-```bash
-> get_msml610.sh 1
-```
-
-Find lesson 4 source file:
-
-```bash
-> get_msml610.sh 4
-```
+- Find lesson 4 source file:
+  ```bash
+  > get_msml610.sh 4
+  ```
 
 ### `slide_check.sh`
 
@@ -186,17 +171,15 @@ Find lesson 4 source file:
 
 #### Examples
 
-Check slides for lesson 1.2:
+- Check slides for lesson 1.2:
+  ```bash
+  > slide_check.sh 01.2
+  ```
 
-```bash
-> slide_check.sh 01.2
-```
-
-Check slides with additional options:
-
-```bash
-> slide_check.sh 2 --verbose
-```
+- Check slides with additional options:
+  ```bash
+  > slide_check.sh 2 --verbose
+  ```
 
 ### `slide_compress.sh`
 
@@ -208,11 +191,10 @@ Check slides with additional options:
 
 #### Examples
 
-Compress all large lecture images:
-
-```bash
-> slide_compress.sh
-```
+- Compress all large lecture images:
+  ```bash
+  > slide_compress.sh
+  ```
 
 ### `slide_improve.sh`
 
@@ -224,17 +206,15 @@ Compress all large lecture images:
 
 #### Examples
 
-Improve slides for lesson 1:
+- Improve slides for lesson 1:
+  ```bash
+  > slide_improve.sh 1
+  ```
 
-```bash
-> slide_improve.sh 1
-```
-
-Improve slides with custom options:
-
-```bash
-> slide_improve.sh 3 --dry_run
-```
+- Improve slides with custom options:
+  ```bash
+  > slide_improve.sh 3 --dry_run
+  ```
 
 ### `slide_reduce.sh`
 
@@ -246,17 +226,15 @@ Improve slides with custom options:
 
 #### Examples
 
-Reduce slides for lesson 1.1 with wildcard:
+- Reduce slides for lesson 1.1 with wildcard:
+  ```bash
+  > slide_reduce.sh 01.1*
+  ```
 
-```bash
-> slide_reduce.sh 01.1*
-```
-
-Reduce slides for lesson 4:
-
-```bash
-> slide_reduce.sh 4 --verbose
-```
+- Reduce slides for lesson 4:
+  ```bash
+  > slide_reduce.sh 4 --verbose
+  ```
 
 ### `generate_class_images.py`
 
@@ -269,29 +247,25 @@ Reduce slides for lesson 4:
 
 #### Examples
 
-Generate 5 standard quality images from a prompt:
+- Generate 5 standard quality images from a prompt:
+  ```bash
+  > generate_class_images.py "A sunset over mountains" --dst_dir ./images --low_res
+  ```
 
-```bash
-> generate_class_images.py "A sunset over mountains" --dst_dir ./images --low_res
-```
+- Generate HD quality images:
+  ```bash
+  > generate_class_images.py "A cat wearing a hat" --dst_dir ./images
+  ```
 
-Generate HD quality images:
+- Generate custom number of images:
+  ```bash
+  > generate_class_images.py "Abstract art" --dst_dir ./images --count 3
+  ```
 
-```bash
-> generate_class_images.py "A cat wearing a hat" --dst_dir ./images
-```
-
-Generate custom number of images:
-
-```bash
-> generate_class_images.py "Abstract art" --dst_dir ./images --count 3
-```
-
-Generate images for MSLM610 workload:
-
-```bash
-> generate_class_images.py --workload MSLM610 --dst_dir ./msml610_images
-```
+- Generate images for MSLM610 workload:
+  ```bash
+  > generate_class_images.py --workload MSLM610 --dst_dir ./msml610_images
+  ```
 
 ### `process_lessons.py`
 
@@ -306,26 +280,22 @@ Generate images for MSLM610 workload:
 
 #### Examples
 
-Generate PDF slides for a specific lecture:
+- Generate PDF slides for a specific lecture:
+  ```bash
+  > process_lessons.py --lectures 01.1 --class data605 --action pdf
+  ```
 
-```bash
-> process_lessons.py --lectures 01.1 --class data605 --action pdf
-```
+- Generate reading scripts for multiple lectures:
+  ```bash
+  > process_lessons.py --lectures 01*:02* --class data605 --action script
+  ```
 
-Generate reading scripts for multiple lectures:
+- Generate both PDFs and scripts:
+  ```bash
+  > process_lessons.py --lectures 01* --class msml610 --action pdf --action script
+  ```
 
-```bash
-> process_lessons.py --lectures 01*:02* --class data605 --action script
-```
-
-Generate both PDFs and scripts:
-
-```bash
-> process_lessons.py --lectures 01* --class msml610 --action pdf --action script
-```
-
-Generate all slides for multiple lessons:
-
-```bash
-> process_lessons.py --lectures 0*:1* --class data605 --action pdf
-```
+- Generate all slides for multiple lessons:
+  ```bash
+  > process_lessons.py --lectures 0*:1* --class data605 --action pdf
+  ```

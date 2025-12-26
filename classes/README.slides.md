@@ -39,7 +39,7 @@
   > slide_reduce.sh 01.1*
   ```
 
-## Generate the PDF for all the slides
+# Generate the PDF for all the slides
 
 - Run
   ```
