@@ -28,7 +28,7 @@ else
     echo "Found file: ${files[*]}"
 fi
 
-OPTS=${@:2}
+OPTS=${@:3}
 
 SRC_NAME=$(cd $DIR/lectures_source; ls Lesson${LESSON}*)
 DST_NAME=$(echo $SRC_NAME | sed 's/\.txt$/.pdf/')
