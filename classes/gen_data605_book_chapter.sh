@@ -17,7 +17,7 @@ INPUT_FILE="${files[0]}"
 # E.g., data605/lectures/Lesson01.1-Intro.pdf
 INPUT_PDF_FILE="${INPUT_FILE/lectures_source/lectures}"
 INPUT_PDF_FILE="${INPUT_PDF_FILE/.txt/.pdf}"
-OUT_DIR="book"
+OUT_DIR="data605/book"
 echo "OUT_DIR=$OUT_DIR"
 
 BASENAME=$(basename "$INPUT_FILE" .txt)
