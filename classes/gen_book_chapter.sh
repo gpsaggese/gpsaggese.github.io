@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -xe
 
 # Check that exactly two arguments are provided
 if [ "$#" -ne 2 ]; then
@@ -35,7 +35,7 @@ fi
 
 # 1) Generate the PDF.
 SRC_NAME=$(cd $DIR/lectures_source; ls Lesson${LESSON}*)
-DST_NAME=$(echo $SRC_NAME | sed 's/\.txt$/.pdf/')
+DST_NAME=$(echo tmp.$SRC_NAME | sed 's/\.txt$/.pdf/')
 notes_to_pdf.py \
     --input $DIR/lectures_source/$SRC_NAME \
     --output $DST_NAME \
