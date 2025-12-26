@@ -59,8 +59,9 @@ $HELPERS_ROOT_DIR/slides/generate_book_chapter.py \
 
 # 3) Convert to PDF.
 BASENAME=$(basename "$INPUT_FILE" .txt)
+PDF_FILE_NAME="$OUT_DIR/${BASENAME}.book_chapter.pdf"
 pandoc "$OUT_DIR/${BASENAME}.book_chapter.txt" \
-    -o "$OUT_DIR/${BASENAME}.pdf" \
+    -o $PDF_FILE_NAME \
     --pdf-engine=xelatex \
     -V geometry:margin=1in \
     -V fontsize=11pt \
@@ -68,4 +69,4 @@ pandoc "$OUT_DIR/${BASENAME}.book_chapter.txt" \
     --include-in-header=$HELPERS_ROOT_DIR/slides/header-style.tex
 
 # 4) Open the PDF.
-open -a /Applications/Skim.app "$OUT_DIR/${BASENAME}.pdf"
+open -a /Applications/Skim.app $PDF_FILE_NAME
