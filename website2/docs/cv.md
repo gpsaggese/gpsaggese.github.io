@@ -1,5 +1,5 @@
 **Giacinto Paolo (GP) Saggese, PhD**  
-Cell: 408-431-1286 | [saggese@gmail.com](mailto:saggese@gmail.com)  [LinkedIn](https://www.linkedin.com/in/gpsaggese/) | [GitHub](https://github.com/gpsaggese)
+Cell: 408-431-1286 | [Email](mailto:saggese@gmail.com) | [LinkedIn](https://www.linkedin.com/in/gpsaggese/) | [GitHub](https://github.com/gpsaggese)
 
 # ***Summary***
 

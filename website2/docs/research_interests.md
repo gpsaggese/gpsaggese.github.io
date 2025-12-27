@@ -22,7 +22,12 @@ in microprocessors to low-power circuit design. Work includes fault tolerance
 mechanisms, application-specific error detection, approximate computing, and
 FPGA-based architectures for high-performance applications.
 
----
+## BibTex
+
+- **BibTeX File:** All publications are available in BibTeX format in [gp_publications.bib](gp_publications.bib)
+
+## Books
+- Coming soon
 
 ## Causal AI Publications
 
@@ -68,8 +73,6 @@ Causal inference for energy demand prediction achieving 12.5% MAPE improvement o
 **Publication:** Manuscript to be submitted to arXiv, 2025
 
 Causal demand forecasting framework integrating knowledge graphs with state-space models for supply chain optimization. Combines LLM-assisted knowledge graph construction with query-specific Bayesian networks, applied to spare parts demand with calibrated uncertainty quantification for risk-aware inventory planning.
-
----
 
 ## Cryptography Publications
 
@@ -123,8 +126,6 @@ Causal demand forecasting framework integrating knowledge graphs with state-spac
 ### Providing Interoperable Time Stamping Services (2003)
 **Authors:** A. Mazzeo, L. Romano, G.P. Saggese
 **Publication:** Scuola Superiore, 2003
-
----
 
 ## Computer Design Publications
 *Fault Tolerance, Computer Arithmetic, FPGA Design, Microprocessor Architecture*
@@ -193,7 +194,3 @@ Causal demand forecasting framework integrating knowledge graphs with state-spac
 **Authors:** D. De Caro, N. Mazzocca, E. Napoli, G.P. Saggese, A.G.M. Strollo
 **Publication:** Proceedings of the 2001 8th IEEE International Conference on Electronics, Circuits and Systems (ICECS 2001), Malta, pp. 745-748, 2001
 **Links:** [DOI](https://doi.org/10.1109/ICECS.2001.957582) | [DBLP](https://dblp.org/rec/conf/icecsys/CaroMNSS01.bib)
-
-## BibTex
-
-- **BibTeX File:** All publications are available in BibTeX format in [gp_publications.bib](gp_publications.bib)
