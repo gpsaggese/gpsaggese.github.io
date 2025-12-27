@@ -277,104 +277,6 @@
       of luck through analyses of moral luck and distributive justice.
   \end{itemize}
 
-% ==============================================================================
-  \subsection{Related Work}
-
-  Recent research has advanced the formal quantification and empirical
-  analysis of skill and luck across multiple domains. This work complements
-  and extends our theoretical framework by providing domain-specific
-  applications and empirical validation.
-
-  \textbf{Game-Theoretic Foundations.}
-  Silver~\cite{silver2025} introduces a formal index to disentangle skill
-  and luck in stochastic games by decomposing outcomes into ``skill leverage''
-  and ``luck leverage.'' This framework provides algorithms to compute these
-  components from game trees and maps games on a spectrum from pure chance
-  to pure skill. The approach generalizes beyond games to any decision process
-  under uncertainty, with applications in game design, AI performance evaluation,
-  and risk management.
-
-  Jerdee and Newman~\cite{jerdee2024} extend classical ranking models by
-  adding a ``luck'' parameter capturing random upsets and a ``depth of competition''
-  metric. Fitting this model to sports, games, and social hierarchies,
-  they find that human social hierarchies tend to be deep with significant
-  luck factors, while sports and games show shallow competition with minimal
-  luck-driven upsets. This quantification demonstrates different luck-skill
-  balances across domains.
-
-  \textbf{Normative and Philosophical Analysis.}
-  Liu and Tsay~\cite{liu2023} build on prior chance models to formalize
-  when high performance misleadingly signals merit versus luck. They define
-  four versions of a normative luck framework integrating psychological
-  insights with decision models, predicting conditions under which extreme
-  success may indicate greater luck and even lower expected skill. They
-  illustrate how highly cited publications can sometimes reflect lower
-  true research quality through chance success, and discuss strategies
-  to correct biases that lead people to mistake luck for skill.
-
-  Lefranc and Trannoy~\cite{lefranc2025} situate the skill-luck distinction
-  in inequality and social justice contexts. They refine equal opportunity
-  definitions by distinguishing how luck enters before or after effort.
-  Their analysis highlights that the timing of luck relative to decision-making
-  critically affects how policy should compensate for or nullify luck's effects.
-
-  \textbf{Agent-Based and Simulation Models.}
-  Pluchino, Biondo, and Rapisarda~\cite{pluchino2018} use agent-based
-  modeling to explore how random events combined with talent distributions
-  produce outcome distributions. They show that multiplicative effects
-  of random lucky events can yield extremely skewed success outcomes even
-  with normally distributed talent. Greatest successes often require being
-  fortunate multiple times rather than being most talented, providing
-  quantitative basis for the meritocracy-versus-luck debate.
-
-  \textbf{Empirical Studies in Education and Labor Markets.}
-  Landaud et al.~\cite{landaud2022} exploit a natural experiment in Norwegian
-  high school exams to measure luck. Students randomly assigned exam subjects
-  experience ``lucky'' outcomes when tested in their strongest subjects.
-  This exam luck significantly boosts grades, graduation probability, and
-  leads to substantial lasting wage differences comparable to effects of
-  parental education or teacher quality, underlining luck's role in educational
-  and labor outcomes.
-
-  \textbf{Applications in Sports.}
-  Holzmeister and Johannesson~\cite{holzmeister2025} quantify skill versus
-  luck in professional soccer using seven European leagues. They decompose
-  team performance relative to expected goals into skill and luck components,
-  estimating that approximately 40\% of over-or-under-performance variation
-  is skill while 60\% is luck. Simulations show luck changes the champion
-  in 34\% of seasons and decides relegations in 76\% of cases, demonstrating
-  that chance significantly sways season outcomes alongside skill.
-
-  \textbf{Corporate Governance and Executive Compensation.}
-  Al-Sabah~\cite{alsabah2020} examines whether CEOs accumulate influence
-  through skill or fortunate outcomes. Findings show that good luck significantly
-  increases CEO power within firms, while measurable skill has smaller effects.
-  Boards often inadvertently reward CEOs for lucky outcomes, expanding
-  authority beyond what skill alone would merit.
-
-  Bertrand and Mullainathan~\cite{bertrand2001} define luck as observable
-  shocks to firm performance outside CEO control and test whether such
-  luck affects compensation. CEO pay increases due to lucky outcomes as
-  much as for skill-driven performance. However, firms with strong governance
-  better filter out luck, granting smaller raises for luck-driven gains.
-  This evidence of ``pay-for-luck'' sparked debates on fair compensation
-  and incentive contract design.
-
-  \textbf{Financial Markets.}
-  Fama and French~\cite{fama2010} address whether outperforming investment
-  fund managers are skillful or lucky. Using bootstrap simulation on decades
-  of U.S. mutual fund data, they show very few funds earn returns beyond
-  chance expectations after fees. Most apparent outperformance can be explained
-  by luck, reinforcing caution in attributing short-term success to manager
-  skill.
-
-  Each of these works either builds upon similar luck-skill decomposition
-  themes or applies them across domains including games, sports, education,
-  finance, and corporate governance. Together, they advance theoretical
-  foundations and provide empirical demonstrations, expanding our ability
-  to quantify and act upon the interplay of skill and luck in real-world
-  outcomes.
-
 % ##############################################################################
   \section{Mathematical Framework}
   \label{sec:theory}
@@ -1449,6 +1351,104 @@
   to a question that otherwise remains informal and speculative.
 
 % ##############################################################################
+  \section{Related Work}
+
+  Recent research has advanced the formal quantification and empirical
+  analysis of skill and luck across multiple domains. This work complements
+  and extends our theoretical framework by providing domain-specific
+  applications and empirical validation.
+
+  \textbf{Game-Theoretic Foundations.}
+  Silver~\cite{silver2025} introduces a formal index to disentangle skill
+  and luck in stochastic games by decomposing outcomes into ``skill leverage''
+  and ``luck leverage.'' This framework provides algorithms to compute these
+  components from game trees and maps games on a spectrum from pure chance
+  to pure skill. The approach generalizes beyond games to any decision process
+  under uncertainty, with applications in game design, AI performance evaluation,
+  and risk management.
+
+  Jerdee and Newman~\cite{jerdee2024} extend classical ranking models by
+  adding a ``luck'' parameter capturing random upsets and a ``depth of competition''
+  metric. Fitting this model to sports, games, and social hierarchies,
+  they find that human social hierarchies tend to be deep with significant
+  luck factors, while sports and games show shallow competition with minimal
+  luck-driven upsets. This quantification demonstrates different luck-skill
+  balances across domains.
+
+  \textbf{Normative and Philosophical Analysis.}
+  Liu and Tsay~\cite{liu2023} build on prior chance models to formalize
+  when high performance misleadingly signals merit versus luck. They define
+  four versions of a normative luck framework integrating psychological
+  insights with decision models, predicting conditions under which extreme
+  success may indicate greater luck and even lower expected skill. They
+  illustrate how highly cited publications can sometimes reflect lower
+  true research quality through chance success, and discuss strategies
+  to correct biases that lead people to mistake luck for skill.
+
+  Lefranc and Trannoy~\cite{lefranc2025} situate the skill-luck distinction
+  in inequality and social justice contexts. They refine equal opportunity
+  definitions by distinguishing how luck enters before or after effort.
+  Their analysis highlights that the timing of luck relative to decision-making
+  critically affects how policy should compensate for or nullify luck's effects.
+
+  \textbf{Agent-Based and Simulation Models.}
+  Pluchino, Biondo, and Rapisarda~\cite{pluchino2018} use agent-based
+  modeling to explore how random events combined with talent distributions
+  produce outcome distributions. They show that multiplicative effects
+  of random lucky events can yield extremely skewed success outcomes even
+  with normally distributed talent. Greatest successes often require being
+  fortunate multiple times rather than being most talented, providing
+  quantitative basis for the meritocracy-versus-luck debate.
+
+  \textbf{Empirical Studies in Education and Labor Markets.}
+  Landaud et al.~\cite{landaud2022} exploit a natural experiment in Norwegian
+  high school exams to measure luck. Students randomly assigned exam subjects
+  experience ``lucky'' outcomes when tested in their strongest subjects.
+  This exam luck significantly boosts grades, graduation probability, and
+  leads to substantial lasting wage differences comparable to effects of
+  parental education or teacher quality, underlining luck's role in educational
+  and labor outcomes.
+
+  \textbf{Applications in Sports.}
+  Holzmeister and Johannesson~\cite{holzmeister2025} quantify skill versus
+  luck in professional soccer using seven European leagues. They decompose
+  team performance relative to expected goals into skill and luck components,
+  estimating that approximately 40\% of over-or-under-performance variation
+  is skill while 60\% is luck. Simulations show luck changes the champion
+  in 34\% of seasons and decides relegations in 76\% of cases, demonstrating
+  that chance significantly sways season outcomes alongside skill.
+
+  \textbf{Corporate Governance and Executive Compensation.}
+  Al-Sabah~\cite{alsabah2020} examines whether CEOs accumulate influence
+  through skill or fortunate outcomes. Findings show that good luck significantly
+  increases CEO power within firms, while measurable skill has smaller effects.
+  Boards often inadvertently reward CEOs for lucky outcomes, expanding
+  authority beyond what skill alone would merit.
+
+  Bertrand and Mullainathan~\cite{bertrand2001} define luck as observable
+  shocks to firm performance outside CEO control and test whether such
+  luck affects compensation. CEO pay increases due to lucky outcomes as
+  much as for skill-driven performance. However, firms with strong governance
+  better filter out luck, granting smaller raises for luck-driven gains.
+  This evidence of ``pay-for-luck'' sparked debates on fair compensation
+  and incentive contract design.
+
+  \textbf{Financial Markets.}
+  Fama and French~\cite{fama2010} address whether outperforming investment
+  fund managers are skillful or lucky. Using bootstrap simulation on decades
+  of U.S. mutual fund data, they show very few funds earn returns beyond
+  chance expectations after fees. Most apparent outperformance can be explained
+  by luck, reinforcing caution in attributing short-term success to manager
+  skill.
+
+  Each of these works either builds upon similar luck-skill decomposition
+  themes or applies them across domains including games, sports, education,
+  finance, and corporate governance. Together, they advance theoretical
+  foundations and provide empirical demonstrations, expanding our ability
+  to quantify and act upon the interplay of skill and luck in real-world
+  outcomes.
+
+% ##############################################################################
   \section{Conclusion}
   \label{sec:conclusion}
 
@@ -1506,7 +1506,7 @@
     \bibitem{frank2016} Frank, R. H. (2016). \textit{Success and Luck: Good
       Fortune and the Myth of Meritocracy}. Princeton University Press.
 
-    \bibitem{pearl2009} Pearl, J. (2009). \textit{Causality: Models,
+
       Reasoning, and Inference} (2nd ed.). Cambridge University Press.
 
     \bibitem{shannon1948} Shannon, C. E. (1948). A mathematical theory of
