@@ -1,10 +1,10 @@
 #!/bin/bash -e
 
 # Find the actual git root directory.
-export GIT_ROOT=$(pwd)
+export GIT_ROOT=$(git rev-parse --show-toplevel)
 if [[ -z $GIT_ROOT ]]; then
     echo "Can't find GIT_ROOT=$GIT_ROOT"
-    exit -1
+    exit 1
 fi;
 echo "GIT_ROOT=$GIT_ROOT"
 
@@ -14,11 +14,11 @@ if [[ -z $1 ]]; then
 else
     NUM_PASSES=$1
 fi;
-SCRIPT_DIR=$(dirname $SCRIPT_SOURCE)
+SCRIPT_DIR=$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd)
 echo $SCRIPT_DIR
 echo "SCRIPT_DIR=$SCRIPT_DIR"
 
-if [[ ./figs ]]; then
+if [[ -d ./figs ]]; then
     rm -rf figs
 fi;
 EXEC=$GIT_ROOT/helpers_root/dev_scripts_helpers/documentation/render_images.py
@@ -66,7 +66,7 @@ if [[ $NUM_PASSES -ge 3 ]]; then
 fi;
 
 LOGFILE=paper.log
-grep -E "LaTeX Warning:|Package .* Warning:|Class .* Warning:" "$LOGFILE"
+grep -E "LaTeX Warning:|Package .* Warning:|Class .* Warning:" "$LOGFILE" || true
 
 # Copy to Google Drive locations if they exist
 GDRIVE_PAPERS="/Users/saggese/Library/CloudStorage/GoogleDrive-gp@causify.ai/Shared drives/Eng - External (GP)/Papers/"

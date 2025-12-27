@@ -12,20 +12,35 @@
   \maketitle
 
   \begin{abstract}
-    The distinction between skill and luck in determining outcomes represents
-    a fundamental problem in understanding individual and societal achievement.
-    This paper develops a mathematical framework for quantifying the
-    role of luck in agent outcomes by decomposing events into
-    probability, utility, and control components. We formalize luck as value-weighted
-    surprise of outcomes not explained by controllable factors,
-    incorporating concepts from probability theory, decision theory, and
-    causal inference. The framework provides a principled method for rating
-    individual events, measuring aggregate luck distributions across
-    populations, and analyzing societal fairness. Applications span
-    moral philosophy, policy design, and institutional evaluation. The theoretical
-    approach enables empirical measurement of luck's contribution to observed
-    outcomes, supporting evidence-based discussions of merit, responsibility,
-    and distributive justice.
+    The inability to rigorously separate skill from luck in human outcomes represents
+    perhaps the most consequential unsolved problem in social science, undergirding
+    every question of justice, merit, responsibility, and institutional design.
+    Despite millennia of philosophical inquiry and centuries of statistical analysis,
+    we have lacked the mathematical foundation to quantify what portion of observed
+    inequality reflects genuine differences in ability versus the capricious distribution
+    of fortune. This paper provides that foundation.
+
+    We develop the first complete mathematical framework for decomposing agent outcomes
+    into skill and luck components by integrating probability theory, decision theory,
+    and causal inference. Our formalization defines luck as value-weighted surprise
+    of outcomes not explained by controllable factors, enabling principled measurement
+    of both individual events and population-level distributions. This framework
+    fundamentally transforms our ability to address questions that have remained
+    intractable: How much of economic inequality is attributable to circumstances
+    versus choices? What degree of outcome variation lies beyond individual control?
+    How should institutions account for luck when evaluating performance and allocating
+    resources?
+
+    The implications are profound and far-reaching. This framework provides the missing
+    analytical foundation for understanding social stratification, meritocracy, and
+    distributive justice. It enables evidence-based policy design by quantifying
+    the extent to which outcomes reflect factors beyond individual agency. It offers
+    a rigorous basis for moral philosophy's treatment of responsibility and desert.
+    And it supplies the tools necessary for evaluating whether our institutions
+    reward skill or merely reinforce the accidents of birth and circumstance.
+    By making measurable what was previously only intuited, this work establishes
+    the theoretical basis for a more scientifically grounded understanding of the
+    human condition in modern society.
   \end{abstract}
 
   \setcounter{tocdepth}{2}
@@ -62,7 +77,8 @@
   scores and measuring distributional properties such as luck inequality
   and the correlation between circumstances and outcomes.
 
-  This paper proceeds as follows. Section~\ref{sec:background} discusses
+  This paper proceeds as follows. Section~\ref{sec:contributions} enumerates
+  our major contributions. Section~\ref{sec:background} discusses
   the conceptual foundations and motivation. Section~\ref{sec:theory}
   develops the mathematical theory, including axioms, probability models,
   and the core luck function. Section~\ref{sec:rating} presents
@@ -70,6 +86,46 @@
   extends the framework to societal modeling. Section~\ref{sec:implications}
   examines consequences for policy and institutions. Section~\ref{sec:conclusion}
   concludes.
+
+% ##############################################################################
+  \section{Contributions}
+  \label{sec:contributions}
+
+  This paper makes the following major contributions:
+
+  \begin{itemize}
+    \item \textbf{First Complete Mathematical Framework:}
+      We provide the first rigorous formalization integrating probability theory,
+      decision theory, and causal inference to decompose outcomes into skill
+      and luck components.
+
+    \item \textbf{Axiomatic Foundation:}
+      We establish axioms ensuring theoretical soundness, including scale invariance,
+      additivity, and proper control attribution.
+
+    \item \textbf{Unified Cross-Disciplinary Theory:}
+      Our framework bridges moral philosophy, economics, statistics, and causal
+      inference, resolving conceptual ambiguities across disciplines.
+
+    \item \textbf{Practical Measurement Methodology:}
+      We develop implementable methods for rating events and computing luck scores
+      from observational or experimental data.
+
+    \item \textbf{Societal-Level Analysis Framework:}
+      We extend from individual events to population dynamics, enabling measurement
+      of luck inequality and empirical evaluation of meritocracy.
+
+    \item \textbf{Causal Model of Outcomes:}
+      We formalize relationships between circumstances, choices, and shocks,
+      enabling variance decomposition and policy analysis.
+
+    \item \textbf{Evidence-Based Foundation for Policy:}
+      By making luck measurable, we transform philosophical debates about
+      responsibility and justice into empirically tractable questions.
+  \end{itemize}
+
+  These contributions establish the theoretical foundation for a scientific
+  approach to merit, fairness, and responsibility.
 
 % ##############################################################################
   \section{Background and Motivation}
@@ -493,18 +549,18 @@
     \centering
     \begin{tikzpicture}[
       node distance=1.2cm,
-      step/.style={rectangle, draw, fill=blue!15, text width=3.5cm, minimum height=0.9cm, align=center, font=\small},
+      stepnode/.style={rectangle, draw, fill=blue!15, text width=3.5cm, minimum height=0.9cm, align=center, font=\small},
       decision/.style={diamond, draw, fill=orange!15, text width=2cm, minimum height=0.8cm, align=center, font=\small},
       arrow/.style={->, >=stealth, thick}
     ]
       % Steps
-      \node[step] (step1) {1. Specify Agent \& Event\\$A$, $E$, $t$};
-      \node[step, below of=step1] (step2) {2. Define Reference Model\\$P(\cdot|I_A(t))$};
-      \node[step, below of=step2] (step3) {3. Compute Surprise\\$S(E) = -\log P(E|I_A)$};
-      \node[step, below of=step3] (step4) {4. Assess Utility\\$U_A(E)$};
-      \node[step, below of=step4] (step5) {5. Estimate Control\\$C_A(E) \in [0,1]$};
-      \node[step, below of=step5] (step6) {6. Calculate Luck\\$L_A(E) = U_A \cdot S \cdot (1-C_A)$};
-      \node[step, below of=step6, fill=green!15] (step7) {7. Normalize\\$L_A^*(E)$ (z-score)};
+      \node[stepnode] (step1) {1. Specify Agent \& Event\\$A$, $E$, $t$};
+      \node[stepnode, below of=step1] (step2) {2. Define Reference Model\\$P(\cdot|I_A(t))$};
+      \node[stepnode, below of=step2] (step3) {3. Compute Surprise\\$S(E) = -\log P(E|I_A)$};
+      \node[stepnode, below of=step3] (step4) {4. Assess Utility\\$U_A(E)$};
+      \node[stepnode, below of=step4] (step5) {5. Estimate Control\\$C_A(E) \in [0,1]$};
+      \node[stepnode, below of=step5] (step6) {6. Calculate Luck\\$L_A(E) = U_A \cdot S \cdot (1-C_A)$};
+      \node[stepnode, below of=step6, fill=green!15] (step7) {7. Normalize\\$L_A^*(E)$ (z-score)};
 
       % Arrows
       \draw[arrow] (step1) -- (step2);
@@ -735,14 +791,14 @@
     \centering
     \begin{tikzpicture}[
       node distance=2.5cm and 2cm,
-      variable/.style={circle, draw, fill=blue!20, minimum size=1.3cm, align=center, font=\small},
+      varnode/.style={circle, draw, fill=blue!20, minimum size=1.3cm, align=center, font=\small},
       outcome/.style={circle, draw, fill=green!25, minimum size=1.5cm, align=center, font=\normalsize},
       shock/.style={circle, draw, fill=red!20, minimum size=1.3cm, align=center, font=\small},
       arrow/.style={->, >=stealth, very thick}
     ]
       % Nodes
-      \node[variable] (B) {Circum-\\stances\\$B_i$};
-      \node[variable, right of=B] (A) {Choices\\$A_i$};
+      \node[varnode] (B) {Circum-\\stances\\$B_i$};
+      \node[varnode, right of=B] (A) {Choices\\$A_i$};
       \node[shock, below of=A, node distance=1.8cm] (S) {Shocks\\$S_i$};
       \node[outcome, right of=A] (Y) {Outcome\\$Y_i$};
 
