@@ -1,9 +1,13 @@
 **Giacinto Paolo (GP) Saggese, PhD**  
-Cell: 408-431-1286 · [saggese@gmail.com](mailto:saggese@gmail.com) · [LinkedIn](https://www.linkedin.com/in/gpsaggese/) · [GitHub](https://github.com/gpsaggese)
+Cell: 408-431-1286 | [saggese@gmail.com](mailto:saggese@gmail.com)  [LinkedIn](https://www.linkedin.com/in/gpsaggese/) | [GitHub](https://github.com/gpsaggese)
 
 # ***Summary***
 
-Technology executive, ML researcher, and systems architect with 20+ years building AI/ML systems, quant strategies, and high-performance software. Expertise in Causal AI, Bayesian modeling, knowledge graphs, optimization, and distributed systems. Founder, team leader, and builder of production-grade ML and quant platforms.
+- Technology executive, ML researcher, and systems architect with 20+ years
+  building AI/ML systems, quant strategies, and high-performance software.
+- Expertise in Causal AI, Bayesian modeling, knowledge graphs, optimization, and
+  distributed systems
+- Founder, team leader, and builder of production-grade ML and quant platforms.
 
 # ***Core Competencies***
 
@@ -13,13 +17,18 @@ Algo Trading · Optimization · Product Strategy · Technical Leadership
 
 # ***Selected Technical Highlights***
 
-- Built full-stack **Causal AI platform** (graph engine, Bayesian models, temporal ML, explainability)  
-- Designed **HPC simulation technology** delivering **3–10x** IC-verification speedup → acquired by Synopsys  
-- Developed **alpha signal pipelines** for large unstructured/alt-data; deployed predictive signals across global markets  
-- Created **intraday simulators**, portfolio optimizers, and low-latency research infrastructure  
+- Built full-stack _Causal AI platform_ (graph engine, Bayesian models, temporal
+  ML, explainability)  
+- Designed _HPC simulation technology_ delivering _3–10x_ IC-verification
+  speedup, acquired by Synopsys  
+- Developed _alpha signal pipelines_ for large unstructured/alt-data; deployed
+  predictive signals across global markets  
+- Created _intraday simulators_, portfolio optimizers, and low-latency research
+  infrastructure  
 - Led ML/engineering teams (8–12 people) across startups and quant firms  
-- Delivered **ML trading signals** with stable out-of-sample performance  
-- Built **ML Ops workflows**: data pipelines, feature stores, model validation, observability, CI/CD
+- Delivered _ML trading signals_ with stable out-of-sample performance  
+- Built _ML Ops workflows_: data pipelines, feature stores, model validation,
+  observability, CI/CD
 
 # ***Experience***
 
@@ -88,31 +97,3 @@ Algo Trading · Optimization · Product Strategy · Technical Leadership
 **1995–2000: Master’s in Electrical Engineering, University of Naples**
 
 - GPA **3.99 / 4.00**, ranked 1st of 500+
-
-# ***Technical Skills***
-
-**Programming:** Python, C++, GPU CUDA, x86 assembly  
-**ML/AI:** Causal inference, Bayesian modeling, time-series ML, knowledge graphs, supervised/unsupervised ML, ML Ops  
-**Quant:** Stat-arb, market-neutral strategies, portfolio optimization, alpha modeling  
-**Systems:** HPC, distributed systems, GPU/FPGA design, compilers, simulators  
-**Tools:** PyTorch, NumPy/SciPy, Pandas, Ray, Spark, Kubernetes (as relevant)
-
-# ***Achievements***
-
-- 20+ publications in top venues  
-- US Patents: [8,156,457](https://patents.google.com/patent/US8156457B2/en), [8,738,350](https://patents.google.com/patent/US8738350B2/en)  
-- O1 Visa recipient (extraordinary ability in sciences)  
-- Ranked 1st in class (500+ students)  
-- Under-18 Italian national swimming finalist (twice)
-
-# ***Selected Publications & Patents***
-
-- AI publications:   
-- Publications: [DBLP](https://dblp.uni-trier.de/pers/hd/s/Saggese:Giacinto_Paolo), [Google Scholar](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C21&q=gp+saggese&btnG=), [ResearchGate](https://www.researchgate.net/scientific-contributions/70377865_GP_Saggese)  
-- Patents: [US 8,156,457](https://patents.google.com/patent/US8156457B2/en), [US 8,738,350](https://patents.google.com/patent/US8738350B2/en)
-
-# ***Role Interests (Optional)***
-
-CTO · VP Engineering · Head of ML/AI · Head of Quant Research · Research Director
-
-Dual citizenship: USA / Italy

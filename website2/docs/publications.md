@@ -183,6 +183,9 @@
 
 ## Additional Resources
 
-- **DBLP Profile:** [https://dblp.org/pid/35/4554.html](https://dblp.org/pid/35/4554.html)
+- **Publications:**
+  - [DBLP](https://dblp.uni-trier.de/pers/hd/s/Saggese:Giacinto_Paolo)
+  - [Google Scholar](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C21&q=gp+saggese&btnG=)
+  - [ResearchGate](https://www.researchgate.net/scientific-contributions/70377865_GP_Saggese)
 - **Research Areas:** Causal AI, Cryptography, Computer Arithmetic, Fault Tolerance, FPGA Design, Soft Error Analysis
 - **BibTeX File:** All publications are available in BibTeX format in [gp_publications.bib](../gp_publications.bib)

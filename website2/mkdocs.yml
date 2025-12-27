@@ -4,6 +4,9 @@ site_description: Personal website of GP Saggese - Adjunct Professor and Technol
 
 theme:
   name: material
+  logo: assets/logo.png  # Custom logo in header
+  favicon: assets/favicon.png  # Custom favicon in browser tab
+  generator: false  # Remove "Made with Material for MkDocs" from footer
   palette:
     # Light mode
     - media: "(prefers-color-scheme: light)"
@@ -25,6 +28,7 @@ theme:
     - navigation.instant
     - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.expand
     - navigation.top
@@ -41,7 +45,11 @@ plugins:
 nav:
   - Home: index.md
   - CV/Resume: cv.md
+  - Education: education.md
+  - Teaching: teaching.md
+  - Coding: coding.md
   - Publications: publications.md
+  - Research interests: research_interests.md
 
 markdown_extensions:
   - admonition
@@ -59,6 +67,9 @@ markdown_extensions:
   - tables
   - toc:
       permalink: true
+
+extra_css:
+  - stylesheets/extra.css
 
 extra:
   social:

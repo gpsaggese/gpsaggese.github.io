@@ -1,56 +1,81 @@
-# Giacinto Paolo Saggese
+# Giacinto Paolo (GP) Saggese, PhD
 
-## Profile
-
-**Adjunct Professor, Computer Science @ University of Maryland**
-
-**Location:** Washington DC-Baltimore Area
+- CTO & Co-Founder @ Causify.AI
+- Adjunct Professor, Computer Science @ University of Maryland, College Park
 
 ## Contact Information
 
-- **Email:** gsaggese@umd.edu | saggese@gmail.com
-- **LinkedIn:** [linkedin.com/in/gpsaggese](https://linkedin.com/in/gpsaggese) (4,000+ followers, 500+ connections)
-- **Publications:** [DBLP](https://dblp.uni-trier.de/pid/35/4554.html) | [Google Scholar](https://scholar.google.com) | [ResearchGate](https://www.researchgate.net)
+- **Email:** gp@causify.ai | gsaggese@umd.edu | saggese@gmail.com
+- **Cell:** 408-431-1286
+- **LinkedIn:** [linkedin.com/in/gpsaggese](https://linkedin.com/in/gpsaggese)
+- **GitHub:** [github.com/gpsaggese](https://github.com/gpsaggese)
+- **Location:** Washington DC-Baltimore Area
+- **Citizenship:** USA / Italy
 
-## Biography
+## Summary
 
-GP holds a PhD in Electrical and Computer Engineering from the University of Illinois at Urbana-Champaign (2000-2006) and completed postdoctoral research focusing on cryptography and computer arithmetic. Over 20 years, he has worked at major technology firms (Intel, NVIDIA, Synopsys) and financial institutions (Teza Technologies, Engineers Gate) across California (Berkeley, Santa Clara, Mountain View, Milpitas, Folsom) and the DC-Baltimore area.
+- Technology executive, ML researcher, and systems architect
+- 20+ years building AI/ML systems, quant strategies, and high-performance software
+- Expertise in:
+    - Causal AI
+    - Bayesian modeling
+    - Knowledge graphs
+    - Optimization
+    - Distributed systems
+
+## 3x Startup Founder
+
+- **Causify.AI** (2023–present) — Co-Founder & CTO
+    - Building causal AI platform using Bayesian inference, knowledge graphs, and temporal ML
+    - Led $5M fundraising
+
+- **June Inc.** (2011–2015) — Co-Founder & CTO
+    - Built quant trading infrastructure: stat-arb, market-neutral strategies
+    - Raised $4M (Series A/B)
+    - Led 8-person team
+    - Acquired by private company
+
+- **ZeroSoft Inc.** (2007–2010) — Co-Founder & CTO
+    - Created HPC simulation technology delivering 3–10x IC-verification speedup
+    - Raised $2M
+    - Customers: NVIDIA, Intel, Cisco
+    - Acquired by Synopsys for $24M
+
+## Selected Technical Highlights
+
+- Built full-stack _Causal AI platform_ (graph engine, Bayesian models,
+  temporal ML, explainability)
+- Designed _HPC simulation technology_ delivering _3–10x_ IC-verification
+  speedup
+- Developed _alpha signal pipelines_ for large unstructured/alt-data; deployed
+  predictive signals across global markets
+- Created _intraday simulators_, portfolio optimizers, and low-latency research
+  infrastructure
+- Led ML/engineering teams (8–12 people) across startups and quant firms
+- Delivered _ML trading signals_ with stable out-of-sample performance
+- Built _ML Ops workflows_: data pipelines, feature stores, model validation,
+  observability, CI/CD
+
+## Publications
+
+Full publication list available on the [Publications](publications.md) page.
 
 ## Languages
 
 - **English:** Native or bilingual proficiency
 - **Italian:** Mother tongue
 
-## Professional Achievements
-
-- Published 30+ technical papers on machine learning, cryptography, computer arithmetic, fault tolerance, and causal AI
-- **Patents:**
-  - "Concurrent simulation of hardware designs with behavioral characteristics" (US 8,156,457, issued April 10, 2012)
-  - "Mixed concurrent and serial logic simulation of hardware designs" (US 13/031,139, issued February 8, 2011)
-- **Co-Founder & CTO** at Causify.AI - Full-stack Causal AI platform
-- **Co-Founder** at June Capital - AI-focused quantitative trading firm
-- **Founder** at ZeroSoft - Integrated transistor simulation company (acquired by Synopsys)
-
-## Current Role
-
-Since 2022, teaches machine learning, big data systems, and decentralized finance at University of Maryland, College Park. Serves as **NSF I-Corps entrepreneurship instructor** and mentor for UMD's blockchain initiative. Maintains an open-source project called **"KaizenFlow"** for FinTech/DeFi applications.
-
-## Teaching
-
-- **DATA605:** Big Data Systems (GitHub repository available)
-- **UMD NSF I-Corps:** Instructor of Entrepreneurship
-- Machine Learning and Causal AI courses
-
 ## Photos
 
-### GP circa 2012
-![GP Saggese circa 2012](images/gp-saggese-2012.png)
-
-### GP circa 2022
-![GP Saggese circa 2022](images/gp-saggese-2022.png)
-
----
+<div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+  <div style="text-align: center;">
+    <h3>GP circa 2012</h3>
+    <img src="images/gp-saggese-2012.png" alt="GP Saggese circa 2012" style="max-width: 400px; width: 100%;">
+  </div>
+  <div style="text-align: center;">
+    <h3>GP circa 2022</h3>
+    <img src="images/gp-saggese-2022.png" alt="GP Saggese circa 2022" style="max-width: 400px; width: 100%;">
+  </div>
+</div>
 
 *Source: [UMD CMNS Faculty Profile](https://cmns.umd.edu/people/giacinto-paolo-saggese)*
-
-https://dblp.uni-trier.de/pid/35/4554.html
