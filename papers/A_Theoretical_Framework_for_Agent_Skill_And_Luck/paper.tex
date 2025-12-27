@@ -5,7 +5,7 @@
   Outcomes}
 
   \author{Giacinto Paolo Saggese$^{*}$}
-  \thanks{$^{*}$ University of Maryland}
+  \thanks{$^{*}$ Causify.AI, The University of Maryland, College Park, MD 20742, USA}
 
   \date{\today}
 
@@ -106,6 +106,44 @@
   the portion of outcomes explained by controllable actions. Circumstance
   refers to background conditions that shape probabilities and opportunities.
 
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+      component/.style={rectangle, draw, fill=blue!20, minimum width=2.5cm, minimum height=1cm, align=center},
+      multiplier/.style={circle, draw, fill=gray!20, minimum size=0.8cm},
+      arrow/.style={->, >=stealth, thick}
+    ]
+      % Three components
+      \node[component] (prob) at (0,0) {Probability\\$P(E|I_A)$};
+      \node[component] (util) at (0,-2) {Utility\\$U_A(E)$};
+      \node[component] (ctrl) at (0,-4) {Control\\$C_A(E)$};
+
+      % Transformations
+      \node[component, fill=green!20] (surp) at (4,0) {Surprise\\$-\log P(E|I_A)$};
+      \node[component, fill=orange!20] (lack) at (4,-4) {Lack of Control\\$(1-C_A(E))$};
+
+      % Result
+      \node[multiplier] (mult1) at (8,-1) {$\times$};
+      \node[multiplier] (mult2) at (8,-3) {$\times$};
+      \node[component, fill=red!30, minimum width=3cm] (luck) at (11,-2) {Luck Score\\$L_A(E)$};
+
+      % Arrows
+      \draw[arrow] (prob) -- (surp);
+      \draw[arrow] (ctrl) -- (lack);
+      \draw[arrow] (surp) -- (mult1);
+      \draw[arrow] (util) -- (mult1);
+      \draw[arrow] (mult1) -- (mult2);
+      \draw[arrow] (lack) -- (mult2);
+      \draw[arrow] (mult2) -- (luck);
+
+      % Labels
+      \node[above=0.1cm of surp, font=\small] {rare $\rightarrow$ high};
+      \node[above=0.1cm of lack, font=\small] {less control $\rightarrow$ high};
+    \end{tikzpicture}
+    \caption{Three components of the luck function combine multiplicatively. Probability is transformed into surprise (rarer events score higher), control is inverted (less control increases luck), and utility provides value weighting.}
+    \label{fig:components}
+  \end{figure}
+
 % ==============================================================================
   \subsection{Motivation for Formalization}
 
@@ -197,6 +235,40 @@
     S(E \mid I_{A}) = -\log P(E \mid I_{A})
   \end{equation}
 
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[scale=1.2]
+      % Axes
+      \draw[->] (0,0) -- (6,0) node[right] {Probability $P(E)$};
+      \draw[->] (0,0) -- (0,4.5) node[above] {Surprise $S(E)$};
+
+      % Tick marks and labels
+      \foreach \x/\label in {1/0.2, 2/0.4, 3/0.6, 4/0.8, 5/1.0} {
+        \draw (\x,0) -- (\x,-0.1) node[below, font=\small] {\label};
+      }
+      \foreach \y/\label in {1/1, 2/2, 3/3, 4/4} {
+        \draw (0,\y) -- (-0.1,\y) node[left, font=\small] {\label};
+      }
+
+      % The curve S = -ln(P) scaled appropriately
+      \draw[thick, blue, domain=0.2:5, samples=100] plot ({\x}, {-ln(\x/5)/ln(2)});
+
+      % Annotations
+      \draw[dashed, gray] (1,0) -- (1,{-ln(0.2)/ln(2)}) -- (0,{-ln(0.2)/ln(2)});
+      \draw[dashed, gray] (4,0) -- (4,{-ln(0.8)/ln(2)}) -- (0,{-ln(0.8)/ln(2)});
+
+      \node[anchor=west, font=\small] at (1.2, 3.5) {Rare events};
+      \node[anchor=west, font=\small] at (1.2, 3.2) {(low $P$)};
+      \node[anchor=west, font=\small] at (1.2, 2.9) {$\rightarrow$ high surprise};
+
+      \node[anchor=west, font=\small] at (4.2, 0.8) {Common events};
+      \node[anchor=west, font=\small] at (4.2, 0.5) {(high $P$)};
+      \node[anchor=west, font=\small] at (4.2, 0.2) {$\rightarrow$ low surprise};
+    \end{tikzpicture}
+    \caption{The surprise function $S(E) = -\log P(E)$ transforms probability into a rarity score. Rare events (low probability) receive high surprise scores, while common events (high probability) receive low scores. The logarithmic form ensures additivity over independent events.}
+    \label{fig:surprise}
+  \end{figure}
+
   This formulation satisfies several desirable properties:
 
   \begin{proposition}
@@ -260,6 +332,56 @@
   formulation addresses cumulative luck and path dependence in life
   trajectories.
 
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[scale=1.1]
+      % Axes
+      \draw[->] (0,0) -- (10,0) node[right] {Time $t$};
+      \draw[->] (0,-2) -- (0,4) node[above] {Cumulative Luck};
+      \draw[dashed, gray] (0,0) -- (10,0);
+
+      % Three trajectories
+      % Agent A - consistently lucky
+      \draw[thick, blue, smooth] plot coordinates {
+        (0,0) (1,0.8) (2,1.3) (3,1.9) (4,2.2) (5,2.8) (6,3.1) (7,3.5) (8,4.0) (9,4.2)
+      };
+      \node[blue, above right] at (9,4.2) {Agent A};
+
+      % Agent B - mixed luck
+      \draw[thick, green!60!black, smooth] plot coordinates {
+        (0,0) (1,0.5) (2,0.2) (3,0.7) (4,0.4) (5,0.8) (6,0.5) (7,0.9) (8,0.7) (9,1.0)
+      };
+      \node[green!60!black, right] at (9,1.0) {Agent B};
+
+      % Agent C - consistently unlucky
+      \draw[thick, red, smooth] plot coordinates {
+        (0,0) (1,-0.3) (2,-0.7) (3,-0.9) (4,-1.2) (5,-1.4) (6,-1.7) (7,-1.8) (8,-1.9) (9,-2.0)
+      };
+      \node[red, below right] at (9,-2.0) {Agent C};
+
+      % Key events marked
+      \fill[blue] (2,1.3) circle (2pt);
+      \node[blue, above, font=\footnotesize] at (2,1.5) {lucky break};
+      \fill[red] (4,-1.2) circle (2pt);
+      \node[red, below, font=\footnotesize] at (4,-1.4) {setback};
+
+      % Time labels
+      \foreach \x in {0,2,4,6,8,10} {
+        \draw (\x,0) -- (\x,-0.1) node[below, font=\footnotesize] {\x};
+      }
+      \draw (0,2) -- (-0.1,2) node[left, font=\footnotesize] {+2};
+      \draw (0,-1) -- (-0.1,-1) node[left, font=\footnotesize] {-1};
+
+      % Annotation
+      \node[below, text width=9cm, align=center, font=\small] at (5,-3) {
+        Path dependence: Early luck (Agent A) or bad luck (Agent C) compounds over time,\\
+        creating divergent life trajectories despite similar starting skills.
+      };
+    \end{tikzpicture}
+    \caption{Time-aggregated luck trajectories for three agents. Early luck events compound over time through path dependence, leading to divergent cumulative outcomes. Agent A benefits from consistent positive luck that creates opportunities for further success. Agent C faces compounding disadvantage from early setbacks. Agent B experiences mixed luck with limited cumulative effect.}
+    \label{fig:trajectories}
+  \end{figure}
+
 % ==============================================================================
   \subsection{Skill-Luck Decomposition}
 
@@ -289,6 +411,43 @@
   \end{equation}
   where $\text{Var}(\bar{Y}_{A})$ represents skill-based variation and $\text{Var}
   (L_{A}(Y))$ represents luck-based variation.
+
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[scale=1.1]
+      % Draw normal distribution curves
+      % Agent A - higher skill
+      \draw[thick, blue, domain=-2:4, samples=100] plot ({\x}, {2.5*exp(-(\x-1)^2/0.8)});
+      \draw[dashed, blue] (1,0) -- (1,2.5);
+      \node[blue, below] at (1,-0.3) {$\bar{Y}_A$};
+      \node[blue, above] at (1.8,2.3) {Agent A};
+
+      % Agent B - lower skill
+      \draw[thick, red, domain=-3:3, samples=100] plot ({\x}, {2.5*exp(-(\x+0.5)^2/0.8)});
+      \draw[dashed, red] (-0.5,0) -- (-0.5,2.5);
+      \node[red, below] at (-0.5,-0.3) {$\bar{Y}_B$};
+      \node[red, above] at (-1.8,2.3) {Agent B};
+
+      % Actual outcomes
+      \draw[->, thick, blue] (1,0.3) -- (2.5,0.3);
+      \node[blue, font=\small] at (1.75, 0.6) {Luck $L_A$};
+      \fill[blue] (2.5,0) circle (2pt) node[below, font=\small] {$Y_A$};
+
+      \draw[->, thick, red] (-0.5,0.3) -- (0.8,0.3);
+      \node[red, font=\small] at (0.15, 0.6) {Luck $L_B$};
+      \fill[red] (0.8,0) circle (2pt) node[below, font=\small] {$Y_B$};
+
+      % Axes
+      \draw[->] (-3.5,0) -- (4.5,0) node[right] {Outcome $Y$};
+      \draw[->] (-3.5,0) -- (-3.5,3) node[above] {Density};
+
+      % Annotation
+      \node[align=left, font=\small] at (5.5, 1.5) {Skill difference:\\$\bar{Y}_A > \bar{Y}_B$};
+      \node[align=left, font=\small] at (5.5, 0.5) {But with luck,\\$Y_B > Y_A$ possible};
+    \end{tikzpicture}
+    \caption{Skill-luck decomposition for two agents. Expected outcomes $\bar{Y}_A$ and $\bar{Y}_B$ reflect skill differences. Actual outcomes $Y_A$ and $Y_B$ deviate due to luck. Agent B with lower skill can outperform Agent A through favorable luck, though this becomes less likely as skill differences increase.}
+    \label{fig:decomposition}
+  \end{figure}
 
 % ==============================================================================
   \subsection{Axioms and Properties}
@@ -329,6 +488,41 @@
 
   Practical application of the framework requires a systematic procedure
   for rating events. We propose a step-by-step pipeline:
+
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+      node distance=1.2cm,
+      step/.style={rectangle, draw, fill=blue!15, text width=3.5cm, minimum height=0.9cm, align=center, font=\small},
+      decision/.style={diamond, draw, fill=orange!15, text width=2cm, minimum height=0.8cm, align=center, font=\small},
+      arrow/.style={->, >=stealth, thick}
+    ]
+      % Steps
+      \node[step] (step1) {1. Specify Agent \& Event\\$A$, $E$, $t$};
+      \node[step, below of=step1] (step2) {2. Define Reference Model\\$P(\cdot|I_A(t))$};
+      \node[step, below of=step2] (step3) {3. Compute Surprise\\$S(E) = -\log P(E|I_A)$};
+      \node[step, below of=step3] (step4) {4. Assess Utility\\$U_A(E)$};
+      \node[step, below of=step4] (step5) {5. Estimate Control\\$C_A(E) \in [0,1]$};
+      \node[step, below of=step5] (step6) {6. Calculate Luck\\$L_A(E) = U_A \cdot S \cdot (1-C_A)$};
+      \node[step, below of=step6, fill=green!15] (step7) {7. Normalize\\$L_A^*(E)$ (z-score)};
+
+      % Arrows
+      \draw[arrow] (step1) -- (step2);
+      \draw[arrow] (step2) -- (step3);
+      \draw[arrow] (step3) -- (step4);
+      \draw[arrow] (step4) -- (step5);
+      \draw[arrow] (step5) -- (step6);
+      \draw[arrow] (step6) -- (step7);
+
+      % Side annotations
+      \node[right=0.5cm of step2, text width=3cm, font=\footnotesize, align=left] {Base rates, models, forecasts};
+      \node[right=0.5cm of step4, text width=3cm, font=\footnotesize, align=left] {Money, health, career metrics};
+      \node[right=0.5cm of step5, text width=3cm, font=\footnotesize, align=left] {Causal analysis, variance decomp};
+      \node[right=0.5cm of step7, text width=3cm, font=\footnotesize, align=left] {Compare across agents/events};
+    \end{tikzpicture}
+    \caption{Event rating pipeline. The seven-step procedure transforms raw event information into a normalized luck score suitable for cross-agent and cross-event comparison.}
+    \label{fig:pipeline}
+  \end{figure}
 
 % ------------------------------------------------------------------------------
   \subsubsection{Step 1: Specify Agent and Event}
@@ -463,6 +657,50 @@
   was important, favorable circumstances and timing contributed significantly
   to the outcome.
 
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[scale=1.0]
+      % Bar chart
+      \draw[->] (0,0) -- (0,5) node[above] {Value};
+      \draw[->] (0,0) -- (11,0) node[right] {};
+
+      % Bars
+      % Probability/Surprise
+      \draw[fill=blue!40] (0.5,0) rectangle (2,2.3) node[midway, white, font=\footnotesize] {2.3};
+      \node[below, font=\small] at (1.25,-0.3) {Surprise};
+      \node[below, font=\footnotesize, text width=1.5cm, align=center] at (1.25,-0.8) {$S(E)$\\$P=0.1$};
+
+      % Utility
+      \draw[fill=green!40] (3,0) rectangle (4.5,5) node[midway, white, font=\footnotesize] {5.0};
+      \node[below, font=\small] at (3.75,-0.3) {Utility};
+      \node[below, font=\footnotesize, text width=1.5cm, align=center] at (3.75,-0.8) {$U_A(E)$\\\$5M};
+
+      % Control
+      \draw[fill=orange!40] (5.5,0) rectangle (7,0.4) node[midway, font=\footnotesize] {0.4};
+      \node[below, font=\small] at (6.25,-0.3) {1-Control};
+      \node[below, font=\footnotesize, text width=1.5cm, align=center] at (6.25,-0.8) {$(1-C_A)$\\$C=0.6$};
+
+      % Result
+      \draw[fill=red!50, draw=red!70, line width=1.5pt] (8.5,0) rectangle (10,4.6);
+      \node[white, font=\small] at (9.25,2.3) {4.6};
+      \node[below, font=\small] at (9.25,-0.3) {\textbf{Luck}};
+      \node[below, font=\footnotesize, text width=1.5cm, align=center] at (9.25,-0.8) {$L_A(E)$\\$2.3 \times 5 \times 0.4$};
+
+      % Multiplication signs
+      \node[font=\Large] at (2.5,2.5) {$\times$};
+      \node[font=\Large] at (5,2.5) {$\times$};
+      \node[font=\Large] at (7.5,2.5) {$=$};
+
+      % Interpretation
+      \node[below, text width=10cm, align=center, font=\small] at (5.5,-2.3) {
+        \textbf{Interpretation:} Significant positive luck. The rare success (low $P$) combined with\\
+        high value (\$5M) and moderate uncontrollability (40\%) yields substantial luck component.
+      };
+    \end{tikzpicture}
+    \caption{Startup example calculation. The entrepreneur's success is decomposed into components: surprise from low base rate ($P=0.1$), high financial utility (\$5M normalized to 5), and moderate lack of control (0.4, since skill $C=0.6$ was important). The resulting luck score of 4.6 indicates substantial favorable luck.}
+    \label{fig:example}
+  \end{figure}
+
 % ##############################################################################
   \section{Societal Modeling and Aggregate Measures}
   \label{sec:society}
@@ -492,6 +730,43 @@
   circumstances, choices, and outcomes, $g$ captures the effect of random
   shocks, and $\varepsilon_{i}$ represents measurement error or small
   unmodeled factors.
+
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+      node distance=2.5cm and 2cm,
+      variable/.style={circle, draw, fill=blue!20, minimum size=1.3cm, align=center, font=\small},
+      outcome/.style={circle, draw, fill=green!25, minimum size=1.5cm, align=center, font=\normalsize},
+      shock/.style={circle, draw, fill=red!20, minimum size=1.3cm, align=center, font=\small},
+      arrow/.style={->, >=stealth, very thick}
+    ]
+      % Nodes
+      \node[variable] (B) {Circum-\\stances\\$B_i$};
+      \node[variable, right of=B] (A) {Choices\\$A_i$};
+      \node[shock, below of=A, node distance=1.8cm] (S) {Shocks\\$S_i$};
+      \node[outcome, right of=A] (Y) {Outcome\\$Y_i$};
+
+      % Arrows
+      \draw[arrow, blue!70] (B) -- (Y) node[midway, above, font=\footnotesize] {circumstantial};
+      \draw[arrow, blue!70] (A) -- (Y) node[midway, above, font=\footnotesize] {agency};
+      \draw[arrow, red!70] (S) -- (Y) node[midway, right, font=\footnotesize] {luck};
+      \draw[arrow, dashed] (B) -- (A) node[midway, above, font=\footnotesize] {constrains};
+
+      % Annotations
+      \node[below of=B, node distance=2.3cm, text width=2cm, align=center, font=\footnotesize] {Parents\\Geography\\Genetics\\Cohort};
+      \node[below of=A, node distance=3cm, text width=2cm, align=center, font=\footnotesize] {Effort\\Education\\Strategy};
+      \node[below of=S, node distance=1.8cm, text width=2cm, align=center, font=\footnotesize] {Accidents\\Encounters\\Markets};
+      \node[right of=Y, node distance=2.5cm, text width=2.5cm, align=left, font=\footnotesize] {Income\\Health\\Status\\Wellbeing};
+
+      % Variance decomposition annotation
+      \node[above of=Y, node distance=2cm, text width=4cm, align=center, font=\small, draw, fill=yellow!10] {
+        $\text{Var}(Y) = \text{Var}(f(B,A)) + \text{Var}(g(S))$\\
+        skill + luck
+      };
+    \end{tikzpicture}
+    \caption{Causal model of societal outcomes. Circumstances $B_i$ (unearned advantages) and choices $A_i$ (agency) jointly determine expected outcomes, while shocks $S_i$ (random events) introduce luck. Circumstances also constrain available choices. The variance decomposition separates skill-based from luck-based variation in outcomes.}
+    \label{fig:causal}
+  \end{figure}
 
 % ==============================================================================
   \subsection{Individual Luck Measures}
@@ -599,6 +874,82 @@
 
     \item Agency contribution: $R^{2}_{B,A}- R^{2}_{B}$
   \end{enumerate}
+
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[scale=1.2]
+      % Two pie charts comparing societies
+
+      % Society 1 - High circumstantial dependence
+      \begin{scope}[xshift=0cm]
+        \node[above] at (0,2.5) {\textbf{Low Mobility Society}};
+
+        % Pie chart
+        \fill[blue!40] (0,0) -- (0:1.5) arc (0:216:1.5) -- cycle;
+        \fill[green!40] (0,0) -- (216:1.5) arc (216:288:1.5) -- cycle;
+        \fill[red!40] (0,0) -- (288:1.5) arc (288:360:1.5) -- cycle;
+
+        \draw[thick] (0,0) circle (1.5);
+
+        % Labels with percentages
+        \node at (108:1) {60\%};
+        \node[font=\footnotesize] at (108:0.5) {Circumstances};
+        \node[font=\footnotesize] at (108:0.2) {$B$};
+
+        \node at (252:0.8) {20\%};
+        \node[font=\footnotesize, text width=1.5cm, align=center] at (252:0.4) {Agency\\$A$};
+
+        \node at (324:0.8) {20\%};
+        \node[font=\footnotesize, text width=1.2cm, align=center] at (324:0.4) {Luck\\$S$};
+
+        % Metrics below
+        \node[below, align=center, font=\footnotesize] at (0,-2.2) {
+          $\rho_B = 0.60$\\
+          $\rho_A = 0.20$\\
+          $\rho_L = 0.20$
+        };
+      \end{scope}
+
+      % Society 2 - More mobility
+      \begin{scope}[xshift=7cm]
+        \node[above] at (0,2.5) {\textbf{High Mobility Society}};
+
+        % Pie chart
+        \fill[blue!40] (0,0) -- (0:1.5) arc (0:108:1.5) -- cycle;
+        \fill[green!40] (0,0) -- (108:1.5) arc (108:252:1.5) -- cycle;
+        \fill[red!40] (0,0) -- (252:1.5) arc (252:360:1.5) -- cycle;
+
+        \draw[thick] (0,0) circle (1.5);
+
+        % Labels with percentages
+        \node at (54:0.9) {30\%};
+        \node[font=\footnotesize] at (54:0.5) {Circumstances};
+        \node[font=\footnotesize] at (54:0.2) {$B$};
+
+        \node at (180:1) {40\%};
+        \node[font=\footnotesize, text width=1.5cm, align=center] at (180:0.5) {Agency\\$A$};
+
+        \node at (306:0.8) {30\%};
+        \node[font=\footnotesize, text width=1.2cm, align=center] at (306:0.4) {Luck\\$S$};
+
+        % Metrics below
+        \node[below, align=center, font=\footnotesize] at (0,-2.2) {
+          $\rho_B = 0.30$\\
+          $\rho_A = 0.40$\\
+          $\rho_L = 0.30$
+        };
+      \end{scope}
+
+      % Legend
+      \node[below, text width=12cm, align=center, font=\small] at (3.5,-3.5) {
+        Variance decomposition comparison. Left: outcomes strongly determined by birth circumstances\\
+        (low mobility). Right: individual agency plays larger role (higher mobility). Luck component\\
+        represents irreducible randomness in both societies.
+      };
+    \end{tikzpicture}
+    \caption{Variance decomposition in two stylized societies. The low mobility society (left) shows outcome variance dominated by circumstances of birth ($\rho_B = 0.60$), with limited role for agency ($\rho_A = 0.20$). The high mobility society (right) exhibits lower circumstantial dependence ($\rho_B = 0.30$) and greater agency contribution ($\rho_A = 0.40$). Both societies contain irreducible luck components from random shocks.}
+    \label{fig:variance}
+  \end{figure}
 
 % ##############################################################################
   \section{Implications and Applications}
