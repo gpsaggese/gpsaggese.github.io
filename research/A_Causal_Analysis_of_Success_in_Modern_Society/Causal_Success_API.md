@@ -22,17 +22,17 @@ certain abilities and resources.
 
 Each agent has four main attributes that define their talents:
 
-- **Intensity** – how active someone is. Higher intensity means more exposure to
+- **Intensity**: how active someone is. Higher intensity means more exposure to
   opportunities and risks. Think of it like surface area for luck: the more
   you're out there doing things, the more chances you have to encounter events
   (both good and bad).
-- **IQ** – ability to capitalize on opportunities. When a lucky event happens,
+- **IQ**: ability to capitalize on opportunities. When a lucky event happens,
   this determines whether the agent can actually take advantage of it. Not every
   opportunity works out, even when it appears.
-- **Networking** – social connections. This lets beneficial events sometimes
+- **Networking**: social connections. This lets beneficial events sometimes
   spill over to others. If you know the right people, you might catch
   opportunities that weren't directly aimed at you.
-- **Initial Capital** – starting wealth. We usually set this to `1.0` for
+- **Initial Capital**: starting wealth. We usually set this to `1.0` for
   everyone so that inequality emerges from the simulation dynamics, not from
   inherited advantages.
 
@@ -44,25 +44,25 @@ Beyond these talents, each agent tracks:
 
 ### Creating a Single Agent
 
-```python
-from causal_success_utils import Agent
+  ```python
+  from causal_success_utils import Agent
 
-# Create an Agent with Specific Talents
-person = Agent(
-    agent_id=0,
-    intensity=0.6,     # Pretty active (range: 0 to 1)
-    iq=0.7,            # Good at seizing opportunities
-    networking=0.5,    # Average connections
-    initial_capital=1.0
-)
+  # Create an Agent with Specific Talents
+  person = Agent(
+      agent_id=0,
+      intensity=0.6,     # Pretty active (range: 0 to 1)
+      iq=0.7,            # Good at seizing opportunities
+      networking=0.5,    # Average connections
+      initial_capital=1.0
+  )
 
-print(person.talent)
-# {'intensity': 0.6, 'iq': 0.7, 'networking': 0.5, 'initial_capital': 1.0}
+  print(person.talent)
+  # {'intensity': 0.6, 'iq': 0.7, 'networking': 0.5, 'initial_capital': 1.0}
 
-prob = person.get_event_probability()
-print(f"Event exposure probability: {prob:.3f}")
-# Event Exposure Probability: 0.648
-```
+  prob = person.get_event_probability()
+  print(f"Event exposure probability: {prob:.3f}")
+  # Event Exposure Probability: 0.648
+  ```
 
 Event exposure probability is computed via a sigmoid centered at 0.5, so
 intensity values above 0.5 lead to above-average exposure and vice versa.
@@ -111,8 +111,8 @@ process is what drives inequality over time.
 
 **Parameters:**
 
-- `n_agents: int` – number of agents
-- `seed: int` – RNG seed for reproducibility
+- `n_agents: int`: number of agents
+- `seed: int`: RNG seed for reproducibility
 
 ## Running the Simulation
 
@@ -188,22 +188,22 @@ agents = run_policy_simulation(
 
 **Policies:**
 
-- `"egalitarian"` – equal split of `resource_amount` across agents
-- `"meritocratic"` – resources proportional to `talent_norm`
-- `"performance"` – resources proportional to current capital (rich-get-richer)
-- `"random"` – one randomly chosen agent receives all the resources
-- `"cate_optimal"` – resources proportional to (non-negative) CATE estimates
+- `"egalitarian"`: equal split of `resource_amount` across agents
+- `"meritocratic"`: resources proportional to `talent_norm`
+- `"performance"`: resources proportional to current capital (rich-get-richer)
+- `"random"`: one randomly chosen agent receives all the resources
+- `"cate_optimal"`: resources proportional to (non-negative) CATE estimates
   passed in cate_values
 - **Arguments:**
 
-- `agents: List[Agent]` – population of agents to allocate resources to and then
+- `agents: List[Agent]`: population of agents to allocate resources to and then
   simulate
-- `policy: str` – one of `"egalitarian"`, `"meritocratic"`, `"performance"`,
+- `policy: str`: one of `"egalitarian"`, `"meritocratic"`, `"performance"`,
   `"random"`, or `"cate_optimal"`
-- `resource_amount: float` – total resource budget to distribute at time 0
-- `cate_values: Optional[np.ndarray]` – required when `policy="cate_optimal"`;
+- `resource_amount: float`: total resource budget to distribute at time 0
+- `cate_values: Optional[np.ndarray]`: required when `policy="cate_optimal"`;
   1D array of CATE estimates (one per agent)
-- `**simulation_kwargs` – additional keyword arguments passed through to
+- `**simulation_kwargs`: additional keyword arguments passed through to
   `run_simulation` (e.g., `n_periods`, `seed`, etc.)
 
 ## Analysis Functions
@@ -336,9 +336,9 @@ The Bayesian model is a linear regression on the log of final capital:
 - \beta\_{\text{networking}} \cdot \text{talent_networking}\_i
 - \varepsilon_i \]
 
-* `beta_luck` Is the Primary Quantity of Interest: the (Log-Scale) Effect of
+- `beta_luck` Is the Primary Quantity of Interest: the (Log-Scale) Effect of
   One additional lucky event, holding talent constant.
-* Priors Are Weakly Informative, Centered at 0.
+- Priors Are Weakly Informative, Centered at 0.
 
 ### `fit_bayesian_luck_model`
 
@@ -367,16 +367,16 @@ The Bayesian model is a linear regression on the log of final capital:
 
 **Arguments:**
 
-- `df: pd.DataFrame` – output from `get_results_dataframe`
-- `draws: int` – posterior draws per chain (default 1000)
-- `tune: int` – warm-up / burn-in iterations (default 1000)
-- `target_accept: float` – NUTS target acceptance rate (default 0.9)
-- `random_seed: int` – random seed
+- `df: pd.DataFrame`: output from `get_results_dataframe`
+- `draws: int`: posterior draws per chain (default 1000)
+- `tune: int`: warm-up / burn-in iterations (default 1000)
+- `target_accept: float`: NUTS target acceptance rate (default 0.9)
+- `random_seed: int`: random seed
 
 **Returns:**
 
-- `model` – PyMC model object
-- `idata` – ArviZ `InferenceData` with posterior samples
+- `model`: PyMC model object
+- `idata`: ArviZ `InferenceData` with posterior samples
 
 > Note: If PyMC or ArviZ are not installed, this function will raise an
 > `ImportError`.
@@ -424,9 +424,9 @@ model and comparing to the observed log-capital.
 
 **Returns a dictionary with:**
 
-- `"y_obs"` – observed log-capital
-- `"y_pred_mean"` – posterior predictive mean log-capital per agent
-- `"y_pred_std"` – posterior predictive standard deviation per agent
+- `"y_obs"`: observed log-capital
+- `"y_pred_mean"`: posterior predictive mean log-capital per agent
+- `"y_pred_std"`: posterior predictive standard deviation per agent
 
 This is useful for checking how well the model captures the distribution of
 outcomes.
