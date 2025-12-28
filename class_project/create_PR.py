@@ -250,7 +250,7 @@ def _copy_project_directory(
     hio.create_dir(dst_projects_path, incremental=True)
     # Copy the directory.
     _LOG.info("Copying directory: %s -> %s", src_path, dst_path)
-    cmd = f"cp -a {src_path} {dst_path}"
+    cmd = f"cp -a '{src_path}' '{dst_path}'"
     hsystem.system(cmd, suppress_output=False)
 
 
