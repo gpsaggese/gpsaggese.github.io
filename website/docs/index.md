@@ -14,7 +14,7 @@
 
 ## Summary
 
-- Technology executive, ML researcher, and systems architect
+- AI/machine learning researcher, Systems architect, and Technology executive
 - 20+ years building AI/ML systems, quant strategies, and high-performance software
 
 - [CV/Resume](02_cv.md)
@@ -34,11 +34,11 @@
 <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
   <div style="text-align: center;">
     <h3>GP circa 2012</h3>
-    <img src="images/gp-saggese-2012.png" alt="GP Saggese circa 2012" style="max-width: 400px; width: 100%;">
+    <img src="images/gp-saggese-2012.png" alt="GP Saggese circa 2012" style="max-width: 300px; width: 100%;">
   </div>
   <div style="text-align: center;">
     <h3>GP circa 2022</h3>
-    <img src="images/gp-saggese-2022.png" alt="GP Saggese circa 2022" style="max-width: 400px; width: 100%;">
+    <img src="images/gp-saggese-2022.png" alt="GP Saggese circa 2022" style="max-width: 300px; width: 100%;">
   </div>
 </div>
 
