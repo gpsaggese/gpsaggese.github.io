@@ -1,0 +1,189 @@
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 02.1: A Map of Machine Learning}}$$**
+\endgroup
+\vspace{1cm}
+
+::: columns
+:::: {.column width=65%}
+**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+
+**References**:
+
+- Burkov: _"The Hundred-Page Machine Learning Book"_ (2019)
+
+- Russell et al.: _"Artificial Intelligence: A Modern Approach"_ (4th ed, 2020)
+
+- Hastie et al.: _"The Elements of Statistical Learning"_ (2nd ed, 2009)
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_Hundred_page_ML_book.jpg){ height=20% }
+![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
+![](msml610/lectures_source/figures/book_covers/Book_cover_The_Elements_of_Statistical_Learning.jpg){ height=20% }
+::::
+:::
+
+// Model assessment and selection
+// Hastie 7 (p. 238)
+
+# ##############################################################################
+# A Map of Machine Learning
+# ##############################################################################
+
+* A Map of Machine Learning
+
+- Machine Learning is a field with many branches
+  - Paradigms
+  - Theory
+  - Models
+  - Techniques
+  - ...
+
+```mermaid
+mindmap
+  root((**Machine Learning**))
+    (**Paradigms**)
+      Supervised
+      Unsupervised
+      RL
+      Active
+      Online
+    (**Theory**)
+      VC theory
+      Bias-variance decomposition
+      MDL
+      Bayesian
+    (**Models**)
+      Linear
+      GLM
+      Neural networks
+      KNN
+      SVM
+      Graphical models
+    (**Techniques**)
+      Pre-processing
+      Model building
+      Performance evaluation
+      Regularization
+      Ensemble learning
+```
+
+* Machine Learning Paradigms
+- How do you set up the learning problem?
+
+  - **Supervised learning**
+    - The dataset includes inputs with corresponding outputs
+    - Develop an input-output relationship
+
+  - **Unsupervised learning**
+    - The data is unlabeled, discover structure within the data
+    - E.g., anomaly detection, clustering
+
+  - **Reinforcement learning**
+    - The correct answer is not immediately available
+    - Evaluate actions based on final outcomes
+
+  - **Active learning**
+    - Not all examples are available initially
+    - Request outputs for specific inputs
+
+  - ...
+
+* Machine Learning Theory
+- **VC theory**
+  - Measure model capacity and generalize based on hypothesis space complexity
+
+- **Bias-variance decomposition**
+  - Prediction error is the sum of:
+    - Bias: Error from simplistic model assumptions
+    - Variance: Error due to sensitivity to training data fluctuations
+
+- **Computation complexity**
+  - Related to information theory and compression
+  - E.g., Minimum Description Length (MDL) measures model complexity via
+    efficient model and data description
+
+- **Bayesian approach**
+  - Treat ML as probability
+  - Combine prior knowledge with observed data to update belief about a model
+
+- **Problem in ML theory**
+  - Assumptions may not align with practical problems
+
+* Machine Learning Models
+- What is the **form of the model** and **how to fit / predict** from the data?
+  - Linear models
+  - Generalized linear models
+    - E.g., logistic, Poisson regression
+  - Support Vector Machines (SVM)
+  - Nearest neighbors
+    - E.g., k-means clustering, KNN
+  - Gaussian processes
+  - Graphical models
+    - Model joint distributions with graphs
+    - E.g., hidden Markov models (HMM), Kalman filters, Bayesian networks
+  - Neural networks
+  - ...
+
+* Machine Learning Techniques
+- What are the stages of a ML pipeline?
+
+  - **Input processing**
+    - Data cleaning
+    - Dimensionality reduction
+    - Feature engineering
+
+  - **Model building**
+    - Models
+    - Learning algorithms
+
+  - **Performance evaluation**
+    - Cross-validation
+    - Bias-variance curves
+    - Learning curves
+
+  - **Regularization**
+
+  - **Aggregation**
+    - Boosting
+    - Bagging
+    - Stacking
+
+* Machine Learning Adages
+
+- _"An explanation of the data should be as simple as possible, but not
+  simpler"_ (Einstein)
+
+- _"The simplest model that fits the data is also the most plausible"_ (Occam's
+  razor)
+
+- _"Garbage in, garbage out"_ (Fuechse, 1957)
+
+- _"All models are wrong, but some are useful"_ (Box, 1976)
+
+- _"If you torture the data long enough it will confess whatever you want"_
+  (Coase, 1982)
+
+- _"Data is the new oil"_ (Humby, 2006)
+
+- _"More data beats clever algorithms"_ (Norvig, ~2006)
+
+- _"The unreasonable effectiveness of data"_ (Halevy, Norvig, Pereira, 2009)
+
+- _"The bitter lesson"_ (Sutton, 2019)

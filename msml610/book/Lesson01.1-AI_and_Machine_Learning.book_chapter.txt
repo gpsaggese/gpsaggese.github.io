@@ -1,0 +1,825 @@
+---
+title: "Lesson 01.1: AI and Machine Learning"
+---
+
+\newpage
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides001.png){width=80%}
+
+</center>
+
+\newpage
+
+<center>
+
+# 2 / 19: ML, AI, and Intelligence
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides002.png){width=80%}
+
+</center>
+
+- **ML, AI, and Intelligence**
+  - **Machine Learning is a subset of AI**
+    - Machine Learning (ML) is a part of Artificial Intelligence (AI). Think of
+      AI as the broad field that aims to create machines capable of performing
+      tasks that would require human intelligence. ML is a specific approach
+      within AI that focuses on teaching machines to learn from data and improve
+      over time without being explicitly programmed.
+    - It's common for people to confuse ML with other terms like deep learning,
+      large-language models, and predictive analytics. Deep learning is a more
+      advanced form of ML that uses neural networks with many layers to analyze
+      complex data. Large-language models, like GPT, are a type of deep learning
+      model designed to understand and generate human language. Predictive
+      analytics involves using data, statistical algorithms, and ML techniques
+      to identify the likelihood of future outcomes based on historical data.
+
+* **What is artificial intelligence?**
+  - Artificial Intelligence is the science and engineering of creating
+    intelligent machines that can perform tasks typically requiring human
+    intelligence. These tasks include understanding natural language,
+    recognizing patterns, solving problems, and making decisions. AI systems can
+    be rule-based, where they follow specific instructions, or they can learn
+    from data, as in the case of ML.
+
+* **What is intelligence?**
+  - Intelligence, in a general sense, refers to the ability to learn,
+    understand, and apply knowledge to adapt to new situations and solve
+    problems. In humans, intelligence encompasses a range of cognitive
+    abilities, including reasoning, problem-solving, planning, abstract
+    thinking, and learning from experience. In the context of AI, intelligence
+    is about creating systems that can mimic these human cognitive functions to
+    some extent.
+
+\newpage
+
+<center>
+
+# 3 / 19: Human Intelligence
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides003.png){width=80%}
+
+</center>
+
+- **Human Intelligence**
+  - **We call ourselves "homo sapiens" because intelligence sets us apart from
+    animals**
+    - Humans are known as _homo sapiens_, which translates to "wise man" in
+      Latin. This name highlights the importance of intelligence in
+      distinguishing humans from other species. Unlike animals, humans have
+      developed complex languages, cultures, and technologies, all of which are
+      rooted in our cognitive abilities.
+
+  - **For thousands of years, we tried to understand how we think**
+    - Throughout history, philosophers, scientists, and thinkers have been
+      fascinated by the workings of the human mind. Understanding how we think
+      and process information has been a central question in fields like
+      philosophy, psychology, and neuroscience. This quest has led to various
+      theories and models attempting to explain human cognition.
+
+  - **One of the biggest mysteries**
+    - **Brain is a small mass of matter**
+      - The human brain, despite its relatively small size and weight, is an
+        incredibly complex organ. It consists of billions of neurons and
+        connections, allowing it to perform a vast array of functions.
+    - **Our brain can understand nature secrets, e.g., theory of relativity,
+      quantum mechanics, black holes in the universe**
+      - The brain's ability to comprehend and formulate complex scientific
+        theories, such as Einstein's theory of relativity or the principles of
+        quantum mechanics, is remarkable. These theories help us understand the
+        universe's fundamental workings, showcasing the brain's extraordinary
+        capacity for abstract thought and problem-solving.
+    - **How can brain understand, predict, and manipulate a world more
+      complicated than itself?**
+      - This question highlights the paradox of human intelligence: how can a
+        biological organ, limited in size and resources, grasp and manipulate
+        concepts and phenomena that are vastly more complex than itself? This
+        remains one of the most intriguing puzzles in the study of human
+        cognition and intelligence.
+
+\newpage
+
+<center>
+
+# 4 / 19: Artificial Intelligence
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides004.png){width=80%}
+
+</center>
+
+- **Artificial Intelligence**
+  - The term "Artificial Intelligence" was first introduced in 1956 during a
+    conference at Dartmouth College. This marked the beginning of AI as a field
+    of study. The goal was to explore the possibility of creating machines that
+    could simulate aspects of human intelligence.
+
+- **AI aims to:**
+  - **Understand human intelligence:** AI research seeks to understand how human
+    intelligence works by trying to replicate it in machines. This involves
+    studying cognitive processes and how they can be modeled computationally.
+  - **Create intelligent entities:** The ultimate goal of AI is to create
+    machines that can perform tasks that typically require human intelligence,
+    such as reasoning, learning, and problem-solving.
+  - The quote _"What I cannot create, I do not understand"_ by Richard Feynman
+    emphasizes the idea that to truly understand something, one must be able to
+    recreate it. This is a guiding principle in AI research.
+
+- **AI is a technology**
+  - AI is a versatile technology that can be applied to virtually any human
+    activity or task, from healthcare to finance to entertainment. Its potential
+    applications are vast and varied.
+  - The impact of AI is considered to be greater than any previous technological
+    advancement in history, as it has the potential to transform industries and
+    societies on a global scale.
+  - AI is already a significant economic force, generating trillions of dollars
+    in revenue each year. This highlights its importance and the rapid pace of
+    its development.
+  - Despite its advancements, AI still faces many unresolved challenges. For
+    example, while AI can solve specific problems, understanding and replicating
+    the full scope of human intelligence remains a complex task. Additionally,
+    AI could potentially contribute to solving major scientific problems, such
+    as those in physics, by providing new insights and approaches.
+
+\newpage
+
+<center>
+
+# 5 / 19: AI Formal Definition
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides005.png){width=80%}
+
+</center>
+
+- **AI Formal Definition**
+  - AI is defined around **two axes**:
+    - **Thinking vs. Acting**: This axis differentiates between AI systems that
+      focus on cognitive processes (thinking) and those that focus on behavior
+      (acting).
+    - **Human vs. Rational (ideal performance)**: This axis distinguishes
+      between AI systems that aim to mimic human behavior and those that aim for
+      optimal, logical performance, regardless of human-like characteristics.
+
+  - Four possible definitions of AI as a machine that can:
+    1. **Think humanly**: This involves creating machines that replicate human
+       thought processes. It focuses on understanding and modeling how humans
+       think.
+    2. **Think rationally**: This involves machines that use logic and reasoning
+       to solve problems, aiming for the most logical outcome.
+    3. **Act humanly**: This involves machines that behave like humans, often
+       evaluated through the Turing Test, which assesses a machine's ability to
+       exhibit human-like behavior.
+    4. **Act rationally**: This involves machines that make decisions and take
+       actions that are logically optimal, aiming for the best possible outcome.
+
+  - **Q**: Which one do you think is the best definition?
+    - This question encourages reflection on the goals of AI development and
+      which approach aligns best with those goals.
+
+  - We will see that building machines that can **"act rationally"** should be
+    the ultimate goal of AI
+    - The emphasis here is on creating AI systems that make the best decisions
+      based on available information, prioritizing logical and optimal outcomes
+      over mimicking human behavior. This approach is often seen as the most
+      practical and beneficial in real-world applications.
+
+\newpage
+
+<center>
+
+# 6 / 19: 1. AI as Thinking Humanly
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides006.png){width=80%}
+
+</center>
+
+- **AI as Thinking Humanly**
+  - The idea here is to create machines that can think in the same way humans
+    do. This involves understanding the processes and mechanisms behind human
+    thought. Essentially, it's about mimicking human cognitive processes in
+    machines.
+
+- **Pros**
+  - By trying to replicate human thinking in machines, we can develop a precise
+    theory of the human mind. This theory can be expressed as a computer
+    program, which helps in understanding and simulating human cognition. It
+    allows us to create models that can potentially predict human behavior and
+    decision-making.
+
+- **Cons**
+  - One major challenge is that we don't fully understand how the human mind
+    works. This lack of understanding makes it difficult to replicate human
+    thought processes accurately in machines. Additionally, this approach is
+    _anthropocentric_, meaning it is centered around human characteristics and
+    may not consider other forms of intelligence or ways of thinking. This can
+    limit the scope and applicability of AI systems.
+
+\newpage
+
+<center>
+
+# 7 / 19: 2. AI as Thinking Rationally
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides007.png){width=80%}
+
+</center>
+
+- 2. AI as Thinking Rationally
+
+* What are the rules of **correct thinking**?
+  - The idea here is to understand how AI can be designed to think in a way that
+    is logically sound. When we talk about _correct thinking_, we mean that if
+    an AI system is given true information (premises), it should be able to
+    process this information and come up with true conclusions. This is similar
+    to how humans use logic to solve problems and make decisions.
+
+* **Logic** studies the "laws of thought"
+  - Logic is a branch of philosophy and mathematics that deals with the
+    principles of valid reasoning. It involves creating formal systems to
+    express statements about objects and their relationships. By using logic, we
+    can ensure that the reasoning process is structured and follows specific
+    rules, which helps in making sure that the conclusions drawn are valid.
+
+* **Automatic theorem proving**
+  - This is a field within AI where computer programs are designed to prove
+    mathematical theorems automatically. These programs use logical notation to
+    represent problems and attempt to solve them. However, a challenge arises
+    because some problems might not have a solution, and the program could run
+    indefinitely trying to find one. This is related to the _halting problem_,
+    which is a concept in computer science that deals with determining whether a
+    program will eventually stop running or continue indefinitely.
+
+\newpage
+
+<center>
+
+# 8 / 19: Thinking Rationally: Cons
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides008.png){width=80%}
+
+</center>
+
+- **Formalizing informal knowledge is difficult**
+  - When we try to convert everyday actions or knowledge into a formal, logical
+    structure, it becomes quite complex. For instance, consider the simple act
+    of a handshake. In our daily lives, we understand this as a friendly gesture
+    between two people. However, when we attempt to describe it using formal
+    logic, it involves defining each step and condition, such as identifying two
+    people, their hands, the movement towards each other, the contact, the
+    shaking motion, and finally the release. This example illustrates how
+    challenging it is to capture the nuances of informal knowledge in a rigid,
+    logical framework.
+
+- **Probabilistic nature of knowledge**
+  - Many real-world situations involve uncertainty and cannot be described with
+    absolute certainty. For example, in medicine, symptoms like fever, cough,
+    and fatigue can be indicative of multiple illnesses such as the flu,
+    COVID-19, or other conditions. This uncertainty requires a probabilistic
+    approach to reasoning, where we assess the likelihood of various outcomes
+    rather than relying on definitive logic.
+
+- **Scalability challenges**
+  - As problems grow in size and complexity, finding solutions using purely
+    logical reasoning becomes impractical. In such cases, heuristics—rules of
+    thumb or simplified strategies—are often employed to make the problem
+    manageable. These heuristics help in finding good enough solutions within a
+    reasonable time frame, even if they are not perfect.
+
+- **Intelligence requires more than rational thinking**
+  - While rational thinking is a crucial component of intelligence, it is not
+    sufficient on its own. Intelligent agents, whether human or artificial, need
+    to interact with the world to gather information and learn. This interaction
+    highlights the importance of having a "body" or a means to perceive and act
+    within an environment, which is essential for developing a comprehensive
+    understanding and making informed decisions.
+
+\newpage
+
+<center>
+
+# 9 / 19: 3. AI as Acting Humanly
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides009.png){width=80%}
+
+</center>
+
+- **Agent** is something that perceives and acts to reach a goal
+  - An _agent_ in AI is essentially a system or entity that can observe its
+    environment through sensors and act upon it using actuators to achieve
+    specific objectives. This concept is fundamental in AI as it forms the basis
+    for creating systems that can operate autonomously.
+
+- **Definition**: AI designs **agents that can act like humans**
+  - The goal of AI is to create agents that can mimic human behavior. This
+    involves designing systems that can perform tasks typically requiring human
+    intelligence, such as understanding language, recognizing objects, and
+    making decisions.
+
+- **Turing test**
+  - _"A computer passes the Turing test if a human cannot tell whether the
+    answers to questions came from a person or a computer"_
+  - The Turing test, proposed by Alan Turing, is a measure of a machine's
+    ability to exhibit intelligent behavior indistinguishable from that of a
+    human. If a machine can engage in a conversation with a human without the
+    human realizing they are talking to a machine, it is said to have passed the
+    test.
+
+- Passing the (embodied) Turing test requires:
+  1. **Natural language processing to communicate**
+     - This involves the ability of a machine to understand and generate human
+       language, allowing it to interact naturally with people.
+  2. **Knowledge representation to store information**
+     - AI systems need to store and organize information in a way that allows
+       them to retrieve and use it effectively.
+  3. **Automated reasoning to use stored knowledge and answer questions**
+     - This is the capability of a system to apply logic and reasoning to the
+       information it has to solve problems or answer questions.
+  4. **Machine learning to detect patterns**
+     - Machine learning enables systems to learn from data, identify patterns,
+       and improve their performance over time without being explicitly
+       programmed.
+  5. **Computer vision and speech recognition to perceive objects and understand
+     speech**
+     - These technologies allow machines to interpret visual and auditory
+       information from the world, similar to human senses.
+  6. **Robotics to manipulate objects and move**
+     - Robotics involves the design and use of robots that can physically
+       interact with their environment, performing tasks that require movement
+       and manipulation.
+
+\newpage
+
+<center>
+
+# 10 / 19: Turing Test: Pros and Cons
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides010.png){width=80%}
+
+</center>
+
+- **Pros**
+  - **Operational definition of intelligence**: The Turing Test provides a clear
+    and practical way to measure machine intelligence. Instead of getting bogged
+    down in complex theories, it offers a straightforward test: if a machine can
+    engage in conversation indistinguishably from a human, it is considered
+    intelligent.
+  - **Sidestep philosophical vagueness**: The Turing Test helps avoid deep
+    philosophical questions that are hard to answer, like "What is
+    consciousness?" or "Can a machine think?" By focusing on observable
+    behavior, it bypasses these debates and provides a more tangible goal for AI
+    development.
+
+- **Cons**
+  - **Anthropomorphic criteria define intelligence in human terms**: The Turing
+    Test assumes that human-like behavior is the only measure of intelligence.
+    This is limiting because there are many forms of intelligence that don't
+    resemble human thinking, such as animal intelligence or even unique machine
+    intelligence.
+  - **Intelligence in terms of Turing test is fooling humans into thinking it's
+    human**: The test measures a machine's ability to mimic human conversation,
+    which might not truly reflect its intelligence. It's more about deception
+    than genuine understanding or problem-solving.
+  - **E.g., aeronautical engineering is about**: This analogy highlights that
+    just as aeronautical engineering focuses on principles like aerodynamics
+    rather than mimicking birds, AI should focus on developing unique
+    capabilities rather than just imitating human behavior.
+
+\newpage
+
+<center>
+
+# 11 / 19: 4. AI as Acting Rationally
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides011.png){width=80%}
+
+</center>
+
+- **Rational agents**: These are systems or entities designed to make decisions
+  that are considered the "right" or most effective based on the information
+  they have. The idea is that these agents should act in a way that maximizes
+  their chances of success or achieving their goals.
+
+- Agents that **act rationally** should:
+  1. **Operate autonomously**: This means the agent should be able to function
+     on its own without needing constant human intervention. It should make
+     decisions independently.
+  2. **Perceive environment**: The agent must be able to gather information from
+     its surroundings. This could involve sensors, cameras, or other
+     data-gathering tools that help it understand the context in which it
+     operates.
+  3. **Persist over a prolonged time period**: The agent should be able to
+     continue functioning effectively over time, not just in short bursts. This
+     involves maintaining performance and adapting as needed.
+  4. **Adapt to change**: As the environment or circumstances change, the agent
+     should be able to adjust its behavior or strategies to remain effective.
+  5. **Create and pursue goals**: The agent should have the ability to set
+     objectives and work towards achieving them, making decisions that align
+     with these goals. This involves planning and prioritizing actions to reach
+     desired outcomes.
+
+\newpage
+
+<center>
+
+# 12 / 19: Acting Rationally as Ultimate Goal of AI
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides012.png){width=80%}
+
+</center>
+
+- _Acting Rationally as Ultimate Goal of AI_: This slide discusses the ultimate
+  aim of Artificial Intelligence (AI), which is to act rationally. It highlights
+  the importance of choosing the right definition of AI to guide its
+  development.
+
+- **Which definition of AI to use?**
+  - _Acting vs. Thinking_: The slide contrasts two approaches to defining AI.
+    Acting involves taking actions to achieve goals, while thinking focuses on
+    the process of reasoning. The emphasis here is on the outcome (acting)
+    rather than the process (thinking).
+  - _Rational vs. Human_: This point compares rational behavior, which can be
+    defined using mathematical models, with human behavior, which is influenced
+    by evolutionary factors and may not always be rational.
+
+- **Acting > Thinking**: The slide suggests that acting rationally encompasses
+  more than just thinking rationally. It implies that the ability to make
+  decisions and take actions is more comprehensive and practical than merely
+  processing thoughts.
+
+- **Rational > Human**: Rationality is preferred over mimicking human behavior
+  because it can be precisely defined and measured. Human behavior, on the other
+  hand, is complex and often irrational due to its evolutionary background.
+
+- \*AI focuses on **agents acting rationally\***: The ultimate goal of AI is to
+  create agents that can act rationally. This means they should be able to make
+  decisions and take actions that are optimal or near-optimal in achieving their
+  objectives, based on the information available to them.
+
+\newpage
+
+<center>
+
+# 13 / 19: Rationally is Not Absolute
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides013.png){width=80%}
+
+</center>
+
+- **Rationality is Not Absolute**
+  - **AI wants to build agents that do the right thing**
+    - The goal of AI is to create systems that can make decisions that are
+      considered "right" or appropriate. However, determining what the "right
+      thing" is can be complex and context-dependent.
+
+  - **E.g., you leave the house and a branch strikes you**
+    - **Q**: Did you act rationally?
+    - Probably. In this scenario, you couldn't predict or control the branch
+      falling. Your decision to leave the house was rational based on the
+      information available to you at the time.
+
+  - **E.g., you cross the street and a car knocks you over**
+    - **Q**: Did you act rationally?
+    - It depends, but probably no. If you crossed without checking for traffic,
+      it might be considered irrational. However, if you followed all safety
+      rules and the car was at fault, your actions could still be rational.
+
+  - **E.g., moral issues with self-driving car**
+    - This example highlights the ethical dilemmas AI systems face. A
+      self-driving car might have to choose between swerving to avoid a crash,
+      potentially harming a pedestrian, or staying on course and risking the
+      lives of its passengers. These situations challenge the notion of
+      rationality, as the "right" decision can vary based on ethical
+      perspectives and societal values.
+
+\newpage
+
+<center>
+
+# 14 / 19: Problems of a Rational Agent
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides014.png){width=80%}
+
+</center>
+
+- **Probabilistic environment**
+  - A _rational agent_ is an entity that makes decisions to achieve the best
+    possible outcome. In a _deterministic setup_, where everything is
+    predictable, the agent aims for the absolute best result. However, in
+    real-world scenarios, uncertainty is common, so the agent strives for the
+    best _expected_ outcome, which means making decisions that are likely to
+    lead to the best results based on probabilities.
+
+- **Best** is determined by the objective function:
+  - The term "best" is subjective and depends on the _objective function_ used.
+    This could be a _cost function_ (minimizing costs), a _sum of rewards_
+    (maximizing benefits), a _loss function_ (minimizing errors), or _utility_
+    (maximizing satisfaction or usefulness).
+
+- Omniscience vs **no-regrets**
+  - Omniscience implies having complete knowledge, which is rarely possible.
+    Instead, agents aim for a _no-regrets_ approach, making the best decisions
+    possible with the information available at the time.
+
+- Sometimes **no provably correct action** exists
+  - In many situations, there isn't a clear-cut correct action. Despite this,
+    decisions still need to be made, often based on the best available evidence
+    or predictions.
+
+- Even **with perfect information** rationality can't be feasible due to:
+  - Even if all information were available, it might not be practical to use it
+    all. For example, in fields like medicine, gathering all possible data can
+    be too costly or time-consuming. Additionally, processing this data might
+    require more computational power than is feasible.
+
+- Perfect good enough vs perfect
+  - In many cases, aiming for "perfect" is unrealistic. Instead, agents often
+    aim for "good enough," a concept known as _satisficing_. This means making
+    decisions that are satisfactory and sufficient, rather than optimal, given
+    the constraints.
+
+\newpage
+
+<center>
+
+# 15 / 19: Machine Learning: Definitions
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides015.png){width=80%}
+
+</center>
+
+- **Machine Learning: Definitions**
+
+* **How to define machine learning?**
+  - Machine learning is a branch of computer science focused on developing
+    algorithms that allow computers to learn from and make predictions or
+    decisions based on data. This means that instead of being programmed with
+    specific instructions for every possible scenario, the computer can improve
+    its performance over time by learning from examples.
+
+* _"Machine learning is the field of study that gives computers the ability to
+  learn without being explicitly programmed"_ (Samuel, 1959)
+  - This classic definition by Arthur Samuel highlights the core idea of machine
+    learning: enabling computers to learn from data and experiences rather than
+    relying solely on pre-defined rules. This approach allows computers to adapt
+    to new situations and improve their performance over time.
+
+* **Machine learning** is about building machines to do **useful things**
+  without being **explicitly programmed**
+  - For example, a computer can learn to play checkers by playing against itself
+    repeatedly. Through this process, it identifies and memorizes board
+    positions that lead to winning outcomes, improving its strategy over time.
+
+* _"A computer program is said to learn from experience $E$ with respect to some
+  task $T$ and some performance measure $P$, if $P(T)$ improves with experience
+  $E$"_ (Mitchell, 1998)
+  - Tom Mitchell's definition emphasizes the importance of experience in machine
+    learning. A program is considered to be learning if its performance on a
+    specific task improves as it gains more experience.
+
+* **Examples of machine learning applications:**
+  - _Computer vision_: Teaching computers to interpret and understand visual
+    information from the world, such as recognizing objects in images.
+  - _Speech recognition_: Enabling computers to understand and process human
+    speech, allowing for applications like voice-activated assistants.
+  - _Natural language processing_: Allowing computers to understand, interpret,
+    and generate human language, which is crucial for applications like chatbots
+    and translation services.
+
+\newpage
+
+<center>
+
+# 16 / 19: Limits of ML Compared to Human Intelligence
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides016.png){width=80%}
+
+</center>
+
+- **AI differs from human intelligence**
+  - While both AI and humans can learn, the way they do it is quite different.
+    For example, _Large Language Models (LLMs)_, which are a type of AI, learn
+    patterns from vast amounts of text data, but they don't understand or learn
+    in the same way humans do. Humans can learn from a few examples and apply
+    reasoning, whereas AI relies heavily on data patterns.
+
+- **Fragility to input variations**
+  - Machine learning models can be surprisingly fragile. Even small changes in
+    the input data can lead to significant errors. For instance, _adversarial
+    attacks_ can trick a model into making mistakes by altering just a single
+    pixel in an image. Similarly, a model trained to play a video game might
+    fail if the screen is slightly rotated, while humans can easily adapt to
+    such changes without any problem.
+
+- **Lack of transfer learning**
+  - Unlike humans, who can apply knowledge from one area to another, machine
+    learning systems struggle with this. They typically need to be retrained
+    from scratch when faced with a new domain or task, as they can't naturally
+    transfer their learning across different contexts.
+
+- **Massive data and compute requirements**
+  - Machine learning models require a lot of data and computing power to learn
+    effectively. For example, a teenager can learn to drive a car in just a few
+    hours of practice. In contrast, self-driving car systems need to process
+    vast amounts of data and require billions of compute hours to achieve a
+    similar level of proficiency.
+
+- **Poor common sense and reasoning**
+  - Machine learning models often lack _common sense_ and the ability to reason
+    intuitively. They don't have an inherent understanding of the world or the
+    ability to apply logic in the way humans do. This means they can make
+    decisions that seem illogical or lack the depth of understanding that comes
+    naturally to humans.
+
+\newpage
+
+<center>
+
+# 17 / 19: Limits of ML Compared to Human Intelligence
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides017.png){width=80%}
+
+</center>
+
+- **Opaque decision-making**
+  - Machine learning models, especially complex ones like deep neural networks,
+    often act as "black boxes." This means that while they can make accurate
+    predictions or decisions, it's not always clear how they arrived at those
+    conclusions. This lack of transparency can be problematic, especially in
+    critical areas like healthcare or finance, where understanding the reasoning
+    behind a decision is crucial for trust and accountability.
+
+- **Dependence on narrow objectives**
+  - Machine learning systems are designed to perform specific tasks very well,
+    but they struggle when the goals are not clearly defined. For example, an
+    algorithm designed to increase user engagement might inadvertently promote
+    content that is misleading or harmful because it focuses solely on
+    engagement metrics without understanding the broader context or
+    consequences.
+
+- **Susceptibility to bias and data quality**
+  - Machine learning models learn from data, and if that data contains biases,
+    the models will likely reflect and even amplify those biases. This can lead
+    to unfair or discriminatory outcomes, highlighting the importance of using
+    high-quality, representative data and implementing strategies to mitigate
+    bias.
+
+- **Lack of embodiment and physical interaction**
+  - Unlike humans, machine learning models do not have physical bodies or
+    sensory experiences. Human intelligence is deeply connected to our physical
+    interactions with the world, which provide context and understanding that
+    machines currently lack. This absence of embodiment limits the ability of
+    machines to fully replicate human-like understanding and reasoning.
+
+\newpage
+
+<center>
+
+# 18 / 19: The 3 Machine Learning Assumptions
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides018.png){width=80%}
+
+</center>
+
+- **In practice, ML involves solving a practical problem by:**
+  - **Gathering a dataset**: This is the first step in any machine learning
+    project. You need data to train your model. The data should be relevant to
+    the problem you're trying to solve.
+  - **Building a statistical model from the dataset algorithmically**: Once you
+    have your data, you use algorithms to create a model that can make
+    predictions or decisions based on that data.
+
+- **The three assumptions of machine learning:**
+  - **A pattern exists**: Machine learning relies on the idea that there is some
+    underlying pattern in the data that can be learned. If no pattern exists,
+    the model won't be able to make accurate predictions.
+  - **Pattern cannot be precisely defined mathematically**: If you can define
+    the solution with a simple formula, you don't need machine learning.
+    However, ML can still be useful for complex patterns that are hard to
+    define.
+  - **Data is available**: You need data to train your model. Without data, you
+    can't make any progress. This is why data is often considered the most
+    crucial element in machine learning.
+
+- **Which ML assumption is essential?**
+  - **A pattern exists**: This is the foundation of machine learning. If there's
+    no pattern, the model won't work. You can try to learn from the data, but if
+    it doesn't work, it might be because there's no pattern.
+  - **Pattern cannot be precisely defined mathematically**: If you can solve the
+    problem with a straightforward formula, machine learning might not be
+    necessary. However, it can still be useful for more complex problems.
+  - **Data is available**: Without data, you can't train a model. This makes
+    data availability crucial for any machine learning project.
+
+\newpage
+
+<center>
+
+# 19 / 19: AI vs ML vs Deep-Learning
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.1-AI_and_Machine_Learning.png/slides019.png){width=80%}
+
+</center>
+
+- **AI**
+  - **Artificial Intelligence (AI)** refers to the broad concept of machines
+    being able to carry out tasks in a way that we would consider "smart." This
+    involves programming machines to mimic human reasoning, learning, and
+    decision-making processes. AI encompasses a wide range of technologies and
+    applications, from simple rule-based systems to complex neural networks.
+
+- **ML**
+  - **Machine Learning (ML)** is a subset of AI focused on the idea that
+    machines can learn from data. Instead of being explicitly programmed to
+    perform a task, machines use algorithms to identify patterns and make
+    decisions based on data. This allows them to improve over time as they are
+    exposed to more data.
+
+- **AI without ML**
+  - AI can exist without ML, as seen in rule-based systems like IBM's Deep Blue,
+    which played chess by following pre-defined rules and strategies rather than
+    learning from data.
+
+- **Deep Learning (DL)**
+  - **Deep Learning** is a specialized form of ML that uses neural networks with
+    many layers (hence "deep") to analyze various levels of data abstraction.
+    This approach is particularly effective for tasks like image and speech
+    recognition.
+
+- **Large Language Models (LLM)**
+  - **Large Language Models** are a type of deep learning model specifically
+    designed to understand and generate human language. They are trained on vast
+    amounts of text data and often use techniques like Reinforcement Learning
+    from Human Feedback (RLHF) to refine their outputs, making them capable of
+    tasks like translation, summarization, and conversation.
