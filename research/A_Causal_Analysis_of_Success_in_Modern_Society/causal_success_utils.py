@@ -52,6 +52,11 @@ __all__ = [
 ]
 
 
+
+# #############################################################################
+# Agent
+# #############################################################################
+
 class Agent:
     """
     Agent representing an individual in the simulation.
@@ -122,10 +127,10 @@ class Agent:
         impact = float(abs(impact))
 
         if event_type == "lucky":
-            self.capital *= (1.0 + impact)
+            self.capital *= 1.0 + impact
             self.lucky_events += 1
         elif event_type == "unlucky":
-            self.capital *= (1.0 - impact)
+            self.capital *= 1.0 - impact
             self.capital = max(0.01, self.capital)
             self.unlucky_events += 1
         else:
@@ -245,9 +250,15 @@ def generate_summary_statistics(agents: List[Agent]) -> Dict[str, float]:
         "max_capital": max_cap,
         "capital_range": float(cap_range),
         "gini_coefficient": float(gini),
-        "top_10_pct_share": float(df.nlargest(top_10_n, "capital")["capital"].sum() / total_cap),
-        "top_20_pct_share": float(df.nlargest(top_20_n, "capital")["capital"].sum() / total_cap),
-        "bottom_50_pct_share": float(df.nsmallest(bottom_50_n, "capital")["capital"].sum() / total_cap),
+        "top_10_pct_share": float(
+            df.nlargest(top_10_n, "capital")["capital"].sum() / total_cap
+        ),
+        "top_20_pct_share": float(
+            df.nlargest(top_20_n, "capital")["capital"].sum() / total_cap
+        ),
+        "bottom_50_pct_share": float(
+            df.nsmallest(bottom_50_n, "capital")["capital"].sum() / total_cap
+        ),
         "mean_lucky_events": float(df["lucky_events"].mean()),
         "mean_unlucky_events": float(df["unlucky_events"].mean()),
         "mean_talent_norm": float(df["talent_norm"].mean()),
@@ -316,7 +327,9 @@ def run_simulation(
         try:
             from tqdm import tqdm  # type: ignore
 
-            periods_iter = tqdm(range(n_periods), desc="Running simulation", unit="period")
+            periods_iter = tqdm(
+                range(n_periods), desc="Running simulation", unit="period"
+            )
         except Exception:
             periods_iter = range(n_periods)
     else:
@@ -325,8 +338,14 @@ def run_simulation(
     for _ in periods_iter:
         # Lucky events
         for _ in range(n_lucky_events_per_period):
-            exposure = np.array([a.get_event_probability() for a in agents], dtype=float)
-            exposure = exposure / exposure.sum() if exposure.sum() > 0 else np.ones(n_agents) / n_agents
+            exposure = np.array(
+                [a.get_event_probability() for a in agents], dtype=float
+            )
+            exposure = (
+                exposure / exposure.sum()
+                if exposure.sum() > 0
+                else np.ones(n_agents) / n_agents
+            )
 
             selected_idx = int(rng.choice(n_agents, p=exposure))
             selected = agents[selected_idx]
@@ -343,13 +362,22 @@ def run_simulation(
                 if net.sum() > 0:
                     net = net / net.sum()
                     inherited_idx = int(rng.choice(n_agents, p=net))
-                    if inherited_idx != selected_idx and rng.random() < agents[inherited_idx].talent["iq"]:
+                    if (
+                        inherited_idx != selected_idx
+                        and rng.random() < agents[inherited_idx].talent["iq"]
+                    ):
                         agents[inherited_idx].apply_event("lucky", impact * 0.5)
 
         # Unlucky events
         for _ in range(n_unlucky_events_per_period):
-            exposure = np.array([a.get_event_probability() for a in agents], dtype=float)
-            exposure = exposure / exposure.sum() if exposure.sum() > 0 else np.ones(n_agents) / n_agents
+            exposure = np.array(
+                [a.get_event_probability() for a in agents], dtype=float
+            )
+            exposure = (
+                exposure / exposure.sum()
+                if exposure.sum() > 0
+                else np.ones(n_agents) / n_agents
+            )
 
             selected_idx = int(rng.choice(n_agents, p=exposure))
             selected = agents[selected_idx]
@@ -450,6 +478,7 @@ def run_policy_simulation(
 # Bayesian model: effect of luck on log-capital, controlling for talent
 # -------------------------------------------------------------------
 
+
 def fit_bayesian_luck_model(
     df: pd.DataFrame,
     draws: int = 1000,
@@ -538,7 +567,9 @@ def fit_bayesian_luck_model(
     return model, idata
 
 
-def summarize_bayesian_fit(idata, var_names: Optional[List[str]] = None) -> pd.DataFrame:
+def summarize_bayesian_fit(
+    idata, var_names: Optional[List[str]] = None
+) -> pd.DataFrame:
     """
     Return a tidy summary table (posterior mean, sd, and credible intervals)
     for the Bayesian model parameters.
@@ -551,11 +582,20 @@ def summarize_bayesian_fit(idata, var_names: Optional[List[str]] = None) -> pd.D
         pandas DataFrame with summary statistics (mean, sd, hdi, etc.)
     """
     if az is None:
-        raise ImportError("ArviZ is not available. Install it to summarize Bayesian results.")
+        raise ImportError(
+            "ArviZ is not available. Install it to summarize Bayesian results."
+        )
 
     if var_names is None:
         # By default, summarize the main coefficients and sigma
-        var_names = ["alpha", "beta_luck", "beta_intensity", "beta_iq", "beta_networking", "sigma"]
+        var_names = [
+            "alpha",
+            "beta_luck",
+            "beta_intensity",
+            "beta_iq",
+            "beta_networking",
+            "sigma",
+        ]
 
     summary = az.summary(idata, var_names=var_names)
     return summary
@@ -586,7 +626,9 @@ def posterior_predictive_check(
             - "y_pred_std": posterior predictive std-dev per agent
     """
     if pm is None:
-        raise ImportError("PyMC is not available. Install it to run posterior predictive checks.")
+        raise ImportError(
+            "PyMC is not available. Install it to run posterior predictive checks."
+        )
 
     capital = df["capital"].to_numpy(dtype=float)
     y_obs = np.log(capital)
