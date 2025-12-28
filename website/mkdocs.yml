@@ -48,7 +48,7 @@ nav:
   - Education: 03_education.md
   - Teaching: 04_teaching.md
   - Publications: 05_publications.md
-  - Research interests: 06_research.md
+  - Research: 06_research.md
   - Coding: 07_coding.md
 
 markdown_extensions:
