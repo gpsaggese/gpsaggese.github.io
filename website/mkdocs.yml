@@ -2,6 +2,8 @@ site_name: GP Saggese - Personal Website
 site_author: Giacinto Paolo Saggese
 site_description: Personal website of GP Saggese - Adjunct Professor and Technology Executive
 
+strict: true
+
 theme:
   name: material
   logo: assets/logo.png  # Custom logo in header
@@ -41,24 +43,13 @@ plugins:
   - search
 
 nav:
-  - Home: 01_index.md
+  - Home: index.md
   - CV/Resume: 02_cv.md
   - Education: 03_education.md
   - Teaching: 04_teaching.md
   - Publications: 05_publications.md
   - Research interests: 06_research.md
   - Coding: 07_coding.md
-
-## Fix slides
-
-> FILE=data605/lectures_source/Lesson09.2-Spark_Primitives.txt
-> llm_cli.py --input $FILE -pf "fix_slides.prompt.md" -o improved.md --model "gpt-4o" -b
-
-## Generate book
-
-> gen_book_chapter.sh data605 03.2
-
-> concatenate_pdfs.py --input_files 'data605/book/Lesson*.pdf' --output_file data605/book/book.pdf
 
 markdown_extensions:
   - admonition

@@ -1,12 +1,16 @@
 # Publications
 
-## BibTex
+## BibTeX
 
 - **BibTeX File:** All publications are available in BibTeX format in [gp_publications.bib](gp_publications.bib)
 
 ## Books
 - [Big Data Systems](https://github.com/gpsaggese/umd_classes/blob/master/data605/book/book.pdf)
 - [Advanced Machine Learning](https://github.com/gpsaggese/umd_classes/blob/master/msml610/book/book.pdf)
+
+## Blogs
+- https://blog.causify.ai/
+- https://causifyai.substack.com/
 
 ## 2025
 

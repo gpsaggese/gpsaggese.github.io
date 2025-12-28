@@ -1,4 +1,4 @@
-# Research Interests & Publications
+# Research Interests
 
 - **Publications:**
   - [DBLP](https://dblp.uni-trier.de/pers/hd/s/Saggese:Giacinto_Paolo)
