@@ -1,5 +1,10 @@
 # Research Interests & Publications
 
+- **Publications:**
+  - [DBLP](https://dblp.uni-trier.de/pers/hd/s/Saggese:Giacinto_Paolo)
+  - [Google Scholar](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C21&q=gp+saggese&btnG=)
+  - [ResearchGate](https://www.researchgate.net/scientific-contributions/70377865_GP_Saggese)
+
 ## Research Areas
 
 ### [Causal AI](#causal-ai-publications)

@@ -41,13 +41,24 @@ plugins:
   - search
 
 nav:
-  - Home: index.md
-  - CV/Resume: cv.md
-  - Education: education.md
-  - Teaching: teaching.md
-  - Coding: coding.md
-  - Publications: publications.md
-  - Research interests: research_interests.md
+  - Home: 01_index.md
+  - CV/Resume: 02_cv.md
+  - Education: 03_education.md
+  - Teaching: 04_teaching.md
+  - Publications: 05_publications.md
+  - Research interests: 06_research.md
+  - Coding: 07_coding.md
+
+## Fix slides
+
+> FILE=data605/lectures_source/Lesson09.2-Spark_Primitives.txt
+> llm_cli.py --input $FILE -pf "fix_slides.prompt.md" -o improved.md --model "gpt-4o" -b
+
+## Generate book
+
+> gen_book_chapter.sh data605 03.2
+
+> concatenate_pdfs.py --input_files 'data605/book/Lesson*.pdf' --output_file data605/book/book.pdf
 
 markdown_extensions:
   - admonition

@@ -5,7 +5,8 @@
 - **BibTeX File:** All publications are available in BibTeX format in [gp_publications.bib](gp_publications.bib)
 
 ## Books
-- data605/book/book.pdf
+- [Big Data Systems](https://github.com/gpsaggese/umd_classes/blob/master/data605/book/book.pdf)
+- [Advanced Machine Learning](https://github.com/gpsaggese/umd_classes/blob/master/msml610/book/book.pdf)
 
 ## 2025
 
@@ -38,8 +39,6 @@
 **Authors:** C. Ma, G. Pomazkin, G.P. Saggese, P. Smith, D. Tikhomirov, N. Trubacheva
 **Publication:** Manuscript to be submitted to arXiv, 2025
 
----
-
 ## 2022
 
 ### A Novel Module-Sign Low-Power Implementation for the DLMS Adaptive Filter With Low Steady-State Error
@@ -53,8 +52,6 @@
 **Publication:** IEEE Transactions on Circuits and Systems I: Regular Papers, vol. 69, no. 6, pp. 2449-2462, 2022
 **Links:** [DOI](https://doi.org/10.1109/TCSI.2022.3152921) | [PDF](https://ieeexplore.ieee.org/iel7/8919/9782465/09726786.pdf) | [DBLP](https://dblp.org/rec/journals/tcasI/StrolloNCPSM22.bib)
 
----
-
 ## 2011
 
 ### Automated Derivation of Application-Specific Error Detectors Using Dynamic Analysis
@@ -62,16 +59,12 @@
 **Publication:** IEEE Transactions on Dependable and Secure Computing, vol. 8, no. 5, pp. 640-655, 2011
 **Links:** [DOI](https://doi.org/10.1109/TDSC.2010.19) | [PDF](https://www.researchgate.net/publication/220068507_Automated_Derivation_of_Application-Specific_Error_Detectors_Using_Dynamic_Analysis) | [DBLP](https://dblp.org/rec/journals/tdsc/PattabiramanSCKI11.bib)
 
----
-
 ## 2006
 
 ### Dynamic Derivation of Application-Specific Error Detectors and their Implementation in Hardware
 **Authors:** K. Pattabiraman, G.P. Saggese, D. Chen, Z. Kalbarczyk, R.K. Iyer
 **Publication:** Sixth European Dependable Computing Conference (EDCC 2006), Coimbra, Portugal, pp. 97-108, 2006
 **Links:** [DOI](https://doi.org/10.1109/EDCC.2006.9) | [PDF](https://tcipg.org/sites/default/files/papers/2006_Pattabiraman_et_al.pdf) | [DBLP](https://dblp.org/rec/conf/edcc/PattabiramanSCKI06.bib)
-
----
 
 ## 2005
 
@@ -93,8 +86,6 @@
 ### Architecture and FPGA Implementation of a Digit-serial RSA Processor
 **Authors:** A. Cilardo, A. Mazzeo, L. Romano, G.P. Saggese
 **Publication:** New Algorithms, Architectures and Applications for Reconfigurable Computing, pp. 209-218, Springer, 2005
-
----
 
 ## 2004
 
@@ -123,8 +114,6 @@
 **Authors:** G.P. Saggese, C. Basile, L. Romano, Z. Kalbarczyk, R.K. Iyer
 **Publication:** 23rd International Symposium on Reliable Distributed Systems (SRDS 2004), Florianópolis, Brazil, pp. 195-204, 2004
 **Links:** [DOI](https://doi.org/10.1109/RELDIS.2004.1353020) | [DBLP](https://dblp.org/rec/conf/srds/SaggeseBRKI04.bib)
-
----
 
 ## 2003
 
@@ -158,8 +147,6 @@
 **Authors:** A. Mazzeo, L. Romano, G.P. Saggese
 **Publication:** Scuola Superiore, 2003
 
----
-
 ## 2002
 
 ### A Technique for FPGA Synthesis Driven by Automatic Source Code Analysis and Transformations
@@ -172,8 +159,6 @@
 **Publication:** Proceedings of the 2002 9th IEEE International Conference on Electronics, Circuits and Systems (ICECS 2002), Dubrovnik, Croatia, pp. 607-610, 2002
 **Links:** [DOI](https://doi.org/10.1109/ICECS.2002.1046242) | [DBLP](https://dblp.org/rec/conf/icecsys/SaggeseSMC02.bib)
 
----
-
 ## 2001
 
 ### A Reconfigurable 2D Convolver for Real-Time SAR Imaging
@@ -185,14 +170,3 @@
 **Authors:** D. De Caro, N. Mazzocca, E. Napoli, G.P. Saggese, A.G.M. Strollo
 **Publication:** Proceedings of the 2001 8th IEEE International Conference on Electronics, Circuits and Systems (ICECS 2001), Malta, pp. 745-748, 2001
 **Links:** [DOI](https://doi.org/10.1109/ICECS.2001.957582) | [DBLP](https://dblp.org/rec/conf/icecsys/CaroMNSS01.bib)
-
----
-
-## Additional Resources
-
-- **Publications:**
-  - [DBLP](https://dblp.uni-trier.de/pers/hd/s/Saggese:Giacinto_Paolo)
-  - [Google Scholar](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C21&q=gp+saggese&btnG=)
-  - [ResearchGate](https://www.researchgate.net/scientific-contributions/70377865_GP_Saggese)
-- **Research Areas:** Causal AI, Cryptography, Computer Arithmetic, Fault Tolerance, FPGA Design, Soft Error Analysis
-- **BibTeX File:** All publications are available in BibTeX format in [gp_publications.bib](../gp_publications.bib)
