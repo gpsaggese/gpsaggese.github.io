@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flash_attn_tm
+    working_dir: /workspace
+    environment:
+      TOKENIZERS_PARALLELISM: "false"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/workspace
+      - ./data:/data/UmdTask39_Fall2025_flash_attn_Topic_Modeling_of_Scientific_Papers/data
+    command: ["bash","-lc","jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token= --NotebookApp.notebook_dir=/workspace"]

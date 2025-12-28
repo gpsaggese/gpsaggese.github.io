@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Time Series Forecasting Dashboard</title>
+    <style>
+      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; margin: 24px; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .card { border: 1px solid #ddd; border-radius: 10px; padding: 12px; }
+      code { background: #f6f8fa; padding: 2px 6px; border-radius: 6px; }
+      img { max-width: 100%; border: 1px solid #eee; border-radius: 8px; }
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
+      th { background: #fafafa; }
+    </style>
+  </head>
+  <body>
+    <h2>Dashboard</h2>
+
+    <div class="card">
+      <form method="post" action="{{ url_for('refresh') }}">
+        <button type="submit">Refresh</button>
+      </form>
+      <p>
+        Metrics file: <code>artifacts/metrics/last_run.json</code><br />
+        Plots folder: <code>artifacts/plots/</code>
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Latest metrics</h3>
+        {% if metrics %}
+          <p><b>Ticker</b>: {{ metrics.get('ticker') }}</p>
+          <p><b>Best by val</b>: {{ metrics.get('best_by_val') }}</p>
+          <pre style="white-space: pre-wrap;">{{ metrics | tojson(indent=2) }}</pre>
+        {% else %}
+          <p>No metrics found yet. Run the pipeline first.</p>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h3>Plots</h3>
+        {% if plots %}
+          <ul>
+            {% for p in plots %}
+              <li><a href="{{ url_for('plots', filename=p) }}">{{ p }}</a></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>No plots found yet. Run the pipeline first.</p>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>
+
+

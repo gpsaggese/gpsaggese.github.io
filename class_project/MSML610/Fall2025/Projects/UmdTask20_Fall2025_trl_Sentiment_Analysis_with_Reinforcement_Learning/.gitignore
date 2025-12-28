@@ -1,0 +1,34 @@
+# --- Python & Notebooks ---
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# --- Mac OS Junk ---
+.DS_Store
+.vscode/
+
+# --- Virtual Environments ---
+env/
+venv/
+.env
+.venv/
+
+# --- Datasets ---
+# Tweets.csv including the dataset as its just 2.5MB
+
+# --- MODEL OUTPUT DIRECTORIES (Heavy files - Ignore these) ---
+models/
+# baseline-bert/
+# baseline-gpt2-sft/
+# gpt2-improved-sft/
+# gpt2-dpo-final/
+# gpt2-dpo-active-learning/
+
+# --- Hugging Face & Caches ---
+.cache/
+
+# --- Scripts with Secrets (Prevent API Key leaks) ---
+upload_to_hub.py
+
+compare_models_local.py

@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  dialogue-system:
+    build: .
+    container_name: dialogue_system_container
+    volumes:
+      - ./models:/app/models
+      - ./pipeline:/app/pipeline
+    environment:
+      PYTHONPATH: "/app:/app/pipeline"
+      HF_HOME: /root/.cache/huggingface
+    command: python pipeline/run_pipeline.py
+

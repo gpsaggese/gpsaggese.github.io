@@ -1,0 +1,15 @@
+# Core dependencies
+numpy
+pandas
+pyyaml
+tqdm
+
+# Machine learning
+scikit-learn
+torch
+transformers
+sentence-transformers
+tf-keras
+
+# Notebooks / dev
+jupyterlab

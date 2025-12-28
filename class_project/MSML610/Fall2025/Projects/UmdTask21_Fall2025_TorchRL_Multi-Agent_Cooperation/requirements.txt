@@ -1,0 +1,19 @@
+# Core
+torch==2.9.1
+tensordict==0.10.0
+torchrl==0.10.1
+numpy==1.26.4
+
+# Envs
+pettingzoo==1.25.0
+mpe2==0.0.1
+gymnasium==1.1.1
+pygame==2.6.1
+
+# Notebooks
+matplotlib==3.9.4
+jupyterlab==4.5.0
+ipykernel==6.31.0
+
+# Fix JupyterLab extension-manager crash with httpx>=0.28
+httpx<0.28.0

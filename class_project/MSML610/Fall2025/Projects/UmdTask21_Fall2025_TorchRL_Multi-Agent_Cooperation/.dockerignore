@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Training artifacts
+checkpoints/
+runs/
+wandb/
+*.pt
+*.pth
+
+# Git
+.git/
+.gitignore

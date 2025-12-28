@@ -1,0 +1,196 @@
+{
+  "isolation_forest_anomaly": [
+    {
+      "model_name": "isolation_forest_anomaly",
+      "version": "v20251127_215603",
+      "timestamp": "2025-11-27T21:56:03.396172",
+      "model_path": "models/isolation_forest_anomaly.pkl",
+      "model_hash": "bc306c4fb5cc4320d901c84b2e15ca27",
+      "metrics": {
+        "precision": 0.33653846153846156,
+        "recall": 0.3954802259887006,
+        "f1_score": 0.36363636363636365,
+        "accuracy": 0.8775
+      },
+      "hyperparameters": {
+        "n_estimators": 200,
+        "contamination": 0.1,
+        "max_samples": "auto"
+      },
+      "description": "Unsupervised anomaly detection using Isolation Forest",
+      "status": "archived"
+    },
+    {
+      "model_name": "isolation_forest_anomaly",
+      "version": "v20251127_232132",
+      "timestamp": "2025-11-27T23:21:32.771111",
+      "model_path": "models/isolation_forest_anomaly.pkl",
+      "model_hash": "8172aa9e5419dbd67b8248f01f2cf14d",
+      "metrics": {
+        "precision": 0.9962962962962963,
+        "recall": 1.0,
+        "f1_score": 0.9981447124304267,
+        "accuracy": 0.9996666666666667
+      },
+      "hyperparameters": {
+        "n_estimators": 200,
+        "contamination": 0.1,
+        "max_samples": "auto"
+      },
+      "description": "Unsupervised anomaly detection using Isolation Forest",
+      "status": "archived"
+    },
+    {
+      "model_name": "isolation_forest_anomaly",
+      "version": "v20251127_232934",
+      "timestamp": "2025-11-27T23:29:34.576543",
+      "model_path": "models/isolation_forest_anomaly.pkl",
+      "model_hash": "8172aa9e5419dbd67b8248f01f2cf14d",
+      "metrics": {
+        "precision": 0.9962962962962963,
+        "recall": 1.0,
+        "f1_score": 0.9981447124304267,
+        "accuracy": 0.9996666666666667
+      },
+      "hyperparameters": {
+        "n_estimators": 200,
+        "contamination": 0.1,
+        "max_samples": "auto"
+      },
+      "description": "Unsupervised anomaly detection using Isolation Forest",
+      "status": "archived"
+    },
+    {
+      "model_name": "isolation_forest_anomaly",
+      "version": "v20251128_000756",
+      "timestamp": "2025-11-28T00:07:56.511325",
+      "model_path": "models/isolation_forest_anomaly.pkl",
+      "model_hash": "8172aa9e5419dbd67b8248f01f2cf14d",
+      "metrics": {
+        "precision": 0.9962962962962963,
+        "recall": 1.0,
+        "f1_score": 0.9981447124304267,
+        "accuracy": 0.9996666666666667
+      },
+      "hyperparameters": {
+        "n_estimators": 200,
+        "contamination": 0.1,
+        "max_samples": "auto"
+      },
+      "description": "Unsupervised anomaly detection using Isolation Forest",
+      "status": "archived"
+    },
+    {
+      "model_name": "isolation_forest_anomaly",
+      "version": "v20251129_134531",
+      "timestamp": "2025-11-29T13:45:31.877109",
+      "model_path": "models/isolation_forest_anomaly.pkl",
+      "model_hash": "785598442826871ba94e5a9199c55b02",
+      "metrics": {
+        "precision": 0.9962962962962963,
+        "recall": 1.0,
+        "f1_score": 0.9981447124304267,
+        "accuracy": 0.9996666666666667
+      },
+      "hyperparameters": {
+        "n_estimators": 200,
+        "contamination": 0.1,
+        "max_samples": "auto"
+      },
+      "description": "Unsupervised anomaly detection using Isolation Forest",
+      "status": "production"
+    }
+  ],
+  "failure_type_classifier": [
+    {
+      "model_name": "failure_type_classifier",
+      "version": "v20251127_215603",
+      "timestamp": "2025-11-27T21:56:03.430962",
+      "model_path": "models/failure_type_classifier.pkl",
+      "model_hash": "89b84a86d098372a9a2f46332bd36802",
+      "metrics": {
+        "f1_macro": 0.1911504424778761,
+        "f1_weighted": 0.8747562621868907
+      },
+      "hyperparameters": {
+        "n_estimators": 200,
+        "max_depth": 15,
+        "class_weight": "balanced"
+      },
+      "description": "Multi-class classifier for failure type identification",
+      "status": "archived"
+    },
+    {
+      "model_name": "failure_type_classifier",
+      "version": "v20251127_232132",
+      "timestamp": "2025-11-27T23:21:32.845807",
+      "model_path": "models/failure_type_classifier.pkl",
+      "model_hash": "cff26c850f46924987db5bb88c713a9a",
+      "metrics": {
+        "f1_macro": 0.191270611057226,
+        "f1_weighted": 0.8763606993607103
+      },
+      "hyperparameters": {
+        "n_estimators": 200,
+        "max_depth": 15,
+        "class_weight": "balanced"
+      },
+      "description": "Multi-class classifier for failure type identification",
+      "status": "archived"
+    },
+    {
+      "model_name": "failure_type_classifier",
+      "version": "v20251127_232935",
+      "timestamp": "2025-11-27T23:29:36.044379",
+      "model_path": "models/failure_type_classifier.pkl",
+      "model_hash": "6c75374b74a1011d30e6c7238d65eee5",
+      "metrics": {
+        "f1_macro": 0.1916109422492401,
+        "f1_weighted": 0.8812506585612968
+      },
+      "hyperparameters": {
+        "n_estimators": 200,
+        "max_depth": 15,
+        "class_weight": "balanced"
+      },
+      "description": "Multi-class classifier for failure type identification",
+      "status": "archived"
+    },
+    {
+      "model_name": "failure_type_classifier",
+      "version": "v20251128_000757",
+      "timestamp": "2025-11-28T00:07:57.794376",
+      "model_path": "models/failure_type_classifier.pkl",
+      "model_hash": "6c75374b74a1011d30e6c7238d65eee5",
+      "metrics": {
+        "f1_macro": 0.1916109422492401,
+        "f1_weighted": 0.8812506585612968
+      },
+      "hyperparameters": {
+        "n_estimators": 200,
+        "max_depth": 15,
+        "class_weight": "balanced"
+      },
+      "description": "Multi-class classifier for failure type identification",
+      "status": "archived"
+    },
+    {
+      "model_name": "failure_type_classifier",
+      "version": "v20251129_134532",
+      "timestamp": "2025-11-29T13:45:32.916530",
+      "model_path": "models/failure_type_classifier.pkl",
+      "model_hash": "7424f536a5368413f1da1ca1b6fff55e",
+      "metrics": {
+        "f1_macro": 0.20491631450206507,
+        "f1_weighted": 0.8635297798768296
+      },
+      "hyperparameters": {
+        "n_estimators": 200,
+        "max_depth": 15,
+        "class_weight": "balanced"
+      },
+      "description": "Multi-class classifier for failure type identification",
+      "status": "production"
+    }
+  ]
+}
