@@ -1,0 +1,17 @@
+# Project-specific ignores
+
+# Large Kaggle dataset dumps (keep the folder + .gitkeep only)
+data/store-sales-time-series-forecasting/
+
+# Generated artifacts and plots from local runs
+
+
+# Notebook/cloud caches
+.ipynb_checkpoints/
+__pycache__/
+
+# Docker build outputs & logs
+docker_simple/tmp.build/
+docker_simple/docker_build.log
+docker_simple/tmp.system_cmd.sh
+docker_simple/tmp.system_output.txt
