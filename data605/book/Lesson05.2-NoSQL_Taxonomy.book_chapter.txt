@@ -1,0 +1,341 @@
+---
+title: "Lesson 5.2: Database Taxonomy"
+---
+
+<center>
+
+![](data605/book/Lesson05.2-NoSQL_Taxonomy.png/slides001.png){width=80%}
+
+</center>
+
+<center>
+
+# 2 / 8: DB Taxonomy
+
+</center>
+
+<center>
+
+![](data605/book/Lesson05.2-NoSQL_Taxonomy.png/slides002.png){width=80%}
+
+</center>
+
+- **DB Taxonomy**
+  - **At least five DB genres**
+    - **_Relational_ (e.g., PostgreSQL)**: These databases organize data into
+      tables with rows and columns, using a structured query language (SQL) for
+      defining and manipulating data. They are great for complex queries and
+      transactions.
+    - **_Key-value_ (e.g., Redis)**: This type of database stores data as a
+      collection of key-value pairs. It's simple and fast, making it ideal for
+      caching and real-time applications.
+    - **_Document_ (e.g., MongoDB)**: Document databases store data in JSON-like
+      formats, allowing for flexible and hierarchical data structures. They are
+      well-suited for applications with varying data types.
+    - **_Columnar_ (e.g., Apache Parquet)**: These databases store data in
+      columns rather than rows, optimizing for read-heavy operations and
+      analytical queries. They are often used in big data and data warehousing.
+    - **_Graph_ (e.g., Neo4j)**: Graph databases use nodes, edges, and
+      properties to represent and store data, making them perfect for
+      applications that involve complex relationships, like social networks.
+
+  - **Criteria to differentiate DBs**
+    - **Data model**: This refers to how data is structured and stored, which
+      can significantly impact the database's performance and suitability for
+      different tasks.
+    - **Trade-off with CAP theorem**: The CAP theorem states that a distributed
+      database can only guarantee two out of three properties: Consistency,
+      Availability, and Partition tolerance. Different databases prioritize
+      these properties differently.
+    - **Querying capability**: This involves the complexity and flexibility of
+      the queries that can be performed, which varies across different database
+      types.
+    - **Replication scheme**: This refers to how data is copied and maintained
+      across multiple locations, affecting the database's reliability and
+      performance.
+
+<center>
+
+# 3 / 8: Relational DB
+
+</center>
+
+<center>
+
+![](data605/book/Lesson05.2-NoSQL_Taxonomy.png/slides003.png){width=80%}
+
+</center>
+
+- **Relational DB**
+  - Examples of relational databases include _Postgres_, MySQL, Oracle, and
+    SQLite. These are popular systems used to store and manage data in a
+    structured way.
+
+- **Data model**
+  - Relational databases are based on _set-theory_ and _relational algebra_.
+    This means they use mathematical concepts to organize and manipulate data.
+  - Data is organized into tables, which are like spreadsheets with rows and
+    columns. Each row represents a record, and each column represents an
+    attribute of the data.
+  - There are many types of attributes you can use, such as numbers, text,
+    dates, and even more complex types like arrays and blobs (binary large
+    objects).
+  - Attribute types are strictly enforced, meaning that each column in a table
+    must contain data of a specific type.
+  - SQL (Structured Query Language) is used to query and manipulate the data.
+    It's a powerful language that allows you to perform complex operations on
+    the data.
+  - Relational databases are ACID compliant, which stands for Atomicity,
+    Consistency, Isolation, and Durability. This ensures that transactions are
+    processed reliably.
+
+- **Good for**
+  - Relational databases are ideal when you know the structure of your data but
+    not necessarily how it will be accessed. This flexibility allows for complex
+    queries.
+  - They are great for handling complex schemas, which means you can have
+    intricate relationships between different tables and still query them
+    efficiently.
+  - They work well with regular data, where the structure doesn't change much
+    over time.
+
+- **Not so good for**
+  - Relational databases struggle with hierarchical data, which is data that
+    naturally forms a tree-like structure. This type of data doesn't fit well
+    into tables.
+  - They are not ideal for variable or heterogeneous data, where each record
+    might have a different structure. This can make it difficult to fit such
+    data into a fixed schema.
+
+<center>
+
+# 4 / 8: Key-Value Store
+
+</center>
+
+<center>
+
+![](data605/book/Lesson05.2-NoSQL_Taxonomy.png/slides004.png){width=80%}
+
+</center>
+
+- **Key-Value Store Examples**
+  - Examples include _Redis_, _DynamoDB_, _Git_, _AWS S3_, and traditional
+    filesystems. These are systems designed to store, retrieve, and manage data
+    using a simple key-value pair model.
+
+- **Data Model**
+  - The data model involves mapping _keys_ (like strings) to _complex values_
+    (such as binary blobs). This means each piece of data is stored with a
+    unique identifier (the key), and the data itself can be any form of complex
+    data.
+  - Operations supported include _get_ (retrieve data), _put_ (store data), and
+    _delete_ (remove data) using the primary key.
+
+- **Applications**
+  - Key-value stores are often used to _cache data_, which helps in speeding up
+    data retrieval.
+  - They are used to store _users' session data_ in web applications, ensuring
+    quick access and updates.
+  - In e-commerce applications, they can store _shopping carts_, allowing for
+    fast retrieval and updates as users add or remove items.
+
+- **Good for**
+  - They excel in handling _unrelated data_, where there is no need for complex
+    relationships or joins between data.
+  - They provide _fast lookups_ due to the simplicity of the key-value model.
+  - They allow for _easy horizontal scaling_ through partitioning, which means
+    they can handle large amounts of data by distributing it across multiple
+    servers.
+
+- **Not so good for**
+  - They are not ideal for _data queries_ that require complex searching or
+    filtering.
+  - They lack _secondary indexes_ and the ability to perform _scanning_
+    operations, which limits their use in scenarios where such features are
+    necessary.
+
+<center>
+
+# 5 / 8: Document Store
+
+</center>
+
+<center>
+
+![](data605/book/Lesson05.2-NoSQL_Taxonomy.png/slides005.png){width=80%}
+
+</center>
+
+- **Document Store**: This slide introduces the concept of a document store,
+  which is a type of database designed to store, retrieve, and manage
+  document-oriented information. Examples include _MongoDB_ and _CouchBase_.
+
+- **Data model**:
+  - The data model in document stores is based on a key-value structure where
+    the _document_ acts as the value. This document is typically a nested
+    dictionary, which means it can contain other dictionaries within it.
+  - Each document is assigned a unique identifier, often a hash, which helps in
+    efficiently retrieving and managing the documents.
+  - Documents can have any number of fields, and these fields can be nested,
+    allowing for complex data structures. Common formats for these documents
+    include JSON, XML, and dictionary data structures.
+
+- **Application**:
+  - Document stores are particularly useful for handling _semi-structured data_,
+    which doesn't fit neatly into traditional table structures.
+
+- **Good for**:
+  - They are ideal when the data structure is unknown or likely to change, as
+    they offer flexibility in how data is stored.
+  - Document stores align well with object-oriented programming (OOP) models,
+    reducing the complexity of translating between the database and application
+    code (known as impedance mismatch).
+  - They are designed to be easily distributed across multiple servers, making
+    them scalable and reliable for large-scale applications.
+
+- **Not so good for**:
+  - Document stores are not optimized for complex join queries, which are common
+    in relational databases.
+  - Data is typically stored in a denormalized form, meaning that data
+    redundancy is common, which can lead to inefficiencies in certain scenarios.
+
+<center>
+
+# 6 / 8: Columnar Store
+
+</center>
+
+<center>
+
+![](data605/book/Lesson05.2-NoSQL_Taxonomy.png/slides006.png){width=80%}
+
+</center>
+
+- **Columnar Store Examples**
+  - Examples include _HBase_, Cassandra, and _Parquet_. These are popular
+    technologies used to store and manage large datasets efficiently by
+    organizing data in columns rather than rows.
+
+- **Data Model**
+  - Columnar stores organize data by columns instead of rows. This is different
+    from traditional databases that store data in rows.
+  - They are similar to key-value and relational databases in that they use keys
+    to access data. However, the values retrieved are groups of columns, which
+    can be more efficient for certain types of queries.
+
+- **Application**
+  - Columnar stores are well-suited for storing web pages and time series data,
+    which often involve large datasets with many columns.
+  - They are also ideal for OLAP (Online Analytical Processing) workloads, which
+    require fast query performance on large datasets.
+
+- **Good for**
+  - These systems are designed for horizontal scalability, meaning they can
+    easily expand by adding more servers.
+  - They support data compression and versioning, which can save storage space
+    and track changes over time.
+  - Columnar stores handle sparse tables efficiently, avoiding extra storage
+    costs for empty or null values.
+  - Adding new columns is inexpensive, making it easy to adapt to changing data
+    requirements.
+
+- **Not so good for**
+  - Designing schemas based on query plans can be challenging because columnar
+    stores are optimized for reading rather than writing.
+  - They do not support native joins, so applications must handle joins, which
+    can complicate application development and reduce performance.
+
+The image on the right likely illustrates the concept of columnar storage,
+showing how data is organized by columns rather than rows, which can help
+visualize the differences from traditional row-based storage systems.
+
+<center>
+
+# 7 / 8: Graph DB
+
+</center>
+
+<center>
+
+![](data605/book/Lesson05.2-NoSQL_Taxonomy.png/slides007.png){width=80%}
+
+</center>
+
+- **Graph DB Examples**
+  - _Neo4j_ and GraphX are popular examples of graph databases. These tools are
+    designed to handle data that is naturally interconnected, like social
+    networks or recommendation systems.
+
+- **Data Model**
+  - Graph databases use a model that consists of _nodes_ and _relationships_.
+    Nodes represent entities, while relationships connect these entities. Both
+    nodes and edges (relationships) can have properties, which are essentially
+    key-value pairs that store additional information.
+  - Queries in graph databases are designed to traverse these nodes and
+    relationships, making it easy to explore complex networks of data.
+
+- **Applications**
+  - Graph databases are particularly useful for managing _social data_, where
+    relationships between users are crucial.
+  - They are also used in _recommendation engines_, which rely on understanding
+    connections between users and products.
+  - _Geographical data_ can benefit from graph databases due to the natural way
+    they handle spatial relationships.
+
+- **Good for**
+  - Graph databases excel at handling _networked data_, which can be challenging
+    to represent using traditional relational databases.
+  - They align well with _object-oriented (OO) systems_, as both use a similar
+    approach to modeling data.
+
+- **Not so good for**
+  - One downside is their _poor scalability_. It can be difficult to partition a
+    graph across multiple nodes, which can limit performance as the dataset
+    grows.
+  - A common workaround is to store the graph structure in a graph database
+    while using a key-value store for relationships, but this can add
+    complexity.
+
+<center>
+
+# 8 / 8: Taxonomy by CAP
+
+</center>
+
+<center>
+
+![](data605/book/Lesson05.2-NoSQL_Taxonomy.png/slides008.png){width=80%}
+
+</center>
+
+- **CA (Consistent, Available) systems**
+  - These systems are designed to ensure that data is always consistent and
+    available, but they face challenges when network partitions occur. A network
+    partition is when there is a break in communication between different parts
+    of a system. To handle this, CA systems often use replication, which means
+    they keep multiple copies of data to ensure availability and consistency.
+    Traditional relational database management systems (RDBMSs) like PostgreSQL
+    and MySQL are examples of CA systems. They are well-suited for applications
+    where data consistency and availability are critical, but they may not
+    perform well in distributed environments where partitions are common.
+
+- **CP (Consistent, Partition-Tolerant) systems**
+  - These systems prioritize consistency and can handle network partitions, but
+    they may struggle with availability. This means that during a partition, the
+    system ensures that all nodes have the same data, but some parts of the
+    system might not be accessible. Examples include BigTable and HBase, which
+    are column-oriented databases, and Redis and Berkeley DB, which are
+    key-value stores. These systems are ideal for applications where data
+    consistency is more important than availability, such as financial
+    transactions.
+
+- **AP (Available, Partition-Tolerant) systems**
+  - AP systems focus on being available and partition-tolerant, but they achieve
+    only _eventual consistency_. This means that while data might not be
+    immediately consistent across all nodes, it will become consistent over time
+    through replication and verification processes. Examples include MongoDB and
+    CouchDB, which are document-oriented databases, and Memcached, Dynamo, and
+    Cassandra, which are key-value or column-oriented stores. These systems are
+    suitable for applications where availability is crucial, such as social
+    media platforms, where temporary inconsistencies are acceptable.

@@ -1,0 +1,610 @@
+---
+title: "Lesson 01.2: The Foundations of AI"
+---
+
+\newpage
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides001.png){width=80%}
+
+</center>
+
+\newpage
+
+<center>
+
+# 2 / 14: AI Relates to Many Other Disciplines
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides002.png){width=80%}
+
+</center>
+
+- **AI and Philosophy**: Philosophy helps us understand the ethical implications
+  and the nature of intelligence itself. It raises questions about
+  consciousness, free will, and the moral status of AI systems. Philosophical
+  discussions guide the development of AI in a way that aligns with human
+  values.
+
+- **AI and Mathematics**: Mathematics is the backbone of AI. It provides the
+  tools and frameworks, such as algorithms and statistical models, that are
+  essential for developing AI systems. Concepts like probability, calculus, and
+  linear algebra are crucial for machine learning.
+
+- **AI and Economics**: Economics contributes to AI through decision-making
+  models and game theory. It helps in understanding how AI can optimize
+  resources, predict market trends, and automate economic processes.
+
+- **AI and Neuroscience**: Neuroscience inspires AI by providing insights into
+  how the human brain processes information. This understanding helps in
+  developing neural networks and other AI models that mimic human cognitive
+  processes.
+
+- **AI and Psychology**: Psychology offers insights into human behavior and
+  cognition, which are essential for creating AI systems that interact naturally
+  with humans. It helps in designing user-friendly interfaces and understanding
+  user needs.
+
+- **AI and Computer Engineering**: Computer engineering provides the hardware
+  and software infrastructure necessary for AI. It involves designing efficient
+  algorithms and systems that can handle large-scale data processing and complex
+  computations.
+
+- **AI and Control Theory**: Control theory is used in AI for developing systems
+  that can maintain desired outputs despite changes in the environment. It is
+  crucial for robotics and autonomous systems.
+
+- **AI and Linguistics**: Linguistics is vital for natural language processing,
+  enabling AI to understand and generate human language. It helps in developing
+  systems that can communicate effectively with humans.
+
+\newpage
+
+<center>
+
+# 3 / 14: AI and Philosophy (1/2)
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides003.png){width=80%}
+
+</center>
+
+- **Can formal rules be used to draw valid conclusions?**
+  - **Reasoning**
+    - Logic is the study of how we can make correct conclusions based on given
+      information. It helps us understand what makes an argument valid or
+      invalid.
+    - Aristotle, a philosopher from ancient Greece, was one of the first to
+      explore how humans think logically. He created some of the earliest rules
+      for logical reasoning, which have influenced thinking for centuries.
+    - Over time, humans have built machines to help with logical tasks, like
+      doing math. One of the earliest examples is the Pascaline, a mechanical
+      calculator from the 1600s. This shows our long-standing interest in using
+      machines to assist with logical processes.
+  - **Rationalism**
+    - Rationalism is the belief that we can understand the world by using reason
+      and logic. It suggests that our ability to think logically is key to
+      gaining knowledge.
+
+- **How does the mind arise from a physical brain?**
+  - **Dualism**
+    - Dualism is the idea that while the physical world follows certain laws,
+      there is a part of the human mind, often referred to as "the soul," that
+      operates beyond these laws. This suggests a separation between the mind
+      and the physical body.
+  - **Materialism**
+    - Materialism argues that the mind is not separate from the body but is
+      instead a physical system that operates according to the laws of physics.
+      This view raises questions about concepts like free will, suggesting that
+      what we perceive as free will might just be our awareness of different
+      choices we can make.
+
+\newpage
+
+<center>
+
+# 4 / 14: AI and Philosophy (2/2)
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides004.png){width=80%}
+
+</center>
+
+- **What does knowledge come from?**
+  - **Empiricism**
+    - This is the idea that knowledge is gained through our senses. For example,
+      we understand that trees are green because we see them with our eyes. This
+      approach emphasizes observation and experience as the primary sources of
+      knowledge.
+  - **Induction**
+    - Induction involves forming general rules based on specific observations.
+      For instance, if you see many swans and they are all white, you might
+      conclude that all swans are white. This method is about making broader
+      generalizations from specific instances.
+  - **Logical Positivism**
+    - This philosophy suggests that knowledge should be based on logical
+      theories that are closely tied to observations. For example, scientific
+      hypotheses are considered valid when they can be tested and confirmed
+      through experiments and data.
+
+- **How does knowledge lead to action?**
+  - **Utilitarianism**
+    - Utilitarianism is about making decisions based on the logic that connects
+      goals with outcomes. It suggests that actions are justified if they lead
+      to the greatest good for the greatest number of people.
+  - **Consequentialism**
+    - This ethical theory determines the rightness or wrongness of actions based
+      on their outcomes. For example, the statement "If you kill, you will go to
+      jail" reflects the idea that the consequences of an action determine its
+      moral value.
+  - **Deontological ethics**
+    - Deontological ethics focuses on the morality of actions themselves, rather
+      than their outcomes. It is based on following universal laws or rules,
+      such as "don't kill" or "don't lie," regardless of the consequences.
+
+\newpage
+
+<center>
+
+# 5 / 14: AI and Cognitive Psychology
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides005.png){width=80%}
+
+</center>
+
+- **How do humans think and act?**
+  - **Cognitive psychology**
+    - Cognitive psychology views the brain as an _information-processing
+      device_. This means that just like a computer processes data, our brain
+      processes information from the world around us.
+    - When we encounter stimuli, such as sights or sounds, our brain translates
+      these into _internal representations_. These are mental images or concepts
+      that help us understand and interact with the world.
+    - These internal representations are then manipulated by cognitive
+      processes. This means our brain uses these representations to form new
+      ideas or _beliefs_ about the world.
+    - Finally, these representations can lead to actions, which are our _goals_.
+      For example, if you believe it's going to rain, your goal might be to
+      carry an umbrella.
+
+  - **Cognitive science**
+    - Cognitive science uses computer models to explore complex human abilities
+      like memory, language, and logical thinking. These models help us
+      understand how these processes work in the brain.
+    - It is often seen as the _dual_ or _opposite_ of AI because while AI
+      focuses on creating intelligent machines, cognitive science focuses on
+      understanding human intelligence.
+
+  - **Human-computer interaction**
+    - This field studies how computers can _augment_ or enhance human abilities,
+      making tasks easier or more efficient.
+    - The shift from artificial intelligence (AI) to intelligence augmentation
+      (IA) highlights the focus on using technology to support and enhance human
+      capabilities, rather than just replicating them.
+
+\newpage
+
+<center>
+
+# 6 / 14: AI and Mathematics
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides006.png){width=80%}
+
+</center>
+
+- **What are the formal rules to draw valid conclusions?**
+  - **Formal logic**
+    - _Logical deduction rules_ are the foundation of formal logic, which was
+      significantly developed by George Boole in the mid-19th century. These
+      rules help us derive conclusions from given premises in a structured way.
+    - _First-order logic_ expands on basic logic by including objects and their
+      relationships, a concept introduced by Gottlob Frege in 1879. This allows
+      for more complex reasoning about the world.
+
+  - **Limits to deduction**
+    - Not all statements can be resolved through deduction; some are
+      "undecidable," meaning we can't determine their truth or falsehood using
+      existing rules.
+    - Gödel's _Incompleteness Theorem_ tells us that in any sufficiently complex
+      formal system, there are true statements that cannot be proven within the
+      system. This was a groundbreaking discovery by Kurt Gödel in 1931, showing
+      the inherent limitations of formal logic.
+
+- **How do we reason with uncertain information?**
+  - **Probability**
+    - Probability is the branch of mathematics that deals with uncertainty. It
+      provides a framework for quantifying and reasoning about the likelihood of
+      different outcomes.
+    - The development of probability theory involved contributions from several
+      mathematicians, including Cardano, Pascal, Bernoulli, and Bayes, between
+      the 1500s and 1700s.
+
+  - **Statistics**
+    - Statistics combines data with probability to make informed decisions and
+      predictions. It involves designing experiments, analyzing data, testing
+      hypotheses, and understanding long-term trends (asymptotics).
+    - This field is crucial for interpreting data and drawing conclusions in the
+      presence of uncertainty, making it a key tool in both scientific research
+      and practical applications.
+
+\newpage
+
+<center>
+
+# 7 / 14: AI and Economics (1/2)
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides007.png){width=80%}
+
+</center>
+
+- **How to make decisions to maximize payoff given preferences?**
+  - **Economies**
+    - In economics, agents (like individuals or companies) aim to maximize their
+      economic well-being, which is often referred to as _utility_. This means
+      they make choices that they believe will give them the most satisfaction
+      or benefit.
+    - Economists study what people want and how they make choices based on these
+      desires and preferences. This helps in understanding consumer behavior and
+      market dynamics.
+  - **Decision theory**
+    - Decision theory is about making choices, especially when there is
+      uncertainty involved. It combines probability theory (which deals with the
+      likelihood of events) and utility theory (which deals with the
+      satisfaction or benefit from outcomes).
+    - This theory is applied in various fields, such as choosing where to invest
+      money or deciding on government policies, where the outcomes are uncertain
+      but preferences are clear.
+
+- **How to make decisions when payoffs are result of several actions?**
+  - **Operations research**
+    - Operations research involves making rational decisions where the payoff
+      depends on a sequence of actions. This concept was notably developed by
+      Bellman in 1957 and is used to optimize complex processes.
+    - An example is Markov Decision Processes, which help in planning and
+      decision-making where outcomes are partly random and partly under the
+      control of a decision-maker.
+  - **Satisficing**
+    - Satisficing is about making decisions that are "good enough" rather than
+      perfect. This approach is more aligned with how humans often make
+      decisions in real life.
+    - For instance, when choosing a restaurant, instead of searching for the
+      absolute best option, a person might pick one that meets their basic
+      criteria, like being nearby and affordable. This reflects a practical
+      approach to decision-making.
+
+\newpage
+
+<center>
+
+# 8 / 14: AI and Economics (2/2)
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides008.png){width=80%}
+
+</center>
+
+- **How multiple agents with different goals act?**
+  - **Large economies**
+    - In large economies, there are many agents, such as individuals or
+      companies, each acting independently. Because there are so many
+      participants, the actions of one agent typically do not have a noticeable
+      impact on the overall market. This means that each agent can make
+      decisions without needing to consider how others will react. For example,
+      in a national economy, a single person's decision to buy or not buy a
+      product is unlikely to affect the market price of that product.
+  - **Small economies**
+    - In contrast, small economies are characterized by fewer agents, where the
+      actions of one can significantly influence the outcomes for others. Here,
+      each player's decisions can affect the utility or satisfaction of others.
+      For instance, in a local market, if one seller decides to lower their
+      prices, it can directly impact the sales and pricing strategies of other
+      sellers in the same market.
+  - **Game theory**
+    - Game theory is a framework for understanding strategic interactions in
+      small economies, where the actions of one agent can affect others. It was
+      formalized by John Von Neumann in 1944. In these scenarios, agents are
+      considered rational and may need to use randomized strategies to avoid
+      being predictable. A classic example is the game of rock-paper-scissors,
+      where players use random choices to prevent their opponents from
+      anticipating their next move. This concept helps in analyzing competitive
+      situations where the outcome depends on the actions of multiple
+      decision-makers.
+
+\newpage
+
+<center>
+
+# 9 / 14: AI and Linguistics
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides009.png){width=80%}
+
+</center>
+
+- AI and Linguistics
+
+* **How can you create systems that understand natural language?**
+  - **Computational linguistics** (NLP)
+    - This field focuses on how computers can be programmed to process and
+      analyze large amounts of natural language data. It involves understanding
+      both the structure (syntax) and meaning (semantics) of sentences.
+    - _Machine translation_ is a key application, where systems like Google
+      Translate convert text from one language to another. This requires
+      understanding the nuances of both languages to provide accurate
+      translations.
+    - _Sentiment analysis_ is used to determine the emotional tone behind words,
+      often applied to social media to gauge public opinion or customer
+      feedback.
+    - _Automated customer support chatbots_ use NLP to understand and respond to
+      customer inquiries, providing quick and efficient service without human
+      intervention.
+
+* **How does language relate to thought?**
+  - **Knowledge representation**
+    - This concept deals with how information and relationships are structured
+      so that computers can use them to simulate human reasoning and
+      decision-making.
+    - Examples include _first order knowledge_, which involves logical
+      statements that can be used to infer new information, and _knowledge
+      graphs_, which visually represent relationships between different pieces
+      of information, helping systems understand context and make connections.
+
+\newpage
+
+<center>
+
+# 10 / 14: AI and Neuroscience
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides010.png){width=80%}
+
+</center>
+
+- **Brain**
+  - The brain is a complex organ where different parts are responsible for
+    specific cognitive functions. This means that certain areas of the brain are
+    specialized for tasks like thinking, memory, and movement.
+  - The cerebral cortex is a key area for processing information. It plays a
+    crucial role in higher brain functions such as perception, reasoning, and
+    decision-making.
+  - For example, if someone suffers an injury to the frontal lobe, which is part
+    of the cerebral cortex, they might have trouble making decisions or
+    controlling their behavior.
+
+- **Anatomy of the brain**
+  - The brain is made up of approximately 100 billion neurons. Neurons are the
+    basic building blocks of the brain and nervous system.
+    - Each neuron can connect with between 10,000 to 100,000 other neurons
+      through structures called synapses. This vast network allows for complex
+      communication within the brain.
+    - Axons are long, thread-like parts of a neuron that carry signals over long
+      distances within the brain, facilitating communication between different
+      brain regions.
+  - Neurons communicate through electrochemical reactions, which are essential
+    for transmitting signals throughout the brain.
+  - Short-term pathways in the brain can develop into long-term connections,
+    which is a fundamental process for learning and memory formation.
+
+- **Memory**
+  - Scientists have not yet developed a comprehensive theory about how
+    individual memories are stored in the brain.
+  - The prevailing theory suggests that memories are not stored as exact
+    replicas but are reconstructed from various pieces of information when
+    needed. This means that our recollection of events can be influenced by
+    various factors and may not always be entirely accurate.
+
+\newpage
+
+<center>
+
+# 11 / 14: The Brain Causes the Mind
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides011.png){width=80%}
+
+</center>
+
+- **The Brain Causes the Mind**
+  - **Simple cells lead to thought and consciousness**
+    - The brain is made up of billions of simple cells called neurons. These
+      neurons connect and communicate with each other, creating complex networks
+      that give rise to thought and consciousness. This is truly amazing because
+      it shows how simple building blocks can lead to incredibly complex
+      processes.
+    - These complex processes are what allow us to think, feel, and be aware of
+      our surroundings. It's a reminder of how intricate and powerful the human
+      brain is.
+
+- **Supercomputers' complexity rivals the brain**
+  - Modern supercomputers are incredibly complex and can perform calculations at
+    speeds that rival the processing power of the human brain. However, while
+    they can process data quickly, they don't yet replicate the nuanced and
+    adaptable nature of human thought.
+
+- **Brain-machine interface**
+  - This technology allows the brain to communicate directly with external
+    devices. Over time, the brain can adapt to these devices, allowing people to
+    learn to use prosthetics as if they were natural limbs. This shows the
+    brain's incredible ability to adjust and integrate new tools into its
+    functioning.
+
+- **AI singularity**
+  - The AI singularity is a theoretical future point where artificial
+    intelligence surpasses human intelligence. At this point, AI could
+    potentially improve itself autonomously, leading to rapid advancements and
+    the emergence of superintelligence.
+    - This raises important questions about the societal impact of such a
+      development. Ensuring that AI aligns with human values (known as the
+      control problem or value alignment) is crucial to prevent unintended
+      consequences.
+    - Additionally, there could be significant economic and social disruptions
+      due to increased automation, affecting jobs and industries.
+  - Despite these discussions, achieving a level of intelligence comparable to
+    the human brain remains a significant challenge and is still unknown.
+
+\newpage
+
+<center>
+
+# 12 / 14: AI and Computer Science
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides012.png){width=80%}
+
+</center>
+
+- **What can be computed?**
+  - **Algorithm**
+    - An _algorithm_ is essentially a step-by-step procedure or formula for
+      solving a problem. Think of it as a recipe that tells you exactly what
+      steps to take to achieve a desired outcome. For example, the algorithm for
+      computing the Greatest Common Divisor (GCD) was devised by Euclid around
+      300 BCE. This ancient algorithm is still used today to find the largest
+      number that divides two numbers without leaving a remainder.
+  - **Limits to computation**
+    - The concept of a _Turing machine_, introduced by Alan Turing in 1936, is a
+      foundational idea in computer science. It is a theoretical device that can
+      simulate any algorithm's logic. However, not all problems can be solved by
+      a Turing machine. Some functions are inherently non-computable, meaning no
+      algorithm can solve them. A classic example is the _halting problem_,
+      which asks whether a given program will eventually stop running or
+      continue indefinitely. This problem is proven to be unsolvable by any
+      algorithm.
+  - **Tractability**
+    - Tractability refers to how feasible it is to solve a problem within a
+      reasonable amount of time. Problems are categorized into complexity
+      classes based on how their solving time increases with input size.
+      Polynomial complexity problems are generally considered tractable, as
+      their solving time grows at a manageable rate. In contrast, problems with
+      exponential complexity are often intractable, as their solving time
+      increases rapidly with input size. The famous _P vs NP_ question asks
+      whether every problem whose solution can be quickly verified (NP) can also
+      be quickly solved (P). This is one of the most important open questions in
+      computer science.
+
+\newpage
+
+<center>
+
+# 13 / 14: AI and Control Theory
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides013.png){width=80%}
+
+</center>
+
+- AI and Control Theory
+
+* **How can artifacts operate under their own control?**
+  - **Control theory**
+    - **Study self-regulating feedback control systems**
+      - Control theory is all about understanding how systems can manage
+        themselves without constant human intervention. It focuses on creating
+        systems that can adjust their behavior based on feedback to maintain a
+        desired state.
+    - **E.g., a water regulator that maintains a constant water flow**
+      - A simple example is a water regulator, which adjusts the flow of water
+        to keep it steady, even if the pressure changes. This is a practical
+        application of control theory in everyday life.
+    - **Mechanisms to minimize error between current and goal states**
+      - The goal of control systems is to reduce the difference between where
+        the system is and where it should be. This involves continuously
+        measuring performance and making adjustments.
+    - **Kalman Filter (Kalman, 1960)**
+      - The Kalman Filter is a mathematical tool used in control theory to
+        predict and correct the state of a system. It helps in making accurate
+        estimations by considering uncertainties and noise in the data.
+    - **Based on calculus, matrix, stochastic optimal control**
+      - Control theory uses advanced mathematics like calculus and matrices to
+        model and solve problems. Stochastic optimal control deals with making
+        the best decisions under uncertainty.
+    - **AI: logical inference, symbolic planning, computation**
+      - In AI, control theory principles are applied to enable machines to make
+        decisions and plan actions logically. This involves using algorithms to
+        simulate human-like reasoning and problem-solving.
+
+\newpage
+
+<center>
+
+# 14 / 14: AI and Computer Engineering
+
+</center>
+
+<center>
+
+![](msml610/book/Lesson01.2-The_Foundations_of_AI.png/slides014.png){width=80%}
+
+</center>
+
+- **How can we build an efficient computer?**
+  - **Electronic computers**
+    - These were first developed during World War II, marking the beginning of
+      modern computing. They were large, room-sized machines that laid the
+      groundwork for today's technology.
+  - **Moore's Law**
+    - This is an observation that the number of transistors on a microchip
+      doubles approximately every 18 months, leading to a doubling of
+      performance. This trend was consistent from 1970 to 2005. However, as
+      chips became more densely packed, issues like heat and power consumption
+      arose, prompting a shift from increasing clock speeds to developing
+      multi-core processors.
+  - **Hardware for AI**
+    - _GPUs_ (Graphics Processing Units) and _TPUs_ (Tensor Processing Units)
+      are specialized hardware designed to handle the massive computations
+      required by AI applications. Wafer-scale engines are another innovation,
+      providing even more computational power by integrating many processors on
+      a single wafer.
+  - **Current Trends**
+    - Modern computing is moving towards massive parallelism, which mimics how
+      the human brain processes information. This approach allows for more
+      efficient processing of complex tasks. The pace of computing power
+      advancement has accelerated, with significant improvements occurring every
+      three months. In AI, GPUs and TPUs are crucial for deep learning tasks,
+      and it has been found that high precision, such as 64-bit calculations, is
+      often unnecessary for many AI applications.
+  - **Quantum Computing**
+    - This emerging technology holds the promise of dramatically speeding up
+      certain types of computations. For example, Shor's algorithm, which is
+      used for factoring large numbers, could be significantly accelerated by
+      quantum computers, potentially impacting fields like cryptography.
