@@ -1,94 +1,94 @@
+"""
+Preprocessing utilities for OWID compact COVID dataset
+"""
+
+import os
 import pandas as pd
 import numpy as np
-from pathlib import Path
 
-def filter_vaccine_era(df, start_date="2021-01-01"):
-    """Filter data to vaccine era period"""
-    df = df[df['date'] >= pd.Timestamp(start_date)].copy()
-    print(f"After time filter: {len(df):,} rows")
-    return df
+def clean_data_minimal(df):
+    """Minimal cleaning before weekly aggregation (keep raw structure)."""
 
-def remove_aggregates(df):
-    """Remove OWID aggregate regions"""
-    invalid_codes = ['OWID_WRL','OWID_AFR','OWID_ASI','OWID_EUR','OWID_EUN','OWID_INT','OWID_KOS','OWID_OWID']
+    # --- Standardize ISO3 country code column ---
     if 'code' in df.columns:
-        before = len(df)
-        df = df[~df['code'].isin(invalid_codes)].copy()
-        print(f"Removed {before - len(df):,} aggregate rows; remaining: {len(df):,}")
-    
-    countries = df['code'].nunique()
-    print(f"Unique countries: {countries}")
-    print(f"Date range: {df['date'].min().date()} to {df['date'].max().date()}")
-    
+        df = df.rename(columns={'code': 'country_code'})
+    elif 'iso_code' in df.columns:
+        df = df.rename(columns={'iso_code': 'country_code'})
+    else:
+        raise ValueError("No ISO3 country code found (expected `code` or `iso_code`).")
+
+    # Drop non-valid ISO codes (strings of length 3 only)
+    df = df[df['country_code'].str.len() == 3].copy()
+
+    # Essential columns required throughout analysis
+    essential_cols = [
+        'country_code', 'country', 'date', 'continent',
+        'people_vaccinated_per_hundred',
+        'new_cases_per_million',
+        'new_deaths_per_million',
+        'population_density',
+        'median_age',
+        'hospital_beds_per_thousand',
+        'gdp_per_capita'
+    ]
+
+    # Keep only columns that exist
+    df = df[[c for c in essential_cols if c in df.columns]].copy()
+
+    # Rename to match notebook variables
+    rename_map = {
+        'people_vaccinated_per_hundred': 'vac_pct',
+        'new_cases_per_million': 'cases_per_100k',
+        'new_deaths_per_million': 'deaths_per_100k',
+    }
+    df = df.rename(columns=rename_map)
+
     return df
 
-def create_weekly_panel(df):
-    """Create weekly aggregated panel data"""
-    df['week_start'] = df['date'].dt.to_period('W').apply(lambda r: r.start_time)
-    
-    agg_dict = {
-        'new_cases': 'sum',
-        'new_deaths': 'sum',
-        'new_vaccinations': 'sum',
-        'new_cases_smoothed': 'mean',
-        'new_vaccinations_smoothed': 'mean',
-        'stringency_index': 'mean',
-        'total_cases': 'max',
-        'total_deaths': 'max',
-        'total_vaccinations': 'max',
-        'people_vaccinated': 'max',
-        'people_fully_vaccinated': 'max',
-        'total_vaccinations_per_hundred': 'max',
-        'people_vaccinated_per_hundred': 'max',
-        'people_fully_vaccinated_per_hundred': 'max',
-        'population': 'last',
-        'population_density': 'last',
-        'median_age': 'last',
-        'hospital_beds_per_thousand': 'last',
-        'gdp_per_capita': 'last',
-        'continent': 'last',
-        'country': 'last'
-    }
-    
-    # Keep only columns present in df
-    agg_dict = {k: v for k, v in agg_dict.items() if k in df.columns}
-    
-    weekly = df.groupby(['code', 'week_start'], as_index=False).agg(agg_dict)
-    weekly.rename(columns={'code': 'country_code', 'country': 'country'}, inplace=True)
-    
-    print(f"Weekly panel created: {weekly.shape}")
+
+
+def build_weekly_panel(df):
+    """Convert country-day data into country-week aggregated panel dataset."""
+
+    # Floor date to weekly frequency (week start Monday)
+    df['week_start'] = df['date'] - pd.to_timedelta(df['date'].dt.weekday, unit='d')
+
+    # Aggregate per week per country-code
+    weekly = df.groupby(['country_code', 'week_start'], as_index=False).agg({
+        'vac_pct': 'mean',
+        'cases_per_100k': 'sum',
+        'deaths_per_100k': 'sum',
+        'continent': 'first',
+        'population_density': 'first',
+        'median_age': 'first',
+        'hospital_beds_per_thousand': 'first',
+        'gdp_per_capita': 'first'
+    })
+
+    # Remove missing key data
+    weekly = weekly.dropna(subset=['vac_pct', 'cases_per_100k', 'deaths_per_100k'])
+
+    print(weekly.head(5))
+
     return weekly
 
-def compute_metrics(weekly):
-    """Compute per-100k metrics and vaccination percentage"""
-    weekly['cases_per_100k'] = weekly['new_cases'] / weekly['population'] * 100000
-    weekly['deaths_per_100k'] = weekly['new_deaths'] / weekly['population'] * 100000
-    
-    if 'people_vaccinated_per_hundred' in weekly.columns:
-        weekly['vac_pct'] = weekly['people_vaccinated_per_hundred']
-    elif 'people_vaccinated' in weekly.columns:
-        weekly['vac_pct'] = weekly['people_vaccinated'] / weekly['population'] * 100
-    else:
-        weekly['vac_pct'] = np.nan
-    
-    print("Metrics computed: cases_per_100k, deaths_per_100k, vac_pct")
-    return weekly
 
-def clean_data(weekly):
-    """Clean and impute missing values"""
-    weekly = weekly.dropna(subset=['country_code', 'week_start', 'vac_pct', 
-                                  'cases_per_100k', 'deaths_per_100k'])
-    
-    covars = ['population_density', 'median_age', 'hospital_beds_per_thousand', 'gdp_per_capita']
-    for c in covars:
-        if c in weekly.columns:
-            median_val = weekly[c].median()
-            weekly[c] = weekly[c].fillna(median_val)
-    
-    print(f"After cleaning: {len(weekly):,} rows")
-    print("Missing values after cleaning:")
-    key_cols = ['vac_pct', 'cases_per_100k', 'deaths_per_100k'] + covars
-    key_cols_present = [c for c in key_cols if c in weekly.columns]
-    print(weekly[key_cols_present].isna().sum().to_string())
-    
-    return weekly
+def final_clean(df):
+    """Final clean before causal analysis & feature engineering."""
+
+    # Remove obvious errors / below-zero values
+    df = df[df['cases_per_100k'] >= 0]
+    df = df[df['deaths_per_100k'] >= 0]
+    df = df[df['vac_pct'] >= 0]
+
+    # Remove rows where vaccination is missing
+    df = df.dropna(subset=['vac_pct', 'cases_per_100k', 'deaths_per_100k'])
+
+    # Drop any duplicate rows
+    df = df.drop_duplicates(subset=['country_code', 'week_start'])
+
+    # Ensure dataset is sorted properly
+    df = df.sort_values(['country_code', 'week_start']).reset_index(drop=True)
+
+    print(f"Final clean done: {df.shape[0]:,} rows remain after validation checks")
+    return df
