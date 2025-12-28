@@ -1,0 +1,21 @@
+# Core data science packages
+pandas>=2.0.0
+numpy>=1.26.0,<2.0.0  # Pin to 1.x for auto-sklearn compatibility
+scikit-learn>=1.5.0,<1.6.0  # Compatible with both auto-sklearn and modern numpy
+
+# Model persistence
+joblib>=1.3.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Development environment
+jupyterlab>=4.1
+
+# AutoML (Linux-only; install via Docker on macOS/Windows)
+# Note: auto-sklearn pulls in its own pinned dependencies (smac/ConfigSpace/pyrfr/etc.)
+auto-sklearn>=0.15.0; platform_system=="Linux" and python_version < "3.12"
+
+# Gradient boosting
+xgboost>=2.0.0
