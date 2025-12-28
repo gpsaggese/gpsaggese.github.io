@@ -2,7 +2,7 @@
 
 **Author:** Krishna Kishore Buddi  
 **Course:** MSML610 – Modern Statistical Machine Learning  
-**Instructor:** Prof. Giovanni Saggese  
+**Instructor:** Prof. GP Saggese  
 
 ---
 
