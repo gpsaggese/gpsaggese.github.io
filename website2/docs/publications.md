@@ -1,5 +1,12 @@
 # Publications
 
+## BibTex
+
+- **BibTeX File:** All publications are available in BibTeX format in [gp_publications.bib](gp_publications.bib)
+
+## Books
+- data605/book/book.pdf
+
 ## 2025
 
 ### Causify Benchmark: A Benchmark of Causal AI for Predictive Maintenance

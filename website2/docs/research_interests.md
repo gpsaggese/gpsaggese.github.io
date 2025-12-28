@@ -22,13 +22,6 @@ in microprocessors to low-power circuit design. Work includes fault tolerance
 mechanisms, application-specific error detection, approximate computing, and
 FPGA-based architectures for high-performance applications.
 
-## BibTex
-
-- **BibTeX File:** All publications are available in BibTeX format in [gp_publications.bib](gp_publications.bib)
-
-## Books
-- Coming soon
-
 ## Causal AI Publications
 
 ### Causify Benchmark: A Benchmark of Causal AI for Predictive Maintenance (2025)
