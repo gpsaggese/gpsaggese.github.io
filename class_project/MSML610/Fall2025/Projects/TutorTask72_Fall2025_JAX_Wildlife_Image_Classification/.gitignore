@@ -1,0 +1,4 @@
+data
+.ipynb_checkpoints
+ignore.md
+__pycache__

@@ -1,0 +1,27 @@
+services:
+  trl-lab:
+    # Build from the Dockerfile in the current directory
+    build: .
+
+    # Give the container a consistent name
+    container_name: trl_airline_lab
+
+    # Map port 8888 (host) to 8888 (container)
+    ports:
+      - "8888:8888" # Jupyter
+      - "8501:8501" # Streamlit
+
+    # CRITICAL: This maps your project folder to the container
+    # Changes you make in VS Code/Finder will appear in Jupyter instantly
+    volumes:
+      - .:/app
+
+    # Set the Jupyter password
+    environment:
+      - JUPYTER_TOKEN=airline
+      # Prevent Python from buffering stdout/stderr (better logs)
+      - PYTHONUNBUFFERED=1
+
+    # (Optional) If you are on an M1/M2/M3 Mac, this helps avoid some warnings.
+    # If on Intel or Windows, you can remove this platform line.
+    # platform: linux/amd64

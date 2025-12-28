@@ -1,0 +1,16 @@
+cat <<EOF >> .gitignore
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+#large files
+models/
+data/
+
+EOF

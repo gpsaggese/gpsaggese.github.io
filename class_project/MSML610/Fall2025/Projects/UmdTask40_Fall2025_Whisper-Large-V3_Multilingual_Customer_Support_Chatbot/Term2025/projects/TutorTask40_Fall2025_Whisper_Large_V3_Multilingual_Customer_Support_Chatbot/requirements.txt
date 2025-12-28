@@ -1,0 +1,10 @@
+transformers>=4.40.0
+accelerate
+sentencepiece
+openai-whisper
+soundfile
+protobuf==3.20.*
+huggingface-hub
+numpy
+torchaudio
+streamlit

@@ -1,0 +1,12 @@
+                precision    recall  f1-score   support
+
+   Accessories       0.61      0.51      0.56      1127
+       Apparel       0.84      0.90      0.87      2139
+      Footwear       0.76      0.99      0.86       922
+    Free Items       0.00      0.00      0.00        11
+ Personal Care       0.00      0.00      0.00       240
+Sporting Goods       0.00      0.00      0.00         3
+
+      accuracy                           0.77      4442
+     macro avg       0.37      0.40      0.38      4442
+  weighted avg       0.72      0.77      0.74      4442

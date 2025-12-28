@@ -1,0 +1,87 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+
+# Virtual environments
+env/
+venv/
+ENV/
+.venv/
+pip-wheel-metadata/
+python-env/
+venv.bak/
+.env
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+*.whl
+
+# Unit test / coverage
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.hprof
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDEs / editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and temp
+*.log
+*.tmp
+*.temp
+
+# PyTorch / ML artifacts
+*.pt
+*.pth
+*.ckpt
+checkpoints/
+checkpoints/*
+runs/
+events.out.tfevents.*
+tensorboard/
+tb_logs/
+wandb/
+wandb/*
+mlruns/
+logs/
+models/
+saved_models/
+*.model
+*.tar.gz
+
+# Caches / datasets / large files
+.cache/
+torch_cache/
+.huggingface/
+datasets/
+data/
+data_raw/
+outputs/
+export.pkl
+
+# Misc
+*.so
+*.dylib
+*.dll
+.env
+.env.* 

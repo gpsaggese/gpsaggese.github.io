@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RLHF News Summarization - T5-Large DPO</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon"></div>
+                    <div class="logo-text">
+                        <h1>RLHF News Summarizer</h1>
+                        <p class="subtitle">Powered by T5-Large + DPO</p>
+                    </div>
+                </div>
+                <div class="model-badge">
+                    <span class="badge-icon">DPO</span>
+                    <span class="badge-text">DPO-Optimized</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Model Info Banner -->
+            <div class="info-banner">
+                <div class="info-item">
+                    <span class="info-label">Model</span>
+                    <span class="info-value">T5-Large (RLHF-DPO)</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Architecture</span>
+                    <span class="info-value">Hierarchical Summarization</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">ROUGE-1</span>
+                    <span class="info-value">0.45 (45.0%)</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">ROUGE-2</span>
+                    <span class="info-value">0.23 (23.0%)</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">DPO Accuracy</span>
+                    <span class="info-value">72%</span>
+                </div>
+            </div>
+
+            <!-- Chat Container -->
+            <div class="chat-container" id="chatContainer">
+                <!-- Welcome Message -->
+                <div class="message assistant-message">
+                    <div class="message-avatar">AI</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-author">RLHF Assistant</span>
+                            <span class="message-badge">DPO-Optimized</span>
+                        </div>
+                        <div class="message-text">
+                            <p>Welcome! I'm an AI-powered news summarization system using:</p>
+                            <ul>
+                                <li><strong>RLHF with DPO</strong> - Direct Preference Optimization for human-aligned
+                                    summaries</li>
+                                <li><strong>T5-Large Model</strong> - Fine-tuned on CNN/DailyMail with 72% preference
+                                    accuracy</li>
+                                <li><strong>Hierarchical Summarization</strong> - Intelligent chunking and recursive
+                                    aggregation</li>
+                            </ul>
+                            <p><strong>What I can do:</strong></p>
+                            <ul>
+                                <li>Summarize text directly</li>
+                                <li>Extract and summarize from URLs</li>
+                                <li>Process PDF, DOCX, and TXT files</li>
+                                <li>Refine summaries with natural language feedback</li>
+                            </ul>
+                            <p>Choose an input mode below and let's get started!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-container">
+                <!-- Input Mode Tabs -->
+                <div class="input-tabs">
+                    <button class="tab-button active" data-tab="text">Text</button>
+                    <button class="tab-button" data-tab="url">URL</button>
+                    <button class="tab-button" data-tab="file">File</button>
+                </div>
+
+                <!-- Text Input Tab -->
+                <div class="tab-content active" id="text-tab">
+                    <div class="input-wrapper">
+                        <textarea id="textInput" class="user-input" placeholder="Paste your article text here..."
+                            rows="4"></textarea>
+                        <button class="example-button" onclick="loadExampleText()"> Try Example Text</button>
+                    </div>
+                </div>
+
+                <!-- URL Input Tab -->
+                <div class="tab-content" id="url-tab">
+                    <div class="input-wrapper">
+                        <textarea id="urlInput" class="user-input"
+                            placeholder="Enter URLs (one per line for multiple)&#10;Example:&#10;https://example.com/article1&#10;https://example.com/article2"
+                            rows="5"></textarea>
+                        <button class="example-button" onclick="loadExampleURL()"> Try Example URL</button>
+                    </div>
+                </div>
+
+                <!-- File Input Tab -->
+                <div class="tab-content" id="file-tab">
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt" multiple hidden>
+                        <div class="file-upload-content">
+                            <div class="file-upload-icon">[File]</div>
+                            <div class="file-upload-text">
+                                <p><strong>Click to upload</strong> or drag and drop</p>
+                                <p class="file-upload-hint">PDF, DOCX, or TXT (max 10MB)</p>
+                            </div>
+                        </div>
+                        <div class="file-selected" id="fileSelected" style="display: none;">
+                            <span id="fileName"></span>
+                            <button class="file-remove" id="fileRemove">X</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructions (optional) -->
+                <div class="instructions-wrapper">
+                    <input type="text" id="instructionsInput" class="instructions-input"
+                        placeholder="Optional: Add instructions (e.g., 'make it brief', 'bullet points')">
+                </div>
+
+                <!-- Submit Button -->
+                <div class="submit-wrapper">
+                    <button id="summarizeButton" class="summarize-button" disabled>
+                        <span>Generate Summary</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M5 10L8 13L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="input-footer">
+                    <span class="input-hint">Tip: Use instructions like "make it shorter", "format as bullet points",
+                        or "include key statistics"</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with RLHF, T5-Large DPO, and Hierarchical Summarization |
+                <a href="https://github.com" target="_blank">View on GitHub</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

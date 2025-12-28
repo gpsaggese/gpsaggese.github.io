@@ -1,0 +1,13 @@
+.DS_Store
+.env
+__pycache__/
+*.pyc
+.vscode/
+.venv/
+.mypy_cache/
+.pyright/
+.pytest_cache/
+.ipynb_checkpoints/
+**/data/raw/
+**/data/processed/
+**/artifacts/

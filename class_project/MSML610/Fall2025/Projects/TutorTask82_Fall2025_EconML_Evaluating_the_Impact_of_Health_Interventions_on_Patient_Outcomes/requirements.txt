@@ -1,0 +1,6 @@
+pandas
+numpy
+matplotlib
+statsmodels>=0.14
+econml>=0.15
+scikit-learn>=1.2

@@ -1,0 +1,49 @@
+# === Data folders: keep structure, ignore contents ===
+data/**
+!data/
+!data/README.md
+!data/raw/
+!data/processed/
+!data/models/
+!data/embeddings/
+
+# === Ignore virtual environments completely ===
+venv/
+.venv/
+env/
+.env
+.env*/
+
+# === Large or generated files ===
+*.pt
+*.bin
+*.ckpt
+*.safetensors
+*.onnx
+*.npy
+*.npz
+*.parquet
+*.csv
+*.xlsx
+*.zip
+*.tar
+*.gz
+*.pkl
+*.joblib
+*.h5
+*.tmp
+*.bak
+*.log
+
+# === Cache, build, and OS junk ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.cache/
+.vscode/
+.idea/
+.DS_Store
+wandb/
+outputs/
+logs/

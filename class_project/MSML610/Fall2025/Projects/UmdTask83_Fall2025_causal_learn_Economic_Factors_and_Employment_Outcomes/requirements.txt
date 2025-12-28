@@ -1,0 +1,33 @@
+# Core data science libraries
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Causal inference - the main library for this project
+causal-learn>=0.1.3
+
+# Machine learning
+scikit-learn>=1.3.0
+tensorflow>=2.13.0
+
+# Graph visualization
+networkx>=3.1
+
+# Jupyter
+jupyter>=1.0.0
+jupyterlab>=4.0.0
+ipykernel>=6.25.0
+notebook>=7.0.0
+
+# Data download (optional)
+kagglehub>=0.2.0
+fredapi>=0.5.0
+
+# SEM (optional - for advanced causal effect estimation)
+# semopy>=2.3.0
+
+# Utilities
+typing-extensions>=4.7.0
+tqdm>=4.65.0

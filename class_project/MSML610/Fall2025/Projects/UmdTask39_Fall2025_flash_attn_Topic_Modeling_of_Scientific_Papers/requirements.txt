@@ -1,0 +1,31 @@
+# Core Data Science Libraries
+numpy
+pandas
+pyarrow
+
+# Machine Learning & Deep Learning
+torch==2.3.0
+scikit-learn==1.3.2
+transformers==4.44.2
+sentence-transformers==3.1.1
+
+# Topic Modeling & Clustering
+umap-learn
+
+# Visualization
+matplotlib
+seaborn
+
+# Utilities
+tqdm
+
+# Jupyter Notebook Support
+notebook==6.5.7
+jupyterlab==4.2.5
+nbconvert==7.16.4
+nbclient==0.10.0
+jupyter-core==5.7.2
+
+# Note: PyTorch installation
+# For CPU-only: pip install torch==2.3.0 --index-url https://download.pytorch.org/whl/cpu
+# For CUDA: Install appropriate CUDA version from pytorch.org

@@ -1,0 +1,26 @@
+# Core TFX and TensorFlow (install first, let pip resolve dependencies)
+tfx==1.14.0
+tensorflow==2.13.0
+
+# Machine Learning Libraries
+xgboost==2.0.3
+scikit-learn
+
+# Data Processing
+pandas
+numpy
+pyarrow<11  # TFX 1.14.0 requires <11
+
+# Visualization
+matplotlib
+seaborn
+
+# Jupyter and Notebook Support
+jupyter
+jupyterlab
+ipykernel
+
+# Utilities
+pyyaml
+tqdm
+future  # Python 2/3 compatibility (required by some TFX dependencies)
