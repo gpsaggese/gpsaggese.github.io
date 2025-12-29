@@ -5,12 +5,11 @@
 % ==============================================================================
 \subsection{Notation and Definitions}
 
-Let $\Omega$ denote a sample space of possible events, $\mathcal{F}$ a
-$\sigma$-algebra on $\Omega$, and $P$ a probability measure. An agent
-$A$ at time $t$ possesses an information set
-$I_{A}(t) \subseteq \mathcal{F}$ representing their knowledge. An event
-$E \in \mathcal{F}$ occurs with conditional probability $P(E \mid I_{A}
-(t))$.
+Let $\Omega$ denote a sample space of possible events, $\mathcal{F}$ a $\sigma$-algebra
+on $\Omega$, and $P$ a probability measure. An agent $A$ at time $t$ possesses
+an information set $I_{A}(t) \subseteq \mathcal{F}$ representing their knowledge.
+An event $E \in \mathcal{F}$ occurs with conditional probability
+$P(E \mid I_{A}(t))$.
 
 \begin{definition}[Agent Utility]
   A utility function $U_{A}: \mathcal{F}\to \mathbb{R}$ assigns value to
@@ -40,8 +39,8 @@ We define luck as a function of probability, utility, and control.
   unexpectedness of $E$ given information $I_{A}$.
 \end{definition}
 
-The surprise function $S$ quantifies rarity. A natural choice based on
-information theory is:
+The surprise function $S$ quantifies rarity. A natural choice based on information
+theory is:
 \begin{equation}
   S(E \mid I_{A}) = -\log P(E \mid I_{A})
 \end{equation}
@@ -89,8 +88,7 @@ information theory is:
   \caption{The surprise function $S(E) = -\log P(E)$ transforms
   probability into a rarity score. Rare events (low probability) receive
   high surprise scores, while common events (high probability) receive
-  low scores. The logarithmic form ensures additivity over independent
-  events.}
+  low scores. The logarithmic form ensures additivity over independent events.}
   \label{fig:surprise}
 \end{figure}
 
@@ -104,8 +102,8 @@ This formulation satisfies several desirable properties:
     \item Monotonically decreasing in probability (rarer events are
       luckier)
 
-    \item Monotonically decreasing in control (less controllable
-      events are luckier)
+    \item Monotonically decreasing in control (less controllable events
+      are luckier)
 
     \item Zero when $U_{A}(E) = 0$ (neutral outcomes)
 
@@ -130,20 +128,21 @@ as deviation from expectation:
   L_{A}^{\text{dev}}(E) = U_{A}(E) - \mathbb{E}[U_{A}(E') \mid S_{A}]
 \end{equation}
 where $S_{A}$ represents the agent's strategy or controllable choices,
-and the expectation is taken over events $E'$ that could occur under that
-strategy. This formulation is particularly useful in skill-luck
-decomposition for repeated performance evaluation.
+and the expectation is taken over events $E'$ that could occur under
+that strategy. This formulation is particularly useful in skill-luck decomposition
+for repeated performance evaluation.
 
 % ------------------------------------------------------------------------------
 \subsubsection{Fragility-Based Luck}
 
-Outcomes that would change under small perturbations reflect greater luck:
+Outcomes that would change under small perturbations reflect greater
+luck:
 \begin{equation}
   L_{A}^{\text{frag}}(E) = U_{A}(E) \cdot \left(1 - P(E \mid \text{perturbations}
   )\right)
 \end{equation}
-This captures near-miss scenarios where slight differences in
-circumstances would have produced substantially different outcomes.
+This captures near-miss scenarios where slight differences in circumstances
+would have produced substantially different outcomes.
 
 % ------------------------------------------------------------------------------
 \subsubsection{Time-Aggregated Luck}
@@ -215,9 +214,9 @@ addresses cumulative luck and path dependence in life trajectories.
 % ==============================================================================
 \subsection{Skill-Luck Decomposition}
 
-Observed outcomes $Y$ can be decomposed into skill and luck components.
-Let $S_{A}$ denote the agent's strategy space and $R$ denote random
-variables outside the agent's control.
+Observed outcomes $Y$ can be decomposed into skill and luck components. Let
+$S_{A}$ denote the agent's strategy space and $R$ denote random variables
+outside the agent's control.
 
 \begin{definition}[Expected Performance]
   The skill-based expected outcome is:
@@ -233,14 +232,14 @@ variables outside the agent's control.
   \end{equation}
 \end{definition}
 
-This decomposition enables performance evaluation that accounts for
-uncontrollable factors. In contexts with repeated observations, the
-variance of outcomes can be partitioned:
+This decomposition enables performance evaluation that accounts for uncontrollable
+factors. In contexts with repeated observations, the variance of outcomes
+can be partitioned:
 \begin{equation}
   \text{Var}(Y) = \text{Var}(\bar{Y}_{A}) + \text{Var}(L_{A}(Y))
 \end{equation}
-where $\text{Var}(\bar{Y}_{A})$ represents skill-based variation and $\text{Var}
-(L_{A}(Y))$ represents luck-based variation.
+where $\text{Var}(\bar{Y}_{A})$ represents skill-based variation and
+$\text{Var}(L_{A}(Y))$ represents luck-based variation.
 
 \begin{figure}[H]
   \centering
@@ -265,19 +264,11 @@ where $\text{Var}(\bar{Y}_{A})$ represents skill-based variation and $\text{Var}
     % Actual outcomes
     \draw[->, thick, blue] (1,0.3) -- (2.5,0.3);
     \node[blue, font=\small] at (1.75, 0.6) {Luck $L_{A}$};
-    \fill[blue]
-      (2.5,0)
-      circle
-      (2pt)
-      node[below, font=\small] {$Y_{A}$};
+    \fill[blue] (2.5,0) circle (2pt) node[below, font=\small] {$Y_{A}$};
 
     \draw[->, thick, red] (-0.5,0.3) -- (0.8,0.3);
     \node[red, font=\small] at (0.15, 0.6) {Luck $L_{B}$};
-    \fill[red]
-      (0.8,0)
-      circle
-      (2pt)
-      node[below, font=\small] {$Y_{B}$};
+    \fill[red] (0.8,0) circle (2pt) node[below, font=\small] {$Y_{B}$};
 
     % Axes
     \draw[->] (-3.5,0) -- (4.5,0) node[right] {Outcome $Y$};
@@ -287,25 +278,25 @@ where $\text{Var}(\bar{Y}_{A})$ represents skill-based variation and $\text{Var}
     \node[align=left, font=\small]
       at
       (5.5, 1.5)
-      {Skill difference:\\$\bar{Y}_{A} > \bar{Y}_{B}$};
+      {Skill difference:\\$\bar{Y}_{A}> \bar{Y}_{B}$};
     \node[align=left, font=\small]
       at
       (5.5, 0.5)
-      {But with luck,\\$Y_{B} > Y_{A}$ possible};
+      {But with luck,\\$Y_{B}> Y_{A}$ possible};
   \end{tikzpicture}
   \caption{Skill-luck decomposition for two agents. Expected outcomes $\bar
-  {Y}_{A}$ and $\bar{Y}_{B}$ reflect skill differences. Actual
-  outcomes $Y_{A}$ and $Y_{B}$ deviate due to luck. Agent B with lower
-  skill can outperform Agent A through favorable luck, though this
-  becomes less likely as skill differences increase.}
+  {Y}_{A}$ and $\bar{Y}_{B}$ reflect skill differences. Actual outcomes
+  $Y_{A}$ and $Y_{B}$ deviate due to luck. Agent B with lower skill can outperform
+  Agent A through favorable luck, though this becomes less likely as
+  skill differences increase.}
   \label{fig:decomposition}
 \end{figure}
 
 % ==============================================================================
 \subsection{Axioms and Properties}
 
-The framework rests on several axioms that formalize intuitive properties
-of luck:
+The framework rests on several axioms that formalize intuitive
+properties of luck:
 
 \begin{assumption}
   [Neutrality] Outcomes with zero utility contribute zero luck:
@@ -319,14 +310,13 @@ of luck:
 
 \begin{assumption}
   [Information Dependence] Luck depends on the agent's prior information:
-  $L_{A}(E)$ is a function of $P(E \mid I_{A})$ rather than $P(E)$
-  alone.
+  $L_{A}(E)$ is a function of $P(E \mid I_{A})$ rather than $P(E)$ alone.
 \end{assumption}
 
 \begin{assumption}
   [Value Monotonicity] For events with equal probability and control,
-  luck increases with absolute utility: if $P(E_{1}\mid I_{A}) = P(E_{2}
-  \mid I_{A})$ and $C_{A}(E_{1}) = C_{A}(E_{2})$, then
+  luck increases with absolute utility: if $P(E_{1}\mid I_{A}) = P(E_{2}\mid
+  I_{A})$ and $C_{A}(E_{1}) = C_{A}(E_{2})$, then
   $|L_{A}(E_{1})| < |L_{A}(E_{2})|$ when
   $|U_{A}(E_{1})| < |U_{A}(E_{2})|$.
 \end{assumption}
@@ -350,9 +340,7 @@ for rating events. We propose a step-by-step pipeline:
     arrow/.style={->, >=stealth, thick}
   ]
     % Steps
-    \node[stepnode]
-      (step1)
-      {1. Specify Agent \& Event\\$A$, $E$, $t$};
+    \node[stepnode] (step1) {1. Specify Agent \& Event\\$A$, $E$, $t$};
     \node[stepnode, below of=step1]
       (step2)
       {2. Define Reference Model\\$P(\cdot|I_{A}(t))$};
@@ -367,7 +355,7 @@ for rating events. We propose a step-by-step pipeline:
       {5. Estimate Control\\$C_{A}(E) \in [0,1]$};
     \node[stepnode, below of=step5]
       (step6)
-      {6. Calculate Luck\\$L_{A}(E) = U_{A} \cdot S \cdot (1-C_{A})$};
+      {6. Calculate Luck\\$L_{A}(E) = U_{A}\cdot S \cdot (1-C_{A})$};
     \node[stepnode, below of=step6, fill=green!15]
       (step7)
       {7. Normalize\\$L_{A}^{*}(E)$ (z-score)};
@@ -415,14 +403,14 @@ for rating events. We propose a step-by-step pipeline:
 % ------------------------------------------------------------------------------
 \subsubsection{Step 1: Specify Agent and Event}
 
-Clearly identify the agent $A$, the event $E$, and the time $t$ at
-which the event occurs. Luck is agent-relative and context-dependent.
+Clearly identify the agent $A$, the event $E$, and the time $t$ at which
+the event occurs. Luck is agent-relative and context-dependent.
 
 % ------------------------------------------------------------------------------
 \subsubsection{Step 2: Define Reference Model}
 
-Construct a probability model $P(\cdot \mid I_{A}(t))$ representing
-the agent's information state prior to the event. This may involve:
+Construct a probability model $P(\cdot \mid I_{A}(t))$ representing the agent's
+information state prior to the event. This may involve:
 \begin{itemize}
   \item Historical base rates for similar events
 
@@ -460,20 +448,17 @@ Determine utility $U_{A}(E)$ using appropriate scales:
 % ------------------------------------------------------------------------------
 \subsubsection{Step 5: Estimate Control}
 
-Quantify the degree of agent control $C_{A}(E) \in [0,1]$. Methods
-include:
+Quantify the degree of agent control $C_{A}(E) \in [0,1]$. Methods include:
 \begin{itemize}
-  \item Causal modeling to identify controllable versus uncontrollable
-    factors
+  \item Causal modeling to identify controllable versus uncontrollable factors
 
-  \item Variance decomposition showing proportion explained by agent's
-    actions
+  \item Variance decomposition showing proportion explained by agent's actions
 
   \item Counterfactual analysis examining outcome sensitivity to agent's
     choices
 
-  \item Repeatability analysis measuring consistency of outcomes across
-    similar scenarios
+  \item Repeatability analysis measuring consistency of outcomes across similar
+    scenarios
 \end{itemize}
 
 % ------------------------------------------------------------------------------
@@ -487,7 +472,8 @@ Apply the luck function:
 % ------------------------------------------------------------------------------
 \subsubsection{Step 7: Normalize}
 
-For cross-event or cross-agent comparison, normalize within relevant populations:
+For cross-event or cross-agent comparison, normalize within relevant
+populations:
 \begin{equation}
   L_{A}^{*}(E) = \frac{L_{A}(E) - \mu_{L}}{\sigma_{L}}
 \end{equation}
@@ -519,8 +505,8 @@ Empirical application requires several types of data:
 % ==============================================================================
 \subsection{Example Application}
 
-Consider a concrete example: an entrepreneur's startup succeeds after
-raising venture capital. We analyze the luck component:
+Consider a concrete example: an entrepreneur's startup succeeds after raising
+venture capital. We analyze the luck component:
 
 \begin{itemize}
   \item \textbf{Event:} Startup achieves successful exit within five
@@ -541,8 +527,8 @@ raising venture capital. We analyze the luck component:
     $L_{A}(E) = 5 \times 2.3 \times (1 - 0.6) = 4.6$
 \end{itemize}
 
-This positive luck score indicates that while the entrepreneur's skill
-was important, favorable circumstances and timing contributed significantly
+This positive luck score indicates that while the entrepreneur's skill was
+important, favorable circumstances and timing contributed significantly
 to the outcome.
 
 \begin{figure}[H]
@@ -629,17 +615,18 @@ as a function of three input categories:
   \item \textbf{Choices} $A_{i}$: Factors under individual control (effort,
     decisions, strategies)
 
-  \item \textbf{Shocks} $S_{i}$: Random events affecting the individual
-    (accidents, encounters, policy changes)
+  \item \textbf{Shocks} $S_{i}$: Random events affecting the individual (accidents,
+    encounters, policy changes)
 \end{itemize}
 
 A general outcome model takes the form:
 \begin{equation}
   Y_{i}= f(B_{i}, A_{i}) + g(S_{i}) + \varepsilon_{i}
 \end{equation}
-where $f$ represents the deterministic relationship between circumstances,
-choices, and outcomes, $g$ captures the effect of random shocks, and $\varepsilon
-_{i}$ represents measurement error or small unmodeled factors.
+where $f$ represents the deterministic relationship between
+circumstances, choices, and outcomes, $g$ captures the effect of random shocks,
+and $\varepsilon_{i}$ represents measurement error or small unmodeled
+factors.
 
 \begin{figure}[H]
   \centering
@@ -653,9 +640,7 @@ _{i}$ represents measurement error or small unmodeled factors.
     % Nodes
     \node[varnode] (B) {Circum-\\stances\\$B_{i}$};
     \node[varnode, right of=B] (A) {Choices\\$A_{i}$};
-    \node[shock, below of=A, node distance=1.8cm]
-      (S)
-      {Shocks\\$S_{i}$};
+    \node[shock, below of=A, node distance=1.8cm] (S) {Shocks\\$S_{i}$};
     \node[outcome, right of=A] (Y) {Outcome\\$Y_{i}$};
 
     % Arrows
@@ -730,19 +715,19 @@ Three complementary measures capture different aspects of luck:
 % ------------------------------------------------------------------------------
 \subsubsection{Residual Luck}
 
-Residual luck measures the deviation of actual outcomes from
-predictions based on circumstances and choices:
+Residual luck measures the deviation of actual outcomes from predictions
+based on circumstances and choices:
 \begin{equation}
   L_{i}^{\text{res}}= Y_{i}- \mathbb{E}[Y_{i}\mid B_{i}, A_{i}]
 \end{equation}
-This represents the core luck component—the portion of outcomes not explained
-by observable inputs.
+This represents the core luck component—the portion of outcomes not
+explained by observable inputs.
 
 % ------------------------------------------------------------------------------
 \subsubsection{Surprise-Weighted Luck}
 
-For outcomes far from expectations, surprise weighting emphasizes extreme
-cases:
+For outcomes far from expectations, surprise weighting emphasizes
+extreme cases:
 \begin{equation}
   L_{i}^{\text{sur}}= U(Y_{i}) \cdot \left[-\log P(Y_{i}\mid B_{i}, A_{i}
   )\right]
@@ -762,8 +747,8 @@ their outcomes.
 % ==============================================================================
 \subsection{Aggregate Luck Metrics}
 
-Societal-level analysis aggregates individual luck scores to
-characterize distributional properties.
+Societal-level analysis aggregates individual luck scores to characterize
+distributional properties.
 
 % ------------------------------------------------------------------------------
 \subsubsection{Luck Inequality}
@@ -772,20 +757,20 @@ The Gini coefficient of absolute luck values measures dispersion:
 \begin{equation}
   G_{L}= \frac{\sum_{i=1}^{n}\sum_{j=1}^{n}|L_{i}- L_{j}|}{2n^{2}\bar{L}}
 \end{equation}
-High luck inequality indicates that some individuals experience far
-more favorable or unfavorable luck than others.
+High luck inequality indicates that some individuals experience far more
+favorable or unfavorable luck than others.
 
 % ------------------------------------------------------------------------------
 \subsubsection{Circumstantial Dependence}
 
-The proportion of outcome variance explained by circumstances (rather
-than choices or luck) measures the degree to which outcomes are predetermined
+The proportion of outcome variance explained by circumstances (rather than
+choices or luck) measures the degree to which outcomes are predetermined
 by birth:
 \begin{equation}
   \rho_{B}= \frac{\text{Var}(\mathbb{E}[Y \mid B])}{\text{Var}(Y)}
 \end{equation}
-Higher values indicate less social mobility and greater importance of
-circumstantial luck.
+Higher values indicate less social mobility and greater importance of circumstantial
+luck.
 
 % ------------------------------------------------------------------------------
 \subsubsection{Agency Contribution}
@@ -800,19 +785,19 @@ This measures the role of individual agency in determining outcomes.
 % ------------------------------------------------------------------------------
 \subsubsection{Mobility Index}
 
-Intergenerational mobility can be measured through the correlation between
-parent and child outcomes:
+Intergenerational mobility can be measured through the correlation
+between parent and child outcomes:
 \begin{equation}
   M = 1 - \text{Corr}(Y_{\text{parent}}, Y_{\text{child}})
 \end{equation}
-Lower correlation (higher $M$) suggests that circumstances of birth
-have less influence on eventual outcomes.
+Lower correlation (higher $M$) suggests that circumstances of birth have
+less influence on eventual outcomes.
 
 % ==============================================================================
 \subsection{Empirical Estimation}
 
-Practical estimation typically proceeds through regression-based variance
-decomposition. Consider a model:
+Practical estimation typically proceeds through regression-based
+variance decomposition. Consider a model:
 \begin{equation}
   Y_{i}= \alpha + \beta_{B}B_{i}+ \beta_{A}A_{i}+ \varepsilon_{i}
 \end{equation}
@@ -866,7 +851,7 @@ Stepwise regression allows decomposition:
       \node[below, align=center, font=\footnotesize]
         at
         (0,-2.2)
-        { $\rho_{B} = 0.60$\\ $\rho_{A} = 0.20$\\ $\rho_{L} = 0.20$ };
+        { $\rho_{B}= 0.60$\\ $\rho_{A}= 0.20$\\ $\rho_{L}= 0.20$ };
     \end{scope}
 
     % Society 2 - More mobility
@@ -901,7 +886,7 @@ Stepwise regression allows decomposition:
       \node[below, align=center, font=\footnotesize]
         at
         (0,-2.2)
-        { $\rho_{B} = 0.30$\\ $\rho_{A} = 0.40$\\ $\rho_{L} = 0.30$ };
+        { $\rho_{B}= 0.30$\\ $\rho_{A}= 0.40$\\ $\rho_{L}= 0.30$ };
     \end{scope}
 
     % Legend
@@ -912,10 +897,9 @@ Stepwise regression allows decomposition:
   \end{tikzpicture}
   \caption{Variance decomposition in two stylized societies. The low mobility
   society (left) shows outcome variance dominated by circumstances of birth
-  ($\rho_{B} = 0.60$), with limited role for agency ($\rho_{A} = 0.20$).
-  The high mobility society (right) exhibits lower circumstantial dependence
-  ($\rho_{B} = 0.30$) and greater agency contribution ($\rho_{A} = 0.40$).
-  Both societies contain irreducible luck components from random
-  shocks.}
+  ($\rho_{B}= 0.60$), with limited role for agency ($\rho_{A}= 0.20$). The
+  high mobility society (right) exhibits lower circumstantial dependence
+  ($\rho_{B}= 0.30$) and greater agency contribution ($\rho_{A}= 0.40$).
+  Both societies contain irreducible luck components from random shocks.}
   \label{fig:variance}
 \end{figure}
