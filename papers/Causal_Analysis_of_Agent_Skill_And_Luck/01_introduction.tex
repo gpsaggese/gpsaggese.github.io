@@ -158,15 +158,21 @@ These components distinguish luck from related concepts. Pure randomness
 becomes luck only when it affects valued outcomes. Skill represents the
 portion of outcomes explained by controllable actions. Circumstance refers
 to background conditions that shape probabilities and opportunities.
+Figure~\ref{fig:components} illustrates how these three components combine
+multiplicatively in our framework: probability is transformed into surprise
+(rarer events score higher), control is inverted (less control increases luck),
+and utility provides value weighting.
 
 The distinction between luck and skill manifests through multiple related
 conceptual pairs. Table~\ref{tab:terminology} summarizes common
 terminology across disciplines, with external factors (luck) on the left
-and internal factors (skill) on the right. These pairs reflect different
+and internal factors (skill) on the right. External factors represent
+uncontrollable influences on outcomes, while internal factors represent
+controllable determinants. These pairs reflect different
 emphases—philosophical (brute luck vs. earned skill), statistical (noise
-vs. signal), or causal (exogenous vs. endogenous)—but all capture the
-fundamental dichotomy between controllable and uncontrollable outcome
-determinants.
+vs. signal), causal (exogenous vs. endogenous), or temporal (timing vs.
+judgment)—but all capture the fundamental dichotomy between controllable
+and uncontrollable outcome determinants.
 
 \begin{table}[H]
   \centering
@@ -187,13 +193,7 @@ determinants.
     Opportunity                               & Capability                        \\
     \bottomrule
   \end{tabular}
-  \caption{Terminology for luck versus skill across disciplines. External
-  factors (left column) represent uncontrollable influences on outcomes,
-  while internal factors (right column) represent controllable
-  determinants. Different terms emphasize different aspects:
-  philosophical (brute luck vs. earned skill), statistical (noise vs.
-  signal), causal (exogenous vs. endogenous), or temporal (timing vs.
-  judgment).}
+  \caption{Terminology for luck versus skill across disciplines.}
   \label{tab:terminology}
 \end{table}
 
@@ -244,10 +244,7 @@ determinants.
     \node[above=0.1cm of lack, font=\small]
       {less control $\rightarrow$ high};
   \end{tikzpicture}
-  \caption{Three components of the luck function combine
-  multiplicatively. Probability is transformed into surprise (rarer
-  events score higher), control is inverted (less control increases luck),
-  and utility provides value weighting.}
+  \caption{Components of the luck function.}
   \label{fig:components}
 \end{figure}
 

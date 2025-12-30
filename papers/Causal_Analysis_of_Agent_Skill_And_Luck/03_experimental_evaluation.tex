@@ -1,5 +1,3 @@
-% This file is included in paper.tex under Section "Experimental Evaluation"
-
 This section presents experimental validation of the theoretical framework
 through agent-based simulation. The experiments examine how skill and
 luck interact to produce observed outcome distributions and test key
@@ -106,7 +104,11 @@ Figure~\ref{fig:dist_comparison} compares the initial talent distribution
 to the final capital distribution after 80 periods. Talent remains
 approximately normally distributed with mean 0.50 and standard deviation
 0.11. In contrast, final capital exhibits substantial right skew with a
-long tail, characteristic of real-world wealth distributions.
+long tail, characteristic of real-world wealth distributions. Despite
+symmetric input distributions, the multiplicative event process produces
+substantial inequality. The emergent Gini coefficient of 0.38 indicates
+moderate concentration, with the top 10\% holding approximately 28\% of
+total capital.
 
 \begin{figure}[H]
   \centering
@@ -156,11 +158,7 @@ long tail, characteristic of real-world wealth distributions.
         node[above, font=\footnotesize] {Mass at low values};
     \end{scope}
   \end{tikzpicture}
-  \caption{Distributional transformation from normal talent (left) to
-  skewed capital (right). Despite symmetric input distributions, the
-  multiplicative event process produces substantial inequality. The emergent
-  Gini coefficient of 0.38 indicates moderate concentration, with the
-  top 10\% holding approximately 28\% of total capital.}
+  \caption{Distributional transformation from normal talent to skewed capital.}
   \label{fig:dist_comparison}
 \end{figure}
 
@@ -197,11 +195,16 @@ more strongly with talent or with experienced luck.
 \subsubsection{Correlation Analysis}
 
 Table~\ref{tab:correlations} presents Pearson correlations between
-outcome (log-capital) and predictor variables. Talent shows weak positive
-correlation ($r = 0.12$), indicating that higher ability agents achieve
-modestly better outcomes on average. However, the number of lucky events
-exhibits far stronger correlation ($r = 0.78$), suggesting that random favorable
-occurrences predict success substantially better than inherent capability.
+outcome (log-capital) and predictor variables. Luck (operationalized as
+lucky event count) exhibits correlation approximately 6.5 times stronger
+than talent. Talent shows weak positive correlation ($r = 0.12$), indicating
+that higher ability agents achieve modestly better outcomes on average. All
+talent dimensions show positive but weak relationships with success. However,
+the number of lucky events exhibits far stronger correlation ($r = 0.78$),
+suggesting that random favorable occurrences predict success substantially
+better than inherent capability. Statistical significance for luck reflects
+the causal nature of event impacts, while talent effects are attenuated by
+randomness in event allocation.
 
 \begin{table}[H]
   \centering
@@ -215,12 +218,7 @@ occurrences predict success substantially better than inherent capability.
     Net events (lucky - unlucky)              & 0.82                                   & $<0.001$           \\
     \bottomrule
   \end{tabular}
-  \caption{Correlations between agent characteristics and final outcomes.
-  Luck (operationalized as lucky event count) exhibits correlation approximately
-  6.5 times stronger than talent. All talent dimensions show positive
-  but weak relationships with success. Statistical significance for luck
-  reflects the causal nature of event impacts, while talent effects are
-  attenuated by randomness in event allocation.}
+  \caption{Correlations between agent characteristics and final outcomes.}
   \label{tab:correlations}
 \end{table}
 
@@ -237,7 +235,12 @@ Examination of the highest achieving decile reveals that these agents
 are not predominantly the most talented. The median talent rank among top
 performers is 52 out of 100, indicating approximately average ability. However,
 these agents experienced a mean of 8.3 lucky events compared to the
-population average of 4.8—a 73\% increase.
+population average of 4.8—a 73\% increase. Figure~\ref{fig:top_performers}
+shows that top performers (outcome rank $>90$) exhibit talent ranks distributed
+across the full range, centered near the population median. If talent were the
+primary determinant of success, points would cluster along the diagonal. The
+observed dispersion indicates that among reasonably capable agents, luck
+rather than ability differences determines who reaches the top.
 
 \begin{figure}[H]
   \centering
@@ -279,12 +282,7 @@ population average of 4.8—a 73\% increase.
     \foreach \y/\label in {1/20, 2/40, 3/60, 4/80, 5/100}
     \draw (0,\y) -- (-0.1,\y) node[left, font=\footnotesize] {\label};
   \end{tikzpicture}
-  \caption{Top performers (outcome rank $>90$) exhibit talent ranks
-  distributed across the full range, centered near the population median.
-  If talent were the primary determinant of success, points would cluster
-  along the diagonal. The observed dispersion indicates that among
-  reasonably capable agents, luck rather than ability differences determines
-  who reaches the top.}
+  \caption{Top performers exhibit talent ranks distributed across the full range.}
   \label{fig:top_performers}
 \end{figure}
 
@@ -318,7 +316,12 @@ DML estimates the average treatment effect (ATE) by first partialling
 out the confounding influence of talent on both treatment and outcome, then
 relating the residuals. The procedure uses cross-fitting with machine
 learning models (gradient boosting) to flexibly capture nonlinear
-relationships.
+relationships. Table~\ref{tab:dml_results} shows that DML methods accounting
+for confounding yield estimates around 0.12, indicating each additional lucky
+event causes approximately 12\% higher final capital, holding talent constant.
+Naive OLS overestimates the effect due to residual confounding (more talented
+agents both encounter more events and capitalize them more effectively). The
+log-scale interpretation follows from exponentiating: $e^{0.12}\approx 1.127$.
 
 \begin{table}[H]
   \centering
@@ -329,13 +332,7 @@ relationships.
     Naive OLS                & 0.156                 & [0.142, 0.170]   & Upward bias             \\
     \bottomrule
   \end{tabular}
-  \caption{Causal effect estimates of lucky events on log-capital. DML methods
-  accounting for confounding yield estimates around 0.12, indicating
-  each additional lucky event causes approximately 12\% higher final capital,
-  holding talent constant. Naive OLS overestimates the effect due to residual
-  confounding (more talented agents both encounter more events and
-  capitalize them more effectively). The log-scale interpretation
-  follows from exponentiating: $e^{0.12}\approx 1.127$.}
+  \caption{Causal effect estimates of lucky events on log-capital.}
   \label{tab:dml_results}
 \end{table}
 
@@ -355,7 +352,13 @@ effects (CATEs) that depend on agent characteristics:
   \tau(x) = \mathbb{E}[Y_{i}(1) - Y_{i}(0) \mid X_{i} = x]
 \end{equation}
 where $Y_{i}(1)$ and $Y_{i}(0)$ represent potential outcomes with and without
-an additional lucky event.
+an additional lucky event. Figure~\ref{fig:cate_analysis} presents the
+heterogeneous treatment effect analysis. The distribution of estimated CATEs
+shows moderate variation around the mean effect of 0.12. CATEs correlate
+positively with IQ ($\rho = 0.41$), indicating that higher cognitive ability
+agents extract greater benefit from lucky events. This heterogeneity suggests
+that while luck matters for everyone, the ability to capitalize on
+opportunities amplifies its impact.
 
 \begin{figure}[H]
   \centering
@@ -413,12 +416,7 @@ an additional lucky event.
       \draw (0,\y) -- (-0.1,\y) node[left, font=\footnotesize] {\label};
     \end{scope}
   \end{tikzpicture}
-  \caption{Heterogeneous treatment effect analysis. Left: Distribution
-  of estimated CATEs shows moderate variation around the mean effect of
-  0.12. Right: CATEs correlate positively with IQ ($\rho = 0.41$), indicating
-  that higher cognitive ability agents extract greater benefit from lucky
-  events. This heterogeneity suggests that while luck matters for
-  everyone, the ability to capitalize on opportunities amplifies its impact.}
+  \caption{Heterogeneous treatment effect analysis.}
   \label{fig:cate_analysis}
 \end{figure}
 
@@ -474,8 +472,14 @@ budget is set to $R = 100$ distributed across the population.
 \subsubsection{Efficiency-Equity Tradeoffs}
 
 Table~\ref{tab:policy_comparison} presents aggregate outcomes under each
-policy. Two primary metrics are reported: total welfare (sum of final
-capital) measuring efficiency, and Gini coefficient measuring inequality.
+policy. Total welfare is the sum of all agents' final capital. CATE-optimal
+allocation achieves highest total welfare by directing resources to
+high-treatment-effect agents. Egalitarian allocation produces lowest
+inequality while sacrificing some efficiency. Performance-based allocation
+amplifies inequality substantially while delivering lowest total welfare,
+suggesting that concentrating resources is inefficient when returns are
+stochastic. Mean rank aggregates both objectives (lower is better across
+multiple criteria). All policies outperform the no-allocation baseline.
 
 \begin{table}[H]
   \centering
@@ -490,15 +494,7 @@ capital) measuring efficiency, and Gini coefficient measuring inequality.
     \midrule No allocation   & 743              & 0.38            & 28\%              & 25\%                 & --            \\
     \bottomrule
   \end{tabular}
-  \caption{Policy comparison across efficiency and equity dimensions. Total
-  welfare is the sum of all agents' final capital. CATE-optimal allocation
-  achieves highest total welfare by directing resources to high-treatment-effect
-  agents. Egalitarian allocation produces lowest inequality while
-  sacrificing some efficiency. Performance-based allocation amplifies inequality
-  substantially while delivering lowest total welfare, suggesting that
-  concentrating resources is inefficient when returns are stochastic. Mean
-  rank aggregates both objectives (lower is better across multiple
-  criteria). All policies outperform the no-allocation baseline.}
+  \caption{Policy comparison across efficiency and equity dimensions.}
   \label{tab:policy_comparison}
 \end{table}
 
@@ -545,7 +541,14 @@ selection. All allocation policies substantially outperform no-allocation
 baselines, indicating that expanding access to resources benefits society
 even when allocation is imperfect. A policy implication follows: increasing
 the number of opportunities (larger $R$ distributed broadly) may matter more
-than precisely targeting those opportunities.
+than precisely targeting those opportunities. Figure~\ref{fig:policy_tradeoff}
+shows policy positions in efficiency-equity space. Points represent outcomes
+under different allocation mechanisms. CATE-optimal policy sits near the
+Pareto frontier (dashed curve), offering highest efficiency at moderate equity.
+Egalitarian policy trades some efficiency for greater equality.
+Performance-based allocation falls below the frontier, dominated by
+alternatives on both dimensions—a cautionary finding for institutions that
+allocate resources primarily based on past success.
 
 \begin{figure}[H]
   \centering
@@ -619,13 +622,7 @@ than precisely targeting those opportunities.
       (3, -0.8)
       {Efficiency-equity tradeoff across allocation policies. CATE-optimal achieves\\ highest welfare but moderate equality. Egalitarian maximizes equality with\\ acceptable efficiency. Performance-based is dominated on both dimensions.};
   \end{tikzpicture}
-  \caption{Policy positions in efficiency-equity space. Points represent
-  outcomes under different allocation mechanisms. CATE-optimal policy
-  sits near the Pareto frontier (dashed curve), offering highest efficiency
-  at moderate equity. Egalitarian policy trades some efficiency for
-  greater equality. Performance-based allocation falls below the frontier,
-  dominated by alternatives on both dimensions—a cautionary finding for
-  institutions that allocate resources primarily based on past success.}
+  \caption{Policy positions in efficiency-equity space.}
   \label{fig:policy_tradeoff}
 \end{figure}
 

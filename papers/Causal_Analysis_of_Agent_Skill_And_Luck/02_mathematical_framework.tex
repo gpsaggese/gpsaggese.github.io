@@ -44,6 +44,10 @@ theory is:
 \begin{equation}
   S(E \mid I_{A}) = -\log P(E \mid I_{A})
 \end{equation}
+As illustrated in Figure~\ref{fig:surprise}, this function transforms
+probability into a rarity score where rare events (low probability) receive
+high surprise scores, while common events (high probability) receive
+low scores. The logarithmic form ensures additivity over independent events.
 
 \begin{figure}[H]
   \centering
@@ -85,10 +89,7 @@ theory is:
       (4.2, 0.2)
       {$\rightarrow$ low surprise};
   \end{tikzpicture}
-  \caption{The surprise function $S(E) = -\log P(E)$ transforms
-  probability into a rarity score. Rare events (low probability) receive
-  high surprise scores, while common events (high probability) receive
-  low scores. The logarithmic form ensures additivity over independent events.}
+  \caption{The surprise function transforms probability into a rarity score.}
   \label{fig:surprise}
 \end{figure}
 
@@ -153,6 +154,12 @@ For sequences of events over time $t = 1, \ldots, T$:
 \end{equation}
 where $\delta \in (0,1]$ is a temporal discount factor. This formulation
 addresses cumulative luck and path dependence in life trajectories.
+Figure~\ref{fig:trajectories} illustrates how early luck events compound over
+time through path dependence, leading to divergent cumulative outcomes. An agent
+benefiting from consistent positive luck creates opportunities for further
+success, while another facing compounding disadvantage from early setbacks
+falls further behind. A third agent experiencing mixed luck shows limited
+cumulative effect.
 
 \begin{figure}[H]
   \centering
@@ -202,12 +209,7 @@ addresses cumulative luck and path dependence in life trajectories.
       (5,-3)
       { Path dependence: Early luck (Agent A) or bad luck (Agent C) compounds over time,\\ creating divergent life trajectories despite similar starting skills. };
   \end{tikzpicture}
-  \caption{Time-aggregated luck trajectories for three agents. Early luck
-  events compound over time through path dependence, leading to
-  divergent cumulative outcomes. Agent A benefits from consistent positive
-  luck that creates opportunities for further success. Agent C faces
-  compounding disadvantage from early setbacks. Agent B experiences mixed
-  luck with limited cumulative effect.}
+  \caption{Time-aggregated luck trajectories for three agents.}
   \label{fig:trajectories}
 \end{figure}
 
@@ -240,6 +242,11 @@ can be partitioned:
 \end{equation}
 where $\text{Var}(\bar{Y}_{A})$ represents skill-based variation and
 $\text{Var}(L_{A}(Y))$ represents luck-based variation.
+Figure~\ref{fig:decomposition} illustrates this decomposition: expected outcomes
+$\bar{Y}_{A}$ and $\bar{Y}_{B}$ reflect skill differences, while actual outcomes
+$Y_{A}$ and $Y_{B}$ deviate due to luck. Notably, an agent with lower skill
+can outperform a higher-skilled agent through favorable luck, though this
+becomes less likely as skill differences increase.
 
 \begin{figure}[H]
   \centering
@@ -284,11 +291,7 @@ $\text{Var}(L_{A}(Y))$ represents luck-based variation.
       (5.5, 0.5)
       {But with luck,\\$Y_{B}> Y_{A}$ possible};
   \end{tikzpicture}
-  \caption{Skill-luck decomposition for two agents. Expected outcomes $\bar
-  {Y}_{A}$ and $\bar{Y}_{B}$ reflect skill differences. Actual outcomes
-  $Y_{A}$ and $Y_{B}$ deviate due to luck. Agent B with lower skill can outperform
-  Agent A through favorable luck, though this becomes less likely as
-  skill differences increase.}
+  \caption{Skill-luck decomposition for two agents.}
   \label{fig:decomposition}
 \end{figure}
 
@@ -329,8 +332,12 @@ properties of luck:
 \subsection{Rating Pipeline}
 
 Practical application of the framework requires a systematic procedure
-for rating events. We propose a step-by-step pipeline:
+for rating events. We propose a step-by-step pipeline illustrated in
+Figure~\ref{fig:pipeline}. The seven-step procedure transforms raw event
+information into a normalized luck score suitable for cross-agent and
+cross-event comparison.
 
+% TODO(gp): Improve this picture using mermaid or graphviz
 \begin{figure}[H]
   \centering
   \begin{tikzpicture}[
@@ -394,9 +401,7 @@ for rating events. We propose a step-by-step pipeline:
       align=left
     ] {Compare across agents/events};
   \end{tikzpicture}
-  \caption{Event rating pipeline. The seven-step procedure transforms raw
-  event information into a normalized luck score suitable for cross-agent
-  and cross-event comparison.}
+  \caption{Event rating pipeline.}
   \label{fig:pipeline}
 \end{figure}
 
@@ -529,7 +534,11 @@ venture capital. We analyze the luck component:
 
 This positive luck score indicates that while the entrepreneur's skill was
 important, favorable circumstances and timing contributed significantly
-to the outcome.
+to the outcome. Figure~\ref{fig:example} visualizes the calculation,
+decomposing the entrepreneur's success into components: surprise from low
+base rate ($P=0.1$), high financial utility (\$5M normalized to 5), and
+moderate lack of control (0.4, since skill $C=0.6$ was important). The
+resulting luck score of 4.6 indicates substantial favorable luck.
 
 \begin{figure}[H]
   \centering
@@ -590,11 +599,7 @@ to the outcome.
       (5.5,-2.3)
       { \textbf{Interpretation:} Significant positive luck. The rare success (low $P$) combined with\\ high value (\$5M) and moderate uncontrollability (40\%) yields substantial luck component. };
   \end{tikzpicture}
-  \caption{Startup example calculation. The entrepreneur's success is decomposed
-  into components: surprise from low base rate ($P=0.1$), high financial
-  utility (\$5M normalized to 5), and moderate lack of control (0.4, since
-  skill $C=0.6$ was important). The resulting luck score of 4.6 indicates
-  substantial favorable luck.}
+  \caption{Startup example calculation.}
   \label{fig:example}
 \end{figure}
 
@@ -626,8 +631,13 @@ A general outcome model takes the form:
 where $f$ represents the deterministic relationship between
 circumstances, choices, and outcomes, $g$ captures the effect of random shocks,
 and $\varepsilon_{i}$ represents measurement error or small unmodeled
-factors.
+factors. Figure~\ref{fig:causal} visualizes this model: circumstances $B_{i}$
+(unearned advantages) and choices $A_{i}$ (agency) jointly determine expected
+outcomes, while shocks $S_{i}$ (random events) introduce luck. Circumstances
+also constrain available choices. The variance decomposition separates
+skill-based from luck-based variation in outcomes.
 
+% TODO(ai_gp): Convert this picture in graphviz
 \begin{figure}[H]
   \centering
   \begin{tikzpicture}[
@@ -699,11 +709,7 @@ factors.
     ]
       { $\text{Var}(Y) = \text{Var}(f(B,A)) + \text{Var}(g(S))$\\ skill + luck };
   \end{tikzpicture}
-  \caption{Causal model of societal outcomes. Circumstances $B_{i}$ (unearned
-  advantages) and choices $A_{i}$ (agency) jointly determine expected outcomes,
-  while shocks $S_{i}$ (random events) introduce luck. Circumstances also
-  constrain available choices. The variance decomposition separates
-  skill-based from luck-based variation in outcomes.}
+  \caption{Causal model of societal outcomes.}
   \label{fig:causal}
 \end{figure}
 
@@ -813,6 +819,13 @@ Stepwise regression allows decomposition:
 
   \item Agency contribution: $R^{2}_{B,A}- R^{2}_{B}$
 \end{enumerate}
+Figure~\ref{fig:variance} compares variance decomposition in two stylized
+societies. The low mobility society (left) shows outcome variance dominated
+by circumstances of birth ($\rho_{B}= 0.60$), with limited role for agency
+($\rho_{A}= 0.20$). The high mobility society (right) exhibits lower
+circumstantial dependence ($\rho_{B}= 0.30$) and greater agency contribution
+($\rho_{A}= 0.40$). Both societies contain irreducible luck components from
+random shocks.
 
 \begin{figure}[H]
   \centering
@@ -895,11 +908,6 @@ Stepwise regression allows decomposition:
       (3.5,-3.5)
       { Variance decomposition comparison. Left: outcomes strongly determined by birth circumstances\\ (low mobility). Right: individual agency plays larger role (higher mobility). Luck component\\ represents irreducible randomness in both societies. };
   \end{tikzpicture}
-  \caption{Variance decomposition in two stylized societies. The low mobility
-  society (left) shows outcome variance dominated by circumstances of birth
-  ($\rho_{B}= 0.60$), with limited role for agency ($\rho_{A}= 0.20$). The
-  high mobility society (right) exhibits lower circumstantial dependence
-  ($\rho_{B}= 0.30$) and greater agency contribution ($\rho_{A}= 0.40$).
-  Both societies contain irreducible luck components from random shocks.}
+  \caption{Variance decomposition in two stylized societies.}
   \label{fig:variance}
 \end{figure}
