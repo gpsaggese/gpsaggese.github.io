@@ -1,0 +1,9 @@
+numpy
+pandas
+fastmcp
+scikit-learn
+jupyterlab
+streamlit
+matplotlib
+seaborn
+import-ipynb

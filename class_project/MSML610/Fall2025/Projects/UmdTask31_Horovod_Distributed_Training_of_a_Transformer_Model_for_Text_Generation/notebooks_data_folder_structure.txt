@@ -1,0 +1,125 @@
+Full Folder Structure of notebooks/data/ (with folder sizes)
+
+notebooks/data/ [34G total]
+├── .DS_Store
+└── preprocessed/ [34G]
+    └── v1/ [34G]
+        ├── .DS_Store
+        ├── metadata.json
+        ├── tokenizer/ [3.3M]
+        │   ├── merges.txt
+        │   ├── special_tokens_map.json
+        │   ├── tokenizer.json
+        │   ├── tokenizer_config.json
+        │   └── vocab.json
+        ├── train/ [8.4G]
+        │   ├── data-00004-of-00041.arrow
+        │   ├── data-00007-of-00041.arrow
+        │   ├── data-00008-of-00041.arrow
+        │   ├── data-00009-of-00041.arrow
+        │   ├── data-00012-of-00041.arrow
+        │   ├── data-00013-of-00041.arrow
+        │   ├── data-00014-of-00041.arrow
+        │   ├── data-00015-of-00041.arrow
+        │   ├── data-00018-of-00041.arrow
+        │   ├── data-00022-of-00041.arrow
+        │   ├── data-00025-of-00041.arrow
+        │   ├── data-00026-of-00041.arrow
+        │   ├── data-00027-of-00041.arrow
+        │   ├── data-00028-of-00041.arrow
+        │   ├── data-00029-of-00041.arrow
+        │   ├── data-00033-of-00041.arrow
+        │   ├── data-00034-of-00041.arrow
+        │   ├── data-00035-of-00041.arrow
+        │   ├── data-00039-of-00041.arrow
+        │   ├── dataset_info.json
+        │   └── state.json
+        ├── train_grouped/ [19G]
+        │   ├── data-00000-of-00041.arrow
+        │   ├── data-00001-of-00041.arrow
+        │   ├── data-00002-of-00041.arrow
+        │   ├── data-00003-of-00041.arrow
+        │   ├── data-00004-of-00041.arrow
+        │   ├── data-00005-of-00041.arrow
+        │   ├── data-00006-of-00041.arrow
+        │   ├── data-00007-of-00041.arrow
+        │   ├── data-00008-of-00041.arrow
+        │   ├── data-00009-of-00041.arrow
+        │   ├── data-00010-of-00041.arrow
+        │   ├── data-00011-of-00041.arrow
+        │   ├── data-00012-of-00041.arrow
+        │   ├── data-00013-of-00041.arrow
+        │   ├── data-00014-of-00041.arrow
+        │   ├── data-00015-of-00041.arrow
+        │   ├── data-00016-of-00041.arrow
+        │   ├── data-00017-of-00041.arrow
+        │   ├── data-00018-of-00041.arrow
+        │   ├── data-00019-of-00041.arrow
+        │   ├── data-00020-of-00041.arrow
+        │   ├── data-00021-of-00041.arrow
+        │   ├── data-00022-of-00041.arrow
+        │   ├── data-00023-of-00041.arrow
+        │   ├── data-00024-of-00041.arrow
+        │   ├── data-00025-of-00041.arrow
+        │   ├── data-00026-of-00041.arrow
+        │   ├── data-00027-of-00041.arrow
+        │   ├── data-00028-of-00041.arrow
+        │   ├── data-00029-of-00041.arrow
+        │   ├── data-00030-of-00041.arrow
+        │   ├── data-00031-of-00041.arrow
+        │   ├── data-00032-of-00041.arrow
+        │   ├── data-00033-of-00041.arrow
+        │   ├── data-00034-of-00041.arrow
+        │   ├── data-00035-of-00041.arrow
+        │   ├── data-00036-of-00041.arrow
+        │   ├── data-00037-of-00041.arrow
+        │   ├── data-00038-of-00041.arrow
+        │   ├── data-00039-of-00041.arrow
+        │   ├── data-00040-of-00041.arrow
+        │   ├── dataset_info.json
+        │   └── state.json
+        ├── train_tokenized/ [5.8G]
+        │   ├── data-00000-of-00013.arrow
+        │   ├── data-00001-of-00013.arrow
+        │   ├── data-00002-of-00013.arrow
+        │   ├── data-00003-of-00013.arrow
+        │   ├── data-00004-of-00013.arrow
+        │   ├── data-00005-of-00013.arrow
+        │   ├── data-00006-of-00013.arrow
+        │   ├── data-00007-of-00013.arrow
+        │   ├── data-00008-of-00013.arrow
+        │   ├── data-00009-of-00013.arrow
+        │   ├── data-00010-of-00013.arrow
+        │   ├── data-00011-of-00013.arrow
+        │   ├── data-00012-of-00013.arrow
+        │   ├── dataset_info.json
+        │   └── state.json
+        ├── val/ [923M]
+        │   ├── data-00000-of-00002.arrow
+        │   ├── data-00001-of-00002.arrow
+        │   ├── dataset_info.json
+        │   └── state.json
+        └── val_tokenized/ [284M]
+            ├── data-00000-of-00001.arrow
+            ├── dataset_info.json
+            └── state.json
+
+Summary:
+- Total directories: 9
+- Total files: 95
+- Total size: 34 GB
+- Main data format: Apache Arrow (.arrow files)
+- Tokenizer files: 5 (JSON and text files)
+- Dataset splits: train, val, train_tokenized, val_tokenized, train_grouped
+
+Folder Size Breakdown:
+- notebooks/data/: 34G (total)
+- notebooks/data/preprocessed/: 34G
+- notebooks/data/preprocessed/v1/: 34G
+- notebooks/data/preprocessed/v1/tokenizer/: 3.3M
+- notebooks/data/preprocessed/v1/train/: 8.4G
+- notebooks/data/preprocessed/v1/train_grouped/: 19G (largest subfolder)
+- notebooks/data/preprocessed/v1/train_tokenized/: 5.8G
+- notebooks/data/preprocessed/v1/val/: 923M
+- notebooks/data/preprocessed/v1/val_tokenized/: 284M
+

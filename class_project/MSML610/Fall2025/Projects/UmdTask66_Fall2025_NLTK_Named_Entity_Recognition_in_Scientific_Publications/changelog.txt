@@ -1,0 +1,3 @@
+# UmdTask66_Fall2025_NLTK_Named_Entity_Recognition_in_Scientific_Publications-1.0.0
+- 2025-12-10
+- First release

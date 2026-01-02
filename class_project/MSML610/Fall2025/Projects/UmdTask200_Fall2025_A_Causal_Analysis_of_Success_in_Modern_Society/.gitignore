@@ -1,0 +1,59 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# ---- Virtual Environment ----
+venv/
+env/
+.venv/
+
+# ---- Jupyter Notebooks ----
+.ipynb_checkpoints/
+
+# ---- Logs and Text Output ----
+*.log
+*.txt
+
+# ---- CSV and Data Files ----
+*.csv
+*.tsv
+*.dat
+
+# ---- Images and Figures ----
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+
+# ---- Build and Distribution ----
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# ---- IDE and Editor Files ----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- macOS ----
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ---- Environment Files ----
+.env
+.env.*
+
+# ---- Compiled Notebooks ----
+*.nbconvert.ipynb
+
+# ---- Cache ----
+.cache/
+*.tmp

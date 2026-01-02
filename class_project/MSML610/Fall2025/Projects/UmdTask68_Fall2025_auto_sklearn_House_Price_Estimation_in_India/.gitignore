@@ -1,0 +1,41 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build/logs
+docker_build.log
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+.jupyter/
+
+# Data (if sensitive)
+# data/raw/*.csv
+
+# Virtual environments
+venv/
+env/
+
+# CSV file - its too big lol
+data/raw/india_housing_prices.csv
+
+# trained models
+*.pkl
+
+# local history
+.history/
+**/.history/

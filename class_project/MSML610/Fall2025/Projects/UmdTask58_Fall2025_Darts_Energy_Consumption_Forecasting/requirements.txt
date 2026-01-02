@@ -1,0 +1,37 @@
+# Energy Consumption Forecasting with Darts
+# Core Dependencies
+
+# Data manipulation
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Darts - Time Series Library
+darts>=0.27.0
+
+# Deep Learning Backend
+torch>=2.0.0
+pytorch-lightning>=2.0.0
+
+# Prophet Model
+prophet>=1.1.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.15.0
+
+# Scikit-learn for metrics and preprocessing
+scikit-learn>=1.3.0
+
+# Jupyter
+jupyter>=1.0.0
+ipywidgets>=8.0.0
+
+# Progress bars
+tqdm>=4.65.0
+
+# Utilities
+python-dateutil>=2.8.0
+holidays>=0.25
+
+

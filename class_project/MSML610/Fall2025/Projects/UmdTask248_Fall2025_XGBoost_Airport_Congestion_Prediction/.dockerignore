@@ -1,0 +1,50 @@
+# ====================================
+# Ignore raw data (do not copy into image)
+# ====================================
+data/raw/
+data/models/
+data/processed/
+
+# ====================================
+# Ignore notebooks
+# ====================================
+notebooks/
+*.ipynb
+
+# ====================================
+# Ignore development files
+# ====================================
+.git/
+.gitignore
+docker_build.log
+docker_build.version.log
+tmp/
+tmp.build/
+
+# ====================================
+# Ignore OS / editor files
+# ====================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ====================================
+# Ignore Python cache
+# ====================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ====================================
+# Ignore virtual envs
+# ====================================
+venv/
+env/
+.venv/
+
+# ====================================
+# Ignore Streamlit cache
+# ====================================
+.streamlit/

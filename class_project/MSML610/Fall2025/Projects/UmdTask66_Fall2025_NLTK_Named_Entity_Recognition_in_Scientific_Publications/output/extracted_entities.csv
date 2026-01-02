@@ -1,0 +1,171 @@
+paper_id,model,entity
+d1aafb70c066a2068b02786f8929fd9c900897fb,NLTK,kauh
+d1aafb70c066a2068b02786f8929fd9c900897fb,NLTK,igm
+d1aafb70c066a2068b02786f8929fd9c900897fb,NLTK,saudi arabia
+d1aafb70c066a2068b02786f8929fd9c900897fb,NLTK,king abdulaziz university hospital
+d1aafb70c066a2068b02786f8929fd9c900897fb,NLTK,mycoplasma
+d1aafb70c066a2068b02786f8929fd9c900897fb,NLTK,microb
+d1aafb70c066a2068b02786f8929fd9c900897fb,NLTK,jeddah
+d1aafb70c066a2068b02786f8929fd9c900897fb,NLTK,igg
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,mycoplasma
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,king abdulaziz university hospital
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,9
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,"january, 1997 through"
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,annual
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,24-months
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,january 1997
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,5
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,gram
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,6
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,7
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,1
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,18000 to 19000
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,igm
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,3
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,one fifth
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,2
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,igg
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,bronchiolitis
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,4
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,saudi arabia
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,10
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,one
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,only 3 -10%
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,8
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,microb
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,jeddah
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,265
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,tertiary
+d1aafb70c066a2068b02786f8929fd9c900897fb,spaCy,1998
+PMC35282,NLTK,kauh
+PMC35282,NLTK,igm
+PMC35282,NLTK,microbiology
+PMC35282,NLTK,saudi arabia
+PMC35282,NLTK,king abdulaziz university hospital
+PMC35282,NLTK,mycoplasma
+PMC35282,NLTK,jeddah
+PMC35282,NLTK,igg
+PMC35282,spaCy,the microbiology labora
+PMC35282,spaCy,mycoplasma
+PMC35282,spaCy,king abdulaziz university hospital
+PMC35282,spaCy,"january, 1997 through"
+PMC35282,spaCy,annual
+PMC35282,spaCy,24-months
+PMC35282,spaCy,january 1997
+PMC35282,spaCy,gram
+PMC35282,spaCy,18000 to 19000
+PMC35282,spaCy,igm
+PMC35282,spaCy,one fifth
+PMC35282,spaCy,"adults.[1,2,3,4,5"
+PMC35282,spaCy,igg
+PMC35282,spaCy,bronchiolitis
+PMC35282,spaCy,saudi arabia
+PMC35282,spaCy,one
+PMC35282,spaCy,only 3 -10%
+PMC35282,spaCy,jeddah
+PMC35282,spaCy,265
+PMC35282,spaCy,tertiary
+PMC35282,spaCy,1998
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,NLTK,onoo
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,NLTK,ards
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,NLTK,rns
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,NLTK,no
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,spaCy,no •
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,spaCy,rns
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,spaCy,nos-2
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,spaCy,two
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,spaCy,more than 10 years ago
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,spaCy,no 2 •
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,spaCy,nos
+6b0567729c2143a66d737eb0a2f63f2dce2e5a7d,spaCy,three
+PMC59543,NLTK,rns
+PMC59543,NLTK,ards
+PMC59543,NLTK,no2
+PMC59543,spaCy,"1,2,3"
+PMC59543,spaCy,rns
+PMC59543,spaCy,nos-1
+PMC59543,spaCy,nos-2
+PMC59543,spaCy,two
+PMC59543,spaCy,"4,5,6"
+PMC59543,spaCy,no•
+PMC59543,spaCy,more than 10 years ago
+PMC59543,spaCy,nos
+PMC59543,spaCy,three
+06ced00a5fc04215949aa72528f2eeaae1d58927,NLTK,pcr
+06ced00a5fc04215949aa72528f2eeaae1d58927,NLTK,clara
+06ced00a5fc04215949aa72528f2eeaae1d58927,NLTK,emphasis
+06ced00a5fc04215949aa72528f2eeaae1d58927,spaCy,7
+06ced00a5fc04215949aa72528f2eeaae1d58927,spaCy,sp-a
+06ced00a5fc04215949aa72528f2eeaae1d58927,spaCy,rt-pcr
+06ced00a5fc04215949aa72528f2eeaae1d58927,spaCy,10
+06ced00a5fc04215949aa72528f2eeaae1d58927,spaCy,8
+06ced00a5fc04215949aa72528f2eeaae1d58927,spaCy,11
+06ced00a5fc04215949aa72528f2eeaae1d58927,spaCy,table 1
+06ced00a5fc04215949aa72528f2eeaae1d58927,spaCy,clara
+06ced00a5fc04215949aa72528f2eeaae1d58927,spaCy,ii
+06ced00a5fc04215949aa72528f2eeaae1d58927,spaCy,sp-d. emphasis
+PMC59549,NLTK,pcr
+PMC59549,NLTK,clara
+PMC59549,NLTK,emphasis
+PMC59549,NLTK,collectins
+PMC59549,spaCy,"1,2,3"
+PMC59549,spaCy,sp-a
+PMC59549,spaCy,rt-pcr
+PMC59549,spaCy,table 1
+PMC59549,spaCy,"4,5,6"
+PMC59549,spaCy,clara
+PMC59549,spaCy,ii
+PMC59549,spaCy,sp-d. emphasis
+348055649b6b8cf2b9a376498df9bf41f7123605,NLTK,etb
+348055649b6b8cf2b9a376498df9bf41f7123605,NLTK,mrna
+348055649b6b8cf2b9a376498df9bf41f7123605,NLTK,no
+348055649b6b8cf2b9a376498df9bf41f7123605,NLTK,eta
+348055649b6b8cf2b9a376498df9bf41f7123605,NLTK,xenopus
+348055649b6b8cf2b9a376498df9bf41f7123605,spaCy,il-1β
+348055649b6b8cf2b9a376498df9bf41f7123605,spaCy,etb
+348055649b6b8cf2b9a376498df9bf41f7123605,spaCy,eta
+348055649b6b8cf2b9a376498df9bf41f7123605,spaCy,xenopus
+348055649b6b8cf2b9a376498df9bf41f7123605,spaCy,ifn
+PMC59574,NLTK,highsmith
+PMC59574,NLTK,yanagisawa
+PMC59574,NLTK,fig
+PMC59574,spaCy,6
+PMC59574,spaCy,"1,2,3"
+PMC59574,spaCy,1
+PMC59574,spaCy,fig
+PMC59574,spaCy,highsmith
+PMC59574,spaCy,yanagisawa
+PMC59574,spaCy,endothelin
+PMC59574,spaCy,et-2
+PMC59574,spaCy,the past decade
+PMC59574,spaCy,2
+PMC59574,spaCy,two and six
+PMC59574,spaCy,21
+PMC59574,spaCy,1988
+PMC59574,spaCy,et-3
+PMC59574,spaCy,20
+PMC59574,spaCy,three
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,NLTK,tristram
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,NLTK,rna
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,NLTK,paramyxoviridae
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,NLTK,rsv
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,NLTK,tnf
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,NLTK,pvm
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,spaCy,rna
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,spaCy,as early as 12
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,spaCy,rsv
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,spaCy,al
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,spaCy,table 1
+5f48792a5fa08bed9f56016f4981ae2ca6031b32,spaCy,pvm
+PMC59580,NLTK,tristram
+PMC59580,NLTK,rna
+PMC59580,NLTK,paramyxoviridae
+PMC59580,NLTK,rsv
+PMC59580,NLTK,tnf
+PMC59580,NLTK,pvm
+PMC59580,spaCy,rna
+PMC59580,spaCy,as early as 12
+PMC59580,spaCy,rsv
+PMC59580,spaCy,al
+PMC59580,spaCy,table 1
+PMC59580,spaCy,pvm

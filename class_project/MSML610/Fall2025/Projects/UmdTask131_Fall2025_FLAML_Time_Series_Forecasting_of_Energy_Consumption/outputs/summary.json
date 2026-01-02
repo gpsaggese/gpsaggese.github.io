@@ -1,0 +1,64 @@
+{
+  "project": {
+    "name": "Energy Consumption Forecasting with FLAML",
+    "author": "Anisha Katiyar",
+    "course": "MSML610 - Advanced Machine Learning",
+    "date": "2025-12-15 21:49:23"
+  },
+  "dataset": {
+    "source": "UCI Household Electric Power Consumption",
+    "total_records": 2075259,
+    "processed_records": 1442,
+    "training_samples": 1129,
+    "test_samples": 283,
+    "features_created": 41
+  },
+  "best_model": {
+    "name": "FLAML (XGBoost)",
+    "test_rmse": 0.03880549284861608,
+    "test_mape": 3.356525977073251,
+    "accuracy": 96.64347402292675
+  },
+  "all_models": [
+    {
+      "Model": "FLAML (XGBoost)",
+      "Test RMSE": 0.03880549284861608,
+      "Test MAPE %": 3.356525977073251,
+      "Test R\u00b2": 0.9843044001516326
+    },
+    {
+      "Model": "Ensemble (60-40)",
+      "Test RMSE": 0.11427264791814011,
+      "Test MAPE %": 9.407342112551293,
+      "Test R\u00b2": 0.8638943691604423
+    },
+    {
+      "Model": "Prophet",
+      "Test RMSE": 0.25851363442197245,
+      "Test MAPE %": 22.137126113070433,
+      "Test R\u00b2": 0.3034401823280253
+    },
+    {
+      "Model": "ARIMA",
+      "Test RMSE": 0.33443458945910903,
+      "Test MAPE %": 37.86129045986175,
+      "Test R\u00b2": -0.16577272031798973
+    }
+  ],
+  "business_impact": {
+    "annual_cost_usd": 1301.016023996575,
+    "moderate_annual_savings_usd": 130.1016023996575,
+    "payback_months": 461.17802466173123,
+    "five_year_benefit_usd": -10349.491988001711
+  },
+  "requirements_completed": {
+    "data_preparation": true,
+    "feature_engineering": true,
+    "flaml_training": true,
+    "model_comparison": true,
+    "visualization": true,
+    "seasonality_analysis": true,
+    "bonus_rolling_forecast": true,
+    "bonus_ensemble": true
+  }
+}

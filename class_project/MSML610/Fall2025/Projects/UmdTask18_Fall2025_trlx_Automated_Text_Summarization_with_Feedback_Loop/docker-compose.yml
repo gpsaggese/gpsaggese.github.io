@@ -1,0 +1,16 @@
+# Docker Compose configuration for RLHF News Summarization System
+
+services:
+  rlhf-system:
+    build: .
+    container_name: rlhf-news-summarizer
+    ports:
+      - "8888:8888"  # Jupyter Notebooks
+      - "8000:8000"  # Backend API
+      - "8080:8080"  # Web Interface (Frontend)
+    volumes:
+      - ./notebooks:/app/notebooks  # Mount notebooks directory
+      - ./data:/app/data            # Mount data directory (includes model)
+    environment:
+      - PYTORCH_ENABLE_MPS_FALLBACK=1
+    restart: unless-stopped

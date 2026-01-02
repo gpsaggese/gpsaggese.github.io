@@ -1,0 +1,32 @@
+[project]
+name = "umdtask55-fall2025-onnx-time-series-forecasting-of-stock-prices"
+version = "0.1.0"
+description = "ONNX Time Series Forecasting of Stock Prices"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "ipython",
+    "tornado==6.1",
+    "jupyter-client==7.3.2",
+    "jupyter-contrib-core",
+    "jupyter-contrib-nbextensions",
+    "yapf",
+    "psycopg2-binary",
+    "numpy<2.0.0",
+    "pandas",
+    "matplotlib",
+    "seaborn",
+    "scikit-learn",
+    "tensorflow[and-cuda]>=2.16.1",
+    "tf2onnx>=1.16.0",
+    "onnx",
+    "onnxruntime-gpu",
+    "jupytext",
+    "xgboost>=2.0.0,<3.0.0",
+    "skl2onnx>=1.19.1",
+    "onnxmltools>=1.14.0",
+    "darts>=0.39.0",
+    "streamlit>=1.52.1",
+    "yfinance>=0.2.66",
+    "plotly>=6.5.0",
+]

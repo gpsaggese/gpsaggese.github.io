@@ -1,0 +1,16 @@
+transformers
+datasets
+accelerate
+sentencepiece 
+torch
+trl
+scikit-learn
+numpy
+pandas
+evaluate
+bert-score
+rouge-score
+sacrebleu
+sentence-transformers
+textblob
+gradio

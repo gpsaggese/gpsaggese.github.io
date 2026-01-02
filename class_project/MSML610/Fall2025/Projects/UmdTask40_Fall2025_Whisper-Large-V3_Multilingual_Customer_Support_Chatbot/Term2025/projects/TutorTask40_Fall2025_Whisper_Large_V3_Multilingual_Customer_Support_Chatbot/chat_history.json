@@ -1,0 +1,10 @@
+[
+  {
+    "role": "user",
+    "content": "Erneuerbare Energien werden wohl immer günstiger und preiswerter werden und sich immer weiter und weiter verbreiten."
+  },
+  {
+    "role": "assistant",
+    "content": "🌐 <strong>Language:</strong> German<br>🎯 <strong>Intent:</strong> help_request<br><br>💬 <strong>Response:</strong><br>Die Entwicklung von Erneuerbaren-Energien ist ein wichtiger Fortschritt für die Umwelt. Sie bieten eine umfassende Lösung für den Energiebedarf der Zukunft.<br><br>🔤 <strong>English Translation:</strong><br>The development of renewable energy is a significant progress for the environment. It provides an all-encompassing solution to meet future energy needs."
+  }
+]

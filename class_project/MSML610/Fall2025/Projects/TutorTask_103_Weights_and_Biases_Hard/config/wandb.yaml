@@ -1,0 +1,11 @@
+
+wandb:
+  project: "time_seires_forecasting"
+  entity: "othakur-university-of-maryland"
+  job_type: "training"
+  group: "time_series_models"
+  log_model: true
+  save_code: true
+  log_plots: true
+  log_predictions: true
+  log_residuals: true

@@ -1,0 +1,252 @@
+data_collection:
+  ticker_symbol: "AAPL"  # Stock ticker symbol (e.g., AAPL, MSFT, GOOGL)
+  # Why: Centralized ticker makes it easy to switch stocks without code changes
+  start_date: "1900-01-01"
+  end_date: null
+  interval: "1d"
+  data_dir: "data/raw"
+  processed_dir: "data/processed"
+
+
+
+feature_engineering:
+  # Moving Averages - smooth out price fluctuations to identify trends
+  short_window: 5  # Short-term moving average (5 days)
+  # Why: Captures very recent trends, reacts quickly to price changes
+  
+  long_window: 20  # Long-term moving average (20 days = ~1 month)
+  # Why: Standard in technical analysis, identifies medium-term trends
+  
+  very_long_window: 50  # Very long-term moving average (50 days = ~2.5 months)
+  # Why: Identifies long-term trends, used for major trend confirmation
+  
+  # Momentum Indicators - measure the rate of price change
+  rsi_period: 14  # RSI (Relative Strength Index) calculation period
+  # Why: 14 is industry standard - measures overbought/oversold conditions
+  # RSI > 70 = overbought (might fall), RSI < 30 = oversold (might rise)
+  
+  macd_fast: 12  # MACD fast EMA period (Exponential Moving Average)
+  # Why: 12-day EMA reacts quickly to price changes
+  
+  macd_slow: 26  # MACD slow EMA period
+  # Why: 26-day EMA is slower, captures longer trends
+  # MACD = fast_EMA - slow_EMA (measures momentum)
+  
+  macd_signal: 9  # MACD signal line period (smooths MACD line)
+  # Why: Signal line helps identify buy/sell signals
+  # When MACD crosses above signal = bullish, below = bearish
+  
+  # Volatility - measures price uncertainty/risk
+  volatility_window: 20  # Rolling standard deviation window
+  # Why: Measures how much prices fluctuate - higher volatility = more risk
+  corr_drop_threshold: 0.9  # Threshold for dropping highly correlated features
+  
+  # Lag Features - previous day values as features
+  lag_features: [1, 2, 3, 5, 10]  # Days to look back
+  # Why: Stock prices are autocorrelated - yesterday's price affects today
+  # Multiple lags capture different time dependencies
+
+
+# MODEL PARAMETERS
+# ============================================================================
+# Different models need different hyperparameters
+model:
+  linear_regression:
+    normalize: true        # or false; set based on your scaler
+    fit_intercept: true    # standard LR intercept
+  # Simple statistical models (special cases of ARIMA)
+  ma:
+    q: 5
+    d: 0
+  ar:
+    p: 5
+    d: 0
+  # LSTM (Long Short-Term Memory) - Deep learning for sequences
+  lstm:
+    sequence_length: 60  # Number of days to look back for prediction
+    # Why: 60 days (~2 months) captures quarterly patterns and trends
+    # Too short (10 days) = misses long patterns, too long (200) = slow + noisy
+    
+    lstm_units: [50, 50]  # Number of neurons in each LSTM layer
+    # Why: [50, 50] means 2 LSTM layers with 50 units each
+    # More units = more capacity but slower training
+    # Two layers = can learn complex patterns (first layer learns simple, second learns complex)
+    
+    dropout_rate: 0.2  # Fraction of neurons to randomly disable during training
+    # Why: Prevents overfitting - forces model to not rely on specific neurons
+    # 0.2 = 20% of neurons disabled randomly each training step
+    
+    dense_units: 25  # Neurons in final dense (fully connected) layer
+    # Why: Dense layer combines LSTM outputs into final prediction
+    # 25 units = enough capacity without overfitting
+    
+    learning_rate: 0.001  # How fast model learns (step size in optimization)
+    # Why: 0.001 is good default for Adam optimizer
+    # Too high (0.1) = unstable training, too low (0.0001) = very slow
+    
+    batch_size: 32  # Number of samples processed before updating weights
+    # Why: 32 is good balance - not too small (slow) or too large (less stable)
+    # Smaller batches = more updates per epoch but slower
+    
+    epochs: 50  # Number of times to iterate through entire training data
+    # Why: 50 epochs with early stopping - model stops if not improving
+    # More epochs = more learning but risk of overfitting
+    
+    validation_split: 0.2  # 20% of training data used for validation
+    # Why: Validation set checks if model is overfitting during training
+    # Separate from test set - test set only used at the end
+  
+  # ARIMA (AutoRegressive Integrated Moving Average) - Statistical model
+  arima:
+    order: [5, 1, 0]  # (p, d, q) parameters
+    # p=5: Use 5 previous values (autoregressive)
+    # d=1: Difference once (makes data stationary - removes trend)
+    # q=0: No moving average component (simpler model)
+    # Why: ARIMA(5,1,0) is good starting point - can tune later
+    
+    seasonal_order: [1, 1, 1, 12]  # (P, D, Q, s) for seasonal patterns
+    # P=1: Seasonal autoregressive
+    # D=1: Seasonal differencing
+    # Q=1: Seasonal moving average
+    # s=12: 12 periods = monthly seasonality (if using monthly data)
+    # Why: Captures yearly patterns (e.g., December effect in stocks)
+  
+  # Prophet - Facebook's time series forecasting tool
+  prophet:
+    yearly_seasonality: true  # Model yearly patterns (e.g., year-end effects)
+    # Why: Stocks often have yearly patterns (tax-loss selling, etc.)
+    
+    weekly_seasonality: true  # Model weekly patterns (e.g., Monday effect)
+    # Why: Stocks often behave differently on different days of week
+    
+    daily_seasonality: false  # Don't model daily patterns (we use daily data)
+    # Why: Daily data doesn't have intraday patterns - only day-to-day
+    
+    seasonality_mode: "multiplicative"  # How seasonality affects trend
+    # "multiplicative" = seasonality scales with trend (e.g., 10% increase)
+    # "additive" = seasonality adds fixed amount (e.g., +$5)
+    # Why: Stock prices scale multiplicatively (percentages matter more)
+    
+    changepoint_prior_scale: 0.05  # How flexible trend changes are
+    # Lower (0.01) = rigid trend, higher (0.5) = very flexible
+    # Why: 0.05 balances - allows trend changes but not too wiggly
+
+# ============================================================================
+# TRAINING PARAMETERS
+# ============================================================================
+# Control how we split data and train models
+training:
+  test_size: 0.2  # 20% of data for final testing
+  # Why: 80/20 split is standard - enough test data for reliable evaluation
+  # Test set is NEVER used during training - only at the end
+  
+  validation_size: 0.1  # 10% of training data for validation
+  # Why: Validation set used during training to tune hyperparameters
+  # Separate from test set - test set is final evaluation only
+  
+  random_state: 42  # Seed for random number generator
+  # Why: Makes results reproducible - same random splits every time
+  # 42 is just a common choice (from Hitchhiker's Guide to Galaxy)
+  
+  target_column: "Close"  # What we're trying to predict
+  # Why: Closing price is most important - final price of the day
+  
+  forecast_horizon: 1  # Number of days ahead to predict
+  # Why: 1 day = next day's price (most common use case)
+  # Can change to 5, 10, etc. for longer forecasts
+
+  # Models and training strategy
+  models_to_run:
+    - linear_regression
+    - xgboost
+    - lightgbm
+    - random_forest
+    - ma
+    - ar
+    - arima
+    - sarimax
+    - prophet
+
+  ensemble:
+    enabled: true
+    type: "stacking"
+    base_models: ["xgboost", "lightgbm", "random_forest", "linear_regression"]
+    meta_model: "linear_regression"
+
+  save_best_only: true
+  metrics_primary: "RMSE"
+
+# ============================================================================
+# EVALUATION METRICS
+# ============================================================================
+# What metrics to calculate and where to save results
+evaluation:
+  metrics:
+    - "MAE"   # Mean Absolute Error - average prediction error
+    - "RMSE"  # Root Mean Squared Error - penalizes large errors more
+    - "MAPE"  # Mean Absolute Percentage Error - error as percentage
+    - "R2" 
+       # R-squared - how well model explains variance
+  # Why: Multiple metrics give different perspectives
+  # MAE = easy to interpret, RMSE = penalizes outliers, MAPE = percentage, R2 = overall fit
+  
+  artifacts_dir: "artifacts"  # Where to save models, plots, etc.
+  # Why: Centralized location for all outputs
+  
+  plots_dir: "artifacts/plots"  # Where to save visualization plots
+  # Why: Organized - separate plots from models
+
+# ============================================================================
+# HYPERPARAMETER TUNING
+# ============================================================================
+hyperparameter_tuning:
+  method: "wandb_sweep"    # or "random", "grid", "bayes"
+  max_runs: 20
+  spaces:
+    lstm:
+      lstm_units: [[50, 50], [64, 64], [100, 50]]
+      dropout_rate: [0.1, 0.2, 0.3]
+      learning_rate: [0.0005, 0.001, 0.002]
+      batch_size: [16, 32, 64]
+      sequence_length: [30, 60, 90]
+    xgboost:
+      n_estimators: [200, 400, 600]
+      max_depth: [3, 5, 7]
+      learning_rate: [0.01, 0.05, 0.1]
+      subsample: [0.7, 0.85, 1.0]
+      colsample_bytree: [0.7, 0.9, 1.0]
+    lightgbm:
+      num_leaves: [31, 63, 127]
+      max_depth: [-1, 6, 10]
+      learning_rate: [0.01, 0.05, 0.1]
+      feature_fraction: [0.7, 0.9, 1.0]
+      bagging_fraction: [0.7, 0.9, 1.0]
+      n_estimators: [200, 400, 600]
+    random_forest:
+      n_estimators: [200, 400, 800]
+      max_depth: [null, 10, 20]
+      max_features: ["auto", "sqrt", 0.5]
+    cnn:
+      filters: [16, 32, 64]
+      kernel_size: [3, 5]
+      dense_units: [32, 64, 128]
+      dropout_rate: [0.1, 0.2, 0.3]
+      learning_rate: [0.0005, 0.001, 0.002]
+
+# ============================================================================
+# W&B (WEIGHTS & BIASES) CONFIGURATION
+# ============================================================================
+# Settings for experiment tracking
+wandb:
+  project_name: "stock_price_forecasting"  # W&B project name
+  # Why: Groups all experiments together in W&B dashboard
+  
+  entity: "othakur"
+  experiment_name: "time_series_forecast"  # Name for this experiment
+  # Why: Descriptive name helps identify this specific run
+  
+  tags:  # Labels to organize experiments
+    - "time_series"      # Type of problem
+    - "stock_prices"     # Domain
+    - "yfinance"         # Data source
+  # Why: Tags help filter/search experiments in W&B dashboard

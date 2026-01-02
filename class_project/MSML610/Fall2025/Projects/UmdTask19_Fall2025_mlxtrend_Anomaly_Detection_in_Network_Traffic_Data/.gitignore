@@ -1,0 +1,15 @@
+# Ignore large dataset files and archives
+archive.zip
+data/
+outputs/
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+archive.zip
+archive.zip
+archive.zip
+
+# Keep anomaly metrics outputs in git
+!outputs/
+!outputs/*.csv
+!outputs/*.json

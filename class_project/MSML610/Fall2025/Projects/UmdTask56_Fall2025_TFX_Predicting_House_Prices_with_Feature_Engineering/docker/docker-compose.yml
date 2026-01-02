@@ -1,0 +1,34 @@
+services:
+  house-price-tfx:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: house-price-tfx
+    image: house-price-tfx:latest
+    ports:
+      - "8889:8889"  # Jupyter Notebook
+      - "8501:8501"  # TensorFlow Serving
+    volumes:
+      # Mount source code for development
+      - ../data:/app/data
+      - ../utils:/app/utils
+      - ../notebooks:/app/notebooks
+      - ../scripts:/app/scripts
+      - ../pipelines:/app/pipelines
+      - ../docs:/app/docs
+      - ../models:/app/models
+      - ../pipeline_outputs:/app/pipeline_outputs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TF_CPP_MIN_LOG_LEVEL=2
+      - JUPYTER_ENABLE_LAB=yes
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    command: >
+      bash -c "
+      echo 'House Price TFX Pipeline Container Started' &&
+      echo 'Starting Jupyter Notebook on port 8889...' &&
+      /usr/bin/python -m jupyter notebook --ip=0.0.0.0 --port=8889 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''
+      "
+    stdin_open: true
+    tty: true
+    working_dir: /app

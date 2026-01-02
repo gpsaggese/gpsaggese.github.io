@@ -1,0 +1,7 @@
+# Ignore local data files
+data/raw/*
+data/processed/*
+
+# But keep placeholders
+!data/raw/.gitkeep
+!data/processed/.gitkeep
