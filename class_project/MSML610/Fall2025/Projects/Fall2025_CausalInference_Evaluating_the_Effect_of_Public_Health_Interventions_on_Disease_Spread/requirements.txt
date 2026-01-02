@@ -9,3 +9,8 @@ causalinference>=0.1.0
 pyyaml>=6.0
 openpyxl>=3.0.0
 jupyter>=1.0.0
+pyarrow>=10.0.0
+pycountry>=24.6.1
+scikit-learn>=1.0.0
+
+

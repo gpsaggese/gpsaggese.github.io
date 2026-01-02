@@ -1,0 +1,465 @@
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 02.4: ML Techniques - Model Learning}}$$**
+\endgroup
+\vspace{1cm}
+
+::: columns
+:::: {.column width=65%}
+**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+
+**References**:
+
+- Burkov: _"The Hundred-Page Machine Learning Book"_ (2019)
+
+- Russell et al.: _"Artificial Intelligence: A Modern Approach"_ (4th ed, 2020)
+
+- Hastie et al.: _"The Elements of Statistical Learning"_ (2nd ed, 2009)
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_Hundred_page_ML_book.jpg){ height=20% }
+![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
+![](msml610/lectures_source/figures/book_covers/Book_cover_The_Elements_of_Statistical_Learning.jpg){ height=20% }
+::::
+:::
+
+// Model assessment and selection
+// Hastie 7 (p. 238)
+
+## #############################################################################
+## Learning Algorithms
+## #############################################################################
+
+### ############################################################################
+### Gradient Descent
+### ############################################################################
+
+* The Problem of Minimizing a Function
+
+::: columns
+:::: {.column width=75%}
+- **Goal**: minimize scalar function $J(\vw)$ of $n$-variables $\vw$
+  - E.g., in-sample error $E_{in}(\vw)$
+
+- **Solutions**:
+  1. Analytical solution
+     - Impose the gradient of $J(\vw)$ to equal 0
+     - Find a closed-form solution for $\vw^*$
+  2. Numerical solution:
+     - Use an iterative method to update $\vw$ to reach the minimum value of
+       $J(\vw)$
+     - E.g., gradient descent
+     - It works even if there is an analytical solution
+::::
+:::: {.column width=30%}
+ ![](msml610/lectures_source/figures/Lesson6_Gradient_descent_2.png)
+// TODO: Convert in Tikz or improve
+::::
+:::
+
+* Gradient Descent: Intuition
+
+::: columns
+:::: {.column width=75%}
+- **Problem**:
+  - You are on a hilly surface and we want to walk down to the bottom of the hill
+
+- **Solution**:
+  - At each point:
+    - You look around
+    - You move a step in the direction where the surface is steepest
+  - You keep doing until we reach the bottom
+
+- **Gradient descent**
+  - Is a general technique for minimizing twice-differentiable functions
+  - In general, converge to a local minimum
+  - If $J(\vw)$ is convex, converge to the global minimum
+    - E.g., logistic regression and linear models
+::::
+:::: {.column width=30%}
+![](msml610/lectures_source/figures/Lesson6_Gradient_descent_1.png)
+// TODO: Convert in Tikz or improve
+::::
+:::
+
+* Gradient descent with fixed learning rate (1/3)
+// TODO: Add images from tutorial
+- Consider the contour plot of a function
+
+- **Start** from a point $\vw(0)$ (random, the origin, ...)
+
+- **At each step**
+  - Move a fixed amount $\eta$ in weight space (fixed learning rate):
+  $$
+  \vw(t + 1) = \vw(t) + \eta \hat{\vvv}
+  $$
+  where $\hat{\vvv}$ is a unit vector
+
+  - Pick $\hat{\vvv}$ to move to a value of $E_{in}(\vw)$ as negative as possible
+
+- The **change for $E_{in}$** is:
+  \begingroup \footnotesize
+  \begin{align*}
+  \Delta E_{in}
+  & = E_{in}(\vw(t + 1)) - E_{in}(\vw(t))
+  & \\
+  & = E_{in}(\vw(t) + \eta \hat{\vvv}) - E_{in}(\vw(t))
+  & \text{ (replacing the expression of $\vw(t + 1)$)}
+  \\
+  & \approx \eta \nabla E_{in}(\vw(t))^T \hat{\vvv} + O(\eta ^ 2)
+  & \text{ (using Taylor expansion)}
+  \\
+  \end{align*}
+  \endgroup
+  - Gradient descent keeps only $O(\eta)$ the term and ignores the rest
+  - Conjugate gradient considers up to $O(\eta^2)$ and ignores higher
+    infinitesimals
+
+* Gradient Descent with Fixed Learning Rate (2/3)
+
+- You have:
+  $$
+  \Delta E_{in}
+  \approx \eta \nabla E_{in}(\vw(t))^T \hat{\vvv}
+  $$
+
+- The **minimal value of the scalar product** $\Delta E_{in}$:
+  - Happens when
+    $\hat{\vvv} = - \frac{\nabla E_{in}(\vw(t))}{\|\nabla E_{in}(\vw(t))\|}$
+  - Is $- \eta \|\nabla E_{in}(\vw(t))\|$
+
+- The **change in weights** $\Delta \vw$ is:
+  \begingroup \footnotesize
+  \begin{align*}
+  \Delta \vw
+  & = \vw(t + 1) - \vw(t) \\
+  & = \eta \hat{\vvv} \\
+  & = - \eta \frac{\nabla E_{in}(\vw(t))}{\|\nabla E_{in}(\vw(t))\|}
+  \end{align*}
+  \endgroup
+
+- Called **"gradient descent"** since it descends along the gradient of the
+  function to optimize
+
+* Gradient Descent with Fixed Learning Rate (3/3)
+- Each $j$ component of the weight $\vw$ is updated with the partial derivative
+  with respect to that coordinate:
+  \begin{align*}
+  \vw(t + 1)
+  &= \vw(t) - \eta \frac{\nabla E_{in}(\vw(t))}{\|\nabla E_{in}(\vw(t))\|} \\
+  w_j(t + 1)
+  &= w_j(t) - \eta
+  \frac{1}{\|\nabla E_{in}(\vw(t))\|}
+  \frac{\partial E_{in}(\vw)}{\partial w_j}
+  \end{align*}
+  - The update of all components should be **simultaneous**, i.e., computed at
+    once
+
+- A step of the optimization when we update the solution (weights) is called
+  **epoch**
+
+* Gradient Descent: Stopping Criteria
+- **In theory**, stop when $\Delta E_{in} = \vv{0}$
+  - Numerically, this might not occur
+
+- **In practice**, stop when:
+  - Variation of $E_{in}$ is smaller than threshold $\Delta E_{in} < \theta$
+  - Reached a certain number of iterations
+
+- **Monitoring gradient descent**
+  - In theory, only compute derivatives of function $J(\vw)$ to optimize
+  - In practice, monitor progress by recomputing cost function $J(\vw)$
+    periodically to ensure it decreases
+
+* Gradient Descent with Fixed Learning Rate
+- Consider a 1D convex function
+  - If **$\eta$ is too small**:
+    - Linear approximation of $E_{in}$ is effective
+    - Many steps needed to converge to minimum
+  - If **$\eta$ is too large**:
+    - Linear approximation fails (higher terms affect values)
+    - It "bounces around"
+
+![](msml610/lectures_source/figures/Lesson6_Gradient_descent_3.png){width=90%}
+// TODO: Put the 3 figures vertically
+
+- **Idea**: vary learning rate $\eta$ during gradient descent
+  - Smaller learning rates may find a better minimum
+  - Reduce $\eta$ as a function of iterations
+  - **Cons**: introduces an additional parameter to tune
+
+* Gradient Descent with Variable Learning Rate
+- In **gradient descent with fixed learning rate** (constant change in weight
+  space), use:
+  $$
+  \Delta \vw = - \eta \frac{\nabla J}{\|\nabla J\|}
+  $$
+
+- **To converge quickly:**
+  - Move fast (large change) in weight space (large $\eta$) when surface is
+    steep (large gradient)
+  - Move slow (small change) in weight space (small $\eta$) near minimum to
+    avoid bouncing (small gradient)
+  - Ideally, $\eta$ should increase with slope: $\eta \propto \|\nabla J\|$
+
+- **Gradient descent with variable learning rate**:
+  $$
+  \Delta \vw = - \eta \nabla J
+  $$
+
+* Feature Scaling in Gradient Descent
+
+- **Problem**: Different gradient components have different errors due to
+  numerical approximation, causing bouncing
+  - Unscaled features lead to slow, unstable convergence
+  - E.g., feature ranging from 1 to 1000 vs. 0.01 to 1 causes inefficient
+    updates
+
+- **Solution**: Converge faster by scaling features to the same range
+  - Min-max scaling
+  - Standardization (transforms feature values to mean 0, standard deviation 1)
+
+* Issues with Batch Gradient Descent
+- Consider squared error with $n$ samples:
+  $$
+  E_{in}(\vw)
+  \triangleq \frac{1}{n} \sum_{i=1}^n (h_{\vw}(\vx_i) - y_i) ^ 2
+  $$
+
+- **Batch Gradient Descent (BGD)** updates each weight component:
+  $$
+  \vw(t + 1) = \vw(t) - \eta \frac{\nabla E_{in}}{\|\nabla E_{in}\|}
+  $$
+
+  - Coordinate update for squared error:
+    $$
+    w_j(t + 1) = w_j(t) -
+    \eta \frac{2}{n}
+    \sum_{i=1}^n (h_{\vw}(\vx_i) - y_i)
+    \frac{\partial h_{\vw}(\vx_i)}{\partial w_j}
+    $$
+
+  - **Cons**: gradient descent with many training examples (e.g., $N = 10^6$)
+    - Is computationally expensive, requiring gradient evaluation from all
+      examples for one update
+    - Requires storing all data in memory
+
+### ############################################################################
+### Stochastic Gradient Descent
+### ############################################################################
+
+* Stochastic Gradient Descent
+- Idea of **Stochastic Gradient Descent (SGD)**: update the weights only for one
+  training example picked at random
+
+- **Algorithm**
+  - Pick one $(\vx_n, y_n)$ at a time from the available examples
+  - Compute $\nabla e(h(\vx_n), y_n)$ to update the weights:
+    $\Delta \vw = -\eta \nabla e$
+  - Update the weight considering only one random example:
+    $$
+    w_j(t + 1) = w_j(t) -
+    \eta \frac{2}{n}
+    (h_{\vw}(\vx_t) - y_t)
+    \frac{\partial h_{\vw}(\vx_t)}{\partial w_j}
+    $$
+
+- **Cons**: in Stochastic Gradient Descent
+  - Path in weight space is random
+  - Oscillates around local minimum
+
+- **Why SGD works**
+  - $\nabla e$ is a function of a random var $\vx_n$
+  - The average direction of SGD is the same direction as batch version
+    $$
+    \EE[\nabla e]
+    = \frac{1}{N} \sum \nabla e(h(\vx_n), y_n)
+    = \nabla \frac{1}{N} \sum e(h(\vx_n), y_n)
+    = \nabla E_{in}
+    $$
+
+* Mini-Batch Gradient Descent
+- **Mini-Batch Gradient Descent** brings together characteristics of both Batch
+  and Stochastic Gradient Descent
+  - Use $b$ examples to make an update to the current weight
+  - $b$ represents the batch size
+  - A common choice is $b = 32$ or $b = 64$
+
+- Mini-batch GD offers a balance between SGD noisiness and full-batch
+  approaches, using small, random data samples for updates
+
+* On-Line Learning and Gradient Descent
+::: columns
+:::: {.column width=65%}
+
+- In many applications, **continuous stream** of training examples $\to$ requires
+  updating the model
+  - In real-time systems, adapt model with new data points without full
+    retraining
+  - Handle variation in underlying process dynamics
+
+- Stochastic GD and mini-batch GD **suitable for online learning**
+  - Update model one example at a time
+  - Discard examples for "compressed" model representation
+    - Useful for large data streams where storing every data point is impractical
+    - E.g., in stock market prediction
+    - E.g., in training a language model on live chat data, discard older
+      conversations after updates
+
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph StreamModel {
+    rankdir=LR;
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.50;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    // Node styles
+    DataStream [label="Stream of data\nx_i", fillcolor=white, shape=plaintext];
+    Model      [label="Model", fillcolor="#C6A6F4"];
+    Output     [label="Output\ny_i", fillcolor=white, shape=plaintext];
+
+    // Edges
+    DataStream -> Model;
+    Model -> Model [label="w_i", fontsize=10];
+    Model -> Output;
+}
+```
+
+::::
+:::
+
+* SGD vs BGD vs Mini-Batch
+- To update the weights:
+  - **BGD (batch gradient descent)** uses all the training examples
+  - **SGD (stochastic gradient descent)** uses a single random training example
+  - **Mini-batch GD** uses a random subset of training examples
+
+\begingroup \scriptsize
+
+| **Aspect**        | **Batch Gradient Descent**               | **Stochastic Gradient Descent**      |
+| ----------------- | ---------------------------------------- | ------------------------------------ |
+| *Computation*     | Uses all examples                        | One example at a time                |
+| *Memory*          | Requires all examples in memory          | Require less memory                  |
+| *Randomization*   | More likely to terminate in flat regions | Avoid local minima due to randomness |
+| *Regularization*  | No implicit regularization               | Oscillations act as regularization   |
+| *Parallelization* | Can be parallelized                      | Less parallel-friendly               |
+| *Online Learning* | Not suitable                             | Suitable for online learning         |
+
+\endgroup
+
+* Map-Reduce for Batch Gradient Descent
+::: columns
+:::: {.column width=45%}
+
+- Batch GD (and many learning algorithms) can be expressed in map-reduce
+
+- **In map-reduce**
+  - **Map step**: use $k$ machines to parallelize summation
+  - **Reduce step**: send $k$ partial sums to a single node to accumulate result
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph BayesianFlow {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+
+    // Operation nodes (rounded boxes)
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    Map_0 [label="Map_0\nCompute Gradient", fillcolor="#A6C8F4"];
+    Map_1 [label="Map_1\nCompute Gradient", fillcolor="#A6C8F4"];
+    Map_n [label="Map_n\nCompute Gradient", fillcolor="#A6C8F4"];
+    ShuffleSort [label="Shuffle & Sort", fillcolor="#C6A6F4"];
+    Update [label="Update Model", fillcolor="#D2B48C"];
+
+    // Variable/value nodes (plain ellipses with white background)
+    node [shape=ellipse, style=filled, fontname="Helvetica", fontsize=12, penwidth=1.4, fillcolor=white];
+
+    DataShard_0  [label="DataShard_0"];
+    DataShard_1  [label="DataShard_1"];
+    DataShard_n  [label="DataShard_n"];
+
+    Gradient_0 [label="Gradient_0"];
+    Gradient_1 [label="Gradient_1"];
+    Gradient_n [label="Gradient_n"];
+
+    AggregatedGradient [label="Aggregated Gradient"];
+    Model [label="Model Parameters"];
+
+    // Force ranks
+    { rank=same; DataShard_0; DataShard_1; DataShard_n; }
+    { rank=same; Map_0; Map_1; Map_n; }
+    { rank=same; Gradient_0; Gradient_1; Gradient_n; }
+
+    // Edges
+    DataShard_0 -> Map_0 -> Gradient_0;
+    DataShard_1 -> Map_1 -> Gradient_1;
+    DataShard_n -> Map_n -> Gradient_n;
+
+    Gradient_0 -> ShuffleSort;
+    Gradient_1 -> ShuffleSort;
+    Gradient_n -> ShuffleSort;
+
+    ShuffleSort -> AggregatedGradient;
+    AggregatedGradient -> Update;
+    Model -> Update -> Model;
+}
+```
+::::
+:::
+
+* Coordinate Descend
+- **Idea**: minimize $J(x_0, ..., x_n)$ by optimizing along one direction $x_i$
+  at a time
+  - Instead of computing all derivatives
+
+- **Algorithm**
+  - Pick a random starting point $\vw(0)$
+  - Pick a random order for the coordinates $\{ x_i \}$
+  - Find the minimum along the current coordinate (1D optimization problem)
+  - Move to the next coordinate $x_{i+1}$
+  - The sequence of $\vw(t)$ is decreasing
+  - A minimum is found if there is no improvement after one cycle of scanning
+    all coordinates
+  - The minimum is local
+
+* Gradient Descent vs Pseudo-Inverse
+- For linear models, you can use pseudo-inverse or gradient descent to find
+  optimal $\vw^*$
+
+- **Gradient descent**
+  - Choose learning rate $\eta$
+  - Requires many iterations
+  - Monitor stopping criteria, oscillations
+  - Effective for many features $P$
+
+- **Pseudo-inverse**
+  - No parameter selection
+  - Converges in one iteration
+  - Computes a $P \times P$ matrix $(\mX^T \mX)^{-1}$
+    - Complexity of matrix inversion $O(P^3)$
+    - For $P \approx 10,000$, prefer gradient descent

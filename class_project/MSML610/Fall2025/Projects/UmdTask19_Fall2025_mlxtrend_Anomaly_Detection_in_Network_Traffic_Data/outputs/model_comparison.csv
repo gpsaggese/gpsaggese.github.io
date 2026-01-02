@@ -1,0 +1,3 @@
+model,roc_auc
+RandomForest,0.9999958464622047
+XGBoost,0.999997526337491

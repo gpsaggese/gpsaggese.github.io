@@ -1,0 +1,122 @@
+# MSML610 Energy Forecasting Project - Git Ignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Spyder
+.spyderproject
+.spyproject
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# FLAML logs
+flaml_energy_forecast.log
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Model files (if saving models)
+*.pkl
+*.pickle
+*.joblib
+*.h5
+
+# Large result files
+predictions.csv
+model_comparison_results.csv
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Environments
+.env
+.env.local
+
+# Documentation builds
+docs/_build/
+
+# Backup files
+*.bak
+*.swp
+*.swo
+
+# Streamlit
+.streamlit/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+*-checkpoint.ipynb   
+
+# Allow outputs
+!outputs/**
+!outputs/
+
+# Allow notebooks
+!notebooks/**
+!notebooks/
+
+# Allow data
+!data/**
+!data/

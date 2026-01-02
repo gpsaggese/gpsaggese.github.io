@@ -1,0 +1,6 @@
+Target,Type,F1 Score,Accuracy,Precision,Recall
+anomaly_flag,Binary,0.9981,0.9997,0.9963,1.0
+failure_type,Multi-class (5),0.8635,0.8795,0.8484,0.8795
+maintenance_required,binary,0.8716,0.8887,0.8977,0.8887
+machine_status,multiclass,0.679,0.7007,0.6599,0.7007
+downtime_risk,binary_threshold,0.9997,0.9997,0.9997,0.9997

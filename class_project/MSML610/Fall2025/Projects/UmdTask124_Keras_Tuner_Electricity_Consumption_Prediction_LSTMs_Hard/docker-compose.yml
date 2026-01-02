@@ -1,0 +1,13 @@
+# docker-compose.yml
+services:
+  notebook:
+    build: .
+    container_name: electricity_forecast_notebook
+    volumes:
+      - ./:/workspace
+      - ./data:/workspace/data
+    ports:
+      - "8888:8888"
+    environment:
+      - TZ=UTC
+    restart: unless-stopped

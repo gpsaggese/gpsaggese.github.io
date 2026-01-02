@@ -1,0 +1,11 @@
+# Ignore the data folder (where the API caches the huge CSV)
+data/
+
+# Ignore any loose CSV files
+*.csv
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+__pycache__/

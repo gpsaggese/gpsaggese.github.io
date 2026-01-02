@@ -1,0 +1,14 @@
+__pycache__
+*.pyc
+.ipynb_checkpoints
+.git
+.vscode
+.DS_Store
+# Ignore local virtual environments
+venv
+env
+# Ignore local model weights if they are huge (we map them via volumes instead)
+models
+# Ignore Docker config files
+Dockerfile
+docker-compose.yml

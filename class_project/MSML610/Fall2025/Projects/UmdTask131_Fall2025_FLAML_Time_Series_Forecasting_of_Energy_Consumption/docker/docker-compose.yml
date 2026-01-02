@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  msml610-project:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: msml610_energy_forecast
+    volumes:
+      - ..:/workspace
+    ports:
+      - "8888:8888"
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: /workspace/docker/run_jupyter_server.sh

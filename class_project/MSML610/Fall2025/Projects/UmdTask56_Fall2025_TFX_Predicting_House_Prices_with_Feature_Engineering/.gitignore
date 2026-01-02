@@ -1,0 +1,103 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# TFX Pipeline Outputs
+pipeline_outputs/
+models/
+*.pb
+*.pbtxt
+saved_model/
+
+# TensorFlow
+*.ckpt
+*.index
+*.meta
+checkpoint
+
+# Data files (keep structure, ignore large files if needed)
+# Uncomment if you don't want to track data files
+# data/*.csv
+# data/*.txt
+
+# Logs
+*.log
+logs/
+*.sqlite
+*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Environment variables
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
+
+# Model artifacts
+*.pkl
+*.h5
+*.hdf5
+*.joblib
+
+# Large binary files
+*.zip
+*.tar.gz
+*.tgz
+
+# Specific to this project
+models/serving/*
+pipeline_outputs/*
+!pipeline_outputs/.gitkeep
+!models/.gitkeep
+
+CLAUDE.md

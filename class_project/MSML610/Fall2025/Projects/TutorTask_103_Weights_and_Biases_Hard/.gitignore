@@ -1,0 +1,17 @@
+.env
+__pycache__/
+*.pyc
+wandb/
+# W&B local run logs should not be committed (and should never sit at repo root)
+artifacts/wandb_runs/
+artifacts/wandb_runs_backup/
+logs/
+data/raw/
+data/processed/
+artifacts/best_model/
+artifacts/metrics/
+artifacts/tuning/
+tmp.precommit_output.txt
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
