@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  # Full-stack Fake News Detector Application
+  web-app:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: fake-news-detector
+    ports:
+      - "5001:5001" # Flask backend
+      - "8501:8501" # Streamlit frontend
+    volumes:
+      # Mount for development (optional - comment out for production)
+      - ./frontend:/app/frontend
+      - ./Code_files:/app/Code_files
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Training environment (for model development)
+  training:
+    build:
+      context: .
+      dockerfile: Code_files/Dockerfile
+    container_name: fake-news-training
+    ports:
+      - "8888:8888" # Jupyter
+    volumes:
+      - ./Code_files:/workspace
+      - ./Data:/workspace/Data
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    profiles:
+      - training # Only start with: docker-compose --profile training up
+    command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+
+networks:
+  default:
+    name: fake-news-network

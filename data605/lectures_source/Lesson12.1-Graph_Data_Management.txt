@@ -1,0 +1,244 @@
+// Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
+//
+//
+
+::: columns
+:::: {.column width=15%}
+![](data605/lectures_source/images/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+UMD DATA605 - Big Data Systems
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{12.1: Graph Data Management}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+- **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+::::
+:::: {.column width=20%}
+::::
+:::
+
+* Graphs: Background
+:::columns
+::::{.column width=50%}
+- A **graph** represents entities and their connections
+  - Entities are _vertices_ (or nodes)
+  - Connections are _edges_ (or links, arcs, relationships)
+
+- **Applications in many fields**
+  - Social networks
+  - Biological networks
+  - Information networks
+  - Infrastructure networks
+  - ...
+::::
+::::{.column width=45%}
+\centering
+\small
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_1.png)
+_An undirected, unweighted graph_
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_5_image_2.png)
+_A directed, edge-weighted graph_
+::::
+:::
+
+* Graph Data Structures: Motivation
+:::columns
+::::{.column width=45%}
+- **Increasing volumes of graph data**
+
+- **Increasing interest in querying and reasoning** about graph data
+
+- **Sectors**
+  - Healthcare
+  - Finance
+  - Logistics
+
+- **Example applications**
+  - Fraud detection
+  - Recommendation systems
+  - Network analysis
+::::
+::::{.column width=25%}
+\center
+\small
+
+![](data605/lectures_source/images/lecture_12_2/big_data_graph1.png)
+_Protein-protein interaction network_
+
+![](data605/lectures_source/images/lecture_12_2/big_data_graph2.png)
+_Supreme court citation network_
+::::
+::::{.column width=25%}
+\center
+\small
+
+![](data605/lectures_source/images/lecture_12_2/big_data_graph3.png)
+_Stock trading network_
+
+![](data605/lectures_source/images/lecture_12_2/big_data_graph4.png)
+_Social networks_
+::::
+:::
+
+* Graph Data Structures: Motivation
+:::columns
+::::{.column width=50%}
+- **Traditional tools** (e.g., relational DBs, NoSQL DBs) struggle with:
+  - Storing and querying graph data
+    - Dedicated solutions: Neo4j
+  - Processing graph-structured queries
+    - Dedicated solutions: Google Pregel, Apache Giraph, Spark GraphX
+::::
+::::{.column width=50%}
+\center
+\small
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_1.png)
+_Global virtual trade network_
+
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_7_image_2.png)
+_Federal funds networks_
+::::
+:::
+
+* Knowledge Graphs
+- **Representation of knowledge in the form of graphs**
+  - Capture entities, relationships, properties
+  - Provide structured view of real-world information
+
+- Represent using RDF or Property Graph models
+  - E.g., Google Knowledge Graph, DBpedia, Wikidata
+
+- **Applications**
+  - Enable machine understanding of complex domains
+  - Support semantic search, recommendation, analytics
+  - Used in industries for data integration, knowledge discovery, AI
+    applications
+
+- **Ontologies**
+  - Provide formal representation of knowledge
+  - Promote interoperability across knowledge bases
+
+* Graph Data Models: RDF
+:::columns
+::::{.column width=55%}
+- **Resource Description Framework**
+  - RDF uses triples: subject-predicate-object
+  - Connects "subject" and "object" through "predicate"
+  - E.g., "TomCruise-acted-TopGun"
+
+- **Used to represent knowledge bases**
+  - Queried through SPARQL
+::::
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_11_image_1.png)
+::::
+:::
+
+- **Pros**
+  - Standardization
+    - W3C standard to model data
+    - Subject and object can be URIs in semantic web
+  - Interoperability
+    - Merge RDF data stores
+  - Extensibility
+    - Add new nodes and relationships
+    - Support ontologies
+
+* Graph Data Models: Property Graph
+- Directed graph with nodes and edges having key-values _properties_
+  - Similar expressive power to RDFs
+
+:::columns
+::::{.column width=45%}
+- **No universal standard**
+  - Less "schema"
+  - Harder to interoperate
+
+- **Examples of query languages**
+  - Cypher for Neo4j
+  - Gremlin for Apache TinkerPop
+::::
+::::{.column width=50%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_12_image_1.png)
+::::
+:::
+
+* Graph Data Models: XML
+- Common data model for flexible data representation
+  - Directed labeled tree
+  - Popular for non-tabular data exchange
+
+:::columns
+::::{.column width=40%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_13_image_1.png)
+::::
+::::{.column width=45%}
+\small
+```xml
+<movies>
+  <movie>
+  <title>Top Gun</title>
+  <actors>
+    <actor>
+     <name>Tom Cruise</name>
+     <born>7/3/1962</born>
+    </actor>
+   <actor>
+     ...
+   </actor>
+  </actors>
+  </movie>
+```
+::::
+:::
+
+* Storing Graph Data
+- **File systems**
+  - Simple
+  - No transactions, ACID compliance
+  - Minimal functionality (build analysis/querying on top)
+
+- **Relational databases**
+  - Mature technology
+  - SQL, transactions, ACID compliance, toolchains
+  - Minimal functionality for graph data
+
+- **NoSQL key-value stores**
+  - Handle large datasets efficiently in a distributed fashion
+  - Minimal native functionality for graph data
+
+- **Graph databases**
+  - Efficiently support complex queries/tasks (e.g., graph traversals)
+  - Less mature than RDBMSs
+  - Often lack declarative language like SQL
+    - Write custom programs
+
+* Graph Databases
+- Many specialized graph DB systems
+  - E.g., Neo4j, Titan, OrientDB, AllegroGraph
+
+- Key distinctions from relational / NoSQL databases
+  - Manage and query graph-structured data
+  - Store graph structure with pointers
+    - Avoid joins, simplify graph traversals
+    - Write queries and graph algorithms (reachability, shortest paths)
+  - Support graph query languages: SPARQL, Cypher, Gremlin
+  - Rudimentary declarative interfaces
+  - Applications require programmatic interfaces
+  - Provide programmatic API for arbitrary graph algorithms

@@ -1,0 +1,6 @@
+.aml_venv
+.DS_STORE
+__pycache__/
+.ipynb_checkpoints/
+checkpoints/
+*.png

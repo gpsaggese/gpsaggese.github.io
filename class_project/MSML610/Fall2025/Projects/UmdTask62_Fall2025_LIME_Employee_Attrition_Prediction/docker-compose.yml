@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  app:
+    build: .
+    ports:
+      - "8888:8888"  # Exposes port 8888 of the container to the host machine
+    environment:
+      - TOKENIZERS_PARALLELISM=false  # Example environment variable
+      - HF_HUB_DISABLE_TELEMETRY=1    # Example environment variable
+    volumes:
+      - .:/workspace  # Binds the current project directory to /workspace in the container

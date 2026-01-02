@@ -1,0 +1,54 @@
+# Core Dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Transformers and NLP
+transformers>=4.30.0
+tokenizers>=0.13.0
+datasets>=2.12.0
+
+# Distributed Training
+horovod[pytorch]>=0.28.0
+
+# Configuration and Utilities
+pyyaml>=6.0
+numpy>=1.24.0
+tqdm>=4.65.0
+pandas>=2.0.0
+
+# Logging and Monitoring
+tensorboard>=2.13.0
+wandb>=0.15.0  # Optional: for experiment tracking
+
+# Metrics
+nltk>=3.8.0
+rouge-score>=0.1.2
+sacrebleu>=2.3.0
+
+# Development and Testing
+pytest>=7.3.0
+pytest-cov>=4.1.0
+black>=23.3.0
+flake8>=6.0.0
+isort>=5.12.0
+
+# Jupyter (for notebooks)
+jupyter>=1.0.0
+ipykernel>=6.23.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Optional: Performance optimization
+ninja>=1.11.0  # For faster PyTorch compilation
+
+# Note: Horovod installation requirements
+# For GPU support, Horovod needs:
+# - NCCL (NVIDIA Collective Communications Library)
+# - OpenMPI or another MPI implementation
+# - CUDA toolkit
+#
+# Installation example (after CUDA/MPI setup):
+#   pip install horovod[pytorch]
+#
+# Or build from source:
+#   HOROVOD_GPU_OPERATIONS=NCCL pip install horovod[pytorch]

@@ -1,0 +1,71 @@
+# =============================================================================
+# FLAML Energy Forecasting Project - Requirements
+# =============================================================================
+# Course: MSML610 - Advanced Machine Learning
+# Author: Anisha Katiyar
+# Date: December 2025
+# =============================================================================
+
+# Core Data Science Libraries
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Machine Learning
+scikit-learn>=1.3.0
+
+# AutoML - FLAML and its dependencies
+flaml>=2.1.0
+lightgbm>=4.0.0
+xgboost>=2.0.0
+
+# Time-Series Specific
+prophet>=1.1.5
+statsmodels>=0.14.0
+
+# Statistical Analysis
+scipy>=1.11.0
+
+# Jupyter Environment
+jupyter>=1.0.0
+ipython>=8.12.0
+notebook>=7.0.0
+ipywidgets>=8.0.0
+
+# Progress Bar
+tqdm>=4.65.0
+
+# Dashboard and Interactive Visualization (Optional)
+streamlit>=1.28.0
+plotly>=5.17.0
+
+# Utilities
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# =============================================================================
+# Installation Instructions:
+# =============================================================================
+# 1. Create a virtual environment (recommended):
+#    python -m venv venv
+#    source venv/bin/activate  # On Windows: venv\Scripts\activate
+#
+# 2. Install all requirements:
+#    pip install -r requirements.txt
+#
+# 3. For Prophet on Windows, you may need:
+#    pip install pystan==2.19.1.1
+#    pip install prophet
+#
+# 4. For M1/M2 Macs, you may need:
+#    conda install -c conda-forge prophet
+# =============================================================================
+
+# =============================================================================
+# Version Notes:
+# =============================================================================
+# - FLAML 2.1.0+ supports latest LightGBM and XGBoost
+# - Prophet 1.1.5+ has improved seasonality handling
+# - Statsmodels 0.14.0+ has updated ARIMA implementation
+# =============================================================================

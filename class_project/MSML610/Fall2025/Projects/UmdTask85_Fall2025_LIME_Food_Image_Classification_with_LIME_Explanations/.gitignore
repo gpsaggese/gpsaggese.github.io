@@ -1,0 +1,7 @@
+%APPDATA%
+.DS_Store
+data/
+runs/
+.vscode/
+__pycache__/
+.ipynb_checkpoints/

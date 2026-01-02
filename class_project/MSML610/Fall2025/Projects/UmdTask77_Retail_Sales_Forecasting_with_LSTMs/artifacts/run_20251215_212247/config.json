@@ -1,0 +1,23 @@
+{
+  "data_dir": "store-sales-time-series-forecasting",
+  "families": [
+    "GROCERY I",
+    "BEVERAGES",
+    "PRODUCE",
+    "CLEANING",
+    "DAIRY"
+  ],
+  "max_stores": 10,
+  "start_date": "2015-01-01",
+  "split_date": "2017-04-01",
+  "context_length": 30,
+  "horizon": 7,
+  "hidden_size": 64,
+  "learning_rate": 0.003,
+  "batch_size": 512,
+  "epochs": 50,
+  "early_stopping_patience": 10,
+  "early_stopping_min_delta": 1e-06,
+  "seed": 0,
+  "device": "cuda"
+}

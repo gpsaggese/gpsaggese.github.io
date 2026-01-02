@@ -1,0 +1,56 @@
+# Configuration for Custom Transformer Language Model Training
+# This model is trained from scratch on BookCorpus dataset
+
+# Model Configuration
+model:
+  type: "custom"  # Only custom transformer model
+  d_model: 768      # Model dimension
+  n_heads: 12       # Number of attention heads
+  n_layers: 12      # Number of transformer layers
+  d_ff: 3072        # Feed-forward hidden dimension
+  dropout: 0.1      # Dropout probability
+  max_seq_len: 512   # Maximum sequence length
+  vocab_size: 50257 # GPT-2 tokenizer vocab size
+
+# Training Configuration
+training:
+  epochs: 10
+  per_gpu_batch_size: 16        # Batch size per GPU
+  learning_rate: 3.0e-4          # Learning rate
+  warmup_steps: 1000             # Warmup steps for learning rate
+  weight_decay: 0.01             # Weight decay for AdamW
+  gradient_accumulation_steps: 2 # Effective batch size: 16 * 4 GPUs * 2 = 128
+  max_grad_norm: 1.0             # Gradient clipping
+  log_interval: 50               # Log every N updates
+  save_interval: 500              # Save checkpoint every N updates
+  eval_interval: 250              # Evaluate every N updates
+  scale_lr_by_world_size: false  # If true, multiply LR by number of GPUs
+  amp_dtype: "bf16"              # Mixed precision: bf16|fp16|fp32 (bf16 for H100)
+  gradient_checkpointing: false  # Enable to save memory (slower but uses less VRAM)
+
+# Data Configuration
+data:
+  data_dir: "data/preprocessed/v1"  # Directory with preprocessed data (from notebook)
+  num_workers: 8                  # Data loading workers
+
+# Generation Configuration
+generation:
+  max_new_tokens: 100
+  temperature: 0.8
+  top_k: 50
+  top_p: 0.9
+  num_samples: 5
+
+# Paths
+paths:
+  checkpoint_dir: "checkpoints"
+  log_dir: "logs"
+  tensorboard_dir: "runs"
+
+# Distributed options
+distributed:
+  horovod_compression: "none"  # Options: none, fp16
+
+# Misc
+seed: 42
+

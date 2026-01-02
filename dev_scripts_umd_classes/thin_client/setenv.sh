@@ -121,6 +121,8 @@ fi
 # Project configuration.
 # #############################################################################
 
+export PATH=$PATH:$GIT_ROOT_DIR/classes
+
 # Set CSFY environment variables.
 set_csfy_env_vars
 

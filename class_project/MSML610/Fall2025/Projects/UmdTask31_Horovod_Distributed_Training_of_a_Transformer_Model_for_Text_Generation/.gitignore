@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyTorch
+*.pt
+*.pth
+
+# Data (preprocessed data can be large)
+notebooks/data/preprocessed/v1/
+*.h5
+*.hdf5
+
+# Checkpoints and logs
+checkpoints/
+logs/
+runs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
+
+# Horovod
+horovod_timeline.json
+
+# Slurm
+*.out
+*.err
+class_project/MSML610/Fall2025/Projects/UmdTask31_Horovod_Distributed_Training_of_a_Transformer_Model_for_Text_Generation/notebooks/data/preprocessed/
+.DS_Store

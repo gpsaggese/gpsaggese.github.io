@@ -1,0 +1,23 @@
+# OS / editor junk
+.DS_Store
+.ipynb_checkpoints/
+__pycache__/
+.Rhistory
+
+# Backups / logs
+*.bak
+*.log
+docker_build.version.log
+
+# Big raw / derived data
+data/arxiv-metadata-oai-snapshot.json
+data/clean_subset.parquet
+data/clean_subset_embeddings.npy
+
+# Local temp builds
+../docker_build.log
+../tmp.build/
+
+# Block example template + data artifacts
+class_project/MSML610/Fall2025/Projects/UmdTask39_Fall2025_flash_attn_Topic_Modeling_of_Scientific_Papers/data/*.csv
+class_project/MSML610/Fall2025/Projects/UmdTask39_Fall2025_flash_attn_Topic_Modeling_of_Scientific_Papers/data/*.png

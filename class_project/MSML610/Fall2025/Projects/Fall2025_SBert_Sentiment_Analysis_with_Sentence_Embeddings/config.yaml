@@ -1,0 +1,14 @@
+data:
+  raw_csv: "data/raw/all-data.csv"
+  cleaned_csv: "data/processed/financial_phrasebank_clean.csv"
+  labels_npy: "data/processed/labels.npy"
+  embeddings_npy: "data/processed/sbert_embeddings.npy"
+
+preprocessing:
+  text_column: sentence
+  label_column: sentiment
+
+embeddings:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+  batch_size: 64
+  device: "cpu"

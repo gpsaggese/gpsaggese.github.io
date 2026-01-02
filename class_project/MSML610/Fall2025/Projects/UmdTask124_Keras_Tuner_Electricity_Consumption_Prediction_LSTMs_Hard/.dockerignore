@@ -1,0 +1,11 @@
+# .dockerignore
+__pycache__
+*.pyc
+.env
+.vscode
+.ipynb_checkpoints
+data/
+models/
+*.h5
+*.pkl
+venv/
