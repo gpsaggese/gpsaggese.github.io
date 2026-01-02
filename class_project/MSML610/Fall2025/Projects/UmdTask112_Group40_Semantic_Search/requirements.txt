@@ -1,0 +1,7 @@
+pandas
+pyarrow
+numpy
+scikit-learn
+sentence-transformers
+kagglehub[pandas-datasets]
+Flask
