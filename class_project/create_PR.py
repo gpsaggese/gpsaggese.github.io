@@ -357,9 +357,7 @@ def _process_branches_with_copy(
     )
     # Process each branch-directory pair with progress bar.
     _LOG.info("Processing branches starting from index %d...", start_from)
-    for idx, (branch, directory) in enumerate(
-        tqdm(pairs, desc="Processing branches")
-    ):
+    for idx, (branch, directory) in enumerate(tqdm(pairs, desc="Processing branches")):
         # Skip pairs before start_from index.
         if idx < start_from:
             _LOG.debug("Skipping pair %d: %s -> %s", idx, branch, directory)

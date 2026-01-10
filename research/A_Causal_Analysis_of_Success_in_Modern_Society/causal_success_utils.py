@@ -20,6 +20,10 @@ This module is the main toolbox for the project. It provides:
 
 The Bayesian part is optional: if PyMC/ArviZ are not installed,
 all simulation and summary functions still work as before.
+
+Import as:
+
+import research.A_Causal_Analysis_of_Success_in_Modern_Society.causal_success_utils as racaosimscsu
 """
 
 from __future__ import annotations
@@ -54,7 +58,6 @@ __all__ = [
 # #############################################################################
 # Agent
 # #############################################################################
-
 
 class Agent:
     """
