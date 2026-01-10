@@ -282,20 +282,20 @@ university courses (`data605` and `msml610`).
 
 - Generate PDF slides for a specific lecture:
   ```bash
-  > process_lessons.py --lectures 01.1 --class data605 --action pdf
+  > process_lessons.py --lectures 01.1 --class data605 --action generate_pdf
   ```
 
 - Generate reading scripts for multiple lectures:
   ```bash
-  > process_lessons.py --lectures 01*:02* --class data605 --action script
+  > process_lessons.py --lectures 01*:02* --class data605 --action generate_script
   ```
 
 - Generate both PDFs and scripts:
   ```bash
-  > process_lessons.py --lectures 01* --class msml610 --action pdf --action script
+  > process_lessons.py --lectures 01* --class msml610 --action generate_pdf --action generate_script
   ```
 
 - Generate all slides for multiple lessons:
   ```bash
-  > process_lessons.py --lectures 0*:1* --class data605 --action pdf
+  > process_lessons.py --lectures 0*:1* --class data605 --action generate_pdf
   ```

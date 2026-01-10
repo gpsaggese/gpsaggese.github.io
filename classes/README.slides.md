@@ -16,7 +16,7 @@
 
 - Check several lessons with limits (for testing)
   ```bash
-  > process_lessons.py --lectures 01.1* --class data605 --action slide_check --limit 0:2
+  > process_lessons.py --lectures 01.1* --class data605 --action check_slide --limit 0:2
   ```
   This checks only the first 2 slides of matching lessons.
 
@@ -62,7 +62,7 @@
 
 - Generate PDFs for multiple lessons
   ```bash
-  > process_lessons.py --lectures 0*:1* --class data605 --action pdf
+  > process_lessons.py --lectures 0*:1* --class data605 --action generate_pdf
   ```
   This generates PDF files for all lessons starting with 0 or 1 (e.g., 01.1, 01.2, 10.1, etc.).
 

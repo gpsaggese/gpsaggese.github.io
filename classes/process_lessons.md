@@ -9,20 +9,20 @@ can process slides using LLM transformations
 
 - Generate PDF slides for a specific lecture
   ```bash
-  > process_lessons.py --lectures 01.1 --class data605 --action pdf
+  > process_lessons.py --lectures 01.1 --class data605 --action generate_pdf
   ```
 
 - Generate reading scripts for multiple lectures
   ```bash
-  > process_lessons.py --lectures 01*:02* --class data605 --action script
+  > process_lessons.py --lectures 01*:02* --class data605 --action generate_script
   ```
 
 - Generate both PDFs and scripts
   ```bash
-  > process_lessons.py --lectures 01* --class msml610 --action pdf --action script
+  > process_lessons.py --lectures 01* --class msml610 --action generate_pdf --action generate_script
   ```
 
-- Generate using default actions (PDF only)
+- Generate using default actions (generate_pdf only)
   ```bash
   > process_lessons.py --lectures 01* --class msml610
   ```
@@ -34,27 +34,27 @@ can process slides using LLM transformations
 
 - Skip specific actions
   ```bash
-  > process_lessons.py --lectures 01* --class data605 --skip_action script
+  > process_lessons.py --lectures 01* --class data605 --skip_action generate_script
   ```
 
 - Reduce slides using LLM transformation (modifies in place)
   ```bash
-  > process_lessons.py --lectures 01.1 --class data605 --action slide_reduce
+  > process_lessons.py --lectures 01.1 --class data605 --action reduce_slide
   ```
 
 - Check slides using LLM transformation (creates separate report)
   ```bash
-  > process_lessons.py --lectures 01.1 --class data605 --action slide_check
+  > process_lessons.py --lectures 01.1 --class data605 --action check_slide
   ```
 
 - Generate specific slides from a lecture
   ```bash
-  > process_lessons.py --lectures 01.1 --limit 1:3 --class data605 --action pdf
+  > process_lessons.py --lectures 01.1 --limit 1:3 --class data605 --action generate_pdf
   ```
 
 - Process all lectures in a class
   ```bash
-  > process_lessons.py --lectures "0*" --class data605 --action pdf --action script
+  > process_lessons.py --lectures "0*" --class data605 --action generate_pdf --action generate_script
   ```
 
 ## Command Line Arguments
@@ -65,17 +65,20 @@ can process slides using LLM transformations
   - Multiple patterns: `01*:02*:03.1` (separated by colons)
 - `--class`: Class directory name (`data605` or `msml610`)
 - `--action`: Actions to execute. Can be specified multiple times:
-  - `pdf`: Generate PDF slides
-  - `script`: Generate reading scripts
-  - `slide_reduce`: Reduce slides using LLM transformation (modifies source in
+  - `generate_pdf`: Generate PDF slides
+  - `generate_script`: Generate reading scripts
+  - `reduce_slide`: Reduce slides using LLM transformation (modifies source in
     place)
-  - `slide_check`: Check slides using LLM transformation (creates separate
+  - `check_slide`: Check slides using LLM transformation (creates separate
     report file)
-  - Default: `pdf` (if no action specified)
+  - `improve_slide`: Improve slides using LLM transformation
+  - `book_chapter`: Generate book chapter PDF from lecture content
+  - `generate_quizzes`: Generate multiple choice quizzes from lecture content
+  - Default: `generate_pdf` (if no action specified)
 - `--skip_action`: Actions to skip (mutually exclusive with `--action`)
 - `--all`: Execute all available actions (mutually exclusive with `--action`)
 - `--limit`: Slide range to process (e.g., `1:3`). Only valid when a single
-  lecture file matches the pattern. Only applies to `pdf` action.
+  lecture file matches the pattern. Only applies to `generate_pdf` action.
 - `--dry_run`: Print commands without executing them
 - `--log_level`: Logging verbosity (optional)
 

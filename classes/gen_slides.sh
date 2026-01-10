@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -e
 
 # Check that exactly two arguments are provided.
 if [ "$#" -ne 2 ]; then

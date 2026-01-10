@@ -34,10 +34,10 @@ UMD DATA605 - Big Data Systems
 :::columns
 ::::{.column width=50%}
 - A **graph** represents entities and their connections
-  - Entities are _vertices_ (or nodes)
-  - Connections are _edges_ (or links, arcs, relationships)
+  - _Entities_ are vertices (nodes)
+  - _Connections_ are edges (links, arcs, relationships)
 
-- **Applications in many fields**
+- **Applications of graphs in many fields**
   - Social networks
   - Biological networks
   - Information networks
