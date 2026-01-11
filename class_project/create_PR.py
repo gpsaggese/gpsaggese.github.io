@@ -232,14 +232,21 @@ def _copy_project_directory(
     """
     # Build source and destination paths.
     src_path = os.path.join(
-        source_dir, "class_project", "MSML610", "Fall2025", "Projects", directory_name
+        source_dir,
+        "class_project",
+        "MSML610",
+        "Fall2025",
+        "Projects",
+        directory_name,
     )
     dst_projects_path = os.path.join(
         dst_dir, "class_project", "MSML610", "Fall2025", "Projects"
     )
     dst_path = os.path.join(dst_projects_path, directory_name)
     # Assert that source directory exists.
-    hdbg.dassert_path_exists(src_path, "Source directory does not exist:", src_path)
+    hdbg.dassert_path_exists(
+        src_path, "Source directory does not exist:", src_path
+    )
     # Assert that destination directory does not exist.
     hdbg.dassert(
         not os.path.exists(dst_path),
@@ -357,7 +364,9 @@ def _process_branches_with_copy(
     )
     # Process each branch-directory pair with progress bar.
     _LOG.info("Processing branches starting from index %d...", start_from)
-    for idx, (branch, directory) in enumerate(tqdm(pairs, desc="Processing branches")):
+    for idx, (branch, directory) in enumerate(
+        tqdm(pairs, desc="Processing branches")
+    ):
         # Skip pairs before start_from index.
         if idx < start_from:
             _LOG.debug("Skipping pair %d: %s -> %s", idx, branch, directory)

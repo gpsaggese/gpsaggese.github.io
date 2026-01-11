@@ -45,6 +45,9 @@ UMD DATA605 - Big Data Systems
   - ...
 ::::
 ::::{.column width=45%}
+
+// TODO: Convert the images into graphviz
+
 \centering
 \small
 
@@ -59,9 +62,10 @@ _A directed, edge-weighted graph_
 * Graph Data Structures: Motivation
 :::columns
 ::::{.column width=45%}
-- **Increasing volumes of graph data**
 
-- **Increasing interest in querying and reasoning** about graph data
+- **Graph data**:
+  - Increasing volumes of data
+  - Increasing interest in querying and reasoning
 
 - **Sectors**
   - Healthcare
@@ -100,9 +104,11 @@ _Social networks_
 ::::{.column width=50%}
 - **Traditional tools** (e.g., relational DBs, NoSQL DBs) struggle with:
   - Storing and querying graph data
-    - Dedicated solutions: Neo4j
   - Processing graph-structured queries
-    - Dedicated solutions: Google Pregel, Apache Giraph, Spark GraphX
+
+- **Dedicated solutions** to:
+  - Storing: Neo4j
+  - Processing: Google Pregel, Apache Giraph, Spark GraphX
 ::::
 ::::{.column width=50%}
 \center
@@ -120,9 +126,8 @@ _Federal funds networks_
 - **Representation of knowledge in the form of graphs**
   - Capture entities, relationships, properties
   - Provide structured view of real-world information
-
-- Represent using RDF or Property Graph models
   - E.g., Google Knowledge Graph, DBpedia, Wikidata
+  - E.g., RDF or Property Graph models
 
 - **Applications**
   - Enable machine understanding of complex domains
@@ -131,7 +136,9 @@ _Federal funds networks_
     applications
 
 - **Ontologies**
-  - Provide formal representation of knowledge
+  - Provide formal and structure representation of knowledge
+    - E.g., type of things and how they relate to each other
+    - Like "meaning and rules" to interpret data into a knowledge graph
   - Promote interoperability across knowledge bases
 
 * Graph Data Models: RDF
@@ -207,6 +214,51 @@ _Federal funds networks_
 ```
 ::::
 :::
+
+* Comparison
+
+```latex
+\usepackage{float}
+\usepackage{caption}
+\begin{document}
+
+\begin{tabular}{|p{3cm}|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+\textbf{Feature} & \textbf{RDF} & \textbf{Property Graph} & \textbf{XML} \\
+\hline
+Core data model & Triples: \textbf{(subject, predicate, object)} & \textbf{Nodes} and \textbf{edges} with properties & \textbf{Hierarchical tree} of elements \\
+\hline
+How facts are stored & Fact is a separate triple & Facts are properties on nodes or edges & Nested tags with attributes \\
+\hline
+Attributes & Modeled as triples & Stored as key--value pairs & XML attributes or child elements \\
+\hline
+Semantics & Formal semantics (RDF, RDFS, OWL) & No built-in semantics & No built-in semantics \\
+\hline
+Ontology support & Native and standardized & Optional, application-defined & None (only schema) \\
+\hline
+Reasoning \& inference & Built-in (e.g., OWL/RDFS) & Usually not supported & Not supported \\
+\hline
+Data integration & Excellent for heterogeneous data & Requires manual mapping & Difficult across different schemas \\
+\hline
+Query language & \texttt{SPARQL} & Cypher, Gremlin, GQL & XPath, XQuery \\
+\hline
+Query style & Graph pattern matching & Graph traversal patterns & Tree navigation \\
+\hline
+Schema & Optional but strongly supported & Labels and constraints & XSD, DTD \\
+\hline
+Standards & W3C standards & Vendor-specific & W3C standards \\
+\hline
+Interoperability & Very high & Limited & High for doc exchange \\
+\hline
+Performance for traversals & Moderate & Very fast & Poor for graph traversal \\
+\hline
+Typical use cases & Linked data, knowledge bases & Fraud, recommendations, network analysis & Doc storage, configuration, data exchange \\
+\hline
+Example systems & Wikidata, DBpedia, Apache Jena & Neo4j, Amazon Neptune & SOAP, RSS, Office documents \\
+\hline
+\end{tabular}
+\end{document}
+```
 
 * Storing Graph Data
 - **File systems**

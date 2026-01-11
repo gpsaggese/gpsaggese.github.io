@@ -126,7 +126,9 @@ class Agent:
         :return: Event probability in [0, 1]
         """
         alpha = 2.0
-        return float(1.0 / (1.0 + np.exp(-alpha * (self.talent["intensity"] - 0.5))))
+        return float(
+            1.0 / (1.0 + np.exp(-alpha * (self.talent["intensity"] - 0.5)))
+        )
 
     def apply_event(self, event_type: str, impact: float) -> None:
         """
@@ -188,7 +190,9 @@ def calculate_gini(values: np.ndarray) -> float:
     x_sorted = np.sort(x)
     n = x_sorted.size
     index = np.arange(1, n + 1, dtype=float)
-    gini = (2.0 * np.sum(index * x_sorted)) / (n * np.sum(x_sorted)) - (n + 1.0) / n
+    gini = (2.0 * np.sum(index * x_sorted)) / (n * np.sum(x_sorted)) - (
+        n + 1.0
+    ) / n
     return float(np.clip(gini, 0.0, 1.0))
 
 
@@ -360,13 +364,17 @@ def run_simulation(
             )
             selected_idx = int(rng.choice(n_agents, p=exposure))
             selected = agents[selected_idx]
-            impact = float(np.clip(rng.normal(lucky_mean, lucky_std), 0.05, 0.50))
+            impact = float(
+                np.clip(rng.normal(lucky_mean, lucky_std), 0.05, 0.50)
+            )
             # IQ gates whether a lucky event can be capitalized on.
             if rng.random() < selected.talent["iq"]:
                 selected.apply_event("lucky", impact)
             # Networking spillover (10%).
             if rng.random() < 0.1:
-                net = np.array([a.talent["networking"] for a in agents], dtype=float)
+                net = np.array(
+                    [a.talent["networking"] for a in agents], dtype=float
+                )
                 if net.sum() > 0:
                     net = net / net.sum()
                     inherited_idx = int(rng.choice(n_agents, p=net))
@@ -387,7 +395,9 @@ def run_simulation(
             )
             selected_idx = int(rng.choice(n_agents, p=exposure))
             selected = agents[selected_idx]
-            impact = float(np.clip(rng.normal(unlucky_mean, unlucky_std), 0.05, 0.30))
+            impact = float(
+                np.clip(rng.normal(unlucky_mean, unlucky_std), 0.05, 0.30)
+            )
             selected.apply_event("unlucky", impact)
     return agents
 
@@ -439,7 +449,9 @@ def run_policy_simulation(
         weights = np.array([a.capital for a in agents], dtype=float)
     elif policy == "cate_optimal":
         if cate_values is None:
-            raise ValueError("cate_values must be provided when policy='cate_optimal'.")
+            raise ValueError(
+                "cate_values must be provided when policy='cate_optimal'."
+            )
         cate_array = np.asarray(cate_values, dtype=float)
         if cate_array.shape[0] != n:
             raise ValueError(
