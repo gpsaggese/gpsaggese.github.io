@@ -220,43 +220,47 @@ _Federal funds networks_
 ```latex
 \usepackage{float}
 \usepackage{caption}
+\renewcommand{\familydefault}{\sfdefault}
+
 \begin{document}
 
+\small
 \begin{tabular}{|p{3cm}|p{4cm}|p{4cm}|p{4cm}|}
 \hline
 \textbf{Feature} & \textbf{RDF} & \textbf{Property Graph} & \textbf{XML} \\
 \hline
-Core data model & Triples: \textbf{(subject, predicate, object)} & \textbf{Nodes} and \textbf{edges} with properties & \textbf{Hierarchical tree} of elements \\
+\textbf{Core data model} & Triples: (subject, predicate, object) & Nodes and edges with properties & Hierarchical tree of elements \\
 \hline
-How facts are stored & Fact is a separate triple & Facts are properties on nodes or edges & Nested tags with attributes \\
+\textbf{How facts are stored} & Fact is a separate triple & Properties on nodes/edges & Nested tags with attributes \\
 \hline
-Attributes & Modeled as triples & Stored as key--value pairs & XML attributes or child elements \\
+\textbf{Attributes} & Modeled as triples & Key--value pairs & Attributes or child elements \\
 \hline
-Semantics & Formal semantics (RDF, RDFS, OWL) & No built-in semantics & No built-in semantics \\
+\textbf{Semantics} & Formal (RDF, RDFS, OWL) & No built-in semantics & No built-in semantics \\
 \hline
-Ontology support & Native and standardized & Optional, application-defined & None (only schema) \\
+\textbf{Ontology support} & Native, standardized & Optional & None (only schema) \\
 \hline
-Reasoning \& inference & Built-in (e.g., OWL/RDFS) & Usually not supported & Not supported \\
+\textbf{Reasoning \& inference} & Built-in (e.g., OWL) & Usually not supported & Not supported \\
 \hline
-Data integration & Excellent for heterogeneous data & Requires manual mapping & Difficult across different schemas \\
+\textbf{Data integration} & Excellent for heterogeneous data & Manual mapping & Hard across schemas \\
 \hline
-Query language & \texttt{SPARQL} & Cypher, Gremlin, GQL & XPath, XQuery \\
+\textbf{Query language} & SPARQL & Cypher, Gremlin, GQL & XPath, XQuery \\
 \hline
-Query style & Graph pattern matching & Graph traversal patterns & Tree navigation \\
+\textbf{Query style} & Pattern matching & Traversals & Tree navigation \\
 \hline
-Schema & Optional but strongly supported & Labels and constraints & XSD, DTD \\
+\textbf{Schema} & Optional, supported & Labels, constraints & XSD, DTD \\
 \hline
-Standards & W3C standards & Vendor-specific & W3C standards \\
+\textbf{Standards} & W3C standards & Vendor-specific & W3C standards \\
 \hline
-Interoperability & Very high & Limited & High for doc exchange \\
+\textbf{Interoperability} & Very high & Limited & High for documents \\
 \hline
-Performance for traversals & Moderate & Very fast & Poor for graph traversal \\
+\textbf{Traversal performance} & Moderate & Very fast & Poor \\
 \hline
-Typical use cases & Linked data, knowledge bases & Fraud, recommendations, network analysis & Doc storage, configuration, data exchange \\
+\textbf{Use cases} & Linked data, KBs & Fraud, recommendations & Docs, configs, data exchange \\
 \hline
-Example systems & Wikidata, DBpedia, Apache Jena & Neo4j, Amazon Neptune & SOAP, RSS, Office documents \\
+\textbf{Examples} & Wikidata, DBpedia & Neo4j, Neptune & SOAP, RSS, Office \\
 \hline
 \end{tabular}
+
 \end{document}
 ```
 
@@ -286,11 +290,103 @@ Example systems & Wikidata, DBpedia, Apache Jena & Neo4j, Amazon Neptune & SOAP,
   - E.g., Neo4j, Titan, OrientDB, AllegroGraph
 
 - Key distinctions from relational / NoSQL databases
-  - Manage and query graph-structured data
   - Store graph structure with pointers
-    - Avoid joins, simplify graph traversals
+    - Avoid joins
+    - Simplify graph traversals
+  - Manage and query graph-structured data
     - Write queries and graph algorithms (reachability, shortest paths)
   - Support graph query languages: SPARQL, Cypher, Gremlin
-  - Rudimentary declarative interfaces
-  - Applications require programmatic interfaces
+  - Declarative interfaces
   - Provide programmatic API for arbitrary graph algorithms
+
+* Query Languages for Graph Databases
+
+```latex
+\usepackage{float}
+\usepackage{caption}
+\renewcommand{\familydefault}{\sfdefault}
+
+\begin{document}
+
+\small
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Feature} & \textbf{Cypher} & \textbf{Gremlin} & \textbf{SPARQL} \\
+\hline
+\textbf{Data Model} & Property Graph & Property Graph & RDF Triple \\
+\hline
+\textbf{Query Style} & Declarative & Imperative & Declarative \\
+\hline
+\textbf{Syntax Example} & SQL-like & Functional API & Triple patterns \\
+\hline
+\textbf{Best For} & Pattern matching & Complex traversals & Semantic data \\
+\hline
+\textbf{Standardization} & Neo4j-specific (OpenCypher) & Apache TinkerPop & W3C Standard \\
+\hline
+\textbf{Backend Support} & Mainly Neo4j & Multi-platform (TinkerPop) & RDF stores \\
+\hline
+\textbf{Learning Curve} & Low & High & Medium \\
+\hline
+\textbf{Use Cases} & Social graphs, fraud detection & Distributed graph processing & Linked data, knowledge graphs \\
+\hline
+\end{tabular}
+\end{document}
+```
+
+* Query Languages: Cypher
+- **Purpose-Built for Property Graphs**
+  - Nodes and relationships with key-value properties
+- **Declarative Syntax**
+  - Express *what* to retrieve, not *how*
+- **Optimized for Pattern Matching**
+  - Easily finds subgraph structures (e.g., friends of friends)
+  - Limited in Graph Analytics
+  - Not ideal for reachability, shortest paths, or centrality
+- **Neo4j Native**
+
+- Example:
+  - _Find the names of people who know someone named "Alice"_
+    \small
+    ```sql
+    MATCH (person)-[:KNOWS]->(friend {name: "Alice"})
+      RETURN person.name
+    ```
+
+* Query Languages: Gremlin
+- **Supports Multiple Models**
+  - Compatible with both Property Graphs and RDF
+- **Imperative Style**
+  - Describes *how* to traverse the graph step by step
+- **Traversal-Based Semantics**
+  - Expresses computation as a flow of operations across vertices and edges
+
+- Example:
+  - _Find the names of people who know someone named "Alice"_
+    \small
+    ```python
+    g.V().hasLabel('Person')
+      .where(out('KNOWS').has('name', 'Alice'))
+      .values('name')
+    ```
+
+* Query Languages: SPARQL
+- **SQL-Like Syntax**
+  - Familiar structure: `SELECT`, `WHERE`, `FILTER`, etc.
+- **Built for RDF Data**
+  - Queries triples: subject–predicate–object
+- **W3C Standard**
+  - Core to Semantic Web and Linked Data applications
+
+- Example:
+  - _Find the names of people who know someone named "Alice"_
+    \small
+    ```sql
+    PREFIX foaf: <...>
+
+    SELECT ?personName
+    WHERE {
+      ?person foaf:knows ?friend .
+      ?friend foaf:name "Alice" .
+      ?person foaf:name ?personName .
+    }
+    ```
