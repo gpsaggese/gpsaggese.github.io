@@ -1,37 +1,13 @@
 #!/bin/bash -xe
 
-# Check that exactly two arguments are provided
-if [ "$#" -ne 2 ]; then
-    echo "Error: Expected exactly 2 arguments, got $#"
-    echo ""
-    echo "Usage: $0 <DIR> <LESSON>"
-    echo ""
-    echo "Arguments:"
-    echo "  DIR     - Course directory (e.g., data605, msml610)"
-    echo "  LESSON  - Lesson number (e.g., 01.1, 02.3)"
-    echo ""
-    echo "Example:"
-    echo "  $0 data605 0.1"
-    exit 1
-fi
-
-# E.g., data605, msml610
-DIR=$1
-# E.g., 01.1
-LESSON=$2
-
 shopt -s nullglob   # empty pattern expands to nothing instead of itself
 
-FILES_DIR="$DIR/lectures_source/Lesson${LESSON}*"
-echo "FILES_DIR=$FILES_DIR"
+# Source common utility functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/utils.sh"
 
-files=$(ls -1 $FILES_DIR)
-if (( ${#files[@]} != 1 )); then
-    echo "Need exactly one file"
-    exit 1
-else
-    echo "Found file: ${files[*]}"
-fi
+# Validate arguments and find the lecture file
+validate_dir_lesson_args "$#" "$@" || exit 1
 
 # 1) Generate the PDF.
 SRC_NAME=$(cd $DIR/lectures_source; ls Lesson${LESSON}*)
@@ -47,7 +23,7 @@ HELPERS_ROOT_DIR=$(find . -type d -path "./helpers_root/dev_scripts_helpers")
 echo "HELPERS_ROOT_DIR=$HELPERS_ROOT_DIR"
 
 # E.g., Lesson01.1-Intro.txt
-INPUT_FILE="${files[0]}"
+INPUT_FILE="$FILES"
 
 OUT_DIR="$DIR/book"
 echo "OUT_DIR=$OUT_DIR"

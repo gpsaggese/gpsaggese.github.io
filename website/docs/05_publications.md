@@ -29,12 +29,6 @@
 
 - C. Ma, G. Pomazkin, G.P. Saggese, P. Smith, D. Tikhomirov, N. Trubacheva, _Causify Horizon: A Causal Demand Forecasting Framework_, Manuscript to be submitted to arXiv, 2025
 
-### 2022
-
-- G. Di Meo, D. De Caro, G.P. Saggese, E. Napoli, N. Petra, A.G.M. Strollo, _A Novel Module-Sign Low-Power Implementation for the DLMS Adaptive Filter With Low Steady-State Error_, IEEE Transactions on Circuits and Systems I: Regular Papers, vol. 69, no. 1, pp. 297-308, 2022
-
-- A.G.M. Strollo, E. Napoli, D. De Caro, N. Petra, G.P. Saggese, G. Di Meo, _Approximate Multipliers Using Static Segmentation: Error Analysis and Improvements_, IEEE Transactions on Circuits and Systems I: Regular Papers, vol. 69, no. 6, pp. 2449-2462, 2022
-
 ### 2011
 
 - K. Pattabiraman, G.P. Saggese, D. Chen, Z. Kalbarczyk, R.K. Iyer, _Automated Derivation of Application-Specific Error Detectors Using Dynamic Analysis_, IEEE Transactions on Dependable and Secure Computing, vol. 8, no. 5, pp. 640-655, 2011
