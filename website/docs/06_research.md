@@ -1,6 +1,6 @@
 # Research Interests
 
-## Publications list
+## Publications List
 - [DBLP](https://dblp.uni-trier.de/pers/hd/s/Saggese:Giacinto_Paolo)
 - [Google Scholar](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C21&q=gp+saggese&btnG=)
 - [ResearchGate](https://www.researchgate.net/scientific-contributions/70377865_GP_Saggese)
@@ -35,7 +35,7 @@ FPGA-based architectures for high-performance applications.
 
 **Publication:** arXiv preprint arXiv:2512.01149, 2025
 
-**Links:** [arXiv](https://arxiv.org/abs/2512.01149)
+**Links:** [PDF](papers/Causify_Benchmark_A_Benchmark_of_Causal_AI_for_Predictive_Maintenance.pdf) | [arXiv](https://arxiv.org/abs/2512.01149)
 
 Comprehensive benchmark comparing Bayesian structural causal models against
 correlation-based ML for predictive maintenance on 10,000 CNC machines. Causal AI
@@ -49,6 +49,8 @@ root-cause explanations.
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
 
+**Links:** [PDF](papers/Causify_DataMap_Causal_Probabilistic_Reasoning.pdf)
+
 Automated system for generating causal probabilistic models by integrating
 knowledge graphs, LLMs, and Bayesian inference. Converts unstructured knowledge
 into executable models for reasoning and decision-making under uncertainty, with
@@ -59,6 +61,8 @@ applications to predictive maintenance.
 **Authors:** G.P. Saggese, P. Smith
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
+
+**Links:** [PDF](papers/Causify_DataFlow_A_Causal_Model_Simulator.pdf)
 
 Computational framework for simulating causal models with time-series data using
 DAG-based architecture with knowledge-time semantics. Guarantees temporal
@@ -71,6 +75,8 @@ execution from research through production deployment.
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
 
+**Links:** [PDF](papers/Causify_DataPull_A_Causal_Data_Layer.pdf)
+
 Bitemporal data layer preserving both event time and knowledge time for
 time-series data. Ensures causal models only use information available at
 decision time, with integrated QA and automatic cleaning for reliable causal
@@ -81,6 +87,8 @@ analysis.
 **Authors:** C. Ma, S. Nikiforova, G.P. Saggese, P. Smith, K. Taduri
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
+
+**Links:** [PDF](papers/Causify_Sentinel_A_Causal_Failure_Prediction_Framework.pdf)
 
 Causal failure prediction framework achieving 100% recall on wind turbine bearing
 failures with weeks-to-months early warning. Combines physics-informed models
@@ -93,6 +101,8 @@ forecasting for remaining useful life prediction.
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
 
+**Links:** [PDF](papers/Causify_Grid_Causal_Inference_in_Energy_Demand_Prediction.pdf)
+
 Causal inference for energy demand prediction achieving 12.5% MAPE improvement
 over non-causal baseline. Demonstrates 47.8% coefficient bias reduction through
 backdoor criterion adjustment, with full Bayesian treatment using Pyro for
@@ -103,6 +113,8 @@ calibrated uncertainty quantification.
 **Authors:** C. Ma, G. Pomazkin, G.P. Saggese, P. Smith, D. Tikhomirov, N. Trubacheva
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
+
+**Links:** [PDF](papers/Causify_Horizon_A_Causal_Demand_Forecasting_Framework.pdf)
 
 Causal demand forecasting framework integrating knowledge graphs with state-space
 models for supply chain optimization. Combines LLM-assisted knowledge graph
@@ -117,7 +129,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Journal of Systems Architecture, vol. 50, no. 12, pp. 711-727, 2004
 
-**Links:** [DOI](https://doi.org/10.1016/j.sysarc.2004.04.002) | [PDF](https://www.researchgate.net/publication/223251907_A_tamper_resistant_hardware_accelerator_for_RSA_cryptographic_applications) | [DBLP](https://dblp.org/rec/journals/jsa/SaggeseRMM04.bib)
+**Links:** [PDF](papers/A_tamper_resistant_hardware_accelerator_for_RSA_cryptographic_applications_q.pdf) | [DOI](https://doi.org/10.1016/j.sysarc.2004.04.002) | [ResearchGate](https://www.researchgate.net/publication/223251907_A_tamper_resistant_hardware_accelerator_for_RSA_cryptographic_applications) | [DBLP](https://dblp.org/rec/journals/jsa/SaggeseRMM04.bib)
 
 ### A Web Services Based Architecture for Digital Time Stamping (2004)
 
@@ -125,7 +137,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Journal of Web Engineering, vol. 2, no. 3, pp. 148-175, 2004
 
-**Links:** [URL](http://www.rintonpress.com/xjwe1/jwe-2-3/148-175.pdf) | [PDF](https://static.aminer.org/pdf/PDF/001/003/193/a_web_services_based_architecture_for_digital_time_stamping.pdf) | [DBLP](https://dblp.org/rec/journals/jwe/CilardoMRSC04.bib)
+**Links:** [PDF](papers/A_Web_Services_Based_Architecture_for_Digital_Time_Stamping.pdf) | [URL](http://www.rintonpress.com/xjwe1/jwe-2-3/148-175.pdf) | [AMiner](https://static.aminer.org/pdf/PDF/001/003/193/a_web_services_based_architecture_for_digital_time_stamping.pdf) | [DBLP](https://dblp.org/rec/journals/jwe/CilardoMRSC04.bib)
 
 ### Exploring the Design-Space for FPGA-Based Implementation of RSA (2004)
 
@@ -133,7 +145,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Microprocessors and Microsystems, vol. 28, no. 4, pp. 183-191, 2004
 
-**Links:** [DOI](https://doi.org/10.1016/j.micpro.2004.03.009) | [DBLP](https://dblp.org/rec/journals/mam/CilardoMRS04.bib)
+**Links:** [PDF](papers/Exploring_the_design-space_for_FPGA-based_implementation_of_RSA.pdf) | [DOI](https://doi.org/10.1016/j.micpro.2004.03.009) | [DBLP](https://dblp.org/rec/journals/mam/CilardoMRS04.bib)
 
 **Note:** ScienceDirect (paywalled)
 
@@ -143,7 +155,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** 2004 Design, Automation and Test in Europe Conference and Exposition (DATE 2004), Paris, France, pp. 206-211, 2004
 
-**Links:** [DOI](https://doi.org/10.1109/DATE.2004.1269231) | [PDF](https://static.aminer.org/pdf/PDF/000/141/620/carry_save_montgomery_modular_exponentiation_on_reconfigurable_hardware.pdf) | [DBLP](https://dblp.org/rec/conf/date/CilardoMRS04.bib)
+**Links:** [PDF](papers/Carry-save_Montgomery_modular_exponentiation_on_reconfigurable_hardware.pdf) | [DOI](https://doi.org/10.1109/DATE.2004.1269231) | [AMiner](https://static.aminer.org/pdf/PDF/000/141/620/carry_save_montgomery_modular_exponentiation_on_reconfigurable_hardware.pdf) | [DBLP](https://dblp.org/rec/conf/date/CilardoMRS04.bib)
 
 ### Using Programmable Hardware to Improve the Dependability of Cryptographic Applications (2003)
 
@@ -151,7 +163,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** PhD Thesis, University of Naples Federico II, Italy, 2003
 
-**Links:** [URL](https://opac.bncf.firenze.sbn.it/bncf-prod/resource?uri=BNI0011112) | [DBLP](https://dblp.org/rec/phd/it/Saggese03.bib)
+**Links:** [PDF](papers/Using_Programmable_Hardware_to_Improve_the_Dependability_of_Cryptographic_Applications.pdf) | [URL](https://opac.bncf.firenze.sbn.it/bncf-prod/resource?uri=BNI0011112) | [DBLP](https://dblp.org/rec/phd/it/Saggese03.bib)
 
 ### FPGA-Based Implementation of a Serial RSA Processor (2003)
 
@@ -159,7 +171,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** 2003 Design, Automation and Test in Europe Conference and Exposition (DATE 2003), Munich, Germany, pp. 10582-10589, 2003
 
-**Links:** [DOI](https://doi.org/10.1109/DATE.2003.10188) | [DBLP](https://dblp.org/rec/conf/date/MazzeoRSM03.bib)
+**Links:** [PDF](papers/FPGA-based_implementation_of_a_serial_RSA_processor.pdf) | [DOI](https://doi.org/10.1109/DATE.2003.10188) | [DBLP](https://dblp.org/rec/conf/date/MazzeoRSM03.bib)
 
 ### An FPGA-Based Performance Analysis of the Unrolling, Tiling, and Pipelining of the AES Algorithm (2003)
 
@@ -167,7 +179,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Field Programmable Logic and Application (FPL 2003), Lisbon, Portugal, Lecture Notes in Computer Science, vol. 2778, pp. 292-302, Springer, 2003
 
-**Links:** [DOI](https://doi.org/10.1007/978-3-540-45234-8_29) | [DBLP](https://dblp.org/rec/conf/fpl/SaggeseMMS03.bib)
+**Links:** [PDF](papers/An_FPGA-Based_Performance_Analysis_of_the_Unrolling,_Tiling,_and_Pipelining_of_the_AES_Algorithm.pdf) | [DOI](https://doi.org/10.1007/978-3-540-45234-8_29) | [DBLP](https://dblp.org/rec/conf/fpl/SaggeseMMS03.bib)
 
 **Note:** Springer (paywalled). See also Semantic Scholar
 
@@ -177,7 +189,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** On The Move to Meaningful Internet Systems 2003: OTM 2003 Workshops, Catania, Sicily, Italy, Lecture Notes in Computer Science, vol. 2889, pp. 960-974, Springer, 2003
 
-**Links:** [DOI](https://doi.org/10.1007/978-3-540-39962-9_93) | [DBLP](https://dblp.org/rec/conf/otm/CilardoMRSC03.bib)
+**Links:** [PDF](papers/Using_Web_Services_Technology_for_Inter-enterprise_Integration_of_Digital_Time_Stamping.pdf) | [DOI](https://doi.org/10.1007/978-3-540-39962-9_93) | [DBLP](https://dblp.org/rec/conf/otm/CilardoMRSC03.bib)
 
 ### Providing Digital Time Stamping Services to Mobile Devices (2003)
 
@@ -185,13 +197,15 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** 9th IEEE International Workshop on Object-Oriented Real-Time Dependable Systems (WORDS Fall 2003), Anacapri (Capri Island), Italy, pp. 94-100, 2003
 
-**Links:** [DOI](https://doi.org/10.1109/WORDS.2003.1267495) | [DBLP](https://dblp.org/rec/conf/words/CotroneoFMRRS03.bib)
+**Links:** [PDF](papers/Providing_Digital_Time_Stamping_Services_to_Mobile_Devices.pdf) | [DOI](https://doi.org/10.1109/WORDS.2003.1267495) | [DBLP](https://dblp.org/rec/conf/words/CotroneoFMRRS03.bib)
 
 ### Providing Interoperable Time Stamping Services (2003)
 
 **Authors:** A. Mazzeo, L. Romano, G.P. Saggese
 
 **Publication:** Scuola Superiore, 2003
+
+**Links:** [PDF](papers/Providing_Interoperable_Time_Stamping_Services.pdf)
 
 ## Computer Design Publications
 *Fault Tolerance, Computer Arithmetic, FPGA Design, Microprocessor Architecture*
@@ -202,7 +216,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** IEEE Transactions on Circuits and Systems I: Regular Papers, vol. 69, no. 1, pp. 297-308, 2022
 
-**Links:** [DOI](https://doi.org/10.1109/TCSI.2021.3088913) | [DBLP](https://dblp.org/rec/journals/tcasI/MeoCSNPS22.bib)
+**Links:** [PDF](papers/A_Novel_Module-Sign_Low-Power_Implementation_for_the_DLMS_Adaptive_Filter.pdf) | [DOI](https://doi.org/10.1109/TCSI.2021.3088913) | [DBLP](https://dblp.org/rec/journals/tcasI/MeoCSNPS22.bib)
 
 **Note:** PDF not freely available
 
@@ -212,7 +226,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** IEEE Transactions on Circuits and Systems I: Regular Papers, vol. 69, no. 6, pp. 2449-2462, 2022
 
-**Links:** [DOI](https://doi.org/10.1109/TCSI.2022.3152921) | [PDF](https://ieeexplore.ieee.org/iel7/8919/9782465/09726786.pdf) | [DBLP](https://dblp.org/rec/journals/tcasI/StrolloNCPSM22.bib)
+**Links:** [PDF](papers/Approximate_Multipliers_Using_Static_Segmentation_Error_Analysis_and_Improvements.pdf) | [DOI](https://doi.org/10.1109/TCSI.2022.3152921) | [IEEE](https://ieeexplore.ieee.org/iel7/8919/9782465/09726786.pdf) | [DBLP](https://dblp.org/rec/journals/tcasI/StrolloNCPSM22.bib)
 
 ### Automated Derivation of Application-Specific Error Detectors Using Dynamic Analysis (2011)
 
@@ -220,7 +234,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** IEEE Transactions on Dependable and Secure Computing, vol. 8, no. 5, pp. 640-655, 2011
 
-**Links:** [DOI](https://doi.org/10.1109/TDSC.2010.19) | [PDF](https://www.researchgate.net/publication/220068507_Automated_Derivation_of_Application-Specific_Error_Detectors_Using_Dynamic_Analysis) | [DBLP](https://dblp.org/rec/journals/tdsc/PattabiramanSCKI11.bib)
+**Links:** [PDF](papers/Automated_Derivation_of_Application-Specific_Error_Detectors_Using_Dynamic_Analysis.pdf) | [DOI](https://doi.org/10.1109/TDSC.2010.19) | [ResearchGate](https://www.researchgate.net/publication/220068507_Automated_Derivation_of_Application-Specific_Error_Detectors_Using_Dynamic_Analysis) | [DBLP](https://dblp.org/rec/journals/tdsc/PattabiramanSCKI11.bib)
 
 ### Dynamic Derivation of Application-Specific Error Detectors and their Implementation in Hardware (2006)
 
@@ -228,7 +242,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Sixth European Dependable Computing Conference (EDCC 2006), Coimbra, Portugal, pp. 97-108, 2006
 
-**Links:** [DOI](https://doi.org/10.1109/EDCC.2006.9) | [PDF](https://tcipg.org/sites/default/files/papers/2006_Pattabiraman_et_al.pdf) | [DBLP](https://dblp.org/rec/conf/edcc/PattabiramanSCKI06.bib)
+**Links:** [PDF](papers/Dynamic_Derivation_of_Application-Specific_Error_Detectors_and_their_Implementation_in_Hardware.pdf) | [DOI](https://doi.org/10.1109/EDCC.2006.9) | [TCIPG](https://tcipg.org/sites/default/files/papers/2006_Pattabiraman_et_al.pdf) | [DBLP](https://dblp.org/rec/conf/edcc/PattabiramanSCKI06.bib)
 
 ### An Experimental Study of Soft Errors in Microprocessors (2005)
 
@@ -236,7 +250,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** IEEE Micro, vol. 25, no. 6, pp. 30-39, 2005
 
-**Links:** [DOI](https://doi.org/10.1109/MM.2005.104) | [PDF](https://www.researchgate.net/publication/220291001_An_Experimental_Study_of_Soft_Errors_in_Microprocessors) | [DBLP](https://dblp.org/rec/journals/micro/SaggeseWKPI05.bib)
+**Links:** [PDF](papers/An_experimental_study_of_soft_errors_in_microprocessors.pdf) | [DOI](https://doi.org/10.1109/MM.2005.104) | [ResearchGate](https://www.researchgate.net/publication/220291001_An_Experimental_Study_of_Soft_Errors_in_Microprocessors) | [DBLP](https://dblp.org/rec/journals/micro/SaggeseWKPI05.bib)
 
 ### Microprocessor Sensitivity to Failures: Control vs Execution and Combinational vs Sequential Logic (2005)
 
@@ -244,7 +258,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** 2005 International Conference on Dependable Systems and Networks (DSN 2005), Yokohama, Japan, pp. 760-769, 2005
 
-**Links:** [DOI](https://doi.org/10.1109/DSN.2005.63) | [DBLP](https://dblp.org/rec/conf/dsn/SaggeseVKI05.bib)
+**Links:** [PDF](papers/Microprocessor_sensitivity_to_failures_control_vs._execution_and_combinational_vs._sequential_logic.pdf) | [DOI](https://doi.org/10.1109/DSN.2005.63) | [DBLP](https://dblp.org/rec/conf/dsn/SaggeseVKI05.bib)
 
 ### An Architectural Framework for Detecting Process Hangs/Crashes (2005)
 
@@ -252,7 +266,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Dependable Computing - EDCC-5, Budapest, Hungary, Lecture Notes in Computer Science, vol. 3463, pp. 103-121, Springer, 2005
 
-**Links:** [DOI](https://doi.org/10.1007/11408901_8) | [PDF](http://www.crhc.uiuc.edu/~nakka/HCDetect.pdf) | [DBLP](https://dblp.org/rec/conf/edcc/NakkaSKI05.bib)
+**Links:** [PDF](papers/An_Architectural_Framework_for_Detecting_Process_Hangs-Crashes.pdf) | [DOI](https://doi.org/10.1007/11408901_8) | [UIUC](http://www.crhc.uiuc.edu/~nakka/HCDetect.pdf) | [DBLP](https://dblp.org/rec/conf/edcc/NakkaSKI05.bib)
 
 ### Architecture and FPGA Implementation of a Digit-serial RSA Processor (2005)
 
@@ -260,13 +274,15 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** New Algorithms, Architectures and Applications for Reconfigurable Computing, pp. 209-218, Springer, 2005
 
+**Links:** [PDF](papers/Architecture_and_FPGA_Implementation_of_a_Digit-serial_RSA_Processor.pdf)
+
 ### Hardware Support for High Performance, Intrusion- and Fault-Tolerant Systems (2004)
 
 **Authors:** G.P. Saggese, C. Basile, L. Romano, Z. Kalbarczyk, R.K. Iyer
 
 **Publication:** 23rd International Symposium on Reliable Distributed Systems (SRDS 2004), Florianópolis, Brazil, pp. 195-204, 2004
 
-**Links:** [DOI](https://doi.org/10.1109/RELDIS.2004.1353020) | [DBLP](https://dblp.org/rec/conf/srds/SaggeseBRKI04.bib)
+**Links:** [PDF](papers/Hardware_support_for_high_performance_intrusion-_and_fault-tolerant_systems.pdf) | [DOI](https://doi.org/10.1109/RELDIS.2004.1353020) | [DBLP](https://dblp.org/rec/conf/srds/SaggeseBRKI04.bib)
 
 ### A Technique for FPGA Synthesis Driven by Automatic Source Code Analysis and Transformations (2002)
 
@@ -274,7 +290,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Field-Programmable Logic and Applications (FPL 2002), Montpellier, France, Lecture Notes in Computer Science, vol. 2438, pp. 47-58, Springer, 2002
 
-**Links:** [DOI](https://doi.org/10.1007/3-540-46117-5_7) | [DBLP](https://dblp.org/rec/conf/fpl/MartinoMSS02.bib)
+**Links:** [PDF](papers/A_Technique_for_FPGA_Synthesis_Driven_by_Automatic_Source_Code_Analysis_and_Transformations.pdf) | [DOI](https://doi.org/10.1007/3-540-46117-5_7) | [DBLP](https://dblp.org/rec/conf/fpl/MartinoMSS02.bib)
 
 ### Shuffled Serial Adder: An Area-Latency Effective Serial Adder (2002)
 
@@ -282,7 +298,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Proceedings of the 2002 9th IEEE International Conference on Electronics, Circuits and Systems (ICECS 2002), Dubrovnik, Croatia, pp. 607-610, 2002
 
-**Links:** [DOI](https://doi.org/10.1109/ICECS.2002.1046242) | [DBLP](https://dblp.org/rec/conf/icecsys/SaggeseSMC02.bib)
+**Links:** [PDF](papers/Shuffled_serial_adder_an_area-latency_effective_serial_adder.pdf) | [DOI](https://doi.org/10.1109/ICECS.2002.1046242) | [DBLP](https://dblp.org/rec/conf/icecsys/SaggeseSMC02.bib)
 
 ### A Reconfigurable 2D Convolver for Real-Time SAR Imaging (2001)
 
@@ -290,7 +306,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Proceedings of the 2001 8th IEEE International Conference on Electronics, Circuits and Systems (ICECS 2001), Malta, pp. 741-744, 2001
 
-**Links:** [DOI](https://doi.org/10.1109/ICECS.2001.957581) | [DBLP](https://dblp.org/rec/conf/icecsys/StrolloNCS01.bib)
+**Links:** [PDF](papers/A_reconfigurable_2D_convolver_for_real-time_SAR_imaging.pdf) | [DOI](https://doi.org/10.1109/ICECS.2001.957581) | [DBLP](https://dblp.org/rec/conf/icecsys/StrolloNCS01.bib)
 
 ### Test Pattern Generator for Hybrid Testing of Combinational Circuits (2001)
 
@@ -298,4 +314,4 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Proceedings of the 2001 8th IEEE International Conference on Electronics, Circuits and Systems (ICECS 2001), Malta, pp. 745-748, 2001
 
-**Links:** [DOI](https://doi.org/10.1109/ICECS.2001.957582) | [DBLP](https://dblp.org/rec/conf/icecsys/CaroMNSS01.bib)
+**Links:** [PDF](papers/Test_pattern_generator_for_hybrid_testing_of_combinational_circuits.pdf) | [DOI](https://doi.org/10.1109/ICECS.2001.957582) | [DBLP](https://dblp.org/rec/conf/icecsys/CaroMNSS01.bib)

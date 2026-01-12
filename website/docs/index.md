@@ -1,7 +1,24 @@
 # Giacinto Paolo (GP) Saggese, PhD
 
-- CTO & Co-Founder @ Causify.AI
+- Co-Founder & CTO @ Causify.AI
+- 3x Startup Founder
+- Ex NVIDIA, Synopsys, Many hedge funds
 - Adjunct Professor, Computer Science @ University of Maryland, College Park
+
+## Photos
+
+<div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+  <div style="text-align: center;">
+    <h3>GP circa 2012</h3>
+    <img src="images/gp-saggese-2012.png" alt="GP Saggese circa 2012" style="max-width: 300px; width: 100%;">
+  </div>
+  <div style="text-align: center;">
+    <h3>GP circa 2022</h3>
+    <img src="images/gp-saggese-2022.png" alt="GP Saggese circa 2022" style="max-width: 300px; width: 100%;">
+  </div>
+</div>
+
+*Source: [UMD CMNS Faculty Profile](https://cmns.umd.edu/people/giacinto-paolo-saggese)*
 
 ## Contact Information
 
@@ -28,18 +45,3 @@
 
 - **English:** Native or bilingual proficiency
 - **Italian:** Mother tongue
-
-## Photos
-
-<div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-  <div style="text-align: center;">
-    <h3>GP circa 2012</h3>
-    <img src="images/gp-saggese-2012.png" alt="GP Saggese circa 2012" style="max-width: 300px; width: 100%;">
-  </div>
-  <div style="text-align: center;">
-    <h3>GP circa 2022</h3>
-    <img src="images/gp-saggese-2022.png" alt="GP Saggese circa 2022" style="max-width: 300px; width: 100%;">
-  </div>
-</div>
-
-*Source: [UMD CMNS Faculty Profile](https://cmns.umd.edu/people/giacinto-paolo-saggese)*

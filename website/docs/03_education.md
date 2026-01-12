@@ -20,16 +20,8 @@
     - [DBLP](https://dblp.uni-trier.de/pers/hd/s/Saggese:Giacinto_Paolo)
     - [Google Scholar](https://scholar.google.com/scholar?hl=en&as_sdt=0%2C21&q=gp+saggese&btnG=)
     - [ResearchGate](https://www.researchgate.net/scientific-contributions/70377865_GP_Saggese)  
-- Granted US Patents
-    - [US 8,156,457](https://patents.google.com/patent/US8156457B2/en) -
-        "Concurrent simulation of hardware designs with behavioral characteristics"
-    - [US 8,738,350](https://patents.google.com/patent/US8738350B2/en) - "Mixed
-        concurrent and serial logic simulation of hardware designs"
-- Pending US Patents
-  - SYSTEMS AND METHODS FOR CASUAL FAILURE PREDICTION IN TIME SERIES (U.S. Patent Application No. 63/934,790)
-  - COMPUTATIONAL SYSTEMS AND METHODS FOR TIME SERIES DATA PROCESSING (No. 450374-000030)
-
-- O1 Visa recipient (extraordinary ability in sciences)  
+- 4 Patents
+- O1 Visa recipient for extraordinary ability in sciences
 - Under-18 Italian national swimming finalist (twice)
 
 ## Technical Skills

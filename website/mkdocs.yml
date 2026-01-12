@@ -35,6 +35,7 @@ theme:
     - search.suggest
     - search.highlight
     - content.code.copy
+    - toc.integrate
   font:
     text: Roboto
     code: Roboto Mono

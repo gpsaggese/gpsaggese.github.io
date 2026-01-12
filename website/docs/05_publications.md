@@ -1,9 +1,5 @@
 # Publications
 
-## BibTeX
-
-- **BibTeX File:** All publications are available in BibTeX format in [gp_publications.bib](gp_publications.bib)
-
 ## Books
 - [Big Data Systems](https://github.com/gpsaggese/umd_classes/blob/master/data605/book/book.pdf)
 - [Advanced Machine Learning](https://github.com/gpsaggese/umd_classes/blob/master/msml610/book/book.pdf)
@@ -12,7 +8,21 @@
 - [Causify Blog](https://blog.causify.ai)
 - [Causify Substack](https://causifyai.substack.com)
 
+## Patents
+
+- Granted US Patents
+    - [US 8,156,457](https://patents.google.com/patent/US8156457B2/en) -
+        "Concurrent simulation of hardware designs with behavioral characteristics"
+    - [US 8,738,350](https://patents.google.com/patent/US8738350B2/en) - "Mixed
+        concurrent and serial logic simulation of hardware designs"
+- Pending US Patents
+    - "Systems and Methods for Causal Failure Prediction in Time Series" (U.S.
+        Patent Application No. 63/934,790)
+    - "Computational Systems and Methods for Time Series Data Processing" (U.S.
+        Patent Application No. 450374-000030)
+
 ## Papers
+
 ### 2025
 
 - K. Taduri, S. Dhande, G.P. Saggese, P. Smith, _Causify Benchmark: A Benchmark of Causal AI for Predictive Maintenance_, arXiv preprint arXiv:2512.01149, 2025
@@ -84,3 +94,7 @@
 - A.G.M. Strollo, E. Napoli, D. De Caro, G.P. Saggese, _A Reconfigurable 2D Convolver for Real-Time SAR Imaging_, Proceedings of the 2001 8th IEEE International Conference on Electronics, Circuits and Systems (ICECS 2001), Malta, pp. 741-744, 2001
 
 - D. De Caro, N. Mazzocca, E. Napoli, G.P. Saggese, A.G.M. Strollo, _Test Pattern Generator for Hybrid Testing of Combinational Circuits_, Proceedings of the 2001 8th IEEE International Conference on Electronics, Circuits and Systems (ICECS 2001), Malta, pp. 745-748, 2001
+
+## BibTeX
+
+- **BibTeX File:** All publications are available in BibTeX format in [gp_publications.bib](gp_publications.bib)
