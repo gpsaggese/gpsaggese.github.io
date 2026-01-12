@@ -35,7 +35,7 @@ FPGA-based architectures for high-performance applications.
 
 **Publication:** arXiv preprint arXiv:2512.01149, 2025
 
-**Links:** [PDF](papers/Causify_Benchmark_A_Benchmark_of_Causal_AI_for_Predictive_Maintenance.pdf) | [arXiv](https://arxiv.org/abs/2512.01149)
+**Links:** [arXiv](https://arxiv.org/abs/2512.01149)
 
 Comprehensive benchmark comparing Bayesian structural causal models against
 correlation-based ML for predictive maintenance on 10,000 CNC machines. Causal AI
@@ -49,8 +49,6 @@ root-cause explanations.
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
 
-**Links:** [PDF](papers/Causify_DataMap_Causal_Probabilistic_Reasoning.pdf)
-
 Automated system for generating causal probabilistic models by integrating
 knowledge graphs, LLMs, and Bayesian inference. Converts unstructured knowledge
 into executable models for reasoning and decision-making under uncertainty, with
@@ -61,8 +59,6 @@ applications to predictive maintenance.
 **Authors:** G.P. Saggese, P. Smith
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
-
-**Links:** [PDF](papers/Causify_DataFlow_A_Causal_Model_Simulator.pdf)
 
 Computational framework for simulating causal models with time-series data using
 DAG-based architecture with knowledge-time semantics. Guarantees temporal
@@ -75,8 +71,6 @@ execution from research through production deployment.
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
 
-**Links:** [PDF](papers/Causify_DataPull_A_Causal_Data_Layer.pdf)
-
 Bitemporal data layer preserving both event time and knowledge time for
 time-series data. Ensures causal models only use information available at
 decision time, with integrated QA and automatic cleaning for reliable causal
@@ -87,8 +81,6 @@ analysis.
 **Authors:** C. Ma, S. Nikiforova, G.P. Saggese, P. Smith, K. Taduri
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
-
-**Links:** [PDF](papers/Causify_Sentinel_A_Causal_Failure_Prediction_Framework.pdf)
 
 Causal failure prediction framework achieving 100% recall on wind turbine bearing
 failures with weeks-to-months early warning. Combines physics-informed models
@@ -101,8 +93,6 @@ forecasting for remaining useful life prediction.
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
 
-**Links:** [PDF](papers/Causify_Grid_Causal_Inference_in_Energy_Demand_Prediction.pdf)
-
 Causal inference for energy demand prediction achieving 12.5% MAPE improvement
 over non-causal baseline. Demonstrates 47.8% coefficient bias reduction through
 backdoor criterion adjustment, with full Bayesian treatment using Pyro for
@@ -113,8 +103,6 @@ calibrated uncertainty quantification.
 **Authors:** C. Ma, G. Pomazkin, G.P. Saggese, P. Smith, D. Tikhomirov, N. Trubacheva
 
 **Publication:** Manuscript to be submitted to arXiv, 2025
-
-**Links:** [PDF](papers/Causify_Horizon_A_Causal_Demand_Forecasting_Framework.pdf)
 
 Causal demand forecasting framework integrating knowledge graphs with state-space
 models for supply chain optimization. Combines LLM-assisted knowledge graph
@@ -137,7 +125,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Journal of Web Engineering, vol. 2, no. 3, pp. 148-175, 2004
 
-**Links:** [PDF](papers/A_Web_Services_Based_Architecture_for_Digital_Time_Stamping.pdf) | [URL](http://www.rintonpress.com/xjwe1/jwe-2-3/148-175.pdf) | [AMiner](https://static.aminer.org/pdf/PDF/001/003/193/a_web_services_based_architecture_for_digital_time_stamping.pdf) | [DBLP](https://dblp.org/rec/journals/jwe/CilardoMRSC04.bib)
+**Links:** [URL](http://www.rintonpress.com/xjwe1/jwe-2-3/148-175.pdf) | [AMiner](https://static.aminer.org/pdf/PDF/001/003/193/a_web_services_based_architecture_for_digital_time_stamping.pdf) | [DBLP](https://dblp.org/rec/journals/jwe/CilardoMRSC04.bib)
 
 ### Exploring the Design-Space for FPGA-Based Implementation of RSA (2004)
 
@@ -163,7 +151,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** PhD Thesis, University of Naples Federico II, Italy, 2003
 
-**Links:** [PDF](papers/Using_Programmable_Hardware_to_Improve_the_Dependability_of_Cryptographic_Applications.pdf) | [URL](https://opac.bncf.firenze.sbn.it/bncf-prod/resource?uri=BNI0011112) | [DBLP](https://dblp.org/rec/phd/it/Saggese03.bib)
+**Links:** [URL](https://opac.bncf.firenze.sbn.it/bncf-prod/resource?uri=BNI0011112) | [DBLP](https://dblp.org/rec/phd/it/Saggese03.bib)
 
 ### FPGA-Based Implementation of a Serial RSA Processor (2003)
 
@@ -197,7 +185,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** 9th IEEE International Workshop on Object-Oriented Real-Time Dependable Systems (WORDS Fall 2003), Anacapri (Capri Island), Italy, pp. 94-100, 2003
 
-**Links:** [PDF](papers/Providing_Digital_Time_Stamping_Services_to_Mobile_Devices.pdf) | [DOI](https://doi.org/10.1109/WORDS.2003.1267495) | [DBLP](https://dblp.org/rec/conf/words/CotroneoFMRRS03.bib)
+**Links:** [DOI](https://doi.org/10.1109/WORDS.2003.1267495) | [DBLP](https://dblp.org/rec/conf/words/CotroneoFMRRS03.bib)
 
 ### Providing Interoperable Time Stamping Services (2003)
 
@@ -205,28 +193,10 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Scuola Superiore, 2003
 
-**Links:** [PDF](papers/Providing_Interoperable_Time_Stamping_Services.pdf)
+**Note:** PDF not available online
 
 ## Computer Design Publications
 *Fault Tolerance, Computer Arithmetic, FPGA Design, Microprocessor Architecture*
-
-### A Novel Module-Sign Low-Power Implementation for the DLMS Adaptive Filter With Low Steady-State Error (2022)
-
-**Authors:** G. Di Meo, D. De Caro, G.P. Saggese, E. Napoli, N. Petra, A.G.M. Strollo
-
-**Publication:** IEEE Transactions on Circuits and Systems I: Regular Papers, vol. 69, no. 1, pp. 297-308, 2022
-
-**Links:** [PDF](papers/A_Novel_Module-Sign_Low-Power_Implementation_for_the_DLMS_Adaptive_Filter.pdf) | [DOI](https://doi.org/10.1109/TCSI.2021.3088913) | [DBLP](https://dblp.org/rec/journals/tcasI/MeoCSNPS22.bib)
-
-**Note:** PDF not freely available
-
-### Approximate Multipliers Using Static Segmentation: Error Analysis and Improvements (2022)
-
-**Authors:** A.G.M. Strollo, E. Napoli, D. De Caro, N. Petra, G.P. Saggese, G. Di Meo
-
-**Publication:** IEEE Transactions on Circuits and Systems I: Regular Papers, vol. 69, no. 6, pp. 2449-2462, 2022
-
-**Links:** [PDF](papers/Approximate_Multipliers_Using_Static_Segmentation_Error_Analysis_and_Improvements.pdf) | [DOI](https://doi.org/10.1109/TCSI.2022.3152921) | [IEEE](https://ieeexplore.ieee.org/iel7/8919/9782465/09726786.pdf) | [DBLP](https://dblp.org/rec/journals/tcasI/StrolloNCPSM22.bib)
 
 ### Automated Derivation of Application-Specific Error Detectors Using Dynamic Analysis (2011)
 
