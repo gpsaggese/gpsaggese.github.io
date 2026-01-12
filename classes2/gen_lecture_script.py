@@ -93,7 +93,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
     # Step 1: Generate script.
     _LOG.info("Step 1: Generating script using generate_slide_script.py")
     cmd_parts = [
-        "uv run generate_slide_script.py",
+        "generate_slide_script.py",
         f"--in_file {input_file}",
         f"--out_file {output_file}",
         "--slides_per_group 3",
