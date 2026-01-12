@@ -42,3 +42,8 @@
 [data-md-color-scheme="default"] .md-typeset a {
     color: #1976d2 !important;
 }
+
+/* Hide generator footer */
+.md-footer-meta__inner {
+    display: none !important;
+}
