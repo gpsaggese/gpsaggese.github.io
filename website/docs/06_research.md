@@ -35,7 +35,6 @@ FPGA-based architectures for high-performance applications.
 
 **Publication:** arXiv preprint arXiv:2512.01149, 2025
 
-**Links:** [arXiv](https://arxiv.org/abs/2512.01149)
 
 Comprehensive benchmark comparing Bayesian structural causal models against
 correlation-based ML for predictive maintenance on 10,000 CNC machines. Causal AI
@@ -117,7 +116,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Journal of Systems Architecture, vol. 50, no. 12, pp. 711-727, 2004
 
-**Links:** [PDF](papers/A_tamper_resistant_hardware_accelerator_for_RSA_cryptographic_applications_q.pdf) | [DOI](https://doi.org/10.1016/j.sysarc.2004.04.002) | [ResearchGate](https://www.researchgate.net/publication/223251907_A_tamper_resistant_hardware_accelerator_for_RSA_cryptographic_applications) | [DBLP](https://dblp.org/rec/journals/jsa/SaggeseRMM04.bib)
+**Links:** [PDF](papers/A_tamper_resistant_hardware_accelerator_for_RSA_cryptographic_applications_q.pdf) | [DOI](https://doi.org/10.1016/j.sysarc.2004.04.002) | [DBLP](https://dblp.org/rec/journals/jsa/SaggeseRMM04.bib)
 
 ### A Web Services Based Architecture for Digital Time Stamping (2004)
 
@@ -125,7 +124,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Journal of Web Engineering, vol. 2, no. 3, pp. 148-175, 2004
 
-**Links:** [URL](http://www.rintonpress.com/xjwe1/jwe-2-3/148-175.pdf) | [AMiner](https://static.aminer.org/pdf/PDF/001/003/193/a_web_services_based_architecture_for_digital_time_stamping.pdf) | [DBLP](https://dblp.org/rec/journals/jwe/CilardoMRSC04.bib)
+**Links:** [DBLP](https://dblp.org/rec/journals/jwe/CilardoMRSC04.bib)
 
 ### Exploring the Design-Space for FPGA-Based Implementation of RSA (2004)
 
@@ -135,15 +134,13 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Links:** [PDF](papers/Exploring_the_design-space_for_FPGA-based_implementation_of_RSA.pdf) | [DOI](https://doi.org/10.1016/j.micpro.2004.03.009) | [DBLP](https://dblp.org/rec/journals/mam/CilardoMRS04.bib)
 
-**Note:** ScienceDirect (paywalled)
-
 ### Carry-Save Montgomery Modular Exponentiation on Reconfigurable Hardware (2004)
 
 **Authors:** A. Cilardo, A. Mazzeo, L. Romano, G.P. Saggese
 
 **Publication:** 2004 Design, Automation and Test in Europe Conference and Exposition (DATE 2004), Paris, France, pp. 206-211, 2004
 
-**Links:** [PDF](papers/Carry-save_Montgomery_modular_exponentiation_on_reconfigurable_hardware.pdf) | [DOI](https://doi.org/10.1109/DATE.2004.1269231) | [AMiner](https://static.aminer.org/pdf/PDF/000/141/620/carry_save_montgomery_modular_exponentiation_on_reconfigurable_hardware.pdf) | [DBLP](https://dblp.org/rec/conf/date/CilardoMRS04.bib)
+**Links:** [PDF](papers/Carry-save_Montgomery_modular_exponentiation_on_reconfigurable_hardware.pdf) | [DOI](https://doi.org/10.1109/DATE.2004.1269231) | [DBLP](https://dblp.org/rec/conf/date/CilardoMRS04.bib)
 
 ### Using Programmable Hardware to Improve the Dependability of Cryptographic Applications (2003)
 
@@ -151,7 +148,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** PhD Thesis, University of Naples Federico II, Italy, 2003
 
-**Links:** [URL](https://opac.bncf.firenze.sbn.it/bncf-prod/resource?uri=BNI0011112) | [DBLP](https://dblp.org/rec/phd/it/Saggese03.bib)
+**Links:** [DBLP](https://dblp.org/rec/phd/it/Saggese03.bib)
 
 ### FPGA-Based Implementation of a Serial RSA Processor (2003)
 
@@ -168,8 +165,6 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 **Publication:** Field Programmable Logic and Application (FPL 2003), Lisbon, Portugal, Lecture Notes in Computer Science, vol. 2778, pp. 292-302, Springer, 2003
 
 **Links:** [PDF](papers/An_FPGA-Based_Performance_Analysis_of_the_Unrolling,_Tiling,_and_Pipelining_of_the_AES_Algorithm.pdf) | [DOI](https://doi.org/10.1007/978-3-540-45234-8_29) | [DBLP](https://dblp.org/rec/conf/fpl/SaggeseMMS03.bib)
-
-**Note:** Springer (paywalled). See also Semantic Scholar
 
 ### Using Web Services Technology for Inter-enterprise Integration of Digital Time Stamping (2003)
 
@@ -204,7 +199,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** IEEE Transactions on Dependable and Secure Computing, vol. 8, no. 5, pp. 640-655, 2011
 
-**Links:** [PDF](papers/Automated_Derivation_of_Application-Specific_Error_Detectors_Using_Dynamic_Analysis.pdf) | [DOI](https://doi.org/10.1109/TDSC.2010.19) | [ResearchGate](https://www.researchgate.net/publication/220068507_Automated_Derivation_of_Application-Specific_Error_Detectors_Using_Dynamic_Analysis) | [DBLP](https://dblp.org/rec/journals/tdsc/PattabiramanSCKI11.bib)
+**Links:** [PDF](papers/Automated_Derivation_of_Application-Specific_Error_Detectors_Using_Dynamic_Analysis.pdf) | [DOI](https://doi.org/10.1109/TDSC.2010.19) | [DBLP](https://dblp.org/rec/journals/tdsc/PattabiramanSCKI11.bib)
 
 ### Dynamic Derivation of Application-Specific Error Detectors and their Implementation in Hardware (2006)
 
@@ -212,7 +207,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Sixth European Dependable Computing Conference (EDCC 2006), Coimbra, Portugal, pp. 97-108, 2006
 
-**Links:** [PDF](papers/Dynamic_Derivation_of_Application-Specific_Error_Detectors_and_their_Implementation_in_Hardware.pdf) | [DOI](https://doi.org/10.1109/EDCC.2006.9) | [TCIPG](https://tcipg.org/sites/default/files/papers/2006_Pattabiraman_et_al.pdf) | [DBLP](https://dblp.org/rec/conf/edcc/PattabiramanSCKI06.bib)
+**Links:** [PDF](papers/Dynamic_Derivation_of_Application-Specific_Error_Detectors_and_their_Implementation_in_Hardware.pdf) | [DOI](https://doi.org/10.1109/EDCC.2006.9) | [DBLP](https://dblp.org/rec/conf/edcc/PattabiramanSCKI06.bib)
 
 ### An Experimental Study of Soft Errors in Microprocessors (2005)
 
@@ -220,7 +215,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** IEEE Micro, vol. 25, no. 6, pp. 30-39, 2005
 
-**Links:** [PDF](papers/An_experimental_study_of_soft_errors_in_microprocessors.pdf) | [DOI](https://doi.org/10.1109/MM.2005.104) | [ResearchGate](https://www.researchgate.net/publication/220291001_An_Experimental_Study_of_Soft_Errors_in_Microprocessors) | [DBLP](https://dblp.org/rec/journals/micro/SaggeseWKPI05.bib)
+**Links:** [PDF](papers/An_experimental_study_of_soft_errors_in_microprocessors.pdf) | [DOI](https://doi.org/10.1109/MM.2005.104) | [DBLP](https://dblp.org/rec/journals/micro/SaggeseWKPI05.bib)
 
 ### Microprocessor Sensitivity to Failures: Control vs Execution and Combinational vs Sequential Logic (2005)
 
@@ -236,7 +231,7 @@ with calibrated uncertainty quantification for risk-aware inventory planning.
 
 **Publication:** Dependable Computing - EDCC-5, Budapest, Hungary, Lecture Notes in Computer Science, vol. 3463, pp. 103-121, Springer, 2005
 
-**Links:** [PDF](papers/An_Architectural_Framework_for_Detecting_Process_Hangs-Crashes.pdf) | [DOI](https://doi.org/10.1007/11408901_8) | [UIUC](http://www.crhc.uiuc.edu/~nakka/HCDetect.pdf) | [DBLP](https://dblp.org/rec/conf/edcc/NakkaSKI05.bib)
+**Links:** [PDF](papers/An_Architectural_Framework_for_Detecting_Process_Hangs-Crashes.pdf) | [DOI](https://doi.org/10.1007/11408901_8) | [DBLP](https://dblp.org/rec/conf/edcc/NakkaSKI05.bib)
 
 ### Architecture and FPGA Implementation of a Digit-serial RSA Processor (2005)
 
