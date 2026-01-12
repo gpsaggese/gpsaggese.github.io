@@ -34,7 +34,8 @@ UMD DATA605 - Big Data Systems
 ::::{.column width=60%}
 - Graph DB storing data as Property Graph
   - Nodes, edges hold data as key-value pairs
-- Focus is on relationships between values
+- Graph structure enables flexible schema
+  - Focus is on relationships between values
 - Two querying languages
   - Cypher
   - Gremlin
@@ -49,28 +50,115 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-* Labeled Property Graphs in Neo4j
+* Graph Data Model in Neo4j: Intuition
 - **Nodes**
-  - Main data elements
+  - Represent entities or objects
   - Connected via _relationships_
   - Have _properties_ (key/value pairs)
 
 - **Relationships**
-  - Connect two _nodes_
-  - Directional
+  - Represent (directional) connections between nodes
+  - Relationship types give semantic meaning to edges
   - Multiple relationships per node
   - Have _properties_ (key/value pairs)
 
 - **Properties**
-  - Named values (key is a string)
+  - Store key–value information on nodes and relationships
+    - Named values (key is a string)
   - Indexed and constrained
   - Composite indexes from multiple properties
 
 - **Labels**
-  - Group nodes into sets
+  - Group nodes into sets with similar roles
   - Nodes may have multiple labels
   - Labels indexed for faster node retrieval
   - Native label indexes optimized for performance
+
+* Why Cypher is Powerful
+- Direct mapping between query and graph structure
+  - Encourages thinking in relationships
+  - Reduces impedance mismatch with graph data
+- Scales naturally with connected data
+- Enables expressive exploratory queries
+
+* Basic Cypher Pattern Matching
+- Queries describe graph patterns to search for
+  - Parentheses `()` represent nodes
+  - Brackets `[]` represent relationships
+  - Arrows `->` or `<-` show relationship direction
+
+- Example
+  ```cypher
+  (a)-[:FRIEND_OF]->(b)
+  ```
+
+- Query Structure
+  ```cypher
+  MATCH [Nodes and relationships]
+    WHERE [Boolean filter statement]
+    RETURN [DISTINCT] [statements [AS alias]]
+    ORDER BY [Properties] [ASC or DESC]
+    SKIP [Number] LIMIT [Number]
+  ```
+
+* MATCH Clause
+- Used to find patterns in the graph
+  - Similar to `FROM ... WHERE` in relational databases
+  - Does not modify data
+  - Can match multiple patterns in one query
+
+- Example
+  ```cypher
+  MATCH (p:Person)-[:LIVES_IN]->(c:City)
+  ```
+
+* Advanced Matching
+- `RETURN` clause specifies what data to output
+  - Can return nodes relationships or properties
+  - Controls query result shape
+  - Example
+    ```cypher
+    RETURN p.name, c.name
+    ```
+
+- Filtering with `WHERE`
+  - Adds conditions to pattern matches
+  - Works with properties labels and expressions
+  - Often combined with `MATCH`
+  - Example
+    ```cypher
+    WHERE p.age > 30
+    ```
+
+- Aggregation and Grouping
+  - Uses functions like `count`, `avg`, `max`
+  - Aggregation happens after `MATCH`
+  - `GROUP BY` is implicit in `RETURN`
+  - Example
+    ```cypher
+    RETURN c.name, count(p)
+    ```
+
+* Creating Data with CREATE
+- Used to add new nodes and relationships
+- Pattern describes what should be created
+- Executes exactly as written
+- Example
+  ```cypher
+  CREATE
+    (a:Person {name:"Alice"})
+    -[:KNOWS]->
+    (b:Person {name:"Bob"})
+  ```
+
+* Updating Graph Data
+- `SET` modifies properties or labels
+- `REMOVE` deletes properties or labels
+- Allows incremental graph evolution
+- Example
+  ```cypher
+  SET p.age = p.age + 1
+  ```
 
 * Wine Suggestion Engine: Example 1/2
 - **Create a wine suggestion engine**
@@ -112,7 +200,7 @@ UMD DATA605 - Big Data Systems
 - **Graph DB approach**: provide values and structure only where necessary
 
   \footnotesize
-  ```sql
+  ```cypher
   CREATE (w:Wine
       {name: "Prancing Wolf",
         style: "ice wine",
@@ -132,7 +220,7 @@ UMD DATA605 - Big Data Systems
 
 * Cypher Example
 \footnotesize
-```sql
+```cypher
 MATCH (p:Publication {name: "Wine Expert Monthly"}),
     (w:Wine {name: "Prancing Wolf"})
     CREATE (p)-[r:reported_on {rating: 2}]->(w)
@@ -147,7 +235,7 @@ MATCH (w:Wine {name: "Prancing Wolf"}),
 
 * Cypher Example
 \footnotesize
-```sql
+```cypher
 CREATE (wr:Winery {name: "Prancing Wolf Winery"})
 MATCH (w:Wine {name: "Prancing Wolf"}),
     (wr:Winery {name: "Prancing Wolf Winery"})
@@ -174,7 +262,7 @@ MATCH (w:Wine), (g:GrapeType {name: "Riesling"})
 :::columns
 ::::{.column width=50%}
 \footnotesize
-```sql
+```cypher
 CREATE (p:Person {name: "Alice"})
 
 MATCH (p:Person {name: "Alice"}),
@@ -195,21 +283,11 @@ MATCH (p1:Person {name: "Patty"}),
 ::::
 :::
 
-* Cypher: Query Structure
-
-```sql
-MATCH [Nodes and relationships]
-  WHERE [Boolean filter statement]
-  RETURN [DISTINCT] [statements [AS alias]]
-  ORDER BY [Properties] [ASC or DESC]
-  SKIP [Number] LIMIT [Number]
-```
-
 * Cypher: Query Example
 :::columns
 ::::{.column width=50%}
 \footnotesize
-```sql
+```cypher
 MATCH (p:Person
   {name: "Alice"})-->(n)
   RETURN n;
@@ -227,85 +305,11 @@ MATCH (fof:Person)-[:friends]-(f:Person)-[:friends]-(p:Person {name: "Alice"})
 ::::
 :::
 
-* Matching nodes and relationships
-- Nodes
-  - (a), (), (:Ntype), (a:Ntype),
-  - (a { prop:'value' } ) ,
-  - (a:Ntype { prop:'value' } )
-- Relationships
-  - (a)--(b)
-  - (a)-->(b), (a)<--(b),
-  - (a)-->(), (a)-[r]->(b),
-  - (a)-[:Rtype]->(b), (a)-[:R1|:R2]->(b),
-  - (a)-[r:Rtype]->(b)
-- May have more than 2 nodes
-  - (a)-->(b)<--(c), (a)-->(b)-->(c)
-- Path
-  - p = (a)-->(b)
-
-* More options
-- Relationship distance:
-  - `(a)-[:Rtype*2]->(b)`: 2 hops of type Rtype
-  - `(a)-[:Rtype*]->(b)`: any number of hops of type Rtype
-  - `(a)-[:Rtype*2..10]->(b)`: 2-10 hops of Rtype
-  - `(a)-[:Rtype*..10]->(b)`: 1-10 hops of Rtype
-  - `(a)-[:Rtype*2..]->(b)`: at least 2 hops of Rtype
-- Could be used also as:
-  - `(a)-[r*2]->(b)` r gets a sequence of relationships
-  - `(a)-[*{prop:val}]->(b)`
-
-* Operators
-- Mathematical
-  -	+, -, *, /,%, ^ (power, not XOR)
-- Comparison
-  - =,<>,<,>,>=,<=, =~ (Regex), IS NULL, IS NOT NULL
-- Boolean
-	- AND, OR, XOR, NOT
-- String
-  - Concatenation through +
-- Collection
-	- Concatenation through +
-	- IN to check if an element exists in a collection
-
-* More WHERE options
-- WHERE others.name IN ['Andres', 'Peter']
-- WHERE user.age IN range (18,30)
-- WHERE n.name =~ 'Tob.*‘
-- WHERE n.name =~ '(?i)ANDR.*‘  - (case insensitive)
-- WHERE (tobias)-->()
-- WHERE NOT (tobias)-->()
-- WHERE has(b.name)
-- WHERE b.name? = 'Bob'
-  (Returns all nodes where name = 'Bob' plus all nodes
-  without a name property)
-
-* Functions
-- On paths:
-  - MATCH shortestPath( (a)-[*]-(b) )
-  - MATCH allShorestPath( (a)-[*]-(b) )
-  - Length(path) – The path length or 0 if not exists.
-  - RETURN relationships(p) - Returns all relationships in a path.
-- On collections:
-  - RETURN a.array, filter(x IN a.array WHERE length(x)= 3)
-    FILTER - returns the elements in a collection that comply to a predicate.
-  - WHERE ANY (x IN a.array    WHERE x = "one"  ) – at least one
-  - WHERE ALL (x IN nodes(p) WHERE x.age > 30) – all elements
-  - WHERE SINGLE (x IN nodes(p) WHERE var.eyes = "blue") – Only one
-- nodes(p) – nodes of the path p
-
-* With
-- Manipulate result sequence before passing to following query parts
-- Usage of WITH:
-  - Limit entries passed to other MATCH clauses
-  - Introduce aggregates for predicates in WHERE
-  - Separate reading from updating the graph. Each query part must be read-only
-    or write-only
-
 * Data access is programmatic
 - REST API
 - Through the Java APIs
   - JVM languages have bindings to the same APIs
-    - JRuby, Jython, Clojure, Scala...
+  - JRuby, Jython, Clojure, Scala...
 - Managing nodes and relationships
 - Indexing
 - Traversing
