@@ -1,0 +1,225 @@
+# ##############################################################################
+# Intro
+# ##############################################################################
+
+In this lesson, we will discuss Neo4j, a graph database that utilizes a Property
+Graph model to store data as nodes and relationships. We will explore the graph
+data model, the powerful Cypher querying language, advanced querying techniques,
+and practical applications like a wine suggestion engine, emphasizing the
+advantages of graph databases.
+
+# ##############################################################################
+# Neo4j
+# ##############################################################################
+
+Neo4j is a type of database known as a graph database, which stores data in a
+structure called a Property Graph. This means that both the nodes (which
+represent entities) and the edges (which represent relationships) can hold data
+in the form of key-value pairs. The graph structure allows for a flexible
+schema, focusing on the relationships between data points. Neo4j supports two
+querying languages, Cypher and Gremlin, and can be accessed via a graphical user
+interface or a REST API. It ensures data integrity with full ACID-compliant
+transactions, supports high-availability clustering, and allows for incremental
+backups. Neo4j can be run on anything from small applications to large server
+clusters.
+
+Let's dive deeper into the graph data model used in Neo4j.
+
+# ##############################################################################
+# Graph Data Model in Neo4j: Intuition
+# ##############################################################################
+
+In Neo4j, nodes represent entities or objects and are connected through
+relationships. Each node and relationship can have properties, which are
+key-value pairs that store information. Relationships are directional and can
+have types that provide semantic meaning, and nodes can have multiple
+relationships. Properties are indexed and can be constrained, with the
+possibility of creating composite indexes from multiple properties. Labels are
+used to group nodes into sets with similar roles, and nodes can have multiple
+labels. These labels are indexed for faster retrieval, with native label indexes
+optimized for performance.
+
+Now, let's explore why the Cypher querying language is considered powerful.
+
+# ##############################################################################
+# Why Cypher is Powerful
+# ##############################################################################
+
+Cypher is a querying language that allows for a direct mapping between the query
+and the graph structure, encouraging us to think in terms of relationships. This
+reduces the impedance mismatch that can occur with graph data. Cypher naturally
+scales with connected data, making it suitable for large and complex datasets.
+It also enables expressive exploratory queries, allowing us to easily navigate
+and analyze the relationships within the data.
+
+# ##############################################################################
+# Basic Cypher Pattern Matching
+# ##############################################################################
+
+Let's explore how Cypher queries describe graph patterns. We use parentheses to
+represent nodes and brackets for relationships. Arrows indicate the direction of
+these relationships. For example, the pattern `(a)-[:FRIEND_OF]->(b)` shows a
+relationship from node `a` to node `b`. The structure of a Cypher query includes
+the `MATCH` clause to specify nodes and relationships, a `WHERE` clause for
+filtering, and a `RETURN` clause to define the output. We can also order, skip,
+and limit results to refine our query further.
+
+Transitioning to the next slide, we'll delve into the MATCH clause in more
+detail.
+
+# ##############################################################################
+# MATCH Clause
+# ##############################################################################
+
+The MATCH clause is crucial for finding patterns in a graph, similar to how we
+use `FROM ... WHERE` in relational databases. It helps us locate specific
+patterns without altering the data. We can match multiple patterns within a
+single query, making it a powerful tool for graph exploration. For instance, the
+query `MATCH (p:Person)-[:LIVES_IN]->(c:City)` finds people living in specific
+cities. This clause is foundational for querying graphs effectively.
+
+Now, let's move on to advanced matching techniques.
+
+# ##############################################################################
+# Advanced Matching
+# ##############################################################################
+
+In advanced matching, the `RETURN` clause is used to specify the data we want to
+output, such as nodes, relationships, or properties. It shapes the query
+results. For example, `RETURN p.name, c.name` outputs the names of people and
+cities. The `WHERE` clause adds conditions to our pattern matches, allowing us
+to filter based on properties, labels, and expressions. It's often used with
+`MATCH`. Aggregation and grouping are also possible, using functions like
+`count`, `avg`, and `max`. Aggregation occurs after `MATCH`, and `GROUP BY` is
+implicit in `RETURN`, as shown in `RETURN c.name, count(p)`.
+
+# ##############################################################################
+# Creating Data with CREATE
+# ##############################################################################
+
+Let's talk about how we can add new nodes and relationships in a graph database
+using the CREATE command. This command allows us to specify exactly what we want
+to create in the database. For example, we can create a node for a person named
+Alice and another for Bob, and then establish a relationship between them using
+the KNOWS relationship. This is a straightforward way to build the structure of
+our data.
+
+Now, let's move on to how we can update the data once it's created.
+
+# ##############################################################################
+# Updating Graph Data
+# ##############################################################################
+
+We can update our graph data using the SET and REMOVE commands. SET is used to
+change properties or add new labels to nodes, while REMOVE deletes properties or
+labels. This allows us to make incremental changes to our graph, keeping it
+up-to-date with new information. For instance, we can increase a person's age by
+one year using the SET command. This flexibility is crucial for maintaining the
+accuracy of our data over time.
+
+Next, let's explore a practical application of these concepts with a wine
+suggestion engine.
+
+# ##############################################################################
+# Wine Suggestion Engine: Example 1/2
+# ##############################################################################
+
+In this example, we are creating a wine suggestion engine. We categorize wines
+by their varieties, such as Chardonnay or Pinot Noir, regions like Bordeaux or
+Napa, and the vintage, which is the year the grapes were harvested.
+Additionally, we track articles written by authors about these wines and allow
+users to keep track of their favorite wines. This setup helps us organize and
+recommend wines based on user preferences and expert opinions.
+
+Let's continue to see how this engine can be further developed.
+
+# ##############################################################################
+# Wine Suggestion Engine: Example 2/2
+# ##############################################################################
+
+Let's explore the relational approach to organizing wine data. We create several
+tables such as wines, wines_categories, category, wines_articles, and articles.
+These tables help us manage different aspects of wine information, like their
+categories and related articles. The relationships we focus on include produced,
+reported_on, and grape_type. However, the relational approach has its drawbacks.
+It lacks a strict schema, leading to incomplete data. There's an old saying in
+the relational database world: "On a long enough timeline all fields become
+optional," highlighting the potential for data inconsistency.
+
+Now, let's transition to the graph database approach using Cypher.
+
+# ##############################################################################
+# Cypher Example
+# ##############################################################################
+
+In the graph database approach, we only provide values and structure where
+necessary. We use Cypher to create nodes and relationships. For example, we
+create a wine node for "Prancing Wolf" with its style and vintage. We also
+create a publication node for "Wine Expert Monthly" and establish a reported_on
+relationship between them. This approach allows us to easily connect related
+data without needing a rigid schema. We can add more details, like ratings, by
+simply updating the relationships.
+
+Let's see another example of using Cypher to add more details to our graph.
+
+# ##############################################################################
+# Cypher Example
+# ##############################################################################
+
+Continuing with the graph database approach, we use Cypher to add more
+information. We match the publication and wine nodes and create a reported_on
+relationship with a rating. We also introduce a new node for the grape type
+"Riesling" and connect it to the wine node with a grape_type relationship. This
+method allows us to flexibly add and connect data, making it easier to manage
+and query complex relationships. The graph database approach provides a more
+dynamic way to handle data compared to the traditional relational approach.
+
+# ##############################################################################
+# Cypher Example
+# ##############################################################################
+
+In this slide, we see how to use Cypher, a query language for databases, to
+create and connect nodes. We start by creating a winery node named "Prancing
+Wolf Winery" and a wine node named "Prancing Wolf" with different styles and
+vintages. We then establish a relationship between the winery and the wine,
+indicating that the winery produced the wine. Additionally, we connect the wine
+to a grape type, "Riesling". This example shows how to build a simple graph
+database structure, linking entities like wineries, wines, and grape types.
+
+Let's move on to see how we can add a social component to our wine graph.
+
+# ##############################################################################
+# Cypher Example with Social Component
+# ##############################################################################
+
+Here, we expand our wine graph by adding a social layer. We introduce people,
+like Alice and Patty, and their preferences and relationships. Alice is created
+as a person node and linked to a wine she likes, "Prancing Wolf" ice wine. Patty
+is also added, and we establish a friendship between her and another person,
+Tom. This demonstrates how we can enrich our graph by adding new nodes and
+relationships without altering existing data, allowing for a more dynamic and
+interconnected dataset.
+
+Now, let's explore how we can query this enriched graph to extract meaningful
+information.
+
+# ##############################################################################
+# Cypher: Query Example
+# ##############################################################################
+
+This slide illustrates how to query our graph to retrieve specific information.
+We use Cypher to find all nodes connected to Alice, returning those nodes. We
+also query to find other people connected to Alice and return their names.
+Lastly, we look for friends of friends of Alice, showcasing how we can navigate
+through relationships to uncover indirect connections. These queries highlight
+the power of graph databases in exploring complex relationships and extracting
+insights from interconnected data.
+
+# ##############################################################################
+# Outro
+# ##############################################################################
+
+In this lesson, we explored Neo4j, a graph database using the Property Graph
+model. We discussed its components, the powerful Cypher querying language, and
+practical applications including a wine suggestion engine. We learned to create,
+update, and query graph data, emphasizing relationships and data integrity.

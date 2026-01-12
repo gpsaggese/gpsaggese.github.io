@@ -1,0 +1,84 @@
+site_name: GP Saggese - Personal Website
+site_author: Giacinto Paolo Saggese
+site_description: Personal website of GP Saggese - Adjunct Professor and Technology Executive
+
+strict: true
+
+theme:
+  name: material
+  logo: assets/logo.png  # Custom logo in header
+  favicon: assets/favicon.png  # Custom favicon in browser tab
+  generator: false  # Remove "Made with Material for MkDocs" from footer
+  palette:
+    # Light mode (default)
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.integrate
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - CV/Resume: 02_cv.md
+  - Education: 03_education.md
+  - Teaching: 04_teaching.md
+  - Publications: 05_publications.md
+  - Research: 06_research.md
+  - Coding: 07_coding.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - tables
+  - toc:
+      permalink: true
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/gpsaggese
+    - icon: fontawesome/brands/github
+      link: https://github.com/gpsaggese
+    - icon: fontawesome/solid/envelope
+      link: mailto:gsaggese@umd.edu
+
+copyright: Copyright &copy; 2025 Giacinto Paolo Saggese

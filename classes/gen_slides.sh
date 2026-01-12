@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -e
 
 # Check that exactly two arguments are provided.
 if [ "$#" -ne 2 ]; then
@@ -20,9 +20,10 @@ DIR=$1
 # E.g., 01.1
 LESSON=$2
 
-files=($DIR/lectures_source/Lesson${LESSON}*)
+files=($DIR/lectures_source/Lesson${LESSON}*.txt)
 if (( ${#files[@]} != 1 )); then
     echo "Need exactly one file"
+    echo $files
     exit 1
 else
     echo "Found file: ${files[*]}"
@@ -30,7 +31,7 @@ fi
 
 OPTS=${@:3}
 
-SRC_NAME=$(cd $DIR/lectures_source; ls Lesson${LESSON}*)
+SRC_NAME=$(cd $DIR/lectures_source; ls Lesson${LESSON}*.txt)
 DST_NAME=$(echo $SRC_NAME | sed 's/\.txt$/.pdf/')
 OPTS_DEBUG="--skip_action cleanup_before --skip_action cleanup_after"
 notes_to_pdf.py \

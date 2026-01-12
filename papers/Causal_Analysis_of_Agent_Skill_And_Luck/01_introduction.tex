@@ -1,0 +1,290 @@
+\title{A Causal Analysis of Skill and Luck in Agent Outcomes}
+
+\author{Giacinto Paolo Saggese$^{*}$}
+\thanks{$^{*}$ Causify.AI, The University of Maryland, College Park, MD 20742,
+USA, gsaggese@umd.edu}
+
+\date{\today}
+
+\maketitle
+
+\begin{abstract}
+  The inability to rigorously separate skill from luck in human outcomes
+  represents perhaps the most consequential unsolved problem in social science,
+  underpinning every question of justice, merit, responsibility, and institutional
+  design. Despite millennia of philosophical inquiry and centuries of
+  statistical analysis, we have lacked the mathematical foundation to quantify
+  what portion of observed inequality reflects genuine differences in ability
+  versus the capricious distribution of fortune. This paper provides
+  that foundation.
+
+  We develop the first complete mathematical framework for decomposing
+  agent outcomes into skill and luck components by integrating
+  probability theory, decision theory, and causal inference. Our formalization
+  defines luck as value-weighted surprise of outcomes not explained by controllable
+  factors, enabling principled measurement of both individual events and
+  population-level distributions. This framework fundamentally transforms
+  our ability to address questions that have remained intractable: How
+  much of economic inequality is attributable to circumstances versus
+  choices? What degree of outcome variation lies beyond individual control?
+  How should institutions account for luck when evaluating performance
+  and allocating resources?
+
+  The implications are profound and far-reaching. This framework provides
+  the missing analytical foundation for understanding social stratification,
+  meritocracy, and distributive justice. It enables evidence-based
+  policy design by quantifying the extent to which outcomes reflect
+  factors beyond individual agency. It offers a rigorous basis for moral
+  philosophy's treatment of responsibility and desert. And it supplies
+  the tools necessary for evaluating whether our institutions reward
+  skill or merely reinforce the accidents of birth and circumstance. By making
+  measurable what was previously only intuited, this work establishes
+  the theoretical basis for a more scientifically grounded understanding
+  of the human condition in modern society.
+\end{abstract}
+
+\setcounter{tocdepth}{1}
+\tableofcontents
+
+% ##############################################################################
+\section{Introduction}
+
+The attribution of outcomes to skill versus luck influences judgments across
+domains including moral philosophy, economic policy, educational assessment,
+and institutional design. Despite widespread intuition that both factors
+matter, formal methods for separating and quantifying these
+contributions remain underdeveloped. This gap impedes rigorous analysis of
+questions such as: To what extent do observed inequalities reflect
+differences in ability versus circumstance? How should institutions account
+for luck when evaluating performance? What policies are justified when
+outcomes depend substantially on factors beyond individual control?
+
+Existing approaches often conflate luck with randomness or treat it as a
+residual category. We propose that luck can be formally defined and measured
+through a multi-component framework that integrates probability (rarity
+of events), utility (value to the agent), and control (degree of agency
+over outcomes). This formalization enables quantitative analysis while
+preserving philosophical distinctions between different forms of luck.
+
+The framework addresses three interconnected problems. First, it
+provides a method for rating individual events on a luck scale, accounting
+for context-dependent information and agent-specific values. Second, it enables
+decomposition of outcomes into skill and luck components through counterfactual
+reasoning and expected value calculations. Third, it supports societal-level
+analysis by aggregating individual luck scores and measuring distributional
+properties such as luck inequality and the correlation between circumstances
+and outcomes.
+
+This paper proceeds as follows. Section~\ref{sec:contributions}
+enumerates our major contributions. Section~\ref{sec:background} discusses
+the conceptual foundations and motivation. Section~\ref{sec:theory}
+develops the mathematical theory, including axioms, probability models, and
+the core luck function. Section~\ref{sec:rating} presents practical
+methods for rating events and decomposing skill from luck. Section~\ref{sec:society}
+extends the framework to societal modeling. Section~\ref{sec:implications}
+examines consequences for policy and institutions. Section~\ref{sec:conclusion}
+concludes.
+
+% ##############################################################################
+\section{Contributions}
+\label{sec:contributions}
+
+This paper makes the following major contributions:
+
+\begin{itemize}
+  \item \textbf{First Complete Mathematical Framework:} We provide the
+    first rigorous formalization integrating probability theory, decision
+    theory, and causal inference to decompose outcomes into skill and
+    luck components.
+
+  \item \textbf{Axiomatic Foundation:} We establish axioms ensuring
+    theoretical soundness, including scale invariance, additivity, and proper
+    control attribution.
+
+  \item \textbf{Unified Cross-Disciplinary Theory:} Our framework
+    bridges moral philosophy, economics, statistics, and causal inference,
+    resolving conceptual ambiguities across disciplines.
+
+  \item \textbf{Practical Measurement Methodology:} We develop
+    implementable methods for rating events and computing luck scores
+    from observational or experimental data.
+
+  \item \textbf{Societal-Level Analysis Framework:} We extend from
+    individual events to population dynamics, enabling measurement of luck
+    inequality and empirical evaluation of meritocracy.
+
+  \item \textbf{Causal Model of Outcomes:} We formalize relationships
+    between circumstances, choices, and shocks, enabling variance decomposition
+    and policy analysis.
+
+  \item \textbf{Evidence-Based Foundation for Policy:} By making luck
+    measurable, we transform philosophical debates about responsibility and
+    justice into empirically tractable questions.
+\end{itemize}
+
+These contributions establish the theoretical foundation for a scientific
+approach to merit, fairness, and responsibility.
+
+% ##############################################################################
+\section{Background and Motivation}
+\label{sec:background}
+
+% ==============================================================================
+\subsection{Conceptual Foundations}
+
+The concept of luck appears in diverse contexts with varying definitions.
+In ordinary language, luck refers to outcomes influenced by chance. In
+moral philosophy, particularly the literature on moral luck, it denotes
+factors outside an agent's control that affect judgments of praise or
+blame. In statistical analysis, luck often represents deviations from
+expected performance or unexplained variance.
+
+We propose a unifying definition: luck is the value-weighted surprise of
+an outcome that the agent did not significantly control, relative to the
+agent's prior information. This definition incorporates three essential components:
+
+\begin{itemize}
+  \item \textbf{Probability:} Low-probability events contribute more to
+    luck than expected occurrences.
+
+  \item \textbf{Value:} Events must matter to the agent; neutral outcomes
+    are not lucky.
+
+  \item \textbf{Control:} Outcomes predominantly caused by the agent's
+    choices reflect skill rather than luck.
+\end{itemize}
+
+These components distinguish luck from related concepts. Pure randomness
+becomes luck only when it affects valued outcomes. Skill represents the
+portion of outcomes explained by controllable actions. Circumstance refers
+to background conditions that shape probabilities and opportunities.
+Figure~\ref{fig:components} illustrates how these three components combine
+multiplicatively in our framework: probability is transformed into surprise
+(rarer events score higher), control is inverted (less control increases luck),
+and utility provides value weighting.
+
+The distinction between luck and skill manifests through multiple related
+conceptual pairs. Table~\ref{tab:terminology} summarizes common
+terminology across disciplines, with external factors (luck) on the left
+and internal factors (skill) on the right. External factors represent
+uncontrollable influences on outcomes, while internal factors represent
+controllable determinants. These pairs reflect different
+emphases—philosophical (brute luck vs. earned skill), statistical (noise
+vs. signal), causal (exogenous vs. endogenous), or temporal (timing vs.
+judgment)—but all capture the fundamental dichotomy between controllable
+and uncontrollable outcome determinants.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ll}
+    \toprule \textbf{Luck / External Factors} & \textbf{Skill / Internal Factors} \\
+    \midrule Luck                             & Skill                             \\
+    Chance                                    & Ability                           \\
+    Randomness                                & Competence                        \\
+    Variance                                  & Consistency                       \\
+    Noise                                     & Signal                            \\
+    Fortune                                   & Merit                             \\
+    Happenstance                              & Expertise                         \\
+    Contingency                               & Mastery                           \\
+    Exogenous factors                         & Endogenous factors                \\
+    Brute luck                                & Earned skill                      \\
+    Random shocks                             & Preparation                       \\
+    Timing                                    & Judgment                          \\
+    Opportunity                               & Capability                        \\
+    \bottomrule
+  \end{tabular}
+  \caption{Terminology for luck versus skill across disciplines.}
+  \label{tab:terminology}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+    component/.style={rectangle, draw, fill=blue!20, minimum width=2.5cm, minimum height=1cm, align=center},
+    multiplier/.style={circle, draw, fill=gray!20, minimum size=0.8cm},
+    arrow/.style={->, >=stealth, thick}
+  ]
+    % Three components
+    \node[component] (prob) at (0,0) {Probability\\$P(E|I_{A})$};
+    \node[component] (util) at (0,-2) {Utility\\$U_{A}(E)$};
+    \node[component] (ctrl) at (0,-4) {Control\\$C_{A}(E)$};
+
+    % Transformations
+    \node[component, fill=green!20]
+      (surp)
+      at
+      (4,0)
+      {Surprise\\$-\log P(E|I_{A})$};
+    \node[component, fill=orange!20]
+      (lack)
+      at
+      (4,-4)
+      {Lack of Control\\$(1-C_{A}(E))$};
+
+    % Result
+    \node[multiplier] (mult1) at (8,-1) {$\times$};
+    \node[multiplier] (mult2) at (8,-3) {$\times$};
+    \node[component, fill=red!30, minimum width=3cm]
+      (luck)
+      at
+      (11,-2)
+      {Luck Score\\$L_{A}(E)$};
+
+    % Arrows
+    \draw[arrow] (prob) -- (surp);
+    \draw[arrow] (ctrl) -- (lack);
+    \draw[arrow] (surp) -- (mult1);
+    \draw[arrow] (util) -- (mult1);
+    \draw[arrow] (mult1) -- (mult2);
+    \draw[arrow] (lack) -- (mult2);
+    \draw[arrow] (mult2) -- (luck);
+
+    % Labels
+    \node[above=0.1cm of surp, font=\small] {rare $\rightarrow$ high};
+    \node[above=0.1cm of lack, font=\small]
+      {less control $\rightarrow$ high};
+  \end{tikzpicture}
+  \caption{Components of the luck function.}
+  \label{fig:components}
+\end{figure}
+
+% ==============================================================================
+\subsection{Motivation for Formalization}
+
+Formalizing luck serves multiple purposes. In moral and political
+philosophy, it clarifies debates about desert and responsibility. If
+outcomes depend substantially on luck, claims that individuals deserve their
+positions become more difficult to sustain. In institutional design, understanding
+luck enables fairer evaluation systems that account for factors beyond individual
+control. In policy analysis, measuring the role of luck informs debates about
+taxation, social insurance, and equality of opportunity.
+
+Empirical measurement requires precise definitions. Without formal
+structure, assertions about the importance of luck remain speculative. A
+mathematical framework enables testable predictions, quantitative comparisons
+across contexts, and evidence-based policy recommendations.
+
+% ==============================================================================
+\subsection{Related Concepts}
+
+Several mathematical and philosophical traditions inform this framework:
+
+\begin{itemize}
+  \item \textbf{Probability Theory:} Provides the foundation for
+    quantifying surprise and rare events through probability measures
+    and information theory.
+
+  \item \textbf{Decision Theory:} Supplies utility functions for valuing
+    outcomes and expected utility calculations for separating realized
+    outcomes from expectations.
+
+  \item \textbf{Causal Inference:} Offers tools for identifying
+    controllable versus uncontrollable factors through causal graphs and
+    counterfactual reasoning.
+
+  \item \textbf{Game Theory:} Distinguishes strategic skill from chance
+    elements in mixed games of skill and luck.
+
+  \item \textbf{Moral Philosophy:} Examines the normative implications
+    of luck through analyses of moral luck and distributive justice.
+\end{itemize}

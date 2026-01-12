@@ -1,6 +1,4 @@
 // Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
-//
-//
 
 ::: columns
 :::: {.column width=15%}
@@ -30,62 +28,17 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-* Query Languages for Graph Databases
-:::columns
-::::{.column width=50%}
-- **Cypher**
-  - Designed for Property Graphs
-  - Data: vertices and edges with key-value properties
-  - Declarative query language
-  - Suitable for subgraph pattern matching
-  - Struggles with reachability queries
-  - Native to Neo4j
-
-- **Gremlin**
-  - Works with RDF and Property Graphs
-  - Imperative query language
-  - Describes graph traversal processes
-
-- **SPARQL**
-  - Similar to SQL in structure
-  - Designed for querying RDF data
-  - Standardized by the W3C for semantic web applications
-::::
-::::{.column width=60%}
-\footnotesize
-```sql
-MATCH (nicole:Actor
-   {name:'Nicole Kidman'})-[[:ACTED_IN]->(movie:Movie)
-WHERE movie.year < 2007
-RETURN movie
-```
-
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_18_image_1.png)
-
-```sql
-PREFIX  foaf: <http://xmlns.com/foaf/0.1/>
-SELECT ?name
-       ?email
-WHERE
-  {
-    ?person  a          foaf:Person.
-    ?person  foaf:name  ?name .
-    ?person  foaf:mbox  ?email .
-  }
-```
-
-::::
-:::
 
 * Neo4j
 :::columns
 ::::{.column width=60%}
 - Graph DB storing data as Property Graph
   - Nodes, edges hold data as key-value pairs
-- Focus is
-  - On relationships between values
+- Graph structure enables flexible schema
+  - Focus is on relationships between values
 - Two querying languages
-  - Cypher, Gremlin
+  - Cypher
+  - Gremlin
 - GUI or REST API
 - Full ACID-compliant transactions
 - High-availability clustering
@@ -97,117 +50,183 @@ WHERE
 ::::
 :::
 
-* Graph DB: Example
+* Graph Data Model in Neo4j: Intuition
+- **Nodes**
+  - Represent entities or objects
+  - Connected via _relationships_
+  - Have _properties_ (key/value pairs)
+
+- **Relationships**
+  - Represent (directional) connections between nodes
+  - Relationship types give semantic meaning to edges
+  - Multiple relationships per node
+  - Have _properties_ (key/value pairs)
+
+- **Properties**
+  - Store key–value information on nodes and relationships
+    - Named values (key is a string)
+  - Indexed and constrained
+  - Composite indexes from multiple properties
+
+- **Labels**
+  - Group nodes into sets with similar roles
+  - Nodes may have multiple labels
+  - Labels indexed for faster node retrieval
+  - Native label indexes optimized for performance
+
+* Why Cypher is Powerful
+- Direct mapping between query and graph structure
+  - Encourages thinking in relationships
+  - Reduces impedance mismatch with graph data
+- Scales naturally with connected data
+- Enables expressive exploratory queries
+
+* Basic Cypher Pattern Matching
+- Queries describe graph patterns to search for
+  - Parentheses `()` represent nodes
+  - Brackets `[]` represent relationships
+  - Arrows `->` or `<-` show relationship direction
+
+- Example
+  ```cypher
+  (a)-[:FRIEND_OF]->(b)
+  ```
+
+- Query Structure
+  ```cypher
+  MATCH [Nodes and relationships]
+    WHERE [Boolean filter statement]
+    RETURN [DISTINCT] [statements [AS alias]]
+    ORDER BY [Properties] [ASC or DESC]
+    SKIP [Number] LIMIT [Number]
+  ```
+
+* MATCH Clause
+- Used to find patterns in the graph
+  - Similar to `FROM ... WHERE` in relational databases
+  - Does not modify data
+  - Can match multiple patterns in one query
+
+- Example
+  ```cypher
+  MATCH (p:Person)-[:LIVES_IN]->(c:City)
+  ```
+
+* Advanced Matching
+- `RETURN` clause specifies what data to output
+  - Can return nodes relationships or properties
+  - Controls query result shape
+  - Example
+    ```cypher
+    RETURN p.name, c.name
+    ```
+
+- Filtering with `WHERE`
+  - Adds conditions to pattern matches
+  - Works with properties labels and expressions
+  - Often combined with `MATCH`
+  - Example
+    ```cypher
+    WHERE p.age > 30
+    ```
+
+- Aggregation and Grouping
+  - Uses functions like `count`, `avg`, `max`
+  - Aggregation happens after `MATCH`
+  - `GROUP BY` is implicit in `RETURN`
+  - Example
+    ```cypher
+    RETURN c.name, count(p)
+    ```
+
+* Creating Data with CREATE
+- Used to add new nodes and relationships
+- Pattern describes what should be created
+- Executes exactly as written
+- Example
+  ```cypher
+  CREATE
+    (a:Person {name:"Alice"})
+    -[:KNOWS]->
+    (b:Person {name:"Bob"})
+  ```
+
+* Updating Graph Data
+- `SET` modifies properties or labels
+- `REMOVE` deletes properties or labels
+- Allows incremental graph evolution
+- Example
+  ```cypher
+  SET p.age = p.age + 1
+  ```
+
+* Wine Suggestion Engine: Example 1/2
+- **Create a wine suggestion engine**
+  - Wines categorized by:
+    - Varieties (e.g., Chardonnay, Pinot Noir)
+    - Regions (e.g., Bordeaux, Napa, Tuscany)
+    - Vintage (year grapes harvested)
+  - Track articles describing wines by authors
+  - Users track favorite wines
+  - ...
+
+* Wine Suggestion Engine: Example 2/2
 :::columns
-::::{.column width=60%}
-\footnotesize
-\begingroup\color{blue}
-```
-Specs
-```
-\endgroup
-- Create a wine suggestion engine
-
-- Wines categorized by
-  - Varieties (e.g., Chardonnay, Pinot Noir)
-  - Regions (e.g., Bordeaux, Napa, Tuscany)
-  - Vintage (year grapes harvested)
-
-- Track articles describing wines by authors
-
-- Users track favorite wines
-\begingroup\color{red}
-```
-Relational model
-```
-\endgroup
-- The important relationships are `produced`, `reported_on`, `grape_type`
+::::{.column width=50%}
+- **Relational approach**
 - Create various tables
   - `wines`: (id, name, year)
   - `wines_categories` (wine_id, category_id)
   - `category` table (id, name)
   - `wines_articles` (wine_id, article_id)
   - `articles` (id, publish_date, title, content)
+- Relationships are
+  - `produced`
+  - `reported_on`
+  - `grape_type`
 ::::
-::::{.column width=40%}
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_20_image_2.png)
-
+::::{.column width=45%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_20_image_1.png)
-
 ::::
 :::
-\begingroup\color{green}
-```
-Problem with relational approach
-```
-\endgroup
+
+- **Problem with relational approach**
   - There isn't much of a schema
   - Lots of incomplete data
-  - An old saying in relational DB world: "*On a long enough timeline all fields
-    become optional*"
-\begingroup\color{blue}
-```
-Graph DB approach
-```
-\endgroup
-  - Provide values and structure only where necessary
-
-* Labeled Property Graphs in Neo4j
-- **Nodes**
-  - Main data elements
-  - Connected via _relationships_
-  - Have _properties_ (key/value pairs)
-
-- **Relationships**
-  - Connect two _nodes_
-  - Directional
-  - Multiple relationships per node
-  - Have _properties_ (key/value pairs)
-
-- **Properties**
-  - Named values (key is a string)
-  - Indexed and constrained
-  - Composite indexes from multiple properties
-
-- **Labels**
-  - Group nodes into sets
-  - Nodes may have multiple labels
-  - Labels indexed for faster node retrieval
-  - Native label indexes optimized for performance
+  - An old saying in relational DB world: _"On a long enough timeline all fields
+    become optional"_
 
 * Cypher Example
-:::columns
-::::{.column width=50%}
-\footnotesize
-```sql
-CREATE (w:Wine
-    {name: "Prancing Wolf",
-      style: "ice wine",
+- **Graph DB approach**: provide values and structure only where necessary
+
+  \footnotesize
+  ```cypher
+  CREATE (w:Wine
+      {name: "Prancing Wolf",
+        style: "ice wine",
+        vintage: 2015})
+
+  CREATE (p:Publication
+      {name: "Wine Expert Monthly"})
+
+  MATCH (p:Publication
+      {name: "Wine Expert Monthly"}),
+      (w:Wine {name: "Prancing Wolf",
       vintage: 2015})
-MATCH (n)
-  RETURN n;
-CREATE (p:Publication
-    {name: "Wine Expert Monthly"})
-MATCH (p:Publication
-    {name: "Wine Expert Monthly"}),
-    (w:Wine {name: "Prancing Wolf",
-    vintage: 2015})
-    CREATE (p)-[r:reported_on]->(w)
-```
-::::
-::::{.column width=50%}
+      CREATE (p)-[r:reported_on]->(w)
+  ```
+
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_22_image_1.png)
-::::
-:::
 
 * Cypher Example
 \footnotesize
-```sql
+```cypher
 MATCH (p:Publication {name: "Wine Expert Monthly"}),
     (w:Wine {name: "Prancing Wolf"})
     CREATE (p)-[r:reported_on {rating: 2}]->(w)
 
 CREATE (g:GrapeType {name: "Riesling"})
+
 MATCH (w:Wine {name: "Prancing Wolf"}),
   (g:GrapeType {name: "Riesling"})
   CREATE (w)-[r:grape_type]->(g)
@@ -216,7 +235,7 @@ MATCH (w:Wine {name: "Prancing Wolf"}),
 
 * Cypher Example
 \footnotesize
-```sql
+```cypher
 CREATE (wr:Winery {name: "Prancing Wolf Winery"})
 MATCH (w:Wine {name: "Prancing Wolf"}),
     (wr:Winery {name: "Prancing Wolf Winery"})
@@ -234,13 +253,16 @@ MATCH (w:Wine), (g:GrapeType {name: "Riesling"})
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_24_image_1.png){wdith=80%}
 
 * Cypher Example
-:::columns
-::::{.column width=50%}
 - Add a social component to the wine graph
   - People preference for wine
   - Relationships with one another
 
-```sql
+- The changes were made "superimposing" new relationships without changing the
+  previous data
+:::columns
+::::{.column width=50%}
+\footnotesize
+```cypher
 CREATE (p:Person {name: "Alice"})
 
 MATCH (p:Person {name: "Alice"}),
@@ -255,18 +277,17 @@ MATCH (p1:Person {name: "Patty"}),
     CREATE (p1)-[r:friends]->(p2)
 ```
 
-- The changes were made "superimposing" new relationships without changing the
-  previous data
 ::::
-::::{.column width=50%}
+::::{.column width=45%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_25_image_1.png)
 ::::
 :::
 
-* Cypher Example
+* Cypher: Query Example
 :::columns
 ::::{.column width=50%}
-```sql
+\footnotesize
+```cypher
 MATCH (p:Person
   {name: "Alice"})-->(n)
   RETURN n;
@@ -279,196 +300,7 @@ MATCH (fof:Person)-[:friends]-(f:Person)-[:friends]-(p:Person {name: "Alice"})
   RETURN fof.name;
 ```
 ::::
-::::{.column width=50%}
+::::{.column width=45%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_26_image_1.png)
 ::::
 :::
-
-* A general query structure
-
-```sql
-MATCH [Nodes and relationships]
-WHERE [Boolean filter statement]
-RETURN [DISTINCT] [statements [AS alias]]
-ORDER BY [Properties] [ASC or DESC]
-SKIP [Number] LIMIT [Number]
-```
-
-* Simple query
-- Get all nodes of type `Program` that have the name `Hello World!`
-
-:::columns
-::::{.column width=50%}
-\vspace{2cm}
-```sql
-MATCH (a : Program)
-WHERE a.name = 'Hello World!'
-RETURN a
-```
-::::
-::::{.column width=50%}
-```graphviz
-graph G {
-    ProgramNode [
-        shape = circle
-        style = "solid"
-        color = "#2F537A"
-        penwidth = 1
-        width = 1
-        fixedsize = true
-        label = <
-            <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0">
-                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">Type =</FONT></TD></TR>
-                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="orange">Program</FONT></TD></TR>
-                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">Name = ‘Hello</FONT></TD></TR>
-                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">World!'</FONT></TD></TR>
-            </TABLE>
-        >
-    ];
-}
-
-```
-::::
-:::
-
-* Query relationships
-- Get all relationships of type `Author` connecting `Programmers` and `Programs`:
-
-```graphviz
-digraph G {
-    // --- Global settings ---
-    rankdir=LR; // left to right
-    layout=dot;
-    bgcolor="white";
-    nodesep=1.0;
-
-    // --- Node styles ---
-    ProgrammerNode [
-        shape=ellipse
-        color="red"
-        fontcolor="red"
-        penwidth=2
-        label=<
-            <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0">
-                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">Type =</FONT></TD></TR>
-                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="red">Programmer</FONT></TD></TR>
-            </TABLE>
-        >
-    ];
-
-    ProgramNode [
-        shape=ellipse
-        color="#2F537A"
-        fontcolor="#2F537A"
-        penwidth=2
-        label=<
-            <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="0">
-                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8">Type =</FONT></TD></TR>
-                <TR><TD ALIGN="CENTER"><FONT POINT-SIZE="8" COLOR="#2F537A">Program</FONT></TD></TR>
-            </TABLE>
-        >
-    ];
-
-    // --- Edge ---
-    ProgrammerNode -> ProgramNode [
-        label=<
-            <FONT COLOR="orange" POINT-SIZE="8">Author</FONT>
-        >
-        color="green"
-        penwidth=3
-        arrowhead=normal
-    ];
-}
-
-```
-
-```sql
-MATCH (a:Programmer)-[r:Author]->(b:Program)
-
-RETURN r
-```
-
-* Matching nodes and relationships
-- Nodes
-  - (a), (), (:Ntype), (a:Ntype),
-  - (a { prop:'value' } ) ,
-  - (a:Ntype { prop:'value' } )
-- Relationships
-  - (a)--(b)
-  - (a)-->(b), (a)<--(b),
-  - (a)-->(), (a)-[r]->(b),
-  - (a)-[:Rtype]->(b), (a)-[:R1|:R2]->(b),
-  - (a)-[r:Rtype]->(b)
-- May have more than 2 nodes
-  - (a)-->(b)<--(c), (a)-->(b)-->(c)
-- Path
-  - p = (a)-->(b)
-
-* More options
-- Relationship distance:
-  - `(a)-[:Rtype*2]->(b)`: 2 hops of type Rtype
-  - `(a)-[:Rtype*]->(b)`: any number of hops of type Rtype
-  - `(a)-[:Rtype*2..10]->(b)`: 2-10 hops of Rtype
-  - `(a)-[:Rtype*..10]->(b)`: 1-10 hops of Rtype
-  - `(a)-[:Rtype*2..]->(b)`: at least 2 hops of Rtype
-- Could be used also as:
-  - `(a)-[r*2]->(b)` r gets a sequence of relationships
-  - `(a)-[*{prop:val}]->(b)`
-
-* Operators
-- Mathematical
-  -	+, -, *, /,%, ^ (power, not XOR)
-- Comparison
-  - =,<>,<,>,>=,<=, =~ (Regex), IS NULL, IS NOT NULL
-- Boolean
-	- AND, OR, XOR, NOT
-- String
-  - Concatenation through +
-- Collection
-	- Concatenation through +
-	- IN to check if an element exists in a collection
-
-* More WHERE options
-- WHERE others.name IN ['Andres', 'Peter']
-- WHERE user.age IN range (18,30)
-- WHERE n.name =~ 'Tob.*‘
-- WHERE n.name =~ '(?i)ANDR.*‘  - (case insensitive)
-- WHERE (tobias)-->()
-- WHERE NOT (tobias)-->()
-- WHERE has(b.name)
-- WHERE b.name? = 'Bob'
-  (Returns all nodes where name = 'Bob' plus all nodes
-  without a name property)
-
-* Functions
-- On paths:
-  - MATCH shortestPath( (a)-[*]-(b) )
-  - MATCH allShorestPath( (a)-[*]-(b) )
-  - Length(path) – The path length or 0 if not exists.
-  - RETURN relationships(p) - Returns all relationships in a path.
-- On collections:
-  - RETURN a.array, filter(x IN a.array WHERE length(x)= 3)
-    FILTER - returns the elements in a collection that comply to a predicate.
-  - WHERE ANY (x IN a.array    WHERE x = "one"  ) – at least one
-  - WHERE ALL (x IN nodes(p) WHERE x.age > 30) – all elements
-  - WHERE SINGLE (x IN nodes(p) WHERE var.eyes = "blue") – Only one
-- nodes(p) – nodes of the path p
-
-* With
-- Manipulate result sequence before passing to following query parts
-- Usage of WITH:
-  - Limit entries passed to other MATCH clauses
-  - Introduce aggregates for predicates in WHERE
-  - Separate reading from updating the graph. Each query part must be read-only
-    or write-only
-
-* Data access is programmatic
-- REST API
-- Through the Java APIs
-  - JVM languages have bindings to the same APIs
-    - JRuby, Jython, Clojure, Scala...
-- Managing nodes and relationships
-- Indexing
-- Traversing
-- Path finding
-- Pattern matching
