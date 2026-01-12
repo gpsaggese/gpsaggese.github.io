@@ -35,6 +35,7 @@ FPGA-based architectures for high-performance applications.
 
 **Publication:** arXiv preprint arXiv:2512.01149, 2025
 
+**Links:** [arXiv](https://arxiv.org/abs/2512.01149)
 
 Comprehensive benchmark comparing Bayesian structural causal models against
 correlation-based ML for predictive maintenance on 10,000 CNC machines. Causal AI
@@ -42,33 +43,39 @@ achieved $49,500 annual advantage over best ML baseline, 93.9% recall through
 explicit failure mechanism modeling, and superior interpretability with
 root-cause explanations.
 
-### Causify DataMap: Causal Probabilistic Reasoning (2025)
+### Causify DataMap: A Causal Probabilistic Reasoning (2025)
 
 **Authors:** G.P. Saggese, P. Smith
 
-**Publication:** Manuscript to be submitted to arXiv, 2025
+**Publication:** Preprint, 2025
+
+**Links:** [Preprint](https://drive.google.com/open?id=1A5PZy9TU_Ok4tCMNgt97zDKAh8LKSrpI&usp=drive_copy)
 
 Automated system for generating causal probabilistic models by integrating
 knowledge graphs, LLMs, and Bayesian inference. Converts unstructured knowledge
 into executable models for reasoning and decision-making under uncertainty, with
 applications to predictive maintenance.
 
-### Causify DataFlow: A Causal Model Simulator (2025)
+### Causify DataFlow: A Causal Simulator for Stream Computing AI (2025)
 
 **Authors:** G.P. Saggese, P. Smith
 
-**Publication:** Manuscript to be submitted to arXiv, 2025
+**Publication:** arXiv preprint arXiv:2512.23977, 2025
+
+**Links:** [arXiv](https://arxiv.org/abs/2512.23977)
 
 Computational framework for simulating causal models with time-series data using
 DAG-based architecture with knowledge-time semantics. Guarantees temporal
 correctness through "tileability" property, enabling unified batch/streaming
 execution from research through production deployment.
 
-### Causify DataPull: A Causal Data Layer (2025)
+### Causify DataPull: A Causal Data Layer for Time-series (2025)
 
 **Authors:** G.P. Saggese, P. Smith
 
-**Publication:** Manuscript to be submitted to arXiv, 2025
+**Publication:** Preprint, 2025
+
+**Links:** [Preprint](https://drive.google.com/open?id=1IwkjHdulKtsAusb3c4CunW3VxN5qndZm&usp=drive_copy)
 
 Bitemporal data layer preserving both event time and knowledge time for
 time-series data. Ensures causal models only use information available at
@@ -79,18 +86,22 @@ analysis.
 
 **Authors:** C. Ma, S. Nikiforova, G.P. Saggese, P. Smith, K. Taduri
 
-**Publication:** Manuscript to be submitted to arXiv, 2025
+**Publication:** Preprint, 2025
+
+**Links:** [Preprint](https://drive.google.com/open?id=1taqsgmdcyXO-gXS7Eog2gXtSDXg-8w0w&usp=drive_copy)
 
 Causal failure prediction framework achieving 100% recall on wind turbine bearing
 failures with weeks-to-months early warning. Combines physics-informed models
 with propensity score weighting for confounder adjustment, plus state-space
 forecasting for remaining useful life prediction.
 
-### Causify Grid: Causal Inference in Energy Demand Prediction (2025)
+### Causify Grid: A Causal Inference in Energy Demand Prediction (2025)
 
 **Authors:** C. Ma, G.P. Saggese, P. Smith
 
-**Publication:** Manuscript to be submitted to arXiv, 2025
+**Publication:** arXiv preprint arXiv:2512.11653, 2025
+
+**Links:** [arXiv](https://arxiv.org/abs/2512.11653)
 
 Causal inference for energy demand prediction achieving 12.5% MAPE improvement
 over non-causal baseline. Demonstrates 47.8% coefficient bias reduction through
@@ -107,6 +118,54 @@ Causal demand forecasting framework integrating knowledge graphs with state-spac
 models for supply chain optimization. Combines LLM-assisted knowledge graph
 construction with query-specific Bayesian networks, applied to spare parts demand
 with calibrated uncertainty quantification for risk-aware inventory planning.
+
+### Causify Optima: The Effect of Latency on Optimal Order Execution Policy (2025)
+
+**Authors:** G.P. Saggese, P. Smith
+
+**Publication:** arXiv preprint arXiv:2504.00846, 2025
+
+**Links:** [arXiv](https://arxiv.org/abs/2504.00846)
+
+Analysis of latency effects on optimal order execution policies in financial markets,
+examining how execution delays impact trading strategies and market microstructure
+considerations for algorithmic trading systems.
+
+### Causify: AIgentic Development System (2025)
+
+**Authors:** G.P. Saggese, P. Smith
+
+**Publication:** Preprint, 2025
+
+**Links:** [Preprint](https://drive.google.com/open?id=1IS8SaI1HMf2CX0AGKe9FmxQ_hghkKKMK&usp=drive_copy)
+
+Development system leveraging AI agents for automated software engineering tasks,
+integrating large language models with code generation, testing, and deployment
+workflows for enhanced developer productivity.
+
+### Causify: A Full-Stack Causal AI Framework (2025)
+
+**Authors:** G.P. Saggese, P. Smith
+
+**Publication:** Preprint, 2025
+
+**Links:** [Preprint](https://drive.google.com/open?id=17-rS5RasQ6LdqcJkKkQAc_fRRIh11NAV&usp=drive_copy)
+
+Comprehensive framework for building production-grade Causal AI systems, providing
+end-to-end tools for causal model development, simulation, deployment, and
+monitoring across diverse industrial applications.
+
+### Runnable Directories: The Solution to the Monorepo vs. Multi-repo Debate (2025)
+
+**Authors:** G.P. Saggese, P. Smith
+
+**Publication:** arXiv preprint arXiv:2512.03815, 2025
+
+**Links:** [arXiv](https://arxiv.org/abs/2512.03815)
+
+Novel approach to code organization that resolves the monorepo versus multi-repo
+trade-offs through self-contained, executable directory structures with explicit
+dependencies and isolated runtime environments.
 
 ## Cryptography Publications
 

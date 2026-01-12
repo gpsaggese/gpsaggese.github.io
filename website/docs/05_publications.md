@@ -27,17 +27,25 @@
 
 - K. Taduri, S. Dhande, G.P. Saggese, P. Smith, _Causify Benchmark: A Benchmark of Causal AI for Predictive Maintenance_, arXiv preprint arXiv:2512.01149, 2025
 
-- G.P. Saggese, P. Smith, _Causify DataMap: Causal Probabilistic Reasoning_, Manuscript to be submitted to arXiv, 2025
+- G.P. Saggese, P. Smith, _Causify DataMap: A Causal Probabilistic Reasoning_, Preprint, 2025
 
-- G.P. Saggese, P. Smith, _Causify DataFlow: A Causal Model Simulator_, Manuscript to be submitted to arXiv, 2025
+- G.P. Saggese, P. Smith, _Causify DataFlow: A Causal Simulator for Stream Computing AI_, arXiv preprint arXiv:2512.23977, 2025
 
-- G.P. Saggese, P. Smith, _Causify DataPull: A Causal Data Layer_, Manuscript to be submitted to arXiv, 2025
+- G.P. Saggese, P. Smith, _Causify DataPull: A Causal Data Layer for Time-series_, Preprint, 2025
 
-- C. Ma, S. Nikiforova, G.P. Saggese, P. Smith, K. Taduri, _Causify Sentinel: A Causal Failure Prediction Framework_, Manuscript to be submitted to arXiv, 2025
+- C. Ma, S. Nikiforova, G.P. Saggese, P. Smith, K. Taduri, _Causify Sentinel: A Causal Failure Prediction Framework_, Preprint, 2025
 
-- C. Ma, G.P. Saggese, P. Smith, _Causify Grid: Causal Inference in Energy Demand Prediction_, Manuscript to be submitted to arXiv, 2025
+- C. Ma, G.P. Saggese, P. Smith, _Causify Grid: A Causal Inference in Energy Demand Prediction_, arXiv preprint arXiv:2512.11653, 2025
 
 - C. Ma, G. Pomazkin, G.P. Saggese, P. Smith, D. Tikhomirov, N. Trubacheva, _Causify Horizon: A Causal Demand Forecasting Framework_, Manuscript to be submitted to arXiv, 2025
+
+- G.P. Saggese, P. Smith, _Causify Optima: The Effect of Latency on Optimal Order Execution Policy_, arXiv preprint arXiv:2504.00846, 2025
+
+- G.P. Saggese, P. Smith, _Causify: AIgentic Development System_, Preprint, 2025
+
+- G.P. Saggese, P. Smith, _Causify: A Full-Stack Causal AI Framework_, Preprint, 2025
+
+- G.P. Saggese, P. Smith, _Runnable Directories: The Solution to the Monorepo vs. Multi-repo Debate_, arXiv preprint arXiv:2512.03815, 2025
 
 ### 2011
 
