@@ -304,14 +304,3 @@ MATCH (fof:Person)-[:friends]-(f:Person)-[:friends]-(p:Person {name: "Alice"})
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_26_image_1.png)
 ::::
 :::
-
-* Data access is programmatic
-- REST API
-- Through the Java APIs
-  - JVM languages have bindings to the same APIs
-  - JRuby, Jython, Clojure, Scala...
-- Managing nodes and relationships
-- Indexing
-- Traversing
-- Path finding
-- Pattern matching

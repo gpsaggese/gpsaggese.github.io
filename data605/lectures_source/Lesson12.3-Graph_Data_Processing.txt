@@ -1,6 +1,4 @@
 // Dir is https://drive.google.com/drive/folders/1u8ZUAkLc8yZBwGgXvfBcAY_oSCyzT_pp
-// 
-// 
 
 ::: columns
 :::: {.column width=15%}
@@ -35,7 +33,7 @@ UMD DATA605 - Big Data Systems
 * Queries vs Analysis Tasks
 - **Queries**
   - Explore data
-  - Result: small graph portion (often a node)
+  - Result is small graph portion (often a node)
   - Challenges
     - Minimize explored graph portion
     - Use indexes (auxiliary data structures)
@@ -46,8 +44,20 @@ UMD DATA605 - Big Data Systems
     - Handle large data efficiently
     - Parallelize if data doesn't fit in memory/disk
 
+* Graph Algorithms
+- **Graph algorithms** are general algorithms applicable to various graph types
+  - Network flows (e.g., max flow, min cut)
+  - Spanning trees (e.g., minimal connectivity)
+  - ...
+
+- **Applications**
+  - Logistics and supply chain optimization
+  - Electric grid design
+  - Telecommunications (e.g., bandwidth allocation)
+
 * Subgraph Matching
-- Find matching instances of a small pattern in a larger graph
+- **Subgraph Matching** = find matching instances of a small pattern in a larger
+  graph
   - Patterns are typically small and fixed
   - Matching can be _approximate_
 
@@ -57,10 +67,10 @@ UMD DATA605 - Big Data Systems
   - Social network analysis (e.g., community pattern detection)
 
 \center
-![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_1.png){width=70%}
+![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_1.png){width=60%}
 
 * Shortest Path Queries
-- Find the shortest or optimal path between two nodes
+- **Shortest Path Queries** = find the shortest or optimal path between two nodes
   - May consider edge weights (e.g., distance, cost)
 
 - **Applications**
@@ -72,7 +82,7 @@ UMD DATA605 - Big Data Systems
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_2.png){width=70%}
 
 * Reachability
-- Determine if a path exists between two nodes
+- **Reachability** = determine if a path exists between two nodes
   - May include constraints (e.g., edge types, direction)
 
 - **Applications**
@@ -81,35 +91,28 @@ UMD DATA605 - Big Data Systems
   - Workflow engines (e.g., task progression)
 
 * Keyword Search
-- Find smallest subgraph containing all specified keywords
+:::columns
+::::{.column width=45%}
+- **Keyword Search** = find smallest subgraph containing all specified keywords
 
 - **Applications**
   - Knowledge graphs (e.g., question answering)
   - Enterprise search (e.g., documents linked by shared entities)
   - Academic citation networks
-
-\center
+::::
+::::{.column width=50%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_3.png)
+::::
+:::
 
 * Historical Queries
-- Find nodes with similar evolution or temporal behavior
+- **Historical Queries** = find nodes with similar evolution or temporal behavior
   - Typically on dynamic or time-stamped graphs
 
 - **Applications**
   - Stock market analysis (e.g., similar price movement)
   - Social media trends (e.g., user behavior over time)
   - Epidemiology (e.g., disease spread patterns)
-
-* Graph Algorithms
-- General algorithms applicable to various graph types
-  - Network flows (e.g., max flow, min cut)
-  - Spanning trees (e.g., minimal connectivity)
-  - ...
-
-- **Applications**
-  - Logistics and supply chain optimization
-  - Electric grid design
-  - Telecommunications (e.g., bandwidth allocation)
 
 ## Graph Data Processing Systems
 
@@ -121,10 +124,11 @@ UMD DATA605 - Big Data Systems
 
 - **Computation is organized into supersteps**
   - _Local computation_
-  - _Message passing_ allows parallel processors to exchange data
+  - _Message passing_
+    - Parallel processors to exchange data
     - Messages are sent during a superstep but delivered in the next
-  - _Synchronization barriers_ ensure all processors complete a superstep before
-    moving on
+  - _Synchronization barriers_
+    - Ensure all processors complete a superstep before moving on
 ::::
 :::: {.column width=35%}
 ![](data605/lectures_source/images/lecture_12_2/lec_12_2_slide_40_image_4.png)
@@ -132,7 +136,7 @@ UMD DATA605 - Big Data Systems
 :::
 
 - **Pros**
-  - Deterministic behavior and predictable execution
+  - Deterministic and predictable behavior
   - Simple abstraction for reasoning about parallelism
   - Suitable for graph computations with regular communication patterns
 - **Cons**
@@ -145,10 +149,11 @@ UMD DATA605 - Big Data Systems
   - Designed for large-scale distributed graph computations
   - Uses a vertex-centric programming model
     - Each vertex performs computation independently in supersteps
-    - Motto: "Think like a vertex"
-  - Vertices send messages to neighbors and update state based on received
-    messages
-  - Vertices can vote to halt; computation ends when all are inactive
+    - Motto: _"Think like a vertex"_
+  - Vertices
+    - Send messages to neighbors
+    - Update state based on received messages
+    - Can vote to halt; computation ends when all are inactive
 
 - **PageRank example**
   - Each vertex divides its rank among neighbors
