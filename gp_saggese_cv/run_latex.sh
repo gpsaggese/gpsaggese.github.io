@@ -93,6 +93,4 @@ else
     echo "Not running on macOS."
 fi
 
-cp $PDF_FILE_NAME website/docs/papers/gp_saggese_cv.pdf
-#cp website/docs/papers/GP_Saggese_Quant_Finance_Research.pdf
-
+cp $PDF_FILE_NAME website/docs/papers/gp_saggese_quant_research_cv.pdf
