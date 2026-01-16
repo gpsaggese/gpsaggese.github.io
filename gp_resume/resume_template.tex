@@ -1,4 +1,4 @@
-\documentclass[10pt,letterpaper]{article}
+\documentclass[10pt, letterpaper]{article}
 
 % Packages
 \usepackage[margin=0.75in]{geometry}
@@ -15,10 +15,10 @@
 
 % Hyperlink styling
 \hypersetup{
-    colorlinks=true,
-    linkcolor=blue!50!black,
-    urlcolor=blue!50!black,
-    citecolor=blue!50!black
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!50!black,
+  citecolor=blue!50!black
 }
 
 % Remove page numbers
@@ -26,18 +26,18 @@
 
 % Section formatting
 \titleformat{\section}
-  {\large\bfseries\uppercase}
-  {}
-  {0pt}
-  {}
-  [\titlerule]
+{\large\bfseries\uppercase}
+{}
+{0pt}
+{}
+[\titlerule]
 \titlespacing{\section}{0pt}{12pt}{6pt}
 
 \titleformat{\subsection}
-  {\normalsize\bfseries}
-  {}
-  {0pt}
-  {}
+{\normalsize\bfseries}
+{}
+{0pt}
+{}
 \titlespacing{\subsection}{0pt}{8pt}{4pt}
 
 % Reduce spacing in lists
@@ -51,7 +51,8 @@
 
 % Pandoc compatibility
 \providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{0pt}}
 
 % Pandoc uses these for strikeout, etc.
 $if(strikeout)$
@@ -69,7 +70,7 @@ $endif$
 
 % Tables
 $if(tables)$
-\usepackage{longtable,booktabs}
+\usepackage{longtable, booktabs}
 $endif$
 
 % Graphics
@@ -83,11 +84,9 @@ $if(graphics)$
 $endif$
 
 \begin{document}
+  % Disable section numbering
+  \setcounter{secnumdepth}{0}
 
-% Disable section numbering
-\setcounter{secnumdepth}{0}
-
-% Insert body content from markdown
-$body$
-
+  % Insert body content from markdown
+  $body$
 \end{document}
