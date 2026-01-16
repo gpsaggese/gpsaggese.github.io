@@ -11,15 +11,13 @@
 ## Patents
 
 - Granted US Patents
-    - [US 8,156,457](https://patents.google.com/patent/US8156457B2/en) -
-        "Concurrent simulation of hardware designs with behavioral characteristics"
-    - [US 8,738,350](https://patents.google.com/patent/US8738350B2/en) - "Mixed
-        concurrent and serial logic simulation of hardware designs"
+    - [US 8,156,457](https://patents.google.com/patent/US8156457B2/en),
+      "Concurrent simulation of hardware designs with behavioral characteristics"
+    - [US 8,738,350](https://patents.google.com/patent/US8738350B2/en),
+      "Mixed concurrent and serial logic simulation of hardware designs"
 - Pending US Patents
-    - "Systems and Methods for Causal Failure Prediction in Time Series" (U.S.
-        Patent Application No. 63/934,790)
-    - "Computational Systems and Methods for Time Series Data Processing" (U.S.
-        Patent Application No. 450374-000030)
+    - 63/934,790, "Systems and Methods for Causal Failure Prediction in Time Series"
+    - 63/960,355, "Computational Systems and Methods for Time Series Data Processing"
 
 ## Papers
 
