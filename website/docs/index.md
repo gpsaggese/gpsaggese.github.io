@@ -7,8 +7,6 @@
 - Declined pre-IPO offers from Google, Facebook, and others to build companies
 - Been writing code almost every day for the last 35 years (evidence on GitHub)
 
-## Photos
-
 <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
   <div style="text-align: center;">
     <h3>GP circa 2012</h3>
@@ -19,8 +17,6 @@
     <img src="images/gp-saggese-2022.png" alt="GP Saggese circa 2022" style="max-width: 300px; width: 100%;">
   </div>
 </div>
-
-*Source: [UMD CMNS Faculty Profile](https://cmns.umd.edu/people/giacinto-paolo-saggese)*
 
 ## Contact Information
 
