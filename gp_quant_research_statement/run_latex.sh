@@ -9,6 +9,11 @@ fi;
 echo "GIT_ROOT=$GIT_ROOT"
 
 SCRIPT_SOURCE=$0
+if [[ -z $1 ]]; then
+    NUM_PASSES=1
+else
+    NUM_PASSES=$1
+fi;
 SCRIPT_DIR=$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd)
 echo $SCRIPT_DIR
 echo "SCRIPT_DIR=$SCRIPT_DIR"
@@ -37,7 +42,28 @@ PDF_FILE_NAME=$SCRIPT_DIR/$PDF_NAME
 DOCKERIZED_LATEX=$GIT_ROOT/helpers_root/dev_scripts_helpers/documentation/dockerized_latex.py
 
 # First pdflatex pass - generates .aux file
-$DOCKERIZED_LATEX -i ${LATEX_NAME} -o $PDF_FILE_NAME
+if [[ $NUM_PASSES -ge 1 ]]; then
+    $DOCKERIZED_LATEX -i ${LATEX_NAME} -o $PDF_FILE_NAME
+fi;
+
+if [[ $NUM_PASSES -ge 2 ]]; then
+    $DOCKERIZED_LATEX -i ${LATEX_NAME} -o $PDF_FILE_NAME
+fi;
+
+if [[ $NUM_PASSES -ge 3 ]]; then
+    if [[ -f $SCRIPT_DIR/references.bib ]]; then
+        # Run bibtex to process bibliography
+        # Extract directory and base name for bibtex
+        TEX_DIR=$(dirname $LATEX_NAME)
+        TEX_BASE=$(basename $LATEX_NAME .tex)
+        cp $SCRIPT_DIR/references.bib .
+        bibtex $TEX_BASE
+
+        # Third pdflatex pass - resolves all cross-references
+        $DOCKERIZED_LATEX -i ${LATEX_NAME} -o $PDF_FILE_NAME
+        $DOCKERIZED_LATEX -i ${LATEX_NAME} -o $PDF_FILE_NAME
+    fi;
+fi;
 
 LOGFILE=paper.log
 grep -E "LaTeX Warning:|Package .* Warning:|Class .* Warning:" "$LOGFILE" || true
