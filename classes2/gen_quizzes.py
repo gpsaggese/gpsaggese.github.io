@@ -3,12 +3,14 @@
 """
 Generate quizzes for a lecture using LLM.
 
-This script generates multiple choice questions from lecture content using
-llm_cli.py.
+This script generates questions from lecture content using llm_cli.py.
+Two modes are available:
+- Multiple choice quizzes (--for_class_quizzes): 20 questions with 5 answers each
+- Discussion/review questions (--for_class_recap): 3-6 open-ended questions
 
 Usage:
-> gen_quizzes.py data605 01.1
-> gen_quizzes.py msml610 02.3
+> gen_quizzes.py --for_class_quizzes data605 01.1
+> gen_quizzes.py --for_class_recap msml610 02.3
 
 Import as:
 
@@ -32,8 +34,8 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 
 
-# System prompt for quiz generation.
-QUIZ_PROMPT = """
+# System prompt for quiz generation (multiple choice).
+CLASS_QUIZZES_PROMPT = """
 You are a college professor teaching a class.
 
 Given the content below:
@@ -44,6 +46,30 @@ Given the content below:
 
 The output should be in Markdown code without having page separators, any
 comment, or divved fence, just the questions and the answers.
+"""
+
+
+# System prompt for class recap questions (open-ended discussion).
+CLASS_RECAP_PROMPT = """
+You are a college professor teaching a class.
+
+Given the content below:
+- Write 5 discussion/review questions for students to answer after watching the videos
+- These should be open-ended questions that require synthesis of information, e.g.,
+  - For task-formulation questions, explicitly define the task, experience, and
+    performance metrics.
+  - For example-based questions, give concrete real-world systems and briefly
+    justify why they fit.
+  - For comparison or reflection questions, explain why one approach is
+    preferable in certain situations.
+  - For conceptual "how and why" questions, describe the underlying mechanism and
+    its practical significance. 
+  - You can also include questions with more right/wrong answers to emphasize key points
+
+- Focus on deeper understanding and application of concepts rather than memorization
+
+The output should be in Markdown code without having page separators, any
+comment, or divved fence, just the questions.
 """
 
 
@@ -66,6 +92,16 @@ def _parse() -> argparse.ArgumentParser:
         help="Lesson number (e.g., 01.1, 02.3)",
     )
     parser.add_argument(
+        "--for_class_quizzes",
+        action="store_true",
+        help="Generate multiple choice quizzes (20 questions with 5 answers each)",
+    )
+    parser.add_argument(
+        "--for_class_recap",
+        action="store_true",
+        help="Generate open-ended discussion/review questions (3-6 questions)",
+    )
+    parser.add_argument(
         "extra_opts",
         nargs="*",
         help="Additional options to pass to llm_cli.py",
@@ -79,6 +115,22 @@ def _main(parser: argparse.ArgumentParser) -> None:
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     # Validate arguments.
     clcomuut.validate_dir_lesson_args(args.dir, args.lesson)
+    # Validate that only one option is specified.
+    hdbg.dassert(
+        args.for_class_quizzes or args.for_class_recap,
+        "Must specify either --for_class_quizzes or --for_class_recap",
+    )
+    hdbg.dassert(
+        not (args.for_class_quizzes and args.for_class_recap),
+        "Cannot specify both --for_class_quizzes and --for_class_recap",
+    )
+    # Select the appropriate prompt.
+    if args.for_class_quizzes:
+        prompt = CLASS_QUIZZES_PROMPT
+        _LOG.info("Using CLASS_QUIZZES_PROMPT for multiple choice questions")
+    else:
+        prompt = CLASS_RECAP_PROMPT
+        _LOG.info("Using CLASS_RECAP_PROMPT for discussion/review questions")
     # Get source and destination names.
     src_name = clcomuut.get_source_name(args.dir, args.lesson)
     dst_name = clcomuut.get_output_name(src_name, ".quizzes.md")
@@ -89,7 +141,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
     clcomuut.ensure_dir_exists(f"{args.dir}/lectures_quizzes")
     # Save the prompt to a temporary file.
     prompt_file = "tmp.gen_quizzes_prompt.txt"
-    hio.to_file(prompt_file, QUIZ_PROMPT)
+    hio.to_file(prompt_file, prompt)
     _LOG.debug("Saved prompt to: %s", prompt_file)
     # Build the command.
     cmd_parts = [
