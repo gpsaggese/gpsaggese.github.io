@@ -10,9 +10,13 @@ Two modes are available:
 - Discussion/review questions (--for_class_recap): 3-6 open-ended questions
   - Saved to: <class_dir>/lectures_recap/<lesson>.recap.md
 
+By default, the output file is automatically formatted using lint_txt.py with
+prettier. Use --no_lint to skip formatting.
+
 Usage:
 > gen_quizzes.py --for_class_quizzes data605 01.1
 > gen_quizzes.py --for_class_recap msml610 02.3
+> gen_quizzes.py --for_class_recap data605 01.2 --no_lint
 
 Import as:
 
@@ -56,7 +60,7 @@ CLASS_RECAP_PROMPT = """
 You are a college professor teaching a class.
 
 Given the content below:
-- Write 5 discussion/review questions for students to answer after watching the videos
+- Write 4 discussion/review questions for students to answer after watching the videos
 - These should be open-ended questions that require synthesis of information, e.g.,
   - For task-formulation questions, explicitly define the task, experience, and
     performance metrics.
@@ -102,6 +106,18 @@ def _parse() -> argparse.ArgumentParser:
         "--for_class_recap",
         action="store_true",
         help="Generate open-ended discussion/review questions (3-6 questions)",
+    )
+    parser.add_argument(
+        "--lint",
+        action="store_true",
+        default=True,
+        help="Run lint_txt.py with prettier action on output file (default: True)",
+    )
+    parser.add_argument(
+        "--no_lint",
+        action="store_false",
+        dest="lint",
+        help="Skip running lint_txt.py on output file",
     )
     parser.add_argument(
         "extra_opts",
@@ -163,6 +179,12 @@ def _main(parser: argparse.ArgumentParser) -> None:
     _LOG.info("Running command: %s", cmd)
     # Execute the command.
     hsystem.system(cmd)
+    # Run linting if requested.
+    if args.lint:
+        _LOG.info("Running lint_txt.py on output file: %s", output_file)
+        lint_cmd = f"lint_txt.py -i {output_file} --action prettier"
+        _LOG.info("Executing: %s", lint_cmd)
+        hsystem.system(lint_cmd)
 
 
 if __name__ == "__main__":

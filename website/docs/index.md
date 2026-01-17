@@ -4,8 +4,9 @@
 - 3x Startup founder
 - Ex-NVIDIA, Synopsys, several super-secretive hedge funds
 - Adjunct Professor, Computer Science @ University of Maryland, College Park (USA)
-- Declined pre-IPO offers from Google, Facebook, and others to build companies
-- Been writing code almost every day for the last 35 years (evidence on GitHub)
+- Declined pre-IPO offers from Google, Facebook, and others to start companies
+- Been writing code almost every day for the last 35 years (see GitHub stats
+  https://github.com/gpsaggese?tab=activity)
 
 <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
   <div style="text-align: center;">

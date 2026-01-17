@@ -118,8 +118,12 @@ No subdirectories.
 #### What It Does
 
 - Generates questions from lecture content using LLM via llm_cli.py
-- Two modes: multiple choice quizzes (20 questions) or discussion questions (3-6 open-ended)
-- Outputs formatted markdown to `{DIR}/lectures_quizzes/`
+- Two modes:
+  - Multiple choice quizzes: 20 questions with 5 answers each
+    - Saved to: `{DIR}/lectures_quizzes/<lesson>.quizzes.md`
+  - Discussion/review questions: 3-6 open-ended questions
+    - Saved to: `{DIR}/lectures_recap/<lesson>.recap.md`
+- Automatically formats output using lint_txt.py with prettier (use `--no_lint` to skip)
 
 #### Examples
 
@@ -131,6 +135,11 @@ No subdirectories.
 - Generate discussion/review questions for msml610 lesson 02.3:
   ```bash
   > ./gen_quizzes.py --for_class_recap msml610 02.3
+  ```
+
+- Generate quizzes without linting:
+  ```bash
+  > ./gen_quizzes.py --for_class_recap data605 01.2 --no_lint
   ```
 
 - Generate quizzes with extra LLM options:
