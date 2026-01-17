@@ -21,7 +21,7 @@ rsync -av --delete \
   --exclude='class_project/**' \
   --exclude='.git' \
   /Users/saggese/src/umd_classes1/ \
-  /Users/saggese/src/umd_classes2/
+  /Users/saggese/src/umd_class_scripts/
 
 git status
 
@@ -43,6 +43,6 @@ class_project/create_PR.sh
 
 class_project/create_PR.py \
   --input_file class_project/fall2025_msml610_branches_dirs.txt \
-  --source_dir /Users/saggese/src/umd_classes2 \
+  --source_dir /Users/saggese/src/umd_class_scripts \
   --dst_dir /Users/saggese/src/umd_classes3
   --copy_dirs
