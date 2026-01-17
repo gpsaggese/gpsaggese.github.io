@@ -11,7 +11,7 @@ Usage:
 
 Import as:
 
-import classes2.count_words as clcowoor
+import class_scripts.count_words as clcowoor
 """
 
 import argparse

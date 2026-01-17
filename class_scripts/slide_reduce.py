@@ -12,13 +12,13 @@ Usage:
 
 Import as:
 
-import classes2.slide_reduce as clslredu
+import class_scripts.slide_reduce as clslredu
 """
 
 import argparse
 import logging
 
-import classes2.common_utils as clcomuut
+import class_scripts.common_utils as clcomuut
 import helpers.hdbg as hdbg
 import helpers.hparser as hparser
 import helpers.hsystem as hsystem

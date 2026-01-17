@@ -12,13 +12,13 @@ Usage:
 
 Import as:
 
-import classes2.get_lecture_file as clgelifi
+import class_scripts.get_lecture_file as clgelifi
 """
 
 import argparse
 import logging
 
-import classes2.common_utils as clcomuut
+import class_scripts.common_utils as clcomuut
 import helpers.hdbg as hdbg
 import helpers.hparser as hparser
 

@@ -15,7 +15,7 @@ Usage:
 
 Import as:
 
-import classes2.gen_book_chapter as clgeboch
+import class_scripts.gen_book_chapter as clgeboch
 """
 
 import argparse
@@ -23,7 +23,7 @@ import glob
 import logging
 from pathlib import Path
 
-import classes2.common_utils as clcomuut
+import class_scripts.common_utils as clcomuut
 import helpers.hdbg as hdbg
 import helpers.hparser as hparser
 import helpers.hsystem as hsystem

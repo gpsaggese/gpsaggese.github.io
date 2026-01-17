@@ -16,14 +16,14 @@ Usage:
 
 Import as:
 
-import classes2.gen_lecture_script as clgelesc
+import class_scripts.gen_lecture_script as clgelesc
 """
 
 import argparse
 import logging
 from pathlib import Path
 
-import classes2.common_utils as clcomuut
+import class_scripts.common_utils as clcomuut
 import helpers.hdbg as hdbg
 import helpers.hio as hio
 import helpers.hparser as hparser

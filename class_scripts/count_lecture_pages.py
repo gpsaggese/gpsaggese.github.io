@@ -11,13 +11,13 @@ Usage:
 
 Import as:
 
-import classes2.count_lecture_pages as clcolepa
+import class_scripts.count_lecture_pages as clcolepa
 """
 
 import argparse
 import logging
 
-import classes2.common_utils as clcomuut
+import class_scripts.common_utils as clcomuut
 import helpers.hdbg as hdbg
 import helpers.hparser as hparser
 

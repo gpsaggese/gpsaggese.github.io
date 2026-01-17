@@ -73,7 +73,10 @@ can process slides using LLM transformations
     report file)
   - `improve_slide`: Improve slides using LLM transformation
   - `book_chapter`: Generate book chapter PDF from lecture content
-  - `generate_quizzes`: Generate multiple choice quizzes from lecture content
+  - `generate_class_quizzes`: Generate multiple choice quizzes from lecture
+    content
+  - `generate_class_recap`: Generate open-ended discussion/review questions from
+    lecture content
   - Default: `generate_pdf` (if no action specified)
 - `--skip_action`: Actions to skip (mutually exclusive with `--action`)
 - `--all`: Execute all available actions (mutually exclusive with `--action`)

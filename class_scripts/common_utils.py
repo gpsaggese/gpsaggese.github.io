@@ -3,7 +3,7 @@ Shared utility functions for class scripts.
 
 Import as:
 
-import classes2.common_utils as clcomuut
+import class_scripts.common_utils as clcomuut
 """
 
 import glob
