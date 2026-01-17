@@ -114,4 +114,7 @@ can process slides using LLM transformations
   lectures_source/     # Input: Lesson*.txt files
   lectures/            # Output: Generated PDF files
   lectures_script/     # Output: Generated script files
+  lectures_quizzes/    # Output: Multiple choice quiz files
+  lectures_recap/      # Output: Discussion/recap question files
+  book/                # Output: Book chapter files
 ```

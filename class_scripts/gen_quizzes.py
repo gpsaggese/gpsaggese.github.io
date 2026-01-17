@@ -6,7 +6,9 @@ Generate quizzes for a lecture using LLM.
 This script generates questions from lecture content using llm_cli.py.
 Two modes are available:
 - Multiple choice quizzes (--for_class_quizzes): 20 questions with 5 answers each
+  - Saved to: <class_dir>/lectures_quizzes/<lesson>.quizzes.md
 - Discussion/review questions (--for_class_recap): 3-6 open-ended questions
+  - Saved to: <class_dir>/lectures_recap/<lesson>.recap.md
 
 Usage:
 > gen_quizzes.py --for_class_quizzes data605 01.1
@@ -124,21 +126,25 @@ def _main(parser: argparse.ArgumentParser) -> None:
         not (args.for_class_quizzes and args.for_class_recap),
         "Cannot specify both --for_class_quizzes and --for_class_recap",
     )
-    # Select the appropriate prompt.
+    # Select the appropriate prompt, output directory, and file extension.
     if args.for_class_quizzes:
         prompt = CLASS_QUIZZES_PROMPT
+        output_dir = f"{args.dir}/lectures_quizzes"
+        file_extension = ".quizzes.md"
         _LOG.info("Using CLASS_QUIZZES_PROMPT for multiple choice questions")
     else:
         prompt = CLASS_RECAP_PROMPT
+        output_dir = f"{args.dir}/lectures_recap"
+        file_extension = ".recap.md"
         _LOG.info("Using CLASS_RECAP_PROMPT for discussion/review questions")
     # Get source and destination names.
     src_name = clcomuut.get_source_name(args.dir, args.lesson)
-    dst_name = clcomuut.get_output_name(src_name, ".quizzes.md")
+    dst_name = clcomuut.get_output_name(src_name, file_extension)
     # Build paths.
     input_file = f"{args.dir}/lectures_source/{src_name}"
-    output_file = f"{args.dir}/lectures_quizzes/{dst_name}"
+    output_file = f"{output_dir}/{dst_name}"
     # Ensure output directory exists.
-    clcomuut.ensure_dir_exists(f"{args.dir}/lectures_quizzes")
+    clcomuut.ensure_dir_exists(output_dir)
     # Save the prompt to a temporary file.
     prompt_file = "tmp.gen_quizzes_prompt.txt"
     hio.to_file(prompt_file, prompt)
