@@ -25,9 +25,8 @@ import class_scripts.gen_quizzes as clgequiz
 
 import argparse
 import logging
-from pathlib import Path
 
-import class_scripts.common_utils as clcomuut
+import class_scripts.common_utils as csccouti
 import helpers.hdbg as hdbg
 import helpers.hio as hio
 import helpers.hparser as hparser
@@ -132,7 +131,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
     args = parser.parse_args()
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     # Validate arguments.
-    clcomuut.validate_dir_lesson_args(args.dir, args.lesson)
+    csccouti.validate_dir_lesson_args(args.dir, args.lesson)
     # Validate that only one option is specified.
     hdbg.dassert(
         args.for_class_quizzes or args.for_class_recap,
@@ -154,13 +153,13 @@ def _main(parser: argparse.ArgumentParser) -> None:
         file_extension = ".recap.md"
         _LOG.info("Using CLASS_RECAP_PROMPT for discussion/review questions")
     # Get source and destination names.
-    src_name = clcomuut.get_source_name(args.dir, args.lesson)
-    dst_name = clcomuut.get_output_name(src_name, file_extension)
+    src_name = csccouti.get_source_name(args.dir, args.lesson)
+    dst_name = csccouti.get_output_name(src_name, file_extension)
     # Build paths.
     input_file = f"{args.dir}/lectures_source/{src_name}"
     output_file = f"{output_dir}/{dst_name}"
     # Ensure output directory exists.
-    clcomuut.ensure_dir_exists(output_dir)
+    csccouti.ensure_dir_exists(output_dir)
     # Save the prompt to a temporary file.
     prompt_file = "tmp.gen_quizzes_prompt.txt"
     hio.to_file(prompt_file, prompt)
