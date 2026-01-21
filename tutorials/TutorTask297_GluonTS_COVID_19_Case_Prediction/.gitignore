@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# PyTorch Lightning logs
+lightning_logs/
+*.ckpt
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# Data files (download separately from Google Drive)
+data/*.csv
+data/*.tsv
+data/*.xlsx
+
+# Keep data directory structure
+!data/.gitkeep
+
+# Development files (optional)
+PHASE*.md
+*_PLAN*.md
+*_SUMMARY*.md
+*_COMPLETE*.md
+*_VERIFIED*.md
+*_FIXED*.md
+generate_*.py
+fix_*.py
