@@ -1,12 +1,13 @@
 # Giacinto Paolo (GP) Saggese, PhD
 
-- Co-Founder & CTO @ Causify.AI
-- 3x Startup founder
-- Ex-NVIDIA, Synopsys, several super-secretive hedge funds
-- Adjunct Professor, Computer Science @ University of Maryland, College Park (USA)
-- Declined pre-IPO offers from Google, Facebook, and others to start companies
-- Been writing code almost every day for the last 35 years (see GitHub stats
-  https://github.com/gpsaggese?tab=activity)
+- **Co-Founder & CTO** @ [Causify.AI](https://www.causify.ai)
+- **3x startup founder**
+- **Adjunct Professor**, Computer Science @ University of Maryland, College Park (USA)
+- **Industry experiences**
+    - Tech: NVIDIA, Synopsys
+    - Finance: June, Teza, Engineers' Gate
+    - Declined pre-IPO offers from Google, Facebook, and others to start companies
+- Been writing code almost every day for the last 35 years (see [GitHub stats](https://github.com/gpsaggese?tab=activity))
 
 <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
   <div style="text-align: center;">
