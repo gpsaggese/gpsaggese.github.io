@@ -29,6 +29,35 @@ FPGA-based architectures for high-performance applications.
 
 ## Causal AI Publications
 
+### Causify Causal Technology Stack (2025)
+
+**Authors:** G.P. Saggese, P. Smith
+
+**Publication:** Preprint, 2025
+
+**Links:** [Preprint](https://drive.google.com/file/d/1GRIqZSvd6k1iC8SfK2xpT7bKhd5B-8i2/view?usp=drive_link)
+
+Comprehensive overview of Causify's intellectual property and technology stack
+developed over two years. Presents the complete framework including core
+technologies (DataFlow, DataMap, DataPull), vertical applications (Grid,
+Horizon, Sentinel, Optima, Benchmark), and AI/ML systems (AIgentic Development,
+Full-Stack Framework, Runnable Directories) for production-grade Causal AI.
+
+### Beyond Accuracy: A Stability-Aware Metric for Multi-Horizon Forecasting (2026)
+
+**Authors:** C. Ma, G. Pomazkin, G.P. Saggese, P. Smith
+
+**Publication:** arXiv preprint arXiv:2601.10863, 2026
+
+**Links:** [arXiv](https://arxiv.org/abs/2601.10863)
+
+Novel evaluation metric called "forecast accuracy and coherence score" (AC score)
+for assessing probabilistic forecasts across multiple time horizons. Addresses
+both prediction accuracy and temporal consistency by ensuring forecasts remain
+stable as the starting point shifts. Demonstrates 75% reduction in forecast
+volatility on M4 Hourly benchmark while maintaining comparable or improved point
+forecast accuracy through differentiable optimization of seasonal ARIMA models.
+
 ### Causify Benchmark: A Benchmark of Causal AI for Predictive Maintenance (2025)
 
 **Authors:** K. Taduri, S. Dhande, G.P. Saggese, P. Smith
@@ -112,7 +141,9 @@ calibrated uncertainty quantification.
 
 **Authors:** C. Ma, G. Pomazkin, G.P. Saggese, P. Smith, D. Tikhomirov, N. Trubacheva
 
-**Publication:** Manuscript to be submitted to arXiv, 2025
+**Publication:** Preprint, 2025
+
+**Links:** [Preprint](https://drive.google.com/file/d/1FlxErQG4nCDCDOppBmyelHQ-vwe0JN_c/view?usp=drive_link)
 
 Causal demand forecasting framework integrating knowledge graphs with state-space
 models for supply chain optimization. Combines LLM-assisted knowledge graph
