@@ -41,7 +41,7 @@
 
 - C. Ma, G.P. Saggese, P. Smith, _Causify Grid: A Causal Inference in Energy Demand Prediction_, arXiv preprint arXiv:2512.11653, 2025
 
-- C. Ma, G. Pomazkin, G.P. Saggese, P. Smith, D. Tikhomirov, N. Trubacheva, _Causify Horizon: A Causal Demand Forecasting Framework_, Internal report, 2025
+- C. Ma, G. Pomazkin, G.P. Saggese, P. Smith, D. Tikhomirov, N. Trubacheva, _Causify Horizon: A Causal Demand Forecasting Framework_, Preprint, 2025
 
 - G.P. Saggese, P. Smith, _Causify Optima: The Effect of Latency on Optimal Order Execution Policy_, arXiv preprint arXiv:2504.00846, 2025
 
