@@ -7,7 +7,7 @@ import Lesson94_Information_Theory_utils as litutils
 """
 
 import logging
-from typing import Any, List, Union
+from typing import Any, List, Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,10 +33,20 @@ def calculate_entropy(probabilities: Union[List[float], np.ndarray]) -> float:
     :param probabilities: Array of probabilities (must sum to 1)
     :return: Entropy in bits
     """
-    # Filter out zero probabilities to avoid log(0).
+    import helpers.hdbg as hdbg
+
+    # Convert to numpy array.
     probabilities = np.array(probabilities)
+    # Check that probabilities sum to 1.
+    prob_sum = np.sum(probabilities)
+    hdbg.dassert_lte(
+        abs(prob_sum - 1.0),
+        1e-6,
+        "Probabilities must sum to 1, got sum=%s",
+        prob_sum,
+    )
+    # Filter out zero probabilities to avoid log(0).
     probabilities = probabilities[probabilities > 0]
-    # TODO(ai_gp): Add check that probabilities sum to 1 with hdbg.dassert
     # Calculate entropy using log base 2.
     entropy = -np.sum(probabilities * np.log2(probabilities))
     return entropy
@@ -70,11 +80,10 @@ def calculate_joint_entropy(joint_prob: np.ndarray) -> float:
     :return: Joint entropy in bits
     """
     joint_prob = np.array(joint_prob)
-    # Filter out zero probabilities.
+    # Flatten the joint probability distribution.
     joint_prob_flat = joint_prob.flatten()
-    # TODO(ai_gp): use calculate_entropy() instead.
-    joint_prob_flat = joint_prob_flat[joint_prob_flat > 0]
-    return -np.sum(joint_prob_flat * np.log2(joint_prob_flat))
+    # Use calculate_entropy() for consistent calculation.
+    return calculate_entropy(joint_prob_flat)
 
 
 def calculate_conditional_entropy(joint_prob: np.ndarray) -> float:
@@ -208,6 +217,71 @@ def calculate_cross_entropy(
 # #############################################################################
 # Visualization functions
 # #############################################################################
+
+
+def plot_distribution_with_stats(
+    *,
+    values: np.ndarray,
+    probabilities: np.ndarray,
+    title: str,
+    ax: Optional[Any] = None,
+    figsize: tuple = (6, 4),
+    save_fig: Optional[str] = None,
+) -> None:
+    """
+    Plot a probability distribution with mean, variance, and entropy statistics.
+
+    :param values: Array of outcome values
+    :param probabilities: Array of probabilities for each outcome
+    :param title: Title for the plot
+    :param ax: Matplotlib axis to plot on (creates new if None)
+    :param figsize: Figure size as (width, height) tuple, default (10, 3)
+    :param save_fig: Optional filename to save the figure (e.g., 'plot.png')
+    """
+    # Calculate statistics.
+    mean = np.sum(values * probabilities)
+    variance = np.sum(probabilities * (values - mean) ** 2)
+    entropy = calculate_entropy(probabilities)
+    # Create axis if not provided.
+    fig = None
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    # Plot probability distribution.
+    ax.bar(
+        values,
+        probabilities,
+        alpha=0.7,
+        edgecolor="black",
+        color="steelblue",
+    )
+    ax.set_xlabel("Value", fontsize=12)
+    ax.set_ylabel("Probability", fontsize=12)
+    ax.set_title(title, fontsize=14, fontweight="bold")
+    ax.grid(True, alpha=0.3, axis="y")
+    # Add statistics text box.
+    stats_text = (
+        f"Mean: {mean:.2f}\n"
+        f"Variance: {variance:.2f}\n"
+        f"Entropy: {entropy:.4f} bits"
+    )
+    ax.text(
+        0.98,
+        0.97,
+        stats_text,
+        transform=ax.transAxes,
+        fontsize=11,
+        verticalalignment="top",
+        horizontalalignment="right",
+        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.8),
+    )
+    # Save figure if requested.
+    if save_fig is not None and fig is not None:
+        fig.savefig(save_fig, dpi=150, bbox_inches="tight")
+        _LOG.info("Saved figure to: %s", save_fig)
+    # Show plot if not using existing axis.
+    if fig is not None:
+        plt.tight_layout()
+        plt.show()
 
 
 def plot_binary_entropy_interactive(*, p: float = 0.5) -> None:

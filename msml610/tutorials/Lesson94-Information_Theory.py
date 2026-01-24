@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -57,40 +57,240 @@ _LOG = logging.getLogger(__name__)
 
 
 # %% [markdown]
-# <a name='entropy'></a>
-# # 1. Entropy and Uncertainty
-#
-# ## Definition
+# # Entropy and Uncertainty
 #
 # **Entropy** $H(X)$ of a discrete random variable $X$ is defined as:
 #
 # $$H(X) = -\sum_x p(x) \log_2 p(x)$$
 #
-# ## Intuition
-#
 # - Entropy quantifies the average level of **information**, **surprise**, or **uncertainty** inherent in the variable's possible outcomes
 # - High entropy = more unpredictability
 # - Low entropy = more certainty
-# - Unit: bits (when using $\log_2$)
-#
-# ## Examples
-#
-# - **Fair coin**: Two equally likely outcomes → maximum uncertainty, $H = 1$ bit
-# - **Biased coin**: If heads occurs 90% of the time → less uncertainty, $H < 1$ bit
 
 # %%
 # Test with fair coin.
+# Two equally likely outcomes → maximum uncertainty, $H = 1$ bit.
 fair_coin = [0.5, 0.5]
 print(f"Fair coin entropy: {utils.calculate_entropy(fair_coin):.4f} bits")
 
+# %%
 # Test with biased coin.
+# If heads occurs 90% of the time → less uncertainty, $H < 1$ bit.
 biased_coin = [0.9, 0.1]
 print(f"Biased coin (90-10) entropy: {utils.calculate_entropy(biased_coin):.4f} bits")
 
-# Test with certain outcome.
-certain = [1.0, 0.0]
-print(f"Certain outcome entropy: {utils.calculate_entropy(certain):.4f} bits")
+# %%
+# Test with broken coin.
+biased_coin = [1.0, 0.0]
+print(f"Biased coin (100-0) entropy: {utils.calculate_entropy(biased_coin):.4f} bits")
+# If heads occurs 100% of the time → no uncertainty, $H = 0$ bit.
 
+# %% [markdown]
+# ## Entropy vs Variance
+#
+# Entropy and variance are related but measure different properties:
+# - **Variance** measures how far values are from the mean
+# - **Entropy** measures how unpredictable a random draw is
+#
+# A distribution can have high variance but low entropy, or vice versa.
+
+# %%
+# Compare two distributions with same variance but different entropy.
+# Distribution 1: Bimodal with peaks at extremes.
+dist1_values = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+dist1_probs = np.array([0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5])
+
+utils.plot_distribution_with_stats(
+    values=dist1_values,
+    probabilities=dist1_probs,
+    title="Distribution 1: Two peaks at extremes (0 and 10)",
+)
+# This distribution has high variance (spread) but low entropy (only 1 bit).
+
+# %%
+# Distribution 2: Uniform over middle values.
+dist2_probs = np.array([0.0, 0.0, 0.2, 0.2, 0.2, 0.2, 0.2, 0.0, 0.0, 0.0, 0.0])
+
+utils.plot_distribution_with_stats(
+    values=dist1_values,
+    probabilities=dist2_probs,
+    title="Distribution 2: Uniform over middle values (2-6)",
+)
+# This distribution has lower variance but higher entropy (~2.32 bits).
+
+# %%
+# Compare the two distributions side by side.
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 3))
+
+utils.plot_distribution_with_stats(
+    values=dist1_values,
+    probabilities=dist1_probs,
+    title="Distribution 1: Two peaks at extremes",
+    ax=ax1,
+)
+
+utils.plot_distribution_with_stats(
+    values=dist1_values,
+    probabilities=dist2_probs,
+    title="Distribution 2: Uniform over middle values",
+    ax=ax2,
+)
+
+plt.tight_layout()
+plt.show()
+
+# Variance measures spread from mean; entropy measures unpredictability.
+# Key insight: Distribution 1 has higher variance but lower entropy.
+
+# %% [markdown]
+# ## Entropy and Distribution Spread
+#
+# Generally, more spread in a distribution leads to higher entropy, but there are exceptions:
+# - Increasing the support of a uniform distribution increases variance but not entropy
+# - The relationship depends on the shape of the distribution
+
+# %%
+# Example: Uniform distributions with different support.
+# Uniform over 2 values.
+uniform_2 = np.array([0.5, 0.5])
+values_2 = np.array([0, 1])
+
+utils.plot_distribution_with_stats(
+    values=values_2,
+    probabilities=uniform_2,
+    title="Uniform distribution over 2 values",
+)
+# A uniform distribution over 2 outcomes has 1 bit of entropy.
+
+# %%
+# Uniform over 4 values.
+uniform_4 = np.array([0.25, 0.25, 0.25, 0.25])
+values_4 = np.array([0, 1, 2, 3])
+
+utils.plot_distribution_with_stats(
+    values=values_4,
+    probabilities=uniform_4,
+    title="Uniform distribution over 4 values",
+)
+# A uniform distribution over 4 outcomes has 2 bits of entropy.
+
+# %%
+# Uniform over 8 values.
+uniform_8 = np.array([0.125] * 8)
+values_8 = np.array([0, 1, 2, 3, 4, 5, 6, 7])
+
+utils.plot_distribution_with_stats(
+    values=values_8,
+    probabilities=uniform_8,
+    title="Uniform distribution over 8 values",
+)
+# A uniform distribution over 8 outcomes has 3 bits of entropy.
+
+# %%
+# Compare uniform distributions with increasing support.
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 3))
+
+utils.plot_distribution_with_stats(
+    values=values_2,
+    probabilities=uniform_2,
+    title="Uniform: 2 values",
+    ax=ax1,
+)
+
+utils.plot_distribution_with_stats(
+    values=values_4,
+    probabilities=uniform_4,
+    title="Uniform: 4 values",
+    ax=ax2,
+)
+
+utils.plot_distribution_with_stats(
+    values=values_8,
+    probabilities=uniform_8,
+    title="Uniform: 8 values",
+    ax=ax3,
+)
+
+plt.tight_layout()
+plt.show()
+
+print("\nPattern: Entropy = log2(n) for uniform distribution over n values.")
+# More outcomes in a uniform distribution → higher entropy.
+
+# %% [markdown]
+# ## Entropy and Uncertainty: Shape Matters
+#
+# Entropy is closely related to the shape of the probability distribution:
+# - **Flat (uniform) distribution** → high entropy, high uncertainty
+# - **Sharply peaked distribution** → low entropy, low uncertainty
+# - **Multi-modal distribution** → can have high entropy despite low variance
+
+# %%
+# Example 1: Flat distribution has high entropy.
+flat_dist = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+values_flat = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+utils.plot_distribution_with_stats(
+    values=values_flat,
+    probabilities=flat_dist,
+    title="Flat (uniform) distribution",
+)
+# Uniform distribution has maximum entropy for given number of outcomes.
+
+# %%
+# Example 2: Sharply peaked distribution has low entropy.
+peaked_dist = np.array([0.01, 0.01, 0.01, 0.01, 0.92, 0.01, 0.01, 0.01, 0.01, 0.01])
+values_peaked = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+utils.plot_distribution_with_stats(
+    values=values_peaked,
+    probabilities=peaked_dist,
+    title="Sharply peaked distribution (92% at position 4)",
+)
+# Concentrated probability → low uncertainty → low entropy.
+
+# %%
+# Example 3: Two close peaks can have low variance but high entropy.
+values_two_peaks = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+two_peaks = np.array([0.0, 0.0, 0.45, 0.0, 0.1, 0.0, 0.45, 0.0, 0.0, 0.0])
+
+utils.plot_distribution_with_stats(
+    values=values_two_peaks,
+    probabilities=two_peaks,
+    title="Distribution with two close peaks (at positions 2 and 6)",
+)
+# Two equally likely peaks → high entropy (~1.1 bits) despite moderate variance.
+
+# %%
+# Compare the three distribution shapes.
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 4))
+
+utils.plot_distribution_with_stats(
+    values=values_flat,
+    probabilities=flat_dist,
+    title="Flat distribution",
+    ax=ax1,
+)
+
+utils.plot_distribution_with_stats(
+    values=values_peaked,
+    probabilities=peaked_dist,
+    title="Peaked distribution",
+    ax=ax2,
+)
+
+utils.plot_distribution_with_stats(
+    values=values_two_peaks,
+    probabilities=two_peaks,
+    title="Two-peak distribution",
+    ax=ax3,
+)
+
+plt.tight_layout()
+plt.show()
+
+print("\nKey insight: Shape affects entropy more than spread alone.")
+# Flat → high entropy; peaked → low entropy; multi-modal → can vary.
 
 # %% [markdown]
 # ## Interactive Visualization: Binary Entropy
@@ -105,10 +305,7 @@ interact(utils.plot_binary_entropy_interactive,
 
 
 # %% [markdown]
-# <a name='joint-conditional'></a>
-# # 2. Joint and Conditional Entropy
-#
-# ## Joint Entropy
+# # Joint and Conditional Entropy
 #
 # **Joint entropy** $H(X, Y)$ of two variables $X$ and $Y$:
 #
@@ -145,8 +342,9 @@ print("Joint Probability Distribution:")
 print(pd.DataFrame(joint_prob, 
                    index=['Sunny', 'Rainy'], 
                    columns=['Park', 'Cinema']))
-print()
 
+
+# %%
 # Calculate marginals.
 p_weather = joint_prob.sum(axis=1)
 p_activity = joint_prob.sum(axis=0)
@@ -164,40 +362,20 @@ print()
 print(f"Chain rule verification: H(Weather) + H(Activity|Weather) = {h_weather + h_activity_given_weather:.4f} bits")
 print(f"Should equal H(Weather, Activity) = {h_joint:.4f} bits")
 
-
 # %% [markdown]
-# <a name='mutual-info'></a>
-# # 3. Mutual Information
-#
-# ## Definition
+# # Mutual Information
 #
 # **Mutual information** $I(X;Y)$ measures how much knowing one variable reduces uncertainty about the other:
 #
 # $$I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X,Y)$$
 #
-# ## Intuition
-#
 # - Measures the shared information between two variables
 # - Quantifies the reduction in uncertainty about one variable given the other
 # - Symmetric: $I(X;Y) = I(Y;X)$
-#
-# ## Properties
-#
-# - Non-negative: $I(X;Y) \geq 0$
-# - $I(X;Y) = 0$ if and only if $X$ and $Y$ are independent
-# - $I(X;X) = H(X)$ (self-information equals entropy)
-# - Higher mutual information indicates stronger relationship
-#
-# ## Applications
-#
-# - Feature selection in machine learning
-# - Dimensionality reduction
-# - Dependency detection in data
 
 # %%
 # Use the weather-activity example.
 print("Example: Weather and Activity Correlation")
-print("=" * 50)
 utils.visualize_information_decomposition(joint_prob)
 
 # Calculate and display mutual information.
@@ -251,32 +429,59 @@ interact(utils.plot_mutual_info_interactive,
 # - Information compression
 
 # %%
-# Example: Classification problem.
+# Setup: Classification problem.
 # True distribution (ground truth labels).
 true_dist = np.array([0.0, 0.0, 1.0, 0.0])  # Class 2 is correct.
-
 # Model predictions (different confidence levels).
 model_confident = np.array([0.05, 0.05, 0.85, 0.05])  # Confident and correct.
 model_uncertain = np.array([0.25, 0.25, 0.25, 0.25])  # Uncertain (uniform).
 model_wrong = np.array([0.05, 0.85, 0.05, 0.05])     # Confident but wrong.
-
 print("Classification Example")
 print("=" * 60)
 print("True label: Class 2")
 print()
 
-for name, model_pred in [("Confident & Correct", model_confident),
-                         ("Uncertain", model_uncertain),
-                         ("Confident & Wrong", model_wrong)]:
-    kl = utils.calculate_kl_divergence(true_dist, model_pred)
-    ce = utils.calculate_cross_entropy(true_dist, model_pred)
-    h_true = utils.calculate_entropy(true_dist)
-    print(f"{name}:")
-    print(f"  Model prediction: {model_pred}")
-    print(f"  Cross-Entropy: {ce:.4f} bits")
-    print(f"  KL Divergence: {kl:.4f} bits")
-    print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
-    print()
+# %%
+# Example 1: Confident and correct model prediction.
+# Low cross-entropy and KL divergence indicate good match with true distribution.
+model_pred = model_confident
+name = "Confident & Correct"
+kl = utils.calculate_kl_divergence(true_dist, model_pred)
+ce = utils.calculate_cross_entropy(true_dist, model_pred)
+h_true = utils.calculate_entropy(true_dist)
+print(f"{name}:")
+print(f"  Model prediction: {model_pred}")
+print(f"  Cross-Entropy: {ce:.4f} bits")
+print(f"  KL Divergence: {kl:.4f} bits")
+print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
+
+# %%
+# Example 2: Uncertain model prediction (uniform distribution).
+# Higher cross-entropy due to uncertainty, even though it includes the correct class.
+model_pred = model_uncertain
+name = "Uncertain"
+kl = utils.calculate_kl_divergence(true_dist, model_pred)
+ce = utils.calculate_cross_entropy(true_dist, model_pred)
+h_true = utils.calculate_entropy(true_dist)
+print(f"{name}:")
+print(f"  Model prediction: {model_pred}")
+print(f"  Cross-Entropy: {ce:.4f} bits")
+print(f"  KL Divergence: {kl:.4f} bits")
+print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
+
+# %%
+# Example 3: Confident but wrong model prediction.
+# Very high cross-entropy and KL divergence due to confident wrong prediction.
+model_pred = model_wrong
+name = "Confident & Wrong"
+kl = utils.calculate_kl_divergence(true_dist, model_pred)
+ce = utils.calculate_cross_entropy(true_dist, model_pred)
+h_true = utils.calculate_entropy(true_dist)
+print(f"{name}:")
+print(f"  Model prediction: {model_pred}")
+print(f"  Cross-Entropy: {ce:.4f} bits")
+print(f"  KL Divergence: {kl:.4f} bits")
+print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
 
 
 # %% [markdown]

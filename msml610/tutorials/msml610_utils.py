@@ -1,3 +1,7 @@
+"""
+Utility functions for MSML610 course tutorials.
+"""
+
 import copy
 import logging
 import os
@@ -14,17 +18,22 @@ from IPython.display import clear_output, display
 
 import helpers.hdbg as hdbg
 
-
 _LOG = logging.getLogger(__name__)
 
 
 def set_notebook_style() -> None:
-    print("# Setting notebook style")
+    """
+    Set default matplotlib style for notebooks.
+    """
+    _LOG.info("Setting notebook style")
     plt.rcParams["figure.figsize"] = [8, 3]
 
 
 def notebook_signature() -> None:
-    print("# Notebook signature")
+    """
+    Display Python environment information including version and module versions.
+    """
+    _LOG.info("Notebook signature")
     cmd = "python --version"
     os.system(cmd)
     cmd = "uname -a"
@@ -34,15 +43,26 @@ def notebook_signature() -> None:
         cmd = f"import {module}"
         exec(cmd)
         version = eval(f"{module}.__version__")
-        print(f"{module} version={version}")
+        _LOG.info("%s version=%s", module, version)
 
 
 def config_notebook() -> None:
+    """
+    Configure notebook with default style and display environment signature.
+    """
     set_notebook_style()
     notebook_signature()
 
 
 def obj_to_str(var_name: str, val: Any, *, top_n: int = 3) -> str:
+    """
+    Convert object to string representation showing name, type, and preview.
+
+    :param var_name: Name of the variable
+    :param val: Value to convert
+    :param top_n: Number of elements to show from start and end for arrays
+    :return: String representation of the object
+    """
     txt = []
     txt_tmp = "var_name=%s (type=%s)" % (var_name, str(type(val)))
     txt.append(txt_tmp)
@@ -58,13 +78,22 @@ def obj_to_str(var_name: str, val: Any, *, top_n: int = 3) -> str:
 
 
 def print_obj(*args: Any, **kwargs: Any) -> None:
-    print(obj_to_str(*args, **kwargs))
+    """
+    Print object information using obj_to_str.
+    """
+    _LOG.info(obj_to_str(*args, **kwargs))
 
 
 # Lesson 7, notebook 1
 
 
 def convert_to_filename(string: str) -> str:
+    """
+    Convert string to sanitized filename path in figures directory.
+
+    :param string: Input string to convert
+    :return: Full path to PNG file
+    """
     dst_dir = os.path.join(
         os.environ["CSFY_GIT_ROOT_PATH"], "lectures_source/figures"
     )
@@ -81,17 +110,29 @@ def convert_to_filename(string: str) -> str:
 
 
 def print_figure(file_name: str) -> None:
+    """
+    Print markdown image reference with fixed width.
+
+    :param file_name: Path to image file
+    """
     txt = f"![]({file_name})" + "{ width=100px }"
-    print(txt)
+    _LOG.info(txt)
 
 
 def process_figure(title: str) -> None:
+    """
+    Save current figure with title-based filename.
+
+    :param title: Title used to generate filename
+    """
     file_name = convert_to_filename(title)
     plt.savefig(file_name, dpi=300)
-    # print_figure(file_name)
 
 
 def plot_binomial() -> None:
+    """
+    Plot binomial distribution for various n and p parameter combinations.
+    """
     n_params = [2, 4, 8]
     p_params = [0, 0.25, 0.5, 0.75, 1]
     max_n = max(n_params) + 1
@@ -102,10 +143,9 @@ def plot_binomial() -> None:
         sharex=True,
         sharey=True,
         figsize=(9, 7),
-        # Fit plots into the figure cleanly.
         constrained_layout=True,
     )
-    print(ax.shape)
+    _LOG.debug("ax.shape=%s", ax.shape)
     for i in range(len(n_params)):
         for j in range(len(p_params)):
             x = list(range(0, max_n))
@@ -129,6 +169,9 @@ def plot_binomial() -> None:
 
 
 def plot_beta() -> None:
+    """
+    Plot beta distribution for various alpha and beta parameter combinations.
+    """
     # Alpha and beta values to plot.
     a_params = [0.8, 1.0, 2.0, 4.0]
     b_params = [0.8, 1.0, 2.0, 4.0]
@@ -140,7 +183,6 @@ def plot_beta() -> None:
         sharex=True,
         sharey=True,
         figsize=(9, 7),
-        # Fit plots into the figure cleanly.
         constrained_layout=True,
     )
     for i in range(len(a_params)):
@@ -163,8 +205,8 @@ def plot_beta() -> None:
 
 
 # #############################################################################
-
-# Interactive Beta Prior updater
+# Interactive Beta Prior updater.
+# #############################################################################
 
 
 def _parse_trials(text: str) -> List[int]:
@@ -327,6 +369,9 @@ def beta_prior_interactive() -> None:
 
 
 def update_prior() -> None:
+    """
+    Visualize how different Beta priors are updated with observed data.
+    """
     plt.figure(figsize=(10, 8))
     theta_real = 0.35
     # 3 different Beta priors.
@@ -367,11 +412,13 @@ def update_prior() -> None:
     process_figure(title)
 
 
-#
+# #############################################################################
+# Loss functions.
+# #############################################################################
+
 LossValue = Union[float, np.ndarray]
 
-
-# We rely on brodcasted operations to handle both scalar and array inputs, e.g.,
+# We rely on broadcasted operations to handle both scalar and array inputs:
 # y_hat     y_true    loss      comment
 # -----------------------------------------------------------------------------
 # scalar    scalar    scalar    Point-wise loss
@@ -381,18 +428,46 @@ LossValue = Union[float, np.ndarray]
 
 
 def squared_loss(y_hat: LossValue, y_true: LossValue) -> LossValue:
+    """
+    Compute squared loss (L2).
+
+    :param y_hat: Predicted value(s)
+    :param y_true: True value(s)
+    :return: Mean squared error
+    """
     return np.mean((y_true - y_hat) ** 2)
 
 
 def abs_loss(y_hat: LossValue, y_true: LossValue) -> LossValue:
+    """
+    Compute absolute loss (L1).
+
+    :param y_hat: Predicted value(s)
+    :param y_true: True value(s)
+    :return: Mean absolute error
+    """
     return np.mean(np.abs(y_true - y_hat))
 
 
 def sin_loss(y_hat: LossValue, y_true: LossValue) -> LossValue:
+    """
+    Compute sinusoidal loss function.
+
+    :param y_hat: Predicted value(s)
+    :param y_true: True value(s)
+    :return: Sinusoidal loss
+    """
     return y_true + np.sin(2 * np.pi * y_hat) + 0.5 * y_hat
 
 
 def asymmetric_loss(y_hat: LossValue, y_true: LossValue) -> LossValue:
+    """
+    Compute asymmetric loss function with different penalties for over/under prediction.
+
+    :param y_hat: Predicted value(s)
+    :param y_true: True value(s)
+    :return: Asymmetric loss
+    """
     y_hat /= 10
     if y_hat < 0.0:
         val = -np.abs(y_true - y_hat)
@@ -404,6 +479,9 @@ def asymmetric_loss(y_hat: LossValue, y_true: LossValue) -> LossValue:
 def plot_loss(grid: np.ndarray, loss_func: Callable) -> None:
     """
     Plot the loss function on a grid of values.
+
+    :param grid: Array of x values
+    :param loss_func: Loss function to plot
     """
     loss_values = [loss_func(i) for i in grid]
     plt.plot(grid, loss_values, label=loss_func.__name__)
@@ -415,19 +493,12 @@ def plot_loss(grid: np.ndarray, loss_func: Callable) -> None:
 
 def pick_best_theta(idata: az.InferenceData) -> None:
     """
-    Plot the absolute and squared loss functions for a range of theta values
-    and mark the minimum loss points on the plot.
+    Plot absolute and squared loss functions for theta and mark minimum points.
 
-    :param idata: InferenceData object containing the posterior
-        distribution of theta.
+    :param idata: InferenceData object containing posterior distribution of theta
     """
     grid = np.linspace(0, 1, 200)
     theta_posterior = idata.to_dataframe()[("posterior", "theta")]
-    # E.g.,
-    # 0       0.145339
-    # 1       0.146737
-    # 2       0.040329
-    # 3       0.109264
     # We don't have a single value for y_true, but a distribution of values.
     # For each point in the grid, compute the loss of that point vs all the
     # points in the posterior.
@@ -454,10 +525,8 @@ def pick_best_theta(idata: az.InferenceData) -> None:
     plt.xlabel(r"$\hat{\theta}$")
 
 
-# Gaussian inference
-
 # #############################################################################
-# Lesson 8
+# Kalman filtering and g-h filters.
 # #############################################################################
 
 
@@ -506,14 +575,13 @@ def plot_gh_filter_results(
     tag_measurements: str = "measurements",
 ) -> None:
     """
-    Plot weight gain data including measurements, ground truth, predictions and
-    estimates.
+    Plot g-h filter results with measurements, predictions, and estimates.
 
-    :param df: DataFrame containing weight data with columns:
-        - measurements: actual weight measurements
-        - ground_truth: true weight values
-        - pred: predicted weights
-        - ests: estimated weights
+    :param measurements: Actual measurements
+    :param preds: Predicted values
+    :param ests: Estimated values
+    :param ground_truth: True values
+    :param tag_measurements: Label for measurements in plot
     """
     idx = pd.date_range("2011-01-01", periods=len(measurements))
     df = pd.DataFrame(
@@ -664,7 +732,9 @@ def gen_non_linear_noisy_data(
     return np.array(vals), np.array(ground_truth)
 
 
+# #############################################################################
 # Discrete Bayes Filter.
+# #############################################################################
 
 
 def plot_dog_in_office_pdf(
@@ -674,9 +744,10 @@ def plot_dog_in_office_pdf(
     title: str = "Probability Histogram",
 ) -> None:
     """
-    Plot a histogram-like bar chart of class probabilities.
+    Plot histogram-like bar chart of class probabilities with door markers.
 
-    :param probabilities: List or numpy array of class probabilities
+    :param probs: List or array of class probabilities
+    :param hallway: Binary array marking door positions
     :param title: Title for the plot
     """
     hdbg.dassert_isinstance(probs, (list, np.ndarray))
@@ -707,61 +778,88 @@ def plot_dog_in_office_pdf(
 
 
 # #############################################################################
-# Save figures.
+# Figure saving utilities.
 # #############################################################################
 
-
-fig_dir = "/app/lectures_source/figures"
+FIG_DIR = "/app/lectures_source/figures"
 
 
 def save_ax(ax: Any, file_name: str) -> None:
-    file_name = os.path.join(fig_dir, file_name)
+    """
+    Save matplotlib axes figure to file and print markdown reference.
+
+    :param ax: Matplotlib axes object
+    :param file_name: Output filename
+    """
+    file_name = os.path.join(FIG_DIR, file_name)
     ax.figure.savefig(file_name, dpi=300, bbox_inches="tight")
     #
     file_name = file_name.replace("/app/", "")
     cmd = f"![]({file_name})"
-    print(cmd)
+    _LOG.info(cmd)
 
 
 def save_fig(axes: Any, file_name: str) -> None:
-    file_name = os.path.join(fig_dir, file_name)
+    """
+    Save matplotlib figure from axes array to file and print markdown reference.
+
+    :param axes: Array of matplotlib axes
+    :param file_name: Output filename
+    """
+    file_name = os.path.join(FIG_DIR, file_name)
     fig = axes[0, 0].figure
     fig.savefig(file_name, dpi=300, bbox_inches="tight")
     #
     file_name = file_name.replace("/app/", "")
     cmd = f"![]({file_name})"
-    print(cmd)
+    _LOG.info(cmd)
 
 
 def save_dot(model: Any, file_name: str) -> None:
+    """
+    Save PyMC model graph to PNG file and print markdown reference.
+
+    :param model: PyMC model object
+    :param file_name: Output filename
+    """
     dot = pm.model_to_graphviz(model)
     dot2 = copy.deepcopy(dot)
     file_name = file_name.replace(".png", "")
-    file_name = os.path.join(fig_dir, file_name)
+    file_name = os.path.join(FIG_DIR, file_name)
     # 300 is print quality; try 600 for very sharp images.
     dot2.graph_attr["dpi"] = "300"
     dot2.render(file_name, format="png", cleanup=True)
     #
     file_name = file_name.replace("/app/", "")
     cmd = f"![]({file_name})"
-    print(cmd)
+    _LOG.info(cmd)
 
 
 def save_df(df: pd.DataFrame, file_name: str) -> None:
-    #!sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet dataframe_image)"
+    """
+    Save DataFrame as image file and print markdown reference.
+
+    :param df: DataFrame to save
+    :param file_name: Output filename
+    """
     import dataframe_image as dfi
-    file_name = os.path.join(fig_dir, file_name)
+    file_name = os.path.join(FIG_DIR, file_name)
     dfi.export(df, file_name, table_conversion="matplotlib", dpi=300)
     #
     file_name = file_name.replace("/app/", "")
     cmd = f"![]({file_name})"
-    print(cmd)
+    _LOG.info(cmd)
 
 
 def save_plt(file_name: str) -> None:
-    file_name = os.path.join(fig_dir, file_name)
+    """
+    Save current matplotlib figure to file and print markdown reference.
+
+    :param file_name: Output filename
+    """
+    file_name = os.path.join(FIG_DIR, file_name)
     plt.savefig(file_name, dpi=300, bbox_inches="tight")
     #
     file_name = file_name.replace("/app/", "")
     cmd = f"![]({file_name})"
-    print(cmd)
+    _LOG.info(cmd)
