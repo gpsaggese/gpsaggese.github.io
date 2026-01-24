@@ -1,14 +1,15 @@
+import copy
 import logging
 import os
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 import arviz as az
+import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pymc as pm
 import scipy.stats as stats
-import ipywidgets as W
 from IPython.display import clear_output, display
 
 import helpers.hdbg as hdbg
@@ -41,7 +42,7 @@ def config_notebook() -> None:
     notebook_signature()
 
 
-def obj_to_str(var_name: str, val: any, top_n: int = 3) -> str:
+def obj_to_str(var_name: str, val: Any, *, top_n: int = 3) -> str:
     txt = []
     txt_tmp = "var_name=%s (type=%s)" % (var_name, str(type(val)))
     txt.append(txt_tmp)
@@ -56,7 +57,7 @@ def obj_to_str(var_name: str, val: any, top_n: int = 3) -> str:
     return "\n".join(txt)
 
 
-def print_obj(*args: any, **kwargs: any) -> None:
+def print_obj(*args: Any, **kwargs: Any) -> None:
     print(obj_to_str(*args, **kwargs))
 
 
@@ -104,7 +105,6 @@ def plot_binomial() -> None:
         # Fit plots into the figure cleanly.
         constrained_layout=True,
     )
-    # constrained_layout=False)
     print(ax.shape)
     for i in range(len(n_params)):
         for j in range(len(p_params)):
@@ -114,16 +114,14 @@ def plot_binomial() -> None:
             # Evaluate the PDF in several points.
             y = stats.binom(n=n, p=p).pmf(x)
             y = [y[k] if k <= n else np.nan for k in range(max_n)]
-            # print(n, p, x, y)
             # Plot the PDF.
-            # ax[i, j].plot(x, y, marker='o', linestyle='--')
-            ax[i, j].bar(x, y)  # vertical bars
+            ax[i, j].bar(x, y)
             # Add the legend.
-            ax[i, j].plot([], label="n={:3.2f}\np={:3.2f}".format(n, p), alpha=0)
+            label = "n={:3.2f}\np={:3.2f}".format(n, p)
+            ax[i, j].plot([], label=label, alpha=0)
             ax[i, j].legend(loc="best")
     ax[2, 1].set_xlabel("x")
     ax[1, 0].set_ylabel("p(x)", rotation=0, labelpad=20)
-    # ax[1, 0].set_yticks([])
     ax[1, 0].set_xticks(range(0, max_n))
     #
     title = "Binomial distribution"
@@ -145,7 +143,6 @@ def plot_beta() -> None:
         # Fit plots into the figure cleanly.
         constrained_layout=True,
     )
-    # constrained_layout=False)
     for i in range(len(a_params)):
         for j in range(len(b_params)):
             alpha = a_params[i]
@@ -155,9 +152,8 @@ def plot_beta() -> None:
             # Plot the PDF.
             ax[i, j].plot(x, y)
             # Add the legend.
-            ax[i, j].plot(
-                [], label="a={:3.2f}\nb={:3.2f}".format(alpha, beta), alpha=0
-            )
+            label = "a={:3.2f}\nb={:3.2f}".format(alpha, beta)
+            ax[i, j].plot([], label=label, alpha=0)
             ax[i, j].legend(loc=1)
     ax[2, 1].set_xlabel("x")
     ax[1, 0].set_ylabel("p(x)", rotation=0, labelpad=20)
@@ -173,11 +169,17 @@ def plot_beta() -> None:
 
 def _parse_trials(text: str) -> List[int]:
     """
-    Parse comma-separated trial counts (non-negative, unique, keep order).
+    Parse comma-separated trial counts.
+
+    Non-negative, unique, keep order.
     """
     try:
-        vals: List[int] = [int(x.strip()) for x in text.split(",") if x.strip()]
-        vals = [v for i, v in enumerate(vals) if v >= 0 and v not in vals[:i]]
+        vals: List[int] = [
+            int(x.strip()) for x in text.split(",") if x.strip()
+        ]
+        vals = [
+            v for i, v in enumerate(vals) if v >= 0 and v not in vals[:i]
+        ]
         return vals if vals else [0]
     except Exception:
         return [0]
@@ -187,8 +189,9 @@ def _generate_data(
     theta_real: float, n_trials: List[int], seed: int
 ) -> List[int]:
     """
-    Generate binomial counts y ~ Binomial(N, theta_real) deterministically per
-    index via seed.
+    Generate binomial counts y ~ Binomial(N, theta_real).
+
+    Deterministically per index via seed.
     """
     y_vals: List[int] = []
     for idx, N in enumerate(n_trials):
@@ -198,10 +201,14 @@ def _generate_data(
 
 
 def _validate_ab(
-    a: float | str, b: float | str, fallback: Tuple[float, float]
+    a: Union[float, str],
+    b: Union[float, str],
+    fallback: Tuple[float, float],
 ) -> Tuple[float, float]:
     """
-    Ensure α, β are valid positive floats; otherwise return fallback.
+    Ensure α, β are valid positive floats.
+
+    Return fallback if invalid.
     """
     try:
         a_f, b_f = float(a), float(b)
@@ -216,8 +223,8 @@ def beta_prior_interactive() -> None:
     """
     Create an interactive ipywidgets visualization with a single Beta prior.
     """
-    # Widgets
-    theta_slider: W.FloatSlider = W.FloatSlider(
+    # Widgets.
+    theta_slider: ipywidgets.FloatSlider = ipywidgets.FloatSlider(
         value=0.35,
         min=0.0,
         max=1.0,
@@ -226,40 +233,40 @@ def beta_prior_interactive() -> None:
         readout_format=".2f",
         continuous_update=False,
         style={"description_width": "90px"},
-        layout=W.Layout(width="350px"),
+        layout=ipywidgets.Layout(width="350px"),
     )
-    trials_text: W.Text = W.Text(
+    trials_text: ipywidgets.Text = ipywidgets.Text(
         value="0,1,2,3,4,8,16,32,64,96,128,160",
         description="n_trials",
         style={"description_width": "90px"},
-        layout=W.Layout(width="420px"),
+        layout=ipywidgets.Layout(width="420px"),
     )
-    seed_int: W.IntText = W.IntText(
+    seed_int: ipywidgets.IntText = ipywidgets.IntText(
         value=42,
         description="seed",
         style={"description_width": "90px"},
-        layout=W.Layout(width="200px"),
+        layout=ipywidgets.Layout(width="200px"),
     )
-    # Single prior parameter widgets
-    a1: W.FloatText = W.FloatText(
-        value=1.0, description="α", layout=W.Layout(width="150px")
+    # Single prior parameter widgets.
+    a1: ipywidgets.FloatText = ipywidgets.FloatText(
+        value=1.0, description="α", layout=ipywidgets.Layout(width="150px")
     )
-    b1: W.FloatText = W.FloatText(
-        value=1.0, description="β", layout=W.Layout(width="150px")
+    b1: ipywidgets.FloatText = ipywidgets.FloatText(
+        value=1.0, description="β", layout=ipywidgets.Layout(width="150px")
     )
-    index_slider: W.IntSlider = W.IntSlider(
+    index_slider: ipywidgets.IntSlider = ipywidgets.IntSlider(
         value=0,
         min=0,
         max=0,
         step=1,
         description="Index",
         style={"description_width": "90px"},
-        layout=W.Layout(width="420px"),
+        layout=ipywidgets.Layout(width="420px"),
         continuous_update=False,
     )
-    play: W.Play = W.Play(interval=600, value=0, min=0, max=0, step=1)
-    W.jslink((play, "value"), (index_slider, "value"))
-    out: W.Output = W.Output()
+    play: ipywidgets.Play = ipywidgets.Play(interval=600, value=0, min=0, max=0, step=1)
+    ipywidgets.jslink((play, "value"), (index_slider, "value"))
+    out: ipywidgets.Output = ipywidgets.Output()
 
     # Core update function
     def refresh_plot(*args) -> None:
@@ -287,16 +294,16 @@ def beta_prior_interactive() -> None:
             )
             ymax *= 1.1
             plt.figure(figsize=(8, 5))
-            plt.fill_between(
-                x, 0, post, alpha=0.5, label=f"Posterior: α={alpha:g}, β={beta:g}"
-            )
+            label = f"Posterior: α={alpha:g}, β={beta:g}"
+            plt.fill_between(x, 0, post, alpha=0.5, label=label)
             plt.axvline(theta_real, ymax=0.3, linestyle="--")
             plt.xlabel("θ")
             plt.ylabel("density")
             plt.xlim(0, 1)
             plt.ylim(0, max(10, ymax))
             plt.legend(loc="upper left", frameon=False)
-            plt.title(f"Posterior after N={N} trials, y={y} heads")
+            title = f"Posterior after N={N} trials, y={y} heads"
+            plt.title(title)
             plt.show()
 
     # Bind observers
@@ -306,13 +313,13 @@ def beta_prior_interactive() -> None:
     # Initial draw
     refresh_plot()
 
-    # Layout
-    prior_box = W.HBox([a1, b1])
-    top_box = W.HBox([theta_slider, seed_int])
-    trials_box = W.HBox([trials_text])
-    index_box = W.HBox([play, index_slider])
-
-    ui = W.VBox([top_box, trials_box, prior_box, index_box, out])
+    # Layout.
+    prior_box = ipywidgets.HBox([a1, b1])
+    top_box = ipywidgets.HBox([theta_slider, seed_int])
+    trials_box = ipywidgets.HBox([trials_text])
+    index_box = ipywidgets.HBox([play, index_slider])
+    #
+    ui = ipywidgets.VBox([top_box, trials_box, prior_box, index_box, out])
     display(ui)
 
 
@@ -361,7 +368,7 @@ def update_prior() -> None:
 
 
 #
-LossValue = Union[float, np.array]
+LossValue = Union[float, np.ndarray]
 
 
 # We rely on brodcasted operations to handle both scalar and array inputs, e.g.,
@@ -394,7 +401,7 @@ def asymmetric_loss(y_hat: LossValue, y_true: LossValue) -> LossValue:
     return val
 
 
-def plot_loss(grid: np.array, loss_func: Callable) -> None:
+def plot_loss(grid: np.ndarray, loss_func: Callable) -> None:
     """
     Plot the loss function on a grid of values.
     """
@@ -491,7 +498,7 @@ def predict_using_gain_guess(
 
 
 def plot_gh_filter_results(
-    measurements: np.array,
+    measurements: np.ndarray,
     preds: List[float],
     ests: List[float],
     ground_truth: List[float],
@@ -509,7 +516,9 @@ def plot_gh_filter_results(
         - ests: estimated weights
     """
     idx = pd.date_range("2011-01-01", periods=len(measurements))
-    df = pd.DataFrame(measurements.T, index=idx, columns=[tag_measurements])
+    df = pd.DataFrame(
+        measurements.T, index=idx, columns=[tag_measurements]
+    )
     if preds is not None:
         df["pred"] = preds
     df["ests"] = ests
@@ -528,7 +537,7 @@ def plot_gh_filter_results(
 
 def predict_learning_gain_rate(
     weight: float,
-    measures: np.array,
+    measures: np.ndarray,
     gain_rate: float,
     weight_factor: float,
     gain_scale: float,
@@ -561,14 +570,14 @@ def predict_learning_gain_rate(
 
 
 def gh_filter(
-    data: np.array,
+    data: np.ndarray,
     x0: float,
     dx: float,
     g: float,
     h: float,
     *,
     dt: float = 1.0,
-) -> np.array:
+) -> np.ndarray:
     """
     Perform g-h filter on 1 state variable with a fixed g and h.
 
@@ -603,8 +612,9 @@ def gen_linear_noisy_data(
     seed: int = 42,
 ) -> Tuple[np.ndarray, List[float]]:
     """
-    Generate random data starting from x0, with slope dx, affected by additive
-    random noise N(0, noise_factor).
+    Generate random data with additive noise N(0, noise_factor).
+
+    Starting from x0, with slope dx.
 
     :param x0: Initial value
     :param dx: Slope
@@ -615,7 +625,8 @@ def gen_linear_noisy_data(
     """
     np.random.seed(seed)
     vals = [
-        x0 + (dx * i) + np.random.randn() * noise_factor for i in range(count)
+        x0 + (dx * i) + np.random.randn() * noise_factor
+        for i in range(count)
     ]
     ground_truth = [x0 + dx * i for i in range(count)]
     return np.array(vals), ground_truth
@@ -631,8 +642,10 @@ def gen_non_linear_noisy_data(
     seed: int = 42,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Generate random data with acceleration, starting from x0, with initial
-    slope dx, affected by additive random noise N(0, noise_factor).
+    Generate random data with acceleration and additive noise.
+
+    Starting from x0, with initial slope dx, affected by random noise
+    N(0, noise_factor).
 
     :param x0: Initial value
     :param dx: Initial slope
@@ -645,15 +658,13 @@ def gen_non_linear_noisy_data(
     np.random.seed(seed)
     ground_truth = [x0 + (dx + i * accel) * i for i in range(count)]
     vals = [
-        ground_truth[i] + np.random.randn() * noise_factor for i in range(count)
+        ground_truth[i] + np.random.randn() * noise_factor
+        for i in range(count)
     ]
     return np.array(vals), np.array(ground_truth)
 
 
-# Discrete Bayes Filter
-
-import matplotlib.pyplot as plt
-import numpy as np
+# Discrete Bayes Filter.
 
 
 def plot_dog_in_office_pdf(
@@ -674,17 +685,18 @@ def plot_dog_in_office_pdf(
     # Check that the sum of probabilities is 1.0.
     hdbg.dassert_lte(0.99, np.sum(probs))
     hdbg.dassert_lte(np.sum(probs), 1.01)
+    #
     indices = np.arange(len(probs))
     if hallway is None:
         hallway = np.array([1, 1, 0, 0, 0, 0, 0, 0, 1, 0])
     hdbg.dassert_eq(len(probs), len(hallway))
     # Create plot.
-    # plt.figure(figsize=(8, 4))
     plt.bar(indices, probs, color="deepskyblue")
-    # Add markers for hallway positions with value 1
+    # Add markers for hallway positions with value 1.
     for i, val in enumerate(hallway):
         if val == 1:
-            plt.plot(i, 0.0, "^r", markersize=20, label="Door" if i == 0 else "")
+            label = "Door" if i == 0 else ""
+            plt.plot(i, 0.0, "^r", markersize=20, label=label)
     plt.ylim(0, 1)
     plt.xlabel("Class Index")
     plt.ylabel("Probability")
@@ -700,15 +712,9 @@ def plot_dog_in_office_pdf(
 
 
 fig_dir = "/app/lectures_source/figures"
-import copy
-import os
-
-#!sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet dataframe_image)"
-
-import dataframe_image as dfi
 
 
-def save_ax(ax, file_name):
+def save_ax(ax: Any, file_name: str) -> None:
     file_name = os.path.join(fig_dir, file_name)
     ax.figure.savefig(file_name, dpi=300, bbox_inches="tight")
     #
@@ -717,7 +723,7 @@ def save_ax(ax, file_name):
     print(cmd)
 
 
-def save_fig(axes, file_name):
+def save_fig(axes: Any, file_name: str) -> None:
     file_name = os.path.join(fig_dir, file_name)
     fig = axes[0, 0].figure
     fig.savefig(file_name, dpi=300, bbox_inches="tight")
@@ -727,23 +733,23 @@ def save_fig(axes, file_name):
     print(cmd)
 
 
-def save_dot(model, file_name):
+def save_dot(model: Any, file_name: str) -> None:
     dot = pm.model_to_graphviz(model)
     dot2 = copy.deepcopy(dot)
     file_name = file_name.replace(".png", "")
     file_name = os.path.join(fig_dir, file_name)
-    dot2.graph_attr["dpi"] = (
-        "300"  # 300 is print quality; try 600 for very sharp images
-    )
+    # 300 is print quality; try 600 for very sharp images.
+    dot2.graph_attr["dpi"] = "300"
     dot2.render(file_name, format="png", cleanup=True)
-    # dot.graph_attr['dpi'] = '96'  # 300 is print quality; try 600 for very sharp images
     #
     file_name = file_name.replace("/app/", "")
     cmd = f"![]({file_name})"
     print(cmd)
 
 
-def save_df(df, file_name):
+def save_df(df: pd.DataFrame, file_name: str) -> None:
+    #!sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet dataframe_image)"
+    import dataframe_image as dfi
     file_name = os.path.join(fig_dir, file_name)
     dfi.export(df, file_name, table_conversion="matplotlib", dpi=300)
     #
@@ -752,7 +758,7 @@ def save_df(df, file_name):
     print(cmd)
 
 
-def save_plt(file_name):
+def save_plt(file_name: str) -> None:
     file_name = os.path.join(fig_dir, file_name)
     plt.savefig(file_name, dpi=300, bbox_inches="tight")
     #
