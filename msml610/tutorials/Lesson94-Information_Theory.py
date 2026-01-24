@@ -47,7 +47,7 @@ plt.rcParams['figure.figsize'] = (12, 6)
 
 # %%
 import msml610_utils as ut
-import notebooks.Refresher.Lesson94_Information_Theory_utils as utils
+import utils_Lesson94_Information_Theory as utils
 
 ut.config_notebook()
 

@@ -23,8 +23,12 @@ _LOG = logging.getLogger(__name__)
 
 
 def calculate_entropy(probabilities: Union[List[float], np.ndarray]) -> float:
-    """
+    r"""
     Calculate Shannon entropy for a discrete probability distribution.
+
+    Entropy $H(X)$ of a discrete random variable $X$ is defined as:
+
+    $$H(X) = -\sum_x p(x) \log_2 p(x)$$
 
     :param probabilities: Array of probabilities (must sum to 1)
     :return: Entropy in bits
@@ -32,14 +36,19 @@ def calculate_entropy(probabilities: Union[List[float], np.ndarray]) -> float:
     # Filter out zero probabilities to avoid log(0).
     probabilities = np.array(probabilities)
     probabilities = probabilities[probabilities > 0]
+    # TODO(ai_gp): Add check that probabilities sum to 1 with hdbg.dassert
     # Calculate entropy using log base 2.
     entropy = -np.sum(probabilities * np.log2(probabilities))
     return entropy
 
 
 def binary_entropy(p: float) -> float:
-    """
+    r"""
     Calculate entropy of a binary random variable.
+
+    Entropy $H(p)$ is defined as:
+
+    $$H(p) = -p \log_2 p - (1-p) \log_2 (1-p)$$
 
     :param p: Probability of outcome 1
     :return: Binary entropy H(p)
@@ -50,8 +59,12 @@ def binary_entropy(p: float) -> float:
 
 
 def calculate_joint_entropy(joint_prob: np.ndarray) -> float:
-    """
+    r"""
     Calculate joint entropy H(X,Y) from joint probability distribution.
+
+    Joint Entropy $H(X, Y)$ of two variables $X$ and $Y$ is defined as:
+
+    $$H(X, Y) = -\sum_{x,y} p(x,y) \log_2 p(x,y)$$
 
     :param joint_prob: 2D array of joint probabilities p(x,y)
     :return: Joint entropy in bits
@@ -59,13 +72,19 @@ def calculate_joint_entropy(joint_prob: np.ndarray) -> float:
     joint_prob = np.array(joint_prob)
     # Filter out zero probabilities.
     joint_prob_flat = joint_prob.flatten()
+    # TODO(ai_gp): use calculate_entropy() instead.
     joint_prob_flat = joint_prob_flat[joint_prob_flat > 0]
     return -np.sum(joint_prob_flat * np.log2(joint_prob_flat))
 
 
 def calculate_conditional_entropy(joint_prob: np.ndarray) -> float:
-    """
+    r"""
     Calculate conditional entropy H(Y|X) from joint probability distribution.
+
+    Conditional Entropy $H(Y|X)$ measures uncertainty in $Y$ after
+    observing $X$:
+
+    $$H(Y|X) = -\sum_{x,y} p(x,y) \log_2 p(y|x) = \sum_x p(x) H(Y|X=x)$$
 
     :param joint_prob: 2D array of joint probabilities p(x,y)
     :return: Conditional entropy H(Y|X) in bits
@@ -92,8 +111,13 @@ def calculate_conditional_entropy(joint_prob: np.ndarray) -> float:
 
 
 def calculate_mutual_information(joint_prob: np.ndarray) -> float:
-    """
+    r"""
     Calculate mutual information I(X;Y) from joint probability distribution.
+
+    Mutual Information $I(X;Y)$ measures how much knowing one variable
+    reduces uncertainty about the other:
+
+    $$I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X,Y)$$
 
     :param joint_prob: 2D array of joint probabilities p(x,y)
     :return: Mutual information in bits
@@ -136,8 +160,13 @@ def create_correlated_joint_distribution(*, correlation: float = 0.5) -> np.ndar
 def calculate_kl_divergence(
     p: Union[List[float], np.ndarray], q: Union[List[float], np.ndarray]
 ) -> float:
-    """
+    r"""
     Calculate KL divergence D_KL(P || Q).
+
+    Kullback-Leibler (KL) Divergence $D_{KL}(P \| Q)$ measures how one
+    distribution differs from another:
+
+    $$D_{KL}(P \| Q) = \sum_x P(x) \log_2 \frac{P(x)}{Q(x)}$$
 
     :param p: True distribution P
     :param q: Approximating distribution Q
@@ -154,8 +183,15 @@ def calculate_kl_divergence(
 def calculate_cross_entropy(
     p: Union[List[float], np.ndarray], q: Union[List[float], np.ndarray]
 ) -> float:
-    """
+    r"""
     Calculate cross-entropy H(P, Q).
+
+    Cross-Entropy $H(P, Q)$ measures the average number of bits needed to
+    encode data from $P$ using code optimized for $Q$:
+
+    $$H(P, Q) = -\sum_x P(x) \log_2 Q(x)$$
+
+    Relationship: $H(P, Q) = H(P) + D_{KL}(P \| Q)$
 
     :param p: True distribution P
     :param q: Model distribution Q
