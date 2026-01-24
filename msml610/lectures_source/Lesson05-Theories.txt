@@ -193,7 +193,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=45%}
 
-![](msml610/lectures_source/figures/Lesson5_Bin_with_marbles.png)
+![](msml610/lectures_source/figures/Lesson05_Bin_with_marbles.png)
 ::::
 :::
 

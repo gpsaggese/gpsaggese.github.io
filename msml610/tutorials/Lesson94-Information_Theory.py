@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -46,6 +46,7 @@ sns.set_style("whitegrid")
 plt.rcParams['figure.figsize'] = (12, 6)
 
 # %%
+import helpers.hmatplotlib as hmatplo
 import msml610_utils as ut
 import utils_Lesson94_Information_Theory as utils
 
@@ -139,6 +140,9 @@ utils.plot_distribution_with_stats(
 plt.tight_layout()
 plt.show()
 
+file_name = "figures/Lesson94_Entropy_vs_Variance.png"
+hmatplo.save_fig(fig, file_name)
+
 # Variance measures spread from mean; entropy measures unpredictability.
 # Key insight: Distribution 1 has higher variance but lower entropy.
 
@@ -214,6 +218,9 @@ utils.plot_distribution_with_stats(
 plt.tight_layout()
 plt.show()
 
+file_name = "figures/Lesson94_Uniform_PDF.png"
+hmatplo.save_fig(fig, file_name)
+
 print("\nPattern: Entropy = log2(n) for uniform distribution over n values.")
 # More outcomes in a uniform distribution → higher entropy.
 
@@ -239,7 +246,7 @@ utils.plot_distribution_with_stats(
 
 # %%
 # Example 2: Sharply peaked distribution has low entropy.
-peaked_dist = np.array([0.01, 0.01, 0.01, 0.01, 0.92, 0.01, 0.01, 0.01, 0.01, 0.01])
+peaked_dist = np.array([0.00, 0.01, 0.01, 0.01, 0.92, 0.01, 0.01, 0.01, 0.01, 0.01])
 values_peaked = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 utils.plot_distribution_with_stats(
@@ -288,6 +295,9 @@ utils.plot_distribution_with_stats(
 
 plt.tight_layout()
 plt.show()
+
+file_name = "figures/Lesson94_Entropy_and_Shape.png"
+hmatplo.save_fig(fig, file_name)
 
 print("\nKey insight: Shape affects entropy more than spread alone.")
 # Flat → high entropy; peaked → low entropy; multi-modal → can vary.

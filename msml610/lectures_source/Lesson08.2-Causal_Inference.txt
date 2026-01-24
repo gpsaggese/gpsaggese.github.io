@@ -1625,7 +1625,7 @@ _Mutilated graph_
 ::::
 :::: {.column width=30%}
 
-![](msml610/lectures_source/figures/Lesson9-Price_Quantity.png){height=30%}
+![](msml610/lectures_source/figures/Lesson09-Price_Quantity.png){height=30%}
 
 ```graphviz[width=70%]
 digraph CausalDAG {
