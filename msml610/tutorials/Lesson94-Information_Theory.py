@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -240,6 +240,23 @@ interact(utils.plot_binary_entropy_interactive,
 #
 # - Describes the information needed for the joint distribution of $X$ and $Y$
 # - For independent variables: $H(X, Y) = H(X) + H(Y)$
+
+# %% [markdown]
+# ## Interactive Visualization: Joint Entropy
+#
+# Adjust the dependence slider to see how correlation between X and Y affects joint entropy.
+# The scatter plot shows sampled realizations from the joint distribution.
+
+# %%
+# Create interactive widget for joint entropy visualization.
+interact(utils.plot_joint_entropy_interactive,
+         dependence=FloatSlider(min=0.0, max=1.0, step=0.05, value=0.5,
+                                description='Dependence:',
+                                style={'description_width': 'initial'}),
+         n_samples=IntSlider(min=10, max=500, step=10, value=100,
+                             description='Sample size:',
+                             style={'description_width': 'initial'}));
+
 
 # %% [markdown]
 # # Conditional Entropy

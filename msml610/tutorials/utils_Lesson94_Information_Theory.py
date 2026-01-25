@@ -7,6 +7,7 @@ import Lesson94_Information_Theory_utils as litutils
 """
 
 import logging
+import warnings
 from typing import Any, List, Optional, Union
 
 import matplotlib.pyplot as plt
@@ -15,7 +16,11 @@ import pandas as pd
 import seaborn as sns
 
 import helpers.hdbg as hdbg
+
 _LOG = logging.getLogger(__name__)
+
+# Suppress FutureWarnings from seaborn and other libraries.
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 # #############################################################################
@@ -160,6 +165,165 @@ def create_correlated_joint_distribution(*, correlation: float = 0.5) -> np.ndar
     p01 = 0.25 - correlation * 0.25
     joint_prob = np.array([[p00, p01], [p10, p11]])
     return joint_prob
+
+
+def plot_joint_entropy_interactive(
+    *, dependence: float = 0.5, n_samples: int = 100
+) -> None:
+    """
+    Interactive visualization of joint entropy with dependence control.
+
+    :param dependence: Dependence strength between variables (0=independent,
+        1=perfectly correlated)
+    :param n_samples: Number of samples to generate for scatter plot
+    """
+    # Create joint distribution with specified dependence.
+    joint_prob = create_correlated_joint_distribution(correlation=dependence)
+    # Convert to DataFrame for better visualization.
+    joint_df = pd.DataFrame(
+        joint_prob, index=["X=0", "X=1"], columns=["Y=0", "Y=1"]
+    )
+    # Calculate marginals.
+    p_x = joint_prob.sum(axis=1)
+    p_y = joint_prob.sum(axis=0)
+    # Calculate entropy metrics.
+    h_x = calculate_entropy(p_x)
+    h_y = calculate_entropy(p_y)
+    h_xy = calculate_joint_entropy(joint_prob)
+    mi = calculate_mutual_information(joint_prob)
+    # Create DataFrame for entropy metrics (without I(X;Y)).
+    metrics_df = pd.DataFrame(
+        {
+            "Metric": ["H(X)", "H(Y)", "H(X,Y)"],
+            "Value": [h_x, h_y, h_xy],
+        }
+    )
+    # Determine interpretation message based on dependence.
+    if dependence < 0.1:
+        interpretation = "Independence: H(X,Y) ≈ H(X) + H(Y) (maximum joint entropy)"
+    elif dependence > 0.9:
+        interpretation = "Perfect dependence: H(X,Y) ≈ H(X) = H(Y) (minimum joint entropy)"
+    else:
+        interpretation = f"Partial dependence: Joint entropy reduced by {mi:.4f} bits due to shared information"
+    # Generate samples from the joint distribution.
+    # Flatten joint probabilities and sample from the 4 outcomes.
+    outcomes = [(0, 0), (0, 1), (1, 0), (1, 1)]
+    probs = joint_prob.flatten()
+    # Sample indices and convert to (x, y) pairs.
+    sampled_indices = np.random.choice(len(outcomes), size=n_samples, p=probs)
+    samples = [outcomes[i] for i in sampled_indices]
+    x_samples = [s[0] for s in samples]
+    y_samples = [s[1] for s in samples]
+    # Add jitter for better visualization.
+    jitter_amount = 0.05
+    x_jittered = x_samples + np.random.normal(0, jitter_amount, n_samples)
+    y_jittered = y_samples + np.random.normal(0, jitter_amount, n_samples)
+    # Create DataFrame for samples.
+    samples_df = pd.DataFrame({"X": x_jittered, "Y": y_jittered})
+    # Create visualization with 4 subplots in a single row.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5))
+    # Plot 1: Joint distribution heatmap using seaborn.
+    sns.heatmap(
+        joint_df,
+        annot=True,
+        fmt=".3f",
+        cmap="YlOrRd",
+        vmin=0,
+        vmax=0.5,
+        cbar=True,
+        ax=ax1,
+        annot_kws={"fontsize": 14, "fontweight": "bold"},
+    )
+    ax1.set_xlabel("Variable Y", fontsize=12)
+    ax1.set_ylabel("Variable X", fontsize=12)
+    ax1.set_title(
+        f"Joint Distribution P(X,Y)\nDependence = {dependence:.2f}",
+        fontsize=14,
+        fontweight="bold",
+    )
+    # Plot 2: Entropy metrics comparison using seaborn.
+    colors_metrics = ["steelblue", "coral", "purple"]
+    sns.barplot(
+        data=metrics_df,
+        x="Metric",
+        y="Value",
+        hue="Metric",
+        palette=colors_metrics,
+        alpha=0.7,
+        edgecolor="black",
+        legend=False,
+        ax=ax2,
+    )
+    ax2.set_ylabel("Information [bits]", fontsize=12)
+    ax2.set_xlabel("")
+    ax2.set_title("Entropy Metrics", fontsize=14, fontweight="bold")
+    ax2.set_ylim([0, 2.2])
+    # Add value labels on bars.
+    for i, (metric, value) in enumerate(
+        zip(metrics_df["Metric"], metrics_df["Value"])
+    ):
+        ax2.text(
+            i,
+            value + 0.05,
+            f"{value:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+        )
+    # Plot 3: Scatter plot of sampled realizations using seaborn.
+    sns.scatterplot(
+        data=samples_df,
+        x="Y",
+        y="X",
+        alpha=0.6,
+        s=50,
+        color="steelblue",
+        edgecolor="black",
+        linewidth=0.5,
+        ax=ax3,
+    )
+    ax3.set_xlabel("Variable Y", fontsize=12)
+    ax3.set_ylabel("Variable X", fontsize=12)
+    ax3.set_title(
+        f"Sampled Realizations (n={n_samples})",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax3.set_xlim([-0.3, 1.3])
+    ax3.set_ylim([-0.3, 1.3])
+    ax3.set_xticks([0, 1])
+    ax3.set_yticks([0, 1])
+    ax3.grid(True, alpha=0.3)
+    # Plot 4: Comments and explanation text.
+    ax4.axis("off")
+    ax4.set_title("Explanation", fontsize=14, fontweight="bold", pad=20)
+    # Add explanation text.
+    text_content = (
+        f"Entropy Values:\n"
+        f"  • H(X) = {h_x:.4f} bits\n"
+        f"  • H(Y) = {h_y:.4f} bits\n"
+        f"  • H(X,Y) = {h_xy:.4f} bits\n\n"
+        f"Interpretation:\n"
+        f"  {interpretation}\n\n"
+        f"Verification:\n"
+        f"  H(X,Y) + I(X;Y) = H(X) + H(Y)\n"
+        f"  {h_xy:.4f} + {mi:.4f} = {h_x:.4f} + {h_y:.4f}\n"
+        f"  {h_xy + mi:.4f} = {h_x + h_y:.4f}"
+    )
+    ax4.text(
+        0.1,
+        0.9,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=11,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=1", facecolor="wheat", alpha=0.3),
+    )
+    plt.tight_layout()
+    plt.show()
 
 
 # #############################################################################
