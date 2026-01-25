@@ -102,7 +102,7 @@ MSML610: Advanced Machine Learning
 
 * Joint Entropy
 - **Joint entropy** $H(X, Y)$ of two variables $X$ and $Y$ is defined as:
-  $$H(X, Y) \defeq -\sum_{x,y} \red{p(x,y)} \log \green{p(x,y)}$$
+  $$H(X, Y) \defeq -\sum_{x,y} p(x,y) \log p(x,y)$$
   - Describes the information needed for the joint distribution of $X$ and $Y$
 
 - **Properties**
@@ -118,9 +118,7 @@ MSML610: Advanced Machine Learning
 
 * Conditional Entropy
 - **Conditional entropy** $H(Y | X)$ is defined as
-  $$H(Y|X) = -\sum_{x,y} p(x,y) \log p(\red{y|x})$$
-
-- **Intuition**
+  $$H(Y|X) \defeq -\sum_{x,y} p(x,y) \log p(y|x)$$
   - Represents the average uncertainty in $Y$ after observing $X$
   - Measures the effectiveness of $X$ in determining $Y$
 

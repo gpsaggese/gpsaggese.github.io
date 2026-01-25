@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -21,6 +21,7 @@
 
 # %%
 if False:
+    pass
     # !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet jupyterlab-vim)"
     # !jupyter labextension enable
 
@@ -241,7 +242,118 @@ interact(utils.plot_binary_entropy_interactive,
 # - For independent variables: $H(X, Y) = H(X) + H(Y)$
 
 # %%
-# TODO(ai_gp): Add example.
+# Example: Independent coin flips.
+# X = First coin flip (0: Tails, 1: Heads).
+# Y = Second coin flip (0: Tails, 1: Heads).
+# For independent events, joint entropy equals sum of individual entropies.
+joint_prob_independent = np.array([
+    [0.25, 0.25],  # X=0: 25% TT, 25% TH
+    [0.25, 0.25]   # X=1: 25% HT, 25% HH
+])
+
+print("Joint Probability Distribution (Independent Coins):")
+pd.DataFrame(joint_prob_independent,
+             index=['X=Tails', 'X=Heads'],
+             columns=['Y=Tails', 'Y=Heads'])
+
+# %%
+# Calculate entropies for independent coins.
+p_x = joint_prob_independent.sum(axis=1)
+p_y = joint_prob_independent.sum(axis=0)
+h_x = utils.calculate_entropy(p_x)
+h_y = utils.calculate_entropy(p_y)
+h_joint = utils.calculate_joint_entropy(joint_prob_independent)
+
+print(f"H(X) = {h_x:.4f} bits")
+print(f"H(Y) = {h_y:.4f} bits")
+print(f"H(X, Y) = {h_joint:.4f} bits")
+print(f"\nFor independent variables: H(X) + H(Y) = {h_x + h_y:.4f} bits")
+print(f"Should equal H(X, Y) = {h_joint:.4f} bits")
+# For independent random variables, joint entropy equals sum of individual entropies.
+
+# %%
+# Example: Correlated coin flips via shared latent variable.
+# We create correlation by introducing a shared latent variable Z.
+# Z = Latent state (0 or 1) with probability p_z.
+# Given Z, X and Y are conditionally independent but marginally correlated.
+p_z = 0.7  # Probability of latent state Z=1.
+# Conditional probabilities: p(X|Z) and p(Y|Z).
+# When Z=0: both coins are biased toward tails.
+# When Z=1: both coins are biased toward heads.
+p_x_given_z0 = 0.2  # P(X=1|Z=0)
+p_x_given_z1 = 0.8  # P(X=1|Z=1)
+p_y_given_z0 = 0.3  # P(Y=1|Z=0)
+p_y_given_z1 = 0.9  # P(Y=1|Z=1)
+
+# %%
+# Calculate joint distribution P(X,Y) by marginalizing over Z.
+# P(X,Y) = sum_z P(X,Y|Z) * P(Z) = sum_z P(X|Z) * P(Y|Z) * P(Z)
+# (since X and Y are conditionally independent given Z)
+joint_prob_correlated = np.zeros((2, 2))
+
+# Z=0 contribution.
+joint_prob_correlated[0, 0] += (1 - p_x_given_z0) * (1 - p_y_given_z0) * (1 - p_z)
+joint_prob_correlated[0, 1] += (1 - p_x_given_z0) * p_y_given_z0 * (1 - p_z)
+joint_prob_correlated[1, 0] += p_x_given_z0 * (1 - p_y_given_z0) * (1 - p_z)
+joint_prob_correlated[1, 1] += p_x_given_z0 * p_y_given_z0 * (1 - p_z)
+
+# Z=1 contribution.
+joint_prob_correlated[0, 0] += (1 - p_x_given_z1) * (1 - p_y_given_z1) * p_z
+joint_prob_correlated[0, 1] += (1 - p_x_given_z1) * p_y_given_z1 * p_z
+joint_prob_correlated[1, 0] += p_x_given_z1 * (1 - p_y_given_z1) * p_z
+joint_prob_correlated[1, 1] += p_x_given_z1 * p_y_given_z1 * p_z
+
+print("Joint Probability Distribution (Correlated via Latent Variable):")
+print(pd.DataFrame(joint_prob_correlated,
+                   index=['X=Tails', 'X=Heads'],
+                   columns=['Y=Tails', 'Y=Heads']))
+# The shared latent variable Z induces correlation between X and Y.
+
+# %%
+# Calculate entropies and correlation for correlated coins.
+p_x_corr = joint_prob_correlated.sum(axis=1)
+p_y_corr = joint_prob_correlated.sum(axis=0)
+h_x_corr = utils.calculate_entropy(p_x_corr)
+h_y_corr = utils.calculate_entropy(p_y_corr)
+h_joint_corr = utils.calculate_joint_entropy(joint_prob_correlated)
+h_y_given_x_corr = utils.calculate_conditional_entropy(joint_prob_correlated)
+mi_corr = utils.calculate_mutual_information(joint_prob_correlated)
+
+print(f"H(X) = {h_x_corr:.4f} bits")
+print(f"H(Y) = {h_y_corr:.4f} bits")
+print(f"H(X, Y) = {h_joint_corr:.4f} bits")
+print(f"H(Y|X) = {h_y_given_x_corr:.4f} bits")
+print(f"I(X;Y) = {mi_corr:.4f} bits")
+print()
+print(f"For correlated variables: H(X) + H(Y) = {h_x_corr + h_y_corr:.4f} bits")
+print(f"This is greater than H(X, Y) = {h_joint_corr:.4f} bits")
+print(f"The difference is the mutual information I(X;Y) = {mi_corr:.4f} bits")
+# The mutual information quantifies the correlation induced by the shared latent variable.
+
+# %%
+# Calculate Pearson correlation coefficient for comparison.
+# E[X], E[Y], E[XY].
+e_x = p_x_corr[1]
+e_y = p_y_corr[1]
+e_xy = joint_prob_correlated[1, 1]
+# Var(X), Var(Y).
+var_x = e_x * (1 - e_x)
+var_y = e_y * (1 - e_y)
+# Cov(X,Y) = E[XY] - E[X]E[Y].
+cov_xy = e_xy - e_x * e_y
+# Correlation.
+if var_x > 0 and var_y > 0:
+    correlation = cov_xy / np.sqrt(var_x * var_y)
+else:
+    correlation = 0
+
+print(f"Pearson correlation coefficient: {correlation:.4f}")
+print(f"Mutual information: {mi_corr:.4f} bits")
+print()
+print("Interpretation:")
+print(f"The shared latent variable Z induces a correlation of {correlation:.4f}")
+print(f"This results in {mi_corr:.4f} bits of mutual information between X and Y")
+# Correlation and mutual information both capture the dependence between X and Y.
 
 # %% [markdown]
 # ## Conditional Entropy
@@ -256,7 +368,33 @@ interact(utils.plot_binary_entropy_interactive,
 # - If $X$ and $Y$ are independent, then $H(Y|X) = H(Y)$
 
 # %%
-# TODO(ai_gp): Add example.
+# Example: Deterministic relationship.
+# X = Day type (0: Weekday, 1: Weekend).
+# Y = Alarm status (0: Off, 1: On).
+# Strong dependency: alarm is always on for weekdays, always off for weekends.
+joint_prob_deterministic = np.array([
+    [0.0, 0.7],  # Weekday: 0% off, 70% on
+    [0.3, 0.0]   # Weekend: 30% off, 0% on
+])
+
+print("Joint Probability Distribution (Alarm and Day Type):")
+print(pd.DataFrame(joint_prob_deterministic,
+                   index=['Weekday', 'Weekend'],
+                   columns=['Alarm=Off', 'Alarm=On']))
+
+# %%
+# Calculate conditional entropy for deterministic relationship.
+p_x_det = joint_prob_deterministic.sum(axis=1)
+p_y_det = joint_prob_deterministic.sum(axis=0)
+h_x_det = utils.calculate_entropy(p_x_det)
+h_y_det = utils.calculate_entropy(p_y_det)
+h_y_given_x_det = utils.calculate_conditional_entropy(joint_prob_deterministic)
+
+print(f"H(X) = {h_x_det:.4f} bits")
+print(f"H(Y) = {h_y_det:.4f} bits")
+print(f"H(Y|X) = {h_y_given_x_det:.4f} bits")
+print(f"\nInterpretation: Once we know the day type, there is {h_y_given_x_det:.4f} bits of uncertainty about alarm status.")
+# When Y is deterministic given X, conditional entropy H(Y|X) approaches 0.
 
 # %% [markdown]
 # ## Chain Rule for Entropy
