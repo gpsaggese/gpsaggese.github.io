@@ -77,14 +77,28 @@ MSML610: Advanced Machine Learning
   - Variance measures how far values are from the mean
   - Entropy measures how unpredictable a random draw is
 
+::: columns
+:::: {.column width=40%}
 - If a distribution has more spread, typically its entropy is larger
   - It is possible that variance increases, but entropy doesn't
     - E.g., a uniform distribution increasing its support
+::::
+:::: {.column width=55%}
+![](msml610/lectures_source/figures/Lesson94_Uniform_PDF.png)
+::::
+:::
 
+::: columns
+:::: {.column width=40%}
 - Entropy is related to information and uncertainty
   - A flatter distribution has high entropy
   - A sharply peaked distribution has low entropy
   - A distribution with two close peaks has low variance but high entropy
+::::
+:::: {.column width=55%}
+![](msml610/lectures_source/figures/Lesson94_Entropy_vs_Variance.png)
+::::
+:::
 
 * Joint Entropy
 - **Joint entropy** $H(X, Y)$ of two variables $X$ and $Y$ is defined as:

@@ -96,55 +96,33 @@ print(f"Biased coin (100-0) entropy: {utils.calculate_entropy(biased_coin):.4f} 
 # A distribution can have high variance but low entropy, or vice versa.
 
 # %%
-# Compare two distributions with same variance but different entropy.
+# Compare two distributions with the same variance but different entropy.
 # Distribution 1: Bimodal with peaks at extremes.
-dist1_values = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-dist1_probs = np.array([0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5])
+dist1_values = np.array([5 - np.sqrt(2), 5 + np.sqrt(2)])
+dist1_probs = np.array([0.5, 0.5])
 
+filename = "figures/Lesson94_Bimodal_Distribution.png"
 utils.plot_distribution_with_stats(
     values=dist1_values,
     probabilities=dist1_probs,
-    title="Distribution 1: Two peaks at extremes (0 and 10)",
+    title="Distribution 1: Two peaks at extremes",
+    save_fig=filename
 )
 # This distribution has high variance (spread) but low entropy (only 1 bit).
 
 # %%
 # Distribution 2: Uniform over middle values.
+dist2_values = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 dist2_probs = np.array([0.0, 0.0, 0.2, 0.2, 0.2, 0.2, 0.2, 0.0, 0.0, 0.0, 0.0])
 
+file_name = "figures/Lesson94_Uniform_Distribution.png"
 utils.plot_distribution_with_stats(
-    values=dist1_values,
-    probabilities=dist2_probs,
-    title="Distribution 2: Uniform over middle values (2-6)",
-)
-# This distribution has lower variance but higher entropy (~2.32 bits).
-
-# %%
-# Compare the two distributions side by side.
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 3))
-
-utils.plot_distribution_with_stats(
-    values=dist1_values,
-    probabilities=dist1_probs,
-    title="Distribution 1: Two peaks at extremes",
-    ax=ax1,
-)
-
-utils.plot_distribution_with_stats(
-    values=dist1_values,
+    values=dist2_values,
     probabilities=dist2_probs,
     title="Distribution 2: Uniform over middle values",
-    ax=ax2,
+    save_fig=file_name,
 )
-
-plt.tight_layout()
-plt.show()
-
-file_name = "figures/Lesson94_Entropy_vs_Variance.png"
-hmatplo.save_fig(fig, file_name)
-
-# Variance measures spread from mean; entropy measures unpredictability.
-# Key insight: Distribution 1 has higher variance but lower entropy.
+# This distribution has lower variance but higher entropy (~2.32 bits).
 
 # %% [markdown]
 # ## Entropy and Distribution Spread
@@ -159,10 +137,12 @@ hmatplo.save_fig(fig, file_name)
 uniform_2 = np.array([0.5, 0.5])
 values_2 = np.array([0, 1])
 
+file_name = "figures/Lesson94_Uniform2.png"
 utils.plot_distribution_with_stats(
     values=values_2,
     probabilities=uniform_2,
     title="Uniform distribution over 2 values",
+    save_fig=file_name,
 )
 # A uniform distribution over 2 outcomes has 1 bit of entropy.
 
@@ -171,10 +151,12 @@ utils.plot_distribution_with_stats(
 uniform_4 = np.array([0.25, 0.25, 0.25, 0.25])
 values_4 = np.array([0, 1, 2, 3])
 
+file_name = "figures/Lesson94_Uniform4.png"
 utils.plot_distribution_with_stats(
     values=values_4,
     probabilities=uniform_4,
     title="Uniform distribution over 4 values",
+    save_fig=file_name,
 )
 # A uniform distribution over 4 outcomes has 2 bits of entropy.
 
@@ -183,46 +165,14 @@ utils.plot_distribution_with_stats(
 uniform_8 = np.array([0.125] * 8)
 values_8 = np.array([0, 1, 2, 3, 4, 5, 6, 7])
 
+file_name = "figures/Lesson94_Uniform8.png"
 utils.plot_distribution_with_stats(
     values=values_8,
     probabilities=uniform_8,
     title="Uniform distribution over 8 values",
+    save_fig=file_name,
 )
 # A uniform distribution over 8 outcomes has 3 bits of entropy.
-
-# %%
-# Compare uniform distributions with increasing support.
-fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 3))
-
-utils.plot_distribution_with_stats(
-    values=values_2,
-    probabilities=uniform_2,
-    title="Uniform: 2 values",
-    ax=ax1,
-)
-
-utils.plot_distribution_with_stats(
-    values=values_4,
-    probabilities=uniform_4,
-    title="Uniform: 4 values",
-    ax=ax2,
-)
-
-utils.plot_distribution_with_stats(
-    values=values_8,
-    probabilities=uniform_8,
-    title="Uniform: 8 values",
-    ax=ax3,
-)
-
-plt.tight_layout()
-plt.show()
-
-file_name = "figures/Lesson94_Uniform_PDF.png"
-hmatplo.save_fig(fig, file_name)
-
-print("\nPattern: Entropy = log2(n) for uniform distribution over n values.")
-# More outcomes in a uniform distribution → higher entropy.
 
 # %% [markdown]
 # ## Entropy and Uncertainty: Shape Matters
@@ -268,40 +218,6 @@ utils.plot_distribution_with_stats(
 )
 # Two equally likely peaks → high entropy (~1.1 bits) despite moderate variance.
 
-# %%
-# Compare the three distribution shapes.
-fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18, 4))
-
-utils.plot_distribution_with_stats(
-    values=values_flat,
-    probabilities=flat_dist,
-    title="Flat distribution",
-    ax=ax1,
-)
-
-utils.plot_distribution_with_stats(
-    values=values_peaked,
-    probabilities=peaked_dist,
-    title="Peaked distribution",
-    ax=ax2,
-)
-
-utils.plot_distribution_with_stats(
-    values=values_two_peaks,
-    probabilities=two_peaks,
-    title="Two-peak distribution",
-    ax=ax3,
-)
-
-plt.tight_layout()
-plt.show()
-
-file_name = "figures/Lesson94_Entropy_and_Shape.png"
-hmatplo.save_fig(fig, file_name)
-
-print("\nKey insight: Shape affects entropy more than spread alone.")
-# Flat → high entropy; peaked → low entropy; multi-modal → can vary.
-
 # %% [markdown]
 # ## Interactive Visualization: Binary Entropy
 #
@@ -323,7 +239,11 @@ interact(utils.plot_binary_entropy_interactive,
 #
 # - Describes the information needed for the joint distribution of $X$ and $Y$
 # - For independent variables: $H(X, Y) = H(X) + H(Y)$
-#
+
+# %%
+# TODO(ai_gp): Add example.
+
+# %% [markdown]
 # ## Conditional Entropy
 #
 # **Conditional entropy** $H(Y|X)$ measures uncertainty in $Y$ after observing $X$:
@@ -334,7 +254,11 @@ interact(utils.plot_binary_entropy_interactive,
 # - Low $H(Y|X)$ implies $X$ has strong predictive power for $Y$
 # - If $Y = X$, then $H(Y|X) = 0$ (no uncertainty)
 # - If $X$ and $Y$ are independent, then $H(Y|X) = H(Y)$
-#
+
+# %%
+# TODO(ai_gp): Add example.
+
+# %% [markdown]
 # ## Chain Rule for Entropy
 #
 # $$H(X, Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)$$
