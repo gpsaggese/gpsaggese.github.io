@@ -22,6 +22,8 @@ MSML610: Advanced Machine Learning
 
 **References**:
 
+[![video](msml610/tutorials/video_frames/frame_001.png)](./msml610/tutorials/joint_entropy_animation.mp4)
+
 # Information theory
 
 ## Entropy
@@ -457,3 +459,10 @@ MSML610: Advanced Machine Learning
 - Total correlation: $C(X_1, \dots, X_n) = \sum_i H(X_i) - H(X_1, \dots, X_n)$
 - Measures total dependency in a set of variables
 - Used in ICA, variational inference, and dependency modeling
+
+2. Applications in Machine Learning
+Entropy: Feature selection, decision tree splitting criteria
+Mutual Information: Dependency detection, feature relevance
+Cross-Entropy: Loss function for classification
+KL Divergence: Variational inference, model comparison
+MDL: Model selection, preventing overfitting

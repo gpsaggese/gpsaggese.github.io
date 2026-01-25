@@ -200,10 +200,12 @@ utils.plot_distribution_with_stats(
 peaked_dist = np.array([0.00, 0.01, 0.01, 0.01, 0.92, 0.01, 0.01, 0.01, 0.01, 0.01])
 values_peaked = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
+file_name = "figures/Lesson94_Sharply_Peaked_Distribution.png"
 utils.plot_distribution_with_stats(
     values=values_peaked,
     probabilities=peaked_dist,
     title="Sharply peaked distribution (92% at position 4)",
+    save_fig=file_name,
 )
 # Concentrated probability → low uncertainty → low entropy.
 
@@ -302,24 +304,59 @@ interact(utils.plot_conditional_entropy_interactive,
 # - Quantifies the reduction in uncertainty about one variable given the other
 # - Symmetric: $I(X;Y) = I(Y;X)$
 
-# %%
-# Use the weather-activity example.
-print("Example: Weather and Activity Correlation")
-utils.visualize_information_decomposition(joint_prob)
+# %% [markdown]
+# ## Example: Weather and Activity
 
-# Calculate and display mutual information.
+# %%
+# Create a joint distribution for Weather (X) and Activity (Y).
+# X: Weather = {Sunny, Rainy}, Y: Activity = {Outdoor, Indoor}.
+# When sunny, people prefer outdoor activities; when rainy, indoor activities.
+joint_prob = np.array([
+    [0.35, 0.15],  # Sunny: 35% outdoor, 15% indoor.
+    [0.10, 0.40]   # Rainy: 10% outdoor, 40% indoor.
+])
+print("Joint Distribution P(Weather, Activity):")
+print("                Outdoor  Indoor")
+print(f"Sunny:          {joint_prob[0,0]:.2f}    {joint_prob[0,1]:.2f}")
+print(f"Rainy:          {joint_prob[1,0]:.2f}    {joint_prob[1,1]:.2f}")
+# The diagonal dominance shows that weather and activity are related.
+
+# %%
+# Calculate mutual information for the weather-activity example.
 mi = utils.calculate_mutual_information(joint_prob)
-print(f"\nMutual Information I(Weather; Activity) = {mi:.4f} bits")
-print(f"This means knowing the weather reduces uncertainty about activity by {mi:.4f} bits")
+print(f"Mutual Information I(Weather; Activity) = {mi:.4f} bits")
+# This quantifies how much knowing the weather reduces uncertainty about activity.
+
+# %%
+# Visualize the information decomposition.
+utils.visualize_information_decomposition(joint_prob)
+# The bar chart shows all entropy relationships, demonstrating how I(X;Y) relates to other quantities.
+
+# %% [markdown]
+# ## Interactive Visualization: Mutual Information with Venn Decomposition
+#
+# Adjust the dependence slider to see how mutual information changes as variables become more or less related.
+# The Venn diagram shows the overlap between H(X) and H(Y), which represents the shared information I(X;Y).
+
+# %%
+# Create interactive widget for mutual information with Venn diagram.
+interact(utils.plot_mutual_information_venn_interactive,
+         dependence=FloatSlider(min=0.0, max=1.0, step=0.05, value=0.5,
+                                description='Dependence:',
+                                style={'description_width': 'initial'}),
+         scenario=widgets.Dropdown(options=['Binary', 'Weather'],
+                                   value='Binary',
+                                   description='Scenario:',
+                                   style={'description_width': 'initial'}));
 
 
 # %% [markdown]
 # ## Interactive Visualization: Correlation and Mutual Information
 #
-# Adjust the correlation strength to see how it affects mutual information between two variables.
+# This visualization shows how correlation strength affects mutual information between two variables.
 
 # %%
-# Create interactive widget.
+# Create interactive widget for correlation-based mutual information.
 interact(utils.plot_mutual_info_interactive,
          correlation=FloatSlider(min=0.0, max=1.0, step=0.05, value=0.5,
                                 description='Correlation:', style={'description_width': 'initial'}));
@@ -343,75 +380,6 @@ interact(utils.plot_mutual_info_interactive,
 #
 # **Intuition:** Quantifies how much information is lost when $Q$ is used to approximate $P$
 #
-# ## Cross-Entropy
-#
-# **Cross-entropy** $H(P, Q)$ measures the average number of bits needed to encode data from $P$ using code optimized for $Q$:
-#
-# $$H(P, Q) = -\sum_x P(x) \log_2 Q(x)$$
-#
-# **Relationship:**
-# $$H(P, Q) = H(P) + D_{KL}(P \| Q)$$
-#
-# **Applications:**
-# - Loss function in classification (logistic regression, neural networks)
-# - Model evaluation and comparison
-# - Information compression
-
-# %%
-# Setup: Classification problem.
-# True distribution (ground truth labels).
-true_dist = np.array([0.0, 0.0, 1.0, 0.0])  # Class 2 is correct.
-# Model predictions (different confidence levels).
-model_confident = np.array([0.05, 0.05, 0.85, 0.05])  # Confident and correct.
-model_uncertain = np.array([0.25, 0.25, 0.25, 0.25])  # Uncertain (uniform).
-model_wrong = np.array([0.05, 0.85, 0.05, 0.05])     # Confident but wrong.
-print("Classification Example")
-print("=" * 60)
-print("True label: Class 2")
-print()
-
-# %%
-# Example 1: Confident and correct model prediction.
-# Low cross-entropy and KL divergence indicate good match with true distribution.
-model_pred = model_confident
-name = "Confident & Correct"
-kl = utils.calculate_kl_divergence(true_dist, model_pred)
-ce = utils.calculate_cross_entropy(true_dist, model_pred)
-h_true = utils.calculate_entropy(true_dist)
-print(f"{name}:")
-print(f"  Model prediction: {model_pred}")
-print(f"  Cross-Entropy: {ce:.4f} bits")
-print(f"  KL Divergence: {kl:.4f} bits")
-print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
-
-# %%
-# Example 2: Uncertain model prediction (uniform distribution).
-# Higher cross-entropy due to uncertainty, even though it includes the correct class.
-model_pred = model_uncertain
-name = "Uncertain"
-kl = utils.calculate_kl_divergence(true_dist, model_pred)
-ce = utils.calculate_cross_entropy(true_dist, model_pred)
-h_true = utils.calculate_entropy(true_dist)
-print(f"{name}:")
-print(f"  Model prediction: {model_pred}")
-print(f"  Cross-Entropy: {ce:.4f} bits")
-print(f"  KL Divergence: {kl:.4f} bits")
-print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
-
-# %%
-# Example 3: Confident but wrong model prediction.
-# Very high cross-entropy and KL divergence due to confident wrong prediction.
-model_pred = model_wrong
-name = "Confident & Wrong"
-kl = utils.calculate_kl_divergence(true_dist, model_pred)
-ce = utils.calculate_cross_entropy(true_dist, model_pred)
-h_true = utils.calculate_entropy(true_dist)
-print(f"{name}:")
-print(f"  Model prediction: {model_pred}")
-print(f"  Cross-Entropy: {ce:.4f} bits")
-print(f"  KL Divergence: {kl:.4f} bits")
-print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
-
 
 # %% [markdown]
 # ## Interactive Visualization: KL Divergence and Distribution Comparison
@@ -425,6 +393,74 @@ interact(utils.plot_kl_divergence_interactive,
                        description='P(outcome=1):', style={'description_width': 'initial'}),
          q1=FloatSlider(min=0.05, max=0.95, step=0.05, value=0.5,
                        description='Q(outcome=1):', style={'description_width': 'initial'}));
+
+
+# %% [markdown]
+# # Cross-Entropy
+#
+# **Cross-entropy** $H(P, Q)$ measures the average number of bits needed to encode data from $P$ using code optimized for $Q$:
+#
+# $$H(P, Q) = -\sum_x P(x) \log_2 Q(x)$$
+#
+# **Relationship:**
+# $$H(P, Q) = H(P) + D_{KL}(P \| Q)$$
+#
+# **Applications:**
+# - Loss function in classification (logistic regression, neural networks)
+# - Model evaluation and comparison
+# - Information compression
+
+# %% [markdown]
+# ## Example: Classification with Cross-Entropy
+
+# %%
+# Setup: Classification problem with 4 classes.
+# True distribution (ground truth labels).
+true_dist = np.array([0.0, 0.0, 1.0, 0.0])  # Class 2 is correct.
+print("Classification Example")
+print("=" * 60)
+print("True label: Class 2")
+print()
+# The true distribution is a one-hot vector indicating the correct class.
+
+# %%
+# Example 1: Confident and correct model prediction.
+model_confident = np.array([0.05, 0.05, 0.85, 0.05])
+kl = utils.calculate_kl_divergence(true_dist, model_confident)
+ce = utils.calculate_cross_entropy(true_dist, model_confident)
+h_true = utils.calculate_entropy(true_dist)
+print("Confident & Correct:")
+print(f"  Model prediction: {model_confident}")
+print(f"  Cross-Entropy: {ce:.4f} bits")
+print(f"  KL Divergence: {kl:.4f} bits")
+print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
+# Low cross-entropy and KL divergence indicate good match with true distribution.
+
+# %%
+# Example 2: Uncertain model prediction (uniform distribution).
+model_uncertain = np.array([0.25, 0.25, 0.25, 0.25])
+kl = utils.calculate_kl_divergence(true_dist, model_uncertain)
+ce = utils.calculate_cross_entropy(true_dist, model_uncertain)
+h_true = utils.calculate_entropy(true_dist)
+print("Uncertain:")
+print(f"  Model prediction: {model_uncertain}")
+print(f"  Cross-Entropy: {ce:.4f} bits")
+print(f"  KL Divergence: {kl:.4f} bits")
+print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
+# Higher cross-entropy due to uncertainty, even though it includes the correct class.
+
+# %%
+# Example 3: Confident but wrong model prediction.
+model_wrong = np.array([0.05, 0.85, 0.05, 0.05])
+kl = utils.calculate_kl_divergence(true_dist, model_wrong)
+ce = utils.calculate_cross_entropy(true_dist, model_wrong)
+h_true = utils.calculate_entropy(true_dist)
+print("Confident & Wrong:")
+print(f"  Model prediction: {model_wrong}")
+print(f"  Cross-Entropy: {ce:.4f} bits")
+print(f"  KL Divergence: {kl:.4f} bits")
+print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
+# Very high cross-entropy and KL divergence due to confident wrong prediction.
 
 
 # %% [markdown]

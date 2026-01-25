@@ -924,6 +924,277 @@ def plot_mutual_info_interactive(*, correlation: float = 0.5) -> None:
         )
 
 
+def plot_mutual_information_venn_interactive(
+    *, dependence: float = 0.5, scenario: str = "Binary"
+) -> None:
+    """
+    Enhanced interactive visualization of mutual information with Venn-style decomposition.
+
+    Shows the relationship between entropy components and mutual information
+    with clear visual decomposition.
+
+    :param dependence: Dependence strength between variables (0=independent,
+        1=perfectly correlated)
+    :param scenario: "Binary" for 2x2 distribution or "Weather" for 3x3
+    """
+    # Create joint distribution based on scenario.
+    if scenario == "Binary":
+        # Binary variables X, Y in {0, 1}.
+        joint_prob = create_correlated_joint_distribution(correlation=dependence)
+        x_labels = ["X=0", "X=1"]
+        y_labels = ["Y=0", "Y=1"]
+        scenario_name = "Binary Variables"
+    else:
+        # Weather/Activity scenario (3x3).
+        # Create a 3x3 joint distribution.
+        # Base independent distribution.
+        p_x_base = np.array([0.4, 0.3, 0.3])  # Sunny, Rainy, Cloudy.
+        p_y_base = np.array([0.35, 0.35, 0.3])  # Park, Cinema, Home.
+        # Create correlated version.
+        # Strong diagonal for dependence (Sunny->Park, Rainy->Cinema, Cloudy->Home).
+        joint_prob = np.outer(p_x_base, p_y_base)
+        # Add correlation by shifting probability to diagonal.
+        diagonal_boost = dependence * 0.2
+        for i in range(3):
+            # Boost diagonal elements.
+            joint_prob[i, i] += diagonal_boost
+        # Renormalize.
+        joint_prob = joint_prob / joint_prob.sum()
+        x_labels = ["Sunny", "Rainy", "Cloudy"]
+        y_labels = ["Park", "Cinema", "Home"]
+        scenario_name = "Weather & Activity"
+    # Convert to DataFrame for visualization.
+    joint_df = pd.DataFrame(joint_prob, index=x_labels, columns=y_labels)
+    # Calculate marginals.
+    p_x = joint_prob.sum(axis=1)
+    p_y = joint_prob.sum(axis=0)
+    # Calculate all entropy metrics.
+    h_x = calculate_entropy(p_x)
+    h_y = calculate_entropy(p_y)
+    h_xy = calculate_joint_entropy(joint_prob)
+    h_y_given_x = calculate_conditional_entropy(joint_prob)
+    h_x_given_y = calculate_conditional_entropy(joint_prob.T)
+    mi = calculate_mutual_information(joint_prob)
+    # Determine interpretation based on dependence.
+    if dependence < 0.1:
+        interpretation = (
+            "Independence:\n"
+            f"  I(X;Y) = {mi:.4f} bits (nearly 0)\n"
+            f"  H(X,Y) = {h_xy:.4f} ≈ H(X) + H(Y)\n"
+            f"  = {h_x:.4f} + {h_y:.4f}\n\n"
+            "Knowing X provides no\n"
+            "information about Y.\n\n"
+            "The Venn circles have\n"
+            "minimal overlap."
+        )
+    elif dependence > 0.9:
+        interpretation = (
+            "Strong Dependence:\n"
+            f"  I(X;Y) = {mi:.4f} bits\n"
+            f"  H(Y|X) = {h_y_given_x:.4f} (nearly 0)\n\n"
+            "Knowing X almost completely\n"
+            "determines Y.\n\n"
+            f"Mutual information is {(mi/h_y*100):.1f}%\n"
+            f"of H(Y).\n\n"
+            "The Venn circles have\n"
+            "maximum overlap."
+        )
+    else:
+        reduction = h_y - h_y_given_x
+        percentage = (reduction / h_y * 100) if h_y > 0 else 0
+        interpretation = (
+            "Partial Dependence:\n"
+            f"  I(X;Y) = {mi:.4f} bits\n\n"
+            f"Knowing X reduces uncertainty\n"
+            f"about Y by {reduction:.4f} bits\n"
+            f"({percentage:.1f}% of H(Y)).\n\n"
+            "Key relationships:\n"
+            f"  I(X;Y) = H(X) - H(X|Y)\n"
+            f"  {mi:.3f} = {h_x:.3f} - {h_x_given_y:.3f}\n\n"
+            f"  I(X;Y) = H(Y) - H(Y|X)\n"
+            f"  {mi:.3f} = {h_y:.3f} - {h_y_given_x:.3f}"
+        )
+    # Create visualization with 4 subplots in a single row.
+    fig, axes = plt.subplots(1, 4, figsize=(20, 5))
+    ax1, ax2, ax3, ax4 = axes
+    # Plot 1: Joint distribution heatmap.
+    sns.heatmap(
+        joint_df,
+        annot=True,
+        fmt=".3f",
+        cmap="YlOrRd",
+        vmin=0,
+        vmax=joint_prob.max() * 1.2,
+        cbar=True,
+        ax=ax1,
+        annot_kws={"fontsize": 11, "fontweight": "bold"},
+    )
+    ax1.set_xlabel("Variable Y", fontsize=12)
+    ax1.set_ylabel("Variable X", fontsize=12)
+    ax1.set_title(
+        f"Joint Distribution P(X,Y)\n{scenario_name}\nDependence = {dependence:.2f}",
+        fontsize=13,
+        fontweight="bold",
+    )
+    # Plot 2: Entropy decomposition using stacked visualization.
+    # Show H(X,Y) decomposed into I(X;Y) + H(X|Y) + H(Y|X) - I(X;Y).
+    # Simpler: show H(X), H(Y), H(X,Y), with I(X;Y) as overlap.
+    categories = ["H(X)", "H(Y)", "H(X,Y)", "I(X;Y)"]
+    values = [h_x, h_y, h_xy, mi]
+    colors_bars = ["steelblue", "coral", "purple", "green"]
+    bars = ax2.bar(
+        categories,
+        values,
+        color=colors_bars,
+        alpha=0.7,
+        edgecolor="black",
+        linewidth=2,
+    )
+    ax2.set_ylabel("Information [bits]", fontsize=12)
+    ax2.set_xlabel("")
+    ax2.set_title(
+        "Entropy Components\n(Mutual Info in Green)", fontsize=13, fontweight="bold"
+    )
+    ax2.grid(True, alpha=0.3, axis="y")
+    max_entropy = max(h_x, h_y, h_xy)
+    ax2.set_ylim([0, max_entropy * 1.2])
+    # Add value labels on bars.
+    for bar, val in zip(bars, values):
+        height = bar.get_height()
+        ax2.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            height + max_entropy * 0.02,
+            f"{val:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+        )
+    # Highlight I(X;Y) bar.
+    bars[3].set_linewidth(3)
+    bars[3].set_edgecolor("darkgreen")
+    # Plot 3: Venn-style visualization showing overlapping information.
+    ax3.set_xlim([0, 10])
+    ax3.set_ylim([0, 10])
+    ax3.axis("off")
+    ax3.set_title("Information Decomposition\n(Venn Diagram)", fontsize=13, fontweight="bold")
+    # Draw two overlapping circles representing H(X) and H(Y).
+    # Circle sizes proportional to entropies.
+    # Overlap represents I(X;Y).
+    from matplotlib.patches import Circle
+    # Scale circles based on entropy.
+    max_h = max(h_x, h_y, 1)
+    radius_x = 2.0 * np.sqrt(h_x / max_h)
+    radius_y = 2.0 * np.sqrt(h_y / max_h)
+    # Position circles with overlap based on MI.
+    center_x = [3.5, 6.5]
+    center_y = [5, 5]
+    # Adjust center positions to show overlap.
+    overlap_factor = mi / max(h_x, h_y, 0.01)
+    separation = 3.0 * (1 - overlap_factor * 0.8)
+    center_x = [5 - separation / 2, 5 + separation / 2]
+    # Draw circles.
+    circle_x = Circle(
+        (center_x[0], center_y[0]),
+        radius_x,
+        color="steelblue",
+        alpha=0.4,
+        linewidth=2,
+        edgecolor="steelblue",
+        label=f"H(X)={h_x:.3f}",
+    )
+    circle_y = Circle(
+        (center_x[1], center_y[1]),
+        radius_y,
+        color="coral",
+        alpha=0.4,
+        linewidth=2,
+        edgecolor="coral",
+        label=f"H(Y)={h_y:.3f}",
+    )
+    ax3.add_patch(circle_x)
+    ax3.add_patch(circle_y)
+    # Add labels.
+    ax3.text(center_x[0] - 0.8, 7.5, "H(X)", fontsize=14, fontweight="bold", color="steelblue")
+    ax3.text(center_x[1] + 0.8, 7.5, "H(Y)", fontsize=14, fontweight="bold", color="coral")
+    # Label the overlap region.
+    ax3.text(
+        5,
+        5,
+        f"I(X;Y)\n{mi:.3f}",
+        fontsize=11,
+        fontweight="bold",
+        ha="center",
+        va="center",
+        color="darkgreen",
+        bbox=dict(boxstyle="round,pad=0.3", facecolor="lightyellow", alpha=0.8),
+    )
+    # Add conditional entropy labels.
+    ax3.text(
+        center_x[0] - 1.2,
+        5,
+        f"H(X|Y)\n{h_x_given_y:.2f}",
+        fontsize=9,
+        ha="center",
+        va="center",
+        color="navy",
+    )
+    ax3.text(
+        center_x[1] + 1.2,
+        5,
+        f"H(Y|X)\n{h_y_given_x:.2f}",
+        fontsize=9,
+        ha="center",
+        va="center",
+        color="darkred",
+    )
+    # Add relationship equations.
+    ax3.text(
+        5,
+        2.0,
+        f"H(X,Y) = {h_xy:.3f}",
+        fontsize=10,
+        ha="center",
+        fontweight="bold",
+        color="purple",
+    )
+    ax3.text(
+        5,
+        1.2,
+        f"= I(X;Y) + H(X|Y) + H(Y|X)",
+        fontsize=8,
+        ha="center",
+        style="italic",
+    )
+    # Plot 4: Explanation text panel.
+    ax4.axis("off")
+    ax4.set_title("Interpretation", fontsize=13, fontweight="bold", pad=20)
+    # Add explanation text.
+    text_content = (
+        f"{interpretation}\n\n"
+        f"Fundamental Relations:\n"
+        f"  H(X,Y) = H(X) + H(Y|X)\n"
+        f"  {h_xy:.3f} = {h_x:.3f} + {h_y_given_x:.3f}\n\n"
+        f"  I(X;Y) = H(X) + H(Y) - H(X,Y)\n"
+        f"  {mi:.3f} = {h_x:.3f} + {h_y:.3f} - {h_xy:.3f}\n\n"
+        f"Symmetry:\n"
+        f"  I(X;Y) = I(Y;X) = {mi:.3f}"
+    )
+    ax4.text(
+        0.1,
+        0.95,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=10,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=1", facecolor="wheat", alpha=0.3),
+    )
+    plt.tight_layout()
+    plt.show()
+
+
 def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
     """
     Interactive visualization of KL divergence between two binary distributions.
@@ -939,11 +1210,38 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
     kl_qp = calculate_kl_divergence(q, p)
     ce_pq = calculate_cross_entropy(p, q)
     h_p = calculate_entropy(p)
-    # Create visualization.
-    fig = plt.figure(figsize=(16, 10))
-    gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.3)
+    # Determine interpretation based on KL divergence value.
+    if kl_pq < 0.01:
+        interpretation = (
+            "Nearly identical distributions!\n"
+            "Q is an excellent approximation of P.\n"
+            "Almost no information is lost."
+        )
+        quality = "Excellent"
+    elif kl_pq < 0.1:
+        interpretation = (
+            "Very similar distributions.\n"
+            "Q is a good approximation of P.\n"
+            "Minimal information loss."
+        )
+        quality = "Good"
+    elif kl_pq < 0.5:
+        interpretation = (
+            "Moderate divergence.\n"
+            "Q differs noticeably from P.\n"
+            "Some information is lost."
+        )
+        quality = "Moderate"
+    else:
+        interpretation = (
+            "Significant divergence!\n"
+            "Q is a poor approximation of P.\n"
+            "Substantial information loss."
+        )
+        quality = "Poor"
+    # Create visualization with 4 subplots in a single row.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5))
     # Plot 1: Distributions comparison.
-    ax1 = fig.add_subplot(gs[0, 0])
     x = np.arange(2)
     width = 0.35
     bars1 = ax1.bar(
@@ -966,7 +1264,11 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
     )
     ax1.set_xlabel("Outcome", fontsize=12)
     ax1.set_ylabel("Probability", fontsize=12)
-    ax1.set_title("Distribution Comparison", fontsize=14, fontweight="bold")
+    ax1.set_title(
+        f"Distribution Comparison\nP: [{1-p1:.2f}, {p1:.2f}] vs Q: [{1-q1:.2f}, {q1:.2f}]",
+        fontsize=14,
+        fontweight="bold",
+    )
     ax1.set_xticks(x)
     ax1.set_xticklabels(["0", "1"])
     ax1.legend(fontsize=11)
@@ -983,9 +1285,9 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
                 ha="center",
                 va="bottom",
                 fontsize=10,
+                fontweight="bold",
             )
     # Plot 2: KL divergence metrics.
-    ax2 = fig.add_subplot(gs[0, 1])
     metrics = ["H(P)", "H(P,Q)", "D_KL(P||Q)", "D_KL(Q||P)"]
     values = [h_p, ce_pq, kl_pq, kl_qp]
     colors_m = ["steelblue", "purple", "red", "orange"]
@@ -993,7 +1295,11 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
         metrics, values, color=colors_m, alpha=0.7, edgecolor="black"
     )
     ax2.set_ylabel("Information [bits]", fontsize=12)
-    ax2.set_title("Information Metrics", fontsize=14, fontweight="bold")
+    ax2.set_title(
+        f"Information Metrics\nApproximation Quality: {quality}",
+        fontsize=14,
+        fontweight="bold",
+    )
     ax2.grid(True, alpha=0.3, axis="y")
     ax2.tick_params(axis="x", rotation=20)
     for bar, val in zip(bars, values):
@@ -1008,7 +1314,6 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
             fontweight="bold",
         )
     # Plot 3: KL divergence heatmap.
-    ax3 = fig.add_subplot(gs[1, :])
     p_range = np.linspace(0.05, 0.95, 30)
     q_range = np.linspace(0.05, 0.95, 30)
     kl_matrix = np.zeros((len(p_range), len(q_range)))
@@ -1026,7 +1331,7 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
         marker="*",
         edgecolor="black",
         linewidth=2,
-        label=f"Current: D_KL={kl_pq:.3f}",
+        label=f"Current: D_KL(P||Q)={kl_pq:.3f}",
         zorder=5,
     )
     ax3.set_xlabel("Q (Approximation probability for outcome 1)", fontsize=12)
@@ -1037,29 +1342,51 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
     ax3.legend(fontsize=11, loc="upper left")
     cbar = plt.colorbar(im, ax=ax3)
     cbar.set_label("KL Divergence [bits]", fontsize=11)
-    # Add diagonal line (where P=Q).
-    ax3.plot([0, 1], [0, 1], "k--", linewidth=2, alpha=0.5, label="P=Q (KL=0)")
+    # Add diagonal line (where P=Q, KL=0).
+    ax3.plot([0, 1], [0, 1], "k--", linewidth=2, alpha=0.5)
+    ax3.text(
+        0.5,
+        0.55,
+        "P=Q line\n(KL=0)",
+        ha="center",
+        fontsize=10,
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="white", alpha=0.8),
+    )
+    # Plot 4: Explanation text panel.
+    ax4.axis("off")
+    ax4.set_title("Explanation", fontsize=14, fontweight="bold", pad=20)
+    # Add comprehensive explanation text.
+    text_content = (
+        f"Distributions:\n"
+        f"  True P:     [{1-p1:.2f}, {p1:.2f}]\n"
+        f"  Approx Q:   [{1-q1:.2f}, {q1:.2f}]\n\n"
+        f"Entropy & Cross-Entropy:\n"
+        f"  H(P) = {h_p:.4f} bits\n"
+        f"  H(P,Q) = {ce_pq:.4f} bits\n\n"
+        f"KL Divergence (Asymmetric!):\n"
+        f"  D_KL(P||Q) = {kl_pq:.4f} bits\n"
+        f"  D_KL(Q||P) = {kl_qp:.4f} bits\n\n"
+        f"Interpretation:\n"
+        f"  {interpretation}\n\n"
+        f"Verification:\n"
+        f"  H(P,Q) = H(P) + D_KL(P||Q)\n"
+        f"  {ce_pq:.4f} = {h_p:.4f} + {kl_pq:.4f}\n"
+        f"  {ce_pq:.4f} = {h_p + kl_pq:.4f} "
+        + ("(verified)" if abs(h_p + kl_pq - ce_pq) < 0.001 else "(error!)")
+    )
+    ax4.text(
+        0.1,
+        0.9,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=11,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=1", facecolor="wheat", alpha=0.3),
+    )
     plt.tight_layout()
     plt.show()
-    # Print analysis.
-    print(f"True distribution P: [{1-p1:.2f}, {p1:.2f}]")
-    print(f"Approximation Q:    [{1-q1:.2f}, {q1:.2f}]")
-    print()
-    print(f"Entropy H(P) = {h_p:.4f} bits")
-    print(f"Cross-Entropy H(P,Q) = {ce_pq:.4f} bits")
-    print(f"KL Divergence D_KL(P||Q) = {kl_pq:.4f} bits")
-    print(
-        f"KL Divergence D_KL(Q||P) = {kl_qp:.4f} bits (note: asymmetric!)"
-    )
-    print()
-    print(
-        f"Verification: H(P) + D_KL(P||Q) = {h_p:.4f} + {kl_pq:.4f} = {h_p+kl_pq:.4f}"
-    )
-    print(
-        f"Should equal H(P,Q) = {ce_pq:.4f} ✓"
-        if abs(h_p + kl_pq - ce_pq) < 0.001
-        else f"Should equal H(P,Q) = {ce_pq:.4f} ✗"
-    )
 
 
 def demonstrate_data_processing_inequality() -> None:
