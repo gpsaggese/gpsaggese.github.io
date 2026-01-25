@@ -15,8 +15,10 @@ import pandas as pd
 import pymc as pm
 import scipy.stats as stats
 from IPython.display import clear_output, display
+from PIL import Image
 
 import helpers.hdbg as hdbg
+import helpers.hio as hio
 
 _LOG = logging.getLogger(__name__)
 
@@ -775,6 +777,92 @@ def plot_dog_in_office_pdf(
     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
     plt.legend()
     plt.show()
+
+
+# #############################################################################
+# Animation generation utilities.
+# #############################################################################
+
+
+def generate_animation(
+    functor: Callable,
+    values: List[dict],
+    dst_dir: str,
+    *,
+    incremental: bool = True,
+    figsize: Optional[Tuple[int, int]] = None,
+    dpi: int = 150,
+) -> None:
+    """
+    Generate animation frames by calling a functor with different parameter values.
+
+    The function creates a directory for frames, then iterates through the
+    provided values, calling the functor with each set of kwargs. Each frame
+    is saved as a PNG file with the naming pattern frame_000.png,
+    frame_001.png, etc.
+
+    :param functor: Function to call for each frame (should use plt.show())
+    :param values: List of dictionaries containing kwargs to pass to functor
+    :param dst_dir: Directory path where frames will be saved
+    :param incremental: If False, directory is recreated from scratch; if
+        True, existing directory is reused
+    :param figsize: Optional figure size as (width, height) to pass to
+        functor (if functor accepts figsize parameter)
+    :param dpi: Resolution for saved frames in dots per inch
+    """
+    # Create directory for frames.
+    hio.create_dir(dst_dir, incremental=incremental)
+    n_steps = len(values)
+    _LOG.info("Generating %s frames...", n_steps)
+    # Generate frames by calling the function with different parameter values.
+    for i, kwargs in enumerate(values):
+        _LOG.info("Frame %s/%s: %s", i + 1, n_steps, kwargs)
+        # Add figsize to kwargs if provided and not already present.
+        if figsize is not None and "figsize" not in kwargs:
+            kwargs = {**kwargs, "figsize": figsize}
+        # Save the original plt.show.
+        original_show = plt.show
+        # Create a custom show function that saves the figure.
+        def save_figure():
+            frame_path = os.path.join(dst_dir, f"frame_{i:03d}.png")
+            plt.savefig(
+                frame_path,
+                dpi=dpi,
+                bbox_inches=None,
+                facecolor="white",
+            )
+            plt.close()
+        # Replace plt.show temporarily.
+        plt.show = save_figure
+        try:
+            # Call the visualization function.
+            functor(**kwargs)
+        finally:
+            # Restore original plt.show.
+            plt.show = original_show
+    # Report completion.
+    frame_files = sorted([f for f in os.listdir(dst_dir) if f.endswith(".png")])
+    _LOG.info("Frames saved to %s/", dst_dir)
+    _LOG.info("Total frames generated: %s", len(frame_files))
+    # Validate that all frames have the same dimensions.
+    if frame_files:
+        dimensions = []
+        for frame_file in frame_files:
+            frame_path = os.path.join(dst_dir, frame_file)
+            with Image.open(frame_path) as img:
+                dimensions.append((frame_file, img.size))
+        # Check if all dimensions are the same.
+        unique_dimensions = set(dim[1] for dim in dimensions)
+        if len(unique_dimensions) == 1:
+            width, height = dimensions[0][1]
+            _LOG.info("All frames have consistent dimensions: %sx%s pixels", width, height)
+        else:
+            _LOG.warning("Inconsistent frame dimensions detected:")
+            for frame_file, size in dimensions:
+                _LOG.warning("  %s: %sx%s pixels", frame_file, size[0], size[1])
+            hdbg.dfatal(
+                "Frame dimensions are inconsistent. Expected all frames to have the same size."
+            )
 
 
 # #############################################################################

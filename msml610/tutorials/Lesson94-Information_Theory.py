@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -259,6 +259,30 @@ interact(utils.plot_joint_entropy_interactive,
                              description='Sample size:',
                              style={'description_width': 'initial'}));
 
+
+# %%
+# Generate animation frames for joint entropy visualization.
+# Parameters for video generation.
+n_steps = 21  # 21 frames from 0.0 to 1.0.
+n_samples_fixed = 100  # Fixed sample size.
+dependence_values = np.linspace(0.0, 1.0, n_steps)
+
+# Prepare values list for generate_animation.
+values = []
+for val in dependence_values:
+    values.append({"dependence": val, "n_samples": n_samples_fixed})
+
+# Directory to save frames.
+dst_dir = "./figures/joint_entropy_animation_frames"
+
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_joint_entropy_interactive,
+    values,
+    dst_dir,
+    figsize=(20, 5),
+    dpi=150
+)
 
 # %% [markdown]
 # # Conditional Entropy

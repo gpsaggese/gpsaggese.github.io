@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -70,56 +70,29 @@ _LOG = logging.getLogger(__name__)
 # %%
 ## Create Video from Interactive Widget
 
-import os
-import shutil
-from pathlib import Path
-
-# Create directory for frames.
-frames_dir = Path("./video_frames")
-frames_dir.mkdir(exist_ok=True)
+import numpy as np
 
 # Parameters for video generation.
 n_steps = 11  # This gives us 11 frames from 0.0 to 1.0 (inclusive)
 n_samples_fixed = 100  # Fixed sample size
 dependence_values = np.linspace(0.0, 1.0, n_steps)
 
-print(f"Generating {n_steps} frames...")
-print(f"Dependence values: {dependence_values}")
+# Prepare values list for generate_animation.
+values = []
+for val in dependence_values:
+    values.append({"dependence": val, "n_samples": n_samples_fixed})
 
-# Generate frames by calling the function with different dependence values.
-for i, dependence_val in enumerate(dependence_values):
-    print(f"Frame {i+1}/{n_steps}: dependence={dependence_val:.2f}")
-    
-    # Call the plotting function.
-    # We need to temporarily modify plt.show() to save instead of showing.
-    # Save the original plt.show
-    original_show = plt.show
-    
-    # Create a custom show function that saves the figure.
-    def save_figure():
-        plt.savefig(
-            frames_dir / f"frame_{i:03d}.png",
-            dpi=150,
-            bbox_inches='tight',
-            facecolor='white'
-        )
-        plt.close()
-    
-    # Replace plt.show temporarily.
-    plt.show = save_figure
-    
-    try:
-        # Call the visualization function.
-        utils.plot_joint_entropy_interactive(
-            dependence=dependence_val,
-            n_samples=n_samples_fixed
-        )
-    finally:
-        # Restore original plt.show.
-        plt.show = original_show
+# Directory to save frames.
+dst_dir = "./video_frames"
 
-print(f"\nFrames saved to {frames_dir}/")
-print(f"Total frames generated: {len(list(frames_dir.glob('*.png')))}")
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_joint_entropy_interactive,
+    values,
+    dst_dir,
+    figsize=(20, 5),
+    dpi=150
+)
 
 
 # %% [markdown]
@@ -135,7 +108,7 @@ print(f"Total frames generated: {len(list(frames_dir.glob('*.png')))}")
 # The resulting video will show how joint entropy changes as the dependence between X and Y varies from complete independence (0.0) to perfect dependence (1.0).
 
 # %%
-# TODO(ai_gp): Create a function in ./msml610/tutorials/msml610_utils.py to accept a function 
+# Animation generation function has been implemented in msml610_utils.py
 
 # %%
 # ## Combine Frames into Video

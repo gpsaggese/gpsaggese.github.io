@@ -168,7 +168,7 @@ def create_correlated_joint_distribution(*, correlation: float = 0.5) -> np.ndar
 
 
 def plot_joint_entropy_interactive(
-    *, dependence: float = 0.5, n_samples: int = 100
+    *, dependence: float = 0.5, n_samples: int = 100, figsize: tuple = (20, 5)
 ) -> None:
     """
     Interactive visualization of joint entropy with dependence control.
@@ -176,6 +176,7 @@ def plot_joint_entropy_interactive(
     :param dependence: Dependence strength between variables (0=independent,
         1=perfectly correlated)
     :param n_samples: Number of samples to generate for scatter plot
+    :param figsize: Figure size as (width, height) in inches
     """
     # Create joint distribution with specified dependence.
     joint_prob = create_correlated_joint_distribution(correlation=dependence)
@@ -221,7 +222,7 @@ def plot_joint_entropy_interactive(
     # Create DataFrame for samples.
     samples_df = pd.DataFrame({"X": x_jittered, "Y": y_jittered})
     # Create visualization with 4 subplots in a single row.
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5))
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=figsize)
     # Plot 1: Joint distribution heatmap using seaborn.
     sns.heatmap(
         joint_df,
@@ -322,7 +323,8 @@ def plot_joint_entropy_interactive(
         family="monospace",
         bbox=dict(boxstyle="round,pad=1", facecolor="wheat", alpha=0.3),
     )
-    plt.tight_layout()
+    # Use fixed padding to ensure consistent dimensions across frames.
+    plt.tight_layout(pad=2.0)
     plt.show()
 
 
