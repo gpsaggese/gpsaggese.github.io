@@ -135,83 +135,86 @@ print(f"Total frames generated: {len(list(frames_dir.glob('*.png')))}")
 # The resulting video will show how joint entropy changes as the dependence between X and Y varies from complete independence (0.0) to perfect dependence (1.0).
 
 # %%
-## Combine Frames into Video
+# TODO(ai_gp): Create a function in ./msml610/tutorials/msml610_utils.py to accept a function 
 
-try:
-    import imageio
-    print("Using imageio for video creation")
+# %%
+# ## Combine Frames into Video
+
+# try:
+#     import imageio
+#     print("Using imageio for video creation")
     
-    # Get all frame files sorted by name.
-    frame_files = sorted(frames_dir.glob("frame_*.png"))
-    print(f"Found {len(frame_files)} frames")
+#     # Get all frame files sorted by name.
+#     frame_files = sorted(frames_dir.glob("frame_*.png"))
+#     print(f"Found {len(frame_files)} frames")
     
-    # Read frames.
-    frames = []
-    for frame_file in frame_files:
-        frames.append(imageio.imread(frame_file))
+#     # Read frames.
+#     frames = []
+#     for frame_file in frame_files:
+#         frames.append(imageio.imread(frame_file))
     
-    # Create video with fps (frames per second).
-    # Lower fps = slower video, higher fps = faster video.
-    fps = 2  # 2 frames per second means each frame shows for 0.5 seconds.
-    output_video = "joint_entropy_animation.mp4"
+#     # Create video with fps (frames per second).
+#     # Lower fps = slower video, higher fps = faster video.
+#     fps = 2  # 2 frames per second means each frame shows for 0.5 seconds.
+#     output_video = "joint_entropy_animation.mp4"
     
-    imageio.mimsave(output_video, frames, fps=fps, codec='libx264')
-    print(f"\nVideo created successfully: {output_video}")
-    print(f"Video duration: {len(frames)/fps:.1f} seconds")
-    print(f"Frame rate: {fps} fps")
+#     imageio.mimsave(output_video, frames, fps=fps, codec='libx264')
+#     print(f"\nVideo created successfully: {output_video}")
+#     print(f"Video duration: {len(frames)/fps:.1f} seconds")
+#     print(f"Frame rate: {fps} fps")
     
-except ImportError:
-    print("imageio not installed. Trying alternative method with matplotlib.animation...")
+# except ImportError:
+#     print("imageio not installed. Trying alternative method with matplotlib.animation...")
     
-    try:
-        from matplotlib import animation
-        from IPython.display import HTML
+#     try:
+#         from matplotlib import animation
+#         from IPython.display import HTML
         
-        # Get all frame files sorted by name.
-        frame_files = sorted(frames_dir.glob("frame_*.png"))
-        print(f"Found {len(frame_files)} frames")
+#         # Get all frame files sorted by name.
+#         frame_files = sorted(frames_dir.glob("frame_*.png"))
+#         print(f"Found {len(frame_files)} frames")
         
-        # Read first frame to get dimensions.
-        first_frame = plt.imread(frame_files[0])
+#         # Read first frame to get dimensions.
+#         first_frame = plt.imread(frame_files[0])
         
-        # Create figure and axis.
-        fig, ax = plt.subplots(figsize=(20, 5))
-        ax.axis('off')
+#         # Create figure and axis.
+#         fig, ax = plt.subplots(figsize=(20, 5))
+#         ax.axis('off')
         
-        # Display first frame.
-        im = ax.imshow(first_frame)
+#         # Display first frame.
+#         im = ax.imshow(first_frame)
         
-        def update_frame(frame_idx):
-            """Update function for animation."""
-            img = plt.imread(frame_files[frame_idx])
-            im.set_array(img)
-            return [im]
+#         def update_frame(frame_idx):
+#             """Update function for animation."""
+#             img = plt.imread(frame_files[frame_idx])
+#             im.set_array(img)
+#             return [im]
         
-        # Create animation.
-        anim = animation.FuncAnimation(
-            fig,
-            update_frame,
-            frames=len(frame_files),
-            interval=500,  # 500ms = 0.5 seconds per frame
-            blit=True,
-            repeat=True
-        )
+#         # Create animation.
+#         anim = animation.FuncAnimation(
+#             fig,
+#             update_frame,
+#             frames=len(frame_files),
+#             interval=500,  # 500ms = 0.5 seconds per frame
+#             blit=True,
+#             repeat=True
+#         )
         
-        # Save as mp4.
-        output_video = "joint_entropy_animation.mp4"
-        Writer = animation.writers['ffmpeg']
-        writer = Writer(fps=2, metadata=dict(artist='Claude'), bitrate=1800)
-        anim.save(output_video, writer=writer)
+#         # Save as mp4.
+#         output_video = "joint_entropy_animation.mp4"
+#         Writer = animation.writers['ffmpeg']
+#         writer = Writer(fps=2, metadata=dict(artist='Claude'), bitrate=1800)
+#         anim.save(output_video, writer=writer)
         
-        print(f"\nVideo created successfully: {output_video}")
+#         print(f"\nVideo created successfully: {output_video}")
         
-        # Display the animation in the notebook.
-        display(HTML(anim.to_jshtml()))
+#         # Display the animation in the notebook.
+#         display(HTML(anim.to_jshtml()))
         
-    except Exception as e:
-        print(f"Error creating video: {e}")
-        print("\nYou can install imageio with: pip install imageio[ffmpeg]")
-        print("Or use the frames manually from the video_frames directory")
+#     except Exception as e:
+#         print(f"Error creating video: {e}")
+#         print("\nYou can install imageio with: pip install imageio[ffmpeg]")
+#         print("Or use the frames manually from the video_frames directory")
 
 # %%
 ## Display Video in Notebook (Optional)
