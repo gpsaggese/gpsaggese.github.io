@@ -563,3 +563,105 @@ Strong (-40%)         38,000 (±5,000)              42% fewer
 See complete scenario analysis in [GluonTS.example.ipynb - Section 7](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb).
 
 ---
+
+## Key Takeaways and Next Steps
+
+### Why Probabilistic Forecasting Matters
+
+Throughout this tutorial, we've seen how probabilistic forecasting moves beyond single point predictions to capture **uncertainty, trends, and variability**—critical for informed decision-making in public health. Unlike traditional forecasts that say "10,000 cases expected," probabilistic models provide "10,000 cases with 80% confidence interval [8,000-12,000]," enabling risk-aware planning.
+
+### Handling Noisy, Evolving Time Series
+
+COVID-19 data exemplifies the challenges of **noisy, evolving time series**:
+
+- **Noise**: Reporting delays, weekend underreporting, data corrections
+- **Evolving patterns**: Multiple waves (Delta, Omicron) with different characteristics
+- **Regime changes**: Distribution shifts as variants emerge
+
+**How GluonTS models handle these challenges:**
+
+1. **7-day moving averages**: Smooth noise while preserving trends
+2. **DeepAR**: Captures complex temporal patterns and seasonality despite noise
+3. **DeepNPTS**: Adapts to distribution shifts and regime changes non-parametrically
+4. **External features**: Deaths and mobility data help anticipate evolving patterns
+5. **Uncertainty quantification**: Wide intervals signal high uncertainty during transitions
+
+Probabilistic models don't just predict—they **quantify uncertainty** and **adapt to variability**, making them essential for real-world forecasting.
+
+### When to Use Each Model
+
+**Quick reference guide:**
+
+| Model | Use When | Key Strength |
+|-------|----------|--------------|
+| **SimpleFeedForward** | Stable trends, fast baseline needed | Speed (30-60 sec) |
+| **DeepAR** | Complex patterns, highest accuracy needed | Accuracy + calibrated uncertainty |
+| **DeepNPTS** | Regime changes, distribution shifts expected | Adaptability to evolving patterns |
+
+**Decision flow:** Need fast results? → SimpleFeedForward. Complex patterns? → DeepAR. Regime changes? → DeepNPTS.
+
+### Best Practices
+
+1. **Always report uncertainty**: Point forecasts alone are insufficient for decision-making
+2. **Choose model based on problem**: Consider data characteristics (stable vs. evolving, noisy vs. clean)
+3. **Validate on holdout data**: Test model performance before deployment
+4. **Monitor calibration**: Ensure prediction intervals match actual outcomes
+5. **Consider external features**: They can significantly improve forecasts for evolving patterns
+
+### Extending This Tutorial
+
+**Try different forecast horizons:**
+- Short-term (7 days): Operational planning
+- Medium-term (14 days): Current choice, matches public health cycles
+- Long-term (28 days): Strategic planning (lower accuracy expected)
+
+**Add more features:**
+- Vaccination rates (available in `data/vaccine.csv`)
+- Weather data (temperature, humidity)
+- Policy stringency indices
+- Genomic surveillance (variant prevalence)
+
+**Experiment with hyperparameters:**
+- Increase `context_length` for longer historical context
+- Adjust `hidden_size` or `num_layers` for model capacity
+- Tune `dropout_rate` for regularization
+- Increase `epochs` for better accuracy (slower training)
+
+**Apply to your own data:**
+- Replace COVID-19 data with your time series
+- Adapt feature engineering to your domain
+- Compare models on your specific problem
+- Build scenario analysis for your use case
+
+### Additional Resources
+
+**GluonTS Documentation:**
+- [Official Documentation](https://ts.gluon.ai/)
+- [GitHub Repository](https://github.com/awslabs/gluonts)
+- [API Reference](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.md)
+
+**Research Papers:**
+- [DeepAR Paper](https://arxiv.org/abs/1704.04110)
+- [DeepNPTS Paper](https://arxiv.org/abs/1906.05264)
+
+**COVID-19 Data Sources:**
+- [JHU COVID-19 Repository](https://github.com/CSSEGISandData/COVID-19)
+- [Google Mobility Reports](https://www.google.com/covid19/mobility/)
+
+**Time Series Forecasting:**
+- "Forecasting: Principles and Practice" by Hyndman & Athanasopoulos
+- [PyTorch Lightning Documentation](https://lightning.ai/docs/pytorch/stable/)
+
+### Final Thoughts
+
+Probabilistic time series forecasting with GluonTS enables you to:
+- **Capture uncertainty** in predictions, not just point estimates
+- **Handle noisy, evolving data** through appropriate model selection
+- **Make informed decisions** using prediction intervals and scenario analysis
+- **Adapt to changing patterns** with models like DeepNPTS
+
+Whether forecasting COVID-19 cases, sales, or any time series, probabilistic forecasts provide the **uncertainty quantification** and **variability awareness** needed for real-world decision-making.
+
+**Ready to get started?** Follow the [README](TutorTask297_GluonTS_COVID_19_Case_Prediction/README.md) to set up your environment, then dive into the [GluonTS.API.ipynb](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.ipynb) and [GluonTS.example.ipynb](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb) notebooks to build your own probabilistic forecasts.
+
+---
