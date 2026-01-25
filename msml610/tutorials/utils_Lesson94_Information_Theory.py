@@ -326,6 +326,207 @@ def plot_joint_entropy_interactive(
     plt.show()
 
 
+def plot_conditional_entropy_interactive(*, dependence: float = 0.5) -> None:
+    """
+    Interactive visualization of conditional entropy with dependence control.
+
+    :param dependence: Dependence strength between variables (0=independent,
+        1=perfectly correlated)
+    """
+    # Create joint distribution with specified dependence.
+    joint_prob = create_correlated_joint_distribution(correlation=dependence)
+    # Convert to DataFrame for better visualization.
+    joint_df = pd.DataFrame(
+        joint_prob, index=["X=0", "X=1"], columns=["Y=0", "Y=1"]
+    )
+    # Calculate marginals.
+    p_x = joint_prob.sum(axis=1)
+    p_y = joint_prob.sum(axis=0)
+    # Calculate conditional distributions P(Y|X).
+    p_y_given_x0 = joint_prob[0, :] / p_x[0] if p_x[0] > 0 else np.array([0.5, 0.5])
+    p_y_given_x1 = joint_prob[1, :] / p_x[1] if p_x[1] > 0 else np.array([0.5, 0.5])
+    # Calculate entropy metrics.
+    h_x = calculate_entropy(p_x)
+    h_y = calculate_entropy(p_y)
+    h_xy = calculate_joint_entropy(joint_prob)
+    h_y_given_x = calculate_conditional_entropy(joint_prob)
+    h_x_given_y = calculate_conditional_entropy(joint_prob.T)
+    # Determine interpretation message based on dependence.
+    if dependence < 0.1:
+        interpretation = (
+            "Independence: H(Y|X) = H(Y)\n"
+            "Knowing X provides no information about Y.\n"
+            "Conditional distributions P(Y|X=0) and P(Y|X=1) are identical."
+        )
+    elif dependence > 0.9:
+        interpretation = (
+            "Perfect dependence: H(Y|X) = 0\n"
+            "Knowing X completely determines Y.\n"
+            "Each conditional distribution is deterministic (spike)."
+        )
+    else:
+        reduction = h_y - h_y_given_x
+        percentage = (reduction / h_y * 100) if h_y > 0 else 0
+        interpretation = (
+            f"Partial dependence: H(Y|X) < H(Y)\n"
+            f"Knowing X reduces uncertainty about Y by {reduction:.4f} bits ({percentage:.1f}%).\n"
+            f"Conditional distributions differ but retain uncertainty."
+        )
+    # Create visualization with 4 subplots in a single row.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5))
+    # Plot 1: Joint distribution heatmap using seaborn.
+    sns.heatmap(
+        joint_df,
+        annot=True,
+        fmt=".3f",
+        cmap="YlOrRd",
+        vmin=0,
+        vmax=0.5,
+        cbar=True,
+        ax=ax1,
+        annot_kws={"fontsize": 14, "fontweight": "bold"},
+    )
+    ax1.set_xlabel("Variable Y", fontsize=12)
+    ax1.set_ylabel("Variable X", fontsize=12)
+    ax1.set_title(
+        f"Joint Distribution P(X,Y)\nDependence = {dependence:.2f}",
+        fontsize=14,
+        fontweight="bold",
+    )
+    # Plot 2: Conditional distributions P(Y|X=0) and P(Y|X=1).
+    # Create DataFrame for conditional distributions.
+    cond_df = pd.DataFrame(
+        {
+            "P(Y|X=0)": p_y_given_x0,
+            "P(Y|X=1)": p_y_given_x1,
+        },
+        index=["Y=0", "Y=1"],
+    )
+    # Plot grouped bar chart.
+    x_pos = np.arange(len(cond_df.index))
+    width = 0.35
+    ax2.bar(
+        x_pos - width / 2,
+        cond_df["P(Y|X=0)"],
+        width,
+        label="P(Y|X=0)",
+        alpha=0.7,
+        color="steelblue",
+        edgecolor="black",
+    )
+    ax2.bar(
+        x_pos + width / 2,
+        cond_df["P(Y|X=1)"],
+        width,
+        label="P(Y|X=1)",
+        alpha=0.7,
+        color="coral",
+        edgecolor="black",
+    )
+    ax2.set_xlabel("Variable Y", fontsize=12)
+    ax2.set_ylabel("Conditional Probability", fontsize=12)
+    ax2.set_title(
+        "Conditional Distributions P(Y|X)", fontsize=14, fontweight="bold"
+    )
+    ax2.set_xticks(x_pos)
+    ax2.set_xticklabels(cond_df.index)
+    ax2.legend(fontsize=11)
+    ax2.set_ylim([0, 1.1])
+    ax2.grid(True, alpha=0.3, axis="y")
+    # Add value labels on bars.
+    for i, (val0, val1) in enumerate(
+        zip(cond_df["P(Y|X=0)"], cond_df["P(Y|X=1)"])
+    ):
+        ax2.text(
+            i - width / 2,
+            val0 + 0.02,
+            f"{val0:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+        )
+        ax2.text(
+            i + width / 2,
+            val1 + 0.02,
+            f"{val1:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+        )
+    # Plot 3: Entropy metrics comparison using seaborn.
+    metrics_df = pd.DataFrame(
+        {
+            "Metric": ["H(X)", "H(Y)", "H(Y|X)", "H(X,Y)"],
+            "Value": [h_x, h_y, h_y_given_x, h_xy],
+        }
+    )
+    colors_metrics = ["steelblue", "coral", "green", "purple"]
+    sns.barplot(
+        data=metrics_df,
+        x="Metric",
+        y="Value",
+        hue="Metric",
+        palette=colors_metrics,
+        alpha=0.7,
+        edgecolor="black",
+        legend=False,
+        ax=ax3,
+    )
+    ax3.set_ylabel("Information [bits]", fontsize=12)
+    ax3.set_xlabel("")
+    ax3.set_title("Entropy Metrics", fontsize=14, fontweight="bold")
+    ax3.set_ylim([0, 2.2])
+    # Add value labels on bars.
+    for i, (metric, value) in enumerate(
+        zip(metrics_df["Metric"], metrics_df["Value"])
+    ):
+        ax3.text(
+            i,
+            value + 0.05,
+            f"{value:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+        )
+    # Highlight H(Y|X) as the main focus.
+    ax3.get_children()[2].set_linewidth(3)
+    ax3.get_children()[2].set_edgecolor("darkgreen")
+    # Plot 4: Explanation text panel.
+    ax4.axis("off")
+    ax4.set_title("Explanation", fontsize=14, fontweight="bold", pad=20)
+    # Add explanation text.
+    text_content = (
+        f"Conditional Entropy:\n"
+        f"  H(Y|X) = {h_y_given_x:.4f} bits\n\n"
+        f"Interpretation:\n"
+        f"  {interpretation}\n\n"
+        f"Chain Rule Verification:\n"
+        f"  H(X,Y) = H(X) + H(Y|X)\n"
+        f"  {h_xy:.4f} = {h_x:.4f} + {h_y_given_x:.4f}\n"
+        f"  {h_xy:.4f} = {h_x + h_y_given_x:.4f}\n\n"
+        f"Symmetry:\n"
+        f"  H(X|Y) = {h_x_given_y:.4f} bits\n"
+        f"  H(X,Y) = H(Y) + H(X|Y)\n"
+        f"  {h_xy:.4f} = {h_y:.4f} + {h_x_given_y:.4f}"
+    )
+    ax4.text(
+        0.1,
+        0.9,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=11,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=1", facecolor="wheat", alpha=0.3),
+    )
+    plt.tight_layout()
+    plt.show()
+
+
 # #############################################################################
 # KL divergence and cross-entropy
 # #############################################################################

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -270,72 +270,26 @@ interact(utils.plot_joint_entropy_interactive,
 # - If $Y = X$, then $H(Y|X) = 0$ (no uncertainty)
 # - If $X$ and $Y$ are independent, then $H(Y|X) = H(Y)$
 
-# %%
-# Example: Deterministic relationship.
-# X = Day type (0: Weekday, 1: Weekend).
-# Y = Alarm status (0: Off, 1: On).
-# Strong dependency: alarm is always on for weekdays, always off for weekends.
-joint_prob_deterministic = np.array([
-    [0.0, 0.7],  # Weekday: 0% off, 70% on
-    [0.3, 0.0]   # Weekend: 30% off, 0% on
-])
-
-print("Joint Probability Distribution (Alarm and Day Type):")
-print(pd.DataFrame(joint_prob_deterministic,
-                   index=['Weekday', 'Weekend'],
-                   columns=['Alarm=Off', 'Alarm=On']))
-
-# %%
-# Calculate conditional entropy for deterministic relationship.
-p_x_det = joint_prob_deterministic.sum(axis=1)
-p_y_det = joint_prob_deterministic.sum(axis=0)
-h_x_det = utils.calculate_entropy(p_x_det)
-h_y_det = utils.calculate_entropy(p_y_det)
-h_y_given_x_det = utils.calculate_conditional_entropy(joint_prob_deterministic)
-
-print(f"H(X) = {h_x_det:.4f} bits")
-print(f"H(Y) = {h_y_det:.4f} bits")
-print(f"H(Y|X) = {h_y_given_x_det:.4f} bits")
-print(f"\nInterpretation: Once we know the day type, there is {h_y_given_x_det:.4f} bits of uncertainty about alarm status.")
-# When Y is deterministic given X, conditional entropy H(Y|X) approaches 0.
-
 # %% [markdown]
 # ## Chain Rule for Entropy
 #
 # $$H(X, Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)$$
 
-# %%
-# Example: Weather and Activity.
-# X = Weather (0: Sunny, 1: Rainy)
-# Y = Activity (0: Park, 1: Cinema)
-joint_prob = np.array([
-    [0.35, 0.15],  # Sunny: 35% park, 15% cinema
-    [0.10, 0.40]   # Rainy: 10% park, 40% cinema
-])
-
-print("Joint Probability Distribution:")
-print(pd.DataFrame(joint_prob, 
-                   index=['Sunny', 'Rainy'], 
-                   columns=['Park', 'Cinema']))
-
+# %% [markdown]
+# ## Interactive Visualization: Conditional Entropy
+#
+# Adjust the dependence slider to see how conditional entropy H(Y|X) changes:
+# - When variables are independent (dependence = 0), H(Y|X) = H(Y)
+# - When variables are perfectly dependent (dependence = 1), H(Y|X) = 0
+# - Observe how the conditional distributions P(Y|X=0) and P(Y|X=1) become more different as dependence increases
 
 # %%
-# Calculate marginals.
-p_weather = joint_prob.sum(axis=1)
-p_activity = joint_prob.sum(axis=0)
+# Create interactive widget for conditional entropy visualization.
+interact(utils.plot_conditional_entropy_interactive,
+         dependence=FloatSlider(min=0.0, max=1.0, step=0.05, value=0.5,
+                                description='Dependence:',
+                                style={'description_width': 'initial'}));
 
-h_weather = utils.calculate_entropy(p_weather)
-h_activity = utils.calculate_entropy(p_activity)
-h_joint = utils.calculate_joint_entropy(joint_prob)
-h_activity_given_weather = utils.calculate_conditional_entropy(joint_prob)
-
-print(f"H(Weather) = {h_weather:.4f} bits")
-print(f"H(Activity) = {h_activity:.4f} bits")
-print(f"H(Weather, Activity) = {h_joint:.4f} bits")
-print(f"H(Activity|Weather) = {h_activity_given_weather:.4f} bits")
-print()
-print(f"Chain rule verification: H(Weather) + H(Activity|Weather) = {h_weather + h_activity_given_weather:.4f} bits")
-print(f"Should equal H(Weather, Activity) = {h_joint:.4f} bits")
 
 # %% [markdown]
 # # Mutual Information
