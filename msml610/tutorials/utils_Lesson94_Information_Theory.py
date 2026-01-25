@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+import helpers.hdbg as hdbg
 _LOG = logging.getLogger(__name__)
 
 
