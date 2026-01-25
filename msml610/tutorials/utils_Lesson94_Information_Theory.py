@@ -7,6 +7,7 @@ import Lesson94_Information_Theory_utils as litutils
 """
 
 import logging
+import textwrap
 import warnings
 from typing import Any, List, Optional, Union
 
@@ -168,7 +169,7 @@ def create_correlated_joint_distribution(*, correlation: float = 0.5) -> np.ndar
 
 
 def plot_joint_entropy_interactive(
-    *, dependence: float = 0.5, n_samples: int = 100, figsize: tuple = (20, 5)
+    *, dependence: float = 0.5, n_samples: int = 100, figsize: Optional[tuple] = None
 ) -> None:
     """
     Interactive visualization of joint entropy with dependence control.
@@ -176,8 +177,12 @@ def plot_joint_entropy_interactive(
     :param dependence: Dependence strength between variables (0=independent,
         1=perfectly correlated)
     :param n_samples: Number of samples to generate for scatter plot
-    :param figsize: Figure size as (width, height) in inches
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
     """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
     # Create joint distribution with specified dependence.
     joint_prob = create_correlated_joint_distribution(correlation=dependence)
     # Convert to DataFrame for better visualization.
@@ -222,7 +227,10 @@ def plot_joint_entropy_interactive(
     # Create DataFrame for samples.
     samples_df = pd.DataFrame({"X": x_jittered, "Y": y_jittered})
     # Create visualization with 4 subplots in a single row.
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=figsize)
+    # Use gridspec_kw to set fixed width ratios for consistent layout.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    )
     # Plot 1: Joint distribution heatmap using seaborn.
     sns.heatmap(
         joint_df,
@@ -299,6 +307,8 @@ def plot_joint_entropy_interactive(
     # Plot 4: Comments and explanation text.
     ax4.axis("off")
     ax4.set_title("Explanation", fontsize=14, fontweight="bold", pad=20)
+    # Wrap interpretation text to fixed width to ensure consistent dimensions.
+    wrapped_interpretation = textwrap.fill(interpretation, width=40)
     # Add explanation text.
     text_content = (
         f"Entropy Values:\n"
@@ -306,25 +316,29 @@ def plot_joint_entropy_interactive(
         f"  • H(Y) = {h_y:.4f} bits\n"
         f"  • H(X,Y) = {h_xy:.4f} bits\n\n"
         f"Interpretation:\n"
-        f"  {interpretation}\n\n"
+        f"  {wrapped_interpretation}\n\n"
         f"Verification:\n"
-        f"  H(X,Y) + I(X;Y) = H(X) + H(Y)\n"
-        f"  {h_xy:.4f} + {mi:.4f} = {h_x:.4f} + {h_y:.4f}\n"
+        f"  H(X,Y) + I(X;Y) =\n"
+        f"      H(X) + H(Y)\n"
+        f"  {h_xy:.4f} + {mi:.4f} =\n"
+        f"      {h_x:.4f} + {h_y:.4f}\n"
         f"  {h_xy + mi:.4f} = {h_x + h_y:.4f}"
     )
     ax4.text(
-        0.1,
-        0.9,
+        0.05,
+        0.95,
         text_content,
         transform=ax4.transAxes,
-        fontsize=11,
+        fontsize=10,
         ha="left",
         va="top",
         family="monospace",
-        bbox=dict(boxstyle="round,pad=1", facecolor="wheat", alpha=0.3),
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
+        wrap=True,
     )
-    # Use fixed padding to ensure consistent dimensions across frames.
-    plt.tight_layout(pad=2.0)
+    # Use subplots_adjust with fixed parameters instead of tight_layout.
+    # This ensures consistent spacing and dimensions across all frames.
+    plt.subplots_adjust(left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25)
     plt.show()
 
 

@@ -22,7 +22,7 @@ MSML610: Advanced Machine Learning
 
 **References**:
 
-[![video](msml610/tutorials/video_frames/frame_001.png)](./msml610/tutorials/joint_entropy_animation.mp4)
+[![video](msml610/tutorials/video_frames/frame_001.png)](./msml610/tutorials/joint_entropy_animation.gif)
 
 # Information theory
 

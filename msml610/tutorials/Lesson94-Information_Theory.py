@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -39,7 +39,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
-from ipywidgets import interact, FloatSlider, IntSlider, widgets
+from ipywidgets import interact, FloatSlider, IntSlider, widgets, fixed
 from IPython.display import display, Markdown
 
 # Set plotting style.
@@ -255,16 +255,17 @@ interact(utils.plot_joint_entropy_interactive,
          dependence=FloatSlider(min=0.0, max=1.0, step=0.05, value=0.5,
                                 description='Dependence:',
                                 style={'description_width': 'initial'}),
-         n_samples=IntSlider(min=10, max=500, step=10, value=100,
+         n_samples=IntSlider(min=10, max=500, step=10, value=300,
                              description='Sample size:',
-                             style={'description_width': 'initial'}));
+                             style={'description_width': 'initial'}),
+         figsize=fixed(None));
 
 
 # %%
 # Generate animation frames for joint entropy visualization.
 # Parameters for video generation.
-n_steps = 21  # 21 frames from 0.0 to 1.0.
-n_samples_fixed = 100  # Fixed sample size.
+n_steps = 11
+n_samples_fixed = 300
 dependence_values = np.linspace(0.0, 1.0, n_steps)
 
 # Prepare values list for generate_animation.
@@ -280,6 +281,7 @@ ut.generate_animation(
     utils.plot_joint_entropy_interactive,
     values,
     dst_dir,
+    incremental=False,
     figsize=(20, 5),
     dpi=150
 )
