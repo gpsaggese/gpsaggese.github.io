@@ -397,7 +397,7 @@ Healthcare Strain         48,455       678,376        3.0% more
 
 **Key insights:** Quantify intervention impact with uncertainty bounds, compare scenarios probabilistically, make informed decisions balancing multiple factors.
 
-See complete scenario analysis in [GluonTS.example.ipynb - Section 7](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb).
+See complete scenario analysis in [GluonTS.example.ipynb - Section 6](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb).
 
 ---
 
