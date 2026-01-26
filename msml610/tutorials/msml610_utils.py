@@ -1,5 +1,9 @@
 """
 Utility functions for MSML610 course tutorials.
+
+Import as:
+
+import msml610.tutorials.msml610_utils as mtumsuti
 """
 
 import copy
@@ -219,12 +223,8 @@ def _parse_trials(text: str) -> List[int]:
     Non-negative, unique, keep order.
     """
     try:
-        vals: List[int] = [
-            int(x.strip()) for x in text.split(",") if x.strip()
-        ]
-        vals = [
-            v for i, v in enumerate(vals) if v >= 0 and v not in vals[:i]
-        ]
+        vals: List[int] = [int(x.strip()) for x in text.split(",") if x.strip()]
+        vals = [v for i, v in enumerate(vals) if v >= 0 and v not in vals[:i]]
         return vals if vals else [0]
     except Exception:
         return [0]
@@ -309,7 +309,9 @@ def beta_prior_interactive() -> None:
         layout=ipywidgets.Layout(width="420px"),
         continuous_update=False,
     )
-    play: ipywidgets.Play = ipywidgets.Play(interval=600, value=0, min=0, max=0, step=1)
+    play: ipywidgets.Play = ipywidgets.Play(
+        interval=600, value=0, min=0, max=0, step=1
+    )
     ipywidgets.jslink((play, "value"), (index_slider, "value"))
     out: ipywidgets.Output = ipywidgets.Output()
 
@@ -587,9 +589,7 @@ def plot_gh_filter_results(
     :param tag_measurements: Label for measurements in plot
     """
     idx = pd.date_range("2011-01-01", periods=len(measurements))
-    df = pd.DataFrame(
-        measurements.T, index=idx, columns=[tag_measurements]
-    )
+    df = pd.DataFrame(measurements.T, index=idx, columns=[tag_measurements])
     if preds is not None:
         df["pred"] = preds
     df["ests"] = ests
@@ -696,8 +696,7 @@ def gen_linear_noisy_data(
     """
     np.random.seed(seed)
     vals = [
-        x0 + (dx * i) + np.random.randn() * noise_factor
-        for i in range(count)
+        x0 + (dx * i) + np.random.randn() * noise_factor for i in range(count)
     ]
     ground_truth = [x0 + dx * i for i in range(count)]
     return np.array(vals), ground_truth
@@ -729,8 +728,7 @@ def gen_non_linear_noisy_data(
     np.random.seed(seed)
     ground_truth = [x0 + (dx + i * accel) * i for i in range(count)]
     vals = [
-        ground_truth[i] + np.random.randn() * noise_factor
-        for i in range(count)
+        ground_truth[i] + np.random.randn() * noise_factor for i in range(count)
     ]
     return np.array(vals), np.array(ground_truth)
 
@@ -826,6 +824,7 @@ def generate_animation(
             kwargs = {**kwargs, "figsize": figsize}
         # Save the original plt.show.
         original_show = plt.show
+
         # Create a custom show function that saves the figure.
         def save_figure():
             frame_path = os.path.join(dst_dir, f"frame_{i:03d}.png")
@@ -836,6 +835,7 @@ def generate_animation(
                 facecolor="white",
             )
             plt.close()
+
         # Replace plt.show temporarily.
         plt.show = save_figure
         try:
@@ -859,7 +859,11 @@ def generate_animation(
         unique_dimensions = set(dim[1] for dim in dimensions)
         if len(unique_dimensions) == 1:
             width, height = dimensions[0][1]
-            _LOG.info("All frames have consistent dimensions: %sx%s pixels", width, height)
+            _LOG.info(
+                "All frames have consistent dimensions: %sx%s pixels",
+                width,
+                height,
+            )
             # Convert frames to movie if requested.
             if convert_to_movie:
                 _LOG.info("Converting frames to movie...")
@@ -940,6 +944,7 @@ def save_df(df: pd.DataFrame, file_name: str) -> None:
     :param file_name: Output filename
     """
     import dataframe_image as dfi
+
     file_name = os.path.join(FIG_DIR, file_name)
     dfi.export(df, file_name, table_conversion="matplotlib", dpi=300)
     #

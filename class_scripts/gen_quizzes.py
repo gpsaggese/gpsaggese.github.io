@@ -68,7 +68,7 @@ Given the content below:
   - For comparison or reflection questions, explain why one approach is
     preferable in certain situations.
   - For conceptual "how and why" questions, describe the underlying mechanism and
-    its practical significance. 
+    its practical significance.
   - You can also include questions with more right/wrong answers to emphasize key points
 
 - Focus on deeper understanding and application of concepts rather than memorization

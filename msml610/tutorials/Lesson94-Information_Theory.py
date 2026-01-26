@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -35,19 +35,15 @@ if False:
 import logging
 
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy import stats
 from ipywidgets import interact, FloatSlider, IntSlider, widgets, fixed
-from IPython.display import display, Markdown
 
 # Set plotting style.
 sns.set_style("whitegrid")
-plt.rcParams['figure.figsize'] = (12, 6)
+plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
-import helpers.hmatplotlib as hmatplo
 import msml610_utils as ut
 import utils_Lesson94_Information_Theory as utils
 
@@ -79,12 +75,16 @@ print(f"Fair coin entropy: {utils.calculate_entropy(fair_coin):.4f} bits")
 # Test with biased coin.
 # If heads occurs 90% of the time → less uncertainty, $H < 1$ bit.
 biased_coin = [0.9, 0.1]
-print(f"Biased coin (90-10) entropy: {utils.calculate_entropy(biased_coin):.4f} bits")
+print(
+    f"Biased coin (90-10) entropy: {utils.calculate_entropy(biased_coin):.4f} bits"
+)
 
 # %%
 # Test with broken coin.
 biased_coin = [1.0, 0.0]
-print(f"Biased coin (100-0) entropy: {utils.calculate_entropy(biased_coin):.4f} bits")
+print(
+    f"Biased coin (100-0) entropy: {utils.calculate_entropy(biased_coin):.4f} bits"
+)
 # If heads occurs 100% of the time → no uncertainty, $H = 0$ bit.
 
 # %% [markdown]
@@ -107,7 +107,7 @@ utils.plot_distribution_with_stats(
     values=dist1_values,
     probabilities=dist1_probs,
     title="Distribution 1: Two peaks at extremes",
-    save_fig=filename
+    save_fig=filename,
 )
 # This distribution has high variance (spread) but low entropy (only 1 bit).
 
@@ -197,7 +197,9 @@ utils.plot_distribution_with_stats(
 
 # %%
 # Example 2: Sharply peaked distribution has low entropy.
-peaked_dist = np.array([0.00, 0.01, 0.01, 0.01, 0.92, 0.01, 0.01, 0.01, 0.01, 0.01])
+peaked_dist = np.array(
+    [0.00, 0.01, 0.01, 0.01, 0.92, 0.01, 0.01, 0.01, 0.01, 0.01]
+)
 values_peaked = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 file_name = "figures/Lesson94_Sharply_Peaked_Distribution.png"
@@ -227,11 +229,19 @@ utils.plot_distribution_with_stats(
 # Use the slider below to adjust the probability $p$ of a binary random variable and observe how entropy changes.
 
 # %%
-interact(utils.plot_binary_entropy_interactive,
-         p=FloatSlider(min=0.00, max=1.00, step=0.01, value=0.5,
-                      description='Probability p:', style={'description_width': 'initial'}),
-         n=fixed(100),
-         figsize=fixed(None));
+interact(
+    utils.plot_binary_entropy_interactive,
+    p=FloatSlider(
+        min=0.00,
+        max=1.00,
+        step=0.01,
+        value=0.5,
+        description="Probability p:",
+        style={"description_width": "initial"},
+    ),
+    n=fixed(100),
+    figsize=fixed(None),
+)
 
 
 # %%
@@ -256,7 +266,7 @@ ut.generate_animation(
     dst_dir,
     incremental=False,
     figsize=(20, 5),
-    dpi=150
+    dpi=150,
 )
 
 # %% [markdown]
@@ -271,14 +281,26 @@ ut.generate_animation(
 
 # %%
 # Create interactive widget for joint entropy visualization.
-interact(utils.plot_joint_entropy_interactive,
-         dependence=FloatSlider(min=0.0, max=1.0, step=0.05, value=0.5,
-                                description='Dependence:',
-                                style={'description_width': 'initial'}),
-         n_samples=IntSlider(min=10, max=500, step=10, value=300,
-                             description='Sample size:',
-                             style={'description_width': 'initial'}),
-         figsize=fixed(None));
+interact(
+    utils.plot_joint_entropy_interactive,
+    dependence=FloatSlider(
+        min=0.0,
+        max=1.0,
+        step=0.05,
+        value=0.5,
+        description="Dependence:",
+        style={"description_width": "initial"},
+    ),
+    n_samples=IntSlider(
+        min=10,
+        max=500,
+        step=10,
+        value=300,
+        description="Sample size:",
+        style={"description_width": "initial"},
+    ),
+    figsize=fixed(None),
+)
 
 
 # %%
@@ -303,7 +325,7 @@ ut.generate_animation(
     dst_dir,
     incremental=False,
     figsize=(20, 5),
-    dpi=150
+    dpi=150,
 )
 
 # %% [markdown]
@@ -333,10 +355,17 @@ ut.generate_animation(
 
 # %%
 # Create interactive widget for conditional entropy visualization.
-interact(utils.plot_conditional_entropy_interactive,
-         dependence=FloatSlider(min=0.0, max=1.0, step=0.05, value=0.5,
-                                description='Dependence:',
-                                style={'description_width': 'initial'}));
+interact(
+    utils.plot_conditional_entropy_interactive,
+    dependence=FloatSlider(
+        min=0.0,
+        max=1.0,
+        step=0.05,
+        value=0.5,
+        description="Dependence:",
+        style={"description_width": "initial"},
+    ),
+)
 
 
 # %% [markdown]
@@ -352,15 +381,24 @@ interact(utils.plot_conditional_entropy_interactive,
 
 # %%
 # Create interactive widget for mutual information with Venn diagram.
-interact(utils.plot_mutual_information_venn_interactive,
-         dependence=FloatSlider(min=0.0, max=1.0, step=0.05, value=0.5,
-                                description='Dependence:',
-                                style={'description_width': 'initial'}),
-         scenario=widgets.Dropdown(options=['Binary', 'Weather'],
-                                   value='Binary',
-                                   description='Scenario:',
-                                   style={'description_width': 'initial'}),
-         figsize=fixed(None));
+interact(
+    utils.plot_mutual_information_venn_interactive,
+    dependence=FloatSlider(
+        min=0.0,
+        max=1.0,
+        step=0.05,
+        value=0.5,
+        description="Dependence:",
+        style={"description_width": "initial"},
+    ),
+    scenario=widgets.Dropdown(
+        options=["Binary", "Weather"],
+        value="Binary",
+        description="Scenario:",
+        style={"description_width": "initial"},
+    ),
+    figsize=fixed(None),
+)
 
 
 # %%
@@ -384,7 +422,7 @@ ut.generate_animation(
     dst_dir,
     incremental=False,
     figsize=(20, 5),
-    dpi=150
+    dpi=150,
 )
 
 # %%
@@ -408,7 +446,7 @@ ut.generate_animation(
     dst_dir,
     incremental=False,
     figsize=(20, 5),
-    dpi=150
+    dpi=150,
 )
 
 # %% [markdown]
@@ -418,9 +456,17 @@ ut.generate_animation(
 
 # %%
 # Create interactive widget for correlation-based mutual information.
-interact(utils.plot_mutual_info_interactive,
-         correlation=FloatSlider(min=0.0, max=1.0, step=0.05, value=0.5,
-                                description='Correlation:', style={'description_width': 'initial'}));
+interact(
+    utils.plot_mutual_info_interactive,
+    correlation=FloatSlider(
+        min=0.0,
+        max=1.0,
+        step=0.05,
+        value=0.5,
+        description="Correlation:",
+        style={"description_width": "initial"},
+    ),
+)
 
 
 # %% [markdown]
@@ -441,11 +487,25 @@ interact(utils.plot_mutual_info_interactive,
 
 # %%
 # Create interactive widget.
-interact(utils.plot_kl_divergence_interactive,
-         p1=FloatSlider(min=0.05, max=0.95, step=0.05, value=0.7,
-                       description='P(outcome=1):', style={'description_width': 'initial'}),
-         q1=FloatSlider(min=0.05, max=0.95, step=0.05, value=0.5,
-                       description='Q(outcome=1):', style={'description_width': 'initial'}));
+interact(
+    utils.plot_kl_divergence_interactive,
+    p1=FloatSlider(
+        min=0.05,
+        max=0.95,
+        step=0.05,
+        value=0.7,
+        description="P(outcome=1):",
+        style={"description_width": "initial"},
+    ),
+    q1=FloatSlider(
+        min=0.05,
+        max=0.95,
+        step=0.05,
+        value=0.5,
+        description="Q(outcome=1):",
+        style={"description_width": "initial"},
+    ),
+)
 
 
 # %% [markdown]
@@ -486,7 +546,9 @@ print("Confident & Correct:")
 print(f"  Model prediction: {model_confident}")
 print(f"  Cross-Entropy: {ce:.4f} bits")
 print(f"  KL Divergence: {kl:.4f} bits")
-print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
+print(
+    f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)"
+)
 # Low cross-entropy and KL divergence indicate good match with true distribution.
 
 # %%
@@ -499,7 +561,9 @@ print("Uncertain:")
 print(f"  Model prediction: {model_uncertain}")
 print(f"  Cross-Entropy: {ce:.4f} bits")
 print(f"  KL Divergence: {kl:.4f} bits")
-print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
+print(
+    f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)"
+)
 # Higher cross-entropy due to uncertainty, even though it includes the correct class.
 
 # %%
@@ -512,7 +576,9 @@ print("Confident & Wrong:")
 print(f"  Model prediction: {model_wrong}")
 print(f"  Cross-Entropy: {ce:.4f} bits")
 print(f"  KL Divergence: {kl:.4f} bits")
-print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)")
+print(
+    f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)"
+)
 # Very high cross-entropy and KL divergence due to confident wrong prediction.
 
 
@@ -537,7 +603,7 @@ print(f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (shoul
 #
 # **Examples of maximum entropy distributions:**
 # - No constraints → Uniform distribution
-# - Positive mean constraint → Exponential distribution  
+# - Positive mean constraint → Exponential distribution
 # - Fixed variance → Normal distribution
 #
 # ## Minimum Description Length (MDL)
@@ -611,7 +677,7 @@ utils.demonstrate_data_processing_inequality()
 # 3. **Cross-Entropy Exercise:** For a 3-class classification problem, compute the cross-entropy loss when:
 #    - True label: class 1
 #    - Model prediction: [0.2, 0.6, 0.2]
-#    
+#
 # 4. **Data Processing Exercise:** Explain why JPEG compression is lossy in terms of the data processing inequality.
 #
 # 5. **Maximum Entropy Exercise:** Show that the uniform distribution maximizes entropy among all distributions with the same number of outcomes.
@@ -620,7 +686,7 @@ utils.demonstrate_data_processing_inequality()
 # Exercise workspace - use this cell to work on the exercises above.
 
 # Exercise 1: Fair die entropy.
-die_probs = np.array([1/6] * 6)
+die_probs = np.array([1 / 6] * 6)
 die_entropy = utils.calculate_entropy(die_probs)
 print(f"Exercise 1: Fair die entropy = {die_entropy:.4f} bits")
 

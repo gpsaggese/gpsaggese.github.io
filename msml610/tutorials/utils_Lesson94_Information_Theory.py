@@ -3,7 +3,7 @@ Utility functions for Information Theory lesson.
 
 Import as:
 
-import Lesson94_Information_Theory_utils as litutils
+import msml610.tutorials.utils_Lesson94_Information_Theory as mtulinth
 """
 
 import logging
@@ -40,7 +40,6 @@ def calculate_entropy(probabilities: Union[List[float], np.ndarray]) -> float:
     :param probabilities: Array of probabilities (must sum to 1)
     :return: Entropy in bits
     """
-    import helpers.hdbg as hdbg
 
     # Convert to numpy array.
     probabilities = np.array(probabilities)
@@ -151,7 +150,9 @@ def calculate_mutual_information(joint_prob: np.ndarray) -> float:
     return mi
 
 
-def create_correlated_joint_distribution(*, correlation: float = 0.5) -> np.ndarray:
+def create_correlated_joint_distribution(
+    *, correlation: float = 0.5
+) -> np.ndarray:
     """
     Create a 2x2 joint distribution with specified correlation.
 
@@ -169,7 +170,10 @@ def create_correlated_joint_distribution(*, correlation: float = 0.5) -> np.ndar
 
 
 def plot_joint_entropy_interactive(
-    *, dependence: float = 0.5, n_samples: int = 100, figsize: Optional[tuple] = None
+    *,
+    dependence: float = 0.5,
+    n_samples: int = 100,
+    figsize: Optional[tuple] = None,
 ) -> None:
     """
     Interactive visualization of joint entropy with dependence control.
@@ -206,9 +210,13 @@ def plot_joint_entropy_interactive(
     )
     # Determine interpretation message based on dependence.
     if dependence < 0.1:
-        interpretation = "Independence: H(X,Y) ≈ H(X) + H(Y) (maximum joint entropy)"
+        interpretation = (
+            "Independence: H(X,Y) ≈ H(X) + H(Y) (maximum joint entropy)"
+        )
     elif dependence > 0.9:
-        interpretation = "Perfect dependence: H(X,Y) ≈ H(X) = H(Y) (minimum joint entropy)"
+        interpretation = (
+            "Perfect dependence: H(X,Y) ≈ H(X) = H(Y) (minimum joint entropy)"
+        )
     else:
         interpretation = f"Partial dependence: Joint entropy reduced by {mi:.4f} bits due to shared information"
     # Generate samples from the joint distribution.
@@ -338,11 +346,15 @@ def plot_joint_entropy_interactive(
     )
     # Use subplots_adjust with fixed parameters instead of tight_layout.
     # This ensures consistent spacing and dimensions across all frames.
-    plt.subplots_adjust(left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25)
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
+    )
     plt.show()
 
 
-def plot_conditional_entropy_interactive(*, dependence: float = 0.5, figsize: Optional[tuple] = None) -> None:
+def plot_conditional_entropy_interactive(
+    *, dependence: float = 0.5, figsize: Optional[tuple] = None
+) -> None:
     """
     Interactive visualization of conditional entropy with dependence control.
 
@@ -364,8 +376,12 @@ def plot_conditional_entropy_interactive(*, dependence: float = 0.5, figsize: Op
     p_x = joint_prob.sum(axis=1)
     p_y = joint_prob.sum(axis=0)
     # Calculate conditional distributions P(Y|X).
-    p_y_given_x0 = joint_prob[0, :] / p_x[0] if p_x[0] > 0 else np.array([0.5, 0.5])
-    p_y_given_x1 = joint_prob[1, :] / p_x[1] if p_x[1] > 0 else np.array([0.5, 0.5])
+    p_y_given_x0 = (
+        joint_prob[0, :] / p_x[0] if p_x[0] > 0 else np.array([0.5, 0.5])
+    )
+    p_y_given_x1 = (
+        joint_prob[1, :] / p_x[1] if p_x[1] > 0 else np.array([0.5, 0.5])
+    )
     # Calculate entropy metrics.
     h_x = calculate_entropy(p_x)
     h_y = calculate_entropy(p_y)
@@ -671,7 +687,9 @@ def plot_distribution_with_stats(
         plt.show()
 
 
-def plot_binary_entropy_interactive(*, p: float = 0.5, n: int = 100, figsize: Optional[tuple] = None) -> None:
+def plot_binary_entropy_interactive(
+    *, p: float = 0.5, n: int = 100, figsize: Optional[tuple] = None
+) -> None:
     """
     Plot binary entropy function with current value highlighted.
 
@@ -742,22 +760,44 @@ def plot_binary_entropy_interactive(*, p: float = 0.5, n: int = 100, figsize: Op
     # Plot 3: Samples over time.
     time_indices = np.arange(n)
     # Create color array for samples.
-    sample_colors = ['skyblue' if s == 0 else 'coral' for s in samples]
-    ax3.scatter(time_indices, samples, c=sample_colors, alpha=0.6, s=50, edgecolor='black', linewidth=0.5)
+    sample_colors = ["skyblue" if s == 0 else "coral" for s in samples]
+    ax3.scatter(
+        time_indices,
+        samples,
+        c=sample_colors,
+        alpha=0.6,
+        s=50,
+        edgecolor="black",
+        linewidth=0.5,
+    )
     # Add horizontal lines at 0 and 1.
-    ax3.axhline(0, color='skyblue', linestyle='--', linewidth=2, alpha=0.5, label='Outcome 0')
-    ax3.axhline(1, color='coral', linestyle='--', linewidth=2, alpha=0.5, label='Outcome 1')
+    ax3.axhline(
+        0,
+        color="skyblue",
+        linestyle="--",
+        linewidth=2,
+        alpha=0.5,
+        label="Outcome 0",
+    )
+    ax3.axhline(
+        1,
+        color="coral",
+        linestyle="--",
+        linewidth=2,
+        alpha=0.5,
+        label="Outcome 1",
+    )
     ax3.set_xlabel("Time (sample index)", fontsize=12)
     ax3.set_ylabel("Outcome", fontsize=12)
     ax3.set_title(
-        f"Samples Over Time (n={n})\nObserved: {samples.sum()}/{n} ones ({samples.sum()/n:.2%})",
+        f"Samples Over Time (n={n})\nObserved: {samples.sum()}/{n} ones ({samples.sum() / n:.2%})",
         fontsize=14,
         fontweight="bold",
     )
     ax3.set_ylim([-0.3, 1.3])
     ax3.set_yticks([0, 1])
-    ax3.set_yticklabels(['0', '1'])
-    ax3.grid(True, alpha=0.3, axis='y')
+    ax3.set_yticklabels(["0", "1"])
+    ax3.grid(True, alpha=0.3, axis="y")
     ax3.legend(fontsize=11)
     # Plot 4: Comments and explanation text.
     ax4.axis("off")
@@ -774,7 +814,7 @@ def plot_binary_entropy_interactive(*, p: float = 0.5, n: int = 100, figsize: Op
         f"  • Drawn: {n}\n"
         f"  • Outcome 1 appeared:\n"
         f"    {samples.sum()} times\n"
-        f"    ({samples.sum()/n:.2%})"
+        f"    ({samples.sum() / n:.2%})"
     )
     ax4.text(
         0.05,
@@ -790,7 +830,9 @@ def plot_binary_entropy_interactive(*, p: float = 0.5, n: int = 100, figsize: Op
     )
     # Use subplots_adjust with fixed parameters instead of tight_layout.
     # This ensures consistent spacing and dimensions across all frames.
-    plt.subplots_adjust(left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25)
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
+    )
     plt.show()
 
 
@@ -854,7 +896,7 @@ def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
     ax2.text(
         0.5,
         0.75,
-        f"H(X, Y) = H(X) + H(Y|X)",
+        "H(X, Y) = H(X) + H(Y|X)",
         ha="center",
         fontsize=12,
     )
@@ -869,7 +911,7 @@ def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
     ax2.text(
         0.5,
         0.58,
-        f"I(X;Y) = H(X) + H(Y) - H(X,Y)",
+        "I(X;Y) = H(X) + H(Y) - H(X,Y)",
         ha="center",
         fontsize=12,
     )
@@ -884,7 +926,7 @@ def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
     ax2.text(
         0.5,
         0.41,
-        f"I(X;Y) = H(Y) - H(Y|X)",
+        "I(X;Y) = H(Y) - H(Y|X)",
         ha="center",
         fontsize=12,
     )
@@ -909,7 +951,7 @@ def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
     ax2.text(
         0.5,
         0.10,
-        f"({(mi/h_y)*100:.1f}% of total uncertainty in Y)",
+        f"({(mi / h_y) * 100:.1f}% of total uncertainty in Y)",
         ha="center",
         fontsize=11,
         style="italic",
@@ -1005,12 +1047,15 @@ def plot_mutual_info_interactive(*, correlation: float = 0.5) -> None:
     print(f"Mutual Information I(X;Y) = {mi:.4f} bits")
     if h_y > 0:
         print(
-            f"Percentage of Y's entropy explained by X: {(mi/h_y)*100:.2f}%"
+            f"Percentage of Y's entropy explained by X: {(mi / h_y) * 100:.2f}%"
         )
 
 
 def plot_mutual_information_venn_interactive(
-    *, dependence: float = 0.5, scenario: str = "Binary", figsize: Optional[tuple] = None
+    *,
+    dependence: float = 0.5,
+    scenario: str = "Binary",
+    figsize: Optional[tuple] = None,
 ) -> None:
     """
     Enhanced interactive visualization of mutual information with Venn-style decomposition.
@@ -1084,7 +1129,7 @@ def plot_mutual_information_venn_interactive(
             f"  H(Y|X) = {h_y_given_x:.4f} (nearly 0)\n\n"
             "Knowing X almost completely\n"
             "determines Y.\n\n"
-            f"Mutual information is {(mi/h_y*100):.1f}%\n"
+            f"Mutual information is {(mi / h_y * 100):.1f}%\n"
             f"of H(Y).\n\n"
             "The Venn circles have\n"
             "maximum overlap."
@@ -1143,7 +1188,9 @@ def plot_mutual_information_venn_interactive(
     ax2.set_ylabel("Information [bits]", fontsize=12)
     ax2.set_xlabel("")
     ax2.set_title(
-        "Entropy Components\n(Mutual Info in Green)", fontsize=13, fontweight="bold"
+        "Entropy Components\n(Mutual Info in Green)",
+        fontsize=13,
+        fontweight="bold",
     )
     ax2.grid(True, alpha=0.3, axis="y")
     max_entropy = max(h_x, h_y, h_xy)
@@ -1167,11 +1214,16 @@ def plot_mutual_information_venn_interactive(
     ax3.set_xlim([0, 10])
     ax3.set_ylim([0, 10])
     ax3.axis("off")
-    ax3.set_title("Information Decomposition\n(Venn Diagram)", fontsize=13, fontweight="bold")
+    ax3.set_title(
+        "Information Decomposition\n(Venn Diagram)",
+        fontsize=13,
+        fontweight="bold",
+    )
     # Draw two overlapping circles representing H(X) and H(Y).
     # Circle sizes proportional to entropies.
     # Overlap represents I(X;Y).
     from matplotlib.patches import Circle
+
     # Scale circles based on entropy.
     max_h = max(h_x, h_y, 1)
     radius_x = 2.0 * np.sqrt(h_x / max_h)
@@ -1205,8 +1257,22 @@ def plot_mutual_information_venn_interactive(
     ax3.add_patch(circle_x)
     ax3.add_patch(circle_y)
     # Add labels.
-    ax3.text(center_x[0] - 0.8, 7.5, "H(X)", fontsize=14, fontweight="bold", color="steelblue")
-    ax3.text(center_x[1] + 0.8, 7.5, "H(Y)", fontsize=14, fontweight="bold", color="coral")
+    ax3.text(
+        center_x[0] - 0.8,
+        7.5,
+        "H(X)",
+        fontsize=14,
+        fontweight="bold",
+        color="steelblue",
+    )
+    ax3.text(
+        center_x[1] + 0.8,
+        7.5,
+        "H(Y)",
+        fontsize=14,
+        fontweight="bold",
+        color="coral",
+    )
     # Label the overlap region.
     ax3.text(
         5,
@@ -1251,7 +1317,7 @@ def plot_mutual_information_venn_interactive(
     ax3.text(
         5,
         1.2,
-        f"= I(X;Y) + H(X|Y) + H(Y|X)",
+        "= I(X;Y) + H(X|Y) + H(Y|X)",
         fontsize=8,
         ha="center",
         style="italic",
@@ -1355,7 +1421,7 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
     ax1.set_xlabel("Outcome", fontsize=12)
     ax1.set_ylabel("Probability", fontsize=12)
     ax1.set_title(
-        f"Distribution Comparison\nP: [{1-p1:.2f}, {p1:.2f}] vs Q: [{1-q1:.2f}, {q1:.2f}]",
+        f"Distribution Comparison\nP: [{1 - p1:.2f}, {p1:.2f}] vs Q: [{1 - q1:.2f}, {q1:.2f}]",
         fontsize=14,
         fontweight="bold",
     )
@@ -1381,9 +1447,7 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
     metrics = ["H(P)", "H(P,Q)", "D_KL(P||Q)", "D_KL(Q||P)"]
     values = [h_p, ce_pq, kl_pq, kl_qp]
     colors_m = ["steelblue", "purple", "red", "orange"]
-    bars = ax2.bar(
-        metrics, values, color=colors_m, alpha=0.7, edgecolor="black"
-    )
+    bars = ax2.bar(metrics, values, color=colors_m, alpha=0.7, edgecolor="black")
     ax2.set_ylabel("Information [bits]", fontsize=12)
     ax2.set_title(
         f"Information Metrics\nApproximation Quality: {quality}",
@@ -1448,8 +1512,8 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
     # Add comprehensive explanation text.
     text_content = (
         f"Distributions:\n"
-        f"  True P:     [{1-p1:.2f}, {p1:.2f}]\n"
-        f"  Approx Q:   [{1-q1:.2f}, {q1:.2f}]\n\n"
+        f"  True P:     [{1 - p1:.2f}, {p1:.2f}]\n"
+        f"  Approx Q:   [{1 - q1:.2f}, {q1:.2f}]\n\n"
         f"Entropy & Cross-Entropy:\n"
         f"  H(P) = {h_p:.4f} bits\n"
         f"  H(P,Q) = {ce_pq:.4f} bits\n\n"
@@ -1551,10 +1615,8 @@ def demonstrate_data_processing_inequality() -> None:
             fontsize=11,
             fontweight="bold",
         )
-    ax1.axhline(
-        mi_xy, color="steelblue", linestyle="--", alpha=0.5, linewidth=2
-    )
-    ax1.text(1.5, mi_xy + 0.03, f"I(X;Y) bound", fontsize=10, style="italic")
+    ax1.axhline(mi_xy, color="steelblue", linestyle="--", alpha=0.5, linewidth=2)
+    ax1.text(1.5, mi_xy + 0.03, "I(X;Y) bound", fontsize=10, style="italic")
     # Plot 2: Information flow diagram.
     ax2.text(
         0.5,
@@ -1604,9 +1666,7 @@ def demonstrate_data_processing_inequality() -> None:
         fontsize=13,
         fontweight="bold",
     )
-    ax2.text(
-        0.5, 0.33, f"I(X;Z) ≤ I(X;Y)", ha="center", fontsize=12
-    )
+    ax2.text(0.5, 0.33, "I(X;Z) ≤ I(X;Y)", ha="center", fontsize=12)
     ax2.text(
         0.5,
         0.26,
@@ -1629,7 +1689,7 @@ def demonstrate_data_processing_inequality() -> None:
     ax2.text(
         0.5,
         0.03,
-        f"({((mi_xy-mi_xz)/mi_xy)*100:.1f}% of original information)",
+        f"({((mi_xy - mi_xz) / mi_xy) * 100:.1f}% of original information)",
         ha="center",
         fontsize=10,
         style="italic",
@@ -1640,18 +1700,18 @@ def demonstrate_data_processing_inequality() -> None:
     print("Data Processing Inequality Demonstration")
     print("=" * 60)
     print(f"Original signal X has {len(p_x)} states")
-    print(f"Compressed Y has 2 states")
-    print(f"Processed Z has 2 states")
+    print("Compressed Y has 2 states")
+    print("Processed Z has 2 states")
     print()
     print(f"I(X;Y) = {mi_xy:.4f} bits (information between X and Y)")
     print(f"I(Y;Z) = {mi_yz:.4f} bits (information between Y and Z)")
     print(f"I(X;Z) = {mi_xz:.4f} bits (information between X and Z)")
     print()
-    print(f"Data Processing Inequality: I(X;Z) ≤ I(X;Y)")
+    print("Data Processing Inequality: I(X;Z) ≤ I(X;Y)")
     print(
         f"{mi_xz:.4f} ≤ {mi_xy:.4f}: {'✓ Satisfied' if mi_xz <= mi_xy + 1e-6 else '✗ Violated'}"
     )
     print()
     print(
-        f"Information lost: {mi_xy - mi_xz:.4f} bits ({((mi_xy-mi_xz)/mi_xy)*100:.1f}%)"
+        f"Information lost: {mi_xy - mi_xz:.4f} bits ({((mi_xy - mi_xz) / mi_xy) * 100:.1f}%)"
     )
