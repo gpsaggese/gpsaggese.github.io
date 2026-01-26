@@ -237,15 +237,13 @@ interact(
 
 # %%
 # Generate animation frames for binary entropy visualization.
-# Parameters for video generation.
-n_steps = 11
-n_fixed = 100
-p_values = np.linspace(0.0, 1.0, n_steps)
-
-# Prepare values list for generate_animation.
-values = []
-for val in p_values:
-    values.append({"p": val, "n": n_fixed})
+values = ut.generate_animation_values(
+    mode="linear",
+    sweep_variable="p",
+    const_variable="n",
+    const_value=100,
+    n_steps=11,
+)
 
 # Directory to save frames.
 dst_dir = "./figures/Lesson94_Binary_Entropy_video"
@@ -296,15 +294,13 @@ interact(
 
 # %%
 # Generate animation frames for joint entropy visualization.
-# Parameters for video generation.
-n_steps = 11
-n_samples_fixed = 300
-dependence_values = np.linspace(0.0, 1.0, n_steps)
-
-# Prepare values list for generate_animation.
-values = []
-for val in dependence_values:
-    values.append({"dependence": val, "n_samples": n_samples_fixed})
+values = ut.generate_animation_values(
+    mode="linear",
+    sweep_variable="dependence",
+    const_variable="n_samples",
+    const_value=300,
+    n_steps=11,
+)
 
 # Directory to save frames.
 dst_dir = "./figures/Lesson94_Joint_Entropy_video"
@@ -353,14 +349,11 @@ interact(
 
 # %%
 # Generate animation frames for conditional entropy visualization.
-# Parameters for video generation.
-n_steps = 11
-dependence_values = np.linspace(0.0, 1.0, n_steps)
-
-# Prepare values list for generate_animation.
-values = []
-for val in dependence_values:
-    values.append({"dependence": val})
+values = ut.generate_animation_values(
+    mode="linear",
+    sweep_variable="dependence",
+    n_steps=11,
+)
 
 # Directory to save frames.
 dst_dir = "./figures/Lesson94_Conditional_Entropy_video"
@@ -411,14 +404,12 @@ interact(
 
 # %%
 # Generate animation frames for mutual information Venn visualization (Binary scenario).
-# Parameters for video generation.
-n_steps = 11
-dependence_values = np.linspace(0.0, 1.0, n_steps)
-
-# Prepare values list for generate_animation.
-values = []
-for val in dependence_values:
-    values.append({"dependence": val, "scenario": "Binary"})
+values = ut.generate_animation_values(
+    mode="linear",
+    sweep_variable="dependence",
+    n_steps=11,
+    scenario="Binary",
+)
 
 # Directory to save frames.
 dst_dir = "./figures/Lesson94_Mutual_Info1_video"
@@ -435,14 +426,12 @@ ut.generate_animation(
 
 # %%
 # Generate animation frames for mutual information Venn visualization (Weather scenario).
-# Parameters for video generation.
-n_steps = 11
-dependence_values = np.linspace(0.0, 1.0, n_steps)
-
-# Prepare values list for generate_animation.
-values = []
-for val in dependence_values:
-    values.append({"dependence": val, "scenario": "Weather"})
+values = ut.generate_animation_values(
+    mode="linear",
+    sweep_variable="dependence",
+    n_steps=11,
+    scenario="Weather",
+)
 
 # Directory to save frames.
 dst_dir = "./figures/Lesson94_Mutual_Info2_video"
@@ -479,14 +468,11 @@ interact(
 
 # %%
 # Generate animation frames for mutual information (correlation-based) visualization.
-# Parameters for video generation.
-n_steps = 11
-correlation_values = np.linspace(0.0, 1.0, n_steps)
-
-# Prepare values list for generate_animation.
-values = []
-for val in correlation_values:
-    values.append({"correlation": val})
+values = ut.generate_animation_values(
+    mode="linear",
+    sweep_variable="correlation",
+    n_steps=11,
+)
 
 # Directory to save frames.
 dst_dir = "./figures/Lesson94_Mutual_Info_Correlation_video"
@@ -534,15 +520,15 @@ interact(
 # %%
 # Generate animation frames for KL divergence visualization.
 # Fix true distribution P at p1=0.7, vary approximating distribution Q.
-# Parameters for video generation.
-n_steps = 19
-p1_fixed = 0.7
-q1_values = np.linspace(0.05, 0.95, n_steps)
-
-# Prepare values list for generate_animation.
-values = []
-for val in q1_values:
-    values.append({"p1": p1_fixed, "q1": val})
+values = ut.generate_animation_values(
+    mode="linear",
+    sweep_variable="q1",
+    const_variable="p1",
+    const_value=0.7,
+    n_steps=19,
+    sweep_min=0.05,
+    sweep_max=0.95,
+)
 
 # Directory to save frames.
 dst_dir = "./figures/Lesson94_KL_Divergence_video"
@@ -608,15 +594,15 @@ interact(
 # %%
 # Generate animation frames for cross-entropy visualization.
 # Fix true distribution P at p1=0.7, vary model distribution Q.
-# Parameters for video generation.
-n_steps = 11
-p1_fixed = 0.7
-q1_values = np.linspace(0.05, 0.95, n_steps)
-
-# Prepare values list for generate_animation.
-values = []
-for val in q1_values:
-    values.append({"p1": p1_fixed, "q1": val})
+values = ut.generate_animation_values(
+    mode="linear",
+    sweep_variable="q1",
+    const_variable="p1",
+    const_value=0.7,
+    n_steps=11,
+    sweep_min=0.05,
+    sweep_max=0.95,
+)
 
 # Directory to save frames.
 dst_dir = "./figures/Lesson94_Cross_Entropy_video"
@@ -675,14 +661,12 @@ interact(
 
 # %%
 # Generate animation frames for data processing inequality visualization.
-# Parameters for video generation.
-n_steps = 21
-noise_values = np.linspace(0.0, 1.0, n_steps)
-
-# Prepare values list for generate_animation.
-values = []
-for val in noise_values:
-    values.append({"noise_level": val, "scenario": "Compression"})
+values = ut.generate_animation_values(
+    mode="linear",
+    sweep_variable="noise_level",
+    n_steps=21,
+    scenario="Compression",
+)
 
 # Directory to save frames.
 dst_dir = "./figures/Lesson94_Data_Processing_Inequality_video"
