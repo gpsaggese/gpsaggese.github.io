@@ -57,6 +57,12 @@ def config_notebook() -> None:
     """
     Configure notebook with default style and display environment signature.
     """
+    if os.environ["CSFY_HOST_USER_NAME"] == "saggese":
+        cmd = 'sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet jupyterlab-vim)"'
+        hsystem.system(cmd)
+        cmd = 'jupyter labextension enable'
+        hsystem.system(cmd)
+        _LOG.warning("vim support installed: restart the notebook, if needed")
     set_notebook_style()
     notebook_signature()
 

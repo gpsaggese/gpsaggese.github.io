@@ -24,6 +24,34 @@ _LOG = logging.getLogger(__name__)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 
+def generate_animation_values(
+    mode: str,
+    sweep_variable: str,
+    const_variable: str,
+    const_value: Any,
+    *,
+    n_steps: int = 11,
+    ) -> List[dict]:
+    """
+    Generate a list of values for a given mode, sweep variable, and constant variable.
+
+    :param mode: Mode of the sweep variable.
+    :param sweep_variable: Name of the sweep variable.
+    :param const_variable: Name of the constant variable.
+    :param const_value: Value of the constant variable.
+    :param n_steps: Number of steps in the sweep.
+    :return: List of values.
+    """
+    if mode == "linear":
+        sweep_values = np.linspace(0.0, 1.0, n_steps)
+    else:
+        raise ValueError(f"Invalid mode: {mode}")
+    values = []
+    for val in sweep_values:
+        values.append({sweep_variable: val, const_variable: const_value})
+    return values
+
+
 # #############################################################################
 # Entropy calculations
 # #############################################################################
@@ -410,7 +438,10 @@ def plot_conditional_entropy_interactive(
             f"Conditional distributions differ but retain uncertainty."
         )
     # Create visualization with 4 subplots in a single row.
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=figsize)
+    # Use gridspec_kw to set fixed width ratios for consistent layout.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    )
     # Plot 1: Joint distribution heatmap using seaborn.
     sns.heatmap(
         joint_df,
@@ -534,12 +565,14 @@ def plot_conditional_entropy_interactive(
     # Plot 4: Comments text panel.
     ax4.axis("off")
     ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    # Wrap interpretation text to fixed width to ensure consistent dimensions.
+    wrapped_interpretation = textwrap.fill(interpretation, width=40)
     # Add explanation text.
     text_content = (
         f"Conditional Entropy:\n"
         f"  H(Y|X) = {h_y_given_x:.4f} bits\n\n"
         f"Interpretation:\n"
-        f"  {interpretation}\n\n"
+        f"  {wrapped_interpretation}\n\n"
         f"Chain Rule Verification:\n"
         f"  H(X,Y) = H(X) + H(Y|X)\n"
         f"  {h_xy:.4f} = {h_x:.4f} + {h_y_given_x:.4f}\n"
@@ -560,7 +593,11 @@ def plot_conditional_entropy_interactive(
         family="monospace",
         bbox=dict(boxstyle="round,pad=1", facecolor="wheat", alpha=0.3),
     )
-    plt.tight_layout()
+    # Use subplots_adjust with fixed parameters instead of tight_layout.
+    # This ensures consistent spacing and dimensions across all frames.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
+    )
     plt.show()
 
 

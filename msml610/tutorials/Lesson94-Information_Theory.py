@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -15,15 +15,6 @@
 
 # %% [markdown]
 # ## Imports
-
-# %% [markdown]
-# ### Install packages
-
-# %%
-if False:
-    pass
-    # !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet jupyterlab-vim)"
-    # !jupyter labextension enable
 
 # %% [markdown]
 # ### Import modules
@@ -300,7 +291,7 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-)
+);
 
 
 # %%
@@ -345,14 +336,6 @@ ut.generate_animation(
 #
 # $$H(X, Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)$$
 
-# %% [markdown]
-# ## Interactive Visualization: Conditional Entropy
-#
-# Adjust the dependence slider to see how conditional entropy H(Y|X) changes:
-# - When variables are independent (dependence = 0), H(Y|X) = H(Y)
-# - When variables are perfectly dependent (dependence = 1), H(Y|X) = 0
-# - Observe how the conditional distributions P(Y|X=0) and P(Y|X=1) become more different as dependence increases
-
 # %%
 # Create interactive widget for conditional entropy visualization.
 interact(
@@ -365,7 +348,8 @@ interact(
         description="Dependence:",
         style={"description_width": "initial"},
     ),
-)
+    figsize=fixed(None),
+);
 
 # %%
 # Generate animation frames for conditional entropy visualization.
@@ -422,7 +406,7 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-)
+);
 
 
 # %%
