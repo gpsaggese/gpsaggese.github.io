@@ -314,7 +314,7 @@ def plot_joint_entropy_interactive(
     ax3.grid(True, alpha=0.3)
     # Plot 4: Comments and explanation text.
     ax4.axis("off")
-    ax4.set_title("Explanation", fontsize=14, fontweight="bold", pad=20)
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
     # Wrap interpretation text to fixed width to ensure consistent dimensions.
     wrapped_interpretation = textwrap.fill(interpretation, width=40)
     # Add explanation text.
@@ -531,9 +531,9 @@ def plot_conditional_entropy_interactive(
     # Highlight H(Y|X) as the main focus.
     ax3.get_children()[2].set_linewidth(3)
     ax3.get_children()[2].set_edgecolor("darkgreen")
-    # Plot 4: Explanation text panel.
+    # Plot 4: Comments text panel.
     ax4.axis("off")
-    ax4.set_title("Explanation", fontsize=14, fontweight="bold", pad=20)
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
     # Add explanation text.
     text_content = (
         f"Conditional Entropy:\n"
@@ -801,7 +801,7 @@ def plot_binary_entropy_interactive(
     ax3.legend(fontsize=11)
     # Plot 4: Comments and explanation text.
     ax4.axis("off")
-    ax4.set_title("Explanation", fontsize=14, fontweight="bold", pad=20)
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
     # Wrap text content to ensure consistent dimensions.
     text_content = (
         f"Information Content:\n"
@@ -939,7 +939,7 @@ def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
         color="green",
     )
     ax2.text(
-        0.5, 0.24, "Interpretation:", ha="center", fontsize=12, fontweight="bold"
+        0.5, 0.24, "Comments:", ha="center", fontsize=12, fontweight="bold"
     )
     ax2.text(
         0.5,
@@ -961,12 +961,19 @@ def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
     plt.show()
 
 
-def plot_mutual_info_interactive(*, correlation: float = 0.5) -> None:
+def plot_mutual_info_interactive(
+    *, correlation: float = 0.5, figsize: Optional[tuple] = None
+) -> None:
     """
     Interactive plot showing how correlation affects mutual information.
 
     :param correlation: Correlation strength between variables
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
     """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
     joint_prob = create_correlated_joint_distribution(correlation=correlation)
     # Calculate metrics.
     mi = calculate_mutual_information(joint_prob)
@@ -974,8 +981,33 @@ def plot_mutual_info_interactive(*, correlation: float = 0.5) -> None:
     p_y = joint_prob.sum(axis=0)
     h_x = calculate_entropy(p_x)
     h_y = calculate_entropy(p_y)
-    # Create visualization.
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(16, 5))
+    h_xy = calculate_joint_entropy(joint_prob)
+    h_y_given_x = calculate_conditional_entropy(joint_prob)
+    # Determine interpretation message based on correlation.
+    if correlation < 0.1:
+        interpretation = (
+            "Independence: I(X;Y) ≈ 0\n"
+            "Variables are nearly independent.\n"
+            "Knowing X provides no information about Y."
+        )
+    elif correlation > 0.9:
+        interpretation = (
+            "Strong correlation: I(X;Y) ≈ H(Y)\n"
+            "Variables are nearly perfectly correlated.\n"
+            "Knowing X almost completely determines Y."
+        )
+    else:
+        percentage = (mi / h_y * 100) if h_y > 0 else 0
+        interpretation = (
+            f"Partial correlation:\n"
+            f"Knowing X reduces uncertainty about Y\n"
+            f"by {mi:.4f} bits ({percentage:.1f}% of H(Y))."
+        )
+    # Create visualization with 4 subplots in a single row.
+    # Use gridspec_kw to set fixed width ratios for consistent layout.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    )
     # Plot 1: Joint distribution heatmap.
     im = ax1.imshow(joint_prob, cmap="YlOrRd", aspect="auto", vmin=0, vmax=0.5)
     ax1.set_xticks([0, 1])
@@ -985,8 +1017,9 @@ def plot_mutual_info_interactive(*, correlation: float = 0.5) -> None:
     ax1.set_xlabel("Variable Y", fontsize=12)
     ax1.set_ylabel("Variable X", fontsize=12)
     ax1.set_title(
-        f"Joint Distribution p(X,Y)\nCorrelation = {correlation:.2f}",
+        f"Joint Distribution P(X,Y)\nCorrelation = {correlation:.2f}",
         fontsize=14,
+        fontweight="bold",
     )
     # Add text annotations.
     for i in range(2):
@@ -1002,53 +1035,105 @@ def plot_mutual_info_interactive(*, correlation: float = 0.5) -> None:
                 fontweight="bold",
             )
     plt.colorbar(im, ax=ax1)
-    # Plot 2: Marginal distributions.
-    x_pos = np.arange(2)
-    width = 0.35
-    ax2.bar(
-        x_pos - width / 2, p_x, width, label="P(X)", alpha=0.7, color="steelblue"
-    )
-    ax2.bar(
-        x_pos + width / 2, p_y, width, label="P(Y)", alpha=0.7, color="coral"
-    )
-    ax2.set_xlabel("Outcome", fontsize=12)
-    ax2.set_ylabel("Probability", fontsize=12)
-    ax2.set_title("Marginal Distributions", fontsize=14)
-    ax2.set_xticks(x_pos)
-    ax2.set_xticklabels(["0", "1"])
-    ax2.legend()
-    ax2.grid(True, alpha=0.3, axis="y")
-    # Plot 3: Information metrics vs correlation.
+    # Plot 2: Information metrics vs correlation.
     correlations = np.linspace(0, 1, 50)
     mis = []
     for corr in correlations:
         jp = create_correlated_joint_distribution(correlation=corr)
         mis.append(calculate_mutual_information(jp))
-    ax3.plot(correlations, mis, "b-", linewidth=2, label="I(X;Y)")
-    ax3.axvline(
+    ax2.plot(correlations, mis, "b-", linewidth=2, label="I(X;Y)")
+    ax2.axvline(
         correlation,
         color="red",
         linestyle="--",
         linewidth=2,
         label=f"Current: {correlation:.2f}",
     )
-    ax3.scatter([correlation], [mi], color="red", s=100, zorder=5)
-    ax3.set_xlabel("Correlation", fontsize=12)
-    ax3.set_ylabel("Mutual Information [bits]", fontsize=12)
-    ax3.set_title("Mutual Information vs Correlation", fontsize=14)
-    ax3.grid(True, alpha=0.3)
-    ax3.legend()
-    ax3.set_ylim([0, 1])
-    plt.tight_layout()
-    plt.show()
-    # Print metrics.
-    print(f"Entropy H(X) = {h_x:.4f} bits")
-    print(f"Entropy H(Y) = {h_y:.4f} bits")
-    print(f"Mutual Information I(X;Y) = {mi:.4f} bits")
-    if h_y > 0:
-        print(
-            f"Percentage of Y's entropy explained by X: {(mi / h_y) * 100:.2f}%"
+    ax2.scatter([correlation], [mi], color="red", s=100, zorder=5)
+    ax2.set_xlabel("Correlation", fontsize=12)
+    ax2.set_ylabel("Mutual Information [bits]", fontsize=12)
+    ax2.set_title(
+        "Mutual Information vs Correlation", fontsize=14, fontweight="bold"
+    )
+    ax2.grid(True, alpha=0.3)
+    ax2.legend(fontsize=11)
+    ax2.set_ylim([0, 1.1])
+    # Plot 3: Entropy metrics comparison using seaborn.
+    metrics_df = pd.DataFrame(
+        {
+            "Metric": ["H(X)", "H(Y)", "I(X;Y)", "H(X,Y)"],
+            "Value": [h_x, h_y, mi, h_xy],
+        }
+    )
+    colors_metrics = ["steelblue", "coral", "green", "purple"]
+    sns.barplot(
+        data=metrics_df,
+        x="Metric",
+        y="Value",
+        hue="Metric",
+        palette=colors_metrics,
+        alpha=0.7,
+        edgecolor="black",
+        legend=False,
+        ax=ax3,
+    )
+    ax3.set_ylabel("Information [bits]", fontsize=12)
+    ax3.set_xlabel("")
+    ax3.set_title("Entropy Metrics", fontsize=14, fontweight="bold")
+    ax3.set_ylim([0, 2.2])
+    # Add value labels on bars.
+    for i, (metric, value) in enumerate(
+        zip(metrics_df["Metric"], metrics_df["Value"])
+    ):
+        ax3.text(
+            i,
+            value + 0.05,
+            f"{value:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
         )
+    # Highlight I(X;Y) bar.
+    ax3.get_children()[2].set_linewidth(3)
+    ax3.get_children()[2].set_edgecolor("darkgreen")
+    # Plot 4: Comments and explanation text.
+    ax4.axis("off")
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    # Wrap interpretation text to fixed width to ensure consistent dimensions.
+    wrapped_interpretation = textwrap.fill(interpretation, width=40)
+    # Add explanation text.
+    text_content = (
+        f"Mutual Information:\n"
+        f"  I(X;Y) = {mi:.4f} bits\n\n"
+        f"Interpretation:\n"
+        f"  {wrapped_interpretation}\n\n"
+        f"Key Relationships:\n"
+        f"  I(X;Y) = H(X) + H(Y) - H(X,Y)\n"
+        f"  {mi:.4f} = {h_x:.4f} + {h_y:.4f}\n"
+        f"           - {h_xy:.4f}\n"
+        f"  {mi:.4f} = {h_x + h_y - h_xy:.4f}\n\n"
+        f"  I(X;Y) = H(Y) - H(Y|X)\n"
+        f"  {mi:.4f} = {h_y:.4f} - {h_y_given_x:.4f}"
+    )
+    ax4.text(
+        0.05,
+        0.95,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=10,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
+        wrap=True,
+    )
+    # Use subplots_adjust with fixed parameters instead of tight_layout.
+    # This ensures consistent spacing and dimensions across all frames.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
+    )
+    plt.show()
 
 
 def plot_mutual_information_venn_interactive(
@@ -1322,9 +1407,9 @@ def plot_mutual_information_venn_interactive(
         ha="center",
         style="italic",
     )
-    # Plot 4: Explanation text panel.
+    # Plot 4: Comments text panel.
     ax4.axis("off")
-    ax4.set_title("Interpretation", fontsize=13, fontweight="bold", pad=20)
+    ax4.set_title("Comments", fontsize=13, fontweight="bold", pad=20)
     # Add explanation text.
     text_content = (
         f"{interpretation}\n\n"
@@ -1348,6 +1433,238 @@ def plot_mutual_information_venn_interactive(
         bbox=dict(boxstyle="round,pad=1", facecolor="wheat", alpha=0.3),
     )
     plt.tight_layout()
+    plt.show()
+
+
+def plot_cross_entropy_interactive(
+    *, p1: float = 0.7, q1: float = 0.5, figsize: Optional[tuple] = None
+) -> None:
+    """
+    Interactive visualization of cross-entropy between two binary distributions.
+
+    :param p1: Probability for true distribution P
+    :param q1: Probability for model distribution Q
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
+    """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
+    # Create distributions.
+    p = np.array([1 - p1, p1])
+    q = np.array([1 - q1, q1])
+    # Calculate metrics.
+    h_p = calculate_entropy(p)
+    h_pq = calculate_cross_entropy(p, q)
+    kl_pq = calculate_kl_divergence(p, q)
+    # Determine interpretation based on cross-entropy value.
+    entropy_ratio = h_pq / h_p if h_p > 0 else 1.0
+    extra_bits = h_pq - h_p
+    if abs(extra_bits) < 0.01:
+        interpretation = (
+            "Optimal encoding!\n"
+            "Model Q matches true distribution P.\n"
+            "H(P,Q) = H(P): No extra bits needed."
+        )
+        quality = "Perfect"
+    elif extra_bits < 0.1:
+        interpretation = (
+            "Near-optimal encoding.\n"
+            "Model Q is very close to P.\n"
+            f"Only {extra_bits:.3f} extra bits per symbol."
+        )
+        quality = "Excellent"
+    elif extra_bits < 0.5:
+        interpretation = (
+            "Moderate encoding cost.\n"
+            "Model Q differs from P.\n"
+            f"Requires {extra_bits:.3f} extra bits per symbol."
+        )
+        quality = "Good"
+    else:
+        interpretation = (
+            "High encoding cost!\n"
+            "Model Q poorly matches P.\n"
+            f"Requires {extra_bits:.3f} extra bits per symbol."
+        )
+        quality = "Poor"
+    # Create visualization with 4 subplots in a single row.
+    # Use gridspec_kw to set fixed width ratios for consistent layout.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    )
+    # Plot 1: Distributions comparison.
+    x = np.arange(2)
+    width = 0.35
+    bars1 = ax1.bar(
+        x - width / 2,
+        p,
+        width,
+        label="P (True)",
+        alpha=0.7,
+        color="steelblue",
+        edgecolor="black",
+    )
+    bars2 = ax1.bar(
+        x + width / 2,
+        q,
+        width,
+        label="Q (Model)",
+        alpha=0.7,
+        color="coral",
+        edgecolor="black",
+    )
+    ax1.set_xlabel("Outcome", fontsize=12)
+    ax1.set_ylabel("Probability", fontsize=12)
+    ax1.set_title(
+        f"Distribution Comparison\nP: [{1 - p1:.2f}, {p1:.2f}] vs Q: [{1 - q1:.2f}, {q1:.2f}]",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(["0", "1"])
+    ax1.legend(fontsize=11)
+    ax1.set_ylim([0, 1.1])
+    ax1.grid(True, alpha=0.3, axis="y")
+    # Add value labels.
+    for bars in [bars1, bars2]:
+        for bar in bars:
+            height = bar.get_height()
+            ax1.text(
+                bar.get_x() + bar.get_width() / 2.0,
+                height + 0.02,
+                f"{height:.2f}",
+                ha="center",
+                va="bottom",
+                fontsize=10,
+                fontweight="bold",
+            )
+    # Plot 2: Cross-entropy heatmap.
+    p_range = np.linspace(0.05, 0.95, 30)
+    q_range = np.linspace(0.05, 0.95, 30)
+    ce_matrix = np.zeros((len(p_range), len(q_range)))
+    for i, p_val in enumerate(p_range):
+        for j, q_val in enumerate(q_range):
+            p_dist = np.array([1 - p_val, p_val])
+            q_dist = np.array([1 - q_val, q_val])
+            ce_matrix[i, j] = calculate_cross_entropy(p_dist, q_dist)
+    im = ax2.contourf(q_range, p_range, ce_matrix, levels=20, cmap="YlOrRd")
+    ax2.scatter(
+        [q1],
+        [p1],
+        color="red",
+        s=200,
+        marker="*",
+        edgecolor="black",
+        linewidth=2,
+        label=f"Current: H(P,Q)={h_pq:.3f}",
+        zorder=5,
+    )
+    ax2.set_xlabel("Q (Model probability for outcome 1)", fontsize=12)
+    ax2.set_ylabel("P (True probability for outcome 1)", fontsize=12)
+    ax2.set_title(
+        "Cross-Entropy H(P,Q) Landscape", fontsize=14, fontweight="bold"
+    )
+    ax2.legend(fontsize=11, loc="upper left")
+    cbar = plt.colorbar(im, ax=ax2)
+    cbar.set_label("Cross-Entropy [bits]", fontsize=11)
+    # Add diagonal line (where P=Q, optimal encoding).
+    ax2.plot([0, 1], [0, 1], "k--", linewidth=2, alpha=0.5)
+    ax2.text(
+        0.5,
+        0.55,
+        "P=Q line\n(optimal)",
+        ha="center",
+        fontsize=10,
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="white", alpha=0.8),
+    )
+    # Plot 3: Information metrics comparison.
+    metrics_df = pd.DataFrame(
+        {
+            "Metric": ["H(P)", "H(P,Q)", "D_KL(P||Q)"],
+            "Value": [h_p, h_pq, kl_pq],
+        }
+    )
+    colors_metrics = ["steelblue", "purple", "coral"]
+    sns.barplot(
+        data=metrics_df,
+        x="Metric",
+        y="Value",
+        hue="Metric",
+        palette=colors_metrics,
+        alpha=0.7,
+        edgecolor="black",
+        legend=False,
+        ax=ax3,
+    )
+    ax3.set_ylabel("Information [bits]", fontsize=12)
+    ax3.set_xlabel("")
+    ax3.set_title(
+        f"Information Metrics\nEncoding Quality: {quality}",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax3.grid(True, alpha=0.3, axis="y")
+    # Add value labels on bars.
+    for i, (metric, value) in enumerate(
+        zip(metrics_df["Metric"], metrics_df["Value"])
+    ):
+        ax3.text(
+            i,
+            value + 0.02,
+            f"{value:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+        )
+    # Highlight H(P,Q) bar as the main focus.
+    ax3.get_children()[1].set_linewidth(3)
+    ax3.get_children()[1].set_edgecolor("darkviolet")
+    # Plot 4: Comments text panel.
+    ax4.axis("off")
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    # Wrap interpretation text to fixed width to ensure consistent dimensions.
+    wrapped_interpretation = textwrap.fill(interpretation, width=40)
+    # Add comprehensive explanation text.
+    text_content = (
+        f"Distributions:\n"
+        f"  True P:     [{1 - p1:.2f}, {p1:.2f}]\n"
+        f"  Model Q:    [{1 - q1:.2f}, {q1:.2f}]\n\n"
+        f"Cross-Entropy:\n"
+        f"  H(P,Q) = {h_pq:.4f} bits\n"
+        f"  (bits needed to encode P\n"
+        f"   using code for Q)\n\n"
+        f"Optimal Entropy:\n"
+        f"  H(P) = {h_p:.4f} bits\n"
+        f"  (minimum bits needed)\n\n"
+        f"Extra Cost:\n"
+        f"  D_KL(P||Q) = {kl_pq:.4f} bits\n"
+        f"  ({(kl_pq / h_p * 100):.1f}% inefficiency)\n\n"
+        f"Interpretation:\n"
+        f"  {wrapped_interpretation}\n\n"
+        f"Verification:\n"
+        f"  H(P,Q) = H(P) + D_KL(P||Q)\n"
+        f"  {h_pq:.4f} = {h_p:.4f} + {kl_pq:.4f}\n"
+        f"  {h_pq:.4f} = {h_p + kl_pq:.4f}"
+    )
+    ax4.text(
+        0.05,
+        0.95,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=10,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
+        wrap=True,
+    )
+    # Use subplots_adjust with fixed parameters instead of tight_layout.
+    # This ensures consistent spacing and dimensions across all frames.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
+    )
     plt.show()
 
 
@@ -1506,9 +1823,9 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
         fontsize=10,
         bbox=dict(boxstyle="round,pad=0.5", facecolor="white", alpha=0.8),
     )
-    # Plot 4: Explanation text panel.
+    # Plot 4: Comments text panel.
     ax4.axis("off")
-    ax4.set_title("Explanation", fontsize=14, fontweight="bold", pad=20)
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
     # Add comprehensive explanation text.
     text_content = (
         f"Distributions:\n"
@@ -1540,6 +1857,434 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
         bbox=dict(boxstyle="round,pad=1", facecolor="wheat", alpha=0.3),
     )
     plt.tight_layout()
+    plt.show()
+
+
+def create_markov_chain_distribution(
+    *, noise_level: float = 0.2, scenario: str = "Compression"
+) -> tuple:
+    """
+    Create distributions for Markov chain X -> Y -> Z with controllable noise.
+
+    :param noise_level: Noise level in Y->Z transition (0.0=clean, 1.0=maximum)
+    :param scenario: Processing scenario - "Compression", "Quantization", or
+        "Binary"
+    :return: Tuple of (p_x, p_y_given_x, p_z_given_y, p_xy, p_yz, p_xz)
+    """
+    if scenario == "Compression":
+        # Compression scenario: 4 states -> 2 states -> 2 states.
+        # X: Original signal with 4 distinct states.
+        p_x = np.array([0.4, 0.3, 0.2, 0.1])
+        # P(Y|X): Compression groups (0,1) -> Y=0 and (2,3) -> Y=1.
+        p_y_given_x = np.array(
+            [
+                [0.9, 0.1],  # X=0 -> mostly Y=0
+                [0.85, 0.15],  # X=1 -> mostly Y=0
+                [0.1, 0.9],  # X=2 -> mostly Y=1
+                [0.05, 0.95],  # X=3 -> mostly Y=1
+            ]
+        )
+    elif scenario == "Quantization":
+        # Quantization scenario: Simulating continuous -> discrete conversion.
+        # X: 4 levels representing quantized continuous values.
+        p_x = np.array([0.35, 0.35, 0.15, 0.15])
+        # P(Y|X): Further quantization to 2 levels.
+        p_y_given_x = np.array(
+            [
+                [0.95, 0.05],  # X=0 -> very likely Y=0
+                [0.80, 0.20],  # X=1 -> likely Y=0
+                [0.20, 0.80],  # X=2 -> likely Y=1
+                [0.05, 0.95],  # X=3 -> very likely Y=1
+            ]
+        )
+    else:  # Binary
+        # Binary symmetric channel scenario.
+        # X: 4 message types (2 bits).
+        p_x = np.array([0.25, 0.25, 0.25, 0.25])
+        # P(Y|X): Binary symmetric channel with grouping.
+        p_y_given_x = np.array(
+            [
+                [0.88, 0.12],  # X=0 -> Y=0
+                [0.88, 0.12],  # X=1 -> Y=0
+                [0.12, 0.88],  # X=2 -> Y=1
+                [0.12, 0.88],  # X=3 -> Y=1
+            ]
+        )
+    # P(Z|Y): Add noise controlled by noise_level parameter.
+    # noise_level = 0.0: clean channel (0.95 correct transmission).
+    # noise_level = 1.0: maximum noise (0.5 = random).
+    clean_prob = 0.95
+    noisy_prob = 0.5
+    transition_prob = clean_prob - noise_level * (clean_prob - noisy_prob)
+    p_z_given_y = np.array(
+        [
+            [transition_prob, 1 - transition_prob],  # Y=0 -> mostly Z=0
+            [1 - transition_prob, transition_prob],  # Y=1 -> mostly Z=1
+        ]
+    )
+    # Calculate joint distributions.
+    # P(X,Y).
+    p_xy = p_x[:, np.newaxis] * p_y_given_x
+    # Marginal P(Y).
+    p_y = p_xy.sum(axis=0)
+    # P(Y,Z).
+    p_yz = p_y[:, np.newaxis] * p_z_given_y
+    # Marginal P(Z).
+    p_z = p_yz.sum(axis=0)
+    # Calculate P(X,Z) through marginalization over Y.
+    p_xz = np.zeros((4, 2))
+    for i in range(4):
+        for k in range(2):
+            for j in range(2):
+                p_xz[i, k] += p_x[i] * p_y_given_x[i, j] * p_z_given_y[j, k]
+    return p_x, p_y_given_x, p_z_given_y, p_xy, p_yz, p_xz
+
+
+def plot_data_processing_inequality_interactive(
+    *,
+    noise_level: float = 0.2,
+    scenario: str = "Compression",
+    figsize: Optional[tuple] = None,
+) -> None:
+    """
+    Interactive visualization of Data Processing Inequality.
+
+    Shows how information degrades through processing pipeline X -> Y -> Z.
+    Demonstrates that I(X;Z) <= I(X;Y) for Markov chain X -> Y -> Z.
+
+    :param noise_level: Noise in Y->Z transition (0.0=clean, 1.0=maximum)
+    :param scenario: Processing scenario - "Compression", "Quantization", or
+        "Binary"
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
+    """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
+    # Create distributions for the Markov chain.
+    p_x, p_y_given_x, p_z_given_y, p_xy, p_yz, p_xz = (
+        create_markov_chain_distribution(
+            noise_level=noise_level, scenario=scenario
+        )
+    )
+    # Calculate marginals.
+    p_y = p_xy.sum(axis=0)
+    p_z = p_yz.sum(axis=0)
+    # Calculate all entropy metrics.
+    h_x = calculate_entropy(p_x)
+    h_y = calculate_entropy(p_y)
+    h_z = calculate_entropy(p_z)
+    # Calculate mutual informations.
+    mi_xy = calculate_mutual_information(p_xy)
+    mi_yz = calculate_mutual_information(p_yz)
+    mi_xz = calculate_mutual_information(p_xz)
+    # Calculate information loss.
+    info_loss = mi_xy - mi_xz
+    info_retention_pct = (mi_xz / mi_xy * 100) if mi_xy > 0 else 100.0
+    # Verify inequality.
+    inequality_satisfied = mi_xz <= mi_xy + 1e-6
+    # Determine interpretation based on noise level.
+    if noise_level < 0.1:
+        interpretation = (
+            "Clean Processing:\n"
+            f"  Noise Level: {noise_level:.2f}\n"
+            f"  Information Loss: {info_loss:.4f} bits\n"
+            f"  Retention: {info_retention_pct:.1f}%\n\n"
+            "Minimal information loss through\n"
+            "the Y->Z transition.\n\n"
+            "I(X;Z) is close to I(X;Y),\n"
+            "demonstrating that clean\n"
+            "processing preserves information."
+        )
+    elif noise_level > 0.7:
+        interpretation = (
+            "High Noise:\n"
+            f"  Noise Level: {noise_level:.2f}\n"
+            f"  Information Loss: {info_loss:.4f} bits\n"
+            f"  Retention: {info_retention_pct:.1f}%\n\n"
+            "Substantial information loss\n"
+            "through the Y->Z transition.\n\n"
+            "I(X;Z) << I(X;Y),\n"
+            "showing how noise degrades\n"
+            "information in a pipeline."
+        )
+    else:
+        interpretation = (
+            "Moderate Noise:\n"
+            f"  Noise Level: {noise_level:.2f}\n"
+            f"  Information Loss: {info_loss:.4f} bits\n"
+            f"  Retention: {info_retention_pct:.1f}%\n\n"
+            "Partial information loss\n"
+            "through the Y->Z transition.\n\n"
+            "I(X;Z) < I(X;Y),\n"
+            "demonstrating the fundamental\n"
+            "inequality."
+        )
+    # Create visualization with 4 subplots in a single row.
+    # Use gridspec_kw to set fixed width ratios for consistent layout.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    )
+    # Plot 1: Processing pipeline diagram.
+    ax1.set_xlim([0, 10])
+    ax1.set_ylim([0, 10])
+    ax1.axis("off")
+    ax1.set_title(
+        f"Processing Pipeline\n{scenario} Scenario",
+        fontsize=14,
+        fontweight="bold",
+    )
+    # Draw pipeline: X -> Y -> Z.
+    # X box.
+    ax1.add_patch(
+        plt.Rectangle(
+            (0.5, 7), 2, 1.5, facecolor="steelblue", alpha=0.6, edgecolor="black"
+        )
+    )
+    ax1.text(1.5, 7.75, "X", ha="center", va="center", fontsize=16, fontweight="bold")
+    ax1.text(
+        1.5,
+        6.3,
+        "Original\n(4 states)",
+        ha="center",
+        va="top",
+        fontsize=9,
+    )
+    # Y box.
+    ax1.add_patch(
+        plt.Rectangle(
+            (4, 7), 2, 1.5, facecolor="coral", alpha=0.6, edgecolor="black"
+        )
+    )
+    ax1.text(5, 7.75, "Y", ha="center", va="center", fontsize=16, fontweight="bold")
+    ax1.text(
+        5,
+        6.3,
+        "Compressed\n(2 states)",
+        ha="center",
+        va="top",
+        fontsize=9,
+    )
+    # Z box.
+    ax1.add_patch(
+        plt.Rectangle(
+            (7.5, 7), 2, 1.5, facecolor="lightgreen", alpha=0.6, edgecolor="black"
+        )
+    )
+    ax1.text(8.5, 7.75, "Z", ha="center", va="center", fontsize=16, fontweight="bold")
+    ax1.text(
+        8.5,
+        6.3,
+        "Noisy\n(2 states)",
+        ha="center",
+        va="top",
+        fontsize=9,
+    )
+    # Arrows.
+    ax1.arrow(
+        2.5,
+        7.75,
+        1.3,
+        0,
+        head_width=0.3,
+        head_length=0.2,
+        fc="black",
+        ec="black",
+    )
+    ax1.arrow(
+        6.0,
+        7.75,
+        1.3,
+        0,
+        head_width=0.3,
+        head_length=0.2,
+        fc="black",
+        ec="black",
+    )
+    # Information metrics.
+    ax1.text(
+        3.15,
+        8.5,
+        f"I(X;Y)={mi_xy:.3f}",
+        ha="center",
+        fontsize=9,
+        bbox=dict(boxstyle="round,pad=0.3", facecolor="wheat", alpha=0.8),
+    )
+    ax1.text(
+        6.65,
+        8.5,
+        f"I(Y;Z)={mi_yz:.3f}",
+        ha="center",
+        fontsize=9,
+        bbox=dict(boxstyle="round,pad=0.3", facecolor="wheat", alpha=0.8),
+    )
+    # Key result.
+    ax1.text(
+        5,
+        4.5,
+        "Data Processing Inequality:",
+        ha="center",
+        fontsize=11,
+        fontweight="bold",
+    )
+    ax1.text(5, 3.8, "I(X;Z) <= I(X;Y)", ha="center", fontsize=11)
+    inequality_color = "green" if inequality_satisfied else "red"
+    inequality_symbol = "check" if inequality_satisfied else "times"
+    ax1.text(
+        5,
+        3.1,
+        f"{mi_xz:.4f} <= {mi_xy:.4f}",
+        ha="center",
+        fontsize=11,
+        color=inequality_color,
+        fontweight="bold",
+    )
+    ax1.text(
+        5,
+        2.4,
+        f"I(X;Z) = {mi_xz:.4f} bits",
+        ha="center",
+        fontsize=10,
+        bbox=dict(boxstyle="round,pad=0.4", facecolor="lightgreen", alpha=0.6),
+    )
+    ax1.text(
+        5,
+        1.5,
+        f"Information Loss: {info_loss:.4f} bits\n({100 - info_retention_pct:.1f}%)",
+        ha="center",
+        fontsize=9,
+    )
+    # Plot 2: Joint distributions heatmaps.
+    ax2_left = plt.subplot(1, 8, 3)
+    ax2_right = plt.subplot(1, 8, 4)
+    # P(X,Y) heatmap.
+    p_xy_df = pd.DataFrame(
+        p_xy, index=[f"X={i}" for i in range(4)], columns=["Y=0", "Y=1"]
+    )
+    sns.heatmap(
+        p_xy_df,
+        annot=True,
+        fmt=".3f",
+        cmap="Blues",
+        vmin=0,
+        vmax=0.4,
+        cbar=False,
+        ax=ax2_left,
+        annot_kws={"fontsize": 9, "fontweight": "bold"},
+    )
+    ax2_left.set_xlabel("Y", fontsize=10)
+    ax2_left.set_ylabel("X", fontsize=10)
+    ax2_left.set_title("P(X,Y)", fontsize=11, fontweight="bold")
+    # P(Y,Z) heatmap.
+    p_yz_df = pd.DataFrame(
+        p_yz, index=["Y=0", "Y=1"], columns=["Z=0", "Z=1"]
+    )
+    sns.heatmap(
+        p_yz_df,
+        annot=True,
+        fmt=".3f",
+        cmap="Oranges",
+        vmin=0,
+        vmax=0.6,
+        cbar=False,
+        ax=ax2_right,
+        annot_kws={"fontsize": 9, "fontweight": "bold"},
+    )
+    ax2_right.set_xlabel("Z", fontsize=10)
+    ax2_right.set_ylabel("Y", fontsize=10)
+    ax2_right.set_title("P(Y,Z)", fontsize=11, fontweight="bold")
+    # Plot 3: Entropy and mutual information metrics.
+    metrics_df = pd.DataFrame(
+        {
+            "Metric": ["H(X)", "H(Y)", "H(Z)", "I(X;Y)", "I(Y;Z)", "I(X;Z)"],
+            "Value": [h_x, h_y, h_z, mi_xy, mi_yz, mi_xz],
+            "Type": [
+                "Entropy",
+                "Entropy",
+                "Entropy",
+                "Mutual Info",
+                "Mutual Info",
+                "Mutual Info",
+            ],
+        }
+    )
+    colors_metrics = [
+        "steelblue",
+        "coral",
+        "lightgreen",
+        "purple",
+        "orange",
+        "green",
+    ]
+    bars = ax3.bar(
+        range(len(metrics_df)),
+        metrics_df["Value"],
+        color=colors_metrics,
+        alpha=0.7,
+        edgecolor="black",
+        linewidth=1.5,
+    )
+    ax3.set_ylabel("Information [bits]", fontsize=12)
+    ax3.set_xlabel("")
+    ax3.set_title("Information Metrics", fontsize=14, fontweight="bold")
+    ax3.set_xticks(range(len(metrics_df)))
+    ax3.set_xticklabels(
+        metrics_df["Metric"], rotation=45, ha="right", fontsize=10
+    )
+    ax3.grid(True, alpha=0.3, axis="y")
+    max_val = max(metrics_df["Value"])
+    ax3.set_ylim([0, max_val * 1.2])
+    # Add value labels on bars.
+    for i, (bar, val) in enumerate(zip(bars, metrics_df["Value"])):
+        height = bar.get_height()
+        ax3.text(
+            i,
+            height + max_val * 0.02,
+            f"{val:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=9,
+            fontweight="bold",
+        )
+    # Highlight I(X;Z) bar.
+    bars[5].set_linewidth(3)
+    bars[5].set_edgecolor("darkgreen")
+    # Plot 4: Comments text panel.
+    ax4.axis("off")
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    # Add comprehensive explanation text.
+    text_content = (
+        f"{interpretation}\n\n"
+        f"Entropies:\n"
+        f"  H(X) = {h_x:.4f} bits\n"
+        f"  H(Y) = {h_y:.4f} bits\n"
+        f"  H(Z) = {h_z:.4f} bits\n\n"
+        f"Mutual Information:\n"
+        f"  I(X;Y) = {mi_xy:.4f} bits\n"
+        f"  I(Y;Z) = {mi_yz:.4f} bits\n"
+        f"  I(X;Z) = {mi_xz:.4f} bits\n\n"
+        f"Inequality Verification:\n"
+        f"  I(X;Z) <= I(X;Y)\n"
+        f"  {mi_xz:.4f} <= {mi_xy:.4f}\n"
+        f"  Status: {'Satisfied' if inequality_satisfied else 'VIOLATED'}"
+    )
+    ax4.text(
+        0.05,
+        0.95,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=10,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
+        wrap=True,
+    )
+    # Use subplots_adjust with fixed parameters instead of tight_layout.
+    # This ensures consistent spacing and dimensions across all frames.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.35
+    )
     plt.show()
 
 
@@ -1677,7 +2422,7 @@ def demonstrate_data_processing_inequality() -> None:
         fontweight="bold",
     )
     ax2.text(
-        0.5, 0.16, "Interpretation:", ha="center", fontsize=12, fontweight="bold"
+        0.5, 0.16, "Comments:", ha="center", fontsize=12, fontweight="bold"
     )
     ax2.text(
         0.5,
@@ -1697,21 +2442,3 @@ def demonstrate_data_processing_inequality() -> None:
     ax2.axis("off")
     plt.tight_layout()
     plt.show()
-    print("Data Processing Inequality Demonstration")
-    print("=" * 60)
-    print(f"Original signal X has {len(p_x)} states")
-    print("Compressed Y has 2 states")
-    print("Processed Z has 2 states")
-    print()
-    print(f"I(X;Y) = {mi_xy:.4f} bits (information between X and Y)")
-    print(f"I(Y;Z) = {mi_yz:.4f} bits (information between Y and Z)")
-    print(f"I(X;Z) = {mi_xz:.4f} bits (information between X and Z)")
-    print()
-    print("Data Processing Inequality: I(X;Z) ≤ I(X;Y)")
-    print(
-        f"{mi_xz:.4f} ≤ {mi_xy:.4f}: {'✓ Satisfied' if mi_xz <= mi_xy + 1e-6 else '✗ Violated'}"
-    )
-    print()
-    print(
-        f"Information lost: {mi_xy - mi_xz:.4f} bits ({((mi_xy - mi_xz) / mi_xy) * 100:.1f}%)"
-    )

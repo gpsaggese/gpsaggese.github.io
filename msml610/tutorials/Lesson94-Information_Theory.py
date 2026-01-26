@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.19.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -367,6 +367,30 @@ interact(
     ),
 )
 
+# %%
+# Generate animation frames for conditional entropy visualization.
+# Parameters for video generation.
+n_steps = 11
+dependence_values = np.linspace(0.0, 1.0, n_steps)
+
+# Prepare values list for generate_animation.
+values = []
+for val in dependence_values:
+    values.append({"dependence": val})
+
+# Directory to save frames.
+dst_dir = "./figures/Lesson94_Conditional_Entropy_video"
+
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_conditional_entropy_interactive,
+    values,
+    dst_dir,
+    incremental=False,
+    figsize=(20, 5),
+    dpi=150,
+)
+
 
 # %% [markdown]
 # # Mutual Information
@@ -466,6 +490,31 @@ interact(
         description="Correlation:",
         style={"description_width": "initial"},
     ),
+    figsize=fixed(None),
+);
+
+# %%
+# Generate animation frames for mutual information (correlation-based) visualization.
+# Parameters for video generation.
+n_steps = 11
+correlation_values = np.linspace(0.0, 1.0, n_steps)
+
+# Prepare values list for generate_animation.
+values = []
+for val in correlation_values:
+    values.append({"correlation": val})
+
+# Directory to save frames.
+dst_dir = "./figures/Lesson94_Mutual_Info_Correlation_video"
+
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_mutual_info_interactive,
+    values,
+    dst_dir,
+    incremental=False,
+    figsize=(20, 5),
+    dpi=150,
 )
 
 
@@ -475,15 +524,6 @@ interact(
 # **Kullback-Leibler (KL) Divergence** $D_{KL}(P \| Q)$ measures how one distribution differs from another:
 #
 # $$D_{KL}(P \| Q) = \sum_x P(x) \log_2 \frac{P(x)}{Q(x)}$$
-#
-# **Properties:**
-# - Not symmetric: $D_{KL}(P \| Q) \neq D_{KL}(Q \| P)$
-# - Non-negative: $D_{KL}(P \| Q) \geq 0$
-# - $D_{KL}(P \| Q) = 0$ if and only if $P = Q$
-# - Not a metric (no triangle inequality)
-#
-# **Intuition:** Quantifies how much information is lost when $Q$ is used to approximate $P$
-#
 
 # %%
 # Create interactive widget.
@@ -505,6 +545,32 @@ interact(
         description="Q(outcome=1):",
         style={"description_width": "initial"},
     ),
+);
+
+# %%
+# Generate animation frames for KL divergence visualization.
+# Fix true distribution P at p1=0.7, vary approximating distribution Q.
+# Parameters for video generation.
+n_steps = 19
+p1_fixed = 0.7
+q1_values = np.linspace(0.05, 0.95, n_steps)
+
+# Prepare values list for generate_animation.
+values = []
+for val in q1_values:
+    values.append({"p1": p1_fixed, "q1": val})
+
+# Directory to save frames.
+dst_dir = "./figures/Lesson94_KL_Divergence_video"
+
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_kl_divergence_interactive,
+    values,
+    dst_dir,
+    incremental=False,
+    figsize=(20, 5),
+    dpi=150,
 )
 
 
@@ -524,69 +590,65 @@ interact(
 # - Information compression
 
 # %% [markdown]
-# ## Example: Classification with Cross-Entropy
+# ## Interactive Visualization: Cross-Entropy
+#
+# Adjust the sliders to see how cross-entropy changes when the true distribution P and model distribution Q differ:
+# - When P = Q (on diagonal), cross-entropy equals entropy H(P) (optimal encoding)
+# - When P != Q, cross-entropy = H(P) + D_KL(P||Q) (extra cost from model mismatch)
+# - This extra cost is why cross-entropy works as a loss function in machine learning
 
 # %%
-# Setup: Classification problem with 4 classes.
-# True distribution (ground truth labels).
-true_dist = np.array([0.0, 0.0, 1.0, 0.0])  # Class 2 is correct.
-print("Classification Example")
-print("=" * 60)
-print("True label: Class 2")
-print()
-# The true distribution is a one-hot vector indicating the correct class.
-
-# %%
-# Example 1: Confident and correct model prediction.
-model_confident = np.array([0.05, 0.05, 0.85, 0.05])
-kl = utils.calculate_kl_divergence(true_dist, model_confident)
-ce = utils.calculate_cross_entropy(true_dist, model_confident)
-h_true = utils.calculate_entropy(true_dist)
-print("Confident & Correct:")
-print(f"  Model prediction: {model_confident}")
-print(f"  Cross-Entropy: {ce:.4f} bits")
-print(f"  KL Divergence: {kl:.4f} bits")
-print(
-    f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)"
+# Create interactive widget for cross-entropy visualization.
+interact(
+    utils.plot_cross_entropy_interactive,
+    p1=FloatSlider(
+        min=0.05,
+        max=0.95,
+        step=0.05,
+        value=0.7,
+        description="P(outcome=1):",
+        style={"description_width": "initial"},
+    ),
+    q1=FloatSlider(
+        min=0.05,
+        max=0.95,
+        step=0.05,
+        value=0.5,
+        description="Q(outcome=1):",
+        style={"description_width": "initial"},
+    ),
+    figsize=fixed(None),
 )
-# Low cross-entropy and KL divergence indicate good match with true distribution.
+
 
 # %%
-# Example 2: Uncertain model prediction (uniform distribution).
-model_uncertain = np.array([0.25, 0.25, 0.25, 0.25])
-kl = utils.calculate_kl_divergence(true_dist, model_uncertain)
-ce = utils.calculate_cross_entropy(true_dist, model_uncertain)
-h_true = utils.calculate_entropy(true_dist)
-print("Uncertain:")
-print(f"  Model prediction: {model_uncertain}")
-print(f"  Cross-Entropy: {ce:.4f} bits")
-print(f"  KL Divergence: {kl:.4f} bits")
-print(
-    f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)"
-)
-# Higher cross-entropy due to uncertainty, even though it includes the correct class.
+# Generate animation frames for cross-entropy visualization.
+# Fix true distribution P at p1=0.7, vary model distribution Q.
+# Parameters for video generation.
+n_steps = 11
+p1_fixed = 0.7
+q1_values = np.linspace(0.05, 0.95, n_steps)
 
-# %%
-# Example 3: Confident but wrong model prediction.
-model_wrong = np.array([0.05, 0.85, 0.05, 0.05])
-kl = utils.calculate_kl_divergence(true_dist, model_wrong)
-ce = utils.calculate_cross_entropy(true_dist, model_wrong)
-h_true = utils.calculate_entropy(true_dist)
-print("Confident & Wrong:")
-print(f"  Model prediction: {model_wrong}")
-print(f"  Cross-Entropy: {ce:.4f} bits")
-print(f"  KL Divergence: {kl:.4f} bits")
-print(
-    f"  H(P) + D_KL(P||Q) = {h_true:.4f} + {kl:.4f} = {h_true + kl:.4f} (should equal CE)"
-)
-# Very high cross-entropy and KL divergence due to confident wrong prediction.
+# Prepare values list for generate_animation.
+values = []
+for val in q1_values:
+    values.append({"p1": p1_fixed, "q1": val})
 
+# Directory to save frames.
+dst_dir = "./figures/Lesson94_Cross_Entropy_video"
+
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_cross_entropy_interactive,
+    values,
+    dst_dir,
+    incremental=False,
+    figsize=(20, 5),
+    dpi=150,
+)
 
 # %% [markdown]
-# <a name='advanced'></a>
-# # 5. Advanced Topics
-#
-# ## Data Processing Inequality
+# # Data Processing Inequality
 #
 # **Statement:** Processing data cannot increase information, it can only lose information.
 #
@@ -596,8 +658,63 @@ print(
 # **Intuition:** Information can only be lost through processing, never gained.
 #
 # **Example:** If $X$ is a raw image and $Y$ is compressed version, no further processing $Z$ will recover more information about $X$ than $Y$ already contains.
+
+# %% [markdown]
+# ## Interactive Visualization: Data Processing Inequality
 #
-# ## Maximum Entropy Principle
+# Use the slider below to control the noise level in a data processing pipeline (X -> Y -> Z) and observe how information degrades through successive stages.
+# - **Noise Level = 0.0**: Clean processing, minimal information loss, I(X;Z) close to I(X;Y)
+# - **Noise Level = 1.0**: Maximum noise, substantial information loss, I(X;Z) << I(X;Y)
+# - The inequality I(X;Z) <= I(X;Y) is always satisfied, demonstrating the fundamental principle
+
+# %%
+# Create interactive widget for data processing inequality visualization.
+interact(
+    utils.plot_data_processing_inequality_interactive,
+    noise_level=FloatSlider(
+        min=0.0,
+        max=1.0,
+        step=0.05,
+        value=0.2,
+        description="Noise Level:",
+        style={"description_width": "initial"},
+    ),
+    scenario=widgets.Dropdown(
+        options=["Compression", "Quantization", "Binary"],
+        value="Compression",
+        description="Scenario:",
+        style={"description_width": "initial"},
+    ),
+    figsize=fixed(None),
+)
+
+
+# %%
+# Generate animation frames for data processing inequality visualization.
+# Parameters for video generation.
+n_steps = 21
+noise_values = np.linspace(0.0, 1.0, n_steps)
+
+# Prepare values list for generate_animation.
+values = []
+for val in noise_values:
+    values.append({"noise_level": val, "scenario": "Compression"})
+
+# Directory to save frames.
+dst_dir = "./figures/Lesson94_Data_Processing_Inequality_video"
+
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_data_processing_inequality_interactive,
+    values,
+    dst_dir,
+    incremental=False,
+    figsize=(20, 5),
+    dpi=150,
+)
+
+# %% [markdown]
+# # Maximum Entropy Principle
 #
 # **Principle:** Use the distribution with the largest entropy given the constraints.
 #
@@ -605,8 +722,9 @@ print(
 # - No constraints → Uniform distribution
 # - Positive mean constraint → Exponential distribution
 # - Fixed variance → Normal distribution
-#
-# ## Minimum Description Length (MDL)
+
+# %% [markdown]
+# # Minimum Description Length (MDL)
 #
 # **Principle:** Select the model that minimizes total description length:
 #
@@ -617,7 +735,8 @@ print(
 # - $L(D|H)$ = length of data encoded using the model
 #
 # **Intuition:** Balances model complexity with data fit (Occam's Razor principle)
-#
+
+# %% [markdown]
 # ## Kolmogorov Complexity
 #
 # **Definition:** The length of the shortest program that outputs a string $x$.
@@ -632,62 +751,3 @@ print(
 # - Measures algorithmic randomness
 
 # %%
-utils.demonstrate_data_processing_inequality()
-
-# %% [markdown]
-# # Summary and Key Takeaways
-#
-# ## Information Theory Relationships
-#
-# The fundamental relationships in information theory:
-#
-# 1. **Entropy relationships:**
-#    - $H(X, Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)$ (Chain Rule)
-#    - $H(X|Y) \leq H(X)$ with equality iff $X$ and $Y$ are independent
-#
-# 2. **Mutual information:**
-#    - $I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)$
-#    - $I(X;Y) = H(X) + H(Y) - H(X,Y)$
-#    - $I(X;Y) \geq 0$ with equality iff $X$ and $Y$ are independent
-#
-# 3. **KL divergence and cross-entropy:**
-#    - $H(P,Q) = H(P) + D_{KL}(P \| Q)$
-#    - $D_{KL}(P \| Q) \geq 0$ with equality iff $P = Q$
-#
-# 4. **Data processing inequality:**
-#    - $I(X;Z) \leq I(X;Y)$ if $X \to Y \to Z$
-#
-# ## Applications in Machine Learning
-#
-# - **Entropy:** Feature selection, decision tree splitting criteria
-# - **Mutual Information:** Dependency detection, feature relevance
-# - **Cross-Entropy:** Loss function for classification
-# - **KL Divergence:** Variational inference, model comparison
-# - **MDL:** Model selection, preventing overfitting
-
-# %% [markdown]
-# # Exercises
-#
-# Try these exercises to deepen your understanding:
-#
-# 1. **Entropy Exercise:** Calculate the entropy of a 6-sided fair die. What happens if one outcome has probability 0.5 and the others share the remaining probability equally?
-#
-# 2. **Mutual Information Exercise:** Given the joint distribution in the weather-activity example, calculate $I(Weather; Activity)$ manually and verify it matches the computed value.
-#
-# 3. **Cross-Entropy Exercise:** For a 3-class classification problem, compute the cross-entropy loss when:
-#    - True label: class 1
-#    - Model prediction: [0.2, 0.6, 0.2]
-#
-# 4. **Data Processing Exercise:** Explain why JPEG compression is lossy in terms of the data processing inequality.
-#
-# 5. **Maximum Entropy Exercise:** Show that the uniform distribution maximizes entropy among all distributions with the same number of outcomes.
-
-# %%
-# Exercise workspace - use this cell to work on the exercises above.
-
-# Exercise 1: Fair die entropy.
-die_probs = np.array([1 / 6] * 6)
-die_entropy = utils.calculate_entropy(die_probs)
-print(f"Exercise 1: Fair die entropy = {die_entropy:.4f} bits")
-
-# Your code here for other exercises...
