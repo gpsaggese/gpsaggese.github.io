@@ -19,7 +19,6 @@ When public health officials plan hospital resources, a single number isn't enou
 - Basic Python familiarity (pandas, numpy helpful)
 - Understanding of time series concepts
 - Docker installed
-- About 60 minutes (15-20 min reading + 40-45 min hands-on)
 
 **Getting Started**: Follow the [README](TutorTask297_GluonTS_COVID_19_Case_Prediction/README.md) to set up your environment, then run `./docker_jupyter.sh` to launch Jupyter notebooks.
 
@@ -35,27 +34,13 @@ Traditional forecasting answers "What will happen?" with a single number. **Prob
 
 ### Why Uncertainty Matters
 
-A hospital administrator sees "100 COVID-19 patients expected." But what if there's a 20% chance of 150 patients (surge) or 10% chance of 50 (decline)? Probabilistic forecasts enable:
-
-- **Risk planning**: Allocate resources for worst-case scenarios
-- **Informed decisions**: Balance preparedness against costs
-- **Better communication**: "80% confident between Y and Z, 10% chance exceeding W"
+A hospital administrator sees "100 COVID-19 patients expected." But what if there's a 20% chance of 150 patients (surge) or 10% chance of 50 (decline)? Probabilistic forecasts enable risk planning, informed decisions, and better communication: "80% confident between Y and Z, 10% chance exceeding W."
 
 ### Key Concepts
 
-#### Prediction Intervals
+**Prediction intervals** define where the true value is likely to fall: 50% interval (middle 50% of outcomes), 80% interval (10th-90th percentile), 90% interval (very wide range). **Example**: Mean 8,500 cases, 80% interval [6,000, 11,500].
 
-A **prediction interval** defines where the true value is likely to fall:
-
-- **50% interval**: Middle 50% of outcomes (interquartile range)
-- **80% interval**: 10th to 90th percentile
-- **90% interval**: Very wide range, captures most scenarios
-
-**Example**: 14-day forecast shows mean 8,500 cases, 50% interval [7,200, 9,800], 80% interval [6,000, 11,500].
-
-#### Quantiles and Sample-Based Forecasts
-
-**Quantiles** divide the distribution into equal-probability segments. Models generate forecasts by sampling many possible futures (e.g., 100 samples), forming a distribution:
+**Quantiles** divide the distribution into equal-probability segments. Models generate forecasts by sampling many possible futures (e.g., 100 samples):
 
 ```python
 forecast.quantile(0.1)  # 10th percentile (lower bound)
@@ -63,11 +48,7 @@ forecast.quantile(0.5)  # Median
 forecast.quantile(0.9)  # 90th percentile (upper bound)
 ```
 
-More samples = smoother distributions (but slower computation).
-
-#### Calibrated Uncertainty
-
-**Calibrated uncertainty** means intervals are accurate: if a model claims "80% of outcomes in this range," then 80% of actual outcomes should fall within. **Uncalibrated models** are misleading (too narrow = overconfident, too wide = underconfident).
+**Calibrated uncertainty** means intervals are accurate: if a model claims "80% of outcomes in this range," then 80% of actual outcomes should fall within. Uncalibrated models are misleading (too narrow = overconfident, too wide = underconfident).
 
 ### Visualizing Probabilistic Forecasts
 
@@ -80,10 +61,6 @@ graph LR
     C --> F[80% Interval]
     C --> G[Samples]
     
-    style C fill:#e1f5ff
-    style D fill:#90ee90
-    style E fill:#ffd700
-    style F fill:#ffb347
 ```
 
 See forecast visualizations in the [GluonTS.API.ipynb notebook](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.ipynb).
@@ -104,14 +81,7 @@ See forecast visualizations in the [GluonTS.API.ipynb notebook](TutorTask297_Glu
 
 ### When to Use GluonTS
 
-**Choose GluonTS when:**
-- You need uncertainty quantification
-- You have sufficient data (hundreds to thousands of time steps)
-- You want to compare multiple architectures easily
-
-**Consider alternatives:**
-- **Prophet**: Strong seasonality, interpretable components
-- **ARIMA**: Small datasets, classical statistical methods
+**Choose GluonTS when:** You need uncertainty quantification, have sufficient data (hundreds to thousands of time steps), and want to compare multiple architectures easily. **Consider alternatives:** Prophet (strong seasonality) or ARIMA (small datasets).
 
 ### GluonTS Workflow
 
@@ -123,8 +93,6 @@ flowchart LR
     D --> E[Predictor]
     E --> F[Probabilistic Forecasts]
     
-    style A fill:#e1f5ff
-    style F fill:#90ee90
 ```
 
 1. **Data Preparation**: Convert to `ListDataset` format
@@ -141,7 +109,7 @@ flowchart LR
 | **SimpleFeedForward** | Stable trends, quick baselines, limited compute | 30-60 sec |
 | **DeepNPTS** | Regime shifts, distribution changes, flexible uncertainty | 1-3 min |
 
-For detailed API documentation, see [GluonTS.API.md](tutorials/TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.md).
+For detailed API documentation, see [GluonTS.API.md](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.md).
 
 ---
 
@@ -167,16 +135,9 @@ COVID-19 case data exhibits:
 
 ### Data Sources
 
-#### 1. JHU COVID-19 Cases and Deaths
-- **Cases**: Daily confirmed cases by state, aggregated nationally
-- **Deaths**: Daily deaths by state
-- **Period**: January 2020 - March 2023
-- **Why deaths help**: Lag cases by 2-3 weeks but highly correlated, helps anticipate trends
+**JHU COVID-19 Cases and Deaths**: Daily confirmed cases and deaths by state, aggregated nationally (Jan 2020 - Mar 2023). Deaths lag cases by 2-3 weeks but are highly correlated, helping anticipate trends.
 
-#### 2. Google Mobility Data
-- **Metrics**: Six categories (retail, grocery, parks, transit, workplaces, residential)
-- **Format**: Percentage change from baseline
-- **Why it matters**: Mobility changes precede case changes (reduced mobility → fewer cases with lag)
+**Google Mobility Data**: Six categories (retail, grocery, parks, transit, workplaces, residential) showing percentage change from baseline. Mobility changes precede case changes (reduced mobility → fewer cases with lag).
 
 ### Feature Engineering
 
@@ -199,8 +160,6 @@ flowchart TD
     I --> K
     J --> K
     
-    style F fill:#90ee90
-    style K fill:#ffd700
 ```
 
 1. **7-day moving averages**: Smooths weekend artifacts, reduces noise
@@ -219,7 +178,6 @@ COVID-19 data presents forecasting challenges:
 
 These challenges make it an excellent testbed for probabilistic models that must adapt to changing patterns and quantify uncertainty appropriately.
 
-Explore the data in [GluonTS.example.ipynb - Section 1](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb).
 
 ---
 
@@ -229,68 +187,15 @@ Each model has distinct strengths suited to different forecasting scenarios. Und
 
 ### DeepAR: Complex Patterns and High Accuracy
 
-**What it does:** Uses recurrent neural networks (RNNs) to learn temporal dependencies and patterns.
-
-**When to use:**
-- Complex patterns with multiple seasonalities
-- Long-term dependencies matter
-- Highest accuracy is critical
-- Sufficient training data available
-
-**Strengths:**
-- Best overall accuracy
-- Captures wave dynamics and seasonality
-- Well-calibrated uncertainty estimates
-- Handles external features effectively
-
-**Configuration highlights:**
-- `context_length=60`: 2 months of history
-- `num_layers=2`: Deep enough for complex patterns
-- `hidden_size=40`: Balanced capacity
-- `num_feat_dynamic_real=3`: Uses deaths, CFR, mobility features
-
-**Training time:** 2-4 minutes
+Uses recurrent neural networks to learn temporal dependencies. **Best for:** Complex patterns with multiple seasonalities, long-term dependencies, highest accuracy needs. **Strengths:** Best overall accuracy, captures wave dynamics, well-calibrated uncertainty, handles external features. **Configuration:** `context_length=60`, `num_layers=2`, `hidden_size=40`, `num_feat_dynamic_real=3`. **Training time:** 2-4 minutes.
 
 ### SimpleFeedForward: Fast Baseline
 
-**What it does:** Direct mapping from recent history to future predictions using feedforward networks.
-
-**When to use:**
-- Need fast results
-- Stable, predictable trends
-- Quick baseline comparison
-- Limited computational resources
-
-**Strengths:**
-- 10x faster than DeepAR
-- Good for stable periods
-- Excellent for prototyping
-- No external features needed
-
-**Limitations:**
-- Struggles with sudden changes
-- Less accurate for complex patterns
-- No feature support
-
-**Training time:** 30-60 seconds
+Direct mapping from recent history to future predictions using feedforward networks. **Best for:** Fast results, stable trends, quick baselines. **Strengths:** 10x faster than DeepAR, good for stable periods, excellent for prototyping. **Limitations:** Struggles with sudden changes, less accurate for complex patterns, no feature support. **Training time:** 30-60 seconds.
 
 ### DeepNPTS: Regime Changes and Flexibility
 
-**What it does:** Learns data distribution non-parametrically, adapting to changing patterns.
-
-**When to use:**
-- Distribution changes over time
-- Regime shifts expected (new variants)
-- Unusual, non-standard data
-- Heavy tails or rare events
-
-**Strengths:**
-- Adapts to distribution shifts
-- Excellent during variant transitions
-- Flexible uncertainty estimates
-- Handles external features
-
-**Training time:** 1-3 minutes
+Learns data distribution non-parametrically, adapting to changing patterns. **Best for:** Distribution changes, regime shifts (new variants), unusual data. **Strengths:** Adapts to distribution shifts, excellent during variant transitions, flexible uncertainty, handles external features. **Training time:** 1-3 minutes.
 
 ### Model Selection Guide
 
@@ -304,9 +209,6 @@ flowchart TD
     E -->|No| G[DeepAR]
     D -->|No| C
     
-    style C fill:#90ee90
-    style F fill:#ffd700
-    style G fill:#ff6b6b
 ```
 
 **Quick reference:**
@@ -332,18 +234,11 @@ from gluonts.dataset.common import ListDataset
 train_ds = ListDataset([
     {
         "start": "2020-01-01",
-        "target": [cases_day1, cases_day2, ...],  # Your time series
-        "feat_dynamic_real": [[deaths_day1, ...],  # Optional features
-                             [mobility_day1, ...]]
+        "target": [cases_day1, cases_day2, ...],
+        "feat_dynamic_real": [[deaths_day1, ...], [mobility_day1, ...]]
     }
 ], freq="D")
 ```
-
-**Key points:**
-- `start`: First timestamp
-- `target`: Time series values (list or array)
-- `feat_dynamic_real`: External features (2D array, optional)
-- `freq`: Pandas frequency string ('D' for daily)
 
 ### Step 2: Model Configuration
 
@@ -363,13 +258,7 @@ estimator = DeepAREstimator(
 
 ### Step 3: Training
 
-Fit the model to historical data:
-
-```python
-predictor = estimator.train(train_ds)
-```
-
-During training, the model learns patterns, dependencies, and uncertainty distributions from your data.
+Fit the model to historical data: `predictor = estimator.train(train_ds)`. The model learns patterns, dependencies, and uncertainty distributions.
 
 ### Step 4: Generating Forecasts
 
@@ -416,24 +305,11 @@ Understanding probabilistic forecasts requires interpreting prediction intervals
 
 ### Reading Prediction Intervals
 
-**What do 10th-90th percentiles mean?**
-- **10th percentile**: 10% of outcomes fall below this value (lower bound)
-- **90th percentile**: 90% of outcomes fall below this value (upper bound)
-- **80% interval**: 80% of likely outcomes fall between these bounds
-
-**Example:** If the 80% interval is [6,000, 11,500] cases, there's an 80% chance the actual value falls within this range.
+**10th-90th percentiles:** 10th percentile = 10% of outcomes fall below (lower bound), 90th percentile = 90% fall below (upper bound). **80% interval** = 80% of likely outcomes fall between bounds. **Example:** [6,000, 11,500] cases means 80% chance actual value falls within this range.
 
 ### Assessing Model Confidence
 
-**Narrow intervals** = High confidence
-- Model is certain about the forecast
-- Low uncertainty in predictions
-- May indicate overconfidence if intervals are too narrow
-
-**Wide intervals** = High uncertainty
-- Model acknowledges uncertainty
-- May be due to noise, regime changes, or limited data
-- More realistic for volatile time series
+**Narrow intervals** = High confidence (model is certain, low uncertainty, may indicate overconfidence if too narrow). **Wide intervals** = High uncertainty (model acknowledges uncertainty, may be due to noise/regime changes/limited data, more realistic for volatile time series).
 
 ### When to Trust Forecasts
 
@@ -451,11 +327,7 @@ Understanding probabilistic forecasts requires interpreting prediction intervals
 
 ### Common Pitfalls
 
-1. **Overconfidence**: Too narrow intervals → claims 80% interval but only 60% of outcomes fall within
-2. **Underconfidence**: Too wide intervals → claims 80% interval but 95% of outcomes fall within
-3. **Ignoring uncertainty**: Making decisions based only on mean forecast, ignoring intervals
-
-**Best practice:** Always consider the full distribution, not just the mean forecast.
+**Overconfidence**: Too narrow intervals (claims 80% but only 60% fall within). **Underconfidence**: Too wide intervals (claims 80% but 95% fall within). **Ignoring uncertainty**: Decisions based only on mean forecast. **Best practice:** Always consider the full distribution, not just the mean.
 
 See forecast interpretation examples in [GluonTS.example.ipynb - Section 5](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb).
 
@@ -467,17 +339,7 @@ Evaluating probabilistic forecasts requires metrics beyond point forecast accura
 
 ### Point Forecast Metrics
 
-**MAE (Mean Absolute Error):** Average absolute difference between predictions and actuals
-- Easy to interpret (in original units)
-- Robust to outliers
-
-**RMSE (Root Mean Square Error):** Penalizes large errors more
-- Common forecasting metric
-- In same units as target
-
-**MAPE (Mean Absolute Percentage Error):** Scale-independent percentage error
-- Useful for comparison across scales
-- Interpretation: average % error
+**MAE (Mean Absolute Error):** Average absolute difference (easy to interpret, robust to outliers). **RMSE (Root Mean Square Error):** Penalizes large errors more (common metric, same units as target). **MAPE (Mean Absolute Percentage Error):** Scale-independent percentage error (useful for comparison).
 
 ### Probabilistic Metrics
 
@@ -493,16 +355,7 @@ Evaluating probabilistic forecasts requires metrics beyond point forecast accura
 
 ### Comparing Models
 
-When comparing models, consider:
-- **Accuracy**: Which has lowest MAE/RMSE?
-- **Uncertainty quality**: Which has lowest CRPS?
-- **Calibration**: Are intervals accurate?
-- **Speed**: Training time matters for production
-
-**Example comparison:**
-- **DeepAR**: Best accuracy (lowest MAE), well-calibrated uncertainty (low CRPS)
-- **SimpleFeedForward**: Good accuracy, acceptable uncertainty, fastest
-- **DeepNPTS**: Good accuracy, flexible uncertainty, adapts to changes
+When comparing models, consider accuracy (lowest MAE/RMSE), uncertainty quality (lowest CRPS), calibration (accurate intervals), and speed (training time). **Example:** DeepAR (best accuracy, well-calibrated), SimpleFeedForward (good accuracy, fastest), DeepNPTS (good accuracy, flexible uncertainty, adapts to changes).
 
 See evaluation code and metrics in [GluonTS.example.ipynb - Section 5](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb).
 
@@ -514,51 +367,35 @@ Probabilistic forecasts enable "what-if" analysis for decision-making. Here's ho
 
 ### What is Scenario Analysis?
 
-Simulating different intervention scenarios to quantify their impact on case counts. This helps public health officials:
-- Evaluate intervention effectiveness before implementation
-- Balance health outcomes with economic costs
-- Plan resource allocation under different scenarios
-- Communicate risk to stakeholders
+Simulating different intervention scenarios to quantify their impact on case counts. Helps public health officials evaluate intervention effectiveness, balance health vs. economic costs, plan resource allocation, and communicate risk.
 
-### How It Works
+**How it works:** Adjust features by intervention strength, re-run forecasts with modified features, compare predictions across scenarios, quantify impact.
 
-1. **Adjust features** by intervention strength (e.g., reduce mobility by 20%)
-2. **Re-run forecasts** with modified features
-3. **Compare predictions** across scenarios
-4. **Quantify impact** of interventions
+### The Five Scenarios
 
-### Example Scenarios
+We test five scenarios using DeepAR (which uses external features):
 
-**Scenario 1: Baseline (No Intervention)**
-- Current trends continue
-- No policy changes
-- Forecast: Expected trajectory
+| Scenario | Description | Mobility Change | CFR Change |
+|----------|-------------|-----------------|------------|
+| **1. Baseline** | No intervention, current trends | 0% | 0% |
+| **2. Moderate Intervention** | Masks, capacity limits | -15% | 0% |
+| **3. Strong Intervention** | Lockdowns, closures | -30% | 0% |
+| **4. Relaxation** | Reopening, holidays | +20% | 0% |
+| **5. Healthcare Strain** | Hospital capacity stressed | 0% | +15% |
 
-**Scenario 2: Moderate Intervention**
-- 20% reduction in mobility
-- Simulates mask mandates, capacity limits
-- Forecast: Slower case growth
+**Interpreting Results:**
 
-**Scenario 3: Strong Intervention**
-- 40% reduction in mobility
-- Simulates lockdowns, school closures
-- Forecast: Significant case reduction
-
-### Interpreting Results
-
-**Example output:**
 ```
-Scenario              Predicted Cases (14 days)    Reduction
+Scenario                  Avg Daily    Total Cases    vs Baseline
 ----------------------------------------------------------------
-Baseline              65,000 (±8,000)              --
-Moderate (-20%)       52,000 (±6,500)              20% fewer
-Strong (-40%)         38,000 (±5,000)              42% fewer
+Baseline                  47,028       658,396        --
+Moderate Intervention     44,957       629,404        4.4% fewer
+Strong Intervention       45,989       643,840        2.2% fewer
+Relaxation                46,074       645,039        2.0% more
+Healthcare Strain         48,455       678,376        3.0% more
 ```
 
-**Key insights:**
-- Quantify intervention impact with uncertainty bounds
-- Compare scenarios probabilistically (not just point estimates)
-- Make informed decisions balancing multiple factors
+**Key insights:** Quantify intervention impact with uncertainty bounds, compare scenarios probabilistically, make informed decisions balancing multiple factors.
 
 See complete scenario analysis in [GluonTS.example.ipynb - Section 7](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb).
 
@@ -568,25 +405,13 @@ See complete scenario analysis in [GluonTS.example.ipynb - Section 7](TutorTask2
 
 ### Why Probabilistic Forecasting Matters
 
-Throughout this tutorial, we've seen how probabilistic forecasting moves beyond single point predictions to capture **uncertainty, trends, and variability**—critical for informed decision-making in public health. Unlike traditional forecasts that say "10,000 cases expected," probabilistic models provide "10,000 cases with 80% confidence interval [8,000-12,000]," enabling risk-aware planning.
+Probabilistic forecasting moves beyond single point predictions to capture **uncertainty, trends, and variability**—critical for informed decision-making. Unlike "10,000 cases expected," probabilistic models provide "10,000 cases with 80% confidence interval [8,000-12,000]," enabling risk-aware planning.
 
 ### Handling Noisy, Evolving Time Series
 
-COVID-19 data exemplifies the challenges of **noisy, evolving time series**:
+COVID-19 data exemplifies **noisy, evolving time series**: noise (reporting delays, weekend underreporting), evolving patterns (multiple waves with different characteristics), and regime changes (distribution shifts as variants emerge).
 
-- **Noise**: Reporting delays, weekend underreporting, data corrections
-- **Evolving patterns**: Multiple waves (Delta, Omicron) with different characteristics
-- **Regime changes**: Distribution shifts as variants emerge
-
-**How GluonTS models handle these challenges:**
-
-1. **7-day moving averages**: Smooth noise while preserving trends
-2. **DeepAR**: Captures complex temporal patterns and seasonality despite noise
-3. **DeepNPTS**: Adapts to distribution shifts and regime changes non-parametrically
-4. **External features**: Deaths and mobility data help anticipate evolving patterns
-5. **Uncertainty quantification**: Wide intervals signal high uncertainty during transitions
-
-Probabilistic models don't just predict—they **quantify uncertainty** and **adapt to variability**, making them essential for real-world forecasting.
+**How GluonTS models handle these:** 7-day moving averages smooth noise, DeepAR captures complex patterns despite noise, DeepNPTS adapts to distribution shifts non-parametrically, external features (deaths, mobility) anticipate evolving patterns, and uncertainty quantification signals high uncertainty during transitions. Probabilistic models **quantify uncertainty** and **adapt to variability**, making them essential for real-world forecasting.
 
 ### When to Use Each Model
 
@@ -602,36 +427,15 @@ Probabilistic models don't just predict—they **quantify uncertainty** and **ad
 
 ### Best Practices
 
-1. **Always report uncertainty**: Point forecasts alone are insufficient for decision-making
+1. **Always report uncertainty**: Point forecasts alone are insufficient
 2. **Choose model based on problem**: Consider data characteristics (stable vs. evolving, noisy vs. clean)
-3. **Validate on holdout data**: Test model performance before deployment
-4. **Monitor calibration**: Ensure prediction intervals match actual outcomes
-5. **Consider external features**: They can significantly improve forecasts for evolving patterns
+3. **Validate on holdout data**: Test performance before deployment
+4. **Monitor calibration**: Ensure intervals match actual outcomes
+5. **Consider external features**: They significantly improve forecasts for evolving patterns
 
 ### Extending This Tutorial
 
-**Try different forecast horizons:**
-- Short-term (7 days): Operational planning
-- Medium-term (14 days): Current choice, matches public health cycles
-- Long-term (28 days): Strategic planning (lower accuracy expected)
-
-**Add more features:**
-- Vaccination rates (available in `data/vaccine.csv`)
-- Weather data (temperature, humidity)
-- Policy stringency indices
-- Genomic surveillance (variant prevalence)
-
-**Experiment with hyperparameters:**
-- Increase `context_length` for longer historical context
-- Adjust `hidden_size` or `num_layers` for model capacity
-- Tune `dropout_rate` for regularization
-- Increase `epochs` for better accuracy (slower training)
-
-**Apply to your own data:**
-- Replace COVID-19 data with your time series
-- Adapt feature engineering to your domain
-- Compare models on your specific problem
-- Build scenario analysis for your use case
+**Try different forecast horizons:** Short-term (7 days), medium-term (14 days), long-term (28 days). **Add more features:** Vaccination rates, weather data, policy stringency indices, genomic surveillance. **Experiment with hyperparameters:** Increase `context_length`, adjust `hidden_size`/`num_layers`, tune `dropout_rate`, increase `epochs`. **Apply to your own data:** Replace COVID-19 data, adapt feature engineering, compare models, build scenario analysis.
 
 ### Additional Resources
 
@@ -640,28 +444,12 @@ Probabilistic models don't just predict—they **quantify uncertainty** and **ad
 - [GitHub Repository](https://github.com/awslabs/gluonts)
 - [API Reference](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.md)
 
-**Research Papers:**
-- [DeepAR Paper](https://arxiv.org/abs/1704.04110)
-- [DeepNPTS Paper](https://arxiv.org/abs/1906.05264)
-
-**COVID-19 Data Sources:**
-- [JHU COVID-19 Repository](https://github.com/CSSEGISandData/COVID-19)
-- [Google Mobility Reports](https://www.google.com/covid19/mobility/)
-
-**Time Series Forecasting:**
-- "Forecasting: Principles and Practice" by Hyndman & Athanasopoulos
-- [PyTorch Lightning Documentation](https://lightning.ai/docs/pytorch/stable/)
+**Research Papers:** [DeepAR Paper](https://arxiv.org/abs/1704.04110), [DeepNPTS Paper](https://arxiv.org/abs/1906.05264). **COVID-19 Data:** [JHU Repository](https://github.com/CSSEGISandData/COVID-19), [Google Mobility Reports](https://www.google.com/covid19/mobility/). **Time Series:** "Forecasting: Principles and Practice" by Hyndman & Athanasopoulos.
 
 ### Final Thoughts
 
-Probabilistic time series forecasting with GluonTS enables you to:
-- **Capture uncertainty** in predictions, not just point estimates
-- **Handle noisy, evolving data** through appropriate model selection
-- **Make informed decisions** using prediction intervals and scenario analysis
-- **Adapt to changing patterns** with models like DeepNPTS
+Probabilistic time series forecasting with GluonTS enables you to capture uncertainty, handle noisy evolving data, make informed decisions using prediction intervals and scenario analysis, and adapt to changing patterns. Whether forecasting COVID-19 cases, sales, or any time series, probabilistic forecasts provide **uncertainty quantification** and **variability awareness** needed for real-world decision-making.
 
-Whether forecasting COVID-19 cases, sales, or any time series, probabilistic forecasts provide the **uncertainty quantification** and **variability awareness** needed for real-world decision-making.
-
-**Ready to get started?** Follow the [README](TutorTask297_GluonTS_COVID_19_Case_Prediction/README.md) to set up your environment, then dive into the [GluonTS.API.ipynb](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.ipynb) and [GluonTS.example.ipynb](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb) notebooks to build your own probabilistic forecasts.
+**Ready to get started?** Follow the [README](TutorTask297_GluonTS_COVID_19_Case_Prediction/README.md) to set up your environment, then dive into the [GluonTS.API.ipynb](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.ipynb) and [GluonTS.example.ipynb](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb) notebooks.
 
 ---
