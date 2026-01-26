@@ -24,45 +24,6 @@ _LOG = logging.getLogger(__name__)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 
-# TODO(gp_ai): Move to msml610/tutorials/msml610_utils.py and update callers.
-def generate_animation_values(
-    mode: str,
-    sweep_variable: str,
-    const_variable: Optional[str] = None,
-    const_value: Optional[Any] = None,
-    *,
-    n_steps: int = 11,
-    sweep_min: float = 0.0,
-    sweep_max: float = 1.0,
-    **extra_constants: Any,
-    ) -> List[dict]:
-    """
-    Generate a list of values for a given mode, sweep variable, and constant variable(s).
-
-    :param mode: Mode of the sweep variable.
-    :param sweep_variable: Name of the sweep variable.
-    :param const_variable: Name of the constant variable (optional).
-    :param const_value: Value of the constant variable (optional).
-    :param n_steps: Number of steps in the sweep.
-    :param sweep_min: Minimum value for the sweep variable.
-    :param sweep_max: Maximum value for the sweep variable.
-    :param extra_constants: Additional constant variables as keyword arguments.
-    :return: List of values.
-    """
-    if mode == "linear":
-        sweep_values = np.linspace(sweep_min, sweep_max, n_steps)
-    else:
-        raise ValueError(f"Invalid mode: {mode}")
-    values = []
-    for val in sweep_values:
-        entry = {sweep_variable: val}
-        if const_variable is not None:
-            entry[const_variable] = const_value
-        entry.update(extra_constants)
-        values.append(entry)
-    return values
-
-
 # #############################################################################
 # Entropy calculations
 # #############################################################################
@@ -1716,13 +1677,20 @@ def plot_cross_entropy_interactive(
     plt.show()
 
 
-def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
+def plot_kl_divergence_interactive(
+    *, p1: float = 0.7, q1: float = 0.5, figsize: Optional[tuple] = None
+) -> None:
     """
     Interactive visualization of KL divergence between two binary distributions.
 
     :param p1: Probability for true distribution P
     :param q1: Probability for approximating distribution Q
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
     """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
     # Create distributions.
     p = np.array([1 - p1, p1])
     q = np.array([1 - q1, q1])
@@ -1761,7 +1729,7 @@ def plot_kl_divergence_interactive(*, p1: float = 0.7, q1: float = 0.5) -> None:
         )
         quality = "Poor"
     # Create visualization with 4 subplots in a single row.
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5))
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=figsize)
     # Plot 1: Distributions comparison.
     x = np.arange(2)
     width = 0.35
