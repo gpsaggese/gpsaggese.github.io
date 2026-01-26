@@ -342,13 +342,18 @@ def plot_joint_entropy_interactive(
     plt.show()
 
 
-def plot_conditional_entropy_interactive(*, dependence: float = 0.5) -> None:
+def plot_conditional_entropy_interactive(*, dependence: float = 0.5, figsize: Optional[tuple] = None) -> None:
     """
     Interactive visualization of conditional entropy with dependence control.
 
     :param dependence: Dependence strength between variables (0=independent,
         1=perfectly correlated)
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
     """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
     # Create joint distribution with specified dependence.
     joint_prob = create_correlated_joint_distribution(correlation=dependence)
     # Convert to DataFrame for better visualization.
@@ -389,7 +394,7 @@ def plot_conditional_entropy_interactive(*, dependence: float = 0.5) -> None:
             f"Conditional distributions differ but retain uncertainty."
         )
     # Create visualization with 4 subplots in a single row.
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5))
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=figsize)
     # Plot 1: Joint distribution heatmap using seaborn.
     sns.heatmap(
         joint_df,
@@ -666,17 +671,36 @@ def plot_distribution_with_stats(
         plt.show()
 
 
-def plot_binary_entropy_interactive(*, p: float = 0.5) -> None:
+def plot_binary_entropy_interactive(*, p: float = 0.5, n: int = 100, figsize: Optional[tuple] = None) -> None:
     """
     Plot binary entropy function with current value highlighted.
 
     :param p: Probability of outcome 1 (slider controlled)
+    :param n: Number of samples to draw over time (default 100)
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
     """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
     # Create array of probabilities.
     p_values = np.linspace(0.001, 0.999, 1000)
     entropy_values = [binary_entropy(p_val) for p_val in p_values]
-    # Create figure with two subplots.
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+    # Generate n samples from the binary distribution.
+    np.random.seed(42)  # For reproducibility
+    samples = np.random.binomial(1, p, n)
+    # Calculate information content.
+    if p > 0 and p < 1:
+        info_0 = -np.log2(1 - p)
+        info_1 = -np.log2(p)
+    else:
+        info_0 = 0.0
+        info_1 = 0.0
+    # Create figure with 4 subplots in a single row.
+    # Use gridspec_kw to set fixed width ratios for consistent layout.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    )
     # Plot 1: Binary entropy function.
     ax1.plot(p_values, entropy_values, "b-", linewidth=2, label="H(p)")
     ax1.axvline(
@@ -688,7 +712,7 @@ def plot_binary_entropy_interactive(*, p: float = 0.5) -> None:
     ax1.scatter([p], [binary_entropy(p)], color="red", s=100, zorder=5)
     ax1.set_xlabel("Probability p", fontsize=12)
     ax1.set_ylabel("Entropy H(p) [bits]", fontsize=12)
-    ax1.set_title("Binary Entropy Function", fontsize=14)
+    ax1.set_title("Binary Entropy Function", fontsize=14, fontweight="bold")
     ax1.grid(True, alpha=0.3)
     ax1.legend(fontsize=11)
     ax1.set_ylim([-0.05, 1.1])
@@ -701,6 +725,7 @@ def plot_binary_entropy_interactive(*, p: float = 0.5) -> None:
     ax2.set_title(
         f"Probability Distribution\nEntropy = {binary_entropy(p):.4f} bits",
         fontsize=14,
+        fontweight="bold",
     )
     ax2.set_ylim([0, 1.1])
     ax2.grid(True, alpha=0.3, axis="y")
@@ -714,15 +739,59 @@ def plot_binary_entropy_interactive(*, p: float = 0.5) -> None:
             fontsize=11,
             fontweight="bold",
         )
-    plt.tight_layout()
+    # Plot 3: Samples over time.
+    time_indices = np.arange(n)
+    # Create color array for samples.
+    sample_colors = ['skyblue' if s == 0 else 'coral' for s in samples]
+    ax3.scatter(time_indices, samples, c=sample_colors, alpha=0.6, s=50, edgecolor='black', linewidth=0.5)
+    # Add horizontal lines at 0 and 1.
+    ax3.axhline(0, color='skyblue', linestyle='--', linewidth=2, alpha=0.5, label='Outcome 0')
+    ax3.axhline(1, color='coral', linestyle='--', linewidth=2, alpha=0.5, label='Outcome 1')
+    ax3.set_xlabel("Time (sample index)", fontsize=12)
+    ax3.set_ylabel("Outcome", fontsize=12)
+    ax3.set_title(
+        f"Samples Over Time (n={n})\nObserved: {samples.sum()}/{n} ones ({samples.sum()/n:.2%})",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax3.set_ylim([-0.3, 1.3])
+    ax3.set_yticks([0, 1])
+    ax3.set_yticklabels(['0', '1'])
+    ax3.grid(True, alpha=0.3, axis='y')
+    ax3.legend(fontsize=11)
+    # Plot 4: Comments and explanation text.
+    ax4.axis("off")
+    ax4.set_title("Explanation", fontsize=14, fontweight="bold", pad=20)
+    # Wrap text content to ensure consistent dimensions.
+    text_content = (
+        f"Information Content:\n"
+        f"  • Outcome 0: {info_0:.4f} bits\n"
+        f"  • Outcome 1: {info_1:.4f} bits\n\n"
+        f"Entropy:\n"
+        f"  • Expected information:\n"
+        f"    {binary_entropy(p):.4f} bits\n\n"
+        f"Samples:\n"
+        f"  • Drawn: {n}\n"
+        f"  • Outcome 1 appeared:\n"
+        f"    {samples.sum()} times\n"
+        f"    ({samples.sum()/n:.2%})"
+    )
+    ax4.text(
+        0.05,
+        0.95,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=10,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
+        wrap=True,
+    )
+    # Use subplots_adjust with fixed parameters instead of tight_layout.
+    # This ensures consistent spacing and dimensions across all frames.
+    plt.subplots_adjust(left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25)
     plt.show()
-    # Print information content.
-    if p > 0 and p < 1:
-        info_0 = -np.log2(1 - p)
-        info_1 = -np.log2(p)
-        print(f"Information content of Outcome 0: {info_0:.4f} bits")
-        print(f"Information content of Outcome 1: {info_1:.4f} bits")
-        print(f"Expected information (Entropy): {binary_entropy(p):.4f} bits")
 
 
 def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
@@ -941,7 +1010,7 @@ def plot_mutual_info_interactive(*, correlation: float = 0.5) -> None:
 
 
 def plot_mutual_information_venn_interactive(
-    *, dependence: float = 0.5, scenario: str = "Binary"
+    *, dependence: float = 0.5, scenario: str = "Binary", figsize: Optional[tuple] = None
 ) -> None:
     """
     Enhanced interactive visualization of mutual information with Venn-style decomposition.
@@ -952,7 +1021,12 @@ def plot_mutual_information_venn_interactive(
     :param dependence: Dependence strength between variables (0=independent,
         1=perfectly correlated)
     :param scenario: "Binary" for 2x2 distribution or "Weather" for 3x3
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
     """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
     # Create joint distribution based on scenario.
     if scenario == "Binary":
         # Binary variables X, Y in {0, 1}.
@@ -1031,7 +1105,7 @@ def plot_mutual_information_venn_interactive(
             f"  {mi:.3f} = {h_y:.3f} - {h_y_given_x:.3f}"
         )
     # Create visualization with 4 subplots in a single row.
-    fig, axes = plt.subplots(1, 4, figsize=(20, 5))
+    fig, axes = plt.subplots(1, 4, figsize=figsize)
     ax1, ax2, ax3, ax4 = axes
     # Plot 1: Joint distribution heatmap.
     sns.heatmap(
@@ -1113,7 +1187,7 @@ def plot_mutual_information_venn_interactive(
     circle_x = Circle(
         (center_x[0], center_y[0]),
         radius_x,
-        color="steelblue",
+        facecolor="steelblue",
         alpha=0.4,
         linewidth=2,
         edgecolor="steelblue",
@@ -1122,7 +1196,7 @@ def plot_mutual_information_venn_interactive(
     circle_y = Circle(
         (center_x[1], center_y[1]),
         radius_y,
-        color="coral",
+        facecolor="coral",
         alpha=0.4,
         linewidth=2,
         edgecolor="coral",

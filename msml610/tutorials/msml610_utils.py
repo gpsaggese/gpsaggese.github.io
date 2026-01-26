@@ -19,6 +19,7 @@ from PIL import Image
 
 import helpers.hdbg as hdbg
 import helpers.hio as hio
+import helpers.hsystem as hsystem
 
 _LOG = logging.getLogger(__name__)
 
@@ -792,6 +793,7 @@ def generate_animation(
     incremental: bool = True,
     figsize: Optional[Tuple[int, int]] = None,
     dpi: int = 150,
+    convert_to_movie: bool = False,
 ) -> None:
     """
     Generate animation frames by calling a functor with different parameter values.
@@ -809,6 +811,8 @@ def generate_animation(
     :param figsize: Optional figure size as (width, height) to pass to
         functor (if functor accepts figsize parameter)
     :param dpi: Resolution for saved frames in dots per inch
+    :param convert_to_movie: If True, convert PNG frames to movie using
+        convert_png_dir_to_movie.py script
     """
     # Create directory for frames.
     hio.create_dir(dst_dir, incremental=incremental)
@@ -856,6 +860,11 @@ def generate_animation(
         if len(unique_dimensions) == 1:
             width, height = dimensions[0][1]
             _LOG.info("All frames have consistent dimensions: %sx%s pixels", width, height)
+            # Convert frames to movie if requested.
+            if convert_to_movie:
+                _LOG.info("Converting frames to movie...")
+                cmd = f"convert_png_dir_to_movie.py --input_dir {dst_dir}"
+                hsystem.system(cmd)
         else:
             _LOG.warning("Inconsistent frame dimensions detected:")
             for frame_file, size in dimensions:

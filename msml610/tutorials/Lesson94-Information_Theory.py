@@ -227,11 +227,37 @@ utils.plot_distribution_with_stats(
 # Use the slider below to adjust the probability $p$ of a binary random variable and observe how entropy changes.
 
 # %%
-# Create interactive widget.
 interact(utils.plot_binary_entropy_interactive,
-         p=FloatSlider(min=0.01, max=0.99, step=0.01, value=0.5,
-                      description='Probability p:', style={'description_width': 'initial'}));
+         p=FloatSlider(min=0.00, max=1.00, step=0.01, value=0.5,
+                      description='Probability p:', style={'description_width': 'initial'}),
+         n=fixed(100),
+         figsize=fixed(None));
 
+
+# %%
+# Generate animation frames for binary entropy visualization.
+# Parameters for video generation.
+n_steps = 11
+n_fixed = 100
+p_values = np.linspace(0.0, 1.0, n_steps)
+
+# Prepare values list for generate_animation.
+values = []
+for val in p_values:
+    values.append({"p": val, "n": n_fixed})
+
+# Directory to save frames.
+dst_dir = "./figures/Lesson94_Binary_Entropy_video"
+
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_binary_entropy_interactive,
+    values,
+    dst_dir,
+    incremental=False,
+    figsize=(20, 5),
+    dpi=150
+)
 
 # %% [markdown]
 # # Joint Entropy
@@ -242,12 +268,6 @@ interact(utils.plot_binary_entropy_interactive,
 #
 # - Describes the information needed for the joint distribution of $X$ and $Y$
 # - For independent variables: $H(X, Y) = H(X) + H(Y)$
-
-# %% [markdown]
-# ## Interactive Visualization: Joint Entropy
-#
-# Adjust the dependence slider to see how correlation between X and Y affects joint entropy.
-# The scatter plot shows sampled realizations from the joint distribution.
 
 # %%
 # Create interactive widget for joint entropy visualization.
@@ -274,7 +294,7 @@ for val in dependence_values:
     values.append({"dependence": val, "n_samples": n_samples_fixed})
 
 # Directory to save frames.
-dst_dir = "./figures/joint_entropy_animation_frames"
+dst_dir = "./figures/Lesson94_Joint_Entropy_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
@@ -330,40 +350,6 @@ interact(utils.plot_conditional_entropy_interactive,
 # - Quantifies the reduction in uncertainty about one variable given the other
 # - Symmetric: $I(X;Y) = I(Y;X)$
 
-# %% [markdown]
-# ## Example: Weather and Activity
-
-# %%
-# Create a joint distribution for Weather (X) and Activity (Y).
-# X: Weather = {Sunny, Rainy}, Y: Activity = {Outdoor, Indoor}.
-# When sunny, people prefer outdoor activities; when rainy, indoor activities.
-joint_prob = np.array([
-    [0.35, 0.15],  # Sunny: 35% outdoor, 15% indoor.
-    [0.10, 0.40]   # Rainy: 10% outdoor, 40% indoor.
-])
-print("Joint Distribution P(Weather, Activity):")
-print("                Outdoor  Indoor")
-print(f"Sunny:          {joint_prob[0,0]:.2f}    {joint_prob[0,1]:.2f}")
-print(f"Rainy:          {joint_prob[1,0]:.2f}    {joint_prob[1,1]:.2f}")
-# The diagonal dominance shows that weather and activity are related.
-
-# %%
-# Calculate mutual information for the weather-activity example.
-mi = utils.calculate_mutual_information(joint_prob)
-print(f"Mutual Information I(Weather; Activity) = {mi:.4f} bits")
-# This quantifies how much knowing the weather reduces uncertainty about activity.
-
-# %%
-# Visualize the information decomposition.
-utils.visualize_information_decomposition(joint_prob)
-# The bar chart shows all entropy relationships, demonstrating how I(X;Y) relates to other quantities.
-
-# %% [markdown]
-# ## Interactive Visualization: Mutual Information with Venn Decomposition
-#
-# Adjust the dependence slider to see how mutual information changes as variables become more or less related.
-# The Venn diagram shows the overlap between H(X) and H(Y), which represents the shared information I(X;Y).
-
 # %%
 # Create interactive widget for mutual information with Venn diagram.
 interact(utils.plot_mutual_information_venn_interactive,
@@ -373,8 +359,57 @@ interact(utils.plot_mutual_information_venn_interactive,
          scenario=widgets.Dropdown(options=['Binary', 'Weather'],
                                    value='Binary',
                                    description='Scenario:',
-                                   style={'description_width': 'initial'}));
+                                   style={'description_width': 'initial'}),
+         figsize=fixed(None));
 
+
+# %%
+# Generate animation frames for mutual information Venn visualization (Binary scenario).
+# Parameters for video generation.
+n_steps = 11
+dependence_values = np.linspace(0.0, 1.0, n_steps)
+
+# Prepare values list for generate_animation.
+values = []
+for val in dependence_values:
+    values.append({"dependence": val, "scenario": "Binary"})
+
+# Directory to save frames.
+dst_dir = "./figures/Lesson94_Mutual_Info1_video"
+
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_mutual_information_venn_interactive,
+    values,
+    dst_dir,
+    incremental=False,
+    figsize=(20, 5),
+    dpi=150
+)
+
+# %%
+# Generate animation frames for mutual information Venn visualization (Weather scenario).
+# Parameters for video generation.
+n_steps = 11
+dependence_values = np.linspace(0.0, 1.0, n_steps)
+
+# Prepare values list for generate_animation.
+values = []
+for val in dependence_values:
+    values.append({"dependence": val, "scenario": "Weather"})
+
+# Directory to save frames.
+dst_dir = "./figures/Lesson94_Mutual_Info2_video"
+
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_mutual_information_venn_interactive,
+    values,
+    dst_dir,
+    incremental=False,
+    figsize=(20, 5),
+    dpi=150
+)
 
 # %% [markdown]
 # ## Interactive Visualization: Correlation and Mutual Information
@@ -389,10 +424,7 @@ interact(utils.plot_mutual_info_interactive,
 
 
 # %% [markdown]
-# <a name='kl-cross'></a>
-# # 4. KL Divergence and Cross-Entropy
-#
-# ## KL Divergence
+# # KL Divergence
 #
 # **Kullback-Leibler (KL) Divergence** $D_{KL}(P \| Q)$ measures how one distribution differs from another:
 #
@@ -406,11 +438,6 @@ interact(utils.plot_mutual_info_interactive,
 #
 # **Intuition:** Quantifies how much information is lost when $Q$ is used to approximate $P$
 #
-
-# %% [markdown]
-# ## Interactive Visualization: KL Divergence and Distribution Comparison
-#
-# Adjust the parameters to see how KL divergence changes when approximating a distribution.
 
 # %%
 # Create interactive widget.
