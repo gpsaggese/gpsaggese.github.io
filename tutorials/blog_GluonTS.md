@@ -444,7 +444,11 @@ COVID-19 data exemplifies **noisy, evolving time series**: noise (reporting dela
 - [GitHub Repository](https://github.com/awslabs/gluonts)
 - [API Reference](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.md)
 
-**Research Papers:** [DeepAR Paper](https://arxiv.org/abs/1704.04110), [DeepNPTS Paper](https://arxiv.org/abs/1906.05264). **COVID-19 Data:** [JHU Repository](https://github.com/CSSEGISandData/COVID-19), [Google Mobility Reports](https://www.google.com/covid19/mobility/). **Time Series:** "Forecasting: Principles and Practice" by Hyndman & Athanasopoulos.
+**Research Papers:** [DeepAR Paper](https://arxiv.org/abs/1704.04110), [GluonTS Paper](https://arxiv.org/abs/1906.05264). 
+
+**COVID-19 Data:** [JHU Repository](https://github.com/CSSEGISandData/COVID-19), [Google Mobility Reports](https://github.com/ActiveConclusion/COVID19_mobility).
+
+**Time Series:** "Forecasting: Principles and Practice" by Hyndman & Athanasopoulos.
 
 ### Final Thoughts
 
