@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -286,7 +286,7 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-);
+)
 
 
 # %%
@@ -340,7 +340,7 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-);
+)
 
 # %%
 # Generate animation frames for conditional entropy visualization.
@@ -394,7 +394,7 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-);
+)
 
 
 # %%
@@ -454,7 +454,7 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-);
+)
 
 # %%
 # Generate animation frames for mutual information (correlation-based) visualization.
@@ -506,7 +506,7 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-);
+)
 
 # %%
 # Generate animation frames for KL divergence visualization.
@@ -578,7 +578,7 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-);
+)
 
 
 # %%
@@ -643,7 +643,7 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-);
+)
 
 
 # %%
@@ -712,7 +712,7 @@ interact(
     true_degree=fixed(3),
     noise_level=fixed(0.3),
     figsize=fixed(None),
-);
+)
 
 
 # %%
@@ -770,7 +770,13 @@ ut.generate_animation(
 interact(
     utils.plot_kolmogorov_complexity_interactive,
     string_type=widgets.Dropdown(
-        options=["All Zeros", "Repeating 01", "Fibonacci", "Random", "Semi-random"],
+        options=[
+            "All Zeros",
+            "Repeating 01",
+            "Fibonacci",
+            "Random",
+            "Semi-random",
+        ],
         value="Random",
         description="String Type:",
         style={"description_width": "initial"},
@@ -782,13 +788,19 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-);
+)
 
 
 # %%
 # Generate animation frames for Kolmogorov Complexity visualization.
 # Sweep through different string types with fixed length.
-string_types = ["All Zeros", "Repeating 01", "Fibonacci", "Semi-random", "Random"]
+string_types = [
+    "All Zeros",
+    "Repeating 01",
+    "Fibonacci",
+    "Semi-random",
+    "Random",
+]
 values = [{"string_type": st, "length": 64} for st in string_types]
 
 # Directory to save frames.

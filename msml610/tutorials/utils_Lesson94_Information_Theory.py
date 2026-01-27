@@ -947,9 +947,7 @@ def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
         fontsize=11,
         color="green",
     )
-    ax2.text(
-        0.5, 0.24, "Comments:", ha="center", fontsize=12, fontweight="bold"
-    )
+    ax2.text(0.5, 0.24, "Comments:", ha="center", fontsize=12, fontweight="bold")
     ax2.text(
         0.5,
         0.17,
@@ -2070,7 +2068,9 @@ def plot_data_processing_inequality_interactive(
             (0.5, 7), 2, 1.5, facecolor="steelblue", alpha=0.6, edgecolor="black"
         )
     )
-    ax1.text(1.5, 7.75, "X", ha="center", va="center", fontsize=16, fontweight="bold")
+    ax1.text(
+        1.5, 7.75, "X", ha="center", va="center", fontsize=16, fontweight="bold"
+    )
     ax1.text(
         1.5,
         6.3,
@@ -2085,7 +2085,9 @@ def plot_data_processing_inequality_interactive(
             (4, 7), 2, 1.5, facecolor="coral", alpha=0.6, edgecolor="black"
         )
     )
-    ax1.text(5, 7.75, "Y", ha="center", va="center", fontsize=16, fontweight="bold")
+    ax1.text(
+        5, 7.75, "Y", ha="center", va="center", fontsize=16, fontweight="bold"
+    )
     ax1.text(
         5,
         6.3,
@@ -2097,10 +2099,17 @@ def plot_data_processing_inequality_interactive(
     # Z box.
     ax1.add_patch(
         plt.Rectangle(
-            (7.5, 7), 2, 1.5, facecolor="lightgreen", alpha=0.6, edgecolor="black"
+            (7.5, 7),
+            2,
+            1.5,
+            facecolor="lightgreen",
+            alpha=0.6,
+            edgecolor="black",
         )
     )
-    ax1.text(8.5, 7.75, "Z", ha="center", va="center", fontsize=16, fontweight="bold")
+    ax1.text(
+        8.5, 7.75, "Z", ha="center", va="center", fontsize=16, fontweight="bold"
+    )
     ax1.text(
         8.5,
         6.3,
@@ -2205,9 +2214,7 @@ def plot_data_processing_inequality_interactive(
     ax2_left.set_ylabel("X", fontsize=10)
     ax2_left.set_title("P(X,Y)", fontsize=11, fontweight="bold")
     # P(Y,Z) heatmap.
-    p_yz_df = pd.DataFrame(
-        p_yz, index=["Y=0", "Y=1"], columns=["Z=0", "Z=1"]
-    )
+    p_yz_df = pd.DataFrame(p_yz, index=["Y=0", "Y=1"], columns=["Z=0", "Z=1"])
     sns.heatmap(
         p_yz_df,
         annot=True,
@@ -2450,9 +2457,7 @@ def demonstrate_data_processing_inequality() -> None:
         color="green" if mi_xz <= mi_xy else "red",
         fontweight="bold",
     )
-    ax2.text(
-        0.5, 0.16, "Comments:", ha="center", fontsize=12, fontweight="bold"
-    )
+    ax2.text(0.5, 0.16, "Comments:", ha="center", fontsize=12, fontweight="bold")
     ax2.text(
         0.5,
         0.09,
@@ -2508,9 +2513,7 @@ def generate_mdl_data(
     return x, y, true_coeffs
 
 
-def fit_polynomial_model(
-    *, x: np.ndarray, y: np.ndarray, degree: int
-) -> tuple:
+def fit_polynomial_model(*, x: np.ndarray, y: np.ndarray, degree: int) -> tuple:
     """
     Fit polynomial of given degree to data.
 
@@ -3011,6 +3014,7 @@ def plot_kolmogorov_complexity_interactive(
     # Create color map: 0=blue, 1=red, -1=gray (padding).
     cmap_colors = ["#3498db", "#e74c3c", "#95a5a6"]  # Blue, Red, Gray
     from matplotlib.colors import ListedColormap
+
     cmap = ListedColormap(cmap_colors)
     im = ax1.imshow(grid, cmap=cmap, aspect="auto", vmin=-1, vmax=1)
     ax1.set_title(
@@ -3024,6 +3028,7 @@ def plot_kolmogorov_complexity_interactive(
     ax1.set_yticks([])
     # Add legend.
     from matplotlib.patches import Patch
+
     legend_elements = [
         Patch(facecolor="#3498db", label="0 bit"),
         Patch(facecolor="#e74c3c", label="1 bit"),
@@ -3088,9 +3093,7 @@ def plot_kolmogorov_complexity_interactive(
         ha="center",
         va="center",
         fontweight="bold",
-        bbox=dict(
-            boxstyle="round,pad=0.8", facecolor=color_status, alpha=0.3
-        ),
+        bbox=dict(boxstyle="round,pad=0.8", facecolor=color_status, alpha=0.3),
     )
     # Plot 4: Comments Panel.
     ax4.axis("off")
