@@ -2,12 +2,15 @@
 Evaluation Metrics Utilities.
 
 Common evaluation metrics for time series forecasting.
+
+Import as:
+
+import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_evaluation as ttgcpguev
 """
 
 import logging
 from typing import Dict, Union
 
-import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

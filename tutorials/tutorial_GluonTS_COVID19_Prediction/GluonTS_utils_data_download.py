@@ -2,6 +2,10 @@
 Simple data downloader for COVID-19 datasets.
 
 Downloads data from Google Drive if not present locally.
+
+Import as:
+
+import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_data_download as ttgcpgudd
 """
 
 import logging

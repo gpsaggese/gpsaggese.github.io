@@ -3,14 +3,16 @@ Data Loader for GluonTS Notebooks.
 
 Simple one-function loader to get COVID-19 data ready for GluonTS models.
 Loads US COVID-19 cases, deaths, and Google mobility data.
+
+Import as:
+
+import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_notebook_loader as ttgcpgunl
 """
 
 import logging
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 
-import numpy as np
-import pandas as pd
 
 from GluonTS_utils_data_io import DataLoader
 from GluonTS_utils_gluonts import (
@@ -57,6 +59,7 @@ def check_and_download_data(
         from GluonTS_utils_data_download import (
             check_and_download_data as download_data,
         )
+
         # Try to download.
         success = download_data(data_dir=data_dir)
         if success:
@@ -154,7 +157,9 @@ def load_covid_data_for_gluonts(
     national_mobility = extract_national_mobility(mobility_df)
     # Merge.
     _LOG.info("\nMerging data sources...")
-    merged_df = merge_all_data(national_cases, national_deaths, national_mobility)
+    merged_df = merge_all_data(
+        national_cases, national_deaths, national_mobility
+    )
     _LOG.info("Merged data: %s days", len(merged_df))
     _LOG.info(
         "Date range: %s to %s",
@@ -228,7 +233,9 @@ def load_covid_data_for_gluonts(
         past_feat_columns=feature_columns,
     )
     _LOG.info("GluonTS datasets created")
-    _LOG.info("Note: Test dataset contains full time series (train + test periods)")
+    _LOG.info(
+        "Note: Test dataset contains full time series (train + test periods)"
+    )
     # Prepare return info.
     info = {
         "total_days": len(merged_df),

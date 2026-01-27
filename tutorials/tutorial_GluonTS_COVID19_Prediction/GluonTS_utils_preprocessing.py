@@ -2,11 +2,14 @@
 Data Preprocessing Utilities for COVID-19 Time Series.
 
 Aggregate, clean, and merge COVID-19 data for time series forecasting with GluonTS.
+
+Import as:
+
+import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_preprocessing as ttgcpgupr
 """
 
 import logging
 
-import numpy as np
 import pandas as pd
 
 _LOG = logging.getLogger(__name__)
@@ -31,19 +34,25 @@ def aggregate_to_national(
     national_cumulative = df[date_columns].sum()
     # Create DataFrame.
     prefix = "Cases" if data_type == "cases" else "Deaths"
-    result_df = pd.DataFrame({
-        "Date": pd.to_datetime(national_cumulative.index),
-        f"Cumulative_{prefix}": national_cumulative.values,
-    })
+    result_df = pd.DataFrame(
+        {
+            "Date": pd.to_datetime(national_cumulative.index),
+            f"Cumulative_{prefix}": national_cumulative.values,
+        }
+    )
     # Calculate daily values.
-    result_df[f"Daily_{prefix}"] = result_df[f"Cumulative_{prefix}"].diff().fillna(0)
+    result_df[f"Daily_{prefix}"] = (
+        result_df[f"Cumulative_{prefix}"].diff().fillna(0)
+    )
     # Calculate 7-day moving average.
     result_df[f"Daily_{prefix}_MA7"] = (
         result_df[f"Daily_{prefix}"].rolling(window=7).mean()
     )
     # Remove negative values (reporting corrections).
     result_df[f"Daily_{prefix}"] = result_df[f"Daily_{prefix}"].clip(lower=0)
-    result_df[f"Daily_{prefix}_MA7"] = result_df[f"Daily_{prefix}_MA7"].clip(lower=0)
+    result_df[f"Daily_{prefix}_MA7"] = result_df[f"Daily_{prefix}_MA7"].clip(
+        lower=0
+    )
     return result_df
 
 
@@ -56,8 +65,7 @@ def extract_national_mobility(mobility_df: pd.DataFrame) -> pd.DataFrame:
     """
     # Filter for national level.
     national = mobility_df[
-        (mobility_df["state"] == "Total") &
-        (mobility_df["county"] == "Total")
+        (mobility_df["state"] == "Total") & (mobility_df["county"] == "Total")
     ].copy()
     national = national.sort_values("date").reset_index(drop=True)
     return national
@@ -83,7 +91,9 @@ def merge_all_data(
     # Merge cases and deaths.
     merged = pd.merge(
         cases_df,
-        deaths_df[["Date", "Daily_Deaths", "Daily_Deaths_MA7", "Cumulative_Deaths"]],
+        deaths_df[
+            ["Date", "Daily_Deaths", "Daily_Deaths_MA7", "Cumulative_Deaths"]
+        ],
         on="Date",
         how="left",
     )
@@ -168,7 +178,9 @@ def preprocess_pipeline(
     _LOG.info("  National mobility: %s days", len(national_mobility))
     # Merge all data.
     _LOG.info("[Step 4/4] Merging all datasets...")
-    merged_df = merge_all_data(national_cases, national_deaths, national_mobility)
+    merged_df = merge_all_data(
+        national_cases, national_deaths, national_mobility
+    )
     _LOG.info(
         "  Merged data: %s days, %s features",
         len(merged_df),

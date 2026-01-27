@@ -2,11 +2,15 @@
 Load COVID-19 Data Utilities.
 
 Load COVID-19 data from various sources: cases, deaths, vaccines, and mobility reports.
+
+Import as:
+
+import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_data_io as ttgcpgudi
 """
 
 import logging
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict
 
 import pandas as pd
 
@@ -136,6 +140,9 @@ def verify_data_exists(
     _LOG.info("All required data files present in %s", data_dir)
     return True
 
+# #############################################################################
+# DataLoader
+# #############################################################################
 
 class DataLoader:
     """Convenience class for loading COVID-19 data."""

@@ -2,13 +2,16 @@
 GluonTS Data Preparation Utilities.
 
 Convert COVID-19 data for GluonTS models.
+
+Import as:
+
+import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_gluonts as ttgcpgugl
 """
 
 import logging
 import warnings
 from typing import List, Optional
 
-import numpy as np
 import pandas as pd
 from gluonts.dataset.common import ListDataset
 
