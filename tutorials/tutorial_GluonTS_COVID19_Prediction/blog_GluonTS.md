@@ -30,7 +30,7 @@ them to COVID-19 case data.
 - Docker installed
 
 **Getting Started**: Follow the
-[README](TutorTask297_GluonTS_COVID_19_Case_Prediction/README.md) to set up your
+[README](README.md) to set up your
 environment, then run `./docker_jupyter.sh` to launch Jupyter notebooks.
 
 ## Understanding Probabilistic Forecasting
@@ -85,7 +85,7 @@ graph LR
 ```
 
 See forecast visualizations in the
-[GluonTS.API.ipynb notebook](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.ipynb).
+[GluonTS.API.ipynb notebook](GluonTS.API.ipynb).
 
 ## Introduction to GluonTS
 
@@ -135,7 +135,7 @@ flowchart LR
 | **DeepNPTS**          | Regime shifts, distribution changes, flexible uncertainty  | 1-3 min       |
 
 For detailed API documentation, see
-[GluonTS.API.md](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.md).
+[GluonTS.API.md](GluonTS.API.md).
 
 ## The COVID-19 Forecasting Problem
 
@@ -260,7 +260,7 @@ flowchart TD
 - **Regime changes, variant transitions** → DeepNPTS
 
 See detailed model comparisons in
-[GluonTS.API.ipynb](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.ipynb).
+[GluonTS.API.ipynb](GluonTS.API.ipynb).
 
 ## Hands-On: Building Your First Forecast
 
@@ -340,7 +340,7 @@ samples = forecast.samples  # Shape: (100, 14)
 ```
 
 See the complete walkthrough in
-[GluonTS.example.ipynb](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb).
+[GluonTS.example.ipynb](GluonTS.example.ipynb).
 
 ## Interpreting Probabilistic Forecasts
 
@@ -385,7 +385,7 @@ data, more realistic for volatile time series).
 practice:** Always consider the full distribution, not just the mean.
 
 See forecast interpretation examples in
-[GluonTS.example.ipynb - Section 5](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb).
+[GluonTS.example.ipynb - Section 5](GluonTS.example.ipynb).
 
 ## Model Evaluation: Beyond Accuracy
 
@@ -423,7 +423,7 @@ accuracy, fastest), DeepNPTS (good accuracy, flexible uncertainty, adapts to
 changes).
 
 See evaluation code and metrics in
-[GluonTS.example.ipynb - Section 5](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb).
+[GluonTS.example.ipynb - Section 5](GluonTS.example.ipynb).
 
 ## Real-World Application: Scenario Analysis
 
@@ -467,7 +467,7 @@ Healthcare Strain         48,455       678,376        3.0% more
 scenarios probabilistically, make informed decisions balancing multiple factors.
 
 See complete scenario analysis in
-[GluonTS.example.ipynb - Section 6](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb).
+[GluonTS.example.ipynb - Section 6](GluonTS.example.ipynb).
 
 ## Key Takeaways and Next Steps
 
@@ -531,7 +531,7 @@ analysis.
 
 - [Official Documentation](https://ts.gluon.ai/)
 - [GitHub Repository](https://github.com/awslabs/gluonts)
-- [API Reference](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.md)
+- [API Reference](GluonTS.API.md)
 
 **Research Papers:** [DeepAR Paper](https://arxiv.org/abs/1704.04110),
 [GluonTS Paper](https://arxiv.org/abs/1906.05264).
@@ -552,9 +552,9 @@ forecasts provide **uncertainty quantification** and **variability awareness**
 needed for real-world decision-making.
 
 **Ready to get started?** Follow the
-[README](TutorTask297_GluonTS_COVID_19_Case_Prediction/README.md) to set up your
+[README](README.md) to set up your
 environment, then dive into the
-[GluonTS.API.ipynb](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.API.ipynb)
+[GluonTS.API.ipynb](GluonTS.API.ipynb)
 and
-[GluonTS.example.ipynb](TutorTask297_GluonTS_COVID_19_Case_Prediction/GluonTS.example.ipynb)
+[GluonTS.example.ipynb](GluonTS.example.ipynb)
 notebooks.
