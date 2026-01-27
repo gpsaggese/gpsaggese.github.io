@@ -40,6 +40,7 @@ class ModelResults:
     :param metrics: dictionary of evaluation metrics
     :param training_time: training time in seconds
     """
+
     model_name: str
     predictor: object
     forecasts: List
@@ -636,7 +637,9 @@ def run_all_scenarios(
     # Run each scenario.
     for i, config in enumerate(scenarios_config, 1):
         if verbose:
-            _LOG.info("\n[%s/5] %s: %s", i, config["name"], config["description"])
+            _LOG.info(
+                "\n[%s/5] %s: %s", i, config["name"], config["description"]
+            )
         # Create modified dataset.
         scenario_ds = create_scenario_dataset(
             merged_df=merged_df,
@@ -746,6 +749,7 @@ def plot_scenario_comparison(
     :param save_path: optional path to save the figure
     """
     import matplotlib.pyplot as plt
+
     # Define colors for each scenario.
     colors = {
         "Baseline": "#6B7280",  # Gray.
