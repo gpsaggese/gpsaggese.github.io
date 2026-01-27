@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -15,9 +15,6 @@
 
 # %% [markdown]
 # ## Imports
-
-# %% [markdown]
-# ### Import modules
 
 # %%
 # %load_ext autoreload
@@ -326,11 +323,9 @@ ut.generate_animation(
 # - Low $H(Y|X)$ implies $X$ has strong predictive power for $Y$
 # - If $Y = X$, then $H(Y|X) = 0$ (no uncertainty)
 # - If $X$ and $Y$ are independent, then $H(Y|X) = H(Y)$
-
-# %% [markdown]
-# ## Chain Rule for Entropy
 #
-# $$H(X, Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)$$
+# - Chain Rule for Entropy
+#   $$H(X, Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)$$
 
 # %%
 # Create interactive widget for conditional entropy visualization.
@@ -446,11 +441,6 @@ ut.generate_animation(
     dpi=150,
 )
 
-# %% [markdown]
-# ## Interactive Visualization: Correlation and Mutual Information
-#
-# This visualization shows how correlation strength affects mutual information between two variables.
-
 # %%
 # Create interactive widget for correlation-based mutual information.
 interact(
@@ -515,6 +505,7 @@ interact(
         description="Q(outcome=1):",
         style={"description_width": "initial"},
     ),
+    figsize=fixed(None),
 );
 
 # %%
@@ -558,8 +549,7 @@ ut.generate_animation(
 # - Loss function in classification (logistic regression, neural networks)
 # - Model evaluation and comparison
 # - Information compression
-
-# %% [markdown]
+#
 # ## Interactive Visualization: Cross-Entropy
 #
 # Adjust the sliders to see how cross-entropy changes when the true distribution P and model distribution Q differ:
@@ -588,7 +578,7 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-)
+);
 
 
 # %%
@@ -629,15 +619,12 @@ ut.generate_animation(
 #
 # **Example:** If $X$ is a raw image and $Y$ is compressed version, no further processing $Z$ will recover more information about $X$ than $Y$ already contains.
 
-# %% [markdown]
-# ## Interactive Visualization: Data Processing Inequality
-#
+# %%
 # Use the slider below to control the noise level in a data processing pipeline (X -> Y -> Z) and observe how information degrades through successive stages.
 # - **Noise Level = 0.0**: Clean processing, minimal information loss, I(X;Z) close to I(X;Y)
 # - **Noise Level = 1.0**: Maximum noise, substantial information loss, I(X;Z) << I(X;Y)
 # - The inequality I(X;Z) <= I(X;Y) is always satisfied, demonstrating the fundamental principle
 
-# %%
 # Create interactive widget for data processing inequality visualization.
 interact(
     utils.plot_data_processing_inequality_interactive,
@@ -656,7 +643,7 @@ interact(
         style={"description_width": "initial"},
     ),
     figsize=fixed(None),
-)
+);
 
 
 # %%
@@ -704,8 +691,58 @@ ut.generate_animation(
 #
 # **Intuition:** Balances model complexity with data fit (Occam's Razor principle)
 
+# %%
+# Use the slider below to adjust the polynomial degree and observe how MDL balances model complexity with data fit:
+# - **Low degree (1-2)**: Simple model, poor fit, high data encoding cost (underfitting)
+# - **Optimal degree (3-4)**: Balanced model, minimum total MDL
+# - **High degree (6-8)**: Complex model, high model cost, overfitting penalty
+
+# Create interactive widget for MDL visualization.
+interact(
+    utils.plot_mdl_interactive,
+    degree=IntSlider(
+        min=1,
+        max=8,
+        step=1,
+        value=3,
+        description="Polynomial Degree:",
+        style={"description_width": "initial"},
+    ),
+    n_samples=fixed(50),
+    true_degree=fixed(3),
+    noise_level=fixed(0.3),
+    figsize=fixed(None),
+);
+
+
+# %%
+# Generate animation frames for MDL visualization.
+values = ut.generate_animation_values(
+    mode="linear",
+    sweep_variable="degree",
+    n_steps=8,
+    sweep_min=1,
+    sweep_max=8,
+    n_samples=50,
+    true_degree=3,
+    noise_level=0.3,
+)
+
+# Directory to save frames.
+dst_dir = "./figures/Lesson94_MDL_video"
+
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_mdl_interactive,
+    values,
+    dst_dir,
+    incremental=False,
+    figsize=(20, 5),
+    dpi=150,
+)
+
 # %% [markdown]
-# ## Kolmogorov Complexity
+# # Kolmogorov Complexity
 #
 # **Definition:** The length of the shortest program that outputs a string $x$.
 #
@@ -718,4 +755,51 @@ ut.generate_animation(
 # - Related to MDL in practice
 # - Measures algorithmic randomness
 
+# %% [markdown]
+# Use the controls below to explore how different string types have different Kolmogorov Complexity:
+# - **String Type**: Choose between structured patterns (low K-complexity) and random strings (high K-complexity)
+# - **Length**: Observe how K-complexity scales differently for patterns vs random strings
+#
+# Key insights:
+# - Patterned strings: Short program generates long output (low K-complexity)
+# - Random strings: Must include all bits in description (high K-complexity, incompressible)
+# - K-complexity is uncomputable, but compression gives practical approximation
+
 # %%
+# Create interactive widget for Kolmogorov Complexity visualization.
+interact(
+    utils.plot_kolmogorov_complexity_interactive,
+    string_type=widgets.Dropdown(
+        options=["All Zeros", "Repeating 01", "Fibonacci", "Random", "Semi-random"],
+        value="Random",
+        description="String Type:",
+        style={"description_width": "initial"},
+    ),
+    length=widgets.Dropdown(
+        options=[16, 32, 64, 128],
+        value=64,
+        description="String Length:",
+        style={"description_width": "initial"},
+    ),
+    figsize=fixed(None),
+);
+
+
+# %%
+# Generate animation frames for Kolmogorov Complexity visualization.
+# Sweep through different string types with fixed length.
+string_types = ["All Zeros", "Repeating 01", "Fibonacci", "Semi-random", "Random"]
+values = [{"string_type": st, "length": 64} for st in string_types]
+
+# Directory to save frames.
+dst_dir = "./figures/Lesson94_Kolmogorov_Complexity_video"
+
+# Generate animation frames with fixed dimensions.
+ut.generate_animation(
+    utils.plot_kolmogorov_complexity_interactive,
+    values,
+    dst_dir,
+    incremental=False,
+    figsize=(20, 5),
+    dpi=150,
+)

@@ -1729,7 +1729,10 @@ def plot_kl_divergence_interactive(
         )
         quality = "Poor"
     # Create visualization with 4 subplots in a single row.
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=figsize)
+    # Use gridspec_kw to set fixed width ratios for consistent layout.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    )
     # Plot 1: Distributions comparison.
     x = np.arange(2)
     width = 0.35
@@ -1842,7 +1845,12 @@ def plot_kl_divergence_interactive(
     # Plot 4: Comments text panel.
     ax4.axis("off")
     ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    # Wrap interpretation text to fixed width to ensure consistent dimensions.
+    wrapped_interpretation = textwrap.fill(interpretation, width=40)
     # Add comprehensive explanation text.
+    verification_text = (
+        "(verified)" if abs(h_p + kl_pq - ce_pq) < 0.001 else "(error!)"
+    )
     text_content = (
         f"Distributions:\n"
         f"  True P:     [{1 - p1:.2f}, {p1:.2f}]\n"
@@ -1854,25 +1862,30 @@ def plot_kl_divergence_interactive(
         f"  D_KL(P||Q) = {kl_pq:.4f} bits\n"
         f"  D_KL(Q||P) = {kl_qp:.4f} bits\n\n"
         f"Interpretation:\n"
-        f"  {interpretation}\n\n"
+        f"  {wrapped_interpretation}\n\n"
         f"Verification:\n"
         f"  H(P,Q) = H(P) + D_KL(P||Q)\n"
         f"  {ce_pq:.4f} = {h_p:.4f} + {kl_pq:.4f}\n"
-        f"  {ce_pq:.4f} = {h_p + kl_pq:.4f} "
-        + ("(verified)" if abs(h_p + kl_pq - ce_pq) < 0.001 else "(error!)")
+        f"  {ce_pq:.4f} = {h_p + kl_pq:.4f}\n"
+        f"  {verification_text}"
     )
     ax4.text(
-        0.1,
-        0.9,
+        0.05,
+        0.95,
         text_content,
         transform=ax4.transAxes,
-        fontsize=11,
+        fontsize=10,
         ha="left",
         va="top",
         family="monospace",
-        bbox=dict(boxstyle="round,pad=1", facecolor="wheat", alpha=0.3),
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
+        wrap=True,
     )
-    plt.tight_layout()
+    # Use subplots_adjust with fixed parameters instead of tight_layout.
+    # This ensures consistent spacing and dimensions across all frames.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
+    )
     plt.show()
 
 
@@ -2457,4 +2470,664 @@ def demonstrate_data_processing_inequality() -> None:
     )
     ax2.axis("off")
     plt.tight_layout()
+    plt.show()
+
+
+# #############################################################################
+# Minimum Description Length (MDL)
+# #############################################################################
+
+
+def generate_mdl_data(
+    *,
+    n_samples: int = 50,
+    true_degree: int = 3,
+    noise_level: float = 0.3,
+    seed: int = 42,
+) -> tuple:
+    """
+    Generate synthetic polynomial data for MDL demonstration.
+
+    :param n_samples: Number of data points to generate
+    :param true_degree: Degree of the true underlying polynomial
+    :param noise_level: Standard deviation of Gaussian noise
+    :param seed: Random seed for reproducibility
+    :return: Tuple of (x values, y values, true coefficients)
+    """
+    np.random.seed(seed)
+    # Generate x values uniformly in [-1, 1].
+    x = np.linspace(-1, 1, n_samples)
+    # Generate true polynomial coefficients.
+    # Use smaller coefficients for higher degrees to keep y values reasonable.
+    true_coeffs = np.random.randn(true_degree + 1) * 0.5
+    # Generate true y values.
+    y_true = np.polyval(true_coeffs, x)
+    # Add Gaussian noise.
+    noise = np.random.normal(0, noise_level, n_samples)
+    y = y_true + noise
+    return x, y, true_coeffs
+
+
+def fit_polynomial_model(
+    *, x: np.ndarray, y: np.ndarray, degree: int
+) -> tuple:
+    """
+    Fit polynomial of given degree to data.
+
+    :param x: Input x values
+    :param y: Target y values
+    :param degree: Degree of polynomial to fit
+    :return: Tuple of (fitted coefficients, predictions, MSE)
+    """
+    # Fit polynomial.
+    coeffs = np.polyfit(x, y, degree)
+    # Generate predictions.
+    y_pred = np.polyval(coeffs, x)
+    # Calculate mean squared error.
+    mse = np.mean((y - y_pred) ** 2)
+    return coeffs, y_pred, mse
+
+
+def calculate_mdl_components(
+    *, n_samples: int, n_params: int, mse: float
+) -> dict:
+    """
+    Calculate MDL components for model selection.
+
+    :param n_samples: Number of data samples
+    :param n_params: Number of model parameters
+    :param mse: Mean squared error of the model
+    :return: Dictionary with 'model_cost', 'data_cost', 'total_mdl'
+    """
+    # L(H): Model description length.
+    # Penalizes complexity using BIC-like penalty: k * log(n).
+    # Each parameter costs log2(n) bits to describe.
+    model_cost = n_params * np.log2(n_samples)
+    # L(D|H): Data encoding cost given the model.
+    # Cost to encode residuals, related to log(MSE).
+    # Add small epsilon to avoid log(0).
+    epsilon = 1e-10
+    data_cost = (n_samples / 2) * np.log2(mse + epsilon)
+    # Total MDL.
+    total_mdl = model_cost + data_cost
+    return {
+        "model_cost": model_cost,
+        "data_cost": data_cost,
+        "total_mdl": total_mdl,
+    }
+
+
+def plot_mdl_interactive(
+    *,
+    degree: int = 3,
+    n_samples: int = 50,
+    true_degree: int = 3,
+    noise_level: float = 0.3,
+    figsize: Optional[tuple] = None,
+) -> None:
+    """
+    Interactive visualization of Minimum Description Length principle.
+
+    :param degree: Current polynomial degree to fit (slider controlled)
+    :param n_samples: Number of data samples
+    :param true_degree: True underlying polynomial degree
+    :param noise_level: Noise level in data generation
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
+    """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
+    # Generate data.
+    x, y, true_coeffs = generate_mdl_data(
+        n_samples=n_samples,
+        true_degree=true_degree,
+        noise_level=noise_level,
+        seed=42,
+    )
+    # Fit model with current degree.
+    coeffs, y_pred, mse = fit_polynomial_model(x=x, y=y, degree=degree)
+    # Calculate MDL for current model.
+    n_params = degree + 1  # Polynomial of degree d has d+1 parameters.
+    mdl_current = calculate_mdl_components(
+        n_samples=n_samples, n_params=n_params, mse=mse
+    )
+    # Calculate MDL for all degrees (1 to 8) to show the curve.
+    max_degree = 8
+    degrees = np.arange(1, max_degree + 1)
+    mdl_values = []
+    model_costs = []
+    data_costs = []
+    for d in degrees:
+        _, _, mse_d = fit_polynomial_model(x=x, y=y, degree=d)
+        mdl_d = calculate_mdl_components(
+            n_samples=n_samples, n_params=d + 1, mse=mse_d
+        )
+        mdl_values.append(mdl_d["total_mdl"])
+        model_costs.append(mdl_d["model_cost"])
+        data_costs.append(mdl_d["data_cost"])
+    # Find optimal degree (minimum MDL).
+    optimal_idx = np.argmin(mdl_values)
+    optimal_degree = degrees[optimal_idx]
+    # Determine interpretation based on current degree.
+    if degree < optimal_degree - 1:
+        status = "Underfitting"
+        interpretation = (
+            f"Model too simple (degree {degree}).\n"
+            f"High data encoding cost due to poor fit.\n"
+            f"Total MDL = {mdl_current['total_mdl']:.2f} bits > optimal.\n"
+            f"Recommendation: Increase complexity."
+        )
+    elif degree > optimal_degree + 1:
+        status = "Overfitting"
+        interpretation = (
+            f"Model too complex (degree {degree}).\n"
+            f"High model cost due to many parameters.\n"
+            f"Total MDL = {mdl_current['total_mdl']:.2f} bits > optimal.\n"
+            f"Recommendation: Reduce complexity."
+        )
+    else:
+        status = "Optimal/Near-Optimal"
+        interpretation = (
+            f"Well-balanced model (degree {degree}).\n"
+            f"Good tradeoff between fit and complexity.\n"
+            f"Total MDL = {mdl_current['total_mdl']:.2f} bits ~ minimum.\n"
+            f"Optimal degree: {optimal_degree}."
+        )
+    # Create visualization with 4 subplots in a single row.
+    # Use gridspec_kw to set fixed width ratios for consistent layout.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    )
+    # Plot 1: Data and Model Fit.
+    ax1.scatter(x, y, alpha=0.6, s=50, color="steelblue", label="Data", zorder=3)
+    # Sort x for smooth curve plotting.
+    x_sorted = np.sort(x)
+    y_fit_sorted = np.polyval(coeffs, x_sorted)
+    ax1.plot(
+        x_sorted,
+        y_fit_sorted,
+        "r-",
+        linewidth=2,
+        label=f"Fit (deg={degree})",
+        zorder=2,
+    )
+    # Plot residuals as light lines.
+    for xi, yi, yi_pred in zip(x, y, y_pred):
+        ax1.plot(
+            [xi, xi], [yi, yi_pred], "gray", alpha=0.3, linewidth=1, zorder=1
+        )
+    ax1.set_xlabel("x", fontsize=12)
+    ax1.set_ylabel("y", fontsize=12)
+    ax1.set_title(
+        f"Data and Model Fit\nMSE = {mse:.4f}",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax1.legend(fontsize=11, loc="upper left")
+    ax1.grid(True, alpha=0.3)
+    # Plot 2: MDL Components Bar Chart.
+    components = ["L(H)\nModel", "L(D|H)\nData", "Total\nMDL"]
+    values_bar = [
+        mdl_current["model_cost"],
+        mdl_current["data_cost"],
+        mdl_current["total_mdl"],
+    ]
+    colors_mdl = ["coral", "skyblue", "purple"]
+    bars = ax2.bar(
+        components,
+        values_bar,
+        color=colors_mdl,
+        alpha=0.7,
+        edgecolor="black",
+        linewidth=2,
+    )
+    ax2.set_ylabel("Description Length [bits]", fontsize=12)
+    ax2.set_title("MDL Components", fontsize=14, fontweight="bold")
+    ax2.grid(True, alpha=0.3, axis="y")
+    # Add value labels on bars.
+    for bar, val in zip(bars, values_bar):
+        height = bar.get_height()
+        ax2.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            height + max(values_bar) * 0.02,
+            f"{val:.1f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+        )
+    # Plot 3: MDL vs Model Complexity Curve.
+    ax3.plot(
+        degrees,
+        mdl_values,
+        "b-",
+        linewidth=2,
+        marker="o",
+        markersize=6,
+        label="Total MDL",
+    )
+    # Highlight current degree.
+    ax3.scatter(
+        [degree],
+        [mdl_current["total_mdl"]],
+        color="red",
+        s=150,
+        zorder=5,
+        label=f"Current (deg={degree})",
+    )
+    # Highlight optimal degree.
+    ax3.scatter(
+        [optimal_degree],
+        [mdl_values[optimal_idx]],
+        color="green",
+        s=150,
+        marker="*",
+        zorder=5,
+        label=f"Optimal (deg={optimal_degree})",
+    )
+    ax3.set_xlabel("Model Complexity (Polynomial Degree)", fontsize=12)
+    ax3.set_ylabel("Total MDL [bits]", fontsize=12)
+    ax3.set_title("MDL vs Complexity", fontsize=14, fontweight="bold")
+    ax3.legend(fontsize=10, loc="upper center")
+    ax3.grid(True, alpha=0.3)
+    ax3.set_xticks(degrees)
+    # Plot 4: Comments Panel.
+    ax4.axis("off")
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    # Wrap interpretation text for consistent layout.
+    wrapped_interpretation = textwrap.fill(interpretation, width=40)
+    # Add explanation text.
+    text_content = (
+        f"Model Status: {status}\n"
+        f"{'=' * 30}\n\n"
+        f"Current Model (degree {degree}):\n"
+        f"  • Parameters: {n_params}\n"
+        f"  • L(H) = {mdl_current['model_cost']:.2f} bits\n"
+        f"  • L(D|H) = {mdl_current['data_cost']:.2f} bits\n"
+        f"  • Total MDL = {mdl_current['total_mdl']:.2f}\n\n"
+        f"Analysis:\n"
+        f"  {wrapped_interpretation}\n\n"
+        f"MDL Principle:\n"
+        f"  Select model minimizing\n"
+        f"  MDL = L(H) + L(D|H)\n"
+        f"  Balances complexity vs fit."
+    )
+    ax4.text(
+        0.05,
+        0.95,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=9,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
+        wrap=True,
+    )
+    # Use subplots_adjust with fixed parameters for consistent dimensions.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
+    )
+    plt.show()
+
+
+# #############################################################################
+# Kolmogorov Complexity
+# #############################################################################
+
+
+def generate_string_by_type(
+    *, string_type: str = "Random", length: int = 64, seed: int = 42
+) -> np.ndarray:
+    """
+    Generate binary string of specified complexity type.
+
+    :param string_type: Type of string to generate
+        ("All Zeros", "Repeating 01", "Fibonacci", "Random", "Semi-random")
+    :param length: Length of binary string
+    :param seed: Random seed for reproducible random strings
+    :return: Binary string as numpy array of 0s and 1s
+    """
+    np.random.seed(seed)
+    if string_type == "All Zeros":
+        # Highly compressible pattern.
+        return np.zeros(length, dtype=int)
+    elif string_type == "Repeating 01":
+        # Simple repeating pattern.
+        pattern = np.array([0, 1])
+        return np.tile(pattern, length // 2 + 1)[:length]
+    elif string_type == "Fibonacci":
+        # Generate Fibonacci sequence and mark positions.
+        # More complex but still structured.
+        fib = [1, 1]
+        while fib[-1] < length:
+            fib.append(fib[-1] + fib[-2])
+        # Create binary string with 1s at Fibonacci positions.
+        result = np.zeros(length, dtype=int)
+        for f in fib:
+            if f < length:
+                result[f] = 1
+        return result
+    elif string_type == "Random":
+        # Incompressible random string.
+        return np.random.randint(0, 2, length)
+    elif string_type == "Semi-random":
+        # Mix of pattern and randomness.
+        # First half is patterned, second half is random.
+        first_half = np.tile([0, 0, 0, 0, 1, 1, 1, 1], length // 16 + 1)[
+            : length // 2
+        ]
+        second_half = np.random.randint(0, 2, length - len(first_half))
+        return np.concatenate([first_half, second_half])
+    else:
+        # Default to random.
+        return np.random.randint(0, 2, length)
+
+
+def calculate_description_length(*, string_type: str, length: int) -> int:
+    """
+    Calculate approximate description length (K-complexity proxy).
+
+    :param string_type: Type of string
+    :param length: Length of string
+    :return: Approximate description length in bits
+    """
+    # Base overhead for any program (interpreter, basic syntax).
+    base_overhead = 20
+    if string_type == "All Zeros":
+        # Description: "print('0' * n)" where n is encoded in log(n) bits.
+        return base_overhead + int(np.ceil(np.log2(length + 1)))
+    elif string_type == "Repeating 01":
+        # Description: "print('01' * (n//2))" - constant pattern + log(n).
+        pattern_bits = 2  # Encode "01" pattern.
+        count_bits = int(np.ceil(np.log2(length + 1)))
+        return base_overhead + pattern_bits + count_bits
+    elif string_type == "Fibonacci":
+        # Description: Fibonacci algorithm + length parameter.
+        algorithm_bits = 40  # Fib generation algorithm.
+        count_bits = int(np.ceil(np.log2(length + 1)))
+        return base_overhead + algorithm_bits + count_bits
+    elif string_type == "Random":
+        # Description: Must include entire string (incompressible).
+        return length  # No compression possible.
+    elif string_type == "Semi-random":
+        # Description: Pattern for first half + full second half.
+        pattern_bits = length // 2 // 4  # Some compression on first half.
+        random_bits = length // 2  # No compression on second half.
+        return base_overhead + pattern_bits + random_bits
+    else:
+        return length
+
+
+def get_program_description(*, string_type: str, length: int) -> tuple:
+    """
+    Get human-readable program description and its length.
+
+    :param string_type: Type of string
+    :param length: Length of string
+    :return: Tuple of (description text, description length)
+    """
+    desc_length = calculate_description_length(
+        string_type=string_type, length=length
+    )
+    if string_type == "All Zeros":
+        description = (
+            f"# Program to generate string:\n"
+            f"def generate():\n"
+            f"    return '0' * {length}\n\n"
+            f"Description length: ~{desc_length} bits\n"
+            f"(Base overhead + log2({length}))"
+        )
+    elif string_type == "Repeating 01":
+        description = (
+            f"# Program to generate string:\n"
+            f"def generate():\n"
+            f"    return '01' * {length // 2}\n\n"
+            f"Description length: ~{desc_length} bits\n"
+            f"(Base + pattern + log2({length}))"
+        )
+    elif string_type == "Fibonacci":
+        description = (
+            f"# Program to generate string:\n"
+            f"def generate():\n"
+            f"    fib = [1,1]\n"
+            f"    while fib[-1] < {length}:\n"
+            f"        fib.append(fib[-1]+fib[-2])\n"
+            f"    result = ['0']*{length}\n"
+            f"    for f in fib:\n"
+            f"        if f < {length}: result[f]='1'\n"
+            f"    return ''.join(result)\n\n"
+            f"Description: ~{desc_length} bits"
+        )
+    elif string_type == "Random":
+        # Must include actual bits (show truncated).
+        description = (
+            f"# Program to generate string:\n"
+            f"def generate():\n"
+            f"    # No pattern - must store all bits\n"
+            f"    return '[actual bits...]'\n\n"
+            f"Description length: ~{desc_length} bits\n"
+            f"(Full string - incompressible!)"
+        )
+    elif string_type == "Semi-random":
+        description = (
+            f"# Program to generate string:\n"
+            f"def generate():\n"
+            f"    # First half: pattern\n"
+            f"    p = '00001111' * {length // 16}\n"
+            f"    # Second half: random bits\n"
+            f"    r = '[random bits...]'\n"
+            f"    return p + r\n\n"
+            f"Description: ~{desc_length} bits"
+        )
+    else:
+        description = f"Unknown type\nLength: {desc_length} bits"
+    return description, desc_length
+
+
+def plot_kolmogorov_complexity_interactive(
+    *,
+    string_type: str = "Random",
+    length: int = 64,
+    figsize: Optional[tuple] = None,
+) -> None:
+    """
+    Interactive visualization of Kolmogorov Complexity concept.
+
+    :param string_type: Type of binary string to generate
+    :param length: Length of binary string
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
+    """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
+    # Generate string.
+    binary_string = generate_string_by_type(
+        string_type=string_type, length=length, seed=42
+    )
+    # Get program description.
+    program_desc, desc_length = get_program_description(
+        string_type=string_type, length=length
+    )
+    # Calculate compression ratio.
+    compression_ratio = desc_length / length if length > 0 else 1.0
+    # Determine complexity interpretation.
+    if compression_ratio < 0.3:
+        complexity_level = "Very Low"
+        interpretation = (
+            f"Highly structured pattern.\n"
+            f"Short program generates long string.\n"
+            f"Compression ratio: {compression_ratio:.2%}\n"
+            f"K-complexity << string length"
+        )
+        color_status = "green"
+    elif compression_ratio < 0.6:
+        complexity_level = "Low to Medium"
+        interpretation = (
+            f"Some structure present.\n"
+            f"Moderate compression possible.\n"
+            f"Compression ratio: {compression_ratio:.2%}\n"
+            f"K-complexity < string length"
+        )
+        color_status = "yellowgreen"
+    elif compression_ratio < 0.9:
+        complexity_level = "Medium to High"
+        interpretation = (
+            f"Limited structure.\n"
+            f"Minimal compression achieved.\n"
+            f"Compression ratio: {compression_ratio:.2%}\n"
+            f"K-complexity approaching length"
+        )
+        color_status = "orange"
+    else:
+        complexity_level = "Very High (Random)"
+        interpretation = (
+            f"No compressible pattern!\n"
+            f"Description equals string length.\n"
+            f"Compression ratio: {compression_ratio:.2%}\n"
+            f"K-complexity ≈ string length"
+        )
+        color_status = "red"
+    # Create visualization with 4 subplots in a single row.
+    # Use gridspec_kw to set fixed width ratios for consistent layout.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    )
+    # Plot 1: String Visualization.
+    # Display binary string as colored grid.
+    n_rows = min(8, int(np.ceil(np.sqrt(length))))
+    n_cols = int(np.ceil(length / n_rows))
+    # Pad string to fill grid.
+    padded_length = n_rows * n_cols
+    padded_string = np.pad(
+        binary_string,
+        (0, padded_length - length),
+        mode="constant",
+        constant_values=-1,
+    )
+    grid = padded_string.reshape(n_rows, n_cols)
+    # Create color map: 0=blue, 1=red, -1=gray (padding).
+    cmap_colors = ["#3498db", "#e74c3c", "#95a5a6"]  # Blue, Red, Gray
+    from matplotlib.colors import ListedColormap
+    cmap = ListedColormap(cmap_colors)
+    im = ax1.imshow(grid, cmap=cmap, aspect="auto", vmin=-1, vmax=1)
+    ax1.set_title(
+        f"Binary String Visualization\n({string_type}, n={length})",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax1.set_xlabel("Bit Position (columns)", fontsize=11)
+    ax1.set_ylabel("Rows", fontsize=11)
+    ax1.set_xticks([])
+    ax1.set_yticks([])
+    # Add legend.
+    from matplotlib.patches import Patch
+    legend_elements = [
+        Patch(facecolor="#3498db", label="0 bit"),
+        Patch(facecolor="#e74c3c", label="1 bit"),
+    ]
+    ax1.legend(
+        handles=legend_elements, loc="upper right", fontsize=9, framealpha=0.9
+    )
+    # Plot 2: Program Description.
+    ax2.axis("off")
+    ax2.set_title(
+        "Shortest Program Description",
+        fontsize=14,
+        fontweight="bold",
+        pad=20,
+    )
+    ax2.text(
+        0.05,
+        0.95,
+        program_desc,
+        transform=ax2.transAxes,
+        fontsize=8,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="lightblue", alpha=0.3),
+        wrap=True,
+    )
+    # Plot 3: Complexity Comparison.
+    metrics = ["String\nLength", "Description\nLength"]
+    values = [length, desc_length]
+    colors_bar = ["steelblue", "coral"]
+    bars = ax3.bar(
+        metrics,
+        values,
+        color=colors_bar,
+        alpha=0.7,
+        edgecolor="black",
+        linewidth=2,
+    )
+    ax3.set_ylabel("Length [bits]", fontsize=12)
+    ax3.set_title("Complexity Comparison", fontsize=14, fontweight="bold")
+    ax3.grid(True, alpha=0.3, axis="y")
+    # Add value labels on bars.
+    for bar, val in zip(bars, values):
+        height = bar.get_height()
+        ax3.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            height + max(values) * 0.02,
+            f"{int(val)}",
+            ha="center",
+            va="bottom",
+            fontsize=11,
+            fontweight="bold",
+        )
+    # Add compression ratio as text annotation.
+    ax3.text(
+        0.5,
+        0.5,
+        f"Compression\nRatio:\n{compression_ratio:.1%}",
+        transform=ax3.transAxes,
+        fontsize=12,
+        ha="center",
+        va="center",
+        fontweight="bold",
+        bbox=dict(
+            boxstyle="round,pad=0.8", facecolor=color_status, alpha=0.3
+        ),
+    )
+    # Plot 4: Comments Panel.
+    ax4.axis("off")
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    # Wrap interpretation text for consistent layout.
+    wrapped_interpretation = textwrap.fill(interpretation, width=40)
+    # Add explanation text.
+    text_content = (
+        f"Kolmogorov Complexity:\n"
+        f"{'=' * 30}\n\n"
+        f"String Type: {string_type}\n"
+        f"String Length: {length} bits\n"
+        f"Description Length: {desc_length} bits\n\n"
+        f"Complexity Level:\n"
+        f"  {complexity_level}\n\n"
+        f"Analysis:\n"
+        f"  {wrapped_interpretation}\n\n"
+        f"Key Insight:\n"
+        f"  K(x) = length of shortest\n"
+        f"  program generating x.\n"
+        f"  Random strings: K(x) ≈ |x|\n"
+        f"  Patterned: K(x) << |x|"
+    )
+    ax4.text(
+        0.05,
+        0.95,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=9,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
+        wrap=True,
+    )
+    # Use subplots_adjust with fixed parameters for consistent dimensions.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
+    )
     plt.show()
