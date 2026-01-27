@@ -14,14 +14,14 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{8.1: Intro to Causal AI}}$$**
+**$$\text{\blue{Lesson 08.1: Intro to Causal AI}}$$**
 \endgroup
 
 \vspace{1cm}
 
 ::: columns
 :::: {.column width=75%}
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 

@@ -18,7 +18,7 @@ MSML610: Advanced Machine Learning
 \endgroup
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 # ##############################################################################
 # MSML610

@@ -1,0 +1,474 @@
+// notes_to_pdf.py --input msml610/lectures_source/figures/Lesson5-Theory_Statistical_learning.txt --output tmp.pdf --type slides --debug_on_error --skip_action cleanup_after --toc_type navigation
+
+// /Users/saggese/Library/CloudStorage/GoogleDrive-saggese@gmail.com/My\ Drive/books/Math\ -\ Machine\ learning/LearningFromData/Abu-Mostafa\ Yaser\ S.,\ Malik\ Magdon\ \(2012\)\ --Ismail,\ et\ al.,\ Learning\ From\ Data\ -\ A\ short\ course\ \(2012\).pdf 
+
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 05.3: Learn-Validation}}$$**
+\endgroup
+\vspace{1cm}
+
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+**References**:
+
+- Abu-Mostafa et al.: _"Learning From Data"_ (2012)
+
+::::
+:::: {.column width=20%}
+![](msml610/lectures_source/figures/book_covers/Book_cover_Learning_from_Data.jpg){ height=20% }
+::::
+:::
+
+# ##############################################################################
+# Learn-Validation Approach
+# ##############################################################################
+
+## #############################################################################
+## Train / Test
+## #############################################################################
+
+* Estimating Out-Of-Sample Error with One Point
+- Pick a **single out-of-sample point** $(\vx', y)$
+
+- The error of the model $h$ is:
+  $$
+  E_{val}(h) = e(h(\vx'), y)
+  $$
+  where the error can be:
+  - Squared error $(h(\vx) - y)^2$
+  - Binary error $I[h(\vx) - y]$
+  - ...
+
+- The **error on an out-of-sample point** is an **unbiased estimate** of
+  $E_{out}$, since:
+  $$
+  \EE[E_{val}(h)] = \EE[e(h(\vx), y)] = E_{out}
+  $$
+- The quality of the estimate depends on the standard error $\VV[e(h(\vx), y)]$,
+  which in an unknown value
+
+* Estimating Out-Of-Sample Error with $K$ Points
+- To improve the estimate, use a validation set with $K$ points 
+  $(\vx_1, y_1), ... , (\vx_K, y_K)$ drawn IID
+
+- Compute the **error on the validation set** as:
+  $$
+  E_{val}(h) = \frac{1}{K} \sum_{i=1}^K e(h(\vx_i), y_i)
+  $$
+
+- The validation error is an **unbiased estimate** of out-of-sample error since:
+  $$
+  \EE[E_{val}(h)] = E_{out}(h)
+  $$
+- The standard error is $\sqrt{K}$ smaller:
+  \begingroup \small
+  \begin{alignat*}{2}
+  \VV[E_{val}(h)]
+  & = \frac{1}{K^2} \sum_i \VV[e(h(\vx_i), y_i)] + \text{covariances}
+  \\
+  &\text{(covariances are 0 because $\vx_i$ independent)}
+  \\
+  &= \frac{1}{K^2} \sum_i \VV[e(h(\vx_i), y_i)]
+  \\
+  &= \frac{K \sigma^2}{K^2} = \frac{\sigma^2}{K}
+  \\
+  \end{alignat*}
+  \endgroup
+
+* Trade-Off Between Training and Validation Set
+- **Problem**: you have finite amount of data points $N$
+
+::: columns
+:::: {.column width=60%}
+  $$
+  \begin{aligned}
+  & D_{val} = \{K \text{ points}\} \\
+  & D_{train} = \{N - K \text{ points}\} \\
+  \end{aligned}
+  $$
+
+- You know that:
+  $$
+  \begin{aligned}
+  \uparrow K
+  & \implies |E_{val} - E_{out}| \downarrow \text{ (most reliable estimate)}
+  \\
+  & \implies \downarrow N - K \implies E_{in}, E_{out} \uparrow \text{ (worse model)}
+  \\
+  \end{aligned}
+  $$
+  - If $K$ is too big, you get a **reliable estimate of a bad number**!
+
+::::
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/Lesson05_Train_Validation_Set_Trade_Off.png)
+
+::::
+:::
+
+- **Solution**:
+  - Rule of thumb: 70-30 or 80-20 split between train and validation
+
+* Error From VC Analysis vs Learn-Validation Approach
+- In general:
+  $$
+  E_{out}(h) = E_{in}(h) + \text{generalization error}
+  $$
+
+- **VC analysis**
+  - Estimates generalization error as "overfit penalty" in terms of hypothesis
+    set complexity
+
+- **Learn-validation**
+  - Estimates $E_{out}$ directly by holding out data as validation set:
+    $$
+    E_{val} \approx E_{out}
+    $$
+  - Use learn-validation approach at different points of the modeling flow:
+    - For selecting hyperparameters (validation set)
+    - To estimate final performance (test set)
+
+* Reusing Validation / Test Set for Training
+- Any data used for learning (e.g., model training or model selection)
+  - Is biased and optimistic
+  - Cannot used to assess the learned model
+
+- **Never use** $D_{val}$ / $D_{test}$ for training or $D_{train}$ for evaluation
+
+- After research is done, all available data can be used to learn
+
+::: columns
+:::: {.column width=60%}
+
+- **Algorithm**
+  1. Train with $N - K$ points to learn $g^-$
+  2. Use $K$ points to compute $E_{val}[g^-]$ estimating $E_{out}[g^-]$
+  3. Once the model form is finalized, use all $N$ data points (including
+     validation, test set) to re-train to get $g$
+     - $E_{val}[g] < E_{val}[g^-]$ since $g$ is learned on a larger data set
+       than $g^-$ and is thus better
+  4. Deliver to customers:
+     - Final hypothesis $g$
+     - Upper bound of out-of-sample performance $E_{val}[g^-]$
+
+::::
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/Lesson05_Use_Validation_Set_To_Train.png)
+
+::::
+:::
+
+// TODO: Add pic
+
+* Learn-Validation Approach: Pros and Cons
+- **Pros**
+  - Estimate $E_{out}$ using $E_{val}$
+  - Simple to compute, no complexity from VC analysis
+
+- **Cons**
+  - Cannot use all data for learning and validation; need a compromise
+  - Learned model and $E_{val}$ depend on the split; different splits can give
+    different results
+
+## #############################################################################
+## Cross-Validation
+## #############################################################################
+
+* Cross-validation
+::: columns
+:::: {.column width=55%}
+
+- **Divide dataset** into $K$ folds, each with $\frac{N}{K}$ samples
+  - Each fold should reflect dataset statistics
+  - E.g., stratified sampling
+
+- **Do $K$ iterations** $i = 1, ..., K$
+- In $i$-th iteration
+  - Train on all folds except $i$ using $\frac{K - 1}{K}N$ points and get
+    $g^{(-i)}(\vx)$
+  - Validate on $i$-th fold using $\frac{N}{K}$ points to compute
+    $$
+    E_{val}^{(i)} = E_{val}[g^{(-i)}(\vx)]
+    $$
+
+- **Average** $K$ error rates and compute bounds:
+  $$
+  E_{val} = \frac{1}{K} \sum_i E_{val}^{(i)}
+  $$
+
+::::
+:::: {.column width=40%}
+
+\begingroup \scriptsize
+_Train / test validation_
+\endgroup
+\vspace{0.1cm}
+
+```tikz
+    \def\blockwidth{1.2}
+    \def\blockheight{0.7}
+
+    % Label
+    \node[anchor=east] at (-0.2, -0.5*\blockheight) {\textbf{Train/Test Split}};
+
+    % Create 6 blocks
+    \foreach \j in {0,...,5} {
+        \pgfmathsetmacro{\x}{\j * \blockwidth}
+        \pgfmathsetmacro{\y}{0}
+
+        % Mark first 4 as train, last 2 as test
+        \ifnum\j<4
+            \fill[blue!70] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
+            \node at (\x + 0.5*\blockwidth, \y - 0.5*\blockheight) {\textbf{Train}};
+        \else
+            \fill[red!80] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
+            \node at (\x + 0.5*\blockwidth, \y - 0.5*\blockheight) {\textbf{Test}};
+        \fi
+
+        \draw[black] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
+    }
+```
+
+\vspace{1cm}
+\begingroup \scriptsize
+_5x cross-validation_
+\endgroup
+\vspace{0.1cm}
+
+```tikz
+\def\blockwidth{1.2}
+\def\blockheight{0.7}
+\def\vspacing{1.2} % vertical spacing between iterations
+\def\nfolds{6}
+
+\foreach \i in {1,...,5} {
+    % Compute vertical center for this row
+    \pgfmathsetmacro{\ycenter}{-\i * \vspacing - 0.5 * \blockheight}
+
+    % Label each iteration (vertically centered)
+    \node[anchor=east] at (-0.2, \ycenter) {\textbf{Iteration \i}};
+
+    \foreach \j in {0,...,4} {
+        \pgfmathtruncatemacro{\jj}{\j + 1}
+
+        % Compute block position
+        \pgfmathsetmacro{\x}{\j * \blockwidth}
+        \pgfmathsetmacro{\y}{-\i * \vspacing}
+
+        % Fill and label blocks
+        \ifnum\i=\jj
+            \fill[red!80] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
+            \node at (\x + 0.5*\blockwidth, \y - 0.5*\blockheight) {\textbf{Test}};
+        \else
+            \fill[blue!70] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
+            \node at (\x + 0.5*\blockwidth, \y - 0.5*\blockheight) {\textbf{Train}};
+        \fi
+
+        % Draw borders
+        \draw[black] (\x, \y) rectangle ++(\blockwidth, -\blockheight);
+    }
+}
+```
+
+:::: 
+:::
+
+* Cross-Validation: Pros and Cons
+- **Pros**
+  - Efficient data usage
+    - All data used for learning and validation
+  - Better estimate of $E_{val}$ than separate training/validation sets
+  - Folds can be stratified
+
+- **Cons**
+  - Computationally intensive: $K$ learning phases
+  - Dependency on fold selection
+  - Errors $E_{val}$ are not independent
+    - Coupling through common training samples
+    - Experimentally not completely correlated
+
+* Repeated Cross-Validation
+- **Repeated Cross-Validation**
+  - Cross-validation results depend on fold selection
+  - To remove this dependency, repeat cross-validation multiple times (e.g., 10)
+    and average results
+  - Note that _"10x 10-fold cross-validation"_ is different than _"1x 100-fold
+    cross-validation"_
+
+* Leave-One-Out Cross-Validation
+- **Leave-one-out** (LOO) cross-validation
+  - There are $N$ training sessions
+  - Each session trains on $N - 1$ points and validates on 1 point
+  - Equivalent to "$N$-fold cross-validation" where $N$ is the number of examples
+    in the dataset
+
+- **Train**
+  - For $i$-th fold, $N - 1$ samples for training $\implies g^{(-i)} \approx g$
+
+- **Validate**
+  - Estimate the validation error on a single point (bad):
+    $$
+    E_{val}[g^{(-i)}] = e(g^{(-i)}(\vx_i), y_i) \not\approx E_{out}[g^{(-i)}]
+    $$
+  - Average $E_{val}$ over the points as estimate of $E_{out}$ (good):
+    $$
+    E_{val}
+    = \frac{1}{N} \sum_{i=1}^K E_{val}[g^{(-i)}]
+    $$
+
+* Leave-One-Out Cross-Validation: Pros and Cons
+- **Pros**
+  - Max data used for training
+  - Deterministic procedure
+    - No dependency on fold selection
+
+- **Cons**
+  - High computational cost (as many learning phases as data points)
+  - Cannot be stratified
+  - Higher correlation between cross-validation estimates
+
+* Bootstrap
+- **Algorithm**
+  - Pick $N$ samples with replacement from a data set with $N$ instances to
+    build training set
+  - Pick the elements never chosen to build the test set ("out-of-bag" samples)
+  - Training set contains 63.2\% of all the samples, 36.8\% in the test set
+
+- **Pros**
+  - Works for small data sets since it "expands" the data
+
+- **Cons**
+  - Not flexible
+  - Smaller percentage of instances are used for training set than 10-fold cross
+    validation
+
+* Bootstrap: Problem
+- **Assumption**
+  - Given $X \sim F$
+  - Draw $n$ IID samples $X_i$ from $F$
+
+- **Goal**:
+  - Consider a sampling statistic $T = g(X_1, ..., X_n)$
+    - E.g., mean, median, OLS coefficients, ...
+  - You want to:
+    - Estimate distribution of $T$, e.g., $F_T(x), f_T(x)$
+    - Estimate a statistic of $T$, e.g., mean, std err
+    - Construct confidence intervals, e.g., $\mu \pm \epsilon$
+    - Calculate standard errors, e.g., $\sigma(\hat{T}_n)$
+    - Hypothesis testing
+
+* Bootstrap Procedure: Algorithm
+- Use observed data $X_1, ..., X_n$ to construct estimated population
+  distribution $\hat{F}_n$
+
+- Repeat $B$ times:
+  - Draw $n$ samples with replacement from estimated population distribution
+    $\hat{F}_n$
+  - Sampling with replacement from $X_i$ equals sampling from $\hat{F}_n$
+  - Compute sample statistics from $n$ samples:
+    $T^{(i)} = g(X^{(i)}_1, ..., X^{(i)}_n)$
+
+- Use $B$ samples of $T^{(i)}$ to estimate empirical distribution $\hat{T}$
+
+- Compute statistics (e.g., confidence interval, standard error) of $T$ from
+  empirical distribution of $\hat{T}$
+
+* Bootstrap: Pros
+- **Tremendously useful tool**
+  - Fewer assumptions
+    - No need for simplifying assumptions for closed formulas
+    - Data doesn't need to be Gaussian
+  - Generality
+    - Applies to any sample statistics, even non-linear ones (e.g., median)
+
+- **Math $\to$ simulation**
+  - Bootstrap is a non-parametric method
+  - Does not rely on large sample sizes, e.g., Central Limit Theorem (CLT) / Law
+    Large Numbers (LLN)
+  - Bootstrap frees data scientists from complex math, approximations, and
+    asymptotics
+
+* Bootstrap: Example of Die Rolls
+- **Problem**
+  - Compute distribution of sum of rolling a die 50 times
+    $$Y = \sum_{i=1}^{50} X_i = g(X_1, ..., X_{50})$$
+  - Sample statistics similar to sample mean, but can be anything
+
+- **Solution**
+  1. **By math**
+     - If you know PMF of the die, compute distribution using mathematics
+     - Theorem of lazy statistician for mean, variance
+     - Compute PDF of $Y$ by convolving PDFs
+  2. **By sampling** (real or simulated)
+     - Roll die 50 times
+     - Compute sample statistic
+     - Repeat procedure
+     - Plot approximate distribution of $Y$
+  3. If only 50 samples of die are known $\to$ **bootstrap**
+
+* Bootstrap of the Median: Pseudo-Code
+
+// TODO(gp): Add a way to render it with render_images.py
+
+\begingroup \small
+```
+def bootstrap_median(x, n_boot):
+    # Compute n_boot sample statistics.
+    median_boot = [0.0] * n_boot
+    for i in range(n_boot):
+        # Sample with replacement.
+        x_star = sample with replacements from x
+        # Compute median for bootstrapped samples.
+        median_boot[i] = median(x_star)
+    # Compute mean and std err from approximation of sample statistics.
+    m_median = numpy.mean(median_boot)
+    se_median = numpy.std(median_boot)
+    return m_median, se_median
+```
+\endgroup
+
+* Bootstrap for variance of sample statistics: explanation
+- Under the hypotheses of bootstrap:
+  - $X \sim F$
+  - $n$ samples $X_i$ IID from $F$
+  - Statistic $T = g(X_1, ..., X_n)$
+  - Compute $\VV_F[T]$ (variance of sample statistics), where $F$ is unknown
+
+- **First approximation**
+  - Only samples from $F$ available
+  - Approximate $F$ with $\hat{F}$, as empirical CDF $\hat{F}$ converges to $F$
+    $$\VV_F[T] \approx \VV_{\hat{F}}[T]$$
+  - Approximation
+    - Not small
+    - Depends on sample size and shape of $F$
+
+- **Second approximation**
+  - Exact $\hat{F}$ may lack closed formula for $\VV_{\hat{F}}[T]$
+  - Use LLN and simulation to approximate variance:
+    $$
+    \VV_{\hat{F}}[T]
+    \approx v_{boot}
+    = \frac{1}{B} \sum_i (T_i - \overline{T}) ^ 2
+    $$
+  - Approximation size reduced by increasing $B$
+  - $v_{boot} \to \VV_{\hat{F}}[T]$ as $B \to \infty$

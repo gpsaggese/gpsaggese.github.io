@@ -14,14 +14,14 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Lesson 03.1: A Brief History of AI}}$$**
+**$$\text{\blue{Lesson 01.3: A Brief History of AI}}$$**
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 - AIMA (Artificial Intelligence: a Modern Approach), Chap 1

@@ -14,14 +14,14 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{8.2: Causal Inference}}$$**
+**$$\text{\blue{Lesson 08.2: Causal Inference}}$$**
 \endgroup
 
 \vspace{1cm}
 
 ::: columns
 :::: {.column width=75%}
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 
