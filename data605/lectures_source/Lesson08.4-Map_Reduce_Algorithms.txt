@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{8.4: Map Reduce Algorithms}}$$**
+**$$\text{\blue{08.4: Map Reduce Algorithms}}$$**
 \endgroup
 
 ::: columns

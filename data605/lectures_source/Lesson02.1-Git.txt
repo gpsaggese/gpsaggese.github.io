@@ -18,14 +18,15 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Lesson 2.1: Git}}$$**
+**$$\text{\blue{02.1: Git}}$$**
 \endgroup
 
-::: columns
-:::: {.column width=75%}
 \vspace{1cm}
 
 **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+::: columns
+:::: {.column width=75%}
 
 ::::
 :::: {.column width=20%}

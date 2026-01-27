@@ -16,7 +16,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Lesson 5.3: Apache HBase}}$$**
+**$$\text{\blue{05.3: Apache HBase}}$$**
 \endgroup
 
 ::: columns

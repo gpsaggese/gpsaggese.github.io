@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{6.4: CouchDB}}$$**
+**$$\text{\blue{06.4: CouchDB}}$$**
 \endgroup
 
 ::: columns

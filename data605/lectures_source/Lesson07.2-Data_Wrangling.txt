@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{7.2: Data Wrangling and Cleaning}}$$**
+**$$\text{\blue{07.2: Data Wrangling and Cleaning}}$$**
 \endgroup
 
 \vspace{1cm}

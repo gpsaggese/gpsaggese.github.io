@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{7.1: Orchestration with Airflow}}$$**
+**$$\text{\blue{07.1: Orchestration with Airflow}}$$**
 \endgroup
 
 ::: columns

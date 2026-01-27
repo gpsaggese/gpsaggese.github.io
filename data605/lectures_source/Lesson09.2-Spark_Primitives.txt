@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{9.1: Apache Spark: Primitives}}$$**
+**$$\text{\blue{09.2: Apache Spark: Primitives}}$$**
 \endgroup
 
 ::: columns

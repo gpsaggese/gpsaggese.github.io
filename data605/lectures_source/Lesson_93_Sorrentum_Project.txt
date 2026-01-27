@@ -14,7 +14,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**Sorrentum Tutorial**
+**$$\text{\blue{93: Sorrentum Project}}$$**
 \endgroup
 
 ::: columns

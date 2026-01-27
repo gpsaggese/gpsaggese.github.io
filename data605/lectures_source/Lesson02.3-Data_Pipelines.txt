@@ -16,14 +16,15 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Lesson 2.2: Data Pipelines}}$$**
+**$$\text{\blue{02.3: Data Pipelines}}$$**
 \endgroup
 
-::: columns
-:::: {.column width=75%}
 \vspace{1cm}
 
 **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+::: columns
+:::: {.column width=75%}
 
 ::::
 :::: {.column width=20%}
