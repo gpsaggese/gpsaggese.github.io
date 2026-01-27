@@ -1,0 +1,18 @@
+# Core dependencies
+numpy>=1.21.0,<1.24.0
+pandas>=1.3.0,<2.0.0
+matplotlib>=3.4.0
+jupyter>=1.0.0
+
+# GluonTS with PyTorch backend (works on Apple Silicon)
+# Note: Using PyTorch instead of MXNet for M1/M2 compatibility
+gluonts[torch]==0.14.0
+torch>=2.0.0,<2.6  # Pin to <2.6 to avoid weights_only loading issues
+
+# Data loading
+gdown>=4.4.0
+requests>=2.26.0
+python-dateutil>=2.8.2
+
+# Optional but useful
+seaborn>=0.11.0
