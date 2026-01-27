@@ -1626,8 +1626,9 @@ def plot_cross_entropy_interactive(
             fontweight="bold",
         )
     # Highlight H(P,Q) bar as the main focus.
-    ax3.get_children()[1].set_linewidth(3)
-    ax3.get_children()[1].set_edgecolor("darkviolet")
+    if len(ax3.patches) >= 2:
+        ax3.patches[1].set_linewidth(3)
+        ax3.patches[1].set_edgecolor("darkviolet")
     # Plot 4: Comments text panel.
     ax4.axis("off")
     ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)

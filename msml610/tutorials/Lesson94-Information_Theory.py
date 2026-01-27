@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -549,15 +549,13 @@ ut.generate_animation(
 # - Loss function in classification (logistic regression, neural networks)
 # - Model evaluation and comparison
 # - Information compression
-#
-# ## Interactive Visualization: Cross-Entropy
-#
+
+# %%
 # Adjust the sliders to see how cross-entropy changes when the true distribution P and model distribution Q differ:
 # - When P = Q (on diagonal), cross-entropy equals entropy H(P) (optimal encoding)
 # - When P != Q, cross-entropy = H(P) + D_KL(P||Q) (extra cost from model mismatch)
 # - This extra cost is why cross-entropy works as a loss function in machine learning
 
-# %%
 # Create interactive widget for cross-entropy visualization.
 interact(
     utils.plot_cross_entropy_interactive,
