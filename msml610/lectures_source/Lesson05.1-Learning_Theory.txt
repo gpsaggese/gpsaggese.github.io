@@ -37,8 +37,6 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
-
-
 # Is Machine Learning Even Possible?
 
 * A Simple Visual ML Experiment (1/2)
@@ -1019,4 +1017,3 @@ digraph ML_Phases {
   - VC analysis is a warranty, forfeited if data is examined before model
     selection (data snooping)
   - From VC analysis, complexity is that of the initial hypothesis set
-
