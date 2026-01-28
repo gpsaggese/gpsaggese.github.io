@@ -1,13 +1,14 @@
 # ---
 # jupyter:
 #   jupytext:
+#     formats: ipynb,py:percent
 #     text_representation:
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
@@ -50,25 +51,25 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %% [markdown]
-# # Step 1: Building Intuition about Hoeffding Inequality
+# # Building Intuition about Hoeffding Inequality
 #
 # We will build intuition about the Hoeffding Inequality progressively through
 # multiple cells, each adding more understanding about how sample means relate
 # to the true probability.
 
 # %% [markdown]
-# ## Cell 1: Basic Bernoulli Sampling Code
+# ## Basic Bernoulli Sampling Code
 #
 # Start with a simple code example showing how to create Bernoulli samples and
 # compute basic statistics.
 
 # %%
 # Demonstrate basic Bernoulli sampling.
-utils.demonstrate_bernoulli_sampling()
+utils.sample_bernoulli1()
 # This shows the code for generating samples and computing the empirical mean.
 
 # %% [markdown]
-# ## Cell 2: Samples Over Time and Empirical PDF
+# ## Samples Over Time and Empirical PDF
 #
 # Visualize the N samples from a Bernoulli distribution both as a sequence over
 # time and as an empirical probability distribution function (PDF).
@@ -80,10 +81,10 @@ utils.demonstrate_bernoulli_sampling()
 
 # %%
 # Display N samples over time and their empirical PDF.
-utils.sample_bernoulli_with_pdf()
+utils.sample_bernoulli2()
 
 # %% [markdown]
-# ## Cell 3: PDF, Empirical Mean, and Statistics
+# ## PDF, Empirical Mean, and Statistics
 #
 # Examine the probability distribution of N samples, compute the empirical mean
 # nu, and compare with the theoretical mean and variance of the Bernoulli
@@ -97,16 +98,11 @@ utils.sample_bernoulli_with_pdf()
 
 # %%
 # Display PDF, empirical mean nu, and compare with theoretical statistics.
-utils.create_interactive_widget_cell3(
-    utils.plot_bernoulli_pdf_cell2,
-    mu_init=0.6,
-    N_init=100,
-    seed_init=42,
-)
+utils.sample_bernoulli3()
 # Changing the seed generates new realizations with different empirical values.
 
 # %% [markdown]
-# ## Cell 4: Distribution of Empirical Mean
+# ## Distribution of Empirical Mean
 #
 # Examine what happens when we repeatedly sample N points many times. Each
 # trial produces an empirical mean nu. This cell shows the distribution of nu
@@ -120,11 +116,5 @@ utils.create_interactive_widget_cell3(
 
 # %%
 # Display the distribution of empirical mean nu from repeated sampling.
-utils.create_interactive_widget_cell4(
-    utils.plot_empirical_mean_distribution_cell3,
-    mu_init=0.6,
-    N_init=100,
-    n_samples_init=1000,
-    seed_init=42,
-)
+utils.sample_bernoulli4()
 # As N increases, the distribution becomes more concentrated around mu.
