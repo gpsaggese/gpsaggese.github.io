@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.19.1
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -21,6 +21,21 @@
 #
 # **References**:
 # - Abu-Mostafa et al.: _"Learning From Data"_ (2012)
+
+# %% [markdown]
+# ## Imports
+
+# %%
+import logging
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from ipywidgets import interact, FloatSlider, IntSlider, fixed
+
+# Set plotting style.
+sns.set_style("whitegrid")
+plt.rcParams["figure.figsize"] = (12, 6)
 
 # %% [markdown]
 # ## 1. Is Machine Learning Even Possible?
@@ -85,6 +100,58 @@
 # - Trade-off: smaller $\varepsilon$ requires larger $N$ for the same probability bound
 #
 # This is a **Probably Approximately Correct (PAC)** statement.
+
+# %% [markdown]
+# ### Interactive Visualization: Hoeffding Inequality
+
+# %%
+# Interactive visualization showing how sample statistics track population statistics.
+import utils_Lesson05_Learning_Theory as utils
+
+interact(
+    utils.plot_hoeffding_interactive,
+    mu=FloatSlider(min=0.1, max=0.9, step=0.05, value=0.6, description='mu (true prop)'),
+    N=IntSlider(min=10, max=1000, step=10, value=100, description='N (sample size)'),
+    epsilon=FloatSlider(min=0.01, max=0.3, step=0.01, value=0.1, description='epsilon (tolerance)'),
+    n_trials=IntSlider(min=100, max=10000, step=100, value=1000, description='n_trials'),
+    figsize=fixed((20, 5))
+)
+# Adjust the sliders to see how:
+# - Larger N makes the bound tighter (exponential improvement)
+# - Smaller epsilon requires larger N for same confidence
+# - Empirical violation rate is typically much less than the bound
+# - The bound works regardless of the true value of mu
+
+# %% [markdown]
+# # Hoeffding Inequality: Study
+
+# %% [markdown]
+# ### Cell 1: Empirical vs Expected Distribution
+
+# %%
+# Create Bernoulli binomial with probability mu, sample N times, and compare empirical vs expected distribution.
+interact(
+    utils.plot_hoeffding_study_empirical_vs_expected,
+    mu=FloatSlider(min=0.1, max=0.9, step=0.05, value=0.6, description='mu (true prob)'),
+    N=IntSlider(min=10, max=500, step=10, value=100, description='N (sample size)'),
+    n_trials=IntSlider(min=100, max=5000, step=100, value=1000, description='n_trials'),
+    figsize=fixed((20, 5))
+)
+# The empirical distribution of nu converges to the expected normal distribution as n_trials increases.
+
+# %% [markdown]
+# ### Cell 2: Distribution of mu - nu
+
+# %%
+# Compute and visualize the distribution of the difference mu - nu.
+interact(
+    utils.plot_hoeffding_study_difference_distribution,
+    mu=FloatSlider(min=0.1, max=0.9, step=0.05, value=0.6, description='mu (true prob)'),
+    N=IntSlider(min=10, max=500, step=10, value=100, description='N (sample size)'),
+    n_trials=IntSlider(min=100, max=5000, step=100, value=1000, description='n_trials'),
+    figsize=fixed((20, 5))
+)
+# The distribution of mu - nu is centered at zero and its spread decreases with larger N.
 
 # %% [markdown]
 # ### 1.5 Supervised Learning: Bin Analogy (Part 2)

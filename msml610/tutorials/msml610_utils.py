@@ -12,12 +12,13 @@ import os
 from typing import Any, Callable, List, Optional, Tuple, Union
 
 import arviz as az
-import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pymc as pm
 import scipy.stats as stats
+import ipywidgets
+from ipywidgets import Button, FloatSlider, FloatText, HBox, IntSlider, IntText
 from IPython.display import clear_output, display
 from PIL import Image
 
@@ -29,46 +30,168 @@ _LOG = logging.getLogger(__name__)
 
 
 # #############################################################################
-# Animation parameter generation.
+# Widget Builder Utilities
 # #############################################################################
 
 
-def generate_animation_values(
-    mode: str,
-    sweep_variable: str,
-    const_variable: Optional[str] = None,
-    const_value: Optional[Any] = None,
+def _create_slider_widget(
     *,
-    n_steps: int = 11,
-    sweep_min: float = 0.0,
-    sweep_max: float = 1.0,
-    **extra_constants: Any,
-) -> List[dict]:
+    name: str,
+    description: str,
+    min_val: float,
+    max_val: float,
+    step: float,
+    initial_value: float,
+    is_float: bool = True,
+) -> Tuple:
     """
-    Generate a list of values for a given mode, sweep variable, and constant variable(s).
+    Create a slider widget with text field and +/- buttons.
 
-    :param mode: Mode of the sweep variable.
-    :param sweep_variable: Name of the sweep variable.
-    :param const_variable: Name of the constant variable (optional).
-    :param const_value: Value of the constant variable (optional).
-    :param n_steps: Number of steps in the sweep.
-    :param sweep_min: Minimum value for the sweep variable.
-    :param sweep_max: Maximum value for the sweep variable.
-    :param extra_constants: Additional constant variables as keyword arguments.
-    :return: List of values.
+    Creates a complete widget control with slider, text input field, and
+    increment/decrement buttons following the notebook conventions.
+
+    :param name: Variable name (e.g., "mu", "N", "seed")
+    :param description: Human-readable description (e.g., "prob of success")
+    :param min_val: Minimum value for the slider
+    :param max_val: Maximum value for the slider
+    :param step: Step size for slider and buttons
+    :param initial_value: Initial value
+    :param is_float: If True, create FloatSlider/FloatText, else IntSlider/IntText
+    :return: Tuple of (slider, text, minus_button, plus_button)
     """
-    if mode == "linear":
-        sweep_values = np.linspace(sweep_min, sweep_max, n_steps)
+    # Create widgets based on type.
+    if is_float:
+        slider = FloatSlider(
+            min=min_val,
+            max=max_val,
+            step=step,
+            value=initial_value,
+            description=f"{name} = {description}",
+            continuous_update=False,
+            style={"description_width": "150px"},
+            layout={"width": "500px"},
+        )
+        text = FloatText(
+            value=initial_value,
+            step=step,
+            description="",
+            layout={"width": "80px"},
+        )
     else:
-        raise ValueError(f"Invalid mode: {mode}")
-    values = []
-    for val in sweep_values:
-        entry = {sweep_variable: val}
-        if const_variable is not None:
-            entry[const_variable] = const_value
-        entry.update(extra_constants)
-        values.append(entry)
-    return values
+        slider = IntSlider(
+            min=int(min_val),
+            max=int(max_val),
+            step=int(step),
+            value=int(initial_value),
+            description=f"{name} = {description}",
+            continuous_update=False,
+            style={"description_width": "150px"},
+            layout={"width": "500px"},
+        )
+        text = IntText(
+            value=int(initial_value),
+            step=int(step),
+            description="",
+            layout={"width": "80px"},
+        )
+    # Create buttons.
+    minus_button = Button(description="-", layout={"width": "40px"})
+    plus_button = Button(description="+", layout={"width": "40px"})
+    return slider, text, minus_button, plus_button
+
+
+def _link_slider_widgets(
+    slider, text, minus_button, plus_button
+) -> None:
+    """
+    Link slider, text field, and buttons together.
+
+    Sets up bidirectional sync between slider and text field, and connects
+    buttons to increment/decrement the slider value.
+
+    :param slider: The slider widget (FloatSlider or IntSlider)
+    :param text: The text input widget (FloatText or IntText)
+    :param minus_button: The decrement button
+    :param plus_button: The increment button
+    """
+    def slider_changed(change):
+        """Update text when slider changes."""
+        text.value = change["new"]
+
+    def text_changed(change):
+        """Update slider when text changes."""
+        if slider.min <= change["new"] <= slider.max:
+            slider.value = change["new"]
+
+    def minus_clicked(b):
+        """Decrement slider value."""
+        slider.value = max(slider.min, slider.value - slider.step)
+
+    def plus_clicked(b):
+        """Increment slider value."""
+        slider.value = min(slider.max, slider.value + slider.step)
+
+    # Connect observers.
+    slider.observe(slider_changed, names="value")
+    text.observe(text_changed, names="value")
+    minus_button.on_click(minus_clicked)
+    plus_button.on_click(plus_clicked)
+
+
+def _create_widget_box(slider, minus_button, text, plus_button) -> HBox:
+    """
+    Create horizontal box layout for widget controls.
+
+    :param slider: The slider widget
+    :param minus_button: The decrement button
+    :param text: The text input widget
+    :param plus_button: The increment button
+    :return: HBox containing all widgets in proper order
+    """
+    return HBox([slider, minus_button, text, plus_button])
+
+
+def build_widget_control(
+    *,
+    name: str,
+    description: str,
+    min_val: float,
+    max_val: float,
+    step: float,
+    initial_value: float,
+    is_float: bool = True,
+) -> Tuple[Union[FloatSlider, IntSlider], HBox]:
+    """
+    Build a complete widget control with slider, text field, and +/- buttons.
+
+    Convenience function that creates, links, and lays out all widget
+    components in a single call.
+
+    :param name: Variable name (e.g., "mu", "N", "seed")
+    :param description: Human-readable description (e.g., "prob of success")
+    :param min_val: Minimum value for the slider
+    :param max_val: Maximum value for the slider
+    :param step: Step size for slider and buttons
+    :param initial_value: Initial value
+    :param is_float: If True, create FloatSlider/FloatText, else IntSlider/IntText
+    :return: Tuple of (slider, box) where slider is the control widget and box
+        is the HBox layout containing all components
+    """
+    # Create widgets with sliders, text fields, and +/- buttons.
+    slider, text, minus_button, plus_button = _create_slider_widget(
+        name=name,
+        description=description,
+        min_val=min_val,
+        max_val=max_val,
+        step=step,
+        initial_value=initial_value,
+        is_float=is_float,
+    )
+    # Link sliders and text fields.
+    _link_slider_widgets(slider, text, minus_button, plus_button)
+    # Create layout.
+    box = _create_widget_box(slider, minus_button, text, plus_button)
+    return slider, box
 
 
 # #############################################################################
@@ -835,6 +958,44 @@ def plot_dog_in_office_pdf(
 # #############################################################################
 # Animation generation utilities.
 # #############################################################################
+
+
+def generate_animation_values(
+    mode: str,
+    sweep_variable: str,
+    const_variable: Optional[str] = None,
+    const_value: Optional[Any] = None,
+    *,
+    n_steps: int = 11,
+    sweep_min: float = 0.0,
+    sweep_max: float = 1.0,
+    **extra_constants: Any,
+) -> List[dict]:
+    """
+    Generate a list of values for a given mode, sweep variable, and constant variable(s).
+
+    :param mode: Mode of the sweep variable.
+    :param sweep_variable: Name of the sweep variable.
+    :param const_variable: Name of the constant variable (optional).
+    :param const_value: Value of the constant variable (optional).
+    :param n_steps: Number of steps in the sweep.
+    :param sweep_min: Minimum value for the sweep variable.
+    :param sweep_max: Maximum value for the sweep variable.
+    :param extra_constants: Additional constant variables as keyword arguments.
+    :return: List of values.
+    """
+    if mode == "linear":
+        sweep_values = np.linspace(sweep_min, sweep_max, n_steps)
+    else:
+        raise ValueError(f"Invalid mode: {mode}")
+    values = []
+    for val in sweep_values:
+        entry = {sweep_variable: val}
+        if const_variable is not None:
+            entry[const_variable] = const_value
+        entry.update(extra_constants)
+        values.append(entry)
+    return values
 
 
 def generate_animation(
