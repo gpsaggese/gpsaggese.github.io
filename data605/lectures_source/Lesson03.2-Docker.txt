@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Lesson 3.2: Docker}}$$**
+**$$\text{\blue{03.2: Docker}}$$**
 \endgroup
 
 ::: columns

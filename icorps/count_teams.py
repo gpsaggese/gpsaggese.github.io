@@ -183,8 +183,12 @@ def _count_umd_teams_by_status(
             if status:
                 # Extract status code.
                 status_code = status.split(":")[0].strip()
-                status_counts[status_code] = status_counts.get(status_code, 0) + 1
-    _LOG.debug("Step 2: Counted %d UMD team entries", sum(status_counts.values()))
+                status_counts[status_code] = (
+                    status_counts.get(status_code, 0) + 1
+                )
+    _LOG.debug(
+        "Step 2: Counted %d UMD team entries", sum(status_counts.values())
+    )
     return status_counts
 
 
@@ -311,7 +315,11 @@ def _main(parser: argparse.ArgumentParser) -> None:
     rows, fieldnames = _read_csv_data(args.input)
     has_umd_column = "UMD Team" in fieldnames
     has_nsf_column = "NSF Background" in fieldnames
-    _LOG.info("CSV columns: UMD Team=%s, NSF Background=%s", has_umd_column, has_nsf_column)
+    _LOG.info(
+        "CSV columns: UMD Team=%s, NSF Background=%s",
+        has_umd_column,
+        has_nsf_column,
+    )
     # Step 1: Count all teams by status.
     status_counts = _count_teams_by_status(rows)
     # Step 2: Count UMD teams by status.

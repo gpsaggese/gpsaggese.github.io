@@ -18,11 +18,11 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Time Series Machine Learning}}$$**
+**$$\text{\blue{Lesson 10: Time Series Machine Learning}}$$**
 \endgroup
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 

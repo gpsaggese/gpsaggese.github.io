@@ -14,11 +14,11 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Stochastic Processes}}$$**
+**$$\text{\blue{Refresher 06: Stochastic Processes}}$$**
 \endgroup
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 

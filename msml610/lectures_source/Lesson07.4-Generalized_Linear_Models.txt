@@ -14,14 +14,14 @@ MSML610: Advanced Machine Learning
 \vspace{0.5cm}
 
 \begingroup \Large
-**$$\text{\blue{7.4: Generalized Linear Models}}$$**
+**$$\text{\blue{Lesson 07.4: Generalized Linear Models}}$$**
 \endgroup
 \vspace{1cm}
 
 ::: columns
 :::: {.column width=75%}
 \vspace{1cm}
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 

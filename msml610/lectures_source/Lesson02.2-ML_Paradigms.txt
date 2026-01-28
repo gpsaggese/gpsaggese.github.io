@@ -20,7 +20,7 @@ MSML610: Advanced Machine Learning
 
 ::: columns
 :::: {.column width=65%}
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 

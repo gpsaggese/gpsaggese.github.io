@@ -14,14 +14,14 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{8.1: Intro to Causal AI}}$$**
+**$$\text{\blue{Lesson 08.1: Intro to Causal AI}}$$**
 \endgroup
 
 \vspace{1cm}
 
 ::: columns
 :::: {.column width=75%}
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 
@@ -82,7 +82,7 @@ MSML610: Advanced Machine Learning
   - Statistical representations to _forecast, explain phenomena_
   - E.g., model to anticipate customer churn based on behavioral data
 
-// ![](msml610/lectures_source/figures/Lesson9-Dashboard.png)
+// ![](msml610/lectures_source/figures/Lesson09-Dashboard.png)
 
 // TODO: Add some pics
 
@@ -98,7 +98,7 @@ MSML610: Advanced Machine Learning
 \endgroup
 
 \begin{center}
-  \includegraphics[width=0.9\textwidth]{msml610/lectures_source/figures/Lesson9-Analytical_sophistication.png}
+  \includegraphics[width=0.9\textwidth]{msml610/lectures_source/figures/Lesson09-Analytical_sophistication.png}
 \end{center}
 
 * AI / ML Explainability

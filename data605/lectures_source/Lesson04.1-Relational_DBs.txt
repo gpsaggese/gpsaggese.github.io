@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Lesson 4.1: Relational DBs}}$$**
+**$$\text{\blue{04.1: Relational DBs}}$$**
 \endgroup
 
 ::: columns

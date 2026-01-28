@@ -5,31 +5,31 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.17.3
+    jupytext_version: 1.19.0
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
 
-+++
-
 # Bayesian Coin
-
 
 ```{code-cell} ipython3
 :tags: [remove-cell]
+
 !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet jupyterlab-vim)"
 !jupyter labextension enable
 ```
 
 ```{code-cell} ipython3
 :tags: [remove-cell]
+
 !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet graphviz)"
 ```
 
 ```{code-cell} ipython3
 :tags: [remove-cell]
+
 !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet dataframe_image)"
 ```
 
@@ -37,6 +37,7 @@ kernelspec:
 
 ```{code-cell} ipython3
 :tags: [remove-cell]
+
 %load_ext autoreload
 %autoreload 2
 
@@ -55,6 +56,7 @@ import preliz as pz
 
 ```{code-cell} ipython3
 :tags: [remove-cell]
+
 import msml610_utils as ut
 
 ut.config_notebook()

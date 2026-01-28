@@ -1,0 +1,1081 @@
+
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 04.2: Machine Learning Models}}$$**
+\endgroup
+
+::: columns
+:::: {.column width=75%}
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+**References**:
+
+- Burkov: _"Machine Learning Engineering"_ (2020)
+
+- Hastie et al.: _"The Elements of Statistical Learning"_ (2nd ed, 2009)
+
+::::
+:::: {.column width=20%}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_Hundred_page_ML_book.jpg){ height=20% }
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_The_Elements_of_Statistical_Learning.jpg){ height=20% }
+
+::::
+:::
+
+
+
+## #############################################################################
+## Logistic Regression
+## #############################################################################
+
+* Logistic Regression Is a Probabilistic Classifier
+- **Logistic regression** learns:
+  - The probability of each class $\Pr(y | \vx)$ given input $\vx$
+  - Instead of predicting class $y$ directly
+
+- **Parametric approach**: assume $\Pr(y | \vx; \vw)$ has a known functional
+  form
+  $$
+  \Pr(y=1|\vx; \vw) = \text{logit}(\vw^T \vx)
+  $$
+
+- **Optimize parameters** $\vw$ using maximum likelihood
+  $$
+  \vw^* = \argmax_{\vw} \Pr(\calD; \vw)
+  $$
+
+- **Predict** by outputting class with highest probability
+  $$
+  h_{\vw}(\vx) =
+  \begin{cases}
+  +1 & \Pr(y=1|\vx; \vw) \ge 0.5 \\
+  -1 & \Pr(y=1|\vx; \vw) < 0.5 \\
+  \end{cases}
+  $$
+
+* Logistic Regression: Example
+- Assume $y$ is:
+  - The event $y_i$ _"patient with characteristics $\vx$ had heart attack"_
+  - Function of parameters $\vx$ (e.g., age, gender, diet)
+
+- In data set $\calD$:
+  - No samples of $\Pr(y | \vx)$
+  - Have realizations:
+    - _"Patient with $\vx_1$ had a heart attack"_
+    - _"Patient with $\vx_2$ didn't"_
+    - ...
+
+- Learn $\Pr(y | \vx)$
+  - Find best parameters $\vw$ for logistic regression model to explain data
+    $\calD$
+
+* Logistic Function
+- Aka "sigmoid"
+- **Logistic function** $\text{logit}(s)$ is defined as
+  $$
+  \text{logit}(s) \defeq \frac{e^s}{1 + e^s} = \frac{1}{1 + e^{-s}}
+  $$
+  - Varies in [0, 1]
+  - Crosses the origin at 0.5
+  - Asymptotes at 0 and 1
+  - It is a soft version of $\sign()$
+
+// TODO(gp): Add picture
+
+* Logistic Regression vs Linear Classifier
+- **Functional form is similar**
+  - **Logistic regression**: $h(\vw) = \text{logit}(\vw^T \vx$)
+  - **Linear classifier** (perceptron): $h(\vw) = \sign(\vw^T \vx)$
+
+- **Difference** in probabilistic interpretation and fitting method
+  - Logistic regression** lacks samples of probability function to interpolate
+    - Uses realizations of random variable
+    - Seeks model parameters maximizing data likelihood
+  - **Linear classification** assumes class value is linear function of inputs
+
+* Error for Probabilistic Binary Classifiers
+- For probabilistic binary classification, use **log-probability error** as
+  point-wise error
+  $$
+  e(h(\vx), y) \defeq -\log(\Pr(y = h(\vx)| \vx; \vw))
+  $$
+  - Negate for positive errors: $\log([0, 1]) \in [-\infty, 0)$
+
+- Log probability generalizes 0-1 error
+  - Case $y = 1$
+    - Output $h(\vx)$ close to 1 $\implies$ probability 1 $\implies \log(1) = 0$
+      $\implies e(\cdot) = 0$
+    - Output close to 0 $\implies e() = -\log(0) \to +\infty$
+  - Similar behavior for $y = 0$
+
+// TODO: Add a picture
+
+* One-Liner Error for Probabilistic Binary Classifiers
+- **Point-wise error** for example $(\vx, y)$ for probabilistic binary
+  classifiers is defined as:
+  \begingroup \small
+  \begin{alignat*}{2}
+  e(h(\vx), y) & \defeq -\log(\Pr(h(\vx) = y | \vx)) \\
+  & = \begin{cases}
+  -\log(\Pr(y=1|\vx)) & y = 1\\
+  -\log(\Pr(y=0|\vx)) & y = 0\\
+  \end{cases}
+  \\
+  & = \begin{cases}
+  -\log(\Pr(y=1|\vx)) & y = 1\\
+  -\log(1 - \Pr(y=1|\vx)) & y = 0\\
+  \end{cases}
+  \\
+  \end{alignat*}
+  \endgroup
+  \vspace{-1cm}
+
+- Any function of a binary variable:
+  \begingroup \small
+  $$
+  \begin{aligned}
+  y
+  &= \begin{cases}
+  a & x = 1\\
+  b & x = 0\\
+  \end{cases}\\
+  \end{aligned}
+  $$
+  \endgroup
+  can be written as one-liner: $y = x \cdot a + (1 - x) \cdot b$
+
+- Point-wise error can be written independently of $\Pr(y=1|\vx)$:
+  \begingroup \small
+  $$
+  e(h(\vx), y) = -y \log(\Pr(y=1|\vx) - (1 - y) \log(1 - \Pr(y=1|\vx))
+  $$
+  \endgroup
+
+* One-Liner Error for Logistic Regression
+- The point-wise error for a binary classifier is:
+  $$
+  e(h(\vx), y) = -y \log(\Pr(y=1|\vx) - (1 - y) \log(1 - \Pr(y=1|\vx))
+  $$
+
+- Simplify further **with logit function**:
+  \begin{alignat*}{3}
+  e(h(\vx), y)
+  & \defeq - \log \Pr(h(\vx)=y)
+  &
+  \\
+  & \text{ ... a bit of math manipulation ...}
+  &
+  \\
+  &
+  = -\log \text{logit}(y \vw^T \vx)
+  &
+  \text{ since } \text{logit}(s) = \frac{1}{1 + e^{-s}}
+  \\
+  &
+  = \log(1 + \exp(-y \vw^T \vx))
+  &
+  \\
+  \end{alignat*}
+  \vspace{-1cm}
+
+- Point-wise error for logistic regression equals **cross-entropy error**
+
+* Cross-Entropy Error
+- **Point-wise error for logistic regression** has expression:
+  $$
+  e(h(\vx), y) = \log(1 + \exp(- y \cdot \vw^T \vx))
+  $$
+  - It is called **cross-entropy error**
+  - Note: no $-$ before $\log(\cdot)$ but before $y \cdot \vw^T \vx$
+
+- Cross-entropy error **generalizes 0-1 error**
+  - If $\vw^T \vx$ agrees with $y$ in sign and $|\vw^T \vx|$ is large $\implies$
+    error goes to 0
+  - If they disagree in sign $\implies$ error goes towards $\infty$
+
+- Define **in-sample error on training set** as average of point-wise errors:
+  $$
+  E_{in} \defeq \frac{1}{N} \sum_n e(h(\vx_n), y_n)
+  $$
+
+* Fitting Logistic Regression
+- A plausible error measure of a hypothesis is based on **likelihood of data**
+  $$
+  \Pr(\calD | h = f)
+  $$
+  - _"How likely is the data $\calD$ under the assumption that $h = f$?"_
+  - _"How likely is that the data $\calD$ was generated by $h$?"_
+
+- **Maximize likelihood** $\calD$ generated from logistic regression
+  $$\Pr(y = 1| \vx; \vw)$$
+
+- It can be proved that this is equivalent to **minimizing in-sample error** on
+  training set **using cross-entropy error**
+
+* Fitting Logistic Regression (Optional)
+- Find $\vw$ that maximizes likelihood for data set
+  $\calD = \{ (\vx_1, y_1), ... , (\vx_N, y_N) \}$ generated by model $h(\vx)$:
+  $$
+  \Pr(D | \vw)
+  = \Pr(y_1 = h(\vx_1) \land ... \land y_N = h(\vx_N))
+  = \Pr(y_1 = y_1' \land ... \land y_N = y_N')
+  $$
+
+- Model form:
+  $$
+  y' = h(\vx) =
+  \begin{cases}
+  +1 & \text{ if logit}(\vw^T \vx) > 0.5\\
+  -1 & \text{ otherwise}
+  \end{cases}
+  $$
+
+- Assuming independence among training examples:
+  $$
+  \Pr(D | \vw) = \prod_{i=1}^N \Pr(y_i = y_i' | \vx_i)
+  $$
+
+- Fold $y_n$ in expression:
+  - When $y_n = 1$, $\Pr(y_n = y_n') = \text{logit}(\vw^T \vx_n)$
+  - When $y_n = -1$, $\Pr(y_n = y_n') = \text{logit}(-\vw^T \vx_n)$
+
+- Thus, $\Pr(y_n = y_n') = \text{logit}(y_n \vw^T \vx_n)$
+
+* Fitting Logistic Regression (Optional)
+- Given:
+  $$
+  \Pr(D | \vw) = \prod_{i=1}^N \text{logit}(y_n \vw^T \vx_n)
+  $$
+
+- Re-write optimization as minimizing sum of point-wise errors
+  $E_{in} = \sum e(h(\vx_n), y_n)$
+  - Maximize $\log(...)$ with respect to $\vw$ since log argument $> 0$ and
+    $\log()$ is monotone
+
+- Equivalently, minimize:
+
+  \begin{alignat*}{3}
+  - \frac{1}{N} \log(...)
+  &= - \frac{1}{N} \log(\prod(...))
+  = - \frac{1}{N} \sum(\log(...))
+  & 
+  \text{ since } \text{logit}(s) = \frac{1}{1 + e^{-s}}
+  \\
+  &= \frac{1}{N} \sum \log(\frac{1}{\text{logit}(y_n \vw^T \vx_n)})
+  &
+  \\
+  &= \frac{1}{N} \sum \log(1 + \exp(- y_n \vw^T \vx_n))
+  = \frac{1}{N} \sum e(h(\vx_n), y_n) = E_{in}(\vw)
+  &
+  \\
+  \end{alignat*}
+
+* Gradient Descent for Logistic Regression
+- Gradient descent requires two inputs:
+  - Gradient of the cost function $\frac{\partial E}{w_j} \text{ for all } j$
+  - Cost function $E_{in}(\vw)$
+
+- The cost function is:
+  $$
+  E_{in}(\vw) = \frac{1}{N} \sum_i e(h(\vx_i; \vw), y_i)
+  $$
+- The cost function for logistic regression:
+  $$
+  E_{in}(\vw) = \frac{1}{N} \sum_i \log(1 + \exp(-y_i \vw^T \vx_i))
+  $$
+
+- Thus gradient descent converges to global minimum
+  - It can be shown that $E_{in}(\vw)$ is convex in $\vw$
+  - In fact sum of exponentials and flipped exponentials is convex and log is
+    monotone
+
+* One-Vs-All Multi-Class Classification
+- Aka "one-vs-rest" classifier
+
+- **Problem**: you have $n$ classes $c_1, ... , c_n$ to distinguish given $\vx$
+
+- **Learn**
+  - Create $n$ binary classification problems where we classify $c_i$ vs
+    $c_{-i}$ (everything but $i$)
+  - Learn $n$ classifiers with optimal $\vw_i$, each estimating
+    $\Pr(y=i | \vx; \vw_i)$
+
+- **Predict**
+  - Evaluate the $n$ classifiers
+  - Pick the class $y = i$ with the maximum $\Pr(y = i | \vx)$
+
+* Cost Function for Multi-Class Classification (Opt)
+- The cost function for logistic regression is:
+  $$
+  E_{in}(\vw)
+  = - \frac{1}{N}
+  \sum_{i=1}^N (y_i \log \Pr(y=1|\vx_i) + (1 - y_i) \log (1 - \Pr(y=1|\vx_i)))
+  $$
+
+- Encode expected outputs $\vy_i$ one-hot
+  - $j$-th element $\vy_i|_j$ is 1 if correct class is $j$-th
+  - E.g., for $k = 4$ `1000`
+
+- Using $\vh(\vx)$ as model outputs and $\Pr(y = 1|\vx) = p(\vx)$:
+  $$
+  E_{in}(\vw)
+  = - \frac{1}{N}
+  \sum_{i=1}^N \sum_{k=1}^K \left(
+  \vy_i \log(\vp(\vx_i)) +
+  (1 - \vy_i) \log(1 - \vp(\vx_i)) \right)\big|_k
+  $$
+
+- Innermost summation considers error on each class/digit
+  - E.g., for $k = 4$ `1000` vs `0100`
+  - Equal digits don't contribute to error
+  - Different digits give positive contribution
+
+## #############################################################################
+## LDA, QDA
+## #############################################################################
+
+* Basic Idea of Parametric Models
+- Assume a model generates data
+  - Known functional form
+  - Parametrized with unknown parameters to estimate
+
+- **Pros**
+  - Utilize data structure
+  - Easy to fit: few parameters
+  - Accurate predictions if assumptions correct
+
+- **Cons**
+  - Strong data assumptions
+  - Low accuracy if assumptions incorrect
+
+* Linear and Quadratic Discriminant Analysis
+- Aka LDA and QDA
+
+- **Parametric models**
+  - Assume each class generating process is multivariate Gaussian
+  - Classifiers with linear and quadratic decision surface
+
+- **Pros**
+  - Closed-form solutions easy to compute (sample mean and covariance)
+  - Inherently multiclass
+  - No hyperparams to tune
+
+- **Cons**
+  - Strong assumptions about the data
+
+* LDA / QDA: Model Form
+- Both LDA and QDA assume class generating process
+  $f_k(\vx; \vv{\mu_k}, \mat{\Sigma_k})$ is **multivariate Gaussian**
+
+- **Linear discriminant analysis (LDA)** model:
+  $$
+  f_k(\vx; \vv{\mu_k}, \mat{\Sigma_k})
+  \sim \calN(\vv{\mu_k}, \mSigma))
+  $$
+  - Means $\vv{\mu_k}$ differ for all $k$ classes
+  - Covariance matrix $\mSigma$ same for all $k$ classes
+  - Classes separated by linear decision boundaries
+
+- **Quadratic discriminant analysis (QDA)** model:
+  - Classes $k$ have different covariance matrix $\mat{\Sigma_k}$
+  - Classes separated by quadratic boundaries
+
+* Bayes Theorem for LDA / QDA
+- Consider a classification setup with multi-class output $Y \in \{1, ..., K\}$
+
+- Build a **parametric model for the conditional distribution**:
+  $$
+  \Pr(Y = k | X = \vx)
+  $$
+
+- Use **Bayes theorem**:
+  $$
+  \Pr(Y = k | X = \vx) = \frac{\Pr(X = \vx | Y = k) \cdot \Pr(Y = k)}{\Pr(X = \vx)}
+  $$
+  where:
+  - $\Pr(X = \vx | Y = k)$: given a class, estimate probability of $\vx$
+  - $\Pr(Y = k) = \pi_k$: probability of each class (prior)
+  - $\Pr(X = \vx)$: probability of each input
+
+- **Estimate probabilities** from data
+
+* LDA / QDA: Boundary Decision (Optional)
+- Consider the ratio between the probabilities of $Y = k$ vs $Y = j$:
+  $$
+  r = \frac{\Pr(Y = k | X = \vx)}{\Pr(Y = j | X = \vx)}
+  $$
+
+- Using the model assumption and Bayes theorem:
+  \begin{alignat*}{2}
+  \Pr(Y = k | X = \vx)
+  &\propto \Pr(X = \vx | Y = k) \cdot \Pr(Y = k)
+  \\
+  &= f_k(\vx; \vv{\mu_k}) \cdot \pi_k
+  \\
+  \end{alignat*}
+  where:
+  $$
+  f_k(\vx) = c \cdot
+  \exp \left(
+  -\frac{1}{2}
+  (\vx - \vv{\mu_k})^T \mSigma^{-1} (\vx - \vv{\mu_k})
+  \right)
+  $$
+
+- Apply $\log(\cdot)$ as a monotone transformation
+  $$
+  r = \log \frac{f_k(\vx)}{f_j(\vx)} + \log \frac{\pi_k}{\pi_j}
+  $$
+
+* LDA / QDA: Boundary Decision (Optional)
+- Apply $\log(\cdot)$ as a monotone transformation
+  $$
+  r = \log \frac{f_k(\vx)}{f_j(\vx)} + \log \frac{\pi_k}{\pi_j}
+  $$
+
+- **Second term** independent of $\vx$ so you can ignore it
+
+- **First term** proportional to:
+  $$
+  (\vx - \vv{\mu_k})^T \mSigma^{-1} (\vx - \vv{\mu_k}) -
+  (\vx - \vv{\mu_j})^T \mSigma^{-1} (\vx - \vv{\mu_j})
+  $$
+
+- Expand, simplify $\vx^T \mSigma^{-1} \vx$, and note:
+  $$
+  2 \vx^T \mSigma^{-1} (\vv{\mu_k} - \vv{\mu_j})
+  $$
+  Resulting in a linear relationship in $\vx$
+  $$
+  - \frac{1}{2} (\vv{\mu_k} + \vv{\mu_j})^T \mSigma^{-1} (\vv{\mu_k} -
+  \vv{\mu_j})
+  + \vx^T \mSigma^{-1}(\vv{\mu_k} - \vv{\mu_j})
+  $$
+
+* LDA / QDA: Learn Model (Optional)
+- In practice:
+  - Ignore $\Pr(X = \vx)$; it's common for all classes
+  - Know or estimate prior $\Pr(Y = k) = \pi_k$ from data
+  - Estimate conditional probability $\Pr(X = \vx | Y = k)$
+
+- Model assumes Gaussian distribution for conditional probability:
+  $$
+  \Pr(X = \vx | Y = k) = f_k(\vx; \vv{\mu_k}, \mat{\Sigma_k})
+  $$
+  where:
+  $$
+  f_k(\vx) = \frac{1}{(2 \pi)^n |\mat{\Sigma_k}|^{1/2}}
+  \exp \left( -\frac{1}{2}(\vx - \vv{\mu_k})^T \mat{\Sigma_k}^{-1}
+  (\vx - \vv{\mu_k}) \right)
+  $$
+
+- Estimate parameters $\vv{\mu_k}$, $\mat{\Sigma_k}$ using sample mean and
+  covariance
+
+* Evaluating LDA / QDA
+- For new $\vx = \vx'$, compute for each class $Y = k$
+  $$
+  \Pr(Y = k | X = \vx) \propto f_k(\vx; \vv{\mu_k}, \mat{\Sigma_k}) \cdot \pi_k
+  $$
+
+- Choose $k$ that maximizes posterior probability
+
+- If $f_i(\vx)$ is from a multivariate Gaussian distribution with diagonal
+  $\mSigma$ (feature independence), you can simplify expressions further
+
+## #############################################################################
+## Kernel Methods
+## #############################################################################
+
+* Kernel: Definition
+
+- Consider a transformation $\Phi: \calX \rightarrow \calZ$
+  - E.g., transform features in space $\calX$ non-linearly into
+    higher-dimensional space $\calZ$
+
+- **Kernel of transformation** $\Phi$ yields inner product of two points
+  $\vx, \vx' \in \calX$ in transformed space $\calZ$
+  $$
+  K_{\Phi}(\vx, \vx')
+  \defeq \langle \Phi(\vx), \Phi(\vx') \rangle
+  = \Phi(\vx)^T \Phi(\vx')
+  = \vz^T \vz'
+  $$
+
+::: columns
+:::: {.column width=50%}
+
+- Why doing this?
+
+::::
+:::: {.column width=45%}
+
+![](msml610/lectures_source/figures/Lesson04_Kernel_Trick.png)
+::::
+:::
+
+* Kernel: Expression From the Transform
+- If you have an expression for $\Phi$, compute a closed formula for the kernel
+
+- E.g., if transformation is $\Phi: \bbR^2 \to \bbR^6$, it introduces interaction
+  terms:
+  $$
+  \vz = \Phi(\vx) = \Phi(x_1, x_2) = (1, x_1, x_2, x_1^2, x_2^2, x_1 x_2)
+  $$
+- Kernel of $\Phi$ is:
+  \begin{alignat*}{2}
+  & K_{\Phi}(\vx, \vx')
+  & = (1, x_1, x_2, x_1^2, x_2^2, x_1 x_2)^T
+    (1, {x'}_1, {x'}_2, {x'}_1^2, {x'}_2^2, {x'}_1 {x'}_2) \\
+  & 
+  & = 1 + x_1 x'_1 + x_2 x_2' + x_1^2 {x'}_1^2 + x_2^2 {x'}_2^2
+    + x_1 x_2 {x'}_1 {x'}_2 \\
+  \end{alignat*}
+
+* Gaussian Kernel
+- Aka "exponential kernel" or "Radial Basis Function" (RBF) kernel
+- A **Gaussian kernel** has the form:
+  $$
+  K(\vx, \vx')
+  = \exp(- \gamma \|\vx - \vx'\|^2)
+  = \exp(- \frac{\|\vx - \vx'\|^2}{\sigma^2})
+  $$
+- It can be shown to be an inner product in an infinite dimension $\calZ$
+
+* Kernel as Way to Measure Similarity
+- **Intuition**: The Gaussian kernel
+  $$
+  K(\vx, \vx')
+  = \exp(- \gamma \|\vx - \vx'\|^2)
+  $$
+  measures "similarity" of point $\vx$ to point $\vx_i$:
+  - $K(\vx, \vx')$ is 1 when points are the same
+  - Value is 0 when points are distant
+  - Effect strength depends on $\gamma$
+
+- Using kernels to compute features:
+  - Kernels often rely on distance between vectors
+    - E.g., euclidean norm $\|\vx - \vx'\|^2$
+  - Need to scale features for similar effects among coordinates
+
+* Linear Kernel
+- Consider the transformation $\Phi$ as the identity function $\Phi(\vx) = \vx$
+- The kernel function is:
+  $$
+  K_{\Phi}(\vx, \vx') = \vx^T \vx'
+  $$
+  - A **linear kernel** means using no kernel
+  - It is just a "pass-through"
+
+* Polynomial Kernel
+- Given a point $\vx \in \bbR^n$, consider the function with two parameters $k$
+  and $d$
+  $$
+  K_{\Phi}(\vx, \vx') = (k + \vx^T \vx')^d
+  $$
+- It is called **polynomial** since if you expand the dot product you get a
+  polynomial
+- It can be proved that this is always a kernel
+
+* Kernel: Identifying a Function as a Kernel
+- **Problem**:
+  - You have a certain function $K(\vx, \vx')$ and you want to show that $K(\cdot)$
+    is an inner product in the form for some function $\Phi(\cdot)$
+    $$
+    K(\vx, \vx') = \Phi(\vx)^T \Phi(\vx') \quad \forall \vx, \vx'
+    $$
+    for a certain $\Phi$ and $\calZ$
+
+- In theory, a given function $K(\vx, \vx')$ is a valid kernel iff:
+  - It is a symmetric, and
+  - Satisfies the Mercer's condition: the matrix $K(\vx_i, \vx_j)$ is definite
+    semi-positive
+
+* Kernel: Example of Identifying a Kernel
+- Let's show that:
+  $$K(\vx, \vx') = (k + \vx^T \vx')^d$$
+  is a **kernel** for any $n, k, d$
+
+- According to the definition you need to show that there is always a transform
+  $\Phi$:
+  $$
+  \Phi: \calX = \bbR^n \to \calZ = \bbR^q
+  $$
+  with $q \gg d$, such that $K_{\Phi} = (k + \vx^T \vx')^d$
+
+- **Example**
+  - $\calX = \bbR^2$, $K(\vx, \vx') = (1 + \vx^T \vx')^2 = (1 + x_1 x'_1 + x_2 x'_2)^2$
+  - Compute the full expression in terms of the coordinates:
+    $$
+    K(\vx, \vx')
+    = (1 + x_1^2 {x'}_1^2 + x_2^2 {x'}_2^2 + 2 x_1 x'_1 + 2 x_2 x'_2 + 2 x_1 x'_1 x_2 x'_2)
+    $$
+  - Choose:
+    - $\calZ = \bbR^6$
+    - $\Phi(x_1, x_2) = (1, x_1^2, x_2^2, \sqrt{2} x_1, \sqrt{2} x_2, \sqrt{2} x_1 x_2)$
+  - This is a particular case of the polynomial kernel
+
+* A Kernel Is a Computational Shortcut
+- In literature, the **kernel trick** is a **computational shortcut** for the dot
+  product of transformed vectors
+
+- Compare 2 ways to compute the inner product of transformed vectors for a
+  polynomial kernel
+  1. **Using definition**: compute images of vectors, then inner product in
+     transformed space:
+     $$
+     (1, x_1, x_2, \sqrt{2} x_1 x_2, x_1^2, x_2^2, ...)^T \cdot (1, x'_1, ...)
+     $$
+     - Requires combinatorial powers and a large dot product
+  2. **Kernel trick**: use kernel function for dot product in transformed space
+     $$
+     (k + \vx^T \vx')^d
+     $$
+     - Requires inner product of small vectors, then power of a number
+
+- Kernel trick is more computationally efficient for inner product computation
+
+## #############################################################################
+## Support Vector Machines (Optional)
+## #############################################################################
+
+* Support Vector Machines (SVM)
+- Arguably one of the most successful classification algorithm, together with
+  neural networks and random forests
+
+- **Idea**: find a separating hyperplane that maximizes the distance from the
+  class points (aka "margin")
+
+- **All the rage in 2005-2015**
+  - Robust classifier handling outliers automatically
+  - Strong theoretical justification of out-of-bound error
+  - Strong link with VC dimension
+  - Cool geometric interpretation
+  - Solve a very complex optimization problem with some neat tricks
+  - Works for both regression and classification
+
+- SVM for classification:
+  - Does not output probabilities (like logistic regression), but predicts
+    directly the class
+  - Has a notion of confidence, as distance from the margin
+
+* SVM Is a Large Margin Classifier
+
+::: columns
+:::: {.column width=50%}
+- Why **large margin** classifier is good?
+
+- Given a linearly separable data set, the optimal separating line maximizes the
+  margin:
+  - More robust to noise
+  - Large margin reduces VC dimension of hypothesis set
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/Lesson04_SVM.png)
+
+::::
+:::
+
+* SVM: Notation and Conventions
+
+- Assume that:
+  1. Outputs are encoded as $y_i \in \{-1, 1\}$
+  2. Pull out $w_0$ from $\vw$
+     - The bias $w_0 = b$ plays a different role
+     - $\vw = (w_1, ... , w_d)$ and there is no $x_0 = 1$
+     - $\vw^T \vx + b = 0$ is the equation of the separating hyperplane
+  3. $\vx_n$ is the closest point to the hyperplane
+     - It can be multiple points from different classes
+
+- Normalize $\vw$ and $b$ to get a canonical representation of the hyperplane
+  imposing $|\vw^T \vx_n + b| = 1$
+
+* SVM: Original Form of Problem
+- The SVM problem is:
+
+  \begin{alignat*}{3}
+  \text{find }
+  & \vw, b
+  &
+  \\
+  \text{maximize }
+  & \frac{1}{\|\vw\|}
+  & \text{(max margin) }
+  \\
+  \text{subject to }
+  & \min_{i=1, ... , n} |\vw^T \vx_i + b| = 1
+  & \text{(hyperplane)}
+  \\
+  \end{alignat*}
+
+- This problem is not friendly to optimization since it has norm, min, and
+  absolute value
+
+* Primal Form of SVM Problem
+- You can rewrite it as:
+
+  $$
+  \begin{aligned}
+  \text{find $\vw, b$} \eqspace & \\
+  \text{minimize } \eqspace & \frac{1}{2} \vw^T \vw\\
+  \text{subject to } \eqspace & y_i (\vw^T \vx_i + b) \ge 1 \; \forall i = 1, ..., n\\
+  \end{aligned}
+  $$
+
+- Note that under $\vw$ minimal and linear separable classes, it is guaranteed
+  that for at least one $\vx_i$ in the second equation will be equal to $1$ (as
+  in the original problem)
+  - In fact otherwise we could scale down $\vw$ and $b$ (which does not change the
+    plane) to use the slack, against the hypothesis of minimality of $\vw$
+
+* Dual (Lagrangian) Form of SVM Problem
+
+  $$
+  \begin{aligned}
+  \text{minimize with respect to } \valpha \eqspace &
+  \calL(\valpha) =
+  \sum_{i=1}^N \alpha_i -
+  \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N y_i y_j \alpha_i \alpha_j \vx_i^T \vx_j \\
+  %
+  \text{subject to } \eqspace &
+  \valpha \ge \vv{0}, \sum_{i=1}^N \alpha_i y_i = 0 \\
+  %
+  & \vw = \sum_{i=1}^N \alpha_i y_i \vx_i \\
+  \end{aligned}
+  $$
+
+- The equation for $\vw$ is not a constraint, but it computes $\vw$ (the plane)
+  given $\valpha$, while $b$ is given by
+  $\min |\vw^T \vx_i + b| = 1$
+
+* Dual Form of SVM as QP Problem
+- The dual form of SVM problem is a convex quadratic programming problem, in the
+  form:
+
+  $$
+  \begin{aligned}
+  \text{minimize with respect to } \valpha \eqspace &
+  \vv{1}^T \valpha - \frac{1}{2} \valpha^T \mQ \valpha\\
+  \text{subject to } \eqspace &
+  \valpha \ge 0, \vy^T \valpha = 0\\
+  \end{aligned}
+  $$
+
+  where:
+  - the matrix is $\mQ = \{ y_i y_j \vx_i^T \vx_j \}_{ij}$
+  - $\valpha$ is the column vector $(\alpha_1, \ldots , \alpha_N)$
+
+* Solving Dual Formulation of SVM Problem (1/2)
+- **Solving convex problem** for $\alpha$
+  - Feeding this problem to a QP solver, you get the optimal vector $\valpha$
+
+- **Compute hyperplane** $\vw$
+
+  - From $\valpha$ recover the plane $\vw$ from the equation:
+    $\vw = \sum_{i=1}^N \alpha_i y_i \vx_i$
+  - Looking at the optimal $\alpha_i$, you can observe that many of them are $0$
+  - This is because when you applied the Lagrange multipliers to the inequalities:
+    $y_i (\vw^T \vx_i + b) \ge 1$, you got the KKT condition:
+    $$
+    \alpha_i (y_i (\vw^T \vx_i + b) - 1) = 0
+    $$
+  - From these equations, either
+    - $\alpha_i = 0$ and $\vx_i$ is an _interior point_ since it has
+      non-null distance from the plane (i.e., slack) from the plane; or
+    - $\alpha_i \ne 0$ and the slack is $0$, which implies that the $\vx_i$ point
+      touches the margin, i.e., it is a _support vector_
+
+* Solving Dual Formulation of SVM Problem (2/2)
+::: columns
+:::: {.column width=50%}
+- Thus the hyperplane is only function of the support vectors:
+  $$
+  \vw
+  = \sum_{i=1}^N \alpha_i y_i \vx_i
+  = \sum_{\vx_i \in \text{SV}} \alpha_i y_i \vx_i
+  $$
+  since only for the support vectors $\alpha \ne 0$
+  - The $\alpha_i \ne 0$ are the real degree of freedom
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/Lesson04_Support_Vectors.png)
+
+::::
+:::
+
+- **Compute** $b$
+  - Once $\vw$ is known, you can use any support vector to compute $b$:
+    $$
+    y_i (\vw^T \vx_i + b) = 1
+    $$
+
+* Support Vectors and Degrees of Freedom for SVM
+- The number of support vectors is related to the degrees of freedom of the
+  model
+- Because of the VC dimension, you have an in-sample quantity to bound the
+  out-of-sample error:
+  $$
+  E_{out} \le E_{in} + c \frac{\text{num of SVs}}{N - 1}
+  $$
+- You are "guaranteed" to not overfit
+
+* Non-Linear Transform for SVM
+- $\Phi: \calX \to \calZ$ transforms $\vx_i$ into
+  $\vz_i = \Phi(\vx_i) \in \bbR^{\tilde{d}}$ with $\tilde{d} > d$
+
+- Transform vectors through $\Phi$ and apply SVM machinery
+
+- Dual SVM formulation in $\calZ$ space:
+  $$
+  \calL(\valpha) =
+  \sum_{i=1}^N \alpha_i -
+  \frac{1}{2} \sum_{i=1}^N \sum_{j=1}^N \alpha_i \alpha_j y_i y_j \vz_i^T \vz_j
+  $$
+
+- Note:
+  - Optimization problem has same number of unknowns as original space (number
+    of points $N$)
+  - Support vectors live in $\calZ$: they have $\alpha = 0$. In $\calX$, they
+    are pre-images of support vectors
+  - Decision boundary and margin can be represented in original space (not
+    linear)
+
+* Non-Linear Transforms for SVM vs Others
+::: columns
+:::: {.column width=40%}
+
+- In SVM the non-linear transform does not change the number of unknowns and
+  degrees of freedom of the model
+- This is different from transforming the variables in a linear problem, since
+  in that case the number of unknowns changes
+
+::::
+:::: {.column width=60%}
+
+![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM1.png){ width=4cm }
+![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM2.png){ width=4cm }
+![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM3.png){ width=4cm }
+![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM4.png){ width=4cm }
+
+::::
+:::
+
+* SVM in Higher Dimensional Space
+- **Pros**
+  - You don't pay the price in terms of complexity of optimization problem
+    - Number of unknowns is still $N$ (different than a linear problem)
+  - You don't pay the price in terms of increased generalization bounds
+    - Number of support vectors is $\le N$
+    - This is because each hypothesis $h$ can be complex but the cardinality of
+      the hypothesis set $\calH$ is the same
+
+- **Cons**
+  - You pay a price to compute $\Phi(\vx_i)^T \Phi(\vx_j)$, since $\Phi$ could be
+    very complex
+    - The kernel trick will remove this extra complexity by doing
+      $\Phi(\vx_i)^T \Phi(\vx_j) = K_{\Phi}(\vx_i, \vx_j)$
+
+* Non-Linear Transform in SVM vs Kernel Trick
+- The trivial approach is:
+  - Transform vectors with $\Phi(\cdot)$
+  - Apply all SVM machinery to the transformed vectors
+  - **Cons**: $\Phi$ might be very complex, e.g., potentially exponential number
+    of terms
+
+- You can express the SVM problem formulation and the prediction in terms of a
+  kernel
+  $$
+  K_{\Phi}(\vx, \vx') = \Phi(\vx)^T \Phi(\vx') = \vz^T \vz'
+  $$
+  - You only need the kernel $K_{\Phi}(\vx, \vx')$ of the transformation
+    $\Phi(\cdot)$ and not $\Phi(\cdot)$ itself
+
+* SVM in Terms of Kernel: Optimization Step
+- When you build the QP formulation for the Lagrangian to compute the $\alpha$ we
+  can use $K_{\Phi}(\vx_i, \vx_j)$ instead of $\vz_i^T \vz_j$
+  $$
+  \calL(\valpha) =
+  \sum_{n=1}^N \alpha_n -
+  \frac{1}{2} \sum_{n=1}^N \sum_{m=1}^N y_n y_m \alpha_n \alpha_m
+  K_{\Phi}(\vx_n, \vx_m)
+  $$
+- $\vz_n$ does not appear in the constraints
+
+  $$
+  \valpha \ge \vv{0}, \valpha^T \vy = 0
+  $$
+
+* SVM in Terms of Kernel: Prediction Step
+- You need only inner products to compute a prediction for a given $\vz$
+- In fact to make predictions, you replace the expression of
+  $\tilde{\vw} = \sum_{i : \alpha_i > 0} \alpha_i y_i \vz_i$ in
+  $h(\vx) = \sign(\vw^T \Phi(\vx) + b)$, yielding:
+
+  $$
+  h(\vx)
+  = \sign(\sum_{i : \alpha_i > 0} \alpha_i y_i K_{\Phi}(\vx_i, \vx) + b)
+  $$
+
+  where $b$ is given by $y_i(\vw^T \vz_i + b) = 1$ for any support vector
+  $\vx_m$ and thus
+
+  $$
+  b = \frac{1}{y_m} - \sum_{i: \alpha_i > 0} \alpha_i y_i K_{\Phi}(\vx_i, \vx_m)
+  $$
+
+* Implications of Kernel Trick in SVM
+- The "kernel trick" is a computational shortcut:
+  - Use the kernel of the transformation instead of the transformation itself
+
+- To use SVMs, compute inner products between transformed vectors $\vz$
+
+- The kernel trick implies:
+  - No need to compute $\Phi()$
+    - Use the kernel $K_{\Phi}$, not the transformation $\Phi$
+  - No need to know $\Phi$
+    - With function $K_{\Phi}$ as an inner product, use SVM machinery without
+      knowing $\calZ$ space or transformation $\Phi$
+  - $\Phi$ can be impossible to compute
+    - $K_{\Phi}$ can correspond to a transformation $\Phi$ to an infinite
+      dimensional space (e.g., Gaussian kernel)
+
+* Non-Linearly Separable SVM Problem
+
+::: columns
+:::: {.column width=50%}
+
+- In general there are different types of **non-linearly separable data sets**
+
+- **Slightly non-separable**
+  - Few points crossing the boundary
+  - $\implies$ use soft margin SVMs
+
+- **Seriously non-separable**
+  - E.g., the class inside the circle
+  - $\implies$ use non-linear kernels
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/Lesson04_Slightly_non_separable_dataset.png){ width=40% }
+
+![](msml610/lectures_source/figures/Lesson04_Slightly_non_separable_dataset2.png){ width=40% }
+
+![](msml610/lectures_source/figures/Lesson04_Non_separable_dataset.png){ width=40% }
+
+::::
+:::
+
+- In practice, both issues are present
+  - Combine soft margin SVM and non-linear kernel transforms
+
+* Soft-Margin SVM: Advantages
+
+::: columns
+:::: {.column width=50%}
+
+- Even with linearly separable data, improve $E_{out}$ using soft margin SVM at
+  the cost of worse $E_{in}$
+  - Trade-off between in-sample and out-of-sample performance
+
+- E.g., outliers force a smaller margin
+  - Ignoring outliers could increase margin
+
+- Large $C$ parameter in SVM requires minimizing error, trading off large margin
+  for correct classification
+
+::::
+:::: {.column width=45%}
+
+![](msml610/lectures_source/figures/Lesson04_Hard_vs_Soft_margin.png)
+
+![](msml610/lectures_source/figures/Lesson04_Hard_vs_Soft_margin2.png)
+
+::::
+:::
+
+* Primal Formulation for Soft Margin SVM
+- You want to introduce an error measure based on the margin violation for each
+  point, so instead of the constraint:
+  $$
+  y_i (\vw^T \vx_i + b) \ge 1 \text{ (hard margin)}
+  $$
+- You can use:
+  $$
+  y_i (\vw^T \vx_i + b) \ge 1 - \xi_i, \text{ where } \xi_i \ge 0
+  \text{ (soft margin)}
+  $$
+- The cumulative margin violation is $C \sum_{i=1}^N \xi_i$
+
+- The soft margin SVM optimization (primal form) is:
+
+  $$
+  \begin{aligned}
+  \text{find $\vw, b, \vxi$} & \\
+  \text{minimize } \eqspace & \frac{1}{2} \vw^T \vw + C \sum_{i=1}^N \xi_i\\
+  \text{subject to } \eqspace & y_i(\vw^T \vx_i + b) \ge 1 - \xi_i \; \forall i\\
+  & \xi_i \ge 0
+  \end{aligned}
+  $$
+
+* Classes of Support Vectors for Soft Margin SVM
+- There are 3 classes of points:
+  - **Margin support vectors**: they are exactly on the margin and define it
+    - In primal form: $y_i (\vw^T \vx_i + b) = 1 \iff \xi_i = 0$
+    - In dual form: $0 < \alpha_i < C$
+  - **Non-margin support vectors**: they are inside the margin and classified
+    correctly or not
+    - In primal form: $y_i (\vw^T \vx_i + b) < 1 \iff \xi_i > 0$
+    - In dual form: $\alpha_i = C$
+  - **Non-support vectors**, i.e., interior points:
+    - In primal form: $y_i (\vw^T \vx_i + b) > 1$
+    - In dual form: $\alpha_i = 0$
+
+* Intuition for C in SVM
+- $C$ represents how much penalty you incur for passing the margin
+  - If $C$ is large, then SVM will try to fit all the points to avoid being
+    penalized
+    - Lower bias / higher variance
+    - $C \to \infty$ which yields hard-margin SVM
+  - If $C$ is small, then you allow margin violations
+    - Higher bias / lower variance
+
+- From another point of view $C \propto \frac{1}{\lambda}$, so large $C$ means
+  small $\lambda$ and thus small regularization
+  - $C$ is chosen through cross validation, like any regularization parameter
+
+![](msml610/lectures_source/figures/Lesson04_Varying_C_in_SVM.png)
+
+* Multi-Class Classification for SVM
+- Often SVM packages have built-in multi-class classification
+
+- Otherwise use the one-vs-all method:
+  - Train $K$ SVMs distinguishing each class from the rest using one-hot
+    encoding
+    - Get SVM parameters $(\vw_1, b_1), ..., (\vw_K, b_k)$
+  - For a new example $\vx$ compute $\vw_i^T \vx + b_i$ for all the models
+  - Pick the model that gives the largest positive value
+    - I.e., more confident about its class vs the rest of the classes
+

@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Lesson 3.1: DevOps}}$$**
+**$$\text{\blue{03.1: DevOps}}$$**
 \endgroup
 
 ::: columns

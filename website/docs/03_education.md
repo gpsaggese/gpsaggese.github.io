@@ -1,9 +1,6 @@
 # Education
 
 - **2004–2005**: Postdoctoral Researcher
-    - University of Illinois at Urbana-Champaign (IL, USA)
-    - Research in cryptography and fault tolerance
-
 - **2000–2004**: PhD, Electrical & Computer Engineering
     - University of Illinois at Urbana-Champaign (IL, USA)
     - 20+ publications in microarchitecture, cryptography, and fault tolerance

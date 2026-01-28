@@ -1,11 +1,13 @@
 # Giacinto Paolo (GP) Saggese, PhD
 
-- Co-Founder & CTO @ Causify.AI
-- 3x Startup Founder
-- Ex NVIDIA, Synopsys, Many hedge funds
-- Adjunct Professor, Computer Science @ University of Maryland, College Park
-
-## Photos
+- **Co-Founder & CTO** @ [Causify.AI](https://www.causify.ai)
+- **3x startup founder**
+- **Adjunct Professor**, Computer Science @ University of Maryland, College Park (USA)
+- **Industry experiences**
+    - Tech: NVIDIA, Synopsys
+    - Finance: June, Teza, Engineers' Gate
+    - Declined pre-IPO offers from Google, Facebook, and others to start companies
+- Been writing code almost every day for the last 35 years (see [GitHub stats](https://github.com/gpsaggese?tab=activity))
 
 <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
   <div style="text-align: center;">
@@ -18,12 +20,9 @@
   </div>
 </div>
 
-*Source: [UMD CMNS Faculty Profile](https://cmns.umd.edu/people/giacinto-paolo-saggese)*
-
 ## Contact Information
 
 - **Email:** gp@causify.ai | gsaggese@umd.edu | saggese@gmail.com
-- **Cell:** 408-431-1286
 - **LinkedIn:** [linkedin.com/in/gpsaggese](https://linkedin.com/in/gpsaggese)
 - **GitHub:** [github.com/gpsaggese](https://github.com/gpsaggese)
 - **Location:** Washington DC-Baltimore Area
@@ -31,7 +30,7 @@
 
 ## Summary
 
-- AI/machine learning researcher, Systems architect, and Technology executive
+- AI/machine learning researcher, systems architect, and technology executive
 - 20+ years building AI/ML systems, quant strategies, and high-performance software
 
 - [CV/Resume](02_cv.md)

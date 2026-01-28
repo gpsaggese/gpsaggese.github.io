@@ -21,7 +21,7 @@ MSML610: Advanced Machine Learning
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 - AIMA (Artificial Intelligence: a Modern Approach), Chap 1

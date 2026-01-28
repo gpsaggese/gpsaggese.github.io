@@ -14,14 +14,14 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{8.2: Causal Inference}}$$**
+**$$\text{\blue{Lesson 08.2: Causal Inference}}$$**
 \endgroup
 
 \vspace{1cm}
 
 ::: columns
 :::: {.column width=75%}
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 
@@ -1625,7 +1625,7 @@ _Mutilated graph_
 ::::
 :::: {.column width=30%}
 
-![](msml610/lectures_source/figures/Lesson9-Price_Quantity.png){height=30%}
+![](msml610/lectures_source/figures/Lesson09-Price_Quantity.png){height=30%}
 
 ```graphviz[width=70%]
 digraph CausalDAG {
