@@ -5,6 +5,7 @@ import csv
 import sys
 from collections import defaultdict
 
+
 def main(csv_file):
     # Define all statuses from count_national.md
     all_statuses = [
@@ -65,13 +66,13 @@ def main(csv_file):
     status_counts = defaultdict(int)
 
     # Read CSV file
-    with open(csv_file, 'r', encoding='utf-8') as f:
+    with open(csv_file, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            status = row.get('National I-Corps Status', '').strip()
+            status = row.get("National I-Corps Status", "").strip()
             # Extract just the status code (e.g., "A.04" from "A.04: PI Search")
             if status:
-                status_code = status.split(':')[0].strip()
+                status_code = status.split(":")[0].strip()
                 status_counts[status_code] += 1
 
     # Print results with tab separation
@@ -84,6 +85,7 @@ def main(csv_file):
     # Print total
     total = sum(status_counts.values())
     print(f"\nTotal\t{total}")
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

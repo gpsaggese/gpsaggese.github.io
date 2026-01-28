@@ -3,18 +3,15 @@ Utility functions for Learning Theory lesson.
 
 Import as:
 
-import msml610.tutorials.utils_Lesson05_Learning_Theory as mtulleth
+import msml610.tutorials.utils_Lesson05_Learning_Theory.old as mtullthol
 """
 
 import logging
-import textwrap
 import warnings
 from typing import Any, Dict, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-import seaborn as sns
 from scipy.stats import norm
 
 import helpers.hdbg as hdbg
@@ -46,6 +43,24 @@ def simulate_marble_sampling(mu: float, N: int) -> float:
     # Calculate sample proportion.
     nu = np.mean(samples)
     return nu
+
+
+def calculate_hoeffding_bound(epsilon: float, N: int) -> float:
+    r"""
+    Calculate the Hoeffding inequality bound.
+
+    The Hoeffding inequality states:
+
+    $$P(|\nu - \mu| > \varepsilon) \le 2e^{-2\varepsilon^2 N}$$
+
+    :param epsilon: Error tolerance
+    :param N: Sample size
+    :return: Hoeffding bound
+    """
+    hdbg.dassert_lt(0, epsilon)
+    hdbg.dassert_lt(0, N)
+    bound = 2 * np.exp(-2 * epsilon**2 * N)
+    return bound
 
 
 def run_hoeffding_experiment(
@@ -92,66 +107,6 @@ def run_hoeffding_experiment(
     return results
 
 
-def calculate_hoeffding_bound(epsilon: float, N: int) -> float:
-    r"""
-    Calculate the Hoeffding inequality bound.
-
-    The Hoeffding inequality states:
-
-    $$P(|\nu - \mu| > \varepsilon) \le 2e^{-2\varepsilon^2 N}$$
-
-    :param epsilon: Error tolerance
-    :param N: Sample size
-    :return: Hoeffding bound
-    """
-    hdbg.dassert_lt(0, epsilon)
-    hdbg.dassert_lt(0, N)
-    bound = 2 * np.exp(-2 * epsilon**2 * N)
-    return bound
-
-
-def plot_hoeffding_interactive(
-    mu: float = 0.6,
-    N: int = 100,
-    epsilon: float = 0.1,
-    n_trials: int = 1000,
-    figsize: Optional[Tuple[int, int]] = None,
-) -> None:
-    """
-    Interactive visualization of Hoeffding Inequality.
-
-    Creates 4 panels showing:
-    1. Marble sampling visualization
-    2. Sampling distribution histogram
-    3. Hoeffding bound curve
-    4. Comments and interpretation
-
-    :param mu: True proportion of red marbles (0 < mu < 1)
-    :param N: Sample size (number of marbles drawn)
-    :param epsilon: Error tolerance
-    :param n_trials: Number of experiments to run
-    :param figsize: Figure size as (width, height) in inches; defaults to
-        (20, 5) if not specified
-    """
-    # Set default figsize if not provided.
-    if figsize is None:
-        figsize = (20, 5)
-    # Run the experiment.
-    results = run_hoeffding_experiment(mu, N, epsilon, n_trials)
-    # Create figure with 4 subplots.
-    fig, axes = plt.subplots(1, 4, figsize=figsize)
-    # Panel 1: Marble bin visualization.
-    _plot_marble_bin(axes[0], results)
-    # Panel 2: Sampling distribution.
-    _plot_sampling_distribution(axes[1], results)
-    # Panel 3: Hoeffding bound curve.
-    _plot_hoeffding_bound_curve(axes[2], results)
-    # Panel 4: Comments.
-    _plot_comments(axes[3], results)
-    plt.tight_layout()
-    plt.show()
-
-
 def _plot_marble_bin(ax: plt.Axes, results: Dict[str, Any]) -> None:
     """
     Plot marble bin visualization showing a single sample.
@@ -168,9 +123,7 @@ def _plot_marble_bin(ax: plt.Axes, results: Dict[str, Any]) -> None:
     # Show marbles in a grid layout.
     grid_size = int(np.ceil(np.sqrt(N)))
     # Pad sample to fit grid.
-    padded_sample = np.pad(
-        sample, (0, grid_size**2 - N), constant_values=-1
-    )
+    padded_sample = np.pad(sample, (0, grid_size**2 - N), constant_values=-1)
     marble_grid = padded_sample.reshape(grid_size, grid_size)
     # Create color map: red for 1, green for 0, white for padding.
     colors = ["white", "green", "red"]
@@ -183,8 +136,7 @@ def _plot_marble_bin(ax: plt.Axes, results: Dict[str, Any]) -> None:
     ax.set_yticks([])
     # Add title and information.
     ax.set_title(
-        "Marble Sampling Visualization\n"
-        f"(Single Sample of N={N} marbles)",
+        f"Marble Sampling Visualization\n(Single Sample of N={N} marbles)",
         fontsize=12,
         fontweight="bold",
     )
@@ -206,9 +158,7 @@ def _plot_marble_bin(ax: plt.Axes, results: Dict[str, Any]) -> None:
     )
 
 
-def _plot_sampling_distribution(
-    ax: plt.Axes, results: Dict[str, Any]
-) -> None:
+def _plot_sampling_distribution(ax: plt.Axes, results: Dict[str, Any]) -> None:
     """
     Plot histogram of sample proportions across all trials.
 
@@ -230,17 +180,25 @@ def _plot_sampling_distribution(
         label=f"Empirical distribution\n(n={n_trials} trials)",
     )
     # Add vertical lines for mu and bounds.
-    ax.axvline(mu, color="red", linestyle="--", linewidth=2, label=f"$\\mu = {mu:.2f}$")
+    ax.axvline(
+        mu, color="red", linestyle="--", linewidth=2, label=f"$\\mu = {mu:.2f}$"
+    )
     ax.axvline(
         mu - epsilon,
         color="orange",
         linestyle=":",
         linewidth=2,
-        label=f"$\\mu \\pm \\varepsilon$",
+        label="$\\mu \\pm \\varepsilon$",
     )
     ax.axvline(mu + epsilon, color="orange", linestyle=":", linewidth=2)
     # Shade the acceptable region.
-    ax.axvspan(mu - epsilon, mu + epsilon, alpha=0.2, color="green", label="Acceptable region")
+    ax.axvspan(
+        mu - epsilon,
+        mu + epsilon,
+        alpha=0.2,
+        color="green",
+        label="Acceptable region",
+    )
     # Add title and labels.
     ax.set_title(
         f"Sampling Distribution of $\\nu$\n(across {n_trials} trials)",
@@ -253,9 +211,7 @@ def _plot_sampling_distribution(
     ax.grid(True, alpha=0.3)
 
 
-def _plot_hoeffding_bound_curve(
-    ax: plt.Axes, results: Dict[str, Any]
-) -> None:
+def _plot_hoeffding_bound_curve(ax: plt.Axes, results: Dict[str, Any]) -> None:
     """
     Plot Hoeffding bound as a function of sample size N.
 
@@ -275,7 +231,7 @@ def _plot_hoeffding_bound_curve(
         bounds,
         color="blue",
         linewidth=2,
-        label=f"Hoeffding bound:\n$2e^{{-2\\varepsilon^2 N}}$",
+        label="Hoeffding bound:\n$2e^{-2\\varepsilon^2 N}$",
     )
     # Mark current N position.
     ax.plot(
@@ -295,8 +251,7 @@ def _plot_hoeffding_bound_curve(
     )
     # Add title and labels.
     ax.set_title(
-        "Hoeffding Bound vs Sample Size\n"
-        f"($\\varepsilon = {epsilon:.2f}$)",
+        f"Hoeffding Bound vs Sample Size\n($\\varepsilon = {epsilon:.2f}$)",
         fontsize=12,
         fontweight="bold",
     )
@@ -354,9 +309,7 @@ def _plot_comments(ax: plt.Axes, results: Dict[str, Any]) -> None:
         interpretation.append("  This confirms the bound is valid!")
     else:
         interpretation.append("OBSERVATION:")
-        interpretation.append(
-            "  The empirical rate slightly exceeds the bound."
-        )
+        interpretation.append("  The empirical rate slightly exceeds the bound.")
         interpretation.append(
             "  This can happen due to statistical fluctuation."
         )
@@ -367,19 +320,13 @@ def _plot_comments(ax: plt.Axes, results: Dict[str, Any]) -> None:
     interpretation.append("KEY INSIGHTS:")
     # Insight about sample size.
     if N < 100:
-        interpretation.append(
-            f"  With N={N}, the bound is relatively loose."
-        )
+        interpretation.append(f"  With N={N}, the bound is relatively loose.")
         interpretation.append(
             "  Try increasing N to see exponential improvement!"
         )
     else:
-        interpretation.append(
-            f"  With N={N}, the bound is tight, showing"
-        )
-        interpretation.append(
-            "  exponential convergence with sample size."
-        )
+        interpretation.append(f"  With N={N}, the bound is tight, showing")
+        interpretation.append("  exponential convergence with sample size.")
     # Insight about epsilon.
     if epsilon < 0.05:
         interpretation.append(
@@ -413,42 +360,44 @@ def _plot_comments(ax: plt.Axes, results: Dict[str, Any]) -> None:
     )
 
 
-def plot_hoeffding_study_empirical_vs_expected(
+def plot_hoeffding_interactive(
     mu: float = 0.6,
     N: int = 100,
+    epsilon: float = 0.1,
     n_trials: int = 1000,
     figsize: Optional[Tuple[int, int]] = None,
 ) -> None:
     """
-    Interactive study of Hoeffding inequality: empirical vs expected distribution.
+    Interactive visualization of Hoeffding Inequality.
 
     Creates 4 panels showing:
-    1. Single sample visualization
-    2. Empirical distribution of nu from trials
-    3. Expected distribution from normal approximation
+    1. Marble sampling visualization
+    2. Sampling distribution histogram
+    3. Hoeffding bound curve
     4. Comments and interpretation
 
-    :param mu: True probability of success (0 < mu < 1)
-    :param N: Number of samples per trial
-    :param n_trials: Number of trials to run
+    :param mu: True proportion of red marbles (0 < mu < 1)
+    :param N: Sample size (number of marbles drawn)
+    :param epsilon: Error tolerance
+    :param n_trials: Number of experiments to run
     :param figsize: Figure size as (width, height) in inches; defaults to
         (20, 5) if not specified
     """
     # Set default figsize if not provided.
     if figsize is None:
         figsize = (20, 5)
-    # Run trials to collect sample means.
-    nus = np.array([simulate_marble_sampling(mu, N) for _ in range(n_trials)])
+    # Run the experiment.
+    results = run_hoeffding_experiment(mu, N, epsilon, n_trials)
     # Create figure with 4 subplots.
     fig, axes = plt.subplots(1, 4, figsize=figsize)
-    # Panel 1: Single sample visualization.
-    _plot_single_sample(axes[0], mu, N)
-    # Panel 2: Empirical distribution.
-    _plot_empirical_distribution_nu(axes[1], nus, mu, N, n_trials)
-    # Panel 3: Expected distribution.
-    _plot_expected_distribution_nu(axes[2], mu, N)
+    # Panel 1: Marble bin visualization.
+    _plot_marble_bin(axes[0], results)
+    # Panel 2: Sampling distribution.
+    _plot_sampling_distribution(axes[1], results)
+    # Panel 3: Hoeffding bound curve.
+    _plot_hoeffding_bound_curve(axes[2], results)
     # Panel 4: Comments.
-    _plot_study_comments_cell1(axes[3], mu, N, n_trials, nus)
+    _plot_comments(axes[3], results)
     plt.tight_layout()
     plt.show()
 
@@ -466,21 +415,21 @@ def _plot_single_sample(ax: plt.Axes, mu: float, N: int) -> None:
     nu = np.mean(sample)
     # Create bar chart showing the sample.
     x_vals = np.arange(N)
-    colors = ['red' if s == 1 else 'green' for s in sample]
-    ax.bar(x_vals, sample, color=colors, edgecolor='black', alpha=0.7)
+    colors = ["red" if s == 1 else "green" for s in sample]
+    ax.bar(x_vals, sample, color=colors, edgecolor="black", alpha=0.7)
     ax.set_ylim(-0.1, 1.1)
-    ax.set_xlabel('Sample index', fontsize=10)
-    ax.set_ylabel('Outcome (1=success, 0=failure)', fontsize=10)
+    ax.set_xlabel("Sample index", fontsize=10)
+    ax.set_ylabel("Outcome (1=success, 0=failure)", fontsize=10)
     ax.set_title(
-        f'Single Bernoulli Sample\n(N={N})',
+        f"Single Bernoulli Sample\n(N={N})",
         fontsize=12,
-        fontweight='bold',
+        fontweight="bold",
     )
     # Add text box with information.
     info_text = (
-        f'True prob: $\\mu = {mu:.2f}$\n'
-        f'Sample mean: $\\nu = {nu:.2f}$\n'
-        f'Successes: {int(np.sum(sample))}/{N}'
+        f"True prob: $\\mu = {mu:.2f}$\n"
+        f"Sample mean: $\\nu = {nu:.2f}$\n"
+        f"Successes: {int(np.sum(sample))}/{N}"
     )
     ax.text(
         0.98,
@@ -488,11 +437,11 @@ def _plot_single_sample(ax: plt.Axes, mu: float, N: int) -> None:
         info_text,
         transform=ax.transAxes,
         fontsize=10,
-        verticalalignment='top',
-        horizontalalignment='right',
-        bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.7),
+        verticalalignment="top",
+        horizontalalignment="right",
+        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.7),
     )
-    ax.grid(True, alpha=0.3, axis='y')
+    ax.grid(True, alpha=0.3, axis="y")
 
 
 def _plot_empirical_distribution_nu(
@@ -517,35 +466,35 @@ def _plot_empirical_distribution_nu(
         bins=40,
         density=True,
         alpha=0.6,
-        color='steelblue',
-        edgecolor='black',
-        label=f'Empirical (n={n_trials})',
+        color="steelblue",
+        edgecolor="black",
+        label=f"Empirical (n={n_trials})",
     )
     # Add vertical line for true mean.
     ax.axvline(
         mu,
-        color='red',
-        linestyle='--',
+        color="red",
+        linestyle="--",
         linewidth=2,
-        label=f'$\\mu = {mu:.2f}$',
+        label=f"$\\mu = {mu:.2f}$",
     )
     # Add vertical line for sample mean.
     sample_mean = np.mean(nus)
     ax.axvline(
         sample_mean,
-        color='orange',
-        linestyle=':',
+        color="orange",
+        linestyle=":",
         linewidth=2,
-        label=f'Sample mean = {sample_mean:.3f}',
+        label=f"Sample mean = {sample_mean:.3f}",
     )
-    ax.set_xlabel('Sample proportion $\\nu$', fontsize=10)
-    ax.set_ylabel('Density', fontsize=10)
+    ax.set_xlabel("Sample proportion $\\nu$", fontsize=10)
+    ax.set_ylabel("Density", fontsize=10)
     ax.set_title(
-        f'Empirical Distribution of $\\nu$\n({n_trials} trials)',
+        f"Empirical Distribution of $\\nu$\n({n_trials} trials)",
         fontsize=12,
-        fontweight='bold',
+        fontweight="bold",
     )
-    ax.legend(loc='upper right', fontsize=9)
+    ax.legend(loc="upper right", fontsize=9)
     ax.grid(True, alpha=0.3)
 
 
@@ -573,35 +522,35 @@ def _plot_expected_distribution_nu(
     ax.plot(
         x_vals,
         y_vals,
-        color='darkblue',
+        color="darkblue",
         linewidth=2,
-        label=f'Normal($\\mu={mu:.2f}$, $\\sigma={theoretical_std:.3f}$)',
+        label=f"Normal($\\mu={mu:.2f}$, $\\sigma={theoretical_std:.3f}$)",
     )
-    ax.fill_between(x_vals, y_vals, alpha=0.3, color='skyblue')
+    ax.fill_between(x_vals, y_vals, alpha=0.3, color="skyblue")
     # Add vertical line for mean.
     ax.axvline(
         mu,
-        color='red',
-        linestyle='--',
+        color="red",
+        linestyle="--",
         linewidth=2,
-        label=f'Mean = {mu:.2f}',
+        label=f"Mean = {mu:.2f}",
     )
     # Shade 1 std dev region.
     ax.axvspan(
         mu - theoretical_std,
         mu + theoretical_std,
         alpha=0.2,
-        color='yellow',
-        label=f'$\\pm 1\\sigma$ region',
+        color="yellow",
+        label="$\\pm 1\\sigma$ region",
     )
-    ax.set_xlabel('Sample proportion $\\nu$', fontsize=10)
-    ax.set_ylabel('Density', fontsize=10)
+    ax.set_xlabel("Sample proportion $\\nu$", fontsize=10)
+    ax.set_ylabel("Density", fontsize=10)
     ax.set_title(
-        f'Expected Distribution (Normal Approx)\n(N={N})',
+        f"Expected Distribution (Normal Approx)\n(N={N})",
         fontsize=12,
-        fontweight='bold',
+        fontweight="bold",
     )
-    ax.legend(loc='upper right', fontsize=9)
+    ax.legend(loc="upper right", fontsize=9)
     ax.grid(True, alpha=0.3)
 
 
@@ -688,19 +637,19 @@ def _plot_study_comments_cell1(
     )
 
 
-def plot_hoeffding_study_difference_distribution(
+def plot_hoeffding_study_empirical_vs_expected(
     mu: float = 0.6,
     N: int = 100,
     n_trials: int = 1000,
     figsize: Optional[Tuple[int, int]] = None,
 ) -> None:
     """
-    Interactive study of Hoeffding inequality: distribution of mu - nu.
+    Interactive study of Hoeffding inequality: empirical vs expected distribution.
 
     Creates 4 panels showing:
-    1. Distribution of errors (mu - nu)
-    2. Cumulative distribution of absolute errors
-    3. Comparison with Hoeffding bound
+    1. Single sample visualization
+    2. Empirical distribution of nu from trials
+    3. Expected distribution from normal approximation
     4. Comments and interpretation
 
     :param mu: True probability of success (0 < mu < 1)
@@ -714,19 +663,16 @@ def plot_hoeffding_study_difference_distribution(
         figsize = (20, 5)
     # Run trials to collect sample means.
     nus = np.array([simulate_marble_sampling(mu, N) for _ in range(n_trials)])
-    # Calculate differences.
-    differences = mu - nus
-    abs_differences = np.abs(differences)
     # Create figure with 4 subplots.
     fig, axes = plt.subplots(1, 4, figsize=figsize)
-    # Panel 1: Distribution of differences.
-    _plot_difference_distribution(axes[0], differences, mu, N, n_trials)
-    # Panel 2: Cumulative distribution of absolute errors.
-    _plot_cumulative_abs_error(axes[1], abs_differences, n_trials)
-    # Panel 3: Hoeffding bound comparison.
-    _plot_hoeffding_comparison(axes[2], abs_differences, N, n_trials)
+    # Panel 1: Single sample visualization.
+    _plot_single_sample(axes[0], mu, N)
+    # Panel 2: Empirical distribution.
+    _plot_empirical_distribution_nu(axes[1], nus, mu, N, n_trials)
+    # Panel 3: Expected distribution.
+    _plot_expected_distribution_nu(axes[2], mu, N)
     # Panel 4: Comments.
-    _plot_study_comments_cell2(axes[3], mu, N, n_trials, differences)
+    _plot_study_comments_cell1(axes[3], mu, N, n_trials, nus)
     plt.tight_layout()
     plt.show()
 
@@ -753,17 +699,17 @@ def _plot_difference_distribution(
         bins=40,
         density=True,
         alpha=0.6,
-        color='purple',
-        edgecolor='black',
-        label=f'Empirical (n={n_trials})',
+        color="purple",
+        edgecolor="black",
+        label=f"Empirical (n={n_trials})",
     )
     # Add vertical line at zero.
     ax.axvline(
         0,
-        color='red',
-        linestyle='--',
+        color="red",
+        linestyle="--",
         linewidth=2,
-        label='Zero error',
+        label="Zero error",
     )
     # Add expected distribution.
     theoretical_std = np.sqrt(mu * (1 - mu) / N)
@@ -772,19 +718,19 @@ def _plot_difference_distribution(
     ax.plot(
         x_vals,
         y_vals,
-        color='darkblue',
+        color="darkblue",
         linewidth=2,
-        linestyle=':',
-        label=f'Expected N(0, {theoretical_std:.3f})',
+        linestyle=":",
+        label=f"Expected N(0, {theoretical_std:.3f})",
     )
-    ax.set_xlabel('Error: $\\mu - \\nu$', fontsize=10)
-    ax.set_ylabel('Density', fontsize=10)
+    ax.set_xlabel("Error: $\\mu - \\nu$", fontsize=10)
+    ax.set_ylabel("Density", fontsize=10)
     ax.set_title(
-        f'Distribution of $\\mu - \\nu$\n({n_trials} trials)',
+        f"Distribution of $\\mu - \\nu$\n({n_trials} trials)",
         fontsize=12,
-        fontweight='bold',
+        fontweight="bold",
     )
-    ax.legend(loc='upper right', fontsize=9)
+    ax.legend(loc="upper right", fontsize=9)
     ax.grid(True, alpha=0.3)
 
 
@@ -808,22 +754,22 @@ def _plot_cumulative_abs_error(
     ax.plot(
         sorted_abs_diff,
         cumulative_prob,
-        color='darkgreen',
+        color="darkgreen",
         linewidth=2,
-        label='Empirical CDF',
+        label="Empirical CDF",
     )
     ax.fill_between(
         sorted_abs_diff,
         cumulative_prob,
         alpha=0.3,
-        color='lightgreen',
+        color="lightgreen",
     )
     # Add horizontal lines for common percentiles.
-    for percentile, label_text in [(0.68, '68%'), (0.95, '95%'), (0.99, '99%')]:
+    for percentile, label_text in [(0.68, "68%"), (0.95, "95%"), (0.99, "99%")]:
         ax.axhline(
             percentile,
-            color='gray',
-            linestyle=':',
+            color="gray",
+            linestyle=":",
             linewidth=1,
             alpha=0.7,
         )
@@ -832,16 +778,16 @@ def _plot_cumulative_abs_error(
             percentile,
             label_text,
             fontsize=8,
-            verticalalignment='bottom',
+            verticalalignment="bottom",
         )
-    ax.set_xlabel('Absolute error: $|\\mu - \\nu|$', fontsize=10)
-    ax.set_ylabel('Cumulative probability', fontsize=10)
+    ax.set_xlabel("Absolute error: $|\\mu - \\nu|$", fontsize=10)
+    ax.set_ylabel("Cumulative probability", fontsize=10)
     ax.set_title(
-        'CDF of Absolute Errors\n(What fraction < epsilon?)',
+        "CDF of Absolute Errors\n(What fraction < epsilon?)",
         fontsize=12,
-        fontweight='bold',
+        fontweight="bold",
     )
-    ax.legend(loc='lower right', fontsize=9)
+    ax.legend(loc="lower right", fontsize=9)
     ax.grid(True, alpha=0.3)
 
 
@@ -867,23 +813,25 @@ def _plot_hoeffding_comparison(
         violations = np.sum(abs_differences > eps)
         empirical_rates.append(violations / n_trials)
     # Calculate Hoeffding bounds.
-    hoeffding_bounds = [calculate_hoeffding_bound(eps, N) for eps in epsilon_vals]
+    hoeffding_bounds = [
+        calculate_hoeffding_bound(eps, N) for eps in epsilon_vals
+    ]
     # Plot empirical rates.
     ax.plot(
         epsilon_vals,
         empirical_rates,
-        color='red',
+        color="red",
         linewidth=2,
-        label='Empirical violation rate',
+        label="Empirical violation rate",
     )
     # Plot Hoeffding bound.
     ax.plot(
         epsilon_vals,
         hoeffding_bounds,
-        color='blue',
+        color="blue",
         linewidth=2,
-        linestyle='--',
-        label='Hoeffding bound',
+        linestyle="--",
+        label="Hoeffding bound",
     )
     # Shade region between them.
     ax.fill_between(
@@ -891,19 +839,19 @@ def _plot_hoeffding_comparison(
         empirical_rates,
         hoeffding_bounds,
         alpha=0.3,
-        color='green',
-        label='Safety margin',
+        color="green",
+        label="Safety margin",
     )
-    ax.set_xlabel('Error tolerance $\\varepsilon$', fontsize=10)
-    ax.set_ylabel('Probability of violation', fontsize=10)
+    ax.set_xlabel("Error tolerance $\\varepsilon$", fontsize=10)
+    ax.set_ylabel("Probability of violation", fontsize=10)
     ax.set_title(
-        f'Hoeffding Bound Validation\n(N={N})',
+        f"Hoeffding Bound Validation\n(N={N})",
         fontsize=12,
-        fontweight='bold',
+        fontweight="bold",
     )
-    ax.set_yscale('log')
-    ax.legend(loc='upper right', fontsize=9)
-    ax.grid(True, alpha=0.3, which='both')
+    ax.set_yscale("log")
+    ax.legend(loc="upper right", fontsize=9)
+    ax.grid(True, alpha=0.3, which="both")
 
 
 def _plot_study_comments_cell2(
@@ -987,3 +935,46 @@ def _plot_study_comments_cell2(
         fontfamily="monospace",
         bbox=dict(boxstyle="round", facecolor="lightyellow", alpha=0.8),
     )
+
+
+def plot_hoeffding_study_difference_distribution(
+    mu: float = 0.6,
+    N: int = 100,
+    n_trials: int = 1000,
+    figsize: Optional[Tuple[int, int]] = None,
+) -> None:
+    """
+    Interactive study of Hoeffding inequality: distribution of mu - nu.
+
+    Creates 4 panels showing:
+    1. Distribution of errors (mu - nu)
+    2. Cumulative distribution of absolute errors
+    3. Comparison with Hoeffding bound
+    4. Comments and interpretation
+
+    :param mu: True probability of success (0 < mu < 1)
+    :param N: Number of samples per trial
+    :param n_trials: Number of trials to run
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
+    """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
+    # Run trials to collect sample means.
+    nus = np.array([simulate_marble_sampling(mu, N) for _ in range(n_trials)])
+    # Calculate differences.
+    differences = mu - nus
+    abs_differences = np.abs(differences)
+    # Create figure with 4 subplots.
+    fig, axes = plt.subplots(1, 4, figsize=figsize)
+    # Panel 1: Distribution of differences.
+    _plot_difference_distribution(axes[0], differences, mu, N, n_trials)
+    # Panel 2: Cumulative distribution of absolute errors.
+    _plot_cumulative_abs_error(axes[1], abs_differences, n_trials)
+    # Panel 3: Hoeffding bound comparison.
+    _plot_hoeffding_comparison(axes[2], abs_differences, N, n_trials)
+    # Panel 4: Comments.
+    _plot_study_comments_cell2(axes[3], mu, N, n_trials, differences)
+    plt.tight_layout()
+    plt.show()

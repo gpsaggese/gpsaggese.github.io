@@ -100,9 +100,8 @@ def _create_slider_widget(
     return slider, text, minus_button, plus_button
 
 
-def _link_slider_widgets(
-    slider, text, minus_button, plus_button
-) -> None:
+# TODO(ai_gp): Add type hints.
+def _link_slider_widgets(slider, text, minus_button, plus_button) -> None:
     """
     Link slider, text field, and buttons together.
 
@@ -114,21 +113,18 @@ def _link_slider_widgets(
     :param minus_button: The decrement button
     :param plus_button: The increment button
     """
+
     def slider_changed(change):
-        """Update text when slider changes."""
         text.value = change["new"]
 
     def text_changed(change):
-        """Update slider when text changes."""
         if slider.min <= change["new"] <= slider.max:
             slider.value = change["new"]
 
     def minus_clicked(b):
-        """Decrement slider value."""
         slider.value = max(slider.min, slider.value - slider.step)
 
     def plus_clicked(b):
-        """Increment slider value."""
         slider.value = min(slider.max, slider.value + slider.step)
 
     # Connect observers.
@@ -138,6 +134,7 @@ def _link_slider_widgets(
     plus_button.on_click(plus_clicked)
 
 
+# TODO(ai_gp): Add type hints.
 def _create_widget_box(slider, minus_button, text, plus_button) -> HBox:
     """
     Create horizontal box layout for widget controls.

@@ -33,17 +33,16 @@ from pathlib import Path
 from cryptography.fernet import Fernet
 
 import helpers.hdbg as hdbg
-import helpers.hio as hio
 import helpers.hparser as hparser
 import helpers.hsystem as hsystem
 
 _LOG = logging.getLogger(__name__)
 
 # Valid file extensions to process.
-_VALID_EXTENSIONS = ('.md', '.txt', '.py')
+_VALID_EXTENSIONS = (".md", ".txt", ".py")
 
 # Encryption header to identify encrypted files.
-_ENCRYPTION_HEADER = b'FERNET_ENCRYPTED_V1\n'
+_ENCRYPTION_HEADER = b"FERNET_ENCRYPTED_V1\n"
 
 # #############################################################################
 
@@ -95,7 +94,7 @@ def _is_file_encrypted(file_path: Path) -> bool:
     :return: True if file starts with encryption header
     """
     try:
-        with open(file_path, 'rb') as f:
+        with open(file_path, "rb") as f:
             header = f.read(len(_ENCRYPTION_HEADER))
             return header == _ENCRYPTION_HEADER
     except Exception as e:
@@ -118,7 +117,7 @@ def _encrypt_file(file_path: Path, secret: str) -> None:
         return
     _LOG.debug("Encrypting file: %s", file_path)
     # Read the file content.
-    with open(file_path, 'rb') as f:
+    with open(file_path, "rb") as f:
         plaintext = f.read()
     # Derive encryption key.
     key = _derive_key(secret)
@@ -126,7 +125,7 @@ def _encrypt_file(file_path: Path, secret: str) -> None:
     # Encrypt the content.
     encrypted = cipher.encrypt(plaintext)
     # Write encrypted content with header.
-    with open(file_path, 'wb') as f:
+    with open(file_path, "wb") as f:
         f.write(_ENCRYPTION_HEADER)
         f.write(encrypted)
 
@@ -140,7 +139,7 @@ def _decrypt_file(file_path: Path, secret: str) -> None:
     """
     _LOG.debug("Decrypting file: %s", file_path)
     # Read the encrypted file.
-    with open(file_path, 'rb') as f:
+    with open(file_path, "rb") as f:
         content = f.read()
     # Check and remove header.
     hdbg.dassert(
@@ -148,7 +147,7 @@ def _decrypt_file(file_path: Path, secret: str) -> None:
         "File is not encrypted with expected format:",
         file_path,
     )
-    encrypted = content[len(_ENCRYPTION_HEADER):]
+    encrypted = content[len(_ENCRYPTION_HEADER) :]
     # Derive decryption key.
     key = _derive_key(secret)
     cipher = Fernet(key)
@@ -162,7 +161,7 @@ def _decrypt_file(file_path: Path, secret: str) -> None:
             str(e),
         )
     # Write decrypted content.
-    with open(file_path, 'wb') as f:
+    with open(file_path, "wb") as f:
         f.write(plaintext)
 
 

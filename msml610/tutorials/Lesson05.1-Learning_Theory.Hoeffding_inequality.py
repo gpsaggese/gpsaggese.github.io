@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -31,10 +31,8 @@
 
 import logging
 
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from ipywidgets import interact, FloatSlider, IntSlider, FloatText, IntText, Button, HBox, VBox, Output, Label
 
 import utils_Lesson05_Learning_Theory as utils
 

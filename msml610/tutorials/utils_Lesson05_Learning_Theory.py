@@ -7,14 +7,12 @@ import msml610.tutorials.utils_Lesson05_Learning_Theory as mtulleth
 """
 
 import logging
-import textwrap
 import warnings
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Callable
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from ipywidgets import Output, VBox
 from scipy.stats import norm
 
@@ -27,14 +25,12 @@ _LOG = logging.getLogger(__name__)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 
-
 # #############################################################################
 # Interactive Widget Setup Functions
 # #############################################################################
 
 
-def sample_bernoulli_with_pdf(
-) -> None:
+def sample_bernoulli_with_pdf() -> None:
     """
     Create interactive Bernoulli sampling visualization with PDF comparison.
 
@@ -45,9 +41,9 @@ def sample_bernoulli_with_pdf(
     Users can adjust the success probability (mu), sample size (N), and random
     seed to observe how empirical results converge to theoretical predictions.
     """
-    mu_init=0.6
-    N_init=100
-    seed_init=42
+    mu_init = 0.6
+    N_init = 100
+    seed_init = 42
     # Create widgets.
     mu_slider, mu_box = mtumsuti.build_widget_control(
         name="mu",
@@ -313,10 +309,12 @@ def plot_bernoulli_samples_and_pdf(
     sample_probs = sample_counts / N
     # Prepare data for both outcomes (0 and 1).
     outcomes = np.array([0, 1])
-    empirical_probs = np.array([
-        sample_probs.get(0, 0),
-        sample_probs.get(1, 0),
-    ])
+    empirical_probs = np.array(
+        [
+            sample_probs.get(0, 0),
+            sample_probs.get(1, 0),
+        ]
+    )
     theoretical_probs = np.array([1 - mu, mu])
     # Set bar width and positions for side-by-side display.
     bar_width = 0.35
@@ -670,11 +668,17 @@ def plot_empirical_mean_distribution_cell3(
     ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
     # Generate interpretation text.
     if N < 30:
-        sample_size_note = "Sample size is small.\nCLT approximation may\nnot be accurate."
+        sample_size_note = (
+            "Sample size is small.\nCLT approximation may\nnot be accurate."
+        )
     elif N < 100:
-        sample_size_note = "Sample size is moderate.\nCLT approximation is\nreasonable."
+        sample_size_note = (
+            "Sample size is moderate.\nCLT approximation is\nreasonable."
+        )
     else:
-        sample_size_note = "Sample size is large.\nCLT approximation is\nvery accurate."
+        sample_size_note = (
+            "Sample size is large.\nCLT approximation is\nvery accurate."
+        )
     text_content = (
         f"Parameters:\n"
         f"  mu = {mu:.4f}\n"
