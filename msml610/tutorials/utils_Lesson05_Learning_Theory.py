@@ -26,6 +26,145 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 # #############################################################################
+# Helper functions
+# #############################################################################
+
+
+def _validate_bernoulli_params(
+    mu: float, N: int, n_samples: int = None
+) -> None:
+    """
+    Validate parameters for Bernoulli sampling functions.
+
+    :param mu: Probability of success (must be in [0, 1])
+    :param N: Number of samples (must be >= 1)
+    :param n_samples: Optional number of trials (must be >= 1 if provided)
+    """
+    hdbg.dassert_lte(0, mu, "mu must be positive:", mu)
+    hdbg.dassert_lte(mu, 1, "mu must be at most 1:", mu)
+    hdbg.dassert_lte(1, N, "N must be at least 1:", N)
+    if n_samples is not None:
+        hdbg.dassert_lte(1, n_samples, "n_samples must be at least 1:", n_samples)
+
+
+def _generate_bernoulli_samples(mu: float, N: int, seed: int) -> np.ndarray:
+    """
+    Generate N Bernoulli samples with a fixed random seed.
+
+    :param mu: Probability of success
+    :param N: Number of samples
+    :param seed: Random seed for reproducibility
+    :return: Array of Bernoulli samples (0s and 1s)
+    """
+    np.random.seed(seed)
+    return np.random.binomial(1, mu, size=N)
+
+
+def _plot_bernoulli_pdf_bars(
+    ax,
+    samples: np.ndarray,
+    mu: float,
+    N: int,
+    title: str = "Empirical PDF",
+) -> None:
+    """
+    Plot side-by-side bars comparing empirical and theoretical Bernoulli PDF.
+
+    :param ax: Matplotlib axes to plot on
+    :param samples: Array of Bernoulli samples (0s and 1s)
+    :param mu: True probability parameter
+    :param N: Number of samples
+    :param title: Title for the plot
+    """
+    sample_counts = pd.Series(samples).value_counts().sort_index()
+    # Normalize to get probabilities.
+    sample_probs = sample_counts / N
+    # Prepare data for both outcomes (0 and 1).
+    outcomes = np.array([0, 1])
+    empirical_probs = np.array(
+        [
+            sample_probs.get(0, 0),
+            sample_probs.get(1, 0),
+        ]
+    )
+    theoretical_probs = np.array([1 - mu, mu])
+    # Set bar width and positions for side-by-side display.
+    bar_width = 0.35
+    x_positions = outcomes
+    # Plot empirical probabilities with darker solid bars.
+    ax.bar(
+        x_positions - bar_width / 2,
+        empirical_probs,
+        width=bar_width,
+        color=["darkred", "darkgreen"],
+        alpha=0.85,
+        edgecolor="black",
+        linewidth=1.5,
+        label="Empirical",
+    )
+    # Plot theoretical probabilities with lighter bars.
+    ax.bar(
+        x_positions + bar_width / 2,
+        theoretical_probs,
+        width=bar_width,
+        color="steelblue",
+        alpha=0.5,
+        edgecolor="black",
+        linewidth=1.5,
+        label="Theoretical",
+    )
+    ax.set_ylabel("Probability", fontsize=12)
+    ax.set_xlabel("Outcome", fontsize=12)
+    ax.set_title(title, fontsize=14, fontweight="bold")
+    ax.set_ylim([0, 1])
+    ax.legend(fontsize=10)
+    ax.grid(True, alpha=0.3, axis="y")
+
+
+def _create_basic_widget_controls(
+    mu_init: float = 0.6,
+    N_init: int = 100,
+    seed_init: int = 42,
+) -> tuple:
+    """
+    Create standard mu, N, and seed slider widgets with boxes.
+
+    :param mu_init: Initial mu value
+    :param N_init: Initial N value
+    :param seed_init: Initial seed value
+    :return: Tuple of (mu_slider, mu_box, N_slider, N_box, seed_slider, seed_box)
+    """
+    mu_slider, mu_box = mtumsuti.build_widget_control(
+        name="mu",
+        description="prob of success",
+        min_val=0.1,
+        max_val=0.9,
+        step=0.05,
+        initial_value=mu_init,
+        is_float=True,
+    )
+    N_slider, N_box = mtumsuti.build_widget_control(
+        name="N",
+        description="number of samples",
+        min_val=10,
+        max_val=500,
+        step=10,
+        initial_value=N_init,
+        is_float=False,
+    )
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="random seed",
+        min_val=0,
+        max_val=1000,
+        step=1,
+        initial_value=seed_init,
+        is_float=False,
+    )
+    return mu_slider, mu_box, N_slider, N_box, seed_slider, seed_box
+
+
+# #############################################################################
 # sample_bernoulli1
 # #############################################################################
 
@@ -49,12 +188,9 @@ def sample_bernoulli1(
     :param seed: Random seed for reproducibility
     """
     # Validate parameters.
-    hdbg.dassert_lte(0, mu, "mu must be positive:", mu)
-    hdbg.dassert_lte(mu, 1, "mu must be at most 1:", mu)
-    hdbg.dassert_lte(1, N, "N must be at least 1:", N)
+    _validate_bernoulli_params(mu, N)
     # Execute the sampling.
-    np.random.seed(seed)
-    samples = np.random.binomial(1, mu, size=N)
+    samples = _generate_bernoulli_samples(mu, N, seed)
     empirical_mean = np.mean(samples)
     # Display results.
     print("Parameters:")
@@ -96,13 +232,9 @@ def _plot_bernoulli_sample2(
     :param seed: Random seed for reproducibility
     """
     # Validate parameters.
-    hdbg.dassert_lte(0, mu, "mu must be positive:", mu)
-    hdbg.dassert_lte(mu, 1, "mu must be at most 1:", mu)
-    hdbg.dassert_lte(1, N, "N must be at least 1:", N)
-    # Set random seed for reproducibility.
-    np.random.seed(seed)
+    _validate_bernoulli_params(mu, N)
     # Generate N Bernoulli samples.
-    samples = np.random.binomial(1, mu, size=N)
+    samples = _generate_bernoulli_samples(mu, N, seed)
     # Compute statistics.
     n_successes = np.sum(samples)
     n_failures = N - n_successes
@@ -136,49 +268,7 @@ def _plot_bernoulli_sample2(
     )
     ax1.legend(fontsize=10, loc="upper right")
     # Plot 2: Empirical PDF with side-by-side bars for comparison.
-    sample_counts = pd.Series(samples).value_counts().sort_index()
-    # Normalize to get probabilities.
-    sample_probs = sample_counts / N
-    # Prepare data for both outcomes (0 and 1).
-    outcomes = np.array([0, 1])
-    empirical_probs = np.array(
-        [
-            sample_probs.get(0, 0),
-            sample_probs.get(1, 0),
-        ]
-    )
-    theoretical_probs = np.array([1 - mu, mu])
-    # Set bar width and positions for side-by-side display.
-    bar_width = 0.35
-    x_positions = outcomes
-    # Plot empirical probabilities with darker solid bars.
-    ax2.bar(
-        x_positions - bar_width / 2,
-        empirical_probs,
-        width=bar_width,
-        color=["darkred", "darkgreen"],
-        alpha=0.85,
-        edgecolor="black",
-        linewidth=1.5,
-        label="Empirical",
-    )
-    # Plot theoretical probabilities with lighter bars.
-    ax2.bar(
-        x_positions + bar_width / 2,
-        theoretical_probs,
-        width=bar_width,
-        color="steelblue",
-        alpha=0.5,
-        edgecolor="black",
-        linewidth=1.5,
-        label="Theoretical",
-    )
-    ax2.set_ylabel("Probability", fontsize=12)
-    ax2.set_xlabel("Outcome", fontsize=12)
-    ax2.set_title("Empirical PDF", fontsize=14, fontweight="bold")
-    ax2.set_ylim([0, 1])
-    ax2.legend(fontsize=10)
-    ax2.grid(True, alpha=0.3, axis="y")
+    _plot_bernoulli_pdf_bars(ax2, samples, mu, N)
     # Plot 3: Comments and explanation.
     ax3.axis("off")
     ax3.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
@@ -221,32 +311,8 @@ def sample_bernoulli2() -> None:
     N_init = 100
     seed_init = 42
     # Create widgets.
-    mu_slider, mu_box = mtumsuti.build_widget_control(
-        name="mu",
-        description="prob of success",
-        min_val=0.1,
-        max_val=0.9,
-        step=0.05,
-        initial_value=mu_init,
-        is_float=True,
-    )
-    N_slider, N_box = mtumsuti.build_widget_control(
-        name="N",
-        description="number of samples",
-        min_val=10,
-        max_val=500,
-        step=10,
-        initial_value=N_init,
-        is_float=False,
-    )
-    seed_slider, seed_box = mtumsuti.build_widget_control(
-        name="seed",
-        description="random seed",
-        min_val=0,
-        max_val=1000,
-        step=1,
-        initial_value=seed_init,
-        is_float=False,
+    mu_slider, mu_box, N_slider, N_box, seed_slider, seed_box = (
+        _create_basic_widget_controls(mu_init, N_init, seed_init)
     )
     # Create output widget.
     output = ipywidgets.Output()
@@ -293,13 +359,9 @@ def _plot_bernoulli_sample3(
     :param seed: Random seed for reproducibility
     """
     # Validate parameters.
-    hdbg.dassert_lte(0, mu, "mu must be positive:", mu)
-    hdbg.dassert_lte(mu, 1, "mu must be at most 1:", mu)
-    hdbg.dassert_lte(1, N, "N must be at least 1:", N)
-    # Set random seed for reproducibility.
-    np.random.seed(seed)
+    _validate_bernoulli_params(mu, N)
     # Generate N Bernoulli samples.
-    samples = np.random.binomial(1, mu, size=N)
+    samples = _generate_bernoulli_samples(mu, N, seed)
     # Compute the sample mean nu.
     nu = np.mean(samples)
     # Compute theoretical mean and variance of Bernoulli distribution.
@@ -312,49 +374,7 @@ def _plot_bernoulli_sample3(
         1, 3, figsize=(18, 5), gridspec_kw={"width_ratios": [1, 1, 1.2]}
     )
     # Plot 1: PDF of samples.
-    sample_counts = pd.Series(samples).value_counts().sort_index()
-    # Normalize to get probabilities.
-    sample_probs = sample_counts / N
-    # Prepare data for both outcomes (0 and 1).
-    outcomes = np.array([0, 1])
-    empirical_probs = np.array(
-        [
-            sample_probs.get(0, 0),
-            sample_probs.get(1, 0),
-        ]
-    )
-    theoretical_probs = np.array([1 - mu, mu])
-    # Set bar width and positions for side-by-side display.
-    bar_width = 0.35
-    x_positions = outcomes
-    # Plot empirical probabilities with darker solid bars.
-    ax1.bar(
-        x_positions - bar_width / 2,
-        empirical_probs,
-        width=bar_width,
-        color=["darkred", "darkgreen"],
-        alpha=0.85,
-        edgecolor="black",
-        linewidth=1.5,
-        label="Empirical",
-    )
-    # Plot theoretical probabilities with lighter bars.
-    ax1.bar(
-        x_positions + bar_width / 2,
-        theoretical_probs,
-        width=bar_width,
-        color="steelblue",
-        alpha=0.5,
-        edgecolor="black",
-        linewidth=1.5,
-        label="Theoretical",
-    )
-    ax1.set_ylabel("Probability", fontsize=12)
-    ax1.set_xlabel("Outcome", fontsize=12)
-    ax1.set_title("PDF of Samples", fontsize=14, fontweight="bold")
-    ax1.set_ylim([0, 1])
-    ax1.legend(fontsize=10)
-    ax1.grid(True, alpha=0.3, axis="y")
+    _plot_bernoulli_pdf_bars(ax1, samples, mu, N, "PDF of Samples")
     # Plot 2: Comparison of empirical vs theoretical statistics.
     metrics = ["Mean", "Variance"]
     empirical = [nu, sample_variance]
@@ -455,32 +475,8 @@ def sample_bernoulli3(
     :param seed_init: Initial value for seed
     """
     # Create widgets.
-    mu_slider, mu_box = mtumsuti.build_widget_control(
-        name="mu",
-        description="prob of success",
-        min_val=0.1,
-        max_val=0.9,
-        step=0.05,
-        initial_value=mu_init,
-        is_float=True,
-    )
-    N_slider, N_box = mtumsuti.build_widget_control(
-        name="N",
-        description="number of samples",
-        min_val=10,
-        max_val=500,
-        step=10,
-        initial_value=N_init,
-        is_float=False,
-    )
-    seed_slider, seed_box = mtumsuti.build_widget_control(
-        name="seed",
-        description="random seed",
-        min_val=0,
-        max_val=1000,
-        step=1,
-        initial_value=seed_init,
-        is_float=False,
+    mu_slider, mu_box, N_slider, N_box, seed_slider, seed_box = (
+        _create_basic_widget_controls(mu_init, N_init, seed_init)
     )
     # Create output widget.
     output = ipywidgets.Output()
@@ -527,10 +523,7 @@ def _plot_bernoulli_sample4(
     :param seed: Random seed for reproducibility
     """
     # Validate parameters.
-    hdbg.dassert_lte(0, mu, "mu must be positive:", mu)
-    hdbg.dassert_lte(mu, 1, "mu must be at most 1:", mu)
-    hdbg.dassert_lte(1, N, "N must be at least 1:", N)
-    hdbg.dassert_lte(1, n_samples, "n_samples must be at least 1:", n_samples)
+    _validate_bernoulli_params(mu, N, n_samples)
     # Set random seed for reproducibility.
     np.random.seed(seed)
     # Generate empirical distribution by repeated sampling.
@@ -553,13 +546,13 @@ def _plot_bernoulli_sample4(
         1, 2, figsize=(18, 5), gridspec_kw={"width_ratios": [1.5, 1]}
     )
     # Plot 1: Distribution of empirical mean nu.
-    # Plot empirical data with darker color and solid bars.
+    # Plot empirical data with light blue color and solid bars.
     ax1.hist(
         empirical_nus,
         bins=30,
         density=True,
         alpha=0.85,
-        color="darkblue",
+        color="lightblue",
         edgecolor="black",
         linewidth=1.5,
         label=f"Empirical (n={n_samples})",
@@ -649,24 +642,11 @@ def sample_bernoulli4() -> None:
     n_samples_init = 1000
     seed_init = 42
     # Create widgets.
-    mu_slider, mu_box = mtumsuti.build_widget_control(
-        name="mu",
-        description="prob of success",
-        min_val=0.1,
-        max_val=0.9,
-        step=0.05,
-        initial_value=mu_init,
-        is_float=True,
+    mu_slider, mu_box, N_slider, N_box, seed_slider, seed_box = (
+        _create_basic_widget_controls(mu_init, N_init, seed_init)
     )
-    N_slider, N_box = mtumsuti.build_widget_control(
-        name="N",
-        description="samples per trial",
-        min_val=10,
-        max_val=500,
-        step=10,
-        initial_value=N_init,
-        is_float=False,
-    )
+    # Update N slider description for this specific use case.
+    N_box.children[0].description = "samples per trial"
     n_samples_slider, n_samples_box = mtumsuti.build_widget_control(
         name="n_samples",
         description="number of trials",
@@ -674,15 +654,6 @@ def sample_bernoulli4() -> None:
         max_val=5000,
         step=100,
         initial_value=n_samples_init,
-        is_float=False,
-    )
-    seed_slider, seed_box = mtumsuti.build_widget_control(
-        name="seed",
-        description="random seed",
-        min_val=0,
-        max_val=1000,
-        step=1,
-        initial_value=seed_init,
         is_float=False,
     )
     # Create output widget.
