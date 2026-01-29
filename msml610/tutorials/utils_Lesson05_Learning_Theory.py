@@ -12,11 +12,9 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-# TODO(ai_gp): Use only import ipywidgets and then ipywidgets.Button, etc
-from ipywidgets import Output, VBox
+import ipywidgets
+import scipy.stats
 from IPython.display import display
-# TODO(ai_gp): Use only import and use only scipy.stats.norm
-from scipy.stats import norm
 
 import helpers.hdbg as hdbg
 import msml610_utils as mtumsuti
@@ -80,8 +78,7 @@ def sample_bernoulli1(
 # #############################################################################
 
 
-# TODO(ai_gp): Rename _plot_bernoulli_sample2
-def _plot_bernoulli_samples_and_pdf(
+def _plot_bernoulli_sample2(
     *,
     mu: float = 0.6,
     N: int = 100,
@@ -252,7 +249,7 @@ def sample_bernoulli2() -> None:
         is_float=False,
     )
     # Create output widget.
-    output = Output()
+    output = ipywidgets.Output()
 
     def update_plot(change=None):
         """
@@ -260,7 +257,7 @@ def sample_bernoulli2() -> None:
         """
         with output:
             output.clear_output(wait=True)
-            _plot_bernoulli_samples_and_pdf(
+            _plot_bernoulli_sample2(
                 mu=mu_slider.value, N=N_slider.value, seed=seed_slider.value
             )
 
@@ -269,7 +266,7 @@ def sample_bernoulli2() -> None:
     N_slider.observe(update_plot, names="value")
     seed_slider.observe(update_plot, names="value")
     # Display widgets and initial plot.
-    display(VBox([mu_box, N_box, seed_box, output]))
+    display(ipywidgets.VBox([mu_box, N_box, seed_box, output]))
     update_plot()
 
 
@@ -278,8 +275,7 @@ def sample_bernoulli2() -> None:
 # #############################################################################
 
 
-# TODO(ai_gp): Rename _plot_bernoulli_sample3
-def _plot_bernoulli_pdf_cell2(
+def _plot_bernoulli_sample3(
     *,
     mu: float = 0.6,
     N: int = 100,
@@ -450,9 +446,10 @@ def sample_bernoulli3(
 ) -> None:
     """
     Sets up complete interactive widget with sliders for mu, N, and seed
-    parameters, connecting them to the provided plotting function.
+    parameters.
 
-    :param plot_func: Plotting function to call (e.g., plot_bernoulli_pdf_cell2)
+    Connects sliders to _plot_bernoulli_sample3() for interactive visualization.
+
     :param mu_init: Initial value for mu (probability of success)
     :param N_init: Initial value for N (number of samples)
     :param seed_init: Initial value for seed
@@ -486,13 +483,12 @@ def sample_bernoulli3(
         is_float=False,
     )
     # Create output widget.
-    output = Output()
+    output = ipywidgets.Output()
 
     def update_plot(change=None):
-        """Update plot when slider values change."""
         with output:
             output.clear_output(wait=True)
-            _plot_bernoulli_pdf_cell2(
+            _plot_bernoulli_sample3(
                 mu=mu_slider.value, N=N_slider.value, seed=seed_slider.value
             )
 
@@ -501,7 +497,7 @@ def sample_bernoulli3(
     N_slider.observe(update_plot, names="value")
     seed_slider.observe(update_plot, names="value")
     # Display widgets and initial plot.
-    display(VBox([mu_box, N_box, seed_box, output]))
+    display(ipywidgets.VBox([mu_box, N_box, seed_box, output]))
     update_plot()
 
 
@@ -510,8 +506,7 @@ def sample_bernoulli3(
 # #############################################################################
 
 
-# TODO(ai_gp): Rename _plot_bernoulli_sample4
-def _plot_empirical_mean_distribution_cell3(
+def _plot_bernoulli_sample4(
     *,
     mu: float = 0.6,
     N: int = 100,
@@ -575,7 +570,7 @@ def _plot_empirical_mean_distribution_cell3(
         expected_mean + 4 * expected_std,
         200,
     )
-    y_expected = norm.pdf(x_range, expected_mean, expected_std)
+    y_expected = scipy.stats.norm.pdf(x_range, expected_mean, expected_std)
     ax1.plot(
         x_range,
         y_expected,
@@ -600,6 +595,8 @@ def _plot_empirical_mean_distribution_cell3(
         fontsize=14,
         fontweight="bold",
     )
+    ax1.set_xlim([0, 1.0])
+    ax1.set_ylim([0, 25])
     ax1.legend(fontsize=10)
     ax1.grid(True, alpha=0.3)
     # Plot 2: Comments and explanation.
@@ -643,13 +640,9 @@ def sample_bernoulli4() -> None:
     Create interactive widget for Cell 4 (Distribution of Empirical Mean).
 
     Sets up complete interactive widget with sliders for mu, N, n_samples,
-    and seed parameters, connecting them to the provided plotting function.
+    and seed parameters.
 
-    :param plot_func: Plotting function to call (e.g., plot_empirical_mean_distribution_cell3)
-    :param mu_init: Initial value for mu (probability of success)
-    :param N_init: Initial value for N (samples per trial)
-    :param n_samples_init: Initial value for n_samples (number of trials)
-    :param seed_init: Initial value for seed
+    Connects sliders to _plot_bernoulli_sample4() for interactive visualization.
     """
     mu_init = 0.6
     N_init = 100
@@ -693,12 +686,12 @@ def sample_bernoulli4() -> None:
         is_float=False,
     )
     # Create output widget.
-    output = Output()
+    output = ipywidgets.Output()
 
     def update_plot(change=None):
         with output:
             output.clear_output(wait=True)
-            _plot_empirical_mean_distribution_cell3(
+            _plot_bernoulli_sample4(
                 mu=mu_slider.value,
                 N=N_slider.value,
                 n_samples=n_samples_slider.value,
@@ -711,5 +704,5 @@ def sample_bernoulli4() -> None:
     n_samples_slider.observe(update_plot, names="value")
     seed_slider.observe(update_plot, names="value")
     # Display widgets and initial plot.
-    display(VBox([mu_box, N_box, n_samples_box, seed_box, output]))
+    display(ipywidgets.VBox([mu_box, N_box, n_samples_box, seed_box, output]))
     update_plot()
