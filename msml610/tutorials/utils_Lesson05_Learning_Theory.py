@@ -12,8 +12,10 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+# TODO(ai_gp): Remove this and use only ipywidgets.Button, etc
 from ipywidgets import Output, VBox
 from IPython.display import display
+# TODO(ai_gp): Remove this and use only scipy.stats.norm
 from scipy.stats import norm
 
 import helpers.hdbg as hdbg
@@ -108,7 +110,7 @@ def plot_bernoulli_samples_and_pdf(
     n_failures = N - n_successes
     empirical_prob = n_successes / N
     # Create visualization with 3 subplots in a single row.
-    fig, (ax1, ax2, ax3) = plt.subplots(
+    _ , (ax1, ax2, ax3) = plt.subplots(
         1, 3, figsize=(18, 5), gridspec_kw={"width_ratios": [1, 1, 1.5]}
     )
     # Plot 1: Samples over time.
