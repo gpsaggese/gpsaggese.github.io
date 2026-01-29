@@ -12,10 +12,10 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-# TODO(ai_gp): Remove this and use only ipywidgets.Button, etc
+# TODO(ai_gp): Use only import ipywidgets and then ipywidgets.Button, etc
 from ipywidgets import Output, VBox
 from IPython.display import display
-# TODO(ai_gp): Remove this and use only scipy.stats.norm
+# TODO(ai_gp): Use only import and use only scipy.stats.norm
 from scipy.stats import norm
 
 import helpers.hdbg as hdbg
@@ -80,7 +80,8 @@ def sample_bernoulli1(
 # #############################################################################
 
 
-def plot_bernoulli_samples_and_pdf(
+# TODO(ai_gp): Rename _plot_bernoulli_sample2
+def _plot_bernoulli_samples_and_pdf(
     *,
     mu: float = 0.6,
     N: int = 100,
@@ -259,7 +260,7 @@ def sample_bernoulli2() -> None:
         """
         with output:
             output.clear_output(wait=True)
-            plot_bernoulli_samples_and_pdf(
+            _plot_bernoulli_samples_and_pdf(
                 mu=mu_slider.value, N=N_slider.value, seed=seed_slider.value
             )
 
@@ -277,7 +278,8 @@ def sample_bernoulli2() -> None:
 # #############################################################################
 
 
-def plot_bernoulli_pdf_cell2(
+# TODO(ai_gp): Rename _plot_bernoulli_sample3
+def _plot_bernoulli_pdf_cell2(
     *,
     mu: float = 0.6,
     N: int = 100,
@@ -317,33 +319,39 @@ def plot_bernoulli_pdf_cell2(
     sample_counts = pd.Series(samples).value_counts().sort_index()
     # Normalize to get probabilities.
     sample_probs = sample_counts / N
-    # Ensure Outcome is numeric to avoid matplotlib warning.
-    outcomes = [0, 1]
-    probabilities = [
-        sample_probs.get(0, 0),
-        sample_probs.get(1, 0),
-    ]
-    # Plot empirical data with darker solid bars.
+    # Prepare data for both outcomes (0 and 1).
+    outcomes = np.array([0, 1])
+    empirical_probs = np.array(
+        [
+            sample_probs.get(0, 0),
+            sample_probs.get(1, 0),
+        ]
+    )
+    theoretical_probs = np.array([1 - mu, mu])
+    # Set bar width and positions for side-by-side display.
+    bar_width = 0.35
+    x_positions = outcomes
+    # Plot empirical probabilities with darker solid bars.
     ax1.bar(
-        outcomes,
-        probabilities,
+        x_positions - bar_width / 2,
+        empirical_probs,
+        width=bar_width,
         color=["darkred", "darkgreen"],
         alpha=0.85,
         edgecolor="black",
         linewidth=1.5,
         label="Empirical",
-        width=0.4,
     )
-    # Add theoretical probabilities with lighter, transparent, dotted line.
-    ax1.plot(
-        [0, 1],
-        [1 - mu, mu],
-        "o--",
+    # Plot theoretical probabilities with lighter bars.
+    ax1.bar(
+        x_positions + bar_width / 2,
+        theoretical_probs,
+        width=bar_width,
         color="steelblue",
-        markersize=10,
-        linewidth=2,
-        label="Theoretical",
         alpha=0.5,
+        edgecolor="black",
+        linewidth=1.5,
+        label="Theoretical",
     )
     ax1.set_ylabel("Probability", fontsize=12)
     ax1.set_xlabel("Outcome", fontsize=12)
@@ -362,24 +370,27 @@ def plot_bernoulli_pdf_cell2(
         empirical,
         width,
         label="Empirical",
-        color="steelblue",
-        alpha=0.7,
+        color="darkgreen",
+        alpha=0.85,
         edgecolor="black",
+        linewidth=1.5,
     )
     ax2.bar(
         x_pos + width / 2,
         theoretical,
         width,
         label="Theoretical",
-        color="coral",
-        alpha=0.7,
+        color="steelblue",
+        alpha=0.5,
         edgecolor="black",
+        linewidth=1.5,
     )
     ax2.set_ylabel("Value", fontsize=12)
     ax2.set_xlabel("Statistic", fontsize=12)
     ax2.set_title("Statistics Comparison", fontsize=14, fontweight="bold")
     ax2.set_xticks(x_pos)
     ax2.set_xticklabels(metrics)
+    ax2.set_ylim([0, 1.0])
     ax2.legend(fontsize=10)
     ax2.grid(True, alpha=0.3, axis="y")
     # Add value labels on bars.
@@ -481,7 +492,7 @@ def sample_bernoulli3(
         """Update plot when slider values change."""
         with output:
             output.clear_output(wait=True)
-            plot_bernoulli_pdf_cell2(
+            _plot_bernoulli_pdf_cell2(
                 mu=mu_slider.value, N=N_slider.value, seed=seed_slider.value
             )
 
@@ -499,7 +510,8 @@ def sample_bernoulli3(
 # #############################################################################
 
 
-def plot_empirical_mean_distribution_cell3(
+# TODO(ai_gp): Rename _plot_bernoulli_sample4
+def _plot_empirical_mean_distribution_cell3(
     *,
     mu: float = 0.6,
     N: int = 100,
@@ -686,7 +698,7 @@ def sample_bernoulli4() -> None:
     def update_plot(change=None):
         with output:
             output.clear_output(wait=True)
-            plot_empirical_mean_distribution_cell3(
+            _plot_empirical_mean_distribution_cell3(
                 mu=mu_slider.value,
                 N=N_slider.value,
                 n_samples=n_samples_slider.value,
