@@ -187,38 +187,21 @@ def plot_bernoulli_samples_and_pdf(
     # Generate interpretation text.
     text_content = (
         f"Parameters:\n"
-        f"  mu = {mu:.4f}\n"
-        f"    (true probability)\n"
-        f"  N = {N}\n"
-        f"    (number of samples)\n"
+        f"  mu = {mu:.4f} (true probability)\n"
+        f"  N = {N} (number of samples)\n"
         f"  seed = {seed}\n\n"
         f"Sample Statistics:\n"
         f"  Successes (1): {n_successes}\n"
         f"  Failures (0): {n_failures}\n"
         f"  Empirical prob: {empirical_prob:.4f}\n\n"
         f"Interpretation:\n"
-        f"  Each sample is an\n"
-        f"  independent Bernoulli trial\n"
-        f"  with success probability mu.\n\n"
-        f"  The left plot shows samples\n"
-        f"  as they occur over time.\n\n"
-        f"  The center plot compares the\n"
-        f"  empirical PDF (bars) with\n"
-        f"  the theoretical probabilities\n"
-        f"  (blue line)."
+        f"- Each sample is an independent Bernoulli trial with success\n"
+        "   probability mu.\n\n"
+        f"- The left plot shows samples as they occur over time.\n\n"
+        f"- The center plot compares the empirical PDF (bars) with\n"
+        f"  the theoretical probabilities (blue line)."
     )
-    ax3.text(
-        0.05,
-        0.95,
-        text_content,
-        transform=ax3.transAxes,
-        fontsize=11,
-        ha="left",
-        va="top",
-        family="monospace",
-        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
-        wrap=True,
-    )
+    mtumsuti.add_fitted_text_box(ax3, text_content)
     # Use subplots_adjust for consistent spacing.
     plt.subplots_adjust(
         left=0.05, right=0.98, top=0.92, bottom=0.10, wspace=0.30
@@ -424,39 +407,23 @@ def plot_bernoulli_pdf_cell2(
     error = abs(nu - mu)
     text_content = (
         f"Parameters:\n"
-        f"  mu = {mu:.4f}\n"
-        f"    (true probability)\n"
-        f"  N = {N}\n"
-        f"    (number of samples)\n"
+        f"  mu = {mu:.4f} (true probability)\n"
+        f"  N = {N} (number of samples)\n"
         f"  seed = {seed}\n\n"
         f"Empirical Statistics:\n"
         f"  nu (sample mean) = {nu:.4f}\n"
         f"  Sample variance = {sample_variance:.4f}\n\n"
         f"Theoretical Statistics:\n"
         f"  Mean = {theoretical_mean:.4f}\n"
-        f"  Variance = {theoretical_variance:.4f}\n"
-        f"    (= mu * (1-mu))\n\n"
+        f"  Variance = {theoretical_variance:.4f} (= mu * (1-mu))\n\n"
         f"Error:\n"
         f"  |nu - mu| = {error:.4f}\n\n"
         f"Interpretation:\n"
-        f"  The empirical mean nu\n"
-        f"  estimates the true mean mu.\n"
-        f"  Change seed to see new\n"
-        f"  realizations with different\n"
+        f"- The empirical mean nu estimates the true mean mu.\n\n"
+        f"- Change seed to see new realizations with different\n"
         f"  empirical values."
     )
-    ax3.text(
-        0.05,
-        0.95,
-        text_content,
-        transform=ax3.transAxes,
-        fontsize=10,
-        ha="left",
-        va="top",
-        family="monospace",
-        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
-        wrap=True,
-    )
+    mtumsuti.add_fitted_text_box(ax3, text_content)
     # Use subplots_adjust for consistent spacing.
     plt.subplots_adjust(
         left=0.05, right=0.98, top=0.92, bottom=0.10, wspace=0.30
@@ -628,53 +595,30 @@ def plot_empirical_mean_distribution_cell3(
     ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
     # Generate interpretation text.
     if N < 30:
-        sample_size_note = (
-            "Sample size is small.\nCLT approximation may\nnot be accurate."
-        )
+        sample_size_note = "Sample size is small. CLT approximation may not be accurate."
     elif N < 100:
-        sample_size_note = (
-            "Sample size is moderate.\nCLT approximation is\nreasonable."
-        )
+        sample_size_note = "Sample size is moderate. CLT approximation is reasonable."
     else:
-        sample_size_note = (
-            "Sample size is large.\nCLT approximation is\nvery accurate."
-        )
+        sample_size_note = "Sample size is large. CLT approximation is very accurate."
     text_content = (
         f"Parameters:\n"
-        f"  mu = {mu:.4f}\n"
-        f"    (true probability)\n"
-        f"  N = {N}\n"
-        f"    (samples per trial)\n"
-        f"  n_samples = {n_samples}\n"
-        f"    (number of trials)\n"
+        f"  mu = {mu:.4f} (true probability)\n"
+        f"  N = {N} (samples per trial)\n"
+        f"  n_samples = {n_samples} (number of trials)\n"
         f"  seed = {seed}\n\n"
         f"Empirical Statistics:\n"
         f"  Mean = {empirical_mean:.4f}\n"
         f"  Std Dev = {empirical_std:.4f}\n\n"
         f"Expected by CLT:\n"
         f"  Mean = {expected_mean:.4f}\n"
-        f"  Std Dev = {expected_std:.4f}\n"
-        f"    (= sqrt(mu(1-mu)/N))\n\n"
+        f"  Std Dev = {expected_std:.4f} (= sqrt(mu(1-mu)/N))\n\n"
         f"Interpretation:\n"
-        f"  {sample_size_note}\n\n"
-        f"  By Central Limit Theorem,\n"
-        f"  nu ~ N(mu, sqrt(mu(1-mu)/N))\n\n"
-        f"  As N increases, the\n"
-        f"  distribution becomes more\n"
-        f"  concentrated around mu."
+        f"- {sample_size_note}\n\n"
+        f"- By Central Limit Theorem, nu ~ N(mu, sqrt(mu(1-mu)/N)).\n\n"
+        f"- As N increases, the distribution becomes more concentrated\n"
+        f"  around mu."
     )
-    ax2.text(
-        0.05,
-        0.95,
-        text_content,
-        transform=ax2.transAxes,
-        fontsize=10,
-        ha="left",
-        va="top",
-        family="monospace",
-        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
-        wrap=True,
-    )
+    mtumsuti.add_fitted_text_box(ax2, text_content)
     # Use subplots_adjust for consistent spacing.
     plt.subplots_adjust(
         left=0.05, right=0.98, top=0.92, bottom=0.10, wspace=0.25
