@@ -18,11 +18,9 @@ import pandas as pd
 import pymc as pm
 import scipy.stats as stats
 import ipywidgets
-# TODO(ai_gp): Remove this and use only ipywidgets.Button, etc
-from ipywidgets import Button, FloatSlider, FloatText, HBox, IntSlider, IntText
+import PIL
+
 from IPython.display import clear_output, display
-# TODO(ai_gp): Remove this and use only PIL.Image
-from PIL import Image
 
 import helpers.hdbg as hdbg
 import helpers.hio as hio
@@ -824,7 +822,7 @@ def _create_slider_widget(
     """
     # Create widgets based on type.
     if is_float:
-        slider = FloatSlider(
+        slider = ipywidgets.FloatSlider(
             min=min_val,
             max=max_val,
             step=step,
@@ -834,14 +832,14 @@ def _create_slider_widget(
             style={"description_width": "150px"},
             layout={"width": "500px"},
         )
-        text = FloatText(
+        text = ipywidgets.FloatText(
             value=initial_value,
             step=step,
             description="",
             layout={"width": "80px"},
         )
     else:
-        slider = IntSlider(
+        slider = ipywidgets.IntSlider(
             min=int(min_val),
             max=int(max_val),
             step=int(step),
@@ -851,20 +849,24 @@ def _create_slider_widget(
             style={"description_width": "150px"},
             layout={"width": "500px"},
         )
-        text = IntText(
+        text = ipywidgets.IntText(
             value=int(initial_value),
             step=int(step),
             description="",
             layout={"width": "80px"},
         )
     # Create buttons.
-    minus_button = Button(description="-", layout={"width": "40px"})
-    plus_button = Button(description="+", layout={"width": "40px"})
+    minus_button = ipywidgets.Button(description="-", layout={"width": "40px"})
+    plus_button = ipywidgets.Button(description="+", layout={"width": "40px"})
     return slider, text, minus_button, plus_button
 
 
-# TODO(ai_gp): Add type hints.
-def _link_slider_widgets(slider, text, minus_button, plus_button) -> None:
+def _link_slider_widgets(
+    slider: Union[ipywidgets.FloatSlider, ipywidgets.IntSlider],
+    text: Union[ipywidgets.FloatText, ipywidgets.IntText],
+    minus_button: ipywidgets.Button,
+    plus_button: ipywidgets.Button,
+) -> None:
     """
     Link slider, text field, and buttons together.
 
@@ -897,8 +899,12 @@ def _link_slider_widgets(slider, text, minus_button, plus_button) -> None:
     plus_button.on_click(plus_clicked)
 
 
-# TODO(ai_gp): Add type hints.
-def _create_widget_box(slider, minus_button, text, plus_button) -> HBox:
+def _create_widget_box(
+    slider: Union[ipywidgets.FloatSlider, ipywidgets.IntSlider],
+    minus_button: ipywidgets.Button,
+    text: Union[ipywidgets.FloatText, ipywidgets.IntText],
+    plus_button: ipywidgets.Button,
+) -> ipywidgets.HBox:
     """
     Create horizontal box layout for widget controls.
 
@@ -908,7 +914,7 @@ def _create_widget_box(slider, minus_button, text, plus_button) -> HBox:
     :param plus_button: The increment button
     :return: HBox containing all widgets in proper order
     """
-    return HBox([slider, minus_button, text, plus_button])
+    return ipywidgets.HBox([slider, minus_button, text, plus_button])
 
 
 def build_widget_control(
@@ -920,7 +926,7 @@ def build_widget_control(
     initial_value: float,
     *,
     is_float: bool = True,
-) -> Tuple[Union[FloatSlider, IntSlider], HBox]:
+) -> Tuple[Union[ipywidgets.FloatSlider, ipywidgets.IntSlider], ipywidgets.HBox]:
     """
     Build a complete widget control with slider, text field, and +/- buttons.
 
@@ -1123,7 +1129,7 @@ def generate_animation(
         dimensions = []
         for frame_file in frame_files:
             frame_path = os.path.join(dst_dir, frame_file)
-            with Image.open(frame_path) as img:
+            with PIL.Image.open(frame_path) as img:
                 dimensions.append((frame_file, img.size))
         # Check if all dimensions are the same.
         unique_dimensions = set(dim[1] for dim in dimensions)

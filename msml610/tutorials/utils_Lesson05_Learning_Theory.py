@@ -30,9 +30,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 # #############################################################################
 
 
-def _validate_bernoulli_params(
-    mu: float, N: int, n_samples: int = None
-) -> None:
+def _validate_bernoulli_params(mu: float, N: int, n_samples: int = None) -> None:
     """
     Validate parameters for Bernoulli sampling functions.
 
@@ -44,7 +42,9 @@ def _validate_bernoulli_params(
     hdbg.dassert_lte(mu, 1, "mu must be at most 1:", mu)
     hdbg.dassert_lte(1, N, "N must be at least 1:", N)
     if n_samples is not None:
-        hdbg.dassert_lte(1, n_samples, "n_samples must be at least 1:", n_samples)
+        hdbg.dassert_lte(
+            1, n_samples, "n_samples must be at least 1:", n_samples
+        )
 
 
 def _generate_bernoulli_samples(mu: float, N: int, seed: int) -> np.ndarray:
@@ -240,7 +240,7 @@ def _plot_bernoulli_sample2(
     n_failures = N - n_successes
     empirical_prob = n_successes / N
     # Create visualization with 3 subplots in a single row.
-    _ , (ax1, ax2, ax3) = plt.subplots(
+    _, (ax1, ax2, ax3) = plt.subplots(
         1, 3, figsize=(18, 5), gridspec_kw={"width_ratios": [1, 1, 1.5]}
     )
     # Plot 1: Samples over time.
@@ -597,11 +597,17 @@ def _plot_bernoulli_sample4(
     ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
     # Generate interpretation text.
     if N < 30:
-        sample_size_note = "Sample size is small. CLT approximation may not be accurate."
+        sample_size_note = (
+            "Sample size is small. CLT approximation may not be accurate."
+        )
     elif N < 100:
-        sample_size_note = "Sample size is moderate. CLT approximation is reasonable."
+        sample_size_note = (
+            "Sample size is moderate. CLT approximation is reasonable."
+        )
     else:
-        sample_size_note = "Sample size is large. CLT approximation is very accurate."
+        sample_size_note = (
+            "Sample size is large. CLT approximation is very accurate."
+        )
     text_content = (
         f"Parameters:\n"
         f"  mu = {mu:.4f} (true probability)\n"
