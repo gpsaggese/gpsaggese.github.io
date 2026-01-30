@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -118,3 +118,136 @@ utils.sample_bernoulli3()
 # Display the distribution of empirical mean nu from repeated sampling.
 utils.sample_bernoulli4()
 # As N increases, the distribution becomes more concentrated around mu.
+
+# %% [markdown]
+# ## Sample Mean
+#
+# The sample mean (nu) is the average of N independent Bernoulli samples:
+# - nu = (1/N) * sum(X_i) where X_i ~ Bernoulli(mu)
+# - E[nu] = mu (expected value equals true probability)
+# - Var(nu) = mu * (1 - mu) / N (variance decreases with N)
+#
+# As N increases:
+# - The sample mean nu becomes a better estimate of mu (Law of Large Numbers)
+# - The distribution of nu concentrates around mu (Central Limit Theorem)
+
+# %% [markdown]
+# # Hoeffding Inequality: Theoretical Bounds
+#
+# The Hoeffding inequality provides a concentration bound that quantifies how
+# quickly the sample mean converges to the true mean as N increases.
+
+# %% [markdown]
+# ## Hoeffding Inequality Statement
+#
+# For N independent Bernoulli random variables X_1, ..., X_N with probability
+# mu, let nu = (1/N) * sum(X_i) be the sample mean.
+#
+# The Hoeffding inequality states:
+#
+# **P(|nu - mu| >= epsilon) <= 2 * exp(-2 * N * epsilon^2)**
+#
+# where:
+# - nu is the sample mean (empirical probability)
+# - mu is the true probability
+# - epsilon > 0 is the deviation threshold
+# - N is the number of samples
+#
+# **Key insights**:
+# 1. The bound decreases exponentially with N
+# 2. The bound is independent of mu (distribution-free)
+# 3. Larger epsilon requires larger N for the same confidence
+# 4. The factor of 2 accounts for both tails (nu > mu + epsilon and
+#    nu < mu - epsilon)
+
+# %% [markdown]
+# ## Interactive Hoeffding Inequality Demonstration
+#
+# This interactive visualization demonstrates the Hoeffding inequality by:
+# 1. Showing the binomial distribution of the sample mean nu
+# 2. Highlighting the tail areas where |nu - mu| >= epsilon (in red)
+# 3. Comparing the theoretical Hoeffding bound with empirical probability
+#
+# **Parameters**:
+# - `mu`: True probability of success
+# - `N`: Number of samples per trial (larger N = tighter concentration)
+# - `epsilon`: Deviation threshold (smaller epsilon = stricter bound)
+# - `seed`: Random seed for reproducibility
+#
+# **Experiment**:
+# - Try increasing N: the distribution becomes more concentrated and the
+#   bound becomes tighter
+# - Try decreasing epsilon: the tail areas shrink and the bound increases
+# - Try different mu values: the bound is independent of mu but the
+#   distribution shape changes
+
+# %%
+# Demonstrate the Hoeffding inequality with interactive visualization.
+utils.hoeffding_inequality_demo()
+# Observe how the theoretical bound compares with empirical probability.
+
+# %% [markdown]
+# ## Hoeffding Bound as a Function of N and Epsilon
+#
+# The Hoeffding bound formula is:
+#
+# **Bound = 2 * exp(-2 * N * epsilon^2)**
+#
+# This interactive visualization shows how the bound changes as we vary N
+# and epsilon. Understanding this relationship is crucial for:
+# 1. Choosing appropriate sample sizes N for a desired confidence level
+# 2. Understanding the trade-off between deviation tolerance (epsilon) and
+#    sample requirements
+# 3. Seeing the exponential decay in both N and epsilon^2
+#
+# **View modes**:
+# - **Heatmap**: Shows the bound value as a color map across all (N, epsilon)
+#   combinations
+# - **Fix N, vary epsilon**: See how increasing tolerance (larger epsilon)
+#   affects the bound for a fixed sample size
+# - **Fix epsilon, vary N**: See how increasing sample size improves the
+#   bound for a fixed deviation threshold
+# - **Contour plot**: Shows curves of constant probability, useful for
+#   finding (N, epsilon) pairs that achieve the same confidence
+#
+# **Key observations**:
+# - The bound is exponentially sensitive to both N and epsilon
+# - To halve epsilon while maintaining the same bound, you need to quadruple N
+# - For practical confidence levels (e.g., 0.05), the required N grows
+#   quadratically with 1/epsilon
+
+# %%
+# Explore the Hoeffding bound as a function of N and epsilon.
+utils.hoeffding_bound_surface()
+# Try different view modes to understand the N vs epsilon trade-off.
+
+# %% [markdown]
+# ## 3D Surface Visualization of Hoeffding Bound
+#
+# This cell provides a three-dimensional surface plot of the Hoeffding bound,
+# offering a different perspective on how the bound varies with N and epsilon.
+#
+# The 3D surface makes it easier to:
+# 1. Visualize the exponential decay in both dimensions simultaneously
+# 2. See the steepest descent directions
+# 3. Understand the "valley" structure where the bound is smallest
+# 4. Rotate the view to examine the surface from different angles
+#
+# **Interactive controls**:
+# - `N_max`, `epsilon_max`: Control the range of the surface
+# - `elevation`: Viewing angle from above (0=horizontal, 90=top-down)
+# - `azimuth`: Rotation angle around the vertical axis
+# - `Use log scale for Z-axis`: Toggle logarithmic scale for better visibility
+#   of small bound values
+#
+# **Suggested experiments**:
+# - Start with default view to see the overall shape
+# - Rotate using azimuth slider (0 to 360 degrees) to view from different sides
+# - Change elevation to see the surface from different heights
+# - Enable log scale to better see the structure at small bound values
+# - Compare with the heatmap view above to build intuition
+
+# %%
+# Visualize the Hoeffding bound as a 3D surface.
+utils.hoeffding_bound_3d_surface()
+# Rotate the view to explore the surface from different angles.

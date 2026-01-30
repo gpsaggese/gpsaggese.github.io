@@ -653,14 +653,18 @@ def sample_bernoulli4() -> None:
     )
     # Update N slider description for this specific use case.
     N_box.children[0].description = "samples per trial"
+    # Create logarithmic n_samples slider.
+    # The slider operates in log10 space: 10^slider_value = n_samples
+    # log10(100) = 2.0, log10(10000) = 4.0
+    log_n_samples_init = np.log10(n_samples_init)
     n_samples_slider, n_samples_box = mtumsuti.build_widget_control(
-        name="n_samples",
-        description="number of trials",
-        min_val=100,
-        max_val=5000,
-        step=100,
-        initial_value=n_samples_init,
-        is_float=False,
+        name="log10(n_samples)",
+        description="number of trials (log scale)",
+        min_val=2.0,
+        max_val=4.0,
+        step=0.1,
+        initial_value=log_n_samples_init,
+        is_float=True,
     )
     # Create output widget.
     output = ipywidgets.Output()
@@ -668,10 +672,12 @@ def sample_bernoulli4() -> None:
     def update_plot(change=None):
         with output:
             output.clear_output(wait=True)
+            # Convert log slider value to actual n_samples.
+            n_samples = int(10 ** n_samples_slider.value)
             _plot_bernoulli_sample4(
                 mu=mu_slider.value,
                 N=N_slider.value,
-                n_samples=n_samples_slider.value,
+                n_samples=n_samples,
                 seed=seed_slider.value,
             )
 
@@ -682,4 +688,854 @@ def sample_bernoulli4() -> None:
     seed_slider.observe(update_plot, names="value")
     # Display widgets and initial plot.
     display(ipywidgets.VBox([mu_box, N_box, n_samples_box, seed_box, output]))
+    update_plot()
+
+
+# #############################################################################
+# hoeffding_inequality_demo
+# #############################################################################
+
+
+def _plot_hoeffding_inequality_demo(
+    *,
+    mu: float = 0.6,
+    N: int = 100,
+    epsilon: float = 0.1,
+    n_trials: int = 10000,
+    seed: int = 42,
+) -> None:
+    """
+    Visualize Hoeffding inequality with binomial distribution and tail areas.
+
+    Shows:
+    1. Binomial distribution with shaded tail regions representing deviations
+       greater than epsilon
+    2. Comparison of theoretical Hoeffding bound vs empirical probability
+    3. Comments explaining the results
+
+    :param mu: True probability of success (0 < mu < 1)
+    :param N: Number of samples per trial
+    :param epsilon: Deviation threshold for Hoeffding bound
+    :param n_trials: Number of trials for empirical probability estimation
+    :param seed: Random seed for reproducibility
+    """
+    # Validate parameters.
+    _validate_bernoulli_params(mu, N)
+    hdbg.dassert_lte(0, epsilon, "epsilon must be positive:", epsilon)
+    hdbg.dassert_lte(epsilon, 1, "epsilon must be at most 1:", epsilon)
+    # Set random seed for reproducibility.
+    np.random.seed(seed)
+    # Generate empirical distribution by repeated sampling.
+    empirical_nus = []
+    for _ in range(n_trials):
+        trial_samples = np.random.binomial(1, mu, size=N)
+        trial_nu = np.mean(trial_samples)
+        empirical_nus.append(trial_nu)
+    empirical_nus = np.array(empirical_nus)
+    # Compute theoretical Hoeffding bound.
+    # P(|nu - mu| >= epsilon) <= 2 * exp(-2 * N * epsilon^2)
+    hoeffding_bound = 2 * np.exp(-2 * N * epsilon**2)
+    # Compute empirical probability of deviation >= epsilon.
+    empirical_prob = np.mean(np.abs(empirical_nus - mu) >= epsilon)
+    # Create binomial distribution for visualization.
+    # For N Bernoulli trials, the sum follows Binomial(N, mu).
+    # The sample mean is sum/N.
+    k_values = np.arange(0, N + 1)
+    binomial_probs = scipy.stats.binom.pmf(k_values, N, mu)
+    sample_means = k_values / N
+    # Identify tail regions: |sample_mean - mu| >= epsilon.
+    tail_mask = np.abs(sample_means - mu) >= epsilon
+    # Create visualization with 3 subplots.
+    fig, (ax1, ax2, ax3) = plt.subplots(
+        1, 3, figsize=(18, 5), gridspec_kw={"width_ratios": [1.5, 1, 1.2]}
+    )
+    # Plot 1: Binomial distribution with shaded tail areas.
+    ax1.bar(
+        sample_means[~tail_mask],
+        binomial_probs[~tail_mask],
+        width=1 / N,
+        color="steelblue",
+        alpha=0.7,
+        edgecolor="black",
+        linewidth=0.5,
+        label="Within epsilon",
+    )
+    ax1.bar(
+        sample_means[tail_mask],
+        binomial_probs[tail_mask],
+        width=1 / N,
+        color="red",
+        alpha=0.7,
+        edgecolor="black",
+        linewidth=0.5,
+        label=f"|nu - mu| >= {epsilon}",
+    )
+    # Mark mu and bounds.
+    ax1.axvline(
+        x=mu,
+        color="green",
+        linestyle="--",
+        linewidth=2,
+        label=f"True mu={mu:.2f}",
+    )
+    ax1.axvline(
+        x=mu - epsilon,
+        color="red",
+        linestyle=":",
+        linewidth=1.5,
+        alpha=0.7,
+    )
+    ax1.axvline(
+        x=mu + epsilon,
+        color="red",
+        linestyle=":",
+        linewidth=1.5,
+        alpha=0.7,
+    )
+    ax1.set_xlabel("Sample Mean (nu = sum/N)", fontsize=12)
+    ax1.set_ylabel("Probability", fontsize=12)
+    ax1.set_title(
+        "Binomial Distribution with Tail Areas",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax1.set_xlim([0, 1.0])
+    ax1.legend(fontsize=10, loc="upper right")
+    ax1.grid(True, alpha=0.3, axis="y")
+    # Plot 2: Comparison of bounds.
+    labels = ["Hoeffding\nBound", "Empirical\nProbability"]
+    values = [hoeffding_bound, empirical_prob]
+    colors = ["coral", "steelblue"]
+    bars = ax2.bar(
+        labels,
+        values,
+        color=colors,
+        alpha=0.85,
+        edgecolor="black",
+        linewidth=1.5,
+    )
+    # Add value labels on bars.
+    for bar, val in zip(bars, values):
+        height = bar.get_height()
+        ax2.text(
+            bar.get_x() + bar.get_width() / 2,
+            height + 0.01,
+            f"{val:.6f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+        )
+    ax2.set_ylabel("Probability", fontsize=12)
+    ax2.set_title(
+        "Hoeffding Bound vs Empirical",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax2.set_ylim([0, min(1.0, max(values) * 1.3)])
+    ax2.grid(True, alpha=0.3, axis="y")
+    # Plot 3: Comments and explanation.
+    ax3.axis("off")
+    ax3.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    # Check if bound is tight.
+    bound_ratio = hoeffding_bound / empirical_prob if empirical_prob > 0 else float("inf")
+    if bound_ratio < 2:
+        tightness_note = "The Hoeffding bound is quite tight."
+    elif bound_ratio < 10:
+        tightness_note = "The Hoeffding bound is reasonably tight."
+    else:
+        tightness_note = "The Hoeffding bound is conservative (loose)."
+    text_content = (
+        f"Parameters:\n"
+        f"  mu = {mu:.4f} (true probability)\n"
+        f"  N = {N} (samples per trial)\n"
+        f"  epsilon = {epsilon:.4f} (deviation threshold)\n"
+        f"  n_trials = {n_trials}\n"
+        f"  seed = {seed}\n\n"
+        f"Hoeffding Inequality:\n"
+        f"  P(|nu - mu| >= epsilon) <= 2*exp(-2*N*epsilon^2)\n"
+        f"  Bound = {hoeffding_bound:.6f}\n\n"
+        f"Empirical Result:\n"
+        f"  P(|nu - mu| >= {epsilon}) = {empirical_prob:.6f}\n"
+        f"  (from {n_trials} trials)\n\n"
+        f"Interpretation:\n"
+        f"- {tightness_note}\n\n"
+        f"- Red bars show tail areas where |nu - mu| >= epsilon.\n\n"
+        f"- As N increases, the distribution concentrates around mu\n"
+        f"  and the bound becomes tighter."
+    )
+    mtumsuti.add_fitted_text_box(ax3, text_content)
+    # Use subplots_adjust for consistent spacing.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.10, wspace=0.30
+    )
+    plt.show()
+
+
+def hoeffding_inequality_demo() -> None:
+    """
+    Create interactive widget demonstrating the Hoeffding inequality.
+
+    Shows:
+    - Binomial distribution with shaded tail areas
+    - Comparison of theoretical Hoeffding bound vs empirical probability
+    - Interactive sliders for mu, N, epsilon, and seed
+
+    The Hoeffding inequality states:
+    P(|nu - mu| >= epsilon) <= 2 * exp(-2 * N * epsilon^2)
+
+    where nu is the sample mean of N Bernoulli trials with true probability mu.
+    """
+    mu_init = 0.6
+    N_init = 100
+    epsilon_init = 0.1
+    seed_init = 42
+    # Create widgets.
+    mu_slider, mu_box, N_slider, N_box, seed_slider, seed_box = (
+        _create_basic_widget_controls(mu_init, N_init, seed_init)
+    )
+    # Update N slider description for this specific use case.
+    N_box.children[0].description = "samples per trial"
+    # Update N slider range for better exploration.
+    N_slider.min = 10
+    N_slider.max = 500
+    epsilon_slider, epsilon_box = mtumsuti.build_widget_control(
+        name="epsilon",
+        description="deviation threshold",
+        min_val=0.01,
+        max_val=0.5,
+        step=0.01,
+        initial_value=epsilon_init,
+        is_float=True,
+    )
+    # Create output widget.
+    output = ipywidgets.Output()
+
+    def update_plot(change=None):
+        with output:
+            output.clear_output(wait=True)
+            _plot_hoeffding_inequality_demo(
+                mu=mu_slider.value,
+                N=N_slider.value,
+                epsilon=epsilon_slider.value,
+                seed=seed_slider.value,
+            )
+
+    # Observe slider changes.
+    mu_slider.observe(update_plot, names="value")
+    N_slider.observe(update_plot, names="value")
+    epsilon_slider.observe(update_plot, names="value")
+    seed_slider.observe(update_plot, names="value")
+    # Display widgets and initial plot.
+    display(
+        ipywidgets.VBox([mu_box, N_box, epsilon_box, seed_box, output])
+    )
+    update_plot()
+
+
+# #############################################################################
+# hoeffding_bound_surface
+# #############################################################################
+
+
+def _plot_hoeffding_bound_surface(
+    *,
+    N_max: int = 500,
+    epsilon_max: float = 0.5,
+    fixed_N: int = None,
+    fixed_epsilon: float = None,
+    plot_type: str = "heatmap",
+) -> None:
+    """
+    Plot Hoeffding bound as a function of N and epsilon.
+
+    Shows how the bound 2*exp(-2*N*epsilon^2) varies with:
+    - N (number of samples)
+    - epsilon (deviation threshold)
+
+    :param N_max: Maximum N value for the plot
+    :param epsilon_max: Maximum epsilon value for the plot
+    :param fixed_N: If provided, plot bound vs epsilon for this fixed N
+    :param fixed_epsilon: If provided, plot bound vs N for this fixed epsilon
+    :param plot_type: Type of plot - "heatmap", "contour", or "3d"
+    """
+    # Create grid for N and epsilon.
+    N_values = np.linspace(10, N_max, 100)
+    epsilon_values = np.linspace(0.01, epsilon_max, 100)
+    N_grid, epsilon_grid = np.meshgrid(N_values, epsilon_values)
+    # Compute Hoeffding bound for each (N, epsilon) pair.
+    bound_grid = 2 * np.exp(-2 * N_grid * epsilon_grid**2)
+    # Create visualization based on plot type and fixed parameters.
+    if fixed_N is not None:
+        # Plot bound vs epsilon for fixed N.
+        fig, (ax1, ax2) = plt.subplots(
+            1, 2, figsize=(18, 5), gridspec_kw={"width_ratios": [1.5, 1]}
+        )
+        epsilon_plot = np.linspace(0.01, epsilon_max, 200)
+        bound_plot = 2 * np.exp(-2 * fixed_N * epsilon_plot**2)
+        ax1.plot(epsilon_plot, bound_plot, linewidth=2.5, color="steelblue")
+        ax1.fill_between(epsilon_plot, 0, bound_plot, alpha=0.3)
+        ax1.set_xlabel("Epsilon (deviation threshold)", fontsize=12)
+        ax1.set_ylabel("Hoeffding Bound", fontsize=12)
+        ax1.set_title(
+            f"Hoeffding Bound vs Epsilon (N={fixed_N})",
+            fontsize=14,
+            fontweight="bold",
+        )
+        ax1.set_ylim([0, 1.0])
+        ax1.grid(True, alpha=0.3)
+        # Add reference lines for common probability thresholds.
+        thresholds = [0.05, 0.1, 0.2]
+        for thresh in thresholds:
+            ax1.axhline(
+                y=thresh,
+                color="red",
+                linestyle="--",
+                alpha=0.5,
+                linewidth=1,
+            )
+            ax1.text(
+                epsilon_max * 0.95,
+                thresh + 0.01,
+                f"p={thresh}",
+                ha="right",
+                fontsize=9,
+                color="red",
+            )
+        # Comments panel.
+        ax2.axis("off")
+        ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+        text_content = (
+            f"Hoeffding Bound:\n"
+            f"  P(|nu - mu| >= epsilon) <= 2*exp(-2*N*epsilon^2)\n\n"
+            f"Fixed Parameters:\n"
+            f"  N = {fixed_N} (samples)\n"
+            f"  N_max = {N_max}\n"
+            f"  epsilon_max = {epsilon_max}\n\n"
+            f"Observations:\n"
+            f"- The bound decreases exponentially as epsilon increases.\n\n"
+            f"- Smaller epsilon (stricter requirement) leads to larger\n"
+            f"  bound (lower confidence).\n\n"
+            f"- For very small epsilon, the bound approaches 2\n"
+            f"  (meaningless bound).\n\n"
+            f"- For large epsilon, the bound approaches 0\n"
+            f"  (very confident)."
+        )
+        mtumsuti.add_fitted_text_box(ax2, text_content)
+    elif fixed_epsilon is not None:
+        # Plot bound vs N for fixed epsilon.
+        fig, (ax1, ax2) = plt.subplots(
+            1, 2, figsize=(18, 5), gridspec_kw={"width_ratios": [1.5, 1]}
+        )
+        N_plot = np.linspace(10, N_max, 200)
+        bound_plot = 2 * np.exp(-2 * N_plot * fixed_epsilon**2)
+        ax1.plot(N_plot, bound_plot, linewidth=2.5, color="coral")
+        ax1.fill_between(N_plot, 0, bound_plot, alpha=0.3, color="coral")
+        ax1.set_xlabel("N (number of samples)", fontsize=12)
+        ax1.set_ylabel("Hoeffding Bound", fontsize=12)
+        ax1.set_title(
+            f"Hoeffding Bound vs N (epsilon={fixed_epsilon:.3f})",
+            fontsize=14,
+            fontweight="bold",
+        )
+        ax1.set_ylim([0, min(2.0, np.max(bound_plot) * 1.1)])
+        ax1.grid(True, alpha=0.3)
+        # Add reference lines for common probability thresholds.
+        thresholds = [0.05, 0.1, 0.2]
+        for thresh in thresholds:
+            if thresh < ax1.get_ylim()[1]:
+                ax1.axhline(
+                    y=thresh,
+                    color="red",
+                    linestyle="--",
+                    alpha=0.5,
+                    linewidth=1,
+                )
+                ax1.text(
+                    N_max * 0.95,
+                    thresh + 0.01,
+                    f"p={thresh}",
+                    ha="right",
+                    fontsize=9,
+                    color="red",
+                )
+        # Comments panel.
+        ax2.axis("off")
+        ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+        text_content = (
+            f"Hoeffding Bound:\n"
+            f"  P(|nu - mu| >= epsilon) <= 2*exp(-2*N*epsilon^2)\n\n"
+            f"Fixed Parameters:\n"
+            f"  epsilon = {fixed_epsilon:.3f}\n"
+            f"  N_max = {N_max}\n"
+            f"  epsilon_max = {epsilon_max}\n\n"
+            f"Observations:\n"
+            f"- The bound decreases exponentially as N increases.\n\n"
+            f"- Doubling N does not halve the bound; it decreases\n"
+            f"  exponentially faster.\n\n"
+            f"- Larger N (more samples) leads to smaller bound\n"
+            f"  (higher confidence).\n\n"
+            f"- The exponential decay shows why we need relatively\n"
+            f"  few samples for good concentration."
+        )
+        mtumsuti.add_fitted_text_box(ax2, text_content)
+    elif plot_type == "heatmap":
+        # Create heatmap of bound as function of both N and epsilon.
+        fig, (ax1, ax2) = plt.subplots(
+            1, 2, figsize=(18, 5), gridspec_kw={"width_ratios": [1.5, 1]}
+        )
+        # Use logarithmic scale for better visualization.
+        bound_grid_log = np.log10(bound_grid + 1e-10)
+        im = ax1.contourf(
+            N_grid,
+            epsilon_grid,
+            bound_grid,
+            levels=20,
+            cmap="RdYlBu_r",
+            alpha=0.9,
+        )
+        # Add contour lines.
+        contour_levels = [0.01, 0.05, 0.1, 0.2, 0.5]
+        contours = ax1.contour(
+            N_grid,
+            epsilon_grid,
+            bound_grid,
+            levels=contour_levels,
+            colors="black",
+            linewidths=1.5,
+            alpha=0.6,
+        )
+        ax1.clabel(contours, inline=True, fontsize=9, fmt="%.2f")
+        ax1.set_xlabel("N (number of samples)", fontsize=12)
+        ax1.set_ylabel("Epsilon (deviation threshold)", fontsize=12)
+        ax1.set_title(
+            "Hoeffding Bound: P(|nu - mu| >= epsilon)",
+            fontsize=14,
+            fontweight="bold",
+        )
+        # Add colorbar.
+        cbar = plt.colorbar(im, ax=ax1)
+        cbar.set_label("Bound Value", fontsize=11)
+        # Comments panel.
+        ax2.axis("off")
+        ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+        text_content = (
+            f"Hoeffding Bound:\n"
+            f"  P(|nu - mu| >= epsilon) <= 2*exp(-2*N*epsilon^2)\n\n"
+            f"Parameters:\n"
+            f"  N_max = {N_max}\n"
+            f"  epsilon_max = {epsilon_max}\n\n"
+            f"Color Interpretation:\n"
+            f"- Blue: Low bound (high confidence)\n"
+            f"- Yellow/Orange: Medium bound\n"
+            f"- Red: High bound (low confidence)\n\n"
+            f"Contour Lines:\n"
+            f"- Black lines show constant probability levels\n"
+            f"- Labels indicate the bound value\n\n"
+            f"Key Insights:\n"
+            f"- Lower-left (small N, large epsilon): high bound\n"
+            f"- Upper-right (large N, small epsilon): varies\n"
+            f"- The bound is exponentially sensitive to both N\n"
+            f"  and epsilon."
+        )
+        mtumsuti.add_fitted_text_box(ax2, text_content)
+    elif plot_type == "contour":
+        # Create contour plot.
+        fig, (ax1, ax2) = plt.subplots(
+            1, 2, figsize=(18, 5), gridspec_kw={"width_ratios": [1.5, 1]}
+        )
+        contour_levels = [0.001, 0.01, 0.05, 0.1, 0.2, 0.5, 1.0]
+        contours = ax1.contour(
+            N_grid,
+            epsilon_grid,
+            bound_grid,
+            levels=contour_levels,
+            cmap="viridis",
+            linewidths=2,
+        )
+        ax1.clabel(contours, inline=True, fontsize=10, fmt="%.3f")
+        ax1.set_xlabel("N (number of samples)", fontsize=12)
+        ax1.set_ylabel("Epsilon (deviation threshold)", fontsize=12)
+        ax1.set_title(
+            "Hoeffding Bound Contours",
+            fontsize=14,
+            fontweight="bold",
+        )
+        ax1.grid(True, alpha=0.3)
+        # Comments panel.
+        ax2.axis("off")
+        ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+        text_content = (
+            f"Hoeffding Bound:\n"
+            f"  P(|nu - mu| >= epsilon) <= 2*exp(-2*N*epsilon^2)\n\n"
+            f"Parameters:\n"
+            f"  N_max = {N_max}\n"
+            f"  epsilon_max = {epsilon_max}\n\n"
+            f"Contour Interpretation:\n"
+            f"- Each line represents constant bound value\n"
+            f"- Labels show the bound probability\n\n"
+            f"Trade-offs:\n"
+            f"- To maintain constant bound while decreasing epsilon,\n"
+            f"  N must increase quadratically.\n\n"
+            f"- The curves show (N, epsilon) pairs that achieve\n"
+            f"  the same confidence level."
+        )
+        mtumsuti.add_fitted_text_box(ax2, text_content)
+    # Adjust layout.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.10, wspace=0.25
+    )
+    plt.show()
+
+
+def hoeffding_bound_surface() -> None:
+    """
+    Create interactive visualization of Hoeffding bound surface.
+
+    Allows exploration of how the bound 2*exp(-2*N*epsilon^2) changes with:
+    - N (number of samples)
+    - epsilon (deviation threshold)
+
+    Provides three view modes:
+    - Fix N and vary epsilon
+    - Fix epsilon and vary N
+    - Show full 2D heatmap/contour of both
+    """
+    N_max_init = 500
+    epsilon_max_init = 0.5
+    # Create widgets for controlling the plot.
+    N_max_slider, N_max_box = mtumsuti.build_widget_control(
+        name="N_max",
+        description="max N for plot",
+        min_val=100,
+        max_val=1000,
+        step=50,
+        initial_value=N_max_init,
+        is_float=False,
+    )
+    epsilon_max_slider, epsilon_max_box = mtumsuti.build_widget_control(
+        name="epsilon_max",
+        description="max epsilon for plot",
+        min_val=0.1,
+        max_val=1.0,
+        step=0.05,
+        initial_value=epsilon_max_init,
+        is_float=True,
+    )
+    # Create mode selector.
+    mode_dropdown = ipywidgets.Dropdown(
+        options=[
+            ("Heatmap (both N and epsilon)", "heatmap"),
+            ("Fix N, vary epsilon", "fixed_N"),
+            ("Fix epsilon, vary N", "fixed_epsilon"),
+            ("Contour plot (both N and epsilon)", "contour"),
+        ],
+        value="heatmap",
+        description="View mode:",
+        style={"description_width": "150px"},
+        layout=ipywidgets.Layout(width="500px"),
+    )
+    # Create sliders for fixed values.
+    fixed_N_slider, fixed_N_box = mtumsuti.build_widget_control(
+        name="fixed_N",
+        description="fixed N value",
+        min_val=10,
+        max_val=500,
+        step=10,
+        initial_value=100,
+        is_float=False,
+    )
+    fixed_epsilon_slider, fixed_epsilon_box = mtumsuti.build_widget_control(
+        name="fixed_epsilon",
+        description="fixed epsilon value",
+        min_val=0.01,
+        max_val=0.5,
+        step=0.01,
+        initial_value=0.1,
+        is_float=True,
+    )
+    # Create output widget.
+    output = ipywidgets.Output()
+
+    def update_plot(change=None):
+        with output:
+            output.clear_output(wait=True)
+            mode = mode_dropdown.value
+            if mode == "fixed_N":
+                _plot_hoeffding_bound_surface(
+                    N_max=N_max_slider.value,
+                    epsilon_max=epsilon_max_slider.value,
+                    fixed_N=fixed_N_slider.value,
+                    fixed_epsilon=None,
+                )
+            elif mode == "fixed_epsilon":
+                _plot_hoeffding_bound_surface(
+                    N_max=N_max_slider.value,
+                    epsilon_max=epsilon_max_slider.value,
+                    fixed_N=None,
+                    fixed_epsilon=fixed_epsilon_slider.value,
+                )
+            else:
+                _plot_hoeffding_bound_surface(
+                    N_max=N_max_slider.value,
+                    epsilon_max=epsilon_max_slider.value,
+                    fixed_N=None,
+                    fixed_epsilon=None,
+                    plot_type=mode,
+                )
+
+    def update_visibility(change=None):
+        """Show/hide fixed value sliders based on mode."""
+        mode = mode_dropdown.value
+        if mode == "fixed_N":
+            fixed_N_box.layout.visibility = "visible"
+            fixed_epsilon_box.layout.visibility = "hidden"
+        elif mode == "fixed_epsilon":
+            fixed_N_box.layout.visibility = "hidden"
+            fixed_epsilon_box.layout.visibility = "visible"
+        else:
+            fixed_N_box.layout.visibility = "hidden"
+            fixed_epsilon_box.layout.visibility = "hidden"
+        update_plot()
+
+    # Observe changes.
+    mode_dropdown.observe(update_visibility, names="value")
+    N_max_slider.observe(update_plot, names="value")
+    epsilon_max_slider.observe(update_plot, names="value")
+    fixed_N_slider.observe(update_plot, names="value")
+    fixed_epsilon_slider.observe(update_plot, names="value")
+    # Initial visibility setup.
+    fixed_N_box.layout.visibility = "hidden"
+    fixed_epsilon_box.layout.visibility = "hidden"
+    # Display widgets.
+    display(
+        ipywidgets.VBox(
+            [
+                mode_dropdown,
+                N_max_box,
+                epsilon_max_box,
+                fixed_N_box,
+                fixed_epsilon_box,
+                output,
+            ]
+        )
+    )
+    update_plot()
+
+
+# #############################################################################
+# hoeffding_bound_3d_surface
+# #############################################################################
+
+
+def _plot_hoeffding_bound_3d(
+    *,
+    N_max: int = 500,
+    epsilon_max: float = 0.5,
+    elevation: float = 30,
+    azimuth: float = 45,
+    use_log_scale: bool = False,
+) -> None:
+    """
+    Plot 3D surface of Hoeffding bound as a function of N and epsilon.
+
+    Creates an interactive 3D visualization showing how the bound
+    2*exp(-2*N*epsilon^2) varies across the (N, epsilon) space.
+
+    :param N_max: Maximum N value for the plot
+    :param epsilon_max: Maximum epsilon value for the plot
+    :param elevation: Elevation angle for 3D view (degrees)
+    :param azimuth: Azimuth angle for 3D view (degrees)
+    :param use_log_scale: If True, use log scale for Z-axis (bound values)
+    """
+    # Import 3D plotting toolkit.
+    from mpl_toolkits.mplot3d import Axes3D
+
+    # Create grid for N and epsilon.
+    N_values = np.linspace(10, N_max, 100)
+    epsilon_values = np.linspace(0.01, epsilon_max, 100)
+    N_grid, epsilon_grid = np.meshgrid(N_values, epsilon_values)
+    # Compute Hoeffding bound for each (N, epsilon) pair.
+    bound_grid = 2 * np.exp(-2 * N_grid * epsilon_grid**2)
+    # Apply log scale if requested.
+    if use_log_scale:
+        Z_grid = np.log10(bound_grid + 1e-10)
+        z_label = "log10(Bound)"
+    else:
+        Z_grid = bound_grid
+        z_label = "Bound Value"
+    # Create 3D plot.
+    fig = plt.figure(figsize=(16, 6))
+    # Left subplot: 3D surface.
+    ax1 = fig.add_subplot(121, projection="3d")
+    surf = ax1.plot_surface(
+        N_grid,
+        epsilon_grid,
+        Z_grid,
+        cmap="viridis",
+        alpha=0.9,
+        edgecolor="none",
+        linewidth=0,
+        antialiased=True,
+    )
+    # Add contour lines on the surface.
+    if not use_log_scale:
+        contour_levels = [0.01, 0.05, 0.1, 0.2, 0.5]
+        for level in contour_levels:
+            ax1.contour(
+                N_grid,
+                epsilon_grid,
+                bound_grid,
+                levels=[level],
+                colors="red",
+                linewidths=1.5,
+                alpha=0.6,
+                offset=level,
+            )
+    # Set labels and title.
+    ax1.set_xlabel("N (samples)", fontsize=11, labelpad=10)
+    ax1.set_ylabel("Epsilon", fontsize=11, labelpad=10)
+    ax1.set_zlabel(z_label, fontsize=11, labelpad=10)
+    ax1.set_title(
+        "3D Surface: Hoeffding Bound",
+        fontsize=13,
+        fontweight="bold",
+        pad=20,
+    )
+    # Set viewing angle.
+    ax1.view_init(elev=elevation, azim=azimuth)
+    # Add colorbar.
+    fig.colorbar(surf, ax=ax1, shrink=0.5, aspect=10, pad=0.1)
+    # Right subplot: Comments panel.
+    ax2 = fig.add_subplot(122)
+    ax2.axis("off")
+    ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    # Generate interpretation text.
+    scale_note = (
+        "Note: Using log scale for better visibility."
+        if use_log_scale
+        else "Note: Using linear scale."
+    )
+    text_content = (
+        f"Hoeffding Bound:\n"
+        f"  P(|nu - mu| >= epsilon) <= 2*exp(-2*N*epsilon^2)\n\n"
+        f"Parameters:\n"
+        f"  N_max = {N_max}\n"
+        f"  epsilon_max = {epsilon_max}\n"
+        f"  elevation = {elevation} degrees\n"
+        f"  azimuth = {azimuth} degrees\n\n"
+        f"Visualization:\n"
+        f"- {scale_note}\n"
+        f"- Surface color indicates bound value\n"
+        f"- Red contour lines show key probability levels\n\n"
+        f"Key Features:\n"
+        f"- Exponential decay in N direction (x-axis)\n"
+        f"- Exponential decay in epsilon direction (y-axis)\n"
+        f"- Steepest descent along the diagonal\n\n"
+        f"Interpretation:\n"
+        f"- Near N=0: bound approaches 2 (meaningless)\n"
+        f"- Large N, large epsilon: bound approaches 0\n"
+        f"- The surface shows trade-off between N and epsilon\n"
+        f"  for achieving desired confidence."
+    )
+    mtumsuti.add_fitted_text_box(ax2, text_content)
+    # Adjust layout.
+    plt.tight_layout()
+    plt.show()
+
+
+def hoeffding_bound_3d_surface() -> None:
+    """
+    Create interactive 3D surface visualization of Hoeffding bound.
+
+    Shows the bound 2*exp(-2*N*epsilon^2) as a 3D surface where:
+    - X-axis: N (number of samples)
+    - Y-axis: epsilon (deviation threshold)
+    - Z-axis: Bound value (probability)
+
+    Allows interactive control of:
+    - Plot range (N_max, epsilon_max)
+    - Viewing angle (elevation, azimuth)
+    - Scale (linear or logarithmic for Z-axis)
+    """
+    N_max_init = 500
+    epsilon_max_init = 0.5
+    elevation_init = 30
+    azimuth_init = 45
+    # Create widgets for controlling the plot.
+    N_max_slider, N_max_box = mtumsuti.build_widget_control(
+        name="N_max",
+        description="max N for plot",
+        min_val=100,
+        max_val=1000,
+        step=50,
+        initial_value=N_max_init,
+        is_float=False,
+    )
+    epsilon_max_slider, epsilon_max_box = mtumsuti.build_widget_control(
+        name="epsilon_max",
+        description="max epsilon for plot",
+        min_val=0.1,
+        max_val=1.0,
+        step=0.05,
+        initial_value=epsilon_max_init,
+        is_float=True,
+    )
+    elevation_slider, elevation_box = mtumsuti.build_widget_control(
+        name="elevation",
+        description="viewing angle (up/down)",
+        min_val=0,
+        max_val=90,
+        step=5,
+        initial_value=elevation_init,
+        is_float=True,
+    )
+    azimuth_slider, azimuth_box = mtumsuti.build_widget_control(
+        name="azimuth",
+        description="viewing angle (rotation)",
+        min_val=0,
+        max_val=360,
+        step=5,
+        initial_value=azimuth_init,
+        is_float=True,
+    )
+    # Create checkbox for log scale.
+    log_scale_checkbox = ipywidgets.Checkbox(
+        value=False,
+        description="Use log scale for Z-axis",
+        style={"description_width": "200px"},
+        layout=ipywidgets.Layout(width="300px"),
+    )
+    # Create output widget.
+    output = ipywidgets.Output()
+
+    def update_plot(change=None):
+        with output:
+            output.clear_output(wait=True)
+            _plot_hoeffding_bound_3d(
+                N_max=N_max_slider.value,
+                epsilon_max=epsilon_max_slider.value,
+                elevation=elevation_slider.value,
+                azimuth=azimuth_slider.value,
+                use_log_scale=log_scale_checkbox.value,
+            )
+
+    # Observe changes.
+    N_max_slider.observe(update_plot, names="value")
+    epsilon_max_slider.observe(update_plot, names="value")
+    elevation_slider.observe(update_plot, names="value")
+    azimuth_slider.observe(update_plot, names="value")
+    log_scale_checkbox.observe(update_plot, names="value")
+    # Display widgets.
+    display(
+        ipywidgets.VBox(
+            [
+                N_max_box,
+                epsilon_max_box,
+                elevation_box,
+                azimuth_box,
+                log_scale_checkbox,
+                output,
+            ]
+        )
+    )
     update_plot()
