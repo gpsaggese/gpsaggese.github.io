@@ -163,28 +163,53 @@ utils.sample_bernoulli4()
 # %% [markdown]
 # ## Interactive Hoeffding Inequality Demonstration
 #
-# This interactive visualization demonstrates the Hoeffding inequality by:
-# 1. Showing the binomial distribution of the sample mean nu
-# 2. Highlighting the tail areas where |nu - mu| >= epsilon (in red)
-# 3. Comparing the theoretical Hoeffding bound with empirical probability
+# This interactive visualization demonstrates the Hoeffding inequality across
+# multiple probability distributions. The Hoeffding inequality is
+# distribution-free: it applies to any bounded random variable in [0, 1],
+# regardless of its specific distribution.
+#
+# The visualization shows four plots:
+# 1. **Underlying Distribution**: The PDF/PMF of the selected distribution
+#    showing the shape of the random variable X
+# 2. **Distribution of Sample Mean**: Histogram of sample means nu from
+#    repeated sampling, with tail areas highlighted in red
+# 3. **Bound vs Empirical**: Comparison of theoretical Hoeffding bound vs
+#    empirical probability
+# 4. **Comments**: Parameters and interpretation
+#
+# Note: The bound is capped at 1.0 since probabilities cannot exceed 1.
+#
+# **Distribution options**:
+# - **Bernoulli**: Binary outcomes (0 or 1), parameter mu is success probability
+# - **Uniform [0, 1]**: Continuous uniform distribution (mu parameter ignored)
+# - **Binomial (scaled)**: Binomial(10, mu) scaled to [0, 1]
+# - **Truncated Gaussian**: Normal(mu, 0.2) truncated to [0, 1]
+# - **Truncated Exponential**: Exponential with mean near mu, truncated to [0, 1]
 #
 # **Parameters**:
-# - `mu`: True probability of success
+# - `Distribution`: Select the probability distribution
+# - `mu`: Distribution parameter (interpretation varies by distribution)
 # - `N`: Number of samples per trial (larger N = tighter concentration)
 # - `epsilon`: Deviation threshold (smaller epsilon = stricter bound)
 # - `seed`: Random seed for reproducibility
 #
-# **Experiment**:
-# - Try increasing N: the distribution becomes more concentrated and the
-#   bound becomes tighter
-# - Try decreasing epsilon: the tail areas shrink and the bound increases
-# - Try different mu values: the bound is independent of mu but the
-#   distribution shape changes
+# **Key insight**: The Hoeffding bound works for ALL these distributions
+# without knowing which one is being used. This is the power of
+# distribution-free bounds.
+#
+# **Experiments to try**:
+# 1. Compare Bernoulli vs Uniform: Both satisfy the bound despite different
+#    shapes
+# 2. Increase N: See how all distributions concentrate around their mean
+# 3. Try Truncated Gaussian with different mu values: The bound still holds
+#    even though the distribution shape changes dramatically near boundaries
+# 4. Compare bound tightness: Some distributions give tighter empirical
+#    probabilities than others, but the bound always holds
 
 # %%
-# Demonstrate the Hoeffding inequality with interactive visualization.
+# Demonstrate the Hoeffding inequality with multiple distributions.
 utils.hoeffding_inequality_demo()
-# Observe how the theoretical bound compares with empirical probability.
+# Try different distributions to see that the bound holds universally.
 
 # %% [markdown]
 # ## Hoeffding Bound as a Function of N and Epsilon

@@ -696,8 +696,54 @@ def sample_bernoulli4() -> None:
 # #############################################################################
 
 
+def _generate_samples_from_distribution(
+    distribution: str,
+    N: int,
+    mu: float = 0.5,
+    seed: int = 42,
+) -> np.ndarray:
+    """
+    Generate N samples from specified distribution in [0, 1].
+
+    :param distribution: Distribution type (bernoulli, uniform, binomial,
+        truncated_gaussian, truncated_exponential)
+    :param N: Number of samples to generate
+    :param mu: Parameter for the distribution (interpretation depends on type)
+    :param seed: Random seed for reproducibility
+    :return: Array of N samples in [0, 1]
+    """
+    np.random.seed(seed)
+    if distribution == "bernoulli":
+        # Bernoulli(mu): samples are 0 or 1.
+        return np.random.binomial(1, mu, size=N)
+    elif distribution == "uniform":
+        # Uniform[0, 1]: mu parameter is ignored.
+        return np.random.uniform(0, 1, size=N)
+    elif distribution == "binomial":
+        # Binomial(10, mu) scaled to [0, 1]: samples are k/10 where k~Binomial(10, mu).
+        n_trials = 10
+        return np.random.binomial(n_trials, mu, size=N) / n_trials
+    elif distribution == "truncated_gaussian":
+        # Truncated Gaussian: mean=mu, std=0.2, truncated to [0, 1].
+        samples = np.random.normal(mu, 0.2, size=N)
+        return np.clip(samples, 0, 1)
+    elif distribution == "truncated_exponential":
+        # Truncated Exponential: rate parameter chosen to have mean near mu.
+        # Exponential(lambda) has mean 1/lambda.
+        # We want mean around mu, so lambda = 1/mu.
+        # Then truncate to [0, 1].
+        if mu <= 0 or mu > 1:
+            mu = 0.5
+        lambda_param = 1 / mu
+        samples = np.random.exponential(1 / lambda_param, size=N)
+        return np.clip(samples, 0, 1)
+    else:
+        raise ValueError(f"Unknown distribution: {distribution}")
+
+
 def _plot_hoeffding_inequality_demo(
     *,
+    distribution: str = "bernoulli",
     mu: float = 0.6,
     N: int = 100,
     epsilon: float = 0.1,
@@ -705,55 +751,141 @@ def _plot_hoeffding_inequality_demo(
     seed: int = 42,
 ) -> None:
     """
-    Visualize Hoeffding inequality with binomial distribution and tail areas.
+    Visualize Hoeffding inequality with different distributions and tail areas.
 
     Shows:
-    1. Binomial distribution with shaded tail regions representing deviations
-       greater than epsilon
+    1. Distribution of sample mean with shaded tail regions representing
+       deviations greater than epsilon
     2. Comparison of theoretical Hoeffding bound vs empirical probability
     3. Comments explaining the results
 
-    :param mu: True probability of success (0 < mu < 1)
+    :param distribution: Distribution type (bernoulli, uniform, binomial,
+        truncated_gaussian, truncated_exponential)
+    :param mu: Distribution parameter (interpretation depends on type)
     :param N: Number of samples per trial
     :param epsilon: Deviation threshold for Hoeffding bound
     :param n_trials: Number of trials for empirical probability estimation
     :param seed: Random seed for reproducibility
     """
     # Validate parameters.
-    _validate_bernoulli_params(mu, N)
+    hdbg.dassert_lte(1, N, "N must be at least 1:", N)
     hdbg.dassert_lte(0, epsilon, "epsilon must be positive:", epsilon)
     hdbg.dassert_lte(epsilon, 1, "epsilon must be at most 1:", epsilon)
     # Set random seed for reproducibility.
     np.random.seed(seed)
     # Generate empirical distribution by repeated sampling.
     empirical_nus = []
-    for _ in range(n_trials):
-        trial_samples = np.random.binomial(1, mu, size=N)
+    empirical_means_per_trial = []
+    for trial_idx in range(n_trials):
+        trial_samples = _generate_samples_from_distribution(
+            distribution, N, mu, seed + trial_idx
+        )
         trial_nu = np.mean(trial_samples)
         empirical_nus.append(trial_nu)
+        empirical_means_per_trial.append(trial_samples)
     empirical_nus = np.array(empirical_nus)
-    # Compute theoretical Hoeffding bound.
-    # P(|nu - mu| >= epsilon) <= 2 * exp(-2 * N * epsilon^2)
-    hoeffding_bound = 2 * np.exp(-2 * N * epsilon**2)
+    # Compute true mean of the distribution.
+    if distribution == "bernoulli":
+        true_mean = mu
+    elif distribution == "uniform":
+        true_mean = 0.5
+    elif distribution == "binomial":
+        true_mean = mu
+    elif distribution == "truncated_gaussian":
+        # Approximate mean (exact would require computing truncated normal mean).
+        true_mean = mu
+    elif distribution == "truncated_exponential":
+        # Approximate mean (exact would require computing truncated exponential mean).
+        true_mean = mu
+    else:
+        true_mean = 0.5
+    # Compute theoretical Hoeffding bound (capped at 1.0).
+    # P(|nu - true_mean| >= epsilon) <= 2 * exp(-2 * N * epsilon^2)
+    hoeffding_bound = min(1.0, 2 * np.exp(-2 * N * epsilon**2))
     # Compute empirical probability of deviation >= epsilon.
-    empirical_prob = np.mean(np.abs(empirical_nus - mu) >= epsilon)
-    # Create binomial distribution for visualization.
-    # For N Bernoulli trials, the sum follows Binomial(N, mu).
-    # The sample mean is sum/N.
-    k_values = np.arange(0, N + 1)
-    binomial_probs = scipy.stats.binom.pmf(k_values, N, mu)
-    sample_means = k_values / N
-    # Identify tail regions: |sample_mean - mu| >= epsilon.
-    tail_mask = np.abs(sample_means - mu) >= epsilon
-    # Create visualization with 3 subplots.
-    fig, (ax1, ax2, ax3) = plt.subplots(
-        1, 3, figsize=(18, 5), gridspec_kw={"width_ratios": [1.5, 1, 1.2]}
+    empirical_prob = np.mean(np.abs(empirical_nus - true_mean) >= epsilon)
+    # Create histogram of empirical sample means for visualization.
+    hist, bin_edges = np.histogram(empirical_nus, bins=50, density=True)
+    bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+    bin_width = bin_edges[1] - bin_edges[0]
+    # Convert density to probability (multiply by bin width).
+    sample_probs = hist * bin_width
+    # Identify tail regions: |bin_center - true_mean| >= epsilon.
+    tail_mask = np.abs(bin_centers - true_mean) >= epsilon
+    # Create visualization with 4 subplots.
+    fig, (ax0, ax1, ax2, ax3) = plt.subplots(
+        1, 4, figsize=(20, 5), gridspec_kw={"width_ratios": [1, 1.5, 0.8, 1]}
     )
-    # Plot 1: Binomial distribution with shaded tail areas.
+    # Plot 0: Show the underlying distribution PDF/PMF.
+    x_values = np.linspace(0, 1, 200)
+    if distribution == "bernoulli":
+        # Show PMF as bars for discrete distribution.
+        outcomes = [0, 1]
+        probs = [1 - mu, mu]
+        ax0.bar(outcomes, probs, width=0.1, color="steelblue", alpha=0.7, edgecolor="black")
+        ax0.set_xlabel("X", fontsize=11)
+        ax0.set_ylabel("P(X)", fontsize=11)
+        ax0.set_xlim([-0.2, 1.2])
+        ax0.set_ylim([0, 1.0])
+    elif distribution == "uniform":
+        # Uniform PDF.
+        pdf_values = np.ones_like(x_values)
+        ax0.fill_between(x_values, 0, pdf_values, color="steelblue", alpha=0.7, edgecolor="black")
+        ax0.set_xlabel("X", fontsize=11)
+        ax0.set_ylabel("PDF(X)", fontsize=11)
+        ax0.set_xlim([0, 1.0])
+        ax0.set_ylim([0, 1.5])
+    elif distribution == "binomial":
+        # Binomial(10, mu) scaled to [0, 1].
+        n_trials = 10
+        k_values = np.arange(0, n_trials + 1)
+        probs = scipy.stats.binom.pmf(k_values, n_trials, mu)
+        x_scaled = k_values / n_trials
+        ax0.bar(x_scaled, probs, width=0.08, color="steelblue", alpha=0.7, edgecolor="black")
+        ax0.set_xlabel("X", fontsize=11)
+        ax0.set_ylabel("P(X)", fontsize=11)
+        ax0.set_xlim([0, 1.0])
+    elif distribution == "truncated_gaussian":
+        # Truncated Gaussian PDF.
+        pdf_values = scipy.stats.norm.pdf(x_values, mu, 0.2)
+        # Normalize to account for truncation.
+        cdf_0 = scipy.stats.norm.cdf(0, mu, 0.2)
+        cdf_1 = scipy.stats.norm.cdf(1, mu, 0.2)
+        normalization = cdf_1 - cdf_0
+        pdf_values = pdf_values / normalization
+        ax0.fill_between(x_values, 0, pdf_values, color="steelblue", alpha=0.7, edgecolor="black")
+        ax0.set_xlabel("X", fontsize=11)
+        ax0.set_ylabel("PDF(X)", fontsize=11)
+        ax0.set_xlim([0, 1.0])
+    elif distribution == "truncated_exponential":
+        # Truncated Exponential PDF.
+        if mu <= 0 or mu > 1:
+            mu_eff = 0.5
+        else:
+            mu_eff = mu
+        lambda_param = 1 / mu_eff
+        pdf_values = lambda_param * np.exp(-lambda_param * x_values)
+        # Normalize to account for truncation.
+        cdf_0 = 1 - np.exp(-lambda_param * 0)
+        cdf_1 = 1 - np.exp(-lambda_param * 1)
+        normalization = cdf_1 - cdf_0
+        pdf_values = pdf_values / normalization
+        ax0.fill_between(x_values, 0, pdf_values, color="steelblue", alpha=0.7, edgecolor="black")
+        ax0.set_xlabel("X", fontsize=11)
+        ax0.set_ylabel("PDF(X)", fontsize=11)
+        ax0.set_xlim([0, 1.0])
+    dist_name = distribution.replace("_", " ").title()
+    ax0.set_title(
+        f"{dist_name}\nDistribution",
+        fontsize=13,
+        fontweight="bold",
+    )
+    ax0.grid(True, alpha=0.3, axis="y")
+    # Plot 1: Distribution of sample mean with shaded tail areas.
     ax1.bar(
-        sample_means[~tail_mask],
-        binomial_probs[~tail_mask],
-        width=1 / N,
+        bin_centers[~tail_mask],
+        sample_probs[~tail_mask],
+        width=bin_width,
         color="steelblue",
         alpha=0.7,
         edgecolor="black",
@@ -761,46 +893,46 @@ def _plot_hoeffding_inequality_demo(
         label="Within epsilon",
     )
     ax1.bar(
-        sample_means[tail_mask],
-        binomial_probs[tail_mask],
-        width=1 / N,
+        bin_centers[tail_mask],
+        sample_probs[tail_mask],
+        width=bin_width,
         color="red",
         alpha=0.7,
         edgecolor="black",
         linewidth=0.5,
-        label=f"|nu - mu| >= {epsilon}",
+        label=f"|nu - mean| >= {epsilon}",
     )
-    # Mark mu and bounds.
+    # Mark true mean and bounds.
     ax1.axvline(
-        x=mu,
+        x=true_mean,
         color="green",
         linestyle="--",
         linewidth=2,
-        label=f"True mu={mu:.2f}",
+        label=f"True mean={true_mean:.2f}",
     )
     ax1.axvline(
-        x=mu - epsilon,
+        x=true_mean - epsilon,
         color="red",
         linestyle=":",
         linewidth=1.5,
         alpha=0.7,
     )
     ax1.axvline(
-        x=mu + epsilon,
+        x=true_mean + epsilon,
         color="red",
         linestyle=":",
         linewidth=1.5,
         alpha=0.7,
     )
-    ax1.set_xlabel("Sample Mean (nu = sum/N)", fontsize=12)
-    ax1.set_ylabel("Probability", fontsize=12)
+    ax1.set_xlabel("Sample Mean (nu)", fontsize=11)
+    ax1.set_ylabel("Probability Density", fontsize=11)
     ax1.set_title(
-        "Binomial Distribution with Tail Areas",
-        fontsize=14,
+        f"Distribution of\nSample Mean",
+        fontsize=13,
         fontweight="bold",
     )
     ax1.set_xlim([0, 1.0])
-    ax1.legend(fontsize=10, loc="upper right")
+    ax1.legend(fontsize=9, loc="upper right")
     ax1.grid(True, alpha=0.3, axis="y")
     # Plot 2: Comparison of bounds.
     labels = ["Hoeffding\nBound", "Empirical\nProbability"]
@@ -825,17 +957,17 @@ def _plot_hoeffding_inequality_demo(
             va="bottom",
             fontsize=10,
         )
-    ax2.set_ylabel("Probability", fontsize=12)
+    ax2.set_ylabel("Probability", fontsize=11)
     ax2.set_title(
-        "Hoeffding Bound vs Empirical",
-        fontsize=14,
+        "Bound vs\nEmpirical",
+        fontsize=13,
         fontweight="bold",
     )
     ax2.set_ylim([0, min(1.0, max(values) * 1.3)])
     ax2.grid(True, alpha=0.3, axis="y")
     # Plot 3: Comments and explanation.
     ax3.axis("off")
-    ax3.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    ax3.set_title("Comments", fontsize=13, fontweight="bold", pad=20)
     # Check if bound is tight.
     bound_ratio = hoeffding_bound / empirical_prob if empirical_prob > 0 else float("inf")
     if bound_ratio < 2:
@@ -844,24 +976,27 @@ def _plot_hoeffding_inequality_demo(
         tightness_note = "The Hoeffding bound is reasonably tight."
     else:
         tightness_note = "The Hoeffding bound is conservative (loose)."
+    dist_name = distribution.replace("_", " ").title()
     text_content = (
         f"Parameters:\n"
-        f"  mu = {mu:.4f} (true probability)\n"
+        f"  distribution = {dist_name}\n"
+        f"  mu = {mu:.4f} (dist. parameter)\n"
+        f"  true mean = {true_mean:.4f}\n"
         f"  N = {N} (samples per trial)\n"
-        f"  epsilon = {epsilon:.4f} (deviation threshold)\n"
+        f"  epsilon = {epsilon:.4f}\n"
         f"  n_trials = {n_trials}\n"
         f"  seed = {seed}\n\n"
         f"Hoeffding Inequality:\n"
-        f"  P(|nu - mu| >= epsilon) <= 2*exp(-2*N*epsilon^2)\n"
-        f"  Bound = {hoeffding_bound:.6f}\n\n"
+        f"  P(|nu - mean| >= epsilon) <= 2*exp(-2*N*epsilon^2)\n"
+        f"  Bound = {hoeffding_bound:.6f} (capped at 1.0)\n\n"
         f"Empirical Result:\n"
-        f"  P(|nu - mu| >= {epsilon}) = {empirical_prob:.6f}\n"
+        f"  P(|nu - mean| >= {epsilon}) = {empirical_prob:.6f}\n"
         f"  (from {n_trials} trials)\n\n"
         f"Interpretation:\n"
         f"- {tightness_note}\n\n"
-        f"- Red bars show tail areas where |nu - mu| >= epsilon.\n\n"
-        f"- As N increases, the distribution concentrates around mu\n"
-        f"  and the bound becomes tighter."
+        f"- Hoeffding bound applies to any distribution in [0, 1].\n\n"
+        f"- Red bars show tail areas where |nu - mean| >= epsilon.\n\n"
+        f"- As N increases, the bound becomes tighter."
     )
     mtumsuti.add_fitted_text_box(ax3, text_content)
     # Use subplots_adjust for consistent spacing.
@@ -876,24 +1011,46 @@ def hoeffding_inequality_demo() -> None:
     Create interactive widget demonstrating the Hoeffding inequality.
 
     Shows:
-    - Binomial distribution with shaded tail areas
+    - Distribution of sample mean with shaded tail areas
     - Comparison of theoretical Hoeffding bound vs empirical probability
-    - Interactive sliders for mu, N, epsilon, and seed
+    - Interactive controls for distribution type, parameters, N, epsilon, seed
 
     The Hoeffding inequality states:
-    P(|nu - mu| >= epsilon) <= 2 * exp(-2 * N * epsilon^2)
+    P(|nu - mean| >= epsilon) <= 2 * exp(-2 * N * epsilon^2)
 
-    where nu is the sample mean of N Bernoulli trials with true probability mu.
+    where nu is the sample mean of N samples from any distribution in [0, 1].
+
+    Supports multiple distributions:
+    - Bernoulli: Binary outcomes (0 or 1)
+    - Uniform: Continuous uniform in [0, 1]
+    - Binomial: Discrete binomial scaled to [0, 1]
+    - Truncated Gaussian: Normal distribution truncated to [0, 1]
+    - Truncated Exponential: Exponential distribution truncated to [0, 1]
     """
     mu_init = 0.6
     N_init = 100
     epsilon_init = 0.1
     seed_init = 42
+    # Create distribution selector.
+    distribution_dropdown = ipywidgets.Dropdown(
+        options=[
+            ("Bernoulli", "bernoulli"),
+            ("Uniform [0, 1]", "uniform"),
+            ("Binomial (scaled)", "binomial"),
+            ("Truncated Gaussian", "truncated_gaussian"),
+            ("Truncated Exponential", "truncated_exponential"),
+        ],
+        value="bernoulli",
+        description="Distribution:",
+        style={"description_width": "150px"},
+        layout=ipywidgets.Layout(width="500px"),
+    )
     # Create widgets.
     mu_slider, mu_box, N_slider, N_box, seed_slider, seed_box = (
         _create_basic_widget_controls(mu_init, N_init, seed_init)
     )
-    # Update N slider description for this specific use case.
+    # Update descriptions.
+    mu_box.children[0].description = "mu = distribution parameter"
     N_box.children[0].description = "samples per trial"
     # Update N slider range for better exploration.
     N_slider.min = 10
@@ -914,6 +1071,7 @@ def hoeffding_inequality_demo() -> None:
         with output:
             output.clear_output(wait=True)
             _plot_hoeffding_inequality_demo(
+                distribution=distribution_dropdown.value,
                 mu=mu_slider.value,
                 N=N_slider.value,
                 epsilon=epsilon_slider.value,
@@ -921,13 +1079,16 @@ def hoeffding_inequality_demo() -> None:
             )
 
     # Observe slider changes.
+    distribution_dropdown.observe(update_plot, names="value")
     mu_slider.observe(update_plot, names="value")
     N_slider.observe(update_plot, names="value")
     epsilon_slider.observe(update_plot, names="value")
     seed_slider.observe(update_plot, names="value")
     # Display widgets and initial plot.
     display(
-        ipywidgets.VBox([mu_box, N_box, epsilon_box, seed_box, output])
+        ipywidgets.VBox(
+            [distribution_dropdown, mu_box, N_box, epsilon_box, seed_box, output]
+        )
     )
     update_plot()
 
