@@ -210,7 +210,7 @@ def cell1_basic_bernoulli_sampling(
 
 
 # #############################################################################
-# sample_bernoulli2
+# Cell 2: Helper - Plot Bernoulli Sample with PDF
 # #############################################################################
 
 
@@ -342,7 +342,7 @@ def cell2_samples_over_time_and_pdf() -> None:
 
 
 # #############################################################################
-# sample_bernoulli3
+# Cell 3: Helper - Plot Bernoulli Sample with Statistics
 # #############################################################################
 
 
@@ -508,7 +508,7 @@ def cell3_pdf_empirical_mean_stats(
 
 
 # #############################################################################
-# sample_bernoulli4
+# Cell 4: Helper - Plot Distribution of Empirical Mean
 # #############################################################################
 
 
@@ -707,7 +707,7 @@ def cell4_distribution_empirical_mean() -> None:
 
 
 # #############################################################################
-# hoeffding_inequality_demo
+# Cell 5: Helper - Plot Hoeffding Inequality Demo
 # #############################################################################
 
 
@@ -1114,7 +1114,7 @@ def cell5_hoeffding_inequality_demo() -> None:
 
 
 # #############################################################################
-# hoeffding_inequality_demo2
+# Cell 6: Helper - Plot Empirical vs Bound
 # #############################################################################
 
 
@@ -1413,7 +1413,7 @@ def cell6_empirical_vs_bound() -> None:
 
 
 # #############################################################################
-# hoeffding_bound_surface
+# Cell 7: Helper - Plot Hoeffding Bound Surface
 # #############################################################################
 
 
@@ -1808,7 +1808,7 @@ def cell7_bound_surface_heatmap() -> None:
 
 
 # #############################################################################
-# hoeffding_bound_3d_surface
+# Cell 8: Helper - Plot 3D Hoeffding Bound
 # #############################################################################
 
 

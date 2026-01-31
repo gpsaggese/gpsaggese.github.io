@@ -28,7 +28,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 # #############################################################################
 
 
-def _draw_bin_with_marbles(mu: float) -> None:
+def _draw_bin_with_marbles(mu: float, seed: int) -> None:
     """
     Draw a 2D bin filled with red and green marbles.
 
@@ -36,9 +36,10 @@ def _draw_bin_with_marbles(mu: float) -> None:
     proportion parameter mu.
 
     :param mu: True proportion of red marbles (0-1)
+    :param seed: Random seed for reproducibility
     """
     # Create figure.
-    fig, ax = plt.subplots(figsize=(8, 8))
+    fig, ax = plt.subplots(figsize=(6, 6))
     # Set up the bin dimensions.
     bin_width = 10
     bin_height = 10
@@ -67,7 +68,7 @@ def _draw_bin_with_marbles(mu: float) -> None:
         for y in y_positions:
             marble_positions.append((x, y))
     # Shuffle positions randomly to distribute colors uniformly.
-    np.random.seed(42)
+    np.random.seed(seed)
     np.random.shuffle(marble_positions)
     # Draw marbles.
     marble_radius = 0.25
@@ -102,14 +103,25 @@ def cell1_draw_bin_with_marbles_interactive() -> None:
     """
     Create interactive visualization of bin with marbles.
 
-    Sets up an interactive widget with a slider for mu parameter that controls
-    the proportion of red marbles in the bin.
+    Sets up an interactive widget with sliders for mu and seed parameters that
+    control the proportion of red marbles and random arrangement in the bin.
     """
     mu_init = 0.5
+    seed_init = 42
+    # Create slider for seed.
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="",
+        min_val=0,
+        max_val=1000,
+        step=1,
+        initial_value=seed_init,
+        is_float=False,
+    )
     # Create slider for mu.
     mu_slider, mu_box = mtumsuti.build_widget_control(
         name="mu",
-        description="true proportion of red marbles",
+        description="",
         min_val=0.0,
         max_val=1.0,
         step=0.01,
@@ -118,11 +130,10 @@ def cell1_draw_bin_with_marbles_interactive() -> None:
     )
     # Create interactive output.
     output = ipywidgets.interactive_output(
-        _draw_bin_with_marbles, {"mu": mu_slider}
+        _draw_bin_with_marbles, {"mu": mu_slider, "seed": seed_slider}
     )
     # Display widgets.
-    display(mu_box)
-    display(output)
+    display(ipywidgets.VBox([seed_box, mu_box, output]))
 
 
 # #############################################################################
@@ -228,16 +239,25 @@ def cell2_plot_single_experiment_interactive() -> None:
     """
     Create interactive visualization of single sampling experiment.
 
-    Sets up an interactive widget with sliders for mu, N, and seed parameters
+    Sets up an interactive widget with sliders for seed, mu, and N parameters
     that shows how close the sample proportion nu is to the true proportion mu.
     """
     mu_init = 0.6
     N_init = 100
     seed_init = 42
     # Create interactive widgets.
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="seed",
+        min_val=0,
+        max_val=1000,
+        step=1,
+        initial_value=seed_init,
+        is_float=False,
+    )
     mu_slider, mu_box = mtumsuti.build_widget_control(
         name="mu",
-        description="true proportion of red marbles",
+        description="mu",
         min_val=0.0,
         max_val=1.0,
         step=0.05,
@@ -246,20 +266,11 @@ def cell2_plot_single_experiment_interactive() -> None:
     )
     N_slider, N_box = mtumsuti.build_widget_control(
         name="N",
-        description="number of samples",
+        description="N",
         min_val=10,
         max_val=1000,
         step=10,
         initial_value=N_init,
-        is_float=False,
-    )
-    seed_slider, seed_box = mtumsuti.build_widget_control(
-        name="seed",
-        description="random seed",
-        min_val=0,
-        max_val=1000,
-        step=1,
-        initial_value=seed_init,
         is_float=False,
     )
     # Create interactive output.
@@ -268,4 +279,4 @@ def cell2_plot_single_experiment_interactive() -> None:
         {"mu": mu_slider, "N": N_slider, "seed": seed_slider},
     )
     # Display widgets.
-    display(ipywidgets.VBox([mu_box, N_box, seed_box, output]))
+    display(ipywidgets.VBox([seed_box, mu_box, N_box, output]))

@@ -60,9 +60,9 @@ utils.cell1_draw_bin_with_marbles_interactive()
 # %% [markdown]
 # ## Cell 2: Single Experiment: Is nu Close to mu?
 #
-# This cell demonstrates a single sampling experiment from the bin. We draw N
-# marbles randomly (with replacement) and compute the sample proportion $\nu$.
-# The key question is: How close is $\nu$ to the true $\mu$?
+# - This cell demonstrates a single sampling experiment from the bin.
+# - We draw N marbles randomly (with replacement) and compute the sample proportion $\nu$.
+# - The key question is: How close is $\nu$ to the true $\mu$?
 
 # %%
 utils.cell2_plot_single_experiment_interactive()
