@@ -19,9 +19,6 @@
 # **Course**: MSML610: Advanced Machine Learning
 #
 # **Instructor**: Dr. GP Saggese
-#
-# **Purpose**: Interactive exploration of the Hoeffding inequality through
-# Bernoulli binomial sampling experiments.
 
 # %% [markdown]
 # ## Imports
@@ -52,16 +49,9 @@ _LOG = logging.getLogger(__name__)
 
 # %% [markdown]
 # # Building Intuition about Hoeffding Inequality
-#
-# We will build intuition about the Hoeffding Inequality progressively through
-# multiple cells, each adding more understanding about how sample means relate
-# to the true probability.
 
 # %% [markdown]
 # ## Basic Bernoulli Sampling Code
-#
-# Start with a simple code example showing how to create Bernoulli samples and
-# compute basic statistics.
 
 # %%
 # Demonstrate basic Bernoulli sampling.

@@ -48,25 +48,21 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %% [markdown]
-# ## Cell 1: Visual Bin - Population of Marbles
+# ## Cell 1: Visual Bin: Population of Marbles.
 #
 # This visualization shows a bin filled with red and green marbles representing
 # the unknown population. The parameter $\mu$ represents the true proportion of
 # red marbles in the bin.
 
 # %%
-utils.draw_bin_with_marbles_interactive()
+utils.cell1_draw_bin_with_marbles_interactive()
 
 # %% [markdown]
-# ## Cell 5: Single Experiment - Is nu Close to mu?
+# ## Cell 2: Single Experiment: Is nu Close to mu?
 #
 # This cell demonstrates a single sampling experiment from the bin. We draw N
 # marbles randomly (with replacement) and compute the sample proportion $\nu$.
 # The key question is: How close is $\nu$ to the true $\mu$?
 
 # %%
-utils.plot_single_experiment_interactive()
-
-# %%
-
-# %%
+utils.cell2_plot_single_experiment_interactive()

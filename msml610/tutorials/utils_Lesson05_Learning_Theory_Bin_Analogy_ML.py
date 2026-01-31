@@ -24,7 +24,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 # #############################################################################
-# Cell 1: Visual Bin - Population of Marbles
+# Cell 1: Visual Bin: Population of Marbles.
 # #############################################################################
 
 
@@ -98,7 +98,7 @@ def _draw_bin_with_marbles(mu: float) -> None:
     plt.show()
 
 
-def draw_bin_with_marbles_interactive() -> None:
+def cell1_draw_bin_with_marbles_interactive() -> None:
     """
     Create interactive visualization of bin with marbles.
 
@@ -126,7 +126,7 @@ def draw_bin_with_marbles_interactive() -> None:
 
 
 # #############################################################################
-# Cell 5: Single Experiment - Is nu Close to mu?
+# Cell 2: Single Experiment: Is nu Close to mu?
 # #############################################################################
 
 
@@ -224,7 +224,7 @@ def _plot_single_experiment(mu: float, N: int, seed: int) -> None:
     plt.show()
 
 
-def plot_single_experiment_interactive() -> None:
+def cell2_plot_single_experiment_interactive() -> None:
     """
     Create interactive visualization of single sampling experiment.
 
