@@ -165,11 +165,11 @@ def _create_basic_widget_controls(
 
 
 # #############################################################################
-# sample_bernoulli1
+# Cell 1: Basic Bernoulli Sampling Code
 # #############################################################################
 
 
-def sample_bernoulli1(
+def cell1_basic_bernoulli_sampling(
     *,
     mu: float = 0.6,
     N: int = 10,
@@ -297,7 +297,12 @@ def _plot_bernoulli_sample2(
     plt.show()
 
 
-def sample_bernoulli2() -> None:
+# #############################################################################
+# Cell 2: Samples Over Time and Empirical PDF
+# #############################################################################
+
+
+def cell2_samples_over_time_and_pdf() -> None:
     """
     Create interactive Bernoulli sampling visualization with PDF comparison.
 
@@ -458,7 +463,12 @@ def _plot_bernoulli_sample3(
     plt.show()
 
 
-def sample_bernoulli3(
+# #############################################################################
+# Cell 3: PDF, Empirical Mean, and Statistics
+# #############################################################################
+
+
+def cell3_pdf_empirical_mean_stats(
     *,
     mu_init: float = 0.6,
     N_init: int = 100,
@@ -634,7 +644,12 @@ def _plot_bernoulli_sample4(
     plt.show()
 
 
-def sample_bernoulli4() -> None:
+# #############################################################################
+# Cell 4: Distribution of Empirical Mean
+# #############################################################################
+
+
+def cell4_distribution_empirical_mean() -> None:
     """
     Create interactive widget for Cell 4 (Distribution of Empirical Mean).
 
@@ -1006,7 +1021,12 @@ def _plot_hoeffding_inequality_demo(
     plt.show()
 
 
-def hoeffding_inequality_demo() -> None:
+# #############################################################################
+# Cell 5: Interactive Hoeffding Inequality Demonstration
+# #############################################################################
+
+
+def cell5_hoeffding_inequality_demo() -> None:
     """
     Create interactive widget demonstrating the Hoeffding inequality.
 
@@ -1249,7 +1269,12 @@ def _plot_hoeffding_inequality_demo2(
     plt.show()
 
 
-def hoeffding_inequality_demo2() -> None:
+# #############################################################################
+# Cell 6: Empirical Probability vs Hoeffding Bound
+# #############################################################################
+
+
+def cell6_empirical_vs_bound() -> None:
     """
     Create interactive widget showing empirical probability vs Hoeffding bound.
 
@@ -1642,7 +1667,12 @@ def _plot_hoeffding_bound_surface(
     plt.show()
 
 
-def hoeffding_bound_surface() -> None:
+# #############################################################################
+# Cell 7: Hoeffding Bound as a Function of N and Epsilon
+# #############################################################################
+
+
+def cell7_bound_surface_heatmap() -> None:
     """
     Create interactive visualization of Hoeffding bound surface.
 
@@ -1898,7 +1928,12 @@ def _plot_hoeffding_bound_3d(
     plt.show()
 
 
-def hoeffding_bound_3d_surface() -> None:
+# #############################################################################
+# Cell 8: 3D Surface Visualization of Hoeffding Bound
+# #############################################################################
+
+
+def cell8_bound_3d_surface() -> None:
     """
     Create interactive 3D surface visualization of Hoeffding bound.
 

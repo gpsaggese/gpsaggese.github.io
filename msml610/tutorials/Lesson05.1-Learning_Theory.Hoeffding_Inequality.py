@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -51,15 +51,15 @@ _LOG = logging.getLogger(__name__)
 # # Building Intuition about Hoeffding Inequality
 
 # %% [markdown]
-# ## Basic Bernoulli Sampling Code
+# ## Cell 1: Basic Bernoulli Sampling Code
 
 # %%
 # Demonstrate basic Bernoulli sampling.
-utils.sample_bernoulli1()
+utils.cell1_basic_bernoulli_sampling()
 # This shows the code for generating samples and computing the empirical mean.
 
 # %% [markdown]
-# ## Samples Over Time and Empirical PDF
+# ## Cell 2: Samples Over Time and Empirical PDF
 #
 # Visualize the N samples from a Bernoulli distribution both as a sequence over
 # time and as an empirical probability distribution function (PDF).
@@ -71,10 +71,10 @@ utils.sample_bernoulli1()
 
 # %%
 # Display N samples over time and their empirical PDF.
-utils.sample_bernoulli2()
+utils.cell2_samples_over_time_and_pdf()
 
 # %% [markdown]
-# ## PDF, Empirical Mean, and Statistics
+# ## Cell 3: PDF, Empirical Mean, and Statistics
 #
 # Examine the probability distribution of N samples, compute the empirical mean
 # nu, and compare with the theoretical mean and variance of the Bernoulli
@@ -88,11 +88,11 @@ utils.sample_bernoulli2()
 
 # %%
 # Display PDF, empirical mean nu, and compare with theoretical statistics.
-utils.sample_bernoulli3()
+utils.cell3_pdf_empirical_mean_stats()
 # Changing the seed generates new realizations with different empirical values.
 
 # %% [markdown]
-# ## Distribution of Empirical Mean
+# ## Cell 4: Distribution of Empirical Mean
 #
 # Examine what happens when we repeatedly sample N points many times. Each
 # trial produces an empirical mean nu. This cell shows the distribution of nu
@@ -106,7 +106,7 @@ utils.sample_bernoulli3()
 
 # %%
 # Display the distribution of empirical mean nu from repeated sampling.
-utils.sample_bernoulli4()
+utils.cell4_distribution_empirical_mean()
 # As N increases, the distribution becomes more concentrated around mu.
 
 # %% [markdown]
@@ -151,7 +151,7 @@ utils.sample_bernoulli4()
 #    nu < mu - epsilon)
 
 # %% [markdown]
-# ## Interactive Hoeffding Inequality Demonstration
+# ## Cell 5: Interactive Hoeffding Inequality Demonstration
 #
 # This interactive visualization demonstrates the Hoeffding inequality across
 # multiple probability distributions. The Hoeffding inequality is
@@ -198,11 +198,11 @@ utils.sample_bernoulli4()
 
 # %%
 # Demonstrate the Hoeffding inequality with multiple distributions.
-utils.hoeffding_inequality_demo()
+utils.cell5_hoeffding_inequality_demo()
 # Try different distributions to see that the bound holds universally.
 
 # %% [markdown]
-# ## Empirical Probability vs Hoeffding Bound
+# ## Cell 6: Empirical Probability vs Hoeffding Bound
 #
 # This visualization shows how both the theoretical Hoeffding bound and the
 # empirical probability change as we vary one parameter while holding the
@@ -241,11 +241,11 @@ utils.hoeffding_inequality_demo()
 
 # %%
 # Visualize how bound and empirical probability change with N or epsilon.
-utils.hoeffding_inequality_demo2()
+utils.cell6_empirical_vs_bound()
 # Compare the exponential decay rates for different distributions.
 
 # %% [markdown]
-# ## Hoeffding Bound as a Function of N and Epsilon
+# ## Cell 7: Hoeffding Bound as a Function of N and Epsilon
 #
 # The Hoeffding bound formula is:
 #
@@ -276,11 +276,11 @@ utils.hoeffding_inequality_demo2()
 
 # %%
 # Explore the Hoeffding bound as a function of N and epsilon.
-utils.hoeffding_bound_surface()
+utils.cell7_bound_surface_heatmap()
 # Try different view modes to understand the N vs epsilon trade-off.
 
 # %% [markdown]
-# ## 3D Surface Visualization of Hoeffding Bound
+# ## Cell 8: 3D Surface Visualization of Hoeffding Bound
 #
 # This cell provides a three-dimensional surface plot of the Hoeffding bound,
 # offering a different perspective on how the bound varies with N and epsilon.
@@ -307,5 +307,5 @@ utils.hoeffding_bound_surface()
 
 # %%
 # Visualize the Hoeffding bound as a 3D surface.
-utils.hoeffding_bound_3d_surface()
+utils.cell8_bound_3d_surface()
 # Rotate the view to explore the surface from different angles.
