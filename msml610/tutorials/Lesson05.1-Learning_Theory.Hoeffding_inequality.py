@@ -14,7 +14,7 @@
 # ---
 
 # %% [markdown]
-# # Lesson 05.1: Hoeffding Inequality Interactive Study
+# # Lesson 05.1: Hoeffding Inequality
 #
 # **Course**: MSML610: Advanced Machine Learning
 #
@@ -210,6 +210,49 @@ utils.sample_bernoulli4()
 # Demonstrate the Hoeffding inequality with multiple distributions.
 utils.hoeffding_inequality_demo()
 # Try different distributions to see that the bound holds universally.
+
+# %% [markdown]
+# ## Empirical Probability vs Hoeffding Bound
+#
+# This visualization shows how both the theoretical Hoeffding bound and the
+# empirical probability change as we vary one parameter while holding the
+# other fixed. This helps understand:
+#
+# 1. **Exponential decay**: Both quantities decrease exponentially
+# 2. **Bound validity**: The empirical probability is always below the bound
+# 3. **Bound tightness**: How close the empirical probability is to the bound
+# 4. **Parameter trade-offs**: The relationship between N and epsilon
+#
+# **Two scanning modes**:
+#
+# - **Scan N (fix epsilon)**: Shows how increasing sample size N improves
+#   concentration for a fixed deviation threshold epsilon
+#   - Both bound and empirical probability decrease exponentially with N
+#   - Demonstrates why we need relatively few samples for good concentration
+#   - Useful for determining required sample size for target confidence
+#
+# - **Scan epsilon (fix N)**: Shows how the probability of large deviations
+#   decreases as we increase the tolerance epsilon
+#   - Both quantities decrease as epsilon increases
+#   - Larger epsilon means more tolerance, so deviation probability drops
+#   - Useful for understanding achievable precision for given sample size
+#
+# **Interactive controls**:
+# - `Distribution`: Select probability distribution
+# - `Scan variable`: Choose to scan N or epsilon
+# - `mu`: Distribution parameter
+# - `fixed_N`: N value used when scanning epsilon
+# - `fixed_epsilon`: epsilon value used when scanning N
+# - `seed`: Random seed for reproducibility
+#
+# **Key observation**: The empirical probability (blue line) is always at or
+# below the theoretical bound (red line), confirming the Hoeffding inequality.
+# The gap between them shows how conservative the bound is.
+
+# %%
+# Visualize how bound and empirical probability change with N or epsilon.
+utils.hoeffding_inequality_demo2()
+# Compare the exponential decay rates for different distributions.
 
 # %% [markdown]
 # ## Hoeffding Bound as a Function of N and Epsilon

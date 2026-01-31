@@ -1094,6 +1094,300 @@ def hoeffding_inequality_demo() -> None:
 
 
 # #############################################################################
+# hoeffding_inequality_demo2
+# #############################################################################
+
+
+def _plot_hoeffding_inequality_demo2(
+    *,
+    distribution: str = "bernoulli",
+    mu: float = 0.6,
+    scan_variable: str = "N",
+    fixed_N: int = 100,
+    fixed_epsilon: float = 0.1,
+    n_trials: int = 1000,
+    seed: int = 42,
+) -> None:
+    """
+    Plot empirical probability vs Hoeffding bound as function of N or epsilon.
+
+    :param distribution: Distribution type
+    :param mu: Distribution parameter
+    :param scan_variable: Which variable to scan ("N" or "epsilon")
+    :param fixed_N: Fixed N value when scanning epsilon
+    :param fixed_epsilon: Fixed epsilon value when scanning N
+    :param n_trials: Number of trials for empirical probability estimation
+    :param seed: Random seed for reproducibility
+    """
+    # Determine scan range based on scan variable.
+    if scan_variable == "N":
+        scan_values = np.arange(10, 501, 10)
+        fixed_value = fixed_epsilon
+        x_label = "N (number of samples)"
+        title = f"Hoeffding Bound vs Empirical (epsilon={fixed_epsilon:.3f})"
+    else:  # scan_variable == "epsilon"
+        scan_values = np.linspace(0.01, 0.5, 50)
+        fixed_value = fixed_N
+        x_label = "Epsilon (deviation threshold)"
+        title = f"Hoeffding Bound vs Empirical (N={fixed_N})"
+    # Compute theoretical bounds and empirical probabilities.
+    hoeffding_bounds = []
+    empirical_probs = []
+    # Compute true mean of the distribution.
+    if distribution == "bernoulli":
+        true_mean = mu
+    elif distribution == "uniform":
+        true_mean = 0.5
+    elif distribution == "binomial":
+        true_mean = mu
+    elif distribution == "truncated_gaussian":
+        true_mean = mu
+    elif distribution == "truncated_exponential":
+        true_mean = mu
+    else:
+        true_mean = 0.5
+    for scan_val in scan_values:
+        if scan_variable == "N":
+            N_current = int(scan_val)
+            epsilon_current = fixed_epsilon
+        else:
+            N_current = fixed_N
+            epsilon_current = scan_val
+        # Compute Hoeffding bound (capped at 1.0).
+        bound = min(1.0, 2 * np.exp(-2 * N_current * epsilon_current**2))
+        hoeffding_bounds.append(bound)
+        # Compute empirical probability.
+        np.random.seed(seed)
+        empirical_nus = []
+        for trial_idx in range(n_trials):
+            trial_samples = _generate_samples_from_distribution(
+                distribution, N_current, mu, seed + trial_idx
+            )
+            trial_nu = np.mean(trial_samples)
+            empirical_nus.append(trial_nu)
+        empirical_nus = np.array(empirical_nus)
+        empirical_prob = np.mean(
+            np.abs(empirical_nus - true_mean) >= epsilon_current
+        )
+        empirical_probs.append(empirical_prob)
+    # Create visualization with 2 subplots.
+    fig, (ax1, ax2) = plt.subplots(
+        1, 2, figsize=(18, 5), gridspec_kw={"width_ratios": [1.5, 1]}
+    )
+    # Plot 1: Bound and empirical probability vs scan variable.
+    ax1.plot(
+        scan_values,
+        hoeffding_bounds,
+        linewidth=2.5,
+        color="coral",
+        label="Hoeffding Bound (theoretical)",
+        marker="o",
+        markersize=4,
+        alpha=0.8,
+    )
+    ax1.plot(
+        scan_values,
+        empirical_probs,
+        linewidth=2.5,
+        color="steelblue",
+        label="Empirical Probability",
+        marker="s",
+        markersize=4,
+        alpha=0.8,
+    )
+    ax1.set_xlabel(x_label, fontsize=12)
+    ax1.set_ylabel("Probability", fontsize=12)
+    ax1.set_title(title, fontsize=14, fontweight="bold")
+    ax1.legend(fontsize=11, loc="best")
+    ax1.grid(True, alpha=0.3)
+    # Set y-axis to log scale if values span multiple orders of magnitude.
+    if np.max(hoeffding_bounds) / np.min(hoeffding_bounds) > 100:
+        ax1.set_yscale("log")
+        ax1.set_ylabel("Probability (log scale)", fontsize=12)
+    else:
+        ax1.set_ylim([0, min(1.0, max(max(hoeffding_bounds), max(empirical_probs)) * 1.1)])
+    # Plot 2: Comments and explanation.
+    ax2.axis("off")
+    ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    dist_name = distribution.replace("_", " ").title()
+    if scan_variable == "N":
+        scan_note = (
+            f"- As N increases, both bound and empirical probability\n"
+            f"  decrease exponentially.\n\n"
+            f"- The exponential decay shows why we need relatively\n"
+            f"  few samples for good concentration.\n\n"
+            f"- Empirical probability is always below the bound."
+        )
+    else:
+        scan_note = (
+            f"- As epsilon increases, both bound and empirical probability\n"
+            f"  decrease.\n\n"
+            f"- Larger epsilon means more tolerance for deviation,\n"
+            f"  so probability of exceeding it decreases.\n\n"
+            f"- Empirical probability is always below the bound."
+        )
+    text_content = (
+        f"Parameters:\n"
+        f"  distribution = {dist_name}\n"
+        f"  mu = {mu:.4f}\n"
+        f"  true mean = {true_mean:.4f}\n"
+        f"  n_trials = {n_trials}\n"
+        f"  seed = {seed}\n\n"
+        f"Scanning:\n"
+        f"  variable = {scan_variable}\n"
+        f"  fixed value = {fixed_value}\n\n"
+        f"Hoeffding Inequality:\n"
+        f"  P(|nu - mean| >= epsilon) <= 2*exp(-2*N*epsilon^2)\n\n"
+        f"Observations:\n"
+        f"{scan_note}"
+    )
+    mtumsuti.add_fitted_text_box(ax2, text_content)
+    # Adjust layout.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.10, wspace=0.25
+    )
+    plt.show()
+
+
+def hoeffding_inequality_demo2() -> None:
+    """
+    Create interactive widget showing empirical probability vs Hoeffding bound.
+
+    This visualization shows how the theoretical Hoeffding bound and empirical
+    probability change as we vary either N (number of samples) or epsilon
+    (deviation threshold) while holding the other fixed.
+
+    Features:
+    - Select distribution type (Bernoulli, Uniform, Binomial, etc.)
+    - Choose distribution parameter mu
+    - Select which variable to scan (N or epsilon)
+    - Set fixed value for the non-scanned variable
+    - Plots both theoretical bound and empirical probability on same axes
+
+    The plot demonstrates:
+    - The bound always holds (empirical <= bound)
+    - Exponential decay with respect to both N and epsilon
+    - How different distributions behave under the same bound
+    """
+    mu_init = 0.6
+    fixed_N_init = 100
+    fixed_epsilon_init = 0.1
+    seed_init = 42
+    # Create distribution selector.
+    distribution_dropdown = ipywidgets.Dropdown(
+        options=[
+            ("Bernoulli", "bernoulli"),
+            ("Uniform [0, 1]", "uniform"),
+            ("Binomial (scaled)", "binomial"),
+            ("Truncated Gaussian", "truncated_gaussian"),
+            ("Truncated Exponential", "truncated_exponential"),
+        ],
+        value="bernoulli",
+        description="Distribution:",
+        style={"description_width": "150px"},
+        layout=ipywidgets.Layout(width="500px"),
+    )
+    # Create scan variable selector.
+    scan_dropdown = ipywidgets.Dropdown(
+        options=[
+            ("Scan N (fix epsilon)", "N"),
+            ("Scan epsilon (fix N)", "epsilon"),
+        ],
+        value="N",
+        description="Scan variable:",
+        style={"description_width": "150px"},
+        layout=ipywidgets.Layout(width="500px"),
+    )
+    # Create widgets.
+    mu_slider, mu_box = mtumsuti.build_widget_control(
+        name="mu",
+        description="distribution parameter",
+        min_val=0.1,
+        max_val=0.9,
+        step=0.05,
+        initial_value=mu_init,
+        is_float=True,
+    )
+    fixed_N_slider, fixed_N_box = mtumsuti.build_widget_control(
+        name="fixed_N",
+        description="N (when scanning epsilon)",
+        min_val=10,
+        max_val=500,
+        step=10,
+        initial_value=fixed_N_init,
+        is_float=False,
+    )
+    fixed_epsilon_slider, fixed_epsilon_box = mtumsuti.build_widget_control(
+        name="fixed_epsilon",
+        description="epsilon (when scanning N)",
+        min_val=0.01,
+        max_val=0.5,
+        step=0.01,
+        initial_value=fixed_epsilon_init,
+        is_float=True,
+    )
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="random seed",
+        min_val=0,
+        max_val=1000,
+        step=1,
+        initial_value=seed_init,
+        is_float=False,
+    )
+    # Create output widget.
+    output = ipywidgets.Output()
+
+    def update_plot(change=None):
+        with output:
+            output.clear_output(wait=True)
+            _plot_hoeffding_inequality_demo2(
+                distribution=distribution_dropdown.value,
+                mu=mu_slider.value,
+                scan_variable=scan_dropdown.value,
+                fixed_N=fixed_N_slider.value,
+                fixed_epsilon=fixed_epsilon_slider.value,
+                seed=seed_slider.value,
+            )
+
+    def update_visibility(change=None):
+        """Show/hide fixed value widgets based on scan variable."""
+        scan_var = scan_dropdown.value
+        if scan_var == "N":
+            fixed_epsilon_box.layout.visibility = "visible"
+            fixed_N_box.layout.visibility = "hidden"
+        else:
+            fixed_epsilon_box.layout.visibility = "hidden"
+            fixed_N_box.layout.visibility = "visible"
+        update_plot()
+
+    # Observe changes.
+    distribution_dropdown.observe(update_plot, names="value")
+    mu_slider.observe(update_plot, names="value")
+    scan_dropdown.observe(update_visibility, names="value")
+    fixed_N_slider.observe(update_plot, names="value")
+    fixed_epsilon_slider.observe(update_plot, names="value")
+    seed_slider.observe(update_plot, names="value")
+    # Initial visibility setup.
+    fixed_N_box.layout.visibility = "hidden"
+    # Display widgets and initial plot.
+    display(
+        ipywidgets.VBox(
+            [
+                distribution_dropdown,
+                scan_dropdown,
+                mu_box,
+                fixed_N_box,
+                fixed_epsilon_box,
+                seed_box,
+                output,
+            ]
+        )
+    )
+    update_plot()
+
+
+# #############################################################################
 # hoeffding_bound_surface
 # #############################################################################
 
