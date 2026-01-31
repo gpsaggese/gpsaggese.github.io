@@ -21,17 +21,7 @@ Type: Code + Interactive
   - Color code: Green if close (< 0.1), Yellow if medium (< 0.2), Red if far
 - Insight box: "In this run, nu [was/wasn't] close to mu"
 
-### Cell 3: The Key Question - How Probable?
-Type: Markdown
-- Discussion: Single experiments don't tell the full story
-- Key insight: We need to know P(|nu - mu| > eps)
-- Questions to consider:
-  - What if we got unlucky in our sample?
-  - How confident can we be that nu ≈ mu?
-  - Does sample size matter? How much?
-  - "Let's repeat this many times..."
-
-### Cell 4: Monte Carlo Simulation - Distribution of nu
+### Cell 3: Monte Carlo Simulation - Distribution of nu
 Type: Code + Interactive Visualization
 - Interactive widgets:
   - mu slider: 0-1
