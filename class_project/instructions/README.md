@@ -2,20 +2,19 @@
 
 - [Summary](#summary)
 - [Class Project Guidelines](#class-project-guidelines)
-  * [Choosing a project](#choosing-a-project)
-  * [Pre-requisites](#pre-requisites)
-    + [Contribution to the repo](#contribution-to-the-repo)
-  * [Configuring your system](#configuring-your-system)
-    + [Simple Docker Setup (`data605_style`) — Recommended for Students](#simple-docker-setup-data605_style--recommended-for-students)
-    + [Want to Learn More?](#want-to-learn-more)
-  * [Working on the project](#working-on-the-project)
+  * [Choosing a Project](#choosing-a-project)
+  * [Pre-Requisites](#pre-requisites)
+    + [Contribution to the Repo](#contribution-to-the-repo)
+  * [Configuring Your System](#configuring-your-system)
+    + [Simple Docker Setup (`simple`) — Recommended for Students](#simple-docker-setup-simple--recommended-for-students)
+  * [Working on the Project](#working-on-the-project)
     + [Project Goal](#project-goal)
-    + [Understanding the deliverables](#understanding-the-deliverables)
+    + [Understanding the Deliverables](#understanding-the-deliverables)
   * [Submission](#submission)
-    + [Difference between `{project}.API.*` and `{project}.example.*`](#difference-between-projectapi-and-projectexample)
+    + [Difference Between `{project}.API.*` and `{project}.example.*`](#difference-between-projectapi-and-projectexample)
     + [Folder Structure](#folder-structure)
     + [Submission Guidelines](#submission-guidelines)
-  * [Examples of a class project](#examples-of-a-class-project)
+  * [Examples of a Class Project](#examples-of-a-class-project)
 
 <!-- tocstop -->
 
@@ -25,22 +24,22 @@ This document provides comprehensive guidelines for completing class projects in
 `DATA605` and `MSML610` courses. Students will learn cutting-edge big data
 technologies by creating hands-on tutorials that teach others how to use these
 tools. The project involves selecting a technology, setting up a development
-environment with `Docker`, and delivering a complete tutorial with documentation,
-code examples, and `Jupyter` notebooks following open-source contribution
-practices.
+environment with `Docker`, and delivering a complete tutorial with
+documentation, code examples, and `Jupyter` notebooks following open-source
+contribution practices.
 
 # Class Project Guidelines
 
 - The goal of the class project (e.g., for `DATA605`, `MSML610`) is to learn a
-  cutting-edge modern big data technology and write a (small) example of a system
-  using it
+  cutting-edge modern big data technology and write a (small) example of a
+  system using it
 - Each class project is similar in spirit to the tutorials for various
-  technologies we have looked at and studied in classes (e.g., `Git`, `Docker`, `SQL`,
-  `Mongo`, `Airflow`, `Dask`)
+  technologies we have looked at and studied in classes (e.g., `Git`, `Docker`,
+  `SQL`, `Mongo`, `Airflow`, `Dask`)
 - Through the class projects you will learn how a tool fits your data science,
   data engineering, machine learning workflows
 
-## Choosing a project
+## Choosing a Project
 
 - The project is for an individual or group
   - Students can discuss and help each other (they will do that even if we say
@@ -57,12 +56,12 @@ practices.
   - Examples
     - `MSML610` Fall 2025:
       - [List of projects](https://docs.google.com/spreadsheets/d/1H_Ev1psuPpUrrRcmBrBb2chfurSo5rPcAdd6i2SIUTQ/edit?gid=0#gid=0)
-      - [Description of
-        projects](https://github.com/gpsaggese/umd_classes/tree/master/class_project/MSML610/Fall2025/project_descriptions)
+      - [Description of projects](https://github.com/gpsaggese/umd_classes/tree/master/class_project/MSML610/Fall2025/project_descriptions)
     - `DATA605` Spring 2025:
       - [Description of projects](https://github.com/gpsaggese/umd_classes/blob/master/class_project/DATA605/Spring2025/project_description.md)
 
-- You need to fill out the [sign up form](https://docs.google.com/forms/d/1TPCt7UFnTOEICltrPU3sIu9RoCbILR32zHbZNzRi9jw/edit)
+- You need to fill out the
+  [sign up form](https://docs.google.com/forms/d/1TPCt7UFnTOEICltrPU3sIu9RoCbILR32zHbZNzRi9jw/edit)
   - Once done, we will add you to the repo so that you can start working
 
 - The goal is to get your hands dirty and figure things out
@@ -70,8 +69,8 @@ practices.
     approach works out
   - Make sure you code by understanding the tool and what your code is doing
     with it
-  - `Google` and `ChatGPT` are your friends, but don't abuse them: copy-pasting code
-    is not recommended and won't benefit the learning outcomes
+  - `Google` and `ChatGPT` are your friends, but don't abuse them: copy-pasting
+    code is not recommended and won't benefit the learning outcomes
 
 - The projects are designed in a way that once you understand the underlying
   technology:
@@ -88,10 +87,10 @@ practices.
 - If selecting a project from the sign-up sheet, ensure you fill out the
   corresponding details promptly. For modifications, email us with the necessary
   information, and we will update the sign-up sheet and Google Doc accordingly
-- **Project selection must be finalized within 1 or 2 weeks** to allow sufficient
-  time for planning and execution
-- The project duration is approximately **4 to 6 weeks**, making timely selection
-  crucial
+- **Project selection must be finalized within 1 or 2 weeks** to allow
+  sufficient time for planning and execution
+- The project duration is approximately **4 to 6 weeks**, making timely
+  selection crucial
 - Your grade will be based on **project complexity, effort, understanding, and
   adherence to guidelines**
 
@@ -121,14 +120,15 @@ practices.
   - Make sure you are assigned to it
 - Only `Python` should be used together with the needed configs for the specific
   tools
-  - You can always communicate with the tech using `Python` libraries or `HTTP` APIs
+  - You can always communicate with the tech using `Python` libraries or `HTTP`
+    APIs
 
 - Unless specified by project description, everything needs to run locally
   without using cloud resources
-  - E.g., it's not ok to use an `AWS` DB instance, you want to install `Postgres` in
-    your container for any database requirements
+  - E.g., it's not ok to use an `AWS` DB instance, you want to install
+    `Postgres` in your container for any database requirements
 
-### Contribution to the repo
+### Contribution to the Repo
 
 - You will work in the same way open-source developers (and specifically
   developers on Causify.AI) contribute to a project
@@ -156,12 +156,16 @@ practices.
 - **Create a GitHub Issue**
   - [ ] Create a **`GitHub` issue** with your **project tag** as the title
     - Example: `Spring2025_Redis_cache_to_fetch_user_profiles`
-  - [ ] Copy/paste the project description and add a link to the `Google Doc` with the details
-  - [ ] Assign the issue to yourself. This issue will be used for project-related discussions
+  - [ ] Copy/paste the project description and add a link to the `Google Doc`
+        with the details
+  - [ ] Assign the issue to yourself. This issue will be used for
+        project-related discussions
 
 - **Create a Git Branch Named After the Issue**
-  - [ ] Name your `Git` branch as follows: `TutorTask{issue_number}_{project_tag}`
-    - Example: If your issue number is **#645**, your branch name should be: **`TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`**
+  - [ ] Name your `Git` branch as follows:
+        `TutorTask{issue_number}_{project_tag}`
+    - Example: If your issue number is **#645**, your branch name should be:
+      **`TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`**
 
 - **Steps to create the branch:**
 
@@ -176,7 +180,8 @@ practices.
 - **Add Files Only in Your Project Directory**
   - Add your project files under the following directory:
     `{GIT_ROOT}/class_project/{COURSE_CODE}/{TERM}{YEAR}/projects/{branch_name}`
-    - Example: If you cloned the repo on your laptop for `DATA605`, your directory should be:
+    - Example: If you cloned the repo on your laptop for `DATA605`, your
+      directory should be:
       `~/src/umd_classes1/class_project/DATA605/Spring2025/projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`
   - Copy the template files to the project directory:
     ```bash
@@ -187,10 +192,12 @@ practices.
 
 - **Create a Pull Request (PR)**:
   - [ ] Always create a **Pull Request (PR)** from your branch
-  - [ ] Name the PR the same as your project branch, and reference the issue number your branch is based on
+  - [ ] Name the PR the same as your project branch, and reference the issue
+        number your branch is based on
   - [ ] Add your TAs and `@gpsaggese` as reviewers
   - [ ] Assign the PR to yourself
-  - [ ] Do **not** push directly to the `master` branch. Only push commits to **your project branch**
+  - [ ] Do **not** push directly to the `master` branch. Only push commits to
+        **your project branch**
 
 - **Naming for Consecutive Updates**
   - When making progress, use incremental branch names by appending `_1`, `_2`
@@ -199,7 +206,7 @@ practices.
       - `TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles_1`
       - `TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles_2`
 
-## Configuring your system
+## Configuring Your System
 
 Before starting implementation, you need to choose **one** of the two supported
 `Docker`-based workflows. Finalize your setup choice before proceeding with
@@ -209,8 +216,8 @@ development.
 
 - A minimal and straightforward setup, modeled after what we use in class
   tutorials
-- The environment comes with `Python`, `Jupyter`, and commonly-used packages already
-  installed
+- The environment comes with `Python`, `Jupyter`, and commonly-used packages
+  already installed
 - Simple scripts (`docker_build.sh`, `docker_bash.sh`, `docker_jupyter.sh`) help
   you build the container, launch it, and start working immediately
 - Ideal for students who:
@@ -221,7 +228,7 @@ development.
 - You may still customize the `Dockerfile`, expose other ports, or add
   project-specific dependencies as needed
 
-## Working on the project
+## Working on the Project
 
 ### Project Goal
 
@@ -236,7 +243,7 @@ development.
     important aspects a developer should know before starting building with that
     technology
 
-### Understanding the deliverables
+### Understanding the Deliverables
 
 - Use the project template files in `instructions/tutorial_template` to
   understand the deliverables and the coding style. They consist of:
@@ -254,8 +261,7 @@ development.
   - One markdown file linked to each `python` script, i.e, API and example
 
 For more guidance on this structure and the rationale behind it, see
-[How to write the
-Tutorial](https://github.com/causify-ai/tutorials/blob/master/docs/all.learn_X_in_60_minutes.how_to_guide.md)
+[How to write the Tutorial](https://github.com/causify-ai/tutorials/blob/master/docs/all.learn_X_in_60_minutes.how_to_guide.md)
 
 In general:
 
@@ -294,7 +300,7 @@ external data-provider API. Please keep the focus on the tool itself.
    - The notebooks should invoke logic from this file instead of embedding
      complex code inline
 
-### Difference between `{project}.API.*` and `{project}.example.*`
+### Difference Between `{project}.API.*` and `{project}.example.*`
 
 - **`{project}.API.*`**: stable contract-only layer. Holds dataclasses, enums,
   and abstract service interfaces so anyone can integrate without pulling in
@@ -420,10 +426,10 @@ COURSE_CODE/
 
 - **Projects that do not run end-to-end or lack proper documentation will be
   considered incomplete**
-  - In case of issues, they will be flagged through `GitHub` issues, and you will
-    be expected to resolve them in a timely manner
+  - In case of issues, they will be flagged through `GitHub` issues, and you
+    will be expected to resolve them in a timely manner
 
-## Examples of a class project
+## Examples of a Class Project
 
 The layout of each project should follow the examples in:
 
@@ -438,5 +444,5 @@ The layout of each project should follow the examples in:
 - Example for
   [`github` tutorial (causify_style)](https://github.com/causify-ai/tutorials/tree/master/tutorial_github_causify_style)
 
-> Note that the tutorials from `DATA605` class are built using a simpler approach
-> for `Docker` and `bash` (e.g., `bash` scripts instead of `Python` code)
+- Note that the tutorials from `DATA605` class are built using a simpler approach
+  for `Docker` and `bash` (e.g., `bash` scripts instead of `Python` code)
