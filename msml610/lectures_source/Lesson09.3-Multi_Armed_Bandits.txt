@@ -1,0 +1,172 @@
+::: columns
+:::: {.column width=15%}
+![](lectures_source/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 09.3: Multi-armed Bandits}}$$**
+\endgroup
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+**References**:
+
+* Introduction
+- What are Multi-Armed Bandits?
+- Why study bandits?
+- Course goals and structure
+
+* Applications
+- Real-world decision-making under uncertainty
+- Online advertising
+- Recommendation systems
+- Clinical trials
+- A/B testing
+- Online learning settings
+- Examples: ads, recommendations, experiments
+
+* The Exploration–Exploitation Tradeoff
+- Definition
+- Why it is unavoidable
+- Intuition through examples
+
+* The K-Armed Bandit Problem
+- Formal problem definition
+- Arms, rewards, and rounds
+- Stochastic assumptions
+
+* Reward Distributions
+- Random rewards
+- Expected reward
+- Unknown parameters
+
+* Performance Metrics
+- Optimal arm
+- Regret
+- Cumulative regret
+
+* Regret Lower Bounds
+- Why lower bounds matter
+- Lai–Robbins bound
+- Implications for algorithm design
+
+* Baseline Strategies
+- Greedy algorithm
+- Random selection
+- Limitations of naive approaches
+
+* ε-Greedy Algorithm
+- Algorithm description
+- Exploration schedules
+- Regret behavior
+
+* Optimism in the Face of Uncertainty
+- Core idea
+- Why optimism works
+- Confidence intervals
+
+* Upper Confidence Bound (UCB)
+- UCB1 algorithm
+- Arm selection rule
+- Key intuition
+
+* Regret Analysis of UCB
+- Logarithmic regret
+- Role of concentration inequalities
+- Comparison to ε-greedy
+
+* Variants of UCB
+- UCB-V
+- KL-UCB
+- When variants matter
+
+* Bayesian Bandits
+- Bayesian modeling of rewards
+- Priors and posteriors
+- Bayesian decision-making
+
+* Thompson Sampling
+- Posterior sampling idea
+- Algorithm steps
+- Practical performance
+
+* Comparison of UCB and Thompson Sampling
+- Frequentist vs. Bayesian views
+- Empirical vs. theoretical tradeoffs
+- When to use each
+
+* Adversarial Bandits
+- Motivation for adversarial models
+- Difference from stochastic bandits
+- Adversary assumptions
+
+* EXP3 Algorithm
+- Probability-weighted arm selection
+- Importance weighting
+- Regret guarantees
+
+* Stochastic vs. Adversarial Settings
+- Model assumptions
+- Algorithm robustness
+- Use cases
+
+* Contextual Bandits
+- Using side information
+- Feature vectors
+- Decision rules with context
+
+* Linear Contextual Bandits
+- Linear reward model
+- Parameter estimation
+- Assumptions
+
+* LinUCB
+- Algorithm structure
+- Confidence ellipsoids
+- Regret guarantees
+
+* Contextual Thompson Sampling
+- Bayesian linear models
+- Posterior sampling with context
+- Comparison to LinUCB
+
+* Bandits vs. Reinforcement Learning
+- Stateless vs. stateful problems
+- Bandits as a special case of RL
+- When RL is needed
+
+* Non-Stationary Bandits
+- Changing reward distributions
+- Concept drift
+- Practical motivation
+
+* Algorithms for Non-Stationary Bandits
+- Discounted UCB
+- Sliding-window methods
+- Restart strategies
+
+* Structured Bandits
+- Linear bandits
+- Combinatorial bandits
+- Graph and rank-one structures
+
+* Best-Arm Identification
+- Pure exploration setting
+- Fixed-confidence vs. fixed-budget
+- Sample complexity
+
+* Practical Issues
+- Delayed feedback
+- Offline evaluation
+- Safety constraints
