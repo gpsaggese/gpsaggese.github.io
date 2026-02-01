@@ -106,9 +106,9 @@ exec_container() {
 
 
 get_docker_vars_script() {
-    local local_dir=$1
+    local script_path=$1
     # Find the name of the container.
-    SCRIPT_DIR=$(cd -- "$(dirname -- local_dir)" &> /dev/null && pwd)
+    SCRIPT_DIR=$(dirname $script_path)
     DOCKER_NAME="$SCRIPT_DIR/docker_name.sh"
     if [[ ! -e $SCRIPT_DIR ]]; then
         echo "Can't find $DOCKER_NAME"

@@ -10,8 +10,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin:$PATH"
 WORKDIR /app
-COPY requirements.txt /app/requirements.txt
-RUN uv pip install --system -r requirements.txt
+COPY pyproject.toml uv.lock /app/
+RUN uv sync
 COPY . /app
 EXPOSE 8888
 CMD ["sh","-lc","jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*'"]

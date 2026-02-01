@@ -21,12 +21,12 @@ import class_project.docker_common.copy_docker_files as cpdccodo
 import argparse
 import logging
 import os
-import shutil
 from typing import List
 
 import helpers.hdbg as hdbg
 import helpers.hio as hio
 import helpers.hparser as hparser
+import helpers.hsystem as hsystem
 
 _LOG = logging.getLogger(__name__)
 
@@ -43,6 +43,7 @@ _FILES_TO_COPY = [
     "docker_cmd.sh",
     "docker_exec.sh",
     "docker_jupyter.sh",
+    "docker_name.sh",
     "docker_push.sh",
     "etc_sudoers",
     "install_jupyter_extensions.sh",
@@ -93,9 +94,10 @@ def _copy_files(
         hdbg.dassert_path_exists(
             src_path, "Source file does not exist:", src_path
         )
-        # Copy the file, preserving metadata.
+        # Copy the file using cp -a to preserve all permissions and attributes.
         _LOG.debug("Copying '%s' -> '%s'", src_path, dst_path)
-        shutil.copy2(src_path, dst_path)
+        cmd = f"cp -a {src_path} {dst_path}"
+        hsystem.system(cmd)
         copied_count += 1
     #
     _LOG.info("Successfully copied %d files", copied_count)
