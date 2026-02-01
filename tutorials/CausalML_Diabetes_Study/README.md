@@ -1,33 +1,42 @@
 <!-- toc -->
 
+- [Summary](#summary)
 - [Measuring the Impact of Lifestyle Programs on Diabetes Outcomes](#measuring-the-impact-of-lifestyle-programs-on-diabetes-outcomes)
-  * [Overview :](#overview-)
-    + [Project Objective :](#project-objective-)
-  * [Installation & Docker Setup](#installation--docker-setup)
+  * [Overview](#overview)
+    + [Project Objective](#project-objective)
+  * [Installation and Docker Setup](#installation-and-docker-setup)
     + [1. Build the Image](#1-build-the-image)
     + [2. Run the Container](#2-run-the-container)
     + [3. Access the Project](#3-access-the-project)
-  * [Folder Structure :](#folder-structure-)
-  * [Resources :](#resources-)
+  * [Folder Structure](#folder-structure)
+  * [Resources](#resources)
 
 <!-- tocstop -->
 
+# Summary
+
+This project estimates the causal impact of lifestyle interventions on diabetes
+outcomes using the `CausalML` library and `CDC BRFSS` dataset. The analysis
+demonstrates heterogeneous treatment effect estimation with meta-learners,
+provides `Docker`-based reproducibility, and includes comprehensive documentation
+for both the API and example implementation.
+
 # Measuring the Impact of Lifestyle Programs on Diabetes Outcomes
 
-## Overview :
+## Overview
 
-### Project Objective :
+### Project Objective
 
 To estimate the causal impact of lifestyle interventions such as dietary
 modifications and structured exercise programs on diabetes-related health
-outcomes (for example, HbA1c levels and disease progression), while rigorously
+outcomes (for example, `HbA1c` levels and disease progression), while rigorously
 accounting for confounding variables to ensure credible and unbiased effect
-estimates.
+estimates
 
-## Installation & Docker Setup
+## Installation and Docker Setup
 
 To ensure reproducibility, this project is containerized. Follow these steps to
-build and run the analysis.
+build and run the analysis
 
 ### 1. Build the Image
 
@@ -39,7 +48,7 @@ docker build -t causalml_project .
 
 ### 2. Run the Container
 
-Start the Jupyter environment with volume mounting (to save your notebook
+Start the `Jupyter` environment with volume mounting (to save your notebook
 changes):
 
 ```bash
@@ -49,28 +58,28 @@ docker run -p 8888:8888 -v "$(pwd)":/app causalml_project
 
 ### 3. Access the Project
 
-- Click the `http://127.0.0.1:8888...` link in your terminal to open JupyterLab.
-- Open `CausalML.API.ipynb` to test the tool.
-- Open `CausalML.example.ipynb` to see the full Diabetes analysis.
+- Click the `http://127.0.0.1:8888...` link in your terminal to open `JupyterLab`
+- Open `CausalML.API.ipynb` to test the tool
+- Open `CausalML.example.ipynb` to see the full Diabetes analysis
 
-## Folder Structure :
+## Folder Structure
 
-- `data/` : Contains datasets used for analysis.
-- CausalML.API.ipynb : Jupyter notebook demonstrating the application of
-  CausalML methods to measure the impact of lifestyle programs on diabetes
-  outcomes.
-- CausalML.API.md : Documentation for the CausalML API used in the notebook.
-- CausalML.examples.ipynb : Additional examples of CausalML applications.
-- CausalML.examples.md : Documentation for the examples provided.
-- utils.py : Utility functions to support data processing and analysis.
-- Dockerfile : Configuration file for building the Docker image.
-- README.md : This file, providing an overview and setup instructions for the
-  project.
+- `data/`: Contains datasets used for analysis
+- `CausalML.API.ipynb`: `Jupyter` notebook demonstrating the application of
+  `CausalML` methods to measure the impact of lifestyle programs on diabetes
+  outcomes
+- `CausalML.API.md`: Documentation for the `CausalML` API used in the notebook
+- `CausalML.examples.ipynb`: Additional examples of `CausalML` applications
+- `CausalML.examples.md`: Documentation for the examples provided
+- `utils.py`: Utility functions to support data processing and analysis
+- `Dockerfile`: Configuration file for building the `Docker` image
+- `README.md`: This file, providing an overview and setup instructions for the
+  project
 
-## Resources :
+## Resources
 
 - [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators)
 
-- [CausalML Library Documentation](https://causalml.readthedocs.io/en/latest/)
+- [`CausalML` Library Documentation](https://causalml.readthedocs.io/en/latest/)
 
-- [MSML610 Advanced Machine Learning - Fall 2025](https://github.com/gpsaggese-org/umd_classes)
+- [`MSML610` Advanced Machine Learning - Fall 2025](https://github.com/gpsaggese-org/umd_classes)
