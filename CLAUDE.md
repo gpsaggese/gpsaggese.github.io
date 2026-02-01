@@ -1,1 +1,1 @@
-/Users/saggese/src/umd_classes1/helpers_root/CLAUDE.md
+helpers_root/CLAUDE.md

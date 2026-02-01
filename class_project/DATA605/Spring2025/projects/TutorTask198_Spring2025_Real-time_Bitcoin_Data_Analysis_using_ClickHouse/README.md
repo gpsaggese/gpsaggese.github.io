@@ -65,8 +65,8 @@ The running project implementation and usage of some functions are in `template.
 
 - The `tutorial_github` example has been implemented in both environments for you
   to refer to:
-  - `tutorial_github_data605_style` uses the simpler DATA605 approach
-  - `tutorial_github_causify_style` uses the more complex Causify approach
+  - `docker_template_example` uses the simpler DATA605 approach
+  - `docker_causify_style` uses the more complex Causify approach
 
 - Choose the approach that best fits your comfort level and project needs. Both
   are valid depending on your use case.

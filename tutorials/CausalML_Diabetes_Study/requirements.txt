@@ -1,0 +1,13 @@
+notebook==7.*
+ipykernel==6.*
+ipywidgets==8.*
+numpy==1.*
+pandas==2.*
+scikit-learn==1.*
+matplotlib==3.*
+seaborn==0.*
+xgboost==2.*
+causalml==0.*
+nbconvert==7.*
+jinja2==3.*
+papermill==2.*

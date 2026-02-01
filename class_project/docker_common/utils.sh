@@ -35,7 +35,9 @@ build_container_image() {
         docker buildx imagetools inspect $FULL_IMAGE_NAME
     fi;
     # Report build version.
-    rm docker_build.version.log
+    if [ -f docker_build.version.log ]; then
+      rm docker_build.version.log
+    fi
     (cd $DIR; docker run --rm -it -v $(pwd):/data $FULL_IMAGE_NAME bash -c "/data/version.sh") 2>&1 | tee docker_build.version.log
     #
     docker image ls $REPO_NAME/$IMAGE_NAME
@@ -106,9 +108,9 @@ exec_container() {
 
 
 get_docker_vars_script() {
-    local local_dir=$1
+    local script_path=$1
     # Find the name of the container.
-    SCRIPT_DIR=$(cd -- "$(dirname -- local_dir)" &> /dev/null && pwd)
+    SCRIPT_DIR=$(dirname $script_path)
     DOCKER_NAME="$SCRIPT_DIR/docker_name.sh"
     if [[ ! -e $SCRIPT_DIR ]]; then
         echo "Can't find $DOCKER_NAME"

@@ -117,7 +117,7 @@ This terminal runs the coding environment where the notebooks live.
 
 1.  Navigate to the tutorial folder containing the launch script:
     ```bash
-    cd ~/src/umd_classes1/class_project/instructions/tutorial_template/tutorial_github_data605_style
+    cd ~/src/umd_classes1/class_project/instructions/tutorial_template/docker_template_example
     ```
 2.  Launch the container:
     ```bash
