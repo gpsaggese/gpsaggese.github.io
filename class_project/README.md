@@ -183,7 +183,8 @@ contribution practices.
     - Example: If you cloned the repo on your laptop for `DATA605`, your
       directory should be:
       `~/src/umd_classes1/class_project/DATA605/Spring2025/projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`
-  - Copy the template files to the project directory (choose one of the example tutorials as a starting point):
+  - Copy the template files to the project directory (choose one of the example
+    tutorials as a starting point):
     ```bash
     # Option 1: Use the simple DATA605-style template (recommended for beginners)
     > cp -r ~/src/umd_classes1/class_project/tutorial_github_data605_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
@@ -217,7 +218,7 @@ Before starting implementation, you need to choose **one** of the two supported
 `Docker`-based workflows. Finalize your setup choice before proceeding with
 development.
 
-### Simple Docker Setup (`simple`) — Recommended for Students
+### Simple Docker Setup
 
 - A minimal and straightforward setup, modeled after what we use in class
   tutorials
@@ -230,8 +231,16 @@ development.
   - Need a reliable, pre-built environment to focus on the tutorial and project
     code
 
+    > cp -r ~/src/umd_classes1/class_project/tutorial_github_data605_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+
 - You may still customize the `Dockerfile`, expose other ports, or add
   project-specific dependencies as needed
+
+### Use Causify Dev System
+
+- You need to model
+
+    > cp -r ~/src/umd_classes1/class_project/tutorial_github_causify_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
 
 ## Working on the Project
 

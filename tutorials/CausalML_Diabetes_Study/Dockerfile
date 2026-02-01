@@ -14,4 +14,3 @@ COPY pyproject.toml uv.lock /app/
 RUN uv sync
 COPY . /app
 EXPOSE 8888
-CMD ["sh","-lc","jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*'"]

@@ -47,6 +47,8 @@ _FILES_TO_COPY = [
     "docker_push.sh",
     "etc_sudoers",
     "install_jupyter_extensions.sh",
+    "run_jupyter.sh"
+    "version.sh",
 ]
 
 

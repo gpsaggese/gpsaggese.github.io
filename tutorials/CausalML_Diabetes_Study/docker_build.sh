@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-set -x
+#set -x
 
 # Import the utility functions.
 GIT_ROOT=$(git rev-parse --show-toplevel)

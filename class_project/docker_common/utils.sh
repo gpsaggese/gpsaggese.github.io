@@ -35,7 +35,9 @@ build_container_image() {
         docker buildx imagetools inspect $FULL_IMAGE_NAME
     fi;
     # Report build version.
-    rm docker_build.version.log
+    if [ -f docker_build.version.log ]; then
+      rm docker_build.version.log
+    fi
     (cd $DIR; docker run --rm -it -v $(pwd):/data $FULL_IMAGE_NAME bash -c "/data/version.sh") 2>&1 | tee docker_build.version.log
     #
     docker image ls $REPO_NAME/$IMAGE_NAME
