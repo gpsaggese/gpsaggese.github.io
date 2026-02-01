@@ -190,7 +190,7 @@ contribution practices.
     > cp -r ~/src/umd_classes1/class_project/tutorial_github_data605_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
 
     # Option 2: Use the advanced Causify-style template
-    > cp -r ~/src/umd_classes1/class_project/tutorial_github_causify_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+    > cp -r ~/src/umd_classes1/class_project/docker_causify_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
 
     > cd ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
     ```
@@ -240,7 +240,7 @@ development.
 
 - You need to model
 
-    > cp -r ~/src/umd_classes1/class_project/tutorial_github_causify_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+    > cp -r ~/src/umd_classes1/class_project/docker_causify_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
 
 ## Working on the Project
 
@@ -260,7 +260,7 @@ development.
 ### Understanding the Deliverables
 
 - Use the example tutorial projects in `tutorial_github_data605_style` or
-  `tutorial_github_causify_style` to understand the deliverables and the coding
+  `docker_causify_style` to understand the deliverables and the coding
   style. They consist of:
 
 - **Utils Module**:

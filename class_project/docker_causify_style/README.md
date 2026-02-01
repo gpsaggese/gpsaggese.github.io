@@ -43,7 +43,7 @@ This project contains the following files
 
 - Go to the top of the repo
   ```
-  > cd $GIT_ROOT/tutorial_github_causify_style
+  > cd $GIT_ROOT/docker_causify_style
   ```
 - Build the thin environment
   ```bash

@@ -12,5 +12,5 @@ __pycache__/
 *.trashinfo
 
 # Tutorial folders (if not needed)
-tutorial_github_causify_style/
+docker_causify_style/
 

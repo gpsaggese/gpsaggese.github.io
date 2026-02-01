@@ -39,11 +39,11 @@ services:
     extends: base_app
     volumes:
       - /Users/saggese/src/tutorials1:/app
-    working_dir: /app/tutorial_github_causify_style
+    working_dir: /app/docker_causify_style
   linter:
     extends: base_app
     volumes:
-      - /Users/saggese/src/tutorials1/tutorial_github_causify_style:/src
+      - /Users/saggese/src/tutorials1/docker_causify_style:/src
       - ../../:/app
     working_dir: /src
     environment:

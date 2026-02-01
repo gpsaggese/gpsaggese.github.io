@@ -207,4 +207,4 @@ github_utils.visualize_user_metric_comparison(stats, score_type="percentile")
 
 
 # %% [markdown]
-# There are many more helper funcs to see and compare statistics. Look at github_utils for more info -> `tutorial_github_causify_style/github_utils.py`
+# There are many more helper funcs to see and compare statistics. Look at github_utils for more info -> `docker_causify_style/github_utils.py`
