@@ -1,16 +1,12 @@
 """
 Import as:
 
-import utils as utils
-
-A utility module for estimating causal effects using CausalML.
-This module provides wrappers around Meta-Learners (T-Learner, X-Learner)
-and handles data preprocessing, propensity checks, and heterogeneity analysis.
+import tutorials.CausalML_Diabetes_Study.utils as tcdistut
 """
 
 import logging
 import os
-from typing import Dict, List, Optional, Tuple
+from typing import List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,7 +29,6 @@ _LOG = logging.getLogger(__name__)
 
 # Set generic style for plots.
 sns.set_theme(style="whitegrid")
-
 
 
 # #############################################################################
@@ -62,6 +57,7 @@ def load_cdc_data(filepath: str) -> pd.DataFrame:
     df = df.astype(float)
     return df
 
+
 def preprocess_for_causal(
     df: pd.DataFrame,
     treatment_col: str,
@@ -78,8 +74,12 @@ def preprocess_for_causal(
     :return: tuple of (df_filtered, X, T, Y)
     """
     # Basic validation.
-    hdbg.dassert_in(treatment_col, df.columns, "Treatment column not found:", treatment_col)
-    hdbg.dassert_in(outcome_col, df.columns, "Outcome column not found:", outcome_col)
+    hdbg.dassert_in(
+        treatment_col, df.columns, "Treatment column not found:", treatment_col
+    )
+    hdbg.dassert_in(
+        outcome_col, df.columns, "Outcome column not found:", outcome_col
+    )
     # Filter data to ensure columns exist and drop NAs.
     keep_cols = covariate_cols + [treatment_col, outcome_col]
     df_clean = df[keep_cols].dropna().copy()
@@ -89,8 +89,9 @@ def preprocess_for_causal(
     Y = df_clean[outcome_col]
     return df_clean, X, T, Y
 
+
 # #############################################################################
-# API Wrapper Class
+# CausalNavigator
 # #############################################################################
 
 
@@ -143,7 +144,7 @@ class CausalNavigator:
             )
         self.cate_estimates = None
         self.feature_names = None
-        
+
     def check_overlap(self, X: pd.DataFrame, T: pd.Series) -> None:
         """
         Diagnose the Common Support (Overlap) assumption.
@@ -201,8 +202,6 @@ class CausalNavigator:
                 self.treatment_name,
             )
             map_dict = {
-                0: self.control_name,
-                1: self.treatment_name,
                 0.0: self.control_name,
                 1.0: self.treatment_name,
             }
@@ -281,7 +280,12 @@ class CausalNavigator:
         plt.show()
 
     def run_placebo_test(
-        self, X: pd.DataFrame, T: pd.Series, Y: pd.Series, *, n_simulations: int = 10
+        self,
+        X: pd.DataFrame,
+        T: pd.Series,
+        Y: pd.Series,
+        *,
+        n_simulations: int = 10,
     ) -> None:
         """
         Validate the model by randomizing the Treatment vector.
@@ -307,8 +311,6 @@ class CausalNavigator:
         unique_vals = sorted(T_proc.unique())
         if self.control_name not in unique_vals:
             map_dict = {
-                0: self.control_name,
-                1: self.treatment_name,
                 0.0: self.control_name,
                 1.0: self.treatment_name,
             }
@@ -392,8 +394,6 @@ class CausalNavigator:
         unique_vals = sorted(T_proc.unique())
         if self.control_name not in unique_vals:
             map_dict = {
-                0: self.control_name,
-                1: self.treatment_name,
                 0.0: self.control_name,
                 1.0: self.treatment_name,
             }
