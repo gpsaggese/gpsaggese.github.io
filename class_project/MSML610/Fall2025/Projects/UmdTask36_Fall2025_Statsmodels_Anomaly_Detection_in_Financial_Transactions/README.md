@@ -74,7 +74,7 @@ from the tutorial template.
 From the repository root, navigate to:
 
 ```bash
-cd class_project/instructions/tutorial_template/tutorial_github_data605_style
+cd class_project/instructions/tutorial_template/docker_template_example
 ```
 
 ### 2. Build the Docker container

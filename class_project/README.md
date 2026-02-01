@@ -187,7 +187,7 @@ contribution practices.
     tutorials as a starting point):
     ```bash
     # Option 1: Use the simple DATA605-style template (recommended for beginners)
-    > cp -r ~/src/umd_classes1/class_project/tutorial_github_data605_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+    > cp -r ~/src/umd_classes1/class_project/docker_template_example/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
 
     # Option 2: Use the advanced Causify-style template
     > cp -r ~/src/umd_classes1/class_project/docker_causify_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
@@ -231,7 +231,7 @@ development.
   - Need a reliable, pre-built environment to focus on the tutorial and project
     code
 
-    > cp -r ~/src/umd_classes1/class_project/tutorial_github_data605_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+    > cp -r ~/src/umd_classes1/class_project/docker_template_example/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
 
 - You may still customize the `Dockerfile`, expose other ports, or add
   project-specific dependencies as needed
@@ -259,7 +259,7 @@ development.
 
 ### Understanding the Deliverables
 
-- Use the example tutorial projects in `tutorial_github_data605_style` or
+- Use the example tutorial projects in `docker_template_example` or
   `docker_causify_style` to understand the deliverables and the coding
   style. They consist of:
 
@@ -455,7 +455,7 @@ The layout of each project should follow the examples in:
 - Example for
   [`open_ai` tutorial](https://github.com/causify-ai/tutorials/tree/master/tutorial_openai)
 - Example for
-  [`github` tutorial (class_style)](https://github.com/causify-ai/tutorials/tree/master/tutorial_github_data605_style)
+  [`github` tutorial (class_style)](https://github.com/causify-ai/tutorials/tree/master/docker_template_example)
 - Example for
   [`github` tutorial (causify_style)](https://github.com/causify-ai/tutorials/tree/master/tutorial_github_causify_style)
 
