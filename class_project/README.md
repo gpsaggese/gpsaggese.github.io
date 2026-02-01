@@ -183,9 +183,14 @@ contribution practices.
     - Example: If you cloned the repo on your laptop for `DATA605`, your
       directory should be:
       `~/src/umd_classes1/class_project/DATA605/Spring2025/projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`
-  - Copy the template files to the project directory:
+  - Copy the template files to the project directory (choose one of the example tutorials as a starting point):
     ```bash
-    > cp -r ~/src/umd_classes1/class_project/instructions/tutorial_template/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+    # Option 1: Use the simple DATA605-style template (recommended for beginners)
+    > cp -r ~/src/umd_classes1/class_project/tutorial_github_data605_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+
+    # Option 2: Use the advanced Causify-style template
+    > cp -r ~/src/umd_classes1/class_project/tutorial_github_causify_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+
     > cd ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
     ```
   - Start working on the files
@@ -245,8 +250,9 @@ development.
 
 ### Understanding the Deliverables
 
-- Use the project template files in `instructions/tutorial_template` to
-  understand the deliverables and the coding style. They consist of:
+- Use the example tutorial projects in `tutorial_github_data605_style` or
+  `tutorial_github_causify_style` to understand the deliverables and the coding
+  style. They consist of:
 
 - **Utils Module**:
   - This file is meant to contain helper functions, reusable logic, and API
