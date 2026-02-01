@@ -40,6 +40,8 @@ MSML610: Advanced Machine Learning
   - Reward distributions $P_1, \ldots, P_K$ are unknown
   - Learn which arms are best while collecting rewards
 
+- Sequential decisions with uncertain outcomes and limited feedback
+
 - **Key Challenge**: Balance:
   - _Exploration_: Try different arms to learn their reward distributions
   - _Exploitation_: Play the arm you believe is best
@@ -65,11 +67,6 @@ MSML610: Advanced Machine Learning
   - Resource allocation (which server to query?)
 
 * Applications: Real-World Decision-Making
-
-- Sequential decisions with uncertain outcomes and limited feedback
-
-::: columns
-:::: {.column width=48%}
 - **Online Advertising**
   - Platform must choose which ad to display
   - Each ad click generates revenue
@@ -87,8 +84,8 @@ MSML610: Advanced Machine Learning
   - Each variant has unknown conversion rate
   - Want to identify best variant quickly
   - Minimize opportunity cost during testing
-::::
-:::: {.column width=48%}
+
+* Applications: Real-World Decision-Making
 - **Recommendation Systems**
   - Netflix/Spotify: Which content to recommend?
   - Each item has unknown appeal to user
@@ -106,12 +103,18 @@ MSML610: Advanced Machine Learning
   - Each asset has unknown future returns
   - Balance risk and reward
   - Market conditions non-stationary
-::::
-:::
 
 * The Exploration–Exploitation Tradeoff
 
 - The "Exploration–Exploitation Tradeoff" is the central dilemma of sequential learning
+
+- **Why This Tradeoff is Unavoidable**:
+  - _Pure exploitation_: Never try suboptimal-looking arms $\to$ may stick with
+    suboptimal choice forever
+  - _Pure exploration_: Always try random arms $\to$ collect lots of information
+    but low total reward
+  - _Must do both_: Explore enough to find good arms, exploit enough to gain high
+    reward
 
 ```graphviz
 digraph ExploitationExploration {
@@ -135,14 +138,6 @@ digraph ExploitationExploration {
 }
 ```
 
-- **Why This Tradeoff is Unavoidable**:
-  - _Pure exploitation_: Never try suboptimal-looking arms $\to$ may stick with
-    suboptimal choice forever
-  - _Pure exploration_: Always try random arms $\to$ collect lots of information
-    but low total reward
-  - _Must do both_: Explore enough to find good arms, exploit enough to gain high
-    reward
-
 * The K-Armed Bandit Problem: Formal Definition
 - **Setting**:
   - $K$ arms (actions), indexed $i = 1, \ldots, K$
@@ -153,17 +148,16 @@ digraph ExploitationExploration {
     3. Agent observes only $R_t$ (not rewards from other arms)
 
 - **Stochastic Bandit Assumption**:
-  - Each arm $i$ has a fixed reward distribution $P_i$ with mean $\mu_i \defeq
-    \mathbb{E}[R | A = i]$
-  - Rewards are independent across rounds: $R_t \perp R_{t'} | A_t, A_{t'}$ for
-    $t \neq t'$
+  - Each arm $i$ has a fixed reward distribution $P_i$ with mean
+    $\mu_i = \EE[R | A = i]$
+  - Rewards are independent across rounds: $R_t$ iid
   - The means $\mu_1, \ldots, \mu_K$ are unknown to the agent
 
 - **Goal**: Design a policy (algorithm) that selects $A_1, A_2, \ldots, A_T$ to
   maximize $$\text{Total Reward} = \sum_{t=1}^{T} R_t$$
 
 - **Key Insight**: Can't maximize reward with certainty (rewards are random), but
-  can minimize **regret**
+  can minimize _regret_
 
 * Reward Distributions
 - Random rewards

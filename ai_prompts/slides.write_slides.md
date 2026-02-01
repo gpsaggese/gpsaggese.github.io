@@ -40,6 +40,7 @@ Learning.
 - Do not use non ASCII characters but use Latex when neede
   - E.g., instead of ε use $\epsilon$
 - Instead of → use $\to$
+- Use $\EE[...]$ and $\VV[...]$
 
 ## Slide formats
 - Use `*` for slide title/bullets:
