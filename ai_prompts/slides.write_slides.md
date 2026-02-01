@@ -29,15 +29,17 @@ Learning.
 
 - Subsections: Use `##` for subsections or just section names without `#`
 
-## Markdown
+## Formatting style
 - Write slides in markdown
-
+- Do not use page separators
 - Special definitions: `\defeq` for "defined as"
-- Use proper LaTeX spacing: `\vspace{Xcm}` for vertical space
 - Group font size changes: `\begingroup \large ... \endgroup`
 - Reference figures from `msml610/lectures_source/figures/`
 - Use `\iff` for "if and only if"
 - Use `\perp` for independence symbol
+- Do not use non ASCII characters but use Latex when neede
+  - E.g., instead of ε use $\epsilon$
+- Instead of → use $\to$
 
 ## Slide formats
 - Use `*` for slide title/bullets:
