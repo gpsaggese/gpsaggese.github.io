@@ -1,5 +1,5 @@
 FROM python:3.11-slim
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libgomp1 graphviz && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libgomp1 && rm -rf /var/lib/apt/lists/*
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 WORKDIR /app
 COPY requirements.txt /app/requirements.txt

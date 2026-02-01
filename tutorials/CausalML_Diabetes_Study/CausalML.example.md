@@ -68,14 +68,14 @@ Age, Income, or existing Health Status?_
 
 ### Key Variables
 
-| Variable          | Role              | Description                                           |
-| ----------------- | ----------------- | ----------------------------------------------------- |
+| Variable          | Role              | Description                                            |
+| ----------------- | ----------------- | ------------------------------------------------------ |
 | `PhysActivity`    | Treatment (T)     | 1 = Reported physical activity in past 30 days, 0 = No |
-| `Diabetes_binary` | Outcome (Y)       | 1 = Has Diabetes, 0 = No Diabetes                     |
-| `Age`             | Covariate (X)     | 13-level age category (1 = 18-24, 13 = 80+)           |
-| `Income`          | Covariate (X)     | 8-level income category                               |
-| `GenHlth`         | Covariate (X)     | Self-reported health (1=Excellent, 5=Poor)            |
-| `BMI`             | Covariate (X / M) | Body mass index (used as confounder in estimation)    |
+| `Diabetes_binary` | Outcome (Y)       | 1 = Has Diabetes, 0 = No Diabetes                      |
+| `Age`             | Covariate (X)     | 13-level age category (1 = 18-24, 13 = 80+)            |
+| `Income`          | Covariate (X)     | 8-level income category                                |
+| `GenHlth`         | Covariate (X)     | Self-reported health (1=Excellent, 5=Poor)             |
+| `BMI`             | Covariate (X / M) | Body mass index (used as confounder in estimation)     |
 
 ## 3. Identification Strategy and Assumptions
 
@@ -183,8 +183,7 @@ poor general health** (`GenHlth`=5)
 
 - **Insight**: Healthy Individuals Show Near-Zero CATE (Floor Effect). Sick
   individuals show a large negative CATE (protective). This suggests
-  interventions should target at-risk populations rather than the general
-  public
+  interventions should target at-risk populations rather than the general public
 
 ### B. the "Age Anomaly": Understanding Counterintuitive Results
 
@@ -214,8 +213,8 @@ checks:
 
 I randomized the treatment assignment and re-ran the model 5 times
 
-- **Result**: the "Placebo" Effects Clustered Around 0.001 (Noise), While
-  the actual effect was -0.002
+- **Result**: the "Placebo" Effects Clustered Around 0.001 (Noise), While the
+  actual effect was -0.002
 - **Conclusion**: the Estimated Treatment Effect Is Statistically
   distinguishable from random noise
 
@@ -237,8 +236,8 @@ DR-Learners using Uplift Curves (Cumulative Gain) on held-out test data
 I iteratively removed individual covariates and re-estimated the ATE to test
 model stability
 
-- **Robustness of Direction**: the Effect Remained Protective (Negative)
-  across all removal scenarios
+- **Robustness of Direction**: the Effect Remained Protective (Negative) across
+  all removal scenarios
 - **Mechanism Discovery (BMI)**: Removing **`BMI`** Resulted in the Largest
   shift, increasing the protective effect size by approximately **5.5x** (from
   -0.002 to ~-0.011)
@@ -250,8 +249,8 @@ model stability
 
 ## 7. Comparison to Gold Standard Evidence
 
-While I use `BRFSS` data, the **Diabetes Prevention Program (DPP)** represents the
-clinical gold standard
+While I use `BRFSS` data, the **Diabetes Prevention Program (DPP)** represents
+the clinical gold standard
 
 - **DPP (RCT)**: 58% Relative Risk Reduction
 - **My Model (Observational)**: 0.2% Absolute Risk Reduction

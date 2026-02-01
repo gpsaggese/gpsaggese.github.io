@@ -18,8 +18,8 @@
 This project estimates the causal impact of lifestyle interventions on diabetes
 outcomes using the `CausalML` library and `CDC BRFSS` dataset. The analysis
 demonstrates heterogeneous treatment effect estimation with meta-learners,
-provides `Docker`-based reproducibility, and includes comprehensive documentation
-for both the API and example implementation.
+provides `Docker`-based reproducibility, and includes comprehensive
+documentation for both the API and example implementation.
 
 # Measuring the Impact of Lifestyle Programs on Diabetes Outcomes
 
@@ -40,25 +40,24 @@ build and run the analysis
 
 ### 1. Build the Image
 
-Run this command in the project root (where the `Dockerfile` is located):
-
-```bash
-docker build -t causalml_project .
-```
+- Run this command in the project root (where the `Dockerfile` is located):
+  ```bash
+  > docker build -t causalml_project .
+  ```
 
 ### 2. Run the Container
 
-Start the `Jupyter` environment with volume mounting (to save your notebook
-changes):
-
-```bash
-# Mac/Linux/WSL
-docker run -p 8888:8888 -v "$(pwd)":/app causalml_project
-```
+- Start the `Jupyter` environment with volume mounting (to save your notebook
+  changes):
+  ```bash
+  # Mac/Linux/WSL
+  > docker run -p 8888:8888 -v "$(pwd)":/app causalml_project
+  ```
 
 ### 3. Access the Project
 
-- Click the `http://127.0.0.1:8888...` link in your terminal to open `JupyterLab`
+- Click the `http://127.0.0.1:8888...` link in your terminal to open
+  `JupyterLab`
 - Open `CausalML.API.ipynb` to test the tool
 - Open `CausalML.example.ipynb` to see the full Diabetes analysis
 
