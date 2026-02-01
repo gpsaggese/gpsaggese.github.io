@@ -27,21 +27,23 @@
   technologies we have looked at and studied in classes (e.g., Git, Docker, SQL,
   Mongo, Airflow, Dask)
 - Through the class projects you will learn how a tool fits your data science,
-  data engineering, machine learning workflows.
+  data engineering, machine learning workflows
 
 ## Choosing a project
 
-- The project is individual or group
+- The project is for an individual or group
   - Students can discuss and help each other (they will do that even if we say
     not to)
   - Students should not have exactly the same project
-  - Groups are less than 3
+  - Groups are made of less than 3 students
 
-- Each student should pick one project from the sign up sheet
+- Each student or group should pick one project from the sign up sheet shared
+  around the mid of course
   - The difficulty of the project does affect the final grade, but we want to
     give a way for everyone to select a project based on their level of computer
     literacy
   - Each project has a description in the corresponding directory
+  - Examples
     - MSML610 Fall 2025:
       - [List of projects](https://docs.google.com/spreadsheets/d/1H_Ev1psuPpUrrRcmBrBb2chfurSo5rPcAdd6i2SIUTQ/edit?gid=0#gid=0)
       - [Description of
@@ -53,11 +55,13 @@
   - Once done, we will add you to the repo so that you can start working
 
 - The goal is to get your hands dirty and figure things out
-  - Often working is all about trying different approaches until one works out
+  - Often solving problems is about trying different approaches until one
+    approach works out
   - Make sure you code by understanding the tool and what your code is doing
     with it
   - Google and ChatGPT are your friends, but don't abuse them: copy-pasting code
     is not recommended and won't benefit the learning outcomes
+
 - The projects are designed in a way that once you understand the underlying
   technology:
   - Easy Project: Takes 2-3 days to complete
