@@ -1,24 +1,20 @@
 #!/bin/bash
 
+# Exit immediately if any command exits with a non-zero status.
 set -e
-#set -x
 
-# Import the utility functions.
-GIT_ROOT=$(git rev-parse --show-toplevel)
-source $GIT_ROOT/class_project/docker_common/utils.sh
+# Print each command to stdout before executing it.
+set -x
 
-# Execute the script setting the vars for this tutorial.
-get_docker_vars_script ${BASH_SOURCE[0]}
-source $DOCKER_NAME
-print_docker_vars
+# Source Docker image naming configuration.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source $SCRIPT_DIR/docker_name.sh
 
-run "docker image ls $FULL_IMAGE_NAME"
+docker image ls $FULL_IMAGE_NAME
 
-CONTAINER_NAME=${IMAGE_NAME}_bash
-PORT=8889
-cmd="docker run --rm -ti \
+CONTAINER_NAME=$IMAGE_NAME
+docker run --rm -ti \
     --name $CONTAINER_NAME \
-    -p $PORT:$PORT \
+    -p 8888:8888 -p 5432:5432 \
     -v $(pwd):/data \
-    $FULL_IMAGE_NAME"
-run $cmd
+    $FULL_IMAGE_NAME

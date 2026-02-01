@@ -7,5 +7,6 @@ echo "# jupyter"
 jupyter --version
 echo "# Python packages"
 pip3 list
-echo "# mongo"
-mongod --version
+# Add more versions for more tools.
+# echo "# mongo"
+# mongod --version

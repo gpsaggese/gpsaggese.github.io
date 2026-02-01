@@ -218,29 +218,70 @@ Before starting implementation, you need to choose **one** of the two supported
 `Docker`-based workflows. Finalize your setup choice before proceeding with
 development.
 
-### Simple Docker Setup
+### `docker_template`
 
-- A minimal and straightforward setup, modeled after what we use in class
-  tutorials
-- The environment comes with `Python`, `Jupyter`, and commonly-used packages
-  already installed
-- Simple scripts (`docker_build.sh`, `docker_bash.sh`, `docker_jupyter.sh`) help
-  you build the container, launch it, and start working immediately
-- Ideal for students who:
-  - Are new to `Docker` or want to avoid setup overhead
-  - Need a reliable, pre-built environment to focus on the tutorial and project
-    code
+- There are simple scripts (`docker_build.sh`, `docker_bash.sh`,
+  `docker_jupyter.sh`) to help you build the container, launch it
 
-    > cp -r ~/src/umd_classes1/class_project/docker_template_example/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+- In this approach each directory is completely different and nothing is shared
+  - The only common part is that there are scripts with a common interface that
+    makes it easy to understand how to run the basic functionalities
+  - This is the approach we use for the `data605/tutorials`
 
-- You may still customize the `Dockerfile`, expose other ports, or add
-  project-specific dependencies as needed
+- Examples are:
+  - `class_project/docker_template`
+  - `class_project/docker_template_example`
 
-### Use Causify Dev System
+- To use it:
+  ```
+  > cp -r class_project/docker_template ...
+  ```
+  - Then you customize the `Dockerfile`, expose other ports, or add
+    project-specific dependencies as needed
 
-- You need to model
+- Pros
+  - Very simple to use: copy and modify
 
-    > cp -r ~/src/umd_classes1/class_project/docker_causify_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+- Cons
+  - Lots of code repetition
+  - No reuse: adding a functionality to one script doesn't apply to the rest
+  - Uses bash scripts
+
+### Causify Dev System
+
+- You need to model your runnable dir after class_project/docker_causify_style/
+  ```
+  > cp -r class_project/docker_causify_style/ ...
+  ```
+
+- Pros
+  - Reusable and standardized
+  - Python
+
+- Cons
+  - More complex to set up
+
+### `docker_common`
+
+- This approach is an evolution of the `docker_template` approach
+  - It uses the same script interface
+  - The scripts share code with `class_project/docker_common/utils.sh`
+  - The scripts that don't change use links
+
+- Example
+  - `class_project/docker_common`
+
+- To use it:
+  ```
+  > class_project/docker_common/copy_docker_files.py --dst_dir ...
+  > ./dev_scripts_helpers/system_tools/create_links.py ...
+  ```
+
+- Pros
+  - Bash scripts but with some common / shared code
+
+- Cons
+  - Uses bash scripts
 
 ## Working on the Project
 
