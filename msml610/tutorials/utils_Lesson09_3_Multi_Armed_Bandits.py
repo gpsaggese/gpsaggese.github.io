@@ -3,12 +3,11 @@ Utility functions for Multi-Armed Bandits lesson.
 
 Import as:
 
-import msml610.tutorials.utils_Lesson09_3_Multi_Armed_Bandits as mtulmaba
+import msml610.tutorials.utils_Lesson09_3_Multi_Armed_Bandits as mtul3maba
 """
 
 import abc
 import logging
-import textwrap
 from typing import List, Optional, Tuple
 
 import ipywidgets
@@ -23,7 +22,7 @@ _LOG = logging.getLogger(__name__)
 
 
 # #############################################################################
-# Class-based Multi-Armed Bandit System
+# MultiArmedBandit
 # #############################################################################
 
 
@@ -130,6 +129,11 @@ class MultiArmedBandit:
         self._rng = np.random.RandomState(self.seed)
 
 
+# #############################################################################
+# Strategy
+# #############################################################################
+
+
 class Strategy(abc.ABC):
     """
     Abstract base class for bandit selection strategies.
@@ -151,6 +155,11 @@ class Strategy(abc.ABC):
     def reset(self) -> None:
         """Reset any internal state of the strategy."""
         pass
+
+
+# #############################################################################
+# ExplorationStrategy
+# #############################################################################
 
 
 class ExplorationStrategy(Strategy):
@@ -182,6 +191,11 @@ class ExplorationStrategy(Strategy):
     def reset(self) -> None:
         """Reset random state."""
         self._rng = np.random.RandomState(self.seed)
+
+
+# #############################################################################
+# ExploitationStrategy
+# #############################################################################
 
 
 class ExploitationStrategy(Strategy):
@@ -220,6 +234,11 @@ class ExploitationStrategy(Strategy):
     def reset(self) -> None:
         """Reset initialization state."""
         self.initialized = False
+
+
+# #############################################################################
+# EpsilonGreedyStrategy
+# #############################################################################
 
 
 class EpsilonGreedyStrategy(Strategy):
@@ -287,6 +306,11 @@ class EpsilonGreedyStrategy(Strategy):
         self.initialized = False
 
 
+# #############################################################################
+# BanditExperiment
+# #############################################################################
+
+
 class BanditExperiment:
     """
     Run a single experiment with a bandit and strategy.
@@ -334,6 +358,11 @@ class BanditExperiment:
             cumulative += reward
             cumulative_rewards.append(cumulative)
         return rewards, cumulative_rewards, cumulative
+
+
+# #############################################################################
+# BanditSimulation
+# #############################################################################
 
 
 class BanditSimulation:
@@ -698,7 +727,7 @@ def cell1_casino_slot_machines() -> None:
                 ax.text(
                     0.5,
                     0.9,
-                    f"Machine {i+1}",
+                    f"Machine {i + 1}",
                     ha="center",
                     va="center",
                     fontsize=14,
@@ -971,7 +1000,11 @@ def cell2_exploration_vs_exploitation() -> None:
             )
             ax.set_xlabel("Trial", fontsize=12)
             ax.set_ylabel("Cumulative Reward", fontsize=12)
-            ax.set_title("Exploration vs Exploitation Strategies", fontsize=14, weight="bold")
+            ax.set_title(
+                "Exploration vs Exploitation Strategies",
+                fontsize=14,
+                weight="bold",
+            )
             ax.set_ylim(0, num_coins)
             ax.grid(True, alpha=0.3)
             ax.legend(loc="upper left", fontsize=10)
@@ -999,8 +1032,8 @@ def cell2_exploration_vs_exploitation() -> None:
                 "- Can get stuck on suboptimal choice",
                 "",
                 f"Balanced (epsilon={epsilon:.2f}): {final_balanced:.2f}",
-                f"- Explores {epsilon*100:.0f}% of time",
-                f"- Exploits {(1-epsilon)*100:.0f}% of time",
+                f"- Explores {epsilon * 100:.0f}% of time",
+                f"- Exploits {(1 - epsilon) * 100:.0f}% of time",
                 "- Balance is key!",
                 "",
                 "True means:",
@@ -1045,6 +1078,11 @@ def cell2_exploration_vs_exploitation() -> None:
     # Display widgets and initial plot.
     display(controls, output)
     update_plot()
+
+
+# #############################################################################
+# BanditEnsemble
+# #############################################################################
 
 
 class BanditEnsemble:
@@ -1189,9 +1227,13 @@ class BanditEnsemble:
         # Create bar plot.
         fig, ax = plt.subplots(figsize=(10, 6))
         x_pos = np.arange(len(strategies))
-        bars = ax.bar(x_pos, means, yerr=stds, capsize=10, color=colors, alpha=0.7)
+        bars = ax.bar(
+            x_pos, means, yerr=stds, capsize=10, color=colors, alpha=0.7
+        )
         ax.set_xlabel("Strategy", fontsize=12)
-        ax.set_ylabel("Mean Final Reward (averaged over mu configs)", fontsize=12)
+        ax.set_ylabel(
+            "Mean Final Reward (averaged over mu configs)", fontsize=12
+        )
         ax.set_title(
             "Strategy Comparison Across Random Mu Configurations",
             fontsize=14,
@@ -1290,15 +1332,14 @@ def cell3_strategy_comparison() -> None:
     )
     # Output widget.
     output = ipywidgets.Output()
+
     def on_run_clicked(b) -> None:
         """Handle run button click."""
         with output:
             clear_output(wait=True)
             # Parse mu values.
             try:
-                mu_values = [
-                    float(x.strip()) for x in mu_text.value.split(",")
-                ]
+                mu_values = [float(x.strip()) for x in mu_text.value.split(",")]
                 k_machines = k_machines_slider.value
                 if len(mu_values) != k_machines:
                     _LOG.warning(
@@ -1308,7 +1349,9 @@ def cell3_strategy_comparison() -> None:
                     )
                     return
             except ValueError:
-                _LOG.warning("Invalid mu values format. Use comma-separated numbers.")
+                _LOG.warning(
+                    "Invalid mu values format. Use comma-separated numbers."
+                )
                 return
             # Update state.
             state["k_machines"] = k_machines
@@ -1316,7 +1359,9 @@ def cell3_strategy_comparison() -> None:
             state["n_coins"] = n_coins_slider.value
             state["n_trials"] = n_trials_slider.value
             # Run simulation.
-            _LOG.info("Running epsilon sweep with %d trials...", state["n_trials"])
+            _LOG.info(
+                "Running epsilon sweep with %d trials...", state["n_trials"]
+            )
             simulation = BanditSimulation(
                 k_machines=state["k_machines"],
                 mu_values=state["mu_values"],
@@ -1329,6 +1374,7 @@ def cell3_strategy_comparison() -> None:
             state["results"] = results
             # Plot results.
             plot_epsilon_sweep(sweep_results=results, n_coins=state["n_coins"])
+
     # Connect callback.
     run_button.on_click(on_run_clicked)
     # Layout widgets.
@@ -1428,6 +1474,7 @@ def cell4_ensemble_comparison() -> None:
     )
     # Output widget.
     output = ipywidgets.Output()
+
     def on_run_clicked(b) -> None:
         """Handle run button click."""
         with output:
@@ -1460,6 +1507,7 @@ def cell4_ensemble_comparison() -> None:
                 ensemble_results=results,
                 epsilon=state["epsilon"],
             )
+
     # Connect callback.
     run_button.on_click(on_run_clicked)
     # Layout widgets.

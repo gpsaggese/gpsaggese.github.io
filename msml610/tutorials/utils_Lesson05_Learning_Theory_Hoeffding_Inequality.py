@@ -3,7 +3,7 @@ Utility functions for Learning Theory lesson - Hoeffding Inequality.
 
 Import as:
 
-import msml610.tutorials.utils_Lesson05_Learning_Theory_Hoeffding_Inequality as mtullhi
+import msml610.tutorials.utils_Lesson05_Learning_Theory_Hoeffding_Inequality as mtullthin
 """
 
 import logging
@@ -688,7 +688,7 @@ def cell4_distribution_empirical_mean() -> None:
         with output:
             output.clear_output(wait=True)
             # Convert log slider value to actual n_samples.
-            n_samples = int(10 ** n_samples_slider.value)
+            n_samples = int(10**n_samples_slider.value)
             _plot_bernoulli_sample4(
                 mu=mu_slider.value,
                 N=N_slider.value,
@@ -837,7 +837,14 @@ def _plot_hoeffding_inequality_demo(
         # Show PMF as bars for discrete distribution.
         outcomes = [0, 1]
         probs = [1 - mu, mu]
-        ax0.bar(outcomes, probs, width=0.1, color="steelblue", alpha=0.7, edgecolor="black")
+        ax0.bar(
+            outcomes,
+            probs,
+            width=0.1,
+            color="steelblue",
+            alpha=0.7,
+            edgecolor="black",
+        )
         ax0.set_xlabel("X", fontsize=11)
         ax0.set_ylabel("P(X)", fontsize=11)
         ax0.set_xlim([-0.2, 1.2])
@@ -845,7 +852,14 @@ def _plot_hoeffding_inequality_demo(
     elif distribution == "uniform":
         # Uniform PDF.
         pdf_values = np.ones_like(x_values)
-        ax0.fill_between(x_values, 0, pdf_values, color="steelblue", alpha=0.7, edgecolor="black")
+        ax0.fill_between(
+            x_values,
+            0,
+            pdf_values,
+            color="steelblue",
+            alpha=0.7,
+            edgecolor="black",
+        )
         ax0.set_xlabel("X", fontsize=11)
         ax0.set_ylabel("PDF(X)", fontsize=11)
         ax0.set_xlim([0, 1.0])
@@ -856,7 +870,14 @@ def _plot_hoeffding_inequality_demo(
         k_values = np.arange(0, n_trials + 1)
         probs = scipy.stats.binom.pmf(k_values, n_trials, mu)
         x_scaled = k_values / n_trials
-        ax0.bar(x_scaled, probs, width=0.08, color="steelblue", alpha=0.7, edgecolor="black")
+        ax0.bar(
+            x_scaled,
+            probs,
+            width=0.08,
+            color="steelblue",
+            alpha=0.7,
+            edgecolor="black",
+        )
         ax0.set_xlabel("X", fontsize=11)
         ax0.set_ylabel("P(X)", fontsize=11)
         ax0.set_xlim([0, 1.0])
@@ -868,7 +889,14 @@ def _plot_hoeffding_inequality_demo(
         cdf_1 = scipy.stats.norm.cdf(1, mu, 0.2)
         normalization = cdf_1 - cdf_0
         pdf_values = pdf_values / normalization
-        ax0.fill_between(x_values, 0, pdf_values, color="steelblue", alpha=0.7, edgecolor="black")
+        ax0.fill_between(
+            x_values,
+            0,
+            pdf_values,
+            color="steelblue",
+            alpha=0.7,
+            edgecolor="black",
+        )
         ax0.set_xlabel("X", fontsize=11)
         ax0.set_ylabel("PDF(X)", fontsize=11)
         ax0.set_xlim([0, 1.0])
@@ -885,7 +913,14 @@ def _plot_hoeffding_inequality_demo(
         cdf_1 = 1 - np.exp(-lambda_param * 1)
         normalization = cdf_1 - cdf_0
         pdf_values = pdf_values / normalization
-        ax0.fill_between(x_values, 0, pdf_values, color="steelblue", alpha=0.7, edgecolor="black")
+        ax0.fill_between(
+            x_values,
+            0,
+            pdf_values,
+            color="steelblue",
+            alpha=0.7,
+            edgecolor="black",
+        )
         ax0.set_xlabel("X", fontsize=11)
         ax0.set_ylabel("PDF(X)", fontsize=11)
         ax0.set_xlim([0, 1.0])
@@ -942,7 +977,7 @@ def _plot_hoeffding_inequality_demo(
     ax1.set_xlabel("Sample Mean (nu)", fontsize=11)
     ax1.set_ylabel("Probability Density", fontsize=11)
     ax1.set_title(
-        f"Distribution of\nSample Mean",
+        "Distribution of\nSample Mean",
         fontsize=13,
         fontweight="bold",
     )
@@ -984,7 +1019,9 @@ def _plot_hoeffding_inequality_demo(
     ax3.axis("off")
     ax3.set_title("Comments", fontsize=13, fontweight="bold", pad=20)
     # Check if bound is tight.
-    bound_ratio = hoeffding_bound / empirical_prob if empirical_prob > 0 else float("inf")
+    bound_ratio = (
+        hoeffding_bound / empirical_prob if empirical_prob > 0 else float("inf")
+    )
     if bound_ratio < 2:
         tightness_note = "The Hoeffding bound is quite tight."
     elif bound_ratio < 10:
@@ -1225,26 +1262,28 @@ def _plot_hoeffding_inequality_demo2(
         ax1.set_yscale("log")
         ax1.set_ylabel("Probability (log scale)", fontsize=12)
     else:
-        ax1.set_ylim([0, min(1.0, max(max(hoeffding_bounds), max(empirical_probs)) * 1.1)])
+        ax1.set_ylim(
+            [0, min(1.0, max(max(hoeffding_bounds), max(empirical_probs)) * 1.1)]
+        )
     # Plot 2: Comments and explanation.
     ax2.axis("off")
     ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
     dist_name = distribution.replace("_", " ").title()
     if scan_variable == "N":
         scan_note = (
-            f"- As N increases, both bound and empirical probability\n"
-            f"  decrease exponentially.\n\n"
-            f"- The exponential decay shows why we need relatively\n"
-            f"  few samples for good concentration.\n\n"
-            f"- Empirical probability is always below the bound."
+            "- As N increases, both bound and empirical probability\n"
+            "  decrease exponentially.\n\n"
+            "- The exponential decay shows why we need relatively\n"
+            "  few samples for good concentration.\n\n"
+            "- Empirical probability is always below the bound."
         )
     else:
         scan_note = (
-            f"- As epsilon increases, both bound and empirical probability\n"
-            f"  decrease.\n\n"
-            f"- Larger epsilon means more tolerance for deviation,\n"
-            f"  so probability of exceeding it decreases.\n\n"
-            f"- Empirical probability is always below the bound."
+            "- As epsilon increases, both bound and empirical probability\n"
+            "  decrease.\n\n"
+            "- Larger epsilon means more tolerance for deviation,\n"
+            "  so probability of exceeding it decreases.\n\n"
+            "- Empirical probability is always below the bound."
         )
     text_content = (
         f"Parameters:\n"
@@ -1833,7 +1872,6 @@ def _plot_hoeffding_bound_3d(
     :param use_log_scale: If True, use log scale for Z-axis (bound values)
     """
     # Import 3D plotting toolkit.
-    from mpl_toolkits.mplot3d import Axes3D
 
     # Create grid for N and epsilon.
     N_values = np.linspace(10, N_max, 100)

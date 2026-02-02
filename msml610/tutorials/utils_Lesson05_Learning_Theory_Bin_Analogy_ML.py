@@ -3,7 +3,7 @@ Utility functions for Learning Theory lesson - Bin Analogy of ML.
 
 Import as:
 
-import msml610.tutorials.utils_Lesson05_Learning_Theory_Bin_Analogy_ML as mtulltba
+import msml610.tutorials.utils_Lesson05_Learning_Theory_Bin_Analogy_ML as mtulltbam
 """
 
 import logging
@@ -14,7 +14,6 @@ import numpy as np
 import ipywidgets
 from IPython.display import display
 
-import helpers.hdbg as hdbg
 import msml610_utils as mtumsuti
 
 _LOG = logging.getLogger(__name__)
@@ -398,7 +397,7 @@ def _plot_monte_carlo_simulation(
         f"Observations:\n"
         f"- nu values cluster around mu = {mu:.3f}\n"
         f"- Concentration is {concentration_quality}\n"
-        f"- Only {empirical_prob*100:.1f}% of experiments\n"
+        f"- Only {empirical_prob * 100:.1f}% of experiments\n"
         f"  have |nu - mu| > {eps:.3f}\n\n"
         f"Key Insight:\n"
         f"- Repeating the experiment many times\n"

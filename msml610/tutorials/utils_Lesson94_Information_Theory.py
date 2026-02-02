@@ -29,7 +29,9 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 # #############################################################################
 
 
-def cell1_calculate_entropy(probabilities: Union[List[float], np.ndarray]) -> float:
+def cell1_calculate_entropy(
+    probabilities: Union[List[float], np.ndarray],
+) -> float:
     r"""
     Calculate Shannon entropy for a discrete probability distribution.
 
