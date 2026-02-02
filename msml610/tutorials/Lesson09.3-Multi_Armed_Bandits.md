@@ -1,6 +1,5 @@
 # Visual Script for Multi-Armed Bandits
 
-<start>
 ## Cell 1: Introduction - Casino Slot Machines
 
 - Type: Interactive
@@ -18,36 +17,19 @@
   - Counter showing budget of coins remaining
 - Comment box: "You have 10 coins. Each machine has a different unknown payout
   rate. How do you maximize your winnings?"
-<end>
 
-## Cell 2: Hidden Reward Distributions
-
-- Type: Interactive
-- Visualization:
-  - K slot machines displayed horizontally
-  - Each machine has a hidden reward distribution shown as a bar (initially
-    covered)
-  - Button "Reveal True Distributions" to show/hide true means
-- Interactive widget:
-  - Toggle "Show True Means" (on/off)
-  - Slider for true mean of each machine mu_1, mu_2, ..., mu_K (0-1)
-  - Display: Bar chart showing true mean of each machine when revealed
-- Display:
-  - Covered bars with question marks (agent's view)
-  - Revealed bars showing true means (god's view)
-- Comment box: "The agent doesn't know which machine is best. The goal is to
-  learn while earning."
-- Purpose: Visualize the unknown reward distributions that agent must learn
-
-## Cell 3: Exploration vs Exploitation Dilemma
+## Cell 2: Exploration vs Exploitation Dilemma
 
 - Type: Interactive
+- Use the set up from cell1_casino_slot_machines
 - Visualization:
-  - Split screen showing two strategies
+  - There are three strategies
   - Left side: "Explore" - trying different machines randomly
   - Right side: "Exploit" - sticking with best known machine
-  - Animated coin flow showing rewards over time
+  - Balanced
 - Interactive widget:
+  - Seed widget
+  - Number of coins
   - Slider for exploration probability epsilon (0-1)
   - Button "Run 100 Trials"
   - Display: Total reward for exploration-only, exploitation-only, and balanced
@@ -59,8 +41,8 @@
   stuck on suboptimal choices. Balance is key."
 - Purpose: Demonstrate the fundamental tradeoff visually
 
-## Cell 4: Greedy Algorithm Failure
-
+<start>
+## Cell 3: Greedy Algorithm Failure
 - Type: Interactive
 - Visualization:
   - 3 slot machines with true means: mu_1=0.4, mu_2=0.7, mu_3=0.5
@@ -77,6 +59,7 @@
 - Comment box: "Greedy algorithm pulled Machine 1 first, got reward 1, and never
   tried the better Machine 2."
 - Purpose: Show how greedy can get stuck on suboptimal arm
+<end>
 
 ## Cell 5: Epsilon-Greedy Algorithm
 

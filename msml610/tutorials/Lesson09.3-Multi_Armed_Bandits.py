@@ -54,4 +54,40 @@ _LOG = logging.getLogger(__name__)
 # %%
 utils.cell1_casino_slot_machines()
 
+# %% [markdown]
+# # Cell 2: Exploration vs Exploitation Dilemma
+#
+# Demonstrate the fundamental tradeoff between exploration and exploitation.
+# - Pure exploration learns but earns little
+# - Pure exploitation gets stuck on suboptimal choices
+# - Balance is key!
+
+# %%
+utils.cell2_exploration_vs_exploitation()
+# Pure exploration learns but earns little. Pure exploitation gets stuck on suboptimal choices. Balance is key.
+
+# %% [markdown]
+# <!-- # Cell A: Strategy Comparison with Epsilon Sweep
+#
+# Interactive comparison of strategies with epsilon sweep analysis.
+# - Run multiple trials with different epsilon values
+# - Compare exploration, exploitation, and balanced strategies
+# - Visualize mean performance with error bars
+# - Find optimal epsilon value -->
+
+# %%
+# utils.cell3_strategy_comparison()
+
+# %% [markdown]
+# <!-- # Cell 4: Ensemble Comparison Across Random Mu Configurations
+#
+# Compare strategies averaged over multiple random mu configurations.
+# - Test strategy robustness across different machine configurations
+# - Average results over many random mu values
+# - Compare mean performance with confidence intervals
+# - Understand which strategy is most reliable -->
+
+# %%
+# utils.cell4_ensemble_comparison()
+
 # %%
