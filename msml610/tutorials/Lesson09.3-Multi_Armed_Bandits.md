@@ -1,22 +1,24 @@
 # Visual Script for Multi-Armed Bandits
 
+<start>
 ## Cell 1: Introduction - Casino Slot Machines
 
 - Type: Interactive
 - Visualization:
-  - Draw 3 slot machines side-by-side
-  - Each machine displays a question mark on its screen
-  - Coin slot and lever visible on each machine
+  - Draw 3 "slot machines" generating a random number from -1 to 1
+  - Each machine displays a question mark on its screen or a value
 - Interactive widget:
-  - Slider for number of machines K (2-5)
-  - Button "Pull Random Machine" to simulate random play
-  - Display: Total coins won, total coins spent
+  - Choose a "slot machine"
+  - Toggle "Show True Means" (on/off)
+  - Slider for true mean of each machine mu_1, mu_2, ..., mu_K (0-1)
+  - Reset "total winnings" and "number of coins"
 - Display:
-  - Show K slot machines with unknown payouts
-  - Counter showing budget remaining
-- Comment box: "You have 100 coins. Each machine has a different unknown payout
+  - Bar chart showing true mean of each machine when revealed
+  - Total winnings
+  - Counter showing budget of coins remaining
+- Comment box: "You have 10 coins. Each machine has a different unknown payout
   rate. How do you maximize your winnings?"
-- Purpose: Introduce the multi-armed bandit problem in intuitive casino setting
+<end>
 
 ## Cell 2: Hidden Reward Distributions
 

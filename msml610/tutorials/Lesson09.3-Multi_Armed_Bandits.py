@@ -32,9 +32,26 @@ plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
 import msml610_utils as ut
+import utils_Lesson09_3_Multi_Armed_Bandits as utils
 
 ut.config_notebook()
 
 # Initialize logger.
 logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
+
+# %% [markdown]
+# # Cell 1: Introduction - Casino Slot Machines
+#
+# Interactive casino slot machine visualization.
+# - There are 3 slot machines
+# - You have 10 coins
+# - Each gives you a payout in [-1, 1] with an unknown mean $\mu_i$
+# - Choose which machine to play
+# - Track total winnings and coin budget
+# - How do you maximize your winnings?
+
+# %%
+utils.cell1_casino_slot_machines()
+
+# %%
