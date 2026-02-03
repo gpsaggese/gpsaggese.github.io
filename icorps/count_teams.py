@@ -233,9 +233,9 @@ def _count_nsf_background_matrix(
         matrix[team_type][nsf_background] += 1
     # Assert if there are teams with missing NSF background.
     if missing_nsf_teams:
-        hdbg.dfatal(
-            "Teams with missing or invalid NSF Background:",
-            ", ".join(missing_nsf_teams),
+        _LOG.warning(
+            "Teams with missing or invalid NSF Background:" +
+            ", ".join(map(str, missing_nsf_teams))
         )
     _LOG.debug("Step 3: Counted NSF background matrix")
     return matrix

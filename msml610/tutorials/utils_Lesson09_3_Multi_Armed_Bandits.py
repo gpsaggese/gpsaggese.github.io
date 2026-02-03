@@ -46,10 +46,10 @@ class MultiArmedBandit:
         """
         Initialize multi-armed bandit.
 
-        :param k_machines: Number of machines (K)
-        :param mu_values: True mean values for each machine
-        :param seed: Random seed for reproducibility
-        :param width: Half-width of uniform distribution around mean
+        :param k_machines: number of machines (K)
+        :param mu_values: true mean values for each machine
+        :param seed: random seed for reproducibility
+        :param width: half-width of uniform distribution around mean
         """
         hdbg.dassert_eq(
             len(mu_values),
@@ -74,8 +74,8 @@ class MultiArmedBandit:
         """
         Pull a specific machine and get reward.
 
-        :param machine_idx: Index of machine to pull (0 to K-1)
-        :return: Reward value in [-1, 1]
+        :param machine_idx: index of machine to pull (0 to K-1)
+        :return: reward value in [-1, 1]
         """
         hdbg.dassert_lte(
             0,
@@ -105,7 +105,7 @@ class MultiArmedBandit:
         """
         Get empirical mean reward for each machine.
 
-        :return: List of empirical means (or 0.0 if machine not pulled)
+        :return: list of empirical means (or 0.0 if machine not pulled)
         """
         means = []
         for rewards in self.machine_rewards:
@@ -119,7 +119,7 @@ class MultiArmedBandit:
         """
         Reset all statistics but keep mu values.
 
-        :param seed: Optional new seed; if None, use original seed
+        :param seed: optional new seed; if None, use original seed
         """
         if seed is not None:
             self.seed = seed
@@ -148,12 +148,14 @@ class Strategy(abc.ABC):
         Select which machine to pull next.
 
         :param bandit: MultiArmedBandit instance with current state
-        :return: Index of machine to pull (0 to K-1)
+        :return: index of machine to pull (0 to K-1)
         """
         pass
 
     def reset(self) -> None:
-        """Reset any internal state of the strategy."""
+        """
+        Reset any internal state of the strategy.
+        """
         pass
 
 
@@ -171,7 +173,7 @@ class ExplorationStrategy(Strategy):
         """
         Initialize exploration strategy.
 
-        :param seed: Random seed for machine selection
+        :param seed: random seed for machine selection
         """
         self.seed = seed
         self._rng = np.random.RandomState(seed)
@@ -184,12 +186,14 @@ class ExplorationStrategy(Strategy):
         Randomly select a machine with equal probability.
 
         :param bandit: MultiArmedBandit instance
-        :return: Randomly selected machine index
+        :return: randomly selected machine index
         """
         return self._rng.randint(0, bandit.k_machines)
 
     def reset(self) -> None:
-        """Reset random state."""
+        """
+        Reset random state.
+        """
         self._rng = np.random.RandomState(self.seed)
 
 
@@ -206,7 +210,9 @@ class ExploitationStrategy(Strategy):
     """
 
     def __init__(self) -> None:
-        """Initialize exploitation strategy."""
+        """
+        Initialize exploitation strategy.
+        """
         self.initialized = False
 
     def select_machine(
@@ -219,7 +225,7 @@ class ExploitationStrategy(Strategy):
         Initially pulls each machine once for initialization.
 
         :param bandit: MultiArmedBandit instance
-        :return: Machine index with highest empirical mean
+        :return: machine index with highest empirical mean
         """
         # Initialize by pulling each machine once.
         if not self.initialized:
@@ -232,7 +238,9 @@ class ExploitationStrategy(Strategy):
         return int(np.argmax(empirical_means))
 
     def reset(self) -> None:
-        """Reset initialization state."""
+        """
+        Reset initialization state.
+        """
         self.initialized = False
 
 
@@ -252,8 +260,8 @@ class EpsilonGreedyStrategy(Strategy):
         """
         Initialize epsilon-greedy strategy.
 
-        :param epsilon: Exploration probability (0 to 1)
-        :param seed: Random seed for exploration decisions
+        :param epsilon: exploration probability (0 to 1)
+        :param seed: random seed for exploration decisions
         """
         hdbg.dassert_lte(
             0.0,
@@ -283,7 +291,7 @@ class EpsilonGreedyStrategy(Strategy):
         With probability 1-epsilon, exploit (best known machine).
 
         :param bandit: MultiArmedBandit instance
-        :return: Selected machine index
+        :return: selected machine index
         """
         # Initialize by pulling each machine once.
         if not self.initialized:
@@ -301,7 +309,9 @@ class EpsilonGreedyStrategy(Strategy):
             return int(np.argmax(empirical_means))
 
     def reset(self) -> None:
-        """Reset random state and initialization."""
+        """
+        Reset random state and initialization.
+        """
         self._rng = np.random.RandomState(self.seed)
         self.initialized = False
 
@@ -328,7 +338,7 @@ class BanditExperiment:
 
         :param bandit: MultiArmedBandit instance
         :param strategy: Strategy instance
-        :param n_coins: Number of coins to play (N)
+        :param n_coins: number of coins to play (N)
         """
         hdbg.dassert_lte(1, n_coins, "Must play at least 1 coin")
         self.bandit = bandit
@@ -339,7 +349,7 @@ class BanditExperiment:
         """
         Run the experiment for n_coins trials.
 
-        :return: Tuple of (rewards, cumulative_rewards, final_total)
+        :return: tuple of (rewards, cumulative_rewards, final_total)
         """
         # Reset bandit and strategy state.
         self.bandit.reset()
@@ -381,10 +391,10 @@ class BanditSimulation:
         """
         Initialize simulation parameters.
 
-        :param k_machines: Number of machines (K)
-        :param mu_values: True mean values for each machine
-        :param n_coins: Number of coins per experiment (N)
-        :param base_seed: Base seed for reproducibility
+        :param k_machines: number of machines (K)
+        :param mu_values: true mean values for each machine
+        :param n_coins: number of coins per experiment (N)
+        :param base_seed: base seed for reproducibility
         """
         self.k_machines = k_machines
         self.mu_values = mu_values
@@ -402,9 +412,9 @@ class BanditSimulation:
         Run n_trials experiments with the same setup, varying seed.
 
         :param strategy_class: Strategy class to instantiate
-        :param strategy_params: Parameters to pass to strategy
-        :param n_trials: Number of trials to run
-        :return: Dictionary with statistics and results
+        :param strategy_params: parameters to pass to strategy
+        :param n_trials: number of trials to run
+        :return: dictionary with statistics and results
         """
         hdbg.dassert_lte(1, n_trials, "Must run at least 1 trial")
         final_totals = []
@@ -457,9 +467,9 @@ class BanditSimulation:
 
         Compare exploration, exploitation, and balanced strategies.
 
-        :param n_trials: Number of trials per epsilon value
-        :param epsilon_values: List of epsilon values to test
-        :return: Dictionary with results for each epsilon
+        :param n_trials: number of trials per epsilon value
+        :param epsilon_values: list of epsilon values to test
+        :return: dictionary with results for each epsilon
         """
         if epsilon_values is None:
             epsilon_values = np.arange(0.0, 1.1, 0.1).tolist()
@@ -502,8 +512,8 @@ def plot_epsilon_sweep(
     """
     Plot comparison of strategies across epsilon values.
 
-    :param sweep_results: Results from BanditSimulation.epsilon_sweep()
-    :param n_coins: Number of coins used in simulation
+    :param sweep_results: results from BanditSimulation.epsilon_sweep()
+    :param n_coins: number of coins used in simulation
     """
     epsilon_values = sweep_results["epsilon_values"]
     exploration = sweep_results["exploration"]
@@ -617,9 +627,9 @@ def cell1_casino_slot_machines() -> None:
 
     Display 3 slot machines with fixed true means generating random rewards.
     User can:
-    - Choose which machine to play
-    - Toggle showing true means
-    - Reset total winnings and coin budget
+    - Choose which machine to play.
+    - Toggle showing true means.
+    - Reset total winnings and coin budget.
     """
     # Initialize state.
     true_means = [-0.2, 0.0, 0.5]
@@ -686,7 +696,9 @@ def cell1_casino_slot_machines() -> None:
     output = ipywidgets.Output()
 
     def update_plot() -> None:
-        """Update the visualization."""
+        """
+        Update the visualization.
+        """
         with output:
             clear_output(wait=True)
 
@@ -782,7 +794,9 @@ def cell1_casino_slot_machines() -> None:
             plt.show()
 
     def on_play_clicked(b) -> None:
-        """Handle play button click."""
+        """
+        Handle play button click.
+        """
         if state["coins_remaining"] <= 0:
             _LOG.warning("No coins remaining!")
             return
@@ -814,7 +828,9 @@ def cell1_casino_slot_machines() -> None:
         update_plot()
 
     def on_reset_clicked(b) -> None:
-        """Handle reset button click."""
+        """
+        Handle reset button click.
+        """
         state["total_winnings"] = 0.0
         state["initial_coins"] = coins_slider.value
         state["coins_remaining"] = coins_slider.value
@@ -829,7 +845,9 @@ def cell1_casino_slot_machines() -> None:
         update_plot()
 
     def on_show_means_changed(change) -> None:
-        """Handle toggle for showing true means."""
+        """
+        Handle toggle for showing true means.
+        """
         state["show_true_means"] = change["new"]
         update_plot()
 
@@ -864,9 +882,9 @@ def cell2_exploration_vs_exploitation() -> None:
     Demonstrate exploration vs exploitation tradeoff with three strategies.
 
     Visualize three strategies:
-    - Pure exploration: randomly select machines
-    - Pure exploitation: always select best known machine
-    - Balanced (epsilon-greedy): explore with probability epsilon
+    - Pure exploration: randomly select machines.
+    - Pure exploitation: always select best known machine.
+    - Balanced (epsilon-greedy): explore with probability epsilon.
 
     Show cumulative rewards over multiple trials to compare performance.
     """
@@ -921,8 +939,8 @@ def cell2_exploration_vs_exploitation() -> None:
         """
         Run experiment with given strategy.
 
-        :param num_coins: Number of coins to play
-        :param seed: Random seed
+        :param num_coins: number of coins to play
+        :param seed: random seed
         :param strategy: Strategy instance to use
         :return: (rewards, cumulative_rewards)
         """
@@ -941,7 +959,9 @@ def cell2_exploration_vs_exploitation() -> None:
         return rewards, cumulative_rewards
 
     def update_plot() -> None:
-        """Update the visualization showing all three strategies."""
+        """
+        Update the visualization showing all three strategies.
+        """
         with output:
             clear_output(wait=True)
 
@@ -1058,7 +1078,9 @@ def cell2_exploration_vs_exploitation() -> None:
             plt.show()
 
     def on_widget_change(change) -> None:
-        """Handle widget value changes."""
+        """
+        Handle widget value changes.
+        """
         update_plot()
 
     # Connect callbacks to automatically update when widgets change.
@@ -1101,10 +1123,10 @@ class BanditEnsemble:
         """
         Initialize ensemble parameters.
 
-        :param k_machines: Number of machines (K)
-        :param n_coins: Number of coins per experiment (N)
-        :param mu_range: Range for random mu values (min, max)
-        :param base_seed: Base seed for reproducibility
+        :param k_machines: number of machines (K)
+        :param n_coins: number of coins per experiment (N)
+        :param mu_range: range for random mu values (min, max)
+        :param base_seed: base seed for reproducibility
         """
         self.k_machines = k_machines
         self.n_coins = n_coins
@@ -1123,10 +1145,10 @@ class BanditEnsemble:
         Run trials across multiple random mu configurations.
 
         :param strategy_class: Strategy class to instantiate
-        :param strategy_params: Parameters to pass to strategy
-        :param n_trials: Number of trials per mu configuration
-        :param n_mu_configs: Number of random mu configurations
-        :return: Dictionary with aggregated statistics
+        :param strategy_params: parameters to pass to strategy
+        :param n_trials: number of trials per mu configuration
+        :param n_mu_configs: number of random mu configurations
+        :return: dictionary with aggregated statistics
         """
         hdbg.dassert_lte(1, n_trials, "Must run at least 1 trial")
         hdbg.dassert_lte(1, n_mu_configs, "Must run at least 1 mu config")
@@ -1174,10 +1196,10 @@ class BanditEnsemble:
         """
         Compare strategies averaged over random mu configurations.
 
-        :param n_trials: Number of trials per mu configuration
-        :param n_mu_configs: Number of random mu configurations
-        :param epsilon: Epsilon value for balanced strategy
-        :return: Dictionary with results for each strategy
+        :param n_trials: number of trials per mu configuration
+        :param n_mu_configs: number of random mu configurations
+        :param epsilon: epsilon value for balanced strategy
+        :return: dictionary with results for each strategy
         """
         results = {}
         # Run exploration.
@@ -1212,8 +1234,8 @@ class BanditEnsemble:
         """
         Plot comparison of strategies across random mu configurations.
 
-        :param ensemble_results: Results from compare_strategies_ensemble()
-        :param epsilon: Epsilon value used for balanced strategy
+        :param ensemble_results: results from compare_strategies_ensemble()
+        :param epsilon: epsilon value used for balanced strategy
         """
         strategies = ["exploration", "exploitation", "balanced"]
         labels = [
@@ -1268,10 +1290,10 @@ def cell3_strategy_comparison() -> None:
     Interactive widget for comparing strategies with epsilon sweep.
 
     User can:
-    - Set number of machines and coins
-    - Configure mu values
-    - Set number of trials
-    - Run epsilon sweep and visualize results
+    - Set number of machines and coins.
+    - Configure mu values.
+    - Set number of trials.
+    - Run epsilon sweep and visualize results.
     """
     # Initialize state.
     state = {
@@ -1334,7 +1356,9 @@ def cell3_strategy_comparison() -> None:
     output = ipywidgets.Output()
 
     def on_run_clicked(b) -> None:
-        """Handle run button click."""
+        """
+        Handle run button click.
+        """
         with output:
             clear_output(wait=True)
             # Parse mu values.
@@ -1476,7 +1500,9 @@ def cell4_ensemble_comparison() -> None:
     output = ipywidgets.Output()
 
     def on_run_clicked(b) -> None:
-        """Handle run button click."""
+        """
+        Handle run button click.
+        """
         with output:
             clear_output(wait=True)
             # Update state.
