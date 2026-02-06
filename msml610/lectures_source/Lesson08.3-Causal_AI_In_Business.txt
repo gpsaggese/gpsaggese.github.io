@@ -14,13 +14,13 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{8.3: Causal AI in Business}}$$**
+**$$\text{\blue{Lesson 08.3: Causal AI in Business}}$$**
 \endgroup
 \vspace{1cm}
 
 ::: columns
 :::: {.column width=75%}
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 

@@ -1,0 +1,3 @@
+REPO_NAME=gpsaggese
+IMAGE_NAME=umd_data605_packages
+FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME

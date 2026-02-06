@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{8.3: Apache Hadoop}}$$**
+**$$\text{\blue{08.3: Apache Hadoop}}$$**
 \endgroup
 
 \vspace{1cm}

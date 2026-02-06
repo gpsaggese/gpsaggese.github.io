@@ -16,7 +16,7 @@ UMD DATA605: Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Lesson 1.2: Introduction to Big Data}}$$**
+**$$\text{\blue{01.2: Introduction to Big Data}}$$**
 \endgroup
 
 \vspace{1cm}

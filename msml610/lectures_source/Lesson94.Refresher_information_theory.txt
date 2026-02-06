@@ -1,6 +1,6 @@
 ::: columns
 :::: {.column width=15%}
-![](lectures_source/UMD_Logo.png)
+![](msml610/lectures_source/figures/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
 
@@ -14,11 +14,11 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Information Theory}}$$**
+**$$\text{\blue{Refresher 04: Information Theory}}$$**
 \endgroup
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 
@@ -26,52 +26,83 @@ MSML610: Advanced Machine Learning
 
 ## Entropy
 
-* Entropy and Uncertainty
+* Entropy: Definition
 - **Entropy** $H(X)$ of a discrete random variable $X$ is defined as:
-  $$H(X) \defeq -\sum_x p(x) \log p(x)$$
+  $$H(X) \defeq -\sum_x p(x) \log_2 p(x)$$
 
 - **Intuition**
-  - Entropy quantifies the average level of information / surprise / uncertainty
-    inherent in the variable's possible outcomes
+  - Entropy quantifies average _information_, _surprise_, or _uncertainty_ in
+    outcomes
     - High entropy = more unpredictability
     - Low entropy = more certainty
-  - Usually the log is base 2 $\log_2$ so unit of entropy is bits
+  - Log in base 2 $\to$ entropy measured in bits
 
 - **Examples**
   - Fair coin
-    - A fair coin toss has two equally likely outcomes, heads or tails, leading
-      to maximum uncertainty $H = 1$
+    - Two equally likely outcomes (heads or tails) $\to$ maximum uncertainty $H =
+      1$
   - Biased coin
-    - If a coin lands on heads 90% of the time, it creates less uncertainty and
-      thus less entropy $H < 1$
+    - Coin lands heads 90% of the time, less uncertainty $\to$ less entropy $H <
+      1$
+  - "Broken" coin
+    - Always lands on heads, no uncertainty $\to$ no entropy $H = 0$
 
-* Why Entropy is Defined in That Way
-- **Entropy as expected information content**
-  - Information of outcome $x_i$ is $-\log p_i$
-    - Rare events ($p_i \to 0$) yield more information ($-\log p_i \to \infty$)
-    - Common events ($p_i \to 1$) yield little information ($-\log p_i \to 0$)
-  - Entropy is the expected information content:
-    $$H(X) = \EE[-\log p_i] = -\sum_i p_i \log p_i$$
+* Entropy as Expected Information Content
 
-- **Axiomatic derivation of entropy**
-  - Shannon's criteria for $H(p_1, ..., p_n)$:
-    1. Continuity: $H()$ is continuous in $p_i$
-    2. Maximality: $H()$ is maximal when outcomes are equally likely
-    3. Additivity: For composite outcomes, $H(X, Y) = H(X) + H(Y | X)$
-  - The only solution is:
-    $$H(X) = -K \sum_i p_i \log p_i$$
+- Entropy measures how _surprising_ a random variable is _on average_
 
-* Entropy and PDF
+- **Intuition**: information quantifies how much we _learn_ when an event occurs
+  - Information of outcome $x_i$ is defined as $-\log p_i$
+    - Rare events ($p_i \to 0$) yield more information: $-\log p_i \to \infty$
+    - Common events ($p_i \to 1$) yield little information: $-\log p_i \to 0$
+
+- Entropy is the expected information content:
+  $$H(X) = \EE[-\log p_i] \defeq -\sum_i p_i \log p_i$$
+
+* Axiomatic Derivation of Entropy
+- Shannon's criteria for $H(p_1, ..., p_n)$:
+  1. Continuity: $H()$ is continuous in $p_i$
+     - Small changes in probabilities should not cause large jumps in
+       uncertainty
+  2. Maximality: $H()$ is maximal when outcomes are equally likely
+  3. Additivity: For composite outcomes, $H(X, Y) = H(X) + H(Y | X)$
+     - Uncertainty about $(X, Y)$ is uncertainty about $H$ plus remaining
+       uncertainty about $Y$
+
+- The only functional form is:
+  $$H(X) \propto = - \sum_i p_i \log p_i$$
+
+* Entropy and Probability Density Function (PDF)
 - Entropy is related to variance but is not the same
-  - If a distribution has more spread, typically its entropy is larger
-  - It is possible that variance increases, but entropy doesn't
+  - Variance measures how far values are from the mean
+  - Entropy measures how unpredictable a random draw is
 
+::: columns
+:::: {.column width=40%}
+- If a distribution has more spread, typically its entropy is larger
+  - It is possible that variance increases, but entropy doesn't
+    - E.g., a uniform distribution increasing its support
+::::
+:::: {.column width=55%}
+![](msml610/lectures_source/figures/Lesson94_Uniform_PDF.png)
+::::
+:::
+
+::: columns
+:::: {.column width=40%}
 - Entropy is related to information and uncertainty
-  - The flatter the prior distribution, the less informative it is
+  - A flatter distribution has high entropy
+  - A sharply peaked distribution has low entropy
+  - A distribution with two close peaks has low variance but high entropy
+::::
+:::: {.column width=55%}
+![](msml610/lectures_source/figures/Lesson94_Entropy_vs_Variance.png)
+::::
+:::
 
 * Joint Entropy
 - **Joint entropy** $H(X, Y)$ of two variables $X$ and $Y$ is defined as:
-  $$H(X, Y) \defeq -\sum_{x,y} \red{p(x,y)} \log \green{p(x,y)}$$
+  $$H(X, Y) \defeq -\sum_{x,y} p(x,y) \log p(x,y)$$
   - Describes the information needed for the joint distribution of $X$ and $Y$
 
 - **Properties**
@@ -87,9 +118,7 @@ MSML610: Advanced Machine Learning
 
 * Conditional Entropy
 - **Conditional entropy** $H(Y | X)$ is defined as
-  $$H(Y|X) = -\sum_{x,y} p(x,y) \log p(\red{y|x})$$
-
-- **Intuition**
+  $$H(Y|X) \defeq -\sum_{x,y} p(x,y) \log p(y|x)$$
   - Represents the average uncertainty in $Y$ after observing $X$
   - Measures the effectiveness of $X$ in determining $Y$
 
@@ -428,3 +457,10 @@ MSML610: Advanced Machine Learning
 - Total correlation: $C(X_1, \dots, X_n) = \sum_i H(X_i) - H(X_1, \dots, X_n)$
 - Measures total dependency in a set of variables
 - Used in ICA, variational inference, and dependency modeling
+
+2. Applications in Machine Learning
+Entropy: Feature selection, decision tree splitting criteria
+Mutual Information: Dependency detection, feature relevance
+Cross-Entropy: Loss function for classification
+KL Divergence: Variational inference, model comparison
+MDL: Model selection, preventing overfitting

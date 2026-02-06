@@ -16,7 +16,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Lesson 5.1: NoSQL Databases}}$$**
+**$$\text{\blue{05.1: NoSQL Databases}}$$**
 \endgroup
 
 ::: columns

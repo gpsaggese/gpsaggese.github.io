@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{6.3: MongoDB Config}}$$**
+**$$\text{\blue{06.3: MongoDB Config}}$$**
 \endgroup
 
 ::: columns

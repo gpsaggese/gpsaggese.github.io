@@ -1,0 +1,1171 @@
+\documentclass[11pt, letterpaper]{article}
+
+% Packages
+\usepackage[margin=0.75in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{xcolor}
+\usepackage{fontawesome5}
+\usepackage{graphicx}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+
+\graphicspath{{gp_saggese_quant_research_cv/figures}}
+
+% Hyperlink styling (HTML-style links)
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue,
+}
+
+% Page numbering setup
+\pagestyle{fancy}
+\fancyhf{} % Clear all header and footer fields
+\fancyfoot[C]{\thepage/\pageref{LastPage}} % Center footer with page numbers
+\renewcommand{\headrulewidth}{0pt} % Remove header line
+\renewcommand{\footrulewidth}{0pt} % Remove footer line
+
+% Set section numbering depth (0=none, 1=section, 2=subsection, 3=subsubsection)
+\setcounter{secnumdepth}{1}
+
+% Section formatting
+\titleformat{\section}
+{\Large\bfseries\filcenter}
+{}
+{0pt}
+{\MakeUppercase}
+[\titlerule]
+\titlespacing{\section}{0pt}{1pt}{6pt}
+
+\titleformat{\subsection}
+{\large\bfseries}
+{}
+{0pt}
+{}
+\titlespacing{\subsection}{0pt}{8pt}{4pt}
+
+% Reduce spacing in lists
+\setlist{nosep, leftmargin=1.5em}
+\setlist[itemize,1]{label=\textbullet}
+\setlist[itemize,2]{label=\textopenbullet}
+
+% Compact paragraphs
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% Pandoc compatibility
+\providecommand{\tightlist}{%
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{0pt}}
+
+% Pandoc uses these for strikeout, etc.
+
+% Code highlighting
+
+% Tables
+
+% Graphics
+
+\begin{document}
+  \begin{center}
+    {\LARGE \textbf{Giacinto Paolo (GP) Saggese, PhD}} \\[6pt]
+
+    {\large Email: \href{mailto:gp@causify.ai}{gp@causify.ai} \;|\; \href{mailto:gsaggese@umd.edu}{gsaggese@umd.edu} \;|\; \href{mailto:saggese@gmail.com}{saggese@gmail.com} }\\[6pt]
+
+    {\large \href{https://www.linkedin.com/in/gpsaggese/}{LinkedIn} \;|\; \href{https://github.com/gpsaggese}{GitHub} \;|\; \href{https://gpsaggese.github.io/umd_classes/}{Website} }\\[6pt]
+
+    {\large Cell: 408--431--1286, Washington DC }
+  \end{center}
+
+  \vspace{12pt}
+
+  \begin{center}
+    {\LARGE \textbf{Quant Research Statement}}
+  \end{center}
+
+  \vspace{12pt}
+
+% Table of Contents
+  \tableofcontents
+  \newpage
+
+% ==============================================================================
+  \section{Executive Summary}
+  \label{executive-summary}
+
+  I am a quantitative researcher specializing in applying machine
+  learning (ML) and artificial intelligence (AI) to financial problems, ranging
+  from alpha-strategies to portfolio construction.
+
+  My experience spans developing, trading, and evaluating over 100 alpha
+  signals across asset classes (US equities, futures, crypto) and trading
+  frequencies (from minutes to days), utilizing both market microstructure
+  and alternative data sources.
+
+  In leadership roles, I interviewed 50+ quantitative analysts, led research
+  teams, and conducted thorough due diligence on alternative datasets.
+
+  I developed proprietary research infrastructure including alpha signal
+  backtesting frameworks, portfolio optimization systems, and market impact
+  models.
+
+  Since 2020, I teach graduate-level courses including ``DATA605:
+  Big Data Systems'' and ``MSML610: Advanced Machine Learning'' at the
+  University of Maryland, College Park (ranked 9th among public US
+  universities), to over 800 students.
+
+  My research at the University of Maryland focuses on Bayesian statistics and
+  Causal AI, specifically developing methods to:
+
+  \begin{itemize}
+    \item Distinguish causal relationships from spurious correlations in
+      financial time series, enabling models that capture true economic
+      mechanisms rather than data-mining artifacts
+
+    \item Quantify uncertainty in model predictions using Bayesian hierarchical
+      models, providing principled confidence intervals for trading decisions
+
+    \item Build knowledge graphs that encode economic relationships across
+      asset classes, sectors, and macroeconomic factors
+
+    \item Apply temporal machine learning to adapt to regime changes while
+      maintaining interpretability of learned patterns
+  \end{itemize}
+
+  These methodologies have been successfully applied to financial prediction,
+  predictive maintenance, demand forecasting, and energy trading, consistently
+  improving both accuracy and robustness over traditional approaches.
+
+  \textbf{Quantifiable Impact}:
+
+  \begin{itemize}
+    \item Contributed 25\% of profit to hedge funds managing \$1.6B in assets
+      under management (AUM) across global futures and US equities
+
+    \item Generated \$90M in profits with Sharpe ratio of approximately 3
+      over 18 months (mid-2016 to end of 2017), achieving 56\% returns at
+      2x volatility target
+
+    \item Successfully deployed over 100 alpha signals in production across
+      US equities, global futures, and ETFs, achieving Sharpe ratios ranging
+      from 1.5 to 5.0 across different strategies
+
+    \item Built and led research teams totaling 15+ quantitative researchers
+      across two offices (Berkeley, CA and Moscow, Russia) that have integrated
+      alternative data sources including news sentiment, social media,
+      macroeconomic indicators, and SEC filings into quantitative strategies.
+
+    \item Built two complete trading systems from data ingestion through
+      portfolio construction.
+  \end{itemize}
+
+  My research philosophy centers on using modern AI and machine learning
+  to complement---not replace---traditional quantitative methods,
+  maintaining a high-throughput research process where models are
+  discovered, validated, and deployed at a predictable rate while
+  accounting for their limited lifespan in competitive markets.
+
+  Complete CV and additional materials: \href{https://github.com/gpsaggese/umd_classes}{https://github.com/gpsaggese/umd\_classes}
+
+  \begin{itemize}
+    \item \href{https://gpsaggese.github.io/umd_classes/03_education/}{Education}
+
+    \item \href{https://gpsaggese.github.io/umd_classes/05_publications/}{Publications}
+
+    \item \href{https://gpsaggese.github.io/umd_classes/06_research/}{AI
+      Research}
+  \end{itemize}
+
+% ==============================================================================
+  \section{Research Philosophy}
+  \label{research-philosophy}
+
+  My research foundation in Causal AI and Bayesian Statistics at the
+  University of Maryland, and applied work at Causify.AI, informs my
+  approach to quantitative finance. I focus on:
+
+  \begin{itemize}
+    \item \textbf{Causal Inference}: Moving beyond correlation to understand
+      causal relationships in financial markets, enabling more robust
+      models that capture underlying economic mechanisms rather than
+      spurious patterns
+
+    \item \textbf{Bayesian Methods}: Incorporating prior knowledge and uncertainty
+      quantification into model development. This allows principled
+      handling of parameter uncertainty and model selection.
+
+    \item \textbf{Decision-Making Under Uncertainty}: Combining probabilistic
+      reasoning with temporal machine learning to build adaptive models.
+      These models adjust to changing market regimes and account for
+      epistemic uncertainty.
+  \end{itemize}
+
+  This foundation shapes my philosophy on alpha generation, where interpretability,
+  economic reasoning, and rigorous statistical validation are paramount.
+
+% ------------------------------------------------------------------------------
+  \subsection{Core Principles for Alpha Generation}
+  \label{core-principles-for-alpha-generation}
+
+  Successful alpha generation requires:
+
+  \begin{itemize}
+    \item Models must be interpretable and grounded in economic theory
+
+    \item State-of-the-art machine learning algorithms should complement
+      traditional statistical methods
+
+    \item I design high-throughput research processes that account for the
+      limited lifespan of alpha signals in competitive markets, ensuring
+      models are discovered and deployed in production at a predictable,
+      steady rate
+
+    \item Maximizing the impact of alternative data means investigating signals:
+
+      \begin{itemize}
+        \item At different time scales, ranging from minutes to days
+
+        \item For multiple asset classes (futures, equities, ETFs, FX,
+          etc.)
+
+        \item For prediction of both factors and residuals
+
+        \item For both continuous and event-driven trading
+      \end{itemize}
+
+    \item Ability to design and implement sophisticated and proprietary data
+      pipelines is needed in addition to expertise in quant methodologies
+
+    \item Combination of strong engineering practices and rigorous research
+      and development (R\&D) accelerates research results
+  \end{itemize}
+
+% ==============================================================================
+  \section{Applications}
+  \label{applications}
+
+% ------------------------------------------------------------------------------
+  \subsection{Portfolio Optimization}
+  \label{portfolio-optimization}
+
+  My approach to portfolio construction emphasizes pragmatism and iterative
+  improvement:
+
+  \textbf{Construction Philosophy}:
+
+  \begin{itemize}
+    \item \textbf{Start Simple}: Begin with realistic portfolio optimization
+      that respects trading constraints
+
+    \item \textbf{Iterative Improvement}: Progressively enhance optimization
+      to address signal peculiarities (e.g., sparsity, different time scales)
+
+    \item \textbf{Leverage Existing Infrastructure}: Utilize available components
+      for:
+
+      \begin{itemize}
+        \item Mean-variance optimization with standard constraints
+
+        \item Covariance estimation
+
+        \item Transaction cost models
+
+        \item Market impact models
+      \end{itemize}
+  \end{itemize}
+
+  \textbf{Portfolio Constraints and Management}:
+
+  \begin{itemize}
+    \item Market neutrality (primary concern)
+
+    \item Low sector exposure
+
+    \item Factor exposure controls (verified ex-post)
+
+    \item Integration with Barra/Axioma factors for optimization
+  \end{itemize}
+
+  \textbf{Prediction Targets}:
+
+  \begin{itemize}
+    \item Optimize for raw returns (from 5 minutes to 1 day ahead)
+
+    \item Mixer blends forecasts from all models
+
+    \item Single-step and multi-period optimization approaches
+  \end{itemize}
+
+  \textbf{Signal Integration}:
+
+  \begin{itemize}
+    \item Alternative data signals are typically additive to microstructure,
+      price-based, and fundamental signals due to low correlation
+
+    \item Occasional challenges arise with strict factor exposure limits
+      when alternative data predicts primarily a single factor
+
+    \item Solution: Dedicated system for trading sectors/factors
+  \end{itemize}
+
+  \textbf{Execution Approach}:
+
+  \begin{itemize}
+    \item Leverage available infrastructure (market impact models, trading
+      algos, fill simulators)
+
+    \item Incorporate actual models into backtesting/optimization systems
+
+    \item Account for costs and optimize for target trading backend
+
+    \item API-based target portfolio specification for next period
+  \end{itemize}
+
+% ------------------------------------------------------------------------------
+  \subsection{Alternative Data and Alpha Generation}
+  \label{alternative-data-and-alpha-generation}
+
+  Alternative data sets are prioritized based on:
+
+  \begin{itemize}
+    \item Large coverage of the trading universe
+
+    \item Frequent updates
+
+    \item Usable across different asset classes (e.g., equities and
+      futures) to amortize research and acquisition costs
+  \end{itemize}
+
+  \textbf{Data Sets with Past Research Success}:
+
+  \begin{itemize}
+    \item News (e.g., news headlines or full-text using natural language
+      processing)
+
+    \item Social sentiment (e.g., from blogs, Twitter, StockTwits)
+
+    \item Anonymized spending reports, credit card transactions, payroll
+      data
+
+    \item Macroeconomic data (e.g., for nowcasting inflation, industrial
+      production, housing starts)
+
+    \item Business reporting and disclosures
+
+    \item Smart-phone app data for geolocation (e.g., for retail traffic)
+
+    \item Supply chain information (e.g., trucking, rail freight data)
+
+    \item Satellite data (e.g., for agriculture and ship tracking)
+
+    \item Online retail prices (e.g., for inflation)
+
+    \item Weather data
+  \end{itemize}
+
+  \textbf{Models Developed and Deployed} (with Sharpe Ratios):
+
+  \begin{itemize}
+    \item News sentiment models using Bloomberg, Reuters, Ravenpack (Sharpe
+      ratio \textasciitilde1.5-2)
+
+    \item Social sentiment from Twitter and StockTwits (Sharpe ratio
+      \textasciitilde1.0-2.0)
+
+    \item SEC insider trading signals (Sharpe ratio \textgreater1.5)
+
+    \item SEC fundamental analysis with Compustat integration (Sharpe
+      ratio \textgreater2.0)
+
+    \item Value strategies combining Compustat and news (Sharpe ratio
+      \textgreater2.0)
+
+    \item Oil/natural gas models using news and 15-min futures (Sharpe
+      ratio 3-5)
+
+    \item Macroeconomic signals from supply chain datasets (Sharpe ratio
+      \textasciitilde1-1.5)
+
+    \item Spot foreign exchange (FX) models using purchasing power parity
+      (Sharpe ratio \textasciitilde2-3)
+
+    \item Short-Term Interest Rate (STIR)/bonds future arbitrage with treasury
+      auction data (Sharpe ratio \textasciitilde1.5-2)
+
+    \item Microstructure models using order book data (Sharpe ratio
+      \textgreater3.0)
+  \end{itemize}
+
+% ------------------------------------------------------------------------------
+  \subsection{Asset Classes and Trading Frequencies}
+  \label{asset-classes-and-trading-frequencies}
+
+  \textbf{Primary Targets}:
+
+  \begin{itemize}
+    \item US equities (market neutral, sector neutral, directional
+      strategies)
+
+    \item Global futures (outrights, calendar spreads for financials,
+      energy, interest rates, currencies, commodities, agriculture)
+
+    \item US exchange-traded funds (ETFs) for factor and sector prediction
+      strategies
+  \end{itemize}
+
+  \textbf{Secondary Targets}:
+
+  \begin{itemize}
+    \item Spot foreign exchange
+
+    \item Global equities (Japan, Europe)
+  \end{itemize}
+
+  \textbf{Trading Frequencies}:
+
+  \begin{itemize}
+    \item Mid-frequency strategies ranging from minutes to days
+
+    \item Optimal frequency depends on the alpha models from specific alternative
+      data sets and transaction cost estimates
+  \end{itemize}
+
+  \textbf{Frequency Examples by Data Type}:
+
+  \begin{itemize}
+    \item Many models from alternative data sets trade once per day
+
+    \item Some data sets (news, social sentiment, blogs) can be traded at
+      higher frequencies, from 15-minute intervals up to every minute
+
+    \item Other data sets allow trading around specific events (earnings,
+      mergers and acquisitions, executive departures, credit rating changes)
+      on the time scale of hours, days, or weeks
+
+    \item Some models combine market microstructure data with fast alternative
+      data (e.g., news) to trade on minutely or hourly time scales
+  \end{itemize}
+
+% ==============================================================================
+  \section{Research Methodology}
+  \label{research-methodology}
+
+  My approach to alpha-generation research is designed to combat overfitting
+  while maintaining high research velocity. The methodology combines
+  rigorous statistical controls with practical mechanisms to prevent
+  common pitfalls in quantitative finance.
+
+  I follow a structured process that prioritizes data integrity and
+  statistical rigor:
+
+  \begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+
+    \item \textbf{Data Isolation}: Separate holdout data immediately before
+      any work begins to prevent information leakage
+
+    \item \textbf{Exploratory Analysis}: Rigorously explore raw data without
+      supervision from prices, understanding biases, collection processes,
+      and data integrity
+
+    \item \textbf{Literature Review}: Review context and generation of data
+      sets while avoiding publication bias
+
+    \item \textbf{Hypothesis Formulation}: Specify all hypotheses upfront,
+      counting every parameter choice as a separate hypothesis
+
+    \item \textbf{Feature Engineering}:
+
+      \begin{itemize}
+        \item Apply data transformations (e.g., differentiation, standardization,
+          outlier detection) to extract information from data
+
+        \item Dimensionality reduction using Principal Component Analysis
+          (PCA) and Independent Component Analysis (ICA)
+
+        \item Deseasonalization and residualization
+      \end{itemize}
+
+    \item \textbf{Backtesting}: Test hypotheses using cross-validation,
+      regularization, and walk-forward testing
+
+    \item \textbf{Robustness Testing}: Bootstrap analysis, sensitivity
+      analysis, and clipping tests
+
+    \item \textbf{Stationarity Testing}: Verify metrics remain consistent
+      over time
+
+    \item \textbf{Multiple Hypothesis Correction}: Apply Benjamini-Hochberg
+      adjustment and White-reality check
+
+    \item \textbf{Independent Review}: Double-check analysis and implementation
+      with fresh eyes
+
+    \item \textbf{Out-of-Sample (OOS) Validation}: Open OOS box only when
+      no further changes are possible
+
+    \item \textbf{Portfolio Integration}:
+
+      \begin{itemize}
+        \item Apply transaction cost models
+
+        \item Test correlation with existing signals
+
+        \item Mean-variance optimization
+      \end{itemize}
+  \end{enumerate}
+
+% ------------------------------------------------------------------------------
+  \subsection{Controlling Overfitting}
+  \label{controlling-overfitting}
+
+  This process combats overfitting through multiple layers of protection:
+
+  \begin{itemize}
+    \item \textbf{Statistical Controls}:
+
+      \begin{itemize}
+        \item In-sample cross-validation and OOS testing
+
+        \item Prevent train/test information leakage to trust OOS results
+
+        \item Multiple hypothesis testing corrections (Benjamini-Hochberg
+          adjustment, White-reality check)
+
+        \item Bootstrap and sensitivity analysis for robustness
+      \end{itemize}
+
+    \item \textbf{Process Discipline}:
+
+      \begin{itemize}
+        \item Specify and count all hypotheses upfront
+
+        \item Do not HARK (Hypothesize After Results are Known)
+
+        \item Maintain velocity to turn ideas into trading strategies quickly
+      \end{itemize}
+
+    \item \textbf{Practical Safeguards}:
+
+      \begin{itemize}
+        \item Implement mechanisms to avoid mistakes (e.g., future
+          peaking, overly optimistic assumptions on market impact)
+
+        \item Apply common sense to model validation and interpretation
+
+        \item Independent review with fresh eyes
+      \end{itemize}
+  \end{itemize}
+
+% ------------------------------------------------------------------------------
+  \subsection{Machine Learning and AI Approach}
+  \label{machine-learning-and-ai-approach}
+
+  My philosophy on applying AI and ML to quantitative finance emphasizes
+  complementing traditional methods rather than replacing them:
+
+  \textbf{Core Principles}:
+
+  \begin{itemize}
+    \item Accelerate how research in finance is done (not change the
+      basics of quant research)
+
+    \item Extract forecasts from noisy and high-dimensional data sets
+
+    \item Complement traditional statistical methods (not replace them)
+  \end{itemize}
+
+  \textbf{Implementation Strategy}:
+
+  \begin{itemize}
+    \item \textbf{Simple First}: Simple models should always be preferred
+      over complex ones
+
+    \item \textbf{Balance Complexity}: Strike a balance between model complexity
+      and data to minimize overfitting
+
+    \item \textbf{Strategic Application}: Deploy machine learning when:
+
+      \begin{itemize}
+        \item New classes of data become available
+
+        \item Old alpha strategies are arbitraged away to extract more information
+
+        \item Simpler models lack capacity to explain market reactions
+
+        \item Widely copied strategies diminish headroom
+      \end{itemize}
+  \end{itemize}
+
+  \textbf{Applications in Practice}:
+
+  \begin{itemize}
+    \item Feature extraction from alternative data sets
+
+    \item Natural language processing (NLP) for news and social sentiment
+      analysis
+
+    \item Deep learning for text processing
+
+    \item Dimensionality reduction and residualization
+
+    \item Pattern recognition in complex, high-dimensional data
+  \end{itemize}
+
+  \textbf{Modern AI Technologies}:
+
+  Recent advances in AI have opened new possibilities for quantitative finance,
+  which I evaluate within my rigorous research framework:
+
+  \begin{itemize}
+    \item \textbf{Large Language Models (LLMs)}: Applying models like GPT
+      and Claude for extracting nuanced information from financial text,
+      earnings call transcripts, and regulatory filings. LLMs excel at
+      understanding context and relationships that traditional NLP
+      methods miss.
+
+    \item \textbf{Transformer Architectures}: Using attention mechanisms
+      for both time-series forecasting and text analysis. Transformers
+      capture long-range dependencies in market data and can model
+      complex temporal patterns.
+
+    \item \textbf{Graph Neural Networks (GNNs)}: Leveraging GNNs to model
+      knowledge graphs in causal inference, capturing relationships
+      between companies, sectors, and economic factors. This aligns with
+      my research on causal AI and enhances understanding of market interconnections.
+
+    \item \textbf{Deep Learning Frameworks}: Utilizing PyTorch and TensorFlow
+      for building custom architectures tailored to financial prediction
+      tasks.
+  \end{itemize}
+
+  These modern techniques are most valuable when:
+
+  \begin{itemize}
+    \item Traditional methods cannot capture the complexity in the data
+
+    \item Sufficient data is available to avoid overfitting
+
+    \item The model remains interpretable or can be validated through rigorous
+      testing
+
+    \item The incremental benefit justifies the additional complexity
+  \end{itemize}
+
+  \textbf{Key Insight}: Traditional finance relies on heuristics and
+  ordinary least squares (OLS) regression. ML offers tools to extract value
+  that traditional methods cannot access, but must be applied rigorously
+  within the disciplined research framework to avoid overfitting in
+  financial markets' low signal-to-noise environment.
+
+% ==============================================================================
+  \section{Technology and Infrastructure}
+  \label{technology-and-infrastructure}
+
+  I have built comprehensive trading infrastructure to support the
+  research process and production trading.
+
+  \textbf{Core Infrastructure Components}:
+
+  \begin{itemize}
+    \item Toolkit for exploratory analysis of alternative data
+
+    \item Research pipeline (feature computation, hypothesis testing,
+      cross-validation)
+
+    \item Event study framework for event-driven trading
+
+    \item Backtesting system for multiple asset classes
+
+    \item Mean-variance optimizer with constraints (cvxopt, numpy)
+
+    \item Portfolio attribution and analysis tools
+
+    \item Market impact models
+
+    \item Real-time data processing pipelines
+
+    \item Automated model deployment system
+  \end{itemize}
+
+  \textbf{Technology Stack}:
+
+  \emph{Core Platform}:
+
+  \begin{itemize}
+    \item Linux-based infrastructure with Python as primary language
+
+    \item Scientific computing: NumPy, pandas, SciPy for numerical
+      analysis
+
+    \item Traditional ML: scikit-learn for classical machine learning
+      algorithms
+
+    \item Deep learning: PyTorch and TensorFlow for neural network
+      architectures
+
+    \item Optimization: cvxopt for portfolio optimization, custom solvers
+      for constraints
+  \end{itemize}
+
+  \emph{Data and ML Operations}:
+
+  \begin{itemize}
+    \item Cloud infrastructure: Amazon AWS (EC2, S3, RDS) for scalable
+      compute and storage
+
+    \item Data pipelines: Real-time and batch processing for market and
+      alternative data
+
+    \item Version control: Git for code, DVC for data versioning
+
+    \item MLOps: Model versioning, automated retraining, and deployment
+      pipelines
+
+    \item Monitoring: Real-time model performance tracking and alerting
+      systems
+  \end{itemize}
+
+  \emph{Integration and Deployment}:
+
+  \begin{itemize}
+    \item API integrations for market data (Bloomberg, Reuters), fundamental
+      data (Compustat), and alternative data sources
+
+    \item Order management system (OMS) integration for trade execution
+
+    \item Database systems: PostgreSQL for structured data, time-series databases
+      for market data
+
+    \item Two complete end-to-end trading systems built from scratch (data
+      ingestion through portfolio construction)
+  \end{itemize}
+
+% ==============================================================================
+  \section{Example of Trading Research in 2015-2019}
+  \label{example-of-trading-research-in-2015-2019}
+
+  The following example illustrates the application of my research
+  methodology in practice, covering the period from 2015 to 2019.
+
+% ------------------------------------------------------------------------------
+  \subsection{2015: Building the Foundation}
+  \label{building-the-foundation}
+
+  \textbf{Context}:
+
+  \begin{itemize}
+    \item Joined as the 2nd person in the alternative data group in Berkeley
+
+    \item No existing research pipeline for ``low frequency'' trading,
+      no data APIs
+
+    \item Everything was geared towards high-frequency trading (HFT) with
+      a pervasive assumption that nothing was held overnight
+
+    \item Initial focus: futures markets
+  \end{itemize}
+
+  \textbf{Futures Trading Scope:}
+
+  \begin{itemize}
+    \item 80 futures contracts across US, Europe, and Asia with varying liquidity
+      levels
+
+      \begin{itemize}
+        \item Asset classes: equity, fixed income, currency, commodities,
+          energies
+
+        \item Instruments: outrights, calendar spreads, butterflies (curvature
+          of term structure)
+
+        \item Trading frequencies:
+
+          \begin{itemize}
+            \item 20 contracts: Time-Weighted Average Price (TWAP) to
+              TWAP (trade over the day)
+
+            \item 13/19 contracts: 5 minutes
+
+            \item Intraday: around open, around close, open/mid-day (good
+              results but not traded due to operational complexity and redundancy)
+          \end{itemize}
+      \end{itemize}
+  \end{itemize}
+
+% ------------------------------------------------------------------------------
+  \subsection{2016-2017: Scaling Up}
+  \label{scaling-up}
+
+  \textbf{By mid-2016}:
+
+  \begin{itemize}
+    \item Deployed \textasciitilde40 models across multiple strategies:
+
+      \begin{itemize}
+        \item Macroeconomic
+
+        \item Alternative data
+
+        \item Microstructure
+
+        \item Price-volume (Commodity Trading Advisor-like)
+      \end{itemize}
+
+    \item Several alternative data models from 4-5 datasets online:
+
+      \begin{itemize}
+        \item Macroecon (GDP estimates tracking trains and ships)
+
+        \item Oil models using oil production and temperature data
+
+        \item News sentiment
+
+        \item Social media sentiment
+
+        \item Microstructure and price-based futures models
+      \end{itemize}
+
+    \item Research hit rate \textasciitilde50\% (2-3 data sets didn't
+      pan out)
+
+    \item Historical Sharpe ratio \textasciitilde4-5 for futures, before
+      costs
+  \end{itemize}
+
+  \textbf{Teza Futures Returns (Jan 2016 - Jan 2017):}
+
+  \begin{itemize}
+    \item Overall: Up a few percent (moderate performance)
+
+    \item Alternative data signals: Performed well
+  \end{itemize}
+
+% ------------------------------------------------------------------------------
+  \subsection{2017-2018: Peak Performance and Transition}
+  \label{peak-performance-and-transition}
+
+  \textbf{2017 Performance}:
+
+  \begin{itemize}
+    \item First year when the futures system was fully completed
+
+    \item \$1B assets under management (AUM)
+
+    \item \textasciitilde25\% of risk allocated to alternative data
+
+    \item Mid-2016 to end of 2017: Sharpe ratio \textasciitilde3, \$90M profit
+      and loss (PnL)
+
+    \item 2x volatility target → returns \textasciitilde56\%
+  \end{itemize}
+
+  \textbf{Strategic Shift:}
+
+  \begin{itemize}
+    \tightlist
+
+    \item After 2017, started focusing on equities, FX, and ETFs
+  \end{itemize}
+
+  \textbf{Company Restructuring:}
+
+  \begin{itemize}
+    \item Significant organizational changes:
+
+      \begin{itemize}
+        \item Leadership departures: Chief Investment Officer (CIO), Chief
+          Risk Officer (CRO), and 2 Chief Technology Officers (CTOs)
+          left
+
+        \item HFT business sold to QuantLab (70 people plus substantial
+          core infrastructure)
+
+        \item Previously working infrastructure had to be reimplemented from
+          scratch
+      \end{itemize}
+  \end{itemize}
+
+% ------------------------------------------------------------------------------
+  \subsection{2018-2019: Challenges and Resilience}
+  \label{challenges-and-resilience}
+
+  \textbf{Trading Challenges}:
+
+  \begin{itemize}
+    \item Feb 2018: Significant drawdown in futures (10\% loss in one
+      month)
+
+      \begin{itemize}
+        \item Mean-reversion models started losing money simultaneously
+
+        \item Risk control failure: systems that had been performing
+          well received increased weight, amplifying losses
+      \end{itemize}
+
+    \item New portfolio manager (PM) brought in for futures
+
+      \begin{itemize}
+        \item Rebuilt portfolio optimization from scratch using already-researched
+          signals
+
+        \item Started adding signals one at a time with overfitting checks
+
+        \item Sept 2018: Began adding back alternative data signals
+      \end{itemize}
+  \end{itemize}
+
+  \textbf{Alternative Data Signal Deployment Issues:}
+
+  \begin{itemize}
+    \item All alternative data signals (both old and new) were not traded
+      in 2018
+
+      \begin{itemize}
+        \item Affected both equities and futures
+
+        \item When signals were eventually put in production, backtests
+          showed they would have performed well
+      \end{itemize}
+  \end{itemize}
+
+  \textbf{Research Output:}
+
+  In 2018, the alternative data team released \textasciitilde10 signals from
+  4-5 data sets:
+
+  \begin{itemize}
+    \item Compustat ``latency arbitrage'' (SEC data, proprietary)
+
+    \item Macro-econ news for futures (RavenPack)
+
+    \item Multiple news-related signals (both event-driven and
+      continuous, RavenPack)
+
+    \item FX signals estimating Purchasing Power Parity (Numbeo)
+
+    \item Two social sentiment signals (PsychSignal and Social Market
+      Analytics)
+
+    \item Auditor change signals
+
+    \item Company disclosure signals
+  \end{itemize}
+
+% ==============================================================================
+  \section{Example of Quant Strategies}
+  \label{example-of-quant-strategies}
+
+% ------------------------------------------------------------------------------
+  \subsection{US Equity: Daily}
+  \label{us-equity-daily}
+
+  \begin{itemize}
+    \item Frequency: multiple events per day
+
+    \item 6 different models (e.g., earning announcement, stat arb, book
+      pressure)
+  \end{itemize}
+
+  Figure 1 shows the cumulative performance of daily US equity strategies,
+  demonstrating consistent returns across multiple event-driven models with
+  strong risk-adjusted performance.
+
+  \begin{center}
+    \includegraphics[width=6.5in]{image8.png}
+
+    \textit{Figure 1: Daily US equity strategy cumulative performance}
+  \end{center}
+
+% ------------------------------------------------------------------------------
+  \subsection{US Equity: Intraday}
+  \label{us-equity-intraday}
+
+  \begin{itemize}
+    \item Universe
+
+      \begin{itemize}
+        \tightlist
+
+        \item 600 most liquid US equities, updated monthly
+      \end{itemize}
+
+    \item Microstructure-based
+
+      \begin{itemize}
+        \tightlist
+
+        \item Machine learning on order book data
+      \end{itemize}
+
+    \item Trade 5 to 30 minute waves
+
+      \begin{itemize}
+        \item With or without overnight holdings
+
+        \item Static feature weights derived independently from price data
+      \end{itemize}
+
+    \item Execution
+
+      \begin{itemize}
+        \tightlist
+
+        \item Mostly passive/market making TWAP/VWAP
+      \end{itemize}
+
+    \item Sharpe ratio: \textgreater5
+
+    \item Capacity: \$10-50M
+  \end{itemize}
+
+  Figures 2-3 illustrate the intraday US equity strategy performance,
+  showing cumulative returns and drawdown characteristics for high-frequency
+  microstructure-based models achieving Sharpe ratios exceeding 5.
+
+  \begin{center}
+    \includegraphics[width=4.48in]{image6.png}
+    \includegraphics[width=4.40in]{image7.png}
+
+    \textit{Figures 2-3: Intraday equity strategy performance and drawdowns}
+  \end{center}
+
+% ------------------------------------------------------------------------------
+  \subsection{Alternative-data for US Equities / Futures}
+  \label{alternative-data-for-us-equities-futures}
+
+  Between 2015 and 2019 I was head of data at Teza. My main duty was to
+  produce alpha strategies for Teza funds. I've supervised a team of 5 researchers
+  in Berkeley, CA and around 10 researchers / developers in the Moscow, Russia
+  office.
+
+  Teza ran two funds from external investors:
+
+  \begin{itemize}
+    \item Global futures (around \$1b)
+
+    \item US equities (around \$600m)
+  \end{itemize}
+
+  My team contributed around 25\% of PnL to both funds.
+
+  Figure 4 presents the realized performance of the global futures fund
+  from its 2015 launch, demonstrating consistent profitability with Sharpe
+  ratio of approximately 3 during peak performance periods (2016-2017).
+
+  \begin{center}
+    \includegraphics[width=6.5in]{image3.png}
+
+    \textit{Figure 4: Global futures fund realized performance (2015-2019)}
+  \end{center}
+
+  Figures 5-6 show the US equity fund performance launched in 2017,
+  illustrating returns and risk metrics across different market conditions.
+
+  \begin{center}
+    \includegraphics[width=6.5in]{image2.png}
+
+    \textit{Figure 5: US equity fund performance (2017-2019)}
+  \end{center}
+
+  \begin{center}
+    \includegraphics[width=6.5in]{image1.png}
+
+    \textit{Figure 6: US equity fund risk metrics and returns}
+  \end{center}
+
+  Figure 7 details the composition and diversification across strategy types,
+  showing the contribution of alternative data models alongside microstructure
+  and fundamental strategies.
+
+  \begin{center}
+    \includegraphics[width=6.5in]{image5.png}
+
+    \textit{Figure 7: Strategy composition and diversification}
+  \end{center}
+
+  External validation of this work appeared in the Wall Street Journal:
+
+  From \href{https://www.wsj.com/articles/the-future-is-bumpy-high-tech-hedge-fund-hits-limits-of-robot-stock-picking-1513007557}{The
+  Future Is Bumpy: High-Tech Hedge Fund Hits Limits of Robot Stock Picking
+  - WSJ}:
+
+  ``Teza Capital Management LLC credits machine learning in part for its
+  more than 50\% gain so far this year.''
+
+% ------------------------------------------------------------------------------
+  \subsection{Alpha research on Crypto statarb}
+  \label{alpha-research-on-crypto-statarb}
+
+  An example of alpha HFT strategies for crypto is below.
+
+  \begin{itemize}
+    \item \emph{Instrument type}: Perpetual futures 25 crypto
+
+    \item \emph{Universe}: Most liquid 25 crypto tokens (excluding
+      stable coins)
+
+      \begin{itemize}
+        \item E.g., ETH, BTC, SAND, STORJ, GMT, AVAX, BNB, APE, MATIC,
+          DOT, UNFI, LINK, XRP, RUNE, NEAR, FTM, WAVES, AXS, OGN, DOGE, SOL
+
+        \item Total daily trading volume: Around \$1.2 billion
+      \end{itemize}
+
+    \item \emph{Exchange}: Binance
+
+    \item \emph{Performance}: Figure 8 displays the cumulative returns of
+      the cryptocurrency statistical arbitrage strategy, achieving a Sharpe
+      ratio of approximately 7 with 150\% annualized returns since inception
+      in January 2021.
+
+      \begin{center}
+        \includegraphics[width=6.24in]{image4.png}
+
+        \textit{Figure 8: Cryptocurrency statistical arbitrage cumulative returns}
+      \end{center}
+
+      \begin{itemize}
+        \item \emph{Number of trades per month}: 216,000 (=25 cryptos * 12
+          trades per hour * 24 hours * 30 days)
+
+        \item \emph{Annualized return}: 150\% / yr since inception (Jan 2021)
+
+        \item \emph{YTD returns}: 310\% / yr, with a return of \$1,947,168,
+          given a target Gross Market Value (GMV) of \$750,000 and
+          target daily dollar volatility of \$150,000
+
+        \item \emph{Sharpe ratio} (measure of risk-adjusted returns): \textasciitilde7
+
+        \item \emph{Risk characteristics}: market neutral within 5\%, less
+          than 20\% concentration in each token, the longest drawdown was
+          14 days
+      \end{itemize}
+
+    \item \emph{Basic economic principle}: use market microstructure and
+      order book-based signals to predict price movement on a short-time
+      timeframe (ranging from minutes to hours)
+
+    \item \emph{Holding period}: around 30 mins
+
+      \begin{itemize}
+        \tightlist
+
+        \item We can liquidate the entire book within 15 mins
+      \end{itemize}
+
+    \item \emph{Brief description}: Every 5 to 15 mins we run our own proprietary
+      statistical arbitrage model. We then find the optimal portfolio
+      using our proprietary Bayesian mean-variance optimization, given current
+      holdings, ideal holdings as predicted by the model, cost to execute,
+      and risk in terms of the covariance matrix. We impose various constraints
+      (e.g., market neutrality within 5\%, less than 20\% concentration in
+      each token). Finally, we place trades through Binance.
+  \end{itemize}
+\end{document}

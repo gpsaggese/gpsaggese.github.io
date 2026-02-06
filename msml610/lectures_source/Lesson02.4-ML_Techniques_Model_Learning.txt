@@ -20,7 +20,7 @@ MSML610: Advanced Machine Learning
 
 ::: columns
 :::: {.column width=65%}
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 
@@ -68,7 +68,7 @@ MSML610: Advanced Machine Learning
      - It works even if there is an analytical solution
 ::::
 :::: {.column width=30%}
- ![](msml610/lectures_source/figures/Lesson6_Gradient_descent_2.png)
+ ![](msml610/lectures_source/figures/Lesson06_Gradient_descent_2.png)
 // TODO: Convert in Tikz or improve
 ::::
 :::
@@ -93,7 +93,7 @@ MSML610: Advanced Machine Learning
     - E.g., logistic regression and linear models
 ::::
 :::: {.column width=30%}
-![](msml610/lectures_source/figures/Lesson6_Gradient_descent_1.png)
+![](msml610/lectures_source/figures/Lesson06_Gradient_descent_1.png)
 // TODO: Convert in Tikz or improve
 ::::
 :::
@@ -196,7 +196,7 @@ MSML610: Advanced Machine Learning
     - Linear approximation fails (higher terms affect values)
     - It "bounces around"
 
-![](msml610/lectures_source/figures/Lesson6_Gradient_descent_3.png){width=90%}
+![](msml610/lectures_source/figures/Lesson06_Gradient_descent_3.png){width=90%}
 // TODO: Put the 3 figures vertically
 
 - **Idea**: vary learning rate $\eta$ during gradient descent

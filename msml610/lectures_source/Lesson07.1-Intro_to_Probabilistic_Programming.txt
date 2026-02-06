@@ -14,14 +14,14 @@ MSML610: Advanced Machine Learning
 \vspace{0.5cm}
 
 \begingroup \Large
-**$$\text{\blue{7.1: Introduction to Probabilistic Programming}}$$**
+**$$\text{\blue{Lesson 07.1: Introduction to Probabilistic Programming}}$$**
 \endgroup
 
 ::: columns
 :::: {.column width=75%}
 \vspace{1cm}
 
-**Instructor**: Dr. GP Saggese - [](gsaggese@umd.edu)
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 

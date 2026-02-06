@@ -18,7 +18,7 @@ UMD DATA605 - Big Data Systems
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{12.1: Streaming and Real-time Analytics}}$$**
+**$$\text{\blue{10.2: Streaming and Real-time Analytics}}$$**
 \endgroup
 
 ::: columns

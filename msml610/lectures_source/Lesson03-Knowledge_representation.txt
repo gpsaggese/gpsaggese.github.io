@@ -16,14 +16,14 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Knowledge Representation}}$$**
+**$$\text{\blue{Lesson 03: Knowledge Representation}}$$**
 \endgroup
 \vspace{1cm}
 
 ::: columns
 :::: {.column width=65%}
 
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 
