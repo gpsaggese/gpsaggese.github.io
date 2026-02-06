@@ -18,14 +18,14 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 \begingroup \Large
-**$$\text{\blue{Machine Learning Theories}}$$**
+**$$\text{\blue{Lesson 05.1: Machine Learning Theories}}$$**
 \endgroup
 \vspace{1cm}
 
 ::: columns
 :::: {.column width=75%}
 \vspace{1cm}
-**Instructor**: Dr. GP Saggese - `gsaggese@umd.edu`
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**:
 
@@ -36,8 +36,6 @@ MSML610: Advanced Machine Learning
 ![](msml610/lectures_source/figures/book_covers/Book_cover_Learning_from_Data.jpg){ height=20% }
 ::::
 :::
-
-
 
 # Is Machine Learning Even Possible?
 
@@ -1019,4 +1017,3 @@ digraph ML_Phases {
   - VC analysis is a warranty, forfeited if data is examined before model
     selection (data snooping)
   - From VC analysis, complexity is that of the initial hypothesis set
-
