@@ -5,7 +5,7 @@ Aggregate, clean, and merge COVID-19 data for time series forecasting with Gluon
 
 Import as:
 
-import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_preprocessing as ttgcpgupr
+import tutorials.tutorial_GluonTS_COVID19_Prediction.utils_preprocessing as ttgcpgupr
 """
 
 import logging

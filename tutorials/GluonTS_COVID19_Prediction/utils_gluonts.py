@@ -5,7 +5,7 @@ Convert COVID-19 data for GluonTS models.
 
 Import as:
 
-import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_gluonts as ttgcpgugl
+import tutorials.tutorial_GluonTS_COVID19_Prediction.utils_gluonts as ttgcpgugl
 """
 
 import logging

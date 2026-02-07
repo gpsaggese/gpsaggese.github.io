@@ -6,20 +6,20 @@ Loads US COVID-19 cases, deaths, and Google mobility data.
 
 Import as:
 
-import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_notebook_loader as ttgcpgunl
+import tutorials.tutorial_GluonTS_COVID19_Prediction.utils_notebook_loader as ttgcpgunl
 """
 
 import logging
 from pathlib import Path
 from typing import Dict
 
-
-from GluonTS_utils_data_io import DataLoader
-from GluonTS_utils_gluonts import (
+# TODO(ai_gp): Use import as ...
+from utils_data_io import DataLoader
+from utils_gluonts import (
     create_gluonts_dataset,
     prepare_train_test_split,
 )
-from GluonTS_utils_preprocessing import (
+from utils_preprocessing import (
     aggregate_to_national,
     extract_national_mobility,
     merge_all_data,
@@ -56,7 +56,7 @@ def check_and_download_data(
     _LOG.info("Attempting to download from Google Drive...\n")
     # Import download function.
     try:
-        from GluonTS_utils_data_download import (
+        from utils_data_download import (
             check_and_download_data as download_data,
         )
 
