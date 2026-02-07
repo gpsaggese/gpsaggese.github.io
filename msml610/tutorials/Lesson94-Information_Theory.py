@@ -14,7 +14,7 @@
 # ---
 
 # %% [markdown]
-# ## Imports
+# # Imports
 
 # %%
 # %load_ext autoreload
@@ -43,7 +43,7 @@ _LOG = logging.getLogger(__name__)
 
 
 # %% [markdown]
-# # Entropy and Uncertainty
+# # Cell 1: Entropy and Uncertainty
 #
 # **Entropy** $H(X)$ of a discrete random variable $X$ is defined as:
 #
@@ -57,26 +57,26 @@ _LOG = logging.getLogger(__name__)
 # Test with fair coin.
 # Two equally likely outcomes → maximum uncertainty, $H = 1$ bit.
 fair_coin = [0.5, 0.5]
-print(f"Fair coin entropy: {utils.calculate_entropy(fair_coin):.4f} bits")
+print(f"Fair coin entropy: {utils.cell1_calculate_entropy(fair_coin):.4f} bits")
 
 # %%
 # Test with biased coin.
 # If heads occurs 90% of the time → less uncertainty, $H < 1$ bit.
 biased_coin = [0.9, 0.1]
 print(
-    f"Biased coin (90-10) entropy: {utils.calculate_entropy(biased_coin):.4f} bits"
+    f"Biased coin (90-10) entropy: {utils.cell1_calculate_entropy(biased_coin):.4f} bits"
 )
 
 # %%
 # Test with broken coin.
 biased_coin = [1.0, 0.0]
 print(
-    f"Biased coin (100-0) entropy: {utils.calculate_entropy(biased_coin):.4f} bits"
+    f"Biased coin (100-0) entropy: {utils.cell1_calculate_entropy(biased_coin):.4f} bits"
 )
 # If heads occurs 100% of the time → no uncertainty, $H = 0$ bit.
 
 # %% [markdown]
-# ## Entropy vs Variance
+# # Cell 2: Entropy vs Variance
 #
 # Entropy and variance are related but measure different properties:
 # - **Variance** measures how far values are from the mean
@@ -90,12 +90,12 @@ print(
 dist1_values = np.array([5 - np.sqrt(2), 5 + np.sqrt(2)])
 dist1_probs = np.array([0.5, 0.5])
 
-filename = "figures/Lesson94_Bimodal_Distribution.png"
-utils.plot_distribution_with_stats(
+file_name = "figures/Lesson94_Bimodal_Distribution.png"
+utils.cell2_plot_distribution_with_stats(
     values=dist1_values,
     probabilities=dist1_probs,
     title="Distribution 1: Two peaks at extremes",
-    save_fig=filename,
+    save_fig=file_name,
 )
 # This distribution has high variance (spread) but low entropy (only 1 bit).
 
@@ -105,7 +105,7 @@ dist2_values = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 dist2_probs = np.array([0.0, 0.0, 0.2, 0.2, 0.2, 0.2, 0.2, 0.0, 0.0, 0.0, 0.0])
 
 file_name = "figures/Lesson94_Uniform_Distribution.png"
-utils.plot_distribution_with_stats(
+utils.cell2_plot_distribution_with_stats(
     values=dist2_values,
     probabilities=dist2_probs,
     title="Distribution 2: Uniform over middle values",
@@ -114,7 +114,7 @@ utils.plot_distribution_with_stats(
 # This distribution has lower variance but higher entropy (~2.32 bits).
 
 # %% [markdown]
-# ## Entropy and Distribution Spread
+# # Cell 3: Entropy and Distribution Spread
 #
 # Generally, more spread in a distribution leads to higher entropy, but there are exceptions:
 # - Increasing the support of a uniform distribution increases variance but not entropy
@@ -127,7 +127,7 @@ uniform_2 = np.array([0.5, 0.5])
 values_2 = np.array([0, 1])
 
 file_name = "figures/Lesson94_Uniform2.png"
-utils.plot_distribution_with_stats(
+utils.cell2_plot_distribution_with_stats(
     values=values_2,
     probabilities=uniform_2,
     title="Uniform distribution over 2 values",
@@ -141,7 +141,7 @@ uniform_4 = np.array([0.25, 0.25, 0.25, 0.25])
 values_4 = np.array([0, 1, 2, 3])
 
 file_name = "figures/Lesson94_Uniform4.png"
-utils.plot_distribution_with_stats(
+utils.cell2_plot_distribution_with_stats(
     values=values_4,
     probabilities=uniform_4,
     title="Uniform distribution over 4 values",
@@ -155,7 +155,7 @@ uniform_8 = np.array([0.125] * 8)
 values_8 = np.array([0, 1, 2, 3, 4, 5, 6, 7])
 
 file_name = "figures/Lesson94_Uniform8.png"
-utils.plot_distribution_with_stats(
+utils.cell2_plot_distribution_with_stats(
     values=values_8,
     probabilities=uniform_8,
     title="Uniform distribution over 8 values",
@@ -164,7 +164,7 @@ utils.plot_distribution_with_stats(
 # A uniform distribution over 8 outcomes has 3 bits of entropy.
 
 # %% [markdown]
-# ## Entropy and Uncertainty: Shape Matters
+# # Cell 4: Entropy and Uncertainty: Shape Matters
 #
 # Entropy is closely related to the shape of the probability distribution:
 # - **Flat (uniform) distribution** → high entropy, high uncertainty
@@ -176,10 +176,12 @@ utils.plot_distribution_with_stats(
 flat_dist = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
 values_flat = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
-utils.plot_distribution_with_stats(
+file_name = "figures/Lesson94_Flat_Distribution.png"
+utils.cell2_plot_distribution_with_stats(
     values=values_flat,
     probabilities=flat_dist,
     title="Flat (uniform) distribution",
+    save_fig=file_name,
 )
 # Uniform distribution has maximum entropy for given number of outcomes.
 
@@ -191,7 +193,7 @@ peaked_dist = np.array(
 values_peaked = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 file_name = "figures/Lesson94_Sharply_Peaked_Distribution.png"
-utils.plot_distribution_with_stats(
+utils.cell2_plot_distribution_with_stats(
     values=values_peaked,
     probabilities=peaked_dist,
     title="Sharply peaked distribution (92% at position 4)",
@@ -204,21 +206,23 @@ utils.plot_distribution_with_stats(
 values_two_peaks = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 two_peaks = np.array([0.0, 0.0, 0.45, 0.0, 0.1, 0.0, 0.45, 0.0, 0.0, 0.0])
 
-utils.plot_distribution_with_stats(
+file_name = "figures/Lesson94_Two_Peaks_Distribution.png"
+utils.cell2_plot_distribution_with_stats(
     values=values_two_peaks,
     probabilities=two_peaks,
     title="Distribution with two close peaks (at positions 2 and 6)",
+    save_fig=file_name,
 )
 # Two equally likely peaks → high entropy (~1.1 bits) despite moderate variance.
 
 # %% [markdown]
-# ## Interactive Visualization: Binary Entropy
+# # Cell 5: Interactive Visualization: Binary Entropy
 #
 # Use the slider below to adjust the probability $p$ of a binary random variable and observe how entropy changes.
 
 # %%
 interact(
-    utils.plot_binary_entropy_interactive,
+    utils.cell5_plot_binary_entropy_interactive,
     p=FloatSlider(
         min=0.00,
         max=1.00,
@@ -247,7 +251,7 @@ dst_dir = "./figures/Lesson94_Binary_Entropy_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
-    utils.plot_binary_entropy_interactive,
+    utils.cell5_plot_binary_entropy_interactive,
     values,
     dst_dir,
     incremental=False,
@@ -256,7 +260,7 @@ ut.generate_animation(
 )
 
 # %% [markdown]
-# # Joint Entropy
+# # Cell 6: Joint Entropy
 #
 # **Joint entropy** $H(X, Y)$ of two variables $X$ and $Y$:
 #
@@ -268,7 +272,7 @@ ut.generate_animation(
 # %%
 # Create interactive widget for joint entropy visualization.
 interact(
-    utils.plot_joint_entropy_interactive,
+    utils.cell6_plot_joint_entropy_interactive,
     dependence=FloatSlider(
         min=0.0,
         max=1.0,
@@ -304,7 +308,7 @@ dst_dir = "./figures/Lesson94_Joint_Entropy_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
-    utils.plot_joint_entropy_interactive,
+    utils.cell6_plot_joint_entropy_interactive,
     values,
     dst_dir,
     incremental=False,
@@ -313,7 +317,7 @@ ut.generate_animation(
 )
 
 # %% [markdown]
-# # Conditional Entropy
+# # Cell 7: Conditional Entropy
 #
 # **Conditional entropy** $H(Y|X)$ measures uncertainty in $Y$ after observing $X$:
 #
@@ -330,7 +334,7 @@ ut.generate_animation(
 # %%
 # Create interactive widget for conditional entropy visualization.
 interact(
-    utils.plot_conditional_entropy_interactive,
+    utils.cell7_plot_conditional_entropy_interactive,
     dependence=FloatSlider(
         min=0.0,
         max=1.0,
@@ -355,7 +359,7 @@ dst_dir = "./figures/Lesson94_Conditional_Entropy_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
-    utils.plot_conditional_entropy_interactive,
+    utils.cell7_plot_conditional_entropy_interactive,
     values,
     dst_dir,
     incremental=False,
@@ -365,7 +369,7 @@ ut.generate_animation(
 
 
 # %% [markdown]
-# # Mutual Information
+# # Cell 8: Mutual Information
 #
 # **Mutual information** $I(X;Y)$ measures how much knowing one variable reduces uncertainty about the other:
 #
@@ -378,7 +382,7 @@ ut.generate_animation(
 # %%
 # Create interactive widget for mutual information with Venn diagram.
 interact(
-    utils.plot_mutual_information_venn_interactive,
+    utils.cell8_plot_mutual_information_venn_interactive,
     dependence=FloatSlider(
         min=0.0,
         max=1.0,
@@ -411,7 +415,7 @@ dst_dir = "./figures/Lesson94_Mutual_Info1_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
-    utils.plot_mutual_information_venn_interactive,
+    utils.cell8_plot_mutual_information_venn_interactive,
     values,
     dst_dir,
     incremental=False,
@@ -433,7 +437,7 @@ dst_dir = "./figures/Lesson94_Mutual_Info2_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
-    utils.plot_mutual_information_venn_interactive,
+    utils.cell8_plot_mutual_information_venn_interactive,
     values,
     dst_dir,
     incremental=False,
@@ -444,7 +448,7 @@ ut.generate_animation(
 # %%
 # Create interactive widget for correlation-based mutual information.
 interact(
-    utils.plot_mutual_info_interactive,
+    utils.cell8_plot_mutual_info_interactive,
     correlation=FloatSlider(
         min=0.0,
         max=1.0,
@@ -469,7 +473,7 @@ dst_dir = "./figures/Lesson94_Mutual_Info_Correlation_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
-    utils.plot_mutual_info_interactive,
+    utils.cell8_plot_mutual_info_interactive,
     values,
     dst_dir,
     incremental=False,
@@ -479,7 +483,7 @@ ut.generate_animation(
 
 
 # %% [markdown]
-# # KL Divergence
+# # Cell 9: KL Divergence
 #
 # **Kullback-Leibler (KL) Divergence** $D_{KL}(P \| Q)$ measures how one distribution differs from another:
 #
@@ -488,7 +492,7 @@ ut.generate_animation(
 # %%
 # Create interactive widget.
 interact(
-    utils.plot_kl_divergence_interactive,
+    utils.cell9_plot_kl_divergence_interactive,
     p1=FloatSlider(
         min=0.05,
         max=0.95,
@@ -526,7 +530,7 @@ dst_dir = "./figures/Lesson94_KL_Divergence_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
-    utils.plot_kl_divergence_interactive,
+    utils.cell9_plot_kl_divergence_interactive,
     values,
     dst_dir,
     incremental=False,
@@ -536,7 +540,7 @@ ut.generate_animation(
 
 
 # %% [markdown]
-# # Cross-Entropy
+# # Cell 10: Cross-Entropy
 #
 # **Cross-entropy** $H(P, Q)$ measures the average number of bits needed to encode data from $P$ using code optimized for $Q$:
 #
@@ -558,7 +562,7 @@ ut.generate_animation(
 
 # Create interactive widget for cross-entropy visualization.
 interact(
-    utils.plot_cross_entropy_interactive,
+    utils.cell10_plot_cross_entropy_interactive,
     p1=FloatSlider(
         min=0.05,
         max=0.95,
@@ -597,7 +601,7 @@ dst_dir = "./figures/Lesson94_Cross_Entropy_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
-    utils.plot_cross_entropy_interactive,
+    utils.cell10_plot_cross_entropy_interactive,
     values,
     dst_dir,
     incremental=False,
@@ -606,7 +610,7 @@ ut.generate_animation(
 )
 
 # %% [markdown]
-# # Data Processing Inequality
+# # Cell 11: Data Processing Inequality
 #
 # **Statement:** Processing data cannot increase information, it can only lose information.
 #
@@ -625,7 +629,7 @@ ut.generate_animation(
 
 # Create interactive widget for data processing inequality visualization.
 interact(
-    utils.plot_data_processing_inequality_interactive,
+    utils.cell11_plot_data_processing_inequality_interactive,
     noise_level=FloatSlider(
         min=0.0,
         max=1.0,
@@ -658,7 +662,7 @@ dst_dir = "./figures/Lesson94_Data_Processing_Inequality_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
-    utils.plot_data_processing_inequality_interactive,
+    utils.cell11_plot_data_processing_inequality_interactive,
     values,
     dst_dir,
     incremental=False,
@@ -667,7 +671,7 @@ ut.generate_animation(
 )
 
 # %% [markdown]
-# # Maximum Entropy Principle
+# # Cell 12: Maximum Entropy Principle
 #
 # **Principle:** Use the distribution with the largest entropy given the constraints.
 #
@@ -677,7 +681,7 @@ ut.generate_animation(
 # - Fixed variance → Normal distribution
 
 # %% [markdown]
-# # Minimum Description Length (MDL)
+# # Cell 13: Minimum Description Length (MDL)
 #
 # **Principle:** Select the model that minimizes total description length:
 #
@@ -697,7 +701,7 @@ ut.generate_animation(
 
 # Create interactive widget for MDL visualization.
 interact(
-    utils.plot_mdl_interactive,
+    utils.cell13_plot_mdl_interactive,
     degree=IntSlider(
         min=1,
         max=8,
@@ -731,7 +735,7 @@ dst_dir = "./figures/Lesson94_MDL_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
-    utils.plot_mdl_interactive,
+    utils.cell13_plot_mdl_interactive,
     values,
     dst_dir,
     incremental=False,
@@ -740,7 +744,7 @@ ut.generate_animation(
 )
 
 # %% [markdown]
-# # Kolmogorov Complexity
+# # Cell 14: Kolmogorov Complexity
 #
 # **Definition:** The length of the shortest program that outputs a string $x$.
 #
@@ -766,7 +770,7 @@ ut.generate_animation(
 # %%
 # Create interactive widget for Kolmogorov Complexity visualization.
 interact(
-    utils.plot_kolmogorov_complexity_interactive,
+    utils.cell14_plot_kolmogorov_complexity_interactive,
     string_type=widgets.Dropdown(
         options=[
             "All Zeros",
@@ -806,7 +810,7 @@ dst_dir = "./figures/Lesson94_Kolmogorov_Complexity_video"
 
 # Generate animation frames with fixed dimensions.
 ut.generate_animation(
-    utils.plot_kolmogorov_complexity_interactive,
+    utils.cell14_plot_kolmogorov_complexity_interactive,
     values,
     dst_dir,
     incremental=False,

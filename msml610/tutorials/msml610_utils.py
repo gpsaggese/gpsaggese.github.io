@@ -18,177 +18,15 @@ import pandas as pd
 import pymc as pm
 import scipy.stats as stats
 import ipywidgets
-from ipywidgets import Button, FloatSlider, FloatText, HBox, IntSlider, IntText
+import PIL
+
 from IPython.display import clear_output, display
-from PIL import Image
 
 import helpers.hdbg as hdbg
 import helpers.hio as hio
 import helpers.hsystem as hsystem
 
 _LOG = logging.getLogger(__name__)
-
-
-# #############################################################################
-# Widget Builder Utilities
-# #############################################################################
-
-
-def _create_slider_widget(
-    *,
-    name: str,
-    description: str,
-    min_val: float,
-    max_val: float,
-    step: float,
-    initial_value: float,
-    is_float: bool = True,
-) -> Tuple:
-    """
-    Create a slider widget with text field and +/- buttons.
-
-    Creates a complete widget control with slider, text input field, and
-    increment/decrement buttons following the notebook conventions.
-
-    :param name: Variable name (e.g., "mu", "N", "seed")
-    :param description: Human-readable description (e.g., "prob of success")
-    :param min_val: Minimum value for the slider
-    :param max_val: Maximum value for the slider
-    :param step: Step size for slider and buttons
-    :param initial_value: Initial value
-    :param is_float: If True, create FloatSlider/FloatText, else IntSlider/IntText
-    :return: Tuple of (slider, text, minus_button, plus_button)
-    """
-    # Create widgets based on type.
-    if is_float:
-        slider = FloatSlider(
-            min=min_val,
-            max=max_val,
-            step=step,
-            value=initial_value,
-            description=f"{name} = {description}",
-            continuous_update=False,
-            style={"description_width": "150px"},
-            layout={"width": "500px"},
-        )
-        text = FloatText(
-            value=initial_value,
-            step=step,
-            description="",
-            layout={"width": "80px"},
-        )
-    else:
-        slider = IntSlider(
-            min=int(min_val),
-            max=int(max_val),
-            step=int(step),
-            value=int(initial_value),
-            description=f"{name} = {description}",
-            continuous_update=False,
-            style={"description_width": "150px"},
-            layout={"width": "500px"},
-        )
-        text = IntText(
-            value=int(initial_value),
-            step=int(step),
-            description="",
-            layout={"width": "80px"},
-        )
-    # Create buttons.
-    minus_button = Button(description="-", layout={"width": "40px"})
-    plus_button = Button(description="+", layout={"width": "40px"})
-    return slider, text, minus_button, plus_button
-
-
-# TODO(ai_gp): Add type hints.
-def _link_slider_widgets(slider, text, minus_button, plus_button) -> None:
-    """
-    Link slider, text field, and buttons together.
-
-    Sets up bidirectional sync between slider and text field, and connects
-    buttons to increment/decrement the slider value.
-
-    :param slider: The slider widget (FloatSlider or IntSlider)
-    :param text: The text input widget (FloatText or IntText)
-    :param minus_button: The decrement button
-    :param plus_button: The increment button
-    """
-
-    def slider_changed(change):
-        text.value = change["new"]
-
-    def text_changed(change):
-        if slider.min <= change["new"] <= slider.max:
-            slider.value = change["new"]
-
-    def minus_clicked(b):
-        slider.value = max(slider.min, slider.value - slider.step)
-
-    def plus_clicked(b):
-        slider.value = min(slider.max, slider.value + slider.step)
-
-    # Connect observers.
-    slider.observe(slider_changed, names="value")
-    text.observe(text_changed, names="value")
-    minus_button.on_click(minus_clicked)
-    plus_button.on_click(plus_clicked)
-
-
-# TODO(ai_gp): Add type hints.
-def _create_widget_box(slider, minus_button, text, plus_button) -> HBox:
-    """
-    Create horizontal box layout for widget controls.
-
-    :param slider: The slider widget
-    :param minus_button: The decrement button
-    :param text: The text input widget
-    :param plus_button: The increment button
-    :return: HBox containing all widgets in proper order
-    """
-    return HBox([slider, minus_button, text, plus_button])
-
-
-def build_widget_control(
-    *,
-    name: str,
-    description: str,
-    min_val: float,
-    max_val: float,
-    step: float,
-    initial_value: float,
-    is_float: bool = True,
-) -> Tuple[Union[FloatSlider, IntSlider], HBox]:
-    """
-    Build a complete widget control with slider, text field, and +/- buttons.
-
-    Convenience function that creates, links, and lays out all widget
-    components in a single call.
-
-    :param name: Variable name (e.g., "mu", "N", "seed")
-    :param description: Human-readable description (e.g., "prob of success")
-    :param min_val: Minimum value for the slider
-    :param max_val: Maximum value for the slider
-    :param step: Step size for slider and buttons
-    :param initial_value: Initial value
-    :param is_float: If True, create FloatSlider/FloatText, else IntSlider/IntText
-    :return: Tuple of (slider, box) where slider is the control widget and box
-        is the HBox layout containing all components
-    """
-    # Create widgets with sliders, text fields, and +/- buttons.
-    slider, text, minus_button, plus_button = _create_slider_widget(
-        name=name,
-        description=description,
-        min_val=min_val,
-        max_val=max_val,
-        step=step,
-        initial_value=initial_value,
-        is_float=is_float,
-    )
-    # Link sliders and text fields.
-    _link_slider_widgets(slider, text, minus_button, plus_button)
-    # Create layout.
-    box = _create_widget_box(slider, minus_button, text, plus_button)
-    return slider, box
 
 
 # #############################################################################
@@ -953,6 +791,232 @@ def plot_dog_in_office_pdf(
 
 
 # #############################################################################
+# Widget Builder Utilities
+# #############################################################################
+
+
+def _create_slider_widget(
+    name: str,
+    description: str,
+    min_val: float,
+    max_val: float,
+    step: float,
+    initial_value: float,
+    *,
+    is_float: bool = True,
+) -> Tuple:
+    """
+    Create a slider widget with text field and +/- buttons.
+
+    Creates a complete widget control with slider, text input field, and
+    increment/decrement buttons following the notebook conventions.
+
+    :param name: Variable name (e.g., "mu", "N", "seed")
+    :param description: Human-readable description (e.g., "prob of success")
+    :param min_val: Minimum value for the slider
+    :param max_val: Maximum value for the slider
+    :param step: Step size for slider and buttons
+    :param initial_value: Initial value
+    :param is_float: If True, create FloatSlider/FloatText, else IntSlider/IntText
+    :return: Tuple of (slider, text, minus_button, plus_button)
+    """
+    # Create widgets based on type.
+    if is_float:
+        slider = ipywidgets.FloatSlider(
+            min=min_val,
+            max=max_val,
+            step=step,
+            value=initial_value,
+            description=f"{name} = {description}",
+            continuous_update=False,
+            style={"description_width": "150px"},
+            layout={"width": "500px"},
+        )
+        text = ipywidgets.FloatText(
+            value=initial_value,
+            step=step,
+            description="",
+            layout={"width": "80px"},
+        )
+    else:
+        slider = ipywidgets.IntSlider(
+            min=int(min_val),
+            max=int(max_val),
+            step=int(step),
+            value=int(initial_value),
+            description=f"{name} = {description}",
+            continuous_update=False,
+            style={"description_width": "150px"},
+            layout={"width": "500px"},
+        )
+        text = ipywidgets.IntText(
+            value=int(initial_value),
+            step=int(step),
+            description="",
+            layout={"width": "80px"},
+        )
+    # Create buttons.
+    minus_button = ipywidgets.Button(description="-", layout={"width": "40px"})
+    plus_button = ipywidgets.Button(description="+", layout={"width": "40px"})
+    return slider, text, minus_button, plus_button
+
+
+def _link_slider_widgets(
+    slider: Union[ipywidgets.FloatSlider, ipywidgets.IntSlider],
+    text: Union[ipywidgets.FloatText, ipywidgets.IntText],
+    minus_button: ipywidgets.Button,
+    plus_button: ipywidgets.Button,
+) -> None:
+    """
+    Link slider, text field, and buttons together.
+
+    Sets up bidirectional sync between slider and text field, and connects
+    buttons to increment/decrement the slider value.
+
+    :param slider: The slider widget (FloatSlider or IntSlider)
+    :param text: The text input widget (FloatText or IntText)
+    :param minus_button: The decrement button
+    :param plus_button: The increment button
+    """
+
+    def slider_changed(change):
+        text.value = change["new"]
+
+    def text_changed(change):
+        if slider.min <= change["new"] <= slider.max:
+            slider.value = change["new"]
+
+    def minus_clicked(b):
+        slider.value = max(slider.min, slider.value - slider.step)
+
+    def plus_clicked(b):
+        slider.value = min(slider.max, slider.value + slider.step)
+
+    # Connect observers.
+    slider.observe(slider_changed, names="value")
+    text.observe(text_changed, names="value")
+    minus_button.on_click(minus_clicked)
+    plus_button.on_click(plus_clicked)
+
+
+def _create_widget_box(
+    slider: Union[ipywidgets.FloatSlider, ipywidgets.IntSlider],
+    minus_button: ipywidgets.Button,
+    text: Union[ipywidgets.FloatText, ipywidgets.IntText],
+    plus_button: ipywidgets.Button,
+) -> ipywidgets.HBox:
+    """
+    Create horizontal box layout for widget controls.
+
+    :param slider: The slider widget
+    :param minus_button: The decrement button
+    :param text: The text input widget
+    :param plus_button: The increment button
+    :return: HBox containing all widgets in proper order
+    """
+    return ipywidgets.HBox([slider, minus_button, text, plus_button])
+
+
+def build_widget_control(
+    name: str,
+    description: str,
+    min_val: float,
+    max_val: float,
+    step: float,
+    initial_value: float,
+    *,
+    is_float: bool = True,
+) -> Tuple[Union[ipywidgets.FloatSlider, ipywidgets.IntSlider], ipywidgets.HBox]:
+    """
+    Build a complete widget control with slider, text field, and +/- buttons.
+
+    Convenience function that creates, links, and lays out all widget
+    components in a single call.
+
+    :param name: Variable name (e.g., "mu", "N", "seed")
+    :param description: Human-readable description (e.g., "prob of success")
+    :param min_val: Minimum value for the slider
+    :param max_val: Maximum value for the slider
+    :param step: Step size for slider and buttons
+    :param initial_value: Initial value
+    :param is_float: If True, create FloatSlider/FloatText, else IntSlider/IntText
+    :return: Tuple of (slider, box) where slider is the control widget and box
+        is the HBox layout containing all components
+    """
+    # Create widgets with sliders, text fields, and +/- buttons.
+    slider, text, minus_button, plus_button = _create_slider_widget(
+        name=name,
+        description=description,
+        min_val=min_val,
+        max_val=max_val,
+        step=step,
+        initial_value=initial_value,
+        is_float=is_float,
+    )
+    # Link sliders and text fields.
+    _link_slider_widgets(slider, text, minus_button, plus_button)
+    # Create layout.
+    box = _create_widget_box(slider, minus_button, text, plus_button)
+    return slider, box
+
+
+def add_fitted_text_box(
+    ax,
+    text,
+    box_xy=(0.02, 0.98),
+    box_width=0.96,
+    box_height=0.96,
+    max_fontsize=16,
+    min_fontsize=8,
+):
+    """
+    Add a text box that fills a given axes region and automatically scales font
+    size to fit vertically.
+    """
+    ax.figure.canvas.draw()
+    renderer = ax.figure.canvas.get_renderer()
+    for fontsize in range(max_fontsize, min_fontsize - 1, -1):
+        txt = ax.text(
+            box_xy[0],
+            box_xy[1],
+            text,
+            transform=ax.transAxes,
+            ha="left",
+            va="top",
+            wrap=True,
+            fontsize=fontsize,
+            family="monospace",
+            bbox=dict(
+                boxstyle="round,pad=1.0",
+                facecolor="wheat",
+                alpha=0.3,
+            ),
+        )
+        bbox = txt.get_window_extent(renderer=renderer)
+        ax_bbox = ax.get_window_extent(renderer=renderer)
+        if bbox.height <= box_height * ax_bbox.height:
+            return txt
+        txt.remove()
+    # fallback (smallest font)
+    ax.text(
+        box_xy[0],
+        box_xy[1],
+        text,
+        transform=ax.transAxes,
+        ha="left",
+        va="top",
+        wrap=True,
+        fontsize=min_fontsize,
+        family="monospace",
+        bbox=dict(
+            boxstyle="round,pad=1.0",
+            facecolor="wheat",
+            alpha=0.3,
+        ),
+    )
+
+
+# #############################################################################
 # Animation generation utilities.
 # #############################################################################
 
@@ -1065,7 +1129,7 @@ def generate_animation(
         dimensions = []
         for frame_file in frame_files:
             frame_path = os.path.join(dst_dir, frame_file)
-            with Image.open(frame_path) as img:
+            with PIL.Image.open(frame_path) as img:
                 dimensions.append((frame_file, img.size))
         # Check if all dimensions are the same.
         unique_dimensions = set(dim[1] for dim in dimensions)

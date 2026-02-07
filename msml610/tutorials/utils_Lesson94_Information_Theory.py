@@ -25,11 +25,13 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 # #############################################################################
-# Entropy calculations
+# Cell 1: Entropy and Uncertainty
 # #############################################################################
 
 
-def calculate_entropy(probabilities: Union[List[float], np.ndarray]) -> float:
+def cell1_calculate_entropy(
+    probabilities: Union[List[float], np.ndarray],
+) -> float:
     r"""
     Calculate Shannon entropy for a discrete probability distribution.
 
@@ -88,8 +90,8 @@ def calculate_joint_entropy(joint_prob: np.ndarray) -> float:
     joint_prob = np.array(joint_prob)
     # Flatten the joint probability distribution.
     joint_prob_flat = joint_prob.flatten()
-    # Use calculate_entropy() for consistent calculation.
-    return calculate_entropy(joint_prob_flat)
+    # Use cell1_calculate_entropy() for consistent calculation.
+    return cell1_calculate_entropy(joint_prob_flat)
 
 
 def calculate_conditional_entropy(joint_prob: np.ndarray) -> float:
@@ -142,8 +144,8 @@ def calculate_mutual_information(joint_prob: np.ndarray) -> float:
     p_x = joint_prob.sum(axis=1)
     p_y = joint_prob.sum(axis=0)
     # Calculate entropies.
-    h_x = calculate_entropy(p_x)
-    h_y = calculate_entropy(p_y)
+    h_x = cell1_calculate_entropy(p_x)
+    h_y = cell1_calculate_entropy(p_y)
     h_xy = calculate_joint_entropy(joint_prob)
     # Mutual information.
     mi = h_x + h_y - h_xy
@@ -169,7 +171,12 @@ def create_correlated_joint_distribution(
     return joint_prob
 
 
-def plot_joint_entropy_interactive(
+# #############################################################################
+# Cell 6: Joint Entropy
+# #############################################################################
+
+
+def cell6_plot_joint_entropy_interactive(
     *,
     dependence: float = 0.5,
     n_samples: int = 100,
@@ -197,8 +204,8 @@ def plot_joint_entropy_interactive(
     p_x = joint_prob.sum(axis=1)
     p_y = joint_prob.sum(axis=0)
     # Calculate entropy metrics.
-    h_x = calculate_entropy(p_x)
-    h_y = calculate_entropy(p_y)
+    h_x = cell1_calculate_entropy(p_x)
+    h_y = cell1_calculate_entropy(p_y)
     h_xy = calculate_joint_entropy(joint_prob)
     mi = calculate_mutual_information(joint_prob)
     # Create DataFrame for entropy metrics (without I(X;Y)).
@@ -352,7 +359,12 @@ def plot_joint_entropy_interactive(
     plt.show()
 
 
-def plot_conditional_entropy_interactive(
+# #############################################################################
+# Cell 7: Conditional Entropy
+# #############################################################################
+
+
+def cell7_plot_conditional_entropy_interactive(
     *, dependence: float = 0.5, figsize: Optional[tuple] = None
 ) -> None:
     """
@@ -383,8 +395,8 @@ def plot_conditional_entropy_interactive(
         joint_prob[1, :] / p_x[1] if p_x[1] > 0 else np.array([0.5, 0.5])
     )
     # Calculate entropy metrics.
-    h_x = calculate_entropy(p_x)
-    h_y = calculate_entropy(p_y)
+    h_x = cell1_calculate_entropy(p_x)
+    h_y = cell1_calculate_entropy(p_y)
     h_xy = calculate_joint_entropy(joint_prob)
     h_y_given_x = calculate_conditional_entropy(joint_prob)
     h_x_given_y = calculate_conditional_entropy(joint_prob.T)
@@ -627,11 +639,11 @@ def calculate_cross_entropy(
 
 
 # #############################################################################
-# Visualization functions
+# Cell 2: Entropy vs Variance
 # #############################################################################
 
 
-def plot_distribution_with_stats(
+def cell2_plot_distribution_with_stats(
     *,
     values: np.ndarray,
     probabilities: np.ndarray,
@@ -653,7 +665,7 @@ def plot_distribution_with_stats(
     # Calculate statistics.
     mean = np.sum(values * probabilities)
     variance = np.sum(probabilities * (values - mean) ** 2)
-    entropy = calculate_entropy(probabilities)
+    entropy = cell1_calculate_entropy(probabilities)
     # Create axis if not provided.
     fig = None
     if ax is None:
@@ -696,7 +708,12 @@ def plot_distribution_with_stats(
         plt.show()
 
 
-def plot_binary_entropy_interactive(
+# #############################################################################
+# Cell 5: Interactive Visualization: Binary Entropy
+# #############################################################################
+
+
+def cell5_plot_binary_entropy_interactive(
     *, p: float = 0.5, n: int = 100, figsize: Optional[tuple] = None
 ) -> None:
     """
@@ -855,8 +872,8 @@ def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
     # Calculate all components.
     p_x = joint_prob.sum(axis=1)
     p_y = joint_prob.sum(axis=0)
-    h_x = calculate_entropy(p_x)
-    h_y = calculate_entropy(p_y)
+    h_x = cell1_calculate_entropy(p_x)
+    h_y = cell1_calculate_entropy(p_y)
     h_xy = calculate_joint_entropy(joint_prob)
     h_y_given_x = calculate_conditional_entropy(joint_prob)
     h_x_given_y = calculate_conditional_entropy(joint_prob.T)
@@ -968,7 +985,12 @@ def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
     plt.show()
 
 
-def plot_mutual_info_interactive(
+# #############################################################################
+# Cell 8: Mutual Information
+# #############################################################################
+
+
+def cell8_plot_mutual_info_interactive(
     *, correlation: float = 0.5, figsize: Optional[tuple] = None
 ) -> None:
     """
@@ -986,8 +1008,8 @@ def plot_mutual_info_interactive(
     mi = calculate_mutual_information(joint_prob)
     p_x = joint_prob.sum(axis=1)
     p_y = joint_prob.sum(axis=0)
-    h_x = calculate_entropy(p_x)
-    h_y = calculate_entropy(p_y)
+    h_x = cell1_calculate_entropy(p_x)
+    h_y = cell1_calculate_entropy(p_y)
     h_xy = calculate_joint_entropy(joint_prob)
     h_y_given_x = calculate_conditional_entropy(joint_prob)
     # Determine interpretation message based on correlation.
@@ -1143,7 +1165,7 @@ def plot_mutual_info_interactive(
     plt.show()
 
 
-def plot_mutual_information_venn_interactive(
+def cell8_plot_mutual_information_venn_interactive(
     *,
     dependence: float = 0.5,
     scenario: str = "Binary",
@@ -1196,8 +1218,8 @@ def plot_mutual_information_venn_interactive(
     p_x = joint_prob.sum(axis=1)
     p_y = joint_prob.sum(axis=0)
     # Calculate all entropy metrics.
-    h_x = calculate_entropy(p_x)
-    h_y = calculate_entropy(p_y)
+    h_x = cell1_calculate_entropy(p_x)
+    h_y = cell1_calculate_entropy(p_y)
     h_xy = calculate_joint_entropy(joint_prob)
     h_y_given_x = calculate_conditional_entropy(joint_prob)
     h_x_given_y = calculate_conditional_entropy(joint_prob.T)
@@ -1443,7 +1465,12 @@ def plot_mutual_information_venn_interactive(
     plt.show()
 
 
-def plot_cross_entropy_interactive(
+# #############################################################################
+# Cell 10: Cross-Entropy
+# #############################################################################
+
+
+def cell10_plot_cross_entropy_interactive(
     *, p1: float = 0.7, q1: float = 0.5, figsize: Optional[tuple] = None
 ) -> None:
     """
@@ -1461,7 +1488,7 @@ def plot_cross_entropy_interactive(
     p = np.array([1 - p1, p1])
     q = np.array([1 - q1, q1])
     # Calculate metrics.
-    h_p = calculate_entropy(p)
+    h_p = cell1_calculate_entropy(p)
     h_pq = calculate_cross_entropy(p, q)
     kl_pq = calculate_kl_divergence(p, q)
     # Determine interpretation based on cross-entropy value.
@@ -1676,7 +1703,12 @@ def plot_cross_entropy_interactive(
     plt.show()
 
 
-def plot_kl_divergence_interactive(
+# #############################################################################
+# Cell 9: KL Divergence
+# #############################################################################
+
+
+def cell9_plot_kl_divergence_interactive(
     *, p1: float = 0.7, q1: float = 0.5, figsize: Optional[tuple] = None
 ) -> None:
     """
@@ -1697,7 +1729,7 @@ def plot_kl_divergence_interactive(
     kl_pq = calculate_kl_divergence(p, q)
     kl_qp = calculate_kl_divergence(q, p)
     ce_pq = calculate_cross_entropy(p, q)
-    h_p = calculate_entropy(p)
+    h_p = cell1_calculate_entropy(p)
     # Determine interpretation based on KL divergence value.
     if kl_pq < 0.01:
         interpretation = (
@@ -1968,7 +2000,12 @@ def create_markov_chain_distribution(
     return p_x, p_y_given_x, p_z_given_y, p_xy, p_yz, p_xz
 
 
-def plot_data_processing_inequality_interactive(
+# #############################################################################
+# Cell 11: Data Processing Inequality
+# #############################################################################
+
+
+def cell11_plot_data_processing_inequality_interactive(
     *,
     noise_level: float = 0.2,
     scenario: str = "Compression",
@@ -1999,9 +2036,9 @@ def plot_data_processing_inequality_interactive(
     p_y = p_xy.sum(axis=0)
     p_z = p_yz.sum(axis=0)
     # Calculate all entropy metrics.
-    h_x = calculate_entropy(p_x)
-    h_y = calculate_entropy(p_y)
-    h_z = calculate_entropy(p_z)
+    h_x = cell1_calculate_entropy(p_x)
+    h_y = cell1_calculate_entropy(p_y)
+    h_z = cell1_calculate_entropy(p_z)
     # Calculate mutual informations.
     mi_xy = calculate_mutual_information(p_xy)
     mi_yz = calculate_mutual_information(p_yz)
@@ -2561,7 +2598,12 @@ def calculate_mdl_components(
     }
 
 
-def plot_mdl_interactive(
+# #############################################################################
+# Cell 13: Minimum Description Length (MDL)
+# #############################################################################
+
+
+def cell13_plot_mdl_interactive(
     *,
     degree: int = 3,
     n_samples: int = 50,
@@ -2930,7 +2972,12 @@ def get_program_description(*, string_type: str, length: int) -> tuple:
     return description, desc_length
 
 
-def plot_kolmogorov_complexity_interactive(
+# #############################################################################
+# Cell 14: Kolmogorov Complexity
+# #############################################################################
+
+
+def cell14_plot_kolmogorov_complexity_interactive(
     *,
     string_type: str = "Random",
     length: int = 64,
