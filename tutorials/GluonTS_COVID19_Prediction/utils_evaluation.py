@@ -5,7 +5,7 @@ Common evaluation metrics for time series forecasting.
 
 Import as:
 
-import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_evaluation as ttgcpguev
+import tutorials.tutorial_GluonTS_COVID19_Prediction.utils_evaluation as ttgcpguev
 """
 
 import logging

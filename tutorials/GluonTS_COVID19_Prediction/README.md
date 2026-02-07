@@ -1,23 +1,17 @@
-# COVID-19 Case Prediction Using GluonTS
-
-**Time Series Forecasting**
+# Summary
 
 This project provides a reproducible pipeline and interactive notebooks for
-probabilistic forecasting of U.S. daily COVID-19 cases. It walks through data
-ingestion (JHU case/death time series and Google Mobility), preprocessing and
-feature engineering (7‑day moving averages, CFR, mobility metrics), and model
-training/evaluation with three GluonTS models: DeepAR, SimpleFeedForward, and
-DeepNPTS. The notebooks show end‑to‑end steps — automatic data download, model
-fitting, posterior/predictive checks, and probabilistic evaluation metrics (MAE,
-RMSE, CRPS).
+probabilistic forecasting of U.S. daily COVID-19 cases using GluonTS. It walks
+through data ingestion (JHU case/death time series and Google Mobility),
+preprocessing and feature engineering (7-day moving averages, CFR, mobility
+metrics), and model training/evaluation with three GluonTS models: DeepAR,
+SimpleFeedForward, and DeepNPTS. The notebooks show end-to-end steps - automatic
+data download, model fitting, posterior/predictive checks, and probabilistic
+evaluation metrics (MAE, RMSE, CRPS).
+
+# COVID-19 Case Prediction Using GluonTS
 
 ## Getting Started
-
-### Prerequisites
-
-- Docker installed and running
-- 8GB RAM minimum
-- Data files (see Data Setup below)
 
 ### Data Setup
 
@@ -41,13 +35,17 @@ download the data manually. We have stored them in a public Google Drive that
 you can access from the links below:
 
 - [US COVID-19 Cases](https://drive.google.com/file/d/1ZfZtoV3PpZblZYES0A5LHCwp54cR8RJL/view)
-  → save as `data/cases.csv`
+  - Save as `data/cases.csv`
 - [US COVID-19 Deaths](https://drive.google.com/file/d/1kYC9nrCnKbNpnoZKz8o6TDMM371gyxbl/view)
-  → save as `data/deaths.csv`
+  - Save as `data/deaths.csv`
 - [US Mobility Report](https://drive.google.com/file/d/1TMqG8Z8vbxmQAv1rNKczYYPCzwT4ZS_q/view)
-  → save as `data/mobility.csv`
+  - Save as `data/mobility.csv`
 
-Or run: `python GluonTS_utils_data_download.py`
+Or run:
+
+```bash
+> python GluonTS_utils_data_download.py
+```
 
 You may need to use `python3` if you run into problems running the above
 command.
@@ -57,7 +55,7 @@ command.
 #### Build the Docker Image
 
 ```bash
-./docker_build.sh
+> ./docker_build.sh
 ```
 
 **Expected Output:**
@@ -92,7 +90,7 @@ subsequent builds
 #### Run Jupyter Notebook
 
 ```bash
-./docker_jupyter.sh
+> ./docker_jupyter.sh
 ```
 
 **Expected Output:**
@@ -110,13 +108,13 @@ Press Ctrl+C to stop
 
 **Open your browser** to `http://localhost:8888` and navigate to:
 
-- `GluonTS.API.ipynb` - Learn model APIs
-- `GluonTS.example.ipynb` - Complete application with a real world use case
+- `GluonTS.API.ipynb`: Learn model APIs
+- `GluonTS.example.ipynb`: Complete application with a real world use case
 
 #### Access Interactive Shell (Optional)
 
 ```bash
-./docker_bash.sh
+> ./docker_bash.sh
 ```
 
 **Expected Output:**
@@ -133,37 +131,29 @@ root@abc123:/workspace#
 These are useful for running Python scripts directly or debugging.
 
 ### File Organization
-```
-TutorTask121_GluonTS_COVID_19_Case_Prediction/
-│
-├── Main Notebooks (Start Here)
-│   ├── GluonTS.API.ipynb           # Model API demonstrations
-│   ├── GluonTS.API.md              # API documentation
-│   ├── GluonTS.example.ipynb       # Complete application
-│   └── GluonTS.example.md          # Application guide
-│
-├── Utility Modules
-│   ├── GluonTS_utils_data_io.py            # Load COVID data
-│   ├── GluonTS_utils_preprocessing.py      # Clean and prepare data
-│   ├── GluonTS_utils_gluonts.py            # GluonTS formatting
-│   ├── GluonTS_utils_evaluation.py         # Metrics and plots
-│   ├── GluonTS_utils_notebook_loader.py    # Quick data loader
-│   └── GluonTS_utils_models.py             # Model wrappers
-│
-├── Data Files
-│   └── data/
-│       ├── cases.csv               # JHU COVID-19 cases
-│       ├── deaths.csv              # JHU COVID-19 deaths
-│       └── mobility.csv            # Google Mobility data
-│
-├── Docker Setup
-│   ├── Dockerfile                  # Container configuration
-│   ├── docker_build.sh             # Build script
-│   ├── docker_jupyter.sh           # Jupyter launcher
-│   └── docker_bash.sh              # Shell access
-│
-└── requirements.txt                # Python dependencies
-```
+
+- Main Notebooks (Start Here)
+  - `GluonTS.API.ipynb`: Model API demonstrations
+  - `GluonTS.API.md`: API documentation
+  - `GluonTS.example.ipynb`: Complete application
+  - `GluonTS.example.md`: Application guide
+- Utility Modules
+  - `GluonTS_utils_data_io.py`: Load COVID data
+  - `GluonTS_utils_preprocessing.py`: Clean and prepare data
+  - `GluonTS_utils_gluonts.py`: GluonTS formatting
+  - `GluonTS_utils_evaluation.py`: Metrics and plots
+  - `GluonTS_utils_notebook_loader.py`: Quick data loader
+  - `GluonTS_utils_models.py`: Model wrappers
+- Data Files
+  - `data/cases.csv`: JHU COVID-19 cases
+  - `data/deaths.csv`: JHU COVID-19 deaths
+  - `data/mobility.csv`: Google Mobility data
+- Docker Setup
+  - `Dockerfile`: Container configuration
+  - `docker_build.sh`: Build script
+  - `docker_jupyter.sh`: Jupyter launcher
+  - `docker_bash.sh`: Shell access
+- `requirements.txt`: Python dependencies
 
 ### Model Comparison
 
@@ -177,10 +167,10 @@ TutorTask121_GluonTS_COVID_19_Case_Prediction/
 
 ```mermaid
 flowchart TB
-    A[Raw Data Sources] --> B[JHU Cases & Deaths]
+    A[Raw Data Sources] --> B[JHU Cases and Deaths]
     A --> C[Google Mobility]
 
-    B --> E[Load & Parse]
+    B --> E[Load and Parse]
     C --> E
 
     E --> G[Aggregate to National Level]
@@ -205,17 +195,17 @@ flowchart TB
 
 ### Features Used
 
-1. **Target:** Daily COVID-19 cases (7-day moving average)
-2. **Deaths Features:** Daily deaths (MA7), cumulative deaths, CFR
-3. **Mobility Features:** Retail, grocery, parks, transit, workplaces,
-   residential
+- **Target**: Daily COVID-19 cases (7-day moving average)
+- **Deaths Features**: Daily deaths (MA7), cumulative deaths, CFR
+- **Mobility Features**: Retail, grocery, parks, transit, workplaces,
+  residential
 
-**Metrics Explained:**
+**Metrics Explained**
 
-- **MAE:** Average absolute difference (lower = better)
-- **RMSE:** Penalizes large errors more (lower = better)
-- **MAPE:** Percentage error, scale-independent (lower = better)
-- **CRPS:** Probabilistic forecast quality (lower = better)
+- **MAE** = Average absolute difference (lower = better)
+- **RMSE** = Penalizes large errors more (lower = better)
+- **MAPE** = Percentage error, scale-independent (lower = better)
+- **CRPS** = Probabilistic forecast quality (lower = better)
 
 ## Troubleshooting
 
@@ -225,17 +215,17 @@ flowchart TB
 
 **Solution:** Stop existing Jupyter or change port:
 
-```bash
-# Edit docker_jupyter.sh, line 14:
--p 8889:8888  # Use 8889 instead
-```
+- Edit `docker_jupyter.sh`, line 14:
+  ```bash
+  -p 8889:8888  # Use 8889 instead
+  ```
 
 **Problem:** Docker build fails
 
 **Solution:** Ensure Docker is running:
 
 ```bash
-docker info
+> docker info
 ```
 
 ### Training Issues
@@ -268,7 +258,7 @@ batch_size = 16  # Instead of 32
 **Solution:** Verify data directory:
 
 ```bash
-ls data/
+> ls data/
 # Should show: cases.csv, deaths.csv, mobility.csv
 ```
 
@@ -297,44 +287,44 @@ get them.
 
 ## Technical Specifications
 
-**Python:** 3.10+  
-**Framework:** GluonTS 0.14.0 with PyTorch backend  
-**Hardware:** CPU-optimized, Apple Silicon compatible  
-**Docker:** Multi-stage build with slim base image  
-**Data:** 1,143 days training, 14 days testing
+- **Python**: 3.10+
+- **Framework**: GluonTS 0.14.0 with PyTorch backend
+- **Hardware**: CPU-optimized, Apple Silicon compatible
+- **Docker**: Multi-stage build with slim base image
+- **Data**: 1,143 days training, 14 days testing
 
 ## Quick Command Reference
 
 ```bash
 # Check data files
-python GluonTS_utils_data_download.py
+> python GluonTS_utils_data_download.py
 
 # Build Docker image
-./docker_build.sh
+> ./docker_build.sh
 
 # Run Jupyter (default)
-./docker_jupyter.sh
+> ./docker_jupyter.sh
 
 # Interactive shell
-./docker_bash.sh
+> ./docker_bash.sh
 
 # Stop container
 # Press Ctrl+C in terminal where Jupyter is running
 
 # View running containers
-docker ps
+> docker ps
 
 # Remove all containers
-docker rm $(docker ps -aq)
+> docker rm $(docker ps -aq)
 ```
 
 ## Data Files
 
 The following data files should be in the `data/` directory:
 
-- `cases.csv` (17 MB) - JHU COVID-19 confirmed cases
-- `deaths.csv` (11 MB) - JHU COVID-19 deaths
-- `mobility.csv` (97 MB) - Google Mobility Reports
+- `cases.csv` (17 MB): JHU COVID-19 confirmed cases
+- `deaths.csv` (11 MB): JHU COVID-19 deaths
+- `mobility.csv` (97 MB): Google Mobility Reports
 
 Download from:
 https://drive.google.com/drive/folders/1qMDGBstdY8H2hYpz8xSolhzNOsVxNHMA

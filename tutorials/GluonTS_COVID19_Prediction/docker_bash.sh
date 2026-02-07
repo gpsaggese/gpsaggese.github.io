@@ -1,17 +1,21 @@
 #!/bin/bash
 
-# Run interactive bash shell in Docker container
+# Exit immediately if any command exits with a non-zero status.
+set -e
 
-echo "Starting Interactive Bash Shell"
-echo "=========================================="
-echo "Working directory: /workspace"
-echo "Type 'exit' to leave"
-echo "=========================================="
-echo ""
+# Print each command to stdout before executing it.
+set -x
 
-docker run -it --rm \
-    -v "$(pwd)":/workspace \
+# Source Docker image naming configuration.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source $SCRIPT_DIR/docker_name.sh
+
+docker image ls $FULL_IMAGE_NAME
+
+CONTAINER_NAME=$IMAGE_NAME
+docker run --rm -ti \
+    --name $CONTAINER_NAME \
+    -p 8888:8888 \
     -e PYTORCH_ENABLE_MPS_FALLBACK=1 \
-    --name gluonts-bash \
-    gluonts-covid \
-    /bin/bash
+    -v $(pwd):/data \
+    $FULL_IMAGE_NAME

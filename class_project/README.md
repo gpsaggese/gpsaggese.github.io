@@ -104,7 +104,7 @@ contribution practices.
 
 ## Pre-requisites
 
-- Watch, star, and fork the Causify.AI repos
+- Watch, star, and fork the repos
   - [`umd_classes`](https://github.com/gpsaggese/umd_classes)
   - [`helpers`](https://github.com/causify-ai/helpers)
 
@@ -221,10 +221,11 @@ development.
 ### `docker_template`
 
 - There are simple scripts (`docker_build.sh`, `docker_bash.sh`,
-  `docker_jupyter.sh`) to help you build the container, launch it
+  `docker_jupyter.sh`) to help you build the container, launch it, and debug it
 
-- In this approach each directory is completely different and nothing is shared
-  - The only common part is that there are scripts with a common interface that
+- In this approach each directory is different and nothing is shared among
+  directories and projects
+  - The only common part is that there are scripts with a shared interface that
     makes it easy to understand how to run the basic functionalities
   - This is the approach we use for the `data605/tutorials`
 
@@ -232,7 +233,7 @@ development.
   - `class_project/docker_template`
   - `class_project/docker_template_example`
 
-- To use it:
+- To use this approach:
   ```
   > cp -r class_project/docker_template ...
   ```
@@ -240,12 +241,35 @@ development.
     project-specific dependencies as needed
 
 - Pros
-  - Very simple to use: copy and modify
+  - Very simple to use: just copy and modify
 
 - Cons
   - Lots of code repetition
-  - No reuse: adding a functionality to one script doesn't apply to the rest
-  - Uses bash scripts
+  - No reuse: adding a functionality to one script doesn't apply to the rest of
+    the scripts
+  - Bash scripts are difficult to maintain and error prone
+
+### `docker_common`
+
+- This approach is an evolution of the `docker_template` approach
+  - It uses the same conceptual interface (e.g., `docker_build.sh`, ...)
+  - The scripts share code with `class_project/docker_common/utils.sh`
+  - The scripts that are not changed use symbolic links to avoid copy-paste
+
+- Example
+  - `class_project/docker_common`
+
+- To use it:
+  ```
+  > class_project/docker_common/copy_docker_files.py --dst_dir ...
+  > ./dev_scripts_helpers/system_tools/create_links.py ...
+  ```
+
+- Pros
+  - There is some common / shared code even if they are bash scripts
+
+- Cons
+  - Bash scripts are difficult to maintain and error prone
 
 ### Causify Dev System
 
@@ -260,28 +284,6 @@ development.
 
 - Cons
   - More complex to set up
-
-### `docker_common`
-
-- This approach is an evolution of the `docker_template` approach
-  - It uses the same script interface
-  - The scripts share code with `class_project/docker_common/utils.sh`
-  - The scripts that don't change use links
-
-- Example
-  - `class_project/docker_common`
-
-- To use it:
-  ```
-  > class_project/docker_common/copy_docker_files.py --dst_dir ...
-  > ./dev_scripts_helpers/system_tools/create_links.py ...
-  ```
-
-- Pros
-  - Bash scripts but with some common / shared code
-
-- Cons
-  - Uses bash scripts
 
 ## Working on the Project
 

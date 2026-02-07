@@ -278,7 +278,7 @@ estimator = DeepAREstimator(
 Calculate standard metrics:
 
 ```python
-from GluonTS_utils_evaluation import calculate_metrics
+from utils_evaluation import calculate_metrics
 
 metrics = calculate_metrics(forecast.mean, actual_values)
 

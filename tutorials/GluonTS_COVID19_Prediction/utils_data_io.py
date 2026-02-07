@@ -5,7 +5,7 @@ Load COVID-19 data from various sources: cases, deaths, vaccines, and mobility r
 
 Import as:
 
-import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_data_io as ttgcpgudi
+import tutorials.tutorial_GluonTS_COVID19_Prediction.utils_data_io as ttgcpgudi
 """
 
 import logging
@@ -28,6 +28,7 @@ def load_jhu_cases(
     :return: DataFrame with cases data
     """
     filepath = Path(data_dir) / "cases.csv"
+    # TODO(ai_gp): dassert_file_exists
     if not filepath.exists():
         raise FileNotFoundError(f"cases.csv not found in {data_dir}")
     _LOG.info("Loading cases data from %s", filepath)
@@ -144,6 +145,7 @@ def verify_data_exists(
 # DataLoader
 # #############################################################################
 
+# TODO(ai_gp): Remove this layer.
 class DataLoader:
     """Convenience class for loading COVID-19 data."""
 

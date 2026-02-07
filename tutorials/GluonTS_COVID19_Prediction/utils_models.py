@@ -6,7 +6,7 @@ Includes scenario analysis utilities for "what-if" policy simulations.
 
 Import as:
 
-import tutorials.tutorial_GluonTS_COVID19_Prediction.GluonTS_utils_models as ttgcpgumo
+import tutorials.tutorial_GluonTS_COVID19_Prediction.utils_models as ttgcpgumo
 """
 
 import logging
@@ -407,7 +407,6 @@ def get_forecast_dataframe(
 # ScenarioResult
 # #############################################################################
 
-# SCENARIO ANALYSIS UTILITIES.
 @dataclass
 class ScenarioResult:
     """

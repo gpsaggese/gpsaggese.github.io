@@ -13,8 +13,4 @@ source $GIT_ROOT/class_project/docker_common/utils.sh
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source $SCRIPT_DIR/docker_name.sh
 
-# Build container.
-#export DOCKER_BUILDKIT=1
-export DOCKER_BUILDKIT=0
-
-docker build . -t $FULL_IMAGE_NAME
+remove_container_image
