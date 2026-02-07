@@ -5,7 +5,10 @@ Learning.
 
 - Follow this format exactly
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 ## Pedagogical Style
 - When writing slides, maintain academic rigor while ensuring clarity for
   graduate-level ML students
