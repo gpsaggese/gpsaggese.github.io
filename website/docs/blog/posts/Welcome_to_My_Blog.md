@@ -1,12 +1,18 @@
----
-title: "Welcome to Our Blog"
-authors:
-  - gpsaggese
-date: 2026-02-07
-categories:
-  - AI Research
-  - Software Engineering
----
+<!-- toc -->
+
+- [What to Expect](#what-to-expect)
+- [My Background](#my-background)
+- [Why This Blog](#why-this-blog)
+- [Topics Covered](#topics-covered)
+- [Get in Touch](#get-in-touch)
+
+<!-- tocstop -->
+
+title: "Welcome to Our Blog" authors:
+
+- Gpsaggese date: 2026-02-07 categories:
+- AI Research
+- Software Engineering
 
 TL;DR: Welcome to our new blog where we'll share insights on AI research,
 machine learning, software engineering, and our experiences in academia and
@@ -35,10 +41,10 @@ This blog will cover a range of topics including:
 ## My Background
 
 I'm an Adjunct Professor at the University of Maryland, teaching and conducting
-research in AI and machine learning. My research interests span causal inference,
-time series analysis, and applying machine learning to real-world problems. I
-also have extensive experience in software engineering, having worked on
-large-scale ML systems and open-source projects.
+research in AI and machine learning. My research interests span causal
+inference, time series analysis, and applying machine learning to real-world
+problems. I also have extensive experience in software engineering, having
+worked on large-scale ML systems and open-source projects.
 
 ## Why This Blog
 
