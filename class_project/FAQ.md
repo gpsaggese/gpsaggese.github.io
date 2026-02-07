@@ -87,9 +87,9 @@ to do it
 
 ## Learn or Refresh Basic Data Science Tools
 
-If you did not take DATA605 or you are not familiar with the basic technology
-we rely on (e.g., `Git`, `Docker`), take time to get familiar with them through
-the DATA605 tutorials:
+If you did not take DATA605 or you are not familiar with the basic technology we
+rely on (e.g., `Git`, `Docker`), take time to get familiar with them through the
+DATA605 tutorials:
 
 - [Git tutorial](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_git)
   ([video](https://drive.google.com/file/d/12TcMNs4vZoZUWq47TUgcqB875GMfqK01/view?usp=drive_link))
