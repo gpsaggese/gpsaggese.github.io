@@ -90,6 +90,12 @@ utils.cell2_samples_over_time_and_pdf()
 #     - Law of Large Numbers
 #     - Central Limit Theorem
 #
+# **Parameters**:
+# - `mu` ($\mu$): True probability of success (between 0 and 1)
+# - `N` ($N$): Number of samples drawn in each trial
+# - `n_samples`: Number of trials to repeat the experiment (how many times we compute $\nu$)
+# - `seed`: Random seed for reproducibility
+#
 # **Key concepts**:
 # - By the Law of Large Numbers: $\nu$ converges to $\mu$ as $N$ increases
 # - By the Central Limit Theorem: $\nu$ is approximately normally distributed:
@@ -98,18 +104,6 @@ utils.cell2_samples_over_time_and_pdf()
 # %%
 # Display the distribution of empirical mean nu from repeated sampling.
 utils.cell3_distribution_empirical_mean()
-
-# %% [markdown]
-# ## Cell 1.4: Sample Mean
-#
-# - The sample mean $\nu$ is the average of $N$ independent Bernoulli samples:
-#   - $\nu = \frac{1}{N} \sum_{i=1}^{N} X_i$ where $X_i \sim \text{Bernoulli}(\mu)$
-#   - $\mathbb{E}[\nu] = \mu$ (expected value equals true probability)
-#   - $\text{Var}(\nu) = \frac{\mu(1-\mu)}{N}$ (variance decreases with $N$)
-#
-# - As $N$ increases:
-#   - The sample mean $\nu$ becomes a better estimate of $\mu$ (Law of Large Numbers)
-#   - The distribution of $\nu$ concentrates around $\mu$ (Central Limit Theorem)
 
 # %% [markdown]
 # # Cell 2: Hoeffding Inequality: Theoretical Bounds

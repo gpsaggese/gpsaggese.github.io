@@ -407,18 +407,18 @@ def _plot_bernoulli_sample4(
         1, 2, figsize=(18, 5), gridspec_kw={"width_ratios": [1.5, 1]}
     )
     # Plot 1: Distribution of empirical mean nu.
-    # Plot empirical data with light blue color and solid bars.
+    # Plot empirical data with dark green color and solid bars.
     ax1.hist(
         empirical_nus,
         bins=30,
         density=True,
         alpha=0.85,
-        color="lightblue",
+        color="darkgreen",
         edgecolor="black",
         linewidth=1.5,
         label=f"Empirical (n={n_samples})",
     )
-    # Plot expected normal distribution with lighter, transparent, dotted line.
+    # Plot expected normal distribution with blue color, transparent, dotted line.
     x_range = np.linspace(
         expected_mean - 4 * expected_std,
         expected_mean + 4 * expected_std,
@@ -429,15 +429,15 @@ def _plot_bernoulli_sample4(
         x_range,
         y_expected,
         "--",
-        color="coral",
+        color="royalblue",
         linewidth=2.5,
         label="Theoretical (CLT)",
-        alpha=0.5,
+        alpha=0.6,
     )
     # Mark the true mean.
     ax1.axvline(
         x=mu,
-        color="green",
+        color="steelblue",
         linestyle="--",
         linewidth=2,
         label=f"True mu={mu:.4f}",
@@ -518,7 +518,7 @@ def cell3_distribution_empirical_mean() -> None:
         _create_basic_widget_controls(mu_init, N_init, seed_init)
     )
     # Update N slider description for this specific use case.
-    N_box.children[0].description = "samples per trial"
+    N_box.children[0].description = "N"
     # Create logarithmic n_samples slider.
     # The slider operates in log10 space: 10^slider_value = n_samples
     # log10(100) = 2.0, log10(10000) = 4.0
