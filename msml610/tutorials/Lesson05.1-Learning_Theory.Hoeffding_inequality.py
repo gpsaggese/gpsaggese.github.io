@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -57,6 +57,9 @@ _LOG = logging.getLogger(__name__)
 # Demonstrate basic Bernoulli sampling.
 utils.cell1_basic_bernoulli_sampling()
 # This shows the code for generating samples and computing the empirical mean.
+# 1. Generating Bernoulli samples
+# 2. Computing the empirical mean
+# 3. Comparing with the true mean
 
 # %% [markdown]
 # ## Cell 2: Samples Over Time and Empirical PDF

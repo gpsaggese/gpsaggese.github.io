@@ -91,16 +91,26 @@ def _plot_bernoulli_pdf_bars(
     # Set bar width and positions for side-by-side display.
     bar_width = 0.35
     x_positions = outcomes
-    # Plot empirical probabilities with darker solid bars.
+    # Plot empirical probabilities with darker solid bars - separate for legend.
     ax.bar(
-        x_positions - bar_width / 2,
-        empirical_probs,
+        0 - bar_width / 2,
+        empirical_probs[0],
         width=bar_width,
-        color=["darkred", "darkgreen"],
+        color="darkred",
         alpha=0.85,
         edgecolor="black",
         linewidth=1.5,
-        label="Empirical",
+        label="Empirical Failure (0)",
+    )
+    ax.bar(
+        1 - bar_width / 2,
+        empirical_probs[1],
+        width=bar_width,
+        color="darkgreen",
+        alpha=0.85,
+        edgecolor="black",
+        linewidth=1.5,
+        label="Empirical Success (1)",
     )
     # Plot theoretical probabilities with lighter bars.
     ax.bar(
@@ -117,6 +127,9 @@ def _plot_bernoulli_pdf_bars(
     ax.set_xlabel("Outcome", fontsize=12)
     ax.set_title(title, fontsize=14, fontweight="bold")
     ax.set_ylim([0, 1])
+    # Set x-axis ticks and labels.
+    ax.set_xticks([0, 1])
+    ax.set_xticklabels(["Outcome 0", "Outcome 1"])
     ax.legend(fontsize=10)
     ax.grid(True, alpha=0.3, axis="y")
 
@@ -245,8 +258,12 @@ def _plot_bernoulli_sample2(
     )
     # Plot 1: Samples over time.
     time_indices = np.arange(N)
-    colors = ["red" if s == 0 else "green" for s in samples]
-    ax1.scatter(time_indices, samples, c=colors, alpha=0.6, s=30)
+    colors = ["darkred" if s == 0 else "darkgreen" for s in samples]
+    # Add jitter to y-values for better visibility of overlapping points.
+    np.random.seed(seed)
+    jitter = np.random.normal(0, 0.05, N)
+    samples_jittered = samples + jitter
+    ax1.scatter(time_indices, samples_jittered, c=colors, alpha=0.6, s=30)
     ax1.set_xlabel("Sample Index (Time)", fontsize=12)
     ax1.set_ylabel("Outcome", fontsize=12)
     ax1.set_title(
