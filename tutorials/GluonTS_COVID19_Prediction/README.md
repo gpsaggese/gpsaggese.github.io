@@ -13,13 +13,6 @@ evaluation metrics (MAE, RMSE, CRPS).
 
 ## Getting Started
 
-### Prerequisites
-
-- Docker installed and running
-- 8GB RAM minimum
-- Data files
-  - See Data Setup section below for automatic or manual download
-
 ### Data Setup
 
 The data files are **not included** in the repository. They will be

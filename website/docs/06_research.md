@@ -8,20 +8,20 @@
 
 ## Research Areas
 
-### [Causal AI](#causal-ai-publications)
+### [Causal AI](#causal_ai_publications)
 
 **2015-present**: Developing production-grade Causal AI systems at Causify.AI,
 combining Bayesian inference, knowledge graphs, and temporal machine learning
 for decision-making under uncertainty. Applications include predictive
 maintenance, failure prediction, demand forecasting, and energy optimization.
 
-### [Cryptography](#cryptography-publications)
+### [Cryptography](#cryptography_publications)
 
 **2000-2005 (PhD work)**: hardware implementations of cryptographic algorithms,
 focusing on RSA and AES acceleration, digital time stamping systems, and
 tamper-resistant FPGA designs for secure cryptographic applications.
 
-### [Computer Design](#computer-design-publications)
+### [Computer Design](#computer_design_publications)
 
 **2000-present**: Research on dependable computing systems, from soft error
 analysis in microprocessors to low-power circuit design. Work includes fault

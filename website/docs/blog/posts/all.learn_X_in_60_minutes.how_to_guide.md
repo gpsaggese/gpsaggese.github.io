@@ -135,6 +135,10 @@ All tutorials maintain these standards:
     even if not all these tutorials don't use the Causify dev system, but some
     simpler bash scripts.
 
+# References
+
+- Follow the `class_project/README.md` 
+
 - Each tutorial conceptually corresponds to:
   - A blog entry
   - A project of one of the classes (e.g., DATA605, MSML610)
