@@ -1,0 +1,7 @@
+# MkDocs and Material theme with blog support
+mkdocs>=1.5.3
+mkdocs-material>=9.5.0
+mkdocs-material-extensions>=1.3.1
+
+# Python markdown extensions for blog features
+pymdown-extensions>=10.7
