@@ -178,7 +178,7 @@ def _create_basic_widget_controls(
 
 
 # #############################################################################
-# Cell 1: Basic Bernoulli Sampling Code
+# Cell 1.1: Basic Bernoulli Sampling Code
 # #############################################################################
 
 
@@ -223,7 +223,7 @@ def cell1_basic_bernoulli_sampling(
 
 
 # #############################################################################
-# Cell 2: Helper - Plot Bernoulli Sample with PDF
+# Cell 1.2: Helper - Plot Bernoulli Sample with PDF
 # #############################################################################
 
 
@@ -315,7 +315,7 @@ def _plot_bernoulli_sample2(
 
 
 # #############################################################################
-# Cell 2: Samples Over Time and Empirical PDF
+# Cell 1.2: Samples Over Time and Empirical PDF
 # #############################################################################
 
 
@@ -359,173 +359,7 @@ def cell2_samples_over_time_and_pdf() -> None:
 
 
 # #############################################################################
-# Cell 3: Helper - Plot Bernoulli Sample with Statistics
-# #############################################################################
-
-
-def _plot_bernoulli_sample3(
-    *,
-    mu: float = 0.6,
-    N: int = 100,
-    seed: int = 42,
-) -> None:
-    """
-    Display PDF, empirical mean, and statistics of Bernoulli samples.
-
-    Shows the probability distribution of N samples, the empirical mean nu,
-    and compares it with the true mean and variance in a single row of 3-4
-    plots following interactive widget conventions.
-
-    :param mu: True probability of success (0 < mu < 1)
-    :param N: Number of samples to draw
-    :param seed: Random seed for reproducibility
-    """
-    # Validate parameters.
-    _validate_bernoulli_params(mu, N)
-    # Generate N Bernoulli samples.
-    samples = _generate_bernoulli_samples(mu, N, seed)
-    # Compute the sample mean nu.
-    nu = np.mean(samples)
-    # Compute theoretical mean and variance of Bernoulli distribution.
-    theoretical_mean = mu
-    theoretical_variance = mu * (1 - mu)
-    # Compute sample variance.
-    sample_variance = np.var(samples, ddof=1)
-    # Create visualization with 3 subplots in a single row.
-    fig, (ax1, ax2, ax3) = plt.subplots(
-        1, 3, figsize=(18, 5), gridspec_kw={"width_ratios": [1, 1, 1.2]}
-    )
-    # Plot 1: PDF of samples.
-    _plot_bernoulli_pdf_bars(ax1, samples, mu, N, "PDF of Samples")
-    # Plot 2: Comparison of empirical vs theoretical statistics.
-    metrics = ["Mean", "Variance"]
-    empirical = [nu, sample_variance]
-    theoretical = [theoretical_mean, theoretical_variance]
-    x_pos = np.arange(len(metrics))
-    width = 0.35
-    ax2.bar(
-        x_pos - width / 2,
-        empirical,
-        width,
-        label="Empirical",
-        color="darkgreen",
-        alpha=0.85,
-        edgecolor="black",
-        linewidth=1.5,
-    )
-    ax2.bar(
-        x_pos + width / 2,
-        theoretical,
-        width,
-        label="Theoretical",
-        color="steelblue",
-        alpha=0.5,
-        edgecolor="black",
-        linewidth=1.5,
-    )
-    ax2.set_ylabel("Value", fontsize=12)
-    ax2.set_xlabel("Statistic", fontsize=12)
-    ax2.set_title("Statistics Comparison", fontsize=14, fontweight="bold")
-    ax2.set_xticks(x_pos)
-    ax2.set_xticklabels(metrics)
-    ax2.set_ylim([0, 1.0])
-    ax2.legend(fontsize=10)
-    ax2.grid(True, alpha=0.3, axis="y")
-    # Add value labels on bars.
-    for i, (emp, theo) in enumerate(zip(empirical, theoretical)):
-        ax2.text(
-            i - width / 2,
-            emp + 0.02,
-            f"{emp:.4f}",
-            ha="center",
-            va="bottom",
-            fontsize=9,
-        )
-        ax2.text(
-            i + width / 2,
-            theo + 0.02,
-            f"{theo:.4f}",
-            ha="center",
-            va="bottom",
-            fontsize=9,
-        )
-    # Plot 3: Comments and explanation.
-    ax3.axis("off")
-    ax3.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
-    # Generate interpretation text.
-    error = abs(nu - mu)
-    text_content = (
-        f"Parameters:\n"
-        f"  mu = {mu:.4f} (true probability)\n"
-        f"  N = {N} (number of samples)\n"
-        f"  seed = {seed}\n\n"
-        f"Empirical Statistics:\n"
-        f"  nu (sample mean) = {nu:.4f}\n"
-        f"  Sample variance = {sample_variance:.4f}\n\n"
-        f"Theoretical Statistics:\n"
-        f"  Mean = {theoretical_mean:.4f}\n"
-        f"  Variance = {theoretical_variance:.4f} (= mu * (1-mu))\n\n"
-        f"Error:\n"
-        f"  |nu - mu| = {error:.4f}\n\n"
-        f"Interpretation:\n"
-        f"- The empirical mean nu estimates the true mean mu.\n\n"
-        f"- Change seed to see new realizations with different\n"
-        f"  empirical values."
-    )
-    mtumsuti.add_fitted_text_box(ax3, text_content)
-    # Use subplots_adjust for consistent spacing.
-    plt.subplots_adjust(
-        left=0.05, right=0.98, top=0.92, bottom=0.10, wspace=0.30
-    )
-    plt.show()
-
-
-# #############################################################################
-# Cell 3: PDF, Empirical Mean, and Statistics
-# #############################################################################
-
-
-def cell3_pdf_empirical_mean_stats(
-    *,
-    mu_init: float = 0.6,
-    N_init: int = 100,
-    seed_init: int = 42,
-) -> None:
-    """
-    Sets up complete interactive widget with sliders for mu, N, and seed
-    parameters.
-
-    Connects sliders to _plot_bernoulli_sample3() for interactive visualization.
-
-    :param mu_init: Initial value for mu (probability of success)
-    :param N_init: Initial value for N (number of samples)
-    :param seed_init: Initial value for seed
-    """
-    # Create widgets.
-    mu_slider, mu_box, N_slider, N_box, seed_slider, seed_box = (
-        _create_basic_widget_controls(mu_init, N_init, seed_init)
-    )
-    # Create output widget.
-    output = ipywidgets.Output()
-
-    def update_plot(change=None):
-        with output:
-            output.clear_output(wait=True)
-            _plot_bernoulli_sample3(
-                mu=mu_slider.value, N=N_slider.value, seed=seed_slider.value
-            )
-
-    # Observe slider changes.
-    mu_slider.observe(update_plot, names="value")
-    N_slider.observe(update_plot, names="value")
-    seed_slider.observe(update_plot, names="value")
-    # Display widgets and initial plot.
-    display(ipywidgets.VBox([mu_box, N_box, seed_box, output]))
-    update_plot()
-
-
-# #############################################################################
-# Cell 4: Helper - Plot Distribution of Empirical Mean
+# Cell 1.3: Helper - Plot Distribution of Empirical Mean
 # #############################################################################
 
 
@@ -662,11 +496,11 @@ def _plot_bernoulli_sample4(
 
 
 # #############################################################################
-# Cell 4: Distribution of Empirical Mean
+# Cell 1.3: Distribution of Empirical Mean
 # #############################################################################
 
 
-def cell4_distribution_empirical_mean() -> None:
+def cell3_distribution_empirical_mean() -> None:
     """
     Create interactive widget for Cell 4 (Distribution of Empirical Mean).
 
@@ -724,7 +558,7 @@ def cell4_distribution_empirical_mean() -> None:
 
 
 # #############################################################################
-# Cell 5: Helper - Plot Hoeffding Inequality Demo
+# Cell 2.2: Helper - Plot Hoeffding Inequality Demo
 # #############################################################################
 
 
@@ -1076,11 +910,11 @@ def _plot_hoeffding_inequality_demo(
 
 
 # #############################################################################
-# Cell 5: Interactive Hoeffding Inequality Demonstration
+# Cell 2.2: Interactive Hoeffding Inequality Demonstration
 # #############################################################################
 
 
-def cell5_hoeffding_inequality_demo() -> None:
+def cell4_hoeffding_inequality_demo() -> None:
     """
     Create interactive widget demonstrating the Hoeffding inequality.
 
@@ -1168,7 +1002,7 @@ def cell5_hoeffding_inequality_demo() -> None:
 
 
 # #############################################################################
-# Cell 6: Helper - Plot Empirical vs Bound
+# Cell 2.3: Helper - Plot Empirical vs Bound
 # #############################################################################
 
 
@@ -1326,11 +1160,11 @@ def _plot_hoeffding_inequality_demo2(
 
 
 # #############################################################################
-# Cell 6: Empirical Probability vs Hoeffding Bound
+# Cell 2.3: Empirical Probability vs Hoeffding Bound
 # #############################################################################
 
 
-def cell6_empirical_vs_bound() -> None:
+def cell5_empirical_vs_bound() -> None:
     """
     Create interactive widget showing empirical probability vs Hoeffding bound.
 
@@ -1469,7 +1303,7 @@ def cell6_empirical_vs_bound() -> None:
 
 
 # #############################################################################
-# Cell 7: Helper - Plot Hoeffding Bound Surface
+# Cell 2.4: Helper - Plot Hoeffding Bound Surface
 # #############################################################################
 
 
@@ -1724,11 +1558,11 @@ def _plot_hoeffding_bound_surface(
 
 
 # #############################################################################
-# Cell 7: Hoeffding Bound as a Function of N and Epsilon
+# Cell 2.4: Hoeffding Bound as a Function of N and Epsilon
 # #############################################################################
 
 
-def cell7_bound_surface_heatmap() -> None:
+def cell6_bound_surface_heatmap() -> None:
     """
     Create interactive visualization of Hoeffding bound surface.
 
@@ -1864,7 +1698,7 @@ def cell7_bound_surface_heatmap() -> None:
 
 
 # #############################################################################
-# Cell 8: Helper - Plot 3D Hoeffding Bound
+# Cell 2.5: Helper - Plot 3D Hoeffding Bound
 # #############################################################################
 
 
@@ -1984,11 +1818,11 @@ def _plot_hoeffding_bound_3d(
 
 
 # #############################################################################
-# Cell 8: 3D Surface Visualization of Hoeffding Bound
+# Cell 2.5: 3D Surface Visualization of Hoeffding Bound
 # #############################################################################
 
 
-def cell8_bound_3d_surface() -> None:
+def cell7_bound_3d_surface() -> None:
     """
     Create interactive 3D surface visualization of Hoeffding bound.
 
