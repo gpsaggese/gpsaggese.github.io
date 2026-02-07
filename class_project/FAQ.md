@@ -1,41 +1,44 @@
 # DATA605, MSML610 - Class Project
 
-### Read Instructions for the Class Projects
+# Summary
 
-[https://github.com/gpsaggese/umd_classes/blob/master/class_project/instructions/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/instructions/README.md)
+- This document provides frequently asked questions and guidance for completing
+  class projects for DATA605 and MSML610
+- It covers project selection, setup, development process, video recording
+  requirements, and grading rubric
 
-### Read Instructions for the Class Projects **Again**
+## Read Instructions for the Class Projects
 
-[https://github.com/gpsaggese/umd_classes/blob/master/class_project/instructions/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/instructions/README.md)
+[https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
 
-### Review Some of the Best Projects From Previous Years
+## Read Instructions for the Class Projects Again
 
-- [tutorial_langchain](https://github.com/causify-ai/tutorials/tree/master/tutorial_langchain)
+[https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
 
-- [tutorial_langgraph](https://github.com/causify-ai/tutorials/tree/master/tutorial_langgraph)
+## Review Some of the Best Projects From Previous Years
 
-- [tutorial_openai](https://github.com/causify-ai/tutorials/tree/master/tutorial_openai)
-
-- [tutorial_prophet](https://github.com/causify-ai/tutorials/tree/master/tutorial_prophet)
-
-- [tutorial_github_causify_style](https://github.com/causify-ai/tutorials/tree/master/tutorial_github_causify_style)
+- [`tutorial_langchain`](https://github.com/causify-ai/tutorials/tree/master/tutorial_langchain)
+- [`tutorial_langgraph`](https://github.com/causify-ai/tutorials/tree/master/tutorial_langgraph)
+- [`tutorial_openai`](https://github.com/causify-ai/tutorials/tree/master/tutorial_openai)
+- [`tutorial_prophet`](https://github.com/causify-ai/tutorials/tree/master/tutorial_prophet)
+- [`tutorial_github_causify_style`](https://github.com/gpsaggese/umd_classes/tree/master/class_project/docker_causify_style)
 
 If you see any problem in the tutorials (code or video), pls send an email to me
 with your TAs in cc. To make this more interesting, there might be (or maybe
 not!) some mistakes on purpose. See if you find them. Happy egg hunt!
 
-### Review Past Projects
+## Review Past Projects
 
 Peruse/draw inspiration from lots of projects from your colleagues in the sister
 class DATA605
 
 - Projects:
-  [https://github.com/causify-ai/tutorials/tree/master/DATA605](https://github.com/causify-ai/tutorials/tree/master/DATA605)
+  [https://github.com/gpsaggese/umd_classes/tree/master/class_project/DATA605](https://github.com/gpsaggese/umd_classes/tree/master/class_project/DATA605)
 
 - Videos:
   [https://drive.google.com/drive/folders/1QLtgPCAS0mqE9cr1hE3UVoIbzakCNtaC](https://drive.google.com/drive/folders/1QLtgPCAS0mqE9cr1hE3UVoIbzakCNtaC)
 
-### Pick Your Project!
+## Pick Your Project
 
 - There are 3 types of projects:
   - "Build X using Y"
@@ -50,7 +53,7 @@ class DATA605
       difficult, and not everyone has the ability to complete this
 
 - All of them require following the format of
-  [https://github.com/gpsaggese/umd_classes/blob/master/class_project/instructions/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/instructions/README.md)
+  [https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
 
 - For MSML610 (Fall 2025)
   - The project list is
@@ -71,35 +74,31 @@ class DATA605
     contribution, so pick other students at your level or with complementary
     skills
 
-### Read Instructions for the Class Projects **Yet Again**
+## Read Instructions for the Class Projects Yet Again
 
 Read instructions for the class projects yet again to understand what to do, how
 to do it
 
-[https://github.com/gpsaggese/umd_classes/blob/master/class_project/instructions/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/instructions/README.md)
+[https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
 
-### Create the Tutorial Template for the Class Project
+## Create the Tutorial Template for the Class Project
 
-[https://github.com/gpsaggese/umd_classes/blob/master/class_project/instructions/tutorial_template/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/instructions/tutorial_template/README.md)
+[https://github.com/gpsaggese/umd_classes/blob/master/class_project/docker_template/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/docker_template/README.md)
 
-### Learn / Refresh Basic Data Science Tools
+## Learn or Refresh Basic Data Science Tools
 
-If you didn't take DATA605 or you are not familiar with the basic technology we
-rely on (e.g., Git, Docker, ...), take time to get familiar with them through
+If you did not take DATA605 or you are not familiar with the basic technology
+we rely on (e.g., `Git`, `Docker`), take time to get familiar with them through
 the DATA605 tutorials:
 
 - [Git tutorial](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_git)
   ([video](https://drive.google.com/file/d/12TcMNs4vZoZUWq47TUgcqB875GMfqK01/view?usp=drive_link))
-
 - [Jupyter tutorial](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_jupyter)
-
 - [GitHub tutorial](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_github)
-
 - [Docker tutorial](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker)
   ([video](https://drive.google.com/file/d/1N9bq5ibN3oKmc0KF07lz9OSa4mbgsrzy/view?usp=drive_link))
-
 - [Docker Compose tutorial](https://github.com/gpsaggese/umd_data605/tree/main/tutorials/tutorial_docker_compose)
-  [(video)](https://drive.google.com/file/d/1XbBPLwyGZ8-xpjnZ6bZRJNrvd9xhwwF2/view?usp=drive_link)
+  ([video](https://drive.google.com/file/d/1XbBPLwyGZ8-xpjnZ6bZRJNrvd9xhwwF2/view?usp=drive_link))
 
 The project schedule is described in the "Class assignment" column in the
 schedule at
@@ -108,22 +107,15 @@ https://docs.google.com/document/d/1YXCrqh6KGg3xm4-Lr4QGdBnjeWEfkqz67FHNHB_rdAk/
 In practice, the process is:
 
 - Pick 1 or 2 projects
-
 - Finalize the project and make sure everything is clear
-
 - Work, work, work by yourself at home
-
 - Work, work, work with us in class lab
-
 - First checkpoint of the project
-
 - Work, work, work by yourself at home
-
 - Work, work, work with us in class lab
-
 - Final submission
 
-### Guidelines for Video Recording
+## Guidelines for Video Recording
 
 The final project requires students to submit a video recording of their
 project.
@@ -140,37 +132,30 @@ will be extremely important in your career).
     [Google Drive dir](https://drive.google.com/drive/folders/1QLtgPCAS0mqE9cr1hE3UVoIbzakCNtaC)
 
 - Required video structure
+  - Step 1: Introduction
+    - Name, UID, tool and difficulty, project title
+  - Step 2: Showcase all files in the PR and confirm naming conventions
+  - Step 3: Execute the Docker image and show the successful execution message
+    - If there was a problem with Docker explain what it was and how you worked
+      around it
+  - Step 4: Open Jupyter Notebook
+    - Steps 1-4 should take approximately 1-2 minutes
+  - Step 5: Full project walkthrough
+    - Run every required code cell
+    - Provide clear verbal explanation of what each cell does
+    - Demonstrate functionality and correctness of the tool
+    - Students should spend the majority of time here
+  - Step 6: Discuss results
+    - Interpret the outputs
+    - Explain what the results mean
+    - Describe how the chosen tool helped address the problem statement
+  - Step 7: Documentation review
+    - Show how the documentation is organized
+    - Explain how a non-technical reader can understand the project using the
+      documentation
+    - Highlight completeness and clarity
 
-- Step 1: Introduction
-  - Name, UID, tool & difficulty, project title
-
-- Step 2: Showcase all files in the PR and confirm naming conventions
-
-- Step 3: Execute the Docker image and show the successful execution message
-  - If there was a problem with Docker explain what it was and how you worked
-    around it
-
-- Step 4: Open Jupyter Notebook
-  - Steps 1–4 should take approximately 1–2 minutes
-
-- Step 5: Full project walkthrough
-  - Run every required code cell
-  - Provide clear verbal explanation of what each cell does
-  - Demonstrate functionality and correctness of the tool
-  - Students should spend the majority of time here
-
-- Step 6: Discuss results
-  - Interpret the outputs
-  - Explain what the results mean
-  - Describe how the chosen tool helped address the problem statement
-
-- Step 7: Documentation review
-  - Show how the documentation is organized
-  - Explain how a non-technical reader can understand the project using the
-    documentation
-  - Highlight completeness and clarity
-
-### A Note From Frank Underwood
+## A Note From Frank Underwood
 
 If you are interested in working in our research team, the best way to be
 noticed is with thoughtful questions, showing that you have thought about the
@@ -183,69 +168,69 @@ disappoint me".
 
 Here is the rubric we used to grade the projects.
 
-- All deliverables delivered (10)
+- All deliverables delivered (10 points)
   - Are all required components submitted, including code, documentation, and
-    any other specified materials?
+    any other specified materials
   - Does everything follow the project's standard structure and formatting
-    guidelines?
+    guidelines
   - Is the submission complete enough for someone else to evaluate or run
-    without requesting extra files or explanations?
+    without requesting extra files or explanations
 
-- Working Docker (5)
+- Working Docker (5 points)
   - Does the Docker container build without errors, following the provided
-    instructions?
+    instructions
   - Does the project run successfully inside the container and behave as
-    expected?
+    expected
   - Are all necessary environment configurations, ports, and dependencies
-    correctly set?
+    correctly set
 
-- Documentation Quality (5)
+- Documentation quality (5 points)
   - Does the documentation clearly explain how to set up, run, and understand
-    the project?
+    the project
   - Is it well-written, free from major grammar or formatting issues, and easy
-    to follow?
+    to follow
   - Does it include all required sections such as installation steps, usage
-    examples, API descriptions, or architectural decisions?
-  - Does it adhere to the formatting and organizational guidelines we provided?
+    examples, API descriptions, or architectural decisions
+  - Does it adhere to the formatting and organizational guidelines we provided
 
-- Actual project complexity (5)
+- Actual project complexity (5 points)
   - How much depth and effort does the project demonstrate beyond the initial
-    suggested scope?
+    suggested scope
   - Did the student add significant features, handle edge cases, or show
-    creative problem-solving?
+    creative problem-solving
   - Is the architecture or technical implementation non-trivial or particularly
-    well-considered?
+    well-considered
 
-- Code quality (5)
-  - Is the code clean, modular, and easy to understand?
-  - Are comments and docstrings used appropriately to explain non-obvious logic?
-  - Is the overall structure of the codebase sensible and maintainable?
+- Code quality (5 points)
+  - Is the code clean, modular, and easy to understand
+  - Are comments and docstrings used appropriately to explain non-obvious logic
+  - Is the overall structure of the codebase sensible and maintainable
   - Does it follow consistent style conventions (e.g., PEP 8 or another relevant
-    standard)?
+    standard)
 
-- PR quality (5)
+- PR quality (5 points)
   - Was the pull request (PR) well-organized, with meaningful commit messages
-    and a clear description?
+    and a clear description
   - Did the student follow good GitHub practices, such as linking issues,
-    keeping PRs scoped, and avoiding unnecessary noise?
+    keeping PRs scoped, and avoiding unnecessary noise
   - Was the PR free of obvious clutter like unrelated test code or temporary
-    debug statements?
+    debug statements
 
-- Depth and understanding (5)
+- Depth and understanding (5 points)
   - Does the student show a solid understanding of the tools and techniques they
-    used?
+    used
   - Do the design decisions reflect thoughtful trade-offs and justification,
-    rather than blindly following tutorials?
+    rather than blindly following tutorials
   - Is there evidence that the student could explain and defend their
-    implementation in a review?
+    implementation in a review
 
-- Late submission (-5)
+- Late submission (-5 points)
   - Was the submission turned in after the deadline without an approved
-    extension?
+    extension
 
-- Incomplete work (-5)
-  - Are there major parts of the project that are missing or obviously broken?
+- Incomplete work (-5 points)
+  - Are there major parts of the project that are missing or obviously broken
   - Does the submission fail to meet critical functional or structural
-    expectations?
+    expectations
   - Are there signs that the project was rushed or left unfinished or AI
-    generated?
+    generated
