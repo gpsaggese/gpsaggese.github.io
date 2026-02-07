@@ -1,9 +1,18 @@
+# Summary
+
+- This tutorial covers Git basics including:
+  - Creating and cloning repositories
+  - Daily operations (adding, committing files)
+  - Working with remotes
+  - Branching and merging
+  - Resolving merge conflicts
+
 # Starting a Git project
 
 ## Create a repo from scratch
 
 - Create a Git repo from scratch or from some local code
-  ```
+  ```bash
   > mkdir /tmp/git_test
   > cd /tmp/git_test
   > git init
@@ -23,11 +32,11 @@
 ## Clone class project
 
 - Clone a project, e.g., the class project from
-  `https://github.com/gpsaggese/umd_data605`
-  ```
+  `https://github.com/gpsaggese/umd_classes`
+  ```bash
   > cd /tmp
-  > git clone git@github.com:gpsaggese/umd_data605.git /tmp/umd_data605_tmp
-  Cloning into 'umd_data605'...
+  > git clone git@github.com:gpsaggese/umd_classes.git /tmp/umd_classes_tmp
+  Cloning into 'umd_classes'...
   Warning: Permanently added 'github.com,140.82.114.4' (ECDSA) to the list of known hosts.
   remote: Enumerating objects: 157, done.
   remote: Counting objects: 100% (157/157), done.
@@ -39,8 +48,8 @@
 
 - `git` downloads the `.git` project and creates the "working tree" (a working
   copy of the project)
-  ```
-  > cd /tmp/umd_data605_tmp
+  ```bash
+  > cd /tmp/umd_classes_tmp
   > ls -1
   Dockerfile
   LICENSE
@@ -63,9 +72,9 @@
   packed-refs
   refs
   ```
-  
+
 - The project is clean:
-  ```
+  ```bash
   > git status
   On branch main
   Your branch is up to date with 'origin/main'.
@@ -76,15 +85,15 @@
   ```
 
 - You can restore the repo to the initial state with:
-  ```
+  ```bash
   > source $GIT_ROOT/projects/tutorial_git/restart.sh
   ```
   which in practice corresponds to:
-  ```
-  > rm -rf /tmp/umd_data605_tmp
+  ```bash
+  > rm -rf /tmp/umd_classes_tmp
 
-  > git clone git@github.com:gpsaggese/umd_data605.git /tmp/umd_data605_tmp
-  Cloning into '/tmp/umd_data605_tmp'...
+  > git clone git@github.com:gpsaggese/umd_classes.git /tmp/umd_classes_tmp
+  Cloning into '/tmp/umd_classes_tmp'...
   Warning: Permanently added 'github.com' (ED25519) to the list of known hosts.
   ```
 
@@ -93,7 +102,7 @@
 ## Adding a file
 
 - You can add a file
-  ```
+  ```bash
   > echo "print('hello')" >hello.py
   > python hello.py
   hello
@@ -111,7 +120,7 @@
   ```
 - Now there is a file in Git that is not tracked
 - Adding it to the staging area
-  ```
+  ```bash
   > git add hello.py
   > git status
   On branch main
@@ -128,7 +137,7 @@
 
 - Look at how the history changes (your output might change depending on where
   you are in the history of the repo):
-  ```
+  ```bash
   # Check history.
   > git log --graph --oneline -4
   * a349849 (HEAD -> main, origin/main, origin/HEAD) Checkpoint
@@ -155,14 +164,14 @@
 # Git remote
 
 - Check for the remote
-  ```
+  ```bash
   > git remote -v
-  origin  git@github.com:gpsaggese/umd_data605.git (fetch)
-  origin  git@github.com:gpsaggese/umd_data605.git (push)
+  origin  git@github.com:gpsaggese/umd_classes.git (fetch)
+  origin  git@github.com:gpsaggese/umd_classes.git (push)
   ```
 
 - Get the data you don't have
-  ```
+  ```bash
   > git fetch
 
   # Fetch and rebase.
@@ -178,7 +187,7 @@
 
 - You can execute the script `work_on_main.sh` or (better) execute the command
   line-by-line:
-  ```
+  ```bash
   > ls
   Dockerfile LICENSE README.md dev_scripts docker_common gp lectures projects
 
@@ -215,7 +224,7 @@
 - The script is `$GIT_ROOT/tutorials/tutorial_git/hot_fix.sh`
 
 - Create a feature branch keeping history linear:
-  ```
+  ```bash
   > ls
   Dockerfile
   LICENSE
@@ -241,13 +250,13 @@
   ```
 
 - Create a new branch `iss53`
-  ```
+  ```bash
   > git checkout -b iss53
   Switched to a new branch 'iss53'
   ```
 
 - Create and commit a file in the branch `iss53`
-  ```
+  ```bash
   > touch feature.py
 
   > git add feature.py
@@ -267,7 +276,7 @@
   ```
 
 - Create a new branch `hotfix` off `main`
-  ```
+  ```bash
   > git checkout main
   Switched to branch 'main'
   Your branch is up to date with 'origin/main'.
@@ -289,7 +298,7 @@
   ```
 
 - Go back to `main` and merge `hotfix`
-  ```
+  ```bash
   > git checkout main
   Switched to branch 'main'
   Your branch is up to date with 'origin/main'.
@@ -308,8 +317,8 @@
   * 68df32f Checkpoint
   ```
 
-- Go back to `iss53` branch` and commit more changes
-  ```
+- Go back to `iss53` branch and commit more changes
+  ```bash
   > git checkout iss53
   Switched to branch 'iss53'
 
@@ -329,7 +338,7 @@
   ```
 
 - Merge `iss53` to main
-  ```
+  ```bash
   > git checkout main
   Switched to branch 'main'
   Your branch is ahead of 'origin/main' by 2 commits.
@@ -350,21 +359,21 @@
   - You should execute each command one at a time
 
 - Restore the repo to the initial state
-  ```
+  ```bash
   > source $GIT_ROOT/projects/tutorial_git/restart.sh
   ```
   which in practice corresponds to
-  ```
-  > rm -rf /tmp/umd_data605_tmp
+  ```bash
+  > rm -rf /tmp/umd_classes_tmp
 
-  > git clone git@github.com:gpsaggese/umd_data605.git /tmp/umd_data605_tmp
-  Cloning into '/tmp/umd_data605_tmp'...
+  > git clone git@github.com:gpsaggese/umd_classes.git /tmp/umd_classes_tmp
+  Cloning into '/tmp/umd_classes_tmp'...
   Warning: Permanently added 'github.com' (ED25519) to the list of known hosts.
   ```
 
-- Create a branch `iss53` with some changes.
-  ```
-  > cd /tmp/umd_data605_tmp
+- Create a branch `iss53` with some changes
+  ```bash
+  > cd /tmp/umd_classes_tmp
 
   > ls
   Dockerfile
@@ -409,7 +418,7 @@
   ```
 
 - Create an `hotfix` branch with some changes
-  ```
+  ```bash
   > git checkout main
   Switched to branch 'main'
 
@@ -430,7 +439,7 @@
   ```
 
 - Merge `hotfix` in `main`
-  ```
+  ```bash
   > git checkout main
   Switched to branch 'main'
 
@@ -442,14 +451,14 @@
 
   > git log --graph --oneline -3
   *   17b765b Merge hot_fix.py
-  |\  
+  |\
   | * 299dc2e Add hot_fix.py
-  |/  
+  |/
   * c47a0b6 Checkpoint
   ```
 
 - Merge `iss53` in `main` creating conflicts
-  ```
+  ```bash
   > git checkout main
   Already on 'main'
 
@@ -477,7 +486,7 @@
   ```
 
 - Solve the conflict and merge
-  ```
+  ```bash
   > echo 'hello from iss53 and hotfix' >feature.py
 
   > git add feature.py
@@ -496,13 +505,13 @@
 
   > git log --graph --oneline -5
   *   cebc983 Merge
-  |\  
+  |\
   | * f0517d8 Add feature.py
   * |   17b765b Merge hot_fix.py
-  |\ \  
-  | |/  
-  |/|   
+  |\ \
+  | |/
+  |/|
   | * 299dc2e Add hot_fix.py
-  |/  
+  |/
   * c47a0b6 Checkpoint
   ```
