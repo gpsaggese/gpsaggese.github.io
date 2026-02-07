@@ -2,18 +2,23 @@
 title: "Welcome to My Blog"
 authors:
   - gpsaggese
-date: 2025-02-07
+date: 2026-02-07
 description: Introducing my personal blog on AI research, machine learning, and software engineering
 categories:
   - AI Research
   - Software Engineering
 ---
 
-TL;DR: Welcome to my new blog where I'll share insights on AI research, machine learning, software engineering, and my experiences in academia and startups.
+TL;DR: Welcome to my new blog where I'll share insights on AI research, machine
+learning, software engineering, and my experiences in academia and startups.
 
 <!-- more -->
 
-I'm excited to launch this blog as a platform to share my thoughts, research findings, and experiences in artificial intelligence and software engineering. As both a researcher and practitioner, I've had the opportunity to work on challenging problems in machine learning, causal inference, and time series analysis.
+I'm excited to launch this blog as a platform to share my thoughts, research
+findings, and experiences in artificial intelligence and software engineering. As
+both a researcher and practitioner, I've had the opportunity to work on
+challenging problems in machine learning, causal inference, and time series
+analysis.
 
 ## What to Expect
 
