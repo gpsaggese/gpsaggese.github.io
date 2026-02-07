@@ -1,18 +1,12 @@
-<!-- toc -->
-
-- [What to Expect](#what-to-expect)
-- [My Background](#my-background)
-- [Why This Blog](#why-this-blog)
-- [Topics Covered](#topics-covered)
-- [Get in Touch](#get-in-touch)
-
-<!-- tocstop -->
-
-title: "Welcome to Our Blog" authors:
-
-- Gpsaggese date: 2026-02-07 categories:
-- AI Research
-- Software Engineering
+---
+title: "Welcome to Our Blog"
+authors:
+  - gpsaggese
+date: 2026-02-07
+categories:
+  - AI Research
+  - Software Engineering
+---
 
 TL;DR: Welcome to our new blog where we'll share insights on AI research,
 machine learning, software engineering, and our experiences in academia and
