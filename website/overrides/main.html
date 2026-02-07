@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+
+  {% if page %}
+    {% set title = page.title or config.site_name %}
+
+    {% if page.meta %}
+      {% if page.meta.description and (page.meta.description | trim | length > 0) %}
+        {% set description = page.meta.description %}
+      {% elif page.meta.tldr and (page.meta.tldr | trim | length > 0) %}
+        {% set description = page.meta.tldr %}
+      {% else %}
+        {% set description = config.site_description %}
+      {% endif %}
+    {% else %}
+      {% set description = config.site_description %}
+    {% endif %}
+
+    {% if page.canonical_url %}
+      {% set url = page.canonical_url %}
+    {% else %}
+      {% set url = config.site_url %}
+    {% endif %}
+
+    {# OG Image (root-relative) #}
+    {% if page.meta and page.meta.image %}
+      {% set raw_image = page.meta.image %}
+      {% if raw_image.startswith("http") %}
+        {% set image = raw_image %}
+      {% else %}
+        {# Ensure root-relative OG path #}
+        {% set image = config.site_url.rstrip('/') ~ '/' ~ raw_image.lstrip('/') %}
+      {% endif %}
+    {% else %}
+      {% set image = config.extra.og_image %}
+    {% endif %}
+
+  {% else %}
+    {% set title = config.site_name %}
+    {% set description = config.site_description %}
+    {% set url = config.site_url %}
+    {% set image = config.extra.og_image %}
+  {% endif %}
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ url }}">
+  <meta property="og:type" content="website">
+
+  {% if image %}
+    <meta property="og:image" content="{{ image }}">
+  {% endif %}
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ title }}">
+  <meta name="twitter:description" content="{{ description }}">
+  {% if image %}
+    <meta name="twitter:image" content="{{ image }}">
+  {% endif %}
+{% endblock %}

@@ -6,6 +6,7 @@ strict: true
 
 theme:
   name: material
+  custom_dir: overrides
   logo: assets/logo.png  # Custom logo in header
   favicon: assets/favicon.png  # Custom favicon in browser tab
   generator: false  # Remove "Made with Material for MkDocs" from footer
@@ -42,6 +43,35 @@ theme:
 
 plugins:
   - search
+  - blog:
+      enabled: true
+      blog_dir: blog
+      blog_toc: true
+      post_date_format: full
+      post_url_date_format: yyyy/MM/dd
+      post_url_format: "{slug}"
+      post_readtime: true
+      post_excerpt_separator: <!-- more -->
+      pagination: true
+      pagination_per_page: 10
+      pagination_keep_content: true
+      categories: true
+      categories_toc: true
+      categories_slugify:
+        !!python/object/apply:pymdownx.slugs.slugify
+          kwds:
+            case: preserve
+      categories_allowed:
+        - "AI Research"
+        - "Machine Learning"
+        - "Deep Learning"
+        - "Software Engineering"
+        - "Startup"
+        - "Teaching"
+        - "Data Science"
+        - "Python"
+      authors: true
+      authors_file: .authors.yml
 
 nav:
   - Home: index.md
@@ -51,26 +81,47 @@ nav:
   - Publications: 05_publications.md
   - Research: 06_research.md
   - Coding: 07_coding.md
+  - Blog: blog/index.md
 
 markdown_extensions:
   - admonition
   - attr_list
   - md_in_html
+  - pymdownx.blocks.caption
+  - pymdownx.details
+  - meta
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
   - tables
   - toc:
-      permalink: true
+      permalink: "#"
+      baselevel: 2
+      separator: "_"
 
 extra_css:
   - stylesheets/extra.css
+  - stylesheets/blog.css
+
+extra_javascript:
+  # MathJax for mathematical notation
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
 extra:
   social:
