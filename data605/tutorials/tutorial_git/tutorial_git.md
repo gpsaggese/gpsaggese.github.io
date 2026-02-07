@@ -36,7 +36,7 @@
   ```bash
   > cd /tmp
   > git clone git@github.com:gpsaggese/umd_classes.git /tmp/umd_classes_tmp
-  Cloning into 'umd_classes'...
+  Cloning into '/tmp/umd_classes_tmp'...
   Warning: Permanently added 'github.com,140.82.114.4' (ECDSA) to the list of known hosts.
   remote: Enumerating objects: 157, done.
   remote: Counting objects: 100% (157/157), done.
@@ -86,7 +86,7 @@
 
 - You can restore the repo to the initial state with:
   ```bash
-  > source $GIT_ROOT/projects/tutorial_git/restart.sh
+  > source $GIT_ROOT/tutorials/tutorial_git/restart.sh
   ```
   which in practice corresponds to:
   ```bash
@@ -244,7 +244,7 @@
   nothing to commit, working tree clean
 
   > git log --graph --oneline -3
-  * 68df32f Checkpoint
+  * 68df32f (HEAD -> main, origin/main, origin/HEAD) Checkpoint
   * b495a2c Checkpoint
   * 38affbd Checkpoint
   ```
@@ -270,7 +270,7 @@
    create mode 100644 feature.py
 
   > git log --graph --oneline -3
-  * dc84037 Add feature.py
+  * dc84037 (HEAD -> iss53) Add feature.py
   * 68df32f Checkpoint
   * b495a2c Checkpoint
   ```
@@ -310,9 +310,9 @@
    create mode 100644 hot_fix.py
 
   > git log --graph --oneline -3
-  *   b15d232 Merge hot_fix.py
+  *   b15d232 (HEAD -> main) Merge hot_fix.py
   |\
-  | * 402ed4f Add hot_fix.py
+  | * 402ed4f (hotfix) Add hot_fix.py
   |/
   * 68df32f Checkpoint
   ```
@@ -323,7 +323,7 @@
   Switched to branch 'iss53'
 
   > git log --graph --oneline -3
-  * dc84037 Add feature.py
+  * dc84037 (HEAD -> iss53) Add feature.py
   * 68df32f Checkpoint
   * b495a2c Checkpoint
 
@@ -360,7 +360,7 @@
 
 - Restore the repo to the initial state
   ```bash
-  > source $GIT_ROOT/projects/tutorial_git/restart.sh
+  > source $GIT_ROOT/tutorials/tutorial_git/restart.sh
   ```
   which in practice corresponds to
   ```bash
@@ -392,7 +392,7 @@
   nothing to commit, working tree clean
 
   > git log --graph --oneline -3
-  * c47a0b6 Checkpoint
+  * c47a0b6 (HEAD -> main, origin/main, origin/HEAD) Checkpoint
   * 68df32f Checkpoint
   * b495a2c Checkpoint
 
@@ -412,12 +412,12 @@
    create mode 100644 feature.py
 
   > git log --graph --oneline -3
-  * f0517d8 Add feature.py
+  * f0517d8 (HEAD -> iss53) Add feature.py
   * c47a0b6 Checkpoint
   * 68df32f Checkpoint
   ```
 
-- Create an `hotfix` branch with some changes
+- Create a `hotfix` branch with some changes
   ```bash
   > git checkout main
   Switched to branch 'main'
@@ -450,9 +450,9 @@
    create mode 100644 feature.py
 
   > git log --graph --oneline -3
-  *   17b765b Merge hot_fix.py
+  *   17b765b (HEAD -> main) Merge hot_fix.py
   |\
-  | * 299dc2e Add hot_fix.py
+  | * 299dc2e (hotfix) Add hot_fix.py
   |/
   * c47a0b6 Checkpoint
   ```
@@ -480,8 +480,7 @@
   +<<<<<<< HEAD
    +hello from hotfix
   +=======
-
-  > hello from iss53
+  + hello from iss53
   +>>>>>>> iss53
   ```
 
@@ -504,14 +503,14 @@
   > git status -s
 
   > git log --graph --oneline -5
-  *   cebc983 Merge
+  *   cebc983 (HEAD -> main) Merge
   |\
-  | * f0517d8 Add feature.py
+  | * f0517d8 (iss53) Add feature.py
   * |   17b765b Merge hot_fix.py
   |\ \
   | |/
   |/|
-  | * 299dc2e Add hot_fix.py
+  | * 299dc2e (hotfix) Add hot_fix.py
   |/
   * c47a0b6 Checkpoint
   ```

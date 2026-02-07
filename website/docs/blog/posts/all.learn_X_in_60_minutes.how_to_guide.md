@@ -78,9 +78,9 @@ All tutorials maintain these standards:
   5. A Jupyter notebook `XYZ.example.ipynb` with a full example
   6. A file `XYZ_utils.py` with Python utility functions
 
-### README
+### README.md
 
-- Each project contains a `readme.md` summarizing its status
+- Each project contains a `readme.md` summarizing its status and a changelog
 
 ### Docker Container
 
@@ -134,6 +134,24 @@ All tutorials maintain these standards:
   - [MSML610](//github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks)
     even if not all these tutorials don't use the Causify dev system, but some
     simpler bash scripts.
+
+# XYZ.API.ipynb
+
+- It should contain a walkthrough of the library / package with an example
+  - In practice it merges the XYZ.API.md and the XYZ.API.ipynb into a single
+    notebook
+  - There should be a little markdown to explain the library / theory and then an
+    example to show how things work
+  - The API ipynb should use simple / synthetic examples since it needs to run quickly
+
+- Most code should be moved to a `utils_*.py` file
+
+# Checklist
+
+- [ ] Is our Docker approach followed?
+  - See ...
+- [ ] Is all the possible code in the notebook moved to a `utils_*.py` file?
+- [ ] Is `XYZ.API.ipynb` in the right format?
 
 # References
 
