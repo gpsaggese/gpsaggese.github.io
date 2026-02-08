@@ -672,7 +672,6 @@ def _draw_dichotomy_4points(
     offset: float,
     point_config: str,
     point_positions: Dict[str, Tuple[float, float]],
-    unique_dichotomies: Set[Tuple[int, ...]],
 ) -> None:
     """
     Draw 2D plot with 4 points and separating line.
@@ -681,7 +680,6 @@ def _draw_dichotomy_4points(
     :param offset: Offset of the line from origin
     :param point_config: Point configuration name
     :param point_positions: Dictionary mapping point names to (x, y) coordinates
-    :param unique_dichotomies: Set of unique dichotomies found so far
     """
     # Create figure with two subplots.
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
@@ -703,9 +701,16 @@ def _draw_dichotomy_4points(
     for i, (point, label, classification) in enumerate(
         zip(points, labels, current_classification)
     ):
+        # Both fill and border show current classification.
         color = "blue" if classification == 1 else "red"
         ax1.scatter(
-            point[0], point[1], c=color, s=200, edgecolors="black", zorder=3
+            point[0],
+            point[1],
+            c=color,
+            s=200,
+            edgecolors=color,
+            linewidths=3,
+            zorder=3,
         )
         ax1.text(
             point[0],
@@ -758,7 +763,6 @@ def _draw_dichotomy_4points(
         sign = "+1" if classification == 1 else "-1"
         text_content += f"  {label}:                   {sign}\n"
     text_content += "\n"
-    text_content += f"Unique dichotomies found: {len(unique_dichotomies)}\n"
     text_content += "Maximum achievable:       14\n"
     text_content += "Total possible (2^4):     16\n"
     text_content += f"Impossible:               {len(impossible)}\n"
@@ -793,8 +797,6 @@ def cell3_dichotomy_explorer_4points() -> None:
     current_point_positions = {
         "value": _get_point_configuration_4points(point_config_init)
     }
-    # Store unique dichotomies found.
-    unique_dichotomies: Dict[str, Set[Tuple[int, ...]]] = {"value": set()}
     # Create dropdown for point configuration.
     config_dropdown = ipywidgets.Dropdown(
         options=["square", "circle", "line", "diamond"],
@@ -821,51 +823,22 @@ def cell3_dichotomy_explorer_4points() -> None:
         initial_value=offset_init,
         is_float=True,
     )
-    # Create button to reset dichotomy counter.
-    reset_button = ipywidgets.Button(
-        description="Reset Counter",
-        button_style="warning",
-        tooltip="Reset unique dichotomies counter",
-    )
 
     def on_config_change(change):
-        """Update point positions and reset counter when configuration changes."""
+        """Update point positions when configuration changes."""
         current_point_positions["value"] = _get_point_configuration_4points(
             change["new"]
         )
-        unique_dichotomies["value"] = set()
 
-    def on_reset_click(b):
-        """Reset the unique dichotomies counter."""
-        unique_dichotomies["value"] = set()
-
-    def update_plot(angle, offset, config):
-        """Update plot and track unique dichotomies."""
-        points = np.array(
-            [
-                current_point_positions["value"]["A"],
-                current_point_positions["value"]["B"],
-                current_point_positions["value"]["C"],
-                current_point_positions["value"]["D"],
-            ]
-        )
-        current_classification = _classify_points_by_line_4points(
-            points, angle, offset
-        )
-        unique_dichotomies["value"].add(tuple(current_classification))
-        _draw_dichotomy_4points(
+    config_dropdown.observe(on_config_change, names="value")
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda angle, offset, config: _draw_dichotomy_4points(
             angle,
             offset,
             config,
             current_point_positions["value"],
-            unique_dichotomies["value"],
-        )
-
-    config_dropdown.observe(on_config_change, names="value")
-    reset_button.on_click(on_reset_click)
-    # Create interactive output.
-    output = ipywidgets.interactive_output(
-        update_plot,
+        ),
         {
             "angle": angle_slider,
             "offset": offset_slider,
@@ -879,7 +852,6 @@ def cell3_dichotomy_explorer_4points() -> None:
                 config_dropdown,
                 angle_box,
                 offset_box,
-                reset_button,
                 output,
             ]
         )

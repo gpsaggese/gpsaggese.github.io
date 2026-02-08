@@ -103,7 +103,6 @@ utils.cell2_dichotomy_explorer_3points_target()
 # - Explore the limitations of linear separators with 4 points:
 #   - Visualize 4 labeled points (A, B, C, D) in different configurations
 #   - Adjust the separating line to discover different classifications
-#   - Track the number of unique dichotomies found
 #   - Discover that not all $2^4 = 16$ classifications are achievable
 #
 # **Parameters**:
@@ -114,7 +113,6 @@ utils.cell2_dichotomy_explorer_3points_target()
 #   - `diamond`: Points arranged in a diamond shape
 # - `angle`: Angle of the line normal in degrees (0 to 360)
 # - `offset`: Distance of the separating line from the origin (-1.5 to 1.5)
-# - `Reset Counter`: Button to reset the unique dichotomies counter
 #
 # **Key observation**:
 # - With 4 points, only 14 out of 16 dichotomies are achievable
