@@ -82,35 +82,106 @@ def _get_line_endpoints(
     return np.array([]), np.array([])
 
 
+def _get_point_configuration(config_name: str) -> Dict[str, Tuple[float, float]]:
+    """
+    Get predefined point configurations.
+
+    :param config_name: Name of configuration
+    :return: Dictionary mapping point names to (x, y) coordinates
+    """
+    configurations = {
+        "collinear1": {
+            "A": (-0.8, 0.0),
+            "B": (0.0, 0.0),
+            "C": (0.8, 0.0),
+        },
+        "collinear2": {
+            "A": (-0.6, -0.6),
+            "B": (0.0, 0.0),
+            "C": (0.6, 0.6),
+        },
+        "triangle1": {
+            "A": (0.0, 0.8),
+            "B": (-0.7, -0.5),
+            "C": (0.7, -0.5),
+        },
+        "triangle2": {
+            "A": (-0.8, -0.6),
+            "B": (0.8, -0.6),
+            "C": (0.8, 0.6),
+        },
+        "triangle3": {
+            "A": (0.0, -0.8),
+            "B": (-0.6, 0.5),
+            "C": (0.6, 0.5),
+        },
+    }
+    return configurations.get(config_name, configurations["triangle1"])
+
+
+def _get_target_classification(assignment_idx: int) -> Tuple[int, int, int]:
+    """
+    Get target classification for a given assignment index.
+
+    :param assignment_idx: Index from 0 to 7 representing one of 2^3 assignments
+    :return: Tuple of (A_label, B_label, C_label) each being +1 or -1
+    """
+    # Generate all 8 possible assignments.
+    assignments = []
+    for i in range(8):
+        # Convert index to binary representation.
+        a = 1 if (i & 4) else -1
+        b = 1 if (i & 2) else -1
+        c = 1 if (i & 1) else -1
+        assignments.append((a, b, c))
+    return assignments[assignment_idx]
+
+
+def _find_solution(
+    points: np.ndarray, target: Tuple[int, int, int]
+) -> Tuple[float, float, bool]:
+    """
+    Find angle and offset that achieves target classification.
+
+    :param points: Array of shape (3, 2) containing point coordinates
+    :param target: Target classification as (A_label, B_label, C_label)
+    :return: Tuple of (angle, offset, found) where found indicates success
+    """
+    # Try different angles and offsets to find a solution.
+    for angle in np.linspace(0, 360, 360):
+        for offset in np.linspace(-2, 2, 100):
+            classifications = _classify_points_by_line(points, angle, offset)
+            if tuple(classifications) == target:
+                return angle, offset, True
+    return 0.0, 0.0, False
+
+
 def _draw_dichotomy_3points(
     angle: float,
     offset: float,
+    point_config: str,
     point_positions: Dict[str, Tuple[float, float]],
-    discovered_dichotomies: Set[Tuple[int, int, int]],
 ) -> None:
     """
     Draw 2D plot with 3 points and separating line.
 
     :param angle: Angle of separating line in degrees (0-360)
     :param offset: Offset of the line from origin
+    :param point_config: Point configuration name ("collinear" or "triangle")
     :param point_positions: Dictionary mapping point names to (x, y) coordinates
-    :param discovered_dichotomies: Set of discovered dichotomies as tuples
     """
     # Create figure with two subplots.
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-    # Extract points.
+    # Get points based on configuration.
     points = np.array(
         [point_positions["A"], point_positions["B"], point_positions["C"]]
     )
     labels = ["A", "B", "C"]
-    # Classify points.
-    classifications = _classify_points_by_line(points, angle, offset)
-    # Update discovered dichotomies.
-    dichotomy = tuple(classifications)
-    discovered_dichotomies.add(dichotomy)
+    # Classify points with current line.
+    current_classification = _classify_points_by_line(points, angle, offset)
     # Plot points on left subplot.
     for i, (point, label, classification) in enumerate(
-        zip(points, labels, classifications)
+        zip(points, labels, current_classification)
     ):
         color = "blue" if classification == 1 else "red"
         ax1.scatter(point[0], point[1], c=color, s=200, edgecolors="black", zorder=3)
@@ -141,17 +212,19 @@ def _draw_dichotomy_3points(
     ax1.legend()
     ax1.set_aspect("equal")
     # Create text content for right subplot.
-    classification_text = ", ".join(
-        [f"{label}: {'+1' if c == 1 else '-1'}" for label, c in zip(labels, classifications)]
-    )
-    text_content = f"Current Classification:\n{classification_text}\n\n"
-    text_content += f"Angle: {angle:.1f} degrees\n"
-    text_content += f"Offset: {offset:.2f}\n\n"
-    text_content += f"Unique Dichotomies Found: {len(discovered_dichotomies)} / 8\n\n"
-    text_content += "All Discovered Dichotomies:\n"
-    for i, dichot in enumerate(sorted(discovered_dichotomies), 1):
-        dichot_str = ", ".join([f"{label}: {'+1' if c == 1 else '-1'}" for label, c in zip(labels, dichot)])
-        text_content += f"{i}. {dichot_str}\n"
+    text_content = "Comment:\n"
+    text_content += "Explore how a 2D perceptron (separating line) can classify\n"
+    text_content += "3 points in different ways. Adjust the angle and offset\n"
+    text_content += "to discover all possible dichotomies.\n"
+    text_content += "\n"
+    text_content += "-" * 50 + "\n\n"
+    text_content += f"Point Configuration:  {point_config}\n\n"
+    text_content += f"Angle:                {angle:.1f} degrees\n"
+    text_content += f"Offset:               {offset:.2f}\n\n"
+    text_content += "Current Classification:\n"
+    for label, classification in zip(labels, current_classification):
+        sign = "+1" if classification == 1 else "-1"
+        text_content += f"  {label}:                  {sign}\n"
     # Add text box to right subplot.
     ax2.axis("off")
     mtumsuti.add_fitted_text_box(ax2, text_content)
@@ -164,20 +237,21 @@ def cell1_dichotomy_explorer_3points() -> None:
     Create interactive dichotomy explorer for 3 points.
 
     Interactive visualization showing how a 2D perceptron can classify 3 points
-    in different ways by adjusting the separating line. Helps discover that
-    3 points can be classified in 2^3 = 8 different ways.
+    in different ways by adjusting the separating line.
     """
     # Initialize parameters.
     angle_init = 0.0
     offset_init = 0.0
-    # Fixed point positions (in a triangle).
-    point_positions = {
-        "A": (0.0, 0.8),
-        "B": (-0.7, -0.5),
-        "C": (0.7, -0.5),
-    }
-    # Track discovered dichotomies.
-    discovered_dichotomies = set()
+    point_config_init = "triangle1"
+    # Store current point configuration.
+    current_point_positions = {"value": _get_point_configuration(point_config_init)}
+    # Create dropdown for point configuration.
+    config_dropdown = ipywidgets.Dropdown(
+        options=["collinear1", "collinear2", "triangle1", "triangle2", "triangle3"],
+        value=point_config_init,
+        description="Point Config:",
+        style={"description_width": "120px"},
+    )
     # Create widgets for angle and offset.
     angle_slider, angle_box = mtumsuti.build_widget_control(
         name="angle",
@@ -197,12 +271,34 @@ def cell1_dichotomy_explorer_3points() -> None:
         initial_value=offset_init,
         is_float=True,
     )
+
+    def on_config_change(change):
+        """Update point positions when configuration changes."""
+        current_point_positions["value"] = _get_point_configuration(change["new"])
+
+    config_dropdown.observe(on_config_change, names="value")
     # Create interactive output.
     output = ipywidgets.interactive_output(
-        lambda angle, offset: _draw_dichotomy_3points(
-            angle, offset, point_positions, discovered_dichotomies
+        lambda angle, offset, config: _draw_dichotomy_3points(
+            angle,
+            offset,
+            config,
+            current_point_positions["value"],
         ),
-        {"angle": angle_slider, "offset": offset_slider},
+        {
+            "angle": angle_slider,
+            "offset": offset_slider,
+            "config": config_dropdown,
+        },
     )
     # Display widgets.
-    display(ipywidgets.VBox([angle_box, offset_box, output]))
+    display(
+        ipywidgets.VBox(
+            [
+                config_dropdown,
+                angle_box,
+                offset_box,
+                output,
+            ]
+        )
+    )

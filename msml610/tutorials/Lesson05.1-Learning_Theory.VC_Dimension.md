@@ -4,13 +4,40 @@
 ## Cell 1: Dichotomy Explorer - 2D Perceptron with 3 Points
 
 - Type: Interactive
+- Purpose: Discover how points can be classified moving the hyperplane
 - Visualization:
   - 2D plot with 3 points (A, B, C) that can be selected in different positions
-    and different assignments (represented by red or blue circles)
+    and different assignments
   - A slider/line representing a 2D perceptron (separating hyperplane) that can
     be rotated and moved
   - Points are colored inside based on which side of the line they fall (blue for
     +1, red for -1)
+- Interactive widgets:
+  - Select points in different positions
+    - collinear1
+    - collinear2
+    - triangle1
+    - triangle2
+    - triangle3
+  - Rotate slider: angle of separating line (0-360 degrees)
+  - Position slider: offset of the line
+- Display:
+  - Current classification: "A: +1, B: -1, C: +1"
+<end>
+
+## Cell 2: Dichotomy Explorer - 2D Perceptron with 3 Points
+
+- Type: Interactive
+- Purpose: Discover that 3 points can be classified in 2^3 = 8 different ways by
+  moving the line
+- Visualization:
+  - Same as Cell 1
+  - 2D plot with 3 points (A, B, C) that can be selected in different positions
+    and different assignments (represented by red or blue circles)
+    - Points are colored inside based on which side of the line they fall (blue for
+      +1, red for -1)
+  - A slider/line representing a 2D perceptron (separating hyperplane) that can
+    be rotated and moved
 - Interactive widgets:
   - Select points in different positions and assignments
     - collinear
@@ -20,11 +47,9 @@
   - Position slider: offset of the line
   - Button: to find the solution 
 - Display:
-  - Desired classification
+  - Desired classification: "A: +1, B: -1, C: +1"
   - Current classification: "A: +1, B: -1, C: +1"
-- Purpose: Discover that 3 points can be classified in 2^3 = 8 different ways by
-  moving the line
-<end>
+  - Print if the current dichotomy is achieved or not
 
 ## Cell 3: Dichotomy Explorer - 2D Perceptron with 4 Points
 
