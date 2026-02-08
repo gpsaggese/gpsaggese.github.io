@@ -494,7 +494,22 @@ class PositiveIntervalsTester(HypothesisTester):
         :param labels: Array of shape (N,) with desired labels in {-1, +1}
         :return: True if valid interval pattern, False otherwise
         """
-        pass
+        # Extract 1D coordinates.
+        points_1d = points.flatten()
+        # Sort points and labels together.
+        sorted_indices = np.argsort(points_1d)
+        sorted_labels = labels[sorted_indices]
+        # Find all transitions.
+        transitions_neg_to_pos = 0
+        transitions_pos_to_neg = 0
+        for i in range(len(sorted_labels) - 1):
+            if sorted_labels[i] == -1 and sorted_labels[i + 1] == 1:
+                transitions_neg_to_pos += 1
+            elif sorted_labels[i] == 1 and sorted_labels[i + 1] == -1:
+                transitions_pos_to_neg += 1
+        # Valid interval: at most one -1→+1 and one +1→-1 transition.
+        # Pattern must be: -1*, +1*, -1*
+        return transitions_neg_to_pos <= 1 and transitions_pos_to_neg <= 1
 
     def get_name(self) -> str:
         """
@@ -502,7 +517,7 @@ class PositiveIntervalsTester(HypothesisTester):
 
         :return: "Positive Intervals"
         """
-        pass
+        return "Positive Intervals"
 
     def find_hypothesis(
         self, points: np.ndarray, labels: np.ndarray
@@ -514,7 +529,41 @@ class PositiveIntervalsTester(HypothesisTester):
         :param labels: Array of shape (N,) with desired labels in {-1, +1}
         :return: Dict with 'left_bound' and 'right_bound', or None if not realizable
         """
-        pass
+        if not self.test_dichotomy(points, labels):
+            return None
+        # Extract 1D coordinates.
+        points_1d = points.flatten()
+        # Sort points and labels together.
+        sorted_indices = np.argsort(points_1d)
+        sorted_points = points_1d[sorted_indices]
+        sorted_labels = labels[sorted_indices]
+        # Find +1 region.
+        positive_indices = np.where(sorted_labels == 1)[0]
+        # If no +1 labels, interval is empty.
+        if len(positive_indices) == 0:
+            # Empty interval: place it outside the range.
+            left_bound = sorted_points[-1] + 1.0
+            right_bound = sorted_points[-1] + 2.0
+        else:
+            # Find leftmost and rightmost +1 points.
+            first_positive_idx = positive_indices[0]
+            last_positive_idx = positive_indices[-1]
+            # Set boundaries.
+            if first_positive_idx == 0:
+                left_bound = sorted_points[0] - 1.0
+            else:
+                left_bound = (
+                    sorted_points[first_positive_idx - 1]
+                    + sorted_points[first_positive_idx]
+                ) / 2.0
+            if last_positive_idx == len(sorted_points) - 1:
+                right_bound = sorted_points[-1] + 1.0
+            else:
+                right_bound = (
+                    sorted_points[last_positive_idx]
+                    + sorted_points[last_positive_idx + 1]
+                ) / 2.0
+        return {"left_bound": left_bound, "right_bound": right_bound}
 
 
 # #############################################################################
@@ -547,7 +596,9 @@ class ConvexSetsTester(HypothesisTester):
         :param labels: Array of shape (N,) with desired labels in {-1, +1}
         :return: Always True (all dichotomies realizable)
         """
-        pass
+        # For convex sets, every dichotomy is realizable by design.
+        # Simply select all +1 points and take their convex hull.
+        return True
 
     def get_name(self) -> str:
         """
@@ -555,7 +606,7 @@ class ConvexSetsTester(HypothesisTester):
 
         :return: "Convex Sets"
         """
-        pass
+        return "Convex Sets"
 
     def find_hypothesis(
         self, points: np.ndarray, labels: np.ndarray
@@ -567,7 +618,24 @@ class ConvexSetsTester(HypothesisTester):
         :param labels: Array of shape (N,) with desired labels in {-1, +1}
         :return: Dict with 'hull_points' (vertices of convex hull)
         """
-        pass
+        # Select all points labeled +1.
+        positive_indices = np.where(labels == 1)[0]
+        if len(positive_indices) == 0:
+            # No positive points: empty hull.
+            return {"hull_points": np.array([])}
+        positive_points = points[positive_indices]
+        if len(positive_points) < 3:
+            # Fewer than 3 points: degenerate hull.
+            return {"hull_points": positive_points}
+        try:
+            # Compute convex hull.
+            hull = scipy.spatial.ConvexHull(positive_points)
+            hull_points = positive_points[hull.vertices]
+            return {"hull_points": hull_points}
+        except Exception as e:
+            # If hull computation fails, return all positive points.
+            _LOG.debug(f"Convex hull computation failed: {e}")
+            return {"hull_points": positive_points}
 
 
 # #############################################################################
@@ -599,9 +667,11 @@ class GrowthFunctionCalculator:
         :param verbose: Whether to print detailed logs
         :param show_progress: Whether to show progress bars for long computations
         """
-        pass
+        self._hypothesis_tester = hypothesis_tester
+        self._verbose = verbose
+        self._show_progress = show_progress
 
-    def compute_growth_function(self, points: np.ndarray) -> Dict[str, any]:
+    def compute_growth_function(self, points: np.ndarray) -> Dict[str, Any]:
         """
         Compute growth function m_H(N) for the given points.
 
@@ -616,7 +686,48 @@ class GrowthFunctionCalculator:
             - 'is_shattered': True if m_H(N) == 2^N
             - 'realizable_dichotomies': List of realizable dichotomy indices
         """
-        pass
+        n = len(points)
+        if self._verbose:
+            _LOG.info(
+                f"Computing growth function for {n} points using "
+                f"{self._hypothesis_tester.get_name()}"
+            )
+        # Create dichotomy enumerator.
+        enumerator = DichotomyEnumerator(n)
+        total_dichotomies = enumerator.count_dichotomies()
+        # Test each dichotomy.
+        realizable_count = 0
+        realizable_indices = []
+        iterator = range(total_dichotomies)
+        if self._show_progress and total_dichotomies > 16:
+            iterator = tqdm(
+                iterator,
+                desc=f"Testing dichotomies (N={n})",
+                disable=not self._show_progress,
+            )
+        for idx in iterator:
+            labels = enumerator.get_dichotomy(idx)
+            if self._hypothesis_tester.test_dichotomy(points, labels):
+                realizable_count += 1
+                realizable_indices.append(idx)
+        # Compute statistics.
+        fraction = realizable_count / total_dichotomies
+        is_shattered = realizable_count == total_dichotomies
+        if self._verbose:
+            _LOG.info(
+                f"m_H({n}) = {realizable_count} / {total_dichotomies} "
+                f"({fraction:.2%})"
+            )
+            if is_shattered:
+                _LOG.info(f"{n} points are shattered!")
+        return {
+            "n": n,
+            "m_h_n": realizable_count,
+            "max_dichotomies": total_dichotomies,
+            "fraction": fraction,
+            "is_shattered": is_shattered,
+            "realizable_dichotomies": realizable_indices,
+        }
 
     def compute_growth_curve(
         self,
@@ -641,7 +752,40 @@ class GrowthFunctionCalculator:
             - 'is_shattered_mean': Fraction of trials where points were shattered
             - 'hypothesis': Name of hypothesis set
         """
-        pass
+        results = []
+        for n in n_range:
+            if self._verbose:
+                _LOG.info(f"Computing for N={n} ({num_trials} trials)")
+            trial_results = []
+            for trial in range(num_trials):
+                # Generate points based on hypothesis type.
+                hypothesis_name = self._hypothesis_tester.get_name()
+                if "Positive" in hypothesis_name:
+                    # Use 1D points for positive rays/intervals.
+                    points = point_generator.generate_line_1d(n)
+                elif "Convex" in hypothesis_name:
+                    # Use circle configuration for convex sets.
+                    points = point_generator.generate_circle(n)
+                else:
+                    # Use random 2D points for perceptron.
+                    points = point_generator.generate_random(n, 2)
+                # Compute growth function.
+                result = self.compute_growth_function(points)
+                trial_results.append(result)
+            # Aggregate trial results.
+            m_h_n_values = [r["m_h_n"] for r in trial_results]
+            is_shattered_values = [r["is_shattered"] for r in trial_results]
+            results.append(
+                {
+                    "n": n,
+                    "m_h_n_mean": np.mean(m_h_n_values),
+                    "m_h_n_std": np.std(m_h_n_values),
+                    "max_dichotomies": trial_results[0]["max_dichotomies"],
+                    "is_shattered_mean": np.mean(is_shattered_values),
+                    "hypothesis": self._hypothesis_tester.get_name(),
+                }
+            )
+        return pd.DataFrame(results)
 
     def find_break_point(
         self, point_generator: PointGenerator, max_n: int = 10
@@ -653,7 +797,23 @@ class GrowthFunctionCalculator:
         :param max_n: Maximum N to test
         :return: Break point N, or None if no break point found up to max_n
         """
-        pass
+        for n in range(1, max_n + 1):
+            # Generate points based on hypothesis type.
+            hypothesis_name = self._hypothesis_tester.get_name()
+            if "Positive" in hypothesis_name:
+                points = point_generator.generate_line_1d(n)
+            elif "Convex" in hypothesis_name:
+                points = point_generator.generate_circle(n)
+            else:
+                points = point_generator.generate_random(n, 2)
+            # Check if shattered.
+            if not self.find_shattered_points(points):
+                if self._verbose:
+                    _LOG.info(f"Break point found at N={n}")
+                return n
+        if self._verbose:
+            _LOG.info(f"No break point found up to N={max_n}")
+        return None
 
     def find_shattered_points(self, points: np.ndarray) -> bool:
         """
@@ -662,11 +822,12 @@ class GrowthFunctionCalculator:
         :param points: Array of shape (N, D) containing point coordinates
         :return: True if all 2^N dichotomies are realizable (points are shattered)
         """
-        pass
+        result = self.compute_growth_function(points)
+        return result["is_shattered"]
 
     def estimate_vc_dimension(
         self, point_generator: PointGenerator, max_n: int = 10, num_trials: int = 5
-    ) -> Dict[str, any]:
+    ) -> Dict[str, Any]:
         """
         Estimate the VC dimension of the hypothesis set.
 
@@ -682,7 +843,37 @@ class GrowthFunctionCalculator:
             - 'break_point': First N where no shattered points found
             - 'results_by_n': Dict mapping N to whether any trial was shattered
         """
-        pass
+        results_by_n = {}
+        vc_dimension = 0
+        for n in range(1, max_n + 1):
+            if self._verbose:
+                _LOG.info(f"Testing VC dimension for N={n} ({num_trials} trials)")
+            # Try multiple random configurations.
+            any_shattered = False
+            for trial in range(num_trials):
+                # Generate points based on hypothesis type.
+                hypothesis_name = self._hypothesis_tester.get_name()
+                if "Positive" in hypothesis_name:
+                    points = point_generator.generate_line_1d(n)
+                elif "Convex" in hypothesis_name:
+                    points = point_generator.generate_circle(n)
+                else:
+                    points = point_generator.generate_random(n, 2)
+                # Check if shattered.
+                if self.find_shattered_points(points):
+                    any_shattered = True
+                    break
+            results_by_n[n] = any_shattered
+            if any_shattered:
+                vc_dimension = n
+            else:
+                # Break point found.
+                break
+        return {
+            "vc_dimension": vc_dimension,
+            "break_point": vc_dimension + 1 if vc_dimension < max_n else None,
+            "results_by_n": results_by_n,
+        }
 
 
 # #############################################################################
@@ -704,7 +895,7 @@ class GrowthFunctionVisualizer:
 
         :param figsize: Default figure size for plots
         """
-        pass
+        self._figsize = figsize
 
     def plot_growth_curve(
         self,
@@ -719,7 +910,46 @@ class GrowthFunctionVisualizer:
         :param title: Plot title (default: auto-generate from hypothesis name)
         :param show_exponential: Whether to show 2^N reference curve
         """
-        pass
+        fig, ax = plt.subplots(figsize=self._figsize)
+        # Plot growth function.
+        ax.plot(
+            results_df["n"],
+            results_df["m_h_n_mean"],
+            marker="o",
+            linewidth=2,
+            label=f"m_H(N) - {results_df['hypothesis'].iloc[0]}",
+        )
+        # Add error bars if std is available.
+        if "m_h_n_std" in results_df.columns:
+            ax.fill_between(
+                results_df["n"],
+                results_df["m_h_n_mean"] - results_df["m_h_n_std"],
+                results_df["m_h_n_mean"] + results_df["m_h_n_std"],
+                alpha=0.2,
+            )
+        # Plot exponential reference.
+        if show_exponential:
+            ax.plot(
+                results_df["n"],
+                results_df["max_dichotomies"],
+                linestyle="--",
+                linewidth=2,
+                label="2^N",
+                alpha=0.7,
+            )
+        # Format plot.
+        ax.set_xlabel("N (number of points)", fontsize=12)
+        ax.set_ylabel("Growth Function m_H(N)", fontsize=12)
+        if title is None:
+            title = (
+                f"Growth Function: {results_df['hypothesis'].iloc[0]}"
+            )
+        ax.set_title(title, fontsize=14, fontweight="bold")
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+        ax.set_yscale("log")
+        plt.tight_layout()
+        plt.show()
 
     def plot_multiple_growth_curves(
         self,
@@ -732,7 +962,37 @@ class GrowthFunctionVisualizer:
         :param results_dict: Dictionary mapping hypothesis names to result DataFrames
         :param title: Plot title
         """
-        pass
+        fig, ax = plt.subplots(figsize=self._figsize)
+        # Plot each hypothesis.
+        for name, results_df in results_dict.items():
+            ax.plot(
+                results_df["n"],
+                results_df["m_h_n_mean"],
+                marker="o",
+                linewidth=2,
+                label=name,
+            )
+        # Plot exponential reference.
+        # Use the first result to get N values.
+        first_df = next(iter(results_dict.values()))
+        ax.plot(
+            first_df["n"],
+            first_df["max_dichotomies"],
+            linestyle="--",
+            linewidth=2,
+            label="2^N",
+            alpha=0.5,
+            color="black",
+        )
+        # Format plot.
+        ax.set_xlabel("N (number of points)", fontsize=12)
+        ax.set_ylabel("Growth Function m_H(N)", fontsize=12)
+        ax.set_title(title, fontsize=14, fontweight="bold")
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+        ax.set_yscale("log")
+        plt.tight_layout()
+        plt.show()
 
     def plot_dichotomy_grid(
         self,
@@ -750,7 +1010,50 @@ class GrowthFunctionVisualizer:
         :param hypothesis_tester: Hypothesis tester to use
         :param max_dichotomies: Maximum number of dichotomies to display
         """
-        pass
+        n = len(points)
+        enumerator = DichotomyEnumerator(n)
+        total_dichotomies = min(enumerator.count_dichotomies(), max_dichotomies)
+        # Determine grid size.
+        grid_size = int(np.ceil(np.sqrt(total_dichotomies)))
+        fig, axes = plt.subplots(
+            grid_size, grid_size, figsize=(12, 12)
+        )
+        axes = axes.flatten()
+        # Plot each dichotomy.
+        for idx in range(total_dichotomies):
+            ax = axes[idx]
+            labels = enumerator.get_dichotomy(idx)
+            is_realizable = hypothesis_tester.test_dichotomy(points, labels)
+            # Plot points.
+            for i, (point, label) in enumerate(zip(points, labels)):
+                color = "blue" if label == 1 else "red"
+                ax.scatter(
+                    point[0],
+                    point[1],
+                    c=color,
+                    s=100,
+                    edgecolors="black",
+                    linewidths=1,
+                    zorder=3,
+                )
+            # Set border color based on realizability.
+            border_color = "green" if is_realizable else "red"
+            for spine in ax.spines.values():
+                spine.set_edgecolor(border_color)
+                spine.set_linewidth(3)
+            ax.set_title(f"#{idx}", fontsize=8)
+            ax.set_xticks([])
+            ax.set_yticks([])
+        # Hide unused subplots.
+        for idx in range(total_dichotomies, len(axes)):
+            axes[idx].axis("off")
+        plt.suptitle(
+            f"Dichotomies for {n} points - {hypothesis_tester.get_name()}",
+            fontsize=14,
+            fontweight="bold",
+        )
+        plt.tight_layout()
+        plt.show()
 
     def plot_shatter_test(
         self,
@@ -765,7 +1068,66 @@ class GrowthFunctionVisualizer:
         :param points: Array of shape (N, D) containing point coordinates
         :param hypothesis_tester: Hypothesis tester to use
         """
-        pass
+        # Compute growth function.
+        calculator = GrowthFunctionCalculator(
+            hypothesis_tester, verbose=False, show_progress=True
+        )
+        result = calculator.compute_growth_function(points)
+        # Create visualization.
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=self._figsize)
+        # Plot 1: Points configuration.
+        if points.shape[1] == 1:
+            # 1D points.
+            ax1.scatter(
+                points[:, 0],
+                np.zeros(len(points)),
+                c="blue",
+                s=200,
+                edgecolors="black",
+                linewidths=2,
+            )
+            ax1.set_yticks([])
+        else:
+            # 2D points.
+            ax1.scatter(
+                points[:, 0],
+                points[:, 1],
+                c="blue",
+                s=200,
+                edgecolors="black",
+                linewidths=2,
+            )
+        ax1.set_title(f"Point Configuration (N={result['n']})", fontsize=12)
+        ax1.grid(True, alpha=0.3)
+        # Plot 2: Statistics.
+        ax2.axis("off")
+        text_content = f"Hypothesis Set: {hypothesis_tester.get_name()}\n\n"
+        text_content += f"N (points):           {result['n']}\n"
+        text_content += f"m_H(N):               {result['m_h_n']}\n"
+        text_content += f"2^N:                  {result['max_dichotomies']}\n"
+        text_content += f"Fraction:             {result['fraction']:.2%}\n\n"
+        if result["is_shattered"]:
+            text_content += "STATUS: Points are SHATTERED! ✓\n"
+            text_content += "All dichotomies are realizable.\n"
+        else:
+            text_content += "STATUS: Points are NOT shattered.\n"
+            unrealizable = result["max_dichotomies"] - result["m_h_n"]
+            text_content += f"{unrealizable} dichotomies are unrealizable.\n"
+        ax2.text(
+            0.1,
+            0.5,
+            text_content,
+            fontsize=12,
+            verticalalignment="center",
+            family="monospace",
+        )
+        plt.suptitle(
+            "Shatter Test",
+            fontsize=14,
+            fontweight="bold",
+        )
+        plt.tight_layout()
+        plt.show()
 
 
 # #############################################################################
@@ -781,7 +1143,34 @@ def compute_theoretical_growth(hypothesis_name: str, n: int) -> int:
     :param n: Number of points
     :return: Theoretical m_H(n) value, or -1 if unknown
     """
-    pass
+    hypothesis_name_lower = hypothesis_name.lower()
+    if "positive rays" in hypothesis_name_lower or "ray" in hypothesis_name_lower:
+        # m_H(N) = N + 1 for positive rays.
+        return n + 1
+    elif "positive intervals" in hypothesis_name_lower or "interval" in hypothesis_name_lower:
+        # m_H(N) = N(N+1)/2 + 1 for positive intervals.
+        return n * (n + 1) // 2 + 1
+    elif "perceptron" in hypothesis_name_lower:
+        # m_H(N) = 2^N for N <= 3, then breaks at N = 4.
+        # For 2D perceptron: m_H(N) = sum_{i=0}^{d} C(N, i) where d = 2.
+        # But empirically: m_H(1)=2, m_H(2)=4, m_H(3)=8, m_H(4)=14.
+        if n <= 3:
+            return 2**n
+        else:
+            # General formula for d-dimensional perceptron:
+            # m_H(N) = 2 * sum_{i=0}^{d} C(N-1, i)
+            # For d=2: m_H(N) = 2 * (C(N-1,0) + C(N-1,1) + C(N-1,2))
+            # = 2 * (1 + (N-1) + (N-1)(N-2)/2)
+            # = 2 * (1 + N - 1 + (N^2 - 3N + 2)/2)
+            # = 2 * (N + (N^2 - 3N + 2)/2)
+            # = N^2 - N + 2
+            return n * n - n + 2
+    elif "convex" in hypothesis_name_lower:
+        # m_H(N) = 2^N for convex sets (all dichotomies realizable).
+        return 2**n
+    else:
+        # Unknown hypothesis set.
+        return -1
 
 
 def compare_with_theory(
@@ -794,4 +1183,15 @@ def compare_with_theory(
     :param hypothesis_name: Name of hypothesis set
     :return: DataFrame with additional 'theoretical' and 'error' columns
     """
-    pass
+    # Make a copy to avoid modifying original.
+    df = results_df.copy()
+    # Compute theoretical values.
+    df["theoretical"] = df["n"].apply(
+        lambda n: compute_theoretical_growth(hypothesis_name, n)
+    )
+    # Compute error.
+    df["error"] = df["m_h_n_mean"] - df["theoretical"]
+    df["error_pct"] = (df["error"] / df["theoretical"] * 100).where(
+        df["theoretical"] > 0, np.nan
+    )
+    return df

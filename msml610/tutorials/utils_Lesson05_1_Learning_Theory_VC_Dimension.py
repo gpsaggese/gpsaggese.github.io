@@ -1291,26 +1291,24 @@ def _draw_convex_sets(
     if len(hull_points) >= 3:
         # Close the hull by repeating first point.
         hull_closed = np.vstack([hull_points, hull_points[0]])
-        hull_color = "green" if match else "orange"
         ax1.fill(
             hull_closed[:, 0],
             hull_closed[:, 1],
-            color=hull_color,
-            alpha=0.2,
+            color="gray",
+            alpha=0.3,
             label="Convex hull",
         )
         ax1.plot(
-            hull_closed[:, 0], hull_closed[:, 1], color=hull_color, linewidth=2
+            hull_closed[:, 0], hull_closed[:, 1], color="gray", linewidth=2
         )
     elif len(hull_points) > 0:
         # Draw selected points for degenerate case.
-        marker_color = "green" if match else "orange"
         ax1.scatter(
             hull_points[:, 0],
             hull_points[:, 1],
             marker="x",
             s=100,
-            c=marker_color,
+            c="gray",
             linewidths=2,
             label="Selected",
         )
@@ -1404,6 +1402,9 @@ def cell6_dichotomy_explorer_convex_sets() -> None:
         initial_value=seed_init,
         is_float=False,
     )
+    # Create a hidden trigger widget to force redraw when button is clicked.
+    trigger = ipywidgets.IntText(value=0, layout=ipywidgets.Layout(display='none'))
+
     # Create "Find Solution" button.
     find_button = ipywidgets.Button(
         description="Find Solution",
@@ -1414,6 +1415,12 @@ def cell6_dichotomy_explorer_convex_sets() -> None:
     def on_n_change(change):
         """Reset selected indices when N changes."""
         selected_indices_state["value"] = []
+        trigger.value += 1  # Force redraw.
+
+    def on_seed_change(change):
+        """Reset selected indices when seed changes."""
+        selected_indices_state["value"] = []
+        trigger.value += 1  # Force redraw.
 
     def on_find_click(b):
         """Find solution for current target."""
@@ -1427,15 +1434,19 @@ def cell6_dichotomy_explorer_convex_sets() -> None:
         # Find solution.
         selected_indices = _find_convex_hull_for_target(points, target)
         selected_indices_state["value"] = selected_indices
+        # Trigger redraw by incrementing trigger value.
+        trigger.value += 1
 
     n_slider.observe(on_n_change, names="value")
+    seed_slider.observe(on_seed_change, names="value")
     find_button.on_click(on_find_click)
     # Create interactive output.
     output = ipywidgets.interactive_output(
-        lambda n, seed: _draw_convex_sets(n, seed, selected_indices_state),
+        lambda n, seed, t: _draw_convex_sets(n, seed, selected_indices_state),
         {
             "n": n_slider,
             "seed": seed_slider,
+            "t": trigger,
         },
     )
     # Display widgets.
@@ -1445,6 +1456,7 @@ def cell6_dichotomy_explorer_convex_sets() -> None:
                 n_box,
                 seed_box,
                 find_button,
+                trigger,
                 output,
             ]
         )
