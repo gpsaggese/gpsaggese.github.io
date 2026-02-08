@@ -126,56 +126,289 @@ def calculate_conditional_entropy(joint_prob: np.ndarray) -> float:
 
 
 # #############################################################################
-# Mutual information
+# Cell 2: Entropy vs Variance
 # #############################################################################
 
 
-def calculate_mutual_information(joint_prob: np.ndarray) -> float:
-    r"""
-    Calculate mutual information I(X;Y) from joint probability distribution.
-
-    Mutual Information $I(X;Y)$ measures how much knowing one variable
-    reduces uncertainty about the other:
-
-    $$I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X,Y)$$
-
-    :param joint_prob: 2D array of joint probabilities p(x,y)
-    :return: Mutual information in bits
+def cell2_plot_distribution_with_stats(
+    values: np.ndarray,
+    probabilities: np.ndarray,
+    title: str,
+    *,
+    ax: Optional[Any] = None,
+    figsize: tuple = (6, 4),
+    save_fig: Optional[str] = None,
+) -> None:
     """
-    joint_prob = np.array(joint_prob)
-    # Calculate marginals.
-    p_x = joint_prob.sum(axis=1)
-    p_y = joint_prob.sum(axis=0)
-    # Calculate entropies.
-    h_x = cell1_calculate_entropy(p_x)
-    h_y = cell1_calculate_entropy(p_y)
-    h_xy = calculate_joint_entropy(joint_prob)
-    # Mutual information.
-    mi = h_x + h_y - h_xy
-    return mi
+    Plot a probability distribution with mean, variance, and entropy statistics.
 
-
-def create_correlated_joint_distribution(
-    *, correlation: float = 0.5
-) -> np.ndarray:
+    :param values: Array of outcome values
+    :param probabilities: Array of probabilities for each outcome
+    :param title: Title for the plot
+    :param ax: Matplotlib axis to plot on (creates new if None)
+    :param figsize: Figure size as (width, height) tuple, default (10, 3)
+    :param save_fig: Optional filename to save the figure (e.g., 'plot.png')
     """
-    Create a 2x2 joint distribution with specified correlation.
-
-    :param correlation: Correlation strength (0=independent, 1=perfectly
-        correlated)
-    :return: 2x2 joint probability matrix
-    """
-    # Create joint distribution with correlation.
-    p11 = 0.25 + correlation * 0.25
-    p00 = 0.25 + correlation * 0.25
-    p10 = 0.25 - correlation * 0.25
-    p01 = 0.25 - correlation * 0.25
-    joint_prob = np.array([[p00, p01], [p10, p11]])
-    return joint_prob
+    # Calculate statistics.
+    mean = np.sum(values * probabilities)
+    variance = np.sum(probabilities * (values - mean) ** 2)
+    entropy = cell1_calculate_entropy(probabilities)
+    # Create axis if not provided.
+    fig = None
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    # Plot probability distribution.
+    ax.bar(
+        values,
+        probabilities,
+        alpha=0.7,
+        edgecolor="black",
+        color="steelblue",
+    )
+    ax.set_xlabel("Value", fontsize=12)
+    ax.set_ylabel("Probability", fontsize=12)
+    ax.set_title(title, fontsize=14, fontweight="bold")
+    ax.grid(True, alpha=0.3, axis="y")
+    # Add statistics text box.
+    stats_text = (
+        f"Mean: {mean:.2f}\n"
+        f"Variance: {variance:.2f}\n"
+        f"Entropy: {entropy:.4f} bits"
+    )
+    ax.text(
+        0.98,
+        0.97,
+        stats_text,
+        transform=ax.transAxes,
+        fontsize=11,
+        verticalalignment="top",
+        horizontalalignment="right",
+        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.8),
+    )
+    # Save figure if requested.
+    if save_fig is not None and fig is not None:
+        fig.savefig(save_fig, dpi=150, bbox_inches="tight")
+        _LOG.info("Saved figure to: %s", save_fig)
+    # Show plot if not using existing axis.
+    if fig is not None:
+        plt.tight_layout()
+        plt.show()
 
 
 # #############################################################################
-# Cell 6: Joint Entropy
+# Cell 3: Interactive Visualization: Binary Entropy
+# #############################################################################
+
+
+def cell3_plot_binary_entropy_interactive(
+    *, p: float = 0.5, n: int = 100, figsize: Optional[tuple] = None
+) -> None:
+    """
+    Plot binary entropy function with current value highlighted.
+
+    :param p: Probability of outcome 1 (slider controlled)
+    :param n: Number of samples to draw over time (default 100)
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
+    """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
+    # Create array of probabilities.
+    p_values = np.linspace(0.001, 0.999, 1000)
+    entropy_values = [binary_entropy(p_val) for p_val in p_values]
+    # Generate n samples from the binary distribution.
+    np.random.seed(42)  # For reproducibility
+    samples = np.random.binomial(1, p, n)
+    # Calculate information content.
+    if p > 0 and p < 1:
+        info_0 = -np.log2(1 - p)
+        info_1 = -np.log2(p)
+    else:
+        info_0 = 0.0
+        info_1 = 0.0
+    # Create figure with 4 subplots in a single row.
+    # Use gridspec_kw to set fixed width ratios for consistent layout.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    )
+    # Plot 1: Binary entropy function.
+    ax1.plot(p_values, entropy_values, "b-", linewidth=2, label="H(p)")
+    ax1.axvline(
+        p, color="red", linestyle="--", linewidth=2, label=f"p = {p:.2f}"
+    )
+    ax1.axhline(
+        binary_entropy(p), color="red", linestyle="--", linewidth=1, alpha=0.5
+    )
+    ax1.scatter([p], [binary_entropy(p)], color="red", s=100, zorder=5)
+    ax1.set_xlabel("Probability p", fontsize=12)
+    ax1.set_ylabel("Entropy H(p) [bits]", fontsize=12)
+    ax1.set_title("Binary Entropy Function", fontsize=14, fontweight="bold")
+    ax1.grid(True, alpha=0.3)
+    ax1.legend(fontsize=11)
+    ax1.set_ylim([-0.05, 1.1])
+    # Plot 2: Probability distribution.
+    outcomes = ["Outcome 0", "Outcome 1"]
+    probs = [1 - p, p]
+    colors = ["skyblue", "coral"]
+    ax2.bar(outcomes, probs, color=colors, alpha=0.7, edgecolor="black")
+    ax2.set_ylabel("Probability", fontsize=12)
+    ax2.set_title(
+        f"Probability Distribution\nEntropy = {binary_entropy(p):.4f} bits",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax2.set_ylim([0, 1.1])
+    ax2.grid(True, alpha=0.3, axis="y")
+    # Add probability values on bars.
+    for i, (outcome, prob) in enumerate(zip(outcomes, probs)):
+        ax2.text(
+            i,
+            prob + 0.02,
+            f"{prob:.2f}",
+            ha="center",
+            fontsize=11,
+            fontweight="bold",
+        )
+    # Plot 3: Samples over time.
+    time_indices = np.arange(n)
+    # Create color array for samples.
+    sample_colors = ["skyblue" if s == 0 else "coral" for s in samples]
+    ax3.scatter(
+        time_indices,
+        samples,
+        c=sample_colors,
+        alpha=0.6,
+        s=50,
+        edgecolor="black",
+        linewidth=0.5,
+    )
+    # Add horizontal lines at 0 and 1.
+    ax3.axhline(
+        0,
+        color="skyblue",
+        linestyle="--",
+        linewidth=2,
+        alpha=0.5,
+        label="Outcome 0",
+    )
+    ax3.axhline(
+        1,
+        color="coral",
+        linestyle="--",
+        linewidth=2,
+        alpha=0.5,
+        label="Outcome 1",
+    )
+    ax3.set_xlabel("Time (sample index)", fontsize=12)
+    ax3.set_ylabel("Outcome", fontsize=12)
+    ax3.set_title(
+        f"Samples Over Time (n={n})\nObserved: {samples.sum()}/{n} ones ({samples.sum() / n:.2%})",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax3.set_ylim([-0.3, 1.3])
+    ax3.set_yticks([0, 1])
+    ax3.set_yticklabels(["0", "1"])
+    ax3.grid(True, alpha=0.3, axis="y")
+    ax3.legend(fontsize=11)
+    # Plot 4: Comments and explanation text.
+    ax4.axis("off")
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    # Wrap text content to ensure consistent dimensions.
+    text_content = (
+        f"Information Content:\n"
+        f"  • Outcome 0: {info_0:.4f} bits\n"
+        f"  • Outcome 1: {info_1:.4f} bits\n\n"
+        f"Entropy:\n"
+        f"  • Expected information:\n"
+        f"    {binary_entropy(p):.4f} bits\n\n"
+        f"Samples:\n"
+        f"  • Drawn: {n}\n"
+        f"  • Outcome 1 appeared:\n"
+        f"    {samples.sum()} times\n"
+        f"    ({samples.sum() / n:.2%})"
+    )
+    ax4.text(
+        0.05,
+        0.95,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=10,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
+        wrap=True,
+    )
+    # Use subplots_adjust with fixed parameters instead of tight_layout.
+    # This ensures consistent spacing and dimensions across all frames.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
+    )
+    plt.show()
+
+
+def cell3_create_binary_entropy_widget() -> None:
+    """
+    Create interactive widget for binary entropy visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the probability p of a binary random variable and observe how
+    entropy changes.
+
+    The widget includes:
+    - Slider for probability p (0.00 to 1.00)
+    - Fixed number of samples n = 100
+    - Fixed figure size
+    """
+    interact(
+        cell3_plot_binary_entropy_interactive,
+        p=FloatSlider(
+            min=0.00,
+            max=1.00,
+            step=0.01,
+            value=0.5,
+            description="Probability p:",
+            style={"description_width": "initial"},
+        ),
+        n=fixed(100),
+        figsize=fixed(None),
+    )
+
+
+def cell3_generate_binary_entropy_animation() -> None:
+    """
+    Generate animation frames for binary entropy visualization.
+
+    This function creates a series of frames showing how binary entropy
+    changes as probability p varies from 0 to 1.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="p",
+        const_variable="n",
+        const_value=100,
+        n_steps=11,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Binary_Entropy_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell3_plot_binary_entropy_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+# #############################################################################
+# Cell 4: Joint Entropy
 # #############################################################################
 
 
@@ -362,8 +595,73 @@ def cell4_plot_joint_entropy_interactive(
     plt.show()
 
 
+def cell4_create_joint_entropy_widget() -> None:
+    """
+    Create interactive widget for joint entropy visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the dependence between variables and sample size to observe how
+    joint entropy changes.
+
+    The widget includes:
+    - Slider for dependence (0.0 to 1.0)
+    - Slider for sample size (10 to 500)
+    - Fixed figure size
+    """
+    interact(
+        cell4_plot_joint_entropy_interactive,
+        dependence=FloatSlider(
+            min=0.0,
+            max=1.0,
+            step=0.05,
+            value=0.5,
+            description="Dependence:",
+            style={"description_width": "initial"},
+        ),
+        n_samples=IntSlider(
+            min=10,
+            max=500,
+            step=10,
+            value=300,
+            description="Sample size:",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell4_generate_joint_entropy_animation() -> None:
+    """
+    Generate animation frames for joint entropy visualization.
+
+    This function creates a series of frames showing how joint entropy
+    changes as dependence between variables varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="dependence",
+        const_variable="n_samples",
+        const_value=300,
+        n_steps=11,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Joint_Entropy_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell4_plot_joint_entropy_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
 # #############################################################################
-# Cell 7: Conditional Entropy
+# Cell 5: Conditional Entropy
 # #############################################################################
 
 
@@ -588,309 +886,107 @@ def cell5_plot_conditional_entropy_interactive(
     plt.show()
 
 
-# #############################################################################
-# KL divergence and cross-entropy
-# #############################################################################
-
-
-def calculate_kl_divergence(
-    p: Union[List[float], np.ndarray], q: Union[List[float], np.ndarray]
-) -> float:
-    r"""
-    Calculate KL divergence D_KL(P || Q).
-
-    Kullback-Leibler (KL) Divergence $D_{KL}(P \| Q)$ measures how one
-    distribution differs from another:
-
-    $$D_{KL}(P \| Q) = \sum_x P(x) \log_2 \frac{P(x)}{Q(x)}$$
-
-    :param p: True distribution P
-    :param q: Approximating distribution Q
-    :return: KL divergence in bits
+def cell5_create_conditional_entropy_widget() -> None:
     """
-    p = np.array(p)
-    q = np.array(q)
-    # Avoid log(0) by filtering.
-    mask = (p > 0) & (q > 0)
-    kl = np.sum(p[mask] * np.log2(p[mask] / q[mask]))
-    return kl
-
-
-def calculate_cross_entropy(
-    p: Union[List[float], np.ndarray], q: Union[List[float], np.ndarray]
-) -> float:
-    r"""
-    Calculate cross-entropy H(P, Q).
-
-    Cross-Entropy $H(P, Q)$ measures the average number of bits needed to
-    encode data from $P$ using code optimized for $Q$:
-
-    $$H(P, Q) = -\sum_x P(x) \log_2 Q(x)$$
-
-    Relationship: $H(P, Q) = H(P) + D_{KL}(P \| Q)$
-
-    :param p: True distribution P
-    :param q: Model distribution Q
-    :return: Cross-entropy in bits
-    """
-    p = np.array(p)
-    q = np.array(q)
-    # Avoid log(0).
-    mask = (p > 0) & (q > 0)
-    ce = -np.sum(p[mask] * np.log2(q[mask]))
-    return ce
-
-
-# #############################################################################
-# Cell 2: Entropy vs Variance
-# #############################################################################
-
-
-def cell2_plot_distribution_with_stats(
-    values: np.ndarray,
-    probabilities: np.ndarray,
-    title: str,
-    *,
-    ax: Optional[Any] = None,
-    figsize: tuple = (6, 4),
-    save_fig: Optional[str] = None,
-) -> None:
-    """
-    Plot a probability distribution with mean, variance, and entropy statistics.
-
-    :param values: Array of outcome values
-    :param probabilities: Array of probabilities for each outcome
-    :param title: Title for the plot
-    :param ax: Matplotlib axis to plot on (creates new if None)
-    :param figsize: Figure size as (width, height) tuple, default (10, 3)
-    :param save_fig: Optional filename to save the figure (e.g., 'plot.png')
-    """
-    # Calculate statistics.
-    mean = np.sum(values * probabilities)
-    variance = np.sum(probabilities * (values - mean) ** 2)
-    entropy = cell1_calculate_entropy(probabilities)
-    # Create axis if not provided.
-    fig = None
-    if ax is None:
-        fig, ax = plt.subplots(figsize=figsize)
-    # Plot probability distribution.
-    ax.bar(
-        values,
-        probabilities,
-        alpha=0.7,
-        edgecolor="black",
-        color="steelblue",
-    )
-    ax.set_xlabel("Value", fontsize=12)
-    ax.set_ylabel("Probability", fontsize=12)
-    ax.set_title(title, fontsize=14, fontweight="bold")
-    ax.grid(True, alpha=0.3, axis="y")
-    # Add statistics text box.
-    stats_text = (
-        f"Mean: {mean:.2f}\n"
-        f"Variance: {variance:.2f}\n"
-        f"Entropy: {entropy:.4f} bits"
-    )
-    ax.text(
-        0.98,
-        0.97,
-        stats_text,
-        transform=ax.transAxes,
-        fontsize=11,
-        verticalalignment="top",
-        horizontalalignment="right",
-        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.8),
-    )
-    # Save figure if requested.
-    if save_fig is not None and fig is not None:
-        fig.savefig(save_fig, dpi=150, bbox_inches="tight")
-        _LOG.info("Saved figure to: %s", save_fig)
-    # Show plot if not using existing axis.
-    if fig is not None:
-        plt.tight_layout()
-        plt.show()
-
-
-# #############################################################################
-# Cell 5: Interactive Visualization: Binary Entropy
-# #############################################################################
-
-
-def cell3_plot_binary_entropy_interactive(
-    *, p: float = 0.5, n: int = 100, figsize: Optional[tuple] = None
-) -> None:
-    """
-    Plot binary entropy function with current value highlighted.
-
-    :param p: Probability of outcome 1 (slider controlled)
-    :param n: Number of samples to draw over time (default 100)
-    :param figsize: Figure size as (width, height) in inches; defaults to
-        (20, 5) if not specified
-    """
-    # Set default figsize if not provided.
-    if figsize is None:
-        figsize = (20, 5)
-    # Create array of probabilities.
-    p_values = np.linspace(0.001, 0.999, 1000)
-    entropy_values = [binary_entropy(p_val) for p_val in p_values]
-    # Generate n samples from the binary distribution.
-    np.random.seed(42)  # For reproducibility
-    samples = np.random.binomial(1, p, n)
-    # Calculate information content.
-    if p > 0 and p < 1:
-        info_0 = -np.log2(1 - p)
-        info_1 = -np.log2(p)
-    else:
-        info_0 = 0.0
-        info_1 = 0.0
-    # Create figure with 4 subplots in a single row.
-    # Use gridspec_kw to set fixed width ratios for consistent layout.
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
-        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
-    )
-    # Plot 1: Binary entropy function.
-    ax1.plot(p_values, entropy_values, "b-", linewidth=2, label="H(p)")
-    ax1.axvline(
-        p, color="red", linestyle="--", linewidth=2, label=f"p = {p:.2f}"
-    )
-    ax1.axhline(
-        binary_entropy(p), color="red", linestyle="--", linewidth=1, alpha=0.5
-    )
-    ax1.scatter([p], [binary_entropy(p)], color="red", s=100, zorder=5)
-    ax1.set_xlabel("Probability p", fontsize=12)
-    ax1.set_ylabel("Entropy H(p) [bits]", fontsize=12)
-    ax1.set_title("Binary Entropy Function", fontsize=14, fontweight="bold")
-    ax1.grid(True, alpha=0.3)
-    ax1.legend(fontsize=11)
-    ax1.set_ylim([-0.05, 1.1])
-    # Plot 2: Probability distribution.
-    outcomes = ["Outcome 0", "Outcome 1"]
-    probs = [1 - p, p]
-    colors = ["skyblue", "coral"]
-    ax2.bar(outcomes, probs, color=colors, alpha=0.7, edgecolor="black")
-    ax2.set_ylabel("Probability", fontsize=12)
-    ax2.set_title(
-        f"Probability Distribution\nEntropy = {binary_entropy(p):.4f} bits",
-        fontsize=14,
-        fontweight="bold",
-    )
-    ax2.set_ylim([0, 1.1])
-    ax2.grid(True, alpha=0.3, axis="y")
-    # Add probability values on bars.
-    for i, (outcome, prob) in enumerate(zip(outcomes, probs)):
-        ax2.text(
-            i,
-            prob + 0.02,
-            f"{prob:.2f}",
-            ha="center",
-            fontsize=11,
-            fontweight="bold",
-        )
-    # Plot 3: Samples over time.
-    time_indices = np.arange(n)
-    # Create color array for samples.
-    sample_colors = ["skyblue" if s == 0 else "coral" for s in samples]
-    ax3.scatter(
-        time_indices,
-        samples,
-        c=sample_colors,
-        alpha=0.6,
-        s=50,
-        edgecolor="black",
-        linewidth=0.5,
-    )
-    # Add horizontal lines at 0 and 1.
-    ax3.axhline(
-        0,
-        color="skyblue",
-        linestyle="--",
-        linewidth=2,
-        alpha=0.5,
-        label="Outcome 0",
-    )
-    ax3.axhline(
-        1,
-        color="coral",
-        linestyle="--",
-        linewidth=2,
-        alpha=0.5,
-        label="Outcome 1",
-    )
-    ax3.set_xlabel("Time (sample index)", fontsize=12)
-    ax3.set_ylabel("Outcome", fontsize=12)
-    ax3.set_title(
-        f"Samples Over Time (n={n})\nObserved: {samples.sum()}/{n} ones ({samples.sum() / n:.2%})",
-        fontsize=14,
-        fontweight="bold",
-    )
-    ax3.set_ylim([-0.3, 1.3])
-    ax3.set_yticks([0, 1])
-    ax3.set_yticklabels(["0", "1"])
-    ax3.grid(True, alpha=0.3, axis="y")
-    ax3.legend(fontsize=11)
-    # Plot 4: Comments and explanation text.
-    ax4.axis("off")
-    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
-    # Wrap text content to ensure consistent dimensions.
-    text_content = (
-        f"Information Content:\n"
-        f"  • Outcome 0: {info_0:.4f} bits\n"
-        f"  • Outcome 1: {info_1:.4f} bits\n\n"
-        f"Entropy:\n"
-        f"  • Expected information:\n"
-        f"    {binary_entropy(p):.4f} bits\n\n"
-        f"Samples:\n"
-        f"  • Drawn: {n}\n"
-        f"  • Outcome 1 appeared:\n"
-        f"    {samples.sum()} times\n"
-        f"    ({samples.sum() / n:.2%})"
-    )
-    ax4.text(
-        0.05,
-        0.95,
-        text_content,
-        transform=ax4.transAxes,
-        fontsize=10,
-        ha="left",
-        va="top",
-        family="monospace",
-        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
-        wrap=True,
-    )
-    # Use subplots_adjust with fixed parameters instead of tight_layout.
-    # This ensures consistent spacing and dimensions across all frames.
-    plt.subplots_adjust(
-        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
-    )
-    plt.show()
-
-
-def cell3_create_binary_entropy_widget() -> None:
-    """
-    Create interactive widget for binary entropy visualization.
+    Create interactive widget for conditional entropy visualization.
 
     This function creates and displays an interactive widget that allows users
-    to adjust the probability p of a binary random variable and observe how
+    to adjust the dependence between variables to observe how conditional
     entropy changes.
 
     The widget includes:
-    - Slider for probability p (0.00 to 1.00)
-    - Fixed number of samples n = 100
+    - Slider for dependence (0.0 to 1.0)
     - Fixed figure size
     """
     interact(
-        cell3_plot_binary_entropy_interactive,
-        p=FloatSlider(
-            min=0.00,
-            max=1.00,
-            step=0.01,
+        cell5_plot_conditional_entropy_interactive,
+        dependence=FloatSlider(
+            min=0.0,
+            max=1.0,
+            step=0.05,
             value=0.5,
-            description="Probability p:",
+            description="Dependence:",
             style={"description_width": "initial"},
         ),
-        n=fixed(100),
         figsize=fixed(None),
     )
+
+
+def cell5_generate_conditional_entropy_animation() -> None:
+    """
+    Generate animation frames for conditional entropy visualization.
+
+    This function creates a series of frames showing how conditional entropy
+    changes as dependence between variables varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="dependence",
+        n_steps=11,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Conditional_Entropy_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell5_plot_conditional_entropy_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+# #############################################################################
+# Cell 6: Mutual Information
+# #############################################################################
+
+
+def calculate_mutual_information(joint_prob: np.ndarray) -> float:
+    r"""
+    Calculate mutual information I(X;Y) from joint probability distribution.
+
+    Mutual Information $I(X;Y)$ measures how much knowing one variable
+    reduces uncertainty about the other:
+
+    $$I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X,Y)$$
+
+    :param joint_prob: 2D array of joint probabilities p(x,y)
+    :return: Mutual information in bits
+    """
+    joint_prob = np.array(joint_prob)
+    # Calculate marginals.
+    p_x = joint_prob.sum(axis=1)
+    p_y = joint_prob.sum(axis=0)
+    # Calculate entropies.
+    h_x = cell1_calculate_entropy(p_x)
+    h_y = cell1_calculate_entropy(p_y)
+    h_xy = calculate_joint_entropy(joint_prob)
+    # Mutual information.
+    mi = h_x + h_y - h_xy
+    return mi
+
+
+def create_correlated_joint_distribution(
+    *, correlation: float = 0.5
+) -> np.ndarray:
+    """
+    Create a 2x2 joint distribution with specified correlation.
+
+    :param correlation: Correlation strength (0=independent, 1=perfectly
+        correlated)
+    :return: 2x2 joint probability matrix
+    """
+    # Create joint distribution with correlation.
+    p11 = 0.25 + correlation * 0.25
+    p00 = 0.25 + correlation * 0.25
+    p10 = 0.25 - correlation * 0.25
+    p01 = 0.25 - correlation * 0.25
+    joint_prob = np.array([[p00, p01], [p10, p11]])
+    return joint_prob
 
 
 def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
@@ -1014,11 +1110,6 @@ def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
     ax2.axis("off")
     plt.tight_layout()
     plt.show()
-
-
-# #############################################################################
-# Cell 8: Mutual Information
-# #############################################################################
 
 
 def cell6_plot_mutual_info_interactive(
@@ -1496,8 +1587,566 @@ def cell6_plot_mutual_information_venn_interactive(
     plt.show()
 
 
+def cell6_create_mutual_information_venn_widget() -> None:
+    """
+    Create interactive widget for mutual information Venn diagram visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the dependence between variables and select different scenarios
+    to observe how mutual information changes.
+
+    The widget includes:
+    - Slider for dependence (0.0 to 1.0)
+    - Dropdown for scenario selection (Binary, Weather)
+    - Fixed figure size
+    """
+    interact(
+        cell6_plot_mutual_information_venn_interactive,
+        dependence=FloatSlider(
+            min=0.0,
+            max=1.0,
+            step=0.05,
+            value=0.5,
+            description="Dependence:",
+            style={"description_width": "initial"},
+        ),
+        scenario=widgets.Dropdown(
+            options=["Binary", "Weather"],
+            value="Binary",
+            description="Scenario:",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell6_create_mutual_info_correlation_widget() -> None:
+    """
+    Create interactive widget for correlation-based mutual information visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the correlation between variables to observe how mutual
+    information changes.
+
+    The widget includes:
+    - Slider for correlation (0.0 to 1.0)
+    - Fixed figure size
+    """
+    interact(
+        cell6_plot_mutual_info_interactive,
+        correlation=FloatSlider(
+            min=0.0,
+            max=1.0,
+            step=0.05,
+            value=0.5,
+            description="Correlation:",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell6_generate_mutual_info_venn_binary_animation() -> None:
+    """
+    Generate animation frames for mutual information Venn visualization (Binary scenario).
+
+    This function creates a series of frames showing how mutual information
+    is represented as a Venn diagram for binary variables as dependence varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="dependence",
+        n_steps=11,
+        scenario="Binary",
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Mutual_Info1_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell6_plot_mutual_information_venn_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell6_generate_mutual_info_venn_weather_animation() -> None:
+    """
+    Generate animation frames for mutual information Venn visualization (Weather scenario).
+
+    This function creates a series of frames showing how mutual information
+    is represented as a Venn diagram for weather variables as dependence varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="dependence",
+        n_steps=11,
+        scenario="Weather",
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Mutual_Info2_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell6_plot_mutual_information_venn_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell6_generate_mutual_info_correlation_animation() -> None:
+    """
+    Generate animation frames for mutual information (correlation-based) visualization.
+
+    This function creates a series of frames showing how mutual information
+    changes with correlation between continuous variables.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="correlation",
+        n_steps=11,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Mutual_Info_Correlation_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell6_plot_mutual_info_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
 # #############################################################################
-# Cell 10: Cross-Entropy
+# Cell 7: KL Divergence
+# #############################################################################
+
+
+def calculate_kl_divergence(
+    p: Union[List[float], np.ndarray], q: Union[List[float], np.ndarray]
+) -> float:
+    r"""
+    Calculate KL divergence D_KL(P || Q).
+
+    Kullback-Leibler (KL) Divergence $D_{KL}(P \| Q)$ measures how one
+    distribution differs from another:
+
+    $$D_{KL}(P \| Q) = \sum_x P(x) \log_2 \frac{P(x)}{Q(x)}$$
+
+    :param p: True distribution P
+    :param q: Approximating distribution Q
+    :return: KL divergence in bits
+    """
+    p = np.array(p)
+    q = np.array(q)
+    # Avoid log(0) by filtering.
+    mask = (p > 0) & (q > 0)
+    kl = np.sum(p[mask] * np.log2(p[mask] / q[mask]))
+    return kl
+
+
+def calculate_cross_entropy(
+    p: Union[List[float], np.ndarray], q: Union[List[float], np.ndarray]
+) -> float:
+    r"""
+    Calculate cross-entropy H(P, Q).
+
+    Cross-Entropy $H(P, Q)$ measures the average number of bits needed to
+    encode data from $P$ using code optimized for $Q$:
+
+    $$H(P, Q) = -\sum_x P(x) \log_2 Q(x)$$
+
+    Relationship: $H(P, Q) = H(P) + D_{KL}(P \| Q)$
+
+    :param p: True distribution P
+    :param q: Model distribution Q
+    :return: Cross-entropy in bits
+    """
+    p = np.array(p)
+    q = np.array(q)
+    # Avoid log(0).
+    mask = (p > 0) & (q > 0)
+    ce = -np.sum(p[mask] * np.log2(q[mask]))
+    return ce
+
+
+def create_markov_chain_distribution(
+    *, noise_level: float = 0.2, scenario: str = "Compression"
+) -> tuple:
+    """
+    Create distributions for Markov chain X -> Y -> Z with controllable noise.
+
+    :param noise_level: Noise level in Y->Z transition (0.0=clean, 1.0=maximum)
+    :param scenario: Processing scenario - "Compression", "Quantization", or
+        "Binary"
+    :return: Tuple of (p_x, p_y_given_x, p_z_given_y, p_xy, p_yz, p_xz)
+    """
+    if scenario == "Compression":
+        # Compression scenario: 4 states -> 2 states -> 2 states.
+        # X: Original signal with 4 distinct states.
+        p_x = np.array([0.4, 0.3, 0.2, 0.1])
+        # P(Y|X): Compression groups (0,1) -> Y=0 and (2,3) -> Y=1.
+        p_y_given_x = np.array(
+            [
+                [0.9, 0.1],  # X=0 -> mostly Y=0
+                [0.85, 0.15],  # X=1 -> mostly Y=0
+                [0.1, 0.9],  # X=2 -> mostly Y=1
+                [0.05, 0.95],  # X=3 -> mostly Y=1
+            ]
+        )
+    elif scenario == "Quantization":
+        # Quantization scenario: Simulating continuous -> discrete conversion.
+        # X: 4 levels representing quantized continuous values.
+        p_x = np.array([0.35, 0.35, 0.15, 0.15])
+        # P(Y|X): Further quantization to 2 levels.
+        p_y_given_x = np.array(
+            [
+                [0.95, 0.05],  # X=0 -> very likely Y=0
+                [0.80, 0.20],  # X=1 -> likely Y=0
+                [0.20, 0.80],  # X=2 -> likely Y=1
+                [0.05, 0.95],  # X=3 -> very likely Y=1
+            ]
+        )
+    else:  # Binary
+        # Binary symmetric channel scenario.
+        # X: 4 message types (2 bits).
+        p_x = np.array([0.25, 0.25, 0.25, 0.25])
+        # P(Y|X): Binary symmetric channel with grouping.
+        p_y_given_x = np.array(
+            [
+                [0.88, 0.12],  # X=0 -> Y=0
+                [0.88, 0.12],  # X=1 -> Y=0
+                [0.12, 0.88],  # X=2 -> Y=1
+                [0.12, 0.88],  # X=3 -> Y=1
+            ]
+        )
+    # P(Z|Y): Add noise controlled by noise_level parameter.
+    # noise_level = 0.0: clean channel (0.95 correct transmission).
+    # noise_level = 1.0: maximum noise (0.5 = random).
+    clean_prob = 0.95
+    noisy_prob = 0.5
+    transition_prob = clean_prob - noise_level * (clean_prob - noisy_prob)
+    p_z_given_y = np.array(
+        [
+            [transition_prob, 1 - transition_prob],  # Y=0 -> mostly Z=0
+            [1 - transition_prob, transition_prob],  # Y=1 -> mostly Z=1
+        ]
+    )
+    # Calculate joint distributions.
+    # P(X,Y).
+    p_xy = p_x[:, np.newaxis] * p_y_given_x
+    # Marginal P(Y).
+    p_y = p_xy.sum(axis=0)
+    # P(Y,Z).
+    p_yz = p_y[:, np.newaxis] * p_z_given_y
+    # Marginal P(Z).
+    p_z = p_yz.sum(axis=0)
+    # Calculate P(X,Z) through marginalization over Y.
+    p_xz = np.zeros((4, 2))
+    for i in range(4):
+        for k in range(2):
+            for j in range(2):
+                p_xz[i, k] += p_x[i] * p_y_given_x[i, j] * p_z_given_y[j, k]
+    return p_x, p_y_given_x, p_z_given_y, p_xy, p_yz, p_xz
+
+
+def cell7_plot_kl_divergence_interactive(
+    *, p1: float = 0.7, q1: float = 0.5, figsize: Optional[tuple] = None
+) -> None:
+    """
+    Interactive visualization of KL divergence between two binary distributions.
+
+    :param p1: Probability for true distribution P
+    :param q1: Probability for approximating distribution Q
+    :param figsize: Figure size as (width, height) in inches; defaults to
+        (20, 5) if not specified
+    """
+    # Set default figsize if not provided.
+    if figsize is None:
+        figsize = (20, 5)
+    # Create distributions.
+    p = np.array([1 - p1, p1])
+    q = np.array([1 - q1, q1])
+    # Calculate metrics.
+    kl_pq = calculate_kl_divergence(p, q)
+    kl_qp = calculate_kl_divergence(q, p)
+    ce_pq = calculate_cross_entropy(p, q)
+    h_p = cell1_calculate_entropy(p)
+    # Determine interpretation based on KL divergence value.
+    if kl_pq < 0.01:
+        interpretation = (
+            "Nearly identical distributions!\n"
+            "Q is an excellent approximation of P.\n"
+            "Almost no information is lost."
+        )
+        quality = "Excellent"
+    elif kl_pq < 0.1:
+        interpretation = (
+            "Very similar distributions.\n"
+            "Q is a good approximation of P.\n"
+            "Minimal information loss."
+        )
+        quality = "Good"
+    elif kl_pq < 0.5:
+        interpretation = (
+            "Moderate divergence.\n"
+            "Q differs noticeably from P.\n"
+            "Some information is lost."
+        )
+        quality = "Moderate"
+    else:
+        interpretation = (
+            "Significant divergence!\n"
+            "Q is a poor approximation of P.\n"
+            "Substantial information loss."
+        )
+        quality = "Poor"
+    # Create visualization with 4 subplots in a single row.
+    # Use gridspec_kw to set fixed width ratios for consistent layout.
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
+        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    )
+    # Plot 1: Distributions comparison.
+    x = np.arange(2)
+    width = 0.35
+    bars1 = ax1.bar(
+        x - width / 2,
+        p,
+        width,
+        label="P (True)",
+        alpha=0.7,
+        color="steelblue",
+        edgecolor="black",
+    )
+    bars2 = ax1.bar(
+        x + width / 2,
+        q,
+        width,
+        label="Q (Approximation)",
+        alpha=0.7,
+        color="coral",
+        edgecolor="black",
+    )
+    ax1.set_xlabel("Outcome", fontsize=12)
+    ax1.set_ylabel("Probability", fontsize=12)
+    ax1.set_title(
+        f"Distribution Comparison\nP: [{1 - p1:.2f}, {p1:.2f}] vs Q: [{1 - q1:.2f}, {q1:.2f}]",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(["0", "1"])
+    ax1.legend(fontsize=11)
+    ax1.set_ylim([0, 1.1])
+    ax1.grid(True, alpha=0.3, axis="y")
+    # Add value labels.
+    for bars in [bars1, bars2]:
+        for bar in bars:
+            height = bar.get_height()
+            ax1.text(
+                bar.get_x() + bar.get_width() / 2.0,
+                height + 0.02,
+                f"{height:.2f}",
+                ha="center",
+                va="bottom",
+                fontsize=10,
+                fontweight="bold",
+            )
+    # Plot 2: KL divergence metrics.
+    metrics = ["H(P)", "H(P,Q)", "D_KL(P||Q)", "D_KL(Q||P)"]
+    values = [h_p, ce_pq, kl_pq, kl_qp]
+    colors_m = ["steelblue", "purple", "red", "orange"]
+    bars = ax2.bar(metrics, values, color=colors_m, alpha=0.7, edgecolor="black")
+    ax2.set_ylabel("Information [bits]", fontsize=12)
+    ax2.set_title(
+        f"Information Metrics\nApproximation Quality: {quality}",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax2.grid(True, alpha=0.3, axis="y")
+    ax2.tick_params(axis="x", rotation=20)
+    for bar, val in zip(bars, values):
+        height = bar.get_height()
+        ax2.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            height + 0.01,
+            f"{val:.3f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+        )
+    # Plot 3: KL divergence heatmap.
+    p_range = np.linspace(0.05, 0.95, 30)
+    q_range = np.linspace(0.05, 0.95, 30)
+    kl_matrix = np.zeros((len(p_range), len(q_range)))
+    for i, p_val in enumerate(p_range):
+        for j, q_val in enumerate(q_range):
+            p_dist = np.array([1 - p_val, p_val])
+            q_dist = np.array([1 - q_val, q_val])
+            kl_matrix[i, j] = calculate_kl_divergence(p_dist, q_dist)
+    im = ax3.contourf(q_range, p_range, kl_matrix, levels=20, cmap="RdYlBu_r")
+    ax3.scatter(
+        [q1],
+        [p1],
+        color="red",
+        s=200,
+        marker="*",
+        edgecolor="black",
+        linewidth=2,
+        label=f"Current: D_KL(P||Q)={kl_pq:.3f}",
+        zorder=5,
+    )
+    ax3.set_xlabel("Q (Approximation probability for outcome 1)", fontsize=12)
+    ax3.set_ylabel("P (True probability for outcome 1)", fontsize=12)
+    ax3.set_title(
+        "KL Divergence D_KL(P||Q) Heatmap", fontsize=14, fontweight="bold"
+    )
+    ax3.legend(fontsize=11, loc="upper left")
+    cbar = plt.colorbar(im, ax=ax3)
+    cbar.set_label("KL Divergence [bits]", fontsize=11)
+    # Add diagonal line (where P=Q, KL=0).
+    ax3.plot([0, 1], [0, 1], "k--", linewidth=2, alpha=0.5)
+    ax3.text(
+        0.5,
+        0.55,
+        "P=Q line\n(KL=0)",
+        ha="center",
+        fontsize=10,
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="white", alpha=0.8),
+    )
+    # Plot 4: Comments text panel.
+    ax4.axis("off")
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    # Wrap interpretation text to fixed width to ensure consistent dimensions.
+    wrapped_interpretation = textwrap.fill(interpretation, width=40)
+    # Add comprehensive explanation text.
+    verification_text = (
+        "(verified)" if abs(h_p + kl_pq - ce_pq) < 0.001 else "(error!)"
+    )
+    text_content = (
+        f"Distributions:\n"
+        f"  True P:     [{1 - p1:.2f}, {p1:.2f}]\n"
+        f"  Approx Q:   [{1 - q1:.2f}, {q1:.2f}]\n\n"
+        f"Entropy & Cross-Entropy:\n"
+        f"  H(P) = {h_p:.4f} bits\n"
+        f"  H(P,Q) = {ce_pq:.4f} bits\n\n"
+        f"KL Divergence (Asymmetric!):\n"
+        f"  D_KL(P||Q) = {kl_pq:.4f} bits\n"
+        f"  D_KL(Q||P) = {kl_qp:.4f} bits\n\n"
+        f"Interpretation:\n"
+        f"  {wrapped_interpretation}\n\n"
+        f"Verification:\n"
+        f"  H(P,Q) = H(P) + D_KL(P||Q)\n"
+        f"  {ce_pq:.4f} = {h_p:.4f} + {kl_pq:.4f}\n"
+        f"  {ce_pq:.4f} = {h_p + kl_pq:.4f}\n"
+        f"  {verification_text}"
+    )
+    ax4.text(
+        0.05,
+        0.95,
+        text_content,
+        transform=ax4.transAxes,
+        fontsize=10,
+        ha="left",
+        va="top",
+        family="monospace",
+        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
+        wrap=True,
+    )
+    # Use subplots_adjust with fixed parameters instead of tight_layout.
+    # This ensures consistent spacing and dimensions across all frames.
+    plt.subplots_adjust(
+        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
+    )
+    plt.show()
+
+
+def cell7_create_kl_divergence_widget() -> None:
+    """
+    Create interactive widget for KL divergence visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the probability distributions P and Q to observe how KL
+    divergence changes.
+
+    The widget includes:
+    - Slider for P(outcome=1) (0.05 to 0.95)
+    - Slider for Q(outcome=1) (0.05 to 0.95)
+    - Fixed figure size
+    """
+    interact(
+        cell7_plot_kl_divergence_interactive,
+        p1=FloatSlider(
+            min=0.05,
+            max=0.95,
+            step=0.05,
+            value=0.7,
+            description="P(outcome=1):",
+            style={"description_width": "initial"},
+        ),
+        q1=FloatSlider(
+            min=0.05,
+            max=0.95,
+            step=0.05,
+            value=0.5,
+            description="Q(outcome=1):",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell7_generate_kl_divergence_animation() -> None:
+    """
+    Generate animation frames for KL divergence visualization.
+
+    This function creates a series of frames showing how KL divergence changes
+    as the approximating distribution Q varies while true distribution P is fixed.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    # Fix true distribution P at p1=0.7, vary approximating distribution Q.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="q1",
+        const_variable="p1",
+        const_value=0.7,
+        n_steps=19,
+        sweep_min=0.05,
+        sweep_max=0.95,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_KL_Divergence_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell7_plot_kl_divergence_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+# #############################################################################
+# Cell 8: Cross-Entropy
 # #############################################################################
 
 
@@ -1734,306 +2383,231 @@ def cell8_plot_cross_entropy_interactive(
     plt.show()
 
 
+def cell8_create_cross_entropy_widget() -> None:
+    """
+    Create interactive widget for cross-entropy visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the true distribution P and model distribution Q to observe how
+    cross-entropy changes.
+
+    The widget includes:
+    - Slider for P(outcome=1) (0.05 to 0.95)
+    - Slider for Q(outcome=1) (0.05 to 0.95)
+    - Fixed figure size
+    """
+    interact(
+        cell8_plot_cross_entropy_interactive,
+        p1=FloatSlider(
+            min=0.05,
+            max=0.95,
+            step=0.05,
+            value=0.7,
+            description="P(outcome=1):",
+            style={"description_width": "initial"},
+        ),
+        q1=FloatSlider(
+            min=0.05,
+            max=0.95,
+            step=0.05,
+            value=0.5,
+            description="Q(outcome=1):",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell8_generate_cross_entropy_animation() -> None:
+    """
+    Generate animation frames for cross-entropy visualization.
+
+    This function creates a series of frames showing how cross-entropy changes
+    as the model distribution Q varies while true distribution P is fixed.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    # Fix true distribution P at p1=0.7, vary model distribution Q.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="q1",
+        const_variable="p1",
+        const_value=0.7,
+        n_steps=11,
+        sweep_min=0.05,
+        sweep_max=0.95,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Cross_Entropy_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell8_plot_cross_entropy_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
 # #############################################################################
-# Cell 9: KL Divergence
+# Cell 9: Data Processing Inequality
 # #############################################################################
 
 
-def cell7_plot_kl_divergence_interactive(
-    *, p1: float = 0.7, q1: float = 0.5, figsize: Optional[tuple] = None
-) -> None:
+def demonstrate_data_processing_inequality() -> None:
     """
-    Interactive visualization of KL divergence between two binary distributions.
-
-    :param p1: Probability for true distribution P
-    :param q1: Probability for approximating distribution Q
-    :param figsize: Figure size as (width, height) in inches; defaults to
-        (20, 5) if not specified
+    Demonstrate the data processing inequality with a simple example.
     """
-    # Set default figsize if not provided.
-    if figsize is None:
-        figsize = (20, 5)
-    # Create distributions.
-    p = np.array([1 - p1, p1])
-    q = np.array([1 - q1, q1])
-    # Calculate metrics.
-    kl_pq = calculate_kl_divergence(p, q)
-    kl_qp = calculate_kl_divergence(q, p)
-    ce_pq = calculate_cross_entropy(p, q)
-    h_p = cell1_calculate_entropy(p)
-    # Determine interpretation based on KL divergence value.
-    if kl_pq < 0.01:
-        interpretation = (
-            "Nearly identical distributions!\n"
-            "Q is an excellent approximation of P.\n"
-            "Almost no information is lost."
-        )
-        quality = "Excellent"
-    elif kl_pq < 0.1:
-        interpretation = (
-            "Very similar distributions.\n"
-            "Q is a good approximation of P.\n"
-            "Minimal information loss."
-        )
-        quality = "Good"
-    elif kl_pq < 0.5:
-        interpretation = (
-            "Moderate divergence.\n"
-            "Q differs noticeably from P.\n"
-            "Some information is lost."
-        )
-        quality = "Moderate"
-    else:
-        interpretation = (
-            "Significant divergence!\n"
-            "Q is a poor approximation of P.\n"
-            "Substantial information loss."
-        )
-        quality = "Poor"
-    # Create visualization with 4 subplots in a single row.
-    # Use gridspec_kw to set fixed width ratios for consistent layout.
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(
-        1, 4, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 1, 1.2]}
+    # Create Markov chain X -> Y -> Z.
+    # X: Original signal (4 states).
+    p_x = np.array([0.4, 0.3, 0.2, 0.1])
+    # Y: Compressed version (2 states) - groups (0,1) and (2,3).
+    # Z: Further processed (2 states) - adds noise.
+    # Transition probabilities.
+    # P(Y|X): X states 0,1 -> Y=0 with high prob; X states 2,3 -> Y=1.
+    p_y_given_x = np.array(
+        [
+            [0.9, 0.1],  # X=0 -> mostly Y=0
+            [0.85, 0.15],  # X=1 -> mostly Y=0
+            [0.1, 0.9],  # X=2 -> mostly Y=1
+            [0.05, 0.95],  # X=3 -> mostly Y=1
+        ]
     )
-    # Plot 1: Distributions comparison.
-    x = np.arange(2)
-    width = 0.35
-    bars1 = ax1.bar(
-        x - width / 2,
-        p,
-        width,
-        label="P (True)",
-        alpha=0.7,
-        color="steelblue",
-        edgecolor="black",
-    )
-    bars2 = ax1.bar(
-        x + width / 2,
-        q,
-        width,
-        label="Q (Approximation)",
-        alpha=0.7,
-        color="coral",
-        edgecolor="black",
-    )
-    ax1.set_xlabel("Outcome", fontsize=12)
-    ax1.set_ylabel("Probability", fontsize=12)
-    ax1.set_title(
-        f"Distribution Comparison\nP: [{1 - p1:.2f}, {p1:.2f}] vs Q: [{1 - q1:.2f}, {q1:.2f}]",
-        fontsize=14,
-        fontweight="bold",
-    )
-    ax1.set_xticks(x)
-    ax1.set_xticklabels(["0", "1"])
-    ax1.legend(fontsize=11)
-    ax1.set_ylim([0, 1.1])
-    ax1.grid(True, alpha=0.3, axis="y")
-    # Add value labels.
-    for bars in [bars1, bars2]:
-        for bar in bars:
-            height = bar.get_height()
-            ax1.text(
-                bar.get_x() + bar.get_width() / 2.0,
-                height + 0.02,
-                f"{height:.2f}",
-                ha="center",
-                va="bottom",
-                fontsize=10,
-                fontweight="bold",
-            )
-    # Plot 2: KL divergence metrics.
-    metrics = ["H(P)", "H(P,Q)", "D_KL(P||Q)", "D_KL(Q||P)"]
-    values = [h_p, ce_pq, kl_pq, kl_qp]
-    colors_m = ["steelblue", "purple", "red", "orange"]
-    bars = ax2.bar(metrics, values, color=colors_m, alpha=0.7, edgecolor="black")
-    ax2.set_ylabel("Information [bits]", fontsize=12)
-    ax2.set_title(
-        f"Information Metrics\nApproximation Quality: {quality}",
-        fontsize=14,
-        fontweight="bold",
-    )
-    ax2.grid(True, alpha=0.3, axis="y")
-    ax2.tick_params(axis="x", rotation=20)
-    for bar, val in zip(bars, values):
-        height = bar.get_height()
-        ax2.text(
-            bar.get_x() + bar.get_width() / 2.0,
-            height + 0.01,
-            f"{val:.3f}",
-            ha="center",
-            va="bottom",
-            fontsize=10,
-            fontweight="bold",
-        )
-    # Plot 3: KL divergence heatmap.
-    p_range = np.linspace(0.05, 0.95, 30)
-    q_range = np.linspace(0.05, 0.95, 30)
-    kl_matrix = np.zeros((len(p_range), len(q_range)))
-    for i, p_val in enumerate(p_range):
-        for j, q_val in enumerate(q_range):
-            p_dist = np.array([1 - p_val, p_val])
-            q_dist = np.array([1 - q_val, q_val])
-            kl_matrix[i, j] = calculate_kl_divergence(p_dist, q_dist)
-    im = ax3.contourf(q_range, p_range, kl_matrix, levels=20, cmap="RdYlBu_r")
-    ax3.scatter(
-        [q1],
-        [p1],
-        color="red",
-        s=200,
-        marker="*",
-        edgecolor="black",
-        linewidth=2,
-        label=f"Current: D_KL(P||Q)={kl_pq:.3f}",
-        zorder=5,
-    )
-    ax3.set_xlabel("Q (Approximation probability for outcome 1)", fontsize=12)
-    ax3.set_ylabel("P (True probability for outcome 1)", fontsize=12)
-    ax3.set_title(
-        "KL Divergence D_KL(P||Q) Heatmap", fontsize=14, fontweight="bold"
-    )
-    ax3.legend(fontsize=11, loc="upper left")
-    cbar = plt.colorbar(im, ax=ax3)
-    cbar.set_label("KL Divergence [bits]", fontsize=11)
-    # Add diagonal line (where P=Q, KL=0).
-    ax3.plot([0, 1], [0, 1], "k--", linewidth=2, alpha=0.5)
-    ax3.text(
-        0.5,
-        0.55,
-        "P=Q line\n(KL=0)",
-        ha="center",
-        fontsize=10,
-        bbox=dict(boxstyle="round,pad=0.5", facecolor="white", alpha=0.8),
-    )
-    # Plot 4: Comments text panel.
-    ax4.axis("off")
-    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
-    # Wrap interpretation text to fixed width to ensure consistent dimensions.
-    wrapped_interpretation = textwrap.fill(interpretation, width=40)
-    # Add comprehensive explanation text.
-    verification_text = (
-        "(verified)" if abs(h_p + kl_pq - ce_pq) < 0.001 else "(error!)"
-    )
-    text_content = (
-        f"Distributions:\n"
-        f"  True P:     [{1 - p1:.2f}, {p1:.2f}]\n"
-        f"  Approx Q:   [{1 - q1:.2f}, {q1:.2f}]\n\n"
-        f"Entropy & Cross-Entropy:\n"
-        f"  H(P) = {h_p:.4f} bits\n"
-        f"  H(P,Q) = {ce_pq:.4f} bits\n\n"
-        f"KL Divergence (Asymmetric!):\n"
-        f"  D_KL(P||Q) = {kl_pq:.4f} bits\n"
-        f"  D_KL(Q||P) = {kl_qp:.4f} bits\n\n"
-        f"Interpretation:\n"
-        f"  {wrapped_interpretation}\n\n"
-        f"Verification:\n"
-        f"  H(P,Q) = H(P) + D_KL(P||Q)\n"
-        f"  {ce_pq:.4f} = {h_p:.4f} + {kl_pq:.4f}\n"
-        f"  {ce_pq:.4f} = {h_p + kl_pq:.4f}\n"
-        f"  {verification_text}"
-    )
-    ax4.text(
-        0.05,
-        0.95,
-        text_content,
-        transform=ax4.transAxes,
-        fontsize=10,
-        ha="left",
-        va="top",
-        family="monospace",
-        bbox=dict(boxstyle="round,pad=0.5", facecolor="wheat", alpha=0.3),
-        wrap=True,
-    )
-    # Use subplots_adjust with fixed parameters instead of tight_layout.
-    # This ensures consistent spacing and dimensions across all frames.
-    plt.subplots_adjust(
-        left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
-    )
-    plt.show()
-
-
-def create_markov_chain_distribution(
-    *, noise_level: float = 0.2, scenario: str = "Compression"
-) -> tuple:
-    """
-    Create distributions for Markov chain X -> Y -> Z with controllable noise.
-
-    :param noise_level: Noise level in Y->Z transition (0.0=clean, 1.0=maximum)
-    :param scenario: Processing scenario - "Compression", "Quantization", or
-        "Binary"
-    :return: Tuple of (p_x, p_y_given_x, p_z_given_y, p_xy, p_yz, p_xz)
-    """
-    if scenario == "Compression":
-        # Compression scenario: 4 states -> 2 states -> 2 states.
-        # X: Original signal with 4 distinct states.
-        p_x = np.array([0.4, 0.3, 0.2, 0.1])
-        # P(Y|X): Compression groups (0,1) -> Y=0 and (2,3) -> Y=1.
-        p_y_given_x = np.array(
-            [
-                [0.9, 0.1],  # X=0 -> mostly Y=0
-                [0.85, 0.15],  # X=1 -> mostly Y=0
-                [0.1, 0.9],  # X=2 -> mostly Y=1
-                [0.05, 0.95],  # X=3 -> mostly Y=1
-            ]
-        )
-    elif scenario == "Quantization":
-        # Quantization scenario: Simulating continuous -> discrete conversion.
-        # X: 4 levels representing quantized continuous values.
-        p_x = np.array([0.35, 0.35, 0.15, 0.15])
-        # P(Y|X): Further quantization to 2 levels.
-        p_y_given_x = np.array(
-            [
-                [0.95, 0.05],  # X=0 -> very likely Y=0
-                [0.80, 0.20],  # X=1 -> likely Y=0
-                [0.20, 0.80],  # X=2 -> likely Y=1
-                [0.05, 0.95],  # X=3 -> very likely Y=1
-            ]
-        )
-    else:  # Binary
-        # Binary symmetric channel scenario.
-        # X: 4 message types (2 bits).
-        p_x = np.array([0.25, 0.25, 0.25, 0.25])
-        # P(Y|X): Binary symmetric channel with grouping.
-        p_y_given_x = np.array(
-            [
-                [0.88, 0.12],  # X=0 -> Y=0
-                [0.88, 0.12],  # X=1 -> Y=0
-                [0.12, 0.88],  # X=2 -> Y=1
-                [0.12, 0.88],  # X=3 -> Y=1
-            ]
-        )
-    # P(Z|Y): Add noise controlled by noise_level parameter.
-    # noise_level = 0.0: clean channel (0.95 correct transmission).
-    # noise_level = 1.0: maximum noise (0.5 = random).
-    clean_prob = 0.95
-    noisy_prob = 0.5
-    transition_prob = clean_prob - noise_level * (clean_prob - noisy_prob)
+    # P(Z|Y): Add noise.
     p_z_given_y = np.array(
         [
-            [transition_prob, 1 - transition_prob],  # Y=0 -> mostly Z=0
-            [1 - transition_prob, transition_prob],  # Y=1 -> mostly Z=1
+            [0.8, 0.2],  # Y=0 -> mostly Z=0
+            [0.2, 0.8],  # Y=1 -> mostly Z=1
         ]
     )
     # Calculate joint distributions.
-    # P(X,Y).
-    p_xy = p_x[:, np.newaxis] * p_y_given_x
-    # Marginal P(Y).
-    p_y = p_xy.sum(axis=0)
-    # P(Y,Z).
-    p_yz = p_y[:, np.newaxis] * p_z_given_y
-    # Marginal P(Z).
-    p_z = p_yz.sum(axis=0)
-    # Calculate P(X,Z) through marginalization over Y.
+    p_xy = p_x[:, np.newaxis] * p_y_given_x  # Joint P(X,Y)
+    p_y = p_xy.sum(axis=0)  # Marginal P(Y)
+    p_yz = p_y[:, np.newaxis] * p_z_given_y  # Joint P(Y,Z)
+    p_z = p_yz.sum(axis=0)  # Marginal P(Z)
+    # Calculate P(X,Z) through Y.
     p_xz = np.zeros((4, 2))
     for i in range(4):
         for k in range(2):
             for j in range(2):
                 p_xz[i, k] += p_x[i] * p_y_given_x[i, j] * p_z_given_y[j, k]
-    return p_x, p_y_given_x, p_z_given_y, p_xy, p_yz, p_xz
-
-
-# #############################################################################
-# Cell 11: Data Processing Inequality
-# #############################################################################
+    # Calculate mutual informations.
+    mi_xy = calculate_mutual_information(p_xy)
+    mi_yz = calculate_mutual_information(p_yz)
+    mi_xz = calculate_mutual_information(p_xz)
+    # Visualize.
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    # Plot 1: Mutual information values.
+    stages = ["I(X;Y)", "I(Y;Z)", "I(X;Z)"]
+    mi_values = [mi_xy, mi_yz, mi_xz]
+    colors_stages = ["steelblue", "coral", "lightgreen"]
+    bars = ax1.bar(
+        stages,
+        mi_values,
+        color=colors_stages,
+        alpha=0.7,
+        edgecolor="black",
+        linewidth=2,
+    )
+    ax1.set_ylabel("Mutual Information [bits]", fontsize=12)
+    ax1.set_title(
+        "Data Processing Inequality\nX → Y → Z", fontsize=14, fontweight="bold"
+    )
+    ax1.grid(True, alpha=0.3, axis="y")
+    # Add values and inequality annotations.
+    for bar, val in zip(bars, mi_values):
+        height = bar.get_height()
+        ax1.text(
+            bar.get_x() + bar.get_width() / 2.0,
+            height + 0.02,
+            f"{val:.4f}",
+            ha="center",
+            va="bottom",
+            fontsize=11,
+            fontweight="bold",
+        )
+    ax1.axhline(mi_xy, color="steelblue", linestyle="--", alpha=0.5, linewidth=2)
+    ax1.text(1.5, mi_xy + 0.03, "I(X;Y) bound", fontsize=10, style="italic")
+    # Plot 2: Information flow diagram.
+    ax2.text(
+        0.5,
+        0.9,
+        "Data Processing Inequality",
+        ha="center",
+        fontsize=16,
+        fontweight="bold",
+    )
+    ax2.text(
+        0.5,
+        0.75,
+        "Markov Chain: X → Y → Z",
+        ha="center",
+        fontsize=13,
+        style="italic",
+    )
+    ax2.text(
+        0.5,
+        0.65,
+        f"I(X;Y) = {mi_xy:.4f} bits",
+        ha="center",
+        fontsize=12,
+        color="steelblue",
+    )
+    ax2.text(
+        0.5,
+        0.58,
+        f"I(Y;Z) = {mi_yz:.4f} bits",
+        ha="center",
+        fontsize=12,
+        color="coral",
+    )
+    ax2.text(
+        0.5,
+        0.51,
+        f"I(X;Z) = {mi_xz:.4f} bits",
+        ha="center",
+        fontsize=12,
+        color="green",
+    )
+    ax2.text(
+        0.5,
+        0.40,
+        "Data Processing Inequality:",
+        ha="center",
+        fontsize=13,
+        fontweight="bold",
+    )
+    ax2.text(0.5, 0.33, "I(X;Z) ≤ I(X;Y)", ha="center", fontsize=12)
+    ax2.text(
+        0.5,
+        0.26,
+        f"{mi_xz:.4f} ≤ {mi_xy:.4f} ✓",
+        ha="center",
+        fontsize=12,
+        color="green" if mi_xz <= mi_xy else "red",
+        fontweight="bold",
+    )
+    ax2.text(0.5, 0.16, "Comments:", ha="center", fontsize=12, fontweight="bold")
+    ax2.text(
+        0.5,
+        0.09,
+        f"Information lost from X to Z: {mi_xy - mi_xz:.4f} bits",
+        ha="center",
+        fontsize=11,
+    )
+    ax2.text(
+        0.5,
+        0.03,
+        f"({((mi_xy - mi_xz) / mi_xy) * 100:.1f}% of original information)",
+        ha="center",
+        fontsize=10,
+        style="italic",
+    )
+    ax2.axis("off")
+    plt.tight_layout()
+    plt.show()
 
 
 def cell9_plot_data_processing_inequality_interactive(
@@ -2393,162 +2967,70 @@ def cell9_plot_data_processing_inequality_interactive(
     plt.show()
 
 
-def demonstrate_data_processing_inequality() -> None:
+def cell9_create_data_processing_inequality_widget() -> None:
     """
-    Demonstrate the data processing inequality with a simple example.
+    Create interactive widget for data processing inequality visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the noise level and select different scenarios to observe how
+    information degrades through successive stages.
+
+    The widget includes:
+    - Slider for noise level (0.0 to 1.0)
+    - Dropdown for scenario selection (Compression, Quantization, Binary)
+    - Fixed figure size
     """
-    # Create Markov chain X -> Y -> Z.
-    # X: Original signal (4 states).
-    p_x = np.array([0.4, 0.3, 0.2, 0.1])
-    # Y: Compressed version (2 states) - groups (0,1) and (2,3).
-    # Z: Further processed (2 states) - adds noise.
-    # Transition probabilities.
-    # P(Y|X): X states 0,1 -> Y=0 with high prob; X states 2,3 -> Y=1.
-    p_y_given_x = np.array(
-        [
-            [0.9, 0.1],  # X=0 -> mostly Y=0
-            [0.85, 0.15],  # X=1 -> mostly Y=0
-            [0.1, 0.9],  # X=2 -> mostly Y=1
-            [0.05, 0.95],  # X=3 -> mostly Y=1
-        ]
+    interact(
+        cell9_plot_data_processing_inequality_interactive,
+        noise_level=FloatSlider(
+            min=0.0,
+            max=1.0,
+            step=0.05,
+            value=0.2,
+            description="Noise Level:",
+            style={"description_width": "initial"},
+        ),
+        scenario=widgets.Dropdown(
+            options=["Compression", "Quantization", "Binary"],
+            value="Compression",
+            description="Scenario:",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
     )
-    # P(Z|Y): Add noise.
-    p_z_given_y = np.array(
-        [
-            [0.8, 0.2],  # Y=0 -> mostly Z=0
-            [0.2, 0.8],  # Y=1 -> mostly Z=1
-        ]
+
+
+def cell9_generate_data_processing_inequality_animation() -> None:
+    """
+    Generate animation frames for data processing inequality visualization.
+
+    This function creates a series of frames showing how information degrades
+    through successive processing stages as noise level varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="noise_level",
+        n_steps=21,
+        scenario="Compression",
     )
-    # Calculate joint distributions.
-    p_xy = p_x[:, np.newaxis] * p_y_given_x  # Joint P(X,Y)
-    p_y = p_xy.sum(axis=0)  # Marginal P(Y)
-    p_yz = p_y[:, np.newaxis] * p_z_given_y  # Joint P(Y,Z)
-    p_z = p_yz.sum(axis=0)  # Marginal P(Z)
-    # Calculate P(X,Z) through Y.
-    p_xz = np.zeros((4, 2))
-    for i in range(4):
-        for k in range(2):
-            for j in range(2):
-                p_xz[i, k] += p_x[i] * p_y_given_x[i, j] * p_z_given_y[j, k]
-    # Calculate mutual informations.
-    mi_xy = calculate_mutual_information(p_xy)
-    mi_yz = calculate_mutual_information(p_yz)
-    mi_xz = calculate_mutual_information(p_xz)
-    # Visualize.
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
-    # Plot 1: Mutual information values.
-    stages = ["I(X;Y)", "I(Y;Z)", "I(X;Z)"]
-    mi_values = [mi_xy, mi_yz, mi_xz]
-    colors_stages = ["steelblue", "coral", "lightgreen"]
-    bars = ax1.bar(
-        stages,
-        mi_values,
-        color=colors_stages,
-        alpha=0.7,
-        edgecolor="black",
-        linewidth=2,
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Data_Processing_Inequality_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell9_plot_data_processing_inequality_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
     )
-    ax1.set_ylabel("Mutual Information [bits]", fontsize=12)
-    ax1.set_title(
-        "Data Processing Inequality\nX → Y → Z", fontsize=14, fontweight="bold"
-    )
-    ax1.grid(True, alpha=0.3, axis="y")
-    # Add values and inequality annotations.
-    for bar, val in zip(bars, mi_values):
-        height = bar.get_height()
-        ax1.text(
-            bar.get_x() + bar.get_width() / 2.0,
-            height + 0.02,
-            f"{val:.4f}",
-            ha="center",
-            va="bottom",
-            fontsize=11,
-            fontweight="bold",
-        )
-    ax1.axhline(mi_xy, color="steelblue", linestyle="--", alpha=0.5, linewidth=2)
-    ax1.text(1.5, mi_xy + 0.03, "I(X;Y) bound", fontsize=10, style="italic")
-    # Plot 2: Information flow diagram.
-    ax2.text(
-        0.5,
-        0.9,
-        "Data Processing Inequality",
-        ha="center",
-        fontsize=16,
-        fontweight="bold",
-    )
-    ax2.text(
-        0.5,
-        0.75,
-        "Markov Chain: X → Y → Z",
-        ha="center",
-        fontsize=13,
-        style="italic",
-    )
-    ax2.text(
-        0.5,
-        0.65,
-        f"I(X;Y) = {mi_xy:.4f} bits",
-        ha="center",
-        fontsize=12,
-        color="steelblue",
-    )
-    ax2.text(
-        0.5,
-        0.58,
-        f"I(Y;Z) = {mi_yz:.4f} bits",
-        ha="center",
-        fontsize=12,
-        color="coral",
-    )
-    ax2.text(
-        0.5,
-        0.51,
-        f"I(X;Z) = {mi_xz:.4f} bits",
-        ha="center",
-        fontsize=12,
-        color="green",
-    )
-    ax2.text(
-        0.5,
-        0.40,
-        "Data Processing Inequality:",
-        ha="center",
-        fontsize=13,
-        fontweight="bold",
-    )
-    ax2.text(0.5, 0.33, "I(X;Z) ≤ I(X;Y)", ha="center", fontsize=12)
-    ax2.text(
-        0.5,
-        0.26,
-        f"{mi_xz:.4f} ≤ {mi_xy:.4f} ✓",
-        ha="center",
-        fontsize=12,
-        color="green" if mi_xz <= mi_xy else "red",
-        fontweight="bold",
-    )
-    ax2.text(0.5, 0.16, "Comments:", ha="center", fontsize=12, fontweight="bold")
-    ax2.text(
-        0.5,
-        0.09,
-        f"Information lost from X to Z: {mi_xy - mi_xz:.4f} bits",
-        ha="center",
-        fontsize=11,
-    )
-    ax2.text(
-        0.5,
-        0.03,
-        f"({((mi_xy - mi_xz) / mi_xy) * 100:.1f}% of original information)",
-        ha="center",
-        fontsize=10,
-        style="italic",
-    )
-    ax2.axis("off")
-    plt.tight_layout()
-    plt.show()
 
 
 # #############################################################################
-# Minimum Description Length (MDL)
+# Cell 10: Minimum Description Length (MDL)
 # #############################################################################
 
 
@@ -2627,11 +3109,6 @@ def calculate_mdl_components(
         "data_cost": data_cost,
         "total_mdl": total_mdl,
     }
-
-
-# #############################################################################
-# Cell 13: Minimum Description Length (MDL)
-# #############################################################################
 
 
 def cell10_plot_mdl_interactive(
@@ -2849,8 +3326,73 @@ def cell10_plot_mdl_interactive(
     plt.show()
 
 
+def cell10_create_mdl_widget() -> None:
+    """
+    Create interactive widget for MDL visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the polynomial degree to observe how MDL balances model
+    complexity with data fit.
+
+    The widget includes:
+    - Slider for polynomial degree (1 to 8)
+    - Fixed sample size (50)
+    - Fixed true degree (3)
+    - Fixed noise level (0.3)
+    - Fixed figure size
+    """
+    interact(
+        cell10_plot_mdl_interactive,
+        degree=IntSlider(
+            min=1,
+            max=8,
+            step=1,
+            value=3,
+            description="Polynomial Degree:",
+            style={"description_width": "initial"},
+        ),
+        n_samples=fixed(50),
+        true_degree=fixed(3),
+        noise_level=fixed(0.3),
+        figsize=fixed(None),
+    )
+
+
+def cell10_generate_mdl_animation() -> None:
+    """
+    Generate animation frames for MDL (Minimum Description Length) visualization.
+
+    This function creates a series of frames showing how MDL balances model
+    complexity with data fit as polynomial degree varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="degree",
+        n_steps=8,
+        sweep_min=1,
+        sweep_max=8,
+        n_samples=50,
+        true_degree=3,
+        noise_level=0.3,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_MDL_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell10_plot_mdl_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
 # #############################################################################
-# Kolmogorov Complexity
+# Cell 11: Kolmogorov Complexity
 # #############################################################################
 
 
@@ -3001,11 +3543,6 @@ def get_program_description(*, string_type: str, length: int) -> tuple:
     else:
         description = f"Unknown type\nLength: {desc_length} bits"
     return description, desc_length
-
-
-# #############################################################################
-# Cell 14: Kolmogorov Complexity
-# #############################################################################
 
 
 def cell11_plot_kolmogorov_complexity_interactive(
@@ -3214,265 +3751,6 @@ def cell11_plot_kolmogorov_complexity_interactive(
     )
     plt.show()
 
-# #############################################################################
-# Widget wrapper functions
-# #############################################################################
-
-
-def cell4_create_joint_entropy_widget() -> None:
-    """
-    Create interactive widget for joint entropy visualization.
-
-    This function creates and displays an interactive widget that allows users
-    to adjust the dependence between variables and sample size to observe how
-    joint entropy changes.
-
-    The widget includes:
-    - Slider for dependence (0.0 to 1.0)
-    - Slider for sample size (10 to 500)
-    - Fixed figure size
-    """
-    interact(
-        cell4_plot_joint_entropy_interactive,
-        dependence=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Dependence:",
-            style={"description_width": "initial"},
-        ),
-        n_samples=IntSlider(
-            min=10,
-            max=500,
-            step=10,
-            value=300,
-            description="Sample size:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
-    )
-
-
-def cell5_create_conditional_entropy_widget() -> None:
-    """
-    Create interactive widget for conditional entropy visualization.
-
-    This function creates and displays an interactive widget that allows users
-    to adjust the dependence between variables to observe how conditional
-    entropy changes.
-
-    The widget includes:
-    - Slider for dependence (0.0 to 1.0)
-    - Fixed figure size
-    """
-    interact(
-        cell5_plot_conditional_entropy_interactive,
-        dependence=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Dependence:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
-    )
-
-
-def cell6_create_mutual_information_venn_widget() -> None:
-    """
-    Create interactive widget for mutual information Venn diagram visualization.
-
-    This function creates and displays an interactive widget that allows users
-    to adjust the dependence between variables and select different scenarios
-    to observe how mutual information changes.
-
-    The widget includes:
-    - Slider for dependence (0.0 to 1.0)
-    - Dropdown for scenario selection (Binary, Weather)
-    - Fixed figure size
-    """
-    interact(
-        cell6_plot_mutual_information_venn_interactive,
-        dependence=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Dependence:",
-            style={"description_width": "initial"},
-        ),
-        scenario=widgets.Dropdown(
-            options=["Binary", "Weather"],
-            value="Binary",
-            description="Scenario:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
-    )
-
-
-def cell6_create_mutual_info_correlation_widget() -> None:
-    """
-    Create interactive widget for correlation-based mutual information visualization.
-
-    This function creates and displays an interactive widget that allows users
-    to adjust the correlation between variables to observe how mutual
-    information changes.
-
-    The widget includes:
-    - Slider for correlation (0.0 to 1.0)
-    - Fixed figure size
-    """
-    interact(
-        cell6_plot_mutual_info_interactive,
-        correlation=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Correlation:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
-    )
-
-
-def cell7_create_kl_divergence_widget() -> None:
-    """
-    Create interactive widget for KL divergence visualization.
-
-    This function creates and displays an interactive widget that allows users
-    to adjust the probability distributions P and Q to observe how KL
-    divergence changes.
-
-    The widget includes:
-    - Slider for P(outcome=1) (0.05 to 0.95)
-    - Slider for Q(outcome=1) (0.05 to 0.95)
-    - Fixed figure size
-    """
-    interact(
-        cell7_plot_kl_divergence_interactive,
-        p1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.7,
-            description="P(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        q1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.5,
-            description="Q(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
-    )
-
-
-def cell8_create_cross_entropy_widget() -> None:
-    """
-    Create interactive widget for cross-entropy visualization.
-
-    This function creates and displays an interactive widget that allows users
-    to adjust the true distribution P and model distribution Q to observe how
-    cross-entropy changes.
-
-    The widget includes:
-    - Slider for P(outcome=1) (0.05 to 0.95)
-    - Slider for Q(outcome=1) (0.05 to 0.95)
-    - Fixed figure size
-    """
-    interact(
-        cell8_plot_cross_entropy_interactive,
-        p1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.7,
-            description="P(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        q1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.5,
-            description="Q(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
-    )
-
-
-def cell9_create_data_processing_inequality_widget() -> None:
-    """
-    Create interactive widget for data processing inequality visualization.
-
-    This function creates and displays an interactive widget that allows users
-    to adjust the noise level and select different scenarios to observe how
-    information degrades through successive stages.
-
-    The widget includes:
-    - Slider for noise level (0.0 to 1.0)
-    - Dropdown for scenario selection (Compression, Quantization, Binary)
-    - Fixed figure size
-    """
-    interact(
-        cell9_plot_data_processing_inequality_interactive,
-        noise_level=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.2,
-            description="Noise Level:",
-            style={"description_width": "initial"},
-        ),
-        scenario=widgets.Dropdown(
-            options=["Compression", "Quantization", "Binary"],
-            value="Compression",
-            description="Scenario:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
-    )
-
-
-def cell10_create_mdl_widget() -> None:
-    """
-    Create interactive widget for MDL visualization.
-
-    This function creates and displays an interactive widget that allows users
-    to adjust the polynomial degree to observe how MDL balances model
-    complexity with data fit.
-
-    The widget includes:
-    - Slider for polynomial degree (1 to 8)
-    - Fixed sample size (50)
-    - Fixed true degree (3)
-    - Fixed noise level (0.3)
-    - Fixed figure size
-    """
-    interact(
-        cell10_plot_mdl_interactive,
-        degree=IntSlider(
-            min=1,
-            max=8,
-            step=1,
-            value=3,
-            description="Polynomial Degree:",
-            style={"description_width": "initial"},
-        ),
-        n_samples=fixed(50),
-        true_degree=fixed(3),
-        noise_level=fixed(0.3),
-        figsize=fixed(None),
-    )
-
 
 def cell11_create_kolmogorov_complexity_widget() -> None:
     """
@@ -3507,313 +3785,6 @@ def cell11_create_kolmogorov_complexity_widget() -> None:
             style={"description_width": "initial"},
         ),
         figsize=fixed(None),
-    )
-
-
-# #############################################################################
-# Animation Generation Functions
-# #############################################################################
-
-
-def cell3_generate_binary_entropy_animation() -> None:
-    """
-    Generate animation frames for binary entropy visualization.
-
-    This function creates a series of frames showing how binary entropy
-    changes as probability p varies from 0 to 1.
-    """
-    import msml610_utils as ut
-
-    # Generate animation values.
-    values = ut.generate_animation_values(
-        mode="linear",
-        sweep_variable="p",
-        const_variable="n",
-        const_value=100,
-        n_steps=11,
-    )
-    # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Binary_Entropy_video"
-    # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
-        cell3_plot_binary_entropy_interactive,
-        values,
-        dst_dir,
-        incremental=False,
-        figsize=(20, 5),
-        dpi=150,
-    )
-
-
-def cell4_generate_joint_entropy_animation() -> None:
-    """
-    Generate animation frames for joint entropy visualization.
-
-    This function creates a series of frames showing how joint entropy
-    changes as dependence between variables varies.
-    """
-    import msml610_utils as ut
-
-    # Generate animation values.
-    values = ut.generate_animation_values(
-        mode="linear",
-        sweep_variable="dependence",
-        const_variable="n_samples",
-        const_value=300,
-        n_steps=11,
-    )
-    # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Joint_Entropy_video"
-    # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
-        cell4_plot_joint_entropy_interactive,
-        values,
-        dst_dir,
-        incremental=False,
-        figsize=(20, 5),
-        dpi=150,
-    )
-
-
-def cell5_generate_conditional_entropy_animation() -> None:
-    """
-    Generate animation frames for conditional entropy visualization.
-
-    This function creates a series of frames showing how conditional entropy
-    changes as dependence between variables varies.
-    """
-    import msml610_utils as ut
-
-    # Generate animation values.
-    values = ut.generate_animation_values(
-        mode="linear",
-        sweep_variable="dependence",
-        n_steps=11,
-    )
-    # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Conditional_Entropy_video"
-    # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
-        cell5_plot_conditional_entropy_interactive,
-        values,
-        dst_dir,
-        incremental=False,
-        figsize=(20, 5),
-        dpi=150,
-    )
-
-
-def cell6_generate_mutual_info_venn_binary_animation() -> None:
-    """
-    Generate animation frames for mutual information Venn visualization (Binary scenario).
-
-    This function creates a series of frames showing how mutual information
-    is represented as a Venn diagram for binary variables as dependence varies.
-    """
-    import msml610_utils as ut
-
-    # Generate animation values.
-    values = ut.generate_animation_values(
-        mode="linear",
-        sweep_variable="dependence",
-        n_steps=11,
-        scenario="Binary",
-    )
-    # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Mutual_Info1_video"
-    # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
-        cell6_plot_mutual_information_venn_interactive,
-        values,
-        dst_dir,
-        incremental=False,
-        figsize=(20, 5),
-        dpi=150,
-    )
-
-
-def cell6_generate_mutual_info_venn_weather_animation() -> None:
-    """
-    Generate animation frames for mutual information Venn visualization (Weather scenario).
-
-    This function creates a series of frames showing how mutual information
-    is represented as a Venn diagram for weather variables as dependence varies.
-    """
-    import msml610_utils as ut
-
-    # Generate animation values.
-    values = ut.generate_animation_values(
-        mode="linear",
-        sweep_variable="dependence",
-        n_steps=11,
-        scenario="Weather",
-    )
-    # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Mutual_Info2_video"
-    # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
-        cell6_plot_mutual_information_venn_interactive,
-        values,
-        dst_dir,
-        incremental=False,
-        figsize=(20, 5),
-        dpi=150,
-    )
-
-
-def cell6_generate_mutual_info_correlation_animation() -> None:
-    """
-    Generate animation frames for mutual information (correlation-based) visualization.
-
-    This function creates a series of frames showing how mutual information
-    changes with correlation between continuous variables.
-    """
-    import msml610_utils as ut
-
-    # Generate animation values.
-    values = ut.generate_animation_values(
-        mode="linear",
-        sweep_variable="correlation",
-        n_steps=11,
-    )
-    # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Mutual_Info_Correlation_video"
-    # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
-        cell6_plot_mutual_info_interactive,
-        values,
-        dst_dir,
-        incremental=False,
-        figsize=(20, 5),
-        dpi=150,
-    )
-
-
-def cell7_generate_kl_divergence_animation() -> None:
-    """
-    Generate animation frames for KL divergence visualization.
-
-    This function creates a series of frames showing how KL divergence changes
-    as the approximating distribution Q varies while true distribution P is fixed.
-    """
-    import msml610_utils as ut
-
-    # Generate animation values.
-    # Fix true distribution P at p1=0.7, vary approximating distribution Q.
-    values = ut.generate_animation_values(
-        mode="linear",
-        sweep_variable="q1",
-        const_variable="p1",
-        const_value=0.7,
-        n_steps=19,
-        sweep_min=0.05,
-        sweep_max=0.95,
-    )
-    # Directory to save frames.
-    dst_dir = "./figures/Lesson94_KL_Divergence_video"
-    # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
-        cell7_plot_kl_divergence_interactive,
-        values,
-        dst_dir,
-        incremental=False,
-        figsize=(20, 5),
-        dpi=150,
-    )
-
-
-def cell8_generate_cross_entropy_animation() -> None:
-    """
-    Generate animation frames for cross-entropy visualization.
-
-    This function creates a series of frames showing how cross-entropy changes
-    as the model distribution Q varies while true distribution P is fixed.
-    """
-    import msml610_utils as ut
-
-    # Generate animation values.
-    # Fix true distribution P at p1=0.7, vary model distribution Q.
-    values = ut.generate_animation_values(
-        mode="linear",
-        sweep_variable="q1",
-        const_variable="p1",
-        const_value=0.7,
-        n_steps=11,
-        sweep_min=0.05,
-        sweep_max=0.95,
-    )
-    # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Cross_Entropy_video"
-    # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
-        cell8_plot_cross_entropy_interactive,
-        values,
-        dst_dir,
-        incremental=False,
-        figsize=(20, 5),
-        dpi=150,
-    )
-
-
-def cell9_generate_data_processing_inequality_animation() -> None:
-    """
-    Generate animation frames for data processing inequality visualization.
-
-    This function creates a series of frames showing how information degrades
-    through successive processing stages as noise level varies.
-    """
-    import msml610_utils as ut
-
-    # Generate animation values.
-    values = ut.generate_animation_values(
-        mode="linear",
-        sweep_variable="noise_level",
-        n_steps=21,
-        scenario="Compression",
-    )
-    # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Data_Processing_Inequality_video"
-    # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
-        cell9_plot_data_processing_inequality_interactive,
-        values,
-        dst_dir,
-        incremental=False,
-        figsize=(20, 5),
-        dpi=150,
-    )
-
-
-def cell10_generate_mdl_animation() -> None:
-    """
-    Generate animation frames for MDL (Minimum Description Length) visualization.
-
-    This function creates a series of frames showing how MDL balances model
-    complexity with data fit as polynomial degree varies.
-    """
-    import msml610_utils as ut
-
-    # Generate animation values.
-    values = ut.generate_animation_values(
-        mode="linear",
-        sweep_variable="degree",
-        n_steps=8,
-        sweep_min=1,
-        sweep_max=8,
-        n_samples=50,
-        true_degree=3,
-        noise_level=0.3,
-    )
-    # Directory to save frames.
-    dst_dir = "./figures/Lesson94_MDL_video"
-    # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
-        cell10_plot_mdl_interactive,
-        values,
-        dst_dir,
-        incremental=False,
-        figsize=(20, 5),
-        dpi=150,
     )
 
 
