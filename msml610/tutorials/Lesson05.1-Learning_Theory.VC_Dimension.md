@@ -23,7 +23,6 @@
 - Display:
   - Current classification: "A: +1, B: -1, C: +1"
 
-<start>
 ## Cell 2: Dichotomy Explorer - 2D Perceptron with 3 Points
 
 - Type: Interactive
@@ -51,9 +50,10 @@
   - Print if the current dichotomy is achieved or not
 
 ## Cell 3: Dichotomy Explorer - 2D Perceptron with 4 Points
-<end>
 
 - Type: Interactive
+- Purpose: Show that with 4 points, not all 16 classifications are possible -
+  introduces the concept of break point
 - Visualization:
   - Same as Cell 2 but with 4 points (A, B, C, D)
   - Start with points in a square configuration
@@ -68,32 +68,31 @@
   - Counter showing unique dichotomies found (should max out at 14)
   - Highlighted: "XOR pattern not achievable!" when points are in square and
     shows which 2 classifications are impossible
-  - Total possible: 2^4 = 16, Achievable: 14
-- Purpose: Show that with 4 points, not all 16 classifications are possible -
-  introduces the concept of break point
+  - Desired dichotomy
 
-## Cell 5: Growth Function - Positive Rays
+<start>
+## Cell 4: Dichotomy Explorer - Positive Rays
 
 - Type: Interactive
+- Purpose: Show simplest example where growth function is linear (N+1)
 - Visualization:
+  - Same set up as cell3_dichotomy_explorer_4points
   - 1D number line with N points placed on it
   - A vertical threshold line 'a' that can be moved
   - Points to the right of 'a' are colored blue (+1), left are red (-1)
 - Interactive widgets:
   - Slider for N (number of points): 1 to 10
   - Slider to move threshold 'a' along the line
-  - "Show all dichotomies" button - displays all N+1 possible positions for 'a'
 - Display:
   - Current dichotomy
-  - Counter: "Dichotomy X of (N+1)"
-  - Formula displayed: m_H(N) = N + 1
-  - "For N=5 points, we have 6 dichotomies"
-- Purpose: Show simplest example where growth function is linear (N+1)
+  - Desired dichotomy
 
-## Cell 6: Growth Function - Positive Intervals
+## Cell 5: Dichotomy Explorer - Positive Intervals
 
 - Type: Interactive
+- Purpose: Show example where growth function is quadratic
 - Visualization:
+  - Same set up as cell3_dichotomy_explorer_4points
   - 1D number line with N points
   - Two vertical threshold lines [a, b] that define an interval
   - Points inside [a, b] are blue (+1), outside are red (-1)
@@ -101,33 +100,26 @@
   - Slider for N (number of points): 1 to 8
   - Slider to move left boundary 'a'
   - Slider to move right boundary 'b'
-  - "Count all dichotomies" button - shows animation cycling through all
-    possibilities
 - Display:
   - Current dichotomy
-  - Formula: m_H(N) = C(N+1, 2) + 1 = (N+1)N/2 + 1
-  - Table showing N vs m_H(N) values
-  - "Growth: Quadratic in N (polynomial)"
-- Purpose: Show example where growth function is quadratic
+  - Desired dichotomy
 
-## Cell 7: Growth Function - Convex Sets
+## Cell 6: Dichotomy Explorer - Convex Sets
 
 - Type: Interactive
+- Purpose: Show example with exponential growth
 - Visualization:
+  - Same set up as cell3_dichotomy_explorer_4points
   - 2D plot with N points arranged in a circle
   - Ability to select any subset of points
   - Draw a convex hull around selected points (shaded region represents +1)
 - Interactive widgets:
   - Slider for N (number of points): 3 to 8
-  - Click points to toggle selection
   - "Random dichotomy" button - randomly selects points and shows convex hull
-  - Counter showing dichotomies tried
 - Display:
-  - Current dichotomy count
-  - Formula: m_H(N) = 2^N
-  - "All 2^N classifications possible! No break point exists."
-  - Warning: "This hypothesis set is too powerful - can lead to overfitting"
-- Purpose: Show example with exponential growth (no break point)
+  - Current dichotomy
+  - Desired dichotomy
+<end>
 
 ## Compute m_H(N) with brute force
 

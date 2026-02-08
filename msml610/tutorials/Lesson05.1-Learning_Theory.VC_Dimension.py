@@ -127,4 +127,91 @@ utils.cell2_dichotomy_explorer_3points_target()
 utils.cell3_dichotomy_explorer_4points()
 # Notice that you can find at most 14 out of 16 possible classifications.
 
+# %% [markdown]
+# ## Cell 4: Dichotomy Explorer - Positive Rays
+#
+# - Explore the simplest hypothesis set with linear growth function:
+#   - Visualize N points on a 1D number line
+#   - Adjust a threshold line that separates points
+#   - Points to the right are +1, points to the left are -1
+#   - Discover that there are exactly N+1 possible dichotomies
+#
+# **Parameters**:
+# - `N`: Number of points (1 to 10)
+# - `threshold`: Position of the threshold line (-1.5 to 1.5)
+# - `Show Target Dichotomy`: Toggle to show/hide a target classification
+# - `target`: Select a target dichotomy (0 to N)
+#
+# **Key observation**:
+# - Growth function is linear: $m_H(N) = N + 1$
+# - This is because the threshold can be placed:
+#   - Before the first point (all +1)
+#   - Between any two consecutive points (N-1 positions)
+#   - After the last point (all -1)
+# - Linear growth means learning is feasible with this hypothesis set
+
+# %%
+# Explore positive rays with linear growth function.
+# Adjust the threshold to discover all N+1 possible dichotomies.
+utils.cell4_dichotomy_explorer_positive_rays()
+# Notice that m_H(N) = N + 1, which is much smaller than 2^N.
+
+# %% [markdown]
+# ## Cell 5: Dichotomy Explorer - Positive Intervals
+#
+# - Explore a hypothesis set with quadratic growth function:
+#   - Visualize N points on a 1D number line
+#   - Adjust two boundaries [a, b] that define an interval
+#   - Points inside the interval are +1, points outside are -1
+#   - Discover that the number of dichotomies grows quadratically with N
+#
+# **Parameters**:
+# - `N`: Number of points (1 to 8)
+# - `left`: Left boundary of the interval (-1.5 to 1.5)
+# - `right`: Right boundary of the interval (-1.5 to 1.5)
+# - `Show Target Dichotomy`: Toggle to show/hide a target classification
+# - `target`: Select a target dichotomy index
+#
+# **Key observation**:
+# - Growth function is quadratic: $m_H(N) \approx \frac{N^2}{2} + N + 1$
+# - This is because we can select any contiguous interval of points
+# - Number of possible intervals: empty set + single points + all pairs + all triples + ...
+# - Quadratic growth is still polynomial, so learning remains feasible
+
+# %%
+# Explore positive intervals with quadratic growth function.
+# Adjust the boundaries to discover different dichotomies.
+utils.cell5_dichotomy_explorer_positive_intervals()
+# Notice that m_H(N) grows quadratically but is still much smaller than 2^N.
+
+# %% [markdown]
+# ## Cell 6: Dichotomy Explorer - Convex Sets
+#
+# - Explore a hypothesis set with exponential growth function:
+#   - Visualize N points arranged in a circle
+#   - Select any subset of points
+#   - All points inside the convex hull of selected points are +1
+#   - Discover that ALL possible dichotomies are achievable
+#
+# **Parameters**:
+# - `N`: Number of points (3 to 8)
+# - `seed`: Seed for random point selection (0 to 100)
+# - `Random Dichotomy`: Button to generate a new random selection
+#
+# **Key observation**:
+# - Growth function is exponential: $m_H(N) = 2^N$
+# - For ANY labeling of points, we can achieve it by:
+#   - Selecting all points labeled +1
+#   - Taking their convex hull
+#   - All points inside the hull will be +1, outside will be -1
+# - Exponential growth means NO break point exists
+# - Without a break point, generalization bounds are useless
+# - This demonstrates why unlimited model complexity leads to overfitting
+
+# %%
+# Explore convex sets with exponential growth function.
+# Use 'Random Dichotomy' to see different point selections.
+utils.cell6_dichotomy_explorer_convex_sets()
+# Notice that m_H(N) = 2^N, meaning ALL dichotomies are achievable.
+
 # %%
