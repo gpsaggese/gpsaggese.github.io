@@ -7,7 +7,7 @@ realized by the hypothesis.
 
 Import as:
 
-import msml610.tutorials.growth_function as mtugrowf
+import msml610.tutorials.growth_function as mtugrfun
 """
 
 import abc
@@ -38,7 +38,7 @@ class PointGenerator:
     reproducible generation via random seeds.
     """
 
-    def __init__(self, seed: Optional[int] = None) -> None:
+    def __init__(self, *, seed: Optional[int] = None) -> None:
         """
         Initialize the point generator.
 
@@ -99,9 +99,7 @@ class PointGenerator:
         points_per_dim = int(np.ceil(n ** (1.0 / d)))
         # Create linearly spaced values for each dimension.
         min_val, max_val = bounds
-        axes = [
-            np.linspace(min_val, max_val, points_per_dim) for _ in range(d)
-        ]
+        axes = [np.linspace(min_val, max_val, points_per_dim) for _ in range(d)]
         # Create meshgrid and reshape to (m, d).
         mesh = np.meshgrid(*axes, indexing="ij")
         points = np.column_stack([axis.ravel() for axis in mesh])
@@ -213,7 +211,7 @@ class DichotomyEnumerator:
 
 
 # #############################################################################
-# HypothesisTester (Base Class)
+# HypothesisTester
 # #############################################################################
 
 
@@ -226,7 +224,7 @@ class HypothesisTester(abc.ABC):
     by some hypothesis in the set.
     """
 
-    @abstractmethod
+    @abc.abstractmethod
     def test_dichotomy(self, points: np.ndarray, labels: np.ndarray) -> bool:
         """
         Test if the given labeling of points is realizable by this hypothesis set.
@@ -237,7 +235,7 @@ class HypothesisTester(abc.ABC):
         """
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def get_name(self) -> str:
         """
         Get the name of this hypothesis set.
@@ -280,6 +278,7 @@ class PerceptronTester(HypothesisTester):
 
     def __init__(
         self,
+        *,
         max_iter: int = 1000,
         tol: float = 1e-3,
         random_state: Optional[int] = None,
@@ -826,7 +825,10 @@ class GrowthFunctionCalculator:
         return result["is_shattered"]
 
     def estimate_vc_dimension(
-        self, point_generator: PointGenerator, max_n: int = 10, num_trials: int = 5
+        self,
+        point_generator: PointGenerator,
+        max_n: int = 10,
+        num_trials: int = 5,
     ) -> Dict[str, Any]:
         """
         Estimate the VC dimension of the hypothesis set.
@@ -847,7 +849,9 @@ class GrowthFunctionCalculator:
         vc_dimension = 0
         for n in range(1, max_n + 1):
             if self._verbose:
-                _LOG.info(f"Testing VC dimension for N={n} ({num_trials} trials)")
+                _LOG.info(
+                    f"Testing VC dimension for N={n} ({num_trials} trials)"
+                )
             # Try multiple random configurations.
             any_shattered = False
             for trial in range(num_trials):
@@ -889,7 +893,7 @@ class GrowthFunctionVisualizer:
     and visualize realizable vs unrealizable dichotomies.
     """
 
-    def __init__(self, figsize: Tuple[int, int] = (12, 6)) -> None:
+    def __init__(self, *, figsize: Tuple[int, int] = (12, 6)) -> None:
         """
         Initialize the visualizer.
 
@@ -941,9 +945,7 @@ class GrowthFunctionVisualizer:
         ax.set_xlabel("N (number of points)", fontsize=12)
         ax.set_ylabel("Growth Function m_H(N)", fontsize=12)
         if title is None:
-            title = (
-                f"Growth Function: {results_df['hypothesis'].iloc[0]}"
-            )
+            title = f"Growth Function: {results_df['hypothesis'].iloc[0]}"
         ax.set_title(title, fontsize=14, fontweight="bold")
         ax.legend()
         ax.grid(True, alpha=0.3)
@@ -1015,9 +1017,7 @@ class GrowthFunctionVisualizer:
         total_dichotomies = min(enumerator.count_dichotomies(), max_dichotomies)
         # Determine grid size.
         grid_size = int(np.ceil(np.sqrt(total_dichotomies)))
-        fig, axes = plt.subplots(
-            grid_size, grid_size, figsize=(12, 12)
-        )
+        fig, axes = plt.subplots(grid_size, grid_size, figsize=(12, 12))
         axes = axes.flatten()
         # Plot each dichotomy.
         for idx in range(total_dichotomies):
@@ -1144,10 +1144,16 @@ def compute_theoretical_growth(hypothesis_name: str, n: int) -> int:
     :return: Theoretical m_H(n) value, or -1 if unknown
     """
     hypothesis_name_lower = hypothesis_name.lower()
-    if "positive rays" in hypothesis_name_lower or "ray" in hypothesis_name_lower:
+    if (
+        "positive rays" in hypothesis_name_lower
+        or "ray" in hypothesis_name_lower
+    ):
         # m_H(N) = N + 1 for positive rays.
         return n + 1
-    elif "positive intervals" in hypothesis_name_lower or "interval" in hypothesis_name_lower:
+    elif (
+        "positive intervals" in hypothesis_name_lower
+        or "interval" in hypothesis_name_lower
+    ):
         # m_H(N) = N(N+1)/2 + 1 for positive intervals.
         return n * (n + 1) // 2 + 1
     elif "perceptron" in hypothesis_name_lower:

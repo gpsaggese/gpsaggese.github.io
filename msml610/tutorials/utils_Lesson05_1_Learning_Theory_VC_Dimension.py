@@ -895,7 +895,7 @@ def _draw_positive_rays(n: int, threshold: float) -> None:
         ax1.text(
             point,
             0.15,
-            f"P{i+1}",
+            f"P{i + 1}",
             ha="center",
             va="bottom",
             fontsize=10,
@@ -931,7 +931,7 @@ def _draw_positive_rays(n: int, threshold: float) -> None:
     text_content += "Current Classification:\n"
     for i, classification in enumerate(current_classification):
         sign = "+1" if classification == 1 else "-1"
-        text_content += f"  P{i+1}:                {sign}\n"
+        text_content += f"  P{i + 1}:                {sign}\n"
     # Add text box to right subplot.
     ax2.axis("off")
     mtumsuti.add_fitted_text_box(ax2, text_content)
@@ -1029,7 +1029,7 @@ def _draw_positive_intervals(
         ax1.text(
             point,
             0.15,
-            f"P{i+1}",
+            f"P{i + 1}",
             ha="center",
             va="bottom",
             fontsize=10,
@@ -1037,10 +1037,18 @@ def _draw_positive_intervals(
         )
     # Plot interval boundaries.
     ax1.axvline(
-        x=left_threshold, color="green", linewidth=2, linestyle="--", label="Left boundary"
+        x=left_threshold,
+        color="green",
+        linewidth=2,
+        linestyle="--",
+        label="Left boundary",
     )
     ax1.axvline(
-        x=right_threshold, color="purple", linewidth=2, linestyle="--", label="Right boundary"
+        x=right_threshold,
+        color="purple",
+        linewidth=2,
+        linestyle="--",
+        label="Right boundary",
     )
     # Shade the interval region.
     ax1.axvspan(left_threshold, right_threshold, alpha=0.2, color="blue")
@@ -1074,7 +1082,7 @@ def _draw_positive_intervals(
     text_content += "Current Classification:\n"
     for i, classification in enumerate(current_classification):
         sign = "+1" if classification == 1 else "-1"
-        text_content += f"  P{i+1}:                {sign}\n"
+        text_content += f"  P{i + 1}:                {sign}\n"
     # Add text box to right subplot.
     ax2.axis("off")
     mtumsuti.add_fitted_text_box(ax2, text_content)
@@ -1147,7 +1155,9 @@ def cell5_dichotomy_explorer_positive_intervals() -> None:
 # #############################################################################
 
 
-def _get_convex_hull_points(points: np.ndarray, selected_indices: List[int]) -> np.ndarray:
+def _get_convex_hull_points(
+    points: np.ndarray, selected_indices: List[int]
+) -> np.ndarray:
     """
     Get convex hull of selected points.
 
@@ -1159,6 +1169,7 @@ def _get_convex_hull_points(points: np.ndarray, selected_indices: List[int]) -> 
         # Not enough points for a hull, return the points themselves.
         return points[selected_indices]
     from scipy.spatial import ConvexHull
+
     selected_points = points[selected_indices]
     hull = ConvexHull(selected_points)
     return selected_points[hull.vertices]
@@ -1281,7 +1292,7 @@ def _draw_convex_sets(
         ax1.text(
             point[0] * 1.15,
             point[1] * 1.15,
-            f"P{i+1}",
+            f"P{i + 1}",
             ha="center",
             va="center",
             fontsize=10,
@@ -1298,9 +1309,7 @@ def _draw_convex_sets(
             alpha=0.3,
             label="Convex hull",
         )
-        ax1.plot(
-            hull_closed[:, 0], hull_closed[:, 1], color="gray", linewidth=2
-        )
+        ax1.plot(hull_closed[:, 0], hull_closed[:, 1], color="gray", linewidth=2)
     elif len(hull_points) > 0:
         # Draw selected points for degenerate case.
         ax1.scatter(
@@ -1351,12 +1360,12 @@ def _draw_convex_sets(
     text_content += "Target Classification:\n"
     for i, classification in enumerate(target_classification):
         sign = "+1" if classification == 1 else "-1"
-        text_content += f"  P{i+1}:                {sign}\n"
+        text_content += f"  P{i + 1}:                {sign}\n"
     text_content += "\n"
     text_content += "Current Classification:\n"
     for i, classification in enumerate(current_classification):
         sign = "+1" if classification == 1 else "-1"
-        text_content += f"  P{i+1}:                {sign}\n"
+        text_content += f"  P{i + 1}:                {sign}\n"
     text_content += "\n"
     if match:
         text_content += "STATUS: MATCH! Classification achieved!\n"
@@ -1403,7 +1412,9 @@ def cell6_dichotomy_explorer_convex_sets() -> None:
         is_float=False,
     )
     # Create a hidden trigger widget to force redraw when button is clicked.
-    trigger = ipywidgets.IntText(value=0, layout=ipywidgets.Layout(display='none'))
+    trigger = ipywidgets.IntText(
+        value=0, layout=ipywidgets.Layout(display="none")
+    )
 
     # Create "Find Solution" button.
     find_button = ipywidgets.Button(
