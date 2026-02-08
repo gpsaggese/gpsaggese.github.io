@@ -1,6 +1,5 @@
 # Interactive Visual Script: Growth Function and VC Theory
 
-<start>
 ## Cell 1: Dichotomy Explorer - 2D Perceptron with 3 Points
 
 - Type: Interactive
@@ -23,8 +22,8 @@
   - Position slider: offset of the line
 - Display:
   - Current classification: "A: +1, B: -1, C: +1"
-<end>
 
+<start>
 ## Cell 2: Dichotomy Explorer - 2D Perceptron with 3 Points
 
 - Type: Interactive
@@ -52,6 +51,7 @@
   - Print if the current dichotomy is achieved or not
 
 ## Cell 3: Dichotomy Explorer - 2D Perceptron with 4 Points
+<end>
 
 - Type: Interactive
 - Visualization:
