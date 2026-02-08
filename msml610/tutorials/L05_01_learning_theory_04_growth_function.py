@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -65,7 +65,7 @@ _LOG = logging.getLogger(__name__)
 # - The VC dimension controls generalization bounds
 
 # %% [markdown]
-# ## Example 1: Positive Rays (Linear Growth)
+# ## Cell 1: Positive Rays
 #
 # **Hypothesis Set**: $h(x) = \text{sign}(x - a)$ for some threshold $a$
 #
@@ -107,7 +107,7 @@ print(f"Points shattered: {result['is_shattered']}")
 # - This linear growth means positive rays have very limited expressiveness
 
 # %% [markdown]
-# ## Example 2: Positive Intervals (Quadratic Growth)
+# ## Cell 2: Positive Intervals
 #
 # **Hypothesis Set**: $h(x) = +1$ if $a \leq x \leq b$, else $-1$
 #
@@ -145,7 +145,7 @@ print(f"\nAll values match theory: {np.all(compared['error'] == 0)}")
 # - For $N=6$: $m_H(6) = 22$ vs $2^6 = 64$ (break point at $N=3$)
 
 # %% [markdown]
-# ## Example 3: Perceptron (Polynomial Growth with Break Point)
+# ## Cell 3: Perceptron
 #
 # **Hypothesis Set**: $h(x) = \text{sign}(w^T x + b)$ (linear separator in 2D)
 #
@@ -199,7 +199,7 @@ print(f"\nBreak point: N = {break_point}")
 # - Growth becomes polynomial after the break point
 
 # %% [markdown]
-# ## Example 4: Demonstrating the XOR Problem
+# ## Cell 4: Demonstrating the XOR Problem
 #
 # Let's explicitly test that the XOR pattern is not realizable by a perceptron.
 
@@ -232,7 +232,7 @@ print(f"Linearly separable pattern realizable: {is_realizable_sep}")
 # - Other patterns (like horizontal or vertical splits) ARE separable
 
 # %% [markdown]
-# ## Example 5: Convex Sets (Exponential Growth)
+# ## Cell 5: Convex Sets
 #
 # **Hypothesis Set**: Select any subset of points and take their convex hull
 #
@@ -272,10 +272,10 @@ print(f"\nAll configurations shattered: {all_shattered}")
 # - Without a break point, generalization bounds are useless
 
 # %% [markdown]
-# ## Example 6: Estimating VC Dimension
+# ## Cell 6: Estimating VC Dimension
 #
-# The VC dimension is the largest $N$ for which some configuration can be shattered.
-# Let's estimate it for the perceptron.
+# - The VC dimension is the largest $N$ for which some configuration can be shattered.
+# - Let's estimate it for the perceptron.
 
 # %%
 # Estimate VC dimension for 2D perceptron.
@@ -302,7 +302,7 @@ for n, shattered in vc_result["results_by_n"].items():
 # - This matches the theoretical prediction: VC dim = $d + 1$ for $d$-dimensional perceptron
 
 # %% [markdown]
-# ## Example 7: Visualizing Growth Curves
+# ## Cell 7: Visualizing Growth Curves
 #
 # Let's compare all four hypothesis sets on a single plot.
 
@@ -344,7 +344,7 @@ visualizer.plot_multiple_growth_curves(
 # The key insight: Polynomial growth $\Rightarrow$ learning is feasible!
 
 # %% [markdown]
-# ## Example 8: Computing Realizable Dichotomies
+# ## Cell 8: Computing Realizable Dichotomies
 #
 # Let's examine which specific dichotomies are realizable for a small example.
 
@@ -383,7 +383,7 @@ print(f"Points shattered: {realizable_count == enumerator.count_dichotomies()}")
 # - This demonstrates why VC dimension = 3 for 2D perceptron
 
 # %% [markdown]
-# ## Example 9: Finding Hypotheses that Realize Dichotomies
+# ## Cell 9: Finding Hypotheses that Realize Dichotomies
 #
 # We can find the actual hypothesis (e.g., threshold, weights) that realizes a given labeling.
 
@@ -429,7 +429,7 @@ if hypothesis_p:
 # - For perceptron, sklearn finds a linear separator via the perceptron algorithm
 
 # %% [markdown]
-# ## Example 10: Edge Cases
+# ## Cell 10: Edge Cases
 #
 # Let's test some edge cases to ensure robustness.
 
@@ -471,42 +471,3 @@ print(f"Collinear breaks shattering: {result['m_h_n'] < 8}")
 # - For $N=1$, all hypothesis sets have $m_H(1) = 2$ (trivial)
 # - Collinear points break the shattering property for perceptrons
 # - Special configurations can reduce the growth function
-
-# %% [markdown]
-# ## Summary and Key Takeaways
-#
-# ### Growth Functions by Hypothesis Set
-#
-# | Hypothesis Set | Growth Function | VC Dim | Break Point |
-# |----------------|----------------|---------|-------------|
-# | Positive Rays | $N + 1$ | 1 | 2 |
-# | Positive Intervals | $\frac{N(N+1)}{2} + 1$ | 2 | 3 |
-# | 2D Perceptron | $N^2 - N + 2$ (for $N \geq 4$) | 3 | 4 |
-# | Convex Sets | $2^N$ | $\infty$ | None |
-#
-# ### Key Insights
-#
-# 1. **Polynomial growth = Feasible learning**
-#    - If $m_H(N)$ is polynomial, generalization is possible
-#
-# 2. **Break point = Control on complexity**
-#    - Break point at $k$ means $m_H(N) \leq N^{k-1}$ (Sauer's Lemma)
-#
-# 3. **VC dimension = Maximum expressiveness**
-#    - VC dim = largest $N$ where some config can be shattered
-#    - Controls PAC learning sample complexity
-#
-# 4. **Trade-off: Expressiveness vs Generalization**
-#    - More expressive = better training fit
-#    - Less expressive = better generalization
-#    - Need break point for learning guarantees
-#
-# ### Connections to Learning Theory
-#
-# - **Hoeffding Inequality**: $P[|E_{in} - E_{out}| > \epsilon] \leq 2 \cdot m_H(2N) \cdot e^{-2\epsilon^2 N}$
-# - **Sample Complexity**: $N = O\left(\frac{d_{VC}}{\epsilon^2} \log\frac{1}{\delta}\right)$
-# - **Generalization Bound**: $E_{out} \leq E_{in} + O\left(\sqrt{\frac{d_{VC} \log N}{N}}\right)$
-#
-# The growth function bridges the gap between finite hypothesis sets and infinite ones!
-
-# %%

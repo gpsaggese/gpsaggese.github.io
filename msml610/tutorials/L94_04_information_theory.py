@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -381,17 +381,16 @@ utils.cell9_generate_data_processing_inequality_animation()
 # - Where:
 #   - $L(H)$ = length of the model/hypothesis
 #   - $L(D|H)$ = length of data encoded using the model
+#
 # - **Intuition**: Balances model complexity with data fit (Occam's Razor principle)
 #
 # **Parameters**:
 # - `Polynomial Degree`: Degree of polynomial model (1 to 8)
-
-# %% [markdown]
+#
 # **Key insights**:
 # - Low degree (1-2): Simple model, poor fit, high data encoding cost (underfitting)
 # - Optimal degree (3-4): Balanced model, minimum total MDL
 # - High degree (6-8): Complex model, high model cost, overfitting penalty
-#
 # %%
 utils.cell10_create_mdl_widget()
 

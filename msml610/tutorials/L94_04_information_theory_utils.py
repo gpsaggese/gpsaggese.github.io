@@ -3288,7 +3288,7 @@ def cell10_plot_mdl_interactive(
     ax3.set_xticks(degrees)
     # Plot 4: Comments Panel.
     ax4.axis("off")
-    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    ax4.set_title("Comments", fontsize=18, fontweight="bold", pad=20)
     # Wrap interpretation text for consistent layout.
     wrapped_interpretation = textwrap.fill(interpretation, width=40)
     # Add explanation text.
@@ -3312,7 +3312,7 @@ def cell10_plot_mdl_interactive(
         0.95,
         text_content,
         transform=ax4.transAxes,
-        fontsize=9,
+        fontsize=13,
         ha="left",
         va="top",
         family="monospace",
@@ -3656,7 +3656,7 @@ def cell11_plot_kolmogorov_complexity_interactive(
     ax2.axis("off")
     ax2.set_title(
         "Shortest Program Description",
-        fontsize=14,
+        fontsize=18,
         fontweight="bold",
         pad=20,
     )
@@ -3665,7 +3665,7 @@ def cell11_plot_kolmogorov_complexity_interactive(
         0.95,
         program_desc,
         transform=ax2.transAxes,
-        fontsize=8,
+        fontsize=13,
         ha="left",
         va="top",
         family="monospace",
@@ -3713,7 +3713,7 @@ def cell11_plot_kolmogorov_complexity_interactive(
     )
     # Plot 4: Comments Panel.
     ax4.axis("off")
-    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    ax4.set_title("Comments", fontsize=18, fontweight="bold", pad=20)
     # Wrap interpretation text for consistent layout.
     wrapped_interpretation = textwrap.fill(interpretation, width=40)
     # Add explanation text.
@@ -3738,7 +3738,7 @@ def cell11_plot_kolmogorov_complexity_interactive(
         0.95,
         text_content,
         transform=ax4.transAxes,
-        fontsize=9,
+        fontsize=13,
         ha="left",
         va="top",
         family="monospace",
