@@ -31,7 +31,7 @@ plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
 import msml610_utils as ut
-import utils_Lesson09_3_Multi_Armed_Bandits as utils
+import Lesson09_3_Multi_Armed_Bandits_utils as utils
 
 ut.config_notebook()
 

@@ -3,7 +3,7 @@ Utility functions for Learning Theory lesson - Hoeffding Inequality.
 
 Import as:
 
-import msml610.tutorials.utils_Lesson05_Learning_Theory_Hoeffding_Inequality as mtullthin
+import msml610.tutorials.Lesson05_1_Learning_Theory_1_Hoeffding_Inequality_utils as mtullthin
 """
 
 import logging

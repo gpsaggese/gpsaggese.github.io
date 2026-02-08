@@ -32,7 +32,7 @@ import logging
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-import utils_Lesson05_Learning_Theory_Hoeffding_Inequality as utils
+import Lesson05_1_Learning_Theory_1_Hoeffding_Inequality_utils as utils
 
 # Set plotting style.
 sns.set_style("whitegrid")
