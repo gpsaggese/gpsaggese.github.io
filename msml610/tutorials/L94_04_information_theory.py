@@ -25,7 +25,6 @@ import logging
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from ipywidgets import interact, FloatSlider, IntSlider, widgets, fixed
 
 # Set plotting style.
 sns.set_style("whitegrid")
@@ -221,43 +220,10 @@ utils.cell2_plot_distribution_with_stats(
 # Use the slider below to adjust the probability $p$ of a binary random variable and observe how entropy changes.
 
 # %%
-interact(
-    utils.cell5_plot_binary_entropy_interactive,
-    p=FloatSlider(
-        min=0.00,
-        max=1.00,
-        step=0.01,
-        value=0.5,
-        description="Probability p:",
-        style={"description_width": "initial"},
-    ),
-    n=fixed(100),
-    figsize=fixed(None),
-)
-
+utils.cell5_create_binary_entropy_widget()
 
 # %%
-# Generate animation frames for binary entropy visualization.
-values = ut.generate_animation_values(
-    mode="linear",
-    sweep_variable="p",
-    const_variable="n",
-    const_value=100,
-    n_steps=11,
-)
-
-# Directory to save frames.
-dst_dir = "./figures/Lesson94_Binary_Entropy_video"
-
-# Generate animation frames with fixed dimensions.
-ut.generate_animation(
-    utils.cell5_plot_binary_entropy_interactive,
-    values,
-    dst_dir,
-    incremental=False,
-    figsize=(20, 5),
-    dpi=150,
-)
+utils.cell5_generate_binary_entropy_animation()
 
 # %% [markdown]
 # # Cell 6: Joint Entropy
@@ -270,51 +236,11 @@ ut.generate_animation(
 # - For independent variables: $H(X, Y) = H(X) + H(Y)$
 
 # %%
-# Create interactive widget for joint entropy visualization.
-interact(
-    utils.cell6_plot_joint_entropy_interactive,
-    dependence=FloatSlider(
-        min=0.0,
-        max=1.0,
-        step=0.05,
-        value=0.5,
-        description="Dependence:",
-        style={"description_width": "initial"},
-    ),
-    n_samples=IntSlider(
-        min=10,
-        max=500,
-        step=10,
-        value=300,
-        description="Sample size:",
-        style={"description_width": "initial"},
-    ),
-    figsize=fixed(None),
-)
+utils.cell6_create_joint_entropy_widget()
 
 
 # %%
-# Generate animation frames for joint entropy visualization.
-values = ut.generate_animation_values(
-    mode="linear",
-    sweep_variable="dependence",
-    const_variable="n_samples",
-    const_value=300,
-    n_steps=11,
-)
-
-# Directory to save frames.
-dst_dir = "./figures/Lesson94_Joint_Entropy_video"
-
-# Generate animation frames with fixed dimensions.
-ut.generate_animation(
-    utils.cell6_plot_joint_entropy_interactive,
-    values,
-    dst_dir,
-    incremental=False,
-    figsize=(20, 5),
-    dpi=150,
-)
+utils.cell6_generate_joint_entropy_animation()
 
 # %% [markdown]
 # # Cell 7: Conditional Entropy
@@ -332,40 +258,10 @@ ut.generate_animation(
 #   $$H(X, Y) = H(X) + H(Y|X) = H(Y) + H(X|Y)$$
 
 # %%
-# Create interactive widget for conditional entropy visualization.
-interact(
-    utils.cell7_plot_conditional_entropy_interactive,
-    dependence=FloatSlider(
-        min=0.0,
-        max=1.0,
-        step=0.05,
-        value=0.5,
-        description="Dependence:",
-        style={"description_width": "initial"},
-    ),
-    figsize=fixed(None),
-)
+utils.cell7_create_conditional_entropy_widget()
 
 # %%
-# Generate animation frames for conditional entropy visualization.
-values = ut.generate_animation_values(
-    mode="linear",
-    sweep_variable="dependence",
-    n_steps=11,
-)
-
-# Directory to save frames.
-dst_dir = "./figures/Lesson94_Conditional_Entropy_video"
-
-# Generate animation frames with fixed dimensions.
-ut.generate_animation(
-    utils.cell7_plot_conditional_entropy_interactive,
-    values,
-    dst_dir,
-    incremental=False,
-    figsize=(20, 5),
-    dpi=150,
-)
+utils.cell7_generate_conditional_entropy_animation()
 
 
 # %% [markdown]
@@ -380,106 +276,20 @@ ut.generate_animation(
 # - Symmetric: $I(X;Y) = I(Y;X)$
 
 # %%
-# Create interactive widget for mutual information with Venn diagram.
-interact(
-    utils.cell8_plot_mutual_information_venn_interactive,
-    dependence=FloatSlider(
-        min=0.0,
-        max=1.0,
-        step=0.05,
-        value=0.5,
-        description="Dependence:",
-        style={"description_width": "initial"},
-    ),
-    scenario=widgets.Dropdown(
-        options=["Binary", "Weather"],
-        value="Binary",
-        description="Scenario:",
-        style={"description_width": "initial"},
-    ),
-    figsize=fixed(None),
-)
+utils.cell8_create_mutual_information_venn_widget()
 
 
 # %%
-# Generate animation frames for mutual information Venn visualization (Binary scenario).
-values = ut.generate_animation_values(
-    mode="linear",
-    sweep_variable="dependence",
-    n_steps=11,
-    scenario="Binary",
-)
-
-# Directory to save frames.
-dst_dir = "./figures/Lesson94_Mutual_Info1_video"
-
-# Generate animation frames with fixed dimensions.
-ut.generate_animation(
-    utils.cell8_plot_mutual_information_venn_interactive,
-    values,
-    dst_dir,
-    incremental=False,
-    figsize=(20, 5),
-    dpi=150,
-)
+utils.cell8_generate_mutual_info_venn_binary_animation()
 
 # %%
-# Generate animation frames for mutual information Venn visualization (Weather scenario).
-values = ut.generate_animation_values(
-    mode="linear",
-    sweep_variable="dependence",
-    n_steps=11,
-    scenario="Weather",
-)
-
-# Directory to save frames.
-dst_dir = "./figures/Lesson94_Mutual_Info2_video"
-
-# Generate animation frames with fixed dimensions.
-ut.generate_animation(
-    utils.cell8_plot_mutual_information_venn_interactive,
-    values,
-    dst_dir,
-    incremental=False,
-    figsize=(20, 5),
-    dpi=150,
-)
+utils.cell8_generate_mutual_info_venn_weather_animation()
 
 # %%
-# Create interactive widget for correlation-based mutual information.
-interact(
-    utils.cell8_plot_mutual_info_interactive,
-    correlation=FloatSlider(
-        min=0.0,
-        max=1.0,
-        step=0.05,
-        value=0.5,
-        description="Correlation:",
-        style={"description_width": "initial"},
-    ),
-    figsize=fixed(None),
-)
+utils.cell8_create_mutual_info_correlation_widget()
 
 # %%
-# Generate animation frames for mutual information (correlation-based) visualization.
-values = ut.generate_animation_values(
-    mode="linear",
-    sweep_variable="correlation",
-    n_steps=11,
-)
-
-# Directory to save frames.
-dst_dir = "./figures/Lesson94_Mutual_Info_Correlation_video"
-
-# Generate animation frames with fixed dimensions.
-ut.generate_animation(
-    utils.cell8_plot_mutual_info_interactive,
-    values,
-    dst_dir,
-    incremental=False,
-    figsize=(20, 5),
-    dpi=150,
-)
+utils.cell8_generate_mutual_info_correlation_animation()
 
 
 # %% [markdown]
@@ -490,53 +300,10 @@ ut.generate_animation(
 # $$D_{KL}(P \| Q) = \sum_x P(x) \log_2 \frac{P(x)}{Q(x)}$$
 
 # %%
-# Create interactive widget.
-interact(
-    utils.cell9_plot_kl_divergence_interactive,
-    p1=FloatSlider(
-        min=0.05,
-        max=0.95,
-        step=0.05,
-        value=0.7,
-        description="P(outcome=1):",
-        style={"description_width": "initial"},
-    ),
-    q1=FloatSlider(
-        min=0.05,
-        max=0.95,
-        step=0.05,
-        value=0.5,
-        description="Q(outcome=1):",
-        style={"description_width": "initial"},
-    ),
-    figsize=fixed(None),
-)
+utils.cell9_create_kl_divergence_widget()
 
 # %%
-# Generate animation frames for KL divergence visualization.
-# Fix true distribution P at p1=0.7, vary approximating distribution Q.
-values = ut.generate_animation_values(
-    mode="linear",
-    sweep_variable="q1",
-    const_variable="p1",
-    const_value=0.7,
-    n_steps=19,
-    sweep_min=0.05,
-    sweep_max=0.95,
-)
-
-# Directory to save frames.
-dst_dir = "./figures/Lesson94_KL_Divergence_video"
-
-# Generate animation frames with fixed dimensions.
-ut.generate_animation(
-    utils.cell9_plot_kl_divergence_interactive,
-    values,
-    dst_dir,
-    incremental=False,
-    figsize=(20, 5),
-    dpi=150,
-)
+utils.cell9_generate_kl_divergence_animation()
 
 
 # %% [markdown]
@@ -554,60 +321,18 @@ ut.generate_animation(
 # - Model evaluation and comparison
 # - Information compression
 
-# %%
+# %% [markdown]
 # Adjust the sliders to see how cross-entropy changes when the true distribution P and model distribution Q differ:
 # - When P = Q (on diagonal), cross-entropy equals entropy H(P) (optimal encoding)
 # - When P != Q, cross-entropy = H(P) + D_KL(P||Q) (extra cost from model mismatch)
 # - This extra cost is why cross-entropy works as a loss function in machine learning
 
-# Create interactive widget for cross-entropy visualization.
-interact(
-    utils.cell10_plot_cross_entropy_interactive,
-    p1=FloatSlider(
-        min=0.05,
-        max=0.95,
-        step=0.05,
-        value=0.7,
-        description="P(outcome=1):",
-        style={"description_width": "initial"},
-    ),
-    q1=FloatSlider(
-        min=0.05,
-        max=0.95,
-        step=0.05,
-        value=0.5,
-        description="Q(outcome=1):",
-        style={"description_width": "initial"},
-    ),
-    figsize=fixed(None),
-)
+# %%
+utils.cell10_create_cross_entropy_widget()
 
 
 # %%
-# Generate animation frames for cross-entropy visualization.
-# Fix true distribution P at p1=0.7, vary model distribution Q.
-values = ut.generate_animation_values(
-    mode="linear",
-    sweep_variable="q1",
-    const_variable="p1",
-    const_value=0.7,
-    n_steps=11,
-    sweep_min=0.05,
-    sweep_max=0.95,
-)
-
-# Directory to save frames.
-dst_dir = "./figures/Lesson94_Cross_Entropy_video"
-
-# Generate animation frames with fixed dimensions.
-ut.generate_animation(
-    utils.cell10_plot_cross_entropy_interactive,
-    values,
-    dst_dir,
-    incremental=False,
-    figsize=(20, 5),
-    dpi=150,
-)
+utils.cell10_generate_cross_entropy_animation()
 
 # %% [markdown]
 # # Cell 11: Data Processing Inequality
@@ -627,58 +352,11 @@ ut.generate_animation(
 # - **Noise Level = 1.0**: Maximum noise, substantial information loss, I(X;Z) << I(X;Y)
 # - The inequality I(X;Z) <= I(X;Y) is always satisfied, demonstrating the fundamental principle
 
-# Create interactive widget for data processing inequality visualization.
-interact(
-    utils.cell11_plot_data_processing_inequality_interactive,
-    noise_level=FloatSlider(
-        min=0.0,
-        max=1.0,
-        step=0.05,
-        value=0.2,
-        description="Noise Level:",
-        style={"description_width": "initial"},
-    ),
-    scenario=widgets.Dropdown(
-        options=["Compression", "Quantization", "Binary"],
-        value="Compression",
-        description="Scenario:",
-        style={"description_width": "initial"},
-    ),
-    figsize=fixed(None),
-)
+utils.cell11_create_data_processing_inequality_widget()
 
 
 # %%
-# Generate animation frames for data processing inequality visualization.
-values = ut.generate_animation_values(
-    mode="linear",
-    sweep_variable="noise_level",
-    n_steps=21,
-    scenario="Compression",
-)
-
-# Directory to save frames.
-dst_dir = "./figures/Lesson94_Data_Processing_Inequality_video"
-
-# Generate animation frames with fixed dimensions.
-ut.generate_animation(
-    utils.cell11_plot_data_processing_inequality_interactive,
-    values,
-    dst_dir,
-    incremental=False,
-    figsize=(20, 5),
-    dpi=150,
-)
-
-# %% [markdown]
-# # Cell 12: Maximum Entropy Principle
-#
-# **Principle:** Use the distribution with the largest entropy given the constraints.
-#
-# **Examples of maximum entropy distributions:**
-# - No constraints → Uniform distribution
-# - Positive mean constraint → Exponential distribution
-# - Fixed variance → Normal distribution
+utils.cell11_generate_data_processing_inequality_animation()
 
 # %% [markdown]
 # # Cell 13: Minimum Description Length (MDL)
@@ -699,49 +377,11 @@ ut.generate_animation(
 # - **Optimal degree (3-4)**: Balanced model, minimum total MDL
 # - **High degree (6-8)**: Complex model, high model cost, overfitting penalty
 
-# Create interactive widget for MDL visualization.
-interact(
-    utils.cell13_plot_mdl_interactive,
-    degree=IntSlider(
-        min=1,
-        max=8,
-        step=1,
-        value=3,
-        description="Polynomial Degree:",
-        style={"description_width": "initial"},
-    ),
-    n_samples=fixed(50),
-    true_degree=fixed(3),
-    noise_level=fixed(0.3),
-    figsize=fixed(None),
-)
+utils.cell13_create_mdl_widget()
 
 
 # %%
-# Generate animation frames for MDL visualization.
-values = ut.generate_animation_values(
-    mode="linear",
-    sweep_variable="degree",
-    n_steps=8,
-    sweep_min=1,
-    sweep_max=8,
-    n_samples=50,
-    true_degree=3,
-    noise_level=0.3,
-)
-
-# Directory to save frames.
-dst_dir = "./figures/Lesson94_MDL_video"
-
-# Generate animation frames with fixed dimensions.
-ut.generate_animation(
-    utils.cell13_plot_mdl_interactive,
-    values,
-    dst_dir,
-    incremental=False,
-    figsize=(20, 5),
-    dpi=150,
-)
+utils.cell13_generate_mdl_animation()
 
 # %% [markdown]
 # # Cell 14: Kolmogorov Complexity
@@ -768,52 +408,8 @@ ut.generate_animation(
 # - K-complexity is uncomputable, but compression gives practical approximation
 
 # %%
-# Create interactive widget for Kolmogorov Complexity visualization.
-interact(
-    utils.cell14_plot_kolmogorov_complexity_interactive,
-    string_type=widgets.Dropdown(
-        options=[
-            "All Zeros",
-            "Repeating 01",
-            "Fibonacci",
-            "Random",
-            "Semi-random",
-        ],
-        value="Random",
-        description="String Type:",
-        style={"description_width": "initial"},
-    ),
-    length=widgets.Dropdown(
-        options=[16, 32, 64, 128],
-        value=64,
-        description="String Length:",
-        style={"description_width": "initial"},
-    ),
-    figsize=fixed(None),
-)
+utils.cell14_create_kolmogorov_complexity_widget()
 
 
 # %%
-# Generate animation frames for Kolmogorov Complexity visualization.
-# Sweep through different string types with fixed length.
-string_types = [
-    "All Zeros",
-    "Repeating 01",
-    "Fibonacci",
-    "Semi-random",
-    "Random",
-]
-values = [{"string_type": st, "length": 64} for st in string_types]
-
-# Directory to save frames.
-dst_dir = "./figures/Lesson94_Kolmogorov_Complexity_video"
-
-# Generate animation frames with fixed dimensions.
-ut.generate_animation(
-    utils.cell14_plot_kolmogorov_complexity_interactive,
-    values,
-    dst_dir,
-    incremental=False,
-    figsize=(20, 5),
-    dpi=150,
-)
+utils.cell14_generate_kolmogorov_complexity_animation()

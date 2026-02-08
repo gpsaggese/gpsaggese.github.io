@@ -6,19 +6,12 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
-
-# %% [markdown]
-# # Lesson 05.1.2: Bin Analogy of ML
-#
-# **Course**: MSML610: Advanced Machine Learning
-#
-# **Instructor**: Dr. GP Saggese
 
 # %% [markdown]
 # ## Imports

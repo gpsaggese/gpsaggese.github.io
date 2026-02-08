@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from ipywidgets import interact, FloatSlider, IntSlider, widgets, fixed
 
 import helpers.hdbg as hdbg
 
@@ -860,6 +861,34 @@ def cell5_plot_binary_entropy_interactive(
         left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
     )
     plt.show()
+
+
+def cell5_create_binary_entropy_widget() -> None:
+    """
+    Create interactive widget for binary entropy visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the probability p of a binary random variable and observe how
+    entropy changes.
+
+    The widget includes:
+    - Slider for probability p (0.00 to 1.00)
+    - Fixed number of samples n = 100
+    - Fixed figure size
+    """
+    interact(
+        cell5_plot_binary_entropy_interactive,
+        p=FloatSlider(
+            min=0.00,
+            max=1.00,
+            step=0.01,
+            value=0.5,
+            description="Probability p:",
+            style={"description_width": "initial"},
+        ),
+        n=fixed(100),
+        figsize=fixed(None),
+    )
 
 
 def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
@@ -3182,3 +3211,637 @@ def cell14_plot_kolmogorov_complexity_interactive(
         left=0.05, right=0.98, top=0.92, bottom=0.08, wspace=0.25
     )
     plt.show()
+
+# #############################################################################
+# Widget wrapper functions
+# #############################################################################
+
+
+def cell6_create_joint_entropy_widget() -> None:
+    """
+    Create interactive widget for joint entropy visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the dependence between variables and sample size to observe how
+    joint entropy changes.
+
+    The widget includes:
+    - Slider for dependence (0.0 to 1.0)
+    - Slider for sample size (10 to 500)
+    - Fixed figure size
+    """
+    interact(
+        cell6_plot_joint_entropy_interactive,
+        dependence=FloatSlider(
+            min=0.0,
+            max=1.0,
+            step=0.05,
+            value=0.5,
+            description="Dependence:",
+            style={"description_width": "initial"},
+        ),
+        n_samples=IntSlider(
+            min=10,
+            max=500,
+            step=10,
+            value=300,
+            description="Sample size:",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell7_create_conditional_entropy_widget() -> None:
+    """
+    Create interactive widget for conditional entropy visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the dependence between variables to observe how conditional
+    entropy changes.
+
+    The widget includes:
+    - Slider for dependence (0.0 to 1.0)
+    - Fixed figure size
+    """
+    interact(
+        cell7_plot_conditional_entropy_interactive,
+        dependence=FloatSlider(
+            min=0.0,
+            max=1.0,
+            step=0.05,
+            value=0.5,
+            description="Dependence:",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell8_create_mutual_information_venn_widget() -> None:
+    """
+    Create interactive widget for mutual information Venn diagram visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the dependence between variables and select different scenarios
+    to observe how mutual information changes.
+
+    The widget includes:
+    - Slider for dependence (0.0 to 1.0)
+    - Dropdown for scenario selection (Binary, Weather)
+    - Fixed figure size
+    """
+    interact(
+        cell8_plot_mutual_information_venn_interactive,
+        dependence=FloatSlider(
+            min=0.0,
+            max=1.0,
+            step=0.05,
+            value=0.5,
+            description="Dependence:",
+            style={"description_width": "initial"},
+        ),
+        scenario=widgets.Dropdown(
+            options=["Binary", "Weather"],
+            value="Binary",
+            description="Scenario:",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell8_create_mutual_info_correlation_widget() -> None:
+    """
+    Create interactive widget for correlation-based mutual information visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the correlation between variables to observe how mutual
+    information changes.
+
+    The widget includes:
+    - Slider for correlation (0.0 to 1.0)
+    - Fixed figure size
+    """
+    interact(
+        cell8_plot_mutual_info_interactive,
+        correlation=FloatSlider(
+            min=0.0,
+            max=1.0,
+            step=0.05,
+            value=0.5,
+            description="Correlation:",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell9_create_kl_divergence_widget() -> None:
+    """
+    Create interactive widget for KL divergence visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the probability distributions P and Q to observe how KL
+    divergence changes.
+
+    The widget includes:
+    - Slider for P(outcome=1) (0.05 to 0.95)
+    - Slider for Q(outcome=1) (0.05 to 0.95)
+    - Fixed figure size
+    """
+    interact(
+        cell9_plot_kl_divergence_interactive,
+        p1=FloatSlider(
+            min=0.05,
+            max=0.95,
+            step=0.05,
+            value=0.7,
+            description="P(outcome=1):",
+            style={"description_width": "initial"},
+        ),
+        q1=FloatSlider(
+            min=0.05,
+            max=0.95,
+            step=0.05,
+            value=0.5,
+            description="Q(outcome=1):",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell10_create_cross_entropy_widget() -> None:
+    """
+    Create interactive widget for cross-entropy visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the true distribution P and model distribution Q to observe how
+    cross-entropy changes.
+
+    The widget includes:
+    - Slider for P(outcome=1) (0.05 to 0.95)
+    - Slider for Q(outcome=1) (0.05 to 0.95)
+    - Fixed figure size
+    """
+    interact(
+        cell10_plot_cross_entropy_interactive,
+        p1=FloatSlider(
+            min=0.05,
+            max=0.95,
+            step=0.05,
+            value=0.7,
+            description="P(outcome=1):",
+            style={"description_width": "initial"},
+        ),
+        q1=FloatSlider(
+            min=0.05,
+            max=0.95,
+            step=0.05,
+            value=0.5,
+            description="Q(outcome=1):",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell11_create_data_processing_inequality_widget() -> None:
+    """
+    Create interactive widget for data processing inequality visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the noise level and select different scenarios to observe how
+    information degrades through successive stages.
+
+    The widget includes:
+    - Slider for noise level (0.0 to 1.0)
+    - Dropdown for scenario selection (Compression, Quantization, Binary)
+    - Fixed figure size
+    """
+    interact(
+        cell11_plot_data_processing_inequality_interactive,
+        noise_level=FloatSlider(
+            min=0.0,
+            max=1.0,
+            step=0.05,
+            value=0.2,
+            description="Noise Level:",
+            style={"description_width": "initial"},
+        ),
+        scenario=widgets.Dropdown(
+            options=["Compression", "Quantization", "Binary"],
+            value="Compression",
+            description="Scenario:",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+def cell13_create_mdl_widget() -> None:
+    """
+    Create interactive widget for MDL visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to adjust the polynomial degree to observe how MDL balances model
+    complexity with data fit.
+
+    The widget includes:
+    - Slider for polynomial degree (1 to 8)
+    - Fixed sample size (50)
+    - Fixed true degree (3)
+    - Fixed noise level (0.3)
+    - Fixed figure size
+    """
+    interact(
+        cell13_plot_mdl_interactive,
+        degree=IntSlider(
+            min=1,
+            max=8,
+            step=1,
+            value=3,
+            description="Polynomial Degree:",
+            style={"description_width": "initial"},
+        ),
+        n_samples=fixed(50),
+        true_degree=fixed(3),
+        noise_level=fixed(0.3),
+        figsize=fixed(None),
+    )
+
+
+def cell14_create_kolmogorov_complexity_widget() -> None:
+    """
+    Create interactive widget for Kolmogorov Complexity visualization.
+
+    This function creates and displays an interactive widget that allows users
+    to explore how different string types have different Kolmogorov Complexity.
+
+    The widget includes:
+    - Dropdown for string type selection
+    - Dropdown for string length selection
+    - Fixed figure size
+    """
+    interact(
+        cell14_plot_kolmogorov_complexity_interactive,
+        string_type=widgets.Dropdown(
+            options=[
+                "All Zeros",
+                "Repeating 01",
+                "Fibonacci",
+                "Random",
+                "Semi-random",
+            ],
+            value="Random",
+            description="String Type:",
+            style={"description_width": "initial"},
+        ),
+        length=widgets.Dropdown(
+            options=[16, 32, 64, 128],
+            value=64,
+            description="String Length:",
+            style={"description_width": "initial"},
+        ),
+        figsize=fixed(None),
+    )
+
+
+# #############################################################################
+# Animation Generation Functions
+# #############################################################################
+
+
+def cell5_generate_binary_entropy_animation() -> None:
+    """
+    Generate animation frames for binary entropy visualization.
+
+    This function creates a series of frames showing how binary entropy
+    changes as probability p varies from 0 to 1.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="p",
+        const_variable="n",
+        const_value=100,
+        n_steps=11,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Binary_Entropy_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell5_plot_binary_entropy_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell6_generate_joint_entropy_animation() -> None:
+    """
+    Generate animation frames for joint entropy visualization.
+
+    This function creates a series of frames showing how joint entropy
+    changes as dependence between variables varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="dependence",
+        const_variable="n_samples",
+        const_value=300,
+        n_steps=11,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Joint_Entropy_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell6_plot_joint_entropy_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell7_generate_conditional_entropy_animation() -> None:
+    """
+    Generate animation frames for conditional entropy visualization.
+
+    This function creates a series of frames showing how conditional entropy
+    changes as dependence between variables varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="dependence",
+        n_steps=11,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Conditional_Entropy_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell7_plot_conditional_entropy_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell8_generate_mutual_info_venn_binary_animation() -> None:
+    """
+    Generate animation frames for mutual information Venn visualization (Binary scenario).
+
+    This function creates a series of frames showing how mutual information
+    is represented as a Venn diagram for binary variables as dependence varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="dependence",
+        n_steps=11,
+        scenario="Binary",
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Mutual_Info1_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell8_plot_mutual_information_venn_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell8_generate_mutual_info_venn_weather_animation() -> None:
+    """
+    Generate animation frames for mutual information Venn visualization (Weather scenario).
+
+    This function creates a series of frames showing how mutual information
+    is represented as a Venn diagram for weather variables as dependence varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="dependence",
+        n_steps=11,
+        scenario="Weather",
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Mutual_Info2_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell8_plot_mutual_information_venn_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell8_generate_mutual_info_correlation_animation() -> None:
+    """
+    Generate animation frames for mutual information (correlation-based) visualization.
+
+    This function creates a series of frames showing how mutual information
+    changes with correlation between continuous variables.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="correlation",
+        n_steps=11,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Mutual_Info_Correlation_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell8_plot_mutual_info_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell9_generate_kl_divergence_animation() -> None:
+    """
+    Generate animation frames for KL divergence visualization.
+
+    This function creates a series of frames showing how KL divergence changes
+    as the approximating distribution Q varies while true distribution P is fixed.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    # Fix true distribution P at p1=0.7, vary approximating distribution Q.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="q1",
+        const_variable="p1",
+        const_value=0.7,
+        n_steps=19,
+        sweep_min=0.05,
+        sweep_max=0.95,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_KL_Divergence_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell9_plot_kl_divergence_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell10_generate_cross_entropy_animation() -> None:
+    """
+    Generate animation frames for cross-entropy visualization.
+
+    This function creates a series of frames showing how cross-entropy changes
+    as the model distribution Q varies while true distribution P is fixed.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    # Fix true distribution P at p1=0.7, vary model distribution Q.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="q1",
+        const_variable="p1",
+        const_value=0.7,
+        n_steps=11,
+        sweep_min=0.05,
+        sweep_max=0.95,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Cross_Entropy_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell10_plot_cross_entropy_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell11_generate_data_processing_inequality_animation() -> None:
+    """
+    Generate animation frames for data processing inequality visualization.
+
+    This function creates a series of frames showing how information degrades
+    through successive processing stages as noise level varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="noise_level",
+        n_steps=21,
+        scenario="Compression",
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Data_Processing_Inequality_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell11_plot_data_processing_inequality_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell13_generate_mdl_animation() -> None:
+    """
+    Generate animation frames for MDL (Minimum Description Length) visualization.
+
+    This function creates a series of frames showing how MDL balances model
+    complexity with data fit as polynomial degree varies.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    values = ut.generate_animation_values(
+        mode="linear",
+        sweep_variable="degree",
+        n_steps=8,
+        sweep_min=1,
+        sweep_max=8,
+        n_samples=50,
+        true_degree=3,
+        noise_level=0.3,
+    )
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_MDL_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell13_plot_mdl_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
+
+
+def cell14_generate_kolmogorov_complexity_animation() -> None:
+    """
+    Generate animation frames for Kolmogorov Complexity visualization.
+
+    This function creates a series of frames showing how different string types
+    have different Kolmogorov Complexity.
+    """
+    import msml610_utils as ut
+
+    # Generate animation values.
+    # Sweep through different string types with fixed length.
+    string_types = [
+        "All Zeros",
+        "Repeating 01",
+        "Fibonacci",
+        "Semi-random",
+        "Random",
+    ]
+    values = [{"string_type": st, "length": 64} for st in string_types]
+    # Directory to save frames.
+    dst_dir = "./figures/Lesson94_Kolmogorov_Complexity_video"
+    # Generate animation frames with fixed dimensions.
+    ut.generate_animation(
+        cell14_plot_kolmogorov_complexity_interactive,
+        values,
+        dst_dir,
+        incremental=False,
+        figsize=(20, 5),
+        dpi=150,
+    )
