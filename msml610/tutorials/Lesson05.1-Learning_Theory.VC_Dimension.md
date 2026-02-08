@@ -6,21 +6,22 @@
 - Type: Interactive
 - Visualization:
   - 2D plot with 3 points (A, B, C) that can be selected in different positions
-    and different assignments
+    and different assignments (represented by red or blue circles)
   - A slider/line representing a 2D perceptron (separating hyperplane) that can
     be rotated and moved
-  - Points are colored based on which side of the line they fall (blue for +1,
-    red for -1)
+  - Points are colored inside based on which side of the line they fall (blue for
+    +1, red for -1)
 - Interactive widgets:
   - Select points in different positions and assignments
+    - collinear
+    - triangle
+    - each with 8 different assignments
   - Rotate slider: angle of separating line (0-360 degrees)
   - Position slider: offset of the line
   - Button: to find the solution 
 - Display:
   - Desired classification
   - Current classification: "A: +1, B: -1, C: +1"
-  - Counter showing unique dichotomies discovered so far
-  - List of all unique dichotomies found (up to 8 possible)
 - Purpose: Discover that 3 points can be classified in 2^3 = 8 different ways by
   moving the line
 <end>
