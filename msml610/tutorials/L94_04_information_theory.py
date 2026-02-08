@@ -14,7 +14,7 @@
 # ---
 
 # %% [markdown]
-# # Imports
+# ## Imports
 
 # %%
 # %load_ext autoreload
@@ -114,7 +114,7 @@ utils.cell2_plot_distribution_with_stats(
 # This distribution has lower variance but higher entropy (~2.32 bits).
 
 # %% [markdown]
-# # Cell 3: Entropy and Distribution Spread
+# # Cell 2.1: Entropy and Distribution Spread
 #
 # Generally, more spread in a distribution leads to higher entropy, but there are exceptions:
 # - Increasing the support of a uniform distribution increases variance but not entropy
@@ -164,7 +164,7 @@ utils.cell2_plot_distribution_with_stats(
 # A uniform distribution over 8 outcomes has 3 bits of entropy.
 
 # %% [markdown]
-# # Cell 4: Entropy and Uncertainty: Shape Matters
+# ## Cell 2.2: Entropy and Uncertainty: Shape Matters
 #
 # Entropy is closely related to the shape of the probability distribution:
 # - **Flat (uniform) distribution** → high entropy, high uncertainty

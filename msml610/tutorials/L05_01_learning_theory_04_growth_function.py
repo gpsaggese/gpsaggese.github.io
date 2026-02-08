@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -37,7 +37,6 @@ import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import seaborn as sns
 
 # Set plotting style.
@@ -190,7 +189,13 @@ compared = mtugrowf.compare_with_theory(results_df, "Perceptron")
 print("=== Growth Function for 2D Perceptron ===")
 print(
     compared[
-        ["n", "m_h_n_mean", "theoretical", "max_dichotomies", "is_shattered_mean"]
+        [
+            "n",
+            "m_h_n_mean",
+            "theoretical",
+            "max_dichotomies",
+            "is_shattered_mean",
+        ]
     ]
 )
 
@@ -292,14 +297,12 @@ calculator = mtugrowf.GrowthFunctionCalculator(
     tester, verbose=True, show_progress=False
 )
 
-vc_result = calculator.estimate_vc_dimension(
-    generator, max_n=6, num_trials=5
-)
+vc_result = calculator.estimate_vc_dimension(generator, max_n=6, num_trials=5)
 
 print("\n=== VC Dimension Estimation ===")
 print(f"Estimated VC Dimension: {vc_result['vc_dimension']}")
 print(f"Break Point: {vc_result['break_point']}")
-print(f"\nResults by N:")
+print("\nResults by N:")
 for n, shattered in vc_result["results_by_n"].items():
     print(f"  N={n}: {'Shattered' if shattered else 'Not shattered'}")
 
@@ -380,7 +383,9 @@ for i in range(enumerator.count_dichotomies()):
     status = "Yes" if is_realizable else "No"
     print(f"{i:9d} | {labels_str:11s} | {status}")
 
-print(f"\nTotal realizable: {realizable_count} / {enumerator.count_dichotomies()}")
+print(
+    f"\nTotal realizable: {realizable_count} / {enumerator.count_dichotomies()}"
+)
 print(f"Points shattered: {realizable_count == enumerator.count_dichotomies()}")
 
 # %% [markdown]
@@ -410,9 +415,7 @@ print(f"Labels: {labels}")
 hypothesis = tester.find_hypothesis(points, labels)
 if hypothesis:
     print(f"\nFound threshold: a = {hypothesis['threshold']:.3f}")
-    print(
-        f"Rule: h(x) = +1 if x >= {hypothesis['threshold']:.3f}, else -1"
-    )
+    print(f"Rule: h(x) = +1 if x >= {hypothesis['threshold']:.3f}, else -1")
 
 # Find perceptron weights for a linearly separable pattern.
 tester_p = mtugrowf.PerceptronTester(random_state=42)
@@ -472,7 +475,7 @@ calculator = mtugrowf.GrowthFunctionCalculator(
 points_collinear = generator.generate_collinear(n=3, d=2)
 result = calculator.compute_growth_function(points_collinear)
 print(f"3 collinear points: m_H(3) = {result['m_h_n']}")
-print(f"Expected for general position: 8")
+print("Expected for general position: 8")
 print(f"Collinear breaks shattering: {result['m_h_n'] < 8}")
 
 # %% [markdown]

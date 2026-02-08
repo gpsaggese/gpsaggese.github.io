@@ -3,7 +3,7 @@ Utility functions for Information Theory lesson.
 
 Import as:
 
-import msml610.tutorials.L94_04_information_theory_utils as mtulinth
+import msml610.tutorials.L94_04_information_theory_utils as mtl0ithut
 """
 
 import logging
@@ -644,10 +644,10 @@ def calculate_cross_entropy(
 
 
 def cell2_plot_distribution_with_stats(
-    *,
     values: np.ndarray,
     probabilities: np.ndarray,
     title: str,
+    *,
     ax: Optional[Any] = None,
     figsize: tuple = (6, 4),
     save_fig: Optional[str] = None,

@@ -36,17 +36,12 @@
 # %load_ext autoreload
 # %autoreload 2
 
-import logging
 
 import arviz as az
-import pandas as pd
-import xarray as xr
 import pymc as pm
 import numpy as np
-import seaborn as sns
 import scipy.stats as stats
 import matplotlib.pyplot as plt
-import preliz as pz
 
 # %%
 dir_name = "./L07_data"
@@ -67,13 +62,13 @@ ut.config_notebook()
 # %%
 data = np.loadtxt(f"{dir_name}/chemical_shifts.csv")
 print(len(data), data)
-#print(sorted(data))
+# print(sorted(data))
 
 # It looks Gaussian with a couple of outliers.
 az.plot_kde(data, rug=True)
 
 title = "Chemical shift"
-ut.process_figure(title);
+ut.process_figure(title)
 
 # %%
 with pm.Model() as model_g:
@@ -91,11 +86,11 @@ pm.model_to_graphviz(model_g)
 
 # %%
 # There are 4 traces for 2 variables.
-az.plot_trace(idata_g);
+az.plot_trace(idata_g)
 
 # %%
 # The posterior distribution of the params is bi-dimensional, since it has mu and sigma.
-az.plot_pair(idata_g, kind='kde', marginals=True);
+az.plot_pair(idata_g, kind="kde", marginals=True)
 
 # %%
 # Report a summary of the inference.
@@ -109,7 +104,7 @@ y_pred_g = pm.sample_posterior_predictive(idata_g, model=model_g)
 # Black: KDE of the data (observed)
 # Blue: KDEs of the posterior predictive samples
 # Orange: KDE of the posterior predictive mean
-az.plot_ppc(y_pred_g, mean=True, num_pp_samples=100);
+az.plot_ppc(y_pred_g, mean=True, num_pp_samples=100)
 
 # %% [markdown]
 # ## Student-t
@@ -127,16 +122,16 @@ for df in [0.1, 0.5, 1, 2, 5, 10, 30]:
     # Compute PDF.
     x_pdf = distr.pdf(x_values)
     plt.plot(x_values, x_pdf, label=f"nu={df}")
-    
+
 # Plot gaussian.
 x_pdf = stats.norm.pdf(x_values)
 plt.plot(x_values, x_pdf, "k--", label="Gauss / nu=infty")
 
-plt.xlim(-5, 5) 
-plt.legend();
+plt.xlim(-5, 5)
+plt.legend()
 
 title = "Chap7: Student-t"
-ut.process_figure(title);
+ut.process_figure(title)
 
 # %%
 # Use a Student-T model.
@@ -144,21 +139,21 @@ with pm.Model() as model_t:
     mu = pm.Uniform("mu", 40, 75)
     sigma = pm.HalfNormal("sigma", sigma=10)
     # A student with nu = 30 is close to a Gaussian.
-    nu = pm.Exponential("nu", 1/30)
+    nu = pm.Exponential("nu", 1 / 30)
     #
     y = pm.StudentT("y", mu=mu, sigma=sigma, nu=nu, observed=data)
     idata_t = pm.sample(1_000)
 
 # %%
-az.plot_trace(idata_t);
+az.plot_trace(idata_t)
 
 # %%
 az.summary(idata_t, kind="stats").round(2)
 
 # %%
 # Compute 100 posterior predictive samples.
-y_ppc_t = pm.sample_posterior_predictive(idata_t, model_t);
+y_ppc_t = pm.sample_posterior_predictive(idata_t, model_t)
 
 # %%
 ax = az.plot_ppc(y_ppc_t, num_pp_samples=100, mean=True)
-ax.set_xlim(40, 70);
+ax.set_xlim(40, 70)

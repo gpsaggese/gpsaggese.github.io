@@ -30,14 +30,11 @@
 # %load_ext autoreload
 # %autoreload 2
 
-import logging
 
 import arviz as az
 import pandas as pd
-import xarray as xr
 import pymc as pm
 import numpy as np
-import seaborn as sns
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 import preliz as pz
@@ -57,7 +54,7 @@ dir_name = "./L07_data"
 
 # %%
 # Load some data it's mainly a linear relationship with some data.
-dummy_data = np.loadtxt(dir_name + '/dummy.csv')
+dummy_data = np.loadtxt(dir_name + "/dummy.csv")
 x = dummy_data[:, 0]
 y = dummy_data[:, 1]
 
@@ -73,8 +70,8 @@ y_c = (y - y.mean()) / y.std()
 
 # Plot the 0-order data (i.e., the original one).
 plt.scatter(x_c[0], y_c)
-plt.xlabel('x')
-plt.ylabel('y');
+plt.xlabel("x")
+plt.ylabel("y")
 
 ut.save_plt("Lesson07.Comparing_models.data.png")
 
@@ -82,29 +79,29 @@ ut.save_plt("Lesson07.Comparing_models.data.png")
 # Linear model.
 with pm.Model() as model_l:
     # mu = alpha + beta * x
-    alpha = pm.Normal('alpha', mu=0, sigma=1)
-    beta = pm.Normal('beta', mu=0, sigma=10)
+    alpha = pm.Normal("alpha", mu=0, sigma=1)
+    beta = pm.Normal("beta", mu=0, sigma=10)
     mu = alpha + beta * x_c[0]
     #
-    sigma = pm.HalfNormal('sigma', 5)
+    sigma = pm.HalfNormal("sigma", 5)
     #
-    y_pred = pm.Normal('y_pred', mu=mu, sigma=sigma, observed=y_c)
+    y_pred = pm.Normal("y_pred", mu=mu, sigma=sigma, observed=y_c)
     #
     idata_l = pm.sample(2000, idata_kwargs={"log_likelihood": True})
     idata_l.extend(pm.sample_posterior_predictive(idata_l))
-    
+
 
 # Quadratic model.
 with pm.Model() as model_p:
     # mu = alpha + beta_1 * x + beta_2 * x^2
-    alpha = pm.Normal('alpha', mu=0, sigma=1)
+    alpha = pm.Normal("alpha", mu=0, sigma=1)
     # Beta is a 2-dim vector.
-    beta = pm.Normal('beta', mu=0, sigma=10, shape=order)
+    beta = pm.Normal("beta", mu=0, sigma=10, shape=order)
     mu = alpha + pm.math.dot(beta, x_c)
     #
-    sigma = pm.HalfNormal('sigma', 5)
+    sigma = pm.HalfNormal("sigma", 5)
     #
-    y_pred = pm.Normal('y_pred', mu=mu, sigma=sigma, observed=y_c)
+    y_pred = pm.Normal("y_pred", mu=mu, sigma=sigma, observed=y_c)
     #
     idata_q = pm.sample(2000, idata_kwargs={"log_likelihood": True})
     idata_q.extend(pm.sample_posterior_predictive(idata_q))
@@ -120,12 +117,14 @@ x_new = np.linspace(x_c[0].min(), x_c[0].max(), 100)
 # Posterior.
 posterior_l = az.extract(idata_l)
 posterior_p = az.extract(idata_q)
-#print(posterior_l)
+# print(posterior_l)
 
 # Compute the mean posterior of the linear model.
 alpha_l_post = posterior_l["alpha"].mean().item()
 beta_l_post = posterior_l["beta"].mean().item()
-print(f"linear model: alpha_l_post={alpha_l_post:.2g}, beta_l_post={beta_l_post:.2g}")
+print(
+    f"linear model: alpha_l_post={alpha_l_post:.2g}, beta_l_post={beta_l_post:.2g}"
+)
 y_l_post = alpha_l_post + beta_l_post * x_new
 
 # Plot the mean posterior of the linear model.
@@ -134,15 +133,17 @@ plt.plot(x_new, y_l_post, "C0", label="linear model")
 # Quadratic model.
 alpha_p_post = posterior_p["alpha"].mean().item()
 beta_p_post = posterior_p["beta"].mean("sample")
-print(f"quadratic model: alpha_p_post={alpha_p_post:.2g}, beta_post[0]={beta_p_post[0]:.2g}, beta_post[1]={beta_p_post[1]:.2g}")
+print(
+    f"quadratic model: alpha_p_post={alpha_p_post:.2g}, beta_post[0]={beta_p_post[0]:.2g}, beta_post[1]={beta_p_post[1]:.2g}"
+)
 y_p_post = alpha_p_post + np.dot(beta_p_post, x_c)
 
-#idx = np.argsort(x_c[0])
-#plt.plot(x_c[0][idx], y_p_post[idx], "C1", label="quadratic model")
+# idx = np.argsort(x_c[0])
+# plt.plot(x_c[0][idx], y_p_post[idx], "C1", label="quadratic model")
 plt.plot(x_c[0], y_p_post, "C1", label="quadratic model")
 
 # Plot data.
-plt.plot(x_c[0], y_c, "C2.");
+plt.plot(x_c[0], y_c, "C2.")
 
 ut.save_plt("Lesson07.Comparing_models.model_fit.png")
 
@@ -152,15 +153,15 @@ ut.save_plt("Lesson07.Comparing_models.model_fit.png")
 #
 
 az.plot_ppc(idata_l, num_pp_samples=100, colors=["C1", "C0", "C1"])
-plt.title("linear model");
+plt.title("linear model")
 ut.save_plt("Lesson07.Comparing_models.lin_model_PPC.png")
 
 az.plot_ppc(idata_q, num_pp_samples=100, colors=["C1", "C0", "C1"])
-plt.title("quadratic model");
+plt.title("quadratic model")
 ut.save_plt("Lesson07.Comparing_models.quadr_model_PPC.png")
 
 # %%
-# #?az.plot_bpv
+# # ?az.plot_bpv
 
 # %% [markdown]
 # ## Bayesian p-value
@@ -181,12 +182,14 @@ for idata, c in zip(idatas, colors):
     az.plot_bpv(idata, kind="t_stat", t_stat="mean", ax=axes[0], color=c)
     axes[0].set_title("linear")
 
+
 # Plot the Bayesian p-value for interquartile range for both models.
 def iqr(x, a=-1):
     """
     Interquartile range.
     """
     return np.subtract(*np.percentile(x, [75, 25], axis=a))
+
 
 for idata, c in zip(idatas, colors):
     # Plot Bayesian p-value.
@@ -213,8 +216,8 @@ y0 = np.array([4.2, 6.1, 5.0, 10.0, 10, 14.0])
 x1 = np.array([6.5, 10])
 y1 = np.array([7, 10])
 
-ax.plot(x0, y0, "ko");
-ax.plot(x1, y1, "rs");
+ax.plot(x0, y0, "ko")
+ax.plot(x1, y1, "rs")
 
 # %%
 #
@@ -236,7 +239,8 @@ for i in order:
     p = np.polynomial.Polynomial.fit(x0, y0, deg=i)
     ps.append(p)
 
-# 
+
+#
 def plot_models(x0, y0, ps):
     for i in range(len(order)):
         p = ps[i]
@@ -294,13 +298,11 @@ loo_q
 # ## Comparing models
 
 # %%
-cmp_df = az.compare({
-    "model_l": idata_l,
-    "model_q": idata_q})
+cmp_df = az.compare({"model_l": idata_l, "model_q": idata_q})
 display(cmp_df)
 
 # %%
-az.plot_compare(cmp_df);
+az.plot_compare(cmp_df)
 
 # %% [markdown]
 # ## Model averaging
@@ -338,7 +340,7 @@ az.plot_kde(
     ax=ax,
 )
 
-plt.legend();
+plt.legend()
 
 # %% [markdown]
 # # Mixture models
@@ -357,7 +359,7 @@ print("shape=", len(cs_exp))
 
 # %%
 _, ax = plt.subplots()
-plt.hist(cs_exp, density=True, bins=30, alpha=0.3);
+plt.hist(cs_exp, density=True, bins=30, alpha=0.3)
 
 # %%
 # The parameters to estimate are:
@@ -381,7 +383,7 @@ with pm.Model() as model_kg:
 
 # %%
 varnames = ["means", "p"]
-az.plot_trace(trace_kg, varnames);
+az.plot_trace(trace_kg, varnames)
 
 # %% [markdown]
 # # Inference engines
@@ -403,7 +405,7 @@ def posterior_grid(grid_points, heads, tails):
     # The prior is uniform.
     prior = np.repeat(1 / grid_points, grid_points)
     # Likelihood is Binomial with known params.
-    likelihood = pz.Binomial(n = heads + tails, p = grid).pdf(heads)
+    likelihood = pz.Binomial(n=heads + tails, p=grid).pdf(heads)
     # Compute the integral of the PDF.
     posterior = likelihood * prior
     posterior /= posterior.sum()
@@ -425,7 +427,7 @@ grid, prior, likelihood, posterior = posterior_grid(grid_points, h, t)
 plt.plot(grid, prior, label="prior")
 plt.plot(grid, likelihood, label="likelihood")
 plt.plot(grid, posterior, label="posterior")
-plt.legend();
+plt.legend()
 
 # %%
 ## Monte Carlo pi
@@ -435,19 +437,19 @@ N = 10000
 
 x, y = np.random.uniform(-1, 1, size=(2, N))
 inside = (x**2 + y**2) <= 1
-pi = inside.sum()*4/N
+pi = inside.sum() * 4 / N
 error = abs((pi - np.pi) / pi) * 100
- 
+
 outside = np.invert(inside)
- 
+
 plt.figure(figsize=(8, 8))
-plt.plot(x[inside], y[inside], 'b.')
-plt.plot(x[outside], y[outside], 'r.')
-plt.plot(0, 0, label=f'π*= {pi:4.3f}\nerror = {error:4.3f}', alpha=0)
-plt.axis('square')
+plt.plot(x[inside], y[inside], "b.")
+plt.plot(x[outside], y[outside], "r.")
+plt.plot(0, 0, label=f"π*= {pi:4.3f}\nerror = {error:4.3f}", alpha=0)
+plt.axis("square")
 plt.xticks([])
 plt.yticks([])
-plt.legend(loc=1, frameon=True, framealpha=0.9);
+plt.legend(loc=1, frameon=True, framealpha=0.9)
 
 
 # %%
@@ -483,18 +485,18 @@ def metropolis(func, draws=10000):
 
 # %%
 np.random.seed(3)
-func = stats.beta(2, 5) 
-trace = metropolis(func=func) 
-x = np.linspace(0.01, .99, 100) 
-y = func.pdf(x) 
-plt.xlim(0, 1) 
-plt.plot(x, y, 'C1-', lw=3, label='True distribution') 
-plt.hist(trace[trace > 0], bins=25, density=True, label='Estimated distribution') 
-plt.xlabel('x') 
-plt.ylabel('pdf(x)')
-plt.yticks([]) 
+func = stats.beta(2, 5)
+trace = metropolis(func=func)
+x = np.linspace(0.01, 0.99, 100)
+y = func.pdf(x)
+plt.xlim(0, 1)
+plt.plot(x, y, "C1-", lw=3, label="True distribution")
+plt.hist(trace[trace > 0], bins=25, density=True, label="Estimated distribution")
+plt.xlabel("x")
+plt.ylabel("pdf(x)")
+plt.yticks([])
 plt.legend()
-plt.savefig('B11197_08_05.png');
+plt.savefig("B11197_08_05.png")
 
 # %% [markdown]
 # # Diagnosing convergence
@@ -503,42 +505,56 @@ plt.savefig('B11197_08_05.png');
 # Centered model.
 with pm.Model() as model_c:
     # Param for the std dev of all Gaussians.
-    a = pm.HalfNormal('a', 10)
+    a = pm.HalfNormal("a", 10)
     # 10 normals with mean=0 and std dev=a.
-    b = pm.Normal('b', 0, a, shape=10)
+    b = pm.Normal("b", 0, a, shape=10)
     idata_c = pm.sample(random_seed=73)
 
 # %%
-coords={'b_dim_0': [0]}
-az.plot_trace(idata_c, var_names=['a', "b"], coords=coords, divergences='top');
+coords = {"b_dim_0": [0]}
+az.plot_trace(idata_c, var_names=["a", "b"], coords=coords, divergences="top")
 
 # %%
 # Non-centered (re-parametrized) model.
 with pm.Model() as model_nc:
-    a = pm.HalfNormal('a', 10)
-    b_offset = pm.Normal('b_offset', mu=0, sigma=1, shape=10)
+    a = pm.HalfNormal("a", 10)
+    b_offset = pm.Normal("b_offset", mu=0, sigma=1, shape=10)
     # Gaussians are rescaled.
-    b = pm.Deterministic('b', 0 + b_offset * a)
-    #idata_nc = pm.sample(random_seed=73, target_accept=0.9)
+    b = pm.Deterministic("b", 0 + b_offset * a)
+    # idata_nc = pm.sample(random_seed=73, target_accept=0.9)
     idata_nc = pm.sample(random_seed=73)
 
 # %%
-ax = az.plot_trace(idata_nc, var_names=['a', "b"], coords=coords, divergences='top')
+ax = az.plot_trace(
+    idata_nc, var_names=["a", "b"], coords=coords, divergences="top"
+)
 
 # %% [markdown]
 # ## Rank plot
 
 # %%
-az.plot_trace(idata_c, var_names=['a', "b"], divergences='top', kind='rank_bars', coords=coords);
+az.plot_trace(
+    idata_c,
+    var_names=["a", "b"],
+    divergences="top",
+    kind="rank_bars",
+    coords=coords,
+)
 
 # %%
-az.plot_trace(idata_nc, var_names=['a', "b"], divergences='top', kind='rank_bars', coords=coords);
+az.plot_trace(
+    idata_nc,
+    var_names=["a", "b"],
+    divergences="top",
+    kind="rank_bars",
+    coords=coords,
+)
 
 # %%
-summaries = pd.concat([
-   az.summary(idata_c, var_names=['a']),
-   az.summary(idata_nc, var_names=['a'])])
-summaries.index = ['centered', 'non_centered']
+summaries = pd.concat(
+    [az.summary(idata_c, var_names=["a"]), az.summary(idata_nc, var_names=["a"])]
+)
+summaries.index = ["centered", "non_centered"]
 summaries
 
 # %% [markdown]
@@ -554,13 +570,13 @@ az.rhat(idata_nc, var_names="a b".split()).to_dataframe().T
 # ## ESS
 
 # %%
-az.plot_autocorr(idata_c, var_names=['a']);
+az.plot_autocorr(idata_c, var_names=["a"])
 
 # %%
 az.ess(idata_c, var_names="a b".split()).to_dataframe().T
 
 # %%
-az.plot_autocorr(idata_nc, var_names=['a']);
+az.plot_autocorr(idata_nc, var_names=["a"])
 
 # %%
 az.ess(idata_nc, var_names="a b".split()).to_dataframe().T
@@ -568,26 +584,34 @@ az.ess(idata_nc, var_names="a b".split()).to_dataframe().T
 # %%
 # Plot the ESS by quantile.
 az.plot_ess(idata_c, var_names="a", kind="quantile")
-az.plot_ess(idata_nc, var_names="a", kind="quantile");
+az.plot_ess(idata_nc, var_names="a", kind="quantile")
 
 # %%
 az.plot_ess(idata_c, var_names="a", kind="evolution")
-az.plot_ess(idata_nc, var_names="a", kind="evolution");
+az.plot_ess(idata_nc, var_names="a", kind="evolution")
 
 # %% [markdown]
 # ## Divergences
 
 # %%
-_, ax = plt.subplots(1, 2, sharey=True, sharex=True, figsize=(10, 5), constrained_layout=True)
+_, ax = plt.subplots(
+    1, 2, sharey=True, sharex=True, figsize=(10, 5), constrained_layout=True
+)
 
 for idx, tr in enumerate([idata_c, idata_nc]):
-    az.plot_pair(tr, var_names=['b', 'a'], coords={'b_dim_0':[0]}, kind='scatter',
-                 divergences=True, divergences_kwargs={'color':'C1'},
-                 ax=ax[idx])
-    ax[idx].set_title(['centered', 'non-centered'][idx])
+    az.plot_pair(
+        tr,
+        var_names=["b", "a"],
+        coords={"b_dim_0": [0]},
+        kind="scatter",
+        divergences=True,
+        divergences_kwargs={"color": "C1"},
+        ax=ax[idx],
+    )
+    ax[idx].set_title(["centered", "non-centered"][idx])
 
 # %%
-az.plot_parallel(idata_c);
+az.plot_parallel(idata_c)
 
 # %%
-az.plot_parallel(idata_nc);
+az.plot_parallel(idata_nc)

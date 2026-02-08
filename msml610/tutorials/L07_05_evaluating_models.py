@@ -30,17 +30,12 @@
 # %load_ext autoreload
 # %autoreload 2
 
-import logging
 
 import arviz as az
 import pandas as pd
-import xarray as xr
 import pymc as pm
 import numpy as np
-import seaborn as sns
-import scipy.stats as stats
 import matplotlib.pyplot as plt
-import preliz as pz
 
 # %%
 import msml610_utils as ut
@@ -57,7 +52,7 @@ dir_name = "./L07_data"
 
 # %%
 # Load some data it's mainly a linear relationship with some data.
-dummy_data = np.loadtxt(dir_name + '/dummy.csv')
+dummy_data = np.loadtxt(dir_name + "/dummy.csv")
 x = dummy_data[:, 0]
 y = dummy_data[:, 1]
 
@@ -73,8 +68,8 @@ y_c = (y - y.mean()) / y.std()
 
 # Plot the 0-order data (i.e., the original one).
 plt.scatter(x_c[0], y_c)
-plt.xlabel('x')
-plt.ylabel('y');
+plt.xlabel("x")
+plt.ylabel("y")
 
 ut.save_plt("Lesson07.Comparing_models.data.png")
 
@@ -82,29 +77,29 @@ ut.save_plt("Lesson07.Comparing_models.data.png")
 # Linear model.
 with pm.Model() as model_l:
     # mu = alpha + beta * x
-    alpha = pm.Normal('alpha', mu=0, sigma=1)
-    beta = pm.Normal('beta', mu=0, sigma=10)
+    alpha = pm.Normal("alpha", mu=0, sigma=1)
+    beta = pm.Normal("beta", mu=0, sigma=10)
     mu = alpha + beta * x_c[0]
     #
-    sigma = pm.HalfNormal('sigma', 5)
+    sigma = pm.HalfNormal("sigma", 5)
     #
-    y_pred = pm.Normal('y_pred', mu=mu, sigma=sigma, observed=y_c)
+    y_pred = pm.Normal("y_pred", mu=mu, sigma=sigma, observed=y_c)
     #
     idata_l = pm.sample(2000, idata_kwargs={"log_likelihood": True})
     idata_l.extend(pm.sample_posterior_predictive(idata_l))
-    
+
 
 # Quadratic model.
 with pm.Model() as model_p:
     # mu = alpha + beta_1 * x + beta_2 * x^2
-    alpha = pm.Normal('alpha', mu=0, sigma=1)
+    alpha = pm.Normal("alpha", mu=0, sigma=1)
     # Beta is a 2-dim vector.
-    beta = pm.Normal('beta', mu=0, sigma=10, shape=order)
+    beta = pm.Normal("beta", mu=0, sigma=10, shape=order)
     mu = alpha + pm.math.dot(beta, x_c)
     #
-    sigma = pm.HalfNormal('sigma', 5)
+    sigma = pm.HalfNormal("sigma", 5)
     #
-    y_pred = pm.Normal('y_pred', mu=mu, sigma=sigma, observed=y_c)
+    y_pred = pm.Normal("y_pred", mu=mu, sigma=sigma, observed=y_c)
     #
     idata_q = pm.sample(2000, idata_kwargs={"log_likelihood": True})
     idata_q.extend(pm.sample_posterior_predictive(idata_q))
@@ -120,12 +115,14 @@ x_new = np.linspace(x_c[0].min(), x_c[0].max(), 100)
 # Posterior.
 posterior_l = az.extract(idata_l)
 posterior_p = az.extract(idata_q)
-#print(posterior_l)
+# print(posterior_l)
 
 # Compute the mean posterior of the linear model.
 alpha_l_post = posterior_l["alpha"].mean().item()
 beta_l_post = posterior_l["beta"].mean().item()
-print(f"linear model: alpha_l_post={alpha_l_post:.2g}, beta_l_post={beta_l_post:.2g}")
+print(
+    f"linear model: alpha_l_post={alpha_l_post:.2g}, beta_l_post={beta_l_post:.2g}"
+)
 y_l_post = alpha_l_post + beta_l_post * x_new
 
 # Plot the mean posterior of the linear model.
@@ -134,15 +131,17 @@ plt.plot(x_new, y_l_post, "C0", label="linear model")
 # Quadratic model.
 alpha_p_post = posterior_p["alpha"].mean().item()
 beta_p_post = posterior_p["beta"].mean("sample")
-print(f"quadratic model: alpha_p_post={alpha_p_post:.2g}, beta_post[0]={beta_p_post[0]:.2g}, beta_post[1]={beta_p_post[1]:.2g}")
+print(
+    f"quadratic model: alpha_p_post={alpha_p_post:.2g}, beta_post[0]={beta_p_post[0]:.2g}, beta_post[1]={beta_p_post[1]:.2g}"
+)
 y_p_post = alpha_p_post + np.dot(beta_p_post, x_c)
 
-#idx = np.argsort(x_c[0])
-#plt.plot(x_c[0][idx], y_p_post[idx], "C1", label="quadratic model")
+# idx = np.argsort(x_c[0])
+# plt.plot(x_c[0][idx], y_p_post[idx], "C1", label="quadratic model")
 plt.plot(x_c[0], y_p_post, "C1", label="quadratic model")
 
 # Plot data.
-plt.plot(x_c[0], y_c, "C2.");
+plt.plot(x_c[0], y_c, "C2.")
 
 ut.save_plt("Lesson07.Comparing_models.model_fit.png")
 
@@ -152,15 +151,15 @@ ut.save_plt("Lesson07.Comparing_models.model_fit.png")
 #
 
 az.plot_ppc(idata_l, num_pp_samples=100, colors=["C1", "C0", "C1"])
-plt.title("linear model");
+plt.title("linear model")
 ut.save_plt("Lesson07.Comparing_models.lin_model_PPC.png")
 
 az.plot_ppc(idata_q, num_pp_samples=100, colors=["C1", "C0", "C1"])
-plt.title("quadratic model");
+plt.title("quadratic model")
 ut.save_plt("Lesson07.Comparing_models.quadr_model_PPC.png")
 
 # %%
-# #?az.plot_bpv
+# # ?az.plot_bpv
 
 # %% [markdown]
 # ## Bayesian p-value
@@ -181,12 +180,14 @@ for idata, c in zip(idatas, colors):
     az.plot_bpv(idata, kind="t_stat", t_stat="mean", ax=axes[0], color=c)
     axes[0].set_title("linear")
 
+
 # Plot the Bayesian p-value for interquartile range for both models.
 def iqr(x, a=-1):
     """
     Interquartile range.
     """
     return np.subtract(*np.percentile(x, [75, 25], axis=a))
+
 
 for idata, c in zip(idatas, colors):
     # Plot Bayesian p-value.
@@ -213,8 +214,8 @@ y0 = np.array([4.2, 6.1, 5.0, 10.0, 10, 14.0])
 x1 = np.array([6.5, 10])
 y1 = np.array([7, 10])
 
-ax.plot(x0, y0, "ko");
-ax.plot(x1, y1, "rs");
+ax.plot(x0, y0, "ko")
+ax.plot(x1, y1, "rs")
 
 # %%
 #
@@ -236,7 +237,8 @@ for i in order:
     p = np.polynomial.Polynomial.fit(x0, y0, deg=i)
     ps.append(p)
 
-# 
+
+#
 def plot_models(x0, y0, ps):
     for i in range(len(order)):
         p = ps[i]
@@ -294,13 +296,11 @@ loo_q
 # ## Comparing models
 
 # %%
-cmp_df = az.compare({
-    "model_l": idata_l,
-    "model_q": idata_q})
+cmp_df = az.compare({"model_l": idata_l, "model_q": idata_q})
 display(cmp_df)
 
 # %%
-az.plot_compare(cmp_df);
+az.plot_compare(cmp_df)
 
 # %% [markdown]
 # ## Model averaging
@@ -338,4 +338,4 @@ az.plot_kde(
     ax=ax,
 )
 
-plt.legend();
+plt.legend()
