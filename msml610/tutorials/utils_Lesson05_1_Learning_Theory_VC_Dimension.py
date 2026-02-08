@@ -186,9 +186,16 @@ def _draw_dichotomy_3points(
     for i, (point, label, classification) in enumerate(
         zip(points, labels, current_classification)
     ):
+        # Both fill and border show current classification (no target in this cell).
         color = "blue" if classification == 1 else "red"
         ax1.scatter(
-            point[0], point[1], c=color, s=200, edgecolors="black", zorder=3
+            point[0],
+            point[1],
+            c=color,
+            s=200,
+            edgecolors=color,
+            linewidths=3,
+            zorder=3,
         )
         ax1.text(
             point[0],
@@ -356,13 +363,21 @@ def _draw_dichotomy_3points_with_target(
     # Check if current matches target.
     match = tuple(current_classification) == target_classification
     # Plot points on left subplot.
-    for i, (point, label, target_class) in enumerate(
-        zip(points, labels, target_classification)
+    for i, (point, label, target_class, current_class) in enumerate(
+        zip(points, labels, target_classification, current_classification)
     ):
-        # Color based on target classification.
-        color = "blue" if target_class == 1 else "red"
+        # Fill color based on target classification.
+        fill_color = "blue" if target_class == 1 else "red"
+        # Edge color based on current classification (assigned by hyperplane).
+        edge_color = "blue" if current_class == 1 else "red"
         ax1.scatter(
-            point[0], point[1], c=color, s=200, edgecolors="black", zorder=3
+            point[0],
+            point[1],
+            c=fill_color,
+            s=200,
+            edgecolors=edge_color,
+            linewidths=3,
+            zorder=3,
         )
         ax1.text(
             point[0],
@@ -406,7 +421,11 @@ def _draw_dichotomy_3points_with_target(
     text_content = "Comment:\n"
     text_content += "Discover that 3 points can be classified in 2^3 = 8\n"
     text_content += "different ways. Adjust the angle and offset to match\n"
-    text_content += "the target classification shown by the point colors.\n"
+    text_content += "the target classification.\n\n"
+    text_content += "Visualization:\n"
+    text_content += "  • Fill color = Target assignment\n"
+    text_content += "  • Border color = Hyperplane assignment\n"
+    text_content += "  • When colors match, classification is correct!\n\n"
     text_content += "Use 'Find Solution' to see a working configuration.\n"
     text_content += "\n"
     text_content += "-" * 50 + "\n\n"
