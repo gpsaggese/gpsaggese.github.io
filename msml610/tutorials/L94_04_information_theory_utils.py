@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+# TODO(ai_gp): Use the functions from import msml610_utils as mtumsuti
+# to build widgets.
 from ipywidgets import interact, FloatSlider, IntSlider, widgets, fixed
 
 import helpers.hdbg as hdbg
@@ -177,7 +179,7 @@ def create_correlated_joint_distribution(
 # #############################################################################
 
 
-def cell6_plot_joint_entropy_interactive(
+def cell4_plot_joint_entropy_interactive(
     *,
     dependence: float = 0.5,
     n_samples: int = 100,
@@ -365,7 +367,7 @@ def cell6_plot_joint_entropy_interactive(
 # #############################################################################
 
 
-def cell7_plot_conditional_entropy_interactive(
+def cell5_plot_conditional_entropy_interactive(
     *, dependence: float = 0.5, figsize: Optional[tuple] = None
 ) -> None:
     """
@@ -714,7 +716,7 @@ def cell2_plot_distribution_with_stats(
 # #############################################################################
 
 
-def cell5_plot_binary_entropy_interactive(
+def cell3_plot_binary_entropy_interactive(
     *, p: float = 0.5, n: int = 100, figsize: Optional[tuple] = None
 ) -> None:
     """
@@ -863,7 +865,7 @@ def cell5_plot_binary_entropy_interactive(
     plt.show()
 
 
-def cell5_create_binary_entropy_widget() -> None:
+def cell3_create_binary_entropy_widget() -> None:
     """
     Create interactive widget for binary entropy visualization.
 
@@ -877,7 +879,7 @@ def cell5_create_binary_entropy_widget() -> None:
     - Fixed figure size
     """
     interact(
-        cell5_plot_binary_entropy_interactive,
+        cell3_plot_binary_entropy_interactive,
         p=FloatSlider(
             min=0.00,
             max=1.00,
@@ -1019,7 +1021,7 @@ def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
 # #############################################################################
 
 
-def cell8_plot_mutual_info_interactive(
+def cell6_plot_mutual_info_interactive(
     *, correlation: float = 0.5, figsize: Optional[tuple] = None
 ) -> None:
     """
@@ -1194,7 +1196,7 @@ def cell8_plot_mutual_info_interactive(
     plt.show()
 
 
-def cell8_plot_mutual_information_venn_interactive(
+def cell6_plot_mutual_information_venn_interactive(
     *,
     dependence: float = 0.5,
     scenario: str = "Binary",
@@ -1499,7 +1501,7 @@ def cell8_plot_mutual_information_venn_interactive(
 # #############################################################################
 
 
-def cell10_plot_cross_entropy_interactive(
+def cell8_plot_cross_entropy_interactive(
     *, p1: float = 0.7, q1: float = 0.5, figsize: Optional[tuple] = None
 ) -> None:
     """
@@ -1737,7 +1739,7 @@ def cell10_plot_cross_entropy_interactive(
 # #############################################################################
 
 
-def cell9_plot_kl_divergence_interactive(
+def cell7_plot_kl_divergence_interactive(
     *, p1: float = 0.7, q1: float = 0.5, figsize: Optional[tuple] = None
 ) -> None:
     """
@@ -2034,7 +2036,7 @@ def create_markov_chain_distribution(
 # #############################################################################
 
 
-def cell11_plot_data_processing_inequality_interactive(
+def cell9_plot_data_processing_inequality_interactive(
     *,
     noise_level: float = 0.2,
     scenario: str = "Compression",
@@ -2632,7 +2634,7 @@ def calculate_mdl_components(
 # #############################################################################
 
 
-def cell13_plot_mdl_interactive(
+def cell10_plot_mdl_interactive(
     *,
     degree: int = 3,
     n_samples: int = 50,
@@ -3006,7 +3008,7 @@ def get_program_description(*, string_type: str, length: int) -> tuple:
 # #############################################################################
 
 
-def cell14_plot_kolmogorov_complexity_interactive(
+def cell11_plot_kolmogorov_complexity_interactive(
     *,
     string_type: str = "Random",
     length: int = 64,
@@ -3217,7 +3219,7 @@ def cell14_plot_kolmogorov_complexity_interactive(
 # #############################################################################
 
 
-def cell6_create_joint_entropy_widget() -> None:
+def cell4_create_joint_entropy_widget() -> None:
     """
     Create interactive widget for joint entropy visualization.
 
@@ -3231,7 +3233,7 @@ def cell6_create_joint_entropy_widget() -> None:
     - Fixed figure size
     """
     interact(
-        cell6_plot_joint_entropy_interactive,
+        cell4_plot_joint_entropy_interactive,
         dependence=FloatSlider(
             min=0.0,
             max=1.0,
@@ -3252,7 +3254,7 @@ def cell6_create_joint_entropy_widget() -> None:
     )
 
 
-def cell7_create_conditional_entropy_widget() -> None:
+def cell5_create_conditional_entropy_widget() -> None:
     """
     Create interactive widget for conditional entropy visualization.
 
@@ -3265,7 +3267,7 @@ def cell7_create_conditional_entropy_widget() -> None:
     - Fixed figure size
     """
     interact(
-        cell7_plot_conditional_entropy_interactive,
+        cell5_plot_conditional_entropy_interactive,
         dependence=FloatSlider(
             min=0.0,
             max=1.0,
@@ -3278,7 +3280,7 @@ def cell7_create_conditional_entropy_widget() -> None:
     )
 
 
-def cell8_create_mutual_information_venn_widget() -> None:
+def cell6_create_mutual_information_venn_widget() -> None:
     """
     Create interactive widget for mutual information Venn diagram visualization.
 
@@ -3292,7 +3294,7 @@ def cell8_create_mutual_information_venn_widget() -> None:
     - Fixed figure size
     """
     interact(
-        cell8_plot_mutual_information_venn_interactive,
+        cell6_plot_mutual_information_venn_interactive,
         dependence=FloatSlider(
             min=0.0,
             max=1.0,
@@ -3311,7 +3313,7 @@ def cell8_create_mutual_information_venn_widget() -> None:
     )
 
 
-def cell8_create_mutual_info_correlation_widget() -> None:
+def cell6_create_mutual_info_correlation_widget() -> None:
     """
     Create interactive widget for correlation-based mutual information visualization.
 
@@ -3324,7 +3326,7 @@ def cell8_create_mutual_info_correlation_widget() -> None:
     - Fixed figure size
     """
     interact(
-        cell8_plot_mutual_info_interactive,
+        cell6_plot_mutual_info_interactive,
         correlation=FloatSlider(
             min=0.0,
             max=1.0,
@@ -3337,7 +3339,7 @@ def cell8_create_mutual_info_correlation_widget() -> None:
     )
 
 
-def cell9_create_kl_divergence_widget() -> None:
+def cell7_create_kl_divergence_widget() -> None:
     """
     Create interactive widget for KL divergence visualization.
 
@@ -3351,7 +3353,7 @@ def cell9_create_kl_divergence_widget() -> None:
     - Fixed figure size
     """
     interact(
-        cell9_plot_kl_divergence_interactive,
+        cell7_plot_kl_divergence_interactive,
         p1=FloatSlider(
             min=0.05,
             max=0.95,
@@ -3372,7 +3374,7 @@ def cell9_create_kl_divergence_widget() -> None:
     )
 
 
-def cell10_create_cross_entropy_widget() -> None:
+def cell8_create_cross_entropy_widget() -> None:
     """
     Create interactive widget for cross-entropy visualization.
 
@@ -3386,7 +3388,7 @@ def cell10_create_cross_entropy_widget() -> None:
     - Fixed figure size
     """
     interact(
-        cell10_plot_cross_entropy_interactive,
+        cell8_plot_cross_entropy_interactive,
         p1=FloatSlider(
             min=0.05,
             max=0.95,
@@ -3407,7 +3409,7 @@ def cell10_create_cross_entropy_widget() -> None:
     )
 
 
-def cell11_create_data_processing_inequality_widget() -> None:
+def cell9_create_data_processing_inequality_widget() -> None:
     """
     Create interactive widget for data processing inequality visualization.
 
@@ -3421,7 +3423,7 @@ def cell11_create_data_processing_inequality_widget() -> None:
     - Fixed figure size
     """
     interact(
-        cell11_plot_data_processing_inequality_interactive,
+        cell9_plot_data_processing_inequality_interactive,
         noise_level=FloatSlider(
             min=0.0,
             max=1.0,
@@ -3440,7 +3442,7 @@ def cell11_create_data_processing_inequality_widget() -> None:
     )
 
 
-def cell13_create_mdl_widget() -> None:
+def cell10_create_mdl_widget() -> None:
     """
     Create interactive widget for MDL visualization.
 
@@ -3456,7 +3458,7 @@ def cell13_create_mdl_widget() -> None:
     - Fixed figure size
     """
     interact(
-        cell13_plot_mdl_interactive,
+        cell10_plot_mdl_interactive,
         degree=IntSlider(
             min=1,
             max=8,
@@ -3472,7 +3474,7 @@ def cell13_create_mdl_widget() -> None:
     )
 
 
-def cell14_create_kolmogorov_complexity_widget() -> None:
+def cell11_create_kolmogorov_complexity_widget() -> None:
     """
     Create interactive widget for Kolmogorov Complexity visualization.
 
@@ -3485,7 +3487,7 @@ def cell14_create_kolmogorov_complexity_widget() -> None:
     - Fixed figure size
     """
     interact(
-        cell14_plot_kolmogorov_complexity_interactive,
+        cell11_plot_kolmogorov_complexity_interactive,
         string_type=widgets.Dropdown(
             options=[
                 "All Zeros",
@@ -3513,7 +3515,7 @@ def cell14_create_kolmogorov_complexity_widget() -> None:
 # #############################################################################
 
 
-def cell5_generate_binary_entropy_animation() -> None:
+def cell3_generate_binary_entropy_animation() -> None:
     """
     Generate animation frames for binary entropy visualization.
 
@@ -3534,7 +3536,7 @@ def cell5_generate_binary_entropy_animation() -> None:
     dst_dir = "./figures/Lesson94_Binary_Entropy_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
-        cell5_plot_binary_entropy_interactive,
+        cell3_plot_binary_entropy_interactive,
         values,
         dst_dir,
         incremental=False,
@@ -3543,7 +3545,7 @@ def cell5_generate_binary_entropy_animation() -> None:
     )
 
 
-def cell6_generate_joint_entropy_animation() -> None:
+def cell4_generate_joint_entropy_animation() -> None:
     """
     Generate animation frames for joint entropy visualization.
 
@@ -3564,7 +3566,7 @@ def cell6_generate_joint_entropy_animation() -> None:
     dst_dir = "./figures/Lesson94_Joint_Entropy_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
-        cell6_plot_joint_entropy_interactive,
+        cell4_plot_joint_entropy_interactive,
         values,
         dst_dir,
         incremental=False,
@@ -3573,7 +3575,7 @@ def cell6_generate_joint_entropy_animation() -> None:
     )
 
 
-def cell7_generate_conditional_entropy_animation() -> None:
+def cell5_generate_conditional_entropy_animation() -> None:
     """
     Generate animation frames for conditional entropy visualization.
 
@@ -3592,7 +3594,7 @@ def cell7_generate_conditional_entropy_animation() -> None:
     dst_dir = "./figures/Lesson94_Conditional_Entropy_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
-        cell7_plot_conditional_entropy_interactive,
+        cell5_plot_conditional_entropy_interactive,
         values,
         dst_dir,
         incremental=False,
@@ -3601,7 +3603,7 @@ def cell7_generate_conditional_entropy_animation() -> None:
     )
 
 
-def cell8_generate_mutual_info_venn_binary_animation() -> None:
+def cell6_generate_mutual_info_venn_binary_animation() -> None:
     """
     Generate animation frames for mutual information Venn visualization (Binary scenario).
 
@@ -3621,7 +3623,7 @@ def cell8_generate_mutual_info_venn_binary_animation() -> None:
     dst_dir = "./figures/Lesson94_Mutual_Info1_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
-        cell8_plot_mutual_information_venn_interactive,
+        cell6_plot_mutual_information_venn_interactive,
         values,
         dst_dir,
         incremental=False,
@@ -3630,7 +3632,7 @@ def cell8_generate_mutual_info_venn_binary_animation() -> None:
     )
 
 
-def cell8_generate_mutual_info_venn_weather_animation() -> None:
+def cell6_generate_mutual_info_venn_weather_animation() -> None:
     """
     Generate animation frames for mutual information Venn visualization (Weather scenario).
 
@@ -3650,7 +3652,7 @@ def cell8_generate_mutual_info_venn_weather_animation() -> None:
     dst_dir = "./figures/Lesson94_Mutual_Info2_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
-        cell8_plot_mutual_information_venn_interactive,
+        cell6_plot_mutual_information_venn_interactive,
         values,
         dst_dir,
         incremental=False,
@@ -3659,7 +3661,7 @@ def cell8_generate_mutual_info_venn_weather_animation() -> None:
     )
 
 
-def cell8_generate_mutual_info_correlation_animation() -> None:
+def cell6_generate_mutual_info_correlation_animation() -> None:
     """
     Generate animation frames for mutual information (correlation-based) visualization.
 
@@ -3678,7 +3680,7 @@ def cell8_generate_mutual_info_correlation_animation() -> None:
     dst_dir = "./figures/Lesson94_Mutual_Info_Correlation_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
-        cell8_plot_mutual_info_interactive,
+        cell6_plot_mutual_info_interactive,
         values,
         dst_dir,
         incremental=False,
@@ -3687,7 +3689,7 @@ def cell8_generate_mutual_info_correlation_animation() -> None:
     )
 
 
-def cell9_generate_kl_divergence_animation() -> None:
+def cell7_generate_kl_divergence_animation() -> None:
     """
     Generate animation frames for KL divergence visualization.
 
@@ -3711,7 +3713,7 @@ def cell9_generate_kl_divergence_animation() -> None:
     dst_dir = "./figures/Lesson94_KL_Divergence_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
-        cell9_plot_kl_divergence_interactive,
+        cell7_plot_kl_divergence_interactive,
         values,
         dst_dir,
         incremental=False,
@@ -3720,7 +3722,7 @@ def cell9_generate_kl_divergence_animation() -> None:
     )
 
 
-def cell10_generate_cross_entropy_animation() -> None:
+def cell8_generate_cross_entropy_animation() -> None:
     """
     Generate animation frames for cross-entropy visualization.
 
@@ -3744,7 +3746,7 @@ def cell10_generate_cross_entropy_animation() -> None:
     dst_dir = "./figures/Lesson94_Cross_Entropy_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
-        cell10_plot_cross_entropy_interactive,
+        cell8_plot_cross_entropy_interactive,
         values,
         dst_dir,
         incremental=False,
@@ -3753,7 +3755,7 @@ def cell10_generate_cross_entropy_animation() -> None:
     )
 
 
-def cell11_generate_data_processing_inequality_animation() -> None:
+def cell9_generate_data_processing_inequality_animation() -> None:
     """
     Generate animation frames for data processing inequality visualization.
 
@@ -3773,7 +3775,7 @@ def cell11_generate_data_processing_inequality_animation() -> None:
     dst_dir = "./figures/Lesson94_Data_Processing_Inequality_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
-        cell11_plot_data_processing_inequality_interactive,
+        cell9_plot_data_processing_inequality_interactive,
         values,
         dst_dir,
         incremental=False,
@@ -3782,7 +3784,7 @@ def cell11_generate_data_processing_inequality_animation() -> None:
     )
 
 
-def cell13_generate_mdl_animation() -> None:
+def cell10_generate_mdl_animation() -> None:
     """
     Generate animation frames for MDL (Minimum Description Length) visualization.
 
@@ -3806,7 +3808,7 @@ def cell13_generate_mdl_animation() -> None:
     dst_dir = "./figures/Lesson94_MDL_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
-        cell13_plot_mdl_interactive,
+        cell10_plot_mdl_interactive,
         values,
         dst_dir,
         incremental=False,
@@ -3815,7 +3817,7 @@ def cell13_generate_mdl_animation() -> None:
     )
 
 
-def cell14_generate_kolmogorov_complexity_animation() -> None:
+def cell11_generate_kolmogorov_complexity_animation() -> None:
     """
     Generate animation frames for Kolmogorov Complexity visualization.
 
@@ -3838,7 +3840,7 @@ def cell14_generate_kolmogorov_complexity_animation() -> None:
     dst_dir = "./figures/Lesson94_Kolmogorov_Complexity_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
-        cell14_plot_kolmogorov_complexity_interactive,
+        cell11_plot_kolmogorov_complexity_interactive,
         values,
         dst_dir,
         incremental=False,

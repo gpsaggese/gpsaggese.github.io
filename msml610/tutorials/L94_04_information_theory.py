@@ -215,7 +215,7 @@ utils.cell2_plot_distribution_with_stats(
 # Two equally likely peaks → high entropy (~1.1 bits) despite moderate variance.
 
 # %% [markdown]
-# # Cell 5: Interactive Visualization: Binary Entropy
+# # Cell 3: Interactive Visualization: Binary Entropy
 #
 # - Use the slider below to adjust the probability $p$ of a binary random variable
 # - Observe how entropy changes as probability varies
@@ -224,13 +224,13 @@ utils.cell2_plot_distribution_with_stats(
 # - `Probability p`: Probability of success for binary random variable (between 0 and 1)
 
 # %%
-utils.cell5_create_binary_entropy_widget()
+utils.cell3_create_binary_entropy_widget()
 
 # %%
-utils.cell5_generate_binary_entropy_animation()
+utils.cell3_generate_binary_entropy_animation()
 
 # %% [markdown]
-# # Cell 6: Joint Entropy
+# # Cell 4: Joint Entropy
 #
 # - **Joint entropy** $H(X, Y)$ of two variables $X$ and $Y$ is defined as:
 #   $$H(X, Y) = -\sum_{x,y} p(x,y) \log_2 p(x,y)$$
@@ -241,14 +241,14 @@ utils.cell5_generate_binary_entropy_animation()
 # - `Dependence`: Level of dependence between $X$ and $Y$ (0 = independent, 1 = fully dependent)
 
 # %%
-utils.cell6_create_joint_entropy_widget()
+utils.cell4_create_joint_entropy_widget()
 
 
 # %%
-utils.cell6_generate_joint_entropy_animation()
+utils.cell4_generate_joint_entropy_animation()
 
 # %% [markdown]
-# # Cell 7: Conditional Entropy
+# # Cell 5: Conditional Entropy
 #
 # - **Conditional entropy** $H(Y|X)$ measures uncertainty in $Y$ after observing $X$:
 #   $$H(Y|X) = -\sum_{x,y} p(x,y) \log_2 p(y|x) = \sum_x p(x) H(Y|X=x)$$
@@ -264,14 +264,14 @@ utils.cell6_generate_joint_entropy_animation()
 # - `Dependence`: Level of dependence between $X$ and $Y$ (0 = independent, 1 = fully dependent)
 
 # %%
-utils.cell7_create_conditional_entropy_widget()
+utils.cell5_create_conditional_entropy_widget()
 
 # %%
-utils.cell7_generate_conditional_entropy_animation()
+utils.cell5_generate_conditional_entropy_animation()
 
 
 # %% [markdown]
-# # Cell 8: Mutual Information
+# # Cell 6: Mutual Information
 #
 # - **Mutual information** $I(X;Y)$ measures how much knowing one variable reduces uncertainty about the other:
 #   $$I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X,Y)$$
@@ -284,24 +284,24 @@ utils.cell7_generate_conditional_entropy_animation()
 # - `Correlation`: Correlation coefficient between variables (for correlation widget)
 
 # %%
-utils.cell8_create_mutual_information_venn_widget()
+utils.cell6_create_mutual_information_venn_widget()
 
 
 # %%
-utils.cell8_generate_mutual_info_venn_binary_animation()
+utils.cell6_generate_mutual_info_venn_binary_animation()
 
 # %%
-utils.cell8_generate_mutual_info_venn_weather_animation()
+utils.cell6_generate_mutual_info_venn_weather_animation()
 
 # %%
-utils.cell8_create_mutual_info_correlation_widget()
+utils.cell6_create_mutual_info_correlation_widget()
 
 # %%
-utils.cell8_generate_mutual_info_correlation_animation()
+utils.cell6_generate_mutual_info_correlation_animation()
 
 
 # %% [markdown]
-# # Cell 9: KL Divergence
+# # Cell 7: KL Divergence
 #
 # - **Kullback-Leibler (KL) Divergence** $D_{KL}(P \| Q)$ measures how one distribution differs from another:
 #   $$D_{KL}(P \| Q) = \sum_x P(x) \log_2 \frac{P(x)}{Q(x)}$$
@@ -313,14 +313,14 @@ utils.cell8_generate_mutual_info_correlation_animation()
 # - `Q(outcome=1)`: Probability of outcome 1 in approximate distribution $Q$ (0.05 to 0.95)
 
 # %%
-utils.cell9_create_kl_divergence_widget()
+utils.cell7_create_kl_divergence_widget()
 
 # %%
-utils.cell9_generate_kl_divergence_animation()
+utils.cell7_generate_kl_divergence_animation()
 
 
 # %% [markdown]
-# # Cell 10: Cross-Entropy
+# # Cell 8: Cross-Entropy
 #
 # - **Cross-entropy** $H(P, Q)$ measures the average number of bits needed to encode data from $P$ using code optimized for $Q$:
 #   $$H(P, Q) = -\sum_x P(x) \log_2 Q(x)$$
@@ -342,14 +342,14 @@ utils.cell9_generate_kl_divergence_animation()
 # - This extra cost is why cross-entropy works as a loss function in machine learning
 
 # %%
-utils.cell10_create_cross_entropy_widget()
+utils.cell8_create_cross_entropy_widget()
 
 
 # %%
-utils.cell10_generate_cross_entropy_animation()
+utils.cell8_generate_cross_entropy_animation()
 
 # %% [markdown]
-# # Cell 11: Data Processing Inequality
+# # Cell 9: Data Processing Inequality
 #
 # - **Statement**: Processing data cannot increase information, it can only lose information
 # - Formally, if $X \to Y \to Z$ forms a Markov chain, then:
@@ -367,14 +367,14 @@ utils.cell10_generate_cross_entropy_animation()
 # - The inequality $I(X;Z) \leq I(X;Y)$ is always satisfied, demonstrating the fundamental principle
 #
 # %%
-utils.cell11_create_data_processing_inequality_widget()
+utils.cell9_create_data_processing_inequality_widget()
 
 
 # %%
-utils.cell11_generate_data_processing_inequality_animation()
+utils.cell9_generate_data_processing_inequality_animation()
 
 # %% [markdown]
-# # Cell 13: Minimum Description Length (MDL)
+# # Cell 10: Minimum Description Length (MDL)
 #
 # - **Principle**: Select the model that minimizes total description length:
 #   $$MDL(H) = L(H) + L(D | H)$$
@@ -393,14 +393,14 @@ utils.cell11_generate_data_processing_inequality_animation()
 # - High degree (6-8): Complex model, high model cost, overfitting penalty
 #
 # %%
-utils.cell13_create_mdl_widget()
+utils.cell10_create_mdl_widget()
 
 
 # %%
-utils.cell13_generate_mdl_animation()
+utils.cell10_generate_mdl_animation()
 
 # %% [markdown]
-# # Cell 14: Kolmogorov Complexity
+# # Cell 11: Kolmogorov Complexity
 #
 # - **Definition**: The length of the shortest program that outputs a string $x$
 # - **Examples**:
@@ -422,8 +422,8 @@ utils.cell13_generate_mdl_animation()
 # - K-complexity is uncomputable, but compression gives practical approximation
 
 # %%
-utils.cell14_create_kolmogorov_complexity_widget()
+utils.cell11_create_kolmogorov_complexity_widget()
 
 
 # %%
-utils.cell14_generate_kolmogorov_complexity_animation()
+utils.cell11_generate_kolmogorov_complexity_animation()
