@@ -6,25 +6,12 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
-
-# %% [markdown]
-# # Growth Function Calculator
-#
-# This notebook demonstrates the use of the growth function calculator to compute $m_H(N)$ for different hypothesis sets and analyze VC dimension empirically.
-#
-# ## Learning Objectives
-#
-# - Understand the growth function $m_H(N)$ as a measure of hypothesis set expressiveness
-# - Compute growth functions empirically for different hypothesis sets
-# - Identify break points where $m_H(N) < 2^N$
-# - Estimate VC dimension through systematic testing
-# - Compare empirical results with theoretical predictions
 
 # %% [markdown]
 # ## Imports
