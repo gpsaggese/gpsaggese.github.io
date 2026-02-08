@@ -3,7 +3,7 @@ Utility functions for Multi-Armed Bandits lesson.
 
 Import as:
 
-import msml610.tutorials.Lesson09_3_Multi_Armed_Bandits_utils as mtul3maba
+import msml610.tutorials.L09_03_multi_armed_bandits_utils as mtul3maba
 """
 
 import abc

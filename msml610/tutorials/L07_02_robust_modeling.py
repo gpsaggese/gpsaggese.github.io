@@ -49,7 +49,7 @@ import matplotlib.pyplot as plt
 import preliz as pz
 
 # %%
-dir_name = "./Lesson07-data"
+dir_name = "./L07_data"
 
 # !ls $dir_name
 

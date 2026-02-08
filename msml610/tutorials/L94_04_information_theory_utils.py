@@ -3,7 +3,7 @@ Utility functions for Information Theory lesson.
 
 Import as:
 
-import msml610.tutorials.Lesson94_Information_Theory_utils as mtulinth
+import msml610.tutorials.L94_04_information_theory_utils as mtulinth
 """
 
 import logging

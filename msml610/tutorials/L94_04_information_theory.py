@@ -33,7 +33,7 @@ plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
 import msml610_utils as ut
-import Lesson94_Information_Theory_utils as utils
+import L94_04_information_theory_utils as utils
 
 ut.config_notebook()
 

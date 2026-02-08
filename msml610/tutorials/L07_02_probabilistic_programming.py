@@ -51,7 +51,7 @@ ut.config_notebook()
 # # Posterior predictive check: Examples
 
 # %%
-dir_name = "./Lesson07-data"
+dir_name = "./L07_data"
 
 # !ls $dir_name
 

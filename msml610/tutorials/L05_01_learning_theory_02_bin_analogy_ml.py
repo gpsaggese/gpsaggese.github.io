@@ -32,7 +32,7 @@ import logging
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-import Lesson05_1_Learning_Theory_2_Bin_Analogy_ML_utils as utils
+import L05_01_learning_theory_02_bin_analogy_ml_utils as utils
 
 # Set plotting style.
 sns.set_style("whitegrid")
