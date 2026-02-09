@@ -20,6 +20,7 @@ import seaborn as sns
 from ipywidgets import interact, FloatSlider, IntSlider, widgets, fixed
 
 import helpers.hdbg as hdbg
+import msml610_utils as ut
 
 _LOG = logging.getLogger(__name__)
 
@@ -384,8 +385,6 @@ def cell3_generate_binary_entropy_animation() -> None:
     This function creates a series of frames showing how binary entropy
     changes as probability p varies from 0 to 1.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     values = ut.generate_animation_values(
         mode="linear",
@@ -395,7 +394,7 @@ def cell3_generate_binary_entropy_animation() -> None:
         n_steps=11,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Binary_Entropy_video"
+    dst_dir = "./figures/L94_Binary_Entropy_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
         cell3_plot_binary_entropy_interactive,
@@ -637,8 +636,6 @@ def cell4_generate_joint_entropy_animation() -> None:
     This function creates a series of frames showing how joint entropy
     changes as dependence between variables varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     values = ut.generate_animation_values(
         mode="linear",
@@ -648,7 +645,7 @@ def cell4_generate_joint_entropy_animation() -> None:
         n_steps=11,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Joint_Entropy_video"
+    dst_dir = "./figures/L94_Joint_Entropy_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
         cell4_plot_joint_entropy_interactive,
@@ -919,8 +916,6 @@ def cell5_generate_conditional_entropy_animation() -> None:
     This function creates a series of frames showing how conditional entropy
     changes as dependence between variables varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     values = ut.generate_animation_values(
         mode="linear",
@@ -928,7 +923,7 @@ def cell5_generate_conditional_entropy_animation() -> None:
         n_steps=11,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Conditional_Entropy_video"
+    dst_dir = "./figures/L94_Conditional_Entropy_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
         cell5_plot_conditional_entropy_interactive,
@@ -1653,8 +1648,6 @@ def cell6_generate_mutual_info_venn_binary_animation() -> None:
     This function creates a series of frames showing how mutual information
     is represented as a Venn diagram for binary variables as dependence varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     values = ut.generate_animation_values(
         mode="linear",
@@ -1663,7 +1656,7 @@ def cell6_generate_mutual_info_venn_binary_animation() -> None:
         scenario="Binary",
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Mutual_Info1_video"
+    dst_dir = "./figures/L94_Mutual_Info1_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
         cell6_plot_mutual_information_venn_interactive,
@@ -1682,8 +1675,6 @@ def cell6_generate_mutual_info_venn_weather_animation() -> None:
     This function creates a series of frames showing how mutual information
     is represented as a Venn diagram for weather variables as dependence varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     values = ut.generate_animation_values(
         mode="linear",
@@ -1692,7 +1683,7 @@ def cell6_generate_mutual_info_venn_weather_animation() -> None:
         scenario="Weather",
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Mutual_Info2_video"
+    dst_dir = "./figures/L94_Mutual_Info2_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
         cell6_plot_mutual_information_venn_interactive,
@@ -1711,8 +1702,6 @@ def cell6_generate_mutual_info_correlation_animation() -> None:
     This function creates a series of frames showing how mutual information
     changes with correlation between continuous variables.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     values = ut.generate_animation_values(
         mode="linear",
@@ -1720,7 +1709,7 @@ def cell6_generate_mutual_info_correlation_animation() -> None:
         n_steps=11,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Mutual_Info_Correlation_video"
+    dst_dir = "./figures/L94_Mutual_Info_Correlation_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
         cell6_plot_mutual_info_interactive,
@@ -2119,8 +2108,6 @@ def cell7_generate_kl_divergence_animation() -> None:
     This function creates a series of frames showing how KL divergence changes
     as the approximating distribution Q varies while true distribution P is fixed.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     # Fix true distribution P at p1=0.7, vary approximating distribution Q.
     values = ut.generate_animation_values(
@@ -2133,7 +2120,7 @@ def cell7_generate_kl_divergence_animation() -> None:
         sweep_max=0.95,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_KL_Divergence_video"
+    dst_dir = "./figures/L94_KL_Divergence_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
         cell7_plot_kl_divergence_interactive,
@@ -2425,7 +2412,6 @@ def cell8_generate_cross_entropy_animation() -> None:
     This function creates a series of frames showing how cross-entropy changes
     as the model distribution Q varies while true distribution P is fixed.
     """
-    import msml610_utils as ut
 
     # Generate animation values.
     # Fix true distribution P at p1=0.7, vary model distribution Q.
@@ -2439,7 +2425,7 @@ def cell8_generate_cross_entropy_animation() -> None:
         sweep_max=0.95,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Cross_Entropy_video"
+    dst_dir = "./figures/L94_Cross_Entropy_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
         cell8_plot_cross_entropy_interactive,
@@ -3007,8 +2993,6 @@ def cell9_generate_data_processing_inequality_animation() -> None:
     This function creates a series of frames showing how information degrades
     through successive processing stages as noise level varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     values = ut.generate_animation_values(
         mode="linear",
@@ -3017,7 +3001,7 @@ def cell9_generate_data_processing_inequality_animation() -> None:
         scenario="Compression",
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Data_Processing_Inequality_video"
+    dst_dir = "./figures/L94_Data_Processing_Inequality_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
         cell9_plot_data_processing_inequality_interactive,
@@ -3365,8 +3349,6 @@ def cell10_generate_mdl_animation() -> None:
     This function creates a series of frames showing how MDL balances model
     complexity with data fit as polynomial degree varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     values = ut.generate_animation_values(
         mode="linear",
@@ -3379,7 +3361,7 @@ def cell10_generate_mdl_animation() -> None:
         noise_level=0.3,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_MDL_video"
+    dst_dir = "./figures/L94_MDL_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
         cell10_plot_mdl_interactive,
@@ -3795,8 +3777,6 @@ def cell11_generate_kolmogorov_complexity_animation() -> None:
     This function creates a series of frames showing how different string types
     have different Kolmogorov Complexity.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     # Sweep through different string types with fixed length.
     string_types = [
@@ -3808,7 +3788,7 @@ def cell11_generate_kolmogorov_complexity_animation() -> None:
     ]
     values = [{"string_type": st, "length": 64} for st in string_types]
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Kolmogorov_Complexity_video"
+    dst_dir = "./figures/L94_Kolmogorov_Complexity_video"
     # Generate animation frames with fixed dimensions.
     ut.generate_animation(
         cell11_plot_kolmogorov_complexity_interactive,
