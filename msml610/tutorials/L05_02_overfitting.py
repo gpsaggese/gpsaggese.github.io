@@ -40,7 +40,7 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %% [markdown]
-# ## Cell 1: True Target Function - Sinusoid
+# ## Cell 1: True Target Function
 #
 # This cell visualizes the true target function that we want to learn.
 #
@@ -59,6 +59,29 @@ _LOG = logging.getLogger(__name__)
 
 # %%
 # Display the true target function with interactive controls.
-utils.plot_true_target_function()
+utils.cell1_plot_true_target_function()
+
+# %% [markdown]
+# ## Cell 2: Sampled Data - In-Sample vs Out-of-Sample
+#
+# This cell visualizes how we sample data from the true target function and split it into training and test sets.
+#
+# **Purpose**: Understand the concept of in-sample (training) and out-of-sample (test) data.
+#
+# **Parameters**:
+# - `Random Seed`: Controls the random sampling of data points
+# - `Function`: Select the true target function to sample from
+# - `epsilon`: Standard deviation of noise added to observations
+# - `N (total samples)`: Total number of data points to sample
+#
+# **Key observations**:
+# - **Green points (In-Sample)**: 80% of data used for training the model
+# - **Red points (Out-of-Sample)**: 20% of data used for testing the model
+# - The model should learn from green points but generalize to red points
+# - This split helps us evaluate how well our model generalizes to unseen data
+
+# %%
+# Display the sampled data with in-sample/out-of-sample split.
+utils.cell2_plot_sampled_data_interactive()
 
 # %%

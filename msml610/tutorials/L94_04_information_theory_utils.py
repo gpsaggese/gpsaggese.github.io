@@ -15,12 +15,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-# TODO(ai_gp): Use the functions from import msml610_utils as mtumsuti
-# to build widgets.
-from ipywidgets import interact, FloatSlider, IntSlider, widgets, fixed
+import ipywidgets
+from ipywidgets import fixed
+from IPython.display import display
 
 import helpers.hdbg as hdbg
-import msml610_utils as ut
+import msml610_utils as mtumsuti
 
 _LOG = logging.getLogger(__name__)
 
@@ -349,6 +349,8 @@ def cell3_plot_binary_entropy_interactive(
     )
     plt.show()
 
+# TODO(ai_gp): Use mtumsuti.build_widget_control like in cell1_draw_bin_with_marbles_interactive
+# in all the functions instead of using ipywidget.FloatSlides, IntSlider
 
 def cell3_create_binary_entropy_widget() -> None:
     """
@@ -363,19 +365,24 @@ def cell3_create_binary_entropy_widget() -> None:
     - Fixed number of samples n = 100
     - Fixed figure size
     """
-    interact(
-        cell3_plot_binary_entropy_interactive,
-        p=FloatSlider(
-            min=0.00,
-            max=1.00,
-            step=0.01,
-            value=0.5,
-            description="Probability p:",
-            style={"description_width": "initial"},
-        ),
-        n=fixed(100),
-        figsize=fixed(None),
+    p_init = 0.5
+    # Create slider for probability p.
+    p_slider, p_box = mtumsuti.build_widget_control(
+        name="p",
+        description="Probability p",
+        min_val=0.00,
+        max_val=1.00,
+        step=0.01,
+        initial_value=p_init,
+        is_float=True,
     )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda p: cell3_plot_binary_entropy_interactive(p, n=100, figsize=None),
+        {"p": p_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([p_box, output]))
 
 
 def cell3_generate_binary_entropy_animation() -> None:
@@ -386,7 +393,7 @@ def cell3_generate_binary_entropy_animation() -> None:
     changes as probability p varies from 0 to 1.
     """
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="p",
         const_variable="n",
@@ -396,7 +403,7 @@ def cell3_generate_binary_entropy_animation() -> None:
     # Directory to save frames.
     dst_dir = "./figures/L94_Binary_Entropy_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell3_plot_binary_entropy_interactive,
         values,
         dst_dir,
@@ -637,7 +644,7 @@ def cell4_generate_joint_entropy_animation() -> None:
     changes as dependence between variables varies.
     """
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="dependence",
         const_variable="n_samples",
@@ -647,7 +654,7 @@ def cell4_generate_joint_entropy_animation() -> None:
     # Directory to save frames.
     dst_dir = "./figures/L94_Joint_Entropy_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell4_plot_joint_entropy_interactive,
         values,
         dst_dir,
@@ -917,7 +924,7 @@ def cell5_generate_conditional_entropy_animation() -> None:
     changes as dependence between variables varies.
     """
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="dependence",
         n_steps=11,
@@ -925,7 +932,7 @@ def cell5_generate_conditional_entropy_animation() -> None:
     # Directory to save frames.
     dst_dir = "./figures/L94_Conditional_Entropy_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell5_plot_conditional_entropy_interactive,
         values,
         dst_dir,
@@ -1649,7 +1656,7 @@ def cell6_generate_mutual_info_venn_binary_animation() -> None:
     is represented as a Venn diagram for binary variables as dependence varies.
     """
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="dependence",
         n_steps=11,
@@ -1658,7 +1665,7 @@ def cell6_generate_mutual_info_venn_binary_animation() -> None:
     # Directory to save frames.
     dst_dir = "./figures/L94_Mutual_Info1_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell6_plot_mutual_information_venn_interactive,
         values,
         dst_dir,
@@ -1676,7 +1683,7 @@ def cell6_generate_mutual_info_venn_weather_animation() -> None:
     is represented as a Venn diagram for weather variables as dependence varies.
     """
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="dependence",
         n_steps=11,
@@ -1685,7 +1692,7 @@ def cell6_generate_mutual_info_venn_weather_animation() -> None:
     # Directory to save frames.
     dst_dir = "./figures/L94_Mutual_Info2_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell6_plot_mutual_information_venn_interactive,
         values,
         dst_dir,
@@ -1703,7 +1710,7 @@ def cell6_generate_mutual_info_correlation_animation() -> None:
     changes with correlation between continuous variables.
     """
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="correlation",
         n_steps=11,
@@ -1711,7 +1718,7 @@ def cell6_generate_mutual_info_correlation_animation() -> None:
     # Directory to save frames.
     dst_dir = "./figures/L94_Mutual_Info_Correlation_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell6_plot_mutual_info_interactive,
         values,
         dst_dir,
@@ -2110,7 +2117,7 @@ def cell7_generate_kl_divergence_animation() -> None:
     """
     # Generate animation values.
     # Fix true distribution P at p1=0.7, vary approximating distribution Q.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="q1",
         const_variable="p1",
@@ -2122,7 +2129,7 @@ def cell7_generate_kl_divergence_animation() -> None:
     # Directory to save frames.
     dst_dir = "./figures/L94_KL_Divergence_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell7_plot_kl_divergence_interactive,
         values,
         dst_dir,
@@ -2415,7 +2422,7 @@ def cell8_generate_cross_entropy_animation() -> None:
 
     # Generate animation values.
     # Fix true distribution P at p1=0.7, vary model distribution Q.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="q1",
         const_variable="p1",
@@ -2427,7 +2434,7 @@ def cell8_generate_cross_entropy_animation() -> None:
     # Directory to save frames.
     dst_dir = "./figures/L94_Cross_Entropy_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell8_plot_cross_entropy_interactive,
         values,
         dst_dir,
@@ -2994,7 +3001,7 @@ def cell9_generate_data_processing_inequality_animation() -> None:
     through successive processing stages as noise level varies.
     """
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="noise_level",
         n_steps=21,
@@ -3003,7 +3010,7 @@ def cell9_generate_data_processing_inequality_animation() -> None:
     # Directory to save frames.
     dst_dir = "./figures/L94_Data_Processing_Inequality_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell9_plot_data_processing_inequality_interactive,
         values,
         dst_dir,
@@ -3350,7 +3357,7 @@ def cell10_generate_mdl_animation() -> None:
     complexity with data fit as polynomial degree varies.
     """
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="degree",
         n_steps=8,
@@ -3363,7 +3370,7 @@ def cell10_generate_mdl_animation() -> None:
     # Directory to save frames.
     dst_dir = "./figures/L94_MDL_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell10_plot_mdl_interactive,
         values,
         dst_dir,
@@ -3790,7 +3797,7 @@ def cell11_generate_kolmogorov_complexity_animation() -> None:
     # Directory to save frames.
     dst_dir = "./figures/L94_Kolmogorov_Complexity_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell11_plot_kolmogorov_complexity_interactive,
         values,
         dst_dir,

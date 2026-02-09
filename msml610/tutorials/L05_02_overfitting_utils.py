@@ -92,7 +92,7 @@ TARGET_FUNCTIONS = {
 # #############################################################################
 
 
-def plot_true_target_function() -> None:
+def cell1_plot_true_target_function() -> None:
     """
     Interactive widget to visualize true target functions with noise.
 
@@ -204,6 +204,195 @@ def plot_true_target_function() -> None:
                 seed_box,
                 function_dropdown,
                 epsilon_box,
+                output,
+            ]
+        )
+    )
+
+
+# #############################################################################
+# Cell 2: Sampled Data - In-Sample and Out-of-Sample
+# #############################################################################
+
+
+def _plot_sampled_data(
+    seed: int, func_name: str, epsilon: float, N: int
+) -> None:
+    """
+    Plot sampled data with in-sample and out-of-sample split.
+
+    :param seed: Random seed for reproducibility
+    :param func_name: Name of target function
+    :param epsilon: Noise standard deviation
+    :param N: Total number of samples
+    """
+    # Set random seed.
+    np.random.seed(seed)
+    # Calculate split sizes (80-20).
+    N_in = int(0.8 * N)
+    N_out = N - N_in
+    # Get target function.
+    target_func = TARGET_FUNCTIONS[func_name]
+    # Generate continuous x for true function.
+    x_true = np.linspace(-1, 1, 200)
+    y_true = target_func(x_true)
+    y_true = np.clip(y_true, -1.0, 1.0)
+    # Generate random x samples for in-sample and out-of-sample.
+    x_samples = np.random.uniform(-1, 1, N)
+    # Sort samples to split them properly.
+    x_samples_sorted_idx = np.argsort(x_samples)
+    x_samples_sorted = x_samples[x_samples_sorted_idx]
+    # Split into in-sample (first 80%) and out-of-sample (last 20%).
+    x_in = x_samples_sorted[:N_in]
+    x_out = x_samples_sorted[N_in:]
+    # Generate y values with noise.
+    y_in = target_func(x_in) + np.random.normal(0, epsilon, N_in)
+    y_out = target_func(x_out) + np.random.normal(0, epsilon, N_out)
+    # Create visualization with 2 subplots.
+    fig, (ax1, ax2) = plt.subplots(
+        1, 2, figsize=(14, 5), gridspec_kw={"width_ratios": [1.5, 1]}
+    )
+    # Plot 1: Function and sampled data.
+    # Plot true function.
+    ax1.plot(x_true, y_true, "b-", linewidth=2, label="True Function", alpha=0.7)
+    # Plot in-sample points.
+    ax1.scatter(
+        x_in,
+        y_in,
+        c="green",
+        s=50,
+        alpha=0.6,
+        edgecolors="black",
+        linewidth=0.5,
+        label=f"In-Sample (N={N_in})",
+        zorder=5,
+    )
+    # Plot out-of-sample points.
+    ax1.scatter(
+        x_out,
+        y_out,
+        c="red",
+        s=50,
+        alpha=0.6,
+        edgecolors="black",
+        linewidth=0.5,
+        label=f"Out-of-Sample (N={N_out})",
+        zorder=5,
+    )
+    # Format plot.
+    ax1.set_xlabel("x", fontsize=12)
+    ax1.set_ylabel("f(x)", fontsize=12)
+    ax1.set_title(
+        f"Sampled Data: In-Sample vs Out-of-Sample\n{func_name}, epsilon={epsilon:.2f}, seed={seed}",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax1.grid(True, alpha=0.3)
+    ax1.axhline(y=0, color="k", linewidth=0.5)
+    ax1.axvline(x=0, color="k", linewidth=0.5)
+    ax1.legend(fontsize=10, loc="best")
+    ax1.set_xlim([-1, 1])
+    ax1.set_ylim([-1.5, 1.5])
+    # Plot 2: Interpretation box.
+    ax2.axis("off")
+    ax2.set_title("Interpretation", fontsize=14, fontweight="bold", pad=20)
+    # Generate interpretation text.
+    text_content = (
+        f"Parameters:\n"
+        f"  Function: {func_name}\n"
+        f"  N (total): {N}\n"
+        f"  N (in-sample): {N_in} (80%)\n"
+        f"  N (out-of-sample): {N_out} (20%)\n"
+        f"  epsilon: {epsilon:.2f}\n"
+        f"  seed: {seed}\n\n"
+        f"Key Observations:\n"
+        f"• Green points: Training data\n"
+        f"  (used to fit the model)\n"
+        f"• Red points: Test data\n"
+        f"  (used to evaluate the model)\n\n"
+        f"Learning Goal:\n"
+        f"We want to fit a model to the\n"
+        f"in-sample (green) points that\n"
+        f"generalizes well to out-of-sample\n"
+        f"(red) points.\n\n"
+        f"The challenge: With limited data,\n"
+        f"we must balance fitting the\n"
+        f"training data vs. generalizing\n"
+        f"to unseen data."
+    )
+    ax2.text(
+        0.05,
+        0.95,
+        text_content,
+        transform=ax2.transAxes,
+        fontsize=10,
+        verticalalignment="top",
+        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.8),
+        family="monospace",
+    )
+    plt.tight_layout()
+    plt.show()
+
+
+def cell2_plot_sampled_data_interactive() -> None:
+    """
+    Interactive widget to visualize sampled data with in-sample/out-of-sample split.
+
+    Shows how data is split into training (in-sample) and test (out-of-sample) sets.
+    """
+    # Create interactive widgets.
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="Random Seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
+    )
+    function_dropdown = ipywidgets.Dropdown(
+        options=list(TARGET_FUNCTIONS.keys()),
+        value="Slow Sinusoid",
+        description="Function:",
+        style={"description_width": "initial"},
+    )
+    epsilon_slider, epsilon_box = mtumsuti.build_widget_control(
+        name="epsilon",
+        description="epsilon (noise std dev)",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=0.1,
+        is_float=True,
+    )
+    N_slider, N_box = mtumsuti.build_widget_control(
+        name="N",
+        description="N (total samples)",
+        min_val=5,
+        max_val=100,
+        step=5,
+        initial_value=20,
+        is_float=False,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        _plot_sampled_data,
+        {
+            "seed": seed_slider,
+            "func_name": function_dropdown,
+            "epsilon": epsilon_slider,
+            "N": N_slider,
+        },
+    )
+    # Display widgets.
+    display(
+        ipywidgets.VBox(
+            [
+                ipywidgets.Label("Configure sampling parameters:"),
+                seed_box,
+                function_dropdown,
+                epsilon_box,
+                N_box,
                 output,
             ]
         )
