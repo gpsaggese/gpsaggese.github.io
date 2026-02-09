@@ -962,3 +962,632 @@ KEY OBSERVATIONS:
     update_plot(
         seed_slider.value, n_experiments_slider.value, max_n_samples_slider.value
     )
+
+
+# #############################################################################
+# Cell 5: Learning with Noise (Bias-Variance Decomposition)
+# #############################################################################
+
+
+def cell5_learning_with_noise() -> None:
+    """
+    Visualize bias-variance decomposition with noise over multiple experiments.
+
+    Uses interactive widgets to control:
+    - seed: Random seed for reproducibility
+    - N_samples: Number of training points per experiment
+    - N_experiments: Number of different training sets to generate
+    - noise_std: Standard deviation of Gaussian noise added to training data
+
+    Similar to cell3_learning_bias_variance but includes a noise widget.
+    Shows how noise affects the learned models and error decomposition.
+    """
+    # Create output widget for displaying plots.
+    output = ipywidgets.Output()
+
+    # Create widgets - seed must be first as per conventions.
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="Random seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
+    )
+    n_samples_slider, n_samples_box = mtumsuti.build_widget_control(
+        name="N_samples",
+        description="Number of training samples per experiment",
+        min_val=2,
+        max_val=20,
+        step=1,
+        initial_value=2,
+        is_float=False,
+    )
+    n_experiments_slider, n_experiments_box = mtumsuti.build_widget_control(
+        name="N_experiments",
+        description="Number of experiments",
+        min_val=5,
+        max_val=100,
+        step=5,
+        initial_value=100,
+        is_float=False,
+    )
+    noise_slider, noise_box = mtumsuti.build_widget_control(
+        name="noise_std",
+        description="Noise standard deviation",
+        min_val=0.0,
+        max_val=0.5,
+        step=0.05,
+        initial_value=0.0,
+        is_float=True,
+    )
+
+    def update_plot(
+        seed: int, n_samples: int, n_experiments: int, noise_std: float
+    ) -> None:
+        """Update the visualization based on widget values."""
+        with output:
+            clear_output(wait=True)
+
+            # Set random seed for reproducibility.
+            np.random.seed(seed)
+
+            # Create dense x values for plotting the true function.
+            x_dense = np.linspace(-1, 1, 200)
+            y_true = target_function(x_dense)
+
+            # Storage for fitted models across experiments.
+            const_models = []  # List of constant values (b)
+            linear_models = []  # List of (a, b) tuples
+
+            # Storage for errors.
+            e_in_const_list = []
+            e_in_linear_list = []
+            e_out_const_list = []
+            e_out_linear_list = []
+
+            # Storage for noisy training data to visualize.
+            all_x_train = []
+            all_y_train_noisy = []
+
+            # Run N_experiments with different random training sets.
+            for _ in range(n_experiments):
+                # Generate training data by sampling random points.
+                x_train = np.random.uniform(-1, 1, n_samples)
+                x_train = np.sort(x_train)
+                y_train_clean = target_function(x_train)
+                # Add Gaussian noise to training data.
+                y_train = y_train_clean + np.random.normal(0, noise_std, n_samples)
+
+                # Store noisy training data for visualization.
+                all_x_train.extend(x_train)
+                all_y_train_noisy.extend(y_train)
+
+                # Fit constant model.
+                b = fit_constant_model(x_train, y_train)
+                const_models.append(b)
+                y_const_train = np.full_like(x_train, b)
+                y_const_dense = np.full_like(x_dense, b)
+
+                # Fit linear model.
+                a, b_linear = fit_linear_model(x_train, y_train)
+                linear_models.append((a, b_linear))
+                y_linear_train = a * x_train + b_linear
+                y_linear_dense = a * x_dense + b_linear
+
+                # Compute errors.
+                e_in_const_list.append(
+                    compute_approximation_error(x_train, y_train, y_const_train)
+                )
+                e_in_linear_list.append(
+                    compute_approximation_error(x_train, y_train, y_linear_train)
+                )
+                e_out_const_list.append(
+                    compute_approximation_error(x_dense, y_true, y_const_dense)
+                )
+                e_out_linear_list.append(
+                    compute_approximation_error(x_dense, y_true, y_linear_dense)
+                )
+
+            # Compute average errors.
+            avg_e_in_const = np.mean(e_in_const_list)
+            avg_e_in_linear = np.mean(e_in_linear_list)
+            avg_e_out_const = np.mean(e_out_const_list)
+            avg_e_out_linear = np.mean(e_out_linear_list)
+
+            # Create figure with 3 subplots.
+            fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+
+            # Plot 1: True function vs all Constant models.
+            ax1 = axes[0]
+            ax1.plot(x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10)
+            # Plot noisy training data as scatter points.
+            if noise_std > 0:
+                ax1.scatter(
+                    all_x_train,
+                    all_y_train_noisy,
+                    color="cyan",
+                    alpha=0.6,
+                    s=20,
+                    label="Noisy training data",
+                    zorder=5,
+                    edgecolors="darkblue",
+                    linewidths=0.5,
+                )
+            # Plot all constant models with transparency.
+            for b in const_models:
+                ax1.axhline(y=b, color="green", alpha=0.3, linewidth=1)
+            # Plot average constant model.
+            avg_b = np.mean(const_models)
+            ax1.axhline(
+                y=avg_b,
+                color="darkgreen",
+                linewidth=3,
+                linestyle="--",
+                label=f"Avg g_0 = {avg_b:.3f}",
+                zorder=9,
+            )
+            ax1.set_xlabel("x", fontsize=12)
+            ax1.set_ylabel("f(x)", fontsize=12)
+            ax1.set_ylim(-1.5, 1.5)
+            ax1.set_title(
+                f"Constant Models ({n_experiments} experiments)",
+                fontsize=14,
+                fontweight="bold",
+            )
+            ax1.legend(loc="upper right")
+            ax1.grid(True, alpha=0.3)
+            ax1.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
+            ax1.axvline(x=0, color="k", linestyle="-", linewidth=0.5)
+
+            # Plot 2: True function vs all Linear models.
+            ax2 = axes[1]
+            ax2.plot(x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10)
+            # Plot noisy training data as scatter points.
+            if noise_std > 0:
+                ax2.scatter(
+                    all_x_train,
+                    all_y_train_noisy,
+                    color="cyan",
+                    alpha=0.6,
+                    s=20,
+                    label="Noisy training data",
+                    zorder=5,
+                    edgecolors="darkblue",
+                    linewidths=0.5,
+                )
+            # Plot all linear models with transparency.
+            for a, b_linear in linear_models:
+                y_linear = a * x_dense + b_linear
+                ax2.plot(x_dense, y_linear, "m-", alpha=0.3, linewidth=1)
+            # Plot average linear model.
+            avg_a = np.mean([a for a, _ in linear_models])
+            avg_b_linear = np.mean([b for _, b in linear_models])
+            y_avg_linear = avg_a * x_dense + avg_b_linear
+            ax2.plot(
+                x_dense,
+                y_avg_linear,
+                color="darkmagenta",
+                linewidth=3,
+                linestyle="--",
+                label=f"Avg g_1",
+                zorder=9,
+            )
+            ax2.set_xlabel("x", fontsize=12)
+            ax2.set_ylabel("f(x)", fontsize=12)
+            ax2.set_ylim(-1.5, 1.5)
+            ax2.set_title(
+                f"Linear Models ({n_experiments} experiments)",
+                fontsize=14,
+                fontweight="bold",
+            )
+            ax2.legend(loc="upper right")
+            ax2.grid(True, alpha=0.3)
+            ax2.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
+            ax2.axvline(x=0, color="k", linestyle="-", linewidth=0.5)
+
+            # Plot 3: Comments.
+            ax3 = axes[2]
+            ax3.axis("off")
+            comment_text = f"""
+BIAS-VARIANCE WITH NOISE
+
+Setup: {n_experiments} experiments
+       {n_samples} samples per experiment
+       Noise std: {noise_std:.2f}
+       Seed: {seed}
+
+AVERAGE IN-SAMPLE ERROR:
+  Constant: {avg_e_in_const:.4f}
+  Linear:   {avg_e_in_linear:.4f}
+
+AVERAGE OUT-OF-SAMPLE ERROR:
+  Constant: {avg_e_out_const:.4f}
+  Linear:   {avg_e_out_linear:.4f}
+
+OBSERVATION:
+Constant model (g_0):
+  - LOW variance (all lines similar)
+  - HIGH bias (far from true f(x))
+
+Linear model (g_1):
+  - HIGHER variance (lines spread)
+  - LOWER bias (closer to f(x))
+
+NOISE EFFECT:
+With noise_std > 0, the training
+data is corrupted by Gaussian noise.
+This increases variance for both
+models and E_out increases.
+
+E_out = bias² + variance + noise²
+"""
+            mtumsuti.add_fitted_text_box(ax3, comment_text)
+
+            plt.tight_layout()
+            plt.show()
+
+    # Link widgets to update function.
+    ipywidgets.interactive_output(
+        update_plot,
+        {
+            "seed": seed_slider,
+            "n_samples": n_samples_slider,
+            "n_experiments": n_experiments_slider,
+            "noise_std": noise_slider,
+        },
+    )
+
+    # Display widgets and output.
+    display(seed_box, n_samples_box, n_experiments_box, noise_box, output)
+
+    # Initial plot.
+    update_plot(
+        seed_slider.value,
+        n_samples_slider.value,
+        n_experiments_slider.value,
+        noise_slider.value,
+    )
+
+
+# #############################################################################
+# Cell 6: Learning Plots with Noise (Bias-Variance as Function of N_samples)
+# #############################################################################
+
+
+def cell6_learning_plots_with_noise() -> None:
+    """
+    Compute and visualize bias-variance decomposition with noise as a function of N_samples.
+
+    Uses interactive widgets to control:
+    - seed: Random seed for reproducibility (fixed for consistency)
+    - N_experiments: Number of experiments to average over
+    - max_N_samples: Maximum number of samples to test
+    - noise_std: Standard deviation of Gaussian noise added to training data
+
+    Similar to cell4_learning_plots but includes a noise widget.
+    Shows how E_in, E_out, bias, and variance change with noise and N_samples.
+    """
+    # Create output widget for displaying plots.
+    output = ipywidgets.Output()
+
+    # Create widgets - seed must be first as per conventions.
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="Random seed (fixed)",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
+    )
+    n_experiments_slider, n_experiments_box = mtumsuti.build_widget_control(
+        name="N_experiments",
+        description="Number of experiments",
+        min_val=20,
+        max_val=200,
+        step=20,
+        initial_value=100,
+        is_float=False,
+    )
+    max_n_samples_slider, max_n_samples_box = mtumsuti.build_widget_control(
+        name="max_N_samples",
+        description="Maximum N_samples",
+        min_val=5,
+        max_val=30,
+        step=5,
+        initial_value=20,
+        is_float=False,
+    )
+    noise_slider, noise_box = mtumsuti.build_widget_control(
+        name="noise_std",
+        description="Noise standard deviation",
+        min_val=0.0,
+        max_val=0.5,
+        step=0.05,
+        initial_value=0.0,
+        is_float=True,
+    )
+
+    def update_plot(
+        seed: int, n_experiments: int, max_n_samples: int, noise_std: float
+    ) -> None:
+        """Update the visualization based on widget values."""
+        with output:
+            clear_output(wait=True)
+
+            # Set random seed for reproducibility.
+            np.random.seed(seed)
+
+            # Create dense x values for plotting the true function and computing metrics.
+            x_dense = np.linspace(-1, 1, 200)
+            y_true = target_function(x_dense)
+
+            # Storage for metrics across different N_samples.
+            n_samples_range = range(2, max_n_samples + 1)
+            e_in_const_avg = []
+            e_out_const_avg = []
+            bias_const = []
+            variance_const = []
+
+            e_in_linear_avg = []
+            e_out_linear_avg = []
+            bias_linear = []
+            variance_linear = []
+
+            # For each N_samples value, run multiple experiments.
+            for n_samples in n_samples_range:
+                # Storage for this N_samples across experiments.
+                const_predictions = []  # Store predictions on x_dense for each experiment
+                linear_predictions = []
+                e_in_const_list = []
+                e_out_const_list = []
+                e_in_linear_list = []
+                e_out_linear_list = []
+
+                # Run N_experiments with different random training sets.
+                for _ in range(n_experiments):
+                    # Generate training data.
+                    x_train = np.random.uniform(-1, 1, n_samples)
+                    x_train = np.sort(x_train)
+                    y_train_clean = target_function(x_train)
+                    # Add Gaussian noise to training data.
+                    y_train = y_train_clean + np.random.normal(0, noise_std, n_samples)
+
+                    # Fit constant model.
+                    b = fit_constant_model(x_train, y_train)
+                    y_const_train = np.full_like(x_train, b)
+                    y_const_dense = np.full_like(x_dense, b)
+                    const_predictions.append(y_const_dense)
+
+                    # Fit linear model.
+                    a, b_linear = fit_linear_model(x_train, y_train)
+                    y_linear_train = a * x_train + b_linear
+                    y_linear_dense = a * x_dense + b_linear
+                    linear_predictions.append(y_linear_dense)
+
+                    # Compute errors.
+                    e_in_const_list.append(
+                        compute_approximation_error(x_train, y_train, y_const_train)
+                    )
+                    e_out_const_list.append(
+                        compute_approximation_error(x_dense, y_true, y_const_dense)
+                    )
+                    e_in_linear_list.append(
+                        compute_approximation_error(x_train, y_train, y_linear_train)
+                    )
+                    e_out_linear_list.append(
+                        compute_approximation_error(x_dense, y_true, y_linear_dense)
+                    )
+
+                # Compute average errors.
+                e_in_const_avg.append(np.mean(e_in_const_list))
+                e_out_const_avg.append(np.mean(e_out_const_list))
+                e_in_linear_avg.append(np.mean(e_in_linear_list))
+                e_out_linear_avg.append(np.mean(e_out_linear_list))
+
+                # Compute bias and variance for constant model.
+                # Average model predictions across experiments.
+                avg_const_predictions = np.mean(const_predictions, axis=0)
+                # Bias: squared error between average model and true function.
+                bias_squared_const = np.mean((avg_const_predictions - y_true) ** 2)
+                bias_const.append(bias_squared_const)
+                # Variance: expected squared deviation from average model.
+                variance_vals_const = [
+                    np.mean((pred - avg_const_predictions) ** 2)
+                    for pred in const_predictions
+                ]
+                variance_const.append(np.mean(variance_vals_const))
+
+                # Compute bias and variance for linear model.
+                avg_linear_predictions = np.mean(linear_predictions, axis=0)
+                bias_squared_linear = np.mean((avg_linear_predictions - y_true) ** 2)
+                bias_linear.append(bias_squared_linear)
+                variance_vals_linear = [
+                    np.mean((pred - avg_linear_predictions) ** 2)
+                    for pred in linear_predictions
+                ]
+                variance_linear.append(np.mean(variance_vals_linear))
+
+            # Create figure with 3 subplots.
+            fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+
+            # Fixed y-axis limit for both plots.
+            y_max = 1.75
+
+            # Plot 1: Metrics for Constant Model.
+            ax1 = axes[0]
+            ax1.plot(
+                n_samples_range,
+                e_in_const_avg,
+                "o-",
+                linewidth=2,
+                markersize=6,
+                label="E_in (In-Sample Error)",
+                color="blue",
+            )
+            ax1.plot(
+                n_samples_range,
+                e_out_const_avg,
+                "s-",
+                linewidth=2,
+                markersize=6,
+                label="E_out (Out-of-Sample Error)",
+                color="red",
+            )
+            ax1.plot(
+                n_samples_range,
+                bias_const,
+                "^-",
+                linewidth=2,
+                markersize=6,
+                label="Bias²",
+                color="green",
+            )
+            ax1.plot(
+                n_samples_range,
+                variance_const,
+                "d-",
+                linewidth=2,
+                markersize=6,
+                label="Variance",
+                color="orange",
+            )
+            ax1.set_xlabel("N_samples", fontsize=12)
+            ax1.set_ylabel("Error", fontsize=12)
+            ax1.set_ylim(0, y_max)
+            ax1.set_title(
+                f"Constant Model (g_0) - Bias-Variance Analysis",
+                fontsize=14,
+                fontweight="bold",
+            )
+            ax1.legend(loc="upper right")
+            ax1.grid(True, alpha=0.3)
+
+            # Plot 2: Metrics for Linear Model.
+            ax2 = axes[1]
+            ax2.plot(
+                n_samples_range,
+                e_in_linear_avg,
+                "o-",
+                linewidth=2,
+                markersize=6,
+                label="E_in (In-Sample Error)",
+                color="blue",
+            )
+            ax2.plot(
+                n_samples_range,
+                e_out_linear_avg,
+                "s-",
+                linewidth=2,
+                markersize=6,
+                label="E_out (Out-of-Sample Error)",
+                color="red",
+            )
+            ax2.plot(
+                n_samples_range,
+                bias_linear,
+                "^-",
+                linewidth=2,
+                markersize=6,
+                label="Bias²",
+                color="green",
+            )
+            ax2.plot(
+                n_samples_range,
+                variance_linear,
+                "d-",
+                linewidth=2,
+                markersize=6,
+                label="Variance",
+                color="orange",
+            )
+            ax2.set_xlabel("N_samples", fontsize=12)
+            ax2.set_ylabel("Error", fontsize=12)
+            ax2.set_ylim(0, y_max)
+            ax2.set_title(
+                f"Linear Model (g_1) - Bias-Variance Analysis",
+                fontsize=14,
+                fontweight="bold",
+            )
+            ax2.legend(loc="upper right")
+            ax2.grid(True, alpha=0.3)
+
+            # Plot 3: Comments.
+            ax3 = axes[2]
+            ax3.axis("off")
+
+            # Get final values for comments.
+            final_e_out_const = e_out_const_avg[-1]
+            final_bias_const = bias_const[-1]
+            final_var_const = variance_const[-1]
+            final_e_out_linear = e_out_linear_avg[-1]
+            final_bias_linear = bias_linear[-1]
+            final_var_linear = variance_linear[-1]
+
+            comment_text = f"""
+BIAS-VARIANCE WITH NOISE
+AS FUNCTION OF N_samples
+
+Setup: {n_experiments} experiments per N
+       Seed: {seed} (fixed)
+       N_samples: 2 to {max_n_samples}
+       Noise std: {noise_std:.2f}
+
+DECOMPOSITION FORMULA:
+E_out = Bias² + Variance + Noise²
+
+CONSTANT MODEL (g_0):
+At N={max_n_samples}:
+  E_out:    {final_e_out_const:.4f}
+  Bias²:    {final_bias_const:.4f}
+  Variance: {final_var_const:.4f}
+
+LINEAR MODEL (g_1):
+At N={max_n_samples}:
+  E_out:    {final_e_out_linear:.4f}
+  Bias²:    {final_bias_linear:.4f}
+  Variance: {final_var_linear:.4f}
+
+KEY OBSERVATIONS:
+• With noise > 0, E_out increases
+  for both models
+
+• Variance increases with noise
+  (models fit noisy data)
+
+• As N increases, variance ↓
+  (more data averages out noise)
+
+• Bias remains constant
+  (determined by model capacity)
+
+• E_out ≈ Bias² + Variance + σ²
+"""
+            mtumsuti.add_fitted_text_box(ax3, comment_text)
+
+            plt.tight_layout()
+            plt.show()
+
+    # Link widgets to update function.
+    ipywidgets.interactive_output(
+        update_plot,
+        {
+            "seed": seed_slider,
+            "n_experiments": n_experiments_slider,
+            "max_n_samples": max_n_samples_slider,
+            "noise_std": noise_slider,
+        },
+    )
+
+    # Display widgets and output.
+    display(seed_box, n_experiments_box, max_n_samples_box, noise_box, output)
+
+    # Initial plot.
+    update_plot(
+        seed_slider.value,
+        n_experiments_slider.value,
+        max_n_samples_slider.value,
+        noise_slider.value,
+    )

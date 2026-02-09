@@ -214,4 +214,99 @@ utils.cell3_learning_bias_variance()
 # Display bias-variance decomposition as a function of N_samples.
 utils.cell4_learning_plots()
 
+# %% [markdown]
+# ## Cell 5: Learning with Noise (Bias-Variance Decomposition)
+#
+# This cell extends Cell 3 by adding Gaussian noise to the training data,
+# demonstrating how noise affects the bias-variance tradeoff.
+#
+# **Purpose**: Show how adding noise to the training data affects both the
+# variance and out-of-sample error of learned models. Demonstrates that noise
+# increases the difficulty of learning and adds a third term to the error
+# decomposition.
+#
+# **Parameters**:
+# - `seed`: Random seed for reproducibility
+# - `N_samples`: Number of training points per experiment (default: 2)
+# - `N_experiments`: Number of different training sets to generate (default: 100)
+# - `noise_std`: Standard deviation of Gaussian noise added to training labels (default: 0.0)
+#
+# **Target Function**:
+# - f(x) = sin(pi*x) for x in [-1, 1]
+# - Training labels: y = f(x) + N(0, noise_std²)
+#
+# **Visualization**:
+# - For each experiment, sample N_samples random points, add Gaussian noise, and fit both models
+# - Plot all fitted models with transparency (alpha=0.5) to show variation
+# - Plot average model across all experiments as a dashed line
+#
+# **Three plots**:
+# 1. **Constant Models**: Shows true function and all fitted constant models
+#    (green lines with transparency). Dashed line shows average model.
+# 2. **Linear Models**: Shows true function and all fitted linear models
+#    (magenta lines with transparency). Dashed line shows average model.
+# 3. **Comments**: Displays average errors and explanation of noise effects.
+#
+# **Key observations**:
+# - **With noise_std = 0**: Same behavior as Cell 3 (no noise case)
+# - **With noise_std > 0**: Training data is corrupted by Gaussian noise
+#   - Models try to fit the noisy observations instead of the true function
+#   - This increases variance for both models (more sensitivity to data)
+#   - E_out increases because models partially fit the noise
+#   - The error decomposition becomes: **E_out = Bias² + Variance + σ²** (noise variance)
+# - **Constant model**: Still has low variance, but noise increases E_out
+# - **Linear model**: Variance increases significantly with noise (tries to fit noise)
+# - Try increasing noise_std to see how noise affects the spread of fitted models
+# - Try increasing N_samples to see how more data helps average out the noise
+
 # %%
+# Display bias-variance decomposition with noise over multiple experiments.
+utils.cell5_learning_with_noise()
+
+# %% [markdown]
+# ## Cell 6: Learning Plots with Noise (Bias-Variance as Function of Training Set Size)
+#
+# This cell extends Cell 4 by adding Gaussian noise to the training data,
+# showing how noise affects the bias-variance decomposition across different
+# training set sizes.
+#
+# **Purpose**: Visualize how E_in, E_out, Bias², and Variance change as a
+# function of training set size when training data is corrupted by Gaussian
+# noise. Demonstrates how more data helps mitigate the effects of noise.
+#
+# **Parameters**:
+# - `seed`: Random seed for reproducibility (fixed to ensure consistent comparison)
+# - `N_experiments`: Number of experiments to average over for each N_samples value
+# - `max_N_samples`: Maximum number of training samples to test
+# - `noise_std`: Standard deviation of Gaussian noise added to training labels (default: 0.0)
+#
+# **Error Decomposition**:
+# With noise:
+# - **E_out = Bias² + Variance + σ²** (noise variance)
+# - **Bias²**: Squared error between the average model and the true function
+# - **Variance**: Average squared deviation of individual models from the average model
+# - **σ²**: Noise variance (noise_std²) - irreducible error
+# - **E_in**: In-sample error on training data
+# - **E_out**: Out-of-sample error on the true function (without noise)
+#
+# **Two plots**:
+# 1. **Constant Model (g_0)**: Shows E_in, E_out, Bias², and Variance as functions of N_samples
+# 2. **Linear Model (g_1)**: Shows E_in, E_out, Bias², and Variance as functions of N_samples
+# 3. **Comments**: Displays the decomposition formula and key observations
+#
+# **Key observations**:
+# - **With noise_std = 0**: Same behavior as Cell 4 (deterministic case)
+# - **With noise_std > 0**: Training data includes random noise
+#   - Variance increases for both models compared to the no-noise case
+#   - E_out increases by approximately σ² (the irreducible error from noise)
+#   - As N_samples increases, variance decreases (more data averages out noise)
+#   - Bias remains relatively constant (determined by model capacity, not noise)
+# - **The noise term**: Represents the best possible error - even a perfect model cannot do better than σ² when learning from noisy data
+# - **More data helps**: Increasing N_samples reduces the variance component but cannot reduce the noise component
+# - Try setting noise_std = 0.1 or 0.2 to see the noise effect
+# - Try increasing max_N_samples to see how variance continues to decrease with more data
+# - Compare with Cell 4 (noise_std = 0) to see the additional error from noise
+
+# %%
+# Display bias-variance decomposition with noise as a function of N_samples.
+utils.cell6_learning_plots_with_noise()
