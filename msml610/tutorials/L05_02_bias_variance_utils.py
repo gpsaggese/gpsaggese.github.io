@@ -787,6 +787,9 @@ def cell4_learning_plots() -> None:
             # Create figure with 3 subplots.
             fig, axes = plt.subplots(1, 3, figsize=(18, 5))
 
+            # Fixed y-axis limit for both plots.
+            y_max = 1.75
+
             # Plot 1: Metrics for Constant Model.
             ax1 = axes[0]
             ax1.plot(
@@ -827,7 +830,7 @@ def cell4_learning_plots() -> None:
             )
             ax1.set_xlabel("N_samples", fontsize=12)
             ax1.set_ylabel("Error", fontsize=12)
-            ax1.set_ylim(0, max(max(e_out_const_avg), max(bias_const)) * 1.2)
+            ax1.set_ylim(0, y_max)
             ax1.set_title(
                 f"Constant Model (g_0) - Bias-Variance Analysis",
                 fontsize=14,
@@ -876,7 +879,7 @@ def cell4_learning_plots() -> None:
             )
             ax2.set_xlabel("N_samples", fontsize=12)
             ax2.set_ylabel("Error", fontsize=12)
-            ax2.set_ylim(0, max(max(e_out_linear_avg), max(variance_linear)) * 1.2)
+            ax2.set_ylim(0, y_max)
             ax2.set_title(
                 f"Linear Model (g_1) - Bias-Variance Analysis",
                 fontsize=14,

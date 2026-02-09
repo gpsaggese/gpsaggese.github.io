@@ -76,8 +76,7 @@
   - Print the in-sample error for both models averaged over the N_experiments
   - Print the OOS error for both models over the N_experiments
 
-<start>
-## Cell 4: Learning plots
+## Cell 4: Learning plots (Bias-Variance)
 
 - Purpose: Compute bias and variance decomposition changing various variables
 - Visualization:
@@ -97,4 +96,21 @@
 - Comment box: 
   - Print the in-sample error for both models averaged over the N_experiments
   - Print the OOS error for both models over the N_experiments
+
+<start>
+## Cell 5: Learning plots with noise
+
+- Purpose: Same as Cell 3 but also add a widget to control the amount of Gaussian
+  noise
+- Reuse the same code as cell3_learning_bias_variance but make sure that the
+  previous code is not changed. In practice for Cell 3 there is no noise widget
+  and the amount of noise is set to 0
+
+## Cell 6: Learning plots with noise (Bias-Variance)
+
+- Purpose: Same as Cell 4 but also add a widget to control the amount of Gaussian
+  noise
+- Reuse the same code as cell4_learning_bias_variance but make sure that the
+  previous code is not changed. In practice for Cell 4 there is no noise widget
+  and the amount of noise is set to 0
 <end>

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -213,3 +213,5 @@ utils.cell3_learning_bias_variance()
 # %%
 # Display bias-variance decomposition as a function of N_samples.
 utils.cell4_learning_plots()
+
+# %%
