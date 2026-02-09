@@ -12,135 +12,13 @@ import os
 from typing import Dict, List, Tuple
 
 import pytest
-# TODO(ai_gp): Use import tqdm
 from tqdm import tqdm
 
 import helpers.hdbg as hdbg
-import helpers.hio as hio
 import helpers.hjupyter as hjupyte
-import helpers.hsystem as hsystem
-import helpers.htimer as htimer
 import helpers.hunit_test as hunitest
 
 _LOG = logging.getLogger(__name__)
-
-
-# #############################################################################
-# Helper functions
-# #############################################################################
-
-
-# TODO(ai_gp): Inline this function in the caller.
-def _find_paired_notebooks(
-    tutorials_dir: str,
-) -> Tuple[List[str], List[str], List[str]]:
-    """
-    Find all tutorial Python files and paired Jupyter notebooks.
-
-    This is a wrapper for hjupyte.find_paired_files() with tutorial-specific
-    pattern.
-
-    :param tutorials_dir: path to the tutorials directory
-    :return: tuple of (python_files, notebook_files, unpaired_notebooks)
-        - python_files: list of .py tutorial files (excluding _utils.py)
-        - notebook_files: list of .ipynb files that have corresponding .py
-        - unpaired_notebooks: list of .ipynb files without corresponding .py
-    """
-    return hjupyte.find_paired_files(
-        tutorials_dir,
-        pattern="L*.py",
-        exclude_pattern="_utils.py",
-    )
-
-
-# TODO(ai_gp): Move to hjupyter.
-def _execute_file_with_docker(
-    file_path: str,
-    *,
-    working_dir: str,
-    is_notebook: bool,
-) -> Tuple[bool, str, float]:
-    """
-    Execute a Python file or notebook using docker_cmd.
-
-    :param file_path: path to the file to execute
-    :param working_dir: directory to cd into before execution
-    :param is_notebook: True if file is a notebook, False if Python script
-    :return: tuple of (success, error_message, elapsed_time)
-    """
-    timer = htimer.Timer()
-    try:
-        if is_notebook:
-            # For notebooks, use hjupyter.run_notebook via docker_cmd.
-            scratch_dir = os.path.join(working_dir, "tmp.notebook_scratch")
-            # Build Python command to run notebook.
-            cmd = (
-                f"python -c \""
-                f"import helpers.hjupyter as hjupyte; "
-                f"import helpers.hio as hio; "
-                f"hio.create_dir('{scratch_dir}', incremental=True); "
-                f"hjupyte.run_notebook('{file_path}', '{scratch_dir}')\""
-            )
-        else:
-            # For Python scripts, execute directly.
-            cmd = f"python {file_path}"
-        # Build invoke docker_cmd command.
-        docker_cmd = f'invoke docker_cmd --cmd "{cmd}"'
-        # Execute in the working directory.
-        hsystem.system(
-            docker_cmd,
-            abort_on_error=False,
-            suppress_output=False,
-        )
-        elapsed = timer.get_elapsed()
-        return True, "", elapsed
-    except Exception as e:
-        elapsed = timer.get_elapsed()
-        error_msg = str(e)
-        return False, error_msg, elapsed
-    # TODO(ai_gp): Have a single exit point.
-
-
-# TODO(ai_gp): Move to hjupyter.
-def _execute_file_directly(
-    file_path: str,
-    *,
-    working_dir: str,
-    is_notebook: bool,
-) -> Tuple[bool, str, float]:
-    """
-    Execute a Python file or notebook directly (inside container).
-
-    :param file_path: path to the file to execute
-    :param working_dir: directory to cd into before execution
-    :param is_notebook: True if file is a notebook, False if Python script
-    :return: tuple of (success, error_message, elapsed_time)
-    """
-    timer = htimer.Timer()
-    try:
-        if is_notebook:
-            # For notebooks, use hjupyter.run_notebook.
-            scratch_dir = os.path.join(working_dir, "tmp.notebook_scratch")
-            hio.create_dir(scratch_dir, incremental=True)
-            hjupyte.run_notebook(
-                file_path,
-                scratch_dir,
-                pre_cmd=f"cd {working_dir}",
-            )
-        else:
-            # For Python scripts, execute directly.
-            cmd = f"cd {working_dir} && python {file_path}"
-            hsystem.system(
-                cmd,
-                abort_on_error=True,
-                suppress_output=False,
-            )
-        elapsed = timer.get_elapsed()
-        return True, "", elapsed
-    except Exception as e:
-        elapsed = timer.get_elapsed()
-        error_msg = str(e)
-        return False, error_msg, elapsed
 
 
 # #############################################################################
@@ -183,13 +61,13 @@ class TestTutorialExecution(hunitest.TestCase):
         ):
             basename = os.path.basename(file_path)
             if use_docker:
-                success, error, elapsed = _execute_file_with_docker(
+                success, error, elapsed = hjupyte.execute_file_with_docker(
                     file_path,
                     working_dir=working_dir,
                     is_notebook=is_notebook,
                 )
             else:
-                success, error, elapsed = _execute_file_directly(
+                success, error, elapsed = hjupyte.execute_file_directly(
                     file_path,
                     working_dir=working_dir,
                     is_notebook=is_notebook,
@@ -207,7 +85,7 @@ class TestTutorialExecution(hunitest.TestCase):
                 _LOG.warning("Error: %s", error)
         return results
 
-    # TODO(ai_gp): Move this to hjupyter.
+    # TODO(ai_gp): Inline this call.
     def _report_results(
         self,
         py_results: Dict[str, Tuple[bool, str, float]],
@@ -219,68 +97,12 @@ class TestTutorialExecution(hunitest.TestCase):
         :param py_results: results from Python file execution
         :param nb_results: results from notebook execution
         """
-        # Collect failures.
-        py_failures = [
-            f for f, (success, _, _) in py_results.items() if not success
-        ]
-        nb_failures = [
-            f for f, (success, _, _) in nb_results.items() if not success
-        ]
-        # Calculate statistics.
-        py_total = len(py_results)
-        py_success = py_total - len(py_failures)
-        nb_total = len(nb_results)
-        nb_success = nb_total - len(nb_failures)
-        total_files = py_total + nb_total
-        total_success = py_success + nb_success
-        total_failures = len(py_failures) + len(nb_failures)
-        # Calculate timing statistics.
-        py_times = [elapsed for _, _, elapsed in py_results.values()]
-        nb_times = [elapsed for _, _, elapsed in nb_results.values()]
-        py_total_time = sum(py_times) if py_times else 0.0
-        nb_total_time = sum(nb_times) if nb_times else 0.0
-        total_time = py_total_time + nb_total_time
-        # Report summary.
-        _LOG.info("=" * 80)
-        _LOG.info("EXECUTION SUMMARY")
-        _LOG.info("=" * 80)
-        _LOG.info("Python scripts: %d total, %d success, %d failed",
-                  py_total, py_success, len(py_failures))
-        if py_total > 0:
-            _LOG.info("  Total time: %.2f seconds", py_total_time)
-            _LOG.info("  Average time: %.2f seconds", py_total_time / py_total)
-        _LOG.info("Notebooks: %d total, %d success, %d failed",
-                  nb_total, nb_success, len(nb_failures))
-        if nb_total > 0:
-            _LOG.info("  Total time: %.2f seconds", nb_total_time)
-            _LOG.info("  Average time: %.2f seconds", nb_total_time / nb_total)
-        _LOG.info("-" * 80)
-        _LOG.info("TOTAL: %d files, %d success, %d failed",
-                  total_files, total_success, total_failures)
-        _LOG.info("Total execution time: %.2f seconds", total_time)
-        # Report failures if any.
+        total_failures, error_message = hjupyte.report_execution_results(
+            py_results,
+            nb_results,
+        )
         if total_failures > 0:
-            _LOG.error("=" * 80)
-            _LOG.error("FAILURES DETECTED")
-            _LOG.error("=" * 80)
-            if py_failures:
-                _LOG.error("Failed Python scripts:")
-                for file_path in py_failures:
-                    basename = os.path.basename(file_path)
-                    _, error, _ = py_results[file_path]
-                    _LOG.error("  - %s: %s", basename, error)
-            if nb_failures:
-                _LOG.error("Failed notebooks:")
-                for file_path in nb_failures:
-                    basename = os.path.basename(file_path)
-                    _, error, _ = nb_results[file_path]
-                    _LOG.error("  - %s: %s", basename, error)
-            _LOG.error("=" * 80)
-            # Assert to fail the test.
-            self.fail(
-                f"{total_failures} file(s) failed to execute. "
-                f"See log for details."
-            )
+            self.fail(error_message)
 
     def _run_tutorial_tests(
         self,
@@ -312,8 +134,10 @@ class TestTutorialExecution(hunitest.TestCase):
         )
         tutorials_dir = os.path.abspath(tutorials_dir)
         # Find files.
-        py_files, paired_notebooks, unpaired_notebooks = _find_paired_notebooks(
-            tutorials_dir
+        py_files, paired_notebooks, unpaired_notebooks = hjupyte.find_paired_files(
+            tutorials_dir,
+            pattern="L*.py",
+            exclude_pattern="_utils.py",
         )
         # Assert no unpaired notebooks.
         hdbg.dassert_eq(
