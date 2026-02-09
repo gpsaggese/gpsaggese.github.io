@@ -3,11 +3,11 @@ Utility functions for L05_02_overfitting notebook.
 
 Import as:
 
-import L05_02_overfitting_utils as utils
+import msml610.tutorials.L05_02_overfitting_utils as mtl0ovut
 """
 
 import logging
-from typing import Callable, Tuple
+from typing import Tuple
 
 import ipywidgets
 import matplotlib.pyplot as plt
@@ -72,7 +72,7 @@ def parabola(x: np.ndarray) -> np.ndarray:
     """
     # Scale parabola to fit in [-1, 1] range
     # x^2 gives [0, 1] for x in [-1, 1], so 2*x^2 - 1 gives [-1, 1]
-    return 2 * (x ** 2) - 1
+    return 2 * (x**2) - 1
 
 
 def constant(x: np.ndarray, c: float = 0.0) -> np.ndarray:
@@ -218,9 +218,7 @@ def cell1_plot_true_target_function() -> None:
             _GLOBAL_STATE["x_dense"] = x_dense
             _GLOBAL_STATE["y_true_dense"] = y_true_dense
             # Create 2x2 subplot layout.
-            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(
-                2, 2, figsize=(14, 10)
-            )
+            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(14, 10))
             # Plot 1: True target function.
             # Plot the true function (noiseless).
             ax1.plot(
@@ -232,7 +230,9 @@ def cell1_plot_true_target_function() -> None:
             )
             # Add noisy function if epsilon > 0.
             if epsilon > 0:
-                y_noisy_dense = y_true_dense + np.random.normal(0, epsilon, len(x_dense))
+                y_noisy_dense = y_true_dense + np.random.normal(
+                    0, epsilon, len(x_dense)
+                )
                 ax1.plot(
                     x_dense,
                     y_noisy_dense,
@@ -243,9 +243,7 @@ def cell1_plot_true_target_function() -> None:
                 )
             ax1.set_xlabel("x", fontsize=12)
             ax1.set_ylabel("f(x)", fontsize=12)
-            ax1.set_title(
-                "True Target Function", fontsize=14, fontweight="bold"
-            )
+            ax1.set_title("True Target Function", fontsize=14, fontweight="bold")
             ax1.grid(True, alpha=0.3)
             ax1.axhline(y=0, color="k", linewidth=0.5)
             ax1.axvline(x=0, color="k", linewidth=0.5)
@@ -264,9 +262,7 @@ def cell1_plot_true_target_function() -> None:
             )
             ax2.set_xlabel("x", fontsize=12)
             ax2.set_ylabel("f(x)", fontsize=12)
-            ax2.set_title(
-                "In-Sample Data (80%)", fontsize=14, fontweight="bold"
-            )
+            ax2.set_title("In-Sample Data (80%)", fontsize=14, fontweight="bold")
             ax2.grid(True, alpha=0.3)
             ax2.axhline(y=0, color="k", linewidth=0.5)
             ax2.axvline(x=0, color="k", linewidth=0.5)
@@ -296,9 +292,7 @@ def cell1_plot_true_target_function() -> None:
             ax3.set_ylim([-1.5, 1.5])
             # Plot 4: Comments.
             ax4.axis("off")
-            ax4.set_title(
-                "Comments", fontsize=16, fontweight="bold", pad=20
-            )
+            ax4.set_title("Comments", fontsize=16, fontweight="bold", pad=20)
             # Generate comment text.
             text_content = (
                 f"Parameters:\n"
@@ -323,7 +317,9 @@ def cell1_plot_true_target_function() -> None:
                 f"- epsilon: more noise → harder learning\n"
                 f"- seed: different random samples"
             )
-            mtumsuti.add_fitted_text_box(ax4, text_content, max_fontsize=14, min_fontsize=10)
+            mtumsuti.add_fitted_text_box(
+                ax4, text_content, max_fontsize=14, min_fontsize=10
+            )
             plt.tight_layout()
             plt.show()
 
@@ -338,7 +334,9 @@ def cell1_plot_true_target_function() -> None:
     display(
         ipywidgets.VBox(
             [
-                ipywidgets.Label("Select the true target function and noise level:"),
+                ipywidgets.Label(
+                    "Select the true target function and noise level:"
+                ),
                 seed_box,
                 function_dropdown,
                 epsilon_box,
@@ -384,9 +382,7 @@ def fit_linear_model(
     return a, b
 
 
-def compute_error(
-    y_true: np.ndarray, y_pred: np.ndarray
-) -> float:
+def compute_error(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """
     Compute mean squared error.
 
@@ -470,9 +466,7 @@ def cell2_plot_model() -> None:
             E_in = compute_error(y_train, y_pred_train)
             E_out = compute_error(y_test, y_pred_test)
             # Create 2x2 subplot layout.
-            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(
-                2, 2, figsize=(14, 10)
-            )
+            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(14, 10))
             # Plot 1: In-sample data with fitted model.
             ax1.scatter(
                 x_train,
@@ -612,9 +606,7 @@ def cell2_plot_model() -> None:
             ax3.set_ylim([-1.5, 1.5])
             # Plot 4: Comments.
             ax4.axis("off")
-            ax4.set_title(
-                "Comments", fontsize=16, fontweight="bold", pad=20
-            )
+            ax4.set_title("Comments", fontsize=16, fontweight="bold", pad=20)
             # Generate comment text based on model type.
             if model_type == "Constant":
                 observations = (
@@ -661,7 +653,9 @@ def cell2_plot_model() -> None:
                 f"how the model changes with different\n"
                 f"training data."
             )
-            mtumsuti.add_fitted_text_box(ax4, text_content, max_fontsize=14, min_fontsize=10)
+            mtumsuti.add_fitted_text_box(
+                ax4, text_content, max_fontsize=14, min_fontsize=10
+            )
             plt.tight_layout()
             plt.show()
 

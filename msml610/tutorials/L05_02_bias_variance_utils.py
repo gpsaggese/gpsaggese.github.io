@@ -3,7 +3,7 @@ Utility functions for L05_02_bias_variance notebook.
 
 Import as:
 
-import L05_02_bias_variance_utils as utils
+import msml610.tutorials.L05_02_bias_variance_utils as mtl0bvaut
 """
 
 import logging
@@ -483,8 +483,8 @@ def cell2_learning_once() -> None:
             y_true = target_function(x_dense)
 
             # Fit models to training data and generate predictions.
-            b, y_const_dense, (a, b_linear), y_linear_dense = fit_models_and_predict(
-                x_train, y_train, x_dense
+            b, y_const_dense, (a, b_linear), y_linear_dense = (
+                fit_models_and_predict(x_train, y_train, x_dense)
             )
 
             # Generate predictions on training data for E_in computation.
@@ -492,15 +492,17 @@ def cell2_learning_once() -> None:
             y_linear_train = a * x_train + b_linear
 
             # Compute all error metrics.
-            e_in_const, e_in_linear, e_out_const, e_out_linear = compute_all_errors(
-                x_train,
-                y_train,
-                x_dense,
-                y_true,
-                y_const_train,
-                y_const_dense,
-                y_linear_train,
-                y_linear_dense,
+            e_in_const, e_in_linear, e_out_const, e_out_linear = (
+                compute_all_errors(
+                    x_train,
+                    y_train,
+                    x_dense,
+                    y_true,
+                    y_const_train,
+                    y_const_dense,
+                    y_linear_train,
+                    y_linear_dense,
+                )
             )
 
             # Create figure with 3 subplots.
@@ -510,7 +512,11 @@ def cell2_learning_once() -> None:
             ax1 = axes[0]
             ax1.plot(x_dense, y_true, "b-", linewidth=2, label="True f(x)")
             ax1.plot(
-                x_dense, y_const_dense, "g-", linewidth=2, label=f"Constant g_0(x)"
+                x_dense,
+                y_const_dense,
+                "g-",
+                linewidth=2,
+                label="Constant g_0(x)",
             )
             # Show training points.
             plot_training_points(ax1, x_train, y_train)
@@ -522,7 +528,9 @@ def cell2_learning_once() -> None:
             # Plot 2: True function vs Linear model.
             ax2 = axes[1]
             ax2.plot(x_dense, y_true, "b-", linewidth=2, label="True f(x)")
-            ax2.plot(x_dense, y_linear_dense, "m-", linewidth=2, label=f"Linear g_1(x)")
+            ax2.plot(
+                x_dense, y_linear_dense, "m-", linewidth=2, label="Linear g_1(x)"
+            )
             # Show training points.
             plot_training_points(ax2, x_train, y_train)
             setup_model_comparison_axis(
@@ -698,7 +706,9 @@ def cell3_learning_bias_variance() -> None:
 
             # Plot 1: True function vs all Constant models.
             ax1 = axes[0]
-            ax1.plot(x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10)
+            ax1.plot(
+                x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10
+            )
             # Plot all constant models with transparency.
             for b in const_models:
                 ax1.axhline(y=b, color="green", alpha=0.3, linewidth=1)
@@ -718,7 +728,9 @@ def cell3_learning_bias_variance() -> None:
 
             # Plot 2: True function vs all Linear models.
             ax2 = axes[1]
-            ax2.plot(x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10)
+            ax2.plot(
+                x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10
+            )
             # Plot all linear models with transparency.
             for a, b_linear in linear_models:
                 y_linear = a * x_dense + b_linear
@@ -733,7 +745,7 @@ def cell3_learning_bias_variance() -> None:
                 color="darkmagenta",
                 linewidth=3,
                 linestyle="--",
-                label=f"Avg g_1",
+                label="Avg g_1",
                 zorder=9,
             )
             setup_model_comparison_axis(
@@ -1174,13 +1186,17 @@ def cell5_learning_with_noise() -> None:
 
             # Plot 1: True function vs all Constant models.
             ax1 = axes[0]
-            ax1.plot(x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10)
+            ax1.plot(
+                x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10
+            )
             # Plot noisy versions of the function as continuous curves.
             if noise_std > 0:
                 # Generate a few noisy realizations of the full function.
                 n_noisy_curves = 5
                 for i in range(n_noisy_curves):
-                    y_noisy = y_true + np.random.normal(0, noise_std, len(y_true))
+                    y_noisy = y_true + np.random.normal(
+                        0, noise_std, len(y_true)
+                    )
                     ax1.plot(
                         x_dense,
                         y_noisy,
@@ -1209,13 +1225,17 @@ def cell5_learning_with_noise() -> None:
 
             # Plot 2: True function vs all Linear models.
             ax2 = axes[1]
-            ax2.plot(x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10)
+            ax2.plot(
+                x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10
+            )
             # Plot noisy versions of the function as continuous curves.
             if noise_std > 0:
                 # Generate a few noisy realizations of the full function.
                 n_noisy_curves = 5
                 for i in range(n_noisy_curves):
-                    y_noisy = y_true + np.random.normal(0, noise_std, len(y_true))
+                    y_noisy = y_true + np.random.normal(
+                        0, noise_std, len(y_true)
+                    )
                     ax2.plot(
                         x_dense,
                         y_noisy,
@@ -1239,7 +1259,7 @@ def cell5_learning_with_noise() -> None:
                 color="darkmagenta",
                 linewidth=3,
                 linestyle="--",
-                label=f"Avg g_1",
+                label="Avg g_1",
                 zorder=9,
             )
             setup_model_comparison_axis(
@@ -1408,7 +1428,9 @@ def cell6_learning_plots_with_noise() -> None:
                 # Run N_experiments with different random training sets.
                 for _ in range(n_experiments):
                     # Generate training data.
-                    x_train, y_train = generate_training_data(n_samples, noise_std)
+                    x_train, y_train = generate_training_data(
+                        n_samples, noise_std
+                    )
 
                     # Fit models and generate predictions.
                     b, y_const_dense, (a, b_linear), y_linear_dense = (

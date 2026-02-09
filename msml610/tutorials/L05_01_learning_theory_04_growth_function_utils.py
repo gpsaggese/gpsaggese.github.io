@@ -7,7 +7,7 @@ realized by the hypothesis.
 
 Import as:
 
-import msml610.tutorials.L05_01_learning_theory_04_growth_function_utils as mtugrfun
+import msml610.tutorials.L05_01_learning_theory_04_growth_function_utils as mtl0lt0gfu
 """
 
 import abc
@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.spatial
-import sklearn.linear_model
 from tqdm import tqdm
 
 _LOG = logging.getLogger(__name__)
