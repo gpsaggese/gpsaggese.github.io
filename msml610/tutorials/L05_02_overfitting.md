@@ -25,7 +25,6 @@
   - Y-axis limits: [-1.5, 1.5]
 - Comment box: "This is the unknown target function we want to learn. In real-world problems, we don't have access to this complete curve - we only see a few sampled points."
 
-<start>
 ## Cell 2: Constant Model (H_0)
 
 - Purpose: Demonstrate learning with a constant hypothesis h(x) = b
@@ -48,25 +47,6 @@
 - Comment box: "The constant model finds the best horizontal line to fit the 2
   points. It has high bias (poor approximation) but low variance (stable across
   different training sets)."
-<end>
-
-## Cell 4: Linear Model (H_1)
-
-- Purpose: Demonstrate learning with a linear hypothesis h(x) = ax + b
-- Visualization:
-  - Plot the true sinusoid (light gray)
-  - Plot the 2 training points (red dots)
-  - Plot the learned linear model as a straight line (orange)
-  - Shade the area between the line and the sinusoid to show approximation error
-- Interactive widget:
-  - Button to "Resample and Relearn" (new training points, new linear fit)
-  - Display the learned parameters a and b
-- Display:
-  - All curves overlaid on same plot
-  - Show E_out value for current fit
-  - Title: "Linear Model: h(x) = ax + b"
-  - Legend showing "True Function", "Training Points", "Learned Model"
-- Comment box: "The linear model finds the best line through the 2 points. It has lower bias (better approximation) but higher variance (more sensitive to training point locations)."
 
 ## Cell 5: Model Comparison - Multiple Realizations
 

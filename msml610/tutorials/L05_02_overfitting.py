@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -72,34 +72,39 @@ _LOG = logging.getLogger(__name__)
 utils.cell1_plot_true_target_function()
 
 # %% [markdown]
-# ## Cell 2: Constant Model (H_0)
+# ## Cell 2: Model Comparison - Constant vs Linear
 #
-# This cell demonstrates learning with a constant hypothesis h(x) = b.
+# This cell demonstrates learning with either a constant hypothesis h(x) = b
+# or a linear hypothesis h(x) = a*x + b.
 #
-# **Purpose**: Show how the simplest model (a constant) fits the data. The
-# constant model finds the best horizontal line by computing the mean of
-# training points. This model has high bias (poor approximation of complex
-# functions) but low variance (very stable across different training sets).
+# **Purpose**: Compare two model types to understand the bias-variance tradeoff.
+# The constant model has high bias and low variance, while the linear model
+# has lower bias but higher variance. Use the selector to switch between models
+# and observe the differences.
 #
 # **Setup**: This cell uses the same configuration as Cell 1. All parameters
 # (function type, epsilon, N, seed) are synchronized with Cell 1. To change
 # the setup, adjust the parameters in Cell 1.
 #
-# **Model**: h(x) = b, where b is the mean of training y-values.
+# **Models**:
+# - **Constant**: h(x) = b, where b is the mean of training y-values
+# - **Linear**: h(x) = a*x + b, where a and b are fit using least squares
 #
-# **Three plots**:
-# 1. **In-Sample Data**: Green training points with fitted constant model and E_in
-# 2. **Out-of-Sample Data**: Red test points with fitted constant model and E_out
-# 3. **True Function vs Model**: Blue true function, green constant model, orange shaded approximation error
-# 4. **Comments**: Learned parameter b, errors, and key observations
+# **Four plots**:
+# 1. **In-Sample Data**: Green training points with fitted model and E_in
+# 2. **Out-of-Sample Data**: Red test points with fitted model and E_out
+# 3. **True Function vs Model**: Blue true function, fitted model, orange shaded approximation error
+# 4. **Comments**: Learned parameters, errors, and key observations
 #
 # **Key observations**:
-# - The constant model (horizontal line) is the simplest possible hypothesis
-# - It has HIGH BIAS: cannot approximate complex target functions well
-# - It has LOW VARIANCE: the fitted line is very stable across different training sets
-# - Click "Resample and Relearn" to see how the model changes with different training data
-# - The orange shaded area shows the approximation error between the true function and the constant
+# - **Constant model**: HIGH BIAS (poor approximation), LOW VARIANCE (stable)
+# - **Linear model**: LOWER BIAS (better approximation), HIGHER VARIANCE (more sensitive)
+# - Click "Resample and Relearn" to see how each model changes with different training data
+# - The orange shaded area shows the approximation error
+# - Compare E_in and E_out for both models to see the bias-variance tradeoff
 
 # %%
-# Display constant model learning with interactive controls.
-utils.cell2_plot_constant_model()
+# Display model learning with interactive controls.
+utils.cell2_plot_model()
+
+# %%

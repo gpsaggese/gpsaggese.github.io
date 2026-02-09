@@ -365,6 +365,25 @@ def fit_constant_model(x_train: np.ndarray, y_train: np.ndarray) -> float:
     return np.mean(y_train)
 
 
+def fit_linear_model(
+    x_train: np.ndarray, y_train: np.ndarray
+) -> Tuple[float, float]:
+    """
+    Fit a linear model h(x) = a*x + b using least squares.
+
+    :param x_train: Training input data
+    :param y_train: Training output data
+    :return: Tuple of (a, b) parameters
+    """
+    # Use least squares to fit y = a*x + b.
+    # Create design matrix [x, 1].
+    A = np.vstack([x_train, np.ones(len(x_train))]).T
+    # Solve least squares: A @ [a, b]^T = y.
+    params = np.linalg.lstsq(A, y_train, rcond=None)[0]
+    a, b = params[0], params[1]
+    return a, b
+
+
 def compute_error(
     y_true: np.ndarray, y_pred: np.ndarray
 ) -> float:
@@ -378,18 +397,25 @@ def compute_error(
     return np.mean((y_true - y_pred) ** 2)
 
 
-def cell2_plot_constant_model() -> None:
+def cell2_plot_model() -> None:
     """
-    Interactive widget to visualize constant model learning.
+    Interactive widget to visualize constant or linear model learning.
 
-    Shows how a constant hypothesis h(x) = b fits the data. The model learns
-    the best horizontal line by finding the mean of training points. Displays
+    Shows how a constant hypothesis h(x) = b or linear hypothesis h(x) = a*x + b
+    fits the data. Allows comparison between the two model types. Displays
     three plots:
     1. In-sample data with fitted model and E_in
     2. Out-of-sample data with fitted model and E_out
     3. True function with fitted model
-    4. Comments and learned parameter
+    4. Comments and learned parameters
     """
+    # Create model selector dropdown.
+    model_selector = ipywidgets.Dropdown(
+        options=["Constant", "Linear"],
+        value="Constant",
+        description="Model Type:",
+        style={"description_width": "initial"},
+    )
     # Create button to resample and relearn.
     resample_button = ipywidgets.Button(
         description="Resample and Relearn",
@@ -420,12 +446,26 @@ def cell2_plot_constant_model() -> None:
             y_true_dense = _GLOBAL_STATE["y_true_dense"]
             func_name = _GLOBAL_STATE["function_name"]
             epsilon = _GLOBAL_STATE["epsilon"]
-            # Fit constant model.
-            b = fit_constant_model(x_train, y_train)
-            # Make predictions.
-            y_pred_train = np.full_like(y_train, b)
-            y_pred_test = np.full_like(y_test, b)
-            y_pred_dense = np.full_like(x_dense, b)
+            # Get selected model type.
+            model_type = model_selector.value
+            # Fit model based on selection.
+            if model_type == "Constant":
+                b = fit_constant_model(x_train, y_train)
+                a = 0.0
+                # Make predictions.
+                y_pred_train = np.full_like(y_train, b)
+                y_pred_test = np.full_like(y_test, b)
+                y_pred_dense = np.full_like(x_dense, b)
+                model_eq = f"h(x) = {b:.3f}"
+                params_text = f"b = {b:.4f}"
+            else:  # Linear
+                a, b = fit_linear_model(x_train, y_train)
+                # Make predictions.
+                y_pred_train = a * x_train + b
+                y_pred_test = a * x_test + b
+                y_pred_dense = a * x_dense + b
+                model_eq = f"h(x) = {a:.3f}*x + {b:.3f}"
+                params_text = f"a = {a:.4f}, b = {b:.4f}"
             # Compute errors.
             E_in = compute_error(y_train, y_pred_train)
             E_out = compute_error(y_test, y_pred_test)
@@ -443,13 +483,23 @@ def cell2_plot_constant_model() -> None:
                 label=f"In-Sample (n={len(x_train)})",
                 zorder=5,
             )
-            ax1.axhline(
-                y=b,
-                color="darkgreen",
-                linewidth=2,
-                label=f"h(x) = {b:.3f}",
-                linestyle="--",
-            )
+            if model_type == "Constant":
+                ax1.axhline(
+                    y=b,
+                    color="darkgreen",
+                    linewidth=2,
+                    label=model_eq,
+                    linestyle="--",
+                )
+            else:  # Linear
+                ax1.plot(
+                    x_dense,
+                    y_pred_dense,
+                    color="orange",
+                    linewidth=2,
+                    label=model_eq,
+                    linestyle="--",
+                )
             ax1.set_xlabel("x", fontsize=12)
             ax1.set_ylabel("y", fontsize=12)
             ax1.set_title(
@@ -473,13 +523,23 @@ def cell2_plot_constant_model() -> None:
                 label=f"Out-of-Sample (n={len(x_test)})",
                 zorder=5,
             )
-            ax2.axhline(
-                y=b,
-                color="darkgreen",
-                linewidth=2,
-                label=f"h(x) = {b:.3f}",
-                linestyle="--",
-            )
+            if model_type == "Constant":
+                ax2.axhline(
+                    y=b,
+                    color="darkgreen",
+                    linewidth=2,
+                    label=model_eq,
+                    linestyle="--",
+                )
+            else:  # Linear
+                ax2.plot(
+                    x_dense,
+                    y_pred_dense,
+                    color="orange",
+                    linewidth=2,
+                    label=model_eq,
+                    linestyle="--",
+                )
             ax2.set_xlabel("x", fontsize=12)
             ax2.set_ylabel("y", fontsize=12)
             ax2.set_title(
@@ -502,22 +562,41 @@ def cell2_plot_constant_model() -> None:
                 label="True Function",
                 alpha=0.7,
             )
-            ax3.axhline(
-                y=b,
-                color="darkgreen",
-                linewidth=2,
-                label=f"h(x) = {b:.3f}",
-                linestyle="--",
-            )
-            # Shade the area between constant and true function.
-            ax3.fill_between(
-                x_dense,
-                y_true_dense,
-                b,
-                alpha=0.3,
-                color="orange",
-                label="Approximation Error",
-            )
+            if model_type == "Constant":
+                ax3.axhline(
+                    y=b,
+                    color="darkgreen",
+                    linewidth=2,
+                    label=model_eq,
+                    linestyle="--",
+                )
+                # Shade the area between constant and true function.
+                ax3.fill_between(
+                    x_dense,
+                    y_true_dense,
+                    b,
+                    alpha=0.3,
+                    color="orange",
+                    label="Approximation Error",
+                )
+            else:  # Linear
+                ax3.plot(
+                    x_dense,
+                    y_pred_dense,
+                    color="orange",
+                    linewidth=2,
+                    label=model_eq,
+                    linestyle="--",
+                )
+                # Shade the area between linear model and true function.
+                ax3.fill_between(
+                    x_dense,
+                    y_true_dense,
+                    y_pred_dense,
+                    alpha=0.3,
+                    color="orange",
+                    label="Approximation Error",
+                )
             ax3.set_xlabel("x", fontsize=12)
             ax3.set_ylabel("y", fontsize=12)
             ax3.set_title(
@@ -536,10 +615,38 @@ def cell2_plot_constant_model() -> None:
             ax4.set_title(
                 "Comments", fontsize=16, fontweight="bold", pad=20
             )
-            # Generate comment text.
+            # Generate comment text based on model type.
+            if model_type == "Constant":
+                observations = (
+                    "Key Observations:\n"
+                    "- Constant model finds best horizontal\n"
+                    "  line (mean of training points)\n"
+                    "- HIGH BIAS: Poor approximation of\n"
+                    "  complex target functions\n"
+                    "- LOW VARIANCE: Very stable across\n"
+                    "  different training sets\n"
+                    "- Orange shaded area shows how poorly\n"
+                    "  the constant approximates the true\n"
+                    "  function"
+                )
+            else:  # Linear
+                observations = (
+                    "Key Observations:\n"
+                    "- Linear model finds best line through\n"
+                    "  training points (least squares)\n"
+                    "- LOWER BIAS: Better approximation\n"
+                    "  than constant for many functions\n"
+                    "- HIGHER VARIANCE: More sensitive to\n"
+                    "  training point locations\n"
+                    "- Orange shaded area shows\n"
+                    "  approximation error\n"
+                    "- Compare with Constant to see\n"
+                    "  bias-variance tradeoff"
+                )
             text_content = (
-                f"Model: h(x) = b\n"
-                f"Learned parameter: b = {b:.4f}\n\n"
+                f"Model Type: {model_type}\n"
+                f"Model: {model_eq}\n"
+                f"Learned parameters: {params_text}\n\n"
                 f"Current Setup:\n"
                 f"  Function: {func_name}\n"
                 f"  epsilon (noise): {epsilon:.2f}\n"
@@ -549,16 +656,7 @@ def cell2_plot_constant_model() -> None:
                 f"Error:\n"
                 f"  E_in = {E_in:.4f}\n"
                 f"  E_out = {E_out:.4f}\n\n"
-                f"Key Observations:\n"
-                f"- Constant model finds best horizontal\n"
-                f"  line (mean of training points)\n"
-                f"- HIGH BIAS: Poor approximation of\n"
-                f"  complex target functions\n"
-                f"- LOW VARIANCE: Very stable across\n"
-                f"  different training sets\n"
-                f"- Orange shaded area shows how poorly\n"
-                f"  the constant approximates the true\n"
-                f"  function\n\n"
+                f"{observations}\n\n"
                 f"Click 'Resample and Relearn' to see\n"
                 f"how the model changes with different\n"
                 f"training data."
@@ -616,7 +714,8 @@ def cell2_plot_constant_model() -> None:
         # Update plot.
         update_plot()
 
-    # Attach observer to button.
+    # Attach observers.
+    model_selector.observe(update_plot, names="value")
     resample_button.on_click(on_resample_clicked)
     # Initial plot.
     update_plot()
@@ -624,11 +723,12 @@ def cell2_plot_constant_model() -> None:
     display(
         ipywidgets.VBox(
             [
-                ipywidgets.Label("Constant Model: h(x) = b"),
+                ipywidgets.Label("Model Comparison: Constant vs Linear"),
                 ipywidgets.Label(
-                    "This model uses the same setup as Cell 1. "
+                    "This cell uses the same setup as Cell 1. "
                     "Adjust parameters in Cell 1 to change the setup."
                 ),
+                model_selector,
                 resample_button,
                 output,
             ]
