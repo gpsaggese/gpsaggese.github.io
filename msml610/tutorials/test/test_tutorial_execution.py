@@ -12,6 +12,8 @@ import os
 from typing import Dict, List, Tuple
 
 import pytest
+# TODO(ai_gp): Use import tqdm
+from tqdm import tqdm
 
 import helpers.hdbg as hdbg
 import helpers.hio as hio
@@ -28,12 +30,15 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 
 
-# TODO(gp): Move this to hjupyter and generalize, e.g., passing a regex.
+# TODO(ai_gp): Inline this function in the caller.
 def _find_paired_notebooks(
     tutorials_dir: str,
 ) -> Tuple[List[str], List[str], List[str]]:
     """
     Find all tutorial Python files and paired Jupyter notebooks.
+
+    This is a wrapper for hjupyte.find_paired_files() with tutorial-specific
+    pattern.
 
     :param tutorials_dir: path to the tutorials directory
     :return: tuple of (python_files, notebook_files, unpaired_notebooks)
@@ -41,45 +46,14 @@ def _find_paired_notebooks(
         - notebook_files: list of .ipynb files that have corresponding .py
         - unpaired_notebooks: list of .ipynb files without corresponding .py
     """
-    hdbg.dassert_path_exists(tutorials_dir)
-    # Find all L*.py files excluding utility files.
-    py_files = hio.listdir(
+    return hjupyte.find_paired_files(
         tutorials_dir,
-        "L*.py",
-        only_files=True,
-        use_relative_paths=False,
-        maxdepth=1,
+        pattern="L*.py",
+        exclude_pattern="_utils.py",
     )
-    py_files = [f for f in py_files if not f.endswith("_utils.py")]
-    py_files = sorted(py_files)
-    # Find all L*.ipynb files.
-    nb_files = hio.listdir(
-        tutorials_dir,
-        "L*.ipynb",
-        only_files=True,
-        use_relative_paths=False,
-        maxdepth=1,
-    )
-    nb_files = sorted(nb_files)
-    # Build set of base names from Python files.
-    py_basenames = set()
-    for py_file in py_files:
-        basename = os.path.basename(py_file)
-        basename = os.path.splitext(basename)[0]
-        py_basenames.add(basename)
-    # Check which notebooks have corresponding .py files.
-    paired_notebooks = []
-    unpaired_notebooks = []
-    for nb_file in nb_files:
-        basename = os.path.basename(nb_file)
-        basename = os.path.splitext(basename)[0]
-        if basename in py_basenames:
-            paired_notebooks.append(nb_file)
-        else:
-            unpaired_notebooks.append(nb_file)
-    return py_files, paired_notebooks, unpaired_notebooks
 
 
+# TODO(ai_gp): Move to hjupyter.
 def _execute_file_with_docker(
     file_path: str,
     *,
@@ -124,8 +98,10 @@ def _execute_file_with_docker(
         elapsed = timer.get_elapsed()
         error_msg = str(e)
         return False, error_msg, elapsed
+    # TODO(ai_gp): Have a single exit point.
 
 
+# TODO(ai_gp): Move to hjupyter.
 def _execute_file_directly(
     file_path: str,
     *,
@@ -199,16 +175,13 @@ class TestTutorialExecution(hunitest.TestCase):
         results = {}
         file_type = "notebook" if is_notebook else "Python script"
         _LOG.info("Executing %d %ss", len(files), file_type)
-        # TODO(ai_gp): Add tqdm progress bar.
-        for idx, file_path in enumerate(files, 1):
+        # Use tqdm progress bar for tracking execution.
+        for file_path in tqdm(
+            files,
+            desc=f"Executing {file_type}s",
+            unit="file",
+        ):
             basename = os.path.basename(file_path)
-            _LOG.info(
-                "Executing %s %d/%d: %s",
-                file_type,
-                idx,
-                len(files),
-                basename,
-            )
             if use_docker:
                 success, error, elapsed = _execute_file_with_docker(
                     file_path,
@@ -222,6 +195,7 @@ class TestTutorialExecution(hunitest.TestCase):
                     is_notebook=is_notebook,
                 )
             results[file_path] = (success, error, elapsed)
+            # Print results.
             status = "SUCCESS" if success else "FAILED"
             _LOG.info(
                 "  %s: %s (%.2f seconds)",
@@ -230,9 +204,10 @@ class TestTutorialExecution(hunitest.TestCase):
                 elapsed,
             )
             if not success:
-                _LOG.warning("  Error: %s", error)
+                _LOG.warning("Error: %s", error)
         return results
 
+    # TODO(ai_gp): Move this to hjupyter.
     def _report_results(
         self,
         py_results: Dict[str, Tuple[bool, str, float]],
@@ -307,88 +282,35 @@ class TestTutorialExecution(hunitest.TestCase):
                 f"See log for details."
             )
 
-    # TODO(ai_gp): Factor out the common code in a helper function that runs
-    # both Python scripts and notebooks, based on a switch "mode", equal to "run_python", "run_notebook"
-    # run_both and passing a is_docker flag.
-    # Then there is a single test method that sets the variables "mode" and "is_docker" and calls the helper function.
-    # Add a max_tests = None or int to limit the number of tests to run.
-    def test1(self) -> None:
+    def _run_tutorial_tests(
+        self,
+        *,
+        mode: str,
+        use_docker: bool,
+        max_tests: int = None,
+    ) -> None:
         """
-        Test execution of Python tutorial scripts only.
-        """
-        # Prepare inputs.
-        tutorials_dir = os.path.join(
-            os.path.dirname(__file__),
-            "..",
-        )
-        tutorials_dir = os.path.abspath(tutorials_dir)
-        use_docker = True
-        # Find files.
-        py_files, _, unpaired_notebooks = _find_paired_notebooks(
-            tutorials_dir
-        )
-        # Assert no unpaired notebooks.
-        hdbg.dassert_eq(
-            len(unpaired_notebooks),
-            0,
-            "Found unpaired notebooks without corresponding .py files:",
-            unpaired_notebooks,
-        )
-        # Run test.
-        py_results = self._execute_files(
-            py_files,
-            working_dir=tutorials_dir,
-            use_docker=use_docker,
-            is_notebook=False,
-        )
-        nb_results = {}
-        # Check outputs.
-        self._report_results(py_results, nb_results)
+        Execute tutorial tests based on specified mode.
 
-    def test2(self) -> None:
+        :param mode: execution mode - "run_python", "run_notebook",
+            or "run_both"
+        :param use_docker: if True, use invoke docker_cmd
+        :param max_tests: if provided, limit number of files to test
         """
-        Test execution of Jupyter notebooks only.
-        """
+        # Validate mode.
+        valid_modes = ["run_python", "run_notebook", "run_both"]
+        hdbg.dassert_in(
+            mode,
+            valid_modes,
+            "Invalid mode:",
+            mode,
+        )
         # Prepare inputs.
         tutorials_dir = os.path.join(
             os.path.dirname(__file__),
             "..",
         )
         tutorials_dir = os.path.abspath(tutorials_dir)
-        use_docker = True
-        # Find files.
-        _, paired_notebooks, unpaired_notebooks = _find_paired_notebooks(
-            tutorials_dir
-        )
-        # Assert no unpaired notebooks.
-        hdbg.dassert_eq(
-            len(unpaired_notebooks),
-            0,
-            "Found unpaired notebooks without corresponding .py files:",
-            unpaired_notebooks,
-        )
-        # Run test.
-        nb_results = self._execute_files(
-            paired_notebooks,
-            working_dir=tutorials_dir,
-            use_docker=use_docker,
-            is_notebook=True,
-        )
-        py_results = {}
-        # Check outputs.
-        self._report_results(py_results, nb_results)
-
-    def test3(self) -> None:
-        """
-        Test execution of both Python scripts and Jupyter notebooks.
-        """
-        # Prepare inputs.
-        tutorials_dir = os.path.join(
-            os.path.dirname(__file__),
-            "..",
-        )
-        tutorials_dir = os.path.abspath(tutorials_dir)
-        use_docker = True
         # Find files.
         py_files, paired_notebooks, unpaired_notebooks = _find_paired_notebooks(
             tutorials_dir
@@ -400,84 +322,39 @@ class TestTutorialExecution(hunitest.TestCase):
             "Found unpaired notebooks without corresponding .py files:",
             unpaired_notebooks,
         )
-        # Run test.
-        py_results = self._execute_files(
-            py_files,
-            working_dir=tutorials_dir,
-            use_docker=use_docker,
-            is_notebook=False,
-        )
-        nb_results = self._execute_files(
-            paired_notebooks,
-            working_dir=tutorials_dir,
-            use_docker=use_docker,
-            is_notebook=True,
-        )
-        # Check outputs.
-        self._report_results(py_results, nb_results)
-
-    def test4(self) -> None:
-        """
-        Test execution of Python scripts directly (no docker).
-        """
-        # Prepare inputs.
-        tutorials_dir = os.path.join(
-            os.path.dirname(__file__),
-            "..",
-        )
-        tutorials_dir = os.path.abspath(tutorials_dir)
-        use_docker = False
-        # Find files.
-        py_files, _, unpaired_notebooks = _find_paired_notebooks(
-            tutorials_dir
-        )
-        # Assert no unpaired notebooks.
-        hdbg.dassert_eq(
-            len(unpaired_notebooks),
-            0,
-            "Found unpaired notebooks without corresponding .py files:",
-            unpaired_notebooks,
-        )
-        # Run test.
-        py_results = self._execute_files(
-            py_files,
-            working_dir=tutorials_dir,
-            use_docker=use_docker,
-            is_notebook=False,
-        )
-        nb_results = {}
-        # Check outputs.
-        self._report_results(py_results, nb_results)
-
-    def test5(self) -> None:
-        """
-        Test execution of notebooks directly (no docker).
-        """
-        # Prepare inputs.
-        tutorials_dir = os.path.join(
-            os.path.dirname(__file__),
-            "..",
-        )
-        tutorials_dir = os.path.abspath(tutorials_dir)
-        use_docker = False
-        # Find files.
-        _, paired_notebooks, unpaired_notebooks = _find_paired_notebooks(
-            tutorials_dir
-        )
-        # Assert no unpaired notebooks.
-        hdbg.dassert_eq(
-            len(unpaired_notebooks),
-            0,
-            "Found unpaired notebooks without corresponding .py files:",
-            unpaired_notebooks,
-        )
-        # Run test.
-        nb_results = self._execute_files(
-            paired_notebooks,
-            working_dir=tutorials_dir,
-            use_docker=use_docker,
-            is_notebook=True,
-        )
+        # Apply max_tests limit if provided.
+        if max_tests is not None:
+            py_files = py_files[:max_tests]
+            paired_notebooks = paired_notebooks[:max_tests]
+        # Run tests based on mode.
         py_results = {}
+        nb_results = {}
+        if mode in ["run_python", "run_both"]:
+            py_results = self._execute_files(
+                py_files,
+                working_dir=tutorials_dir,
+                use_docker=use_docker,
+                is_notebook=False,
+            )
+        if mode in ["run_notebook", "run_both"]:
+            nb_results = self._execute_files(
+                paired_notebooks,
+                working_dir=tutorials_dir,
+                use_docker=use_docker,
+                is_notebook=True,
+            )
         # Check outputs.
         self._report_results(py_results, nb_results)
+
+    def test1(self) -> None:
+        """
+        Test execution of Python tutorial / scripts with / without docker.
+        """
+        #mode = "run_python"
+        #mode = "run_notebook"
+        mode = "run_both"
+        use_docker = True
+        self._run_tutorial_tests(
+            mode,
+            use_docker,
+        )
