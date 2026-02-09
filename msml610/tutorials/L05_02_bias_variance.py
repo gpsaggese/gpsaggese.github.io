@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -171,3 +171,45 @@ utils.cell2_learning_once()
 # %%
 # Display bias-variance decomposition over multiple experiments.
 utils.cell3_learning_bias_variance()
+
+# %% [markdown]
+# ## Cell 4: Learning Plots (Bias-Variance as Function of Training Set Size)
+#
+# This cell shows how bias, variance, and overall error change as we increase
+# the number of training samples. This is a comprehensive view of the
+# bias-variance tradeoff across different dataset sizes.
+#
+# **Purpose**: Visualize the bias-variance decomposition as a function of
+# training set size (N_samples). Shows how more data affects both components
+# of the learning error and demonstrates the classic bias-variance curves.
+#
+# **Parameters**:
+# - `seed`: Random seed for reproducibility (fixed to ensure consistent comparison)
+# - `N_experiments`: Number of experiments to average over for each N_samples value
+# - `max_N_samples`: Maximum number of training samples to test
+#
+# **Error Decomposition**:
+# For a deterministic target function (no noise):
+# - **E_out = Bias² + Variance**
+# - **Bias²**: Squared error between the average model (over all possible training sets) and the true function
+# - **Variance**: Average squared deviation of individual models from the average model
+# - **E_in**: In-sample error on training data
+# - **E_out**: Out-of-sample error on the full function domain
+#
+# **Two plots**:
+# 1. **Constant Model (g_0)**: Shows E_in, E_out, Bias², and Variance as functions of N_samples
+# 2. **Linear Model (g_1)**: Shows E_in, E_out, Bias², and Variance as functions of N_samples
+# 3. **Comments**: Displays the decomposition formula and key observations
+#
+# **Key observations**:
+# - **Constant model**: Has very low variance (almost constant across N_samples) because it's insensitive to training data, but has high bias because it cannot capture the sinusoidal pattern
+# - **Linear model**: Has higher variance (especially with few samples) because it's more flexible and sensitive to training data, but has lower bias because it can better approximate the target function
+# - **As N_samples increases**: Variance decreases for both models (more data leads to more stable fits), while bias remains relatively constant (determined by model capacity)
+# - **E_out decomposition**: You can verify that E_out ≈ Bias² + Variance by comparing the curves
+# - **The bias-variance tradeoff**: Simpler models (constant) have low variance but high bias; more complex models (linear) have higher variance but lower bias
+# - Try increasing N_experiments to get smoother, more stable curves
+# - Try changing max_N_samples to see the trend over larger dataset sizes
+
+# %%
+# Display bias-variance decomposition as a function of N_samples.
+utils.cell4_learning_plots()

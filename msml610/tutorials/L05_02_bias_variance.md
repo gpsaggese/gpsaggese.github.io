@@ -53,7 +53,7 @@
   - Print the in-sample error E_in for both models
   - Print the OOS error E_out for both models
 
-## Cell 2: Learning
+## Cell 3: Learning over multiple training set
 
 - Purpose: Show bias and variance decomposition
 - Visualization:
@@ -76,21 +76,20 @@
   - Print the in-sample error for both models averaged over the N_experiments
   - Print the OOS error for both models over the N_experiments
 
-## Cell 3: Learning
+<start>
+## Cell 4: Learning plots
 
-- Purpose: Show bias and variance decomposition
+- Purpose: Compute bias and variance decomposition changing various variables
 - Visualization:
-  - Same set-up of cell 2
-- This time pick two random points from the sinusoid
-  - Create a widget with N_samples = 2
-  - Create a widget with N_experiments = 20
-  - Fit a constant model g_0 and a line g_1 to the in sample with N_samples
-    points and show all the fitted models over N_experiments, using alpha=.5
+  - Same set-up of cell 3
 - Display:
+  - seed is fixed
   - Plot 3 subgraphs
     - one with the true function and the constant models
     - one with the true function and the linear models
     - one with a comment
+  - Show E_in, E_out, bias, variance for the constant and linear model
+    as function 
   - Title: "Learning"
   - X-axis label: "x"
   - Y-axis label: "f(x)"
