@@ -97,7 +97,11 @@ def cell1_plot_true_target_function() -> None:
     Interactive widget to visualize true target functions with noise.
 
     Shows the unknown target function that we want to learn. Allows selection
-    of different target functions and noise levels.
+    of different target functions and noise levels. Displays four plots:
+    1. True target function
+    2. In-sample data (80% of N samples)
+    3. Out-of-sample data (20% of N samples)
+    4. Key insights and comments
     """
     # Create seed widget with slider and +/- buttons.
     seed_slider, seed_box = mtumsuti.build_widget_control(
@@ -126,6 +130,16 @@ def cell1_plot_true_target_function() -> None:
         initial_value=0.0,
         is_float=True,
     )
+    # Create N widget with slider and +/- buttons.
+    N_slider, N_box = mtumsuti.build_widget_control(
+        name="N",
+        description="N (total samples)",
+        min_val=5,
+        max_val=100,
+        step=5,
+        initial_value=20,
+        is_float=False,
+    )
     output = ipywidgets.Output()
 
     def update_plot(change: dict = None) -> None:
@@ -140,53 +154,146 @@ def cell1_plot_true_target_function() -> None:
             seed = seed_slider.value
             func_name = function_dropdown.value
             epsilon = epsilon_slider.value
-            # Generate x values.
-            x = np.linspace(-1, 1, 200)
+            N = N_slider.value
+            # Generate x values for true function (dense).
+            x_dense = np.linspace(-1, 1, 200)
             # Get target function.
             target_func = TARGET_FUNCTIONS[func_name]
-            y_true = target_func(x)
+            y_true_dense = target_func(x_dense)
             # Ensure y_true is clipped to [-1, 1] range.
-            y_true = np.clip(y_true, -1.0, 1.0)
-            # Add noise for visualization if epsilon > 0.
+            y_true_dense = np.clip(y_true_dense, -1.0, 1.0)
+            # Generate sampled data points.
+            np.random.seed(seed)
+            # Sample N points uniformly from [-1, 1].
+            x_samples = np.random.uniform(-1, 1, N)
+            x_samples = np.sort(x_samples)
+            y_samples = target_func(x_samples)
+            y_samples = np.clip(y_samples, -1.0, 1.0)
+            # Add noise to samples.
             if epsilon > 0:
-                np.random.seed(seed)
-                y_noisy = y_true + np.random.normal(0, epsilon, len(x))
+                y_samples_noisy = y_samples + np.random.normal(0, epsilon, N)
             else:
-                y_noisy = y_true
-            # Create plot.
-            fig, ax = plt.subplots(figsize=(10, 6))
-            # Plot the true function.
+                y_samples_noisy = y_samples
+            # Split into in-sample (80%) and out-of-sample (20%).
+            np.random.seed(seed)
+            indices = np.arange(N)
+            np.random.shuffle(indices)
+            n_train = int(0.8 * N)
+            train_indices = indices[:n_train]
+            test_indices = indices[n_train:]
+            # In-sample data.
+            x_train = x_samples[train_indices]
+            y_train = y_samples_noisy[train_indices]
+            # Out-of-sample data.
+            x_test = x_samples[test_indices]
+            y_test = y_samples_noisy[test_indices]
+            # Create 2x2 subplot layout.
+            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(
+                2, 2, figsize=(14, 10)
+            )
+            # Plot 1: True target function.
+            # Plot the true function (noiseless).
+            ax1.plot(
+                x_dense,
+                y_true_dense,
+                "b-",
+                linewidth=2,
+                label="True Function (noiseless)",
+            )
+            # Add noisy function if epsilon > 0.
             if epsilon > 0:
-                ax.plot(x, y_true, "b-", linewidth=2, label="True Function (noiseless)")
-                ax.plot(x, y_noisy, "b-", linewidth=1, alpha=0.5, label="With Noise")
-            else:
-                ax.plot(x, y_true, "b-", linewidth=2, label="True Function")
-            # Format plot.
-            ax.set_xlabel("x", fontsize=12)
-            ax.set_ylabel("f(x)", fontsize=12)
-            ax.set_title("True Target Function", fontsize=14, fontweight="bold")
-            ax.grid(True, alpha=0.3)
-            ax.axhline(y=0, color="k", linewidth=0.5)
-            ax.axvline(x=0, color="k", linewidth=0.5)
-            ax.legend(fontsize=10)
-            ax.set_xlim([-1, 1])
-            # Set y-axis limits to show full range with room for noise.
-            ax.set_ylim([-1.5, 1.5])
-            # Add comment box.
-            comment = (
-                "This is the unknown target function we want to learn.\n"
-                "In real-world problems, we don't have access to this\n"
-                "complete curve - we only see a few sampled points."
+                y_noisy_dense = y_true_dense + np.random.normal(0, epsilon, len(x_dense))
+                ax1.plot(
+                    x_dense,
+                    y_noisy_dense,
+                    "b-",
+                    linewidth=1,
+                    alpha=0.5,
+                    label="With Noise",
+                )
+            ax1.set_xlabel("x", fontsize=12)
+            ax1.set_ylabel("f(x)", fontsize=12)
+            ax1.set_title(
+                "True Target Function", fontsize=14, fontweight="bold"
             )
-            ax.text(
-                0.02,
-                0.98,
-                comment,
-                transform=ax.transAxes,
-                fontsize=10,
-                verticalalignment="top",
-                bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
+            ax1.grid(True, alpha=0.3)
+            ax1.axhline(y=0, color="k", linewidth=0.5)
+            ax1.axvline(x=0, color="k", linewidth=0.5)
+            ax1.legend(fontsize=10)
+            ax1.set_xlim([-1, 1])
+            ax1.set_ylim([-1.5, 1.5])
+            # Plot 2: In-sample data.
+            ax2.scatter(
+                x_train,
+                y_train,
+                color="green",
+                s=50,
+                alpha=0.7,
+                label=f"In-Sample (n={len(x_train)})",
+                zorder=5,
             )
+            ax2.set_xlabel("x", fontsize=12)
+            ax2.set_ylabel("f(x)", fontsize=12)
+            ax2.set_title(
+                "In-Sample Data (80%)", fontsize=14, fontweight="bold"
+            )
+            ax2.grid(True, alpha=0.3)
+            ax2.axhline(y=0, color="k", linewidth=0.5)
+            ax2.axvline(x=0, color="k", linewidth=0.5)
+            ax2.legend(fontsize=10)
+            ax2.set_xlim([-1, 1])
+            ax2.set_ylim([-1.5, 1.5])
+            # Plot 3: Out-of-sample data.
+            ax3.scatter(
+                x_test,
+                y_test,
+                color="red",
+                s=50,
+                alpha=0.7,
+                label=f"Out-of-Sample (n={len(x_test)})",
+                zorder=5,
+            )
+            ax3.set_xlabel("x", fontsize=12)
+            ax3.set_ylabel("f(x)", fontsize=12)
+            ax3.set_title(
+                "Out-of-Sample Data (20%)", fontsize=14, fontweight="bold"
+            )
+            ax3.grid(True, alpha=0.3)
+            ax3.axhline(y=0, color="k", linewidth=0.5)
+            ax3.axvline(x=0, color="k", linewidth=0.5)
+            ax3.legend(fontsize=10)
+            ax3.set_xlim([-1, 1])
+            ax3.set_ylim([-1.5, 1.5])
+            # Plot 4: Comments.
+            ax4.axis("off")
+            ax4.set_title(
+                "Comments", fontsize=16, fontweight="bold", pad=20
+            )
+            # Generate comment text.
+            text_content = (
+                f"Parameters:\n"
+                f"  Function: {func_name}\n"
+                f"  epsilon (noise): {epsilon:.2f}\n"
+                f"  N (total samples): {N}\n"
+                f"  seed: {seed}\n\n"
+                f"Data Split:\n"
+                f"  In-sample: {len(x_train)} points (80%)\n"
+                f"  Out-of-sample: {len(x_test)} points (20%)\n\n"
+                f"Key Observations:\n"
+                f"- The true function (blue curve) is\n"
+                f"  the unknown target we want to learn\n"
+                f"- In practice, we only observe a few\n"
+                f"  noisy samples from this function\n"
+                f"- Green points are used for training\n"
+                f"- Red points are held out for testing\n"
+                f"- The goal is to learn from green points\n"
+                f"  and generalize to red points\n\n"
+                f"Try varying:\n"
+                f"- N: more samples → better learning\n"
+                f"- epsilon: more noise → harder learning\n"
+                f"- seed: different random samples"
+            )
+            mtumsuti.add_fitted_text_box(ax4, text_content, max_fontsize=14, min_fontsize=10)
             plt.tight_layout()
             plt.show()
 
@@ -194,6 +301,7 @@ def cell1_plot_true_target_function() -> None:
     seed_slider.observe(update_plot, names="value")
     function_dropdown.observe(update_plot, names="value")
     epsilon_slider.observe(update_plot, names="value")
+    N_slider.observe(update_plot, names="value")
     # Initial plot.
     update_plot()
     # Display widgets.
@@ -201,194 +309,6 @@ def cell1_plot_true_target_function() -> None:
         ipywidgets.VBox(
             [
                 ipywidgets.Label("Select the true target function and noise level:"),
-                seed_box,
-                function_dropdown,
-                epsilon_box,
-                output,
-            ]
-        )
-    )
-
-
-# #############################################################################
-# Cell 2: Sampled Data - In-Sample and Out-of-Sample
-# #############################################################################
-
-
-def _plot_sampled_data(
-    seed: int, func_name: str, epsilon: float, N: int
-) -> None:
-    """
-    Plot sampled data with in-sample and out-of-sample split.
-
-    :param seed: Random seed for reproducibility
-    :param func_name: Name of target function
-    :param epsilon: Noise standard deviation
-    :param N: Total number of samples
-    """
-    # Set random seed.
-    np.random.seed(seed)
-    # Calculate split sizes (80-20).
-    N_in = int(0.8 * N)
-    N_out = N - N_in
-    # Get target function.
-    target_func = TARGET_FUNCTIONS[func_name]
-    # Generate continuous x for true function.
-    x_true = np.linspace(-1, 1, 200)
-    y_true = target_func(x_true)
-    y_true = np.clip(y_true, -1.0, 1.0)
-    # Generate random x samples for in-sample and out-of-sample.
-    x_samples = np.random.uniform(-1, 1, N)
-    # Sort samples to split them properly.
-    x_samples_sorted_idx = np.argsort(x_samples)
-    x_samples_sorted = x_samples[x_samples_sorted_idx]
-    # Split into in-sample (first 80%) and out-of-sample (last 20%).
-    x_in = x_samples_sorted[:N_in]
-    x_out = x_samples_sorted[N_in:]
-    # Generate y values with noise.
-    y_in = target_func(x_in) + np.random.normal(0, epsilon, N_in)
-    y_out = target_func(x_out) + np.random.normal(0, epsilon, N_out)
-    # Create visualization with 2 subplots.
-    fig, (ax1, ax2) = plt.subplots(
-        1, 2, figsize=(14, 5), gridspec_kw={"width_ratios": [1.5, 1]}
-    )
-    # Plot 1: Function and sampled data.
-    # Plot true function.
-    ax1.plot(x_true, y_true, "b-", linewidth=2, label="True Function", alpha=0.7)
-    # Plot in-sample points.
-    ax1.scatter(
-        x_in,
-        y_in,
-        c="green",
-        s=50,
-        alpha=0.6,
-        edgecolors="black",
-        linewidth=0.5,
-        label=f"In-Sample (N={N_in})",
-        zorder=5,
-    )
-    # Plot out-of-sample points.
-    ax1.scatter(
-        x_out,
-        y_out,
-        c="red",
-        s=50,
-        alpha=0.6,
-        edgecolors="black",
-        linewidth=0.5,
-        label=f"Out-of-Sample (N={N_out})",
-        zorder=5,
-    )
-    # Format plot.
-    ax1.set_xlabel("x", fontsize=12)
-    ax1.set_ylabel("f(x)", fontsize=12)
-    ax1.set_title(
-        f"Sampled Data: In-Sample vs Out-of-Sample\n{func_name}, epsilon={epsilon:.2f}, seed={seed}",
-        fontsize=14,
-        fontweight="bold",
-    )
-    ax1.grid(True, alpha=0.3)
-    ax1.axhline(y=0, color="k", linewidth=0.5)
-    ax1.axvline(x=0, color="k", linewidth=0.5)
-    ax1.legend(fontsize=10, loc="best")
-    ax1.set_xlim([-1, 1])
-    ax1.set_ylim([-1.5, 1.5])
-    # Plot 2: Interpretation box.
-    ax2.axis("off")
-    ax2.set_title("Interpretation", fontsize=14, fontweight="bold", pad=20)
-    # Generate interpretation text.
-    text_content = (
-        f"Parameters:\n"
-        f"  Function: {func_name}\n"
-        f"  N (total): {N}\n"
-        f"  N (in-sample): {N_in} (80%)\n"
-        f"  N (out-of-sample): {N_out} (20%)\n"
-        f"  epsilon: {epsilon:.2f}\n"
-        f"  seed: {seed}\n\n"
-        f"Key Observations:\n"
-        f"• Green points: Training data\n"
-        f"  (used to fit the model)\n"
-        f"• Red points: Test data\n"
-        f"  (used to evaluate the model)\n\n"
-        f"Learning Goal:\n"
-        f"We want to fit a model to the\n"
-        f"in-sample (green) points that\n"
-        f"generalizes well to out-of-sample\n"
-        f"(red) points.\n\n"
-        f"The challenge: With limited data,\n"
-        f"we must balance fitting the\n"
-        f"training data vs. generalizing\n"
-        f"to unseen data."
-    )
-    ax2.text(
-        0.05,
-        0.95,
-        text_content,
-        transform=ax2.transAxes,
-        fontsize=10,
-        verticalalignment="top",
-        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.8),
-        family="monospace",
-    )
-    plt.tight_layout()
-    plt.show()
-
-
-def cell2_plot_sampled_data_interactive() -> None:
-    """
-    Interactive widget to visualize sampled data with in-sample/out-of-sample split.
-
-    Shows how data is split into training (in-sample) and test (out-of-sample) sets.
-    """
-    # Create interactive widgets.
-    seed_slider, seed_box = mtumsuti.build_widget_control(
-        name="seed",
-        description="Random Seed",
-        min_val=0,
-        max_val=100,
-        step=1,
-        initial_value=42,
-        is_float=False,
-    )
-    function_dropdown = ipywidgets.Dropdown(
-        options=list(TARGET_FUNCTIONS.keys()),
-        value="Slow Sinusoid",
-        description="Function:",
-        style={"description_width": "initial"},
-    )
-    epsilon_slider, epsilon_box = mtumsuti.build_widget_control(
-        name="epsilon",
-        description="epsilon (noise std dev)",
-        min_val=0.0,
-        max_val=1.0,
-        step=0.05,
-        initial_value=0.1,
-        is_float=True,
-    )
-    N_slider, N_box = mtumsuti.build_widget_control(
-        name="N",
-        description="N (total samples)",
-        min_val=5,
-        max_val=100,
-        step=5,
-        initial_value=20,
-        is_float=False,
-    )
-    # Create interactive output.
-    output = ipywidgets.interactive_output(
-        _plot_sampled_data,
-        {
-            "seed": seed_slider,
-            "func_name": function_dropdown,
-            "epsilon": epsilon_slider,
-            "N": N_slider,
-        },
-    )
-    # Display widgets.
-    display(
-        ipywidgets.VBox(
-            [
-                ipywidgets.Label("Configure sampling parameters:"),
                 seed_box,
                 function_dropdown,
                 epsilon_box,

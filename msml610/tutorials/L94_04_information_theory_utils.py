@@ -349,8 +349,6 @@ def cell3_plot_binary_entropy_interactive(
     )
     plt.show()
 
-# TODO(ai_gp): Use mtumsuti.build_widget_control like in cell1_draw_bin_with_marbles_interactive
-# in all the functions instead of using ipywidget.FloatSlides, IntSlider
 
 def cell3_create_binary_entropy_widget() -> None:
     """
@@ -378,7 +376,7 @@ def cell3_create_binary_entropy_widget() -> None:
     )
     # Create interactive output.
     output = ipywidgets.interactive_output(
-        lambda p: cell3_plot_binary_entropy_interactive(p, n=100, figsize=None),
+        lambda p: cell3_plot_binary_entropy_interactive(p=p, n=100, figsize=None),
         {"p": p_slider},
     )
     # Display widgets.
@@ -614,26 +612,37 @@ def cell4_create_joint_entropy_widget() -> None:
     - Slider for sample size (10 to 500)
     - Fixed figure size
     """
-    interact(
-        cell4_plot_joint_entropy_interactive,
-        dependence=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Dependence:",
-            style={"description_width": "initial"},
-        ),
-        n_samples=IntSlider(
-            min=10,
-            max=500,
-            step=10,
-            value=300,
-            description="Sample size:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    dependence_init = 0.5
+    n_samples_init = 300
+    # Create slider for dependence.
+    dependence_slider, dependence_box = mtumsuti.build_widget_control(
+        name="dependence",
+        description="Dependence",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=dependence_init,
+        is_float=True,
     )
+    # Create slider for sample size.
+    n_samples_slider, n_samples_box = mtumsuti.build_widget_control(
+        name="n_samples",
+        description="Sample size",
+        min_val=10,
+        max_val=500,
+        step=10,
+        initial_value=n_samples_init,
+        is_float=False,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda dependence, n_samples: cell4_plot_joint_entropy_interactive(
+            dependence=dependence, n_samples=n_samples, figsize=None
+        ),
+        {"dependence": dependence_slider, "n_samples": n_samples_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([dependence_box, n_samples_box, output]))
 
 
 def cell4_generate_joint_entropy_animation() -> None:
@@ -902,18 +911,26 @@ def cell5_create_conditional_entropy_widget() -> None:
     - Slider for dependence (0.0 to 1.0)
     - Fixed figure size
     """
-    interact(
-        cell5_plot_conditional_entropy_interactive,
-        dependence=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Dependence:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    dependence_init = 0.5
+    # Create slider for dependence.
+    dependence_slider, dependence_box = mtumsuti.build_widget_control(
+        name="dependence",
+        description="Dependence",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=dependence_init,
+        is_float=True,
     )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda dependence: cell5_plot_conditional_entropy_interactive(
+            dependence=dependence, figsize=None
+        ),
+        {"dependence": dependence_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([dependence_box, output]))
 
 
 def cell5_generate_conditional_entropy_animation() -> None:
@@ -1602,24 +1619,33 @@ def cell6_create_mutual_information_venn_widget() -> None:
     - Dropdown for scenario selection (Binary, Weather)
     - Fixed figure size
     """
-    interact(
-        cell6_plot_mutual_information_venn_interactive,
-        dependence=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Dependence:",
-            style={"description_width": "initial"},
-        ),
-        scenario=widgets.Dropdown(
-            options=["Binary", "Weather"],
-            value="Binary",
-            description="Scenario:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    dependence_init = 0.5
+    # Create slider for dependence.
+    dependence_slider, dependence_box = mtumsuti.build_widget_control(
+        name="dependence",
+        description="Dependence",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=dependence_init,
+        is_float=True,
     )
+    # Create dropdown for scenario selection.
+    scenario_dropdown = ipywidgets.Dropdown(
+        options=["Binary", "Weather"],
+        value="Binary",
+        description="Scenario:",
+        style={"description_width": "initial"},
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda dependence, scenario: cell6_plot_mutual_information_venn_interactive(
+            dependence=dependence, scenario=scenario, figsize=None
+        ),
+        {"dependence": dependence_slider, "scenario": scenario_dropdown},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([dependence_box, scenario_dropdown, output]))
 
 
 def cell6_create_mutual_info_correlation_widget() -> None:
@@ -1634,18 +1660,26 @@ def cell6_create_mutual_info_correlation_widget() -> None:
     - Slider for correlation (0.0 to 1.0)
     - Fixed figure size
     """
-    interact(
-        cell6_plot_mutual_info_interactive,
-        correlation=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Correlation:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    correlation_init = 0.5
+    # Create slider for correlation.
+    correlation_slider, correlation_box = mtumsuti.build_widget_control(
+        name="correlation",
+        description="Correlation",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=correlation_init,
+        is_float=True,
     )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda correlation: cell6_plot_mutual_info_interactive(
+            correlation=correlation, figsize=None
+        ),
+        {"correlation": correlation_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([correlation_box, output]))
 
 
 def cell6_generate_mutual_info_venn_binary_animation() -> None:
@@ -2086,26 +2120,37 @@ def cell7_create_kl_divergence_widget() -> None:
     - Slider for Q(outcome=1) (0.05 to 0.95)
     - Fixed figure size
     """
-    interact(
-        cell7_plot_kl_divergence_interactive,
-        p1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.7,
-            description="P(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        q1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.5,
-            description="Q(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    p1_init = 0.7
+    q1_init = 0.5
+    # Create slider for P(outcome=1).
+    p1_slider, p1_box = mtumsuti.build_widget_control(
+        name="p1",
+        description="P(outcome=1)",
+        min_val=0.05,
+        max_val=0.95,
+        step=0.05,
+        initial_value=p1_init,
+        is_float=True,
     )
+    # Create slider for Q(outcome=1).
+    q1_slider, q1_box = mtumsuti.build_widget_control(
+        name="q1",
+        description="Q(outcome=1)",
+        min_val=0.05,
+        max_val=0.95,
+        step=0.05,
+        initial_value=q1_init,
+        is_float=True,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda p1, q1: cell7_plot_kl_divergence_interactive(
+            p1=p1, q1=q1, figsize=None
+        ),
+        {"p1": p1_slider, "q1": q1_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([p1_box, q1_box, output]))
 
 
 def cell7_generate_kl_divergence_animation() -> None:
@@ -2390,26 +2435,37 @@ def cell8_create_cross_entropy_widget() -> None:
     - Slider for Q(outcome=1) (0.05 to 0.95)
     - Fixed figure size
     """
-    interact(
-        cell8_plot_cross_entropy_interactive,
-        p1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.7,
-            description="P(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        q1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.5,
-            description="Q(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    p1_init = 0.7
+    q1_init = 0.5
+    # Create slider for P(outcome=1).
+    p1_slider, p1_box = mtumsuti.build_widget_control(
+        name="p1",
+        description="P(outcome=1)",
+        min_val=0.05,
+        max_val=0.95,
+        step=0.05,
+        initial_value=p1_init,
+        is_float=True,
     )
+    # Create slider for Q(outcome=1).
+    q1_slider, q1_box = mtumsuti.build_widget_control(
+        name="q1",
+        description="Q(outcome=1)",
+        min_val=0.05,
+        max_val=0.95,
+        step=0.05,
+        initial_value=q1_init,
+        is_float=True,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda p1, q1: cell8_plot_cross_entropy_interactive(
+            p1=p1, q1=q1, figsize=None
+        ),
+        {"p1": p1_slider, "q1": q1_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([p1_box, q1_box, output]))
 
 
 def cell8_generate_cross_entropy_animation() -> None:
@@ -2973,24 +3029,33 @@ def cell9_create_data_processing_inequality_widget() -> None:
     - Dropdown for scenario selection (Compression, Quantization, Binary)
     - Fixed figure size
     """
-    interact(
-        cell9_plot_data_processing_inequality_interactive,
-        noise_level=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.2,
-            description="Noise Level:",
-            style={"description_width": "initial"},
-        ),
-        scenario=widgets.Dropdown(
-            options=["Compression", "Quantization", "Binary"],
-            value="Compression",
-            description="Scenario:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    noise_level_init = 0.2
+    # Create slider for noise level.
+    noise_level_slider, noise_level_box = mtumsuti.build_widget_control(
+        name="noise_level",
+        description="Noise Level",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=noise_level_init,
+        is_float=True,
     )
+    # Create dropdown for scenario selection.
+    scenario_dropdown = ipywidgets.Dropdown(
+        options=["Compression", "Quantization", "Binary"],
+        value="Compression",
+        description="Scenario:",
+        style={"description_width": "initial"},
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda noise_level, scenario: cell9_plot_data_processing_inequality_interactive(
+            noise_level=noise_level, scenario=scenario, figsize=None
+        ),
+        {"noise_level": noise_level_slider, "scenario": scenario_dropdown},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([noise_level_box, scenario_dropdown, output]))
 
 
 def cell9_generate_data_processing_inequality_animation() -> None:
@@ -3332,21 +3397,26 @@ def cell10_create_mdl_widget() -> None:
     - Fixed noise level (0.3)
     - Fixed figure size
     """
-    interact(
-        cell10_plot_mdl_interactive,
-        degree=IntSlider(
-            min=1,
-            max=8,
-            step=1,
-            value=3,
-            description="Polynomial Degree:",
-            style={"description_width": "initial"},
-        ),
-        n_samples=fixed(50),
-        true_degree=fixed(3),
-        noise_level=fixed(0.3),
-        figsize=fixed(None),
+    degree_init = 3
+    # Create slider for polynomial degree.
+    degree_slider, degree_box = mtumsuti.build_widget_control(
+        name="degree",
+        description="Polynomial Degree",
+        min_val=1,
+        max_val=8,
+        step=1,
+        initial_value=degree_init,
+        is_float=False,
     )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda degree: cell10_plot_mdl_interactive(
+            degree=degree, n_samples=50, true_degree=3, noise_level=0.3, figsize=None
+        ),
+        {"degree": degree_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([degree_box, output]))
 
 
 def cell10_generate_mdl_animation() -> None:
@@ -3753,28 +3823,35 @@ def cell11_create_kolmogorov_complexity_widget() -> None:
     - Dropdown for string length selection
     - Fixed figure size
     """
-    interact(
-        cell11_plot_kolmogorov_complexity_interactive,
-        string_type=widgets.Dropdown(
-            options=[
-                "All Zeros",
-                "Repeating 01",
-                "Fibonacci",
-                "Random",
-                "Semi-random",
-            ],
-            value="Random",
-            description="String Type:",
-            style={"description_width": "initial"},
-        ),
-        length=widgets.Dropdown(
-            options=[16, 32, 64, 128],
-            value=64,
-            description="String Length:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    # Create dropdown for string type selection.
+    string_type_dropdown = ipywidgets.Dropdown(
+        options=[
+            "All Zeros",
+            "Repeating 01",
+            "Fibonacci",
+            "Random",
+            "Semi-random",
+        ],
+        value="Random",
+        description="String Type:",
+        style={"description_width": "initial"},
     )
+    # Create dropdown for string length selection.
+    length_dropdown = ipywidgets.Dropdown(
+        options=[16, 32, 64, 128],
+        value=64,
+        description="String Length:",
+        style={"description_width": "initial"},
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda string_type, length: cell11_plot_kolmogorov_complexity_interactive(
+            string_type=string_type, length=length, figsize=None
+        ),
+        {"string_type": string_type_dropdown, "length": length_dropdown},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([string_type_dropdown, length_dropdown, output]))
 
 
 def cell11_generate_kolmogorov_complexity_animation() -> None:
