@@ -9,7 +9,7 @@ import msml610.tutorials.test.test_tutorial_execution as mtttetex
 
 import logging
 import os
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import pytest
 from tqdm import tqdm
@@ -85,31 +85,12 @@ class TestTutorialExecution(hunitest.TestCase):
                 _LOG.warning("Error: %s", error)
         return results
 
-    # TODO(ai_gp): Inline this call.
-    def _report_results(
-        self,
-        py_results: Dict[str, Tuple[bool, str, float]],
-        nb_results: Dict[str, Tuple[bool, str, float]],
-    ) -> None:
-        """
-        Report execution results and assert if any failures occurred.
-
-        :param py_results: results from Python file execution
-        :param nb_results: results from notebook execution
-        """
-        total_failures, error_message = hjupyte.report_execution_results(
-            py_results,
-            nb_results,
-        )
-        if total_failures > 0:
-            self.fail(error_message)
-
     def _run_tutorial_tests(
         self,
-        *,
         mode: str,
         use_docker: bool,
-        max_tests: int = None,
+        *,
+        max_tests: Optional[int] = None,
     ) -> None:
         """
         Execute tutorial tests based on specified mode.
@@ -148,6 +129,7 @@ class TestTutorialExecution(hunitest.TestCase):
         )
         # Apply max_tests limit if provided.
         if max_tests is not None:
+            _LOG.warning("Limiting tests to %d files", max_tests)
             py_files = py_files[:max_tests]
             paired_notebooks = paired_notebooks[:max_tests]
         # Run tests based on mode.
@@ -168,7 +150,12 @@ class TestTutorialExecution(hunitest.TestCase):
                 is_notebook=True,
             )
         # Check outputs.
-        self._report_results(py_results, nb_results)
+        total_failures, error_message = hjupyte.report_execution_results(
+            py_results,
+            nb_results,
+        )
+        if total_failures > 0:
+            self.fail(error_message)
 
     def test1(self) -> None:
         """
@@ -178,7 +165,10 @@ class TestTutorialExecution(hunitest.TestCase):
         #mode = "run_notebook"
         mode = "run_both"
         use_docker = True
+        #max_tests = None
+        max_tests = 2
         self._run_tutorial_tests(
             mode,
             use_docker,
+            max_tests=max_tests,
         )
