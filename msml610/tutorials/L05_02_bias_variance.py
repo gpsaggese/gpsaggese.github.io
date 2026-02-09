@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -137,7 +137,7 @@ utils.cell2_learning_once()
 # **Parameters**:
 # - `seed`: Random seed for reproducibility
 # - `N_samples`: Number of training points per experiment (default: 2)
-# - `N_experiments`: Number of different training sets to generate (default: 20)
+# - `N_experiments`: Number of different training sets to generate (default: 100)
 #
 # **Target Function**:
 # - f(x) = sin(pi*x) for x in [-1, 1]
