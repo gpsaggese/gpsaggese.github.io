@@ -1047,10 +1047,6 @@ def cell5_learning_with_noise() -> None:
             e_out_const_list = []
             e_out_linear_list = []
 
-            # Storage for noisy training data to visualize.
-            all_x_train = []
-            all_y_train_noisy = []
-
             # Run N_experiments with different random training sets.
             for _ in range(n_experiments):
                 # Generate training data by sampling random points.
@@ -1059,10 +1055,6 @@ def cell5_learning_with_noise() -> None:
                 y_train_clean = target_function(x_train)
                 # Add Gaussian noise to training data.
                 y_train = y_train_clean + np.random.normal(0, noise_std, n_samples)
-
-                # Store noisy training data for visualization.
-                all_x_train.extend(x_train)
-                all_y_train_noisy.extend(y_train)
 
                 # Fit constant model.
                 b = fit_constant_model(x_train, y_train)
@@ -1102,19 +1094,21 @@ def cell5_learning_with_noise() -> None:
             # Plot 1: True function vs all Constant models.
             ax1 = axes[0]
             ax1.plot(x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10)
-            # Plot noisy training data as scatter points.
+            # Plot noisy versions of the function as continuous curves.
             if noise_std > 0:
-                ax1.scatter(
-                    all_x_train,
-                    all_y_train_noisy,
-                    color="cyan",
-                    alpha=0.6,
-                    s=20,
-                    label="Noisy training data",
-                    zorder=5,
-                    edgecolors="darkblue",
-                    linewidths=0.5,
-                )
+                # Generate a few noisy realizations of the full function.
+                n_noisy_curves = 5
+                for i in range(n_noisy_curves):
+                    y_noisy = y_true + np.random.normal(0, noise_std, len(y_true))
+                    ax1.plot(
+                        x_dense,
+                        y_noisy,
+                        color="cyan",
+                        alpha=0.4,
+                        linewidth=1.5,
+                        zorder=5,
+                        label="f(x) + noise" if i == 0 else "",
+                    )
             # Plot all constant models with transparency.
             for b in const_models:
                 ax1.axhline(y=b, color="green", alpha=0.3, linewidth=1)
@@ -1144,19 +1138,21 @@ def cell5_learning_with_noise() -> None:
             # Plot 2: True function vs all Linear models.
             ax2 = axes[1]
             ax2.plot(x_dense, y_true, "b-", linewidth=3, label="True f(x)", zorder=10)
-            # Plot noisy training data as scatter points.
+            # Plot noisy versions of the function as continuous curves.
             if noise_std > 0:
-                ax2.scatter(
-                    all_x_train,
-                    all_y_train_noisy,
-                    color="cyan",
-                    alpha=0.6,
-                    s=20,
-                    label="Noisy training data",
-                    zorder=5,
-                    edgecolors="darkblue",
-                    linewidths=0.5,
-                )
+                # Generate a few noisy realizations of the full function.
+                n_noisy_curves = 5
+                for i in range(n_noisy_curves):
+                    y_noisy = y_true + np.random.normal(0, noise_std, len(y_true))
+                    ax2.plot(
+                        x_dense,
+                        y_noisy,
+                        color="cyan",
+                        alpha=0.4,
+                        linewidth=1.5,
+                        zorder=5,
+                        label="f(x) + noise" if i == 0 else "",
+                    )
             # Plot all linear models with transparency.
             for a, b_linear in linear_models:
                 y_linear = a * x_dense + b_linear
