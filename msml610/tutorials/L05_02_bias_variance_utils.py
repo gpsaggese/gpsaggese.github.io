@@ -84,6 +84,234 @@ def compute_approximation_error(
 
 
 # #############################################################################
+# Helper Functions
+# #############################################################################
+
+
+def generate_training_data(
+    n_samples: int,
+    noise_std: float = 0.0,
+    x_range: Tuple[float, float] = (-1, 1),
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Generate random training data from the target function with optional noise.
+
+    :param n_samples: Number of training points to generate
+    :param noise_std: Standard deviation of Gaussian noise (default 0.0)
+    :param x_range: Range for uniform sampling of x values
+    :return: Tuple of (x_train, y_train) arrays
+    """
+    x_train = np.random.uniform(x_range[0], x_range[1], n_samples)
+    x_train = np.sort(x_train)
+    y_train = target_function(x_train)
+    if noise_std > 0:
+        y_train = y_train + np.random.normal(0, noise_std, n_samples)
+    return x_train, y_train
+
+
+def fit_models_and_predict(
+    x_train: np.ndarray, y_train: np.ndarray, x_dense: np.ndarray
+) -> Tuple[float, np.ndarray, Tuple[float, float], np.ndarray]:
+    """
+    Fit constant and linear models, generate predictions on dense grid.
+
+    :param x_train: Training x values
+    :param y_train: Training y values
+    :param x_dense: Dense x values for prediction
+    :return: Tuple of (b, y_const_dense, (a, b_linear), y_linear_dense)
+    """
+    # Fit constant model.
+    b = fit_constant_model(x_train, y_train)
+    y_const_dense = np.full_like(x_dense, b)
+
+    # Fit linear model.
+    a, b_linear = fit_linear_model(x_train, y_train)
+    y_linear_dense = a * x_dense + b_linear
+
+    return b, y_const_dense, (a, b_linear), y_linear_dense
+
+
+def compute_all_errors(
+    x_train: np.ndarray,
+    y_train: np.ndarray,
+    x_dense: np.ndarray,
+    y_true: np.ndarray,
+    y_const_train: np.ndarray,
+    y_const_dense: np.ndarray,
+    y_linear_train: np.ndarray,
+    y_linear_dense: np.ndarray,
+) -> Tuple[float, float, float, float]:
+    """
+    Compute all error metrics (E_in and E_out for both models).
+
+    :param x_train: Training x values
+    :param y_train: Training y values
+    :param x_dense: Dense x values
+    :param y_true: True function values on dense grid
+    :param y_const_train: Constant model predictions on training data
+    :param y_const_dense: Constant model predictions on dense grid
+    :param y_linear_train: Linear model predictions on training data
+    :param y_linear_dense: Linear model predictions on dense grid
+    :return: Tuple of (e_in_const, e_in_linear, e_out_const, e_out_linear)
+    """
+    # Compute in-sample error E_in (on training data).
+    e_in_const = compute_approximation_error(x_train, y_train, y_const_train)
+    e_in_linear = compute_approximation_error(x_train, y_train, y_linear_train)
+
+    # Compute out-of-sample error E_out (on full dense grid).
+    e_out_const = compute_approximation_error(x_dense, y_true, y_const_dense)
+    e_out_linear = compute_approximation_error(x_dense, y_true, y_linear_dense)
+
+    return e_in_const, e_in_linear, e_out_const, e_out_linear
+
+
+def setup_model_comparison_axis(
+    ax: plt.Axes,
+    title: str,
+    x_label: str = "x",
+    y_label: str = "f(x)",
+    y_lim: Tuple[float, float] = (-1.5, 1.5),
+    add_origin_lines: bool = True,
+) -> None:
+    """
+    Setup standard axis formatting for model comparison plots.
+
+    :param ax: Matplotlib axis to configure
+    :param title: Plot title
+    :param x_label: Label for x-axis
+    :param y_label: Label for y-axis
+    :param y_lim: Y-axis limits
+    :param add_origin_lines: Whether to add horizontal/vertical lines at origin
+    """
+    ax.set_xlabel(x_label, fontsize=12)
+    ax.set_ylabel(y_label, fontsize=12)
+    ax.set_ylim(y_lim)
+    ax.set_title(title, fontsize=14, fontweight="bold")
+    ax.legend(loc="upper right")
+    ax.grid(True, alpha=0.3)
+    if add_origin_lines:
+        ax.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
+        ax.axvline(x=0, color="k", linestyle="-", linewidth=0.5)
+
+
+def plot_training_points(
+    ax: plt.Axes,
+    x_train: np.ndarray,
+    y_train: np.ndarray,
+    color: str = "red",
+    size: int = 100,
+    label: str = "Training points",
+) -> None:
+    """
+    Plot training points as scatter plot.
+
+    :param ax: Matplotlib axis
+    :param x_train: Training x values
+    :param y_train: Training y values
+    :param color: Point color
+    :param size: Point size
+    :param label: Legend label
+    """
+    ax.scatter(
+        x_train,
+        y_train,
+        color=color,
+        s=size,
+        zorder=5,
+        label=label,
+        edgecolors="black",
+    )
+
+
+def compute_bias_variance(
+    predictions: list, y_true: np.ndarray
+) -> Tuple[float, float]:
+    """
+    Compute bias squared and variance for a set of model predictions.
+
+    :param predictions: List of prediction arrays from different experiments
+    :param y_true: True function values
+    :return: Tuple of (bias_squared, variance)
+    """
+    # Average model predictions across experiments.
+    avg_predictions = np.mean(predictions, axis=0)
+    # Bias: squared error between average model and true function.
+    bias_squared = np.mean((avg_predictions - y_true) ** 2)
+    # Variance: expected squared deviation from average model.
+    variance_vals = [
+        np.mean((pred - avg_predictions) ** 2) for pred in predictions
+    ]
+    variance = np.mean(variance_vals)
+    return bias_squared, variance
+
+
+def plot_error_metrics(
+    ax: plt.Axes,
+    n_samples_range: range,
+    e_in_avg: list,
+    e_out_avg: list,
+    bias: list,
+    variance: list,
+    title: str,
+    y_max: float = 1.75,
+) -> None:
+    """
+    Plot error metrics (E_in, E_out, bias, variance) over N_samples.
+
+    :param ax: Matplotlib axis
+    :param n_samples_range: Range of N_samples values
+    :param e_in_avg: Average in-sample errors
+    :param e_out_avg: Average out-of-sample errors
+    :param bias: Bias squared values
+    :param variance: Variance values
+    :param title: Plot title
+    :param y_max: Maximum y-axis value
+    """
+    ax.plot(
+        n_samples_range,
+        e_in_avg,
+        "o-",
+        linewidth=2,
+        markersize=6,
+        label="E_in (In-Sample Error)",
+        color="blue",
+    )
+    ax.plot(
+        n_samples_range,
+        e_out_avg,
+        "s-",
+        linewidth=2,
+        markersize=6,
+        label="E_out (Out-of-Sample Error)",
+        color="red",
+    )
+    ax.plot(
+        n_samples_range,
+        bias,
+        "^-",
+        linewidth=2,
+        markersize=6,
+        label="Bias²",
+        color="green",
+    )
+    ax.plot(
+        n_samples_range,
+        variance,
+        "d-",
+        linewidth=2,
+        markersize=6,
+        label="Variance",
+        color="orange",
+    )
+    ax.set_xlabel("N_samples", fontsize=12)
+    ax.set_ylabel("Error", fontsize=12)
+    ax.set_ylim(0, y_max)
+    ax.set_title(title, fontsize=14, fontweight="bold")
+    ax.legend(loc="upper right")
+    ax.grid(True, alpha=0.3)
+
+
+# #############################################################################
 # Cell 1: Approximation
 # #############################################################################
 
@@ -131,14 +359,7 @@ def cell1_approximation() -> None:
         color="orange",
         label="Approximation Error",
     )
-    ax1.set_xlabel("x", fontsize=12)
-    ax1.set_ylabel("f(x)", fontsize=12)
-    ax1.set_ylim(-1.5, 1.5)
-    ax1.set_title("True Function vs Constant Model", fontsize=14, fontweight="bold")
-    ax1.legend(loc="upper right")
-    ax1.grid(True, alpha=0.3)
-    ax1.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
-    ax1.axvline(x=0, color="k", linestyle="-", linewidth=0.5)
+    setup_model_comparison_axis(ax1, "True Function vs Constant Model")
 
     # Plot 2: True function vs Linear model.
     ax2 = axes[1]
@@ -159,14 +380,7 @@ def cell1_approximation() -> None:
         color="orange",
         label="Approximation Error",
     )
-    ax2.set_xlabel("x", fontsize=12)
-    ax2.set_ylabel("f(x)", fontsize=12)
-    ax2.set_ylim(-1.5, 1.5)
-    ax2.set_title("True Function vs Linear Model", fontsize=14, fontweight="bold")
-    ax2.legend(loc="upper right")
-    ax2.grid(True, alpha=0.3)
-    ax2.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
-    ax2.axvline(x=0, color="k", linestyle="-", linewidth=0.5)
+    setup_model_comparison_axis(ax2, "True Function vs Linear Model")
 
     # Plot 3: Comments.
     ax3 = axes[2]
@@ -262,34 +476,31 @@ def cell2_learning_once() -> None:
             np.random.seed(seed)
 
             # Generate training data by sampling random points.
-            x_train = np.random.uniform(-1, 1, n_samples)
-            x_train = np.sort(x_train)  # Sort for better visualization
-            y_train = target_function(x_train)
+            x_train, y_train = generate_training_data(n_samples)
 
             # Create dense x values for plotting the true function and computing E_out.
             x_dense = np.linspace(-1, 1, 200)
             y_true = target_function(x_dense)
 
-            # Fit constant model to training data.
-            b = fit_constant_model(x_train, y_train)
-            y_const_train = np.full_like(x_train, b)
-            y_const_dense = np.full_like(x_dense, b)
-
-            # Fit linear model to training data.
-            a, b_linear = fit_linear_model(x_train, y_train)
-            y_linear_train = a * x_train + b_linear
-            y_linear_dense = a * x_dense + b_linear
-
-            # Compute in-sample error E_in (on training data).
-            e_in_const = compute_approximation_error(x_train, y_train, y_const_train)
-            e_in_linear = compute_approximation_error(
-                x_train, y_train, y_linear_train
+            # Fit models to training data and generate predictions.
+            b, y_const_dense, (a, b_linear), y_linear_dense = fit_models_and_predict(
+                x_train, y_train, x_dense
             )
 
-            # Compute out-of-sample error E_out (on full dense grid).
-            e_out_const = compute_approximation_error(x_dense, y_true, y_const_dense)
-            e_out_linear = compute_approximation_error(
-                x_dense, y_true, y_linear_dense
+            # Generate predictions on training data for E_in computation.
+            y_const_train = np.full_like(x_train, b)
+            y_linear_train = a * x_train + b_linear
+
+            # Compute all error metrics.
+            e_in_const, e_in_linear, e_out_const, e_out_linear = compute_all_errors(
+                x_train,
+                y_train,
+                x_dense,
+                y_true,
+                y_const_train,
+                y_const_dense,
+                y_linear_train,
+                y_linear_dense,
             )
 
             # Create figure with 3 subplots.
@@ -302,54 +513,22 @@ def cell2_learning_once() -> None:
                 x_dense, y_const_dense, "g-", linewidth=2, label=f"Constant g_0(x)"
             )
             # Show training points.
-            ax1.scatter(
-                x_train,
-                y_train,
-                color="red",
-                s=100,
-                zorder=5,
-                label="Training points",
-                edgecolors="black",
-            )
-            ax1.set_xlabel("x", fontsize=12)
-            ax1.set_ylabel("f(x)", fontsize=12)
-            ax1.set_ylim(-1.5, 1.5)
-            ax1.set_title(
+            plot_training_points(ax1, x_train, y_train)
+            setup_model_comparison_axis(
+                ax1,
                 f"Constant Model: E_in={e_in_const:.4f}, E_out={e_out_const:.4f}",
-                fontsize=14,
-                fontweight="bold",
             )
-            ax1.legend(loc="upper right")
-            ax1.grid(True, alpha=0.3)
-            ax1.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
-            ax1.axvline(x=0, color="k", linestyle="-", linewidth=0.5)
 
             # Plot 2: True function vs Linear model.
             ax2 = axes[1]
             ax2.plot(x_dense, y_true, "b-", linewidth=2, label="True f(x)")
             ax2.plot(x_dense, y_linear_dense, "m-", linewidth=2, label=f"Linear g_1(x)")
             # Show training points.
-            ax2.scatter(
-                x_train,
-                y_train,
-                color="red",
-                s=100,
-                zorder=5,
-                label="Training points",
-                edgecolors="black",
-            )
-            ax2.set_xlabel("x", fontsize=12)
-            ax2.set_ylabel("f(x)", fontsize=12)
-            ax2.set_ylim(-1.5, 1.5)
-            ax2.set_title(
+            plot_training_points(ax2, x_train, y_train)
+            setup_model_comparison_axis(
+                ax2,
                 f"Linear Model: E_in={e_in_linear:.4f}, E_out={e_out_linear:.4f}",
-                fontsize=14,
-                fontweight="bold",
             )
-            ax2.legend(loc="upper right")
-            ax2.grid(True, alpha=0.3)
-            ax2.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
-            ax2.axvline(x=0, color="k", linestyle="-", linewidth=0.5)
 
             # Plot 3: Comments.
             ax3 = axes[2]
@@ -477,35 +656,36 @@ def cell3_learning_bias_variance() -> None:
             # Run N_experiments with different random training sets.
             for _ in range(n_experiments):
                 # Generate training data by sampling random points.
-                x_train = np.random.uniform(-1, 1, n_samples)
-                x_train = np.sort(x_train)
-                y_train = target_function(x_train)
+                x_train, y_train = generate_training_data(n_samples)
 
-                # Fit constant model.
-                b = fit_constant_model(x_train, y_train)
+                # Fit models and generate predictions.
+                b, y_const_dense, (a, b_linear), y_linear_dense = (
+                    fit_models_and_predict(x_train, y_train, x_dense)
+                )
                 const_models.append(b)
-                y_const_train = np.full_like(x_train, b)
-                y_const_dense = np.full_like(x_dense, b)
-
-                # Fit linear model.
-                a, b_linear = fit_linear_model(x_train, y_train)
                 linear_models.append((a, b_linear))
+
+                # Generate predictions on training data for E_in computation.
+                y_const_train = np.full_like(x_train, b)
                 y_linear_train = a * x_train + b_linear
-                y_linear_dense = a * x_dense + b_linear
 
                 # Compute errors.
-                e_in_const_list.append(
-                    compute_approximation_error(x_train, y_train, y_const_train)
+                e_in_const, e_in_linear, e_out_const, e_out_linear = (
+                    compute_all_errors(
+                        x_train,
+                        y_train,
+                        x_dense,
+                        y_true,
+                        y_const_train,
+                        y_const_dense,
+                        y_linear_train,
+                        y_linear_dense,
+                    )
                 )
-                e_in_linear_list.append(
-                    compute_approximation_error(x_train, y_train, y_linear_train)
-                )
-                e_out_const_list.append(
-                    compute_approximation_error(x_dense, y_true, y_const_dense)
-                )
-                e_out_linear_list.append(
-                    compute_approximation_error(x_dense, y_true, y_linear_dense)
-                )
+                e_in_const_list.append(e_in_const)
+                e_in_linear_list.append(e_in_linear)
+                e_out_const_list.append(e_out_const)
+                e_out_linear_list.append(e_out_linear)
 
             # Compute average errors.
             avg_e_in_const = np.mean(e_in_const_list)
@@ -532,18 +712,9 @@ def cell3_learning_bias_variance() -> None:
                 label=f"Avg g_0 = {avg_b:.3f}",
                 zorder=9,
             )
-            ax1.set_xlabel("x", fontsize=12)
-            ax1.set_ylabel("f(x)", fontsize=12)
-            ax1.set_ylim(-1.5, 1.5)
-            ax1.set_title(
-                f"Constant Models ({n_experiments} experiments)",
-                fontsize=14,
-                fontweight="bold",
+            setup_model_comparison_axis(
+                ax1, f"Constant Models ({n_experiments} experiments)"
             )
-            ax1.legend(loc="upper right")
-            ax1.grid(True, alpha=0.3)
-            ax1.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
-            ax1.axvline(x=0, color="k", linestyle="-", linewidth=0.5)
 
             # Plot 2: True function vs all Linear models.
             ax2 = axes[1]
@@ -565,18 +736,9 @@ def cell3_learning_bias_variance() -> None:
                 label=f"Avg g_1",
                 zorder=9,
             )
-            ax2.set_xlabel("x", fontsize=12)
-            ax2.set_ylabel("f(x)", fontsize=12)
-            ax2.set_ylim(-1.5, 1.5)
-            ax2.set_title(
-                f"Linear Models ({n_experiments} experiments)",
-                fontsize=14,
-                fontweight="bold",
+            setup_model_comparison_axis(
+                ax2, f"Linear Models ({n_experiments} experiments)"
             )
-            ax2.legend(loc="upper right")
-            ax2.grid(True, alpha=0.3)
-            ax2.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
-            ax2.axvline(x=0, color="k", linestyle="-", linewidth=0.5)
 
             # Plot 3: Comments.
             ax3 = axes[2]
@@ -725,35 +887,36 @@ def cell4_learning_plots() -> None:
                 # Run N_experiments with different random training sets.
                 for _ in range(n_experiments):
                     # Generate training data.
-                    x_train = np.random.uniform(-1, 1, n_samples)
-                    x_train = np.sort(x_train)
-                    y_train = target_function(x_train)
+                    x_train, y_train = generate_training_data(n_samples)
 
-                    # Fit constant model.
-                    b = fit_constant_model(x_train, y_train)
-                    y_const_train = np.full_like(x_train, b)
-                    y_const_dense = np.full_like(x_dense, b)
+                    # Fit models and generate predictions.
+                    b, y_const_dense, (a, b_linear), y_linear_dense = (
+                        fit_models_and_predict(x_train, y_train, x_dense)
+                    )
                     const_predictions.append(y_const_dense)
-
-                    # Fit linear model.
-                    a, b_linear = fit_linear_model(x_train, y_train)
-                    y_linear_train = a * x_train + b_linear
-                    y_linear_dense = a * x_dense + b_linear
                     linear_predictions.append(y_linear_dense)
 
+                    # Generate predictions on training data for E_in computation.
+                    y_const_train = np.full_like(x_train, b)
+                    y_linear_train = a * x_train + b_linear
+
                     # Compute errors.
-                    e_in_const_list.append(
-                        compute_approximation_error(x_train, y_train, y_const_train)
+                    e_in_const, e_in_linear, e_out_const, e_out_linear = (
+                        compute_all_errors(
+                            x_train,
+                            y_train,
+                            x_dense,
+                            y_true,
+                            y_const_train,
+                            y_const_dense,
+                            y_linear_train,
+                            y_linear_dense,
+                        )
                     )
-                    e_out_const_list.append(
-                        compute_approximation_error(x_dense, y_true, y_const_dense)
-                    )
-                    e_in_linear_list.append(
-                        compute_approximation_error(x_train, y_train, y_linear_train)
-                    )
-                    e_out_linear_list.append(
-                        compute_approximation_error(x_dense, y_true, y_linear_dense)
-                    )
+                    e_in_const_list.append(e_in_const)
+                    e_out_const_list.append(e_out_const)
+                    e_in_linear_list.append(e_in_linear)
+                    e_out_linear_list.append(e_out_linear)
 
                 # Compute average errors.
                 e_in_const_avg.append(np.mean(e_in_const_list))
@@ -762,27 +925,18 @@ def cell4_learning_plots() -> None:
                 e_out_linear_avg.append(np.mean(e_out_linear_list))
 
                 # Compute bias and variance for constant model.
-                # Average model predictions across experiments.
-                avg_const_predictions = np.mean(const_predictions, axis=0)
-                # Bias: squared error between average model and true function.
-                bias_squared_const = np.mean((avg_const_predictions - y_true) ** 2)
+                bias_squared_const, variance_const_val = compute_bias_variance(
+                    const_predictions, y_true
+                )
                 bias_const.append(bias_squared_const)
-                # Variance: expected squared deviation from average model.
-                variance_vals_const = [
-                    np.mean((pred - avg_const_predictions) ** 2)
-                    for pred in const_predictions
-                ]
-                variance_const.append(np.mean(variance_vals_const))
+                variance_const.append(variance_const_val)
 
                 # Compute bias and variance for linear model.
-                avg_linear_predictions = np.mean(linear_predictions, axis=0)
-                bias_squared_linear = np.mean((avg_linear_predictions - y_true) ** 2)
+                bias_squared_linear, variance_linear_val = compute_bias_variance(
+                    linear_predictions, y_true
+                )
                 bias_linear.append(bias_squared_linear)
-                variance_vals_linear = [
-                    np.mean((pred - avg_linear_predictions) ** 2)
-                    for pred in linear_predictions
-                ]
-                variance_linear.append(np.mean(variance_vals_linear))
+                variance_linear.append(variance_linear_val)
 
             # Create figure with 3 subplots.
             fig, axes = plt.subplots(1, 3, figsize=(18, 5))
@@ -792,101 +946,29 @@ def cell4_learning_plots() -> None:
 
             # Plot 1: Metrics for Constant Model.
             ax1 = axes[0]
-            ax1.plot(
+            plot_error_metrics(
+                ax1,
                 n_samples_range,
                 e_in_const_avg,
-                "o-",
-                linewidth=2,
-                markersize=6,
-                label="E_in (In-Sample Error)",
-                color="blue",
-            )
-            ax1.plot(
-                n_samples_range,
                 e_out_const_avg,
-                "s-",
-                linewidth=2,
-                markersize=6,
-                label="E_out (Out-of-Sample Error)",
-                color="red",
-            )
-            ax1.plot(
-                n_samples_range,
                 bias_const,
-                "^-",
-                linewidth=2,
-                markersize=6,
-                label="Bias²",
-                color="green",
-            )
-            ax1.plot(
-                n_samples_range,
                 variance_const,
-                "d-",
-                linewidth=2,
-                markersize=6,
-                label="Variance",
-                color="orange",
+                "Constant Model (g_0) - Bias-Variance Analysis",
+                y_max,
             )
-            ax1.set_xlabel("N_samples", fontsize=12)
-            ax1.set_ylabel("Error", fontsize=12)
-            ax1.set_ylim(0, y_max)
-            ax1.set_title(
-                f"Constant Model (g_0) - Bias-Variance Analysis",
-                fontsize=14,
-                fontweight="bold",
-            )
-            ax1.legend(loc="upper right")
-            ax1.grid(True, alpha=0.3)
 
             # Plot 2: Metrics for Linear Model.
             ax2 = axes[1]
-            ax2.plot(
+            plot_error_metrics(
+                ax2,
                 n_samples_range,
                 e_in_linear_avg,
-                "o-",
-                linewidth=2,
-                markersize=6,
-                label="E_in (In-Sample Error)",
-                color="blue",
-            )
-            ax2.plot(
-                n_samples_range,
                 e_out_linear_avg,
-                "s-",
-                linewidth=2,
-                markersize=6,
-                label="E_out (Out-of-Sample Error)",
-                color="red",
-            )
-            ax2.plot(
-                n_samples_range,
                 bias_linear,
-                "^-",
-                linewidth=2,
-                markersize=6,
-                label="Bias²",
-                color="green",
-            )
-            ax2.plot(
-                n_samples_range,
                 variance_linear,
-                "d-",
-                linewidth=2,
-                markersize=6,
-                label="Variance",
-                color="orange",
+                "Linear Model (g_1) - Bias-Variance Analysis",
+                y_max,
             )
-            ax2.set_xlabel("N_samples", fontsize=12)
-            ax2.set_ylabel("Error", fontsize=12)
-            ax2.set_ylim(0, y_max)
-            ax2.set_title(
-                f"Linear Model (g_1) - Bias-Variance Analysis",
-                fontsize=14,
-                fontweight="bold",
-            )
-            ax2.legend(loc="upper right")
-            ax2.grid(True, alpha=0.3)
 
             # Plot 3: Comments.
             ax3 = axes[2]
@@ -1050,37 +1132,36 @@ def cell5_learning_with_noise() -> None:
             # Run N_experiments with different random training sets.
             for _ in range(n_experiments):
                 # Generate training data by sampling random points.
-                x_train = np.random.uniform(-1, 1, n_samples)
-                x_train = np.sort(x_train)
-                y_train_clean = target_function(x_train)
-                # Add Gaussian noise to training data.
-                y_train = y_train_clean + np.random.normal(0, noise_std, n_samples)
+                x_train, y_train = generate_training_data(n_samples, noise_std)
 
-                # Fit constant model.
-                b = fit_constant_model(x_train, y_train)
+                # Fit models and generate predictions.
+                b, y_const_dense, (a, b_linear), y_linear_dense = (
+                    fit_models_and_predict(x_train, y_train, x_dense)
+                )
                 const_models.append(b)
-                y_const_train = np.full_like(x_train, b)
-                y_const_dense = np.full_like(x_dense, b)
-
-                # Fit linear model.
-                a, b_linear = fit_linear_model(x_train, y_train)
                 linear_models.append((a, b_linear))
+
+                # Generate predictions on training data for E_in computation.
+                y_const_train = np.full_like(x_train, b)
                 y_linear_train = a * x_train + b_linear
-                y_linear_dense = a * x_dense + b_linear
 
                 # Compute errors.
-                e_in_const_list.append(
-                    compute_approximation_error(x_train, y_train, y_const_train)
+                e_in_const, e_in_linear, e_out_const, e_out_linear = (
+                    compute_all_errors(
+                        x_train,
+                        y_train,
+                        x_dense,
+                        y_true,
+                        y_const_train,
+                        y_const_dense,
+                        y_linear_train,
+                        y_linear_dense,
+                    )
                 )
-                e_in_linear_list.append(
-                    compute_approximation_error(x_train, y_train, y_linear_train)
-                )
-                e_out_const_list.append(
-                    compute_approximation_error(x_dense, y_true, y_const_dense)
-                )
-                e_out_linear_list.append(
-                    compute_approximation_error(x_dense, y_true, y_linear_dense)
-                )
+                e_in_const_list.append(e_in_const)
+                e_in_linear_list.append(e_in_linear)
+                e_out_const_list.append(e_out_const)
+                e_out_linear_list.append(e_out_linear)
 
             # Compute average errors.
             avg_e_in_const = np.mean(e_in_const_list)
@@ -1122,18 +1203,9 @@ def cell5_learning_with_noise() -> None:
                 label=f"Avg g_0 = {avg_b:.3f}",
                 zorder=9,
             )
-            ax1.set_xlabel("x", fontsize=12)
-            ax1.set_ylabel("f(x)", fontsize=12)
-            ax1.set_ylim(-1.5, 1.5)
-            ax1.set_title(
-                f"Constant Models ({n_experiments} experiments)",
-                fontsize=14,
-                fontweight="bold",
+            setup_model_comparison_axis(
+                ax1, f"Constant Models ({n_experiments} experiments)"
             )
-            ax1.legend(loc="upper right")
-            ax1.grid(True, alpha=0.3)
-            ax1.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
-            ax1.axvline(x=0, color="k", linestyle="-", linewidth=0.5)
 
             # Plot 2: True function vs all Linear models.
             ax2 = axes[1]
@@ -1170,18 +1242,9 @@ def cell5_learning_with_noise() -> None:
                 label=f"Avg g_1",
                 zorder=9,
             )
-            ax2.set_xlabel("x", fontsize=12)
-            ax2.set_ylabel("f(x)", fontsize=12)
-            ax2.set_ylim(-1.5, 1.5)
-            ax2.set_title(
-                f"Linear Models ({n_experiments} experiments)",
-                fontsize=14,
-                fontweight="bold",
+            setup_model_comparison_axis(
+                ax2, f"Linear Models ({n_experiments} experiments)"
             )
-            ax2.legend(loc="upper right")
-            ax2.grid(True, alpha=0.3)
-            ax2.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
-            ax2.axvline(x=0, color="k", linestyle="-", linewidth=0.5)
 
             # Plot 3: Comments.
             ax3 = axes[2]
@@ -1345,37 +1408,36 @@ def cell6_learning_plots_with_noise() -> None:
                 # Run N_experiments with different random training sets.
                 for _ in range(n_experiments):
                     # Generate training data.
-                    x_train = np.random.uniform(-1, 1, n_samples)
-                    x_train = np.sort(x_train)
-                    y_train_clean = target_function(x_train)
-                    # Add Gaussian noise to training data.
-                    y_train = y_train_clean + np.random.normal(0, noise_std, n_samples)
+                    x_train, y_train = generate_training_data(n_samples, noise_std)
 
-                    # Fit constant model.
-                    b = fit_constant_model(x_train, y_train)
-                    y_const_train = np.full_like(x_train, b)
-                    y_const_dense = np.full_like(x_dense, b)
+                    # Fit models and generate predictions.
+                    b, y_const_dense, (a, b_linear), y_linear_dense = (
+                        fit_models_and_predict(x_train, y_train, x_dense)
+                    )
                     const_predictions.append(y_const_dense)
-
-                    # Fit linear model.
-                    a, b_linear = fit_linear_model(x_train, y_train)
-                    y_linear_train = a * x_train + b_linear
-                    y_linear_dense = a * x_dense + b_linear
                     linear_predictions.append(y_linear_dense)
 
+                    # Generate predictions on training data for E_in computation.
+                    y_const_train = np.full_like(x_train, b)
+                    y_linear_train = a * x_train + b_linear
+
                     # Compute errors.
-                    e_in_const_list.append(
-                        compute_approximation_error(x_train, y_train, y_const_train)
+                    e_in_const, e_in_linear, e_out_const, e_out_linear = (
+                        compute_all_errors(
+                            x_train,
+                            y_train,
+                            x_dense,
+                            y_true,
+                            y_const_train,
+                            y_const_dense,
+                            y_linear_train,
+                            y_linear_dense,
+                        )
                     )
-                    e_out_const_list.append(
-                        compute_approximation_error(x_dense, y_true, y_const_dense)
-                    )
-                    e_in_linear_list.append(
-                        compute_approximation_error(x_train, y_train, y_linear_train)
-                    )
-                    e_out_linear_list.append(
-                        compute_approximation_error(x_dense, y_true, y_linear_dense)
-                    )
+                    e_in_const_list.append(e_in_const)
+                    e_out_const_list.append(e_out_const)
+                    e_in_linear_list.append(e_in_linear)
+                    e_out_linear_list.append(e_out_linear)
 
                 # Compute average errors.
                 e_in_const_avg.append(np.mean(e_in_const_list))
@@ -1384,27 +1446,18 @@ def cell6_learning_plots_with_noise() -> None:
                 e_out_linear_avg.append(np.mean(e_out_linear_list))
 
                 # Compute bias and variance for constant model.
-                # Average model predictions across experiments.
-                avg_const_predictions = np.mean(const_predictions, axis=0)
-                # Bias: squared error between average model and true function.
-                bias_squared_const = np.mean((avg_const_predictions - y_true) ** 2)
+                bias_squared_const, variance_const_val = compute_bias_variance(
+                    const_predictions, y_true
+                )
                 bias_const.append(bias_squared_const)
-                # Variance: expected squared deviation from average model.
-                variance_vals_const = [
-                    np.mean((pred - avg_const_predictions) ** 2)
-                    for pred in const_predictions
-                ]
-                variance_const.append(np.mean(variance_vals_const))
+                variance_const.append(variance_const_val)
 
                 # Compute bias and variance for linear model.
-                avg_linear_predictions = np.mean(linear_predictions, axis=0)
-                bias_squared_linear = np.mean((avg_linear_predictions - y_true) ** 2)
+                bias_squared_linear, variance_linear_val = compute_bias_variance(
+                    linear_predictions, y_true
+                )
                 bias_linear.append(bias_squared_linear)
-                variance_vals_linear = [
-                    np.mean((pred - avg_linear_predictions) ** 2)
-                    for pred in linear_predictions
-                ]
-                variance_linear.append(np.mean(variance_vals_linear))
+                variance_linear.append(variance_linear_val)
 
             # Create figure with 3 subplots.
             fig, axes = plt.subplots(1, 3, figsize=(18, 5))
@@ -1414,101 +1467,29 @@ def cell6_learning_plots_with_noise() -> None:
 
             # Plot 1: Metrics for Constant Model.
             ax1 = axes[0]
-            ax1.plot(
+            plot_error_metrics(
+                ax1,
                 n_samples_range,
                 e_in_const_avg,
-                "o-",
-                linewidth=2,
-                markersize=6,
-                label="E_in (In-Sample Error)",
-                color="blue",
-            )
-            ax1.plot(
-                n_samples_range,
                 e_out_const_avg,
-                "s-",
-                linewidth=2,
-                markersize=6,
-                label="E_out (Out-of-Sample Error)",
-                color="red",
-            )
-            ax1.plot(
-                n_samples_range,
                 bias_const,
-                "^-",
-                linewidth=2,
-                markersize=6,
-                label="Bias²",
-                color="green",
-            )
-            ax1.plot(
-                n_samples_range,
                 variance_const,
-                "d-",
-                linewidth=2,
-                markersize=6,
-                label="Variance",
-                color="orange",
+                "Constant Model (g_0) - Bias-Variance Analysis",
+                y_max,
             )
-            ax1.set_xlabel("N_samples", fontsize=12)
-            ax1.set_ylabel("Error", fontsize=12)
-            ax1.set_ylim(0, y_max)
-            ax1.set_title(
-                f"Constant Model (g_0) - Bias-Variance Analysis",
-                fontsize=14,
-                fontweight="bold",
-            )
-            ax1.legend(loc="upper right")
-            ax1.grid(True, alpha=0.3)
 
             # Plot 2: Metrics for Linear Model.
             ax2 = axes[1]
-            ax2.plot(
+            plot_error_metrics(
+                ax2,
                 n_samples_range,
                 e_in_linear_avg,
-                "o-",
-                linewidth=2,
-                markersize=6,
-                label="E_in (In-Sample Error)",
-                color="blue",
-            )
-            ax2.plot(
-                n_samples_range,
                 e_out_linear_avg,
-                "s-",
-                linewidth=2,
-                markersize=6,
-                label="E_out (Out-of-Sample Error)",
-                color="red",
-            )
-            ax2.plot(
-                n_samples_range,
                 bias_linear,
-                "^-",
-                linewidth=2,
-                markersize=6,
-                label="Bias²",
-                color="green",
-            )
-            ax2.plot(
-                n_samples_range,
                 variance_linear,
-                "d-",
-                linewidth=2,
-                markersize=6,
-                label="Variance",
-                color="orange",
+                "Linear Model (g_1) - Bias-Variance Analysis",
+                y_max,
             )
-            ax2.set_xlabel("N_samples", fontsize=12)
-            ax2.set_ylabel("Error", fontsize=12)
-            ax2.set_ylim(0, y_max)
-            ax2.set_title(
-                f"Linear Model (g_1) - Bias-Variance Analysis",
-                fontsize=14,
-                fontweight="bold",
-            )
-            ax2.legend(loc="upper right")
-            ax2.grid(True, alpha=0.3)
 
             # Plot 3: Comments.
             ax3 = axes[2]
