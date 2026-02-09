@@ -7,7 +7,7 @@ realized by the hypothesis.
 
 Import as:
 
-import msml610.tutorials.growth_function as mtugrfun
+import msml610.tutorials.L05_01_learning_theory_04_growth_function_utils as mtugrfun
 """
 
 import abc
@@ -298,8 +298,8 @@ class PerceptronTester(HypothesisTester):
         """
         Test if labels can be separated by a linear hyperplane.
 
-        Trains a perceptron on the data and checks if it achieves perfect
-        classification.
+        Uses LinearSVC for more robust linear separability testing than
+        the standard perceptron algorithm.
 
         :param points: Array of shape (N, D) containing point coordinates
         :param labels: Array of shape (N,) with desired labels in {-1, +1}
@@ -314,11 +314,15 @@ class PerceptronTester(HypothesisTester):
             # Can only separate if all labels are the same.
             return np.all(labels == labels[0])
         try:
-            # Train perceptron.
-            clf = sklearn.linear_model.Perceptron(
-                max_iter=self._max_iter,
-                tol=self._tol,
+            # Use LinearSVC for robust linear separability test.
+            # Large C value enforces hard margin (finds separator if it exists).
+            import sklearn.svm
+
+            clf = sklearn.svm.LinearSVC(
+                C=1e10,
+                max_iter=self._max_iter * 10,
                 random_state=self._random_state,
+                dual="auto",
             )
             clf.fit(points, labels)
             # Check if perfect classification achieved.
@@ -327,7 +331,7 @@ class PerceptronTester(HypothesisTester):
             return is_separable
         except Exception as e:
             # If training fails, assume not separable.
-            _LOG.debug(f"Perceptron training failed: {e}")
+            _LOG.debug(f"LinearSVC training failed: {e}")
             return False
 
     def get_name(self) -> str:
@@ -357,11 +361,14 @@ class PerceptronTester(HypothesisTester):
                 "intercept": labels[0],
             }
         try:
-            # Train perceptron.
-            clf = sklearn.linear_model.Perceptron(
-                max_iter=self._max_iter,
-                tol=self._tol,
+            # Use LinearSVC for robust linear separability.
+            import sklearn.svm
+
+            clf = sklearn.svm.LinearSVC(
+                C=1e10,
+                max_iter=self._max_iter * 10,
                 random_state=self._random_state,
+                dual="auto",
             )
             clf.fit(points, labels)
             # Check if perfect classification achieved.
@@ -373,7 +380,7 @@ class PerceptronTester(HypothesisTester):
                 }
             return None
         except Exception as e:
-            _LOG.debug(f"Perceptron training failed: {e}")
+            _LOG.debug(f"LinearSVC training failed: {e}")
             return None
 
 
@@ -498,17 +505,30 @@ class PositiveIntervalsTester(HypothesisTester):
         # Sort points and labels together.
         sorted_indices = np.argsort(points_1d)
         sorted_labels = labels[sorted_indices]
-        # Find all transitions.
-        transitions_neg_to_pos = 0
-        transitions_pos_to_neg = 0
+        # Find all transitions and their positions.
+        transition_neg_to_pos_pos = None
+        transition_pos_to_neg_pos = None
         for i in range(len(sorted_labels) - 1):
             if sorted_labels[i] == -1 and sorted_labels[i + 1] == 1:
-                transitions_neg_to_pos += 1
+                if transition_neg_to_pos_pos is not None:
+                    # More than one -1 to +1 transition.
+                    return False
+                transition_neg_to_pos_pos = i
             elif sorted_labels[i] == 1 and sorted_labels[i + 1] == -1:
-                transitions_pos_to_neg += 1
-        # Valid interval: at most one -1→+1 and one +1→-1 transition.
-        # Pattern must be: -1*, +1*, -1*
-        return transitions_neg_to_pos <= 1 and transitions_pos_to_neg <= 1
+                if transition_pos_to_neg_pos is not None:
+                    # More than one +1 to -1 transition.
+                    return False
+                transition_pos_to_neg_pos = i
+        # Valid interval: the -1→+1 transition (if present) must come before
+        # the +1→-1 transition (if present). Pattern must be: -1*, +1*, -1*
+        if (
+            transition_neg_to_pos_pos is not None
+            and transition_pos_to_neg_pos is not None
+        ):
+            return transition_neg_to_pos_pos < transition_pos_to_neg_pos
+        # If there's at most one transition of each type, and they're in the
+        # right order, it's valid.
+        return True
 
     def get_name(self) -> str:
         """

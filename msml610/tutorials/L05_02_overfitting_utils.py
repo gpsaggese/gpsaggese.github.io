@@ -20,6 +20,25 @@ _LOG = logging.getLogger(__name__)
 
 
 # #############################################################################
+# Global Variables for Synchronized State
+# #############################################################################
+
+# Store global state for synchronization across cells.
+_GLOBAL_STATE = {
+    "seed": 42,
+    "function_name": "Slow Sinusoid",
+    "epsilon": 0.0,
+    "N": 20,
+    "x_train": None,
+    "y_train": None,
+    "x_test": None,
+    "y_test": None,
+    "x_dense": None,
+    "y_true_dense": None,
+}
+
+
+# #############################################################################
 # Target Functions
 # #############################################################################
 
@@ -187,6 +206,17 @@ def cell1_plot_true_target_function() -> None:
             # Out-of-sample data.
             x_test = x_samples[test_indices]
             y_test = y_samples_noisy[test_indices]
+            # Update global state for synchronization with other cells.
+            _GLOBAL_STATE["seed"] = seed
+            _GLOBAL_STATE["function_name"] = func_name
+            _GLOBAL_STATE["epsilon"] = epsilon
+            _GLOBAL_STATE["N"] = N
+            _GLOBAL_STATE["x_train"] = x_train
+            _GLOBAL_STATE["y_train"] = y_train
+            _GLOBAL_STATE["x_test"] = x_test
+            _GLOBAL_STATE["y_test"] = y_test
+            _GLOBAL_STATE["x_dense"] = x_dense
+            _GLOBAL_STATE["y_true_dense"] = y_true_dense
             # Create 2x2 subplot layout.
             fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(
                 2, 2, figsize=(14, 10)
@@ -313,6 +343,293 @@ def cell1_plot_true_target_function() -> None:
                 function_dropdown,
                 epsilon_box,
                 N_box,
+                output,
+            ]
+        )
+    )
+
+
+# #############################################################################
+# Cell 2: Constant Model (H_0)
+# #############################################################################
+
+
+def fit_constant_model(x_train: np.ndarray, y_train: np.ndarray) -> float:
+    """
+    Fit a constant model h(x) = b by finding the mean of y_train.
+
+    :param x_train: Training input data
+    :param y_train: Training output data
+    :return: Learned parameter b
+    """
+    return np.mean(y_train)
+
+
+def compute_error(
+    y_true: np.ndarray, y_pred: np.ndarray
+) -> float:
+    """
+    Compute mean squared error.
+
+    :param y_true: True values
+    :param y_pred: Predicted values
+    :return: Mean squared error
+    """
+    return np.mean((y_true - y_pred) ** 2)
+
+
+def cell2_plot_constant_model() -> None:
+    """
+    Interactive widget to visualize constant model learning.
+
+    Shows how a constant hypothesis h(x) = b fits the data. The model learns
+    the best horizontal line by finding the mean of training points. Displays
+    three plots:
+    1. In-sample data with fitted model and E_in
+    2. Out-of-sample data with fitted model and E_out
+    3. True function with fitted model
+    4. Comments and learned parameter
+    """
+    # Create button to resample and relearn.
+    resample_button = ipywidgets.Button(
+        description="Resample and Relearn",
+        button_style="primary",
+        tooltip="Generate new training points and refit the model",
+    )
+    # Create output widget.
+    output = ipywidgets.Output()
+
+    def update_plot(change: dict = None) -> None:
+        """
+        Update the plot with current global state.
+
+        :param change: Dictionary with change information (unused)
+        """
+        with output:
+            clear_output(wait=True)
+            # Check if global state is initialized.
+            if _GLOBAL_STATE["x_train"] is None:
+                print("Please run Cell 1 first to initialize the data.")
+                return
+            # Get data from global state.
+            x_train = _GLOBAL_STATE["x_train"]
+            y_train = _GLOBAL_STATE["y_train"]
+            x_test = _GLOBAL_STATE["x_test"]
+            y_test = _GLOBAL_STATE["y_test"]
+            x_dense = _GLOBAL_STATE["x_dense"]
+            y_true_dense = _GLOBAL_STATE["y_true_dense"]
+            func_name = _GLOBAL_STATE["function_name"]
+            epsilon = _GLOBAL_STATE["epsilon"]
+            # Fit constant model.
+            b = fit_constant_model(x_train, y_train)
+            # Make predictions.
+            y_pred_train = np.full_like(y_train, b)
+            y_pred_test = np.full_like(y_test, b)
+            y_pred_dense = np.full_like(x_dense, b)
+            # Compute errors.
+            E_in = compute_error(y_train, y_pred_train)
+            E_out = compute_error(y_test, y_pred_test)
+            # Create 2x2 subplot layout.
+            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(
+                2, 2, figsize=(14, 10)
+            )
+            # Plot 1: In-sample data with fitted model.
+            ax1.scatter(
+                x_train,
+                y_train,
+                color="green",
+                s=50,
+                alpha=0.7,
+                label=f"In-Sample (n={len(x_train)})",
+                zorder=5,
+            )
+            ax1.axhline(
+                y=b,
+                color="darkgreen",
+                linewidth=2,
+                label=f"h(x) = {b:.3f}",
+                linestyle="--",
+            )
+            ax1.set_xlabel("x", fontsize=12)
+            ax1.set_ylabel("y", fontsize=12)
+            ax1.set_title(
+                f"In-Sample Data and Model (E_in = {E_in:.4f})",
+                fontsize=14,
+                fontweight="bold",
+            )
+            ax1.grid(True, alpha=0.3)
+            ax1.axhline(y=0, color="k", linewidth=0.5)
+            ax1.axvline(x=0, color="k", linewidth=0.5)
+            ax1.legend(fontsize=10)
+            ax1.set_xlim([-1, 1])
+            ax1.set_ylim([-1.5, 1.5])
+            # Plot 2: Out-of-sample data with fitted model.
+            ax2.scatter(
+                x_test,
+                y_test,
+                color="red",
+                s=50,
+                alpha=0.7,
+                label=f"Out-of-Sample (n={len(x_test)})",
+                zorder=5,
+            )
+            ax2.axhline(
+                y=b,
+                color="darkgreen",
+                linewidth=2,
+                label=f"h(x) = {b:.3f}",
+                linestyle="--",
+            )
+            ax2.set_xlabel("x", fontsize=12)
+            ax2.set_ylabel("y", fontsize=12)
+            ax2.set_title(
+                f"Out-of-Sample Data and Model (E_out = {E_out:.4f})",
+                fontsize=14,
+                fontweight="bold",
+            )
+            ax2.grid(True, alpha=0.3)
+            ax2.axhline(y=0, color="k", linewidth=0.5)
+            ax2.axvline(x=0, color="k", linewidth=0.5)
+            ax2.legend(fontsize=10)
+            ax2.set_xlim([-1, 1])
+            ax2.set_ylim([-1.5, 1.5])
+            # Plot 3: True function with fitted model.
+            ax3.plot(
+                x_dense,
+                y_true_dense,
+                "b-",
+                linewidth=2,
+                label="True Function",
+                alpha=0.7,
+            )
+            ax3.axhline(
+                y=b,
+                color="darkgreen",
+                linewidth=2,
+                label=f"h(x) = {b:.3f}",
+                linestyle="--",
+            )
+            # Shade the area between constant and true function.
+            ax3.fill_between(
+                x_dense,
+                y_true_dense,
+                b,
+                alpha=0.3,
+                color="orange",
+                label="Approximation Error",
+            )
+            ax3.set_xlabel("x", fontsize=12)
+            ax3.set_ylabel("y", fontsize=12)
+            ax3.set_title(
+                "True Function vs Constant Model",
+                fontsize=14,
+                fontweight="bold",
+            )
+            ax3.grid(True, alpha=0.3)
+            ax3.axhline(y=0, color="k", linewidth=0.5)
+            ax3.axvline(x=0, color="k", linewidth=0.5)
+            ax3.legend(fontsize=10)
+            ax3.set_xlim([-1, 1])
+            ax3.set_ylim([-1.5, 1.5])
+            # Plot 4: Comments.
+            ax4.axis("off")
+            ax4.set_title(
+                "Comments", fontsize=16, fontweight="bold", pad=20
+            )
+            # Generate comment text.
+            text_content = (
+                f"Model: h(x) = b\n"
+                f"Learned parameter: b = {b:.4f}\n\n"
+                f"Current Setup:\n"
+                f"  Function: {func_name}\n"
+                f"  epsilon (noise): {epsilon:.2f}\n"
+                f"  N (total): {_GLOBAL_STATE['N']}\n"
+                f"  n_train: {len(x_train)}\n"
+                f"  n_test: {len(x_test)}\n\n"
+                f"Error:\n"
+                f"  E_in = {E_in:.4f}\n"
+                f"  E_out = {E_out:.4f}\n\n"
+                f"Key Observations:\n"
+                f"- Constant model finds best horizontal\n"
+                f"  line (mean of training points)\n"
+                f"- HIGH BIAS: Poor approximation of\n"
+                f"  complex target functions\n"
+                f"- LOW VARIANCE: Very stable across\n"
+                f"  different training sets\n"
+                f"- Orange shaded area shows how poorly\n"
+                f"  the constant approximates the true\n"
+                f"  function\n\n"
+                f"Click 'Resample and Relearn' to see\n"
+                f"how the model changes with different\n"
+                f"training data."
+            )
+            mtumsuti.add_fitted_text_box(ax4, text_content, max_fontsize=14, min_fontsize=10)
+            plt.tight_layout()
+            plt.show()
+
+    def on_resample_clicked(b: ipywidgets.Button) -> None:
+        """
+        Handle resample button click.
+
+        Generates new training data by incrementing seed and updates global state.
+
+        :param b: Button widget (unused)
+        """
+        # Increment seed to get new samples.
+        new_seed = _GLOBAL_STATE["seed"] + 1
+        _GLOBAL_STATE["seed"] = new_seed
+        # Get current parameters.
+        func_name = _GLOBAL_STATE["function_name"]
+        epsilon = _GLOBAL_STATE["epsilon"]
+        N = _GLOBAL_STATE["N"]
+        # Get target function.
+        target_func = TARGET_FUNCTIONS[func_name]
+        # Generate x values for true function (dense).
+        x_dense = np.linspace(-1, 1, 200)
+        y_true_dense = target_func(x_dense)
+        y_true_dense = np.clip(y_true_dense, -1.0, 1.0)
+        # Generate new sampled data points.
+        np.random.seed(new_seed)
+        x_samples = np.random.uniform(-1, 1, N)
+        x_samples = np.sort(x_samples)
+        y_samples = target_func(x_samples)
+        y_samples = np.clip(y_samples, -1.0, 1.0)
+        # Add noise to samples.
+        if epsilon > 0:
+            y_samples_noisy = y_samples + np.random.normal(0, epsilon, N)
+        else:
+            y_samples_noisy = y_samples
+        # Split into in-sample (80%) and out-of-sample (20%).
+        np.random.seed(new_seed)
+        indices = np.arange(N)
+        np.random.shuffle(indices)
+        n_train = int(0.8 * N)
+        train_indices = indices[:n_train]
+        test_indices = indices[n_train:]
+        # Update global state.
+        _GLOBAL_STATE["x_train"] = x_samples[train_indices]
+        _GLOBAL_STATE["y_train"] = y_samples_noisy[train_indices]
+        _GLOBAL_STATE["x_test"] = x_samples[test_indices]
+        _GLOBAL_STATE["y_test"] = y_samples_noisy[test_indices]
+        _GLOBAL_STATE["x_dense"] = x_dense
+        _GLOBAL_STATE["y_true_dense"] = y_true_dense
+        # Update plot.
+        update_plot()
+
+    # Attach observer to button.
+    resample_button.on_click(on_resample_clicked)
+    # Initial plot.
+    update_plot()
+    # Display widgets.
+    display(
+        ipywidgets.VBox(
+            [
+                ipywidgets.Label("Constant Model: h(x) = b"),
+                ipywidgets.Label(
+                    "This model uses the same setup as Cell 1. "
+                    "Adjust parameters in Cell 1 to change the setup."
+                ),
+                resample_button,
                 output,
             ]
         )

@@ -1,6 +1,5 @@
 # Bias-Variance Trade-Off: Interactive Visual Script
 
-<start>
 ## Cell 1: True Target Function
 
 - Purpose: Visualize the true target function that we want to learn
@@ -25,48 +24,31 @@
   - Y-axis label: "f(x)"
   - Y-axis limits: [-1.5, 1.5]
 - Comment box: "This is the unknown target function we want to learn. In real-world problems, we don't have access to this complete curve - we only see a few sampled points."
-<end>
 
-## Cell 2: Sampled Data - In-Sample vs Out-of-Sample
-
-- Purpose: Show how we sample data from the target function and split into training/test sets
-- Visualization:
-  - Plot the true target function (blue curve)
-  - Overlay in-sample training points (green dots, 80% of data)
-  - Overlay out-of-sample test points (red dots, 20% of data)
-  - Show the 80-20 split visually
-- Interactive widget:
-  - Random seed: controls sampling
-  - Function selection: choose target function
-  - epsilon: std dev of noise
-  - N (total samples): total number of data points to sample (5 to 100)
-- Display:
-  - Left subplot: Function and sampled data visualization
-  - Right subplot: Interpretation box with parameters and key observations
-  - Title: "Sampled Data: In-Sample vs Out-of-Sample"
-- Interpretation box:
-  - Parameters: function name, N total, N in-sample (80%), N out-of-sample (20%), epsilon, seed
-  - Key observations about green (training) vs red (test) points
-  - Learning goal: fit model to in-sample that generalizes to out-of-sample
-  - Challenge: balance fitting training data vs. generalizing to unseen data
-
-## Cell 3: Constant Model (H_0)
+<start>
+## Cell 2: Constant Model (H_0)
 
 - Purpose: Demonstrate learning with a constant hypothesis h(x) = b
 - Visualization:
-  - Plot the true sinusoid (light gray)
-  - Plot the 2 training points (red dots)
+  - Same set-up as cell 1 (user should select the set up in cell 1 and then
+    the same setup should hold across all the cells)
+  - Use some global variables to keep the cells in sync
   - Plot the learned constant model as a horizontal line (green)
-  - Shade the area between the constant and the sinusoid to show approximation error
+  - Shade the area between the constant and the true function to show
+    approximation error
 - Interactive widget:
-  - Button to "Resample and Relearn" (new training points, new constant fit)
+  - Button to "Resample and Relearn" (new training points, new model  fit)
   - Display the learned parameter b
 - Display:
-  - All curves overlaid on same plot
-  - Show E_out value for current fit
+  - One plot showing the in-sample data and the fitted model
+  - One plot showing the out-sample data and the fitted model
+  - One plot showing the true function and the fitted model
+  - Show E_in and E_out value for current fit
   - Title: "Constant Model: h(x) = b"
-  - Legend showing "True Function", "Training Points", "Learned Model"
-- Comment box: "The constant model finds the best horizontal line to fit the 2 points. It has high bias (poor approximation) but low variance (stable across different training sets)."
+- Comment box: "The constant model finds the best horizontal line to fit the 2
+  points. It has high bias (poor approximation) but low variance (stable across
+  different training sets)."
+<end>
 
 ## Cell 4: Linear Model (H_1)
 

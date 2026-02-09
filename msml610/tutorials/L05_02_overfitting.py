@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -70,3 +70,36 @@ _LOG = logging.getLogger(__name__)
 # %%
 # Display the true target function with interactive controls.
 utils.cell1_plot_true_target_function()
+
+# %% [markdown]
+# ## Cell 2: Constant Model (H_0)
+#
+# This cell demonstrates learning with a constant hypothesis h(x) = b.
+#
+# **Purpose**: Show how the simplest model (a constant) fits the data. The
+# constant model finds the best horizontal line by computing the mean of
+# training points. This model has high bias (poor approximation of complex
+# functions) but low variance (very stable across different training sets).
+#
+# **Setup**: This cell uses the same configuration as Cell 1. All parameters
+# (function type, epsilon, N, seed) are synchronized with Cell 1. To change
+# the setup, adjust the parameters in Cell 1.
+#
+# **Model**: h(x) = b, where b is the mean of training y-values.
+#
+# **Three plots**:
+# 1. **In-Sample Data**: Green training points with fitted constant model and E_in
+# 2. **Out-of-Sample Data**: Red test points with fitted constant model and E_out
+# 3. **True Function vs Model**: Blue true function, green constant model, orange shaded approximation error
+# 4. **Comments**: Learned parameter b, errors, and key observations
+#
+# **Key observations**:
+# - The constant model (horizontal line) is the simplest possible hypothesis
+# - It has HIGH BIAS: cannot approximate complex target functions well
+# - It has LOW VARIANCE: the fitted line is very stable across different training sets
+# - Click "Resample and Relearn" to see how the model changes with different training data
+# - The orange shaded area shows the approximation error between the true function and the constant
+
+# %%
+# Display constant model learning with interactive controls.
+utils.cell2_plot_constant_model()
