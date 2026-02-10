@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -41,31 +41,7 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %% [markdown]
-# ## Background: The Growth Function
-#
-# ### What is the Growth Function?
-#
-# The **growth function** $m_H(N)$ measures the expressive power of a hypothesis set $H$:
-#
-# $$m_H(N) = \max_{x_1, \ldots, x_N} |\{(h(x_1), \ldots, h(x_N)) : h \in H\}|$$
-#
-# In other words, it counts the maximum number of different ways (dichotomies) that $H$ can classify $N$ points.
-#
-# ### Key Concepts
-#
-# - **Dichotomy**: A binary labeling of $N$ points (there are $2^N$ possible dichotomies)
-# - **Shattered Points**: Points where all $2^N$ dichotomies are realizable ($m_H(N) = 2^N$)
-# - **Break Point**: The first $N$ where $m_H(N) < 2^N$
-# - **VC Dimension**: The largest $N$ for which some configuration of $N$ points can be shattered
-#
-# ### Why It Matters
-#
-# - If $m_H(N)$ grows polynomially, learning is feasible
-# - If $m_H(N)$ grows exponentially, overfitting is likely
-# - The VC dimension controls generalization bounds
-
-# %% [markdown]
-# ## Cell 1: Positive Rays
+# # Cell 1: Positive Rays
 #
 # **Hypothesis Set**: $h(x) = \text{sign}(x - a)$ for some threshold $a$
 #
@@ -73,7 +49,9 @@ _LOG = logging.getLogger(__name__)
 #
 # **VC Dimension**: 1
 #
-# Let's compute the growth function empirically and verify it matches theory.
+# **Goal**:
+# - Compute the growth function empirically for positive rays
+# - Verify the computed growth function matches the theoretical prediction
 
 # %%
 # Create point generator and hypothesis tester for positive rays.
@@ -107,7 +85,7 @@ print(f"Points shattered: {result['is_shattered']}")
 # - This linear growth means positive rays have very limited expressiveness
 
 # %% [markdown]
-# ## Cell 2: Positive Intervals
+# # Cell 2: Positive Intervals
 #
 # **Hypothesis Set**: $h(x) = +1$ if $a \leq x \leq b$, else $-1$
 #
@@ -115,7 +93,9 @@ print(f"Points shattered: {result['is_shattered']}")
 #
 # **VC Dimension**: 2
 #
-# Let's verify the quadratic growth pattern.
+# **Goal**:
+# - Verify the quadratic growth pattern for positive intervals
+# - Compare empirical results with theoretical predictions across multiple values of $N$
 
 # %%
 # Create tester for positive intervals.
@@ -145,7 +125,7 @@ print(f"\nAll values match theory: {np.all(compared['error'] == 0)}")
 # - For $N=6$: $m_H(6) = 22$ vs $2^6 = 64$ (break point at $N=3$)
 
 # %% [markdown]
-# ## Cell 3: Perceptron
+# # Cell 3: Perceptron
 #
 # **Hypothesis Set**: $h(x) = \text{sign}(w^T x + b)$ (linear separator in 2D)
 #
@@ -155,7 +135,10 @@ print(f"\nAll values match theory: {np.all(compared['error'] == 0)}")
 #
 # **Break Point**: 4
 #
-# The perceptron is a key example showing the transition from exponential to polynomial growth.
+# **Goal**:
+# - Demonstrate the transition from exponential to polynomial growth in the perceptron
+# - Identify the break point where shattering is no longer possible
+# - Compare empirical growth function with theoretical predictions
 
 # %%
 # Create perceptron tester.
@@ -199,9 +182,12 @@ print(f"\nBreak point: N = {break_point}")
 # - Growth becomes polynomial after the break point
 
 # %% [markdown]
-# ## Cell 4: Demonstrating the XOR Problem
+# # Cell 4: Demonstrating the XOR Problem
 #
-# Let's explicitly test that the XOR pattern is not realizable by a perceptron.
+# **Goal**:
+# - Explicitly test that the XOR pattern is not realizable by a perceptron
+# - Demonstrate why the perceptron cannot shatter 4 points
+# - Compare XOR pattern with a linearly separable pattern
 
 # %%
 # Create XOR configuration.
@@ -232,7 +218,7 @@ print(f"Linearly separable pattern realizable: {is_realizable_sep}")
 # - Other patterns (like horizontal or vertical splits) ARE separable
 
 # %% [markdown]
-# ## Cell 5: Convex Sets
+# # Cell 5: Convex Sets
 #
 # **Hypothesis Set**: Select any subset of points and take their convex hull
 #
@@ -240,7 +226,10 @@ print(f"Linearly separable pattern realizable: {is_realizable_sep}")
 #
 # **VC Dimension**: Infinite (no break point)
 #
-# This demonstrates a hypothesis set with unlimited expressiveness.
+# **Goal**:
+# - Demonstrate a hypothesis set with unlimited expressiveness
+# - Verify that all dichotomies are realizable (no break point)
+# - Illustrate the implications of infinite VC dimension for learning
 
 # %%
 # Create convex sets tester.
@@ -272,10 +261,12 @@ print(f"\nAll configurations shattered: {all_shattered}")
 # - Without a break point, generalization bounds are useless
 
 # %% [markdown]
-# ## Cell 6: Estimating VC Dimension
+# # Cell 6: Estimating VC Dimension
 #
-# - The VC dimension is the largest $N$ for which some configuration can be shattered.
-# - Let's estimate it for the perceptron.
+# **Goal**:
+# - Estimate the VC dimension for the 2D perceptron
+# - Determine the largest $N$ for which some configuration can be shattered
+# - Identify the break point where shattering becomes impossible
 
 # %%
 # Estimate VC dimension for 2D perceptron.
@@ -302,9 +293,12 @@ for n, shattered in vc_result["results_by_n"].items():
 # - This matches the theoretical prediction: VC dim = $d + 1$ for $d$-dimensional perceptron
 
 # %% [markdown]
-# ## Cell 7: Visualizing Growth Curves
+# # Cell 7: Visualizing Growth Curves
 #
-# Let's compare all four hypothesis sets on a single plot.
+# **Goal**:
+# - Compare growth functions across multiple hypothesis sets
+# - Visualize the difference between linear, quadratic, and exponential growth
+# - Illustrate which hypothesis sets enable feasible learning
 
 # %%
 # Create visualizer.
@@ -344,9 +338,12 @@ visualizer.plot_multiple_growth_curves(
 # The key insight: Polynomial growth $\Rightarrow$ learning is feasible!
 
 # %% [markdown]
-# ## Cell 8: Computing Realizable Dichotomies
+# # Cell 8: Computing Realizable Dichotomies
 #
-# Let's examine which specific dichotomies are realizable for a small example.
+# **Goal**:
+# - Examine which specific dichotomies are realizable for a small example
+# - Test all possible labelings for 3 points with a perceptron
+# - Verify the shattering property empirically
 
 # %%
 # Create 3 points and test all 8 dichotomies with perceptron.
@@ -383,9 +380,12 @@ print(f"Points shattered: {realizable_count == enumerator.count_dichotomies()}")
 # - This demonstrates why VC dimension = 3 for 2D perceptron
 
 # %% [markdown]
-# ## Cell 9: Finding Hypotheses that Realize Dichotomies
+# # Cell 9: Finding Hypotheses that Realize Dichotomies
 #
-# We can find the actual hypothesis (e.g., threshold, weights) that realizes a given labeling.
+# **Goal**:
+# - Find the actual hypothesis parameters that realize a given labeling
+# - Extract thresholds for positive rays and weights for perceptrons
+# - Understand which hypotheses are "closest" to the data
 
 # %%
 # Find threshold for a positive ray pattern.
@@ -429,9 +429,12 @@ if hypothesis_p:
 # - For perceptron, sklearn finds a linear separator via the perceptron algorithm
 
 # %% [markdown]
-# ## Cell 10: Edge Cases
+# # Cell 10: Edge Cases
 #
-# Let's test some edge cases to ensure robustness.
+# **Goal**:
+# - Test edge cases to ensure robustness of the growth function calculator
+# - Examine behavior with $N=1$ point
+# - Explore how special configurations (collinear points) affect shattering
 
 # %%
 # Test with N=1 point.
