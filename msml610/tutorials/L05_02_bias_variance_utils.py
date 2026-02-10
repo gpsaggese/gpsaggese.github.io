@@ -334,20 +334,16 @@ def cell1_approximation() -> None:
     # Create dense x values for plotting the true function.
     x_dense = np.linspace(-1, 1, 200)
     y_true = target_function(x_dense)
-
     # Fit constant model (finds best horizontal line).
     b = fit_constant_model(x_dense, y_true)
     y_const = np.full_like(x_dense, b)
     error_const = compute_approximation_error(x_dense, y_true, y_const)
-
     # Fit linear model (finds best diagonal line).
     a, b_linear = fit_linear_model(x_dense, y_true)
     y_linear = a * x_dense + b_linear
     error_linear = compute_approximation_error(x_dense, y_true, y_linear)
-
     # Create figure with 3 subplots.
     fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-
     # Plot 1: True function vs Constant model.
     ax1 = axes[0]
     ax1.plot(x_dense, y_true, "b-", linewidth=2, label="True f(x)")
@@ -364,7 +360,6 @@ def cell1_approximation() -> None:
         label="Approximation Error",
     )
     setup_model_comparison_axis(ax1, "True Function vs Constant Model")
-
     # Plot 2: True function vs Linear model.
     ax2 = axes[1]
     ax2.plot(x_dense, y_true, "b-", linewidth=2, label="True f(x)")
@@ -385,7 +380,6 @@ def cell1_approximation() -> None:
         label="Approximation Error",
     )
     setup_model_comparison_axis(ax2, "True Function vs Linear Model")
-
     # Plot 3: Comments.
     ax3 = axes[2]
     ax3.axis("off")
@@ -426,7 +420,6 @@ perfectly.
         fontfamily="monospace",
         bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
     )
-
     plt.tight_layout()
     plt.show()
 
@@ -475,26 +468,20 @@ def cell2_learning_once() -> None:
         """Update the visualization based on widget values."""
         with output:
             clear_output(wait=True)
-
             # Set random seed for reproducibility.
             np.random.seed(seed)
-
             # Generate training data by sampling random points.
             x_train, y_train = generate_training_data(n_samples)
-
             # Create dense x values for plotting the true function and computing E_out.
             x_dense = np.linspace(-1, 1, 200)
             y_true = target_function(x_dense)
-
             # Fit models to training data and generate predictions.
             b, y_const_dense, (a, b_linear), y_linear_dense = (
                 fit_models_and_predict(x_train, y_train, x_dense)
             )
-
             # Generate predictions on training data for E_in computation.
             y_const_train = np.full_like(x_train, b)
             y_linear_train = a * x_train + b_linear
-
             # Compute all error metrics.
             e_in_const, e_in_linear, e_out_const, e_out_linear = (
                 compute_all_errors(
@@ -508,10 +495,8 @@ def cell2_learning_once() -> None:
                     y_linear_dense,
                 )
             )
-
             # Create figure with 3 subplots.
             fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-
             # Plot 1: True function vs Constant model.
             ax1 = axes[0]
             ax1.plot(x_dense, y_true, "b-", linewidth=2, label="True f(x)")
@@ -528,7 +513,6 @@ def cell2_learning_once() -> None:
                 ax1,
                 f"Constant Model: E_in={e_in_const:.4f}, E_out={e_out_const:.4f}",
             )
-
             # Plot 2: True function vs Linear model.
             ax2 = axes[1]
             ax2.plot(x_dense, y_true, "b-", linewidth=2, label="True f(x)")
@@ -541,7 +525,6 @@ def cell2_learning_once() -> None:
                 ax2,
                 f"Linear Model: E_in={e_in_linear:.4f}, E_out={e_out_linear:.4f}",
             )
-
             # Plot 3: Comments.
             ax3 = axes[2]
             ax3.axis("off")
@@ -560,19 +543,15 @@ OUT-OF-SAMPLE ERROR (E_out):
   Linear:   {e_out_linear:.4f}
 """
             mtumsuti.add_fitted_text_box(ax3, comment_text)
-
             plt.tight_layout()
             plt.show()
-
     # Link widgets to update function.
     ipywidgets.interactive_output(
         update_plot,
         {"seed": seed_slider, "n_samples": n_samples_slider},
     )
-
     # Display widgets and output.
     display(seed_box, n_samples_box, output)
-
     # Initial plot.
     update_plot(seed_slider.value, n_samples_slider.value)
 
@@ -632,40 +611,32 @@ def cell3_learning_bias_variance() -> None:
         """Update the visualization based on widget values."""
         with output:
             clear_output(wait=True)
-
             # Set random seed for reproducibility.
             np.random.seed(seed)
-
             # Create dense x values for plotting the true function.
             x_dense = np.linspace(-1, 1, 200)
             y_true = target_function(x_dense)
-
             # Storage for fitted models across experiments.
             const_models = []  # List of constant values (b)
             linear_models = []  # List of (a, b) tuples
-
             # Storage for errors.
             e_in_const_list = []
             e_in_linear_list = []
             e_out_const_list = []
             e_out_linear_list = []
-
             # Run N_experiments with different random training sets.
             for _ in range(n_experiments):
                 # Generate training data by sampling random points.
                 x_train, y_train = generate_training_data(n_samples)
-
                 # Fit models and generate predictions.
                 b, y_const_dense, (a, b_linear), y_linear_dense = (
                     fit_models_and_predict(x_train, y_train, x_dense)
                 )
                 const_models.append(b)
                 linear_models.append((a, b_linear))
-
                 # Generate predictions on training data for E_in computation.
                 y_const_train = np.full_like(x_train, b)
                 y_linear_train = a * x_train + b_linear
-
                 # Compute errors.
                 e_in_const, e_in_linear, e_out_const, e_out_linear = (
                     compute_all_errors(
@@ -683,16 +654,13 @@ def cell3_learning_bias_variance() -> None:
                 e_in_linear_list.append(e_in_linear)
                 e_out_const_list.append(e_out_const)
                 e_out_linear_list.append(e_out_linear)
-
             # Compute average errors.
             avg_e_in_const = np.mean(e_in_const_list)
             avg_e_in_linear = np.mean(e_in_linear_list)
             avg_e_out_const = np.mean(e_out_const_list)
             avg_e_out_linear = np.mean(e_out_linear_list)
-
             # Create figure with 3 subplots.
             fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-
             # Plot 1: True function vs all Constant models.
             ax1 = axes[0]
             ax1.plot(
@@ -714,7 +682,6 @@ def cell3_learning_bias_variance() -> None:
             setup_model_comparison_axis(
                 ax1, f"Constant Models ({n_experiments} experiments)"
             )
-
             # Plot 2: True function vs all Linear models.
             ax2 = axes[1]
             ax2.plot(
@@ -740,7 +707,6 @@ def cell3_learning_bias_variance() -> None:
             setup_model_comparison_axis(
                 ax2, f"Linear Models ({n_experiments} experiments)"
             )
-
             # Plot 3: Comments.
             ax3 = axes[2]
             ax3.axis("off")
@@ -760,7 +726,6 @@ AVERAGE OUT-OF-SAMPLE ERROR:
   Linear:   {avg_e_out_linear:.4f}
 """
             mtumsuti.add_fitted_text_box(ax3, comment_text)
-
             plt.tight_layout()
             plt.show()
 
@@ -839,26 +804,21 @@ def cell4_learning_plots() -> None:
         """Update the visualization based on widget values."""
         with output:
             clear_output(wait=True)
-
             # Set random seed for reproducibility.
             np.random.seed(seed)
-
             # Create dense x values for plotting the true function and computing metrics.
             x_dense = np.linspace(-1, 1, 200)
             y_true = target_function(x_dense)
-
             # Storage for metrics across different N_samples.
             n_samples_range = range(2, max_n_samples + 1)
             e_in_const_avg = []
             e_out_const_avg = []
             bias_const = []
             variance_const = []
-
             e_in_linear_avg = []
             e_out_linear_avg = []
             bias_linear = []
             variance_linear = []
-
             # For each N_samples value, run multiple experiments.
             for n_samples in n_samples_range:
                 # Storage for this N_samples across experiments.
@@ -868,23 +828,19 @@ def cell4_learning_plots() -> None:
                 e_out_const_list = []
                 e_in_linear_list = []
                 e_out_linear_list = []
-
                 # Run N_experiments with different random training sets.
                 for _ in range(n_experiments):
                     # Generate training data.
                     x_train, y_train = generate_training_data(n_samples)
-
                     # Fit models and generate predictions.
                     b, y_const_dense, (a, b_linear), y_linear_dense = (
                         fit_models_and_predict(x_train, y_train, x_dense)
                     )
                     const_predictions.append(y_const_dense)
                     linear_predictions.append(y_linear_dense)
-
                     # Generate predictions on training data for E_in computation.
                     y_const_train = np.full_like(x_train, b)
                     y_linear_train = a * x_train + b_linear
-
                     # Compute errors.
                     e_in_const, e_in_linear, e_out_const, e_out_linear = (
                         compute_all_errors(
@@ -902,33 +858,27 @@ def cell4_learning_plots() -> None:
                     e_out_const_list.append(e_out_const)
                     e_in_linear_list.append(e_in_linear)
                     e_out_linear_list.append(e_out_linear)
-
                 # Compute average errors.
                 e_in_const_avg.append(np.mean(e_in_const_list))
                 e_out_const_avg.append(np.mean(e_out_const_list))
                 e_in_linear_avg.append(np.mean(e_in_linear_list))
                 e_out_linear_avg.append(np.mean(e_out_linear_list))
-
                 # Compute bias and variance for constant model.
                 bias_squared_const, variance_const_val = compute_bias_variance(
                     const_predictions, y_true
                 )
                 bias_const.append(bias_squared_const)
                 variance_const.append(variance_const_val)
-
                 # Compute bias and variance for linear model.
                 bias_squared_linear, variance_linear_val = compute_bias_variance(
                     linear_predictions, y_true
                 )
                 bias_linear.append(bias_squared_linear)
                 variance_linear.append(variance_linear_val)
-
             # Create figure with 3 subplots.
             fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-
             # Fixed y-axis limit for both plots.
             y_max = 1.75
-
             # Plot 1: Metrics for Constant Model.
             ax1 = axes[0]
             plot_error_metrics(
@@ -941,7 +891,6 @@ def cell4_learning_plots() -> None:
                 "Constant Model (g_0) - Bias-Variance Analysis",
                 y_max=y_max,
             )
-
             # Plot 2: Metrics for Linear Model.
             ax2 = axes[1]
             plot_error_metrics(
@@ -954,11 +903,9 @@ def cell4_learning_plots() -> None:
                 "Linear Model (g_1) - Bias-Variance Analysis",
                 y_max=y_max,
             )
-
             # Plot 3: Comments.
             ax3 = axes[2]
             ax3.axis("off")
-
             # Get final values for comments.
             final_e_out_const = e_out_const_avg[-1]
             final_bias_const = bias_const[-1]
@@ -966,7 +913,6 @@ def cell4_learning_plots() -> None:
             final_e_out_linear = e_out_linear_avg[-1]
             final_bias_linear = bias_linear[-1]
             final_var_linear = variance_linear[-1]
-
             comment_text = f"""
 BIAS-VARIANCE DECOMPOSITION
 AS FUNCTION OF N_samples
@@ -994,7 +940,6 @@ At N={max_n_samples}:
   Variance: {final_var_linear:.4f}
 """
             mtumsuti.add_fitted_text_box(ax3, comment_text)
-
             plt.tight_layout()
             plt.show()
 
@@ -1082,40 +1027,32 @@ def cell5_learning_with_noise() -> None:
         """Update the visualization based on widget values."""
         with output:
             clear_output(wait=True)
-
             # Set random seed for reproducibility.
             np.random.seed(seed)
-
             # Create dense x values for plotting the true function.
             x_dense = np.linspace(-1, 1, 200)
             y_true = target_function(x_dense)
-
             # Storage for fitted models across experiments.
             const_models = []  # List of constant values (b)
             linear_models = []  # List of (a, b) tuples
-
             # Storage for errors.
             e_in_const_list = []
             e_in_linear_list = []
             e_out_const_list = []
             e_out_linear_list = []
-
             # Run N_experiments with different random training sets.
             for _ in range(n_experiments):
                 # Generate training data by sampling random points.
                 x_train, y_train = generate_training_data(n_samples, noise_std=noise_std)
-
                 # Fit models and generate predictions.
                 b, y_const_dense, (a, b_linear), y_linear_dense = (
                     fit_models_and_predict(x_train, y_train, x_dense)
                 )
                 const_models.append(b)
                 linear_models.append((a, b_linear))
-
                 # Generate predictions on training data for E_in computation.
                 y_const_train = np.full_like(x_train, b)
                 y_linear_train = a * x_train + b_linear
-
                 # Compute errors.
                 e_in_const, e_in_linear, e_out_const, e_out_linear = (
                     compute_all_errors(
@@ -1133,16 +1070,13 @@ def cell5_learning_with_noise() -> None:
                 e_in_linear_list.append(e_in_linear)
                 e_out_const_list.append(e_out_const)
                 e_out_linear_list.append(e_out_linear)
-
             # Compute average errors.
             avg_e_in_const = np.mean(e_in_const_list)
             avg_e_in_linear = np.mean(e_in_linear_list)
             avg_e_out_const = np.mean(e_out_const_list)
             avg_e_out_linear = np.mean(e_out_linear_list)
-
             # Create figure with 3 subplots.
             fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-
             # Plot 1: True function vs all Constant models.
             ax1 = axes[0]
             ax1.plot(
@@ -1181,7 +1115,6 @@ def cell5_learning_with_noise() -> None:
             setup_model_comparison_axis(
                 ax1, f"Constant Models ({n_experiments} experiments)"
             )
-
             # Plot 2: True function vs all Linear models.
             ax2 = axes[1]
             ax2.plot(
@@ -1224,7 +1157,6 @@ def cell5_learning_with_noise() -> None:
             setup_model_comparison_axis(
                 ax2, f"Linear Models ({n_experiments} experiments)"
             )
-
             # Plot 3: Comments.
             ax3 = axes[2]
             ax3.axis("off")
@@ -1245,7 +1177,6 @@ AVERAGE OUT-OF-SAMPLE ERROR:
   Linear:   {avg_e_out_linear:.4f}
 """
             mtumsuti.add_fitted_text_box(ax3, comment_text)
-
             plt.tight_layout()
             plt.show()
 
@@ -1337,26 +1268,21 @@ def cell6_learning_plots_with_noise() -> None:
         """Update the visualization based on widget values."""
         with output:
             clear_output(wait=True)
-
             # Set random seed for reproducibility.
             np.random.seed(seed)
-
             # Create dense x values for plotting the true function and computing metrics.
             x_dense = np.linspace(-1, 1, 200)
             y_true = target_function(x_dense)
-
             # Storage for metrics across different N_samples.
             n_samples_range = range(2, n_samples + 1)
             e_in_const_avg = []
             e_out_const_avg = []
             bias_const = []
             variance_const = []
-
             e_in_linear_avg = []
             e_out_linear_avg = []
             bias_linear = []
             variance_linear = []
-
             # For each N_samples value, run multiple experiments.
             for curr_n_samples in n_samples_range:
                 # Storage for this N_samples across experiments.
@@ -1366,25 +1292,21 @@ def cell6_learning_plots_with_noise() -> None:
                 e_out_const_list = []
                 e_in_linear_list = []
                 e_out_linear_list = []
-
                 # Run N_experiments with different random training sets.
                 for _ in range(n_experiments):
                     # Generate training data.
                     x_train, y_train = generate_training_data(
                         curr_n_samples, noise_std=noise_std
                     )
-
                     # Fit models and generate predictions.
                     b, y_const_dense, (a, b_linear), y_linear_dense = (
                         fit_models_and_predict(x_train, y_train, x_dense)
                     )
                     const_predictions.append(y_const_dense)
                     linear_predictions.append(y_linear_dense)
-
                     # Generate predictions on training data for E_in computation.
                     y_const_train = np.full_like(x_train, b)
                     y_linear_train = a * x_train + b_linear
-
                     # Compute errors.
                     e_in_const, e_in_linear, e_out_const, e_out_linear = (
                         compute_all_errors(
@@ -1402,33 +1324,27 @@ def cell6_learning_plots_with_noise() -> None:
                     e_out_const_list.append(e_out_const)
                     e_in_linear_list.append(e_in_linear)
                     e_out_linear_list.append(e_out_linear)
-
                 # Compute average errors.
                 e_in_const_avg.append(np.mean(e_in_const_list))
                 e_out_const_avg.append(np.mean(e_out_const_list))
                 e_in_linear_avg.append(np.mean(e_in_linear_list))
                 e_out_linear_avg.append(np.mean(e_out_linear_list))
-
                 # Compute bias and variance for constant model.
                 bias_squared_const, variance_const_val = compute_bias_variance(
                     const_predictions, y_true
                 )
                 bias_const.append(bias_squared_const)
                 variance_const.append(variance_const_val)
-
                 # Compute bias and variance for linear model.
                 bias_squared_linear, variance_linear_val = compute_bias_variance(
                     linear_predictions, y_true
                 )
                 bias_linear.append(bias_squared_linear)
                 variance_linear.append(variance_linear_val)
-
             # Create figure with 3 subplots.
             fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-
             # Fixed y-axis limit for both plots.
             y_max = 1.75
-
             # Plot 1: Metrics for Constant Model.
             ax1 = axes[0]
             plot_error_metrics(
@@ -1441,7 +1357,6 @@ def cell6_learning_plots_with_noise() -> None:
                 "Constant Model (g_0) - Bias-Variance Analysis",
                 y_max=y_max,
             )
-
             # Plot 2: Metrics for Linear Model.
             ax2 = axes[1]
             plot_error_metrics(
@@ -1454,11 +1369,9 @@ def cell6_learning_plots_with_noise() -> None:
                 "Linear Model (g_1) - Bias-Variance Analysis",
                 y_max=y_max,
             )
-
             # Plot 3: Comments.
             ax3 = axes[2]
             ax3.axis("off")
-
             # Get final values for comments.
             final_e_out_const = e_out_const_avg[-1]
             final_bias_const = bias_const[-1]
@@ -1466,7 +1379,6 @@ def cell6_learning_plots_with_noise() -> None:
             final_e_out_linear = e_out_linear_avg[-1]
             final_bias_linear = bias_linear[-1]
             final_var_linear = variance_linear[-1]
-
             comment_text = f"""
 BIAS-VARIANCE WITH NOISE
 AS FUNCTION OF N_samples
@@ -1492,7 +1404,6 @@ At N={n_samples}:
   Variance: {final_var_linear:.4f}
 """
             mtumsuti.add_fitted_text_box(ax3, comment_text)
-
             plt.tight_layout()
             plt.show()
 

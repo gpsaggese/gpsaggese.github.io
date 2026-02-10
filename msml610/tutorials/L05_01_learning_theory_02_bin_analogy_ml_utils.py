@@ -223,11 +223,6 @@ def _plot_single_experiment(mu: float, N: int, seed: int) -> None:
         f"Assessment:\n"
         f"  In this run, nu {closeness} close to mu.\n"
         f"  Color: {color_desc}\n\n"
-        f"Key Insight:\n"
-        f"- A single experiment gives us one estimate.\n"
-        f"- Sometimes nu is close to mu, sometimes not.\n"
-        f"- We need to understand: How OFTEN is nu close?\n"
-        f"- Try different seeds to see variation!"
     )
     mtumsuti.add_fitted_text_box(ax2, text_content)
     plt.tight_layout()
@@ -399,13 +394,6 @@ def _plot_monte_carlo_simulation(
         f"- Concentration is {concentration_quality}\n"
         f"- Only {empirical_prob * 100:.1f}% of experiments\n"
         f"  have |nu - mu| > {eps:.3f}\n\n"
-        f"Key Insight:\n"
-        f"- Repeating the experiment many times\n"
-        f"  shows nu is typically close to mu\n"
-        f"- Larger N → tighter distribution\n"
-        f"- This builds intuition for why\n"
-        f"  sample statistics approximate\n"
-        f"  population parameters"
     )
     mtumsuti.add_fitted_text_box(ax2, text_content)
     plt.tight_layout()

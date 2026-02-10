@@ -880,20 +880,15 @@ def _link_slider_widgets(
     :param minus_button: The decrement button
     :param plus_button: The increment button
     """
-
     def slider_changed(change):
         text.value = change["new"]
-
     def text_changed(change):
         if slider.min <= change["new"] <= slider.max:
             slider.value = change["new"]
-
     def minus_clicked(b):
         slider.value = max(slider.min, slider.value - slider.step)
-
     def plus_clicked(b):
         slider.value = min(slider.max, slider.value + slider.step)
-
     # Connect observers.
     slider.observe(slider_changed, names="value")
     text.observe(text_changed, names="value")
@@ -1007,18 +1002,15 @@ def build_log_widget_control(
     # Create buttons.
     minus_button = ipywidgets.Button(description="-", layout={"width": "40px"})
     plus_button = ipywidgets.Button(description="+", layout={"width": "40px"})
-
     # Link widgets.
     def exp_slider_changed(change):
         """Update text field with actual value when slider changes."""
         value_text.value = base ** change["new"]
-
     def value_text_changed(change):
         """Update slider exponent when text field changes."""
         try:
             # Find the closest exponent for the entered value.
             import math
-
             new_exp = round(math.log(change["new"], base))
             # Clamp to valid range.
             new_exp = max(min_exp, min(max_exp, new_exp))
@@ -1026,15 +1018,12 @@ def build_log_widget_control(
         except (ValueError, ZeroDivisionError):
             # Invalid value, reset to current slider value.
             value_text.value = base ** exp_slider.value
-
     def minus_clicked(b):
         """Decrement exponent (halve value for base=2)."""
         exp_slider.value = max(min_exp, exp_slider.value - 1)
-
     def plus_clicked(b):
         """Increment exponent (double value for base=2)."""
         exp_slider.value = min(max_exp, exp_slider.value + 1)
-
     # Connect observers.
     exp_slider.observe(exp_slider_changed, names="value")
     value_text.observe(value_text_changed, names="value")
@@ -1046,17 +1035,25 @@ def build_log_widget_control(
 
 
 def add_fitted_text_box(
-    ax,
-    text,
-    box_xy=(0.02, 0.98),
-    box_width=0.96,
-    box_height=0.96,
-    max_fontsize=16,
-    min_fontsize=8,
-):
+    ax: plt.Axes,
+    text: str,
+    box_xy: Tuple[float, float] = (0.02, 0.98),
+    box_width: float = 0.96,
+    box_height: float = 0.96,
+    *,
+    max_fontsize: int = 16,
+    min_fontsize: int = 8,
+) -> None:
     """
-    Add a text box that fills a given axes region and automatically scales font
-    size to fit vertically.
+    Add a text box that fills a given axes region and automatically scales font size to fit vertically.
+
+    :param ax: Matplotlib axes to add text to
+    :param text: Text content to display
+    :param box_xy: Position of text box as (x, y) in axes coordinates
+    :param box_width: Width of box as fraction of axes width
+    :param box_height: Height of box as fraction of axes height
+    :param max_fontsize: Maximum font size to try
+    :param min_fontsize: Minimum font size to use
     """
     ax.figure.canvas.draw()
     renderer = ax.figure.canvas.get_renderer()
@@ -1185,7 +1182,6 @@ def generate_animation(
             kwargs = {**kwargs, "figsize": figsize}
         # Save the original plt.show.
         original_show = plt.show
-
         # Create a custom show function that saves the figure.
         def save_figure():
             frame_path = os.path.join(dst_dir, f"frame_{i:03d}.png")
@@ -1196,7 +1192,6 @@ def generate_animation(
                 facecolor="white",
             )
             plt.close()
-
         # Replace plt.show temporarily.
         plt.show = save_figure
         try:

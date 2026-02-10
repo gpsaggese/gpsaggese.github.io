@@ -219,8 +219,8 @@ def cell1_plot_true_target_function() -> None:
             _GLOBAL_STATE["y_test"] = y_test
             _GLOBAL_STATE["x_dense"] = x_dense
             _GLOBAL_STATE["y_true_dense"] = y_true_dense
-            # Create 2x2 subplot layout.
-            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(14, 10))
+            # Create 1x4 subplot layout.
+            fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5))
             # Plot 1: True target function.
             # Plot the true function (noiseless).
             ax1.plot(
@@ -305,15 +305,6 @@ def cell1_plot_true_target_function() -> None:
                 f"Data Split:\n"
                 f"  In-sample: {len(x_train)} points (80%)\n"
                 f"  Out-of-sample: {len(x_test)} points (20%)\n\n"
-                f"Key Observations:\n"
-                f"- The true function (blue curve) is\n"
-                f"  the unknown target we want to learn\n"
-                f"- In practice, we only observe a few\n"
-                f"  noisy samples from this function\n"
-                f"- Green points are used for training\n"
-                f"- Red points are held out for testing\n"
-                f"- The goal is to learn from green points\n"
-                f"  and generalize to red points\n\n"
                 f"Try varying:\n"
                 f"- N: more samples → better learning\n"
                 f"- epsilon: more noise → harder learning\n"
@@ -467,8 +458,8 @@ def cell2_plot_model() -> None:
             # Compute errors.
             E_in = compute_error(y_train, y_pred_train)
             E_out = compute_error(y_test, y_pred_test)
-            # Create 2x2 subplot layout.
-            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(14, 10))
+            # Create 1x4 subplot layout.
+            fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5))
             # Plot 1: In-sample data with fitted model.
             ax1.scatter(
                 x_train,

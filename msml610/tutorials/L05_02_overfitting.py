@@ -144,5 +144,3 @@ utils.cell1_plot_true_target_function()
 # %%
 # Display model learning with interactive controls.
 utils.cell2_plot_model()
-
-# %%
