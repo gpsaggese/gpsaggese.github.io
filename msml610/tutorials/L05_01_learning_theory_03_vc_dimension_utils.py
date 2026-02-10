@@ -441,9 +441,9 @@ def _draw_dichotomy_3points_with_target(
         text_content += f"  {label}:                   {sign}\n"
     text_content += "\n"
     if match:
-        text_content += "STATUS: MATCH! You found the correct classification!\n"
+        text_content += "Status: Match! You found the correct classification!\n"
     else:
-        text_content += "STATUS: Keep adjusting to match the target.\n"
+        text_content += "Status: Keep adjusting to match the target.\n"
     # Add text box to right subplot.
     ax2.axis("off")
     mtumsuti.add_fitted_text_box(ax2, text_content)
@@ -768,8 +768,8 @@ def _draw_dichotomy_4points(
     text_content += f"Impossible:               {len(impossible)}\n"
     text_content += "\n"
     if is_xor:
-        text_content += "XOR PATTERN DETECTED!\n"
-        text_content += "This pattern is NOT achievable with a\n"
+        text_content += "Xor Pattern Detected!\n"
+        text_content += "This pattern is not achievable with a\n"
         text_content += "linear separator (2D perceptron).\n"
     else:
         text_content += "This introduces the concept of BREAK POINT:\n"
@@ -1368,9 +1368,9 @@ def _draw_convex_sets(
         text_content += f"  P{i + 1}:                {sign}\n"
     text_content += "\n"
     if match:
-        text_content += "STATUS: MATCH! Classification achieved!\n"
+        text_content += "Status: Match! Classification achieved!\n"
     else:
-        text_content += "STATUS: Use 'Find Solution' to achieve target.\n"
+        text_content += "Status: Use 'Find Solution' to achieve target.\n"
     text_content += "\n"
     text_content += "Selected point indices: " + str(selected_indices) + "\n"
     # Add text box to right subplot.

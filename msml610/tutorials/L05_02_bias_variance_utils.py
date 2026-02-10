@@ -384,7 +384,7 @@ def cell1_approximation() -> None:
     ax3 = axes[2]
     ax3.axis("off")
     comment_text = f"""
-APPROXIMATION ERRORS
+Approximation Errors
 
 Target Function:
   f(x) = sin(pi*x)
@@ -397,8 +397,8 @@ Linear Model (g_1):
   g_1(x) = {a:.3f}*x + {b_linear:.3f}
   Error: {error_linear:.4f}
 
-OBSERVATION:
-The linear model has LOWER
+Observation:
+The linear model has lower
 approximation error than the
 constant model.
 
@@ -529,16 +529,16 @@ def cell2_learning_once() -> None:
             ax3 = axes[2]
             ax3.axis("off")
             comment_text = f"""
-LEARNING vs APPROXIMATION
+Learning vs Approximation
 
 Training Set: {n_samples} random points
 Seed: {seed}
 
-IN-SAMPLE ERROR (E_in):
+In-sample Error (E_in):
   Constant: {e_in_const:.4f}
   Linear:   {e_in_linear:.4f}
 
-OUT-OF-SAMPLE ERROR (E_out):
+Out-of-sample Error (E_out):
   Constant: {e_out_const:.4f}
   Linear:   {e_out_linear:.4f}
 """
@@ -711,17 +711,17 @@ def cell3_learning_bias_variance() -> None:
             ax3 = axes[2]
             ax3.axis("off")
             comment_text = f"""
-BIAS-VARIANCE DECOMPOSITION
+Bias-variance Decomposition
 
 Setup: {n_experiments} experiments
        {n_samples} samples per experiment
        Seed: {seed}
 
-AVERAGE IN-SAMPLE ERROR:
+Average In-sample Error:
   Constant: {avg_e_in_const:.4f}
   Linear:   {avg_e_in_linear:.4f}
 
-AVERAGE OUT-OF-SAMPLE ERROR:
+Average Out-of-sample Error:
   Constant: {avg_e_out_const:.4f}
   Linear:   {avg_e_out_linear:.4f}
 """
@@ -914,26 +914,26 @@ def cell4_learning_plots() -> None:
             final_bias_linear = bias_linear[-1]
             final_var_linear = variance_linear[-1]
             comment_text = f"""
-BIAS-VARIANCE DECOMPOSITION
-AS FUNCTION OF N_samples
+Bias-variance Decomposition
+as Function of N_samples
 
 Setup: {n_experiments} experiments per N
        Seed: {seed} (fixed)
        N_samples: 2 to {max_n_samples}
 
-DECOMPOSITION FORMULA:
+Decomposition Formula:
 E_out = Bias² + Variance + Noise
 
 (Noise = 0 for our deterministic
  target function)
 
-CONSTANT MODEL (g_0):
+Constant Model (g_0):
 At N={max_n_samples}:
   E_out:    {final_e_out_const:.4f}
   Bias²:    {final_bias_const:.4f}
   Variance: {final_var_const:.4f}
 
-LINEAR MODEL (g_1):
+Linear Model (g_1):
 At N={max_n_samples}:
   E_out:    {final_e_out_linear:.4f}
   Bias²:    {final_bias_linear:.4f}
@@ -1161,18 +1161,18 @@ def cell5_learning_with_noise() -> None:
             ax3 = axes[2]
             ax3.axis("off")
             comment_text = f"""
-BIAS-VARIANCE WITH NOISE
+Bias-variance with Noise
 
 Setup: {n_experiments} experiments
        {n_samples} samples per experiment
        Noise std: {noise_std:.2f}
        Seed: {seed}
 
-AVERAGE IN-SAMPLE ERROR:
+Average In-sample Error:
   Constant: {avg_e_in_const:.4f}
   Linear:   {avg_e_in_linear:.4f}
 
-AVERAGE OUT-OF-SAMPLE ERROR:
+Average Out-of-sample Error:
   Constant: {avg_e_out_const:.4f}
   Linear:   {avg_e_out_linear:.4f}
 """
@@ -1380,24 +1380,24 @@ def cell6_learning_plots_with_noise() -> None:
             final_bias_linear = bias_linear[-1]
             final_var_linear = variance_linear[-1]
             comment_text = f"""
-BIAS-VARIANCE WITH NOISE
-AS FUNCTION OF N_samples
+Bias-variance with Noise
+as Function of N_samples
 
 Setup: {n_experiments} experiments per N
        Seed: {seed} (fixed)
        N_samples: 2 to {n_samples}
        Noise std: {noise_std:.2f}
 
-DECOMPOSITION FORMULA:
+Decomposition Formula:
 E_out = Bias² + Variance + Noise²
 
-CONSTANT MODEL (g_0):
+Constant Model (g_0):
 At N={n_samples}:
   E_out:    {final_e_out_const:.4f}
   Bias²:    {final_bias_const:.4f}
   Variance: {final_var_const:.4f}
 
-LINEAR MODEL (g_1):
+Linear Model (g_1):
 At N={n_samples}:
   E_out:    {final_e_out_linear:.4f}
   Bias²:    {final_bias_linear:.4f}
