@@ -115,10 +115,12 @@ class TestTutorialExecution(hunitest.TestCase):
         )
         tutorials_dir = os.path.abspath(tutorials_dir)
         # Find files.
-        py_files, paired_notebooks, unpaired_notebooks = hjupyte.find_paired_files(
-            tutorials_dir,
-            pattern="L*.py",
-            exclude_pattern="_utils.py",
+        py_files, paired_notebooks, unpaired_notebooks = (
+            hjupyte.find_paired_files(
+                tutorials_dir,
+                pattern="L*.py",
+                exclude_pattern="_utils.py",
+            )
         )
         # Assert no unpaired notebooks.
         hdbg.dassert_eq(
@@ -161,11 +163,11 @@ class TestTutorialExecution(hunitest.TestCase):
         """
         Test execution of Python tutorial / scripts with / without docker.
         """
-        #mode = "run_python"
-        #mode = "run_notebook"
+        # mode = "run_python"
+        # mode = "run_notebook"
         mode = "run_both"
         use_docker = True
-        #max_tests = None
+        # max_tests = None
         max_tests = 2
         self._run_tutorial_tests(
             mode,
