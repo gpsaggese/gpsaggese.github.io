@@ -182,7 +182,7 @@ def _create_basic_widget_controls(
 # #############################################################################
 
 
-def cell1_basic_bernoulli_sampling(
+def cell1_1_basic_bernoulli_sampling(
     *,
     mu: float = 0.6,
     N: int = 10,
@@ -298,13 +298,7 @@ def _plot_bernoulli_sample2(
         f"Sample Statistics:\n"
         f"  Successes (1): {n_successes}\n"
         f"  Failures (0): {n_failures}\n"
-        f"  Empirical prob: {empirical_prob:.4f}\n\n"
-        f"Interpretation:\n"
-        f"- Each sample is an independent Bernoulli trial with success\n"
-        "   probability mu.\n\n"
-        f"- The left plot shows samples as they occur over time.\n\n"
-        f"- The center plot compares the empirical PDF (bars) with\n"
-        f"  the theoretical probabilities (blue line)."
+        f"  Empirical prob: {empirical_prob:.4f}"
     )
     mtumsuti.add_fitted_text_box(ax3, text_content)
     # Use subplots_adjust for consistent spacing.
@@ -319,7 +313,7 @@ def _plot_bernoulli_sample2(
 # #############################################################################
 
 
-def cell2_samples_over_time_and_pdf() -> None:
+def cell1_2_samples_over_time_and_pdf() -> None:
     """
     Create interactive Bernoulli sampling visualization with PDF comparison.
 
@@ -500,7 +494,7 @@ def _plot_bernoulli_sample4(
 # #############################################################################
 
 
-def cell3_distribution_empirical_mean() -> None:
+def cell1_3_distribution_empirical_mean() -> None:
     """
     Create interactive widget for Cell 4 (Distribution of Empirical Mean).
 
@@ -869,16 +863,6 @@ def _plot_hoeffding_inequality_demo(
     # Plot 3: Comments and explanation.
     ax3.axis("off")
     ax3.set_title("Comments", fontsize=13, fontweight="bold", pad=20)
-    # Check if bound is tight.
-    bound_ratio = (
-        hoeffding_bound / empirical_prob if empirical_prob > 0 else float("inf")
-    )
-    if bound_ratio < 2:
-        tightness_note = "The Hoeffding bound is quite tight."
-    elif bound_ratio < 10:
-        tightness_note = "The Hoeffding bound is reasonably tight."
-    else:
-        tightness_note = "The Hoeffding bound is conservative (loose)."
     dist_name = distribution.replace("_", " ").title()
     text_content = (
         f"Parameters:\n"
@@ -895,11 +879,6 @@ def _plot_hoeffding_inequality_demo(
         f"Empirical Result:\n"
         f"  P(|nu - mean| >= {epsilon}) = {empirical_prob:.6f}\n"
         f"  (from {n_trials} trials)\n\n"
-        f"Interpretation:\n"
-        f"- {tightness_note}\n\n"
-        f"- Hoeffding bound applies to any distribution in [0, 1].\n\n"
-        f"- Red bars show tail areas where |nu - mean| >= epsilon.\n\n"
-        f"- As N increases, the bound becomes tighter."
     )
     mtumsuti.add_fitted_text_box(ax3, text_content)
     # Use subplots_adjust for consistent spacing.
@@ -914,7 +893,7 @@ def _plot_hoeffding_inequality_demo(
 # #############################################################################
 
 
-def cell4_hoeffding_inequality_demo() -> None:
+def cell2_2_hoeffding_inequality_demo() -> None:
     """
     Create interactive widget demonstrating the Hoeffding inequality.
 
@@ -927,6 +906,12 @@ def cell4_hoeffding_inequality_demo() -> None:
     P(|nu - mean| >= epsilon) <= 2 * exp(-2 * N * epsilon^2)
 
     where nu is the sample mean of N samples from any distribution in [0, 1].
+
+    Parameters (controlled via interactive widgets):
+    - mu: Distribution parameter (interpretation varies by distribution)
+    - N: Number of samples per trial (larger N = tighter concentration)
+    - epsilon: Deviation threshold (smaller epsilon = stricter bound)
+    - seed: Random seed for reproducibility
 
     Supports multiple distributions:
     - Bernoulli: Binary outcomes (0 or 1)
@@ -957,15 +942,16 @@ def cell4_hoeffding_inequality_demo() -> None:
     mu_slider, mu_box, N_slider, N_box, seed_slider, seed_box = (
         _create_basic_widget_controls(mu_init, N_init, seed_init)
     )
-    # Update descriptions.
-    mu_box.children[0].description = "mu = distribution parameter"
-    N_box.children[0].description = "samples per trial"
+    # Update descriptions to show only variable names.
+    mu_box.children[0].description = "mu"
+    N_box.children[0].description = "N"
+    seed_box.children[0].description = "seed"
     # Update N slider range for better exploration.
     N_slider.min = 10
     N_slider.max = 500
     epsilon_slider, epsilon_box = mtumsuti.build_widget_control(
         name="epsilon",
-        description="deviation threshold",
+        description="epsilon",
         min_val=0.01,
         max_val=0.5,
         step=0.01,
@@ -1164,7 +1150,7 @@ def _plot_hoeffding_inequality_demo2(
 # #############################################################################
 
 
-def cell5_empirical_vs_bound() -> None:
+def cell2_3_empirical_vs_bound() -> None:
     """
     Create interactive widget showing empirical probability vs Hoeffding bound.
 
@@ -1562,7 +1548,7 @@ def _plot_hoeffding_bound_surface(
 # #############################################################################
 
 
-def cell6_bound_surface_heatmap() -> None:
+def cell2_4_bound_surface_heatmap() -> None:
     """
     Create interactive visualization of Hoeffding bound surface.
 
@@ -1822,7 +1808,7 @@ def _plot_hoeffding_bound_3d(
 # #############################################################################
 
 
-def cell7_bound_3d_surface() -> None:
+def cell2_5_bound_3d_surface() -> None:
     """
     Create interactive 3D surface visualization of Hoeffding bound.
 

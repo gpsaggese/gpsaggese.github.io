@@ -6,19 +6,12 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
-
-# %% [markdown]
-# # Lesson 05.1: Hoeffding Inequality
-#
-# **Course**: MSML610: Advanced Machine Learning
-#
-# **Instructor**: Dr. GP Saggese
 
 # %% [markdown]
 # ## Imports
@@ -61,7 +54,7 @@ _LOG = logging.getLogger(__name__)
 
 # %%
 # Demonstrate basic Bernoulli sampling.
-utils.cell1_basic_bernoulli_sampling()
+utils.cell1_1_basic_bernoulli_sampling()
 
 # %% [markdown]
 # ## Cell 1.2: Samples Over Time and Empirical PDF
@@ -77,7 +70,7 @@ utils.cell1_basic_bernoulli_sampling()
 
 # %%
 # Display N samples over time and their empirical PDF.
-utils.cell2_samples_over_time_and_pdf()
+utils.cell1_2_samples_over_time_and_pdf()
 
 # %% [markdown]
 # ## Cell 1.3: Distribution of Empirical Mean
@@ -103,14 +96,14 @@ utils.cell2_samples_over_time_and_pdf()
 
 # %%
 # Display the distribution of empirical mean nu from repeated sampling.
-utils.cell3_distribution_empirical_mean()
+utils.cell1_3_distribution_empirical_mean()
 
 # %% [markdown]
 # # Cell 2: Hoeffding Inequality: Theoretical Bounds
 #
 # - The Hoeffding inequality provides a concentration bound
-# - It quantifies how quickly the sample mean converges to the true mean as $N$
-#   increases
+#     - It quantifies how quickly the sample mean converges to the true mean as $N$
+#       increases
 
 # %% [markdown]
 # ## Cell 2.1: Hoeffding Inequality Statement
@@ -193,7 +186,7 @@ utils.cell3_distribution_empirical_mean()
 
 # %%
 # Demonstrate the Hoeffding inequality with multiple distributions.
-utils.cell4_hoeffding_inequality_demo()
+utils.cell2_2_hoeffding_inequality_demo()
 
 # %% [markdown]
 # ## Cell 2.3: Empirical Probability vs Hoeffding Bound
@@ -239,7 +232,7 @@ utils.cell4_hoeffding_inequality_demo()
 
 # %%
 # Visualize how bound and empirical probability change with N or epsilon.
-utils.cell5_empirical_vs_bound()
+utils.cell2_3_empirical_vs_bound()
 
 # %% [markdown]
 # ## Cell 2.4: Hoeffding Bound as a Function of $N$ and $\epsilon$
@@ -279,7 +272,7 @@ utils.cell5_empirical_vs_bound()
 
 # %%
 # Explore the Hoeffding bound as a function of N and epsilon.
-utils.cell6_bound_surface_heatmap()
+utils.cell2_4_bound_surface_heatmap()
 
 # %% [markdown]
 # ## Cell 2.5: 3D Surface Visualization of Hoeffding Bound
@@ -310,4 +303,4 @@ utils.cell6_bound_surface_heatmap()
 
 # %%
 # Visualize the Hoeffding bound as a 3D surface.
-utils.cell7_bound_3d_surface()
+utils.cell2_5_bound_3d_surface()
