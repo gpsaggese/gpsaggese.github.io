@@ -962,6 +962,89 @@ def build_widget_control(
     return slider, box
 
 
+def build_log_widget_control(
+    name: str,
+    description: str,
+    min_exp: int,
+    max_exp: int,
+    initial_exp: int,
+    *,
+    base: int = 2,
+) -> Tuple[ipywidgets.IntSlider, ipywidgets.HBox]:
+    """
+    Build a logarithmic widget control that displays true values.
+
+    Creates a slider that operates on exponents but displays actual values.
+    For base=2: exponent 2→4, 3→8, 4→16, etc.
+    Clicking + doubles the value, clicking - halves it.
+
+    :param name: Variable name (e.g., "log(N)")
+    :param description: Human-readable description
+    :param min_exp: Minimum exponent (e.g., 2 for min value of 4 when base=2)
+    :param max_exp: Maximum exponent (e.g., 10 for max value of 1024 when base=2)
+    :param initial_exp: Initial exponent
+    :param base: Base for logarithm (default 2)
+    :return: Tuple of (slider, box) where slider controls the exponent and box
+        is the HBox layout containing all components
+    """
+    # Create slider that operates on exponents.
+    exp_slider = ipywidgets.IntSlider(
+        min=min_exp,
+        max=max_exp,
+        step=1,
+        value=initial_exp,
+        description=name,
+        continuous_update=False,
+        style={"description_width": "150px"},
+        layout={"width": "500px"},
+    )
+    # Create text field that displays actual values.
+    value_text = ipywidgets.IntText(
+        value=base**initial_exp,
+        description="",
+        layout={"width": "80px"},
+    )
+    # Create buttons.
+    minus_button = ipywidgets.Button(description="-", layout={"width": "40px"})
+    plus_button = ipywidgets.Button(description="+", layout={"width": "40px"})
+
+    # Link widgets.
+    def exp_slider_changed(change):
+        """Update text field with actual value when slider changes."""
+        value_text.value = base ** change["new"]
+
+    def value_text_changed(change):
+        """Update slider exponent when text field changes."""
+        try:
+            # Find the closest exponent for the entered value.
+            import math
+
+            new_exp = round(math.log(change["new"], base))
+            # Clamp to valid range.
+            new_exp = max(min_exp, min(max_exp, new_exp))
+            exp_slider.value = new_exp
+        except (ValueError, ZeroDivisionError):
+            # Invalid value, reset to current slider value.
+            value_text.value = base ** exp_slider.value
+
+    def minus_clicked(b):
+        """Decrement exponent (halve value for base=2)."""
+        exp_slider.value = max(min_exp, exp_slider.value - 1)
+
+    def plus_clicked(b):
+        """Increment exponent (double value for base=2)."""
+        exp_slider.value = min(max_exp, exp_slider.value + 1)
+
+    # Connect observers.
+    exp_slider.observe(exp_slider_changed, names="value")
+    value_text.observe(value_text_changed, names="value")
+    minus_button.on_click(minus_clicked)
+    plus_button.on_click(plus_clicked)
+    # Create layout.
+    box = _create_widget_box(exp_slider, minus_button, value_text, plus_button)
+    return exp_slider, box
+
+
 def add_fitted_text_box(
     ax,
     text,

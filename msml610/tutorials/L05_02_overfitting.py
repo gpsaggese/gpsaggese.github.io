@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -40,7 +40,7 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %% [markdown]
-# ## Cell 1: True Target Function and Data Sampling
+# # Cell 1: True Target Function and Data Sampling
 #
 # **Goal**:
 # - Visualize the true target function that we want to learn in a machine learning problem

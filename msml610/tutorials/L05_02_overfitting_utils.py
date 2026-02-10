@@ -28,7 +28,7 @@ _GLOBAL_STATE = {
     "seed": 42,
     "function_name": "Slow Sinusoid",
     "epsilon": 0.0,
-    "N": 20,
+    "N": 16,  # Default: 2^4 = 16 (logarithmic control)
     "x_train": None,
     "y_train": None,
     "x_test": None,
@@ -149,15 +149,16 @@ def cell1_plot_true_target_function() -> None:
         initial_value=0.0,
         is_float=True,
     )
-    # Create N widget with slider and +/- buttons.
-    N_slider, N_box = mtumsuti.build_widget_control(
-        name="N",
+    # Create N widget with logarithmic slider and +/- buttons.
+    # Uses exponents 2-10 for base 2: gives values 4, 8, 16, 32, 64, 128, 256, 512, 1024
+    # Initial exponent 4 gives initial value of 16
+    N_exp_slider, N_box = mtumsuti.build_log_widget_control(
+        name="log(N)",
         description="N (total samples)",
-        min_val=5,
-        max_val=100,
-        step=5,
-        initial_value=20,
-        is_float=False,
+        min_exp=2,
+        max_exp=10,
+        initial_exp=4,
+        base=2,
     )
     output = ipywidgets.Output()
 
@@ -173,7 +174,8 @@ def cell1_plot_true_target_function() -> None:
             seed = seed_slider.value
             func_name = function_dropdown.value
             epsilon = epsilon_slider.value
-            N = N_slider.value
+            # N_exp_slider contains the exponent; compute actual N value.
+            N = 2 ** N_exp_slider.value
             # Generate x values for true function (dense).
             x_dense = np.linspace(-1, 1, 200)
             # Get target function.
@@ -327,7 +329,7 @@ def cell1_plot_true_target_function() -> None:
     seed_slider.observe(update_plot, names="value")
     function_dropdown.observe(update_plot, names="value")
     epsilon_slider.observe(update_plot, names="value")
-    N_slider.observe(update_plot, names="value")
+    N_exp_slider.observe(update_plot, names="value")
     # Initial plot.
     update_plot()
     # Display widgets.
@@ -525,7 +527,8 @@ def cell2_plot_model() -> None:
                     label=model_eq,
                     linestyle="--",
                 )
-            else:  # Linear
+            else:
+                # Linear.
                 ax2.plot(
                     x_dense,
                     y_pred_dense,
@@ -573,7 +576,8 @@ def cell2_plot_model() -> None:
                     color="orange",
                     label="Approximation Error",
                 )
-            else:  # Linear
+            else: 
+                # Linear.
                 ax3.plot(
                     x_dense,
                     y_pred_dense,
@@ -608,33 +612,6 @@ def cell2_plot_model() -> None:
             ax4.axis("off")
             ax4.set_title("Comments", fontsize=16, fontweight="bold", pad=20)
             # Generate comment text based on model type.
-            if model_type == "Constant":
-                observations = (
-                    "Key Observations:\n"
-                    "- Constant model finds best horizontal\n"
-                    "  line (mean of training points)\n"
-                    "- HIGH BIAS: Poor approximation of\n"
-                    "  complex target functions\n"
-                    "- LOW VARIANCE: Very stable across\n"
-                    "  different training sets\n"
-                    "- Orange shaded area shows how poorly\n"
-                    "  the constant approximates the true\n"
-                    "  function"
-                )
-            else:  # Linear
-                observations = (
-                    "Key Observations:\n"
-                    "- Linear model finds best line through\n"
-                    "  training points (least squares)\n"
-                    "- LOWER BIAS: Better approximation\n"
-                    "  than constant for many functions\n"
-                    "- HIGHER VARIANCE: More sensitive to\n"
-                    "  training point locations\n"
-                    "- Orange shaded area shows\n"
-                    "  approximation error\n"
-                    "- Compare with Constant to see\n"
-                    "  bias-variance tradeoff"
-                )
             text_content = (
                 f"Model Type: {model_type}\n"
                 f"Model: {model_eq}\n"
@@ -648,7 +625,7 @@ def cell2_plot_model() -> None:
                 f"Error:\n"
                 f"  E_in = {E_in:.4f}\n"
                 f"  E_out = {E_out:.4f}\n\n"
-                f"{observations}\n\n"
+                f"\n"
                 f"Click 'Resample and Relearn' to see\n"
                 f"how the model changes with different\n"
                 f"training data."

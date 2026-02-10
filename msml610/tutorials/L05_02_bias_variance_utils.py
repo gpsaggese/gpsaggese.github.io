@@ -90,6 +90,7 @@ def compute_approximation_error(
 
 def generate_training_data(
     n_samples: int,
+    *,
     noise_std: float = 0.0,
     x_range: Tuple[float, float] = (-1, 1),
 ) -> Tuple[np.ndarray, np.ndarray]:
@@ -168,6 +169,7 @@ def compute_all_errors(
 def setup_model_comparison_axis(
     ax: plt.Axes,
     title: str,
+    *,
     x_label: str = "x",
     y_label: str = "f(x)",
     y_lim: Tuple[float, float] = (-1.5, 1.5),
@@ -198,6 +200,7 @@ def plot_training_points(
     ax: plt.Axes,
     x_train: np.ndarray,
     y_train: np.ndarray,
+    *,
     color: str = "red",
     size: int = 100,
     label: str = "Training points",
@@ -253,6 +256,7 @@ def plot_error_metrics(
     bias: list,
     variance: list,
     title: str,
+    *,
     y_max: float = 1.75,
 ) -> None:
     """
@@ -554,21 +558,6 @@ IN-SAMPLE ERROR (E_in):
 OUT-OF-SAMPLE ERROR (E_out):
   Constant: {e_out_const:.4f}
   Linear:   {e_out_linear:.4f}
-
-OBSERVATION:
-With only {n_samples} points, the models
-fit the TRAINING data (E_in) but
-may not generalize well (E_out).
-
-Learning ≠ Approximation!
-
-The constant model has E_in=0
-when N=1 (perfect fit!) but
-E_out is still high.
-
-Try different seeds to see how
-training set selection affects
-both E_in and E_out.
 """
             mtumsuti.add_fitted_text_box(ax3, comment_text)
 
@@ -769,22 +758,6 @@ AVERAGE IN-SAMPLE ERROR:
 AVERAGE OUT-OF-SAMPLE ERROR:
   Constant: {avg_e_out_const:.4f}
   Linear:   {avg_e_out_linear:.4f}
-
-OBSERVATION:
-Constant model (g_0):
-  - LOW variance (all lines similar)
-  - HIGH bias (far from true f(x))
-
-Linear model (g_1):
-  - HIGHER variance (lines spread)
-  - LOWER bias (closer to f(x))
-
-This is the BIAS-VARIANCE
-TRADEOFF!
-
-The transparent lines show
-individual models. The dashed
-line shows the average model.
 """
             mtumsuti.add_fitted_text_box(ax3, comment_text)
 
@@ -966,7 +939,7 @@ def cell4_learning_plots() -> None:
                 bias_const,
                 variance_const,
                 "Constant Model (g_0) - Bias-Variance Analysis",
-                y_max,
+                y_max=y_max,
             )
 
             # Plot 2: Metrics for Linear Model.
@@ -979,7 +952,7 @@ def cell4_learning_plots() -> None:
                 bias_linear,
                 variance_linear,
                 "Linear Model (g_1) - Bias-Variance Analysis",
-                y_max,
+                y_max=y_max,
             )
 
             # Plot 3: Comments.
@@ -1019,20 +992,6 @@ At N={max_n_samples}:
   E_out:    {final_e_out_linear:.4f}
   Bias²:    {final_bias_linear:.4f}
   Variance: {final_var_linear:.4f}
-
-KEY OBSERVATIONS:
-• Constant model: VERY LOW variance
-  (insensitive to training data)
-  but HIGH bias (can't fit f(x))
-
-• Linear model: HIGHER variance
-  (sensitive to training samples)
-  but LOWER bias (better fit)
-
-• As N increases, variance ↓
-  for both models
-
-• E_out ≈ Bias² + Variance
 """
             mtumsuti.add_fitted_text_box(ax3, comment_text)
 
@@ -1144,7 +1103,7 @@ def cell5_learning_with_noise() -> None:
             # Run N_experiments with different random training sets.
             for _ in range(n_experiments):
                 # Generate training data by sampling random points.
-                x_train, y_train = generate_training_data(n_samples, noise_std)
+                x_train, y_train = generate_training_data(n_samples, noise_std=noise_std)
 
                 # Fit models and generate predictions.
                 b, y_const_dense, (a, b_linear), y_linear_dense = (
@@ -1284,23 +1243,6 @@ AVERAGE IN-SAMPLE ERROR:
 AVERAGE OUT-OF-SAMPLE ERROR:
   Constant: {avg_e_out_const:.4f}
   Linear:   {avg_e_out_linear:.4f}
-
-OBSERVATION:
-Constant model (g_0):
-  - LOW variance (all lines similar)
-  - HIGH bias (far from true f(x))
-
-Linear model (g_1):
-  - HIGHER variance (lines spread)
-  - LOWER bias (closer to f(x))
-
-NOISE EFFECT:
-With noise_std > 0, the training
-data is corrupted by Gaussian noise.
-This increases variance for both
-models and E_out increases.
-
-E_out = bias² + variance + noise²
 """
             mtumsuti.add_fitted_text_box(ax3, comment_text)
 
@@ -1319,7 +1261,7 @@ E_out = bias² + variance + noise²
     )
 
     # Display widgets and output.
-    display(seed_box, n_samples_box, n_experiments_box, noise_box, output)
+    display(seed_box, noise_box, n_samples_box, n_experiments_box, output)
 
     # Initial plot.
     update_plot(
@@ -1342,7 +1284,7 @@ def cell6_learning_plots_with_noise() -> None:
     Uses interactive widgets to control:
     - seed: Random seed for reproducibility (fixed for consistency)
     - N_experiments: Number of experiments to average over
-    - max_N_samples: Maximum number of samples to test
+    - N_samples: Number of samples to test
     - noise_std: Standard deviation of Gaussian noise added to training data
 
     Similar to cell4_learning_plots but includes a noise widget.
@@ -1370,9 +1312,9 @@ def cell6_learning_plots_with_noise() -> None:
         initial_value=100,
         is_float=False,
     )
-    max_n_samples_slider, max_n_samples_box = mtumsuti.build_widget_control(
-        name="max_N_samples",
-        description="Maximum N_samples",
+    n_samples_slider, n_samples_box = mtumsuti.build_widget_control(
+        name="N_samples",
+        description="Number of samples",
         min_val=5,
         max_val=30,
         step=5,
@@ -1390,7 +1332,7 @@ def cell6_learning_plots_with_noise() -> None:
     )
 
     def update_plot(
-        seed: int, n_experiments: int, max_n_samples: int, noise_std: float
+        seed: int, n_experiments: int, n_samples: int, noise_std: float
     ) -> None:
         """Update the visualization based on widget values."""
         with output:
@@ -1404,7 +1346,7 @@ def cell6_learning_plots_with_noise() -> None:
             y_true = target_function(x_dense)
 
             # Storage for metrics across different N_samples.
-            n_samples_range = range(2, max_n_samples + 1)
+            n_samples_range = range(2, n_samples + 1)
             e_in_const_avg = []
             e_out_const_avg = []
             bias_const = []
@@ -1416,7 +1358,7 @@ def cell6_learning_plots_with_noise() -> None:
             variance_linear = []
 
             # For each N_samples value, run multiple experiments.
-            for n_samples in n_samples_range:
+            for curr_n_samples in n_samples_range:
                 # Storage for this N_samples across experiments.
                 const_predictions = []  # Store predictions on x_dense for each experiment
                 linear_predictions = []
@@ -1429,7 +1371,7 @@ def cell6_learning_plots_with_noise() -> None:
                 for _ in range(n_experiments):
                     # Generate training data.
                     x_train, y_train = generate_training_data(
-                        n_samples, noise_std
+                        curr_n_samples, noise_std=noise_std
                     )
 
                     # Fit models and generate predictions.
@@ -1497,7 +1439,7 @@ def cell6_learning_plots_with_noise() -> None:
                 bias_const,
                 variance_const,
                 "Constant Model (g_0) - Bias-Variance Analysis",
-                y_max,
+                y_max=y_max,
             )
 
             # Plot 2: Metrics for Linear Model.
@@ -1510,7 +1452,7 @@ def cell6_learning_plots_with_noise() -> None:
                 bias_linear,
                 variance_linear,
                 "Linear Model (g_1) - Bias-Variance Analysis",
-                y_max,
+                y_max=y_max,
             )
 
             # Plot 3: Comments.
@@ -1531,38 +1473,23 @@ AS FUNCTION OF N_samples
 
 Setup: {n_experiments} experiments per N
        Seed: {seed} (fixed)
-       N_samples: 2 to {max_n_samples}
+       N_samples: 2 to {n_samples}
        Noise std: {noise_std:.2f}
 
 DECOMPOSITION FORMULA:
 E_out = Bias² + Variance + Noise²
 
 CONSTANT MODEL (g_0):
-At N={max_n_samples}:
+At N={n_samples}:
   E_out:    {final_e_out_const:.4f}
   Bias²:    {final_bias_const:.4f}
   Variance: {final_var_const:.4f}
 
 LINEAR MODEL (g_1):
-At N={max_n_samples}:
+At N={n_samples}:
   E_out:    {final_e_out_linear:.4f}
   Bias²:    {final_bias_linear:.4f}
   Variance: {final_var_linear:.4f}
-
-KEY OBSERVATIONS:
-• With noise > 0, E_out increases
-  for both models
-
-• Variance increases with noise
-  (models fit noisy data)
-
-• As N increases, variance ↓
-  (more data averages out noise)
-
-• Bias remains constant
-  (determined by model capacity)
-
-• E_out ≈ Bias² + Variance + σ²
 """
             mtumsuti.add_fitted_text_box(ax3, comment_text)
 
@@ -1575,18 +1502,18 @@ KEY OBSERVATIONS:
         {
             "seed": seed_slider,
             "n_experiments": n_experiments_slider,
-            "max_n_samples": max_n_samples_slider,
+            "n_samples": n_samples_slider,
             "noise_std": noise_slider,
         },
     )
 
     # Display widgets and output.
-    display(seed_box, n_experiments_box, max_n_samples_box, noise_box, output)
+    display(seed_box, noise_box, n_samples_box, n_experiments_box, output)
 
     # Initial plot.
     update_plot(
         seed_slider.value,
         n_experiments_slider.value,
-        max_n_samples_slider.value,
+        n_samples_slider.value,
         noise_slider.value,
     )
