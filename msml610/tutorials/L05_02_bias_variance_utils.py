@@ -397,19 +397,8 @@ Linear Model (g_1):
   g_1(x) = {a:.3f}*x + {b_linear:.3f}
   Error: {error_linear:.4f}
 
-Observation:
-The linear model has lower
-approximation error than the
-constant model.
-
 Error_linear = {error_linear:.4f}
 Error_const = {error_const:.4f}
-
-The linear model fits the
-sinusoid better in the range
-[-1, 1], even though neither
-can capture the curvature
-perfectly.
 """
     ax3.text(
         0.1,
@@ -1234,23 +1223,27 @@ def cell6_learning_plots_with_noise() -> None:
         initial_value=42,
         is_float=False,
     )
-    n_experiments_slider, n_experiments_box = mtumsuti.build_widget_control(
-        name="N_experiments",
+    # Create logarithmic widget for N_experiments.
+    # Uses exponents 4-10 for base 2: gives values 16, 32, 64, 128, 256, 512, 1024
+    # Initial exponent 6 gives initial value of 64
+    n_experiments_exp_slider, n_experiments_box = mtumsuti.build_log_widget_control(
+        name="log(N_experiments)",
         description="Number of experiments",
-        min_val=20,
-        max_val=200,
-        step=20,
-        initial_value=100,
-        is_float=False,
+        min_exp=4,
+        max_exp=10,
+        initial_exp=6,
+        base=2,
     )
-    n_samples_slider, n_samples_box = mtumsuti.build_widget_control(
-        name="N_samples",
+    # Create logarithmic widget for N_samples.
+    # Uses exponents 1-8 for base 2: gives values 2, 4, 8, 16, 32, 64, 128, 256
+    # Initial exponent 4 gives initial value of 16
+    n_samples_exp_slider, n_samples_box = mtumsuti.build_log_widget_control(
+        name="log(N_samples)",
         description="Number of samples",
-        min_val=5,
-        max_val=30,
-        step=5,
-        initial_value=20,
-        is_float=False,
+        min_exp=1,
+        max_exp=8,
+        initial_exp=4,
+        base=2,
     )
     noise_slider, noise_box = mtumsuti.build_widget_control(
         name="noise_std",
@@ -1263,9 +1256,12 @@ def cell6_learning_plots_with_noise() -> None:
     )
 
     def update_plot(
-        seed: int, n_experiments: int, n_samples: int, noise_std: float
+        seed: int, n_experiments_exp: int, n_samples_exp: int, noise_std: float
     ) -> None:
         """Update the visualization based on widget values."""
+        # Convert exponents to actual values.
+        n_experiments = 2**n_experiments_exp
+        n_samples = 2**n_samples_exp
         with output:
             clear_output(wait=True)
             # Set random seed for reproducibility.
@@ -1412,8 +1408,8 @@ At N={n_samples}:
         update_plot,
         {
             "seed": seed_slider,
-            "n_experiments": n_experiments_slider,
-            "n_samples": n_samples_slider,
+            "n_experiments_exp": n_experiments_exp_slider,
+            "n_samples_exp": n_samples_exp_slider,
             "noise_std": noise_slider,
         },
     )
@@ -1424,7 +1420,7 @@ At N={n_samples}:
     # Initial plot.
     update_plot(
         seed_slider.value,
-        n_experiments_slider.value,
-        n_samples_slider.value,
+        n_experiments_exp_slider.value,
+        n_samples_exp_slider.value,
         noise_slider.value,
     )

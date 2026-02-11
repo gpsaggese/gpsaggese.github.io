@@ -938,17 +938,36 @@ def cell2_2_hoeffding_inequality_demo() -> None:
         style={"description_width": "150px"},
         layout=ipywidgets.Layout(width="500px"),
     )
-    # Create widgets.
-    mu_slider, mu_box, N_slider, N_box, seed_slider, seed_box = (
-        _create_basic_widget_controls(mu_init, N_init, seed_init)
+    # Create mu and seed widgets.
+    mu_slider, mu_box = mtumsuti.build_widget_control(
+        name="mu",
+        description="mu",
+        min_val=0.1,
+        max_val=0.9,
+        step=0.05,
+        initial_value=mu_init,
+        is_float=True,
     )
-    # Update descriptions to show only variable names.
-    mu_box.children[0].description = "mu"
-    N_box.children[0].description = "N"
-    seed_box.children[0].description = "seed"
-    # Update N slider range for better exploration.
-    N_slider.min = 10
-    N_slider.max = 500
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="seed",
+        min_val=0,
+        max_val=1000,
+        step=1,
+        initial_value=seed_init,
+        is_float=False,
+    )
+    # Create N widget with logarithmic slider and +/- buttons.
+    # Uses exponents 3-10 for base 2: gives values 8, 16, 32, 64, 128, 256, 512, 1024
+    # Initial exponent 7 gives initial value of 128
+    N_exp_slider, N_box = mtumsuti.build_log_widget_control(
+        name="log(N)",
+        description="N",
+        min_exp=3,
+        max_exp=10,
+        initial_exp=7,
+        base=2,
+    )
     epsilon_slider, epsilon_box = mtumsuti.build_widget_control(
         name="epsilon",
         description="epsilon",
@@ -967,7 +986,7 @@ def cell2_2_hoeffding_inequality_demo() -> None:
             _plot_hoeffding_inequality_demo(
                 distribution=distribution_dropdown.value,
                 mu=mu_slider.value,
-                N=N_slider.value,
+                N=N_exp_slider.value,
                 epsilon=epsilon_slider.value,
                 seed=seed_slider.value,
             )
@@ -975,7 +994,7 @@ def cell2_2_hoeffding_inequality_demo() -> None:
     # Observe slider changes.
     distribution_dropdown.observe(update_plot, names="value")
     mu_slider.observe(update_plot, names="value")
-    N_slider.observe(update_plot, names="value")
+    N_exp_slider.observe(update_plot, names="value")
     epsilon_slider.observe(update_plot, names="value")
     seed_slider.observe(update_plot, names="value")
     # Display widgets and initial plot.
@@ -1001,6 +1020,7 @@ def _plot_hoeffding_inequality_demo2(
     fixed_epsilon: float = 0.1,
     n_trials: int = 1000,
     seed: int = 42,
+    use_log_scale: bool = False,
 ) -> None:
     """
     Plot empirical probability vs Hoeffding bound as function of N or epsilon.
@@ -1012,6 +1032,7 @@ def _plot_hoeffding_inequality_demo2(
     :param fixed_epsilon: Fixed epsilon value when scanning N
     :param n_trials: Number of trials for empirical probability estimation
     :param seed: Random seed for reproducibility
+    :param use_log_scale: Whether to use log scale for y-axis
     """
     # Determine scan range based on scan variable.
     if scan_variable == "N":
@@ -1090,15 +1111,15 @@ def _plot_hoeffding_inequality_demo2(
         alpha=0.8,
     )
     ax1.set_xlabel(x_label, fontsize=12)
-    ax1.set_ylabel("Probability", fontsize=12)
     ax1.set_title(title, fontsize=14, fontweight="bold")
     ax1.legend(fontsize=11, loc="best")
     ax1.grid(True, alpha=0.3)
-    # Set y-axis to log scale if values span multiple orders of magnitude.
-    if np.max(hoeffding_bounds) / np.min(hoeffding_bounds) > 100:
+    # Set y-axis scale based on user preference.
+    if use_log_scale:
         ax1.set_yscale("log")
         ax1.set_ylabel("Probability (log scale)", fontsize=12)
     else:
+        ax1.set_ylabel("Probability", fontsize=12)
         ax1.set_ylim(
             [0, min(1.0, max(max(hoeffding_bounds), max(empirical_probs)) * 1.1)]
         )
@@ -1106,22 +1127,6 @@ def _plot_hoeffding_inequality_demo2(
     ax2.axis("off")
     ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
     dist_name = distribution.replace("_", " ").title()
-    if scan_variable == "N":
-        scan_note = (
-            "- As N increases, both bound and empirical probability\n"
-            "  decrease exponentially.\n\n"
-            "- The exponential decay shows why we need relatively\n"
-            "  few samples for good concentration.\n\n"
-            "- Empirical probability is always below the bound."
-        )
-    else:
-        scan_note = (
-            "- As epsilon increases, both bound and empirical probability\n"
-            "  decrease.\n\n"
-            "- Larger epsilon means more tolerance for deviation,\n"
-            "  so probability of exceeding it decreases.\n\n"
-            "- Empirical probability is always below the bound."
-        )
     text_content = (
         f"Parameters:\n"
         f"  distribution = {dist_name}\n"
@@ -1132,10 +1137,6 @@ def _plot_hoeffding_inequality_demo2(
         f"Scanning:\n"
         f"  variable = {scan_variable}\n"
         f"  fixed value = {fixed_value}\n\n"
-        f"Hoeffding Inequality:\n"
-        f"  P(|nu - mean| >= epsilon) <= 2*exp(-2*N*epsilon^2)\n\n"
-        f"Observations:\n"
-        f"{scan_note}"
     )
     mtumsuti.add_fitted_text_box(ax2, text_content)
     # Adjust layout.
@@ -1236,6 +1237,13 @@ def cell2_3_empirical_vs_bound() -> None:
         initial_value=seed_init,
         is_float=False,
     )
+    # Create log scale checkbox.
+    log_scale_checkbox = ipywidgets.Checkbox(
+        value=False,
+        description="Use log scale for y-axis",
+        style={"description_width": "150px"},
+        layout=ipywidgets.Layout(width="500px"),
+    )
     # Create output widget.
     output = ipywidgets.Output()
 
@@ -1249,6 +1257,7 @@ def cell2_3_empirical_vs_bound() -> None:
                 fixed_N=fixed_N_slider.value,
                 fixed_epsilon=fixed_epsilon_slider.value,
                 seed=seed_slider.value,
+                use_log_scale=log_scale_checkbox.value,
             )
 
     def update_visibility(change=None):
@@ -1269,6 +1278,7 @@ def cell2_3_empirical_vs_bound() -> None:
     fixed_N_slider.observe(update_plot, names="value")
     fixed_epsilon_slider.observe(update_plot, names="value")
     seed_slider.observe(update_plot, names="value")
+    log_scale_checkbox.observe(update_plot, names="value")
     # Initial visibility setup.
     fixed_N_box.layout.visibility = "hidden"
     # Display widgets and initial plot.
@@ -1281,6 +1291,7 @@ def cell2_3_empirical_vs_bound() -> None:
                 fixed_N_box,
                 fixed_epsilon_box,
                 seed_box,
+                log_scale_checkbox,
                 output,
             ]
         )
@@ -1366,15 +1377,7 @@ def _plot_hoeffding_bound_surface(
             f"Fixed Parameters:\n"
             f"  N = {fixed_N} (samples)\n"
             f"  N_max = {N_max}\n"
-            f"  epsilon_max = {epsilon_max}\n\n"
-            f"Observations:\n"
-            f"- The bound decreases exponentially as epsilon increases.\n\n"
-            f"- Smaller epsilon (stricter requirement) leads to larger\n"
-            f"  bound (lower confidence).\n\n"
-            f"- For very small epsilon, the bound approaches 2\n"
-            f"  (meaningless bound).\n\n"
-            f"- For large epsilon, the bound approaches 0\n"
-            f"  (very confident)."
+            f"  epsilon_max = {epsilon_max}\n"
         )
         mtumsuti.add_fitted_text_box(ax2, text_content)
     elif fixed_epsilon is not None:
@@ -1423,15 +1426,7 @@ def _plot_hoeffding_bound_surface(
             f"Fixed Parameters:\n"
             f"  epsilon = {fixed_epsilon:.3f}\n"
             f"  N_max = {N_max}\n"
-            f"  epsilon_max = {epsilon_max}\n\n"
-            f"Observations:\n"
-            f"- The bound decreases exponentially as N increases.\n\n"
-            f"- Doubling N does not halve the bound; it decreases\n"
-            f"  exponentially faster.\n\n"
-            f"- Larger N (more samples) leads to smaller bound\n"
-            f"  (higher confidence).\n\n"
-            f"- The exponential decay shows why we need relatively\n"
-            f"  few samples for good concentration."
+            f"  epsilon_max = {epsilon_max}\nn"
         )
         mtumsuti.add_fitted_text_box(ax2, text_content)
     elif plot_type == "heatmap":
@@ -1486,12 +1481,7 @@ def _plot_hoeffding_bound_surface(
             f"- Red: High bound (low confidence)\n\n"
             f"Contour Lines:\n"
             f"- Black lines show constant probability levels\n"
-            f"- Labels indicate the bound value\n\n"
-            f"Key Insights:\n"
-            f"- Lower-left (small N, large epsilon): high bound\n"
-            f"- Upper-right (large N, small epsilon): varies\n"
-            f"- The bound is exponentially sensitive to both N\n"
-            f"  and epsilon."
+            f"- Labels indicate the bound value\n"
         )
         mtumsuti.add_fitted_text_box(ax2, text_content)
     elif plot_type == "contour":
@@ -1790,12 +1780,7 @@ def _plot_hoeffding_bound_3d(
         f"Key Features:\n"
         f"- Exponential decay in N direction (x-axis)\n"
         f"- Exponential decay in epsilon direction (y-axis)\n"
-        f"- Steepest descent along the diagonal\n\n"
-        f"Interpretation:\n"
-        f"- Near N=0: bound approaches 2 (meaningless)\n"
-        f"- Large N, large epsilon: bound approaches 0\n"
-        f"- The surface shows trade-off between N and epsilon\n"
-        f"  for achieving desired confidence."
+        f"- Steepest descent along the diagonal\n"
     )
     mtumsuti.add_fitted_text_box(ax2, text_content)
     # Adjust layout.

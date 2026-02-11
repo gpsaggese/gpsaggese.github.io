@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -67,6 +67,7 @@ points = generator.generate_line_1d(n=n)
 print(f"\nGenerated {n} points on 1D line:")
 print(f"Points: {points.flatten()}")
 
+# %%
 # Compute growth function.
 result = calculator.compute_growth_function(points)
 
@@ -115,7 +116,6 @@ compared = mtugrowf.compare_with_theory(results_df, "Positive Intervals")
 
 print("=== Growth Function for Positive Intervals ===")
 print(compared[["n", "m_h_n_mean", "theoretical", "max_dichotomies"]])
-print(f"\nAll values match theory: {np.all(compared['error'] == 0)}")
 
 # %% [markdown]
 # ### Observation
@@ -229,7 +229,6 @@ print(f"Linearly separable pattern realizable: {is_realizable_sep}")
 # **Goal**:
 # - Demonstrate a hypothesis set with unlimited expressiveness
 # - Verify that all dichotomies are realizable (no break point)
-# - Illustrate the implications of infinite VC dimension for learning
 
 # %%
 # Create convex sets tester.
@@ -272,7 +271,7 @@ print(f"\nAll configurations shattered: {all_shattered}")
 # Estimate VC dimension for 2D perceptron.
 tester = mtugrowf.PerceptronTester(random_state=42)
 calculator = mtugrowf.GrowthFunctionCalculator(
-    tester, verbose=True, show_progress=False
+    tester, verbose=False, show_progress=False
 )
 
 vc_result = calculator.estimate_vc_dimension(generator, max_n=6, num_trials=5)
@@ -333,7 +332,7 @@ visualizer.plot_multiple_growth_curves(
 # - **Positive Rays**: Linear growth $O(N)$ - very limited expressiveness
 # - **Positive Intervals**: Quadratic growth $O(N^2)$ - moderate expressiveness
 # - **Perceptron**: Polynomial growth $O(N^2)$ after break point - good balance
-# - **Red dashed line**: Exponential $2^N$ - shows what unlimited growth looks like
+# - **Gray dashed line**: Exponential $2^N$ - shows what unlimited growth looks like
 #
 # The key insight: Polynomial growth $\Rightarrow$ learning is feasible!
 
