@@ -7,15 +7,69 @@ Theory}
 \begin{document}
   \maketitle
 
-  Some interesting research direction for machine learning (and AI) are:
+  \section*{Promising Research Directions in Machine Learning and AI}
+
+  Drawing on my 15 years of experience across finance, predictive
+  maintenance, energy forecasting, and complex real-world systems, I believe
+  the next frontier of machine learning might lie not in scaling existing
+  paradigms, but in rethinking their foundations.
 
   \begin{itemize}
-    \item Extend Machine Learning theory treating time as part of the system
-      to unify feature space and time. Is time really \textit{special}?
+    \item \textbf{Reconceptualizing Time in Learning Systems}
 
-  \item How to extend MDL / VC dimension / complexity measurements to time,
-    causality, and the research process
+      Modern learning theory largely treats time as an external index over
+      data. Yet in real systems, time is not merely a coordinate—it is generative,
+      causal, and structural. Markets evolve, machines degrade, energy
+      systems adapt, and agents respond to predictions.
 
+      A fundamental question emerges: \emph{Is time truly special, or have
+      we artificially separated it from the feature space due to historical
+      modeling choices?}
+
+      Is it possible a unification in which time is embedded directly into
+      the representation of the system—where features, dynamics, and
+      evolution are treated within a single formal structure? Such a framework
+      would remove the boundary between static learning and dynamical systems,
+      leading to new principles for:
+      \begin{itemize}
+        \item Learning in non-stationary and path-dependent environments,
+
+        \item Modeling feedback loops between predictions and reality,
+
+        \item Understanding adaptation as an inherent property of learning
+          systems.
+      \end{itemize}
+
+      This shift would move machine learning from pattern recognition
+      toward \emph{temporal reasoning about evolving worlds}.
+
+    \item \textbf{A Theory of Complexity for Time, Causality, and
+      Discovery}
+
+      Classical notions of complexity—such as Minimum Description Length
+      (MDL) and VC dimension—were developed for static hypothesis classes
+      under i.i.d.\ assumptions. However, real-world learning unfolds in
+      time, under causal constraints, and often in interaction with the
+      environment.
+
+      We need a new theory of complexity that captures:
+      \begin{itemize}
+        \item Capacity in time-evolving and feedback-driven systems,
+
+        \item The cost of modeling causal structure rather than mere correlation,
+
+        \item The adaptive nature of the research and model selection process
+          itself.
+      \end{itemize}
+
+      Such a theory would quantify not only the complexity of models, but
+      the complexity of \emph{learning trajectories}. It would connect generalization,
+      stability, causality, and scientific discovery within a unified
+      mathematical framework.
+
+      Ultimately, this line of research aims to answer a deeper question:
+      \emph{What does it mean to learn in a world that changes in
+      response to being modeled?}
   \end{itemize}
 
 % ##############################################################################
@@ -28,7 +82,7 @@ Theory}
 
   Define a time-indexed hypothesis class:
   \[
-    \mathcal{H}_{t} = \{h_{t}(x) : t \in \mathbb{T}\}
+    \mathcal{H}_{t}= \{h_{t}(x) : t \in \mathbb{T}\}
   \]
 
   Assume bounded drift:
@@ -45,15 +99,15 @@ Theory}
 
   Time-aware extension:
   \[
-    n \gtrsim \frac{VC(\mathcal{H}) + D_{T} + \log(1/\delta)}{\epsilon^{2}}
+    n \gtrsim \frac{VC(\mathcal{H}) + D_{T}+ \log(1/\delta)}{\epsilon^{2}}
   \]
 
   where $D_{T}$ measures cumulative drift:
   \[
-    D_{T} = \sum_{t=1}^{T-1}\|h_{t+1}- h_{t}\|
+    D_{T}= \sum_{t=1}^{T-1}\|h_{t+1}- h_{t}\|
   \]
 
-  \subsection*{Examples}
+  \textbf{Examples}
 
   \begin{itemize}
     \item Stock market prediction: $h_{t}(x)$ predicts returns from
@@ -61,16 +115,30 @@ Theory}
       markets, crisis periods)
 
     \item Adaptive recommendation systems: User preferences drift over
-      time, requiring hypothesis updates $h_{t} \to h_{t+1}$ as tastes evolve
+      time, requiring hypothesis updates $h_{t}\to h_{t+1}$ as tastes evolve
 
     \item Climate modeling: Physical relationships may shift due to
       anthropogenic forcing, violating stationarity assumptions
 
     \item Medical diagnosis: Disease patterns and diagnostic criteria
       evolve with new treatments and emerging pathogens
+
+    \item Natural language processing: Language models trained on pre-2020
+      data fail to understand pandemic-related terminology or evolving
+      slang. The relationship between text features and meaning changes as
+      vocabulary and usage patterns drift.
+
+    \item Fraud detection: Fraudsters continuously adapt their
+      strategies to evade detection, creating an adversarial drift where
+      $P(y|x, t)$ is actively manipulated by intelligent agents.
+
+    \item Energy demand forecasting: The relationship between
+      temperature and electricity usage changes as solar panel adoption
+      increases and electric vehicles become common, fundamentally altering
+      load patterns.
   \end{itemize}
 
-  \subsection*{Provocative Questions}
+  \textbf{Provocative Questions}
 
   \begin{itemize}
     \item Can a model that constantly adapts to time still learn anything
@@ -80,9 +148,26 @@ Theory}
     \item Is forgetting necessary for generalization in non-stationary environments?
       Classical theory rewards more data, but in drifting environments,
       old data may hurt performance.
+
+    \item Does the notion of "ground truth" even make sense in time-varying
+      systems? If $y = f_{t}(x)$ where $f_{t}$ itself evolves, what are we
+      actually trying to learn—the current $f_{t}$ or the meta-function that
+      generates the sequence $\{f_{t}\}$?
+
+    \item Can we have PAC-style guarantees without stationarity? Or does
+      non-stationarity fundamentally break the connection between
+      empirical and true risk?
+
+    \item Should we penalize model complexity or model \textit{stability}?
+      A complex but stable model might generalize better over time than a
+      simple but volatile one.
+
+    \item Is the distinction between "learning from data" and "tracking
+      a signal" just a matter of timescale? At what rate of change does
+      learning become impossible?
   \end{itemize}
 
-  \subsection*{Research Topics}
+  \textbf{Research Topics}
 
   \begin{itemize}
     \item VC dimension of time-indexed hypothesis classes
@@ -131,8 +216,27 @@ Theory}
 
   Define:
   \[
-    VC_{T} = VC\left(\bigcup_{t=1}^{T}\mathcal{H}_{t}\right)
+    VC_{T}= VC\left(\bigcup_{t=1}^{T}\mathcal{H}_{t}\right)
   \]
+
+  \textbf{Examples:}
+  \begin{itemize}
+    \item Consider a linear classifier $h_{t}(x) = \text{sign}(w_{t}^{\top}
+      x)$ where $w_{t}$ drifts smoothly. At any fixed $t$, $VC(\mathcal{H}
+      ) = d+1$ (standard for linear classifiers in $\mathbb{R}^{d}$).
+      But over $T$ timesteps with unbounded drift, $VC_{T}$ can grow without
+      bound as the union captures increasingly complex decision boundaries.
+
+    \item A neural network with fixed architecture but time-varying weights.
+      If weights can change arbitrarily, $VC_{T}$ may equal the VC dimension
+      of the universal function approximator class, even if each $h_{t}$
+      individually has bounded complexity.
+
+    \item Seasonal models: A retailer uses $h_{\text{holiday}}$ during
+      December and $h_{\text{regular}}$ otherwise. Then $VC_{T}$ is at least
+      $\max(VC(h_{\text{holiday}}), VC(h_{\text{regular}}))$ but could be
+      larger if the union creates new decision boundaries.
+  \end{itemize}
 
   Questions:
   \begin{itemize}
@@ -140,11 +244,18 @@ Theory}
 
     \item Can we define a temporal VC dimension?
 
-    \item If $VC_{T} \to \infty$ as $T \to \infty$, does this mean all
+    \item If $VC_{T}\to \infty$ as $T \to \infty$, does this mean all
       long-term predictions are impossible?
 
     \item Can two models have identical $VC(\mathcal{H})$ but vastly different
       $VC_{T}$ due to different drift patterns?
+
+    \item Does smooth drift (small $\|h_{t+1}- h_{t}\|$) lead to sublinear
+      growth in $VC_{T}$, or is any non-zero drift enough to cause
+      unbounded complexity?
+
+    \item If we observe concept drift but don't model it, does the
+      effective $VC_{T}$ perceived by a stationary learner explode?
   \end{itemize}
 
   \subsection*{Kolmogorov Complexity Over Time}
@@ -156,18 +267,18 @@ Theory}
 
   Incremental description length:
   \[
-    L = \sum_{t=1}^{T}K(x_{t} \mid x_{<t})
+    L = \sum_{t=1}^{T}K(x_{t}\mid x_{<t})
   \]
 
   Use compression rate changes to detect regime shifts.
 
-  \textbf{Example:} A financial time series that suddenly becomes less compressible
-  (higher $K(x_{t} \mid x_{<t})$) may indicate a regime change where past
-  patterns no longer predict future behavior—think of the 2008 crisis or
-  COVID-19 market turbulence.
+  \textbf{Example:} A financial time series that suddenly becomes less
+  compressible (higher $K(x_{t}\mid x_{<t})$) may indicate a regime
+  change where past patterns no longer predict future behavior—think of
+  the 2008 crisis or COVID-19 market turbulence.
 
   \textbf{Provocative Question:} \textit{Is there a fundamental limit to
-  predictability based on Kolmogorov complexity? If $K(x_{t} \mid x_{<t})$
+  predictability based on Kolmogorov complexity? If $K(x_{t}\mid x_{<t})$
   approaches $|x_{t}|$ (data is incompressible given past), does this
   imply the system has become random or that our model class is too weak?}
 
@@ -175,8 +286,26 @@ Theory}
 
   Exponential decay weights:
   \[
-    w_{t} = e^{-t/\tau}
+    w_{t}= e^{-t/\tau}
   \]
+
+  \textbf{Examples:}
+  \begin{itemize}
+    \item Reinforcement learning in changing environments: An RL agent
+      playing a game where rules gradually change must weight recent
+      experience more heavily. Too much memory and it keeps using obsolete
+      strategies; too little and it can't learn patterns.
+
+    \item Online advertising: Click-through rate models must balance
+      learning user preferences (requires memory) with adapting to
+      changing tastes (requires forgetting). A user who clicked sports ads
+      in January might prefer fashion ads by March.
+
+    \item Robotics in aging systems: A robot learning to compensate for
+      motor degradation must forget its old calibration while retaining
+      general manipulation skills. Which memories should persist and which
+      should decay?
+  \end{itemize}
 
   Research:
   \begin{itemize}
@@ -192,6 +321,22 @@ Theory}
     \item If we forget too fast ($\tau$ too small), we lose
       generalization. If we forget too slow, we overfit to obsolete data.
       Is there a "no free lunch" theorem for memory decay?
+
+    \item Should forgetting rate $\tau$ itself be learned from data? Or
+      does this create a "meta-overfitting" problem where we overfit to
+      recent drift patterns?
+
+    \item Can we design forgetting mechanisms that are "content-aware"—
+      forgetting irrelevant noise while retaining stable patterns? Is this
+      even possible without knowing the future?
+
+    \item Does human memory's selective forgetting (we remember
+      important events but forget mundane details) suggest an optimal forgetting
+      strategy for ML? Can we formalize "importance-weighted forgetting"?
+
+    \item Is there a fundamental trade-off between adaptation speed and stability?
+      Can we prove lower bounds on regret in terms of drift rate and
+      memory window?
   \end{itemize}
 
   \subsection*{VC Dimension of Causal / Bayesian Networks}
@@ -214,10 +359,10 @@ Theory}
     \item MDL penalties for structure learning
   \end{itemize}
 
-  \textbf{Example:} A 10-node causal DAG with max indegree 3 and linear Gaussian
-  conditionals has far lower VC dimension than a fully-connected 10-node
-  network. This suggests causal structure provides inductive bias that
-  improves generalization—but only if the assumed structure is correct.
+  \textbf{Example:} A 10-node causal DAG with max indegree 3 and linear
+  Gaussian conditionals has far lower VC dimension than a fully-connected
+  10-node network. This suggests causal structure provides inductive bias
+  that improves generalization—but only if the assumed structure is correct.
 
   \textbf{Provocative Questions:}
   \begin{itemize}
@@ -254,10 +399,10 @@ Theory}
     \item Generalization with architecture search
   \end{itemize}
 
-  \textbf{Example:} Consider AutoML trying 1000 different model architectures,
-  each with 100 hyperparameter combinations. Even if the "best" model has
-  low VC dimension, the search process itself adds
-  $\log(1000 \times 100) \approx 17$ bits of complexity. This hidden cost
+  \textbf{Example:} Consider AutoML trying 1000 different model
+  architectures, each with 100 hyperparameter combinations. Even if the
+  "best" model has low VC dimension, the search process itself adds $\log
+  (1000 \times 100) \approx 17$ bits of complexity. This hidden cost
   explains why AutoML often overfits despite using "simple" final models.
 
   \textbf{Provocative Questions:}
@@ -268,6 +413,23 @@ Theory}
 
     \item Can we detect overfitting from the research process itself by analyzing
       the "trajectory" through model space rather than just the final model?
+
+    \item Should scientific venues require a "complexity tax" where papers
+      must report $C_{\text{search}}$ alongside model accuracy? Would
+      this reveal that many "breakthroughs" are actually just
+      overfitting?
+
+    \item If two researchers independently discover the same solution,
+      does this reduce its effective complexity? Does convergent discovery
+      serve as evidence against overfitting?
+
+    \item Can we formalize the idea that "surprising" results (low prior
+      probability) should be penalized more heavily for multiple testing
+      than "expected" results?
+
+    \item Is transfer learning a way to "amortize" search cost across tasks?
+      If a pre-trained model is fine-tuned with minimal search, does this
+      reduce $C_{\text{search}}$ for the downstream task?
   \end{itemize}
 
   \subsection*{Backtesting Complexity}
@@ -286,16 +448,16 @@ Theory}
     \item Overfitting detection using Rademacher complexity
   \end{itemize}
 
-  \textbf{Example:} A hedge fund backtests 10,000 trading strategies on 20
-  years of data and selects the top performer. Even if that strategy has
-  Sharpe ratio 3.0 in-sample, the effective VC dimension includes the search
-  over 10,000 strategies, dramatically inflating the risk of overfitting.
+  \textbf{Example:} A hedge fund backtests 10,000 trading strategies on
+  20 years of data and selects the top performer. Even if that strategy has
+  Sharpe ratio 3.0 in-sample, the effective VC dimension includes the
+  search over 10,000 strategies, dramatically inflating the risk of overfitting.
   The "published" strategy may have $VC_{\text{eff}}\gg VC(\mathcal{H})$.
 
-  \textbf{Real-world scenario:} Quantitative trading firms often find
-  that strategies with impressive backtest performance degrade
-  immediately upon deployment—a phenomenon directly explained by
-  ignoring $C_{\text{search}}$ in complexity estimates.
+  \textbf{Real-world scenario:} Quantitative trading firms often find that
+  strategies with impressive backtest performance degrade immediately upon
+  deployment—a phenomenon directly explained by ignoring $C_{\text{search}}$
+  in complexity estimates.
 
   \textbf{Provocative Questions:}
   \begin{itemize}
