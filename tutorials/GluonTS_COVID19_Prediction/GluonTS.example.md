@@ -473,5 +473,5 @@ All results are reproducible given:
 
 ## See Also
 
-- **GluonTS.API.md**: Reference guide for GluonTS models and parameters
+- **GluonTS.API.ipynb**: API tutorial with theory and hands-on examples
 - **README.md**: Project setup and quick start guide
