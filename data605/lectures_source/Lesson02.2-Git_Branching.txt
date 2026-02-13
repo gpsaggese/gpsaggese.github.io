@@ -34,68 +34,14 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
-* Bash / Linux: Resources
-::: columns
-:::: {.column width=55%}
-- **How Linux works**
-  - Processes
-  - File ownership and permissions
-  - Virtual memory
-  - How to administer a Linux box as root
-
-- **Easy**
-  - [Command-Line for Beginners](https://ubuntu.com/tutorials/command-line-for-beginners)
-  - E.g., `find`, `xargs`, `chmod`, `chown`, symbolic, and hard links
-
-- **Mastery**
-  - [The Linux Command Line](https://linuxcommand.org/tlcl.php)
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_4_image_1.png)
-::::
-:::
-
-* Git Resources
-::: columns
-:::: {.column width=55%}
-- Concepts in the slides
-
-- Tutorial:
-  [Tutorial Git](https://github.com/gpsaggese/umd\_classes/tree/master/data605/tutorials/tutorial\_git)
-
-- We will use Git during the project
-
-- Mastery:
-  [Pro Git](https://git-scm.com/book/en/v2) (free)
-
-- Web resources:
-  - [https://githowto.com](https://githowto.com)
-  - [dangitgit.com](https://dangitgit.com) (without swearing)
-  - [Oh Sh*t, Git!?!](https://ohshitgit.com/) (with swearing)
-
-- Playgrounds
-  - [https://learngitbranching.js.org](https://learngitbranching.js.org)
-
-:::: 
-:::: {.column width=40%}
-![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_1.png)
-
-//![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_2.png)
-
-//![](data605/lectures_source/images/lecture_2/lec_2_slide_5_image_3.png)
-:::: 
-:::
-
 * Git Branching
 ::: columns
 :::: {.column width=55%}
 - **Branching**
-  - Diverge from main development line
-
+  - Diverge from the main development line
 - **Why branch?**
-  - Work without affecting main code
-  - Avoid changes in main branch
+  - Work without affecting the main code
+  - Avoid changes in the main branch
   - Merge code downstream for updates
   - Merge code upstream after completion
 
@@ -109,12 +55,12 @@ UMD DATA605 - Big Data Systems
 
 - **Git branching is lightweight**
   - Instantaneous
-  - Branch is a pointer to a commit
+  - A branch is a pointer to a commit
   - Git stores data as snapshots, not file differences
 
 - **Git workflows branch and merge often**
   - Multiple times a day
-  - Surprising for users of distributed VCS
+  - Surprising for users of centralized VCS
     - E.g., branch before lunch
   - Branches are cheap
     - Use them to isolate and organize work
@@ -127,12 +73,12 @@ UMD DATA605 - Big Data Systems
   - Moves forward with each commit
 
 - `HEAD`
-  - Pointer to the local branch
+  - Pointer to the current branch
   - E.g., `master`, `testing`
   - `git checkout <BRANCH>` moves across branches
 
 - `git branch testing`
-  - Create a new pointer `testing`
+  - Creates a new pointer `testing`
   - Points to the current commit
   - Pointer is movable
 
@@ -151,14 +97,13 @@ UMD DATA605 - Big Data Systems
 * Git Checkout
 ::: columns
 :::: {.column width=55%}
-- `git checkout` switches branch
-  - Move `HEAD` pointer to new branch
-  - Change files in working dir to match branch pointer
-
+- `git checkout` switches branches
+  - Moves `HEAD` pointer to the new branch
+  - Changes files in the working directory to match the branch pointer
 - E.g., two branches, `master` and `testing`
   - You are on `master`
   - `git checkout testing`
-  - Pointer moves, working dir changes
+  - Pointer moves, working directory changes
   - Keep working and commit on `testing`
   - Pointer to `testing` moves forward
 
@@ -187,7 +132,7 @@ UMD DATA605 - Big Data Systems
   ```
   > git checkout -b iss53
   work ... work ... work
-  > git commit
+  > git commit -m "Add feature for Issue 53"
   ```
   \endgroup
 ::::
@@ -217,7 +162,7 @@ UMD DATA605 - Big Data Systems
   \endgroup
 
 - **Fast forward**
-  - Now there is a divergent history between `master` and `iss53`
+  - Now there is no divergent history between `master` and `iss53`
 ::::
 :::: {.column width=40%}
 
@@ -270,17 +215,16 @@ UMD DATA605 - Big Data Systems
   \endgroup
 
 * Fast Forward Merge
-- **Fast forward merge**
-  - Merge a commit `X` with a commit `Y` that can be reached by following the
-    history of commit `X`
+  - Merge a commit `Y` with a commit `X` that can be reached by following the
+    history of commit `Y`
 
-- There is not divergent history to merge
+- There is no divergent history to merge
   - Git simply moves the branch pointer forward from X to Y
 
 ::: columns
 :::: {.column width=55%}
-- **Mental model**: a branch is just a pointer that says where the tip of the
-  branch is
+- **Mental model**: a branch is just a pointer that indicates where the tip of
+  the branch is
 - E.g., `C4'` is reachable from `C3`
   \begingroup \small \color{blue}
   ```
@@ -315,11 +259,10 @@ UMD DATA605 - Big Data Systems
   - Adds conflict resolution markers
 
 - **User merges manually**
-  - Edit the files `git mergetool`
-  - `git add` to mark as resolved
-  - `git commit`
-  - Use PyCharm or VS Code
-
+  - Edit the files using `git mergetool`
+  - Use `git add` to mark as resolved
+  - Use `git commit` to finalize the merge
+  - Use PyCharm or VS Code for assistance
 ::::
 :::: {.column width=40%}
 
@@ -332,11 +275,12 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Git Rebasing
-- In Git there are **two ways of merging divergent history**
-  - E.g., `master` and `experiment` have a common ancestor `C2`
+
+- In Git, there are **two ways of merging divergent history**
+- E.g., consider `master` and `experiment` have a common ancestor `C2`
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - **Merge**
   - Go to the target branch
@@ -356,14 +300,13 @@ UMD DATA605 - Big Data Systems
     > git rebase master
     ```
     \endgroup
-
-  - Rebase algo:
+  - Rebase algorithm:
     - Get all the changes committed in the branch (`C4`) where we are on
       (`experiment`) since the common ancestor (`C2`)
     - Sync to the branch that we are rebasing onto (`master` at `C3`)
     - Apply the changes `C4`
-    - Only current branch is affected
-    - Finally fast forward `experiment`
+    - Only the current branch is affected
+    - Finally, fast forward `experiment`
 ::::
 :::: {.column width=40%}
 
@@ -378,8 +321,8 @@ UMD DATA605 - Big Data Systems
 :::: {.column width=55%}
 - **Rebasing makes for a cleaner history**
   - The history looks like all the work happened in series
-  - Although in reality it happened in parallel to the development in master
-
+  - Although in reality, it happened in parallel to the development in the
+    master branch
 - **Rebasing to contribute to a project**
   - Developer
     - You are contributing to a project that you don't maintain
@@ -448,7 +391,7 @@ UMD DATA605 - Big Data Systems
 
 2) **History represents how a project should have been made**
    - _"You should tell the history in the way that is best for future readers"_
-   - Use `git rebase` and filter-branch
+   - Use `git rebase` and `filter-branch`
 ::::
 :::: {.column width=40%}
 
@@ -458,7 +401,7 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Rebase vs Merge: Philosophical Considerations
-- Many man-centuries have been wasted discussing rebase-vs-merge at the
+- **Many man-centuries have been wasted** discussing rebase-vs-merge at the
   watercooler
   - Total waste of time! Tell people to get back to work!
 
@@ -475,23 +418,23 @@ UMD DATA605 - Big Data Systems
 
 - **Personally**
   - I like to squash-and-merge branches to `master`
-  - Rarely my commits are "complete", are just checkpoints
+  - Rarely are my commits "complete"; they are just checkpoints
 
 * Remote Branches
-- **Remote branches** are pointers to branches in remote repos
+- **Remote branches** are pointers to branches in remote repositories
   \begingroup \small \color{blue}
   ```
-  git remote -v
+  > git remote -v
   origin  git@github.com:gpsaggese/umd_classes.git (fetch)
   origin  git@github.com:gpsaggese/umd_classes.git (push)
   ```
   \endgroup
 
 - **Tracking branches**
-  - Local references representing the state of the remote repo
+  - Local references representing the state of the remote repository
   - E.g., `master` tracks `origin/master`
   - You can't change the remote branch (e.g., `origin/master`)
-  - You can change tracking branch (e.g., `master`)
+  - You can change the tracking branch (e.g., `master`)
   - Git updates tracking branches when you do `git fetch origin` (or `git pull`)
 
 - To share code in a local branch you need to push it to a remote
@@ -511,16 +454,13 @@ UMD DATA605 - Big Data Systems
 * Git Workflows
 ::: columns
 :::: {.column width=55%}
-
 - **Git workflows** = ways of working and collaborating using Git
-
-- **Long-running branches** = branches at different level of stabilities, that
-  are always open
+- **Long-running branches** = branches at different levels of stability that are
+  always open
   - `master` is always ready to be released
   - `develop` branch to develop in
-  - topic / feature branches
-  - When branches are "stable enough" they are merged up
-
+  - topic/feature branches
+  - When branches are "stable enough," they are merged up
 ::::
 :::: {.column width=40%}
 
@@ -536,12 +476,12 @@ UMD DATA605 - Big Data Systems
 - **Topic branches** = short-lived branches for a single feature
   - E.g., `hotfix`, `wip-XYZ`
   - Easy to review
-  - Silo-ed from the rest
+  - Siloed from the rest
   - This is typical of Git since other VCS support for branches is not good
     enough
   - E.g.,
     - You start `iss91`, then you cancel some stuff, and go to `iss91v2`
-    - Somebody starts `dumbidea` branch and merge to `master` (!)
+    - Somebody starts a `dumbidea` branch and merges it to `master` (!)
     - You squash-and-merge your `iss91v2`
 
 ::::
@@ -559,15 +499,8 @@ UMD DATA605 - Big Data Systems
   - Developers:
     - Check out the code from the central repo on their computer
     - Modify the code locally
-    - Push it back to the central hub (assuming no conflicts with latest copy,
-      otherwise they need to merge)
-
-- **Centralized workflow in Git**
-  - Developers:
-    - Have push (i.e., write) access to the central repo
-    - Need to fetch and then merge
-    - Cannot push code that will overwrite each other code (only fast-forward
-      changes)
+    - Push it back to the central hub (assuming no conflicts with the latest
+      copy, otherwise they need to merge)
 ::::
 :::: {.column width=40%}
 
@@ -576,30 +509,38 @@ UMD DATA605 - Big Data Systems
 ::::
 :::
 
+- **Centralized workflow in Git**
+  - Developers:
+    - Have push (i.e., write) access to the central repo
+    - Need to fetch and then merge
+    - Cannot push code that will overwrite each other's code (only fast-forward
+      changes)
+
 * Forking Workflows
-- Typically devs don't have permissions to update directly branches on a project
+- Typically, developers don't have permissions to update branches directly on a
+  project
   - Read-write permissions for core contributors
-  - Read-only for anybody else
+  - Read-only for everybody else
 
 - **Solution**
   - "Forking" a repo
-  - External contributors
-    - Clone the repo and create a branch with the work
+  - External contributors:
+    - Clone the repo and create a branch with their work
     - Create a writable fork of the project
-    - Push branches to fork
-    - Prepare a PR with their work
-  - Project maintainer
+    - Push branches to the fork
+    - Prepare a PR (Pull Request) with their work
+  - Project maintainer:
     - Reviews PRs
     - Accepts PRs
     - Integrates PRs
-  - In practice it's the project maintainer that pulls the code when it's ready,
+  - In practice, it's the project maintainer who pulls the code when it's ready,
     instead of external contributors pushing the code
 
 ::: columns
 :::: {.column width=80%}
 - **Aka "GitHub workflow"**
-  - "Innovation" was forking (Fork me on GitHub!)
-  - GitHub acquired by Microsoft for 7.5b USD
+  - The "innovation" was forking (Fork me on GitHub!)
+  - GitHub was acquired by Microsoft for 7.5 billion USD
 ::::
 :::: {.column width=15%}
 
@@ -631,14 +572,14 @@ UMD DATA605 - Big Data Systems
      - Write access to their own public repo
      - E.g., `gpsaggese/csfy`
    - Makes changes
-   - Pushes changes to his own public copy
-   - Sends email to maintainer asking to pull changes (pull request)
+   - Pushes changes to their own public copy
+   - Sends a pull request to the maintainer asking to merge changes
 
 3. **The maintainer**
-   - Adds contributor repo as a remote
+   - Adds the contributor's repo as a remote
    - Merges the changes into a local branch
    - Tests changes locally
-   - Pushes branch to the official repo
+   - Pushes the branch to the official repo
 
 * Git log
 - `git log` reports info about commits
@@ -654,7 +595,7 @@ UMD DATA605 - Big Data Systems
 
 - `^` after a reference resolves to the parent of that commit
   - `HEAD^` = commit before `HEAD`, i.e., last commit
-  - `^2` means `^^`
+  - `^2` means the second parent of a merge commit
   - A merge commit has multiple parents
 
 ::::
@@ -673,7 +614,7 @@ UMD DATA605 - Big Data Systems
   - `1..2` = commits that are reachable from 2 but not from 1
   - Like a "difference"
   - `git log master..experiment` $\to$ `D,C`
-  - `git log experiment..master`$\to$ `F,E`
+  - `git log experiment..master` $\to$ `F,E`
 ::::
 :::: {.column width=40%}
 
@@ -700,10 +641,11 @@ UMD DATA605 - Big Data Systems
 :::
 
 * Advanced Git
+
 - **Stashing**
-  - Copy state of your working dir (e.g., modified and staged files)
+  - Copy the state of your working directory (e.g., modified and staged files)
   - Save it in a stack
-  - Apply later
+  - Apply it later
 
 - **Cherry-picking**
   - Apply a single commit from one branch onto another
@@ -711,49 +653,21 @@ UMD DATA605 - Big Data Systems
 - **rerere**
   - = "Reuse Recorded Resolution"
   - Git caches how to solve certain conflicts
-
 - **Submodules / subtrees**
-  - Project including other Git projects
+  - Projects including other Git projects
 
 * Advanced Git
 - **bisect**
-  - `git bisect` helps identifying the commit that introduced a bug
-    - Bug appears at top of tree
+  - `git bisect` helps identify the commit that introduced a bug
+    - Bug appears at the top of the tree
     - Unknown revision where it started
-    - Script returns 0 if good, non-0 if bad
-    - `git bisect` finds revision where script changes from good to bad
+    - Script returns 0 if good, non-zero if bad
+    - `git bisect` finds the revision where the script changes from good to bad
 
 - **filter-branch**
-  - Rewrite repo history in a script-able way
+  - Rewrite repository history in a scriptable way
     - E.g., change email, remove sensitive file
-  - Check out each version, run command, commit result
+  - Check out each version, run a command, commit the result
 
 - **Hooks**
-  - Run scripts before commit, merging,
-
-* GitHub
-::: columns
-:::: {.column width=65%}
-- GitHub acquired by MSFT for 7.5b
-- **GitHub: largest host for Git repos**
-  - Git hosting (100m+ open source projects)
-  - PRs, forks
-  - Issue tracking
-  - Code review
-  - Collaboration
-  - Wiki
-  - Actions (CI / CD)
-
-- **"Forking a project"**
-  - Open-source communities
-    - Negative connotation
-    - Modify and create a competing project
-  - GitHub parlance
-    - Copy a project to contribute without push/write access
-::::
-:::: {.column width=30%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_34_image_1.png)
-
-::::
-:::
+  - Run scripts before committing, merging, etc

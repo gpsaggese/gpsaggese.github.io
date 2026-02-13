@@ -134,7 +134,6 @@ These are useful for running Python scripts directly or debugging.
 
 - Main Notebooks (Start Here)
   - `GluonTS.API.ipynb`: Model API demonstrations
-  - `GluonTS.API.md`: API documentation
   - `GluonTS.example.ipynb`: Complete application
   - `GluonTS.example.md`: Application guide
 - Utility Modules

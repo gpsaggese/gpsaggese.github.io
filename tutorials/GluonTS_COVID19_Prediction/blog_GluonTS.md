@@ -108,7 +108,7 @@ The workflow consists of five main steps:
 | **SimpleFeedForward** | Stable trends, quick baselines, limited compute            | 30-60 sec     |
 | **DeepNPTS**          | Regime shifts, distribution changes, flexible uncertainty  | 1-3 min       |
 
-For detailed API documentation, see [GluonTS.API.md](GluonTS.API.md).
+For detailed API documentation, see [GluonTS.API.ipynb](GluonTS.API.ipynb).
 
 ## The COVID-19 Forecasting Problem
 
@@ -457,7 +457,7 @@ Probabilistic models **quantify uncertainty** and **adapt to variability**, maki
 
 - [Official Documentation](https://ts.gluon.ai/)
 - [GitHub Repository](https://github.com/awslabs/gluonts)
-- [API Reference](GluonTS.API.md)
+- [API Reference](GluonTS.API.ipynb)
 
 **Research Papers:** [DeepAR Paper](https://arxiv.org/abs/1704.04110), [GluonTS Paper](https://arxiv.org/abs/1906.05264).
 
