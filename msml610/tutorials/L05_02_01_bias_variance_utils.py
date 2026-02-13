@@ -1,9 +1,9 @@
 """
-Utility functions for L05_02_bias_variance notebook.
+Utility functions for L05_02_01_bias_variance notebook.
 
 Import as:
 
-import msml610.tutorials.L05_02_bias_variance_utils as mtl0bvaut
+import msml610.tutorials.L05_02_01_bias_variance_utils as mtl0bvaut
 """
 
 import logging

@@ -3,7 +3,7 @@ Utility functions for Learning Theory lesson - Bin Analogy of ML.
 
 Import as:
 
-import msml610.tutorials.L05_01_learning_theory_02_bin_analogy_ml_utils as mtulltbam
+import msml610.tutorials.L05_01_02_bin_analogy_ml_utils as mtulltbam
 """
 
 import logging

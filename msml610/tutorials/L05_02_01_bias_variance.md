@@ -1,7 +1,7 @@
 # Implement notebook script
 
-notebook = `msml610/tutorials/L05_02_bias_variance.ipynb`
-script = `msml610/tutorials/L05_02_bias_variance.md`
+notebook = `msml610/tutorials/L05_02_01_bias_variance.ipynb`
+script = `msml610/tutorials/L05_02_01_bias_variance.md`
 
 ## Build notebook
 - If the $notebook doesn't exist 

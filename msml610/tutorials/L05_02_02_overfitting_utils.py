@@ -1,9 +1,9 @@
 """
-Utility functions for L05_02_overfitting notebook.
+Utility functions for L05_02_02_overfitting notebook.
 
 Import as:
 
-import msml610.tutorials.L05_02_overfitting_utils as mtl0ovut
+import msml610.tutorials.L05_02_02_overfitting_utils as mtl0ovut
 """
 
 import logging

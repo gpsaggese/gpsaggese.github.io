@@ -3,7 +3,7 @@ Utility functions for Lesson 5.1 - Learning Theory VC Dimension notebook.
 
 Import as:
 
-import msml610.tutorials.L05_01_learning_theory_03_vc_dimension_utils as mtl0lt0vdu
+import msml610.tutorials.L05_01_03_vc_dimension_utils as mtl0lt0vdu
 """
 
 import logging

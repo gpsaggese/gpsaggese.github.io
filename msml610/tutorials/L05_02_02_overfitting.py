@@ -31,7 +31,7 @@ plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
 import msml610_utils as ut
-import L05_02_overfitting_utils as utils
+import L05_02_02_overfitting_utils as utils
 
 ut.config_notebook()
 

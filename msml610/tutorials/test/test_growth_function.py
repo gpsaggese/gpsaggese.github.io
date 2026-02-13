@@ -15,7 +15,7 @@ import pandas as pd
 import pytest
 
 import helpers.hunit_test as hunitest
-import msml610.tutorials.L05_01_learning_theory_04_growth_function_utils as mtl0lt0gfu
+import msml610.tutorials.L05_01_04_growth_function_utils as mtl0lt0gfu
 
 _LOG = logging.getLogger(__name__)
 

@@ -31,7 +31,7 @@ sns.set_style("whitegrid")
 plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
-import L05_01_learning_theory_04_growth_function_utils as mtugrowf
+import L05_01_04_growth_function_utils as mtugrowf
 import msml610_utils as ut
 
 ut.config_notebook()
