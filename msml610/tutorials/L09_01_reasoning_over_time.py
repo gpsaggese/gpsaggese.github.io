@@ -50,7 +50,7 @@ hio.create_dir(dst_dir, incremental=True)
 # # cp msml610/tutorials/figures/*.png msml610/lectures_source/figures
 
 # %% [markdown]
-# # Cell 1
+# # Cell 1: Estimating Body Weight
 
 # %% [markdown]
 # ## Cell 1.1: Ground truth
@@ -86,7 +86,7 @@ df["ground_truth"] = ground_truth
 df.head()
 
 # %%
-df["measurements"].plot(marker="o", markersize=10, linestyle="None");
+df["measurements"].plot(marker=".", markersize=10, linestyle="None");
 df["ground_truth"].plot(color="k", linewidth=2);
 
 plt.savefig(os.path.join(dst_dir, "L09_04_ground_truth.png"))
@@ -95,43 +95,16 @@ plt.savefig(os.path.join(dst_dir, "L09_04_ground_truth.png"))
 # ## Cell 1.2: Knowing gain_rate
 
 # %%
-time_step = 1
-# This is the blending factor.
-weight_scale = 4 / 10.0
-# This is the internal model (ground truth).
-gain_rate = 1.0
-# This is the initial weight.
-weight = 160.0
-
-# TODO(ai_gp): Move the following to *_utils and call it cell_1_2_knowning_gain_rate()
-
-ests, preds = time_ut.predict_using_gain_guess(
-    weight, measured_weights, gain_rate, weight_scale, time_step
-)
-# TODO(ai_gp): Use dict and pass plot_prediction_with_params
-time_ut.plot_gh_filter_results(measured_weights, preds, ests, ground_truth)
-plt.savefig(os.path.join(dst_dir, "L09_04_knowing_gain_rate.png"))
+time_ut.cell_1_2_knowning_gain_rate(measured_weights, ground_truth, dst_dir)
 
 # %% [markdown]
 # ## Cell 1.3: Wrong guess of gain_rate
 
 # %%
-time_step = 1
-weight_scale = 4 / 10.0
-gain_rate = -10.0
-weight = 160.0
+time_ut.cell_1_3_wrong_guess_gain_rate(measured_weights, ground_truth, dst_dir)
 
-# TODO(ai_gp): Move the following to *_utils and call it cell_1_3_wrong_guess_gain_rate()
-
-ests, preds = time_ut.predict_using_gain_guess(
-    weight, measured_weights, gain_rate, weight_scale, time_step
-)
-# TODO(ai_gp): Use dict and pass plot_prediction_with_params
-time_ut.plot_gh_filter_results(measured_weights, preds, ests, ground_truth)
-plt.savefig(os.path.join(dst_dir, "L09_04_wrong_gain_rate.png"))
-
-# %%
-## Cell 1.4: Interactive
+# %% [markdown]
+# ## Cell 1.4: Interactive
 
 # %%
 # Interactive exploration of gain rate parameters.
@@ -141,32 +114,17 @@ time_ut.create_interactive_gain_rate_widget(measured_weights, ground_truth)
 # ## Cell 1.5: Learning gain_rate
 
 # %%
-time_step = 1
-# Gains for update step.
-weight_scale = 4 / 10.0
-gain_scale = 1 / 3.0
-# Initial guess of gain_rate.
-gain_rate = -1.0
-weight = 160.0
-
-# TODO(ai_gp): Move the following to *_utils and call it cell_1_5_learning_gain_rate()
-
-ests, preds = time_ut.predict_learning_gain_rate(
-    weight, measured_weights, gain_rate, weight_scale, gain_scale, time_step
-)
-time_ut.plot_gh_filter_results(measured_weights, preds, ests, ground_truth)
-plt.savefig(os.path.join(dst_dir, "L09_04_learning_gain_rate.png"))
+time_ut.cell_1_5_learning_gain_rate(measured_weights, ground_truth, dst_dir)
 
 # %% [markdown]
-# # Cell 2: Noisy measurements
+# # Cell 2: g-h Filter on Noisy measurements
+
+# %% [markdown]
+# ## Cell 2.1: Interactive Linear Noisy Data
 
 # %%
-vals, ground_truth = time_ut.gen_linear_noisy_data(
-    x0=0, dx=1, count=100, noise_factor=5
-)
-# TODO(gp): Fix this.
-pd.Series(ground_truth).plot()
-pd.Series(vals).plot()
+# Interactive exploration of linear noisy data generation parameters.
+time_ut.create_interactive_linear_noisy_data_widget()
 
 # %%
 vals, ground_truth = time_ut.gen_linear_noisy_data(
@@ -184,6 +142,7 @@ ests = time_ut.gh_filter(
 )
 
 preds = None
+# TODO(ai_gp): 
 time_ut.plot_gh_filter_results(vals, preds, ests, ground_truth)
 
 

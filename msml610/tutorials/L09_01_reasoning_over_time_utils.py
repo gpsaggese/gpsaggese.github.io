@@ -7,6 +7,7 @@ import msml610.tutorials.L09_01_reasoning_over_time_utils as mturetium
 """
 
 import logging
+import os
 from typing import List, Optional, Tuple, Union
 
 import ipywidgets
@@ -49,7 +50,7 @@ def plot_gh_filter_results(
     df["ests"] = ests
     df["ground_truth"] = ground_truth
     # Measurements as points.
-    df["measurements"].plot(marker="o", markersize=10, linestyle="None")
+    df["measurements"].plot(marker=".", markersize=10, linestyle="None")
     # Ground truth line.
     df["ground_truth"].plot(color="k", linewidth=linewidth)
     # Predictions as dashed line.
@@ -60,8 +61,7 @@ def plot_gh_filter_results(
     plt.legend(loc="upper left")
 
 
-# TODO(ai_gp): -> plot_gh_filter_results_with_params
-def plot_prediction_with_params(
+def plot_gh_filter_results_with_params(
     measurements: np.ndarray,
     preds: List[float],
     ests: List[float],
@@ -137,6 +137,109 @@ def predict_using_gain_guess(
     return ests, preds
 
 
+def cell_1_2_knowning_gain_rate(
+    measured_weights: np.ndarray,
+    ground_truth: np.ndarray,
+    dst_dir: str,
+) -> None:
+    """
+    Plot gain rate prediction with known (correct) gain rate.
+
+    :param measured_weights: Array of weight measurements
+    :param ground_truth: Array of true weight values
+    :param dst_dir: Directory to save output figure
+    """
+    time_step = 1
+    # This is the blending factor.
+    weight_scale = 4 / 10.0
+    # This is the internal model (ground truth).
+    gain_rate = 1.0
+    # This is the initial weight.
+    weight = 160.0
+    #
+    ests, preds = predict_using_gain_guess(
+        weight, measured_weights, gain_rate, weight_scale, time_step
+    )
+    params = {
+        "initial_weight": weight,
+        "weight_scale": weight_scale,
+        "gain_rate": gain_rate,
+        "time_step": time_step,
+    }
+    plot_gh_filter_results_with_params(
+        measured_weights, preds, ests, ground_truth, params
+    )
+    plt.savefig(os.path.join(dst_dir, "L09_04_knowing_gain_rate.png"))
+
+
+def cell_1_3_wrong_guess_gain_rate(
+    measured_weights: np.ndarray,
+    ground_truth: np.ndarray,
+    dst_dir: str,
+) -> None:
+    """
+    Plot gain rate prediction with wrong gain rate guess.
+
+    :param measured_weights: Array of weight measurements
+    :param ground_truth: Array of true weight values
+    :param dst_dir: Directory to save output figure
+    """
+    time_step = 1
+    weight_scale = 4 / 10.0
+    gain_rate = -10.0
+    weight = 160.0
+    #
+    ests, preds = predict_using_gain_guess(
+        weight, measured_weights, gain_rate, weight_scale, time_step
+    )
+    params = {
+        "initial_weight": weight,
+        "weight_scale": weight_scale,
+        "gain_rate": gain_rate,
+        "time_step": time_step,
+    }
+    plot_gh_filter_results_with_params(
+        measured_weights, preds, ests, ground_truth, params
+    )
+    plt.savefig(os.path.join(dst_dir, "L09_04_wrong_gain_rate.png"))
+
+
+def cell_1_5_learning_gain_rate(
+    measured_weights: np.ndarray,
+    ground_truth: np.ndarray,
+    dst_dir: str,
+) -> None:
+    """
+    Plot gain rate prediction while learning the gain rate.
+
+    :param measured_weights: Array of weight measurements
+    :param ground_truth: Array of true weight values
+    :param dst_dir: Directory to save output figure
+    """
+    time_step = 1
+    # Gains for update step.
+    weight_scale = 4 / 10.0
+    gain_scale = 1 / 3.0
+    # Initial guess of gain_rate.
+    gain_rate = -1.0
+    weight = 160.0
+    #
+    ests, preds = predict_learning_gain_rate(
+        weight, measured_weights, gain_rate, weight_scale, gain_scale, time_step
+    )
+    params = {
+        "initial_weight": weight,
+        "weight_scale": weight_scale,
+        "gain_scale": gain_scale,
+        "gain_rate": gain_rate,
+        "time_step": time_step,
+    }
+    plot_gh_filter_results_with_params(
+        measured_weights, preds, ests, ground_truth, params
+    )
+    plt.savefig(os.path.join(dst_dir, "L09_04_learning_gain_rate.png"))
+
+
 def create_interactive_gain_rate_widget(
     measured_weights: np.ndarray,
     ground_truth: np.ndarray,
@@ -163,7 +266,7 @@ def create_interactive_gain_rate_widget(
         nonlocal fig_gain
         if fig_gain is not None:
             plt.close(fig_gain)
-        fig_gain = plt.figure(figsize=(10, 5))
+        fig_gain = plt.figure(figsize=((8, 4)))
         time_step = 1
         ests, preds = predict_using_gain_guess(
             weight, measured_weights, gain_rate, weight_scale, time_step
@@ -173,7 +276,7 @@ def create_interactive_gain_rate_widget(
             "weight_scale": weight_scale,
             "gain_rate": gain_rate,
         }
-        plot_prediction_with_params(
+        plot_gh_filter_results_with_params(
             measured_weights, preds, ests, ground_truth, params
         )
 
@@ -352,6 +455,120 @@ def gen_non_linear_noisy_data(
         ground_truth[i] + np.random.randn() * noise_factor for i in range(count)
     ]
     return np.array(vals), np.array(ground_truth)
+
+
+def create_interactive_linear_noisy_data_widget() -> None:
+    """
+    Create interactive widget for visualizing linear noisy data generation.
+
+    Allows user to interactively adjust parameters to see how they affect
+    the generated data and ground truth.
+    """
+    fig_noisy = None
+
+    def _plot_linear_noisy_data(
+        seed: int,
+        x0: float,
+        dx: float,
+        count: int,
+        noise_factor: float,
+    ) -> None:
+        """
+        Plot linear noisy data with ground truth.
+
+        :param seed: Random seed for reproducibility
+        :param x0: Initial value
+        :param dx: Slope
+        :param count: Number of points to generate
+        :param noise_factor: Standard deviation of Gaussian noise
+        """
+        nonlocal fig_noisy
+        if fig_noisy is not None:
+            plt.close(fig_noisy)
+        fig_noisy = plt.figure(figsize=((8, 4)))
+        vals, ground_truth = gen_linear_noisy_data(
+            x0=x0, dx=dx, count=count, noise_factor=noise_factor, seed=seed
+        )
+        df = pd.DataFrame({
+            "measurements": vals,
+            "ground_truth": ground_truth,
+        })
+        df["measurements"].plot(marker=".", markersize=10, linestyle="None")
+        df["ground_truth"].plot(color="k", linewidth=2)
+        # TODO(ai_gp): Plot using xlim=(-10, 110) and ylim=(-10, 110).
+        plt.legend(loc="upper left")
+        plt.xlabel("Time step")
+        plt.ylabel("Value")
+        plt.title("Linear Noisy Data Generation")
+        plt.grid(True, alpha=0.3)
+
+    # Create seed widget (first widget per convention).
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="Random seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
+    )
+    # Create x0 widget.
+    x0_slider, x0_box = mtumsuti.build_widget_control(
+        name="x0",
+        description="Initial value",
+        min_val=-50.0,
+        max_val=50.0,
+        step=1.0,
+        initial_value=0.0,
+        is_float=True,
+    )
+    # Create dx widget.
+    dx_slider, dx_box = mtumsuti.build_widget_control(
+        name="dx",
+        description="Slope",
+        min_val=-5.0,
+        max_val=5.0,
+        step=0.1,
+        initial_value=1.0,
+        is_float=True,
+    )
+    # Create count widget.
+    count_slider, count_box = mtumsuti.build_widget_control(
+        name="count",
+        description="Number of points",
+        min_val=10,
+        max_val=200,
+        step=10,
+        initial_value=100,
+        is_float=False,
+    )
+    # Create noise_factor widget.
+    noise_factor_slider, noise_factor_box = mtumsuti.build_widget_control(
+        name="noise_factor",
+        description="Noise std dev",
+        min_val=0.0,
+        max_val=20.0,
+        step=0.5,
+        initial_value=5.0,
+        is_float=True,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        _plot_linear_noisy_data,
+        {
+            "seed": seed_slider,
+            "x0": x0_slider,
+            "dx": dx_slider,
+            "count": count_slider,
+            "noise_factor": noise_factor_slider,
+        },
+    )
+    # Display widgets.
+    display(
+        ipywidgets.VBox(
+            [seed_box, x0_box, dx_box, count_box, noise_factor_box, output]
+        )
+    )
 
 
 # #############################################################################

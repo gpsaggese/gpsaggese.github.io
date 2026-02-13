@@ -102,7 +102,7 @@ MSML610: Advanced Machine Learning
 :::
 
 * Example of Estimating Body Weight
-- **What's your real weight?**
+- **What's the real weight?**
   - You need to blend prediction and measurement
   $$
   \text{estimate = 0.6} \times \text{prediction} + (1 - 0.6) \times \text{measurement}
@@ -134,34 +134,35 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
-- **Remark**: it's not impressive since the prediction model describes the ground
-  truth, so you don't need the measurements
+- Not impressive since the prediction model describes the ground truth
 
-* Example of Estimating Body Weight
 ::: columns
 :::: {.column width=50%}
-- Consider when the model predicts a gain of -10lb/day, which is incorrect
+- When the model predicts a gain of -10lb/day (incorrect)
   - Estimates diverge from measurements
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/L09_04_wrong_gain_rate.png.png)
+![](msml610/lectures_source/figures/L09_04_wrong_gain_rate.png)
 ::::
 :::
 
+* Example of Estimating Body Weight
+
 ::: columns
 :::: {.column width=50%}
-- The filter needs a correct guess of the weight change rate
-  - Also the rate of change can vary over time
+- Two **problems**
+  - The filter needs a correct guess of the weight change rate
+  - The rate of change can vary over time
 
-- Solution: estimate the rate of change from measurements
+- **Solution**: estimate the rate of change from measurements
   - "Data is better than a guess, even if it's noisy"
   - Refine the estimate of the gain rate:
     $$
     \text{new gain = old gain + 0.3 (measurement - prediction) / 1 day}
     $$
 
-- The "state" is given by `weight` and `gain_rate`, so you need to predict and
-  update both
+- The "state" is given by `weight` and `gain_rate`
+  - You need to predict and update both
 ::::
 :::: {.column width=45%}
 ![](msml610/lectures_source/figures/L09_04_learning_gain_rate.png)
@@ -214,7 +215,10 @@ MSML610: Advanced Machine Learning
 
 // TODO(gp): Add a diagram
 
-* g-h Filter Algorithm: Pseudo-Code ::: Columns :::: {.Column Width=55%}
+* g-h Filter Algorithm: Pseudo-Code
+
+::: columns
+:::: {.column width=55%}
 
 1. Initialization
    - Initialize the state of the filter
