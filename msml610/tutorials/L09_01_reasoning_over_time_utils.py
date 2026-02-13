@@ -9,11 +9,14 @@ import msml610.tutorials.L09_01_reasoning_over_time_utils as mturetium
 import logging
 from typing import List, Optional, Tuple, Union
 
+import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from IPython.display import display
 
 import helpers.hdbg as hdbg
+import msml610_utils as mtumsuti
 
 _LOG = logging.getLogger(__name__)
 
@@ -54,9 +57,10 @@ def plot_gh_filter_results(
         df["pred"].plot(color="r", linewidth=linewidth, linestyle="--")
     # Estimates as solid line.
     df["ests"].plot(color="b", linewidth=linewidth)
-    plt.legend()
+    plt.legend(loc="upper left")
 
 
+# TODO(ai_gp): -> plot_gh_filter_results_with_params
 def plot_prediction_with_params(
     measurements: np.ndarray,
     preds: List[float],
@@ -86,10 +90,10 @@ def plot_prediction_with_params(
         tag_measurements=tag_measurements,
     )
     # Add parameter information to the title.
-    param_str = "\n".join(
+    param_str = ", ".join(
         [f"{key}: {value:.4g}" for key, value in params.items()]
     )
-    plt.title(f"Parameters:\n{param_str}", fontsize=10, loc="right")
+    plt.title(f"Parameters: {param_str}", fontsize=10)
 
 
 # #############################################################################
@@ -143,15 +147,13 @@ def create_interactive_gain_rate_widget(
     :param measured_weights: Array of weight measurements
     :param ground_truth: Array of true weight values
     """
-    from ipywidgets import FloatSlider, interact
-
     fig_gain = None
 
-    def interactive_gain_rate(
+    def _plot_gain_rate_prediction(
         weight: float, weight_scale: float, gain_rate: float
     ) -> None:
         """
-        Interactive function to explore gain rate prediction parameters.
+        Plot gain rate prediction with given parameters.
 
         :param weight: Initial weight estimate
         :param weight_scale: Scale factor for blending prediction and
@@ -175,17 +177,48 @@ def create_interactive_gain_rate_widget(
             measured_weights, preds, ests, ground_truth, params
         )
 
-    interact(
-        interactive_gain_rate,
-        weight=FloatSlider(
-            value=160.0, min=100.0, max=200.0, step=1.0, continuous_update=False
-        ),
-        weight_scale=FloatSlider(
-            value=0.4, min=0.0, max=1.0, step=0.05, continuous_update=False
-        ),
-        gain_rate=FloatSlider(
-            value=1.0, min=-20.0, max=20.0, step=0.5, continuous_update=False
-        ),
+    # Create slider for initial weight.
+    weight_slider, weight_box = mtumsuti.build_widget_control(
+        name="weight",
+        description="",
+        min_val=100.0,
+        max_val=200.0,
+        step=1.0,
+        initial_value=160.0,
+        is_float=True,
+    )
+    # Create slider for weight scale.
+    weight_scale_slider, weight_scale_box = mtumsuti.build_widget_control(
+        name="weight_scale",
+        description="",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=0.4,
+        is_float=True,
+    )
+    # Create slider for gain rate.
+    gain_rate_slider, gain_rate_box = mtumsuti.build_widget_control(
+        name="gain_rate",
+        description="",
+        min_val=-20.0,
+        max_val=20.0,
+        step=0.5,
+        initial_value=1.0,
+        is_float=True,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        _plot_gain_rate_prediction,
+        {
+            "weight": weight_slider,
+            "weight_scale": weight_scale_slider,
+            "gain_rate": gain_rate_slider,
+        },
+    )
+    # Display widgets.
+    display(
+        ipywidgets.VBox([weight_box, weight_scale_box, gain_rate_box, output])
     )
 
 

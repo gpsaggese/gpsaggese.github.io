@@ -142,7 +142,14 @@ MSML610: Advanced Machine Learning
 :::: {.column width=50%}
 - Consider when the model predicts a gain of -10lb/day, which is incorrect
   - Estimates diverge from measurements
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L09_04_wrong_gain_rate.png.png)
+::::
+:::
 
+::: columns
+:::: {.column width=50%}
 - The filter needs a correct guess of the weight change rate
   - Also the rate of change can vary over time
 

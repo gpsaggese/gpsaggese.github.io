@@ -103,14 +103,17 @@ gain_rate = 1.0
 # This is the initial weight.
 weight = 160.0
 
+# TODO(ai_gp): Move the following to *_utils and call it cell_1_2_knowning_gain_rate()
+
 ests, preds = time_ut.predict_using_gain_guess(
     weight, measured_weights, gain_rate, weight_scale, time_step
 )
+# TODO(ai_gp): Use dict and pass plot_prediction_with_params
 time_ut.plot_gh_filter_results(measured_weights, preds, ests, ground_truth)
 plt.savefig(os.path.join(dst_dir, "L09_04_knowing_gain_rate.png"))
 
 # %% [markdown]
-# ## Wrong guess of gain_rate
+# ## Cell 1.3: Wrong guess of gain_rate
 
 # %%
 time_step = 1
@@ -118,18 +121,24 @@ weight_scale = 4 / 10.0
 gain_rate = -10.0
 weight = 160.0
 
+# TODO(ai_gp): Move the following to *_utils and call it cell_1_3_wrong_guess_gain_rate()
+
 ests, preds = time_ut.predict_using_gain_guess(
     weight, measured_weights, gain_rate, weight_scale, time_step
 )
+# TODO(ai_gp): Use dict and pass plot_prediction_with_params
 time_ut.plot_gh_filter_results(measured_weights, preds, ests, ground_truth)
-plt.savefig(os.path.join(dst_dir, "L09_04_knowing_gain_rate.png"))
+plt.savefig(os.path.join(dst_dir, "L09_04_wrong_gain_rate.png"))
+
+# %%
+## Cell 1.4: Interactive
 
 # %%
 # Interactive exploration of gain rate parameters.
 time_ut.create_interactive_gain_rate_widget(measured_weights, ground_truth)
 
 # %% [markdown]
-# ## Learning gain_rate
+# ## Cell 1.5: Learning gain_rate
 
 # %%
 time_step = 1
@@ -140,16 +149,16 @@ gain_scale = 1 / 3.0
 gain_rate = -1.0
 weight = 160.0
 
+# TODO(ai_gp): Move the following to *_utils and call it cell_1_5_learning_gain_rate()
+
 ests, preds = time_ut.predict_learning_gain_rate(
     weight, measured_weights, gain_rate, weight_scale, gain_scale, time_step
 )
 time_ut.plot_gh_filter_results(measured_weights, preds, ests, ground_truth)
 plt.savefig(os.path.join(dst_dir, "L09_04_learning_gain_rate.png"))
 
-# %%
-
 # %% [markdown]
-# ## Noisy measurements
+# # Cell 2: Noisy measurements
 
 # %%
 vals, ground_truth = time_ut.gen_linear_noisy_data(
