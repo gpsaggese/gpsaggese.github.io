@@ -42,13 +42,13 @@ MSML610: Advanced Machine Learning
   - Navigation of aircraft, drones, autonomous cars
   - Robotics: arm kinematics to predict the position of joints
   - Sensor fusion: merge multiple sensor readings
-  - Finance: predict economic variables (e.g., stock prices)
+  - Finance: predict economic variables
   - Computer vision: track moving objects across video
 
 - **Kalman filter**
   - Used for state estimation in dynamic systems with noisy, uncertain
     measurements
-  - Track over time using predictions (model) and observations
+  - Track state over time using model to make predictions and observations
 
 * Some Guiding Principles
 - **The world is noisy**
@@ -56,48 +56,48 @@ MSML610: Advanced Machine Learning
   - E.g., wind or ice might change the car's path
 
 - **Sensors are noisy**
-  - A kitchen scale gives different readings for the same object
+  - E.g., a kitchen scale gives different readings for the same object
 
 - **Knowledge is uncertain**
-  - You alter beliefs based on evidence strength
+  - E.g., you alter beliefs on how things work based on evidence and its strength
 
-- Use past information and system knowledge to estimate future information
-  - E.g., if a car moves at a certain speed at time $t$, the speed at time $t+1$
-    is likely close to the previous speed
+- **Combine past information and system knowledge** to estimate future
+  information
+  - E.g., if a car moves at speed $X$ at time $t$, the speed at time $t+1$ is
+    $\approx X$
 
-- Data is better than a guess, even if noisy
-  - Never discard information, no matter how poor
+- **Data (even if noisy) > guess**
+  - Never discard information, no matter how poor it is
   - E.g., two sensors, even if one is less accurate, are better than one
 
 ## #############################################################################
 ## g-h Filter
 ## #############################################################################
 
-* Example of Weight: Blending Predictions and Measurements
-- Imagine going to the gym to gain muscle mass
-  - Estimate your weight over time
+* Example of Body Weight
+- **Goal**: estimate your weight over time while going to the gym
 
 - You could:
   1. **Predict your weight**
-     - Track calorie intake and energy expense
+     - Track calorie intake
+     - Track energy expense
      - Compute expected weight gain
-     - Cons: Difficult to track food intake and exercise accurately
+     - _Cons_: Difficult to track food intake and exercise accurately
   2. **Measure your weight**
      - Use a scale
-     - Cons: Scale is noisy, water weight fluctuates, different clothes
+     - _Cons_: Scale is noisy, water weight fluctuates, different clothes
 
-- Prediction doesn't match measurements
-  - At time $t - 1$
-    - Estimate: $\hat{x}_{t-1} = 158$
-  - At time $t$:
+- **Problem**: Prediction doesn't match measurements
+  - E.g., at time $t$:
+    - Estimate $\hat{x}_{t|t-1} = 159$ based on calorie intake and energy
+      expended
     - Scale measures 164
-    - Estimate $\hat{x}_{t|t-1} = 159$ based on calorie intake
 
 - **What's your real weight?**
   - You need to blend prediction and measurement
 
-* Example of Weight: Correct Gain_Rate
-- **Blend the estimates like:**
+* Example of Body Weight: Blending Estimates
+- **Blend the estimates:**
 
   $$
   \text{estimate = 0.6} \times \text{prediction} + (1 - 0.6) \times \text{measurement}

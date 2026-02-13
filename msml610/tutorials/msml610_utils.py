@@ -103,9 +103,6 @@ def print_obj(*args: Any, **kwargs: Any) -> None:
     _LOG.info(obj_to_str(*args, **kwargs))
 
 
-# Lesson 7, notebook 1
-
-
 def convert_to_filename(string: str) -> str:
     """
     Convert string to sanitized filename path in figures directory.
@@ -147,6 +144,9 @@ def process_figure(title: str) -> None:
     file_name = convert_to_filename(title)
     plt.savefig(file_name, dpi=300)
 
+
+# TODO(ai_gp): Move the functions between <start1> and <end1> to L07_01_bayesian_coin_utils.py
+# <start>
 
 def plot_binomial() -> None:
     """
@@ -541,10 +541,17 @@ def pick_best_theta(idata: az.InferenceData) -> None:
     plt.yticks([])
     plt.xlabel(r"$\hat{\theta}$")
 
+<end1>
 
+
+# TODO(ai_gp): Move the functions between <start> and <end> to L09_01_reasoning_over_time_utils.py
+
+# <start>
 # #############################################################################
 # Kalman filtering and g-h filters.
 # #############################################################################
+
+
 
 
 def predict_using_gain_guess(
@@ -788,6 +795,9 @@ def plot_dog_in_office_pdf(
     plt.grid(True, axis="y", linestyle="--", alpha=0.7)
     plt.legend()
     plt.show()
+
+
+# <end>
 
 
 # #############################################################################
