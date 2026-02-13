@@ -25,8 +25,8 @@ MSML610: Advanced Machine Learning
 - AIMA 14: Probabilistic reasoning over time
 - https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python
 
-// ./notes/math.Kalman_filter.txt
 // ./notes/math.Kalman_and_Bayesian_filters_in_Python.Labbe.2018.txt
+// ./notes/math.Kalman_filter.txt
 // ./notebooks/quantopian/quantopian_kalman_filter.ipynb
 // ./notebooks/Kalman_and_Bayesian_filters_in_python
 // - AIMA 14.4 (p. 479)
@@ -74,10 +74,10 @@ MSML610: Advanced Machine Learning
 ## g-h Filter
 ## #############################################################################
 
-* Example of Body Weight
+* Example of Estimating Body Weight
 - **Goal**: estimate your weight over time while going to the gym
 
-- You could:
+- Two possible approaches
   1. **Predict your weight**
      - Track calorie intake
      - Track energy expense
@@ -87,22 +87,29 @@ MSML610: Advanced Machine Learning
      - Use a scale
      - _Cons_: Scale is noisy, water weight fluctuates, different clothes
 
+::: columns
+:::: {.column width=50%}
 - **Problem**: Prediction doesn't match measurements
   - E.g., at time $t$:
     - Estimate $\hat{x}_{t|t-1} = 159$ based on calorie intake and energy
       expended
     - Scale measures 164
 
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L09_04_ground_truth.png)
+::::
+:::
+
+* Example of Estimating Body Weight
 - **What's your real weight?**
   - You need to blend prediction and measurement
-
-* Example of Body Weight: Blending Estimates
-- **Blend the estimates:**
-
   $$
   \text{estimate = 0.6} \times \text{prediction} + (1 - 0.6) \times \text{measurement}
   $$
-  - You believe the prediction is more likely correct than the measurement
+  - Because of coefficient 0.6 you believe the prediction is more likely correct
+    than the measurement
+  - The prediction is always between the prediction and the measurement
 
 - **Algorithm**
   1. Start with an initial guess
@@ -110,24 +117,29 @@ MSML610: Advanced Machine Learning
   2. Predict the next weight based on the model
   3. Measure the weight
   4. Estimate the next weight by merging values:
-     - The prediction is always between the prediction and the measurement
   5. Go back to first step
 
-* Example of Weight:
+* Example of Estimating Body Weight
+::: columns
+:::: {.column width=50%}
+- Assume you know the initial weight and the gain rate
+  - \black{Black line} is the actual weight (i.e., _ground truth_)
+  - \red{Red line} is the _prediction_ from previous day's weight
+  - \green{Green circles} are the _measurements_
+  - \blue{Blue line} is the _estimate_ from the filter
+    - Always falls between measurement and prediction
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L09_04_knowing_gain_rate.png)
+::::
+:::
 
-- The black line is the actual weight, i.e., **ground truth**
-- The initial guess is 160 lbs
-- The \red{red line} is the **prediction** from previous day's weight
-- The **measurements** are the circles
-- The \blue{blue} line is the **estimate** from the filter
-  - Always falls between measurement and prediction
+- **Remark**: it's not impressive since the prediction model describes the ground
+  truth, so you don't need the measurements
 
-- It's not impressive since the prediction model describes the ground truth, so
-  you don't need the measurements
-
-// TODO: Add pic
-
-* Example of Weight: Learning Gain_Rate
+* Example of Estimating Body Weight
+::: columns
+:::: {.column width=50%}
 - Consider when the model predicts a gain of -10lb/day, which is incorrect
   - Estimates diverge from measurements
 
@@ -143,8 +155,11 @@ MSML610: Advanced Machine Learning
 
 - The "state" is given by `weight` and `gain_rate`, so you need to predict and
   update both
-
-// TODO
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L09_04_learning_gain_rate.png)
+::::
+:::
 
 * g-h Filter
 - The previous algorithm is called **g-h filter**

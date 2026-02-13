@@ -39,23 +39,19 @@
 # %load_ext autoreload
 # %autoreload 2
 
-import logging
 
 import arviz as az
-import pandas as pd
-import xarray as xr
 import pymc as pm
 import numpy as np
-import seaborn as sns
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 import preliz as pz
 
 import ipywidgets as widgets
-from IPython.display import display
 
 # %%
 import msml610_utils as ut
+import L07_01_bayesian_coin_utils as coin_ut
 
 ut.config_notebook()
 
@@ -83,18 +79,24 @@ ut.config_notebook()
 # Set random seed for reproducibility.
 np.random.seed(42)
 
+
 # Define an interactive function.
-def sample_bernoulli(n: int =4, p: float=0.35) -> None:
+def sample_bernoulli(n: int = 4, p: float = 0.35) -> None:
     data = stats.bernoulli.rvs(p=p, size=n)
     print(f"Bernoulli(p={p}) - {n} realizations:")
     print(data)
 
+
 # Create interactive sliders.
 widgets.interact(
     sample_bernoulli,
-    n=widgets.IntSlider(value=4, min=1, max=50, step=1, description='n (samples)'),
-    p=widgets.FloatSlider(value=0.35, min=0.0, max=1.0, step=0.01, description='p (success prob)')
-);
+    n=widgets.IntSlider(
+        value=4, min=1, max=50, step=1, description="n (samples)"
+    ),
+    p=widgets.FloatSlider(
+        value=0.35, min=0.0, max=1.0, step=0.01, description="p (success prob)"
+    ),
+)
 
 # %% [markdown]
 # ## Binomial
@@ -103,7 +105,7 @@ widgets.interact(
 # A **binomial random variable** represents the number of successes in a fixed number of independent trials, where each trial has two possible outcomes: success or failure.
 #
 # - **Parameters:**
-#   - $n$: number of trials  
+#   - $n$: number of trials
 #   - $p$: probability of success in each trial
 #
 # - **Probability formula:**
@@ -119,6 +121,7 @@ widgets.interact(
 # Set random seed for reproducibility
 np.random.seed(42)
 
+
 # Define interactive function with type hints
 def sample_binomial(n: int = 4, p: float = 0.35, trials: int = 10) -> None:
     """
@@ -128,31 +131,38 @@ def sample_binomial(n: int = 4, p: float = 0.35, trials: int = 10) -> None:
     print(f"Binomial(n={trials}, p={p}) - {n} realizations:")
     print(data)
 
+
 # Create interactive sliders
 widgets.interact(
     sample_binomial,
-    n=widgets.IntSlider(value=4, min=1, max=50, step=1, description='n (samples)'),
-    trials=widgets.IntSlider(value=10, min=1, max=100, step=1, description='trials per sample'),
-    p=widgets.FloatSlider(value=0.35, min=0.0, max=1.0, step=0.01, description='p (success prob)')
-);
+    n=widgets.IntSlider(
+        value=4, min=1, max=50, step=1, description="n (samples)"
+    ),
+    trials=widgets.IntSlider(
+        value=10, min=1, max=100, step=1, description="trials per sample"
+    ),
+    p=widgets.FloatSlider(
+        value=0.35, min=0.0, max=1.0, step=0.01, description="p (success prob)"
+    ),
+)
 
 # %%
 params = {
-    #"kind": "cdf",
+    # "kind": "cdf",
     "kind": "pdf",
     "pointinterval": False,
-    "interval": "hdi",   # Highest density interval.
-    #"interval": "eti",  # Equally tailed interval.
-    "xy_lim": "auto"
+    "interval": "hdi",  # Highest density interval.
+    # "interval": "eti",  # Equally tailed interval.
+    "xy_lim": "auto",
 }
 
-#help(pz.Binomial.plot_interactive)
+# help(pz.Binomial.plot_interactive)
 
 # Probability of k successes on N trials flipping a coin with p success
 pz.Binomial(p=0.5, n=5).plot_interactive(**params)
 
 # %%
-ut.plot_binomial()
+coin_ut.plot_binomial()
 
 # %% [markdown]
 # ## Beta
@@ -170,6 +180,7 @@ ut.plot_binomial()
 # Set random seed for reproducibility.
 np.random.seed(42)
 
+
 # Define an interactive function.
 def sample_beta(n: int, a: float, b: float) -> None:
     """
@@ -179,22 +190,29 @@ def sample_beta(n: int, a: float, b: float) -> None:
     print(f"Beta(a={a}, b={b}) - {n} realizations:")
     print(data)
 
+
 # Create interactive sliders.
 widgets.interact(
     sample_beta,
-    n=widgets.IntSlider(value=4, min=1, max=50, step=1, description='n (samples)'),
-    a=widgets.FloatSlider(value=2.0, min=0.1, max=10.0, step=0.1, description='α (shape1)'),
-    b=widgets.FloatSlider(value=5.0, min=0.1, max=10.0, step=0.1, description='β (shape2)')
-);
+    n=widgets.IntSlider(
+        value=4, min=1, max=50, step=1, description="n (samples)"
+    ),
+    a=widgets.FloatSlider(
+        value=2.0, min=0.1, max=10.0, step=0.1, description="α (shape1)"
+    ),
+    b=widgets.FloatSlider(
+        value=5.0, min=0.1, max=10.0, step=0.1, description="β (shape2)"
+    ),
+)
 
 # %%
 params = {
-    #"kind": "cdf",
+    # "kind": "cdf",
     "kind": "pdf",
     "pointinterval": False,
-    "interval": "hdi",   # Highest density interval.
-    #"interval": "eti",  # Equal tailed interval.
-    "xy_lim": "auto"
+    "interval": "hdi",  # Highest density interval.
+    # "interval": "eti",  # Equal tailed interval.
+    "xy_lim": "auto",
 }
 
 alpha = 3.0
@@ -203,7 +221,7 @@ beta = 1.0
 pz.Beta(alpha=alpha, beta=beta).plot_interactive(**params)
 
 # %%
-ut.plot_beta()
+coin_ut.plot_beta()
 
 # %% [markdown]
 # # Coin Example: Analytical Solution
@@ -216,10 +234,10 @@ ut.plot_beta()
 # theta = 0.35, 1.00
 
 # %%
-ut.beta_prior_interactive()
+coin_ut.beta_prior_interactive()
 
 # %%
-ut.update_prior()
+coin_ut.update_prior()
 
 # %% [markdown]
 # # Coin Example: Numerical Solution
@@ -260,14 +278,14 @@ data1
 
 with pm.Model() as model1:
     # Prior.
-    theta = pm.Beta('theta', alpha=1., beta=1.)
+    theta = pm.Beta("theta", alpha=1.0, beta=1.0)
     # Likelihood.
-    y = pm.Bernoulli('y', p=theta, observed=data1)
+    y = pm.Bernoulli("y", p=theta, observed=data1)
     # (Numerical) Inference to estimate the posterior distribution through samples.
     idata1 = pm.sample(1000, random_seed=123)
 
 # %%
-az.plot_trace(idata1);
+az.plot_trace(idata1)
 
 # %% [markdown]
 # - PyMC uses NUTS sampler, computes 4 chains
@@ -288,10 +306,10 @@ az.summary(idata1, kind="stats")
 # - $\Pr(\hat{\theta} \in [0.031, 0.653]) = 0.94$
 
 # %%
-az.plot_trace(idata1, kind="rank_bars", combined=True);
+az.plot_trace(idata1, kind="rank_bars", combined=True)
 
 # %%
-az.plot_posterior(idata1);
+az.plot_posterior(idata1)
 
 # %% [markdown]
 # ## More data
@@ -310,9 +328,9 @@ data2
 # %%
 with pm.Model() as model2:
     # Prior.
-    theta = pm.Beta('theta', alpha=1., beta=1.)
+    theta = pm.Beta("theta", alpha=1.0, beta=1.0)
     # Likelihood.
-    y = pm.Bernoulli('y', p=theta, observed=data2)
+    y = pm.Bernoulli("y", p=theta, observed=data2)
     # (Numerical) Inference to estimate the posterior distribution through samples.
     idata2 = pm.sample(1000, random_seed=123)
 
@@ -320,7 +338,7 @@ with pm.Model() as model2:
 az.summary(idata2, kind="stats")
 
 # %%
-az.plot_posterior(idata2);
+az.plot_posterior(idata2)
 
 # %% [markdown]
 # ## Even more data
@@ -338,9 +356,9 @@ data3
 # %%
 with pm.Model() as model3:
     # Prior.
-    theta = pm.Beta('theta', alpha=1., beta=1.)
+    theta = pm.Beta("theta", alpha=1.0, beta=1.0)
     # Likelihood.
-    y = pm.Bernoulli('y', p=theta, observed=data3)
+    y = pm.Bernoulli("y", p=theta, observed=data3)
     # (Numerical) Inference to estimate the posterior distribution through samples.
     idata3 = pm.sample(1000, random_seed=123)
 
@@ -348,48 +366,53 @@ with pm.Model() as model3:
 az.summary(idata3, kind="stats")
 
 # %%
-az.plot_posterior(idata3);
+az.plot_posterior(idata3)
 
 # %% [markdown]
 # ## Savage-Dickey ratio
 
 # %%
 for idata in [idata1, idata2, idata3]:
-    az.plot_bf(idata, var_name="theta", prior=np.random.uniform(0, 1, 10000), ref_val=0.5);
-    plt.xlim(0, 1);
+    az.plot_bf(
+        idata,
+        var_name="theta",
+        prior=np.random.uniform(0, 1, 10000),
+        ref_val=0.5,
+    )
+    plt.xlim(0, 1)
 
 # %% [markdown]
 # ## ROPE
 
 # %%
 for idata in [idata1, idata2, idata3]:
-    az.plot_posterior(idata, rope=[0.45, .55], ref_val=0.5)
-    plt.xlim(0, 1);
+    az.plot_posterior(idata, rope=[0.45, 0.55], ref_val=0.5)
+    plt.xlim(0, 1)
 
 # %% [markdown]
 # # Decision with loss function
 
 # %%
-#loss_func = lambda x: ut.squared_loss(x, theta_real)
-#loss_func = lambda x: ut.abs_loss(x, theta_real)
-#loss_func = lambda x: ut.asymmetric_loss(x, theta_real)
-loss_func = lambda x: ut.sin_loss(x, theta_real)
+# loss_func = lambda x: coin_ut.squared_loss(x, theta_real)
+# loss_func = lambda x: coin_ut.abs_loss(x, theta_real)
+# loss_func = lambda x: coin_ut.asymmetric_loss(x, theta_real)
+loss_func = lambda x: coin_ut.sin_loss(x, theta_real)
 
 grid = np.linspace(-2.0, 2.0, 50)
-ut.plot_loss(grid, loss_func)
+coin_ut.plot_loss(grid, loss_func)
 
 # %%
 idata1.to_dataframe()[("posterior", "theta")]
 
 # %%
-plt.plot(idata1.to_dataframe()[("posterior", "theta")]);
+plt.plot(idata1.to_dataframe()[("posterior", "theta")])
 
 # %%
 df = idata1.to_dataframe()[("posterior", "theta")]
 df.plot(kind="kde")
 
 # %%
-ut.pick_best_theta(idata1)
+coin_ut.pick_best_theta(idata1)
 
 # %%
-ut.pick_best_theta(idata2)
+coin_ut.pick_best_theta(idata2)
