@@ -3,7 +3,7 @@ Utility functions for L05_02_02_overfitting notebook.
 
 Import as:
 
-import msml610.tutorials.L05_02_02_overfitting_utils as mtl0ovut
+import msml610.tutorials.L05_02_02_overfitting_utils as mtl00ovut
 """
 
 import logging
@@ -175,7 +175,7 @@ def cell1_plot_true_target_function() -> None:
             func_name = function_dropdown.value
             epsilon = epsilon_slider.value
             # N_exp_slider contains the exponent; compute actual N value.
-            N = 2 ** N_exp_slider.value
+            N = 2**N_exp_slider.value
             # Generate x values for true function (dense).
             x_dense = np.linspace(-1, 1, 200)
             # Get target function.
@@ -567,7 +567,7 @@ def cell2_plot_model() -> None:
                     color="orange",
                     label="Approximation Error",
                 )
-            else: 
+            else:
                 # Linear.
                 ax3.plot(
                     x_dense,

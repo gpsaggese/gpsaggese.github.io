@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -40,7 +40,7 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %% [markdown]
-# ## Cell 1: Dichotomy Explorer - 2D Perceptron with 3 Points
+# # Cell 1: Dichotomy Explorer - 2D Perceptron with 3 Points
 #
 # - Explore how a 2D perceptron (a separating line) can classify 3 points in different ways:
 #   - Visualize 3 labeled points (A, B, C) in a 2D plane
@@ -68,7 +68,7 @@ utils.cell1_dichotomy_explorer_3points()
 # Try different angles and offsets to discover all 8 possible classifications of 3 points.
 
 # %% [markdown]
-# ## Cell 2: Dichotomy Explorer - 2D Perceptron with 3 Points (Target Assignment)
+# # Cell 2: Dichotomy Explorer - 2D Perceptron with 3 Points (Target Assignment)
 #
 # - Discover that 3 points can be classified in $2^3 = 8$ different ways:
 #   - Select a target classification (one of 8 possible assignments)
@@ -98,7 +98,7 @@ utils.cell2_dichotomy_explorer_3points_target()
 # Use 'Find Solution' to automatically discover a line that achieves the target.
 
 # %% [markdown]
-# ## Cell 3: Dichotomy Explorer - 2D Perceptron with 4 Points
+# # Cell 3: Dichotomy Explorer - 2D Perceptron with 4 Points
 #
 # - Explore the limitations of linear separators with 4 points:
 #   - Visualize 4 labeled points (A, B, C, D) in different configurations
@@ -128,7 +128,7 @@ utils.cell3_dichotomy_explorer_4points()
 # Notice that you can find at most 14 out of 16 possible classifications.
 
 # %% [markdown]
-# ## Cell 4: Dichotomy Explorer - Positive Rays
+# # Cell 4: Dichotomy Explorer - Positive Rays
 #
 # - Explore the simplest hypothesis set with linear growth function:
 #   - Visualize N points on a 1D number line
@@ -157,7 +157,7 @@ utils.cell4_dichotomy_explorer_positive_rays()
 # Notice that m_H(N) = N + 1, which is much smaller than 2^N.
 
 # %% [markdown]
-# ## Cell 5: Dichotomy Explorer - Positive Intervals
+# # Cell 5: Dichotomy Explorer - Positive Intervals
 #
 # - Explore a hypothesis set with quadratic growth function:
 #   - Visualize N points on a 1D number line
@@ -185,7 +185,7 @@ utils.cell5_dichotomy_explorer_positive_intervals()
 # Notice that m_H(N) grows quadratically but is still much smaller than 2^N.
 
 # %% [markdown]
-# ## Cell 6: Dichotomy Explorer - Convex Sets
+# # Cell 6: Dichotomy Explorer - Convex Sets
 #
 # - Explore a hypothesis set with exponential growth function:
 #   - Visualize N points arranged in a circle

@@ -16,7 +16,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import ipywidgets
-from ipywidgets import fixed
 from IPython.display import display
 
 import helpers.hdbg as hdbg
@@ -376,7 +375,9 @@ def cell3_create_binary_entropy_widget() -> None:
     )
     # Create interactive output.
     output = ipywidgets.interactive_output(
-        lambda p: cell3_plot_binary_entropy_interactive(p=p, n=100, figsize=None),
+        lambda p: cell3_plot_binary_entropy_interactive(
+            p=p, n=100, figsize=None
+        ),
         {"p": p_slider},
     )
     # Display widgets.
@@ -409,6 +410,55 @@ def cell3_generate_binary_entropy_animation() -> None:
         figsize=(20, 5),
         dpi=150,
     )
+
+
+# #############################################################################
+# Cell 6: Mutual Information
+# #############################################################################
+
+
+def calculate_mutual_information(joint_prob: np.ndarray) -> float:
+    r"""
+    Calculate mutual information I(X;Y) from joint probability distribution.
+
+    Mutual Information $I(X;Y)$ measures how much knowing one variable
+    reduces uncertainty about the other:
+
+    $$I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X,Y)$$
+
+    :param joint_prob: 2D array of joint probabilities p(x,y)
+    :return: Mutual information in bits
+    """
+    joint_prob = np.array(joint_prob)
+    # Calculate marginals.
+    p_x = joint_prob.sum(axis=1)
+    p_y = joint_prob.sum(axis=0)
+    # Calculate entropies.
+    h_x = cell1_calculate_entropy(p_x)
+    h_y = cell1_calculate_entropy(p_y)
+    h_xy = calculate_joint_entropy(joint_prob)
+    # Mutual information.
+    mi = h_x + h_y - h_xy
+    return mi
+
+
+def create_correlated_joint_distribution(
+    *, correlation: float = 0.5
+) -> np.ndarray:
+    """
+    Create a 2x2 joint distribution with specified correlation.
+
+    :param correlation: Correlation strength (0=independent, 1=perfectly
+        correlated)
+    :return: 2x2 joint probability matrix
+    """
+    # Create joint distribution with correlation.
+    p11 = 0.25 + correlation * 0.25
+    p00 = 0.25 + correlation * 0.25
+    p10 = 0.25 - correlation * 0.25
+    p01 = 0.25 - correlation * 0.25
+    joint_prob = np.array([[p00, p01], [p10, p11]])
+    return joint_prob
 
 
 # #############################################################################
@@ -957,55 +1007,6 @@ def cell5_generate_conditional_entropy_animation() -> None:
         figsize=(20, 5),
         dpi=150,
     )
-
-
-# #############################################################################
-# Cell 6: Mutual Information
-# #############################################################################
-
-
-def calculate_mutual_information(joint_prob: np.ndarray) -> float:
-    r"""
-    Calculate mutual information I(X;Y) from joint probability distribution.
-
-    Mutual Information $I(X;Y)$ measures how much knowing one variable
-    reduces uncertainty about the other:
-
-    $$I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X,Y)$$
-
-    :param joint_prob: 2D array of joint probabilities p(x,y)
-    :return: Mutual information in bits
-    """
-    joint_prob = np.array(joint_prob)
-    # Calculate marginals.
-    p_x = joint_prob.sum(axis=1)
-    p_y = joint_prob.sum(axis=0)
-    # Calculate entropies.
-    h_x = cell1_calculate_entropy(p_x)
-    h_y = cell1_calculate_entropy(p_y)
-    h_xy = calculate_joint_entropy(joint_prob)
-    # Mutual information.
-    mi = h_x + h_y - h_xy
-    return mi
-
-
-def create_correlated_joint_distribution(
-    *, correlation: float = 0.5
-) -> np.ndarray:
-    """
-    Create a 2x2 joint distribution with specified correlation.
-
-    :param correlation: Correlation strength (0=independent, 1=perfectly
-        correlated)
-    :return: 2x2 joint probability matrix
-    """
-    # Create joint distribution with correlation.
-    p11 = 0.25 + correlation * 0.25
-    p00 = 0.25 + correlation * 0.25
-    p10 = 0.25 - correlation * 0.25
-    p01 = 0.25 - correlation * 0.25
-    joint_prob = np.array([[p00, p01], [p10, p11]])
-    return joint_prob
 
 
 def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
@@ -1639,7 +1640,8 @@ def cell6_create_mutual_information_venn_widget() -> None:
     )
     # Create interactive output.
     output = ipywidgets.interactive_output(
-        lambda dependence, scenario: cell6_plot_mutual_information_venn_interactive(
+        lambda dependence,
+        scenario: cell6_plot_mutual_information_venn_interactive(
             dependence=dependence, scenario=scenario, figsize=None
         ),
         {"dependence": dependence_slider, "scenario": scenario_dropdown},
@@ -3049,7 +3051,8 @@ def cell9_create_data_processing_inequality_widget() -> None:
     )
     # Create interactive output.
     output = ipywidgets.interactive_output(
-        lambda noise_level, scenario: cell9_plot_data_processing_inequality_interactive(
+        lambda noise_level,
+        scenario: cell9_plot_data_processing_inequality_interactive(
             noise_level=noise_level, scenario=scenario, figsize=None
         ),
         {"noise_level": noise_level_slider, "scenario": scenario_dropdown},
@@ -3411,7 +3414,11 @@ def cell10_create_mdl_widget() -> None:
     # Create interactive output.
     output = ipywidgets.interactive_output(
         lambda degree: cell10_plot_mdl_interactive(
-            degree=degree, n_samples=50, true_degree=3, noise_level=0.3, figsize=None
+            degree=degree,
+            n_samples=50,
+            true_degree=3,
+            noise_level=0.3,
+            figsize=None,
         ),
         {"degree": degree_slider},
     )
@@ -3845,7 +3852,8 @@ def cell11_create_kolmogorov_complexity_widget() -> None:
     )
     # Create interactive output.
     output = ipywidgets.interactive_output(
-        lambda string_type, length: cell11_plot_kolmogorov_complexity_interactive(
+        lambda string_type,
+        length: cell11_plot_kolmogorov_complexity_interactive(
             string_type=string_type, length=length, figsize=None
         ),
         {"string_type": string_type_dropdown, "length": length_dropdown},

@@ -3,7 +3,7 @@ Utility functions for L05_02_01_bias_variance notebook.
 
 Import as:
 
-import msml610.tutorials.L05_02_01_bias_variance_utils as mtl0bvaut
+import msml610.tutorials.L05_02_01_bias_variance_utils as mtl00bvut
 """
 
 import logging
@@ -534,6 +534,7 @@ Out-of-sample Error (E_out):
             mtumsuti.add_fitted_text_box(ax3, comment_text)
             plt.tight_layout()
             plt.show()
+
     # Link widgets to update function.
     ipywidgets.interactive_output(
         update_plot,
@@ -1032,7 +1033,9 @@ def cell5_learning_with_noise() -> None:
             # Run N_experiments with different random training sets.
             for _ in range(n_experiments):
                 # Generate training data by sampling random points.
-                x_train, y_train = generate_training_data(n_samples, noise_std=noise_std)
+                x_train, y_train = generate_training_data(
+                    n_samples, noise_std=noise_std
+                )
                 # Fit models and generate predictions.
                 b, y_const_dense, (a, b_linear), y_linear_dense = (
                     fit_models_and_predict(x_train, y_train, x_dense)
@@ -1226,13 +1229,15 @@ def cell6_learning_plots_with_noise() -> None:
     # Create logarithmic widget for N_experiments.
     # Uses exponents 4-10 for base 2: gives values 16, 32, 64, 128, 256, 512, 1024
     # Initial exponent 6 gives initial value of 64
-    n_experiments_exp_slider, n_experiments_box = mtumsuti.build_log_widget_control(
-        name="log(N_experiments)",
-        description="Number of experiments",
-        min_exp=4,
-        max_exp=10,
-        initial_exp=6,
-        base=2,
+    n_experiments_exp_slider, n_experiments_box = (
+        mtumsuti.build_log_widget_control(
+            name="log(N_experiments)",
+            description="Number of experiments",
+            min_exp=4,
+            max_exp=10,
+            initial_exp=6,
+            base=2,
+        )
     )
     # Create logarithmic widget for N_samples.
     # Uses exponents 1-8 for base 2: gives values 2, 4, 8, 16, 32, 64, 128, 256

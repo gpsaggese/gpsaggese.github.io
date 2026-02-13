@@ -7,7 +7,7 @@ realized by the hypothesis.
 
 Import as:
 
-import msml610.tutorials.L05_01_04_growth_function_utils as mtl0lt0gfu
+import msml610.tutorials.L05_01_04_growth_function_utils as mtl00gfut
 """
 
 import abc

@@ -15,7 +15,7 @@ import pandas as pd
 import pytest
 
 import helpers.hunit_test as hunitest
-import msml610.tutorials.L05_01_04_growth_function_utils as mtl0lt0gfu
+import msml610.tutorials.L05_01_04_growth_function_utils as mtl00gfut
 
 _LOG = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ class Test_PointGenerator(hunitest.TestCase):
         Test random point generation.
         """
         # Prepare inputs.
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        generator = mtl00gfut.PointGenerator(seed=42)
         # Run test.
         points = generator.generate_random(n=5, d=2, bounds=(-1.0, 1.0))
         # Check outputs.
@@ -46,7 +46,7 @@ class Test_PointGenerator(hunitest.TestCase):
         self.assertTrue(np.all(points >= -1.0))
         self.assertTrue(np.all(points <= 1.0))
         # Verify reproducibility.
-        generator2 = mtl0lt0gfu.PointGenerator(seed=42)
+        generator2 = mtl00gfut.PointGenerator(seed=42)
         points2 = generator2.generate_random(n=5, d=2, bounds=(-1.0, 1.0))
         np.testing.assert_array_equal(points, points2)
 
@@ -55,7 +55,7 @@ class Test_PointGenerator(hunitest.TestCase):
         Test circle point generation.
         """
         # Prepare inputs.
-        generator = mtl0lt0gfu.PointGenerator()
+        generator = mtl00gfut.PointGenerator()
         # Run test.
         points = generator.generate_circle(n=8, radius=1.0)
         # Check outputs.
@@ -69,7 +69,7 @@ class Test_PointGenerator(hunitest.TestCase):
         Test grid point generation.
         """
         # Prepare inputs.
-        generator = mtl0lt0gfu.PointGenerator()
+        generator = mtl00gfut.PointGenerator()
         # Run test.
         points = generator.generate_grid(n=9, d=2, bounds=(-1.0, 1.0))
         # Check outputs.
@@ -82,7 +82,7 @@ class Test_PointGenerator(hunitest.TestCase):
         Test collinear point generation.
         """
         # Prepare inputs.
-        generator = mtl0lt0gfu.PointGenerator()
+        generator = mtl00gfut.PointGenerator()
         # Run test.
         points = generator.generate_collinear(n=5, d=3, bounds=(-1.0, 1.0))
         # Check outputs.
@@ -96,7 +96,7 @@ class Test_PointGenerator(hunitest.TestCase):
         Test 1D line point generation.
         """
         # Prepare inputs.
-        generator = mtl0lt0gfu.PointGenerator()
+        generator = mtl00gfut.PointGenerator()
         # Run test.
         points = generator.generate_line_1d(n=6, bounds=(-1.0, 1.0))
         # Check outputs.
@@ -120,13 +120,13 @@ class Test_DichotomyEnumerator(hunitest.TestCase):
         Test dichotomy counting.
         """
         # Prepare inputs.
-        enumerator = mtl0lt0gfu.DichotomyEnumerator(n=3)
+        enumerator = mtl00gfut.DichotomyEnumerator(n=3)
         # Run test.
         actual = enumerator.count_dichotomies()
         # Check outputs.
         self.assertEqual(actual, 8)
         # Prepare inputs.
-        enumerator = mtl0lt0gfu.DichotomyEnumerator(n=5)
+        enumerator = mtl00gfut.DichotomyEnumerator(n=5)
         # Run test.
         actual = enumerator.count_dichotomies()
         # Check outputs.
@@ -137,7 +137,7 @@ class Test_DichotomyEnumerator(hunitest.TestCase):
         Test getting specific dichotomies.
         """
         # Prepare inputs.
-        enumerator = mtl0lt0gfu.DichotomyEnumerator(n=3)
+        enumerator = mtl00gfut.DichotomyEnumerator(n=3)
         # Run test.
         labels = enumerator.get_dichotomy(0)
         # Check outputs.
@@ -154,7 +154,7 @@ class Test_DichotomyEnumerator(hunitest.TestCase):
         Test enumerating all dichotomies.
         """
         # Prepare inputs.
-        enumerator = mtl0lt0gfu.DichotomyEnumerator(n=3)
+        enumerator = mtl00gfut.DichotomyEnumerator(n=3)
         # Run test.
         dichotomies = list(enumerator.enumerate_all())
         # Check outputs.
@@ -182,7 +182,7 @@ class Test_PerceptronTester(hunitest.TestCase):
         Test linearly separable case.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
+        tester = mtl00gfut.PerceptronTester(random_state=42)
         points = np.array([[0, 0], [1, 0], [0, 1], [1, 1]])
         labels = np.array([-1, -1, 1, 1])
         # Run test.
@@ -195,7 +195,7 @@ class Test_PerceptronTester(hunitest.TestCase):
         Test XOR (not linearly separable) case.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
+        tester = mtl00gfut.PerceptronTester(random_state=42)
         points = np.array([[-1, -1], [1, -1], [-1, 1], [1, 1]])
         labels = np.array([1, -1, -1, 1])
         # Run test.
@@ -208,7 +208,7 @@ class Test_PerceptronTester(hunitest.TestCase):
         Test trivial case with all same labels.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
+        tester = mtl00gfut.PerceptronTester(random_state=42)
         points = np.array([[0, 0], [1, 0], [0, 1]])
         labels = np.array([1, 1, 1])
         # Run test.
@@ -221,7 +221,7 @@ class Test_PerceptronTester(hunitest.TestCase):
         Test finding hypothesis parameters.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
+        tester = mtl00gfut.PerceptronTester(random_state=42)
         points = np.array([[0, 0], [1, 0], [0, 1], [1, 1]])
         labels = np.array([-1, -1, 1, 1])
         # Run test.
@@ -236,11 +236,11 @@ class Test_PerceptronTester(hunitest.TestCase):
         Test that 3 points can be shattered by perceptron.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        tester = mtl00gfut.PerceptronTester(random_state=42)
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        generator = mtl00gfut.PointGenerator(seed=42)
         points = generator.generate_random(n=3, d=2)
         # Run test.
         result = calculator.compute_growth_function(points)
@@ -254,8 +254,8 @@ class Test_PerceptronTester(hunitest.TestCase):
         Test break point at 4 points for perceptron.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        tester = mtl00gfut.PerceptronTester(random_state=42)
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
         points = np.array([[-1, -1], [1, -1], [1, 1], [-1, 1]])
@@ -281,7 +281,7 @@ class Test_PositiveRaysTester(hunitest.TestCase):
         Test valid ray pattern.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PositiveRaysTester()
+        tester = mtl00gfut.PositiveRaysTester()
         points = np.array([[-1], [-0.5], [0.5], [1]])
         labels = np.array([-1, -1, 1, 1])
         # Run test.
@@ -294,7 +294,7 @@ class Test_PositiveRaysTester(hunitest.TestCase):
         Test invalid ray pattern with multiple transitions.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PositiveRaysTester()
+        tester = mtl00gfut.PositiveRaysTester()
         points = np.array([[-1], [-0.5], [0.5], [1]])
         labels = np.array([-1, 1, -1, 1])
         # Run test.
@@ -307,7 +307,7 @@ class Test_PositiveRaysTester(hunitest.TestCase):
         Test finding threshold.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PositiveRaysTester()
+        tester = mtl00gfut.PositiveRaysTester()
         points = np.array([[-1], [0], [1], [2], [3]])
         labels = np.array([-1, -1, 1, 1, 1])
         # Run test.
@@ -324,11 +324,11 @@ class Test_PositiveRaysTester(hunitest.TestCase):
         Test that m_H(N) = N + 1 for positive rays.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PositiveRaysTester()
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        tester = mtl00gfut.PositiveRaysTester()
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        generator = mtl00gfut.PointGenerator(seed=42)
         # Run test and check outputs.
         for n in [1, 2, 3, 4, 5]:
             points = generator.generate_line_1d(n)
@@ -351,7 +351,7 @@ class Test_PositiveIntervalsTester(hunitest.TestCase):
         Test valid interval pattern.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PositiveIntervalsTester()
+        tester = mtl00gfut.PositiveIntervalsTester()
         points = np.array([[-1], [-0.5], [0], [0.5], [1]])
         labels = np.array([-1, -1, 1, 1, -1])
         # Run test.
@@ -364,7 +364,7 @@ class Test_PositiveIntervalsTester(hunitest.TestCase):
         Test invalid interval pattern with multiple intervals.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PositiveIntervalsTester()
+        tester = mtl00gfut.PositiveIntervalsTester()
         points = np.array([[-1], [-0.5], [0], [0.5], [1]])
         labels = np.array([-1, 1, -1, 1, -1])
         # Run test.
@@ -377,7 +377,7 @@ class Test_PositiveIntervalsTester(hunitest.TestCase):
         Test finding interval boundaries.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PositiveIntervalsTester()
+        tester = mtl00gfut.PositiveIntervalsTester()
         points = np.array([[-2], [-1], [0], [1], [2], [3]])
         labels = np.array([-1, -1, 1, 1, 1, -1])
         # Run test.
@@ -392,11 +392,11 @@ class Test_PositiveIntervalsTester(hunitest.TestCase):
         Test that m_H(N) = N(N+1)/2 + 1 for positive intervals.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PositiveIntervalsTester()
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        tester = mtl00gfut.PositiveIntervalsTester()
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        generator = mtl00gfut.PointGenerator(seed=42)
         # Run test and check outputs.
         for n in [1, 2, 3, 4, 5]:
             points = generator.generate_line_1d(n)
@@ -420,10 +420,10 @@ class Test_ConvexSetsTester(hunitest.TestCase):
         Test that all dichotomies are realizable.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.ConvexSetsTester()
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        tester = mtl00gfut.ConvexSetsTester()
+        generator = mtl00gfut.PointGenerator(seed=42)
         points = generator.generate_circle(n=5)
-        enumerator = mtl0lt0gfu.DichotomyEnumerator(n=5)
+        enumerator = mtl00gfut.DichotomyEnumerator(n=5)
         # Run test and check outputs.
         for i in range(10):
             labels = enumerator.get_dichotomy(i)
@@ -434,8 +434,8 @@ class Test_ConvexSetsTester(hunitest.TestCase):
         Test finding convex hull.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.ConvexSetsTester()
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        tester = mtl00gfut.ConvexSetsTester()
+        generator = mtl00gfut.PointGenerator(seed=42)
         points = generator.generate_circle(n=6)
         labels = np.array([1, 1, 1, -1, -1, -1])
         # Run test.
@@ -450,11 +450,11 @@ class Test_ConvexSetsTester(hunitest.TestCase):
         Test that m_H(N) = 2^N for convex sets.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.ConvexSetsTester()
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        tester = mtl00gfut.ConvexSetsTester()
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        generator = mtl00gfut.PointGenerator(seed=42)
         # Run test and check outputs.
         for n in [1, 2, 3, 4, 5]:
             points = generator.generate_circle(n)
@@ -479,11 +479,11 @@ class Test_GrowthFunctionCalculator(hunitest.TestCase):
         Test computing growth function.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PositiveRaysTester()
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        tester = mtl00gfut.PositiveRaysTester()
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        generator = mtl00gfut.PointGenerator(seed=42)
         points = generator.generate_line_1d(n=4)
         # Run test.
         result = calculator.compute_growth_function(points)
@@ -503,11 +503,11 @@ class Test_GrowthFunctionCalculator(hunitest.TestCase):
         Test computing growth curve.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        tester = mtl00gfut.PerceptronTester(random_state=42)
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        generator = mtl00gfut.PointGenerator(seed=42)
         # Run test.
         results_df = calculator.compute_growth_curve(
             generator, n_range=[1, 2, 3, 4], num_trials=1
@@ -524,11 +524,11 @@ class Test_GrowthFunctionCalculator(hunitest.TestCase):
         Test finding break point.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        tester = mtl00gfut.PerceptronTester(random_state=42)
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        generator = mtl00gfut.PointGenerator(seed=42)
         # Run test.
         break_point = calculator.find_break_point(generator, max_n=10)
         # Check outputs.
@@ -540,11 +540,11 @@ class Test_GrowthFunctionCalculator(hunitest.TestCase):
         Test finding shattered points.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        tester = mtl00gfut.PerceptronTester(random_state=42)
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        generator = mtl00gfut.PointGenerator(seed=42)
         points_3 = generator.generate_random(n=3, d=2)
         # Run test.
         actual = calculator.find_shattered_points(points_3)
@@ -557,11 +557,11 @@ class Test_GrowthFunctionCalculator(hunitest.TestCase):
         Test estimating VC dimension.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        tester = mtl00gfut.PerceptronTester(random_state=42)
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        generator = mtl00gfut.PointGenerator(seed=42)
         # Run test.
         result = calculator.estimate_vc_dimension(
             generator, max_n=6, num_trials=3
@@ -588,7 +588,7 @@ class Test_GrowthFunctionVisualizer(hunitest.TestCase):
         Test plotting growth curve without errors.
         """
         # Prepare inputs.
-        visualizer = mtl0lt0gfu.GrowthFunctionVisualizer()
+        visualizer = mtl00gfut.GrowthFunctionVisualizer()
         data = {
             "n": [1, 2, 3, 4],
             "m_h_n_mean": [2, 4, 8, 14],
@@ -610,7 +610,7 @@ class Test_GrowthFunctionVisualizer(hunitest.TestCase):
         Test plotting multiple growth curves without errors.
         """
         # Prepare inputs.
-        visualizer = mtl0lt0gfu.GrowthFunctionVisualizer()
+        visualizer = mtl00gfut.GrowthFunctionVisualizer()
         data1 = {
             "n": [1, 2, 3],
             "m_h_n_mean": [2, 3, 4],
@@ -650,7 +650,7 @@ class Test_HelperFunctions(hunitest.TestCase):
         """
         # Run test and check outputs.
         for n in [1, 2, 3, 4, 5]:
-            result = mtl0lt0gfu.compute_theoretical_growth("Positive Rays", n)
+            result = mtl00gfut.compute_theoretical_growth("Positive Rays", n)
             self.assertEqual(result, n + 1)
 
     def test2(self) -> None:
@@ -659,7 +659,9 @@ class Test_HelperFunctions(hunitest.TestCase):
         """
         # Run test and check outputs.
         for n in [1, 2, 3, 4, 5]:
-            result = mtl0lt0gfu.compute_theoretical_growth("Positive Intervals", n)
+            result = mtl00gfut.compute_theoretical_growth(
+                "Positive Intervals", n
+            )
             expected = n * (n + 1) // 2 + 1
             self.assertEqual(result, expected)
 
@@ -668,11 +670,17 @@ class Test_HelperFunctions(hunitest.TestCase):
         Test theoretical growth for perceptron.
         """
         # Run test and check outputs.
-        self.assertEqual(mtl0lt0gfu.compute_theoretical_growth("Perceptron", 1), 2)
-        self.assertEqual(mtl0lt0gfu.compute_theoretical_growth("Perceptron", 2), 4)
-        self.assertEqual(mtl0lt0gfu.compute_theoretical_growth("Perceptron", 3), 8)
         self.assertEqual(
-            mtl0lt0gfu.compute_theoretical_growth("Perceptron", 4), 14
+            mtl00gfut.compute_theoretical_growth("Perceptron", 1), 2
+        )
+        self.assertEqual(
+            mtl00gfut.compute_theoretical_growth("Perceptron", 2), 4
+        )
+        self.assertEqual(
+            mtl00gfut.compute_theoretical_growth("Perceptron", 3), 8
+        )
+        self.assertEqual(
+            mtl00gfut.compute_theoretical_growth("Perceptron", 4), 14
         )
 
     def test4(self) -> None:
@@ -681,7 +689,7 @@ class Test_HelperFunctions(hunitest.TestCase):
         """
         # Run test and check outputs.
         for n in [1, 2, 3, 4, 5]:
-            result = mtl0lt0gfu.compute_theoretical_growth("Convex Sets", n)
+            result = mtl00gfut.compute_theoretical_growth("Convex Sets", n)
             self.assertEqual(result, 2**n)
 
     def test5(self) -> None:
@@ -695,7 +703,7 @@ class Test_HelperFunctions(hunitest.TestCase):
         }
         results_df = pd.DataFrame(data)
         # Run test.
-        compared = mtl0lt0gfu.compare_with_theory(results_df, "Positive Rays")
+        compared = mtl00gfut.compare_with_theory(results_df, "Positive Rays")
         # Check outputs.
         self.assertIn("theoretical", compared.columns)
         self.assertIn("error", compared.columns)
@@ -717,16 +725,16 @@ class Test_IntegrationEndToEnd(hunitest.TestCase):
         Test complete workflow for perceptron.
         """
         # Prepare inputs.
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        generator = mtl00gfut.PointGenerator(seed=42)
+        tester = mtl00gfut.PerceptronTester(random_state=42)
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
         # Run test.
         results_df = calculator.compute_growth_curve(
             generator, n_range=[1, 2, 3, 4], num_trials=1
         )
-        compared = mtl0lt0gfu.compare_with_theory(results_df, "Perceptron")
+        compared = mtl00gfut.compare_with_theory(results_df, "Perceptron")
         # Check outputs.
         for n in [1, 2, 3]:
             row = compared[compared["n"] == n].iloc[0]
@@ -737,9 +745,9 @@ class Test_IntegrationEndToEnd(hunitest.TestCase):
         Test complete workflow for positive rays.
         """
         # Prepare inputs.
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
-        tester = mtl0lt0gfu.PositiveRaysTester()
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        generator = mtl00gfut.PointGenerator(seed=42)
+        tester = mtl00gfut.PositiveRaysTester()
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
         # Run test.
@@ -755,16 +763,18 @@ class Test_IntegrationEndToEnd(hunitest.TestCase):
         Test complete workflow for positive intervals.
         """
         # Prepare inputs.
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
-        tester = mtl0lt0gfu.PositiveIntervalsTester()
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        generator = mtl00gfut.PointGenerator(seed=42)
+        tester = mtl00gfut.PositiveIntervalsTester()
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
         # Run test.
         results_df = calculator.compute_growth_curve(
             generator, n_range=[1, 2, 3, 4, 5], num_trials=1
         )
-        compared = mtl0lt0gfu.compare_with_theory(results_df, "Positive Intervals")
+        compared = mtl00gfut.compare_with_theory(
+            results_df, "Positive Intervals"
+        )
         # Check outputs.
         for _, row in compared.iterrows():
             self.assertEqual(row["m_h_n_mean"], row["theoretical"])
@@ -775,9 +785,9 @@ class Test_IntegrationEndToEnd(hunitest.TestCase):
         Test complete workflow for convex sets.
         """
         # Prepare inputs.
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
-        tester = mtl0lt0gfu.ConvexSetsTester()
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        generator = mtl00gfut.PointGenerator(seed=42)
+        tester = mtl00gfut.ConvexSetsTester()
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
         # Run test.
@@ -804,15 +814,15 @@ class Test_EdgeCases(hunitest.TestCase):
         Test with N=1 point.
         """
         # Prepare inputs.
-        generator = mtl0lt0gfu.PointGenerator(seed=42)
+        generator = mtl00gfut.PointGenerator(seed=42)
         # Run test and check outputs.
         for tester in [
-            mtl0lt0gfu.PerceptronTester(random_state=42),
-            mtl0lt0gfu.PositiveRaysTester(),
-            mtl0lt0gfu.PositiveIntervalsTester(),
-            mtl0lt0gfu.ConvexSetsTester(),
+            mtl00gfut.PerceptronTester(random_state=42),
+            mtl00gfut.PositiveRaysTester(),
+            mtl00gfut.PositiveIntervalsTester(),
+            mtl00gfut.ConvexSetsTester(),
         ]:
-            calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+            calculator = mtl00gfut.GrowthFunctionCalculator(
                 tester, verbose=False, show_progress=False
             )
             hypothesis_name = tester.get_name()
@@ -830,7 +840,7 @@ class Test_EdgeCases(hunitest.TestCase):
         Test with N=0 points.
         """
         # Prepare inputs.
-        enumerator = mtl0lt0gfu.DichotomyEnumerator(n=0)
+        enumerator = mtl00gfut.DichotomyEnumerator(n=0)
         # Run test.
         actual = enumerator.count_dichotomies()
         # Check outputs.
@@ -841,8 +851,8 @@ class Test_EdgeCases(hunitest.TestCase):
         Test with all identical points.
         """
         # Prepare inputs.
-        tester = mtl0lt0gfu.PerceptronTester(random_state=42)
-        calculator = mtl0lt0gfu.GrowthFunctionCalculator(
+        tester = mtl00gfut.PerceptronTester(random_state=42)
+        calculator = mtl00gfut.GrowthFunctionCalculator(
             tester, verbose=False, show_progress=False
         )
         points = np.array([[0, 0], [0, 0], [0, 0]])

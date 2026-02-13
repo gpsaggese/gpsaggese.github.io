@@ -85,7 +85,7 @@ _LOG = logging.getLogger(__name__)
 utils.cell1_plot_true_target_function()
 
 # %% [markdown]
-# ## Cell 2: Model Comparison - Constant vs Linear
+# # Cell 2: Model Comparison - Constant vs Linear
 #
 # **Goal**:
 # - Compare two hypothesis classes: constant model $h(x) = b$ vs linear model $h(x) = ax + b$
