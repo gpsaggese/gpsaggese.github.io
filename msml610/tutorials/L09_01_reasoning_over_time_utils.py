@@ -216,7 +216,7 @@ def cell1_4_create_interactive_gain_rate_widget(
         nonlocal fig_gain
         if fig_gain is not None:
             plt.close(fig_gain)
-        fig_gain = plt.figure(figsize=((8, 4)))
+        fig_gain = plt.figure(figsize=plt.rcParams["figure.figsize"])
         time_step = 1
         ests, preds = predict_using_gain_guess(
             weight, measured_weights, gain_rate, weight_scale, time_step
@@ -553,7 +553,7 @@ def cell2_1_create_interactive_linear_noisy_data_widget() -> None:
         nonlocal fig_noisy
         if fig_noisy is not None:
             plt.close(fig_noisy)
-        fig_noisy = plt.figure(figsize=((8, 4)))
+        fig_noisy = plt.figure(figsize=plt.rcParams["figure.figsize"])
         # Use fixed values for x0 and dx.
         vals, ground_truth = gen_linear_noisy_data(
             x0=0, dx=1, count=count, noise_factor=noise_factor, seed=seed
@@ -648,7 +648,7 @@ def cell2_9_create_interactive_gh_filter_widget() -> None:
         nonlocal fig_gh
         if fig_gh is not None:
             plt.close(fig_gh)
-        fig_gh = plt.figure(figsize=(8, 4))
+        fig_gh = plt.figure(figsize=plt.rcParams["figure.figsize"])
         # Generate test data with current noise level.
         zs, ground_truth = gen_linear_noisy_data(
             x0=5, dx=5, count=100, noise_factor=noise_factor
@@ -760,7 +760,7 @@ def cell2_5_create_interactive_non_linear_noisy_data_widget() -> None:
         nonlocal fig_non_linear
         if fig_non_linear is not None:
             plt.close(fig_non_linear)
-        fig_non_linear = plt.figure(figsize=(8, 4))
+        fig_non_linear = plt.figure(figsize=plt.rcParams["figure.figsize"])
         # Use fixed values for x0 and dx.
         vals, ground_truth = gen_non_linear_noisy_data(
             x0=0,
