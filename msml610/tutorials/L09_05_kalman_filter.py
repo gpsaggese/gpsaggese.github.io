@@ -80,5 +80,3 @@ time_ut.cell1_1_plot_gaussian_sum()
 # %%
 # Interactive exploration of product of Gaussians.
 time_ut.cell1_2_plot_gaussian_product()
-
-# %%

@@ -132,70 +132,82 @@ MSML610: Advanced Machine Learning
   - If two Gaussians are similar (measures corroborate), result becomes more
     certain
 
+* Kalman Pseudo-Algorithm
+- Typical symbols used in Kalman literature:
+
+  \begingroup \small
+  | **Symbol** | **Meaning** |
+  |--------|----------|
+  | $x$ | State |
+  | $P$ | Variance of state (uncertainty, belief) |
+  | $f()$ | System model |
+  | $Q$ | System model error |
+  | $z$ | Measurement |
+  | $R$ | Measurement noise |
+  \endgroup
+
+- **Initialization**
+  - Initialize state of filter: $x = x_0$
+  - Initialize belief in the state: $P = P_0$
+
+* Kalman Pseudo-Algorithm
+
+- **Predict stage**
+  \begingroup \small
+  ```python
+  def predict(posterior, movement):
+    # Prior belief about state (mean x, variance P).
+    x, P = posterior
+    # System model: movement (mean dx) and its uncertainty Q.
+    dx, Q = movement
+    # Use system model to predict next state: x = f(x)
+    x = x + dx
+    # Adjust belief to account for uncertainty in prediction.
+    P = P + Q
+    return gaussian(x, P)
+  ```
+  \endgroup
+
+* Kalman Pseudo-Algorithm
+
+- **Update stage**
+  \begingroup \small
+  ```python
+  def update(prior, measurement):
+    # Prior belief about state (mean x, variance P)
+    x, P = prior
+    # Measurement z and belief about its accuracy R.
+    z, R = measurement
+    # Compute residual between estimated state and measurement.
+    y = z - x
+    # Compute Kalman gain K from prediction uncertainty P and
+    # measurement noise R.
+    K = P / (P + R)
+    # Update state estimate.
+    x = x + K * y
+    # Update belief (uncertainty).
+    P = (1 - K) * P
+    return gaussian(x, P)
+  ```
+  \endgroup
+
 * Kalman Gain
 - Assume that:
-  - $x$ is the model prediction
-  - $z$ indicates the measurements
+  - Prior prediction $x \sim Normal(\mu_x,\sigma_x^2)$
+  - Measurement $z \sim Normal(\mu_z,\sigma_z^2)$
 
-- The mean of the posterior is:
-
+- The mean of the posterior (using the multiplication expression) is:
   $$
   \mu
   = \frac{\sigma_x^2 \mu_z + \sigma_z^2 \mu_x}{\sigma_x^2 + \sigma_z^2}
   = \frac{\sigma_x^2}{\sigma_x^2 + \sigma_z^2} \mu_z +
-  \frac{\sigma_z^2}{\sigma_x^2 + \sigma_z^2} \mu_x
+    \frac{\sigma_z^2}{\sigma_x^2 + \sigma_z^2} \mu_x
   = K \mu_z + (1 - K) \mu_x
   $$
 
-- The Kalman Gain $K$:
+- The Kalman Gain $K=\dfrac{\sigma_x^2}{\sigma_x^2+\sigma_z^2}$:
   - Is the scaling term that mixes the prediction and the measurement
   - Depends on the ratio of uncertainty of prior and measurement
-
-* Kalman Pseudo-Algorithm
-- Typical symbols used in Kalman literature:
-  - $x$: state
-  - $P$: variance of state (uncertainty, belief)
-  - $f()$: system model
-  - $Q$: system model error
-  - $z$: measurement
-  - $R$: measurement noise
-
-- **Initialization**
-  - Initialize state of filter $x = x_0$
-  - Initialize belief in the state $P = P_0$
-
-- **Predict**
-  - Use system model to predict state at the next time step $x = f(x)$
-  - Adjust belief to account for uncertainty in prediction $P = P + Q$
-
-- **Update**
-  - Get measurement $z$ and belief about its accuracy $R$
-  - Compute residual between estimated state $x$ and $z$: $y = z - x$
-  - Compute scaling factor (Kalman $K$) based on accuracy of prediction $P$ and
-    measurement $R$
-  - Update state: $x = x + K * y$
-  - Update belief in the state: $P = (1 - K) * P$
-
-```python
-def predict(posterior, movement):
-  x, P = posterior    # Mean and variance of posterior.
-  dx, Q = movement    # Mean and variance of movement.
-  x = x + dx          # Compute prediction.
-  P = P + Q
-  return gaussian(x, P)
-
-def update(prior, measurement):
-  x, P = prior        # Mean and variance of prior.
-  z, R = measurement  # Mean and variance of measurement.
-
-  y = z - x           # Residual.
-
-  K = P / (P + R)     # Kalman gain.
-
-  x = x + K * y       # Mean of posterior.
-  P = (1 - K) * P     # Variance of posterior.
-  return gaussian(x, P)
-```
 
 # ##############################################################################
 # Multivariate Kalman Filters
