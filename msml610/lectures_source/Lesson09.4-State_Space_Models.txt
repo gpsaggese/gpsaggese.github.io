@@ -175,15 +175,6 @@ MSML610: Advanced Machine Learning
   - $h$: scaling used to update the parameter of the system model based on the
     measurements
 
-- If $g$ is:
-  - Smaller $\to$ follow more our model than the measurements
-  - Larger $\to$ follow more the measurements than our model
-  - Too large $\to$ follow the measurements and reject no noise
-
-- If $h$ is:
-  - Smaller $\to$ Smoother but slower adaptation of the rate estimate
-  - Larger $\to$ Faster adjustment of the estimated rate
-
 - g-h filters have different values of $g$ and $h$ to achieve different
   properties
   - E.g., pick $g$ to minimize the transient error when the derivative of the
@@ -192,92 +183,18 @@ MSML610: Advanced Machine Learning
 - Many filters (including Kalman filter) are just generalizations of a g-h
   filter
 
-* Control Theory Nomenclature
-- State space models developed in control theory $\to$ different nomenclature
-  - **System**: object you want to estimate/track
-  - **Filter**: algorithm to estimate the state of the system
-  - **State of the system** `x`: current values you are interested in
-    - Part of the state might be hidden (i.e., only partially observable)
-  - **Measurement** `z`: the measured value of the system
-    - Observable, but it can be inaccurate
-  - **State estimate** `x_est`: filter estimate of the state
-  - **System model**: mathematical model of the system
-    - Typically there is error in the specification of the model
-  - **System propagation**: predict step using the system model to form a new
-    state estimate `x_pred`
-    - Because the system model and the measurements are imperfect, the estimate
-      is imperfect
-  - **Measurement update**: update step
-
-```graphviz
-digraph StateEstimation {
-    splines=true;
-    nodesep=1.0;
-    ranksep=1.2;
-    compound=true;
-    bgcolor="white";
-
-    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.2, color="#444444"];
-    edge [fontname="Helvetica", fontsize=11, color="#444444", penwidth=1.2];
-
-    // System subgraph (TOP)
-    subgraph cluster_system {
-        label="System";
-        style="rounded,filled";
-        color="#A0D6D1";          // soft teal border
-        fillcolor="#E8F8F7";      // very light teal background
-        fontname="Helvetica";
-        fontsize=13;
-
-        SystemBlock [label="System dynamics", fillcolor="#A6C8F4"];   // pastel blue
-        x [shape=circle, label="x", fillcolor="#A6E7F4"];             // soft cyan
-
-        { rank=same; SystemBlock; x; }
-
-        SystemBlock -> x;
-        x -> SystemBlock;
-    }
-
-    // Filter subgraph (BOTTOM)
-    subgraph cluster_filter {
-        label="Filter";
-        style="rounded,filled";
-        color="#C6A6F4";          // soft violet border
-        fillcolor="#F5EDFF";      // very light violet background
-        fontname="Helvetica";
-        fontsize=13;
-
-        SystemModel [label="System model", fillcolor="#B2E2B2"];      // pastel green
-        Propagation [label="Predict step\n(System propagation)", fillcolor="#FFD1A6"];  // soft orange
-        Update [label="Update step\n(Measurement update)", fillcolor="#F4A6A6"];        // soft red
-
-        { rank=same; Propagation; Update; }
-
-        SystemModel -> Propagation;
-        Propagation -> Update [label="x_pred"];
-        Update -> Propagation [label="x_est"];
-    }
-
-    // Force vertical stacking
-    SystemBlock -> SystemModel [style=invis, weight=10];
-
-    // Interconnections
-    x -> Update [label="z"];
-}
-```
-
 * g-h Filter Algorithm: Pseudo-Code
 
 ::: columns
 :::: {.column width=55%}
 
-1. Initialization
-   - Initialize the state of the filter
-   - Initialize your belief in the state
-2. Predict
+1. **Initialization**
+   - Initialize state of the filter
+   - Initialize belief in the state
+2. **Predict**
    - Use system model to predict state at next time step
    - Adjust belief to account for uncertainty in prediction
-3. Update
+3. **Update**
    - Get measurement and associated belief about its accuracy
    - Use as estimate of the next state a point between estimated state and
      measurement
@@ -315,37 +232,128 @@ digraph BayesianFlow {
 :::
 
 * Interpretation of $g$
+::: columns
+:::: {.column width=50%}
 - If $g = 0$:
-  - The filter follows the system model, ignoring the measurements
+  - Follow system model, ignore measurements
+
+- If $g$ is small:
+  - Follow model more than measurements
 
 - If $g$ increases:
-  - The filter follows the measurements more, ignoring the prediction
-  - Useful when measurements are accurate and the system model is inaccurate
+  - Follow measurements more, ignore prediction
+  - Useful with accurate measurements, inaccurate model
 
 - If $g = 1$:
-  - The filter follows only the measurements, ignoring the system model
-
-// Add pic
+  - Follow only measurements, ignore model
+  - Too large $\to$ follow measurements, reject no noise
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L09_04_varying_g1.png)
+![](msml610/lectures_source/figures/L09_04_varying_g2.png)
+::::
+:::
 
 * Interpretation of $h$
-- You might need to estimate some model parameters from data, e.g.,
-  - The change of weight
-  - The rate of change of the measurements
-  - The speed of the car on different terrains
+::: columns
+:::: {.column width=50%}
+- Estimate model parameters from data:
+  - Change of weight
+  - Rate of change of measurements
+  - Car speed on different terrains
 
 - If $h = 0$:
-  - The filter follows the previous values of the rate of change of the
-    underlying model
-  - I.e., it adapts slowly to the change of the signals
+  - Filter follows previous rate of change
+  - Adapts slowly to signal changes
 
 - If $h = 1$:
-  - The filter reacts to the transient rapidly if the signal varies
-    significantly with respect to the time step
+  - Filter reacts rapidly to significant signal variations
 
-- **Note**: an incorrect initial state (e.g., initial value/rate of change) is
-  similar to a changing state
+- If $h$ is:
+  - Smaller $\to$ Smoother, slower rate adaptation
+  - Larger $\to$ Faster rate adjustment
 
-// Add pic
+- **Note**: Incorrect initial state is similar to a changing state
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L09_04_varying_h1.png)
+::::
+:::
+
+* Control Theory Nomenclature
+::: columns
+:::: {.column width=50%}
+- State space models developed in control theory $\to$ different nomenclature
+
+- **System**: object to estimate/track
+
+- **Filter**: algorithm to estimate system state
+
+- **State of the system** `x`: current values of interest
+  - Part of the state might be hidden
+::::
+:::: {.column width=45%}
+```graphviz
+digraph StateEstimation {
+    splines=true;
+    nodesep=1.0;
+    ranksep=1.2;
+    compound=true;
+    bgcolor="white";
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.2, color="#444444"];
+    edge [fontname="Helvetica", fontsize=11, color="#444444", penwidth=1.2];
+    // System subgraph (TOP)
+    subgraph cluster_system {
+        label="System";
+        style="rounded,filled";
+        color="#A0D6D1";          // soft teal border
+        fillcolor="#E8F8F7";      // very light teal background
+        fontname="Helvetica";
+        fontsize=13;
+        SystemBlock [label="System dynamics", fillcolor="#A6C8F4"];   // pastel blue
+        x [shape=circle, label="x", fillcolor="#A6E7F4"];             // soft cyan
+        { rank=same; SystemBlock; x; }
+        SystemBlock -> x;
+        x -> SystemBlock;
+    }
+    // Filter subgraph (BOTTOM)
+    subgraph cluster_filter {
+        label="Filter";
+        style="rounded,filled";
+        color="#C6A6F4";          // soft violet border
+        fillcolor="#F5EDFF";      // very light violet background
+        fontname="Helvetica";
+        fontsize=13;
+        SystemModel [label="System model", fillcolor="#B2E2B2"];      // pastel green
+        Propagation [label="Predict step\n(System propagation)", fillcolor="#FFD1A6"];  // soft orange
+        Update [label="Update step\n(Measurement update)", fillcolor="#F4A6A6"];        // soft red
+        { rank=same; Propagation; Update; }
+        SystemModel -> Propagation;
+        Propagation -> Update [label="x_pred"];
+        Update -> Propagation [label="x_est"];
+    }
+    // Force vertical stacking
+    SystemBlock -> SystemModel [style=invis, weight=10];
+    // Interconnections
+    x -> Update [label="z"];
+}
+```
+::::
+:::
+
+- **Measurement** `z`: measured value of system
+  - Observable, can be inaccurate
+
+- **State estimate** `x_est`: filter estimate of state
+
+- **System model**: mathematical model of system
+  - Typically has error
+
+- **System propagation**: predict step using system model to form new state
+  estimate `x_pred`
+  - Estimate is imperfect
+
+- **Measurement update**: update step
 
 ## #############################################################################
 ## One Dimensional Kalman Filters

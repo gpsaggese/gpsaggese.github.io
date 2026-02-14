@@ -235,7 +235,8 @@ df["measures"].plot(
     color="b",
     # Hide line.
     linestyle="None",
-);
+)
+plt.savefig(os.path.join(dst_dir, "L09_04_varying_g1.png"))
 
 # %%
 # If g is large we follow more the measures than our model.
@@ -250,6 +251,7 @@ df["g=0.4"] = time_ut.gh_filter(data=zs, x0=0.0, dx=1, dt=1.0, g=0.4, h=0.01)
 df["g=0.8"] = time_ut.gh_filter(data=zs, x0=0.0, dx=1, dt=1.0, g=0.8, h=0.01)
 
 df.plot();
+plt.savefig(os.path.join(dst_dir, "L09_04_varying_g2.png"))
 
 # %% [markdown]
 # ## Cell 2.8: Varying h
@@ -275,6 +277,7 @@ df["dx=2 h=0.05"] = time_ut.gh_filter(data=zs, x0=0, dx=2, dt=1.0, g=0.2, h=0.05
 df["dx=2 h=0.5"] = time_ut.gh_filter(data=zs, x0=0, dx=2, dt=1.0, g=0.2, h=0.5)
 
 df.plot();
+plt.savefig(os.path.join(dst_dir, "L09_04_varying_h1.png"))
 
 # %% [markdown]
 # ## Cell 2.9: Interactive g-h Filter Example
