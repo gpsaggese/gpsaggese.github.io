@@ -256,11 +256,16 @@ digraph BayesianFlow {
 
 * Interpretation of $h$
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=40%}
 - Estimate model parameters from data:
   - Change of weight
   - Rate of change of measurements
   - Car speed on different terrains
+::::
+:::: {.column width=55%}
+![](msml610/lectures_source/figures/L09_04_varying_h1.png)
+::::
+:::
 
 - If $h = 0$:
   - Filter follows previous rate of change
@@ -274,11 +279,6 @@ digraph BayesianFlow {
   - Larger $\to$ Faster rate adjustment
 
 - **Note**: Incorrect initial state is similar to a changing state
-::::
-:::: {.column width=45%}
-![](msml610/lectures_source/figures/L09_04_varying_h1.png)
-::::
-:::
 
 * Control Theory Nomenclature
 ::: columns
@@ -360,76 +360,80 @@ digraph StateEstimation {
 ## #############################################################################
 
 * Updating Belief Using Gaussians
-- The Bayes theorem tells that:
+- The **Kalman filter** is based on Bayes theorem and Gaussians
+
+- The **Bayes theorem** states:
   $$
   \text{posterior = normalized(prior $\times$ likelihood)}
   $$
-- If the prior and the likelihood are Gaussian the result is also Gaussian
-  (conjugate prior)
-  - The belief and probability are represented as a Gaussian
-  - We can encode the PDF in terms of mean and std dev
+- If the _prior_ and the _likelihood_ are Gaussian the _posterior_ is also
+  Gaussian (conjugate prior)
+  - Everything can be represented as Gaussians $\to$ encode the PDF in terms of
+    mean and std dev
   - Updating belief is equivalent to sum and multiplication of Gaussians
 
-- Algorithm:
-
+- **Algorithm**
+  \begingroup \scriptsize
   ```python
-   # Create prior (using current estimate and system model)
-   prior = predict(x, process_model)
+  # Create prior (using current estimate and system model).
+  prior = predict(x, process_model)
 
-   # Create likelihood (using measurement).
-   likelihood = gaussian(z, sensor_var)
+  # Create likelihood (using measurement).
+  likelihood = gaussian(z, sensor_var)
 
-   # Update belief using prior and likelihood
-   posterior = update(prior, likelihood)
+  # Update belief using prior and likelihood
+  posterior = update(prior, likelihood)
   ```
+  \endgroup
 
 * Sum of Gaussians
-- The sum of two independent Gaussians
-
+- Given two two Gaussians $X$ and $Y$
   $$
   \begin{aligned}
-  & Normal(\mu_1, \sigma_1^2) \\
-  & Normal(\mu_2, \sigma_2^2) \\
+  & X \sim Normal(\mu_1, \sigma_1^2) \\
+  & Y \sim Normal(\mu_2, \sigma_2^2) \\
   \end{aligned}
   $$
 
-  is a Gaussian $Normal(\mu, \sigma^2)$ with:
-
+- The sum $Z = X + Y$ is a Gaussian $Normal(\mu, \sigma^2)$ with:
   $$
+  \left\{
   \begin{aligned}
   & \mu = \mu_1 + \mu_2 \\
   & \sigma^2 = \sigma_1^2 + \sigma_2^2 \\
   \end{aligned}
+  \right.
   $$
 
-- The mean is the sum of the mean (by linearity)
-- The variance always increases
+- **Interpretation:**
+  - The mean is the sum of the mean (by linearity)
+  - The variance always increases
 
 * Product of Gaussians
-- The product of two independent Gaussians
-
+- Given two two Gaussians $X$ and $Y$
   $$
   \begin{aligned}
-  & Normal(\mu_1, \sigma_1^2) \\
-  & Normal(\mu_2, \sigma_2^2) \\
+  & X \sim Normal(\mu_1, \sigma_1^2) \\
+  & Y \sim Normal(\mu_2, \sigma_2^2) \\
   \end{aligned}
   $$
 
-  is a Gaussian $\N(\mu, \sigma^2)$ with:
-
+- The product $Z = X \cdot Y$ is a Gaussian $Normal(\mu, \sigma^2)$ with:
   $$
+  \left\{
   \begin{aligned}
   & \mu = \frac{\mu_1 \sigma_2^2 + \mu_2 \sigma_1^2}{\sigma_1^2 + \sigma_2^2} \\
   & \sigma^2 = \frac{\sigma_1^2 \sigma_2^2}{\sigma_1^2 + \sigma_2^2} \\
   \end{aligned}
+  \right.
   $$
 
 - **Interpretation:**
-  - The variance may be reduced as more information is incorporated
-  - If one Gaussian $N_1$ is much narrower than the other (i.e., one measure is
-    more accurate), the result is pushed towards $N_1$
-  - If two Gaussians are similar (i.e., two measures corroborate each other),
-    the result becomes more certain
+  - Reduce variance by incorporating more information
+  - If one Gaussian $X$ is narrower (more accurate), result leans towards
+    $X$
+  - If two Gaussians are similar (measures corroborate), result becomes more
+    certain
 
 * Kalman Gain
 - Assume that:
@@ -500,9 +504,9 @@ def update(prior, measurement):
   return gaussian(x, P)
 ```
 
-## #############################################################################
-## Multivariate Gaussians
-## #############################################################################
+# ##############################################################################
+# Multivariate Kalman Filters
+# ##############################################################################
 
 * Multivariate State
 - Often the state variable is multivariate, e.g.,
@@ -573,10 +577,6 @@ def update(prior, measurement):
   - After 1 sec, you get a position update of $x=5$
     - You can infer that the velocity is 5/s
     - The covariance matrix is then stretched diagonally
-
-# ##############################################################################
-# Multivariate Kalman Filters
-# ##############################################################################
 
 * Notation
 - A Bayesian notation $a | b$ means "$a$ given the evidence of $b$"
