@@ -457,6 +457,82 @@ def gen_non_linear_noisy_data(
     return np.array(vals), np.array(ground_truth)
 
 
+def cell_2_2_correct_initial_guess() -> None:
+    """
+    Demonstrate g-h filter with correct initial guesses.
+
+    Shows how the filter performs when starting values match the true
+    system parameters.
+    """
+    vals, ground_truth = gen_linear_noisy_data(
+        x0=0, dx=1, count=30, noise_factor=1
+    )
+    ests = gh_filter(
+        data=vals,
+        # Initial guesses (actually correct!).
+        x0=0,
+        dx=1,
+        dt=1,
+        # g, h params.
+        g=0.1,
+        h=0.02,
+    )
+    preds = None
+    plot_gh_filter_results(vals, preds, ests, ground_truth)
+
+
+def cell_2_3_wrong_initial_guess() -> None:
+    """
+    Demonstrate g-h filter with wrong initial guesses.
+
+    Shows how the filter adapts when starting with incorrect state
+    estimates.
+    """
+    vals, ground_truth = gen_linear_noisy_data(
+        x0=0, dx=1, count=100, noise_factor=10
+    )
+    ests = gh_filter(
+        data=vals,
+        # Initial guesses (wrong!).
+        x0=100,
+        dx=2,
+        dt=1,
+        g=0.2,
+        h=0.02,
+    )
+    preds = None
+    plot_gh_filter_results(vals, preds, ests, ground_truth)
+
+
+def cell_2_4_extreme_noise() -> None:
+    """
+    Demonstrate g-h filter performance with extreme noise.
+
+    Shows how the filter handles measurements with very high noise levels.
+    """
+    vals, ground_truth = gen_linear_noisy_data(
+        x0=0, dx=1, count=100, noise_factor=100
+    )
+    ests = gh_filter(data=vals, x0=100, dx=1, dt=1, g=0.1, h=0.02)
+    preds = None
+    plot_gh_filter_results(vals, preds, ests, ground_truth)
+
+
+def cell_2_6_non_linear_gh_filter() -> None:
+    """
+    Demonstrate g-h filter on non-linear data.
+
+    Shows filter performance when the underlying system has acceleration,
+    violating the constant velocity assumption.
+    """
+    vals, ground_truth = gen_non_linear_noisy_data(
+        x0=0, dx=1, count=20, noise_factor=100, accel=5
+    )
+    ests = gh_filter(data=vals, x0=100, dx=1, dt=1, g=0.1, h=0.02)
+    preds = None
+    plot_gh_filter_results(vals, preds, ests, ground_truth)
+
+
 def create_interactive_linear_noisy_data_widget() -> None:
     """
     Create interactive widget for visualizing linear noisy data generation.
@@ -468,8 +544,6 @@ def create_interactive_linear_noisy_data_widget() -> None:
 
     def _plot_linear_noisy_data(
         seed: int,
-        x0: float,
-        dx: float,
         count: int,
         noise_factor: float,
     ) -> None:
@@ -477,8 +551,6 @@ def create_interactive_linear_noisy_data_widget() -> None:
         Plot linear noisy data with ground truth.
 
         :param seed: Random seed for reproducibility
-        :param x0: Initial value
-        :param dx: Slope
         :param count: Number of points to generate
         :param noise_factor: Standard deviation of Gaussian noise
         """
@@ -486,8 +558,9 @@ def create_interactive_linear_noisy_data_widget() -> None:
         if fig_noisy is not None:
             plt.close(fig_noisy)
         fig_noisy = plt.figure(figsize=((8, 4)))
+        # Use fixed values for x0 and dx.
         vals, ground_truth = gen_linear_noisy_data(
-            x0=x0, dx=dx, count=count, noise_factor=noise_factor, seed=seed
+            x0=0, dx=1, count=count, noise_factor=noise_factor, seed=seed
         )
         df = pd.DataFrame({
             "measurements": vals,
@@ -495,7 +568,8 @@ def create_interactive_linear_noisy_data_widget() -> None:
         })
         df["measurements"].plot(marker=".", markersize=10, linestyle="None")
         df["ground_truth"].plot(color="k", linewidth=2)
-        # TODO(ai_gp): Plot using xlim=(-10, 110) and ylim=(-10, 110).
+        plt.xlim(-10, 110)
+        plt.ylim(-10, 110)
         plt.legend(loc="upper left")
         plt.xlabel("Time step")
         plt.ylabel("Value")
@@ -511,26 +585,6 @@ def create_interactive_linear_noisy_data_widget() -> None:
         step=1,
         initial_value=42,
         is_float=False,
-    )
-    # Create x0 widget.
-    x0_slider, x0_box = mtumsuti.build_widget_control(
-        name="x0",
-        description="Initial value",
-        min_val=-50.0,
-        max_val=50.0,
-        step=1.0,
-        initial_value=0.0,
-        is_float=True,
-    )
-    # Create dx widget.
-    dx_slider, dx_box = mtumsuti.build_widget_control(
-        name="dx",
-        description="Slope",
-        min_val=-5.0,
-        max_val=5.0,
-        step=0.1,
-        initial_value=1.0,
-        is_float=True,
     )
     # Create count widget.
     count_slider, count_box = mtumsuti.build_widget_control(
@@ -557,8 +611,6 @@ def create_interactive_linear_noisy_data_widget() -> None:
         _plot_linear_noisy_data,
         {
             "seed": seed_slider,
-            "x0": x0_slider,
-            "dx": dx_slider,
             "count": count_slider,
             "noise_factor": noise_factor_slider,
         },
@@ -566,51 +618,122 @@ def create_interactive_linear_noisy_data_widget() -> None:
     # Display widgets.
     display(
         ipywidgets.VBox(
-            [seed_box, x0_box, dx_box, count_box, noise_factor_box, output]
+            [seed_box, count_box, noise_factor_box, output]
         )
     )
 
 
-# #############################################################################
-# Discrete Bayes Filter.
-# #############################################################################
-
-
-def plot_dog_in_office_pdf(
-    probs: Union[List[float], np.ndarray],
-    *,
-    hallway: Optional[np.ndarray] = None,
-    title: str = "Probability Histogram",
-) -> None:
+def create_interactive_non_linear_noisy_data_widget() -> None:
     """
-    Plot histogram-like bar chart of class probabilities with door markers.
+    Create interactive widget for visualizing non-linear noisy data.
 
-    :param probs: List or array of class probabilities
-    :param hallway: Binary array marking door positions
-    :param title: Title for the plot
+    Allows user to interactively adjust parameters including acceleration
+    to see how they affect the generated data and ground truth.
     """
-    hdbg.dassert_isinstance(probs, (list, np.ndarray))
-    hdbg.dassert_lte(0.0, np.min(probs))
-    hdbg.dassert_lte(np.max(probs), 1.0)
-    # Check that the sum of probabilities is 1.0.
-    hdbg.dassert_lte(0.99, np.sum(probs))
-    hdbg.dassert_lte(np.sum(probs), 1.01)
-    #
-    indices = np.arange(len(probs))
-    if hallway is None:
-        hallway = np.array([1, 1, 0, 0, 0, 0, 0, 0, 1, 0])
-    hdbg.dassert_eq(len(probs), len(hallway))
-    # Create plot.
-    plt.bar(indices, probs, color="deepskyblue")
-    # Add markers for hallway positions with value 1.
-    for i, val in enumerate(hallway):
-        if val == 1:
-            label = "Door" if i == 0 else ""
-            plt.plot(i, 0.0, "^r", markersize=20, label=label)
-    plt.ylim(0, 1)
-    plt.xlabel("Class Index")
-    plt.ylabel("Probability")
-    plt.title(title)
-    plt.grid(True, axis="y", linestyle="--", alpha=0.7)
-    plt.legend()
-    plt.show()
+    fig_non_linear = None
+
+    def _plot_non_linear_noisy_data(
+        seed: int,
+        count: int,
+        noise_factor: float,
+        accel: float,
+    ) -> None:
+        """
+        Plot non-linear noisy data with ground truth.
+
+        :param seed: Random seed for reproducibility
+        :param count: Number of points to generate
+        :param noise_factor: Standard deviation of Gaussian noise
+        :param accel: Acceleration factor
+        """
+        nonlocal fig_non_linear
+        if fig_non_linear is not None:
+            plt.close(fig_non_linear)
+        fig_non_linear = plt.figure(figsize=(8, 4))
+        # Use fixed values for x0 and dx.
+        vals, ground_truth = gen_non_linear_noisy_data(
+            x0=0,
+            dx=1,
+            count=count,
+            noise_factor=noise_factor,
+            accel=accel,
+            seed=seed,
+        )
+        # Plot ground truth as line.
+        pd.Series(ground_truth).plot(color="k", linewidth=2, label="Ground truth")
+        # Plot measurements as scatter points.
+        pd.Series(vals).plot(
+            marker="o",
+            markersize=6,
+            linestyle="None",
+            color="b",
+            label="Measurements",
+        )
+        plt.legend(loc="upper left")
+        plt.xlabel("Time step")
+        plt.ylabel("Value")
+        plt.title("Non-Linear Noisy Data Generation")
+        plt.grid(True, alpha=0.3)
+
+    # Create seed widget (first widget per convention).
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="Random seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
+    )
+    # Create count widget.
+    count_slider, count_box = mtumsuti.build_widget_control(
+        name="count",
+        description="Number of points",
+        min_val=10,
+        max_val=200,
+        step=10,
+        initial_value=100,
+        is_float=False,
+    )
+    # Create noise_factor widget.
+    noise_factor_slider, noise_factor_box = mtumsuti.build_widget_control(
+        name="noise_factor",
+        description="Noise std dev",
+        min_val=0.0,
+        max_val=2000.0,
+        step=50.0,
+        initial_value=1000.0,
+        is_float=True,
+    )
+    # Create accel widget.
+    accel_slider, accel_box = mtumsuti.build_widget_control(
+        name="accel",
+        description="Acceleration",
+        min_val=-10.0,
+        max_val=10.0,
+        step=0.5,
+        initial_value=5.0,
+        is_float=True,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        _plot_non_linear_noisy_data,
+        {
+            "seed": seed_slider,
+            "count": count_slider,
+            "noise_factor": noise_factor_slider,
+            "accel": accel_slider,
+        },
+    )
+    # Display widgets.
+    display(
+        ipywidgets.VBox(
+            [
+                seed_box,
+                count_box,
+                noise_factor_box,
+                accel_box,
+                output,
+            ]
+        )
+    )

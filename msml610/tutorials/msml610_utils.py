@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pymc as pm
+import seaborn as sns
 import ipywidgets
 import PIL
 
@@ -36,6 +37,7 @@ def set_notebook_style() -> None:
     Set default matplotlib style for notebooks.
     """
     _LOG.info("Setting notebook style")
+    sns.set_style("whitegrid")
     plt.rcParams["figure.figsize"] = [8, 3]
 
 

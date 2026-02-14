@@ -32,10 +32,6 @@ import L09_01_reasoning_over_time_utils as time_ut
 
 ut.config_notebook()
 
-# Set plotting style.
-sns.set_style("whitegrid")
-plt.rcParams["figure.figsize"] = (8, 4)
-
 # Initialize logger.
 logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
@@ -126,70 +122,41 @@ time_ut.cell_1_5_learning_gain_rate(measured_weights, ground_truth, dst_dir)
 # Interactive exploration of linear noisy data generation parameters.
 time_ut.create_interactive_linear_noisy_data_widget()
 
-# %%
-vals, ground_truth = time_ut.gen_linear_noisy_data(
-    x0=0, dx=1, count=30, noise_factor=1
-)
-ests = time_ut.gh_filter(
-    data=vals,
-    # Initial guesses (actually correct!).
-    x0=0,
-    dx=1,
-    dt=1,
-    # g, h params.
-    g=0.1,
-    h=0.02,
-)
-
-preds = None
-# TODO(ai_gp): 
-time_ut.plot_gh_filter_results(vals, preds, ests, ground_truth)
-
+# %% [markdown]
+# ## Cell 2.2: Correct Initial Guess
 
 # %%
-# Wrong initial guess for state.
-vals, ground_truth = time_ut.gen_linear_noisy_data(
-    x0=0, dx=1, count=100, noise_factor=10
-)
-ests = time_ut.gh_filter(
-    data=vals,
-    # Initial guesses (wrong!).
-    x0=100,
-    dx=2,
-    dt=1,
-    g=0.2,
-    h=0.02,
-)
-preds = None
-time_ut.plot_gh_filter_results(vals, preds, ests, ground_truth)
+# Demonstrate g-h filter with correct initial guesses.
+time_ut.cell_2_2_correct_initial_guess()
+
+
+# %% [markdown]
+# ## Cell 2.3: Wrong Initial Guess
 
 # %%
-# Extreme noise.
-vals, ground_truth = time_ut.gen_linear_noisy_data(
-    x0=0, dx=1, count=100, noise_factor=100
-)
-ests = time_ut.gh_filter(data=vals, x0=100, dx=1, dt=1, g=0.1, h=0.02)
-preds = None
-time_ut.plot_gh_filter_results(vals, preds, ests, ground_truth)
+# Demonstrate g-h filter with wrong initial guesses.
+time_ut.cell_2_3_wrong_initial_guess()
+
+# %% [markdown]
+# ## Cell 2.4: Extreme Noise
 
 # %%
-# Non linear ground truth.
-vals, ground_truth = time_ut.gen_non_linear_noisy_data(
-    x0=0, dx=1, count=100, noise_factor=1000, accel=5
-)
+# Demonstrate g-h filter performance with extreme noise.
+time_ut.cell_2_4_extreme_noise()
 
-# TODO(gp): Fix this.
-pd.Series(ground_truth).plot()
-pd.Series(vals).plot()
+# %% [markdown]
+# ## Cell 2.5: Interactive Non-Linear Noisy Data
 
 # %%
-vals, ground_truth = time_ut.gen_non_linear_noisy_data(
-    x0=0, dx=1, count=20, noise_factor=100, accel=5
-)
-ests = time_ut.gh_filter(data=vals, x0=100, dx=1, dt=1, g=0.1, h=0.02)
+# Interactive exploration of non-linear noisy data generation parameters.
+time_ut.create_interactive_non_linear_noisy_data_widget()
 
-preds = None
-time_ut.plot_gh_filter_results(vals, preds, ests, ground_truth)
+# %% [markdown]
+# ## Cell 2.6: Non-Linear with g-h Filter
+
+# %%
+# Demonstrate g-h filter on non-linear data.
+time_ut.cell_2_6_non_linear_gh_filter()
 
 # %% [markdown]
 # ## Varying g
@@ -293,33 +260,3 @@ interact(
         value=0.02, min=0.0, max=0.5, step=0.01, continuous_update=False
     ),
 )
-
-# %% [markdown]
-# ## Discrete Bayes Filter
-
-# %%
-belief = np.array([1.0 / 10] * 10)
-print(belief)
-
-# %%
-time_ut.plot_dog_in_office_pdf(belief)
-
-# %%
-# The sensor says the dog is in front of a door.
-belief = np.array([1 / 3, 1 / 3, 0, 0, 0, 0, 0, 0, 1 / 3, 0])
-time_ut.plot_dog_in_office_pdf(belief)
-
-# %%
-# If the sensor reports "door", "move right", "door", we know that the door is at position 0.
-belief = np.array([0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-time_ut.plot_dog_in_office_pdf(belief)
-
-# %%
-# If sensors are noisy we can't conclude with certainty that we are in front of a door.
-# Assume that the sensor is 3x more likely to be right than wrong
-# - We need to scale the probability by 3 and then normalize it to sum to 1
-belief = np.array(
-    [0.188, 0.188, 0.062, 0.062, 0.062, 0.062, 0.062, 0.062, 0.188, 0.062]
-)
-belief /= sum(belief)
-time_ut.plot_dog_in_office_pdf(belief)
