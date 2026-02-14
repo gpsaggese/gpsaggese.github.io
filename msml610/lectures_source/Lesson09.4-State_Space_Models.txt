@@ -175,6 +175,15 @@ MSML610: Advanced Machine Learning
   - $h$: scaling used to update the parameter of the system model based on the
     measurements
 
+- If $g$ is:
+  - Smaller $\to$ follow more our model than the measurements
+  - Larger $\to$ follow more the measurements than our model
+  - Too large $\to$ follow the measurements and reject no noise
+
+- If $h$ is:
+  - Smaller $\to$ Smoother but slower adaptation of the rate estimate
+  - Larger $\to$ Faster adjustment of the estimated rate
+
 - g-h filters have different values of $g$ and $h$ to achieve different
   properties
   - E.g., pick $g$ to minimize the transient error when the derivative of the

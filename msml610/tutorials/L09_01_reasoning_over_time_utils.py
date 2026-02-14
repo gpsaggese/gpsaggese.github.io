@@ -111,8 +111,7 @@ def predict_using_gain_guess(
     return ests, preds
 
 
-# TODO(ai_gp): -> plot_gh_filter_with_known_gain_rate
-def cell_1_2_knowning_gain_rate(
+def plot_gh_filter_with_known_gain_rate(
     measured_weights: np.ndarray,
     ground_truth: np.ndarray,
     params: dict,
@@ -124,7 +123,9 @@ def cell_1_2_knowning_gain_rate(
 
     :param measured_weights: Array of weight measurements
     :param ground_truth: Array of true weight values
+    :param params: Dictionary of parameters to display
     :param dst_dir: Directory to save output figure
+    :param dst_filename: Filename for the output figure
     """
     ests, preds = predict_using_gain_guess(
         params["initial_weight"],
@@ -166,8 +167,7 @@ def cell_1_2_knowning_gain_rate(
 #     plt.savefig(os.path.join(dst_dir, "L09_04_wrong_gain_rate.png"))
 
 
-# TODO(ai_gp): -> plot_gh_filter_with_learning_gain_rate
-def cell_1_5_learning_gain_rate(
+def plot_gh_filter_with_learning_gain_rate(
     measured_weights: np.ndarray,
     ground_truth: np.ndarray,
     params: dict,
@@ -179,9 +179,10 @@ def cell_1_5_learning_gain_rate(
 
     :param measured_weights: Array of weight measurements
     :param ground_truth: Array of true weight values
+    :param params: Dictionary of parameters to display
     :param dst_dir: Directory to save output figure
+    :param dst_filename: Filename for the output figure
     """
-    #
     ests, preds = predict_learning_gain_rate(
         params["initial_weight"],
         measured_weights,
@@ -413,13 +414,14 @@ def gen_non_linear_noisy_data(
     return np.array(vals), np.array(ground_truth)
 
 
-# TODO(ai_gp): -> plot_gh_filter_with_params
-def cell_2_2_correct_initial_guess(params: dict) -> None:
+def plot_gh_filter_with_params(params: dict) -> None:
     """
     Demonstrate g-h filter with correct initial guesses.
 
     Shows how the filter performs when starting values match the true
     system parameters.
+
+    :param params: Dictionary of filter parameters (x0, dx, dt, g, h)
     """
     vals, ground_truth = gen_linear_noisy_data(
         x0=0, dx=1, count=100, noise_factor=10
@@ -434,36 +436,6 @@ def cell_2_2_correct_initial_guess(params: dict) -> None:
     )
     preds = None
     plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
-
-
-# def cell_2_3_wrong_initial_guess() -> None:
-#     """
-#     Demonstrate g-h filter with wrong initial guesses.
-
-#     Shows how the filter adapts when starting with incorrect state
-#     estimates.
-#     """
-#     vals, ground_truth = gen_linear_noisy_data(
-#         x0=0, dx=1, count=100, noise_factor=10
-#     )
-#     params = {
-#         # Initial guesses (wrong!).
-#         "x0": 100,
-#         "dx": 2,
-#         "dt": 1,
-#         "g": 0.2,
-#         "h": 0.02,
-#     }
-#     ests = gh_filter(
-#         data=vals,
-#         x0=params["x0"],
-#         dx=params["dx"],
-#         dt=params["dt"],
-#         g=params["g"],
-#         h=params["h"],
-#     )
-#     preds = None
-#     plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
 
 def cell_2_4_extreme_noise() -> None:
@@ -613,6 +585,101 @@ def create_interactive_linear_noisy_data_widget() -> None:
     )
 
 
+def create_interactive_gh_filter_widget() -> None:
+    """
+    Create interactive widget for exploring g-h filter parameters.
+
+    Allows user to interactively adjust initial state (x, dx) and filter
+    gains (g, h) to see their effect on filtering noisy linear data.
+    """
+    # Generate test data once for all widget interactions.
+    zs, _ = gen_linear_noisy_data(x0=5, dx=5, count=100, noise_factor=50)
+    fig_gh = None
+
+    def _plot_gh_filter(
+        x: float,
+        dx: float,
+        g: float,
+        h: float,
+    ) -> None:
+        """
+        Plot g-h filter results with given parameters.
+
+        :param x: Initial state estimate
+        :param dx: Initial rate of change estimate
+        :param g: Scale factor to blend prediction and measurement
+        :param h: Scale factor to update rate of change
+        """
+        nonlocal fig_gh
+        if fig_gh is not None:
+            plt.close(fig_gh)
+        fig_gh = plt.figure(figsize=(8, 4))
+        # Apply g-h filter.
+        data = gh_filter(data=zs, x0=x, dx=dx, g=g, h=h)
+        # Plot measurements as scatter.
+        plt.scatter(list(range(len(zs))), zs, marker=".", lw=1, label="Measurements")
+        # Plot filtered estimates as line.
+        plt.plot(data, color="b", label="Filtered estimates")
+        plt.legend(loc="upper left")
+        plt.xlabel("Time step")
+        plt.ylabel("Value")
+        plt.title("g-h Filter Interactive Example")
+        plt.grid(True, alpha=0.3)
+
+    # Create x widget.
+    x_slider, x_box = mtumsuti.build_widget_control(
+        name="x",
+        description="Initial state",
+        min_val=-200.0,
+        max_val=2000.0,
+        step=10.0,
+        initial_value=0.0,
+        is_float=True,
+    )
+    # Create dx widget.
+    dx_slider, dx_box = mtumsuti.build_widget_control(
+        name="dx",
+        description="Initial rate",
+        min_val=-50.0,
+        max_val=50.0,
+        step=0.5,
+        initial_value=5.0,
+        is_float=True,
+    )
+    # Create g widget.
+    g_slider, g_box = mtumsuti.build_widget_control(
+        name="g",
+        description="State gain",
+        min_val=0.01,
+        max_val=2.0,
+        step=0.02,
+        initial_value=0.1,
+        is_float=True,
+    )
+    # Create h widget.
+    h_slider, h_box = mtumsuti.build_widget_control(
+        name="h",
+        description="Rate gain",
+        min_val=0.0,
+        max_val=0.5,
+        step=0.01,
+        initial_value=0.02,
+        is_float=True,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        _plot_gh_filter,
+        {
+            "x": x_slider,
+            "dx": dx_slider,
+            "g": g_slider,
+            "h": h_slider,
+        },
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([x_box, dx_box, g_box, h_box, output]))
+
+
 def create_interactive_non_linear_noisy_data_widget() -> None:
     """
     Create interactive widget for visualizing non-linear noisy data.
@@ -729,96 +796,3 @@ def create_interactive_non_linear_noisy_data_widget() -> None:
     )
 
 
-def create_interactive_gh_filter_widget() -> None:
-    """
-    Create interactive widget for exploring g-h filter parameters.
-
-    Allows user to interactively adjust initial state (x, dx) and filter
-    gains (g, h) to see their effect on filtering noisy linear data.
-    """
-    # Generate test data once for all widget interactions.
-    zs, _ = gen_linear_noisy_data(x0=5, dx=5, count=100, noise_factor=50)
-    fig_gh = None
-
-    def _plot_gh_filter(
-        x: float,
-        dx: float,
-        g: float,
-        h: float,
-    ) -> None:
-        """
-        Plot g-h filter results with given parameters.
-
-        :param x: Initial state estimate
-        :param dx: Initial rate of change estimate
-        :param g: Scale factor to blend prediction and measurement
-        :param h: Scale factor to update rate of change
-        """
-        nonlocal fig_gh
-        if fig_gh is not None:
-            plt.close(fig_gh)
-        fig_gh = plt.figure(figsize=(8, 4))
-        # Apply g-h filter.
-        data = gh_filter(data=zs, x0=x, dx=dx, g=g, h=h)
-        # Plot measurements as scatter.
-        plt.scatter(list(range(len(zs))), zs, marker="+", lw=1, label="Measurements")
-        # Plot filtered estimates as line.
-        plt.plot(data, color="b", label="Filtered estimates")
-        plt.legend(loc="upper left")
-        plt.xlabel("Time step")
-        plt.ylabel("Value")
-        plt.title("g-h Filter Interactive Example")
-        plt.grid(True, alpha=0.3)
-
-    # Create x widget.
-    x_slider, x_box = mtumsuti.build_widget_control(
-        name="x",
-        description="Initial state",
-        min_val=-200.0,
-        max_val=2000.0,
-        step=10.0,
-        initial_value=0.0,
-        is_float=True,
-    )
-    # Create dx widget.
-    dx_slider, dx_box = mtumsuti.build_widget_control(
-        name="dx",
-        description="Initial rate",
-        min_val=-50.0,
-        max_val=50.0,
-        step=0.5,
-        initial_value=5.0,
-        is_float=True,
-    )
-    # Create g widget.
-    g_slider, g_box = mtumsuti.build_widget_control(
-        name="g",
-        description="State gain",
-        min_val=0.01,
-        max_val=2.0,
-        step=0.02,
-        initial_value=0.1,
-        is_float=True,
-    )
-    # Create h widget.
-    h_slider, h_box = mtumsuti.build_widget_control(
-        name="h",
-        description="Rate gain",
-        min_val=0.0,
-        max_val=0.5,
-        step=0.01,
-        initial_value=0.02,
-        is_float=True,
-    )
-    # Create interactive output.
-    output = ipywidgets.interactive_output(
-        _plot_gh_filter,
-        {
-            "x": x_slider,
-            "dx": dx_slider,
-            "g": g_slider,
-            "h": h_slider,
-        },
-    )
-    # Display widgets.
-    display(ipywidgets.VBox([x_box, dx_box, g_box, h_box, output]))

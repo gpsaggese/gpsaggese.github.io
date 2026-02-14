@@ -171,7 +171,7 @@ params = {
     "g": 0.1,
     "h": 0.02,
 }
-time_ut.cell_2_2_correct_initial_guess(params)
+time_ut.plot_gh_filter_with_params(params)
 
 
 # %% [markdown]
@@ -187,7 +187,7 @@ params = {
     "g": 0.2,
     "h": 0.02,
 }
-time_ut.cell_2_3_wrong_initial_guess(params)
+time_ut.plot_gh_filter_with_params(params)
 
 # %% [markdown]
 # ## Cell 2.4: Extreme Noise
