@@ -209,6 +209,63 @@ MSML610: Advanced Machine Learning
       is imperfect
   - **Measurement update**: update step
 
+```graphviz
+digraph StateEstimation {
+    splines=true;
+    nodesep=1.0;
+    ranksep=1.2;
+    compound=true;
+    bgcolor="white";
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.2, color="#444444"];
+    edge [fontname="Helvetica", fontsize=11, color="#444444", penwidth=1.2];
+
+    // System subgraph (TOP)
+    subgraph cluster_system {
+        label="System";
+        style="rounded,filled";
+        color="#A0D6D1";          // soft teal border
+        fillcolor="#E8F8F7";      // very light teal background
+        fontname="Helvetica";
+        fontsize=13;
+
+        SystemBlock [label="System dynamics", fillcolor="#A6C8F4"];   // pastel blue
+        x [shape=circle, label="x", fillcolor="#A6E7F4"];             // soft cyan
+
+        { rank=same; SystemBlock; x; }
+
+        SystemBlock -> x;
+        x -> SystemBlock;
+    }
+
+    // Filter subgraph (BOTTOM)
+    subgraph cluster_filter {
+        label="Filter";
+        style="rounded,filled";
+        color="#C6A6F4";          // soft violet border
+        fillcolor="#F5EDFF";      // very light violet background
+        fontname="Helvetica";
+        fontsize=13;
+
+        SystemModel [label="System model", fillcolor="#B2E2B2"];      // pastel green
+        Propagation [label="Predict step\n(System propagation)", fillcolor="#FFD1A6"];  // soft orange
+        Update [label="Update step\n(Measurement update)", fillcolor="#F4A6A6"];        // soft red
+
+        { rank=same; Propagation; Update; }
+
+        SystemModel -> Propagation;
+        Propagation -> Update [label="x_pred"];
+        Update -> Propagation [label="x_est"];
+    }
+
+    // Force vertical stacking
+    SystemBlock -> SystemModel [style=invis, weight=10];
+
+    // Interconnections
+    x -> Update [label="z"];
+}
+```
+
 * g-h Filter Algorithm: Pseudo-Code
 
 ::: columns
