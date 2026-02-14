@@ -1,9 +1,9 @@
 """
-Utility functions for reasoning over time tutorial (L09_01).
+Utility functions for g-h filter tutorial (L09_04).
 
 Import as:
 
-import msml610.tutorials.L09_01_reasoning_over_time_utils as mturetium
+import msml610.tutorials.L09_04_gh_filter as mtughfi
 """
 
 import logging
