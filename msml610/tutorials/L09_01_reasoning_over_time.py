@@ -27,9 +27,6 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-import msml610_utils as ut
-import L09_01_reasoning_over_time_utils as time_ut
-
 ut.config_notebook()
 
 # Initialize logger.
@@ -37,9 +34,11 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %%
-import helpers.hio as hio
-
 import os
+
+import helpers.hio as hio
+import msml610_utils as ut
+import L09_01_reasoning_over_time_utils as time_ut
 
 dst_dir = "figures"
 hio.create_dir(dst_dir, incremental=True)
