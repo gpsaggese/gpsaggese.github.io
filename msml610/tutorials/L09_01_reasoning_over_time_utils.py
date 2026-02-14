@@ -111,7 +111,7 @@ def predict_using_gain_guess(
     return ests, preds
 
 
-def plot_gh_filter_with_known_gain_rate(
+def cell1_2_plot_gh_filter_with_known_gain_rate(
     measured_weights: np.ndarray,
     ground_truth: np.ndarray,
     params: dict,
@@ -138,6 +138,29 @@ def plot_gh_filter_with_known_gain_rate(
         measured_weights, preds, ests, ground_truth, params
     )
     plt.savefig(os.path.join(dst_dir, dst_filename))
+
+
+def cell1_3_plot_gh_filter_with_known_gain_rate(
+    measured_weights: np.ndarray,
+    ground_truth: np.ndarray,
+    params: dict,
+    dst_dir: str,
+    dst_filename: str,
+) -> None:
+    """
+    Plot gain rate prediction with wrong gain rate guess.
+
+    Wrapper for cell1_2_plot_gh_filter_with_known_gain_rate.
+
+    :param measured_weights: Array of weight measurements
+    :param ground_truth: Array of true weight values
+    :param params: Dictionary of parameters to display
+    :param dst_dir: Directory to save output figure
+    :param dst_filename: Filename for the output figure
+    """
+    cell1_2_plot_gh_filter_with_known_gain_rate(
+        measured_weights, ground_truth, params, dst_dir, dst_filename
+    )
 
 
 # def cell_1_3_wrong_guess_gain_rate(
@@ -167,37 +190,7 @@ def plot_gh_filter_with_known_gain_rate(
 #     plt.savefig(os.path.join(dst_dir, "L09_04_wrong_gain_rate.png"))
 
 
-def plot_gh_filter_with_learning_gain_rate(
-    measured_weights: np.ndarray,
-    ground_truth: np.ndarray,
-    params: dict,
-    dst_dir: str,
-    dst_filename: str,
-) -> None:
-    """
-    Plot gain rate prediction while learning the gain rate.
-
-    :param measured_weights: Array of weight measurements
-    :param ground_truth: Array of true weight values
-    :param params: Dictionary of parameters to display
-    :param dst_dir: Directory to save output figure
-    :param dst_filename: Filename for the output figure
-    """
-    ests, preds = predict_learning_gain_rate(
-        params["initial_weight"],
-        measured_weights,
-        params["gain_rate"],
-        params["weight_scale"],
-        params["gain_scale"],
-        params["time_step"],
-    )
-    plot_gh_filter_results_with_params(
-        measured_weights, preds, ests, ground_truth, params
-    )
-    plt.savefig(os.path.join(dst_dir, dst_filename))
-
-
-def create_interactive_gain_rate_widget(
+def cell1_4_create_interactive_gain_rate_widget(
     measured_weights: np.ndarray,
     ground_truth: np.ndarray,
 ) -> None:
@@ -280,6 +273,36 @@ def create_interactive_gain_rate_widget(
     display(
         ipywidgets.VBox([weight_box, weight_scale_box, gain_rate_box, output])
     )
+
+
+def cell1_5_plot_gh_filter_with_learning_gain_rate(
+    measured_weights: np.ndarray,
+    ground_truth: np.ndarray,
+    params: dict,
+    dst_dir: str,
+    dst_filename: str,
+) -> None:
+    """
+    Plot gain rate prediction while learning the gain rate.
+
+    :param measured_weights: Array of weight measurements
+    :param ground_truth: Array of true weight values
+    :param params: Dictionary of parameters to display
+    :param dst_dir: Directory to save output figure
+    :param dst_filename: Filename for the output figure
+    """
+    ests, preds = predict_learning_gain_rate(
+        params["initial_weight"],
+        measured_weights,
+        params["gain_rate"],
+        params["weight_scale"],
+        params["gain_scale"],
+        params["time_step"],
+    )
+    plot_gh_filter_results_with_params(
+        measured_weights, preds, ests, ground_truth, params
+    )
+    plt.savefig(os.path.join(dst_dir, dst_filename))
 
 
 def predict_learning_gain_rate(
@@ -414,7 +437,7 @@ def gen_non_linear_noisy_data(
     return np.array(vals), np.array(ground_truth)
 
 
-def plot_gh_filter_with_params(params: dict) -> None:
+def cell2_2_plot_gh_filter_with_params(params: dict) -> None:
     """
     Demonstrate g-h filter with correct initial guesses.
 
@@ -438,7 +461,18 @@ def plot_gh_filter_with_params(params: dict) -> None:
     plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
 
-def cell_2_4_extreme_noise() -> None:
+def cell2_3_plot_gh_filter_with_params(params: dict) -> None:
+    """
+    Demonstrate g-h filter with wrong initial guesses.
+
+    Wrapper for cell2_2_plot_gh_filter_with_params.
+
+    :param params: Dictionary of filter parameters (x0, dx, dt, g, h)
+    """
+    cell2_2_plot_gh_filter_with_params(params)
+
+
+def cell2_4_extreme_noise() -> None:
     """
     Demonstrate g-h filter performance with extreme noise.
 
@@ -466,7 +500,7 @@ def cell_2_4_extreme_noise() -> None:
     plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
 
-def cell_2_6_non_linear_gh_filter() -> None:
+def cell2_6_non_linear_gh_filter() -> None:
     """
     Demonstrate g-h filter on non-linear data.
 
@@ -495,7 +529,7 @@ def cell_2_6_non_linear_gh_filter() -> None:
     plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
 
-def create_interactive_linear_noisy_data_widget() -> None:
+def cell2_1_create_interactive_linear_noisy_data_widget() -> None:
     """
     Create interactive widget for visualizing linear noisy data generation.
 
@@ -585,7 +619,7 @@ def create_interactive_linear_noisy_data_widget() -> None:
     )
 
 
-def create_interactive_gh_filter_widget() -> None:
+def cell2_9_create_interactive_gh_filter_widget() -> None:
     """
     Create interactive widget for exploring g-h filter parameters.
 
@@ -700,7 +734,7 @@ def create_interactive_gh_filter_widget() -> None:
     )
 
 
-def create_interactive_non_linear_noisy_data_widget() -> None:
+def cell2_5_create_interactive_non_linear_noisy_data_widget() -> None:
     """
     Create interactive widget for visualizing non-linear noisy data.
 

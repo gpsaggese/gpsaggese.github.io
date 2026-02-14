@@ -27,6 +27,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+import msml610_utils as ut
 ut.config_notebook()
 
 # Initialize logger.
@@ -37,7 +38,6 @@ _LOG = logging.getLogger(__name__)
 import os
 
 import helpers.hio as hio
-import msml610_utils as ut
 import L09_01_reasoning_over_time_utils as time_ut
 
 dst_dir = "figures"
@@ -101,7 +101,7 @@ params = {
     "initial_weight": 160.0,
 }
 file_name = "L09_04_knowing_gain_rate.png"
-time_ut.plot_gh_filter_with_known_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
+time_ut.cell1_2_plot_gh_filter_with_known_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
 
 # %% [markdown]
 # ## Cell 1.3: Wrong guess of gain_rate
@@ -118,14 +118,14 @@ params = {
     "initial_weight": 160.0,
 }
 file_name = "L09_04_wrong_gain_rate.png"
-time_ut.plot_gh_filter_with_known_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
+time_ut.cell1_3_plot_gh_filter_with_known_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
 
 # %% [markdown]
 # ## Cell 1.4: Interactive
 
 # %%
 # Interactive exploration of gain rate parameters.
-time_ut.create_interactive_gain_rate_widget(measured_weights, ground_truth)
+time_ut.cell1_4_create_interactive_gain_rate_widget(measured_weights, ground_truth)
 
 # %% [markdown]
 # ## Cell 1.5: Learning gain_rate
@@ -145,7 +145,7 @@ params = {
 }
 file_name = "L09_04_learning_gain_rate.png"
 
-time_ut.plot_gh_filter_with_learning_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
+time_ut.cell1_5_plot_gh_filter_with_learning_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
 
 # %% [markdown]
 # # Cell 2: g-h Filter on Noisy measurements
@@ -155,7 +155,7 @@ time_ut.plot_gh_filter_with_learning_gain_rate(measured_weights, ground_truth, p
 
 # %%
 # Interactive exploration of linear noisy data generation parameters.
-time_ut.create_interactive_linear_noisy_data_widget()
+time_ut.cell2_1_create_interactive_linear_noisy_data_widget()
 
 # %% [markdown]
 # ## Cell 2.2: Correct Initial Guess
@@ -170,7 +170,7 @@ params = {
     "g": 0.1,
     "h": 0.02,
 }
-time_ut.plot_gh_filter_with_params(params)
+time_ut.cell2_2_plot_gh_filter_with_params(params)
 
 
 # %% [markdown]
@@ -186,28 +186,28 @@ params = {
     "g": 0.2,
     "h": 0.02,
 }
-time_ut.plot_gh_filter_with_params(params)
+time_ut.cell2_3_plot_gh_filter_with_params(params)
 
 # %% [markdown]
 # ## Cell 2.4: Extreme Noise
 
 # %%
 # Demonstrate g-h filter performance with extreme noise.
-time_ut.cell_2_4_extreme_noise()
+time_ut.cell2_4_extreme_noise()
 
 # %% [markdown]
 # ## Cell 2.5: Interactive Non-Linear Noisy Data
 
 # %%
 # Interactive exploration of non-linear noisy data generation parameters.
-time_ut.create_interactive_non_linear_noisy_data_widget()
+time_ut.cell2_5_create_interactive_non_linear_noisy_data_widget()
 
 # %% [markdown]
 # ## Cell 2.6: Non-Linear with g-h Filter
 
 # %%
 # Demonstrate g-h filter on non-linear data.
-time_ut.cell_2_6_non_linear_gh_filter()
+time_ut.cell2_6_non_linear_gh_filter()
 
 # %% [markdown]
 # ## Cell 2.7: Varying g
@@ -281,4 +281,4 @@ df.plot();
 
 # %%
 # Interactive exploration of g-h filter parameters.
-time_ut.create_interactive_gh_filter_widget()
+time_ut.cell2_9_create_interactive_gh_filter_widget()

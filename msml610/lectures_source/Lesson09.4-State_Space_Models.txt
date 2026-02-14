@@ -193,37 +193,29 @@ MSML610: Advanced Machine Learning
   filter
 
 * Control Theory Nomenclature
-- State space models were developed in control theory, so there is a different
-  nomenclature
+- State space models developed in control theory $\to$ different nomenclature
 
 - **System**: object you want to estimate/track
 
 - **Filter**: algorithm to estimate the state of the system
 
 - **State of the system** `x`: current values you are interested in
-  - E.g., weight
-  - Part of the state might be hidden (i.e., not observable)
-  - You cannot observe the entire state directly, only measure it indirectly
+  - Part of the state might be hidden (i.e., only partially observable)
 
 - **Measurement** `z`: the measured value of the system
-  - It is observable
-  - It can be inaccurate
-    - E.g., 99.3kg instead of 100kg
+  - Observable, but it can be inaccurate
 
 - **State estimate** `x_est`: filter estimate of the state
 
 - **System model**: mathematical model of the system
-  - E.g., "weight today = weight yesterday + weight gain"
-  - The system model is typically imperfect
-  - There is error in the specification of the model
+  - Typically there is error in the specification of the model
 
 - **System propagation**: predict step using the system model to form a new
   state estimate `x_pred`
-  - Because the system model is imperfect, the estimate is imperfect
+  - Because the system model is imperfect (and the estimate), the estimate is
+    imperfect
 
 - **Measurement update**: update step
-
-// TODO(gp): Add a diagram
 
 * g-h Filter Algorithm: Pseudo-Code
 
