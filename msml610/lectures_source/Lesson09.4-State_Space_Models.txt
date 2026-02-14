@@ -179,8 +179,9 @@ MSML610: Advanced Machine Learning
   properties
   - E.g., pick $g$ to minimize the transient error when the derivative of the
     signal has a step (i.e., a discontinuity of the slope)
-  - Many filters (including Kalman filter) are just generalizations of a g-h
-    filter
+
+- Many filters (including Kalman filter) are just generalizations of a g-h
+  filter
 
 * Control Theory Nomenclature
 - State space models were developed in control theory, so there is a different

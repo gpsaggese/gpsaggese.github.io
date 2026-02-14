@@ -91,13 +91,35 @@ plt.savefig(os.path.join(dst_dir, "L09_04_ground_truth.png"))
 # ## Cell 1.2: Knowing gain_rate
 
 # %%
-time_ut.cell_1_2_knowning_gain_rate(measured_weights, ground_truth, dst_dir)
+params = {
+    # This is the time interval between measurements
+    "time_step": 1,
+    # This is the blending factor
+    "weight_scale": 4 / 10.0,
+    # This is the internal model (ground truth)
+    "gain_rate": 1.0,
+    # This is the initial weight
+    "initial_weight": 160.0,
+}
+file_name = "L09_04_knowing_gain_rate.png"
+time_ut.plot_gh_filter_with_known_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
 
 # %% [markdown]
 # ## Cell 1.3: Wrong guess of gain_rate
 
 # %%
-time_ut.cell_1_3_wrong_guess_gain_rate(measured_weights, ground_truth, dst_dir)
+params = {
+    # This is the time interval between measurements
+    "time_step": 1,
+    # This is the blending factor
+    "weight_scale": 4 / 10.0,
+    # This is the internal model (wrong guess)
+    "gain_rate": -10.0,
+    # This is the initial weight
+    "initial_weight": 160.0,
+}
+file_name = "L09_04_wrong_gain_rate.png"
+time_ut.plot_gh_filter_with_known_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
 
 # %% [markdown]
 # ## Cell 1.4: Interactive
@@ -110,7 +132,21 @@ time_ut.create_interactive_gain_rate_widget(measured_weights, ground_truth)
 # ## Cell 1.5: Learning gain_rate
 
 # %%
-time_ut.cell_1_5_learning_gain_rate(measured_weights, ground_truth, dst_dir)
+params = {
+    # Time interval between measurements
+    "time_step": 1,
+    # Scale for updating the weight estimate (blending factor)
+    "weight_scale": 4 / 10.0,
+    # Scale for updating the gain rate estimate
+    "gain_scale": 1 / 3.0,
+    # Initial guess for the gain rate
+    "gain_rate": -1.0,
+    # Initial value for weight estimate
+    "initial_weight": 160.0,
+}
+file_name = "L09_04_learning_gain_rate.png"
+
+time_ut.plot_gh_filter_with_learning_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
 
 # %% [markdown]
 # # Cell 2: g-h Filter on Noisy measurements
@@ -159,7 +195,7 @@ time_ut.create_interactive_non_linear_noisy_data_widget()
 time_ut.cell_2_6_non_linear_gh_filter()
 
 # %% [markdown]
-# ## Varying g
+# ## Cell 2.7: Varying g
 
 # %%
 # If g is smaller we follow more our model than the measurements.
@@ -179,12 +215,12 @@ df["g=0.8"] = time_ut.gh_filter(data=zs, x0=0.0, dx=5.0, dt=1.0, g=0.8, h=0.01)
 
 df.drop("measures", axis=1).plot()
 df["measures"].plot(
-    marker="o",
+    marker=".",
     markersize=10,
     color="b",
     # Hide line.
     linestyle="None",
-)
+);
 
 # %%
 # If g is large we follow more the measures than our model.
@@ -198,10 +234,10 @@ df["g=0.1"] = time_ut.gh_filter(data=zs, x0=0.0, dx=1, dt=1.0, g=0.1, h=0.01)
 df["g=0.4"] = time_ut.gh_filter(data=zs, x0=0.0, dx=1, dt=1.0, g=0.4, h=0.01)
 df["g=0.8"] = time_ut.gh_filter(data=zs, x0=0.0, dx=1, dt=1.0, g=0.8, h=0.01)
 
-df.plot()
+df.plot();
 
 # %% [markdown]
-# ## Varying h
+# ## Cell 2.8: Varying h
 # - h affects how much we favor the measurement of $\frac{dx}{dt}$ vs our prediction
 # - If the signal is varying a lot, then we will react to the transient rapidly
 
@@ -223,40 +259,11 @@ df["dx=2 h=0.05"] = time_ut.gh_filter(data=zs, x0=0, dx=2, dt=1.0, g=0.2, h=0.05
 # Small ringing with higher frequency.
 df["dx=2 h=0.5"] = time_ut.gh_filter(data=zs, x0=0, dx=2, dt=1.0, g=0.2, h=0.5)
 
-df.plot()
+df.plot();
 
 # %% [markdown]
-# # Interactice example
+# ## Cell 2.9: Interactive g-h Filter Example
 
 # %%
-zs1, _ = time_ut.gen_linear_noisy_data(x0=5, dx=5, count=100, noise_factor=50)
-
-fig = None
-
-
-def interactive_gh(x, dx, g, h):
-    global fig
-    if fig is not None:
-        plt.close(fig)
-    fig = plt.figure()
-    data = time_ut.gh_filter(data=zs1, x0=x, dx=dx, g=g, h=h)
-    plt.scatter(list(range(len(zs1))), zs1, marker="+", lw=1)
-    plt.plot(data, color="b")
-
-
-interactive_gh(0, 5, 0.1, 0.02)
-
-# %%
-from ipywidgets import interact, FloatSlider
-
-interact(
-    interactive_gh,
-    x=FloatSlider(value=0.0, min=-200, max=2000, continuous_update=False),
-    dx=FloatSlider(value=5.0, min=-50.0, max=50, continuous_update=False),
-    g=FloatSlider(
-        value=0.1, min=0.01, max=2, step=0.02, continuous_update=False
-    ),
-    h=FloatSlider(
-        value=0.02, min=0.0, max=0.5, step=0.01, continuous_update=False
-    ),
-)
+# Interactive exploration of g-h filter parameters.
+time_ut.create_interactive_gh_filter_widget()

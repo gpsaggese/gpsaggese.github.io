@@ -25,44 +25,6 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 
 
-# TODO(ai_gp): -> inline in plot_gh_filter_results_with_params and make sure
-# plot_gh_filter_results
-def plot_gh_filter_results(
-    measurements: np.ndarray,
-    preds: List[float],
-    ests: List[float],
-    ground_truth: List[float],
-    *,
-    tag_measurements: str = "measurements",
-) -> None:
-    """
-    Plot g-h filter results with measurements, predictions, and estimates.
-
-    :param measurements: Actual measurements
-    :param preds: Predicted values
-    :param ests: Estimated values
-    :param ground_truth: True values
-    :param tag_measurements: Label for measurements in plot
-    """
-    idx = pd.date_range("2011-01-01", periods=len(measurements))
-    df = pd.DataFrame(measurements.T, index=idx, columns=[tag_measurements])
-    linewidth = 2
-    if preds is not None:
-        df["pred"] = preds
-    df["ests"] = ests
-    df["ground_truth"] = ground_truth
-    # Measurements as points.
-    df["measurements"].plot(marker=".", markersize=10, linestyle="None")
-    # Ground truth line.
-    df["ground_truth"].plot(color="k", linewidth=linewidth)
-    # Predictions as dashed line.
-    if preds is not None:
-        df["pred"].plot(color="b", linewidth=linewidth, linestyle="--")
-    # Estimates as solid line.
-    df["ests"].plot(color="r", linewidth=linewidth)
-    plt.legend(loc="upper left")
-
-
 def plot_gh_filter_results_with_params(
     measurements: np.ndarray,
     preds: List[float],
@@ -83,14 +45,24 @@ def plot_gh_filter_results_with_params(
         gain_rate, scale_factor)
     :param tag_measurements: Label for measurements in plot
     """
-    # Call the base plotting function.
-    plot_gh_filter_results(
-        measurements,
-        preds,
-        ests,
-        ground_truth,
-        tag_measurements=tag_measurements,
-    )
+    # Create dataframe with measurements and results.
+    idx = pd.date_range("2011-01-01", periods=len(measurements))
+    df = pd.DataFrame(measurements.T, index=idx, columns=[tag_measurements])
+    linewidth = 2
+    if preds is not None:
+        df["pred"] = preds
+    df["ests"] = ests
+    df["ground_truth"] = ground_truth
+    # Measurements as points.
+    df["measurements"].plot(marker=".", markersize=10, linestyle="None")
+    # Ground truth line.
+    df["ground_truth"].plot(color="k", linewidth=linewidth)
+    # Predictions as dashed line.
+    if preds is not None:
+        df["pred"].plot(color="b", linewidth=linewidth, linestyle="--")
+    # Estimates as solid line.
+    df["ests"].plot(color="r", linewidth=linewidth)
+    plt.legend(loc="upper left")
     # Add parameter information to the title.
     param_str = ", ".join(
         [f"{key}: {value:.4g}" for key, value in params.items()]
@@ -139,103 +111,59 @@ def predict_using_gain_guess(
     return ests, preds
 
 
-def cell_1_2_knowning_gain_rate(
+def plot_gh_filter_with_known_gain_rate(
     measured_weights: np.ndarray,
     ground_truth: np.ndarray,
+    params: dict,
     dst_dir: str,
+    dst_filename: str,
 ) -> None:
     """
-    Plot gain rate prediction with known (correct) gain rate.
+    Plot gain rate prediction with known gain rate.
 
     :param measured_weights: Array of weight measurements
     :param ground_truth: Array of true weight values
+    :param params: Dictionary of parameters
     :param dst_dir: Directory to save output figure
+    :param dst_filename: Filename for the saved figure
     """
-    time_step = 1
-    # This is the blending factor.
-    weight_scale = 4 / 10.0
-    # This is the internal model (ground truth).
-    gain_rate = 1.0
-    # This is the initial weight.
-    weight = 160.0
-    #
     ests, preds = predict_using_gain_guess(
-        weight, measured_weights, gain_rate, weight_scale, time_step
+        params["initial_weight"],
+        measured_weights,
+        params["gain_rate"],
+        params["weight_scale"],
+        params["time_step"],
     )
-    params = {
-        "initial_weight": weight,
-        "weight_scale": weight_scale,
-        "gain_rate": gain_rate,
-        "time_step": time_step,
-    }
     plot_gh_filter_results_with_params(
         measured_weights, preds, ests, ground_truth, params
     )
-    plt.savefig(os.path.join(dst_dir, "L09_04_knowing_gain_rate.png"))
+    plt.savefig(os.path.join(dst_dir, dst_filename))
 
 
-def cell_1_3_wrong_guess_gain_rate(
+def plot_gh_filter_with_learning_gain_rate(
     measured_weights: np.ndarray,
     ground_truth: np.ndarray,
+    params: dict,
     dst_dir: str,
-) -> None:
-    """
-    Plot gain rate prediction with wrong gain rate guess.
-
-    :param measured_weights: Array of weight measurements
-    :param ground_truth: Array of true weight values
-    :param dst_dir: Directory to save output figure
-    """
-    time_step = 1
-    weight_scale = 4 / 10.0
-    gain_rate = -10.0
-    weight = 160.0
-    #
-    ests, preds = predict_using_gain_guess(
-        weight, measured_weights, gain_rate, weight_scale, time_step
-    )
-    params = {
-        "initial_weight": weight,
-        "weight_scale": weight_scale,
-        "gain_rate": gain_rate,
-        "time_step": time_step,
-    }
-    plot_gh_filter_results_with_params(
-        measured_weights, preds, ests, ground_truth, params
-    )
-    plt.savefig(os.path.join(dst_dir, "L09_04_wrong_gain_rate.png"))
-
-
-def cell_1_5_learning_gain_rate(
-    measured_weights: np.ndarray,
-    ground_truth: np.ndarray,
-    dst_dir: str,
+    dst_filename: str,
 ) -> None:
     """
     Plot gain rate prediction while learning the gain rate.
 
     :param measured_weights: Array of weight measurements
     :param ground_truth: Array of true weight values
+    :param params: Dictionary of parameters
     :param dst_dir: Directory to save output figure
+    :param dst_filename: Filename for the saved figure
     """
-    time_step = 1
-    # Gains for update step.
-    weight_scale = 4 / 10.0
-    gain_scale = 1 / 3.0
-    # Initial guess of gain_rate.
-    gain_rate = -1.0
-    weight = 160.0
-    #
     ests, preds = predict_learning_gain_rate(
-        weight, measured_weights, gain_rate, weight_scale, gain_scale, time_step
+        params["initial_weight"],
+        measured_weights,
+        params["gain_rate"],
+        params["weight_scale"],
+        params["gain_scale"],
+        params["time_step"],
     )
-    params = {
-        "initial_weight": weight,
-        "weight_scale": weight_scale,
-        "gain_scale": gain_scale,
-        "gain_rate": gain_rate,
-        "time_step": time_step,
-    }
     plot_gh_filter_results_with_params(
         measured_weights, preds, ests, ground_truth, params
     )
@@ -477,15 +405,13 @@ def cell_2_2_correct_initial_guess() -> None:
         "g": 0.1,
         "h": 0.02,
     }
-    # TODO(ai_gp): Use the values from params.
     ests = gh_filter(
         data=vals,
-        x0=0,
-        dx=1,
-        dt=1,
-        # g, h params.
-        g=0.1,
-        h=0.02,
+        x0=params["x0"],
+        dx=params["dx"],
+        dt=params["dt"],
+        g=params["g"],
+        h=params["h"],
     )
     preds = None
     plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
@@ -509,14 +435,13 @@ def cell_2_3_wrong_initial_guess() -> None:
         "g": 0.2,
         "h": 0.02,
     }
-    # TODO(ai_gp): Use the values from params.
     ests = gh_filter(
         data=vals,
-        x0=100,
-        dx=2,
-        dt=1,
-        g=0.2,
-        h=0.02,
+        x0=params["x0"],
+        dx=params["dx"],
+        dt=params["dt"],
+        g=params["g"],
+        h=params["h"],
     )
     preds = None
     plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
@@ -538,8 +463,14 @@ def cell_2_4_extreme_noise() -> None:
         "g": 0.1,
         "h": 0.02,
     }
-    # TODO(ai_gp): Use the values from params.
-    ests = gh_filter(data=vals, x0=100, dx=1, dt=1, g=0.1, h=0.02)
+    ests = gh_filter(
+        data=vals,
+        x0=params["x0"],
+        dx=params["dx"],
+        dt=params["dt"],
+        g=params["g"],
+        h=params["h"],
+    )
     preds = None
     plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
@@ -554,8 +485,6 @@ def cell_2_6_non_linear_gh_filter() -> None:
     vals, ground_truth = gen_non_linear_noisy_data(
         x0=0, dx=1, count=20, noise_factor=100, accel=5
     )
-    ests = gh_filter(data=vals, x0=100, dx=1, dt=1, g=0.1, h=0.02)
-    preds = None
     params = {
         "x0": 100,
         "dx": 1,
@@ -563,6 +492,15 @@ def cell_2_6_non_linear_gh_filter() -> None:
         "g": 0.1,
         "h": 0.02,
     }
+    ests = gh_filter(
+        data=vals,
+        x0=params["x0"],
+        dx=params["dx"],
+        dt=params["dt"],
+        g=params["g"],
+        h=params["h"],
+    )
+    preds = None
     plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
 
@@ -770,3 +708,98 @@ def create_interactive_non_linear_noisy_data_widget() -> None:
             ]
         )
     )
+
+
+def create_interactive_gh_filter_widget() -> None:
+    """
+    Create interactive widget for exploring g-h filter parameters.
+
+    Allows user to interactively adjust initial state (x, dx) and filter
+    gains (g, h) to see their effect on filtering noisy linear data.
+    """
+    # Generate test data once for all widget interactions.
+    zs, _ = gen_linear_noisy_data(x0=5, dx=5, count=100, noise_factor=50)
+    fig_gh = None
+
+    def _plot_gh_filter(
+        x: float,
+        dx: float,
+        g: float,
+        h: float,
+    ) -> None:
+        """
+        Plot g-h filter results with given parameters.
+
+        :param x: Initial state estimate
+        :param dx: Initial rate of change estimate
+        :param g: Scale factor to blend prediction and measurement
+        :param h: Scale factor to update rate of change
+        """
+        nonlocal fig_gh
+        if fig_gh is not None:
+            plt.close(fig_gh)
+        fig_gh = plt.figure(figsize=(8, 4))
+        # Apply g-h filter.
+        data = gh_filter(data=zs, x0=x, dx=dx, g=g, h=h)
+        # Plot measurements as scatter.
+        plt.scatter(list(range(len(zs))), zs, marker="+", lw=1, label="Measurements")
+        # Plot filtered estimates as line.
+        plt.plot(data, color="b", label="Filtered estimates")
+        plt.legend(loc="upper left")
+        plt.xlabel("Time step")
+        plt.ylabel("Value")
+        plt.title("g-h Filter Interactive Example")
+        plt.grid(True, alpha=0.3)
+
+    # Create x widget.
+    x_slider, x_box = mtumsuti.build_widget_control(
+        name="x",
+        description="Initial state",
+        min_val=-200.0,
+        max_val=2000.0,
+        step=10.0,
+        initial_value=0.0,
+        is_float=True,
+    )
+    # Create dx widget.
+    dx_slider, dx_box = mtumsuti.build_widget_control(
+        name="dx",
+        description="Initial rate",
+        min_val=-50.0,
+        max_val=50.0,
+        step=0.5,
+        initial_value=5.0,
+        is_float=True,
+    )
+    # Create g widget.
+    g_slider, g_box = mtumsuti.build_widget_control(
+        name="g",
+        description="State gain",
+        min_val=0.01,
+        max_val=2.0,
+        step=0.02,
+        initial_value=0.1,
+        is_float=True,
+    )
+    # Create h widget.
+    h_slider, h_box = mtumsuti.build_widget_control(
+        name="h",
+        description="Rate gain",
+        min_val=0.0,
+        max_val=0.5,
+        step=0.01,
+        initial_value=0.02,
+        is_float=True,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        _plot_gh_filter,
+        {
+            "x": x_slider,
+            "dx": dx_slider,
+            "g": g_slider,
+            "h": h_slider,
+        },
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([x_box, dx_box, g_box, h_box, output]))
