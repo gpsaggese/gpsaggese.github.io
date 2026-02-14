@@ -25,6 +25,8 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 
 
+# TODO(ai_gp): -> inline in plot_gh_filter_results_with_params and make sure
+# plot_gh_filter_results
 def plot_gh_filter_results(
     measurements: np.ndarray,
     preds: List[float],
@@ -55,9 +57,9 @@ def plot_gh_filter_results(
     df["ground_truth"].plot(color="k", linewidth=linewidth)
     # Predictions as dashed line.
     if preds is not None:
-        df["pred"].plot(color="r", linewidth=linewidth, linestyle="--")
+        df["pred"].plot(color="b", linewidth=linewidth, linestyle="--")
     # Estimates as solid line.
-    df["ests"].plot(color="b", linewidth=linewidth)
+    df["ests"].plot(color="r", linewidth=linewidth)
     plt.legend(loc="upper left")
 
 
@@ -465,11 +467,19 @@ def cell_2_2_correct_initial_guess() -> None:
     system parameters.
     """
     vals, ground_truth = gen_linear_noisy_data(
-        x0=0, dx=1, count=30, noise_factor=1
+        x0=0, dx=1, count=100, noise_factor=10
     )
+    params = {
+        # Initial guesses (actually correct!).
+        "x0": 0,
+        "dx": 1,
+        "dt": 1,
+        "g": 0.1,
+        "h": 0.02,
+    }
+    # TODO(ai_gp): Use the values from params.
     ests = gh_filter(
         data=vals,
-        # Initial guesses (actually correct!).
         x0=0,
         dx=1,
         dt=1,
@@ -478,7 +488,7 @@ def cell_2_2_correct_initial_guess() -> None:
         h=0.02,
     )
     preds = None
-    plot_gh_filter_results(vals, preds, ests, ground_truth)
+    plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
 
 def cell_2_3_wrong_initial_guess() -> None:
@@ -491,9 +501,17 @@ def cell_2_3_wrong_initial_guess() -> None:
     vals, ground_truth = gen_linear_noisy_data(
         x0=0, dx=1, count=100, noise_factor=10
     )
+    params = {
+        # Initial guesses (wrong!).
+        "x0": 100,
+        "dx": 2,
+        "dt": 1,
+        "g": 0.2,
+        "h": 0.02,
+    }
+    # TODO(ai_gp): Use the values from params.
     ests = gh_filter(
         data=vals,
-        # Initial guesses (wrong!).
         x0=100,
         dx=2,
         dt=1,
@@ -501,7 +519,7 @@ def cell_2_3_wrong_initial_guess() -> None:
         h=0.02,
     )
     preds = None
-    plot_gh_filter_results(vals, preds, ests, ground_truth)
+    plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
 
 def cell_2_4_extreme_noise() -> None:
@@ -513,9 +531,17 @@ def cell_2_4_extreme_noise() -> None:
     vals, ground_truth = gen_linear_noisy_data(
         x0=0, dx=1, count=100, noise_factor=100
     )
+    params = {
+        "x0": 100,
+        "dx": 1,
+        "dt": 1,
+        "g": 0.1,
+        "h": 0.02,
+    }
+    # TODO(ai_gp): Use the values from params.
     ests = gh_filter(data=vals, x0=100, dx=1, dt=1, g=0.1, h=0.02)
     preds = None
-    plot_gh_filter_results(vals, preds, ests, ground_truth)
+    plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
 
 def cell_2_6_non_linear_gh_filter() -> None:
@@ -530,7 +556,14 @@ def cell_2_6_non_linear_gh_filter() -> None:
     )
     ests = gh_filter(data=vals, x0=100, dx=1, dt=1, g=0.1, h=0.02)
     preds = None
-    plot_gh_filter_results(vals, preds, ests, ground_truth)
+    params = {
+        "x0": 100,
+        "dx": 1,
+        "dt": 1,
+        "g": 0.1,
+        "h": 0.02,
+    }
+    plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
 
 def create_interactive_linear_noisy_data_widget() -> None:
