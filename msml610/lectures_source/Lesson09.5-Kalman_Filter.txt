@@ -35,11 +35,26 @@ MSML610: Advanced Machine Learning
 ## 1-D Kalman Filters
 ## #############################################################################
 
-* Kalman Filter
-- The typical formulation of the Kalman filter is in terms of the "orthogonal
-  projection" approach to minimize mean squared error
-  - Instead of a Bayesian formulation
+* Kalman Filter: Intuition and Interpretations
+- Extension of $g$–$h$ filters
+  - $g$–$h$ uses fixed gains $g,h$ for position and velocity
+  - Kalman filter computes adaptive gain $K_t$ from covariance $P_t$
+  - Handles multidimensional states and general linear systems
 
+- **State space model**
+  - $x_t = A x_{t-1} + w_t$
+  - $y_t = C x_t + v_t$
+  - Gaussian noises with covariances $Q,R$
+
+- **Bayesian interpretation**
+  - Prior and likelihood Gaussian $\Rightarrow$ posterior Gaussian
+  - Recursively updates mean and covariance
+  - Example: radar tracking of aircraft
+
+- **Orthogonal projection interpretation**
+  - Estimate is projection onto span of observations
+  - $K_t$ minimizes $E[\|x_t - \hat{x}_t\|^2]$
+  - Error orthogonal to measurement space
 
 * Updating Belief Using Gaussians
 - The **Kalman filter** is based on Bayes theorem and Gaussians
@@ -925,7 +940,3 @@ digraph RobotDBN {
 - Many optimizations are possible, e.g.,
   - Instead of running each sample through the entire DBN one can run all the
     samples evaluating one slice at a time to compute the posterior distribution
-
-# ##############################################################################
-# State Space Model
-# ##############################################################################
