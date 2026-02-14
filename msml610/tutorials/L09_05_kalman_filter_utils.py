@@ -138,6 +138,8 @@ def _plot_gaussian_sum_with_correlation(
     plt.title(f"Input Gaussians (rho={rho:.2f})")
     plt.legend()
     plt.grid(True, alpha=0.3)
+    plt.xlim([-5, 5])
+    plt.ylim([0, 0.7])
     # Right plot: Sum (analytical vs numerical).
     plt.subplot(1, 2, 2)
     plt.plot(
@@ -160,6 +162,8 @@ def _plot_gaussian_sum_with_correlation(
     plt.title("Sum: Z = X + Y")
     plt.legend()
     plt.grid(True, alpha=0.3)
+    plt.xlim([-5, 5])
+    plt.ylim([0, 0.7])
     plt.tight_layout()
 
 
@@ -321,6 +325,8 @@ def _plot_gaussian_product_helper(
     plt.title("Input Gaussians")
     plt.legend()
     plt.grid(True, alpha=0.3)
+    plt.xlim([-5, 5])
+    plt.ylim([0, 0.7])
     # Right plot: Product (analytical vs numerical).
     plt.subplot(1, 2, 2)
     plt.plot(
@@ -343,6 +349,8 @@ def _plot_gaussian_product_helper(
     plt.title("Product: Z = X * Y (PDF multiplication)")
     plt.legend()
     plt.grid(True, alpha=0.3)
+    plt.xlim([-5, 5])
+    plt.ylim([0, 0.7])
     plt.tight_layout()
 
 
