@@ -589,11 +589,10 @@ def create_interactive_gh_filter_widget() -> None:
     """
     Create interactive widget for exploring g-h filter parameters.
 
-    Allows user to interactively adjust initial state (x, dx) and filter
-    gains (g, h) to see their effect on filtering noisy linear data.
+    Allows user to interactively adjust initial state (x, dx), filter
+    gains (g, h), and noise level to see their effect on filtering noisy
+    linear data.
     """
-    # Generate test data once for all widget interactions.
-    zs, _ = gen_linear_noisy_data(x0=5, dx=5, count=100, noise_factor=50)
     fig_gh = None
 
     def _plot_gh_filter(
@@ -601,6 +600,7 @@ def create_interactive_gh_filter_widget() -> None:
         dx: float,
         g: float,
         h: float,
+        noise_factor: float,
     ) -> None:
         """
         Plot g-h filter results with given parameters.
@@ -609,13 +609,20 @@ def create_interactive_gh_filter_widget() -> None:
         :param dx: Initial rate of change estimate
         :param g: Scale factor to blend prediction and measurement
         :param h: Scale factor to update rate of change
+        :param noise_factor: Standard deviation of Gaussian noise
         """
         nonlocal fig_gh
         if fig_gh is not None:
             plt.close(fig_gh)
         fig_gh = plt.figure(figsize=(8, 4))
+        # Generate test data with current noise level.
+        zs, ground_truth = gen_linear_noisy_data(
+            x0=5, dx=5, count=100, noise_factor=noise_factor
+        )
         # Apply g-h filter.
         data = gh_filter(data=zs, x0=x, dx=dx, g=g, h=h)
+        # Plot ground truth as black line.
+        plt.plot(ground_truth, color="k", linewidth=2, label="Ground truth")
         # Plot measurements as scatter.
         plt.scatter(list(range(len(zs))), zs, marker=".", lw=1, label="Measurements")
         # Plot filtered estimates as line.
@@ -666,6 +673,16 @@ def create_interactive_gh_filter_widget() -> None:
         initial_value=0.02,
         is_float=True,
     )
+    # Create noise_factor widget.
+    noise_factor_slider, noise_factor_box = mtumsuti.build_widget_control(
+        name="noise_factor",
+        description="Noise std dev",
+        min_val=0.0,
+        max_val=100.0,
+        step=5.0,
+        initial_value=50.0,
+        is_float=True,
+    )
     # Create interactive output.
     output = ipywidgets.interactive_output(
         _plot_gh_filter,
@@ -674,10 +691,13 @@ def create_interactive_gh_filter_widget() -> None:
             "dx": dx_slider,
             "g": g_slider,
             "h": h_slider,
+            "noise_factor": noise_factor_slider,
         },
     )
     # Display widgets.
-    display(ipywidgets.VBox([x_box, dx_box, g_box, h_box, output]))
+    display(
+        ipywidgets.VBox([x_box, dx_box, g_box, h_box, noise_factor_box, output])
+    )
 
 
 def create_interactive_non_linear_noisy_data_widget() -> None:
