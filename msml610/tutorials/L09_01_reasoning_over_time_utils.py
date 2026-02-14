@@ -111,7 +111,8 @@ def predict_using_gain_guess(
     return ests, preds
 
 
-def plot_gh_filter_with_known_gain_rate(
+# TODO(ai_gp): -> plot_gh_filter_with_known_gain_rate
+def cell_1_2_knowning_gain_rate(
     measured_weights: np.ndarray,
     ground_truth: np.ndarray,
     params: dict,
@@ -123,9 +124,7 @@ def plot_gh_filter_with_known_gain_rate(
 
     :param measured_weights: Array of weight measurements
     :param ground_truth: Array of true weight values
-    :param params: Dictionary of parameters
     :param dst_dir: Directory to save output figure
-    :param dst_filename: Filename for the saved figure
     """
     ests, preds = predict_using_gain_guess(
         params["initial_weight"],
@@ -140,7 +139,35 @@ def plot_gh_filter_with_known_gain_rate(
     plt.savefig(os.path.join(dst_dir, dst_filename))
 
 
-def plot_gh_filter_with_learning_gain_rate(
+# def cell_1_3_wrong_guess_gain_rate(
+#     measured_weights: np.ndarray,
+#     ground_truth: np.ndarray,
+#     dst_dir: str,
+# ) -> None:
+#     """
+#     Plot gain rate prediction with wrong gain rate guess.
+
+#     :param measured_weights: Array of weight measurements
+#     :param ground_truth: Array of true weight values
+#     :param dst_dir: Directory to save output figure
+#     """
+
+#     #
+#     ests, preds = predict_using_gain_guess(
+#         params["initial_weight"],
+#         measured_weights,
+#         params["gain_rate"],
+#         params["weight_scale"],
+#         params["time_step"],
+#     )
+#     plot_gh_filter_results_with_params(
+#         measured_weights, preds, ests, ground_truth, params
+#     )
+#     plt.savefig(os.path.join(dst_dir, "L09_04_wrong_gain_rate.png"))
+
+
+# TODO(ai_gp): -> plot_gh_filter_with_learning_gain_rate
+def cell_1_5_learning_gain_rate(
     measured_weights: np.ndarray,
     ground_truth: np.ndarray,
     params: dict,
@@ -152,10 +179,9 @@ def plot_gh_filter_with_learning_gain_rate(
 
     :param measured_weights: Array of weight measurements
     :param ground_truth: Array of true weight values
-    :param params: Dictionary of parameters
     :param dst_dir: Directory to save output figure
-    :param dst_filename: Filename for the saved figure
     """
+    #
     ests, preds = predict_learning_gain_rate(
         params["initial_weight"],
         measured_weights,
@@ -167,7 +193,7 @@ def plot_gh_filter_with_learning_gain_rate(
     plot_gh_filter_results_with_params(
         measured_weights, preds, ests, ground_truth, params
     )
-    plt.savefig(os.path.join(dst_dir, "L09_04_learning_gain_rate.png"))
+    plt.savefig(os.path.join(dst_dir, dst_filename))
 
 
 def create_interactive_gain_rate_widget(
@@ -387,7 +413,8 @@ def gen_non_linear_noisy_data(
     return np.array(vals), np.array(ground_truth)
 
 
-def cell_2_2_correct_initial_guess() -> None:
+# TODO(ai_gp): -> plot_gh_filter_with_params
+def cell_2_2_correct_initial_guess(params: dict) -> None:
     """
     Demonstrate g-h filter with correct initial guesses.
 
@@ -397,14 +424,6 @@ def cell_2_2_correct_initial_guess() -> None:
     vals, ground_truth = gen_linear_noisy_data(
         x0=0, dx=1, count=100, noise_factor=10
     )
-    params = {
-        # Initial guesses (actually correct!).
-        "x0": 0,
-        "dx": 1,
-        "dt": 1,
-        "g": 0.1,
-        "h": 0.02,
-    }
     ests = gh_filter(
         data=vals,
         x0=params["x0"],
@@ -417,34 +436,34 @@ def cell_2_2_correct_initial_guess() -> None:
     plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
 
-def cell_2_3_wrong_initial_guess() -> None:
-    """
-    Demonstrate g-h filter with wrong initial guesses.
+# def cell_2_3_wrong_initial_guess() -> None:
+#     """
+#     Demonstrate g-h filter with wrong initial guesses.
 
-    Shows how the filter adapts when starting with incorrect state
-    estimates.
-    """
-    vals, ground_truth = gen_linear_noisy_data(
-        x0=0, dx=1, count=100, noise_factor=10
-    )
-    params = {
-        # Initial guesses (wrong!).
-        "x0": 100,
-        "dx": 2,
-        "dt": 1,
-        "g": 0.2,
-        "h": 0.02,
-    }
-    ests = gh_filter(
-        data=vals,
-        x0=params["x0"],
-        dx=params["dx"],
-        dt=params["dt"],
-        g=params["g"],
-        h=params["h"],
-    )
-    preds = None
-    plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
+#     Shows how the filter adapts when starting with incorrect state
+#     estimates.
+#     """
+#     vals, ground_truth = gen_linear_noisy_data(
+#         x0=0, dx=1, count=100, noise_factor=10
+#     )
+#     params = {
+#         # Initial guesses (wrong!).
+#         "x0": 100,
+#         "dx": 2,
+#         "dt": 1,
+#         "g": 0.2,
+#         "h": 0.02,
+#     }
+#     ests = gh_filter(
+#         data=vals,
+#         x0=params["x0"],
+#         dx=params["dx"],
+#         dt=params["dt"],
+#         g=params["g"],
+#         h=params["h"],
+#     )
+#     preds = None
+#     plot_gh_filter_results_with_params(vals, preds, ests, ground_truth, params)
 
 
 def cell_2_4_extreme_noise() -> None:

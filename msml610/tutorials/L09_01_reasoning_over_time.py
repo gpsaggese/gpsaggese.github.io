@@ -163,7 +163,15 @@ time_ut.create_interactive_linear_noisy_data_widget()
 
 # %%
 # Demonstrate g-h filter with correct initial guesses.
-time_ut.cell_2_2_correct_initial_guess()
+params = {
+    # Initial guesses (actually correct!).
+    "x0": 0,
+    "dx": 1,
+    "dt": 1,
+    "g": 0.1,
+    "h": 0.02,
+}
+time_ut.cell_2_2_correct_initial_guess(params)
 
 
 # %% [markdown]
@@ -171,7 +179,15 @@ time_ut.cell_2_2_correct_initial_guess()
 
 # %%
 # Demonstrate g-h filter with wrong initial guesses.
-time_ut.cell_2_3_wrong_initial_guess()
+params = {
+    # Initial guesses (wrong!).
+    "x0": 100,
+    "dx": 2,
+    "dt": 1,
+    "g": 0.2,
+    "h": 0.02,
+}
+time_ut.cell_2_3_wrong_initial_guess(params)
 
 # %% [markdown]
 # ## Cell 2.4: Extreme Noise
