@@ -116,54 +116,62 @@ def _plot_gaussian_sum_with_correlation(
         max(mu1 + 4 * sigma1, mu2 + 4 * sigma2, mu_sum + 4 * sigma_sum),
         1000,
     )
-    plt.figure(figsize=(12, 5))
-    # Left plot: Individual Gaussians.
-    plt.subplot(1, 2, 1)
+    plt.figure()
     X_marginal = stats.norm(mu1, sigma1)
     Y_marginal = stats.norm(mu2, sigma2)
-    plt.plot(
+    # Plot input Gaussians with filled areas.
+    X_pdf = X_marginal.pdf(x_range)
+    Y_pdf = Y_marginal.pdf(x_range)
+    plt.fill_between(
         x_range,
-        X_marginal.pdf(x_range),
+        X_pdf,
+        alpha=0.3,
+        color="blue",
         label=f"X ~ N({mu1:.1f}, {sigma1:.1f}^2)",
-        linewidth=2,
     )
     plt.plot(
         x_range,
-        Y_marginal.pdf(x_range),
-        label=f"Y ~ N({mu2:.1f}, {sigma2:.1f}^2)",
+        X_pdf,
         linewidth=2,
+        color="blue",
     )
-    plt.xlabel("Value")
-    plt.ylabel("Probability Density")
-    plt.title(f"Input Gaussians (rho={rho:.2f})")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.xlim([-5, 5])
-    plt.ylim([0, 0.7])
-    # Right plot: Sum (analytical vs numerical).
-    plt.subplot(1, 2, 2)
+    plt.fill_between(
+        x_range,
+        Y_pdf,
+        alpha=0.3,
+        color="yellow",
+        label=f"Y ~ N({mu2:.1f}, {sigma2:.1f}^2)",
+    )
+    plt.plot(
+        x_range,
+        Y_pdf,
+        linewidth=2,
+        color="orange",
+    )
+    # Plot sum (analytical).
     plt.plot(
         x_range,
         Z_analytical.pdf(x_range),
-        label=f"Analytical: N({mu_sum:.2f}, {sigma_sum:.2f}^2)",
+        label=f"Sum Analytical: N({mu_sum:.2f}, {sigma_sum:.2f}^2)",
         linewidth=2,
         color="red",
     )
+    # Plot sum (numerical histogram).
     plt.hist(
         Z_samples,
         bins=50,
         density=True,
         alpha=0.5,
-        label=f"Numerical ({n_samples} samples)",
-        color="blue",
+        label=f"Sum Numerical ({n_samples} samples)",
+        color="lightcoral",
     )
     plt.xlabel("Value")
     plt.ylabel("Probability Density")
-    plt.title("Sum: Z = X + Y")
+    plt.title(f"Sum of Gaussians: Z = X + Y (rho={rho:.2f})")
     plt.legend()
     plt.grid(True, alpha=0.3)
     plt.xlim([-5, 5])
-    plt.ylim([0, 0.7])
+    plt.ylim([0, 1])
     plt.tight_layout()
 
 
@@ -305,52 +313,60 @@ def _plot_gaussian_product_helper(
         max(mu1 + 4 * sigma1, mu2 + 4 * sigma2, mu_prod + 4 * sigma_prod),
         1000,
     )
-    plt.figure(figsize=(12, 5))
-    # Left plot: Individual Gaussians.
-    plt.subplot(1, 2, 1)
-    plt.plot(
+    plt.figure()
+    # Plot input Gaussians with filled areas.
+    X_pdf = X.pdf(x_range)
+    Y_pdf = Y.pdf(x_range)
+    plt.fill_between(
         x_range,
-        X.pdf(x_range),
+        X_pdf,
+        alpha=0.3,
+        color="blue",
         label=f"X ~ N({mu1:.1f}, {sigma1:.1f}^2)",
-        linewidth=2,
     )
     plt.plot(
         x_range,
-        Y.pdf(x_range),
-        label=f"Y ~ N({mu2:.1f}, {sigma2:.1f}^2)",
+        X_pdf,
         linewidth=2,
+        color="blue",
     )
-    plt.xlabel("Value")
-    plt.ylabel("Probability Density")
-    plt.title("Input Gaussians")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.xlim([-5, 5])
-    plt.ylim([0, 0.7])
-    # Right plot: Product (analytical vs numerical).
-    plt.subplot(1, 2, 2)
+    plt.fill_between(
+        x_range,
+        Y_pdf,
+        alpha=0.3,
+        color="yellow",
+        label=f"Y ~ N({mu2:.1f}, {sigma2:.1f}^2)",
+    )
+    plt.plot(
+        x_range,
+        Y_pdf,
+        linewidth=2,
+        color="orange",
+    )
+    # Plot product (analytical).
     plt.plot(
         x_range,
         Z_analytical.pdf(x_range),
-        label=f"Analytical: N({mu_prod:.2f}, {sigma_prod:.2f}^2)",
+        label=f"Product Analytical: N({mu_prod:.2f}, {sigma_prod:.2f}^2)",
         linewidth=2,
         color="red",
     )
+    # Plot product (numerical histogram).
     plt.hist(
         Z_samples,
         bins=50,
         density=True,
         alpha=0.5,
-        label=f"Numerical ({n_samples} samples)",
-        color="blue",
+        label=f"Product Numerical ({n_samples} samples)",
+        color="lightcoral",
     )
     plt.xlabel("Value")
     plt.ylabel("Probability Density")
-    plt.title("Product: Z = X * Y (PDF multiplication)")
+    plt.title("Product of Gaussians: Z = X * Y (PDF multiplication)")
     plt.legend()
     plt.grid(True, alpha=0.3)
     plt.xlim([-5, 5])
-    plt.ylim([0, 0.7])
+    plt.ylim([0, 1])
     plt.tight_layout()
 
 
