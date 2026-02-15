@@ -1,7 +1,7 @@
 + cd ../tmp.build
 ++ pwd
 + docker run --rm -it -v /Users/saggese/src/umd_classes1/tutorials/tmp.build:/data gpsaggese/umd_tutorial_filterpy bash -c /data/version.sh
-# Pytho3
+# Python3
 Python 3.12.3
 # pip3
 pip 26.0.1 from /opt/venv/lib/python3.12/site-packages/pip (python 3.12)

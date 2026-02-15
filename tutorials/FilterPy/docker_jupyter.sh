@@ -29,9 +29,9 @@ while getopts p:d:uv flag
 do
     case "${flag}" in
         p) JUPYTER_HOST_PORT=${OPTARG};;  # Port for Jupyter Lab
-        u) JUPYTER_USE_VIM=1;;             # Enable vim bindings
-        d) TARGET_DIR=${OPTARG};;          # Directory to mount as /data
-        v) VERBOSE=1;;                     # Enable verbose output
+        u) JUPYTER_USE_VIM=1;;            # Enable vim bindings
+        d) TARGET_DIR=${OPTARG};;         # Directory to mount as /data
+        v) VERBOSE=1;;                    # Enable verbose output
     esac
 done
 
