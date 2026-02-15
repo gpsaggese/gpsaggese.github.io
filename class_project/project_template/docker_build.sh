@@ -1,6 +1,12 @@
 #!/bin/bash
 # """
 # Build a Docker container image for the project.
+#
+# This script sets up the build environment with error handling and command
+# tracing, loads Docker configuration from docker_name.sh, and builds the
+# Docker image using the build_container_image utility function. It supports
+# both single-architecture and multi-architecture builds via the
+# DOCKER_BUILD_MULTI_ARCH environment variable.
 # """
 
 # Exit immediately if any command exits with a non-zero status.

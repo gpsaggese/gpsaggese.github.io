@@ -1,11 +1,6 @@
 #!/bin/bash
 # """
 # Utility functions for Docker container management.
-#
-# This script provides:
-# - Docker container image building, pushing, pulling, and removal
-# - Container lifecycle management (killing, executing)
-# - Docker variable management and configuration
 # """
 
 get_docker_vars_script() {
@@ -89,7 +84,8 @@ build_container_image() {
         # Use the default builder.
         docker buildx use multiarch
         docker buildx inspect --bootstrap
-        # Note that one needs to push to the repo since otherwise it is not possible to keep multiple
+        # Note that one needs to push to the repo since otherwise it is not
+        # possible to keep multiple.
         (cd $DIR; docker buildx build --push --platform linux/arm64,linux/amd64 $OPTS --tag $FULL_IMAGE_NAME . 2>&1 | tee ../docker_build.log; exit ${PIPESTATUS[0]})
         # Report the status.
         docker buildx imagetools inspect $FULL_IMAGE_NAME
