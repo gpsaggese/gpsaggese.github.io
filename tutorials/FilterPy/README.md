@@ -41,7 +41,7 @@ This directory contains no subdirectories.
 
 - Builds the Docker image for the tutorial environment
 - Uses `gpsaggese/umd_data605_XYZ` as the image name
-- Sources common Docker utilities from `docker_common/utils.sh` in the git root
+- Sources common Docker utilities from `project_template/utils.sh` in the git root
 
 #### Examples
 

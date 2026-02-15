@@ -55,7 +55,7 @@
   LICENSE
   README.md
   dev_scripts
-  docker_common
+  project_template
   gp
   lectures
   projects
@@ -189,7 +189,7 @@
   line-by-line:
   ```bash
   > ls
-  Dockerfile LICENSE README.md dev_scripts docker_common gp lectures projects
+  Dockerfile LICENSE README.md dev_scripts project_template gp lectures projects
 
   > git status -s
 
@@ -230,7 +230,7 @@
   LICENSE
   README.md
   dev_scripts
-  docker_common
+  project_template
   gp
   lectures
   projects
@@ -380,7 +380,7 @@
   LICENSE
   README.md
   dev_scripts
-  docker_common
+  project_template
   gp
   lectures
   projects

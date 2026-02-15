@@ -1,4 +1,4 @@
-# docker_common
+# project_template
 
 This directory contains shared Docker utility scripts and configuration files for
 building, running, and managing Docker containers across different projects.

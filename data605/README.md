@@ -57,7 +57,7 @@ deploying course materials
   - Includes formatting and linting utilities
   - Contains Jupyter and tmux setup scripts
 
-- `docker_common/`: Shared Docker configuration files
+- `project_template/`: Shared Docker configuration files
   - Contains common Docker setup scripts
   - Includes bashrc and sudoers configuration
   - Contains Jupyter extension installation scripts
