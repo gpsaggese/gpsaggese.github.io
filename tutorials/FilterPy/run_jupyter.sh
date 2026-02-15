@@ -31,42 +31,33 @@ if [[ $VERBOSE == 1 ]]; then
     set -x
 fi;
 
-jupyter labextension disable @jupyterlab/apputils-extension:announcements
+# Disable announcements extension (JupyterLab 3.2+).
+jupyter labextension disable @jupyterlab/apputils-extension:announcements 2>/dev/null || true
 
-jupyter nbextension enable autosavetime/main
-
+# Install vim extension for JupyterLab if requested.
 if [[ $JUPYTER_USE_VIM != 0 ]]; then
-    jupyter nbextension enable vim_binding/vim_binding
+    # Try to install jupyterlab-vim extension
+    pip install jupyterlab-vim 2>/dev/null || true
+    jupyter labextension install @axlair/jupyterlab_vim 2>/dev/null || true
 fi;
 
-cat << EOT >> ~/.jupyter/jupyter_notebook_config.py
+# Create Jupyter Server configuration (used by JupyterLab).
+mkdir -p ~/.jupyter
+cat << EOT >> ~/.jupyter/jupyter_server_config.py
 #------------------------------------------------------------------------------
-# Jupytext
+# Jupytext Configuration for JupyterLab
 #------------------------------------------------------------------------------
-# The following line yields:
-# ```
-# [C 14:54:35.676 NotebookApp] Bad config encountered during initialization:
-# The 'contents_manager_class' trait of a NotebookApp instance expected a
-# subclass of notebook.services.contents.manager.ContentsManager or
-# jupyter_server.contents.services.managers.ContentsManage, not the
-# JupytextContentsManager JupytextContentsManager.
-# ```
-# Not needed according to https://bytemeta.vip/repo/mwouts/jupytext/issues/953
-#c.NotebookApp.contents_manager_class = "jupytext.TextFileContentsManager"
 # Always pair ipynb notebooks to py files
 c.ContentsManager.default_jupytext_formats = "ipynb,py"
 # Use the percent format when saving as py
 c.ContentsManager.preferred_jupytext_formats_save = "py:percent"
 c.ContentsManager.outdated_text_notebook_margin = float("inf")
-EOT
 
-mkdir -p ~/.jupyter/nbextensions/autosavetime
-cat << EOT >> ~/.jupyter/nbextensions/autosavetime/main.js
-var params = {
-    autosavetime_set_starting_interval: 1,
-    autosavetime_starting_interval: 1,
-    autosavetime_show_selector : false,
-}
+#------------------------------------------------------------------------------
+# Autosave Configuration
+#------------------------------------------------------------------------------
+# Autosave interval in seconds (60 seconds = 1 minute)
+c.ServerApp.autosave_interval = 60
 EOT
 
 # Start Jupyter Lab with development-friendly settings.
