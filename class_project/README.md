@@ -18,16 +18,6 @@
 
 <!-- tocstop -->
 
-# Summary
-
-This document provides comprehensive guidelines for completing class projects in
-`DATA605` and `MSML610` courses. Students will learn cutting-edge big data
-technologies by creating hands-on tutorials that teach others how to use these
-tools. The project involves selecting a technology, setting up a development
-environment with `Docker`, and delivering a complete tutorial with
-documentation, code examples, and `Jupyter` notebooks following open-source
-contribution practices.
-
 # Class Project Guidelines
 
 - The goal of the class project (e.g., for `DATA605`, `MSML610`) is to learn a
@@ -82,8 +72,8 @@ contribution practices.
   - If you really need to propose a new idea or suggest modifications, please
     contact us: we will review but we won't guarantee we can accommodate all
     requests
-- Your project should align with your learning goals and interests, offering a
-  great opportunity to explore various technologies and strengthen your resume
+- Your project should align with your learning goals and interests, offering an
+  opportunity to explore various technologies and strengthen your resume
 - If selecting a project from the sign-up sheet, ensure you fill out the
   corresponding details promptly. For modifications, email us with the necessary
   information, and we will update the sign-up sheet and Google Doc accordingly
@@ -96,9 +86,9 @@ contribution practices.
 
 **NOTE**:
 
-- If you choose to use a paid service, you are responsible for the costs
-  incurred. In any case, you are expected to use the services efficiently to
-  keep them within free tier usage
+- If you choose to use a paid service (e.g., an Amazon service), you are
+  responsible for the costs incurred. In any case, you are expected to use the
+  services efficiently to keep them within free tier usage
 - To save costs/improve usage, you should make sure that the services are turned
   off/shutdown when not being used
 
@@ -307,60 +297,57 @@ development.
   style. They consist of:
 
 - **Utils Module**:
-  - This file is meant to contain helper functions, reusable logic, and API
+  - This file is meant to contain helper functions, reusable logic, and package
     wrappers
   - Keep the notebooks focused on documentation and outputs. Place any logic or
     workflow functions inside this module
 - **Scripts/Notebooks**:
-  - You will work on one API file and one Example (Your project) file
+  - You will work on one package file and one Example (Your project) file
   - We encourage you to use `Python` files (Utils module) and call the code from
     notebooks
 - **Markdowns**:
-  - One markdown file linked to each `python` script, i.e, API and example
+  - One markdown file linked to each `python` script, i.e, package and example
 
 For more guidance on this structure and the rationale behind it, see
-[How to write the Tutorial](https://github.com/causify-ai/tutorials/blob/master/docs/all.learn_X_in_60_minutes.how_to_guide.md)
+[How to write the
+Tutorial](https://github.com/gpsaggese/umd_classes/blob/master/website/docs/blog/posts/all.learn_X_in_60_minutes.how_to_guide.md)
 
 In general:
 
-- **For API**: you are expected to describe the API, its architecture, etc
-- **For Example**: You are expected to use the project tool according to the
+- **For package**: you are expected to describe the package, its architecture, etc
+- **For example**: You are expected to use the project tool according to the
   specifications mentioned in the project description
 
 ## Submission
 
 Your submission must include the following files:
 
-**Important**: "API" here refers to the tool's internal interface—not an
-external data-provider API. Please keep the focus on the tool itself.
+**Important**: "package" here refers to the tool's internal interface—not an
+external data-provider package. Please keep the focus on the tool itself.
 
-1. `XYZ.API.md`:
-   - Document the native programming interface (classes, functions,
-     configuration objects) of your chosen tool or library
-   - Describe the lightweight wrapper layer you have written on top of this
-     native API
+- `XYZ.package.ipynb`:
+  - A `Jupyter` notebook demonstrating usage of the native package and your wrapper
+    layer, with clean, minimal cells
+  - Document the native programming interface (classes, functions,
+    configuration objects) of your chosen tool or library
+  - Describe the lightweight wrapper layer you have written on top of this
+    native package
 
-2. `XYZ.API.ipynb`:
-   - A `Jupyter` notebook demonstrating usage of the native API and your wrapper
-     layer, with clean, minimal cells
+- `XYZ.example.ipynb`:
+  - A `Jupyter` notebook corresponding to the example above, demonstrating
+    end-to-end functionality
+  - A markdown file presenting a complete example of an application that uses
+    your package layer
 
-3. `XYZ.example.md`:
-   - A markdown file presenting a complete example of an application that uses
-     your API layer
+- `XYZ_utils.py`:
+  - A `Python` module containing reusable utility functions and wrappers around
+    the package
+  - The notebooks should invoke logic from this file instead of embedding
+    complex code inline
 
-4. `XYZ.example.ipynb`:
-   - A `Jupyter` notebook corresponding to the example above, demonstrating
-     end-to-end functionality
+### Difference Between `{project}.package.*` and `{project}.example.*`
 
-5. `XYZ_utils.py`:
-   - A `Python` module containing reusable utility functions and wrappers around
-     the API
-   - The notebooks should invoke logic from this file instead of embedding
-     complex code inline
-
-### Difference Between `{project}.API.*` and `{project}.example.*`
-
-- **`{project}.API.*`**: stable contract-only layer. Holds dataclasses, enums,
+- **`{project}.package.*`**: stable contract-only layer. Holds dataclasses, enums,
   and abstract service interfaces so anyone can integrate without pulling in
   your runtime code
 
@@ -380,13 +367,13 @@ external data-provider API. Please keep the focus on the tool itself.
   ```
 
 - **`{project}.example.*`**: runnable reference implementation that satisfies
-  the API with real storage, I/O, and third-party calls
+  the package with real storage, I/O, and third-party calls
 
   ```python
   import sqlite3
   import bcrypt
   import jwt
-  from project.API.auth import User, AuthService
+  from project_package.auth import User, AuthService
 
   class SqliteAuthService(AuthService):
       _DB = "users.db"
@@ -413,12 +400,9 @@ COURSE_CODE/
 └── Term20xx/
     └── projects/
         └── TutorTaskXX_Name_of_issue/
-            ├── utils_data_io.py
-            ├── utils_post_processing.py
-            ├── API.ipynb
-            ├── API.md
-            ├── example.ipynb
-            ├── example.md
+            ├── {project}_utils.py
+            ├── {project}.package.ipynb
+            ├── {project}.example.ipynb
             ├── Dockerfile
             └── README.md
 ```
