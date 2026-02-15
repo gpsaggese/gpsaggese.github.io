@@ -1,4 +1,64 @@
+#!/bin/bash
+# """
+# Utility functions for Docker container management.
+#
+# This script provides:
+# - Docker container image building, pushing, pulling, and removal
+# - Container lifecycle management (killing, executing)
+# - Docker variable management and configuration
+# """
+
+get_docker_vars_script() {
+    # """
+    # Load Docker variables from docker_name.sh script.
+    #
+    # :param script_path: Path to the script to determine the Docker configuration directory
+    # :return: Sources REPO_NAME, IMAGE_NAME, and FULL_IMAGE_NAME variables
+    # """
+    local script_path=$1
+    # Find the name of the container.
+    SCRIPT_DIR=$(dirname $script_path)
+    DOCKER_NAME="$SCRIPT_DIR/docker_name.sh"
+    if [[ ! -e $SCRIPT_DIR ]]; then
+        echo "Can't find $DOCKER_NAME"
+        exit -1
+    fi;
+    source $DOCKER_NAME
+}
+
+
+print_docker_vars() {
+    # """
+    # Print current Docker variables to stdout.
+    # """
+    echo "REPO_NAME=$REPO_NAME"
+    echo "IMAGE_NAME=$IMAGE_NAME"
+    echo "FULL_IMAGE_NAME=$FULL_IMAGE_NAME"
+}
+
+
+run() {
+    # """
+    # Execute a command with echo output.
+    #
+    # :param cmd: Command string to execute
+    # :return: Exit status of the executed command
+    # """
+    cmd="$*"
+    echo "> $cmd"
+    eval "$cmd"
+}
+
+
 build_container_image() {
+    # """
+    # Build a Docker container image.
+    #
+    # Supports both single-architecture and multi-architecture builds.
+    # Creates temporary build directory, copies files, and builds the image.
+    #
+    # :param @: Additional options to pass to docker build/buildx build
+    # """
     echo "# ${FUNCNAME[0]} ..."
     FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME
     echo "FULL_IMAGE_NAME=$FULL_IMAGE_NAME"
@@ -29,7 +89,7 @@ build_container_image() {
         # Use the default builder.
         docker buildx use multiarch
         docker buildx inspect --bootstrap
-        # Note that one needs to push to the repo since otherwise it is not possible to keep multiple 
+        # Note that one needs to push to the repo since otherwise it is not possible to keep multiple
         (cd $DIR; docker buildx build --push --platform linux/arm64,linux/amd64 $OPTS --tag $FULL_IMAGE_NAME . 2>&1 | tee ../docker_build.log; exit ${PIPESTATUS[0]})
         # Report the status.
         docker buildx imagetools inspect $FULL_IMAGE_NAME
@@ -48,6 +108,9 @@ build_container_image() {
 
 
 remove_container_image() {
+    # """
+    # Remove Docker container image(s) matching the current configuration.
+    # """
     echo "# ${FUNCNAME[0]} ..."
     FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME
     echo "FULL_IMAGE_NAME=$FULL_IMAGE_NAME"
@@ -59,6 +122,11 @@ remove_container_image() {
 
 
 push_container_image() {
+    # """
+    # Push Docker container image to registry.
+    #
+    # Authenticates using credentials from ~/.docker/passwd.$REPO_NAME.txt.
+    # """
     echo "# ${FUNCNAME[0]} ..."
     FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME
     echo "FULL_IMAGE_NAME=$FULL_IMAGE_NAME"
@@ -70,6 +138,9 @@ push_container_image() {
 
 
 pull_container_image() {
+    # """
+    # Pull Docker container image from registry.
+    # """
     echo "# ${FUNCNAME[0]} ..."
     FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME
     echo "FULL_IMAGE_NAME=$FULL_IMAGE_NAME"
@@ -79,6 +150,9 @@ pull_container_image() {
 
 
 kill_container() {
+    # """
+    # Kill and remove Docker container(s) matching the current configuration.
+    # """
     echo "# ${FUNCNAME[0]} ..."
     FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME
     echo "FULL_IMAGE_NAME=$FULL_IMAGE_NAME"
@@ -95,6 +169,12 @@ kill_container() {
 
 
 exec_container() {
+    # """
+    # Execute bash shell in running Docker container.
+    #
+    # Opens an interactive bash session in the first container matching the
+    # current configuration.
+    # """
     echo "# ${FUNCNAME[0]} ..."
     FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME
     echo "FULL_IMAGE_NAME=$FULL_IMAGE_NAME"
@@ -104,31 +184,4 @@ exec_container() {
     echo "CONTAINER_ID=$CONTAINER_ID"
     docker exec -it $CONTAINER_ID bash
     echo "${FUNCNAME[0]} ... done"
-}
-
-
-get_docker_vars_script() {
-    local script_path=$1
-    # Find the name of the container.
-    SCRIPT_DIR=$(dirname $script_path)
-    DOCKER_NAME="$SCRIPT_DIR/docker_name.sh"
-    if [[ ! -e $SCRIPT_DIR ]]; then
-        echo "Can't find $DOCKER_NAME"
-        exit -1
-    fi;
-    source $DOCKER_NAME
-}
-
-
-print_docker_vars() {
-    echo "REPO_NAME=$REPO_NAME"
-    echo "IMAGE_NAME=$IMAGE_NAME"
-    echo "FULL_IMAGE_NAME=$FULL_IMAGE_NAME"
-}
-
-
-run() {
-    cmd="$*"
-    echo "> $cmd"
-    eval "$cmd"
 }
