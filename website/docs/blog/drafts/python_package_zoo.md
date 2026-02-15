@@ -19,12 +19,15 @@ Poetry and uv.
 
 <!-- more -->
 
-Python's ecosystem offers numerous tools for managing packages and virtual
-environments. Choosing the right tool depends on your project requirements,
-whether you need simple dependency management, cross-language support, or
-high-performance package installation. This guide organizes the main tools by
-category to help you understand their purpose and select the best fit for your
-workflow.
+- Python's ecosystem offers numerous tools for managing packages and virtual
+  environments
+- Choosing the right tool depends on:
+  - Project requirements
+  - Need for simple dependency management
+  - Cross-language support requirements
+  - Performance needs
+- This guide organizes tools by category to help select the best fit for your
+  workflow
 
 ## Built-In and Standard Tools
 
@@ -33,55 +36,42 @@ workflow.
 - Default Python package installer
 - Installs packages from PyPI
 - Works with `requirements.txt`
+  ```bash
+  > pip install requests
+  > pip install -r requirements.txt
+  > pip freeze > requirements.txt
+  ```
 
-```bash
-pip install requests
-pip install -r requirements.txt
-pip freeze > requirements.txt
-```
-
-**Best for:** Simple projects and universal compatibility
-
-### Venv
+### `venv`
 
 - Built-in virtual environment tool (Python 3.3+)
 - Creates isolated environments
+  ```bash
+  > python -m venv venv
+  > source venv/bin/activate  # macOS/Linux
+  ```
 
-```bash
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
-venv\Scripts\activate     # Windows
-```
 
-**Best for:** Standard lightweight environment isolation
-
-### Virtualenv
+### `virtualenv`
 
 - Older alternative to `venv`
 - More features
 - Slightly faster environment creation
-
-```bash
-pip install virtualenv
-virtualenv myenv
-```
-
-**Best for:** Legacy systems or advanced isolation needs
+  ```bash
+  > pip install virtualenv
+  > virtualenv myenv
+  ```
 
 ## Modern Dependency and Environment Managers
 
-### Pipenv
-
+### `pipenv`
 - Combines `pip` + `venv`
 - Uses `Pipfile` and `Pipfile.lock`
 - Automatic virtual environment management
-
-```bash
-pipenv install requests
-pipenv shell
-```
-
-**Best for:** Simple dependency + environment workflows
+  ```bash
+  > pipenv install requests
+  > pipenv shell
+  ```
 
 ### Poetry
 
@@ -89,63 +79,52 @@ pipenv shell
 - Uses `pyproject.toml`
 - Built-in dependency resolution
 - Handles packaging and publishing
-
-```bash
-poetry init
-poetry add requests
-poetry shell
-```
-
-**Best for:** Modern applications, libraries, and production projects
+  ```bash
+  > poetry init
+  > poetry add requests
+  > poetry shell
+  ```
 
 ### Conda
 
 - Cross-language package + environment manager
 - Popular in data science
 - Manages Python versions
+  ```bash
+  > conda create -n myenv python=3.11
+  > conda activate myenv
+  > conda install numpy
+  ```
 
-```bash
-conda create -n myenv python=3.11
-conda activate myenv
-conda install numpy
-```
-
-**Best for:** Data science and scientific computing
+- **Best for**: Data science and scientific computing
 
 ### Mamba
 
 - Faster alternative to conda
 - Same commands
 - Faster dependency solver
+  ```bash
+  > mamba create -n myenv python=3.11
+  ```
 
-```bash
-mamba create -n myenv python=3.11
-```
-
-**Best for:** Large scientific environments
-
-## Lightweight and Emerging Tools
+- **Best for**: Large scientific environments
 
 ### `uv`
 
 - Extremely fast Rust-based package manager
 - Drop-in `pip` replacement
 - Can manage virtual environments
-
-```bash
-> uv venv
-> uv pip install requests
-```
+  ```bash
+  > uv venv
+  > uv pip install requests
+  ```
 
 ### `pipx`
 
 - Installs Python CLI tools globally in isolated environments
-
-```bash
-pipx install black
-```
-
-**Best for:** Installing developer CLI tools safely
+  ```bash
+  > pipx install black
+  ```
 
 ## Comparison Overview
 
@@ -160,13 +139,3 @@ pipx install black
 | mamba      | Yes              | Yes          | No       | Yes                 | Large scientific environments|
 | uv         | Yes              | Yes          | Yes      | No                  | Fast modern workflows        |
 | pipx       | Yes              | Auto         | No       | No                  | Installing CLI tools         |
-
-## Conclusion
-
-The Python package management landscape has evolved significantly, offering
-solutions for every use case. For simple projects, `pip` and `venv` remain
-reliable choices. Modern development workflows benefit from tools like Poetry or
-uv, which provide integrated dependency management and environment isolation.
-Data scientists should consider Conda or Mamba for their cross-language support
-and scientific package ecosystems. Choose the tool that matches your project's
-complexity and performance requirements.

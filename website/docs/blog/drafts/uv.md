@@ -16,16 +16,20 @@ faster.
 
 ## Introduction
 
-In this tutorial, we'll explore why `uv` is becoming the go-to package manager
-for Python developers and how to use it effectively in your projects.
+- This tutorial explores why `uv` is becoming the go-to package manager for
+  Python developers and how to use it effectively
 
-Python's packaging ecosystem has long been criticized for its complexity and
-speed. `uv` addresses these pain points by providing a unified, fast, and
-modern solution for dependency management and virtual environment handling.
+- Python's packaging ecosystem challenges:
+  - Long criticized for complexity
+  - Slow performance
+
+- `uv` addresses these pain points:
+  - Unified solution
+  - Fast performance
+  - Modern dependency management
+  - Efficient virtual environment handling
 
 ## Why UV?
-
-`uv` stands out for several compelling reasons:
 
 - **Speed**: Written in Rust with highly optimized algorithms, `uv` is 10-100x
   faster than `pip` for dependency resolution and installation
@@ -51,8 +55,6 @@ Here's a speed comparison for installing packages:
 | `uv pip install`   | 0.3            | Subsequent install (cached) |
 
 ## Installation
-
-- Installing `uv` is straightforward across all platforms.
 
 - On macOS and Linux using the official installer:
 
@@ -84,7 +86,7 @@ Here's a speed comparison for installing packages:
 
 ### Creating a Virtual Environment
 
-- The simplest way to start is creating a virtual environment:
+- Create a virtual environment:
   ```bash
   > uv venv
   Using CPython 3.14.2 interpreter at: /opt/homebrew/opt/python@3.14/bin/python3.14
@@ -181,7 +183,7 @@ Here's a speed comparison for installing packages:
 
 ### Initializing a New Project
 
-- `uv` includes project scaffolding capabilities:
+- Create a new project with scaffolding:
 
   ```bash
   > uv init myproject
@@ -196,30 +198,30 @@ Here's a speed comparison for installing packages:
 
 ### Dev vs Prod Dependencies
 
-- Production Dependencies are required to **run** your application in production
-- In `pyproject.toml`:
-  ```
-  [project]
-  dependencies = [
-    "fastapi"
-  ]
-  ```
+- Production Dependencies = required to run your application in production
+  - In `pyproject.toml`:
+    ```
+    [project]
+    dependencies = [
+      "fastapi"
+    ]
+    ```
 
-- Development Dependencies are needed only for **development** (testing, linting, formatting)
-  and not required in production
-- E.g., `pytest`
-
-- In `pyproject.toml`:
-  ```
-  [project.optional-dependencies]
-  dev = [
-    "pytest"
-  ]
-  ```
+- Development Dependencies = needed only for development (testing, linting,
+  formatting)
+  - Not required in production
+  - Example: `pytest`
+  - In `pyproject.toml`:
+    ```
+    [project.optional-dependencies]
+    dev = [
+      "pytest"
+    ]
+    ```
 
 ### Working with pyproject.toml
 
-- `uv` uses `pyproject.toml` for modern Python project management:
+- Example `pyproject.toml` configuration:
 
   ```toml
   [project]
@@ -302,8 +304,6 @@ Here's a speed comparison for installing packages:
 
 ### Python Version Management
 
-- `uv` can manage Python installations
-
 - List available Python versions:
 
   ```bash
@@ -363,8 +363,6 @@ Here's a speed comparison for installing packages:
   ```
 
 ### Caching
-
-- `uv` maintains a global cache for package downloads
 
 - Show cache information:
 
@@ -507,14 +505,14 @@ Here's a speed comparison for installing packages:
 
 ### Resolving Conflicts
 
-- If you encounter dependency conflicts, `uv` provides detailed error messages:
+- `uv` provides detailed error messages for dependency conflicts:
 
   ```bash
   > uv pip install package1 package2
   ```
 
-  - The resolver will show exactly which constraints conflict and suggest
-    resolutions
+  - Shows exactly which constraints conflict
+  - Suggests resolutions
 
 ### Pre-release Versions
 
@@ -543,7 +541,7 @@ Here's a speed comparison for installing packages:
 
 ### Docker Integration
 
-- Use `uv` in a Dockerfile for faster builds:
+- Example Dockerfile using `uv`:
 
   ```dockerfile
   FROM python:3.11-slim
@@ -565,7 +563,7 @@ Here's a speed comparison for installing packages:
 
 ### CI/CD Integration
 
-- Use `uv` in GitHub Actions:
+- Example GitHub Actions workflow:
 
   ```yaml
   - name: Install uv
@@ -583,7 +581,7 @@ Here's a speed comparison for installing packages:
 
 ### Pre-commit Hooks
 
-- Add `uv` to pre-commit configuration:
+- Example pre-commit configuration:
 
   ```yaml
   repos:
@@ -626,13 +624,13 @@ Here's a speed comparison for installing packages:
 
 ### Private Package Indexes
 
-- For private PyPI mirrors, configure authentication:
+- Configure authentication for private PyPI mirrors:
 
   ```bash
   > export UV_INDEX_URL="https://user:token@private-index.example.com/simple"
   ```
 
-  - Or use keyring integration for secure credential storage
+  - Alternative: use keyring integration for secure credential storage
 
 ## Comparison with Other Tools
 
@@ -663,22 +661,3 @@ Here's a speed comparison for installing packages:
 | Ease of use    | Higher   | Medium    |
 | Compatibility  | Excellent | Excellent |
 | Maintenance    | Active   | Active    |
-
-## Conclusion
-
-`uv` represents a significant leap forward in Python package management. Its
-combination of speed, simplicity, and modern design makes it an essential tool
-for Python developers.
-
-The transition from traditional tools like `pip` and `virtualenv` is seamless,
-and the performance gains are immediately noticeable. Whether you're working on
-a small script or a large application, `uv` streamlines dependency management
-and reduces friction in the development workflow.
-
-Start with the basics like `uv venv` and `uv pip install`, then gradually
-explore advanced features like project management and Python version handling.
-The time you save on package operations will compound quickly, and the improved
-reliability of dependency resolution will prevent headaches down the road.
-
-Install `uv` today and experience Python package management done right. Your
-development workflow will be faster, simpler, and more reliable.
