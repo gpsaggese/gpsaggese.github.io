@@ -441,8 +441,6 @@ The layout of each project should follow the examples in:
   [`open_ai` tutorial](https://github.com/causify-ai/tutorials/tree/master/tutorial_openai)
 - Example for
   [`github` tutorial (class_style)](https://github.com/causify-ai/tutorials/tree/master/docker_template_example)
-- Example for
-  [`github` tutorial (causify_style)](https://github.com/causify-ai/tutorials/tree/master/tutorial_github_causify_style)
 
 - Note that the tutorials from `DATA605` class are built using a simpler approach
   for `Docker` and `bash` (e.g., `bash` scripts instead of `Python` code)
