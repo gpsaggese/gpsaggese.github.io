@@ -15,7 +15,7 @@ if [[ ! -d $DIR_NAME ]]; then
 fi;
 
 # Install extensions.
-sudo jupyter contrib nbextension install
+jupyter contrib nbextension install
 
 # Enable extensions.
 extensions="

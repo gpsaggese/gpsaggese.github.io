@@ -59,8 +59,8 @@ RUN pip3 install filterpy
 RUN mkdir /install
 
 # Install Jupyter extensions.
-ADD install_jupyter_extensions.sh /install
-RUN /install/install_jupyter_extensions.sh
+#ADD install_jupyter_extensions.sh /install
+#RUN /install/install_jupyter_extensions.sh
 
 # Config.
 ADD etc_sudoers /install/
