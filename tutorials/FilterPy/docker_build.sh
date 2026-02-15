@@ -16,4 +16,5 @@ source $SCRIPT_DIR/docker_name.sh
 # Build container.
 export DOCKER_BUILDKIT=1
 #export DOCKER_BUILDKIT=0
+#build_container_image --no-cache
 build_container_image

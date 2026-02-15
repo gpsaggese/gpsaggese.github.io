@@ -1,7 +1,9 @@
 #!/bin/bash -xe
 
-jupyter-notebook \
+jupyter lab \
     --port=8888 \
-    --no-browser --ip=0.0.0.0 \
+    --no-browser \
+    --ip=0.0.0.0 \
     --allow-root \
-    --NotebookApp.token='' --NotebookApp.password=''
+    --ServerApp.token='' \
+    --ServerApp.password=''
