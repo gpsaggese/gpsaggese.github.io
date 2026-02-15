@@ -21,7 +21,6 @@
 - [`tutorial_langgraph`](https://github.com/causify-ai/tutorials/tree/master/tutorial_langgraph)
 - [`tutorial_openai`](https://github.com/causify-ai/tutorials/tree/master/tutorial_openai)
 - [`tutorial_prophet`](https://github.com/causify-ai/tutorials/tree/master/tutorial_prophet)
-- [`tutorial_github_causify_style`](https://github.com/gpsaggese/umd_classes/tree/master/class_project/docker_causify_style)
 
 If you see any problem in the tutorials (code or video), pls send an email to me
 with your TAs in cc. To make this more interesting, there might be (or maybe

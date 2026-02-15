@@ -176,13 +176,7 @@
   - Copy the template files to the project directory (choose one of the example
     tutorials as a starting point):
     ```bash
-    # Option 1: Use the simple DATA605-style template (recommended for beginners)
     > cp -r ~/src/umd_classes1/class_project/docker_template_example/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
-
-    # Option 2: Use the advanced Causify-style template
-    > cp -r ~/src/umd_classes1/class_project/docker_causify_style/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
-
-    > cd ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
     ```
   - Start working on the files
 
@@ -239,42 +233,6 @@ development.
     the scripts
   - Bash scripts are difficult to maintain and error prone
 
-### `docker_common`
-
-- This approach is an evolution of the `docker_template` approach
-  - It uses the same conceptual interface (e.g., `docker_build.sh`, ...)
-  - The scripts share code with `class_project/docker_common/utils.sh`
-  - The scripts that are not changed use symbolic links to avoid copy-paste
-
-- Example
-  - `class_project/docker_common`
-
-- To use it:
-  ```
-  > class_project/docker_common/copy_docker_files.py --dst_dir ...
-  > ./dev_scripts_helpers/system_tools/create_links.py ...
-  ```
-
-- Pros
-  - There is some common / shared code even if they are bash scripts
-
-- Cons
-  - Bash scripts are difficult to maintain and error prone
-
-### Causify Dev System
-
-- You need to model your runnable dir after class_project/docker_causify_style/
-  ```
-  > cp -r class_project/docker_causify_style/ ...
-  ```
-
-- Pros
-  - Reusable and standardized
-  - Python
-
-- Cons
-  - More complex to set up
-
 ## Working on the Project
 
 ### Project Goal
@@ -292,8 +250,8 @@ development.
 
 ### Understanding the Deliverables
 
-- Use the example tutorial projects in `docker_template_example` or
-  `docker_causify_style` to understand the deliverables and the coding
+- Use the example tutorial projects in `docker_template_example`
+  to understand the deliverables and the coding
   style. They consist of:
 
 - **Utils Module**:
