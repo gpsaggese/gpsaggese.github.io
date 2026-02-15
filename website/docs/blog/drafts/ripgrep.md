@@ -14,12 +14,10 @@ speed.
 <!-- more -->
 
 ## Introduction
-
 - In this tutorial, we'll explore why `ripgrep` is my search tool and how to use
   it effectively
 
 ## Why Ripgrep?
-
 - `ripgrep` stands out for several compelling reasons:
   - **Speed**: Written in Rust with highly optimized algorithms, `ripgrep` is
     often 5-10x faster than alternatives
@@ -42,7 +40,6 @@ speed.
   | `rg`      | 0.4            | Ripgrep with default settings |
 
 ## Installation
-
 - Installing `ripgrep` is straightforward across all platforms
 
 - On macOS using Homebrew:
@@ -61,7 +58,6 @@ speed.
   ```
 
 ## Basic Usage
-
 - The simplest `ripgrep` command searches for a pattern in the current
   directory:
   ```bash
@@ -91,7 +87,6 @@ speed.
   ```
 
 ## Understanding the Output
-
 - `ripgrep` output is designed for clarity:
   ```bash
   > rg "def calculate"
@@ -113,7 +108,6 @@ speed.
 ## Advanced Features
 
 ### File Type Filtering
-
 - `ripgrep` understands common file types:
   ```bash
   > rg "pattern" -t py
@@ -131,7 +125,6 @@ speed.
   ```
 
 ### Context Lines
-
 - Show lines before and after matches:
   ```bash
   > rg "pattern" -C 3
@@ -148,7 +141,6 @@ speed.
   ```
 
 ### Search Only Filenames
-
 - List files containing matches without showing the matches:
   ```bash
   > rg "pattern" -l
@@ -160,7 +152,6 @@ speed.
   ```
 
 ### Multiline Search
-
 - Search across multiple lines:
   ```bash
   > rg -U "pattern1.*pattern2"
@@ -168,7 +159,6 @@ speed.
   The `-U` flag enables multiline mode where `.` matches newlines
 
 ### Word Boundaries
-
 - Match whole words only:
   ```bash
   > rg -w "word"
@@ -178,28 +168,24 @@ speed.
 ## Practical Examples
 
 ### Find All TODO Comments
-
 - Find all TODO comments:
   ```bash
   > rg "TODO|FIXME|XXX" -t py
   ```
 
 ### Search for Function Definitions
-
 - Search for function definitions:
   ```bash
   > rg "^def \w+\(" -t py
   ```
 
 ### Find All Imports of a Module
-
 - Find all imports of a module:
   ```bash
   > rg "^import pandas|^from pandas" -t py
   ```
 
 ### Search in Git History
-
 - Combine with `git` to search across all branches:
   ```bash
   > git grep "pattern" $(git rev-list --all)
@@ -211,7 +197,6 @@ speed.
   ```
 
 ### Find Large Files with Pattern
-
 - Find large files with pattern:
   ```bash
   > rg "pattern" --stats
@@ -219,7 +204,6 @@ speed.
   The `--stats` flag shows per-file statistics including file sizes searched
 
 ## Configuration and Customization
-
 - Create a configuration file at `~/.ripgreprc`:
   ```bash
   # Always show line numbers
@@ -241,7 +225,6 @@ speed.
 ## Tips and Tricks
 
 ### Ignore Additional Patterns
-
 - Create a `.rgignore` file in your project root:
   ```text
   # Ignore build artifacts
@@ -255,7 +238,6 @@ speed.
   ```
 
 ### Search Hidden Files
-
 - By default, `ripgrep` skips hidden files
 - Include them:
   ```bash
@@ -263,21 +245,18 @@ speed.
   ```
 
 ### Search All Files Including Ignored
-
 - Override `.gitignore` and search everything:
   ```bash
   > rg "pattern" --no-ignore
   ```
 
 ### Replace Text Across Files
-
 - While `ripgrep` doesn't replace text, combine it with `sed`:
   ```bash
   > rg "old_pattern" -l | xargs sed -i 's/old_pattern/new_pattern/g'
   ```
 
 ### Count Matches
-
 - Count occurrences of a pattern:
   ```bash
   > rg "pattern" -c
@@ -291,7 +270,6 @@ speed.
 ## Common Gotchas
 
 ### Pattern Escaping
-
 - Special regex characters need escaping:
   ```bash
   > rg "function\(\)"  # Match "function()"
@@ -299,7 +277,6 @@ speed.
   ```
 
 ### Binary Files
-
 - `ripgrep` skips binary files by default
 - To search them:
   ```bash
@@ -307,7 +284,6 @@ speed.
   ```
 
 ### Symbolic Links
-
 - By default, `ripgrep` doesn't follow symbolic links
 - To follow them:
   ```bash
@@ -317,7 +293,6 @@ speed.
 ## Integration with Development Tools
 
 ### Vim Integration
-
 - Add to `.vimrc`:
   ```vim
   set grepprg=rg\ --vimgrep
@@ -331,7 +306,6 @@ speed.
   ```
 
 ### VS Code Integration
-
 - VS Code uses `ripgrep` by default for file searching
 - Configure search exclusions in `settings.json`:
   ```json
@@ -344,7 +318,6 @@ speed.
   ```
 
 ### Command Line Aliases
-
 - Add useful aliases to your shell configuration:
   ```bash
   # Search Python files
@@ -358,7 +331,6 @@ speed.
   ```
 
 ## Comparison with Other Tools
-
 Ripgrep vs grep:
 
 | Feature                    | ripgrep | grep    |
