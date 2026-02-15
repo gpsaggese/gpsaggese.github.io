@@ -13,7 +13,6 @@ set -e
 export JUPYTER_HOST_PORT=8888
 export JUPYTER_USE_VIM=0
 export TARGET_DIR=""
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_DIR=.
 export VERBOSE=0
 

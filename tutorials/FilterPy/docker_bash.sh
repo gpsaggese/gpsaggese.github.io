@@ -6,15 +6,22 @@ set -e
 # Print each command to stdout before executing it.
 set -x
 
-# Source Docker image naming configuration.
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source $SCRIPT_DIR/docker_name.sh
+# Import the utility functions.
+GIT_ROOT=$(git rev-parse --show-toplevel)
+source $GIT_ROOT/class_project/project_template/utils.sh
 
-docker image ls $FULL_IMAGE_NAME
+# Execute the script setting the vars for this tutorial.
+get_docker_vars_script ${BASH_SOURCE[0]}
+source $DOCKER_NAME
+print_docker_vars
 
-CONTAINER_NAME=$IMAGE_NAME
-docker run --rm -ti \
+run "docker image ls $FULL_IMAGE_NAME"
+
+CONTAINER_NAME=${IMAGE_NAME}_bash
+PORT=8889
+cmd="docker run --rm -ti \
     --name $CONTAINER_NAME \
-    -p 8888:8888 -p 5432:5432 \
+    -p $PORT:$PORT \
     -v $(pwd):/data \
-    $FULL_IMAGE_NAME
+    $FULL_IMAGE_NAME"
+run $cmd

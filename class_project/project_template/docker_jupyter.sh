@@ -13,6 +13,7 @@ set -e
 export JUPYTER_HOST_PORT=8888
 export JUPYTER_USE_VIM=0
 export TARGET_DIR=""
+TARGET_DIR=.
 export VERBOSE=0
 
 OLD_CMD_OPTS=$@
@@ -41,7 +42,7 @@ source $DOCKER_NAME
 print_docker_vars
 
 # Run the script.
-DOCKER_RUN_OPTS="-p $JUPYTER_HOST_PORT:$JUPYTER_HOST_PORT"
+DOCKER_RUN_OPTS="-p $JUPYTER_HOST_PORT:8888"
 if [[ $TARGET_DIR != "" ]]; then
     DOCKER_RUN_OPTS="$DOCKER_RUN_OPTS -v $TARGET_DIR:/data"
 fi;
