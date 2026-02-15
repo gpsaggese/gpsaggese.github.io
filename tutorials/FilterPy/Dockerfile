@@ -13,7 +13,7 @@ RUN apt install -y --no-install-recommends \
     git \
     vim
 
-# Install Python and build deps (venv requires python3-venv on Debian/Ubuntu)
+# Install Python and build deps (venv requires python3-venv on Debian/Ubuntu).
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     python3 \
@@ -22,38 +22,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-# Create virtual environment
+# Create virtual environment.
 RUN python3 -m venv /opt/venv
 
-# Make the venv the default Python
+# Make the venv the default Python.
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Upgrade pip inside the venv
+# Upgrade pip inside the venv.
 RUN python -m pip install --upgrade pip
 
-# Install uv
+# Install uv, if needed.
 #RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 #ENV PATH="/root/.local/bin:$PATH"
 #COPY pyproject.toml uv.lock /app/
 #RUN uv sync
     
-# Install Python packages.
-# There is a bug:
-#   File "/opt/homebrew/lib/python3.10/site-packages/tornado/iostream.py", line 182, in advance
-#   assert 0 < size <= self._size
-# for tornado==6.2 and jupyter-client==8.0.2.
-# https://discourse.jupyter.org/t/jupyter-notebook-zmq-message-arrived-on-closed-channel-error/17869/10
-#RUN pip3 install \
-#    ipython \
-#    tornado==6.1 \
-#    jupyter-client==7.3.2 \
-#    jupyter-contrib-core \
-#    jupyter-contrib-nbextensions \
-#    yapf
-
+# Install Jupyter.
 RUN pip3 install jupyterlab
 
-# Install packages with pip install.
+# Install project specific packages.
 RUN pip3 install filterpy
 
 RUN mkdir /install

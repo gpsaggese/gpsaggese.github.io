@@ -9,11 +9,10 @@ set -x
 GIT_ROOT=$(git rev-parse --show-toplevel)
 source $GIT_ROOT/class_project/docker_common/utils.sh
 
-# Source Docker image naming configuration.
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source $SCRIPT_DIR/docker_name.sh
+# Execute the script setting the vars for this tutorial.
+get_docker_vars_script ${BASH_SOURCE[0]}
+source $DOCKER_NAME
+print_docker_vars
 
-# Build container.
-#export DOCKER_BUILDKIT=1
-export DOCKER_BUILDKIT=0
-build_container_image
+# Remove the container image.
+remove_container_image
