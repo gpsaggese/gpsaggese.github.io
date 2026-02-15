@@ -1,10 +1,9 @@
-# project_template
-
-This directory contains a Docker-based development environment template with utility
-scripts, configuration files, and Jupyter notebook templates for machine learning projects.
+# Project Template
+This directory contains a Docker-based development environment template with
+utility scripts, configuration files, and Jupyter notebook templates for machine
+learning projects.
 
 ## Description of Files
-
 - `bashrc`
   - Bash configuration file enabling vi mode for command-line editing
 
@@ -13,10 +12,12 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
     directories
 
 - `docker_build.version.log`
-  - Log file containing Python, pip, Jupyter, and package version information from Docker build
+  - Log file containing Python, pip, Jupyter, and package version information
+    from Docker build
 
 - `docker_cmd.sh`
-  - Shell script for executing arbitrary commands inside Docker containers with volume mounting
+  - Shell script for executing arbitrary commands inside Docker containers with
+    volume mounting
 
 - `docker_jupyter.sh`
   - Shell script for launching Jupyter Lab server inside Docker containers
@@ -25,16 +26,20 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   - Configuration file defining Docker repository and image naming variables
 
 - `Dockerfile`
-  - Docker image build configuration with Ubuntu, Python, Jupyter, and project dependencies
+  - Docker image build configuration with Ubuntu, Python, Jupyter, and project
+    dependencies
 
 - `etc_sudoers`
-  - Sudoers configuration file granting passwordless sudo access for postgres user
+  - Sudoers configuration file granting passwordless sudo access for postgres
+    user
 
 - `README.md`
-  - Documentation file describing directory contents, files, and executable scripts
+  - Documentation file describing directory contents, files, and executable
+    scripts
 
 - `template_utils.py`
-  - Python utility functions supporting tutorial notebooks with data processing and modeling helpers
+  - Python utility functions supporting tutorial notebooks with data processing
+    and modeling helpers
 
 - `template.API.ipynb`
   - Jupyter notebook template for API exploration and library usage examples
@@ -48,10 +53,10 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
 ## Description of Executables
 
 ### `copy_docker_files.py`
-
 - **What It Does**
 
-- Copies Docker configuration and utility files from project_template to a destination directory
+- Copies Docker configuration and utility files from project_template to a
+  destination directory
 - Preserves all file permissions and attributes during copying
 - Creates destination directory if it doesn't exist
 
@@ -66,7 +71,6 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   ```
 
 ### `docker_bash.sh`
-
 - **What It Does**
   - Launches an interactive bash shell inside a Docker container
   - Mounts the current working directory as `/data` inside the container
@@ -78,10 +82,10 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   ```
 
 ### `docker_build.sh`
-
 - **What It Does**
   - Builds Docker container images using Docker BuildKit
-  - Supports single-architecture builds (default) or multi-architecture builds (linux/arm64, linux/amd64)
+  - Supports single-architecture builds (default) or multi-architecture builds
+    (`linux/arm64`, `linux/amd64`)
   - Copies project files to temporary build directory and generates build logs
 
 - Build container image for current architecture:
@@ -89,14 +93,14 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   > ./docker_build.sh
   ```
 
-- Build multi-architecture image (requires setting DOCKER_BUILD_MULTI_ARCH=1 in the script):
+- Build multi-architecture image (requires setting `DOCKER_BUILD_MULTI_ARCH=1` in
+  the script):
   ```bash
   > # Edit docker_build.sh to set DOCKER_BUILD_MULTI_ARCH=1
   > ./docker_build.sh
   ```
 
 ### `docker_clean.sh`
-
 - **What It Does**
 
 - Removes all Docker images matching the project's full image name
@@ -109,7 +113,6 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   ```
 
 ### `docker_cmd.sh`
-
 - **What It Does**
   - Executes arbitrary commands inside a Docker container
   - Mounts current directory as `/data` for accessing project files
@@ -131,9 +134,9 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   ```
 
 ### `docker_exec.sh`
-
 - **What It Does**
-  - Attaches to an already running Docker container with an interactive bash shell
+  - Attaches to an already running Docker container with an interactive bash
+    shell
   - Finds the container ID automatically based on the image name
   - Useful for debugging or inspecting running containers
 
@@ -143,10 +146,10 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   ```
 
 ### `docker_jupyter.sh`
-
 - **What It Does**
   - Launches Jupyter Lab server inside a Docker container
-  - Supports custom port configuration (default 8888), vim keybindings, and custom directory mounting
+  - Supports custom port configuration (default 8888), vim keybindings, and
+    custom directory mounting
   - Runs `run_jupyter.sh` script inside the container with specified options
 
 - Start Jupyter on default port 8888:
@@ -170,9 +173,9 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   ```
 
 ### `docker_push.sh`
-
 - **What It Does**
-  - Authenticates to Docker registry using credentials from `~/.docker/passwd.$REPO_NAME.txt`
+  - Authenticates to Docker registry using credentials from
+    `~/.docker/passwd.$REPO_NAME.txt`
   - Pushes the project's Docker image to the remote repository
   - Lists images before pushing for verification
 
@@ -182,10 +185,10 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   ```
 
 ### `install_jupyter_extensions.sh`
-
 - **What It Does**
   - Installs Jupyter contrib nbextensions and enables productivity extensions
-  - Configures extensions including autosave, code prettify, collapsible headings, execute time, and vim bindings
+  - Configures extensions including autosave, code prettify, collapsible
+    headings, execute time, and vim bindings
   - Creates Jupyter configuration files and data directories
 
 - Install and configure Jupyter extensions:
@@ -194,9 +197,9 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   ```
 
 ### `run_jupyter.sh`
-
 - **What It Does**
-  - Launches Jupyter Lab server with no authentication (token and password disabled)
+  - Launches Jupyter Lab server with no authentication (token and password
+    disabled)
   - Binds to all network interfaces (0.0.0.0) on port 8888
   - Allows root access for container environments
 
@@ -206,11 +209,13 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   ```
 
 ### `utils.sh`
-
 - **What It Does**
-  - Provides reusable bash functions for Docker operations (not meant to be executed directly)
-  - Includes functions for building, removing, pushing, pulling images, and managing containers
-  - Sources configuration from `docker_name.sh` to set repository and image names
+  - Provides reusable bash functions for Docker operations (not meant to be
+    executed directly)
+  - Includes functions for building, removing, pushing, pulling images, and
+    managing containers
+  - Sources configuration from `docker_name.sh` to set repository and image
+    names
 
 - This is a utility library sourced by other scripts:
   ```bash
@@ -219,7 +224,6 @@ scripts, configuration files, and Jupyter notebook templates for machine learnin
   ```
 
 ### `version.sh`
-
 - **What It Does**
   - Reports version information for Python3, pip3, and Jupyter
   - Lists all installed Python packages with versions
