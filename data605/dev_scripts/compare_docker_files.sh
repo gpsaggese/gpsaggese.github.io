@@ -21,8 +21,8 @@ do
 done;
 
 if [[ 0 == 1 ]]; then
-    ln -sf ../../docker_common/bashrc $DST_DIR
-    ln -sf ../../docker_common/etc_sudoers $DST_DIR
-    ln -sf ../../docker_common/install_jupyter_extensions $DST_DIR
-    ln -sf ../../docker_common/version.sh $DST_DIR
+    ln -sf ../../project_template/bashrc $DST_DIR
+    ln -sf ../../project_template/etc_sudoers $DST_DIR
+    ln -sf ../../project_template/install_jupyter_extensions $DST_DIR
+    ln -sf ../../project_template/version.sh $DST_DIR
 fi;

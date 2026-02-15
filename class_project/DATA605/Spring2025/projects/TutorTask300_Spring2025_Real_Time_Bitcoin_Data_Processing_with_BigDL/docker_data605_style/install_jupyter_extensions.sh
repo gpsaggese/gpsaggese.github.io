@@ -1,1 +1,1 @@
-../../../../../docker_common/install_jupyter_extensions.sh
+../../../../../project_template/install_jupyter_extensions.sh
