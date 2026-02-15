@@ -1,14 +1,21 @@
+# Summary
+
+This tutorial demonstrates Docker Compose fundamentals through a practical Flask
+application example with Redis backend, covering service orchestration, container
+management, and multi-container application lifecycle
+
 # Docker Compose Tutorial
 
 ## Files
 
-- This example is a simple Flask app that counts the number of times a page is loaded,
-  using a Redis backend as storage
+- This example is a simple Flask app that counts the number of times a page is
+  loaded using a Redis backend as storage
 
 - In this dir there is a service composed of two Docker containers
-  - one container with an app
-  - one container with Redis (a key-store DB)
-- The two containers are orchestrated through Docker-compose
+  - One container with an app
+  - One container with Redis (a key-store DB)
+
+- The two containers are orchestrated through Docker Compose
 
   ```bash
   > echo $GIT_ROOT
@@ -24,7 +31,7 @@
   ```
 
 - Take a look at each file with
-  ```
+  ```bash
   > vi docker-compose.yml Dockerfile app.py requirements.txt
   ```
 
@@ -105,7 +112,7 @@
   ```
 
 - The packages installed in the app container are:
-  ```
+  ```bash
   > cat requirements.txt
   flask
   redis
@@ -143,17 +150,19 @@
   if __name__ == "__main__":
       app.run(host="0.0.0.0", debug=True)
   ```
+
 - There is a Redis cache running at port `6379` that stores the state of the
   application
 
 ## Clean up images
 
 - No containers associated to this service are running
-  ```
+  ```bash
   > docker compose ps
   NAME                COMMAND             SERVICE             STATUS              PORTS
   ```
-- Note that if containers are running with those images, you can't delete the
+
+- Note that if containers are running with those images, you cannot delete the
   images, but you need to kill the containers first
 
 - Clean up the images from previous executions
@@ -236,12 +245,13 @@
   ```
 
 - Docker Compose file is declarative
-- `docker compose up` automatically builds/pulls needed images that are not
+
+- `docker compose up` automatically builds and pulls needed images that are not
   available
   - Builds or pulls the images
   - Creates the networks and volumes first, since these resources are consumed by
     the services
-    - Volumes are created only if they don't exist otherwise are recycled
+    - Volumes are created only if they do not exist otherwise are recycled
     - This is the declarative part
   - Starts all the required containers
 
@@ -287,24 +297,26 @@
 ## Check the status
 
 - The previous shell shows the `docker compose up` process
+
 - You need to create another shell (e.g., with `tmux`) and go to the same dir
   ```bash
   > cd ~/src/umd_data605_1/tutorials/tutorial_docker_compose/counter_app
   ```
 
-- Let's check what Docker did:
+- Check what Docker did:
   ```bash
   > docker compose ps
   NAME                   COMMAND                  SERVICE             STATUS              PORTS
   counter_app-redis-1    "docker-entrypoint.s…"   redis               running             6379/tcp
   counter_app-web-fe-1   "python app.py"          web-fe              running             0.0.0.0:5000->5001/tcp
   ```
-  - The Docker objects are named by Compose as the project name (i.e., build context
-    dir `counter_app`) and resource name (i.e., `redis-1`, `web-fe-1`)
-  - You can see the entry points, the name of the services, the status, and the ports
-  
-- You can check each container, since Docker Compose is just a wrapper around Docker
-  commands:
+  - The Docker objects are named by Compose as the project name (i.e., build
+    context dir `counter_app`) and resource name (i.e., `redis-1`, `web-fe-1`)
+  - You can see the entry points, the name of the services, the status, and the
+    ports
+
+- You can check each container, since Docker Compose is just a wrapper around
+  Docker commands:
   ```bash
   > docker container ls
   CONTAINER ID   IMAGE                COMMAND                  CREATED         STATUS         PORTS                     NAMES
@@ -334,21 +346,24 @@
 
 ## Interact with the app
 
-- The app is running, if you go to your browse to `http://localhost:5001/`
-  ```
+- The app is running, if you go to your browser at `http://localhost:5001/`
+  ```verbatim
   You've visited me 1 times.
   ```
+
 - If you refresh the counter goes up
-- You can check in the log of the service that requests are happening or the main
-  window where the app is running
-  ```
+
+- You can check in the log of the service that requests are happening or the
+  main window where the app is running
+  ```bash
   > docker compose logs
   counter_app-web-fe-1  |  * Debugger PIN: 202-780-491
   counter_app-web-fe-1  | 172.22.0.1 - - [10/Mar/2024 10:51:02] "GET / HTTP/1.1" 200 -
   counter_app-web-fe-1  | 172.22.0.1 - - [10/Mar/2024 10:51:02] "GET /favicon.ico HTTP/1.1" 404 -
   counter_app-web-fe-1  | 172.22.0.1 - - [10/Mar/2024 10:51:05] "GET / HTTP/1.1" 200 -
   ```
-- You will see a `HTTP GET` every time there is a refresh
+
+- You will see an `HTTP GET` every time there is a refresh
 
 - You can list the processes running inside each container with:
   ```bash
@@ -373,23 +388,26 @@
   Container counter_app-web-fe-1   Removed
   Network counter_app_counter-net  Removed
   ```
-- If you check the status with `docker compose ps` and directly with `docker` you
-  can verify that the Docker objects disappeared
+
+- If you check the status with `docker compose ps` and directly with `docker`
+  you can verify that the Docker objects disappeared
   ```bash
   > docker compose ps
   NAME                IMAGE               COMMAND             SERVICE             CREATED             STATUS              PORTS
   ```
-  - The volumes and the images are persisted, but not the containers and the networks
+  - The volumes and the images are persisted, but not the containers and the
+    networks
 
-- If you go to the browser and refresh, you should get an error, since the app is
-  not serving
+- If you go to the browser and refresh, you should get an error, since the app
+  is not serving
   ```verbatim
   This site can’t be reached
   localhost refused to connect.
   ```
 
 ## Other useful commands
-- You can also `pause` the service
+
+- You can also pause the service
   ```bash
   > docker compose pause
   [+] Running 2/0
@@ -401,7 +419,7 @@
   counter_app         paused(2)           /Users/saggese/src/umd_data605_1/tutorials/tutorial_docker_compose/counter_app/docker-compose.yml
   ```
 
-- If you `unpause`, the app restarts
+- If you unpause, the app restarts
   ```bash
   > docker compose unpause
   [+] Running 2/0
@@ -411,20 +429,20 @@
   > docker compose ls
   NAME                STATUS              CONFIG FILES
   counter_app         running(2)          /Users/saggese/src/umd_data605_1/tutorials/tutorial_docker_compose/counter_app/docker-compose.yml
-   ```
+  ```
 
-- `stop`, `start` are similar to `pause`/`unpause` but work at container level
-  insted of process level
+- `stop` and `start` are similar to pause and unpause but work at container
+  level instead of process level
 
-- E.g., `restart` recreates the containers
-  - The volumes are maintained so the state is not lost, it's like restarting the
-    computer, without deleting the disks
+- `restart` recreates the containers
+  - The volumes are maintained so the state is not lost
+  - This is like restarting the computer without deleting the disks
 
 - You can delete a stopped app with `docker compose rm`
-  - Still images and volumes are kept
+  - Images and volumes are still kept
 
 - To bring down the service and delete the volumes
-  ```
+  ```bash
   > docker-compose down -v
   [+] Running 4/4
   ✔ Container counter_app-web-fe-1   Removed        0.2s
