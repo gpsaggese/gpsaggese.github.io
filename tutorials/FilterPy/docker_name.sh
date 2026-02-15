@@ -3,5 +3,5 @@
 # This file is sourced by docker_*.sh scripts.
 
 REPO_NAME=gpsaggese
-IMAGE_NAME=umd_data605_FilterPy
+IMAGE_NAME=umd_tutorial_filterpy
 FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME

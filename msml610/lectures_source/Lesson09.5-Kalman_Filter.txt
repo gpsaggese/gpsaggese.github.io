@@ -35,6 +35,8 @@ MSML610: Advanced Machine Learning
 ## 1-D Kalman Filters
 ## #############################################################################
 
+// https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/04-One-Dimensional-Kalman-Filters.ipynb
+
 * Kalman Filter: Intuition and Interpretations
 - Extension of $g$–$h$ filters
   - $g$–$h$ uses fixed gains $g,h$ for position and velocity
@@ -212,6 +214,9 @@ MSML610: Advanced Machine Learning
 # ##############################################################################
 # Multivariate Kalman Filters
 # ##############################################################################
+
+// https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/05-Multivariate-Gaussians.ipynb
+// https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/06-Multivariate-Kalman-Filters.ipynb
 
 * Multivariate State
 - Often the state variable is multivariate, e.g.,

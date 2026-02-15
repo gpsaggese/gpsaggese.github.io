@@ -14,6 +14,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source $SCRIPT_DIR/docker_name.sh
 
 # Build container.
-#export DOCKER_BUILDKIT=1
-export DOCKER_BUILDKIT=0
+export DOCKER_BUILDKIT=1
+#export DOCKER_BUILDKIT=0
 build_container_image
