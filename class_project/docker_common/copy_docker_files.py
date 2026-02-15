@@ -4,7 +4,7 @@
 Copy Docker-related files from the source directory to a destination directory.
 
 This script copies all Docker configuration and utility files from
-class_project/docker_common/ to a specified destination directory.
+class_project/project_template/ to a specified destination directory.
 
 Usage examples:
     # Copy all files to a target directory.
@@ -15,7 +15,7 @@ Usage examples:
 
 Import as:
 
-import class_project.docker_common.copy_docker_files as cpdccodo
+import class_project.project_template.copy_docker_files as cpdccodo
 """
 
 import argparse
@@ -61,7 +61,7 @@ def _get_source_dir() -> str:
     """
     Get the absolute path to the source directory containing Docker files.
 
-    :return: absolute path to class_project/docker_common/
+    :return: absolute path to class_project/project_template/
     """
     # Get the directory where this script is located.
     script_dir = os.path.dirname(os.path.abspath(__file__))
