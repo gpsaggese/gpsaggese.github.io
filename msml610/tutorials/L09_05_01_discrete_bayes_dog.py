@@ -40,7 +40,7 @@ import L09_05_01_discrete_bayes_dog_utils as ut
 # !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet filterpy)"
 
 # %% [markdown]
-# # Tracking a Dog
+# # Cell 1: Tracking a Dog
 
 # %% [markdown]
 # ## Problem Definition
@@ -54,7 +54,10 @@ import L09_05_01_discrete_bayes_dog_utils as ut
 # - Can we find out where the dog is from consecutive measurements?
 
 # %% [markdown]
-# ## A Simple Example with Perfect Sensors
+# ## Dog with Door sensor
+
+# %% [markdown]
+# ### A Simple Example with Perfect Sensors
 
 # %%
 # At the beginning, we don't know where the dog is.
@@ -88,7 +91,7 @@ belief = np.array([0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 ut.plot_belief(belief)
 
 # %% [markdown]
-# ## Noisy Sensors
+# ### Noisy Sensors
 
 # %% [markdown]
 # - If the sensor is not reliable, it seemed that it's impossible to determine where the dog is
@@ -200,7 +203,10 @@ update(likelihood, belief)
 
 
 # %% [markdown]
-# ## Incorporating movement
+# ## Dog with Movement Sensor
+
+# %% [markdown]
+# ### Incorporating movement
 #
 # - Assume that the movement sensor is perfect
 # - If the dog has moved to the right, we need to shift the belief to the right
@@ -234,7 +240,7 @@ ut.plot_belief(new_belief)
 
 
 # %% [markdown]
-# ## Terminology
+# ### Terminology
 #
 # - system: what we are trying to model
 #     - E.g., the dog
@@ -244,7 +250,7 @@ ut.plot_belief(new_belief)
 # - process model: the dog moves one or more positions at each time st4ep
 
 # %% [markdown]
-# ## Adding Uncertainty to the Prediction
+# ### Adding Uncertainty to the Prediction
 #
 # - Assume that the sensor's movement measurement $z$ is
 #   - 80% to be correct
@@ -376,7 +382,7 @@ prior = predict(belief, offset=3, kernel=[0.05, 0.05, 0.6, 0.2, 0.1])
 ut.plot_beliefs(belief, prior)
 
 # %% [markdown]
-# ## Integrating Measurements and Updates
+# ### Integrating Measurements and Updates
 #
 # - Each prediction loses information / knowledge
 # - With each update we incorporate the measurement into the estimate, which improvoves knowledge
@@ -422,5 +428,17 @@ ut.plot_beliefs(prior3, posterior3, title1="Prior3", title2="Posterior3", y_lim=
 
 # %% [markdown]
 # # Cell 2: Bayes Dog Simulation
+
+# %%
+
+# %% [markdown]
+# - The dog:
+#   - Has only a door sensor
+#   - Runs around the hallway
+# - The green line is where the dog actually is
+# - Assume that there is no 
+
+# %%
+ut.cell2_interactive()
 
 # %%

@@ -8,11 +8,12 @@ import msml610.tutorials.L09_05_01_discrete_bayes_dog_utils as mtl00dbdu
 
 import copy
 import logging
-from typing import Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
 
+import helpers.hdbg as hdbg
 
 _LOG = logging.getLogger(__name__)
 
@@ -108,11 +109,11 @@ def plot_beliefs(
         plt.tight_layout()
     else:
         n = len(belief1)
-        # TODO(ai_gp): Use a dassert.
-        if len(belief2) != n:
-            raise ValueError(
-                "belief1 and belief2 must have the same length."
-            )
+        # Assert that both beliefs have the same length.
+        assert len(belief2) == n, (
+            f"belief1 and belief2 must have the same length. "
+            f"Got {n} and {len(belief2)}"
+        )
         indices = np.arange(n)
         width = 0.4
         _, ax = plt.subplots(figsize=plt.rcParams["figure.figsize"])
@@ -166,60 +167,190 @@ def plot_beliefs(
         plt.tight_layout()
 
 
-# #########################################################
+# ############################################################################
 # Cell 2
-# #########################################################
+# ############################################################################
 
 from filterpy.discrete_bayes import predict, update
+from ipywidgets import IntSlider, interact
 
 
-def discrete_bayes_sim(prior, kernel, measurements, z_prob, hallway):
-    posterior = np.array([.1]*10)
+def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> np.ndarray:
+    """
+    Compute likelihood that a measurement matches positions in the hallway.
+
+    Creates a likelihood array where positions matching the measurement z
+    are scaled according to the measurement probability.
+
+    :param hall: Array representing the hallway map (0=wall, 1=door)
+    :param z: Measurement value (0 or 1)
+    :param z_prob: Probability that the measurement is correct
+    :return: Likelihood array for all positions
+    """
+    try:
+        scale = z_prob / (1.0 - z_prob)
+    except ZeroDivisionError:
+        scale = 1e8
+    likelihood = np.ones(len(hall))
+    likelihood[hall == z] *= scale
+    return likelihood
+
+    
+def dassert_sensor_info(sensor_info: Dict[str, List]) -> None:
+    hdbg.dassert_eq(len(sensor_info["positions"]), len(sensor_info["z_moves"]))
+    hdbg.dassert_eq(len(sensor_info["positions"]), len(sensor_info["z_doors"]))
+
+
+def get_dog_movements1() -> List[int]:
+    positions = [i % len(HALLWAY) for i in range(50)]
+    return positions
+
+
+def get_sensor_info(positions: List[int]) -> Dict[str, List]:
+    """
+    Get the movements of the dog and the measurements.
+
+    The dog moves 1 position to the right at each step.
+    """
+    z_doors = [HALLWAY[z] for z in positions]
+    z_moves = [0] + [positions[i] - positions[i-1] for i in range(1, len(positions))]
+    sensor_info = {
+        "positions": positions,
+        "z_doors": z_doors,
+        "z_moves": z_moves,
+    }
+    dassert_sensor_info(sensor_info)
+    return z_moves, z_doors
+
+
+def discrete_bayes_sim(
+    prior: np.ndarray,
+    # TODO(gp): door_sensor_prob
+    kernel: tuple,
+    sensor_info: Dict[str, List],
+    # 
+    z_prob: float,
+    hallway: np.ndarray,
+) -> Tuple[list, list]:
+    """
+    Run discrete Bayes filter simulation.
+
+    Performs predict-update cycles for each measurement, tracking both prior and
+    posterior beliefs at each step.
+
+    :param prior: Initial belief distribution
+    :param kernel: Motion model kernel (probabilities for undershoot,
+        correct, overshoot)
+    :param dog_info: Dictionary containing the dog's movements and measurements
+    :param z_prob: Probability that sensor measurement is correct
+    :return: Tuple of (priors, posteriors) lists for each time step
+    """
+    posterior = prior.copy()
     priors, posteriors = [], []
-    for i, z in enumerate(measurements):
-        prior = predict(posterior, 1, kernel)
+    dassert_sensor_info(sensor_info)
+    for i in range(len(sensor_info["z_doors"])):
+        # Predict step.
+        prior = predict(posterior, sensor_info["z_moves"][i], kernel)
         priors.append(prior)
-
-        likelihood = lh_hallway(hallway, z, z_prob)
+        # Update step.
+        likelihood = lh_hallway(hallway, sensor_info["z_doors"][i], z_prob)
         posterior = update(likelihood, prior)
         posteriors.append(posterior)
     return priors, posteriors
 
 
-def plot_posterior(hallway, posteriors, i):
-    plt.title('Posterior')
-    book_plots.bar_plot(hallway, c='k')
-    book_plots.bar_plot(posteriors[i], ylim=(0, 1.0))
-    plt.axvline(i % len(hallway), lw=5)
-    plt.show()
-    
-def plot_prior(hallway, priors, i):
-    plt.title('Prior')
-    book_plots.bar_plot(hallway, c='k')
-    book_plots.bar_plot(priors[i], ylim=(0, 1.0), c='#ff8015')
-    plt.axvline(i % len(hallway), lw=5)
+def plot_posterior(
+    hallway: np.ndarray, posteriors: list, i: int
+) -> None:
+    """
+    Plot posterior belief at step i with dog position marker.
+
+    :param hallway: Map of the hallway (0=wall, 1=door)
+    :param posteriors: List of posterior belief distributions
+    :param i: Time step index
+    """
+    plot_belief(
+        posteriors[i],
+        title="Posterior",
+        y_lim=(0, 1.0),
+        use_hallway=True,
+    )
+    # Mark current dog position.
+    plt.axvline(i % len(hallway), color="green", linewidth=5, alpha=0.5)
     plt.show()
 
-def animate_discrete_bayes(hallway, priors, posteriors):
-    def animate(step):
+
+def plot_prior(hallway: np.ndarray, priors: list, i: int) -> None:
+    """
+    Plot prior belief at step i with dog position marker.
+
+    :param hallway: Map of the hallway (0=wall, 1=door)
+    :param priors: List of prior belief distributions
+    :param i: Time step index
+    """
+    plot_belief(
+        priors[i],
+        title="Prior",
+        y_lim=(0, 1.0),
+        use_hallway=True,
+    )
+    # Mark current dog position.
+    plt.axvline(i % len(hallway), color="green", linewidth=5, alpha=0.5)
+    plt.show()
+
+
+def animate_discrete_bayes(
+    hallway: np.ndarray, priors: list, posteriors: list
+):
+    """
+    Create animation function for discrete Bayes filter.
+
+    Returns a function that alternates between plotting priors and
+    posteriors as the step parameter changes.
+
+    :param hallway: Map of the hallway (0=wall, 1=door)
+    :param priors: List of prior belief distributions
+    :param posteriors: List of posterior belief distributions
+    :return: Animation function for use with ipywidgets
+    """
+
+    def animate(step: int) -> None:
+        """
+        Display belief distribution for given step.
+
+        :param step: Step number (1-indexed, alternates between prior/posterior)
+        """
         step -= 1
-        i = step // 2    
+        i = step // 2
         if step % 2 == 0:
             plot_prior(hallway, priors, i)
         else:
             plot_posterior(hallway, posteriors, i)
-    
+
     return animate
 
 
-def cell2_interactive():
-    # change these numbers to alter the simulation
-    kernel = (.1, .8, .1)
+def cell2_interactive() -> None:
+    """
+    Interactive visualization of discrete Bayes filter tracking a dog.
+
+    Creates an interactive widget that animates the belief update process
+    as the dog moves through a hallway with noisy sensors.
+    """
+    # Change these numbers to alter the simulation.
+    kernel = (0.1, 0.8, 0.1)
     z_prob = 1.0
-    hallway = np.array([1, 1, 0, 0, 0, 0, 0, 0, 1, 0])
-
-    # measurements with no noise
-    zs = [hallway[i % len(hallway)] for i in range(50)]
-
-    priors, posteriors = discrete_bayes_sim(prior, kernel, zs, z_prob, hallway)
-    interact(animate_discrete_bayes(hallway, priors, posteriors), step=IntSlider(value=1, max=len(zs)*2));
+    # Initial uniform belief.
+    prior = np.array([0.1] * 10)
+    # Get the sensor info.
+    positions = get_dog_movements1()
+    sensor_info = get_sensor_info(positions)
+    # Run simulation.
+    priors, posteriors = discrete_bayes_sim(
+        prior, kernel, sensor_info, z_prob, HALLWAY
+    )
+    # Create interactive widget.
+    interact(
+        animate_discrete_bayes(HALLWAY, priors, posteriors),
+        step=IntSlider(value=1, max=len(sensor_info["z_doors"]) * 2),
+    )
