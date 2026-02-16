@@ -46,11 +46,14 @@ import L09_05_01_discrete_bayes_dog_utils as ut
 # ## Problem Definition
 
 # %% [markdown]
-# - There is a dog with a sensor
-# - The dog wanders around the offices and halls
-# - The sensor reports if the dog is in front of a door or a hall
+# - There is a dog with a sensor, that wanders around the offices and halls
+# - The sensor reports if the dog is in front of a door or a hall and its movement
+#   - The sensor can have noise
 # - There are 10 positions in the hallway, numbered 0 to 9
-# - The hallway is circular so after 9, the position is 0
+#     - The hallway is circular: there is position 0 after position 9
+# - Can we find out where the dog is from consecutive measurements?
+
+# %%
 
 # %% [markdown]
 # ## A Simple Example
@@ -346,16 +349,16 @@ def predict_move_convolution(pdf, offset, kernel):
 
     prior = np.zeros(N)
     for i in range(N):
-        for k in range (kN):
-            index = (i + (width-k) - offset) % N
+        for k in range(kN):
+            index = (i + (width - k) - offset) % N
             prior[i] += pdf[index] * kernel[k]
     return prior
 
 
 # %%
-belief = [.05, .05, .05, .05, .55, .05, .05, .05, .05, .05]
+belief = [0.05, 0.05, 0.05, 0.05, 0.55, 0.05, 0.05, 0.05, 0.05, 0.05]
 
-prior = predict_move_convolution(belief, offset=1, kernel=[.1, .8, .1])
+prior = predict_move_convolution(belief, offset=1, kernel=[0.1, 0.8, 0.1])
 
 ut.plot_beliefs(belief, prior)
 
@@ -364,13 +367,13 @@ ut.plot_beliefs(belief, prior)
 
 from filterpy.discrete_bayes import predict
 
-belief = [.05, .05, .05, .05, .55, .05, .05, .05, .05, .05]
-prior = predict(belief, offset=1, kernel=[.1, .8, .1])
+belief = [0.05, 0.05, 0.05, 0.05, 0.55, 0.05, 0.05, 0.05, 0.05, 0.05]
+prior = predict(belief, offset=1, kernel=[0.1, 0.8, 0.1])
 ut.plot_belief(prior)
 
 # %%
-belief = [.05, .05, .05, .05, .55, .05, .05, .05, .05, .05]
-prior = predict(belief, offset=3, kernel=[.05, .05, .6, .2, .1])
+belief = [0.05, 0.05, 0.05, 0.05, 0.55, 0.05, 0.05, 0.05, 0.05, 0.05]
+prior = predict(belief, offset=3, kernel=[0.05, 0.05, 0.6, 0.2, 0.1])
 
 ut.plot_beliefs(belief, prior)
 
@@ -384,29 +387,39 @@ ut.plot_beliefs(belief, prior)
 # %%
 hallway = np.array([1, 1, 0, 0, 0, 0, 0, 0, 1, 0])
 # Sensor measurements are imperfect.
-kernel = (.1, .8, .1)
-
+kernel = (0.1, 0.8, 0.1)
+y_lim = (0, 0.4)
 
 # We don't have any information. The dog could be anywhere.
-prior1 = np.array([.1] * 10)
+prior1 = np.array([0.1] * 10)
 
 # The sensor tells that the dog is in front of a door.
-likelihood = lh_hallway(hallway, z=1, z_prob=.75)
-posterior1 = update(likelihood, prior)
+likelihood = lh_hallway(hallway, z=1, z_prob=0.75)
+posterior1 = update(likelihood, prior1)
 
-ut.plot_beliefs(prior1, posterior1, title1="Prior 1", title2="Posterior 1")
+ut.plot_beliefs(prior1, posterior1, title1="Prior 1", title2="Posterior 1", y_lim=y_lim)
 
 # %%
 # The sensor says that the dog moved to the right.
 move = 1
 prior2 = predict(posterior1, move, kernel)
-ut.plot_beliefs(posterior1, prior2, title1="Posterior1", title2="Prior2")
+ut.plot_beliefs(posterior1, prior2, title1="Posterior1", title2="Prior2", y_lim=y_lim)
 
 # The probabilities move to the right and get smeared a bit.
 
 # %%
 # The sensor senses another door.
-likelihood = lh_hallway(hallway, z=1, z_prob=.75)
+likelihood = lh_hallway(hallway, z=1, z_prob=0.75)
 posterior2 = update(likelihood, prior2)
 
-ut.plot_beliefs(prior2, posterior2, title1="Prior2", title2="Posterior2")
+ut.plot_beliefs(prior2, posterior2, title1="Prior2", title2="Posterior2", y_lim=y_lim)
+# The belief is that the dog is in front of position 1.
+
+# %%
+move = 1
+prior3 = predict(posterior2, move, kernel)
+likelihood = lh_hallway(hallway, z=0, z_prob=.75)
+posterior3 = update(likelihood, prior3)
+ut.plot_beliefs(prior3, posterior3, title1="Prior3", title2="Posterior3", y_lim=y_lim)
+
+# %%
