@@ -25,11 +25,11 @@ MSML610: Advanced Machine Learning
 - AIMA 14: Probabilistic reasoning over time
 - https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python
 
-// ./notes/math.Kalman_and_Bayesian_filters_in_Python.Labbe.2018.txt
+// /Users/saggese/src/notes1/notes/math.Kalman_and_Bayesian_filters_in_Python.Labbe.2018.txt
+// /Users/saggese/src/notes1/notebooks/Kalman_and_Bayesian_filters_in_python
 // ./notes/math.Kalman_filter.txt
 // ./notebooks/quantopian/quantopian_kalman_filter.ipynb
-// ./notebooks/Kalman_and_Bayesian_filters_in_python
-// - AIMA 14.4 (p. 479)
+// AIMA 14.4 (p. 479)
 
 ## #############################################################################
 ## 1-D Kalman Filters
