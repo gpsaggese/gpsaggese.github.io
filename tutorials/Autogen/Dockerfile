@@ -13,8 +13,8 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /workspace
 
-# Copy requirements
-COPY requirements.txt /workspace/requirements.txt
+# Copy the entire project into the container
+COPY . /workspace
 
 # Upgrade pip, setuptools, wheel, and install dependencies
 RUN python -m pip install --upgrade pip setuptools wheel \
