@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -70,10 +70,10 @@ ut.plot_belief(belief)
 hallway = np.array([1, 1, 0, 0, 0, 0, 0, 0, 1, 0])
 ut.plot_belief(hallway)
 
-# %%
-- The sensor returns always the correct answer.
-- The first reading from the sensor is "door"
-- The dog is in front of a door, but we don't know which one
+# %% [markdown]
+# - The sensor returns always the correct answer.
+# - The first reading from the sensor is "door"
+# - The dog is in front of a door, but we don't know which one
 
 # %%
 belief = np.array([1/3, 1/3, 0, 0, 0, 0, 0, 0, 1/3, 0])
@@ -99,9 +99,9 @@ ut.plot_belief(belief)
 belief = np.array([.31, .31, .01, .01, .01, .01, .01, .01, .31, .01])
 ut.plot_belief(belief)
 
-# %%
-- Testing shows that the sensor is 3 times more likely to be right than wrong
 
+# %% [markdown]
+# - Testing shows that the sensor is 3 times more likely to be right than wrong
 
 # %%
 def update_belief(
@@ -325,5 +325,3 @@ def show_prior(step: int) -> None:
     plt.show()
 
 interact(show_prior, step=IntSlider(value=1, max=len(predict_beliefs)));
-
-# %%

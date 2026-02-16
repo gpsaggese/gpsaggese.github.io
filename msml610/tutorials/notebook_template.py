@@ -22,10 +22,6 @@
 
 import logging
 
-import matplotlib.pyplot as plt
-import numpy as np
-import seaborn as sns
-
 import msml610_utils as ut
 
 ut.config_notebook()
