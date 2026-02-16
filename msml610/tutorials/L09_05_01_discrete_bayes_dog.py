@@ -24,7 +24,6 @@ import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 
 import msml610_utils as ut
 
@@ -59,7 +58,7 @@ import L09_05_01_discrete_bayes_dog_utils as ut
 # %%
 # At the beginning, we don't know where the dog is.
 # The prior is: all the positions are equiprobable.
-belief = np.array([1/10]*10)
+belief = np.array([1 / 10] * 10)
 print(belief)
 
 # %%
@@ -76,7 +75,7 @@ ut.plot_belief(hallway)
 # - The dog is in front of a door, but we don't know which one
 
 # %%
-belief = np.array([1/3, 1/3, 0, 0, 0, 0, 0, 0, 1/3, 0])
+belief = np.array([1 / 3, 1 / 3, 0, 0, 0, 0, 0, 0, 1 / 3, 0])
 ut.plot_belief(belief)
 
 # %% [markdown]
@@ -84,7 +83,7 @@ ut.plot_belief(belief)
 # - The only location possible is position #1
 
 # %%
-belief = np.array([0., 1., 0., 0., 0., 0., 0., 0., 0., 0.])
+belief = np.array([0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 ut.plot_belief(belief)
 
 # %% [markdown]
@@ -96,12 +95,13 @@ ut.plot_belief(belief)
 #
 
 # %%
-belief = np.array([.31, .31, .01, .01, .01, .01, .01, .01, .31, .01])
+belief = np.array([0.31, 0.31, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.31, 0.01])
 ut.plot_belief(belief)
 
 
 # %% [markdown]
 # - Testing shows that the sensor is 3 times more likely to be right than wrong
+
 
 # %%
 def update_belief(
@@ -122,16 +122,18 @@ def update_belief(
         if val == z:
             belief[i] *= correct_scale
 
+
 belief = np.array([0.1] * 10)
-reading = 1 # 1 is 'door'
-update_belief(hallway, belief, z=reading, correct_scale=3.)
-print('belief:', belief)
-print('sum =', sum(belief))
+reading = 1  # 1 is 'door'
+update_belief(hallway, belief, z=reading, correct_scale=3.0)
+print("belief:", belief)
+print("sum =", sum(belief))
 belief /= sum(belief)
 ut.plot_belief(belief)
 
 # %%
 from filterpy.discrete_bayes import normalize
+
 
 def scaled_update(
     hall: np.ndarray, belief: np.ndarray, z: int, z_prob: float
@@ -147,16 +149,17 @@ def scaled_update(
     :param z: Measurement value (0 or 1)
     :param z_prob: Probability that the measurement is correct
     """
-    scale = z_prob / (1. - z_prob)
-    belief[hall==z] *= scale
+    scale = z_prob / (1.0 - z_prob)
+    belief[hall == z] *= scale
     normalize(belief)
 
-belief = np.array([0.1] * 10)
-scaled_update(hallway, belief, z=1, z_prob=.75)
 
-print('sum =', sum(belief))
-print('probability of door =', belief[0])
-print('probability of wall =', belief[2])
+belief = np.array([0.1] * 10)
+scaled_update(hallway, belief, z=1, z_prob=0.75)
+
+print("sum =", sum(belief))
+print("probability of door =", belief[0])
+print("probability of wall =", belief[2])
 ut.plot_belief(belief)
 
 # %% [markdown]
@@ -165,6 +168,7 @@ ut.plot_belief(belief)
 
 # %%
 from filterpy.discrete_bayes import update
+
 
 def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> np.ndarray:
     """
@@ -179,15 +183,16 @@ def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> np.ndarray:
     :return: Likelihood array for all positions
     """
     try:
-        scale = z_prob / (1. - z_prob)
+        scale = z_prob / (1.0 - z_prob)
     except ZeroDivisionError:
         scale = 1e8
     likelihood = np.ones(len(hall))
-    likelihood[hall==z] *= scale
+    likelihood[hall == z] *= scale
     return likelihood
 
+
 belief = np.array([0.1] * 10)
-likelihood = lh_hallway(hallway, z=1, z_prob=.75)
+likelihood = lh_hallway(hallway, z=1, z_prob=0.75)
 # def update(likelihood, prior):
 #    return normalize(likelihood * prior)
 update(likelihood, belief)
@@ -198,6 +203,7 @@ update(likelihood, belief)
 #
 # - Assume that the movement sensor is perfect
 # - If the dog has moved to the right, we need to shift the belief to the right
+
 
 # %%
 def perfect_predict(belief: np.ndarray, move: int) -> np.ndarray:
@@ -214,11 +220,11 @@ def perfect_predict(belief: np.ndarray, move: int) -> np.ndarray:
     n = len(belief)
     result = np.zeros(n)
     for i in range(n):
-        result[i] = belief[(i-move) % n]
+        result[i] = belief[(i - move) % n]
     return result
 
 
-belief = np.array([.35, .1, .2, .3, 0, 0, 0, 0, 0, .05])
+belief = np.array([0.35, 0.1, 0.2, 0.3, 0, 0, 0, 0, 0, 0.05])
 ut.plot_belief(belief)
 
 # %%
@@ -248,6 +254,7 @@ ut.plot_belief(new_belief)
 #   - 80% likely to have moved to the right
 #   - 10% likely to have moved 3 or 5 spaces to the right
 
+
 # %%
 def predict_move(
     belief: np.ndarray,
@@ -273,25 +280,27 @@ def predict_move(
     prior = np.zeros(n)
     for i in range(n):
         prior[i] = (
-            belief[(i-move) % n]   * p_correct +
-            belief[(i-move-1) % n] * p_over +
-            belief[(i-move+1) % n] * p_under)
+            belief[(i - move) % n] * p_correct
+            + belief[(i - move - 1) % n] * p_over
+            + belief[(i - move + 1) % n] * p_under
+        )
     return prior
 
-belief = [0., 0., 0., 1., 0., 0., 0., 0., 0., 0.]
+
+belief = [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 ut.plot_belief(belief)
 
 move = 2
-prior = predict_move(belief, move, .1, .8, .1)
+prior = predict_move(belief, move, 0.1, 0.8, 0.1)
 ut.plot_belief(prior)
 
 # %%
 # Assume the belief is not correct.
-belief = [0, 0, .4, .6, 0, 0, 0, 0, 0, 0]
+belief = [0, 0, 0.4, 0.6, 0, 0, 0, 0, 0, 0]
 ut.plot_belief(belief)
 
 move = 2
-prior = predict_move(belief, move, .1, .8, .1)
+prior = predict_move(belief, move, 0.1, 0.8, 0.1)
 ut.plot_belief(prior)
 
 # %% [markdown]
@@ -304,12 +313,13 @@ from ipywidgets import interact, IntSlider
 belief = np.array([1.0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 predict_beliefs = []
 predict_beliefs.append(belief)
-print('Initial belief:', belief)
+print("Initial belief:", belief)
 
 for i in range(100):
-    belief = predict_move(belief, 1, .1, .8, .1)
+    belief = predict_move(belief, 1, 0.1, 0.8, 0.1)
     predict_beliefs.append(belief)
-print('Final Belief:', belief)
+print("Final Belief:", belief)
+
 
 # Make an interactive plot.
 def show_prior(step: int) -> None:
@@ -320,8 +330,9 @@ def show_prior(step: int) -> None:
 
     :param step: Time step to display (1-indexed)
     """
-    ut.plot_belief(predict_beliefs[step-1])
-    plt.title(f'Step {step}')
+    ut.plot_belief(predict_beliefs[step - 1])
+    plt.title(f"Step {step}")
     plt.show()
 
-interact(show_prior, step=IntSlider(value=1, max=len(predict_beliefs)));
+
+interact(show_prior, step=IntSlider(value=1, max=len(predict_beliefs)))
