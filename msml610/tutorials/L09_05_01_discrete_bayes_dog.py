@@ -335,4 +335,78 @@ def show_prior(step: int) -> None:
     plt.show()
 
 
-interact(show_prior, step=IntSlider(value=1, max=len(predict_beliefs)))
+interact(show_prior, step=IntSlider(value=1, max=len(predict_beliefs)));
+
+
+# %%
+def predict_move_convolution(pdf, offset, kernel):
+    N = len(pdf)
+    kN = len(kernel)
+    width = int((kN - 1) / 2)
+
+    prior = np.zeros(N)
+    for i in range(N):
+        for k in range (kN):
+            index = (i + (width-k) - offset) % N
+            prior[i] += pdf[index] * kernel[k]
+    return prior
+
+
+# %%
+belief = [.05, .05, .05, .05, .55, .05, .05, .05, .05, .05]
+
+prior = predict_move_convolution(belief, offset=1, kernel=[.1, .8, .1])
+
+ut.plot_beliefs(belief, prior)
+
+# %%
+# Using filterpy.
+
+from filterpy.discrete_bayes import predict
+
+belief = [.05, .05, .05, .05, .55, .05, .05, .05, .05, .05]
+prior = predict(belief, offset=1, kernel=[.1, .8, .1])
+ut.plot_belief(prior)
+
+# %%
+belief = [.05, .05, .05, .05, .55, .05, .05, .05, .05, .05]
+prior = predict(belief, offset=3, kernel=[.05, .05, .6, .2, .1])
+
+ut.plot_beliefs(belief, prior)
+
+# %% [markdown]
+# ## Integrating Measurements and Updates
+#
+# - Each prediction loses information / knowledge
+# - With each update we incorporate the measurement into the estimate, which improvoves knowledge
+# - The output of the update step is then fed into the next prediction
+
+# %%
+hallway = np.array([1, 1, 0, 0, 0, 0, 0, 0, 1, 0])
+# Sensor measurements are imperfect.
+kernel = (.1, .8, .1)
+
+
+# We don't have any information. The dog could be anywhere.
+prior1 = np.array([.1] * 10)
+
+# The sensor tells that the dog is in front of a door.
+likelihood = lh_hallway(hallway, z=1, z_prob=.75)
+posterior1 = update(likelihood, prior)
+
+ut.plot_beliefs(prior1, posterior1, title1="Prior 1", title2="Posterior 1")
+
+# %%
+# The sensor says that the dog moved to the right.
+move = 1
+prior2 = predict(posterior1, move, kernel)
+ut.plot_beliefs(posterior1, prior2, title1="Posterior1", title2="Prior2")
+
+# The probabilities move to the right and get smeared a bit.
+
+# %%
+# The sensor senses another door.
+likelihood = lh_hallway(hallway, z=1, z_prob=.75)
+posterior2 = update(likelihood, prior2)
+
+ut.plot_beliefs(prior2, posterior2, title1="Prior2", title2="Posterior2")
