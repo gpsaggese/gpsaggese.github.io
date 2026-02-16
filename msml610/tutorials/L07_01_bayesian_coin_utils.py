@@ -3,11 +3,11 @@ Utility functions for Bayesian coin flip tutorial (L07_01).
 
 Import as:
 
-import msml610.tutorials.L07_01_bayesian_coin_utils as mtubacoum
+import msml610.tutorials.L07_01_bayesian_coin_utils as mtl0bcout
 """
 
 import logging
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Callable, List, Tuple, Union
 
 import arviz as az
 import ipywidgets

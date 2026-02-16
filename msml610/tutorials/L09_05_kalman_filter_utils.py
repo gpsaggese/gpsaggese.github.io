@@ -3,21 +3,18 @@ Utility functions for g-h filter tutorial (L09_04).
 
 Import as:
 
-import msml610.tutorials.L09_04_gh_filter as mtughfi
+import msml610.tutorials.L09_05_kalman_filter_utils as mtl0kfiut
 """
 
 import logging
-import os
-from typing import List, Optional, Tuple, Union
+from typing import Tuple
 
 import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import scipy.stats as stats
 from IPython.display import display
 
-import helpers.hdbg as hdbg
 import msml610_utils as mtumsuti
 
 _LOG = logging.getLogger(__name__)
@@ -100,10 +97,12 @@ def _plot_gaussian_sum_with_correlation(
     # Compute sum numerically by sampling from bivariate normal.
     np.random.seed(42)
     # Create covariance matrix for bivariate normal.
-    cov_matrix = np.array([
-        [sigma1**2, rho * sigma1 * sigma2],
-        [rho * sigma1 * sigma2, sigma2**2],
-    ])
+    cov_matrix = np.array(
+        [
+            [sigma1**2, rho * sigma1 * sigma2],
+            [rho * sigma1 * sigma2, sigma2**2],
+        ]
+    )
     mean_vector = np.array([mu1, mu2])
     # Sample from bivariate normal.
     samples = np.random.multivariate_normal(mean_vector, cov_matrix, n_samples)
@@ -445,9 +444,4 @@ def cell1_2_plot_gaussian_product() -> None:
         },
     )
     # Display widgets.
-    display(
-        ipywidgets.VBox([mu1_box, sigma1_box, mu2_box, sigma2_box, output])
-    )
-
-
-
+    display(ipywidgets.VBox([mu1_box, sigma1_box, mu2_box, sigma2_box, output]))

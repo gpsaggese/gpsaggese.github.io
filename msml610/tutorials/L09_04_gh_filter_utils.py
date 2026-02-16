@@ -3,21 +3,19 @@ Utility functions for g-h filter tutorial (L09_04).
 
 Import as:
 
-import msml610.tutorials.L09_04_gh_filter as mtughfi
+import msml610.tutorials.L09_04_gh_filter_utils as mtl0gfiut
 """
 
 import logging
 import os
-from typing import List, Optional, Tuple, Union
+from typing import List, Tuple
 
 import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scipy.stats as stats
 from IPython.display import display
 
-import helpers.hdbg as hdbg
 import msml610_utils as mtumsuti
 
 _LOG = logging.getLogger(__name__)
@@ -100,9 +98,7 @@ def predict_using_gain_guess(
         # Predict using the internal model.
         predicted_weight = initial_weight + gain_rate * time_step
         # Update by blending prediction and measurement.
-        initial_weight = predicted_weight + scale_factor * (
-            z - predicted_weight
-        )
+        initial_weight = predicted_weight + scale_factor * (z - predicted_weight)
         # Log values.
         ests.append(initial_weight)
         preds.append(predicted_weight)
@@ -276,36 +272,6 @@ def cell1_4_create_interactive_gain_rate_widget(
     )
 
 
-def cell1_5_plot_gh_filter_with_learning_gain_rate(
-    measured_weights: np.ndarray,
-    ground_truth: np.ndarray,
-    params: dict,
-    dst_dir: str,
-    dst_filename: str,
-) -> None:
-    """
-    Plot gain rate prediction while learning the gain rate.
-
-    :param measured_weights: Array of weight measurements
-    :param ground_truth: Array of true weight values
-    :param params: Dictionary of parameters to display
-    :param dst_dir: Directory to save output figure
-    :param dst_filename: Filename for the output figure
-    """
-    ests, preds = predict_learning_gain_rate(
-        params["initial_weight"],
-        measured_weights,
-        params["gain_rate"],
-        params["weight_scale"],
-        params["gain_scale"],
-        params["time_step"],
-    )
-    plot_gh_filter_results_with_params(
-        measured_weights, preds, ests, ground_truth, params
-    )
-    plt.savefig(os.path.join(dst_dir, dst_filename))
-
-
 def predict_learning_gain_rate(
     weight: float,
     measures: np.ndarray,
@@ -338,6 +304,36 @@ def predict_learning_gain_rate(
         ests.append(weight)
         _LOG.debug("z=%.2f pred=%.2f weight=%.2f", z, weight, weight)
     return ests, preds
+
+
+def cell1_5_plot_gh_filter_with_learning_gain_rate(
+    measured_weights: np.ndarray,
+    ground_truth: np.ndarray,
+    params: dict,
+    dst_dir: str,
+    dst_filename: str,
+) -> None:
+    """
+    Plot gain rate prediction while learning the gain rate.
+
+    :param measured_weights: Array of weight measurements
+    :param ground_truth: Array of true weight values
+    :param params: Dictionary of parameters to display
+    :param dst_dir: Directory to save output figure
+    :param dst_filename: Filename for the output figure
+    """
+    ests, preds = predict_learning_gain_rate(
+        params["initial_weight"],
+        measured_weights,
+        params["gain_rate"],
+        params["weight_scale"],
+        params["gain_scale"],
+        params["time_step"],
+    )
+    plot_gh_filter_results_with_params(
+        measured_weights, preds, ests, ground_truth, params
+    )
+    plt.savefig(os.path.join(dst_dir, dst_filename))
 
 
 def gh_filter(
@@ -559,10 +555,12 @@ def cell2_1_create_interactive_linear_noisy_data_widget() -> None:
         vals, ground_truth = gen_linear_noisy_data(
             x0=0, dx=1, count=count, noise_factor=noise_factor, seed=seed
         )
-        df = pd.DataFrame({
-            "measurements": vals,
-            "ground_truth": ground_truth,
-        })
+        df = pd.DataFrame(
+            {
+                "measurements": vals,
+                "ground_truth": ground_truth,
+            }
+        )
         df["measurements"].plot(marker=".", markersize=10, linestyle="None")
         df["ground_truth"].plot(color="k", linewidth=2)
         plt.xlim(-10, 110)
@@ -613,11 +611,7 @@ def cell2_1_create_interactive_linear_noisy_data_widget() -> None:
         },
     )
     # Display widgets.
-    display(
-        ipywidgets.VBox(
-            [seed_box, count_box, noise_factor_box, output]
-        )
-    )
+    display(ipywidgets.VBox([seed_box, count_box, noise_factor_box, output]))
 
 
 def cell2_9_create_interactive_gh_filter_widget() -> None:
@@ -659,7 +653,9 @@ def cell2_9_create_interactive_gh_filter_widget() -> None:
         # Plot ground truth as black line.
         plt.plot(ground_truth, color="k", linewidth=2, label="Ground truth")
         # Plot measurements as scatter.
-        plt.scatter(list(range(len(zs))), zs, marker=".", lw=1, label="Measurements")
+        plt.scatter(
+            list(range(len(zs))), zs, marker=".", lw=1, label="Measurements"
+        )
         # Plot filtered estimates as line.
         plt.plot(data, color="b", label="Filtered estimates")
         plt.legend(loc="upper left")
@@ -772,7 +768,9 @@ def cell2_5_create_interactive_non_linear_noisy_data_widget() -> None:
             seed=seed,
         )
         # Plot ground truth as line.
-        pd.Series(ground_truth).plot(color="k", linewidth=2, label="Ground truth")
+        pd.Series(ground_truth).plot(
+            color="k", linewidth=2, label="Ground truth"
+        )
         # Plot measurements as scatter points.
         pd.Series(vals).plot(
             marker="o",

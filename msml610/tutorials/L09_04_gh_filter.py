@@ -24,10 +24,10 @@ import logging
 
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 import msml610_utils as ut
+
 ut.config_notebook()
 
 # Initialize logger.
@@ -81,8 +81,8 @@ df["ground_truth"] = ground_truth
 df.head()
 
 # %%
-df["measurements"].plot(marker=".", markersize=10, linestyle="None");
-df["ground_truth"].plot(color="k", linewidth=2);
+df["measurements"].plot(marker=".", markersize=10, linestyle="None")
+df["ground_truth"].plot(color="k", linewidth=2)
 
 plt.savefig(os.path.join(dst_dir, "L09_04_ground_truth.png"))
 
@@ -101,7 +101,9 @@ params = {
     "initial_weight": 160.0,
 }
 file_name = "L09_04_knowing_gain_rate.png"
-time_ut.cell1_2_plot_gh_filter_with_known_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
+time_ut.cell1_2_plot_gh_filter_with_known_gain_rate(
+    measured_weights, ground_truth, params, dst_dir, file_name
+)
 
 # %% [markdown]
 # ## Cell 1.3: Wrong guess of gain_rate
@@ -118,14 +120,18 @@ params = {
     "initial_weight": 160.0,
 }
 file_name = "L09_04_wrong_gain_rate.png"
-time_ut.cell1_3_plot_gh_filter_with_known_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
+time_ut.cell1_3_plot_gh_filter_with_known_gain_rate(
+    measured_weights, ground_truth, params, dst_dir, file_name
+)
 
 # %% [markdown]
 # ## Cell 1.4: Interactive
 
 # %%
 # Interactive exploration of gain rate parameters.
-time_ut.cell1_4_create_interactive_gain_rate_widget(measured_weights, ground_truth)
+time_ut.cell1_4_create_interactive_gain_rate_widget(
+    measured_weights, ground_truth
+)
 
 # %% [markdown]
 # ## Cell 1.5: Learning gain_rate
@@ -145,7 +151,9 @@ params = {
 }
 file_name = "L09_04_learning_gain_rate.png"
 
-time_ut.cell1_5_plot_gh_filter_with_learning_gain_rate(measured_weights, ground_truth, params, dst_dir, file_name)
+time_ut.cell1_5_plot_gh_filter_with_learning_gain_rate(
+    measured_weights, ground_truth, params, dst_dir, file_name
+)
 
 # %% [markdown]
 # # Cell 2: g-h Filter on Noisy measurements
@@ -250,7 +258,7 @@ df["g=0.1"] = time_ut.gh_filter(data=zs, x0=0.0, dx=1, dt=1.0, g=0.1, h=0.01)
 df["g=0.4"] = time_ut.gh_filter(data=zs, x0=0.0, dx=1, dt=1.0, g=0.4, h=0.01)
 df["g=0.8"] = time_ut.gh_filter(data=zs, x0=0.0, dx=1, dt=1.0, g=0.8, h=0.01)
 
-df.plot();
+df.plot()
 plt.savefig(os.path.join(dst_dir, "L09_04_varying_g2.png"))
 
 # %% [markdown]
@@ -276,7 +284,7 @@ df["dx=2 h=0.05"] = time_ut.gh_filter(data=zs, x0=0, dx=2, dt=1.0, g=0.2, h=0.05
 # Small ringing with higher frequency.
 df["dx=2 h=0.5"] = time_ut.gh_filter(data=zs, x0=0, dx=2, dt=1.0, g=0.2, h=0.5)
 
-df.plot();
+df.plot()
 plt.savefig(os.path.join(dst_dir, "L09_04_varying_h1.png"))
 
 # %% [markdown]

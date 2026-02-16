@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -22,12 +22,9 @@
 
 import logging
 
-import numpy as np
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 import msml610_utils as ut
+
 ut.config_notebook()
 
 # Initialize logger.
@@ -35,7 +32,6 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %%
-import os
 
 import helpers.hio as hio
 import L09_05_kalman_filter_utils as time_ut

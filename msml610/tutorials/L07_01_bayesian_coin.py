@@ -294,7 +294,7 @@ az.plot_trace(idata1)
 #
 
 # %%
-# #?az.summary
+# # ?az.summary
 
 # %%
 az.summary(idata1, kind="stats")
