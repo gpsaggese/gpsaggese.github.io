@@ -420,4 +420,7 @@ likelihood = lh_hallway(hallway, z=0, z_prob=.75)
 posterior3 = update(likelihood, prior3)
 ut.plot_beliefs(prior3, posterior3, title1="Prior3", title2="Posterior3", y_lim=y_lim)
 
+# %% [markdown]
+# # Cell 2: Bayes Dog Simulation
+
 # %%
