@@ -34,8 +34,141 @@ MSML610: Advanced Machine Learning
 # Discrete Bayes Filtering
 
 ## #############################################################################
-## A Bayesian 1-D Dog
+## A Discrete Bayesian 1-D Dog
 ## #############################################################################
+
+
+* A Discrete Bayesian 1-D Dog
+- From tutorial `L09_05_01_discrete_bayes_dog.ipynb`
+
+::: columns
+:::: {.column width=55%}
+- Dog with sensor
+  - Wanders around offices and halls
+
+- 10 positions in hallway with doors, numbered 0 to 9
+  - Circular hallway: position 0 follows position 9
+  - Door positions: 0, 1, 8
+
+- Sensor reports if dog is in front of door or hall and its movement
+  - Sensor may have noise
+::::
+:::: {.column width=40%}
+![](msml610/lectures_source/figures/bichon_pic.jpg){ height=20%}
+(Nuvolo)
+::::
+:::
+
+- Can we find out where the dog is from consecutive measurements?
+
+
+* You Cannot Trust Either Source Alone
+::: columns
+:::: {.column width=45%}
+
+- **Measurements Alone**
+  - Sensor says "door"
+  - Three door positions: 0, 1, 8
+  - Cannot tell from single measurement which door it is
+::::
+:::: {.column width=45%}
+
+- **Predictions Alone**
+  - Dog moves right repeatedly
+  - Position drifts over time
+  - Uncertainty accumulates; eventually, no idea where the dog is
+::::
+:::
+
+- Both sources of information (prediction and measurements) have limitations,
+  but together they work
+  - **Combine predictions with measurements**
+    - Prediction: _"Based on movement, dog should be around position 4"_
+    - Measurement: _"Sensor says wall"_
+    - Check hallway: Position 4 is a wall
+    - Agreement increases confidence
+  - **After several cycles**
+    - Only one position consistent with entire history
+    - High confidence in dog's location
+
+* Predict: Loses Information
+- **What it does**
+  - _"Dog was at position 3 and moved right 1"_
+  - _"So dog is probably at position 4"_
+  - _"But could be 3 or 5 due to movement error"_
+
+- **Effect on belief**
+  - Shifts distribution to the right
+  - Spreads out probability mass
+  - Uncertainty increases
+
+- **Analogy**: Blurring a photo
+  - Sharp image becomes fuzzy
+  - Information is lost
+
+* Update: Gains Information
+- **What it does**
+  - _"Sensor says door"_
+  - _"Boost probability at all door positions (0, 1, 8)"_
+  - _"Reduce probability at wall positions"_
+
+- **Effect on belief**
+  - Concentrates probability on matching positions
+  - Peaks emerge in distribution
+  - Uncertainty decreases
+
+- **Analogy**: Sharpening a photo
+  - Fuzzy image becomes clearer
+  - Information is gained
+
+* Bayesian Update Algorithm
+
+- **Start with prior belief**
+  $$Pr(\text{position}) = \text{uniform}$$
+  - "Dog could be anywhere"
+
+- **Get evidence** (measurement)
+  $$Pr(\text{door sensor} | \text{position})$$
+  - Likelihood of seeing "door" at each position
+
+- **Update belief** using Bayes' rule
+  $$
+  Pr(\text{position} | \text{door sensor})
+  = \frac{Pr(\text{door sensor} | \text{position}) \cdot Pr(\text{position})}{Pr(\text{door sensor})}
+  $$
+
+- **Posterior becomes next prior**
+  - Cycle repeats with each new measurement
+
+* Bayesian Update Algorithm
+
+```graphviz[width=80%]
+digraph BayesianUpdateAlgo {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    // Node styles
+    x0   [label="x_0", shape=circle, fillcolor="#A6E7F4"];
+    zk   [label="z_k", shape=circle, fillcolor="#A6E7F4"];
+    xhat [label="hat_x_k", shape=circle, fillcolor="#B2E2B2"];
+
+    predict [label="Predict\nStep\n\nUse movement model\nBelief spreads out\n(loses information)", fillcolor="#A6C8F4"];
+    update  [label="Update\nStep\n\nUse measurement\nBelief concentrates\n(gains information)", fillcolor="#C6A6F4"];
+
+    // Force ranks
+    {rank=same; predict; update}
+
+    // Edges
+    x0 -> predict [label=" Prior"];
+    predict -> update [label=" Prior"];
+    update -> predict [label=" Posterior"];
+    predict -> xhat [label=" Posterior"];
+    zk -> update [label=" Measurement"];
+}
+```
 
 ## #############################################################################
 ## 1-D Kalman Filters

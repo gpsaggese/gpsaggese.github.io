@@ -53,10 +53,8 @@ import L09_05_01_discrete_bayes_dog_utils as ut
 #     - The hallway is circular: there is position 0 after position 9
 # - Can we find out where the dog is from consecutive measurements?
 
-# %%
-
 # %% [markdown]
-# ## A Simple Example
+# ## A Simple Example with Perfect Sensors
 
 # %%
 # At the beginning, we don't know where the dog is.
@@ -70,7 +68,7 @@ ut.plot_belief(belief)
 # %%
 # The map of the office is the following.
 hallway = np.array([1, 1, 0, 0, 0, 0, 0, 0, 1, 0])
-ut.plot_belief(hallway)
+ut.plot_belief(hallway, title="Hallway")
 
 # %% [markdown]
 # - The sensor returns always the correct answer.
