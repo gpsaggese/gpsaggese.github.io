@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -110,7 +110,7 @@ ut.plot_belief(belief, hallway=hallway)
 
 # %%
 def update_belief(
-    hall: np.ndarray, belief: np.ndarray, z: int, correct_scale: float
+    hall: np.ndarray, belief: ut.Pdf, z: int, correct_scale: float
 ) -> None:
     """
     Update belief in-place based on a measurement.
@@ -141,7 +141,7 @@ from filterpy.discrete_bayes import normalize
 
 
 def scaled_update(
-    hall: np.ndarray, belief: np.ndarray, z: int, z_prob: float
+    hall: np.ndarray, belief: ut.Pdf, z: int, z_prob: float
 ) -> None:
     """
     Update belief using scaled likelihood based on measurement probability.
@@ -175,7 +175,7 @@ ut.plot_belief(belief, hallway=hallway)
 from filterpy.discrete_bayes import update
 
 
-def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> np.ndarray:
+def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> ut.Pdf:
     """
     Compute likelihood that a measurement matches positions in the hallway.
 
@@ -214,7 +214,7 @@ update(likelihood, belief)
 
 
 # %%
-def perfect_predict(belief: np.ndarray, move: int) -> np.ndarray:
+def perfect_predict(belief: ut.Pdf, move: int) -> ut.Pdf:
     """
     Move the position by `move` spaces with perfect prediction.
 
@@ -265,12 +265,12 @@ ut.plot_belief(new_belief, hallway=hallway)
 
 # %%
 def predict_move(
-    belief: np.ndarray,
+    belief: ut.Pdf,
     move: int,
     p_under: float,
     p_correct: float,
     p_over: float,
-) -> np.ndarray:
+) -> ut.Pdf:
     """
     Predict movement with uncertainty in the motion model.
 
@@ -347,7 +347,7 @@ interact(show_prior, step=IntSlider(value=1, max=len(predict_beliefs)));
 
 
 # %%
-def predict_move_convolution(pdf, offset, kernel):
+def predict_move_convolution(pdf: ut.Pdf, offset: int, kernel: ut.Pdf) -> ut.Pdf:
     N = len(pdf)
     kN = len(kernel)
     width = int((kN - 1) / 2)

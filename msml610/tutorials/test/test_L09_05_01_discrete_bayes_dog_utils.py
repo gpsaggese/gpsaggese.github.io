@@ -7,7 +7,6 @@ import msml610.tutorials.test.test_L09_05_01_discrete_bayes_dog_utils as mtttl0d
 """
 
 import logging
-from typing import List
 
 import numpy as np
 
@@ -40,8 +39,8 @@ class Test_discrete_bayes_sim(hunitest.TestCase):
 
     def _check_simulation_results(
         self,
-        priors: list,
-        posteriors: list,
+        priors: mtl00dbdu.List[mtl00dbdu.Pdf],
+        posteriors: mtl00dbdu.List[mtl00dbdu.Pdf],
         expected_length: int,
     ) -> None:
         """
@@ -60,7 +59,7 @@ class Test_discrete_bayes_sim(hunitest.TestCase):
         for p in posteriors:
             self.assertAlmostEqual(np.sum(p), 1.0, places=6)
 
-    def _get_most_likely_position(self, belief: np.ndarray) -> int:
+    def _get_most_likely_position(self, belief: mtl00dbdu.Pdf) -> int:
         """
         Extract the most likely position from a belief distribution.
 
@@ -70,7 +69,7 @@ class Test_discrete_bayes_sim(hunitest.TestCase):
         return int(np.argmax(belief))
         
     def _check_most_likely_positions(
-        self, posteriors: list, expected_pos: List[int]
+        self, posteriors: mtl00dbdu.List[mtl00dbdu.Pdf], expected_pos: mtl00dbdu.PosList
     ) -> None:
         """
         Verify that most likely positions from posteriors match expected values.

@@ -8,7 +8,7 @@ import msml610.tutorials.L09_05_01_discrete_bayes_dog_utils as mtl00dbdu
 
 import copy
 import logging
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 from ipywidgets import Dropdown, VBox, interactive_output
 from filterpy.discrete_bayes import predict, update
@@ -24,8 +24,8 @@ _LOG = logging.getLogger(__name__)
 # Represent a list of positions as a list of integers.
 PosList = List[int]
 
-# Represent a probability distribution as a list of probabilities.
-Pdf = List[float]
+# Represent a probability distribution as a list of probabilities or numpy array.
+Pdf = Union[List[float], np.ndarray]
 
 HALLWAY_LEN = 10
 
@@ -42,7 +42,7 @@ def get_hallway2() -> np.ndarray:
 
 
 def plot_belief(
-    belief: np.ndarray,
+    belief: Pdf,
     *,
     title: str = "Belief",
     y_lim: Tuple[float, float] = (0, 1),
@@ -86,8 +86,8 @@ def plot_belief(
 
 
 def plot_beliefs(
-    belief1: np.ndarray,
-    belief2: np.ndarray,
+    belief1: Pdf,
+    belief2: Pdf,
     *,
     title1: str = "Belief1",
     title2: str = "Belief2",
@@ -218,7 +218,7 @@ def dassert_sensor_info(sensor_info: Dict[str, List]) -> None:
     hdbg.dassert_eq(len(sensor_info["positions"]), len(sensor_info["z_doors"]))
 
 
-def get_dog_movements1() -> List[int]:
+def get_dog_movements1() -> PosList:
     """
     The dog runs around the office for 50 steps.
     """
@@ -226,7 +226,7 @@ def get_dog_movements1() -> List[int]:
     return positions
 
 
-def get_dog_movements2() -> List[int]:
+def get_dog_movements2() -> PosList:
     """
     The dog runs between door 1 and door 2 for 50 steps.
     """
@@ -234,7 +234,7 @@ def get_dog_movements2() -> List[int]:
     return positions
 
 
-def get_dog_movements3() -> List[int]:
+def get_dog_movements3() -> PosList:
     """
     The dog runs between positions 0 and 3 for 12 steps, then back for 12 steps.
     """
@@ -242,7 +242,7 @@ def get_dog_movements3() -> List[int]:
     return positions
 
 
-def get_sensor_info(positions: List[int], hallway: np.ndarray) -> Dict[str, List]:
+def get_sensor_info(positions: PosList, hallway: np.ndarray) -> Dict[str, List]:
     """
     Get the movements of the dog and the measurements.
     """
@@ -281,14 +281,14 @@ def get_bad_sensor_info(use_bad_sensor: bool) -> Dict[str, List]:
 
 
 def discrete_bayes_sim(
-    prior: np.ndarray,
+    prior: Pdf,
     # TODO(gp): door_sensor_prob
     kernel: tuple,
     sensor_info: Dict[str, List],
-    # 
+    #
     z_prob: float,
     hallway: np.ndarray,
-) -> Tuple[list, list]:
+) -> Tuple[List[Pdf], List[Pdf]]:
     """
     Run discrete Bayes filter simulation.
 
@@ -317,7 +317,7 @@ def discrete_bayes_sim(
 
 
 def plot_posterior(
-    hallway: np.ndarray, posteriors: list, i: int, positions: List[int]
+    hallway: np.ndarray, posteriors: List[Pdf], i: int, positions: PosList
 ) -> None:
     """
     Plot posterior belief at step i with dog position marker.
@@ -338,7 +338,7 @@ def plot_posterior(
     plt.show()
 
 
-def plot_prior(hallway: np.ndarray, priors: list, i: int, positions: List[int]) -> None:
+def plot_prior(hallway: np.ndarray, priors: List[Pdf], i: int, positions: PosList) -> None:
     """
     Plot prior belief at step i with dog position marker.
 
@@ -359,7 +359,7 @@ def plot_prior(hallway: np.ndarray, priors: list, i: int, positions: List[int]) 
 
 
 def animate_discrete_bayes(
-    hallway: np.ndarray, priors: list, posteriors: list, sensor_info: Dict[str, List]
+    hallway: np.ndarray, priors: List[Pdf], posteriors: List[Pdf], sensor_info: Dict[str, List]
 ):
     """
     Create animation function for discrete Bayes filter.
@@ -391,7 +391,7 @@ def animate_discrete_bayes(
 
 
 def plot_dog_movement(
-    positions: List[int],
+    positions: PosList,
     step_idx: int,
     *,
     ax: Optional[plt.Axes] = None,
@@ -428,8 +428,8 @@ def plot_dog_movement(
 
 def animate_discrete_bayes_with_movement(
     hallway: np.ndarray,
-    priors: list,
-    posteriors: list,
+    priors: List[Pdf],
+    posteriors: List[Pdf],
     sensor_info: Dict[str, List],
 ):
     """
@@ -495,8 +495,8 @@ def animate_discrete_bayes_with_movement(
 
 def animate_discrete_bayes_with_movement_and_info(
     hallway: np.ndarray,
-    priors: list,
-    posteriors: list,
+    priors: List[Pdf],
+    posteriors: List[Pdf],
     sensor_info: Dict[str, List],
 ):
     """
