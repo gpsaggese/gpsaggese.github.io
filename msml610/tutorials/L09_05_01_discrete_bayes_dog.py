@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -43,7 +43,7 @@ import L09_05_01_discrete_bayes_dog_utils as ut
 # # Cell 1: Tracking a Dog
 
 # %% [markdown]
-# ## Problem Definition
+# ## Cell 1.1: Problem Definition
 
 # %% [markdown]
 # - There is a dog with a sensor, that wanders around the offices and halls
@@ -54,7 +54,7 @@ import L09_05_01_discrete_bayes_dog_utils as ut
 # - Can we find out where the dog is from consecutive measurements?
 
 # %% [markdown]
-# ## Dog with Door sensor
+# ## Cell 1.2: Dog with Door Sensor
 
 # %% [markdown]
 # ### A Simple Example with Perfect Sensors
@@ -204,7 +204,7 @@ update(likelihood, belief)
 
 
 # %% [markdown]
-# ## Dog with Movement Sensor
+# ## Cell 1.3: Dog with Movement Sensor
 
 # %% [markdown]
 # ### Incorporating movement
@@ -459,7 +459,7 @@ ut.plot_beliefs(
 # # Cell 2: Bayes Dog Simulation
 
 # %% [markdown]
-# ## Interactive Visualization
+# ## Cell 2.1: Interactive Visualization
 #
 # - The dog has only a door sensor and runs around the hallway
 # - The green line marks where the dog actually is at each step
@@ -468,7 +468,7 @@ ut.plot_beliefs(
 #   - **Bottom plot**: Dog movement trajectory over time with current position highlighted
 
 # %% [markdown]
-# ## Widget Controls
+# ### Widget Controls
 #
 # The interactive visualization includes four controls:
 #
@@ -488,7 +488,7 @@ ut.plot_beliefs(
 #    - Lower values add more noise to measurements
 
 # %%
-ut.cell2_interactive()
+ut.cell2_1_interactive()
 
 # %% [markdown]
 # - With movement1, z_prob = 1
@@ -499,10 +499,10 @@ ut.cell2_interactive()
 # - When the initial prior is concentrated in the wrong position, it is overriden by data
 
 # %% [markdown]
-# ## Bad Sensor Data
+# ## Cell 2.2: Bad Sensor Data
 
 # %%
-ut.cell2_1_interactive()
+ut.cell2_2_interactive()
 
 # %%
 # TODO(gp): Add comment

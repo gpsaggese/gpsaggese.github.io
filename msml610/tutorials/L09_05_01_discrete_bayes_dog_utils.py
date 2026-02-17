@@ -184,7 +184,7 @@ def plot_beliefs(
 
 
 # ############################################################################
-# Cell 2
+# Cell 2: Bayes Dog Simulation
 # ############################################################################
 
 
@@ -613,7 +613,12 @@ def animate_discrete_bayes_with_movement_and_info(
     return animate
 
 
-def cell2_interactive() -> None:
+# ############################################################################
+# Cell 2.1: Interactive Visualization
+# ############################################################################
+
+
+def cell2_1_interactive() -> None:
     """
     Interactive visualization of discrete Bayes filter tracking a dog.
 
@@ -727,7 +732,12 @@ def cell2_interactive() -> None:
     display(VBox([controls, output]))
 
 
-def cell2_1_interactive() -> None:
+# ############################################################################
+# Cell 2.2: Bad Sensor Data
+# ############################################################################
+
+
+def cell2_2_interactive() -> None:
     """
     Interactive visualization of discrete Bayes filter tracking a dog.
 
