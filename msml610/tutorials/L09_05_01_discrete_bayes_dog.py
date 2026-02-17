@@ -66,12 +66,13 @@ belief = np.array([1 / 10] * 10)
 print(belief)
 
 # %%
-ut.plot_belief(belief)
+hallway = ut.get_hallway1()
+ut.plot_belief(belief, hallway=hallway)
 
 # %%
 # The map of the office is the following.
-hallway = np.array([1, 1, 0, 0, 0, 0, 0, 0, 1, 0])
-ut.plot_belief(hallway, title="Hallway")
+hallway = ut.get_hallway1()
+ut.plot_belief(hallway, hallway=hallway, title="Hallway")
 
 # %% [markdown]
 # - The sensor returns always the correct answer.
@@ -80,7 +81,7 @@ ut.plot_belief(hallway, title="Hallway")
 
 # %%
 belief = np.array([1 / 3, 1 / 3, 0, 0, 0, 0, 0, 0, 1 / 3, 0])
-ut.plot_belief(belief)
+ut.plot_belief(belief, hallway=hallway)
 
 # %% [markdown]
 # - The readings is "door", "move right", "door"
@@ -88,7 +89,7 @@ ut.plot_belief(belief)
 
 # %%
 belief = np.array([0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-ut.plot_belief(belief)
+ut.plot_belief(belief, hallway=hallway)
 
 # %% [markdown]
 # ### Noisy Sensors
@@ -100,7 +101,7 @@ ut.plot_belief(belief)
 
 # %%
 belief = np.array([0.31, 0.31, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.31, 0.01])
-ut.plot_belief(belief)
+ut.plot_belief(belief, hallway=hallway)
 
 
 # %% [markdown]
@@ -133,7 +134,7 @@ update_belief(hallway, belief, z=reading, correct_scale=3.0)
 print("belief:", belief)
 print("sum =", sum(belief))
 belief /= sum(belief)
-ut.plot_belief(belief)
+ut.plot_belief(belief, hallway=hallway)
 
 # %%
 from filterpy.discrete_bayes import normalize
@@ -164,7 +165,7 @@ scaled_update(hallway, belief, z=1, z_prob=0.75)
 print("sum =", sum(belief))
 print("probability of door =", belief[0])
 print("probability of wall =", belief[2])
-ut.plot_belief(belief)
+ut.plot_belief(belief, hallway=hallway)
 
 # %% [markdown]
 # - Generalizing;
@@ -232,11 +233,11 @@ def perfect_predict(belief: np.ndarray, move: int) -> np.ndarray:
 
 
 belief = np.array([0.35, 0.1, 0.2, 0.3, 0, 0, 0, 0, 0, 0.05])
-ut.plot_belief(belief)
+ut.plot_belief(belief, hallway=hallway)
 
 # %%
 new_belief = perfect_predict(belief, 1)
-ut.plot_belief(new_belief)
+ut.plot_belief(new_belief, hallway=hallway)
 
 
 # %% [markdown]
@@ -295,20 +296,20 @@ def predict_move(
 
 
 belief = [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-ut.plot_belief(belief)
+ut.plot_belief(belief, hallway=hallway)
 
 move = 2
 prior = predict_move(belief, move, 0.1, 0.8, 0.1)
-ut.plot_belief(prior)
+ut.plot_belief(prior, hallway=hallway)
 
 # %%
 # Assume the belief is not correct.
 belief = [0, 0, 0.4, 0.6, 0, 0, 0, 0, 0, 0]
-ut.plot_belief(belief)
+ut.plot_belief(belief, hallway=hallway)
 
 move = 2
 prior = predict_move(belief, move, 0.1, 0.8, 0.1)
-ut.plot_belief(prior)
+ut.plot_belief(prior, hallway=hallway)
 
 # %% [markdown]
 # - After the update with the noisy sensor there is always some lost information
@@ -337,7 +338,7 @@ def show_prior(step: int) -> None:
 
     :param step: Time step to display (1-indexed)
     """
-    ut.plot_belief(predict_beliefs[step - 1])
+    ut.plot_belief(predict_beliefs[step - 1], hallway=hallway)
     plt.title(f"Step {step}")
     plt.show()
 
@@ -364,7 +365,7 @@ belief = [0.05, 0.05, 0.05, 0.05, 0.55, 0.05, 0.05, 0.05, 0.05, 0.05]
 
 prior = predict_move_convolution(belief, offset=1, kernel=[0.1, 0.8, 0.1])
 
-ut.plot_beliefs(belief, prior)
+ut.plot_beliefs(belief, prior, hallway=hallway)
 
 # %%
 # Using filterpy.
@@ -373,13 +374,13 @@ from filterpy.discrete_bayes import predict
 
 belief = [0.05, 0.05, 0.05, 0.05, 0.55, 0.05, 0.05, 0.05, 0.05, 0.05]
 prior = predict(belief, offset=1, kernel=[0.1, 0.8, 0.1])
-ut.plot_belief(prior)
+ut.plot_belief(prior, hallway=hallway)
 
 # %%
 belief = [0.05, 0.05, 0.05, 0.05, 0.55, 0.05, 0.05, 0.05, 0.05, 0.05]
 prior = predict(belief, offset=3, kernel=[0.05, 0.05, 0.6, 0.2, 0.1])
 
-ut.plot_beliefs(belief, prior)
+ut.plot_beliefs(belief, prior, hallway=hallway)
 
 # %% [markdown]
 # ### Integrating Measurements and Updates
@@ -389,7 +390,7 @@ ut.plot_beliefs(belief, prior)
 # - The output of the update step is then fed into the next prediction
 
 # %%
-hallway = np.array([1, 1, 0, 0, 0, 0, 0, 0, 1, 0])
+hallway = ut.get_hallway1()
 # Sensor measurements are imperfect.
 kernel = (0.1, 0.8, 0.1)
 y_lim = (0, 0.4)
@@ -398,33 +399,33 @@ y_lim = (0, 0.4)
 prior1 = np.array([0.1] * 10)
 
 # The sensor tells that the dog is in front of a door.
-likelihood = lh_hallway(hallway, z=1, z_prob=0.75)
+likelihood = ut.lh_hallway(hallway, z=1, z_prob=0.75)
 posterior1 = update(likelihood, prior1)
 
-ut.plot_beliefs(prior1, posterior1, title1="Prior 1", title2="Posterior 1", y_lim=y_lim)
+ut.plot_beliefs(prior1, posterior1, title1="Prior 1", title2="Posterior 1", y_lim=y_lim, hallway=hallway)
 
 # %%
 # The sensor says that the dog moved to the right.
 move = 1
 prior2 = predict(posterior1, move, kernel)
-ut.plot_beliefs(posterior1, prior2, title1="Posterior1", title2="Prior2", y_lim=y_lim)
+ut.plot_beliefs(posterior1, prior2, title1="Posterior1", title2="Prior2", y_lim=y_lim, hallway=hallway)
 
 # The probabilities move to the right and get smeared a bit.
 
 # %%
 # The sensor senses another door.
-likelihood = lh_hallway(hallway, z=1, z_prob=0.75)
+likelihood = ut.lh_hallway(hallway, z=1, z_prob=0.75)
 posterior2 = update(likelihood, prior2)
 
-ut.plot_beliefs(prior2, posterior2, title1="Prior2", title2="Posterior2", y_lim=y_lim)
+ut.plot_beliefs(prior2, posterior2, title1="Prior2", title2="Posterior2", y_lim=y_lim, hallway=hallway)
 # The belief is that the dog is in front of position 1.
 
 # %%
 move = 1
 prior3 = predict(posterior2, move, kernel)
-likelihood = lh_hallway(hallway, z=0, z_prob=.75)
+likelihood = ut.lh_hallway(hallway, z=0, z_prob=.75)
 posterior3 = update(likelihood, prior3)
-ut.plot_beliefs(prior3, posterior3, title1="Prior3", title2="Posterior3", y_lim=y_lim)
+ut.plot_beliefs(prior3, posterior3, title1="Prior3", title2="Posterior3", y_lim=y_lim, hallway=hallway)
 
 # %% [markdown]
 # # Cell 2: Bayes Dog Simulation

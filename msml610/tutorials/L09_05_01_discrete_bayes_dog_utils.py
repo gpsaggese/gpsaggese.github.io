@@ -21,14 +21,17 @@ import msml610_utils as mtumsuti
 
 _LOG = logging.getLogger(__name__)
 
+HALLWAY_LEN = 10
 
 def get_hallway1() -> np.ndarray:
     hallway = np.array([1, 1, 0, 0, 0, 0, 0, 0, 1, 0])
+    hdbg.dassert_eq(len(hallway), HALLWAY_LEN)
     return hallway
 
 
 def get_hallway2() -> np.ndarray:
     hallway = np.array([1, 1, 0, 1, 0, 1, 1, 0, 1, 0])
+    hdbg.dassert_eq(len(hallway), HALLWAY_LEN)
     return hallway
 
 
@@ -38,6 +41,7 @@ def plot_belief(
     title: str = "Belief",
     y_lim: Tuple[float, float] = (0, 1),
     ax: Optional[plt.Axes] = None,
+    hallway: np.ndarray = None,
     use_hallway: bool = True,
 ) -> None:
     """
@@ -67,7 +71,8 @@ def plot_belief(
     ax.set_title(title)
     # Mark door positions.
     if use_hallway:
-        doors = np.where(HALLWAY == 1)[0]
+        hdbg.dassert_is_not(hallway, None)
+        doors = np.where(hallway == 1)[0]
         for d in doors:
             ax.axvline(
                 d, color="red", linestyle="--", linewidth=2, alpha=0.8
@@ -82,6 +87,7 @@ def plot_beliefs(
     title2: str = "Belief2",
     y_lim: Tuple[float, float] = (0, 1),
     same_plot: bool = True,
+    hallway: np.ndarray = None,
     use_hallway: bool = True,
 ) -> None:
     """
@@ -121,10 +127,7 @@ def plot_beliefs(
     else:
         n = len(belief1)
         # Assert that both beliefs have the same length.
-        assert len(belief2) == n, (
-            f"belief1 and belief2 must have the same length. "
-            f"Got {n} and {len(belief2)}"
-        )
+        hdbg.dassert_eq(len(belief2), n)
         indices = np.arange(n)
         width = 0.4
         _, ax = plt.subplots(figsize=plt.rcParams["figure.figsize"])
@@ -170,7 +173,8 @@ def plot_beliefs(
         ax.legend()
         # Mark door positions.
         if use_hallway:
-            doors = np.where(HALLWAY == 1)[0]
+            hdbg.dassert_is_not(hallway, None)
+            doors = np.where(hallway == 1)[0]
             for d in doors:
                 ax.axvline(
                     d, color="red", linestyle="--", linewidth=2, alpha=0.8
@@ -212,7 +216,7 @@ def get_dog_movements1() -> List[int]:
     """
     The dog runs around the office for 50 steps.
     """
-    positions = [i % len(HALLWAY) for i in range(50)]
+    positions = [i % HALLWAY_LEN for i in range(50)]
     return positions
 
 
@@ -232,11 +236,11 @@ def get_dog_movements3() -> List[int]:
     return positions
 
 
-def get_sensor_info(positions: List[int]) -> Dict[str, List]:
+def get_sensor_info(positions: List[int], hallway: np.ndarray) -> Dict[str, List]:
     """
     Get the movements of the dog and the measurements.
     """
-    z_doors = [HALLWAY[z] for z in positions]
+    z_doors = [hallway[z] for z in positions]
     z_moves = [0] + [positions[i] - positions[i-1] for i in range(1, len(positions))]
     sensor_info = {
         "positions": positions,
@@ -388,8 +392,8 @@ def plot_dog_movement(
     ax.set_xlabel("Step")
     ax.set_ylabel("Position")
     ax.set_title("Dog Movement")
-    ax.set_ylim(-0.5, len(HALLWAY) - 0.5)
-    ax.set_yticks(range(len(HALLWAY)))
+    ax.set_ylim(-0.5, HALLWAY_LEN - 0.5)
+    ax.set_yticks(range(HALLWAY_LEN))
     ax.grid(True, alpha=0.3)
 
 
@@ -432,6 +436,7 @@ def animate_discrete_bayes_with_movement(
                 title="Prior",
                 y_lim=(0, 1.0),
                 ax=axes[0],
+                hallway=hallway,
                 use_hallway=True,
             )
             # Mark current dog position.
@@ -444,6 +449,7 @@ def animate_discrete_bayes_with_movement(
                 title="Posterior",
                 y_lim=(0, 1.0),
                 ax=axes[0],
+                hallway=hallway,
                 use_hallway=True,
             )
             # Mark current dog position.
@@ -466,6 +472,7 @@ def cell2_interactive() -> None:
     as the dog moves through a hallway with noisy sensors. Includes controls
     for movement function, initial prior, and sensor probability.
     """
+    hallway = get_hallway1()
     # Create widgets for controls.
     # Movement function selector.
     movement_dropdown = Dropdown(
@@ -541,16 +548,16 @@ def cell2_interactive() -> None:
             positions = get_dog_movements3()
         else:
             raise ValueError(f"Invalid movement function: {movement_func}")
-        sensor_info = get_sensor_info(positions)
+        sensor_info = get_sensor_info(positions, hallway)
         # Update step slider max value.
         step_slider.max = len(sensor_info["z_doors"]) * 2
         # Run simulation.
         priors, posteriors = discrete_bayes_sim(
-            prior, kernel, sensor_info, z_prob, HALLWAY
+            prior, kernel, sensor_info, z_prob, hallway
         )
         # Animate.
         animate_fn = animate_discrete_bayes_with_movement(
-            HALLWAY, priors, posteriors, sensor_info
+            hallway, priors, posteriors, sensor_info
         )
         animate_fn(step)
 
