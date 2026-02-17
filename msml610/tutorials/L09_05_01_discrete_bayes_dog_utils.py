@@ -202,15 +202,32 @@ def dassert_sensor_info(sensor_info: Dict[str, List]) -> None:
 
 
 def get_dog_movements1() -> List[int]:
+    """
+    The dog runs around the office for 50 steps.
+    """
     positions = [i % len(HALLWAY) for i in range(50)]
+    return positions
+
+
+def get_dog_movements2() -> List[int]:
+    """
+    The dog runs between door 1 and door 2 for 50 steps.
+    """
+    positions = [0, 1] * 25
+    return positions
+
+
+def get_dog_movements3() -> List[int]:
+    """
+    The dog runs between door 1 and door 2 for 50 steps.
+    """
+    positions = [0, 0] + [0, 1, 2, 3] * 12
     return positions
 
 
 def get_sensor_info(positions: List[int]) -> Dict[str, List]:
     """
     Get the movements of the dog and the measurements.
-
-    The dog moves 1 position to the right at each step.
     """
     z_doors = [HALLWAY[z] for z in positions]
     z_moves = [0] + [positions[i] - positions[i-1] for i in range(1, len(positions))]
@@ -220,7 +237,7 @@ def get_sensor_info(positions: List[int]) -> Dict[str, List]:
         "z_moves": z_moves,
     }
     dassert_sensor_info(sensor_info)
-    return z_moves, z_doors
+    return sensor_info
 
 
 def discrete_bayes_sim(
@@ -260,7 +277,7 @@ def discrete_bayes_sim(
 
 
 def plot_posterior(
-    hallway: np.ndarray, posteriors: list, i: int
+    hallway: np.ndarray, posteriors: list, i: int, positions: List[int]
 ) -> None:
     """
     Plot posterior belief at step i with dog position marker.
@@ -268,6 +285,7 @@ def plot_posterior(
     :param hallway: Map of the hallway (0=wall, 1=door)
     :param posteriors: List of posterior belief distributions
     :param i: Time step index
+    :param positions: List of actual dog positions
     """
     plot_belief(
         posteriors[i],
@@ -276,17 +294,18 @@ def plot_posterior(
         use_hallway=True,
     )
     # Mark current dog position.
-    plt.axvline(i % len(hallway), color="green", linewidth=5, alpha=0.5)
+    plt.axvline(positions[i], color="green", linewidth=5, alpha=0.5)
     plt.show()
 
 
-def plot_prior(hallway: np.ndarray, priors: list, i: int) -> None:
+def plot_prior(hallway: np.ndarray, priors: list, i: int, positions: List[int]) -> None:
     """
     Plot prior belief at step i with dog position marker.
 
     :param hallway: Map of the hallway (0=wall, 1=door)
     :param priors: List of prior belief distributions
     :param i: Time step index
+    :param positions: List of actual dog positions
     """
     plot_belief(
         priors[i],
@@ -295,12 +314,12 @@ def plot_prior(hallway: np.ndarray, priors: list, i: int) -> None:
         use_hallway=True,
     )
     # Mark current dog position.
-    plt.axvline(i % len(hallway), color="green", linewidth=5, alpha=0.5)
+    plt.axvline(positions[i], color="green", linewidth=5, alpha=0.5)
     plt.show()
 
 
 def animate_discrete_bayes(
-    hallway: np.ndarray, priors: list, posteriors: list
+    hallway: np.ndarray, priors: list, posteriors: list, sensor_info: Dict[str, List]
 ):
     """
     Create animation function for discrete Bayes filter.
@@ -311,6 +330,7 @@ def animate_discrete_bayes(
     :param hallway: Map of the hallway (0=wall, 1=door)
     :param priors: List of prior belief distributions
     :param posteriors: List of posterior belief distributions
+    :param sensor_info: Dictionary containing dog positions and measurements
     :return: Animation function for use with ipywidgets
     """
 
@@ -323,9 +343,9 @@ def animate_discrete_bayes(
         step -= 1
         i = step // 2
         if step % 2 == 0:
-            plot_prior(hallway, priors, i)
+            plot_prior(hallway, priors, i, sensor_info["positions"])
         else:
-            plot_posterior(hallway, posteriors, i)
+            plot_posterior(hallway, posteriors, i, sensor_info["positions"])
 
     return animate
 
@@ -343,7 +363,8 @@ def cell2_interactive() -> None:
     # Initial uniform belief.
     prior = np.array([0.1] * 10)
     # Get the sensor info.
-    positions = get_dog_movements1()
+    #positions = get_dog_movements1()
+    positions = get_dog_movements2()
     sensor_info = get_sensor_info(positions)
     # Run simulation.
     priors, posteriors = discrete_bayes_sim(
@@ -351,6 +372,6 @@ def cell2_interactive() -> None:
     )
     # Create interactive widget.
     interact(
-        animate_discrete_bayes(HALLWAY, priors, posteriors),
-        step=IntSlider(value=1, max=len(sensor_info["z_doors"]) * 2),
+        animate_discrete_bayes(HALLWAY, priors, posteriors, sensor_info),
+        step=IntSlider(value=1, min=1, max=len(sensor_info["z_doors"]) * 2),
     )

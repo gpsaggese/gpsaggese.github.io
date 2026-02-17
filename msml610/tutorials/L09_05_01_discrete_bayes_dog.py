@@ -429,8 +429,6 @@ ut.plot_beliefs(prior3, posterior3, title1="Prior3", title2="Posterior3", y_lim=
 # %% [markdown]
 # # Cell 2: Bayes Dog Simulation
 
-# %%
-
 # %% [markdown]
 # - The dog:
 #   - Has only a door sensor
