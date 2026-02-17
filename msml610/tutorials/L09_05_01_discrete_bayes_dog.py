@@ -343,7 +343,7 @@ def show_prior(step: int) -> None:
     plt.show()
 
 
-interact(show_prior, step=IntSlider(value=1, max=len(predict_beliefs)));
+interact(show_prior, step=IntSlider(value=1, max=len(predict_beliefs)))
 
 
 # %%
@@ -402,13 +402,27 @@ prior1 = np.array([0.1] * 10)
 likelihood = ut.lh_hallway(hallway, z=1, z_prob=0.75)
 posterior1 = update(likelihood, prior1)
 
-ut.plot_beliefs(prior1, posterior1, title1="Prior 1", title2="Posterior 1", y_lim=y_lim, hallway=hallway)
+ut.plot_beliefs(
+    prior1,
+    posterior1,
+    title1="Prior 1",
+    title2="Posterior 1",
+    y_lim=y_lim,
+    hallway=hallway,
+)
 
 # %%
 # The sensor says that the dog moved to the right.
 move = 1
 prior2 = predict(posterior1, move, kernel)
-ut.plot_beliefs(posterior1, prior2, title1="Posterior1", title2="Prior2", y_lim=y_lim, hallway=hallway)
+ut.plot_beliefs(
+    posterior1,
+    prior2,
+    title1="Posterior1",
+    title2="Prior2",
+    y_lim=y_lim,
+    hallway=hallway,
+)
 
 # The probabilities move to the right and get smeared a bit.
 
@@ -417,15 +431,29 @@ ut.plot_beliefs(posterior1, prior2, title1="Posterior1", title2="Prior2", y_lim=
 likelihood = ut.lh_hallway(hallway, z=1, z_prob=0.75)
 posterior2 = update(likelihood, prior2)
 
-ut.plot_beliefs(prior2, posterior2, title1="Prior2", title2="Posterior2", y_lim=y_lim, hallway=hallway)
+ut.plot_beliefs(
+    prior2,
+    posterior2,
+    title1="Prior2",
+    title2="Posterior2",
+    y_lim=y_lim,
+    hallway=hallway,
+)
 # The belief is that the dog is in front of position 1.
 
 # %%
 move = 1
 prior3 = predict(posterior2, move, kernel)
-likelihood = ut.lh_hallway(hallway, z=0, z_prob=.75)
+likelihood = ut.lh_hallway(hallway, z=0, z_prob=0.75)
 posterior3 = update(likelihood, prior3)
-ut.plot_beliefs(prior3, posterior3, title1="Prior3", title2="Posterior3", y_lim=y_lim, hallway=hallway)
+ut.plot_beliefs(
+    prior3,
+    posterior3,
+    title1="Prior3",
+    title2="Posterior3",
+    y_lim=y_lim,
+    hallway=hallway,
+)
 
 # %% [markdown]
 # # Cell 2: Bayes Dog Simulation

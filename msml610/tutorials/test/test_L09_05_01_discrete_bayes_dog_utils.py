@@ -67,9 +67,11 @@ class Test_discrete_bayes_sim(hunitest.TestCase):
         :return: Index of the position with highest probability
         """
         return int(np.argmax(belief))
-        
+
     def _check_most_likely_positions(
-        self, posteriors: mtl00dbdu.List[mtl00dbdu.Pdf], expected_pos: mtl00dbdu.PosList
+        self,
+        posteriors: mtl00dbdu.List[mtl00dbdu.Pdf],
+        expected_pos: mtl00dbdu.PosList,
     ) -> None:
         """
         Verify that most likely positions from posteriors match expected values.

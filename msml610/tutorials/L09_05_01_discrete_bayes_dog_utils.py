@@ -29,6 +29,7 @@ Pdf = Union[List[float], np.ndarray]
 
 HALLWAY_LEN = 10
 
+
 def get_hallway1() -> np.ndarray:
     hallway = np.array([1, 1, 0, 0, 0, 0, 0, 0, 1, 0])
     hdbg.dassert_eq(len(hallway), HALLWAY_LEN)
@@ -65,13 +66,9 @@ def plot_belief(
     # Show all integers on x-axis.
     ax.set_xticks(range(len(belief)))
     # Grid lines at every integer (vertical).
-    ax.grid(
-        axis="x", color="gray", linestyle="-", linewidth=0.8, alpha=0.6
-    )
+    ax.grid(axis="x", color="gray", linestyle="-", linewidth=0.8, alpha=0.6)
     # Horizontal grid lines.
-    ax.grid(
-        axis="y", color="gray", linestyle="--", linewidth=0.8, alpha=0.5
-    )
+    ax.grid(axis="y", color="gray", linestyle="--", linewidth=0.8, alpha=0.5)
     ax.set_xlabel("State")
     ax.set_ylabel("Probability")
     ax.set_title(title)
@@ -80,9 +77,7 @@ def plot_belief(
         hdbg.dassert_is_not(hallway, None)
         doors = np.where(hallway == 1)[0]
         for d in doors:
-            ax.axvline(
-                d, color="red", linestyle="--", linewidth=2, alpha=0.8
-            )
+            ax.axvline(d, color="red", linestyle="--", linewidth=2, alpha=0.8)
 
 
 def plot_beliefs(
@@ -192,6 +187,7 @@ def plot_beliefs(
 # Cell 2
 # ############################################################################
 
+
 def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> np.ndarray:
     """
     Compute likelihood that a measurement matches positions in the hallway.
@@ -212,7 +208,7 @@ def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> np.ndarray:
     likelihood[hall == z] *= scale
     return likelihood
 
-    
+
 def dassert_sensor_info(sensor_info: Dict[str, List]) -> None:
     hdbg.dassert_eq(len(sensor_info["positions"]), len(sensor_info["z_moves"]))
     hdbg.dassert_eq(len(sensor_info["positions"]), len(sensor_info["z_doors"]))
@@ -247,7 +243,9 @@ def get_sensor_info(positions: PosList, hallway: np.ndarray) -> Dict[str, List]:
     Get the movements of the dog and the measurements.
     """
     z_doors = [hallway[z] for z in positions]
-    z_moves = [0] + [positions[i] - positions[i-1] for i in range(1, len(positions))]
+    z_moves = [0] + [
+        positions[i] - positions[i - 1] for i in range(1, len(positions))
+    ]
     sensor_info = {
         "positions": positions,
         "z_doors": z_doors,
@@ -270,7 +268,9 @@ def get_bad_sensor_info(use_bad_sensor: bool) -> Dict[str, List]:
     else:
         z_doors = [hallway[z] for z in positions]
         hdbg.dassert_eq(z_doors, [1, 0, 1, 0, 0, 1, 0, 1, 0, 0])
-    z_moves = [0] + [positions[i] - positions[i-1] for i in range(1, len(positions))]
+    z_moves = [0] + [
+        positions[i] - positions[i - 1] for i in range(1, len(positions))
+    ]
     sensor_info = {
         "positions": positions,
         "z_doors": z_doors,
@@ -338,7 +338,9 @@ def plot_posterior(
     plt.show()
 
 
-def plot_prior(hallway: np.ndarray, priors: List[Pdf], i: int, positions: PosList) -> None:
+def plot_prior(
+    hallway: np.ndarray, priors: List[Pdf], i: int, positions: PosList
+) -> None:
     """
     Plot prior belief at step i with dog position marker.
 
@@ -359,7 +361,10 @@ def plot_prior(hallway: np.ndarray, priors: List[Pdf], i: int, positions: PosLis
 
 
 def animate_discrete_bayes(
-    hallway: np.ndarray, priors: List[Pdf], posteriors: List[Pdf], sensor_info: Dict[str, List]
+    hallway: np.ndarray,
+    priors: List[Pdf],
+    posteriors: List[Pdf],
+    sensor_info: Dict[str, List],
 ):
     """
     Create animation function for discrete Bayes filter.
@@ -457,7 +462,9 @@ def animate_discrete_bayes_with_movement(
         # Create side-by-side plots (1 row, 2 columns) with width ratio 1:2.
         figsize = copy.deepcopy(plt.rcParams["figure.figsize"])
         figsize[0] = figsize[0] * 1.5
-        _, axes = plt.subplots(1, 2, figsize=figsize, gridspec_kw={'width_ratios': [1, 2]})
+        _, axes = plt.subplots(
+            1, 2, figsize=figsize, gridspec_kw={"width_ratios": [1, 2]}
+        )
         # Plot dog movement.
         plot_dog_movement(sensor_info["positions"], i, ax=axes[0])
         # Plot belief (prior or posterior).
@@ -472,7 +479,10 @@ def animate_discrete_bayes_with_movement(
             )
             # Mark current dog position.
             axes[1].axvline(
-                sensor_info["positions"][i], color="green", linewidth=5, alpha=0.5
+                sensor_info["positions"][i],
+                color="green",
+                linewidth=5,
+                alpha=0.5,
             )
         else:
             plot_belief(
@@ -485,7 +495,10 @@ def animate_discrete_bayes_with_movement(
             )
             # Mark current dog position.
             axes[1].axvline(
-                sensor_info["positions"][i], color="green", linewidth=5, alpha=0.5
+                sensor_info["positions"][i],
+                color="green",
+                linewidth=5,
+                alpha=0.5,
             )
         plt.tight_layout()
         plt.show()
@@ -524,9 +537,11 @@ def animate_discrete_bayes_with_movement_and_info(
         # Create 3-panel layout: text box | movement | belief with width ratio 1:1:2.
         figsize = copy.deepcopy(plt.rcParams["figure.figsize"])
         figsize[0] = figsize[0] * 2.0
-        _, axes = plt.subplots(1, 3, figsize=figsize, gridspec_kw={'width_ratios': [1, 1, 2]})
+        _, axes = plt.subplots(
+            1, 3, figsize=figsize, gridspec_kw={"width_ratios": [1, 1, 2]}
+        )
         # Create sensor info text box.
-        axes[0].axis('off')
+        axes[0].axis("off")
         sensor_text = (
             f"SENSOR INFO SUMMARY\n"
             f"{'=' * 30}\n\n"
@@ -542,12 +557,11 @@ def animate_discrete_bayes_with_movement_and_info(
             f"Door reading: {sensor_info['z_doors'][i]}\n"
             f"Movement: {sensor_info['z_moves'][i]}\n"
         )
-        actual_door = hallway[sensor_info['positions'][i]]
-        sensor_reading = sensor_info['z_doors'][i]
+        actual_door = hallway[sensor_info["positions"][i]]
+        sensor_reading = sensor_info["z_doors"][i]
         is_correct = actual_door == sensor_reading
         sensor_text += (
-            f"Actual door: {actual_door}\n"
-            f"Sensor correct: {is_correct}"
+            f"Actual door: {actual_door}\nSensor correct: {is_correct}"
         )
         mtumsuti.add_fitted_text_box(
             axes[0],
@@ -572,7 +586,10 @@ def animate_discrete_bayes_with_movement_and_info(
             )
             # Mark current dog position.
             axes[2].axvline(
-                sensor_info["positions"][i], color="green", linewidth=5, alpha=0.5
+                sensor_info["positions"][i],
+                color="green",
+                linewidth=5,
+                alpha=0.5,
             )
         else:
             plot_belief(
@@ -585,7 +602,10 @@ def animate_discrete_bayes_with_movement_and_info(
             )
             # Mark current dog position.
             axes[2].axvline(
-                sensor_info["positions"][i], color="green", linewidth=5, alpha=0.5
+                sensor_info["positions"][i],
+                color="green",
+                linewidth=5,
+                alpha=0.5,
             )
         plt.tight_layout()
         plt.show()
@@ -646,7 +666,9 @@ def cell2_interactive() -> None:
         is_float=False,
     )
 
-    def update_visualization(movement_func: str, prior_type: str, z_prob: float, step: int) -> None:
+    def update_visualization(
+        movement_func: str, prior_type: str, z_prob: float, step: int
+    ) -> None:
         """
         Update the visualization based on widget values.
 
@@ -746,7 +768,9 @@ def cell2_1_interactive() -> None:
         is_float=False,
     )
 
-    def update_visualization(use_bad_sensor: bool, z_prob: float, step: int) -> None:
+    def update_visualization(
+        use_bad_sensor: bool, z_prob: float, step: int
+    ) -> None:
         """
         Update the visualization based on widget values.
 
