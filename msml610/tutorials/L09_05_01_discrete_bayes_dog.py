@@ -430,13 +430,46 @@ ut.plot_beliefs(prior3, posterior3, title1="Prior3", title2="Posterior3", y_lim=
 # # Cell 2: Bayes Dog Simulation
 
 # %% [markdown]
-# - The dog:
-#   - Has only a door sensor
-#   - Runs around the hallway
-# - The green line is where the dog actually is
-# - Assume that there is no 
+# ## Interactive Visualization
+#
+# - The dog has only a door sensor and runs around the hallway
+# - The green line marks where the dog actually is at each step
+# - Two plots show the filter in action:
+#   - **Top plot**: Belief distribution (Prior or Posterior) with red lines marking door positions
+#   - **Bottom plot**: Dog movement trajectory over time with current position highlighted
+
+# %% [markdown]
+# ## Widget Controls
+#
+# The interactive visualization includes four controls:
+#
+# 1. **Movement**: Select the dog's movement pattern
+#    - Movement 1 (around office): Dog traverses all 10 positions sequentially for 50 steps
+#    - Movement 2 (between doors): Dog alternates between positions 0 and 1 for 50 steps
+#
+# 2. **Initial Prior**: Choose the starting belief distribution
+#    - Flat (uniform): Equal probability (0.1) across all 10 positions
+#    - All in position 3: Belief concentrated at position 3
+#    - All in position 8: Belief concentrated at position 8
+#
+# 3. **z_prob**: Sensor accuracy (0.0 to 1.0)
+#    - Probability that the door sensor measurement is correct
+#    - 1.0 = perfect sensor (always correct)
+#    - 0.75 = sensor is correct 75% of the time
+#    - Lower values add more noise to measurements
 
 # %%
 ut.cell2_interactive()
+
+# %% [markdown]
+# - With movement1, z_prob = 1
+#     - The prior shifts tracking the dog
+#     - When the dog is in front of a door, the estimate becomes accurate
+#     - When the dog is in a stretch of no doors, the estimate is less certain
+#
+# - When the initial prior is concentrated in the wrong position, it is overriden by data
+
+# %% [markdown]
+# ## Bad Sensor Data
 
 # %%
