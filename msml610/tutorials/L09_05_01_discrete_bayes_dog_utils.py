@@ -21,6 +21,12 @@ import msml610_utils as mtumsuti
 
 _LOG = logging.getLogger(__name__)
 
+# Represent a list of positions as a list of integers.
+PosList = List[int]
+
+# Represent a probability distribution as a list of probabilities.
+Pdf = List[float]
+
 HALLWAY_LEN = 10
 
 def get_hallway1() -> np.ndarray:
@@ -251,6 +257,29 @@ def get_sensor_info(positions: List[int], hallway: np.ndarray) -> Dict[str, List
     return sensor_info
 
 
+def get_bad_sensor_info(use_bad_sensor: bool) -> Dict[str, List]:
+    """
+    Get the movements of the dog and the measurements.
+    """
+    hallway = get_hallway2()
+    positions = list(range(HALLWAY_LEN))
+    if use_bad_sensor:
+        # Note that the sensor is wrong.
+        #         [1, 0, 1, 0, 0, 1, 0, 1, 0, 0]
+        z_doors = [1, 0, 1, 0, 0, 1, 1, 1, 0, 0]
+    else:
+        z_doors = [hallway[z] for z in positions]
+        hdbg.dassert_eq(z_doors, [1, 0, 1, 0, 0, 1, 0, 1, 0, 0])
+    z_moves = [0] + [positions[i] - positions[i-1] for i in range(1, len(positions))]
+    sensor_info = {
+        "positions": positions,
+        "z_doors": z_doors,
+        "z_moves": z_moves,
+    }
+    dassert_sensor_info(sensor_info)
+    return sensor_info
+
+
 def discrete_bayes_sim(
     prior: np.ndarray,
     # TODO(gp): door_sensor_prob
@@ -425,22 +454,24 @@ def animate_discrete_bayes_with_movement(
         """
         step -= 1
         i = step // 2
-        # Create stacked plots (2 rows, 1 column).
+        # Create side-by-side plots (1 row, 2 columns) with width ratio 1:2.
         figsize = copy.deepcopy(plt.rcParams["figure.figsize"])
-        figsize[1] = figsize[1] * 2
-        _, axes = plt.subplots(2, 1, figsize=figsize)
+        figsize[0] = figsize[0] * 1.5
+        _, axes = plt.subplots(1, 2, figsize=figsize, gridspec_kw={'width_ratios': [1, 2]})
+        # Plot dog movement.
+        plot_dog_movement(sensor_info["positions"], i, ax=axes[0])
         # Plot belief (prior or posterior).
         if step % 2 == 0:
             plot_belief(
                 priors[i],
                 title="Prior",
                 y_lim=(0, 1.0),
-                ax=axes[0],
+                ax=axes[1],
                 hallway=hallway,
                 use_hallway=True,
             )
             # Mark current dog position.
-            axes[0].axvline(
+            axes[1].axvline(
                 sensor_info["positions"][i], color="green", linewidth=5, alpha=0.5
             )
         else:
@@ -448,16 +479,114 @@ def animate_discrete_bayes_with_movement(
                 posteriors[i],
                 title="Posterior",
                 y_lim=(0, 1.0),
-                ax=axes[0],
+                ax=axes[1],
                 hallway=hallway,
                 use_hallway=True,
             )
             # Mark current dog position.
-            axes[0].axvline(
+            axes[1].axvline(
                 sensor_info["positions"][i], color="green", linewidth=5, alpha=0.5
             )
+        plt.tight_layout()
+        plt.show()
+
+    return animate
+
+
+def animate_discrete_bayes_with_movement_and_info(
+    hallway: np.ndarray,
+    priors: list,
+    posteriors: list,
+    sensor_info: Dict[str, List],
+):
+    """
+    Create animation function for discrete Bayes filter with movement plot and sensor info box.
+
+    Returns a function that alternates between plotting priors and
+    posteriors as the step parameter changes, along with a plot showing
+    the dog's movement trajectory and a text box with sensor information.
+
+    :param hallway: Map of the hallway (0=wall, 1=door)
+    :param priors: List of prior belief distributions
+    :param posteriors: List of posterior belief distributions
+    :param sensor_info: Dictionary containing dog positions and measurements
+    :return: Animation function for use with ipywidgets
+    """
+
+    def animate(step: int) -> None:
+        """
+        Display belief distribution, movement, and sensor info for given step.
+
+        :param step: Step number (1-indexed, alternates between prior/posterior)
+        """
+        step -= 1
+        i = step // 2
+        # Create 3-panel layout: text box | movement | belief with width ratio 1:1:2.
+        figsize = copy.deepcopy(plt.rcParams["figure.figsize"])
+        figsize[0] = figsize[0] * 2.0
+        _, axes = plt.subplots(1, 3, figsize=figsize, gridspec_kw={'width_ratios': [1, 1, 2]})
+        # Create sensor info text box.
+        axes[0].axis('off')
+        sensor_text = (
+            f"SENSOR INFO SUMMARY\n"
+            f"{'=' * 30}\n\n"
+            f"Total steps: {len(sensor_info['positions'])}\n\n"
+            f"Positions:\n{sensor_info['positions']}\n\n"
+            f"Door readings:\n{sensor_info['z_doors']}\n\n"
+            f"Movements:\n{sensor_info['z_moves']}\n\n"
+            f"Actual hallway:\n{list(hallway)}\n\n"
+            f"{'-' * 30}\n"
+            f"CURRENT STEP: {i}\n"
+            f"{'-' * 30}\n"
+            f"Position: {sensor_info['positions'][i]}\n"
+            f"Door reading: {sensor_info['z_doors'][i]}\n"
+            f"Movement: {sensor_info['z_moves'][i]}\n"
+        )
+        actual_door = hallway[sensor_info['positions'][i]]
+        sensor_reading = sensor_info['z_doors'][i]
+        is_correct = actual_door == sensor_reading
+        sensor_text += (
+            f"Actual door: {actual_door}\n"
+            f"Sensor correct: {is_correct}"
+        )
+        mtumsuti.add_fitted_text_box(
+            axes[0],
+            sensor_text,
+            box_xy=(0.02, 0.98),
+            box_width=0.96,
+            box_height=0.96,
+            max_fontsize=10,
+            min_fontsize=6,
+        )
         # Plot dog movement.
         plot_dog_movement(sensor_info["positions"], i, ax=axes[1])
+        # Plot belief (prior or posterior).
+        if step % 2 == 0:
+            plot_belief(
+                priors[i],
+                title="Prior",
+                y_lim=(0, 1.0),
+                ax=axes[2],
+                hallway=hallway,
+                use_hallway=True,
+            )
+            # Mark current dog position.
+            axes[2].axvline(
+                sensor_info["positions"][i], color="green", linewidth=5, alpha=0.5
+            )
+        else:
+            plot_belief(
+                posteriors[i],
+                title="Posterior",
+                y_lim=(0, 1.0),
+                ax=axes[2],
+                hallway=hallway,
+                use_hallway=True,
+            )
+            # Mark current dog position.
+            axes[2].axvline(
+                sensor_info["positions"][i], color="green", linewidth=5, alpha=0.5
+            )
         plt.tight_layout()
         plt.show()
 
@@ -573,4 +702,84 @@ def cell2_interactive() -> None:
     )
     # Display widgets above plots.
     controls = VBox([movement_dropdown, prior_dropdown, z_prob_box, step_box])
+    display(VBox([controls, output]))
+
+
+def cell2_1_interactive() -> None:
+    """
+    Interactive visualization of discrete Bayes filter tracking a dog.
+
+    Creates an interactive widget that animates the belief update process
+    as the dog moves through a hallway with noisy sensors. Includes controls
+    for movement function, initial prior, and sensor probability.
+    """
+    hallway = get_hallway2()
+    # Create widgets for controls.
+    # Sensor quality selector.
+    sensor_dropdown = Dropdown(
+        options={
+            "Perfect sensor": False,
+            "Bad sensor": True,
+        },
+        value=True,
+        description="Sensor Type:",
+        style={"description_width": "initial"},
+    )
+    # z_prob slider with +/- buttons.
+    z_prob_slider, z_prob_box = mtumsuti.build_widget_control(
+        name="z_prob",
+        description="Sensor accuracy",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=1.0,
+        is_float=True,
+    )
+    # Step slider with +/- buttons.
+    step_slider, step_box = mtumsuti.build_widget_control(
+        name="step",
+        description="Animation step",
+        min_val=1,
+        max_val=100,
+        step=1,
+        initial_value=1,
+        is_float=False,
+    )
+
+    def update_visualization(use_bad_sensor: bool, z_prob: float, step: int) -> None:
+        """
+        Update the visualization based on widget values.
+
+        :param use_bad_sensor: Whether to use bad sensor data
+        :param z_prob: Sensor measurement probability
+        :param step: Current step in the animation
+        """
+        # Change these numbers to alter the simulation.
+        kernel = (0.1, 0.8, 0.1)
+        # Use flat (uniform) prior.
+        prior = np.array([0.1] * 10)
+        sensor_info = get_bad_sensor_info(use_bad_sensor=use_bad_sensor)
+        # Update step slider max value.
+        step_slider.max = len(sensor_info["z_doors"]) * 2
+        # Run simulation.
+        priors, posteriors = discrete_bayes_sim(
+            prior, kernel, sensor_info, z_prob, hallway
+        )
+        # Animate with sensor info box.
+        animate_fn = animate_discrete_bayes_with_movement_and_info(
+            hallway, priors, posteriors, sensor_info
+        )
+        animate_fn(step)
+
+    # Create interactive output.
+    output = interactive_output(
+        update_visualization,
+        {
+            "use_bad_sensor": sensor_dropdown,
+            "z_prob": z_prob_slider,
+            "step": step_slider,
+        },
+    )
+    # Display widgets above plots.
+    controls = VBox([sensor_dropdown, z_prob_box, step_box])
     display(VBox([controls, output]))

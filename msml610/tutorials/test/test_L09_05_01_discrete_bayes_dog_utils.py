@@ -7,6 +7,7 @@ import msml610.tutorials.test.test_L09_05_01_discrete_bayes_dog_utils as mtttl0d
 """
 
 import logging
+from typing import List
 
 import numpy as np
 
@@ -26,14 +27,70 @@ class Test_discrete_bayes_sim(hunitest.TestCase):
     Test the discrete_bayes_sim function.
     """
 
+    def _get_default_setup(self) -> tuple:
+        """
+        Return default prior, kernel, and hallway for standard tests.
+
+        :return: Tuple of (prior, kernel, hallway)
+        """
+        prior = np.array([0.1] * 10)
+        kernel = (0.1, 0.8, 0.1)
+        hallway = mtl00dbdu.get_hallway1()
+        return prior, kernel, hallway
+
+    def _check_simulation_results(
+        self,
+        priors: list,
+        posteriors: list,
+        expected_length: int,
+    ) -> None:
+        """
+        Validate simulation results for priors and posteriors.
+
+        :param priors: List of prior belief distributions
+        :param posteriors: List of posterior belief distributions
+        :param expected_length: Expected number of time steps
+        """
+        # Check lengths.
+        self.assertEqual(len(priors), expected_length)
+        self.assertEqual(len(posteriors), expected_length)
+        # Verify all beliefs sum to 1.
+        for p in priors:
+            self.assertAlmostEqual(np.sum(p), 1.0, places=6)
+        for p in posteriors:
+            self.assertAlmostEqual(np.sum(p), 1.0, places=6)
+
+    def _get_most_likely_position(self, belief: np.ndarray) -> int:
+        """
+        Extract the most likely position from a belief distribution.
+
+        :param belief: Belief distribution array
+        :return: Index of the position with highest probability
+        """
+        return int(np.argmax(belief))
+        
+    def _check_most_likely_positions(
+        self, posteriors: list, expected_pos: List[int]
+    ) -> None:
+        """
+        Verify that most likely positions from posteriors match expected values.
+
+        :param posteriors: List of posterior belief distributions
+        :param expected_pos: List of expected most likely positions
+        """
+        actual_pos = []
+        # Check most likely position for each posterior.
+        for i in range(len(posteriors)):
+            most_likely_pos = self._get_most_likely_position(posteriors[i])
+            actual_pos.append(most_likely_pos)
+        self.assertEqual(actual_pos, expected_pos)
+
     def test1(self) -> None:
         """
         Test basic simulation with uniform prior and multiple steps.
         """
         # Prepare inputs.
-        prior = np.array([0.1] * 10)
-        kernel = (0.1, 0.8, 0.1)
-        hallway = mtl00dbdu.get_hallway1()
+        prior, kernel, hallway = self._get_default_setup()
         positions = [0, 1, 2, 3]
         sensor_info = mtl00dbdu.get_sensor_info(positions, hallway)
         z_prob = 0.8
@@ -42,22 +99,16 @@ class Test_discrete_bayes_sim(hunitest.TestCase):
             prior, kernel, sensor_info, z_prob, hallway
         )
         # Check outputs.
-        self.assertEqual(len(priors), 4)
-        self.assertEqual(len(posteriors), 4)
-        # Verify all beliefs sum to 1.
-        for p in priors:
-            self.assertAlmostEqual(np.sum(p), 1.0, places=6)
-        for p in posteriors:
-            self.assertAlmostEqual(np.sum(p), 1.0, places=6)
+        self._check_simulation_results(priors, posteriors, 4)
+        # Check most likely positions match actual positions.
+        self._check_most_likely_positions(posteriors, positions)
 
     def test2(self) -> None:
         """
         Test simulation with single measurement.
         """
         # Prepare inputs.
-        prior = np.array([0.1] * 10)
-        kernel = (0.1, 0.8, 0.1)
-        hallway = mtl00dbdu.get_hallway1()
+        prior, kernel, hallway = self._get_default_setup()
         positions = [0]
         sensor_info = mtl00dbdu.get_sensor_info(positions, hallway)
         z_prob = 0.75
@@ -66,11 +117,18 @@ class Test_discrete_bayes_sim(hunitest.TestCase):
             prior, kernel, sensor_info, z_prob, hallway
         )
         # Check outputs.
-        self.assertEqual(len(priors), 1)
-        self.assertEqual(len(posteriors), 1)
-        # Verify beliefs sum to 1.
-        self.assertAlmostEqual(np.sum(priors[0]), 1.0, places=6)
-        self.assertAlmostEqual(np.sum(posteriors[0]), 1.0, places=6)
+        self._check_simulation_results(priors, posteriors, 1)
+        # Check most likely position in final posterior.
+        most_likely_pos = self._get_most_likely_position(posteriors[-1])
+        # Check that the most likely position is one of the door positions.
+        # With single measurement and uniform prior, the filter should identify
+        # a door position (0, 1, or 8 in hallway1).
+        door_positions = [0, 1, 8]
+        self.assertIn(
+            most_likely_pos,
+            door_positions,
+            f"Most likely position {most_likely_pos} should be a door position",
+        )
 
     def test3(self) -> None:
         """
@@ -89,22 +147,27 @@ class Test_discrete_bayes_sim(hunitest.TestCase):
             prior, kernel, sensor_info, z_prob, hallway
         )
         # Check outputs.
-        self.assertEqual(len(priors), 3)
-        self.assertEqual(len(posteriors), 3)
-        # Verify all beliefs sum to 1.
-        for p in priors:
-            self.assertAlmostEqual(np.sum(p), 1.0, places=6)
-        for p in posteriors:
-            self.assertAlmostEqual(np.sum(p), 1.0, places=6)
+        self._check_simulation_results(priors, posteriors, 3)
+        # Check most likely position in final posterior.
+        most_likely_pos = self._get_most_likely_position(posteriors[-1])
+        # Check that the most likely position is the correct one.
+        # With high sensor accuracy (z_prob=0.9) and peaked prior, the filter
+        # should track to the final position.
+        expected_final_pos = positions[-1]
+        self.assertEqual(
+            most_likely_pos,
+            expected_final_pos,
+            f"Most likely position {most_likely_pos} should match final position {expected_final_pos}",
+        )
+        # Check most likely positions match actual positions.
+        self._check_most_likely_positions(posteriors, positions)
 
     def test4(self) -> None:
         """
         Test simulation with perfect sensor.
         """
         # Prepare inputs.
-        prior = np.array([0.1] * 10)
-        kernel = (0.1, 0.8, 0.1)
-        hallway = mtl00dbdu.get_hallway1()
+        prior, kernel, hallway = self._get_default_setup()
         positions = [0, 1, 8]
         sensor_info = mtl00dbdu.get_sensor_info(positions, hallway)
         z_prob = 1.0
@@ -113,13 +176,10 @@ class Test_discrete_bayes_sim(hunitest.TestCase):
             prior, kernel, sensor_info, z_prob, hallway
         )
         # Check outputs.
-        self.assertEqual(len(priors), 3)
-        self.assertEqual(len(posteriors), 3)
-        # Verify all beliefs sum to 1.
-        for p in priors:
-            self.assertAlmostEqual(np.sum(p), 1.0, places=6)
-        for p in posteriors:
-            self.assertAlmostEqual(np.sum(p), 1.0, places=6)
+        self._check_simulation_results(priors, posteriors, 3)
+        # Check most likely positions match actual positions.
+        # With perfect sensor (z_prob=1.0), tracking should be exact.
+        self._check_most_likely_positions(posteriors, positions)
 
     def test5(self) -> None:
         """
@@ -130,36 +190,23 @@ class Test_discrete_bayes_sim(hunitest.TestCase):
         kernel = (0.1, 0.8, 0.1)
         hallway = mtl00dbdu.get_hallway2()
         positions = [0, 1, 2, 3, 4]
-        # Create sensor_info manually for different hallway.
-        z_doors = [hallway[z] for z in positions]
-        z_moves = [0] + [positions[i] - positions[i-1] for i in range(1, len(positions))]
-        sensor_info = {
-            "positions": positions,
-            "z_doors": z_doors,
-            "z_moves": z_moves,
-        }
+        sensor_info = mtl00dbdu.get_sensor_info(positions, hallway)
         z_prob = 0.7
         # Run test.
         priors, posteriors = mtl00dbdu.discrete_bayes_sim(
             prior, kernel, sensor_info, z_prob, hallway
         )
         # Check outputs.
-        self.assertEqual(len(priors), 5)
-        self.assertEqual(len(posteriors), 5)
-        # Verify beliefs sum to 1.
-        for p in priors:
-            self.assertAlmostEqual(np.sum(p), 1.0, places=6)
-        for p in posteriors:
-            self.assertAlmostEqual(np.sum(p), 1.0, places=6)
+        self._check_simulation_results(priors, posteriors, 5)
+        # Check most likely positions match actual positions.
+        self._check_most_likely_positions(posteriors, positions)
 
     def test6(self) -> None:
         """
         Test with extended movement sequence.
         """
         # Prepare inputs.
-        prior = np.array([0.1] * 10)
-        kernel = (0.1, 0.8, 0.1)
-        hallway = mtl00dbdu.get_hallway1()
+        prior, kernel, hallway = self._get_default_setup()
         positions = mtl00dbdu.get_dog_movements1()
         sensor_info = mtl00dbdu.get_sensor_info(positions, hallway)
         z_prob = 0.85
@@ -168,10 +215,6 @@ class Test_discrete_bayes_sim(hunitest.TestCase):
             prior, kernel, sensor_info, z_prob, hallway
         )
         # Check outputs.
-        self.assertEqual(len(priors), len(positions))
-        self.assertEqual(len(posteriors), len(positions))
-        # Verify first and last beliefs sum to 1.
-        self.assertAlmostEqual(np.sum(priors[0]), 1.0, places=6)
-        self.assertAlmostEqual(np.sum(posteriors[0]), 1.0, places=6)
-        self.assertAlmostEqual(np.sum(priors[-1]), 1.0, places=6)
-        self.assertAlmostEqual(np.sum(posteriors[-1]), 1.0, places=6)
+        self._check_simulation_results(priors, posteriors, len(positions))
+        # Check most likely positions match actual positions.
+        self._check_most_likely_positions(posteriors, positions)
