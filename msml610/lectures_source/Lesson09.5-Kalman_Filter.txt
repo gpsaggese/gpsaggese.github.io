@@ -33,10 +33,7 @@ MSML610: Advanced Machine Learning
 
 # Discrete Bayes Filtering
 
-## #############################################################################
-## A Discrete Bayesian 1-D Dog
-## #############################################################################
-
+// https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/02-Discrete-Bayes.ipynb
 
 * A Discrete Bayesian 1-D Dog
 - From tutorial `L09_05_01_discrete_bayes_dog.ipynb`
@@ -170,9 +167,9 @@ digraph BayesianUpdateAlgo {
 }
 ```
 
-## #############################################################################
-## 1-D Kalman Filters
-## #############################################################################
+# #############################################################################
+# Unidimensional Kalman Filters
+# #############################################################################
 
 // https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/04-One-Dimensional-Kalman-Filters.ipynb
 
@@ -185,7 +182,7 @@ digraph BayesianUpdateAlgo {
 - **State space model**
   - $x_t = A x_{t-1} + w_t$
   - $y_t = C x_t + v_t$
-  - Gaussian noises with covariances $Q,R$
+  - All quantities are Gaussian with given mean and covariances
 
 - **Bayesian interpretation**
   - Prior and likelihood Gaussian $\Rightarrow$ posterior Gaussian
@@ -194,8 +191,8 @@ digraph BayesianUpdateAlgo {
 
 - **Orthogonal projection interpretation**
   - Estimate is projection onto span of observations
-  - $K_t$ minimizes $E[\|x_t - \hat{x}_t\|^2]$
-  - Error orthogonal to measurement space
+  - $K_t$ minimizes $EE[\|x_t - \hat{x}_t\|^2]$
+  - Error orthogonal to measurement space (optimal)
 
 * Updating Belief Using Gaussians
 - The **Kalman filter** is based on Bayes theorem and Gaussians
@@ -225,7 +222,7 @@ digraph BayesianUpdateAlgo {
   \endgroup
 
 * Sum of Gaussians
-- Given two two Gaussians $X$ and $Y$
+- Given two independent Gaussians $X$ and $Y$
   $$
   \begin{aligned}
   & X \sim Normal(\mu_1, \sigma_1^2) \\
@@ -233,7 +230,7 @@ digraph BayesianUpdateAlgo {
   \end{aligned}
   $$
 
-- The sum $Z = X + Y$ is a Gaussian $Normal(\mu, \sigma^2)$ with:
+- The sum $Z = X + Y$ is $Normal(\mu, \sigma^2)$ with:
   $$
   \left\{
   \begin{aligned}
@@ -248,7 +245,7 @@ digraph BayesianUpdateAlgo {
   - The variance always increases
 
 * Product of Gaussians
-- Given two two Gaussians $X$ and $Y$
+- Given two independent Gaussians $X$ and $Y$
   $$
   \begin{aligned}
   & X \sim Normal(\mu_1, \sigma_1^2) \\
@@ -256,7 +253,7 @@ digraph BayesianUpdateAlgo {
   \end{aligned}
   $$
 
-- The product $Z = X \cdot Y$ is a Gaussian $Normal(\mu, \sigma^2)$ with:
+- The product $Z = X \cdot Y$ is $Normal(\mu, \sigma^2)$ with:
   $$
   \left\{
   \begin{aligned}

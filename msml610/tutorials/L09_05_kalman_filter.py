@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -21,7 +21,6 @@
 # %autoreload 2
 
 import logging
-
 
 import msml610_utils as ut
 
@@ -42,6 +41,17 @@ hio.create_dir(dst_dir, incremental=True)
 # %% [markdown]
 # # Cell 1: Sum and Product of Gaussians
 
+# %%
+from collections import namedtuple
+gaussian = namedtuple('Gaussian', ['mean', 'var'])
+gaussian.__repr__ = lambda s: f'N(mu={s[0]:.3f}, sigma^2={s[1]:.3f})'
+
+x = gaussian(3.4, 10.1)
+print(x)
+print("x.mean=", x.mean)
+print("x.var=", x.var)
+
+
 # %% [markdown]
 # ## Cell 1.1: Sum of Gaussians
 # - Given two Gaussians $X$ and $Y$
@@ -56,8 +66,21 @@ hio.create_dir(dst_dir, incremental=True)
 #   - Positive correlation increases variance, negative correlation decreases it
 
 # %%
+def gaussian_sum(g1, g2):
+    return gaussian(g1.mean + g2.mean, g1.var + g2.var)
+
+
+# %%
+x = gaussian(10, 0.2 ** 2)
+y = gaussian(15, 0.7 ** 2)
+print(gaussian_sum(x, y))
+
+# %%
+
+# %%
 # Interactive exploration of sum of Gaussians with correlation.
 time_ut.cell1_1_plot_gaussian_sum()
+
 
 # %% [markdown]
 # ## Cell 1.2: Product of Gaussians
@@ -73,5 +96,55 @@ time_ut.cell1_1_plot_gaussian_sum()
 #   - If two Gaussians are similar (measures corroborate), result becomes more certain
 
 # %%
+def gaussian_multiply(g1, g2):
+    mean = (g1.var * g2.mean + g2.var * g1.mean) / (g1.var + g2.var)
+    variance = (g1.var * g2.var) / (g1.var + g2.var)
+    return gaussian(mean, variance)
+
+
+# %%
+z = gaussian(10.1)
+
+# %%
 # Interactive exploration of product of Gaussians.
 time_ut.cell1_2_plot_gaussian_product()
+
+# %% [markdown]
+# # Cell 2
+
+# %% [markdown]
+# - The intuition is the same as the discrete case
+#
+# - There is a cycle of prediction and updates
+#     1) Predict: prior = x_est using system model
+#     2) Update: posterior = likelihood * prior
+#
+# - Create prior (using current estimate and system model)
+#   - `prior = predict(x, process_model)`
+# - Create likelihood (using measurement)
+#   - `likelihood = gaussian(z, sensor_var)`
+# - Update belief using prior and likelihood
+#   - `x = update(prior, likelihood)`
+
+# %% [markdown]
+# - Let's assume that the dog moves in the hallway, back and forth
+#   - It's not circular
+# - We have a sensor that measures the distance of the dog from one extreme
+
+# %% [markdown]
+# We can use Newton's equation of motion to compute the position of the dog, based on current position and velocity
+#
+# $$\overline{x}_k = x_{k-1} + v_k \Delta_t$$
+#
+# - $x_{k-1}$ has uncertainty quantified by a Gaussian
+# - $v_k$ has also uncertainty quantified by a Gaussian
+#
+# We can compute the sum of two Gaussians in terms of mean and uncertainty
+# - It makes sense since we know that uncertainy becomes larger 
+
+# %%
+- The likelihood $z | x$ is the probability of measures given the current state
+
+
+
+# %%

@@ -555,8 +555,11 @@ ut.cell2_1_interactive()
 #     [1, 1, 0, 1, 0, 1, 1, 1, 0, 0]
 #     ```
 #   - The first part of the simulation is the usual one
-#   - Around step 14-16 you can see that the filter is "surprised" by the measure
+#   - Around step 14-16 you can see that the filter is "surprised" by the bad measure
 #   - Then it recovers
 
 # %%
 ut.cell2_2_interactive()
+
+# %% [markdown]
+# - Although this example is very simple, it incorporates all the concept that a Kalman filter relies on
