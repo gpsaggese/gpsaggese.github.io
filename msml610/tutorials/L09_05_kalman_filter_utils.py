@@ -7,7 +7,7 @@ import msml610.tutorials.L09_05_kalman_filter_utils as mtl0kfiut
 """
 
 import logging
-from typing import Tuple
+from typing import Optional, Tuple
 
 import ipywidgets
 import matplotlib.pyplot as plt
@@ -18,6 +18,46 @@ from IPython.display import display
 import msml610_utils as mtumsuti
 
 _LOG = logging.getLogger(__name__)
+
+from collections import namedtuple
+Gaussian = namedtuple('Gaussian', ['mean', 'var'])
+Gaussian.__repr__ = lambda s: f'N(mu={s[0]:.3f}, sigma^2={s[1]:.3f})'
+
+
+# #############################################################################
+# Gaussian utility functions
+# #############################################################################
+
+
+def plot_gaussian(
+    gaussian: Gaussian,
+    *,
+    ax: Optional[plt.Axes] = None,
+    color: str = "",
+    style: str = "-",
+) -> None:
+    """
+    Plot a Gaussian distribution as its PDF.
+
+    :param gaussian: Gaussian named tuple with mean and var fields
+    :param ax: Matplotlib axes to plot on; if None, create a new figure using
+        default rcParams dimensions
+    :param color: Line color; empty string uses default matplotlib color cycle
+    :param style: Line style (e.g., "-", "--", ":"), defaults to solid line
+    """
+    if ax is None:
+        _, ax = plt.subplots()
+    mu = gaussian.mean
+    sigma = np.sqrt(gaussian.var)
+    # Generate x values covering +/- 4 standard deviations.
+    xs = np.arange(mu - 4 * sigma, mu + 4 * sigma, sigma / 100)
+    ys = [stats.norm.pdf(x, mu, sigma) for x in xs]
+    label = f"$\\mathcal{{N}}({mu:.3f}, {gaussian.var:.3f})$"
+    kwargs: dict = {"label": label, "linestyle": style}
+    if color:
+        kwargs["color"] = color
+    ax.plot(xs, ys, **kwargs)
+    ax.legend()
 
 
 # #############################################################################

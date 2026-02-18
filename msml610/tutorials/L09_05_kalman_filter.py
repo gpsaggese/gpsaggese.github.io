@@ -42,11 +42,7 @@ hio.create_dir(dst_dir, incremental=True)
 # # Cell 1: Sum and Product of Gaussians
 
 # %%
-from collections import namedtuple
-gaussian = namedtuple('Gaussian', ['mean', 'var'])
-gaussian.__repr__ = lambda s: f'N(mu={s[0]:.3f}, sigma^2={s[1]:.3f})'
-
-x = gaussian(3.4, 10.1)
+x = time_ut.Gaussian(3.4, 10.1)
 print(x)
 print("x.mean=", x.mean)
 print("x.var=", x.var)
@@ -71,11 +67,13 @@ def gaussian_sum(g1, g2):
 
 
 # %%
-x = gaussian(10, 0.2 ** 2)
-y = gaussian(15, 0.7 ** 2)
+# Sum two Gaussians.
+x = time_ut.Gaussian(10, 0.2 ** 2)
+y = time_ut.Gaussian(15, 0.7 ** 2)
 print(gaussian_sum(x, y))
 
 # %%
+time_ut.plot_gaussian(x)
 
 # %%
 # Interactive exploration of sum of Gaussians with correlation.

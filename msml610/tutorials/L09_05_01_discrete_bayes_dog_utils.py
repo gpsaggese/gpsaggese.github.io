@@ -8,7 +8,7 @@ import msml610.tutorials.L09_05_01_discrete_bayes_dog_utils as mtl00dbdu
 
 import copy
 import logging
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, NamedTuple
 
 from ipywidgets import Dropdown, VBox, interactive_output
 from filterpy.discrete_bayes import predict, update
@@ -284,10 +284,8 @@ def get_bad_sensor_info(use_bad_sensor: bool) -> Dict[str, List]:
 
 def discrete_bayes_sim(
     prior: Pdf,
-    # TODO(gp): door_sensor_prob
-    kernel: tuple,
+    movement_sensor_prob: Tuple,
     sensor_info: Dict[str, List],
-    #
     z_prob: float,
     hallway: np.ndarray,
 ) -> Tuple[List[Pdf], List[Pdf]]:
@@ -298,10 +296,12 @@ def discrete_bayes_sim(
     posterior beliefs at each step.
 
     :param prior: Initial belief distribution
-    :param kernel: Motion model kernel (probabilities for undershoot,
-        correct, overshoot)
-    :param dog_info: Dictionary containing the dog's movements and measurements
+    :param movement_sensor_prob: Motion model kernel (probabilities for
+        undershoot, correct, overshoot)
+    :param sensor_info: Dictionary containing the dog's movements and
+        measurements
     :param z_prob: Probability that sensor measurement is correct
+    :param hallway: Array representing the hallway map (0=wall, 1=door)
     :return: Tuple of (priors, posteriors) lists for each time step
     """
     posterior = prior.copy()
@@ -309,7 +309,9 @@ def discrete_bayes_sim(
     dassert_sensor_info(sensor_info)
     for i in range(len(sensor_info["z_doors"])):
         # Predict step.
-        prior = predict(posterior, sensor_info["z_moves"][i], kernel)
+        prior = predict(
+            posterior, sensor_info["z_moves"][i], movement_sensor_prob
+        )
         priors.append(prior)
         # Update step.
         likelihood = lh_hallway(hallway, sensor_info["z_doors"][i], z_prob)
@@ -319,12 +321,11 @@ def discrete_bayes_sim(
 
 
 def plot_posterior(
-    hallway: np.ndarray, posteriors: List[Pdf], i: int, positions: PosList
+    posteriors: List[Pdf], i: int, positions: PosList
 ) -> None:
     """
     Plot posterior belief at step i with dog position marker.
 
-    :param hallway: Map of the hallway (0=wall, 1=door)
     :param posteriors: List of posterior belief distributions
     :param i: Time step index
     :param positions: List of actual dog positions
@@ -333,7 +334,7 @@ def plot_posterior(
         posteriors[i],
         title="Posterior",
         y_lim=(0, 1.0),
-        use_hallway=True,
+        use_hallway=False,
     )
     # Mark current dog position.
     plt.axvline(positions[i], color="green", linewidth=5, alpha=0.5)
@@ -341,12 +342,11 @@ def plot_posterior(
 
 
 def plot_prior(
-    hallway: np.ndarray, priors: List[Pdf], i: int, positions: PosList
+    priors: List[Pdf], i: int, positions: PosList
 ) -> None:
     """
     Plot prior belief at step i with dog position marker.
 
-    :param hallway: Map of the hallway (0=wall, 1=door)
     :param priors: List of prior belief distributions
     :param i: Time step index
     :param positions: List of actual dog positions
@@ -355,7 +355,7 @@ def plot_prior(
         priors[i],
         title="Prior",
         y_lim=(0, 1.0),
-        use_hallway=True,
+        use_hallway=False,
     )
     # Mark current dog position.
     plt.axvline(positions[i], color="green", linewidth=5, alpha=0.5)
@@ -390,9 +390,9 @@ def animate_discrete_bayes(
         step -= 1
         i = step // 2
         if step % 2 == 0:
-            plot_prior(hallway, priors, i, sensor_info["positions"])
+            plot_prior(priors, i, sensor_info["positions"])
         else:
-            plot_posterior(hallway, posteriors, i, sensor_info["positions"])
+            plot_posterior(posteriors, i, sensor_info["positions"])
 
     return animate
 
