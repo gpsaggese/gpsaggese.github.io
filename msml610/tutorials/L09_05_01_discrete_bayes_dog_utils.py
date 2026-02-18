@@ -8,7 +8,7 @@ import msml610.tutorials.L09_05_01_discrete_bayes_dog_utils as mtl00dbdu
 
 import copy
 import logging
-from typing import Dict, List, Optional, Tuple, Union, NamedTuple
+from typing import Dict, List, Optional, Tuple, Union
 
 from ipywidgets import Dropdown, VBox, interactive_output
 from filterpy.discrete_bayes import predict, update
@@ -320,9 +320,7 @@ def discrete_bayes_sim(
     return priors, posteriors
 
 
-def plot_posterior(
-    posteriors: List[Pdf], i: int, positions: PosList
-) -> None:
+def plot_posterior(posteriors: List[Pdf], i: int, positions: PosList) -> None:
     """
     Plot posterior belief at step i with dog position marker.
 
@@ -341,9 +339,7 @@ def plot_posterior(
     plt.show()
 
 
-def plot_prior(
-    priors: List[Pdf], i: int, positions: PosList
-) -> None:
+def plot_prior(priors: List[Pdf], i: int, positions: PosList) -> None:
     """
     Plot prior belief at step i with dog position marker.
 

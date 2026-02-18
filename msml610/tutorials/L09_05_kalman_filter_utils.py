@@ -20,8 +20,9 @@ import msml610_utils as mtumsuti
 _LOG = logging.getLogger(__name__)
 
 from collections import namedtuple
-Gaussian = namedtuple('Gaussian', ['mean', 'var'])
-Gaussian.__repr__ = lambda s: f'N(mu={s[0]:.3f}, sigma^2={s[1]:.3f})'
+
+Gaussian = namedtuple("Gaussian", ["mean", "var"])
+Gaussian.__repr__ = lambda s: f"N(mu={s[0]:.3f}, sigma^2={s[1]:.3f})"
 
 
 # #############################################################################

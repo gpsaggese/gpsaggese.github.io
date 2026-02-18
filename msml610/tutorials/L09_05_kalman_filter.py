@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -138,7 +138,7 @@ time_ut.cell1_2_plot_gaussian_product()
 # - $v_k$ has also uncertainty quantified by a Gaussian
 #
 # We can compute the sum of two Gaussians in terms of mean and uncertainty
-# - It makes sense since we know that uncertainy becomes larger 
+# - It makes sense since we know that uncertainy becomes larger
 
 # %%
 - The likelihood $z | x$ is the probability of measures given the current state

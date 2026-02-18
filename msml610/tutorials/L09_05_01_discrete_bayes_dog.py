@@ -102,6 +102,7 @@ ut.plot_belief(belief, hallway=hallway)
 #     - "How can you conclude anything, if you are always unsure?"
 # - Let's assume that testing the sensor shows that the sensor is 3 times more likely to be right than wrong
 
+
 # %%
 def update_belief(
     hall: np.ndarray, belief: ut.Pdf, z: int, correct_scale: float
@@ -304,7 +305,14 @@ belief = [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 move = 2
 prior = predict_move(belief, move, 0.1, 0.8, 0.1)
 
-ut.plot_beliefs(belief, prior, hallway=hallway, same_plot=False, title1="Belief", title2="Prior")
+ut.plot_beliefs(
+    belief,
+    prior,
+    hallway=hallway,
+    same_plot=False,
+    title1="Belief",
+    title2="Prior",
+)
 
 # %%
 # Assume the belief is not correct.
@@ -313,7 +321,14 @@ belief = [0, 0, 0.4, 0.6, 0, 0, 0, 0, 0, 0]
 move = 2
 prior = predict_move(belief, move, 0.1, 0.8, 0.1)
 
-ut.plot_beliefs(belief, prior, hallway=hallway, same_plot=False, title1="Belief", title2="Prior")
+ut.plot_beliefs(
+    belief,
+    prior,
+    hallway=hallway,
+    same_plot=False,
+    title1="Belief",
+    title2="Prior",
+)
 
 # %% [markdown]
 # - After the update with the noisy sensor there is always some lost information
@@ -352,11 +367,12 @@ def show_prior(step: int) -> None:
     plt.show()
 
 
-interact(show_prior, step=IntSlider(value=1, max=len(predict_beliefs)));
+interact(show_prior, step=IntSlider(value=1, max=len(predict_beliefs)))
 
 
 # %% [markdown]
 # - Generalizing the model prediction uncertainty requires a convolution which is conceptually implemented as below
+
 
 # %%
 def predict_move_convolution(pdf: ut.Pdf, offset: int, kernel: ut.Pdf) -> ut.Pdf:
@@ -434,7 +450,7 @@ ut.plot_beliefs(
     title2="Posterior 1",
     y_lim=y_lim,
     hallway=hallway,
-    same_plot = False,
+    same_plot=False,
 )
 
 # %%
@@ -448,7 +464,7 @@ ut.plot_beliefs(
     title2="Prior2",
     y_lim=y_lim,
     hallway=hallway,
-    same_plot = False,
+    same_plot=False,
 )
 
 # The probabilities move to the right and get smeared a bit.
@@ -465,7 +481,7 @@ ut.plot_beliefs(
     title2="Posterior2",
     y_lim=y_lim,
     hallway=hallway,
-    same_plot = False
+    same_plot=False,
 )
 # The belief is that the dog is in front of position 1.
 
@@ -482,7 +498,7 @@ ut.plot_beliefs(
     title2="Posterior3",
     y_lim=y_lim,
     hallway=hallway,
-    same_plot = False
+    same_plot=False,
 )
 
 # %% [markdown]
@@ -530,7 +546,7 @@ ut.cell2_1_interactive()
 #
 # - When the initial prior is concentrated in the wrong position
 #     - The prior is wrong but, over time, it is corrected by data
-#  
+#
 # - When the door sensor is less precise (i.e., the `z_prob` decreases), the estimates get worse
 #
 # **movements2**
