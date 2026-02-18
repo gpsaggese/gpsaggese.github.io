@@ -115,6 +115,7 @@ def plot_beliefs(
             title=title1,
             y_lim=y_lim,
             ax=axes[0],
+            hallway=hallway,
             use_hallway=use_hallway,
         )
         plot_belief(
@@ -122,6 +123,7 @@ def plot_beliefs(
             title=title2,
             y_lim=y_lim,
             ax=axes[1],
+            hallway=hallway,
             use_hallway=use_hallway,
         )
         plt.tight_layout()
@@ -263,11 +265,11 @@ def get_bad_sensor_info(use_bad_sensor: bool) -> Dict[str, List]:
     positions = list(range(HALLWAY_LEN))
     if use_bad_sensor:
         # Note that the sensor is wrong.
-        #         [1, 0, 1, 0, 0, 1, 0, 1, 0, 0]
-        z_doors = [1, 0, 1, 0, 0, 1, 1, 1, 0, 0]
+        #         [1, 1, 0, 1, 0, 1, 1, 0, 1, 0]
+        z_doors = [1, 1, 0, 1, 0, 1, 1, 1, 0, 0]
     else:
         z_doors = [hallway[z] for z in positions]
-        hdbg.dassert_eq(z_doors, [1, 0, 1, 0, 0, 1, 0, 1, 0, 0])
+        hdbg.dassert_eq(z_doors, [1, 1, 0, 1, 0, 1, 1, 0, 1, 0])
     z_moves = [0] + [
         positions[i] - positions[i - 1] for i in range(1, len(positions))
     ]
