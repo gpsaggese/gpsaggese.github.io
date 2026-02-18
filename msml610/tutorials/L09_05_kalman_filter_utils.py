@@ -34,9 +34,10 @@ def plot_gaussian(
     gaussian: Gaussian,
     *,
     ax: Optional[plt.Axes] = None,
+    label: str = "",
     color: str = "",
     style: str = "-",
-) -> None:
+) -> plt.Axes:
     """
     Plot a Gaussian distribution as its PDF.
 
@@ -53,12 +54,15 @@ def plot_gaussian(
     # Generate x values covering +/- 4 standard deviations.
     xs = np.arange(mu - 4 * sigma, mu + 4 * sigma, sigma / 100)
     ys = [stats.norm.pdf(x, mu, sigma) for x in xs]
-    label = f"$\\mathcal{{N}}({mu:.3f}, {gaussian.var:.3f})$"
+    if label:
+        label += " ~ "
+    label += f"N({mu:.3f}, {gaussian.var:.3f})"
     kwargs: dict = {"label": label, "linestyle": style}
     if color:
         kwargs["color"] = color
     ax.plot(xs, ys, **kwargs)
     ax.legend()
+    return ax
 
 
 # #############################################################################
