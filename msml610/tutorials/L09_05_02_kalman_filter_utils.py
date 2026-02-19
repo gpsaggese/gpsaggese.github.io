@@ -9,11 +9,12 @@ import msml610.tutorials.L09_05_02_kalman_filter_utils as mtl090502kfuti
 import logging
 import math
 from collections import namedtuple
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import scipy.stats as stats
 from IPython.display import display
 from numpy.random import randn
@@ -114,30 +115,6 @@ def plot_gaussian(
 #     mu = mu1 + mu2
 #     sigma = np.sqrt(sigma1**2 + sigma2**2)
 #     return mu, sigma
-
-
-# TODO(ai_gp): Remove this and use in the caller code gaussian_multiply() instead.
-def gaussian_product(
-    mu1: float, sigma1: float, mu2: float, sigma2: float
-) -> Tuple[float, float]:
-    """
-    Compute product of two Gaussians.
-
-    Given X ~ N(mu1, sigma1^2) and Y ~ N(mu2, sigma2^2),
-    compute the product (point-wise multiplication of PDFs).
-
-    :param mu1: Mean of first Gaussian
-    :param sigma1: Standard deviation of first Gaussian
-    :param mu2: Mean of second Gaussian
-    :param sigma2: Standard deviation of second Gaussian
-    :return: Tuple of (mu, sigma) for the product distribution
-    """
-    sigma1_sq = sigma1**2
-    sigma2_sq = sigma2**2
-    # Product of Gaussians formula.
-    mu = (mu1 * sigma2_sq + mu2 * sigma1_sq) / (sigma1_sq + sigma2_sq)
-    sigma = np.sqrt((sigma1_sq * sigma2_sq) / (sigma1_sq + sigma2_sq))
-    return mu, sigma
 
 
 def _plot_gaussian_sum_with_correlation(
@@ -365,8 +342,12 @@ def _plot_gaussian_product_helper(
     # Create scipy Gaussian distributions.
     X = stats.norm(mu1, sigma1)
     Y = stats.norm(mu2, sigma2)
-    # Compute product analytically.
-    mu_prod, sigma_prod = gaussian_product(mu1, sigma1, mu2, sigma2)
+    # Compute product analytically using gaussian_multiply().
+    g1 = Gaussian(mu1, sigma1**2)
+    g2 = Gaussian(mu2, sigma2**2)
+    g_prod = gaussian_multiply(g1, g2)
+    mu_prod = g_prod.mean
+    sigma_prod = math.sqrt(g_prod.var)
     Z_analytical = stats.norm(mu_prod, sigma_prod)
     # Compute product numerically using importance sampling.
     np.random.seed(42)
@@ -547,8 +528,7 @@ class DogSimulation:
         """
         self.x = x0
         self.velocity = velocity
-        # TODO(ai_gp): -> measurement_std
-        self.meas_std = math.sqrt(measurement_var)
+        self.measurement_std = math.sqrt(measurement_var)
         self.process_std = math.sqrt(process_var)
 
     def move(self, *, dt: float = 1.0) -> None:
@@ -568,7 +548,7 @@ class DogSimulation:
 
         :return: noisy measurement of current position
         """
-        measurement = self.x + randn() * self.meas_std
+        measurement = self.x + randn() * self.measurement_std
         return measurement
 
     def move_and_sense(self) -> float:
@@ -581,8 +561,7 @@ class DogSimulation:
         return self.sense_position()
 
 
-# TODO(ai_gp): Add type hints.
-def update(prior, likelihood):
+def update(prior: Gaussian, likelihood: Gaussian) -> Gaussian:
     """
     Compute posterior given prior and likelihood.
 
@@ -594,8 +573,7 @@ def update(prior, likelihood):
     return posterior
 
 
-# TODO(ai_gp): Add type hints.
-def predict(pos, movement):
+def predict(pos: Gaussian, movement: Gaussian) -> Gaussian:
     """
     Predict next position given current position and movement.
 
@@ -603,32 +581,42 @@ def predict(pos, movement):
     :param movement: movement Gaussian
     :return: predicted position Gaussian
     """
-    # TODO(ai_gp): Add comments.
-    # TODO(ai_gp): Use gaussian_sum() instead.
-    return Gaussian(pos.mean + movement.mean, pos.var + movement.var)
+    # Sum the position and movement Gaussians to get the predicted position.
+    # Adding Gaussians: new mean = pos.mean + movement.mean,
+    # new variance = pos.var + movement.var.
+    return gaussian_sum(pos, movement)
 
 
-# TODO(ai_gp): Implement this.
-def to_str(info: List[Tuple[Gaussian, float, Gaussian]]) -> pd.DataFrame:
+def to_str(info: List[Tuple[Gaussian, Gaussian, float]]) -> pd.DataFrame:
     """
-    Convert a list of tuples (prior, posterior, measurement) to a pandas DataFrame
-    and then print it in the format below:
+    Convert a list of tuples (prior, posterior, measurement) to a DataFrame.
+
+    The output format is:
 
     ```
-    PREDICT			UPDATE
-    (prior.mean, prior.var) (measurement) (posterior.mean, posterior.var)
-        x      var		  z	    x      var
-    1.000  401.000	1.354	  1.352   1.990
-    2.352    2.990	1.882	  2.070   1.198
+    PREDICT          UPDATE
+    x      var       z       x      var
+    1.000  401.000   1.354   1.352  1.990
+    2.352    2.990   1.882   2.070  1.198
     ```
-    """
 
-# # Perform Kalman filter on measurement z.
-# info = []
-# for z in zs:
-#     prior = time_ut.predict(x, process_model)
-#     likelihood = time_ut.Gaussian(z, sensor_var)
-#     x = time_ut.update(prior, likelihood)
-#     #
-#     info.append((prior, x, z))
-# )
+    :param info: list of (prior, posterior, measurement) tuples
+    :return: DataFrame with columns predict_x, predict_var, z, update_x,
+        update_var
+    """
+    rows = []
+    for prior, posterior, z in info:
+        rows.append(
+            {
+                "predict_x": prior.mean,
+                "predict_var": prior.var,
+                "z": z,
+                "update_x": posterior.mean,
+                "update_var": posterior.var,
+            }
+        )
+    df = pd.DataFrame(
+        rows,
+        columns=["predict_x", "predict_var", "z", "update_x", "update_var"],
+    )
+    return df
