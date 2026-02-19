@@ -401,3 +401,108 @@ def plot_metrics_comparison_barplot(
     if save_path:
         plt.savefig(save_path, dpi=150, bbox_inches="tight")
     plt.show()
+
+
+# #############################################################################
+# Scenario analysis visualizations
+# #############################################################################
+
+
+def plot_scenario_comparison(
+    results: list,
+    *,
+    prediction_length: int = 14,
+    save_path: Optional[str] = None,
+) -> None:
+    """
+    Create visualizations comparing all scenarios (trajectories + bar chart).
+
+    Expects objects with .name, .forecast (mean, quantile), .total_cases,
+    .cases_vs_baseline() - e.g. ScenarioResult from utils_models.
+
+    :param results: list of scenario result objects
+    :param prediction_length: forecast horizon for x-axis
+    :param save_path: optional path to save the figure
+    """
+    import logging
+
+    _log = logging.getLogger(__name__)
+    colors = {
+        "Baseline": "#6B7280",
+        "Moderate Intervention": "#3B82F6",
+        "Strong Intervention": "#10B981",
+        "Relaxation": "#F59E0B",
+        "Healthcare Strain": "#EF4444",
+    }
+    fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    ax1 = axes[0]
+    days = list(range(1, prediction_length + 1))
+    for result in results:
+        color = colors.get(result.name, "#6B7280")
+        forecast = result.forecast
+        ax1.plot(
+            days, forecast.mean, label=result.name, color=color, linewidth=2.5
+        )
+        ax1.fill_between(
+            days,
+            forecast.quantile(0.1),
+            forecast.quantile(0.9),
+            alpha=0.15,
+            color=color,
+        )
+    ax1.set_xlabel("Days Ahead", fontsize=12)
+    ax1.set_ylabel("Daily Cases", fontsize=12)
+    ax1.set_title(
+        "Forecast Trajectories by Scenario", fontsize=14, fontweight="bold"
+    )
+    ax1.legend(loc="best", fontsize=10)
+    ax1.grid(True, alpha=0.3)
+    ax1.set_xticks(range(1, prediction_length + 1, 2))
+
+    ax2 = axes[1]
+    names = [r.name for r in results]
+    totals = [r.total_cases for r in results]
+    bar_colors = [colors.get(n, "#6B7280") for n in names]
+    bars = ax2.barh(names, totals, color=bar_colors, alpha=0.8)
+    baseline_total = next(
+        (r.total_cases for r in results if r.name == "Baseline"), totals[0]
+    )
+    for bar, result in zip(bars, results):
+        width = bar.get_width()
+        diff, pct = result.cases_vs_baseline(baseline_total)
+        ax2.text(
+            width + baseline_total * 0.01,
+            bar.get_y() + bar.get_height() / 2,
+            f"{width:,.0f}",
+            ha="left",
+            va="center",
+            fontweight="bold",
+            fontsize=10,
+        )
+        if result.name != "Baseline":
+            pct_text = f"({pct:+.1f}%)"
+            ax2.text(
+                width + baseline_total * 0.08,
+                bar.get_y() + bar.get_height() / 2,
+                pct_text,
+                ha="left",
+                va="center",
+                fontsize=9,
+                color="green" if pct < 0 else "red",
+            )
+    ax2.set_xlabel("Total Cases (14 days)", fontsize=12)
+    ax2.set_title("Total Cases by Scenario", fontsize=14, fontweight="bold")
+    ax2.grid(True, alpha=0.3, axis="x")
+    ax2.axvline(
+        x=baseline_total,
+        color="gray",
+        linestyle="--",
+        linewidth=1.5,
+        alpha=0.7,
+        label="Baseline",
+    )
+    plt.tight_layout()
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches="tight")
+        _log.info("Saved scenario comparison plot to: %s", save_path)
+    plt.show()
