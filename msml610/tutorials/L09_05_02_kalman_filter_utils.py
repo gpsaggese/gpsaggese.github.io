@@ -1,12 +1,14 @@
 """
-Utility functions for g-h filter tutorial (L09_04).
+Utility functions for Kalman filter tutorial (L09_05_02).
 
 Import as:
 
-import msml610.tutorials.L09_05_kalman_filter_utils as mtl0kfiut
+import msml610.tutorials.L09_05_02_kalman_filter_utils as mtl090502kfuti
 """
 
 import logging
+import math
+from collections import namedtuple
 from typing import Optional, Tuple
 
 import ipywidgets
@@ -14,20 +16,44 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as stats
 from IPython.display import display
+from numpy.random import randn
 
 import msml610_utils as mtumsuti
 
 _LOG = logging.getLogger(__name__)
 
-from collections import namedtuple
+
+# #############################################################################
+# Gaussian utility functions
+# #############################################################################
+
 
 Gaussian = namedtuple("Gaussian", ["mean", "var"])
 Gaussian.__repr__ = lambda s: f"N(mu={s[0]:.3f}, sigma^2={s[1]:.3f})"
 
 
-# #############################################################################
-# Gaussian utility functions
-# #############################################################################
+def gaussian_sum(g1, g2):
+    """
+    Compute sum of two Gaussians.
+
+    :param g1: first Gaussian
+    :param g2: second Gaussian
+    :return: sum Gaussian
+    """
+    return Gaussian(g1.mean + g2.mean, g1.var + g2.var)
+
+
+def gaussian_multiply(g1, g2):
+    """
+    Compute product of two Gaussians (PDF multiplication).
+
+    :param g1: first Gaussian
+    :param g2: second Gaussian
+    :return: product Gaussian
+    """
+    mean = (g1.var * g2.mean + g2.var * g1.mean) / (g1.var + g2.var)
+    variance = (g1.var * g2.var) / (g1.var + g2.var)
+    return Gaussian(mean, variance)
 
 
 def plot_gaussian(
@@ -70,26 +96,27 @@ def plot_gaussian(
 # #############################################################################
 
 
-def gaussian_sum(
-    mu1: float, sigma1: float, mu2: float, sigma2: float
-) -> Tuple[float, float]:
-    """
-    Compute sum of two Gaussians.
+# def gaussian_sum(
+#     mu1: float, sigma1: float, mu2: float, sigma2: float
+# ) -> Tuple[float, float]:
+#     """
+#     Compute sum of two Gaussians.
 
-    Given X ~ N(mu1, sigma1^2) and Y ~ N(mu2, sigma2^2),
-    compute Z = X + Y ~ N(mu, sigma^2).
+#     Given X ~ N(mu1, sigma1^2) and Y ~ N(mu2, sigma2^2),
+#     compute Z = X + Y ~ N(mu, sigma^2).
 
-    :param mu1: Mean of first Gaussian
-    :param sigma1: Standard deviation of first Gaussian
-    :param mu2: Mean of second Gaussian
-    :param sigma2: Standard deviation of second Gaussian
-    :return: Tuple of (mu, sigma) for the sum distribution
-    """
-    mu = mu1 + mu2
-    sigma = np.sqrt(sigma1**2 + sigma2**2)
-    return mu, sigma
+#     :param mu1: Mean of first Gaussian
+#     :param sigma1: Standard deviation of first Gaussian
+#     :param mu2: Mean of second Gaussian
+#     :param sigma2: Standard deviation of second Gaussian
+#     :return: Tuple of (mu, sigma) for the sum distribution
+#     """
+#     mu = mu1 + mu2
+#     sigma = np.sqrt(sigma1**2 + sigma2**2)
+#     return mu, sigma
 
 
+# TODO(ai_gp): Remove this and use in the caller code gaussian_multiply() instead.
 def gaussian_product(
     mu1: float, sigma1: float, mu2: float, sigma2: float
 ) -> Tuple[float, float]:
@@ -497,35 +524,111 @@ def cell1_2_plot_gaussian_product() -> None:
 # #############################################################################
 
 
-from numpy.random import randn, seed
-from math import sqrt
+class DogSimulation:
+    """
+    Simulate a dog moving in 1D with process and measurement noise.
+    """
 
+    def __init__(
+        self,
+        *,
+        x0: float = 0,
+        velocity: float = 1,
+        measurement_var: float = 0.0,
+        process_var: float = 0.0,
+    ) -> None:
+        """
+        Initialize dog simulation with position, velocity, and noise.
 
-class DogSimulation(object):
-    def __init__(self, x0=0, velocity=1,
-                 measurement_var=0.0,
-                 process_var=0.0):
-        """ x0 : initial position
-            velocity: (+=right, -=left)
-            measurement_var: variance in measurement m^2
-            process_var: variance in process (m/s)^2
+        :param x0: initial position
+        :param velocity: velocity (+=right, -=left)
+        :param measurement_var: variance in measurement m^2
+        :param process_var: variance in process (m/s)^2
         """
         self.x = x0
         self.velocity = velocity
-        self.meas_std = sqrt(measurement_var)
-        self.process_std = sqrt(process_var)
+        # TODO(ai_gp): -> measurement_std
+        self.meas_std = math.sqrt(measurement_var)
+        self.process_std = math.sqrt(process_var)
 
-    def move(self, dt=1.0):
-        """Compute new position of the dog in dt seconds."""
-        dx = self.velocity + randn()*self.process_std
+    def move(self, *, dt: float = 1.0) -> None:
+        """
+        Compute new position of the dog in dt seconds.
+
+        :param dt: time step in seconds
+        """
+        # Compute the change in position due to movement and noise.
+        dx = self.velocity + randn() * self.process_std
+        # Update the position.
         self.x += dx * dt
 
-    def sense_position(self):
-        """ Returns measurement of new position in meters."""
-        measurement = self.x + randn()*self.meas_std
+    def sense_position(self) -> float:
+        """
+        Return measurement of new position in meters.
+
+        :return: noisy measurement of current position
+        """
+        measurement = self.x + randn() * self.meas_std
         return measurement
 
-    def move_and_sense(self):
-        """ Move dog, and return measurement of new position in meters"""
+    def move_and_sense(self) -> float:
+        """
+        Move dog and return measurement of new position in meters.
+
+        :return: noisy measurement after moving
+        """
         self.move()
         return self.sense_position()
+
+
+# TODO(ai_gp): Add type hints.
+def update(prior, likelihood):
+    """
+    Compute posterior given prior and likelihood.
+
+    :param prior: prior Gaussian
+    :param likelihood: likelihood Gaussian
+    :return: posterior Gaussian
+    """
+    posterior = gaussian_multiply(prior, likelihood)
+    return posterior
+
+
+# TODO(ai_gp): Add type hints.
+def predict(pos, movement):
+    """
+    Predict next position given current position and movement.
+
+    :param pos: current position Gaussian
+    :param movement: movement Gaussian
+    :return: predicted position Gaussian
+    """
+    # TODO(ai_gp): Add comments.
+    # TODO(ai_gp): Use gaussian_sum() instead.
+    return Gaussian(pos.mean + movement.mean, pos.var + movement.var)
+
+
+# TODO(ai_gp): Implement this.
+def to_str(info: List[Tuple[Gaussian, float, Gaussian]]) -> pd.DataFrame:
+    """
+    Convert a list of tuples (prior, posterior, measurement) to a pandas DataFrame
+    and then print it in the format below:
+
+    ```
+    PREDICT			UPDATE
+    (prior.mean, prior.var) (measurement) (posterior.mean, posterior.var)
+        x      var		  z	    x      var
+    1.000  401.000	1.354	  1.352   1.990
+    2.352    2.990	1.882	  2.070   1.198
+    ```
+    """
+
+# # Perform Kalman filter on measurement z.
+# info = []
+# for z in zs:
+#     prior = time_ut.predict(x, process_model)
+#     likelihood = time_ut.Gaussian(z, sensor_var)
+#     x = time_ut.update(prior, likelihood)
+#     #
+#     info.append((prior, x, z))
+# )

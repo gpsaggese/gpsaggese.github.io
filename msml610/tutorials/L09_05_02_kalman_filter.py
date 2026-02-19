@@ -32,7 +32,7 @@ _LOG = logging.getLogger(__name__)
 
 # %%
 import helpers.hio as hio
-import L09_05_kalman_filter_utils as time_ut
+import L09_05_02_kalman_filter_utils as time_ut
 
 dst_dir = "figures"
 hio.create_dir(dst_dir, incremental=True)
@@ -47,31 +47,27 @@ print(x)
 print("x.mean=", x.mean)
 print("x.var=", x.var)
 
-
 # %% [markdown]
 # ## Cell 1.1: Sum of Gaussians
 # - Given two Gaussians $X$ and $Y$
 #   $$X \sim Normal(\mu_1, \sigma_1^2)$$
 #   $$Y \sim Normal(\mu_2, \sigma_2^2)$$
-# - For correlated Gaussians with correlation coefficient $\rho$, the sum $Z = X + Y$ is a Gaussian $Normal(\mu, \sigma^2)$ with:
+# - For correlated Gaussians with correlation coefficient $\rho$, the sum
+#   $Z = X + Y$ is a Gaussian $Normal(\mu, \sigma^2)$ with:
 #   $$\mu = \mu_1 + \mu_2$$
 #   $$\sigma^2 = \sigma_1^2 + \sigma_2^2 + 2\rho\sigma_1\sigma_2$$
 # - **Interpretation:**
 #   - The mean is the sum of the means (by linearity)
-#   - For independent Gaussians ($\rho = 0$), the variance is the sum of variances (uncertainty increases)
+#   - For independent Gaussians ($\rho = 0$), the variance is the sum of
+#     variances (uncertainty increases)
 #   - Positive correlation increases variance, negative correlation decreases it
 
 # %%
-def gaussian_sum(g1, g2):
-    return gaussian(g1.mean + g2.mean, g1.var + g2.var)
-
-
-# %%
 # Sum two Gaussians.
-x = time_ut.Gaussian(10, 0.2 ** 2)
-y = time_ut.Gaussian(15, 0.7 ** 2)
+x = time_ut.Gaussian(10, 0.2**2)
+y = time_ut.Gaussian(15, 0.7**2)
 
-z = gaussian_sum(x, y)
+z = time_ut.gaussian_sum(x, y)
 print(z)
 
 # %%
@@ -80,24 +76,23 @@ time_ut.plot_gaussian(y, ax=ax, label="y")
 time_ut.plot_gaussian(z, ax=ax, label="z");
 
 # %%
-
-# %%
 # Interactive exploration of sum of Gaussians with correlation.
 time_ut.cell1_1_plot_gaussian_sum()
-
 
 # %% [markdown]
 # ## Cell 1.2: Product of Gaussians
 # - Given two Gaussians $X$ and $Y$
 #   $$X \sim Normal(\mu_X, \sigma_X^2)$$
 #   $$Y \sim Normal(\mu_Y, \sigma_Y^2)$$
-# - The product $Z = X \cdot Y$ (PDF multiplication) is a Gaussian $Normal(\mu_Z, \sigma_Z^2)$ with:
+# - The product $Z = X \cdot Y$ (PDF multiplication) is a Gaussian
+#   $Normal(\mu_Z, \sigma_Z^2)$ with:
 #   $$\mu_Z = \frac{\mu_X \sigma_Y^2 + \mu_Y \sigma_X^2}{\sigma_X^2 + \sigma_Y^2}$$
 #   $$\sigma_Z^2 = \frac{\sigma_X^2 \sigma_Y^2}{\sigma_X^2 + \sigma_Y^2}$$
 # - **Interpretation:**
 #   - Reduces variance by incorporating more information
 #   - If one Gaussian $X$ is narrower (more accurate), result leans towards $X$
-#   - If two Gaussians are similar (measures corroborate), result becomes more certain
+#   - If two Gaussians are similar (measures corroborate), result becomes more
+#     certain
 
 # %% [markdown]
 # **Gaussian products in terms of precision**
@@ -114,17 +109,10 @@ time_ut.cell1_1_plot_gaussian_sum()
 # - The variance is smaller than both
 
 # %%
-def gaussian_multiply(g1, g2):
-    mean = (g1.var * g2.mean + g2.var * g1.mean) / (g1.var + g2.var)
-    variance = (g1.var * g2.var) / (g1.var + g2.var)
-    return gaussian(mean, variance)
-
-
-# %%
 # Product of two equal Gaussians.
-x = time_ut.Gaussian(10, 1.)
+x = time_ut.Gaussian(10, 1.0)
 
-z = gaussian_multiply(x, x)
+z = time_ut.gaussian_multiply(x, x)
 print(z)
 
 # The result is more certain than both.
@@ -136,10 +124,10 @@ time_ut.plot_gaussian(z, ax=ax, label="z");
 
 # %%
 # Product of two different Gaussians.
-x = time_ut.Gaussian(10, 0.2 ** 2)
-y = time_ut.Gaussian(15, 0.7 ** 2)
+x = time_ut.Gaussian(10, 0.2**2)
+y = time_ut.Gaussian(15, 0.7**2)
 
-z = gaussian_multiply(x, y)
+z = time_ut.gaussian_multiply(x, y)
 print(z)
 
 ax = time_ut.plot_gaussian(x, label="x")
@@ -150,7 +138,7 @@ time_ut.plot_gaussian(z, ax=ax, label="z");
 x = time_ut.Gaussian(10.2, 1)
 y = time_ut.Gaussian(9.7, 1)
 
-z = gaussian_multiply(x, y)
+z = time_ut.gaussian_multiply(x, y)
 print(z)
 
 ax = time_ut.plot_gaussian(x, label="x")
@@ -188,7 +176,8 @@ time_ut.cell1_2_plot_gaussian_product()
 # - We have a sensor that measures the distance of the dog from one extreme
 
 # %% [markdown]
-# We can use Newton's equation of motion to compute the position of the dog, based on current position and velocity
+# We can use Newton's equation of motion to compute the position of the dog,
+# based on current position and velocity
 #
 # $$\overline{x}_k = x_{k-1} + v_k \Delta_t$$
 #
@@ -196,12 +185,16 @@ time_ut.cell1_2_plot_gaussian_product()
 # - $v_k$ has also uncertainty quantified by a Gaussian
 #
 # We can compute the sum of two Gaussians in terms of mean and uncertainty
-# - It makes sense since we know that uncertainy becomes larger
+# - It makes sense since we know that uncertainty becomes larger
 
-# %%
-- The likelihood $z | x$ is the probability of measures given the current state
+# %% [markdown]
+# - The likelihood $z | x$ is the probability of measures given the current
+#   state
+#
+#
 
-
+# %% [markdown]
+# # 
 
 # %%
 import numpy as np
@@ -212,21 +205,57 @@ process_var = 1.0
 # Variance in the sensor.
 sensor_var = 2.0
 
-# dog's position, N(0, 20**2)
-x = gaussian(0., 20.**2)
+# Dog's position, N(0, 20**2).
+x = time_ut.Gaussian(0.0, 20.0**2)
 velocity = 1
-# time step in seconds
-dt = 1. 
-process_model = gaussian(velocity*dt, process_var) # displacement to add to x
-  
-# simulate dog and get measurements
+# Time step in seconds.
+dt = 1.0
+# Displacement to add to x.
+process_model = time_ut.Gaussian(velocity * dt, process_var)
+
+# Simulate dog and get measurements.
 dog = time_ut.DogSimulation(
-    x0=x.mean, 
-    velocity=process_model.mean, 
-    measurement_var=sensor_var, 
+    x0=x.mean,
+    velocity=process_model.mean,
+    measurement_var=sensor_var,
     process_var=process_model.var)
 
-# create list of measurements
+# Create a list of measurements.
 zs = [dog.move_and_sense() for _ in range(10)]
+
+
+# %%
+def print_gh(predict, update, z):
+    """
+    Print predict/update step of the Kalman filter.
+
+    :param predict: predicted state as (mean, var) tuple
+    :param update: updated state as (mean, var) tuple
+    :param z: measurement value
+    """
+    predict_template = '{: 7.3f} {: 8.3f}'
+    update_template = '{:.3f}\t{: 7.3f} {: 7.3f}'
+    print(predict_template.format(predict[0], predict[1]), end='\t')
+    print(update_template.format(z, update[0], update[1]))
+
+
+# %%
+print('PREDICT\t\t\tUPDATE')
+print('     x      var\t\t  z\t    x      var')
+
+# Perform Kalman filter on measurement z.
+info = []
+for z in zs:
+    prior = time_ut.predict(x, process_model)
+    likelihood = time_ut.Gaussian(z, sensor_var)
+    x = time_ut.update(prior, likelihood)
+    #
+    info.append((prior, x, z))
+    
+    print_gh(prior, x, z)
+
+print()
+print(f'final estimate:        {x.mean:10.3f}')
+print(f'actual final position: {dog.x:10.3f}')
 
 # %%
