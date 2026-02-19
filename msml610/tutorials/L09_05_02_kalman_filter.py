@@ -85,6 +85,7 @@ time_ut.plot_gaussian(z, ax=ax, label="z");
 # Interactive exploration of sum of Gaussians with correlation.
 time_ut.cell1_1_plot_gaussian_sum()
 
+
 # %% [markdown]
 # ## Cell 1.2: Product of Gaussians
 # - Given two Gaussians $X$ and $Y$
@@ -99,21 +100,18 @@ time_ut.cell1_1_plot_gaussian_sum()
 #   - If two Gaussians are similar (measures corroborate), result becomes more certain
 
 # %% [markdown]
-# - The precision of a gaussian is
+# **Gaussian products in terms of precision**
+#
+# - The precision of a Gaussian is
 #   $$\tau = \frac{1}{\sigma^2}$$
 # - The precision of the product is the sum of the precisions
 #   $$\tau_Z = \tau_X + \tau_Y$$
 #   $$\sigma_Z^2 = \frac{1}{\frac{1}{\sigma_X^2} + \frac{1}{\sigma_Y^2}}$$
 # - The mean is the average of the means weighted by the precisions
 #   $$\mu_Z = \sigma_Z^2 (\frac{\mu_X}{\sigma_X^2} + \frac{\mu_Y}{\sigma_Y^2})$$
-
-# %%
-- The mean is averaged towards the more certain Gaussian
-- The variance is smaller than both
-
-- Sum adds uncertainty
-- Multiplication reduces uncertainty
-
+#
+# - The mean is averaged towards the more certain Gaussian
+# - The variance is smaller than both
 
 # %%
 def gaussian_multiply(g1, g2):
@@ -123,7 +121,7 @@ def gaussian_multiply(g1, g2):
 
 
 # %%
-# Product of two Gaussians.
+# Product of two equal Gaussians.
 x = time_ut.Gaussian(10, 1.)
 
 z = gaussian_multiply(x, x)
@@ -133,23 +131,31 @@ print(z)
 
 # %%
 ax = time_ut.plot_gaussian(x, label="x")
+time_ut.plot_gaussian(x, ax=ax, label="x")
 time_ut.plot_gaussian(z, ax=ax, label="z");
 
 # %%
-# Sum two Gaussians.
+# Product of two different Gaussians.
 x = time_ut.Gaussian(10, 0.2 ** 2)
 y = time_ut.Gaussian(15, 0.7 ** 2)
 
 z = gaussian_multiply(x, y)
 print(z)
 
-# %%
 ax = time_ut.plot_gaussian(x, label="x")
 time_ut.plot_gaussian(y, ax=ax, label="y")
 time_ut.plot_gaussian(z, ax=ax, label="z");
 
 # %%
-- sum adds uncertainty
+x = time_ut.Gaussian(10.2, 1)
+y = time_ut.Gaussian(9.7, 1)
+
+z = gaussian_multiply(x, y)
+print(z)
+
+ax = time_ut.plot_gaussian(x, label="x")
+time_ut.plot_gaussian(y, ax=ax, label="y")
+time_ut.plot_gaussian(z, ax=ax, label="z");
 
 # %%
 # Interactive exploration of product of Gaussians.
@@ -173,6 +179,10 @@ time_ut.cell1_2_plot_gaussian_product()
 #   - `x = update(prior, likelihood)`
 
 # %% [markdown]
+# - Sum adds uncertainty
+# - Multiplication reduces uncertainty
+
+# %% [markdown]
 # - Let's assume that the dog moves in the hallway, back and forth
 #   - It's not circular
 # - We have a sensor that measures the distance of the dog from one extreme
@@ -192,5 +202,31 @@ time_ut.cell1_2_plot_gaussian_product()
 - The likelihood $z | x$ is the probability of measures given the current state
 
 
+
+# %%
+import numpy as np
+np.random.seed(13)
+
+# Variance in the dog's movement.
+process_var = 1.0
+# Variance in the sensor.
+sensor_var = 2.0
+
+# dog's position, N(0, 20**2)
+x = gaussian(0., 20.**2)
+velocity = 1
+# time step in seconds
+dt = 1. 
+process_model = gaussian(velocity*dt, process_var) # displacement to add to x
+  
+# simulate dog and get measurements
+dog = time_ut.DogSimulation(
+    x0=x.mean, 
+    velocity=process_model.mean, 
+    measurement_var=sensor_var, 
+    process_var=process_model.var)
+
+# create list of measurements
+zs = [dog.move_and_sense() for _ in range(10)]
 
 # %%
