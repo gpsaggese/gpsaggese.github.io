@@ -587,9 +587,9 @@ def predict(pos: Gaussian, movement: Gaussian) -> Gaussian:
     return gaussian_sum(pos, movement)
 
 
-def to_str(info: List[Tuple[Gaussian, Gaussian, float]]) -> pd.DataFrame:
+def kf_info_to_df(info: List[Tuple[Gaussian, float, Gaussian]]) -> pd.DataFrame:
     """
-    Convert a list of tuples (prior, posterior, measurement) to a DataFrame.
+    Convert a list of tuples (prior, posterior, z) to a DataFrame.
 
     The output format is:
 
@@ -600,7 +600,8 @@ def to_str(info: List[Tuple[Gaussian, Gaussian, float]]) -> pd.DataFrame:
     2.352    2.990   1.882   2.070  1.198
     ```
 
-    :param info: list of (prior, posterior, measurement) tuples
+    :param info: list of (prior, posterior, z) tuples where prior and posterior
+        are Gaussians and z is the measurement
     :return: DataFrame with columns predict_x, predict_var, z, update_x,
         update_var
     """
@@ -620,3 +621,221 @@ def to_str(info: List[Tuple[Gaussian, Gaussian, float]]) -> pd.DataFrame:
         columns=["predict_x", "predict_var", "z", "update_x", "update_var"],
     )
     return df
+
+
+def plot_kf_info(
+    info: List[Tuple[Gaussian, float, Gaussian]],
+    *,
+    ylim: Optional[Tuple[float, float]] = None,
+    show_prior: bool = True,
+) -> None:
+    """
+    Plot Kalman filter info with measurements, prior, and posterior over time.
+
+    For each time step, the prior (predict) is plotted as a red up-triangle,
+    the measurement as a black circle, and the posterior (update) as a green
+    down-triangle. No lines are drawn, only scatter points. Posterior
+    uncertainty is shown as shaded bands for 1, 2, and 3 standard deviations.
+
+    :param info: list of (prior, posterior, z) tuples where prior and posterior
+        are Gaussians and z is the measurement
+    :param ylim: y-axis limits as (ymin, ymax); if None, matplotlib auto-scales
+    :param show_prior: if True, plot the prior (predict) scatter points
+    """
+    times = list(range(len(info)))
+    predict_xs = [prior.mean for prior, _, _ in info]
+    update_xs = [posterior.mean for _, posterior, _ in info]
+    update_stds = [np.sqrt(posterior.var) for _, posterior, _ in info]
+    zs = [z for _, _, z in info]
+    _, ax = plt.subplots(figsize=(12, 6))
+    # Optionally plot prior (predict) as red up-triangle.
+    if show_prior:
+        ax.scatter(
+            times,
+            predict_xs,
+            marker="^",
+            color="red",
+            zorder=5,
+            label="Prior (predict)",
+            s=100,
+        )
+    # Plot measurement as black circle.
+    ax.scatter(
+        times,
+        zs,
+        marker="o",
+        color="black",
+        zorder=5,
+        label="Measurement (z)",
+        s=100,
+    )
+    # Plot posterior (update) as green down-triangle.
+    ax.scatter(
+        times,
+        update_xs,
+        marker="v",
+        color="green",
+        zorder=5,
+        label="Posterior (update)",
+        s=100,
+    )
+    # Plot posterior uncertainty as shaded bands for 1, 2, and 3 std devs.
+    for n_std, alpha in [(3, 0.10), (2, 0.15), (1, 0.20)]:
+        lower = [x - n_std * s for x, s in zip(update_xs, update_stds)]
+        upper = [x + n_std * s for x, s in zip(update_xs, update_stds)]
+        ax.fill_between(
+            times,
+            lower,
+            upper,
+            alpha=alpha,
+            color="green",
+            label=f"Posterior ±{n_std}σ",
+        )
+    ax.set_xlabel("Time Step")
+    ax.set_ylabel("Position")
+    ax.set_title("Kalman Filter: Predictions, Updates, and Measurements")
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    if ylim is not None:
+        ax.set_ylim(ylim)
+    plt.tight_layout()
+
+
+# #############################################################################
+# Cell 3: Interactive Dog Simulation
+# #############################################################################
+
+
+def _run_dog_simulation(
+    seed: int,
+    process_var: float,
+    sensor_var: float,
+    initial_position: float,
+    *,
+    n_steps: int = 10,
+    # TODO(ai_gp): Change to a tuple of (prior, measurement, posterior).
+) -> List[Tuple[Gaussian, Gaussian, float]]:
+    """
+    Run dog simulation and Kalman filter with given parameters.
+
+    :param seed: random seed for reproducibility
+    :param process_var: variance in the dog's movement
+    :param sensor_var: variance in the sensor
+    :param initial_position: dog's initial position
+    :param n_steps: number of simulation steps
+    :return: list of (prior, posterior, measurement) tuples
+    """
+    np.random.seed(seed)
+    x = Gaussian(initial_position, 20.0**2)
+    velocity = 1.0
+    dt = 1.0
+    process_model = Gaussian(velocity * dt, process_var)
+    dog = DogSimulation(
+        x0=x.mean,
+        velocity=process_model.mean,
+        measurement_var=sensor_var,
+        process_var=process_model.var,
+    )
+    zs = [dog.move_and_sense() for _ in range(n_steps)]
+    info = []
+    for z in zs:
+        prior = predict(x, process_model)
+        likelihood = Gaussian(z, sensor_var)
+        x = update(prior, likelihood)
+        info.append((prior, x, z))
+    return info
+
+
+def cell3_interactive_dog_simulation() -> None:
+    """
+    Create interactive widget for exploring Dog simulation with Kalman filter.
+
+    Allows user to adjust seed, process_var, sensor_var, and initial_position
+    and see the Kalman filter results plotted over time.
+    """
+    fig_dog = None
+
+    def _plot_simulation(
+        seed: int,
+        process_var: float,
+        sensor_var: float,
+        initial_position: float,
+    ) -> None:
+        """
+        Run and plot dog simulation with given parameters.
+
+        :param seed: random seed for reproducibility
+        :param process_var: variance in the dog's movement
+        :param sensor_var: variance in the sensor
+        :param initial_position: dog's initial position
+        """
+        nonlocal fig_dog
+        if fig_dog is not None:
+            plt.close(fig_dog)
+        num_steps = 25
+        info = _run_dog_simulation(seed, process_var, sensor_var, initial_position, n_steps=num_steps)
+        plot_kf_info(info)
+        fig_dog = plt.gcf()
+
+    # Create seed widget first (per convention, seed is always the first widget).
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="Seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=13,
+        is_float=False,
+    )
+    # Create process_var widget.
+    process_var_slider, process_var_box = mtumsuti.build_widget_control(
+        name="process_var",
+        description="Process Var",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=1.0,
+        is_float=True,
+    )
+    # Create sensor_var widget.
+    sensor_var_slider, sensor_var_box = mtumsuti.build_widget_control(
+        name="sensor_var",
+        description="Sensor Var",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=2.0,
+        is_float=True,
+    )
+    # Create initial_position widget.
+    initial_position_slider, initial_position_box = mtumsuti.build_widget_control(
+        name="initial_position",
+        description="Initial Pos",
+        min_val=-10.0,
+        max_val=20.0,
+        step=0.5,
+        initial_value=0.0,
+        is_float=True,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        _plot_simulation,
+        {
+            "seed": seed_slider,
+            "process_var": process_var_slider,
+            "sensor_var": sensor_var_slider,
+            "initial_position": initial_position_slider,
+        },
+    )
+    # Display widgets.
+    display(
+        ipywidgets.VBox(
+            [
+                seed_box,
+                process_var_box,
+                sensor_var_box,
+                initial_position_box,
+                output,
+            ]
+        )
+    )

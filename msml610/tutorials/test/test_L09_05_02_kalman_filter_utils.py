@@ -197,6 +197,6 @@ class Test_End_to_End_Continuous_Bayes_Filter1(hunitest.TestCase):
             likelihood = mtl0kfiut.Gaussian(z, sensor_var)
             x = mtl0kfiut.update(prior, likelihood)
             info.append((prior, x, z))
-        actual = mtl0kfiut.to_str(info)
+        actual = mtl0kfiut.kf_info_to_df(info)
         # Check output.
         self.check_string(str(actual))

@@ -150,7 +150,7 @@ time_ut.plot_gaussian(z, ax=ax, label="z");
 time_ut.cell1_2_plot_gaussian_product()
 
 # %% [markdown]
-# # Cell 2
+# # Cell 2: Tracking the Dog
 
 # %% [markdown]
 # - The intuition is the same as the discrete case
@@ -193,9 +193,6 @@ time_ut.cell1_2_plot_gaussian_product()
 #
 #
 
-# %% [markdown]
-# # 
-
 # %%
 import numpy as np
 np.random.seed(13)
@@ -205,12 +202,12 @@ process_var = 1.0
 # Variance in the sensor.
 sensor_var = 2.0
 
-# Dog's position, N(0, 20**2).
+# Dog's initial position.
 x = time_ut.Gaussian(0.0, 20.0**2)
-velocity = 1
+velocity = 1.0
 # Time step in seconds.
 dt = 1.0
-# Displacement to add to x.
+# Displacement to add to x (representing how to model the movement of the dog).
 process_model = time_ut.Gaussian(velocity * dt, process_var)
 
 # Simulate dog and get measurements.
@@ -221,28 +218,11 @@ dog = time_ut.DogSimulation(
     process_var=process_model.var)
 
 # Create a list of measurements.
-zs = [dog.move_and_sense() for _ in range(10)]
-
-
-# %%
-def print_gh(predict, update, z):
-    """
-    Print predict/update step of the Kalman filter.
-
-    :param predict: predicted state as (mean, var) tuple
-    :param update: updated state as (mean, var) tuple
-    :param z: measurement value
-    """
-    predict_template = '{: 7.3f} {: 8.3f}'
-    update_template = '{:.3f}\t{: 7.3f} {: 7.3f}'
-    print(predict_template.format(predict[0], predict[1]), end='\t')
-    print(update_template.format(z, update[0], update[1]))
-
+n_steps = 10
+zs = [dog.move_and_sense() for _ in range(n_steps)]
+print(zs)
 
 # %%
-print('PREDICT\t\t\tUPDATE')
-print('     x      var\t\t  z\t    x      var')
-
 # Perform Kalman filter on measurement z.
 info = []
 for z in zs:
@@ -251,11 +231,26 @@ for z in zs:
     x = time_ut.update(prior, likelihood)
     #
     info.append((prior, x, z))
-    
-    print_gh(prior, x, z)
 
-print()
-print(f'final estimate:        {x.mean:10.3f}')
-print(f'actual final position: {dog.x:10.3f}')
+print(time_ut.kf_info_to_df(info))
+
+# %% [markdown]
+# - The uncertainty after prediction is > than the uncertainty after update (as usual)
+# - The variance of the prior at time 0 is very large, but after we measure, the
+#     variance of the measurement "dominates" (i.
+# - The posterior values are always between the measurement and the prior
+# - After a few cycles the posterior variance is around 1, which is smaller than the sensor variance ~2
+#   - Using a model + measurements is better
+
+# %%
+# Plot Kalman filter results.
+time_ut.plot_kf_info(info)
+
+# %%
+# Interactive Dog simulation with adjustable parameters.
+time_ut.cell3_interactive_dog_simulation()
+
+# %% [markdown]
+# - Is it better to have precise measurements (`sensor_var` << `process_var`) or vice versa?
 
 # %%
