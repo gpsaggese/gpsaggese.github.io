@@ -9,6 +9,7 @@ import tutorials.tutorial_GluonTS_COVID19_Prediction.utils_preprocessing as ttgc
 """
 
 import logging
+from typing import Any, List, Optional
 
 import pandas as pd
 
@@ -144,6 +145,74 @@ def create_train_test_split(
     train_df = df.iloc[:split_idx].copy()
     test_df = df.iloc[split_idx:].copy()
     return train_df, test_df
+
+
+def train_test_split_covid(
+    merged_df: pd.DataFrame,
+    *,
+    train_end_date: Optional[str] = None,
+    pred_length: int = 14,
+    test_length: int = 14,
+    target_col: str = "Daily_Cases_MA7",
+    past_feat_columns: Optional[List[str]] = None,
+) -> tuple[Any, Any, pd.DataFrame, pd.DataFrame]:
+    """
+    Split merged COVID data into train/test and convert to GluonTS datasets.
+
+    One-stop function for notebooks: pass merged_df and get datasets ready for
+    model training.
+
+    :param merged_df: Merged DataFrame (cases + deaths + mobility)
+    :param train_end_date: Optional end date for training (YYYY-MM-DD).
+        If None, uses last test_length days as test.
+    :param pred_length: Forecast horizon for GluonTS (default: 14)
+    :param test_length: Number of days for test set (default: 14)
+    :param target_col: Target column name (default: Daily_Cases_MA7)
+    :param past_feat_columns: Optional feature columns for GluonTS. If None,
+        uses minimal set: Daily_Deaths_MA7, Cumulative_Deaths, CFR.
+    :return: Tuple of (train_ds, test_ds, train_df, test_df)
+    """
+    from utils_gluonts import create_gluonts_dataset, prepare_train_test_split
+
+    if past_feat_columns is None:
+        past_feat_columns = ["Daily_Deaths_MA7", "Cumulative_Deaths", "CFR"]
+
+    df_clean = merged_df.dropna(subset=[target_col]).copy()
+    df_clean["Date"] = pd.to_datetime(df_clean["Date"])
+
+    if train_end_date is not None:
+        end_dt = pd.to_datetime(train_end_date)
+        train_df = df_clean[df_clean["Date"] <= end_dt].reset_index(drop=True)
+        test_start = end_dt + pd.Timedelta(days=1)
+        test_end = end_dt + pd.Timedelta(days=test_length)
+        test_df = df_clean[
+            (df_clean["Date"] >= test_start) & (df_clean["Date"] <= test_end)
+        ].reset_index(drop=True)
+    else:
+        train_df, test_df = prepare_train_test_split(
+            df_clean,
+            test_size=test_length,
+            target_column=target_col,
+        )
+
+    feat_cols = [c for c in past_feat_columns if c in merged_df.columns]
+    full_df = merged_df.dropna(subset=[target_col])
+
+    train_ds = create_gluonts_dataset(
+        train_df,
+        target_column=target_col,
+        freq="D",
+        prediction_length=pred_length,
+        past_feat_columns=feat_cols if feat_cols else None,
+    )
+    test_ds = create_gluonts_dataset(
+        full_df,
+        target_column=target_col,
+        freq="D",
+        prediction_length=pred_length,
+        past_feat_columns=feat_cols if feat_cols else None,
+    )
+    return train_ds, test_ds, train_df, test_df
 
 
 def preprocess_pipeline(
