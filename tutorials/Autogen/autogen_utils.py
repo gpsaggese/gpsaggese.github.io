@@ -33,7 +33,35 @@ chroma_client = chromadb.PersistentClient(path="./chroma_db")
 default_ef = chromadb.utils.embedding_functions.DefaultEmbeddingFunction()
 
 # --- 3. FUNCTIONS ---
+# Force proper markdown table spacing
+def clean_markdown(text: str) -> str:
+    text = text.replace("TERMINATE", "").strip()
 
+    # Step 1: Split into lines
+    lines = text.split("\n")
+    result = []
+
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        is_table = stripped.startswith("|")
+        prev_is_table = result[-1].strip().startswith("|") if result else False
+        next_line = lines[i + 1].strip() if i + 1 < len(lines) else ""
+        next_is_table = next_line.startswith("|")
+
+        # Inject blank line BEFORE a table starts
+        if is_table and not prev_is_table:
+            result.append("")
+
+        result.append(line)
+
+        # Inject blank line AFTER a table ends
+        if is_table and not next_is_table and next_line != "":
+            result.append("")
+
+    # Step 2: Collapse 3+ consecutive blank lines into 2
+    collapsed = re.sub(r'\n{3,}', '\n\n', "\n".join(result))
+    return collapsed.strip()
+    
 def embed_10k_to_chroma(ticker: str, file_path: str):
     ticker = ticker.lower()
     collection_name = f"{ticker}_10k"
@@ -43,7 +71,7 @@ def embed_10k_to_chroma(ticker: str, file_path: str):
     )
 
     if collection.count() > 0:
-        print(f"ℹ️ Collection '{collection_name}' already exists.")
+        print(f" Collection '{collection_name}' already exists.")
         return collection_name
 
     with open(file_path, "r", encoding="utf-8") as f:
@@ -53,7 +81,7 @@ def embed_10k_to_chroma(ticker: str, file_path: str):
     overlap = 200
     chunks = [text[i : i + chunk_size] for i in range(0, len(text), chunk_size - overlap)]
 
-    print(f"📦 Encoding {len(chunks)} chunks for {ticker.upper()}...")
+    print(f" Encoding {len(chunks)} chunks for {ticker.upper()}...")
     collection.add(
         documents=chunks,
         ids=[f"{ticker}_{i}" for i in range(len(chunks))],

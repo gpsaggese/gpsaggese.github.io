@@ -46,23 +46,23 @@ Files Overview
 
 Coming to the most important section of it
 
-### `autogen.example.ipynb`
+# autogen.example.ipynb
 
-This notebook provides a **practical, end-to-end example** of using AutoGen and demonstrates a complete agentic workflow.
+This notebook provides a practical, end-to-end example of using **AutoGen** to demonstrate a complete agentic workflow.
 
-**Example Workflow Implemented:**
+## Part 1: Dynamic Market Debate & Live Data
+- Fetches real-time stock data from Yahoo Finance.  
+- Bull and Bear strategist agents debate market trends.  
+- Selector agent dynamically decides which expert to call at each step.  
+- Generates stock charts and financial summaries.
 
-1. **Dynamic Market Debate & Live Data**  
-   - Uses Yahoo Finance to fetch real-time stock data.  
-   - Agents (Bull and Bear strategists) debate market trends.  
-   - A Selector agent chooses which expert to call at each step.  
-   - Generates stock charts and financial summaries.
+## Part 2: SEC Filings & Quantitative RAG Analysis (Extension of Part 1)
+- Pulls 10-K filings from SEC EDGAR and cleans them.  
+- Embeds documents into a **ChromaDB** vector database.  
+- Senior Quant Analyst agent queries the database to extract revenue splits, risk factors, and other insights.  
+- Quant Runtime agent executes Python code locally to transform raw tables into structured visualizations.  
 
-2. **SEC Filings & Quantitative RAG Analysis**  
-   - Pulls 10-K filings from SEC EDGAR and cleans them.  
-   - Embeds documents into a ChromaDB vector database.  
-   - Senior Quant Analyst agent queries the database to extract revenue splits, risk factors, and other insights.  
-   - Quant Runtime agent executes Python code locally to transform raw tables into structured visualizations.
+> Part 2 extends Part 1 by combining live market data with deep, structured analysis of SEC filings, showing how multiple agents collaborate, leverage private databases via RAG, and produce actionable insights in a single integrated workflow.
 
 This example shows **how multiple agents collaborate**, use live data, leverage private databases via RAG, and produce actionable insights in a single integrated workflow. 
 
