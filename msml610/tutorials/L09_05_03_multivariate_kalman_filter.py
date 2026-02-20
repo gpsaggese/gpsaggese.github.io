@@ -42,6 +42,8 @@ hio.create_dir(dst_dir, incremental=True)
 # %%
 # !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet filterpy)"
 
+import filterpy
+
 # %% [markdown]
 # # Cell 1: Multi-variate Gaussians
 #
@@ -85,158 +87,228 @@ time_ut.plot_3d_sampled_covariance(mu, P)
 time_ut.cell_1_1_plot_covariance_matrix()
 
 # %% [markdown]
-# # Cell 1: Sum and Product of Gaussians
-
-# %%
-x = time_ut.Gaussian(3.4, 10.1)
-print(x)
-print("x.mean=", x.mean)
-print("x.var=", x.var)
+# ## Using Correlations to Improve Estimates
 
 # %% [markdown]
-# ## Cell 1.1: Sum of Gaussians
-# - Given two Gaussians $X$ and $Y$
-#   $$X \sim Normal(\mu_1, \sigma_1^2)$$
-#   $$Y \sim Normal(\mu_2, \sigma_2^2)$$
-# - For correlated Gaussians with correlation coefficient $\rho$, the sum
-#   $Z = X + Y$ is a Gaussian $Normal(\mu, \sigma^2)$ with:
-#   $$\mu = \mu_1 + \mu_2$$
-#   $$\sigma^2 = \sigma_1^2 + \sigma_2^2 + 2\rho\sigma_1\sigma_2$$
-# - **Interpretation:**
-#   - The mean is the sum of the means (by linearity)
-#   - For independent Gaussians ($\rho = 0$), the variance is the sum of
-#     variances (uncertainty increases)
-#   - Positive correlation increases variance, negative correlation decreases it
+# - Given an aircraft that we need to locate on a 2D map, ignoring the altitude
+# - We are tracking an aircraft with two radars
+#   - Each radar provides the position as two coordinates, such as the "range"
+#     (distance) and the "bearing" (angle) to a target
+#
+# - The areas on the X-Y diagrams represent where the plane is likely to be
+#
+# - One radar measurement (let's assume it's the prior) is equally distributed
+#   across the two axes (yellow)
+# - The other radar measurement (let's assume it's the evidence) instead is
+#   inaccurate along the range but precise along the bearing estimates (green)
+# - The posterior is given by the multiplication of the two Gaussians (blue)
+#   - The uncertainty of the posterior is the smaller than the two other measurements
 
 # %%
-# Sum two Gaussians.
-x = time_ut.Gaussian(10, 0.2**2)
-y = time_ut.Gaussian(15, 0.7**2)
+# Prior.
+P0 = [[6, 0], [0, 6]]
+filterpy.stats.plot_covariance_ellipse((10, 10), P0, fc='y', alpha=0.6)
 
-z = time_ut.gaussian_sum(x, y)
-print(z)
+# Evidence.
+P1 = [[2, 1.9], [1.9, 2]]
+filterpy.stats.plot_covariance_ellipse((10, 10), P1, fc='g', alpha=0.9)
 
-# %%
-ax = time_ut.plot_gaussian(x, label="x")
-time_ut.plot_gaussian(y, ax=ax, label="y")
-time_ut.plot_gaussian(z, ax=ax, label="z");
+# Posterior.
+P2 = filterpy.stats.multivariate_multiply((10, 10), P0, (10, 10), P1)[1]
+print(P2)
+filterpy.stats.plot_covariance_ellipse((10, 10), P2, ec='k', fc='b')
 
 # %% [markdown]
-# **Goal**:
-# - Explore the sum of two Gaussians $X \sim N(\mu_1, \sigma_1^2)$ and
-#   $Y \sim N(\mu_2, \sigma_2^2)$ with correlation $\rho$
-# - Observe how mean and variance of $Z = X + Y$ change with parameters
-#
-# **Plots**:
-# - Input Gaussians $X$ (blue) and $Y$ (yellow) as filled PDFs
-# - Analytical sum $Z$ (red line)
-# - Numerical sum via sampling (light coral histogram)
-#
-# **Parameters**:
-# - `mu1` ($\mu_1$): mean of $X$
-# - `sigma1` ($\sigma_1$): standard deviation of $X$
-# - `mu2` ($\mu_2$): mean of $Y$
-# - `sigma2` ($\sigma_2$): standard deviation of $Y$
-# - `rho` ($\rho$): correlation coefficient between $X$ and $Y$
-#
-# **Key observations**:
-# - The mean of $Z$ is always $\mu_1 + \mu_2$ regardless of correlation
-# - Positive $\rho$ increases variance; negative $\rho$ decreases it
-# - For independent Gaussians ($\rho = 0$), variance is simply
-#   $\sigma_1^2 + \sigma_2^2$
+# - If the two measurements are like below, the resulting measurement is much smaller
+#   - We are "triangulating" the aircraft
+#   - This is optimal when the radars are orthogonal
 
 # %%
-# Interactive exploration of sum of Gaussians with correlation.
-time_ut.cell1_1_plot_gaussian_sum()
+P3 = [[2, -1.9], [-1.9, 2.2]]
+filterpy.stats.plot_covariance_ellipse((10, 10), P2, ec='k', fc='y', alpha=0.6)
+filterpy.stats.plot_covariance_ellipse((10, 10), P3, ec='k', fc='g', alpha=0.6)
+
+P4 = filterpy.stats.multivariate_multiply((10, 10), P2, (10, 10), P3)[1]
+filterpy.stats.plot_covariance_ellipse((10, 10), P4, ec='k', fc='b')
 
 # %% [markdown]
-# ## Cell 1.2: Product of Gaussians
-# - Given two Gaussians $X$ and $Y$
-#   $$X \sim Normal(\mu_X, \sigma_X^2)$$
-#   $$Y \sim Normal(\mu_Y, \sigma_Y^2)$$
-# - The product $Z = X \cdot Y$ (PDF multiplication) is a Gaussian
-#   $Normal(\mu_Z, \sigma_Z^2)$ with:
-#   $$\mu_Z = \frac{\mu_X \sigma_Y^2 + \mu_Y \sigma_X^2}{\sigma_X^2 + \sigma_Y^2}$$
-#   $$\sigma_Z^2 = \frac{\sigma_X^2 \sigma_Y^2}{\sigma_X^2 + \sigma_Y^2}$$
-# - **Interpretation:**
-#   - Reduces variance by incorporating more information
-#   - If one Gaussian $X$ is narrower (more accurate), result leans towards $X$
-#   - If two Gaussians are similar (measures corroborate), result becomes more
-#     certain
+# # Cell 1: Sum and Product of Bidimensional Gaussians
 
 # %% [markdown]
-# **Gaussian products in terms of precision**
+# ## Sum of Two 2D Gaussians
 #
-# - The precision of a Gaussian is
-#   $$\tau = \frac{1}{\sigma^2}$$
-# - The precision of the product is the sum of the precisions
-#   $$\tau_Z = \tau_X + \tau_Y$$
-#   $$\sigma_Z^2 = \frac{1}{\frac{1}{\sigma_X^2} + \frac{1}{\sigma_Y^2}}$$
-# - The mean is the average of the means weighted by the precisions
-#   $$\mu_Z = \sigma_Z^2 (\frac{\mu_X}{\sigma_X^2} + \frac{\mu_Y}{\sigma_Y^2})$$
-#
-# - The mean is averaged towards the more certain Gaussian
-# - The variance is smaller than both
+# - If $X \sim N(0, \Sigma_1)$ and $Y \sim N(0, \Sigma_2)$ are independent,
+#   then $X + Y \sim N(0, \Sigma_1 + \Sigma_2)$: the covariances add
+#     - Yellow: G1
+#     - Green: G2
+#     - Blue: G1 + G2
+# - The sum is always larger (less certain) than either factor
 
 # %%
-# Product of two equal Gaussians.
-x = time_ut.Gaussian(10, 1.0)
-
-z = time_ut.gaussian_multiply(x, x)
-print(z)
-
-# The result is more certain than both.
-
-# %%
-ax = time_ut.plot_gaussian(x, label="x")
-time_ut.plot_gaussian(x, ax=ax, label="x")
-time_ut.plot_gaussian(z, ax=ax, label="z");
-
-# %%
-# Product of two different Gaussians.
-x = time_ut.Gaussian(10, 0.2**2)
-y = time_ut.Gaussian(15, 0.7**2)
-
-z = time_ut.gaussian_multiply(x, y)
-print(z)
-
-ax = time_ut.plot_gaussian(x, label="x")
-time_ut.plot_gaussian(y, ax=ax, label="y")
-time_ut.plot_gaussian(z, ax=ax, label="z");
-
-# %%
-x = time_ut.Gaussian(10.2, 1)
-y = time_ut.Gaussian(9.7, 1)
-
-z = time_ut.gaussian_multiply(x, y)
-print(z)
-
-ax = time_ut.plot_gaussian(x, label="x")
-time_ut.plot_gaussian(y, ax=ax, label="y")
-time_ut.plot_gaussian(z, ax=ax, label="z");
+time_ut.cell_1_2_plot_sum_of_gaussians()
 
 # %% [markdown]
-# **Goal**:
-# - Explore the product of two Gaussian PDFs $X \sim N(\mu_1, \sigma_1^2)$ and
-#   $Y \sim N(\mu_2, \sigma_2^2)$
-# - Observe how combining two beliefs (product) reduces uncertainty
+# ## Product of Two 2D Gaussians
 #
-# **Plots**:
-# - Input Gaussians $X$ (blue) and $Y$ (yellow) as filled PDFs
-# - Analytical product $Z$ (red line)
-# - Numerical product via importance sampling (light coral histogram)
-#
-# **Parameters**:
-# - `mu1` ($\mu_1$): mean of $X$
-# - `sigma1` ($\sigma_1$): standard deviation of $X$
-# - `mu2` ($\mu_2$): mean of $Y$
-# - `sigma2` ($\sigma_2$): standard deviation of $Y$
-#
-# **Key observations**:
-# - The product pulls the mean toward the more certain (narrower) Gaussian
-# - The resulting variance is smaller than both input variances
-# - When inputs agree, the result is very sharp (high certainty)
+# - The product of two Gaussian PDFs is also a Gaussian (up to normalization)
+# - Given $G1 \sim N(0, \Sigma_1)$ and $G2 \sim N(0, \Sigma_2)$:
+#   $\Sigma^{-1} = \Sigma_1^{-1} + \Sigma_2^{-1}$
+#     - Yellow: G1
+#     - Green: G2
+#     - Blue: G1 * G2
+# - The product is always smaller (more certain) than either factor
 
 # %%
-# Interactive exploration of product of Gaussians.
-time_ut.cell1_2_plot_gaussian_product()
+time_ut.cell_1_3_plot_product_of_gaussians()
+
+
+# %% [markdown]
+# # Tracking a Dog with Hidden Variables
+#
+# - There is a dog moving on a 1-d track
+# - The dog moves approximately 1 meter per step
+#   - The velocity has variance due to noise/imperfect model specification
+# - There is a sensor that measures the position of the dog
+#   - The sensor has a certain error
+# - Time is discrete
+
+# %%
+def compute_dog_data(z_var, process_var, count=1, dt=1.):
+    "returns track, measurements 1D ndarrays"
+    x, vel = 0., 1.
+    z_std = math.sqrt(z_var) 
+    p_std = math.sqrt(process_var)
+    xs, zs = [], []
+    for _ in range(count):
+        v = vel + (randn() * p_std)
+        x += v*dt        
+        xs.append(x)
+        zs.append(x + randn() * z_std)        
+    return np.array(xs), np.array(zs)
+
+
+xs, zs = compute_dog_data()
+
+# %% [markdown]
+# * Tracking Dog: Predict Step
+# - At each step, the position is described with a Gaussian distribution
+#   $Normal(\mu, \sigma^2)$
+#
+# - The position is part of the system's state, along with the velocity
+#   - The position is "observed" by a sensor
+#   - The velocity is a "hidden" variable
+#   - You could use more variables (E.g., acceleration, jerk, etc.)
+
+# %% [markdown]
+# ## Design State Covariance
+# - Initialize variances to reasonable values
+#   - E.g., $\sigma_{position} = 500m$ due to uncertainty about initial position
+#   - Top speed for a dog is 21m/s, so set $3 \sigma_{velocity} = 21$
+#   - Assume covariances to be zero due to unknown initial correlation between
+#     position and velocity
+#   - $\mP$ is diagonal
+#
+# ## Design System Model
+# - Describe mathematically the behavior of the system
+#   $$
+#   x_{t+1} = x_t + v \Delta t
+#   $$
+# - No model to predict how dog velocity changes over time
+#   - Assume it remains constant
+#     $$
+#     \dot{x}_{t+1} = \dot{x}_t
+#     $$
+#   - This is not correct, but if velocity doesn't change much, the filter will
+#     perform well
+# - Put the model in matrix form $\vx_{t+1} = \mF \vx_t$
+#
+# ## Predicting the System
+#
+# - If we predict the system without measurements:
+#   - The state follows the system model
+#   - The state uncertainty grows
+#     - This is true even without system error (noise)
+#
+# ## Design System Noise
+#
+# - Consider a car driving on a road with cruise control on
+# - It should travel at constant speed:
+#
+#   $$
+#   x_t = \dot{x}_{t-1} \Delta t + x_{t-1}
+#   $$
+#
+# - In reality, it is affected by unknown factors:
+#   - The cruise control is not perfect
+#   - Wind, hills, potholes affect the car
+#   - Passengers roll down windows, changing the drag profile of the car
+#
+# - Model this as:
+#
+#   $$
+#   \dot{x}_t = \dot{x}_{t-1} + w
+#   $$
+#
+# - Model all of this with a covariance matrix $\mQ = \EE[\vw \cdot \vw^T]$:
+#   - Assume the noise is iid, has zero mean, and is independent from the system
+#   - For these reasons, you don't have to change the position, only the velocity
+#
+# ## Design the Control Function
+# - Incorporate control inputs to predict state based on this information
+#   $$
+#   \Delta \overline{\vx} = \mB \vu
+#   $$
+# - E.g., in the case of the car
+#   - Steering
+#   - Acceleration
+# - E.g., in the case of the dog, control inputs can be
+#   - The voice of its master
+#   - Seeing a squirrel
+#
+
+# %% [markdown]
+# ## Update Step
+#
+# * Tracking Dog: Design the Measurement Function
+# - Kalman filter computes the update step in the measurement space
+#
+# - If the measurement is in the same units as the state, the residual is simple
+#   to compute:
+#
+#   $$
+#   \text{residual = measured position - predicted position}
+#   $$
+#
+# - E.g., assume we are tracking the position of the dog using a sensor that
+#   outputs a voltage
+#   - We cannot compute the residual as:
+#     $$
+#     \text{measure voltage - predicted position}
+#     $$
+#   - We need to convert the position into voltage
+#
+# - The Kalman space allows to have a measurement matrix $\mH$ to convert the
+#   state into a measurement
+#
+#   $$
+#   \vy = \vz - \mH \overline{\vx}
+#   $$
+#
+# * Why Working in Measurement and Not in State Space?
+# - The problem is that it is possible to convert state into measurement, but not
+#   vice versa because of the hidden variables
+#   - E.g., transform position (discarding velocity) into voltage
+#   - If the sensor doesn't read velocity how do we estimate the measured velocity
+#
+# * Tracking Dog: Design the Measurement
+# - Typically $\vz$ is easy since it just contains the measurements from the
+#   sensor
+#
+# - The measurement noise matrix $\mR$ can be difficult to estimate
+#   - Noise can be not Gaussian
+#   - There can be a bias in the sensor
+#   - The error can be not symmetrical (e.g., temperature sensor is less precise
+#     as the temperature increases)
+#
+
+# %%

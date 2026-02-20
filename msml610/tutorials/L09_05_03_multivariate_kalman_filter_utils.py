@@ -10,13 +10,11 @@ import logging
 from typing import Optional
 
 import filterpy.stats as stats
-from filterpy.stats import plot_covariance_ellipse
 import ipywidgets
-from matplotlib import cm
+import matplotlib
+import matplotlib.patches
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-from numpy.random import multivariate_normal
 from IPython.display import display
 
 import msml610_utils as mtumsuti
@@ -83,7 +81,7 @@ def plot_3d_sampled_covariance(
     miny = mean[1] - w
     maxy = mean[1] + w
     count = 1000
-    x, y = multivariate_normal(mean=mean, cov=cov, size=count).T
+    x, y = np.random.multivariate_normal(mean=mean, cov=cov, size=count).T
     xs = np.arange(minx, maxx, (maxx - minx) / 40.0)
     ys = np.arange(miny, maxy, (maxy - miny) / 40.0)
     xv, yv = np.meshgrid(xs, ys)
@@ -106,7 +104,7 @@ def plot_3d_sampled_covariance(
         ]
     )
     zv = zs.reshape(xv.shape)
-    ax.contour(xv, yv, zv, zdir="x", offset=minx - 1, cmap=cm.binary)
+    ax.contour(xv, yv, zv, zdir="x", offset=minx - 1, cmap=matplotlib.cm.binary)
     y = mean[1]
     zs = np.array(
         [
@@ -115,11 +113,181 @@ def plot_3d_sampled_covariance(
         ]
     )
     zv = zs.reshape(xv.shape)
-    ax.contour(xv, yv, zv, zdir="y", offset=maxy, cmap=cm.binary)
+    ax.contour(xv, yv, zv, zdir="y", offset=maxy, cmap=matplotlib.cm.binary)
 
 
 # #############################################################################
-# Cell 1: Interactive 2D Covariance Matrix
+# Cell 1.2 / 1.3: Helpers
+# #############################################################################
+
+
+def _sample_valid_cov_params(
+    var_min: float = 0.1,
+    var_max: float = 10.0,
+    *,
+    cov_fraction: float = 0.9,
+) -> tuple:
+    """
+    Sample random valid 2D covariance parameters (positive definite matrix).
+
+    Draws var_x and var_y uniformly in [var_min, var_max], then draws
+    cov_xy in (-cov_fraction * sqrt(var_x * var_y),
+               +cov_fraction * sqrt(var_x * var_y)) to guarantee positive
+    definiteness.
+
+    :param var_min: minimum value for var_x and var_y
+    :param var_max: maximum value for var_x and var_y
+    :param cov_fraction: fraction of the geometric mean used as cov_xy limit
+    :return: tuple (var_x, var_y, cov_xy) rounded to one decimal place
+    """
+    var_x = round(np.random.uniform(var_min, var_max), 1)
+    var_y = round(np.random.uniform(var_min, var_max), 1)
+    max_cov = cov_fraction * np.sqrt(var_x * var_y)
+    cov_xy = round(np.random.uniform(-max_cov, max_cov), 1)
+    return var_x, var_y, cov_xy
+
+
+# #############################################################################
+# Cell 1.2: Sum of Two 2D Gaussians
+# #############################################################################
+
+
+def _plot_sum_of_gaussians(
+    var_x1: float,
+    var_y1: float,
+    cov_xy1: float,
+    var_x2: float,
+    var_y2: float,
+    cov_xy2: float,
+) -> None:
+    """
+    Plot two 2D Gaussians and their sum as covariance ellipses.
+
+    If X ~ N(0, Sigma1) and Y ~ N(0, Sigma2) are independent, then
+    X + Y ~ N(0, Sigma1 + Sigma2): the covariances add.
+
+    :param var_x1: variance of x dimension for Gaussian 1
+    :param var_y1: variance of y dimension for Gaussian 1
+    :param cov_xy1: covariance between x and y for Gaussian 1
+    :param var_x2: variance of x dimension for Gaussian 2
+    :param var_y2: variance of y dimension for Gaussian 2
+    :param cov_xy2: covariance between x and y for Gaussian 2
+    """
+    mean = np.array([0.0, 0.0])
+    cov1 = np.array([[var_x1, cov_xy1], [cov_xy1, var_y1]])
+    cov2 = np.array([[var_x2, cov_xy2], [cov_xy2, var_y2]])
+    # Validate positive definiteness.
+    for cov, name in [(cov1, "G1"), (cov2, "G2")]:
+        try:
+            np.linalg.cholesky(cov)
+        except np.linalg.LinAlgError:
+            _LOG.warning(
+                "%s covariance not positive definite;"
+                " need var_x * var_y > cov_xy^2",
+                name,
+            )
+            return
+    # Compute sum covariance: covariances add for independent variables.
+    cov_sum = cov1 + cov2
+    plt.figure(figsize=(8, 8))
+    # Plot ellipses at 1 and 2 standard deviations.
+    stats.plot_covariance_ellipse(mean, cov1, fc="y", alpha=0.4)
+    stats.plot_covariance_ellipse(mean, cov2, fc="g", alpha=0.4)
+    stats.plot_covariance_ellipse(
+        mean, cov_sum, fc="b", alpha=0.4
+    )
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    cov1_str = (
+        f"[[{var_x1:.1f}, {cov_xy1:.1f}], [{cov_xy1:.1f}, {var_y1:.1f}]]"
+    )
+    cov2_str = (
+        f"[[{var_x2:.1f}, {cov_xy2:.1f}], [{cov_xy2:.1f}, {var_y2:.1f}]]"
+    )
+    plt.title(f"Sum of Gaussians\nG1={cov1_str}\nG2={cov2_str}")
+    legend_elements = [
+        matplotlib.patches.Patch(fc="y", alpha=0.4, label="G1"),
+        matplotlib.patches.Patch(fc="g", alpha=0.4, label="G2"),
+        matplotlib.patches.Patch(fc="b", alpha=0.4, label="G1 + G2 (sum)"),
+    ]
+    plt.legend(handles=legend_elements)
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+
+
+# #############################################################################
+# Cell 1.3: Product of Two 2D Gaussians
+# #############################################################################
+
+
+def _plot_product_of_gaussians(
+    var_x1: float,
+    var_y1: float,
+    cov_xy1: float,
+    var_x2: float,
+    var_y2: float,
+    cov_xy2: float,
+) -> None:
+    """
+    Plot two 2D Gaussians and their product as covariance ellipses.
+
+    The product of G1 ~ N(0, Sigma1) and G2 ~ N(0, Sigma2) is proportional
+    to N(0, Sigma) where Sigma^{-1} = Sigma1^{-1} + Sigma2^{-1}. The
+    product is always more certain (smaller ellipse) than either factor.
+
+    :param var_x1: variance of x dimension for Gaussian 1
+    :param var_y1: variance of y dimension for Gaussian 1
+    :param cov_xy1: covariance between x and y for Gaussian 1
+    :param var_x2: variance of x dimension for Gaussian 2
+    :param var_y2: variance of y dimension for Gaussian 2
+    :param cov_xy2: covariance between x and y for Gaussian 2
+    """
+    mean = np.array([0.0, 0.0])
+    cov1 = np.array([[var_x1, cov_xy1], [cov_xy1, var_y1]])
+    cov2 = np.array([[var_x2, cov_xy2], [cov_xy2, var_y2]])
+    # Validate positive definiteness.
+    for cov, name in [(cov1, "G1"), (cov2, "G2")]:
+        try:
+            np.linalg.cholesky(cov)
+        except np.linalg.LinAlgError:
+            _LOG.warning(
+                "%s covariance not positive definite;"
+                " need var_x * var_y > cov_xy^2",
+                name,
+            )
+            return
+    # Compute product covariance: Sigma^{-1} = Sigma1^{-1} + Sigma2^{-1}.
+    cov_prod = np.linalg.inv(np.linalg.inv(cov1) + np.linalg.inv(cov2))
+    plt.figure(figsize=(8, 8))
+    # Plot ellipses at 1 and 2 standard deviations.
+    stats.plot_covariance_ellipse(mean, cov1, fc="y", alpha=0.4)
+    stats.plot_covariance_ellipse(mean, cov2, fc="g", alpha=0.4)
+    stats.plot_covariance_ellipse(
+        mean, cov_prod, fc="b", alpha=0.6
+    )
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    cov1_str = (
+        f"[[{var_x1:.1f}, {cov_xy1:.1f}], [{cov_xy1:.1f}, {var_y1:.1f}]]"
+    )
+    cov2_str = (
+        f"[[{var_x2:.1f}, {cov_xy2:.1f}], [{cov_xy2:.1f}, {var_y2:.1f}]]"
+    )
+    plt.title(f"Product of Gaussians\nG1={cov1_str}\nG2={cov2_str}")
+    legend_elements = [
+        matplotlib.patches.Patch(fc="y", alpha=0.4, label="G1"),
+        matplotlib.patches.Patch(fc="g", alpha=0.4, label="G2"),
+        matplotlib.patches.Patch(
+            fc="b", alpha=0.6, label="G1 * G2 (product)"
+        ),
+    ]
+    plt.legend(handles=legend_elements)
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+
+
+# #############################################################################
+# Cell 1.1: Interactive 2D Covariance Matrix
 # #############################################################################
 
 
@@ -150,11 +318,13 @@ def _plot_covariance_matrix(
         samples[:, 0], samples[:, 1], alpha=0.3, s=10, label="Samples"
     )
     # Plot covariance ellipse at 1, 2, 3 standard deviations.
-    plot_covariance_ellipse(
+    # Use axis_equal=False to avoid conflict with fixed xlim/ylim; set equal
+    # aspect manually with adjustable='box' so the axes box is resized instead
+    # of the data limits being overridden.
+    stats.plot_covariance_ellipse(
         mean,
         cov,
-        std=[1, 2, 3],
-        axis_equal=True,
+        axis_equal=False,
         show_semiaxis=True,
     )
     plt.xlabel("X")
@@ -165,8 +335,298 @@ def _plot_covariance_matrix(
     plt.title(f"2D Covariance: {cov_str}\nN={n_samples}, seed={seed}")
     plt.xlim(-10, 10)
     plt.ylim(-10, 10)
+    plt.gca().set_aspect("equal", adjustable="box")
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
+
+
+def cell_1_2_plot_sum_of_gaussians() -> None:
+    """
+    Create interactive widget for exploring the sum of two 2D Gaussians.
+
+    Shows G1 (yellow), G2 (green), and G1 + G2 (blue) as covariance
+    ellipses. The sum covariance equals Sigma1 + Sigma2. A "Random" button
+    assigns random valid covariance parameters to both Gaussians.
+    """
+    fig_sum = None
+
+    def _plot(
+        var_x1: float,
+        var_y1: float,
+        cov_xy1: float,
+        var_x2: float,
+        var_y2: float,
+        cov_xy2: float,
+    ) -> None:
+        """
+        Update plot for sum of Gaussians.
+
+        :param var_x1: variance of x for Gaussian 1
+        :param var_y1: variance of y for Gaussian 1
+        :param cov_xy1: covariance xy for Gaussian 1
+        :param var_x2: variance of x for Gaussian 2
+        :param var_y2: variance of y for Gaussian 2
+        :param cov_xy2: covariance xy for Gaussian 2
+        """
+        nonlocal fig_sum
+        if fig_sum is not None:
+            plt.close(fig_sum)
+        _plot_sum_of_gaussians(
+            var_x1, var_y1, cov_xy1, var_x2, var_y2, cov_xy2
+        )
+        fig_sum = plt.gcf()
+
+    # Create widgets for Gaussian 1.
+    var_x1_slider, var_x1_box = mtumsuti.build_widget_control(
+        name="var_x1",
+        description="var_x1 (G1)",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=2.0,
+        is_float=True,
+    )
+    var_y1_slider, var_y1_box = mtumsuti.build_widget_control(
+        name="var_y1",
+        description="var_y1 (G1)",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=2.0,
+        is_float=True,
+    )
+    cov_xy1_slider, cov_xy1_box = mtumsuti.build_widget_control(
+        name="cov_xy1",
+        description="cov_xy1 (G1)",
+        min_val=-5.0,
+        max_val=5.0,
+        step=0.1,
+        initial_value=0.5,
+        is_float=True,
+    )
+    # Create widgets for Gaussian 2.
+    var_x2_slider, var_x2_box = mtumsuti.build_widget_control(
+        name="var_x2",
+        description="var_x2 (G2)",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=3.0,
+        is_float=True,
+    )
+    var_y2_slider, var_y2_box = mtumsuti.build_widget_control(
+        name="var_y2",
+        description="var_y2 (G2)",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=1.0,
+        is_float=True,
+    )
+    cov_xy2_slider, cov_xy2_box = mtumsuti.build_widget_control(
+        name="cov_xy2",
+        description="cov_xy2 (G2)",
+        min_val=-5.0,
+        max_val=5.0,
+        step=0.1,
+        initial_value=-0.5,
+        is_float=True,
+    )
+    # Create Random button.
+    random_button = ipywidgets.Button(
+        description="Random",
+        button_style="info",
+        layout={"width": "100px"},
+    )
+
+    def _on_random(b: ipywidgets.Button) -> None:
+        """
+        Assign random valid covariance parameters to all six sliders.
+
+        :param b: button widget (unused)
+        """
+        var_x1, var_y1, cov_xy1 = _sample_valid_cov_params()
+        var_x2, var_y2, cov_xy2 = _sample_valid_cov_params()
+        var_x1_slider.value = var_x1
+        var_y1_slider.value = var_y1
+        cov_xy1_slider.value = cov_xy1
+        var_x2_slider.value = var_x2
+        var_y2_slider.value = var_y2
+        cov_xy2_slider.value = cov_xy2
+
+    random_button.on_click(_on_random)
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        _plot,
+        {
+            "var_x1": var_x1_slider,
+            "var_y1": var_y1_slider,
+            "cov_xy1": cov_xy1_slider,
+            "var_x2": var_x2_slider,
+            "var_y2": var_y2_slider,
+            "cov_xy2": cov_xy2_slider,
+        },
+    )
+    # Display widgets.
+    display(
+        ipywidgets.VBox(
+            [
+                random_button,
+                var_x1_box,
+                var_y1_box,
+                cov_xy1_box,
+                var_x2_box,
+                var_y2_box,
+                cov_xy2_box,
+                output,
+            ]
+        )
+    )
+
+
+def cell_1_3_plot_product_of_gaussians() -> None:
+    """
+    Create interactive widget for exploring the product of two 2D Gaussians.
+
+    Shows G1 (yellow), G2 (green), and G1 * G2 (blue) as covariance
+    ellipses. The product is always more certain (smaller) than either
+    factor. A "Random" button assigns random valid covariance parameters to
+    both Gaussians.
+    """
+    fig_prod = None
+
+    def _plot(
+        var_x1: float,
+        var_y1: float,
+        cov_xy1: float,
+        var_x2: float,
+        var_y2: float,
+        cov_xy2: float,
+    ) -> None:
+        """
+        Update plot for product of Gaussians.
+
+        :param var_x1: variance of x for Gaussian 1
+        :param var_y1: variance of y for Gaussian 1
+        :param cov_xy1: covariance xy for Gaussian 1
+        :param var_x2: variance of x for Gaussian 2
+        :param var_y2: variance of y for Gaussian 2
+        :param cov_xy2: covariance xy for Gaussian 2
+        """
+        nonlocal fig_prod
+        if fig_prod is not None:
+            plt.close(fig_prod)
+        _plot_product_of_gaussians(
+            var_x1, var_y1, cov_xy1, var_x2, var_y2, cov_xy2
+        )
+        fig_prod = plt.gcf()
+
+    # Create widgets for Gaussian 1.
+    var_x1_slider, var_x1_box = mtumsuti.build_widget_control(
+        name="var_x1",
+        description="var_x1 (G1)",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=4.0,
+        is_float=True,
+    )
+    var_y1_slider, var_y1_box = mtumsuti.build_widget_control(
+        name="var_y1",
+        description="var_y1 (G1)",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=2.0,
+        is_float=True,
+    )
+    cov_xy1_slider, cov_xy1_box = mtumsuti.build_widget_control(
+        name="cov_xy1",
+        description="cov_xy1 (G1)",
+        min_val=-5.0,
+        max_val=5.0,
+        step=0.1,
+        initial_value=1.0,
+        is_float=True,
+    )
+    # Create widgets for Gaussian 2.
+    var_x2_slider, var_x2_box = mtumsuti.build_widget_control(
+        name="var_x2",
+        description="var_x2 (G2)",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=2.0,
+        is_float=True,
+    )
+    var_y2_slider, var_y2_box = mtumsuti.build_widget_control(
+        name="var_y2",
+        description="var_y2 (G2)",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=4.0,
+        is_float=True,
+    )
+    cov_xy2_slider, cov_xy2_box = mtumsuti.build_widget_control(
+        name="cov_xy2",
+        description="cov_xy2 (G2)",
+        min_val=-5.0,
+        max_val=5.0,
+        step=0.1,
+        initial_value=-1.0,
+        is_float=True,
+    )
+    # Create Random button.
+    random_button = ipywidgets.Button(
+        description="Random",
+        button_style="info",
+        layout={"width": "100px"},
+    )
+
+    def _on_random(b: ipywidgets.Button) -> None:
+        """
+        Assign random valid covariance parameters to all six sliders.
+
+        :param b: button widget (unused)
+        """
+        var_x1, var_y1, cov_xy1 = _sample_valid_cov_params()
+        var_x2, var_y2, cov_xy2 = _sample_valid_cov_params()
+        var_x1_slider.value = var_x1
+        var_y1_slider.value = var_y1
+        cov_xy1_slider.value = cov_xy1
+        var_x2_slider.value = var_x2
+        var_y2_slider.value = var_y2
+        cov_xy2_slider.value = cov_xy2
+
+    random_button.on_click(_on_random)
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        _plot,
+        {
+            "var_x1": var_x1_slider,
+            "var_y1": var_y1_slider,
+            "cov_xy1": cov_xy1_slider,
+            "var_x2": var_x2_slider,
+            "var_y2": var_y2_slider,
+            "cov_xy2": cov_xy2_slider,
+        },
+    )
+    # Display widgets.
+    display(
+        ipywidgets.VBox(
+            [
+                random_button,
+                var_x1_box,
+                var_y1_box,
+                cov_xy1_box,
+                var_x2_box,
+                var_y2_box,
+                cov_xy2_box,
+                output,
+            ]
+        )
+    )
 
 
 def cell_1_1_plot_covariance_matrix() -> None:

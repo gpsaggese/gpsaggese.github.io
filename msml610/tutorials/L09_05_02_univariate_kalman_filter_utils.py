@@ -97,26 +97,6 @@ def plot_gaussian(
 # #############################################################################
 
 
-# def gaussian_sum(
-#     mu1: float, sigma1: float, mu2: float, sigma2: float
-# ) -> Tuple[float, float]:
-#     """
-#     Compute sum of two Gaussians.
-
-#     Given X ~ N(mu1, sigma1^2) and Y ~ N(mu2, sigma2^2),
-#     compute Z = X + Y ~ N(mu, sigma^2).
-
-#     :param mu1: Mean of first Gaussian
-#     :param sigma1: Standard deviation of first Gaussian
-#     :param mu2: Mean of second Gaussian
-#     :param sigma2: Standard deviation of second Gaussian
-#     :return: Tuple of (mu, sigma) for the sum distribution
-#     """
-#     mu = mu1 + mu2
-#     sigma = np.sqrt(sigma1**2 + sigma2**2)
-#     return mu, sigma
-
-
 def _plot_gaussian_sum_with_correlation(
     mu1: float,
     sigma1: float,
