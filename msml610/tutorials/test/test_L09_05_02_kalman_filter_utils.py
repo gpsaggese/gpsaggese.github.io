@@ -119,10 +119,11 @@ class TestDogSimulation(hunitest.TestCase):
             x0=0.0, velocity=1.0, measurement_var=0.0, process_var=0.0
         )
         # Run test.
-        measurement = dog.move_and_sense()
+        measurement, actual_pos = dog.move_and_sense()
         # Check output.
         # After one step: x = 0.0 + 1.0 = 1.0; measurement = 1.0.
         self.assertAlmostEqual(measurement, 1.0)
+        self.assertAlmostEqual(actual_pos, 1.0)
         self.assertAlmostEqual(dog.x, 1.0)
 
     def test8(self) -> None:
@@ -135,7 +136,8 @@ class TestDogSimulation(hunitest.TestCase):
         )
         n_steps = 5
         # Run test.
-        measurements = [dog.move_and_sense() for _ in range(n_steps)]
+        ms_and_pos = [dog.move_and_sense() for _ in range(n_steps)]
+        measurements = [m for m, _ in ms_and_pos]
         # Check output.
         # With no noise, positions accumulate as 1.0, 2.0, 3.0, 4.0, 5.0.
         expected = [1.0, 2.0, 3.0, 4.0, 5.0]
@@ -152,7 +154,7 @@ class TestDogSimulation(hunitest.TestCase):
             x0=0.0, velocity=1.0, measurement_var=0.0, process_var=1.0
         )
         # Run test.
-        measurement = dog.move_and_sense()
+        measurement, _ = dog.move_and_sense()
         # Check output.
         # With seed(42), randn()=0.4967141530112327.
         # dx = 1.0 + 0.4967141530112327 * 1.0 = 1.4967141530112327.
@@ -175,28 +177,14 @@ class Test_End_to_End_Continuous_Bayes_Filter1(hunitest.TestCase):
         """
         From the notebook `L09_05_02_kalman_filter.ipynb`.
         """
-        # Prepare inputs.
-        np.random.seed(13)
-        process_var = 1.0
-        sensor_var = 2.0
-        x = mtl0kfiut.Gaussian(0.0, 20.0**2)
-        velocity = 1
-        dt = 1.0
-        process_model = mtl0kfiut.Gaussian(velocity * dt, process_var)
-        dog = mtl0kfiut.DogSimulation(
-            x0=x.mean,
-            velocity=process_model.mean,
-            measurement_var=sensor_var,
-            process_var=process_model.var,
-        )
-        zs = [dog.move_and_sense() for _ in range(5)]
         # Run test.
-        info = []
-        for z in zs:
-            prior = mtl0kfiut.predict(x, process_model)
-            likelihood = mtl0kfiut.Gaussian(z, sensor_var)
-            x = mtl0kfiut.update(prior, likelihood)
-            info.append((prior, x, z))
+        info = mtl0kfiut._run_dog_simulation(
+            seed=13,
+            process_var=1.0,
+            sensor_var=2.0,
+            initial_position=0.0,
+            n_steps=5,
+        )
         actual = mtl0kfiut.kf_info_to_df(info)
         # Check output.
         self.check_string(str(actual))

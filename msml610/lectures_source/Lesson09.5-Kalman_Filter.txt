@@ -36,8 +36,6 @@ MSML610: Advanced Machine Learning
 // https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/02-Discrete-Bayes.ipynb
 
 * A Discrete Bayesian 1-D Dog
-- From tutorial `L09_05_01_discrete_bayes_dog.ipynb`
-
 ::: columns
 :::: {.column width=55%}
 - Dog with sensor
@@ -167,13 +165,16 @@ digraph BayesianUpdateAlgo {
 }
 ```
 
+* Tutorial
+- `L09_05_01_discrete_bayes_dog.ipynb`
+
 # #############################################################################
 # Unidimensional Kalman Filters
 # #############################################################################
 
 // https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/04-One-Dimensional-Kalman-Filters.ipynb
 
-* Kalman Filter: Intuition and Interpretations
+* Kalman Filter: Interpretations
 - Extension of $g$–$h$ filters
   - $g$–$h$ uses fixed gains $g,h$ for position and velocity
   - Kalman filter computes adaptive gain $K_t$ from covariance $P_t$
@@ -191,11 +192,11 @@ digraph BayesianUpdateAlgo {
 
 - **Orthogonal projection interpretation**
   - Estimate is projection onto span of observations
-  - $K_t$ minimizes $EE[\|x_t - \hat{x}_t\|^2]$
+  - $K_t$ minimizes $\EE[\|x_t - \hat{x}_t\|^2]$
   - Error orthogonal to measurement space (optimal)
 
-* Updating Belief Using Gaussians
-- The **Kalman filter** is based on Bayes theorem and Gaussians
+* Kalman Filter: Bayesian Interpretation
+- **Kalman filter** can be interpreted as based on Bayes theorem and Gaussians
 
 - The **Bayes theorem** states:
   $$
@@ -203,8 +204,8 @@ digraph BayesianUpdateAlgo {
   $$
 - If the _prior_ and the _likelihood_ are Gaussian the _posterior_ is also
   Gaussian (conjugate prior)
-  - Everything can be represented as Gaussians $\to$ encode the PDF in terms of
-    mean and std dev
+  - Everything can be represented as Gaussians $\to$ encode PDF in terms of mean
+    and std dev
   - Updating belief is equivalent to sum and multiplication of Gaussians
 
 - **Algorithm**
@@ -270,7 +271,7 @@ digraph BayesianUpdateAlgo {
   - If two Gaussians are similar (measures corroborate), result becomes more
     certain
 
-* Kalman Pseudo-Algorithm
+* Kalman Filter: Classical Representation
 - Typical symbols used in Kalman literature:
 
   \begingroup \small
@@ -329,6 +330,8 @@ digraph BayesianUpdateAlgo {
   ```
   \endgroup
 
+- The Bayesian update is not apparent and it's replaced by Kalman Gain
+
 * Kalman Gain
 - Assume that:
   - Prior prediction $x \sim Normal(\mu_x,\sigma_x^2)$
@@ -346,6 +349,10 @@ digraph BayesianUpdateAlgo {
 - The Kalman Gain $K=\dfrac{\sigma_x^2}{\sigma_x^2+\sigma_z^2}$:
   - Is the scaling term that mixes the prediction and the measurement
   - Depends on the ratio of uncertainty of prior and measurement
+
+* Tutorial
+
+- `L09_05_02_kalman_filter.ipynb`
 
 # ##############################################################################
 # Multivariate Kalman Filters
