@@ -81,6 +81,9 @@ multivariate_gaussian(x, mu, P)
 # %%
 time_ut.plot_3d_sampled_covariance(mu, P)
 
+# %%
+time_ut.cell_1_1_plot_covariance_matrix()
+
 # %% [markdown]
 # # Cell 1: Sum and Product of Gaussians
 

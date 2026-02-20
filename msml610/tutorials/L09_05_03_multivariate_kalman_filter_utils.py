@@ -10,11 +10,16 @@ import logging
 from typing import Optional
 
 import filterpy.stats as stats
+from filterpy.stats import plot_covariance_ellipse
+import ipywidgets
 from matplotlib import cm
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 from numpy.random import multivariate_normal
+from IPython.display import display
+
+import msml610_utils as mtumsuti
 
 _LOG = logging.getLogger(__name__)
 
@@ -113,34 +118,152 @@ def plot_3d_sampled_covariance(
     ax.contour(xv, yv, zv, zdir="y", offset=maxy, cmap=cm.binary)
 
 
-# TODO(ai_gp): Add interactive plot of 2D covariance matrix called cell_1_1_plot_covariance_matrix
-# The widgets are the covariance matrix elements, var_x, var_y, and cov_xy.
-# There is seed
-# There is N number of samples
-# The covariance is shown in the plot
-# Add it to the notebook L09_05_03_multivariate_kalman_filter.ipynb
+# #############################################################################
+# Cell 1: Interactive 2D Covariance Matrix
+# #############################################################################
 
-from filterpy.stats import plot_covariance_ellipse
 
-fig = None
-def plot_covariance(var_x, var_y, cov_xy):
-    global fig
-    if fig: plt.close(fig)
-    fig = plt.figure(figsize=(4,4))
-    P1 = [[var_x, cov_xy], [cov_xy, var_y]]
+def _plot_covariance_matrix(
+    var_x: float,
+    var_y: float,
+    cov_xy: float,
+    n_samples: int,
+    seed: int,
+) -> None:
+    """
+    Plot 2D Gaussian samples with covariance ellipse.
 
-    plot_covariance_ellipse((10, 10), P1, 
-    std=[1, 2, 3],
-    axis_equal=False,
-                            show_semiaxis=True)
+    :param var_x: variance of x dimension
+    :param var_y: variance of y dimension
+    :param cov_xy: covariance between x and y
+    :param n_samples: number of samples to draw
+    :param seed: random seed for reproducibility
+    """
+    mean = np.array([0.0, 0.0])
+    cov = np.array([[var_x, cov_xy], [cov_xy, var_y]])
+    np.random.seed(seed)
+    # Sample from the multivariate Gaussian.
+    samples = np.random.multivariate_normal(mean, cov, n_samples)
+    plt.figure(figsize=(6, 6))
+    # Plot samples.
+    plt.scatter(
+        samples[:, 0], samples[:, 1], alpha=0.3, s=10, label="Samples"
+    )
+    # Plot covariance ellipse at 1, 2, 3 standard deviations.
+    plot_covariance_ellipse(
+        mean,
+        cov,
+        std=[1, 2, 3],
+        axis_equal=True,
+        show_semiaxis=True,
+    )
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    cov_str = (
+        f"[[{var_x:.2f}, {cov_xy:.2f}], [{cov_xy:.2f}, {var_y:.2f}]]"
+    )
+    plt.title(f"2D Covariance: {cov_str}\nN={n_samples}, seed={seed}")
+    plt.xlim(-10, 10)
+    plt.ylim(-10, 10)
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
 
-    plt.xlim(4, 16)
-    plt.gca().set_aspect('equal')
-    plt.ylim(4, 16)
 
-    
-with figsize(y=6):
-    interact (plot_covariance,           
-          var_x=FloatSlider(5, min=0, max=20), 
-          var_y=FloatSlider(5, min=0, max=20), 
-          cov_xy=FloatSlider(1.5, min=0, max=50, step=.2));
+def cell_1_1_plot_covariance_matrix() -> None:
+    """
+    Create interactive widget for exploring 2D covariance matrix.
+
+    Allows user to adjust var_x, var_y, cov_xy, number of samples, and seed
+    to visualize the covariance ellipse and sampled data points.
+    """
+    fig_cov = None
+
+    def _plot(
+        var_x: float,
+        var_y: float,
+        cov_xy: float,
+        n_samples: int,
+        seed: int,
+    ) -> None:
+        """
+        Plot covariance matrix with given parameters.
+
+        :param var_x: variance of x dimension
+        :param var_y: variance of y dimension
+        :param cov_xy: covariance between x and y
+        :param n_samples: number of samples to draw
+        :param seed: random seed for reproducibility
+        """
+        nonlocal fig_cov
+        if fig_cov is not None:
+            plt.close(fig_cov)
+        _plot_covariance_matrix(var_x, var_y, cov_xy, n_samples, seed)
+        fig_cov = plt.gcf()
+
+    # Create var_x widget.
+    var_x_slider, var_x_box = mtumsuti.build_widget_control(
+        name="var_x",
+        description="var_x",
+        min_val=0.1,
+        max_val=20.0,
+        step=0.1,
+        initial_value=5.0,
+        is_float=True,
+    )
+    # Create var_y widget.
+    var_y_slider, var_y_box = mtumsuti.build_widget_control(
+        name="var_y",
+        description="var_y",
+        min_val=0.1,
+        max_val=20.0,
+        step=0.1,
+        initial_value=5.0,
+        is_float=True,
+    )
+    # Create cov_xy widget.
+    cov_xy_slider, cov_xy_box = mtumsuti.build_widget_control(
+        name="cov_xy",
+        description="cov_xy",
+        min_val=-10.0,
+        max_val=10.0,
+        step=0.1,
+        initial_value=1.5,
+        is_float=True,
+    )
+    # Create n_samples widget.
+    n_samples_slider, n_samples_box = mtumsuti.build_widget_control(
+        name="n_samples",
+        description="n_samples",
+        min_val=100,
+        max_val=5000,
+        step=100,
+        initial_value=1000,
+        is_float=False,
+    )
+    # Create seed widget (always last by convention).
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        _plot,
+        {
+            "var_x": var_x_slider,
+            "var_y": var_y_slider,
+            "cov_xy": cov_xy_slider,
+            "n_samples": n_samples_slider,
+            "seed": seed_slider,
+        },
+    )
+    # Display widgets.
+    display(
+        ipywidgets.VBox(
+            [var_x_box, var_y_box, cov_xy_box, n_samples_box, seed_box, output]
+        )
+    )
