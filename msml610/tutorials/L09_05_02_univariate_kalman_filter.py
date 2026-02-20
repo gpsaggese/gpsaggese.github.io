@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -32,7 +32,7 @@ _LOG = logging.getLogger(__name__)
 
 # %%
 import helpers.hio as hio
-import L09_05_02_kalman_filter_utils as time_ut
+import L09_05_02_univariate_kalman_filter_utils as time_ut
 
 dst_dir = "figures"
 hio.create_dir(dst_dir, incremental=True)

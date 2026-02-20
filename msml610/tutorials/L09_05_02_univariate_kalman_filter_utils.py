@@ -3,7 +3,7 @@ Utility functions for Kalman filter tutorial (L09_05_02).
 
 Import as:
 
-import msml610.tutorials.L09_05_02_kalman_filter_utils as mtl090502kfuti
+import msml610.tutorials.L09_05_02_univariate_kalman_filter_utils as mtl090502ukfuti
 """
 
 import logging

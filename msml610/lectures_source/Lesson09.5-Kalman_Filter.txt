@@ -352,7 +352,7 @@ digraph BayesianUpdateAlgo {
 
 * Tutorial
 
-- `L09_05_02_kalman_filter.ipynb`
+- `L09_05_02_univariate_kalman_filter.ipynb`
 
 # ##############################################################################
 # Multivariate Kalman Filters

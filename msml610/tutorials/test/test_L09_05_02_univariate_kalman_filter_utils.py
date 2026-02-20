@@ -1,9 +1,9 @@
 """
-Unit tests for L09_05_02_kalman_filter_utils module.
+Unit tests for L09_05_02_univariate_kalman_filter_utils module.
 
 Import as:
 
-import msml610.tutorials.test.test_L09_05_02_kalman_filter_utils as mtttl002kfiut
+import msml610.tutorials.test.test_L09_05_02_univariate_kalman_filter_utils as mtttl002ukfiut
 """
 
 import logging
@@ -11,7 +11,7 @@ import logging
 import numpy as np
 
 import helpers.hunit_test as hunitest
-import msml610.tutorials.L09_05_02_kalman_filter_utils as mtl0kfiut
+import msml610.tutorials.L09_05_02_univariate_kalman_filter_utils as mtl0kfiut
 
 _LOG = logging.getLogger(__name__)
 
@@ -175,7 +175,7 @@ class Test_End_to_End_Continuous_Bayes_Filter1(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        From the notebook `L09_05_02_kalman_filter.ipynb`.
+        From the notebook `L09_05_02_univariate_kalman_filter.ipynb`.
         """
         # Run test.
         info = mtl0kfiut._run_dog_simulation(
