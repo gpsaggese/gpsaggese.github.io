@@ -1,19 +1,3 @@
-<!-- toc -->
-
-- [Summary](#summary)
-- [Measuring the Impact of Lifestyle Programs on Diabetes Outcomes](#measuring-the-impact-of-lifestyle-programs-on-diabetes-outcomes)
-  * [Overview](#overview)
-    + [Project Objective](#project-objective)
-  * [Installation and Docker Setup](#installation-and-docker-setup)
-    + [1. Build the Image](#1-build-the-image)
-    + [2. Download the Dataset](#2-download-the-dataset)
-    + [3. Run the Container](#3-run-the-container)
-    + [4. Access the Project](#4-access-the-project)
-  * [Folder Structure](#folder-structure)
-  * [Resources](#resources)
-
-<!-- tocstop -->
-
 # Summary
 
 This project estimates the causal impact of lifestyle interventions on diabetes

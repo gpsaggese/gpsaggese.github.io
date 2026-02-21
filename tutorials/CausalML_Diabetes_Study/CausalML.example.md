@@ -1,30 +1,3 @@
-<!-- toc -->
-
-- [Summary](#summary)
-- [Causal Analysis of Lifestyle Interventions on Diabetes Risk](#causal-analysis-of-lifestyle-interventions-on-diabetes-risk)
-  * [1. Project Objective](#1-project-objective)
-    + [Constraint Note: Dataset Pivot](#constraint-note-dataset-pivot)
-  * [2. Data Source](#2-data-source)
-    + [Key Variables](#key-variables)
-  * [3. Identification Strategy and Assumptions](#3-identification-strategy-and-assumptions)
-    + [Causal Graphs (DAGs)](#causal-graphs-dags)
-      - [DAG 1: Assumed Causal Structure (Ideal/Longitudinal)](#dag-1-assumed-causal-structure-ideallongitudinal)
-      - [DAG 2: Actual Cross-Sectional Reality](#dag-2-actual-cross-sectional-reality)
-    + [Key Assumptions](#key-assumptions)
-  * [4. Methodology: the X-Learner](#4-methodology-the-x-learner)
-    + [Meta-Learner Architectures Compared](#meta-learner-architectures-compared)
-  * [5. Key Findings and Interpretation](#5-key-findings-and-interpretation)
-    + [A. the "High Risk" Benefit](#a-the-high-risk-benefit)
-    + [B. the "Age Anomaly": Understanding Counterintuitive Results](#b-the-age-anomaly-understanding-counterintuitive-results)
-  * [6. Robustness and Validation (Advanced Analysis)](#6-robustness-and-validation-advanced-analysis)
-    + [A. Placebo Test (Refutation)](#a-placebo-test-refutation)
-    + [B. Estimator Tournament ("Horse Race")](#b-estimator-tournament-horse-race)
-    + [C. Sensitivity Analysis (Covariate Stability)](#c-sensitivity-analysis-covariate-stability)
-  * [7. Comparison to Gold Standard Evidence](#7-comparison-to-gold-standard-evidence)
-    + [Key Limitations](#key-limitations)
-
-<!-- tocstop -->
-
 # Summary
 
 This document presents a causal analysis of physical activity's effect on

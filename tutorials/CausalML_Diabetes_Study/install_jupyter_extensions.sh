@@ -1,23 +1,29 @@
 #!/usr/bin/env bash
+# """
+# Install and configure Jupyter Notebook extensions.
 #
-# Install Jupyter packages.
-#
+# This script sets up Jupyter with a curated set of extensions for enhanced
+# notebook functionality including code prettification, table of contents,
+# execution time tracking, vim bindings, and more. It also configures the
+# Jupyter data directory and extension settings.
+# """
 
+# Exit on error and print commands.
 set -ex
 
 echo "# Install Jupyter extensions"
 
-# Create jupyter data dir.
+# Create Jupyter data directory if it doesn't exist.
 DIR_NAME=$(jupyter --data-dir)
 echo "Jupyter data dir: $DIR_NAME"
 if [[ ! -d $DIR_NAME ]]; then
   mkdir -p $DIR_NAME
 fi;
 
-# Install extensions.
-sudo jupyter contrib nbextension install
+# Install nbextensions package.
+jupyter contrib nbextension install
 
-# Enable extensions.
+# Define list of extensions to enable.
 extensions="
 autosavetime/main
 code_prettify/code_prettify
@@ -32,20 +38,21 @@ runtools/main
 toc2/main
 spellchecker/main"
 
+# Enable each extension in the list.
 for v in $extensions; do
   jupyter nbextension enable $v
 done;
 
-# Disable configuration for nbextensions without explicit compatibility.
+# Configure Jupyter to show incompatible extensions.
 echo "{\"nbext_hide_incompat\": false}" > /$HOME/.jupyter/nbconfig/common.json
 
+# Create nbextensions directory if it doesn't exist.
 DIR=$(jupyter --data-dir)/nbextensions
 if [[ ! -e $DIR ]]; then
     mkdir $DIR
 fi
 
-# Fix vim plugin extension (from dev_scripts/notebooks/fix_vim_plugin.sh).
-# Install vim bindings.
+# Install vim bindings extension from GitHub repository.
 cd $DIR
 if [[ -e vim_binding ]]; then
     rm -rf vim_binding
@@ -54,4 +61,5 @@ git clone https://github.com/lambdalisue/jupyter-vim-binding vim_binding
 
 #jupyter nbextension enable vim_binding/vim_binding
 
+# Generate default Jupyter configuration file.
 jupyter notebook --generate-config -y
