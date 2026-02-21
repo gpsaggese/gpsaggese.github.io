@@ -8,6 +8,7 @@ Set the OPENAI_API_KEY using export before running the script.
 
 > class_project/ta/generate_class_project_description.py \
     --input class_project/DATA605/Spring2026/projects.csv \
+    --output_dir class_project/DATA605/Spring2025/projects_descriptions \
     --max_projects 2
 """
 
@@ -30,15 +31,6 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 # Constants
 # #############################################################################
-
-# Default output folder for generated Markdown files.
-DEFAULT_MARKDOWN_PATH = "class_project/ta/projects"
-
-# Base GitHub URL for generated project files.
-DEFAULT_FILE_GITHUB_LINK = (
-    "https://github.com/gpsaggese/umd_classes/tree/master/"
-    "class_project/ta/projects/"
-)
 
 # Path to the prompt template file.
 _PROMPT_FILE_PATH = pathlib.Path(__file__).parent / "prompt.txt"
@@ -118,7 +110,7 @@ def _generate_project_description(project_name: str) -> Any:
 
 def create_markdown_file(
     df: pd.DataFrame,
-    markdown_folder_path: str,
+    out_dir: str,
     max_projects: Optional[int],
     *,
     sleep_sec: float = 0.5,
@@ -127,23 +119,27 @@ def create_markdown_file(
     Create a Markdown file per tool with its generated project description.
 
     :param df: the dataframe containing the tool information
-    :param markdown_folder_path: the path to the output Markdown folder
+    :param out_dir: the path to the output Markdown folder
     :param max_projects: limit to the rows processed (None = all)
     :param sleep_sec: amount of time to sleep between API requests
     :return: dataframe with tool names and generated GitHub URLs
     """
     file_githublinks_df = pd.DataFrame(columns=["Tool", "URL"])
     rows = df.head(max_projects) if max_projects is not None else df
-    hio.create_dir(markdown_folder_path, incremental=True)
+    hio.create_dir(out_dir, incremental=True)
     for _, row in tqdm.tqdm(rows.iterrows(), total=len(rows)):
         project_name = row["Tool"]
         description = _generate_project_description(project_name)
         content = f"{description}\n\n"
         file_name = f"{project_name}_Project_Description.md"
-        markdown_path = str(pathlib.Path(markdown_folder_path) / file_name)
+        markdown_path = str(pathlib.Path(out_dir) / file_name)
         hio.to_file(markdown_path, content)
         _LOG.info("Generated Markdown File: %s", file_name)
-        github_url = f"{DEFAULT_FILE_GITHUB_LINK}{file_name}"
+        # Base GitHub URL for generated project files.
+        base_dir = (
+            "https://github.com/gpsaggese/umd_classes/tree/master"
+        )
+        github_url = f"{base_dir}/{out_dir}/{file_name}"
         file_githublinks_df.loc[len(file_githublinks_df)] = [
             project_name,
             github_url,
@@ -173,8 +169,8 @@ def _parse() -> argparse.ArgumentParser:
         help="Path to the CSV file with tool information",
     )
     parser.add_argument(
-        "--markdown_folder_path",
-        default=DEFAULT_MARKDOWN_PATH,
+        "--out_dir",
+        required=True,
         help="Output folder for generated Markdown files",
     )
     parser.add_argument(
@@ -197,18 +193,18 @@ def _main(parser: argparse.ArgumentParser) -> None:
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     # Expand user/relative paths to absolute ones early to avoid surprises.
     input_path = str(pathlib.Path(args.input).expanduser().resolve())
-    markdown_folder_path = str(
-        pathlib.Path(args.markdown_folder_path).expanduser().resolve()
+    out_dir = str(
+        pathlib.Path(args.out_dir).expanduser().resolve()
     )
     _LOG.info("Reading CSV from %s", input_path)
     df = _read_csv(input_path)
     _LOG.info("Processing %d tools", len(df))
     file_githublinks_df = create_markdown_file(
         df,
-        markdown_folder_path,
+        out_dir,
         args.max_projects,
     )
-    _LOG.info("Done: %s", markdown_folder_path)
+    _LOG.info("Done: %s", out_dir)
     _LOG.debug("GitHub links:\n%s", file_githublinks_df)
 
 
