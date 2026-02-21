@@ -161,6 +161,16 @@ All tutorials maintain these standards:
   > Execute docs/ai_prompts/coding.lint.md on tutorials/Autogen/autogen_utils.py
   ```
 
+- Format the blog
+  ```
+  cc> Execute docs/ai_prompts/blog.format_rules.md on website/docs/blog/posts/all.learn_Autogen_in_60_minutes.how_to_guide.md
+  ```
+
+- Rendering the blogs locally
+  ```
+  > website/test.sh
+  ```
+
 # Checklist
 
 - [ ] Is our Docker approach followed?
