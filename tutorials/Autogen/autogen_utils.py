@@ -3,7 +3,7 @@ Utility functions and tool wrappers for Autogen-based financial analysis agents.
 
 Import as:
 
-import tutorials.Autogen.autogen_utils as autagut
+import tutorials.Autogen.autogen_utils as tauauuti
 """
 
 import glob
@@ -13,9 +13,6 @@ import os
 import re
 import typing
 
-import autogen_agentchat.agents
-import autogen_agentchat.conditions
-import autogen_agentchat.teams
 import autogen_core
 import autogen_core.tools
 import autogen_ext.code_executors.local
@@ -74,7 +71,7 @@ def clean_markdown(text: str) -> str:
         if is_table and not next_is_table and next_line != "":
             result.append("")
     # Collapse 3+ consecutive blank lines into 2.
-    collapsed = re.sub(r'\n{3,}', '\n\n', "\n".join(result))
+    collapsed = re.sub(r"\n{3,}", "\n\n", "\n".join(result))
     return collapsed.strip()
 
 
@@ -105,7 +102,7 @@ def embed_10k_to_chroma(ticker: str, file_path: str) -> str:
     chunk_size = 2000
     overlap = 200
     chunks = [
-        text[i: i + chunk_size]
+        text[i : i + chunk_size]
         for i in range(0, len(text), chunk_size - overlap)
     ]
     _LOG.info("Encoding %d chunks for %s...", len(chunks), ticker.upper())
@@ -133,15 +130,15 @@ def fetch_and_clean_10k(ticker: str) -> str:
     files = glob.glob(search_path)
     hdbg.dassert(files, "No 10-K files found for ticker '%s'", ticker)
     raw_path = max(files, key=os.path.getmtime)
-    with open(raw_path, 'r', encoding='utf-8') as f:
+    with open(raw_path, "r", encoding="utf-8") as f:
         raw_data = f.read()
     doc_match = re.search(
-        r'<DOCUMENT>\s*<TYPE>10-K.*?\s*<TEXT>(.*?)</TEXT>',
+        r"<DOCUMENT>\s*<TYPE>10-K.*?\s*<TEXT>(.*?)</TEXT>",
         raw_data,
         re.DOTALL | re.IGNORECASE,
     )
     html_content = doc_match.group(1) if doc_match else raw_data
-    soup = bs4.BeautifulSoup(html_content, 'html.parser')
+    soup = bs4.BeautifulSoup(html_content, "html.parser")
     for tag in soup(["script", "style", "link", "meta"]):
         tag.decompose()
     clean_text = markdownify.markdownify(
@@ -150,10 +147,10 @@ def fetch_and_clean_10k(ticker: str) -> str:
         tables=True,
         include_empty_tables=False,
     )
-    clean_text = re.sub(r'\n\s*\n', '\n\n', clean_text).replace('\xa0', ' ')
+    clean_text = re.sub(r"\n\s*\n", "\n\n", clean_text).replace("\xa0", " ")
     os.makedirs("report_texts", exist_ok=True)
     save_path = f"report_texts/{ticker}_10K_clean.txt"
-    with open(save_path, "w", encoding='utf-8') as f:
+    with open(save_path, "w", encoding="utf-8") as f:
         f.write(clean_text)
     return save_path
 
@@ -211,7 +208,7 @@ async def plot_stock_trend(ticker: str, days: int) -> autogen_core.Image:
         ticker, period=f"{days}d", progress=False, multi_level_index=False
     )
     plt.figure(figsize=(10, 5))
-    plt.plot(data['Close'], color='#1f77b4')
+    plt.plot(data["Close"], color="#1f77b4")
     plt.title(f"{ticker} - {days} Days")
     filename = f"{ticker}_chart.png"
     plt.savefig(filename)
@@ -235,7 +232,7 @@ async def query_10k_report(
         name=col_name, embedding_function=default_ef
     )
     results = collection.query(query_texts=[question], n_results=3)
-    context = "\n\n---\n\n".join(results['documents'][0])
+    context = "\n\n---\n\n".join(results["documents"][0])
     return f"### Evidence from {ticker} 10-K:\n{context}"
 
 

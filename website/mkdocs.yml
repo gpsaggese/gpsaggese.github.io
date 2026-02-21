@@ -74,6 +74,9 @@ plugins:
       authors: true
       authors_file: .authors.yml
 
+not_in_nav: |
+  short_stories/*
+
 nav:
   - Home: index.md
   - CV/Resume: 02_cv.md

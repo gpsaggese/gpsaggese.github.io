@@ -29,19 +29,5 @@
   2. **`Autogen.example.ipynb`**: Proceed to this notebook to explore more
      complex, multi-agent scenarios and advanced problem-solving techniques.
 
-## Docker Infrastructure
-- Below is a quick reference for the shell scripts included in this directory:
-  - `docker_build.sh`: Builds the Docker image from the local Dockerfile.
-  - `docker_jupyter.sh`: Runs the container and starts a Jupyter Notebook server.
-  - `docker_bash.sh`: Opens an interactive Bash terminal inside the running
-    container.
-  - `docker_exec.sh`: Executes a specific command inside an active container.
-  - `docker_clean.sh`: Removes unused containers and dangling images to free up
-    space.
-  - `docker_cmd.sh`: Runs the container with a custom command passed as an
-    argument.
-  - `docker_push.sh`: Pushes the local Docker image to a remote registry.
-  - `docker_name.sh`: Sets or retrieves the standard naming convention for the
-    project's images.
-  - `run_jupyter.sh`: The internal entry point script used to initialize Jupyter
-    inside the container.
+- For more informations on the Docker build system refer to [Project template
+  readme](https://github.com/gpsaggese/umd_classes/blob/master/class_project/project_template/README.md)

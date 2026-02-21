@@ -178,14 +178,17 @@ All tutorials maintain these standards:
 # Checklist
 
 - [ ] Is our Docker approach followed?
+  - If not follow `class_project/project_template/README.md`
 - [ ] Is all the possible code in the notebook moved to a `*_utils.py` file?
 - [ ] Is `project.API.ipynb` in the right format?
-- [ ] Does a notebook run end-to-end
+- [ ] Do the notebooks run end-to-end?
+- [ ] Are all the notebooks paired using Jupytext?
+- [ ] Did you run `linters2/lint_branch.sh`?
 
 # References
 
-- Follow the `class_project/README.md` 
+- A description of the Docker build system is 
+  `class_project/project_template/README.md`
 
-- Each tutorial conceptually corresponds to:
-  - A blog entry
-  - A project of one of the classes (e.g., DATA605, MSML610)
+- class_project/FAQ.md
+- class_project/README.md

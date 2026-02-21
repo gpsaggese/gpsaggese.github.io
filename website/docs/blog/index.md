@@ -4,8 +4,8 @@ title: Blog
 
 # Blog
 
-Welcome to my blog! Here I share insights on AI research, machine learning,
+Welcome to our research blog! Here we share insights on AI research, machine learning,
 software engineering, and startup experiences.
 
-Browse through my latest posts below or use the categories to find specific
+Browse through our latest posts below or use the categories to find specific
 topics of interest.

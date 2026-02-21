@@ -33,5 +33,8 @@ cmd="docker run --rm -ti \
     --name $CONTAINER_NAME \
     -p $PORT:$PORT \
     -v $(pwd):/data \
+    -v $GIT_ROOT:/git_root \
+    -e PYTHONPATH=/git_root:/git_root/helpers_root \
+    -e OPENAI_API_KEY=$OPENAI_API_KEY \
     $FULL_IMAGE_NAME"
 run $cmd
