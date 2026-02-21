@@ -734,105 +734,74 @@ def print_scenario_summary(results: List[ScenarioResult]) -> pd.DataFrame:
     return df
 
 
+def print_policy_insights(results: List[ScenarioResult]) -> None:
+    """
+    Print policy insights comparing intervention impact vs baseline/relaxation.
+
+    :param results: list of ScenarioResult objects from run_all_scenarios
+    """
+    baseline = next((r for r in results if r.name == "Baseline"), results[0])
+    strong_intervention = next(
+        (r for r in results if r.name == "Strong Intervention"), None
+    )
+    relaxation = next(
+        (r for r in results if r.name == "Relaxation"), None
+    )
+    cases_prevented = (
+        baseline.total_cases - strong_intervention.total_cases
+        if strong_intervention
+        else 0
+    )
+    additional_cases = (
+        relaxation.total_cases - baseline.total_cases if relaxation else 0
+    )
+    print("POLICY INSIGHTS")
+    print("=" * 70)
+    print()
+    print("Intervention Impact:")
+    if strong_intervention:
+        pct = (cases_prevented / baseline.total_cases) * 100
+        print(
+            f"  Strong intervention (30% mobility reduction) could prevent"
+        )
+        print(f"  ~{cases_prevented:,.0f} cases over 14 days ({pct:.1f}% reduction)")
+    else:
+        print("  Strong intervention scenario not found.")
+    print()
+    print("Relaxation Risk:")
+    if relaxation:
+        pct = (additional_cases / baseline.total_cases) * 100
+        print(
+            f"  Lifting restrictions (20% mobility increase) could add"
+        )
+        print(f"  ~{additional_cases:,.0f} cases over 14 days ({pct:.1f}% increase)")
+    else:
+        print("  Relaxation scenario not found.")
+    print()
+    print("Caveats:")
+    print("  - These are model projections, not guarantees")
+    print("  - Correlation does not imply causation")
+    print("  - Use to inform discussion, not dictate policy")
+    print("=" * 70)
+
+
 def plot_scenario_comparison(
     results: List[ScenarioResult],
     *,
     prediction_length: int = 14,
-    save_path: str = None,
+    save_path: Optional[str] = None,
 ) -> None:
     """
-    Create visualizations comparing all scenarios.
+    Create visualizations comparing all scenarios (delegates to utils_visualization).
 
     :param results: list of ScenarioResult objects
     :param prediction_length: forecast horizon (for x-axis)
     :param save_path: optional path to save the figure
     """
-    import matplotlib.pyplot as plt
+    from utils_visualization import plot_scenario_comparison as _plot
 
-    # Define colors for each scenario.
-    colors = {
-        "Baseline": "#6B7280",  # Gray.
-        "Moderate Intervention": "#3B82F6",  # Blue.
-        "Strong Intervention": "#10B981",  # Green.
-        "Relaxation": "#F59E0B",  # Orange.
-        "Healthcare Strain": "#EF4444",  # Red.
-    }
-    fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-    # ===== Plot 1: Forecast Trajectories =====
-    ax1 = axes[0]
-    days = list(range(1, prediction_length + 1))
-    for result in results:
-        color = colors.get(result.name, "#6B7280")
-        forecast = result.forecast
-        # Plot mean.
-        ax1.plot(
-            days, forecast.mean, label=result.name, color=color, linewidth=2.5
-        )
-        # Plot confidence interval (lighter).
-        ax1.fill_between(
-            days,
-            forecast.quantile(0.1),
-            forecast.quantile(0.9),
-            alpha=0.15,
-            color=color,
-        )
-    ax1.set_xlabel("Days Ahead", fontsize=12)
-    ax1.set_ylabel("Daily Cases", fontsize=12)
-    ax1.set_title(
-        "Forecast Trajectories by Scenario", fontsize=14, fontweight="bold"
+    _plot(
+        results,
+        prediction_length=prediction_length,
+        save_path=save_path,
     )
-    ax1.legend(loc="best", fontsize=10)
-    ax1.grid(True, alpha=0.3)
-    ax1.set_xticks(range(1, prediction_length + 1, 2))
-    # ===== Plot 2: Total Cases Bar Chart =====
-    ax2 = axes[1]
-    names = [r.name for r in results]
-    totals = [r.total_cases for r in results]
-    bar_colors = [colors.get(name, "#6B7280") for name in names]
-    bars = ax2.barh(names, totals, color=bar_colors, alpha=0.8)
-    # Add value labels.
-    baseline_total = next(
-        (r.total_cases for r in results if r.name == "Baseline"), totals[0]
-    )
-    for bar, result in zip(bars, results):
-        width = bar.get_width()
-        diff, pct = result.cases_vs_baseline(baseline_total)
-        # Main value.
-        ax2.text(
-            width + baseline_total * 0.01,
-            bar.get_y() + bar.get_height() / 2,
-            f"{width:,.0f}",
-            ha="left",
-            va="center",
-            fontweight="bold",
-            fontsize=10,
-        )
-        # Percentage change (if not baseline).
-        if result.name != "Baseline":
-            pct_text = f"({pct:+.1f}%)"
-            ax2.text(
-                width + baseline_total * 0.08,
-                bar.get_y() + bar.get_height() / 2,
-                pct_text,
-                ha="left",
-                va="center",
-                fontsize=9,
-                color="green" if pct < 0 else "red",
-            )
-    ax2.set_xlabel("Total Cases (14 days)", fontsize=12)
-    ax2.set_title("Total Cases by Scenario", fontsize=14, fontweight="bold")
-    ax2.grid(True, alpha=0.3, axis="x")
-    # Add baseline reference line.
-    ax2.axvline(
-        x=baseline_total,
-        color="gray",
-        linestyle="--",
-        linewidth=1.5,
-        alpha=0.7,
-        label="Baseline",
-    )
-    plt.tight_layout()
-    if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches="tight")
-        _LOG.info("Saved scenario comparison plot to: %s", save_path)
-    plt.show()
