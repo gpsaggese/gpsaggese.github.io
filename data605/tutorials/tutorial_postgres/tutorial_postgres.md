@@ -14,7 +14,7 @@
   # E.g., GIT_ROOT=~/src/umd_data605
   > cd $GIT_ROOT
   > ls
-  Dockerfile    LICENSE       README.md     __pycache__   dev_scripts   docker_common gp            lectures      tutorial
+  Dockerfile    LICENSE       README.md     __pycache__   dev_scripts   project_template gp            lectures      tutorial
 
   > cd tutorials/tutorial_postgres
   > ls

@@ -39,6 +39,7 @@ MSML610: Advanced Machine Learning
 * Static vs Dynamic Probabilistic Reasoning
 - **Static probabilistic reasoning**
   - Random variables have _fixed_ values
+  - Everything done so far
   - E.g., repairing a car:
     - Broken parts remain broken during diagnosis
     - Observed evidence stays fixed

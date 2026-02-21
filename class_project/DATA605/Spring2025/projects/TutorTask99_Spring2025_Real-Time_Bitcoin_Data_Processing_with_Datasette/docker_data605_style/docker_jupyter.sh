@@ -32,7 +32,7 @@ fi
 
 # Import utility functions
 GIT_ROOT=$(git rev-parse --show-toplevel)
-source $GIT_ROOT/docker_common/utils.sh
+source $GIT_ROOT/project_template/utils.sh
 
 # Set Docker variables
 get_docker_vars_script ${BASH_SOURCE[0]}

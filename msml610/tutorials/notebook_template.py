@@ -22,14 +22,6 @@
 
 import logging
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Set plotting style.
-sns.set_style("whitegrid")
-plt.rcParams["figure.figsize"] = (12, 6)
-
-# %%
 import msml610_utils as ut
 
 ut.config_notebook()

@@ -7,7 +7,7 @@ set -e
 set -x
 
 GIT_ROOT=$(git rev-parse --show-toplevel)
-source $GIT_ROOT/class_project/docker_common/utils.sh
+source $GIT_ROOT/class_project/project_template/utils.sh
 
 # Source Docker image naming configuration.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

@@ -116,7 +116,7 @@ requirements.txt                # Python dependencies
 
 ## 4. Build & Run Docker (data605_style)
 
-**Note**: I copied `install_jupyter_extensions.sh` and `.bashrc` from the `docker_common` directory into my local project folder. I also made slight modifications to the Docker-related scripts (`docker_bash.sh`, `docker_build.sh`, `docker_jupyter.sh`) and the `Dockerfile`.
+**Note**: I copied `install_jupyter_extensions.sh` and `.bashrc` from the `project_template` directory into my local project folder. I also made slight modifications to the Docker-related scripts (`docker_bash.sh`, `docker_build.sh`, `docker_jupyter.sh`) and the `Dockerfile`.
 
 1. **Configure & Authenticate Databricks CLI**
 
