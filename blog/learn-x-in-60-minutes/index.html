@@ -13,8 +13,10 @@
       
       
       
+        <link rel="prev" href="../welcome-to-our-blog/">
       
-        <link rel="next" href="../welcome-to-our-blog/">
+      
+        <link rel="next" href="../ripgrep-in-30-mins/">
       
       
         
@@ -25,7 +27,7 @@
     
     
       
-        <title>Learn X in 60 Minutes - GP Saggese's AI Research</title>
+        <title>Learn X in 60 Minutes - GP's AI Research</title>
       
     
     
@@ -132,7 +134,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="GP Saggese&#39;s AI Research" class="md-header__button md-logo" aria-label="GP Saggese's AI Research" data-md-component="logo">
+    <a href="../.." title="GP&#39;s AI Research" class="md-header__button md-logo" aria-label="GP's AI Research" data-md-component="logo">
       
   <img src="../../assets/logo.png" alt="logo">
 
@@ -145,7 +147,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            GP Saggese's AI Research
+            GP's AI Research
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -426,12 +428,12 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="GP Saggese&#39;s AI Research" class="md-nav__button md-logo" aria-label="GP Saggese's AI Research" data-md-component="logo">
+    <a href="../.." title="GP&#39;s AI Research" class="md-nav__button md-logo" aria-label="GP's AI Research" data-md-component="logo">
       
   <img src="../../assets/logo.png" alt="logo">
 
     </a>
-    GP Saggese's AI Research
+    GP's AI Research
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -723,7 +725,6 @@
                           <span class="md-ellipsis">
                             in
                             
-                              <a href="../category/AI-Research/">AI Research</a>, 
                               <a href="../category/Software-Engineering/">Software Engineering</a></span>
                         </div>
                       </li>
@@ -735,7 +736,7 @@
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
                           <span class="md-ellipsis">
                             
-                              3 min read
+                              4 min read
                             
                           </span>
                         </div>
@@ -818,10 +819,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#readme" class="md-nav__link">
+  <a href="#readmemd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        README
+        README.md
       
     </span>
   </a>
@@ -863,6 +864,50 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#projectapiipynb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        project.API.ipynb
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tools_of_the_trade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tools of the trade
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
   
 </li>
       
@@ -951,17 +996,24 @@ writer):</p>
 <li>A Jupyter notebook <code>XYZ.example.ipynb</code> with a full example</li>
 <li>A file <code>XYZ_utils.py</code> with Python utility functions</li>
 </ul>
-<h4 id="readme">README<a class="headerlink" href="#readme" title="Permanent link">#</a></h4>
+<h4 id="readmemd">README.md<a class="headerlink" href="#readmemd" title="Permanent link">#</a></h4>
 <ul>
-<li>Each project contains a <code>readme.md</code> summarizing its status</li>
+<li>Each project contains a <code>README.md</code> summarizing its status and a changelog</li>
 </ul>
 <h4 id="docker_container">Docker Container<a class="headerlink" href="#docker_container" title="Permanent link">#</a></h4>
 <ul>
 <li>The Docker container should:</li>
 <li>Contain everything so that one is ready to run tutorials and develop with
     that technology</li>
-<li>Often installing and getting a package to work (e.g., PyMC) takes a long
-    time</li>
+<li>
+<p>Often installing and getting a package to work (e.g., PyMC) takes a long
+    time</p>
+</li>
+<li>
+<p>The Docker structure and approach should follow the template
+  <code>class_project/project_template/</code></p>
+</li>
+<li>Feel free to copy that directory as a base for </li>
 </ul>
 <h4 id="jupyter_notebooks">Jupyter Notebooks<a class="headerlink" href="#jupyter_notebooks" title="Permanent link">#</a></h4>
 <ul>
@@ -984,7 +1036,7 @@ writer):</p>
 <h4 id="markdown">Markdown<a class="headerlink" href="#markdown" title="Permanent link">#</a></h4>
 <ul>
 <li>Markdown documents should cover information about:</li>
-<li>What the technology / Python package ot library is</li>
+<li>What the technology / Python package to library is</li>
 <li>What problem it solves</li>
 <li>What are the alternatives, both open source and commercial with comments
     about advantages and disadvantages</li>
@@ -1013,16 +1065,72 @@ writer):</p>
 <li>Spark</li>
 </ul>
 </li>
-<li>
-<p><a href="//github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks">MSML610</a>
+<li><a href="https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks">MSML610</a>
     even if not all these tutorials don't use the Causify dev system, but some
-    simpler bash scripts.</p>
+    simpler bash scripts.</li>
+</ul>
+<h2 id="projectapiipynb"><code>project.API.ipynb</code><a class="headerlink" href="#projectapiipynb" title="Permanent link">#</a></h2>
+<ul>
+<li>It should contain a walkthrough of the library / package with an example</li>
+<li>In practice it merges the XYZ.API.md and the XYZ.API.ipynb into a single
+    notebook</li>
+<li>There should be a little markdown to explain the library / theory and then an
+    example to show how things work</li>
+<li>
+<p>The API ipynb should use simple / synthetic examples since it needs to run quickly</p>
 </li>
 <li>
-<p>Each tutorial conceptually corresponds to:</p>
+<p>Most code should be moved to a <code>*_utils.py</code> file</p>
 </li>
-<li>A blog entry</li>
-<li>A project of one of the classes (e.g., DATA605, MSML610)</li>
+</ul>
+<h2 id="tools_of_the_trade">Tools of the trade<a class="headerlink" href="#tools_of_the_trade" title="Permanent link">#</a></h2>
+<ul>
+<li>
+<p>Format a markdown file
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>&gt;<span class="w"> </span>lint_txt.py<span class="w"> </span>-i<span class="w"> </span>...
+</code></pre></div></p>
+</li>
+<li>
+<p>Clean up the Python code using Claude Code
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>cc&gt;<span class="w"> </span>Execute<span class="w"> </span>docs/ai_prompts/coding.lint.md<span class="w"> </span>on<span class="w"> </span>tutorials/Autogen/autogen_utils.py
+</code></pre></div></p>
+</li>
+<li>
+<p>Format the blog
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>cc&gt;<span class="w"> </span>Execute<span class="w"> </span>docs/ai_prompts/blog.format_rules.md<span class="w"> </span>on<span class="w"> </span>website/docs/blog/posts/all.learn_Autogen_in_60_minutes.how_to_guide.md
+</code></pre></div></p>
+</li>
+<li>
+<p>Align the Docker system with
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>cc&gt;<span class="w"> </span>Execute<span class="w"> </span>docs/ai_prompts/docker.align_with_template.md<span class="w"> </span>on<span class="w"> </span>tutorials/Autogen
+</code></pre></div></p>
+</li>
+<li>
+<p>Rendering the blogs locally
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>&gt;<span class="w"> </span>website/test.sh
+</code></pre></div></p>
+</li>
+</ul>
+<h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">#</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Is our Docker approach followed?</li>
+<li>If not follow <code>class_project/project_template/README.md</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Is all the possible code in the notebook moved to a <code>*_utils.py</code> file?</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Is <code>project.API.ipynb</code> in the right format?</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Do the notebooks run end-to-end?</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Are all the notebooks paired using Jupytext?</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Did you run <code>linters2/lint_branch.sh</code>?</li>
+</ul>
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">#</a></h2>
+<ul>
+<li>
+<p>A description of the Docker build system is 
+  <code>class_project/project_template/README.md</code></p>
+</li>
+<li>
+<p>class_project/FAQ.md</p>
+</li>
+<li>class_project/README.md</li>
 </ul>
 
 
