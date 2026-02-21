@@ -1,4 +1,4 @@
-site_name: GP Saggese's AI Research
+site_name: GP's AI Research
 site_author: Giacinto Paolo Saggese
 site_description: Personal website of GP Saggese - Startup Boy and AI Researcher
 
@@ -63,15 +63,19 @@ plugins:
             case: preserve
       categories_allowed:
         - "AI Research"
-        - "Machine Learning"
+        - "Causal AI"
+        - "Data Science"
         - "Deep Learning"
+        - "Machine Learning"
+        - "Python"
         - "Software Engineering"
         - "Startup"
         - "Teaching"
-        - "Data Science"
-        - "Python"
       authors: true
       authors_file: .authors.yml
+
+not_in_nav: |
+  short_stories/*
 
 nav:
   - Home: index.md
