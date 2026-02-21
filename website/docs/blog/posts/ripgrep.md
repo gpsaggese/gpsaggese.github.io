@@ -5,7 +5,7 @@ authors:
 date: 2026-02-10
 description:
 categories:
-  - Business
+  - Python
 ---
 
 TL;DR `ripgrep` is a blazingly fast search tool that combines the usability and

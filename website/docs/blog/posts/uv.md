@@ -5,7 +5,7 @@ authors:
 date: 2026-02-14
 description:
 categories:
-  - Business
+  - Python
 ---
 
 TL;DR `uv` is a blazingly fast Python package manager written in Rust that

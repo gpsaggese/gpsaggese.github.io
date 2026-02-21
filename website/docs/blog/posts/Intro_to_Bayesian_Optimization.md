@@ -1,6 +1,7 @@
 ---
 title: "Introduction to Bayesian Optimization"
 authors:
+  - damiancalabresi
   - gpsaggese
 date: 2026-02-14
 description:
@@ -14,6 +15,7 @@ where to look next and saves you millions.
 <!-- more -->
 
 ## Introduction
+
 Bayesian Optimization is ideal for black-box optimization problems. Black-box
 optimization problems are those where the objective function is not known or is
 very complex, it cannot be expressed mathematically and usually requires to run
@@ -36,6 +38,7 @@ model, the model updates its beliefs, and the cycle repeats, getting smarter
 with every iteration.
 
 ## Bayesian Optimization vs Global Search Methods
+
 When you need to optimize a function that isn't differentiable or convex, the
 traditional playbook calls for **global search methods**. These approaches
 systematically explore large swaths of the search space, which often means
@@ -46,17 +49,18 @@ Here are the most common alternatives:
 - **Genetic Algorithms**: Inspired by natural selection, they maintain a
   population of candidate solutions. The best survive, reproduce with random
   mutations, and evolve over generations. Effective, but they need a large
-  number of evaluations before meaningful patterns emerge.
+  number of evaluations before meaningful patterns emerge
 - **Simulated Annealing**: Starts with a random solution and makes random jumps
   to neighbors. If a neighbor is better, it's kept. Over time, the "temperature"
   drops and the jumps get smaller, focusing the search. The risk? It can easily
-  get trapped in local optima before the temperature cools.
+  get trapped in local optima before the temperature cools
 - **Particle Swarm Optimization**: A swarm of candidate solutions moves through
   the search space, with each particle drawn toward the best solution found so
   far. It converges more gracefully, but still requires many evaluations to
-  build consensus.
+  build consensus
 
 ### The Exploration-Exploitation Tradeoff
+
 Every optimizer faces the same problem: **exploration** (trying new, untested
 regions) versus **exploitation** (refining the areas that already look good).
 Get the balance wrong, and you either waste experiments on random guessing or
@@ -69,32 +73,34 @@ is the expected improvement highest?", balancing uncertainty (exploration)
 against predicted performance (exploitation).
 
 ## How Does Bayesian Optimization Work?
+
 Suppose we want to optimize a black-box function $f(x)$. Since we can't observe
 it directly, and real experiments carry noise, we represent it with a
 **Surrogate Model**: $y = f(x) + \epsilon$.
 
-![Surrogate Model](images/surrogate-model.png) _Image source:
+![Surrogate Model](Intro_to_Bayesian_Optimization.figs/surrogate-model.png) _Image source:
 [Adaptive Experimentation (Ax) - ax.dev](https://ax.dev/)_
 
 The surrogate model is a **Gaussian Process (GP)**, defined as
 $f(x) \sim GP(m(x), k(x, x'))$, where:
 
 - $m(x)$ is the **mean function**, our best estimate of the objective at each
-  point.
+  point
 - $k(x, x')$ is the **covariance function** (typically a Gaussian kernel:
   $k(x, x') = \sigma^2 \exp\left(-\frac{\|x - x'\|^2}{2l^2}\right)$), which
-  encodes how correlated nearby points are.
+  encodes how correlated nearby points are
 
 In other words:
 
 - At points we've already evaluated, the GP has low uncertainty and a
-  well-defined mean.
+  well-defined mean
 - At points we haven't visited, the GP interpolates using the covariance
-  function, producing both a prediction _and_ a confidence interval.
+  function, producing both a prediction _and_ a confidence interval
 - The further a point is from observed data, the wider its confidence interval,
-  signaling that we know less about that region.
+  signaling that we know less about that region
 
 ### The Acquisition Function
+
 With a surrogate model in hand, we need a strategy to decide where to sample
 next. That's the job of the **Acquisition Function**. The most widely used is
 the **Expected Improvement (EI)**:
@@ -109,18 +115,19 @@ this point to be?"_ Points with high predicted value _or_ high uncertainty score
 well, naturally balancing exploitation and exploration.
 
 ### The Sequential Loop
+
 Bayesian Optimization proceeds iteratively:
 
-1. Fit a Gaussian Process to all observed data.
+1. Fit a Gaussian Process to all observed data
 2. Evaluate the acquisition function across the search space to identify the
-   most promising candidate.
-3. Run the experiment at that candidate and observe the result.
-4. Feed the result back into the GP, update the model, and repeat.
+   most promising candidate
+3. Run the experiment at that candidate and observe the result
+4. Feed the result back into the GP, update the model, and repeat
 
 The following animation shows this loop in action for a single-variable
 optimization:
 
-![Sequential Exploration](images/sequential-exploration.gif) _Image source:
+![Sequential Exploration](Intro_to_Bayesian_Optimization.figs/sequential-exploration.gif) _Image source:
 [Adaptive Experimentation (Ax) - ax.dev](https://ax.dev/)_
 
 Notice how the uncertainty (shaded region) shrinks around observed points, and
@@ -128,6 +135,7 @@ the algorithm quickly focuses on the most promising areas rather than
 exhaustively trying on the entire domain.
 
 ## Adaptive Experimentation with Ax
+
 Several libraries implement Bayesian Optimization, but **Adaptive
 Experimentation (Ax)**, developed by Meta, stands out for its clean, high-level
 API. Built on top of [BoTorch](https://botorch.org/) (which itself is built on
@@ -139,6 +147,7 @@ surrogate modeling, acquisition function selection, and trial generation under
 the hood. The documentation is available at [ax.dev](https://ax.dev/).
 
 ## A Bayesian Optimization Example: the Hartmann Function
+
 To demonstrate the power of Bayesian Optimization, let's apply it to a classic
 benchmark: finding the global optimum of the **Hartmann function in 6
 dimensions**.
@@ -160,11 +169,11 @@ but cannot be visualized):
 Even though we know the formula, finding the global optimum is non-trivial.
 Let's see how the traditional methods would fare:
 
-- Simulated Annealing: It will probably get stuck in a local optima.
-- Genetic Algorithms: Requires too many experiments, the success rate would be
-  totally random.
-- Particle Swarm Optimization: Probably better, the local optima will move
-  towards the global optima, but still requires too many experiments.
+- **Simulated Annealing**: It will probably get stuck in a local optimum
+- **Genetic Algorithms**: Requires too many experiments, the success rate would
+  be totally random
+- **Particle Swarm Optimization**: Probably better, the local optima will move
+  towards the global optimum, but still requires too many experiments
 
 To put the scale in perspective: each of the 6 input dimensions ranges from 0
 to 1. A brute-force grid search with a step of 0.1 would require $10^6$
@@ -172,6 +181,7 @@ evaluations. With Bayesian Optimization, **we found the global optimum in fewer
 than 45 experiments**.
 
 Here's the code using Ax:
+
 ```python
 # Create the Ax Client
 client = Client()
@@ -220,6 +230,7 @@ the Hartmann function is **-3.32**. That's less than a **0.9% error**, achieved
 with only **45 evaluations** instead of a million.
 
 ## Conclusion
+
 Bayesian Optimization turns the expensive trial-and-error of black-box
 optimization into a deliberate, data-driven process. By building a probabilistic
 model of the objective and using it to guide each experiment, it consistently
@@ -231,6 +242,7 @@ surrogate modeling and acquisition function optimization, so you can focus on
 designing your experiments rather than implementing the math.
 
 ## Next Steps
+
 In upcoming articles, I'll show how Bayesian Optimization can be applied to
 **real-world marketing campaigns**, finding ad bidding strategies that lower
 costs while increasing revenue. I'll also cover **multi-objective
@@ -238,6 +250,7 @@ optimization**, where the goal isn't a single best answer but a Pareto frontier
 that maps the tradeoffs between competing objectives.
 
 ## References
+
 - [Engineering At Meta: Efficient Optimization With Ax, an Open Platform for Adaptive Experimentation](https://engineering.fb.com/2025/11/18/open-source/efficient-optimization-ax-open-platform-adaptive-experimentation/)
 - [Engineering At Meta: Using AI to make lower-carbon, faster-curing concrete](https://engineering.fb.com/2025/07/16/data-center-engineering/ai-make-lower-carbon-faster-curing-concrete/)
 - [Github: Sustainable Concrete](https://github.com/facebookresearch/SustainableConcrete)

@@ -4,7 +4,6 @@ authors:
   - gpsaggese
 date: 2026-02-07
 categories:
-  - AI Research
   - Software Engineering
 ---
 
