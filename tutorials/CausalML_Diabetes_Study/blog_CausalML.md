@@ -257,19 +257,7 @@ Still, the fact that our model:
 
 ## Try It Yourself
 
-We've packaged everything into a Docker container so you can reproduce our analysis in minutes:
-
-```bash
-# Build the container
-docker build -t causalml_project .
-
-# Run Jupyter
-docker run -p 8888:8888 -v "$(pwd)":/app causalml_project
-```
-
-Open [`CausalML.API.ipynb`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/CausalML_Diabetes_Study/CausalML.API.ipynb) to explore the `CausalNavigator` interface, or dive into [`CausalML.example.ipynb`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/CausalML_Diabetes_Study/CausalML.example.ipynb) for the full diabetes analysis.
-
-The code is designed to be self-contained, documented, and most importantly guaranteed to work. No more fighting with package versions or missing dependencies.
+Explore the `CausalNavigator` interface in [`CausalML.API.ipynb`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/CausalML_Diabetes_Study/CausalML.API.ipynb), or dive into the full diabetes analysis in [`CausalML.example.ipynb`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/CausalML_Diabetes_Study/CausalML.example.ipynb). Both notebooks are self-contained with setup instructions included.
 
 ---
 
@@ -284,4 +272,11 @@ Causal machine learning is a rapidly evolving field. Some directions we're excit
 The tools are maturing fast. What was research-only five years ago is now accessible to any data scientist willing to learn. And as healthcare, policy, and business increasingly demand *causal* answers, not just correlational patterns, these skills will only become more valuable.
 
 If you're looking to apply causal inference in production environments, check out [Causify](https://causify.ai/) they're building tools to make causal AI accessible for real-world decision making.
+
+**Want to dig deeper?**
+- [CausalML Documentation](https://causalml.readthedocs.io/)
+- [CausalML GitHub](https://github.com/uber/causalml)
+- [Original Paper](https://arxiv.org/abs/2002.11631)
+- [BRFSS Dataset](https://www.cdc.gov/brfss/)
+- [CDC Diabetses Health Indicatiors](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators)
 

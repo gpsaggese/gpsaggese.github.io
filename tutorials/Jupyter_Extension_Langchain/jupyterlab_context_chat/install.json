@@ -1,0 +1,5 @@
+{
+  "packageManager": "python",
+  "packageName": "context_chat",
+  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package context_chat"
+}
