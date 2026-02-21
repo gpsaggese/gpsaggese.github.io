@@ -30,7 +30,7 @@ This tutorial notebook (`BitcoinPetl.example.ipynb`) demonstrates a complete, en
 ## Prerequisites
 
 - Python libraries: `petl`, `requests`, `pandas`, `matplotlib`, `seaborn`, `statsmodels`, `plotly`  
-- Docker environment set up via `docker_common/docker_build.sh`
+- Docker environment set up via `project_template/docker_build.sh`
 
 ## Workflow Steps
 
@@ -142,8 +142,8 @@ Fetch last 7 days trailing by 3 minutes, compute MA(10), and display:
 
 1. Build & launch Docker:
    ```bash
-   bash docker_common/docker_build.sh
-   bash docker_common/docker_bash.sh
+   bash project_template/docker_build.sh
+   bash project_template/docker_bash.sh
    ```
 2. In Jupyter, **Restart & Run All** on both notebooks.  
 3. Interrupt the live cell when finished.

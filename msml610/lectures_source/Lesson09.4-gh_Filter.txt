@@ -1,0 +1,352 @@
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 09.4: gh Filter}}$$**
+\endgroup
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+**References**:
+
+- AIMA 14: Probabilistic reasoning over time
+- https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python
+
+// ./notes/math.Kalman_and_Bayesian_filters_in_Python.Labbe.2018.txt
+// ./notes/math.Kalman_filter.txt
+// ./notebooks/quantopian/quantopian_kalman_filter.ipynb
+// ./notebooks/Kalman_and_Bayesian_filters_in_python
+// - AIMA 14.4 (p. 479)
+
+# ##############################################################################
+# gh Filter
+# ##############################################################################
+
+* Tracking Objects
+- Many problems can be formulated as **tracking objects**
+
+- **Examples**
+  - Navigation of aircraft, drones, autonomous cars
+  - Robotics: arm kinematics to predict the position of joints
+  - Sensor fusion: merge multiple sensor readings
+  - Finance: predict economic variables
+  - Computer vision: track moving objects across video
+
+- **Kalman filter**
+  - Used for state estimation in dynamic systems with noisy, uncertain
+    measurements
+  - Track state over time using model to make predictions and observations
+
+* Some Guiding Principles
+- **The world is noisy**
+  - E.g., a car might swerve around a pothole or brake for a pedestrian
+  - E.g., wind or ice might change the car's path
+
+- **Sensors are noisy**
+  - E.g., a kitchen scale gives different readings for the same object
+
+- **Knowledge is uncertain**
+  - E.g., you alter beliefs on how things work based on evidence and its strength
+
+- **Combine past information and system knowledge** to estimate future
+  information
+  - E.g., if a car moves at speed $X$ at time $t$, the speed at time $t+1$ is
+    $\approx X$
+
+- **Data (even if noisy) > guess**
+  - Never discard information, no matter how poor it is
+  - E.g., two sensors, even if one is less accurate, are better than one
+
+* Example of Estimating Body Weight
+- **Goal**: estimate your weight over time while going to the gym
+
+- Two possible approaches
+  1. **Predict your weight**
+     - Track calorie intake
+     - Track energy expense
+     - Compute expected weight gain
+     - _Cons_: Difficult to track food intake and exercise accurately
+  2. **Measure your weight**
+     - Use a scale
+     - _Cons_: Scale is noisy, water weight fluctuates, different clothes
+
+::: columns
+:::: {.column width=50%}
+- **Problem**: Prediction doesn't match measurements
+  - E.g., at time $t$:
+    - Estimate $\hat{x}_{t|t-1} = 159$ based on calorie intake and energy
+      expended
+    - Scale measures 164
+
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L09_04_ground_truth.png)
+::::
+:::
+
+* Example of Estimating Body Weight
+- **What's the real weight?**
+  - You need to blend prediction and measurement
+  $$
+  \text{estimate = 0.6} \times \text{prediction} + (1 - 0.6) \times \text{measurement}
+  $$
+  - Because of coefficient 0.6 you believe the prediction is more likely correct
+    than the measurement
+  - The prediction is always between the prediction and the measurement
+
+- **Algorithm**
+  1. Start with an initial guess
+     - Assume it's correct for now
+  2. Predict the next weight based on the model
+  3. Measure the weight
+  4. Estimate the next weight by merging values:
+  5. Go back to first step
+
+* Example of Estimating Body Weight
+::: columns
+:::: {.column width=50%}
+- Assume you know the initial weight and the gain rate
+  - \black{Black line} is the actual weight (i.e., _ground truth_)
+  - \red{Red line} is the _prediction_ from previous day's weight
+  - \green{Green circles} are the _measurements_
+  - \blue{Blue line} is the _estimate_ from the filter
+    - Always falls between measurement and prediction
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L09_04_knowing_gain_rate.png)
+::::
+:::
+
+- Not impressive since the prediction model describes the ground truth
+
+::: columns
+:::: {.column width=50%}
+- When the model predicts a gain of -10lb/day (incorrect)
+  - Estimates diverge from measurements
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L09_04_wrong_gain_rate.png)
+::::
+:::
+
+* Example of Estimating Body Weight
+
+::: columns
+:::: {.column width=50%}
+- Two **problems**
+  - The filter needs a correct guess of the weight change rate
+  - The rate of change can vary over time
+
+- **Solution**: estimate the rate of change from measurements
+  - "Data is better than a guess, even if it's noisy"
+  - Refine the estimate of the gain rate:
+    $$
+    \text{new gain = old gain + 0.3 (measurement - prediction) / 1 day}
+    $$
+
+- The "state" is given by `weight` and `gain_rate`
+  - You need to predict and update both
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L09_04_learning_gain_rate.png)
+::::
+:::
+
+* g-h Filter
+- The previous algorithm is called **g-h filter**
+  - $g$: scaling used to blend predicted state and measurement
+  - $h$: scaling used to update the parameter of the system model based on the
+    measurements
+
+- g-h filters have different values of $g$ and $h$ to achieve different
+  properties
+  - E.g., pick $g$ to minimize the transient error when the derivative of the
+    signal has a step (i.e., a discontinuity of the slope)
+
+- Many filters (including Kalman filter) are just generalizations of a g-h
+  filter
+
+* g-h Filter Algorithm: Pseudo-Code
+
+::: columns
+:::: {.column width=55%}
+
+1. **Initialization**
+   - Initialize state of the filter
+   - Initialize belief in the state
+2. **Predict**
+   - Use system model to predict state at next time step
+   - Adjust belief to account for uncertainty in prediction
+3. **Update**
+   - Get measurement and associated belief about its accuracy
+   - Use as estimate of the next state a point between estimated state and
+     measurement
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph BayesianFlow {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+
+    // Node styles
+    x0   [label="Initial Conditions (x_0)", shape=box, fillcolor="#F4A6A6"];
+    zk   [label="Measurement (z_k)", shape=box, fillcolor="#FFD1A6"];
+    pred [label="Predict\nStep", shape=box, fillcolor="#A6C8F4"];
+    upd  [label="Update\nStep", shape=box, fillcolor="#C6A6F4"];
+    xhat [label="State Estimate (\hat{x}_k)", shape=box, fillcolor="#B2E2B2"];
+
+    // Force ranks
+    {rank=same; x0; zk;}
+    {rank=same; pred; upd;}
+
+    // Edges
+    x0   -> pred;
+    pred -> upd;
+    zk   -> upd;
+    upd  -> pred;
+    pred -> xhat;
+}
+```
+::::
+:::
+
+* Interpretation of $g$
+::: columns
+:::: {.column width=50%}
+- If $g = 0$:
+  - Follow system model, ignore measurements
+
+- If $g$ is small:
+  - Follow model more than measurements
+
+- If $g$ increases:
+  - Follow measurements more, ignore prediction
+  - Useful with accurate measurements, inaccurate model
+
+- If $g = 1$:
+  - Follow only measurements, ignore model
+  - Too large $\to$ follow measurements, reject no noise
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L09_04_varying_g1.png)
+![](msml610/lectures_source/figures/L09_04_varying_g2.png)
+::::
+:::
+
+* Interpretation of $h$
+::: columns
+:::: {.column width=40%}
+- Estimate model parameters from data:
+  - Change of weight
+  - Rate of change of measurements
+  - Car speed on different terrains
+::::
+:::: {.column width=55%}
+![](msml610/lectures_source/figures/L09_04_varying_h1.png)
+::::
+:::
+
+- If $h = 0$:
+  - Filter follows previous rate of change
+  - Adapts slowly to signal changes
+
+- If $h = 1$:
+  - Filter reacts rapidly to significant signal variations
+
+- If $h$ is:
+  - Smaller $\to$ Smoother, slower rate adaptation
+  - Larger $\to$ Faster rate adjustment
+
+- **Note**: Incorrect initial state is similar to a changing state
+
+* Control Theory Nomenclature
+::: columns
+:::: {.column width=50%}
+- State space models developed in control theory $\to$ different nomenclature
+
+- **System**: object to estimate/track
+
+- **Filter**: algorithm to estimate system state
+
+- **State of the system** `x`: current values of interest
+  - Part of the state might be hidden
+::::
+:::: {.column width=45%}
+```graphviz
+digraph StateEstimation {
+    splines=true;
+    nodesep=1.0;
+    ranksep=1.2;
+    compound=true;
+    bgcolor="white";
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.2, color="#444444"];
+    edge [fontname="Helvetica", fontsize=11, color="#444444", penwidth=1.2];
+    // System subgraph (TOP)
+    subgraph cluster_system {
+        label="System";
+        style="rounded,filled";
+        color="#A0D6D1";          // soft teal border
+        fillcolor="#E8F8F7";      // very light teal background
+        fontname="Helvetica";
+        fontsize=13;
+        SystemBlock [label="System dynamics", fillcolor="#A6C8F4"];   // pastel blue
+        x [shape=circle, label="x", fillcolor="#A6E7F4"];             // soft cyan
+        { rank=same; SystemBlock; x; }
+        SystemBlock -> x;
+        x -> SystemBlock;
+    }
+    // Filter subgraph (BOTTOM)
+    subgraph cluster_filter {
+        label="Filter";
+        style="rounded,filled";
+        color="#C6A6F4";          // soft violet border
+        fillcolor="#F5EDFF";      // very light violet background
+        fontname="Helvetica";
+        fontsize=13;
+        SystemModel [label="System model", fillcolor="#B2E2B2"];      // pastel green
+        Propagation [label="Predict step\n(System propagation)", fillcolor="#FFD1A6"];  // soft orange
+        Update [label="Update step\n(Measurement update)", fillcolor="#F4A6A6"];        // soft red
+        { rank=same; Propagation; Update; }
+        SystemModel -> Propagation;
+        Propagation -> Update [label="x_pred"];
+        Update -> Propagation [label="x_est"];
+    }
+    // Force vertical stacking
+    SystemBlock -> SystemModel [style=invis, weight=10];
+    // Interconnections
+    x -> Update [label="z"];
+}
+```
+::::
+:::
+
+- **Measurement** `z`: measured value of system
+  - Observable, can be inaccurate
+
+- **State estimate** `x_est`: filter estimate of state
+
+- **System model**: mathematical model of system
+  - Typically has error
+
+- **System propagation**: predict step using system model to form new state
+  estimate `x_pred`
+  - Estimate is imperfect
+
+- **Measurement update**: update step
