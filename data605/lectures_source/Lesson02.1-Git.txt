@@ -87,643 +87,253 @@ UMD DATA605 - Big Data Systems
 :::: 
 :::
 
-* Git Branching
-::: columns
-:::: {.column width=55%}
-- **Branching**
-  - Diverge from the main development line
-- **Why branch?**
-  - Work without affecting the main code
-  - Avoid changes in the main branch
-  - Merge code downstream for updates
-  - Merge code upstream after completion
+* Version Control Systems (1/2)
 
-::::
-:::: {.column width=40%}
+- A **Version Control System** (VCS) is a system that allows to:
+  - Record changes to files
+  - Recall specific versions later (like a "file time-machine")
+  - Compare changes to files over time
+  - Track *who* changed *what* and *when* and *why*
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_15_image_1.png)
+- **Simplest "VCS"**
+  - Make a copy of a dir and add
+    - `_v1` (bad); or
+    - a timestamp `_20220101` (better)
+  - **Cons**: It kind of works for one person, but doesn't scale
 
-::::
-:::
-
-- **Git branching is lightweight**
-  - Instantaneous
-  - A branch is a pointer to a commit
-  - Git stores data as snapshots, not file differences
-
-- **Git workflows branch and merge often**
-  - Multiple times a day
-  - Surprising for users of centralized VCS
-    - E.g., branch before lunch
-  - Branches are cheap
-    - Use them to isolate and organize work
-
-* Git Branching
-::: columns
-:::: {.column width=55%}
-- `master` (or `main`) is a normal branch
-  - Pointer to the last commit
-  - Moves forward with each commit
-
-- `HEAD`
-  - Pointer to the current branch
-  - E.g., `master`, `testing`
-  - `git checkout <BRANCH>` moves across branches
-
-- `git branch testing`
-  - Creates a new pointer `testing`
-  - Points to the current commit
-  - Pointer is movable
-
-- Divergent history
-  - Work progresses in two "split" branches
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_16_image_1.png)
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_16_image_2.png)
-
-::::
-:::
-
-* Git Checkout
-::: columns
-:::: {.column width=55%}
-- `git checkout` switches branches
-  - Moves `HEAD` pointer to the new branch
-  - Changes files in the working directory to match the branch pointer
-- E.g., two branches, `master` and `testing`
-  - You are on `master`
-  - `git checkout testing`
-  - Pointer moves, working directory changes
-  - Keep working and commit on `testing`
-  - Pointer to `testing` moves forward
-
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_2.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_17_image_3.png)
-
-::::
-:::
-
-* Git Branching and Merging
+* Version Control Systems (2/2)
 
 ::: columns
 :::: {.column width=55%}
-- Tutorials
-  - [Work on main](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#work-on-main)
-  - [Hot fix](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#hot-fix)
-
-- Start from a project with some commits
-
-- Branch to work on a new feature "Issue 53"
-  \begingroup \small \color{blue}
-  ```
-  > git checkout -b iss53
-  work ... work ... work
-  > git commit -m "Add feature for Issue 53"
-  ```
-  \endgroup
+- **Centralized VCS**
+  - E.g., `Perforce`, `Subversion`
+  - A server stores the code, clients connect to it
+  - **Cons**: If the server is down, nobody can work
 ::::
 :::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_2.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_3.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_1.png)
 
 ::::
 :::
 
-* Git Branching and Merging
+\vspace{0.1cm}
 
 ::: columns
 :::: {.column width=55%}
-- **Need a hotfix** to `master`
-  \begingroup \small \color{blue}
-  ```
-  > git checkout master
-  > git checkout -b hotfix
-  fix ... fix ... fix
-  > git commit -am "Hot fix"
-  > git checkout master
-  > git merge hotfix
-  ```
-  \endgroup
-
-- **Fast forward**
-  - Now there is no divergent history between `master` and `iss53`
+- **Distributed VCS**
+  - E.g., `Git`, `Mercurial`, `Bazaar`, `Dart`
+  - Each client has the entire history of the repo locally
+  - Each node is both a client and a server
+  - **Cons**: complex
 ::::
 :::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_3.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_4.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_18_image_5.png)
-
+![](data605/lectures_source/images/lecture_2/lec_2_slide_6_image_2.png)
 ::::
 :::
 
-* Git Branching and Merging
-::: columns
-:::: {.column width=55%}
-- Keep working on `iss53`
-  \begingroup \small \color{blue}
-  ```
-  > git checkout iss53
-  work ... work ... work
-  ```
-  \endgroup
-  - The branch keeps diverging
-
-- At some point you are done with `iss53`
-  - You want to merge your work back to `master`
-  - Go to the target branch
-    \begingroup \small \color{blue}
-    ```
-    > git checkout master
-    > git merge iss53
-    ```
-    \endgroup
-
-- Git can't fast forward
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_19_image_2.png)
-
-::::
-:::
-
-- Git creates a new snapshot with the 3-way "merge commit" (i.e., a commit with
-  more than one parent)
-- Delete the branch
-  \begingroup \small \color{blue}
-  ```
-  > git branch -d iss53
-  ```
-  \endgroup
-
-* Fast Forward Merge
-  - Merge a commit `Y` with a commit `X` that can be reached by following the
-    history of commit `Y`
-
-- There is no divergent history to merge
-  - Git simply moves the branch pointer forward from X to Y
+* VCS: How to Track Data
+- Consider a directory with project files inside
+- **How do you track changes to the data?**
 
 ::: columns
 :::: {.column width=55%}
-- **Mental model**: a branch is just a pointer that indicates where the tip of
-  the branch is
-- E.g., `C4'` is reachable from `C3`
-  \begingroup \small \color{blue}
-  ```
-  > git checkout master
-  > git merge experiment
-  ```
-  \endgroup
-- Git moves the pointer of master to `C4'`
+- **Delta-based VCS**
+  - E.g., `Subversion`
+  - Store the data in terms of patches (changes of files over time)
+  - Can reconstruct the state of the repo by applying the patches
 ::::
 :::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_20_image_1.png)
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_20_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_1.png)
 
 ::::
 :::
 
-* Merging Conflicts
-::: columns
-:::: {.column width=55%}
-- Tutorial:
-  - [Merging conflicts](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#merging-conflicts)
-
-- Sometimes **Git can't merge**, e.g.,
-  - The same file has been modified by both branches
-  - One file was modified by one branch and deleted by another
-
-- **Git**:
-  - Does not create a merge commit
-  - Pauses to let you resolve the conflict
-  - Adds conflict resolution markers
-
-- **User merges manually**
-  - Edit the files using `git mergetool`
-  - Use `git add` to mark as resolved
-  - Use `git commit` to finalize the merge
-  - Use PyCharm or VS Code for assistance
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_2.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_3.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_21_image_4.png)
-
-::::
-:::
-
-* Git Rebasing
-
-- In Git, there are **two ways of merging divergent history**
-- E.g., consider `master` and `experiment` have a common ancestor `C2`
-
-::: columns
-:::: {.column width=60%}
-
-- **Merge**
-  - Go to the target branch
-    \begingroup \small \color{blue}
-    ```
-    > git checkout master
-    > git merge experiment
-    ```
-    \endgroup
-  - Create a new snapshot `C5` and commit
-
-- **Rebase**
-  - Go to the branch to rebase
-    \begingroup \small \color{blue}
-    ```
-    > git checkout experiment
-    > git rebase master
-    ```
-    \endgroup
-  - Rebase algorithm:
-    - Get all the changes committed in the branch (`C4`) where we are on
-      (`experiment`) since the common ancestor (`C2`)
-    - Sync to the branch that we are rebasing onto (`master` at `C3`)
-    - Apply the changes `C4`
-    - Only the current branch is affected
-    - Finally, fast forward `experiment`
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_2.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_22_image_3.png)
-::::
-:::
-
-* Uses of Rebase
-::: columns
-:::: {.column width=55%}
-- **Rebasing makes for a cleaner history**
-  - The history looks like all the work happened in series
-  - Although in reality, it happened in parallel to the development in the
-    master branch
-- **Rebasing to contribute to a project**
-  - Developer
-    - You are contributing to a project that you don't maintain
-    - You work on your branch
-    - When you are ready to integrate your work, rebase your work onto
-      `origin/master`
-  - The maintainer
-    - Does not have to do any integration work
-    - Does just a fast forward or a clean apply (no conflicts)
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_23_image_2.png)
-
-::::
-:::
-
-* Golden Rule of Rebasing
-- **Remember**: rebasing means abandoning existing commits and creating new ones
-  that are similar but different
+\vspace{1cm}
 
 ::: columns
 :::: {.column width=55%}
-
-- **Problem**
-  - You push commits to a remote
-  - Others pull commits and base work on them
-  - You rewrite commits with `git rebase`
-  - You push again with `git push --force`
-  - Collaborators must re-merge work
-
-- **Solution**
-  - Strict: _"Do not ever rebase commits outside your repository"_
-  - Loose: _"Rebase your branch if only you use it, even if pushed to a server"_
+- **Stream of snapshots VCS**
+  - E.g., `Git`
+  - Store data in terms of snapshots of a filesystem
+  - Take a "picture" of what files look like
+  - Store reference (hash) to the snapshots
+  - Save link to previous identical files
 ::::
 :::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_1.png)
-![](data605/lectures_source/images/lecture_2/lec_2_slide_24_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_7_image_2.png)
 
 ::::
 :::
 
-* Rebase vs Merge: Philosophical Considerations
-- Deciding **Rebase-vs-merge** depends on the answer to the question:
-  - _What does the commit history of a repo mean?_
+* Git
+- **Almost everything is local for Git**
+  - History stored locally in each node
+  - Diff-ing files done locally
+    - Centralized VCS requires server access
+  - Commit to local copy
+    - Upload changes with network connection
 
+- **Almost everything is undoable in Git**
+  - No data corruption
+    - Everything checksummed
+  - Nothing lost
+  - Disclaimer:
+    - Commit (at least locally) or stash
+    - Know how to do it to avoid "git hell"
+
+- **Git is a mini key-value store with a VCS built on top**
+  - Exactly true
+  - Two layers:
+    - "porcelain": key-value store for file-system
+    - "plumbing": VCS layer
+
+* Sections of a Git Project
 ::: columns
 :::: {.column width=55%}
 
-1) **History is the record of what actually happened**
-   - _"History should not be tampered with, even if messy!"_
-   - Use `git merge`
+- There are 3 main sections of a Git project
+  - **Working tree** (aka checkout)
+    - Version of code on the filesystem for use and modification
+  - **Staging area** (aka cache, index)
+    - File in `.git` storing info for the next commit
+  - **Git directory** (aka .git)
+    - Stores metadata and objects (like a DB)
+    - The repo itself with all history
+    - Cloning gets you the project's `.git`
 ::::
 :::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_1.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_1.png)
+
 ::::
 :::
 
-\vspace{0.5cm}
+* States of a File in Git
 
 ::: columns
 :::: {.column width=55%}
-
-2) **History represents how a project should have been made**
-   - _"You should tell the history in the way that is best for future readers"_
-   - Use `git rebase` and `filter-branch`
+- Each file can be in 4 states from Git point-of-view
+  - **Untracked**: files not under Git version control
+  - **Modified**: changed files, not committed yet
+  - **Staged**: marked modified files for next commit
+  - **Committed**: data stored in local DB
 ::::
 :::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_25_image_2.png)
+![](data605/lectures_source/images/lecture_2/lec_2_slide_9_image_2.png)
 
 ::::
 :::
 
-* Rebase vs Merge: Philosophical Considerations
-- **Many man-centuries have been wasted** discussing rebase-vs-merge at the
-  watercooler
-  - Total waste of time! Tell people to get back to work!
+* Git Tutorial
+- **Git tutorial on class repo**
+  - Follow the `README`
 
-- When you contribute to a project often people decide for you based on their
-  preference
+- **How to use a tutorial**
+  - Type commands one-by-one
+    - Avoid copy-paste
+  - Observe results
+    - Understand each line
+  - Experiment
+    - _"What happens if I do this?"_
+    - _"Does the result match my mental model?"_
+  - Learn command line before GUI
+    - GUIs hide details and you become dependent on it
 
-- **Best of the merge-vs-rebase approaches**
-  - Rebase changes you've made in your local repo
-    - Even if you have pushed but you know the branch is yours
-    - Use `git pull --rebase` to clean up the history of your work
-    - If the branch is shared with others then you need to definitively `git
-      merge`
-  - Only `git merge` to master to preserve the history of how something was built
+- Go through **recommended Git book** and try all examples
+  - Use online tutorials
 
-- **Personally**
-  - I like to squash-and-merge branches to `master`
-  - Rarely are my commits "complete"; they are just checkpoints
+- Build your own **cheat sheet**
+  - Reuse others' cheat sheets only if familiar
 
-* Remote Branches
-- **Remote branches** are pointers to branches in remote repositories
-  \begingroup \small \color{blue}
-  ```
-  > git remote -v
-  origin  git@github.com:gpsaggese/umd_classes.git (fetch)
-  origin  git@github.com:gpsaggese/umd_classes.git (push)
-  ```
-  \endgroup
+- Achieve **mastery of basic tools**
+  - Bash, Git, editor
+  - Python, Pandas
+  - ...
 
-- **Tracking branches**
-  - Local references representing the state of the remote repository
-  - E.g., `master` tracks `origin/master`
-  - You can't change the remote branch (e.g., `origin/master`)
-  - You can change the tracking branch (e.g., `master`)
-  - Git updates tracking branches when you do `git fetch origin` (or `git pull`)
 
-- To share code in a local branch you need to push it to a remote
-  \begingroup \small \color{blue}
-  ```
-  > git push origin serverfix
-  ```
-  \endgroup
+* Git Daily Use
+- Check out a project (`git clone`) or start from scratch (`git init`)
+  - Only once per Git project client
 
-- To work on it
-  \begingroup \small \color{blue}
-  ```
-  > git checkout -b serverfix origin/serverfix
-  ```
-  \endgroup
+- **Daily routine**
+  - Modify files in working tree (`vi ...`)
+  - Add files (`git add ...`)
+  - Stage changes for next commit (`git add -u ...`)
+  - Commit changes to `.git` (`git commit`)
 
-* Git Workflows
-::: columns
-:::: {.column width=55%}
-- **Git workflows** = ways of working and collaborating using Git
-- **Long-running branches** = branches at different levels of stability that are
-  always open
-  - `master` is always ready to be released
-  - `develop` branch to develop in
-  - topic/feature branches
-  - When branches are "stable enough," they are merged up
-::::
-:::: {.column width=40%}
+- **Use a branch to group commits together**
+  - Isolate code from changes in `master`
+  - Merge `master` into branch
+  - Isolate `master` from changes
+  - Pull Request (PR) for code review
+  - Merge PR into upstream
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_1.png)
+* Git Remote
+- **Remote repos**: versions of the project hosted online
+  - Manage remote repos to collaborate
+  - Push/pull changes
+  - `git remote -v`: show remotes
+  - `git fetch`: pull data from remote repo you don't have locally
+  - `git pull`: shorthand for `git fetch origin` + `git merge master --rebase`
+  - `git push <REMOTE> <BRANCH>`: push local data to remote
+    - E.g., `git push origin master`
 
-::::
-:::
+- Multiple forks of the same repo with different policies
+  - E.g., read-only, read-write
 
-* Git Workflows
-::: columns
-:::: {.column width=55%}
+- If someone pushed to remote, you **can't push changes immediately**:
+  - Fetch changes
+  - Merge changes to your branch
+  - Resolve conflicts, if needed
+  - Test project sanity (e.g., run unit tests)
+  - Push changes to remote
 
-- **Topic branches** = short-lived branches for a single feature
-  - E.g., `hotfix`, `wip-XYZ`
-  - Easy to review
-  - Siloed from the rest
-  - This is typical of Git since other VCS support for branches is not good
-    enough
-  - E.g.,
-    - You start `iss91`, then you cancel some stuff, and go to `iss91v2`
-    - Somebody starts a `dumbidea` branch and merges it to `master` (!)
-    - You squash-and-merge your `iss91v2`
+* Git Tagging
+- Git allows marking points in history with a **tag**
+  - E.g., release points
+  - Check out a tag
 
-::::
-:::: {.column width=40%}
+- Enter detached `HEAD` state
+  - Committing won't add changes to the tag or branch
+  - Commit will be "unreachable," reachable only by commit hash
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_28_image_2.png)
-
-::::
-:::
-
-* Centralized Workflow
-::: columns
-:::: {.column width=55%}
-- **Centralized workflow in centralized VCS**
-  - Developers:
-    - Check out the code from the central repo on their computer
-    - Modify the code locally
-    - Push it back to the central hub (assuming no conflicts with the latest
-      copy, otherwise they need to merge)
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_29_image_1.png)
-
-::::
-:::
-
-- **Centralized workflow in Git**
-  - Developers:
-    - Have push (i.e., write) access to the central repo
-    - Need to fetch and then merge
-    - Cannot push code that will overwrite each other's code (only fast-forward
-      changes)
-
-* Forking Workflows
-- Typically, developers don't have permissions to update branches directly on a
-  project
-  - Read-write permissions for core contributors
-  - Read-only for everybody else
-
-- **Solution**
-  - "Forking" a repo
-  - External contributors:
-    - Clone the repo and create a branch with their work
-    - Create a writable fork of the project
-    - Push branches to the fork
-    - Prepare a PR (Pull Request) with their work
-  - Project maintainer:
-    - Reviews PRs
-    - Accepts PRs
-    - Integrates PRs
-  - In practice, it's the project maintainer who pulls the code when it's ready,
-    instead of external contributors pushing the code
-
-::: columns
-:::: {.column width=80%}
-- **Aka "GitHub workflow"**
-  - The "innovation" was forking (Fork me on GitHub!)
-  - GitHub was acquired by Microsoft for 7.5 billion USD
-::::
-:::: {.column width=15%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_30_image_1.png)
-
-::::
-:::
-
-* Integration-Manager Workflow
-::: columns
-:::: {.column width=55%}
-- This is the classical model for open-source development
-  - E.g., Linux, GitHub (forking) workflow
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_31_image_1.png)
-
-::::
-:::
-
-1. **One repo is the official project**
-   - Only the project maintainer pushes to the public repo
-   - E.g., `causify-ai/csfy`
-
-2. **Each contributor**
-   - Has read access to everyone else's public repo
-   - Forks the project into a private copy
-     - Write access to their own public repo
-     - E.g., `gpsaggese/csfy`
-   - Makes changes
-   - Pushes changes to their own public copy
-   - Sends a pull request to the maintainer asking to merge changes
-
-3. **The maintainer**
-   - Adds the contributor's repo as a remote
-   - Merges the changes into a local branch
-   - Tests changes locally
-   - Pushes the branch to the official repo
-
-* Git log
-- `git log` reports info about commits
-
-- **refs** are references to:
-  - `HEAD` (commit you are working on, next commit)
-  - `origin/master` (remote branch)
-  - `experiment` (local branch)
-  - `d921970` (commit)
-
+* Git Internals
 ::: columns
 :::: {.column width=55%}
 
-- `^` after a reference resolves to the parent of that commit
-  - `HEAD^` = commit before `HEAD`, i.e., last commit
-  - `^2` means the second parent of a merge commit
-  - A merge commit has multiple parents
+- **Understand Git only if you understand its data model**
+  - Git is a key-value store with a VCS interface
+  - Key = hash of a file
+  - Value = content of a file
 
+- **Git objects**
+  - Commits: pointers to the tree and commit metadata
+  - Trees: directories and mapping between files and blobs
+  - Blobs: content of files
+
+- Refs:
+  - Easy: 
+[\textcolor{blue}{\underline{Understanding Git Data Model}}](https://konrad126.medium.com/https-medium-com-zspajich-understanding-git-data-model-95eb16cc99f5)
+  - Hard-core: 
+[\textcolor{blue}{\underline{Git internals}}](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects)
 ::::
 :::: {.column width=40%}
 
-![](data605/lectures_source/images/lecture_2/lec_2_slide_32_image_1.png)
+*Commit tree*
+![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_1.png)
+
+*Commit parents*
+![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_2.png)
+
+*Commit history of a branch*
+![](data605/lectures_source/images/lecture_2/lec_2_slide_14_image_3.png)
 
 ::::
 :::
-
-* Dot notation
-::: columns
-:::: {.column width=55%}
-
-- **Double-dot notation**
-  - `1..2` = commits that are reachable from 2 but not from 1
-  - Like a "difference"
-  - `git log master..experiment` $\to$ `D,C`
-  - `git log experiment..master` $\to$ `F,E`
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_32_image_1.png)
-
-::::
-:::
-
-\vspace{0.5cm}
-
-::: columns
-:::: {.column width=55%}
-- **Triple-dot notation**
-  - `1...2` = commits that are reachable from either branch but not from both
-  - Like "union excluding intersection"
-  - `git log master...experiment` $\to$ `F,E,D,C`
-
-::::
-:::: {.column width=40%}
-
-![](data605/lectures_source/images/lecture_2/lec_2_slide_32_image_1.png)
-
-::::
-:::
-
-* Advanced Git
-
-- **Stashing**
-  - Copy the state of your working directory (e.g., modified and staged files)
-  - Save it in a stack
-  - Apply it later
-
-- **Cherry-picking**
-  - Apply a single commit from one branch onto another
-
-- **rerere**
-  - = "Reuse Recorded Resolution"
-  - Git caches how to solve certain conflicts
-- **Submodules / subtrees**
-  - Projects including other Git projects
-
-* Advanced Git
-- **bisect**
-  - `git bisect` helps identify the commit that introduced a bug
-    - Bug appears at the top of the tree
-    - Unknown revision where it started
-    - Script returns 0 if good, non-zero if bad
-    - `git bisect` finds the revision where the script changes from good to bad
-
-- **filter-branch**
-  - Rewrite repository history in a scriptable way
-    - E.g., change email, remove sensitive file
-  - Check out each version, run a command, commit the result
-
-- **Hooks**
-  - Run scripts before committing, merging, etc
 
 * GitHub
 ::: columns

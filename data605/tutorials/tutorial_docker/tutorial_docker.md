@@ -1,9 +1,15 @@
+# Summary
+
+This tutorial covers Docker fundamentals including image management, container
+operations, building custom images, and common Docker commands for containerized
+development
+
 # Docker tutorial
 
 ## Set-up
 
 - Make sure Docker works on your laptop
-  ```
+  ```bash
   > docker version
   Client:
    Cloud integration: v1.0.24
@@ -40,7 +46,7 @@
 
 - Pull ubuntu image, not the latest but the one we use for our tutorials
 
-  ```
+  ```bash
   > docker image pull ubuntu:20.04
   20.04: Pulling from library/ubuntu
   eaead16dc43b: Pull complete
@@ -55,14 +61,14 @@
     no special meaning but just a convention to be the newest
 
 - Now you see your local copy of the image
-  ```
+  ```bash
   > docker images
   REPOSITORY                    TAG                  IMAGE ID       CREATED        SIZE
   ubuntu                        20.04                680e5dfb52c7   2 weeks ago    72.8MB
   ```
 
 - You can pull other images and see that they are downloaded
-  ```
+  ```bash
   > docker image pull alpine:latest
   > docker image pull redis:latest
 
@@ -74,7 +80,7 @@
 - It's very simple to install an entire OS or a tool
 
 - Note that the same image can have multiple tags
-  ```
+  ```bash
   > docker image pull ubuntu
   Using default tag: latest
   latest: Pulling from library/ubuntu
@@ -100,7 +106,7 @@
   ```
 
 - Dangling images
-  ```
+  ```bash
   > docker image ls | grep none
   REPOSITORY     TAG                   IMAGE ID        CREATED     SIZE
   <none>      <none>               16bc6726a51c   41 hours ago   2.33GB
@@ -108,7 +114,7 @@
   ```
 
 - You can see the layers of the image with:
-  ```
+  ```bash
   > docker image inspect ubuntu:latest
   [
       {
@@ -124,7 +130,7 @@
   ```
 
 - You can see how each layer was created with:
-  ```
+  ```bash
   > docker image history ubuntu:20.04
   IMAGE          CREATED       CREATED BY                                      SIZE      COMMENT
   680e5dfb52c7   2 weeks ago   /bin/sh -c #(nop)  CMD ["bash"]                 0B
@@ -159,7 +165,7 @@
 
 - Start, stop, restart a container
 
-  ```
+  ```bash
   # Start.
   > docker container run --name percy -it ubuntu:latest /bin/bash
   # Stop.
@@ -187,12 +193,12 @@
 
 ## Building containers
 
-  ```
+  ```bash
   > echo "flask" >requirements.txt
   ```
 
 - Example Dockerfile
-  ```
+  ```dockerfile
   FROM python:3.8-slim-buster
   LABEL maintainer="gsaggese@umd.edu"
 
@@ -207,7 +213,7 @@
   ```
 
 - Then you can build the image
-  ```
+  ```bash
   > docker build -t test . --progress plain
   #1 [internal] load build definition from Dockerfile
   #1 sha256:d4ee5c5c88ac988faa4fa4b57712c90dd1c6d0cdbd63f8f3eab15568437a2139
@@ -275,70 +281,71 @@
 
 ## Docker Basics
 
-- A docker container is an instance of a _container image_ that runs on your
+- A docker container is an instance of a container image that runs on your
   machine and is managed by Docker
   - A large variety of docker images have been uploaded to
-    [DockerHub](https://hub.docker.com/), that have been created by both the
-    Docker developers and the Docker user community.
+    [DockerHub](https://hub.docker.com/) that have been created by both the
+    Docker developers and the Docker user community
 
-- Each docker user has a certain set of container images stored in his/her
-  machine. Those images are managed by the Docker platform itself. To see the
-  images that are stored in your machine:
-  ```
-  > docker images
-  ```
+- Each docker user has a certain set of container images stored in their
+  machine
+  - Those images are managed by the Docker platform itself
+  - To see the images that are stored in your machine:
+    ```bash
+    > docker images
+    ```
 - Every image is associated with a unique `repository-name`, which can be
   thought of as a readable unique image identifier
 
 ### Managing Containers
 
-- A basic way to _start_ a docker container is:
-  ```
+- A basic way to start a docker container is:
+  ```bash
   > docker run --name my-container -d repository-name
   ```
 
-- The above command starts a container based on the image `repository-name`. If
-  the specific image is _not_ present on your machine, docker automatically
-  `pulls` the image from DockerHub
+- The above command starts a container based on the image `repository-name`
+  - If the specific image is not present on your machine, `docker` automatically
+    pulls the image from DockerHub
 
 - The parameters:
-  - `--name`: Allows you to specify a name for your container; if you don't add
-    this parameter, docker randomly generates a name for you
+  - `--name`: Allows you to specify a name for your container
+    - If you don't add this parameter, `docker` randomly generates a name for you
   - `-d`: Runs the container in the background (stands for "detached")
 
 - Once you start a container in the background, it will keep running until you
-  `stop` it like so:
+  stop it like so:
 
-  ```
+  ```bash
   > docker stop my-container
   ```
 
-- You can `restart` your container by simply running:
+- You can restart your container by simply running:
 
-  ```
+  ```bash
   > docker restart my-container
   ```
 
 - If you are done with a container and want to completely remove it from your
-  system (remember that containers take up non-trivial amounts of disk space!),
-  after `stopping` the container you can run:
-  ```
+  system (containers take up non-trivial amounts of disk space), after stopping
+  the container you can run:
+  ```bash
   > docker rm my-container
   ```
 
 - To see the docker containers that are currently running:
-  ```
+  ```bash
   > docker ps
   ```
 
 - Adding a `-a` flag shows you both the running and stopped containers that are
-  instantiated on your machine.
+  instantiated on your machine
 
 - If something goes wrong, for example the files or data within the container get
-  corrupted and you want to re-initialize the container, you need to `stop`
-  the container, `remove` it, and then re-initialize it from scratch.
+  corrupted and you want to re-initialize the container, you need to stop the
+  container, remove it, and then re-initialize it from scratch
 
-  ```
+  ```bash
   > docker stop my-container
   > docker rm my-container
   > docker run --name my-container -d repository-name
@@ -346,33 +353,34 @@
 
 ### Accessing Containers
 
-- A container is very similar to a virtual machine, viewed at a high level. That
-  means it resembles an independent environment within your machine environment.
-  One good way to run programs within your container is to connect to the
-  container's `bash` shell and run your programs from within the container
-  itself:
+- A container is very similar to a virtual machine, viewed at a high level
+  - It resembles an independent environment within your machine environment
+  - One good way to run programs within your container is to connect to the
+    container's `bash` shell and run your programs from within the container
+    itself:
 
-  ```
-  > docker exec -it my-container bash
-  ```
+    ```bash
+    > docker exec -it my-container bash
+    ```
 
-  - `-it`: Instructs Docker to allocate a pseudo-TTY connected to the container’s
-    `stdin` (standard input); creating an interactive bash shell in the container.
+  - `-it`: Instructs Docker to allocate a pseudo-TTY connected to the container's
+    `stdin` (standard input), creating an interactive bash shell in the container
 
 ### Copying Files into Containers
 
-Since containers have their own independent environment and file system, they
-can only see the files within that file system. In some situations you will want
-to write code in your host machine\'s environment and then run that piece of
-code within the container. To copy files into the container you can:
+- Containers have their own independent environment and file system
+  - They can only see the files within that file system
+  - In some situations you will want to write code in your host machine's
+    environment and then run that piece of code within the container
+  - To copy files into the container you can:
 
-```
-> docker cp file container-name:/path/where/to/copy/file
-```
+    ```bash
+    > docker cp file container-name:/path/where/to/copy/file
+    ```
 
 ### Docker Help
 
 - To find out more about the different docker commands:
-  ```
+  ```bash
   > docker COMMAND --help
   ```

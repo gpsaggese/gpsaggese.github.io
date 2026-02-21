@@ -1,0 +1,734 @@
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 09.5: Kalman Filter}}$$**
+\endgroup
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+**References**:
+
+- AIMA 14: Probabilistic reasoning over time
+- https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python
+
+// /Users/saggese/src/notes1/notes/math.Kalman_and_Bayesian_filters_in_Python.Labbe.2018.txt
+// /Users/saggese/src/notes1/notebooks/Kalman_and_Bayesian_filters_in_python
+// ./notes/math.Kalman_filter.txt
+// ./notebooks/quantopian/quantopian_kalman_filter.ipynb
+// AIMA 14.4 (p. 479)
+
+# Discrete Bayes Filtering
+
+// https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/02-Discrete-Bayes.ipynb
+
+* A Discrete Bayesian 1-D Dog
+::: columns
+:::: {.column width=55%}
+- Dog with sensor
+  - Wanders around offices and halls
+
+- 10 positions in hallway with doors, numbered 0 to 9
+  - Circular hallway: position 0 follows position 9
+  - Door positions: 0, 1, 8
+
+- Sensor reports if dog is in front of door or hall and its movement
+  - Sensor may have noise
+::::
+:::: {.column width=40%}
+![](msml610/lectures_source/figures/bichon_pic.jpg){ height=20%}
+(Nuvolo)
+::::
+:::
+
+- Can we find out where the dog is from consecutive measurements?
+
+
+* You Cannot Trust Either Source Alone
+::: columns
+:::: {.column width=45%}
+
+- **Measurements Alone**
+  - Sensor says "door"
+  - Three door positions: 0, 1, 8
+  - Cannot tell from single measurement which door it is
+::::
+:::: {.column width=45%}
+
+- **Predictions Alone**
+  - Dog moves right repeatedly
+  - Position drifts over time
+  - Uncertainty accumulates; eventually, no idea where the dog is
+::::
+:::
+
+- Both sources of information (prediction and measurements) have limitations,
+  but together they work
+  - **Combine predictions with measurements**
+    - Prediction: _"Based on movement, dog should be around position 4"_
+    - Measurement: _"Sensor says wall"_
+    - Check hallway: Position 4 is a wall
+    - Agreement increases confidence
+  - **After several cycles**
+    - Only one position consistent with entire history
+    - High confidence in dog's location
+
+* Predict: Loses Information
+- **What it does**
+  - _"Dog was at position 3 and moved right 1"_
+  - _"So dog is probably at position 4"_
+  - _"But could be 3 or 5 due to movement error"_
+
+- **Effect on belief**
+  - Shifts distribution to the right
+  - Spreads out probability mass
+  - Uncertainty increases
+
+- **Analogy**: Blurring a photo
+  - Sharp image becomes fuzzy
+  - Information is lost
+
+* Update: Gains Information
+- **What it does**
+  - _"Sensor says door"_
+  - _"Boost probability at all door positions (0, 1, 8)"_
+  - _"Reduce probability at wall positions"_
+
+- **Effect on belief**
+  - Concentrates probability on matching positions
+  - Peaks emerge in distribution
+  - Uncertainty decreases
+
+- **Analogy**: Sharpening a photo
+  - Fuzzy image becomes clearer
+  - Information is gained
+
+* Bayesian Update Algorithm
+
+- **Start with prior belief**
+  $$Pr(\text{position}) = \text{uniform}$$
+  - "Dog could be anywhere"
+
+- **Get evidence** (measurement)
+  $$Pr(\text{door sensor} | \text{position})$$
+  - Likelihood of seeing "door" at each position
+
+- **Update belief** using Bayes' rule
+  $$
+  Pr(\text{position} | \text{door sensor})
+  = \frac{Pr(\text{door sensor} | \text{position}) \cdot Pr(\text{position})}{Pr(\text{door sensor})}
+  $$
+
+- **Posterior becomes next prior**
+  - Cycle repeats with each new measurement
+
+* Bayesian Update Algorithm
+
+```graphviz[width=80%]
+digraph BayesianUpdateAlgo {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    // Node styles
+    x0   [label="x_0", shape=circle, fillcolor="#A6E7F4"];
+    zk   [label="z_k", shape=circle, fillcolor="#A6E7F4"];
+    xhat [label="hat_x_k", shape=circle, fillcolor="#B2E2B2"];
+
+    predict [label="Predict\nStep\n\nUse movement model\nBelief spreads out\n(loses information)", fillcolor="#A6C8F4"];
+    update  [label="Update\nStep\n\nUse measurement\nBelief concentrates\n(gains information)", fillcolor="#C6A6F4"];
+
+    // Force ranks
+    {rank=same; predict; update}
+
+    // Edges
+    x0 -> predict [label=" Prior"];
+    predict -> update [label=" Prior"];
+    update -> predict [label=" Posterior"];
+    predict -> xhat [label=" Posterior"];
+    zk -> update [label=" Measurement"];
+}
+```
+
+* Tutorial
+- `L09_05_01_discrete_bayes_dog.ipynb`
+
+# #############################################################################
+# Unidimensional Kalman Filters
+# #############################################################################
+
+// https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/04-One-Dimensional-Kalman-Filters.ipynb
+
+* Kalman Filter: Interpretations
+- Extension of $g$–$h$ filters
+  - $g$–$h$ uses fixed gains $g,h$ for position and velocity
+  - Kalman filter computes adaptive gain $K_t$ from covariance $P_t$
+  - Handles multidimensional states and general linear systems
+
+- **State space model**
+  - $x_t = A x_{t-1} + w_t$
+  - $y_t = C x_t + v_t$
+  - All quantities are Gaussian with given mean and covariances
+
+- **Bayesian interpretation**
+  - Prior and likelihood Gaussian $\Rightarrow$ posterior Gaussian
+  - Recursively updates mean and covariance
+  - Example: radar tracking of aircraft
+
+- **Orthogonal projection interpretation**
+  - Estimate is projection onto span of observations
+  - $K_t$ minimizes $\EE[\|x_t - \hat{x}_t\|^2]$
+  - Error orthogonal to measurement space (optimal)
+
+* Kalman Filter: Bayesian Interpretation
+- **Kalman filter** can be interpreted as based on Bayes theorem and Gaussians
+
+- The **Bayes theorem** states:
+  $$
+  \text{posterior = normalized(prior $\times$ likelihood)}
+  $$
+- If the _prior_ and the _likelihood_ are Gaussian the _posterior_ is also
+  Gaussian (conjugate prior)
+  - Everything can be represented as Gaussians $\to$ encode PDF in terms of mean
+    and std dev
+  - Updating belief is equivalent to sum and multiplication of Gaussians
+
+- **Algorithm**
+  \begingroup \scriptsize
+  ```python
+  # Create prior (using current estimate and system model).
+  prior = predict(x, process_model)
+
+  # Create likelihood (using measurement).
+  likelihood = gaussian(z, sensor_var)
+
+  # Update belief using prior and likelihood
+  posterior = update(prior, likelihood)
+  ```
+  \endgroup
+
+* Sum of Gaussians
+- Given two independent Gaussians $X$ and $Y$
+  $$
+  \begin{aligned}
+  & X \sim Normal(\mu_1, \sigma_1^2) \\
+  & Y \sim Normal(\mu_2, \sigma_2^2) \\
+  \end{aligned}
+  $$
+
+- The sum $Z = X + Y$ is $Normal(\mu, \sigma^2)$ with:
+  $$
+  \left\{
+  \begin{aligned}
+  & \mu = \mu_1 + \mu_2 \\
+  & \sigma^2 = \sigma_1^2 + \sigma_2^2 \\
+  \end{aligned}
+  \right.
+  $$
+
+- **Interpretation:**
+  - The mean is the sum of the mean (by linearity)
+  - The variance always increases
+
+* Product of Gaussians
+- Given two independent Gaussians $X$ and $Y$
+  $$
+  \begin{aligned}
+  & X \sim Normal(\mu_1, \sigma_1^2) \\
+  & Y \sim Normal(\mu_2, \sigma_2^2) \\
+  \end{aligned}
+  $$
+
+- The product $Z = X \cdot Y$ is $Normal(\mu, \sigma^2)$ with:
+  $$
+  \left\{
+  \begin{aligned}
+  & \mu = \frac{\mu_1 \sigma_2^2 + \mu_2 \sigma_1^2}{\sigma_1^2 + \sigma_2^2} \\
+  & \sigma^2 = \frac{\sigma_1^2 \sigma_2^2}{\sigma_1^2 + \sigma_2^2} \\
+  \end{aligned}
+  \right.
+  $$
+
+- **Interpretation:**
+  - Reduce variance by incorporating more information
+  - If one Gaussian $X$ is narrower (more accurate), result leans towards
+    $X$
+  - If two Gaussians are similar (measures corroborate), result becomes more
+    certain
+
+* Kalman Filter: Classical Representation
+- Typical symbols used in Kalman literature:
+
+  \begingroup \small
+  | **Symbol** | **Meaning** |
+  |--------|----------|
+  | $x$ | State |
+  | $P$ | Variance of state (uncertainty, belief) |
+  | $f()$ | System model |
+  | $Q$ | System model error |
+  | $z$ | Measurement |
+  | $R$ | Measurement noise |
+  \endgroup
+
+- **Initialization**
+  - Initialize state of filter: $x = x_0$
+  - Initialize belief in the state: $P = P_0$
+
+* Kalman Pseudo-Algorithm
+
+- **Predict stage**
+  \begingroup \small
+  ```python
+  def predict(posterior, movement):
+    # Prior belief about state (mean x, variance P).
+    x, P = posterior
+    # System model: movement (mean dx) and its uncertainty Q.
+    dx, Q = movement
+    # Use system model to predict next state: x = f(x)
+    x = x + dx
+    # Adjust belief to account for uncertainty in prediction.
+    P = P + Q
+    return gaussian(x, P)
+  ```
+  \endgroup
+
+* Kalman Pseudo-Algorithm
+
+- **Update stage**
+  \begingroup \small
+  ```python
+  def update(prior, measurement):
+    # Prior belief about state (mean x, variance P)
+    x, P = prior
+    # Measurement z and belief about its accuracy R.
+    z, R = measurement
+    # Compute residual between estimated state and measurement.
+    y = z - x
+    # Compute Kalman gain K from prediction uncertainty P and
+    # measurement noise R.
+    K = P / (P + R)
+    # Update state estimate.
+    x = x + K * y
+    # Update belief (uncertainty).
+    P = (1 - K) * P
+    return gaussian(x, P)
+  ```
+  \endgroup
+
+- The Bayesian update is not apparent and it's replaced by Kalman Gain
+
+* Kalman Gain
+- Assume that:
+  - Prior prediction $x \sim Normal(\mu_x,\sigma_x^2)$
+  - Measurement $z \sim Normal(\mu_z,\sigma_z^2)$
+
+- The mean of the posterior (using the multiplication expression) is:
+  $$
+  \mu
+  = \frac{\sigma_x^2 \mu_z + \sigma_z^2 \mu_x}{\sigma_x^2 + \sigma_z^2}
+  = \frac{\sigma_x^2}{\sigma_x^2 + \sigma_z^2} \mu_z +
+    \frac{\sigma_z^2}{\sigma_x^2 + \sigma_z^2} \mu_x
+  = K \mu_z + (1 - K) \mu_x
+  $$
+
+- The Kalman Gain $K=\dfrac{\sigma_x^2}{\sigma_x^2+\sigma_z^2}$:
+  - Is the scaling term that mixes the prediction and the measurement
+  - Depends on the ratio of uncertainty of prior and measurement
+
+* Tutorial
+
+- `L09_05_02_univariate_kalman_filter.ipynb`
+
+# ##############################################################################
+# Multivariate Kalman Filters
+# ##############################################################################
+
+// https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/05-Multivariate-Gaussians.ipynb
+// https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/06-Multivariate-Kalman-Filters.ipynb
+
+* Multivariate State
+- Often the state variable is multivariate, e.g.,
+  - E.g., position and velocity of a dog (probably correlated)
+  - E.g., height and weight of an adult (correlated)
+
+- **Variance** is a measure of how a population varies, e.g.,
+  - Variance = 0 means constant
+  - Large variance means lots of variation
+
+- **Covariance** are correlated variances
+  - E.g., height and weight are generally positively correlated
+
+- **Covariance matrix**
+  - The diagonal contains the variance for each variable
+  - The off-diagonal elements contain the covariance between $i$ and $j$
+    variables
+  - The covariance matrix is symmetric
+
+- Correlation allows prediction
+  - E.g., "as winter comes you predict you will spend more on heating your
+    house"
+
+* Multivariate Gaussian
+- The marginal of a multivariate Gaussian is 1-d Gaussian
+- Consider a contour plot (i.e., the intersection of a 2-d Gaussian
+  $z = f(x, y)$ with a plane $z = c$)
+  - The contour plot is always an ellipses
+
+* Multiplying Two Multivariate Gaussians
+- Given two multivariate Gaussians $\sim Normal(\vmu_i, \mSigma_i)$
+- The product of the Gaussians is still Gaussian $\sim Normal(\vmu, \mSigma)$
+  $$
+  \begin{aligned}
+  \vmu &= \mSigma_2 (\mSigma_1 + \mSigma_2)^{-1} \vmu_1 +
+    \mSigma_1 (\mSigma_1 + \mSigma_2)^{-1} \vmu_2 \\
+  \mSigma &= \mSigma_1 (\mSigma_1 + \mSigma_2)^{-1} \mSigma_2 \\
+  \end{aligned}
+  $$
+- **Note**: this is a generalization of the 1-d case to multivariate
+
+  $$
+  \begin{aligned}
+  & \mu = \frac{\mu_1 \sigma_2^2 + \mu_2 \sigma_1^2}{\sigma_1^2 + \sigma_2^2} \\
+  & \sigma^2 = \frac{\sigma_1^2 \sigma_2^2}{\sigma_1^2 + \sigma_2^2} \\
+  \end{aligned}
+  $$
+
+  replacing:
+  - $\sigma^2$ with covariance matrix $\mSigma$
+  - Division with matrix inversion
+
+* Core Insight: Power Comes from Correlated Structure
+- Real physical systems couple variables through dynamics
+  - Position evolves according to $x_{t+1} = x_t + \dot{x}_t \Delta t$
+  - A change in $\dot{x}$ necessarily changes future $x$
+
+- Correlation constrains what combinations are plausible
+  - Large velocity with small position change is unlikely
+  - Bayesian update favors consistent $(x, \dot{x})$ pairs
+
+- No correlation means no information gain
+  - If velocity comes from a different aircraft, combining it with position adds
+    nothing
+  - Mathematically, zero covariance implies no reduction in uncertainty
+
+- Hidden but correlated variables create extra constraints
+  - Velocity is not measured, yet strongly linked to position
+  - Each measurement of $x$ indirectly informs $\dot{x}$
+
+- Uncertainty shrinks because we intersect constraints
+  - Measurement constrains $x$
+  - Dynamics constrain relationship between $x$ and $\dot{x}$
+  - Posterior covariance reflects both constraints
+  - Multivariate filter exploits structure of motion
+  - Structure converts noisy data into strong predictions
+
+- Repeated updates amplify the effect
+  - Each cycle tightens the $(x, \dot{x})$ relationship
+  - Velocity estimate stabilizes
+  - Position variance becomes much smaller than measurement variance
+
+* Multivariate Filtering
+- Covariance structure helps improve the estimate, e.g.,
+  - You know an airplane direction can't change quickly
+  - Knowing an approximate value for the velocity helps constrain possible next
+    positions
+
+- State variables can either be:
+  - observed variables: directly measured by a sensor
+  - hidden variables: inferred from the observed variables
+
+- **Example: airplane**
+  - You are tracking a plane moving in a direction (1-d problem)
+  - At time 1, you are fairly certain about the position $x=0$, but you don't
+    know the velocity
+    - You plot position and velocity on an x-y plane
+    - The covariance matrix between position and velocity is narrow and tall
+    - It is narrow on the x-axis since you know that the position is around
+      $x=0$
+    - It is tall on the y-axis because of your lack of knowledge about velocity
+  - After 1 sec, you get a position update of $x=5$
+    - You can infer that the velocity is 5/s
+    - The covariance matrix is then stretched diagonally
+
+* Notation
+- A Bayesian notation $a | b$ means _"$a$ given the evidence of $b$"_
+  - The prior is $\hat{\vx}_{t|t-1}$, since you know only the information at
+    time $t-1$, i.e., the previous state
+  - The posterior is $\hat{\vx}_{t|t}$, since you know all the information at
+    time $t$, i.e., the measurement
+
+- **A simpler notation:**
+  - Indicate the "prior" version of the variables (i.e., after the system
+    update) with an overline (E.g., $\overline{x}$, $\overline{\bx}$,
+    $\overline{\bX}$)
+  - Omit the indices $t + 1$ and $t$ and use an assignment notation
+    (representing "update in place" of a variable):
+    $$
+    x = x + 1
+    $$
+    instead of the mathematical notation using a different variable for each
+    time step:
+    $$
+    x_{t+1} = x_t + 1
+    $$
+  - With this notation:
+    - The prior is $\overline{x} = \hat{x}_{t|t-1}$
+    - The posterior is $x = \hat{x}_{t|t}$
+
+* Multivariate Kalman Filter
+
+- With the previous notation:
+  - State update: $\overline{\bx} = \bF \bx + \bB \bu$
+  - State uncertainty: $\overline{\bP} = \bF \bP \bF^T + \bQ$
+  - Residual: $\by = \bz - \bH \overline{\bx}$
+  - Kalman gain:
+    $\bK = \overline{\bP} \bH^T (\bH \overline{\bP} \bH^T + \bR)^{-1}$
+  - Updated state: $\bx = \overline{\bx} + \bK \by$
+  - Update state uncertainty: $\bP = (\bI - \bK \bH) \overline{\bP}$
+
+- Where
+  - $\bx$ and $\bP$ are the state mean and covariance
+  - $\bF$ is the state transition function
+  - $\bQ$ is the system error (i.e., the noise in the model assessment)
+  - $\bB$ and $\bu$ model the control inputs to the system
+  - $\bH$ is the measurement function
+  - $\bz$ and $\bR$ are the measurement mean and covariance
+  - $\by$ is the residual
+  - $\bK$ is the Kalman gain
+
+- Use the system model to predict the next state
+  - When we multiply $\bF$ to $\bx$ we get the prior (i.e., the state before
+    seeing any measurement)
+- Form an estimate between the prior and the measurement
+
+* From Univariate to Multivariate Kalman Filter
+
+- Let's compare
+
+\begingroup \scriptsize
+\begin{tabular}{|c|c|c|c|}
+\hline
+  \textbf{Definition} &
+  \textbf{Univariate (Bayesian)} &
+  \textbf{Univariate (Kalman)} &
+  \textbf{Multivariate (Kalman)} \\
+\hline
+\hline
+  State update &
+  $\overline{\mu} = \mu + \mu_{f}$ &
+  $\overline{x} = x + dx$ &
+  $\overline{\bx} = \bF \bx + \bB \bu$ \\
+
+\hline
+  State uncertainty &
+  $\overline{\sigma}^2 = \sigma^2 + \sigma_f^2$ &
+  $\overline{P} = P + Q$ &
+  $\overline{\bP} = \bF \bP \bF^T + \bQ$ \\
+
+\hline
+  Residual &
+  &
+  $y = z - \overline{x}$ &
+  $\by = \bz - \bH \overline{\bx}$ \\
+
+\hline
+  Kalman gain &
+  &
+  $K = \frac{\overline{P}}{\overline{P} + R}$ &
+  $\bK = \overline{\bP} \bH^T (\bH \overline{\bP} \bH^T + \bR)^{-1}$ \\
+
+\hline
+  Updated state &
+  $\hat{\mu}
+  = \frac{\overline{\sigma}^2 \mu_z + \sigma_z^2 \overline{\mu}}
+    {\overline{\sigma}^2 + \sigma_z^2}$ &
+  $x = \overline{x} + K y$ &
+  $\bx = \overline{\bx} + \bK \by$ \\
+
+\hline
+  Upd. state uncertainty &
+  $\sigma^2
+  = \frac{\overline{\sigma}^2 \sigma_z^2}{\overline{\sigma}^2 + \sigma_z^2}$ &
+  $P = (1 - K) \overline{P}$ &
+  $\bP = (\bI - \bK \bH) \overline{\bP}$ \\
+\hline
+\end{tabular}
+\endgroup
+
+* Designing a Kalman filter
+
+- The designer of the model needs to design:
+  - The form of the state $\vx$ and $\mP$
+  - The system model $\mF$ and $\mQ$
+  - The measurement $\vz$ and $\mR$
+  - The measurement function $\mH$
+  - The control inputs $\mB$ and $\vu$ if there are control inputs
+
+* Algorithm
+
+**Initialization**
+- Initialize the state of the filter
+- Initialize our belief in the state
+
+**Predict**
+- Use process model to predict state at the next time step
+- Adjust belief to account for the uncertainty in prediction    
+
+**Update**
+- Get a measurement and associated belief about its accuracy
+- Compute residual between estimated state and measurement
+- Compute scaling factor based on whether the measurement or prediction is more
+  accurate
+- Set state between the prediction and measurement based on scaling factor
+- Update belief in the state based on how certain we are in the measurement
+
+* Tutorial
+- `L09_05_03_multivariate_kalman_filter.ipynb`
+
+## #############################################################################
+## Non-Linear Filtering
+## #############################################################################
+
+* Optimality
+- **Assumptions:**
+  - Everything is linear
+  - System and sensor noise is Gaussian
+- Under these assumptions, the Kalman filter is optimal in a least square sense
+
+- The Kalman filter is a mathematical model of the world
+  - The output is only as accurate as the model of the world
+
+* The World Is Non-Linear
+- The Kalman filter uses linear equations and can only handle linear problems
+
+- **The world is non-linear:**
+  - System model can be non-linear:
+    - Many physical systems are described by non-linear differential equations
+    - E.g., a ball flying through air is affected by drag, leading to non-linear
+      behaviors
+  - Measurements can be non-linear:
+    - To measure the height on a plane, you can measure the distance of the
+      plane from the radar. Given the Pythagorean theorem, you get:
+      $$
+      x = \sqrt{\text{dist}^2 - \text{height}^2}
+      $$
+
+- Rarely does a physical system have equations that can be solved analytically
+
+* Extended Kalman Filter
+- Aka EKF
+- EKF is a nonlinear version of the Kalman filter
+  - Linearize the differential equations to compute the Jacobian (i.e., matrix
+    of partial derivatives) at the point of the current estimate
+  - Used for estimating the state of a nonlinear dynamic system
+
+- Pros
+  - Use the linear Kalman machinery
+- Cons:
+  - Analytical solution:
+    - Difficult or impossible
+  - Numerical solution:
+    - Expensive computationally
+    - Errors can compound forcing the filter to diverge (unstable)
+
+* Unscented Kalman Filter
+- Aka UKF
+- It is superior to EKF in almost every way
+
+* Intuition of Sampling Techniques
+- Assume you have a distribution $X$ and a non-linearity $\phi$
+
+- For every measurement:
+  - Generate many points from $X$
+  - Pass them through the non-linear function $\phi$
+  - Approximate the result (E.g., compute mean and variance)
+
+- **Problem**:
+  - "How many points are needed to build an accurate output distribution"?
+  - Even if $n$=500,000 points are enough for 1 dimension, for $k$ dimensions
+    you might need $n^k$ points (curse of dimensionality)
+
+* Unscented Transform
+- Unscented transform estimates the result of applying a non-linear
+  transformation to a probability distribution characterized by a finite number
+  of moments (e.g., mean and covariance)
+  - E.g., compute the non-linear transform of a distribution, given mean and
+    covariance estimate
+  - Called "unscented" since "it doesn't stink."
+
+- **Intuition**
+  - Given a PDF $C$ with mean $\vmu$ and covariance $\mSigma$
+  - Encode mean and covariance in a set of points (sigma points) that represent
+    a discrete PMF $D$ with the same mean $\vmu$ and covariance $\mSigma$
+  - Propagate the discrete PMF $D$ by applying the non-linear function $\phi$ to
+    each point of the PMF
+  - The mean and covariance of $\phi(D)$ approximate the mean and covariance of
+    $\phi(C)$
+
+* Unscented Transform: 1D Case
+- The idea is that we need 3 sigma points for a 1-d Gaussian
+  - One point for the mean
+  - Two points around the mean
+- Each point has a weight
+
+* Unscented Transform: Sigma Points
+- Consider a distribution $F$ and a non-linearity $\phi$
+- There are algorithms to generate points and weights (given the mean and
+  covariance of $F$) to evaluate mean and covariance of $F$ transformed through
+  $\phi$
+
+- In $n$ dimensions, we need $2n + 1$ points $\vx_i$ and weights $w_i^m, w_i^c$
+
+  $$
+  \begin{aligned}
+  \sum_i w_i^m &= 1 \\
+  \sum_i w_i^c &= 1 \\
+  \mu(\phi) &= \sum_i w_i^m \phi(\vx_i) \\
+  \Sigma(\phi) &= \sum_i w_i^c (\phi(\vx_i) - \mu(\phi))(\phi(\vx_i) - \mu(\phi))^T \\
+  \end{aligned}
+  $$
+
+- Note that selecting the sigma points has not a single solution
+
+* Monte Carlo Sampling
+- Use a finite number of randomly sampled points to represent the problem
+- Run the points through the transformation (e.g., non-linear function / system
+  you are modeling)
+- Compute the results on the transformed points
+
+* Particle Filters
+- Aka Sequential Monte Carlo (SMC) methods
+- = Monte Carlo algorithms to solve problems in Bayesian statistical inference
+  (e.g., in filtering problems)
+- The goal is to compute posterior distributions of the states, given some data
+
+* Generic particle filter algorithm
+1) Randomly generate particle
+  - Particles have all state variable that needs to be estimated (e.g.,
+    position, velocity)
+  - Each particle has a weight representing the probability that it represents
+    the actual state of the system
+2) Predict next state of the particles
+3) Update weighting
+  - Update the weighting of the particles based on the measurements
+  - Particles that match closely the measurements are weighted higher
+4) Resample
+  - Discard highly improbable particle
+5) Compute estimate
+  - Compute weighted mean and covariance of the particles to get an estimate of
+    the state and uncertainty

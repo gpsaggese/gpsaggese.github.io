@@ -15,11 +15,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-# TODO(ai_gp): Use the functions from import msml610_utils as mtumsuti
-# to build widgets.
-from ipywidgets import interact, FloatSlider, IntSlider, widgets, fixed
+import ipywidgets
+from IPython.display import display
 
 import helpers.hdbg as hdbg
+import msml610_utils as mtumsuti
 
 _LOG = logging.getLogger(__name__)
 
@@ -318,14 +318,14 @@ def cell3_plot_binary_entropy_interactive(
     # Wrap text content to ensure consistent dimensions.
     text_content = (
         f"Information Content:\n"
-        f"  • Outcome 0: {info_0:.4f} bits\n"
-        f"  • Outcome 1: {info_1:.4f} bits\n\n"
+        f"  - Outcome 0: {info_0:.4f} bits\n"
+        f"  - Outcome 1: {info_1:.4f} bits\n\n"
         f"Entropy:\n"
-        f"  • Expected information:\n"
+        f"  - Expected information:\n"
         f"    {binary_entropy(p):.4f} bits\n\n"
         f"Samples:\n"
-        f"  • Drawn: {n}\n"
-        f"  • Outcome 1 appeared:\n"
+        f"  - Drawn: {n}\n"
+        f"  - Outcome 1 appeared:\n"
         f"    {samples.sum()} times\n"
         f"    ({samples.sum() / n:.2%})"
     )
@@ -362,19 +362,26 @@ def cell3_create_binary_entropy_widget() -> None:
     - Fixed number of samples n = 100
     - Fixed figure size
     """
-    interact(
-        cell3_plot_binary_entropy_interactive,
-        p=FloatSlider(
-            min=0.00,
-            max=1.00,
-            step=0.01,
-            value=0.5,
-            description="Probability p:",
-            style={"description_width": "initial"},
-        ),
-        n=fixed(100),
-        figsize=fixed(None),
+    p_init = 0.5
+    # Create slider for probability p.
+    p_slider, p_box = mtumsuti.build_widget_control(
+        name="p",
+        description="Probability p",
+        min_val=0.00,
+        max_val=1.00,
+        step=0.01,
+        initial_value=p_init,
+        is_float=True,
     )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda p: cell3_plot_binary_entropy_interactive(
+            p=p, n=100, figsize=None
+        ),
+        {"p": p_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([p_box, output]))
 
 
 def cell3_generate_binary_entropy_animation() -> None:
@@ -384,10 +391,8 @@ def cell3_generate_binary_entropy_animation() -> None:
     This function creates a series of frames showing how binary entropy
     changes as probability p varies from 0 to 1.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="p",
         const_variable="n",
@@ -395,9 +400,9 @@ def cell3_generate_binary_entropy_animation() -> None:
         n_steps=11,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Binary_Entropy_video"
+    dst_dir = "./figures/L94_Binary_Entropy_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell3_plot_binary_entropy_interactive,
         values,
         dst_dir,
@@ -405,6 +410,55 @@ def cell3_generate_binary_entropy_animation() -> None:
         figsize=(20, 5),
         dpi=150,
     )
+
+
+# #############################################################################
+# Cell 6: Mutual Information
+# #############################################################################
+
+
+def calculate_mutual_information(joint_prob: np.ndarray) -> float:
+    r"""
+    Calculate mutual information I(X;Y) from joint probability distribution.
+
+    Mutual Information $I(X;Y)$ measures how much knowing one variable
+    reduces uncertainty about the other:
+
+    $$I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X,Y)$$
+
+    :param joint_prob: 2D array of joint probabilities p(x,y)
+    :return: Mutual information in bits
+    """
+    joint_prob = np.array(joint_prob)
+    # Calculate marginals.
+    p_x = joint_prob.sum(axis=1)
+    p_y = joint_prob.sum(axis=0)
+    # Calculate entropies.
+    h_x = cell1_calculate_entropy(p_x)
+    h_y = cell1_calculate_entropy(p_y)
+    h_xy = calculate_joint_entropy(joint_prob)
+    # Mutual information.
+    mi = h_x + h_y - h_xy
+    return mi
+
+
+def create_correlated_joint_distribution(
+    *, correlation: float = 0.5
+) -> np.ndarray:
+    """
+    Create a 2x2 joint distribution with specified correlation.
+
+    :param correlation: Correlation strength (0=independent, 1=perfectly
+        correlated)
+    :return: 2x2 joint probability matrix
+    """
+    # Create joint distribution with correlation.
+    p11 = 0.25 + correlation * 0.25
+    p00 = 0.25 + correlation * 0.25
+    p10 = 0.25 - correlation * 0.25
+    p01 = 0.25 - correlation * 0.25
+    joint_prob = np.array([[p00, p01], [p10, p11]])
+    return joint_prob
 
 
 # #############################################################################
@@ -563,9 +617,9 @@ def cell4_plot_joint_entropy_interactive(
     # Add explanation text.
     text_content = (
         f"Entropy Values:\n"
-        f"  • H(X) = {h_x:.4f} bits\n"
-        f"  • H(Y) = {h_y:.4f} bits\n"
-        f"  • H(X,Y) = {h_xy:.4f} bits\n\n"
+        f"  - H(X) = {h_x:.4f} bits\n"
+        f"  - H(Y) = {h_y:.4f} bits\n"
+        f"  - H(X,Y) = {h_xy:.4f} bits\n\n"
         f"Interpretation:\n"
         f"  {wrapped_interpretation}\n\n"
         f"Verification:\n"
@@ -608,26 +662,37 @@ def cell4_create_joint_entropy_widget() -> None:
     - Slider for sample size (10 to 500)
     - Fixed figure size
     """
-    interact(
-        cell4_plot_joint_entropy_interactive,
-        dependence=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Dependence:",
-            style={"description_width": "initial"},
-        ),
-        n_samples=IntSlider(
-            min=10,
-            max=500,
-            step=10,
-            value=300,
-            description="Sample size:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    dependence_init = 0.5
+    n_samples_init = 300
+    # Create slider for dependence.
+    dependence_slider, dependence_box = mtumsuti.build_widget_control(
+        name="dependence",
+        description="Dependence",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=dependence_init,
+        is_float=True,
     )
+    # Create slider for sample size.
+    n_samples_slider, n_samples_box = mtumsuti.build_widget_control(
+        name="n_samples",
+        description="Sample size",
+        min_val=10,
+        max_val=500,
+        step=10,
+        initial_value=n_samples_init,
+        is_float=False,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda dependence, n_samples: cell4_plot_joint_entropy_interactive(
+            dependence=dependence, n_samples=n_samples, figsize=None
+        ),
+        {"dependence": dependence_slider, "n_samples": n_samples_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([dependence_box, n_samples_box, output]))
 
 
 def cell4_generate_joint_entropy_animation() -> None:
@@ -637,10 +702,8 @@ def cell4_generate_joint_entropy_animation() -> None:
     This function creates a series of frames showing how joint entropy
     changes as dependence between variables varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="dependence",
         const_variable="n_samples",
@@ -648,9 +711,9 @@ def cell4_generate_joint_entropy_animation() -> None:
         n_steps=11,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Joint_Entropy_video"
+    dst_dir = "./figures/L94_Joint_Entropy_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell4_plot_joint_entropy_interactive,
         values,
         dst_dir,
@@ -898,18 +961,26 @@ def cell5_create_conditional_entropy_widget() -> None:
     - Slider for dependence (0.0 to 1.0)
     - Fixed figure size
     """
-    interact(
-        cell5_plot_conditional_entropy_interactive,
-        dependence=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Dependence:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    dependence_init = 0.5
+    # Create slider for dependence.
+    dependence_slider, dependence_box = mtumsuti.build_widget_control(
+        name="dependence",
+        description="Dependence",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=dependence_init,
+        is_float=True,
     )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda dependence: cell5_plot_conditional_entropy_interactive(
+            dependence=dependence, figsize=None
+        ),
+        {"dependence": dependence_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([dependence_box, output]))
 
 
 def cell5_generate_conditional_entropy_animation() -> None:
@@ -919,18 +990,16 @@ def cell5_generate_conditional_entropy_animation() -> None:
     This function creates a series of frames showing how conditional entropy
     changes as dependence between variables varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="dependence",
         n_steps=11,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Conditional_Entropy_video"
+    dst_dir = "./figures/L94_Conditional_Entropy_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell5_plot_conditional_entropy_interactive,
         values,
         dst_dir,
@@ -938,55 +1007,6 @@ def cell5_generate_conditional_entropy_animation() -> None:
         figsize=(20, 5),
         dpi=150,
     )
-
-
-# #############################################################################
-# Cell 6: Mutual Information
-# #############################################################################
-
-
-def calculate_mutual_information(joint_prob: np.ndarray) -> float:
-    r"""
-    Calculate mutual information I(X;Y) from joint probability distribution.
-
-    Mutual Information $I(X;Y)$ measures how much knowing one variable
-    reduces uncertainty about the other:
-
-    $$I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X,Y)$$
-
-    :param joint_prob: 2D array of joint probabilities p(x,y)
-    :return: Mutual information in bits
-    """
-    joint_prob = np.array(joint_prob)
-    # Calculate marginals.
-    p_x = joint_prob.sum(axis=1)
-    p_y = joint_prob.sum(axis=0)
-    # Calculate entropies.
-    h_x = cell1_calculate_entropy(p_x)
-    h_y = cell1_calculate_entropy(p_y)
-    h_xy = calculate_joint_entropy(joint_prob)
-    # Mutual information.
-    mi = h_x + h_y - h_xy
-    return mi
-
-
-def create_correlated_joint_distribution(
-    *, correlation: float = 0.5
-) -> np.ndarray:
-    """
-    Create a 2x2 joint distribution with specified correlation.
-
-    :param correlation: Correlation strength (0=independent, 1=perfectly
-        correlated)
-    :return: 2x2 joint probability matrix
-    """
-    # Create joint distribution with correlation.
-    p11 = 0.25 + correlation * 0.25
-    p00 = 0.25 + correlation * 0.25
-    p10 = 0.25 - correlation * 0.25
-    p01 = 0.25 - correlation * 0.25
-    joint_prob = np.array([[p00, p01], [p10, p11]])
-    return joint_prob
 
 
 def visualize_information_decomposition(joint_prob: np.ndarray) -> None:
@@ -1600,24 +1620,34 @@ def cell6_create_mutual_information_venn_widget() -> None:
     - Dropdown for scenario selection (Binary, Weather)
     - Fixed figure size
     """
-    interact(
-        cell6_plot_mutual_information_venn_interactive,
-        dependence=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Dependence:",
-            style={"description_width": "initial"},
-        ),
-        scenario=widgets.Dropdown(
-            options=["Binary", "Weather"],
-            value="Binary",
-            description="Scenario:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    dependence_init = 0.5
+    # Create slider for dependence.
+    dependence_slider, dependence_box = mtumsuti.build_widget_control(
+        name="dependence",
+        description="Dependence",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=dependence_init,
+        is_float=True,
     )
+    # Create dropdown for scenario selection.
+    scenario_dropdown = ipywidgets.Dropdown(
+        options=["Binary", "Weather"],
+        value="Binary",
+        description="Scenario:",
+        style={"description_width": "initial"},
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda dependence,
+        scenario: cell6_plot_mutual_information_venn_interactive(
+            dependence=dependence, scenario=scenario, figsize=None
+        ),
+        {"dependence": dependence_slider, "scenario": scenario_dropdown},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([dependence_box, scenario_dropdown, output]))
 
 
 def cell6_create_mutual_info_correlation_widget() -> None:
@@ -1632,18 +1662,26 @@ def cell6_create_mutual_info_correlation_widget() -> None:
     - Slider for correlation (0.0 to 1.0)
     - Fixed figure size
     """
-    interact(
-        cell6_plot_mutual_info_interactive,
-        correlation=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.5,
-            description="Correlation:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    correlation_init = 0.5
+    # Create slider for correlation.
+    correlation_slider, correlation_box = mtumsuti.build_widget_control(
+        name="correlation",
+        description="Correlation",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=correlation_init,
+        is_float=True,
     )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda correlation: cell6_plot_mutual_info_interactive(
+            correlation=correlation, figsize=None
+        ),
+        {"correlation": correlation_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([correlation_box, output]))
 
 
 def cell6_generate_mutual_info_venn_binary_animation() -> None:
@@ -1653,19 +1691,17 @@ def cell6_generate_mutual_info_venn_binary_animation() -> None:
     This function creates a series of frames showing how mutual information
     is represented as a Venn diagram for binary variables as dependence varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="dependence",
         n_steps=11,
         scenario="Binary",
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Mutual_Info1_video"
+    dst_dir = "./figures/L94_Mutual_Info1_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell6_plot_mutual_information_venn_interactive,
         values,
         dst_dir,
@@ -1682,19 +1718,17 @@ def cell6_generate_mutual_info_venn_weather_animation() -> None:
     This function creates a series of frames showing how mutual information
     is represented as a Venn diagram for weather variables as dependence varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="dependence",
         n_steps=11,
         scenario="Weather",
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Mutual_Info2_video"
+    dst_dir = "./figures/L94_Mutual_Info2_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell6_plot_mutual_information_venn_interactive,
         values,
         dst_dir,
@@ -1711,18 +1745,16 @@ def cell6_generate_mutual_info_correlation_animation() -> None:
     This function creates a series of frames showing how mutual information
     changes with correlation between continuous variables.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="correlation",
         n_steps=11,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Mutual_Info_Correlation_video"
+    dst_dir = "./figures/L94_Mutual_Info_Correlation_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell6_plot_mutual_info_interactive,
         values,
         dst_dir,
@@ -2090,26 +2122,37 @@ def cell7_create_kl_divergence_widget() -> None:
     - Slider for Q(outcome=1) (0.05 to 0.95)
     - Fixed figure size
     """
-    interact(
-        cell7_plot_kl_divergence_interactive,
-        p1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.7,
-            description="P(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        q1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.5,
-            description="Q(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    p1_init = 0.7
+    q1_init = 0.5
+    # Create slider for P(outcome=1).
+    p1_slider, p1_box = mtumsuti.build_widget_control(
+        name="p1",
+        description="P(outcome=1)",
+        min_val=0.05,
+        max_val=0.95,
+        step=0.05,
+        initial_value=p1_init,
+        is_float=True,
     )
+    # Create slider for Q(outcome=1).
+    q1_slider, q1_box = mtumsuti.build_widget_control(
+        name="q1",
+        description="Q(outcome=1)",
+        min_val=0.05,
+        max_val=0.95,
+        step=0.05,
+        initial_value=q1_init,
+        is_float=True,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda p1, q1: cell7_plot_kl_divergence_interactive(
+            p1=p1, q1=q1, figsize=None
+        ),
+        {"p1": p1_slider, "q1": q1_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([p1_box, q1_box, output]))
 
 
 def cell7_generate_kl_divergence_animation() -> None:
@@ -2119,11 +2162,9 @@ def cell7_generate_kl_divergence_animation() -> None:
     This function creates a series of frames showing how KL divergence changes
     as the approximating distribution Q varies while true distribution P is fixed.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     # Fix true distribution P at p1=0.7, vary approximating distribution Q.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="q1",
         const_variable="p1",
@@ -2133,9 +2174,9 @@ def cell7_generate_kl_divergence_animation() -> None:
         sweep_max=0.95,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_KL_Divergence_video"
+    dst_dir = "./figures/L94_KL_Divergence_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell7_plot_kl_divergence_interactive,
         values,
         dst_dir,
@@ -2396,26 +2437,37 @@ def cell8_create_cross_entropy_widget() -> None:
     - Slider for Q(outcome=1) (0.05 to 0.95)
     - Fixed figure size
     """
-    interact(
-        cell8_plot_cross_entropy_interactive,
-        p1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.7,
-            description="P(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        q1=FloatSlider(
-            min=0.05,
-            max=0.95,
-            step=0.05,
-            value=0.5,
-            description="Q(outcome=1):",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    p1_init = 0.7
+    q1_init = 0.5
+    # Create slider for P(outcome=1).
+    p1_slider, p1_box = mtumsuti.build_widget_control(
+        name="p1",
+        description="P(outcome=1)",
+        min_val=0.05,
+        max_val=0.95,
+        step=0.05,
+        initial_value=p1_init,
+        is_float=True,
     )
+    # Create slider for Q(outcome=1).
+    q1_slider, q1_box = mtumsuti.build_widget_control(
+        name="q1",
+        description="Q(outcome=1)",
+        min_val=0.05,
+        max_val=0.95,
+        step=0.05,
+        initial_value=q1_init,
+        is_float=True,
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda p1, q1: cell8_plot_cross_entropy_interactive(
+            p1=p1, q1=q1, figsize=None
+        ),
+        {"p1": p1_slider, "q1": q1_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([p1_box, q1_box, output]))
 
 
 def cell8_generate_cross_entropy_animation() -> None:
@@ -2425,11 +2477,10 @@ def cell8_generate_cross_entropy_animation() -> None:
     This function creates a series of frames showing how cross-entropy changes
     as the model distribution Q varies while true distribution P is fixed.
     """
-    import msml610_utils as ut
 
     # Generate animation values.
     # Fix true distribution P at p1=0.7, vary model distribution Q.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="q1",
         const_variable="p1",
@@ -2439,9 +2490,9 @@ def cell8_generate_cross_entropy_animation() -> None:
         sweep_max=0.95,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Cross_Entropy_video"
+    dst_dir = "./figures/L94_Cross_Entropy_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell8_plot_cross_entropy_interactive,
         values,
         dst_dir,
@@ -2980,24 +3031,34 @@ def cell9_create_data_processing_inequality_widget() -> None:
     - Dropdown for scenario selection (Compression, Quantization, Binary)
     - Fixed figure size
     """
-    interact(
-        cell9_plot_data_processing_inequality_interactive,
-        noise_level=FloatSlider(
-            min=0.0,
-            max=1.0,
-            step=0.05,
-            value=0.2,
-            description="Noise Level:",
-            style={"description_width": "initial"},
-        ),
-        scenario=widgets.Dropdown(
-            options=["Compression", "Quantization", "Binary"],
-            value="Compression",
-            description="Scenario:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    noise_level_init = 0.2
+    # Create slider for noise level.
+    noise_level_slider, noise_level_box = mtumsuti.build_widget_control(
+        name="noise_level",
+        description="Noise Level",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.05,
+        initial_value=noise_level_init,
+        is_float=True,
     )
+    # Create dropdown for scenario selection.
+    scenario_dropdown = ipywidgets.Dropdown(
+        options=["Compression", "Quantization", "Binary"],
+        value="Compression",
+        description="Scenario:",
+        style={"description_width": "initial"},
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda noise_level,
+        scenario: cell9_plot_data_processing_inequality_interactive(
+            noise_level=noise_level, scenario=scenario, figsize=None
+        ),
+        {"noise_level": noise_level_slider, "scenario": scenario_dropdown},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([noise_level_box, scenario_dropdown, output]))
 
 
 def cell9_generate_data_processing_inequality_animation() -> None:
@@ -3007,19 +3068,17 @@ def cell9_generate_data_processing_inequality_animation() -> None:
     This function creates a series of frames showing how information degrades
     through successive processing stages as noise level varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="noise_level",
         n_steps=21,
         scenario="Compression",
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Data_Processing_Inequality_video"
+    dst_dir = "./figures/L94_Data_Processing_Inequality_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell9_plot_data_processing_inequality_interactive,
         values,
         dst_dir,
@@ -3296,10 +3355,10 @@ def cell10_plot_mdl_interactive(
         f"Model Status: {status}\n"
         f"{'=' * 30}\n\n"
         f"Current Model (degree {degree}):\n"
-        f"  • Parameters: {n_params}\n"
-        f"  • L(H) = {mdl_current['model_cost']:.2f} bits\n"
-        f"  • L(D|H) = {mdl_current['data_cost']:.2f} bits\n"
-        f"  • Total MDL = {mdl_current['total_mdl']:.2f}\n\n"
+        f"  - Parameters: {n_params}\n"
+        f"  - L(H) = {mdl_current['model_cost']:.2f} bits\n"
+        f"  - L(D|H) = {mdl_current['data_cost']:.2f} bits\n"
+        f"  - Total MDL = {mdl_current['total_mdl']:.2f}\n\n"
         f"Analysis:\n"
         f"  {wrapped_interpretation}\n\n"
         f"MDL Principle:\n"
@@ -3341,21 +3400,30 @@ def cell10_create_mdl_widget() -> None:
     - Fixed noise level (0.3)
     - Fixed figure size
     """
-    interact(
-        cell10_plot_mdl_interactive,
-        degree=IntSlider(
-            min=1,
-            max=8,
-            step=1,
-            value=3,
-            description="Polynomial Degree:",
-            style={"description_width": "initial"},
-        ),
-        n_samples=fixed(50),
-        true_degree=fixed(3),
-        noise_level=fixed(0.3),
-        figsize=fixed(None),
+    degree_init = 3
+    # Create slider for polynomial degree.
+    degree_slider, degree_box = mtumsuti.build_widget_control(
+        name="degree",
+        description="Polynomial Degree",
+        min_val=1,
+        max_val=8,
+        step=1,
+        initial_value=degree_init,
+        is_float=False,
     )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda degree: cell10_plot_mdl_interactive(
+            degree=degree,
+            n_samples=50,
+            true_degree=3,
+            noise_level=0.3,
+            figsize=None,
+        ),
+        {"degree": degree_slider},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([degree_box, output]))
 
 
 def cell10_generate_mdl_animation() -> None:
@@ -3365,10 +3433,8 @@ def cell10_generate_mdl_animation() -> None:
     This function creates a series of frames showing how MDL balances model
     complexity with data fit as polynomial degree varies.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
-    values = ut.generate_animation_values(
+    values = mtumsuti.generate_animation_values(
         mode="linear",
         sweep_variable="degree",
         n_steps=8,
@@ -3379,9 +3445,9 @@ def cell10_generate_mdl_animation() -> None:
         noise_level=0.3,
     )
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_MDL_video"
+    dst_dir = "./figures/L94_MDL_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell10_plot_mdl_interactive,
         values,
         dst_dir,
@@ -3764,28 +3830,36 @@ def cell11_create_kolmogorov_complexity_widget() -> None:
     - Dropdown for string length selection
     - Fixed figure size
     """
-    interact(
-        cell11_plot_kolmogorov_complexity_interactive,
-        string_type=widgets.Dropdown(
-            options=[
-                "All Zeros",
-                "Repeating 01",
-                "Fibonacci",
-                "Random",
-                "Semi-random",
-            ],
-            value="Random",
-            description="String Type:",
-            style={"description_width": "initial"},
-        ),
-        length=widgets.Dropdown(
-            options=[16, 32, 64, 128],
-            value=64,
-            description="String Length:",
-            style={"description_width": "initial"},
-        ),
-        figsize=fixed(None),
+    # Create dropdown for string type selection.
+    string_type_dropdown = ipywidgets.Dropdown(
+        options=[
+            "All Zeros",
+            "Repeating 01",
+            "Fibonacci",
+            "Random",
+            "Semi-random",
+        ],
+        value="Random",
+        description="String Type:",
+        style={"description_width": "initial"},
     )
+    # Create dropdown for string length selection.
+    length_dropdown = ipywidgets.Dropdown(
+        options=[16, 32, 64, 128],
+        value=64,
+        description="String Length:",
+        style={"description_width": "initial"},
+    )
+    # Create interactive output.
+    output = ipywidgets.interactive_output(
+        lambda string_type,
+        length: cell11_plot_kolmogorov_complexity_interactive(
+            string_type=string_type, length=length, figsize=None
+        ),
+        {"string_type": string_type_dropdown, "length": length_dropdown},
+    )
+    # Display widgets.
+    display(ipywidgets.VBox([string_type_dropdown, length_dropdown, output]))
 
 
 def cell11_generate_kolmogorov_complexity_animation() -> None:
@@ -3795,8 +3869,6 @@ def cell11_generate_kolmogorov_complexity_animation() -> None:
     This function creates a series of frames showing how different string types
     have different Kolmogorov Complexity.
     """
-    import msml610_utils as ut
-
     # Generate animation values.
     # Sweep through different string types with fixed length.
     string_types = [
@@ -3808,9 +3880,9 @@ def cell11_generate_kolmogorov_complexity_animation() -> None:
     ]
     values = [{"string_type": st, "length": 64} for st in string_types]
     # Directory to save frames.
-    dst_dir = "./figures/Lesson94_Kolmogorov_Complexity_video"
+    dst_dir = "./figures/L94_Kolmogorov_Complexity_video"
     # Generate animation frames with fixed dimensions.
-    ut.generate_animation(
+    mtumsuti.generate_animation(
         cell11_plot_kolmogorov_complexity_interactive,
         values,
         dst_dir,

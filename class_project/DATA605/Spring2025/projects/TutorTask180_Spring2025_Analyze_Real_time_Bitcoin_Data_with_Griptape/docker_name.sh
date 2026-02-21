@@ -2,8 +2,8 @@
 GIT_ROOT=$(git rev-parse --show-toplevel)
 
 # Optional: Load shared utils if you have them
-if [ -f "$GIT_ROOT/docker_common/utils.sh" ]; then
-    source "$GIT_ROOT/docker_common/utils.sh"
+if [ -f "$GIT_ROOT/project_template/utils.sh" ]; then
+    source "$GIT_ROOT/project_template/utils.sh"
 fi
 
 # Define Docker image and container names for reuse

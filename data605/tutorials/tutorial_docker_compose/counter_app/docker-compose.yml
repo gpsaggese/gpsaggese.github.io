@@ -1,7 +1,3 @@
-# Mandatory first line to specify API version.
-# Ideally always use the latest version, typically 3 or higher.
-version: "3.5"
-
 # Define the different microservices.
 services:
 

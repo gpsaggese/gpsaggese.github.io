@@ -12,5 +12,6 @@ ENV PATH="/root/.local/bin:$PATH"
 WORKDIR /app
 COPY pyproject.toml uv.lock /app/
 RUN uv sync
+ENV PATH="/app/.venv/bin:$PATH"
 COPY . /app
 EXPOSE 8888

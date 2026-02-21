@@ -39,7 +39,7 @@ TutorTask354_Spring2025_Real_Time_Bitcoin_Price_Analysis_with_Petl/
 ├── BitcoinPetl.example.ipynb    # End-to-end example notebook
 ├── BitcoinPetl.API.md           # Markdown documentation for API layer
 ├── BitcoinPetl.example.md       # Markdown outline of example workflow
-├── docker_common/
+├── project_template/
 │   ├── docker_build.sh          # Script to build Docker image
 │   ├── docker_bash.sh           # Script to launch container shell
 │   └── docker_jupyter.sh        # Script to start Jupyter Notebook
@@ -52,17 +52,17 @@ TutorTask354_Spring2025_Real_Time_Bitcoin_Price_Analysis_with_Petl/
 
 1. **Build the Docker image**  
    ```bash
-   bash docker_common/docker_build.sh
+   bash project_template/docker_build.sh
    ```
 2. **Start an interactive shell**  
    ```bash
-   bash docker_common/docker_bash.sh
+   bash project_template/docker_bash.sh
    ```
    This mounts the project directory at `/work` inside the container.
 
 3. **Launch Jupyter Notebook**  
    ```bash
-   bash docker_common/docker_jupyter.sh
+   bash project_template/docker_jupyter.sh
    ```
    Open your browser at `http://localhost:8888` and navigate to `BitcoinPetl.API.ipynb` or `BitcoinPetl.example.ipynb`.
 

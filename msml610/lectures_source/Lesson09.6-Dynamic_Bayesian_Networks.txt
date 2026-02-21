@@ -1,0 +1,312 @@
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 09.5: Kalman Filter}}$$**
+\endgroup
+\vspace{1cm}
+
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+**References**:
+
+- AIMA 14: Probabilistic reasoning over time
+- https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python
+
+// /Users/saggese/src/notes1/notes/math.Kalman_and_Bayesian_filters_in_Python.Labbe.2018.txt
+// /Users/saggese/src/notes1/notebooks/Kalman_and_Bayesian_filters_in_python
+// ./notes/math.Kalman_filter.txt
+// ./notebooks/quantopian/quantopian_kalman_filter.ipynb
+// AIMA 14.4 (p. 479)
+
+# #############################################################################
+# Dynamic Bayesian networks
+# #############################################################################
+
+// ## 14.5, Dynamic Bayesian networks (p. 498)
+
+* Dynamic Bayesian Networks (DBNs)
+- DBNs extend Bayesian networks to model temporal processes
+
+- Main idea
+  - "Unroll" the model over time
+  - Capture intra-slice (within time) and inter-slice (across time) dependencies
+- Each time slice includes:
+  - State variables $X_t$
+  - Evidence variables $E_t$
+
+- Assumptions
+  - First-order Markov process: current state depends only on the previous state
+  - First-order sensor Markov process: evidence depends only on current state
+  - Stationarity: each time slice is the same, both structure and parameters do
+    not change over time
+    - Structure and CPTs (Conditional Probability Tables) are the same across
+      slices (time-homogeneous model)
+  - No Gaussian distribution
+
+* DBNs vs HMMs
+- DBNs generalize Hidden Markov Models (HMMs)
+
+- HMMs are a special case with a single hidden and evidence variable per time
+  step
+
+- DBNs model more complex systems than HMMs by:
+  - Using multiple state variables
+    - Enables modeling large systems like robot localization with many state
+      components
+  - Exploiting sparse connections among variables yielding compact model
+    - HMM: transition matrix of size $O(d^{2n})$
+    - DBN: size $O(nd^k)$ with $k$ bounded parents per variable
+
+* DBNs vs Kalman Filters
+- DBNs generalize Kalman filters
+
+- Every Kalman filter can be represented in a DBN with:
+  - Continuous variables
+  - Linear / Gaussian conditional distributions
+
+- Not every DBN can be represented by a Kalman filter, since:
+  - DBN variables can mix discrete/continuous and non-Gaussian
+  - Allow arbitrary conditional dependencies among variables
+
+- **Pros of DBNs**
+  - DBNs are applicable to broader domains including:
+    - Fault diagnosis in networks
+    - Complex system monitoring
+
+- **Pros of Kalman filters:**
+  - Optimal for linear systems with Gaussian noise
+  - Support exact inference, DBNs often require approximate methods
+
+* Constructing a DBN
+- Key components of a DBN
+  - Prior distribution of state $\Pr(X_0)$
+  - Transition model $\Pr(X_{t+1} | X_t)$
+  - Sensor model $\Pr(E_t | X_t)$
+  - Transition and sensor models are time-homogeneous
+- Network topology includes:
+  - Intra-slice topology
+  - Inter-slice links
+
+* DBN Example: Tracking a Robot (1/3)
+- **Problem:**
+  - Tracking a robot moving randomly on a line $X$ over time
+
+- **Initial model:**
+  - Position $X_t$ and velocity $\dot{X_t}$ as state variables
+  - Update via Newton's laws
+  - Easy to generalize for 2d or 3d by using a $\vX_t$
+
+- **Issue:**
+  - Velocity changes over time
+  - Battery exhaustion affects velocity systematically
+  - Effect depends on cumulative energy use
+  - Violates the Markov property (future depends on full history)
+
+- **Solution:**
+  - Include battery level $Battery_t$ in the state $X_t$
+  - Restores the Markov assumption
+  - Allows motion prediction considering energy constraints
+  - Enables coherent reasoning about motion and power consumption over time
+
+- **New requirement for state:**
+  - $S_t = (X_t, \dot{X}_t, \text{BatteryLevel}_t)$
+  - $E_t = (\text{GPS}_t, \text{BMeter}_t)$
+
+* DBN Example: Tracking a Robot (2/3)
+::: columns
+:::: {.column width=40%}
+- The DBN structure models both intra-slice (within time) and inter-slice
+  (across time) dependencies
+
+- Intra-slice dependencies:
+  - Position $\text{X}_t$ influences velocity $\dot{X}_t$
+  - $\text{BatteryLevel}_t$ influences velocity $\dot{X}_t$
+  - $\text{Battery}_{t+1}$ depends on $\text{Battery}_t$ and $\dot{X}_t$
+  - $\text{BMeter}_t$ depends on $\text{Battery}_t$
+  - $\text{GPS}_t$ depends on $X_t$
+
+- Inter-slice dependencies:
+  - Position $X_{t+1}$ depends on Position $X_t$ and
+    velocity $\dot{X}_t$
+  - Velocity $\dot{X}_{t+1}$ depends on $\dot{X}_t$ and $\text{Battery}_t$
+::::
+:::: {.column width=55%}
+```graphviz
+digraph BayesianFlow {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+
+    // Default node style
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    // States (rounded boxes)
+    Battery_0 [label="Battery_0", fillcolor="#A6C8F4"];
+    Battery_1 [label="Battery_1", fillcolor="#A6C8F4"];
+    BMeter_1 [label="BMeter_1", fillcolor="#A6C8F4"];
+
+    // Variables (circles)
+    node [shape=circle];
+    Xdot_0 [label="Ẋ_0", fillcolor="#B2E2B2"];
+    Xdot_1 [label="Ẋ_1", fillcolor="#B2E2B2"];
+    X_0 [label="X_0", fillcolor="#C6A6F4"];
+    X_1 [label="X_1", fillcolor="#C6A6F4"];
+    Z_1 [label="Z_1", fillcolor="#FFD1A6"];
+
+    // Edges
+    Battery_0 -> Battery_1;
+    Battery_0 -> Xdot_1;
+    Battery_0 -> X_1;
+    Battery_1 -> BMeter_1;
+    Xdot_0 -> Xdot_1;
+    Xdot_0 -> X_1;
+    X_0 -> X_1;
+    X_1 -> Z_1;
+}
+```
+
+::::
+:::
+
+* DBN Example: Tracking a Robot (3/3)
+
+::: columns
+:::: {.column width=40%}
+
+- **Replicate for Multiple Time Slices**:
+   - Create slices for $t = 0, 1, 2, \ldots$ with the above variables and
+     dependencies
+   - Group each time slice vertically or horizontally for clarity
+- **Unrolling**:
+   - Visualize the full DBN by unrolling these slices over the desired number of
+     time steps (e.g., three slices for $t = 0, 1, 2$)
+::::
+:::: {.column width=55%}
+
+```graphviz
+digraph RobotDBN {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    // Time slice 0 (Red)
+    Battery_0_0 [label="Battery_{0}", fillcolor="#F4A6A6"];
+    BMeter_0_0 [label="BMeter_{0}", fillcolor="#F4A6A6"];
+    Xdot_0_0 [label="Ẋ_{0}", shape=circle, fillcolor="#F4A6A6"];
+    X_0_0 [label="X_{0}", shape=circle, fillcolor="#F4A6A6"];
+    Z_0_0 [label="Z_{0}", shape=circle, fillcolor="#F4A6A6"];
+
+    // Time slice 1 (Green)
+    Battery_1_1 [label="Battery_{1}", fillcolor="#B2E2B2"];
+    BMeter_1_1 [label="BMeter_{1}", fillcolor="#B2E2B2"];
+    Xdot_1_1 [label="Ẋ_{1}", shape=circle, fillcolor="#B2E2B2"];
+    X_1_1 [label="X_{1}", shape=circle, fillcolor="#B2E2B2"];
+    Z_1_1 [label="Z_{1}", shape=circle, fillcolor="#B2E2B2"];
+
+    // Time slice 2 (Violet)
+    Battery_2_2 [label="Battery_{2}", fillcolor="#C6A6F4"];
+    BMeter_2_2 [label="BMeter_{2}", fillcolor="#C6A6F4"];
+    Xdot_2_2 [label="Ẋ_{2}", shape=circle, fillcolor="#C6A6F4"];
+    X_2_2 [label="X_{2}", shape=circle, fillcolor="#C6A6F4"];
+    Z_2_2 [label="Z_{2}", shape=circle, fillcolor="#C6A6F4"];
+
+    // Intra-slice dependencies
+    Battery_0_0 -> BMeter_0_0;
+    X_0_0 -> Z_0_0;
+
+    Battery_1_1 -> BMeter_1_1;
+    X_1_1 -> Z_1_1;
+
+    Battery_2_2 -> BMeter_2_2;
+    X_2_2 -> Z_2_2;
+
+    // Inter-slice dependencies
+    Battery_0_0 -> Battery_1_1;
+    Battery_1_1 -> Battery_2_2;
+
+    Xdot_0_0 -> Xdot_1_1;
+    Xdot_1_1 -> Xdot_2_2;
+
+    X_0_0 -> X_1_1;
+    X_1_1 -> X_2_2;
+
+    Xdot_0_0 -> X_1_1;
+    Xdot_1_1 -> X_2_2;
+
+    Battery_0_0 -> Xdot_1_1;
+    Battery_1_1 -> Xdot_2_2;
+
+    Xdot_0_0 -> Battery_1_1;
+    Xdot_1_1 -> Battery_2_2;
+}
+```
+::::
+:::
+
+* Inference in DBNs
+- DBNs are Bayesian networks and we can use the same inference algorithms
+  - "Unroll" the DBN over time (i.e., replicate slices for each time step) and
+    apply standard BN inference
+  - We can't unroll "forever", but we limit to a certain number of slices to
+    approximate a fixed amount of time dependency
+
+- Use recursive methods to get a constant time and space update complexity
+  - Variable elimination with temporal ordering
+  - At time step $t + 1$ add slice $t + 2$ and remove slice $t$ so one has
+    always two slices to do inference
+  - Maintains constant memory by keeping only two slices at a time
+
+- Complexity:
+  - Exponential in number of state variables ($O(nd^{n+k})$)
+  - More efficient than full HMM representation ($O(d^{2n})$)
+
+- Even though we can use DBNs to represent very complex temporal processes with
+  many sparsely connected variables, we cannot reason efficiently and exactly
+  about those processes
+  - The prior joint distribution over all the variables is factorizable into its
+    constituents CPTs
+  - The posterior joint distribution conditioned on observation sequence is not
+    factorizable
+
+* Approximate Inference in DBNs
+- Particle Filtering:
+  - Represent belief state with weighted samples (particles)
+  - Steps: propagate, weight, resample
+- Benefits:
+  - Focuses computation on high-probability regions
+  - Maintains manageable memory and time per step
+- Challenges:
+  - Approximation error
+  - Sensitive to transition and observation model assumptions
+- Used when exact inference is computationally impractical
+- Real-world application: robot localization, speech recognition
+
+* DBN to Represent Changing Model
+- We can model the fact that the system can change over time
+  - Transient failure: a sensor reads wrong measures
+  - Persistent failure model: we can model it with additional variables (e.g.,
+    $Sensor Broken$)
+
+* DBN: Inference
+- We can unroll the DBN and get a BayesNet and then perform exact or approximate
+  inference with the known methods (e.g., MCMC)
+
+* DBN: Optimization for Inference
+- Many optimizations are possible, e.g.,
+  - Instead of running each sample through the entire DBN one can run all the
+    samples evaluating one slice at a time to compute the posterior distribution
