@@ -1,3 +1,14 @@
+---
+draft: true
+title: "Fewer Experiments, Better Results: Optimizing Marketing Campaigns with Ax"
+authors:
+  - gpsaggese
+date: 2026-02-21
+description:
+categories:
+  - Causal AI
+---
+
 # Fewer Experiments, Better Results: Optimizing Marketing Campaigns with Ax
 
 *I recently explored how Meta's Ax library can optimize marketing campaigns with minimal experimentation. Here's what I learned and why you should consider it for your next optimization problem.*
@@ -12,7 +23,9 @@ Traditional approaches like grid search or random search waste most of their bud
 
 This is exactly what [Adaptive Experimentation (Ax)](https://ax.dev/) does. Developed by Meta and built on top of [BoTorch](https://botorch.org/) (a Bayesian Optimization framework on PyTorch), Ax provides a high-level API that makes it straightforward to run Bayesian Optimization experiments, even if you've never heard of Gaussian Processes.
 
-In a [previous post](blog_introduction_to_bayesian_optimization.md), I covered the fundamentals of Bayesian Optimization. Here, I'll show you how Ax brings that theory to life in a real-world marketing scenario.
+In a previous post
+<!--(blog_introduction_to_bayesian_optimization.md)-->
+, I covered the fundamentals of Bayesian Optimization. Here, I'll show you how Ax brings that theory to life in a real-world marketing scenario.
 
 ## The Competition: How Does Ax Stack Up?
 
@@ -44,7 +57,7 @@ Real-Time Bidding (RTB) is how most digital advertising works today. When a user
 3. The highest bid wins, and the ad is displayed
 4. The advertiser typically pays the second-highest bid price (second-price auction)
 
-![RTB Process](images/rtb-process-2.png)
+![RTB Process](Ax_Multi_Objective_Optimization.figs/rtb-process-2.png)
 
 ### The Bidding Strategy
 
@@ -79,9 +92,6 @@ Before tackling the marketing problem, let's see how Ax works on a well-known be
 $$
 f(\mathbf{x}) = -\sum_{i=1}^{4} \alpha_i \exp \left( -\sum_{j=1}^{6} A_{ij} (x_j - P_{ij})^2 \right)
 $$
-
-> **Note:** We previously explored the basics of Bayesian Optimization and the Hartmann function example in [Introduction to Bayesian Optimization](./blog_introduction_to_bayesian_optimization.md). If you need a gentle introduction to why Bayesian Optimization works, how the Ax library makes it simple, and a step-by-step walkthrough of this Hartmann demo—including full code and mathematical background—check out that post first.
-
 
 
 This function has multiple local optima and one global optimum, making it a perfect test case. A grid search with a step of 0.1 would require $10^6$ evaluations. Let's see how Ax handles it:
@@ -218,7 +228,7 @@ The Pareto frontier gives the advertiser a set of optimal configurations to choo
 - **Medium budget** (~2.1M): 73 clicks --- balanced approach
 - **High budget** (~5M): 127 clicks --- maximum reach but higher cost per click
 
-![Pareto Frontier](images/rtb-clicks-pareto-frontier.png)
+![Pareto Frontier](Ax_Multi_Objective_Optimization.figs/rtb-clicks-pareto-frontier.png)
 
 This is powerful because it transforms a vague question ("What's the best bid strategy?") into a concrete set of trade-offs the advertiser can reason about.
 
@@ -259,4 +269,3 @@ If Bayesian Optimization interests you, here are some related tools:
 - [iPinYou Global RTB Bidding Algorithm Competition Dataset](https://contest.ipinyou.com/)
 - [Real-Time Bidding Benchmarking with iPinYou Dataset (Zhang, Yuan, Wang)](https://github.com/wnzhang/make-ipinyou-data)
 - [Google Vizier: A Service for Black-Box Optimization (2017)](https://dl.acm.org/doi/10.1145/3097983.3098043)
-- [Introduction to Bayesian Optimization (blog post)](blog_introduction_to_bayesian_optimization.md)
