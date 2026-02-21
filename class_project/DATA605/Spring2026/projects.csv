@@ -1,0 +1,154 @@
+Id,Tool,Description,GitHub,Stars,Website,Category
+1,ActiveCampaign,Email marketing and automation platform,https://github.com/ActiveCampaign,300,Marketing Analytics,APIs & Platforms
+2,adtk,Time-series anomaly detection,https://github.com/arundo/adtk,"1,200",https://github.com/arundo/adtk,Time Series & Forecasting
+3,alipy,Active learning toolbox,https://github.com/NUAA-AL/ALiPy,"1,600",https://github.com/NUAA-AL/ALiPy,Core Machine Learning & AI
+4,Altair,Declarative statistical visualization,https://github.com/vega/altair,"9,600",altair-viz.github.io,Visualization
+5,Amundsen,Data discovery and metadata platform,https://github.com/amundsen-io/amundsen,"4,400",amundsen.io,Data Integration & Governance
+6,Ansible,Automation and configuration management,https://github.com/ansible/ansible,"60,000",ansible.com,DevOps & Infrastructure
+7,Anthropic MCP,Model Context Protocol by Anthropic,https://github.com/anthropics/mcp,"3,400",Anthropic,Language Models
+8,Apache Beam,Unified batch and stream processing,https://github.com/apache/beam,"7,200",apache.org/beam,Data Engineering & Pipelines
+9,Apache Flink,Distributed stream and batch processing,https://github.com/apache/flink,"23,000",flink.apache.org,Distributed Computing
+10,Apache Kafka,Distributed event streaming platform,https://github.com/apache/kafka,"27,000",apache.org/kafka,Data Engineering & Pipelines
+11,Apache Spark,Cluster-computing framework,https://github.com/apache/spark,"38,000",Apache Spark,Distributed Computing
+12,Argo Workflows,Kubernetes-native workflow engine,https://github.com/argoproj/argo-workflows,"14,000",argoproj.github.io,DevOps & Infrastructure
+13,auto-sklearn,Automated machine learning toolkit,https://github.com/automl/auto-sklearn,"6,700",https://automl.github.io/auto-sklearn/master/,AutoML
+14,Autofeat,Automated feature engineering,https://github.com/cod3licious/autofeat,"1,200",https://github.com/cod3licious/autofeat,Core Machine Learning & AI
+15,AutoGluon,"AutoML toolkit for tabular, text, and image data",https://github.com/autogluon/autogluon,"8,100",https://auto.gluon.ai,AutoML
+16,AutoKeras,AutoML library for neural architecture search and hyperparameter tuning,https://github.com/keras-team/autokeras,"9,000",https://autokeras.com,AutoML
+17,Avro,Data serialization system,https://github.com/apache/avro,"2,300",avro.apache.org,"Data Storage, Databases & Formats"
+18,bentoml,Model serving framework,https://github.com/bentoml/BentoML,"7,200",https://www.bentoml.com,"MLOps, Lifecycle & Deployment"
+19,Bonobo,Lightweight ETL framework for Python,https://github.com/python-bonobo/bonobo,"1,600",bonobo-project.org,Data Engineering & Pipelines
+20,catboost,Gradient boosting with categorical features,https://github.com/catboost/catboost,"8,200",https://catboost.ai,Core Machine Learning & AI
+21,Celery,Distributed task queue,https://github.com/celery/celery,"22,000",celeryproject.org,Distributed Computing
+22,Clickhouse,Columnar OLAP database,https://github.com/ClickHouse/ClickHouse,"35,000",https://clickhouse.com/,"Data Storage, Databases & Formats"
+23,CouchDB,Document-oriented NoSQL database,https://github.com/apache/couchdb,"5,700",CouchDB,"Data Storage, Databases & Formats"
+24,Dagster,Data orchestrator for ML and analytics,https://github.com/dagster-io/dagster,"8,600",dagster.io,Data Engineering & Pipelines
+25,Darts,Time series forecasting library,https://github.com/unit8co/darts,"9,600",https://unit8co.github.io/darts,Time Series & Forecasting
+26,DataHub,Metadata platform for data governance,https://github.com/datahub-project/datahub,"8,900",datahubproject.io,Data Integration & Governance
+27,Dataprep,Data preparation library,https://github.com/sfu-db/dataprep,"2,400",dataprep.ai,Data Engineering & Pipelines
+28,datasets,Dataset loading and processing library,https://github.com/huggingface/datasets,"18,000",https://huggingface.co/docs/datasets,Data Engineering & Pipelines
+29,Django ORM,Object-relational mapper for Django,https://github.com/django/django,"75,000",docs.djangoproject.com,"Data Storage, Databases & Formats"
+30,DocsGPT,Documentation Q&A with LLMs,https://github.com/arc53/DocsGPT,"15,000",DocsGPT GitHub,Language Models
+31,Dolibarr,Open-source ERP and CRM,https://github.com/Dolibarr/dolibarr,"3,800",Dolibarr GitHub,Web
+32,DVC,Data version control,https://github.com/iterative/dvc,"14,000",dvc.org,"MLOps, Lifecycle & Deployment"
+33,ERPNext,Open-source ERP system,https://github.com/frappe/erpnext,"18,000",ERPNext GitHub,Web
+34,factor-analyzer,Factor analysis implementation,https://github.com/EducationalTestingService/factor_analyzer,640,https://github.com/EducationalTestingService/factor_analyzer,Statistical Methods
+35,Faker,Python library for generating fake data,https://github.com/joke2k/faker,"18,500",https://faker.readthedocs.io/,Software Engineering & Developer Tools
+36,fastapi,High-performance API framework,https://github.com/tiangolo/fastapi,"76,000",https://fastapi.tiangolo.com,Web
+37,FastText,Efficient word embeddings and text classification,https://github.com/facebookresearch/fastText,"25,000",FastText,NLP
+38,Faust,Python stream processing built on Kafka,https://github.com/robinhood/faust,"6,800",faust.streamz.io,Data Engineering & Pipelines
+39,Featuretools,Automated feature engineering using deep feature synthesis,https://github.com/alteryx/featuretools,"7,000",https://www.featuretools.com,AutoML
+40,FireDucks,Real-time data pipeline framework,https://github.com/fireducks-dev/fireducks,"1,500",FireDucks GitHub,Data Engineering & Pipelines
+41,FLAML,Fast and lightweight AutoML library,https://github.com/microsoft/FLAML,"2,900",https://microsoft.github.io/FLAML,AutoML
+42,FNSPID,Fairness and non-stationary public-interest dataset,https://github.com/Zdong104/FNSPID_Financial_News_Dataset,300,https://huggingface.co/datasets/Zihan1004/FNSPID,"Privacy, Security & Trustworthy AI"
+43,Gensim,Topic modeling and document similarity,https://github.com/piskvorky/gensim,"15,000",gensim.org,NLP
+44,Google Cloudpickle,Serialization for distributed Python computing,https://github.com/cloudpipe/cloudpickle,"3,000",Cloudpickle,Distributed Computing
+45,gradio,ML web interfaces,https://github.com/gradio-app/gradio,"32,000",https://gradio.app,Web
+46,Graphene,GraphQL APIs in Python,https://github.com/graphql-python/graphene,"8,000",Graphene,Web
+47,GraphQL,Query language for APIs,https://github.com/graphql/graphql-spec,"15,000",https://graphql.org/,Web
+48,Great Expectations,Data quality and validation framework,https://github.com/great-expectations/great_expectations,"9,300",greatexpectations.io,Data Integration & Governance
+49,Griptape,Framework for building AI-powered applications,https://github.com/griptape-ai/griptape,"6,200",griptape.ai,Language Models
+50,H2O.ai,Open-source ML platform,https://github.com/h2oai/h2o-3,"6,700",h2o.ai,Core Machine Learning & AI
+51,h5py,Pythonic HDF5 interface,https://github.com/h5py/h5py,"1,900",https://www.h5py.org,"Data Storage, Databases & Formats"
+52,Haystack,NLP search and QA framework,https://github.com/deepset-ai/haystack,"16,000",Haystack GitHub,NLP
+53,hdbscan,Density-based clustering,https://github.com/scikit-learn-contrib/hdbscan,"3,100",https://hdbscan.readthedocs.io,Statistical Methods
+54,Huey,Lightweight task queue for Python,https://github.com/coleifer/huey,"3,900",Huey,Distributed Computing
+55,HuggingFace,ML and NLP model hub and tooling,https://github.com/huggingface/transformers,"130,000",HuggingFace,NLP
+56,hydra-core,Hierarchical configuration management,https://github.com/facebookresearch/hydra,"7,800",https://hydra.cc,Software Engineering & Developer Tools
+57,hypothesis,Property-based testing framework,https://github.com/HypothesisWorks/hypothesis,"6,600",https://hypothesis.readthedocs.io,Software Engineering & Developer Tools
+58,igraph,High-performance network analysis,https://github.com/igraph/python-igraph,"1,400",https://igraph.org/python,Graph & Network Analytics
+59,imbalanced-learn,ML techniques for imbalanced datasets,https://github.com/scikit-learn-contrib/imbalanced-learn,"6,600",https://imbalanced-learn.org,Statistical Methods
+60,Kats,Time series analysis toolkit by Meta,https://github.com/facebookresearch/Kats,"3,600",https://github.com/facebookresearch/kats,Time Series & Forecasting
+61,Kedro,Data science pipeline framework,https://github.com/kedro-org/kedro,"9,200",kedro.readthedocs.io,Data Engineering & Pipelines
+62,kmodes,K-modes and K-prototypes clustering,https://github.com/nicodv/kmodes,"1,500",https://github.com/nicodv/kmodes,Statistical Methods
+63,Kubeflow,ML workflows on Kubernetes,https://github.com/kubeflow/kubeflow,"13,000",kubeflow.org,"MLOps, Lifecycle & Deployment"
+64,Kubernetes,Container orchestration system,https://github.com/kubernetes/kubernetes,"105,000",kubernetes.io,DevOps & Infrastructure
+65,LakeFS,Git-like version control for data lakes,https://github.com/treeverse/lakeFS,"6,200",https://lakefs.io,Data Integration & Governance
+66,Langchain and Neo4j,LLM + graph integration,https://github.com/langchain-ai/langchain,"82,000",langchain.com,Language Models
+67,libact,Active learning algorithms,https://github.com/ntucllab/libact,"1,400",https://github.com/ntucllab/libact,Core Machine Learning & AI
+68,lightgbm,Lightweight gradient boosting framework,https://github.com/microsoft/LightGBM,"15,000",https://lightgbm.readthedocs.io,Core Machine Learning & AI
+69,LIME,Local interpretable model explanations,https://github.com/marcotcr/lime,"10,000",https://github.com/marcotcr/lime,"Privacy, Security & Trustworthy AI"
+70,LlamaIndex,Framework for LLM-powered data apps,https://github.com/run-llama/llama_index,"36,000",LlamaIndex,Language Models
+71,llm,Minimal library for working with LLMs,https://github.com/simonw/llm,"6,100",llm Python Package,Language Models
+72,Luigi,Batch workflow management,https://github.com/spotify/luigi,"18,000",https://github.com/spotify/luigi,Data Engineering & Pipelines
+73,Mailchimp Marketing,SDK for Mailchimp API,https://github.com/mailchimp/mailchimp-marketing-python,600,Mailchimp Marketing,APIs & Platforms
+74,Mailgun,Email API SDKs and tooling,https://github.com/mailgun/mailgun-python,"1,100",Mailgun Python SDK,APIs & Platforms
+75,Marquez,Metadata service for data pipelines,https://github.com/MarquezProject/marquez,"3,200",marquezproject.io,Data Integration & Governance
+76,"MCP (Model Context Protocol, Python SDK)",Model Context Protocol Python SDK,https://github.com/modelcontextprotocol/python-sdk,"1,200",https://github.com/modelcontextprotocol/python-sdk,APIs & Platforms
+77,Meltano,Open-source ELT platform for analytics engineering,https://github.com/meltano/meltano,"3,500",https://meltano.com/,Data Engineering & Pipelines
+78,Metaflow,Human-centric data science workflow framework,https://github.com/Netflix/metaflow,"7,800",https://metaflow.org/,"MLOps, Lifecycle & Deployment"
+79,Metasfresh,Open-source ERP system,https://github.com/metasfresh/metasfresh,"1,100",Metasfresh GitHub,Web
+80,METL,Meta-learning framework for transfer learning and representation reuse,https://github.com/markotibold/metl,250,https://github.com/markotibold/metl,AutoML
+81,mlflow,Experiment tracking and model registry,https://github.com/mlflow/mlflow,"18,000",https://mlflow.org,"MLOps, Lifecycle & Deployment"
+82,MLflow Computational framework,ML lifecycle management platform,https://github.com/mlflow/mlflow,"18,000",mlflow.org,"MLOps, Lifecycle & Deployment"
+83,MLlib,Apache Spark machine learning library,https://github.com/apache/spark,"38,000",https://spark.apache.org/mllib,Core Machine Learning & AI
+84,modAL,Active learning framework,https://github.com/modAL-python/modAL,"3,000",https://modal-python.readthedocs.io,Core Machine Learning & AI
+85,Modin,Scalable pandas with Ray/Dask,https://github.com/modin-project/modin,"4,100",modin.readthedocs.io,Distributed Computing
+86,msgpack,Efficient binary serialization,https://github.com/msgpack/msgpack-python,"2,200",msgpack.org,"Data Storage, Databases & Formats"
+87,NetworkX,Network analysis and graph algorithms,https://github.com/networkx/networkx,"7,700",https://networkx.org,Graph & Network Analytics
+88,NLTK,Natural language processing toolkit,https://github.com/nltk/nltk,"13,000",nltk.org,NLP
+89,OneBM,Automatic feature extraction for relational databases,https://github.com/ahmadkl/OneBM,600,https://github.com/ahmadkl/OneBM,AutoML
+90,OpenRefine,Data cleaning and transformation tool,https://github.com/OpenRefine/OpenRefine,"11,000",openrefine.org,Data Engineering & Pipelines
+91,orbit,Bayesian time series models,https://github.com/uber/orbit,"2,000",https://github.com/uber/orbit,Time Series & Forecasting
+92,pandas-etl,ETL utilities built on top of pandas,https://github.com/pandas-dev/pandas-etl,900,https://github.com/pandas-dev/pandas-etl,Data Engineering & Pipelines
+93,pandera,Schema-based data validation,https://github.com/unionai-oss/pandera,"3,400",https://pandera.readthedocs.io,Data Integration & Governance
+94,Papermill,Parameterized notebook execution,https://github.com/nteract/papermill,"5,600",https://github.com/nteract/papermill,Data Engineering & Pipelines
+95,Petl,Simple ETL framework,https://github.com/petl-developers/petl,"1,300",petl.readthedocs.io,Data Engineering & Pipelines
+96,Pika,Pure-Python RabbitMQ (AMQP) client,https://github.com/pika/pika,"2,100",Pika,Distributed Computing
+97,pmdarima,Auto-ARIMA and SARIMA models,https://github.com/alkaline-ml/pmdarima,"3,300",https://www.alkaline-ml.com/pmdarima,Time Series & Forecasting
+98,Postmark,Transactional email API service,https://github.com/ActiveCampaign/postmark-python,640,Postmark,APIs & Platforms
+99,Prefect,Workflow orchestration tool,https://github.com/PrefectHQ/prefect,"15,000",prefect.io,Data Engineering & Pipelines
+100,Presto,Distributed SQL query engine,https://github.com/prestodb/presto,"15,000",prestodb.io,Distributed Computing
+101,prince,Factor and correspondence analysis,https://github.com/MaxHalford/prince,"1,100",https://github.com/MaxHalford/prince,Statistical Methods
+102,Protocol Buffers (protobuf),Structured data serialization,https://github.com/protocolbuffers/protobuf,"65,000",developers.google.com/protocol-buffers,"Data Storage, Databases & Formats"
+103,Py2neo,Neo4j Python client,https://github.com/neo4j-contrib/py2neo,"1,800",py2neo.org,Graph & Network Analytics
+104,pycaret,End-to-end low-code ML workflows,https://github.com/pycaret/pycaret,"8,500",https://pycaret.org,AutoML
+105,pycaret-anomaly,Low-code anomaly detection module for PyCaret,https://github.com/pycaret/pycaret,"8,500",https://pycaret.org,AutoML
+106,Pydantic,Data validation using type hints,https://github.com/pydantic/pydantic,"21,000",Pydantic GitHub,Software Engineering & Developer Tools
+107,PyDBGen,Python-based database data generator,https://github.com/tirthajyoti/PyDBGen,"1,200",https://github.com/tirthajyoti/PyDBGen,Software Engineering & Developer Tools
+108,PyDrive,Wrapper for Google Drive API,https://github.com/googlearchive/PyDrive,"2,400",pydrive.readthedocs.io,APIs & Platforms
+109,Pygrametl,ETL framework for data warehouses,https://github.com/chrthomsen/pygrametl,"1,000",pygrametl.readthedocs.io,Data Engineering & Pipelines
+110,Pyjanitor,Data cleaning utilities,https://github.com/pyjanitor-devs/pyjanitor,"1,300",pyjanitor.readthedocs.io,Data Engineering & Pipelines
+111,PyKafka,Python client for Kafka,https://github.com/Parsely/pykafka,"2,300",pypi.org/project/pykafka,Data Engineering & Pipelines
+112,pyod,Outlier detection algorithms,https://github.com/yzhao062/pyod,"6,200",https://pyod.readthedocs.io,Statistical Methods
+113,pytracking,Email tracking and monitoring,https://github.com/revans/pytracking,"1,200",pytracking on PyPI,APIs & Platforms
+114,RandomDataGenerator,Utility for generating random structured datasets,https://github.com/benkeen/generatedata,"2,000",https://github.com/benkeen/generatedata,Software Engineering & Developer Tools
+115,Rasa,Conversational AI framework,https://github.com/RasaHQ/rasa,"18,000",Rasa GitHub,NLP
+116,Ray,Distributed application framework,https://github.com/ray-project/ray,"32,000",ray.io,Distributed Computing
+117,redis-py,Python client for Redis,https://github.com/redis/redis-py,"11,000",https://redis-py.readthedocs.io,"Data Storage, Databases & Formats"
+118,rich,Rich terminal formatting,https://github.com/Textualize/rich,"49,000",https://rich.readthedocs.io,Software Engineering & Developer Tools
+119,River,Online machine learning library,https://github.com/online-ml/river,"4,300",https://riverml.xyz/,Core Machine Learning & AI
+120,SDV (Synthetic Data Vault),Synthetic data generation framework for tabular data,https://github.com/sdv-dev/SDV,"4,500",https://sdv.dev/,"Privacy, Security & Trustworthy AI"
+121,SendGrid,Python SDK for SendGrid email API,https://github.com/sendgrid/sendgrid-python,"1,600",SendGrid,APIs & Platforms
+122,SHAP,Explains machine-learning predictions,https://github.com/shap/shap,"21,000",https://shap.readthedocs.io,"Privacy, Security & Trustworthy AI"
+123,Singer,Open-source standard for ETL data extraction and loading,https://github.com/singer-io,"6,000",https://www.singer.io/,Data Integration & Governance
+124,sktime,Time series ML framework,https://github.com/sktime/sktime,"7,100",https://www.sktime.net/en/stable/installation.html,Time Series & Forecasting
+125,small-text,Active learning for text classification,https://github.com/webis-de/small-text,"1,400",https://github.com/webis-de/small-text,NLP
+126,SNAP,Stanford Network Analysis Platform,https://github.com/snap-stanford/snap,"6,300",https://snap.stanford.edu,Graph & Network Analytics
+127,Snorkel,Weak supervision framework,https://github.com/snorkel-team/snorkel,"5,600",,Data Integration & Governance
+128,Snowflake,Cloud data warehousing platform,https://github.com/snowflakedb,"6,000",snowflake.com,"Data Storage, Databases & Formats"
+129,Socket.IO,Real-time web communication,https://github.com/socketio/socket.io,"60,000",socket.io,Web
+130,spaCy,Industrial-strength NLP library,https://github.com/explosion/spaCy,"28,000",https://spacy.io,NLP
+131,Spark SQL,Structured data processing module in Spark,https://github.com/apache/spark,"38,000",spark.apache.org/sql,Distributed Computing
+132,SQLAlchemy,Database toolkit and ORM,https://github.com/sqlalchemy/sqlalchemy,"7,200",sqlalchemy.org,"Data Storage, Databases & Formats"
+133,streamlit,Interactive data applications,https://github.com/streamlit/streamlit,"33,000",https://streamlit.io,Web
+134,Streamz,Real-time data processing with Dask,https://github.com/python-streamz/streamz,"1,300",streamz.readthedocs.io,Data Engineering & Pipelines
+135,stumpy,Matrix profile time-series analysis,https://github.com/TDAmeritrade/stumpy,"3,500",https://stumpy.readthedocs.io,Time Series & Forecasting
+136,SWE-agent,AI agent for software engineering,https://github.com/princeton-nlp/SWE-agent,"14,000",SWE-agent GitHub,Web
+137,Synthesized.io,Enterprise synthetic data generation platform,https://github.com/synthesized-io,"1,500",https://www.synthesized.io/,"Privacy, Security & Trustworthy AI"
+138,Terraform,Infrastructure as code tool,https://github.com/hashicorp/terraform,"42,000",Terraform,DevOps & Infrastructure
+139,TextBlob,Simple NLP library,https://github.com/sloria/TextBlob,"9,100",textblob.readthedocs.io,NLP
+140,TinyDB,Lightweight document database,https://github.com/msiemens/tinydb,"6,100",tinydb.readthedocs.io,"Data Storage, Databases & Formats"
+141,tokenizers,Fast tokenization library for NLP,https://github.com/huggingface/tokenizers,"9,200",https://huggingface.co/docs/tokenizers,NLP
+142,Tonic.ai,Synthetic data generation for ML and testing,https://github.com/tonicai,"3,000",https://www.tonic.ai/,"Privacy, Security & Trustworthy AI"
+143,TPOT,AutoML library using genetic programming,https://github.com/EpistasisLab/tpot,"9,300",https://epistasislab.github.io/tpot,AutoML
+144,Trane,Automatically defines prediction problems from event-based datasets,https://github.com/HDI-Project/Trane,700,https://github.com/HDI-Project/Trane,AutoML
+145,Trifacta Wrangler,GUI-based data wrangling tool,https://github.com/jlove29/trifacta-wrangler,2000,https://www.trifacta.com/products/wrangler/,Data Engineering & Pipelines
+146,Tryton,Modular open-source ERP system,https://github.com/tryton/tryton,"1,900",Tryton GitHub,Web
+147,tsfresh,Time series feature extraction,https://github.com/blue-yonder/tsfresh,"7,900",https://github.com/blue-yonder/tsfresh,Time Series & Forecasting
+148,tslearn,Time series machine learning,https://github.com/tslearn-team/tslearn,"2,800",tslearn.readthedocs.io,Time Series & Forecasting
+149,txtai,AI search and semantic indexing,https://github.com/neuml/txtai,"9,500",txtai,Language Models
+150,umap-learn,Nonlinear dimensionality reduction,https://github.com/lmcinnes/umap,"7,300",https://umap-learn.readthedocs.io,Statistical Methods
+151,What-If Tool (WIT),Model interpretability tool,https://github.com/PAIR-code/what-if-tool,"1,200",https://pair-code.github.io/what-if-tool,Visualization
+152,XGBoost,Gradient boosting framework,https://github.com/dmlc/xgboost,"25,000",pytables.readthedocs.io,Core Machine Learning & AI
+153,YData-profiling,Data profiling and data understanding tool,https://github.com/ydataai/ydata-profiling,"11,500",https://docs.profiling.ydata.ai/latest/,Analytics

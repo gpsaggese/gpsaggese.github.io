@@ -21,11 +21,7 @@ deploying course materials
   - Contains script files with speaking notes for each lesson
   - Named as `Lesson##.#-Topic.script.txt`
 
-- `lectures_quizzes.secret/`: Quiz materials for the course
-  - Private directory containing quiz content
-
 - `lectures_recap.secret/`: Lecture recap materials
-  - Private directory containing recap summaries
 
 ## Book and Publishing
 
