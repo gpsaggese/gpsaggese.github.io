@@ -16,10 +16,11 @@ hands-on examples including live market data debates and SEC filing analysis.
 <!-- more -->
 
 This tutorial's goal is to show you in 60 minutes:
-- The basic API of AutoGen (an open-source framework for building agentic AI
-  systems)
-- Concrete examples of using AutoGen to build agents that can debate and reason
-  investment strategies based on market data and SEC filings
+
+  - The basic API of AutoGen (an open-source framework for building agentic AI
+    systems)
+  - Concrete examples of using AutoGen to build agents that can debate and reason
+    investment strategies based on market data and SEC filings
 
 ## AutoGen in 30 Seconds
 
@@ -27,6 +28,7 @@ AutoGen is an open-source framework from Microsoft for building agentic AI
 systems made of multiple collaborating agents.
 
 Key capabilities:
+
 - **Layered APIs**: Message-passing agents, tool usage, and human-in-the-loop
   workflows
 - **Autonomous planning**: Reasoning and execution of tasks such as coding,
