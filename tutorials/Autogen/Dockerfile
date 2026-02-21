@@ -10,15 +10,32 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
-WORKDIR /workspace
+# Create virtual environment.
+RUN python3 -m venv /opt/venv
 
-# Copy the entire project into the container
-COPY . /workspace
+# Make the venv the default Python.
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Upgrade pip, setuptools, wheel, and install dependencies
-RUN python -m pip install --upgrade pip setuptools wheel \
-    && pip install --no-cache-dir -r requirements.txt
+# Upgrade pip inside the venv.
+RUN python -m pip install --upgrade pip
 
-# Default command
-CMD ["bash"]
+# Install Jupyter.
+RUN pip3 install jupyterlab
+
+# Install project specific packages.
+COPY requirements.txt /install/requirements.txt
+RUN pip3 install --no-cache-dir -r /install/requirements.txt
+
+RUN mkdir -p /install
+
+# Config.
+ADD etc_sudoers /install/
+COPY etc_sudoers /etc/sudoers
+COPY bashrc /root/.bashrc
+
+# Report package versions.
+ADD version.sh /install/
+RUN /install/version.sh 2>&1 | tee version.log
+
+# Jupyter.
+EXPOSE 8888

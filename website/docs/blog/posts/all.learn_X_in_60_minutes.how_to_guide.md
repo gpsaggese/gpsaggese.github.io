@@ -157,16 +157,21 @@ All tutorials maintain these standards:
 
 - Clean up the Python code using Claude Code
   ```bash
-  > Execute docs/ai_prompts/coding.lint.md on tutorials/Autogen/autogen_utils.py
+  cc> Execute docs/ai_prompts/coding.lint.md on tutorials/Autogen/autogen_utils.py
   ```
 
 - Format the blog
-  ```
+  ```bash
   cc> Execute docs/ai_prompts/blog.format_rules.md on website/docs/blog/posts/all.learn_Autogen_in_60_minutes.how_to_guide.md
   ```
 
-- Rendering the blogs locally
+- Align the Docker system with
+  ```bash
+  cc> Execute docs/ai_prompts/docker.align_with_template.md on tutorials/Autogen
   ```
+
+- Rendering the blogs locally
+  ```bash
   > website/test.sh
   ```
 
