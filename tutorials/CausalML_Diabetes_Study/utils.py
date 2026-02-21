@@ -23,8 +23,6 @@ from causalml.metrics import auuc_score, plot_gain
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier, XGBRegressor
 
-import helpers.hdbg as hdbg
-
 _LOG = logging.getLogger(__name__)
 
 # Set generic style for plots.
@@ -45,7 +43,8 @@ def load_cdc_data(filepath: str) -> pd.DataFrame:
     :param filepath: relative path to the CSV file
     :return: cleaned dataframe ready for processing
     """
-    hdbg.dassert(os.path.exists(filepath), "File not found:", filepath)
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f"File not found: {filepath}")
     _LOG.info("Loading data from: %s", filepath)
     df = pd.read_csv(filepath)
     # Drop duplicates.
@@ -74,12 +73,10 @@ def preprocess_for_causal(
     :return: tuple of (df_filtered, X, T, Y)
     """
     # Basic validation.
-    hdbg.dassert_in(
-        treatment_col, df.columns, "Treatment column not found:", treatment_col
-    )
-    hdbg.dassert_in(
-        outcome_col, df.columns, "Outcome column not found:", outcome_col
-    )
+    if treatment_col not in df.columns:
+        raise ValueError(f"Treatment column not found: {treatment_col}")
+    if outcome_col not in df.columns:
+        raise ValueError(f"Outcome column not found: {outcome_col}")
     # Filter data to ensure columns exist and drop NAs.
     keep_cols = covariate_cols + [treatment_col, outcome_col]
     df_clean = df[keep_cols].dropna().copy()
@@ -115,11 +112,8 @@ class CausalNavigator:
         :param treatment_name: label for T=1
         """
         self.learner_type = learner_type.upper()
-        hdbg.dassert_in(
-            self.learner_type,
-            ["S", "T", "X"],
-            "learner_type must be 'S', 'T', or 'X'",
-        )
+        if self.learner_type not in ["S", "T", "X"]:
+            raise ValueError("learner_type must be 'S', 'T', or 'X'")
         self.control_name = control_name
         self.treatment_name = treatment_name
         # Define base learners (using XGBoost for speed and performance).
@@ -227,9 +221,8 @@ class CausalNavigator:
         :param df_original: original dataframe
         :return: dataframe with CATE column added
         """
-        hdbg.dassert_is_not(
-            self.cate_estimates, None, "Model not fitted. Run fit_estimate first"
-        )
+        if self.cate_estimates is None:
+            raise ValueError("Model not fitted. Run fit_estimate first")
         df_out = df_original.copy()
         df_out["cate"] = self.cate_estimates
         return df_out
@@ -246,7 +239,8 @@ class CausalNavigator:
         :param col: the column to group by (e.g., 'Age', 'Income')
         :param bins: number of bins if the column is continuous
         """
-        hdbg.dassert_in(col, df_with_cate.columns, "Column not found:", col)
+        if col not in df_with_cate.columns:
+            raise ValueError(f"Column not found: {col}")
         plt.figure(figsize=(10, 6))
         # Check if column is effectively continuous or categorical.
         unique_vals = df_with_cate[col].nunique()
@@ -299,11 +293,8 @@ class CausalNavigator:
         :param n_simulations: how many times to shuffle and retrain (keep low, e.g. 5-10)
         """
         _LOG.info("Running Placebo Test (%s permutations)", n_simulations)
-        hdbg.dassert_is_not(
-            self.cate_estimates,
-            None,
-            "Run fit_estimate() first to establish a baseline",
-        )
+        if self.cate_estimates is None:
+            raise ValueError("Run fit_estimate() first to establish a baseline")
         original_ate = self.cate_estimates.mean()
         placebo_ates = []
         # Handle label mapping once for consistency.
