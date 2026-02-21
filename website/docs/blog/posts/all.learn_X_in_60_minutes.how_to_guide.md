@@ -80,7 +80,7 @@ All tutorials maintain these standards:
 
 ### README.md
 
-- Each project contains a `readme.md` summarizing its status and a changelog
+- Each project contains a `README.md` summarizing its status and a changelog
 
 ### Docker Container
 
@@ -89,6 +89,10 @@ All tutorials maintain these standards:
     that technology
   - Often installing and getting a package to work (e.g., PyMC) takes a long
     time
+
+- The Docker structure and approach should follow the template
+  `class_project/project_template/`
+  - Feel free to copy that directory as a base for 
 
 ### Jupyter Notebooks
 
@@ -107,7 +111,7 @@ All tutorials maintain these standards:
 ### Markdown
 
 - Markdown documents should cover information about:
-  - What the technology / Python package ot library is
+  - What the technology / Python package to library is
   - What problem it solves
   - What are the alternatives, both open source and commercial with comments
     about advantages and disadvantages
@@ -131,11 +135,11 @@ All tutorials maintain these standards:
       - Airflow
       - Dask
       - Spark
-  - [MSML610](//github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks)
+  - [MSML610](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks)
     even if not all these tutorials don't use the Causify dev system, but some
     simpler bash scripts.
 
-# XYZ.API.ipynb
+# `project.API.ipynb`
 
 - It should contain a walkthrough of the library / package with an example
   - In practice it merges the XYZ.API.md and the XYZ.API.ipynb into a single
@@ -144,14 +148,25 @@ All tutorials maintain these standards:
     example to show how things work
   - The API ipynb should use simple / synthetic examples since it needs to run quickly
 
-- Most code should be moved to a `utils_*.py` file
+- Most code should be moved to a `*_utils.py` file
+
+# Tools of the trade
+- Format a markdown file
+  ```bash
+  > lint_txt.py -i ...
+  ```
+
+- Clean up the Python code using Claude Code
+  ```bash
+  > Execute docs/ai_prompts/coding.lint.md on tutorials/Autogen/autogen_utils.py
+  ```
 
 # Checklist
 
 - [ ] Is our Docker approach followed?
-  - See ...
-- [ ] Is all the possible code in the notebook moved to a `utils_*.py` file?
-- [ ] Is `XYZ.API.ipynb` in the right format?
+- [ ] Is all the possible code in the notebook moved to a `*_utils.py` file?
+- [ ] Is `project.API.ipynb` in the right format?
+- [ ] Does a notebook run end-to-end
 
 # References
 
