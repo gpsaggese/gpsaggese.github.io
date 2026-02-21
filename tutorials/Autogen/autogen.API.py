@@ -19,34 +19,31 @@
 # - This notebook shows the working of autogen API and all its individual components and its explanations.
 
 # %%
-# Standard Library Imports
+# Standard Library Imports.
 import os
 import io
 
-# Third-Party Libraries
+# Third-Party Libraries.
 import requests
 import PIL.Image
 import IPython.display
 
-# Autogen Core & Utilities
+# Autogen Core & Utilities.
 import autogen_core
 from autogen_core.models import UserMessage
-import autogen_core.tools as tools  # FunctionTool
+import autogen_core.tools as tools  # FunctionTool.
 
-# Autogen Extensions / Models
+# Autogen Extensions / Models.
 # For OpenAIChatCompletionClient.
 import autogen_ext.models.openai as openai
 
-# Autogen AgentChat Modules
+# Autogen AgentChat Modules.
 import autogen_agentchat
 import autogen_agentchat.teams as teams
-
 # For AssistantAgent.
 import autogen_agentchat.agents as agent
-
 # For Message and Event types.
 import autogen_agentchat.messages as msg
-
 # For TaskResult.
 import autogen_agentchat.base as base
 import autogen_agentchat.ui as ui
@@ -58,12 +55,14 @@ import autogen_agentchat.conditions as conditions
 #
 # ### Assistant Agent
 # - AssistantAgent is a built-in agent that uses a language model and has the ability to use tools.
-# - The below cell shows how to implement the agent
+# - The below cell shows how to implement the agent.
 
 
 # %%
 async def web_search(query: str) -> str:
-    """Find information on the web"""
+    """
+    Find information on the web.
+    """
     return "AutoGen is a programming framework for building multi-agent applications."
 
 
@@ -137,7 +136,9 @@ await assistant_run_stream()
 # %%
 # Define a tool using a Python function.
 async def web_search_func(query: str) -> str:
-    """Find information on the web"""
+    """
+    Find information on the web.
+    """
     return "AutoGen is a programming framework for building multi-agent applications."
 
 
@@ -213,46 +214,40 @@ async for message in streaming_assistant.run_stream(
 # ### The below cell shows the working of Agent to Agent communication.
 
 # %%
-# 1. Setup the Model Client (using existing openai_model_client from previous step)
-
-# 2. Define Agent A: The Vision Specialist
+# 1. Setup the Model Client (using existing openai_model_client from previous step).
+# 2. Define Agent A: The Vision Specialist.
 vision_agent = agent.AssistantAgent(
     name="Vision_Specialist",
     model_client=openai_model_client,
     system_message="Describe the image provided in detail.",
 )
-
-# 3. Define Agent B: The Reviewer
+# 3. Define Agent B: The Reviewer.
 reviewer_agent = agent.AssistantAgent(
     name="Reviewer",
     model_client=openai_model_client,
     system_message="Based on the description provided, suggest one creative use for this item.",
 )
-
-# 4. Create the Team (This enables true Agent-to-Agent communication)
+# 4. Create the Team (this enables true Agent-to-Agent communication).
 agent_team = teams.RoundRobinGroupChat(
     [vision_agent, reviewer_agent], max_turns=2
 )
-
-# 5. Prepare the MultiModalMessage from your local file
+# 5. Prepare the MultiModalMessage from your local file.
 pil_image = PIL.Image.open("artifacts/camera.png")
 img = autogen_core.Image(pil_image)
 IPython.display.display(pil_image)
-
 input_message = msg.MultiModalMessage(
     content=["Look at this camera feed and discuss it.", img], source="User"
 )
-
-# 6. Run the Team
+# 6. Run the Team.
 # The team will pass the MultiModalMessage from the User to Agent A,
 # then Agent A's response to Agent B automatically.
 async for message in agent_team.run_stream(task=input_message):
-    # TaskResult objects don't have 'source', so we check if 'source' exists
+    # TaskResult objects don't have 'source', so we check if 'source' exists.
     if hasattr(message, "source"):
         print(f"\n--- Message from {message.source} ---")
         print(message.content)
     else:
-        # This handles the final TaskResult object
+        # This handles the final TaskResult object.
         print("\n--- Task Complete ---")
         # Optional: print(message.stop_reason)
 
@@ -264,42 +259,38 @@ async for message in agent_team.run_stream(task=input_message):
 
 # %%
 async def internal_events():
-    # 1. Setup the agent using the 'agent' alias
-    # model_client_stream=True is required to see the internal 'Thinking' events
+    # 1. Setup the agent using the 'agent' alias.
+    # model_client_stream=True is required to see the internal 'Thinking' events.
     solo_agent = agent.AssistantAgent(
         name="Solo_Assistant",
         model_client=openai_model_client,
         system_message="You are a helpful assistant.",
         model_client_stream=True,
     )
-
     print("--- Execution Started ---\n")
-
-    # 2. Process the stream using the 'msg' and 'base' aliases
+    # 2. Process the stream using the 'msg' and 'base' aliases.
     async for event in solo_agent.run_stream(
         task="What is the capital of France?"
     ):
-        # Internal "Live" Streaming (Individual tokens as they arrive)
+        # Internal "Live" Streaming (individual tokens as they arrive).
         if isinstance(event, msg.ModelClientStreamingChunkEvent):
             if event.content:
                 print(event.content, end="", flush=True)
-
-        # Final Messages (Completed response blocks)
-        # We check specific types to avoid the generic ChatMessage TypeError
+        # Final Messages (completed response blocks).
+        # We check specific types to avoid the generic ChatMessage TypeError.
         elif isinstance(
             event, (msg.TextMessage, msg.MultiModalMessage, msg.StopMessage)
         ):
-            # Filter out the 'user' prompt to keep the output clean
+            # Filter out the 'user' prompt to keep the output clean.
             if event.source != "user":
                 print(f"\n\n[FINAL MESSAGE from {event.source}]:")
                 print(event.content)
-
-        # Final Summary using the 'base' alias
+        # Final Summary using the 'base' alias.
         elif isinstance(event, base.TaskResult):
             print(f"\n\n--- Task Finished | Reason: {event.stop_reason} ---")
 
 
-# Run the block
+# Run the block.
 await internal_events()
 
 # %% [markdown]
@@ -313,7 +304,7 @@ await internal_events()
 # The demonstration will primarily highlight `SelectorGroupChat`, as it is the key element in the `autogen.example.ipynb example`.
 
 # %%
-# Analyst system message (no TERMINATE here)
+# Analyst system message (no TERMINATE here).
 analyst = agent.AssistantAgent(
     name="Analyst",
     model_client=openai_model_client,
@@ -323,7 +314,7 @@ Answer clearly and concisely.
 """,
 )
 
-# Reviewer system message
+# Reviewer system message.
 reviewer = agent.AssistantAgent(
     name="Reviewer",
     model_client=openai_model_client,
@@ -333,10 +324,8 @@ Comment on the Analyst's output briefly.
 """,
 )
 
-# Team termination condition
-termination_condition = conditions.TextMentionTermination(
-    "TERMINATE"
-)  # you can instead use a timeout or max_turns
+# Team termination condition (you can instead use a timeout or max_turns).
+termination_condition = conditions.TextMentionTermination("TERMINATE")
 team = teams.SelectorGroupChat(
     [analyst, reviewer],
     model_client=openai_model_client,
@@ -351,10 +340,9 @@ team = teams.SelectorGroupChat(
 #
 
 # %%
-# Task prompt
+# Task prompt.
 task_prompt = "Summarize the hypothetical company 'ExampleCorp' in 2 sentences. Provide one key insight."
-
-# Run
+# Run.
 async for message in team.run_stream(task=task_prompt):
     if hasattr(message, "source") and isinstance(message.content, str):
         print(f"{message.source}: {message.content.strip()}\n")
@@ -406,9 +394,7 @@ model_client = openai.OpenAIChatCompletionClient(
     api_key=os.environ["OPENAI_API_KEY"],
 )
 assistant = agent.AssistantAgent("assistant", model_client=model_client)
-
 # Create the team setting a maximum number of turns to 1.
-
 task = "Write a 4-line poem about the ocean."
 while True:
     # Run the conversation and stream to the console.
