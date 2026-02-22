@@ -22,18 +22,10 @@
 #
 # This notebook is the **“show me the pieces”** tour: lots of small, runnable snippets that build a mental model.
 # When you’re ready for full workflows (agent loops, graphs, subagents, memory), jump to `langchain.example.ipynb`.
-#
-# **How to use this notebook**
-# - Run top-to-bottom if you can. If you’re skimming, read the markdown and run only the cells you’re curious about.
-# - Some cells call an LLM (that can cost money). If you don’t have API keys set up yet, you can still read everything safely.
-#
-# **Recommended setup (most reproducible)**
-# 1) `cd tutorials/LangChain_LangGraph`
-# 2) `cp .env.example .env` and fill in your provider + API key(s)
-# 3) Either:
-#    - Docker (recommended): `docker compose up --build` → open JupyterLab at `http://localhost:8888/lab`
-#    - Local venv: `pip install -r requirements.txt`
-#
+
+# %%
+# !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet jupyterlab-vim)"
+# !jupyter labextension enable
 
 # %% [markdown]
 # ## APIs covered (parity with `langchain.example.ipynb`)
@@ -60,7 +52,6 @@
 # - Notebooks as data: `nbformat`, `nbclient`, `papermill`
 #
 # If any of those names feel mysterious right now — perfect. We’ll introduce them with small examples.
-#
 
 # %% [markdown]
 # # Imports
@@ -69,59 +60,53 @@
 # If the next cell errors with “No module named …”, that’s not you — it just means you’re not running with this tutorial’s pinned dependencies yet.
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Enable auto-reloading so edits are picked up without restarting the kernel.
 # - Import the notebook utility library (`langchain.API_utils.py`) so all reusable functions and classes are available.
-#
-#
-
-# %%
 # %load_ext autoreload
 # %autoreload 2
 
-import importlib.util as _ilu
+#import importlib.util as _ilu
 import os
 import sys
 import importlib
 from pathlib import Path as _Path
 
 
-def _require_import(module_name: str):
-    try:
-        return importlib.import_module(module_name)
-    except ModuleNotFoundError as e:
-        raise RuntimeError(
-            f"""Missing Python package {module_name!r}.
+# def _require_import(module_name: str):
+#     try:
+#         return importlib.import_module(module_name)
+#     except ModuleNotFoundError as e:
+#         raise RuntimeError(
+#             f"""Missing Python package {module_name!r}.
 
-This tutorial is meant to be run from `tutorials/LangChain_LangGraph` with its pinned dependencies.
+# This tutorial is meant to be run from `tutorials/LangChain_LangGraph` with its pinned dependencies.
 
-Quick fixes:
-- Docker (recommended): `cd tutorials/LangChain_LangGraph && docker compose up --build`
-- Local venv: `cd tutorials/LangChain_LangGraph && pip install -r requirements.txt`
-"""
-        ) from e
-
-
-langchain = _require_import("langchain")
-langchain_core = _require_import("langchain_core")
-langgraph = _require_import("langgraph")
-
-# Load utility library for this notebook.
-_utils_path = _Path("langchain.API_utils.py")
-_spec = _ilu.spec_from_file_location("langchain_api_utils", str(_utils_path))
-_mod = _ilu.module_from_spec(_spec)
-sys.modules["langchain_api_utils"] = _mod
-_spec.loader.exec_module(_mod)
-
-import langchain_api_utils as ut
+# Quick fixes:
+# - Docker (recommended): `cd tutorials/LangChain_LangGraph && docker compose up --build`
+# - Local venv: `cd tutorials/LangChain_LangGraph && pip install -r requirements.txt`
+# """
+#         ) from e
 
 
-# %% [markdown]
-# **This cell will:**
-# - Configure logging and print environment/version info for debugging.
-#
-#
+# langchain = _require_import("langchain")
+# langchain_core = _require_import("langchain_core")
+# langgraph = _require_import("langgraph")
+
+# # Load utility library for this notebook.
+# _utils_path = _Path("langchain.API_utils.py")
+# _spec = _ilu.spec_from_file_location("langchain_api_utils", str(_utils_path))
+# _mod = _ilu.module_from_spec(_spec)
+# sys.modules["langchain_api_utils"] = _mod
+# _spec.loader.exec_module(_mod)
+
+import langchain
+import langchain_core
+import langgraph
+
+import langchain_API_utils as ut
+
 
 # %%
 import logging
@@ -132,6 +117,7 @@ logging.basicConfig(
 )
 _LOG = logging.getLogger("learn_langchain.api")
 
+# TODO(ai_gp): Move it to a function in *_utils.py and use print instead of _LOG.info
 _LOG.info("python=%s", sys.version.split()[0])
 _LOG.info("platform=%s", platform.platform())
 _LOG.info("langchain=%s", getattr(langchain, "__version__", "unknown"))
@@ -156,14 +142,10 @@ _LOG.info("LLM_PROVIDER=%s", os.getenv("LLM_PROVIDER", "(unset)"))
 # If you don’t want to spend money while reading, you can skip the LLM-invoking cells — the markdown still explains what they’re doing.
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Load `.env` and check for optional LangSmith tracing.
 # - `LlmConfig`, `load_llm_config`, and `get_chat_model` are defined in `langchain.API_utils`.
-#
-#
-
-# %%
 import os
 
 from dotenv import load_dotenv
@@ -176,13 +158,9 @@ if os.getenv("LANGSMITH_TRACING", "").strip().lower() in {"1", "true", "yes"}:
     _LOG.info("LangSmith tracing requested (LANGSMITH_TRACING=true).")
 
 
-# %% [markdown]
-# **This cell will:**
-# - Instantiate the chat model from your `.env` configuration.
-#
-#
-
 # %%
+# This cell will:
+# - Instantiate the chat model from your `.env` configuration.
 llm = ut.get_chat_model()
 llm
 
@@ -199,14 +177,10 @@ llm
 # That “workspace” detail will matter once we get to sandboxed filesystem access.
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Load the local dataset into a Pandas DataFrame and prepare the time column.
 # - Copy the dataset under `./workspace/data/` so Deep Agents can access it via `/workspace/...`.
-#
-#
-
-# %%
 from pathlib import Path
 import shutil
 
@@ -230,13 +204,9 @@ if not WORKSPACE_DATASET_PATH.exists():
 df.head(5)
 
 
-# %% [markdown]
-# **This cell will:**
-# - Build compact, JSON-serializable metadata and sample rows to pass into prompts.
-#
-#
-
 # %%
+# This cell will:
+# - Build compact, JSON-serializable metadata and sample rows to pass into prompts.
 # build_dataset_meta is defined in langchain.API_utils.
 DATASET_META = ut.build_dataset_meta(df)
 DATASET_META
@@ -260,13 +230,9 @@ DATASET_META
 # As you run the next cell, focus on the *shape* of the pipeline more than the exact prompt wording.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Demonstrate a small part of the API surface used in the examples notebook.
-#
-#
-
 # %%
+# This cell will:
+# - Demonstrate a small part of the API surface used in the examples notebook.
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
@@ -295,13 +261,9 @@ chain.invoke({"question": "Explain LCEL in one sentence."})
 # When you’re learning, it helps to treat runnables like functions — except they can be composed and configured.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Demonstrate a small part of the API surface used in the examples notebook.
-#
-#
-
 # %%
+# This cell will:
+# - Demonstrate a small part of the API surface used in the examples notebook.
 from langchain_core.runnables import RunnableParallel
 
 summary_prompt = ChatPromptTemplate.from_messages(
@@ -327,13 +289,9 @@ parallel.invoke(
 )
 
 
-# %% [markdown]
-# **This cell will:**
-# - Use `ToolNode` to execute tool calls inside a graph.
-#
-#
-
 # %%
+# This cell will:
+# - Use `ToolNode` to execute tool calls inside a graph.
 questions = [
     {"question": "What is a tool in LangChain?"},
     {"question": "What is ToolNode in LangGraph?"},
@@ -342,13 +300,9 @@ questions = [
 chain.batch(questions, return_exceptions=True, config={"max_concurrency": 3})
 
 
-# %% [markdown]
-# **This cell will:**
-# - Demonstrate a small part of the API surface used in the examples notebook.
-#
-#
-
 # %%
+# This cell will:
+# - Demonstrate a small part of the API surface used in the examples notebook.
 chunks = []
 for chunk in chain.stream(
     {"question": "Give me a 2-bullet explanation of RunnableParallel."}
@@ -373,14 +327,10 @@ final[:300] + ("..." if len(final) > 300 else "")
 # "model asks for tool" → "we run tool" → "tool returns data" → "model continues".
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Build and compile a `StateGraph` (a small LangGraph workflow).
 # - Use `ToolNode` to execute tool calls inside a graph.
-#
-#
-
-# %%
 # mean, zscore, ToolState are defined in langchain.API_utils.
 from langchain_core.messages import AIMessage
 from langgraph.graph import START, END, StateGraph
@@ -430,14 +380,10 @@ out = graph.invoke({"messages": [AIMessage(content="", tool_calls=tool_calls)]})
 # - system controls: injected inputs (state, stores, call IDs)
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Build and compile a `StateGraph` (a small LangGraph workflow).
 # - Use `ToolNode` to execute tool calls inside a graph.
-#
-#
-
-# %%
 # dataset_brief, InjectedStateState are defined in langchain.API_utils.
 import json
 
@@ -484,14 +430,10 @@ json.loads(out["messages"][-1].content)
 # In this tutorial we use `InMemoryStore` for simplicity, but the pattern generalizes to other persistence layers.
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Build and compile a `StateGraph` (a small LangGraph workflow).
 # - Use `ToolNode` to execute tool calls inside a graph.
-#
-#
-
-# %%
 # save_pref, load_pref, StoreState are defined in langchain.API_utils.
 from langchain_core.messages import AIMessage
 from langgraph.graph import START, END, StateGraph
@@ -560,13 +502,9 @@ out1["messages"][-1].content, out2["messages"][-1].content
 # - **LangGraph** is what you reach for when you want full control (state, routing, memory, HITL).
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Create a tool-calling agent using `create_agent(...)`.
-#
-#
-
 # %%
+# This cell will:
+# - Create a tool-calling agent using `create_agent(...)`.
 # utc_now is defined in langchain.API_utils.
 from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
@@ -599,13 +537,10 @@ out = agent.invoke(
 # - handoffs between teammates become less ambiguous
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Create a tool-calling agent with an explicit output contract.
 # - Ask for UTC time and require a reproducible Python snippet in the final answer.
-#
-
-# %%
 contract_agent = create_agent(
     model=llm,
     tools=[ut.utc_now],
@@ -637,13 +572,9 @@ print(getattr(contract_out["messages"][-1], "content", ""))
 # If it feels advanced on a first read, that’s normal — the goal is to make the concepts *available*, not to memorize them.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Create a tool-calling agent using `create_agent(...)`.
-#
-#
-
 # %%
+# This cell will:
+# - Create a tool-calling agent using `create_agent(...)`.
 # CustomState and extract_facts are built by make_custom_state_and_tool() in langchain.API_utils.
 import json
 
@@ -691,14 +622,10 @@ state = supervisor.invoke(
 # In the next cell we create a tiny file in `tmp_runs/hitl/` and only delete it if the human approves.
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Build and compile a `StateGraph` (a small LangGraph workflow).
 # - Demonstrate human-in-the-loop control using `interrupt(...)` and resume.
-#
-#
-
-# %%
 # HITLState, propose_delete, do_delete are defined in langchain.API_utils.
 from pathlib import Path
 
@@ -748,13 +675,9 @@ out2 = graph.invoke(
 # We’ll keep the demos safe: everything writes under `tmp_runs/`.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Demonstrate notebook operations (write/execute/parameterize notebooks).
-#
-#
-
 # %%
+# This cell will:
+# - Demonstrate notebook operations (write/execute/parameterize notebooks).
 from pathlib import Path
 
 import nbformat
@@ -794,13 +717,9 @@ str(out_path)
 # This is the first building block for “notebook automation” — generating a notebook artifact from a structured spec.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Demonstrate notebook operations (write/execute/parameterize notebooks).
-#
-#
-
 # %%
+# This cell will:
+# - Demonstrate notebook operations (write/execute/parameterize notebooks).
 # write_notebook is defined in langchain.API_utils.
 spec = {
     "cells": [
@@ -823,15 +742,11 @@ ut.write_notebook.invoke({"spec": spec, "out_rel": "demo/tool_hello.ipynb"})
 # You’ll see us use an injected workspace directory so the graph can safely read/write only where we intend.
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Build and compile a `StateGraph` (a small LangGraph workflow).
 # - Use `ToolNode` to execute tool calls inside a graph.
 # - Demonstrate notebook operations (write/execute/parameterize notebooks).
-#
-#
-
-# %%
 # nb_write, nb_run, nb_extract_errors, nb_extract_artifacts, nb_list_files, ToolGraphState
 # are defined in langchain.API_utils.
 from pathlib import Path
@@ -946,13 +861,9 @@ out3 = graph.invoke(
 # This is a friendly way to build “run this notebook and report back” pipelines.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Demonstrate notebook operations (write/execute/parameterize notebooks).
-#
-#
-
 # %%
+# This cell will:
+# - Demonstrate notebook operations (write/execute/parameterize notebooks).
 # extract_errors is defined in langchain.API_utils.
 from pathlib import Path
 
@@ -999,13 +910,9 @@ ut.extract_errors(nb)
 # - embedded images
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Demonstrate notebook operations (write/execute/parameterize notebooks).
-#
-#
-
 # %%
+# This cell will:
+# - Demonstrate notebook operations (write/execute/parameterize notebooks).
 import base64
 import json
 
@@ -1081,13 +988,9 @@ for i, cell in enumerate(nb2.cells):
 # Everything stays under `tmp_runs/`.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Demonstrate notebook operations (write/execute/parameterize notebooks).
-#
-#
-
 # %%
+# This cell will:
+# - Demonstrate notebook operations (write/execute/parameterize notebooks).
 
 run_dir = Path("tmp_runs/writes_files").resolve()
 run_dir.mkdir(parents=True, exist_ok=True)
@@ -1140,13 +1043,9 @@ sorted([p.name for p in run_dir.iterdir() if p.is_file()])
 # We’ll do a tiny demo so you can see the mechanics.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Demonstrate notebook operations (write/execute/parameterize notebooks).
-#
-#
-
 # %%
+# This cell will:
+# - Demonstrate notebook operations (write/execute/parameterize notebooks).
 import papermill as pm
 
 run_dir = Path("tmp_runs/papermill").resolve()
@@ -1199,13 +1098,9 @@ str(out_nb)
 # For the full DA1–DA8 walkthrough, see `langchain.example.ipynb`.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
 # %%
+# This cell will:
+# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
 try:
     import deepagents  # type: ignore
     from deepagents import create_deep_agent  # type: ignore
@@ -1232,13 +1127,9 @@ except Exception as e:  # pragma: no cover
 # - it makes it easy to inspect what the agent wrote
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
 # %%
+# This cell will:
+# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
 root = Path(".").resolve()
 Path("workspace").mkdir(parents=True, exist_ok=True)
 
@@ -1277,13 +1168,9 @@ print(
 # The cell below wires the guardrail and runs one tiny approve flow so you can see the interrupt lifecycle end-to-end.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
 # %%
+# This cell will:
+# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
 from pathlib import Path
 
 from langgraph.checkpoint.memory import MemorySaver

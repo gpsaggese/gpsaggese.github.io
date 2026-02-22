@@ -4,7 +4,7 @@
 # Python3
 Python 3.12.3
 # pip3
-pip 26.0.1 from /opt/venv/lib/python3.12/site-packages/pip (python 3.12)
+pip 26.0.1 from /venv/lib/python3.12/site-packages/pip (python 3.12)
 # jupyter
 Selected Jupyter core packages...
 IPython          : 9.10.0
@@ -34,7 +34,7 @@ argon2-cffi               25.1.0
 argon2-cffi-bindings      25.1.0
 arrow                     1.4.0
 asttokens                 3.0.1
-async-lru                 2.1.0
+async-lru                 2.2.0
 attrs                     25.4.0
 babel                     2.18.0
 beautifulsoup4            4.14.3
@@ -122,7 +122,7 @@ parso                     0.8.6
 pexpect                   4.9.0
 pillow                    12.1.1
 pip                       26.0.1
-platformdirs              4.9.1
+platformdirs              4.9.2
 prometheus_client         0.24.1
 prompt_toolkit            3.0.52
 propcache                 0.4.1

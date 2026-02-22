@@ -42,13 +42,9 @@
 # Run from `tutorials/LangChain_LangGraph` so local paths and helper utilities resolve exactly as written.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Enable auto-reloading so edits are picked up without restarting the kernel.
-#
-#
-
 # %%
+# This cell will:
+# - Enable auto-reloading so edits are picked up without restarting the kernel.
 # %load_ext autoreload
 # %autoreload 2
 
@@ -78,13 +74,9 @@ langchain_core = _require_import("langchain_core")
 langgraph = _require_import("langgraph")
 
 
-# %% [markdown]
-# **This cell will:**
-# - Configure logging and print environment/version info for debugging.
-#
-#
-
 # %%
+# This cell will:
+# - Configure logging and print environment/version info for debugging.
 import logging
 import platform
 
@@ -117,13 +109,9 @@ _LOG.info("LLM_PROVIDER=%s", os.getenv("LLM_PROVIDER", "(unset)"))
 # Tip: start with a smaller/cheaper model while learning, then switch models later.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Define a small `.env`-driven factory to create the chat model.
-#
-#
-
 # %%
+# This cell will:
+# - Define a small `.env`-driven factory to create the chat model.
 import os
 from dataclasses import dataclass
 
@@ -240,13 +228,9 @@ if os.getenv("LANGSMITH_TRACING", "").strip().lower() in {"1", "true", "yes"}:
     _LOG.info("LangSmith tracing requested (LANGSMITH_TRACING=true).")
 
 
-# %% [markdown]
-# **This cell will:**
-# - Instantiate the chat model from your `.env` configuration.
-#
-#
-
 # %%
+# This cell will:
+# - Instantiate the chat model from your `.env` configuration.
 llm = get_chat_model()
 llm
 
@@ -259,14 +243,10 @@ llm
 # Just like in the API notebook, we also copy it into `./workspace/data/` so that sandboxed filesystem tools can refer to it as `/workspace/data/T1_slice.csv`.
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Load the local dataset into a Pandas DataFrame and prepare the time column.
 # - Copy the dataset under `./workspace/data/` so Deep Agents can access it via `/workspace/...`.
-#
-#
-
-# %%
 from pathlib import Path
 import shutil
 
@@ -290,14 +270,9 @@ if not WORKSPACE_DATASET_PATH.exists():
 df.head(5)
 
 
-# %% [markdown]
-# **This cell will:**
-# - Build compact, JSON-serializable metadata and sample rows to pass into prompts.
-#
-#
-
-
 # %%
+# This cell will:
+# - Build compact, JSON-serializable metadata and sample rows to pass into prompts.
 def build_dataset_meta(df) -> dict:
     """
     Build a compact JSON-serializable dataset metadata dict for demos.
@@ -342,13 +317,9 @@ DATASET_META
 # - what “a reasonable question” about this dataset might be
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run the next step of the end-to-end example.
-#
-#
-
 # %%
+# This cell will:
+# - Run the next step of the end-to-end example.
 import matplotlib.pyplot as plt
 
 print("shape:", df.shape)
@@ -391,13 +362,10 @@ if "Date/Time" in df.columns and pd.api.types.is_datetime64_any_dtype(
 # Use this when you want answers grounded in project docs rather than pure model memory.
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Build a tiny docs index from this folder's markdown files.
 # - Run a retrieval-grounded QA query over that index.
-#
-
-# %%
 import langchain_utils as tut_utils
 
 from langchain_core.output_parsers import StrOutputParser
@@ -460,13 +428,10 @@ docs_snapshot = tut_utils.snapshot_checksums(docs_paths)
 # - add those chunks back into the existing vector store
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Simulate a docs change and detect it via checksum diff.
 # - Incrementally upsert changed chunks into the existing docs store.
-#
-
-# %%
 refresh_doc = Path("tmp_runs/docs_refresh_demo.md")
 refresh_doc.parent.mkdir(parents=True, exist_ok=True)
 refresh_doc.write_text(
@@ -508,13 +473,9 @@ print(
 # - the agent loop becomes much easier to understand when you already trust the tools
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run the next step of the end-to-end example.
-#
-#
-
 # %%
+# This cell will:
+# - Run the next step of the end-to-end example.
 from datetime import datetime, timezone
 import math
 
@@ -559,13 +520,9 @@ def sqrt(x: float) -> float:
 # - a final AI message that uses those results
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Create a tool-calling agent using `create_agent(...)`.
-#
-#
-
 # %%
+# This cell will:
+# - Create a tool-calling agent using `create_agent(...)`.
 from langchain_core.messages import HumanMessage
 from langchain.agents import create_agent
 
@@ -605,13 +562,9 @@ final_state = agent.invoke(inputs)
 # - How do edges determine what runs next?
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Build and compile a `StateGraph` (a small LangGraph workflow).
-#
-#
-
 # %%
+# This cell will:
+# - Build and compile a `StateGraph` (a small LangGraph workflow).
 from typing import TypedDict
 from langgraph.graph import StateGraph, START, END
 
@@ -659,13 +612,9 @@ graph.invoke({"n": 0, "msg": ""})
 # This is the foundation for “if the model asked for a tool, run tools; otherwise, finish.”
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Build and compile a `StateGraph` (a small LangGraph workflow).
-#
-#
-
 # %%
+# This cell will:
+# - Build and compile a `StateGraph` (a small LangGraph workflow).
 from typing import Literal
 
 
@@ -718,13 +667,9 @@ graph.invoke({"flag": True, "out": ""}), graph.invoke({"flag": False, "out": ""}
 # In the next cell, focus on how state updates combine rather than replace.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Build and compile a `StateGraph` (a small LangGraph workflow).
-#
-#
-
 # %%
+# This cell will:
+# - Build and compile a `StateGraph` (a small LangGraph workflow).
 from typing import Annotated, List
 
 
@@ -808,14 +753,10 @@ graph.invoke({"evidence": []})["evidence"]
 # This is one of the best places to pause and say: “Ah — *this* is what an agent really is.”
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Build and compile a `StateGraph` (a small LangGraph workflow).
 # - Use `ToolNode` to execute tool calls inside a graph.
-#
-#
-
-# %%
 from typing import Annotated as Ann
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
@@ -879,13 +820,9 @@ out = graph.invoke(
 # This keeps each piece simpler and makes debugging much easier.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Create a tool-calling agent using `create_agent(...)`.
-#
-#
-
 # %%
+# This cell will:
+# - Create a tool-calling agent using `create_agent(...)`.
 from langchain.tools import tool as lc_tool
 
 
@@ -955,13 +892,9 @@ _last_text(out)
 # You’ll also see `ToolRuntime`, which gives the tool access to useful runtime context (like the current state).
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Create a tool-calling agent using `create_agent(...)`.
-#
-#
-
 # %%
+# This cell will:
+# - Create a tool-calling agent using `create_agent(...)`.
 import json
 from typing_extensions import Annotated as TxAnnotated
 
@@ -1078,13 +1011,9 @@ out2 = supervisor.invoke(
 {"rewrite": _last_text(out1), "facts_updated": out2.get("facts")}
 
 
-# %% [markdown]
-# **This cell will:**
-# - Create a tool-calling agent using `create_agent(...)`.
-#
-#
-
 # %%
+# This cell will:
+# - Create a tool-calling agent using `create_agent(...)`.
 # E6.2: two subagents (date normalization + email drafting)
 date_agent = create_agent(
     llm,
@@ -1152,14 +1081,9 @@ b = sup.invoke(
 {"normalize_datetime": _last_text(a), "draft_email_body": _last_text(b)}
 
 
-# %% [markdown]
-# **This cell will:**
-# - Create a tool-calling agent using `create_agent(...)`.
-#
-#
-
-
 # %%
+# This cell will:
+# - Create a tool-calling agent using `create_agent(...)`.
 # E6.3: context isolation (noisy worker, clean supervisor)
 @lc_tool(
     "generate_noise",
@@ -1215,14 +1139,10 @@ out = sup.invoke(
 _last_text(out)
 
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Create a tool-calling agent using `create_agent(...)`.
 # - Demonstrate notebook operations (write/execute/parameterize notebooks).
-#
-#
-
-# %%
 # E6.6: parallel tool calls (one AI turn emits multiple tool calls)
 sum_agent = create_agent(
     llm,
@@ -1301,21 +1221,12 @@ _last_text(out)
 # - parent graph that composes them
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Build and compile a `StateGraph` (a small LangGraph workflow).
-#
-#
-#
-#
-
-
 # #############################################################################
 # SubState
 # #############################################################################
-
-
-# %%
 class SubState(TypedDict):
     raw: str
     parsed: dict
@@ -1392,13 +1303,9 @@ parent_graph.invoke(
 # If you’ve ever debugged an agent that “remembered the wrong thing,” this is the antidote.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Build and compile a `StateGraph` (a small LangGraph workflow).
-#
-#
-
 # %%
+# This cell will:
+# - Build and compile a `StateGraph` (a small LangGraph workflow).
 from langgraph.checkpoint.memory import MemorySaver
 
 
@@ -1483,14 +1390,10 @@ run_twice("shared"), run_twice("private")
 # LangGraph gives you the **primitive** (interrupt + resume). You can surface that in a notebook, a web app, Slack, etc.
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Build and compile a `StateGraph` (a small LangGraph workflow).
 # - Demonstrate human-in-the-loop control using `interrupt(...)` and resume.
-#
-#
-
-# %%
 from pathlib import Path
 from typing import Literal as Lit
 
@@ -1554,13 +1457,9 @@ pending = (
 pending
 
 
-# %% [markdown]
-# **This cell will:**
-# - Run the next step of the end-to-end example.
-#
-#
-
 # %%
+# This cell will:
+# - Run the next step of the end-to-end example.
 out2 = hitl_graph.invoke(
     Command(resume="approve"), config={"configurable": {"thread_id": thread_id}}
 )
@@ -1588,13 +1487,9 @@ victim.exists()
 # - HITL gates are what prevent “silent” edits when you want a human to approve
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
 # %%
+# This cell will:
+# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
 try:
     import deepagents  # type: ignore
     from deepagents import CompiledSubAgent, create_deep_agent  # type: ignore
@@ -1614,13 +1509,9 @@ except Exception as e:  # pragma: no cover
     )
 
 
-# %% [markdown]
-# **This cell will:**
-# - Run the next step of the end-to-end example.
-#
-#
-
 # %%
+# This cell will:
+# - Run the next step of the end-to-end example.
 from pathlib import Path
 from typing import Any
 
@@ -1751,13 +1642,9 @@ DATASET_CONTEXT = build_dataset_context()
 # - plus evidence that the agent is *tool-capable* (even if it doesn’t call a tool yet)
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
 # %%
+# This cell will:
+# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
 llm_da = get_chat_model()
 agent = create_deep_agent(model=llm_da)
 out = agent.invoke(
@@ -1787,13 +1674,9 @@ print(
 # - iterate as you go
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
 # %%
+# This cell will:
+# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
 agent = create_deep_agent(model=get_chat_model())
 prompt = (
     "Before doing anything else, call write_todos with 5 EDA tasks for THIS dataset. "
@@ -1815,13 +1698,9 @@ print(_as_text(todos)[:800])
 # That way you can inspect files with your own eyes.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
 # %%
+# This cell will:
+# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
 root = Path(".").resolve()
 Path("workspace").mkdir(parents=True, exist_ok=True)
 agent = create_deep_agent(
@@ -1869,13 +1748,9 @@ if len(bullets) < 2:
 # In real projects you usually use a mix.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
 # %%
+# This cell will:
+# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.store.memory import InMemoryStore
 
@@ -1983,13 +1858,9 @@ print(
 # - the main agent stays focused on coordination
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
 # %%
+# This cell will:
+# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
 from langgraph.checkpoint.memory import MemorySaver
 
 ckpt = MemorySaver()
@@ -2050,14 +1921,10 @@ print(
 # You’ll see how a compiled graph can be slotted in as a worker.
 #
 
-# %% [markdown]
-# **This cell will:**
+# %%
+# This cell will:
 # - Create a tool-calling agent using `create_agent(...)`.
 # - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
-# %%
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import MemorySaver
 
@@ -2122,13 +1989,9 @@ print(
 # If you’re building anything that touches real systems, this pattern is worth memorizing.
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
 # %%
+# This cell will:
+# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.types import Command
 
@@ -2229,13 +2092,9 @@ print(read_txt.replace("\\n", "\\\\n")[:200])
 # - you can review exactly what it wrote
 #
 
-# %% [markdown]
-# **This cell will:**
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-#
-#
-
 # %%
+# This cell will:
+# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
 from langgraph.checkpoint.memory import MemorySaver
 
 ckpt = MemorySaver()
