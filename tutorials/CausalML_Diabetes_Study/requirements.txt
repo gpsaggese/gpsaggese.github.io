@@ -11,3 +11,4 @@ causalml==0.*
 nbconvert==7.*
 jinja2==3.*
 papermill==2.*
+graphviz==0.*
