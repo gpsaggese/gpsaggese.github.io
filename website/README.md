@@ -1,4 +1,4 @@
-# GP Saggese Personal Website
+# GP's Personal Website
 
 This is a personal website built with MkDocs Material, featuring a blog
 integrated into the main site.

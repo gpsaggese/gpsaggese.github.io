@@ -23,10 +23,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Create virtual environment.
-RUN python3 -m venv /opt/venv
+RUN python3 -m venv /venv
 
 # Make the venv the default Python.
-ENV PATH="/opt/venv/bin:$PATH"
+ENV PATH="/opt/bin:$PATH"
 
 # Upgrade pip inside the venv.
 RUN python -m pip install --upgrade pip

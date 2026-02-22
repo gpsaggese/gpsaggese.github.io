@@ -4,7 +4,6 @@ authors:
   - gpsaggese
 date: 2026-02-07
 categories:
-  - AI Research
   - Software Engineering
 ---
 
@@ -80,7 +79,7 @@ All tutorials maintain these standards:
 
 ### README.md
 
-- Each project contains a `readme.md` summarizing its status and a changelog
+- Each project contains a `README.md` summarizing its status and a changelog
 
 ### Docker Container
 
@@ -89,6 +88,10 @@ All tutorials maintain these standards:
     that technology
   - Often installing and getting a package to work (e.g., PyMC) takes a long
     time
+
+- The Docker structure and approach should follow the template
+  `class_project/project_template/`
+  - Feel free to copy that directory as a base for 
 
 ### Jupyter Notebooks
 
@@ -107,7 +110,7 @@ All tutorials maintain these standards:
 ### Markdown
 
 - Markdown documents should cover information about:
-  - What the technology / Python package ot library is
+  - What the technology / Python package to library is
   - What problem it solves
   - What are the alternatives, both open source and commercial with comments
     about advantages and disadvantages
@@ -131,11 +134,11 @@ All tutorials maintain these standards:
       - Airflow
       - Dask
       - Spark
-  - [MSML610](//github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks)
+  - [MSML610](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks)
     even if not all these tutorials don't use the Causify dev system, but some
     simpler bash scripts.
 
-# XYZ.API.ipynb
+# `project.API.ipynb`
 
 - It should contain a walkthrough of the library / package with an example
   - In practice it merges the XYZ.API.md and the XYZ.API.ipynb into a single
@@ -144,19 +147,48 @@ All tutorials maintain these standards:
     example to show how things work
   - The API ipynb should use simple / synthetic examples since it needs to run quickly
 
-- Most code should be moved to a `utils_*.py` file
+- Most code should be moved to a `*_utils.py` file
+
+# Tools of the trade
+- Format a markdown file
+  ```bash
+  > lint_txt.py -i ...
+  ```
+
+- Clean up the Python code using Claude Code
+  ```bash
+  cc> Execute docs/ai_prompts/coding.lint.md on tutorials/Autogen/autogen_utils.py
+  ```
+
+- Format the blog
+  ```bash
+  cc> Execute docs/ai_prompts/blog.format_rules.md on website/docs/blog/posts/all.learn_Autogen_in_60_minutes.how_to_guide.md
+  ```
+
+- Align the Docker system with
+  ```bash
+  cc> Execute docs/ai_prompts/docker.align_with_template.md on tutorials/Autogen
+  ```
+
+- Rendering the blogs locally
+  ```bash
+  > website/test.sh
+  ```
 
 # Checklist
 
 - [ ] Is our Docker approach followed?
-  - See ...
-- [ ] Is all the possible code in the notebook moved to a `utils_*.py` file?
-- [ ] Is `XYZ.API.ipynb` in the right format?
+  - If not follow `class_project/project_template/README.md`
+- [ ] Is all the possible code in the notebook moved to a `*_utils.py` file?
+- [ ] Is `project.API.ipynb` in the right format?
+- [ ] Do the notebooks run end-to-end?
+- [ ] Are all the notebooks paired using Jupytext?
+- [ ] Did you run `linters2/lint_branch.sh`?
 
 # References
 
-- Follow the `class_project/README.md` 
+- A description of the Docker build system is 
+  `class_project/project_template/README.md`
 
-- Each tutorial conceptually corresponds to:
-  - A blog entry
-  - A project of one of the classes (e.g., DATA605, MSML610)
+- class_project/FAQ.md
+- class_project/README.md

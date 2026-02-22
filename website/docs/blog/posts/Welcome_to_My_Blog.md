@@ -2,7 +2,7 @@
 title: "Welcome to Our Blog"
 authors:
   - gpsaggese
-date: 2026-02-07
+date: 2026-02-06
 categories:
   - AI Research
   - Software Engineering

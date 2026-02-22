@@ -1,20 +1,16 @@
 ---
-title: "Python Package and Virtual Environment Management Tools"
+title: "Python Package Tools in 30 mins"
 authors:
   - gpsaggese
 date: 2026-02-14
 description:
 categories:
-  - Technical
+  - Python
 ---
 
-# Summary
-This document provides an overview of the main tools used for managing packages
-and virtual environments in Python, grouped by purpose and modern usage
-
 TL;DR: A comprehensive guide to Python package managers and virtual environment
-tools, from built-in solutions like pip and venv to modern alternatives like
-Poetry and uv.
+tools, from built-in solutions like `pip` and `venv` to modern alternatives like
+`Poetry` and `uv`.
 
 <!-- more -->
 

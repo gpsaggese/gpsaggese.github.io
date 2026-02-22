@@ -1,7 +1,12 @@
 #!/bin/bash
+# """
 # Docker image naming configuration.
-# This file is sourced by docker_*.sh scripts.
+#
+# This file defines the repository name, image name, and full image name
+# variables used by all docker_*.sh scripts in the project template.
+# """
 
 REPO_NAME=gpsaggese
-IMAGE_NAME=autogen
+# The file should be all lower case.
+IMAGE_NAME=umd_autogen
 FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME

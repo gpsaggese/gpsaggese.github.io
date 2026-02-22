@@ -1,33 +1,42 @@
+# Use Python 3.10 slim (compatible with gluonts[torch]==0.14.0).
 FROM python:3.10-slim
 
-# Set working directory
-WORKDIR /workspace
+# Avoid interactive prompts during apt operations.
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install CA certificates (needed for HTTPS) and basic build tools.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
     build-essential \
     curl \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Create virtual environment.
+RUN python3 -m venv /opt/venv
 
-# Copy project files
-COPY . .
+# Make the venv the default Python.
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Expose Jupyter port
+# Upgrade pip inside the venv.
+RUN python -m pip install --upgrade pip
+
+# Install Jupyter.
+RUN pip3 install jupyterlab
+
+# Install project specific packages.
+RUN mkdir -p /install
+COPY requirements.txt /install/requirements.txt
+RUN pip3 install --no-cache-dir -r /install/requirements.txt
+
+# Config.
+ADD etc_sudoers /install/
+COPY etc_sudoers /etc/sudoers
+COPY bashrc /root/.bashrc
+
+# Report package versions.
+ADD version.sh /install/
+RUN /install/version.sh 2>&1 | tee version.log
+
+# Jupyter.
 EXPOSE 8888
-
-# Set environment variables
-ENV JUPYTER_ENABLE_LAB=yes
-
-# Start Jupyter Notebook
-CMD ["jupyter", "notebook", \
-     "--ip=0.0.0.0", \
-     "--port=8888", \
-     "--no-browser", \
-     "--allow-root", \
-     "--NotebookApp.token=''", \
-     "--NotebookApp.password=''"]

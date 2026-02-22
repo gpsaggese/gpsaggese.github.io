@@ -1,18 +1,18 @@
 # Project Template
 This directory contains a Docker-based development environment template with
-utility scripts, configuration files, and Jupyter notebook templates for machine
-learning projects.
+utility scripts, configuration files, and Jupyter notebook templates for
+standardizing projects.
 
 ## Description of Files
 - `bashrc`
-  - Bash configuration file enabling vi mode for command-line editing
+  - Bash configuration file enabling `vi` mode for command-line editing
 
 - `copy_docker_files.py`
   - Python script for copying Docker configuration files to destination
     directories
 
 - `docker_build.version.log`
-  - Log file containing Python, pip, Jupyter, and package version information
+  - Log file containing Python, `pip`, Jupyter, and package version information
     from Docker build
 
 - `docker_cmd.sh`
