@@ -16,7 +16,7 @@
 # %% [markdown]
 # ## Deep Agents — API overview (used in `langchain.example.ipynb`)
 #
-# Deep Agents (the `deepagents` package used in this tutorial) is an optional layer that bundles a few “agent app” conveniences:
+# Deep Agents (the `deepagents` package used in this tutorial) is an optional layer that bundles a few "agent app" conveniences:
 #
 # - a ready-to-run agent loop (`create_deep_agent(...)`)
 # - a toolbox (todos, filesystem tools, delegation to subagents)
@@ -34,24 +34,20 @@
 
 # %%
 # This cell will:
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-try:
-    import deepagents  # type: ignore
-    from deepagents import create_deep_agent  # type: ignore
-    from deepagents.backends import (  # type: ignore
-        FilesystemBackend,
-    )
+# - Enable auto-reloading so edits are picked up without restarting the kernel.
+# - Import the notebook utility library (deep_agents_API_utils.py).
+# - Verify that deepagents is importable.
+# %load_ext autoreload
+# %autoreload 2
 
-    print("deepagents:", getattr(deepagents, "__version__", "(unknown)"))
-except Exception as e:  # pragma: no cover
-    raise RuntimeError(
-        "This section requires `deepagents`.\n"
-        f"Import error: {type(e).__name__}: {str(e)[:200]}"
-    )
+import deep_agents_API_utils as ut
+
+version = ut.check_deepagents()
+print("deepagents:", version)
 
 
 # %% [markdown]
-# This next cell shows how Deep Agents’ **virtual filesystem** works.
+# This next cell shows how Deep Agents' **virtual filesystem** works.
 #
 # - The agent will refer to files like `/workspace/hello.txt`.
 # - Under the hood, that maps to a real folder you can see locally: `./workspace/hello.txt`.
@@ -63,32 +59,11 @@ except Exception as e:  # pragma: no cover
 
 # %%
 # This cell will:
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-root = Path(".").resolve()
-Path("workspace").mkdir(parents=True, exist_ok=True)
-
-backend = FilesystemBackend(root_dir=str(root), virtual_mode=True)
-agent = create_deep_agent(model=ut.get_chat_model(), backend=backend)
-
-out = agent.invoke(
-    {
-        "messages": [
-            {
-                "role": "user",
-                "content": (
-                    "Call write_file with file_path='/workspace/hello.txt' and content='hello'. "
-                    "Then call read_file on '/workspace/hello.txt' and return the content."
-                ),
-            }
-        ]
-    }
-)
-
-paths = sorted([str(p) for p in Path("workspace").rglob("hello.txt")])
+# - Run a Deep Agents demo (filesystem write/read via virtual FilesystemBackend).
+# run_filesystem_demo is defined in deep_agents_API_utils.
+paths, preview = ut.run_filesystem_demo(ut.get_chat_model())
 print("hello.txt paths on disk:", paths)
-print(
-    "final message preview:", getattr(out["messages"][-1], "content", "")[:200]
-)
+print("final message preview:", preview)
 
 
 # %% [markdown]
@@ -104,62 +79,8 @@ print(
 
 # %%
 # This cell will:
-# - Run a Deep Agents demo (filesystem/todos/subagents/HITL).
-from pathlib import Path
-
-from langgraph.checkpoint.memory import MemorySaver
-from langgraph.types import Command
-
-try:
-    from langchain.agents.middleware.human_in_the_loop import InterruptOnConfig
-except ModuleNotFoundError as e:  # pragma: no cover
-    raise RuntimeError(
-        """This Deep Agents HITL demo needs the tutorial dependencies.
-
-Run it from `tutorials/LangChain_LangGraph` with `requirements.txt` installed (or via Docker).
-"""
-    ) from e
-
-root = Path(".").resolve()
-backend = FilesystemBackend(root_dir=str(root), virtual_mode=True)
-agent = create_deep_agent(
-    model=ut.get_chat_model(),
-    checkpointer=MemorySaver(),
-    backend=backend,
-    interrupt_on={
-        "edit_file": InterruptOnConfig(allowed_decisions=["approve", "reject"])
-    },
-)
-
-thread_id = "API_HITL_GUARDRAIL"
-agent.invoke(
-    {
-        "messages": [
-            {
-                "role": "user",
-                "content": "write_file /workspace/hitl_api_demo.txt with 'line1\nline2\n'",
-            }
-        ]
-    },
-    config={"configurable": {"thread_id": thread_id}},
-)
-out = agent.invoke(
-    {
-        "messages": [
-            {
-                "role": "user",
-                "content": "edit_file /workspace/hitl_api_demo.txt replace 'line2' with 'LINE2_APPROVED' then read_file /workspace/hitl_api_demo.txt",
-            }
-        ]
-    },
-    config={"configurable": {"thread_id": thread_id}},
-)
-
-interrupted = "__interrupt__" in out
+# - Run a Deep Agents HITL approve-flow demo.
+# run_hitl_demo is defined in deep_agents_API_utils.
+agent, out, interrupted = ut.run_hitl_demo(ut.get_chat_model())
 print("interrupted:", interrupted)
-if interrupted:
-    out = agent.invoke(
-        Command(resume={"decisions": [{"type": "approve"}]}),
-        config={"configurable": {"thread_id": thread_id}},
-    )
 print("agent type:", type(agent))
