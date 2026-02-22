@@ -10,7 +10,7 @@ This file contains utility functions that support the tutorial notebooks.
 
 Import as:
 
-import tutorials.FilterPy.template_utils as tfiteuti
+import class_project.project_template.template_utils as cpptteut
 """
 
 import pandas as pd

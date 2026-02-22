@@ -31,7 +31,6 @@ CONTAINER_NAME=${IMAGE_NAME}_bash
 PORT=8889
 cmd="docker run --rm -ti \
     --name $CONTAINER_NAME \
-    -p $PORT:$PORT \
     -v $(pwd):/data \
     -v $GIT_ROOT:/git_root \
     -e PYTHONPATH=/git_root:/git_root/helpers_root \

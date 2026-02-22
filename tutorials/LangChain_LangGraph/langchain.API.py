@@ -127,7 +127,9 @@ import langchain_api_utils as ut
 import logging
 import platform
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s - %(message)s"
+)
 _LOG = logging.getLogger("learn_langchain.api")
 
 _LOG.info("python=%s", sys.version.split()[0])
@@ -214,7 +216,9 @@ DATASET_PATH = Path("data/T1_slice.csv").resolve()
 df = pd.read_csv(DATASET_PATH)
 TIME_COL = "Date/Time"
 if TIME_COL in df.columns:
-    df[TIME_COL] = pd.to_datetime(df[TIME_COL], format="%d %m %Y %H:%M", errors="coerce")
+    df[TIME_COL] = pd.to_datetime(
+        df[TIME_COL], format="%d %m %Y %H:%M", errors="coerce"
+    )
 
 # Make the dataset visible to Deep Agents filesystem tools under `/workspace/...`.
 WORKSPACE_DIR = Path("workspace").resolve()
@@ -266,10 +270,12 @@ DATASET_META
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a concise tutor. Answer clearly."),
-    ("human", "{question}"),
-])
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You are a concise tutor. Answer clearly."),
+        ("human", "{question}"),
+    ]
+)
 
 chain = prompt | llm | StrOutputParser()
 chain.invoke({"question": "Explain LCEL in one sentence."})
@@ -298,20 +304,27 @@ chain.invoke({"question": "Explain LCEL in one sentence."})
 # %%
 from langchain_core.runnables import RunnableParallel
 
-summary_prompt = ChatPromptTemplate.from_messages([
-    ("system", "You write crisp summaries."),
-    ("human", "Summarize in 3 bullets:\n\n{text}"),
-])
-risks_prompt = ChatPromptTemplate.from_messages([
-    ("system", "You list caveats."),
-    ("human", "List 3 risks/caveats:\n\n{text}"),
-])
+summary_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You write crisp summaries."),
+        ("human", "Summarize in 3 bullets:\n\n{text}"),
+    ]
+)
+risks_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You list caveats."),
+        ("human", "List 3 risks/caveats:\n\n{text}"),
+    ]
+)
 
 summary_chain = summary_prompt | llm | StrOutputParser()
 risks_chain = risks_prompt | llm | StrOutputParser()
 
 parallel = RunnableParallel(summary=summary_chain, risks=risks_chain)
-parallel.invoke({"text": "LangChain provides composable building blocks for LLM apps."}, config={"max_concurrency": 2})
+parallel.invoke(
+    {"text": "LangChain provides composable building blocks for LLM apps."},
+    config={"max_concurrency": 2},
+)
 
 
 # %% [markdown]
@@ -337,7 +350,9 @@ chain.batch(questions, return_exceptions=True, config={"max_concurrency": 3})
 
 # %%
 chunks = []
-for chunk in chain.stream({"question": "Give me a 2-bullet explanation of RunnableParallel."}):
+for chunk in chain.stream(
+    {"question": "Give me a 2-bullet explanation of RunnableParallel."}
+):
     chunks.append(chunk)
 final = "".join(chunks)
 final[:300] + ("..." if len(final) > 300 else "")
@@ -380,12 +395,25 @@ g.add_edge("tools", END)
 graph = g.compile()
 
 tool_calls = [
-    {"name": "mean", "args": {"xs": [1, 2, 3, 4]}, "id": "t1", "type": "tool_call"},
-    {"name": "zscore", "args": {"xs": [9, 10, 10], "x": 10}, "id": "t2", "type": "tool_call"},  # error (std=0)
+    {
+        "name": "mean",
+        "args": {"xs": [1, 2, 3, 4]},
+        "id": "t1",
+        "type": "tool_call",
+    },
+    {
+        "name": "zscore",
+        "args": {"xs": [9, 10, 10], "x": 10},
+        "id": "t2",
+        "type": "tool_call",
+    },  # error (std=0)
 ]
 
 out = graph.invoke({"messages": [AIMessage(content="", tool_calls=tool_calls)]})
-[type(m).__name__ + ":" + (getattr(m, "content", "")[:80]) for m in out["messages"]]
+[
+    type(m).__name__ + ":" + (getattr(m, "content", "")[:80])
+    for m in out["messages"]
+]
 
 
 # %% [markdown]
@@ -430,7 +458,14 @@ state_in: ut.InjectedStateState = {
         AIMessage(
             content="",
             tool_calls=[
-                {"name": "dataset_brief", "args": {"question": "What columns exist and what is the sampling frequency?"}, "id": "t1", "type": "tool_call"}
+                {
+                    "name": "dataset_brief",
+                    "args": {
+                        "question": "What columns exist and what is the sampling frequency?"
+                    },
+                    "id": "t1",
+                    "type": "tool_call",
+                }
             ],
         )
     ],
@@ -471,8 +506,44 @@ g.add_edge(START, "tools")
 g.add_edge("tools", END)
 graph = g.compile(store=store)
 
-out1 = graph.invoke({"messages": [AIMessage(content="", tool_calls=[{"name": "save_pref", "args": {"user_id": "u1", "key": "freq_hint", "value": "1min"}, "id": "t1", "type": "tool_call"}])]})
-out2 = graph.invoke({"messages": [AIMessage(content="", tool_calls=[{"name": "load_pref", "args": {"user_id": "u1", "key": "freq_hint"}, "id": "t2", "type": "tool_call"}])]})
+out1 = graph.invoke(
+    {
+        "messages": [
+            AIMessage(
+                content="",
+                tool_calls=[
+                    {
+                        "name": "save_pref",
+                        "args": {
+                            "user_id": "u1",
+                            "key": "freq_hint",
+                            "value": "1min",
+                        },
+                        "id": "t1",
+                        "type": "tool_call",
+                    }
+                ],
+            )
+        ]
+    }
+)
+out2 = graph.invoke(
+    {
+        "messages": [
+            AIMessage(
+                content="",
+                tool_calls=[
+                    {
+                        "name": "load_pref",
+                        "args": {"user_id": "u1", "key": "freq_hint"},
+                        "id": "t2",
+                        "type": "tool_call",
+                    }
+                ],
+            )
+        ]
+    }
+)
 out1["messages"][-1].content, out2["messages"][-1].content
 
 
@@ -505,8 +576,16 @@ agent = create_agent(
     tools=[ut.utc_now],
     system_prompt="Use tools when a tool can answer the question more reliably than guessing.",
 )
-out = agent.invoke({"messages": [HumanMessage(content="Call utc_now and return the exact value.")]})
-[(type(m).__name__, getattr(m, "content", "")[:120]) for m in out["messages"]][-4:]
+out = agent.invoke(
+    {
+        "messages": [
+            HumanMessage(content="Call utc_now and return the exact value.")
+        ]
+    }
+)
+[(type(m).__name__, getattr(m, "content", "")[:120]) for m in out["messages"]][
+    -4:
+]
 
 
 # %% [markdown]
@@ -536,7 +615,11 @@ contract_agent = create_agent(
     ),
 )
 contract_out = contract_agent.invoke(
-    {"messages": [HumanMessage(content="What is the current UTC time? Use your tool.")]}
+    {
+        "messages": [
+            HumanMessage(content="What is the current UTC time? Use your tool.")
+        ]
+    }
 )
 print(getattr(contract_out["messages"][-1], "content", ""))
 
@@ -576,9 +659,18 @@ supervisor = create_agent(
 )
 
 state = supervisor.invoke(
-    {"messages": [{"role": "user", "content": "Text: LangGraph supports interrupts."}], "user_prefs": {"tone": "formal"}, "facts": []}
+    {
+        "messages": [
+            {"role": "user", "content": "Text: LangGraph supports interrupts."}
+        ],
+        "user_prefs": {"tone": "formal"},
+        "facts": [],
+    }
 )
-{"facts": state.get("facts"), "last": getattr(state["messages"][-1], "content", "")[:160]}
+{
+    "facts": state.get("facts"),
+    "last": getattr(state["messages"][-1], "content", "")[:160],
+}
 
 
 # %% [markdown]
@@ -612,7 +704,7 @@ from pathlib import Path
 
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
-from langgraph.types import Command, interrupt
+from langgraph.types import Command
 
 builder = StateGraph(ut.HITLState)
 builder.add_node("propose", ut.propose_delete)
@@ -628,9 +720,16 @@ victim = tmp_dir / "victim.txt"
 victim.write_text("delete me", encoding="utf-8")
 
 thread_id = "HITL_API_DEMO"
-out1 = graph.invoke({"target_path": str(victim), "decision": ""}, config={"configurable": {"thread_id": thread_id}})
-pending = out1.get("__interrupt__", [])[0].value if "__interrupt__" in out1 else None
-out2 = graph.invoke(Command(resume="approve"), config={"configurable": {"thread_id": thread_id}})
+out1 = graph.invoke(
+    {"target_path": str(victim), "decision": ""},
+    config={"configurable": {"thread_id": thread_id}},
+)
+pending = (
+    out1.get("__interrupt__", [])[0].value if "__interrupt__" in out1 else None
+)
+out2 = graph.invoke(
+    Command(resume="approve"), config={"configurable": {"thread_id": thread_id}}
+)
 {"pending": pending, "victim_exists_after": victim.exists()}
 
 
@@ -678,7 +777,9 @@ out_path = run_dir / "smoke_out.ipynb"
 nbformat.write(nb, str(in_path))
 
 nb2 = nbformat.read(str(in_path), as_version=4)
-client = NotebookClient(nb2, resources={"metadata": {"path": str(run_dir)}}, timeout=60)
+client = NotebookClient(
+    nb2, resources={"metadata": {"path": str(run_dir)}}, timeout=60
+)
 client.execute()
 nbformat.write(nb2, str(out_path))
 
@@ -701,7 +802,12 @@ str(out_path)
 
 # %%
 # write_notebook is defined in langchain.API_utils.
-spec = {"cells": [{"type": "markdown", "source": "# Tool-written notebook"}, {"type": "code", "source": "print('ok')"}]}
+spec = {
+    "cells": [
+        {"type": "markdown", "source": "# Tool-written notebook"},
+        {"type": "code", "source": "print('ok')"},
+    ]
+}
 ut.write_notebook.invoke({"spec": spec, "out_rel": "demo/tool_hello.ipynb"})
 
 
@@ -737,7 +843,15 @@ from langgraph.prebuilt import ToolNode
 workspace = Path("tmp_runs/ipynb_tools_workspace").resolve()
 workspace.mkdir(parents=True, exist_ok=True)
 
-tool_node = ToolNode([ut.nb_write, ut.nb_run, ut.nb_extract_errors, ut.nb_extract_artifacts, ut.nb_list_files])
+tool_node = ToolNode(
+    [
+        ut.nb_write,
+        ut.nb_run,
+        ut.nb_extract_errors,
+        ut.nb_extract_artifacts,
+        ut.nb_list_files,
+    ]
+)
 g = StateGraph(ut.ToolGraphState)
 g.add_node("tools", tool_node)
 g.add_edge(START, "tools")
@@ -755,24 +869,71 @@ spec = {
 # Execute dependent operations in separate invocations for deterministic behavior.
 
 out1 = graph.invoke(
-    {"workspace_dir": str(workspace), "messages": [AIMessage(content="", tool_calls=[
-        {"name": "nb_write", "args": {"spec": spec, "out_rel": "demo/in.ipynb"}, "id": "t1", "type": "tool_call"},
-    ])]}
+    {
+        "workspace_dir": str(workspace),
+        "messages": [
+            AIMessage(
+                content="",
+                tool_calls=[
+                    {
+                        "name": "nb_write",
+                        "args": {"spec": spec, "out_rel": "demo/in.ipynb"},
+                        "id": "t1",
+                        "type": "tool_call",
+                    },
+                ],
+            )
+        ],
+    }
 )
 
 out2 = graph.invoke(
-    {"workspace_dir": str(workspace), "messages": [AIMessage(content="", tool_calls=[
-        {"name": "nb_run", "args": {"in_rel": "demo/in.ipynb", "out_rel": "demo/out.executed.ipynb", "timeout_s": 60}, "id": "t2", "type": "tool_call"},
-    ])]}
+    {
+        "workspace_dir": str(workspace),
+        "messages": [
+            AIMessage(
+                content="",
+                tool_calls=[
+                    {
+                        "name": "nb_run",
+                        "args": {
+                            "in_rel": "demo/in.ipynb",
+                            "out_rel": "demo/out.executed.ipynb",
+                            "timeout_s": 60,
+                        },
+                        "id": "t2",
+                        "type": "tool_call",
+                    },
+                ],
+            )
+        ],
+    }
 )
 
 out3 = graph.invoke(
-    {"workspace_dir": str(workspace), "messages": [AIMessage(content="", tool_calls=[
-        {"name": "nb_list_files", "args": {}, "id": "t3", "type": "tool_call"},
-    ])]}
+    {
+        "workspace_dir": str(workspace),
+        "messages": [
+            AIMessage(
+                content="",
+                tool_calls=[
+                    {
+                        "name": "nb_list_files",
+                        "args": {},
+                        "id": "t3",
+                        "type": "tool_call",
+                    },
+                ],
+            )
+        ],
+    }
 )
 
-out1["messages"][-1].content, out2["messages"][-1].content, out3["messages"][-1].content[:200]
+(
+    out1["messages"][-1].content,
+    out2["messages"][-1].content,
+    out3["messages"][-1].content[:200],
+)
 
 
 # %% [markdown]
@@ -798,7 +959,6 @@ from pathlib import Path
 import nbformat
 from nbformat import validate
 from nbclient import NotebookClient
-from nbclient.exceptions import CellExecutionError
 
 run_dir = Path("tmp_runs/execute").resolve()
 run_dir.mkdir(parents=True, exist_ok=True)
@@ -817,7 +977,12 @@ out_path = run_dir / "error_out.executed.ipynb"
 nbformat.write(nb_err, str(in_path))
 
 nb = nbformat.read(str(in_path), as_version=4)
-client = NotebookClient(nb, timeout=60, allow_errors=True, resources={"metadata": {"path": str(run_dir)}})
+client = NotebookClient(
+    nb,
+    timeout=60,
+    allow_errors=True,
+    resources={"metadata": {"path": str(run_dir)}},
+)
 client.execute()
 nbformat.write(nb, str(out_path))
 
@@ -863,7 +1028,9 @@ executed_nb = run_dir / "artifacts.executed.ipynb"
 nbformat.write(nb, str(in_nb))
 
 nb2 = nbformat.read(str(in_nb), as_version=4)
-NotebookClient(nb2, timeout=120, resources={"metadata": {"path": str(run_dir)}}).execute()
+NotebookClient(
+    nb2, timeout=120, resources={"metadata": {"path": str(run_dir)}}
+).execute()
 nbformat.write(nb2, str(executed_nb))
 
 out_dir = run_dir / "out"
@@ -885,16 +1052,24 @@ for i, cell in enumerate(nb2.cells):
                 t = data["text/plain"]
                 p = out_dir / f"cell_{i}_text_{j}.txt"
                 p.write_text(t if isinstance(t, str) else "".join(t))
-                manifest.append({"cell": i, "kind": "text/plain", "path": str(p)})
+                manifest.append(
+                    {"cell": i, "kind": "text/plain", "path": str(p)}
+                )
             if "image/png" in data:
                 b64 = data["image/png"]
-                b = base64.b64decode(b64 if isinstance(b64, str) else "".join(b64))
+                b = base64.b64decode(
+                    b64 if isinstance(b64, str) else "".join(b64)
+                )
                 p = out_dir / f"cell_{i}_img_{j}.png"
                 p.write_bytes(b)
                 manifest.append({"cell": i, "kind": "image/png", "path": str(p)})
 
 (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2))
-{"executed_nb": str(executed_nb), "n_artifacts": len(manifest), "manifest": str(out_dir / "manifest.json")}
+{
+    "executed_nb": str(executed_nb),
+    "n_artifacts": len(manifest),
+    "manifest": str(out_dir / "manifest.json"),
+}
 
 
 # %% [markdown]
@@ -913,7 +1088,6 @@ for i, cell in enumerate(nb2.cells):
 #
 
 # %%
-import csv
 
 run_dir = Path("tmp_runs/writes_files").resolve()
 run_dir.mkdir(parents=True, exist_ok=True)
@@ -945,7 +1119,9 @@ out_nb = run_dir / "writes_files.executed.ipynb"
 nbformat.write(nb, str(in_nb))
 
 nb2 = nbformat.read(str(in_nb), as_version=4)
-NotebookClient(nb2, timeout=120, resources={"metadata": {"path": str(run_dir)}}).execute()
+NotebookClient(
+    nb2, timeout=120, resources={"metadata": {"path": str(run_dir)}}
+).execute()
 nbformat.write(nb2, str(out_nb))
 
 sorted([p.name for p in run_dir.iterdir() if p.is_file()])
@@ -979,16 +1155,28 @@ run_dir.mkdir(parents=True, exist_ok=True)
 nb = nbformat.v4.new_notebook()
 nb.cells = [
     nbformat.v4.new_markdown_cell("# Papermill demo"),
-    nbformat.v4.new_code_cell("# Parameters\nx = 1\ny = 2", metadata={"tags": ["parameters"]}),
+    nbformat.v4.new_code_cell(
+        "# Parameters\nx = 1\ny = 2", metadata={"tags": ["parameters"]}
+    ),
     nbformat.v4.new_code_cell("print({'x': x, 'y': y, 'x_plus_y': x + y})"),
 ]
-nb.metadata["kernelspec"] = {"name": "python3", "display_name": "Python 3", "language": "python"}
+nb.metadata["kernelspec"] = {
+    "name": "python3",
+    "display_name": "Python 3",
+    "language": "python",
+}
 
 in_nb = run_dir / "pm_in.ipynb"
 out_nb = run_dir / "pm_out.ipynb"
 nbformat.write(nb, str(in_nb))
 
-pm.execute_notebook(str(in_nb), str(out_nb), parameters={"x": 10, "y": 32}, cwd=str(run_dir), kernel_name="python3")
+pm.execute_notebook(
+    str(in_nb),
+    str(out_nb),
+    parameters={"x": 10, "y": 32},
+    cwd=str(run_dir),
+    kernel_name="python3",
+)
 str(out_nb)
 
 
@@ -1020,12 +1208,9 @@ str(out_nb)
 # %%
 try:
     import deepagents  # type: ignore
-    from deepagents import CompiledSubAgent, create_deep_agent  # type: ignore
+    from deepagents import create_deep_agent  # type: ignore
     from deepagents.backends import (  # type: ignore
-        CompositeBackend,
         FilesystemBackend,
-        StateBackend,
-        StoreBackend,
     )
 
     print("deepagents:", getattr(deepagents, "__version__", "(unknown)"))
@@ -1076,7 +1261,9 @@ out = agent.invoke(
 
 paths = sorted([str(p) for p in Path("workspace").rglob("hello.txt")])
 print("hello.txt paths on disk:", paths)
-print("final message preview:", getattr(out["messages"][-1], "content", "")[:200])
+print(
+    "final message preview:", getattr(out["messages"][-1], "content", "")[:200]
+)
 
 
 # %% [markdown]
@@ -1118,12 +1305,21 @@ agent = create_deep_agent(
     model=ut.get_chat_model(),
     checkpointer=MemorySaver(),
     backend=backend,
-    interrupt_on={"edit_file": InterruptOnConfig(allowed_decisions=["approve", "reject"])},
+    interrupt_on={
+        "edit_file": InterruptOnConfig(allowed_decisions=["approve", "reject"])
+    },
 )
 
 thread_id = "API_HITL_GUARDRAIL"
 agent.invoke(
-    {"messages": [{"role": "user", "content": "write_file /workspace/hitl_api_demo.txt with 'line1\nline2\n'"}]},
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "write_file /workspace/hitl_api_demo.txt with 'line1\nline2\n'",
+            }
+        ]
+    },
     config={"configurable": {"thread_id": thread_id}},
 )
 out = agent.invoke(
@@ -1146,4 +1342,3 @@ if interrupted:
         config={"configurable": {"thread_id": thread_id}},
     )
 print("agent type:", type(agent))
-

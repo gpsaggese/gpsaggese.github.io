@@ -88,7 +88,9 @@ langgraph = _require_import("langgraph")
 import logging
 import platform
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s - %(message)s"
+)
 _LOG = logging.getLogger("learn_langchain.examples")
 
 _LOG.info("python=%s", sys.version.split()[0])
@@ -130,6 +132,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+# #############################################################################
+# LlmConfig
+# #############################################################################
+
+
 @dataclass(frozen=True)
 class LlmConfig:
     """
@@ -147,7 +154,9 @@ def _require_env(var_name: str) -> str:
     """
     value = os.getenv(var_name)
     if not value:
-        raise RuntimeError(f"Missing required environment variable `{var_name}`. See `.env.example`.")
+        raise RuntimeError(
+            f"Missing required environment variable `{var_name}`. See `.env.example`."
+        )
     return value
 
 
@@ -165,7 +174,9 @@ def load_llm_config() -> LlmConfig:
     }
     model = os.getenv("LLM_MODEL", default_models.get(provider, ""))
     if not model:
-        raise RuntimeError(f"Missing `LLM_MODEL` for provider={provider!r}. See `.env.example`.")
+        raise RuntimeError(
+            f"Missing `LLM_MODEL` for provider={provider!r}. See `.env.example`."
+        )
 
     cfg = LlmConfig(provider=provider, model=model, temperature=temperature)
     return cfg
@@ -210,7 +221,9 @@ def get_chat_model():
                 "Install it with `pip install langchain-ollama` and retry."
             ) from e
 
-        base_url = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+        base_url = os.getenv(
+            "OLLAMA_BASE_URL", "http://host.docker.internal:11434"
+        )
         model = ChatOllama(
             model=cfg.model,
             temperature=cfg.temperature,
@@ -263,7 +276,9 @@ DATASET_PATH = Path("data/T1_slice.csv").resolve()
 df = pd.read_csv(DATASET_PATH)
 TIME_COL = "Date/Time"
 if TIME_COL in df.columns:
-    df[TIME_COL] = pd.to_datetime(df[TIME_COL], format="%d %m %Y %H:%M", errors="coerce")
+    df[TIME_COL] = pd.to_datetime(
+        df[TIME_COL], format="%d %m %Y %H:%M", errors="coerce"
+    )
 
 # Make the dataset visible to Deep Agents filesystem tools under `/workspace/...`.
 WORKSPACE_DIR = Path("workspace").resolve()
@@ -281,11 +296,12 @@ df.head(5)
 #
 #
 
+
 # %%
 def build_dataset_meta(df) -> dict:
-    '''
+    """
     Build a compact JSON-serializable dataset metadata dict for demos.
-    '''
+    """
     cols = list(df.columns)
     dtypes = {c: str(df[c].dtype) for c in cols}
     sample_rows = df.head(3).to_dict(orient="records")
@@ -309,6 +325,7 @@ def build_dataset_meta(df) -> dict:
         "freq": freq,
     }
     return meta
+
 
 DATASET_META = build_dataset_meta(df)
 DATASET_META
@@ -343,8 +360,12 @@ numeric_cols = [c for c in df.columns if c != "Date/Time"]
 print("\nsummary stats (numeric):")
 display(df[numeric_cols].describe().T)
 
-if "Date/Time" in df.columns and pd.api.types.is_datetime64_any_dtype(df["Date/Time"]):
-    cols = [c for c in ["LV ActivePower (kW)", "Wind Speed (m/s)"] if c in df.columns]
+if "Date/Time" in df.columns and pd.api.types.is_datetime64_any_dtype(
+    df["Date/Time"]
+):
+    cols = [
+        c for c in ["LV ActivePower (kW)", "Wind Speed (m/s)"] if c in df.columns
+    ]
     if cols:
         ax = df.plot(
             x="Date/Time",
@@ -383,9 +404,15 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 
-docs_paths = [Path("README.md"), Path("langchain.API.md"), Path("langchain.example.md")]
+docs_paths = [
+    Path("README.md"),
+    Path("langchain.API.md"),
+    Path("langchain.example.md"),
+]
 raw_docs = tut_utils.load_markdown_documents(docs_paths)
-chunked_docs = tut_utils.split_documents(raw_docs, chunk_size=900, chunk_overlap=120)
+chunked_docs = tut_utils.split_documents(
+    raw_docs, chunk_size=900, chunk_overlap=120
+)
 
 embeddings = tut_utils.make_embeddings()
 docs_store = tut_utils.build_vector_store(chunked_docs, embeddings)
@@ -416,7 +443,10 @@ rag_chain = (
 rag_question = "How do HITL interrupts and resume work in this tutorial?"
 rag_answer = rag_chain.invoke(rag_question)
 print(rag_answer[:900])
-print("sources:", [d.metadata.get("source") for d in retriever.invoke(rag_question)])
+print(
+    "sources:",
+    [d.metadata.get("source") for d in retriever.invoke(rag_question)],
+)
 
 docs_snapshot = tut_utils.snapshot_checksums(docs_paths)
 
@@ -452,11 +482,19 @@ print("changes:", changes)
 changed_paths = [Path(path) for path in (changes["new"] + changes["modified"])]
 if changed_paths:
     changed_docs = tut_utils.load_markdown_documents(changed_paths)
-    changed_chunks = tut_utils.split_documents(changed_docs, chunk_size=900, chunk_overlap=120)
+    changed_chunks = tut_utils.split_documents(
+        changed_docs, chunk_size=900, chunk_overlap=120
+    )
     tut_utils.add_documents_to_store(docs_store, changed_chunks)
 
 docs_snapshot = updated_snapshot
-print("refresh query sources:", [d.metadata.get("source") for d in retriever.invoke("What is docs refresh demo?")])
+print(
+    "refresh query sources:",
+    [
+        d.metadata.get("source")
+        for d in retriever.invoke("What is docs refresh demo?")
+    ],
+)
 
 
 # %% [markdown]
@@ -482,10 +520,12 @@ import math
 
 from langchain_core.tools import tool
 
+
 @tool
 def utc_now() -> str:
     """Return the current UTC time as an ISO string."""
     return datetime.now(timezone.utc).isoformat()
+
 
 @tool
 def mean(xs: list[float]) -> float:
@@ -494,6 +534,7 @@ def mean(xs: list[float]) -> float:
         raise ValueError("xs must be non-empty")
     return sum(float(x) for x in xs) / len(xs)
 
+
 @tool
 def sqrt(x: float) -> float:
     """Return sqrt(x)."""
@@ -501,7 +542,6 @@ def sqrt(x: float) -> float:
     if x < 0:
         raise ValueError("x must be >= 0")
     return math.sqrt(x)
-
 
 
 # %% [markdown]
@@ -538,9 +578,18 @@ agent = create_agent(
     ),
 )
 
-inputs = {"messages": [HumanMessage(content="Compute mean([1,2,3,4,10]) and sqrt(49). Also tell me the current UTC time.")]}
+inputs = {
+    "messages": [
+        HumanMessage(
+            content="Compute mean([1,2,3,4,10]) and sqrt(49). Also tell me the current UTC time."
+        )
+    ]
+}
 final_state = agent.invoke(inputs)
-[(type(m).__name__, getattr(m, "content", "")[:120]) for m in final_state["messages"]][-4:]
+[
+    (type(m).__name__, getattr(m, "content", "")[:120])
+    for m in final_state["messages"]
+][-4:]
 
 
 # %% [markdown]
@@ -566,17 +615,26 @@ final_state = agent.invoke(inputs)
 from typing import TypedDict
 from langgraph.graph import StateGraph, START, END
 
+
+# #############################################################################
+# S
+# #############################################################################
+
+
 class S(TypedDict):
     n: int
     msg: str
+
 
 def inc(state: S) -> dict:
     """Increment `state['n']` by 1."""
     return {"n": state.get("n", 0) + 1}
 
+
 def set_msg(state: S) -> dict:
     """Set `state['msg']` to a string derived from the current counter."""
     return {"msg": f"n={state.get('n', 0)}"}
+
 
 g = StateGraph(S)
 g.add_node("inc", inc)
@@ -610,21 +668,31 @@ graph.invoke({"n": 0, "msg": ""})
 # %%
 from typing import Literal
 
+
+# #############################################################################
+# R
+# #############################################################################
+
+
 class R(TypedDict):
     flag: bool
     out: str
+
 
 def a(state: R) -> dict:
     """Write a marker output for the `A` branch."""
     return {"out": "path=A"}
 
+
 def b(state: R) -> dict:
     """Write a marker output for the `B` branch."""
     return {"out": "path=B"}
 
+
 def route(state: R) -> Literal["a", "b"]:
     """Route based on the boolean `state['flag']`."""
     return "a" if state.get("flag") else "b"
+
 
 g = StateGraph(R)
 g.add_node("a", a)
@@ -659,19 +727,30 @@ graph.invoke({"flag": True, "out": ""}), graph.invoke({"flag": False, "out": ""}
 # %%
 from typing import Annotated, List
 
+
 def add_list(old: List[str], new: List[str]) -> List[str]:
     """Reducer that concatenates two evidence lists."""
     return old + new
 
+
+# #############################################################################
+# ReducerState
+# #############################################################################
+
+
 class ReducerState(TypedDict):
     evidence: Annotated[List[str], add_list]
+
 
 def find_missingness(_: ReducerState) -> dict:
     """Compute missingness findings from the local dataset."""
     miss = (df.isna().mean() * 100).sort_values(ascending=False)
     top = miss.head(3)
-    evidence = [f"missingness: {idx} has {val:.2f}% missing" for idx, val in top.items()]
+    evidence = [
+        f"missingness: {idx} has {val:.2f}% missing" for idx, val in top.items()
+    ]
     return {"evidence": evidence}
+
 
 def find_outliers(_: ReducerState) -> dict:
     """Compute a simple outlier finding using z-scores on one numeric column."""
@@ -687,14 +766,19 @@ def find_outliers(_: ReducerState) -> dict:
     mu = float(s.mean())
     sigma = float(s.std(ddof=0))
     if sigma == 0.0:
-        return {"evidence": [f"outliers: std({col}) is 0, cannot compute z-scores"]}
+        return {
+            "evidence": [f"outliers: std({col}) is 0, cannot compute z-scores"]
+        }
     z = ((s - mu) / sigma).abs()
     idx = int(z.idxmax())
     ts = None
     if "Date/Time" in df.columns:
         ts = df.loc[idx, "Date/Time"]
-    evidence = [f"outliers: max |z| for {col} at row={idx} ts={ts} value={s.loc[idx]:.3f} z={z.loc[idx]:.2f}"]
+    evidence = [
+        f"outliers: max |z| for {col} at row={idx} ts={ts} value={s.loc[idx]:.3f} z={z.loc[idx]:.2f}"
+    ]
     return {"evidence": evidence}
+
 
 g = StateGraph(ReducerState)
 g.add_node("missingness", find_missingness)
@@ -736,11 +820,19 @@ from typing import Annotated as Ann
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 
+
+# #############################################################################
+# RS
+# #############################################################################
+
+
 class RS(TypedDict):
     messages: Ann[list, add_messages]
 
+
 tools = [utc_now, mean, sqrt]
 tool_node = ToolNode(tools)
+
 
 def call_model(state: RS) -> dict:
     """Call the model with bound tools and append the AI message."""
@@ -748,10 +840,12 @@ def call_model(state: RS) -> dict:
     ai = bound.invoke(state["messages"])
     return {"messages": [ai]}
 
+
 def needs_tools(state: RS) -> str:
     """Route to tools if the last AI message contains tool calls."""
     last = state["messages"][-1]
     return "tools" if getattr(last, "tool_calls", None) else "end"
+
 
 g = StateGraph(RS)
 g.add_node("model", call_model)
@@ -761,8 +855,18 @@ g.add_conditional_edges("model", needs_tools, {"tools": "tools", "end": END})
 g.add_edge("tools", "model")
 graph = g.compile()
 
-out = graph.invoke({"messages": [HumanMessage(content="Compute mean([1,2,3,4,10]) and sqrt(49). Also tell me the current UTC time.")]})
-[(type(m).__name__, getattr(m, "content", "")[:120]) for m in out["messages"]][-4:]
+out = graph.invoke(
+    {
+        "messages": [
+            HumanMessage(
+                content="Compute mean([1,2,3,4,10]) and sqrt(49). Also tell me the current UTC time."
+            )
+        ]
+    }
+)
+[(type(m).__name__, getattr(m, "content", "")[:120]) for m in out["messages"]][
+    -4:
+]
 
 
 # %% [markdown]
@@ -784,12 +888,16 @@ out = graph.invoke({"messages": [HumanMessage(content="Compute mean([1,2,3,4,10]
 # %%
 from langchain.tools import tool as lc_tool
 
+
 def _last_text(result: dict) -> str:
-    '''
+    """
     Return the final message text/content from an agent result state.
-    '''
+    """
     msg = result["messages"][-1]
-    return getattr(msg, "text", None) or getattr(msg, "content", None) or str(msg)
+    return (
+        getattr(msg, "text", None) or getattr(msg, "content", None) or str(msg)
+    )
+
 
 # E6.1: supervisor calls a worker wrapped as a tool
 worker_agent = create_agent(
@@ -804,12 +912,19 @@ worker_agent = create_agent(
     ),
 )
 
-@lc_tool("summarize_text", description="Summarize long text into a short summary + 3 bullet points.")
+
+@lc_tool(
+    "summarize_text",
+    description="Summarize long text into a short summary + 3 bullet points.",
+)
 def summarize_text(text: str) -> str:
-    '''
+    """
     Summarize `text` using the worker agent and return a plain string.
-    '''
-    return _last_text(worker_agent.invoke({"messages": [{"role": "user", "content": text}]}))
+    """
+    return _last_text(
+        worker_agent.invoke({"messages": [{"role": "user", "content": text}]})
+    )
+
 
 supervisor = create_agent(
     llm,
@@ -817,7 +932,16 @@ supervisor = create_agent(
     system_prompt="If asked to summarize, call summarize_text and return the tool output.",
 )
 
-out = supervisor.invoke({"messages": [{"role": "user", "content": "Summarize: LangChain provides building blocks for LLM apps."}]})
+out = supervisor.invoke(
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "Summarize: LangChain provides building blocks for LLM apps.",
+            }
+        ]
+    }
+)
 _last_text(out)
 
 
@@ -846,31 +970,62 @@ from langchain.tools import ToolRuntime, InjectedToolCallId
 from langchain_core.messages import ToolMessage
 from langgraph.types import Command
 
+
+# #############################################################################
+# CustomState
+# #############################################################################
+
+
 class CustomState(AgentState):
     user_prefs: dict
     facts: list[str]
 
-worker = create_agent(llm, tools=[], system_prompt="Rewrite text. Return only rewritten text.")
 
-@lc_tool("rewrite_with_prefs", description="Rewrite text following preferences from supervisor state.")
-def rewrite_with_prefs(text: str, runtime: ToolRuntime[None, CustomState]) -> str:
-    '''
+worker = create_agent(
+    llm, tools=[], system_prompt="Rewrite text. Return only rewritten text."
+)
+
+
+@lc_tool(
+    "rewrite_with_prefs",
+    description="Rewrite text following preferences from supervisor state.",
+)
+def rewrite_with_prefs(
+    text: str, runtime: ToolRuntime[None, CustomState]
+) -> str:
+    """
     Rewrite `text` using supervisor preferences available via `runtime.state`.
-    '''
+    """
     tone = runtime.state.get("user_prefs", {}).get("tone", "neutral")
     result = worker.invoke(
-        {"messages": [{"role": "system", "content": f"Tone must be: {tone}."}, {"role": "user", "content": text}]}
+        {
+            "messages": [
+                {"role": "system", "content": f"Tone must be: {tone}."},
+                {"role": "user", "content": text},
+            ]
+        }
     )
     return _last_text(result)
 
-fact_worker = create_agent(llm, tools=[], system_prompt='Return ONLY JSON: {"facts": ["..."]}')
 
-@lc_tool("extract_facts", description="Extract facts and update supervisor state via Command(update=...).")
-def extract_facts(text: str, tool_call_id: TxAnnotated[str, InjectedToolCallId]) -> Command:
-    '''
+fact_worker = create_agent(
+    llm, tools=[], system_prompt='Return ONLY JSON: {"facts": ["..."]}'
+)
+
+
+@lc_tool(
+    "extract_facts",
+    description="Extract facts and update supervisor state via Command(update=...).",
+)
+def extract_facts(
+    text: str, tool_call_id: TxAnnotated[str, InjectedToolCallId]
+) -> Command:
+    """
     Extract facts and store them in the supervisor state via `Command(update=...)`.
-    '''
-    raw = _last_text(fact_worker.invoke({"messages": [{"role": "user", "content": text}]}))
+    """
+    raw = _last_text(
+        fact_worker.invoke({"messages": [{"role": "user", "content": text}]})
+    )
     try:
         facts = list(json.loads(raw).get("facts", []))
     except Exception:
@@ -878,9 +1033,15 @@ def extract_facts(text: str, tool_call_id: TxAnnotated[str, InjectedToolCallId])
     return Command(
         update={
             "facts": facts,
-            "messages": [ToolMessage(content=f"Stored {len(facts)} facts.", tool_call_id=tool_call_id)],
+            "messages": [
+                ToolMessage(
+                    content=f"Stored {len(facts)} facts.",
+                    tool_call_id=tool_call_id,
+                )
+            ],
         }
     )
+
 
 supervisor = create_agent(
     llm,
@@ -891,14 +1052,24 @@ supervisor = create_agent(
 
 out1 = supervisor.invoke(
     {
-        "messages": [{"role": "user", "content": "Rewrite: please send me the report by tonight."}],
+        "messages": [
+            {
+                "role": "user",
+                "content": "Rewrite: please send me the report by tonight.",
+            }
+        ],
         "user_prefs": {"tone": "formal"},
         "facts": [],
     }
 )
 out2 = supervisor.invoke(
     {
-        "messages": [{"role": "user", "content": "Read this and explain it: LangGraph supports interrupts."}],
+        "messages": [
+            {
+                "role": "user",
+                "content": "Read this and explain it: LangGraph supports interrupts.",
+            }
+        ],
         "user_prefs": {"tone": "neutral"},
         "facts": [],
     }
@@ -921,12 +1092,19 @@ date_agent = create_agent(
     system_prompt='Return ONLY JSON: {"normalized": "...", "notes": "..."}',
 )
 
-@lc_tool("normalize_datetime", description="Normalize informal date/time mentions into an explicit format. Returns JSON.")
+
+@lc_tool(
+    "normalize_datetime",
+    description="Normalize informal date/time mentions into an explicit format. Returns JSON.",
+)
 def normalize_datetime(request: str) -> str:
-    '''
+    """
     Normalize an informal date/time request using a specialized subagent.
-    '''
-    return _last_text(date_agent.invoke({"messages": [{"role": "user", "content": request}]}))
+    """
+    return _last_text(
+        date_agent.invoke({"messages": [{"role": "user", "content": request}]})
+    )
+
 
 email_agent = create_agent(
     llm,
@@ -934,17 +1112,43 @@ email_agent = create_agent(
     system_prompt="Draft a short professional email body. Return only the email body.",
 )
 
-@lc_tool("draft_email_body", description="Draft a concise professional email body for a user request.")
+
+@lc_tool(
+    "draft_email_body",
+    description="Draft a concise professional email body for a user request.",
+)
 def draft_email_body(request: str) -> str:
-    '''
+    """
     Draft a short professional email body for `request`.
-    '''
-    return _last_text(email_agent.invoke({"messages": [{"role": "user", "content": request}]}))
+    """
+    return _last_text(
+        email_agent.invoke({"messages": [{"role": "user", "content": request}]})
+    )
 
-sup = create_agent(llm, tools=[normalize_datetime, draft_email_body], system_prompt="Pick the right tool for the user's intent.")
 
-a = sup.invoke({"messages": [{"role": "user", "content": "Normalize: next Tuesday at 2pm."}]})
-b = sup.invoke({"messages": [{"role": "user", "content": "Write an email to my professor asking for a 2-day extension."}]})
+sup = create_agent(
+    llm,
+    tools=[normalize_datetime, draft_email_body],
+    system_prompt="Pick the right tool for the user's intent.",
+)
+
+a = sup.invoke(
+    {
+        "messages": [
+            {"role": "user", "content": "Normalize: next Tuesday at 2pm."}
+        ]
+    }
+)
+b = sup.invoke(
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "Write an email to my professor asking for a 2-day extension.",
+            }
+        ]
+    }
+)
 {"normalize_datetime": _last_text(a), "draft_email_body": _last_text(b)}
 
 
@@ -954,14 +1158,19 @@ b = sup.invoke({"messages": [{"role": "user", "content": "Write an email to my p
 #
 #
 
+
 # %%
 # E6.3: context isolation (noisy worker, clean supervisor)
-@lc_tool("generate_noise", description="Generate a long string to simulate noisy intermediate work.")
+@lc_tool(
+    "generate_noise",
+    description="Generate a long string to simulate noisy intermediate work.",
+)
 def generate_noise(n_chars: int) -> str:
-    '''
+    """
     Generate a long string used to simulate irrelevant intermediate work.
-    '''
+    """
     return "X" * int(n_chars)
+
 
 noisy_worker_agent = create_agent(
     llm,
@@ -972,15 +1181,37 @@ noisy_worker_agent = create_agent(
     ),
 )
 
-@lc_tool("noisy_worker", description="Do a task in an isolated context and return a concise final answer.")
-def noisy_worker(task: str) -> str:
-    '''
-    Run `task` in an isolated subagent context and return the final answer.
-    '''
-    return _last_text(noisy_worker_agent.invoke({"messages": [{"role": "user", "content": task}]}))
 
-sup = create_agent(llm, tools=[noisy_worker], system_prompt="Call noisy_worker for the user's request.")
-out = sup.invoke({"messages": [{"role": "user", "content": "Explain in plain English what 'context isolation' means in subagents."}]})
+@lc_tool(
+    "noisy_worker",
+    description="Do a task in an isolated context and return a concise final answer.",
+)
+def noisy_worker(task: str) -> str:
+    """
+    Run `task` in an isolated subagent context and return the final answer.
+    """
+    return _last_text(
+        noisy_worker_agent.invoke(
+            {"messages": [{"role": "user", "content": task}]}
+        )
+    )
+
+
+sup = create_agent(
+    llm,
+    tools=[noisy_worker],
+    system_prompt="Call noisy_worker for the user's request.",
+)
+out = sup.invoke(
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "Explain in plain English what 'context isolation' means in subagents.",
+            }
+        ]
+    }
+)
 _last_text(out)
 
 
@@ -993,32 +1224,63 @@ _last_text(out)
 
 # %%
 # E6.6: parallel tool calls (one AI turn emits multiple tool calls)
-sum_agent = create_agent(llm, tools=[], system_prompt="Summarize in 2 sentences. Return only the summary.")
-act_agent = create_agent(llm, tools=[], system_prompt="Extract action items as bullets. Return only bullets.")
-reply_agent = create_agent(llm, tools=[], system_prompt="Draft a short reply email. Return only the email body.")
+sum_agent = create_agent(
+    llm,
+    tools=[],
+    system_prompt="Summarize in 2 sentences. Return only the summary.",
+)
+act_agent = create_agent(
+    llm,
+    tools=[],
+    system_prompt="Extract action items as bullets. Return only bullets.",
+)
+reply_agent = create_agent(
+    llm,
+    tools=[],
+    system_prompt="Draft a short reply email. Return only the email body.",
+)
+
 
 @lc_tool("sub_summarize", description="Summarize the text in 2 sentences.")
 def sub_summarize(text: str) -> str:
-    '''
+    """
     Summarize `text` in 2 sentences.
-    '''
-    return _last_text(sum_agent.invoke({"messages": [{"role": "user", "content": text}]}))
+    """
+    return _last_text(
+        sum_agent.invoke({"messages": [{"role": "user", "content": text}]})
+    )
 
-@lc_tool("sub_action_items", description="Extract action items as bullet points.")
+
+@lc_tool(
+    "sub_action_items", description="Extract action items as bullet points."
+)
 def sub_action_items(text: str) -> str:
-    '''
+    """
     Extract action items from `text` as bullet points.
-    '''
-    return _last_text(act_agent.invoke({"messages": [{"role": "user", "content": text}]}))
+    """
+    return _last_text(
+        act_agent.invoke({"messages": [{"role": "user", "content": text}]})
+    )
 
-@lc_tool("sub_draft_reply", description="Draft a short email reply addressing the content.")
+
+@lc_tool(
+    "sub_draft_reply",
+    description="Draft a short email reply addressing the content.",
+)
 def sub_draft_reply(text: str) -> str:
-    '''
+    """
     Draft a short email reply based on `text`.
-    '''
-    return _last_text(reply_agent.invoke({"messages": [{"role": "user", "content": text}]}))
+    """
+    return _last_text(
+        reply_agent.invoke({"messages": [{"role": "user", "content": text}]})
+    )
 
-sup = create_agent(llm, tools=[sub_summarize, sub_action_items, sub_draft_reply], system_prompt="Use tools as needed and return a clean final response.")
+
+sup = create_agent(
+    llm,
+    tools=[sub_summarize, sub_action_items, sub_draft_reply],
+    system_prompt="Use tools as needed and return a clean final response.",
+)
 
 email_thread = (
     "Call ALL THREE tools (sub_summarize, sub_action_items, sub_draft_reply). "
@@ -1045,11 +1307,18 @@ _last_text(out)
 #
 #
 
+
+# #############################################################################
+# SubState
+# #############################################################################
+
+
 # %%
 class SubState(TypedDict):
     raw: str
     parsed: dict
     formatted: str
+
 
 def parse_node(state: SubState) -> dict:
     """Parse `key: value` lines from `state['raw']` into a dict."""
@@ -1061,11 +1330,13 @@ def parse_node(state: SubState) -> dict:
             parsed[k.strip()] = v.strip()
     return {"parsed": parsed}
 
+
 def format_node(state: SubState) -> dict:
     """Format the parsed fields as a bullet list."""
     parsed = state.get("parsed", {})
     lines = [f"- {k}: {v}" for k, v in parsed.items()]
     return {"formatted": "Parsed fields:\n" + "\n".join(lines)}
+
 
 sub = StateGraph(SubState)
 sub.add_node("parse", parse_node)
@@ -1075,14 +1346,22 @@ sub.add_edge("parse", "format")
 sub.add_edge("format", END)
 subgraph = sub.compile()
 
+
+# #############################################################################
+# ParentState
+# #############################################################################
+
+
 class ParentState(TypedDict):
     user_text: str
     result: str
+
 
 def call_subgraph(state: ParentState) -> dict:
     """Call `subgraph` and project its formatted output into the parent state."""
     out = subgraph.invoke({"raw": state["user_text"]})
     return {"result": out["formatted"]}
+
 
 parent = StateGraph(ParentState)
 parent.add_node("worker", call_subgraph)
@@ -1090,7 +1369,12 @@ parent.add_edge(START, "worker")
 parent.add_edge("worker", END)
 parent_graph = parent.compile()
 
-parent_graph.invoke({"user_text": "name: Indro\nrole: ML engineer\nlocation: Kolkata", "result": ""})["result"]
+parent_graph.invoke(
+    {
+        "user_text": "name: Indro\nrole: ML engineer\nlocation: Kolkata",
+        "result": "",
+    }
+)["result"]
 
 
 # %% [markdown]
@@ -1115,12 +1399,20 @@ parent_graph.invoke({"user_text": "name: Indro\nrole: ML engineer\nlocation: Kol
 # %%
 from langgraph.checkpoint.memory import MemorySaver
 
+
+# #############################################################################
+# CSub
+# #############################################################################
+
+
 class CSub(TypedDict):
     n: int
+
 
 def bump(state: CSub) -> dict:
     """Increment a counter used to demonstrate subgraph memory behavior."""
     return {"n": state.get("n", 0) + 1}
+
 
 sub_builder = StateGraph(CSub)
 sub_builder.add_node("bump", bump)
@@ -1130,17 +1422,27 @@ sub_builder.add_edge("bump", END)
 sub_shared = sub_builder.compile()
 sub_private = sub_builder.compile(checkpointer=MemorySaver())
 
+
+# #############################################################################
+# P
+# #############################################################################
+
+
 class P(TypedDict):
     mode: str
     sub_n: int
+
 
 def call_sub(state: P) -> dict:
     """Call the shared or private subgraph depending on `state['mode']`."""
     if state["mode"] == "shared":
         out = sub_shared.invoke({"n": state.get("sub_n", 0)})
         return {"sub_n": out["n"]}
-    out = sub_private.invoke({"n": 0}, config={"configurable": {"thread_id": "SUBGRAPH_THREAD"}})
+    out = sub_private.invoke(
+        {"n": 0}, config={"configurable": {"thread_id": "SUBGRAPH_THREAD"}}
+    )
     return {"sub_n": out["n"]}
+
 
 parent_builder = StateGraph(P)
 parent_builder.add_node("call_sub", call_sub)
@@ -1148,11 +1450,19 @@ parent_builder.add_edge(START, "call_sub")
 parent_builder.add_edge("call_sub", END)
 parent = parent_builder.compile(checkpointer=MemorySaver())
 
+
 def run_twice(mode: str):
     """Invoke the parent graph twice and return the two observed sub-counters."""
-    out1 = parent.invoke({"mode": mode, "sub_n": 0}, config={"configurable": {"thread_id": f"PARENT_{mode}"}})
-    out2 = parent.invoke({"mode": mode, "sub_n": out1["sub_n"]}, config={"configurable": {"thread_id": f"PARENT_{mode}"}})
+    out1 = parent.invoke(
+        {"mode": mode, "sub_n": 0},
+        config={"configurable": {"thread_id": f"PARENT_{mode}"}},
+    )
+    out2 = parent.invoke(
+        {"mode": mode, "sub_n": out1["sub_n"]},
+        config={"configurable": {"thread_id": f"PARENT_{mode}"}},
+    )
     return out1["sub_n"], out2["sub_n"]
+
 
 run_twice("shared"), run_twice("private")
 
@@ -1185,15 +1495,27 @@ from typing import Literal as Lit
 from langgraph.types import Command, interrupt
 from langgraph.checkpoint.memory import MemorySaver
 
+
+# #############################################################################
+# HITLState
+# #############################################################################
+
+
 class HITLState(TypedDict):
     target_path: str
     decision: Lit["approve", "reject", ""]
 
+
 def propose_delete(state: HITLState) -> dict:
     """Emit an interrupt asking for approval to delete `state['target_path']`."""
-    payload = {"action": "delete_file", "target_path": state["target_path"], "message": "Approve deletion?"}
+    payload = {
+        "action": "delete_file",
+        "target_path": state["target_path"],
+        "message": "Approve deletion?",
+    }
     decision = interrupt(payload)
     return {"decision": decision}
+
 
 def do_delete(state: HITLState) -> dict:
     """Delete the file if the prior interrupt decision was `approve`."""
@@ -1203,6 +1525,7 @@ def do_delete(state: HITLState) -> dict:
     if p.exists() and p.is_file():
         p.unlink()
     return {}
+
 
 builder = StateGraph(HITLState)
 builder.add_node("propose", propose_delete)
@@ -1219,8 +1542,13 @@ victim = tmp_dir / "victim.txt"
 victim.write_text("delete me", encoding="utf-8")
 
 thread_id = "HITL_NOTEBOOK_DEMO"
-out1 = hitl_graph.invoke({"target_path": str(victim), "decision": ""}, config={"configurable": {"thread_id": thread_id}})
-pending = out1.get("__interrupt__", [])[0].value if "__interrupt__" in out1 else None
+out1 = hitl_graph.invoke(
+    {"target_path": str(victim), "decision": ""},
+    config={"configurable": {"thread_id": thread_id}},
+)
+pending = (
+    out1.get("__interrupt__", [])[0].value if "__interrupt__" in out1 else None
+)
 pending
 
 
@@ -1231,7 +1559,9 @@ pending
 #
 
 # %%
-out2 = hitl_graph.invoke(Command(resume="approve"), config={"configurable": {"thread_id": thread_id}})
+out2 = hitl_graph.invoke(
+    Command(resume="approve"), config={"configurable": {"thread_id": thread_id}}
+)
 victim.exists()
 
 
@@ -1289,46 +1619,53 @@ except Exception as e:  # pragma: no cover
 #
 
 # %%
-import json
 from pathlib import Path
 from typing import Any
 
-from langchain_core.messages import AIMessage, ToolMessage
+from langchain_core.messages import AIMessage
+
 
 def _all_tool_calls(messages: list[Any]) -> list[dict[str, Any]]:
-    '''
+    """
     Collect tool call dicts emitted by `AIMessage` objects in `messages`.
-    '''
+    """
     calls: list[dict[str, Any]] = []
     for m in messages:
         if isinstance(m, AIMessage):
-            for tc in (m.tool_calls or []):
+            for tc in m.tool_calls or []:
                 if isinstance(tc, dict):
                     calls.append(tc)
     return calls
 
+
 def _tool_outputs(messages: list[Any], tool_name: str) -> list[Any]:
-    '''
+    """
     Return tool message contents for `tool_name`.
-    '''
+    """
     outs: list[Any] = []
     for m in messages:
         if isinstance(m, ToolMessage) and getattr(m, "name", None) == tool_name:
             outs.append(m.content)
     return outs
 
+
 def _as_text(x: Any) -> str:
-    '''
+    """
     Convert `x` to a readable string for printing.
-    '''
+    """
     if isinstance(x, str):
         return x
-    return json.dumps(x, indent=2, ensure_ascii=False) if isinstance(x, (dict, list)) else str(x)
+    return (
+        json.dumps(x, indent=2, ensure_ascii=False)
+        if isinstance(x, (dict, list))
+        else str(x)
+    )
+
 
 def _read_file_text(read_result: Any) -> str:
-    '''
+    """
     Extract plain text from a `read_file` tool output.
-    '''
+    """
     if read_result is None:
         return ""
     if isinstance(read_result, str):
@@ -1347,10 +1684,11 @@ def _read_file_text(read_result: Any) -> str:
             return text
     return _as_text(read_result)
 
+
 def _extract_bullets(text: str) -> list[str]:
-    '''
+    """
     Extract Markdown-style bullet lines from `text`.
-    '''
+    """
     lines = []
     for ln in text.splitlines():
         s = ln.strip()
@@ -1363,15 +1701,21 @@ def _extract_bullets(text: str) -> list[str]:
         if len(s) >= 3 and s[0].isdigit() and s[1] in (".", ")"):
             lines.append("- " + s[2:].strip())
             continue
-        if len(s) >= 4 and s[0].isdigit() and s[1].isdigit() and s[2] in (".", ")"):
+        if (
+            len(s) >= 4
+            and s[0].isdigit()
+            and s[1].isdigit()
+            and s[2] in (".", ")")
+        ):
             lines.append("- " + s[3:].strip())
             continue
     return lines
 
+
 def build_dataset_context() -> str:
-    '''
+    """
     Build a compact dataset context string for prompts, if `DATASET_META` exists.
-    '''
+    """
     meta = globals().get("DATASET_META", None)
     if not isinstance(meta, dict):
         return "Dataset context: (not loaded)."
@@ -1390,6 +1734,7 @@ def build_dataset_context() -> str:
         f"sample_rows={sample_rows}",
     ]
     return "Dataset context:\\n" + "\\n".join(parts)
+
 
 DATASET_CONTEXT = build_dataset_context()
 
@@ -1413,9 +1758,20 @@ DATASET_CONTEXT = build_dataset_context()
 # %%
 llm_da = get_chat_model()
 agent = create_deep_agent(model=llm_da)
-out = agent.invoke({"messages": [{"role": "user", "content": "In 3 bullets, explain what a deep agent is useful for."}]})
+out = agent.invoke(
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "In 3 bullets, explain what a deep agent is useful for.",
+            }
+        ]
+    }
+)
 print("state keys:", sorted(list(out.keys()))[:20])
-print("final message preview:", getattr(out["messages"][-1], "content", "")[:240])
+print(
+    "final message preview:", getattr(out["messages"][-1], "content", "")[:240]
+)
 
 
 # %% [markdown]
@@ -1487,7 +1843,11 @@ print("notes.md paths on disk:", paths)
 if paths:
     read_txt = Path(paths[0]).read_text(encoding="utf-8")
 else:
-    read_txt = _read_file_text(reads[-1]) if reads else _as_text(getattr(out["messages"][-1], "content", "(missing)"))
+    read_txt = (
+        _read_file_text(reads[-1])
+        if reads
+        else _as_text(getattr(out["messages"][-1], "content", "(missing)"))
+    )
 
 bullets = _extract_bullets(read_txt)
 print("two bullets:", bullets[:2])
@@ -1523,24 +1883,38 @@ NOTE_STATE = "/workspace/notes.md"
 NOTE_FS = "/workspace/notes.md"
 NOTE_STORE = "/memories/notes.md"
 
+
 def run(agent, thread_id: str, user_msg: str):
-    '''
+    """
     Invoke `agent` with `thread_id` for persistence/scoping tests.
-    '''
+    """
     return agent.invoke(
         {"messages": [{"role": "user", "content": user_msg}]},
         config={"configurable": {"thread_id": thread_id}},
     )
 
+
 # 1) State backend (thread-scoped)
 agent_state = create_deep_agent(model=get_chat_model(), checkpointer=ckpt)
-run(agent_state, "STATE_A", f"write_file {NOTE_STATE} with 'hello from STATE thread A'")
+run(
+    agent_state,
+    "STATE_A",
+    f"write_file {NOTE_STATE} with 'hello from STATE thread A'",
+)
 outA = run(agent_state, "STATE_A", f"read_file {NOTE_STATE}")
-outB = run(agent_state, "STATE_B", f"read_file {NOTE_STATE} (if missing, say so)")
+outB = run(
+    agent_state, "STATE_B", f"read_file {NOTE_STATE} (if missing, say so)"
+)
 state_reads_a = _tool_outputs(outA["messages"], "read_file")
 state_reads_b = _tool_outputs(outB["messages"], "read_file")
-print("StateBackend thread A read:", _as_text(state_reads_a[-1])[:120] if state_reads_a else "(no tool output)")
-print("StateBackend thread B read:", _as_text(state_reads_b[-1])[:120] if state_reads_b else "(no tool output)")
+print(
+    "StateBackend thread A read:",
+    _as_text(state_reads_a[-1])[:120] if state_reads_a else "(no tool output)",
+)
+print(
+    "StateBackend thread B read:",
+    _as_text(state_reads_b[-1])[:120] if state_reads_b else "(no tool output)",
+)
 
 # 2) Filesystem backend (disk, cross-thread)
 root = Path("tmp_runs/deepagents/fs_root").resolve()
@@ -1555,8 +1929,14 @@ outA = run(agent_fs, "FS_A", f"read_file {NOTE_FS}")
 outB = run(agent_fs, "FS_B", f"read_file {NOTE_FS}")
 fs_reads_a = _tool_outputs(outA["messages"], "read_file")
 fs_reads_b = _tool_outputs(outB["messages"], "read_file")
-print("FilesystemBackend thread A read:", _as_text(fs_reads_a[-1])[:120] if fs_reads_a else "(no tool output)")
-print("FilesystemBackend thread B read:", _as_text(fs_reads_b[-1])[:120] if fs_reads_b else "(no tool output)")
+print(
+    "FilesystemBackend thread A read:",
+    _as_text(fs_reads_a[-1])[:120] if fs_reads_a else "(no tool output)",
+)
+print(
+    "FilesystemBackend thread B read:",
+    _as_text(fs_reads_b[-1])[:120] if fs_reads_b else "(no tool output)",
+)
 print("fs root_dir:", root)
 
 # 3) Store backend via CompositeBackend (cross-thread under /memories/)
@@ -1571,13 +1951,23 @@ agent_store = create_deep_agent(
     backend=composite_backend,
     store=store,
 )
-run(agent_store, "STORE_A", f"write_file {NOTE_STORE} with 'hello from STORE thread A'")
+run(
+    agent_store,
+    "STORE_A",
+    f"write_file {NOTE_STORE} with 'hello from STORE thread A'",
+)
 outA = run(agent_store, "STORE_A", f"read_file {NOTE_STORE}")
 outB = run(agent_store, "STORE_B", f"read_file {NOTE_STORE}")
 store_reads_a = _tool_outputs(outA["messages"], "read_file")
 store_reads_b = _tool_outputs(outB["messages"], "read_file")
-print("StoreBackend thread A read:", _as_text(store_reads_a[-1])[:120] if store_reads_a else "(no tool output)")
-print("StoreBackend thread B read:", _as_text(store_reads_b[-1])[:120] if store_reads_b else "(no tool output)")
+print(
+    "StoreBackend thread A read:",
+    _as_text(store_reads_a[-1])[:120] if store_reads_a else "(no tool output)",
+)
+print(
+    "StoreBackend thread B read:",
+    _as_text(store_reads_b[-1])[:120] if store_reads_b else "(no tool output)",
+)
 
 
 # %% [markdown]
@@ -1618,7 +2008,9 @@ profiler_subagent = {
 root = Path(".").resolve()
 Path("workspace").mkdir(parents=True, exist_ok=True)
 dataset_on_disk = Path("workspace/data/T1_slice.csv")
-print("dataset exists on disk:", dataset_on_disk.exists(), "path:", dataset_on_disk)
+print(
+    "dataset exists on disk:", dataset_on_disk.exists(), "path:", dataset_on_disk
+)
 
 agent = create_deep_agent(
     model=get_chat_model(),
@@ -1633,10 +2025,15 @@ prompt = (
     "\n\n"
     f"{DATASET_CONTEXT}\n\nIf you need raw rows, use read_file {DATASET_META.get('tool_path')}."
 )
-out = agent.invoke({"messages": [{"role": "user", "content": prompt}]}, config={"configurable": {"thread_id": "DA5"}})
+out = agent.invoke(
+    {"messages": [{"role": "user", "content": prompt}]},
+    config={"configurable": {"thread_id": "DA5"}},
+)
 calls = _all_tool_calls(out["messages"])
 print("tool calls:", [c.get("name") for c in calls])
-print("final message preview:", getattr(out["messages"][-1], "content", "")[:240])
+print(
+    "final message preview:", getattr(out["messages"][-1], "content", "")[:240]
+)
 
 
 # %% [markdown]
@@ -1672,7 +2069,9 @@ specialized_prompt = (
     "- For each: 1 concrete test/plot\n"
     "Be concise."
 )
-compiled_worker = create_agent(model=get_chat_model(), tools=[], system_prompt=specialized_prompt)
+compiled_worker = create_agent(
+    model=get_chat_model(), tools=[], system_prompt=specialized_prompt
+)
 
 hypothesis_agent = CompiledSubAgent(
     name="hypothesis-agent",
@@ -1682,7 +2081,9 @@ hypothesis_agent = CompiledSubAgent(
 root = Path(".").resolve()
 Path("workspace").mkdir(parents=True, exist_ok=True)
 dataset_on_disk = Path("workspace/data/T1_slice.csv")
-print("dataset exists on disk:", dataset_on_disk.exists(), "path:", dataset_on_disk)
+print(
+    "dataset exists on disk:", dataset_on_disk.exists(), "path:", dataset_on_disk
+)
 
 agent = create_deep_agent(
     model=get_chat_model(),
@@ -1697,10 +2098,15 @@ prompt = (
     "\n\n"
     f"{DATASET_CONTEXT}\n\nIf you need raw rows, use read_file {DATASET_META.get('tool_path')}."
 )
-out = agent.invoke({"messages": [{"role": "user", "content": prompt}]}, config={"configurable": {"thread_id": "DA6"}})
+out = agent.invoke(
+    {"messages": [{"role": "user", "content": prompt}]},
+    config={"configurable": {"thread_id": "DA6"}},
+)
 calls = _all_tool_calls(out["messages"])
 print("tool calls:", [c.get("name") for c in calls])
-print("final message preview:", getattr(out["messages"][-1], "content", "")[:240])
+print(
+    "final message preview:", getattr(out["messages"][-1], "content", "")[:240]
+)
 
 
 # %% [markdown]
@@ -1744,25 +2150,44 @@ agent = create_deep_agent(
     model=get_chat_model(),
     checkpointer=ckpt,
     backend=FilesystemBackend(root_dir=str(root), virtual_mode=True),
-    interrupt_on={"edit_file": InterruptOnConfig(allowed_decisions=["approve", "reject"])},
+    interrupt_on={
+        "edit_file": InterruptOnConfig(allowed_decisions=["approve", "reject"])
+    },
 )
 
 # Step 1: create a file (no interrupt)
 agent.invoke(
-    {"messages": [{"role": "user", "content": "write_file /workspace/notes.md with 'line1\\nline2\\n'"}]},
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "write_file /workspace/notes.md with 'line1\\nline2\\n'",
+            }
+        ]
+    },
     config={"configurable": {"thread_id": thread_id}},
 )
 
 # Step 2: attempt an edit (expect interrupt), then resume programmatically
 out = agent.invoke(
-    {"messages": [{"role": "user", "content": "edit_file /workspace/notes.md replace 'line2' with 'LINE2_EDITED' then read_file /workspace/notes.md"}]},
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "edit_file /workspace/notes.md replace 'line2' with 'LINE2_EDITED' then read_file /workspace/notes.md",
+            }
+        ]
+    },
     config={"configurable": {"thread_id": thread_id}},
 )
 has_intr = "__interrupt__" in out
 print("interrupted:", has_intr)
 if has_intr:
     intr0 = out["__interrupt__"][0]
-    print("interrupt payload preview:", _as_text(getattr(intr0, "value", intr0))[:240])
+    print(
+        "interrupt payload preview:",
+        _as_text(getattr(intr0, "value", intr0))[:240],
+    )
     out = agent.invoke(
         Command(resume={"decisions": [{"type": "approve"}]}),
         config={"configurable": {"thread_id": thread_id}},
@@ -1780,7 +2205,11 @@ print("notes.md paths on disk:", paths)
 if paths:
     read_txt = Path(paths[0]).read_text(encoding="utf-8")
 else:
-    read_txt = _read_file_text(read_outs[-1]) if read_outs else _as_text(getattr(out2["messages"][-1], "content", ""))
+    read_txt = (
+        _read_file_text(read_outs[-1])
+        if read_outs
+        else _as_text(getattr(out2["messages"][-1], "content", ""))
+    )
 
 print(read_txt.replace("\\n", "\\\\n")[:200])
 
@@ -1818,48 +2247,88 @@ outside_secret.parent.mkdir(parents=True, exist_ok=True)
 outside_secret.write_text("SUPER_SECRET=do_not_leak\\n", encoding="utf-8")
 
 backend = FilesystemBackend(root_dir=str(root), virtual_mode=True)
-agent = create_deep_agent(model=get_chat_model(), checkpointer=ckpt, backend=backend)
+agent = create_deep_agent(
+    model=get_chat_model(), checkpointer=ckpt, backend=backend
+)
+
 
 # Note: filesystem tool calls are chosen by the model. For debugging, print the actual
 # tool call args the agent produced, since it may choose a different path than requested.
 def _print_tool_calls(state: dict, label: str) -> None:
-    '''
+    """
     Print tool call names and args emitted by the model.
-    '''
+    """
     calls = _all_tool_calls(state.get("messages", []))
     simplified = [{"name": c.get("name"), "args": c.get("args")} for c in calls]
     print(f"{label} tool_calls:", simplified)
 
+
 # Safe file inside the sandbox.
 out_ok = agent.invoke(
-    {"messages": [{"role": "user", "content": "Call write_file on /workspace/ok.txt with content 'safe'. Then call read_file on /workspace/ok.txt. Do not read any other paths."}]},
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "Call write_file on /workspace/ok.txt with content 'safe'. Then call read_file on /workspace/ok.txt. Do not read any other paths.",
+            }
+        ]
+    },
     config={"configurable": {"thread_id": thread_id}},
 )
 ok_reads = _tool_outputs(out_ok["messages"], "read_file")
-ok_txt = _read_file_text(ok_reads[-1]) if ok_reads else _as_text(getattr(out_ok["messages"][-1], "content", ""))
+ok_txt = (
+    _read_file_text(ok_reads[-1])
+    if ok_reads
+    else _as_text(getattr(out_ok["messages"][-1], "content", ""))
+)
 print("ok read preview:", ok_txt[:80])
 _print_tool_calls(out_ok, "ok")
 
 # Attempt path traversal escape.
 out_env = agent.invoke(
-    {"messages": [{"role": "user", "content": "Call read_file on /workspace/../tmp_runs/deepagents/secret_outside_sandbox.txt exactly. Return the raw result (error or content). Do not substitute any other path."}]},
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "Call read_file on /workspace/../tmp_runs/deepagents/secret_outside_sandbox.txt exactly. Return the raw result (error or content). Do not substitute any other path.",
+            }
+        ]
+    },
     config={"configurable": {"thread_id": thread_id}},
 )
 escape_reads = _tool_outputs(out_env["messages"], "read_file")
-print("escape attempt output preview:", _as_text(escape_reads[-1])[:160] if escape_reads else "(no tool output)")
+print(
+    "escape attempt output preview:",
+    _as_text(escape_reads[-1])[:160] if escape_reads else "(no tool output)",
+)
 _print_tool_calls(out_env, "escape")
 
 # Attempt to read a host path.
 out_hosts = agent.invoke(
-    {"messages": [{"role": "user", "content": "Call read_file on /etc/hosts exactly. Return the raw result (error or content). Do not substitute any other path."}]},
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "Call read_file on /etc/hosts exactly. Return the raw result (error or content). Do not substitute any other path.",
+            }
+        ]
+    },
     config={"configurable": {"thread_id": thread_id}},
 )
 hosts_reads = _tool_outputs(out_hosts["messages"], "read_file")
-print("/etc/hosts attempt output preview:", _as_text(hosts_reads[-1])[:160] if hosts_reads else "(no tool output)")
+print(
+    "/etc/hosts attempt output preview:",
+    _as_text(hosts_reads[-1])[:160] if hosts_reads else "(no tool output)",
+)
 _print_tool_calls(out_hosts, "hosts")
 
 print("sandbox root_dir:", root)
-print("sandbox files:", sorted([str(p.relative_to(root)) for p in root.rglob('*') if p.is_file()])[:20])
+print(
+    "sandbox files:",
+    sorted([str(p.relative_to(root)) for p in root.rglob("*") if p.is_file()])[
+        :20
+    ],
+)
 
 
 # %% [markdown]

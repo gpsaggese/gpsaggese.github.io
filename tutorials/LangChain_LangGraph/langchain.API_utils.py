@@ -3,6 +3,10 @@ Utility library for langchain.API.ipynb.
 
 All reusable functions and classes extracted from the notebook live here,
 organised in the same order as the notebook sections they belong to.
+
+Import as:
+
+import tutorials.LangChain_LangGraph.langchain.API_utils as tlllaput
 """
 
 import base64
@@ -33,6 +37,11 @@ _LOG = logging.getLogger(__name__)
 # ##############################################################################
 # LLM Configuration
 # ##############################################################################
+
+
+# #############################################################################
+# LlmConfig
+# #############################################################################
 
 
 @dataclass(frozen=True)
@@ -102,7 +111,9 @@ def get_chat_model():
                 "`LLM_PROVIDER=ollama` requires `langchain-ollama`. "
                 "Install it with `pip install langchain-ollama` and retry."
             ) from e
-        base_url = os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
+        base_url = os.getenv(
+            "OLLAMA_BASE_URL", "http://host.docker.internal:11434"
+        )
         return ChatOllama(
             model=cfg.model,
             temperature=cfg.temperature,
@@ -149,8 +160,18 @@ def build_dataset_meta(df) -> dict:
 # ##############################################################################
 
 
+# #############################################################################
+# ToolState
+# #############################################################################
+
+
 class ToolState(TypedDict):
     messages: Annotated[list, add_messages]
+
+
+# #############################################################################
+# InjectedStateState
+# #############################################################################
 
 
 class InjectedStateState(TypedDict):
@@ -158,8 +179,18 @@ class InjectedStateState(TypedDict):
     dataset_meta: dict
 
 
+# #############################################################################
+# StoreState
+# #############################################################################
+
+
 class StoreState(TypedDict):
     messages: Annotated[list, add_messages]
+
+
+# #############################################################################
+# ToolGraphState
+# #############################################################################
 
 
 class ToolGraphState(TypedDict):
@@ -321,6 +352,11 @@ def make_custom_state_and_tool():
 # ##############################################################################
 # Human-in-the-loop (HITL)
 # ##############################################################################
+
+
+# #############################################################################
+# HITLState
+# #############################################################################
 
 
 class HITLState(TypedDict):
