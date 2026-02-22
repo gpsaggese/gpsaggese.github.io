@@ -1,11 +1,12 @@
 #!/bin/bash
+# """
 # Docker image naming configuration.
-# This file is sourced by docker_*.sh scripts.
+#
+# This file defines the repository name, image name, and full image name
+# variables used by all docker_*.sh scripts in the project template.
+# """
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="${PROJECT_DIR:-$SCRIPT_DIR}"
-
-IMAGE_NAME="${IMAGE_NAME:-langchain_langgraph}"
-REPO_NAME="${REPO_NAME:-${USER:-local}}"
-FULL_IMAGE_NAME="${FULL_IMAGE_NAME:-$REPO_NAME/$IMAGE_NAME}"
-CONTAINER_NAME="${CONTAINER_NAME:-$IMAGE_NAME}"
+REPO_NAME=gpsaggese
+# The file should be all lower case.
+IMAGE_NAME=umd_langchain_langgraph
+FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME

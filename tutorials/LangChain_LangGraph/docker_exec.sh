@@ -1,21 +1,25 @@
-#!/bin/bash
+#!/bin/bash -e
+# """
+# Execute a bash shell in a running Docker container.
+#
+# This script connects to an already running Docker container and opens an
+# interactive bash session for debugging or inspection purposes.
+# """
 
-set -euo pipefail
+# Exit immediately if any command exits with a non-zero status.
+set -e
+
+# Print each command to stdout before executing it.
 set -x
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/docker_name.sh"
+# Import the utility functions.
+GIT_ROOT=$(git rev-parse --show-toplevel)
+source $GIT_ROOT/class_project/project_template/utils.sh
 
-if docker ps --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
-    docker exec -it "$CONTAINER_NAME" bash
-    exit 0
-fi
+# Load Docker configuration variables for this script.
+get_docker_vars_script ${BASH_SOURCE[0]}
+source $DOCKER_NAME
+print_docker_vars
 
-if docker compose -f "$SCRIPT_DIR/docker-compose.yml" ps --services --filter status=running | grep -qx "jupyter"; then
-    docker compose -f "$SCRIPT_DIR/docker-compose.yml" exec jupyter bash
-    exit 0
-fi
-
-echo "No running container found for '$CONTAINER_NAME' or compose service 'jupyter'."
-echo "Start one with './docker_bash.sh' or 'docker compose up' first."
-exit 1
+# Execute bash shell in the running container.
+exec_container
