@@ -14,14 +14,13 @@ import tutorials.LangChain_LangGraph.langchain.example_utils as tlllexut
 import importlib
 import importlib.util
 import json
+import logging
 import math
 import pathlib
 from typing import Annotated, Any, List, TypedDict
 
 from langchain_core.tools import tool
 from langgraph.graph.message import add_messages
-
-import logging
 
 _LOG = logging.getLogger(__name__)
 
@@ -55,7 +54,9 @@ utc_now = _api.utc_now
 
 
 def _require_import(module_name: str):
-    """Import `module_name` or raise a user-friendly RuntimeError."""
+    """
+    Import `module_name` or raise a user-friendly RuntimeError.
+    """
     try:
         return importlib.import_module(module_name)
     except ModuleNotFoundError as e:
@@ -78,7 +79,9 @@ Quick fixes:
 
 @tool
 def sqrt(x: float) -> float:
-    """Return sqrt(x); raises ValueError for negative input."""
+    """
+    Return sqrt(x); raises ValueError for negative input.
+    """
     x = float(x)
     if x < 0:
         raise ValueError("x must be >= 0")
@@ -91,7 +94,9 @@ def sqrt(x: float) -> float:
 
 
 def add_list(old: List[str], new: List[str]) -> List[str]:
-    """Reducer that concatenates two evidence lists."""
+    """
+    Reducer that concatenates two evidence lists.
+    """
     return old + new
 
 
@@ -105,10 +110,15 @@ class ReducerState(TypedDict):
 
 
 def make_dataset_nodes(df):
-    """Return (find_missingness, find_outliers) graph node functions bound to `df`."""
+    """
+    Return (find_missingness, find_outliers) graph node functions bound to
+    `df`.
+    """
 
     def find_missingness(_: ReducerState) -> dict:
-        """Compute missingness findings from `df`."""
+        """
+        Compute missingness findings from `df`.
+        """
         miss = (df.isna().mean() * 100).sort_values(ascending=False)
         top = miss.head(3)
         evidence = [
@@ -118,7 +128,10 @@ def make_dataset_nodes(df):
         return {"evidence": evidence}
 
     def find_outliers(_: ReducerState) -> dict:
-        """Compute a simple outlier finding using z-scores on one numeric column of `df`."""
+        """
+        Compute a simple outlier finding using z-scores on one numeric column
+        of `df`.
+        """
         numeric_cols = [c for c in df.columns if c != "Date/Time"]
         col = None
         if "Wind Speed (m/s)" in df.columns:
@@ -165,10 +178,14 @@ class RS(TypedDict):
 
 
 def make_call_model(llm, tools):
-    """Return a graph node that calls `llm` bound to `tools`."""
+    """
+    Return a graph node that calls `llm` bound to `tools`.
+    """
 
     def call_model(state: RS) -> dict:
-        """Call the model with bound tools and append the AI message."""
+        """
+        Call the model with bound tools and append the AI message.
+        """
         bound = llm.bind_tools(tools)
         ai = bound.invoke(state["messages"])
         return {"messages": [ai]}
@@ -177,7 +194,9 @@ def make_call_model(llm, tools):
 
 
 def needs_tools(state: RS) -> str:
-    """Route to tools if the last AI message contains tool calls."""
+    """
+    Route to tools if the last AI message contains tool calls.
+    """
     last = state["messages"][-1]
     return "tools" if getattr(last, "tool_calls", None) else "end"
 
@@ -188,7 +207,9 @@ def needs_tools(state: RS) -> str:
 
 
 def _last_text(result: dict) -> str:
-    """Return the final message text/content from an agent result state."""
+    """
+    Return the final message text/content from an agent result state.
+    """
     msg = result["messages"][-1]
     return (
         getattr(msg, "text", None) or getattr(msg, "content", None) or str(msg)
@@ -212,7 +233,9 @@ class SubState(TypedDict):
 
 
 def parse_node(state: SubState) -> dict:
-    """Parse `key: value` lines from `state['raw']` into a dict."""
+    """
+    Parse `key: value` lines from `state['raw']` into a dict.
+    """
     raw = state["raw"]
     parsed = {}
     for line in raw.splitlines():
@@ -223,7 +246,9 @@ def parse_node(state: SubState) -> dict:
 
 
 def format_node(state: SubState) -> dict:
-    """Format the parsed fields as a bullet list."""
+    """
+    Format the parsed fields as a bullet list.
+    """
     parsed = state.get("parsed", {})
     lines = [f"- {k}: {v}" for k, v in parsed.items()]
     return {"formatted": "Parsed fields:\n" + "\n".join(lines)}
@@ -240,10 +265,15 @@ class ParentState(TypedDict):
 
 
 def make_call_subgraph(subgraph):
-    """Return a graph node function that invokes `subgraph` and projects its output."""
+    """
+    Return a graph node function that invokes `subgraph` and projects its
+    output.
+    """
 
     def call_subgraph(state: ParentState) -> dict:
-        """Call `subgraph` and project its formatted output into the parent state."""
+        """
+        Call `subgraph` and project its formatted output into the parent state.
+        """
         out = subgraph.invoke({"raw": state["user_text"]})
         return {"result": out["formatted"]}
 
@@ -265,7 +295,9 @@ class CSub(TypedDict):
 
 
 def bump(state: CSub) -> dict:
-    """Increment a counter used to demonstrate subgraph memory behavior."""
+    """
+    Increment a counter used to demonstrate subgraph memory behavior.
+    """
     return {"n": state.get("n", 0) + 1}
 
 
@@ -280,10 +312,14 @@ class P(TypedDict):
 
 
 def make_call_sub(sub_shared, sub_private):
-    """Return a graph node that calls the shared or private subgraph."""
+    """
+    Return a graph node that calls the shared or private subgraph.
+    """
 
     def call_sub(state: P) -> dict:
-        """Call the shared or private subgraph depending on `state['mode']`."""
+        """
+        Call the shared or private subgraph depending on `state['mode']`.
+        """
         if state["mode"] == "shared":
             out = sub_shared.invoke({"n": state.get("sub_n", 0)})
             return {"sub_n": out["n"]}
@@ -297,10 +333,15 @@ def make_call_sub(sub_shared, sub_private):
 
 
 def make_run_twice(parent):
-    """Return a function that invokes `parent` graph twice and returns both sub-counters."""
+    """
+    Return a function that invokes `parent` graph twice and returns both
+    sub-counters.
+    """
 
     def run_twice(mode: str):
-        """Invoke the parent graph twice and return the two observed sub-counters."""
+        """
+        Invoke the parent graph twice and return the two observed sub-counters.
+        """
         out1 = parent.invoke(
             {"mode": mode, "sub_n": 0},
             config={"configurable": {"thread_id": f"PARENT_{mode}"}},
@@ -320,7 +361,9 @@ def make_run_twice(parent):
 
 
 def _all_tool_calls(messages: list[Any]) -> list[dict[str, Any]]:
-    """Collect tool call dicts emitted by `AIMessage` objects in `messages`."""
+    """
+    Collect tool call dicts emitted by `AIMessage` objects in `messages`.
+    """
     from langchain_core.messages import AIMessage
 
     calls: list[dict[str, Any]] = []
@@ -333,7 +376,9 @@ def _all_tool_calls(messages: list[Any]) -> list[dict[str, Any]]:
 
 
 def _tool_outputs(messages: list[Any], tool_name: str) -> list[Any]:
-    """Return tool message contents for `tool_name`."""
+    """
+    Return tool message contents for `tool_name`.
+    """
     from langchain_core.messages import ToolMessage
 
     outs: list[Any] = []
@@ -344,7 +389,9 @@ def _tool_outputs(messages: list[Any], tool_name: str) -> list[Any]:
 
 
 def _as_text(x: Any) -> str:
-    """Convert `x` to a readable string for printing."""
+    """
+    Convert `x` to a readable string for printing.
+    """
     if isinstance(x, str):
         return x
     return (
@@ -355,7 +402,9 @@ def _as_text(x: Any) -> str:
 
 
 def _read_file_text(read_result: Any) -> str:
-    """Extract plain text from a `read_file` tool output."""
+    """
+    Extract plain text from a `read_file` tool output.
+    """
     if read_result is None:
         return ""
     if isinstance(read_result, str):
@@ -375,7 +424,9 @@ def _read_file_text(read_result: Any) -> str:
 
 
 def _extract_bullets(text: str) -> list[str]:
-    """Extract Markdown-style bullet lines from `text`."""
+    """
+    Extract Markdown-style bullet lines from `text`.
+    """
     lines = []
     for ln in text.splitlines():
         s = ln.strip()
@@ -400,7 +451,9 @@ def _extract_bullets(text: str) -> list[str]:
 
 
 def build_dataset_context(meta: dict | None = None) -> str:
-    """Build a compact dataset context string for prompts from `meta`."""
+    """
+    Build a compact dataset context string for prompts from `meta`.
+    """
     if not isinstance(meta, dict):
         return "Dataset context: (not loaded)."
     cols = meta.get("columns", [])
@@ -421,7 +474,9 @@ def build_dataset_context(meta: dict | None = None) -> str:
 
 
 def _print_tool_calls(state: dict, label: str) -> None:
-    """Print tool call names and args emitted by the model."""
+    """
+    Print tool call names and args emitted by the model.
+    """
     calls = _all_tool_calls(state.get("messages", []))
     simplified = [{"name": c.get("name"), "args": c.get("args")} for c in calls]
     print(f"{label} tool_calls:", simplified)

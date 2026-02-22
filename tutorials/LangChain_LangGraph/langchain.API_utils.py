@@ -18,16 +18,16 @@ from math import sqrt as _sqrt
 from pathlib import Path
 from typing import Annotated, Any, Literal, Sequence, TypedDict
 
+import nbformat
+
 from dotenv import load_dotenv
 from langchain_core.tools import tool
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import InjectedState, InjectedStore
 from langgraph.store.base import BaseStore
-from typing_extensions import Annotated as TxAnnotated
-
-import nbformat
-from nbformat import validate
 from nbclient import NotebookClient
+from nbformat import validate
+from typing_extensions import Annotated as TxAnnotated
 
 load_dotenv()
 
@@ -46,7 +46,10 @@ _LOG = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class LlmConfig:
-    """Configuration for selecting an LLM provider + model from environment variables."""
+    """
+    Configuration for selecting an LLM provider + model from environment
+    variables.
+    """
 
     provider: str
     model: str
@@ -54,7 +57,9 @@ class LlmConfig:
 
 
 def _require_env(var_name: str) -> str:
-    """Return the value of `var_name` from environment variables or raise."""
+    """
+    Return the value of `var_name` from environment variables or raise.
+    """
     value = os.getenv(var_name)
     if not value:
         raise RuntimeError(
@@ -64,7 +69,9 @@ def _require_env(var_name: str) -> str:
 
 
 def load_llm_config() -> LlmConfig:
-    """Load `LlmConfig` from environment variables."""
+    """
+    Load `LlmConfig` from environment variables.
+    """
     provider = _require_env("LLM_PROVIDER").lower()
     temperature = float(os.getenv("LLM_TEMPERATURE", "0"))
     default_models = {
@@ -81,7 +88,9 @@ def load_llm_config() -> LlmConfig:
 
 
 def get_chat_model():
-    """Create a tool-calling-capable chat model using env configuration."""
+    """
+    Create a tool-calling-capable chat model using env configuration.
+    """
     cfg = load_llm_config()
     if cfg.provider == "openai":
         from langchain_openai import ChatOpenAI
@@ -130,7 +139,9 @@ def get_chat_model():
 
 
 def build_dataset_meta(df) -> dict:
-    """Build a compact JSON-serializable dataset metadata dict for demos."""
+    """
+    Build a compact JSON-serializable dataset metadata dict for demos.
+    """
     cols = list(df.columns)
     dtypes = {c: str(df[c].dtype) for c in cols}
     sample_rows = df.head(3).to_dict(orient="records")
@@ -204,7 +215,9 @@ class ToolGraphState(TypedDict):
 
 
 def _as_floats(xs: Sequence[float]) -> list[float]:
-    """Validate `xs` and return it as a non-empty `list[float]`."""
+    """
+    Validate `xs` and return it as a non-empty `list[float]`.
+    """
     if xs is None:
         raise ValueError("xs must not be None")
     xs_list = [float(x) for x in xs]
@@ -215,14 +228,18 @@ def _as_floats(xs: Sequence[float]) -> list[float]:
 
 @tool
 def mean(xs: Sequence[float]) -> float:
-    """Compute the arithmetic mean of a non-empty list of numbers."""
+    """
+    Compute the arithmetic mean of a non-empty list of numbers.
+    """
     xs_list = _as_floats(xs)
     return sum(xs_list) / len(xs_list)
 
 
 @tool
 def zscore(xs: Sequence[float], x: float) -> float:
-    """Compute z = (x - mean(xs)) / std(xs)."""
+    """
+    Compute z = (x - mean(xs)) / std(xs).
+    """
     xs_list = _as_floats(xs)
     mu = sum(xs_list) / len(xs_list)
     var = sum((v - mu) ** 2 for v in xs_list) / len(xs_list)
@@ -242,7 +259,9 @@ def dataset_brief(
     question: str,
     dataset_meta: TxAnnotated[dict, InjectedState("dataset_meta")],
 ) -> str:
-    "Answer a question using injected dataset metadata (InjectedState)."
+    """
+    Answer a question using injected dataset metadata (InjectedState).
+    """
     payload = {
         "question": question,
         "n_rows": dataset_meta.get("n_rows"),
@@ -267,7 +286,9 @@ def save_pref(
     value: str,
     store: TxAnnotated[BaseStore, InjectedStore()],
 ) -> str:
-    "Save a user preference (key/value) into an injected store."
+    """
+    Save a user preference (key/value) into an injected store.
+    """
     namespace = ("prefs", user_id)
     store.put(namespace, key, {"value": value})
     return f"saved {key}={value} for user_id={user_id}"
@@ -279,7 +300,9 @@ def load_pref(
     key: str,
     store: TxAnnotated[BaseStore, InjectedStore()],
 ) -> str:
-    "Load a user preference (key) from an injected store."
+    """
+    Load a user preference (key) from an injected store.
+    """
     namespace = ("prefs", user_id)
     item = store.get(namespace, key)
     if not item:
@@ -294,7 +317,9 @@ def load_pref(
 
 @tool
 def utc_now() -> str:
-    """Return the current UTC time as an ISO string."""
+    """
+    Return the current UTC time as an ISO string.
+    """
     from datetime import datetime, timezone
 
     return datetime.now(timezone.utc).isoformat()
@@ -331,7 +356,9 @@ def make_custom_state_and_tool():
         tool_call_id: TxAnnotated[str, InjectedToolCallId],
         runtime: ToolRuntime[None, CustomState],
     ) -> Command:
-        """Extract simple facts and update the graph state via `Command(update=...)`."""
+        """
+        Extract simple facts and update the graph state via `Command(update=...)`.
+        """
         tone = runtime.state.get("user_prefs", {}).get("tone", "neutral")
         facts = [f"tone={tone}", f"n_chars={len(text)}"]
         return Command(
@@ -365,7 +392,9 @@ class HITLState(TypedDict):
 
 
 def propose_delete(state: HITLState) -> dict:
-    """Ask for approval to delete a file."""
+    """
+    Ask for approval to delete a file.
+    """
     from langgraph.types import interrupt
 
     payload = {
@@ -378,7 +407,9 @@ def propose_delete(state: HITLState) -> dict:
 
 
 def do_delete(state: HITLState) -> dict:
-    """Delete the file if approved."""
+    """
+    Delete the file if approved.
+    """
     if state["decision"] != "approve":
         return {}
     p = Path(state["target_path"])
@@ -393,7 +424,9 @@ def do_delete(state: HITLState) -> dict:
 
 
 def _safe_path(workspace: Path, rel_path: str) -> Path:
-    """Resolve `rel_path` under `workspace` and reject path traversal."""
+    """
+    Resolve `rel_path` under `workspace` and reject path traversal.
+    """
     p = (workspace / rel_path).resolve()
     if not str(p).startswith(str(workspace)):
         raise ValueError("Path escapes workspace")
@@ -401,7 +434,9 @@ def _safe_path(workspace: Path, rel_path: str) -> Path:
 
 
 def _safe_injected_path(workspace_dir: str, rel_path: str) -> Path:
-    """Resolve `rel_path` under `workspace_dir` and reject path traversal."""
+    """
+    Resolve `rel_path` under `workspace_dir` and reject path traversal.
+    """
     root = Path(workspace_dir).resolve()
     p = (root / rel_path).resolve()
     if not str(p).startswith(str(root)):
@@ -411,7 +446,9 @@ def _safe_injected_path(workspace_dir: str, rel_path: str) -> Path:
 
 @tool
 def write_notebook(spec: dict[str, Any], out_rel: str) -> str:
-    "Write a notebook from a small spec into a safe workspace path."
+    """
+    Write a notebook from a small spec into a safe workspace path.
+    """
     workspace = Path("notebooks").resolve()
     workspace.mkdir(parents=True, exist_ok=True)
     out_path = _safe_path(workspace, out_rel)
@@ -439,7 +476,9 @@ def nb_write(
     out_rel: str,
     workspace_dir: TxAnnotated[str, InjectedState("workspace_dir")],
 ) -> str:
-    "Write a notebook under an injected workspace_dir."
+    """
+    Write a notebook under an injected workspace_dir.
+    """
     out_path = _safe_injected_path(workspace_dir, out_rel)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     nb = nbformat.v4.new_notebook()
@@ -469,7 +508,10 @@ def nb_run(
     timeout_s: int,
     workspace_dir: TxAnnotated[str, InjectedState("workspace_dir")],
 ) -> str:
-    "Execute a notebook with nbclient and save the executed copy under workspace_dir."
+    """
+    Execute a notebook with nbclient and save the executed copy under
+    workspace_dir.
+    """
     in_path = _safe_injected_path(workspace_dir, in_rel)
     out_path = _safe_injected_path(workspace_dir, out_rel)
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -489,7 +531,9 @@ def nb_extract_errors(
     executed_rel: str,
     workspace_dir: TxAnnotated[str, InjectedState("workspace_dir")],
 ) -> str:
-    "Extract per-cell error metadata from an executed notebook (JSON string)."
+    """
+    Extract per-cell error metadata from an executed notebook (JSON string).
+    """
     p = _safe_injected_path(workspace_dir, executed_rel)
     nb = nbformat.read(str(p), as_version=4)
     errs = []
@@ -514,7 +558,10 @@ def nb_extract_artifacts(
     artifacts_rel_dir: str,
     workspace_dir: TxAnnotated[str, InjectedState("workspace_dir")],
 ) -> str:
-    "Extract stdout + inline PNGs from an executed notebook into artifacts_rel_dir (JSON manifest)."
+    """
+    Extract stdout + inline PNGs from an executed notebook into
+    artifacts_rel_dir (JSON manifest).
+    """
     p = _safe_injected_path(workspace_dir, executed_rel)
     out_dir = _safe_injected_path(workspace_dir, artifacts_rel_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -551,7 +598,9 @@ def nb_extract_artifacts(
 def nb_list_files(
     workspace_dir: TxAnnotated[str, InjectedState("workspace_dir")],
 ) -> str:
-    "List files under workspace_dir (JSON)."
+    """
+    List files under workspace_dir (JSON).
+    """
     root = Path(workspace_dir).resolve()
     files = []
     for p in root.rglob("*"):
@@ -561,7 +610,9 @@ def nb_list_files(
 
 
 def extract_errors(nb) -> list[dict]:
-    """Extract cell execution errors from an executed notebook."""
+    """
+    Extract cell execution errors from an executed notebook.
+    """
     errs = []
     for i, cell in enumerate(nb.cells):
         if cell.get("cell_type") != "code":
