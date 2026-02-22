@@ -41,7 +41,8 @@ RUN python -m pip install --upgrade pip
 RUN pip3 install jupyterlab
 
 # Install project specific packages.
-RUN pip3 install filterpy
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
 
 RUN mkdir /install
 

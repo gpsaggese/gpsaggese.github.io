@@ -29,9 +29,9 @@ while getopts p:d:uv flag
 do
     case "${flag}" in
         p) JUPYTER_HOST_PORT=${OPTARG};;  # Port for Jupyter Lab
-        u) JUPYTER_USE_VIM=1;;             # Enable vim bindings
-        d) TARGET_DIR=${OPTARG};;          # Directory to mount as /data
-        v) VERBOSE=1;;                     # Enable verbose output
+        u) JUPYTER_USE_VIM=1;;            # Enable vim bindings
+        d) TARGET_DIR=${OPTARG};;         # Directory to mount as /data
+        v) VERBOSE=1;;                    # Enable verbose output
     esac
 done
 
@@ -50,7 +50,9 @@ source $DOCKER_NAME
 print_docker_vars
 
 # Configure Docker run options with port forwarding and optional volume mount.
-DOCKER_RUN_OPTS="-p $JUPYTER_HOST_PORT:8888"
+# We use the same port inside and outside the container, so that the localhost
+# printed inside the container is the correct one.
+DOCKER_RUN_OPTS="-p $JUPYTER_HOST_PORT:$JUPYTER_HOST_PORT"
 if [[ $TARGET_DIR != "" ]]; then
     DOCKER_RUN_OPTS="$DOCKER_RUN_OPTS -v $TARGET_DIR:/data"
 fi;
@@ -67,5 +69,7 @@ run "docker run \
     --name $CONTAINER_NAME \
     $DOCKER_RUN_OPTS \
     -v $(pwd):/curr_dir \
+    -v $GIT_ROOT:/git_root \
+    -e PYTHONPATH=/git_root:/git_root/helpers_root \
     $FULL_IMAGE_NAME \
     $CMD"

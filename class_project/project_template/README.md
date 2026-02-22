@@ -50,6 +50,43 @@ standardizing projects.
 - `utils.sh`
   - Bash utility library with reusable functions for Docker operations
 
+## Workflows
+
+- All commands should be run from inside the project directory
+  ```bash
+  > cd tutorials/FilterPy
+  ...
+  ```
+
+- To build the container for a project
+  ```
+  > cd $PROJECT
+  # Build the container.
+  > docker_build.sh
+  # Test the container.
+  > docker_bash.sh ls
+  ```
+
+- Start Jupyter
+  ```bash
+  > docker_jupyter.sh
+  # Go to localhost:8888
+  ```
+
+- Start Jupyter on a specific port with vim support
+  ```bash
+  > docker_jupyter.sh -p 8890 -u
+  # Go to localhost:8890
+  ```
+
+## How to customize a project template
+
+- Copy the
+  ```
+  > cp -r class_project/project_template $TARGET
+  ```
+- TODO(gp): Complete
+
 ## Description of Executables
 
 ### `copy_docker_files.py`

@@ -1,4 +1,5 @@
-# Pinned to versions compatible with the APIs used in the notebooks in this folder (notably `langchain.agents.create_agent`).
+# Pinned to versions compatible with the APIs used in the notebooks in this
+# folder (notably `langchain.agents.create_agent`).
 langchain==1.2.8
 langchain-core==1.2.8
 langchain-openai==1.1.7

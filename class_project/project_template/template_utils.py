@@ -7,6 +7,10 @@ This file contains utility functions that support the tutorial notebooks.
 - This helps keep the notebooks clean, modular, and easier to debug.
 - Students should implement functions here for data preprocessing,
   model setup, evaluation, or any reusable logic.
+
+Import as:
+
+import class_project.project_template.template_utils as cpptteut
 """
 
 import pandas as pd
@@ -25,6 +29,7 @@ logger = logging.getLogger(__name__)
 # Example 1: Split the dataset into train and test sets
 # -----------------------------------------------------------------------------
 
+
 def split_data(df: pd.DataFrame, target_column: str, test_size: float = 0.2):
     """
     Split the dataset into training and testing sets.
@@ -40,11 +45,15 @@ def split_data(df: pd.DataFrame, target_column: str, test_size: float = 0.2):
     y = df[target_column]
     return train_test_split(X, y, test_size=test_size, random_state=42)
 
+
 # -----------------------------------------------------------------------------
 # Example 2: PyCaret classification pipeline
 # -----------------------------------------------------------------------------
 
-def run_pycaret_classification(df: pd.DataFrame, target_column: str) -> pd.DataFrame:
+
+def run_pycaret_classification(
+    df: pd.DataFrame, target_column: str
+) -> pd.DataFrame:
     """
     Run a basic PyCaret classification experiment.
 
@@ -61,5 +70,3 @@ def run_pycaret_classification(df: pd.DataFrame, target_column: str) -> pd.DataF
     ...
 
     return results
-
-
