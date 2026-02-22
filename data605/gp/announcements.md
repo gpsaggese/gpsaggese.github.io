@@ -60,7 +60,7 @@ This is a preparation for the in-class quiz and for the class project.
     - E) Can store semi-structured data
   ```
 
-## Assignment #2: Drill Quiz
+## Quiz #0: Drill Quiz
 
 Hello DATA605 team,
 
