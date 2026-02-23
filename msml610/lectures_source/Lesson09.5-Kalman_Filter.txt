@@ -31,9 +31,14 @@ MSML610: Advanced Machine Learning
 // ./notebooks/quantopian/quantopian_kalman_filter.ipynb
 // AIMA 14.4 (p. 479)
 
+# ##############################################################################
 # Discrete Bayes Filtering
+# ##############################################################################
 
 // https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/02-Discrete-Bayes.ipynb
+
+* Tutorial
+- `L09_05_01_discrete_bayes_dog.ipynb`
 
 * A Discrete Bayesian 1-D Dog
 ::: columns
@@ -165,14 +170,15 @@ digraph BayesianUpdateAlgo {
 }
 ```
 
-* Tutorial
-- `L09_05_01_discrete_bayes_dog.ipynb`
-
 # #############################################################################
 # Unidimensional Kalman Filters
 # #############################################################################
 
 // https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/04-One-Dimensional-Kalman-Filters.ipynb
+
+* Tutorial
+
+- `L09_05_02_univariate_kalman_filter.ipynb`
 
 * Kalman Filter: Interpretations
 - Extension of $g$–$h$ filters
@@ -350,16 +356,15 @@ digraph BayesianUpdateAlgo {
   - Is the scaling term that mixes the prediction and the measurement
   - Depends on the ratio of uncertainty of prior and measurement
 
-* Tutorial
-
-- `L09_05_02_univariate_kalman_filter.ipynb`
-
 # ##############################################################################
 # Multivariate Kalman Filters
 # ##############################################################################
 
 // https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/05-Multivariate-Gaussians.ipynb
 // https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/06-Multivariate-Kalman-Filters.ipynb
+
+* Tutorial
+- `L09_05_03_multivariate_kalman_filter.ipynb`
 
 * Multivariate State
 - Often the state variable is multivariate, e.g.,
@@ -596,9 +601,6 @@ digraph BayesianUpdateAlgo {
   accurate
 - Set state between the prediction and measurement based on scaling factor
 - Update belief in the state based on how certain we are in the measurement
-
-* Tutorial
-- `L09_05_03_multivariate_kalman_filter.ipynb`
 
 ## #############################################################################
 ## Non-Linear Filtering

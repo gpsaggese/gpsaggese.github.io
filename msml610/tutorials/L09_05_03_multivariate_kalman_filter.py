@@ -166,16 +166,21 @@ time_ut.cell_1_3_plot_product_of_gaussians()
 # # Tracking a Dog with Hidden Variables
 #
 # - There is a dog moving on a 1-d track
-# - The dog moves approximately 1 meter per step
+#   - The dog moves approximately 1 meter per step
 #   - The velocity has variance due to noise/imperfect model specification
-# - There is a sensor that measures the position of the dog
-#   - The sensor has a certain error
-# - Time is discrete
+#     - There is a sensor that measures the position of the dog
+#       - The sensor has a certain error
+#     - Time is discrete
+#
+# - We want to add a hidden variable to improve our estimates
 
 # %%
 def compute_dog_data(z_var, process_var, count=1, dt=1.):
-    "returns track, measurements 1D ndarrays"
-    x, vel = 0., 1.
+    """
+    Returns track, measurements 1D ndarrays
+    """
+    x = 0.0
+    vel = 1.0
     z_std = math.sqrt(z_var) 
     p_std = math.sqrt(process_var)
     xs, zs = [], []
