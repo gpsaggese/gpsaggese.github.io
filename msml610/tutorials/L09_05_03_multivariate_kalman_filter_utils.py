@@ -7,7 +7,8 @@ import msml610.tutorials.L09_05_03_multivariate_kalman_filter_utils as mtl090503
 """
 
 import logging
-from typing import Optional
+import math
+from typing import Optional, Tuple
 
 import filterpy.stats as stats
 import ipywidgets
@@ -727,3 +728,43 @@ def cell_1_1_plot_covariance_matrix() -> None:
             [var_x_box, var_y_box, cov_xy_box, n_samples_box, seed_box, output]
         )
     )
+
+
+# #############################################################################
+# Dog tracking simulation
+# #############################################################################
+
+
+def compute_dog_data(
+    z_var: float,
+    process_var: float,
+    *,
+    count: int = 50,
+    dt: float = 1.0,
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Simulate a dog moving on a 1-d track and return positions and measurements.
+
+    The simulation runs for `count` steps, moving the dog forward approximately
+    1 meter per step. At each step the velocity varies according to the process
+    variance `process_var`. After updating the position, a noisy measurement is
+    computed with an assumed sensor variance of `z_var`.
+
+    :param z_var: variance of the measurement noise (sensor variance)
+    :param process_var: variance of the process noise (velocity variance)
+    :param count: number of steps to simulate
+    :param dt: time step duration
+    :return: (xs, zs) tuple of 1D NumPy arrays where `xs` contains the true
+        positions and `zs` contains the noisy measurements
+    """
+    x = 0.0
+    vel = 1.0
+    z_std = math.sqrt(z_var)
+    p_std = math.sqrt(process_var)
+    xs, zs = [], []
+    for _ in range(count):
+        v = vel + (np.random.randn() * p_std)
+        x += v * dt
+        xs.append(x)
+        zs.append(x + np.random.randn() * z_std)
+    return np.array(xs), np.array(zs)

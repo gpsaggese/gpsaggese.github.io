@@ -22,6 +22,7 @@
 
 import logging
 import numpy as np
+import matplotlib.pyplot as plt
 
 import msml610_utils as ut
 
@@ -165,34 +166,32 @@ time_ut.cell_1_3_plot_product_of_gaussians()
 # %% [markdown]
 # # Tracking a Dog with Hidden Variables
 #
-# - There is a dog moving on a 1-d track
-#   - The dog moves approximately 1 meter per step
-#   - The velocity has variance due to noise/imperfect model specification
-#     - There is a sensor that measures the position of the dog
-#       - The sensor has a certain error
-#     - Time is discrete
+# - We go back to tracking a dog on a 1-d track and use hidden variables to
+#   improve our estimates
+#   - The underlying ideas are the same as the previous chapters: we are just
+#     multiplying and adding Gaussians
 #
-# - We want to add a hidden variable to improve our estimates
+# - The dog moves approximately 1 meter per step
+#   - At each step, the velocity varies according to the process variance
+#     `process_var`
+#   - After updating the position, a measurement is computed with an assumed
+#     sensor variance `z_var`
+#   - Time is discrete
+#
+# - We start by writing a simulation for the dog
+#   - The simulation runs for `count` steps
 
 # %%
-def compute_dog_data(z_var, process_var, count=1, dt=1.):
-    """
-    Returns track, measurements 1D ndarrays
-    """
-    x = 0.0
-    vel = 1.0
-    z_std = math.sqrt(z_var) 
-    p_std = math.sqrt(process_var)
-    xs, zs = [], []
-    for _ in range(count):
-        v = vel + (randn() * p_std)
-        x += v*dt        
-        xs.append(x)
-        zs.append(x + randn() * z_std)        
-    return np.array(xs), np.array(zs)
+z_var = 1.0
+process_var = 0.1
+count = 50
+xs, zs = time_ut.compute_dog_data(z_var, process_var, count=count)
+print("xs=", xs)
+print("zs=", zs)
 
-
-xs, zs = compute_dog_data()
+# %%
+plt.figure(figsize=(8, 3))
+plt.plot(xs, label="True position (xs)");
 
 # %% [markdown]
 # * Tracking Dog: Predict Step
@@ -211,8 +210,9 @@ xs, zs = compute_dog_data()
 #   - Top speed for a dog is 21m/s, so set $3 \sigma_{velocity} = 21$
 #   - Assume covariances to be zero due to unknown initial correlation between
 #     position and velocity
-#   - $\mP$ is diagonal
-#
+#   - $P$ is diagonal
+
+# %% [markdown]
 # ## Design System Model
 # - Describe mathematically the behavior of the system
 #   $$
@@ -226,7 +226,8 @@ xs, zs = compute_dog_data()
 #   - This is not correct, but if velocity doesn't change much, the filter will
 #     perform well
 # - Put the model in matrix form $\vx_{t+1} = \mF \vx_t$
-#
+
+# %% [markdown]
 # ## Predicting the System
 #
 # - If we predict the system without measurements:
@@ -234,6 +235,8 @@ xs, zs = compute_dog_data()
 #   - The state uncertainty grows
 #     - This is true even without system error (noise)
 #
+
+# %% [markdown]
 # ## Design System Noise
 #
 # - Consider a car driving on a road with cruise control on
@@ -269,7 +272,6 @@ xs, zs = compute_dog_data()
 # - E.g., in the case of the dog, control inputs can be
 #   - The voice of its master
 #   - Seeing a squirrel
-#
 
 # %% [markdown]
 # ## Update Step
