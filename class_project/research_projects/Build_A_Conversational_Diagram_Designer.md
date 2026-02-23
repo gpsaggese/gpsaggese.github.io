@@ -1,50 +1,50 @@
-# **Conversational Diagram Designer (CDD)**
+# Conversational Diagram Designer (CDD)
 
-## **1\. Overview**
-
-Conversational Diagram Designer (CDD) is a browser-based diagramming tool that allows users to create and refine diagrams using natural language.
+## Overview
+Conversational Diagram Designer (CDD) is a browser-based diagramming tool that
+allows users to create and refine diagrams using natural language.
 
 It combines:
 
-- A diagram code editor  
-- A live renderer  
-- A chat interface powered by LLMs  
+- A diagram code editor
+- A live renderer
+- A chat interface powered by LLMs
 - A vision feedback loop (rendered image sent back to the LLM)
 
 CDD supports:
 
-- Graphviz (DOT)  
-- Mermaid  
+- Graphviz (DOT)
+- Mermaid
 - C4 (PlantUML or Structurizr DSL)
 
 The system can:
 
-- Run fully locally in the browser  
+- Run fully locally in the browser
 - Be deployed to AWS and exposed as a web application
 
-It's like [https://dreampuf.github.io/GraphvizOnline/](https://dreampuf.github.io/GraphvizOnline/)? but with a chat to have LLM (and other models) help create the graph
+It's like
+[https://dreampuf.github.io/GraphvizOnline/](https://dreampuf.github.io/GraphvizOnline/)?
+but with a chat to have LLM (and other models) help create the graph
 
-## **2\. Goals**
+## Goals
 
-### **Primary Goals**
-
+### Primary Goals
 - Conversational diagram creation and editing
 - Real-time rendering
 - LLM-driven diagram modification
 - Vision-based diagram validation
 - Local and cloud deployment options
 
-### **Non-Goals (V1)**
-
+### Non-Goals (V1)
 - Multi-user collaboration
 - Enterprise authentication
 - Persistence
 
-## **3\. Core User Flow**
-
+## Core User Flow
 1. User types:
 
-   "Create a microservices architecture with API Gateway, 3 services, and a database."
+   "Create a microservices architecture with API Gateway, 3 services, and a
+   database."
 
 2. LLM generates diagram source code (Mermaid/DOT/C4).
 
@@ -62,8 +62,7 @@ It's like [https://dreampuf.github.io/GraphvizOnline/](https://dreampuf.github.i
 
 8. Loop continues.
 
-## **4\. High-Level Architecture**
-
+## High-Level Architecture
 ```
 Browser UI
 ├── Chat Panel
@@ -77,10 +76,9 @@ Optional Backend (AWS)
 └── Storage (optional)
 ```
 
-## **5\. Frontend Architecture**
+## Frontend Architecture
 
-### **Recommended Stack**
-
+### Recommended Stack
 - React / Next.js
 - Monaco Editor
 - Mermaid.js
@@ -88,34 +86,32 @@ Optional Backend (AWS)
 - Optional PlantUML rendering
 - OpenAI/Anthropic/local LLM APIs
 
-## **6\. Diagram Engine**
+## Diagram Engine
 
-### **Supported Formats**
+### Supported Formats
+| Format        | Renderer       | Local Support |
+| :------------ | :------------- | :------------ |
+| Mermaid       | Mermaid.js     | Yes           |
+| Graphviz DOT  | Viz.js (WASM)  | Yes           |
+| C4 (PlantUML) | Server or WASM | Partial       |
 
-| Format | Renderer | Local Support |
-| :---- | :---- | :---- |
-| Mermaid | Mermaid.js | Yes |
-| Graphviz DOT | Viz.js (WASM) | Yes |
-| C4 (PlantUML) | Server or WASM | Partial |
+## LLM Interaction Model
 
-## **7\. LLM Interaction Model**
+### System Prompt (Example)
+You are a diagram engineer. You output only valid diagram code. When modifying,
+output the FULL updated diagram. Never include explanations unless explicitly
+requested.
 
-### **System Prompt (Example)**
-
-You are a diagram engineer. You output only valid diagram code. When modifying, output the FULL updated diagram. Never include explanations unless explicitly requested.
-
-### **Operation Modes**
-
+### Operation Modes
 - Create
 - Modify
 - Debug
 - Refactor
 - Explain
 
-## **8\. Vision Feedback Loop**
+## Vision Feedback Loop
 
-### **Purpose**
-
+### Purpose
 LLMs struggle with spatial reasoning unless they see the rendered output.
 
 Vision feedback enables:
@@ -126,8 +122,7 @@ Vision feedback enables:
 - Visual hierarchy issues
 - Logical inconsistencies
 
-### **Flow**
-
+### Flow
 1. Render diagram → SVG/PNG.
 2. Convert to base64 image.
 3. Send image to multimodal LLM.
@@ -136,31 +131,29 @@ Vision feedback enables:
 
 Limit auto-correction to 3 iterations to avoid infinite loops.
 
-### **Example of a conversation**
-
+### Example of a Conversation
 An example of a conversation is
 
-1\)
-Create a graphviz graph based on this content
-\- \*\*System\*\*: object you want to estimate/track
-\- \*\*Filter\*\*: algorithm to estimate the state of the system
-\- \*\*State of the system\*\* x: current values you are interested in
-  \- Part of the state might be hidden (i.e., only partially observable)
-\- \*\*Measurement\*\* z: the measured value of the system
-  \- Observable, but it can be inaccurate
-\- \*\*State estimate\*\* x\_est: filter estimate of the state
-\- \*\*System model\*\*: mathematical model of the system
-  \- Typically there is error in the specification of the model
-\- \*\*System propagation\*\*: predict step using the system model to form a new
-  state estimate x\_pred
-  \- Because the system model and the measurements are imperfect, the estimate
+1) Create a graphviz graph based on this content
+- **System**: object you want to estimate/track
+- **Filter**: algorithm to estimate the state of the system
+- **State of the system** x: current values you are interested in
+  - Part of the state might be hidden (i.e., only partially observable)
+- **Measurement** z: the measured value of the system
+  - Observable, but it can be inaccurate
+- **State estimate** x_est: filter estimate of the state
+- **System model**: mathematical model of the system
+  - Typically there is error in the specification of the model
+- **System propagation**: predict step using the system model to form a new
+  state estimate x_pred
+  - Because the system model and the measurements are imperfect, the estimate
     is imperfect
-\- \*\*Measurement update\*\*: update step
+- **Measurement update**: update step
 There should be a System and a Filter on two rows stacked, where Filter estimates the state of System
-\`\`\`
+```
 
-2\) Write the variables that correspond to a circle on top of the edges
+2) Write the variables that correspond to a circle on top of the edges
 
-3\) No need to have the circle, just write the names of the variables on the edges
+3) No need to have the circle, just write the names of the variables on the edges
 
-4\) Put Predict step, Update step, system model, Filter inside a subgraph to keep it together
+4) Put Predict step, Update step, system model, Filter inside a subgraph to keep it together
