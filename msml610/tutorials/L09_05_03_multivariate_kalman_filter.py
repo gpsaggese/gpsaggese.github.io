@@ -213,7 +213,7 @@ x0 = np.array([[0.0], [1.0]])
 print("x0 (initial state) =\n", x0)
 
 # %% [markdown]
-# ## Design State Covariance
+# ### Design State Covariance
 #
 # - The state covariance matrix $P$ encodes our uncertainty about the state
 # - We initialize it with large diagonal values to reflect ignorance at startup:
@@ -234,7 +234,7 @@ P = np.diag([500.0, 49.0])
 print("P =\n", P)
 
 # %% [markdown]
-# ## Design System Model
+# ### Design System Model
 #
 # - The state-transition matrix $F$ describes how the state evolves over one
 #   time step under a constant-velocity assumption:
@@ -254,7 +254,7 @@ F = np.array([[1.0, dt], [0.0, 1.0]])
 print("F =\n", F)
 
 # %% [markdown]
-# ## Predicting the System
+# ### Predicting the System
 #
 # - Without a new measurement the filter propagates the state and covariance
 #   forward (the **predict step**):
@@ -276,7 +276,7 @@ print("x_pred (one step) =\n", x_pred)
 print("P_pred (one step) =\n", P_pred)
 
 # %% [markdown]
-# ## Design System Noise
+# ### Design System Noise
 #
 # - The dog's velocity is not perfectly constant; it is perturbed by
 #   unmodeled forces (distraction, fatigue, wind)
@@ -298,7 +298,7 @@ Q = np.array([[0.0, 0.0], [0.0, process_var]])
 print("Q =\n", Q)
 
 # %% [markdown]
-# ## Design the Control Function
+# ### Design the Control Function
 #
 # - A known control input $\mathbf{u}$ can shift the predicted state:
 #   $$
@@ -381,5 +381,85 @@ time_ut.plot_dog_tracking(xs, zs, means, variances)
 
 # %%
 time_ut.cell_dog_tracking_interactive()
+
+# %% [markdown]
+# # Show Effect of Hidden Variables
+#
+# ## What Changes When We Add a Hidden Variable?
+#
+# - A **1D Kalman filter** tracks position only: $\mathbf{x}_t = [x_t]$
+#   - The filter has no model of velocity; it assumes the dog is stationary
+#     between measurements
+#   - Each prediction step simply holds position constant: $\bar{x}_t = x_{t-1}$
+#   - The filter can only react to measurements, not anticipate movement
+#
+# - A **2D Kalman filter** tracks position and velocity: $\mathbf{x}_t =
+#   [x_t, \dot{x}_t]^T$
+#   - Velocity $\dot{x}_t$ is the **hidden variable**: never measured directly,
+#     but inferred from successive position measurements
+#   - The prediction step uses velocity to anticipate where the dog will be:
+#     $\bar{x}_t = x_{t-1} + \dot{x}_{t-1}\,\Delta t$
+#   - The covariance matrix develops off-diagonal terms that capture the
+#     correlation between position and velocity errors
+#
+# ## Why Hidden Variables Help
+#
+# - The 1D filter is essentially a recursive average -- it is well-calibrated
+#   only when the dog is stationary or very slow
+# - The 2D filter learns the dog's speed implicitly; after a few steps the
+#   estimated velocity is close to the true velocity and the position predictions
+#   are much more accurate
+# - The improvement is quantified by the Mean Squared Error (MSE) shown below:
+#   the 2D filter consistently achieves a lower MSE than the 1D filter
+#
+# ## Experiment Setup
+#
+# - Same dog simulation: the dog moves ~1 m/step with Gaussian velocity noise
+# - Same measurements: position + Gaussian sensor noise $\sigma^2 = z\_var$
+# - 1D filter: $F = [[1]]$, $Q = [[process\_var]]$, $H = [[1]]$, $R = [[z\_var]]$
+# - 2D filter: $F = [[1, \Delta t], [0, 1]]$, $Q = diag(0, process\_var)$,
+#   $H = [[1, 0]]$, $R = [[z\_var]]$
+
+# %%
+# Static comparison with default parameters.
+np.random.seed(42)
+xs_ex, zs_ex = time_ut.compute_dog_data(z_var=1.0, process_var=0.1, count=50)
+means_1d, var_1d = time_ut.run_dog_kalman_filter_1d(
+    zs_ex, z_var=1.0, process_var=0.1
+)
+means_2d, var_2d = time_ut.run_dog_kalman_filter(
+    zs_ex, z_var=1.0, process_var=0.1
+)
+time_ut.plot_hidden_variable_comparison(
+    xs_ex, zs_ex, means_1d, var_1d, means_2d, var_2d
+)
+
+# %% [markdown]
+# ## Observations from the Comparison
+#
+# - **Left panel (1D KF, position only)**:
+#   - The filter lags behind the true trajectory because each prediction step
+#     does not use velocity -- it simply holds the previous position estimate
+#   - The uncertainty band (shaded area) is wide because the filter must account
+#     for large unpredicted jumps in position
+#   - MSE is typically higher
+#
+# - **Right panel (2D KF, position + hidden velocity)**:
+#   - The filter rapidly learns the dog's velocity from the first few measurements
+#   - Subsequent predictions are accurate because the motion model
+#     ($x_{t+1} = x_t + v_t$) anticipates where the dog will be
+#   - The uncertainty band is narrower and centered on the true trajectory
+#   - MSE is consistently lower
+#
+# ## Interactive: Vary Noise Levels and See the MSE Difference
+#
+# - Increase `z_var`: both filters degrade, but 2D degrades less because it
+#   uses its motion model to bridge noisy measurements
+# - Increase `process_var`: the dog's velocity changes more erratically; the
+#   advantage of the 2D filter is reduced but still present
+
+# %%
+# Interactive comparison of 1D vs 2D Kalman filter.
+time_ut.cell_hidden_variable_comparison_interactive()
 
 # %%
