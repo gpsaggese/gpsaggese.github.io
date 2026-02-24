@@ -602,6 +602,50 @@ digraph BayesianUpdateAlgo {
 - Set state between the prediction and measurement based on scaling factor
 - Update belief in the state based on how certain we are in the measurement
 
+## Modeling
+
+* State Space Systems
+- A dynamic system is a system whose state (position, temperature) evolves
+  over time
+- Many dynamic system can be described as differential equations, since calculus
+  is the math of changing values
+
+- It is possible to convert a set of higher order differential equations into a
+set of first-order differential equations
+  $$\dot{\mathbf x}=\mathbf A\mathbf x+\mathbf B\mathbf u+\mathbf w$$
+  where
+  - $\mathbf A$ is the system dynamics matrix
+  - $u$ are control inputs (e.g., pressing accelerator)
+  - $\mathbf w$ is noise
+
+- We are interested in finding a (recursive) equation that finds the value
+  of $\mathbf x_k = \mathbf x (t_k)$ from the previous (discrete) state
+  $\mathbf x_{k-1}$
+  $$\mathbf x_k=\mathbf F\mathbf x_{k-1}+\mathbf B_k\mathbf u_k$$
+  where
+  - $\mathbf F$ is the state transition matrix (aka "fundamental matrix")
+
+- State space methods because we express the solution of the differential
+  equations in terms of system state
+
+- There are methods for finding the state transition matrix
+  - Compute the matrix exponential $e^{\mathbf A} t$ (many different ways to do
+    it, despite numerical difficulties)
+  - Linear Time Invariant theory (if time invariant): use inverse Laplace transform
+  - Numerical solutions
+
+* Designing the Process Noise Matrix
+- Designing the matrix $\mathbf Q$ is very difficult
+  - When you model a given process, you ignore certain effects and then you
+    need to estimate the error
+- E.g., model a thrown baseball
+  - There are unknown factors (e.g., ball rotation, spin decay, drag, effects of
+    wind and air density)
+
+- If $\mathbf Q$ is too small, the filter is overconfident in the prediction model
+- If $\mathbf Q$ is too large, the filter is unduly influenced by the noise in
+  the measurements
+
 ## #############################################################################
 ## Non-Linear Filtering
 ## #############################################################################
