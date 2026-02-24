@@ -43,3 +43,19 @@ docker_bash.sh
 docker_jupyter.sh
 docker_name.sh
 run_jupyter.sh
+# Exclude test files
+tests/
+tutorials/Autogen/tests/
+
+# Shell configs
+.bashrc
+
+# Docker and sudo-related files
+Dockerfile
+
+# Documentation
+README.md
+
+# Python dependencies
+requirements.in
+
