@@ -768,3 +768,209 @@ def compute_dog_data(
         xs.append(x)
         zs.append(x + np.random.randn() * z_std)
     return np.array(xs), np.array(zs)
+
+
+# #############################################################################
+# Kalman Filter for Dog Tracking
+# #############################################################################
+
+# TODO(ai_gp): Use import filterpy.kalman as kf
+from filterpy.kalman import KalmanFilter
+
+
+def run_dog_kalman_filter(
+    zs: np.ndarray,
+    z_var: float,
+    process_var: float,
+    *,
+    dt: float = 1.0,
+    initial_pos: float = 0.0,
+    initial_vel: float = 1.0,
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Run a multivariate Kalman filter to track a dog's 1-D position.
+
+    The state vector is [position, velocity]. Only position is measured;
+    velocity is a hidden variable inferred by the filter.
+
+    Matrices used:
+    - F = [[1, dt], [0, 1]]: constant velocity motion model
+    - H = [[1, 0]]: observe position only
+    - P = diag([500, 49]): large initial uncertainty
+    - Q = diag([0, process_var]): velocity can change randomly
+    - R = [[z_var]]: measurement noise
+
+    :param zs: noisy position measurements, shape (count,)
+    :param z_var: measurement noise variance (sensor variance)
+    :param process_var: process noise variance (velocity variance)
+    :param dt: time step duration
+    :param initial_pos: initial estimated position
+    :param initial_vel: initial estimated velocity
+    :return: (means, variances) arrays of estimated position means and
+        position variances at each step
+    """
+    # State transition: position += velocity * dt, velocity unchanged.
+    F = np.array([[1.0, dt], [0.0, 1.0]])
+    # Measurement: observe only position.
+    H = np.array([[1.0, 0.0]])
+    # Initial covariance: large uncertainty in both position and velocity.
+    # Top dog speed ~21 m/s => 3*sigma_vel = 21 => sigma_vel^2 = 49.
+    P = np.diag([500.0, 49.0])
+    # Process noise: only velocity is perturbed by the environment.
+    Q = np.array([[0.0, 0.0], [0.0, process_var]])
+    # Measurement noise.
+    R = np.array([[z_var]])
+    # Build and initialize filter.
+    kf = KalmanFilter(dim_x=2, dim_z=1)
+    kf.F = F
+    kf.H = H
+    kf.P = P.copy()
+    kf.Q = Q
+    kf.R = R
+    kf.x = np.array([[initial_pos], [initial_vel]])
+    # Run filter over all measurements.
+    means = []
+    variances = []
+    for z in zs:
+        kf.predict()
+        kf.update(np.array([[z]]))
+        means.append(float(kf.x[0]))
+        variances.append(float(kf.P[0, 0]))
+    return np.array(means), np.array(variances)
+
+
+def plot_dog_tracking(
+    xs: np.ndarray,
+    zs: np.ndarray,
+    means: np.ndarray,
+    variances: np.ndarray,
+    *,
+    title: str = "Dog Tracking with Multivariate Kalman Filter",
+) -> None:
+    """
+    Plot true positions, noisy measurements, and Kalman filter estimates.
+
+    :param xs: true positions, shape (count,)
+    :param zs: noisy measurements, shape (count,)
+    :param means: Kalman filter estimated positions, shape (count,)
+    :param variances: Kalman filter position variances, shape (count,)
+    :param title: plot title
+    """
+    steps = np.arange(len(xs))
+    std = np.sqrt(np.array(variances))
+    plt.figure(figsize=(10, 5))
+    plt.plot(steps, xs, label="True position", color="k", lw=2)
+    plt.scatter(
+        steps,
+        zs,
+        label="Measurements",
+        color="r",
+        s=20,
+        alpha=0.7,
+        zorder=5,
+    )
+    plt.plot(steps, means, label="KF estimate", color="b", lw=2)
+    plt.fill_between(
+        steps,
+        means - std,
+        means + std,
+        color="b",
+        alpha=0.2,
+        label="KF +/- 1 std",
+    )
+    plt.xlabel("Time step")
+    plt.ylabel("Position (m)")
+    plt.title(title)
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+
+
+def cell_dog_tracking_interactive() -> None:
+    """
+    Create interactive widget for dog tracking with multivariate Kalman filter.
+
+    Allows adjustment of z_var (measurement noise), process_var (process
+    noise), count (number of steps), and seed to visualize how the Kalman
+    filter adapts to different noise conditions.
+
+    - Increasing z_var makes the sensor noisier: the KF smooths more.
+    - Increasing process_var makes the dog more unpredictable: the KF follows
+      measurements more closely.
+    """
+    fig_dog = None
+
+    def _plot(
+        seed: int,
+        z_var: float,
+        process_var: float,
+        count: int,
+    ) -> None:
+        """
+        Recompute and display the dog tracking plot.
+
+        :param seed: random seed for reproducibility
+        :param z_var: measurement noise variance
+        :param process_var: process noise variance
+        :param count: number of simulation steps
+        """
+        nonlocal fig_dog
+        if fig_dog is not None:
+            plt.close(fig_dog)
+        np.random.seed(seed)
+        xs_i, zs_i = compute_dog_data(z_var, process_var, count=count)
+        means_i, variances_i = run_dog_kalman_filter(zs_i, z_var, process_var)
+        plot_dog_tracking(xs_i, zs_i, means_i, variances_i)
+        fig_dog = plt.gcf()
+
+    # Seed widget is always first.
+    seed_slider, seed_box = mtumsuti.build_widget_control(
+        name="seed",
+        description="seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
+    )
+    z_var_slider, z_var_box = mtumsuti.build_widget_control(
+        name="z_var",
+        description="z_var",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=1.0,
+        is_float=True,
+    )
+    process_var_slider, process_var_box = mtumsuti.build_widget_control(
+        name="process_var",
+        description="process_var",
+        min_val=0.01,
+        max_val=2.0,
+        step=0.01,
+        initial_value=0.1,
+        is_float=True,
+    )
+    count_slider, count_box = mtumsuti.build_widget_control(
+        name="count",
+        description="count",
+        min_val=10,
+        max_val=200,
+        step=10,
+        initial_value=50,
+        is_float=False,
+    )
+    output = ipywidgets.interactive_output(
+        _plot,
+        {
+            "seed": seed_slider,
+            "z_var": z_var_slider,
+            "process_var": process_var_slider,
+            "count": count_slider,
+        },
+    )
+    display(
+        ipywidgets.VBox(
+            [seed_box, z_var_box, process_var_box, count_box, output]
+        )
+    )
