@@ -631,7 +631,8 @@ set of first-order differential equations
 - There are methods for finding the state transition matrix
   - Compute the matrix exponential $e^{\mathbf A} t$ (many different ways to do
     it, despite numerical difficulties)
-  - Linear Time Invariant theory (if time invariant): use inverse Laplace transform
+  - Linear Time Invariant theory (if time invariant): use inverse Laplace
+    transform
   - Numerical solutions
 
 * Designing the Process Noise Matrix
@@ -651,28 +652,28 @@ set of first-order differential equations
 ## #############################################################################
 
 * Optimality
-- **Assumptions:**
+- The Kalman filter is optimal (in a least square sense) under **assumptions**
+  that
   - Everything is linear
-  - System and sensor noise is Gaussian
-- Under these assumptions, the Kalman filter is optimal in a least square sense
-
-- The Kalman filter is a mathematical model of the world
-  - The output is only as accurate as the model of the world
+  - Process and sensor noise is Gaussian
 
 * The World Is Non-Linear
 - The Kalman filter uses linear equations and can only handle linear problems
+  - The Kalman filter is a mathematical model of the world
+  - The output is only as accurate as the model of the world
 
 - **The world is non-linear:**
   - System model can be non-linear:
     - Many physical systems are described by non-linear differential equations
-    - E.g., a ball flying through air is affected by drag, leading to non-linear
-      behaviors
+    - E.g., a ball flying through air is affected by drag
   - Measurements can be non-linear:
     - To measure the height on a plane, you can measure the distance of the
       plane from the radar. Given the Pythagorean theorem, you get:
       $$
       x = \sqrt{\text{dist}^2 - \text{height}^2}
       $$
+  - A Gaussian through a almost linear f(x) becomes quickly non-Gaussian
+    (bimodal, skewed, etc)
 
 - Rarely does a physical system have equations that can be solved analytically
 
@@ -685,6 +686,7 @@ set of first-order differential equations
 
 - Pros
   - Use the linear Kalman machinery
+
 - Cons:
   - Analytical solution:
     - Difficult or impossible
@@ -756,6 +758,8 @@ set of first-order differential equations
 - Run the points through the transformation (e.g., non-linear function / system
   you are modeling)
 - Compute the results on the transformed points
+
+### 
 
 * Particle Filters
 - Aka Sequential Monte Carlo (SMC) methods
