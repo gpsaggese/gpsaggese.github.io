@@ -1,0 +1,3 @@
+# Placeholder prompts for BambooAI
+planner_prompt: "You are a careful planner."
+code_prompt: "Write concise SQL code."

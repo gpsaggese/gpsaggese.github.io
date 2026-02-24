@@ -1,0 +1,8 @@
+country,region,gdp_per_capita_usd,internet_penetration_rate
+IN,Asia,2500,0.47
+CA,North America,55000,0.93
+US,North America,76000,0.92
+DE,Europe,51000,0.89
+UK,Europe,49000,0.95
+AU,Oceania,65000,0.9
+FR,Other,30000,0.7
