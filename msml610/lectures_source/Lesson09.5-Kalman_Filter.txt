@@ -817,3 +817,35 @@ set of first-order differential equations
 5) Compute estimate
   - Compute weighted mean and covariance of the particles to get an estimate of
     the state and uncertainty
+
+* Degeneracy Problem in Sequential Importance Sampling (SIS)
+- Intuition: weights collapse onto very few particles
+  - Most particles receive extremely small weights after measurement update
+  - Only a handful meaningfully contribute to the state estimate
+- Why this happens
+  - Initial particles are uniformly distributed
+  - Measurement likelihood sharply favors particles near the true state
+- Particles with near-zero weight
+  - Contribute almost nothing to expectations
+  - Do not help represent the true distribution
+- Geometric intuition
+  - Posterior mass concentrated in small region of state space
+  - Most particles lie in low-probability regions
+- Consequence
+  - Effective sample size becomes very small
+  - Example: $5000$ particles but only $3$ with significant weight
+- Interpretation
+  - The approximation of the posterior is poor despite large $N$
+  - Computational resources are wasted on useless particles
+
+* Resampling: Core Idea
+- Goal: focus computational effort on high-probability regions
+- Strategy
+  - Discard particles with very small weights
+  - Duplicate particles with high weights
+- Effect
+  - New particle set better approximates posterior
+  - Majority of particles lie in meaningful regions
+- Role of prediction noise
+  - Slight dispersion after duplication
+  - Prevents particles from collapsing to identical copies
