@@ -47,12 +47,11 @@ hio.create_dir(dst_dir, incremental=True)
 
 import filterpy
 
-
 # %%
 def f(x):
     return (np.cos(4 * (x / 2 + 0.7))) - 1.3 * x
 
-    
+
 time_ut.plot_function(f)
 
 # %%
@@ -63,7 +62,7 @@ data = normal(loc=gaussian[0], scale=gaussian[1], size=500000)
 time_ut.plot_nonlinear_func(data, f)
 
 # %%
-# Plot N points 
+# Plot N points.
 N = 30000
 plt.subplot(121)
 plt.scatter(data[:N], range(N), alpha=0.2, s=1)
@@ -80,12 +79,6 @@ def f_nonlinear_xy(x, y):
 # %%
 time_ut.plot_nonlinear_xy()
 
-# %% [markdown]
-# # 
-
-# %% [markdown]
-# # 
-
 # %%
 # Create a Gaussian.
 N = 10000
@@ -95,17 +88,61 @@ xs, ys = multivariate_normal(mean=mean, cov=p, size=N).T
 
 # Compute linearized mean.
 mean1 = f_nonlinear_xy(np.mean(xs), np.mean(ys))
-print("f(mean)=", mean1)
-mean2 = np.mean([f_nonlinear_xy(xs_tmp, ys_tmp) for xs_tmp, ys_tmp in zip(xs, ys)], axis=0)
-print("mean(f)=", mean2)
-
+_LOG.info("f(mean)=%s", mean1)
+mean2 = np.mean(
+    [f_nonlinear_xy(xs_tmp, ys_tmp) for xs_tmp, ys_tmp in zip(xs, ys)], axis=0
+)
+_LOG.info("mean(f)=%s", mean2)
 # Plot both.
-time_ut.plot_monte_carlo_mean(xs, ys, f_nonlinear_xy, mean_fx, "Linearized Mean")
+time_ut.plot_monte_carlo_mean(xs, ys, f_nonlinear_xy, mean1, "Linearized Mean")
+
+# %% [markdown]
+# ### Unscented transform
 
 # %%
-np.array([f_nonlinear_xy(xs_tmp, ys_tmp) for xs_tmp, ys_tmp in zip(xs, ys)])
+# Create the sigma points for the Gaussian.
+
+from filterpy.kalman import MerweScaledSigmaPoints
+import scipy.stats as stats
+
+# Initial mean and covariance.
+mean = (0.0, 0.0)
+p = np.array([[32.0, 15.0], [15.0, 40.0]])
+
+# Create sigma points and weights from the initial distribution.
+points = MerweScaledSigmaPoints(n=2, alpha=0.3, beta=2.0, kappa=0.1)
+sigmas = points.sigma_points(mean, p)
+
+# Generate random points.
+plt.figure(figsize=[4, 4])
+np.random.seed(100)
+xs, ys = multivariate_normal(mean=mean, cov=p, size=5000).T
+plt.scatter(xs, ys, marker="o", alpha=0.05, color="k", edgecolors="none")
+plt.scatter(sigmas[:, 0], sigmas[:, 1], c="r", s=30);
 
 # %%
-xs
+from filterpy.kalman import MerweScaledSigmaPoints, unscented_transform
+import scipy.stats as stats
+
+# Transform sigma points through non-linear function.
+sigmas_f = np.empty((5, 2))
+for i in range(5):
+    sigmas_f[i] = f_nonlinear_xy(sigmas[i, 0], sigmas[i, 1])
+    
+# Use unscented transform to get new mean and covariance.
+ukf_mean, ukf_cov = unscented_transform(sigmas_f, points.Wm, points.Wc)
+
+# Generate random points.
+np.random.seed(100)
+xs, ys = multivariate_normal(mean=mean, cov=p, size=5000).T
+time_ut.plot_monte_carlo_mean(xs, ys, f_nonlinear_xy, ukf_mean, "Unscented Mean")
+
+# %% [markdown]
+# Using only 5 points we were able to compute the mean with great accuracy.
 
 # %%
+# Compute linearized mean.
+mean1 = f_nonlinear_xy(np.mean(xs), np.mean(ys))
+_LOG.info("f(mean)=%s", mean1)
+#
+_LOG.info("mean(f)=%s", ukf_mean)

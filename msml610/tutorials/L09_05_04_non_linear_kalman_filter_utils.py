@@ -10,6 +10,7 @@ import logging
 from typing import Callable, List, Optional
 
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import scipy.stats
 
@@ -21,73 +22,86 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 
 
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+def f_nonlinear_xy(x: float, y: float):
+    """
+    Apply a nonlinear function mapping (x, y) to (x+y, 0.1*x^2 + y^2).
 
-def f_nonlinear_xy(x, y):
-    return x + y, 0.1*x**2 + y*y
+    :param x: x input value
+    :param y: y input value
+    :return: tuple of transformed values (fx, fy)
+    """
+    return x + y, 0.1 * x**2 + y * y
 
 
-def plot_nonlinear_xy():
-    # ----- grid in original plane -----
+def plot_nonlinear_xy() -> None:
+    """
+    Plot the nonlinear transformation f_nonlinear_xy as 3D surfaces.
+    """
+    # Grid in original plane.
     x = np.linspace(-2, 2, 120)
     y = np.linspace(-2, 2, 120)
     X, Y = np.meshgrid(x, y)
-    # ----- transform -----
+    # Transform inputs.
     FX, FY = f_nonlinear_xy(X, Y)
-    # ----- 3D embedding: (x, y) -> (fx, fy) -----
-    fig = plt.figure(figsize=(8,6))
-    ax = fig.add_subplot(111, projection='3d')
-    # plane z = x + y
+    # 3D embedding: (x, y) -> (fx, fy).
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111, projection="3d")
+    # Plane z = x + y.
     ax.plot_surface(
         X, Y, FX,
-        color="#4C72B0",   # soft blue
+        color="#4C72B0",
         alpha=0.55,
         linewidth=0,
         antialiased=True,
-        shade=True
+        shade=True,
     )
-
-    # paraboloid z = 0.1x^2 + y^2
+    # Paraboloid z = 0.1*x^2 + y^2.
     ax.plot_surface(
         X, Y, FY,
-        color="#DD8452",   # soft orange
+        color="#DD8452",
         alpha=0.55,
         linewidth=0,
         antialiased=True,
-        shade=True
+        shade=True,
     )
-
-    # viewing angle similar to textbook plots
+    # Viewing angle similar to textbook plots.
     ax.view_init(elev=25, azim=-60)
     ax.set_title("Plane mapped into (f_x, f_y) space")
     ax.set_xlabel("f_x(x,y)")
     ax.set_ylabel("f_y(x,y)")
     ax.set_zlabel("original y (acts as parameter)")
-
     plt.show()
 
 
+def plot_function(
+    func: Callable,
+    *,
+    xmin: float = -4,
+    xmax: float = 4,
+    num: int = 800,
+    title: str = "Function plot",
+) -> None:
+    """
+    Plot a 1D function over a specified range.
 
-def plot_function(func, xmin=-4, xmax=4, num=800, title="Function plot"):
+    :param func: the function to plot
+    :param xmin: minimum x value
+    :param xmax: maximum x value
+    :param num: number of sample points
+    :param title: plot title
+    """
     x = np.linspace(xmin, xmax, num)
     y = func(x)
-
-    plt.figure(figsize=(7,5))
-
-    # function curve
+    plt.figure(figsize=(7, 5))
+    # Function curve.
     plt.plot(x, y, color="#4C72B0", linewidth=2)
-
-    # x-axis
+    # Axis lines.
     plt.axhline(0, color="black", linewidth=1)
     plt.axvline(0, color="black", linewidth=1, alpha=0.4)
-
     plt.title(title)
     plt.xlabel("x")
     plt.ylabel("f(x)")
     plt.grid(alpha=0.25)
-
     plt.tight_layout()
     plt.show()
 
@@ -117,7 +131,7 @@ def plot_nonlinear_func(
         out_lim = [y - std * 3, y + std * 3]
     # Plot output.
     h = np.histogram(ys, num_bins, density=False)
-    fig = plt.figure(figsize=(8,6))
+    fig = plt.figure(figsize=(8, 6))
     plt.subplot(221)
     plt.plot(h[1][1:], h[0], lw=2, alpha=0.8)
     if out_lim is not None:
@@ -196,12 +210,12 @@ def plot_monte_carlo_mean(
     ax = plt.subplot(121)
     ax.grid(False)
     plot_bivariate_colormap(xs, ys)
-    plt.scatter(xs, ys, marker="*", alpha=0.02, color="k")
+    plt.scatter(xs, ys, marker="o", alpha=0.05, color="k", edgecolors="none")
     ax.set_xlim(-20, 20)
     ax.set_ylim(-20, 20)
     ax = plt.subplot(122)
     ax.grid(False)
-    plt.scatter(fxs, fys, marker="*", alpha=0.02, color="k")
+    plt.scatter(fxs, fys, marker="o", alpha=0.05, color="k", edgecolors="none")
     plt.scatter(mean_fx[0], mean_fx[1], marker="v", s=300, c="r", label=label)
     plt.scatter(
         computed_mean_x,

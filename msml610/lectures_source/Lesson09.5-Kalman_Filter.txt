@@ -677,39 +677,59 @@ set of first-order differential equations
 
 - Rarely does a physical system have equations that can be solved analytically
 
-* Extended Kalman Filter
-- Aka EKF
-- EKF is a nonlinear version of the Kalman filter
-  - Linearize the differential equations to compute the Jacobian (i.e., matrix
-    of partial derivatives) at the point of the current estimate
-  - Used for estimating the state of a nonlinear dynamic system
+* Nonlinear Kalman Filtering Overview
+- Goal: estimate hidden state $x_t$ of nonlinear dynamical system
+  - State dynamics: $x_t = f(x_{t-1}, u_{t-1}) + w_t$
+  - Measurement model: $y_t = h(x_t) + v_t$
+  where
+  - $f(\cdot)$ and $h(\cdot)$ nonlinear
+- Noise often assumed Gaussian:
+  - $w_t \sim \mathcal{N}(0, \mathbf Q)$
+  - $v_t \sim \mathcal{N}(0, \mathbfR)$
+- Exact Bayesian filter requires propagating full probability density
+  - Generally intractable
+- Nonlinear Kalman filters approximate the posterior
+  - Maintain tractable representation of mean and covariance
+
+- Different approaches
+  - Extended Kalman Filter (EKF)
+  - Unscented Kalman Filter (UKF)
+  - Particle Filter
+
+* Extended Kalman Filter EKF
+- **Core idea**: linearize nonlinear functions around current estimate
+  - First order Taylor expansion of $f$ and $h$
+- Replace nonlinear system by local linear model
+  - Jacobians: $F_t = \frac{\partial f}{\partial x}$, $H_t = \frac{\partial h}{\partial x}$
+- Apply standard Kalman filter equations to linearized model
+- Intuition
+  - Approximate nonlinear curve by tangent line at estimate
+  - Assume distribution remains approximately Gaussian
+- Pros
+  - Simple and computationally efficient
+  - Use the linear Kalman machinery
+- Cons
+  - Accuracy depends on quality of linearization
+  - Can diverge for strong nonlinearities
+
+* Unscented Kalman Filter UKF
+- **Core idea**: avoid linearization, approximate distribution instead
+- Represent Gaussian by deterministic sigma points
+  - Choose $2n+1$ points capturing mean and covariance
+- Propagate sigma points through nonlinear functions
+  - $x_t^{(i)} = f(x_{t-1}^{(i)})$
+- Recompute mean and covariance from transformed points
+- Intuition
+  - More accurate to approximate distribution than function
+  - Captures second order nonlinear effects
 
 - Pros
-  - Use the linear Kalman machinery
+  - No Jacobians required
+  - Higher accuracy than EKF for strong nonlinearities
+  - It is superior to EKF in almost every way
 
-- Cons:
-  - Analytical solution:
-    - Difficult or impossible
-  - Numerical solution:
-    - Expensive computationally
-    - Errors can compound forcing the filter to diverge (unstable)
-
-* Unscented Kalman Filter
-- Aka UKF
-- It is superior to EKF in almost every way
-
-* Intuition of Sampling Techniques
-- Assume you have a distribution $X$ and a non-linearity $\phi$
-
-- For every measurement:
-  - Generate many points from $X$
-  - Pass them through the non-linear function $\phi$
-  - Approximate the result (E.g., compute mean and variance)
-
-- **Problem**:
-  - "How many points are needed to build an accurate output distribution"?
-  - Even if $n$=500,000 points are enough for 1 dimension, for $k$ dimensions
-    you might need $n^k$ points (curse of dimensionality)
+- Cons
+  - Slightly higher computational cost
 
 * Unscented Transform
 - Unscented transform estimates the result of applying a non-linear
@@ -741,7 +761,6 @@ set of first-order differential equations
   $\phi$
 
 - In $n$ dimensions, we need $2n + 1$ points $\vx_i$ and weights $w_i^m, w_i^c$
-
   $$
   \begin{aligned}
   \sum_i w_i^m &= 1 \\
@@ -750,22 +769,38 @@ set of first-order differential equations
   \Sigma(\phi) &= \sum_i w_i^c (\phi(\vx_i) - \mu(\phi))(\phi(\vx_i) - \mu(\phi))^T \\
   \end{aligned}
   $$
+  - Note that selecting the sigma points has not a single solution
 
-- Note that selecting the sigma points has not a single solution
+* Particle Filter PF
+- **Core idea**: represent posterior by weighted samples
+  - $\{x_t^{(i)}, w_t^{(i)}\}_{i=1}^N$
+- Sequential Monte Carlo approximation of Bayesian filter
+- Steps
+  - Sample from proposal distribution
+  - Weight by likelihood $p(y_t | x_t^{(i)})$
+  - Resample to avoid weight degeneracy
+- Intuition
+  - Approximate arbitrary distribution, not restricted to Gaussian
+  - Works for multimodal and highly nonlinear systems
+- Pros
+  - Very flexible
+  - Handles non-Gaussian noise
+- Cons
+  - Computationally expensive
+  - Particle degeneracy problem
 
-* Monte Carlo Sampling
-- Use a finite number of randomly sampled points to represent the problem
-- Run the points through the transformation (e.g., non-linear function / system
-  you are modeling)
-- Compute the results on the transformed points
+* Intuition of Sampling Techniques
+- Assume you have a distribution $X$ and a non-linearity $\phi$
 
-### 
+- For every measurement:
+  - Generate many points from $X$
+  - Pass them through the non-linear function $\phi$
+  - Approximate the result (e.g., compute mean and variance)
 
-* Particle Filters
-- Aka Sequential Monte Carlo (SMC) methods
-- = Monte Carlo algorithms to solve problems in Bayesian statistical inference
-  (e.g., in filtering problems)
-- The goal is to compute posterior distributions of the states, given some data
+- **Problem**:
+  - "How many points are needed to build an accurate output distribution"?
+  - Even if $n$=500,000 points are enough for 1 dimension, for $k$ dimensions
+    you might need $n^k$ points (curse of dimensionality)
 
 * Generic particle filter algorithm
 1) Randomly generate particle
