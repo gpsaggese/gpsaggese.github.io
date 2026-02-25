@@ -21,6 +21,8 @@
 # %autoreload 2
 
 import logging
+
+from numpy.random import multivariate_normal, normal
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -45,44 +47,65 @@ hio.create_dir(dst_dir, incremental=True)
 
 import filterpy
 
-# %%
-from numpy.random import normal
-import numpy as np
 
-# create 500,000 samples with mean 0, std 1
-gaussian = (0., 1.)
+# %%
+def f(x):
+    return (np.cos(4 * (x / 2 + 0.7))) - 1.3 * x
+
+    
+time_ut.plot_function(f)
+
+# %%
+# Create 500,000 samples with mean 0, std 1.
+gaussian = (0.0, 1.0)
 data = normal(loc=gaussian[0], scale=gaussian[1], size=500000)
 
-def f(x):
-    return (np.cos(4*(x/2 + 0.7))) - 1.3*x
-    
 time_ut.plot_nonlinear_func(data, f)
 
 # %%
+# Plot N points 
 N = 30000
 plt.subplot(121)
-plt.scatter(data[:N], range(N), alpha=.2, s=1)
-plt.title('Input')
+plt.scatter(data[:N], range(N), alpha=0.2, s=1)
+plt.title("Input")
 plt.subplot(122)
-plt.title('Output')
-plt.scatter(f(data[:N]), range(N), alpha=.2, s=1);
+plt.title("Output")
+plt.scatter(f(data[:N]), range(N), alpha=0.2, s=1)
 
 # %%
-import numpy as np
-from numpy.random import multivariate_normal
-
 def f_nonlinear_xy(x, y):
-    return np.array([x + y, .1*x**2 + y*y])
+    return np.array([x + y, 0.1 * x**2 + y * y])
 
-# Generate random points from a multivariate.
+
+# %%
+time_ut.plot_nonlinear_xy()
+
+# %% [markdown]
+# # 
+
+# %% [markdown]
+# # 
+
+# %%
+# Create a Gaussian.
 N = 10000
-mean = (0., 0.)
-p = np.array([[32., 15.], [15., 40.]])
+mean = (0.0, 0.0)
+p = np.array([[32.0, 15.0], [15.0, 40.0]])
 xs, ys = multivariate_normal(mean=mean, cov=p, size=N).T
 
-# Compute linearized mean
-mean_fx = f_nonlinear_xy(*mean)
+# Compute linearized mean.
+mean1 = f_nonlinear_xy(np.mean(xs), np.mean(ys))
+print("f(mean)=", mean1)
+mean2 = np.mean([f_nonlinear_xy(xs_tmp, ys_tmp) for xs_tmp, ys_tmp in zip(xs, ys)], axis=0)
+print("mean(f)=", mean2)
 
-time_ut.plot_monte_carlo_mean(xs, ys, f_nonlinear_xy, mean_fx, 'Linearized Mean');
+# Plot both.
+time_ut.plot_monte_carlo_mean(xs, ys, f_nonlinear_xy, mean_fx, "Linearized Mean")
+
+# %%
+np.array([f_nonlinear_xy(xs_tmp, ys_tmp) for xs_tmp, ys_tmp in zip(xs, ys)])
+
+# %%
+xs
 
 # %%
