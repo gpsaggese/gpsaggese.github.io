@@ -1,10 +1,8 @@
-# Start with a basic Ubuntu image.
-FROM ubuntu:22.04
-ENV DEBIAN_FRONTEND noninteractive
+FROM ubuntu:24.04
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Update the packages.
-RUN apt-get -y update && \
-    apt-get -y upgrade
+RUN apt-get -y update
+RUN apt-get -y upgrade
 
 # Install system utilities.
 RUN apt install -y --no-install-recommends \
@@ -15,65 +13,63 @@ RUN apt install -y --no-install-recommends \
     git \
     vim
 
-# Install Python.
-RUN apt install -y --no-install-recommends \
+# Install Python and build deps (venv requires python3-venv on Debian/Ubuntu).
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     python3 \
     python3-pip \
-    python3-dev
+    python3-dev \
+    python3-venv \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Python packages.
-# There is a bug for tornado==6.2 and jupyter-client==8.0.2. So we pin Tornado and Jupyter.
-#   File "/opt/homebrew/lib/python3.10/site-packages/tornado/iostream.py", line 182, in advance
-#   assert 0 < size <= self._size
-# https://discourse.jupyter.org/t/jupyter-notebook-zmq-message-arrived-on-closed-channel-error/17869/10
-RUN pip3 install \
-    dask[complete] \
-    fastparquet \
-    ipython \
-    ipython-sql \
-    jupyter \
-    jupyter-client==7.3.2 \
-    jupyter-contrib-core \
-    jupyter-contrib-nbextensions \
-    matplotlib \
-    numpy \
-    pandas \
-    psycopg2-binary \
-    tornado==6.1 \
-    yapf
+# Create virtual environment.
+RUN python3 -m venv /venv
+
+# Make the venv the default Python.
+ENV PATH="/venv/bin:$PATH"
+
+# Upgrade pip inside the venv.
+RUN python -m pip install --upgrade pip
+
+# Install uv, if needed.
+#RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+#ENV PATH="/root/.local/bin:$PATH"
+#COPY pyproject.toml uv.lock /app/
+#RUN uv sync
+    
+# Install Jupyter.
+RUN pip3 install jupyterlab
+
+# Install project specific packages.
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
 
 RUN mkdir /install
 
 # Install Postgres.
-RUN apt install -y \
+RUN apt-get update && apt-get install -y \
     postgresql \
     postgresql-contrib \
-    libpq-dev
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Config.
+# Config Postgres.
 ADD etc_sudoers /install/
 COPY etc_sudoers /etc/sudoers
 COPY bashrc /var/lib/postgresql/.bashrc
-
-# Set the config for PostgreSQL server.
 ADD postgresql.conf pg_hba.conf /install/
-RUN cp /install/postgresql.conf /etc/postgresql/14/main
-RUN cp /install/pg_hba.conf /etc/postgresql/14/main
+RUN cp /install/postgresql.conf /etc/postgresql/16/main
+RUN cp /install/pg_hba.conf /etc/postgresql/16/main
 
 # Install graphviz.
-RUN apt install -y graphviz
+RUN apt-get update && apt-get install -y graphviz && rm -rf /var/lib/apt/lists/*
 RUN pip3 install graphviz
 
-USER postgres
-
-# Install Jupyter extensions.
-ADD install_jupyter_extensions.sh /install/
-RUN /install/install_jupyter_extensions.sh
-
 # Report package versions.
-#ADD version.sh /install/
-#RUN /install/version.sh 2>&1 | tee /data/version.log
+ADD version.sh /install/
+RUN /install/version.sh 2>&1 | tee /install/version.log
+
+USER postgres
 
 # Dask.
 EXPOSE 8787
