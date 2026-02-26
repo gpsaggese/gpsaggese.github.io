@@ -118,8 +118,8 @@ digraph BayesianNetwork1 {
 
 - **"Dependency in nature"** is like assignment in programming
   - E.g., nature assigns $Smoke$ based on $Fire$:
-    - ![](emoji/check_mark.png){ width=12px } $Smoke := f(Fire)$
-    - ![](emoji/wrong.png){ width=12px } $Fire := f(Smoke)$
+    - ![](assets/emoji/check_mark.png){ width=12px } $Smoke := f(Fire)$
+    - ![](assets/emoji/wrong.png){ width=12px } $Fire := f(Smoke)$
 
 - **Structural equations** describe "assignment mechanism" in causal graphs
   $$
@@ -1699,7 +1699,7 @@ digraph CausalDAG {
 - In a **chain** $X \rightarrow M \rightarrow Y$
   - Conditioning on $M$ blocks causal effect
   - Mediators must remain unconditioned
-  - ![](emoji/skull.png){ width=14px } _Do not do it_!
+  - ![](assets/emoji/skull.png){ width=14px } _Do not do it_!
 ::::
 :::: {.column width=35%}
 ```graphviz
@@ -1728,7 +1728,7 @@ digraph CausalFlow {
 :::: {.column width=60%}
 - In a **fork** $X \leftarrow Z \rightarrow Y$
   - Conditioning on $Z$ removes confounding
-  - ![](emoji/emoji_smile.png){ width=12px } _Need to do it_!
+  - ![](assets/emoji/emoji_smile.png){ width=12px } _Need to do it_!
 ::::
 :::: {.column width=35%}
 ```graphviz[width=60%]
@@ -1759,7 +1759,7 @@ digraph CausalDAG {
 - In a **collider** $X \rightarrow M \leftarrow Y$
   - Conditioning on $M$ introduces bias
   - Colliders must remain unconditioned
-  - ![](emoji/skull.png){ width=14px } _do not do it_!
+  - ![](assets/emoji/skull.png){ width=14px } _do not do it_!
 ::::
 :::: {.column width=35%}
 ```graphviz[width=60%]

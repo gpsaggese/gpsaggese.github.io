@@ -1,0 +1,17 @@
+@prefix ex: <http://example.com/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:Customer a rdfs:Class .
+ex:churned a rdfs:Property ;
+  rdfs:domain ex:Customer ;
+  rdfs:range xsd:boolean ;
+  rdfs:label "churned" .
+ex:has_premium a rdfs:Property ;
+  rdfs:domain ex:Customer ;
+  rdfs:range xsd:boolean ;
+  rdfs:label "has_premium" .
+ex:monthly_spend_usd a rdfs:Property ;
+  rdfs:domain ex:Customer ;
+  rdfs:range xsd:decimal ;
+  rdfs:label "monthly_spend_usd" .

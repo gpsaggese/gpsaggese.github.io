@@ -70,7 +70,7 @@ MSML610: Advanced Machine Learning
 // TODO(gp): Move this to Techniques?
 
 * Good vs Bad Way to Do Statistics
-- **Bad** ![Smile Emoji](emoji/angry_devil.png){ width=12px }
+- **Bad** ![Smile Emoji](assets/emoji/angry_devil.png){ width=12px }
   - Learn a collection of "statistical recipes"
     - Make assumption / approximate to make math workable
   - Given data and problem
@@ -79,7 +79,7 @@ MSML610: Advanced Machine Learning
   - For machine learning
     - Iterate until you get a "good" fit on out-of-sample data
 
-- **Good** ![Smile Emoji](emoji/emoji_smile.png){ width=12px }
+- **Good** ![Smile Emoji](assets/emoji/emoji_smile.png){ width=12px }
   - General approach to statistical inference (Bayesian statistics)
     - Remove limitations from closed analytical form
   - Probabilistic approach unifies (seemingly) disparate methods
@@ -347,7 +347,7 @@ Probability of $k$ heads out of $n$ tosses given bias $p$
   - _"One should let the data speak"_
   - The prior doesn't let the data speak for itself
 
-- ![](emoji/balance_scale.png){ width=14px } **Counterpoints** 
+- ![](assets/emoji/balance_scale.png){ width=14px } **Counterpoints** 
   - _"Data doesn't speak, but murmurs"_
     - Data doesn't have meaning per-se
     - Make sense of data only in context of models (e.g., mental models,
@@ -440,9 +440,9 @@ Kruschke diagram
 - In the frequentist framework, there is a true (unknown) parameter value
   - A **confidence interval** may or may not contain the true parameter value
   - Interpretation of a 95% confidence interval
-    - ![](emoji/wrong.png){ width=12px }
+    - ![](assets/emoji/wrong.png){ width=12px }
       No: _"There is a 95% probability that the true value is in this interval"_
-    - ![](emoji/check_mark.png){ width=12px }
+    - ![](assets/emoji/check_mark.png){ width=12px }
       Yes: _"If repeated many times, 95% of intervals would contain the true
       value"_
 

@@ -73,7 +73,7 @@ issue number generated.
 
 **2- Fork the repository**
 
-![Fork](images/2-create-fork.png)
+![Fork](assets/images/2-create-fork.png)
 
 Fork will create a copy of the repository in your GitHub account. This will
 allow you to make changes to the repository without affecting the original one.

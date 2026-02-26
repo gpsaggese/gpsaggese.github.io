@@ -371,7 +371,7 @@ MSML610: Advanced Machine Learning
   - Yes! There is a way to approximate using a single fit to the data
 
 * ELPD with LOO-CV
-- ![](emoji/skull.png){ width=14px } Math alert
+- ![](assets/emoji/skull.png){ width=14px } Math alert
 - We want to compute $ELPD_{LOO-CV}$ where:
   - "Expected Log-Pointwise predictive Density" (ELPD)
     - It should be ELPPD and not ELPD!

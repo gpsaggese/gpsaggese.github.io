@@ -1,7 +1,7 @@
 // Controlling size:
 //
 // ![](lectures_source/figures/Chap7_Binomial_distribution.png){height=50%}
-// Bad ![Smile Emoji](emoji/angry_devil.png){width=12px}
+// Bad ![Smile Emoji](assets/emoji/angry_devil.png){width=12px}
 // \includegraphics[width=0.6\textwidth]{lectures_source/figures/Chap7_Binomial_distribution.png}
 // ```latex[width=50%]
 // ![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_1.png){ width=1cm }
@@ -86,24 +86,24 @@
 
 * Emoji
 - Applications
-- Bad ![Smile Emoji](emoji/angry_devil.png){ width=12px }
+- Bad ![Smile Emoji](assets/emoji/angry_devil.png){ width=12px }
 - Challenges
-- Check mark ![](emoji/check_mark.png){ width=12px }
+- Check mark ![](assets/emoji/check_mark.png){ width=12px }
 - Cons
-- Counterpoints ![](emoji/balance_scale.png){ width=14px }
-- E.g., ![](emoji/backhand_pointing_right.png){ width=14px }
-- E.g., ![](emoji/pushpin_tack.png){ width=12px }
-- Fail ![](emoji/skull.png){ width=14px }
-- Good ![](emoji/emoji_smile.png){ width=12px }
-- Idea ![](emoji/lightbulb.png){ width=14px }
-- Intuition ![](emoji/lightbulb.png){ width=14px }
-- Issues ![](emoji/warning.png){ width=14px }
-- Problem ![](emoji/puzzle.png){ width=14px }
+- Counterpoints ![](assets/emoji/balance_scale.png){ width=14px }
+- E.g., ![](assets/emoji/backhand_pointing_right.png){ width=14px }
+- E.g., ![](assets/emoji/pushpin_tack.png){ width=12px }
+- Fail ![](assets/emoji/skull.png){ width=14px }
+- Good ![](assets/emoji/emoji_smile.png){ width=12px }
+- Idea ![](assets/emoji/lightbulb.png){ width=14px }
+- Intuition ![](assets/emoji/lightbulb.png){ width=14px }
+- Issues ![](assets/emoji/warning.png){ width=14px }
+- Problem ![](assets/emoji/puzzle.png){ width=14px }
 - Pros
-- Question ![](emoji/question_mark.png){ width=14px }
-- Remark ![](emoji/exclamation_mark.png){ width=14px }
-- Solution ![](emoji/lightbulb.png){ width=14px }
-- Wrong ![](emoji/wrong.png){ width=12px }
+- Question ![](assets/emoji/question_mark.png){ width=14px }
+- Remark ![](assets/emoji/exclamation_mark.png){ width=14px }
+- Solution ![](assets/emoji/lightbulb.png){ width=14px }
+- Wrong ![](assets/emoji/wrong.png){ width=12px }
 
 * Emoji (Mac)
 - Good ![Smile Emoji](mac_emojis/emoji_smile.png){ width=12px }

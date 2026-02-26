@@ -277,10 +277,10 @@ MSML610: Advanced Machine Learning
 \begingroup \scriptsize
 | **Application**  | **False Positive**       | **False Negative** |
 |------------------|--------------------------|--------------------------|
-| **Supermarket**  | ![](emoji/check_mark.png){ width=10px } Minor issue | ![](emoji/warning.png){ width=10px } Costly |
+| **Supermarket**  | ![](assets/emoji/check_mark.png){ width=10px } Minor issue | ![](assets/emoji/warning.png){ width=10px } Costly |
 |                  | One extra discount       | Annoyed customer, delays       |
 |                  |                          |                                |
-| **CIA Building** | ![](emoji/skull.png){ width=10px } Critical | ![](emoji/check_mark.png){ width=10px } Acceptable |
+| **CIA Building** | ![](assets/emoji/skull.png){ width=10px } Critical | ![](assets/emoji/check_mark.png){ width=10px } Acceptable |
 |                  | Security breach                            | Triggers further checks    |
 \endgroup
 

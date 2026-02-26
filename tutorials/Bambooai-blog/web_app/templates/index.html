@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BambooAI</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.18/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link rel="icon" type="image/svg+xml" href="/static/image/favicon.svg" id="favicon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/github.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!-- LocalForage dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
+
+    <!-- KaTeX dependencies -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <!-- Configure marked to handle LaTeX safely -->
+    <script>
+    // Configure marked to not escape our LaTeX delimiters
+    const renderer = new marked.Renderer();
+    const originalCode = renderer.code.bind(renderer);
+
+    renderer.code = function(code, language) {
+        if (language === 'math' || language === 'latex') {
+            return code;  // Don't wrap in code blocks
+        }
+        return originalCode(code, language);
+    };
+
+    marked.setOptions({
+        renderer: renderer,
+        breaks: true,
+        gfm: true,
+        headerIds: false,
+        mangle: false,
+        sanitize: false,
+        smartLists: true,
+        smartypants: false
+    });
+    </script>
+        
+    <!-- CodeMirror Core -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+
+    <!-- CodeMirror Theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+
+    <!-- CodeMirror Python Mode -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+
+    <!-- Plotly -->
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <button id="collapseButton" class="collapse-button" aria-label="Toggle left panel">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+        </button>
+        <div class="left-panel" id="leftPanel">
+            <div class="top-panel">
+                <div class="menu-container">
+                    <button id="menuButton" class="menu-button" title="Menu">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="4" y1="8" x2="20" y2="8"></line>
+                            <line x1="4" y1="12" x2="20" y2="12"></line>
+                            <line x1="4" y1="16" x2="20" y2="16"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="content-area">
+                <div id="streamOutput"></div>
+                <div class="scroll-indicator">↓</div>
+            </div>           
+            <div class="input-area">
+                <div class="input-row">
+                    <div class="textarea-container">
+                        <textarea
+                            id="queryInput"
+                            placeholder="Enter your query here"
+                        ></textarea>
+                    
+                        <div class="icon-row">
+                            <!-- Paperclip with menu -->
+                            <div class="attach-menu-container">
+                                <button
+                                    id="uploadButton"
+                                    type="button"
+                                    class="icon-button attach-icon"
+                                    title="Attach dataset"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path
+                                            d="M21.44 11.05l-9.19 9.19a6 6 0 0 1
+                                               -8.49-8.49l8.57-8.57A4 4 0 1 1
+                                               18 8.84l-8.59 8.57a2 2 0 0 1
+                                               -2.83-2.83l8.49-8.48"
+                                        />
+                                    </svg>
+                                </button>
+            
+                                <!-- New attach menu -->
+                                <div class="attach-menu">
+                                    <button class="attach-option primary-dataset-option" title="Upload Primary Dataset">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                                            <polyline points="13 2 13 9 20 9"></polyline>
+                                        </svg>
+                                        <span>Primary Dataset</span>
+                                    </button>
+                                    <button class="attach-option auxiliary-dataset-option" title="Upload Auxiliary Dataset">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                            <polyline points="2 17 12 22 22 17"></polyline>
+                                            <polyline points="2 12 12 17 22 12"></polyline>
+                                        </svg>
+                                        <span>Auxiliary Dataset</span>
+                                    </button>
+                                    <button class="attach-option ontology-upload-option" title="Upload/Manage Ontology">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                        </svg>
+                                        <span>Ontology</span>
+                                    </button>
+                                    {% if sweatstack_authenticated %}
+                                    <button class="attach-option sweatstack-data-option" title="Load SweatStack Data">
+                                        <img src="/static/image/sweatstack-favicon.svg" width="20" height="20" alt="SweatStack">
+                                        <span>SweatStack</span>
+                                    </button>
+                                    {% endif %}
+                                    <div id="uploadLimitMessage" class="upload-limit-message"></div>
+                                </div>
+                            </div>
+            
+                            <input type="file" id="primaryFile" accept=".csv,.parquet" style="display: none" />
+                            <input type="file" id="auxiliaryFile" accept=".csv,.parquet" style="display: none" />
+                            <input type="file" id="ontologyUploadFile" accept=".ttl" style="display: none" />
+                            
+                            <!-- Planning brain -->
+                            <button
+                                id="planningSwitch"
+                                type="button"
+                                class="icon-button planning-brain"
+                                aria-checked="false"
+                                title="Planning"
+                            >
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M9.5 2A2.5 2.5 0 0 1
+                                            12 4.5v15a2.5 2.5 0 0 1
+                                            -4.96.44 2.5 2.5 0 0 1
+                                            -2.96-3.08 3 3 0 0 1
+                                            -.34-5.58 2.5 2.5 0 0 1
+                                            1.32-4.24 2.5 2.5 0 0 1
+                                            1.98-3A2.5 2.5 0 0 1
+                                            9.5 2Z"
+                                    />
+                                    <path
+                                        d="M14.5 2A2.5 2.5 0 0 0
+                                            12 4.5v15a2.5 2.5 0 0 0
+                                            4.96.44 2.5 2.5 0 0 0
+                                            2.96-3.08 3 3 0 0 0
+                                            .34-5.58 2.5 2.5 0 0 0
+                                            -1.32-4.24 2.5 2.5 0 0
+                                            0 -1.98-3A2.5 2.5 0 0
+                                            0 14.5 2Z"
+                                    />
+                                </svg>
+                            </button>
+                            
+                            <!-- Grow Ideas -->
+                            <button
+                                id="suggestQuestions"
+                                type="button"
+                                class="icon-button filter-icon suggest-questions disabled"
+                                title="Grow New Ideas"
+                                >
+                                <!-- Icon from Tabler Icons (tabler.io) -->
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"></path>
+                                    <path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"></path>
+                                    <path d="M12 20l0 -10"></path>
+                                </svg>
+                            </button>
+
+                            <!-- Branching CV Icons Popup -->
+                            <div id="branchingSliderPopup" class="branching-slider-popup">
+                                <button class="branching-icon" data-value="5" title="Follow emergence - pursue interesting patterns that appeared unexpectedly in our investigation">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"></path>
+                                        <path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"></path>
+                                        <path d="M12 20l0 -10"></path>
+                                    </svg>
+                                </button>
+                                <button class="branching-icon" data-value="4" title="Blend elements - combine two aspects from our current exploration in a new way">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"></path>
+                                        <path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"></path>
+                                        <path d="M12 20l0 -10"></path>
+                                    </svg>
+                                </button>
+                                <button class="branching-icon" data-value="3" title="Test boundaries - explore what happens at the edges of our current assumptions">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"></path>
+                                        <path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"></path>
+                                        <path d="M12 20l0 -10"></path>
+                                    </svg>
+                                </button>
+                                <button class="branching-icon" data-value="2" title="Shift angle - examine the same subject from a different perspective or framework">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"></path>
+                                        <path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"></path>
+                                        <path d="M12 20l0 -10"></path>
+                                    </svg>
+                                </button>
+                                <button class="branching-icon" data-value="1" title="Refine focus - adjust scope, granularity, or specific parameters within the same inquiry">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 10a6 6 0 0 0 -6 -6h-3v2a6 6 0 0 0 6 6h3"></path>
+                                        <path d="M12 14a6 6 0 0 1 6 -6h3v1a6 6 0 0 1 -6 6h-3"></path>
+                                        <path d="M12 20l0 -10"></path>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Rank Solution -->
+                            <button id="rankButton" type="button" class="icon-button rank-icon" title="Save Memory" style="display: none;">
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    
+                        <!-- Submit button -->
+                        <button
+                            id="submitQuery"
+                            class="submit-button"
+                            aria-label="Submit query"
+                        >
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="m22 2-7 20-4-9-9-4Z" />
+                                <path d="M22 2 11 13" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            
+                <!-- File status messages -->
+                <div id="datasetStatusPillsContainer"></div>
+            </div>            
+        </div>
+        <div class="right-panel" id="rightPanel">
+            <div class="panel-header">
+                <div class="tab-navigation">
+                    <button id="prevResponse" class="nav-arrow" disabled>&larr;</button>
+                    <button id="nextResponse" class="nav-arrow" disabled>&rarr;</button>
+                </div>
+            </div>
+            <div class="tab-container" id="tabContainer"></div>
+            <div id="contentOutput"></div>
+        </div>
+    </div>
+
+    <div class="menu-popup">
+        <img src="/static/image/logo_light.svg" alt="Logo" class="menu-logo">
+        <div class="settings-container">
+            <button class="settings-button" aria-label="Settings">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+            
+            <div class="settings-popup">
+                <!-- Theme toggle first - simplified -->
+                <button id="themeToggle" class="settings-option theme-toggle-option">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                    <span class="theme-label">Light Theme</span>
+                </button>
+            
+                <div class="integrations-menu-item">
+                    <button class="settings-option integrations-option">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="8" cy="8" r="6"></circle>
+                            <circle cx="16" cy="16" r="6"></circle>
+                        </svg>
+                        <span>Integrations</span>
+                        <span class="submenu-arrow">›</span>
+                    </button>
+                    <div class="integrations-submenu">
+                        <button class="settings-option sweatstack-option" data-enabled="{{ sweatstack_enabled|lower }}">
+                            <img src="/static/image/sweatstack-favicon.svg" width="20" height="20" alt="SweatStack">
+                            <span>SweatStack</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <a href="https://github.com/pgalko/BambooAI" target="_blank" rel="noopener noreferrer" class="settings-option">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" stroke="none">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>Project Page</span>
+                </a>
+            </div>
+        </div>
+        <button class="menu-option new-conversation-option" title="New Workflow">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2v6h6"/>
+                <path d="M4 4v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6a2 2 0 0 0-2 2Z"/>
+                <path d="M12 18v-6"/>
+                <path d="M9 15h6"/>
+            </svg>
+            <span>New Workflow</span>
+        </button>
+        <button class="menu-option workflow-map-option">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3h6v6H3zM15 3h6v6h-6zM21 15h-6v6h6zM9 15H3v6h6zM12 9v12M9 9H3M15 9h6M12 3v6"/>
+            </svg>
+            <span>Workflow Map</span>
+            <span class="keyboard-shortcut">⌘M</span>
+        </button>
+    </div>
+
+    <!-- Rank Modal -->
+    <div id="rankModal" class="modal">
+        <div class="modal-content">
+            <button class="close" aria-label="Close">×</button>
+            <h3>Rate the Solution</h3>
+            <div id="rankStatusMessage" class="rank-status-message"></div>
+            <div class="star-rating" id="starRating">
+                <input type="radio" id="star10" name="rating" value="10" hidden>
+                <label for="star10" title="10 stars">★</label>
+                <input type="radio" id="star9" name="rating" value="9" hidden>
+                <label for="star9" title="9 stars">★</label>
+                <input type="radio" id="star8" name="rating" value="8" hidden>
+                <label for="star8" title="8 stars">★</label>
+                <input type="radio" id="star7" name="rating" value="7" hidden>
+                <label for="star7" title="7 stars">★</label>
+                <input type="radio" id="star6" name="rating" value="6" hidden>
+                <label for="star6" title="6 stars">★</label>
+                <input type="radio" id="star5" name="rating" value="5" hidden>
+                <label for="star5" title="5 stars">★</label>
+                <input type="radio" id="star4" name="rating" value="4" hidden>
+                <label for="star4" title="4 stars">★</label>
+                <input type="radio" id="star3" name="rating" value="3" hidden>
+                <label for="star3" title="3 stars">★</label>
+                <input type="radio" id="star2" name="rating" value="2" hidden>
+                <label for="star2" title="2 stars">★</label>
+                <input type="radio" id="star1" name="rating" value="1" hidden>
+                <label for="star1" title="1 star">★</label>
+            </div>
+            <div class="knowledge-base-hint">5+ also creates a record in episodic memory if enabled</div>
+            <button id="submit-rank" class="submit-rank-btn" aria-label="Submit rating">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Workflow Map Modal -->
+    <div id="workflowMapModal" class="modal">
+        <div class="modal-content workflow-modal-content">
+            <div class="modal-header">
+                <h2>Workflow Map</h2>
+                <button class="close workflow-close">&times;</button>
+            </div>
+            <div class="modal-body workflow-body">
+                <div id="workflowMapContainer" class="workflow-map-container"></div>
+                <div id="workflowDetailsPane" class="workflow-details-pane">
+                    <div class="details-content">
+                        <div id="nodeTaskContent" class="details-text">
+                            Hover over a node to view task details
+                        </div>
+                        <div id="nodePlotPreview" class="details-plot-preview">
+                            <!-- Plot preview will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p class="hint">Click on any node to navigate to that conversation</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Summary Popup -->
+    <div id="summaryPopup" class="summary-popup">
+        <button class="close-button">&times;</button>
+        <div id="summaryContent"></div>
+    </div>
+
+    <!-- SweatStack Sports Selection Modal -->
+    <div id="sweatstackModal" class="modal">
+        <div class="modal-content">
+            <button class="close" aria-label="Close">×</button>
+            <div class="modal-header-section">
+                <img src="/static/image/sweatstack-favicon.svg" alt="SweatStack Logo">
+                <h3>Load Data from SweatStack</h3>
+            </div>
+
+            <div class="modal-sections-container">
+                <div class="modal-section">
+                    <h4>Select Sports:</h4>
+                    <div class="sports-selection">
+                        <label class="sport-option">
+                            <input type="checkbox" id="cycling-checkbox" value="cycling" checked>
+                            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Cycling</span>
+                        </label>
+                        <label class="sport-option">
+                            <input type="checkbox" id="running-checkbox" value="running">
+                            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Running</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Select Metrics:</h4>
+                    <div class="metrics-selection">
+                        {% for metric in sweatstack_metrics %}
+                        <label class="metric-option">
+                            <input type="checkbox" id="{{ metric.value }}-checkbox" value="{{ metric.value }}" {% if metric in sweatstack_default_metrics %}checked{% endif %}>
+                            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>{{ metric.value.replace('_', ' ') }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Select Users:</h4>
+                    <div class="users-selection" id="users-selection">
+                        <div class="loading-spinner">Loading users...</div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h4>Date Range:</h4>
+                    <div class="date-range-selection">
+                        <div class="date-input-group">
+                            <label for="startDate">Start Date:</label>
+                            <input type="date" id="startDate" name="startDate" class="date-input">
+                        </div>
+                        <div class="date-input-group">
+                            <label for="endDate">End Date:</label>
+                            <input type="date" id="endDate" name="endDate" class="date-input">
+                        </div>
+                    </div>
+                </div>
+                <p id="modal-message" class="warning-note">
+                    Note: More metrics and longer time windows may slow down the application due to longer loading and processing times.
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="connectSweatstack" class="circular-button" title="Load Data from SwetStack" aria-label="Load Data from SweatStack">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m22 2-7 20-4-9-9-4Z" />
+                        <path d="M22 2 11 13" />
+                    </svg>
+                </button>
+                <div class="button-label">Load Data</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SweatStack Configuration Required Modal -->
+    <div id="sweatstackConfigModal" class="modal">
+        <div class="modal-content">
+            <button class="close" aria-label="Close">×</button>
+            <div class="modal-header-section">
+                <img src="/static/image/sweatstack-favicon.svg" alt="SweatStack Logo">
+                <h3>SweatStack Configuration Required</h3>
+            </div>
+
+            <div class="modal-section">
+                <p>
+                    Set SWEATSTACK_CLIENT_ID and SWEATSTACK_CLIENT_SECRET environment variables. 
+                    Get API credentials at <a href="https://app.sweatstack.no/settings/api" target="_blank" rel="noopener noreferrer">https://app.sweatstack.no/settings/api</a>
+                </p>
+            </div>
+
+            <button onclick="document.getElementById('sweatstackConfigModal').style.display='none'" class="circular-button" title="Close" aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </button>
+            <div class="button-label">OK</div>
+        </div>
+    </div>
+
+    <!-- SweatStack Authenticated Modal -->
+    <div id="sweatstackAuthenticatedModal" class="modal">
+        <div class="modal-content">
+            <button class="close" aria-label="Close">×</button>
+            <div class="modal-header-section">
+                <img src="/static/image/sweatstack-favicon.svg" alt="SweatStack Logo">
+                <h3>SweatStack Connected</h3>
+            </div>
+
+            <div class="modal-section">
+                <p>
+                    You are already authenticated with SweatStack. You can load data using the attach menu or disconnect from your account.
+                </p>
+            </div>
+
+            <button id="logoutSweatstack" class="circular-button" title="Disconnect from SweatStack" aria-label="Logout from SweatStack">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+            <div class="button-label">Disconnect</div>
+        </div>
+    </div>
+
+    <!-- Load modules in dependency order -->
+    <script src="{{ url_for('static', filename='js/core.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ui-controls.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/file-management.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/content-rendering.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/query-processing.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/workflow-management.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pdf-export.js') }}"></script>
+</body>
+</html>

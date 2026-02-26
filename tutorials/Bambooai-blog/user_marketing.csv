@@ -1,0 +1,501 @@
+user_id,acquisition_channel,cac_usd,campaign_id
+1001,Paid Social,106.23,1046
+1002,Referral,82.73,1011
+1003,Direct,0.0,1015
+1004,Paid Social,123.0,1023
+1005,Organic Search,0.0,1018
+1006,Organic Search,0.0,1007
+1007,Organic Search,0.0,1030
+1008,Email Marketing,124.27,1020
+1009,Paid Social,142.72,1016
+1010,Direct,0.0,1022
+1011,Organic Search,0.0,1036
+1012,Referral,65.65,1015
+1013,Email Marketing,140.25,1005
+1014,Organic Search,0.0,1007
+1015,Organic Search,0.0,1024
+1016,Organic Search,0.0,1017
+1017,Paid Social,59.59,1024
+1018,Paid Social,122.53,1011
+1019,Paid Social,148.16,1014
+1020,Organic Search,0.0,1025
+1021,Paid Social,91.15,1040
+1022,Organic Search,0.0,1044
+1023,Organic Search,0.0,1025
+1024,Paid Social,127.11,1046
+1025,Paid Social,126.56,1031
+1026,Direct,0.0,1009
+1027,Organic Search,0.0,1015
+1028,Paid Social,44.64,1006
+1029,Paid Social,13.17,1016
+1030,Organic Search,0.0,1022
+1031,Paid Social,122.87,1025
+1032,Organic Search,0.0,1020
+1033,Organic Search,0.0,1021
+1034,Referral,85.54,1006
+1035,Referral,116.5,1013
+1036,Email Marketing,141.99,1014
+1037,Paid Social,128.2,1006
+1038,Organic Search,0.0,1008
+1039,Direct,0.0,1047
+1040,Paid Social,23.73,1007
+1041,Organic Search,0.0,1049
+1042,Paid Social,92.9,1022
+1043,Organic Search,0.0,1028
+1044,Referral,102.4,1017
+1045,Organic Search,0.0,1030
+1046,Direct,0.0,1029
+1047,Paid Social,21.47,1038
+1048,Paid Social,102.38,1034
+1049,Paid Social,80.44,1017
+1050,Organic Search,0.0,1041
+1051,Referral,80.42,1038
+1052,Direct,0.0,1016
+1053,Referral,85.03,1013
+1054,Email Marketing,86.34,1030
+1055,Paid Social,132.11,1023
+1056,Referral,63.51,1034
+1057,Organic Search,0.0,1043
+1058,Organic Search,0.0,1044
+1059,Organic Search,0.0,1033
+1060,Paid Social,94.94,1002
+1061,Paid Social,107.09,1036
+1062,Organic Search,0.0,1042
+1063,Email Marketing,24.77,1039
+1064,Paid Social,7.11,1025
+1065,Organic Search,0.0,1022
+1066,Paid Social,90.54,1043
+1067,Organic Search,0.0,1038
+1068,Email Marketing,68.43,1014
+1069,Organic Search,0.0,1048
+1070,Referral,55.5,1003
+1071,Direct,0.0,1028
+1072,Organic Search,0.0,1021
+1073,Organic Search,0.0,1024
+1074,Email Marketing,95.2,1012
+1075,Direct,0.0,1017
+1076,Direct,0.0,1032
+1077,Direct,0.0,1015
+1078,Organic Search,0.0,1044
+1079,Paid Social,76.36,1041
+1080,Organic Search,0.0,1043
+1081,Email Marketing,71.57,1001
+1082,Paid Social,147.1,1034
+1083,Paid Social,76.43,1041
+1084,Organic Search,0.0,1033
+1085,Paid Social,96.84,1029
+1086,Paid Social,39.82,1012
+1087,Direct,0.0,1012
+1088,Paid Social,23.69,1017
+1089,Email Marketing,23.57,1031
+1090,Paid Social,27.03,1031
+1091,Organic Search,0.0,1034
+1092,Direct,0.0,1038
+1093,Direct,0.0,1045
+1094,Paid Social,55.12,1028
+1095,Direct,0.0,1048
+1096,Paid Social,73.72,1028
+1097,Paid Social,101.8,1043
+1098,Paid Social,29.99,1015
+1099,Organic Search,0.0,1043
+1100,Organic Search,0.0,1046
+1101,Organic Search,0.0,1009
+1102,Paid Social,45.4,1029
+1103,Paid Social,30.67,1024
+1104,Paid Social,17.86,1038
+1105,Referral,22.49,1019
+1106,Organic Search,0.0,1004
+1107,Paid Social,34.92,1000
+1108,Direct,0.0,1029
+1109,Organic Search,0.0,1048
+1110,Organic Search,0.0,1002
+1111,Organic Search,0.0,1044
+1112,Organic Search,0.0,1013
+1113,Referral,96.05,1029
+1114,Email Marketing,16.86,1049
+1115,Paid Social,131.67,1003
+1116,Email Marketing,138.53,1017
+1117,Email Marketing,13.86,1036
+1118,Organic Search,0.0,1024
+1119,Email Marketing,121.9,1047
+1120,Paid Social,113.5,1000
+1121,Email Marketing,31.76,1045
+1122,Email Marketing,35.36,1014
+1123,Paid Social,58.72,1008
+1124,Organic Search,0.0,1014
+1125,Organic Search,0.0,1048
+1126,Paid Social,58.49,1023
+1127,Email Marketing,72.07,1003
+1128,Email Marketing,113.38,1011
+1129,Organic Search,0.0,1036
+1130,Paid Social,41.6,1036
+1131,Paid Social,108.44,1042
+1132,Organic Search,0.0,1005
+1133,Organic Search,0.0,1038
+1134,Paid Social,82.16,1045
+1135,Referral,20.54,1023
+1136,Paid Social,69.87,1010
+1137,Paid Social,82.23,1012
+1138,Direct,0.0,1033
+1139,Paid Social,44.04,1024
+1140,Referral,59.71,1006
+1141,Referral,7.91,1003
+1142,Organic Search,0.0,1007
+1143,Paid Social,35.66,1019
+1144,Paid Social,52.49,1028
+1145,Organic Search,0.0,1044
+1146,Organic Search,0.0,1045
+1147,Paid Social,91.07,1009
+1148,Paid Social,103.47,1042
+1149,Organic Search,0.0,1033
+1150,Organic Search,0.0,1025
+1151,Referral,17.6,1040
+1152,Organic Search,0.0,1048
+1153,Organic Search,0.0,1002
+1154,Paid Social,113.09,1005
+1155,Referral,67.59,1004
+1156,Organic Search,0.0,1004
+1157,Direct,0.0,1046
+1158,Direct,0.0,1022
+1159,Organic Search,0.0,1048
+1160,Direct,0.0,1008
+1161,Paid Social,56.63,1034
+1162,Paid Social,148.04,1019
+1163,Paid Social,92.84,1048
+1164,Paid Social,39.4,1041
+1165,Organic Search,0.0,1034
+1166,Email Marketing,27.16,1049
+1167,Paid Social,40.66,1017
+1168,Organic Search,0.0,1016
+1169,Organic Search,0.0,1023
+1170,Paid Social,46.34,1002
+1171,Direct,0.0,1031
+1172,Organic Search,0.0,1034
+1173,Paid Social,16.63,1037
+1174,Organic Search,0.0,1012
+1175,Paid Social,64.51,1046
+1176,Organic Search,0.0,1024
+1177,Direct,0.0,1008
+1178,Paid Social,62.69,1003
+1179,Referral,145.57,1013
+1180,Organic Search,0.0,1036
+1181,Paid Social,123.48,1033
+1182,Organic Search,0.0,1010
+1183,Referral,29.78,1040
+1184,Email Marketing,101.95,1002
+1185,Organic Search,0.0,1027
+1186,Direct,0.0,1028
+1187,Email Marketing,87.88,1008
+1188,Paid Social,45.6,1002
+1189,Paid Social,116.58,1024
+1190,Organic Search,0.0,1033
+1191,Organic Search,0.0,1011
+1192,Email Marketing,66.69,1041
+1193,Referral,78.6,1008
+1194,Paid Social,40.15,1014
+1195,Paid Social,21.65,1039
+1196,Paid Social,93.54,1024
+1197,Direct,0.0,1004
+1198,Email Marketing,89.28,1010
+1199,Email Marketing,27.38,1033
+1200,Direct,0.0,1023
+1201,Paid Social,82.23,1014
+1202,Organic Search,0.0,1037
+1203,Organic Search,0.0,1007
+1204,Email Marketing,24.49,1004
+1205,Paid Social,14.19,1047
+1206,Organic Search,0.0,1025
+1207,Organic Search,0.0,1017
+1208,Direct,0.0,1005
+1209,Organic Search,0.0,1036
+1210,Organic Search,0.0,1047
+1211,Paid Social,115.23,1012
+1212,Direct,0.0,1027
+1213,Direct,0.0,1004
+1214,Organic Search,0.0,1012
+1215,Direct,0.0,1016
+1216,Organic Search,0.0,1049
+1217,Paid Social,125.44,1039
+1218,Direct,0.0,1044
+1219,Paid Social,23.02,1031
+1220,Email Marketing,110.98,1028
+1221,Direct,0.0,1002
+1222,Paid Social,31.28,1039
+1223,Organic Search,0.0,1033
+1224,Paid Social,112.46,1039
+1225,Organic Search,0.0,1026
+1226,Organic Search,0.0,1012
+1227,Referral,25.27,1044
+1228,Paid Social,120.31,1032
+1229,Email Marketing,34.24,1005
+1230,Paid Social,28.73,1023
+1231,Direct,0.0,1018
+1232,Paid Social,123.11,1015
+1233,Paid Social,101.45,1039
+1234,Paid Social,80.84,1027
+1235,Organic Search,0.0,1032
+1236,Direct,0.0,1047
+1237,Organic Search,0.0,1040
+1238,Organic Search,0.0,1012
+1239,Paid Social,68.67,1042
+1240,Organic Search,0.0,1044
+1241,Referral,72.09,1024
+1242,Referral,48.7,1041
+1243,Referral,113.4,1035
+1244,Paid Social,77.89,1026
+1245,Organic Search,0.0,1037
+1246,Referral,135.44,1006
+1247,Paid Social,60.66,1004
+1248,Referral,83.82,1042
+1249,Referral,136.44,1044
+1250,Email Marketing,95.51,1030
+1251,Organic Search,0.0,1022
+1252,Paid Social,141.28,1041
+1253,Email Marketing,96.02,1009
+1254,Paid Social,53.56,1031
+1255,Organic Search,0.0,1042
+1256,Paid Social,120.13,1029
+1257,Referral,94.91,1038
+1258,Direct,0.0,1030
+1259,Paid Social,134.61,1017
+1260,Organic Search,0.0,1035
+1261,Paid Social,26.99,1001
+1262,Referral,50.2,1013
+1263,Organic Search,0.0,1012
+1264,Paid Social,112.87,1028
+1265,Email Marketing,9.86,1011
+1266,Direct,0.0,1038
+1267,Direct,0.0,1001
+1268,Direct,0.0,1031
+1269,Paid Social,54.6,1012
+1270,Organic Search,0.0,1045
+1271,Email Marketing,21.04,1026
+1272,Email Marketing,127.74,1048
+1273,Email Marketing,23.49,1040
+1274,Referral,62.61,1016
+1275,Paid Social,120.61,1039
+1276,Paid Social,26.74,1030
+1277,Direct,0.0,1033
+1278,Paid Social,109.73,1023
+1279,Direct,0.0,1044
+1280,Direct,0.0,1034
+1281,Email Marketing,105.62,1047
+1282,Paid Social,83.7,1005
+1283,Paid Social,41.51,1018
+1284,Organic Search,0.0,1029
+1285,Paid Social,31.33,1006
+1286,Organic Search,0.0,1009
+1287,Paid Social,89.59,1040
+1288,Paid Social,63.12,1031
+1289,Organic Search,0.0,1033
+1290,Paid Social,142.36,1027
+1291,Organic Search,0.0,1014
+1292,Organic Search,0.0,1029
+1293,Email Marketing,78.35,1036
+1294,Paid Social,93.66,1028
+1295,Organic Search,0.0,1021
+1296,Paid Social,131.46,1003
+1297,Direct,0.0,1019
+1298,Organic Search,0.0,1031
+1299,Paid Social,106.01,1035
+1300,Organic Search,0.0,1049
+1301,Organic Search,0.0,1003
+1302,Paid Social,27.12,1026
+1303,Paid Social,88.56,1016
+1304,Paid Social,92.97,1011
+1305,Direct,0.0,1021
+1306,Referral,111.78,1016
+1307,Paid Social,140.48,1009
+1308,Paid Social,139.21,1000
+1309,Direct,0.0,1021
+1310,Organic Search,0.0,1025
+1311,Paid Social,147.8,1017
+1312,Organic Search,0.0,1049
+1313,Organic Search,0.0,1013
+1314,Referral,138.52,1046
+1315,Email Marketing,131.13,1028
+1316,Direct,0.0,1011
+1317,Paid Social,90.73,1035
+1318,Organic Search,0.0,1034
+1319,Organic Search,0.0,1011
+1320,Organic Search,0.0,1006
+1321,Paid Social,121.41,1028
+1322,Direct,0.0,1010
+1323,Direct,0.0,1032
+1324,Organic Search,0.0,1005
+1325,Referral,82.92,1046
+1326,Direct,0.0,1014
+1327,Paid Social,55.22,1031
+1328,Paid Social,55.31,1010
+1329,Paid Social,111.94,1022
+1330,Organic Search,0.0,1025
+1331,Paid Social,37.57,1033
+1332,Direct,0.0,1045
+1333,Organic Search,0.0,1033
+1334,Organic Search,0.0,1028
+1335,Organic Search,0.0,1003
+1336,Organic Search,0.0,1016
+1337,Email Marketing,137.65,1034
+1338,Direct,0.0,1012
+1339,Paid Social,89.19,1040
+1340,Organic Search,0.0,1038
+1341,Paid Social,6.9,1014
+1342,Paid Social,101.21,1028
+1343,Organic Search,0.0,1028
+1344,Paid Social,144.36,1010
+1345,Paid Social,26.56,1031
+1346,Paid Social,65.12,1001
+1347,Paid Social,17.38,1046
+1348,Organic Search,0.0,1013
+1349,Paid Social,77.82,1019
+1350,Paid Social,91.33,1021
+1351,Paid Social,14.73,1010
+1352,Email Marketing,113.74,1026
+1353,Direct,0.0,1002
+1354,Organic Search,0.0,1016
+1355,Organic Search,0.0,1043
+1356,Paid Social,32.65,1027
+1357,Organic Search,0.0,1028
+1358,Paid Social,73.45,1020
+1359,Referral,86.9,1046
+1360,Paid Social,14.53,1015
+1361,Paid Social,117.45,1036
+1362,Paid Social,70.73,1019
+1363,Paid Social,81.04,1005
+1364,Paid Social,68.91,1018
+1365,Referral,63.11,1004
+1366,Paid Social,86.15,1002
+1367,Referral,27.51,1000
+1368,Referral,31.38,1037
+1369,Organic Search,0.0,1014
+1370,Organic Search,0.0,1033
+1371,Organic Search,0.0,1034
+1372,Organic Search,0.0,1048
+1373,Organic Search,0.0,1024
+1374,Direct,0.0,1023
+1375,Organic Search,0.0,1011
+1376,Paid Social,27.64,1017
+1377,Email Marketing,108.82,1014
+1378,Organic Search,0.0,1043
+1379,Email Marketing,8.93,1015
+1380,Organic Search,0.0,1026
+1381,Organic Search,0.0,1007
+1382,Direct,0.0,1045
+1383,Paid Social,7.86,1024
+1384,Email Marketing,20.1,1016
+1385,Direct,0.0,1028
+1386,Email Marketing,30.89,1007
+1387,Organic Search,0.0,1014
+1388,Organic Search,0.0,1026
+1389,Direct,0.0,1045
+1390,Email Marketing,40.26,1049
+1391,Referral,109.73,1006
+1392,Paid Social,129.08,1002
+1393,Paid Social,125.38,1028
+1394,Direct,0.0,1043
+1395,Paid Social,101.87,1023
+1396,Referral,34.72,1002
+1397,Email Marketing,47.51,1019
+1398,Paid Social,134.97,1045
+1399,Direct,0.0,1014
+1400,Direct,0.0,1024
+1401,Organic Search,0.0,1029
+1402,Referral,8.85,1013
+1403,Paid Social,31.31,1006
+1404,Email Marketing,89.54,1016
+1405,Paid Social,66.11,1043
+1406,Email Marketing,134.44,1019
+1407,Paid Social,123.53,1035
+1408,Organic Search,0.0,1008
+1409,Referral,42.62,1037
+1410,Organic Search,0.0,1047
+1411,Paid Social,90.59,1021
+1412,Referral,43.87,1001
+1413,Referral,95.5,1023
+1414,Paid Social,64.36,1007
+1415,Paid Social,85.05,1010
+1416,Paid Social,68.24,1012
+1417,Organic Search,0.0,1016
+1418,Paid Social,142.53,1007
+1419,Direct,0.0,1020
+1420,Direct,0.0,1017
+1421,Direct,0.0,1029
+1422,Direct,0.0,1017
+1423,Organic Search,0.0,1045
+1424,Paid Social,120.98,1046
+1425,Organic Search,0.0,1030
+1426,Paid Social,8.26,1037
+1427,Paid Social,43.96,1031
+1428,Email Marketing,83.54,1010
+1429,Paid Social,96.85,1044
+1430,Organic Search,0.0,1024
+1431,Organic Search,0.0,1032
+1432,Direct,0.0,1037
+1433,Paid Social,147.74,1040
+1434,Organic Search,0.0,1007
+1435,Organic Search,0.0,1010
+1436,Direct,0.0,1021
+1437,Organic Search,0.0,1023
+1438,Email Marketing,137.57,1040
+1439,Direct,0.0,1016
+1440,Organic Search,0.0,1011
+1441,Organic Search,0.0,1045
+1442,Referral,85.36,1031
+1443,Paid Social,99.46,1014
+1444,Paid Social,125.31,1015
+1445,Email Marketing,34.93,1021
+1446,Referral,6.59,1027
+1447,Referral,24.85,1019
+1448,Direct,0.0,1032
+1449,Paid Social,131.71,1009
+1450,Organic Search,0.0,1039
+1451,Direct,0.0,1031
+1452,Paid Social,101.43,1049
+1453,Paid Social,30.43,1032
+1454,Referral,137.59,1001
+1455,Organic Search,0.0,1032
+1456,Paid Social,60.56,1032
+1457,Organic Search,0.0,1040
+1458,Paid Social,11.81,1012
+1459,Organic Search,0.0,1029
+1460,Organic Search,0.0,1032
+1461,Organic Search,0.0,1012
+1462,Paid Social,92.46,1025
+1463,Direct,0.0,1021
+1464,Paid Social,61.45,1038
+1465,Referral,46.86,1001
+1466,Paid Social,56.57,1037
+1467,Organic Search,0.0,1038
+1468,Email Marketing,48.08,1025
+1469,Organic Search,0.0,1045
+1470,Referral,74.03,1049
+1471,Organic Search,0.0,1014
+1472,Referral,140.84,1033
+1473,Organic Search,0.0,1041
+1474,Email Marketing,36.17,1043
+1475,Paid Social,9.52,1048
+1476,Referral,43.03,1039
+1477,Organic Search,0.0,1010
+1478,Paid Social,12.46,1002
+1479,Referral,76.97,1005
+1480,Paid Social,91.54,1008
+1481,Paid Social,53.47,1005
+1482,Direct,0.0,1008
+1483,Paid Social,20.46,1038
+1484,Paid Social,15.89,1030
+1485,Paid Social,110.59,1031
+1486,Referral,76.85,1040
+1487,Organic Search,0.0,1049
+1488,Organic Search,0.0,1011
+1489,Referral,40.73,1007
+1490,Email Marketing,123.77,1007
+1491,Paid Social,120.92,1049
+1492,Paid Social,105.73,1027
+1493,Organic Search,0.0,1019
+1494,Organic Search,0.0,1046
+1495,Paid Social,57.34,1006
+1496,Paid Social,18.28,1010
+1497,Paid Social,138.01,1019
+1498,Organic Search,0.0,1015
+1499,Referral,142.78,1003
+1500,Referral,69.67,1005

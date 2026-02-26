@@ -56,7 +56,7 @@ MSML610: Advanced Machine Learning
     - E.g., students in a school: each student is different, with common factors
   - **Repeated measurements on same objects**
 
-- **Idea**: ![](emoji/lightbulb.png){ width=14px }
+- **Idea**: ![](assets/emoji/lightbulb.png){ width=14px }
   - Model shares information between groups, but allows differences
   - Parameters of prior distributions have a prior distribution
     - Aka "hyper-priors" (!)

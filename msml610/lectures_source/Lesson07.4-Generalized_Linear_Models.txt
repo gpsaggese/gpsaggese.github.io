@@ -204,7 +204,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
-- **Do you see any problem in the model?** ![](emoji/puzzle.png){ width=14px }
+- **Do you see any problem in the model?** ![](assets/emoji/puzzle.png){ width=14px }
 
 * Linear Model: Bike Rental Example (Criticism)
 
@@ -304,7 +304,7 @@ MSML610: Advanced Machine Learning
 
 - **How to model it?**
   - _Use Poisson_:
-    - ![](emoji/wrong.png){ width=12px }: mean and variance must be equal
+    - ![](assets/emoji/wrong.png){ width=12px }: mean and variance must be equal
   - _Use Gaussian_:
     - Mismatch predicting negative rented bikes
     - Poor fit on positive side
@@ -312,7 +312,7 @@ MSML610: Advanced Machine Learning
     - Better fit, though not perfect
     - Right tail predictions differ, but high demand probability is low
     - Second parameter controls variance
-    - ![](emoji/check_mark.png){ width=12px }: overall better than Normal model
+    - ![](assets/emoji/check_mark.png){ width=12px }: overall better than Normal model
 
 // ## 4.5, Robust regression
 
