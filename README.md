@@ -1,6 +1,6 @@
 # GP's University of Maryland Machine Learning Classes
 
-![University of Maryland Logo](https://1000logos.net/wp-content/uploads/2022/07/University-of-Maryland-Logo.png)
+<img src="https://1000logos.net/wp-content/uploads/2022/07/University-of-Maryland-Logo.png" alt="University of Maryland Logo" width="200"/>
 
 This repository contains course materials, tutorials, and projects for two
 graduate-level courses taught at the University of Maryland:
