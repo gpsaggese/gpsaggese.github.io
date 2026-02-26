@@ -16,12 +16,11 @@ In this tutorial you will:
 
 ## Workflow
 
-The four phases of this tutorial are:
-
-1. **Start the container** — launch a Docker container with PostgreSQL installed
-2. **Start the Postgres server** — run the server process inside the container
-3. **Create databases** — load example datasets into PostgreSQL
-4. **Query the data** — connect via `psql` or Jupyter and run SQL
+- The four phases of this tutorial:
+  1. **Start the container**: launch a Docker container with PostgreSQL installed
+  2. **Start the Postgres server**: run the server process inside the container
+  3. **Create databases**: load example datasets into PostgreSQL
+  4. **Query the data**: connect via `psql` or Jupyter and run SQL
 
 ## Set up environment
 
@@ -48,8 +47,7 @@ The four phases of this tutorial are:
 
 ## Build container (optional)
 
-- The provided scripts (e.g., `docker_bash.sh`) pull and use the pre-built
-  image from Docker Hub. Building the container yourself is optional.
+- Building the container yourself is recommended
 
 - To examine how the container is built:
   ```bash
@@ -70,7 +68,7 @@ The four phases of this tutorial are:
   ```
 
 - You should see the prompt from Docker showing the user and container ID:
-  ```bash
+  ```verbatim
   postgres@09913bf19d81:/$
   ```
 
@@ -90,46 +88,44 @@ The four phases of this tutorial are:
 
 ## PostgreSQL
 
-- PostgreSQL is already installed in the container. The following sections
-  explain the setup.
+- PostgreSQL is already installed in the container
 
 - PostgreSQL runs in client-server mode:
-  - The **server** is a continuously running process that listens on a specific
-    port (default: `5432`)
-  - A **client** connects to the server over that port to send SQL commands and
-    receive results
+  - The **server**: continuously running process that listens on a port
+    (default: `5432`)
+  - The **client**: connects to the server over that port to send SQL commands
+    and receive results
   - In this setup the client and server run inside the same container, but they
     could be on separate machines
 
-- Connecting using the `psql` client is the easiest way to interact with
-  PostgreSQL:
+- `psql` is the easiest client to interact with PostgreSQL:
   - It provides command-line access to the database
-  - GUI clients (e.g., pgAdmin, DBeaver) are also available
+  - GUI clients (e.g., `pgAdmin`, `DBeaver`) are also available
 
 - PostgreSQL has a default superuser called `postgres`:
   - You can do everything under that username, or create a separate username
   - If you run a command (e.g., `createdb`) without specifying a user, it uses
     the Linux username you are logged in as
-  - If no matching PostgreSQL user exists, the command will fail — use
+  - If no matching PostgreSQL user exists, the command will fail - use
     `-U postgres` to run as the superuser
 
-- Note: no password is required here because PostgreSQL uses **peer
-  authentication** by default. Peer authentication means PostgreSQL trusts the
-  operating system user without requiring a password — the `postgres` OS user
-  maps directly to the `postgres` database superuser. Password authentication
-  is required for network connections from external applications.
+- Peer authentication = PostgreSQL trusts the operating system user without
+  requiring a password
+  - The `postgres` OS user maps directly to the `postgres` database superuser
+  - Password authentication is required for network connections from external
+    applications
 
-- The `psql` client accepts many options (user, port, host, etc.). See the
-  documentation: http://www.postgresql.org/docs/current/static/app-psql.html
+- `psql` client documentation:
+  http://www.postgresql.org/docs/current/static/app-psql.html
 
-- The `University` dataset used in examples is provided on the book website:
+- The `University` dataset used in examples:
   http://www.db-book.com
 
 ## Start Postgres
 
-- Start the PostgreSQL server inside the container.
+- Start the PostgreSQL server inside the container
 
-- First, examine the startup script:
+- Examine the startup script:
   ```bash
   docker> vi /data/run_psql_server.sh
   ```
@@ -159,7 +155,7 @@ The four phases of this tutorial are:
   [ - ]  procps
   [ - ]  sysstat
   ```
-  The `[ + ]` next to `postgresql` confirms the server is running.
+  - The `[ + ]` next to `postgresql` confirms the server is running
 
 ## Creating example databases
 
@@ -200,17 +196,14 @@ The four phases of this tutorial are:
   ```
 
 - The script runs these three steps:
-
   1. Create a database called `university`:
      ```bash
      docker> createdb university
      ```
-
   2. Create the tables using the DDL schema:
      ```bash
      docker> psql --command "\i DDL.sql" university
      ```
-
   3. Populate the tables with the small dataset:
      ```bash
      docker> psql --command "\i smallRelationsInsertFile.sql" university
@@ -218,12 +211,12 @@ The four phases of this tutorial are:
 
 ### Creating the university_large database
 
-- You can create a second database `university_large` for the larger dataset
-  from the book website: http://www.db-book.com
-- Because the table names are identical to the small dataset, a separate
-  database is required to avoid conflicts
-- The process mirrors the small university setup: create a new database, load
-  the DDL schema, then load the larger insert file:
+- Create a second database `university_large` for the larger dataset:
+  http://www.db-book.com
+- The table names are identical to the small dataset, so a separate database
+  is required to avoid conflicts
+- Process: create a new database, load the DDL schema, then load the larger
+  insert file:
   ```bash
   docker> createdb university_large
   docker> psql --command "\i /data/tutorial_university/DDL.sql;" university_large
@@ -232,7 +225,7 @@ The four phases of this tutorial are:
 
 ## Connecting to Postgres
 
-You can connect to the Postgres server in three ways:
+- Three ways to connect to the Postgres server:
 
 | Method | When to use |
 |---|---|
@@ -242,8 +235,8 @@ You can connect to the Postgres server in three ways:
 
 ### Connecting from inside the container
 
-- With the server running, connect to it from the same container shell:
-  ```bash
+- With the server running, connect from the same container shell:
+  ```verbatim
   docker> psql -U postgres
   psql (14.5 (Ubuntu 14.5-0ubuntu0.22.04.1))
   Type "help" for help.
@@ -252,7 +245,7 @@ You can connect to the Postgres server in three ways:
   ```
 
 - Switch to the `university` database:
-  ```bash
+  ```verbatim
   postgres=# \c university
   SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, bits: 256, compression: off)
   You are now connected to database "university" as user "postgres".
@@ -262,15 +255,13 @@ You can connect to the Postgres server in three ways:
 
 ### Using a second terminal in the same container
 
-- If the server is started in one terminal, you can open a second terminal
-  attached to the same running container using `docker_exec.sh`:
-
+- To run queries in one terminal while the server runs in another, use
+  `docker_exec.sh` to attach a second shell to the running container:
   - In terminal 1, start the container and the server:
     ```bash
     > ./docker_bash.sh
     docker> /data/run_psql_server.sh
     ```
-
   - In terminal 2, attach to the running container:
     ```bash
     > ./docker_exec.sh
@@ -280,18 +271,17 @@ You can connect to the Postgres server in three ways:
     CONTAINER_ID=2ea21580ffb9
     postgres@2ea21580ffb9:/$
     ```
-
-  - You can now run queries in terminal 2 while the server runs in terminal 1.
+  - Terminal 2 can now run queries while the server runs in terminal 1
 
 ### Connecting from your laptop
 
-- From your laptop (outside Docker) you need the Postgres client installed:
+- Install the Postgres client on your laptop (outside Docker):
   ```bash
   > brew install postgresql
   ```
 
-- Connect to the server running inside Docker (which exposes port 5432):
-  ```bash
+- Connect to the server running inside Docker (exposed on port 5432):
+  ```verbatim
   > psql -U postgres -h localhost
   SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, bits: 256, compression: off)
   You are now connected to database "postgres" as user "postgres".
@@ -299,8 +289,8 @@ You can connect to the Postgres server in three ways:
   postgres=#
   ```
 
-- This demonstrates the client-server model: the `psql` client on your laptop
-  connects over port 5432 to the PostgreSQL server running inside Docker.
+- The `psql` client on your laptop connects over port 5432 to the PostgreSQL
+  server running inside Docker, demonstrating the client-server model
 
 ### Connecting from Jupyter notebook
 
@@ -310,34 +300,33 @@ You can connect to the Postgres server in three ways:
   ```
 
 - Open a browser on your laptop and navigate to:
-  ```
+  ```verbatim
   http://localhost:8888/tree/data/tutorial_university
   ```
 
-- You will see three tutorial notebooks:
-  ```
+- Three tutorial notebooks available:
+  ```verbatim
   sql_basics.ipynb
   sql_joins.ipynb
   sql_nulls_and_unknown.ipynb
   ```
 
-- The notebooks connect to your local PostgreSQL instance and let you run SQL
-  queries directly from notebook cells.
+- The notebooks connect to the local PostgreSQL instance and run SQL queries
+  from notebook cells
 
-- Queries use Jupyter **magic commands** — special directives that extend
-  notebook cells beyond plain Python:
-  - `%sql` — run a single-line SQL command
-  - `%%sql` — run a multi-line SQL block
+- Jupyter magic commands for running SQL:
+  - `%sql`: run a single-line SQL command
+  - `%%sql`: run a multi-line SQL block
 
 - **Important**: the `university` database must exist before running the
-  notebooks. Follow the steps in the "Creating example databases" section above
-  first.
+  notebooks - follow "Creating example databases" above first
 
 ## Using psql CLI
 
-Once inside `psql`, you can use backslash (`\`) commands to manage the
-database. These are client commands, not SQL — they control the `psql` session
-itself.
+- Backslash (`\`) commands in `psql`:
+  - These are client commands, not SQL
+  - They control the `psql` session
+  - Documentation: http://www.postgresql.org/docs/current/static/app-psql.html
 
 ### Quick reference
 
@@ -351,13 +340,10 @@ itself.
 | `\d <table>` | Show schema for a table |
 | `\q` | Quit psql |
 
-All commands are documented at:
-http://www.postgresql.org/docs/current/static/app-psql.html
-
 ### Examples
 
 - Get general help:
-  ```
+  ```verbatim
   postgres=# help
   You are using psql, the command-line interface to PostgreSQL.
   Type:  \copyright for distribution terms
@@ -368,7 +354,7 @@ http://www.postgresql.org/docs/current/static/app-psql.html
   ```
 
 - List psql backslash commands:
-  ```
+  ```verbatim
   postgres=# \?
   General
     \copyright             show PostgreSQL usage and distribution terms
@@ -379,7 +365,7 @@ http://www.postgresql.org/docs/current/static/app-psql.html
   ```
 
 - List available SQL commands:
-  ```
+  ```verbatim
   postgres=# \h
   Available help:
     ABORT                            ALTER SYSTEM                     CREATE FOREIGN DATA WRAPPER ...
@@ -388,7 +374,7 @@ http://www.postgresql.org/docs/current/static/app-psql.html
   ```
 
 - Get help for a specific SQL command:
-  ```
+  ```verbatim
   postgres=# \h create
   Command:     CREATE ACCESS METHOD
   Description: define a new access method
@@ -399,7 +385,7 @@ http://www.postgresql.org/docs/current/static/app-psql.html
   ```
 
 - Show all databases:
-  ```
+  ```verbatim
   postgres=# \l
                                      List of databases
          Name            |  Owner   | Encoding | Collate |  Ctype  |   Access privileges
@@ -413,11 +399,10 @@ http://www.postgresql.org/docs/current/static/app-psql.html
    university_large     | postgres | UTF8     | C.UTF-8 | C.UTF-8 |
   (5 rows)
   ```
-  The `postgres` database is created automatically by PostgreSQL for internal
-  use.
+  - The `postgres` database is created automatically by PostgreSQL for internal use
 
 - Connect to the `university` database (note the prompt changes):
-  ```
+  ```verbatim
   postgres=# \c university
   SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, bits: 256, compression: off)
   You are now connected to database "university" as user "postgres".
@@ -426,7 +411,7 @@ http://www.postgresql.org/docs/current/static/app-psql.html
   ```
 
 - List tables in the current database:
-  ```
+  ```verbatim
   university=# \d
              List of relations
    Schema |    Name    | Type  |  Owner
@@ -446,7 +431,7 @@ http://www.postgresql.org/docs/current/static/app-psql.html
   ```
 
 - Query a table:
-  ```
+  ```verbatim
   university=# select * from instructor;
     id   |    name    | dept_name  |  salary
   -------+------------+------------+----------
@@ -467,12 +452,12 @@ http://www.postgresql.org/docs/current/static/app-psql.html
 
 ## Other notebook examples
 
-The `tutorial_university` directory contains three Jupyter notebooks. Open them
-at `http://localhost:8888/tree/data/tutorial_university` after starting
-Jupyter with `/data/run_jupyter.sh`.
+- The `tutorial_university` directory contains three Jupyter notebooks
+- Navigate to `http://localhost:8888/tree/data/tutorial_university` after
+  running `docker> /data/run_jupyter.sh`
 
-- **`sql_basics.ipynb`** — introductory SQL queries (SELECT, WHERE, ORDER BY,
+- **`sql_basics.ipynb`**: introductory SQL queries (SELECT, WHERE, ORDER BY,
   aggregation) on the university dataset
-- **`sql_joins.ipynb`** — JOIN types and multi-table queries
-- **`sql_nulls_and_unknown.ipynb`** — handling NULL values and three-valued
+- **`sql_joins.ipynb`**: JOIN types and multi-table queries
+- **`sql_nulls_and_unknown.ipynb`**: handling NULL values and three-valued
   logic in SQL
