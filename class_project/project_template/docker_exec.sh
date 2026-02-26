@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 # """
 # Execute a bash shell in a running Docker container.
 #
