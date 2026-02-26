@@ -22,8 +22,8 @@ Before you begin, make sure you have the following installed and configured:
 
 1. Clone the repository:
    ```bash
-   $ git clone git@github.com:gpsaggese/umd_classes.git
-   $ cd umd_classes
+   > git clone git@github.com:gpsaggese/umd_classes.git
+   > cd umd_classes
    ```
 
 2. Navigate to your course folder:

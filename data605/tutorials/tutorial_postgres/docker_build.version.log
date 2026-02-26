@@ -47,13 +47,16 @@ fastjsonschema            2.21.2
 fonttools                 4.61.1
 fqdn                      1.5.1
 graphviz                  0.21
+greenlet                  3.3.2
 h11                       0.16.0
 httpcore                  1.0.9
 httpx                     0.28.1
 idna                      3.11
 ipykernel                 7.2.0
 ipython                   9.10.0
+ipython-genutils          0.2.0
 ipython_pygments_lexers   1.1.1
+ipython-sql               0.5.0
 isoduration               20.11.0
 jedi                      0.19.2
 Jinja2                    3.1.6
@@ -90,9 +93,11 @@ pexpect                   4.9.0
 pillow                    12.1.1
 pip                       26.0.1
 platformdirs              4.9.2
+prettytable               3.17.0
 prometheus_client         0.24.1
 prompt_toolkit            3.0.52
 psutil                    7.2.2
+psycopg2-binary           2.9.11
 ptyprocess                0.7.0
 pure_eval                 0.2.3
 pycparser                 3.0
@@ -112,6 +117,8 @@ Send2Trash                2.1.0
 setuptools                82.0.0
 six                       1.17.0
 soupsieve                 2.8.3
+SQLAlchemy                2.0.47
+sqlparse                  0.5.5
 stack-data                0.6.3
 terminado                 0.18.1
 tinycss2                  1.4.0
@@ -126,4 +133,4 @@ webcolors                 25.10.0
 webencodings              0.5.1
 websocket-client          1.9.0
 # postgres
-/data/version.sh: line 28: postgres: command not found
+postgres (PostgreSQL) 16.11 (Ubuntu 16.11-0ubuntu0.24.04.1)

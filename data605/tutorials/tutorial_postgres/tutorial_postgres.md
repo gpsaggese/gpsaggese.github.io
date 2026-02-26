@@ -3,7 +3,7 @@
 ## Overview
 
 PostgreSQL is a full-featured, open-source relational database system. It is
-used for several tutorials and for the class project in `umd_data605`.
+used for several tutorials and for the DATA605 class project in `umd_classes`.
 
 In this tutorial you will:
 
@@ -25,7 +25,7 @@ In this tutorial you will:
 ## Set up environment
 
 - Read the instructions in the top-level `README.md` to clone the class repo
-  `umd_data605` and set up the Docker environment
+  `umd_classes` and set up the Docker environment
 - Make sure the Docker daemon is running on your computer (e.g., Docker Desktop
   for Mac)
   - See https://www.docker.com/products/docker-desktop for installation
@@ -36,7 +36,7 @@ In this tutorial you will:
   # E.g., GIT_ROOT=~/src/umd_data605
   > cd $GIT_ROOT
   > ls
-  Dockerfile    LICENSE       README.md     __pycache__   dev_scripts   project_template lectures      tutorials
+  Dockerfile    LICENSE       README.md     dev_scripts   project_template lectures      tutorials
 
   > cd tutorials/tutorial_postgres
   > ls
@@ -55,7 +55,7 @@ In this tutorial you will:
   > vi Dockerfile docker_*.sh
   ```
 
-- Build the Docker container (this takes approximately 10 minutes):
+- Build the Docker container (this takes several minutes):
   ```bash
   > ./docker_build.sh
   ```

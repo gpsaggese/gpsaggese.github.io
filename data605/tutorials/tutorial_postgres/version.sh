@@ -25,4 +25,4 @@ pip3 list
 
 # Display PostgreSQL version.
 echo "# postgres"
-postgres --version || true
+/usr/lib/postgresql/16/bin/postgres --version || true
