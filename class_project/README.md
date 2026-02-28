@@ -374,16 +374,6 @@ In general:
   cc> Execute docs/ai_prompts/coding.lint.md on tutorials/Autogen/autogen_utils.py
   ```
 
-- Format the blog:
-  ```bash
-  cc> Execute docs/ai_prompts/blog.format_rules.md on website/docs/blog/posts/all.learn_Autogen_in_60_minutes.how_to_guide.md
-  ```
-
-- Align the Docker system with:
-  ```bash
-  cc> Execute docs/ai_prompts/docker.align_with_template.md on tutorials/Autogen
-  ```
-
 - Render the blogs locally:
   ```bash
   > website/test.sh
@@ -480,8 +470,6 @@ The layout of each project should follow the examples in:
   — the canonical starting point with blank `template.API.ipynb` and
   `template.example.ipynb` notebooks
 
-## Review Best Projects
-
 - Review some of the best projects from previous years:
   - [`tutorial_langchain`](https://github.com/causify-ai/tutorials/tree/master/tutorial_langchain)
   - [`tutorial_langgraph`](https://github.com/causify-ai/tutorials/tree/master/tutorial_langgraph)
@@ -570,7 +558,7 @@ The layout of each project should follow the examples in:
 
 ### Submission Checklist
 
-- [ ] Is our Docker approach followed?
+- [ ] Is Docker approach followed?
 - [ ] Is all the possible code in the notebook moved to a `*_utils.py` file?
 - [ ] Is `project.API.ipynb` in the right format?
 - [ ] Do the notebooks run end-to-end?
