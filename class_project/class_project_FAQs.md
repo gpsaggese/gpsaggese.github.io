@@ -9,11 +9,8 @@
 
 ## Read Instructions for the Class Projects
 
-[https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
-
-## Read Instructions for the Class Projects Again
-
-[https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
+Read the full instructions before proceeding:
+[class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
 
 ## Review Some of the Best Projects From Previous Years
 
@@ -39,50 +36,19 @@ class DATA605
 
 ## Pick Your Project
 
-- There are 3 types of projects:
-  - "Build X using Y"
-    - These projects are either individual or for teams of at most 3 students
-    - The best projects will become blog entries and potential publications
-  - Implement examples for the lectures
-    - These are only individual projects
-    - The best projects will be used as tutorials of next years' MSML610 classes
-  - Research projects
-    - These are only for teams of at most 3 students
-    - The best projects might lead to a blog or a publication, but are also more
-      difficult, and not everyone has the ability to complete this
+- See [README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
+  for the full project types and selection rules
 
-- All of them require following the format of
-  [https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
-
-- For MSML610 (Fall 2025)
-  - The project list is
-    [here](https://docs.google.com/spreadsheets/d/1H_Ev1psuPpUrrRcmBrBb2chfurSo5rPcAdd6i2SIUTQ/edit?gid=0#gid=0)
-  - To sign up, you fill out the form
-    [here](https://docs.google.com/forms/d/1TPCt7UFnTOEICltrPU3sIu9RoCbILR32zHbZNzRi9jw/edit)
-  - You can pick two projects so that if multiple students are wanting the same
-    project, we will assign the projects at random
-
-- Each class project is either individual or group
+- **MSML610 sign-up links** (Fall 2025):
+  - Project list:
+    [spreadsheet](https://docs.google.com/spreadsheets/d/1H_Ev1psuPpUrrRcmBrBb2chfurSo5rPcAdd6i2SIUTQ/edit?gid=0#gid=0)
+  - Sign-up form:
+    [form](https://docs.google.com/forms/d/1TPCt7UFnTOEICltrPU3sIu9RoCbILR32zHbZNzRi9jw/edit)
+  - You can pick two projects as a backup; conflicts are resolved at random
 
 - For group projects, teams are up to 3 members
-  - For team projects, you need to pick a project with difficulty equal to hard
-  - Please choose teams of students you know and you can rely on
-  - We will not consider excuses like "my project is not great because XYZ
-    didn't do their part"
-  - All members of the team get the same score independently of their
-    contribution, so pick other students at your level or with complementary
-    skills
-
-## Read Instructions for the Class Projects Yet Again
-
-Read instructions for the class projects yet again to understand what to do, how
-to do it
-
-[https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
-
-## Create the Tutorial Template for the Class Project
-
-[https://github.com/gpsaggese/umd_classes/blob/master/class_project/docker_template/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/docker_template/README.md)
+  - Team projects require a project rated "hard" difficulty
+  - All members receive the same score — choose partners carefully
 
 ## Learn or Refresh Basic Data Science Tools
 

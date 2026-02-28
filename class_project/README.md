@@ -1,8 +1,11 @@
-# Class Project Guidelines
+# Class Project Guidelines "Learn X in 60 minutes"
 
 - The goal of the class project (e.g., for `DATA605`, `MSML610`) is to learn a
   cutting-edge modern big data technology and write a (small) example of a
   system using it
+- The result of each project is a "tutorial" that can teach a curious computer
+  scientist a new technology in 60 minutes
+
 - Each class project is similar in spirit to the tutorials for various
   technologies we have looked at and studied in classes (e.g., `Git`, `Docker`,
   `SQL`, `Mongo`, `Airflow`, `Dask`)
@@ -21,6 +24,8 @@
   > cp -r ~/src/umd_classes1/class_project/project_template/* .
   ```
 
+- Customize the content of the files `Dockerfile`, `requirements.txt`
+
 - Build the Docker image:
   ```bash
   > ./docker_build.sh
@@ -31,58 +36,70 @@
   > ./docker_jupyter.sh
   ```
 
-- Open the notebooks in this order:
-  1. **`{project}.API.ipynb`**: Start here to explore the tool's native API and
-     core features
-  2. **`{project}.example.ipynb`**: Proceed to this notebook to build and
-     demonstrate your end-to-end application
+- To open a bash shell inside the container for debugging:
+  ```bash
+  > ./docker_bash.sh
+  ```
+
+- To remove the container and free resources:
+  ```bash
+  > ./docker_clean.sh
+  ```
+
+- Complete the notebooks in this order:
+  1. **`{project}.API.ipynb`**: explore the tool's native API and core features
+  2. **`{project}.example.ipynb`**: Build and demonstrate your end-to-end
+     application
 
 ## Choosing a Project
 
+### Project Types
+
+There are three types of projects:
+
+- **"Build X using Y"**: Build a system or application using a specific
+  technology — individual or teams of at most 3 students. The best projects
+  become blog entries and potential publications.
+- **Implement examples for the lectures**: Implement tutorial examples that
+  illustrate lecture concepts — individual projects only. The best projects are
+  used as tutorials in future classes.
+- **Research projects**: Explore an open research question — teams of at most 3
+  students. The best projects may lead to a blog post or publication, but these
+  are the most challenging.
+
+### Selection Rules
+
 - The project is done by a single student or a group of students
   - Students should not have exactly the same project
-  - Groups are made of less than 3 students
-  - Students working on different projects can discuss and help each other (they
-    will do that even if we say not to)
+  - Groups are made of less than 3 students (`<= 3`)
+  - All team members receive the same score, so choose partners carefully
+  - Students working on different projects can discuss and help each other
 
-- Each student or group should pick one project from the sign up sheet shared
-  around the mid of course
+- Each student or group picks one project from the sign-up sheet shared during
+  class
   - Each project has a description in the corresponding directory
+  - You can pick two projects as a backup; if there is a conflict, projects are
+    assigned at random
 
 - The goal of the project is to get your hands dirty and figure things out
-  - Often solving problems is about trying different approaches until one
-    approach works out
-  - Make sure you code by understanding the tool and what your code is doing
-    with it
+  - Often solving problems is about trying different approaches until one works
+  - Make sure you understand the tool and what your code is doing
   - `Google` and `ChatGPT` are your friends, but don't abuse them: copy-pasting
     code is not recommended and won't benefit the learning outcomes
 
-- The projects are designed in a way that once you understand the underlying
-  technology
-  - We expect a project to takes 6-8 full days to complete (e.g., 40 hours)
+- We expect a project to take 6-8 full days to complete (e.g., 40 hours)
 
-- It is highly recommended to choose a project from the sign up sheet
-  - If you really need to propose a new idea or suggest modifications, please
-    contact us: we will review but we won't guarantee we can accommodate all
-    requests
-- Your project should align with your learning goals and interests, offering an
-  opportunity to explore various technologies and strengthen your resume
-- If selecting a project from the sign-up sheet, ensure you fill out the
-  corresponding details promptly. For modifications, email us with the necessary
-  information, and we will update the sign-up sheet and Google Doc accordingly
-- **Project selection must be finalized within 1 or 2 weeks** to allow
+- Your project should align with your learning goals and interests
+- Project selection must be finalized within 1 or 2 weeks to allow
   sufficient time for planning and execution
-- The project duration is approximately **4 to 6 weeks**, making timely
-  selection crucial
-- Your grade will be based on:
-  - **Project complexity**: depth and sophistication of the technology
-    used
-  - **Effort and understanding**: demonstrated grasp of the tool and
-    quality of the tutorial
-  - **Adherence to guidelines**: correct structure, naming, and PR
-    workflow
 
-**NOTE**:
+- Your grade will be based on:
+  - **Project complexity**: depth and sophistication of the technology used
+  - **Effort and understanding**: demonstrated grasp of the tool and quality of
+    the tutorial
+  - **Adherence to guidelines**: correct structure, naming, and PR workflow
+
+### Paid Cloud Services
 
 - If you choose to use a paid service (e.g., an Amazon service), you are
   responsible for the costs incurred
@@ -90,6 +107,21 @@
     tier usage
   - To save costs/improve usage, you should make sure that the services are
     turned off/shutdown when not being used
+
+### Project Timeline
+
+- The project schedule is described in the "Class assignment" column in the
+  class schedule
+
+- In practice, the process is:
+  - Pick 2 projects
+  - Finalize the project and make sure everything is clear
+  - ... Work, work, work by yourself at home ...
+  - ... Work, work, work with us in class lab ...
+  - First checkpoint / PR of the project
+  - ... Work, work, work by yourself at home ...
+  - ... Work, work, work with us in class lab ...
+  - Final submission
 
 ## Pre-requisites
 
@@ -107,19 +139,21 @@
   - Make sure you are assigned to it
 - Only `Python` should be used together with the needed configs for the specific
   tools
-  - You can always communicate with the tech using `Python` libraries or `HTTP`
-    APIs
 
 - Unless specified by project description, everything needs to run locally
   without using cloud resources
   - E.g., it's not ok to use an `AWS` DB instance, you want to install
     `Postgres` in your container for any database requirements
 
+### Learn or Refresh Basic Data Science Tools
+
+- If you did not take DATA605 or you are not familiar with the basic technology
+  we rely on (e.g., `Git`, `Docker`, `Jupyter`, `Python`, `bash`), take time to
+  get familiar with them through the DATA605 tutorials
+
 ### Contribution to the Repo
 
-- You will work in the same way open-source developers (and specifically
-  developers on Causify.AI) contribute to a project
-
+- You will work in the same way open-source developers contribute to a project
 - Each project will need to be organized like a proper open source project,
   including filing issues, opening PRs, checking in the code in
   [https://github.com/gpsaggese/umd_classes/tree/master](https://github.com/gpsaggese/umd_classes/tree/master)
@@ -137,7 +171,7 @@
   - Your project tag should follows this format:
     `Spring{year}_{project_title_without_spaces}`
     - Example: if your project title is **"Redis cache to fetch user
-      profiles"**, your project branch will be:
+      profiles"** for Spring 2025, your project branch will be:
       **`Spring2025_Redis_cache_to_fetch_user_profiles`**
 
 - **Create a GitHub Issue**
@@ -194,10 +228,6 @@
 
 ## Configuring Your System
 
-Before starting implementation, you need to choose **one** of the two supported
-`Docker`-based workflows. Finalize your setup choice before proceeding with
-development.
-
 ### `docker_template`
 
 - There are simple scripts (`docker_build.sh`, `docker_bash.sh`,
@@ -231,6 +261,30 @@ development.
 
 ## Working on the Project
 
+### Tutorial Goals
+
+Each tutorial aims to provide:
+
+- **Conceptual understanding**: Clear explanations of what the technology is and
+  when to use it
+- **Practical application**: A complete example showing real-world usage and
+  working code examples that run immediately
+- **Reproducibility**: Guaranteed to work through automated testing and all
+  dependencies and setup handled via Docker
+
+### Technologies Covered
+
+Examples of technologies included in this tutorial series:
+
+- **Big Data**: Spark, Dask, Hadoop
+- **Databases**: PostgreSQL, MongoDB, Redis
+- **Workflow Orchestration**: Airflow, Prefect
+- **Probabilistic Programming**: PyMC, Stan
+- **Machine Learning**: scikit-learn, XGBoost, LightGBM
+- **Deep Learning**: PyTorch, TensorFlow, JAX
+- **LLMs & AI**: LangChain, OpenAI API, Anthropic API
+- **DevOps**: Docker, Docker Compose, Git
+
 ### Project Goal
 
 - For your course project, you're not just building something cool, but you're
@@ -243,6 +297,25 @@ development.
   - That should make sure the tutorial is not lengthy and covers all the
     important aspects a developer should know before starting building with that
     technology
+
+- Each 60-minute tutorial follows this time breakdown for a reader:
+  1. **Setup (5 min)**: Clone repo, start Docker container, verify environment
+  2. **Introduction (10 min)**: Read overview markdown, understand use cases
+  3. **API Exploration (20 min)**: Work through `XYZ.API.ipynb` notebook
+  4. **Complete Example (25 min)**: Work through `XYZ.example.ipynb` notebook
+
+### Invariants
+
+All tutorials must maintain these standards:
+
+- **Code repository**: All code is on GitHub in a format common to all tutorials
+- **Dependency management**: All packages are handled through Docker in a
+  standard approach (e.g., `docker_build`, `docker_bash`)
+- **Consistent structure**: The format of the tutorial follows the same
+  structure across all topics
+- **Centralized location**: All tutorial material is in a directory in the
+  [`tutorials`](https://github.com/gpsaggese/umd_classes/tree/master/tutorials)
+  repo and in the [`//helpers`](https://github.com/causify-ai/helpers) sub-repo
 
 ### Understanding the Deliverables
 
@@ -257,13 +330,12 @@ development.
 - **API Notebook** (`{project}.API.ipynb`):
   - Explores the tool's native API: core classes, functions, and configuration
   - Describes the lightweight wrapper layer you have written on top
+  - Contains a walkthrough of the library/package with examples
+  - Uses simple/synthetic examples since it needs to run quickly
+  - Most code should be moved to a `*_utils.py` file
 - **Example Notebook** (`{project}.example.ipynb`):
   - Demonstrates an end-to-end application using your wrapper layer
   - Calls functions from `{project}_utils.py` to keep cells concise
-
-For more guidance on this structure and the rationale behind it, see
-[How to write the
-Tutorial](https://github.com/gpsaggese/umd_classes/blob/master/website/docs/blog/posts/all.learn_X_in_60_minutes.how_to_guide.md)
 
 In general:
 
@@ -271,6 +343,79 @@ In general:
   how your wrapper simplifies it
 - **For example notebook**: demonstrate the tool according to the specifications
   in your project description
+
+### Docker Container
+
+- The Docker container should:
+  - Contain everything so that one is ready to run tutorials and develop with
+    that technology
+  - Often installing and getting a package to work (e.g., PyMC) takes a long
+    time
+
+- The Docker structure and approach should follow the template
+  [`class_project/project_template/`](https://github.com/gpsaggese/umd_classes/tree/master/class_project/project_template)
+
+### Jupyter Notebooks
+
+- Each Jupyter notebook should:
+  - Run end-to-end after a restart
+    - It's super frustrating when a tutorial doesn't work because the version of
+      the library is not compatible with the code anymore
+    - This is enforced by the unit test through `pytest`, in this way we are
+      guaranteed that it works
+  - Be self-contained and linear
+    - Each example is explained thoroughly without having to jump from tutorial
+      to tutorial
+    - Each cell and its output is commented and explained
+  - Take less than a few minutes to execute end-to-end
+
+### Markdown
+
+- Markdown documents should cover information about:
+  - What the technology/Python package or library is
+  - What problem it solves
+  - What are the alternatives, both open source and commercial with comments
+    about advantages and disadvantages
+  - A description of the native API of the technology
+  - A description of the Docker container
+  - Visual aids with `mermaid`, `graphviz`, `tikz` (e.g., flow diagrams, data
+    transformation steps, and plots) to enhance understanding of how the library
+    and the example works
+  - References to books and in-depth tutorials that we have run and we think are
+    awesome
+  - All sources should be referred and acknowledged
+
+- This is the same approach used in:
+  - [DATA605](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials)
+    - E.g., Git, Docker, Docker Compose, Postgres, MongoDB, Airflow, Dask, Spark
+  - [MSML610](https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks)
+
+### Tools of the Trade
+
+- Format a markdown file:
+  ```bash
+  > lint_txt.py -i ...
+  ```
+
+- Clean up the Python code using Claude Code:
+  ```bash
+  cc> Execute docs/ai_prompts/coding.lint.md on tutorials/Autogen/autogen_utils.py
+  ```
+
+- Format the blog:
+  ```bash
+  cc> Execute docs/ai_prompts/blog.format_rules.md on website/docs/blog/posts/all.learn_Autogen_in_60_minutes.how_to_guide.md
+  ```
+
+- Align the Docker system with:
+  ```bash
+  cc> Execute docs/ai_prompts/docker.align_with_template.md on tutorials/Autogen
+  ```
+
+- Render the blogs locally:
+  ```bash
+  > website/test.sh
+  ```
 
 ## Submission
 
@@ -349,19 +494,61 @@ external data-provider package. Please keep the focus on the tool itself.
   ```
 
 ### Folder Structure
+
 ```text
 COURSE_CODE/
 └── Term20xx/
     └── projects/
         └── TutorTaskXX_Name_of_issue/
-            ├── {project}_utils.py
-            ├── {project}.API.ipynb
-            ├── {project}.example.ipynb
+            ├── {project}_utils.py       # reusable helper functions
+            ├── {project}.API.ipynb      # tool's native API exploration
+            ├── {project}.example.ipynb  # end-to-end application demo
             ├── Dockerfile
+            ├── docker_build.sh          # build the Docker image
+            ├── docker_bash.sh           # open a shell in the container
+            ├── docker_jupyter.sh        # launch Jupyter inside the container
+            ├── docker_clean.sh          # remove the container and image
+            ├── requirements.txt
             └── README.md
 ```
 
-### Submission Guidelines
+### Video Recording Guidelines
+
+The final project requires students to submit a video recording of their
+project. The goal is to learn how to present your work in a professional manner
+(which will be extremely important in your career).
+
+- Video duration
+  - Minimum: 10 minutes
+  - Maximum: 20 minutes
+
+- Submission method
+  - Students should upload the video in this
+    [Google Drive dir](https://drive.google.com/drive/folders/1QLtgPCAS0mqE9cr1hE3UVoIbzakCNtaC)
+
+- Required video structure
+  - Step 1: Introduction
+    - Name, UID, tool and difficulty, project title
+  - Step 2: Showcase all files in the PR and confirm naming conventions
+  - Step 3: Execute the Docker image and show the successful execution message
+    - If there was a problem with Docker explain what it was and how you worked
+      around it
+  - Step 4: Open Jupyter Notebook
+    - Steps 1-4 should take approximately 1-2 minutes
+  - Step 5: Full project walkthrough
+    - Run every required code cell
+    - Provide clear verbal explanation of what each cell does
+    - Demonstrate functionality and correctness of the tool
+    - Students should spend the majority of time here
+  - Step 6: Discuss results
+    - Interpret the outputs
+    - Explain what the results mean
+    - Describe how the chosen tool helped address the problem statement
+  - Step 7: Documentation review
+    - Show how the documentation is organized
+    - Explain how a non-technical reader can understand the project using the
+      documentation
+    - Highlight completeness and clarity
 
 ## Examples of a Class Project
 
@@ -375,3 +562,109 @@ The layout of each project should follow the examples in:
 - [`class_project/project_template`](https://github.com/gpsaggese/umd_classes/tree/master/class_project/project_template)
   — the canonical starting point with blank `template.API.ipynb` and
   `template.example.ipynb` notebooks
+
+## Review Best Projects
+
+- Review some of the best projects from previous years:
+  - [`tutorial_langchain`](https://github.com/causify-ai/tutorials/tree/master/tutorial_langchain)
+  - [`tutorial_langgraph`](https://github.com/causify-ai/tutorials/tree/master/tutorial_langgraph)
+  - [`tutorial_openai`](https://github.com/causify-ai/tutorials/tree/master/tutorial_openai)
+  - [`tutorial_prophet`](https://github.com/causify-ai/tutorials/tree/master/tutorial_prophet)
+
+- Peruse/draw inspiration from lots of projects from your colleagues in the
+  sister class DATA605:
+  - Projects:
+    [https://github.com/gpsaggese/umd_classes/tree/master/class_project/DATA605](https://github.com/gpsaggese/umd_classes/tree/master/class_project/DATA605)
+  - Videos:
+    [https://drive.google.com/drive/folders/1QLtgPCAS0mqE9cr1hE3UVoIbzakCNtaC](https://drive.google.com/drive/folders/1QLtgPCAS0mqE9cr1hE3UVoIbzakCNtaC)
+
+- If you see any problem in the tutorials (code or video), pls send an email to
+  me with your TAs in cc. To make this more interesting, there might be (or maybe
+  not!) some mistakes on purpose. See if you find them. Happy egg hunt!
+
+## A Note From Frank Underwood
+
+- If you are interested in working in our research team, the best way to be
+  noticed is with thoughtful questions, showing that you have thought about the
+  question and read the material.
+
+- Like Frank Underwood said: "Don't disappoint me. And more importantly, do not
+  disappoint me".
+
+## Grading Rubric
+
+- All deliverables delivered (10 points)
+  - Are all required components submitted, including code, documentation, and
+    any other specified materials
+  - Does everything follow the project's standard structure and formatting
+    guidelines
+  - Is the submission complete enough for someone else to evaluate or run
+    without requesting extra files or explanations
+
+- Working Docker (5 points)
+  - Does the Docker container build without errors, following the provided
+    instructions
+  - Does the project run successfully inside the container and behave as
+    expected
+  - Are all necessary environment configurations, ports, and dependencies
+    correctly set
+
+- Documentation quality (5 points)
+  - Does the documentation clearly explain how to set up, run, and understand
+    the project
+  - Is it well-written, free from major grammar or formatting issues, and easy
+    to follow
+  - Does it include all required sections such as installation steps, usage
+    examples, API descriptions, or architectural decisions
+  - Does it adhere to the formatting and organizational guidelines we provided
+
+- Actual project complexity (5 points)
+  - How much depth and effort does the project demonstrate beyond the initial
+    suggested scope
+  - Did the student add significant features, handle edge cases, or show
+    creative problem-solving
+  - Is the architecture or technical implementation non-trivial or particularly
+    well-considered
+
+- Code quality (5 points)
+  - Is the code clean, modular, and easy to understand
+  - Are comments and docstrings used appropriately to explain non-obvious logic
+  - Is the overall structure of the codebase sensible and maintainable
+  - Does it follow consistent style conventions (e.g., PEP 8 or another relevant
+    standard)
+
+- PR quality (5 points)
+  - Was the pull request (PR) well-organized, with meaningful commit messages
+    and a clear description
+  - Did the student follow good GitHub practices, such as linking issues,
+    keeping PRs scoped, and avoiding unnecessary noise
+  - Was the PR free of obvious clutter like unrelated test code or temporary
+    debug statements
+
+- Depth and understanding (5 points)
+  - Does the student show a solid understanding of the tools and techniques they
+    used
+  - Do the design decisions reflect thoughtful trade-offs and justification,
+    rather than blindly following tutorials
+  - Is there evidence that the student could explain and defend their
+    implementation in a review
+
+- Late submission (-5 points)
+  - Was the submission turned in after the deadline without an approved
+    extension
+
+- Incomplete work (-5 points)
+  - Are there major parts of the project that are missing or obviously broken
+  - Does the submission fail to meet critical functional or structural
+    expectations
+  - Are there signs that the project was rushed or left unfinished or AI
+    generated
+
+### Submission Checklist
+
+- [ ] Is our Docker approach followed?
+- [ ] Is all the possible code in the notebook moved to a `*_utils.py` file?
+- [ ] Is `project.API.ipynb` in the right format?
+- [ ] Do the notebooks run end-to-end?
+- [ ] Are all the notebooks paired using Jupytext?
+- [ ] Did you run `linters2/lint_branch.sh`?
