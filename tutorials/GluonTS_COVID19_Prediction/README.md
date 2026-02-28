@@ -1,22 +1,27 @@
-# COVID-19 Forecasting with GluonTS
+# GluonTS Probabilistic Time Series Forecasting
 
-Welcome! This tutorial shows you how to build a probabilistic forecasting system for predicting U.S. COVID-19 cases using GluonTS. You'll work through a complete, real-world pipeline: pulling data from multiple sources, engineering features that matter, training three different neural network models, and comparing their predictions.
+Welcome! This tutorial teaches you how to build probabilistic forecasting models with GluonTS. We use a **synthetic-data-first** approach: you'll learn GluonTS fundamentals with clean, interpretable synthetic data, then apply them to a real-world COVID-19 forecasting pipeline.
 
-The tutorials are designed to be **interactive and focused on learning**. While we cover all the practical details—data preprocessing, feature engineering, model training, and evaluation—the heavy lifting is handled by reusable Python utilities. This means the notebooks stay clean and readable, so you can actually focus on understanding *how* probabilistic forecasting works, rather than getting bogged down in implementation code.
+The tutorials are **interactive and focused on learning**. Implementation details live in reusable Python utilities so notebooks stay clean and readable—you focus on understanding *how* probabilistic forecasting works.
 
 **What you'll learn:**
 - Building time series forecasts with uncertainty estimates
-- Comparing different GluonTS model architectures
-- Feature engineering for epidemiological data
-- Evaluating probabilistic predictions
+- Comparing different GluonTS model architectures (DeepAR, SimpleFeedForward, DeepNPTS)
+- Synthetic data progression: sinusoid → multi-frequency → regime change
+- Real-world application: COVID-19 case forecasting with scenario analysis
 
 # COVID-19 Case Prediction Using GluonTS
+
+## Learning Path
+
+1. **`GluonTS.API.ipynb`** — Start here. Learn GluonTS fundamentals with **synthetic data** (sinusoid, multi-frequency, regime change). No data download needed. Covers DeepAR, SimpleFeedForward, DeepNPTS.
+2. **`GluonTS.example.ipynb`** — Real-world application. Full COVID-19 forecasting pipeline with JHU + mobility data, feature engineering, and scenario analysis.
 
 ## Getting Started
 
 ### Data Setup
 
-Data files are automatically downloaded when you run the notebooks. If automatic download fails, you can download them manually.
+**`GluonTS.API.ipynb`** uses synthetic data—no download needed. **`GluonTS.example.ipynb`** requires COVID data. Files are automatically downloaded when you run the example notebook. If automatic download fails, you can download them manually.
 
 **Automatic Download (Default)**
 
@@ -38,7 +43,7 @@ Save to `data/` directory:
 
 Or run:
 ```bash
-python utils_data_download.py
+python utils.py
 ```
 
 ### Build and Run
@@ -63,20 +68,12 @@ Opens at http://localhost:8888
 ### Files and Structure
 
 **Notebooks**
-- `GluonTS.API.ipynb` — Model API demonstrations
-- `GluonTS.example.ipynb` — Complete end-to-end example
-- `GluonTS.example.md` — Guide (auto-synced with notebook)
+- `GluonTS.API.ipynb` — GluonTS fundamentals with synthetic data
+- `GluonTS.example.ipynb` — COVID-19 end-to-end application
 
-**Utilities** 
-- `utils_data_download.py` — Download data from Google Drive
-- `utils_data_io.py` — Load case, death, and mobility data
-- `utils_preprocessing.py` — Aggregate, merge, engineer features
-- `utils_analysis.py` — Correlation analysis and data checks
-- `utils_gluonts.py` — Convert to GluonTS format
-- `utils_models.py` — Train DeepAR, SimpleFeedForward, DeepNPTS
-- `utils_evaluation.py` — Calculate metrics
-- `utils_visualization.py` — Plotting code
-- `utils_notebook_loader.py` — Quick data loader
+**Utilities**
+- `utils.py` — Consolidated utilities: data I/O, download, preprocessing,
+  GluonTS conversion, model training, evaluation, visualization, synthetic data
 
 **Data** (auto-downloaded)
 - `data/cases.csv` — Daily confirmed cases
@@ -96,7 +93,7 @@ The notebooks are organized for learning. Implementation details (data loading, 
 
 Instead of notebook cells with 20 lines of matplotlib code, you see:
 ```python
-import utils_visualization as viz
+import utils as viz
 viz.plot_data_overview(train_df, test_df)
 ```
 
@@ -192,7 +189,7 @@ If it's empty, go back to the "Data Setup" section above and run the downloader.
 
 ```bash
 # Download data (only needed if automatic download failed)
-python utils_data_download.py
+python utils.py
 
 # Build Docker image
 ./docker_build.sh
