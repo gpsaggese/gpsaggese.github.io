@@ -1,4 +1,4 @@
-# DATA605, MSML610 - Class Project
+# DATA605, MSML610 - Class Project FAQs
 
 # Summary
 

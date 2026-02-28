@@ -85,3 +85,19 @@ Hello DATA605 team,
 As we said, Linux/bash/Docker works decently only Mac and Linux, but not Windows.
 We have tried several times to get Windows to work, but failed, so the plan is to
 have Windows laptop get to install a VM and run linux
+
+## Project #1: Choose Your Project
+
+Here are the instructions for the class project.
+
+class_project/class_project_FAQs.md
+class_project/README.md
+all.learn_X_in_60_minutes.how_to_guide.md
+
+The projects to choose from are:
+
+The research projects to choose from:
+
+The specs for each projects are:
+
+The form to subscribe is:

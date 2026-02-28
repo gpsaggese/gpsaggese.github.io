@@ -340,3 +340,13 @@ TL;DR:
 # Resources
 
 - Official documentation for Claude Code: https://code.claude.com/docs/en
+
+<!--
+
+Add information about .claude/skills/
+
+.claude/statusline.sh
+
+> ls /Users/saggese/src/umd_classes1/helpers_root/dev_scripts_helpers/ai/
+cc        ccc       ccp       instr     README.md se        sl
+-->

@@ -26,22 +26,19 @@
 - Each class project is similar in spirit to the tutorials for various
   technologies we have looked at and studied in classes (e.g., `Git`, `Docker`,
   `SQL`, `Mongo`, `Airflow`, `Dask`)
-- Through the class projects you will learn how a tool fits your data science,
-  data engineering, machine learning workflows
+- Through the class projects you will learn how a specific tool fits your data
+  science, data engineering, machine learning workflows
 
 ## Choosing a Project
 
-- The project is for an individual or group
-  - Students can discuss and help each other (they will do that even if we say
-    not to)
+- The project is done by a single student or a group of students
   - Students should not have exactly the same project
   - Groups are made of less than 3 students
+  - Students working on different projects can discuss and help each other (they
+    will do that even if we say not to)
 
 - Each student or group should pick one project from the sign up sheet shared
   around the mid of course
-  - The difficulty of the project does affect the final grade, but we want to
-    give a way for everyone to select a project based on their level of computer
-    literacy
   - Each project has a description in the corresponding directory
   - Examples
     - `MSML610` Fall 2025:
@@ -54,7 +51,7 @@
   [sign up form](https://docs.google.com/forms/d/1TPCt7UFnTOEICltrPU3sIu9RoCbILR32zHbZNzRi9jw/edit)
   - Once done, we will add you to the repo so that you can start working
 
-- The goal is to get your hands dirty and figure things out
+- The goal of the project is to get your hands dirty and figure things out
   - Often solving problems is about trying different approaches until one
     approach works out
   - Make sure you code by understanding the tool and what your code is doing
@@ -63,10 +60,8 @@
     code is not recommended and won't benefit the learning outcomes
 
 - The projects are designed in a way that once you understand the underlying
-  technology:
-  - **Easy Project**: Takes 2-3 days to complete
-  - **Medium Difficulty Project**: Takes 4-5 to complete
-  - **Difficult Project**: Takes 6-8 to complete
+  technology
+  - We expect a project to takes 6-8 full days to complete (e.g., 40 hours)
 
 - It is highly recommended to choose a project from the sign up sheet
   - If you really need to propose a new idea or suggest modifications, please
@@ -81,16 +76,19 @@
   sufficient time for planning and execution
 - The project duration is approximately **4 to 6 weeks**, making timely
   selection crucial
-- Your grade will be based on **project complexity, effort, understanding, and
-  adherence to guidelines**
+- Your grade will be based on
+  - Project complexity
+  - Effort and understanding
+  - Adherence to guidelines
 
 **NOTE**:
 
 - If you choose to use a paid service (e.g., an Amazon service), you are
-  responsible for the costs incurred. In any case, you are expected to use the
-  services efficiently to keep them within free tier usage
-- To save costs/improve usage, you should make sure that the services are turned
-  off/shutdown when not being used
+  responsible for the costs incurred
+  - You are expected to use the services efficiently to keep them within free
+    tier usage
+  - To save costs/improve usage, you should make sure that the services are
+    turned off/shutdown when not being used
 
 ## Pre-requisites
 
@@ -101,11 +99,9 @@
 - Install `Docker` on your computer
   - You can use `Docker` natively on `Mac` and `Linux`
   - Use `VMware` in `Windows` or dual-boot
-    - If you have problems installing it on your laptop, it recommended to use
-      one computer from `UMD`, or perhaps a device of one your friends
-- After signing up for a project accept the invitation to collaborate sent to
-  the email that you used to register your `GitHub` account, or check
-  [here](https://github.com/gpsaggese/umd_classes/invitations)
+    - If you have problems installing it on your laptop, it is recommended to use
+      one computer from `UMD` laboratories
+
 - Check your `GitHub` issue on https://github.com/gpsaggese/umd_classes/issues
   - Make sure you are assigned to it
 - Only `Python` should be used together with the needed configs for the specific
