@@ -1,95 +1,85 @@
 # Altair
 
 ## Description
-Altair is a declarative statistical visualization library for Python, designed
-to create a wide variety of interactive charts and plots with minimal code. It
-leverages the Vega and Vega-Lite visualization grammars, allowing users to build
-complex visualizations while focusing on the data rather than the details of the
-rendering process. Altair is particularly well-suited for exploratory data
-analysis and storytelling with data.
-
-## Technologies Used
-- **Altair**
-  - Declarative syntax for creating visualizations.
-  - Supports a variety of chart types including bar, line, scatter, and more.
-  - Integrates seamlessly with Pandas DataFrames for data manipulation.
-  - Interactive features such as tooltips and selections to enhance user
-    engagement.
-
-- **Pandas**
-  - Essential for data manipulation and preprocessing.
-  - Provides data structures like DataFrames to work with structured data.
+- Altair is a declarative statistical visualization library for Python, designed
+  to create interactive and informative visualizations with minimal code.
+- It leverages the power of Vega and Vega-Lite, allowing users to generate a
+  wide range of visual representations of data using a concise syntax.
+- The library is built on a grammar of graphics, which means users can easily
+  combine visual elements and encode data attributes to create complex
+  visualizations.
+- Altair supports a variety of data types and formats, including pandas
+  DataFrames, which makes it easy to integrate into existing data science
+  workflows.
+- It offers capabilities for interactive visualizations, enabling users to
+  create charts that respond to user inputs, such as selections and filters.
+- The library is particularly suited for exploratory data analysis (EDA) and
+  communicating data insights effectively through visual storytelling.
 
 ## Project Objective
-- The goal of this project is to visualize and analyze global COVID-19
-  vaccination data to identify trends, disparities, and correlations across
-  different countries. Students will create interactive visualizations that
-  allow users to explore vaccination rates over time, compare countries, and
-  analyze the impact of demographic factors on vaccination uptake.
+The goal of this project is to analyze and visualize trends in global
+temperature changes over time, optimizing for insights into climate patterns and
+anomalies. Students will employ Altair to create interactive visualizations that
+help communicate their findings effectively.
 
 ## Dataset Suggestions
-- Look for publicly available datasets on platforms like Kaggle, which host
-  updated COVID-19 vaccination data.
-- Explore government health department websites or APIs that provide vaccination
-  statistics.
-- Consider using open datasets from organizations like Our World in Data or the
-  World Health Organization (WHO).
+1. **Global Historical Climatology Network (GHCN)**
+   - **Source Name**: NOAA
+   - **URL**: [NOAA GHCN](https://www.ncdc.noaa.gov/ghcn-daily-description)
+   - **Data Contains**: Daily temperature records from weather stations
+     worldwide.
+   - **Access Requirements**: No authentication required; data is publicly
+     available.
+
+2. **Kaggle Global Temperature Data**
+   - **Source Name**: Kaggle
+   - **URL**:
+     [Kaggle Global Temperature](https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data)
+   - **Data Contains**: Monthly average temperatures from 1750 to present,
+     including anomalies.
+   - **Access Requirements**: Free to use after signing up for a Kaggle account.
+
+3. **NASA GISS Surface Temperature Analysis (GISTEMP)**
+   - **Source Name**: NASA
+   - **URL**: [NASA GISTEMP](https://datahub.io/core/global-temp)
+   - **Data Contains**: Global surface temperature data from 1880 to present,
+     including anomalies and trends.
+   - **Access Requirements**: Publicly available, no authentication needed.
+
+4. **OpenWeatherMap Historical Weather Data**
+   - **Source Name**: OpenWeatherMap
+   - **URL**: [OpenWeatherMap API](https://openweathermap.org/history)
+   - **Data Contains**: Historical weather data including temperature, humidity,
+     and precipitation.
+   - **Access Requirements**: Free tier available; requires API key (easy
+     signup).
 
 ## Tasks
-- **Set Up Environment**
-  - Install required packages:
-    - `altair`
-    - `pandas`
-  - Import necessary libraries and prepare your development environment (e.g.,
-    Jupyter Notebook or Google Colab).
+- **Data Acquisition**: Load the selected dataset(s) into a pandas DataFrame for
+  analysis, ensuring proper formatting and cleaning.
+- **Exploratory Data Analysis**: Use Altair to create initial visualizations
+  (e.g., line charts, histograms) to explore the dataset and identify trends or
+  anomalies.
+- **Interactive Visualization**: Develop interactive visualizations using Altair
+  features, such as tooltips and selection filters, to allow users to explore
+  data insights dynamically.
+- **Insights and Reporting**: Summarize findings from the visualizations,
+  discussing key trends in global temperatures and potential implications for
+  climate change.
+- **Presentation**: Prepare a presentation that showcases the visualizations and
+  insights, emphasizing the storytelling aspect of the data analysis.
 
-- **Data Acquisition**
-  - Download the COVID-19 vaccination dataset from a public source.
-  - Load the dataset into a Pandas DataFrame.
-  - Inspect the dataset for relevant columns such as country, date, total
-    vaccinations, and population.
-
-- **Data Cleaning and Preprocessing**
-  - Handle missing values in the dataset by applying appropriate techniques
-    (e.g., imputation or removal).
-  - Create new columns for metrics such as vaccination rate per 100 people.
-  - Filter the dataset to focus on specific countries or regions of interest.
-
-- **Create Interactive Visualizations**
-  - Develop a line chart to visualize vaccination trends over time for selected
-    countries.
-  - Create a bar chart comparing total vaccinations across different countries.
-  - Implement scatter plots to explore the relationship between vaccination
-    rates and demographic factors (e.g., GDP, population density).
-
-- **Enhance User Interaction**
-  - Add tooltips to your charts to display additional information on hover
-    (e.g., total vaccinations, date).
-  - Implement selection features to allow users to filter data by country or
-    date range.
-  - Create a dashboard layout to present multiple visualizations in a cohesive
-    manner.
-
-- **Analysis and Insights**
-  - Analyze the visualizations to identify key trends, disparities, and
-    correlations.
-  - Write a brief report summarizing the findings from your visualizations,
-    highlighting any surprising insights or patterns.
-
-## Bonus Ideas (Optional)
-- **Time-Series Forecasting**: Extend the project by applying time-series
-  forecasting methods to predict future vaccination rates using historical data.
-- **Comparative Analysis**: Compare vaccination rates against other variables
-  such as healthcare spending or public health policies to draw deeper insights.
-
-- **User Feedback**: Create a simple user interface using Streamlit or Dash to
-  allow users to interact with your visualizations more dynamically.
+## Bonus Ideas
+- Implement a comparison between different regions or time periods in the
+  temperature data to identify localized trends.
+- Explore additional variables such as CO2 levels or extreme weather events and
+  visualize their relationships with temperature changes.
+- Create a dashboard using Altair and Streamlit to allow users to interact with
+  multiple visualizations simultaneously.
 
 ## Useful Resources
-- [Altair Documentation](https://altair-viz.github.io/)
-- [Pandas Documentation](https://pandas.pydata.org/pandas-docs/stable/)
+- [Altair Official Documentation](https://altair-viz.github.io/)
+- [Vega-Lite Documentation](https://vega.github.io/vega-lite/)
 - [Kaggle Datasets](https://www.kaggle.com/datasets)
-
-## Cost
-- Altair: Open-source and free to use.
-- Pandas: Open-source and free to use.
+- [Pandas Documentation](https://pandas.pydata.org/docs/)
+- [Streamlit Documentation](https://docs.streamlit.io/)

@@ -1,98 +1,80 @@
 # Alipy
 
 ## Description
-Alipy is a Python library designed for analyzing and visualizing user behavior
-in online platforms, particularly focusing on recommendation systems. It
-simplifies the process of working with user-item interactions, allowing data
-scientists to build, evaluate, and optimize collaborative filtering models
-efficiently.
-
-## Technologies Used
-- **Alipy**
-  - Provides tools for collaborative filtering and recommendation system
-    evaluation.
-  - Supports various algorithms including user-based and item-based
-    collaborative filtering.
-  - Facilitates metrics for assessing recommendation performance such as
-    precision, recall, and F1-score.
-- **Pandas**
-  - Essential for data manipulation and analysis.
-  - Allows for easy handling of large datasets with its DataFrame structure.
-
-- **Matplotlib/Seaborn**
-  - Used for visualizing the results of the recommendation models.
-  - Helps in creating insightful plots to understand user behavior and model
-    performance.
+- **Active Learning Framework**: Alipy is a Python library designed to
+  facilitate active learning, enabling users to efficiently select the most
+  informative data points for labeling.
+- **Multiple Query Strategies**: The tool supports various query strategies,
+  including uncertainty sampling, query-by-committee, and diversity-based
+  methods, allowing users to tailor their approach based on specific project
+  needs.
+- **Integration with Machine Learning Libraries**: Alipy is compatible with
+  popular machine learning libraries like Scikit-learn, making it easy to
+  integrate into existing workflows.
+- **User-Friendly API**: The library features an intuitive API that simplifies
+  the implementation of active learning processes, making it accessible even for
+  those new to the concept.
+- **Evaluation Metrics**: Alipy provides built-in metrics to evaluate the
+  effectiveness of different query strategies, helping users to understand their
+  performance and make data-driven decisions.
 
 ## Project Objective
-- Develop a recommendation system for a movie streaming platform that predicts
-  user ratings for unseen movies based on their previous viewing history and
-  preferences. The goal is to optimize the model for accuracy in predicting user
-  ratings and enhancing user satisfaction.
+The goal of this project is to build a machine learning model for classifying
+handwritten digits from the MNIST dataset using active learning techniques. The
+project aims to optimize the model's performance while minimizing the number of
+labeled samples needed for training.
 
 ## Dataset Suggestions
-- Explore datasets available on **Kaggle** that focus on movie ratings and user
-  preferences, such as the MovieLens dataset.
-- Look for open datasets on **HuggingFace** related to user-item interactions in
-  entertainment or streaming services.
-- Consider using public datasets from **government portals** that provide user
-  behavior analytics.
+1. **MNIST Handwritten Digits**
+   - **Source**: Kaggle
+   - **URL**: [MNIST Dataset](https://www.kaggle.com/c/digit-recognizer/data)
+   - **Data Contains**: Images of handwritten digits (0-9) along with their
+     corresponding labels.
+   - **Access Requirements**: Free to use; requires creating a Kaggle account.
+
+2. **Fashion MNIST**
+   - **Source**: Kaggle
+   - **URL**:
+     [Fashion MNIST Dataset](https://www.kaggle.com/zalando-research/fashionmnist)
+   - **Data Contains**: Images of clothing items categorized into 10 classes
+     (e.g., T-shirt, Trouser, Pullover).
+   - **Access Requirements**: Free to use; requires creating a Kaggle account.
+
+3. **CIFAR-10**
+   - **Source**: Kaggle
+   - **URL**: [CIFAR-10 Dataset](https://www.kaggle.com/c/cifar-10)
+   - **Data Contains**: 60,000 32x32 color images in 10 classes, with 6,000
+     images per class.
+   - **Access Requirements**: Free to use; requires creating a Kaggle account.
 
 ## Tasks
-- **Set Up Environment**
-  - Install required libraries including Alipy, Pandas, and visualization
-    libraries (Matplotlib/Seaborn).
-  - Create a Jupyter notebook or Google Colab environment for development.
+- **Data Preparation**: Load the chosen dataset and preprocess the images (e.g.,
+  normalization, reshaping) for use in the model.
+- **Model Selection**: Choose a suitable machine learning model (e.g., a simple
+  CNN or a decision tree) for digit classification.
+- **Active Learning Implementation**: Utilize Alipy to implement active learning
+  strategies to select the most informative samples for labeling.
+- **Model Training and Evaluation**: Train the model using the labeled samples
+  and evaluate its performance using standard metrics (e.g., accuracy,
+  precision, recall).
+- **Analysis of Active Learning**: Compare the performance of the model with and
+  without active learning to assess its effectiveness.
 
-- **Load and Preprocess Data**
-  - Import the dataset containing user ratings and movie details.
-  - Clean the data:
-    - Handle missing values and duplicates.
-    - Normalize user ratings.
-  - Split the data into training and testing sets.
-
-- **Build Collaborative Filtering Model**
-  - Utilize Alipy to implement a user-based or item-based collaborative
-    filtering model.
-  - Train the model on the training dataset to learn user preferences.
-
-- **Evaluate Model Performance**
-  - Use Alipy's built-in evaluation metrics to assess the model:
-    - Calculate precision, recall, and F1-score.
-    - Generate recommendations for a subset of users.
-  - Analyze the results to identify strengths and weaknesses of the model.
-
-- **Visualize Results**
-  - Create visualizations to showcase:
-    - Distribution of user ratings.
-    - Comparison between predicted and actual ratings.
-    - Recommendations made for top users.
-  - Use Matplotlib and Seaborn to enhance the presentation of findings.
-
-- **Optimize the Model**
-  - Experiment with different algorithms and hyperparameters in Alipy.
-  - Implement cross-validation to ensure robustness of the model.
-  - Compare results from different approaches to identify the best-performing
-    model.
-
-## Bonus Ideas (Optional)
-- **Implement Hybrid Recommendation System**
-  - Combine collaborative filtering with content-based filtering to enhance
-    recommendations.
-- **User Segmentation Analysis**
-  - Perform clustering on user behaviors to create targeted recommendations for
-    different user segments.
-
-- **Deployment Simulation**
-  - Create a mock-up of how the recommendation system would work in a real
-    application, including user interfaces and interaction flows.
+## Bonus Ideas
+- **Experiment with Different Query Strategies**: Implement multiple query
+  strategies available in Alipy and compare their effectiveness on the chosen
+  dataset.
+- **Hyperparameter Tuning**: Use techniques like grid search or random search to
+  optimize hyperparameters of the chosen model.
+- **Visualization of Learning Process**: Create visualizations to show how the
+  model's performance improves with the addition of labeled samples through
+  active learning.
+- **Transfer Learning**: Investigate the use of pre-trained models to enhance
+  classification accuracy and reduce training time.
 
 ## Useful Resources
 - [Alipy Documentation](https://alipy.readthedocs.io/en/latest/)
-- [Pandas Documentation](https://pandas.pydata.org/docs/)
-- [Matplotlib Documentation](https://matplotlib.org/stable/contents.html)
-- [Seaborn Documentation](https://seaborn.pydata.org/)
-
-## Cost
-- Alipy: Open-source, free.
-- Pandas, Matplotlib, and Seaborn: All are free and open-source libraries.
+- [Kaggle Datasets](https://www.kaggle.com/datasets)
+- [Scikit-learn Documentation](https://scikit-learn.org/stable/documentation.html)
+- [Active Learning in Machine Learning: A Survey](https://www.sciencedirect.com/science/article/pii/S0957417421000196)
+- [GitHub Repository for Alipy](https://github.com/Alipy/Alipy)

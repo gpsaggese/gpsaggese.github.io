@@ -4,8 +4,7 @@ I will give you the name of a tool (XYZ).
 
 ## Task
 
-Write a description in 4-6 lines about what the tool is and its features using
-markdown bullet points.
+Write **4–6 bullet points** describing what the tool is and its key features.
 
 - You must then generate a **project blueprint** that helps students build
   realistic data science projects over a semester.
@@ -13,40 +12,46 @@ markdown bullet points.
   and you will decide everything else (domain, dataset type, ML task, etc.) in a
   technically feasible and pedagogically valuable way.
 
-Your response must include:
+Your response must include the following sections in order:
 
-1. **Project Objective**: Clearly state the goal of the project and what is being
-   optimized, predicted, or detected.
+1. **Description**: 4–6 bullet points describing what the tool is and its key
+   features.
 
-2. **Dataset Suggestions**: Suggest where to find datasets (e.g., Kaggle,
-   HuggingFace, government portals, simulated data). Provide some specific
-   examples of data sets that a user could use
+2. **Project Objective**: Clearly state the goal of the project and what is
+   being optimized, predicted, or detected.
 
-3. **Tasks**: Outline the key tasks of the project, each tailored to the tool.
-   Describe each task in 1-2 lines high-level description in brief bullet point
-   formats.
+3. **Dataset Suggestions**: For each dataset, include the source name, direct
+   URL or API endpoint, what data it contains, and access requirements. Provide
+   3–4 specific examples.
 
-4. **Bonus Ideas**: Add extensions, baseline comparisons, or challenges
-   students might attempt if they want to go further.
+4. **Tasks**: Outline the key tasks of the project, each tailored to the tool.
+   Describe each task in 1–2 lines as brief bullet points.
 
-- The template of a project is like
+5. **Bonus Ideas**: Add extensions, baseline comparisons, or challenges students
+   might attempt if they want to go further.
+
+6. **Useful Resources**: Include 3–5 links — official docs, relevant APIs, and
+   GitHub repos.
+
+- The output must follow this exact template:
   ```
-  # TextBlob
+  # ToolName
 
   ## Description
 
-  ## Technologies Used
-
   ## Project Objective
+
+  ## Dataset Suggestions
 
   ## Tasks
 
-  ## Useful Resources
+  ## Bonus Ideas
 
-  ## Cost
+  ## Useful Resources
   ```
 
 ## Constraints
+
 - Project should run on standard laptops or Google Colab.
 
 - Data sets

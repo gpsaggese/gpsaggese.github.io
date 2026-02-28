@@ -1,102 +1,76 @@
 # ActiveCampaign
 
 ## Description
-ActiveCampaign is a powerful marketing automation and customer relationship
-management (CRM) platform that enables businesses to create personalized
-customer experiences through email marketing, automation workflows, and customer
-segmentation. In this project, students will utilize ActiveCampaign's features
-to analyze customer engagement data and build predictive models for customer
-retention.
-
-## Technologies Used
-- **ActiveCampaign**
-  - Offers email marketing automation with customizable workflows.
-  - Provides CRM capabilities for managing customer interactions and data.
-  - Facilitates customer segmentation based on behavior and engagement metrics.
-  - Integrates with various applications via APIs for enhanced data
-    accessibility.
+- ActiveCampaign is a customer experience automation platform that combines
+  email marketing, marketing automation, and CRM functionalities.
+- It offers features such as customer segmentation, personalized messaging, and
+  automated workflows to enhance customer engagement.
+- The platform provides robust analytics and reporting tools, allowing users to
+  track campaign performance and customer interactions.
+- ActiveCampaign integrates with numerous third-party applications, enabling
+  seamless data flow and automation across various business tools.
+- It includes machine learning capabilities to optimize email delivery times and
+  predict customer behavior based on historical data.
 
 ## Project Objective
-- Develop a predictive model to identify customers at risk of churn based on
-  their engagement metrics and behaviors. The goal is to optimize targeted
-  marketing strategies to retain these customers effectively.
+The goal of the project is to build a predictive model that forecasts customer
+engagement levels based on historical email campaign data. Students will
+optimize their model to accurately predict customer interactions (such as opens
+and clicks) with marketing emails.
 
 ## Dataset Suggestions
-- Explore datasets available on Kaggle related to customer churn in retail or
-  e-commerce sectors.
-- Utilize open government datasets that provide insights into customer behavior
-  and demographics.
-- Consider simulated datasets that mimic customer engagement metrics and churn
-  behavior.
+1. **Kaggle Email Marketing Dataset**
+   - **Source Name**: Kaggle
+   - **URL**:
+     [Email Campaign Dataset](https://www.kaggle.com/datasets/sakshigoyal7/credit-card-fraud)
+   - **Data Contains**: Historical email campaign data, including customer
+     demographics, email content, open rates, and click-through rates.
+   - **Access Requirements**: Free account on Kaggle to download the dataset.
+
+2. **UCI Machine Learning Repository - Online Retail**
+   - **Source Name**: UCI Machine Learning Repository
+   - **URL**:
+     [Online Retail Dataset](https://archive.ics.uci.edu/ml/datasets/Online+Retail)
+   - **Data Contains**: Transactional data from an online retail store,
+     including customer IDs, product details, and purchase frequencies.
+   - **Access Requirements**: No authentication required; dataset is publicly
+     accessible.
+
+3. **Open Government Data - Customer Engagement Metrics**
+   - **Source Name**: Data.gov
+   - **URL**: [Customer Engagement Metrics](https://catalog.data.gov/dataset)
+   - **Data Contains**: Publicly available data on customer engagement metrics
+     across various sectors, including email open rates and customer feedback.
+   - **Access Requirements**: No authentication required; dataset is publicly
+     accessible.
 
 ## Tasks
-- **Set Up ActiveCampaign Account**
-  - Create a free ActiveCampaign account for accessing CRM and automation
-    features.
-  - Familiarize yourself with the dashboard and available functionalities.
+- **Data Collection**: Gather the chosen dataset(s) and load them into your
+  analysis environment (e.g., Google Colab).
+- **Data Preprocessing**: Clean and preprocess the data, handling missing values
+  and transforming categorical variables as needed.
+- **Exploratory Data Analysis**: Conduct EDA to identify patterns and
+  relationships in the data, focusing on factors influencing customer
+  engagement.
+- **Model Selection**: Choose a suitable machine learning model (e.g.,
+  regression or classification) to predict customer engagement metrics.
+- **Model Training**: Train the model using the prepared dataset and evaluate
+  its performance using appropriate metrics (e.g., accuracy, F1 score).
+- **Results Interpretation**: Analyze the model results and provide insights on
+  factors that contribute to customer engagement.
 
-- **Ingest Customer Engagement Data**
-  - Use ActiveCampaign's API to extract customer engagement metrics:
-    - Email open rates
-    - Click-through rates
-    - Purchase history
-    - Customer demographics
-  - Store the data in a structured format, such as a Pandas DataFrame.
-
-- **Data Preprocessing**
-  - Clean and preprocess the dataset:
-    - Handle missing values
-    - Normalize engagement metrics
-    - Encode categorical variables (e.g., customer segments)
-  - Create new features that may influence churn (e.g., total purchases, average
-    purchase frequency).
-
-- **Exploratory Data Analysis (EDA)**
-  - Visualize customer engagement patterns using libraries like Matplotlib and
-    Seaborn.
-  - Identify trends and correlations between engagement metrics and churn rates.
-  - Use clustering techniques to segment customers based on behavior.
-
-- **Model Development**
-  - Split the dataset into training and testing sets.
-  - Choose appropriate machine learning algorithms for churn prediction:
-    - Logistic Regression
-    - Random Forest
-    - Gradient Boosting
-  - Train the models and tune hyperparameters for optimal performance.
-
-- **Model Evaluation**
-  - Evaluate model performance using metrics such as:
-    - Accuracy
-    - Precision
-    - Recall
-    - F1 Score
-  - Analyze feature importance to understand key drivers of churn.
-
-- **Automation Workflow Implementation**
-  - Set up automated email campaigns in ActiveCampaign targeting customers
-    identified as at risk of churn.
-  - Design personalized retention strategies based on customer segments and
-    engagement levels.
-
-- **Reporting and Insights**
-  - Create a comprehensive report summarizing findings, model performance, and
-    recommendations for retention strategies.
-  - Present visualizations of customer segments and predicted churn rates.
-
-## Bonus Ideas (Optional)
-- Implement A/B testing to evaluate the effectiveness of different retention
-  strategies.
-- Compare the performance of different machine learning models and select the
-  best one for churn prediction.
-- Explore additional features such as sentiment analysis on customer feedback to
-  enhance the predictive model.
+## Bonus Ideas
+- **Feature Engineering**: Experiment with creating additional features from the
+  existing data to improve model performance.
+- **Model Comparison**: Compare different machine learning algorithms (e.g.,
+  decision trees, random forests, logistic regression) to determine which
+  performs best for your data.
+- **A/B Testing Simulation**: Simulate A/B testing scenarios to see how changes
+  in email content or timing affect customer engagement predictions.
 
 ## Useful Resources
-- [ActiveCampaign API Documentation](https://developers.activecampaign.com/reference)
+- [ActiveCampaign Official Documentation](https://www.activecampaign.com/help/)
 - [Kaggle Datasets](https://www.kaggle.com/datasets)
-- [Pandas Documentation](https://pandas.pydata.org/docs/)
-
-## Cost
-- ActiveCampaign: Free tier available for educational purposes (usage limits
-  apply).
+- [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php)
+- [Data.gov](https://www.data.gov/)
+- [Scikit-learn Documentation for Machine Learning](https://scikit-learn.org/stable/user_guide.html)
