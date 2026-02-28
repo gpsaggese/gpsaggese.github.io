@@ -1,13 +1,21 @@
 <!-- toc -->
 
+<<<<<<< Updated upstream
 - [Summary](#summary)
 - [Getting Started (Quick Checklist)](#getting-started-quick-checklist)
+=======
+>>>>>>> Stashed changes
 - [Class Project Guidelines](#class-project-guidelines)
+  * [Quick Start](#quick-start)
   * [Choosing a Project](#choosing-a-project)
   * [Pre-Requisites](#pre-requisites)
     + [Contribution to the Repo](#contribution-to-the-repo)
   * [Configuring Your System](#configuring-your-system)
+<<<<<<< Updated upstream
     + [`docker_template`](#docker_template)
+=======
+    + [Docker Template Setup — Recommended for Students](#docker-template-setup--recommended-for-students)
+>>>>>>> Stashed changes
   * [Working on the Project](#working-on-the-project)
     + [Project Goal](#project-goal)
     + [Understanding the Deliverables](#understanding-the-deliverables)
@@ -56,6 +64,34 @@ Follow these steps in order:
   `SQL`, `Mongo`, `Airflow`, `Dask`)
 - Through the class projects you will learn how a specific tool fits your data
   science, data engineering, machine learning workflows
+
+## Quick Start
+
+- Change directory to your project folder:
+  ```bash
+  > cd ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+  ```
+
+- Copy the project template files into your directory:
+  ```bash
+  > cp -r ~/src/umd_classes1/class_project/project_template/* .
+  ```
+
+- Build the Docker image:
+  ```bash
+  > ./docker_build.sh
+  ```
+
+- Launch Jupyter to work on the notebooks:
+  ```bash
+  > ./docker_jupyter.sh
+  ```
+
+- Open the notebooks in this order:
+  1. **`{project}.API.ipynb`**: Start here to explore the tool's native API and
+     core features
+  2. **`{project}.example.ipynb`**: Proceed to this notebook to build and
+     demonstrate your end-to-end application
 
 ## Choosing a Project
 
@@ -190,10 +226,9 @@ Follow these steps in order:
     - Example: If you cloned the repo on your laptop for `DATA605`, your
       directory should be:
       `~/src/umd_classes1/class_project/DATA605/Spring2025/projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`
-  - Copy the template files to the project directory (choose one of the example
-    tutorials as a starting point):
+  - Copy the project template to your directory:
     ```bash
-    > cp -r ~/src/umd_classes1/class_project/docker_template_example/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+    > cp -r ~/src/umd_classes1/class_project/project_template/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
     ```
   - Start working on the files
 
@@ -215,20 +250,25 @@ Follow these steps in order:
 
 ## Configuring Your System
 
+<<<<<<< Updated upstream
 Before starting implementation, set up the `docker_template` workflow below.
 Finalize your setup before proceeding with development.
+=======
+Before starting implementation, set up the `Docker`-based workflow from the
+project template.
+>>>>>>> Stashed changes
 
-### `docker_template`
+### Docker Template Setup — Recommended for Students
 
-- There are simple scripts (`docker_build.sh`, `docker_bash.sh`,
-  `docker_jupyter.sh`) to help you build the container, launch it, and debug it
+- Each project gets its own directory with a set of standard scripts
+  (`docker_build.sh`, `docker_bash.sh`, `docker_jupyter.sh`) to build the
+  container, launch it, and debug it
+  - This is the same approach used for the tutorials in this repo (e.g.,
+    `tutorials/autogen`, `tutorials/tensorflow`)
 
-- In this approach each directory is different and nothing is shared among
-  directories and projects
-  - The only common part is that there are scripts with a shared interface that
-    makes it easy to understand how to run the basic functionalities
-  - This is the approach we use for the `data605/tutorials`
+- The template lives at `class_project/project_template`
 
+<<<<<<< Updated upstream
 - Examples are:
   - `class_project/docker_template`
   - `class_project/docker_template_example`
@@ -239,15 +279,22 @@ Finalize your setup before proceeding with development.
   ```
   - Then you customize the `Dockerfile`, expose other ports, or add
     project-specific dependencies as needed
+=======
+- To start a new project, copy the template:
+  ```bash
+  > cp -r class_project/project_template ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+  ```
+  - Then customize the `Dockerfile`, expose additional ports, or add
+    project-specific dependencies in `requirements.txt` as needed
+>>>>>>> Stashed changes
 
 - Pros
   - Very simple to use: just copy and modify
+  - Mirrors the structure of every tutorial in the repo
 
 - Cons
-  - Lots of code repetition
-  - No reuse: adding a functionality to one script doesn't apply to the rest of
-    the scripts
-  - Bash scripts are difficult to maintain and error prone
+  - Each directory is self-contained; improvements to scripts in one project do
+    not propagate to others
 
 ## Working on the Project
 
@@ -266,21 +313,20 @@ Finalize your setup before proceeding with development.
 
 ### Understanding the Deliverables
 
-- Use the example tutorial projects in `docker_template_example`
-  to understand the deliverables and the coding
-  style. They consist of:
+- Use the example tutorials (e.g., `tutorials/autogen`, `tutorials/tensorflow`)
+  and `class_project/project_template` to understand the deliverables and
+  coding style. They consist of:
 
-- **Utils Module**:
-  - This file is meant to contain helper functions, reusable logic, and package
-    wrappers
-  - Keep the notebooks focused on documentation and outputs. Place any logic or
-    workflow functions inside this module
-- **Scripts/Notebooks**:
-  - You will work on one package file and one Example (Your project) file
-  - We encourage you to use `Python` files (Utils module) and call the code from
-    notebooks
-- **Markdowns**:
-  - One markdown file linked to each `python` script, i.e, package and example
+- **Utils Module** (`{project}_utils.py`):
+  - Contains helper functions, reusable logic, and wrappers around the tool
+  - Keep the notebooks focused on documentation and outputs; place all logic
+    inside this module
+- **API Notebook** (`{project}.API.ipynb`):
+  - Explores the tool's native API: core classes, functions, and configuration
+  - Describes the lightweight wrapper layer you have written on top
+- **Example Notebook** (`{project}.example.ipynb`):
+  - Demonstrates an end-to-end application using your wrapper layer
+  - Calls functions from `{project}_utils.py` to keep cells concise
 
 For more guidance on this structure and the rationale behind it, see
 [How to write the
@@ -288,42 +334,50 @@ Tutorial](https://github.com/gpsaggese/umd_classes/blob/master/website/docs/blog
 
 In general:
 
-- **For package**: you are expected to describe the package, its architecture, etc
-- **For example**: You are expected to use the project tool according to the
-  specifications mentioned in the project description
+- **For API notebook**: describe the tool's architecture, key abstractions, and
+  how your wrapper simplifies it
+- **For example notebook**: demonstrate the tool according to the specifications
+  in your project description
 
 ## Submission
 
 Your submission must include the following files:
 
+<<<<<<< Updated upstream
 **Important**: "package" here refers to the tool's internal interface—not an
 external data-provider package. Please keep the focus on the tool itself.
 
 - `XYZ.API.ipynb`:
   - A `Jupyter` notebook demonstrating usage of the native package and your
+=======
+- `XYZ.API.ipynb`:
+  - A `Jupyter` notebook demonstrating usage of the tool's native API and your
+>>>>>>> Stashed changes
     wrapper layer, with clean, minimal cells
   - Document the native programming interface (classes, functions,
     configuration objects) of your chosen tool or library
-  - Describe the lightweight wrapper layer you have written on top of this
-    native package
+  - Describe the lightweight wrapper layer you have written on top
 
 - `XYZ.example.ipynb`:
-  - A `Jupyter` notebook corresponding to the example above, demonstrating
-    end-to-end functionality
-  - A markdown file presenting a complete example of an application that uses
-    your package layer
+  - A `Jupyter` notebook demonstrating end-to-end functionality
+  - Shows a complete application that uses your wrapper layer
 
 - `XYZ_utils.py`:
   - A `Python` module containing reusable utility functions and wrappers around
-    the package
+    the tool
   - The notebooks should invoke logic from this file instead of embedding
     complex code inline
 
 ### Difference Between `{project}.API.*` and `{project}.example.*`
 
+<<<<<<< Updated upstream
 - **`{project}.API.*`**: stable contract-only layer. Holds dataclasses, enums,
   and abstract service interfaces so anyone can integrate without pulling in
   your runtime code
+=======
+- **`{project}.API.*`**: explores the tool's native API, key abstractions, and
+  the lightweight wrapper layer you build on top
+>>>>>>> Stashed changes
 
   ```python
   from dataclasses import dataclass
@@ -453,14 +507,11 @@ COURSE_CODE/
 
 The layout of each project should follow the examples in:
 
-- Example for
-  [`langchain` tutorial](https://github.com/causify-ai/tutorials/tree/master/tutorial_langchain)
-- Examples for
-  [`neo4j`](https://github.com/causify-ai/tutorials/tree/master/tutorial_neo4j)
-- Example for
-  [`open_ai` tutorial](https://github.com/causify-ai/tutorials/tree/master/tutorial_openai)
-- Example for
-  [`github` tutorial (class_style)](https://github.com/causify-ai/tutorials/tree/master/docker_template_example)
-
-- Note that the tutorials from `DATA605` class are built using a simpler approach
-  for `Docker` and `bash` (e.g., `bash` scripts instead of `Python` code)
+- [`tutorials/autogen`](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/autogen)
+  — the closest reference for the expected structure (`docker_build.sh`,
+  `autogen.API.ipynb`, `autogen.example.ipynb`, `autogen_utils.py`)
+- [`tutorials/tensorflow`](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/tensorflow)
+  — another self-contained example following the same template
+- [`class_project/project_template`](https://github.com/gpsaggese/umd_classes/tree/master/class_project/project_template)
+  — the canonical starting point with blank `template.API.ipynb` and
+  `template.example.ipynb` notebooks

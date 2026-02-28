@@ -65,8 +65,8 @@ All tutorials maintain these standards:
 ## Content
 
 - Each tutorial about `XYZ` contains:
-  1. A Docker container with everything needed to build and run using the
-     Causify `dev-system` format or a simple set of bash scripts
+  1. A Docker container with everything needed to build using a simple set of
+     bash scripts
   2. A markdown `XYZ.API.md` about the technology described:
      - The native API
      - The software layer written by us on top of the native API
@@ -189,6 +189,6 @@ All tutorials maintain these standards:
 # References
 
 - A description of the Docker build system is
-  [`class_project/project_template/README.md`](https://github.com/gpsaggese/umd_classes/blob/master/class_project/project_template/README.md)
+  [project_template/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/project_template/README.md)
 - [Class project FAQs](https://github.com/gpsaggese/umd_classes/blob/master/class_project/class_project_FAQs.md)
 - [Class project README](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)

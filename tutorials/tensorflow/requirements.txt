@@ -1,0 +1,12 @@
+ipywidgets
+matplotlib
+numpy
+pandas>=2.1.1
+plotly
+pyarrow
+scikit-learn
+seaborn
+tensorflow
+tensorflow-probability
+tf-keras
+tqdm
