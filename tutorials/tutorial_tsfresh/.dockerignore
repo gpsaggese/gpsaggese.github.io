@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+client_venv.helpers/
+venv/
+.env/
+.envrc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local data (if large / not needed in image)
+data/
+uci_har_data/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker artifacts
+docker_build.sh
+docker_push.sh
+docker_clean.sh
+docker_exec.sh
+docker_cmd.sh
+docker_bash.sh
+docker_jupyter.sh
+docker_name.sh
+run_jupyter.sh
