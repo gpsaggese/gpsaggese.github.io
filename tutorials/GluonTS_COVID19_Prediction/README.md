@@ -43,7 +43,7 @@ Save to `data/` directory:
 
 Or run:
 ```bash
-python utils_data_download.py
+python utils.py
 ```
 
 ### Build and Run
@@ -70,19 +70,10 @@ Opens at http://localhost:8888
 **Notebooks**
 - `GluonTS.API.ipynb` — GluonTS fundamentals with synthetic data
 - `GluonTS.example.ipynb` — COVID-19 end-to-end application
-- `GluonTS.example.md` — Guide (auto-synced with notebook)
 
 **Utilities**
-- `utils_synthetic.py` — Synthetic data generation for the API notebook
-- `utils_data_download.py` — Download data from Google Drive
-- `utils_data_io.py` — Load case, death, and mobility data
-- `utils_preprocessing.py` — Aggregate, merge, engineer features
-- `utils_analysis.py` — Correlation analysis and data checks
-- `utils_gluonts.py` — Convert to GluonTS format
-- `utils_models.py` — Train DeepAR, SimpleFeedForward, DeepNPTS
-- `utils_evaluation.py` — Calculate metrics
-- `utils_visualization.py` — Plotting code
-- `utils_notebook_loader.py` — Quick data loader
+- `utils.py` — Consolidated utilities: data I/O, download, preprocessing,
+  GluonTS conversion, model training, evaluation, visualization, synthetic data
 
 **Data** (auto-downloaded)
 - `data/cases.csv` — Daily confirmed cases
@@ -102,7 +93,7 @@ The notebooks are organized for learning. Implementation details (data loading, 
 
 Instead of notebook cells with 20 lines of matplotlib code, you see:
 ```python
-import utils_visualization as viz
+import utils as viz
 viz.plot_data_overview(train_df, test_df)
 ```
 
@@ -198,7 +189,7 @@ If it's empty, go back to the "Data Setup" section above and run the downloader.
 
 ```bash
 # Download data (only needed if automatic download failed)
-python utils_data_download.py
+python utils.py
 
 # Build Docker image
 ./docker_build.sh
