@@ -39,29 +39,29 @@ prompts, no custom backend, just clean OAuth and Smithery.
 
 - Google does not allow apps to access Gmail using usernames and passwords.
 - Instead, your app must:
-  1. Redirect the user to Google
-  2. Ask permission for specific scopes
-  3. Receive a temporary authorization code
-  4. Exchange it for access and refresh tokens
-  5. Use tokens to call the Gmail API
+  - Redirect the user to Google
+  - Ask permission for specific scopes
+  - Receive a temporary authorization code
+  - Exchange it for access and refresh tokens
+  - Use tokens to call the Gmail API
 - This protects users and allows them to revoke access at any time.
 
 ## Step 1 — Create a Google Cloud Project
 
-1. Open [Google Cloud Console](https://console.cloud.google.com)
-2. Click the project selector (top left)
-3. Click **New Project**
-4. Give it a name (example: `gmail-integration`)
-5. Click **Create**
+- Open [Google Cloud Console](https://console.cloud.google.com)
+- Click the project selector (top left)
+- Click **New Project**
+- Give it a name (example: `gmail-integration`)
+- Click **Create**
 
 - You now have an isolated environment where APIs and credentials live.
 
 ## Step 2 — Enable the Gmail API
 
-1. Navigate to **APIs & Services → Library**
-2. Search for **Gmail API**
-3. Open it
-4. Click **Enable**
+- Navigate to **APIs & Services → Library**
+- Search for **Gmail API**
+- Open it
+- Click **Enable**
 
 - Most OAuth errors come from forgetting this step.
 
@@ -230,15 +230,15 @@ prompts, no custom backend, just clean OAuth and Smithery.
 
 - Install the Smithery CLI:
   ```bash
-  npm install -g @smithery/cli
+  > npm install -g @smithery/cli
   ```
 - Login (opens browser OAuth):
   ```bash
-  smithery login
+  > smithery login
   ```
 - Install the Gmail integration:
   ```bash
-  smithery install gmail
+  > smithery install gmail
   ```
 - This step automatically:
   - Installs the Gmail MCP server
@@ -249,41 +249,41 @@ prompts, no custom backend, just clean OAuth and Smithery.
 
 - Create the Claude Code config directory:
   ```bash
-  mkdir ~/.config/claude-code
+  > mkdir ~/.config/claude-code
   ```
 - Check your config home:
   ```bash
-  echo $XDG_CONFIG_HOME
+  > echo $XDG_CONFIG_HOME
   ```
 
 ### Step 3 — Inspect the Installed MCP Server
 
 - Smithery writes a server definition file. Verify it exists:
   ```bash
-  ls ~/.config/claude-code/mcp_servers.json
+  > ls ~/.config/claude-code/mcp_servers.json
   ```
 - Pretty-print it:
   ```bash
-  cat ~/.config/claude-code/mcp_servers.json | jq
+  > cat ~/.config/claude-code/mcp_servers.json | jq
   ```
 
 ### Step 4 — Link MCP to Claude Desktop
 
 - Find where `npx` lives:
   ```bash
-  which npx
+  > which npx
   ```
 - Edit the MCP config if needed:
   ```bash
-  vi ~/.config/claude-code/mcp_servers.json
+  > vi ~/.config/claude-code/mcp_servers.json
   ```
 - Copy it into Claude's home config:
   ```bash
-  cp ~/.config/claude-code/mcp_servers.json ~/.claude/mcp_servers.json
+  > cp ~/.config/claude-code/mcp_servers.json ~/.claude/mcp_servers.json
   ```
 - You may also want to inspect the main Claude config:
   ```bash
-  vi ~/.claude.json
+  > vi ~/.claude.json
   ```
 
 ### Step 5 — Restart Claude
@@ -293,8 +293,8 @@ prompts, no custom backend, just clean OAuth and Smithery.
 ### Step 6 — Test It
 
 - Try:
-  ```text
-  summarize my latest email
+  ```claude
+  claude> summarize my latest email
   ```
 - If connected correctly, Claude will ask permission once, then call Gmail
   automatically.
@@ -316,11 +316,11 @@ prompts, no custom backend, just clean OAuth and Smithery.
   - Confirm `~/.claude/mcp_servers.json` exists
 - Permission errors — re-run:
   ```bash
-  smithery login
-  smithery install gmail
+  > smithery login
+  > smithery install gmail
   ```
 - `jq` not installed:
   ```bash
-  brew install jq
+  > brew install jq
   ```
 - You now have a local AI email agent powered by Claude Code and MCP.
