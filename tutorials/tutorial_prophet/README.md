@@ -1,65 +1,34 @@
-<!-- toc -->
+# Prophet Tutorial
 
-- [Project files](#project-files)
-- [Setup and Dependencies](#setup-and-dependencies)
-  * [Building and Running the Docker Container](#building-and-running-the-docker-container)
-    + [Environment Setup](#environment-setup)
+- This folder contains the setup for running Prophet time series forecasting
+  tutorials within a containerized environment
 
-<!-- tocstop -->
+## Quick Start
 
-
-This project contains the following files
-
-- Boilerplate files to get the project run in `//tutorials`
-  - `changelog.txt`
-  - `conftest.py`
-  - `invoke.yaml`
-  - `pip_list.txt`
-  - `poetry.lock.out`
-  - `pytest.ini`
-  - `repo_config.yaml`
-  - `tasks.py`
-
-- `README.md`: This file
-- `tutorial_prophet.ipynb`: a notebook implementing a project using Prophet
-- `tutorial_prophet.py`: Python version of the Jupyter notebook
-- `prophet_model.py`: code implementing the native packages of Prophet
-
-- `dev_scripts_tutorial_prophet` boilerplate files
-- `devops` mostly boilerplate files
-  - `devops/docker_build/pyproject.toml`: contains the dependency of the package
-    in Poetry format
-
-# Setup and Dependencies
-
-## Building and Running the Docker Container
-
-- Go to the top of the repo
-  ```
-  > cd $GIT_ROOT
-  ```
-- Build the thin environment
+- From the root of the repository, change your directory to the Prophet tutorial
+  folder:
   ```bash
-  > ./helpers_root/dev_scripts_helpers/thin_client/build.py
-  ```
-- Go to the project dir
-  ```
-  > cd tutorial_prophet
-  ```
-- Activate virtual environment:
-  ```bash
-  > source dev_scripts_tutorial_prophet/thin_client/setenv.sh
-  ```
-- Build Docker Image:
-  ```bash
-  > i docker_build_local_image --version 1.1.0
-  ```
-- Run Container:
-  ```bash
-  > i docker_bash --skip-pull --stage local --version 1.1.0
-  ```
-- Launch Jupyter Notebook:
-  ```bash
-  > i docker_jupyter --skip-pull --stage local --version 1.1.0 -d
+  > cd tutorials/tutorial_prophet
   ```
 
+- Build the Docker image:
+  ```bash
+  > ./docker_build.sh
+  ```
+
+- Launch Jupyter Lab inside the container:
+  ```bash
+  > ./docker_jupyter.sh
+  ```
+
+- Once `./docker_jupyter.sh` is running, follow this sequence to explore the
+  tutorials:
+  1. **`prophet.API.ipynb`**: Start here to learn the core Prophet API —
+     basic usage, trend types, seasonality, holidays, external regressors,
+     and cross-validation with small self-contained examples.
+  2. **`prophet.example.ipynb`**: Proceed to this notebook for a complete
+     end-to-end forecasting workflow on a synthetic daily time series with
+     controlled trend, seasonality, holiday, and autoregressive components.
+
+- For more information on the Docker build system refer to the [Project
+  template README](https://github.com/gpsaggese/umd_classes/blob/master/class_project/project_template/README.md)
