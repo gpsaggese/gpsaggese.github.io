@@ -152,9 +152,7 @@ def create_markdown_file(
         markdown_path = str(pathlib.Path(out_dir) / file_name)
         # In incremental mode skip projects whose output already exists.
         if incremental and pathlib.Path(markdown_path).exists():
-            _LOG.warning(
-                "Skipping (already exists): %s", file_name
-            )
+            _LOG.warning("Skipping (already exists): %s", file_name)
             continue
         if dry_run:
             _LOG.info("Would generate: %s", file_name)
@@ -170,9 +168,7 @@ def create_markdown_file(
         cmd = f"{lint_script} -i {markdown_path}"
         hsystem.system(cmd, suppress_output=False)
         # Base GitHub URL for generated project files.
-        base_dir = (
-            "https://github.com/gpsaggese/umd_classes/tree/master"
-        )
+        base_dir = "https://github.com/gpsaggese/umd_classes/tree/master"
         github_url = f"{base_dir}/{out_dir}/{file_name}"
         file_githublinks_df.loc[len(file_githublinks_df)] = [
             project_name,
@@ -239,14 +235,10 @@ def _main(parser: argparse.ArgumentParser) -> None:
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     # Expand user/relative paths to absolute ones early to avoid surprises.
     input_path = str(pathlib.Path(args.input).expanduser().resolve())
-    out_dir = str(
-        pathlib.Path(args.out_dir).expanduser().resolve()
-    )
+    out_dir = str(pathlib.Path(args.out_dir).expanduser().resolve())
     incremental = not args.no_incremental
     dry_run = args.dry_run
-    _LOG.info(
-        "incremental=%s dry_run=%s", incremental, dry_run
-    )
+    _LOG.info("incremental=%s dry_run=%s", incremental, dry_run)
     _LOG.info("Reading CSV from %s", input_path)
     df = _read_csv(input_path)
     _LOG.info("Processing %d tools", len(df))
