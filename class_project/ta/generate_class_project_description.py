@@ -148,7 +148,7 @@ def create_markdown_file(
         hio.create_dir(out_dir, incremental=True)
     for _, row in tqdm.tqdm(rows.iterrows(), total=len(rows)):
         project_name = row["Tool"]
-        file_name = f"{project_name}_Project_Description.md"
+        file_name = f"{project_name.replace(' ', '_')}_Project_Description.md"
         markdown_path = str(pathlib.Path(out_dir) / file_name)
         # In incremental mode skip projects whose output already exists.
         if incremental and pathlib.Path(markdown_path).exists():

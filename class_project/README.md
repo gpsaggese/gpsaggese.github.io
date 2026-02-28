@@ -1,12 +1,13 @@
 <!-- toc -->
 
 - [Summary](#summary)
+- [Getting Started (Quick Checklist)](#getting-started-quick-checklist)
 - [Class Project Guidelines](#class-project-guidelines)
   * [Choosing a Project](#choosing-a-project)
   * [Pre-Requisites](#pre-requisites)
     + [Contribution to the Repo](#contribution-to-the-repo)
   * [Configuring Your System](#configuring-your-system)
-    + [Simple Docker Setup (`simple`) — Recommended for Students](#simple-docker-setup-simple--recommended-for-students)
+    + [`docker_template`](#docker_template)
   * [Working on the Project](#working-on-the-project)
     + [Project Goal](#project-goal)
     + [Understanding the Deliverables](#understanding-the-deliverables)
@@ -17,6 +18,33 @@
   * [Examples of a Class Project](#examples-of-a-class-project)
 
 <!-- tocstop -->
+
+# Summary
+
+This guide explains how to complete the class project for courses such as
+`DATA605` and `MSML610`. You will pick a big data, AI, or data science
+technology from the sign-up sheet, build a small working system with it,
+write a hands-on tutorial, and submit everything via a GitHub Pull Request.
+The goal is practical, documented, reproducible code — not just a report.
+
+## Getting Started (Quick Checklist)
+
+Follow these steps in order:
+
+1. **Pick a project** — choose from the sign-up sheet
+   ([Choosing a Project](#choosing-a-project))
+2. **Fork and clone the repos** — `umd_classes` and `helpers`
+   ([Pre-Requisites](#pre-requisites))
+3. **Set up Docker** — install Docker and use the `docker_template` workflow
+   ([Configuring Your System](#configuring-your-system))
+4. **Create a GitHub issue** — title it with your project tag
+   ([Contribution to the Repo](#contribution-to-the-repo))
+5. **Create your branch** — name it `TutorTask{N}_{project_tag}`
+   ([Contribution to the Repo](#contribution-to-the-repo))
+6. **Build the deliverables** — `{project}.API.*`, `{project}.example.*`, and
+   `{project}_utils.py` ([Understanding the Deliverables](#understanding-the-deliverables))
+7. **Open a Pull Request** — add reviewers and iterate
+   ([Submission Guidelines](#submission-guidelines))
 
 # Class Project Guidelines
 
@@ -66,10 +94,13 @@
   sufficient time for planning and execution
 - The project duration is approximately **4 to 6 weeks**, making timely
   selection crucial
-- Your grade will be based on
-  - Project complexity
-  - Effort and understanding
-  - Adherence to guidelines
+- Your grade will be based on:
+  - **Project complexity**: depth and sophistication of the technology
+    used
+  - **Effort and understanding**: demonstrated grasp of the tool and
+    quality of the tutorial
+  - **Adherence to guidelines**: correct structure, naming, and PR
+    workflow
 
 **NOTE**:
 
@@ -80,7 +111,7 @@
   - To save costs/improve usage, you should make sure that the services are
     turned off/shutdown when not being used
 
-## Pre-requisites
+## Pre-Requisites
 
 - Watch, star, and fork the repos
   - [`umd_classes`](https://github.com/gpsaggese/umd_classes)
@@ -184,9 +215,8 @@
 
 ## Configuring Your System
 
-Before starting implementation, you need to choose **one** of the two supported
-`Docker`-based workflows. Finalize your setup choice before proceeding with
-development.
+Before starting implementation, set up the `docker_template` workflow below.
+Finalize your setup before proceeding with development.
 
 ### `docker_template`
 
@@ -204,7 +234,7 @@ development.
   - `class_project/docker_template_example`
 
 - To use this approach:
-  ```
+  ```bash
   > cp -r class_project/docker_template ...
   ```
   - Then you customize the `Dockerfile`, expose other ports, or add
@@ -269,9 +299,9 @@ Your submission must include the following files:
 **Important**: "package" here refers to the tool's internal interface—not an
 external data-provider package. Please keep the focus on the tool itself.
 
-- `XYZ.package.ipynb`:
-  - A `Jupyter` notebook demonstrating usage of the native package and your wrapper
-    layer, with clean, minimal cells
+- `XYZ.API.ipynb`:
+  - A `Jupyter` notebook demonstrating usage of the native package and your
+    wrapper layer, with clean, minimal cells
   - Document the native programming interface (classes, functions,
     configuration objects) of your chosen tool or library
   - Describe the lightweight wrapper layer you have written on top of this
@@ -289,9 +319,9 @@ external data-provider package. Please keep the focus on the tool itself.
   - The notebooks should invoke logic from this file instead of embedding
     complex code inline
 
-### Difference Between `{project}.package.*` and `{project}.example.*`
+### Difference Between `{project}.API.*` and `{project}.example.*`
 
-- **`{project}.package.*`**: stable contract-only layer. Holds dataclasses, enums,
+- **`{project}.API.*`**: stable contract-only layer. Holds dataclasses, enums,
   and abstract service interfaces so anyone can integrate without pulling in
   your runtime code
 
@@ -339,13 +369,13 @@ external data-provider package. Please keep the focus on the tool itself.
   ```
 
 ### Folder Structure
-```
+```text
 COURSE_CODE/
 └── Term20xx/
     └── projects/
         └── TutorTaskXX_Name_of_issue/
             ├── {project}_utils.py
-            ├── {project}.package.ipynb
+            ├── {project}.API.ipynb
             ├── {project}.example.ipynb
             ├── Dockerfile
             └── README.md
@@ -369,15 +399,19 @@ COURSE_CODE/
   - Mention expected terminal outputs when running scripts (e.g., starting
     `Jupyter`, mounting volumes, etc.) E.g.,
 
-  ```md
-  ### To Build the Image
+  Your README should contain sections like:
 
-  ''' <- triple backticks here bash docker_build.sh '''
+      ### To Build the Image
 
-  ### To Run the Container
+      ```bash
+      bash docker_build.sh
+      ```
 
-  ''' bash docker_bash.sh '''
-  ```
+      ### To Run the Container
+
+      ```bash
+      bash docker_bash.sh
+      ```
 
 - Visual documentation:
   - Include diagrams and flowcharts when relevant (e.g., using `mermaid`) E.g.,
