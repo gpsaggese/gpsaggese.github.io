@@ -40,16 +40,6 @@
 - Each student or group should pick one project from the sign up sheet shared
   around the mid of course
   - Each project has a description in the corresponding directory
-  - Examples
-    - `MSML610` Fall 2025:
-      - [List of projects](https://docs.google.com/spreadsheets/d/1H_Ev1psuPpUrrRcmBrBb2chfurSo5rPcAdd6i2SIUTQ/edit?gid=0#gid=0)
-      - [Description of projects](https://github.com/gpsaggese/umd_classes/tree/master/class_project/MSML610/Fall2025/project_descriptions)
-    - `DATA605` Spring 2025:
-      - [Description of projects](https://github.com/gpsaggese/umd_classes/blob/master/class_project/DATA605/Spring2025/project_description.md)
-
-- You need to fill out the
-  [sign up form](https://docs.google.com/forms/d/1TPCt7UFnTOEICltrPU3sIu9RoCbILR32zHbZNzRi9jw/edit)
-  - Once done, we will add you to the repo so that you can start working
 
 - The goal of the project is to get your hands dirty and figure things out
   - Often solving problems is about trying different approaches until one
