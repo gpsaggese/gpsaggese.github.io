@@ -12,45 +12,6 @@
 - Through the class projects you will learn how a specific tool fits your data
   science, data engineering, machine learning workflows
 
-## Quick Start
-
-- Change directory to your project folder:
-  ```bash
-  > cd ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
-  ```
-
-- Copy the project template files into your directory:
-  ```bash
-  > cp -r ~/src/umd_classes1/class_project/project_template/* .
-  ```
-
-- Customize the content of the files `Dockerfile`, `requirements.txt`
-
-- Build the Docker image:
-  ```bash
-  > ./docker_build.sh
-  ```
-
-- Launch Jupyter to work on the notebooks:
-  ```bash
-  > ./docker_jupyter.sh
-  ```
-
-- To open a bash shell inside the container for debugging:
-  ```bash
-  > ./docker_bash.sh
-  ```
-
-- To remove the container and free resources:
-  ```bash
-  > ./docker_clean.sh
-  ```
-
-- Complete the notebooks in this order:
-  1. **`{project}.API.ipynb`**: explore the tool's native API and core features
-  2. **`{project}.example.ipynb`**: Build and demonstrate your end-to-end
-     application
-
 ## Choosing a Project
 
 ### Project Types
@@ -71,7 +32,7 @@ There are three types of projects:
 
 - The project is done by a single student or a group of students
   - Students should not have exactly the same project
-  - Groups are made of less than 3 students (`<= 3`)
+  - Groups are made of at most 3 students (`<= 3`)
   - All team members receive the same score, so choose partners carefully
   - Students working on different projects can discuss and help each other
 
@@ -90,8 +51,8 @@ There are three types of projects:
 - We expect a project to take 6-8 full days to complete (e.g., 40 hours)
 
 - Your project should align with your learning goals and interests
-- Project selection must be finalized within 1 or 2 weeks to allow
-  sufficient time for planning and execution
+- Project selection must be finalized within 1 or 2 weeks to allow sufficient
+  time for planning and execution
 
 - Your grade will be based on:
   - **Project complexity**: depth and sophistication of the technology used
@@ -132,8 +93,8 @@ There are three types of projects:
 - Install `Docker` on your computer
   - You can use `Docker` natively on `Mac` and `Linux`
   - Use `VMware` in `Windows` or dual-boot
-    - If you have problems installing it on your laptop, it is recommended to use
-      one computer from `UMD` laboratories
+    - If you have problems installing it on your laptop, it is recommended to
+      use one computer from `UMD` laboratories
 
 - Check your `GitHub` issue on https://github.com/gpsaggese/umd_classes/issues
   - Make sure you are assigned to it
@@ -151,7 +112,7 @@ There are three types of projects:
   we rely on (e.g., `Git`, `Docker`, `Jupyter`, `Python`, `bash`), take time to
   get familiar with them through the DATA605 tutorials
 
-### Contribution to the Repo
+## Contribution to the Repo
 
 - You will work in the same way open-source developers contribute to a project
 - Each project will need to be organized like a proper open source project,
@@ -164,14 +125,14 @@ There are three types of projects:
 - Each step of the project is delivered by committing code to the dir
   corresponding to your project and doing a `GitHub` Pull Request (PR)
   - You should commit regularly and not just once at the end
-  - We will specifically do a reviews of intermediate results of the project and
+  - We will specifically do reviews of intermediate results of the project and
     give you some feedback on what to improve (adopting `Agile` methodology)
 
 - **Project Tag Naming Convention**
-  - Your project tag should follows this format:
+  - Your project tag should follow this format:
     `Spring{year}_{project_title_without_spaces}`
     - Example: if your project title is **"Redis cache to fetch user
-      profiles"** for Spring 2025, your project branch will be:
+      profiles"** for Spring 2025, your project tag will be:
       **`Spring2025_Redis_cache_to_fetch_user_profiles`**
 
 - **Create a GitHub Issue**
@@ -201,12 +162,12 @@ There are three types of projects:
 - **Add Files Only in Your Project Directory**
   - Add your project files under the following directory:
     `{GIT_ROOT}/class_project/{COURSE_CODE}/{TERM}{YEAR}/projects/{branch_name}`
-    - Example: If you cloned the repo on your laptop for `DATA605`, your
-      directory should be:
+    - Example for DATA605 Spring 2025:
       `~/src/umd_classes1/class_project/DATA605/Spring2025/projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`
   - Copy the project template to your directory:
     ```bash
-    > cp -r ~/src/umd_classes1/class_project/project_template/ ~/src/umd_classes1/class_project/COURSECODE/Term20xx/projects/{branch_name}
+    > cp -r ~/src/umd_classes1/class_project/project_template/ \
+        ~/src/umd_classes1/class_project/DATA605/Spring2025/projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles
     ```
   - Start working on the files
 
@@ -226,6 +187,46 @@ There are three types of projects:
       - `TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles_1`
       - `TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles_2`
 
+## Quick Start
+
+- After creating your branch and project directory (see "Contribution to the
+  Repo" above), change directory to your project folder:
+  ```bash
+  > cd ~/src/umd_classes1/class_project/DATA605/Spring2025/projects/{branch_name}
+  ```
+
+- Copy the project template files into your directory (if not already done):
+  ```bash
+  > cp -r ~/src/umd_classes1/class_project/project_template/* .
+  ```
+
+- Customize the content of the files `Dockerfile`, `requirements.txt`
+
+- Build the Docker image:
+  ```bash
+  > ./docker_build.sh
+  ```
+
+- Launch Jupyter to work on the notebooks:
+  ```bash
+  > ./docker_jupyter.sh
+  ```
+
+- To open a bash shell inside the container for debugging:
+  ```bash
+  > ./docker_bash.sh
+  ```
+
+- To remove the container and free resources:
+  ```bash
+  > ./docker_clean.sh
+  ```
+
+- Complete the notebooks in this order:
+  1. **`{project}.API.ipynb`**: explore the tool's native API and core features
+  2. **`{project}.example.ipynb`**: Build and demonstrate your end-to-end
+     application
+
 ## Configuring Your System
 
 ### `docker_template`
@@ -233,35 +234,38 @@ There are three types of projects:
 - There are simple scripts (`docker_build.sh`, `docker_bash.sh`,
   `docker_jupyter.sh`) to help you build the container, launch it, and debug it
 
-- In this approach each directory is different and nothing is shared among
+- In this approach each directory is self-contained and nothing is shared among
   directories and projects
   - The only common part is that there are scripts with a shared interface that
     makes it easy to understand how to run the basic functionalities
   - This is the approach we use for the `data605/tutorials`
 
-- Examples are:
-  - `class_project/docker_template`
-  - `class_project/docker_template_example`
-
 - To use this approach:
-  ```
+  ```bash
   > cp -r class_project/docker_template ...
   ```
-  - Then you customize the `Dockerfile`, expose other ports, or add
+  - Then customize the `Dockerfile`, expose other ports, or add
     project-specific dependencies as needed
 
-- Pros
-  - Very simple to use: just copy and modify
-
-- Cons
-  - Lots of code repetition
-  - No reuse: adding a functionality to one script doesn't apply to the rest of
-    the scripts
-  - Bash scripts are difficult to maintain and error prone
+- Examples are in `class_project/docker_template` and
+  `class_project/docker_template_example`
 
 ## Working on the Project
 
-### Tutorial Goals
+### Tutorial Goal
+
+For your course project, you are not just building something — you are also
+teaching others how to use a Big Data, AI, LLM, or data science technology. The
+deliverable is a hands-on, beginner-friendly tutorial that teaches the
+technology in 60 minutes.
+
+Each 60-minute tutorial follows this time breakdown for a reader:
+
+1. **Setup (5 min)**: Clone repo, start Docker container, verify environment
+2. **Introduction (10 min)**: Read overview markdown, understand use cases
+3. **API Exploration (20 min)**: Work through `{project}.API.ipynb` notebook
+4. **Complete Example (25 min)**: Work through `{project}.example.ipynb`
+   notebook
 
 Each tutorial aims to provide:
 
@@ -269,40 +273,8 @@ Each tutorial aims to provide:
   when to use it
 - **Practical application**: A complete example showing real-world usage and
   working code examples that run immediately
-- **Reproducibility**: Guaranteed to work through automated testing and all
+- **Reproducibility**: Guaranteed to work through automated testing with all
   dependencies and setup handled via Docker
-
-### Technologies Covered
-
-Examples of technologies included in this tutorial series:
-
-- **Big Data**: Spark, Dask, Hadoop
-- **Databases**: PostgreSQL, MongoDB, Redis
-- **Workflow Orchestration**: Airflow, Prefect
-- **Probabilistic Programming**: PyMC, Stan
-- **Machine Learning**: scikit-learn, XGBoost, LightGBM
-- **Deep Learning**: PyTorch, TensorFlow, JAX
-- **LLMs & AI**: LangChain, OpenAI API, Anthropic API
-- **DevOps**: Docker, Docker Compose, Git
-
-### Project Goal
-
-- For your course project, you're not just building something cool, but you're
-  also teaching others how to use a Big Data, AI, LLM, or data science tech
-- As a project report, you'll create a tutorial that's hands-on and
-  beginner-friendly
-  - Think of it as your chance to help a classmate get started with the same
-    tech
-  - The goal of this tutorial is to help pickup a new technology in 60 Minutes
-  - That should make sure the tutorial is not lengthy and covers all the
-    important aspects a developer should know before starting building with that
-    technology
-
-- Each 60-minute tutorial follows this time breakdown for a reader:
-  1. **Setup (5 min)**: Clone repo, start Docker container, verify environment
-  2. **Introduction (10 min)**: Read overview markdown, understand use cases
-  3. **API Exploration (20 min)**: Work through `XYZ.API.ipynb` notebook
-  4. **Complete Example (25 min)**: Work through `XYZ.example.ipynb` notebook
 
 ### Invariants
 
@@ -421,77 +393,22 @@ In general:
 
 Your submission must include the following files:
 
-**Important**: "package" here refers to the tool's internal interface—not an
-external data-provider package. Please keep the focus on the tool itself.
+- `{project}.API.ipynb`:
+  - A `Jupyter` notebook exploring the tool's native API: core classes,
+    functions, and configuration
+  - Describes the lightweight wrapper layer you have written on top
+  - Contains a walkthrough of the library/package with examples
+  - Uses simple/synthetic examples so it runs quickly
 
-- `XYZ.package.ipynb`:
-  - A `Jupyter` notebook demonstrating usage of the native package and your wrapper
-    layer, with clean, minimal cells
-  - Document the native programming interface (classes, functions,
-    configuration objects) of your chosen tool or library
-  - Describe the lightweight wrapper layer you have written on top of this
-    native package
+- `{project}.example.ipynb`:
+  - A `Jupyter` notebook demonstrating an end-to-end application
+  - Calls functions from `{project}_utils.py` to keep cells concise
 
-- `XYZ.example.ipynb`:
-  - A `Jupyter` notebook corresponding to the example above, demonstrating
-    end-to-end functionality
-  - A markdown file presenting a complete example of an application that uses
-    your package layer
-
-- `XYZ_utils.py`:
+- `{project}_utils.py`:
   - A `Python` module containing reusable utility functions and wrappers around
     the package
   - The notebooks should invoke logic from this file instead of embedding
     complex code inline
-
-### Difference Between `{project}.package.*` and `{project}.example.*`
-
-- **`{project}.package.*`**: stable contract-only layer. Holds dataclasses, enums,
-  and abstract service interfaces so anyone can integrate without pulling in
-  your runtime code
-
-  ```python
-  from dataclasses import dataclass
-  from typing import Protocol
-
-  @dataclass
-  class User:
-      id: int
-      email: str
-
-  class AuthService(Protocol):
-      """Authenticate users without revealing storage details."""
-      def register(self, user: User, password: str) -> None: ...
-      def login(self, email: str, password: str) -> str: ...  # returns JWT
-  ```
-
-- **`{project}.example.*`**: runnable reference implementation that satisfies
-  the package with real storage, I/O, and third-party calls
-
-  ```python
-  import sqlite3
-  import bcrypt
-  import jwt
-  from project_package.auth import User, AuthService
-
-  class SqliteAuthService(AuthService):
-      _DB = "users.db"
-
-      def register(self, user: User, password: str) -> None:
-          hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-          with sqlite3.connect(self._DB) as conn:
-              conn.execute(
-                  "INSERT INTO users(id, email, password) VALUES (?,?,?)",
-                  (user.id, user.email, hashed),
-              )
-
-      def login(self, email: str, password: str) -> str:
-          with sqlite3.connect(self._DB) as conn:
-              row = conn.execute("SELECT password FROM users WHERE email=?", (email,)).fetchone()
-          if not row or not bcrypt.checkpw(password.encode(), row[0]):
-              raise PermissionError("invalid credentials")
-          return jwt.encode({"sub": email}, "supersecret", algorithm="HS256")
-  ```
 
 ### Folder Structure
 
@@ -578,18 +495,9 @@ The layout of each project should follow the examples in:
   - Videos:
     [https://drive.google.com/drive/folders/1QLtgPCAS0mqE9cr1hE3UVoIbzakCNtaC](https://drive.google.com/drive/folders/1QLtgPCAS0mqE9cr1hE3UVoIbzakCNtaC)
 
-- If you see any problem in the tutorials (code or video), pls send an email to
-  me with your TAs in cc. To make this more interesting, there might be (or maybe
-  not!) some mistakes on purpose. See if you find them. Happy egg hunt!
-
-## A Note From Frank Underwood
-
-- If you are interested in working in our research team, the best way to be
-  noticed is with thoughtful questions, showing that you have thought about the
-  question and read the material.
-
-- Like Frank Underwood said: "Don't disappoint me. And more importantly, do not
-  disappoint me".
+- If you see any problem in the tutorials (code or video), please send an email
+  to me with your TAs in cc. To make this more interesting, there might be (or
+  maybe not!) some mistakes on purpose. See if you find them!
 
 ## Grading Rubric
 
@@ -630,8 +538,8 @@ The layout of each project should follow the examples in:
   - Is the code clean, modular, and easy to understand
   - Are comments and docstrings used appropriately to explain non-obvious logic
   - Is the overall structure of the codebase sensible and maintainable
-  - Does it follow consistent style conventions (e.g., PEP 8 or another relevant
-    standard)
+  - Does it follow consistent style conventions (e.g., PEP 8 or another
+    relevant standard)
 
 - PR quality (5 points)
   - Was the pull request (PR) well-organized, with meaningful commit messages
