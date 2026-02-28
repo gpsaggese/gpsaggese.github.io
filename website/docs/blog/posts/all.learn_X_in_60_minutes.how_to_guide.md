@@ -90,8 +90,8 @@ All tutorials maintain these standards:
     time
 
 - The Docker structure and approach should follow the template
-  `class_project/project_template/`
-  - Feel free to copy that directory as a base for 
+  [`class_project/project_template/`](https://github.com/gpsaggese/umd_classes/tree/master/class_project/project_template)
+  - Feel free to copy that directory as a base for
 
 ### Jupyter Notebooks
 
@@ -178,7 +178,8 @@ All tutorials maintain these standards:
 # Checklist
 
 - [ ] Is our Docker approach followed?
-  - If not follow `class_project/project_template/README.md`
+  - If not follow
+    [`class_project/project_template/README.md`](https://github.com/gpsaggese/umd_classes/blob/master/class_project/project_template/README.md)
 - [ ] Is all the possible code in the notebook moved to a `*_utils.py` file?
 - [ ] Is `project.API.ipynb` in the right format?
 - [ ] Do the notebooks run end-to-end?
@@ -187,8 +188,7 @@ All tutorials maintain these standards:
 
 # References
 
-- A description of the Docker build system is 
-  `class_project/project_template/README.md`
-
-- class_project/FAQ.md
-- class_project/README.md
+- A description of the Docker build system is
+  [`class_project/project_template/README.md`](https://github.com/gpsaggese/umd_classes/blob/master/class_project/project_template/README.md)
+- [Class project FAQs](https://github.com/gpsaggese/umd_classes/blob/master/class_project/class_project_FAQs.md)
+- [Class project README](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
