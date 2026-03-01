@@ -33,3 +33,7 @@
   ```bash
   > i docker_jupyter --skip-pull --stage local --version 1.1.0 -d
   ```
+
+## Changelog
+
+- 2026-03-01: Initial release

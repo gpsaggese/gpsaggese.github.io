@@ -76,3 +76,7 @@ A second example of Bayesian Optimization is the use of the Ax library to find t
 Bayesian Optimization is used to find the optimal hyperparameters for a bidding strategy. This strategy is usually based on the prediction of the Click-Through Rate (CTR) for a marketing campaign. In order to demonstrate the optimization of the hyperparameters, a simulation of a CTR prediction model is used.
 
 The creation of this predictive model is described in [dsp_pctr_prediction_model.ipynb](dsp_pctr_prediction_model.ipynb).
+
+## Changelog
+
+- 2026-03-01: Initial release

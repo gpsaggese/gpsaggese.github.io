@@ -78,3 +78,7 @@ Set the `OPENAI_API_KEY` environment variable for API access:
 import os
 os.environ["OPENAI_API_KEY"] = "<your_openai_api_key>"
 ```
+
+## Changelog
+
+- 2026-03-01: Initial release

@@ -15,3 +15,7 @@ Learn tsfresh — automated time series feature extraction — in 60 minutes.
 
 For Docker build system details see the
 [project template README](../../class_project/project_template/README.md).
+
+## Changelog
+
+- 2026-03-01: Initial release

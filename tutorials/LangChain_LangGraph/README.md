@@ -130,3 +130,7 @@ If you feel "I see code but I don't know what layer I'm in," use this heuristic:
 - Deep Agents demos are sandboxed to `workspace/` and `tmp_runs/`, but
   token/password-less Jupyter in `docker-compose.yml` is only for trusted local
   environments
+
+## Changelog
+
+- 2026-03-01: Initial release

@@ -221,3 +221,7 @@ docker ps
 - [JHU COVID-19 Data Repository](https://github.com/CSSEGISandData/COVID-19)
 - [Google COVID-19 Community Mobility Reports](https://www.google.com/covid19/mobility/)
 - [CDC COVID-19 Data Tracker](https://covid.cdc.gov/covid-data-tracker/)
+
+## Changelog
+
+- 2026-03-01: Initial release
