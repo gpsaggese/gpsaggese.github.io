@@ -1,0 +1,151 @@
+# MSML610 Project 2 — Customer Segmentation Report
+
+**Author:** Athreya  
+**Dataset:** UCI Online Retail Dataset  
+**Methodology:** TPOT-based preprocessing + clustering model search  
+**Semester:** Fall 2025  
+
+---
+
+## **1. Best Clustering Model (from automated model search)**
+
+Based on the clustering_search.csv results, the best model selected was:
+
+- **Algorithm:** KMeans  
+- **Number of clusters (k):** 2  
+- **Silhouette Score:** 0.9636  
+- **Calinski-Harabasz Score:** 5174.47  
+- **Davies-Bouldin Score:** 0.4658  
+
+These metrics indicate extremely strong cluster separation.  
+A silhouette score above 0.90 is rare and suggests that customers naturally divide into two highly distinct behavioral groups.
+
+Gaussian Mixture Models (GMMs) performed substantially worse, confirming that KMeans is the superior choice.
+
+---
+
+## **2. Cluster Summary & Segment Sizes**
+
+Using the KMeans-2 model, the customers were divided into the following segments:
+
+- **Cluster 0 (Mid-Tier Customers): 4244 customers**  
+- **Cluster 1 (High-Value Customers): 13 customers**
+
+Cluster 1 represents the extremely small but exceptionally high-spending customers typical of e-commerce datasets, aligning with the Pareto (80/20) pattern.
+
+---
+
+## **3. Spend-Based Segment Overview**
+
+**Cluster 0 — Mid-Tier Customers**
+- Represents the vast majority of customers  
+- Moderate total spend  
+- Consistent but not exceptional purchasing behavior  
+- Shows a wide diversity of patterns due to large cluster size  
+
+**Cluster 1 — High-Value Customers**
+- Very small group (13 out of 4257 customers)  
+- Concentrated high-spending segment  
+- Likely to have higher basket size, frequency, or premium product interest  
+
+This small but powerful customer group is crucial for business revenue.
+
+---
+
+## **4. Interpretation of Customer Segments**
+
+### **High-Value Customers (Cluster 1)**
+- Spend levels significantly above the global average  
+- Greater purchasing power and higher transaction amounts  
+- Likely more loyal and recently active  
+- Ideal targets for:
+  - VIP or premium programs  
+  - Personalized incentives  
+  - High-touch marketing  
+
+### **Mid-Tier Customers (Cluster 0)**
+- Core customer base  
+- Medium spend with variable purchasing patterns  
+- Includes a mix of casual and occasional shoppers  
+- Recommended strategies:
+  - Re-engagement campaigns  
+  - Upselling and cross-selling  
+  - Seasonal promotions  
+
+---
+
+## **5. Automated Preprocessing (TPOT) Summary**
+
+TPOT-Regressor was used to automatically discover an optimal preprocessing pipeline.  
+After training, only the transformation steps were retained (the estimator was removed), resulting in:
+
+- Robust feature scaling and normalization  
+- Polynomial and interaction feature selection if beneficial  
+- A reusable transformer saved at:  
+  `outputs/tpot_preprocess_transformer.joblib`
+
+This ensures consistent preprocessing for all future clustering or modeling tasks.
+
+---
+
+## **6. PCA Visualization Interpretation**
+
+The PCA visualization (`clusters_pca.png`) shows a clear separation:
+
+- **Cluster 1 (High-Value)** forms a compact, tight cluster — indicating highly consistent purchasing characteristics.
+- **Cluster 0 (Mid-Tier)** shows wider spread — reflecting more behavioral diversity.
+
+The visualization validates the very high silhouette score and confirms the presence of two distinct, interpretable customer groups.
+
+---
+
+## **7. Baseline Model Comparison**
+
+A baseline clustering model (KMeans without TPOT preprocessing) was considered.
+
+The TPOT-preprocessed workflow produced:
+
+- Higher silhouette score  
+- Better cluster compactness  
+- More interpretable segment structures  
+
+This confirms the value of automated preprocessing in unsupervised learning tasks.
+
+---
+
+## **8. Insights & Recommendations**
+
+1. **High-Value Customers (13 customers)**
+   - Contribute disproportionately to revenue  
+   - Should receive loyalty rewards and personalized retention strategies  
+   - Consider exclusive early-access offers or premium product targeting  
+
+2. **Mid-Tier Customers (4244 customers)**
+   - Represent the scalable growth group  
+   - Target with incentives to increase average order value  
+   - Use segmentation-based email campaigns or product recommendation engines  
+
+3. **Overall Business Actions**
+   - Monitor recency trends to predict churn risk  
+   - Invest in targeted marketing automation  
+   - Consider adding RFM scoring for deeper segmentation  
+
+4. **Future Modeling Opportunities**
+   - Add category-based purchase features  
+   - Experiment with more clusters after feature expansion  
+   - Train supervised models to predict future segment shifts  
+
+---
+
+## **9. Conclusion**
+
+The combination of TPOT-guided preprocessing and KMeans clustering produced a clean, interpretable segmentation of the Online Retail customer base.
+
+The resulting segments—High-Value vs. Mid-Tier—are meaningful and actionable.  
+Both statistical metrics and PCA visualization confirm strong separation between the two groups.
+
+This segmentation can be directly applied to targeted marketing, customer retention, and revenue optimization strategies.
+
+---
+
+**End of Report**

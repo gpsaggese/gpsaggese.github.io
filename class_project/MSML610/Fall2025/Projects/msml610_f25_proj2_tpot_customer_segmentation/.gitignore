@@ -1,0 +1,16 @@
+# Python venv
+venv/
+__pycache__/
+*.pyc
+
+# Data
+data/*.xlsx
+data/*.csv
+
+# Outputs
+outputs/*.csv
+outputs/*.png
+outputs/*.joblib
+
+# Jupyter
+.ipynb_checkpoints/
