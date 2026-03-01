@@ -31,3 +31,7 @@
 
 - For more informations on the Docker build system refer to [Project template
   readme](https://github.com/gpsaggese/umd_classes/blob/master/class_project/project_template/README.md)
+
+## Changelog
+
+- 2026-03-01: Initial release
