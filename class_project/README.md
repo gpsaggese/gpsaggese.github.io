@@ -560,7 +560,9 @@ The layout of each project should follow the examples in:
 
 - [ ] Is Docker approach followed?
 - [ ] Is all the possible code in the notebook moved to a `*_utils.py` file?
-- [ ] Is `project.API.ipynb` in the right format?
+- [ ] Are `project.API.ipynb` and `project.example.ipynb` in the right format?
 - [ ] Do the notebooks run end-to-end?
-- [ ] Are all the notebooks paired using Jupytext?
-- [ ] Did you run `linters2/lint_branch.sh`?
+
+- Optional
+  - [ ] Did you run `linters2/lint_branch.sh`?
+  - [ ] Are all the notebooks paired using Jupytext?

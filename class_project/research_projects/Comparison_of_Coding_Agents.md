@@ -1,4 +1,4 @@
-# Tool Description
+# Project Description
 
 - AI coding agents = software tools powered by large language models (LLMs) that assist or
   autonomously perform software engineering tasks such as editing files, running tests, and

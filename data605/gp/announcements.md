@@ -101,9 +101,7 @@ have Windows laptop get to install a VM and run linux
 ## Project #1: Choose Your Project (DATA605 Spring 2026)
 
 - Here are the instructions for the class project.
-  - [class_project/class_project_FAQs.md](class_project/class_project_FAQs.md)
   - [class_project/README.md](class_project/README.md)
-  - [all.learn_X_in_60_minutes.how_to_guide.md](all.learn_X_in_60_minutes.how_to_guide.md)
 
 - The projects to choose from are:
   - [DATA605 - Spring 2026 - Sign up sheet](https://docs.google.com/spreadsheets/d/1O1t_DQ6xpFTcnEaT3c6ss_FBlJV2dqNv83nVH9QA124/edit?gid=0#gid=0)
@@ -113,6 +111,7 @@ have Windows laptop get to install a VM and run linux
   - [class_project/DATA605/Spring2026/projects_descriptions/](class_project/DATA605/Spring2026/projects_descriptions/)
 
 - The research projects to choose from:
+  
 
 - The form to sign up for a project is:
   - [DATA605 - Spring 2026 - Class Project](https://docs.google.com/forms/d/1ddzqNN3eV5_2lGcuplRVuBn4oocyCtN3oNHCj9XUSsI/edit)
