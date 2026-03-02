@@ -132,12 +132,12 @@ There are three types of projects:
   - Your project tag should follow this format:
     `Spring{year}_{project_title_without_spaces}`
     - Example: if your project title is **"Redis cache to fetch user
-      profiles"** for Spring 2025, your project tag will be:
-      **`Spring2025_Redis_cache_to_fetch_user_profiles`**
+      profiles"** for Spring 2026, your project tag will be:
+      **`Spring2026_Redis_cache_to_fetch_user_profiles`**
 
 - **Create a GitHub Issue**
   - [ ] Create a **`GitHub` issue** with your **project tag** as the title
-    - Example: `Spring2025_Redis_cache_to_fetch_user_profiles`
+    - Example: `Spring2026_Redis_cache_to_fetch_user_profiles`
   - [ ] Copy/paste the project description and add a link to the `Google Doc`
         with the details
   - [ ] Assign the issue to yourself. This issue will be used for
@@ -147,7 +147,7 @@ There are three types of projects:
   - [ ] Name your `Git` branch as follows:
         `TutorTask{issue_number}_{project_tag}`
     - Example: If your issue number is **#645**, your branch name should be:
-      **`TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`**
+      **`TutorTask645_Spring2026_Redis_cache_to_fetch_user_profiles`**
 
 - **Steps to create the branch:**
 
@@ -156,18 +156,18 @@ There are three types of projects:
   > git clone --recursive git@github.com:gpsaggese/umd_classes.git umd_classes1
   > cd $HOME/src/umd_classes1
   > git checkout master
-  > git checkout -b TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles
+  > git checkout -b TutorTask645_Spring2026_Redis_cache_to_fetch_user_profiles
   ```
 
 - **Add Files Only in Your Project Directory**
   - Add your project files under the following directory:
     `{GIT_ROOT}/class_project/{COURSE_CODE}/{TERM}{YEAR}/projects/{branch_name}`
-    - Example for DATA605 Spring 2025:
-      `~/src/umd_classes1/class_project/DATA605/Spring2025/projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles`
+    - Example for DATA605 Spring 2026:
+      `~/src/umd_classes1/class_project/DATA605/Spring2026/projects/TutorTask645_Spring2026_Redis_cache_to_fetch_user_profiles`
   - Copy the project template to your directory:
     ```bash
     > cp -r ~/src/umd_classes1/class_project/project_template/ \
-        ~/src/umd_classes1/class_project/DATA605/Spring2025/projects/TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles
+        ~/src/umd_classes1/class_project/DATA605/Spring2026/projects/TutorTask645_Spring2026_Redis_cache_to_fetch_user_profiles
     ```
   - Start working on the files
 
@@ -184,15 +184,15 @@ There are three types of projects:
   - When making progress, use incremental branch names by appending `_1`, `_2`
     to your branch name, etc.
     - Example:
-      - `TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles_1`
-      - `TutorTask645_Spring2025_Redis_cache_to_fetch_user_profiles_2`
+      - `TutorTask645_Spring2026_Redis_cache_to_fetch_user_profiles_1`
+      - `TutorTask645_Spring2026_Redis_cache_to_fetch_user_profiles_2`
 
 ## Quick Start
 
 - After creating your branch and project directory (see "Contribution to the
   Repo" above), change directory to your project folder:
   ```bash
-  > cd ~/src/umd_classes1/class_project/DATA605/Spring2025/projects/{branch_name}
+  > cd ~/src/umd_classes1/class_project/DATA605/Spring2026/projects/{branch_name}
   ```
 
 - Copy the project template files into your directory (if not already done):

@@ -104,7 +104,7 @@ have Windows laptop get to install a VM and run linux
   - [class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
 
 - The projects to choose from are:
-  - [DATA605 - Spring 2026 - Sign up sheet](https://docs.google.com/spreadsheets/d/1O1t_DQ6xpFTcnEaT3c6ss_FBlJV2dqNv83nVH9QA124/edit?gid=0#gid=0)
+  - [DATA605 - Spring 2026 - Sign up sheet](https://docs.google.com/spreadsheets/d/1O1t_DQ6xpFTcnEaT3c6ss_FBlJV2dqNv83nVH9QA124)
   - [class_project/DATA605/Spring2026/projects.csv](https://github.com/gpsaggese/umd_classes/blob/master/class_project/DATA605/Spring2026/projects.csv)
 
 - The specs for each projects are:
@@ -114,4 +114,4 @@ have Windows laptop get to install a VM and run linux
   - [class_project/research_projects](https://github.com/gpsaggese/umd_classes/tree/master/class_project/research_projects)
 
 - The form to sign up for a project is:
-  - [DATA605 - Spring 2026 - Class Project](https://docs.google.com/forms/d/1ddzqNN3eV5_2lGcuplRVuBn4oocyCtN3oNHCj9XUSsI/edit)
+  - [DATA605 - Spring 2026 - Class Project](https://docs.google.com/forms/d/e/1FAIpQLSczE7sQRw7NFTVrwFHGy4fwzkPJHAVRzN-czYNVkD0WtkdlvA)
