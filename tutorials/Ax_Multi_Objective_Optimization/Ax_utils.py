@@ -84,19 +84,30 @@ def load_pctr_prediction_model(date: str):
     bid_to_pay_ratio = average_ctr_and_bid_to_pay_ratio["bid_to_pay_ratio"]
     return model, features, average_ctr, bid_to_pay_ratio
 
+def load_average_ctr_and_bid_to_pay_ratio(date: str):
+    """
+    This method loads the average CTR and the bid to pay ratio for a given date.
+    """
+    date = datetime.strptime(date, "%Y%m%d")
+    prev_date = date - timedelta(days=1)
+    prev_date_str = prev_date.strftime('%Y%m%d')
+    average_ctr_and_bid_to_pay_ratio = json.load(open(f"models/average_ctr_and_bid_to_pay_ratio_{prev_date_str}.json"))
+    average_ctr = average_ctr_and_bid_to_pay_ratio["average_ctr"]
+    bid_to_pay_ratio = average_ctr_and_bid_to_pay_ratio["bid_to_pay_ratio"]
+    return average_ctr, bid_to_pay_ratio
 
 def dsp_simulation(date: str, base_bid: float, budget: float, ctr_reg_coef: float, bid_to_pay_ratio_reg_coef: float, pacing_reg_coef: float, offset: int = 0, limit: Optional[int] = None):
     """
     This method processes the dataset for a given date, loads the ctr prediction model, simulates the bidding strategy and returns the results.
     """
     # Load the dataset for the given date
-    df_bids = pd.read_csv(f"dataset/bid_with_features_{date}.csv").iloc[offset:offset+limit] if limit is not None else pd.read_csv(f"dataset/bid_with_features_{date}.csv").iloc[offset:]
+    df_bids = pd.read_csv(f"dataset/bid_with_features_and_pctr_{date}.csv").iloc[offset:offset+limit] if limit is not None else pd.read_csv(f"dataset/bid_with_features_and_pctr_{date}.csv").iloc[offset:]
     if len(df_bids) == 0:
         return 0, 0, 0, 0, 0
     # Load the ctr prediction model
-    model, features, average_ctr, bid_to_pay_ratio = load_pctr_prediction_model(date)
-    # Predict the CTR for each bid
-    df_bids["sim_pctr"] = model.predict_proba(df_bids[features])[:, 1]
+    average_ctr, bid_to_pay_ratio = load_average_ctr_and_bid_to_pay_ratio(date)
+    # Obtained the predicted CTR for each bid from the dataset
+    df_bids["sim_pctr"] = df_bids["pctr"]
     # Calculate the rawbid amount
     df_bids["sim_ctr_ratio"] = (df_bids["sim_pctr"] / average_ctr)
     df_bids["sim_raw_bid"] = base_bid * (1 + ctr_reg_coef * (df_bids["sim_ctr_ratio"] - 1))
