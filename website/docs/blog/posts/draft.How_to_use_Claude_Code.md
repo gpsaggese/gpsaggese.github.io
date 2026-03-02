@@ -484,9 +484,77 @@ TL;DR:
 
 ## Automate with hooks
 
+- Run shell commands automatically when CC
+  - edits files
+  - finishes tasks
+  - need input
+  - format code
+  - send notification
+  - enforce project rules
+
+- Hooks are user-defined commands that execute at specific points
+  - Provide deterministic control
+
+- For decisions that require judgement, use prompt-based hooks
+
+- Examples
+  - Get notified when CC needs input
+  - Autoformat code after edits
+  - Audit config changes
+
+- `Notification` event fires when CC is waiting for input or permission
+
+- Hooks events fire at specific lifecycle points in CC
+  - When an event fires, all matching hooks run in parallel
+  - `Session Start`
+  - `Notification`: when CC sends a notification
+  - `Stop`: when CC finishes responding
+
+- Hooks have a type
+  - `prompt`: single turn LLM eval (i.e., Prompt-based hooks)
+  - `agent`: multi-turn LLM eval (i.e., Agent-based hooks)
+
+- Hooks communicate with CC through stdin, stdout, stderr, exit codes
+  - Inputs are passed as JSON to `stdin`
+  - Hooks can return a structure JSON output and exit code
+
+- Hook matchers let specify which occurrence of an event
+  - E.g., `Notification` has values `permission_prompt`, `idle_prompt`,
+    `elicitation_dialog`
+
+- Prompt based hooks
+  - Use `type: "prompt"` and `model`
+  - The return value should be `"ok": true / false`
+
 ## Programmatic usage
 
+- Agent SDK and CLI (aka headless mode)
+  ```bash
+  > claude -p "..."
+  ```
+- Use `--output-format` for `text`, `json`
+  - It is possible to pass `--json-schema`
+  - Use `--allowedTools` to use certain tools without prompting
+    - E.g., `Bash(git diff *)`, `Read,Edit`
+
 ## Model Context Protocol (MCP)
+
+- MCP is an open source standard for AI-tool integrations
+
+- E.g.,
+  - Implement features from issue trackers
+  - Analyze monitoring data
+  - Query DBs
+  - Automate workflows
+
+- E.g.,
+  - Notion
+  - Slack
+  - Asana
+  - Zapier
+
+- Use a remote HTTP server
+- Use a local stdio server
 
 ## Troubleshooting
 
