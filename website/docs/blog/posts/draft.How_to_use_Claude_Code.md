@@ -295,31 +295,192 @@ TL;DR:
 
 # Build with CC
 
-- Explore
-  - Fast, read-only, agent optimized for searching and analyzing codebases
-- Plan
-- 
+- CC include built-in subagents
+  - Explore
+    - Fast
+    - Agent optimized for searching and analyzing codebases
+    - Read-only tools
+  - Plan
+    - Gather context before presenting a plan
+    - Read-only tools
+  - General-purpose
+    - Agent for complex, multi-step tasks, code modifications
+    - All tools
+
+- You can create your own subagent with
+  - Custom prompts
+  - Tool restrictions
+  - Hooks
+  - Skills
 
 ## Create custom subagents
 
 - Subagents are specialized AI assistants that handle specific types of tasks
-  - Custom context window
-  - Custom system prompt
-  - Specific tool access
+  - They have
+    - Custom context window
+    - Custom system prompt
+    - Specific tool access
 
 - When CC finds a task that matches a subagent description it delegates to
   subagent
   - Subagent works independently and returns results
 
+- Subagents are defined in Markdown files with YAML frontmatter
+  - Store in `.claude/agents`
+    - Specific of a code base
+    - User subagents for all projects
+    - Specify name, description, tools, model, prompt
+  - `/agents` command
+  - You can pre-load skills into subagent at startup
+  - You can enable memory to persist information across conversations (e.g.,
+    build up knowledge over time)
+  - Can run in foreground (blocking) or background (concurrent)
+
+- Common patterns for subagents
+  - Isolate operations that produce large amounts of output
+    - E.g., fetching doc, processing logs
+    - The work is self-contained and can return a summary
+  - Run parallel research
+  - Multi-step workflows to use subagents in sequence
+    ```
+    Use the code-reviewer subagent to find performance issues, then use the
+    optimizer subagent to fix them
+    ```
+
+### Example subagents
+
+- Subagents should excel at one specific task
+  - Task descriptions should be clear
+
+- Code reviewer
+- Debugger
+- Data scientist
+- Database query validator
+
 ## Run agent teams
+
+- Agent teams are disable by default
+
+- Agent teams let you coordinate multiple CC instances working together
+  - One session is the team lead
+    - Coordinate work
+    - Assign tasks
+    - Synthesize results
+  - Teammates
+    - work independently
+    - Communicate with each other
+
+### When to use agent teams
+
+- Use when parallel exploration adds real value
+  - Research and review
+  - New independent features
+  - Debugging with competing hypotheses
+
+- Subagent don't talk to each other but only to the main agent
+- In agent teams, teammates share a task list and communicate with each other
 
 ## Create plugins
 
+- Plugins allow to extend CC with skills, agents, hooks, and MCP servers
+
+- Use plugins when you want to
+  - share functionality with your team or community
+  - use the same skills/agents across multiple projects
+  - version control and update 
+  - distribute through a marketplace
+
+- Plugins use namespaced skills like `/plugin-name:hello`
+
+- You can point CC to a plugin with `--plugin-dir`
+  - Need a plugin manifest `.claude-plugin-name/plugin.json`
+  - Then the various dirs `commands/`, `agents/`, `skills`
+
 ## Prebuilt plugins
+
+- You can find and install plugins from marketplaces to install CC with new
+  commands, agents, and capabilities
+
+- Add the marketplace and browse catalog for plugins
+- Install plugins
+
+- External integrations
+  - Github
+  - Asana
+  - Slack
 
 ## Extend CC with skills
 
+- Commands and skills have been merged
+  - `.claude/commands/review.md` and a skill at `.claude/skills/review/SKILL.md`
+    both create `/review`
+
+- `/simplify` reviews recently changed files for code, reuse, quality
+  - It spawns 3 agents (code reuse, code quality, efficiency) and then applies
+    fixes
+  - E.g., `/simplify focus on memory efficiency`
+
+- `/batch <instruction>` orchestrate large-scale changes in parallel
+  - Decompose the work into 5 to 30 units
+  - Present a plan for approval
+  - Spawns agents in isolated `git worktree`
+  - E.g., `/batch migrate src/ from Solid to React`
+
+- Skills can be organized in nested `.claude/skills` directories
+  - Useful in monorepos where each "package" can have their own skills
+
+- Skills are like
+  ```
+  my-skill
+    - SKILL.md
+    - template.md   
+    - reference.md  (detailed API docs, loaded when needed)
+    - examples
+      - sample.md   (usage examples, loaded when needed)
+    - scripts/
+      - helper.py   (utility scripts)
+  ```
+- Description can refer to more files
+  ```
+  - For complete API details, see [reference.md](reference.md)
+  - For usage examples, see [examples.md](examples.md)
+  ```
+
+- Fields
+  - `name`: name (if different from directory name)
+  - `description`
+  - `argument-hint`: hint shown during autocomplete
+  - `disable-model-invocation`: prevent CC from triggering automatically
+    - E.g., `/commit`, `send-slack-message`
+  - `model`: model to use
+
+- String substitution
+  - `$ARGUMENTS`: all arguments when invoking the skill
+  - `$N$, `$ARGUMENTS[n]`: n-th argument
+  ```
+  Fix GitHub issue $ARGUMENTS following our coding standards.
+  ```
+  - E.g., `/fix-issue 123`
+
+- The `!command` runs shell commands before the skill content is sent to CC
+  - E.g., to pull the content in `pr-summary`
+    ```
+    ## Pull request context
+    - PR diff: !`gh pr diff`
+    - PR comments: !`gh pr view --comments`
+    - Changed files: !`gh pr diff --name-only`
+    ```
+
 ## Output styles
+
+- Control CC's system prompt
+  - `Default`: normal behavior for software engineering
+  - `Explanatory`: provide educational insights
+  - `Learning`: collaborative, CC will add `TODO(human)` to implement
+
+- `/output-style [style]`
+
+- You can create new styles
 
 ## Automate with hooks
 
