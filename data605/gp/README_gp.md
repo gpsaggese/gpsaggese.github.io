@@ -1,4 +1,4 @@
-- GitHub: https://github.com/gpsaggese/umd_data605
+- GitHub: https://github.com/gpsaggese/umd_classes
 - Dockerhub: 
 
 
