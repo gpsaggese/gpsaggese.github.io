@@ -3,7 +3,7 @@ draft: true
 title: "How to Use Claude Code"
 authors:
   - gpsaggese
-date: 2026-
+date: 2026-03-01
 description:
 categories:
   - Causal AI

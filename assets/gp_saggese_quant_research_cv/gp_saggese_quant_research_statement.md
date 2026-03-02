@@ -28,12 +28,12 @@ limited lifespan in competitive markets.
 
 My full CV is [here](https://github.com/gpsaggese/umd_classes)
 
-- [Education](https://gpsaggese.github.io/umd_classes/03_education/)
+- [Education](https://gpsaggese.github.io/03_education/)
 
-- [Publications](https://gpsaggese.github.io/umd_classes/05_publications/)
+- [Publications](https://gpsaggese.github.io/05_publications/)
 
 - [AI
-  Research](https://gpsaggese.github.io/umd_classes/06_research/)
+  Research](https://gpsaggese.github.io/06_research/)
 
 ## Overview
 

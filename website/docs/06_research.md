@@ -286,7 +286,7 @@ Trubacheva
 2004
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/A_tamper_resistant_hardware_accelerator_for_RSA_cryptographic_applications_q.pdf)
+[PDF](https://gpsaggese.github.io/papers/A_tamper_resistant_hardware_accelerator_for_RSA_cryptographic_applications_q.pdf)
 | [DOI](https://doi.org/10.1016/j.sysarc.2004.04.002) |
 [DBLP](https://dblp.org/rec/journals/jsa/SaggeseRMM04.bib)
 
@@ -326,7 +326,7 @@ Trubacheva
 2004
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/Exploring_the_design-space_for_FPGA-based_implementation_of_RSA.pdf)
+[PDF](https://gpsaggese.github.io/papers/Exploring_the_design-space_for_FPGA-based_implementation_of_RSA.pdf)
 | [DOI](https://doi.org/10.1016/j.micpro.2004.03.009) |
 [DBLP](https://dblp.org/rec/journals/mam/CilardoMRS04.bib)
 
@@ -349,7 +349,7 @@ Trubacheva
 Exposition (DATE 2004), Paris, France, pp. 206-211, 2004
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/Carry-save_Montgomery_modular_exponentiation_on_reconfigurable_hardware.pdf)
+[PDF](https://gpsaggese.github.io/papers/Carry-save_Montgomery_modular_exponentiation_on_reconfigurable_hardware.pdf)
 | [DOI](https://doi.org/10.1109/DATE.2004.1269231) |
 [DBLP](https://dblp.org/rec/conf/date/CilardoMRS04.bib)
 
@@ -390,7 +390,7 @@ Exposition (DATE 2004), Paris, France, pp. 206-211, 2004
 Exposition (DATE 2003), Munich, Germany, pp. 10582-10589, 2003
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/FPGA-based_implementation_of_a_serial_RSA_processor.pdf)
+[PDF](https://gpsaggese.github.io/papers/FPGA-based_implementation_of_a_serial_RSA_processor.pdf)
 | [DOI](https://doi.org/10.1109/DATE.2003.10188) |
 [DBLP](https://dblp.org/rec/conf/date/MazzeoRSM03.bib)
 
@@ -413,7 +413,7 @@ Portugal, Lecture Notes in Computer Science, vol. 2778, pp. 292-302, Springer,
 2003
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/An_FPGA-Based_Performance_Analysis_of_the_Unrolling,_Tiling,_and_Pipelining_of_the_AES_Algorithm.pdf)
+[PDF](https://gpsaggese.github.io/papers/An_FPGA-Based_Performance_Analysis_of_the_Unrolling,_Tiling,_and_Pipelining_of_the_AES_Algorithm.pdf)
 | [DOI](https://doi.org/10.1007/978-3-540-45234-8_29) |
 [DBLP](https://dblp.org/rec/conf/fpl/SaggeseMMS03.bib)
 
@@ -436,7 +436,7 @@ Workshops, Catania, Sicily, Italy, Lecture Notes in Computer Science, vol. 2889,
 pp. 960-974, Springer, 2003
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/Using_Web_Services_Technology_for_Inter-enterprise_Integration_of_Digital_Time_Stamping.pdf)
+[PDF](https://gpsaggese.github.io/papers/Using_Web_Services_Technology_for_Inter-enterprise_Integration_of_Digital_Time_Stamping.pdf)
 | [DOI](https://doi.org/10.1007/978-3-540-39962-9_93) |
 [DBLP](https://dblp.org/rec/conf/otm/CilardoMRSC03.bib)
 
@@ -502,7 +502,7 @@ _Fault Tolerance, Computer Arithmetic, FPGA Design, Microprocessor Architecture_
 no. 5, pp. 640-655, 2011
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/Automated_Derivation_of_Application-Specific_Error_Detectors_Using_Dynamic_Analysis.pdf)
+[PDF](https://gpsaggese.github.io/papers/Automated_Derivation_of_Application-Specific_Error_Detectors_Using_Dynamic_Analysis.pdf)
 | [DOI](https://doi.org/10.1109/TDSC.2010.19) |
 [DBLP](https://dblp.org/rec/journals/tdsc/PattabiramanSCKI11.bib)
 
@@ -526,7 +526,7 @@ no. 5, pp. 640-655, 2011
 Coimbra, Portugal, pp. 97-108, 2006
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/Dynamic_Derivation_of_Application-Specific_Error_Detectors_and_their_Implementation_in_Hardware.pdf)
+[PDF](https://gpsaggese.github.io/papers/Dynamic_Derivation_of_Application-Specific_Error_Detectors_and_their_Implementation_in_Hardware.pdf)
 | [DOI](https://doi.org/10.1109/EDCC.2006.9) |
 [DBLP](https://dblp.org/rec/conf/edcc/PattabiramanSCKI06.bib)
 
@@ -547,7 +547,7 @@ Coimbra, Portugal, pp. 97-108, 2006
 **Publication:** IEEE Micro, vol. 25, no. 6, pp. 30-39, 2005
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/An_experimental_study_of_soft_errors_in_microprocessors.pdf)
+[PDF](https://gpsaggese.github.io/papers/An_experimental_study_of_soft_errors_in_microprocessors.pdf)
 | [DOI](https://doi.org/10.1109/MM.2005.104) |
 [DBLP](https://dblp.org/rec/journals/micro/SaggeseWKPI05.bib)
 
@@ -570,7 +570,7 @@ Coimbra, Portugal, pp. 97-108, 2006
 Networks (DSN 2005), Yokohama, Japan, pp. 760-769, 2005
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/Microprocessor_sensitivity_to_failures_control_vs._execution_and_combinational_vs._sequential_logic.pdf)
+[PDF](https://gpsaggese.github.io/papers/Microprocessor_sensitivity_to_failures_control_vs._execution_and_combinational_vs._sequential_logic.pdf)
 | [DOI](https://doi.org/10.1109/DSN.2005.63) |
 [DBLP](https://dblp.org/rec/conf/dsn/SaggeseVKI05.bib)
 
@@ -593,7 +593,7 @@ Networks (DSN 2005), Yokohama, Japan, pp. 760-769, 2005
 in Computer Science, vol. 3463, pp. 103-121, Springer, 2005
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/An_Architectural_Framework_for_Detecting_Process_Hangs-Crashes.pdf)
+[PDF](https://gpsaggese.github.io/papers/An_Architectural_Framework_for_Detecting_Process_Hangs-Crashes.pdf)
 | [DOI](https://doi.org/10.1007/11408901_8) |
 [DBLP](https://dblp.org/rec/conf/edcc/NakkaSKI05.bib)
 
@@ -618,7 +618,7 @@ in Computer Science, vol. 3463, pp. 103-121, Springer, 2005
 Reconfigurable Computing, pp. 209-218, Springer, 2005
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/Architecture_and_FPGA_Implementation_of_a_Digit-serial_RSA_Processor.pdf)
+[PDF](https://gpsaggese.github.io/papers/Architecture_and_FPGA_Implementation_of_a_Digit-serial_RSA_Processor.pdf)
 
 - Digit-serial architecture: Extends serial RSA implementation to process data
   in higher-radix digits rather than single bits, providing a middle ground
@@ -640,7 +640,7 @@ Reconfigurable Computing, pp. 209-218, Springer, 2005
 (SRDS 2004), Florianópolis, Brazil, pp. 195-204, 2004
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/Hardware_support_for_high_performance_intrusion-_and_fault-tolerant_systems.pdf)
+[PDF](https://gpsaggese.github.io/papers/Hardware_support_for_high_performance_intrusion-_and_fault-tolerant_systems.pdf)
 | [DOI](https://doi.org/10.1109/RELDIS.2004.1353020) |
 [DBLP](https://dblp.org/rec/conf/srds/SaggeseBRKI04.bib)
 
@@ -666,7 +666,7 @@ Montpellier, France, Lecture Notes in Computer Science, vol. 2438, pp. 47-58,
 Springer, 2002
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/A_Technique_for_FPGA_Synthesis_Driven_by_Automatic_Source_Code_Analysis_and_Transformations.pdf)
+[PDF](https://gpsaggese.github.io/papers/A_Technique_for_FPGA_Synthesis_Driven_by_Automatic_Source_Code_Analysis_and_Transformations.pdf)
 | [DOI](https://doi.org/10.1007/3-540-46117-5_7) |
 [DBLP](https://dblp.org/rec/conf/fpl/MartinoMSS02.bib)
 
@@ -691,7 +691,7 @@ Electronics, Circuits and Systems (ICECS 2002), Dubrovnik, Croatia, pp. 607-610,
 2002
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/Shuffled_serial_adder_an_area-latency_effective_serial_adder.pdf)
+[PDF](https://gpsaggese.github.io/papers/Shuffled_serial_adder_an_area-latency_effective_serial_adder.pdf)
 | [DOI](https://doi.org/10.1109/ICECS.2002.1046242) |
 [DBLP](https://dblp.org/rec/conf/icecsys/SaggeseSMC02.bib)
 
@@ -714,7 +714,7 @@ Electronics, Circuits and Systems (ICECS 2002), Dubrovnik, Croatia, pp. 607-610,
 Electronics, Circuits and Systems (ICECS 2001), Malta, pp. 741-744, 2001
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/A_reconfigurable_2D_convolver_for_real-time_SAR_imaging.pdf)
+[PDF](https://gpsaggese.github.io/papers/A_reconfigurable_2D_convolver_for_real-time_SAR_imaging.pdf)
 | [DOI](https://doi.org/10.1109/ICECS.2001.957581) |
 [DBLP](https://dblp.org/rec/conf/icecsys/StrolloNCS01.bib)
 
@@ -738,7 +738,7 @@ Electronics, Circuits and Systems (ICECS 2001), Malta, pp. 741-744, 2001
 Electronics, Circuits and Systems (ICECS 2001), Malta, pp. 745-748, 2001
 
 **Links:**
-[PDF](https://gpsaggese.github.io/umd_classes/papers/Test_pattern_generator_for_hybrid_testing_of_combinational_circuits.pdf)
+[PDF](https://gpsaggese.github.io/papers/Test_pattern_generator_for_hybrid_testing_of_combinational_circuits.pdf)
 | [DOI](https://doi.org/10.1109/ICECS.2001.957582) |
 [DBLP](https://dblp.org/rec/conf/icecsys/CaroMNSS01.bib)
 
