@@ -1,0 +1,29 @@
+# Jupyter
+jupyter==1.0.0
+notebook==7.5.3
+ipykernel==7.2.0
+jupyterlab==4.5.5
+
+# Core data stack
+numpy==2.4.2
+pandas==3.0.0
+scikit-learn==1.8.0
+matplotlib==3.10.8
+tqdm==4.67.3
+
+# Utilities
+requests==2.32.5
+pydantic==2.12.5
+playwright==1.50.0
+
+# LLM / AutoGen
+openai==2.18.0
+autogen-agentchat==0.7.5
+autogen-ext[openai,web-surfer]==0.7.5
+pyautogen==0.10.0
+
+# Additional packages
+yfinance==1.1.0
+PyPDF2==3.0.1
+chromadb==1.5.0
+sec_edgar_downloader==5.1.0

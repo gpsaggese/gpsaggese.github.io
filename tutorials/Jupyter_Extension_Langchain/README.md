@@ -98,3 +98,7 @@ Notes:
 ## Provider configuration
 
 Set env vars in `.env` (loaded via `docker-compose.yml`) and restart the container. See `.env.example` for the supported variables.
+
+## Changelog
+
+- 2026-03-01: Initial release

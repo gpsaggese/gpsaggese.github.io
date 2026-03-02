@@ -1,0 +1,10 @@
+# Ignore everything by default, then whitelist what's needed.
+**
+
+# Include tutorial files.
+!requirements.txt
+!Dockerfile
+!bashrc
+!etc_sudoers
+!version.sh
+!run_jupyter.sh
