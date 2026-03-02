@@ -1,0 +1,1 @@
+LlamaIndex is a framework for building LLM-powered applications. It supports document ingestion, indexing, and retrieval. Retrieval-augmented generation improves factual grounding.
