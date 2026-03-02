@@ -33,6 +33,9 @@
 
 - Clone a project, e.g., the class project from
   `https://github.com/gpsaggese/umd_classes`
+  - The tutorial uses SSH (`git@github.com:...`): this requires an SSH key
+    pair set up with GitHub; if you only have HTTPS access use
+    `https://github.com/gpsaggese/umd_classes.git` instead
   ```bash
   > cd /tmp
   > git clone git@github.com:gpsaggese/umd_classes.git /tmp/umd_classes_tmp
@@ -83,11 +86,18 @@
 
   nothing to commit, working tree clean
   ```
+  - Note: "sparse checkout" is an advanced Git feature not relevant here; ignore
+    that line
 
 - You can restore the repo to the initial state with:
-  ```bash
-  > source $GIT_ROOT/tutorials/tutorial_git/restart.sh
-  ```
+  - First set `GIT_ROOT` to point to where you cloned this class repo, e.g.:
+    ```bash
+    > export GIT_ROOT=/path/to/umd_classes
+    ```
+  - Then run:
+    ```bash
+    > source $GIT_ROOT/tutorials/tutorial_git/restart.sh
+    ```
   which in practice corresponds to:
   ```bash
   > rm -rf /tmp/umd_classes_tmp
@@ -100,6 +110,17 @@
 # Daily use
 
 ## Adding a file
+
+- Navigate into the cloned repo first:
+  ```bash
+  > cd /tmp/umd_classes_tmp
+  ```
+
+- The staging area (also called the index) is a buffer between your working
+  directory and the repo history
+  - Files must be explicitly staged with `git add` before they are included in
+    a commit
+  - This lets you craft commits precisely, even if multiple files were changed
 
 - You can add a file
   ```bash
@@ -118,7 +139,7 @@
 
   nothing added to commit but untracked files present (use "git add" to track)
   ```
-- Now there is a file in Git that is not tracked
+- Now there is a file in the working directory that Git is not tracking
 - Adding it to the staging area
   ```bash
   > git add hello.py
@@ -144,8 +165,16 @@
   * f85c019 Checkpoint
   * 20734cf Checkpoint
   * e36d971 Checkpoint
-
+  ```
+  - `HEAD -> main`: the commit your working directory currently reflects,
+    pointing at your local `main` branch
+  - `origin/main`: where the remote (`origin`, i.e., GitHub) thinks `main` is
+  - `origin/HEAD`: the default branch on the remote server
+  - After a commit, `HEAD -> main` advances while `origin/main` stays behind
+    until you push
+  ```bash
   # Commit locally.
+  # `-a` = stage all tracked modified files; `-m` = inline commit message.
   > git commit -am "Add hello.py"
   [main f919311] Add hello.py
   1 file changed, 1 insertion(+)
@@ -169,16 +198,24 @@
   origin  git@github.com:gpsaggese/umd_classes.git (fetch)
   origin  git@github.com:gpsaggese/umd_classes.git (push)
   ```
+  - `origin` is the default name Git gives to the remote you cloned from
 
 - Get the data you don't have
   ```bash
   > git fetch
 
-  # Fetch and rebase.
+  # Fetch and integrate.
   > git pull
+
+  # Fetch, stash any local changes, integrate, then restore local changes.
   > git pull --autostash
   ```
-- This won't make a difference unless a commit went it in between the time you
+  - `git fetch` downloads new commits from the remote but does not touch your
+    working directory
+  - `git pull` = `git fetch` + `git merge` (or rebase, depending on config)
+  - `--autostash`: temporarily stashes uncommitted local changes before pulling
+    and restores them afterward, preventing conflicts with incoming changes
+- This won't make a difference unless a commit went in between the time you
   cloned and fetched (which is very unlikely)
 
 # Branching and merging
@@ -187,6 +224,8 @@
 
 - You can execute the script `work_on_main.sh` or (better) execute the command
   line-by-line:
+  - `git status -s`: `-s` = short format, shows one line per file instead of
+    the verbose default output
   ```bash
   > ls
   Dockerfile LICENSE README.md dev_scripts project_template gp lectures projects
@@ -353,7 +392,7 @@
    create mode 100644 feature2.py
    ```
 
-## Merging conflicts
+## Merge conflicts
 
 - A script running the entire flow is in `$GIT_ROOT/tutorials/tutorial_git/merge_conflict.sh`
   - You should execute each command one at a time
@@ -432,8 +471,8 @@
   > git status -s
   A  feature.py
 
-  > git commit -am 'Add hot_fix.py'
-  [hotfix 299dc2e] Add hot_fix.py
+  > git commit -am 'Add feature.py'
+  [hotfix 299dc2e] Add feature.py
    1 file changed, 1 insertion(+)
    create mode 100644 feature.py
   ```
@@ -443,16 +482,16 @@
   > git checkout main
   Switched to branch 'main'
 
-  > git merge hotfix -m 'Merge hot_fix.py'
+  > git merge hotfix -m 'Merge hotfix'
   Merge made by the 'ort' strategy.
    feature.py | 1 +
    1 file changed, 1 insertion(+)
    create mode 100644 feature.py
 
   > git log --graph --oneline -3
-  *   17b765b (HEAD -> main) Merge hot_fix.py
+  *   17b765b (HEAD -> main) Merge hotfix
   |\
-  | * 299dc2e (hotfix) Add hot_fix.py
+  | * 299dc2e (hotfix) Add feature.py
   |/
   * c47a0b6 Checkpoint
   ```
@@ -468,6 +507,7 @@
   Recorded preimage for 'feature.py'
   Automatic merge failed; fix conflicts and then commit the result.
 
+  # `AA` = file was added in both branches, creating a conflict.
   > git status -s
   AA feature.py
 
@@ -485,6 +525,12 @@
   ```
 
 - Solve the conflict and merge
+  - The conflict markers mean:
+    - `<<<<<<< HEAD`: start of the version from the current branch (`main`)
+    - `=======`: separator between the two conflicting versions
+    - `>>>>>>> iss53`: end of the version from the incoming branch (`iss53`)
+  - Edit the file to keep the desired content, remove all marker lines, then
+    stage and commit
   ```bash
   > echo 'hello from iss53 and hotfix' >feature.py
 
@@ -496,7 +542,7 @@
   > cat feature.py
   hello from iss53 and hotfix
 
-  > git commit -m Merge
+  > git commit -m "Merge"
   Recorded resolution for 'feature.py'.
   [main cebc983] Merge
 
@@ -506,11 +552,11 @@
   *   cebc983 (HEAD -> main) Merge
   |\
   | * f0517d8 (iss53) Add feature.py
-  * |   17b765b Merge hot_fix.py
+  * |   17b765b Merge hotfix
   |\ \
   | |/
   |/|
-  | * 299dc2e (hotfix) Add hot_fix.py
+  | * 299dc2e (hotfix) Add feature.py
   |/
   * c47a0b6 Checkpoint
   ```

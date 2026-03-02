@@ -1,9 +1,13 @@
 #!/bin/bash -xe
-# /Users/saggese/src/umd_data605/projects/tutorial_git/hot_fix.sh 2>&1 | tee /tmp/log.txt
-# cat /tmp/log.txt | perl -p -e 's/\+\+/+/; s/^\+ /\n> /'
+# To generate output for the tutorial run:
+# ```
+# > hot_fix.sh 2>&1 | tee /tmp/log.txt
+# > cat /tmp/log.txt | perl -p -e 's/\+\+/+/; s/^\+ /\n> /'
+# ```
 
-GIT_ROOT=/Users/saggese/src/umd_data605
-source $GIT_ROOT/tutorials/tutorial_git/restart.sh
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+GIT_ROOT=$(cd "$SCRIPT_DIR/../.." && pwd)
+source "$GIT_ROOT/tutorials/tutorial_git/restart.sh"
 
 # Work on issue53.
 git checkout -b iss53
