@@ -9,7 +9,7 @@ categories:
   - Causal AI
 ---
 
-TL;DR: 
+TL;DR:
 
 <!-- more -->
 
@@ -387,7 +387,7 @@ TL;DR:
 - Use plugins when you want to
   - share functionality with your team or community
   - use the same skills/agents across multiple projects
-  - version control and update 
+  - version control and update
   - distribute through a marketplace
 
 - Plugins use namespaced skills like `/plugin-name:hello`
@@ -433,7 +433,7 @@ TL;DR:
   ```
   my-skill
     - SKILL.md
-    - template.md   
+    - template.md
     - reference.md  (detailed API docs, loaded when needed)
     - examples
       - sample.md   (usage examples, loaded when needed)
@@ -560,7 +560,28 @@ TL;DR:
 
 # Deployment
 
+<!-- https://code.claude.com/docs/en/third-party-integrations -->
+
+- You can deploy CC through Anthropic or through a cloud provider
+  - Claude for Teams: best for smaller teams to get started
+  - Claude for Enterprise: SSO, compliance
+
+- Development containers
+  - Preconfigured development container
+  - Works with VS Code
+
 # Administration
+
+## Advanced setup
+
+## Authentication
+
+## Security
+- `/sandbox` allows to define boundaries where CC can work autonomously
+- CC only write to the folder where it was started and its subfolders
+  - It can read files outside the working directory
+- Support for allow frequently used commands
+- Accept Edits mode
 
 # Configuration
 
@@ -569,13 +590,3 @@ TL;DR:
 # Resources
 
 - Official documentation for Claude Code: https://code.claude.com/docs/en
-
-<!--
-
-Add information about .claude/skills/
-
-.claude/statusline.sh
-
-> ls /Users/saggese/src/umd_classes1/helpers_root/dev_scripts_helpers/ai/
-cc        ccc       ccp       instr     README.md se        sl
--->
