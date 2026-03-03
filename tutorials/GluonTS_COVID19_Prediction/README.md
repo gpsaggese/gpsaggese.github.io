@@ -43,7 +43,7 @@ Save to `data/` directory:
 
 Or run:
 ```bash
-python utils.py
+python GluonTS_utils.py
 ```
 
 ### Build and Run
@@ -72,7 +72,7 @@ Opens at http://localhost:8888
 - `GluonTS.example.ipynb` — COVID-19 end-to-end application
 
 **Utilities**
-- `utils.py` — Consolidated utilities: data I/O, download, preprocessing,
+- `GluonTS_utils.py` — Consolidated utilities: data I/O, download, preprocessing,
   GluonTS conversion, model training, evaluation, visualization, synthetic data
 
 **Data** (auto-downloaded)
@@ -93,7 +93,7 @@ The notebooks are organized for learning. Implementation details (data loading, 
 
 Instead of notebook cells with 20 lines of matplotlib code, you see:
 ```python
-import utils as viz
+import GluonTS_utils as viz
 viz.plot_data_overview(train_df, test_df)
 ```
 

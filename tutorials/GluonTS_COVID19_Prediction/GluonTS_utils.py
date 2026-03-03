@@ -15,8 +15,8 @@ Sections:
 
 Import as:
 
-    import utils
-    from utils import load_covid_data_for_gluonts, train_deepar_covid
+    import GluonTS_utils
+    from GluonTS_utils import load_covid_data_for_gluonts, train_deepar_covid
 """
 
 import logging
