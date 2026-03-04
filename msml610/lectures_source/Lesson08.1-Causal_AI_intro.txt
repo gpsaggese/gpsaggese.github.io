@@ -122,6 +122,13 @@ MSML610: Advanced Machine Learning
     - Explain
     - Trust machine results
 
+* Humans are primed to take association for causation
+- _"You eat X that gives a stomachaches several times"
+  - $\to$ You infer that _"X is bad for you"_
+- _"You put money in a stock right before a steep increase in prices"_
+  - $\to$ You infer _"you can time the market"_
+  - It might lead to riskier and riskier bets
+
 * Correlation is Not Causation!
 - **Correlation** is a statistical method for understanding relationships
   between data
@@ -135,9 +142,34 @@ MSML610: Advanced Machine Learning
 - **Causation** explains how changing one variable influences the other
   - Cannot be concluded from correlation alone
 
+- Association is when two variables move together
+- Causation is when change in one variable causes change in another
+
 - **Data does not understand causes and effects**
   - Only humans can identify variables and relationships based on context
   - Without causation, you can't make intelligent decisions
+
+* Association and Causation
+- Intuitively you know that association is not causation
+
+- E.g., "top-notch consulting improve businesses"
+  - Does top-notch consulting really improve business?
+  - Or flourishing businesses have the budget to hire top-notch consulting?
+
+- E.g., in hotel industry
+  - Prices are low outside tourist season
+  - Prices are high when demand is high and hotel full
+  - A naive prediction suggests to increase prices to sell more rooms
+
+- E.g., online marketplace company
+  - Decide how to set prices and when to have sales
+  - What is the impact of lowering prices on units sold?
+  - Gains from selling more need to compensate for the loss of selling cheaper
+  - This is a causal question: "what would happen if we lower prices vs doing
+    nothing"
+  - Price cuts can have different impacts depending on
+    - The type of business (e.g., clothing vs dog food)
+    - The timing (e.g., before Christmas)
 
 * Causal AI
 - **Understands the why**
@@ -160,6 +192,12 @@ MSML610: Advanced Machine Learning
   - Provides understanding of relationships for better decisions
   - E.g., improve supply chain by understanding impact of decisions on logistics
 
+* Causal inference and decision making
+- What would happen if you change the price of a merchandise?
+- What happens if you switch from low-sugar diet to low-fat diet?
+- What happens to bank's margin if a bank increases customer's credit line?
+- Is it better to build a library or give tables to kids to boost test score?
+
 * Causal AI vs Traditional AI
 - **Current AI** uses correlation to:
   - Analyze data
@@ -171,6 +209,22 @@ MSML610: Advanced Machine Learning
 
 - _"The next revolution of data science is the science of interpreting reality,
   not of summarizing data"_ (Judea Pearl, 2021)
+
+- Causal inference is the science of:
+  - Inferring causation from association
+  - Understand when and why causation and association differ
+
+- Causal inference is normative
+  - If you understand cause-and-effect relationships, then you can intervene on the
+    cause to bring the desired effect
+
+* Machine Learning and Decision Making
+- ML is very good at prediction and very bad at "what-if" questions
+
+- ML using association is great to predict one var from another, without
+  intervention
+- ML is terrible for decision making when there are interventions
+  - ML models can be useless or harmful
 
 ## The Ladder of Causation
 

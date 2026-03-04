@@ -1,0 +1,47 @@
+::: columns
+:::: {.column width=15%}
+![](msml610/lectures_source/figures/UMD_Logo.png)
+::::
+:::: {.column width=75%}
+
+\vspace{0.4cm}
+\begingroup \large
+MSML610: Advanced Machine Learning
+\endgroup
+::::
+:::
+
+\vspace{1cm}
+
+\begingroup \Large
+**$$\text{\blue{Lesson 08.4: }}$$**
+\endgroup
+
+\vspace{1cm}
+
+::: columns
+:::: {.column width=75%}
+**Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
+
+**References**:
+
+- AIMA (Artificial Intelligence: a Modern Approach)
+
+- Pearl et al., The Book of Why, 2017
+::::
+:::: {.column width=20%}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){width=1.5cm}
+
+![](msml610/lectures_source/figures/book_covers/Book_cover_Book_of_why.jpg){width=1.5cm}
+
+::::
+:::
+
+# Causal Networks
+
+## Causal DAGs
+
+// Causal_inference_in_Python.Facure.2023.txt
+
+* (Non-Causal) Bayesian Networks

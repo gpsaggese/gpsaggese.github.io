@@ -54,9 +54,6 @@
 - Run multiple speculative searches during research
 - Read several files at once to build context faster
 
-
-
-
 ## Model Capabilities
 
 ### Extended thinking
