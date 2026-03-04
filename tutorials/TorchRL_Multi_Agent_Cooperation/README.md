@@ -1,192 +1,126 @@
-# TorchRL + PettingZoo MPE — Multi-Agent Communication (Course Tutorial Project)
+TorchRL + PettingZoo MPE — Multi-Agent Communication
 
-This repository is a course-style tutorial project demonstrating how to build an end-to-end **multi-agent reinforcement learning (MARL)** workflow using **TorchRL** and **PettingZoo’s Multi-Agent Particle Environment (MPE)**. The focus is **cooperative learning with communication**, along with practical debugging and evaluation techniques.
+ This folder contains a course-style tutorial project demonstrating an end-to-end multi-agent reinforcement learning (MARL) workflow using TorchRL and PettingZoo (MPE) with communication.
 
----
 
-## Project Objective
+Quick Start
 
-Train multiple agents to **collaborate** in an MPE task (e.g., `simple_reference`) and evaluate cooperation using:
+ From the root of the repository, create and activate a virtual environment:
+  > conda create -n torchrl-mac python=3.10 -y
+  > conda activate torchrl-mac
 
-* **Task success rate** (goal completion)
-* **Communication behavior metrics** (message entropy, message change rate)
-* (Optional) **communication ablations** (disable/random comm)
+ Install dependencies:
+  > pip install -r requirements.txt
 
----
+ Launch Jupyter Notebook:
+  > jupyter notebook
 
-## Repository Contents
+ Open and run the notebooks in this order:
 
-This project follows the course submission structure:
+  i. TorchRL_MAC.API.ipynb
+    Start here to understand the wrapper layer and core utilities.
 
-* `TorchRL_MAC_utils.py`
-  Reusable utilities and wrapper logic: environment creation, actor/critic helpers, rollout/training helpers, evaluation, and communication metrics.
+  ii. TorchRL_MAC.example.ipynb
+    Run this notebook to execute end-to-end training + evaluation.
 
-* `TorchRL_MAC.API.ipynb` + `TorchRL_MAC.API.md`
-  “API tutorial” demonstrating the wrapper layer (contract-style usage) with minimal cells.
+ Notebooks are designed to be executed using Restart & Run All.
 
-* `TorchRL_MAC.example.ipynb` + `TorchRL_MAC.example.md`
-  End-to-end training + evaluation example demonstrating the full pipeline and results.
 
-* `Dockerfile`
-  Container for reproducible execution.
+Docker Quick Start
 
-* `docker_build.sh` / `docker_bash.sh`
-  Helper scripts for building and running the Docker container.
+ Build the Docker image:
+ > ./docker_build.sh
 
----
+ Run the container and launch Jupyter:
+ > ./docker_bash.sh
 
-## Quickstart (Local)
+ Open the printed Jupyter URL in your browser and run the notebooks.
 
-### 1) Create environment
+ Note: Docker runs on CPU by default.
 
-Using conda (recommended):
 
-```bash
-conda create -n torchrl-mac python=3.10 -y
-conda activate torchrl-mac
-```
+Project Structure
 
-### 2) Install dependencies
+ TorchRL_MAC_utils.py
+  Environment creation, wrapper logic, actor/critic helpers, rollout/training utilities, evaluation, and communication metrics.
 
-```bash
-pip install -r requirements.txt
-```
+ TorchRL_MAC.API.ipynb / .md
+  Minimal API-style tutorial demonstrating wrapper contracts.
 
-### 3) Run notebooks
+ TorchRL_MAC.example.ipynb / .md
+  Full training + evaluation example with results and diagnostics.
 
-```bash
-jupyter notebook
-```
+ Dockerfile
+  Reproducible container environment.
 
-Open and run (top-to-bottom):
+ docker_build.sh / docker_bash.sh
+  Docker helper scripts.
 
-* `TorchRL_MAC.API.ipynb`
-* `TorchRL_MAC.example.ipynb`
+Project Objective
 
-**Important:** notebooks are designed to be executed via **Restart & Run All**.
+ Train multiple agents to cooperate in an MPE environment (e.g., simple_reference) and evaluate cooperation using:
+  i. Task success rate (success)
+  ii. Goal distance diagnostics
+  iii. Communication behavior metrics:
+   > message_entropy
+   > message_change_rate
+   > observation-derived verification metrics
 
----
 
-## Quickstart (Docker)
+What This Tutorial Covers
 
-### Build the image
+ i. Integration of PettingZoo MPE with TorchRL
+ ii. CTDE (Centralized Training, Decentralized Execution)
+ iii. Communication verification and debugging
+ iv. Interpreting structured metrics beyond raw returns
+ v. Practical MARL failure modes and iteration process
 
-Using the helper script (recommended):
 
-```bash
-./docker_build.sh
-```
+Evaluation Metrics
 
-Or manually:
+ This project prioritizes structured evaluation over noisy return curves:
+  > success — binary success based on goal distance threshold
+  > distances=[...] — debug visibility into goal proximity
+ Communication structure:
+  > message_entropy
+  > message_change_rate
+  > observation-derived variants (*_obs)
 
-```bash
-docker build -t torchrl-mac .
-```
 
-### Run the container (launch Jupyter)
+Notes on Training Iteration
 
-Using the helper script (recommended):
+ Initial experiments included:
+  > Single-worker A3C
+  > Multi-worker A3C
+  > Reward shaping (distance-to-goal shaping)
+  > Communication wiring verification
 
-```bash
-./docker_bash.sh
-```
+ Observed MARL failure mode:
+  > Loss changing without meaningful improvement in success or structured communication.
 
-Or manually:
+ The final notebook reflects the stabilized and interpretable configuration after these iterations.
 
-```bash
-docker run --rm -it -p 8888:8888 torchrl-mac
-```
 
-You should see a Jupyter URL printed in the terminal. Open it in your browser and run the notebooks.
+Reproducibility
 
-> Note: Docker runs on **CPU** by default. Local runs may use hardware acceleration depending on availability.
+ For stable runs:
+  > Use fixed seeds (config exposes seed)
+  > Execute notebooks from a clean kernel state
+  > Prefer CPU inside Docker for deterministic behavior
 
----
 
-## What You’ll Learn
+Troubleshooting
 
-By completing the notebooks, you will learn:
+ Success always 0.0
+  > Check success_dist
+  > Print goal distances
+  > Verify environment version (simple_reference_v3)
 
-1. How to integrate **PettingZoo MPE** environments with **TorchRL** wrappers
-2. How to implement a **CTDE** (centralized training, decentralized execution) MARL structure
-3. How to compute and interpret **communication metrics**:
+ Communication metrics look random
+  > Increase training duration
+  > Tune entropy coefficient
+  > Run communication sanity checks
 
-   * `message_entropy`
-   * `message_change_rate`
-   * observation-derived variants (`*_obs`) for verification
-4. How to validate that “communication is real” using:
-
-   * wiring sanity checks
-   * action-vs-observation consistency checks
-   * optional ablations (`full_comm`, `disable_comm`, `random_comm`)
-
----
-
-## Evaluation Metrics (What Matters)
-
-Returns can be noisy or misleading in shaped-reward environments. This project prioritizes:
-
-* **Success** (`success`): binary success based on whether all agents reach within `success_dist` of their goals
-* **Goal distances debug** (`distances=[...]` vs `success_dist`) for interpretability
-* **Communication structure metrics**:
-
-  * `message_entropy`, `message_change_rate`
-  * `message_entropy_obs`, `message_change_rate_obs` (should align if comm is wired correctly)
-
----
-
-## Notes on the A3C Attempt (Academic Iteration)
-
-We initially implemented:
-
-* **single-worker A3C**
-* **multi-worker A3C**
-
-and then performed extensive:
-
-* hyperparameter tuning
-* reward shaping experiments (e.g., distance-to-goal shaping)
-* communication verification (watching actions/messages, wiring checks)
-
-In multiple runs, we observed a common MARL failure mode: training loss changing without meaningful improvements in **success** or message structure. Based on these diagnostics, we transitioned to the **current stable setup** used in the example notebook, which produced interpretable results.
-
-This iteration process is documented in `TorchRL_MAC.example.md`.
-
----
-
-## Reproducibility
-
-For reproducible results:
-
-* use fixed seeds (configs expose `seed`)
-* run notebooks from a clean kernel state (“Restart & Run All”)
-* prefer CPU inside Docker for stability
-
----
-
-## Common Troubleshooting
-
-### “Success is always 0.0”
-
-Check:
-
-* `success_dist` threshold (too strict thresholds will show 0 success)
-* goal distance debug prints (`distances=[...]`)
-* ensure you’re evaluating the correct environment version (`simple_reference_v3` vs others)
-
-### Communication metrics look random (high entropy, high change rate)
-
-This can be normal early in training. If entropy/change rate stay high late into training:
-
-* try increasing training duration
-* tune entropy coefficient
-* verify comm wiring using the sanity check in utils
-
-### TorchRL/PettingZoo wrapper mismatch
-
-This project includes wrapper fallbacks in the utilities to handle minor version differences. If you see spec/key errors:
-
-* confirm installed versions from `pip freeze`
-* run the API notebook first (it prints env specs and expected keys)
-
----
+ Wrapper/spec errors
+  > Confirm installed versions (pip freeze)
+  > Run API notebook first to inspect environment specs
