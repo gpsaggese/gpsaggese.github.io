@@ -111,61 +111,19 @@ This is where Ax comes in.
 
 ## The Solution: Ax in Action
 
-### Step 1: A Warm-Up with the Hartmann Function
-Before tackling the marketing problem, let's see how Ax works on a well-known
-benchmark, the
-[Hartmann function](https://en.wikipedia.org/wiki/Hartmann_function) in 6
-dimensions:
+### Tutorial
 
-$$
-f(\mathbf{x}) = -\sum_{i=1}^{4} \alpha_i \exp \left( -\sum_{j=1}^{6} A_{ij} (x_j - P_{ij})^2 \right)
-$$
+The following tutorial describes how to use Ax to perform multi-objective optimization and ready-to-run code examples to optimize a marketing campaign. You can find the tutorial in `Ax.example.ipynb`.
 
-This function has multiple local optima and one global optimum, making it a
-perfect test case. A grid search with a step of 0.1 would require $10^6$
-evaluations. Let's see how Ax handles it:
-```python
-from ax.api.client import Client
-from ax.api.configs import RangeParameterConfig
+The tutorial covers the following topics:
+- Real-Time Bidding Algorithms with Bayesian Optimization
+- Multi-Objective Optimization: Maximize the number of clicks while minimizing the budget spent
+- Bayesian Optimization on Multi-Armed Bandits as an alternative to A/B Testing
 
-# Create the Ax Client
-client = Client()
+**Note:** The tutorial referenced above provides all the source code in Jupyter Notebook format to run this example.
 
-# Define the search space: 6 variables, each between 0 and 1
-parameters = [
-    RangeParameterConfig(name=f"x{i}", parameter_type="float", bounds=(0, 1))
-    for i in range(1, 7)
-]
+### Step 1: Maximizing the Results of a Marketing Campaign
 
-client.configure_experiment(parameters=parameters)
-client.configure_optimization(objective="-hartmann")  # Minimize
-```
-
-The optimization loop is remarkably simple: ask Ax for suggested trials, run
-them, and report results:
-```python
-for _ in range(10):
-    # Ask Ax for the next batch of parameters to try
-    trials = client.get_next_trials(max_trials=5)
-
-    for trial_index, parameters in trials.items():
-        # Evaluate the function (in a real scenario, this is your experiment)
-        result = hartmann6(**parameters)
-
-        # Report the result back to Ax
-        client.complete_trial(
-            trial_index=trial_index,
-            raw_data={"hartmann": result}
-        )
-
-best_parameters, prediction, _, _ = client.get_best_parameterization()
-```
-
-**Result:** Ax found a value of **-3.30** in just **45 trials**, while the known
-global optimum is **-3.32**. That's a 0.9% difference, found with a fraction of
-the effort a grid search would require.
-
-### Step 2: Optimizing the Marketing Campaign
 Now let's apply Ax to a real-world scenario. We're putting ourselves in the
 shoes of a **DSP (Demand Side Platform)** --- the system that decides, on behalf
 of an advertiser, how much to bid for each ad impression in real time.
