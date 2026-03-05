@@ -38,10 +38,83 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
-# Causal Networks
-
-## Causal DAGs
-
 // Causal_inference_in_Python.Facure.2023.txt
 
-* (Non-Causal) Bayesian Networks
+* Definition
+- Causal inference question: "what is the impact of $T$ on $Y$?"
+  - E.g., `is_on_sale` -> `on_weekly_amount_sold`?
+
+- Unit of analysis = the thing you wish to intervene on / treat, e.g.,
+  - _"People who buy"_
+  - _"When is the best moment to have sales"_
+
+- _"Treatment for unit $i$"_ $T_i = 1$ if object / unit $i$ has received the
+  treatment
+  - E.g., `(weeks_to_xmas, is_on_sale)` = "apply price drop on a specific week"
+- Sometimes $T$ is denoted with $D$
+
+- Outcome = the variable one wants to influence, $Y_i$
+  - E.g., `weekly_amount_sold`
+
+* The fundamental problem of causal inference
+- "You can never observe the same unit with and without treatment"
+
+- If you plot the outcome `weekly_amount_sold` by the treatment `is_on_sale`
+  you see that the stores that dropped price sell a lot more (from 50 to 150)
+
+- This matches the intuition "people buy more when prices are low due to sales"
+
+- The magnitude of the change seem too large
+  - Maybe only larger businesses can afford aggressive price drops
+  - Maybe customers buy close to Christmas anyway
+
+- If you could observe the two counterfactual situations, you will know for sure
+  the effect of the price drops
+- But this is not possible due to the fundamental problem of causal inference
+
+## Causal models
+
+* Causal Model
+- A causal model is a series of assignments $\leftarrow$
+  \begin{align*}
+  & T \leftarrow f_t(u_t) \\
+  & Y \leftarrow f_y(T, u_y) \\
+  \end{align*}
+  where:
+  - $u_t, u_y$ are exogenous variables (outside the model)
+    - They account for everything not accounted by the variables in the model
+  - The treatment $T$ together with $u_y$ causes the outcome $Y$
+  - $T$ and $Y$ are endogenous to the model
+
+- Note that because of the non-reversibility of causality you can't move things
+  around the equal side
+
+* Causal model: sales example
+- Causal model for sales example
+  \begin{align*}
+  & IsOnSales \leftarrow f_t(u_t) \\
+  & AmountSold \leftarrow f_y(IsOnSales, u_y) \\
+  \end{align*}
+
+- You could add a $BusinessSize$ in the model
+  \begin{align*}
+  & BusinessSize \leftarrow f_s(u_s) \\
+  & IsOnSales \leftarrow f_t(BusinessSize, u_t) \\
+  & AmountSold \leftarrow f_y(IsOnSales, BusinessSize, u_y) \\
+  \end{align*}
+
+- One can make an assumption of linear model for $f_y(.)$ and say
+  $$AmountSold = \alpha + \beta_1 IsOnSales + \beta_2 \BusinessSize + e$$
+
+## Interventions
+
+*
+- You can force the treatment $t_0$
+  \begin{align*}
+  & T \leftarrow t_0 \\
+  & Y \leftarrow f_y(T, u_y) \\
+  \end{align*}
+  and ask "what would happen to the outcome $Y$ if I were to set the treatment to
+  $t_0$?
+- The intervention is represented by the $do(.)$ operator, e.g., $do(T = t_0)$
+

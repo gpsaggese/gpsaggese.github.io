@@ -38,8 +38,6 @@ MSML610: Advanced Machine Learning
 # Causal AI
 # ##############################################################################
 
-// ## Why Causal AI?
-
 ## #############################################################################
 ## Why Causal AI?
 ## #############################################################################
@@ -49,17 +47,6 @@ MSML610: Advanced Machine Learning
   - Organize and analyze massive amount of data
   - Data analytics (dashboards, models, reports)
   - Run machine learning on data
-
-- Problems with **traditional AI**
-  - Predicts based on observed correlations
-  - Can't explain why an outcome occurred
-
-- **AI in decision making**
-  - Understand impact of decisions
-  - E.g., _"What happens if a product price is reduced by 10%?"_
-    - Will more customers buy?
-    - If revenue decreases, what to do?
-    - Why are customers leaving? Quality issue? Emerging competitor?
 
 * What Are Data Analytics?
 - **Collections of data**
@@ -82,10 +69,6 @@ MSML610: Advanced Machine Learning
   - Statistical representations to _forecast, explain phenomena_
   - E.g., model to anticipate customer churn based on behavioral data
 
-// ![](msml610/lectures_source/figures/Lesson09-Dashboard.png)
-
-// TODO: Add some pics
-
 * Data Analytics Sophistication
 
 \begingroup \footnotesize
@@ -101,33 +84,21 @@ MSML610: Advanced Machine Learning
   \includegraphics[width=0.9\textwidth]{msml610/lectures_source/figures/Lesson09-Analytical_sophistication.png}
 \end{center}
 
-* AI / ML Explainability
-- **Regulators** require you to defend ML/AI decision results
-  - E.g., hiring decisions, policy setup
+// ![](msml610/lectures_source/figures/Lesson09-Dashboard.png)
 
-- E.g., neural networks are "black boxes"
-  - Lack of explainability
-    - Humans can't understand input-to-conclusion process (easily or at all)
-    - Can't explain decisions to shareholders
-  - Bias
-    - E.g., using age, race, sex as features can introduce bias
+// TODO: Improve the following
 
-- Drawbacks: organizations can:
-  - **Be fined** by authorities
-  - **Face backlash** from customers and activists
+* Problem 1: Association vs Correlation
+- Easy to overfit
+- Predicts based on observed correlations
+- Can't explain why an outcome occurred
 
-- Solution:
-  - **Explainable AI** allows users to:
-    - Comprehend
-    - Explain
-    - Trust machine results
-
-* Humans are primed to take association for causation
-- _"You eat X that gives a stomachaches several times"
-  - $\to$ You infer that _"X is bad for you"_
-- _"You put money in a stock right before a steep increase in prices"_
-  - $\to$ You infer _"you can time the market"_
-  - It might lead to riskier and riskier bets
+- Humans are primed to take association for causation
+  - _"You eat X that gives a stomachaches several times"
+    - $\to$ You infer that _"X is bad for you"_
+  - _"You put money in a stock right before a steep increase in prices"_
+    - $\to$ You infer _"you can time the market"_
+    - It might lead to riskier and riskier bets
 
 * Correlation is Not Causation!
 - **Correlation** is a statistical method for understanding relationships
@@ -149,7 +120,7 @@ MSML610: Advanced Machine Learning
   - Only humans can identify variables and relationships based on context
   - Without causation, you can't make intelligent decisions
 
-* Association and Causation
+* Correlation is Not Causation: Examples
 - Intuitively you know that association is not causation
 
 - E.g., "top-notch consulting improve businesses"
@@ -171,6 +142,40 @@ MSML610: Advanced Machine Learning
     - The type of business (e.g., clothing vs dog food)
     - The timing (e.g., before Christmas)
 
+* Problem 2: Decision Making
+- Can't understand impact of decisions
+
+- What would happen if you change the price of a merchandise?
+- What happens if you switch from low-sugar diet to low-fat diet?
+- What happens to bank's margin if a bank increases customer's credit line?
+- Is it better to build a library or give tables to kids to boost test score?
+
+- E.g., _"What happens if a product price is reduced by 10%?"_
+  - Will more customers buy?
+  - If revenue decreases, what to do?
+  - Why are customers leaving? Quality issue? Emerging competitor?
+
+* Problem 3: ML Explainability
+- **Regulators** require you to defend ML/AI decision results
+  - E.g., hiring decisions, policy setup
+
+- E.g., neural networks are "black boxes"
+  - Lack of explainability
+    - Humans can't understand input-to-conclusion process (easily or at all)
+    - Can't explain decisions to shareholders
+  - Bias
+    - E.g., using age, race, sex as features can introduce bias
+
+- Drawbacks: organizations can:
+  - **Be fined** by authorities
+  - **Face backlash** from customers and activists
+
+- Solution:
+  - **Explainable AI** allows users to:
+    - Comprehend
+    - Explain
+    - Trust machine results
+
 * Causal AI
 - **Understands the why**
   - Determines cause-and-effect between variables
@@ -191,12 +196,6 @@ MSML610: Advanced Machine Learning
 - **Improving decision-making**
   - Provides understanding of relationships for better decisions
   - E.g., improve supply chain by understanding impact of decisions on logistics
-
-* Causal inference and decision making
-- What would happen if you change the price of a merchandise?
-- What happens if you switch from low-sugar diet to low-fat diet?
-- What happens to bank's margin if a bank increases customer's credit line?
-- Is it better to build a library or give tables to kids to boost test score?
 
 * Causal AI vs Traditional AI
 - **Current AI** uses correlation to:
