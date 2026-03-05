@@ -21,6 +21,7 @@
 # %autoreload 2
 
 import logging
+import os
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -39,6 +40,13 @@ ut.config_notebook()
 # Initialize logger.
 logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
+
+# %%
+import helpers.hmodule as hmodule
+hmodule.install_module_if_not_present(
+  "dataframe_image",
+  use_activate=True,
+)
 
 # %%
 from cycler import cycler
@@ -63,17 +71,34 @@ dir_name = "L09_data"
 # !ls $dir_name
 
 # %%
+out_dir_name = "figures/L09"
+
+# %%
 data = pd.read_csv(dir_name + "/xmas_sales.csv")
+data["is_on_sale"] = data["is_on_sale"].astype(float)
 print(data.shape)
 data.head(6)
 
 # %%
+import helpers.hpandas_display as hpandisp
+hpandisp.convert_df_to_png(data.head(6), os.path.join(out_dir_name, 'xmas_sales_df.png'), index=True,
+                           print_markdown=True,
+                           markdown_path_prefix="msml610/lectures_source")
+# # cp msml610/tutorials/figures/L09/* msml610/lectures_source/figures/L09/
+
+# %%
 fig, ax = plt.subplots(1, 1, figsize=(10, 5))
-sns.boxplot(y="weekly_amount_sold", x="is_on_sale", data=data, ax=ax)
+sns.boxplot(y="weekly_amount_sold", x="is_on_sale", data=data,
+            ax=ax)
 
 ax.set_xlabel("is_on_sale", fontsize=20)
 ax.set_ylabel("weekly_amount_sold", fontsize=20)
 ax.tick_params(axis="both", which="major", labelsize=18)
+
+import helpers.hmatplotlib as hmatplo
+hmatplo.save_fig(fig, os.path.join(out_dir_name, "xmas_boxplot.png"),
+                  print_markdown=True,
+                  path_prefix="msml610/lectures_source")
 
 # %%
 # i = unit identifier
