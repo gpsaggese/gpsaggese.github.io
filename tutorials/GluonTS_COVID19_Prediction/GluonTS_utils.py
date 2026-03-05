@@ -61,8 +61,13 @@ DEFAULT_LEARNING_RATE = 1e-3
 DEFAULT_FIGSIZE = (12, 6)
 DEFAULT_DPI = 150
 
-# Logging setup
+# Logging setup -- configure so messages show up in notebooks by default
 _LOG = logging.getLogger(__name__)
+if not _LOG.handlers:
+    _handler = logging.StreamHandler()
+    _handler.setFormatter(logging.Formatter("%(message)s"))
+    _LOG.addHandler(_handler)
+    _LOG.setLevel(logging.INFO)
 warnings.filterwarnings("ignore")
 
 
@@ -110,17 +115,17 @@ def analyze_feature_correlation(
         corr_series = corr_series.drop(target_col)
     correlations = corr_series.sort_values(ascending=False)
 
-    print(" Feature Correlations with Daily Cases:")
+    print("Feature Correlations with Daily Cases:")
     print("=" * 70)
     for feat, corr in correlations.items():
         bar = bar_char * int(abs(corr) * bar_width)
         sign = "+" if corr > 0 else "-"
         print(f"  {feat:35s} [{sign}] {bar} {corr:+.3f}")
 
-    print("\n Interpretation:")
-    print(" • Positive correlation: Feature increases with cases")
-    print(" • Negative correlation: Feature decreases when cases rise")
-    print(" • Magnitude: Strength of relationship")
+    print("\nInterpretation:")
+    print("  Positive correlation: Feature increases with cases")
+    print("  Negative correlation: Feature decreases when cases rise")
+    print("  Magnitude: Strength of relationship")
 
     return correlations
 
@@ -425,16 +430,16 @@ def check_and_download_data(
         file_path = data_path / filename
         if file_path.exists():
             existing_files.append(filename)
-            _LOG.info("✓ Found: %s", filename)
+            _LOG.info("  Found: %s", filename)
         else:
             missing_files.append(filename)
 
     if not missing_files:
-        _LOG.info("\n✓ All data files present!")
+        _LOG.info("\nAll data files present.")
         return True
 
-    _LOG.info("\n⚠ Missing files: %s", ", ".join(missing_files))
-    _LOG.info("\n📥 Attempting to download from Google Drive...")
+    _LOG.info("\nMissing files: %s", ", ".join(missing_files))
+    _LOG.info("\nAttempting to download from Google Drive...")
 
     downloaded = []
     failed = []
@@ -453,7 +458,7 @@ def check_and_download_data(
             failed.append(filename)
 
     if failed:
-        _LOG.error("❌ Failed to download: %s", ", ".join(failed))
+        _LOG.error("Failed to download: %s", ", ".join(failed))
         _LOG.info("Please download manually from: https://drive.google.com/drive/folders/1qMDGBstdY8H2hYpz8xSolhzNOsVxNHMA")
         file_mapping = {
             "cases.csv": "time_series_covid19_confirmed_US.csv",
@@ -464,10 +469,10 @@ def check_and_download_data(
         for local_name in failed:
             if local_name in file_mapping:
                 drive_name = file_mapping[local_name]
-                _LOG.info("  - %s → rename to '%s'", drive_name, local_name)
+                _LOG.info("  - %s -> rename to '%s'", drive_name, local_name)
         return False
 
-    _LOG.info("✅ Successfully downloaded: %s", ", ".join(downloaded))
+    _LOG.info("Successfully downloaded: %s", ", ".join(downloaded))
     return True
 
 
@@ -1041,24 +1046,26 @@ def quick_load_full() -> Dict:
 
 def compute_custom_metrics(forecasts, ground_truths) -> Dict[str, float]:
     """
-    Compute additional metrics (MAE, RMSE, MAPE) not always included in GluonTS Evaluator.
+    Compute MAE, RMSE, and MAPE from GluonTS forecast/ground-truth pairs.
 
-    Args:
-        forecasts: List of forecast objects with .mean attribute
-        ground_truths: List of ground truth objects (DataFrame, array, etc.)
+    GluonTS's ``make_evaluation_predictions`` returns each ground truth as the
+    *full* time series (train + test).  The forecast only covers the last
+    ``prediction_length`` steps.  We therefore align by taking the *tail* of
+    the ground truth that matches the forecast length.
 
-    Returns:
-        Dictionary with MAE, RMSE, MAPE metrics
+    :param forecasts: List of forecast objects (each has a ``.mean`` attribute)
+    :param ground_truths: List of ground truth time-series objects returned by
+        ``make_evaluation_predictions``
+    :return: Dictionary with ``MAE``, ``RMSE``, ``MAPE`` keys
     """
     mae_values = []
     rmse_values = []
     mape_values = []
 
     for forecast, ground_truth in zip(forecasts, ground_truths):
-        # extract forecast mean as numpy array
         forecast_mean = np.array(forecast.mean)
+        forecast_len = len(forecast_mean)
 
-        # extract target values robustly
         if hasattr(ground_truth, "target"):
             target = np.array(ground_truth.target)
         elif isinstance(ground_truth, pd.DataFrame):
@@ -1069,19 +1076,13 @@ def compute_custom_metrics(forecasts, ground_truths) -> Dict[str, float]:
         else:
             target = np.array(ground_truth)
 
-        # Ensure same length
-        if len(forecast_mean) != len(target):
-            min_len = min(len(forecast_mean), len(target))
-            forecast_mean = forecast_mean[:min_len]
-            target = target[:min_len]
+        # Align: the forecast corresponds to the LAST forecast_len values
+        # of the full ground-truth series.
+        target = target[-forecast_len:]
 
-        # Calculate metrics for this time series
         mae = np.mean(np.abs(forecast_mean - target))
         rmse = np.sqrt(np.mean((forecast_mean - target) ** 2))
 
-        # MAPE: use denominator clipped at 1 to avoid extreme percentages when
-        # target is very small.  Cutting off at 1 makes the metric interpretable
-        # for count data (errors relative to at least one case).
         denom = np.maximum(np.abs(target), 1.0)
         mape_vals = np.abs((target - forecast_mean) / denom)
         mape = np.mean(mape_vals) if mape_vals.size > 0 else np.nan
@@ -1093,7 +1094,6 @@ def compute_custom_metrics(forecasts, ground_truths) -> Dict[str, float]:
     return {
         "MAE": float(np.nanmean(mae_values)),
         "RMSE": float(np.nanmean(rmse_values)),
-        # multiply percentage after handling NaNs
         "MAPE": float(np.nanmean(mape_values)) * 100,
     }
 
@@ -1147,14 +1147,14 @@ def train_deepar_covid(
     """
     if verbose:
         _LOG.info("\n" + "=" * 70)
-        _LOG.info("🚀 TRAINING DeepAR MODEL")
+        _LOG.info("TRAINING DeepAR MODEL")
         _LOG.info("=" * 70)
-        _LOG.info("\n📋 Configuration:")
-        _LOG.info("  • Epochs: %s", epochs)
-        _LOG.info("  • Context length: %s days", context_length or prediction_length * 2)
-        _LOG.info("  • External features: %s", num_feat_dynamic_real)
-        _LOG.info("  • Hidden size: %s", hidden_size)
-        _LOG.info("  • RNN layers: %s", num_layers)
+        _LOG.info("\nConfiguration:")
+        _LOG.info("  Epochs: %s", epochs)
+        _LOG.info("  Context length: %s days", context_length or prediction_length * 2)
+        _LOG.info("  External features: %s", num_feat_dynamic_real)
+        _LOG.info("  Hidden size: %s", hidden_size)
+        _LOG.info("  RNN layers: %s", num_layers)
 
     start_time = time.time()
     estimator = DeepAREstimator(
@@ -1172,13 +1172,13 @@ def train_deepar_covid(
     )
 
     if verbose:
-        _LOG.info("\n⏳ Training in progress...")
+        _LOG.info("\nTraining in progress...")
     predictor = estimator.train(train_ds)
     training_time = time.time() - start_time
 
     if verbose:
-        _LOG.info("✅ Training complete in %.1f seconds", training_time)
-        _LOG.info("\n🔮 Generating probabilistic forecasts...")
+        _LOG.info("Training complete in %.1f seconds", training_time)
+        _LOG.info("\nGenerating probabilistic forecasts...")
 
     forecast_it, ts_it = make_evaluation_predictions(
         dataset=test_ds, predictor=predictor, num_samples=100
@@ -1189,15 +1189,14 @@ def train_deepar_covid(
     evaluator = Evaluator(quantiles=[0.1, 0.5, 0.9])
     agg_metrics, _ = evaluator(iter(ground_truths), iter(forecasts))
 
-    # Compute custom metrics to ensure MAE, RMSE, MAPE are always available
     custom_metrics = compute_custom_metrics(forecasts, ground_truths)
     agg_metrics.update(custom_metrics)
 
     if verbose:
-        _LOG.info("\n📊 DeepAR Performance:")
-        _LOG.info("  • MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
-        _LOG.info("  • RMSE: %.2f", agg_metrics.get("RMSE", 0))
-        _LOG.info("  • MAE: %.2f", agg_metrics.get("MAE", 0))
+        _LOG.info("\nDeepAR Performance:")
+        _LOG.info("  MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
+        _LOG.info("  RMSE: %.2f", agg_metrics.get("RMSE", 0))
+        _LOG.info("  MAE: %.2f", agg_metrics.get("MAE", 0))
         _LOG.info("=" * 70)
 
     return ModelResults(
@@ -1239,13 +1238,13 @@ def train_feedforward_covid(
     """
     if verbose:
         _LOG.info("\n" + "=" * 70)
-        _LOG.info("🚀 TRAINING SimpleFeedForward MODEL")
+        _LOG.info("TRAINING SimpleFeedForward MODEL")
         _LOG.info("=" * 70)
-        _LOG.info("\n⚠️  Note: This model doesn't use external features")
-        _LOG.info("\n📋 Configuration:")
-        _LOG.info("  • Epochs: %s", epochs)
-        _LOG.info("  • Context length: %s days", context_length or prediction_length * 2)
-        _LOG.info("  • Hidden layers: %s", hidden_dimensions or [40, 40])
+        _LOG.info("\nNote: This model doesn't use external features")
+        _LOG.info("\nConfiguration:")
+        _LOG.info("  Epochs: %s", epochs)
+        _LOG.info("  Context length: %s days", context_length or prediction_length * 2)
+        _LOG.info("  Hidden layers: %s", hidden_dimensions or [40, 40])
 
     start_time = time.time()
     estimator = SimpleFeedForwardEstimator(
@@ -1259,13 +1258,13 @@ def train_feedforward_covid(
     )
 
     if verbose:
-        _LOG.info("\n⏳ Training in progress...")
+        _LOG.info("\nTraining in progress...")
     predictor = estimator.train(train_ds)
     training_time = time.time() - start_time
 
     if verbose:
-        _LOG.info("✅ Training complete in %.1f seconds", training_time)
-        _LOG.info("\n🔮 Generating probabilistic forecasts...")
+        _LOG.info("Training complete in %.1f seconds", training_time)
+        _LOG.info("\nGenerating probabilistic forecasts...")
 
     forecast_it, ts_it = make_evaluation_predictions(
         dataset=test_ds, predictor=predictor, num_samples=100
@@ -1276,15 +1275,14 @@ def train_feedforward_covid(
     evaluator = Evaluator(quantiles=[0.1, 0.5, 0.9])
     agg_metrics, _ = evaluator(iter(ground_truths), iter(forecasts))
 
-    # Compute custom metrics to ensure MAE, RMSE, MAPE are always available
     custom_metrics = compute_custom_metrics(forecasts, ground_truths)
     agg_metrics.update(custom_metrics)
 
     if verbose:
-        _LOG.info("\n📊 SimpleFeedForward Performance:")
-        _LOG.info("  • MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
-        _LOG.info("  • RMSE: %.2f", agg_metrics.get("RMSE", 0))
-        _LOG.info("  • MAE: %.2f", agg_metrics.get("MAE", 0))
+        _LOG.info("\nSimpleFeedForward Performance:")
+        _LOG.info("  MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
+        _LOG.info("  RMSE: %.2f", agg_metrics.get("RMSE", 0))
+        _LOG.info("  MAE: %.2f", agg_metrics.get("MAE", 0))
         _LOG.info("=" * 70)
 
     return ModelResults(
@@ -1330,14 +1328,14 @@ def train_deepnpts_covid(
     """
     if verbose:
         _LOG.info("\n" + "=" * 70)
-        _LOG.info("🚀 TRAINING DeepNPTS MODEL")
+        _LOG.info("TRAINING DeepNPTS MODEL")
         _LOG.info("=" * 70)
-        _LOG.info("\n📋 Configuration:")
-        _LOG.info("  • Epochs: %s", epochs)
-        _LOG.info("  • Context length: %s days", context_length or prediction_length * 2)
-        _LOG.info("  • External features: %s", num_feat_dynamic_real)
-        _LOG.info("  • Hidden nodes: %s", num_hidden_nodes or [40])
-        _LOG.info("  • Dropout: %s", dropout_rate)
+        _LOG.info("\nConfiguration:")
+        _LOG.info("  Epochs: %s", epochs)
+        _LOG.info("  Context length: %s days", context_length or prediction_length * 2)
+        _LOG.info("  External features: %s", num_feat_dynamic_real)
+        _LOG.info("  Hidden nodes: %s", num_hidden_nodes or [40])
+        _LOG.info("  Dropout: %s", dropout_rate)
 
     start_time = time.time()
     estimator = DeepNPTSEstimator(
@@ -1354,13 +1352,13 @@ def train_deepnpts_covid(
     )
 
     if verbose:
-        _LOG.info("\n⏳ Training in progress...")
+        _LOG.info("\nTraining in progress...")
     predictor = estimator.train(train_ds)
     training_time = time.time() - start_time
 
     if verbose:
-        _LOG.info("✅ Training complete in %.1f seconds", training_time)
-        _LOG.info("\n🔮 Generating probabilistic forecasts...")
+        _LOG.info("Training complete in %.1f seconds", training_time)
+        _LOG.info("\nGenerating probabilistic forecasts...")
 
     forecast_it, ts_it = make_evaluation_predictions(
         dataset=test_ds, predictor=predictor, num_samples=100
@@ -1371,15 +1369,14 @@ def train_deepnpts_covid(
     evaluator = Evaluator(quantiles=[0.1, 0.5, 0.9])
     agg_metrics, _ = evaluator(iter(ground_truths), iter(forecasts))
 
-    # Compute custom metrics to ensure MAE, RMSE, MAPE are always available
     custom_metrics = compute_custom_metrics(forecasts, ground_truths)
     agg_metrics.update(custom_metrics)
 
     if verbose:
-        _LOG.info("\n📊 DeepNPTS Performance:")
-        _LOG.info("  • MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
-        _LOG.info("  • RMSE: %.2f", agg_metrics.get("RMSE", 0))
-        _LOG.info("  • MAE: %.2f", agg_metrics.get("MAE", 0))
+        _LOG.info("\nDeepNPTS Performance:")
+        _LOG.info("  MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
+        _LOG.info("  RMSE: %.2f", agg_metrics.get("RMSE", 0))
+        _LOG.info("  MAE: %.2f", agg_metrics.get("MAE", 0))
         _LOG.info("=" * 70)
 
     return ModelResults(
@@ -1767,7 +1764,7 @@ def print_scenario_summary(results: List[ScenarioResult]) -> pd.DataFrame:
                 "vs Baseline": f"{pct:+.1f}%"
                 if result.name != "Baseline"
                 else "--",
-                "Cases Δ": diff
+                "Cases Delta": diff
                 if result.name != "Baseline"
                 else 0,
             }
@@ -1781,7 +1778,7 @@ def print_scenario_summary(results: List[ScenarioResult]) -> pd.DataFrame:
     print(f"\nForecast horizon: 14 days")
     print(f"Baseline total cases: {baseline_total:,.0f}")
     print("")
-    print("Scenario".ljust(25), "Avg Daily".ljust(12), "Total Cases".ljust(14), "vs Baseline".ljust(12), "Cases Δ".ljust(15))
+    print("Scenario".ljust(25), "Avg Daily".ljust(12), "Total Cases".ljust(14), "vs Baseline".ljust(12), "Cases Delta".ljust(15))
     print("-" * 90)
 
     for _, row in df.iterrows():
@@ -1789,10 +1786,9 @@ def print_scenario_summary(results: List[ScenarioResult]) -> pd.DataFrame:
         avg_daily = f"{row['Avg Daily Cases']:,.0f}".ljust(12)
         total_cases = f"{row['Total Cases (14d)']:,.0f}".ljust(14)
         vs_baseline = str(row["vs Baseline"]).ljust(12)
-        # Format Cases Δ with proper sign and thousands separator
         cases_delta_val = "--"
         if row["Scenario"] != "Baseline":
-            cases_delta_val = f"{int(row['Cases Δ']):+,.0f}"
+            cases_delta_val = f"{int(row['Cases Delta']):+,.0f}"
         cases_delta = cases_delta_val.ljust(15)
         print(scenario_name + avg_daily + total_cases + vs_baseline + cases_delta)
     print("=" * 90)
@@ -1832,7 +1828,7 @@ def print_policy_insights(results: List[ScenarioResult]) -> None:
     print("=" * 70)
     print()
 
-    print("💡 Intervention Impact:")
+    print("Intervention Impact:")
     if strong_intervention:
         pct = (cases_prevented / baseline.total_cases) * 100
         print("  Strong intervention (30% mobility reduction) could prevent")
@@ -1841,7 +1837,7 @@ def print_policy_insights(results: List[ScenarioResult]) -> None:
         print("  Strong intervention scenario not found.")
     print()
 
-    print("⚠️  Relaxation Risk:")
+    print("Relaxation Risk:")
     if relaxation:
         pct = (additional_cases / baseline.total_cases) * 100
         print("  Lifting restrictions (20% mobility increase) could add")
@@ -1850,7 +1846,7 @@ def print_policy_insights(results: List[ScenarioResult]) -> None:
         print("  Relaxation scenario not found.")
 
     print()
-    print("📝 Caveats:")
+    print("Caveats:")
     print("  - These are model projections, not guarantees")
     print("  - Correlation does not imply causation")
     print("  - Use to inform discussion, not dictate policy")
@@ -1929,7 +1925,7 @@ def plot_scenario_comparison(
         ax2.text(
             width + baseline_total * 0.01,
             bar.get_y() + bar.get_height() / 2,
-            ".0f",
+            f"{width:,.0f}",
             ha="left",
             va="center",
             fontweight="bold",
@@ -1969,10 +1965,10 @@ def plot_scenario_comparison(
     plt.show()
 
     print("\nScenario comparison insights:")
-    print("• Left plot shows how each scenario evolves over the 14-day forecast")
-    print("• Right plot compares total case burden for each scenario")
-    print("• Shaded areas show forecast uncertainty (80% confidence intervals)")
-    print("• Percentages show change relative to baseline scenario")
+    print("  - Left plot shows how each scenario evolves over the 14-day forecast")
+    print("  - Right plot compares total case burden for each scenario")
+    print("  - Shaded areas show forecast uncertainty (80% confidence intervals)")
+    print("  - Percentages show change relative to baseline scenario")
 
 
 # #############################################################################
@@ -2032,7 +2028,7 @@ def print_metrics(
         metrics: Dictionary returned by calculate_metrics()
         model_name: Name of your model (just for the header)
     """
-    print(f"\n📊 {model_name} Performance Metrics:")
+    print(f"\n{model_name} Performance Metrics:")
     print("=" * 60)
     print(f"MAE (Mean Absolute Error):      {metrics['mae']:10,.2f}")
     print(f"RMSE (Root Mean Squared Error): {metrics['rmse']:10,.2f}")
@@ -2041,19 +2037,18 @@ def print_metrics(
     print(f"Maximum Error:                   {metrics['max_error']:10,.2f}")
     print("=" * 60)
 
-    # Add helpful interpretation
     if metrics["mape"] < 10:
-        print("✅ Excellent! Error less than 10%")
+        print("Excellent -- error less than 10%")
     elif metrics["mape"] < 20:
-        print("👍 Good performance, error less than 20%")
+        print("Good performance -- error less than 20%")
     else:
-        print("🤔 Moderate performance (COVID data is highly variable)")
+        print("Moderate performance (COVID data is highly variable)")
 
     if abs(metrics["me"]) < metrics["mae"] / 2:
-        print("⚖️  Low bias - not systematically over/under-predicting")
+        print("Low bias -- not systematically over/under-predicting")
     else:
         bias_direction = "over" if metrics["me"] > 0 else "under"
-        print(f"📈 Model tends to {bias_direction}-predict")
+        print(f"Model tends to {bias_direction}-predict")
 
 
 def plot_forecast(
@@ -2160,7 +2155,7 @@ def plot_forecast(
 
     if save_path:
         plt.savefig(save_path, dpi=DEFAULT_DPI, bbox_inches="tight")
-        print(f"💾 Forecast plot saved to: {save_path}")
+        print(f"Forecast plot saved to: {save_path}")
 
     plt.show()
 
@@ -2298,7 +2293,7 @@ def plot_error_analysis(
 
     if save_path:
         plt.savefig(save_path, dpi=DEFAULT_DPI, bbox_inches="tight")
-        _LOG.info("💾 Error analysis plot saved to: %s", save_path)
+        _LOG.info("Error analysis plot saved to: %s", save_path)
 
     plt.show()
 
@@ -2343,17 +2338,17 @@ def compare_models_metrics(
                 fontsize=10
             )
 
-    plt.suptitle("🤖 Model Performance Comparison", fontsize=16, fontweight="bold")
+    plt.suptitle("Model Performance Comparison", fontsize=16, fontweight="bold")
     plt.tight_layout()
 
     if save_path:
         plt.savefig(save_path, dpi=DEFAULT_DPI, bbox_inches="tight")
-        print(f"💾 Model comparison plot saved to: {save_path}")
+        print(f"Model comparison plot saved to: {save_path}")
 
     plt.show()
 
     # Print summary table
-    print("\n📋 Model Comparison Summary:")
+    print("\nModel Comparison Summary:")
     print("=" * 70)
     print("%-20s %12s %12s %12s" % ("Model", "MAE", "RMSE", "MAPE"))
     print("-" * 70)
@@ -2371,7 +2366,7 @@ def compare_models_metrics(
     # Find and highlight best model
     best_model = min(results.items(), key=lambda x: x[1]["mape"])
     _LOG.info(
-        "\n🏆 Best Model (by MAPE): %s (%.2f%% error)",
+        "\nBest Model (by MAPE): %s (%.2f%% error)",
         best_model[0],
         best_model[1]["mape"],
     )
@@ -2690,9 +2685,9 @@ def plot_train_test_split(
     plt.show()
 
     print("\nData split information:")
-    print(f"• Training data: {len(data['train_df'])} points")
-    print(f"• Test data: {len(data['test_df'])} points")
-    print("• The red line shows where training ends and testing begins")
+    print(f"  - Training data: {len(data['train_df'])} points")
+    print(f"  - Test data: {len(data['test_df'])} points")
+    print("  - The red line shows where training ends and testing begins")
 
 
 def plot_forecast_result(
@@ -2762,10 +2757,10 @@ def plot_forecast_result(
     plt.show()
 
     print(f"\n{model_name} forecast summary:")
-    print("• Blue line shows recent historical data")
-    print("• Red line shows what actually happened")
-    print("• Orange dashed line is the model's prediction")
-    print("• Shaded area shows the model's uncertainty (80% confidence)")
+    print("  - Blue line shows recent historical data")
+    print("  - Red line shows what actually happened")
+    print("  - Orange dashed line is the model's prediction")
+    print("  - Shaded area shows the model's uncertainty (80% confidence)")
 
 
 # #############################################################################
@@ -2839,10 +2834,10 @@ def plot_data_overview(
     plt.show()
 
     print("\nData overview:")
-    print("• Blue line shows data used for training the model")
-    print("• Red line shows future data for testing predictions")
-    print("• The vertical dashed line marks the forecast start point")
-    print("• Notice the multiple peaks - this makes forecasting challenging!")
+    print("  - Blue line shows data used for training the model")
+    print("  - Red line shows future data for testing predictions")
+    print("  - The vertical dashed line marks the forecast start point")
+    print("  - Notice the multiple peaks -- this makes forecasting challenging!")
 
 
 def plot_forecast_with_confidence_intervals(
@@ -2924,10 +2919,10 @@ def plot_forecast_with_confidence_intervals(
 
     # Print some helpful observations
     print(f"\n{model_name} Results:")
-    print("• The blue line shows the historical data the model learned from")
-    print("• The red line shows what actually happened after training")
-    print("• The orange dashed line is the model's forecast")
-    print("• The shaded area shows the model's uncertainty (90% confidence)")
+    print("  - The blue line shows the historical data the model learned from")
+    print("  - The red line shows what actually happened after training")
+    print("  - The orange dashed line is the model's forecast")
+    print("  - The shaded area shows the model's uncertainty (90% confidence)")
 
     return range(len(train_values)), train_values, forecast_dates, actual_values
 
@@ -3007,10 +3002,10 @@ def plot_data_exploration(
     plt.show()
 
     print("\nKey observations from the data:")
-    print("• Multiple distinct waves of cases are visible")
-    print("• Deaths follow cases with a lag (as expected)")
-    print("• Mobility patterns shifted dramatically during lockdowns")
-    print("• These patterns provide valuable signals for forecasting!")
+    print("  - Multiple distinct waves of cases are visible")
+    print("  - Deaths follow cases with a lag (as expected)")
+    print("  - Mobility patterns shifted dramatically during lockdowns")
+    print("  - These patterns provide valuable signals for forecasting")
 
 
 def plot_model_comparison_3panel(
@@ -3104,10 +3099,10 @@ def plot_model_comparison_3panel(
     plt.show()
 
     print("\nModel comparison insights:")
-    print("• All models capture the general trend in the data")
-    print("• Confidence intervals show each model's uncertainty")
-    print("• Compare forecast accuracy against the black 'Actual' line")
-    print("• Look for models that balance accuracy with reasonable uncertainty bounds")
+    print("  - All models capture the general trend in the data")
+    print("  - Confidence intervals show each model's uncertainty")
+    print("  - Compare forecast accuracy against the black 'Actual' line")
+    print("  - Look for models that balance accuracy with reasonable uncertainty bounds")
 
 
 def print_model_comparison_from_metrics(
@@ -3206,10 +3201,10 @@ def plot_metrics_comparison_barplot(
 
     # Print some insights
     print("\nPerformance comparison notes:")
-    print("• Lower values are better for all metrics shown")
-    print("• MAE = Mean Absolute Error (average prediction error)")
-    print("• RMSE = Root Mean Square Error (emphasizes larger errors)")
-    print("• MAPE = Mean Absolute Percentage Error (relative error)")
+    print("  - Lower values are better for all metrics shown")
+    print("  - MAE = Mean Absolute Error (average prediction error)")
+    print("  - RMSE = Root Mean Square Error (emphasizes larger errors)")
+    print("  - MAPE = Mean Absolute Percentage Error (relative error)")
 
 
 # #############################################################################
