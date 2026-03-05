@@ -98,15 +98,16 @@ MSML610: Advanced Machine Learning
 :::: {.column width=45%}
   ```graphviz[width=80%]
   digraph CausalDiagram {
+    rankdir=TB;
     splines=true;
-    nodesep=1.0;
-    ranksep=0.75;
-    node [shape=circle, style="filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+    nodesep=0.5;
+    ranksep=0.5;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
     // Node styles
-    T   [fillcolor="#A6E7F4"];
-    Y   [fillcolor="#A6C8F4"];
-    u_t [fillcolor="#FFD1A6"];
-    u_y [fillcolor="#FFD1A6"];
+    T   [label="T", fillcolor="#A6E7F4"];
+    Y   [label="Y", fillcolor="#A6C8F4"];
+    u_t [label="u_t", fillcolor="#FFD1A6"];
+    u_y [label="u_y", fillcolor="#FFD1A6"];
     // Edges
     u_t -> T;
     T   -> Y;
@@ -145,28 +146,26 @@ MSML610: Advanced Machine Learning
 
 ```graphviz[width=80%]
 digraph SalesModelExtended {
+  rankdir=TB;
   splines=true;
-  nodesep=1.0;
-  ranksep=0.75;
+  nodesep=0.5;
+  ranksep=0.5;
 
   node [
-    shape=circle,
-    style="filled",
+    shape=box,
+    style="rounded,filled",
     fontname="Helvetica",
     fontsize=12,
-    penwidth=1.4,
-    width=1.2,
-    height=1.2,
-    fixedsize=true
+    penwidth=1.4
   ];
 
   // Node styles
-  BusinessSize [fillcolor="#A6E7F4"];
-  IsOnSales [fillcolor="#A6E7F4"];
-  AmountSold [fillcolor="#A6C8F4"];
-  u_s [fillcolor="#FFD1A6"];
-  u_t [fillcolor="#FFD1A6"];
-  u_y [fillcolor="#FFD1A6"];
+  BusinessSize [label="BusinessSize", fillcolor="#A6E7F4"];
+  IsOnSales [label="IsOnSales", fillcolor="#A6E7F4"];
+  AmountSold [label="AmountSold", fillcolor="#A6C8F4"];
+  u_s [label="u_s", fillcolor="#FFD1A6"];
+  u_t [label="u_t", fillcolor="#FFD1A6"];
+  u_y [label="u_y", fillcolor="#FFD1A6"];
 
   // Edges
   u_s -> BusinessSize;
