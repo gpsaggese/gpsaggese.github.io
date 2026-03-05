@@ -147,11 +147,17 @@ You define your parameters, tell Ax what to optimize, and it handles the
 surrogate modeling, acquisition function selection, and trial generation under
 the hood. The documentation is available at [ax.dev](https://ax.dev/).
 
+### Tutorial: Bayesian Optimization with Ax
+
+The following tutorial describes how to use Ax to perform Bayesian Optimization and ready-to-run code examples to find the global optimum of the Hartmann function. You can find the tutorial in `Ax.package.ipynb`.
+
 ## A Bayesian Optimization Example: the Hartmann Function
 
 To demonstrate the power of Bayesian Optimization, let's apply it to a classic
 benchmark: finding the global optimum of the **Hartmann function in 6
 dimensions**.
+
+**Note:** The tutorial referenced above provides all the source code in Jupyter Notebook format to run this example.
 
 The Hartmann function is defined as:
 
@@ -165,7 +171,7 @@ and a single global optimum, making it easy for naive optimizers to get stuck.
 Here's what it looks like in 2 dimensions (the 6D version follows the same idea,
 but cannot be visualized):
 
-<img src="images/hartmann-2d.png" alt="Hartmann Function in 2 Dimensions" width="400">
+<img src="Intro_to_Bayesian_Optimization.figs/hartmann-2d.png" alt="Hartmann Function in 2 Dimensions" width="400">
 
 Even though we know the formula, finding the global optimum is non-trivial.
 Let's see how the traditional methods would fare:
