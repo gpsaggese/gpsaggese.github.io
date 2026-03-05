@@ -59,8 +59,7 @@ MSML610: Advanced Machine Learning
 
 ![](msml610/lectures_source/figures/L09/xmas_sales_df.png){width=80%}
 
-
-* The fundamental problem of causal inference
+* The Fundamental Problem of Causal Inference
 - _"You can never observe the same unit with and without treatment"_
 
 - **Example**
@@ -117,7 +116,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::
 
-* Causal model: sales example
+* Causal Model: Sales Example
 ::: columns
 :::: {.column width=50%}
 
@@ -137,9 +136,6 @@ MSML610: Advanced Machine Learning
   & AmountSold \leftarrow f_y(IsOnSales, BusinessSize, u_y) \\
   \end{aligned}
   $$
-
-- One can make an assumption of linear model for $f_y(.)$ and say
-  $$AmountSold = \alpha + \beta_1 IsOnSales + \beta_2 BusinessSize + e$$
 
 ::::
 :::: {.column width=45%}
@@ -180,15 +176,275 @@ digraph SalesModelExtended {
 ::::
 ::::
 
-## Interventions
+- One can make an assumption of linear model for $f_y(.)$ and say
+  $$AmountSold = \alpha + \beta_1 IsOnSales + \beta_2 BusinessSize + e$$
 
-*
-- You can force the treatment $t_0$
-  \begin{align*}
+* Applying a Treatment to Sales Example
+- Ask _"what would happen to the outcome $Y$ if I were to set the treatment to
+  $t_0$?"_
+  $$
+  \begin{aligned}
   & T \leftarrow t_0 \\
   & Y \leftarrow f_y(T, u_y) \\
-  \end{align*}
-  and ask "what would happen to the outcome $Y$ if I were to set the treatment to
-  $t_0$?
-- The intervention is represented by the $do(.)$ operator, e.g., $do(T = t_0)$
+  \end{aligned}
+  $$
+  - The intervention is represented by the $do(.)$ operator, e.g., $do(T = t_0)$
 
+- Note that
+  $$\EE[AmountSold | isOnSales = 1] \ne \EE[AmountSold | do(IsOnSales = 1)$$
+  - The first is what happens to businesses that make a price cut (e.g., a big
+    business)
+    - You are "selecting" the subsample of businesses that actually cut prices
+  - The second is that happens if you force every business to engage in sales
+
+* Individual treatment effect
+- One can use the $do(.)$ operator to express the impact of the treatment on the
+  outcome for an individual unit $i$
+  $$\tau_i = Y_i|do(T=t_1) - Y_i|do(T=t_0)$$
+- The effect $\tau_i$ of going from treatment $t_0$ to $t_1$ for unit $i$ is the
+  difference in the outcome of that unit under $t_1$ compared to $t_0$
+  - E.g., $AmountSold_i|do(IsOnSales=1) - AmountSold_i|do(IsOnSales=0)$
+
+- You can only observe one term due to the fundamental problem of causal
+  inference
+  - You can represent it in theory, but you can't recover it from data
+
+* Potential outcomes
+- Aka "counterfactual"
+
+- The do operator can represent "the unit $i$ outcome would be $Y$ if the
+  treatment is set to $t$"
+  $$Y_{t,i} = Y(t)_i = Y_i|do(T_i = t)$$
+
+- If the treatment is binary, you can use $Y_{0,i}$ (without the treatment) vs
+  $Y_{1,i}$ (with the treatment)
+  - One is "factual", i.e., observable
+  - The other is "counterfactual"
+
+* Consistency of the treatment
+- There are no hidden multiple versions of the treatment
+  - E.g., a drug coming in multiple dosages, but it's treated as binary
+  - E.g., in "help from a financial planner", is "help" a one-time consultation
+    or regular advice?
+
+* No interference
+- Aka "Stable unit of treatment value (SUTVA)"
+- The effect of one unit is not influenced by the treatment of other units (if
+  there are spillovers or network effects)
+
+- E.g., vaccinating one person makes other close people less likely to catch the
+  illness even if they don't get the treatment
+
+//* Average treatment effect (ATE)
+//- ATE is the impact that the treatment $T$ would have on the average:
+//  $$ATE = \EE[Y_{1t} - Y_{0t}]$$
+//- We can define it, but not measure it
+//
+//* Average treatment effect on the treated (ATT)
+//- ATT is the impact of the treatment on the units that got the treatment:
+//  $$ATT = \EE[Y_{1i} - Y_{0i}|T=1]$$
+//- We can define it, but not measure it
+//
+//* Conditional average treatment effects (CATE)
+//- CATE is the impact of the treatment on the units in a group defined by $X=x$
+//  $$CATE = \EE[Y_{1i} - Y_{0i}|X=x]$$
+//
+//* Example
+//- Let's assume you can see both potential outcomes $AmountSold_{0i}$ and
+//  $AmountSold_{1i}$ at the same time (which is impossible)
+//
+//- The average impact of price cuts on amount could:
+//  $$ATE = \EE[AmountSold_{1i} - AmountSold_{0i}]$$
+//
+//- How the business engaged in price cuts increased its sales:
+//  $$ATT = \EE[AmountSold_{1i} - AmountSold_{0i} | IsOnSales=1]$$
+//
+//- The impact of having sales during the week of Christmas:
+//  $$CATE = \EE[AmountSold_{1i} - AmountSold_{0i} | weeksToXmas = 0]$$
+//
+//// TODO: Add plot
+//
+//- The sales increase the amount sold on average by 65 units in average
+//  $$ATE = 1/n \sum_{i=1}{n} te_i = (20 + 20 + 100 + 50 + 0 + 200) / 6 = 65$$
+//
+//- The business that cut prices (i.e., treated) increased the amount sold on
+//  average by 83.33 units
+//  $$ATT = (50 + 0 + 200) / 3 = 83.33$$
+//
+//- The average effect conditioned on being one week prior to Christmas ($x=1$)
+//  is
+//  $$CATE(x=1) = (100 + 200) / 2 = 150$$
+//  $$CATE(x=0) = (20 + 20 + 50 + 0) / 4 = 22.5$$
+//  - The business benefited from price cuts much more one week prior to Christmas
+//    than cutting on the same week as Christmas
+//
+//- Consider the real outcomes now
+//
+//// TODO: Add plot
+//
+//- Can't one just take the mean of treated and compare it to the mean of control?
+//  $$"ATE" = (500 + 600 + 800) / 3 - (200 + 120 + 300) / 3 = 426.67"
+//- Besides sampling bias, we are confusing association with causation
+//  - Business that engaged in sales are different from those that didn't
+//  - In fact the average outcome for the treated ones is
+//    $\EE[AmountSold_{1i}] = \EE[y1] = (500 + 600 + 800) / 3 = 633.33$
+//    is much higher than the average outcome
+//    $\EE[AmountSold_{0i}] = \EE[y0] = (200 + 120 + 300) / 3 = 206.66$
+//  - This effect masks the true treatment effect
+//
+//* Bias
+//- "Bias is what makes association different from causation"
+//
+//- The claim "cutting prices increases the amount sold by a business" can be
+//  questioned with "those businesses that cut prices would probably have sold more
+//  anyway, even with no price cuts"
+//
+//- More formally the argument refers to potential outcomes
+//  - $\EE[Y_0 | T = 1]$ = what happened to the treated if they were not treated
+//  - In other words, we are trying to estimate $\EE[Y_t]$ using $\EE[Y | T=t]$
+//    but this is a "biased estimator"
+//
+//* The bias equation
+//- The association before the treatment and the outcome is measured by
+//  $$\EE[Y| T = 1] - \EE[Y | T = 0]$$
+//  which is the average amount sold by the business cutting prices minus the
+//  average amount sold by the business that didn't
+//- Causation is interested in
+//  $$\EE[Y_1 - Y_0] \def= \EE[Y| do(T = 1)] - \EE[Y | do(T = 0)]$$
+//
+//- Let's express the first as function of the second
+//  $$z = \EE[Y| T = 1] - \EE[Y | T = 0]$$
+//- Replacing the observed outcomes (it is the same since each individual has two
+//  potential outcomes but only one can be observed and the other is missing)
+//  $$Y | T=1 = (Y_1 |T=1) + (Y_0 | T=1) = Y_1 | T=1$$
+//  $$... = \EE[Y_1| T = 1] - \EE[Y_0 | T = 0]$$
+//- Adding and subtracting $\EE[Y_0 | T=1]$, reordering and merging expectations
+//  $$E[Y | T = 1] - E[Y | T = 0] = 
+//  \underbrace{E[Y_1 - Y_0 | T = 1]}_{\text{ATT}} +
+//  \underbrace{(E[Y_0 | T = 1] - E[Y_0 | T = 0])}_{\text{Bias}}
+//  $$
+//- Association is not causation, but causation + a bias term 
+//- The bias is given by how the treated and control group differ regardless of the
+//  treatment
+//  - Many things you can't observe are changing together with the treatment
+//  - The treated and untreated businesses differ in more ways than just cutting
+//    prices
+//- For association to be causation, treated and control units would have to be
+//  exchangeable
+//
+//* The bias equation: visual example
+//- Plot the outcome `weekly_amount_sold` by business size measured by
+//  `avg_week_sales`
+//- Color the points by treatment (red) / control (blue)
+//- The treated units are more concentrated to the right of the plot
+//
+//// TODO(gp): Add picture
+//
+//- The difference in amount sold between the two groups has two causes
+//  1. The treatment effect: a price cut increases the amount sold
+//  2. The business size: bigger businesses sell more and can more easily do more
+//     price cuts
+//
+//- The challenge for causal inference is untangling the two effects
+//
+//* Simpson's Paradox
+//- The trend appears in different groups of data, but reverses when the groups are
+//  combined
+//- In other words, a relationship that holds within subgroups can disappear (or
+//  even flip) when the data is aggregated
+//
+//- The paradox occurs because a confounder that influences the relationship
+//  between the variables being analyzed
+//  - When the data is aggregated, the hidden variable distorts the results
+//
+//// TODO(gp): Add picture
+//
+//* Simpson's Paradox: Admission bias in University
+//
+//- A university has two departments
+//
+//| Department    | Male Applicants | Male Accepted | Female Applicants | Female Accepted |
+//|--------------|----------------|---------------|----------------------|-------------------|
+//| University | 120 | 81 | 120 | 58 |
+//
+//- Male Overall Acceptance Rate: $\frac{81}{120}$ = 67.5%
+//- Female Overall Acceptance Rate: $\frac{58}{120}$ = 48.3%
+//
+//- It seems that there is a bias against females, since their acceptance rate is below
+//
+//- Let's break down the same data but split in Engineering and English
+//
+//| Department    | Male Applicants | Male Accepted | Male Acceptance Rate | Female Applicants | Female Accepted | Female Acceptance Rate |
+//|--------------|----------------|---------------|----------------------|-------------------|----------------|----------------------|
+//| **University** | 120 | 81 | 67.5% | 120 | 58 | 48.3% |
+//| **Engineering** | 100 | 80 | 80% | 20 | 18 | 90% |
+//| **English**    | 20  | 1  | 5%  | 100 | 40  | 40% |
+//
+//- At the department level:
+//  - Women have a higher acceptance rate in Engineering (90% vs 80%)
+//  - Women have a higher acceptance rate in English (40% vs 5%)
+//
+//- The reason for the paradox is that
+//  - Engineering has a high acceptance rate, and English has a low acceptance rate
+//  - More men apply to Engineering, and more women apply to English
+//
+//- When combined, the distribution makes the female acceptance rate higher overall
+//
+//* Identifying the treatment effect
+//- We can't observe $\EE[Y_{1t} - Y_{0t}]$ since we can only observe one of the
+//  outcomes and not both
+//- How can we recover causal quantities from observable data?
+//
+//- The bias equation says that:
+//  $$E[Y | T = 1] - E[Y | T = 0] = 
+//  \underbrace{E[Y_1 - Y_0 | T = 1]}_{\text{ATT}} +
+//  \underbrace{(E[Y_0 | T = 1] - E[Y_0 | T = 0])}_{\text{Bias}}
+//  $$
+//- If $\EE[Y_0|T=0] = \EE[Y_0|T=1]$, i.e., the treatment and the control group are
+//  comparable (exchangeable) regardless of the treatment, then the bias term
+//  vanishes
+//  $$E[Y | T = 1] - E[Y | T = 0] = E[Y_1 - Y_0 | T = 1] = ATT$$
+//- But it also holds $\EE[Y_1 - Y_0 | T=1] = \EE[Y_1 - Y_0|T=0]$
+//  $$ATT = ATE = \EE[Y_1 - Y_0]$$
+//  then the difference in means is the average causal effect
+//// TODO: Unclear
+//
+//- The intuition is that if businesses that do and don't cut prices are similar to
+//  each other, then the difference in amount sold between the ones that cut prices
+//  and the ones that don't, can be entirely attributed to the price cut
+//
+//* Independence assumption
+//- The exchangeability property means that the outcomes are independent of the
+//  treatment, $(Y_0, Y_1) \perpto T$
+//
+//- $\EE[Y_0 | T] = \EE[Y_0]$: the treatment gives no information about the
+//  potential outcomes
+//- In other terms $\EE[Y_0 | T=1] = \EE[Y_0 | T=0]$
+//
+//- In the business example, we couldn't tell apart businesses that chose to engage
+//  in sales from those that didn't
+//
+//* Phases of causal inference
+//- A causal inference problem is often broken down into two steps
+//  1. Identification
+//     - Express the causal quantity of interest in terms of observable data
+//     - Remove the bias, making treated and untreated comparable, so that all
+//       the difference can be attributed to the treatment effect
+//       $$\EE[Y_0 | T=0] = \EE[Y_0 | T=1]$$
+//     - You need to know how the treatment was distributed or assigned
+//     - This is why data alone (observational) cannot answer causal questions
+//  2. Estimation
+//     - Use data to estimate the causal quantity identified in 1.
+//       $$te = \EE[Y|T=1] - \EE[Y|T=0]$$
+//
+//* Randomization removes bias
+//- Randomization of treatment forces independence to hold and removes bias
+//
+//- Assume you can randomize the treatment
+//  \begin{align*}
+//  & IsOnSales \leftarrow rand(t) \\
+//  & AmountSold \leftarrow f_y(IsOnSales, u_y) \\
+//  \end{align*}
+//- The dependency to $u_t$ disappears since the assignment mechanism of the
+//  treatment is fully known
+//- Treatment becomes independent from potential outcomes
