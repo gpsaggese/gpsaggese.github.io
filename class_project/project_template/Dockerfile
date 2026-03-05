@@ -46,10 +46,6 @@ RUN pip3 install -r requirements.txt
 
 RUN mkdir /install
 
-# Install Jupyter extensions.
-#ADD install_jupyter_extensions.sh /install
-#RUN /install/install_jupyter_extensions.sh
-
 # Config.
 ADD etc_sudoers /install/
 COPY etc_sudoers /etc/sudoers

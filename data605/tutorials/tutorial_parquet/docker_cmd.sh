@@ -29,4 +29,4 @@ docker run \
     $DOCKER_RUN_OPTS \
     -v $(pwd):/data \
     $FULL_IMAGE_NAME \
-    $CMD
+    bash -c "$CMD"

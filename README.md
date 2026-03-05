@@ -1,130 +1,55 @@
-<!-- toc -->
-
-- [GP's University of Maryland Machine Learning Classes](#gps-university-of-maryland-machine-learning-classes)
-- [Cloning the GitHub Class Repo](#cloning-the-github-class-repo)
-- [Conventions](#conventions)
-- [Office Hours](#office-hours)
-- [How to Contribute](#how-to-contribute)
-
-<!-- tocstop -->
-
 # GP's University of Maryland Machine Learning Classes
 
-![alt text](https://1000logos.net/wp-content/uploads/2022/07/University-of-Maryland-Logo.png)
+<img src="https://1000logos.net/wp-content/uploads/2022/07/University-of-Maryland-Logo.png" alt="University of Maryland Logo" width="200"/>
 
-- DATA605: Big Data Systems
-- MSML610: Advanced Machine Learning
+This repository contains course materials, tutorials, and projects for two
+graduate-level courses taught at the University of Maryland:
 
-# Cloning the GitHub Class Repo
+- **DATA605: Big Data Systems** — covers scalable data engineering, distributed
+  systems, and big data tools
+- **MSML610: Advanced Machine Learning** — covers advanced ML techniques,
+  research methods, and applied projects
 
-- Clone the GitHub Class Repository to get started:
-  ```
-  > git clone git@github.com:gpsaggese/umd_classes.git
-  ```
-- More detailed instructions are in each project dir
+## Prerequisites
 
-# Conventions
+Before you begin, make sure you have the following installed and configured:
 
-- We indicate the execution of an OS command (e.g., Linux / MacOS) from the
-  terminal of your computer with:
-  ```
-  > ... Linux command ...
-  ```
+- [Git](https://git-scm.com/) with an SSH key added to your GitHub account
+- Python 3.11+
+- Docker (required for some tutorials and assignments)
 
-  E.g.,
-  ```
-  > echo "Hello world"
-  Hello world
-  ```
+## Getting Started
 
-- We indicate the execution of a command inside a Docker container with:
-  ```
-  docker> ls
-  ```
+1. Clone the repository:
+   ```bash
+   > git clone git@github.com:gpsaggese/umd_classes.git
+   > cd umd_classes
+   ```
 
-- We indicate the execution of a Postgres command from the `psql` client with:
-  ```
-  psql>
-  ```
+2. Navigate to your course folder:
+   - For DATA605: `cd data605/`
+   - For MSML610: `cd msml610/`
 
-# Office Hours
+3. Read the course-specific README for setup and assignment instructions.
 
-- Contact: gsaggese@umd.edu
+## Repository Structure
 
-# How to Contribute
+| Directory | Description |
+|---|---|
+| [`data605/`](data605/) | Lectures, tutorials, and materials for DATA605: Big Data Systems |
+| [`msml610/`](msml610/) | Lectures, tutorials, and materials for MSML610: Advanced Machine Learning |
+| [`class_project/`](class_project/) | Class project templates, examples, and student project guidelines |
+| [`tutorials/`](tutorials/) | Standalone tutorials on ML and data engineering tools |
+| [`papers/`](papers/) | Research papers and reading lists |
+| [`research/`](research/) | Research projects and experimental work |
+| [`helpers_root/`](helpers_root/) | Shared utility libraries and infrastructure |
 
-Contributions to the repository are done using the Fork and PR method. The steps
-are:
+## How to Contribute
 
-1. Create an Issue
-2. Fork the repository
-3. Create a new branch
-4. Make your changes
-5. Create a pull request from your branch to the main repository
-6. Wait for the pull request to be reviewed and merged
+See [how_to_contribute.md](how_to_contribute.md) for guidelines on submitting
+fixes, improvements, and new content.
 
-For more information about Forks, see the
-[GitHub Docs](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks).
+## Office Hours
 
-**1- Create an Issue**
-
-Create an issue to discuss the changes you want to make. Keep record of the
-issue number generated.
-
-**2- Fork the repository**
-
-![Fork](assets/images/2-create-fork.png)
-
-Fork will create a copy of the repository in your GitHub account. This will
-allow you to make changes to the repository without affecting the original one.
-Commits can be merged back to the original repository by creating a pull
-request.
-
-This method is useful to reduce the noise created by multiple pull requests and
-commits in the main repository.
-
-**3- Create a new branch on your forked repository**
-
-Create a new branch on your forked repository to make your changes. Include the
-issue number in the branch name.
-```
-# Always clone your forked repository, not the original one.
-> git clone git@github.com:{your_username}/umd_classes.git umd_classes
-> cd umd_classes
-> git checkout -b TutorTask{issue_number}_{project_branch_name}
-```
-
-**Note:** Always reference the issue number in the branch name.
-
-**4- Make and commit your changes**
-
-Make your changes to the code in the new branch. The commit message should
-include a reference to the issue number.
-```
-> git add .
-> git commit -m "{whatever commit message you want} (gpsaggese/umd_classes#{issue_number})"
-> git push origin TutorTask{issue_number}_{project_branch_name}
-```
-
-**Note:** The prefix `gpsaggese/umd_classes` is required to link the commit to
-an issue in the original repository. If the issue is in your forked repository,
-this isn't required.
-
-**5- Create a pull request from your branch to the main repository**
-
-Create a pull request from your branch to the main repository. The pull request
-should include a reference to the issue number.
-
-Including this text in the pull request description will automatically close the
-issue once the pull request is merged.
-```
-Fixes gpsaggese/umd_classes#{issue_number}
-```
-
-For more information about how to reference an issue in a pull request, see the
-[GitHub Docs](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue).
-
-**6- Wait for the pull request to be reviewed and merged**
-
-Wait for the pull request to be reviewed and merged. Add the expected reviewer
-as the `assignee`.
+- **Email:** gsaggese@umd.edu
+- Reach out by email to schedule a meeting or ask questions

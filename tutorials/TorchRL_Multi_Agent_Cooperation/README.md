@@ -155,3 +155,8 @@
    i. Confirm installed versions (pip freeze)
   
    ii. Run API notebook first to inspect environment specs
+
+
+## Changelog
+
+- 2026-03-01: Initial release

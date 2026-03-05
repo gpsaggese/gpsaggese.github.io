@@ -1,0 +1,20 @@
+# Jupyter & notebook tools.
+jupyter==1.0.0
+notebook==7.3.2
+ipykernel==6.29.5
+
+# Data stack.
+numpy==1.26.4
+pandas==2.2.3
+matplotlib==3.9.4
+scipy==1.13.1
+
+# tsfresh.
+tsfresh==0.20.3
+
+# Machine learning.
+scikit-learn==1.5.2
+
+# Utilities.
+requests==2.32.3
+tqdm==4.67.1

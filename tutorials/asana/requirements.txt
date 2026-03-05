@@ -1,0 +1,21 @@
+# Jupyter
+jupyter==1.1.1
+jupyterlab==4.3.3
+notebook==7.3.1
+ipykernel==6.29.5
+jupytext==1.16.4
+
+# Core data stack
+numpy==2.2.0
+pandas==2.2.3
+matplotlib==3.9.3
+seaborn==0.13.2
+scikit-learn==1.6.0
+
+# Asana client
+asana==5.0.10
+
+# Utilities
+requests==2.32.3
+tqdm==4.67.1
+python-dotenv==1.0.1
