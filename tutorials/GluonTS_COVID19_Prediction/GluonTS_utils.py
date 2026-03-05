@@ -2,16 +2,13 @@
 Consolidated utilities for COVID-19 time series forecasting with GluonTS.
 
 Sections:
-- Analysis: feature correlation, data quality checks
-- Data I/O: load cases, deaths, vaccines, mobility; DataLoader
-- Data download: download from Google Drive
-- GluonTS: create_gluonts_dataset, prepare_train_test_split
-- Preprocessing: aggregate, merge, train/test split
-- Notebook loader: load_covid_data_for_gluonts, quick_load_*
-- Models: DeepAR, SimpleFeedForward, DeepNPTS, scenario analysis
-- Evaluation: calculate_metrics, print_metrics, plot_forecast
-- Synthetic: generators, prepare_synthetic_dataset
-- Visualization: plotting for data, forecasts, comparisons
+- Data Management: loading, downloading, preprocessing
+- Synthetic Data: generators and utilities
+- GluonTS Core: dataset creation and validation
+- Model Training: individual model trainers and utilities
+- Evaluation: metrics calculation and model comparison
+- Scenario Analysis: what-if analysis functions
+- Visualization: plotting functions
 
 Import as:
 
@@ -19,6 +16,11 @@ Import as:
     from GluonTS_utils import load_covid_data_for_gluonts, train_deepar_covid
 """
 
+# =============================================================================
+# IMPORTS
+# =============================================================================
+
+# Standard library imports
 import logging
 import time
 import urllib.request
@@ -27,20 +29,41 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+# Third-party imports
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
+# GluonTS imports
 from gluonts.dataset.common import ListDataset
 from gluonts.evaluation import Evaluator, make_evaluation_predictions
 from gluonts.torch.model.deep_npts import DeepNPTSEstimator
 from gluonts.torch.model.deepar import DeepAREstimator
 from gluonts.torch.model.simple_feedforward import SimpleFeedForwardEstimator
 
-warnings.filterwarnings("ignore")
+# =============================================================================
+# CONSTANTS
+# =============================================================================
 
-_LOG = logging.getLogger(__name__)
-
+# Default settings
 _DEFAULT_START = "2020-01-01"
+_DEFAULT_PREDICTION_LENGTH = 14
+_DEFAULT_CONTEXT_LENGTH = 60
+
+# Data directories and files
+REQUIRED_DATA_FILES = ["cases.csv", "deaths.csv", "mobility.csv"]
+
+# Model training defaults
+DEFAULT_EPOCHS = 10
+DEFAULT_LEARNING_RATE = 1e-3
+
+# Visualization defaults
+DEFAULT_FIGSIZE = (12, 6)
+DEFAULT_DPI = 150
+
+# Logging setup
+_LOG = logging.getLogger(__name__)
+warnings.filterwarnings("ignore")
 
 
 # #############################################################################
@@ -174,142 +197,135 @@ def check_data_quality(
 
 
 # #############################################################################
-# Data I/O
+# Data Management
 # #############################################################################
 
 
-def load_jhu_cases(
+def load_csv_data(
+    filename: str,
     *,
     data_dir: str = "data",
+    date_columns: Optional[List[str]] = None,
+    required: bool = True,
 ) -> pd.DataFrame:
     """
-    Load JHU CSSE COVID-19 cases data from CSV.
+    Generic CSV data loader with error handling.
+
+    :param filename: Name of the CSV file to load
+    :param data_dir: Directory containing the file
+    :param date_columns: Columns to parse as dates
+    :param required: Whether file is required (raises error if missing)
+    :return: Loaded DataFrame
+    :raises FileNotFoundError: If required file is missing
+    """
+    filepath = Path(data_dir) / filename
+
+    if not filepath.exists():
+        if required:
+            raise FileNotFoundError(f"Required file '{filename}' not found in {data_dir}")
+        _LOG.warning("Optional file '%s' not found in %s", filename, data_dir)
+        return pd.DataFrame()
+
+    try:
+        df = pd.read_csv(filepath)
+        if date_columns:
+            for col in date_columns:
+                if col in df.columns:
+                    df[col] = pd.to_datetime(df[col])
+
+        _LOG.info("Loaded %s: %d rows, %d columns", filename, len(df), len(df.columns))
+        return df
+    except Exception as e:
+        if required:
+            raise RuntimeError(f"Failed to load {filename}: {e}")
+        _LOG.warning("Failed to load optional file %s: %s", filename, e)
+        return pd.DataFrame()
+
+
+def load_jhu_cases(*, data_dir: str = "data") -> pd.DataFrame:
+    """
+    Load JHU CSSE COVID-19 cases data.
 
     :param data_dir: Directory containing data files
     :return: DataFrame with cases data
     """
-    filepath = Path(data_dir) / "cases.csv"
-    if not filepath.exists():
-        raise FileNotFoundError(f"cases.csv not found in {data_dir}")
-    _LOG.info("Loading cases data from %s", filepath)
-    df = pd.read_csv(filepath)
-    _LOG.info("Loaded %s rows, %s columns", len(df), len(df.columns))
-    return df
+    return load_csv_data("cases.csv", data_dir=data_dir)
 
 
-def load_jhu_deaths(
-    *,
-    data_dir: str = "data",
-) -> pd.DataFrame:
+def load_jhu_deaths(*, data_dir: str = "data") -> pd.DataFrame:
     """
-    Load JHU CSSE COVID-19 deaths data from CSV.
+    Load JHU CSSE COVID-19 deaths data.
 
     :param data_dir: Directory containing data files
     :return: DataFrame with deaths data
     """
-    filepath = Path(data_dir) / "deaths.csv"
-    if not filepath.exists():
-        raise FileNotFoundError(f"deaths.csv not found in {data_dir}")
-    _LOG.info("Loading deaths data from %s", filepath)
-    df = pd.read_csv(filepath)
-    _LOG.info("Loaded %s rows, %s columns", len(df), len(df.columns))
-    return df
+    return load_csv_data("deaths.csv", data_dir=data_dir)
 
 
-def load_jhu_vaccines(
-    *,
-    data_dir: str = "data",
-) -> pd.DataFrame:
+
+
+def load_google_mobility(*, data_dir: str = "data") -> pd.DataFrame:
     """
-    Load JHU CSSE COVID-19 vaccine data from CSV.
+    Load Google COVID-19 Community Mobility Reports.
 
     :param data_dir: Directory containing data files
-    :return: DataFrame with vaccine data
+    :return: DataFrame with mobility data (date column parsed)
     """
-    filepath = Path(data_dir) / "vaccine.csv"
-    if not filepath.exists():
-        raise FileNotFoundError(f"vaccine.csv not found in {data_dir}")
-    _LOG.info("Loading vaccine data from %s", filepath)
-    df = pd.read_csv(filepath)
-    _LOG.info("Loaded %s rows, %s columns", len(df), len(df.columns))
+    df = load_csv_data("mobility.csv", data_dir=data_dir, date_columns=["date"])
+    if not df.empty and "date" in df.columns:
+        _LOG.info("  Date range: %s to %s", df["date"].min().date(), df["date"].max().date())
     return df
 
 
-def load_google_mobility(
-    *,
-    data_dir: str = "data",
-) -> pd.DataFrame:
-    """
-    Load Google COVID-19 Community Mobility Reports from CSV.
-
-    :param data_dir: Directory containing data files
-    :return: DataFrame with mobility data
-    """
-    filepath = Path(data_dir) / "mobility.csv"
-    if not filepath.exists():
-        raise FileNotFoundError(f"mobility.csv not found in {data_dir}")
-    _LOG.info("Loading mobility data from %s", filepath)
-    df = pd.read_csv(filepath)
-    df["date"] = pd.to_datetime(df["date"])
-    _LOG.info("Loaded %s rows, %s columns", len(df), len(df.columns))
-    _LOG.info("  Date range: %s to %s", df["date"].min(), df["date"].max())
-    return df
-
-
-def load_all_data(
-    *,
-    data_dir: str = "data",
-) -> Dict[str, pd.DataFrame]:
+def load_all_data(*, data_dir: str = "data") -> Dict[str, pd.DataFrame]:
     """
     Load all COVID-19 datasets at once.
 
     :param data_dir: Directory containing data files
-    :return: Dictionary with keys 'cases', 'deaths', 'vaccines', 'mobility'
+    :return: Dictionary with keys 'cases', 'deaths', 'mobility'
     """
     _LOG.info("Loading all COVID-19 datasets...")
     _LOG.info("=" * 60)
+
     data = {}
     data["cases"] = load_jhu_cases(data_dir=data_dir)
     data["deaths"] = load_jhu_deaths(data_dir=data_dir)
-    data["vaccines"] = load_jhu_vaccines(data_dir=data_dir)
     data["mobility"] = load_google_mobility(data_dir=data_dir)
+
     _LOG.info("=" * 60)
     _LOG.info("All datasets loaded successfully")
     return data
 
 
-def verify_data_exists(
-    *,
-    data_dir: str = "data",
-) -> bool:
+def verify_data_exists(*, data_dir: str = "data") -> bool:
     """
     Verify that all required data files exist.
 
     :param data_dir: Directory containing data files
     :return: True if all files exist, False otherwise
     """
-    required_files = ["cases.csv", "deaths.csv", "vaccine.csv", "mobility.csv"]
     data_path = Path(data_dir)
     missing_files = []
-    for filename in required_files:
+
+    for filename in REQUIRED_DATA_FILES:
         if not (data_path / filename).exists():
             missing_files.append(filename)
+
     if missing_files:
         _LOG.info("Missing files: %s", ", ".join(missing_files))
         _LOG.info("Expected location: %s", data_path.absolute())
         return False
+
     _LOG.info("All required data files present in %s", data_dir)
     return True
 
 
 class DataLoader:
-    """Convenience class for loading COVID-19 data."""
+    """
+    Convenience class for loading COVID-19 data with consistent interface.
+    """
 
-    def __init__(
-        self,
-        *,
-        data_dir: str = "data",
-    ):
+    def __init__(self, *, data_dir: str = "data"):
         """
         Initialize DataLoader.
 
@@ -325,9 +341,6 @@ class DataLoader:
         """Load deaths data."""
         return load_jhu_deaths(data_dir=self.data_dir)
 
-    def load_vaccines(self) -> pd.DataFrame:
-        """Load vaccines data."""
-        return load_jhu_vaccines(data_dir=self.data_dir)
 
     def load_mobility(self) -> pd.DataFrame:
         """Load mobility data."""
@@ -390,51 +403,58 @@ def check_and_download_data(
     data_dir: str = "data",
 ) -> bool:
     """
-    Check if data files exist, download if missing.
+    Check if data files exist, download missing ones from Google Drive.
 
     :param data_dir: Directory containing data files
     :return: True if all files present or downloaded successfully
     """
     data_path = Path(data_dir)
     data_path.mkdir(exist_ok=True)
+
+    # Google Drive file IDs for each dataset
     drive_files = {
         "cases.csv": "1ZfZtoV3PpZblZYES0A5LHCwp54cR8RJL",
         "deaths.csv": "1kYC9nrCnKbNpnoZKz8o6TDMM371gyxbl",
         "mobility.csv": "1TMqG8Z8vbxmQAv1rNKczYYPCzwT4ZS_q",
     }
+
     existing_files = []
     missing_files = []
-    for filename in drive_files.keys():
+
+    for filename in REQUIRED_DATA_FILES:
         file_path = data_path / filename
         if file_path.exists():
             existing_files.append(filename)
-            _LOG.info("Found: %s", filename)
+            _LOG.info("✓ Found: %s", filename)
         else:
             missing_files.append(filename)
+
     if not missing_files:
-        _LOG.info("\nAll data files present!")
+        _LOG.info("\n✓ All data files present!")
         return True
-    _LOG.info("\nMissing files: %s", ", ".join(missing_files))
-    _LOG.info("\nAttempting to download from Google Drive...")
+
+    _LOG.info("\n⚠ Missing files: %s", ", ".join(missing_files))
+    _LOG.info("\n📥 Attempting to download from Google Drive...")
+
     downloaded = []
     failed = []
+
     for filename in missing_files:
-        file_id = drive_files[filename]
+        file_id = drive_files.get(filename)
+        if not file_id:
+            _LOG.warning("No download link available for %s", filename)
+            failed.append(filename)
+            continue
+
         file_path = data_path / filename
-        if file_id:
-            if download_file_from_google_drive(file_id, file_path):
-                downloaded.append(filename)
-            else:
-                failed.append(filename)
+        if download_file_from_google_drive(file_id, file_path):
+            downloaded.append(filename)
         else:
             failed.append(filename)
-    if downloaded:
-        _LOG.info("\nSuccessfully downloaded: %s", ", ".join(downloaded))
+
     if failed:
-        _LOG.info("\nSome files need manual download:")
-        _LOG.info(
-            "Visit: https://drive.google.com/drive/folders/1qMDGBstdY8H2hYpz8xSolhzNOsVxNHMA"
-        )
+        _LOG.error("❌ Failed to download: %s", ", ".join(failed))
+        _LOG.info("Please download manually from: https://drive.google.com/drive/folders/1qMDGBstdY8H2hYpz8xSolhzNOsVxNHMA")
         file_mapping = {
             "cases.csv": "time_series_covid19_confirmed_US.csv",
             "deaths.csv": "time_series_covid19_deaths_US.csv",
@@ -446,6 +466,8 @@ def check_and_download_data(
                 drive_name = file_mapping[local_name]
                 _LOG.info("  - %s → rename to '%s'", drive_name, local_name)
         return False
+
+    _LOG.info("✅ Successfully downloaded: %s", ", ".join(downloaded))
     return True
 
 
@@ -1017,6 +1039,65 @@ def quick_load_full() -> Dict:
 # #############################################################################
 
 
+def compute_custom_metrics(forecasts, ground_truths) -> Dict[str, float]:
+    """
+    Compute additional metrics (MAE, RMSE, MAPE) not always included in GluonTS Evaluator.
+
+    Args:
+        forecasts: List of forecast objects with .mean attribute
+        ground_truths: List of ground truth objects (DataFrame, array, etc.)
+
+    Returns:
+        Dictionary with MAE, RMSE, MAPE metrics
+    """
+    mae_values = []
+    rmse_values = []
+    mape_values = []
+
+    for forecast, ground_truth in zip(forecasts, ground_truths):
+        # extract forecast mean as numpy array
+        forecast_mean = np.array(forecast.mean)
+
+        # extract target values robustly
+        if hasattr(ground_truth, "target"):
+            target = np.array(ground_truth.target)
+        elif isinstance(ground_truth, pd.DataFrame):
+            if "target" in ground_truth.columns:
+                target = ground_truth["target"].values
+            else:
+                target = ground_truth.iloc[:, 0].values
+        else:
+            target = np.array(ground_truth)
+
+        # Ensure same length
+        if len(forecast_mean) != len(target):
+            min_len = min(len(forecast_mean), len(target))
+            forecast_mean = forecast_mean[:min_len]
+            target = target[:min_len]
+
+        # Calculate metrics for this time series
+        mae = np.mean(np.abs(forecast_mean - target))
+        rmse = np.sqrt(np.mean((forecast_mean - target) ** 2))
+
+        # MAPE: use denominator clipped at 1 to avoid extreme percentages when
+        # target is very small.  Cutting off at 1 makes the metric interpretable
+        # for count data (errors relative to at least one case).
+        denom = np.maximum(np.abs(target), 1.0)
+        mape_vals = np.abs((target - forecast_mean) / denom)
+        mape = np.mean(mape_vals) if mape_vals.size > 0 else np.nan
+
+        mae_values.append(mae)
+        rmse_values.append(rmse)
+        mape_values.append(mape)
+
+    return {
+        "MAE": float(np.nanmean(mae_values)),
+        "RMSE": float(np.nanmean(rmse_values)),
+        # multiply percentage after handling NaNs
+        "MAPE": float(np.nanmean(mape_values)) * 100,
+    }
+
+
 @dataclass
 class ModelResults:
     """
@@ -1035,44 +1116,46 @@ def train_deepar_covid(
     train_ds,
     test_ds,
     *,
-    prediction_length: int = 14,
+    prediction_length: int = _DEFAULT_PREDICTION_LENGTH,
     num_feat_dynamic_real: int = 0,
-    epochs: int = 20,
-    learning_rate: float = 0.001,
+    epochs: int = DEFAULT_EPOCHS,
+    learning_rate: float = DEFAULT_LEARNING_RATE,
     context_length: Optional[int] = None,
     num_layers: int = 2,
     hidden_size: int = 40,
-    dropout: float = 0.1,
+    dropout_rate: float = 0.1,
     verbose: bool = True,
 ) -> ModelResults:
     """
-    Train a DeepAR model on COVID-19 data.
+    Train a DeepAR model for COVID-19 forecasting.
 
-    :param train_ds: training dataset
-    :param test_ds: test dataset
-    :param prediction_length: number of time steps to predict
-    :param num_feat_dynamic_real: number of dynamic real features
-    :param epochs: number of training epochs
-    :param learning_rate: learning rate for optimizer
-    :param context_length: number of time steps to use as context
-    :param num_layers: number of RNN layers
-    :param hidden_size: hidden layer size
-    :param dropout: dropout rate
-    :param verbose: whether to print progress information
-    :return: ModelResults containing trained model and evaluation metrics
+    DeepAR is great for complex patterns with multiple seasonalities and long-term
+    dependencies. It uses recurrent neural networks to "remember" past patterns.
+
+    :param train_ds: Training dataset in GluonTS format
+    :param test_ds: Test dataset for evaluation
+    :param prediction_length: How many days to forecast ahead
+    :param num_feat_dynamic_real: Number of external features (like mobility data)
+    :param epochs: Training iterations (more = better but slower)
+    :param learning_rate: How aggressively to update model weights
+    :param context_length: How far back to look (default: 2x prediction_length)
+    :param num_layers: RNN layers (more = complex but slower)
+    :param hidden_size: Size of hidden layers
+    :param dropout_rate: Regularization to prevent overfitting
+    :param verbose: Show training progress and results
+    :return: ModelResults with trained model, forecasts, and metrics
     """
     if verbose:
         _LOG.info("\n" + "=" * 70)
-        _LOG.info("TRAINING DeepAR MODEL")
+        _LOG.info("🚀 TRAINING DeepAR MODEL")
         _LOG.info("=" * 70)
-        _LOG.info("\nConfiguration:")
-        _LOG.info("  Epochs: %s", epochs)
-        _LOG.info(
-            "  Context length: %s", context_length or prediction_length * 2
-        )
-        _LOG.info("  Features: %s", num_feat_dynamic_real)
-        _LOG.info("  Hidden size: %s", hidden_size)
-        _LOG.info("  Layers: %s", num_layers)
+        _LOG.info("\n📋 Configuration:")
+        _LOG.info("  • Epochs: %s", epochs)
+        _LOG.info("  • Context length: %s days", context_length or prediction_length * 2)
+        _LOG.info("  • External features: %s", num_feat_dynamic_real)
+        _LOG.info("  • Hidden size: %s", hidden_size)
+        _LOG.info("  • RNN layers: %s", num_layers)
+
     start_time = time.time()
     estimator = DeepAREstimator(
         freq="D",
@@ -1081,33 +1164,42 @@ def train_deepar_covid(
         num_feat_dynamic_real=num_feat_dynamic_real,
         num_layers=num_layers,
         hidden_size=hidden_size,
-        dropout_rate=dropout,
+        dropout_rate=dropout_rate,
         lr=learning_rate,
         batch_size=32,
         num_batches_per_epoch=50,
         trainer_kwargs={"max_epochs": epochs},
     )
+
     if verbose:
-        _LOG.info("\nTraining in progress...")
+        _LOG.info("\n⏳ Training in progress...")
     predictor = estimator.train(train_ds)
     training_time = time.time() - start_time
+
     if verbose:
-        _LOG.info("\nTraining complete in %.1f seconds", training_time)
-    if verbose:
-        _LOG.info("\nGenerating probabilistic forecasts...")
+        _LOG.info("✅ Training complete in %.1f seconds", training_time)
+        _LOG.info("\n🔮 Generating probabilistic forecasts...")
+
     forecast_it, ts_it = make_evaluation_predictions(
         dataset=test_ds, predictor=predictor, num_samples=100
     )
     forecasts = list(forecast_it)
     ground_truths = list(ts_it)
+
     evaluator = Evaluator(quantiles=[0.1, 0.5, 0.9])
     agg_metrics, _ = evaluator(iter(ground_truths), iter(forecasts))
+
+    # Compute custom metrics to ensure MAE, RMSE, MAPE are always available
+    custom_metrics = compute_custom_metrics(forecasts, ground_truths)
+    agg_metrics.update(custom_metrics)
+
     if verbose:
-        _LOG.info("\nDeepAR Performance:")
-        _LOG.info("  MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
-        _LOG.info("  RMSE: %.2f", agg_metrics.get("RMSE", 0))
-        _LOG.info("  MAE: %.2f", agg_metrics.get("MAE", 0))
+        _LOG.info("\n📊 DeepAR Performance:")
+        _LOG.info("  • MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
+        _LOG.info("  • RMSE: %.2f", agg_metrics.get("RMSE", 0))
+        _LOG.info("  • MAE: %.2f", agg_metrics.get("MAE", 0))
         _LOG.info("=" * 70)
+
     return ModelResults(
         model_name="DeepAR",
         predictor=predictor,
@@ -1122,37 +1214,39 @@ def train_feedforward_covid(
     train_ds,
     test_ds,
     *,
-    prediction_length: int = 14,
-    epochs: int = 100,
-    learning_rate: float = 0.001,
+    prediction_length: int = _DEFAULT_PREDICTION_LENGTH,
+    epochs: int = DEFAULT_EPOCHS,
+    learning_rate: float = DEFAULT_LEARNING_RATE,
     context_length: Optional[int] = None,
     hidden_dimensions: Optional[List[int]] = None,
     verbose: bool = True,
 ) -> ModelResults:
     """
-    Train a SimpleFeedForward model on COVID-19 data.
+    Train a SimpleFeedForward model for COVID-19 forecasting.
 
-    :param train_ds: training dataset
-    :param test_ds: test dataset
-    :param prediction_length: number of time steps to predict
-    :param epochs: number of training epochs
-    :param learning_rate: learning rate for optimizer
-    :param context_length: number of time steps to use as context
-    :param hidden_dimensions: list of hidden layer dimensions
-    :param verbose: whether to print progress information
-    :return: ModelResults containing trained model and evaluation metrics
+    This is the fastest model - just maps recent history directly to future predictions.
+    Good for quick baselines and stable trends, but doesn't handle complex patterns well.
+
+    :param train_ds: Training dataset in GluonTS format
+    :param test_ds: Test dataset for evaluation
+    :param prediction_length: How many days to forecast ahead
+    :param epochs: Training iterations (more = better but slower)
+    :param learning_rate: How aggressively to update model weights
+    :param context_length: How far back to look (default: 2x prediction_length)
+    :param hidden_dimensions: Size of hidden layers (default: [40, 40])
+    :param verbose: Show training progress and results
+    :return: ModelResults with trained model, forecasts, and metrics
     """
     if verbose:
         _LOG.info("\n" + "=" * 70)
-        _LOG.info("TRAINING SimpleFeedForward MODEL")
+        _LOG.info("🚀 TRAINING SimpleFeedForward MODEL")
         _LOG.info("=" * 70)
-        _LOG.info("\nNote: This model doesn't use external features.")
-        _LOG.info("\nConfiguration:")
-        _LOG.info("  Epochs: %s", epochs)
-        _LOG.info(
-            "  Context length: %s", context_length or prediction_length * 2
-        )
-        _LOG.info("  Hidden layers: %s", hidden_dimensions or [40, 40])
+        _LOG.info("\n⚠️  Note: This model doesn't use external features")
+        _LOG.info("\n📋 Configuration:")
+        _LOG.info("  • Epochs: %s", epochs)
+        _LOG.info("  • Context length: %s days", context_length or prediction_length * 2)
+        _LOG.info("  • Hidden layers: %s", hidden_dimensions or [40, 40])
+
     start_time = time.time()
     estimator = SimpleFeedForwardEstimator(
         prediction_length=prediction_length,
@@ -1163,27 +1257,36 @@ def train_feedforward_covid(
         num_batches_per_epoch=50,
         trainer_kwargs={"max_epochs": epochs},
     )
+
     if verbose:
-        _LOG.info("\nTraining in progress...")
+        _LOG.info("\n⏳ Training in progress...")
     predictor = estimator.train(train_ds)
     training_time = time.time() - start_time
+
     if verbose:
-        _LOG.info("\nTraining complete in %.1f seconds", training_time)
-    if verbose:
-        _LOG.info("\nGenerating probabilistic forecasts...")
+        _LOG.info("✅ Training complete in %.1f seconds", training_time)
+        _LOG.info("\n🔮 Generating probabilistic forecasts...")
+
     forecast_it, ts_it = make_evaluation_predictions(
         dataset=test_ds, predictor=predictor, num_samples=100
     )
     forecasts = list(forecast_it)
     ground_truths = list(ts_it)
+
     evaluator = Evaluator(quantiles=[0.1, 0.5, 0.9])
     agg_metrics, _ = evaluator(iter(ground_truths), iter(forecasts))
+
+    # Compute custom metrics to ensure MAE, RMSE, MAPE are always available
+    custom_metrics = compute_custom_metrics(forecasts, ground_truths)
+    agg_metrics.update(custom_metrics)
+
     if verbose:
-        _LOG.info("\nSimpleFeedForward Performance:")
-        _LOG.info("  MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
-        _LOG.info("  RMSE: %.2f", agg_metrics.get("RMSE", 0))
-        _LOG.info("  MAE: %.2f", agg_metrics.get("MAE", 0))
+        _LOG.info("\n📊 SimpleFeedForward Performance:")
+        _LOG.info("  • MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
+        _LOG.info("  • RMSE: %.2f", agg_metrics.get("RMSE", 0))
+        _LOG.info("  • MAE: %.2f", agg_metrics.get("MAE", 0))
         _LOG.info("=" * 70)
+
     return ModelResults(
         model_name="SimpleFeedForward",
         predictor=predictor,
@@ -1198,42 +1301,44 @@ def train_deepnpts_covid(
     train_ds,
     test_ds,
     *,
-    prediction_length: int = 14,
+    prediction_length: int = _DEFAULT_PREDICTION_LENGTH,
     num_feat_dynamic_real: int = 0,
-    epochs: int = 30,
-    learning_rate: float = 0.001,
+    epochs: int = DEFAULT_EPOCHS,
+    learning_rate: float = DEFAULT_LEARNING_RATE,
     context_length: Optional[int] = None,
     num_hidden_nodes: Optional[List[int]] = None,
     dropout_rate: float = 0.1,
     verbose: bool = True,
 ) -> ModelResults:
     """
-    Train a DeepNPTS model on COVID-19 data.
+    Train a DeepNPTS model for COVID-19 forecasting.
 
-    :param train_ds: training dataset
-    :param test_ds: test dataset
-    :param prediction_length: number of time steps to predict
-    :param num_feat_dynamic_real: number of dynamic real features
-    :param epochs: number of training epochs
-    :param learning_rate: learning rate for optimizer
-    :param context_length: number of time steps to use as context
-    :param num_hidden_nodes: list of hidden node sizes
-    :param dropout_rate: dropout rate
-    :param verbose: whether to print progress information
-    :return: ModelResults containing trained model and evaluation metrics
+    DeepNPTS adapts well to changing patterns and regime shifts. It's great when
+    the data behavior changes over time (like new virus variants).
+
+    :param train_ds: Training dataset in GluonTS format
+    :param test_ds: Test dataset for evaluation
+    :param prediction_length: How many days to forecast ahead
+    :param num_feat_dynamic_real: Number of external features (like mobility data)
+    :param epochs: Training iterations (more = better but slower)
+    :param learning_rate: How aggressively to update model weights
+    :param context_length: How far back to look (default: 2x prediction_length)
+    :param num_hidden_nodes: Size of hidden layers (default: [40])
+    :param dropout_rate: Regularization to prevent overfitting
+    :param verbose: Show training progress and results
+    :return: ModelResults with trained model, forecasts, and metrics
     """
     if verbose:
         _LOG.info("\n" + "=" * 70)
-        _LOG.info("TRAINING DeepNPTS MODEL")
+        _LOG.info("🚀 TRAINING DeepNPTS MODEL")
         _LOG.info("=" * 70)
-        _LOG.info("\nConfiguration:")
-        _LOG.info("  Epochs: %s", epochs)
-        _LOG.info(
-            "  Context length: %s", context_length or prediction_length * 2
-        )
-        _LOG.info("  Features: %s", num_feat_dynamic_real)
-        _LOG.info("  Hidden nodes: %s", num_hidden_nodes or [40])
-        _LOG.info("  Dropout: %s", dropout_rate)
+        _LOG.info("\n📋 Configuration:")
+        _LOG.info("  • Epochs: %s", epochs)
+        _LOG.info("  • Context length: %s days", context_length or prediction_length * 2)
+        _LOG.info("  • External features: %s", num_feat_dynamic_real)
+        _LOG.info("  • Hidden nodes: %s", num_hidden_nodes or [40])
+        _LOG.info("  • Dropout: %s", dropout_rate)
+
     start_time = time.time()
     estimator = DeepNPTSEstimator(
         freq="D",
@@ -1247,27 +1352,36 @@ def train_deepnpts_covid(
         batch_size=32,
         num_batches_per_epoch=50,
     )
+
     if verbose:
-        _LOG.info("\nTraining in progress...")
+        _LOG.info("\n⏳ Training in progress...")
     predictor = estimator.train(train_ds)
     training_time = time.time() - start_time
+
     if verbose:
-        _LOG.info("\nTraining complete in %.1f seconds", training_time)
-    if verbose:
-        _LOG.info("\nGenerating probabilistic forecasts...")
+        _LOG.info("✅ Training complete in %.1f seconds", training_time)
+        _LOG.info("\n🔮 Generating probabilistic forecasts...")
+
     forecast_it, ts_it = make_evaluation_predictions(
         dataset=test_ds, predictor=predictor, num_samples=100
     )
     forecasts = list(forecast_it)
     ground_truths = list(ts_it)
+
     evaluator = Evaluator(quantiles=[0.1, 0.5, 0.9])
     agg_metrics, _ = evaluator(iter(ground_truths), iter(forecasts))
+
+    # Compute custom metrics to ensure MAE, RMSE, MAPE are always available
+    custom_metrics = compute_custom_metrics(forecasts, ground_truths)
+    agg_metrics.update(custom_metrics)
+
     if verbose:
-        _LOG.info("\nDeepNPTS Performance:")
-        _LOG.info("  MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
-        _LOG.info("  RMSE: %.2f", agg_metrics.get("RMSE", 0))
-        _LOG.info("  MAE: %.2f", agg_metrics.get("MAE", 0))
+        _LOG.info("\n📊 DeepNPTS Performance:")
+        _LOG.info("  • MAPE: %.2f%%", agg_metrics.get("MAPE", 0))
+        _LOG.info("  • RMSE: %.2f", agg_metrics.get("RMSE", 0))
+        _LOG.info("  • MAE: %.2f", agg_metrics.get("MAE", 0))
         _LOG.info("=" * 70)
+
     return ModelResults(
         model_name="DeepNPTS",
         predictor=predictor,
@@ -1314,6 +1428,9 @@ def print_model_comparison(comparison_df: pd.DataFrame) -> None:
     _LOG.info("\nWhich model performed best?\n")
     _LOG.info(comparison_df.to_string(index=False))
     _LOG.info("\n" + "=" * 80)
+    # interpretation guidance
+    _LOG.info("\nMetric guidelines: MAPE <10%% highly accurate, 10-20%% good, 21-50%% reasonable, >50%% inaccurate.")
+    _LOG.info("Lower RMSE and MAE are always better; compare them to the scale or baseline of the target series.")
     winner = comparison_df.iloc[0]
     _LOG.info(
         "\nWinner: %s with MAPE of %.2f%%", winner["Model"], winner["MAPE (%)"]
@@ -1350,7 +1467,10 @@ def get_forecast_dataframe(
 @dataclass
 class ScenarioResult:
     """
-    Container for scenario analysis results.
+    A handy container that holds all the results from running a scenario forecast.
+
+    This bundles together the forecast data, summary statistics, and scenario details
+    so you can easily compare different "what-if" situations.
     """
 
     name: str
@@ -1363,7 +1483,7 @@ class ScenarioResult:
     adjustments: Dict[str, float] = field(default_factory=dict)
 
     def cases_vs_baseline(self, baseline_total: float) -> Tuple[float, float]:
-        """Calculate difference from baseline scenario."""
+        """Calculate how this scenario compares to the baseline in terms of total cases."""
         diff = self.total_cases - baseline_total
         pct_diff = (diff / baseline_total) * 100 if baseline_total != 0 else 0
         return diff, pct_diff
@@ -1381,7 +1501,28 @@ def create_scenario_dataset(
     freq: str = "D",
 ) -> ListDataset:
     """
-    Create a modified GluonTS dataset for scenario analysis.
+    Create a modified version of your data to test different "what-if" scenarios.
+
+    This is useful for exploring questions like:
+    - What if mobility decreased by 20% (stricter lockdowns)?
+    - What if the case fatality rate increased (healthcare strain)?
+    - What if restrictions were relaxed?
+
+    The function keeps all historical data unchanged and extends the external
+    features for the forecast period with scenario adjustments applied.
+
+    Args:
+        merged_df: Your main COVID-19 dataset
+        feature_columns: Which columns to include as features
+        target_column: The column you're trying to predict
+        mobility_adjustment: Multiply mobility values by this factor (0.8 = 20% reduction)
+        cfr_adjustment: Multiply case fatality rate by this factor
+        deaths_adjustment: Multiply death-related values by this factor
+        prediction_length: How many days to forecast
+        freq: Frequency of the data ('D' for daily)
+
+    Returns:
+        A GluonTS dataset ready for scenario forecasting
     """
     df = merged_df.copy()
     mobility_cols = [
@@ -1394,32 +1535,47 @@ def create_scenario_dataset(
     ]
     cfr_cols = ["CFR"]
     deaths_cols = ["Daily_Deaths_MA7", "Cumulative_Deaths", "Daily_Deaths"]
-    forecast_start_idx = len(df) - prediction_length
-    for col in df.columns:
-        if col in mobility_cols and mobility_adjustment != 1.0:
-            df.loc[df.index[forecast_start_idx:], col] = (
-                df.loc[df.index[forecast_start_idx:], col] * mobility_adjustment
-            )
-        elif col in cfr_cols and cfr_adjustment != 1.0:
-            df.loc[df.index[forecast_start_idx:], col] = (
-                df.loc[df.index[forecast_start_idx:], col] * cfr_adjustment
-            )
-        elif col in deaths_cols and deaths_adjustment != 1.0:
-            df.loc[df.index[forecast_start_idx:], col] = (
-                df.loc[df.index[forecast_start_idx:], col] * deaths_adjustment
-            )
+
     df_clean = df.dropna(subset=[target_column]).copy()
     date_col = "Date" if "Date" in df_clean.columns else "date"
     start_date = pd.to_datetime(df_clean[date_col].iloc[0])
+    
+    # Use all historical data for the target
     target = df_clean[target_column].values.tolist()
+
     data_entry = {"start": start_date, "target": target}
+
     if feature_columns:
         feat_dynamic_real = []
+        
+        # Get the last row as a template for future feature values
+        last_row_idx = len(df_clean) - 1
+        
         for col in feature_columns:
             if col in df_clean.columns:
-                feat_dynamic_real.append(df_clean[col].values.tolist())
+                # Get historical values
+                historical_values = df_clean[col].values.tolist()
+                
+                # Get the last value and extend it for the forecast period
+                last_value = df_clean[col].iloc[last_row_idx]
+                
+                # Apply scenario adjustments to the extended forecast period
+                if col in mobility_cols:
+                    extended_value = last_value * mobility_adjustment
+                elif col in cfr_cols:
+                    extended_value = last_value * cfr_adjustment
+                elif col in deaths_cols:
+                    extended_value = last_value * deaths_adjustment
+                else:
+                    extended_value = last_value
+                
+                # Create extended feature values: historical + forecast period with adjustments
+                extended_values = historical_values + [extended_value] * prediction_length
+                feat_dynamic_real.append(extended_values)
+        
         if feat_dynamic_real:
             data_entry["feat_dynamic_real"] = feat_dynamic_real
+
     return ListDataset([data_entry], freq=freq)
 
 
@@ -1432,16 +1588,34 @@ def run_scenario_forecast(
     *,
     num_samples: int = 100,
 ) -> ScenarioResult:
-    """Run a forecast for a specific scenario using a trained predictor."""
+    """
+    Run a forecast for one specific scenario and package up all the results.
+
+    This takes your trained model and a modified dataset (representing a scenario)
+    and generates the forecast along with summary statistics.
+
+    Args:
+        predictor: Your trained GluonTS model
+        scenario_dataset: The modified dataset for this scenario
+        scenario_name: Short name for the scenario (e.g., "Strong Intervention")
+        scenario_description: Longer description of what this scenario represents
+        adjustments: Dictionary of what was changed (e.g., {"mobility": 0.8})
+        num_samples: Number of forecast samples to generate (more = better uncertainty estimates)
+
+    Returns:
+        ScenarioResult object with forecast, summary stats, and scenario details
+    """
     forecast_it, ts_it = make_evaluation_predictions(
         dataset=scenario_dataset, predictor=predictor, num_samples=num_samples
     )
     forecasts = list(forecast_it)
     forecast = forecasts[0]
+
     mean_daily = float(forecast.mean.mean())
     total_cases = float(forecast.mean.sum())
     lower = float(forecast.quantile(0.1).mean())
     upper = float(forecast.quantile(0.9).mean())
+
     return ScenarioResult(
         name=scenario_name,
         description=scenario_description,
@@ -1463,7 +1637,27 @@ def run_all_scenarios(
     prediction_length: int = 14,
     verbose: bool = True,
 ) -> List[ScenarioResult]:
-    """Run all predefined scenarios and return results."""
+    """
+    Run forecasts for all the predefined scenarios to explore different possibilities.
+
+    This function tests 5 different scenarios:
+    1. Baseline - No changes, current trends continue
+    2. Moderate Intervention - 15% mobility reduction
+    3. Strong Intervention - 30% mobility reduction
+    4. Relaxation - 20% mobility increase
+    5. Healthcare Strain - 15% higher case fatality rate
+
+    Args:
+        predictor: Your trained GluonTS model
+        merged_df: The main COVID-19 dataset
+        feature_columns: Which columns to use as features
+        target_column: Which column you're predicting
+        prediction_length: How many days to forecast
+        verbose: Whether to print progress updates
+
+    Returns:
+        List of ScenarioResult objects, one for each scenario
+    """
     scenarios_config = [
         {
             "name": "Baseline",
@@ -1501,16 +1695,17 @@ def run_all_scenarios(
             "deaths": 1.10,
         },
     ]
+
     results = []
     if verbose:
-        _LOG.info("\n" + "=" * 70)
-        _LOG.info("RUNNING SCENARIO ANALYSIS")
-        _LOG.info("=" * 70)
+        print("\n" + "=" * 70)
+        print("EXPLORING DIFFERENT SCENARIOS")
+        print("=" * 70)
+
     for i, config in enumerate(scenarios_config, 1):
         if verbose:
-            _LOG.info(
-                "\n[%s/5] %s: %s", i, config["name"], config["description"]
-            )
+            print(f"\n[{i}/5] {config['name']}: {config['description']}")
+
         scenario_ds = create_scenario_dataset(
             merged_df=merged_df,
             feature_columns=feature_columns,
@@ -1520,11 +1715,13 @@ def run_all_scenarios(
             deaths_adjustment=config["deaths"],
             prediction_length=prediction_length,
         )
+
         adjustments = {
             "mobility": config["mobility"],
             "cfr": config["cfr"],
             "deaths": config["deaths"],
         }
+
         result = run_scenario_forecast(
             predictor=predictor,
             scenario_dataset=scenario_ds,
@@ -1533,21 +1730,32 @@ def run_all_scenarios(
             adjustments=adjustments,
         )
         results.append(result)
+
         if verbose:
-            _LOG.info(
-                "   Avg daily: %,.0f | Total: %,.0f",
-                result.mean_daily_cases,
-                result.total_cases,
-            )
+            print(f"   Avg daily: {result.mean_daily_cases:,.0f} | Total: {result.total_cases:,.0f}")
     if verbose:
-        _LOG.info("\nScenario analysis complete.")
+        print("\nScenario exploration complete!")
     return results
 
 
 def print_scenario_summary(results: List[ScenarioResult]) -> pd.DataFrame:
-    """Print a formatted summary table of all scenario results."""
+    """
+    Print a clear comparison table showing how all scenarios differ from each other.
+
+    This creates a nice table that lets you quickly see:
+    - Average daily cases for each scenario
+    - Total cases over the forecast period
+    - How much each scenario differs from the baseline
+
+    Args:
+        results: List of ScenarioResult objects from run_all_scenarios()
+
+    Returns:
+        DataFrame with the summary data (useful for further analysis)
+    """
     baseline = next((r for r in results if r.name == "Baseline"), results[0])
     baseline_total = baseline.total_cases
+
     summary_data = []
     for result in results:
         diff, pct = result.cases_vs_baseline(baseline_total)
@@ -1556,46 +1764,53 @@ def print_scenario_summary(results: List[ScenarioResult]) -> pd.DataFrame:
                 "Scenario": result.name,
                 "Avg Daily Cases": result.mean_daily_cases,
                 "Total Cases (14d)": result.total_cases,
-                "Range (10%-90%)": f"{result.lower_bound:,.0f} - {result.upper_bound:,.0f}",
                 "vs Baseline": f"{pct:+.1f}%"
                 if result.name != "Baseline"
                 else "--",
-                "Cases Δ": f"{diff:+,.0f}"
+                "Cases Δ": diff
                 if result.name != "Baseline"
-                else "--",
+                else 0,
             }
         )
+
     df = pd.DataFrame(summary_data)
-    _LOG.info("\n" + "=" * 90)
-    _LOG.info("SCENARIO COMPARISON SUMMARY")
-    _LOG.info("=" * 90)
-    _LOG.info("\nForecast horizon: 14 days")
-    _LOG.info("Baseline total cases: %,.0f", baseline_total)
-    _LOG.info("")
-    _LOG.info(
-        "%s %s %s %s %s",
-        "Scenario".ljust(25),
-        "Avg Daily".ljust(12),
-        "Total Cases".ljust(14),
-        "vs Baseline".ljust(12),
-        "Cases Δ".ljust(15),
-    )
-    _LOG.info("-" * 90)
+
+    print("\n" + "=" * 90)
+    print("SCENARIO FORECAST COMPARISON")
+    print("=" * 90)
+    print(f"\nForecast horizon: 14 days")
+    print(f"Baseline total cases: {baseline_total:,.0f}")
+    print("")
+    print("Scenario".ljust(25), "Avg Daily".ljust(12), "Total Cases".ljust(14), "vs Baseline".ljust(12), "Cases Δ".ljust(15))
+    print("-" * 90)
+
     for _, row in df.iterrows():
-        _LOG.info(
-            "%s %10,.0f %12,.0f %10s %14s",
-            row["Scenario"].ljust(25),
-            row["Avg Daily Cases"],
-            row["Total Cases (14d)"],
-            row["vs Baseline"].rjust(10),
-            row["Cases Δ"].rjust(14),
-        )
-    _LOG.info("=" * 90)
+        scenario_name = str(row["Scenario"]).ljust(25)
+        avg_daily = f"{row['Avg Daily Cases']:,.0f}".ljust(12)
+        total_cases = f"{row['Total Cases (14d)']:,.0f}".ljust(14)
+        vs_baseline = str(row["vs Baseline"]).ljust(12)
+        # Format Cases Δ with proper sign and thousands separator
+        cases_delta_val = "--"
+        if row["Scenario"] != "Baseline":
+            cases_delta_val = f"{int(row['Cases Δ']):+,.0f}"
+        cases_delta = cases_delta_val.ljust(15)
+        print(scenario_name + avg_daily + total_cases + vs_baseline + cases_delta)
+    print("=" * 90)
     return df
 
 
 def print_policy_insights(results: List[ScenarioResult]) -> None:
-    """Print policy insights comparing intervention impact vs baseline/relaxation."""
+    """
+    Print key insights about the potential impact of different policy decisions.
+
+    This translates the scenario results into practical insights like:
+    - How many cases could stricter interventions prevent?
+    - What risks come with relaxing restrictions?
+    - What happens if healthcare gets overwhelmed?
+
+    Args:
+        results: List of ScenarioResult objects from run_all_scenarios()
+    """
     baseline = next((r for r in results if r.name == "Baseline"), results[0])
     strong_intervention = next(
         (r for r in results if r.name == "Strong Intervention"), None
@@ -1603,6 +1818,7 @@ def print_policy_insights(results: List[ScenarioResult]) -> None:
     relaxation = next(
         (r for r in results if r.name == "Relaxation"), None
     )
+
     cases_prevented = (
         baseline.total_cases - strong_intervention.total_cases
         if strong_intervention
@@ -1611,30 +1827,30 @@ def print_policy_insights(results: List[ScenarioResult]) -> None:
     additional_cases = (
         relaxation.total_cases - baseline.total_cases if relaxation else 0
     )
-    print("POLICY INSIGHTS")
+
+    print("\nPOLICY INSIGHTS FROM SCENARIO ANALYSIS")
     print("=" * 70)
     print()
-    print("Intervention Impact:")
+
+    print("💡 Intervention Impact:")
     if strong_intervention:
         pct = (cases_prevented / baseline.total_cases) * 100
-        print(
-            f"  Strong intervention (30% mobility reduction) could prevent"
-        )
+        print("  Strong intervention (30% mobility reduction) could prevent")
         print(f"  ~{cases_prevented:,.0f} cases over 14 days ({pct:.1f}% reduction)")
     else:
         print("  Strong intervention scenario not found.")
     print()
-    print("Relaxation Risk:")
+
+    print("⚠️  Relaxation Risk:")
     if relaxation:
         pct = (additional_cases / baseline.total_cases) * 100
-        print(
-            f"  Lifting restrictions (20% mobility increase) could add"
-        )
+        print("  Lifting restrictions (20% mobility increase) could add")
         print(f"  ~{additional_cases:,.0f} cases over 14 days ({pct:.1f}% increase)")
     else:
         print("  Relaxation scenario not found.")
+
     print()
-    print("Caveats:")
+    print("📝 Caveats:")
     print("  - These are model projections, not guarantees")
     print("  - Correlation does not imply causation")
     print("  - Use to inform discussion, not dictate policy")
@@ -1645,17 +1861,23 @@ def plot_scenario_comparison(
     results: list,
     *,
     prediction_length: int = 14,
+    figsize: tuple = (16, 6),
     save_path: Optional[str] = None,
 ) -> None:
     """
-    Create visualizations comparing all scenarios.
+    Create a comprehensive visualization comparing all scenarios side-by-side.
 
-    Expects objects with .name, .forecast (mean, quantile), .total_cases,
-    .cases_vs_baseline() - e.g. ScenarioResult from models.
+    This plot shows two views:
+    1. Forecast trajectories over time for each scenario
+    2. Total cases comparison as a bar chart
 
-    :param results: list of scenario result objects
-    :param prediction_length: forecast horizon for x-axis
-    :param save_path: optional path to save the figure
+    Perfect for presentations or reports to show the range of possible outcomes.
+
+    Args:
+        results: List of scenario result objects (from run_all_scenarios)
+        prediction_length: Number of days being forecasted
+        figsize: Size of the plot (width, height) in inches
+        save_path: If provided, save the plot to this file path
     """
     colors = {
         "Baseline": "#6B7280",
@@ -1664,7 +1886,10 @@ def plot_scenario_comparison(
         "Relaxation": "#F59E0B",
         "Healthcare Strain": "#EF4444",
     }
-    fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+
+    fig, axes = plt.subplots(1, 2, figsize=figsize)
+
+    # Left plot: Forecast trajectories over time
     ax1 = axes[0]
     days = list(range(1, prediction_length + 1))
     for result in results:
@@ -1682,28 +1907,29 @@ def plot_scenario_comparison(
         )
     ax1.set_xlabel("Days Ahead", fontsize=12)
     ax1.set_ylabel("Daily Cases", fontsize=12)
-    ax1.set_title(
-        "Forecast Trajectories by Scenario", fontsize=14, fontweight="bold"
-    )
+    ax1.set_title("Forecast Trajectories by Scenario", fontsize=14, fontweight="bold")
     ax1.legend(loc="best", fontsize=10)
     ax1.grid(True, alpha=0.3)
     ax1.set_xticks(range(1, prediction_length + 1, 2))
 
+    # Right plot: Total cases comparison
     ax2 = axes[1]
     names = [r.name for r in results]
     totals = [r.total_cases for r in results]
     bar_colors = [colors.get(n, "#6B7280") for n in names]
     bars = ax2.barh(names, totals, color=bar_colors, alpha=0.8)
+
     baseline_total = next(
         (r.total_cases for r in results if r.name == "Baseline"), totals[0]
     )
+
     for bar, result in zip(bars, results):
         width = bar.get_width()
         diff, pct = result.cases_vs_baseline(baseline_total)
         ax2.text(
             width + baseline_total * 0.01,
             bar.get_y() + bar.get_height() / 2,
-            f"{width:,.0f}",
+            ".0f",
             ha="left",
             va="center",
             fontweight="bold",
@@ -1720,6 +1946,7 @@ def plot_scenario_comparison(
                 fontsize=9,
                 color="green" if pct < 0 else "red",
             )
+
     ax2.set_xlabel("Total Cases (14 days)", fontsize=12)
     ax2.set_title("Total Cases by Scenario", fontsize=14, fontweight="bold")
     ax2.grid(True, alpha=0.3, axis="x")
@@ -1731,11 +1958,21 @@ def plot_scenario_comparison(
         alpha=0.7,
         label="Baseline",
     )
+
     plt.tight_layout()
+
+    # Save if requested
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches="tight")
-        _LOG.info("Saved scenario comparison plot to: %s", save_path)
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        print(f"Saved scenario comparison plot to: {save_path}")
+
     plt.show()
+
+    print("\nScenario comparison insights:")
+    print("• Left plot shows how each scenario evolves over the 14-day forecast")
+    print("• Right plot compares total case burden for each scenario")
+    print("• Shaded areas show forecast uncertainty (80% confidence intervals)")
+    print("• Percentages show change relative to baseline scenario")
 
 
 # #############################################################################
@@ -1748,30 +1985,35 @@ def calculate_metrics(
     actual_values: Union[np.ndarray, pd.Series, list],
 ) -> Dict[str, float]:
     """
-    Calculate comprehensive forecasting metrics.
+    Calculate standard forecasting accuracy metrics.
 
-    :param forecast_values: Forecasted values
-    :param actual_values: Actual observed values
-    :return: Dictionary with MAE, RMSE, MAPE, ME, and max_error
+    This gives you the key numbers to understand how well your forecast performed:
+    - MAE: Average absolute error (easy to understand, in same units as data)
+    - RMSE: Penalizes big errors more (good for detecting outliers)
+    - MAPE: Percentage error (good for comparing across different scales)
+    - ME: Average bias (positive = over-forecasting, negative = under-forecasting)
+
+    :param forecast_values: What your model predicted
+    :param actual_values: What actually happened
+    :return: Dictionary with all the metrics
     """
     forecast_values = np.asarray(forecast_values).flatten()
     actual_values = np.asarray(actual_values).flatten()
+
+    # Handle mismatched lengths (take the shorter one)
     if len(forecast_values) != len(actual_values):
         min_len = min(len(forecast_values), len(actual_values))
         forecast_values = forecast_values[:min_len]
         actual_values = actual_values[:min_len]
+
     errors = forecast_values - actual_values
-    mae = np.mean(np.abs(errors))
-    rmse = np.sqrt(np.mean(errors**2))
-    mape = np.mean(np.abs(errors / actual_values)) * 100
-    me = np.mean(errors)
-    max_error = np.max(np.abs(errors))
+
     return {
-        "mae": mae,
-        "rmse": rmse,
-        "mape": mape,
-        "me": me,
-        "max_error": max_error,
+        "mae": np.mean(np.abs(errors)),  # Mean Absolute Error
+        "rmse": np.sqrt(np.mean(errors**2)),  # Root Mean Square Error
+        "mape": np.mean(np.abs(errors / actual_values)) * 100,  # Mean Absolute Percentage Error
+        "me": np.mean(errors),  # Mean Error (bias)
+        "max_error": np.max(np.abs(errors)),  # Worst single prediction
     }
 
 
@@ -1780,26 +2022,38 @@ def print_metrics(
     *,
     model_name: str = "Model",
 ) -> None:
-    """Print metrics in a formatted way."""
-    _LOG.info("\n%s Performance:", model_name)
-    _LOG.info("=" * 60)
-    _LOG.info("MAE (Mean Absolute Error):      %10,.2f", metrics["mae"])
-    _LOG.info("RMSE (Root Mean Squared Error): %10,.2f", metrics["rmse"])
-    _LOG.info("MAPE (Mean Abs. %% Error):       %10.2f %%", metrics["mape"])
-    _LOG.info("ME (Mean Error / Bias):         %10,.2f", metrics["me"])
-    _LOG.info("Maximum Error:                   %10,.2f", metrics["max_error"])
-    _LOG.info("=" * 60)
+    """
+    Print forecasting metrics in a clear, easy-to-read format with helpful interpretation.
+
+    This takes the raw numbers from calculate_metrics() and presents them nicely,
+    plus adds some guidance on what the numbers mean for your model's performance.
+
+    Args:
+        metrics: Dictionary returned by calculate_metrics()
+        model_name: Name of your model (just for the header)
+    """
+    print(f"\n📊 {model_name} Performance Metrics:")
+    print("=" * 60)
+    print(f"MAE (Mean Absolute Error):      {metrics['mae']:10,.2f}")
+    print(f"RMSE (Root Mean Squared Error): {metrics['rmse']:10,.2f}")
+    print(f"MAPE (Mean Abs. %% Error):       {metrics['mape']:10.2f} %%")
+    print(f"ME (Mean Error / Bias):         {metrics['me']:10,.2f}")
+    print(f"Maximum Error:                   {metrics['max_error']:10,.2f}")
+    print("=" * 60)
+
+    # Add helpful interpretation
     if metrics["mape"] < 10:
-        _LOG.info("\nExcellent performance, error less than 10%%")
+        print("✅ Excellent! Error less than 10%")
     elif metrics["mape"] < 20:
-        _LOG.info("\nGood performance, error less than 20%%")
+        print("👍 Good performance, error less than 20%")
     else:
-        _LOG.info("\nModerate performance (COVID data is highly variable)")
+        print("🤔 Moderate performance (COVID data is highly variable)")
+
     if abs(metrics["me"]) < metrics["mae"] / 2:
-        _LOG.info("Low bias (not systematically over or under-predicting)")
+        print("⚖️  Low bias - not systematically over/under-predicting")
     else:
         bias_direction = "over" if metrics["me"] > 0 else "under"
-        _LOG.info("Model tends to %s-predict", bias_direction)
+        print(f"📈 Model tends to {bias_direction}-predict")
 
 
 def plot_forecast(
@@ -1814,8 +2068,29 @@ def plot_forecast(
     save_path: str = None,
     context_days: int = 60,
 ) -> None:
-    """Create a comprehensive forecast visualization."""
-    plt.figure(figsize=(16, 6))
+    """
+    Create a comprehensive forecast visualization that shows how well your model did.
+
+    This plot combines everything you need to evaluate your forecast:
+    - Recent historical data (to see the patterns your model learned)
+    - What actually happened (the ground truth)
+    - Your model's predictions
+    - Uncertainty bands (how confident the model is)
+
+    Args:
+        train_df: Your training data DataFrame
+        forecast_dates: Dates for the forecast period
+        forecast_values: The model's point predictions (usually the mean)
+        actual_values: What actually happened during the forecast period
+        forecast_quantiles: Uncertainty intervals like {0.1: lower, 0.9: upper}
+        target_column: Name of the column you're forecasting
+        model_name: Name of your model (for the plot title)
+        save_path: If provided, save the plot to this file path
+        context_days: How many days of historical data to show before the forecast
+    """
+    plt.figure(figsize=DEFAULT_FIGSIZE)
+
+    # Show recent historical context
     train_context = train_df.tail(context_days)
     plt.plot(
         train_context["Date"],
@@ -1825,16 +2100,20 @@ def plot_forecast(
         linewidth=2,
         alpha=0.8,
     )
+
+    # Plot actual values (what really happened)
     plt.plot(
         forecast_dates,
         actual_values,
-        label="Actual",
+        label="Actual Values",
         color="orange",
         linewidth=3,
         marker="o",
         markersize=8,
         zorder=5,
     )
+
+    # Plot model predictions
     plt.plot(
         forecast_dates,
         forecast_values,
@@ -1846,6 +2125,8 @@ def plot_forecast(
         linestyle="--",
         zorder=4,
     )
+
+    # Add uncertainty intervals if available
     if 0.05 in forecast_quantiles and 0.95 in forecast_quantiles:
         plt.fill_between(
             forecast_dates,
@@ -1853,8 +2134,9 @@ def plot_forecast(
             forecast_quantiles[0.95],
             alpha=0.15,
             color="red",
-            label="90% Confidence",
+            label="90% Confidence Interval",
         )
+
     if 0.25 in forecast_quantiles and 0.75 in forecast_quantiles:
         plt.fill_between(
             forecast_dates,
@@ -1862,21 +2144,24 @@ def plot_forecast(
             forecast_quantiles[0.75],
             alpha=0.25,
             color="red",
-            label="50% Confidence",
+            label="50% Confidence Interval",
         )
+
     plt.title(
-        f"{model_name} Forecast Visualization",
+        f"{model_name} Forecast: {len(forecast_dates)}-Day Prediction",
         fontsize=16,
         fontweight="bold",
     )
     plt.xlabel("Date", fontsize=13)
-    plt.ylabel(target_column.replace("_", " "), fontsize=13)
+    plt.ylabel(target_column.replace("_", " ").title(), fontsize=13)
     plt.legend(loc="best", fontsize=11)
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
+
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches="tight")
-        _LOG.info("Plot saved as '%s'", save_path)
+        plt.savefig(save_path, dpi=DEFAULT_DPI, bbox_inches="tight")
+        print(f"💾 Forecast plot saved to: {save_path}")
+
     plt.show()
 
 
@@ -1888,15 +2173,32 @@ def plot_error_analysis(
     *,
     save_path: str = None,
 ) -> None:
-    """Create detailed error analysis plots."""
+    """
+    Create detailed error analysis plots to understand where your forecast went wrong.
+
+    This shows 4 different views of your model's performance:
+    1. Forecast vs Actual over time - See the overall pattern
+    2. Daily prediction errors - When did it over/under-predict?
+    3. Absolute percentage error - Which days had the biggest relative errors?
+    4. Forecast uncertainty - How confident was the model each day?
+
+    Args:
+        forecast_values: What your model predicted
+        actual_values: What actually happened
+        forecast_quantiles: The uncertainty intervals from your model
+        model_name: Name of your model (for the plot titles)
+        save_path: If provided, save the plot to this file path
+    """
     fig, axes = plt.subplots(2, 2, figsize=(16, 10))
     forecast_period = len(forecast_values)
     errors = forecast_values - actual_values
+
+    # Panel 1: Forecast vs Actual
     axes[0, 0].plot(
         range(1, forecast_period + 1),
         actual_values,
         "o-",
-        label="Actual",
+        label="Actual Values",
         color="orange",
         linewidth=2,
         markersize=8,
@@ -1910,6 +2212,8 @@ def plot_error_analysis(
         linewidth=2,
         markersize=7,
     )
+
+    # Add uncertainty band if available
     if 0.1 in forecast_quantiles and 0.9 in forecast_quantiles:
         axes[0, 0].fill_between(
             range(1, forecast_period + 1),
@@ -1917,19 +2221,25 @@ def plot_error_analysis(
             forecast_quantiles[0.9],
             alpha=0.2,
             color="red",
+            label="80% Confidence",
         )
-    axes[0, 0].set_title("Forecast vs Actual", fontweight="bold")
-    axes[0, 0].set_xlabel("Day")
+
+    axes[0, 0].set_title("Forecast vs Actual Values", fontweight="bold")
+    axes[0, 0].set_xlabel("Day in Forecast Period")
     axes[0, 0].set_ylabel("Value")
     axes[0, 0].legend()
     axes[0, 0].grid(True, alpha=0.3)
+
+    # Panel 2: Daily Errors
     colors = ["red" if e > 0 else "green" for e in errors]
     axes[0, 1].bar(range(1, forecast_period + 1), errors, color=colors)
     axes[0, 1].axhline(y=0, color="black", linestyle="--", linewidth=1)
     axes[0, 1].set_title("Daily Forecast Errors", fontweight="bold")
-    axes[0, 1].set_xlabel("Day")
+    axes[0, 1].set_xlabel("Day in Forecast Period")
     axes[0, 1].set_ylabel("Error (Forecast - Actual)")
     axes[0, 1].grid(True, alpha=0.3, axis="y")
+
+    # Panel 3: Absolute Percentage Error
     ape = np.abs(errors / actual_values) * 100
     mape = np.mean(ape)
     axes[1, 0].bar(
@@ -1943,13 +2253,15 @@ def plot_error_analysis(
         color="red",
         linestyle="--",
         linewidth=2,
-        label=f"Mean APE: {mape:.1f}%",
+        label=f"Average: {mape:.1f}%",
     )
     axes[1, 0].set_title("Absolute Percentage Error by Day", fontweight="bold")
-    axes[1, 0].set_xlabel("Day")
+    axes[1, 0].set_xlabel("Day in Forecast Period")
     axes[1, 0].set_ylabel("Absolute % Error")
     axes[1, 0].legend()
     axes[1, 0].grid(True, alpha=0.3, axis="y")
+
+    # Panel 4: Uncertainty Analysis
     if 0.1 in forecast_quantiles and 0.9 in forecast_quantiles:
         ci_width = forecast_quantiles[0.9] - forecast_quantiles[0.1]
         axes[1, 1].plot(
@@ -1960,33 +2272,34 @@ def plot_error_analysis(
             linewidth=2,
             markersize=8,
         )
-        axes[1, 1].set_title(
-            "Forecast Uncertainty (80% CI Width)",
-            fontweight="bold",
-        )
-        axes[1, 1].set_xlabel("Day")
-        axes[1, 1].set_ylabel("CI Width")
+        axes[1, 1].set_title("Forecast Uncertainty (80% CI Width)", fontweight="bold")
+        axes[1, 1].set_xlabel("Day in Forecast Period")
+        axes[1, 1].set_ylabel("Confidence Interval Width")
         axes[1, 1].grid(True, alpha=0.3)
     else:
         axes[1, 1].text(
             0.5,
             0.5,
-            "Quantiles not available",
+            "Quantiles not available\nfor uncertainty analysis",
             ha="center",
             va="center",
             transform=axes[1, 1].transAxes,
+            fontsize=12,
         )
         axes[1, 1].set_title("Uncertainty Analysis", fontweight="bold")
+
     plt.suptitle(
-        f"{model_name} Error Analysis",
+        f"{model_name} - Detailed Error Analysis",
         fontsize=16,
         fontweight="bold",
         y=1.00,
     )
     plt.tight_layout()
+
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches="tight")
-        _LOG.info("Error analysis saved as '%s'", save_path)
+        plt.savefig(save_path, dpi=DEFAULT_DPI, bbox_inches="tight")
+        _LOG.info("💾 Error analysis plot saved to: %s", save_path)
+
     plt.show()
 
 
@@ -1996,48 +2309,69 @@ def compare_models_metrics(
     save_path: str = None,
 ) -> None:
     """
-    Compare multiple models side by side (bar chart + print table).
+    Compare how different models performed using bar charts and a summary table.
 
-    :param results: Dictionary mapping model names to their metrics
-    :param save_path: Optional path to save plot
+    This creates an easy-to-read comparison showing which model did best
+    on each accuracy metric, helping you choose the right model for your needs.
+
+    Args:
+        results: Dictionary where keys are model names and values are metric dictionaries
+        save_path: If provided, save the comparison plot to this file path
     """
     metrics_to_plot = ["mae", "rmse", "mape"]
     model_names = list(results.keys())
+
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
     for idx, metric in enumerate(metrics_to_plot):
         values = [results[model][metric] for model in model_names]
-        axes[idx].bar(
-            model_names,
-            values,
-            color=["steelblue", "green", "purple"][: len(model_names)],
-        )
-        axes[idx].set_title(metric.upper(), fontweight="bold")
-        axes[idx].set_ylabel(metric.upper())
+        colors = ["steelblue", "green", "purple", "orange", "red"][:len(model_names)]
+
+        bars = axes[idx].bar(model_names, values, color=colors, alpha=0.8)
+        axes[idx].set_title(metric.upper(), fontweight="bold", fontsize=12)
+        axes[idx].set_ylabel(metric.upper(), fontsize=11)
         axes[idx].grid(True, alpha=0.3, axis="y")
-        for i, v in enumerate(values):
-            axes[idx].text(i, v, f"{v:.1f}", ha="center", va="bottom")
-    plt.suptitle("Model Comparison", fontsize=16, fontweight="bold")
+
+        # Add value labels on bars
+        for bar, v in zip(bars, values):
+            axes[idx].text(
+                bar.get_x() + bar.get_width()/2,
+                bar.get_height(),
+                f"{v:.1f}",
+                ha="center",
+                va="bottom",
+                fontsize=10
+            )
+
+    plt.suptitle("🤖 Model Performance Comparison", fontsize=16, fontweight="bold")
     plt.tight_layout()
+
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches="tight")
-        _LOG.info("Comparison saved as '%s'", save_path)
+        plt.savefig(save_path, dpi=DEFAULT_DPI, bbox_inches="tight")
+        print(f"💾 Model comparison plot saved to: {save_path}")
+
     plt.show()
-    _LOG.info("\nModel Comparison Table:")
-    _LOG.info("=" * 70)
-    _LOG.info("%-20s %12s %12s %12s", "Model", "MAE", "RMSE", "MAPE")
-    _LOG.info("-" * 70)
+
+    # Print summary table
+    print("\n📋 Model Comparison Summary:")
+    print("=" * 70)
+    print("%-20s %12s %12s %12s" % ("Model", "MAE", "RMSE", "MAPE"))
+    print("-" * 70)
+
     for model, metrics in results.items():
-        _LOG.info(
-            "%-20s %12,.2f %12,.2f %11.2f%%",
+        print("%-20s %12,.2f %12,.2f %11.2f%%" % (
             model,
             metrics["mae"],
             metrics["rmse"],
             metrics["mape"],
-        )
-    _LOG.info("=" * 70)
+        ))
+
+    print("=" * 70)
+
+    # Find and highlight best model
     best_model = min(results.items(), key=lambda x: x[1]["mape"])
     _LOG.info(
-        "\nBest Model (by MAPE): %s (%.2f%%)",
+        "\n🏆 Best Model (by MAPE): %s (%.2f%% error)",
         best_model[0],
         best_model[1]["mape"],
     )
@@ -2058,7 +2392,25 @@ def generate_sinusoid(
     seed: int = 42,
     start_date: str = _DEFAULT_START,
 ) -> pd.DataFrame:
-    """Pure sine wave with additive Gaussian noise."""
+    """
+    Create a simple sine wave pattern with some noise - the "hello world" of time series.
+
+    This generates a repeating up-and-down pattern that's easy for models to learn.
+    Think of it like the tides or daily temperature variations - predictable cycles
+    with a bit of randomness thrown in.
+
+    Args:
+        n_points: How many days of data you want to generate
+        period: How many days for one complete cycle (up and down)
+        amplitude: How much the signal varies from the baseline
+        baseline: The center value around which it oscillates
+        noise_std: How much random noise to add (makes it realistic)
+        seed: Random seed for reproducible results
+        start_date: When your time series starts
+
+    Returns:
+        DataFrame with Date and value columns, ready for forecasting
+    """
     rng = np.random.default_rng(seed)
     t = np.arange(n_points)
     signal = baseline + amplitude * np.sin(2 * np.pi * t / period)
@@ -2079,7 +2431,31 @@ def generate_multi_frequency(
     seed: int = 42,
     start_date: str = _DEFAULT_START,
 ) -> pd.DataFrame:
-    """Combination of trend, seasonal, weekly cycle, and noise."""
+    """
+    Create a complex, realistic time series with multiple patterns happening at once.
+
+    This combines several different cycles and trends, just like real-world data:
+    - A long-term upward trend (like growing sales or population)
+    - Seasonal cycles (like yearly weather patterns)
+    - Weekly cycles (like weekend vs weekday behavior)
+    - Random noise (because life is unpredictable)
+
+    Much more challenging than a simple sine wave - great for testing how robust your models are!
+
+    Args:
+        n_points: How many days of data to generate
+        trend_slope: How much the baseline increases each day (growth rate)
+        seasonal_period: Length of the big seasonal cycle in days
+        seasonal_amplitude: How much the seasonal pattern varies
+        weekly_amplitude: How much the weekly pattern varies
+        baseline: Starting value for the series
+        noise_std: How much random noise to add
+        seed: Random seed for reproducible results
+        start_date: When your time series starts
+
+    Returns:
+        DataFrame with Date and value columns, ready for forecasting
+    """
     rng = np.random.default_rng(seed)
     t = np.arange(n_points)
     trend = baseline + trend_slope * t
@@ -2104,7 +2480,34 @@ def generate_regime_change(
     seed: int = 42,
     start_date: str = _DEFAULT_START,
 ) -> pd.DataFrame:
-    """Time series that changes behavior at a configurable changepoint."""
+    """
+    Create a time series that suddenly changes behavior - like when everything changes overnight.
+
+    This simulates real-world disruptions like:
+    - A new COVID variant emerging
+    - Government policies changing
+    - Market crashes or booms
+    - Seasonal weather shifts
+
+    The pattern is completely different before and after the changepoint,
+    making this a tough test for forecasting models.
+
+    Args:
+        n_points: How many days of data to generate
+        changepoint_frac: Where the change happens (0.5 = halfway through)
+        baseline_before: Average value before the change
+        amplitude_before: How much the signal varies before the change
+        period_before: Length of cycles before the change
+        baseline_after: Average value after the change
+        amplitude_after: How much the signal varies after the change
+        period_after: Length of cycles after the change
+        noise_std: How much random noise to add
+        seed: Random seed for reproducible results
+        start_date: When your time series starts
+
+    Returns:
+        DataFrame with Date and value columns, ready for forecasting
+    """
     rng = np.random.default_rng(seed)
     cp = int(n_points * changepoint_frac)
     t_before = np.arange(cp)
@@ -2129,13 +2532,25 @@ def prepare_synthetic_dataset(
     freq: str = "D",
 ) -> Dict:
     """
-    Split a synthetic DataFrame into train/test and convert to GluonTS format.
+    Split your synthetic time series into training and test sets for forecasting experiments.
 
-    :param df: DataFrame with Date and target columns
-    :param target_col: name of the target column
-    :param prediction_length: forecast horizon (also used as test size)
-    :param freq: time series frequency
-    :return: dict with train_ds, test_ds, train_df, test_df, and metadata
+    This takes the data you generated and divides it so your model can learn from
+    the past and then try to predict the future. The model sees everything up to
+    a certain point, then has to forecast what happens next.
+
+    Args:
+        df: DataFrame from one of the generate_* functions above
+        target_col: Which column contains the values you want to forecast
+        prediction_length: How many days into the future to forecast
+        freq: How often the data is sampled ('D' for daily)
+
+    Returns:
+        Dictionary containing:
+        - train_ds, test_ds: GluonTS datasets ready for training/testing
+        - train_df, test_df: The original DataFrames split up
+        - target: The column name being forecasted
+        - prediction_length: How far ahead you're forecasting
+        - info: Summary statistics about the split
     """
     date_col = "Date" if "Date" in df.columns else "date"
     df = df.copy().sort_values(date_col).reset_index(drop=True)
@@ -2182,58 +2597,102 @@ def plot_synthetic_series(
     *,
     target_col: str = "value",
     title: str = "Synthetic Time Series",
-    figsize: tuple = (14, 4),
+    figsize: tuple = (14, 6),
+    save_path: Optional[str] = None,
 ) -> None:
-    """Quick visualization of a synthetic series."""
+    """
+    Create a simple, clean plot of a synthetic time series.
+
+    Perfect for quickly checking what your generated data looks like
+    before using it for training models.
+
+    Args:
+        df: DataFrame containing the time series data
+        target_col: Name of the column with the values to plot
+        title: Title for the plot
+        figsize: Size of the plot (width, height) in inches
+        save_path: If provided, save the plot to this file path
+    """
     date_col = "Date" if "Date" in df.columns else "date"
     plt.figure(figsize=figsize)
-    plt.plot(df[date_col], df[target_col], linewidth=1.2, color="steelblue")
+    plt.plot(df[date_col], df[target_col], linewidth=2, color="#2E86AB", alpha=0.8)
     plt.title(title, fontsize=14, fontweight="bold")
-    plt.xlabel("Date")
-    plt.ylabel("Value")
+    plt.xlabel("Date", fontsize=12)
+    plt.ylabel("Value", fontsize=12)
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
+
+    # Save if requested
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+
     plt.show()
 
 
 def plot_train_test_split(
     data: Dict,
     *,
-    title: str = "Train / Test Split",
-    figsize: tuple = (14, 4),
+    title: str = "Train/Test Data Split",
+    figsize: tuple = (14, 6),
+    save_path: Optional[str] = None,
 ) -> None:
-    """Visualize the train/test split from prepare_synthetic_dataset."""
+    """
+    Visualize how your data is split between training and testing periods.
+
+    This helps you understand what portion of your data the model learns from
+    versus what it's tested on.
+
+    Args:
+        data: Dictionary returned by prepare_synthetic_dataset()
+        title: Title for the plot
+        figsize: Size of the plot (width, height) in inches
+        save_path: If provided, save the plot to this file path
+    """
     target_col = data["target"]
     date_col = "Date" if "Date" in data["train_df"].columns else "date"
+
     plt.figure(figsize=figsize)
     plt.plot(
         data["train_df"][date_col],
         data["train_df"][target_col],
-        label="Train",
-        color="steelblue",
-        linewidth=1.2,
+        label="Training Data",
+        color="#2E86AB",
+        linewidth=2,
+        alpha=0.8,
     )
     plt.plot(
         data["test_df"][date_col],
         data["test_df"][target_col],
-        label="Test",
-        color="orange",
-        linewidth=1.2,
+        label="Test Data",
+        color="#A23B72",
+        linewidth=2,
+        alpha=0.8,
     )
     plt.axvline(
         x=data["test_df"][date_col].iloc[0],
         color="red",
         linestyle="--",
+        linewidth=1.5,
         alpha=0.7,
-        label="Split point",
+        label="Split Point",
     )
     plt.title(title, fontsize=14, fontweight="bold")
-    plt.xlabel("Date")
-    plt.ylabel("Value")
-    plt.legend()
+    plt.xlabel("Date", fontsize=12)
+    plt.ylabel("Value", fontsize=12)
+    plt.legend(loc="best")
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
+
+    # Save if requested
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+
     plt.show()
+
+    print("\nData split information:")
+    print(f"• Training data: {len(data['train_df'])} points")
+    print(f"• Test data: {len(data['test_df'])} points")
+    print("• The red line shows where training ends and testing begins")
 
 
 def plot_forecast_result(
@@ -2242,42 +2701,71 @@ def plot_forecast_result(
     *,
     model_name: str = "Model",
     context_points: int = 60,
-    figsize: tuple = (14, 5),
+    figsize: tuple = (14, 6),
+    save_path: Optional[str] = None,
 ) -> None:
-    """Plot forecast against actuals with confidence intervals."""
+    """
+    Plot a forecast result with some historical context.
+
+    Shows the recent historical data along with the model's prediction
+    and uncertainty bounds for easy interpretation.
+
+    Args:
+        data: Dictionary returned by prepare_synthetic_dataset()
+        forecast_entry: Forecast object from a GluonTS model
+        model_name: Name of the model for the plot title
+        context_points: Number of historical points to show before forecast
+        figsize: Size of the plot (width, height) in inches
+        save_path: If provided, save the plot to this file path
+    """
     target_col = data["target"]
     date_col = "Date" if "Date" in data["train_df"].columns else "date"
     train_tail = data["train_df"].tail(context_points)
     test_dates = data["test_df"][date_col].values
     actuals = data["test_df"][target_col].values
     pred_mean = forecast_entry.mean
+
     plt.figure(figsize=figsize)
     plt.plot(
         train_tail[date_col], train_tail[target_col],
-        label="History", color="steelblue", linewidth=1.2,
+        label="Historical", color="#2E86AB", linewidth=2, alpha=0.8,
     )
     plt.plot(
         test_dates, actuals,
-        label="Actual", color="orange", linewidth=2, marker="o", markersize=4,
+        label="Actual", color="#A23B72", linewidth=2, marker="o", markersize=4, alpha=0.8,
     )
     plt.plot(
         test_dates[:len(pred_mean)], pred_mean,
-        label=f"{model_name} forecast", color="red",
-        linewidth=2, linestyle="--", marker="s", markersize=4,
+        label=f"{model_name} Forecast", color="#F18F01",
+        linewidth=2.5, linestyle="--", marker="s", markersize=4,
     )
+
+    # Add confidence interval
     q_low = forecast_entry.quantile(0.1)
     q_high = forecast_entry.quantile(0.9)
     plt.fill_between(
         test_dates[:len(q_low)], q_low, q_high,
-        alpha=0.15, color="red", label="80% interval",
+        alpha=0.2, color="#F18F01", label="80% Confidence",
     )
-    plt.title(f"{model_name} Forecast", fontsize=14, fontweight="bold")
-    plt.xlabel("Date")
-    plt.ylabel("Value")
-    plt.legend()
+
+    plt.title(f"{model_name} Forecast Results", fontsize=14, fontweight="bold")
+    plt.xlabel("Date", fontsize=12)
+    plt.ylabel("Value", fontsize=12)
+    plt.legend(loc="best")
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
+
+    # Save if requested
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+
     plt.show()
+
+    print(f"\n{model_name} forecast summary:")
+    print("• Blue line shows recent historical data")
+    print("• Red line shows what actually happened")
+    print("• Orange dashed line is the model's prediction")
+    print("• Shaded area shows the model's uncertainty (80% confidence)")
 
 
 # #############################################################################
@@ -2291,32 +2779,51 @@ def plot_data_overview(
     target_col: str,
     *,
     date_col: str = "Date",
-    title: str = "US COVID-19 Cases: 7-Day Moving Average",
+    title: str = "COVID-19 Cases: Training and Test Data",
     ylabel: str = "Daily Cases (7-day avg)",
+    figsize: tuple = (14, 6),
+    save_path: Optional[str] = None,
 ) -> None:
-    """Plot training and test data with forecast boundary line."""
-    plt.figure(figsize=(14, 5))
+    """
+    Show the complete dataset split between training and testing periods.
+
+    This gives you the full picture of your data, with a clear marker
+    showing where the model stops learning and starts being tested.
+
+    Args:
+        train_df: Training data DataFrame
+        test_df: Test data DataFrame
+        target_col: Name of the column with the target values
+        date_col: Name of the date column
+        title: Title for the plot
+        ylabel: Label for the y-axis
+        figsize: Size of the plot (width, height) in inches
+        save_path: If provided, save the plot to this file path
+    """
+    plt.figure(figsize=figsize)
     plt.plot(
         train_df[date_col],
         train_df[target_col],
         label="Training Data",
-        color="steelblue",
-        linewidth=1.5,
+        color="#2E86AB",
+        linewidth=2,
+        alpha=0.8,
     )
     plt.plot(
         test_df[date_col],
         test_df[target_col],
-        label="Test Data (Future)",
-        color="coral",
-        linewidth=1.5,
+        label="Test Data",
+        color="#A23B72",
+        linewidth=2,
+        alpha=0.8,
     )
     plt.axvline(
         x=train_df[date_col].iloc[-1],
         color="red",
         linestyle="--",
-        linewidth=2,
+        linewidth=1.5,
         alpha=0.7,
-        label="Today (Forecast Start)",
+        label="Forecast Start",
     )
     plt.title(title, fontsize=16, fontweight="bold")
     plt.xlabel("Date", fontsize=12)
@@ -2324,97 +2831,127 @@ def plot_data_overview(
     plt.legend(loc="upper left")
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
+
+    # Save if requested
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+
     plt.show()
-    print("\n Note that there are multiple peaks and troughs in the case data.")
-    print(
-        "\n This makes sense as there were multiple rounds of vaccinations and Covid variants."
-    )
+
+    print("\nData overview:")
+    print("• Blue line shows data used for training the model")
+    print("• Red line shows future data for testing predictions")
+    print("• The vertical dashed line marks the forecast start point")
+    print("• Notice the multiple peaks - this makes forecasting challenging!")
 
 
 def plot_forecast_with_confidence_intervals(
-    train_df: pd.DataFrame,
-    data: Dict[str, Any],
-    actual: np.ndarray,
-    forecast: Any,
+    forecast_result: Any,
     model_name: str,
     *,
-    color: str = "forestgreen",
-    context_days: int = 90,
-    prediction_length: int = 14,
-    ylabel: str = "Daily Cases (7-day avg)",
+    figsize: tuple = (14, 8),
+    save_path: Optional[str] = None,
 ) -> tuple:
-    """Plot forecast with historical context and confidence intervals."""
-    target_col = data["target"]
-    train_dates = train_df["Date"].values[-context_days:]
-    train_values = train_df[target_col].values[-context_days:]
-    last_train_date = pd.Timestamp(train_dates[-1])
-    forecast_dates = pd.date_range(
-        start=last_train_date + pd.Timedelta(days=1),
-        periods=prediction_length,
-        freq="D",
-    )
-    actual_values = actual[-prediction_length:]
-    plt.figure(figsize=(14, 6))
-    plt.plot(
-        train_dates, train_values, label="Historical", color="steelblue", linewidth=2
-    )
-    plt.plot(
-        forecast_dates,
-        actual_values,
-        label="Actual Future",
-        color="coral",
-        linewidth=2,
-        marker="o",
-        markersize=4,
-    )
-    plt.plot(
-        forecast_dates,
-        forecast.mean,
-        label=f"{model_name} Forecast",
-        color=color,
-        linewidth=2.5,
-        marker="s",
-        markersize=5,
-        linestyle="--",
-    )
-    plt.fill_between(
-        forecast_dates,
-        forecast.quantile(0.1),
-        forecast.quantile(0.9),
-        alpha=0.3,
-        color=color,
-        label="80% Confidence",
-    )
-    plt.fill_between(
-        forecast_dates,
-        forecast.quantile(0.05),
-        forecast.quantile(0.95),
-        alpha=0.2,
-        color=color,
-        label="90% Confidence",
-    )
-    plt.axvline(
-        x=last_train_date, color="red", linestyle="--", linewidth=1.5, alpha=0.7
-    )
-    plt.title(f"{model_name}: COVID-19 Case Forecasting", fontsize=16, fontweight="bold")
-    plt.xlabel("Date", fontsize=12)
-    plt.ylabel(ylabel, fontsize=12)
-    plt.legend(loc="best")
+    """
+    Plot forecast results with confidence intervals in a clean, readable way.
+
+    This creates a nice visualization showing your model's predictions alongside
+    the actual data, with uncertainty bands to show how confident the model is.
+
+    Args:
+        forecast_result: The forecast object from a trained model
+        model_name: Name of the model (for the title)
+        figsize: Size of the plot (width, height) in inches
+        save_path: If provided, save the plot to this file path
+
+    Returns:
+        Tuple of (train_dates, train_values, forecast_dates, actual_values)
+        for any additional analysis you might want to do
+    """
+    # Extract the data we need
+    forecast = forecast_result.forecasts[0]
+    actual = forecast_result.ground_truths[0]
+
+    # Split into training history and future actuals
+    history_len = len(actual) - len(forecast.mean)
+    train_values = actual[:history_len]
+    actual_values = actual[history_len:]
+    forecast_mean = forecast.mean
+    forecast_lower = forecast.quantile(0.05)  # 90% confidence interval
+    forecast_upper = forecast.quantile(0.95)
+
+    # Create date ranges (assuming daily data)
+    last_train_date = len(train_values) - 1
+    forecast_dates = range(last_train_date + 1, last_train_date + 1 + len(forecast_mean))
+
+    # Set up the plot with a nice style
+    plt.figure(figsize=figsize)
+    plt.style.use('default')  # Clean style
+
+    # Plot training data (what the model learned from)
+    plt.plot(range(len(train_values)), train_values,
+             color='#2E86AB', linewidth=2, label='Training Data', alpha=0.8)
+
+    # Plot actual future values (ground truth)
+    plt.plot(forecast_dates, actual_values,
+             color='#A23B72', linewidth=2, label='Actual Future', alpha=0.8)
+
+    # Plot forecast with confidence interval
+    plt.plot(forecast_dates, forecast_mean,
+             color='#F18F01', linewidth=2.5, linestyle='--', label='Forecast', alpha=0.9)
+
+    # Add confidence interval shading
+    plt.fill_between(forecast_dates, forecast_lower, forecast_upper,
+                     alpha=0.2, color='#F18F01', label='90% Confidence Interval')
+
+    # Add a vertical line to show where training ended
+    plt.axvline(x=last_train_date, color='red', linestyle='--', linewidth=1.5, alpha=0.7,
+                label='Training End')
+
+    # Make it look nice
+    plt.title(f'{model_name}: COVID-19 Forecasting Results', fontsize=16, fontweight='bold')
+    plt.xlabel('Days from Start', fontsize=12)
+    plt.ylabel('Daily Cases', fontsize=12)
+    plt.legend(loc='best', framealpha=0.9)
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
+
+    # Save if requested
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+
     plt.show()
-    if "DeepAR" in model_name:
-        print("\n Observe that DeepAR captures the trend and provides uncertainty bounds.")
-    elif "SimpleFeedForward" in model_name:
-        print("\n SimpleFeedForward gives a smooth baseline forecast!")
-    elif "DeepNPTS" in model_name:
-        print("\n DeepNPTS adapts to the data's natural distribution!")
-    return train_dates, train_values, forecast_dates, actual_values
+
+    # Print some helpful observations
+    print(f"\n{model_name} Results:")
+    print("• The blue line shows the historical data the model learned from")
+    print("• The red line shows what actually happened after training")
+    print("• The orange dashed line is the model's forecast")
+    print("• The shaded area shows the model's uncertainty (90% confidence)")
+
+    return range(len(train_values)), train_values, forecast_dates, actual_values
 
 
-def plot_data_exploration(merged_df: pd.DataFrame) -> None:
-    """Plot cases, deaths, and mobility in 3-panel layout."""
-    fig, axes = plt.subplots(3, 1, figsize=(15, 10))
+def plot_data_exploration(
+    merged_df: pd.DataFrame,
+    *,
+    figsize: tuple = (15, 10),
+    save_path: Optional[str] = None,
+) -> None:
+    """
+    Create a comprehensive 3-panel view of COVID-19 data trends.
+
+    This shows cases, deaths, and mobility patterns together so you can see
+    how they relate to each other over time.
+
+    Args:
+        merged_df: DataFrame with Date, Daily_Cases_MA7, Daily_Deaths_MA7, workplaces columns
+        figsize: Size of the plot (width, height) in inches
+        save_path: If provided, save the plot to this file path
+    """
+    fig, axes = plt.subplots(3, 1, figsize=figsize)
+
+    # Top panel: Cases
     axes[0].plot(
         merged_df["Date"],
         merged_df["Daily_Cases_MA7"],
@@ -2422,12 +2959,14 @@ def plot_data_exploration(merged_df: pd.DataFrame) -> None:
         color="#2E86AB",
     )
     axes[0].set_title(
-        " COVID-19 Daily Cases (7-Day Moving Average)",
+        "COVID-19 Daily Cases (7-Day Moving Average)",
         fontsize=14,
         fontweight="bold",
     )
     axes[0].set_ylabel("Cases", fontsize=12)
     axes[0].grid(True, alpha=0.3)
+
+    # Middle panel: Deaths
     axes[1].plot(
         merged_df["Date"],
         merged_df["Daily_Deaths_MA7"],
@@ -2435,12 +2974,14 @@ def plot_data_exploration(merged_df: pd.DataFrame) -> None:
         color="#A23B72",
     )
     axes[1].set_title(
-        " COVID-19 Daily Deaths (7-Day Moving Average)",
+        "COVID-19 Daily Deaths (7-Day Moving Average)",
         fontsize=14,
         fontweight="bold",
     )
     axes[1].set_ylabel("Deaths", fontsize=12)
     axes[1].grid(True, alpha=0.3)
+
+    # Bottom panel: Mobility
     axes[2].plot(
         merged_df["Date"],
         merged_df["workplaces"],
@@ -2448,7 +2989,7 @@ def plot_data_exploration(merged_df: pd.DataFrame) -> None:
         color="#F18F01",
     )
     axes[2].set_title(
-        " Workplace Mobility (% change from baseline)",
+        "Workplace Mobility (% change from baseline)",
         fontsize=14,
         fontweight="bold",
     )
@@ -2456,32 +2997,59 @@ def plot_data_exploration(merged_df: pd.DataFrame) -> None:
     axes[2].set_xlabel("Date", fontsize=12)
     axes[2].axhline(y=0, color="gray", linestyle="--", alpha=0.5)
     axes[2].grid(True, alpha=0.3)
+
     plt.tight_layout()
+
+    # Save if requested
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+
     plt.show()
-    print("\n Key Observations:")
-    print(" • Multiple distinct waves of cases visible")
-    print(" • Deaths follow cases with a lag")
-    print(" • Mobility patterns shifted dramatically during lockdowns")
-    print(" • These patterns provide valuable signals for forecasting!")
+
+    print("\nKey observations from the data:")
+    print("• Multiple distinct waves of cases are visible")
+    print("• Deaths follow cases with a lag (as expected)")
+    print("• Mobility patterns shifted dramatically during lockdowns")
+    print("• These patterns provide valuable signals for forecasting!")
 
 
 def plot_model_comparison_3panel(
     deepar_results: Any,
     feedforward_results: Any,
     deepnpts_results: Any,
+    *,
+    figsize: tuple = (15, 12),
+    save_path: Optional[str] = None,
 ) -> None:
-    """Plot 3-panel forecast comparison for DeepAR, SimpleFeedForward, DeepNPTS."""
-    fig, axes = plt.subplots(3, 1, figsize=(15, 12))
+    """
+    Compare three forecasting models side-by-side in a 3-panel layout.
+
+    This helps you see how different models perform on the same data,
+    making it easier to choose the best approach for your needs.
+
+    Args:
+        deepar_results: Forecast results from DeepAR model
+        feedforward_results: Forecast results from SimpleFeedForward model
+        deepnpts_results: Forecast results from DeepNPTS model
+        figsize: Size of the plot (width, height) in inches
+        save_path: If provided, save the plot to this file path
+    """
+    fig, axes = plt.subplots(3, 1, figsize=figsize)
+
+    # Model configurations with consistent colors
     models = [
         (deepar_results, "DeepAR", "#2E86AB"),
         (feedforward_results, "SimpleFeedForward", "#A23B72"),
         (deepnpts_results, "DeepNPTS", "#F18F01"),
     ]
+
     for idx, (results, name, color) in enumerate(models):
         ax = axes[idx]
         forecast = results.forecasts[0]
         actual = results.ground_truths[0]
         history_len = len(actual) - len(forecast.mean)
+
+        # Plot historical data (training)
         ax.plot(
             range(history_len),
             actual[:history_len],
@@ -2490,6 +3058,8 @@ def plot_model_comparison_3panel(
             alpha=0.6,
             linewidth=2,
         )
+
+        # Plot actual future values
         ax.plot(
             range(history_len, len(actual)),
             actual[history_len:],
@@ -2497,6 +3067,8 @@ def plot_model_comparison_3panel(
             color="black",
             linewidth=2,
         )
+
+        # Plot forecast
         forecast_range = range(history_len, history_len + len(forecast.mean))
         ax.plot(
             forecast_range,
@@ -2506,6 +3078,8 @@ def plot_model_comparison_3panel(
             linewidth=2,
             linestyle="--",
         )
+
+        # Add confidence interval
         ax.fill_between(
             forecast_range,
             forecast.quantile(0.1),
@@ -2514,17 +3088,26 @@ def plot_model_comparison_3panel(
             color=color,
             label="80% CI",
         )
+
         ax.set_title(f"{name} Forecast", fontsize=14, fontweight="bold")
         ax.set_ylabel("Daily Cases", fontsize=12)
         ax.legend(loc="upper left")
         ax.grid(True, alpha=0.3)
+
     axes[2].set_xlabel("Days", fontsize=12)
     plt.tight_layout()
+
+    # Save if requested
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+
     plt.show()
-    print("\n Visual Insights:")
-    print(" • All models capture the general trend")
-    print(" • Confidence intervals show forecast uncertainty")
-    print(" • Compare forecast accuracy against actual values (black line)")
+
+    print("\nModel comparison insights:")
+    print("• All models capture the general trend in the data")
+    print("• Confidence intervals show each model's uncertainty")
+    print("• Compare forecast accuracy against the black 'Actual' line")
+    print("• Look for models that balance accuracy with reasonable uncertainty bounds")
 
 
 def print_model_comparison_from_metrics(
@@ -2572,29 +3155,61 @@ def plot_metrics_comparison_barplot(
     results_dict: Dict[str, Dict[str, float]],
     *,
     metrics: Optional[list] = None,
+    figsize: tuple = (12, 6),
     save_path: Optional[str] = None,
 ) -> None:
-    """Bar chart comparing metrics across models."""
+    """
+    Create bar charts comparing model performance across different metrics.
+
+    This gives you a quick visual way to see which model performs best
+    on different accuracy measures.
+
+    Args:
+        results_dict: Dictionary with model names as keys and metric dictionaries as values
+        metrics: List of metrics to plot (defaults to ['mae', 'rmse', 'mape'])
+        figsize: Size of the plot (width, height) in inches
+        save_path: If provided, save the plot to this file path
+    """
     if metrics is None:
         metrics = ["mae", "rmse", "mape"]
+
     model_names = list(results_dict.keys())
-    fig, axes = plt.subplots(1, len(metrics), figsize=(5 * len(metrics), 5))
+
+    fig, axes = plt.subplots(1, len(metrics), figsize=figsize)
     if len(metrics) == 1:
         axes = [axes]
-    colors = ["steelblue", "green", "purple", "coral", "darkblue"][: len(model_names)]
+
+    # Consistent color palette
+    colors = ["#2E86AB", "#A23B72", "#F18F01", "#FCCA46", "#6B2737"][: len(model_names)]
+
     for idx, metric in enumerate(metrics):
         values = [results_dict[model].get(metric, 0) for model in model_names]
-        axes[idx].bar(model_names, values, color=colors)
-        axes[idx].set_title(metric.upper(), fontweight="bold")
-        axes[idx].set_ylabel(metric.upper())
+        bars = axes[idx].bar(model_names, values, color=colors, alpha=0.8)
+
+        axes[idx].set_title(metric.upper(), fontsize=14, fontweight="bold")
+        axes[idx].set_ylabel(metric.upper(), fontsize=12)
         axes[idx].grid(True, alpha=0.3, axis="y")
+
+        # Add value labels on bars
         for i, v in enumerate(values):
-            axes[idx].text(i, v, f"{v:.1f}", ha="center", va="bottom")
-    plt.suptitle("Model Comparison", fontsize=16, fontweight="bold")
+            axes[idx].text(i, v + max(values) * 0.02, f"{v:.2f}",
+                          ha="center", va="bottom", fontsize=10)
+
+    plt.suptitle("Model Performance Comparison", fontsize=16, fontweight="bold")
     plt.tight_layout()
+
+    # Save if requested
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches="tight")
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+
     plt.show()
+
+    # Print some insights
+    print("\nPerformance comparison notes:")
+    print("• Lower values are better for all metrics shown")
+    print("• MAE = Mean Absolute Error (average prediction error)")
+    print("• RMSE = Root Mean Square Error (emphasizes larger errors)")
+    print("• MAPE = Mean Absolute Percentage Error (relative error)")
 
 
 # #############################################################################
