@@ -80,6 +80,9 @@ Opens at http://localhost:8888
 - `data/deaths.csv` — Daily deaths
 - `data/mobility.csv` — Mobility patterns
 
+**Documentation**
+- `blog_GluonTS.md` — Blog post covering GluonTS and COVID-19 forecasting
+
 **Docker**
 - `Dockerfile` — Container setup
 - `docker_build.sh` — Build image
@@ -93,8 +96,8 @@ The notebooks are organized for learning. Implementation details (data loading, 
 
 Instead of notebook cells with 20 lines of matplotlib code, you see:
 ```python
-import GluonTS_utils as viz
-viz.plot_data_overview(train_df, test_df)
+import GluonTS_utils as gluonts
+gluonts.plot_data_overview(train_df, test_df)
 ```
 
 This keeps notebooks clean and readable.
@@ -103,9 +106,9 @@ This keeps notebooks clean and readable.
 
 | Model                 | External Features           | Training Time | Best Use Case                       |
 | --------------------- | --------------------------- | ------------- | ----------------------------------- |
-| **DeepAR**            | Yes (deaths, mobility, CFR) | 3-4 min       | Complex patterns, highest accuracy  |
-| **SimpleFeedForward** | No                          | 30-60 sec     | Quick baselines, stable trends      |
-| **DeepNPTS**          | Yes (deaths, mobility, CFR) | 3-4 min       | Regime changes, distribution shifts |
+| **DeepAR**            | Yes (deaths, mobility, CFR) | 1 min       | Complex patterns, highest accuracy  |
+| **SimpleFeedForward** | No                          | 30-40 sec     | Quick baselines, stable trends      |
+| **DeepNPTS**          | Yes (deaths, mobility, CFR) | 15-20 sec       | Regime changes, distribution shifts |
 
 ## Data Pipeline
 
@@ -165,7 +168,3 @@ flowchart TB
 - [JHU COVID-19 Data Repository](https://github.com/CSSEGISandData/COVID-19)
 - [Google COVID-19 Community Mobility Reports](https://www.google.com/covid19/mobility/)
 - [CDC COVID-19 Data Tracker](https://covid.cdc.gov/covid-data-tracker/)
-
-## Changelog
-
-- 2026-03-01: Initial release
