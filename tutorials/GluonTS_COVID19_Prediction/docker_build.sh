@@ -37,3 +37,6 @@ export DOCKER_BUILD_MULTI_ARCH=0
 # Uncomment the line below to build without using Docker cache.
 #build_container_image --no-cache
 build_container_image
+
+# clean up the staging area created by build_container_image
+rm -rf ../tmp.build

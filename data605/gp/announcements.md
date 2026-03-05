@@ -85,3 +85,33 @@ Hello DATA605 team,
 As we said, Linux/bash/Docker works decently only Mac and Linux, but not Windows.
 We have tried several times to get Windows to work, but failed, so the plan is to
 have Windows laptop get to install a VM and run linux
+
+## Project #1: Choose Your Project (2025)
+- Examples
+  - `MSML610` Fall 2025:
+    - [List of projects](https://docs.google.com/spreadsheets/d/1H_Ev1psuPpUrrRcmBrBb2chfurSo5rPcAdd6i2SIUTQ/edit?gid=0#gid=0)
+    - [Description of projects](https://github.com/gpsaggese/umd_classes/tree/master/class_project/MSML610/Fall2025/project_descriptions)
+  - `DATA605` Spring 2025:
+    - [Description of projects](https://github.com/gpsaggese/umd_classes/blob/master/class_project/DATA605/Spring2025/project_description.md)
+
+- You need to fill out the
+  [sign up form](https://docs.google.com/forms/d/1TPCt7UFnTOEICltrPU3sIu9RoCbILR32zHbZNzRi9jw/edit)
+  - Once done, we will add you to the repo so that you can start working
+
+## Project #1: Choose Your Project (DATA605 Spring 2026)
+
+- Here are the instructions for the class project.
+  - [class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
+
+- The projects to choose from are:
+  - [DATA605 - Spring 2026 - Sign up sheet](https://docs.google.com/spreadsheets/d/1O1t_DQ6xpFTcnEaT3c6ss_FBlJV2dqNv83nVH9QA124)
+  - [class_project/DATA605/Spring2026/projects.csv](https://github.com/gpsaggese/umd_classes/blob/master/class_project/DATA605/Spring2026/projects.csv)
+
+- The specs for each projects are:
+  - [class_project/DATA605/Spring2026/projects_descriptions/](https://github.com/gpsaggese/umd_classes/tree/master/class_project/DATA605/Spring2026/projects_descriptions/)
+
+- The research projects to choose from:
+  - [class_project/research_projects](https://github.com/gpsaggese/umd_classes/tree/master/class_project/research_projects)
+
+- The form to sign up for a project is:
+  - [DATA605 - Spring 2026 - Class Project](https://docs.google.com/forms/d/e/1FAIpQLSczE7sQRw7NFTVrwFHGy4fwzkPJHAVRzN-czYNVkD0WtkdlvA)

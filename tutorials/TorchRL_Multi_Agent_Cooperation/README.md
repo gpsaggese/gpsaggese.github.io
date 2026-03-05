@@ -190,3 +190,7 @@ This project includes wrapper fallbacks in the utilities to handle minor version
 * run the API notebook first (it prints env specs and expected keys)
 
 ---
+
+## Changelog
+
+- 2026-03-01: Initial release

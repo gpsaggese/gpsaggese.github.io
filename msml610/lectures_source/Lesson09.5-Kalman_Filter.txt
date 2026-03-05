@@ -31,9 +31,14 @@ MSML610: Advanced Machine Learning
 // ./notebooks/quantopian/quantopian_kalman_filter.ipynb
 // AIMA 14.4 (p. 479)
 
+# ##############################################################################
 # Discrete Bayes Filtering
+# ##############################################################################
 
 // https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/02-Discrete-Bayes.ipynb
+
+* Tutorial
+- `L09_05_01_discrete_bayes_dog.ipynb`
 
 * A Discrete Bayesian 1-D Dog
 ::: columns
@@ -165,14 +170,15 @@ digraph BayesianUpdateAlgo {
 }
 ```
 
-* Tutorial
-- `L09_05_01_discrete_bayes_dog.ipynb`
-
 # #############################################################################
 # Unidimensional Kalman Filters
 # #############################################################################
 
 // https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/04-One-Dimensional-Kalman-Filters.ipynb
+
+* Tutorial
+
+- `L09_05_02_univariate_kalman_filter.ipynb`
 
 * Kalman Filter: Interpretations
 - Extension of $g$–$h$ filters
@@ -350,16 +356,15 @@ digraph BayesianUpdateAlgo {
   - Is the scaling term that mixes the prediction and the measurement
   - Depends on the ratio of uncertainty of prior and measurement
 
-* Tutorial
-
-- `L09_05_02_univariate_kalman_filter.ipynb`
-
 # ##############################################################################
 # Multivariate Kalman Filters
 # ##############################################################################
 
 // https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/05-Multivariate-Gaussians.ipynb
 // https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/06-Multivariate-Kalman-Filters.ipynb
+
+* Tutorial
+- `L09_05_03_multivariate_kalman_filter.ipynb`
 
 * Multivariate State
 - Often the state variable is multivariate, e.g.,
@@ -597,71 +602,134 @@ digraph BayesianUpdateAlgo {
 - Set state between the prediction and measurement based on scaling factor
 - Update belief in the state based on how certain we are in the measurement
 
-* Tutorial
-- `L09_05_03_multivariate_kalman_filter.ipynb`
+## Modeling
+
+* State Space Systems
+- A dynamic system is a system whose state (position, temperature) evolves
+  over time
+- Many dynamic system can be described as differential equations, since calculus
+  is the math of changing values
+
+- It is possible to convert a set of higher order differential equations into a
+set of first-order differential equations
+  $$\dot{\mathbf x}=\mathbf A\mathbf x+\mathbf B\mathbf u+\mathbf w$$
+  where
+  - $\mathbf A$ is the system dynamics matrix
+  - $u$ are control inputs (e.g., pressing accelerator)
+  - $\mathbf w$ is noise
+
+- We are interested in finding a (recursive) equation that finds the value
+  of $\mathbf x_k = \mathbf x (t_k)$ from the previous (discrete) state
+  $\mathbf x_{k-1}$
+  $$\mathbf x_k=\mathbf F\mathbf x_{k-1}+\mathbf B_k\mathbf u_k$$
+  where
+  - $\mathbf F$ is the state transition matrix (aka "fundamental matrix")
+
+- State space methods because we express the solution of the differential
+  equations in terms of system state
+
+- There are methods for finding the state transition matrix
+  - Compute the matrix exponential $e^{\mathbf A} t$ (many different ways to do
+    it, despite numerical difficulties)
+  - Linear Time Invariant theory (if time invariant): use inverse Laplace
+    transform
+  - Numerical solutions
+
+* Designing the Process Noise Matrix
+- Designing the matrix $\mathbf Q$ is very difficult
+  - When you model a given process, you ignore certain effects and then you
+    need to estimate the error
+- E.g., model a thrown baseball
+  - There are unknown factors (e.g., ball rotation, spin decay, drag, effects of
+    wind and air density)
+
+- If $\mathbf Q$ is too small, the filter is overconfident in the prediction model
+- If $\mathbf Q$ is too large, the filter is unduly influenced by the noise in
+  the measurements
 
 ## #############################################################################
 ## Non-Linear Filtering
 ## #############################################################################
 
 * Optimality
-- **Assumptions:**
+- The Kalman filter is optimal (in a least square sense) under **assumptions**
+  that
   - Everything is linear
-  - System and sensor noise is Gaussian
-- Under these assumptions, the Kalman filter is optimal in a least square sense
-
-- The Kalman filter is a mathematical model of the world
-  - The output is only as accurate as the model of the world
+  - Process and sensor noise is Gaussian
 
 * The World Is Non-Linear
 - The Kalman filter uses linear equations and can only handle linear problems
+  - The Kalman filter is a mathematical model of the world
+  - The output is only as accurate as the model of the world
 
 - **The world is non-linear:**
   - System model can be non-linear:
     - Many physical systems are described by non-linear differential equations
-    - E.g., a ball flying through air is affected by drag, leading to non-linear
-      behaviors
+    - E.g., a ball flying through air is affected by drag
   - Measurements can be non-linear:
     - To measure the height on a plane, you can measure the distance of the
       plane from the radar. Given the Pythagorean theorem, you get:
       $$
       x = \sqrt{\text{dist}^2 - \text{height}^2}
       $$
+  - A Gaussian through a almost linear f(x) becomes quickly non-Gaussian
+    (bimodal, skewed, etc)
 
 - Rarely does a physical system have equations that can be solved analytically
 
-* Extended Kalman Filter
-- Aka EKF
-- EKF is a nonlinear version of the Kalman filter
-  - Linearize the differential equations to compute the Jacobian (i.e., matrix
-    of partial derivatives) at the point of the current estimate
-  - Used for estimating the state of a nonlinear dynamic system
+* Nonlinear Kalman Filtering Overview
+- Goal: estimate hidden state $x_t$ of nonlinear dynamical system
+  - State dynamics: $x_t = f(x_{t-1}, u_{t-1}) + w_t$
+  - Measurement model: $y_t = h(x_t) + v_t$
+  where
+  - $f(\cdot)$ and $h(\cdot)$ nonlinear
+- Noise often assumed Gaussian:
+  - $w_t \sim \mathcal{N}(0, \mathbf Q)$
+  - $v_t \sim \mathcal{N}(0, \mathbfR)$
+- Exact Bayesian filter requires propagating full probability density
+  - Generally intractable
+- Nonlinear Kalman filters approximate the posterior
+  - Maintain tractable representation of mean and covariance
+
+- Different approaches
+  - Extended Kalman Filter (EKF)
+  - Unscented Kalman Filter (UKF)
+  - Particle Filter
+
+* Extended Kalman Filter EKF
+- **Core idea**: linearize nonlinear functions around current estimate
+  - First order Taylor expansion of $f$ and $h$
+- Replace nonlinear system by local linear model
+  - Jacobians: $F_t = \frac{\partial f}{\partial x}$, $H_t = \frac{\partial h}{\partial x}$
+- Apply standard Kalman filter equations to linearized model
+- Intuition
+  - Approximate nonlinear curve by tangent line at estimate
+  - Assume distribution remains approximately Gaussian
+- Pros
+  - Simple and computationally efficient
+  - Use the linear Kalman machinery
+- Cons
+  - Accuracy depends on quality of linearization
+  - Can diverge for strong nonlinearities
+
+* Unscented Kalman Filter UKF
+- **Core idea**: avoid linearization, approximate distribution instead
+- Represent Gaussian by deterministic sigma points
+  - Choose $2n+1$ points capturing mean and covariance
+- Propagate sigma points through nonlinear functions
+  - $x_t^{(i)} = f(x_{t-1}^{(i)})$
+- Recompute mean and covariance from transformed points
+- Intuition
+  - More accurate to approximate distribution than function
+  - Captures second order nonlinear effects
 
 - Pros
-  - Use the linear Kalman machinery
-- Cons:
-  - Analytical solution:
-    - Difficult or impossible
-  - Numerical solution:
-    - Expensive computationally
-    - Errors can compound forcing the filter to diverge (unstable)
+  - No Jacobians required
+  - Higher accuracy than EKF for strong nonlinearities
+  - It is superior to EKF in almost every way
 
-* Unscented Kalman Filter
-- Aka UKF
-- It is superior to EKF in almost every way
-
-* Intuition of Sampling Techniques
-- Assume you have a distribution $X$ and a non-linearity $\phi$
-
-- For every measurement:
-  - Generate many points from $X$
-  - Pass them through the non-linear function $\phi$
-  - Approximate the result (E.g., compute mean and variance)
-
-- **Problem**:
-  - "How many points are needed to build an accurate output distribution"?
-  - Even if $n$=500,000 points are enough for 1 dimension, for $k$ dimensions
-    you might need $n^k$ points (curse of dimensionality)
+- Cons
+  - Slightly higher computational cost
 
 * Unscented Transform
 - Unscented transform estimates the result of applying a non-linear
@@ -693,7 +761,6 @@ digraph BayesianUpdateAlgo {
   $\phi$
 
 - In $n$ dimensions, we need $2n + 1$ points $\vx_i$ and weights $w_i^m, w_i^c$
-
   $$
   \begin{aligned}
   \sum_i w_i^m &= 1 \\
@@ -702,20 +769,38 @@ digraph BayesianUpdateAlgo {
   \Sigma(\phi) &= \sum_i w_i^c (\phi(\vx_i) - \mu(\phi))(\phi(\vx_i) - \mu(\phi))^T \\
   \end{aligned}
   $$
+  - Note that selecting the sigma points has not a single solution
 
-- Note that selecting the sigma points has not a single solution
+* Particle Filter PF
+- **Core idea**: represent posterior by weighted samples
+  - $\{x_t^{(i)}, w_t^{(i)}\}_{i=1}^N$
+- Sequential Monte Carlo approximation of Bayesian filter
+- Steps
+  - Sample from proposal distribution
+  - Weight by likelihood $p(y_t | x_t^{(i)})$
+  - Resample to avoid weight degeneracy
+- Intuition
+  - Approximate arbitrary distribution, not restricted to Gaussian
+  - Works for multimodal and highly nonlinear systems
+- Pros
+  - Very flexible
+  - Handles non-Gaussian noise
+- Cons
+  - Computationally expensive
+  - Particle degeneracy problem
 
-* Monte Carlo Sampling
-- Use a finite number of randomly sampled points to represent the problem
-- Run the points through the transformation (e.g., non-linear function / system
-  you are modeling)
-- Compute the results on the transformed points
+* Intuition of Sampling Techniques
+- Assume you have a distribution $X$ and a non-linearity $\phi$
 
-* Particle Filters
-- Aka Sequential Monte Carlo (SMC) methods
-- = Monte Carlo algorithms to solve problems in Bayesian statistical inference
-  (e.g., in filtering problems)
-- The goal is to compute posterior distributions of the states, given some data
+- For every measurement:
+  - Generate many points from $X$
+  - Pass them through the non-linear function $\phi$
+  - Approximate the result (e.g., compute mean and variance)
+
+- **Problem**:
+  - "How many points are needed to build an accurate output distribution"?
+  - Even if $n$=500,000 points are enough for 1 dimension, for $k$ dimensions
+    you might need $n^k$ points (curse of dimensionality)
 
 * Generic particle filter algorithm
 1) Randomly generate particle
@@ -732,3 +817,35 @@ digraph BayesianUpdateAlgo {
 5) Compute estimate
   - Compute weighted mean and covariance of the particles to get an estimate of
     the state and uncertainty
+
+* Degeneracy Problem in Sequential Importance Sampling (SIS)
+- Intuition: weights collapse onto very few particles
+  - Most particles receive extremely small weights after measurement update
+  - Only a handful meaningfully contribute to the state estimate
+- Why this happens
+  - Initial particles are uniformly distributed
+  - Measurement likelihood sharply favors particles near the true state
+- Particles with near-zero weight
+  - Contribute almost nothing to expectations
+  - Do not help represent the true distribution
+- Geometric intuition
+  - Posterior mass concentrated in small region of state space
+  - Most particles lie in low-probability regions
+- Consequence
+  - Effective sample size becomes very small
+  - Example: $5000$ particles but only $3$ with significant weight
+- Interpretation
+  - The approximation of the posterior is poor despite large $N$
+  - Computational resources are wasted on useless particles
+
+* Resampling: Core Idea
+- Goal: focus computational effort on high-probability regions
+- Strategy
+  - Discard particles with very small weights
+  - Duplicate particles with high weights
+- Effect
+  - New particle set better approximates posterior
+  - Majority of particles lie in meaningful regions
+- Role of prediction noise
+  - Slight dispersion after duplication
+  - Prevents particles from collapsing to identical copies

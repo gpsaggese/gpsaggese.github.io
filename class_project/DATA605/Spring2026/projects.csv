@@ -74,7 +74,7 @@ Id,Tool,Description,GitHub,Stars,Website,Category
 73,Mailchimp Marketing,SDK for Mailchimp API,https://github.com/mailchimp/mailchimp-marketing-python,600,Mailchimp Marketing,APIs & Platforms
 74,Mailgun,Email API SDKs and tooling,https://github.com/mailgun/mailgun-python,"1,100",Mailgun Python SDK,APIs & Platforms
 75,Marquez,Metadata service for data pipelines,https://github.com/MarquezProject/marquez,"3,200",marquezproject.io,Data Integration & Governance
-76,"MCP (Model Context Protocol, Python SDK)",Model Context Protocol Python SDK,https://github.com/modelcontextprotocol/python-sdk,"1,200",https://github.com/modelcontextprotocol/python-sdk,APIs & Platforms
+76,"MCP_Python_SDK",Model Context Protocol Python SDK,https://github.com/modelcontextprotocol/python-sdk,"1,200",https://github.com/modelcontextprotocol/python-sdk,APIs & Platforms
 77,Meltano,Open-source ELT platform for analytics engineering,https://github.com/meltano/meltano,"3,500",https://meltano.com/,Data Engineering & Pipelines
 78,Metaflow,Human-centric data science workflow framework,https://github.com/Netflix/metaflow,"7,800",https://metaflow.org/,"MLOps, Lifecycle & Deployment"
 79,Metasfresh,Open-source ERP system,https://github.com/metasfresh/metasfresh,"1,100",Metasfresh GitHub,Web
@@ -100,7 +100,7 @@ Id,Tool,Description,GitHub,Stars,Website,Category
 99,Prefect,Workflow orchestration tool,https://github.com/PrefectHQ/prefect,"15,000",prefect.io,Data Engineering & Pipelines
 100,Presto,Distributed SQL query engine,https://github.com/prestodb/presto,"15,000",prestodb.io,Distributed Computing
 101,prince,Factor and correspondence analysis,https://github.com/MaxHalford/prince,"1,100",https://github.com/MaxHalford/prince,Statistical Methods
-102,Protocol Buffers (protobuf),Structured data serialization,https://github.com/protocolbuffers/protobuf,"65,000",developers.google.com/protocol-buffers,"Data Storage, Databases & Formats"
+102,Protocol Buffers,Structured data serialization,https://github.com/protocolbuffers/protobuf,"65,000",developers.google.com/protocol-buffers,"Data Storage, Databases & Formats"
 103,Py2neo,Neo4j Python client,https://github.com/neo4j-contrib/py2neo,"1,800",py2neo.org,Graph & Network Analytics
 104,pycaret,End-to-end low-code ML workflows,https://github.com/pycaret/pycaret,"8,500",https://pycaret.org,AutoML
 105,pycaret-anomaly,Low-code anomaly detection module for PyCaret,https://github.com/pycaret/pycaret,"8,500",https://pycaret.org,AutoML
@@ -118,7 +118,7 @@ Id,Tool,Description,GitHub,Stars,Website,Category
 117,redis-py,Python client for Redis,https://github.com/redis/redis-py,"11,000",https://redis-py.readthedocs.io,"Data Storage, Databases & Formats"
 118,rich,Rich terminal formatting,https://github.com/Textualize/rich,"49,000",https://rich.readthedocs.io,Software Engineering & Developer Tools
 119,River,Online machine learning library,https://github.com/online-ml/river,"4,300",https://riverml.xyz/,Core Machine Learning & AI
-120,SDV (Synthetic Data Vault),Synthetic data generation framework for tabular data,https://github.com/sdv-dev/SDV,"4,500",https://sdv.dev/,"Privacy, Security & Trustworthy AI"
+120,Synthetic Data Vault,Synthetic data generation framework for tabular data,https://github.com/sdv-dev/SDV,"4,500",https://sdv.dev/,"Privacy, Security & Trustworthy AI"
 121,SendGrid,Python SDK for SendGrid email API,https://github.com/sendgrid/sendgrid-python,"1,600",SendGrid,APIs & Platforms
 122,SHAP,Explains machine-learning predictions,https://github.com/shap/shap,"21,000",https://shap.readthedocs.io,"Privacy, Security & Trustworthy AI"
 123,Singer,Open-source standard for ETL data extraction and loading,https://github.com/singer-io,"6,000",https://www.singer.io/,Data Integration & Governance
@@ -149,6 +149,6 @@ Id,Tool,Description,GitHub,Stars,Website,Category
 148,tslearn,Time series machine learning,https://github.com/tslearn-team/tslearn,"2,800",tslearn.readthedocs.io,Time Series & Forecasting
 149,txtai,AI search and semantic indexing,https://github.com/neuml/txtai,"9,500",txtai,Language Models
 150,umap-learn,Nonlinear dimensionality reduction,https://github.com/lmcinnes/umap,"7,300",https://umap-learn.readthedocs.io,Statistical Methods
-151,What-If Tool (WIT),Model interpretability tool,https://github.com/PAIR-code/what-if-tool,"1,200",https://pair-code.github.io/what-if-tool,Visualization
+151,What-If Tool,Model interpretability tool,https://github.com/PAIR-code/what-if-tool,"1,200",https://pair-code.github.io/what-if-tool,Visualization
 152,XGBoost,Gradient boosting framework,https://github.com/dmlc/xgboost,"25,000",pytables.readthedocs.io,Core Machine Learning & AI
 153,YData-profiling,Data profiling and data understanding tool,https://github.com/ydataai/ydata-profiling,"11,500",https://docs.profiling.ydata.ai/latest/,Analytics

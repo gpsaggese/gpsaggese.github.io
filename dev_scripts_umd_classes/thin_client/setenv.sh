@@ -10,6 +10,7 @@ SCRIPT_PATH=$(realpath "${BASH_SOURCE[0]:-$0}")
 echo "##> $SCRIPT_PATH"
 
 GIT_ROOT_DIR=$(git rev-parse --show-toplevel)
+export GR=$GIT_ROOT_DIR
 echo "GIT_ROOT_DIR=$GIT_ROOT_DIR"
 
 # #############################################################################

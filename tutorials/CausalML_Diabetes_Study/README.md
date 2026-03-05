@@ -95,3 +95,7 @@ build and run the analysis
 - [`CausalML` Library Documentation](https://causalml.readthedocs.io/en/latest/)
 
 - [`MSML610` Advanced Machine Learning - Fall 2025](https://github.com/gpsaggese-org/umd_classes)
+
+## Changelog
+
+- 2026-03-01: Initial release

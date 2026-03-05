@@ -1,40 +1,70 @@
-# Project Description Creation Process
+# Summary
 
-# **Objective**
+This document is a reference for future TAs when preparing project descriptions
+for student capstone projects. It covers the end-to-end process from tool list
+creation to student assignment and onboarding.
 
-This document serves as a reference for future TAs when preparing project descriptions for students’ capstone projects for a course.
+## Tool List Creation
 
-# **Process**
+- TAs create a list of all possible tools they find interesting that are related
+  to the course
+  - TAs can look at tools released for capstone projects in past courses
+- GP reviews the list and provides feedback to TAs
+- The steps above are repeated until the tool list is finalized
 
-1. Tool list creation  
-   1. TAs create a list of all possible tools they find interesting that are related to the course.  
-   2. TAs can look at tools released for capstone projects in past courses.  
-   3. GP reviews the list and provides feedback to TAs.  
-   4. Above steps are repeated until the list of tools are finalised.  
-2. TAs run the [script](https://github.com/gpsaggese/umd_classes/blob/master/class_project/ta.class_project_gen/generate_class_project_description.py) to generate descriptions for all the tools in the list.   
-   1. TAs to review all descriptions to ensure they align with the requirements and the difficulty levels.   
-   2. TAs can/should tweak the prompt for description generation if necessary.  
-3. GP will then release the links to tool list & descriptions for students to look at.  
-4. Students fill the google signup form, mentioning their two choices.  
-5. TAs will then start assigning tools to students.  
-   1. Priority will be given to groups first, then individual students.  
-   2. In case of collisions/overlaps between choices, try to resolve by looking at both choices.  
-   3. TAs to send emails to all students/groups whose choices overlap/collide with others to choose new tools.  
-   4. Resolve all conflicts until no overlaps/collisions remain.  
-   5. TAs to also send regular emails to students who did not fill the google signup form to push them to make the selections.  
-   6. TAs will also release the list of available tools through ELMS announcements after the first round of tool assignment.   
-      1. This is done so that students who are yet to fill the form see which tools are available and taken, reducing chances of more collisions.   
-6. TAs to release the final list of tools assigned to students through ELMS announcements.  
-7. TAs will also release a small assignment to push students to set up Git and Docker environments on their system.  
-8. TAs to use the [invite script](https://github.com/gpsaggese/umd_classes/blob/UmdTask89_Update_Github_Invite_Collaborators_script/class_project/ta.class_project_gen/invite_github_collaborators.py) to send out Github collaborator invites to all students.  
-   1. If TAs need to create token for the repo, there are two options-  
-      1. Option A (recommended): fine-grained PAT:  
-         1. GitHub → Settings → Developer settings → Personal access tokens → Fine-grained → Generate  
-         2. Resource owner: pick the org (or your account if it’s under you).  
-         3. Repository access: select Only selected repositories → choose the target repo.  
-         4. Repository permissions: set Administration → Write.  
-      2. Option B: classic PAT  
-         1. GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate  
-         2. Scopes: check repo (this covers private repos and includes repo:invite).  
-9. TAs will create the issues for all assigned tools using the script.(TODO:Aayush \- add link to script).  
-10. TAs to inform students to self-assign themselves to the respective issues.
+## Description Generation
+
+- TAs run the
+  [generate_class_project_description.py](https://github.com/gpsaggese/umd_classes/blob/master/class_project/ta.class_project_gen/generate_class_project_description.py)
+  script to generate descriptions for all tools in the list:
+  ```bash
+  > python class_project/ta/generate_class_project_description.py \
+      --input class_project/DATA605/Spring2026/projects.csv \
+      --out_dir class_project/DATA605/Spring2026/projects_descriptions \
+      --max_projects 2
+  ```
+- TAs review all descriptions to ensure they align with the requirements and
+  difficulty levels
+- TAs can tweak the prompt for description generation if necessary
+
+## Tool Release and Student Assignment
+
+- GP releases links to tool list and descriptions for students
+- Students fill the Google signup form mentioning their two choices
+- TAs assign tools to students:
+  - Priority is given to groups first, then individual students
+  - In case of collisions/overlaps between choices, try to resolve by looking at
+    both choices
+  - TAs send emails to all students/groups whose choices overlap to choose new
+    tools
+  - Resolve all conflicts until no overlaps/collisions remain
+  - TAs send regular emails to students who did not fill the Google signup form
+    to push them to make their selections
+  - TAs release the list of available tools through ELMS announcements after the
+    first round of tool assignment
+    - This helps students who have not filled the form see which tools are
+      available and taken, reducing chances of more collisions
+
+## Final Assignment and Onboarding
+
+- TAs release the final list of tools assigned to students through ELMS
+  announcements
+- TAs release a small assignment to push students to set up Git and Docker
+  environments on their system
+- TAs use the
+  [invite_github_collaborators.py](https://github.com/gpsaggese/umd_classes/blob/UmdTask89_Update_Github_Invite_Collaborators_script/class_project/ta.class_project_gen/invite_github_collaborators.py)
+  script to send out GitHub collaborator invites to all students
+  - To create a token for the repo, two options are available:
+    - **Option A (recommended)**: fine-grained PAT
+      - GitHub -> Settings -> Developer settings -> Personal access tokens ->
+        Fine-grained -> Generate
+      - Resource owner: pick the org (or your account if it is under you)
+      - Repository access: Only selected repositories -> choose the target repo
+      - Repository permissions: Administration -> Write
+    - **Option B**: classic PAT
+      - GitHub -> Settings -> Developer settings -> Personal access tokens ->
+        Tokens (classic) -> Generate
+      - Scopes: check `repo` (covers private repos and includes `repo:invite`)
+- TAs create issues for all assigned tools using the script (TODO: add link to
+  script)
+- TAs inform students to self-assign themselves to the respective issues

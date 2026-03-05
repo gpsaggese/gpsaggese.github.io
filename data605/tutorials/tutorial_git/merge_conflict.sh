@@ -1,9 +1,13 @@
 #!/bin/bash -xe
-# /Users/saggese/src/umd_data605/projects/tutorial_git/merge_conflict.sh 2>&1 | tee /tmp/log.txt
-# cat /tmp/log.txt | perl -p -e 's/\+\+/+/; s/^\+ /\n> /'
+# To generate output for the tutorial run:
+# ```
+# > merge_conflict.sh 2>&1 | tee /tmp/log.txt
+# > cat /tmp/log.txt | perl -p -e 's/\+\+/+/; s/^\+ /\n> /'
+# ```
 
-GIT_ROOT=/Users/saggese/src/umd_data605
-source $GIT_ROOT/tutorials/tutorial_git/restart.sh
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+GIT_ROOT=$(cd "$SCRIPT_DIR/../.." && pwd)
+source "$GIT_ROOT/tutorials/tutorial_git/restart.sh"
 
 # Work on issue53.
 git checkout -b iss53
@@ -19,11 +23,11 @@ git checkout -b hotfix
 echo "hello from hotfix" > feature.py
 git add feature.py
 git status -s
-git commit -am "Add hot_fix.py"
+git commit -am "Add feature.py"
 
 # Merge hot-fix into main. 
 git checkout main
-git merge hotfix -m "Merge hot_fix.py"
+git merge hotfix -m "Merge hotfix"
 git log --graph --oneline -3
 
 # Merge iss53 back to main. 
