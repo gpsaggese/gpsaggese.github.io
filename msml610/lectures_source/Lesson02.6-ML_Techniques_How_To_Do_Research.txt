@@ -280,7 +280,7 @@ MSML610: Advanced Machine Learning
     - Next step: use all $100M$ instances to train the model
 ::::
 :::: {.column width=40%}
-![](msml610/lectures_source/figures/Lesson02_Learning_curves.png)
+![](msml610/lectures_source/figures/L02.6.Learning_curves.png)
 ::::
 :::
 
@@ -388,19 +388,19 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson02_Monalisa_incremental.png){width=90%}
+![](msml610/lectures_source/figures/L02.6.Monalisa_incremental.png){width=90%}
 
 \small _Incremental
 
 \vspace{0.5cm}
 
-![](msml610/lectures_source/figures/Lesson02_Monalisa_iterative.png){width=90%}
+![](msml610/lectures_source/figures/L02.6.Monalisa_iterative.png){width=90%}
 
 \small _Iterative_
 
 \vspace{0.5cm}
 
-![](msml610/lectures_source/figures/Lesson02_Skateboard.png){width=90%}
+![](msml610/lectures_source/figures/L02.6.Skateboard.png){width=90%}
 
 \small _Incremental vs Iterative_
 ::::

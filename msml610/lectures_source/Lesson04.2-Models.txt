@@ -528,7 +528,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=45%}
 
-![](msml610/lectures_source/figures/Lesson04_Kernel_Trick.png)
+![](msml610/lectures_source/figures/L04.2.Kernel_Trick.png)
 ::::
 :::
 
@@ -691,7 +691,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=50%}
 
-![](msml610/lectures_source/figures/Lesson04_SVM.png)
+![](msml610/lectures_source/figures/L04.2.SVM.png)
 
 ::::
 :::
@@ -820,7 +820,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=50%}
 
-![](msml610/lectures_source/figures/Lesson04_Support_Vectors.png)
+![](msml610/lectures_source/figures/L04.2.Support_Vectors.png)
 
 ::::
 :::
@@ -874,10 +874,10 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=60%}
 
-![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM1.png){ width=4cm }
-![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM2.png){ width=4cm }
-![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM3.png){ width=4cm }
-![](msml610/lectures_source/figures/Lesson04_Non_linear_SVM4.png){ width=4cm }
+![](msml610/lectures_source/figures/L04.2.Non_linear_SVM1.png){ width=4cm }
+![](msml610/lectures_source/figures/L04.2.Non_linear_SVM2.png){ width=4cm }
+![](msml610/lectures_source/figures/L04.2.Non_linear_SVM3.png){ width=4cm }
+![](msml610/lectures_source/figures/L04.2.Non_linear_SVM4.png){ width=4cm }
 
 ::::
 :::
@@ -979,11 +979,11 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson04_Slightly_non_separable_dataset.png){ width=40% }
+![](msml610/lectures_source/figures/L04.2.Slightly_non_separable_dataset.png){ width=40% }
 
-![](msml610/lectures_source/figures/Lesson04_Slightly_non_separable_dataset2.png){ width=40% }
+![](msml610/lectures_source/figures/L04.2.Slightly_non_separable_dataset2.png){ width=40% }
 
-![](msml610/lectures_source/figures/Lesson04_Non_separable_dataset.png){ width=40% }
+![](msml610/lectures_source/figures/L04.2.Non_separable_dataset.png){ width=40% }
 
 ::::
 :::
@@ -1009,9 +1009,9 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=45%}
 
-![](msml610/lectures_source/figures/Lesson04_Hard_vs_Soft_margin.png)
+![](msml610/lectures_source/figures/L04.2.Hard_vs_Soft_margin.png)
 
-![](msml610/lectures_source/figures/Lesson04_Hard_vs_Soft_margin2.png)
+![](msml610/lectures_source/figures/L04.2.Hard_vs_Soft_margin2.png)
 
 ::::
 :::
@@ -1066,7 +1066,7 @@ MSML610: Advanced Machine Learning
   small $\lambda$ and thus small regularization
   - $C$ is chosen through cross validation, like any regularization parameter
 
-![](msml610/lectures_source/figures/Lesson04_Varying_C_in_SVM.png)
+![](msml610/lectures_source/figures/L04.2.Varying_C_in_SVM.png)
 
 * Multi-Class Classification for SVM
 - Often SVM packages have built-in multi-class classification

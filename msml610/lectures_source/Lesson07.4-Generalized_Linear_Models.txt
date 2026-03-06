@@ -69,7 +69,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson07_Immigrant_Nobel_Prize_and_chocolate.png)
+![](msml610/lectures_source/figures/L07.4.Immigrant_Nobel_Prize_and_chocolate.png)
 
 ::::
 :::
@@ -128,7 +128,7 @@ MSML610: Advanced Machine Learning
   - Add noise
 ::::
 :::: {.column width=60%}
-![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example1.png)
+![](msml610/lectures_source/figures/L07.4.Linear_regression_synthetic_example1.png)
 ::::
 :::
 
@@ -142,7 +142,7 @@ MSML610: Advanced Machine Learning
 
 ::::
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example2.png)
+![](msml610/lectures_source/figures/L07.4.Linear_regression_synthetic_example2.png)
 ::::
 :::
 
@@ -159,7 +159,7 @@ MSML610: Advanced Machine Learning
 
 ::::
 :::: {.column width=65%}
-![](msml610/lectures_source/figures/Lesson07_Linear_regression_synthetic_example3.png)
+![](msml610/lectures_source/figures/L07.4.Linear_regression_synthetic_example3.png)
 ::::
 :::
 
@@ -171,7 +171,7 @@ MSML610: Advanced Machine Learning
   - **Temperature** $X$
   - **Number of bikes rented** $Y$
 
-![](msml610/lectures_source/figures/Lesson07_Bike_rental_data.png){ width=80% }
+![](msml610/lectures_source/figures/L07.4.Bike_rental_data.png){ width=80% }
 
 - Intermediate variable is mean number of bikes rented for temperature $X$:
   $\mu = \alpha + \beta X$
@@ -198,8 +198,8 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=50%}
 
-![](msml610/lectures_source/figures/Lesson07_Bike_rental_data_2.png)
-![](msml610/lectures_source/figures/Lesson07_Bike_rental_data_3.png)
+![](msml610/lectures_source/figures/L07.4.Bike_rental_data_2.png)
+![](msml610/lectures_source/figures/L07.4.Bike_rental_data_3.png)
 
 ::::
 :::
@@ -271,7 +271,7 @@ MSML610: Advanced Machine Learning
   - Assumes mean equals variance (can't model "overdispersion")
 ::::
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Poisson_PMF.png)
+![](msml610/lectures_source/figures/L07.4.Poisson_PMF.png)
 ::::
 :::
 
@@ -285,7 +285,7 @@ MSML610: Advanced Machine Learning
     $$\text{mean } \ll \text{ variance}$$
 ::::
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Neg_binomial_PMF.png)
+![](msml610/lectures_source/figures/L07.4.Neg_binomial_PMF.png)
 ::::
 :::
 
@@ -330,12 +330,12 @@ MSML610: Advanced Machine Learning
 
 ::::
 :::: {.column width=55%}
-![](msml610/lectures_source/figures/Lesson07_Non_robust_regression1.png){width=80%}
+![](msml610/lectures_source/figures/L07.4.Non_robust_regression1.png){width=80%}
 
 //![](msml610/lectures_source/figures/Lesson07_Robust_regression_code.png)
-![](msml610/lectures_source/figures/Lesson07_Robust_regression_model.png){width=80%}
+![](msml610/lectures_source/figures/L07.4.Robust_regression_model.png){width=80%}
 
-![](msml610/lectures_source/figures/Lesson07_Non_robust_regression2.png){width=80%}
+![](msml610/lectures_source/figures/L07.4.Non_robust_regression2.png){width=80%}
 ::::
 :::
 
@@ -418,7 +418,7 @@ MSML610: Advanced Machine Learning
 - Classical dataset of flower measurements from 3 Iris species
   - `setosa`, `virginica`, `versicolor`
 \centering
-![](msml610/lectures_source/figures/Lesson07_Logistic_regression_df.png){width=80%}
+![](msml610/lectures_source/figures/L07.4.Logistic_regression_df.png){width=80%}
 
 - E.g., predict probability of a flower being `setosa` from `sepal_length`
 
@@ -485,22 +485,22 @@ MSML610: Advanced Machine Learning
 
 ::: columns
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Logistic_regression_code.png)
+![](msml610/lectures_source/figures/L07.4.Logistic_regression_code.png)
 
 ::::
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Logistic_regression_model.png){ height=50% }
+![](msml610/lectures_source/figures/L07.4.Logistic_regression_model.png){ height=50% }
 
 ::::
 :::
 
 ::: columns
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Logistic_regression_result.png)
+![](msml610/lectures_source/figures/L07.4.Logistic_regression_result.png)
 
 ::::
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Logistic_regression_result2.png)
+![](msml610/lectures_source/figures/L07.4.Logistic_regression_result2.png)
 
 ::::
 :::
@@ -515,24 +515,24 @@ MSML610: Advanced Machine Learning
   - Mean $\mu$ as square root of a linear model
   - Standard deviation $\sigma$ as a linear function of the predictor variable
 
-![](msml610/lectures_source/figures/Lesson07_Variable_variance_data.png)
+![](msml610/lectures_source/figures/L07.4.Variable_variance_data.png)
 
 * Heteroskedasticity: Bayesian Model
 ::: columns
 :::: {.column width=50%}
 
-![](msml610/lectures_source/figures/Lesson07_Variable_variance_code.png)
+![](msml610/lectures_source/figures/L07.4.Variable_variance_code.png)
 
 ::::
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Variable_variance_model.png)
+![](msml610/lectures_source/figures/L07.4.Variable_variance_model.png)
 
 ::::
 :::
 
 ::: columns
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Variable_variance_result.png)
+![](msml610/lectures_source/figures/L07.4.Variable_variance_result.png)
 
 ::::
 :::: {.column width=50%}
@@ -592,10 +592,10 @@ MSML610: Advanced Machine Learning
 
 ::: columns
 :::: {.column width=40%}
-![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression1.png)
+![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression1.png)
 ::::
 :::: {.column width=55%}
-![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression2.png)
+![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression2.png)
 ::::
 :::
 
@@ -603,10 +603,10 @@ MSML610: Advanced Machine Learning
 
 ::: columns
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_code.png)
+![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression_model_code.png)
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model.png)
+![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression_model.png)
 ::::
 :::
 
@@ -616,10 +616,10 @@ MSML610: Advanced Machine Learning
 
 ::: columns
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_results1.png)
+![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression_results1.png)
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_results2.png)
+![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression_results2.png)
 ::::
 :::
 
@@ -632,10 +632,10 @@ MSML610: Advanced Machine Learning
 
 ::: columns
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_code.png)
+![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression_model_RentedBikes_model_code.png)
 ::::
 :::: {.column width=40%}
-![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model.png)
+![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression_model_RentedBikes_model.png)
 ::::
 :::
 
@@ -645,11 +645,11 @@ MSML610: Advanced Machine Learning
 
 ::: columns
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_trace.png)
+![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression_model_RentedBikes_model_trace.png)
 
 ::::
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Multiple_linear_regression_model_RentedBikes_model_results.png)
+![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression_model_RentedBikes_model_results.png)
 ::::
 :::
 

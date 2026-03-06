@@ -120,7 +120,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson05_Train_Validation_Set_Trade_Off.png)
+![](msml610/lectures_source/figures/L05.3.Train_Validation_Set_Trade_Off.png)
 
 ::::
 :::
@@ -173,7 +173,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson05_Use_Validation_Set_To_Train.png)
+![](msml610/lectures_source/figures/L05.3.Use_Validation_Set_To_Train.png)
 
 ::::
 :::

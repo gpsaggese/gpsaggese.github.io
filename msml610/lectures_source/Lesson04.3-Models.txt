@@ -118,7 +118,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=50%}
 
-![](msml610/lectures_source/figures/Lesson04_RBF_Model.png)
+![](msml610/lectures_source/figures/L04.3.RBF_Model.png)
 
 ::::
 :::
@@ -255,7 +255,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson04_KNN_Model.png)
+![](msml610/lectures_source/figures/L04.3.KNN_Model.png)
 
 ::::
 :::
@@ -278,7 +278,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson04_Voronoi.png)
+![](msml610/lectures_source/figures/L04.3.Voronoi.png)
 
 ::::
 :::
@@ -393,7 +393,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson04_Clustering.png)
+![](msml610/lectures_source/figures/L04.3.Clustering.png)
 
 ::::
 :::
@@ -415,7 +415,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson04_Elbow_method.png)
+![](msml610/lectures_source/figures/L04.3.Elbow_method.png)
 
 ::::
 :::
@@ -552,7 +552,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: column
 
-![](msml610/lectures_source/figures/Lesson04_1D_Gaussian.png)
+![](msml610/lectures_source/figures/L04.3.1D_Gaussian.png)
 ::::
 :::
 
@@ -587,7 +587,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: column
 
-![](msml610/lectures_source/figures/Lesson04_2D_Gaussian.png)
+![](msml610/lectures_source/figures/L04.3.2D_Gaussian.png)
 ::::
 :::
 

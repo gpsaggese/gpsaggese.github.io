@@ -84,7 +84,7 @@ MSML610: Advanced Machine Learning
   \includegraphics[width=0.9\textwidth]{msml610/lectures_source/figures/Lesson09-Analytical_sophistication.png}
 \end{center}
 
-// ![](msml610/lectures_source/figures/Lesson09-Dashboard.png)
+// ![](msml610/lectures_source/figures/L08.1_Lesson09-Dashboard.png)
 
 // TODO: Improve the following
 

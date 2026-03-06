@@ -217,7 +217,7 @@ Probability of $k$ heads out of $n$ tosses given bias $p$
 
 ::::
 :::: {.column width=55%}
-![](msml610/lectures_source/figures/Lesson07_Binomial_distribution.png)
+![](msml610/lectures_source/figures/L07.1.Binomial_distribution.png)
 ::::
 :::
 
@@ -248,7 +248,7 @@ Probability of $k$ heads out of $n$ tosses given bias $p$
     \theta^{\alpha - 1} (1 - \theta)^{\beta - 1} \\
 \end{align*}
 
-![](msml610/lectures_source/figures/Lesson07_Beta_distribution.png)
+![](msml610/lectures_source/figures/L07.1.Beta_distribution.png)
 ::::
 :::
 
@@ -316,7 +316,7 @@ Probability of $k$ heads out of $n$ tosses given bias $p$
 ::::
 :::: {.column width=60%}
 
-![](msml610/lectures_source/figures/Lesson07_Updating_the_prior.png)
+![](msml610/lectures_source/figures/L07.1.Updating_the_prior.png)
 ::::
 :::
 
@@ -336,7 +336,7 @@ Probability of $k$ heads out of $n$ tosses given bias $p$
 ::::
 :::: {.column width=55%}
 
-![](msml610/lectures_source/figures/Lesson07_Updating_the_prior.png)
+![](msml610/lectures_source/figures/L07.1.Updating_the_prior.png)
 ::::
 :::
 
@@ -428,7 +428,7 @@ Probability of $k$ heads out of $n$ tosses given bias $p$
 :::: {.column width=30%}
 
 Kruschke diagram
-![](msml610/lectures_source/figures/Lesson07_Kruschke_diagram.png){ height=50%}
+![](msml610/lectures_source/figures/L07.1.Kruschke_diagram.png){ height=50%}
 ::::
 :::
 
@@ -590,7 +590,7 @@ digraph BayesTheorem {
 ::::
 :::: {.column width=70%}
 
-![](msml610/lectures_source/figures/Lesson07_Coin_example_numerical_solution.png)
+![](msml610/lectures_source/figures/L07.1.Coin_example_numerical_solution.png)
 
 ::::
 :::
@@ -611,6 +611,6 @@ digraph BayesTheorem {
 
 ::::
 :::: {.column width=70%}
-![](msml610/lectures_source/figures/Lesson07_Coin_example_numerical_solution_2.png)
+![](msml610/lectures_source/figures/L07.1.Coin_example_numerical_solution_2.png)
 ::::
 :::

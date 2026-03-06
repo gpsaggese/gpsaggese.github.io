@@ -158,7 +158,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson03_symbolic_vs_subsymbolic.png)
+![](msml610/lectures_source/figures/L03.symbolic_vs_subsymbolic.png)
 // TODO: Convert in tikz
 
 ::::
@@ -179,7 +179,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson03_conceptual_spaces.png)
+![](msml610/lectures_source/figures/L03.conceptual_spaces.png)
 
 ::::
 :::
@@ -971,7 +971,7 @@ digraph UniversityOntology {
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson03_Protege_OWL.jpg)
+![](msml610/lectures_source/figures/L03.Protege_OWL.jpg)
 ::::
 :::
 
@@ -1091,7 +1091,7 @@ digraph UniversityOntology {
     $\lnot A \lor B \text{ means } (\lnot A) \lor B$
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/Lesson13_propositional_logic_BNF.png){ height=50% }
+![](msml610/lectures_source/figures/L03.propositional_logic_BNF.png){ height=50% }
 ::::
 :::
 
@@ -1381,7 +1381,7 @@ digraph UniversityOntology {
 ::::
 :::: {.column width=45%}
 
-![](msml610/lectures_source/figures/Lesson03_FOL_Syntax.png)
+![](msml610/lectures_source/figures/L03.FOL_Syntax.png)
 
 ::::
 :::
@@ -1830,7 +1830,7 @@ digraph OWL_Example {
 ::::
 :::: {.column width=60%}
 
-![](msml610/lectures_source/figures/Lesson03_RDF_example.png)
+![](msml610/lectures_source/figures/L03.RDF_example.png)
 
 ::::
 :::
@@ -1975,7 +1975,7 @@ digraph OWL_Example {
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson03_DBPedia.png)
+![](msml610/lectures_source/figures/L03.DBPedia.png)
 
 ::::
 :::
@@ -2006,7 +2006,7 @@ digraph OWL_Example {
 ::::
 :::: {.column width=45%}
 
-![](msml610/lectures_source/figures/Lesson03_WordNet.png)
+![](msml610/lectures_source/figures/L03.WordNet.png)
 
 ::::
 :::
@@ -2046,7 +2046,7 @@ digraph OWL_Example {
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson03_ConceptNet.png)
+![](msml610/lectures_source/figures/L03.ConceptNet.png)
 
 ::::
 :::

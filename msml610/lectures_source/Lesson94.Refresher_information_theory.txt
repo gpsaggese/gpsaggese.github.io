@@ -84,7 +84,7 @@ MSML610: Advanced Machine Learning
     - E.g., a uniform distribution increasing its support
 ::::
 :::: {.column width=55%}
-![](msml610/lectures_source/figures/Lesson94_Uniform_PDF.png)
+![](msml610/lectures_source/figures/L94.Uniform_PDF.png)
 ::::
 :::
 
@@ -96,7 +96,7 @@ MSML610: Advanced Machine Learning
   - A distribution with two close peaks has low variance but high entropy
 ::::
 :::: {.column width=55%}
-![](msml610/lectures_source/figures/Lesson94_Entropy_vs_Variance.png)
+![](msml610/lectures_source/figures/L94.Entropy_vs_Variance.png)
 ::::
 :::
 

@@ -1024,7 +1024,7 @@ digraph BayesianFlow {
 ::::
 :::: {.column width=45%}
 
-![](msml610/lectures_source/figures/Lesson06_Rejection_Sampling.png)
+![](msml610/lectures_source/figures/L06.2.Rejection_Sampling.png)
 
 ::::
 :::
@@ -1066,7 +1066,7 @@ digraph BayesianFlow {
     E[f(X)] \approx \frac{1}{N} \sum_{i=1}^N w_i f(X_i)
     $$ :::: ::::
     {.column width=35%}
-    ![](msml610/lectures_source/figures/Lesson06_Importance_Sampling.png) ::::
+    ![](msml610/lectures_source/figures/L06.2.Importance_Sampling.png) ::::
     :::
 
 - **Example**:
@@ -1147,7 +1147,7 @@ digraph BayesianFlow {
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson06_MCMC_mixing.png)
+![](msml610/lectures_source/figures/L06.2.MCMC_mixing.png)
 ::::
 :::
 

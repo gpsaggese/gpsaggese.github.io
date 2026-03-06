@@ -464,9 +464,9 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=30%}
 
-![](msml610/lectures_source/figures/Lesson01.Waymo.png)
-![](msml610/lectures_source/figures/Lesson01.Big_dog.png)
-![](msml610/lectures_source/figures/Lesson01.Mars_Rover.png)
+![](msml610/lectures_source/figures/L01.3.Waymo.png)
+![](msml610/lectures_source/figures/L01.3.Big_dog.png)
+![](msml610/lectures_source/figures/L01.3.Mars_Rover.png)
 
 ::::
 :::
@@ -501,7 +501,7 @@ MSML610: Advanced Machine Learning
   - _"First solve AI, then use AI to solve everything else"_
 ::::
 :::: {.column width=30%}
-![](msml610/lectures_source/figures/Lesson01_Friendly_AI.png)
+![](msml610/lectures_source/figures/L01.3.Friendly_AI.png)
 ::::
 :::
 
@@ -529,9 +529,9 @@ MSML610: Advanced Machine Learning
   - E.g., parole evaluations, loan applications
 ::::
 :::: {.column width=30%}
-![](msml610/lectures_source/figures/Lesson01_Terminator.png)
+![](msml610/lectures_source/figures/L01.3.Terminator.png)
 
-![](msml610/lectures_source/figures/Lesson01_Misinformation.png)
+![](msml610/lectures_source/figures/L01.3.Misinformation.png)
 ::::
 :::
 
@@ -611,11 +611,11 @@ MSML610: Advanced Machine Learning
   - Used informally by AI researchers to quantify risk
 ::::
 :::: {.column width=40%}
-![](msml610/lectures_source/figures/Lesson01_e_acc.png)
+![](msml610/lectures_source/figures/L01.3.e_acc.png)
 
 \vspace{0.5cm}
 
-![](msml610/lectures_source/figures/Lesson01_P_doom.png)
+![](msml610/lectures_source/figures/L01.3.P_doom.png)
 ::::
 :::
 
@@ -631,9 +631,9 @@ MSML610: Advanced Machine Learning
 - We can't get airport terminals to work
 ::::
 :::: {.column width=40%}
-![](msml610/lectures_source/figures/Lesson01.Windows_failure.png)
+![](msml610/lectures_source/figures/L01.3.Windows_failure.png)
 
-![](msml610/lectures_source/figures/Lesson01.Y2K.png)
+![](msml610/lectures_source/figures/L01.3.Y2K.png)
 ::::
 :::
 

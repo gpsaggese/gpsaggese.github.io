@@ -284,7 +284,7 @@ _Mutilated graph_
 ::::
 :::: {.column width=30%}
 
-![](msml610/lectures_source/figures/Lesson09-Price_Quantity.png){height=30%}
+![](msml610/lectures_source/figures/L08.3_Lesson09-Price_Quantity.png){height=30%}
 
 ```graphviz[width=70%]
 digraph CausalDAG {
@@ -601,7 +601,7 @@ digraph CerealAds {
 - There is a **mediator** variable
 ::::
 :::: {.column width=35%}
-![](msml610/lectures_source/figures/Lesson08_Nagging_kids.png)
+![](msml610/lectures_source/figures/L08.3.Nagging_kids.png)
 ::::
 :::
 

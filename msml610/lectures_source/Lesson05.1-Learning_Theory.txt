@@ -193,7 +193,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=45%}
 
-![](msml610/lectures_source/figures/Lesson05_Bin_with_marbles.png)
+![](msml610/lectures_source/figures/L05.1.Bin_with_marbles.png)
 ::::
 :::
 
@@ -943,7 +943,7 @@ digraph ML_Phases {
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson05_VC_Generalization_Bounds.png)
+![](msml610/lectures_source/figures/L05.1.VC_Generalization_Bounds.png)
 
 ::::
 :::
@@ -958,7 +958,7 @@ digraph ML_Phases {
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson05_VC_Generalization_Bounds2.png)
+![](msml610/lectures_source/figures/L05.1.VC_Generalization_Bounds2.png)
 
 ::::
 :::
@@ -1008,7 +1008,7 @@ digraph ML_Phases {
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson05_Void_VC_guarantee.png)
+![](msml610/lectures_source/figures/L05.1.Void_VC_guarantee.png)
 ::::
 :::
 

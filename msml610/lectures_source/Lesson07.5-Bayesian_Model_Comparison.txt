@@ -80,9 +80,9 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=50%}
 
-![](msml610/lectures_source/figures/Lesson07.Comparing_models.data.png)
+![](msml610/lectures_source/figures/L07.5.Comparing_models.data.png)
 
-![](msml610/lectures_source/figures/Lesson07.Comparing_models.model_code.png)
+![](msml610/lectures_source/figures/L07.5.Comparing_models.model_code.png)
 
 ::::
 :::
@@ -107,10 +107,10 @@ MSML610: Advanced Machine Learning
 
 ::::
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07.Comparing_models.model_fit.png)
+![](msml610/lectures_source/figures/L07.5.Comparing_models.model_fit.png)
 
-![](msml610/lectures_source/figures/Lesson07.Comparing_models.lin_model_PPC.png)
-![](msml610/lectures_source/figures/Lesson07.Comparing_models.quadr_model_PPC.png)
+![](msml610/lectures_source/figures/L07.5.Comparing_models.lin_model_PPC.png)
+![](msml610/lectures_source/figures/L07.5.Comparing_models.quadr_model_PPC.png)
 ::::
 :::
 

@@ -155,7 +155,7 @@ MSML610: Advanced Machine Learning
   6. Robotics to manipulate objects and move
 ::::
 :::: {.column width=30%}
-![](msml610/lectures_source/figures/Lesson01_Ex_machina.jpg)
+![](msml610/lectures_source/figures/L01.1.Ex_machina.jpg)
 ::::
 :::
 

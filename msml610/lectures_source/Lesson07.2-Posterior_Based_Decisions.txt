@@ -94,7 +94,7 @@ MSML610: Advanced Machine Learning
 
 ::: columns
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Savage_Dickey.png)
+![](msml610/lectures_source/figures/L07.2.Savage_Dickey.png)
 
 ::::
 :::: {.column width=45%}
@@ -186,7 +186,7 @@ MSML610: Advanced Machine Learning
   - Data looks Gaussian with a couple of outliers
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift.png)
+![](msml610/lectures_source/figures/L07.2.Chemical_shift.png)
 ::::
 :::
 
@@ -220,7 +220,7 @@ MSML610: Advanced Machine Learning
   $$
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift.png)
+![](msml610/lectures_source/figures/L07.2.Chemical_shift.png)
 ::::
 :::
 
@@ -237,7 +237,7 @@ MSML610: Advanced Machine Learning
 
 * Chemical Shift: PyMC
 
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution1.png)
+![](msml610/lectures_source/figures/L07.2.Chemical_shift_pymc_solution1.png)
 
 - The PyMC code is **one-to-one with the model**:
   \begingroup \scriptsize
@@ -266,7 +266,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=65%}
 
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution2.png)
+![](msml610/lectures_source/figures/L07.2.Chemical_shift_pymc_solution2.png)
 
 ::::
 :::
@@ -339,7 +339,7 @@ MSML610: Advanced Machine Learning
 * Chemical Shift Example: PPC
 ::: columns
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution3.png)
+![](msml610/lectures_source/figures/L07.2.Chemical_shift_pymc_solution3.png)
 ::::
 :::: {.column width=45%}
 - **Apply the Bayesian workflow**
@@ -367,7 +367,7 @@ MSML610: Advanced Machine Learning
       deviation
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_pymc_solution3.png)
+![](msml610/lectures_source/figures/L07.2.Chemical_shift_pymc_solution3.png)
 ::::
 :::
 
@@ -393,7 +393,7 @@ MSML610: Advanced Machine Learning
 - Student's t has **heavy tails** (high kurtosis)
   - Values more likely far from mean compared to Normal
 
-![](msml610/lectures_source/figures/Lesson07_Student-t.png){ height=30%}
+![](msml610/lectures_source/figures/L07.2.Student-t.png){ height=30%}
 
 * Chemical Shift: Use Student's t-dist (1/3)
 ::: columns
@@ -410,7 +410,7 @@ MSML610: Advanced Machine Learning
 \end{equation*}
 ::::
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_robust_model.png)
+![](msml610/lectures_source/figures/L07.2.Chemical_shift_robust_model.png)
 ::::
 :::
 
@@ -426,14 +426,14 @@ MSML610: Advanced Machine Learning
   - Outliers have less effect
 ::::
 :::: {.column width=60%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_robust_model2.png)
+![](msml610/lectures_source/figures/L07.2.Chemical_shift_robust_model2.png)
 ::::
 :::
 
 * Chemical Shift: Use Student's t-dist (3/3)
 ::: columns
 :::: {.column width=60%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_robust_model3.png)
+![](msml610/lectures_source/figures/L07.2.Chemical_shift_robust_model3.png)
 ::::
 :::: {.column width=35%}
 - PPC fits better than Normal model
@@ -504,9 +504,9 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson07_Immigrant_Nobel_Prize.png)
+![](msml610/lectures_source/figures/L07.2.Immigrant_Nobel_Prize.png)
 
-![](msml610/lectures_source/figures/Lesson07_Immigrant_Nobel_Prize_density_by_country.png)
+![](msml610/lectures_source/figures/L07.2.Immigrant_Nobel_Prize_density_by_country.png)
 
 ::::
 :::
@@ -519,7 +519,7 @@ MSML610: Advanced Machine Learning
   - Normalizes effect by variability for pooled std dev
   - Variability of each group normalizes mean difference
   - Similar to a Z-score, number of std dev values differ
-    ![](msml610/lectures_source/figures/Lesson07_Cohen_d.png)
+    ![](msml610/lectures_source/figures/L07.2.Cohen_d.png)
 
 - **Bayesian approach**
   - Compute posterior distribution of means and std $\to$ formula

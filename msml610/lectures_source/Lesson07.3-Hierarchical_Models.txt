@@ -83,7 +83,7 @@ MSML610: Advanced Machine Learning
 - **Hierarchical**
   - Groups have different priors which come from a common prior
 
-![](msml610/lectures_source/figures/Lesson07_Pooled_unpooled_hierarchical_models.png){ width=80% }
+![](msml610/lectures_source/figures/L07.3.Pooled_unpooled_hierarchical_models.png){ width=80% }
 
 // TODO(gp): Convert it into graphviz
 
@@ -98,7 +98,7 @@ MSML610: Advanced Machine Learning
 
 ::: columns
 :::: {.column width=40%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical1.png)
+![](msml610/lectures_source/figures/L07.3.Chemical_shift_hierarchical1.png)
 ::::
 :::: {.column width=45%}
 \small
@@ -130,7 +130,7 @@ MSML610: Advanced Machine Learning
   - Use same model structure to compare groups
 ::::
 :::: {.column width=55%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical2.png)
+![](msml610/lectures_source/figures/L07.3.Chemical_shift_hierarchical2.png)
 ::::
 :::
 
@@ -148,7 +148,7 @@ MSML610: Advanced Machine Learning
 - Intermediate situation between single group and 20 separate groups
 ::::
 :::: {.column width=55%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical3.png)
+![](msml610/lectures_source/figures/L07.3.Chemical_shift_hierarchical3.png)
 ::::
 :::
 
@@ -168,7 +168,7 @@ MSML610: Advanced Machine Learning
 - **Shrinkage occurs**
 ::::
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical4.png)
+![](msml610/lectures_source/figures/L07.3.Chemical_shift_hierarchical4.png)
 ::::
 :::
 
@@ -182,7 +182,7 @@ MSML610: Advanced Machine Learning
   - Improve estimation for small groups using data from others
 ::::
 :::: {.column width=40%}
-![](msml610/lectures_source/figures/Lesson07.3_Shrinkage.png)
+![](msml610/lectures_source/figures/L07.3.Shrinkage.png)
 ::::
 :::
 - **Amount of shrinkage** depends on data:

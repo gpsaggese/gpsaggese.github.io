@@ -170,9 +170,9 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=30%}
 
-![](msml610/lectures_source/figures/Lesson04_Tree_stump.png)
+![](msml610/lectures_source/figures/L04.1.Tree_stump.png)
 
-![](msml610/lectures_source/figures/Lesson04_Tree_stump2.png)
+![](msml610/lectures_source/figures/L04.1.Tree_stump2.png)
 
 ::::
 :::
@@ -271,7 +271,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson04_Decision_Tree1.png)
+![](msml610/lectures_source/figures/L04.1.Decision_Tree1.png)
 
 ::::
 :::
@@ -297,7 +297,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=30%}
 
-![](msml610/lectures_source/figures/Lesson04_Decision_Tree1.png)
+![](msml610/lectures_source/figures/L04.1.Decision_Tree1.png)
 
 ::::
 :::
@@ -350,7 +350,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson04_Decision_Tree_parity.png)
+![](msml610/lectures_source/figures/L04.1.Decision_Tree_parity.png)
 
 ::::
 :::
@@ -402,7 +402,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson04_Decision_Tree_Intuition.png)
+![](msml610/lectures_source/figures/L04.1.Decision_Tree_Intuition.png)
 
 ::::
 :::
@@ -447,7 +447,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=55%}
 
-![](msml610/lectures_source/figures/Lesson04_Decision_Tree_Impurity.png)
+![](msml610/lectures_source/figures/L04.1.Decision_Tree_Impurity.png)
 
 ::::
 :::

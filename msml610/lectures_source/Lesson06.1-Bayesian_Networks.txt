@@ -140,7 +140,7 @@ MSML610: Advanced Machine Learning
 - You would expect $Rain \implies WetGrass$
 ::::
 :::: {.column width=30%}
-![](msml610/lectures_source/figures/Lesson06_grass_sprinkler.png)
+![](msml610/lectures_source/figures/L06.1.grass_sprinkler.png)
 ::::
 :::
 

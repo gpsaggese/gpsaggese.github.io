@@ -85,7 +85,7 @@ mindmap
 ::::
 :::: {.column width=20%}
 
-![](msml610/lectures_source/figures/Lesson01_black_swans.jpg)
+![](msml610/lectures_source/figures/L01.2.black_swans.jpg)
 ::::
 :::
 
@@ -203,8 +203,8 @@ mindmap
   - Current theory: memories reconstructed
 ::::
 :::: {.column width=35%}
-![](msml610/lectures_source/figures/Lesson01_brain.jpg)
-![](msml610/lectures_source/figures/Lesson01_neuron.png)
+![](msml610/lectures_source/figures/L01.2.brain.jpg)
+![](msml610/lectures_source/figures/L01.2.neuron.png)
 ::::
 :::
 
@@ -277,8 +277,8 @@ mindmap
     - E.g., Shor's algorithm for factorization
 ::::
 :::: {.column width=40%}
-![](msml610/lectures_source/figures/Lesson01_eniac.png)
-![](msml610/lectures_source/figures/Lesson01.Moore_Law.png)
-![](msml610/lectures_source/figures/Lesson01.CPU_GPU_TPU.png)
+![](msml610/lectures_source/figures/L01.2.eniac.png)
+![](msml610/lectures_source/figures/L01.2.Moore_Law.png)
+![](msml610/lectures_source/figures/L01.2.CPU_GPU_TPU.png)
 ::::
 :::

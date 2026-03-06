@@ -107,7 +107,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/Lesson05_Optimal_fit.png)
+![](msml610/lectures_source/figures/L05.2.Optimal_fit.png)
 
 ::::
 :::
@@ -140,7 +140,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=45%}
 
-![](msml610/lectures_source/figures/Lesson05_Diamond_price_example.png)
+![](msml610/lectures_source/figures/L05.2.Diamond_price_example.png)
 
 ::::
 :::
@@ -161,7 +161,7 @@ MSML610: Advanced Machine Learning
     - Overfit
     - Low bias, high variance
 
-![](msml610/lectures_source/figures/Lesson05_Optimal_fit2.png){ width=80% }
+![](msml610/lectures_source/figures/L05.2.Optimal_fit2.png){ width=80% }
 
 # ##############################################################################
 # Bias Variance Analysis
@@ -181,7 +181,7 @@ MSML610: Advanced Machine Learning
 
 // TODO(gp): Redraw this
 
-![](msml610/lectures_source/figures/Lesson05_VC_analysis_vs_Bias_Variance_analysis.png){ width=80% }
+![](msml610/lectures_source/figures/L05.2.VC_analysis_vs_Bias_Variance_analysis.png){ width=80% }
 
 * Hypothesis Set and Bias-Variance Analysis
 - **Learning** consists in finding $g \in \calH$ such that $g \approx f$ where
@@ -345,9 +345,9 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson05_bias_variance.png)
+![](msml610/lectures_source/figures/L05.2.bias_variance.png)
 
-![](msml610/lectures_source/figures/Lesson05_bias_variance_decomposition.png)
+![](msml610/lectures_source/figures/L05.2.bias_variance_decomposition.png)
 
 ::::
 :::
@@ -365,7 +365,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson05_Bias_Variance_tradeoff_example1.png)
+![](msml610/lectures_source/figures/L05.2.Bias_Variance_tradeoff_example1.png)
 
 ::::
 :::
@@ -385,7 +385,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson05_Bias_Variance_tradeoff_example2.png)
+![](msml610/lectures_source/figures/L05.2.Bias_Variance_tradeoff_example2.png)
 
 ::::
 :::
@@ -437,8 +437,8 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson05_Bias_Variance_Numerical_Example1.png)
-![](msml610/lectures_source/figures/Lesson05_Bias_Variance_Numerical_Example2.png)
+![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example1.png)
+![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example2.png)
 
 ::::
 :::
@@ -464,9 +464,9 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=45%}
 
-![](msml610/lectures_source/figures/Lesson05_bias_variance_curve.png)
+![](msml610/lectures_source/figures/L05.2.bias_variance_curve.png)
 
-![](msml610/lectures_source/figures/Lesson05_bias_variance_decomposition.png)
+![](msml610/lectures_source/figures/L05.2.bias_variance_decomposition.png)
 
 ::::
 :::
@@ -500,7 +500,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=50%}
 
-![](msml610/lectures_source/figures/Lesson05_regularization.png)
+![](msml610/lectures_source/figures/L05.2.regularization.png)
 
 ::::
 :::
@@ -563,7 +563,7 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=30%}
 
-![](msml610/lectures_source/figures/Lesson05_Deterministic_Noise.png)
+![](msml610/lectures_source/figures/L05.2.Deterministic_Noise.png)
 
 ::::
 :::
@@ -604,9 +604,9 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=25%}
 
-![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example1.png)
+![](msml610/lectures_source/figures/L05.2.deterministic_noise_example1.png)
 
-![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example2.png)
+![](msml610/lectures_source/figures/L05.2.deterministic_noise_example2.png)
 
 ::::
 :::
@@ -641,13 +641,13 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=25%}
 
-![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example3.png)
+![](msml610/lectures_source/figures/L05.2.deterministic_noise_example3.png)
 
-![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example5.png)
+![](msml610/lectures_source/figures/L05.2.deterministic_noise_example5.png)
 
-![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example4.png)
+![](msml610/lectures_source/figures/L05.2.deterministic_noise_example4.png)
 
-![](msml610/lectures_source/figures/Lesson05_deterministic_noise_example6.png)
+![](msml610/lectures_source/figures/L05.2.deterministic_noise_example6.png)
 
 ::::
 :::
@@ -751,9 +751,9 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson05_learning_curve.png)
+![](msml610/lectures_source/figures/L05.2.learning_curve.png)
 
-![](msml610/lectures_source/figures/Lesson05_learning_curve2.png)
+![](msml610/lectures_source/figures/L05.2.learning_curve2.png)
 ::::
 :::
 
@@ -775,9 +775,9 @@ MSML610: Advanced Machine Learning
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/Lesson05_Irreducible_Error1.png)
+![](msml610/lectures_source/figures/L05.2.Irreducible_Error1.png)
 
-![](msml610/lectures_source/figures/Lesson05_Irreducible_Error2.png)
+![](msml610/lectures_source/figures/L05.2.Irreducible_Error2.png)
 ::::
 :::
 
