@@ -201,5 +201,3 @@ mtl0cireout.plot_simpsons_paradox()
 hmatplo.save_fig(fig, os.path.join(out_dir_name, "Simpson_Paradox.png"),
                   print_markdown=True,
                   path_prefix="msml610/lectures_source")
-
-# %%
