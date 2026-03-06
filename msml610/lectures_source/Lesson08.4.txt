@@ -331,7 +331,7 @@ digraph SalesModelExtended {
     \endgroup
   - Association = causation + a bias term 
 
-* The Bias Equation: Comments
+* The Bias Equation: Remarks
 - Association = causation + a bias term 
   \begingroup
   \small
@@ -345,6 +345,7 @@ digraph SalesModelExtended {
 - Bias arises from differences between treated and control groups
   (besides the treatment)
   - Unobservable factors change together with treatment
+    - E.g., there are confounders
   - E.g., treated and untreated businesses differ beyond price cuts
     - E.g., differ in size, location, day of the week on which they have a sale,
       cities they are located in
@@ -352,9 +353,9 @@ digraph SalesModelExtended {
 - For association to be causation, treated and control units must be
   **exchangeable**
 
-* The bias equation: visual example
-- Plot the outcome `weekly_amount_sold` by business size measured by
-  `avg_week_sales`
+* The Bias Equation: Visual Example
+- Plot the outcome `weekly_amount_sold` by business size (measured by
+  `avg_week_sales`)
 - Color the points by treatment (red) / control (blue)
 - The treated units are more concentrated to the right of the plot
 //
