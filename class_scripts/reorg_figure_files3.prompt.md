@@ -1,0 +1,13 @@
+Read the file figure_mappings.csv
+
+msml610/lectures_source/Lesson07.3-Hierarchical_Models.txt,msml610/lectures_source/figures/Lesson07_Pooled_unpooled_hierarchical_models.png,msml610/lectures_source/figures/L07.3.Pooled_unpooled_hierarchical_models.png
+msml610/lectures_source/Lesson07.3-Hierarchical_Models.txt,msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical1.png,msml610/lectures_source/figures/L07.3.Chemical_shift_hierarchical1.png
+msml610/lectures_source/Lesson07.3-Hierarchical_Models.txt,msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical2.png,msml610/lectures_source/figures/L07.3.Chemical_shift_hierarchical2.png
+msml610/lectures_source/Lesson07.3-Hierarchical_Models.txt,msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical3.png,msml610/lectures_source/figures/L07.3.Chemical_shift_hierarchical3.png
+msml610/lectures_source/Lesson07.3-Hierarchical_Models.txt,msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical4.png,msml610/lectures_source/figures/L07.3.Chemical_shift_hierarchical4.png
+
+Extract the second and third element in the CSV
+
+git mv second third
+
+Replace instances of second with third
