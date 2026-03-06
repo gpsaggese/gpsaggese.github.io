@@ -358,58 +358,60 @@ digraph SalesModelExtended {
   `avg_week_sales`)
 - Color the points by treatment (red) / control (blue)
 - The treated units are more concentrated to the right of the plot
-//
-//// TODO(gp): Add picture
-//
-//- The difference in amount sold between the two groups has two causes
-//  1. The treatment effect: a price cut increases the amount sold
-//  2. The business size: bigger businesses sell more and can more easily do more
-//     price cuts
-//
-//- The challenge for causal inference is untangling the two effects
-//
-//* Simpson's Paradox
-//- The trend appears in different groups of data, but reverses when the groups are
-//  combined
-//- In other words, a relationship that holds within subgroups can disappear (or
-//  even flip) when the data is aggregated
-//
-//- The paradox occurs because a confounder that influences the relationship
-//  between the variables being analyzed
-//  - When the data is aggregated, the hidden variable distorts the results
-//
-//// TODO(gp): Add picture
-//
-//* Simpson's Paradox: Admission bias in University
-//
-//- A university has two departments
-//
-//| Department    | Male Applicants | Male Accepted | Female Applicants | Female Accepted |
-//|--------------|----------------|---------------|----------------------|-------------------|
-//| University | 120 | 81 | 120 | 58 |
-//
-//- Male Overall Acceptance Rate: $\frac{81}{120}$ = 67.5%
-//- Female Overall Acceptance Rate: $\frac{58}{120}$ = 48.3%
-//
-//- It seems that there is a bias against females, since their acceptance rate is below
-//
-//- Let's break down the same data but split in Engineering and English
-//
-//| Department    | Male Applicants | Male Accepted | Male Acceptance Rate | Female Applicants | Female Accepted | Female Acceptance Rate |
-//|--------------|----------------|---------------|----------------------|-------------------|----------------|----------------------|
-//| **University** | 120 | 81 | 67.5% | 120 | 58 | 48.3% |
-//| **Engineering** | 100 | 80 | 80% | 20 | 18 | 90% |
-//| **English**    | 20  | 1  | 5%  | 100 | 40  | 40% |
-//
-//- At the department level:
-//  - Women have a higher acceptance rate in Engineering (90% vs 80%)
-//  - Women have a higher acceptance rate in English (40% vs 5%)
-//
-//- The reason for the paradox is that
-//  - Engineering has a high acceptance rate, and English has a low acceptance rate
-//  - More men apply to Engineering, and more women apply to English
-//
-//- When combined, the distribution makes the female acceptance rate higher overall
+
+![](msml610/lectures_source/figures/L08/Association_Causation_Bias1.png)
+![](msml610/lectures_source/figures/L08/Association_Causation_Bias2.png)
+
+- The difference in amount sold between the two groups has two causes
+  1. The treatment effect: a price cut increases the amount sold
+  2. The business size: bigger businesses sell more and can more easily do more
+     price cuts
+
+- The challenge for causal inference is untangling the two effects
+
+* Simpson's Paradox
+- The trend appears in different groups of data, but reverses when the groups are
+  combined
+- In other words, a relationship that holds within subgroups can disappear (or
+  even flip) when the data is aggregated
+
+- The paradox occurs because a confounder that influences the relationship
+  between the variables being analyzed
+  - When the data is aggregated, the hidden variable distorts the results
+
+![](msml610/lectures_source/figures/L08/Simpson_Paradox.png)
+
+
+* Simpson's Paradox: Admission bias in University
+
+- A university has two departments
+
+| Department    | Male Applicants | Male Accepted | Female Applicants | Female Accepted |
+|--------------|----------------|---------------|----------------------|-------------------|
+| University | 120 | 81 | 120 | 58 |
+
+- Male Overall Acceptance Rate: $\frac{81}{120}$ = 67.5%
+- Female Overall Acceptance Rate: $\frac{58}{120}$ = 48.3%
+
+- It seems that there is a bias against females, since their acceptance rate is below
+
+- Let's break down the same data but split in Engineering and English
+
+| Department    | Male Applicants | Male Accepted | Male Acceptance Rate | Female Applicants | Female Accepted | Female Acceptance Rate |
+|--------------|----------------|---------------|----------------------|-------------------|----------------|----------------------|
+| **University** | 120 | 81 | 67.5% | 120 | 58 | 48.3% |
+| **Engineering** | 100 | 80 | 80% | 20 | 18 | 90% |
+| **English**    | 20  | 1  | 5%  | 100 | 40  | 40% |
+
+- At the department level:
+  - Women have a higher acceptance rate in Engineering (90% vs 80%)
+  - Women have a higher acceptance rate in English (40% vs 5%)
+
+- The reason for the paradox is that
+  - Engineering has a high acceptance rate, and English has a low acceptance rate
+  - More men apply to Engineering, and more women apply to English
+
+- When combined, the distribution makes the female acceptance rate higher overall
 //
 //* Identifying the treatment effect
 //- We can't observe $\EE[Y_{1t} - Y_{0t}]$ since we can only observe one of the
