@@ -1,5 +1,5 @@
 # Learn CrewAI in 60 Minutes
-## Structured Multi-Agent AI Systems with Planning, Execution, and Critique
+## Structured Multi Agent AI Systems with Planning, Execution, and Critique
 
 ---
 
@@ -7,7 +7,7 @@
 
 This tutorial provides everything needed to become familiar with **CrewAI** in 60 minutes.
 
-CrewAI is a framework for building **collaborative multi-agent AI systems** where agents with specialized roles plan, execute, critique, and refine tasks iteratively.
+CrewAI is a framework for building **collaborative multiagent AI systems** where agents with specialized roles plan, execute, critique, and refine tasks iteratively.
 
 By the end, you will move from:
 
@@ -17,12 +17,12 @@ Single LLM prompts → Structured autonomous AI systems
 
 # 2. What This Tutorial Provides
 
-## Hands-on Experience
+## Hands on Experience
 
 - Working Docker container
 - Reproducible notebook (`tutorial_crewai.ipynb`)
-- End-to-end runnable example
-- Multi-agent planning loop
+- End to end runnable example
+- Multiagent planning loop
 
 ## Conceptual Understanding
 
@@ -31,14 +31,14 @@ You will understand:
 - What CrewAI is
 - What problem it solves
 - Native API structure
-- When to use multi-agent systems
+- When to use multiagent systems
 - Alternatives and trade-offs
 
 ## Practical Application
 
 You can:
 
-- Build a Planner–Worker–Critic loop
+- Build a Planner -> Worker -> Critic loop
 - Execute notebook code through agents
 - Implement retry logic
 - Track explicit state
@@ -51,10 +51,9 @@ No local environment conflicts.
 
 ## Reproducibility
 
-- Notebook runs end-to-end after restart
-- Execution enforced via pytest
-- Version pinning prevents breakage
-- Takes < 3 minutes to execute
+- Notebook runs end to end
+- Dependencies are managed via the container environment
+- Takes ~ 3 minutes to execute
 
 ---
 
@@ -76,10 +75,10 @@ Work through:
 Learn:
 
 - Creating agents
-- Defining roles
-- Creating tasks
+- Defining tasks
 - Running a crew
-- Observing iteration
+- How to give an agent tools
+- How an agent calls Python functions
 
 ---
 
