@@ -354,33 +354,39 @@ digraph SalesModelExtended {
   **exchangeable**
 
 * The Bias Equation: Visual Example
-- Plot the outcome `weekly_amount_sold` by business size (measured by
-  `avg_week_sales`)
-- Color the points by treatment (red) / control (blue)
-- The treated units are more concentrated to the right of the plot
+::: columns
+:::: {.column width=50%}
+- Plot `weekly_amount_sold` by business size (`avg_week_sales`)
+  - Color points: treatment (red) / control (blue)
+  - Treated units concentrated on the right
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L08/L08_01_Association_Causation_Bias0.png)
+::::
+:::
 
-![](msml610/lectures_source/figures/L08/Association_Causation_Bias1.png)
-![](msml610/lectures_source/figures/L08/Association_Causation_Bias2.png)
+::: columns
+:::: {.column width=50%}
+- Difference in amount sold between groups has two causes
+  1. _Treatment effect_: Price cut increases amount sold
+  2. _Business size_: Bigger businesses sell more, can do more price cuts
 
-- The difference in amount sold between the two groups has two causes
-  1. The treatment effect: a price cut increases the amount sold
-  2. The business size: bigger businesses sell more and can more easily do more
-     price cuts
-
-- The challenge for causal inference is untangling the two effects
+- The challenge for causal inference is to untangle the two effects
+::::
+:::: {.column width=45%}
+![](msml610/lectures_source/figures/L08/L08_01_Association_Causation_Bias1.png)
+![](msml610/lectures_source/figures/L08/L08_01_Association_Causation_Bias2.png)
+::::
+:::
 
 * Simpson's Paradox
-- The trend appears in different groups of data, but reverses when the groups are
-  combined
-- In other words, a relationship that holds within subgroups can disappear (or
-  even flip) when the data is aggregated
+- Trend appears in different data groups but reverses when combined
+  - Relationship within subgroups can disappear or flip when aggregated
 
-- The paradox occurs because a confounder that influences the relationship
-  between the variables being analyzed
-  - When the data is aggregated, the hidden variable distorts the results
+- Paradox occurs due to a confounder influencing the relationship
+  - Aggregated data distorts results due to hidden variable
 
-![](msml610/lectures_source/figures/L08/Simpson_Paradox.png)
-
+![](msml610/lectures_source/figures/L08/L08_01_Simpson_Paradox.png)
 
 * Simpson's Paradox: Admission bias in University
 

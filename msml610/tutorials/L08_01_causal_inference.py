@@ -68,11 +68,11 @@ plt.rc("font", size=20)
 # # Cell 1: Sales example
 
 # %%
-dir_name = "L09_data"
+dir_name = "L08_data"
 # #!ls $dir_name
 
 out_dir_name = "figures/L08"
-# # cp ./msml610/tutorials/figures/L08/*.png msml610/lectures_source/figures/L08/
+# # cp msml610/lectures_source/figures/L08/*.png msml610/lectures_source/figures/L08/
 
 # %%
 data = pd.read_csv(dir_name + "/xmas_sales.csv")
@@ -173,6 +173,10 @@ hmatplo.save_fig(fig, os.path.join(out_dir_name, "xmas_boxplot.png"),
 
 # %%
 mtl0cireout.plot_sales_bias_analysis(data, marker)
+fig = None
+hmatplo.save_fig(fig, os.path.join(out_dir_name, "Association_Causation_Bias0.png"),
+                  print_markdown=True,
+                  path_prefix="msml610/lectures_source")
 
 # %% [markdown]
 # - **Purpose**: Compare pooled vs. stratified regression models with synthetic data
