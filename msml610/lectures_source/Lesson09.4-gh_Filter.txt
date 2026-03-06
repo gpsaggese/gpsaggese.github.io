@@ -93,7 +93,7 @@ MSML610: Advanced Machine Learning
 
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/L09.4_L09_04_ground_truth.png)
+![](msml610/lectures_source/figures/L09.4.ground_truth.png)
 ::::
 :::
 
@@ -126,7 +126,7 @@ MSML610: Advanced Machine Learning
     - Always falls between measurement and prediction
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/L09.4_L09_04_knowing_gain_rate.png)
+![](msml610/lectures_source/figures/L09.4.knowing_gain_rate.png)
 ::::
 :::
 
@@ -138,7 +138,7 @@ MSML610: Advanced Machine Learning
   - Estimates diverge from measurements
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/L09.4_L09_04_wrong_gain_rate.png)
+![](msml610/lectures_source/figures/L09.4.wrong_gain_rate.png)
 ::::
 :::
 
@@ -161,7 +161,7 @@ MSML610: Advanced Machine Learning
   - You need to predict and update both
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/L09.4_L09_04_learning_gain_rate.png)
+![](msml610/lectures_source/figures/L09.4.learning_gain_rate.png)
 ::::
 :::
 
@@ -245,8 +245,8 @@ digraph BayesianFlow {
   - Too large $\to$ follow measurements, reject no noise
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/L09.4_L09_04_varying_g1.png)
-![](msml610/lectures_source/figures/L09.4_L09_04_varying_g2.png)
+![](msml610/lectures_source/figures/L09.4.varying_g1.png)
+![](msml610/lectures_source/figures/L09.4.varying_g2.png)
 ::::
 :::
 
@@ -259,7 +259,7 @@ digraph BayesianFlow {
   - Car speed on different terrains
 ::::
 :::: {.column width=55%}
-![](msml610/lectures_source/figures/L09.4_L09_04_varying_h1.png)
+![](msml610/lectures_source/figures/L09.4.varying_h1.png)
 ::::
 :::
 
