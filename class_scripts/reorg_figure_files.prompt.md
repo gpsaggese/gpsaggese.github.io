@@ -1,16 +1,6 @@
-## Step 1
-Find all the figure files referred to inside files like
-msml610/lectures_source/*.txt
+Process the content in log.txt
 
-E.g., inside msml610/lectures_source/Lesson01.3-Brief_History_of_AI.txt
-there are files like
-
-![](msml610/lectures_source/figures/Lesson01.Windows_failure.png)
-
-- You can ignore files like
-  - msml610/lectures_source/figures/UMD_Logo.png
-  - msml610/lectures_source/figures/GP_in_coding_state.png
-  - files that start with Book_cover_*
+For each file in log.txt find which file is used in
 
 - Create a map from the name of the figure file to a format like
   msml610/lectures_source/figures/L<XY.Z>.<name>.png
@@ -34,6 +24,3 @@ msml610/lectures_source/figures/L01.3.Windows_failure.png
   txt file, original file, modified file
 
   msml610/lectures_source/Lesson01.3-Brief_History_of_AI.txt,msml610/lectures_source/figures/Lesson01.Windows_failure.png,msml610/lectures_source/figures/L01.3.Windows_failure.png,
-
-## Step 2 
-Find the files that are not used in files msml610/lectures_source/*.txt

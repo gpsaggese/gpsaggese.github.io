@@ -1,4 +1,4 @@
-Read the file figure_mappings.csv
+Read the file figure_mappings_new.csv
 
 msml610/lectures_source/Lesson07.3-Hierarchical_Models.txt,msml610/lectures_source/figures/Lesson07_Pooled_unpooled_hierarchical_models.png,msml610/lectures_source/figures/L07.3.Pooled_unpooled_hierarchical_models.png
 msml610/lectures_source/Lesson07.3-Hierarchical_Models.txt,msml610/lectures_source/figures/Lesson07_Chemical_shift_hierarchical1.png,msml610/lectures_source/figures/L07.3.Chemical_shift_hierarchical1.png

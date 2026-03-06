@@ -78,7 +78,7 @@ MSML610: Advanced Machine Learning
 - Neurons send pulses to the muscles to make them contract
 ::::
 :::: {.column width=40%}
-![](lectures_source/figures/Lesson11_Neuron.png)
+![](msml610/lectures_source/figures/L11.Neuron.png)
 ::::
 :::
 
@@ -118,7 +118,7 @@ MSML610: Advanced Machine Learning
     have a machine that can learn anything
 ::::
 :::: {.column width=40%}
-![](lectures_source/figures/Lesson11_Brain.png)
+![](msml610/lectures_source/figures/L11.Brain.png)
 ::::
 :::
 
@@ -175,7 +175,7 @@ MSML610: Advanced Machine Learning
   - You can infer features automatically
 ::::
 :::: {.column width=40%}
-![](lectures_source/figures/Lesson11_Shallow_vs_Deep.png)
+![](msml610/lectures_source/figures/L11.Shallow_vs_Deep.png)
 
 - Shallow model has short computation path
 - A decision tree has some long paths
@@ -772,7 +772,7 @@ MSML610: Advanced Machine Learning
   - Pooling layer: reduces spatial dimensions (e.g., max pooling)
   - Fully connected layers: typically at the end for classification
 
-![](lectures_source/figures/Lesson11_CNN.png)
+![](msml610/lectures_source/figures/L11.CNN.png)
 
 * Convolutional Neural Networks
 
@@ -1328,8 +1328,8 @@ digraph FeedbackSystem {
 ::::
 :::: {.column width=30%}
 
-![](lectures_source/figures/Lesson11_Attention_1.png)
-![](lectures_source/figures/Lesson11_Attention_2.png)
+![](msml610/lectures_source/figures/L11.Attention_1.png)
+![](msml610/lectures_source/figures/L11.Attention_2.png)
 ::::
 :::
 

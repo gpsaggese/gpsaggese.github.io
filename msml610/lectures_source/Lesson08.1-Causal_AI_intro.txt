@@ -81,7 +81,7 @@ MSML610: Advanced Machine Learning
 \endgroup
 
 \begin{center}
-  \includegraphics[width=0.9\textwidth]{msml610/lectures_source/figures/Lesson09-Analytical_sophistication.png}
+  \includegraphics[width=0.9\textwidth]{msml610/lectures_source/figures/L08.1.Analytical_sophistication.png}
 \end{center}
 
 // ![](msml610/lectures_source/figures/L08.1_Lesson09-Dashboard.png)

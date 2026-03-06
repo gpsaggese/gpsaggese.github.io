@@ -348,7 +348,7 @@ MSML610: Advanced Machine Learning
   - Then the cycle repeats next year
 ::::
 :::: {.column width=45%}
-![](lectures_source/figures/Lesson10_Antidiabetic_drug_sales.png)
+![](lectures_source/figures/L10.Antidiabetic_drug_sales.png)
 ::::
 :::
 
@@ -389,7 +389,7 @@ MSML610: Advanced Machine Learning
   - Plot each time series chunk on the same graph
 ::::
 :::: {.column width=45%}
-![](lectures_source/figures/Lesson10_Antidiabetic_drug_sales_seasonal_plot.png)
+![](lectures_source/figures/L10.Antidiabetic_drug_sales_seasonal_plot.png)
 ::::
 :::
 
@@ -412,7 +412,7 @@ MSML610: Advanced Machine Learning
   - Help identify underlying trends by eliminating seasonal fluctuations
 ::::
 :::: {.column width=50%}
-![](lectures_source/figures/Lesson10_Antidiabetic_drug_sales_subseasonal_plot.png)
+![](lectures_source/figures/L10.Antidiabetic_drug_sales_subseasonal_plot.png)
 \begingroup \small
 Sub-seasonal plot
 \endgroup
@@ -434,7 +434,7 @@ Sub-seasonal plot
   - Speech recognition
 ::::
 :::: {.column width=40%}
-![](lectures_source/figures/Lesson10_Speech_spectrogram.png)
+![](lectures_source/figures/L10.Speech_spectrogram.png)
 ::::
 :::
 
@@ -443,7 +443,7 @@ Sub-seasonal plot
 - E.g., compute the frequency of ocean waves
 ::::
 :::: {.column width=40%}
-![](lectures_source/figures/Lesson10_Wave_spectral_plot.png)
+![](lectures_source/figures/L10.Wave_spectral_plot.png)
 ::::
 :::
 

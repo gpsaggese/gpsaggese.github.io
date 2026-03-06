@@ -84,7 +84,7 @@ MSML610: Advanced Machine Learning
   - Its wheels may slip unpredictably (stochastic outcome)
 ::::
 :::: {.column width=25%}
-![](lectures_source/figures/Lesson12_Star_Wars_droid.png)
+![](msml610/lectures_source/figures/L12.Star_Wars_droid.png)
 ::::
 :::
 
@@ -143,21 +143,21 @@ MSML610: Advanced Machine Learning
   - Total utility is the sum of all received rewards
 ::::
 :::: {.column width=25%}
-// save_screenshot.py --dst_dir lectures_source/figures --filename Lesson12_4x3_environment.png
+// save_screenshot.py --dst_dir msml610/lectures_source/figures --filename Lesson12_4x3_environment.png
 
-![](lectures_source/figures/Lesson12_4x3_environment1.png)
+![](msml610/lectures_source/figures/L12.4x3_environment1.png)
 
 \vspace{0.5cm}
 
 \begin{center}
-\includegraphics[width=0.5\textwidth]{lectures_source/figures/Lesson12_4x3_environment2.png}
+\includegraphics[width=0.5\textwidth]{msml610/lectures_source/figures/L12.4x3_environment2.png}
 {\scriptsize\text{Valid actions}}
 \end{center}
 
 \vspace{0.5cm}
 
 \begin{center}
-\includegraphics[width=1.0\textwidth]{lectures_source/figures/Lesson12_4x3_environment3.png}
+\includegraphics[width=1.0\textwidth]{msml610/lectures_source/figures/L12.4x3_environment3.png}
 {\scriptsize\text{Example of optimal policy}}
 \end{center}
 ::::
@@ -262,7 +262,7 @@ MSML610: Advanced Machine Learning
 
 ::: columns
 :::: {.column width=20%}
-![](lectures_source/figures/Lesson12_Tetris.png)
+![](msml610/lectures_source/figures/L12.Tetris.png)
 ::::
 :::: {.column width=80%}
 
@@ -307,7 +307,7 @@ MSML610: Advanced Machine Learning
     non-terminal transitions)
 ::::
 :::: {.column width=30%}
-![](lectures_source/figures/Lesson13_4x3_environment_utility_states.png)
+![](msml610/lectures_source/figures/L12.4x3_environment_utility_states.png)
 ::::
 :::
 
@@ -585,7 +585,7 @@ digraph TetrisDDN {
 
 ::::
 :::: {.column width=35%}
-![](lectures_source/figures/Lesson12_Multi_armed_bandits.png)
+![](msml610/lectures_source/figures/L12.Multi_armed_bandits.png)
 ::::
 :::
 
@@ -651,7 +651,7 @@ digraph TetrisDDN {
     because motion and sensor are noisy)
 ::::
 :::: {.column width=25%}
-![](lectures_source/figures/Lesson12_4x3_environment1.png)
+![](msml610/lectures_source/figures/L12.4x3_environment1.png)
 ::::
 :::
 

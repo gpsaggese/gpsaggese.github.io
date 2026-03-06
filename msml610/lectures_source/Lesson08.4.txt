@@ -45,7 +45,7 @@ MSML610: Advanced Machine Learning
 * Sales example
 - There are stores that put product on sales for Christmas
   
-  ![](msml610/lectures_source/figures/L09/L08.4_xmas_sales_df.png){width=60%}
+  ![](msml610/lectures_source/figures/L09/L08.4.xmas_sales_df.png){width=60%}
 
   where
   - `store`: id of the store
@@ -84,7 +84,7 @@ MSML610: Advanced Machine Learning
 - Matches intuition: _"people buy more when prices are low due to sales"_
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/L09/L08.4_xmas_boxplot.png)
+![](msml610/lectures_source/figures/L09/L08.4.xmas_boxplot.png)
 ::::
 :::
 - Is it true?
@@ -361,7 +361,7 @@ digraph SalesModelExtended {
   - Treated units concentrated on the right
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/L08/L08.4_L08_01_Association_Causation_Bias0.png)
+![](msml610/lectures_source/figures/L08/L08.4.Association_Causation_Bias0.png)
 ::::
 :::
 
@@ -374,8 +374,8 @@ digraph SalesModelExtended {
 - The challenge for causal inference is to untangle the two effects
 ::::
 :::: {.column width=45%}
-![](msml610/lectures_source/figures/L08/L08.4_L08_01_Association_Causation_Bias1.png)
-![](msml610/lectures_source/figures/L08/L08.4_L08_01_Association_Causation_Bias2.png)
+![](msml610/lectures_source/figures/L08/L08.4.Association_Causation_Bias1.png)
+![](msml610/lectures_source/figures/L08/L08.4.Association_Causation_Bias2.png)
 ::::
 :::
 
@@ -386,7 +386,7 @@ digraph SalesModelExtended {
 - Paradox occurs due to a confounder influencing the relationship
   - Aggregated data distorts results due to hidden variable
 
-![](msml610/lectures_source/figures/L08/L08.4_L08_01_Simpson_Paradox.png)
+![](msml610/lectures_source/figures/L08/L08.4.Simpson_Paradox.png)
 
 * Simpson's Paradox: Admission bias in University
 
