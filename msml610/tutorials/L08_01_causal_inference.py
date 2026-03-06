@@ -63,14 +63,13 @@ marker = ["o", "v", "d", "p"]
 
 plt.rc("font", size=20)
 
-# %%
-# Chap1
+# %% [markdown]
+# # Cell 1: Sales example
 
 # %%
 dir_name = "L09_data"
-# !ls $dir_name
+# #!ls $dir_name
 
-# %%
 out_dir_name = "figures/L09"
 
 # %%
@@ -101,57 +100,57 @@ hmatplo.save_fig(fig, os.path.join(out_dir_name, "xmas_boxplot.png"),
                   path_prefix="msml610/lectures_source")
 
 # %%
-# i = unit identifier
-# y0, y1 = outcomes under control and treatment
-# t = treatment indicator
-# x = group
-df1 = pd.DataFrame(
-    dict(
-        i=[1, 2, 3, 4, 5, 6],
-        y0=[200, 120, 300, 450, 600, 600],
-        y1=[220, 140, 400, 500, 600, 800],
-        t=[0, 0, 0, 1, 1, 1],
-        x=[0, 0, 1, 0, 0, 1],
-    )
-)
-df1
+# # i = unit identifier
+# # y0, y1 = outcomes under control and treatment
+# # t = treatment indicator
+# # x = group
+# df1 = pd.DataFrame(
+#     dict(
+#         i=[1, 2, 3, 4, 5, 6],
+#         y0=[200, 120, 300, 450, 600, 600],
+#         y1=[220, 140, 400, 500, 600, 800],
+#         t=[0, 0, 0, 1, 1, 1],
+#         x=[0, 0, 1, 0, 0, 1],
+#     )
+# )
+# df1
 
 # %%
-# Select the outcome based on the treatment.
-df1["y"] = (df1["t"] * df1["y1"] + (1 - df1["t"]) * df1["y0"]).astype(int)
+# # Select the outcome based on the treatment.
+# df1["y"] = (df1["t"] * df1["y1"] + (1 - df1["t"]) * df1["y0"]).astype(int)
 
-# Treatment effect.
-df1["te"] = df1["y1"] - df1["y0"]
+# # Treatment effect.
+# df1["te"] = df1["y1"] - df1["y0"]
 
-df1
-
-# %%
-df2 = pd.DataFrame(
-    dict(
-        i=[1, 2, 3, 4, 5, 6],
-        y0=[
-            200,
-            120,
-            300,
-            np.nan,
-            np.nan,
-            np.nan,
-        ],
-        y1=[np.nan, np.nan, np.nan, 500, 600, 800],
-        t=[0, 0, 0, 1, 1, 1],
-        x=[0, 0, 1, 0, 0, 1],
-    )
-)
-df2
+# df1
 
 # %%
-# Select the outcome based on the treatment.
-df2["y"] = (df2["t"] * df2["y1"] + (1 - df2["t"]) * df2["y0"]).astype(int)
+# df2 = pd.DataFrame(
+#     dict(
+#         i=[1, 2, 3, 4, 5, 6],
+#         y0=[
+#             200,
+#             120,
+#             300,
+#             np.nan,
+#             np.nan,
+#             np.nan,
+#         ],
+#         y1=[np.nan, np.nan, np.nan, 500, 600, 800],
+#         t=[0, 0, 0, 1, 1, 1],
+#         x=[0, 0, 1, 0, 0, 1],
+#     )
+# )
+# df2
 
-# Treatment effect.
-df2["te"] = df2["y1"] - df2["y0"]
+# %%
+# # Select the outcome based on the treatment.
+# df2["y"] = (df2["t"] * df2["y1"] + (1 - df2["t"]) * df2["y0"]).astype(int)
 
-df2
+# # Treatment effect.
+# df2["te"] = df2["y1"] - df2["y0"]
+
+# df2
 
 # %%
 plt.rc("font", size=20)
