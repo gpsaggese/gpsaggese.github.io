@@ -99,6 +99,9 @@ hmatplo.save_fig(fig, os.path.join(out_dir_name, "xmas_boxplot.png"),
                   print_markdown=True,
                   path_prefix="msml610/lectures_source")
 
+# %% [markdown]
+# ## Conceptual example.
+
 # %%
 # # i = unit identifier
 # # y0, y1 = outcomes under control and treatment
@@ -152,7 +155,11 @@ hmatplo.save_fig(fig, os.path.join(out_dir_name, "xmas_boxplot.png"),
 
 # df2
 
+# %% [markdown]
+# ## Visual Analysis of Bias in Sales Example
+
 # %%
+# TODO(ai_gp): Move this to msml610/tutorials/L08_01_causal_inference_utils.py
 plt.rc("font", size=20)
 fig = plt.figure()
 
@@ -203,6 +210,8 @@ plt.scatter(
 plt.legend(fontsize="14")
 
 # %%
+# TODO(ai_gp): Move this to msml610/tutorials/L08_01_causal_inference_utils.py
+
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -343,6 +352,8 @@ plt.show()
 # # Simpson paradox
 
 # %%
+# TODO(ai_gp): Move this to msml610/tutorials/L08_01_causal_inference_utils.py
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
