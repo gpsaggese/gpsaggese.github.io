@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -33,6 +33,10 @@ sns.set_style("whitegrid")
 plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
+import helpers.hmatplotlib as hmatplo
+import helpers.hmodule as hmodule
+import helpers.hpandas_display as hpandisp
+
 import msml610_utils as ut
 import L08_01_causal_inference_utils as mtl0cireout
 
@@ -43,26 +47,25 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %%
-import helpers.hmodule as hmodule
 hmodule.install_module_if_not_present(
   "dataframe_image",
   use_activate=True,
 )
 
 # %%
-from cycler import cycler
+# from cycler import cycler
 
-default_cycler = (
-    cycler(color=["0.3", "0.5", "0.7", "0.5"])
-    + cycler(linestyle=["-", "--", ":", "-."])
-    + cycler(marker=["o", "v", "d", "p"])
-)
+# default_cycler = (
+#     cycler(color=["0.3", "0.5", "0.7", "0.5"])
+#     + cycler(linestyle=["-", "--", ":", "-."])
+#     + cycler(marker=["o", "v", "d", "p"])
+# )
 
-color = ["0.3", "0.5", "0.7", "0.5"]
-linestyle = ["-", "--", ":", "-."]
-marker = ["o", "v", "d", "p"]
+# color = ["0.3", "0.5", "0.7", "0.5"]
+# linestyle = ["-", "--", ":", "-."]
+# marker = ["o", "v", "d", "p"]
 
-plt.rc("font", size=20)
+# plt.rc("font", size=20)
 
 # %% [markdown]
 # # Cell 1: Sales example
@@ -71,21 +74,25 @@ plt.rc("font", size=20)
 dir_name = "L08_data"
 # #!ls $dir_name
 
-out_dir_name = "figures/L08"
-# # cp msml610/lectures_source/figures/L08/*.png msml610/lectures_source/figures/L08/
+out_dir_name = "figures/"
+
+markdown_path_prefix="msml610/lectures_source"
+# # cp msml610/lectures_source/figures/L08*.png msml610/lectures_source/figures
 
 # %%
-data = pd.read_csv(dir_name + "/xmas_sales.csv")
-data["is_on_sale"] = data["is_on_sale"].astype(float)
+data = mtl0cireout.load_xmas_sales_data(dir_name)
 print(data.shape)
 data.head(6)
 
 # %%
-import helpers.hpandas_display as hpandisp
-hpandisp.convert_df_to_png(data.head(6), os.path.join(out_dir_name, 'xmas_sales_df.png'), index=True,
-                           print_markdown=True,
-                           markdown_path_prefix="msml610/lectures_source")
-# # cp msml610/tutorials/figures/L09/* msml610/lectures_source/figures/L09/
+xmas_sales_df_png = os.path.join(out_dir_name, 'L08.4.xmas_sales_df.png')
+hpandisp.convert_df_to_png(
+    data.head(6),
+    xmas_sales_df_png,
+    index=True,
+    print_markdown=True,
+    markdown_path_prefix=markdown_path_prefix
+)
 
 # %% [markdown]
 # - **Purpose**: Compare sales outcomes between stores with and without price cuts
@@ -93,19 +100,14 @@ hpandisp.convert_df_to_png(data.head(6), os.path.join(out_dir_name, 'xmas_sales_
 # - **Key insight**: Visual evidence suggesting price cuts increase sales, but this may reflect confounding rather than true causal effect
 
 # %%
-# TODO(ai_gp): Move to _utils.py
-fig, ax = plt.subplots(1, 1, figsize=(10, 5))
-sns.boxplot(y="weekly_amount_sold", x="is_on_sale", data=data,
-            ax=ax)
-
-ax.set_xlabel("is_on_sale", fontsize=20)
-ax.set_ylabel("weekly_amount_sold", fontsize=20)
-ax.tick_params(axis="both", which="major", labelsize=18)
-
-import helpers.hmatplotlib as hmatplo
-hmatplo.save_fig(fig, os.path.join(out_dir_name, "xmas_boxplot.png"),
-                  print_markdown=True,
-                  path_prefix="msml610/lectures_source")
+fig = mtl0cireout.plot_xmas_sales_boxplot(data)
+xmas_boxplot_png = os.path.join(out_dir_name, "L08.4.xmas_boxplot.png")
+hmatplo.save_fig(
+    fig,
+    xmas_boxplot_png,
+    print_markdown=True,
+    path_prefix=markdown_path_prefix
+)
 
 # %% [markdown]
 # ## Cell 2: Conceptual Example
@@ -172,11 +174,14 @@ hmatplo.save_fig(fig, os.path.join(out_dir_name, "xmas_boxplot.png"),
 # - **Key insight**: Within each group, the relationship between baseline sales and treatment appears similar, but overall pooled relationship is different
 
 # %%
-mtl0cireout.plot_sales_bias_analysis(data, marker)
-fig = None
-hmatplo.save_fig(fig, os.path.join(out_dir_name, "Association_Causation_Bias0.png"),
-                  print_markdown=True,
-                  path_prefix="msml610/lectures_source")
+fig = mtl0cireout.plot_sales_bias_analysis(data)
+bias_analysis0_png = os.path.join(out_dir_name, "L08.4.Association_Causation_Bias0.png")
+hmatplo.save_fig(
+    fig,
+    bias_analysis0_png,
+    print_markdown=True,
+    path_prefix=markdown_path_prefix
+)
 
 # %% [markdown]
 # - **Purpose**: Compare pooled vs. stratified regression models with synthetic data
@@ -184,10 +189,14 @@ hmatplo.save_fig(fig, os.path.join(out_dir_name, "Association_Causation_Bias0.pn
 # - **Key insight**: Simpson's paradox emerges when aggregation obscures group-level trends; stratification reveals the true relationships
 
 # %%
-mtl0cireout.plot_single_vs_separate_trends()
-hmatplo.save_fig(fig, os.path.join(out_dir_name, "Association_Causation_Bias1.png"),
-                  print_markdown=True,
-                  path_prefix="msml610/lectures_source")
+fig = mtl0cireout.plot_single_vs_separate_trends()
+bias_analysis1_png = os.path.join(out_dir_name, "L08.4.Association_Causation_Bias1.png")
+hmatplo.save_fig(
+    fig,
+    bias_analysis1_png,
+    print_markdown=True,
+    path_prefix=markdown_path_prefix
+)
 
 # %% [markdown]
 # ## Cell 4: Simpson's Paradox
@@ -197,7 +206,11 @@ hmatplo.save_fig(fig, os.path.join(out_dir_name, "Association_Causation_Bias1.pn
 # - **Key insight**: Ignoring confounding variables (like business size) leads to contradictory causal conclusions
 
 # %%
-mtl0cireout.plot_simpsons_paradox()
-hmatplo.save_fig(fig, os.path.join(out_dir_name, "Simpson_Paradox.png"),
-                  print_markdown=True,
-                  path_prefix="msml610/lectures_source")
+fig = mtl0cireout.plot_simpsons_paradox()
+simpsons_paradox_png = os.path.join(out_dir_name, "L08.4.Simpson_Paradox.png")
+hmatplo.save_fig(
+    fig,
+    simpsons_paradox_png,
+    print_markdown=True,
+    path_prefix=markdown_path_prefix
+)
