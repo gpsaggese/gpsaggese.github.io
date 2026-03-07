@@ -278,8 +278,20 @@ def plot_simpsons_paradox():
         label="Group Red",
     )
     # Plot group regression lines.
-    plt.plot(x1, model_blue.predict(x1.reshape(-1, 1)), color="blue", linewidth=2)
-    plt.plot(x2, model_red.predict(x2.reshape(-1, 1)), color="red", linewidth=2)
+    plt.plot(
+        x1,
+        model_blue.predict(x1.reshape(-1, 1)),
+        color="blue",
+        linewidth=2,
+        label="Group Blue Trend",
+    )
+    plt.plot(
+        x2,
+        model_red.predict(x2.reshape(-1, 1)),
+        color="red",
+        linewidth=2,
+        label="Group Red Trend",
+    )
     # Plot overall regression line.
     x_range = np.linspace(min(x), max(x), 100)
     plt.plot(
@@ -292,4 +304,102 @@ def plot_simpsons_paradox():
     # Labels and legend.
     plt.xlabel("x")
     plt.ylabel("y")
+    plt.legend(fontsize=10, loc="best")
+    return fig
+
+
+def plot_university_simpsons_paradox() -> mfigure.Figure:
+    """
+    Plot Simpson's paradox in a university context showing admission trends.
+
+    Demonstrates how two groups can each show positive trends in admission rates,
+    but when aggregated, the overall trend reverses, illustrating Simpson's
+    paradox. This is a common phenomenon in real admissions data.
+
+    :return: matplotlib figure object with two subplots
+    """
+    # Generate synthetic university admission data.
+    np.random.seed(0)
+    n = 100
+    # Group A: More selective, higher baseline admission rates.
+    x_a = np.random.normal(20, 2, n)
+    y_a = 2 * x_a + np.random.normal(0, 8, n) + 60
+    # Group B: Less selective, lower baseline admission rates.
+    x_b = np.random.normal(25, 2, n)
+    y_b = 2 * x_b + np.random.normal(0, 8, n) + 20
+    # Create figure with two subplots.
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+    # Plot 1: Separated groups with individual trends.
+    ax1.scatter(
+        x_a,
+        y_a,
+        alpha=0.6,
+        s=50,
+        color="blue",
+        edgecolor="darkblue",
+        label="Group A",
+    )
+    ax1.scatter(
+        x_b,
+        y_b,
+        alpha=0.6,
+        s=50,
+        color="red",
+        edgecolor="darkred",
+        label="Group B",
+    )
+    # Calculate and plot regression lines for each group.
+    coef_a = np.polyfit(x_a, y_a, 1)
+    coef_b = np.polyfit(x_b, y_b, 1)
+    x_line = np.linspace(
+        min(x_a.min(), x_b.min()), max(x_a.max(), x_b.max()), 100
+    )
+    ax1.plot(
+        x_line,
+        coef_a[0] * x_line + coef_a[1],
+        color="blue",
+        linewidth=2,
+        linestyle="-",
+        label="Group A Trend",
+    )
+    ax1.plot(
+        x_line,
+        coef_b[0] * x_line + coef_b[1],
+        color="red",
+        linewidth=2,
+        linestyle="-",
+        label="Group B Trend",
+    )
+    ax1.set_title("Grouped Data (Positive Trends in Each Group)", fontsize=12)
+    ax1.set_xlabel("Metric (e.g., GPA, SAT)", fontsize=11)
+    ax1.set_ylabel("Admission Rate (%)", fontsize=11)
+    ax1.legend(fontsize=10)
+    ax1.grid(True, alpha=0.3)
+    # Plot 2: Aggregated data with overall trend.
+    x_all = np.concatenate([x_a, x_b])
+    y_all = np.concatenate([y_a, y_b])
+    ax2.scatter(
+        x_all,
+        y_all,
+        alpha=0.6,
+        s=50,
+        color="purple",
+        edgecolor="purple",
+        label="All Applicants",
+    )
+    coef_all = np.polyfit(x_all, y_all, 1)
+    ax2.plot(
+        x_line,
+        coef_all[0] * x_line + coef_all[1],
+        color="black",
+        linewidth=2,
+        linestyle="--",
+        label="Overall Trend",
+    )
+    ax2.set_title("Aggregated Data (Reversed Trend)", fontsize=12)
+    ax2.set_xlabel("Metric (e.g., GPA, SAT)", fontsize=11)
+    ax2.set_ylabel("Admission Rate (%)", fontsize=11)
+    ax2.legend(fontsize=10)
+    ax2.grid(True, alpha=0.3)
+    plt.tight_layout()
     return fig

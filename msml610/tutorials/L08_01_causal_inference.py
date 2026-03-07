@@ -52,21 +52,6 @@ hmodule.install_module_if_not_present(
   use_activate=True,
 )
 
-# %%
-# from cycler import cycler
-
-# default_cycler = (
-#     cycler(color=["0.3", "0.5", "0.7", "0.5"])
-#     + cycler(linestyle=["-", "--", ":", "-."])
-#     + cycler(marker=["o", "v", "d", "p"])
-# )
-
-# color = ["0.3", "0.5", "0.7", "0.5"]
-# linestyle = ["-", "--", ":", "-."]
-# marker = ["o", "v", "d", "p"]
-
-# plt.rc("font", size=20)
-
 # %% [markdown]
 # # Cell 1: Sales example
 
@@ -214,3 +199,15 @@ hmatplo.save_fig(
     print_markdown=True,
     path_prefix=markdown_path_prefix
 )
+
+# %% [markdown]
+# ## Cell 5: University Simpson's Paradox
+#
+# - **Purpose**: Demonstrate Simpson's paradox in university admissions context with two different groups
+# - **What it shows**: Left panel shows two groups (A and B) each with positive admission trends; right panel shows aggregated data with reversed negative overall trend
+# - **Key insight**: Simpson's paradox reveals how ignoring group differences (e.g., selectivity, baseline rates) leads to reversed causal conclusions in aggregate data
+
+# %%
+fig = mtl0cireout.plot_university_simpsons_paradox()
+
+# %%
