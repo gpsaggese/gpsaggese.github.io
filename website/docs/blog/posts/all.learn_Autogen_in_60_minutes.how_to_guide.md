@@ -48,28 +48,28 @@ Key capabilities:
 This tutorial includes all the code, notebooks, and Docker containers in
 `tutorials/Autogen/`.
 
-- `tutorials/Autogen/README.md`: Instructions and setup for the tutorial
+- [`tutorials/Autogen/README.md`](../../../../tutorials/Autogen/README.md): Instructions and setup for the tutorial
   environment
 - A Docker system to build and run the environment using our standardized
   approach
-- `autogen.API.ipynb`: Tutorial notebook focusing on API configurations and
+- [`autogen.API.ipynb`](../../../../tutorials/Autogen/autogen.API.ipynb): Tutorial notebook focusing on API configurations and
   basic agent setup
-- `autogen.example.ipynb`: Advanced end-to-end agentic workflow example
-- `autogen_utils.py`: Utility functions required by `autogen.example.ipynb`
+- [`autogen.example1.ipynb`](../../../../tutorials/Autogen/AutoGen.example1.ipynb): Advanced end-to-end agentic workflow example Part 1
+- [`autogen.example2.ipynb`](../../../../tutorials/Autogen/AutoGen.example2.ipynb): Advanced end-to-end agentic workflow example Part 1
+- [`autogen_utils.py`](../../../../tutorials/Autogen/autogen_utils.py): Utility functions required by [`autogen.example1.ipynb`](../../../../tutorials/Autogen/AutoGen.example1.ipynb) and [`autogen.example2.ipynb`](../../../../tutorials/Autogen/AutoGen.example2.ipynb)
 
-## `autogen.example.ipynb`
+## [`autogen.example1.ipynb`](../../../../tutorials/Autogen/AutoGen.example1.ipynb) and [`autogen.example2.ipynb`](../../../../tutorials/Autogen/AutoGen.example2.ipynb)
 
-This notebook provides a practical, end-to-end example of using AutoGen to
-demonstrate a complete agentic workflow.
+Each notebook contains two end-to-end practical examples, as shown below.
 
-### Part 1: Dynamic Market Debate and Live Data
+### [Part 1: Dynamic Market Debate and Live Data](../../../../tutorials/Autogen/AutoGen.example1.ipynb)
 
 - Fetches real-time stock data from Yahoo Finance
 - Bull and Bear strategist agents debate market trends
 - Selector agent dynamically decides which expert to call at each step
 - Generates stock charts and financial summaries
 
-### Part 2: SEC Filings and Quantitative RAG Analysis
+### [Part 2: SEC Filings and Quantitative RAG Analysis](../../../../tutorials/Autogen/AutoGen.example2.ipynb)
 
 Part 2 extends Part 1 by combining live market data with deep, structured
 analysis of SEC filings.
