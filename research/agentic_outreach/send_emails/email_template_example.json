@@ -1,0 +1,4 @@
+{
+  "subject": "Hello {first_name}!",
+  "body": "Dear {first_name} {last_name},\n\nThis is a personalized email sent to you.\n\nBest regards,\nThe Team"
+}

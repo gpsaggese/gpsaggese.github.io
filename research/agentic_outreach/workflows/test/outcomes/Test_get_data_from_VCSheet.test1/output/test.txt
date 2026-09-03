@@ -1,0 +1,2 @@
+hash,origin,origin_timestamp,first_name,last_name,email,email_timestamp,email_verification,email_verification_timestamp,linkedin_url,job_title,linked_timestamp,company_name,company_domain,company_type,industry,city,country,enrichment_timestamp,type,biography
+,VCSheet_Query1,,Ann,Miura-Ko,ann@floodgate.com,,,,https://www.linkedin.com/in/amiura/,Co-Founding Partner@Floodgate,,Floodgate,,,,,,,,

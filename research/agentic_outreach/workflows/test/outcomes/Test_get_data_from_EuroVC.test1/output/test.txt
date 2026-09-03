@@ -1,0 +1,2 @@
+hash,origin,origin_timestamp,first_name,last_name,email,email_timestamp,email_verification,email_verification_timestamp,linkedin_url,job_title,linked_timestamp,company_name,company_domain,company_type,industry,city,country,enrichment_timestamp,type,biography
+,Euro-VC-LinkedIn,2020-08-20T16:15:48.000Z,Julian,Zachmann,,,,,https://www.linkedin.com/in/julianzachmann/,Venture Capital Investor,,http://www.high-tech-gruenderfonds.de,,,,Bonn,,,,

@@ -1,0 +1,59 @@
+3D Printing 3,152
+AdTech 13,766
+Advanced Manufacturing 9,006
+AgTech 13,639
+Artificial Intelligence & Machine Learning 85,979
+AudioTech 3,610
+Augmented Reality 6,078
+Autonomous cars 1,233
+B2B Payments 1,784
+Beauty 3,152
+Big Data 30,590
+Cannabis 6,662
+Car-Sharing 602
+CleanTech 54,951
+Climate Tech 11,811
+CloudTech & DevOps 16,679
+Construction Technology 4,731
+Cryptocurrency/Blockchain 20,461
+Cybersecurity 17,860
+Digital Health 13,288
+E-Commerce 58,896
+EdTech 22,704
+Ephemeral Content 272
+Esports 2,893
+FemTech 2,297
+FinTech 53,769
+FoodTech 12,830
+Gaming 17,413
+HealthTech 36,891
+HR Tech 12,028
+Impact Investing 1,428
+Industrials 244,030
+Infrastructure 10,443
+InsurTech 5,646
+Internet of Things 17,948
+Legal Tech 3,263
+Life Sciences 42,279
+LOHAS & Wellness 47,828
+Manufacturing 222,873
+Marketing Tech 23,675
+Micro-Mobility 964
+Mobile 69,009
+Mobile Commerce 3,563
+Mobility Tech 9,134
+Mortgage Tech 548
+Nanotechnology 3,330
+Oil & Gas 35,114
+Oncology 13,982
+Pet Technology 1,581
+Real Estate Technology 12,134
+Restaurant Technology 4,203
+Ridesharing 1,152
+Robotics and Drones 11,024
+SaaS 135,717
+Space Technology 2,694
+Supply Chain Tech 7,624
+TMT 261,220
+Virtual Reality 6,461
+Wearables & Quantified Self 4,420

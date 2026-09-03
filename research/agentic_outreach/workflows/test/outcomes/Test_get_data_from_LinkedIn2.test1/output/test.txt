@@ -1,0 +1,2 @@
+hash,origin,origin_timestamp,first_name,last_name,email,email_timestamp,email_verification,email_verification_timestamp,linkedin_url,job_title,linked_timestamp,company_name,company_domain,company_type,industry,city,country,enrichment_timestamp,type,biography
+,VC_search_export,2024-07-11T18:03:01.973Z,Zhenya,Loginov,zloginov@accel.com,,_valid_,,https://www.linkedin.com/in/ACwAAABGC0cBTaYzMWKXyySFD4zZyoPI59OadWk/,Partner,,Accel,,,,"Palo Alto, California, United States",,,,I invest and help European and Israeli founders build global businesses

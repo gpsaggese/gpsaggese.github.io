@@ -1,0 +1,2 @@
+hash,origin,origin_timestamp,first_name,last_name,email,email_timestamp,email_verification,email_verification_timestamp,linkedin_url,job_title,linked_timestamp,company_name,company_domain,company_type,industry,city,country,enrichment_timestamp,type,biography
+,Folkapp,,Susan,Akbarpour,susan@candouventures.com,,,,https://www.linkedin.com/in/susanakbarpour,"Investor, Serial entrepreneur and board member",,Candou Ventures,,,,Palo Alto,,,,

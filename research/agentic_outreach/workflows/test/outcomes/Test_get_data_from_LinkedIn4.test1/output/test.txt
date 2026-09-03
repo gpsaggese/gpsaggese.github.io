@@ -1,0 +1,2 @@
+hash,origin,origin_timestamp,first_name,last_name,email,email_timestamp,email_verification,email_verification_timestamp,linkedin_url,job_title,linked_timestamp,company_name,company_domain,company_type,industry,city,country,enrichment_timestamp,type,biography
+,VC Tier 1,,Dinesh,K,dk@accel.com,,_valid_,,,Partner,,Accel,accel.com,,,San Francisco Bay Area,,,,
