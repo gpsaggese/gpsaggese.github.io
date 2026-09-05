@@ -2,14 +2,6 @@
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L02.2: Machine Learning Paradigms
 // slides_engine=typst
-// references=
-// - Burkov: "The Hundred-Page Machine Learning Book" (2019)
-// - Russell et al.: "Artificial Intelligence: A Modern Approach" (4th ed, 2020)
-// - Hastie et al.: "The Elements of Statistical Learning" (2nd ed, 2009)
-
-
-// Model assessment and selection
-// Hastie 7 (p. 238)
 
 # Machine Learning Paradigms
 
