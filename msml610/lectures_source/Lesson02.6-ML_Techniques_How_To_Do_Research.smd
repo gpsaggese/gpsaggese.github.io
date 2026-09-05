@@ -38,9 +38,22 @@
       complexity
   - Complexity of a hypothesis set $\calH$
     - E.g., VC dimension of the model
+      `#cite("abumostafa2012learning")`{=typst}
   - Complexity of both $h$ and $\calH$ are related by counting:
     - If you need $l$ bits to specify $h$, then $h$ is one of $2^l$ elements of
       set $\calH$
+
+\begingroup \footnotesize
+```{=typst}
+#styled-table(
+  headers: ("Complexity Of", "Measure", "Example"),
+  rows: (
+    ("Single hypothesis $h$", "Description length", "Polynomial order, MDL, Kolmogorov complexity"),
+    ("Hypothesis set $\calH$", "Capacity", "VC dimension"),
+  ),
+)
+```
+\endgroup
 
 * Model Soundness
 - @Model should tell a story@
@@ -68,12 +81,27 @@
     - The model views the world through training data
   - Formalized by Hoeffding's hypothesis in ML theory: training and testing
     distributions are the same
+    `#cite("abumostafa2012learning")`{=typst}
 
 - @Causes of Sampling Bias@
   - _Non-random sampling_: Favors certain outcomes or groups
   - _Undercoverage_: Inadequate representation of some population members
   - _Survivorship bias_: Includes only successful subjects
   - _Self-selection bias_: Participants choose to participate, introducing bias
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#EEEDFE', 'primaryBorderColor': '#7F77DD', 'primaryTextColor': '#26215C', 'lineColor': '#888888', 'fontFamily': 'Helvetica'}}}%%
+mindmap
+  root((**Sampling Bias**))
+    (**Non-random sampling**)
+      Favors certain outcomes
+    (**Undercoverage**)
+      Inadequate representation
+    (**Survivorship bias**)
+      Only successful subjects
+    (**Self-selection bias**)
+      Participants opt in
+```
 
 - @Consequences@
   - Systematic errors distort relationships or predictions
@@ -96,6 +124,7 @@
 * Data Snooping (1/2)
 - @Definition@: **Data snooping** occurs when test set information improperly
   influences model-building
+  `#cite("hastie2009statlearn")`{=typst}
 
 - @Causes of Data Snooping@
   - _Train-test contamination_: Test data leaks into training
@@ -124,8 +153,20 @@
     - Fit preprocessing steps only on training data, then apply to test data
   - Use cross-validation properly
 
+\begingroup \footnotesize
+```{=typst}
+#styled-table(
+  headers: ("Source", "Preventive Strategy"),
+  rows: (
+    ("Train-test contamination", "Keep training, validation, and test sets separate"),
+    ("Multiple hypothesis testing", "Use cross-validation properly; fit preprocessing on training data only"),
+  ),
+)
+```
+\endgroup
+
 * "Burning the Test Set"
-- @Problem@
+- @Problem@ `#cite("hastie2009statlearn")`{=typst}
   - Repeated test set use during development leaks into training $\to$ overfitting to
     _test data_
   - _"If you torture the data long enough, it will confess whatever you want"_
@@ -149,10 +190,10 @@
 
 * How to Achieve Out-Of-Sample Fit
 - @Goal@: Choose an hypothesis $g \in \calH$ approximates the unknown target
-  function $f$
+  function $f$ `#cite("abumostafa2012learning")`{=typst}
   - $g \approx f$ means $E_{out}(g) \approx 0$
 
-- @Solution@: 
+- @Solution@:
   - Build a model that has:
     - Good in-sample performance $E_{in}(g) \approx 0$
     - Good generalization $E_{out}(g) \approx E_{in}(g)$
@@ -161,6 +202,7 @@
 * What If Out-Of-Sample Fit Is Poor?
 - @Problem@: the model performs well in sample ($E_{in} \approx 0$) but poorly out of
   sample ($E_{out} \gg E_{in}$)
+  `#cite("abumostafa2012learning")`{=typst}
   - In-sample performance is optimistic
   - Model is overfitted and fails to generalize
 
@@ -180,8 +222,23 @@
        - Decrease regularization $\lambda$ to fix high bias
        - Increase regularization $\lambda$ to fix high variance
 
+\begingroup \footnotesize
+```{=typst}
+#styled-table(
+  headers: ("Lever", "Action", "Effect"),
+  rows: (
+    ("Training data", "Get more data", "Fixes high variance"),
+    ("Features", "Remove features", "Fixes high variance"),
+    ("Features", "Add (derived) features", "Fixes high bias"),
+    ("Regularization", "Decrease $\lambda$", "Fixes high bias"),
+    ("Regularization", "Increase $\lambda$", "Fixes high variance"),
+  ),
+)
+```
+\endgroup
+
 * Why Using a Lot of Data?
-- @Fact@: **Several studies** show that:
+- @Fact@: **Several studies** show that: `#cite("abumostafa2012learning")`{=typst}
   - Different algorithms/models have remarkably similar performance
   - Increasing training set improves performance
 
@@ -346,3 +403,10 @@ _Iterative_
 _Incremental vs Iterative_
 ::::
 :::
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
+```
