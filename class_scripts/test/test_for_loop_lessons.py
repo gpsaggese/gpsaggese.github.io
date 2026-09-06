@@ -3,6 +3,8 @@ import pprint
 from typing import List, Optional
 from unittest import mock
 
+import pytest
+
 import helpers.hio as hio
 import helpers.hunit_test as hunitest
 import helpers.hunit_test_utils as hunteuti
@@ -732,9 +734,16 @@ class Test_generate_script_e2e(hunitest.TestCase):
     No output verification - only checks that the command completes.
     """
 
+
+    # Requires a dev container: `_generate_script()` calls
+    # `gen_lecture_video_script.py`, which makes a real LLM API call (needs
+    # `openai` + network) and shells out to `lint_text.py
+    # --use_dockerized_prettier` (needs Docker).
+    @pytest.mark.need_dev_container
     def test1(self) -> None:
         """
         Fast test: `_generate_script()` executes successfully with minimal source file.
+
         """
         # Prepare inputs.
         class_dir, scratch_dir = _create_test_structure(
@@ -745,10 +754,10 @@ class Test_generate_script_e2e(hunitest.TestCase):
         source_content = """
         # Lesson 04.1: Scripts
 
-        ## Transition: Start
+        * Slide 1
         Beginning.
 
-        ## Content
+        * Slide 2
         Body.
         """
         source_content = hprint.dedent(source_content)
@@ -821,6 +830,7 @@ class Test_process_lecture_file_e2e(hunitest.TestCase):
             class_dir, source_path, source_name, actions
         )
 
+    @pytest.mark.need_dev_container
     def test3(self) -> None:
         """
         Fast test: Process file with `generate_script` action.
@@ -834,10 +844,10 @@ class Test_process_lecture_file_e2e(hunitest.TestCase):
         source_content = """
         # Lesson 03.1: Script Test
 
-        ## Transition: Start
+        * Slide 1
         Begin.
 
-        ## Content
+        * Slide 2
         Body text.
         """
         source_content = hprint.dedent(source_content)

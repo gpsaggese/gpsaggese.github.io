@@ -1,6 +1,7 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L09.9: Monte Carlo Tree Search
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 // references=
 // - 2006, Coulom, "Efficient Selectivity and Backup Operators in Monte-Carlo

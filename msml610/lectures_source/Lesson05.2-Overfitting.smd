@@ -1,6 +1,7 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L05.2: Overfitting
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 // references=
 // - Abu-Mostafa et al.: _"Learning From Data"_ (2012)
@@ -29,6 +30,7 @@
 :::: {.column width=45%}
 
 ```tikz
+\bfseries
 % Axis
 \draw[->] (0,0) -- (7,0) node[right] {$\text{VC dimension, } d_{\text{vc}}$};
 \draw[->] (0,0) -- (0,5) node[above] {Error};
@@ -671,6 +673,7 @@
 :::: {.column width=40%}
 
 ```tikz
+\bfseries
 % Axes
 \draw[->] (0,0) -- (7,0) node[below] {Number of Data Points, $N$};
 \draw[->] (0,0) -- (0,4) node[above] {Expected Error};

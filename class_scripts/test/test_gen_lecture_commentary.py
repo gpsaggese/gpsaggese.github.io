@@ -9,9 +9,13 @@ import class_scripts.test.test_gen_lecture_commentary as csttgelcom
 import logging
 from unittest import mock
 
+import pytest
+
 import helpers.hprint as hprint
 import helpers.hunit_test as hunitest
 
+# `gen_lecture_commentary.py` is a `uv run` script that requires `pdf2image`.
+pytest.importorskip("pdf2image")
 import class_scripts.gen_lecture_commentary as csgeleco
 
 _LOG = logging.getLogger(__name__)

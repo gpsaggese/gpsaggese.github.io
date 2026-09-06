@@ -39,7 +39,6 @@ import class_scripts.common_utils as csccouti
 import class_scripts.slides_utils as cscsluti
 import helpers.hdbg as hdbg
 import helpers.hio as hio
-import helpers.hllm as hllm
 import helpers.hparser as hparser
 import helpers.hselect_input_output as hseinout
 import helpers.hsystem as hsystem
@@ -104,6 +103,8 @@ def _process_slides_group(
     :param model: LLM model to use
     :return: generated script content
     """
+    import helpers.hllm as hllm
+
     hdbg.dassert_isinstance(slides_group, list)
     hdbg.dassert_lt(0, len(slides_group))
     # Process images from slides.
@@ -273,7 +274,7 @@ def generate_lecture_video_script(
     _LOG.info("Step 5: Linting the final script")
     cmd = (
         f"lint_text.py -i {output_file} -o {output_file} "
-        f"--use_dockerized_prettier --action prettier --action frame_chapters"
+        f"--use_dockerized_prettier --action beautify --action frame_chapters"
     )
     hsystem.system(cmd)
     _LOG.info("Lecture script generated: %s", output_file)

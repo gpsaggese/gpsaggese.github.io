@@ -62,7 +62,8 @@ for combo in "${COMBOS[@]}"; do
     model_tag=$(echo "$model_tag" | tr '/' '_')
     tag="${lesson_slug}__${MODE}__${backend}__${model_tag}"
 
-    cmd=(python class_scripts/gen_book_chapter.py "$LESSON" \
+    cmd=(python class_scripts/gen_book_chapter.py \
+        --input "$LESSON" \
         --mode "$MODE" \
         --llm_backend "$backend" \
         --no_incremental \

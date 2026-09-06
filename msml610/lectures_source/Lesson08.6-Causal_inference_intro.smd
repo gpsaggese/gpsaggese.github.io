@@ -1,6 +1,7 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L08.6: Intro to Causal Inference
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 // references=
 // - Facure, Causal Inference in Python, 2023

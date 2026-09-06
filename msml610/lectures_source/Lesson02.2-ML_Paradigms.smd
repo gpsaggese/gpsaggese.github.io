@@ -1,151 +1,196 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L02.2: Machine Learning Paradigms
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 
 # Machine Learning Paradigms
 
 ## Major Paradigms
 
-* Machine Learning Paradigms with Examples (1/3)
+* Machine Learning Paradigms: A Taxonomy
 
-- **Supervised Learning**
-  - Learn from labeled data to predict labels for new inputs
-  - E.g., image classification using ResNet on ImageNet
+- @Question@: How do the paradigms differ in _how they access data and
+  feedback_?
 
-- **Unsupervised Learning**
-  - Discover hidden patterns or structure in unlabeled data
-  - E.g., K-means clustering for customer segmentation
+// TODO(ai_gp): Add a ... since there are more axes to consider
+```graphviz[width=80%]
+digraph LearningParadigms {
+  graph [rankdir=LR, splines=curved, bgcolor="transparent",
+         ranksep="1.0 equally", nodesep=0.24, pad=0.3, fontname="Helvetica"];
+  node  [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12,
+         fontcolor="#26215C", color="#D8D6EE", penwidth=1.2,
+         height=0.46, margin="0.18,0.09"];
+  edge  [arrowhead=none, penwidth=1.4, color="#B9B6D6"];
 
-- **Reinforcement Learning**
-  - Learn through interaction with an environment, receiving rewards/punishments
-  - E.g., deep Q-Learning for playing Atari games
+  root [label="Learning Paradigms", shape=box, style="rounded,filled",
+        fillcolor="#26215C", fontcolor="white", fontsize=14, penwidth=0,
+        margin="0.26,0.16"];
 
-- **Self-Supervised Learning**
-  - Generate pseudo-labels from unlabeled data to pre-train models
-  - E.g., BERT (Masked Language Modeling)
+  // Label availability - violet
+  label_avail [label="Label Availability", fillcolor="white", color="#7C74D6", fontcolor="#45296B", penwidth=1.6, fontsize=12];
+  supervised   [label=<<b>Supervised</b><br/><font point-size="9" color="#45296B">Labeled input-output pairs</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
+  unsupervised [label=<<b>Unsupervised</b><br/><font point-size="9" color="#45296B">Unlabeled data, discover structure</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
+  selfsup      [label=<<b>Self-supervised</b><br/><font point-size="9" color="#45296B">Labels derived from data</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
+  semisup      [label=<<b>Semi-supervised</b><br/><font point-size="9" color="#45296B">Mixed labeled + unlabeled</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 
-- **Semi-Supervised Learning**
-  - Combine small labeled data with large unlabeled data to improve performance
-  - E.g., named entity recognition (NER) using annotated sentences with entity
-    tags combined with many raw text documents
+  // Interactive - blue
+  interactive  [label="Interactive/Sequential", fillcolor="white", color="#3E86C8", fontcolor="#1F4E79", penwidth=1.6, fontsize=12];
+  rl           [label=<<b>Reinforcement</b><br/><font point-size="9" color="#1F4E79">Learn from delayed rewards</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
+  active       [label=<<b>Active Learning</b><br/><font point-size="9" color="#1F4E79">Request labels on demand</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
+  online       [label=<<b>Online Learning</b><br/><font point-size="9" color="#1F4E79">Sequential data, incremental update</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
 
-* Machine Learning Paradigms with Examples (2/3)
+  root -> label_avail [color="#7C74D6", penwidth=2.0];
+  root -> interactive [color="#3E86C8", penwidth=2.0];
 
-- **Online Learning**
-  - Learn incrementally from a stream of data in real time
+  label_avail -> {supervised unsupervised selfsup semisup} [color="#A9A3E6"];
+  interactive -> {rl active online}                        [color="#8FB6DE"];
+
+  { rank=same; supervised; unsupervised; selfsup; semisup; rl; active; online; }
+}
+```
+
+* Machine Learning Paradigms: Examples (1/3)
+
+- @Question@: How to set up a machine learning problem?
+  - @Supervised Learning@
+    - Learn from _labeled data_ to predict labels for new inputs
+    - E.g., image classification using ResNet on ImageNet
+  - @Unsupervised Learning@
+    - Discover hidden patterns or structure in _unlabeled data_
+    - E.g., K-means clustering for customer segmentation
+  - @Reinforcement Learning@
+    - Learn through _interaction with an environment_, receiving rewards/punishments
+    - E.g., deep Q-Learning for playing Atari games
+      `#cite("mnih2015dqn")`{=typst}
+  - @Self-Supervised Learning@
+    - Generate _pseudo-labels from unlabeled data_ to pre-train models
+    - E.g., BERT (Masked Language Modeling) `#cite("devlin2019bert")`{=typst}
+  - @Semi-Supervised Learning@
+    - Combine _small labeled data with large unlabeled data_ to improve performance
+    - E.g., named entity recognition (NER) using annotated sentences with entity tags
+      combined with many raw text documents
+
+* Machine Learning Paradigms: Examples (2/3)
+
+- @Online Learning@
+  - Learn _incrementally_ from a stream of data in real time
   - E.g., online logistic regression for click-through rate prediction
 
-- **Multi-Task Learning**
-  - Train simultaneously a model to perform multiple related tasks
+- @Multi-Task Learning@
+  - Train simultaneously a model to _perform multiple related tasks_
   - E.g., learn sentiment analysis and question answering
 
-- **Meta-Learning**
-  - "Learning to learn": adapt quickly to new tasks using prior experience
-  - E.g., a model can be fine-tuned quickly on a new task using just a few
-    gradient steps
+- @Meta-Learning@
+  - _"Learning to learn"_: Adapt quickly to new tasks using prior experience
+  - E.g., a model can be fine-tuned quickly on a new task using just a few gradient
+    steps `#cite("finn2017maml")`{=typst}
 
-- **Zero-Shot / Few-Shot Learning**
-  - Generalize to new tasks with no or few labeled examples
+- @Zero-Shot / Few-Shot Learning@
+  - Generalize to new tasks with _no or few labeled examples_
   - E.g., GPT-4 solving tasks with zero-shot prompting
+    `#cite("openai2023gpt4")`{=typst}
 
-- **Active Learning**
-  - The model selects the most informative samples to be labeled by an oracle
-    (e.g., a human)
+- @Active Learning@
+  - The _model selects_ the most informative samples to be labeled by an oracle
+    (e.g., a human) `#cite("settles2009survey")`{=typst}
   - E.g., pick samples where the model is least confident to get more examples
 
-* Machine Learning Paradigms with Examples (3/3)
+* Machine Learning Paradigms: Examples (3/3)
 
-- **Federated Learning**
-  - Train models across decentralized devices without sharing raw data
+- @Federated Learning@
+  - Train models _across decentralized devices_ without sharing raw data
+    `#cite("mcmahan2017federated")`{=typst}
   - E.g., fraud detection or credit scoring across banks
 
-- **Evolutionary Learning**
-  - Optimize model structures or parameters using evolutionary algorithms
-    inspired by natural selection and genetics
-  - Gradient free, global search, variable length inputs
+- @Evolutionary Learning@
+  - Optimize model structures or parameters, _gradient-free_, via a global search
+    over evolutionary algorithms inspired by natural selection and genetics
   - E.g., genetic algorithms
 
-- **Curriculum Learning**
-  - Train models on easier tasks first, gradually increasing difficulty
+- @Curriculum Learning@
+  - Train models on easier tasks first, _gradually increasing difficulty_
+    `#cite("bengio2009curriculum")`{=typst}
   - E.g., training in robotic control simulations
 
-- **Multi-Agent Learning**
-  - Multiple agents learn and interact in shared environments, often in
+- @Multi-Agent Learning@
+  - _Multiple agents_ learn and interact in shared environments, often in
     game-theoretic settings (e.g., competition, collaboration)
   - E.g., AlphaStar to play StarCraft II
+    `#cite("vinyals2019alphastar")`{=typst}
 
-## Some Examples
+## The Three Core Paradigms
 
 * Supervised Learning
-- Learn a function $f: X \to Y$ that maps inputs to correct outputs
+
+- @Definition@: **Supervised learning** learns a function $f: X \to Y$ that maps
+  inputs to correct outputs `#cite("mitchell1997machinelearning")`{=typst}
   - Training examples $(\vx, y)$ with pairs of inputs and correct outputs
-  - Requires labeled data for training
+  - Requires labeled data $y_i$ for training
   - Measure performance with error on a separate test set
 
-- **Classification**: output is a discrete label, e.g.,
-  - `Spam` vs `Not Spam`
-  - Digit recognition `0`, `1`, ..
-  - Sentiment analysis `Pos`, `Neg`, `Neutral`
+- @Examples@: Two main task types
+  - **Classification**: Output is a discrete label
+    - `Spam` vs `Not Spam`
+    - Digit recognition `0`, `1`,
+    - Sentiment analysis `Pos`, `Neg`, `Neutral`
+  - **Regression**: Output is a continuous value
+    - House prices given features like size and location
+    - Oil demand
+    - Stock prices
 
-- **Regression**: output is a continuous value, e.g.,
-  - House prices given features like size and location
-  - House demand
-  - Stock prices
-
-- **Common algorithms**:
-  - Linear Regression
-  - Decision Trees
-  - K-nearest neighbors
-  - Neural Networks
-  - ..
+- @Algorithms@
+  - Linear regression, decision trees, neural networks, etc
 
 * Unsupervised Learning
-- Learn from data **without** labeled outputs
-  - Goal: discover patterns or structure in the data
+
+- @Definition@: **Unsupervised learning** learns from data _without_ labeled outputs
+  - Goal: Discover patterns or structure in the data
   - No explicit feedback signal
   - Evaluation can be qualitative
 
-- **Main techniques**:
+- @Techniques@
   - **Clustering**: Group similar examples, e.g.,
     - Customer segmentation
     - Grouping news articles by topic without knowing the topics
-  - **Dimensionality Reduction**: Reduce number of variables with PCA while
-    preserving structure
-    - E.g., visualize high-dimensional data in 2D
+  - **Dimensionality Reduction**: Reduce number of variables while preserving
+    structure
+    - E.g., visualize high-dimensional data in 2D (e.g., via PCA)
   - **Density Estimation**: Estimate probability distribution of data
     - E.g., anomaly detection in server logs
-  - **Association Rule Learning**: Discover interesting relations between
-    variables
+  - **Association Rule Learning**: Discover interesting relations between variables
     - E.g., market basket analysis (e.g., "people who buy X also buy Y")
 
-- **Common algorithms:**
-  - K-means
-  - PCA
-  - Autoencoders
+- @Algorithms@
+  - K-means `#cite("macqueen1967kmeans")`{=typst}, PCA, Autoencoders
 
 * Reinforcement Learning
-- Learn by **interacting with an environment** to **maximize cumulative reward**
+
+- @Definition@: RL learns by _interacting with an environment_ to _maximize
+  cumulative reward_ `#cite("suttonbarto2018rlbook")`{=typst}
   - Learn policy $\pi(s) \to a$ that maximizes expected reward
-  - Trade-off between exploration (trying new actions) and exploitation (using
-    known good actions)
-  - Environments provide clear rules and feedback (win/loss/reward)
+  - Trade-off between exploration (trying new actions) and exploitation (using known
+    good actions)
+  - Reward signals can be sparse, delayed, or hard to specify outside games and
+    simulators, which makes credit assignment hard
   - Often involve physical simulation or real-world interaction
 
 ::: columns
 :::: {.column width=60%}
-- **Core elements:**
-  - Agent: Learner and decision maker
-  - Environment: Everything the agent interacts with
-  - State $s$
-  - Action $a$
-  - Reward $r$
 
-- **Algorithms:**
-  - Q-learning
-  - Policy Gradient methods
+- @Components@
+  - _Agent_: Learner and decision maker
+  - _Environment_: Everything the agent interacts with
+  - _State_: $s$
+  - _Action_: $a$
+  - _Reward_: $r$
+
+- @Algorithms@
+  - Q-learning, policy gradient methods
+
 ::::
 :::: {.column width=35%}
+
 ```graphviz
 digraph BayesianFlow {
     splines=true;
@@ -162,45 +207,43 @@ digraph BayesianFlow {
     //{ rank=same; Agent; Env; }
 
     // Edges
-    Agent -> Agent [label="  State", fontcolor=black, labeldistance=2.0];
     Agent -> Env [label="  Action", fontcolor=black, labeldistance=2.0];
+    Env -> Agent [label="  State", fontcolor=black, labeldistance=2.0];
     Env -> Agent [label="  Reward", fontcolor=black, labeldistance=2.0];
 }
 ```
+
 ::::
 :::
 
 * Reinforcement Learning: Examples
-- In **game playing**, learn strategies through trial and error
-  - E.g., AlphaGo mastering the game of Go
-- In **robotics**, learn control policies for movement and manipulation
-- In **autonomous driving**, learn safe and efficient driving behaviors
-- In **resource management**, optimize allocation of limited resources over time
-  - E.g., data center cooling or CPU job scheduling
-- In **personalized recommendations**, adapt suggestions based on user
-  interaction
-  - E.g., newsfeed ranking adjusting based on user clicks
-- In **healthcare**, optimize treatment plans over time
+
+- @Applications@
+  - **Game playing**: Learn strategies through trial and error
+    - E.g., AlphaGo mastering the game of Go `#cite("silver2016alphago")`{=typst}
+  - **Robotics**: Learn control policies for movement and manipulation
+  - **Autonomous driving**: Learn safe and efficient driving behaviors
+  - **Resource management**: Optimize allocation of limited resources over time
+    - E.g., data center cooling or CPU job scheduling
+  - **Personalized recommendations**: Adapt suggestions based on user interaction
+    - E.g., newsfeed ranking adjusting based on user clicks
+  - **Healthcare**: Optimize treatment plans over time
 
 ## Machine Learning in Practice
 
 * Machine Learning Flow (1/2)
-- @Question@
-  - E.g., "How can we predict house prices?"
-- **Input data**
-  - E.g., historical data of house sales
-- **Features**
-  - E.g., number of bedrooms, location, square footage
-- @Algorithm@
-  - E.g., linear regression, decision trees
-- **Parameters**
-  - E.g., learning rate, number of trees in a random forest
-- **Evaluation**
-  - E.g., accuracy, precision, recall
+
+- @Components@: The stages of the ML pipeline, in order
+  - _Question_: E.g., "How can we predict house prices?"
+  - _Input data_: E.g., historical data of house sales
+  - _Features_: E.g., number of bedrooms, location, square footage
+  - _Model_: E.g., linear regression, decision trees
+  - _Parameters_: E.g., learning rate, number of trees in a random forest
+  - _Evaluation_: E.g., accuracy, precision, recall
 
 * Machine Learning Flow (2/2)
 
-```graphviz[height=80%]
+```graphviz
 digraph BayesianFlow {
     rankdir=LR;
     splines=true;
@@ -211,81 +254,80 @@ digraph BayesianFlow {
     "Question" [fillcolor="#F4A6A6"];
     "Input data" [fillcolor="#FFD1A6"];
     "Features" [fillcolor="#B2E2B2"];
-    "Algorithm" [fillcolor="#A0D6D1"];
+    "Model" [fillcolor="#A0D6D1"];
     "Parameters" [fillcolor="#A6E7F4"];
     "Evaluation" [fillcolor="#A6C8F4"];
     // Force ranks
     // Edges
     "Question" -> "Input data";
     "Input data" -> "Features";
-    "Features" -> "Algorithm";
-    "Algorithm" -> "Parameters";
+    "Features" -> "Model";
+    "Model" -> "Parameters";
     "Parameters" -> "Evaluation";
 }
 ```
 
-- **Not all phases are equally important!**
-  - Question $>$ Data $>$ Features $>$ Algorithm
+- @Remark@: Not all phases are equally important!
+  - Question $>$ Data $>$ Features $>$ Model
+  - Clarity of the _question_ impacts project success
+  - Quality and relevance of _data_ are crucial for performance
+  - Proper _feature_ selection simplifies the model and improves accuracy
+  - _Model_ is often less important (contrary to popular belief!)
 
-- Clarity of the **question** impacts project success
-- Quality and relevance of **data** are crucial for performance
-- Proper **feature** selection simplifies the model and improves accuracy
-- @Algorithm@: is often less important (contrary to popular belief!)
+* Framing the Question
 
-* Question
-- **Make the question concrete and precise**
-  - Define the problem clearly
-  - Specify inputs and expected outputs
-  - Align question with business or research objectives
-  - E.g.,:
-    - **Bad**: _"How can we improve sales?"_
-    - **Good**: _"What factors most significantly impact sales of product X in
-      region Y during season Z?"_
-
-- Formulating question is **the most important part** of the machine learning
-  problem
+- Formulating question is @the most important part@ of the machine learning problem
   - Misunderstanding leads to:
     - Solving the wrong problem
     - Collecting wrong data
-    - ..
+    - ... nothing possibly good
 
-- _"If I were given one hour to save the planet, I would spend 59 minutes
-  defining the problem and one minute resolving it"_ (Einstein)
+- _"If I were given one hour to save the planet, I would spend 59 minutes defining
+  the problem and one minute resolving it"_ (Einstein, unverified)
 
-* Input Data
-- Ensure **data is specific to prediction** goal
-  - E.g., use known movie ratings to predict unseen movie ratings from the same
-    population
-  - Training set $\approx$ test set
+- @Make the question concrete and precise@
+  - Align question with business or research objectives
+  - Define the problem clearly
+  - E.g.,:
+    - **Bad**: _"How can we improve sales?"_
+    - **Good**: _"What factors most significantly impact sales of product X in region
+      Y during season Z?"_
 
-- Relationship between data and prediction goal is **not always direct**
+* Input Data: Fit, Quality, and Scale
+
+- Ensure @data is specific to prediction@ goal
+  - E.g., use known movie ratings to predict unseen ratings from _same population_
+  - Training set must $\approx$ test set $\approx$ prod data
+
+- Relationship between data and prediction goal is @not always direct@
   - E.g., interested in prices but predict supply and demand instead
 
 - Poor-quality data leads to inaccurate predictions
-  - _"Garbage in - garbage out"_
+  - _"Garbage in, garbage out"_
 
-- Recognize **when data is insufficient** for valid answers
-  - _"Combination of data and desire for an answer does not ensure a reasonable
-    answer can be extracted"_ (John Tukey)
+- Recognize @when data is insufficient@ for valid answers
+  - _"Desire for an answer does not ensure that a reasonable answer can be extracted
+    from the given body of data"_ (John Tukey)
 
-- **More data vs better models**
-  - Meta-studies show difference between generic and best model is like
-    5\%
-  - _"It's not who has the best algorithm that wins. It's who has the most
-    data"_ (Google researcher)
-  - _"Every time I fire a linguist, the performance of the speech recognizer
-    goes up"_ (IBM researcher in speech recognition)
+- @More data vs better models@
+  - Gap between a well-tuned generic model and the best specialized model is often
+    small compared to more / better data
+  - _"It's not who has the best algorithm that wins. It's who has the most data"_
+    `#cite("banko2001data")`{=typst}
+  - _"Every time I fire a linguist, the performance of the speech recognizer goes
+    up"_ (IBM researcher in speech recognition)
 
-* Features
-- **Features** provide high-level information about inputs
+* What Makes a Good Feature
+
+- @Definition@: **Features** provide high-level information about inputs
   - E.g., use intensity and symmetry for scanned numbers instead of raw bit maps
 
-- **Characteristics of good features**:
-  1. Perform data compression
-  2. Retain relevant information
+- @Characteristics@
+  1. Retain relevant information
+  2. Perform data compression
   3. Often created with expert knowledge
 
-- **Common mistakes in feature building**:
+- @Common mistakes in feature building@
   1. Automating feature selection may lead to overfitting
      - Black box predictions can be accurate but stop working anytime
      - E.g., Google Flu's unclear feature-model link
@@ -293,111 +335,251 @@ digraph BayesianFlow {
      - E.g., mislabeling outliers
   3. Unnecessarily discarding information
 
-* Models
-- Best models are:
-  - **Interpretable**
-    - Allow users to understand and trust the model's decisions
-    - E.g., decision trees are appropriate in medical studies since they produce
-      a "reasoning"
-  - **Simple**
-    - Easier to implement and maintain
-    - Reduces the risk of overfitting
-  - **Accurate**
-    - Often accuracy is traded off for remaining characteristics
-    - E.g., accuracy vs interpretability, accuracy vs speed
-  - **Fast**
-    - Reduce computational costs to train and test
-    - E.g., real-time applications
-  - **Scalable**
-    - Can handle large datasets efficiently (growing data and user bases)
-    - E.g., in the Netflix prize, Netflix didn't end up implementing the best
-      algorithm since it wasn't scalable enough
+* What Makes a Good Model
+
+::: columns
+:::: {.column width=50%}
+
+- There are several desirable properties, often in tension with each other
+- @Simple@
+  - Easier to implement and maintain
+  - Reduces the risk of overfitting
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph ModelTradeoffs {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.5;
+    ranksep=0.6;
+    rankdir=TB;
+
+    node [shape=box,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=11,
+          margin="0.18,0.10",
+          height=0.45];
+
+    edge [style=dashed,
+          color="#B23A48",
+          penwidth=1.3,
+          arrowhead=none,
+          fontname="Helvetica",
+          fontsize=9,
+          fontcolor="#6B1F1F"];
+
+    Accurate      [label="Accurate", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79", penwidth=2.4];
+    Interpretable [label="Interpretable", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+    Simple        [label="Simple", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+    Fast          [label="Fast", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+    Scalable      [label="Scalable", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+
+    { rank=same; Interpretable; Simple; Fast; Scalable; }
+
+    Accurate -> Interpretable [label="  Trade-off  "];
+    Accurate -> Simple [label="  Overfitting risk  "];
+    Accurate -> Fast [label="  Compute cost  "];
+    Accurate -> Scalable [label="  Resources  "];
+}
+```
+
+::::
+:::
+
+- @Accurate@
+  - Often accuracy is traded off for remaining characteristics
+- @Interpretable@
+  - Allow users to understand and trust the model's decisions
+    - E.g., decision trees are great since they produce a "reasoning"
+- @Fast@
+  - Reduce computational costs to train and test
+    - E.g., for real-time applications
+- @Scalable@
+  - Can handle large datasets efficiently (growing data and user bases)
+    - E.g., in the Netflix prize, the algorithm that won wasn't implemented since it
+      wasn't scalable enough
 
 ## Pipeline Organization
 
 * How Are Machine Learning Systems Organized?
 
-- Machine learning systems organized in a **pipeline**
+- @Fact@: Machine learning systems @are organized in a pipeline@
   1. **Break down** problem into sub-problems
   2. **Solve** problems one at a time
   3. **Combine** solutions to solve initial problem
 
-- Performance $p$ of a pipeline:
-  $$
-  p_{system} = \sum_i p_i \cdot \alpha_i
-  $$
-  where:
-  - $p_i$: Performance of each stage
-  - $\alpha_i$: Importance of each stage
+- @Remark@
+  - Overall pipeline performance $p_{system}$ is **not a weighted sum** of the
+    per-stage performances $p_i$
+  - **Stage errors compound**: A mistake early in the pipeline propagates to every
+    later stage
+  - **Ceiling analysis** measures each stage's marginal contribution to system
+    performance:
+    $$
+    \Delta p_{system} \approx \alpha_i \cdot \Delta p_i
+    $$
+    where:
+    - $\Delta p_i$: Improvement in the performance of stage $i$ alone
+      - E.g., replacing stage with an "oracle"
+    - $\alpha_i$: Resulting improvement in overall system performance
 
 * Example of Photo OCR System
 
-- @Goal@: build systems to read text in a picture
+- @Goal@: Build systems to read text in a picture
   - OCR = "Optical Character Recognition"
 
-- **Stages of ML pipeline for OCR:**
-  - Text detection: find text areas in the picture
-  - Character segmentation: split text into letter boxes
+- @Stages of ML pipeline for OCR@
+  - Text detection: Find text areas in the picture
+  - Character segmentation: Split text into letter boxes
     - E.g., `h e l l o`
-  - Character classification: classify characters individually
-  - Spelling correction: fix text errors using context
+  - Character classification: Classify characters individually
+  - Spelling correction: Fix text errors using context
     - E.g., `hell0` corrected to `hello`
 
-- **Sliding window approach**
-  - @Problem@: Unknown text location and size
-  - Text detection
-    - Train classifier to recognize letters vs non-letters
+```graphviz
+digraph OCRPipeline {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.35;
+    ranksep=0.5;
+    rankdir=LR;
+
+    node [shape=box,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=11,
+          margin="0.18,0.10",
+          height=0.45];
+
+    edge [color="#A3B1C0",
+          penwidth=1.3,
+          arrowhead=vee,
+          arrowsize=0.75,
+          fontname="Helvetica",
+          fontsize=9,
+          fontcolor="#7B8794"];
+
+    Image    [label="Input\nimage", shape=ellipse, fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+    Detect   [label="Text\ndetection", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+    Segment  [label="Character\nsegmentation", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+    Classify [label="Character\nclassification", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+    Spell    [label="Spelling\ncorrection", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+    Text     [label="Output\ntext", shape=ellipse, fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+
+    Image -> Detect;
+    Detect -> Segment [label="  Boxes  "];
+    Segment -> Classify [label="  h e l l o  "];
+    Classify -> Spell [label="  \"hell0\"  "];
+    Spell -> Text [label="  \"hello\"  "];
+}
+```
+
+- @Sliding window approach@: The text location and size is unknown
+  - **Text detection**
+    - Train classifier to _recognize letters vs non-letters_ (simpler!)
     - Scan image in two directions with different sizes for text
-    - Evaluate classifier cheaper than training
+    - Evaluating the classifier on a window is cheap
     - Create text likelihood map (e.g., heatmap) using classifier probabilities
     - Enclose text areas in boxes
     - Discard boxes not fitting aspect ratio (valid text width > height)
-  - Character segmentation
-    - Use sliding window classifiers to find "breaks" between characters
+  - Same approach for **character segmentation** and find characters
 
 * Getting More Data
-- The ideal recipe for ML is:
-  "low-bias algorithm + train on massive amount of data"
 
-- Use learning curves to make sure we are taking advantage of more data
+- The **ideal recipe for ML** is: _"low-bias algorithm + massive amount of data"_
 
-- The **problem** is getting large amount of data
+- @Problem@: How do we know we are using the data effectively?
+  - E.g., use _learning curves_ to make sure we are taking advantage of more data
 
-- Always ask yourself: _"how much work is to get 10x more data than we
-  currently have?"_
+- @Problem@: How to get a **large amount of data**?
+  - Always ask yourself: _"how much work is to get 10x more data than we currently
+    have?"_
+  - Often it is not that difficult:
+    1. **Artificial data**
+       - E.g., synthesize / amplify data set
+    2. **Collect and label by hand**
+       - E.g., crowd sourcing (e.g., Amazon Mechanical Turk or other services), LLMs
+         (risky)
 
-- Often it is not that difficult:
-  1. Artificial data
-     - E.g., synthesize or amplify data set
-  2. Collect and label by hand
-     - E.g., crowd sourcing like Amazon Mechanical Turk
+* Getting Mode Data: OCR Pipeline
 
-* OCR Pipeline: Example of Artificial Data Synthesis
-- @Question@: How can we increase data set size?
-  1. Synthesize data set
+- @Question@: How can we increase data set size for OCR problem?
+  1. **Synthesize data set**
      - Use font libraries to generate large training sets
      - Paste characters against random backgrounds
      - Apply scaling, distortion, adding noise, etc
-  2. Amplify a data set
+  2. **Amplify a data set**
      - Add examples by warping/distorting existing examples
+  3. **Distill other models**
+  4. **Buy or create datasets**
+  5. **Crowdsourcing** / **Gamification**
 
-- Transformations and noise should be specific to the application domain
+- For 1. and 2., transformations and noise should be specific to the application
+  domain
   - E.g., Gaussian noise is not always appropriate
 
 * Ceiling Analysis for ML Pipeline
-- The most valuable resource is time
-  - You work on optimization for months
-  - Find out that the optimization doesn't make much difference
+
+- @Fact@: The **most valuable resource is time**
+  - Researchers' time is extremly expensive
+  - E.g.,
+    - You work on optimization for months
+    - Find out that the optimization doesn't make much difference
 
 - @Problem@: On which part of the pipeline should time/resource be spent?
 
-- @Solution@: Ceiling analysis to Analyze pipeline performance
-  - Single number for system performance
+- @Solution@: Ceiling analysis to analyze pipeline performance
+  - Use a single number for system performance
+    - Too many metrics make things difficult
     - E.g., accuracy for OCR
-  - For each component:
-    - Mock component with "oracle" (always give correct output)
-    - Leave others untouched
+  - For each component, in pipeline order:
+    - Mock component with an "oracle" (always give correct output)
+    - Leave other components untouched
     - Compute pipeline performance
-  - Identify critical components by estimating performance improvement with 10%
-    component improvement
+  - The component whose oracle gives the largest jump in end-to-end performance is
+    the highest-value target for further work
   - Measure, don't guess!
+    - "Premature optimizations are the root of all evil"
+      `#cite("knuth1974premature")`{=typst}
+
+* Ceiling Analysis for ML Pipeline: OCT Example
+
+::: columns
+:::: {.column width=30%}
+
+- @Example@: OCR pipeline, baseline accuracy 72%
+  - Text detection is the highest-value target: Perfecting it alone accounts for most
+    of the achievable gain
+
+::::
+:::: {.column width=70%}
+
+// TODO(ai_gp): Make the first column bigger so the text fits better.
+```{=typst}
+#styled-table(
+  headers: ("Component made perfect", "Accuracy", "Gain"),
+  rows: (
+    ("(baseline system)", "72%", "--"),
+    ("Text detection", "89%", "+17%"),
+    ("+ Char. segmentation", "90%", "+1%"),
+    ("+ Char. classification", "100%", "+10%"),
+  ),
+)
+```
+
+::::
+:::
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
+```

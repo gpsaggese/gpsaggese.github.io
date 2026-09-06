@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""
+r"""
 Generate an HTML page with links to lesson materials for a class or book.
 
 For each lesson source file found in `{DIR}/lectures_source/`, builds an HTML
@@ -23,13 +23,22 @@ lesson without the missing link, and keep going.
 # Usage Example
 
 - Generate the links page for a class, failing on the first missing artifact:
-> publish_class_links.py --dir data605 --out_file data605/class_links.html
+> publish_class_links.py \
+        --dir data605 \
+        --out_file data605/class_links.html
 
-- Generate the links page while tolerating missing artifacts, linking to the `master` branch instead of the current branch:
-> publish_class_links.py --dir msml610 --out_file /tmp/links.html --do_not_fail_on_warnings --use_master
+- Generate the links page while tolerating missing artifacts, linking to the
+  `master` branch instead of the current branch:
+> publish_class_links.py \
+        --dir msml610 \
+        --out_file /tmp/links.html \
+        --do_not_fail_on_warnings --use_master
 
 - Generate the links page and open it in the default browser:
-> publish_class_links.py --dir data605 --out_file data605/class_links.html --open_html
+> publish_class_links.py \
+        --dir data605 \
+        --out_file data605/class_links.html \
+        --open_html
 
 Import as:
 

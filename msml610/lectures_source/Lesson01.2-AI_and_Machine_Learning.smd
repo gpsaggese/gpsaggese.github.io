@@ -1,6 +1,7 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L01.2: AI and Machine Learning
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 // references=
 // - AIMA (Artificial Intelligence: a Modern Approach), Chap 1
@@ -424,6 +425,7 @@ digraph laws_of_thought {
 :::: {.column width=30%}
 
 ```tikz
+\bfseries
 % Define colors.
   \definecolor{AIcolor}{RGB}{244,166,166}    % Red/Pink
   \definecolor{MLcolor}{RGB}{178,226,178}    % Green

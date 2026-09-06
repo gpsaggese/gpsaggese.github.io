@@ -2,7 +2,11 @@
 
 Mode-specific instructions for `--mode typst_aima`'s per-slide generation path. See
 `prompt.generate_book_chapter_common.md` for the shared style guide (audience, tone,
-content rules)
+content rules). `prompt.generate_typst_book_chapter_common.md` is concatenated
+ahead of this file, so its rules already apply here: general Typst syntax
+(emphasis, formulas, lists), pulled in via its own
+`@.claude/skills/typst.rules.md` reference, plus what's specific to this
+pipeline (dissolving semantic tags, never fabricating a diagram's rendered figure)
 Unlike `prompt.generate_typst_book_chapter.md` (used for the older whole-document
 generation path), this prompt is used to convert **one slide's entire body text at a
 time**, in a single call, regardless of whether the source slide used a `:::
@@ -30,6 +34,33 @@ diagram, or table that has already been converted to Typst by Python. Copy each 
 token to the output **exactly as written**, on its own line, with no surrounding
 markup, no `#figure(...)`, no brackets. Never invent a token that was not in the
 input, and never put the token itself inside a sentence
+
+For a token backed by a diagram, the manifest tells you its label and what it
+shows, but never its rendered image path — you cannot know that path, so
+never write your own `#figure(image(...))` (or `#wrap-content(...)` around
+one) in place of the token, even one that looks plausible from the label and
+description. Python substitutes the real diagram source in for the bare
+token after your call returns; wrapping the token in synthesized figure
+markup yourself just produces a second, fake figure around it. See
+"Diagrams: Never Fabricate the Rendered Figure" in
+`prompt.generate_typst_book_chapter_common.md`
+
+- Bad output (token wrapped in fabricated figure markup):
+  ```text
+  #wrap-content(
+    [
+      #figure(
+        image("some/guessed/path.png", width: 100%),
+        caption: [Diagram relating Correct premises, Logic and Correct conclusions],
+      ) <fig:2aiasthinkingrationally>
+    ],
+    align: right,
+  )[@@FIGURE_1@@]
+  ```
+- Good output (the token, bare, on its own line):
+  ```text
+  @@FIGURE_1@@
+  ```
 
 After the slide fragment, you are also given a `Figure manifest:` block listing each
 token's Typst label and a one-line description of what it shows — never copy that
@@ -74,83 +105,10 @@ position in the sentence. Never wrap it, quote it, or alter the key
 
 ## Semantic Tags: Dissolve, Don't Relabel
 
-`@Definition@`, `@Example@`, `@Pros@`, `@Cons@`, `@Problem@`, `@Solution@`,
-`@Question@`, `@Answer@`, `@Remark@`, `@Key idea@`, ... mark the _rhetorical role_ of
-the bullet that follows; `@word` is also Typst label-reference syntax, so leaving it
-verbatim is a compile error, not just a style issue. See "Dissolving Semantic Tags"
-in the shared style guide for the rules: this is what applying them looks like in
-Typst
-Never emit the tag word itself as a `#strong[...]` label (`#strong[Definition]`,
-`#strong[Pros]`, `#strong[Cons]`, `#strong[Problem]`, `#strong[Question]`, ...). Use
-`#strong[...]` only for the actual term or claim being introduced
-
-- Input:
-
-  ```text
-  - @Definition@: An **agent** is something that perceives and acts to
-    reach a goal
-  ```
-- Bad output (relabels the tag, keeps the outline structure):
-  ```text
-  - #strong[Definition]: An #strong[agent] is something that perceives and
-    acts to reach a goal.
-  ```
-- Good output (a plain sentence; only the term is bold):
-  ```text
-  An #strong[agent] is something that perceives and acts to reach a goal.
-  ```
-
-- Input:
-  ```text
-  - @Pros@
-    - Express precise theory of the human mind as a computer program
-
-  - @Cons@
-    - Unknown workings of the human mind
-    - Anthropocentric definition
-  ```
-- Bad output (two tag-labeled lists):
-  ```text
-  - #strong[Pros]:
-    - Express precise theory of the human mind as a computer program.
-  - #strong[Cons]:
-    - Unknown workings of the human mind.
-    - Anthropocentric definition.
-  ```
-- Good output (one passage weighing both sides):
-  ```text
-  Expressing this as a computer program forces a precise theory of the
-  human mind instead of a vague verbal one. The cost is that the mind's
-  own workings are still largely unknown, and the definition of "thinking
-  like a human" is inescapably anthropocentric.
-  ```
-
-- Input:
-  ```text
-  - @Question@: What is artificial intelligence?
-    - First, understand what **human intelligence** is
-  ```
-- Good output (the question stays a question; the tag disappears):
-  ```text
-  What is artificial intelligence? Answering that starts with
-  understanding what #strong[human intelligence] is.
-  ```
-
-- Input:
-
-  ```text
-  - @Limitations@
-    - **Omniscience vs no-regrets**
-      - Best is based on available information, not perfect knowledge
-  ```
-  Good output (a genuinely enumerable set stays a list, without the tag label;
-  the item's lead phrase is emphasis, not a definition, so it is `#emph`, not
-  `#strong` — see "Highlighting and Emphasis" below):
-
-  ```text
-  - #emph[Omniscience vs no-regrets]: the best decision is based on
-    available information, not perfect knowledge.
-  ```
+See "Semantic Tags in Typst" in `prompt.generate_typst_book_chapter_common.md`
+for the rules and worked examples (how `@Definition@`, `@Pros@`/`@Cons@`,
+`@Question@`, etc. dissolve into prose, and the `#strong` vs `#emph`
+decision).
 
 A `@Pros@`/`@Cons@` (or `@Problem@`/`@Solution@`) pair always reaches you together
 in the same call, even if the source put them in separate `::: columns` panels (that
@@ -159,52 +117,15 @@ above, never two labeled halves.
 
 ## Highlighting and Emphasis
 
-- `#strong[...]` is reserved for the term or claim being formally defined or
-  named for the first time, normally in a sentence shaped like "#strong[Term]
-  is/refers to/means ..." or the direct answer to a "what is X?" question. Use
-  it sparingly: a handful of times per slide at most, and never for a list
-  item's lead phrase
-- Everything else the source marks for emphasis becomes `#emph[...]` instead:
-  a `**bold**` list-item lead phrase, a term already defined earlier and
-  mentioned again, or a word/phrase emphasized for rhetorical weight rather
-  than being defined. Decide `#strong` vs `#emph` by the role the phrase
-  plays in the sentence, not by mechanically mapping `**text**` → `#strong[text]`
-  — the source's markdown bold does not settle it
-- `_text_` (markdown italic) → `#emph[text]`
-- Never leave `**`, `_`, or a bare `*` used as markdown emphasis in the output —
-  those characters have no special meaning in Typst body markup and will render as
-  literal asterisks/underscores
-- A plain quoted phrase (`"..."`) stays a plain quoted string: do not prefix it with
-  `#`. `#"text"` is a Typst string _expression_, not a quoted phrase, and drops the
-  visible quote marks
-
-- Input: `- **Omniscience vs. no-regrets**: the best decision is based on the
-  information available at the time of acting.`
-- Bad output (a list-item lead phrase is emphasis, not a definition):
-  `- #strong[Omniscience vs. no-regrets]: the best decision is based on the
-  information available at the time of acting.`
-- Good output:
-  `- #emph[Omniscience vs. no-regrets]: the best decision is based on the
-  information available at the time of acting.`
+See "Highlighting and Emphasis" in `.claude/skills/typst.rules.md`.
 
 ## Lists
 
-- Not every `-` bullet in the input should become a Typst list item. A lone tagged
-  bullet (`@Definition@`, `@Example@`, `@Remark@`, ...) that holds one short point
-  becomes a plain sentence in the paragraph instead: see "Semantic Tags: Dissolve,
-  Don't Relabel" above
-- Keep a real Typst list only for content meant to be scanned as parallel items: an
-  enumerated set of steps, assumptions, properties, or named alternatives. For a list
-  you do keep, bullet lists (`- item`) and numbered lists (`1. item`) use the same
-  syntax in Typst as in Markdown: copy the list structure and nesting as is, just
-  convert the text of each item per the rules above
-
-## Formulas
-
-- Inline: `` `formula` `` for text-like expressions, or `$formula$` for inline math
-- Display math: `$ formula $` on its own line/paragraph
-- Prefer native Typst math syntax over raw LaTeX commands inside `$...$` (e.g.,
-  `subset.eq`, `|X|` instead of `\subseteq`, `\abs{X}`)
+See "Lists" in `.claude/skills/typst.rules.md` for the general rule (a lone
+tagged bullet becomes a plain sentence; a real list is kept only for
+parallel items). A lone tagged bullet (`@Definition@`, `@Example@`,
+`@Remark@`, ...) dissolving into prose here follows "Semantic Tags:
+Dissolve, Don't Relabel" above.
 
 ## Be Direct
 
@@ -215,6 +136,5 @@ above, never two labeled halves.
 ## Other Rules
 
 - Do not repeat a bullet verbatim; expand and explain it
-- Close every `#strong[`, `#emph[`, `[...]`, `(...)` you open
 - Output only the converted body: no commentary, no code fence wrapping the whole
   response

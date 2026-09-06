@@ -11,9 +11,14 @@ import pprint
 from typing import Any, Dict, List, Tuple
 from unittest import mock
 
+import pytest
+
 import helpers.hio as hio
 import helpers.hunit_test as hunitest
 
+# `publish_class_links.py` transitively imports `dev_scripts_helpers.github.
+# to_github`, which requires `requests`.
+pytest.importorskip("requests")
 import class_scripts.publish_class_links as cspuclli
 
 _ALL_LABELS = [

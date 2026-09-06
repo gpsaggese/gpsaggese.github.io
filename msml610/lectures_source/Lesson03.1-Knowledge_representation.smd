@@ -1,81 +1,125 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L03.1: Knowledge Representation
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
-// references=
-// - Russell et al.: _"Artificial Intelligence: A Modern Approach"_ (4th ed, 2020)
-//  - Chap 7: Logical agents
-//  - Chap 8, First-order logic
-//  - Chap 9: Inference in first-order logic
-//  - Chap 10, Knowledge representation
-
-// How to run:
-// > notes_to_pdf.py --input lectures_source/Lesson03.1-Knowledge_representation.txt --output tmp.pdf --type slides
-// > gen_slides.py msml610/03.1 --slides_engine typst
-//
-// ![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
 
 # Knowledge Representation
 
-## Basics of Knowledge Representation
+* Roadmap
 
-* Why Knowledge Representation Matters
+::: columns
+:::: {.column width=55%}
 
-- @Motivation@: **Why KR is essential to AI**
+- @Goal@: Build up from **why** knowledge must be represented explicitly to **how**
+  it is organized, reasoned over, and reused
+  - **Foundations**: What knowledge representation is, and the core design tradeoffs
+  - **Languages**: Natural language, programming languages, propositional and
+    first-order logic
+  - **Semantics**: Knowledge bases, grounding, models, and satisfaction
+  - **Reasoning**: Entailment, inference, soundness and completeness
+  - **Agents**: Reflex, rule-based, and knowledge-based agents
+  - **Ontologies**: Components, examples, and reasoning tasks
 
-  1) **Learning alone is not enough**: machines need to _reason_ about the world
-     - Example: a medical AI trained on patient data can predict diseases
-     - But to _explain_ a diagnosis to a doctor, it needs structured knowledge
+::::
+:::: {.column width=45%}
 
-  2) **Bridges perception and reasoning**
-     - Sensors provide raw data (perception)
-     - KR turns data into actionable knowledge (reasoning)
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#EEEDFE', 'primaryBorderColor': '#7F77DD', 'primaryTextColor': '#26215C', 'lineColor': '#888888', 'fontFamily': 'Helvetica'}}}%%
+mindmap
+  root((**Knowledge<br/>Representation**))
+    (**Foundations**)
+    (**Languages**)
+    (**Semantics**)
+    (**Reasoning**)
+    (**Agents**)
+    (**Ontologies**)
+```
 
-  3) **Enables explainability**
-     - Users can understand _why_ a system made a decision
-     - Critical for high-stakes domains (healthcare, law, autonomous systems)
+::::
+:::
 
-  4) **Enables white-box learning**
-     - Robots plan actions using abstract symbolic knowledge
-     - Conversational agents reason about intent and context
+## What Is Knowledge Representation
 
-* What is Knowledge Representation?
+* Defining Knowledge Representation
 
-- @Definition@: **Knowledge Representation (KR)** is the study of how to
-  formally
-  encode information so that machines can reason with it
+- @Definition@: **Knowledge Representation (KR)** is the study of how to _formally
+  encode information_ so that machines can reason with it
   - E.g., rules, logic, ontologies, semantic networks
   - KR defines:
-    - _Structure_: how knowledge is organized
-    - _Semantics_: what it means
+    - _Structure_: How knowledge is organized
+    - _Semantics_: What it means
 
-- @Fact@: **Knowledge Representation**
-  - Is at the heart of AI and complements learning-based approaches
-  - Serves as a bridge between perception (data) and reasoning (logic)
-  - Is essential for explainability and transparency in intelligent systems
-
-- @Example@: Machines can use knowledge representation to:
+- @Applications@: Machines use knowledge representation to:
   - Draw conclusions
   - Perform planning
   - Answer queries
-  - ..
+  -
 
-* Expressiveness vs. Tractability
+* Why Knowledge Representation Matters
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=70%}
 
-- @Definition@: Tradeoff in AI / ML between:
-  - _Expressiveness_: richness of concepts that can be captured
-  - _Tractability_: whether reasoning can be performed efficiently
-
-- @Fact@: More expressive languages lead to harder computation
+- @Motivation@: Why knowledge representation is essential to AI?
+  1. @Learning alone is not enough@: Machines need to _reason_ about the world
+     - Example: A medical AI can _predict_ diseases
+     - But to _explain_ a diagnosis to a doctor or patience, it needs structured
+       knowledge
+  2. @Bridges perception and reasoning@
+     - Sensors provide _perception_ (i.e., raw data)
+     - KR turns raw data into _actionable knowledge_ through _reasoning_
+  3. @Enables explainability@
+     - Users can understand _why_ a system made a decision
+     - Critical for high-stakes domains (e.g., healthcare, law, autonomous systems)
+  4. @Enables planning and abstract reasoning@
+     - Robots plan actions using abstract symbolic knowledge
+     - Conversational agents can reason about intent and context
 
 ::::
-:::: {.column width=35%}
+:::: {.column width=30%}
 
-// TODO(ai_gp): Switch to a font more similar to DejaVu or Computer Modern
-// TODO(ai_gp): Make the comments on the axes bigger and closer to the axes
+```graphviz
+digraph WhyKR {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.5;
+
+  node [shape=box, style="rounded,filled", penwidth=1.8,
+        fontname="Helvetica", fontsize=12, margin="0.22,0.14", height=0.50];
+  edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+        fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+  Perception [label="Perception\n(raw data)", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  KR         [label="Knowledge\nRepresentation", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Reasoning  [label="Reasoning", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Action     [label="Action /\nExplanation", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+
+  Perception -> KR;
+  KR -> Reasoning;
+  Reasoning -> Action;
+}
+```
+
+::::
+:::
+
+## Design Choices in Knowledge Representation
+
+* Expressiveness Vs. Tractability
+
+::: columns
+:::: {.column width=70%}
+
+- @Definition@: In knowledge representation there is a **trade-off** between:
+  - _Expressiveness_: Richness of concepts that can be captured
+  - _Tractability_: Whether reasoning can be performed efficiently
+
+::::
+:::: {.column width=30%}
 
 ```tikz
 \begin{axis}[
@@ -83,15 +127,15 @@
   height=8cm,
   axis lines=middle,
   xlabel style={
-    at={(axis description cs:0.5,-0.1)},
+    at={(axis description cs:0.5,-0.05)},
     anchor=north,
-    font=\large
+    font=\Huge\bfseries
   },
   ylabel style={
-    at={(axis description cs:-0.07,0.5)},
+    at={(axis description cs:-0.02,0.5)},
     anchor=south,
     rotate=90,
-    font=\large
+    font=\Huge\bfseries
   },
   xlabel={\textbf{Expressiveness}},
   ylabel={\textbf{Tractability}},
@@ -109,34 +153,30 @@
   \addplot[domain=1:9, ultra thick, dashed, blue] {10 / x};
 
   % Points
-  \addplot[only marks, mark=*] coordinates {(2,5)} node[above right, font=\large] {\textbf{Atomic}};
-  \addplot[only marks, mark=*] coordinates {(5,2)} node[above right, font=\large] {\textbf{Factored}};
-  \addplot[only marks, mark=*] coordinates {(8,1.25)} node[below right, font=\large] {\textbf{Structured}};
+  \addplot[only marks, mark=*] coordinates {(2,5)} node[above right, font=\huge\bfseries] {\textbf{Atomic}};
+  \addplot[only marks, mark=*] coordinates {(5,2)} node[above right, font=\huge\bfseries] {\textbf{Factored}};
+  \addplot[only marks, mark=*] coordinates {(8,1.25)} node[below right, font=\huge\bfseries] {\textbf{Structured}};
 \end{axis}
 ```
 
 ::::
 :::
 
-- @Key insight@: choosing the right knowledge representation depends on the
-  application
+- @Fact@: More expressive languages lead to harder computation
+  - Choosing the right knowledge representation depends on the application
 
 - @Example@
-  - _Atomic_: treats each state as a single, indivisible entity: simple but
-    limited
-    - E.g., depth-first search algorithms (e.g., `E3` in chess)
-  - _Factored_: captures relationships between variables but can't express
-    complex
-    structures
-    - E.g., propositional logic: 
-      _"Minesweeper example: breeze at 1,2 iff pit at adjacent cells"_
-      $B_{1,2} \Leftrightarrow (P_{1,1} \lor P_{2,2} \lor P_{1,3})$
-  - _Structured_: more expressive but undecidable in general
+  - **Atomic**: Treats each state as a single, indivisible entity: Simple but limited
+    - E.g., a chess position treated as one opaque state in game-tree search
+  - **Factored**: Captures simple relationships between variables, without structure
+    - E.g., propositional logic: $B_{1,2} \iff (P_{1,1} \lor P_{2,2} \lor P_{1,3})$ =
+      _"Wumpus World example: Breeze at 1,2 iff pit at adjacent cells"_
+  - **Structured**: More expressive but undecidable in general
     - E.g., first-order logic:
-      $\forall x \, \forall y \, Father(x, y) \Rightarrow Parent(x, y)$ =
-      _"A father of a person is their parent"_
+      $\forall x \, \forall y \, Father(x, y) \implies Parent(x, y)$ = _"A father of
+      a person is their parent"_
 
-* Symbolic vs. Sub-symbolic Representation
+* Symbolic Vs. Sub-symbolic Representation
 
 ::: columns
 :::: {.column width=55%}
@@ -144,55 +184,58 @@
 - @Definition@: **Symbolic KR** uses discrete, human-readable symbols
   - E.g., logic, knowledge graphs
   - Interpretable and suitable for rule-based reasoning
-  - Struggle with ambiguity
+  - Struggles with ambiguity
 
 - @Definition@: **Sub-symbolic KR** uses learned, distributed representations
   - E.g., vector embeddings
-  - Lack transparency
-
-- @Definition@: **Neuro-symbolic KR** blend the two approaches
-  - Reason over learned concepts using structured logic
+  - Lacks transparency
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ![](msml610/lectures_source/figures/L03.symbolic_vs_subsymbolic.png)
+
 // TODO: Convert in tikz
 
 ::::
 :::
 
-* Neuro-symbolic Approach: Conceptual Spaces
+- @Definition@: **Neuro-symbolic KR** blends the two approaches
+  - Reason over learned concepts using structured logic
 
-- @Definition@: **Conceptual spaces** are frameworks for representing knowledge
-  using geometric structures
-  - Each dimension represents an interpretable feature
+* Conceptual Spaces
+
+- @Definition@: **Conceptual spaces** are frameworks for representing knowledge using
+  geometric structures
+  - Each "dimension" represents an interpretable feature
   - Similarity between objects is modeled by spatial distance
-  - A **concepts** is a region in a multidimensional space
+  - A **concept** is a region in a multidimensional space
 
-- @Pros@:
+- @Pros@
   - Natural modeling of similarity and vagueness
-  - Symbolic systems use discrete symbols without structure (e.g., `Car` vs
-    `Bicycle`)
+  - Better than symbolic systems, in which discrete symbols carry no similarity
+    structure (e.g., `Car` vs `Bicycle`)
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=65%}
 
 - @Example@: Transportation methods
-  - Dimensions: `Environmental Friendliness`, `Technological Advancement`
-  - Wooden Transportation (red region)
-  - Vehicles (blue region)
-  - Advanced Vehicles (nested subset)
+  - Dimensions: `Environmental friendliness`, `Technological advancement`
+  - `Wooden` (red region) overlaps `Vehicle` (blue region)
+  - `Bicycle`, `Motorbike`, ... are nested subregions of `Vehicle`
+  - `Elevator` in `Vehicle` outside any other subregion
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=35%}
 
 ![](msml610/lectures_source/figures/L03.conceptual_spaces.png)
 
 ::::
 :::
 
-* Natural languages
+## Languages for Representing Knowledge
+
+* Natural Languages
 
 - @Definition@: **Natural languages** (e.g., English, Italian) are:
   - _Expressive_
@@ -203,16 +246,17 @@
     - Meaning depends on the sentence and context
     - E.g., "Look!"
 
-- @Concept@: **Sapir-Whorf hypothesis**
-  - _"The language you speak shapes how you perceive, think about, and
-    experience
-    the world"_
-    - Even through arbitrary grammatical features (e.g., gender of nouns)
+- @Definition@: The **Sapir-Whorf hypothesis** claims: _"the language you speak
+  shapes how you perceive, think about, and experience the world"_
+  - Even through arbitrary grammatical features (e.g., gender of nouns)
+  - The strong version (language determines what you can think) is rejected; only a
+    weak influence is supported by evidence
 
 - @Example@
   - Some languages lack words for certain concepts (e.g., direction)
-  - Some languages have many words for the same concepts
-    - E.g., Arctic languages have many words for snow (e.g., fresh, hard)
+  - Some languages have more fine-grained vocabulary for a concept
+    - E.g., Russian distinguishes dark blue and light blue as two basic colors, not
+      shades of one
   - Newspeak from 1984 (Orwell)
     - You can't think certain concepts since you don't have words for it
 
@@ -222,24 +266,29 @@
   - Encodes desired behavior directly into the program
   - E.g., a robot programmed with specific steps to navigate a maze
 
-- @Definition@: **Declarative approach** specifies _what_ the goal is, but _not
-  how_ to achieve it
+- @Definition@: **Declarative approach** specifies _what_ the goal is, but not _how_
+  to achieve it
   - Describes relationships between actions and goals
   - Leaves solution search to the system
-  - E.g., describing the goal "reach the exit of the maze" and letting the robot
-    find the path
+  - E.g., describing the goal "reach the exit of the maze" and letting the robot find
+    the path
 
-// TODO(ai_gp): Convert it into a table?
-- @Comparison@:
-  - Procedural: more control, less flexibility
-  - Declarative: more abstraction, easier to modify or extend
+- @Comparison@
+| **Approach**    | **Strengths**                                                        | **Weaknesses**                                                                |
+| --------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **Procedural**  | More control over execution, explicit steps                          | Less flexible, harder to modify or extend                                     |
+| **Declarative** | More abstract, easier to modify/extend, easier to reason about goals | Less control, harder to optimize, may require more powerful inference engines |
 
-- @Approach@: Many successful AI systems use a hybrid approach
+- @Remark@: Many successful AI systems use a hybrid approach
   - Declarative knowledge can be compiled into procedural code
   - E.g., a planner generates procedures (plans) from declarative goals
 
-* Programming Languages
-- @Concept@: A **programming language** (e.g., C++, Python) is a formal and
+* Limits of Programming Languages
+
+::: columns
+:::: {.column width=60%}
+
+- @Definition@: A **programming language** (e.g., C++, Python) is a formal and
   procedural language
   - _Data structures_ represent facts
   - _Code_ updates data structures in a domain-specific way
@@ -252,170 +301,222 @@
        information or quantify uncertainty
      - E.g., _"A white knight is in `b1` or in `f6`"_
 
-- @Concept@: In **declarative language** knowledge and inference are separate:
+- @Definition@: In a **declarative language**, knowledge and inference are separate
   1. _Knowledge_ represents the domain-specific problem
      - The meaning of a sentence is a function of the meaning of its parts
        (compositional semantics)
   2. _Inference_ is domain independent
   - E.g., propositional logic, first order logic
 
-## Examples of Logic
+::::
+:::: {.column width=38%}
+
+```graphviz
+digraph ProgVsDeclarative {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.5;
+  ranksep=0.4;
+
+  node [shape=box, style="rounded,filled", penwidth=1.6,
+        fontname="Helvetica", fontsize=11, margin="0.2,0.12", height=0.45];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.7,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  subgraph cluster_prog {
+    label = "Programming Language";
+    labelloc = "t";
+    fontname = "Helvetica-Bold";
+    fontsize = 11.5;
+    fontcolor = "#3A4A5C";
+    style = "rounded,filled";
+    fillcolor = "#F7F9FB";
+    color = "#C7D0DA";
+    penwidth = 1.0;
+    margin = 14;
+
+    Data [label="Data structures\n(facts)", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+    Code [label="Code\n(domain logic)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+    Data -> Code [label="  coupled", dir=both];
+  }
+
+  subgraph cluster_decl {
+    label = "Declarative Language";
+    labelloc = "t";
+    fontname = "Helvetica-Bold";
+    fontsize = 11.5;
+    fontcolor = "#3A4A5C";
+    style = "rounded,filled";
+    fillcolor = "#F7F9FB";
+    color = "#C7D0DA";
+    penwidth = 1.0;
+    margin = 14;
+
+    Knowledge [label="Knowledge\n(domain-specific)", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+    Inference [label="Inference\n(domain-independent)", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+    Knowledge -> Inference [label="  separate", style=dashed];
+  }
+}
+```
+
+::::
+:::
 
 * Propositional Logic
 
-- @Fact@: Propositional logic uses atomic statements (propositions) and logical
-  connectives to represent knowledge
+::: columns
+:::: {.column width=62%}
+
+- @Definition@: **Propositional logic** uses atomic statements (propositions) and
+  logical connectives to represent knowledge
   - _Syntax_
     - Atomic formulas: $P$, $Q$
     - Connectives: NOT $\lnot$, AND $\land$, OR $\lor$, IMPLIES $\implies$
   - _Semantics_
     - Based on truth tables
-    - Each proposition has a binary truth value: true or false
+    - Each proposition has a binary truth value: True or false
   - _Inference mechanisms_
-    - Modus ponens: from statements "$P$" and "$P \implies Q$", infer "$Q$"
-    - Resolution: derive contradictions to infer conclusions
-    - ..
+    - Modus ponens: From statements "$P$" and "$P \implies Q$", infer "$Q$"
+    - Resolution: Derive contradictions to infer conclusions
+    -
 
-- @Applications@: best used in closed and well-defined environments
+- @Applications@: Best used in closed and well-defined environments
   - Digital circuit design
   - Rule-based systems
   - Simplified AI models
 
-- @Limitations@:
+- @Limitations@
   - Cannot represent objects, relations, or quantifiers
   - Not suitable for open or dynamic domains
 
+::::
+:::: {.column width=35%}
+
+```graphviz
+digraph PropLogic {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.45;
+
+  node [shape=box, style="rounded,filled", penwidth=1.6,
+        fontname="Helvetica", fontsize=11, margin="0.2,0.12", height=0.45];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.7,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Syntax    [label="Syntax\nP, Q,\nNOT/AND/OR/IMPLIES", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Semantics [label="Semantics\nTruth tables", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Inference [label="Inference\nModus ponens,\nResolution", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+
+  Syntax -> Semantics [label="  means"];
+  Syntax -> Inference [label="  derives"];
+}
+```
+
+::::
+:::
+
 * First-Order Logic (FOL)
 
-- @Definition@: **first-order logic** is an extension of propositional logic
+- @Definition@: **First-order logic** is an extension of propositional logic
   - _Syntax_
     - Atomic formulas and connectives from propositional logic
     - _Variables_ $x$
     - _Predicate_ $Human(x)$
-    - _Quantifiers_ (e.g., universal "for all" $\forall$, existential "there
-      exists" $\exists$)
-
+    - _Quantifiers_ (e.g., universal "for all" $\forall$, existential "there exists"
+      $\exists$)
   - _Semantics_
     - Represents more complex and structured knowledge than propositional logic
     - Can model properties, relationships, and quantification over objects
-      - E.g., $\forall x (Human(x) \implies Mortal(x))$ = _"All humans are
-        mortal"_
-
+      - E.g., $\forall x (Human(x) \implies Mortal(x))$ = _"All humans are mortal"_
   - _Inference mechanisms_
-    - Unification: matches predicates with variables
-    - Resolution: deduces new facts from known statements
-    - Model checking: verifies truth of statements under specific
-      interpretations
+    - Unification: Matches predicates with variables
+    - Resolution: Deduces new facts from known statements
+    - Model checking: Verifies truth of statements under specific interpretations
 
-- @Applications@:
+- @Applications@
   - Knowledge representation
   - Automated theorem proving
   - Semantic web and ontologies
 
-* Reasoning and Inference in Logic
+## Knowledge Bases and Their Semantics
 
-- **Knowledge base (KB)** is a structured set of facts and rules used for
-  logical
-  reasoning
+* Syntax and Semantics of a KB
 
-- **Logical inference** is the process of deriving new facts from known ones
-  using formal rules
-  - E.g., answer questions based on a Knowledge Base
-
-- **Inference engine**: mechanism that applies logical rules to a KB to derive
-  conclusions or answer queries
-  - _Forward chaining_
-    - Starts with known facts and applies inference rules to extract more data
-    - E.g., given "$A \rightarrow B$" and $A$, infer $B$
-  - _Backward chaining_
-    - Begins with a goal and works backward to find supporting facts
-    - E.g., to prove $B$, check if $A \rightarrow B$ and then prove $A$
-  - _Resolution_
-    - A complete inference rule for propositional and first-order logic
-    - Useful in automated theorem proving
-  - _Entailment_ ($KB \models \alpha$):
-    - Sentence $\alpha$ is entailed by KB if it is true in all models where KB
-      is
-      true
-
-* Logic and Knowledge Base: Structure and Semantics
+::: columns
+:::: {.column width=60%}
 
 - @Definition@: **Knowledge base (KB)** is a set of:
-  - _Sentences_ $\alpha$ expressing assertions (observed, assumed or derived)
-    about the world
+  - _Sentences_ $\alpha$ expressing assertions (observed, assumed or derived) about
+    the world
     - E.g., _"it rains"_, _"the ground is dry"_, _"the ground is wet"_
   - _Rules_
-    - E.g, _"If it rains, the ground gets wet"_
+    - E.g., _"If it rains, the ground gets wet"_
 
-- @Definition@: **Knowledge representation language** is a formal way of
-  creating
+- @Definition@: **Knowledge representation language** is a formal way of creating
   sentences about the world
-  - **Syntax**: specifies all well-formed sentences in the logic
+  - **Syntax**: Specifies all well-formed sentences in the logic
     - E.g., in arithmetic: "$x + y = 4$" is well-formed, "$x4y+ =$" is not
-  - **Semantics**: meaning of sentences with respect to each possible world
+  - **Semantics**: Meaning of sentences with respect to each possible world
     - E.g., $x + y = 4$ is true in world $(x=2, y=2)$, false in $(x=1, y=1)$
 
 - @Definition@: **Axiom** is a sentence taken as given (not derived from others)
 
-- @Definition@: **Inference** is the process of deriving new sentences from old
-  ones
+- @Definition@: **Inference** is the process of deriving new sentences from old ones
   - Should follow logical reasoning rules
 
 - @Definition@: **Truth values** representations
-  - Classical logic: each sentence is true or false
-  - **Fuzzy logic**: allows different degrees of truth
-    - E.g., $Belief(\alpha) = 0.5$
-  - **Probabilistic logic**: sentences have probability of being true
+  - Classical logic: Each sentence is true or false
+  - **Fuzzy logic**: Allows different degrees of truth
+    - E.g., $Truth(\alpha) = 0.5$
+  - **Probabilistic logic**: Sentences have probability of being true
     - E.g., $\Pr(\alpha) = 0.3$
 
-* Rule-Based Systems (1/2)
-- @Definition@: A **rule-based system** uses "if-then" rules to derive
-  conclusions or make decisions
-  - It mimics human decision-making by applying logical rules to a set of facts
+::::
+:::: {.column width=38%}
 
-- @Key components@
-  - _Knowledge base_: stores facts and rules
-  - _Inference engine_: applies rules to known facts to infer new facts or take
-    actions
-  - _Working memory_: holds current facts being considered
+```graphviz
+digraph KBStructure {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.4;
 
-- @Algorithm@
-  - _Match_: find rules whose conditions match current facts
-  - _Conflict resolution_: decide which rule to apply if multiple rules match
-  - _Act_: apply the chosen rule to modify facts or trigger actions
-  - _Repeat_: continue until no more rules can be applied
+  node [shape=box, style="rounded,filled", penwidth=1.6,
+        fontname="Helvetica", fontsize=10.5, margin="0.18,0.1", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
 
-- @Example@
-  - _Rule_: If a patient has a fever and a rash, then suggest measles
-  - _Fact_: Patient has a fever and a rash
-  - _Conclusion_: Suggest measles
+  Sentences [label="Sentences", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Rules     [label="Rules", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  KB        [label="Knowledge Base", fillcolor="#F4A6A6", color="#C0455B", fontcolor="#6B2A2A"];
+  Syntax    [label="Syntax\n(well-formed)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Semantics [label="Semantics\n(meaning per world)", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Inference [label="Inference", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
 
-* Rule-Based Systems (2/2)
+  Sentences -> KB;
+  Rules -> KB;
+  KB -> Syntax [style=dashed, label="  form"];
+  KB -> Semantics [style=dashed, label="  meaning"];
+  KB -> Inference [label="  derives new"];
+}
+```
 
-- @Pros@
-  - Easy to modify and update rules
-  - Transparent and explainable reasoning
-  - Good when expert knowledge can be clearly articulated
+::::
+:::
 
-- @Cons@
-  - Hard to scale to very large or complex domains
-  - Cannot handle uncertainty without extensions (e.g., probabilistic reasoning)
-  - Rule conflicts and maintenance can become challenging
-
-- @Applications@
-  - Expert systems
-    - E.g., medical diagnosis, technical troubleshooting
-  - Business rule engines
-  - Game AI
-  - Tools for legal reasoning
-
-* Grounding: Definition and Framework
+* Grounding
 
 ::: columns
 :::: {.column width=50%}
 
-- @Definition@: **Grounding** connects abstract symbols to real-world entities
-  or
+- @Definition@: **Grounding** connects abstract symbols to real-world entities or
   observations
   - E.g., link the symbol in the KB `Apple` to the fruit "apple"
   - It is the bridge between representation in a KB and the world
@@ -428,7 +529,7 @@
 ::::
 :::
 
-- @Goals@: make representations meaningful beyond syntax
+- @Goal@: Make representations meaningful beyond syntax
   - Enable agents to act meaningfully in the real world
   - Avoid purely symbolic manipulation without real-world relevance
 
@@ -437,19 +538,18 @@
   - Complex, context-dependent mapping from inputs to concepts
 
 - @Applications@
-  - Robotics: object recognition, manipulation
+  - Robotics: Object recognition, manipulation
   - Natural language understanding
   - Autonomous agents, cognitive systems
 
-* Grounding: Philosophical and Practical Considerations
+* Can We Trust Grounding?
 
-- @Question@
-  - We can't be sure!
-  - Do we live in a simulation? What is reality?
+- @Question@: How do we know the symbols in the KB actually match reality?
+  - We can't be sure! Do we live in a simulation? What is reality?
 
-- We **assume** that is correct
-  - Agent's sensors create a sentence in the KB when something happens in the
-    real world
+- We **assume** that it is correct
+  - Agent's sensors create a sentence in the KB when something happens in the real
+    world
     ```
     IF smell = burning THEN food_is_burning
     ```
@@ -463,7 +563,7 @@
   - Learning is still fallible
   - E.g., `smell = burning` because maybe somebody is cooking on a grill
 
-* Model and Possible Worlds: Examples
+* Models and Possible Worlds
 
 ::: columns
 :::: {.column width=60%}
@@ -508,128 +608,313 @@ digraph G {
   - Sentence $x + y = 4$ is true in certain worlds and false in others
   - E.g., in worlds with $x = 2$ men and $y = 2$ women, $x + y = 4$ is true
 
-* Satisfaction of a Sentence in a Model
+* Satisfaction
+
+::: columns
+:::: {.column width=60%}
+
 - @Recap@: A model $m$ fixes all the variables $x_1, ..., x_n$ used in sentences
   - E.g., $(Rain = T, WetGround = T)$
 
-- @Definition@: If a sentence $\alpha$ is true in model $m$, we say _"the model
-  $m$ **satisfies** the sentence $\alpha$"_
+- @Definition@: If a sentence $\alpha$ is true in model $m$, we say _"the model $m$
+  **satisfies** the sentence $\alpha$"_
   - E.g., the model $(Rain = T, WetGround = F)$ satisfies $\alpha: Rain = T$
-  - This seems backwards, since in our common way of reasoning, the world is
-    fixed and sentences are evaluated as true or false
+  - This seems backwards, since in our common way of reasoning, the world is fixed
+    and sentences are evaluated as true or false
 
-- @Definition@: $M(\alpha)$ is the set of all the models in which $\alpha$ is
-  true
+- @Definition@: $M(\alpha)$ is the set of all the models in which $\alpha$ is true
   - E.g.,
     - $\alpha: Rain = T$
-    - $M(Rain = T) = \{(Rain, WetGround), (Rain, \lnot WetGround)\}$
+    - $M(Rain = T) = \{(Rain = T, WetGround = T), (Rain = T, WetGround = F)\}$
+
+::::
+:::: {.column width=38%}
+
+```graphviz
+digraph Satisfaction {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.3;
+  ranksep=0.3;
+
+  node [shape=box, style="rounded,filled", penwidth=1.4,
+        fontname="Helvetica", fontsize=9.5, margin="0.14,0.08", height=0.4];
+
+  subgraph cluster_all {
+    label = "All possible worlds  (blue = M(Rain=T))";
+    labelloc = "t";
+    fontname = "Helvetica-Bold";
+    fontsize = 10.5;
+    fontcolor = "#3A4A5C";
+    style = "rounded,filled";
+    fillcolor = "#F7F9FB";
+    color = "#C7D0DA";
+    penwidth = 1.0;
+    margin = 14;
+
+    W1 [label="Rain=T\nWetGround=T", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+    W2 [label="Rain=T\nWetGround=F", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+    W3 [label="Rain=F\nWetGround=T", fillcolor="#EDEDED", color="#B0B8C0", fontcolor="#5A6472"];
+    W4 [label="Rain=F\nWetGround=F", fillcolor="#EDEDED", color="#B0B8C0", fontcolor="#5A6472"];
+
+    { rank=same; W1; W2; W3; W4; }
+  }
+}
+```
+
+::::
+:::
+
+## Entailment and Inference
 
 * Logical Entailment
-- @Definition@: **Logical entailment** between sentences is the fact that a
-  sentence follows logically from another sentence in a KB
-  - "$\alpha$ **entails** $\beta$" (written $\alpha \models \beta$) iff (by def)
-    in every model in which $\alpha$ is true, $\beta$ is also true
+
+- @Definition@: **Logical entailment** between sentences is the fact that a sentence
+  follows logically from another sentence in a KB
+  - "$\alpha$ **entails** $\beta$" (written $\alpha \models \beta$) iff (by def) in
+    every model in which $\alpha$ is true, $\beta$ is also true
   - Equivalent to $M(\alpha) \subseteq M(\beta)$
 
-- @Example@: in the "rain and wet ground" world
-  - $\alpha$: "(Rain = T, WetGround = T)" entails
-    $\beta$: "Rain $\implies$ WetGround"
-  - If you know for a fact that it's raining and the ground is wet, then you can
-    confidently conclude that the rule "if it rains, then the ground is wet"
-    must
-    be true (at least in this world)
-  - The specific concrete fact supports the general conditional rule
+- @Example@: In the "rain and wet ground" world
+  - $KB = \{Rain, Rain \implies WetGround\}$ entails $WetGround$
+  - In every model where $Rain$ is true and $Rain \implies WetGround$ is true,
+    $WetGround$ is also true
+  - There is no model that satisfies $KB$ but violates $WetGround$
 
-- @Example@: in the "sitting table" world
+- @Example@: In the "sitting table" world
   - $\alpha$: "$x = 0$", $\beta$: "$x \cdot y = 0$"
   - $\alpha$ entails $\beta$ since in any model in which $x = 0$ is true, also
     $x \cdot y = 0$ is true, regardless of the value of $y$
 
-- @Intuition@:
-  - Entailment is not related to a proof, it just "preserves truth" across all
-    models
+- @Intuition@
+  - Entailment is not related to a proof, it just "preserves truth" across all models
   - Entailment is a constraint on consistent belief
   - _"If you believe your KB, you must believe the entailed sentences"_
 
-* Logical Entailment vs Implication
+* Entailment, Implication, and Inference
 
-- Entailment and implication are related but distinct
-  - _Logical entailment_ is about truth following from known facts
-  - _Implication_ is about a relationship between two statements
+::: columns
+:::: {.column width=58%}
 
-- **Logical entailment** ($KB \models \alpha$):
-  - Means $\alpha$ is always true in any world where KB is true
-  - E.g.,
-    - KB: _"It is raining"_, _"If it rains, the ground is wet"_
-    - Entailed: _"The ground is wet"_
+- Entailment, implication, and inference are related but distinct
+  - _Implication_ is a relationship between two statements inside the logic
+  - _Logical entailment_ is truth necessarily following from known facts
+  - _Inference_ is the reasoning process used to derive new truths
 
-- **Implication** ($A \implies B$):
-  - A statement in logic that says: _"If A is true, then B is true"_
-    - Doesn't guarantee A or B is true by itself
-    - Implication is true unless A is true and B is false
-  - E.g.,
-    - $A$: _"It is raining"_, $B$: _"The ground is wet"_
-    - $A \implies B$ is the statement _"If it is raining, then the ground is
-      wet"_
-    - This statement can be true even if it's not raining
+- @Definition@: **Implication** ($A \implies B$) is the statement _"if $A$ is true,
+  then $B$ is true"_
+  - Does not guarantee $A$ or $B$ is true by itself
+  - Implication is true unless $A$ is true and $B$ is false
+  - E.g., $A$: _"it is raining"_, $B$: _"the ground is wet"_
+    - $A \implies B$ can be true even if it's not raining
 
-- @Intuition@:
-  - Entailment is "meta-level truth-following"
-  - Implication is "within the logic"
+- @Definition@: **Logical entailment** ($KB \models \alpha$) means $\alpha$ is always
+  true in any world where $KB$ is true
+  - E.g., $Rain$ entails $WetGround$ iff in every model where $Rain$ is true,
+    $WetGround$ is also true
+    - $Rain = T, WetGround = F \to$ violation, so $Rain$ does not entail $WetGround$
+      in general
 
-* Model Checking Procedure
-- @Recap@: $M(KB)$ represents all the models / possible worlds that are true
-  given our $KB$
+- @Definition@: **Inference** is what an agent (person or computer) figures out by
+  reasoning from what it knows
+  - Starts with some truths, then reasons its way to new truths
 
-- @Problem@:
-  - We want to verify whether "a sentence $\alpha$ is entailed by $KB$",
-    i.e., $KB \models \alpha$
+- @Intuition@
+  - Implication is "a statement inside the logic"
+  - Entailment is "meta-level truth-following across all models"
+  - Inference is "the reasoning process that (ideally) tracks entailment"
 
-- @Solution@:
-  - According to the definition, we need to verify that $\alpha$ is true in all
-    the models in which $KB$ is true
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph EII {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.45;
+
+  node [shape=box, style="rounded,filled", penwidth=1.6,
+        fontname="Helvetica", fontsize=10.5, margin="0.18,0.12", height=0.55];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Implication [label="Implication\n(A implies B)\nstatement inside logic", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Entailment  [label="Entailment\n(KB entails alpha)\ntruth across all models", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Inference   [label="Inference\nreasoning process", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+
+  Implication -> Entailment [label="  used to state"];
+  Inference -> Entailment [label="  aims to track", style=dashed];
+}
+```
+
+::::
+:::
+
+* Inference Engines
+
+::: columns
+:::: {.column width=48%}
+
+- @Definition@: An **inference engine** is the mechanism that applies logical rules
+  to a KB to derive conclusions or answer queries
+  - _Forward chaining_
+    - Starts with known facts and applies inference rules to extract more data
+    - E.g., given $A \implies B$ and $A$, infer $B$
+  - _Backward chaining_
+    - Begins with a goal and works backward to find supporting facts
+    - E.g., to prove $B$, check if $A \implies B$ and then prove $A$
+  - _Resolution_
+    - A complete inference rule for propositional and first-order logic
+    - Useful in automated theorem proving
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph InferenceEngines {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.7;
+  ranksep=0.35;
+
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=9.5, margin="0.16,0.1", height=0.4];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
+        fontname="Helvetica", fontsize=8.5, fontcolor="#7B8794"];
+
+  FCLabel [label="Forward chaining", shape=plaintext, fontname="Helvetica-Bold", fontsize=9.5, fontcolor="#3A4A5C"];
+  BCLabel [label="Backward chaining", shape=plaintext, fontname="Helvetica-Bold", fontsize=9.5, fontcolor="#3A4A5C"];
+  ResLabel [label="Resolution", shape=plaintext, fontname="Helvetica-Bold", fontsize=9.5, fontcolor="#3A4A5C"];
+
+  FactsFC [label="Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  ConclFC [label="Conclusion: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+
+  GoalBC  [label="Goal: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  FactsBC [label="Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+
+  Clauses       [label="Clauses", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Contradiction [label="Contradiction", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+
+  { rank=same; FCLabel; BCLabel; ResLabel; }
+  { rank=same; FactsFC; GoalBC; Clauses; }
+  { rank=same; ConclFC; FactsBC; Contradiction; }
+
+  FCLabel -> FactsFC [style=invis];
+  BCLabel -> GoalBC [style=invis];
+  ResLabel -> Clauses [style=invis];
+
+  FactsFC -> ConclFC [label="  apply rule"];
+  GoalBC -> FactsBC [label="  find support"];
+  Clauses -> Contradiction [label="  derive"];
+}
+```
+
+::::
+:::
+
+* Model Checking
+
+::: columns
+:::: {.column width=55%}
+
+- @Recap@: $M(KB)$ represents all the models / possible worlds in which our $KB$ is
+  true
+
+- @Problem@
+  - We want to verify whether "a sentence $\alpha$ is entailed by $KB$", i.e.,
+    $KB \models \alpha$
+
+- @Solution@
+  - According to the definition, we need to verify that $\alpha$ is true in all the
+    models in which $KB$ is true
     - I.e., $M(KB) \subseteq M(\alpha)$
 
-- @Example@: E.g., **model checking procedure** (brute force)
+- @Algorithm@: **Model checking** (brute force)
   1. Enumerate all the models / possible worlds
   2. Find which models are possible given the $KB$, i.e., $M(KB)$
   3. Check whether the sentence $\alpha$ is true in all the models that are
      compatible with the $KB$
 
-* Sound and Complete Inference Algorithm
-- @Definition@: **Inference** is a syntactic process of deriving new sentences
-  from others, using formal rules of a proof system (e.g., modus ponens,
-  resolution, etc.)
+::::
+:::: {.column width=42%}
+
+```graphviz
+digraph ModelChecking {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.4;
+
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=10, margin="0.18,0.12", height=0.45];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Step1        [label="1. Enumerate all\npossible worlds", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Step2        [label="2. Find M(KB)\n(models where KB true)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Step3        [label="3. Check alpha true\nin all of M(KB)", shape=diamond, fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Entailed     [label="KB entails alpha", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+  NotEntailed  [label="KB does not\nentail alpha", fillcolor="#F4A6A6", color="#C0455B", fontcolor="#6B2A2A"];
+
+  Step1 -> Step2;
+  Step2 -> Step3;
+  Step3 -> Entailed [label="  yes"];
+  Step3 -> NotEntailed [label="  no"];
+}
+```
+
+::::
+:::
+
+* Soundness and Completeness
+
+- @Definition@: **Inference** is a syntactic process of deriving new sentences from
+  others, using formal rules of a proof system (e.g., modus ponens, resolution, etc.)
   - You know: _"If it rains, the ground gets wet"_
   - You see: _"It is raining"_
   - You infer: _"The ground must be wet"_
 
 - @Definition@: **Sound** inference algorithm
-  - Derives only sentences entailed from $KB$
+  - Derives only sentences entailed by $KB$
   - _"Whatever the inference algorithm finds, it's correct"_, i.e., no false
     positives
-  - E.g., model checking is sound
-    - It works only when the space of models is finite
-    - When it works, it is truth preserving
 
 - @Definition@: **Complete** inference algorithm
-  - Can derive any sentence entailed from $KB$
-  - _"The inference algorithm doesn't miss anything"_ i.e., no false negatives
+  - Can derive any sentence entailed by $KB$
+  - _"The inference algorithm doesn't miss anything"_, i.e., no false negatives
 
-- The ideal inference algorithm is both sound and complete
+- @Example@: Model checking is both sound and complete when the space of models is
+  finite
+  - Sound: Every model it finds consistent with $KB \land \alpha$ makes $\alpha$
+    true, so it never asserts a false entailment
+  - Complete: Enumerating all (finitely many) models is guaranteed to find every
+    entailed $\alpha$
 
-* Isomorphism between Model and Possible Worlds
-- A sound and complete inference algorithm yields conclusions guaranteed to be
-  true in any world where the premises are true
+- @Key idea@: The ideal inference algorithm is both sound and complete
+
+* Representation Mirrors the World
+
+- A sound and complete inference algorithm yields conclusions guaranteed to be true
+  in any world where the premises are true
 
 ::: columns
 :::: {.column width=40%}
+
 - In other words, even if the inference operates on "syntax" (the internal
   representation):
-  - _"Sentences in the representation"_ correspond to _"aspects of the real
-    world"_
+  - _"Sentences in the representation"_ correspond to _"aspects of the real world"_
   - _"Entailment between sentences in the representation"_ corresponds to
     _"implication between aspects of the real world"_
+
 ::::
 :::: {.column width=55%}
 
@@ -639,25 +924,25 @@ digraph EntailmentSemantics {
   node [shape=box, style=filled, fillcolor=lightgray];
 
   // Representation layer
-  Sentences -> Sentence [label="Entails", style=dashed];
+  Sentence1 -> Sentence2 [label="Entails", style=dashed];
 
   // World layer
   RealWorld1 -> RealWorld2 [label="Follows", style=dashed];
 
   // Semantics arrows
-  Sentences -> RealWorld1 [label="Semantics", dir=down, style=dashed];
-  Sentence -> RealWorld2 [label="Semantics", dir=down, style=dashed];
+  Sentence1 -> RealWorld1 [label="Semantics", style=dashed];
+  Sentence2 -> RealWorld2 [label="Semantics", style=dashed];
 
   // Invisible edges to align Representation and World vertically
-  {rank=same; Sentences; Sentence}
+  {rank=same; Sentence1; Sentence2}
   {rank=same; RealWorld1; RealWorld2}
 
   // Labels for layers (optional)
   subgraph cluster_representation {
     label="Representation";
     style=dotted;
-    Sentences;
-    Sentence;
+    Sentence1;
+    Sentence2;
   }
 
   subgraph cluster_world {
@@ -668,79 +953,161 @@ digraph EntailmentSemantics {
   }
 }
 ```
+
 ::::
 :::
 
-* Entailment vs Inference vs Implication
-- **Implication**
-  - _"If $A$, then $B$"_
-  - It doesn't say whether A is true; it just says, if it happens, then B
-    follows
-  - It's a "statement inside the logic system"
-
-- **Inference**
-  - This is what you (a person or a computer) figure out based on what you know
-  - You start with some truths, then reason your way to new truths
-  - It's "reasoning inside the logic system"
-
-- **Logical entailment**
-  - $A$ entails $B$: if the fact $A$ is true and that automatically guarantees
-    that fact $B$ must also be true
-  - E.g., $Rain$ entails $WetGround$ iff in every possible world where $Rain$ is
-    true, $WetGround$ is also true
-    - $Rain = T, WetGround = F \to$ violation
-    - Since there is at least one counterexample, $Rain$ does not entail
-      $WetGround$
-
 // # 7, Logical agents (p. 221)
 
-## Logical Agents
+## Logical Agents and Rule-Based Systems
 
-// TODO(gp): Merge with rule systems in next slides
-* Reflex Agents
+* Reflex and Rule-Based Agents
 
-- @Definition@: **Reflex agents** act based on the current percept, ignoring
-  percept history
-  - Operate using predefined condition-action rule: _"if condition, then
-    action"_
-    - E.g., a thermostat: _"if temperature < threshold, turn on the heater"_
+::: columns
+:::: {.column width=58%}
+
+- @Definition@: A **reflex agent** acts on the current percept alone, using a
+  predefined condition-action rule: _"if condition, then action"_
+  - E.g., a thermostat: _"if temperature < threshold, turn on the heater"_
+  - Ignores percept history: No memory of past states
+
+- @Definition@: A **rule-based system** generalizes reflex agents with an explicit
+  "if-then" rule set and a memory of current facts
+  - _Knowledge base_: Stores facts and rules
+  - _Inference engine_: Applies rules to known facts to infer new facts or take
+    actions
+  - _Working memory_: Holds current facts being considered
+
+- @Algorithm@
+  - _Match_: Find rules whose conditions match current facts
+  - _Conflict resolution_: Decide which rule to apply if multiple rules match
+  - _Act_: Apply the chosen rule to modify facts or trigger actions
+  - _Repeat_: Continue until no more rules can be applied
+
+- @Example@
+  - _Rule_: If a patient has a fever and a rash, then suggest measles
+  - _Fact_: Patient has a fever and a rash
+  - _Conclusion_: Suggest measles
+
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph RuleBasedLoop {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.4;
+
+  node [shape=box, style="rounded,filled", penwidth=1.6,
+        fontname="Helvetica", fontsize=10.5, margin="0.2,0.12", height=0.45];
+  edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.7,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Match    [label="Match\n(find matching rules)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Conflict [label="Conflict resolution\n(pick rule)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Act      [label="Act\n(apply rule)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Memory   [label="Working memory\n(current facts)", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+
+  Match -> Conflict;
+  Conflict -> Act;
+  Act -> Match [label="  repeat", constraint=false];
+  Memory -> Match [style=dashed];
+  Act -> Memory [style=dashed, label="  updates", constraint=false];
+}
+```
+
+::::
+:::
+
+* Rule-Based Systems: Trade-offs
 
 - @Pros@
-  - Fast and efficient in well-defined environments
+  - Fast and efficient in simple, well-defined environments
+  - Easy to modify and update rules
+  - Transparent and explainable reasoning
+  - Good when expert knowledge can be clearly articulated
 
 - @Cons@
-  - Struggle with complex or partially observable environments
-  - Cannot plan ahead or learn from experience
+  - Without working memory, cannot plan ahead or learn from experience
+  - Hard to scale to very large or complex domains
+  - Cannot handle uncertainty without extensions (e.g., probabilistic reasoning)
+  - Rule conflicts and maintenance can become challenging
 
 - @Applications@
-  - Simple or fully observable environments where quick reactions are sufficient
+  - Simple, fully observable control loops (e.g., thermostats)
+  - Expert systems
+    - E.g., medical diagnosis, technical troubleshooting
+  - Business rule engines
+  - Game AI
+  - Tools for legal reasoning
 
 * Knowledge-based Agents
 
-- @Fact@: Intelligence is achieved by _reasoning_ on an internal representation
-  of knowledge
+::: columns
+:::: {.column width=58%}
 
-- @Definition@: **Knowledge-based agents**
-  - Form representations of a complex world using a knowledge base
-  - Use inference to derive new representations
-  - Deduce actions from representations
-  - Accept tasks as goal descriptions
-  - Update knowledge using information from sensors
-  - Explain actions based on knowledge
+- @Fact@: Intelligence is achieved by _reasoning_ on an internal representation of
+  knowledge
+
+- @Definition@: A **knowledge-based agent** maintains a knowledge base and operates
+  through two operations
+  - **TELL**: Add a new percept or fact to the knowledge base
+  - **ASK**: Query the knowledge base for the next action to take
+  - Between TELL and ASK, the agent uses _inference_ to derive new facts and deduce
+    an action
+
+- @Characteristics@
+  - Accepts tasks as goal descriptions
+  - Updates knowledge using information from sensors
+  - Explains actions based on knowledge
     - E.g., medical diagnosis system infers diseases, suggests treatments
     - E.g., chess program uses move database to plan strategy
-  - Handle incomplete or uncertain information through probabilistic reasoning
+  - Handles incomplete or uncertain information through probabilistic reasoning
+
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph KBAgent {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.45;
+
+  node [shape=box, style="rounded,filled", penwidth=1.6,
+        fontname="Helvetica", fontsize=11, margin="0.2,0.12", height=0.5];
+  edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.7,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Percept   [label="Percept / Fact", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  KB        [label="Knowledge Base", fillcolor="#F4A6A6", color="#C0455B", fontcolor="#6B2A2A"];
+  Inference [label="Inference", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Action    [label="Action", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+
+  Percept -> KB [label="  TELL"];
+  KB -> Inference;
+  Inference -> KB [style=dashed, constraint=false];
+  KB -> Action [label="  ASK"];
+}
+```
+
+::::
+:::
 
 ## Ontologies
 
-* Ontologies (in Computer Science)
+* Ontologies
 
-- @Definition@: **Ontology:** is a formal and explicit representation of a
-  domain
+- @Definition@: An **ontology** is a formal and explicit representation of a domain
   - Describes the types of things that exist and how they relate to each other
-    - _Classes_: types of things
-    - _Individuals_: specific objects
-    - _Properties_: how things are related
+    - _Classes_: Types of things
+    - _Individuals_: Specific objects
+    - _Properties_: How things are related
 
 - @Example@
   - A medical ontology defines relationships between diseases, symptoms, and
@@ -752,46 +1119,80 @@ digraph EntailmentSemantics {
   - Enable reasoning about entities and their relationships
   - Enable machines and humans to understand and share information consistently
 
-- @Related Concepts@
-  - _Schema in a database_: columns with types (more rigid than ontologies)
-  - _Taxonomy_: simpler hierarchical tree-like classification
-  - _Knowledge base_: a collection of facts and rules, sometimes built from an
+- @Comparison@: Related but distinct concepts
+  - _Schema in a database_: Columns with types (more rigid than ontologies)
+  - _Taxonomy_: Simpler hierarchical tree-like classification
+  - _Knowledge base_: A collection of facts and rules, sometimes built from an
     ontology
 
-* Ontologies: Components
+* Components of an Ontology
 
-- **Classes / Concepts**: Represent general concepts in a domain
-  - E.g., `Person`, `City`, `Car`
+::: columns
+:::: {.column width=55%}
 
-- **Individuals / Instances**: Specific, concrete examples of classes
-  - E.g., `GP` (an instance of `Person`), `Rome`, `Ferrari 458`
+- @Components@
+  - _Classes / Concepts_: General concepts in a domain
+    - E.g., `Person`, `City`, `Car`
+  - _Individuals / Instances_: Specific, concrete examples of classes
+    - E.g., `GP` (an instance of `Person`), `Rome`, `Ferrari 458`
+  - _Properties / Relations_: Interactions or associations between classes or
+    instances
+    - E.g., `isMortal`, `locatedIn`, `hasAge`
+  - _Attributes / Data values_: Data associated with instances
+    - E.g., (`GP`, `hasAge`, `<your_guess>`)
+  - _Constraints_: Rules that restrict the kinds of values a property can take
+    - E.g., `hasColor` on `Car` must range over {`red`, `yellow`, ...}
+  - _Axioms_: Logical statements that define rules and constraints
+    - E.g., all humans are mortal: $\forall x (Human(x) \implies Mortal(x))$
+  - _Hierarchies_: Parent-child relationships between classes and properties
+    - E.g., `Student` is a subclass of `Person`
 
-- **Properties / Relations**: Describe interactions or associations between
-  classes or instances
-  - E.g., `isMortal`, `locatedIn`, `hasAge`
+::::
+:::: {.column width=42%}
 
-- **Attributes / Data values**: Specify data associated with instances
-  - E.g., (`GP`, `hasAge`, `<your_guess>`)
+```graphviz
+digraph OntologyComponents {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.35;
 
-- **Constraints**: Rules that restrict the kinds of values a property can take
-  - E.g., (`Ferrari 458`, `mustBe`, `red`)
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=9.5, margin="0.16,0.1", height=0.4];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
+        fontname="Helvetica", fontsize=8.5, fontcolor="#7B8794"];
 
-- **Axioms**: Logical statements that define rules and constraints
-  - E.g., all humans are mortal: $\forall x (Person(x) \implies Mortal(x))$
+  ParentClass [label="Person (class)", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  ChildClass  [label="Student (subclass)", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Individual  [label="GP (individual)", fillcolor="#C6A6F4", color="#8F5FC0", fontcolor="#45296B"];
+  Property    [label="hasAge (property)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Attribute   [label="42 (attribute value)", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Axiom       [label="Axiom:\nHuman(x) => Mortal(x)", fillcolor="#F4A6A6", color="#C0455B", fontcolor="#6B2A2A"];
 
-- **Hierarchies**: Organize classes and properties into parent-child
-  relationships
-  - E.g., `Student` is a subclass of `Person`
+  ChildClass -> ParentClass [label="  subclass of"];
+  Individual -> ParentClass [label="  instance of"];
+  Individual -> Property [label="  has"];
+  Property -> Attribute [label="  value"];
+  ParentClass -> Axiom [style=dashed, label="  constrained by"];
+}
+```
 
-* Ontology: Example University
+::::
+:::
+
+* Example: University Ontology
 
 ::: columns
 :::: {.column width=35%}
+
 - **Classes**
   - `Student`
   - `Professor`
   - `Course`
   - `Department`
+
 ::::
 :::: {.column width=60%}
 
@@ -838,102 +1239,100 @@ digraph UniversityOntology {
     Department -> Course [label="offersCourse"];
 }
 ```
+
 ::::
 :::
 
-- @Properties@: relationships between Classes
+- @Properties@: Relationships between Classes
   - `takesCourse` (`Student` $\rightarrow$ `Course`)
   - `teachesCourse` (`Professor` $\rightarrow$ `Course`)
   - `belongsToDepartment` (Student, Professor $\rightarrow$ `Department`)
 
-- **Individuals**: examples of Classes
+- **Individuals**: Examples of Classes
   - `Student`: Alice, Bob
   - `Professor`: GP, DrNo
   - `Course`: DATA605, MSML610
 
-- **Axioms**: logical rules that must be true
+- **Axioms**: Logical rules that must be true
   - Every `Course` must be taught by exactly one `Professor`
   - Every `Student` must belong to exactly one `Department`
 
 ## Reasoning in Ontologies
 
-* Example of Reasoning Tasks (1/4)
-- **Subsumption**
+* Class-Level Reasoning Tasks
+
+- @Definition@: **Subsumption**
   - _"Is class `A` a subclass of `B`?"_
   - Check whether one concept is more general than another
-  - E.g., if `Person` subsumes `Student`, every `Student` is necessarily a
-    `Person`
+  - E.g., if `Person` subsumes `Student`, every `Student` is necessarily a `Person`
   - Important for building taxonomies and ontologies
 
-- **Satisfiability**
+- @Definition@: **Satisfiability**
   - _"Can an instance of a concept exist?"_
   - Test if a concept is logically consistent (i.e., without contradiction)
-  - E.g., if the concept `FlyingPenguin` requires flying but is also defined as
-    a
-    penguin (which cannot fly), it might be not satisfiable
+  - E.g., the concept `FlyingPenguin` requires flying but is also defined as a
+    penguin (which cannot fly), so it is unsatisfiable
 
-- **Classification**
-  - _Organize concepts into a hierarchy_
+- @Definition@: **Classification**
+  - _"Organize concepts into a hierarchy"_
   - Automatically organize concepts into a hierarchy by checking subsumption
     relationships
-  - E.g., given definitions of `Animal`, `Bird`, and `Penguin`, classification
-    places `Penguin` under `Bird`, and `Bird` under `Animal`
+  - E.g., given definitions of `Animal`, `Bird`, and `Penguin`, classification places
+    `Penguin` under `Bird`, and `Bird` under `Animal`
 
-* Example of reasoning tasks in KR (2/4)
-- **Instance Checking**
+* Instance-Level Reasoning Tasks
+
+- @Definition@: **Instance Checking**
   - _"Is a specific individual an instance of a concept?"_
   - E.g., is `GP` an instance of `Student`?
 
-- **Consistency Checking**
+- @Definition@: **Consistency Checking**
   - _"Is the entire knowledge base free of contradictions?"_
   - E.g., no `Person` is both `Alive` and `Dead` at the same time
 
-- **Realization**
+- @Definition@: **Realization**
   - _"What is the most specific class an instance belongs to?"_
   - E.g., discovering that `GP` is a `Professor` rather than just a `Human`
 
-- **Retrieval**
-  - _Find all individuals that satisfy a certain condition_
+- @Definition@: **Retrieval**
+  - _"Find all individuals that satisfy a certain condition"_
   - E.g., retrieve all instances classified as `TeachingAssistant`
 
-* Example of reasoning tasks in KR (3/4)
-- **Query Answering**
-  - _Answer complex queries about the knowledge base_
+* Advanced Reasoning Tasks
+
+- @Definition@: **Query Answering**
+  - _"Answer complex queries about the knowledge base"_
   - E.g., find all `Person` that study at the university and are not `Student`
 
-- **Abduction**
-  - _Given an observation, infer the best explanation_
-  - E.g., seeing a `Person` carrying a backpack and wearing flip-flops in the
-    snow and infer that is likely a `Student`
+- @Definition@: **Abduction**
+  - _"Given an observation, infer the best explanation"_
+  - E.g., seeing a `Person` carrying a backpack and wearing flip-flops in the snow,
+    infer that they are likely a `Student`
 
-- **Deduction**
-  - _Infer consequences that logically follow from facts and rules_
-  - E.g., if `John` is a `Student` in `ComputerScience` then he can attend
-    `MSML610`
+- @Definition@: **Deduction**
+  - _"Infer consequences that logically follow from facts and rules"_
+  - E.g., if `John` is a `Student` in `ComputerScience` then he can attend `MSML610`
 
-* Example of reasoning tasks in KR (4/4)
-- **Belief Revision**
-  - _Update the knowledge base when new, possibly conflicting, information
-    arrives_
-  - E.g., learning that not every student in `ComputerScience` can take
-    `MSML610`
-    and revise a previous rule
+- @Definition@: **Belief Revision**
+  - _"Update the knowledge base when new, possibly conflicting, information arrives"_
+  - E.g., learning that not every student in `ComputerScience` can take `MSML610` and
+    revising a previous rule
 
-- **Temporal Reasoning**
-  - _Reason about events over time_
-  - E.g., if `EventA` happens before `EventB`, then `EventB` cannot `Cause`
-    `EventA`
+- @Definition@: **Temporal Reasoning**
+  - _"Reason about events over time"_
+  - E.g., if `EventA` happens before `EventB`, then `EventB` cannot `Cause` `EventA`
 
-- **Causal Reasoning**
-  - _Infer causes and effects among entities or events_
+- @Definition@: **Causal Reasoning**
+  - _"Infer causes and effects among entities or events"_
   - E.g., inferring that (`Storm`, `Cause`, `Flooding`) based on temporal and
     physical knowledge
 
-* Ontologies tools: Protege Example
+* Protege
 
 ::: columns
 :::: {.column width=55%}
-- **Protégé** is a free, open-source platform for building ontologies
+
+- **Protege** is a free, open-source platform for building ontologies
   - Developed at Stanford
 
 - **Construct and visualize ontologies**
@@ -941,10 +1340,12 @@ digraph UniversityOntology {
 
 - **Enable reasoning** over ontologies using plugins
   - E.g., checking consistency, inferring new knowledge
+
 ::::
 :::: {.column width=40%}
 
 ![](msml610/lectures_source/figures/L03.Protege_OWL.jpg)
+
 ::::
 :::
 
@@ -959,3 +1360,19 @@ digraph UniversityOntology {
   - Domain-specific knowledge modeling (e.g., biomedicine, law)
   - Semantic Web applications
   - AI systems that require structured knowledge
+
+* Summary
+
+- @Key idea@: Knowledge representation bridges perception and reasoning by making
+  implicit knowledge explicit, structured, and machine-processable
+
+- @Recap@
+  - _Design tradeoffs_: Expressiveness vs. tractability, symbolic vs. sub-symbolic
+  - _Languages_: Natural language, programming languages, propositional and
+    first-order logic
+  - _Semantics_: A KB is a set of sentences, grounded in the world, evaluated over
+    models
+  - _Reasoning_: Entailment defines what must follow; sound and complete inference
+    computes it
+  - _Agents and ontologies_: From reflex rules to knowledge-based agents, structured
+    with ontologies for shared, reasoned-over vocabularies

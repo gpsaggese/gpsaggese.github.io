@@ -1,6 +1,7 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L08.X: Causal Inference
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 // references=
 // - Facure, Causal Inference in Python, 2023
@@ -58,15 +59,15 @@
 \draw[->, line width=1.5pt] (0,0) -- (6.5,0);
 
 % Axis labels
-\node[font=\small] at (-0.8, 1) {Control};
-\node[font=\small] at (-0.8, 4.5) {Treated};
-\node[font=\small] at (1.5, -0.8) {Pre};
-\node[font=\small] at (4.5, -0.8) {Post};
+\node[font=\small\bfseries] at (-0.8, 1) {Control};
+\node[font=\small\bfseries] at (-0.8, 4.5) {Treated};
+\node[font=\small\bfseries] at (1.5, -0.8) {Pre};
+\node[font=\small\bfseries] at (4.5, -0.8) {Post};
 
 % Y-axis label
-\node[font=\small] at (-0.5, 6.2) {Units};
+\node[font=\small\bfseries] at (-0.5, 6.2) {Units};
 % X-axis label
-\node[font=\small] at (6.8, -0.3) {Time};
+\node[font=\small\bfseries] at (6.8, -0.3) {Time};
 
 % Grid cells with outcomes
 % Control-Pre: Y(0)
@@ -93,11 +94,11 @@
 
 % Annotation: "Time correlations"
 \draw[->, line width=2pt] (2.8,5.9) to[bend left=30] (4.2,5.9);
-\node[font=\small] at (3.5, 6.4) {Time correlations};
+\node[font=\small\bfseries] at (3.5, 6.4) {Time correlations};
 
 % Annotation: "Unit correlations"
 \draw[->, line width=2pt] (5.8,2.2) to[bend right=30] (5.8,4.3);
-\node[font=\small] at (6.3, 3.25) {Unit correlations};
+\node[font=\small\bfseries] at (6.3, 3.25) {Unit correlations};
 ```
 
 * Canonical Difference-in-Differences: The Setup

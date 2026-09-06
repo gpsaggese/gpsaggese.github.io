@@ -24,7 +24,6 @@ from typing import List, Optional, Tuple
 
 from tqdm import tqdm
 
-import class_scripts.gen_lecture_video_script as csglvisc
 import helpers.hdbg as hdbg
 import helpers.hlint as hlint
 import helpers.hio as hio
@@ -309,6 +308,8 @@ def _generate_script(
     :param cmd_opts: unused for this action since script generation is a
         direct Python call rather than a subprocess
     """
+    import class_scripts.gen_lecture_video_script as csglvisc
+
     if cmd_opts:
         _LOG.warning(
             "cmd_opts='%s' is ignored for the 'generate_script' action",

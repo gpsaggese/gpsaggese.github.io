@@ -51,12 +51,25 @@ jobs:
         with:
           python-version: '3.11'
 
+      # Some scripts declare their dependencies inline and are meant to be run
+      # via `uv run`.
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
       # To access modules in `helpers_root`, make sure PYTHONPATH includes
       # it, just as it's set in `setenv.sh`.
       - name: Update PYTHONPATH
         run: |
           PYTHONPATH="$(realpath .):$(realpath helpers_root)"
           echo "PYTHONPATH=$PYTHONPATH" >> $GITHUB_ENV
+
+      # `setenv.sh` adds every first-level `dev_scripts_helpers` subdirectory
+      # to `PATH` via `set_path()`, but `setenv.sh` itself can't be sourced
+      # here (it activates a pre-built thin-client venv that doesn't exist on a
+      # bare CI runner). Replicate just the PATH portion.
+      - name: Update PATH
+        run: |
+          find "$(realpath helpers_root/dev_scripts_helpers)" -maxdepth 1 -type d >> "$GITHUB_PATH"
 
       # Install the packages that are required to run the tests via GH,
       # matching what `common_run_tests.yml` installs for other repos.
@@ -68,7 +81,8 @@ jobs:
       - name: Run pytest_log
         run: |
           helpers_root/dev_scripts_helpers/testing/pytest_log --no_clear_screen \
-            --ignore=helpers_root book_springer book_cs_refreshers class_project class_scripts
+            --ignore=helpers_root -m "not need_dev_container" \
+            book_springer book_cs_refreshers class_project class_scripts
 
       - name: Upload pytest log
         if: ${{ always() }}

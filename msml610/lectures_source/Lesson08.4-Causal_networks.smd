@@ -1,6 +1,7 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L08.2: Causal Inference
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 // references=
 // - AIMA (Artificial Intelligence: a Modern Approach)
@@ -940,6 +941,7 @@ digraph CausalTriangle {
 ::::
 :::: {.column width=40%}
 ```tikz
+\bfseries
 \begin{axis}[
     xlabel={Ice cream sales},
     ylabel={Drownings},
@@ -1052,7 +1054,7 @@ digraph CausalTriangle {
 \addplot+[only marks, mark=square*, mark size=2pt, color=red!70] coordinates {
     (4.2,2.1) (5.1,2.0) (6.0,2.2) (6.5,2.1)
 };
-\node[anchor=south east, font=\small, text=black!70] at (rel axis cs:1.0,0.05)
+\node[anchor=south east, font=\small\bfseries, text=black!70] at (rel axis cs:1.0,0.05)
 {No trend within each temperature band};
 \end{axis}
 ```
@@ -1079,7 +1081,7 @@ digraph CausalTriangle {
 \addplot+[only marks, mark=*, mark size=2pt, color=blue!60] coordinates {
     (0.3,0.2) (0.8,0.3) (1.2,0.2) (1.6,0.4) (2.1,0.3) (2.8,0.2) (3.4,0.4) (3.9,0.5) (4.2,0.4) (5.1,0.3) (6.0,0.2) (6.5,0.2)
 };
-\node[anchor=south east, font=\small, text=black!70] at (rel axis cs:0.95,0.08)
+\node[anchor=south east, font=\small\bfseries, text=black!70] at (rel axis cs:0.95,0.08)
 {Flat: no causal effect};
 \end{axis}
 ```

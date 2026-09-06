@@ -1,6 +1,7 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=Lesson 11: Deep Learning
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 
 // References:
@@ -191,6 +192,7 @@
 :::: {.column width=40%}
 
 ```tikz
+\bfseries
 % Input nodes
 \node[draw=none, fill=none, text centered] (x1label) at (-3,2) {$x_1$};
 \node[draw=none, fill=none, text centered] (x2label) at (-3,1) {$x_2$};
@@ -244,6 +246,7 @@
 :::: {.column width=40%}
 
 ```tikz
+\bfseries
   \begin{axis}[
     axis lines = middle,
     xmin=-6, xmax=6,
@@ -295,6 +298,7 @@
 :::: {.column width=40%}
 
 ```tikz
+\bfseries
   \begin{axis}[
     axis lines=middle,
     xmin=-4, xmax=6,
@@ -368,6 +372,7 @@
     decision trees
 
 ```tikz
+\bfseries
 \draw[thick, blue] (0,0) circle (2cm);
 \draw[thick, red, dashed]
   (2,0) -- (1.414,1.414) -- (0,2) -- (-1.414,1.414) -- (-2,0) --
@@ -532,13 +537,13 @@
 
 \node[circle, draw, thick, line width=1.2pt, minimum size=1.3cm] (neuron) at (4,0.3) {$x_j^{(l)}$};
 
-\draw[->, thick] (x0) -- node[above, sloped, font=\scriptsize] {$w^{(l)}_{0j}$} (neuron);
-\draw[->, thick] (x1) -- node[above, sloped, font=\scriptsize] {$w^{(l)}_{1j}$} (neuron);
-\draw[->, thick] (x2) -- node[above, sloped, font=\scriptsize] {$w^{(l)}_{2j}$} (neuron);
-\draw[->, thick] (xd) -- node[below, sloped, font=\scriptsize] {$w^{(l)}_{d(l-1)j}$} (neuron);
+\draw[->, thick] (x0) -- node[above, sloped, font=\scriptsize\bfseries] {$w^{(l)}_{0j}$} (neuron);
+\draw[->, thick] (x1) -- node[above, sloped, font=\scriptsize\bfseries] {$w^{(l)}_{1j}$} (neuron);
+\draw[->, thick] (x2) -- node[above, sloped, font=\scriptsize\bfseries] {$w^{(l)}_{2j}$} (neuron);
+\draw[->, thick] (xd) -- node[below, sloped, font=\scriptsize\bfseries] {$w^{(l)}_{d(l-1)j}$} (neuron);
 
-\node[draw=none, fill=none, font=\small] at (-0.8,2.9) {layer $l-1$};
-\node[draw=none, fill=none, font=\small] at (5.6,0.3) {layer $l$};
+\node[draw=none, fill=none, font=\small\bfseries] at (-0.8,2.9) {layer $l-1$};
+\node[draw=none, fill=none, font=\small\bfseries] at (5.6,0.3) {layer $l$};
 ```
 
 * Feedforward Propagation Algorithm
@@ -829,10 +834,10 @@
   }
 }
 \draw[thick, red, line width=1.4pt] (-0.3,0.3) rectangle (1.5,-1.5);
-\node[red, font=\scriptsize] at (0.6,0.9) {filter ($3\times3$)};
+\node[red, font=\scriptsize\bfseries] at (0.6,0.9) {filter ($3\times3$)};
 
 \draw[->, thick] (3.2,-0.9) -- (4.4,-0.9);
-\node[font=\scriptsize] at (3.8,-0.6) {convolve};
+\node[font=\scriptsize\bfseries] at (3.8,-0.6) {convolve};
 
 \foreach \i in {0,...,2} {
   \foreach \j in {0,...,2} {
@@ -840,7 +845,7 @@
   }
 }
 \draw[thick, red, line width=1.4pt] (4.7,0.3) rectangle (5.3,-0.3);
-\node[font=\scriptsize] at (6.1,0.9) {feature map};
+\node[font=\scriptsize\bfseries] at (6.1,0.9) {feature map};
 ```
 
 * Convolutional Neural Networks
@@ -1028,6 +1033,7 @@ digraph FeedbackSystem {
   - E.g., machine translation, speech recognition, and language modeling
 
 ```tikz
+\bfseries
 \node[draw=none] (Ctm1) at (-6,1) {$C_{t-1}$};
 \node[draw=none] (htm1) at (-6,-1) {$h_{t-1}$};
 \node[draw=none] (xt) at (-6,-2) {$x_t$};
@@ -1081,6 +1087,7 @@ digraph FeedbackSystem {
     efficiency
 
 ```tikz
+\bfseries
 \node[draw=none] (htm1) at (-6,0.5) {$h_{t-1}$};
 \node[draw=none] (xt) at (-6,-1.5) {$x_t$};
 
@@ -1344,7 +1351,7 @@ digraph FeedbackSystem {
 \node[draw, fill=blue!20, rounded corners, minimum width=3.2cm, minimum height=0.8cm] (hidden) at (-1.8,0) {Hidden layer};
 
 \node[draw, fill=violet!20, rounded corners, minimum width=3.2cm, minimum height=0.8cm] (softmax) at (-1.8,-1.2) {Softmax over vocabulary};
-\node[draw=none, font=\scriptsize] at (-1.8,-2.1) {$\Pr(w_t | w_{t-n}, ..., w_{t-1})$};
+\node[draw=none, font=\scriptsize\bfseries] at (-1.8,-2.1) {$\Pr(w_t | w_{t-n}, ..., w_{t-1})$};
 
 \draw[->, thick] (w1) -- (e1);
 \draw[->, thick] (w2) -- (e2);
@@ -1375,7 +1382,7 @@ digraph FeedbackSystem {
 
 \node[draw, fill=violet!20, rounded corners, minimum width=2.2cm, minimum height=0.7cm] (softmax) at (-1.5,-2) {Softmax};
 \draw[->, thick] (h) -- (softmax);
-\node[draw=none, font=\scriptsize] at (-1.5,-2.9) {$\Pr(w_{t+1} | w_1, ..., w_t)$};
+\node[draw=none, font=\scriptsize\bfseries] at (-1.5,-2.9) {$\Pr(w_{t+1} | w_1, ..., w_t)$};
 ```
 
 * RNNs for Language Models: Pros and Cons

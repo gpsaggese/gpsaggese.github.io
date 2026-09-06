@@ -1,162 +1,464 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L02.3: ML Techniques - Input Processing
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 
-## Input Processing
+# Input Processing
 
-* Data Processing Transformations
+## Overview
 
-- **Purpose of data processing**
-  - Prepare raw data for effective machine learning
-  - Improve model performance and generalization
+* From Raw Data to Model Input
 
-- **Data cleanup**
-  - Apply filters or smoothing to remove irrelevant variations
+- @Motivation@: raw data rarely arrives in the shape a model needs, a fixed
+  sequence of transformations turns it into clean, well-scaled, informative
+  input
+  - Improves model performance, generalization, and training stability
 
-- **Handling missing data**
+- @Techniques@: this lesson covers, in order
+  - _Data quality_: remove duplicates and errors, denoise, handle outliers
+    and missing values
+  - _Scaling and encoding_: put numeric features on comparable scales, turn
+    categories into numbers, bin continuous values
+  - _Feature space engineering_: construct new features, reduce
+    dimensionality
+  - _Safe application_: fit every transformation on train only, then
+    augment the training set
 
-- **Types of transformations**
-  - Normalization and standardization
-  - Encoding categorical data
-  - Feature construction
-  - Dimensionality reduction
-  - Discretization
+```graphviz[width=95%]
+digraph InputProcessingPipeline {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.28;
+  ranksep=0.4;
+  rankdir=LR;
 
-- **Data augmentation**
-  - Increase dataset size using transformations (common in vision)
+  node [shape=box, style="rounded,filled", penwidth=1.6,
+        fontname="Helvetica", fontsize=10, margin="0.14,0.10", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  raw   [label="Raw Data", fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
+  clean [label="Clean &\nDenoise", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  fix   [label="Handle Outliers\n& Missing Values", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  scale [label="Scale &\nEncode", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  eng   [label="Construct &\nReduce Features", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  aug   [label="Augment", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  ready [label="Model-Ready\nData", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+
+  raw -> clean -> fix -> scale -> eng -> aug -> ready;
+}
+```
+
+## Data Quality
 
 * Data Cleaning
 
-- **Purpose of data cleaning**
-  - Ensure data quality for accurate model training
-  - Detect and correct errors or inconsistencies in the dataset
+- @Goal@: ensure data quality for accurate model training by detecting and correcting
+  _errors or inconsistencies_ in the dataset
 
-- **Typical steps in data cleaning**
-  - *Remove duplicates*: Identical records are eliminated
-  - *Correct data entry errors*: Fix misspellings or misformatted entries
-  - *Standardize data*:
-    - Convert dates formatted as both `MM/DD/YYYY` and `DD-MM-YYYY` into
+- @Techniques@:
+  - _Remove duplicates_: eliminate identical records
+  - _Correct data entry errors_: fix misspellings or misformatted entries
+  - _Standardize data_:
+    - Convert dates formatted as both `MM/DD/YYYY` and `DD-MM-YYYY` into one
       consistent format
-    - String normalization (e.g., lowercase conversion)
-    - Type conversion (e.g., strings to integers)
-    - Dealing with unexpected characters or encodings
+      - E.g., `01/02/2024` is ambiguous between the two formats, so the bug
+        is invisible on any single row
+    - Normalize strings (e.g., lowercase conversion)
+    - Convert types (e.g., strings to integers)
+    - Handle unexpected characters or encodings
 
-- **Relevance to ML models**
-  - Poor data quality leads to biased or incorrect predictions
-  - Clean data reduces variance and improves generalization
+- @Remark@: removing mislabeled and noisy records lowers both the variance
+  of the fitted model and the irreducible error floor
 
-* Handling Outliers and Missing Data
+* Noise Removal and Smoothing
 
-- **Outliers**
-  - *Definition*: Data points significantly different from others
-  - *Causes*: Measurement errors, variability in the data
-  - *Detection*: Box plots, Z-scores, or interquartile method
-  - *Treatment*: Removal, capping, or transformation (e.g., log scale)
+- @Goal@: remove irrelevant or corrupt variation from a signal to improve
+  clarity and model robustness
+  - E.g., clean noisy speech by removing high-frequency noise
 
-- **Missing data**
-  - *Detection*: Count of null values or incomplete entries
+- @Techniques@:
+  - _Smoothing_: moving average over a window of samples
+  - _Filtering_: low-pass filter for audio, median filter for spikes
 
-- **Remediation**
-  - *Deletion*: Remove rows or columns with too many missing values
-  - *Imputation*:
-    - Mean/median/mode substitution
-    - K-nearest neighbors (KNN)
-    - Regression or model-based approaches
-    - E.g., for a missing temperature reading, impute using the mean of the day's
-      surrounding values
+- @Cons@:
+  - A moving average removes real signal along with noise
+  - A low-pass filter adds lag between the true and the smoothed value
+  - A centered window uses future samples, which is leakage in any
+    forecasting setup
 
-* Normalization and Standardization
+* Outliers
 
-- @Goal@: Adjust feature scales for better convergence and learning
-  - _Normalize_: Rescale to $[0, 1]$
-  - _Standardize_: Zero mean, unit variance
+- @Definition@: a data point that falls outside $[Q_1 - 1.5 \cdot IQR,
+  Q_3 + 1.5 \cdot IQR]$ (the interquartile range rule
+  `#cite("tukey1977eda")`{=typst}) or has $|z| > 3$
+  - _Causes_: measurement errors, or genuine variability in the data
 
-- **Why it helps**
-  - Equal feature contribution in distance-based models
-  - Faster convergence in gradient-based algorithms
-  - Enables regularization
-  - Easier feature interpretation
+- @Techniques@:
+  - _Detection_: box plots, the IQR rule, or the Z-score
+    - The Z-score test assumes approximate normality and is itself
+      distorted by the outliers it is trying to find (masking)
+  - _Treatment_: removal, capping, or a variance-stabilizing transform
+    (e.g., log scale)
 
-- **Common methods**
-  - Min-Max normalization: $x' = \frac{x - x_{min}}{x_{max} - x_{min}}$
+- @Remark@: an outlier can be an _error_ or a _rare true event_
+  - In fraud detection, anomaly detection, and risk modeling, the outlier
+    _is_ the signal, decide which case applies before removing anything
+
+* Missing Data and Imputation
+
+- @Detection@: count of null values or incomplete entries per column
+
+::: columns
+:::: {.column width=50%}
+- @Definition@: three mechanisms explain why a value is missing
+  `#cite("rubin1976missingdata")`{=typst}, and which one holds decides whether
+  imputation is safe
+  - _MCAR_ (missing completely at random): missingness unrelated to any
+    variable, imputation is unbiased
+  - _MAR_ (missing at random): missingness depends on observed variables,
+    imputation conditioned on those variables is unbiased
+  - _MNAR_ (missing not at random): missingness depends on the missing value
+    itself
+    - E.g., high earners skip the income question, imputation is biased unless
+      the mechanism is modeled explicitly
+::::
+:::: {.column width=50%}
+
+```graphviz[width=85%]
+digraph MissingnessMechanisms {
+  graph [rankdir=LR, splines=curved, bgcolor="transparent",
+         ranksep="0.9 equally", nodesep=0.22, pad=0.25, fontname="Helvetica"];
+  node  [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
+         fontcolor="#26215C", color="#D8D6EE", penwidth=1.1,
+         height=0.42, margin="0.16,0.08"];
+  edge  [arrowhead=none, penwidth=1.3, color="#B9B6D6"];
+
+  root [label="Why is it missing?", shape=box, style="rounded,filled",
+        fillcolor="#26215C", fontcolor="white", fontsize=12, penwidth=0,
+        margin="0.22,0.14"];
+
+  mcar [label=<<b>MCAR</b><br/><font point-size="9" color="#1F4E2E">Unrelated to any variable<br/>imputation unbiased</font>>,
+        fillcolor="#E5F4EE", color="#8FB79A", fontcolor="#1F4E2E"];
+  mar  [label=<<b>MAR</b><br/><font point-size="9" color="#1F4E79">Depends on observed variables<br/>condition on them, unbiased</font>>,
+        fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
+  mnar [label=<<b>MNAR</b><br/><font point-size="9" color="#6B1F1F">Depends on the missing value itself<br/>biased unless modeled</font>>,
+        fillcolor="#FBE5E5", color="#D98C8C", fontcolor="#6B1F1F"];
+
+  root -> mcar [color="#8FB79A"];
+  root -> mar  [color="#7CA6CE"];
+  root -> mnar [color="#D98C8C"];
+
+  { rank=same; mcar; mar; mnar; }
+}
+```
+::::
+:::
+
+* Missing Data and Imputation
+
+- @Techniques@:
+  - **Deletion**: remove rows or columns with too many missing values
+  - **Imputation**: mean/median/mode substitution, K-nearest neighbors (KNN), or a
+    regression/model-based estimate
+    - E.g., impute a missing temperature reading by interpolating between the day's
+      surrounding readings
+  - **Missingness indicator**: add a binary `was_missing` column, missingness is
+    often predictive on its own
+
+- @Cons@: mean/median/mode substitution
+  - Shrinks feature variance
+  - Attenuates correlations
+  - Bias downstream estimates toward zero
+
+## Feature Scaling and Encoding
+
+* Feature Scaling
+
+- @Goal@: put features on comparable scales for fair distance comparisons
+  and faster, more stable optimization
+  - _Normalize_ (min-max): rescale to [0, 1]
+  - _Standardize_ (z-score): zero mean, unit variance
+
+- @Techniques@:
+  - _Min-max normalization_: $x' = \frac{x - x_{\min}}{x_{\max} - x_{\min}}$
   - Z-score standardization: $x' = \frac{x - \mu}{\sigma}$
+  - RobustScaler: center and scale by the median and IQR instead of the
+    mean and range, unaffected by outliers
 
-* Encoding Categorical Data
+- @Comparison@:
+  - Min-max is affected by a single extreme value and does not bound unseen test
+    values to [0, 1]
+  - Z-score is more robust, but is still pulled by heavy outliers
+  - RobustScaler is more outlier-safe
 
-- @Goal@: Convert non-numeric categories into numeric representations
+* Feature Scaling
 
-- **Label encoding**
-  - Assigns an integer to each category
+- @Comparison@: scale-sensitive vs scale-invariant models
+
+  - _Needs scaling_
+    - kNN, SVM, k-means, PCA, and gradient-based models
+    - Unscaled feature with a small range gets penalized more heavily by an L1/L2
+      penalty, the penalty is not scale-invariant
+  - _Invariant to scaling_
+    - Tree-based models (decision trees, random forests, gradient boosting) only
+      compare feature values via thresholds
+
+* Categorical Encoding
+
+- @Goal@: convert non-numeric categories into numeric representations
+
+- @Techniques@:
+  - _Label encoding_: assign an integer to each category
     - E.g., `red`, `green`, `blue` $\to$ `1`, `2`, `3`
-  - Can mislead models if order is not meaningful
-
-- **One-hot encoding**
-  - Creates binary vector per category
+    - Asserts both an order and equal spacing that is usually not meaningful
+      - E.g., `green - red = blue - green`
+  - _One-hot encoding_: create a binary vector per category
     - E.g., `red`, `green`, `blue` $\to$ `[1,0,0]`, `[0,1,0]`, `[0,0,1]`
-  - Avoids ordinal assumption
-  - Increases dimensionality
+    - Avoids the ordinal assumption
+  - _Ordinal encoding_: label encoding is correct when the order _is_ real
+    - E.g., `small < medium < large`
+  - _Target/mean encoding_, _learned embeddings_: map each category to a statistic of
+    the target, or to a learned dense vector
+
+- @Cons@:
+  - One-hot increases dimensionality sharply for high-cardinality columns
+  - A category unseen at inference time has no learned encoding, map it to an
+    explicit `unknown` bucket
+
+* Discretization
+
+- @Goal@: convert a continuous quantity to categorical
+
+
+- @Techniques@:
+  - _Equal-width binning_: split the range into bins of equal width
+  - _Quantile binning_: split so each bin holds an equal count of points
+  - _Supervised binning_: choose cut points with a decision tree on the
+    target
+  - _K-means binning_: cluster values into bins along one dimension
+
+::: columns
+:::: {.column width=50%}
+- @Example@: discretizing age
+  - `Child`: [0, 13), `Teen`: [13, 20), `Adult`: [20, 65), `Senior`: [65,
+    $\infty$)
+  - Age 32 $\to$ `Adult`
+- @Cons@:
+  - Discards all within-bin variation, e.g., ages 21 and 64 both become `Adult`
+  - Cut points are arbitrary
+  - An equal-width bin can end up empty
+  - A real threshold effect can fall inside a bin instead of at its edge
+::::
+:::: {.column width=45%}
+
+```graphviz[width=90%]
+digraph AgeBinning {
+  bgcolor="transparent";
+  pad="0.1";
+  splines=spline;
+  nodesep=0.22;
+  ranksep=0.3;
+  rankdir=LR;
+
+  node [shape=box, style="rounded,filled", penwidth=1.4,
+        fontname="Helvetica", fontsize=10, margin="0.14,0.09", height=0.4];
+  edge [color="#A3B1C0", penwidth=1.1, arrowhead=vee, arrowsize=0.6,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  child  [label="Child\n[0, 13)",    fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
+  teen   [label="Teen\n[13, 20)",    fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
+  adult  [label="Adult\n[20, 65)",   fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+  senior [label="Senior\n[65, inf)", fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
+
+  child -> teen -> adult -> senior [style=invis];
+  { rank=same; child; teen; adult; senior; }
+
+  age32 [label="Age = 32", shape=ellipse, fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
+  age32 -> adult [label="mapped to", color="#D9902B", fontcolor="#6B4517"];
+}
+```
+::::
+:::
+
+## Feature Space Engineering
 
 * Feature Construction
 
-- @Goal@: Derive more informative features from raw inputs
+- @Goal@:
+  - Derive more informative features from raw inputs
+  - Encod domain knowledge the raw columns don't expose directly
 
-- **Methods**
-  - Combining variables (e.g., area = height × width)
-  - Extracting parts (e.g., year from a date)
-  - Logical features
+- @Techniques@:
+  - Combine variables (e.g., $area = height \times width$)
+  - Extract parts (e.g., year from a date)
+  - Derive logical features
     - E.g., transform `2023-04-15` $\to$ (`Saturday`, `is_weekend = True`)
 
-- **Why it helps**
-  - Encodes domain knowledge
-  - Improves model expressiveness and performance
+- @Remark@: hand-built features are the part representation learning in deep learning
+  replaces
+
+- @Cons@: a feature built from the target, or from rows that occur after the
+  prediction point in time, leaks _information_
 
 * Dimensionality Reduction
 
-- @Goal@: Reduce number of features while preserving key information
+- @Goal@: reduce the number of features while preserving key information, e.g.,
+  - Reduce 1024x640 image pixels to 10 principal components
+  - Collapse 3 color channels into 1 luminance (grayscale) channel
 
-- **Why it helps**
+- @Comparison@: feature selection vs feature extraction
+  - _Selection_: keep a subset of the original, interpretable columns
+  - _Extraction_ (e.g., PCA): build new combinations of columns that are no
+    longer directly interpretable
+
+- @Techniques@:
+  - _PCA_ `#cite("pearson1901pca")`{=typst}: unsupervised, linear combinations
+    that maximize variance
+  - _LDA_: supervised, projects data to maximize class separability
+  - _t-SNE_ `#cite("vandermaaten2008tsne")`{=typst}, _UMAP_
+    `#cite("mcinnes2018umap")`{=typst}: non-linear methods used mainly for
+    visualization
+  - Some techniques are scale dependent
+
+- @Applications@
   - Reduce overfitting
   - Reduce data redundancy
   - Improve model speed
   - Allow visualization
 
-- **Common techniques**
-  - PCA: linear combinations that maximize variance
-  - LDA: projects data to maximize class separability
+## Applying Transformations Safely
 
-- @Example@
-  - Reduce 1024x640 image pixels to 10 principal components
-  - Quantize color images into gray scale
+* Fit on Train, Apply to Validation and Test
 
-* Discretization
+::: columns
+:::: {.column width=50%}
+- @Problem@: a model, a scaler, imputer, encoder, and PCA are all _fitted_ objects,
+  each learns statistics from data
+  - E.g., mean, min/max, category list, principal axes
+  - Fitting them on the full dataset (before splitting) leaks information into
+    training `#cite("kaufman2012leakage")`{=typst}
+::::
+:::: {.column width=50%}
 
-- @Goal@: Convert continuous values into categorical bins
+```graphviz
+digraph FitTransformLeakage {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.3;
+  ranksep=0.4;
+  rankdir=LR;
 
-- **Why it helps**
-  - Simplifies models or enables categorical algorithms
-  - Helps detect threshold effects in data
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=10, margin="0.14,0.10", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
 
-- @Techniques@
-  - Equal-width binning
-  - Quantile binning
+  subgraph cluster_wrong {
+    label     = "Wrong: fit before split";
+    labelloc  = "t";
+    fontname  = "Helvetica-Bold";
+    fontsize  = 11;
+    fontcolor = "#6B1F1F";
+    style     = "rounded,filled";
+    fillcolor = "#FBE5E5";
+    color     = "#D98C8C";
+    margin    = 14;
 
-- @Example@
-  - Discretize age
-    - `Child`: $[0, 13)$
-    - `Teen`: $[13, 20)$
-    - `Adult`: $[20, 65)$
-    - `Senior`: $[65, \infty)$
-  - Age 32 $\to$ `Adult`
+    all_data [label="All Data", fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
+    fit_all  [label="Fit scaler/imputer\non ALL rows", fillcolor="#FBC6C6", color="#D64545", fontcolor="#6B1F1F"];
+    split_w  [label="Split", fillcolor="#FBC6C6", color="#D64545", fontcolor="#6B1F1F"];
+    train_w  [label="Train", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+    test_w   [label="Test\n(already leaked into)", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
 
-* Noise Removal
+    all_data -> fit_all -> split_w;
+    split_w -> train_w;
+    split_w -> test_w;
+  }
+}
+```
+::::
+:::
 
-- @Goal@: Remove irrelevant or corrupt data variations
+::: columns
+:::: {.column width=50%}
+- @Solution@: fit every transformer on the training fold only, then apply the
+  already-fitted transformer to validation and test
+  - Repeat this inside every cross-validation fold, not once for the whole
+    dataset
+  - E.g., `sklearn.pipeline.Pipeline` chains the fitted steps
+::::
+:::: {.column width=50%}
+```graphviz
+digraph FitTransformLeakage {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.3;
+  ranksep=0.4;
+  rankdir=LR;
 
-- **Why it helps**
-  - Improves signal clarity and model robustness
-    - E.g., clean noisy speech by removing high-frequency noise
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=10, margin="0.14,0.10", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
 
-- **Methods**
-  - Smoothing (e.g., moving average)
-  - Filtering (e.g., low-pass filter in audio)
+  subgraph cluster_correct {
+    label     = "Correct: split before fit";
+    labelloc  = "t";
+    fontname  = "Helvetica-Bold";
+    fontsize  = 11;
+    fontcolor = "#1F4E2E";
+    style     = "rounded,filled";
+    fillcolor = "#E5F4EE";
+    color     = "#8FB79A";
+    margin    = 14;
+
+    all_data2 [label="All Data", fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
+    split_c   [label="Split", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    train_c   [label="Train", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+    fit_c     [label="Fit scaler/imputer\non TRAIN only", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+    test_c    [label="Test", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    apply_c   [label="Apply fitted\ntransform", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    all_data2 -> split_c;
+    split_c -> train_c -> fit_c;
+    split_c -> test_c -> apply_c;
+    fit_c -> apply_c [style=dashed, label="reuse", color="#6FA890"];
+  }
+}
+```
+
+::::
+:::
+
+* Data Augmentation
+
+- @Goal@: increase the effective size and diversity of a dataset by
+  applying label-preserving transformations to existing examples
+
+- @Techniques@:
+  - _Vision_: random crop, flip, rotation, color jitter, cutout
+  - _Text_: synonym replacement, back-translation, random word dropout
+  - _Audio_: pitch shift, time stretch, added background noise
+  - _Tabular_: SMOTE-style synthetic minority oversampling
+    `#cite("chawla2002smote")`{=typst}
+
+- @Remark@: augmentation acts as a "regularizer"
+  - It exposes the model to more variation than the raw dataset contains, without
+    collecting new labels
+
+- @Cons@:
+  - An augmentation that changes the true label trains the model on wrong data
+    - E.g., flipping an image of a `6` into a `9`
+  - Make sure the synthetic data has the same distribution of the true data
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
+```

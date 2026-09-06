@@ -1,6 +1,7 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L09: A/B Testing and Experimentation
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 // references=
 // - Pearl, Glymour, Jewell: _"Causal Inference in Statistics: A Primer"_ (2016)

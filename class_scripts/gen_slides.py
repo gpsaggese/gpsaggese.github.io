@@ -27,6 +27,9 @@ published dir `{DIR}/lectures_pdf/`.
 - Release the slides PDF already built for msml610 lesson 08.1, i.e., copy
   it from `msml610/lectures_pdf.tmp/` to `msml610/lectures_pdf/`:
 > gen_slides.py -i msml610/08.1 --action release
+
+- Generate the slides PDFs for multiple lessons in one run:
+> gen_slides.py --files "msml610/08.1 msml610/08.2"
 """
 
 import argparse
@@ -50,13 +53,21 @@ def _parse() -> argparse.ArgumentParser:
         description=__doc__,
         formatter_class=hparser.CustomHelpFormatter,
     )
-    parser.add_argument(
+    input_group = parser.add_mutually_exclusive_group(required=True)
+    input_group.add_argument(
         "-i",
         "--input",
-        required=True,
         type=str,
         help="Lecture specification: 'data605/08.1', 'msml610/08.1', "
         "or file path 'msml610/lectures_source/Lesson10.2-Name.smd'",
+    )
+    input_group.add_argument(
+        "-f",
+        "--files",
+        type=str,
+        help="Space-separated list of lecture specifications to process in "
+        "one run, e.g., 'msml610/08.1 msml610/08.2' (each element follows "
+        "the same format as -i/--input)",
     )
     parser.add_argument(
         "--daemon",
@@ -129,10 +140,15 @@ def _release(dir_arg: str, dst_name: str) -> None:
     _LOG.info("%s", hprint.color_highlight(msg, "green"))
 
 
-def _main(parser: argparse.ArgumentParser) -> None:
-    args = parser.parse_args()
-    hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
-    dir_arg, lesson_arg = csccouti.parse_lesson_spec(args.input)
+def _process_lesson_spec(input_spec: str, args: argparse.Namespace) -> None:
+    """
+    Generate (or release) the slides PDF for a single lecture specification.
+
+    :param input_spec: lecture specification, e.g. 'msml610/08.1' or a
+        lecture source file path
+    :param args: parsed command-line arguments
+    """
+    dir_arg, lesson_arg = csccouti.parse_lesson_spec(input_spec)
     csccouti.validate_dir_lesson_args(dir_arg, lesson_arg)
     # Get source and destination names.
     src_name = csccouti.get_source_name(dir_arg, lesson_arg)
@@ -205,6 +221,21 @@ def _main(parser: argparse.ArgumentParser) -> None:
     # Execute the command.
     _LOG.info("%s", hprint.color_highlight(f"> {cmd}", "green"))
     hsystem.system(cmd, suppress_output=False)
+
+
+def _main(parser: argparse.ArgumentParser) -> None:
+    args = parser.parse_args()
+    hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
+    input_specs = args.files.split() if args.files else [args.input]
+    if args.daemon:
+        hdbg.dassert_eq(
+            len(input_specs),
+            1,
+            "`--daemon` only supports a single lecture, got: %s",
+            input_specs,
+        )
+    for input_spec in input_specs:
+        _process_lesson_spec(input_spec, args)
 
 
 if __name__ == "__main__":

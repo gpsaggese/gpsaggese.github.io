@@ -10,10 +10,14 @@ import os
 import pprint
 from typing import List
 
+import pytest
+
 import helpers.hio as hio
 import helpers.hprint as hprint
 import helpers.hunit_test as hunitest
 
+# `count_lecture_slides.py` is a `uv run` script that requires `tabulate`.
+pytest.importorskip("tabulate")
 import class_scripts.count_lecture_slides as cscolesl
 
 

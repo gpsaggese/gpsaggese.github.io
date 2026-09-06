@@ -8,6 +8,7 @@ import class_scripts.test.test_common_utils as csttcout
 
 import logging
 import os
+import sys
 from unittest import mock
 
 import helpers.hio as hio
@@ -543,15 +544,28 @@ class Test_call_llm(hunitest.TestCase):
         # Prepare outputs.
         expected = "Paris"
         # Run test.
-        with mock.patch(
-            "helpers.hllm.get_completion", return_value=expected
-        ) as mock_get_completion:
+        # Note: the "hllm" backend tests inject a fake module into
+        # `sys.modules["helpers.hllm"]` instead of using
+        # `mock.patch("helpers.hllm.get_completion")` directly.
+        # - Problem: `helpers.hllm` imports `openai` and `pydantic` at module
+        #   level. `mock.patch("helpers.hllm.get_completion", ...)` needs to
+        #   import the real `helpers.hllm` module to find `get_completion` to
+        #   patch. In an environment where `openai` isn't installed that import
+        #   raises `ModuleNotFoundError`.
+        # - Solution: pre-populate `sys.modules["helpers.hllm"]` with a
+        #   `MagicMock` via `mock.patch.dict()` before `call_llm()` runs.
+        #   This keeps the test hermetic without adding `openai` as a
+        #   dependency of the CI job
+        # TODO(gp): Maybe factor this out.
+        mock_hllm = mock.MagicMock()
+        mock_hllm.get_completion.return_value = expected
+        with mock.patch.dict(sys.modules, {"helpers.hllm": mock_hllm}):
             actual = csccouti.call_llm(
                 user_prompt, system_prompt, model, llm_backend
             )
         # Check outputs.
         self.assert_equal(actual, expected)
-        mock_get_completion.assert_called_once_with(
+        mock_hllm.get_completion.assert_called_once_with(
             user_prompt=user_prompt,
             system_prompt=system_prompt,
             model=model,
@@ -573,10 +587,10 @@ class Test_call_llm(hunitest.TestCase):
         images_as_base64 = ("base64_image_data",)
         # Prepare outputs.
         expected = "A slide about causal inference."
+        mock_hllm = mock.MagicMock()
+        mock_hllm.get_completion.return_value = expected
         # Run test.
-        with mock.patch(
-            "helpers.hllm.get_completion", return_value=expected
-        ) as mock_get_completion:
+        with mock.patch.dict(sys.modules, {"helpers.hllm": mock_hllm}):
             actual = csccouti.call_llm(
                 user_prompt,
                 system_prompt,
@@ -586,7 +600,7 @@ class Test_call_llm(hunitest.TestCase):
             )
         # Check outputs.
         self.assert_equal(actual, expected)
-        mock_get_completion.assert_called_once_with(
+        mock_hllm.get_completion.assert_called_once_with(
             user_prompt=user_prompt,
             system_prompt=system_prompt,
             model=model,

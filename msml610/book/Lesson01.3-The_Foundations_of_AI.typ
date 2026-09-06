@@ -31,16 +31,28 @@
 
 #wrap-content(
   [
-    #figure(
-      image(
-        "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.1.png",
-        width: 100%,
-      ),
-      caption: [Diagram relating AI to other disciplines],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:airelatestomanyotherdisciplines>
+// rendered_images:begin
+//     ```mermaid
+//     mindmap
+//       root((AI))
+//         Philosophy
+//         Mathematics
+//         Economics
+//         Neuroscience
+//         Psychology
+//         Computer engineering
+//         Control theory
+//         Linguistics
+//     ```
+//     label=fig:airelatestomanyotherdisciplines
+//     caption=Diagram relating AI to other disciplines
+// rendered_images:end
+// render_images:begin
+#figure(
+  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.1.png"),
+  caption: [Diagram relating AI to other disciplines],
+) <fig:airelatestomanyotherdisciplines>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -238,16 +250,50 @@ structure of desires and preferences that make such maximization coherent.
 
 #wrap-content(
   [
-    #figure(
-      image(
-        "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.2.png",
-        width: 100%,
-      ),
-      caption: [Probability, utility, and decision theory],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:aiandeconomics12>
+// rendered_images:begin
+//     ```graphviz
+//     digraph DecisionTheory {
+//         bgcolor="transparent";
+//         pad="0.15";
+//         splines=spline;
+//         nodesep=0.4;
+//         ranksep=0.4;
+//         rankdir=TB;
+// 
+//         node [shape=box,
+//               style="rounded,filled",
+//               penwidth=1.8,
+//               fontname="Helvetica",
+//               fontsize=12,
+//               margin="0.22,0.14",
+//               height=0.50];
+// 
+//         edge [color="#A3B1C0",
+//               penwidth=1.3,
+//               arrowhead=vee,
+//               arrowsize=0.75,
+//               fontname="Helvetica",
+//               fontsize=10,
+//               fontcolor="#7B8794"];
+// 
+//         Prob    [label="Probability\nTheory", fillcolor="#A6E7F4", color="#5FB0C4", fontcolor="#1F4E56"];
+//         Utility [label="Utility\nTheory", fillcolor="#A6E7F4", color="#5FB0C4", fontcolor="#1F4E56"];
+//         Dec     [label="Decision\nTheory", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+// 
+//         { rank=same; Prob; Utility; }
+//         Prob -> Dec;
+//         Utility -> Dec;
+//     }
+//     ```
+//     label=fig:aiandeconomics12
+//     caption=Probability, utility, and decision theory
+// rendered_images:end
+// render_images:begin
+#figure(
+  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.2.png"),
+  caption: [Probability, utility, and decision theory],
+) <fig:aiandeconomics12>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -265,7 +311,6 @@ structure of desires and preferences that make such maximization coherent.
   their combination yields a principled framework for action under
   uncertainty.
 ]
-
 
 A harder question arises when payoffs depend not on a single choice but on a
 #emph[sequence of actions]. #strong[Operations research] tackles exactly
@@ -451,16 +496,52 @@ that far exceeds any human cognitive ability #cite("good1965ultraintelligent").
 
 #wrap-content(
   [
-    #figure(
-      image(
-        "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.3.png",
-        width: 100%,
-      ),
-      caption: [Diagram relating AI System, Improves Itself, Capability Increases and Superintelligence],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:thebraincausesthemind>
+// rendered_images:begin
+//     ```graphviz[width=28%]
+//     digraph Singularity {
+//         bgcolor="transparent";
+//         pad="0.15";
+//         splines=spline;
+//         nodesep=0.4;
+//         ranksep=0.5;
+//         rankdir=LR;
+// 
+//         node [shape=box,
+//               style="rounded,filled",
+//               penwidth=1.8,
+//               fontname="Helvetica",
+//               fontsize=12,
+//               margin="0.22,0.14",
+//               height=0.50];
+// 
+//         edge [color="#A3B1C0",
+//               penwidth=1.3,
+//               arrowhead=vee,
+//               arrowsize=0.75,
+//               fontname="Helvetica",
+//               fontsize=10,
+//               fontcolor="#7B8794"];
+// 
+//         AI      [label="AI\nSystem", fillcolor="#F4A6A6", color="#D46A6A", fontcolor="#6B1F1F"];
+//         Improve [label="Improves\nItself", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
+//         Capable [label="Capability\nIncreases", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+//         Super   [label="Super-\nintelligence", fillcolor="#C6A6F4", color="#8A5FCC", fontcolor="#3E1F6B"];
+// 
+//         AI -> Improve;
+//         Improve -> Capable;
+//         Capable -> AI [style=dashed, constraint=false, label="  recursive loop"];
+//         Capable -> Super [label="  over time"];
+//     }
+//     ```
+//     label=fig:thebraincausesthemind
+//     caption=Diagram relating AI System, Improves Itself, Capability Increases and Superintelligence
+// rendered_images:end
+// render_images:begin
+#figure(
+  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.3.png"),
+  caption: [Diagram relating AI System, Improves Itself, Capability Increases and Superintelligence],
+) <fig:thebraincausesthemind>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -492,16 +573,54 @@ machinery of the mind.
 
 #wrap-content(
   [
-    #figure(
-      image(
-        "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.4.png",
-        width: 100%,
-      ),
-      caption: [Diagram relating Stimuli, Internal Representation, Cognitive Processes and Beliefs],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:aiandcognitivepsychology>
+// rendered_images:begin
+//     ```graphviz
+//     digraph CognitivePsychology {
+//         bgcolor="transparent";
+//         pad="0.15";
+//         splines=spline;
+//         nodesep=0.5;
+//         ranksep=0.6;
+//         rankdir=LR;
+// 
+//         node [shape=box,
+//               style="rounded,filled",
+//               penwidth=1.8,
+//               fontname="Helvetica",
+//               fontsize=12,
+//               margin="0.22,0.14",
+//               height=0.50];
+// 
+//         edge [color="#A3B1C0",
+//               penwidth=1.3,
+//               arrowhead=vee,
+//               arrowsize=0.75,
+//               fontname="Helvetica",
+//               fontsize=10,
+//               fontcolor="#7B8794"];
+// 
+//         Stimuli [label="Stimuli", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+//         Repr    [label="Internal\nRepresentation", fillcolor="#A6E7F4", color="#5FB0C4", fontcolor="#1F4E56"];
+//         Process [label="Cognitive\nProcesses", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
+//         Beliefs [label="Beliefs", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+//         Actions [label="Actions\n(Goals)", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+// 
+//         Stimuli -> Repr;
+//         Repr -> Process;
+//         Process -> Beliefs [label="  new representations"];
+//         Beliefs -> Actions;
+//         Beliefs -> Process [style=dashed, constraint=false, label="  update"];
+//     }
+//     ```
+//     label=fig:aiandcognitivepsychology
+//     caption=Diagram relating Stimuli, Internal Representation, Cognitive Processes and Beliefs
+// rendered_images:end
+// render_images:begin
+#figure(
+  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.4.png"),
+  caption: [Diagram relating Stimuli, Internal Representation, Cognitive Processes and Beliefs],
+) <fig:aiandcognitivepsychology>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -697,16 +816,52 @@ provable stability and performance guarantees.
 
 #wrap-content(
   [
-    #figure(
-      image(
-        "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.5.png",
-        width: 100%,
-      ),
-      caption: [Diagram relating Goal State, Controller, System and Current State],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:aiandcontroltheory>
+// rendered_images:begin
+//     ```graphviz
+//     digraph ControlLoop {
+//         bgcolor="transparent";
+//         pad="0.15";
+//         splines=spline;
+//         nodesep=0.5;
+//         ranksep=0.5;
+//         rankdir=LR;
+// 
+//         node [shape=box,
+//               style="rounded,filled",
+//               penwidth=1.8,
+//               fontname="Helvetica",
+//               fontsize=12,
+//               margin="0.22,0.14",
+//               height=0.50];
+// 
+//         edge [color="#A3B1C0",
+//               penwidth=1.3,
+//               arrowhead=vee,
+//               arrowsize=0.75,
+//               fontname="Helvetica",
+//               fontsize=10,
+//               fontcolor="#7B8794"];
+// 
+//         Goal       [label="Goal\nState", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+//         Controller [label="Controller", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
+//         System     [label="System", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+//         Output     [label="Current\nState", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+// 
+//         Goal -> Controller [label="  error"];
+//         Controller -> System;
+//         System -> Output;
+//         Output -> Controller [style=dashed, constraint=false, label="  feedback"];
+//     }
+//     ```
+//     label=fig:aiandcontroltheory
+//     caption=Diagram relating Goal State, Controller, System and Current State
+// rendered_images:end
+// render_images:begin
+#figure(
+  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.5.png"),
+  caption: [Diagram relating Goal State, Controller, System and Current State],
+) <fig:aiandcontroltheory>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -739,16 +894,59 @@ support interactions at scale.
 
 #wrap-content(
   [
-    #figure(
-      image(
-        "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.6.png",
-        width: 100%,
-      ),
-      caption: [Diagram relating Natural Language, Computational Linguistics, Knowledge Representation and Machine Translation],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:aiandlinguistics>
+// rendered_images:begin
+//     ```graphviz[width=42%]
+//     digraph Linguistics {
+//         bgcolor="transparent";
+//         pad="0.15";
+//         splines=spline;
+//         nodesep=0.4;
+//         ranksep=0.5;
+//         rankdir=LR;
+// 
+//         node [shape=box,
+//               style="rounded,filled",
+//               penwidth=1.8,
+//               fontname="Helvetica",
+//               fontsize=12,
+//               margin="0.22,0.14",
+//               height=0.50];
+// 
+//         edge [color="#A3B1C0",
+//               penwidth=1.3,
+//               arrowhead=vee,
+//               arrowsize=0.75,
+//               fontname="Helvetica",
+//               fontsize=10,
+//               fontcolor="#7B8794"];
+// 
+//         NL     [label="Natural\nLanguage", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+//         CL     [label="Computational\nLinguistics", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
+//         KR     [label="Knowledge\nRepresentation", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
+//         Trans  [label="Machine\nTranslation", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+//         Sent   [label="Sentiment\nAnalysis", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+//         Chat   [label="Chatbots", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+//         Reason [label="Reasoning", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+// 
+//         NL -> CL;
+//         NL -> KR;
+//         CL -> Trans;
+//         CL -> Sent;
+//         CL -> Chat;
+//         KR -> Reason;
+// 
+//         { rank=same; Trans; Sent; Chat; Reason; }
+//     }
+//     ```
+//     label=fig:aiandlinguistics
+//     caption=Diagram relating Natural Language, Computational Linguistics, Knowledge Representation and Machine Translation
+// rendered_images:end
+// render_images:begin
+#figure(
+  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.6.png"),
+  caption: [Diagram relating Natural Language, Computational Linguistics, Knowledge Representation and Machine Translation],
+) <fig:aiandlinguistics>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,

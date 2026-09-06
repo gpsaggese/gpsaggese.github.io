@@ -1,6 +1,7 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L07.4: Generalized Linear Models
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 // references=
 // - AIMA (Artificial Intelligence: a Modern Approach)
@@ -347,9 +348,9 @@
     grid=both,
     minor grid style={gray!15},
     major grid style={gray!25},
-    legend style={draw=none, fill=none, at={(0.02,0.98)}, anchor=north west, font=\small},
-    tick label style={font=\small},
-    label style={font=\small},
+    legend style={draw=none, fill=none, at={(0.02,0.98)}, anchor=north west, font=\small\bfseries},
+    tick label style={font=\small\bfseries},
+    label style={font=\small\bfseries},
   ]
 
   % --- logistic curve: P(y=1|x) = 1/(1 + exp(-(a x + b)))
@@ -368,7 +369,7 @@
   \addlegendentry{Boundary $x^\star=-b/a$}
 
   % --- optional: annotate boundary
-  \node[anchor=north east, font=\small] at (axis cs:\xb,0.0) {$x^\star$};
+  \node[anchor=north east, font=\small\bfseries] at (axis cs:\xb,0.0) {$x^\star$};
 
 \end{axis}
 ```

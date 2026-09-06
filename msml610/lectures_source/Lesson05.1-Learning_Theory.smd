@@ -1,6 +1,7 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
 // lesson_title=L05.1: Machine Learning Theories
+// version=v1.0 (2026-09-03)
 // slides_engine=typst
 // references=
 // - Abu-Mostafa et al.: _"Learning From Data"_ (2012)
@@ -353,6 +354,7 @@
 :::: {.column width=30%}
 
 ```tikz[width=90%]
+\bfseries
 % Draw the three overlapping colored circles
 \draw[thick, red] (0,0) circle(2cm);         % B1
 \draw[thick, green] (1,0.5) circle(2cm);     % B2
@@ -462,6 +464,7 @@ digraph ML_Phases {
 :::: {.column width=30%}
 
 ```tikz
+\bfseries
 % Draw rectangle
 \draw[thick] (0,0) rectangle (5,3.5);
 
@@ -492,6 +495,7 @@ digraph ML_Phases {
 ```
 
 ```tikz
+\bfseries
 % Draw rectangle
 \draw[thick] (0,0) rectangle (5,3.5);
 
@@ -616,6 +620,7 @@ digraph ML_Phases {
 // TODO(gp): Use x_1, x_2, ... instead of A
 
 ```tikz[width=60%]
+\bfseries
 % Draw rectangle
 \draw[thick] (0,0) rectangle (5,3.5);
 
@@ -659,6 +664,7 @@ digraph ML_Phases {
 :::: {.column width=45%}
 
 ```tikz
+\bfseries
     % Draw axis
     \draw[thick,->] (-1,0) -- (8,0) node[right] {};
 
@@ -699,6 +705,7 @@ digraph ML_Phases {
 :::: {.column width=45%}
 
 ```tikz
+\bfseries
 % Draw axis
 \draw[very thick] (-0.5,0) -- (9,0);
 
@@ -744,6 +751,7 @@ digraph ML_Phases {
 :::: {.column width=45%}
 
 ```tikz[width=50%]
+\bfseries
 % Circle radius
 \def\r{3}
 
