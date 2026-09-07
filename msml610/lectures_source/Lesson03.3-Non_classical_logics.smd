@@ -212,6 +212,29 @@ digraph NonMonotonicReasoning {
 - @Techniques@
   - Knowledge graphs, non-monotonic logic, probabilistic reasoning, machine learning
 
+* Common Sense Reasoning: University Example
+
+- **Initial facts**
+  - $Alice$ is a $Student$
+  - $Bob$ is a $Student$
+  - $CS101$ is a $Course$ offered by the $ComputerScience$ department
+
+- **Common sense knowledge**
+  - $Students$ typically $Enroll$ in $Courses$ offered by their $Department$
+  - $Students$ usually $attend$ $Course$ they are enrolled in
+  - $Professors$ usually teach the $Courses$ they are assigned
+
+- **Reasoning steps**
+  - $Alice$ belongs to the $ComputerScience$ department
+  - $CS101$ is offered by the $ComputerScience$ department
+  - Common sense suggests $Alice$ is likely enrolled in $CS101$, even if
+    enrollment is not explicitly stated
+  - Therefore, it is reasonable to assume "$takesCoure(Alice, CS101)$"
+
+- **New information**
+  - $Alice$ is pursuing research only and not taking courses
+  - The conclusion that $takesCourse(Alice, CS101)$ must be revised
+
 * Common Sense Reasoning: Restaurant Example
 
 ::: columns
