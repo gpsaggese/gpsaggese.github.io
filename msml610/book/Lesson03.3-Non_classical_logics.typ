@@ -118,8 +118,14 @@ assumptions about the structure of reality.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.1.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.1.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Logical Systems, Propositional Logic (facts: true/false), First-Order Logic (objects & relations) and Higher-Order Logic (relations as objects)],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:ontologicalcommitment>
 // render_images:end
 
@@ -186,8 +192,14 @@ emerge.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.2.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.2.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Initial KB: Birds typically fly Tweety is a bird, Conclusion: Tweety can fly, New Fact: Tweety is a penguin Penguins cannot fly and Updated KB],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:nonmonotoniclogic>
 // render_images:end
 
@@ -328,8 +340,14 @@ prediction about Bob's behavior.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.3.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.3.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Bob enters Restaurant, Bob sits at Table, Common Sense: Sit at table → intends to eat and Infer: Bob intends to eat],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:commonsensereasoningrestaurantexample>
 // render_images:end
 
@@ -437,8 +455,14 @@ from which the system selects its learned rules.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.4.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.4.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Background Knowledge: Birds have wings Penguins are birds, Positive Examples: Tweety (bird) flies Parrot (bird) flies, Negative Examples: Penguin cannot fly Ostrich cannot fly and Hypothesis Space],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:inductivelogicprogramming>
 // render_images:end
 
@@ -523,8 +547,14 @@ precisely why the formalism is so widely adopted.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.5.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.5.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Class: Person, PetOwner (Person with pet), Instance: GP (a PetOwner) and Instance: Nuvolo (GP's dog)],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:descriptionlogic>
 // render_images:end
 
@@ -640,8 +670,14 @@ nominals.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.6.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.6.png",
+    width: 70%,
+  ),
   caption: [Diagram relating ALC (base), S: Transitive Props (ancestorOf), H: Role Hierarchies (hasSon sub-role of hasChild) and O: Nominals (John:individual)],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:shoin>
 // render_images:end
 
@@ -710,8 +746,14 @@ algorithm guaranteed to answer every reasoning query in finite time.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.7.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.7.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Web Ontology Language (OWL), OWL Lite (Simpler) for classification, OWL DL (Full expressiveness) Decidable reasoning and OWL Full (Maximum) Undecidable],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:owl>
 // render_images:end
 
@@ -747,8 +789,14 @@ constraint that propositional or plain first-order logic cannot express as compa
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.8.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.8.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Person (Class), Student (Class), hasAdvisor (ObjectProperty) and Restriction: minCardinality 1],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:exampleofowlinrdf>
 // render_images:end
 
@@ -922,8 +970,14 @@ properties, and OWL sits at the top, enabling expressive ontological reasoning.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.9.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.9.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Foundation: URIs and Unicode, RDF (Data Model) Triples: Subject-Predicate-Object, RDFS (Schema Layer) Classes and Properties and OWL (Ontology Language) Express complex relationships],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:semanticweb>
 // render_images:end
 
@@ -1005,8 +1059,14 @@ example, showing items linked to values through properties in a directed graph.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.10.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.10.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Item: Q42 (Douglas Adams), Property: P31 (instance of), Value: Q5 (Human) and Property: P106 (occupation)],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:wikidata>
 // render_images:end
 
@@ -1101,8 +1161,14 @@ hierarchical structure that makes inheritance-based inference straightforward.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.11.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.11.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Animal, Dog, Cat and Mammal],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:semanticnetworks>
 // render_images:end
 
@@ -1287,8 +1353,14 @@ responsible for every course a given student takes.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.12.png"),
+  image(
+    "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.12.png",
+    width: 70%,
+  ),
   caption: [Diagram relating takesCourse, teachesCourse, belongsToDepartment and offersCourse],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:knowledgegraphuniversityexample>
 // render_images:end
 
