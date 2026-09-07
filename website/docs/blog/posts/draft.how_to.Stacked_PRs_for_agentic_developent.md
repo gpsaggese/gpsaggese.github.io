@@ -164,6 +164,8 @@ timeline
 
 ## GitHub Stacked PRs
 
+// https://docs.github.com/en/pull-requests/get-started/about-stacked-prs
+
 - GitHub started offering native stacked PR support in summer 2026, allowing multiple
   PRs to stack on a single branch with automatic dependency tracking
   - Each PR links to the previous one, and merging happens in order
@@ -171,55 +173,55 @@ timeline
 - **Creating the stack**: branch each task off the previous one and open a PR against
   that parent branch:
 
-```bash
-# Create the branch.
-> git checkout -b feature/step-1-schema main
-# ... agent adds database schema ...
-> git add -A && git commit -m "Step 1: add database schema"
-> git push -u origin feature/step-1-schema
-# ... agent works ...
+  ```bash
+  # Create the branch.
+  > git checkout -b feature/step-1-schema main
+  # ... agent adds database schema ...
+  > git add -A && git commit -m "Step 1: add database schema"
+  > git push -u origin feature/step-1-schema
+  # ... agent works ...
 
-# Create review on GitHub.
-> gh pr create --base main --head feature/step-1-schema \
-    --title "Step 1: add database schema"
-```
+  # Create review on GitHub.
+  > gh pr create --base main --head feature/step-1-schema \
+      --title "Step 1: add database schema"
+  ```
 
-```
-> git checkout -b feature/step-2-api feature/step-1-schema
-# ... agent adds API endpoint ...
-> git add -A && git commit -m "Step 2: add API endpoint"
-> git push -u origin feature/step-2-api
-> gh pr create --base feature/step-1-schema --head feature/step-2-api \
-    --title "Step 2: add API endpoint"
+  ```
+  > git checkout -b feature/step-2-api feature/step-1-schema
+  # ... agent adds API endpoint ...
+  > git add -A && git commit -m "Step 2: add API endpoint"
+  > git push -u origin feature/step-2-api
+  > gh pr create --base feature/step-1-schema --head feature/step-2-api \
+      --title "Step 2: add API endpoint"
 
-> git checkout -b feature/step-3-ui feature/step-2-api
-# ... agent adds UI component ...
-> git add -A && git commit -m "Step 3: add UI component"
-> git push -u origin feature/step-3-ui
-> gh pr create --base feature/step-2-api --head feature/step-3-ui \
-    --title "Step 3: add UI component"
-```
+  > git checkout -b feature/step-3-ui feature/step-2-api
+  # ... agent adds UI component ...
+  > git add -A && git commit -m "Step 3: add UI component"
+  > git push -u origin feature/step-3-ui
+  > gh pr create --base feature/step-2-api --head feature/step-3-ui \
+      --title "Step 3: add UI component"
+  ```
 
-GitHub renders the three PRs as a linked stack. When `feature/step-1-schema`
-merges into `main`, GitHub automatically retargets Step 2's PR base to `main`.
+- GitHub renders the three PRs as a linked stack. When `feature/step-1-schema` merges
+  into `main`, GitHub automatically retargets Step 2's PR base to `main`.
 
-**Updating an earlier PR**: if review feedback lands on Step 1, every downstream
-branch needs a manual rebase:
+- **Updating an earlier PR**: if review feedback lands on Step 1, every downstream
+  branch needs a manual rebase:
 
-```bash
-> git checkout feature/step-1-schema
-# ... apply fix ...
-> git add -A && git commit -m "Fix: address review comment"
-> git push
+  ```bash
+  > git checkout feature/step-1-schema
+  # ... apply fix ...
+  > git add -A && git commit -m "Fix: address review comment"
+  > git push
 
-> git checkout feature/step-2-api
-> git rebase feature/step-1-schema
-> git push --force-with-lease
+  > git checkout feature/step-2-api
+  > git rebase feature/step-1-schema
+  > git push --force-with-lease
 
-> git checkout feature/step-3-ui
-> git rebase feature/step-2-api
-> git push --force-with-lease
-```
+  > git checkout feature/step-3-ui
+  > git rebase feature/step-2-api
+  > git push --force-with-lease
+  ```
 
 - Refer to [GitHub's stacked PRs
   documentation](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-stacked-pull-requests)
@@ -227,7 +229,7 @@ branch needs a manual rebase:
 
 ## GitHub Stacked PRs + helpers
 
-The helpers framework provides several CLI tools to streamline the stacked PR workflow:
+- The helpers framework provides several CLI tools to streamline the stacked PR workflow:
 
 ### Creating Branches with Issues
 

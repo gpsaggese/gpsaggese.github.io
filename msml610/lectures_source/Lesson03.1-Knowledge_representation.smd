@@ -195,7 +195,7 @@ digraph WhyKR {
 
 ![](msml610/lectures_source/figures/L03.symbolic_vs_subsymbolic.png)
 
-// TODO: Convert in tikz
+// TODO(gp): Convert in tikz
 
 ::::
 :::
@@ -669,56 +669,81 @@ digraph Satisfaction {
 - **Forward chaining**
   - Starts with known facts and applies inference rules to extract more data
   - E.g., given $A \implies B$ and $A$, infer $B$
-- **Backward chaining**
-  - Begins with a goal and works backward to find supporting facts
-  - E.g., to prove $B$, check if $A \implies B$ and then prove $A$
-- **Resolution**
-  - A complete inference rule for propositional and first-order logic
-  - Useful in automated theorem proving
 
-::::
-:::: {.column width=50%}
-
-// TODO(ai_gp): Use subgraphs and have a divved fenced close to each definition
-// i.e., one for forward chaining, ... instead of all 3 in one
 ```graphviz
-digraph InferenceEngines {
+digraph ForwardChaining {
   bgcolor="transparent";
   pad="0.15";
   rankdir=TB;
   splines=spline;
-  nodesep=0.7;
-  ranksep=0.35;
+  nodesep=0.5;
+  ranksep=0.4;
 
   node [shape=box, style="rounded,filled", penwidth=1.5,
-        fontname="Helvetica", fontsize=9.5, margin="0.16,0.1", height=0.4];
-  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
-        fontname="Helvetica", fontsize=8.5, fontcolor="#7B8794"];
+        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
 
-  FCLabel [label="Forward chaining", shape=plaintext, fontname="Helvetica-Bold", fontsize=9.5, fontcolor="#3A4A5C"];
-  BCLabel [label="Backward chaining", shape=plaintext, fontname="Helvetica-Bold", fontsize=9.5, fontcolor="#3A4A5C"];
-  ResLabel [label="Resolution", shape=plaintext, fontname="Helvetica-Bold", fontsize=9.5, fontcolor="#3A4A5C"];
+  Facts [label="Known Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Rule  [label="Rule: A → B", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Concl [label="Conclusion: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
 
-  FactsFC [label="Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-  ConclFC [label="Conclusion: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Facts -> Rule [label="matches"];
+  Rule -> Concl [label="derives"];
+}
+```
 
-  GoalBC  [label="Goal: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
-  FactsBC [label="Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+- **Backward chaining**
+  - Begins with a goal and works backward to find supporting facts
+  - E.g., to prove $B$, check if $A \implies B$ and then prove $A$
 
-  Clauses       [label="Clauses", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-  Contradiction [label="Contradiction", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+```graphviz
+digraph BackwardChaining {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.5;
+  ranksep=0.4;
 
-  { rank=same; FCLabel; BCLabel; ResLabel; }
-  { rank=same; FactsFC; GoalBC; Clauses; }
-  { rank=same; ConclFC; FactsBC; Contradiction; }
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
 
-  FCLabel -> FactsFC [style=invis];
-  BCLabel -> GoalBC [style=invis];
-  ResLabel -> Clauses [style=invis];
+  Goal  [label="Goal: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Rule  [label="Rule: A → B", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Facts [label="Supporting Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
 
-  FactsFC -> ConclFC [label="  apply rule"];
-  GoalBC -> FactsBC [label="  find support"];
-  Clauses -> Contradiction [label="  derive"];
+  Goal -> Rule [label="matches"];
+  Rule -> Facts [label="prove"];
+}
+```
+
+- **Resolution**
+  - A complete inference rule for propositional and first-order logic
+  - Useful in automated theorem proving
+
+```graphviz
+digraph Resolution {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.5;
+  ranksep=0.4;
+
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Clauses [label="Clauses & Negation", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Process [label="Resolve & Refute", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Result  [label="Contradiction Found", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+
+  Clauses -> Process [label="apply"];
+  Process -> Result [label="derives"];
 }
 ```
 
@@ -819,40 +844,59 @@ digraph ModelChecking {
 ::::
 :::: {.column width=50%}
 
-// TODO(ai_gp): Improve this using the standard style
 ```graphviz
 digraph EntailmentSemantics {
+  bgcolor="transparent";
+  pad="0.15";
   rankdir=TB;
-  node [shape=box, style=filled, fillcolor=lightgray];
+  splines=spline;
+  nodesep=0.6;
+  ranksep=0.5;
 
-  // Representation layer
-  Sentence1 -> Sentence2 [label="Entails", style=dashed];
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=10.5, margin="0.18,0.1", height=0.45];
+  edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
 
-  // World layer
-  RealWorld1 -> RealWorld2 [label="Follows", style=dashed];
-
-  // Semantics arrows
-  Sentence1 -> RealWorld1 [label="Semantics", style=dashed];
-  Sentence2 -> RealWorld2 [label="Semantics", style=dashed];
-
-  // Invisible edges to align Representation and World vertically
-  {rank=same; Sentence1; Sentence2}
-  {rank=same; RealWorld1; RealWorld2}
-
-  // Labels for layers (optional)
   subgraph cluster_representation {
-    label="Representation";
-    style=dotted;
-    Sentence1;
-    Sentence2;
+    label = "Representation (Syntax)";
+    labelloc = "t";
+    fontname = "Helvetica-Bold";
+    fontsize = 11;
+    fontcolor = "#3A4A5C";
+    style = "rounded,filled";
+    fillcolor = "#F7F9FB";
+    color = "#C7D0DA";
+    penwidth = 1.0;
+    margin = 12;
+
+    Sent1 [label="Sentence α", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+    Sent2 [label="Sentence β", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+    Sent1 -> Sent2 [label="  Entails"];
   }
 
   subgraph cluster_world {
-    label="World";
-    style=dotted;
-    RealWorld1;
-    RealWorld2;
+    label = "World (Reality)";
+    labelloc = "t";
+    fontname = "Helvetica-Bold";
+    fontsize = 11;
+    fontcolor = "#3A4A5C";
+    style = "rounded,filled";
+    fillcolor = "#F7F9FB";
+    color = "#C7D0DA";
+    penwidth = 1.0;
+    margin = 12;
+
+    World1 [label="Aspect 1", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+    World2 [label="Aspect 2", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+    World1 -> World2 [label="  Follows"];
   }
+
+  Sent1 -> World1 [label="Semantics", style=dashed];
+  Sent2 -> World2 [label="Semantics", style=dashed];
+
+  {rank=same; Sent1; Sent2}
+  {rank=same; World1; World2}
 }
 ```
 

@@ -141,7 +141,6 @@ WARNING: Can't find s3fs: continuing
 # Workflow in short
 
 /slides.review            03.1   .    .   .   .   .
-
 /slides.add_visuals       .
 /slides.add_references    .
 /slides.lint              .
@@ -176,16 +175,6 @@ Edit book chapter
 
 run_typst.py --compress_pdf .
 > compress_pdf.py --input msml610/book/Lesson01.3*.pdf
-
-### [ ] Add cc loop in gen_book_chapters
-- Instead of using an LLM use cc agent
-  - Iterate until it compiles
-  - run_typst.py --input msml610/book/Lesson01.4-Brief_History_of_AI.typ --output msml610/book/Lesson01.4-Brief_History_of_AI.pdf --action render_images --skip_action open_pdf
-
-- Keep the LLM chat open so that we don't have to send the same instructions over and
-  over (only for the library version)
-- Also we can use this to keep track of the old text and make the transitions
-  smoother
 
 # Workflows
 

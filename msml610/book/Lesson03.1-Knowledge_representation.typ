@@ -170,8 +170,14 @@ descriptive power and computational feasibility.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.1.png"),
+  image(
+    "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.1.png",
+    width: 80%,
+  ),
   caption: [Diagram illustrating the tradeoff between expressiveness and tractability across atomic, factored, and structured representations.],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:expressivenessvstractability>
 // render_images:end
 
@@ -226,7 +232,8 @@ structure, interpretability, and tolerance for ambiguity.
     "../lectures_source/figures/L03.symbolic_vs_subsymbolic.png",
     width: 80%,
   ),
-  caption: [symbolic vs subsymbolic],
+  caption: [Symbolic and sub-symbolic representations compared by structure,
+    interpretability, and tolerance for ambiguity.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -269,7 +276,8 @@ subregions, reflecting its distinct feature profile.
 
 #figure(
   image("../lectures_source/figures/L03.conceptual_spaces.png", width: 80%),
-  caption: [conceptual spaces],
+  caption: [Conceptual space showing overlapping wooden and vehicle regions with
+    nested subregions.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -603,8 +611,14 @@ the ground is wet though it has not rained.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.2.png"),
+  image(
+    "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.2.png",
+    width: 70%,
+  ),
   caption: [Diagram relating a model to the possible worlds it grounds.],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:modelsandpossibleworlds>
 // render_images:end
 
@@ -855,8 +869,14 @@ tracks reasoning about the actual world.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.3.png"),
+  image(
+    "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.3.png",
+    width: 80%,
+  ),
   caption: [Diagram relating entailment between sentences, consequence between world states, and the semantics that link representation to the world.],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:representationmirrorstheworld>
 // render_images:end
 
@@ -1090,8 +1110,15 @@ individuals that share a common role.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.4.png"),
-  caption: [Diagram relating Student, Professor, Course, and Department entities and instances in an example university ontology.],
+  image(
+    "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.4.png",
+    width: 80%,
+  ),
+  caption: [Example university ontology relating classes, individuals, and
+    properties such as takesCourse and teachesCourse.],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:exampleuniversityontology>
 // render_images:end
 
@@ -1221,7 +1248,8 @@ explicitly stated but follows from the axioms already present.
 
 #figure(
   image("../lectures_source/figures/L03.Protege_OWL.jpg", width: 80%),
-  caption: [Protege OWL],
+  caption: [Protégé's visual workspace for editing ontology classes, individuals,
+    and properties.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
