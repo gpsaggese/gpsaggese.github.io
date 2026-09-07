@@ -1,7 +1,7 @@
 // git_hash=bf95ac2c8-l69 timestamp=20260905_164943
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
-  aima-style, algorithm, chapter, glossary, styled-table,
+  aima-style, algorithm, chapter, glossary, styled-table, wrap-content,
 )
 // Import the custom citation/bibliography system.
 #import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": (
@@ -117,16 +117,8 @@ corpus.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:56 '* Expressiveness Vs. Tractability'
 // Slide: Expressiveness Vs. Tractability
-Knowledge representation always trades off two competing goals. #emph[Expressiveness]
-is the richness of concepts a language can capture: how much detail and nuance it can
-encode about the world. #emph[Tractability] is whether reasoning in that language can
-be performed efficiently, ideally in polynomial time or better. These two properties
-pull in opposite directions: more expressive languages lead to harder computation,
-often pushing reasoning problems into #emph[undecidable] or #emph[intractable]
-territory (as shown in @fig:expressivenessvstractability). Choosing the right
-representation depends heavily on the application and the balance it demands between
-descriptive power and computational feasibility.
-
+#wrap-content(
+  [
 // rendered_images:begin
 // ```tikz
 // \begin{axis}[
@@ -172,7 +164,7 @@ descriptive power and computational feasibility.
 #figure(
   image(
     "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.1.png",
-    width: 70%,
+    width: 100%,
   ),
   caption: [Diagram illustrating the tradeoff between expressiveness and tractability across atomic, factored, and structured representations.],
   kind: "figure",
@@ -180,6 +172,21 @@ descriptive power and computational feasibility.
   placement: auto,
 ) <fig:expressivenessvstractability>
 // render_images:end
+  ],
+  align: right,
+  column-gutter: 1em,
+  columns: (1fr, 50%),
+)[
+  Knowledge representation always trades off two competing goals. #emph[Expressiveness]
+  is the richness of concepts a language can capture: how much detail and nuance it can
+  encode about the world. #emph[Tractability] is whether reasoning in that language can
+  be performed efficiently, ideally in polynomial time or better. These two properties
+  pull in opposite directions: more expressive languages lead to harder computation,
+  often pushing reasoning problems into #emph[undecidable] or #emph[intractable]
+  territory (as shown in @fig:expressivenessvstractability). Choosing the right
+  representation depends heavily on the application and the balance it demands between
+  descriptive power and computational feasibility.
+]
 
 Three broad levels of representation illustrate this spectrum:
 
@@ -203,34 +210,12 @@ Three broad levels of representation illustrate this spectrum:
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:123 '* Symbolic Vs. Sub-symbolic Representation'
 // Slide: Symbolic Vs. Sub-symbolic Representation
-Beyond how expressive a representation is, a second design axis is whether it is
-symbolic or sub-symbolic. #strong[Symbolic knowledge representation] uses discrete,
-human-readable symbols to encode what a system knows. Logic formulas and knowledge
-graphs are classic examples: a fact like `parent(alice, bob)` is immediately
-interpretable by a human reader, and a rule engine can chain such facts together to
-derive new conclusions. This transparency makes symbolic representations well suited
-for rule-based reasoning, where every inference step can be inspected and justified.
-The tradeoff is that symbolic systems struggle with ambiguity; real-world language
-and perception are full of graded, context-dependent meanings that do not reduce
-neatly to crisp logical predicates.
-
-#strong[Sub-symbolic knowledge representation] takes the opposite path, encoding
-knowledge as learned, distributed representations rather than explicit symbols.
-Vector embeddings are the prototypical example: a word, sentence, or image is mapped
-to a point in a high-dimensional space, and similarity in that space captures
-semantic relationships that would be tedious to hand-code. Sub-symbolic
-representations excel at handling the very ambiguity that defeats symbolic methods,
-but they lack transparency. A 768-dimensional vector for the concept "dog" does not
-explain #emph[why] it sits near "wolf" and far from "democracy" in any way a domain
-expert can audit.
-
-@fig:symbolicvssubsymbolic contrasts symbolic and sub-symbolic representations in
-structure, interpretability, and tolerance for ambiguity.
-
+#wrap-content(
+  [
 #figure(
   image(
     "../lectures_source/figures/L03.symbolic_vs_subsymbolic.png",
-    width: 80%,
+    width: 100%,
   ),
   caption: [Symbolic and sub-symbolic representations compared by structure,
     interpretability, and tolerance for ambiguity.],
@@ -238,6 +223,35 @@ structure, interpretability, and tolerance for ambiguity.
   supplement: [Fig.],
   placement: auto,
 ) <fig:symbolicvssubsymbolic>
+  ],
+  align: right,
+  column-gutter: 1em,
+  columns: (1fr, 50%),
+)[
+  Beyond how expressive a representation is, a second design axis is whether it is
+  symbolic or sub-symbolic. #strong[Symbolic knowledge representation] uses discrete,
+  human-readable symbols to encode what a system knows. Logic formulas and knowledge
+  graphs are classic examples: a fact like `parent(alice, bob)` is immediately
+  interpretable by a human reader, and a rule engine can chain such facts together to
+  derive new conclusions. This transparency makes symbolic representations well suited
+  for rule-based reasoning, where every inference step can be inspected and justified.
+  The tradeoff is that symbolic systems struggle with ambiguity; real-world language
+  and perception are full of graded, context-dependent meanings that do not reduce
+  neatly to crisp logical predicates.
+
+  #strong[Sub-symbolic knowledge representation] takes the opposite path, encoding
+  knowledge as learned, distributed representations rather than explicit symbols.
+  Vector embeddings are the prototypical example: a word, sentence, or image is mapped
+  to a point in a high-dimensional space, and similarity in that space captures
+  semantic relationships that would be tedious to hand-code. Sub-symbolic
+  representations excel at handling the very ambiguity that defeats symbolic methods,
+  but they lack transparency. A 768-dimensional vector for the concept "dog" does not
+  explain #emph[why] it sits near "wolf" and far from "democracy" in any way a domain
+  expert can audit.
+
+  @fig:symbolicvssubsymbolic contrasts symbolic and sub-symbolic representations in
+  structure, interpretability, and tolerance for ambiguity.
+]
 
 #strong[Neuro-symbolic knowledge representation] blends both approaches, aiming to
 get the best of each. A neuro-symbolic system might learn distributed representations
@@ -577,15 +591,8 @@ mechanisms for revising their beliefs when new evidence contradicts old conclusi
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:381 '* Models and Possible Worlds'
 // Slide: Models and Possible Worlds
-That informal talk of "the world" can be made precise with the notion of a model.
-Consider a world with two Boolean variables: _rain_ and _wet ground_. Each possible
-world (or #strong[model]) assigns a truth value to every relevant variable. With just
-these two, there are four models: $("Rain" = T, "WetGround" = T)$,
-$("Rain" = T, "WetGround" = F)$, $("Rain" = F, "WetGround" = T)$, and
-$("Rain" = F, "WetGround" = F)$. A model $m$ captures one possible world; for
-instance, $m$ might be $("Rain" = F, "WetGround" = T)$, representing a world where
-the ground is wet though it has not rained.
-
+#wrap-content(
+  [
 // rendered_images:begin
 // ```graphviz
 // digraph G {
@@ -613,7 +620,7 @@ the ground is wet though it has not rained.
 #figure(
   image(
     "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.2.png",
-    width: 70%,
+    width: 100%,
   ),
   caption: [Diagram relating a model to the possible worlds it grounds.],
   kind: "figure",
@@ -621,10 +628,24 @@ the ground is wet though it has not rained.
   placement: auto,
 ) <fig:modelsandpossibleworlds>
 // render_images:end
+  ],
+  align: right,
+  column-gutter: 1em,
+  columns: (1fr, 50%),
+)[
+  That informal talk of "the world" can be made precise with the notion of a model.
+  Consider a world with two Boolean variables: _rain_ and _wet ground_. Each possible
+  world (or #strong[model]) assigns a truth value to every relevant variable. With just
+  these two, there are four models: $("Rain" = T, "WetGround" = T)$,
+  $("Rain" = T, "WetGround" = F)$, $("Rain" = F, "WetGround" = T)$, and
+  $("Rain" = F, "WetGround" = F)$. A model $m$ captures one possible world; for
+  instance, $m$ might be $("Rain" = F, "WetGround" = T)$, representing a world where
+  the ground is wet though it has not rained.
 
-A model serves as the formal bridge between the abstract notion of "possible world"
-and the concrete variable assignments that ground our reasoning
-(@fig:modelsandpossibleworlds).
+  A model serves as the formal bridge between the abstract notion of "possible world"
+  and the concrete variable assignments that ground our reasoning
+  (@fig:modelsandpossibleworlds).
+]
 
 Now consider a richer scenario: men and women sitting at a table. Here the model
 represents every possible world as "there are $x$ men and $y$ women." A sentence such
