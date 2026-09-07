@@ -19,17 +19,34 @@
 # Non-classical Logics
 
 * Motivation
-// TODO(ai_gp): Add one slide with motivation
 
-- Distinction
-  - Ontological commitment: what exists in the world
-  - Epistemological commitment: what an agent believes about facts
+- @Problem@: classical logic (propositional, first-order) assumes a complete,
+  static world where conclusions never change once proven
+  - Real-world knowledge is incomplete, exception-ridden, and evolves as new
+    facts arrive
+  - E.g., _"birds fly"_ holds by default, but breaks once you learn about
+    penguins
+
+- @Key idea@: relax classical logic along two axes
+  - _Ontological commitment_: what exists in the world
+  - _Epistemological commitment_: what an agent believes about facts
+
+- @Techniques@: this lecture covers
+  - Non-monotonic and default reasoning, common sense reasoning, open vs
+    closed world assumption
+  - Description logics (ALC, SHOIN) and the Web Ontology Language (OWL)
+  - Knowledge representation standards: RDF, SPARQL
+  - Knowledge graphs and semantic networks (WordNet, ConceptNet, WikiData,
+    DBpedia)
 
 * Ontological Commitment
 
 - @Definition@: **Ontological commitments** are assumptions about reality made by
-  a language
+  a language `#cite("russell2020aima")`{=typst}
   - Different formal models make different assumptions on how truth is defined
+
+::: columns
+:::: {.column width=45%}
 
 - @Examples@:
   - _Propositional logic_: world consists of facts that are either true or false
@@ -40,7 +57,34 @@
   - _Higher-order logic_: relations can be objects themselves
     - E.g., assertions about relations like _"all relations are transitive"_
   - _Temporal logic_: facts hold at particular times or intervals
-    // TODO(ai_gp): Add example
+    - E.g., _"rain occurred at time t"_
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph OntologicalLevels {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname=Helvetica];
+
+    root [label="Logical Systems", fillcolor="#C6A6F4"];
+
+    prop [label="Propositional Logic\n(facts: true/false)", fillcolor="#A0D6D1"];
+    fol [label="First-Order Logic\n(objects & relations)", fillcolor="#A0D6D1"];
+    hol [label="Higher-Order Logic\n(relations as objects)", fillcolor="#A0D6D1"];
+    temp [label="Temporal Logic\n(facts at times)", fillcolor="#A0D6D1"];
+
+    root -> prop;
+    root -> fol;
+    root -> hol;
+    root -> temp;
+}
+```
+
+::::
+:::
+
+// TODO(ai_gp): Add temporal logic example
 
 * Epistemological Commitment
 
@@ -52,15 +96,52 @@
   - _Probability theory_: each sentence has a degree of belief in [0, 1]
     - E.g., $\Pr(X = 6) = 0.3$
 
+## Non-monotonic Reasoning and Common Sense
+
 * Non-monotonic Logic
 
+::: columns
+:::: {.column width=45%}
+
 - @Definition@: **Non-monotonic logic** is a logic where adding new information
-  can invalidate previous conclusions
+  can invalidate previous conclusions `#cite("mccarthy1980circumscription")`{=typst}
 
 - @Comparison@:
   - _Classical logic_: once proven, conclusions remain true even with new
     information
   - _Non-monotonic logic_: conclusions change as new facts are learned
+
+- @Intuition@:
+  - Real-world reasoning involves incomplete or evolving knowledge
+  - Non-monotonic logic allows systems to reason flexibly and adapt to new
+    circumstances
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph NonMonotonicReasoning {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname=Helvetica];
+    edge [fontname=Helvetica];
+
+    kb1 [label="Initial KB:\nBirds typically fly\nTweety is a bird", fillcolor="#FFD1A6"];
+    conc1 [label="Conclusion:\nTweety can fly", fillcolor="#B2E2B2"];
+
+    newFact [label="New Fact:\nTweety is a penguin\nPenguins cannot fly", fillcolor="#F4A6A6"];
+
+    kb2 [label="Updated KB", fillcolor="#FFD1A6"];
+    conc2 [label="Revised Conclusion:\nTweety CANNOT fly", fillcolor="#A6E7F4"];
+
+    kb1 -> conc1 [label="reasoning"];
+    conc1 -> newFact [label="conflict"];
+    newFact -> kb2 [label="update"];
+    kb2 -> conc2 [label="revise"];
+}
+```
+
+::::
+:::
 
 - @Example@
   - Initial KB: _"Birds typically fly"_, _"Tweety is a bird"_
@@ -68,16 +149,11 @@
   - New fact: _"Tweety is a penguin"_ and _"penguins cannot fly"_
   - Revised conclusion: _"Tweety cannot fly"_
 
-- @Intuition@:
-  - Real-world reasoning involves incomplete or evolving knowledge
-  - Non-monotonic logic allows systems to reason flexibly and adapt to new
-    circumstances
-
 * Default Reasoning
 
 - @Definition@: **Default reasoning** makes assumptions by default in the absence
   of contrary evidence, allowing conclusions based on typical situations unless
-  exceptions are found
+  exceptions are found `#cite("reiter1980default")`{=typst}
 
 - @Key idea@:
   - Assume the most likely case unless specified otherwise
@@ -159,47 +235,143 @@
   - $Alice$ is pursuing research only and not taking courses
   - The conclusion that $takesCourse(Alice, CS101)$ must be revised
 
+* Common Sense Reasoning: Restaurant Example
+
+::: columns
+:::: {.column width=45%}
+
+- **Initial facts**
+  - $Bob$ enters a $Restaurant$
+  - $Bob$ sits at a $Table$
+
+- **Common sense knowledge**
+  - $Customers$ who sit $\implies$ intend to order
+  - $Waiters$ bring $Menu$ before taking order
+  - $Customers$ pay before leaving
+
+- **Reasoning steps**
+  - $Bob$ sat at table $\implies$ intends to eat
+  - Therefore, $Bob$ will get menu and order
+
+- **New information**
+  - $Bob$ asks for directions only
+  - Revise: $Bob$ will NOT order
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph RestaurantExample {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname=Helvetica];
+    edge [fontname=Helvetica, fontsize=10];
+
+    bob_enters [label="Bob enters\nRestaurant", fillcolor="#FFD1A6"];
+    bob_sits [label="Bob sits at\nTable", fillcolor="#FFD1A6"];
+
+    common_sense [label="Common Sense:\nSit at table\n→ intends to eat", fillcolor="#C6A6F4"];
+
+    infer1 [label="Infer: Bob\nintends to eat", fillcolor="#B2E2B2"];
+    menu [label="Server brings\nMenu", fillcolor="#B2E2B2"];
+    order [label="Bob places\nOrder", fillcolor="#B2E2B2"];
+
+    new_info [label="NEW: Bob asks\nfor directions\nonly", fillcolor="#F4A6A6"];
+    revise [label="REVISE:\nNo order!", fillcolor="#A6E7F4"];
+
+    bob_enters -> bob_sits;
+    bob_sits -> common_sense [label="apply"];
+    common_sense -> infer1 [label="conclude"];
+    infer1 -> menu;
+    menu -> order;
+
+    order -> new_info [label="contradicts"];
+    new_info -> revise [label="revise"];
+}
+```
+
+::::
+:::
+
 * Open World vs Closed World Assumptions
 
-- @Definition@: the **Closed World Assumption (CWA)** implies that any missing
-  information is false by default
-  - E.g., in relational databases (SQL), logic programming, business rules
+\begingroup \small
 
-- @Example@:
-  - Fact: _"Alice takes CS101"_
+```{=typst}
+#styled-table(
+  headers: ("Aspect", "Closed World Assumption (CWA)", "Open World Assumption (OWA)"),
+  rows: (
+    ("Missing info", "False by default", "Unknown (not false)"),
+    ("Example: Bob takes CS101?", "FALSE (not stated $\\implies$ false)", "UNKNOWN (not stated $\\implies$ unknown)"),
+    ("DB systems", "Relational DB (SQL), logic programs", "Semantic Web (RDF, OWL)"),
+    ("Best for", "Complete, static knowledge", "Incomplete, evolving data"),
+    ("Query \"Bob takes CS101\"", "Returns false", "Returns no result (unknown)"),
+  ),
+  caption: "Closed World vs Open World Assumptions",
+)
+```
+
+\endgroup
+
+- @Example CWA@:
+  - Fact: _"Alice takes CS101"_ is in the database
   - Nothing said about Bob
-  - CWA conclusion: _"Bob does not take CS101"_
+  - Conclusion: _"Bob does not take CS101"_ (assumed false)
 
-- @Definition@: the **Open World Assumption (OWA)** implies that any missing
-  information is unknown, not false
-  - E.g., semantic Web (RDF, OWL), incomplete or growing data
-
-- @Example@:
+- @Example OWA@:
   - Fact: _"Alice takes CS101"_ is known
   - Nothing said about Bob
-  - OWA conclusion: _"Bob's enrollment is unknown"_
+  - Conclusion: _"Bob's enrollment is unknown"_ (could be true or false)
 
 * Inductive Logic Programming
 
+::: columns
+:::: {.column width=45%}
+
 - @Definition@: **Inductive logic programming** learns logical rules from
   examples and background knowledge
-  - Given positive/negative examples and background facts, infer rules that
-    explain them
 
 - @Example@
-  - Background knowledge: _"Birds have wings"_
+  - Background: _"Birds have wings"_
   - Positive: _"Tweety is a bird that can fly"_
   - Negative: _"Penguin cannot fly"_
-  - Learned rule: _"Birds can fly unless they are penguins"_
+  - Learned: _"Birds fly unless penguins"_
 
 - @Pros@:
   - Produces human-readable rules
-  - Integrates learning with symbolic reasoning
+  - Integrates learning with reasoning
   - Supports background knowledge
 
 - @Challenges@:
-  - Computational complexity with large datasets
-  - Can Handle noisy, incomplete data
+  - Complexity with large datasets
+  - Cannot handle noisy data
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph ILP {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname=Helvetica];
+    edge [fontname=Helvetica];
+
+    background [label="Background Knowledge:\nBirds have wings\nPenguins are birds", fillcolor="#FFD1A6"];
+
+    pos_ex [label="Positive Examples:\nTweety (bird) flies\nParrot (bird) flies", fillcolor="#B2E2B2"];
+    neg_ex [label="Negative Examples:\nPenguin cannot fly\nOstrich cannot fly", fillcolor="#F4A6A6"];
+
+    hypothesis [label="Hypothesis Space", fillcolor="#A0D6D1"];
+
+    learned_rule [label="Learned Rules:\nBird(X) ∧ ¬Penguin(X)\n→ CanFly(X)", fillcolor="#A6C8F4"];
+
+    background -> hypothesis;
+    pos_ex -> hypothesis;
+    neg_ex -> hypothesis;
+    hypothesis -> learned_rule;
+}
+```
+
+::::
+:::
 
 # Knowledge Representation Frameworks
 
@@ -210,18 +382,46 @@
 * Description Logic
 
 - @Definition@: **Description logic** represents structured knowledge about a
-  domain
+  domain `#cite("baader2003dlhandbook")`{=typst}
   - Balances expressivity and computational efficiency
   - More expressive than propositional logic, less than first-order logic
+
+::: columns
+:::: {.column width=45%}
 
 - @Components@
   - _Classes_: abstract groups (e.g., $Person$, $Animal$)
   - _Properties_: binary relations (e.g., $hasChild$, $ownsPet$)
-  - _Instances_: specific objects (e.g., $GP$, GP's dog $Nuvolo$)
+  - _Instances_: specific objects (e.g., $GP$, $Nuvolo$)
 
 - **Reasoning tasks**
-  - Concept subsumption: _"Is class $A$ a subset of class $B$?"_
-  - Instance checking: _"Does instance $a$ belong to class $A$?"_
+  - Concept subsumption: _"Is $A$ a subset of $B$?"_
+  - Instance checking: _"Does $a$ belong to $A$?"_
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph DescriptionLogic {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname=Helvetica];
+    edge [fontname=Helvetica];
+
+    person [label="Class: Person", fillcolor="#C6A6F4"];
+    pet_owner [label="PetOwner\n(Person with pet)", fillcolor="#A0D6D1"];
+    gp [label="Instance: GP\n(a PetOwner)", fillcolor="#A6E7F4"];
+    nuvolo [label="Instance: Nuvolo\n(GP's dog)", fillcolor="#A6E7F4"];
+
+    person -> pet_owner [label="subclass"];
+    pet_owner -> gp [label="instance"];
+    gp -> nuvolo [label="ownsPet"];
+
+    syntax_note [label="Syntax:\nPetOwner ≡ Person ⊓ ∃ownsPet.Dog", fillcolor="#B2E2B2", shape=note];
+}
+```
+
+::::
+:::
 
 - **Syntax**: combines atomic concepts and roles with logical constructors
   ($\sqcap$, $\sqcup$, $\neg$, $\forall$, $\exists$)
@@ -253,46 +453,109 @@
 * SHOIN
 
 - @Definition@: **SHOIN** is a description logic more expressive than ALC
+  `#cite("horrocks2003owl")`{=typst}
+
+::: columns
+:::: {.column width=45%}
 
 - @Components@:
-  - $\mathcal{S}$: transitive properties
-    - E.g., $ancestorOf$
-  - $\mathcal{H}$: role hierarchies
-    - E.g., $hasSon \sqsubseteq hasChild$
-  - $\mathcal{O}$: specific individuals
-    - E.g., $John$ is nominal
-  - $\mathcal{I}$: inverse roles
-    - E.g., $isChildOf$ inverse of $hasChild$
-  - $\mathcal{N}$: cardinality constraints
-    - E.g., _"exactly 1 child"_
+  - $\mathcal{S}$: transitive properties (e.g., $ancestorOf$)
+  - $\mathcal{H}$: role hierarchies (e.g., $hasSon \sqsubseteq hasChild$)
+  - $\mathcal{O}$: specific individuals (e.g., $John$ nominal)
+  - $\mathcal{I}$: inverse roles (e.g., $isChildOf$ inverse $hasChild$)
+  - $\mathcal{N}$: cardinality constraints (e.g., _"exactly 1"_)
 
 - @Example@: _"exactly two children"_: $Person \sqsubseteq (=2\ hasChild.\top)$
 
 - @Pros@
-  - More powerful, but reasoning harder (exponential complexity)
+  - More powerful, but harder reasoning
   - Models richer real-world scenarios
-  - Foundation for OWL DL reasoning
+  - Foundation for OWL DL
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph SHOINFeatures {
+    rankdir=LR;
+    node [shape=box, style=filled, fontname=Helvetica, fontsize=9];
+    edge [fontname=Helvetica, fontsize=8];
+
+    alc [label="ALC\n(base)", fillcolor="#A0D6D1"];
+
+    s_node [label="S:\nTransitive\nProps\n(ancestorOf)", fillcolor="#FFD1A6"];
+    h_node [label="H:\nRole\nHierarchies\n(hasSon⊆hasChild)", fillcolor="#FFD1A6"];
+    o_node [label="O:\nNominals\n(John:individual)", fillcolor="#FFD1A6"];
+    i_node [label="I:\nInverse\nRoles\n(isChildOf)", fillcolor="#FFD1A6"];
+    n_node [label="N:\nCardinality\n(=2 children)", fillcolor="#FFD1A6"];
+
+    alc -> s_node;
+    s_node -> h_node;
+    h_node -> o_node;
+    o_node -> i_node;
+    i_node -> n_node;
+
+    shoin [label="SHOIN\n(full)", fillcolor="#A6C8F4"];
+    n_node -> shoin;
+}
+```
+
+::::
+:::
 
 // https://en.wikipedia.org/wiki/Web_Ontology_Language
 
 * OWL
 
-- @Definition@: **Web Ontology Language (OWL)**
-  - Is a semantic web language representing complex knowledge about things and
-    relationships
-  - Enables rich knowledge representation on the web (based on SHOIN)
-  - Supports formal semantics for machine reasoning
+::: columns
+:::: {.column width=45%}
+
+- @Definition@: **Web Ontology Language (OWL)** `#cite("mcguinness2004owl")`{=typst}
+  - Semantic web language for complex knowledge
+  - Rich representation on the web (based on SHOIN)
+  - Formal semantics for machine reasoning
 
 - @Components@: classes, properties, individuals, axioms
 
 - @Example@: _"Every cat is a mammal"_: $Cat \sqsubseteq Mammal$
 
+- @Applications@: semantic search, biomedical data
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph OWLVariants {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname=Helvetica];
+    edge [fontname=Helvetica];
+
+    owl [label="Web Ontology\nLanguage (OWL)", fillcolor="#C6A6F4"];
+
+    lite [label="OWL Lite\n(Simpler)\nfor classification", fillcolor="#A0D6D1"];
+    dl [label="OWL DL\n(Full expressiveness)\nDecidable reasoning", fillcolor="#A6E7F4"];
+    full [label="OWL Full\n(Maximum)\nUndecidable", fillcolor="#FFD1A6"];
+
+    owl -> lite;
+    owl -> dl;
+    owl -> full;
+
+    lite -> dl [style=invis];
+    dl -> full [style=invis];
+
+    note1 [label="Lite:\nHierarchies only", fillcolor="#B2E2B2", shape=note, fontsize=8];
+    note2 [label="DL:\nDecidable\n= practical", fillcolor="#B2E2B2", shape=note, fontsize=8];
+    note3 [label="Full:\nTuring\ncomplete", fillcolor="#F4A6A6", shape=note, fontsize=8];
+}
+```
+
+::::
+:::
+
 - @Variants@:
   - _OWL Lite_: simpler, for classification hierarchies
   - _OWL DL_: full expressiveness with decidable reasoning
   - _OWL Full_: maximum expressiveness, undecidable
-
-- @Applications@: semantic search, biomedical data
 
 * Example of OWL in RDF
 
@@ -327,7 +590,7 @@ digraph OWL_Example {
 
 * RDF (Resource Description Framework)
 
-- @Definition@: **Resource Description Framework (RDF)**
+- @Definition@: **Resource Description Framework (RDF)** `#cite("klyne2004rdf")`{=typst}
   - Is a standard model for data interchange on the web
   - Represents structured information in a machine-readable way
 
@@ -368,21 +631,9 @@ digraph OWL_Example {
 ::::
 :::
 
-* RDF (Resource Description Framework)
-
-- @Pros@
-  - Statements form directed graphs of nodes and edges
-  - Components are URIs to ensure global uniqueness or literals
-    - E.g., `http://example.org/Nuvolo`
-
-- @Applications@:
-  - Building knowledge graphs
-  - Semantic search
-  - Supporting ontologies
-
 * SPARQL
 
-- @Definition@: **SPARQL**
+- @Definition@: **SPARQL** `#cite("prudhommeaux2008sparql")`{=typst}
   - Is the query language for RDF data
   - Allows retrieval and manipulation of data stored in RDF format
 
@@ -406,50 +657,115 @@ digraph OWL_Example {
 
 * Semantic Web
 
-- @Definition@: **Semantic Web**
-  - Extends the Web by enabling machines to understand and interpret data
-  - Adds meaning/semantics to enable better integration, automation, discovery
+::: columns
+:::: {.column width=40%}
 
-- @Problem@: HTML is human-readable but lacks semantic structure for computers
+- @Definition@: **Semantic Web**
+  - Extends the Web for machine understanding
+  - Adds meaning/semantics for integration and discovery
+
+- @Problem@: HTML lacks semantic structure for computers
 
 - @Components@:
   - RDF: base data model
-  - SPARQL: query language for RDF
-  - OWL: define rich ontologies
+  - SPARQL: query language
+  - OWL: rich ontologies
 
 - Current status:
-  - Core ideas (structured data, ontologies) widely adopted
+  - Core ideas widely adopted
   - Full vision partially realized
 
 - @Challenges@:
-  - Widespread adoption complexity
-  - Privacy
-  - Data ownership
-  - Standardization needs
-  - Scalability
-  - Centralization
-  - Censorship
+  - Adoption complexity, privacy, ownership
+  - Standardization, scalability, centralization
+
+::::
+:::: {.column width=55%}
+
+```graphviz
+digraph SemanticWebStack {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname=Helvetica];
+    edge [fontname=Helvetica];
+
+    foundation [label="Foundation:\nURIs and Unicode", fillcolor="#FFD1A6"];
+
+    rdf [label="RDF\n(Data Model)\nTriples: Subject-Predicate-Object", fillcolor="#A0D6D1"];
+    rdfs [label="RDFS\n(Schema Layer)\nClasses and Properties", fillcolor="#A0D6D1"];
+
+    owl [label="OWL\n(Ontology Language)\nExpress complex relationships", fillcolor="#A6E7F4"];
+
+    sparql [label="SPARQL\n(Query Language)\nRetrieve and query RDF", fillcolor="#B2E2B2"];
+
+    apps [label="Applications:\nSemantic Search, KGs, AI Reasoning", fillcolor="#A6C8F4"];
+
+    foundation -> rdf;
+    foundation -> rdfs;
+    rdf -> owl;
+    rdf -> sparql;
+    owl -> apps;
+    sparql -> apps;
+}
+```
+
+::::
+:::
+
+## Semantic Network Implementations
 
 * WikiData
 
-- @Definition@: **WikiData** is a free, open, collaborative knowledge base
-  storing structured data for Wikipedia
+::: columns
+:::: {.column width=45%}
+
+- @Definition@: **WikiData** is a free, collaborative knowledge base for Wikipedia
+  `#cite("vrandecic2014wikidata")`{=typst}
   - Accessible via SPARQL APIs
   - Graph-based data model
 
 - @Components@:
-  - _Item_: entity or concept
-    - E.g., `Q42` = Douglas Adams
-  - _Property_: relationship or attribute
-    - E.g., `P31` = instance of, `P27` = country
-  - _Value_: specific data via property link
-    - `Q42` $\to$ `P31` $\to$ `Q5` (Douglas Adams is human)
-    - `Q42` $\to$ `P106` $\to$ `Q36180` (occupation: science fiction writer)
-  - _Reference_: citation supporting a claim
-  - _Qualifier_: context for statement
-    - E.g., population `2,165,423` with qualifier `P585` = "2021"
+  - _Item_: entity (e.g., `Q42` = Douglas Adams)
+  - _Property_: attribute (e.g., `P31` = instance of)
+  - _Value_: data via property
+    - `Q42` $\to$ `P31` $\to$ `Q5` (is human)
+    - `Q42` $\to$ `P106` $\to$ sci-fi writer
+  - _Reference_: citation
+  - _Qualifier_: context (e.g., year)
 
-- @Applications@: knowledge graphs, semantic search, AI reasoning, data enrichment
+- @Applications@: KGs, semantic search, AI reasoning
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph WikiDataStructure {
+    rankdir=LR;
+    node [shape=box, style=filled, fontname=Helvetica];
+    edge [fontname=Helvetica];
+
+    q42 [label="Item: Q42\n(Douglas Adams)", fillcolor="#FFD1A6"];
+    p31 [label="Property: P31\n(instance of)", fillcolor="#A0D6D1"];
+    q5 [label="Value: Q5\n(Human)", fillcolor="#A6E7F4"];
+
+    p106 [label="Property: P106\n(occupation)", fillcolor="#A0D6D1"];
+    q36180 [label="Value: Q36180\n(Sci-fi writer)", fillcolor="#A6E7F4"];
+
+    ref [label="Reference:\nSupporting citation", fillcolor="#B2E2B2", shape=note];
+    qual [label="Qualifier:\nYear = 1952", fillcolor="#B2E2B2", shape=note];
+
+    q42 -> p31 [label="statement"];
+    p31 -> q5 [label="value"];
+
+    q42 -> p106 [label="statement"];
+    p106 -> q36180 [label="value"];
+
+    p31 -> ref [label=""];
+    p106 -> qual [label=""];
+}
+```
+
+::::
+:::
 
 * DBPedia
 
@@ -457,7 +773,7 @@ digraph OWL_Example {
 :::: {.column width=55%}
 
 - @Definition@: **DBpedia** extracts structured content from Wikipedia, creating
-  a large-scale, multilingual knowledge graph
+  a large-scale, multilingual knowledge graph `#cite("lehmann2015dbpedia")`{=typst}
 
 - @Components@:
   - Data as RDF triples _(Subject, Predicate, Object)_
@@ -465,8 +781,6 @@ digraph OWL_Example {
 
 - @Applications@:
   - Enables semantic queries over Wikipedia via SPARQL endpoints
-
-- @Applications@:
   - Semantic Web
   - Enhancing AI models with real-world knowledge
 
@@ -480,28 +794,61 @@ digraph OWL_Example {
 
 * Semantic Networks
 
+::: columns
+:::: {.column width=45%}
+
 - @Definition@: **Semantic Networks** represent knowledge as graphs of concepts
   and relations
 
 - @Components@:
-  - _Nodes_: concepts
-  - _Edges_: relations (e.g., "is-a", "part-of")
-    - E.g., `Dog` is `Animal` $\to$ `Dog` inherits `Animal` traits
+  - _Nodes_: concepts (entities)
+  - _Edges_: semantic relations
+    - E.g., "is-a", "part-of", "has-property"
 
 - @Examples@:
   - WordNet, ConceptNet
 
 - @Pros@:
   - Easy to visualize and traverse
-  - Support reasoning
-  - Used in early AI systems and current KG applications
+  - Support reasoning via path traversal
+  - Used in early AI and current KGs
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph SemanticNetwork {
+    rankdir=TB;
+    node [shape=ellipse, style=filled, fontname=Helvetica];
+    edge [fontname=Helvetica];
+
+    animal [label="Animal", fillcolor="#C6A6F4"];
+    dog [label="Dog", fillcolor="#A0D6D1"];
+    cat [label="Cat", fillcolor="#A0D6D1"];
+    mammal [label="Mammal", fillcolor="#A0D6D1"];
+    fido [label="Fido\n(instance)", fillcolor="#A6E7F4"];
+
+    animal -> mammal [label="is-a"];
+    animal -> dog [label="is-a"];
+    animal -> cat [label="is-a"];
+    dog -> fido [label="instance"];
+
+    hasLeg [label="has 4 legs", fillcolor="#FFD1A6"];
+    dog -> hasLeg [label="has-property"];
+
+    mammal_box [label="Mammals\nhave fur", fillcolor="#B2E2B2", shape=note];
+}
+```
+
+::::
+:::
 
 * WordNet
 
 ::: columns
 :::: {.column width=50%}
 
-- @Definition@: **WordNet**
+- @Definition@: **WordNet** `#cite("miller1995wordnet")`{=typst}
   - Is a large lexical database of English words
   - Models semantic relationships between words
   - Manually curated
@@ -530,7 +877,7 @@ digraph OWL_Example {
 
 * ConceptNet
 
-- @Definition@: **ConceptNet**
+- @Definition@: **ConceptNet** `#cite("speer2017conceptnet")`{=typst}
   - Is a large knowledge graph connecting words and phrases with labeled semantic
     relationships
   - Represents commonsense knowledge
@@ -559,12 +906,12 @@ digraph OWL_Example {
 - @Applications@: natural language understanding; question answering, chatbots;
   commonsense AI reasoning; semantic search, recommendation
 
-### Knowledge Graphs
+## Knowledge Graphs
 
 * Knowledge Graphs
 
 - @Definition@: **Knowledge Graphs (KGs)** represent entities and relationships
-  as graph structures
+  as graph structures `#cite("hogan2021knowledgegraphs")`{=typst}
 
 - @Components@
   - _Nodes_: entities
@@ -620,4 +967,11 @@ digraph UniversityOntology {
     ComputerScience -> CS101 [label="offersCourse"];
     Mathematics -> MATH201 [label="offersCourse"];
 }
+```
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
 ```
