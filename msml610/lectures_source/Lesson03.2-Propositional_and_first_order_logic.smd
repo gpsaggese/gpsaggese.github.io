@@ -10,12 +10,6 @@
 //  - Chap 9: Inference in first-order logic
 //  - Chap 10, Knowledge representation
 
-// How to run:
-// > notes_to_pdf.py --input lectures_source/Lesson03.1-Knowledge_representation.txt --output tmp.pdf --type slides
-// > gen_slides.py msml610/03.1 --slides_engine typst
-//
-// ![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
-
 # Propositional logic
 
 ## Syntax
@@ -24,7 +18,7 @@
 
 * Propositional Logic
 - @Definition@: **Propositional logic** is a formal system for reasoning about
-  statements that can be true or false
+  statements that can be _true_ or _false_
   - **Syntax** defines the allowable sentences
     - Consists of proposition symbol and logical connectives
     - E.g., $P \land Q$
@@ -47,41 +41,40 @@
 // ## Syntax of propositional logic
 
 * Proposition Symbol
-- @Definition@: A **proposition symbol** is an atomic sentence consisting of a
-  single symbol
+- A @proposition symbol@ is an atomic sentence consisting of a single symbol
   - E.g., $P$, $Q$, $North$
   - Doesn't have truth value, it is just a symbol for a real-world statement
     (needs grounding for semantics)
   - Stands for a proposition that can be true or false
     - E.g., $K_{E,5}$ = "the Knight is in E5"
     - $K_{E,5}$ is not composed of any other symbol, it is an atomic symbol
-  - **Built-in symbols**: $True$ and $False$ are proposition symbols with
-    inherent truth values
+- $True$ and $False$ are @built-in symbols@, i.e., proposition symbols with
+  inherent truth values
 
 - @Fact@: Propositional logic is an _atomic representation_ since 
   propositions have no internal structure
 
 * Sentences
-- @Definition@: An **atomic sentence** is a sentence composed of a single
-  proposition symbol
+
+- An @atomic sentence@ is a sentence composed of a single proposition symbol
   - E.g., $P$
 
-- @Definition@: A **complex sentence** is constructed from simpler sentences
+- A @complex sentence@ is constructed from simpler sentences
   using parentheses and logical connectives
   - E.g., $(P \land Q) \lor R$
   - Recursive definition allows building more complex sentences
 
-- @Definition@: **Logical connectives** are:
+- @Logical connectives@ are:
   - Not: $\lnot$
   - And: $\land$ (looks like an "A" for "and")
   - Or: $\lor$ (comes from Latin "vel" which means "or")
   - Implies: $\implies$
   - If and only if: $\iff$
 
-- @Key principle@: Each sentence (atomic or complex) can be only true or false
+- @Key idea@: Each sentence (atomic or complex) can be only true or false
 
-* Proposition Logic: Weather Example
-- **Atomic sentences**:
+* Propositional Logic: Weather Example
+- @Atomic sentences@:
   - $Rain$ = _"it's raining"_
   - $Cold$ = _"it's cold"_
   - $Sunny$ = _"it's sunny"_
@@ -91,36 +84,37 @@
 - _Atomic sentence_ can be positive or negated
   - E.g., $Rain$, $\lnot Rain$ = _"it's not raining"_
 
-- **Negation**
+- @Conjunction / Disjunction@
+  - E.g., $Rain \land Cloudy$ = _"it's raining and it's cloudy"_
+  - E.g., $Rain \lor Snow$ = _"it's either raining or snowing"_
+
+- @Negation@
   - E.g., $\lnot (Rain \lor Cloudy)$ = _"it's not the case that it's raining or
     cloudy"_
 
-- **Conjunction / Disjunction**
-  - E.g., $Rain \land Cold$ = _"it's raining and it's cold"_
-  - E.g., $Rain \lor Snow$ = _"it's either raining or snowing"_
-
-- **Implication** is a sentence containing "premise $\implies$ conclusion"
+- @Implication@ is a sentence containing "premise $\implies$ conclusion"
   - Aka _"if-then statements"_, _"rules"_
   - E.g., $Rain \implies \lnot Snow$ = _"if it's raining, it's not snowing"_
 
-- **Biconditional**: $(A \implies B) \land (B \implies A)$
+- @Biconditional@: $(A \implies B) \land (B \implies A)$
   - E.g., $Sunny \iff \lnot Cloudy$ = _"it's sunny if and only if it's not
     cloudy"_
 
 * Grammar in BNF form
-::: columns
-:::: {.column width=50%}
 - @Definition@: **Backus Normal Form** formally represents the grammar of
-  propositional logic
+  propositional logic (Backus, 1959) `#cite("backus1959syntax")`{=typst}
 
 - @Problem@: _Ambiguity_: the same sentence can be parsed in multiple ways
   - E.g., $\lnot A \lor B = (\lnot A) \lor B$ or $\lnot (A \lor B)$ ?
+
+::: columns
+:::: {.column width=40%}
 
 - @Solution@: Eliminate ambiguity by defining operator precedence
   - E.g., $\lnot$ has higher precedence than $\land, \lor$
   - So $\lnot A \lor B$ means $(\lnot A) \lor B$
 ::::
-:::: {.column width=45%}
+:::: {.column width=60%}
 ![](msml610/lectures_source/figures/L03.propositional_logic_BNF.png){ height=40% }
 ::::
 :::
@@ -160,15 +154,32 @@
 
 - @Definition@: **Truth table** contains truth value of a sentence for each
   possible model $m$
-  - E.g., $X = A \land B \lor C$
-// TODO(ai_gp): Use a better table and put it on a side with more rows
-    ```
-    A   B   C   X
-    -------------
-    F   F   F   F
-    F   F   F   T
-    ...
-    ```
+
+::: columns
+:::: {.column width=50%}
+- E.g., $X = A \land B \lor C$
+  - Enumerate every assignment of $A$, $B$, $C$
+  - $X$ is true whenever $C$ is true, or $A$ and $B$ are both true
+::::
+:::: {.column width=45%}
+```{=typst}
+#styled-table(
+  headers: ("A", "B", "C", "X"),
+  rows: (
+    ("F", "F", "F", "F"),
+    ("F", "F", "T", "T"),
+    ("F", "T", "F", "F"),
+    ("F", "T", "T", "T"),
+    ("T", "F", "F", "F"),
+    ("T", "F", "T", "T"),
+    ("T", "T", "F", "T"),
+    ("T", "T", "T", "T"),
+  ),
+  bold-first-col: false,
+)
+```
+::::
+:::
 
 * Interpretation of Implication
 - @Fact@: in a logical implication "$P \implies Q$" there is **no causation**
@@ -181,10 +192,33 @@
   - An implication is true whenever the antecedent is false
     - E.g., _"5 is even implies pigs fly"_ is true
 
+## Inference and Proof
+
 * Model Checking is Sound and Complete
-- @Remember@: **Model checking algorithm**
+::: columns
+:::: {.column width=55%}
+- @Fact@: **Model checking algorithm**
   - Enumerates all the models (truth tables)
   - Checks if $\alpha$ is true for every model where $KB$ is true
+::::
+:::: {.column width=40%}
+```graphviz[width=100%]
+digraph ModelChecking {
+  graph [rankdir=TB, bgcolor="transparent", nodesep=0.25, ranksep=0.35,
+         fontname="Helvetica"];
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
+        fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
+  edge [color="#888888", penwidth=1.2];
+
+  enumerate [label="Enumerate all\nmodels", fillcolor="#A0D6D1"];
+  filter [label="Keep models\nwhere KB true", fillcolor="#A6E7F4"];
+  check [label="Check alpha true\nin all of them", fillcolor="#A6C8F4"];
+
+  enumerate -> filter -> check;
+}
+```
+::::
+:::
 
 - @Fact@: in propositional logic, the model checking algorithm is:
   - **Sound**
@@ -218,17 +252,31 @@
   - _Addition_: if $p$, then $p \lor q$
   - _Simplification_: from $p \land q$, infer $p$ (or $q$)
   - _Conjunction_: from $p$ and $q$, infer $p \land q$
-  - _Resolution Rule_
+  - _Resolution Rule_ (Robinson, 1965) `#cite("robinson1965resolution")`{=typst}
     - From $(p \lor q)$ and $(\lnot p \lor r)$, infer $(q \lor r)$
+
+\begingroup \scriptsize
+| **Rule** | **From** | **Infer** |
+|---|---|---|
+| Modus Ponens | $p \implies q$, $p$ | $q$ |
+| Modus Tollens | $p \implies q$, $\lnot q$ | $\lnot p$ |
+| Syllogism | $p \implies q$, $q \implies r$ | $p \implies r$ |
+| Disjunctive Syllogism | $p \lor q$, $\lnot p$ | $q$ |
+| Addition | $p$ | $p \lor q$ |
+| Simplification | $p \land q$ | $p$ (or $q$) |
+| Conjunction | $p$, $q$ | $p \land q$ |
+| Resolution Rule | $(p \lor q)$, $(\lnot p \lor r)$ | $(q \lor r)$ |
+\endgroup
 
 * Propositional Theorem Proving
 - @Algorithm@: **Prove a sentence** $\alpha$ under a knowledge base KB in
   propositional logic
   - Apply rules of inference to construct a proof of $\alpha$
-  - Any sentence can have only one of the following truth values:
-    1. True
-    2. False
-    3. Undecidable under the KB
+  - Given a $KB$, a query $\alpha$ has one of the following entailment
+    statuses:
+    1. Entailed (i.e., $KB \models \alpha$)
+    2. Refuted (i.e., $KB \models \lnot \alpha$)
+    3. Unknown (i.e., $KB$ entails neither $\alpha$ nor $\lnot \alpha$)
 
 - @Comparison@
   - _Model checking_ involves enumerating all models to show the sentence is
@@ -309,6 +357,8 @@
   $$
 
 * Deduction Theorem
+::: columns
+:::: {.column width=60%}
 - @Definition@: A **valid sentence** $\alpha$ that is true for all the models
   - E.g., $P \lor \lnot P$
   - Aka "tautology"
@@ -324,7 +374,7 @@
     the
     sentence $\alpha \implies \beta$ is a tautology
 
-- @Key insight@: The deduction theorem is like a _bridge_ between two different
+- @Key idea@: The deduction theorem is like a _bridge_ between two different
   but closely related ideas:
   - _Entailment_ $\models$ is a semantic notion
     - It's about truth across all models
@@ -332,8 +382,29 @@
       true, $\beta$ is also true
   - _Implication_ $\implies$ is a syntactic notion
     - $\alpha \implies \beta$ is just another formula inside the logic
+::::
+:::: {.column width=35%}
+```graphviz[width=100%]
+digraph DeductionBridge {
+  graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.4,
+         fontname="Helvetica"];
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
+        fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
+  edge [color="#888888", penwidth=1.4, fontname="Helvetica", fontsize=10,
+        fontcolor="#45296B"];
+
+  entailment [label="Entailment\n(semantic)", fillcolor="#A6C8F4"];
+  implication [label="Implication\n(syntactic)", fillcolor="#A0D6D1"];
+
+  entailment -> implication [dir=both, label="Deduction\nTheorem"];
+}
+```
+::::
+:::
 
 * Satisfiability
+::: columns
+:::: {.column width=55%}
 - @Definition@: A sentence $\alpha$ is **satisfiable** iff $\alpha$ is true for
   some model
 
@@ -341,7 +412,7 @@
   in propositional logic
   - One can enumerate all the possible models until one is found to satisfy the
     sentence $\alpha$
-  - It is NP-complete
+  - It is NP-complete (Cook, 1971) `#cite("cook1971complexity")`{=typst}
 
 - @Corollary@: A sentence $\alpha$ is **un-satisfiable** iff $\alpha$ is never
   true (i.e., a contradiction)
@@ -350,12 +421,37 @@
   - $\alpha$ is valid (i.e., a tautology) iff $\lnot \alpha$ is un-satisfiable
   - By contrapositive, $\alpha$ is satisfiable iff $\lnot \alpha$ is not valid
     ($\lnot \alpha$ is not a tautology)
+::::
+:::: {.column width=40%}
+```graphviz[width=100%]
+digraph Satisfiability {
+  graph [bgcolor="transparent", fontname="Helvetica"];
+  node [fontname="Helvetica", fontsize=10, fontcolor="#26215C"];
 
-* Proof by Contraction
+  subgraph cluster_all {
+    label="All sentences";
+    style="rounded,filled"; color="#F4A6A6"; fillcolor="#FBEAEA";
+    labelloc=b; fontsize=11; fontcolor="#7A2E2E";
+
+    subgraph cluster_sat {
+      label="Satisfiable";
+      style="rounded,filled"; color="#A0D6D1"; fillcolor="#E7F6F5";
+      labelloc=b; fontsize=11; fontcolor="#1F5A55";
+
+      valid [label="Valid\n(tautologies)", shape=box,
+             style="rounded,filled", fillcolor="#A6C8F4", penwidth=0];
+    }
+  }
+}
+```
+\footnotesize _Unsatisfiable sentences lie outside the "Satisfiable" box_
+::::
+:::
+
+* Proof by Contradiction
 - @Definition@: **Proof method**: The sentence $\alpha \models \beta$ is true
-  iff
-  the sentence
-  "$\alpha \lor \lnot \beta)$" is un-satisfiable (i.e., a contradiction)
+  iff the sentence $\alpha \land \lnot \beta$ is un-satisfiable (i.e., a
+  contradiction)
 
 - @Algorithm@: In a proof by contradiction:
   - Assume $\alpha$
@@ -383,6 +479,14 @@
       states to be enumerated
   - Can't represent uncertainty
     - E.g., _"There is 50% of probability that the pawn is in `b1`"_
+
+\begingroup \scriptsize
+| **Pros** | **Cons** |
+|---|---|
+| Declarative, compositional semantics | Can't concisely describe environments with many objects |
+| Can deal with partial information | Can't represent uncertainty |
+| Context independent, unambiguous | |
+\endgroup
 
 # First-order Logic
 
@@ -462,7 +566,7 @@
   - Statement is true if $P(x)$ is true for at least one $x$
 
 - Variables are **bound** by quantifiers or **free** (unbound)
-  - E.g., $\forall x (Cat(x) \rightarrow Mammal(x))$
+  - E.g., $\forall x (Cat(x) \implies Mammal(x))$
 
 * Nested Quantifiers
 - Complex sentences can be expressed using **multiple quantifiers**
@@ -480,7 +584,7 @@
     - $\exists y \; \forall x \; Loves(x, y)$
 
 * Connection between $\forall$ and $\exists$
-- @Axiom@: the universal and existential quantifiers are **connected** through
+- @Fact@: the universal and existential quantifiers are **connected** through
   negation and De Morgan rules
 // TODO(ai_gp): Use a better latex
   $$
@@ -518,12 +622,12 @@
   - There are many possible interpretations
   - The intended interpretation is often the one that is the most natural
     - E.g., map the symbol $GP$ $\to$ me
-    - E.g., $\forall x \, (Human(x) \rightarrow Mortal(x))$ means that every
+    - E.g., $\forall x \, (Human(x) \implies Mortal(x))$ means that every
       human is mortal
 
 * Representing Knowledge in FOL
 - @Pros@: FOL enables representation of:
-  - General rules: $\forall x\, (Bird(x) \rightarrow CanFly(x))$
+  - General rules: $\forall x\, (Bird(x) \implies CanFly(x))$
   - Specific facts: $Bird(Tweety)$
 
 - **Relations**: Complex relations are captured through predicates:
@@ -536,6 +640,15 @@
 
 - **Reasoning**: Enables reasoning about objects, properties, and their
   relationships
+
+\begingroup \scriptsize
+| **Category** | **Example** |
+|---|---|
+| General rules | $\forall x\, (Bird(x) \implies CanFly(x))$ |
+| Specific facts | $Bird(Tweety)$ |
+| Relations | $Loves(Romeo, Juliet)$, $GreaterThan(3, 2)$ |
+| Functions | $FatherOf(John)$ |
+\endgroup
 
 * First-Order Logic: Inference
 - @Goal@: derive new sentences from existing ones using sound rules
@@ -550,6 +663,22 @@
     Tollens, Resolution, etc., also apply within FOL
     - Modus ponens: from $P$ and $P \implies Q$, infer $Q$
 
-- @Complexity@: FOL inference is semi-decidable:
+- @Fact@: FOL inference is semi-decidable (Turing, 1936)
+  `#cite("turing1936computable")`{=typst}:
   - If a sentence is entailed, a proof can be found
   - If not entailed, proof search may not terminate
+
+\begingroup \scriptsize
+| **Rule** | **From** | **Infer** |
+|---|---|---|
+| Universal Instantiation | $\forall x\, P(x)$ | $P(c)$, any constant $c$ |
+| Existential Instantiation | $\exists x\, P(x)$ | $P(c)$, a new constant $c$ |
+| Modus Ponens | $P$, $P \implies Q$ | $Q$ |
+\endgroup
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
+```
