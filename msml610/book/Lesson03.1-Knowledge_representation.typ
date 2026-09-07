@@ -172,7 +172,7 @@ descriptive power and computational feasibility.
 #figure(
   image(
     "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.1.png",
-    width: 80%,
+    width: 70%,
   ),
   caption: [Diagram illustrating the tradeoff between expressiveness and tractability across atomic, factored, and structured representations.],
   kind: "figure",
@@ -871,7 +871,7 @@ tracks reasoning about the actual world.
 #figure(
   image(
     "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.3.png",
-    width: 80%,
+    width: 70%,
   ),
   caption: [Diagram relating entailment between sentences, consequence between world states, and the semantics that link representation to the world.],
   kind: "figure",
@@ -1112,10 +1112,9 @@ individuals that share a common role.
 #figure(
   image(
     "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.4.png",
-    width: 80%,
+    width: 70%,
   ),
-  caption: [Example university ontology relating classes, individuals, and
-    properties such as takesCourse and teachesCourse.],
+  caption: [Diagram relating Student, Professor, Course, and Department entities and instances in an example university ontology.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,

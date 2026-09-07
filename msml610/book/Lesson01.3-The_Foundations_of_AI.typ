@@ -49,8 +49,14 @@
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.1.png"),
+  image(
+    "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.1.png",
+    width: 100%,
+  ),
   caption: [Diagram relating AI to other disciplines],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:airelatestomanyotherdisciplines>
 // render_images:end
   ],
@@ -290,8 +296,14 @@ structure of desires and preferences that make such maximization coherent.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.2.png"),
+  image(
+    "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.2.png",
+    width: 100%,
+  ),
   caption: [Probability, utility, and decision theory],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:aiandeconomics12>
 // render_images:end
   ],
@@ -538,8 +550,14 @@ that far exceeds any human cognitive ability #cite("good1965ultraintelligent").
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.3.png"),
+  image(
+    "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.3.png",
+    width: 28%,
+  ),
   caption: [Diagram relating AI System, Improves Itself, Capability Increases and Superintelligence],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:thebraincausesthemind>
 // render_images:end
   ],
@@ -617,8 +635,14 @@ machinery of the mind.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.4.png"),
+  image(
+    "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.4.png",
+    width: 100%,
+  ),
   caption: [Diagram relating Stimuli, Internal Representation, Cognitive Processes and Beliefs],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:aiandcognitivepsychology>
 // render_images:end
   ],
@@ -858,8 +882,14 @@ provable stability and performance guarantees.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.5.png"),
+  image(
+    "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.5.png",
+    width: 100%,
+  ),
   caption: [Diagram relating Goal State, Controller, System and Current State],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:aiandcontroltheory>
 // render_images:end
   ],
@@ -943,8 +973,14 @@ support interactions at scale.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.6.png"),
+  image(
+    "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.6.png",
+    width: 42%,
+  ),
   caption: [Diagram relating Natural Language, Computational Linguistics, Knowledge Representation and Machine Translation],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:aiandlinguistics>
 // render_images:end
   ],

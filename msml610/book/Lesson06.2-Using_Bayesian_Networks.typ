@@ -160,33 +160,39 @@ different edge counts and conditional probability table sizes.
 
 #wrap-content(
   [
-    // rendered_images:begin
-    // ```graphviz
-    // digraph BayesianNetwork {
-    //     splines=true;
-    //     nodesep=0.8;
-    //     ranksep=0.8;
-    //
-    //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-    //
-    //     Burglary   [label="Burglary", fillcolor="#A6C8F4"];
-    //     Alarm      [label="Alarm", fillcolor="#FFD1A6"];
-    //     JohnCalls   [label="JohnCalls", fillcolor="#B2E2B2"];
-    //     MaryCalls   [label="MaryCalls", fillcolor="#B2E2B2"];
-    //     Earthquake [label="Earthquake", fillcolor="#A6C8F4"];
-    //
-    //     Burglary -> Alarm;
-    //     Earthquake -> Alarm;
-    //     Alarm -> JohnCalls;
-    //     Alarm -> MaryCalls;
-    // }
-    // ```
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.1.png", width: 100%),
-    )
-    // render_images:end
+// rendered_images:begin
+//     ```graphviz
+//     digraph BayesianNetwork {
+//         splines=true;
+//         nodesep=0.8;
+//         ranksep=0.8;
+//     
+//         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+//     
+//         Burglary   [label="Burglary", fillcolor="#A6C8F4"];
+//         Alarm      [label="Alarm", fillcolor="#FFD1A6"];
+//         JohnCalls   [label="JohnCalls", fillcolor="#B2E2B2"];
+//         MaryCalls   [label="MaryCalls", fillcolor="#B2E2B2"];
+//         Earthquake [label="Earthquake", fillcolor="#A6C8F4"];
+//     
+//         Burglary -> Alarm;
+//         Earthquake -> Alarm;
+//         Alarm -> JohnCalls;
+//         Alarm -> MaryCalls;
+//     }
+//     ```
+// rendered_images:end
+// render_images:begin
+#figure(
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.1.png",
+    width: 100%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+)
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -224,7 +230,13 @@ different edge counts and conditional probability table sizes.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.2.png"),
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.2.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 
@@ -259,7 +271,13 @@ different edge counts and conditional probability table sizes.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.3.png"),
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.3.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 
@@ -279,27 +297,33 @@ what is the alarm probability?"
 
 #wrap-content(
   [
-    // rendered_images:begin
-    // ```graphviz
-    // digraph CausalModel {
-    //     splines=true;
-    //     nodesep=2.0;
-    //     ranksep=1.5;
-    //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-    //
-    //     Causes [label="Causes", fillcolor="#B2E2B2"];
-    //     Symptoms [label="Symptoms", fillcolor="#F4A6A6"];
-    //
-    //     Causes -> Symptoms;
-    //     Symptoms -> Causes;
-    // }
-    // ```
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.4.png", width: 100%),
-    )
-    // render_images:end
+// rendered_images:begin
+//     ```graphviz
+//     digraph CausalModel {
+//         splines=true;
+//         nodesep=2.0;
+//         ranksep=1.5;
+//         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+//     
+//         Causes [label="Causes", fillcolor="#B2E2B2"];
+//         Symptoms [label="Symptoms", fillcolor="#F4A6A6"];
+//     
+//         Causes -> Symptoms;
+//         Symptoms -> Causes;
+//     }
+//     ```
+// rendered_images:end
+// render_images:begin
+#figure(
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.4.png",
+    width: 100%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+)
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -362,28 +386,34 @@ can change beliefs about an ancestor through competing explanations.
 
 #wrap-content(
   [
-    // rendered_images:begin
-    // ```graphviz
-    // digraph BayesianFlow {
-    //     splines=true;
-    //     nodesep=1.0;
-    //     ranksep=0.75;
-    //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-    //
-    //     Rain [fillcolor="#A6C8F4", label="Rain"];
-    //     WetGrass [fillcolor="#B2E2B2", label="WetGrass"];
-    //     Sprinkler [fillcolor="#A6E7F4", label="Sprinkler"];
-    //
-    //     Rain -> WetGrass;
-    //     Sprinkler -> WetGrass;
-    // }
-    // ```
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.5.png", width: 100%),
-    )
-    // render_images:end
+// rendered_images:begin
+//     ```graphviz
+//     digraph BayesianFlow {
+//         splines=true;
+//         nodesep=1.0;
+//         ranksep=0.75;
+//         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+//     
+//         Rain [fillcolor="#A6C8F4", label="Rain"];
+//         WetGrass [fillcolor="#B2E2B2", label="WetGrass"];
+//         Sprinkler [fillcolor="#A6E7F4", label="Sprinkler"];
+//     
+//         Rain -> WetGrass;
+//         Sprinkler -> WetGrass;
+//     }
+//     ```
+// rendered_images:end
+// render_images:begin
+#figure(
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.5.png",
+    width: 100%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+)
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -448,7 +478,13 @@ Consider risk factors and outcomes for heart disease:
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.6.png"),
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.6.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 
@@ -500,7 +536,13 @@ For house prices in a region:
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.7.png"),
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.7.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 
@@ -558,7 +600,13 @@ For an individual company's stock price:
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.8.png"),
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.8.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 
@@ -782,7 +830,13 @@ vehicle characteristics drive accident and theft risk, which translate to costs.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.9.png"),
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.9.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 

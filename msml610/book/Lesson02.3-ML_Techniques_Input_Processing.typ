@@ -84,8 +84,14 @@ reaching the model.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.1.png"),
+  image(
+    "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.1.png",
+    width: 95%,
+  ),
   caption: [Diagram relating Raw Data, Clean & Denoise, Handle Outliers & Missing Values and Scale & Encode],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:fromrawdatatomodelinput>
 // render_images:end
 
@@ -377,8 +383,14 @@ $[65, oo)$. Under this scheme an age of 32 maps to `Adult`, as shown in
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.2.png"),
+  image(
+    "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.2.png",
+    width: 90%,
+  ),
   caption: [Diagram relating Child \[0, 13), Teen \[13, 20), Adult \[20, 65) and Senior \[65, inf)],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:discretization>
 // render_images:end
 
@@ -526,8 +538,14 @@ already "seen" the held-out data indirectly.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.3.png"),
+  image(
+    "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.3.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Wrong: fit before split, All Data, Fit scaler/imputer on ALL rows and Split],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:fitontrainapplytovalidationandtest>
 // render_images:end
 
@@ -589,8 +607,14 @@ the held-out fold applies each one without refitting.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.4.png"),
+  image(
+    "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.4.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Correct: split before fit, All Data, Split and Train],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:fitontrainapplytovalidationandtest-2>
 // render_images:end
 

@@ -57,6 +57,9 @@ modeling complex scenarios and finding optimal strategies.
     Analytical sophistication spectrum: from descriptive statistics through
     predictive models to prescriptive and optimization-based approaches.
   ],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 
 Each step up this ladder requires more sophisticated methodology and delivers
@@ -124,7 +127,13 @@ knowing one variable tells you something about the other.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson08.1-Causal_AI_intro.typ.figs/Lesson08.1-Causal_AI_intro.1.png"),
+  image(
+    "Lesson08.1-Causal_AI_intro.typ.figs/Lesson08.1-Causal_AI_intro.1.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 
@@ -733,7 +742,13 @@ components:
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson08.1-Causal_AI_intro.typ.figs/Lesson08.1-Causal_AI_intro.2.png"),
+  image(
+    "Lesson08.1-Causal_AI_intro.typ.figs/Lesson08.1-Causal_AI_intro.2.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 
@@ -825,7 +840,13 @@ The causal DAG reveals the complexity:
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson08.1-Causal_AI_intro.typ.figs/Lesson08.1-Causal_AI_intro.3.png"),
+  image(
+    "Lesson08.1-Causal_AI_intro.typ.figs/Lesson08.1-Causal_AI_intro.3.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 

@@ -270,8 +270,14 @@ Nothing false sneaks in along the way.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.1.png"),
+  image(
+    "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.1.png",
+    width: 100%,
+  ),
   caption: [Diagram relating Correct premises, Logic and Correct conclusions],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:2aiasthinkingrationally>
 // render_images:end
   ],
@@ -726,8 +732,14 @@ their decision logic.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.2.png"),
+  image(
+    "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.2.png",
+    width: 100%,
+  ),
   caption: [Diagram illustrating AI vs ML vs Deep Learning],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:aivsmlvsdeeplearning>
 // render_images:end
   ],

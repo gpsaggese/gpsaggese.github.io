@@ -83,8 +83,14 @@ and limits that tell us when and why a method works.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.1.png"),
+  image(
+    "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.1.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Machine Learning, Paradigms, Models and Techniques],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:fourbranchesofmachinelearning>
 // render_images:end
 
@@ -139,8 +145,14 @@ interactive or sequential.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.2.png"),
+  image(
+    "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.2.png",
+    width: 80%,
+  ),
   caption: [Diagram relating Learning Paradigms, Label Availability and Interactive/Sequential],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:learningparadigms>
 // render_images:end
 
@@ -268,8 +280,14 @@ branch from the central concept of an ML model.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.3.png"),
+  image(
+    "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.3.png",
+    width: 70%,
+  ),
   caption: [Diagram relating ML Models, Parametric, Non-parametric and Graphical models],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:modelfamilies>
 // render_images:end
 
@@ -369,8 +387,14 @@ practitioner to revisit earlier decisions when later stages reveal problems.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.4.png"),
+  image(
+    "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.4.png",
+    width: 70%,
+  ),
   caption: [Diagram illustrating Stages of an ML Pipeline],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:stagesofanmlpipeline>
 // render_images:end
 

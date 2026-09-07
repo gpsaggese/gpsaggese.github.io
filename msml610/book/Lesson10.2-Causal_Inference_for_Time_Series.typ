@@ -90,8 +90,14 @@ is encoded by the arrow structure.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.1.png"),
+  image(
+    "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.1.png",
+    width: 70%,
+  ),
   caption: [First-order temporal causal graph showing treatment and outcome],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:temporal-causal>
 // render_images:end
 
@@ -217,8 +223,14 @@ responds to sales, creating bidirectional causality that OLS cannot untangle.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.2.png"),
+  image(
+    "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.2.png",
+    width: 70%,
+  ),
   caption: [Feedback loop structure where policy affects outcome contemporaneously,],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:feedback-loop>
 // render_images:end
 
@@ -567,8 +579,14 @@ post-period outcome. The gap represents the policy effect.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.3.png"),
+  image(
+    "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.3.png",
+    width: 70%,
+  ),
   caption: [Interrupted Time Series design: using pre-period trends as counterfactual],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:its-structure>
 // render_images:end
 
@@ -730,8 +748,14 @@ removed.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.4.png"),
+  image(
+    "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.4.png",
+    width: 70%,
+  ),
   caption: [Difference-in-Differences design: the causal effect is the difference],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:did-structure>
 // render_images:end
 
@@ -962,8 +986,14 @@ the estimated effect. The method's strength is transparency: reviewers can see
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.5.png"),
+  image(
+    "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.5.png",
+    width: 70%,
+  ),
   caption: [Synthetic control construction: the donor pool is weighted optimally],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:synthetic-control-construction>
 // render_images:end
 
@@ -1118,6 +1148,9 @@ summarizes the key properties of each approach.
     table.hline(stroke: 1.2pt),
   ),
   caption: [Comparison of causal inference methods for time series data.],
+  kind: "table",
+  supplement: [Table.],
+  placement: auto,
 ) <tbl:causal-methods>
 
 *Granger Causality*: uses the own history as control, offering fast predictive

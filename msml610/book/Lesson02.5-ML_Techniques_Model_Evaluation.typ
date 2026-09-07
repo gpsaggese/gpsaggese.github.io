@@ -351,8 +351,14 @@ deployment.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.1.png"),
+  image(
+    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.1.png",
+    width: 70%,
+  ),
   caption: [Diagram illustrating Using Test Data],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:usingtestdata>
 // render_images:end
 
@@ -673,8 +679,14 @@ between the two kinds of mistakes.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.2.png"),
+  image(
+    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.2.png",
+    width: 70%,
+  ),
   caption: [Diagram illustrating Confusion Matrix],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:confusionmatrix>
 // render_images:end
 
@@ -903,8 +915,14 @@ and how the random baseline provides a floor for useful performance.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.3.png"),
+  image(
+    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.3.png",
+    width: 55%,
+  ),
   caption: [Diagram illustrating Precision-Recall],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:precisionrecallcurves>
 // render_images:end
 Curves
@@ -1139,8 +1157,14 @@ evaluation, and final retraining on the combined dataset.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.4.png"),
+  image(
+    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.4.png",
+    width: 65%,
+  ),
   caption: [Diagram illustrating Model Selection],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:modelselectionprocess>
 // render_images:end
 Process
@@ -1193,8 +1217,14 @@ cannot be trusted as a final performance estimate.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.5.png"),
+  image(
+    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.5.png",
+    width: 55%,
+  ),
   caption: [Diagram illustrating Model Selection],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:modelselectionaslearning>
 // render_images:end
 as Learning
