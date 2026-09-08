@@ -1,4 +1,6 @@
-# Conventions
+# How to Contribute
+
+## Conventions
 - We indicate the execution of an OS command (e.g., Linux / macOS) from the
   terminal of your computer with:
   ```bash
@@ -11,22 +13,12 @@
   Hello world
   ```
 
-- We indicate the execution of a command inside a Docker container with:
-  ```bash
-  docker> ls
-  ```
-
-- We indicate the execution of a Postgres command from the `psql` client with:
-  ```bash
-  psql>
-  ```
-
-# How to Contribute
+## Overview
 - Contributions to the repository are done using the Fork and PR method. The
   steps are:
   1. Create an Issue
   2. Fork the repository
-  3. Sync your fork with upstream
+  3. Clone your fork and sync it with upstream
   4. Create a new branch on your forked repository
   5. Make and commit your changes
   6. Create a pull request from your branch to the main repository
@@ -49,7 +41,7 @@
   pull request.
 
 ### Fork the Repository
-![Fork](assets/images/2-create-fork.png)
+![Fork](../assets/images/2-create-fork.png)
 
 - A fork creates a copy of the repository in your GitHub account. This allows
   you to make changes without affecting the original repository. Changes can be
@@ -58,27 +50,30 @@
 - This approach reduces noise from multiple commits and branches in the main
   repository.
 
-### Sync Your Fork with Upstream
-- Before creating a branch, add the original repository as an upstream remote
-  and sync your fork so you start from the latest code:
-  ```bash
-  > git remote add upstream git@github.com:gpsaggese/umd_classes.git
-  > git fetch upstream
-  > git checkout main
-  > git merge upstream/main
-  ```
-
-### Create a New Branch on Your Forked Repository
-- Clone your forked repository (not the original) and create a new branch that
-  includes the issue number. For example, for issue #42:
+### Clone Your Fork and Sync It With Upstream
+- Clone your forked repository (not the original one) and add the original
+  repository as an `upstream` remote so you can keep your fork up to date:
   ```bash
   # Always clone your forked repository, not the original one.
-  > git clone git@github.com:{your_username}/umd_classes.git umd_classes
+  > git clone --recursive git@github.com:{your_username}/umd_classes.git umd_classes
   > cd umd_classes
-  > git checkout -b TutorTask{issue_number}_{short_description}
+  > git remote add upstream git@github.com:gpsaggese/umd_classes.git
+  > git fetch upstream
+  > git checkout master
+  > git merge upstream/master
   ```
 
-- Example branch name: `TutorTask42_Add_Postgres_Tutorial`
+- Repeat the `fetch` / `checkout master` / `merge` steps any time before
+  starting new work, to make sure you branch off the latest code.
+
+### Create a New Branch on Your Forked Repository
+- Create a new branch that includes the issue number. For example, for issue
+  #42:
+  ```bash
+  > git checkout -b UmdTask{issue_number}_{short_description}
+  ```
+
+- Example branch name: `UmdTask42_Add_Postgres_Tutorial`
 
 **Note:** Always include the issue number in the branch name.
 
@@ -88,7 +83,7 @@
   ```bash
   > git add {file1} {file2}
   > git commit -m "{commit message} (gpsaggese/umd_classes#{issue_number})"
-  > git push origin TutorTask{issue_number}_{short_description}
+  > git push origin UmdTask{issue_number}_{short_description}
   ```
 
 - The prefix `gpsaggese/umd_classes` is required to link the commit to an issue
@@ -117,4 +112,5 @@
   changes before the PR is merged.
 
 - If conflicts arise between your branch and the main branch, sync your fork
-  (Step 3) and rebase or merge main into your branch before requesting a review.
+  (Step 3) and rebase or merge `master` into your branch before requesting a
+  review.

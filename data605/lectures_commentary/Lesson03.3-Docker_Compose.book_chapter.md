@@ -252,7 +252,7 @@ same network, allowing it to communicate with the `web-fe` service.
   - **Example taken from https://github.com/nigelpoulton/counter-app**
     - This bullet point indicates that the tutorial is based on a practical example from a GitHub repository. The repository, created by Nigel Poulton, contains a sample application called "counter-app." This app is likely used to demonstrate how Docker Compose can be utilized to manage multi-container Docker applications.
   
-  - **[tutorial\_docker\_compose](https://github.com/gpsaggese/umd_classes/tree/main/data605/tutorials/tutorial_docker_compose)**
+  - **[tutorial\_docker\_compose](https://github.com/gpsaggese/gpsaggese.github.io/tree/main/data605/tutorials/tutorial_docker_compose)**
     - This link directs you to another GitHub repository where the tutorial files are stored. It is part of a series of tutorials for a class, possibly related to data science or software development, given the context of Docker Compose usage. This repository likely contains additional resources or instructions to help you follow along with the tutorial.
 
 - **Command Line Instructions**

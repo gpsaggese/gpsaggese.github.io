@@ -18,8 +18,8 @@ Spark, NoSQL databases, and cloud computing platforms.
 
 - [Syllabus](https://docs.google.com/document/d/e/2PACX-1vTJsW8-7lHiXsdjhAWVgXLAWJWrlnfwG4hd-WQp1s8z-SRSD-K1fBOBkYItg0HCSwJkUx35i-VPbiwo/pub)
 - [Class FAQs](https://docs.google.com/document/d/e/2PACX-1vRw3ZzwbUhx5FEW2_cs4WvS36NPOGKeXWxdwzGhyPJyRAbfXH6eFWbQhAqYUes-QIobGlD-IQuNMfYW/pub)
-- [Class GitHub](https://github.com/gpsaggese/umd_classes/tree/master/data605)
-- [Lectures](https://github.com/gpsaggese/umd_classes/tree/master/data605/lectures)
+- [Class GitHub](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/data605)
+- [Lectures](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/data605/lectures)
 - [ELMS](https://umd.instructure.com/courses/1342334)
 
 **Past Offerings:**
@@ -44,8 +44,8 @@ to deploy production-grade machine learning systems.
 **Course Materials:**
 
 - [Class Schedule](https://docs.google.com/document/d/e/2PACX-1vTfxdfGXcGjuujw1FaWxAL1dXeA95VBqjZ16VAa6UoG8CdGR5-Y4Y08PUQPtH2WvQ9SLNBijw2-vhjB/pub)
-- [Class GitHub](https://github.com/gpsaggese/umd_classes/tree/master/msml610)
-- [Lectures](https://github.com/gpsaggese/umd_classes/tree/master/msml610/lectures)
+- [Class GitHub](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/msml610)
+- [Lectures](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/msml610/lectures)
 - [ELMS](https://umd.instructure.com/courses/1391619)
 
 <div style="display: flex; align-items: center; gap: 15px;" markdown="1">

@@ -1,15 +1,16 @@
 # Class Project Guidelines
 
-- The goal of the class project (e.g., for `DATA605`, `MSML610`) is to learn a
-  cutting-edge modern big data technology and write an example of a system using
-  it
+- The goal of the class project for both `DATA605` and `MSML610` is to learn a
+  cutting-edge modern technology and develop a small example using it
 
-- There are two types of projects: research projects and tutorials
+- There are two types of projects:
+  1. Research projects
+  2. Tutorials
 
-## Research projects
+## Research Projects
 - Explore an open research question
 - Teams of at most 3 students
-- Examples are in
+- Examples of past projects are in:
   - `research/ideas/README.md`
   - `research/ideas/*.md`
 
@@ -22,7 +23,7 @@
   - The result of each project is a "tutorial" that can teach a curious computer
     scientist a new technology in 60 minutes
 - Individual or teams of at most 3 students
-- Examples are in :
+- Examples are in:
   - `class_project/project_descriptions/DATA605`
   - `class_project/project_descriptions/MSML610`
   - `class_project/all_projects.md`
@@ -32,18 +33,19 @@
 
 - Well done projects become blog entries and potential publications
 
-### Selection Rules
+## Selection Rules
 - The project is done by a single student or a group of students
   - Students should not have exactly the same project
   - Groups are made of at most 3 students (`<= 3`)
   - All team members receive the same score, so choose partners carefully
-  - Students working on different projects can discuss and help each other
+
+- Of course, students working on different projects can discuss and help each other
 
 - Each student or group picks one project from the sign-up sheet shared during
   class
   - Each project has a description in the corresponding directory
   - You can pick two projects as a backup; if there is a conflict, projects are
-    assigned at random
+    assigned at random among your preferences
 
 - The goal of the project is to get your hands dirty and figure things out
   - Often solving problems is about trying different approaches until one works
@@ -63,7 +65,7 @@
     the tutorial
   - **Adherence to guidelines**: correct structure, naming, and PR workflow
 
-### Paid Cloud Services
+## Paid Cloud Services
 - If you choose to use a paid service (e.g., an Amazon service), you are
   responsible for the costs incurred
   - You are expected to use the services efficiently to keep them within free
@@ -71,12 +73,12 @@
   - To save costs/improve usage, you should make sure that the services are
     turned off/shutdown when not being used
 
-### Project Timeline
+## Project Timeline
 - The project schedule is described in the "Class assignment" column in the
   class schedule
 
 - In practice, the process is:
-  - Pick 2 projects
+  - Pick 3 projects
   - Finalize the project and make sure everything is clear
   - ... Work, work, work by yourself at home ...
   - ... Work, work, work with us in class lab ...
@@ -87,7 +89,7 @@
 
 ## Pre-Requisites
 - Watch, star, and fork the repos
-  - [`umd_classes`](https://github.com/gpsaggese/umd_classes)
+  - [`umd_classes`](https://github.com/gpsaggese/gpsaggese.github.io)
   - [`helpers`](https://github.com/causify-ai/helpers)
 
 - Install `Docker` on your computer
@@ -96,7 +98,7 @@
     - If you have problems installing it on your laptop, it is recommended to
       use one computer from `UMD` laboratories
 
-- Check your `GitHub` issue on https://github.com/gpsaggese/umd_classes/issues
+- Check your `GitHub` issue on https://github.com/gpsaggese/gpsaggese.github.io/issues
   - Make sure you are assigned to it
 - Only `Python` should be used, along with necessary configuration files for the
   specific tools
@@ -114,7 +116,7 @@
 - You will work in the same way open-source developers contribute to a project
 - Each class project will need to be organized like a proper open source
   project, including filing issues, opening PRs, and checking in code in the
-  [umd_classes repository](https://github.com/gpsaggese/umd_classes)
+  [umd_classes repository](https://github.com/gpsaggese/gpsaggese.github.io)
 
 - (Optional) You can use some of the tooling we use for interns and Causify
   - Set up your working environment by following the instructions in the
@@ -128,7 +130,8 @@
 
 ### Project Tag Naming Convention
 - Your project tag should follow this format:
-  `{Class}_Spring{year}_{project_title_without_spaces}`
+  `{Class}_{Term}{Year}_{project_title_without_spaces}`
+  - `{Term}` is `Spring` or `Fall`
   - Example: if your project title is **"Redis cache to fetch user profiles"**
     for DATA605 Spring 2026, your project tag will be:
     `DATA605_Spring2026_Redis_cache_to_fetch_user_profiles`
@@ -140,7 +143,7 @@
 - Copy/paste the project description and add a link to the document with
   project specs
   - E.g.,
-    https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/projects_descriptions/DATA605/ActiveCampaign_Project_Description.md
+    https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/project_descriptions/DATA605/ActiveCampaign_Project_Description.md
 
 - Assign the GitHub issue to yourself (if you have permissions) or tag the
   issue with the individuals working on the project
@@ -148,9 +151,7 @@
   - This issue will be used for project-related discussions
 
 ### Create a Local Branch to Work in
-Create a new branch in your fork with the following naming convention:
-
-- Name your `Git` branch as follows: `UmdTask{issue_number}_{project_tag}`
+- Create a new branch in your fork, named `UmdTask{issue_number}_{project_tag}`
   - Example: If your issue number is `#645`, your branch name should be:
     `UmdTask645_DATA605_Spring2026_Redis_cache_to_fetch_user_profiles`
 
@@ -165,9 +166,11 @@ Create a new branch in your fork with the following naming convention:
 
 ### Add Files Only in Your Project Directory
 - Add your project files under the following directory:
-  `{GIT_ROOT}/class_project/{COURSE_CODE}/{TERM}{YEAR}/projects/{branch_name}`
+  `{GIT_ROOT}/class_project/{course_code}/{Term}{Year}/projects/{branch_name}`
+  - Note: `{course_code}` is lowercase (e.g., `data605`, `msml610`), unlike the
+    uppercase `{Class}` used in the project tag
   - Example for DATA605 Spring 2026:
-    `~/src/umd_classes1/class_project/DATA605/Spring2026/projects/UmdTask645_DATA605_Spring2026_Redis_cache_to_fetch_user_profiles`
+    `~/src/umd_classes1/class_project/data605/Spring2026/projects/UmdTask645_DATA605_Spring2026_Redis_cache_to_fetch_user_profiles`
 - **Important**: You should add files only under your project directory!
 - Follow the instructions (carefully!) in
   `class_project/project_template/docker_scripts.README.md`
@@ -179,7 +182,7 @@ Create a new branch in your fork with the following naming convention:
   your branch is based on
 - Add your TAs and `@gpsaggese` as reviewers
 - Assign the PR to yourself
-- You should **not** be able to push directly to the `master` branch—only push
+- You should **not** be able to push directly to the `master` branch: only push
   commits to **your project branch**
 
 - When making progress during the semester (e.g., when a PR is merged), use
@@ -189,9 +192,9 @@ Create a new branch in your fork with the following naming convention:
     - `UmdTask645_DATA605_Spring2026_Redis_cache_to_fetch_user_profiles_2`
 
 ### Video Recording Guidelines
-The final project requires students to submit a video recording of their
-project. The goal is to learn how to present your work in a professional manner
-(which will be extremely important in your career).
+- The final project requires students to submit a video recording of their
+  project. The goal is to learn how to present your work in a professional
+  manner (which will be extremely important in your career)
 
 - Video duration
   - Minimum: 10 minutes
@@ -229,26 +232,26 @@ project. The goal is to learn how to present your work in a professional manner
 
 - The layout of each project should follow these reference examples in the
   `umd_classes` repository:
-  - **[`tutorials/Autogen`](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/Autogen)**
+  - [`tutorials/Autogen`](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/tutorials/Autogen)
     - Contains: `docker_build.sh`, `autogen.API.ipynb`, `autogen.example.ipynb`,
       `autogen_utils.py`
     - Study this first for the recommended directory layout
 
-  - **[`tutorials/tensorflow`](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/tensorflow)**
+  - [`tutorials/TensorFlow`](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/tutorials/TensorFlow)
 
-  - **[`class_project/project_template`](https://github.com/gpsaggese/umd_classes/tree/master/class_project/project_template)**
+  - [`class_project/project_template`](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/class_project/project_template)
     - The canonical starting point template for new projects
     - Contains blank `template.API.ipynb` and `template.example.ipynb` notebooks
     - Use this as a foundation for your project structure
 
 - Review these exemplary projects from colleagues to understand what excellence
   looks like:
-  - [`tutorial_langchain`](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/tutorial_langchain)
-  - [`tutorial_langgraph`](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/tutorial_langgraph)
+  - [`tutorials/LangChain`](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/tutorials/LangChain)
+  - [`tutorials/LangGraph`](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/tutorials/LangGraph)
 
 - **From DATA605 class projects:**
   - **Projects:**
-    [https://github.com/gpsaggese/umd_classes/tree/master/class_project/DATA605](https://github.com/gpsaggese/umd_classes/tree/master/class_project/DATA605)
+    [`class_project/data605`](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/class_project/data605)
   - **Project videos:**
     [Google Drive folder](https://drive.google.com/drive/folders/1QLtgPCAS0mqE9cr1hE3UVoIbzakCNtaC)
 

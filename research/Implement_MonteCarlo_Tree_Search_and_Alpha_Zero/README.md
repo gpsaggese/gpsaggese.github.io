@@ -151,4 +151,4 @@ and a leading digit is not a legal module name.
   -> `mcts.03.API.ipynb` -> `mcts.03.example.ipynb`)
 
 - For more information on the Docker build system refer to
-  [Project template readme](https://github.com/gpsaggese/umd_classes/blob/master/class_project/project_template/docker_scripts.README.md)
+  [Project template readme](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/project_template/docker_scripts.README.md)
