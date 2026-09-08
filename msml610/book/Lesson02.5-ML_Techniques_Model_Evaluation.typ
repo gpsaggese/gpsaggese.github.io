@@ -1,7 +1,7 @@
 // git_hash=6d65371d2-h2c timestamp=20260904_160218
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
-  aima-style, algorithm, chapter, glossary, styled-table,
+  aima-style, algorithm, chapter, styled-table, wrap-content,
 )
 // Import the custom citation/bibliography system.
 #import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": (
@@ -19,12 +19,13 @@
 
 #chapter("L02.5: ML Techniques - Model Evaluation")
 
-// TODO(ai_gp): Add `= Roadmap` section immediately after #chapter(...), before first content (typst.rules.md:## Mandatory Sections)
+= Roadmap
+
+This chapter covers the principles and practice of evaluating machine learning models. Model evaluation requires separating data into training, validation, and test sets to estimate generalization performance honestly. We explore essential error measures (accuracy, precision, recall, F-score, and ROC/AUC), understand how to choose metrics aligned with application-specific costs, and learn strategies for model selection including hyperparameter tuning, cross-validation, and ensemble methods. Finally, we examine bias-variance tradeoffs and how to recognize when a model is overfitting.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:11 '# Model Evaluation'
 // Slide: Model Evaluation
-// TODO(ai_gp): Replace #strong[Model Evaluation] with real Typst heading syntax `=` or integrate into section structure (typst.rules.md:## Structural Hierarchy)
-#strong[Model Evaluation]
+= Model Evaluation
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:13 '## Why Evaluate'
 // Slide: Why Evaluate
@@ -32,8 +33,7 @@
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:15 '* How to Make Progress in ML Research'
 // Slide: How to Make Progress in ML Research
-// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
-#strong[How to Make Progress in ML Research]
+=== How to Make Progress in ML Research
 
 Machine learning offers a vast landscape of choices at every stage of a project:
 how to preprocess the data, which features to extract or engineer, which model
@@ -50,8 +50,7 @@ straightforward to rank alternatives and to communicate results to stakeholders
 who need a bottom line.
 
 A metric alone, however, is only as trustworthy as the evaluation protocol
-// TODO(ai_gp): Cross-validation is being formally defined here for the first time; use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
-behind it. #emph[Cross-validation] provides a principled way to estimate how
+behind it. #strong[Cross-validation] provides a principled way to estimate how
 well a model will generalize: by repeatedly splitting the data into training and
 validation folds, it guards against the optimistic bias that comes from
 evaluating on the same data used for fitting. Beyond cross-validation,
@@ -65,8 +64,7 @@ model selection from guesswork into an evidence-based process.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:33 '* In-Sample vs Out-Of-Sample Error Expressions'
 // Slide: In-Sample vs Out-Of-Sample Error Expressions
-// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
-#strong[In-Sample vs Out-Of-Sample Error Expressions]
+=== In-Sample vs Out-Of-Sample Error Expressions
 
 The goal of learning is to find a function $h$ that approximates an unknown
 target function $f$ over the space of inputs $x in cal(X)$. Because $f$ is
@@ -112,8 +110,7 @@ finite training data.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:58 '* Training vs Test Set'
 // Slide: Training vs Test Set
-// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
-#strong[Training vs Test Set]
+=== Training vs Test Set
 
 Performance on the training set $E_(i n)$ is an #strong[optimistic estimate] of
 the true out-of-sample error $E_(o u t)$. A model can achieve a 0% error rate on
@@ -122,8 +119,7 @@ essentially at random on unseen examples, yielding a 50% error rate on a test
 set. The gap between these two numbers is the core danger of overfitting:
 in-sample success tells you almost nothing about real-world reliability.
 
-// TODO(ai_gp): "properly evaluate model performance" is not a term being formally defined; use #emph instead of #strong (typst.rules.md:## Highlighting and Emphasis)
-To #strong[properly evaluate model performance], the data used for evaluation
+To #emph[properly evaluate model performance], the data used for evaluation
 must be kept entirely separate from the data used for training. Both the
 training and test sets should be representative samples drawn from the same
 underlying population. Consider a credit-risk problem: if a model is built using
@@ -159,8 +155,7 @@ afford to use every example for training, because you would have nothing left to
 honestly assess how well the model generalizes. The standard remedy is to
 #strong[hold out] a portion of the data exclusively for evaluation.
 
-// TODO(ai_gp): "train/test split" is a term being formally defined (followed by colon and description); use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
-The simplest version of this idea is a single #emph[train/test split]: partition
+The simplest version of this idea is a single #strong[train/test split]: partition
 the dataset into a training set used to fit the model and a test set used only
 once, at the end, to estimate performance metrics and confidence bounds.
 Choosing the split ratio involves a tension: a larger training set lets the
@@ -208,17 +203,16 @@ while a very large dataset can afford a thin validation slice.
 Several techniques help ensure that every split shares the #emph[same underlying
   distribution]:
 
-// TODO(ai_gp): "Stratified sampling" and "Shuffle and sample" and "Sample and check statistics" are techniques being formally defined; use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
-- #emph[Stratified sampling]: split the data so that each class label (or, more
+- #strong[Stratified sampling]: split the data so that each class label (or, more
   generally, each important subgroup) appears in every set in proportion to its
   frequency in the full dataset. This is especially important when some classes
   are rare; a naive random split could leave a minority class entirely out of
   the test set.
-- #emph[Shuffle and sample]: randomly permute the entire dataset before drawing
+- #strong[Shuffle and sample]: randomly permute the entire dataset before drawing
   the train, validation, and test portions. Shuffling breaks any ordering
   artifacts (for instance, data sorted by date or by class) and, combined with
   stratification, keeps the resulting splits well balanced.
-- #emph[Sample and check statistics]: after splitting, compare summary
+- #strong[Sample and check statistics]: after splitting, compare summary
   statistics of key variables across all three sets. Examining the mean,
   standard deviation, and probability density function (PDF) of each feature
   confirms that no split has drifted from the others. A large discrepancy in any
@@ -242,8 +236,7 @@ must rely on other means (or be foregone entirely), and the model is evaluated
 directly on the 40% test portion.
 
 When the dataset is small, even a single fixed split wastes too many examples.
-// TODO(ai_gp): "K-fold cross-validation" is being formally defined here; use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
-#emph[K-fold cross-validation] is the standard remedy: the data is partitioned
+#strong[K-fold cross-validation] is the standard remedy: the data is partitioned
 into $K$ equally sized folds, and the model is trained $K$ times, each time
 holding out a different fold for evaluation and averaging the results. Even so,
 small datasets carry a heightened risk that a seemingly high accuracy is an
@@ -265,8 +258,7 @@ however, adding more data yields smaller and smaller accuracy gains, and the
 computational cost of processing that additional data may no longer be justified
 by the marginal improvement.
 
-// TODO(ai_gp): "learning curves" is being formally defined and explained here; use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
-You should use #emph[learning curves] to track this effect. A learning curve
+You should use #strong[learning curves] to track this effect. A learning curve
 plots model performance (on the vertical axis) against training set size (on the
 horizontal axis), making it easy to see where the curve begins to flatten.
 @fig:learningcurvesexample illustrates a typical learning curve: early on the
@@ -281,8 +273,7 @@ feature engineering instead.
     "../lectures_source/figures/L02.5.Learning_Curves_Example.png",
     width: 80%,
   ),
-  // TODO(ai_gp): Caption should use sentence case, not Title Case: "Learning curves example" (typst.rules.md:## Figures: Required Elements)
-  caption: [Learning Curves Example],
+  caption: [Learning curves example.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -308,8 +299,7 @@ every available example, which generally improves its accuracy.
 There is a subtle but important shift in interpretation that comes with this
 practice. The reported $E_"test"$ no longer describes the exact model sitting in
 production, because that model was retrained on a larger dataset. Instead,
-// TODO(ai_gp): "procedure" is being formally redefined/introduced here in a new context; use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
-$E_"test"$ estimates the quality of the #emph[procedure]: the entire pipeline
+$E_"test"$ estimates the quality of the #strong[procedure]: the entire pipeline
 that, given data of this size and shape, produces a fitted model. In practice,
 the deployed model will usually perform at least as well as the estimate
 suggests, since it saw strictly more training data, but the guarantee is about
@@ -369,7 +359,6 @@ deployment.
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.1.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Caption should use sentence case, not Title Case: "diagram illustrating using test data" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram illustrating Using Test Data],
   kind: "figure",
   supplement: [Fig.],
@@ -383,11 +372,10 @@ deployment.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:198 '* How to Choose an Error Measure?'
 // Slide: How to Choose an Error Measure?
-#strong[How to Choose an Error Measure?]
+=== How to Choose an Error Measure?
 
 The choice of error measure is not purely a technical decision; it depends on
-// TODO(ai_gp): "application" is not being formally defined here, just emphasized in context; use #emph instead of #strong (typst.rules.md:## Highlighting and Emphasis)
-the #strong[application] domain and should ultimately be defined by the customer
+the #emph[application] domain and should ultimately be defined by the customer
 or end user in terms of an acceptable error level. A medical diagnostic system,
 for instance, demands extremely low error tolerance because a missed diagnosis
 can be life-threatening, whereas a movie recommendation engine can tolerate a
@@ -405,12 +393,11 @@ function encodes these priorities directly into the training or evaluation
 objective.
 
 Beyond application-specific costs, a good error measure should satisfy two
-general properties. First, it should be #emph[plausible]: the measure should
-// TODO(ai_gp): "plausible" and "friendly" are two properties/criteria being formally defined (followed by colons and explanations); use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
+general properties. First, it should be #strong[plausible]: the measure should
 match the statistical assumptions underlying the data. Squared error, for
 example, is a natural choice when the noise in the observations follows a
 Gaussian distribution, because minimizing squared error is equivalent to maximum
-likelihood estimation under that model. Second, it should be #emph[friendly]:
+likelihood estimation under that model. Second, it should be #strong[friendly]:
 the measure should be mathematically convenient to work with. Measures that
 admit closed-form solutions simplify calculations considerably and reduce
 computational cost. Measures that are convex are especially valuable because
@@ -454,9 +441,7 @@ their identity through an additional check.
       ),
     ),
   ),
-  // TODO(ai_gp): Caption must be one plain line, not wrapped across multiple lines (typst.rules.md:## Figures: Required Elements)
-  caption: [Error severity for fingerprint verification in two different
-    settings.],
+  caption: [Error severity for fingerprint verification in two different settings.],
   kind: "table",
   supplement: [Table.],
   placement: auto,
@@ -471,8 +456,7 @@ in which it operates.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:235 '* How to Measure Classifier's Performance?'
 // Slide: How to Measure Classifier's Performance?
-// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
-#strong[How to Measure Classifier's Performance?]
+=== How to Measure Classifier's Performance?
 
 #strong[Success rate] (also called hit rate or win rate) measures the proportion
 of correct predictions out of all predictions made. It is computed as
@@ -486,14 +470,9 @@ how often the model gets the right answer. For instance, if a classifier labels
 complement of this quantity, the error or miss rate, simply counts the fraction
 of incorrect predictions.
 
-#strong[Log probability loss], more commonly known as #strong[cross-entropy
-  loss], evaluates a classifier that outputs probabilities between 0 and 1
-rather than hard labels. It is defined as
+#strong[Log probability loss], more commonly known as #strong[cross-entropy loss], evaluates a classifier that outputs probabilities between 0 and 1 rather than hard labels. It is defined as
 
-// TODO(ai_gp): This formula could be kept on a single line to avoid potential line-wrapping issues in narrow columns (typst.rules.md:## Formulas)
-$
-  "cross-entropy" = -frac(1, N) sum_(i=1)^N [y_i log(p_i) + (1 - y_i) log(1 - p_i)]
-$
+$ "cross-entropy" = -frac(1, N) sum_(i=1)^N [y_i log(p_i) + (1 - y_i) log(1 - p_i)] $
 
 where $y_i$ is the true binary label and $p_i$ is the predicted probability for
 observation $i$. Cross-entropy penalizes confident wrong predictions far more
@@ -521,8 +500,7 @@ definitions of each metric appear in later sections.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:261 '* Mean Squared Error (MSE)'
 // Slide: Mean Squared Error (MSE)
-// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
-#strong[Mean Squared Error (MSE)]
+=== Mean Squared Error (MSE)
 
 #strong[Mean squared error] (MSE) is the average squared difference between
 predicted and actual values:
@@ -563,13 +541,9 @@ summaries that are far less influenced by extreme values.
 // Slide: Root Mean Squared Error (RMSE)
 #strong[Root Mean Squared Error (RMSE)]
 
-#strong[Root Mean Squared Error] (RMSE) is defined as the square root of the
-Mean Squared Error:
+#strong[Root Mean Squared Error] (RMSE) is defined as the square root of the Mean Squared Error:
 
-// TODO(ai_gp): This formula could be kept on a single line to avoid potential line-wrapping issues in narrow columns (typst.rules.md:## Formulas)
-$
-  "RMSE" equiv sqrt("MSE") = sqrt(1/N sum_(i=1)^N (h(bold(x)_i) - f(bold(x)_i))^2)
-$
+$ "RMSE" equiv sqrt("MSE") = sqrt(1/N sum_(i=1)^N (h(bold(x)_i) - f(bold(x)_i))^2) $
 
 Because the square root undoes the squaring of units introduced by MSE, RMSE is
 expressed in the same units as the target variable. This makes it far easier to
@@ -651,8 +625,7 @@ the confusion matrix provide.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:339 '* Confusion Matrix'
 // Slide: Confusion Matrix
-// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
-#strong[Confusion Matrix]
+=== Confusion Matrix
 
 Binary classification problems rest on two assumptions: the actual and predicted
 class labels both belong to $\{0, 1\}$, and by convention $y = 1$ encodes the
@@ -706,7 +679,6 @@ between the two kinds of mistakes.
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.2.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Caption should use sentence case: "diagram illustrating confusion matrix" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram illustrating Confusion Matrix],
   kind: "figure",
   supplement: [Fig.],
@@ -734,10 +706,7 @@ class we most care about detecting correctly.
 Formally, it is the conditional probability of a true positive given that the
 model predicted positive:
 
-// TODO(ai_gp): This formula could be kept on a single line to avoid potential line-wrapping issues in narrow columns (typst.rules.md:## Formulas)
-$
-  "precision" := Pr("TP" | "pred = 1") = frac(|"pred = 1" and "act = 1"|, |"pred = 1"|) = frac("TP", "TP" + "FP")
-$
+$ "precision" := Pr("TP" | "pred = 1") = frac(|"pred = 1" and "act = 1"|, |"pred = 1"|) = frac("TP", "TP" + "FP") $
 
 A model with high precision rarely cries wolf: when it flags an instance as
 positive, that flag is usually right. The denominator counts everything the
@@ -747,10 +716,7 @@ model labeled positive, so every false positive drags precision down.
 conditional probability of a true positive given that the actual label is
 positive:
 
-// TODO(ai_gp): This formula could be kept on a single line to avoid potential line-wrapping issues in narrow columns (typst.rules.md:## Formulas)
-$
-  "recall" := Pr("TP" | "act = 1") = frac("TP", |"act = 1"|) = frac("TP", "TP" + "FN")
-$
+$ "recall" := Pr("TP" | "act = 1") = frac("TP", |"act = 1"|) = frac("TP", "TP" + "FN") $
 
 A model with high recall misses very few real positives: it finds most of the
 needles in the haystack. Here the denominator counts every truly positive
@@ -804,8 +770,7 @@ precision and recall shift as the decision threshold changes.
     "../lectures_source/figures/L02.5.Precision_Recall_ROC.png",
     width: 80%,
   ),
-  // TODO(ai_gp): Caption should use sentence case: "precision-recall ROC" or similar (typst.rules.md:## Figures: Required Elements)
-  caption: [Precision Recall ROC],
+  caption: [Precision-recall ROC curve.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -946,14 +911,12 @@ and how the random baseline provides a floor for useful performance.
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.3.png",
     width: 55%,
   ),
-  // TODO(ai_gp): Caption should use sentence case: "diagram illustrating precision-recall" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram illustrating Precision-Recall],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:precisionrecallcurves>
 // render_images:end
-Curves
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:541 '* ROC Curves'
 // Slide: ROC Curves
@@ -1025,8 +988,7 @@ corner encloses more area and reflects stronger overall discrimination.
 
 #figure(
   image("../lectures_source/figures/L02.5.AUC_ROC_Curve.png", width: 80%),
-  // TODO(ai_gp): Caption should use sentence case: "AUC ROC curve" (typst.rules.md:## Figures: Required Elements)
-  caption: [AUC ROC Curve],
+  caption: [AUC ROC curve.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1108,17 +1070,13 @@ into three disjoint subsets, typically in a 60-20-20 ratio: a training set
 $D_"train"$, a validation set $D_"val"$, and a test set $D_"test"$. With this
 partition in hand, the process unfolds in a clear sequence of steps:
 
-// TODO(ai_gp): Use #algorithm(...) macro for this structured 5-step procedure instead of bare numbered list (typst.rules.md:## Algorithms and Pseudocode)
-1. Learn $N$ candidate hypotheses $g_1, dots, g_N$ on $D_"train"$ alone.
-2. Evaluate each hypothesis on $D_"val"$, producing validation errors
-  $E_"val"^((1)), dots, E_"val"^((N))$.
-3. Select the model $g_m$ that achieves the minimum validation error
-  $E_"val"^((m))$.
-4. Estimate the chosen model's true out-of-sample performance using the held-out
-  test set: $E_"test" approx E_"out"$.
-5. Retrain the selected model architecture on all available data,
-  $D = D_"train" union D_"val" union D_"test"$, to produce the final hypothesis
-  $g_m^*$.
+#algorithm("Model Selection Procedure", (
+  [*Learn* N candidate hypotheses $g_1, dots, g_N$ on $D_"train"$ alone.],
+  [*Evaluate* each hypothesis on $D_"val"$, producing validation errors $E_"val"^((1)), dots, E_"val"^((N))$.],
+  [*Select* the model $g_m$ that achieves the minimum validation error $E_"val"^((m))$.],
+  [*Estimate* the chosen model's true out-of-sample performance using the held-out test set: $E_"test" approx E_"out"$.],
+  [*Retrain* the selected model architecture on all available data, $D = D_"train" union D_"val" union D_"test"$, to produce the final hypothesis $g_m^*$.],
+))
 
 The reason for retraining at the end is straightforward: once model selection is
 complete and a fair performance estimate has been recorded, there is no further
@@ -1191,18 +1149,16 @@ evaluation, and final retraining on the combined dataset.
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.4.png",
     width: 65%,
   ),
-  // TODO(ai_gp): Caption should use sentence case: "diagram illustrating model selection" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram illustrating Model Selection],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:modelselectionprocess>
 // render_images:end
-Process
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:687 '* Model Selection as Learning'
 // Slide: Model Selection as Learning
-#strong[Model Selection as Learning]
+=== Model Selection as Learning
 
 Selecting the model with the smallest $E_("val")$ is itself a #strong[form of
   learning]. The hypothesis set is the finite collection $\{g_1, dots, g_N\}$ of
@@ -1252,14 +1208,12 @@ cannot be trusted as a final performance estimate.
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.5.png",
     width: 55%,
   ),
-  // TODO(ai_gp): Caption should use sentence case: "diagram illustrating model selection as learning" or similar (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram illustrating Model Selection],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:modelselectionaslearning>
 // render_images:end
-as Learning
 
 Once a model has been selected, its true performance must still be assessed on a
 separate test set $D_("test")$. The validation error $E_("val")(g_m)$ is an
@@ -1283,8 +1237,7 @@ complexity term and provides an analogous guarantee.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:737 '* Ensemble Learning: Intuition'
 // Slide: Ensemble Learning: Intuition
-// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
-#strong[Ensemble Learning: Intuition]
+=== Ensemble Learning: Intuition
 
 The core intuition behind ensemble methods is straightforward: a group of weak
 learners, each only slightly better than random guessing, can be combined into a
@@ -1455,12 +1408,11 @@ dataset and combining their predictions.
 
 The learning procedure works as follows:
 
-// TODO(ai_gp): Use #algorithm(...) macro for this structured 3-step Bagging procedure instead of bare numbered list (typst.rules.md:## Algorithms and Pseudocode)
-1. Draw several training datasets at random from the original data, sampling
-  _with replacement_ (the bootstrap step).
-2. Train one model on each of these bootstrapped datasets.
-3. Combine the individual outputs: for classification, take a majority vote; for
-  regression, average the predictions.
+#algorithm("Bagging (Bootstrap Aggregating)", (
+  [*Draw* several training datasets at random from the original data, sampling _with replacement_ (the bootstrap step).],
+  [*Train* one model on each of these bootstrapped datasets.],
+  [*Combine* the individual outputs: for classification, take a majority vote; for regression, average the predictions.],
+))
 
 The result is a composite model that typically outperforms any single
 constituent learner.
@@ -1484,8 +1436,7 @@ output.
 
 #figure(
   image("../lectures_source/figures/L02.5.Bagging_Classifier.png", width: 80%),
-  // TODO(ai_gp): Caption should use sentence case: "bagging classifier" (typst.rules.md:## Figures: Required Elements)
-  caption: [Bagging Classifier],
+  caption: [Bagging classifier.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1557,8 +1508,7 @@ sequentially added weak learners collectively form a strong predictor.
 
 #figure(
   image("../lectures_source/figures/L02.5.Boosting_Concept.png", width: 80%),
-  // TODO(ai_gp): Caption should use sentence case: "boosting concept" (typst.rules.md:## Figures: Required Elements)
-  caption: [Boosting Concept],
+  caption: [Boosting concept.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1586,8 +1536,7 @@ of boosting.
 
 #figure(
   image("../lectures_source/figures/L02.5.AdaBoost_Diagram.png", width: 80%),
-  // TODO(ai_gp): Caption should use sentence case: "AdaBoost diagram" (typst.rules.md:## Figures: Required Elements)
-  caption: [AdaBoost Diagram],
+  caption: [AdaBoost diagram.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1595,20 +1544,13 @@ of boosting.
 
 The learning procedure follows a clear iterative pattern:
 
-// TODO(ai_gp): Use #algorithm(...) macro for this structured 5-step AdaBoost procedure instead of bare numbered list (typst.rules.md:## Algorithms and Pseudocode)
-1. Initialize all training examples with equal weight, so the first weak learner
-  treats every point as equally important.
-2. At each round, train a new classifier using the current weight distribution
-  over the examples.
-3. Evaluate that classifier's performance and assign it a model weight
-  reflecting its overall accuracy: a more accurate learner earns a higher vote
-  in the final ensemble.
-4. Update the example weights, increasing the weight of points the new
-  classifier got wrong and decreasing the weight of those it classified
-  correctly. This forces the next round's learner to concentrate on the hard
-  cases.
-5. Repeat until a predetermined number of rounds is reached or the ensemble's
-  training error drops to zero.
+#algorithm("AdaBoost (Adaptive Boosting)", (
+  [*Initialize* all training examples with equal weight, so the first weak learner treats every point as equally important.],
+  [*Train* a new classifier at each round using the current weight distribution over the examples.],
+  [*Evaluate* that classifier's performance and assign it a model weight reflecting its overall accuracy: a more accurate learner earns a higher vote in the final ensemble.],
+  [*Update* the example weights, increasing the weight of points the new classifier got wrong and decreasing the weight of those it classified correctly. This forces the next round's learner to concentrate on the hard cases.],
+  [*Repeat* until a predetermined number of rounds is reached or the ensemble's training error drops to zero.],
+))
 
 The final prediction is a weighted majority vote (for classification) across all
 the learners produced during these rounds. Because each successive model is
@@ -1651,8 +1593,7 @@ prediction.
 
 #figure(
   image("../lectures_source/figures/L02.5.Stacking_Ensemble.png", width: 80%),
-  // TODO(ai_gp): Caption should use sentence case: "stacking ensemble" (typst.rules.md:## Figures: Required Elements)
-  caption: [Stacking Ensemble],
+  caption: [Stacking ensemble.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1708,5 +1649,10 @@ prediction.
   placement: auto,
 )
 
-// TODO(ai_gp): Add mandatory level-1 sections: `= Summary` before `= References` (typst.rules.md:## Mandatory Sections)
-// TODO(ai_gp): Add mandatory `= References` section at the end with bibliography (typst.rules.md:## Mandatory Sections)
+= Summary
+
+This chapter has presented a comprehensive framework for evaluating machine learning models. Model evaluation requires more than computing accuracy on training data: it demands a careful separation of data into training, validation, and test sets to obtain honest estimates of generalization performance. The choice of error measure must align with application-specific costs and the nature of the prediction task, whether classification or regression. Precision, recall, and their combinations (F-score, ROC, AUC) provide nuanced views of classifier performance, especially in imbalanced settings. Model selection via validation balances the need for good performance with the risk of overfitting, while ensemble methods like bagging, boosting, and stacking harness the power of combining multiple learners to achieve accuracy beyond what any single model could provide. Understanding these evaluation and ensemble techniques is essential for building machine learning systems that generalize reliably to new data.
+
+= References
+
+#references("/msml610/lectures_source/refs.bib")

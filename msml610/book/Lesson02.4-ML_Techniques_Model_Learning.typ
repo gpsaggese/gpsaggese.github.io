@@ -21,10 +21,16 @@
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:11 '# The Optimization Problem'
 // Slide: The Optimization Problem
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[The Optimization Problem]
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:13 '* Minimizing a Function'
 // Slide: Minimizing a Function
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[Minimizing a Function]
 
 The goal of optimization in machine learning is to minimize a scalar function
@@ -37,10 +43,17 @@ which averages the pointwise error of a hypothesis $h_(bold(w))$ over $N$
 training examples $(bold(x)_i, y_i)$.
 
 Two broad strategies exist for finding the minimizer. The first is an
+// TODO(ai_gp): Use #strong[...] instead of #emph[...] here since this term
+// is being formally introduced/defined with the colon-based definition pattern
+// (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
 #emph[analytical approach]: set the gradient of $J(bold(w))$ equal to zero and
 solve for $bold(w)^*$ in closed form. This is elegant when it works, but many
 objective functions do not admit a closed-form solution, or the solution is too
-expensive to compute for large $P$. The second is a #emph[numerical approach]:
+expensive to compute for large $P$. The second is a
+// TODO(ai_gp): Use #strong[...] instead of #emph[...] here since this term
+// is being formally introduced/defined with the colon-based definition pattern
+// (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
+#emph[numerical approach]:
 use an iterative method that updates $bold(w)$ step by step until $J(bold(w))$
 reaches its minimum. Gradient descent is the prototypical example. A numerical
 method remains applicable even when an analytical solution exists, making it the
@@ -52,6 +65,9 @@ a minimum of the objective surface.
 
 #figure(
   image("../lectures_source/figures/L02.4.Gradient_descent_2.png", width: 80%),
+  // TODO(ai_gp): Caption must describe what the figure shows in a single clause,
+  // not just label it. Example: "Gradient descent surface showing convergence to
+  // minimum." (.claude/skills/typst.rules.md:## Figures: Required Elements)
   caption: [Gradient descent 2],
   kind: "figure",
   supplement: [Fig.],
@@ -60,6 +76,9 @@ a minimum of the objective surface.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:43 '* Gradient Descent: Intuition'
 // Slide: Gradient Descent: Intuition
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[Gradient Descent: Intuition]
 
 Imagine standing on a hilly surface with the goal of reaching the lowest point.
@@ -71,6 +90,8 @@ for mathematical optimization, as @fig:gradientdescent1 illustrates.
 
 #figure(
   image("../lectures_source/figures/L02.4.Gradient_descent_1.png", width: 80%),
+  // TODO(ai_gp): Caption must describe what the figure shows, not just label it
+  // (.claude/skills/typst.rules.md:## Figures: Required Elements)
   caption: [Gradient descent 1],
   kind: "figure",
   supplement: [Fig.],
@@ -81,7 +102,11 @@ for mathematical optimization, as @fig:gradientdescent1 illustrates.
 twice-differentiable functions. Starting from an initial guess, the algorithm
 iteratively adjusts its parameters by moving in the direction of the negative
 gradient (the direction of steepest decrease). In the general case, gradient
-descent converges to a #emph[local minimum], a point that is lower than all
+descent converges to a
+// TODO(ai_gp): Use #strong[...] instead of #emph[...] here since this term
+// is being formally defined with the "a point that is..." pattern
+// (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
+#emph[local minimum], a point that is lower than all
 nearby points but not necessarily the lowest point overall. However, when the
 objective function $J(bold(w))$ is convex, every local minimum is also the
 global minimum, so gradient descent is guaranteed to find the best possible
@@ -92,10 +117,16 @@ plateaus.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:73 '# Gradient Descent'
 // Slide: Gradient Descent
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[Gradient Descent]
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:75 '* Gradient Descent with Fixed Learning Rate (1/3)'
 // Slide: Gradient Descent with Fixed Learning Rate (1/3)
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[Gradient Descent with Fixed Learning Rate (1/3)]
 
 Consider the contour plot of a loss function $E_{"in"}$ over weight space.
@@ -129,6 +160,9 @@ faster, though at a higher per-step cost.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:107 '* Gradient Descent with Fixed Learning Rate (2/3)'
 // Slide: Gradient Descent with Fixed Learning Rate (2/3)
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[Gradient Descent with Fixed Learning Rate (2/3)]
 
 The change in the in-sample error $E_(i n)$ when moving along a unit direction
@@ -150,6 +184,9 @@ At that choice the change equals $- eta \| nabla E_(i n) (bold(w)(t)) \|$, the
 steepest possible decrease for a step of size $eta$.
 
 Substituting this optimal direction back into the weight update gives the full
+// TODO(ai_gp): Use #emph[...] instead of #strong[...] here since this is not
+// a formal definition in a sentence like "Term is/refers to..." but rather a
+// label/emphasis (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
 rule for the #strong[change in weights]:
 
 $
@@ -166,6 +203,9 @@ step.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:133 '* Gradient Descent with Fixed Learning Rate (3/3)'
 // Slide: Gradient Descent with Fixed Learning Rate (3/3)
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[Gradient Descent with Fixed Learning Rate (3/3)]
 
 The gradient descent update formula specifies how each component of the weight
@@ -195,6 +235,9 @@ convergence criteria and stopping conditions.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:153 '* Gradient Descent: Stopping Criteria'
 // Slide: Gradient Descent: Stopping Criteria
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[Gradient Descent: Stopping Criteria]
 
 When should gradient descent stop? In theory, the algorithm terminates when the
@@ -220,10 +263,16 @@ a simple but effective diagnostic for catching these issues early.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:167 '# Tuning Gradient Descent'
 // Slide: Tuning Gradient Descent
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[Tuning Gradient Descent]
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:169 '* Choosing the Learning Rate'
 // Slide: Choosing the Learning Rate
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[Choosing the Learning Rate]
 
 Consider a one-dimensional convex function whose minimum we seek via gradient
@@ -237,6 +286,8 @@ convergence to the minimum requires a large number of iterations.
 
 #figure(
   image("../lectures_source/figures/L02.4.Gradient_descent_3a.png", width: 80%),
+  // TODO(ai_gp): Caption must describe what the figure shows, not just label it
+  // (.claude/skills/typst.rules.md:## Figures: Required Elements)
   caption: [Gradient descent 3a],
   kind: "figure",
   supplement: [Fig.],
@@ -251,6 +302,8 @@ back and forth across the valley, potentially diverging altogether.
 
 #figure(
   image("../lectures_source/figures/L02.4.Gradient_descent_3b.png", width: 80%),
+  // TODO(ai_gp): Caption must describe what the figure shows, not just label it
+  // (.claude/skills/typst.rules.md:## Figures: Required Elements)
   caption: [Gradient descent 3b],
   kind: "figure",
   supplement: [Fig.],
@@ -271,6 +324,8 @@ the optimum.
 
 #figure(
   image("../lectures_source/figures/L02.4.Gradient_descent_3c.png", width: 80%),
+  // TODO(ai_gp): Caption must describe what the figure shows, not just label it
+  // (.claude/skills/typst.rules.md:## Figures: Required Elements)
   caption: [Gradient descent 3c],
   kind: "figure",
   supplement: [Fig.],
@@ -279,6 +334,9 @@ the optimum.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:202 '* Gradient Descent with Variable Learning Rate'
 // Slide: Gradient Descent with Variable Learning Rate
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[Gradient Descent with Variable Learning Rate]
 
 When using #strong[gradient descent with a fixed learning rate], every update
@@ -315,6 +373,9 @@ refinement near it.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:222 '* Feature Scaling in Gradient Descent'
 // Slide: Feature Scaling in Gradient Descent
+// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
+// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
+// Structural Hierarchy)
 #strong[Feature Scaling in Gradient Descent]
 
 Unscaled features distort the error surface. When one feature ranges from 1 to
@@ -384,6 +445,10 @@ gradient estimate for dramatically cheaper per-step computation.
 single training example chosen at random, rather than computing the gradient
 over the entire dataset. This makes each update far cheaper, which is especially
 valuable when the training set is large.
+
+// TODO(ai_gp): Use #algorithm("Stochastic Gradient Descent", [...]) instead of
+// a bare numbered list for this procedure (.claude/skills/typst.rules.md:##
+// Algorithms and Pseudocode)
 
 The procedure works as follows:
 
@@ -484,6 +549,9 @@ Mini-Batch GD.
     ),
     bold-first-col: true,
   ),
+  // TODO(ai_gp): Caption must not list out every column header. Instead, describe
+  // what the table shows in one short clause. Example: "Comparison of gradient
+  // descent variants." (.claude/skills/typst.rules.md:## Figures: Required Elements)
   caption: [Table of Aspect, Batch GD, Stochastic GD, Mini-Batch GD],
   kind: "table",
   supplement: [Table.],
@@ -494,7 +562,11 @@ Mini-Batch GD.
 // Slide: On-Line Learning and Gradient Descent
 #strong[On-Line Learning and Gradient Descent]
 
-In many applications, training data arrives as a #strong[continuous stream]
+In many applications, training data arrives as a
+// TODO(ai_gp): Use #emph[...] instead of #strong[...] here since this is
+// emphasis/contrast, not a formal definition in a sentence like "Term
+// is/refers to..." (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
+#strong[continuous stream]
 rather than a fixed batch. The model must incorporate new observations on the
 fly, updating its parameters as each example (or small group of examples)
 becomes available. This contrasts sharply with the offline setting, where the
@@ -536,6 +608,10 @@ adequate today.
     "Lesson02.4-ML_Techniques_Model_Learning.typ.figs/Lesson02.4-ML_Techniques_Model_Learning.1.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Caption is too vague. Describe what the diagram shows more
+  // specifically. Example: "Model architecture for streaming data updates in
+  // online learning." (.claude/skills/typst.rules.md:## Figures: Required
+  // Elements)
   caption: [Diagram relating Model],
   kind: "figure",
   supplement: [Fig.],
@@ -560,6 +636,9 @@ avoided. Once raw examples are gone, there is no way to revisit them if the
 learning rate was poorly chosen, if the model class changes, or if a subtle bug
 corrupted earlier updates. Retaining at least a representative buffer or summary
 statistics provides a safety net that pure online updates lack.
+
+// Revert garbled section at top, restore proper context
+
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:369 '* Map-Reduce for Batch Gradient Descent'
 // Slide: Map-Reduce for Batch Gradient Descent
@@ -639,6 +718,10 @@ terms.
     "Lesson02.4-ML_Techniques_Model_Learning.typ.figs/Lesson02.4-ML_Techniques_Model_Learning.2.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Caption is too vague. Describe what the diagram shows more
+  // specifically. Example: "Map-reduce architecture for distributed gradient
+  // computation across worker nodes." (.claude/skills/typst.rules.md:## Figures:
+  // Required Elements)
   caption: [Diagram relating Shuffle & Reduce],
   kind: "figure",
   supplement: [Fig.],

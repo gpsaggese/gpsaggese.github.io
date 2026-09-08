@@ -1,0 +1,46 @@
+20:45:31 - [36mINFO [0m hdbg.py init_logger:1167                               Saving log to file '/Users/saggese/src/umd_classes1/helpers_root/dev_scripts_helpers/typst/run_typst.py.log'
+20:45:31 - [36mINFO [0m hdbg.py init_logger:1177                               [94m> /Users/saggese/src/umd_classes1/helpers_root/dev_scripts_helpers/typst/run_typst.py --input=msml610/book/Lesson02.5-ML_Techniques_Model_Evaluation.typ --output=msml610/book.tmp/Lesson02.5-ML_Techniques_Model_Evaluation.pdf[0m
+################################################################################
+# Action selected:
+################################################################################
+    render_images: Yes
+          compile: Yes
+     compress_pdf: -
+         open_pdf: Yes
+20:45:31 - [36mINFO [0m hselect_action.py mark_action:321                      
+################################################################################
+action=render_images
+################################################################################
+20:45:50 - [36mINFO [0m hselect_action.py mark_action:321                      
+################################################################################
+action=compile
+################################################################################
+warning: unknown font family: cmu typewriter
+    ┌─ helpers_root/dev_scripts_helpers/typst/aima_style.typ:178:47
+    │
+178 │     #set text(weight: "bold", size: 8pt, font: "CMU Typewriter")
+    │                                                ^^^^^^^^^^^^^^^^
+
+warning: unknown font family: cmu typewriter
+    ┌─ helpers_root/dev_scripts_helpers/typst/aima_style.typ:182:52
+    │
+182 │     #set text(weight: "regular", size: 7.8pt, font: "CMU Typewriter", fill: black)
+    │                                                     ^^^^^^^^^^^^^^^^
+20:45:52 - [41mWARN [0m run_typst.py _report_compile_warnings:123              warning: unknown font family: cmu typewriter
+20:45:52 - [41mWARN [0m run_typst.py _report_compile_warnings:123              warning: unknown font family: cmu typewriter
+Traceback (most recent call last):
+  File "/Users/saggese/src/umd_classes1/helpers_root/dev_scripts_helpers/typst/run_typst.py", line 365, in <module>
+    _main(_parse())
+  File "/Users/saggese/src/umd_classes1/helpers_root/dev_scripts_helpers/typst/run_typst.py", line 361, in _main
+    _process_typst_file(in_file_path, out_file_path, root, args)
+  File "/Users/saggese/src/umd_classes1/helpers_root/dev_scripts_helpers/typst/run_typst.py", line 295, in _process_typst_file
+    _compile_typst(
+  File "/Users/saggese/src/umd_classes1/helpers_root/dev_scripts_helpers/typst/run_typst.py", line 178, in _compile_typst
+    hdbg.dfatal(msg)
+  File "/Users/saggese/src/umd_classes1/helpers_root/helpers/hdbg.py", line 84, in dfatal
+    raise assertion_type(ret)
+AssertionError: 
+################################################################################
+Found 2 `typst compile` warning(s) for '/Users/saggese/src/umd_classes1/msml610/book/Lesson02.5-ML_Techniques_Model_Evaluation.typ'
+################################################################################
+

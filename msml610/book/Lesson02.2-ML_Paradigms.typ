@@ -2,7 +2,7 @@
 // FIXED_BY_CLAUDE_20260907_202440
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
-  aima-style, algorithm, chapter, glossary, styled-table,
+  aima-style, chapter, styled-table, wrap-content,
 )
 // Import the custom citation/bibliography system.
 #import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": (
@@ -20,9 +20,13 @@
 
 #chapter("L02.2: Machine Learning Paradigms")
 
+= Roadmap
+
+This chapter introduces the foundational learning paradigms that organize machine learning problem formulations. It covers the taxonomy of learning approaches (supervised, unsupervised, semi-supervised, self-supervised, reinforcement, active, and more), explains the machine learning workflow from question formulation through evaluation, and examines how practical ML systems are structured as pipelines where component errors compound. Understanding these paradigms is essential for framing problems appropriately and choosing suitable algorithms.
+
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:7 '# Machine Learning Paradigms'
 // Slide: Machine Learning Paradigms
-#strong[Machine Learning Paradigms]
+= Machine Learning Paradigms
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:9 '## Major Paradigms'
 // Slide: Major Paradigms
@@ -30,7 +34,7 @@
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:11 '* Machine Learning Paradigms: A Taxonomy'
 // Slide: Machine Learning Paradigms: A Taxonomy
-#strong[Machine Learning Paradigms: A Taxonomy]
+=== Machine Learning Paradigms: A Taxonomy
 
 How do the major machine learning paradigms differ in the way they access data
 and receive feedback? The answer turns on two axes: whether labeled outputs are
@@ -118,32 +122,32 @@ an appropriate algorithm.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:53 '* Machine Learning Paradigms: Examples (1/3)'
 // Slide: Machine Learning Paradigms: Examples (1/3)
-#strong[Machine Learning Paradigms: Examples (1/3)]
+=== Machine Learning Paradigms: Examples (1/3)
 
 How do you set up a machine learning problem? The answer depends on what kind of
 data you have and what kind of feedback the learning system receives. There are
 five major paradigms, each suited to a different setting.
 
-#strong[Supervised learning] trains a model on labeled data: each input comes
+#emph[Supervised learning] trains a model on labeled data: each input comes
 paired with the correct output, and the model learns to predict that output for
 new, unseen inputs. Image classification is a canonical example, where
 architectures like ResNet learn to map pixel arrays to category labels using the
 millions of labeled photographs in ImageNet.
 
-#strong[Unsupervised learning] works without any labels at all. Instead, the
+#emph[Unsupervised learning] works without any labels at all. Instead, the
 goal is to discover hidden patterns or structure lurking in the data itself.
 K-means clustering for customer segmentation is a typical application: the
 algorithm groups customers by purchasing behavior without anyone telling it what
 the groups should be.
 
-#strong[Reinforcement learning] takes a fundamentally different approach. Rather
+#emph[Reinforcement learning] takes a fundamentally different approach. Rather
 than learning from a fixed dataset, the agent learns through interaction with an
 environment, taking actions and receiving rewards or punishments that shape its
 future behavior. Deep Q-Learning, which learned to play Atari games at
 superhuman levels #cite("mnih2015dqn"), demonstrated how powerful this
 trial-and-error paradigm can be when combined with deep neural networks.
 
-#strong[Self-supervised learning] bridges the gap between supervised and
+#emph[Self-supervised learning] bridges the gap between supervised and
 unsupervised approaches by generating pseudo-labels directly from unlabeled
 data. The model creates its own supervision signal, typically by hiding part of
 the input and predicting the missing piece. BERT's masked language modeling
@@ -151,7 +155,7 @@ objective #cite("devlin2019bert") is a prominent example: the model masks random
 words in a sentence and learns to reconstruct them, building rich language
 representations in the process without a single human-provided label.
 
-#strong[Semi-supervised learning] combines a small set of labeled examples with
+#emph[Semi-supervised learning] combines a small set of labeled examples with
 a much larger pool of unlabeled data to improve performance beyond what either
 source alone could provide. Named entity recognition illustrates this well: a
 handful of sentences annotated with entity tags (person, organization, location)
@@ -165,7 +169,7 @@ decision in framing a machine learning problem.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:74 '* Machine Learning Paradigms: Examples (2/3)'
 // Slide: Machine Learning Paradigms: Examples (2/3)
-#strong[Machine Learning Paradigms: Examples (2/3)]
+=== Machine Learning Paradigms: Examples (2/3)
 
 #strong[Online learning] trains a model incrementally from a stream of data
 arriving in real time, rather than requiring the entire dataset up front. A
@@ -191,7 +195,7 @@ handles new tasks with no labeled examples at all (zero-shot) or only a handful
 novel tasks purely through zero-shot prompting #cite("openai2023gpt4"), relying
 on broad pretraining rather than task-specific supervision.
 
-#strong[Active learning] flips the usual labeling workflow. Instead of passively
+#emph[Active learning] flips the usual labeling workflow. Instead of passively
 receiving labeled data, the model itself selects the most informative samples to
 be labeled by an oracle, typically a human annotator #cite("settles2009survey").
 A common strategy is to pick samples where the model is least confident,
@@ -199,7 +203,7 @@ concentrating labeling effort where it will reduce uncertainty the most.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:99 '* Machine Learning Paradigms: Examples (3/3)'
 // Slide: Machine Learning Paradigms: Examples (3/3)
-#strong[Machine Learning Paradigms: Examples (3/3)]
+=== Machine Learning Paradigms: Examples (3/3)
 
 #strong[Federated learning] trains models across decentralized devices without
 sharing raw data #cite("mcmahan2017federated"). Each participant (a phone, a
@@ -248,9 +252,9 @@ training regime would have uncovered.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:124 '* Supervised Learning'
 // Slide: Supervised Learning
-#strong[Supervised Learning]
+=== Supervised Learning
 
-#strong[Supervised learning] learns a function $f: X arrow.r Y$ that maps inputs
+#emph[Supervised learning] learns a function $f: X arrow.r Y$ that maps inputs
 to correct outputs #cite("mitchell1997machinelearning"). The training set
 consists of example pairs $(bold(x), y)$, where each input $bold(x)$ is paired
 with the correct output $y$. Because every training example carries a label
@@ -276,9 +280,9 @@ theme that recurs throughout the course.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:145 '* Unsupervised Learning'
 // Slide: Unsupervised Learning
-#strong[Unsupervised Learning]
+=== Unsupervised Learning
 
-#strong[Unsupervised learning] learns from data without labeled outputs. Rather
+#emph[Unsupervised learning] learns from data without labeled outputs. Rather
 than receiving explicit feedback or correct answers, the algorithm's goal is to
 discover patterns, groupings, or structure hidden within the data itself.
 Because there is no ground-truth label to compare against, evaluation tends to
@@ -318,9 +322,9 @@ depending on the architecture.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:167 '* Reinforcement Learning'
 // Slide: Reinforcement Learning
-#strong[Reinforcement Learning]
+=== Reinforcement Learning
 
-#strong[Reinforcement learning] (RL) is a paradigm in which an agent learns by
+#emph[Reinforcement learning] (RL) is a paradigm in which an agent learns by
 interacting with an environment to maximize cumulative reward #cite(
   "suttonbarto2018rlbook",
 ). Rather than learning from a fixed dataset of labeled examples, the agent
@@ -357,16 +361,16 @@ from the environment, then repeats.
 //     splines=true;
 //     nodesep=1.0;
 //     ranksep=0.75;
-// 
+//
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
-// 
+//
 //     // Node styles
 //     Agent      [label="Agent", shape=box, fillcolor="#F4A6A6"];
 //     Env        [label="Environment", shape=box, fillcolor="#B2E2B2"];
-// 
+//
 //     // Force ranks
 //     //{ rank=same; Agent; Env; }
-// 
+//
 //     // Edges
 //     Agent -> Env [label="  Action", fontcolor=black, labeldistance=2.0];
 //     Env -> Agent [label="  State", fontcolor=black, labeldistance=2.0];
@@ -376,18 +380,23 @@ from the environment, then repeats.
 // label=fig:reinforcementlearning caption=Diagram relating Agent, Environment,
 // rendered_images:end
 // render_images:begin
-#figure(
-  image(
-    "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.2.png",
-    width: 70%,
-  ),
-  caption: [Diagram relating agent, environment and reward signals in the RL loop.],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:reinforcementlearning>
-// render_images:end
-
+#wrap-content(
+  [
+    #figure(
+      image(
+        "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.2.png",
+        width: 100%,
+      ),
+      caption: [Diagram relating agent, environment and reward signals in the RL loop.],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:reinforcementlearning>
+  ],
+  align: right,
+  column-gutter: 1em,
+  columns: (1fr, 40%),
+)[
 Among the best-known RL algorithms are #emph[Q-learning], which maintains a
 table or function approximator estimating the expected future reward for each
 state-action pair, and #emph[policy gradient methods], which directly optimize
@@ -395,10 +404,12 @@ the policy by adjusting its parameters in the direction that increases expected
 reward. These two families represent the main algorithmic divide in RL:
 value-based methods that learn what states and actions are worth, versus
 policy-based methods that learn the mapping from states to actions directly.
+]
+// render_images:end
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:219 '* Reinforcement Learning: Examples'
 // Slide: Reinforcement Learning: Examples
-#strong[Reinforcement Learning: Examples]
+=== Reinforcement Learning: Examples
 
 Reinforcement learning finds natural application in any domain where an agent
 must make a sequence of decisions and can learn from the outcomes of those
@@ -438,7 +449,7 @@ the most leverage over traditional supervised approaches.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:234 '* Machine Learning Flow (1/2)'
 // Slide: Machine Learning Flow (1/2)
-#strong[Machine Learning Flow (1/2)]
+=== Machine Learning Flow (1/2)
 
 Every machine learning project follows a common pipeline whose stages build on
 one another. The process begins with a #strong[question]: a concrete problem
@@ -459,7 +470,7 @@ or tuning parameters).
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:244 '* Machine Learning Flow (2/2)'
 // Slide: Machine Learning Flow (2/2)
-#strong[Machine Learning Flow (2/2)]
+=== Machine Learning Flow (2/2)
 
 // rendered_images:begin
 // ```graphviz
@@ -944,7 +955,7 @@ pipeline only to discover that the optimization barely moves the needle on
 overall performance is a costly mistake. The central question, then, is: which
 part of the pipeline deserves the investment of time and resources?
 
-#strong[Ceiling analysis] provides a principled answer by quantifying how much
+#emph[Ceiling analysis] provides a principled answer by quantifying how much
 each pipeline component limits end-to-end performance. The procedure begins by
 choosing a single scalar metric for the entire system, since juggling too many
 metrics at once obscures the signal (for an OCR system, for instance, overall
@@ -975,21 +986,32 @@ gain. The remaining components, while still imperfect, contribute far less
 marginal improvement, so engineering effort spent on them yields diminishing
 returns until the text detection bottleneck is resolved.
 
-#figure(
-  styled-table(
-    headers: ("Component made perfect", "Accuracy", "Gain"),
-    rows: (
-      ("(baseline system)", "72%", "--"),
-      ("Text detection", "89%", "+17%"),
-      ("+ Char. segmentation", "90%", "+1%"),
-      ("+ Char. classification", "100%", "+10%"),
+#grid(
+  columns: (1fr, 40%),
+  column-gutter: 1em,
+  align: (left, top),
+)[
+  The table reveals that improving text detection would yield a +17% gain over
+  baseline, far exceeding the marginal contributions of character segmentation
+  (+1%) and classification (+10%) when applied in sequence. This ordering shows
+  where investment in engineering effort will have the highest return.
+][
+  #figure(
+    styled-table(
+      headers: ("Component made perfect", "Accuracy", "Gain"),
+      rows: (
+        ("(baseline system)", "72%", "--"),
+        ("Text detection", "89%", "+17%"),
+        ("+ Char. segmentation", "90%", "+1%"),
+        ("+ Char. classification", "100%", "+10%"),
+      ),
     ),
-  ),
-  caption: [Table of Component made perfect, Accuracy, Gain],
-  kind: "table",
-  supplement: [Table.],
-  placement: auto,
-) <tab:ceilinganalysisformlpipelineoctexample>
+    caption: [Ceiling analysis results: accuracy gains from perfecting each OCR component.],
+    kind: "table",
+    supplement: [Table.],
+    placement: auto,
+  ) <tab:ceilinganalysisformlpipelineoctexample>
+]
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:580 '* References'
 // Slide: References

@@ -354,34 +354,38 @@ modularity for less direct control over execution and a heavier computational bu
 the system needs a sufficiently powerful search mechanism to turn that abstract goal
 into concrete behavior.
 
-// TODO(ai_gp): Use `#grid(columns: (1fr, <width>), ...)` to pair this table with its surrounding prose instead of bare `#figure` (typst.rules.md:## Every Visual Pairs with Its Text)
-#figure(
-  styled-table(
-    headers: ("Approach", "Strengths", "Weaknesses"),
-    rows: (
-      (
-        "Procedural",
-        "More control over execution; explicit steps",
-        "Less flexible; harder to modify or extend",
+#grid(
+  columns: (1fr, 50%),
+  column-gutter: 1em,
+)[
+  The tradeoff: procedural representations give control but resist change; declarative
+  ones are easier to modify but demand more from the solver. @tab:proceduraldeclarative
+  summarizes the key differences between the two approaches.
+][
+  #figure(
+    styled-table(
+      headers: ("Approach", "Strengths", "Weaknesses"),
+      rows: (
+        (
+          "Procedural",
+          "More control over execution; explicit steps",
+          "Less flexible; harder to modify or extend",
+        ),
+        (
+          "Declarative",
+          "More abstract; easier to modify, extend, and reason about goals",
+          "Less control; harder to optimize; may require more powerful inference engines",
+        ),
       ),
-      (
-        "Declarative",
-        "More abstract; easier to modify, extend, and reason about goals",
-        "Less control; harder to optimize; may require more powerful inference engines",
-      ),
+      bold-first-col: true,
     ),
-    bold-first-col: true,
-  ),
-  caption: [Comparison of procedural and declarative approaches to encoding
-    knowledge.],
-  kind: "table",
-  supplement: [Table.],
-  placement: auto,
-) <tab:proceduraldeclarative>
-
-// TODO(ai_gp): Add an in-text reference `@tab:proceduraldeclarative` to integrate this table into the prose (typst.rules.md:## Figures: Required Elements)
-The tradeoff: procedural representations give control but resist change; declarative
-ones are easier to modify but demand more from the solver.
+    caption: [Comparison of procedural and declarative approaches to encoding
+      knowledge.],
+    kind: "table",
+    supplement: [Table.],
+    placement: auto,
+  ) <tab:proceduraldeclarative>
+]
 
 In practice, many successful AI systems use a hybrid of both styles. Declarative
 knowledge can be #emph[compiled] into procedural code: a classical planner, for
@@ -781,14 +785,13 @@ entailed by the knowledge base, written $"KB" models alpha$. By definition, this
 holds exactly when α is true in every model where $"KB"$ is true, that is, when
 $M("KB") subset.eq M(alpha)$.
 
-// TODO(ai_gp): Use `#algorithm("Model Checking", [...])` instead of a numbered list (typst.rules.md:## Algorithms and Pseudocode)
 #strong[Model checking] provides a brute-force algorithm for answering this question:
 
-1. Enumerate all possible models (all assignments of truth values to the
-  propositional symbols in the language).
-2. Identify which of those models satisfy the knowledge base, giving the set
-  $M("KB")$.
-3. Verify that α is true in every model belonging to $M("KB")$.
+#algorithm("Model Checking", (
+  [Enumerate all possible models (all assignments of truth values to the propositional symbols in the language).],
+  [Identify which of those models satisfy the knowledge base, giving the set $M("KB")$.],
+  [Verify that α is true in every model belonging to $M("KB")$.],
+))
 
 If every model in $M("KB")$ also makes α true, then $"KB" models alpha$ holds. If
 even a single model in $M("KB")$ falsifies α, the entailment fails. The procedure is
@@ -931,18 +934,14 @@ together: a #emph[knowledge base] that stores both facts and rules, an
 or trigger actions, and a #emph[working memory] that holds the facts currently under
 consideration.
 
-// TODO(ai_gp): Use `#algorithm("Inference Engine Cycle", [...])` instead of a numbered list (typst.rules.md:## Algorithms and Pseudocode)
 The inference engine cycles through four steps:
 
-1. #emph[Match]: find every rule whose conditions are satisfied by the current facts
-  in working memory.
-2. #emph[Conflict resolution]: when multiple rules match simultaneously, decide which
-  one to fire (strategies range from choosing the most specific rule to prioritizing
-  recently added facts).
-3. #emph[Act]: apply the chosen rule, which may add new facts to working memory or
-  trigger an external action.
-4. #emph[Repeat]: return to step 1 and continue until no rule's conditions match, at
-  which point the system halts.
+#algorithm("Inference Engine Cycle", (
+  [#emph[Match]: find every rule whose conditions are satisfied by the current facts in working memory.],
+  [#emph[Conflict resolution]: when multiple rules match simultaneously, decide which one to fire (strategies range from choosing the most specific rule to prioritizing recently added facts).],
+  [#emph[Act]: apply the chosen rule, which may add new facts to working memory or trigger an external action.],
+  [#emph[Repeat]: return to step 1 and continue until no rule's conditions match, at which point the system halts.],
+))
 
 To see this cycle in action, suppose the knowledge base contains the rule "if a
 patient has a fever and a rash, then suggest measles." Working memory currently holds
@@ -1139,8 +1138,7 @@ individuals that share a common role.
     "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.4.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Use sentence case in caption: lowercase "Student, Professor, Course, and Department" as they are not proper nouns (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Student, Professor, Course, and Department entities and instances in an example university ontology.],
+  caption: [Diagram relating student, professor, course, and department entities and instances in an example university ontology.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1301,7 +1299,8 @@ Protégé's use cases span a wide range of domains:
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:909 '* Summary'
 // Slide: Summary
-// TODO(ai_gp): Add `= Summary` as a level-1 heading (typst.rules.md:## Mandatory Sections)
+= Summary
+
 Pulling these threads together: #emph[knowledge representation] bridges raw
 perception and structured reasoning: it takes what is implicitly known and makes it
 explicit, organized, and amenable to machine processing. Without it, an agent may
@@ -1340,4 +1339,7 @@ internal representations and more capable behavior. #emph[Ontologies] provide sh
 structured vocabularies that let agents (and teams of agents) organize knowledge into
 coherent categories, reason over them, and communicate unambiguously about the world.
 
-// TODO(ai_gp): Add `= References` level-1 section at the end with `#references(...)` call (typst.rules.md:## Mandatory Sections)
+= References
+
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")

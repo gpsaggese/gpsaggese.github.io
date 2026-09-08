@@ -350,8 +350,6 @@ $[0, 13)$, `Teen` for $[13, 20)$, `Adult` for $[20, 65)$, and `Senior` for
 $[65, oo)$. Under this scheme an age of 32 maps to `Adult`, as shown in
 @fig:discretization.
 
-// TODO(ai_gp): Use wrap it
-// TODO(ai_gp): Wrap this simple discretization diagram with #wrap-content(...) using ~50% width — simple diagram with 5 nodes and 1 edge label, legible at narrow width (.claude/skills/typst.rules.md:## Every Visual Pairs with Its Text)
 // rendered_images:begin
 // ```graphviz[width=90%]
 // digraph AgeBinning {
@@ -361,39 +359,40 @@ $[65, oo)$. Under this scheme an age of 32 maps to `Adult`, as shown in
 //   nodesep=0.22;
 //   ranksep=0.3;
 //   rankdir=LR;
-// 
+//
 //   node [shape=box, style="rounded,filled", penwidth=1.4,
 //         fontname="Helvetica", fontsize=10, margin="0.14,0.09", height=0.4];
 //   edge [color="#A3B1C0", penwidth=1.1, arrowhead=vee, arrowsize=0.6,
 //         fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-// 
+//
 //   child  [label="Child\n[0, 13)",    fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
 //   teen   [label="Teen\n[13, 20)",    fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
 //   adult  [label="Adult\n[20, 65)",   fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
 //   senior [label="Senior\n[65, inf)", fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
-// 
+//
 //   child -> teen -> adult -> senior [style=invis];
 //   { rank=same; child; teen; adult; senior; }
-// 
+//
 //   age32 [label="Age = 32", shape=ellipse, fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
 //   age32 -> adult [label="mapped to", color="#D9902B", fontcolor="#6B4517"];
 // }
 // ```
 // label=fig:discretization
-// caption=Diagram relating Child [0, 13), Teen [13, 20), Adult [20, 65) and Senior [65, inf)
+// caption=Discretization of age into four categories
 // rendered_images:end
 // render_images:begin
-// TODO(ai_gp): Simplify caption to one short clause without listing every category — change "Diagram relating Child [0, 13), Teen [13, 20), Adult [20, 65) and Senior [65, inf)" to something like "Discretization of age into four categories" (.claude/skills/typst.rules.md:## Figures: Required Elements)
-#figure(
-  image(
-    "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.2.png",
-    width: 90%,
-  ),
-  caption: [Diagram relating Child \[0, 13), Teen \[13, 20), Adult \[20, 65) and Senior \[65, inf)],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:discretization>
+#wrap-content(width: 50%)[
+  #figure(
+    image(
+      "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.2.png",
+      width: 100%,
+    ),
+    caption: [Discretization of age into four categories],
+    kind: "figure",
+    supplement: [Fig.],
+    placement: auto,
+  ) <fig:discretization>
+]
 // render_images:end
 
 The convenience of discretization comes with real costs. All within-bin
@@ -448,28 +447,22 @@ the dominant patterns. Similarly, collapsing three color channels (red, green,
 blue) into a single luminance value produces a grayscale image that retains the
 structural content at a fraction of the dimensionality.
 
-Two broad strategies exist for achieving this reduction. // TODO(ai_gp): Change #emph[Feature selection] to #strong[Feature selection] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
-#emph[Feature
+Two broad strategies exist for achieving this reduction. #strong[Feature
   selection] keeps a subset of the original columns intact, so the surviving
-features remain directly interpretable. // TODO(ai_gp): Change #emph[Feature extraction] to #strong[Feature extraction] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
-#emph[Feature extraction], by contrast,
+features remain directly interpretable. #strong[Feature extraction], by contrast,
 constructs entirely new features as combinations of the originals; the result is
 typically more compact but no longer maps one-to-one onto any single measured
 quantity.
 
-Several concrete techniques fall under feature extraction. // TODO(ai_gp): Change #emph[Principal Component Analysis] to #strong[Principal Component Analysis] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
-#emph[Principal
+Several concrete techniques fall under feature extraction. #strong[Principal
   Component Analysis] (PCA) #cite("pearson1901pca") is an unsupervised method
 that finds linear combinations of the original features ordered by the amount of
 variance they explain: the first component captures the direction of greatest
 spread, the second captures the most remaining spread orthogonal to the first,
-and so on. // TODO(ai_gp): Change #emph[Linear Discriminant Analysis] to #strong[Linear Discriminant Analysis] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
-#emph[Linear Discriminant Analysis] (LDA) takes a supervised
+and so on. #strong[Linear Discriminant Analysis] (LDA) takes a supervised
 approach, projecting the data onto axes that maximize the separation between
 known classes rather than overall variance. For visualization, non-linear
-techniques such as // TODO(ai_gp): Change #emph[t-SNE] to #strong[t-SNE] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
-#emph[t-SNE] #cite("vandermaaten2008tsne") and // TODO(ai_gp): Change #emph[UMAP] to #strong[UMAP] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
-#emph[UMAP]
+techniques such as #strong[t-SNE] #cite("vandermaaten2008tsne") and #strong[UMAP]
 #cite("mcinnes2018umap") embed high-dimensional data into two or three
 dimensions while attempting to preserve local neighborhood structure. Several
 of these methods are scale-dependent: features measured in different units or
@@ -512,12 +505,12 @@ already "seen" the held-out data indirectly.
 //   nodesep=0.3;
 //   ranksep=0.4;
 //   rankdir=LR;
-// 
+//
 //   node [shape=box, style="rounded,filled", penwidth=1.5,
 //         fontname="Helvetica", fontsize=10, margin="0.14,0.10", height=0.42];
 //   edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
 //         fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-// 
+//
 //   subgraph cluster_wrong {
 //     label     = "Wrong: fit before split";
 //     labelloc  = "t";
@@ -528,13 +521,13 @@ already "seen" the held-out data indirectly.
 //     fillcolor = "#FBE5E5";
 //     color     = "#D98C8C";
 //     margin    = 14;
-// 
+//
 //     all_data [label="All Data", fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
 //     fit_all  [label="Fit scaler/imputer\non ALL rows", fillcolor="#FBC6C6", color="#D64545", fontcolor="#6B1F1F"];
 //     split_w  [label="Split", fillcolor="#FBC6C6", color="#D64545", fontcolor="#6B1F1F"];
 //     train_w  [label="Train", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
 //     test_w   [label="Test\n(already leaked into)", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
-// 
+//
 //     all_data -> fit_all -> split_w;
 //     split_w -> train_w;
 //     split_w -> test_w;
@@ -542,16 +535,15 @@ already "seen" the held-out data indirectly.
 // }
 // ```
 // label=fig:fitontrainapplytovalidationandtest
-// caption=Diagram relating Wrong: fit before split, All Data, Fit scaler/imputer on ALL rows and Split
+// caption=The incorrect workflow: fitting transformers on all data before splitting
 // rendered_images:end
 // render_images:begin
-// TODO(ai_gp): Simplify caption to one short clause without listing every element — change "Diagram relating Wrong: fit before split, All Data, Fit scaler/imputer on ALL rows and Split" to something like "The incorrect workflow: fitting transformers on all data before splitting" (.claude/skills/typst.rules.md:## Figures: Required Elements)
 #figure(
   image(
     "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.3.png",
     width: 70%,
   ),
-  caption: [Diagram relating Wrong: fit before split, All Data, Fit scaler/imputer on ALL rows and Split],
+  caption: [The incorrect workflow: fitting transformers on all data before splitting],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -580,12 +572,12 @@ the held-out fold applies each one without refitting.
 //   nodesep=0.3;
 //   ranksep=0.4;
 //   rankdir=LR;
-// 
+//
 //   node [shape=box, style="rounded,filled", penwidth=1.5,
 //         fontname="Helvetica", fontsize=10, margin="0.14,0.10", height=0.42];
 //   edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
 //         fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-// 
+//
 //   subgraph cluster_correct {
 //     label     = "Correct: split before fit";
 //     labelloc  = "t";
@@ -596,14 +588,14 @@ the held-out fold applies each one without refitting.
 //     fillcolor = "#E5F4EE";
 //     color     = "#8FB79A";
 //     margin    = 14;
-// 
+//
 //     all_data2 [label="All Data", fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
 //     split_c   [label="Split", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
 //     train_c   [label="Train", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
 //     fit_c     [label="Fit scaler/imputer\non TRAIN only", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
 //     test_c    [label="Test", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 //     apply_c   [label="Apply fitted\ntransform", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
-// 
+//
 //     all_data2 -> split_c;
 //     split_c -> train_c -> fit_c;
 //     split_c -> test_c -> apply_c;
@@ -612,16 +604,15 @@ the held-out fold applies each one without refitting.
 // }
 // ```
 // label=fig:fitontrainapplytovalidationandtest-2
-// caption=Diagram relating Correct: split before fit, All Data, Split and Train
+// caption=The correct workflow: splitting data before fitting transformers
 // rendered_images:end
 // render_images:begin
-// TODO(ai_gp): Simplify caption to one short clause without listing every element — change "Diagram relating Correct: split before fit, All Data, Split and Train" to something like "The correct workflow: splitting data before fitting transformers" (.claude/skills/typst.rules.md:## Figures: Required Elements)
 #figure(
   image(
     "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.4.png",
     width: 70%,
   ),
-  caption: [Diagram relating Correct: split before fit, All Data, Split and Train],
+  caption: [The correct workflow: splitting data before fitting transformers],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -674,10 +665,10 @@ principle is that synthetic examples must preserve the same distribution as the
 true data; any augmentation pipeline should be audited to confirm that every
 transformation it applies is genuinely label-preserving for the task at hand.
 
-// TODO(ai_gp): Add mandatory '= Summary' section here with a wrap-up of key learning points (.claude/skills/typst.rules.md:## Mandatory Sections)
+= Summary
 
-// TODO(ai_gp): Add mandatory '= References' section at the end with bibliography of cited works (.claude/skills/typst.rules.md:## Mandatory Sections)
-// TODO(ai_gp): Add file path to #references() call — should be #references("/msml610/lectures_source/refs.bib") (.claude/skills/typst.rules.md:## Bibliography and Citations)
-#references(
-  // references go here
-)
+Input processing transforms raw, messy data into clean, well-scaled, informative features that improve model performance and generalization. The pipeline flows through data quality (removing duplicates, errors, and handling missing values), scaling and encoding (standardizing numeric features and converting categories to numbers), feature space engineering (constructing new features and reducing dimensionality when needed), and safe application discipline (fitting transformers on training data only and applying them identically to validation and test sets). Data augmentation can further increase dataset diversity without collecting new labels. Every step trades off simplicity against the risk of losing information, and every decision should be guided by domain knowledge about what the data represents and what the task demands.
+
+= References
+
+#references("/msml610/lectures_source/refs.bib")

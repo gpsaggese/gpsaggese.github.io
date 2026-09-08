@@ -17,8 +17,19 @@
 // Apply the AIMA document template (page/text/heading set + show rules).
 #show: aima-style
 
-// TODO(ai_gp): Add mandatory `= Roadmap` section right after #chapter(...) before first content section (typst.rules.md:## Mandatory Sections)
 #chapter("L03.2: Propositional and First Order Logic")
+
+= Roadmap
+
+This chapter explores two foundational logical systems for knowledge representation:
+#emph[propositional logic] and #emph[first-order logic]. Propositional logic provides
+a clean, tractable framework for reasoning about fixed facts, using syntax and
+semantics grounded in truth tables and model checking. First-order logic extends this
+with variables, predicates, and quantifiers, dramatically increasing expressiveness at
+the cost of computational complexity. Both systems form the theoretical backbone for
+automated reasoning, constraint satisfaction, and knowledge-based AI systems. This
+chapter walks through their formal definitions, inference procedures, and practical
+applications.
 
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:13 '# Propositional logic'
 // Slide: Propositional logic
@@ -235,8 +246,7 @@ that exactly five of the eight models satisfy $X$.
     ),
     bold-first-col: false,
   ),
-  // TODO(ai_gp): Replace vague caption "Table of A, B, C, X" with a descriptive one-line clause explaining what the table shows, not just listing column names (typst.rules.md:## Figures: Required Elements)
-  caption: [Table of A, B, C, X],
+  caption: [Truth table for the formula X = A and B or C, showing all $2^3 = 8$ models with their truth values.],
   kind: "table",
   supplement: [Table.],
   placement: auto,
@@ -669,11 +679,12 @@ attempt to construct one collapses into contradiction.
 
 The method translates that equivalence into a step-by-step argument:
 
-// TODO(ai_gp): Replace this numbered list with #algorithm("Proof by Contradiction", [...]) macro (typst.rules.md:# Algorithms and Pseudocode)
-1. Assume the premises α.
-2. Assume that the target conclusion β is false.
-3. Derive a contradiction from these two assumptions taken together.
-4. Conclude that β must be true whenever α is.
+#algorithm("Proof by Contradiction", (
+  [Assume the premises α.],
+  [Assume that the target conclusion β is false.],
+  [Derive a contradiction from these two assumptions taken together.],
+  [Conclude that β must be true whenever α is.],
+))
 
 The power of this technique is that searching for a contradiction is often easier
 than constructing a direct derivation, because negating the conclusion gives the
@@ -953,26 +964,47 @@ facts from which an inference engine can derive new conclusions. The real payoff
 bird, the system automatically concludes $"CanFly"("Tweety")$ without that conclusion
 ever being stated explicitly.
 
-// TODO(ai_gp): Use #grid(...)[prose][table] pairing instead of bare #figure for this table (typst.rules.md:## Every Visual Pairs with Its Text)
-#figure(
-  styled-table(
-    headers: ("Category", "Example"),
-    rows: (
-      ("General rules", [$forall x ("Bird"(x) arrow.r.double "CanFly"(x))$]),
-      ("Specific facts", [$"Bird"("Tweety")$]),
-      ("Relations", [$"Loves"("Romeo", "Juliet")$, $"GreaterThan"(3, 2)$]),
-      ("Functions", [$"FatherOf"("John")$]),
-    ),
-  ),
-  caption: [Representative FOL expressions by category.],
-  kind: "table",
-  supplement: [Table.],
-  placement: auto,
-) <tab:folcategories>
+#grid(
+  columns: (1fr, 50%),
+  column-gutter: 1em,
+)[
+  Interpreted this way, first-order logic offers several representational strengths. It
+  can express general rules such as $forall x ("Bird"(x) arrow.r.double "CanFly"(x))$,
+  stating that every bird can fly, alongside specific facts like $"Bird"("Tweety")$
+  that ground those rules in particular individuals.
 
-@tab:folcategories summarizes these four categories, illustrating how a single
-formalism covers universal generalizations, ground facts, relational statements, and
-functional terms.
+  Beyond simple properties, FOL captures complex #strong[relations] through
+  multi-argument predicates: $"Loves"("Romeo", "Juliet")$ and $"GreaterThan"(3, 2)$
+  each link two objects in a named relationship that propositional logic could not
+  express without enumerating every possible pair. #strong[Functions] add another layer
+  by constructing new objects from existing ones: $"FatherOf"("John")$ refers to a
+  specific individual (John's father) without requiring a separate constant for that
+  person.
+
+  Together, these building blocks assemble into a #strong[knowledge base] of axioms and
+  facts from which an inference engine can derive new conclusions. The real payoff is
+  #emph[reasoning]: given the rule that all birds fly and the fact that Tweety is a
+  bird, the system automatically concludes $"CanFly"("Tweety")$ without that conclusion
+  ever being stated explicitly. @tab:folcategories summarizes these four categories,
+  illustrating how a single formalism covers universal generalizations, ground facts,
+  relational statements, and functional terms.
+][
+  #figure(
+    styled-table(
+      headers: ("Category", "Example"),
+      rows: (
+        ("General rules", [$forall x ("Bird"(x) arrow.r.double "CanFly"(x))$]),
+        ("Specific facts", [$"Bird"("Tweety")$]),
+        ("Relations", [$"Loves"("Romeo", "Juliet")$, $"GreaterThan"(3, 2)$]),
+        ("Functions", [$"FatherOf"("John")$]),
+      ),
+    ),
+    caption: [Representative FOL expressions by category.],
+    kind: "table",
+    supplement: [Table.],
+    placement: auto,
+  ) <tab:folcategories>
+]
 
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:653 '* First-Order Logic: Inference'
 // Slide: First-Order Logic: Inference
@@ -1030,7 +1062,28 @@ that can always tell you "no, this does not follow" in finite time. Practical FO
 provers therefore combine completeness guarantees with heuristic search strategies to
 keep proof search tractable for the cases that arise in practice.
 
-// TODO(ai_gp): Add mandatory `= Summary` section before `= References` (typst.rules.md:## Mandatory Sections)
+= Summary
+
+Propositional logic and first-order logic form the theoretical backbone of automated
+reasoning. Propositional logic provides a clean, decidable framework for reasoning
+about fixed facts through truth-functional semantics and complete inference procedures
+like model checking and resolution. Its strength is tractability; its weakness is
+expressiveness: it cannot quantify over objects or express relations compactly.
+
+First-order logic overcomes these limitations by introducing variables, predicates, and
+quantifiers, allowing statements that range over collections of objects and express
+complex relational structures. This dramatic increase in expressiveness comes at a cost:
+reasoning becomes semi-decidable rather than decidable, and proof search strategies
+become essential to keep inference tractable. Despite these challenges, FOL serves as
+the foundation for logic programming languages, automated theorem provers, and
+knowledge representation systems across AI.
+
+Both logics rest on the same core principles: clear syntax-semantics separation, the
+notion of entailment as truth preservation across models, and the ideal of sound and
+complete inference. These principles, developed rigorously over decades, continue to
+guide the design of modern AI reasoning systems, even as richer and more practical
+formalisms build upon them.
+
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:679 '* References'
 // Slide: References
 = References

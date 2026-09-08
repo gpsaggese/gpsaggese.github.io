@@ -19,15 +19,27 @@
 
 #chapter("L03.3: Non-classical Logics and Knowledge Representation")
 
-// TODO(ai_gp): Add = Roadmap section right here as first mandatory level-1 section (typst.rules.md:## Mandatory Sections)
+= Roadmap
+
+This chapter explores logical systems that relax the assumptions of classical
+propositional and first-order logic to handle real-world reasoning challenges:
+incomplete information, evolving knowledge, and default assumptions. #emph[Non-monotonic
+  and default reasoning] allow conclusions to be retracted when new facts arrive,
+enabling systems to work with incomplete information and common-sense knowledge.
+#emph[Description logics] provide decidable fragments of first-order logic tailored
+for ontologies and knowledge organization. #emph[Knowledge representation standards]
+like RDF and OWL enable the Semantic Web, allowing machines to understand and reason
+over structured data shared across the internet. Finally, #emph[semantic networks and
+  knowledge graphs] ground these formal systems in large-scale, practical
+implementations that power modern AI applications.
+
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:19 '# Non-classical Logics'
 // Slide: Non-classical Logics
-// TODO(ai_gp): Replace with real heading syntax = or == instead of #strong[] (typst.rules.md:## Structural Hierarchy)
-#strong[Non-classical Logics]
+= Non-classical Logics
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:21 '* Motivation'
 // Slide: Motivation
-= Motivation
+== Motivation
 
 Classical logic, whether propositional or first-order, assumes a complete, static
 world in which conclusions, once proven, never need to be retracted. Real-world
@@ -124,8 +136,7 @@ assumptions about the structure of reality.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.1.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: "Diagram relating logical systems, propositional logic..." not Title Case (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Logical Systems, Propositional Logic (facts: true/false), First-Order Logic (objects & relations) and Higher-Order Logic (relations as objects)],
+  caption: [Diagram relating logical systems, propositional logic (facts: true/false), first-order logic (objects & relations) and higher-order logic (relations as objects)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -151,8 +162,7 @@ forcing a hard true-or-false judgment.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:101 '* Non-monotonic Logic'
 // Slide: Non-monotonic Logic
-// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
-#strong[Non-monotonic Logic]
+=== Non-monotonic Logic
 
 #strong[Non-monotonic logic] is a logic in which adding new information can
 invalidate conclusions that were previously derived #cite(
@@ -219,8 +229,7 @@ the absence of more specific information.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:152 '* Default Reasoning'
 // Slide: Default Reasoning
-// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
-#strong[Default Reasoning]
+=== Default Reasoning
 
 #strong[Default reasoning] makes assumptions in the absence of contrary evidence,
 allowing a system to draw conclusions based on what is typical rather than waiting
@@ -245,8 +254,7 @@ sensibly in the common case while remaining open to correction.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:171 '* Non-Monotonic Logic: University Example'
 // Slide: Non-Monotonic Logic: University Example
-// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
-#strong[Non-Monotonic Logic: University Example]
+=== Non-Monotonic Logic: University Example
 
 The initial facts establish that $"Alice"$ is a $"Student"$ belonging to the
 $"ComputerScience"$ department, and that $"CS101"$ is a $"Course"$ offered by that
@@ -263,8 +271,7 @@ extending them.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:193 '* Common Sense Reasoning'
 // Slide: Common Sense Reasoning
-// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
-#strong[Common Sense Reasoning]
+=== Common Sense Reasoning
 
 Much of what humans know about the world is never stated explicitly: if you drop a
 glass, it will likely break; people eat food when hungry. These facts feel too
@@ -351,8 +358,7 @@ prediction about Bob's behavior.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.3.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Restaurant", "Table", "Common Sense" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Bob enters Restaurant, Bob sits at Table, Common Sense: Sit at table → intends to eat and Infer: Bob intends to eat],
+  caption: [Diagram relating Bob enters restaurant, Bob sits at table, common sense: sit at table → intends to eat and infer: Bob intends to eat],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -373,51 +379,54 @@ specific or more recent evidence.
 // Slide: Open World vs Closed World Assumptions
 #strong[Open World vs Closed World Assumptions]
 
-The distinction between these two assumptions becomes concrete with a simple
-enrollment example. Suppose the only recorded fact is "Alice takes CS101." Under the
-#strong[closed-world assumption], silence is denial: because nothing is said about
-Bob, the system concludes "Bob does not take CS101." The absence of a positive
-statement is treated as a negative one. Under the #strong[open-world assumption],
-silence is ignorance: the system acknowledges that Bob's enrollment status is simply
-unknown, and he may or may not be enrolled. Neither answer is assumed until evidence
-arrives. @tab:openworldvsclosedworldassumptions summarizes how the two assumptions
-diverge across several key aspects, including how they treat missing information,
-what unstated facts imply, and where each assumption is most naturally applied.
-
-// TODO(ai_gp): Use #grid(...) to pair this 3-column table with the paragraph prose, or add a comment explaining why full-width bare #figure is needed (typst.rules.md:## Every Visual Pairs with Its Text)
-#figure(
-  styled-table(
-    headers: (
-      "Aspect",
-      "Closed World Assumption (CWA)",
-      "Open World Assumption (OWA)",
+#grid(
+  columns: (1fr, 50%),
+  column-gutter: 1em,
+)[
+  The distinction between these two assumptions becomes concrete with a simple
+  enrollment example. Suppose the only recorded fact is "Alice takes CS101." Under the
+  #strong[closed-world assumption], silence is denial: because nothing is said about
+  Bob, the system concludes "Bob does not take CS101." The absence of a positive
+  statement is treated as a negative one. Under the #strong[open-world assumption],
+  silence is ignorance: the system acknowledges that Bob's enrollment status is simply
+  unknown, and he may or may not be enrolled. Neither answer is assumed until evidence
+  arrives. @tab:openworldvsclosedworldassumptions summarizes how the two assumptions
+  diverge across several key aspects, including how they treat missing information,
+  what unstated facts imply, and where each assumption is most naturally applied.
+][
+  #figure(
+    styled-table(
+      headers: (
+        "Aspect",
+        "Closed World Assumption (CWA)",
+        "Open World Assumption (OWA)",
+      ),
+      rows: (
+        ("Missing info", "False by default", "Unknown (not false)"),
+        (
+          "Example: Bob takes CS101?",
+          "FALSE (not stated → false)",
+          "UNKNOWN (not stated → unknown)",
+        ),
+        (
+          "DB systems",
+          "Relational DB (SQL), logic programs",
+          "Semantic Web (RDF, OWL)",
+        ),
+        ("Best for", "Complete, static knowledge", "Incomplete, evolving data"),
+        (
+          "Query \"Bob takes CS101\"",
+          "Returns false",
+          "Returns no result (unknown)",
+        ),
+      ),
     ),
-    rows: (
-      ("Missing info", "False by default", "Unknown (not false)"),
-      (
-        "Example: Bob takes CS101?",
-        "FALSE (not stated → false)",
-        "UNKNOWN (not stated → unknown)",
-      ),
-      (
-        "DB systems",
-        "Relational DB (SQL), logic programs",
-        "Semantic Web (RDF, OWL)",
-      ),
-      ("Best for", "Complete, static knowledge", "Incomplete, evolving data"),
-      (
-        "Query \"Bob takes CS101\"",
-        "Returns false",
-        "Returns no result (unknown)",
-      ),
-    ),
-  ),
-  // TODO(ai_gp): Change caption to sentence case: "Closed world assumption vs open world assumption" not Title Case (typst.rules.md:## Figures: Required Elements)
-  caption: [Closed World Assumption vs Open World Assumption],
-  kind: "table",
-  supplement: [Table.],
-  placement: auto,
-) <tab:openworldvsclosedworldassumptions>
+    caption: [Closed world assumption vs open world assumption],
+    kind: "table",
+    supplement: [Table.],
+    placement: auto,
+  ) <tab:openworldvsclosedworldassumptions>
+]
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:302 '* Inductive Logic Programming'
 // Slide: Inductive Logic Programming
@@ -469,8 +478,7 @@ from which the system selects its learned rules.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.4.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Background Knowledge", "Positive Examples", "Negative Examples", "Hypothesis Space" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Background Knowledge: Birds have wings Penguins are birds, Positive Examples: Tweety (bird) flies Parrot (bird) flies, Negative Examples: Penguin cannot fly Ostrich cannot fly and Hypothesis Space],
+  caption: [Diagram relating background knowledge: birds have wings, penguins are birds, positive examples: Tweety (bird) flies, parrot (bird) flies, negative examples: penguin cannot fly, ostrich cannot fly and hypothesis space],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -562,8 +570,7 @@ precisely why the formalism is so widely adopted.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.5.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Class", "Person", "PetOwner", "Instance" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Class: Person, PetOwner (Person with pet), Instance: GP (a PetOwner) and Instance: Nuvolo (GP's dog)],
+  caption: [Diagram relating class: person, petowner (person with pet), instance: GP (a petowner) and instance: Nuvolo (GP's dog)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -686,8 +693,7 @@ nominals.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.6.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Transitive Props", "Role Hierarchies" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating ALC (base), S: Transitive Props (ancestorOf), H: Role Hierarchies (hasSon sub-role of hasChild) and O: Nominals (John:individual)],
+  caption: [Diagram relating ALC (base), S: transitive props (ancestorOf), H: role hierarchies (hasSon sub-role of hasChild) and O: nominals (John:individual)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -763,8 +769,7 @@ algorithm guaranteed to answer every reasoning query in finite time.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.7.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Web Ontology Language", "Simpler", "Full expressiveness", "Maximum", "Decidable reasoning", "Undecidable" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Web Ontology Language (OWL), OWL Lite (Simpler) for classification, OWL DL (Full expressiveness) Decidable reasoning and OWL Full (Maximum) Undecidable],
+  caption: [Diagram relating web ontology language (OWL), OWL Lite (simpler) for classification, OWL DL (full expressiveness) decidable reasoning and OWL Full (maximum) undecidable],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -807,8 +812,7 @@ constraint that propositional or plain first-order logic cannot express as compa
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.8.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Class", "ObjectProperty" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Person (Class), Student (Class), hasAdvisor (ObjectProperty) and Restriction: minCardinality 1],
+  caption: [Diagram relating person (class), student (class), hasadvisor (objectproperty) and restriction: mincardinality 1],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -842,40 +846,44 @@ model for data interchange on the web. It provides a way to represent structured
 information in a machine-readable format, enabling different systems and applications
 to share and combine data without loss of meaning.
 
-The basic building block of RDF is the #strong[triple], a three-part statement that
-links two pieces of information through a named relationship:
+#grid(
+  columns: (1fr, 55%),
+  column-gutter: 1em,
+)[
+  The basic building block of RDF is the #strong[triple], a three-part statement that
+  links two pieces of information through a named relationship:
 
-- #emph[Subject]: the entity being described (e.g., `Nuvolo`)
-- #emph[Predicate]: the property or relationship (e.g., `isA`)
-- #emph[Object]: the value or related entity (e.g., `Dog`)
+  - #emph[Subject]: the entity being described (e.g., `Nuvolo`)
+  - #emph[Predicate]: the property or relationship (e.g., `isA`)
+  - #emph[Object]: the value or related entity (e.g., `Dog`)
 
-// TODO(ai_gp): Use #grid(...) to pair this 3-column table with the surrounding prose, or add a comment explaining why full-width bare #figure is needed (typst.rules.md:## Every Visual Pairs with Its Text)
-#figure(
-  styled-table(
-    headers: (
-      "Subject",
-      "Predicate",
-      "Object",
+  As @tab:rdftriples illustrates, each row captures one atomic fact about an entity.
+  The triple `(Book123, hasAuthor, Author456)` connects a book to its author, while
+  `(Author456, hasName, "F. Scott Fitzgerald")` attaches a human-readable name to that
+  author entity. By chaining triples together this way, RDF builds up a rich
+  description from minimal primitives.
+][
+  #figure(
+    styled-table(
+      headers: (
+        "Subject",
+        "Predicate",
+        "Object",
+      ),
+      rows: (
+        ("Book123", "hasTitle", [_"The Great Gatsby"_]),
+        ("Book123", "hasAuthor", "Author456"),
+        ("Author456", "hasName", [_"F. Scott Fitzgerald"_]),
+        ("Book123", "publishedYear", [_"1925"_]),
+        ("Book123", "belongsToGenre", [_"Fiction"_]),
+      ),
     ),
-    rows: (
-      ("Book123", "hasTitle", [_"The Great Gatsby"_]),
-      ("Book123", "hasAuthor", "Author456"),
-      ("Author456", "hasName", [_"F. Scott Fitzgerald"_]),
-      ("Book123", "publishedYear", [_"1925"_]),
-      ("Book123", "belongsToGenre", [_"Fiction"_]),
-    ),
-  ),
-  caption: [RDF triples describing a book and its author],
-  kind: "table",
-  supplement: [Table.],
-  placement: auto,
-) <tab:rdftriples>
-
-As @tab:rdftriples illustrates, each row captures one atomic fact about an entity.
-The triple `(Book123, hasAuthor, Author456)` connects a book to its author, while
-`(Author456, hasName, "F. Scott Fitzgerald")` attaches a human-readable name to that
-author entity. By chaining triples together this way, RDF builds up a rich
-description from minimal primitives.
+    caption: [RDF triples describing a book and its author],
+    kind: "table",
+    supplement: [Table.],
+    placement: auto,
+  ) <tab:rdftriples>
+]
 
 These statements naturally form directed graphs, where subjects and objects are nodes
 and predicates are the labeled edges connecting them. To ensure global uniqueness and
@@ -990,8 +998,7 @@ properties, and OWL sits at the top, enabling expressive ontological reasoning.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.9.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Foundation", "Data Model", "Schema Layer", "Ontology Language" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Foundation: URIs and Unicode, RDF (Data Model) Triples: Subject-Predicate-Object, RDFS (Schema Layer) Classes and Properties and OWL (Ontology Language) Express complex relationships],
+  caption: [Diagram relating foundation: URIs and Unicode, RDF (data model) triples: subject-predicate-object, RDFS (schema layer) classes and properties and OWL (ontology language) express complex relationships],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1080,8 +1087,7 @@ example, showing items linked to values through properties in a directed graph.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.10.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Item", "Property", "Value" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Item: Q42 (Douglas Adams), Property: P31 (instance of), Value: Q5 (Human) and Property: P106 (occupation)],
+  caption: [Diagram relating item: Q42 (Douglas Adams), property: P31 (instance of), value: Q5 (human) and property: P106 (occupation)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1183,8 +1189,7 @@ hierarchical structure that makes inheritance-based inference straightforward.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.11.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: "Diagram relating animal, dog, cat and mammal" not Title Case (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Animal, Dog, Cat and Mammal],
+  caption: [Diagram relating animal, dog, cat and mammal],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
