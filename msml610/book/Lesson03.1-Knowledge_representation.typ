@@ -119,73 +119,75 @@ corpus.
 // Slide: Expressiveness Vs. Tractability
 #wrap-content(
   [
-// rendered_images:begin
-// ```tikz
-// \begin{axis}[
-//   width=12cm,
-//   height=8cm,
-//   axis lines=middle,
-//   xlabel style={
-//     at={(axis description cs:0.5,-0.05)},
-//     anchor=north,
-//     font=\Huge\bfseries
-//   },
-//   ylabel style={
-//     at={(axis description cs:-0.02,0.5)},
-//     anchor=south,
-//     rotate=90,
-//     font=\Huge\bfseries
-//   },
-//   xlabel={\textbf{Expressiveness}},
-//   ylabel={\textbf{Tractability}},
-//   xtick=\empty,
-//   ytick=\empty,
-//   xmin=0.5, xmax=10,
-//   ymin=0, ymax=10,
-//   domain=1:9,
-//   samples=100,
-//   enlargelimits=true,
-//   clip=false,
-//   ]
-// 
-//   % Tradeoff curve (dashed, ultra thick hyperbola)
-//   \addplot[domain=1:9, ultra thick, dashed, blue] {10 / x};
-// 
-//   % Points
-//   \addplot[only marks, mark=*] coordinates {(2,5)} node[above right, font=\huge\bfseries] {\textbf{Atomic}};
-//   \addplot[only marks, mark=*] coordinates {(5,2)} node[above right, font=\huge\bfseries] {\textbf{Factored}};
-//   \addplot[only marks, mark=*] coordinates {(8,1.25)} node[below right, font=\huge\bfseries] {\textbf{Structured}};
-// \end{axis}
-// ```
-// label=fig:expressivenessvstractability
-// caption=Diagram illustrating the tradeoff between expressiveness and tractability across atomic, factored, and structured representations.
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.1.png",
-    width: 100%,
-  ),
-  caption: [Diagram illustrating the tradeoff between expressiveness and tractability across atomic, factored, and structured representations.],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:expressivenessvstractability>
-// render_images:end
+    // rendered_images:begin
+    // ```tikz
+    // \begin{axis}[
+    //   width=12cm,
+    //   height=8cm,
+    //   axis lines=middle,
+    //   xlabel style={
+    //     at={(axis description cs:0.5,-0.05)},
+    //     anchor=north,
+    //     font=\Huge\bfseries
+    //   },
+    //   ylabel style={
+    //     at={(axis description cs:-0.02,0.5)},
+    //     anchor=south,
+    //     rotate=90,
+    //     font=\Huge\bfseries
+    //   },
+    //   xlabel={\textbf{Expressiveness}},
+    //   ylabel={\textbf{Tractability}},
+    //   xtick=\empty,
+    //   ytick=\empty,
+    //   xmin=0.5, xmax=10,
+    //   ymin=0, ymax=10,
+    //   domain=1:9,
+    //   samples=100,
+    //   enlargelimits=true,
+    //   clip=false,
+    //   ]
+    //
+    //   % Tradeoff curve (dashed, ultra thick hyperbola)
+    //   \addplot[domain=1:9, ultra thick, dashed, blue] {10 / x};
+    //
+    //   % Points
+    //   \addplot[only marks, mark=*] coordinates {(2,5)} node[above right, font=\huge\bfseries] {\textbf{Atomic}};
+    //   \addplot[only marks, mark=*] coordinates {(5,2)} node[above right, font=\huge\bfseries] {\textbf{Factored}};
+    //   \addplot[only marks, mark=*] coordinates {(8,1.25)} node[below right, font=\huge\bfseries] {\textbf{Structured}};
+    // \end{axis}
+    // ```
+    // label=fig:expressivenessvstractability
+    // caption=Diagram illustrating the tradeoff between expressiveness and tractability across atomic, factored, and structured representations.
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image(
+        "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.1.png",
+        width: 100%,
+      ),
+      caption: [Diagram illustrating the tradeoff between expressiveness and
+        tractability across atomic, factored, and structured representations.],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:expressivenessvstractability>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
   columns: (1fr, 50%),
 )[
-  Knowledge representation always trades off two competing goals. #emph[Expressiveness]
-  is the richness of concepts a language can capture: how much detail and nuance it can
-  encode about the world. #emph[Tractability] is whether reasoning in that language can
-  be performed efficiently, ideally in polynomial time or better. These two properties
-  pull in opposite directions: more expressive languages lead to harder computation,
-  often pushing reasoning problems into #emph[undecidable] or #emph[intractable]
-  territory (as shown in @fig:expressivenessvstractability). Choosing the right
-  representation depends heavily on the application and the balance it demands between
-  descriptive power and computational feasibility.
+  Knowledge representation always trades off two competing goals.
+  #emph[Expressiveness] is the richness of concepts a language can capture: how much
+  detail and nuance it can encode about the world. #emph[Tractability] is whether
+  reasoning in that language can be performed efficiently, ideally in polynomial time
+  or better. These two properties pull in opposite directions: more expressive
+  languages lead to harder computation, often pushing reasoning problems into
+  #emph[undecidable] or #emph[intractable] territory (as shown in
+  @fig:expressivenessvstractability). Choosing the right representation depends
+  heavily on the application and the balance it demands between descriptive power and
+  computational feasibility.
 ]
 
 Three broad levels of representation illustrate this spectrum:
@@ -212,17 +214,17 @@ Three broad levels of representation illustrate this spectrum:
 // Slide: Symbolic Vs. Sub-symbolic Representation
 #wrap-content(
   [
-#figure(
-  image(
-    "../lectures_source/figures/L03.symbolic_vs_subsymbolic.png",
-    width: 100%,
-  ),
-  caption: [Symbolic and sub-symbolic representations compared by structure,
-    interpretability, and tolerance for ambiguity.],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:symbolicvssubsymbolic>
+    #figure(
+      image(
+        "../lectures_source/figures/L03.symbolic_vs_subsymbolic.png",
+        width: 100%,
+      ),
+      caption: [Symbolic and sub-symbolic representations compared by structure,
+        interpretability, and tolerance for ambiguity.],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:symbolicvssubsymbolic>
   ],
   align: right,
   column-gutter: 1em,
@@ -233,17 +235,17 @@ Three broad levels of representation illustrate this spectrum:
   human-readable symbols to encode what a system knows. Logic formulas and knowledge
   graphs are classic examples: a fact like `parent(alice, bob)` is immediately
   interpretable by a human reader, and a rule engine can chain such facts together to
-  derive new conclusions. This transparency makes symbolic representations well suited
-  for rule-based reasoning, where every inference step can be inspected and justified.
-  The tradeoff is that symbolic systems struggle with ambiguity; real-world language
-  and perception are full of graded, context-dependent meanings that do not reduce
-  neatly to crisp logical predicates.
+  derive new conclusions. This transparency makes symbolic representations well
+  suited for rule-based reasoning, where every inference step can be inspected and
+  justified. The tradeoff is that symbolic systems struggle with ambiguity;
+  real-world language and perception are full of graded, context-dependent meanings
+  that do not reduce neatly to crisp logical predicates.
 
   #strong[Sub-symbolic knowledge representation] takes the opposite path, encoding
   knowledge as learned, distributed representations rather than explicit symbols.
-  Vector embeddings are the prototypical example: a word, sentence, or image is mapped
-  to a point in a high-dimensional space, and similarity in that space captures
-  semantic relationships that would be tedious to hand-code. Sub-symbolic
+  Vector embeddings are the prototypical example: a word, sentence, or image is
+  mapped to a point in a high-dimensional space, and similarity in that space
+  captures semantic relationships that would be tedious to hand-code. Sub-symbolic
   representations excel at handling the very ambiguity that defeats symbolic methods,
   but they lack transparency. A 768-dimensional vector for the concept "dog" does not
   explain #emph[why] it sits near "wolf" and far from "democracy" in any way a domain
@@ -358,9 +360,10 @@ into concrete behavior.
   columns: (1fr, 50%),
   column-gutter: 1em,
 )[
-  The tradeoff: procedural representations give control but resist change; declarative
-  ones are easier to modify but demand more from the solver. @tab:proceduraldeclarative
-  summarizes the key differences between the two approaches.
+  The tradeoff: procedural representations give control but resist change;
+  declarative ones are easier to modify but demand more from the solver.
+  @tab:proceduraldeclarative summarizes the key differences between the two
+  approaches.
 ][
   #figure(
     styled-table(
@@ -446,12 +449,12 @@ of relevant facts is fixed and finite. Practical applications include:
   true-or-false statements.
 
 These strengths come with real costs. Propositional logic cannot represent objects,
-relations between objects, or #emph[quantified statements] ("for all" or "there exists"). A
-sentence like "every student enrolled in the course has completed the prerequisite"
-has no direct encoding: you would need a separate proposition for each individual
-student. This makes propositional logic unsuitable for open or dynamic domains where
-the number of entities is unknown or changes over time, motivating the move to more
-expressive formalisms such as first-order logic.
+relations between objects, or #emph[quantified statements] ("for all" or "there
+exists"). A sentence like "every student enrolled in the course has completed the
+prerequisite" has no direct encoding: you would need a separate proposition for each
+individual student. This makes propositional logic unsuitable for open or dynamic
+domains where the number of entities is unknown or changes over time, motivating the
+move to more expressive formalisms such as first-order logic.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:276 '* First-Order Logic (FOL)'
 // Slide: First-Order Logic (FOL)
@@ -484,9 +487,9 @@ automated reasoning possible:
   symbols.
 
 These capabilities make first-order logic a workhorse across several areas of AI and
-computer science: representing structured knowledge in #emph[expert systems] and databases,
-powering automated theorem proving where new conclusions must be derived mechanically
-from axioms, and underpinning the semantic web and ontologies that give
+computer science: representing structured knowledge in #emph[expert systems] and
+databases, powering automated theorem proving where new conclusions must be derived
+mechanically from axioms, and underpinning the semantic web and ontologies that give
 machine-readable meaning to data shared across the internet.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:299 '## Knowledge Bases and Their Semantics'
@@ -599,41 +602,41 @@ mechanisms for revising their beliefs when new evidence contradicts old conclusi
 // Slide: Models and Possible Worlds
 #wrap-content(
   [
-// rendered_images:begin
-// ```graphviz
-// digraph G {
-//   rankdir=TD;
-//   nodesep=3.5;
-//   node [shape=box, style="rounded,filled", fillcolor="#f7f7f7"];
-// 
-//   Model [label="Model"];
-//   Worlds [label="Possible\nworlds"];
-// 
-//   Model -> Worlds [
-//     dir=both
-//     fontsize=10
-//     penwidth=2
-//     label="   Grounding"
-//     labeldistance=3.0
-//     labelangle=0
-//   ];
-// }
-// ```
-// label=fig:modelsandpossibleworlds
-// caption=Diagram relating a model to the possible worlds it grounds.
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.2.png",
-    width: 100%,
-  ),
-  caption: [Diagram relating a model to the possible worlds it grounds.],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:modelsandpossibleworlds>
-// render_images:end
+    // rendered_images:begin
+    // ```graphviz
+    // digraph G {
+    //   rankdir=TD;
+    //   nodesep=3.5;
+    //   node [shape=box, style="rounded,filled", fillcolor="#f7f7f7"];
+    //
+    //   Model [label="Model"];
+    //   Worlds [label="Possible\nworlds"];
+    //
+    //   Model -> Worlds [
+    //     dir=both
+    //     fontsize=10
+    //     penwidth=2
+    //     label="   Grounding"
+    //     labeldistance=3.0
+    //     labelangle=0
+    //   ];
+    // }
+    // ```
+    // label=fig:modelsandpossibleworlds
+    // caption=Diagram relating a model to the possible worlds it grounds.
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image(
+        "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.2.png",
+        width: 100%,
+      ),
+      caption: [Diagram relating a model to the possible worlds it grounds.],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:modelsandpossibleworlds>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -641,8 +644,8 @@ mechanisms for revising their beliefs when new evidence contradicts old conclusi
 )[
   That informal talk of "the world" can be made precise with the notion of a model.
   Consider a world with two Boolean variables: _rain_ and _wet ground_. Each possible
-  world (or #strong[model]) assigns a truth value to every relevant variable. With just
-  these two, there are four models: $("Rain" = T, "WetGround" = T)$,
+  world (or #strong[model]) assigns a truth value to every relevant variable. With
+  just these two, there are four models: $("Rain" = T, "WetGround" = T)$,
   $("Rain" = T, "WetGround" = F)$, $("Rain" = F, "WetGround" = T)$, and
   $("Rain" = F, "WetGround" = F)$. A model $m$ captures one possible world; for
   instance, $m$ might be $("Rain" = F, "WetGround" = T)$, representing a world where
@@ -788,8 +791,10 @@ $M("KB") subset.eq M(alpha)$.
 #strong[Model checking] provides a brute-force algorithm for answering this question:
 
 #algorithm("Model Checking", (
-  [Enumerate all possible models (all assignments of truth values to the propositional symbols in the language).],
-  [Identify which of those models satisfy the knowledge base, giving the set $M("KB")$.],
+  [Enumerate all possible models (all assignments of truth values to the
+    propositional symbols in the language).],
+  [Identify which of those models satisfy the knowledge base, giving the set
+    $M("KB")$.],
   [Verify that α is true in every model belonging to $M("KB")$.],
 ))
 
@@ -860,21 +865,21 @@ tracks reasoning about the actual world.
 // digraph EntailmentSemantics {
 //   rankdir=TB;
 //   node [shape=box, style=filled, fillcolor=lightgray];
-// 
+//
 //   // Representation layer
 //   Sentence1 -> Sentence2 [label="Entails", style=dashed];
-// 
+//
 //   // World layer
 //   RealWorld1 -> RealWorld2 [label="Follows", style=dashed];
-// 
+//
 //   // Semantics arrows
 //   Sentence1 -> RealWorld1 [label="Semantics", style=dashed];
 //   Sentence2 -> RealWorld2 [label="Semantics", style=dashed];
-// 
+//
 //   // Invisible edges to align Representation and World vertically
 //   {rank=same; Sentence1; Sentence2}
 //   {rank=same; RealWorld1; RealWorld2}
-// 
+//
 //   // Labels for layers (optional)
 //   subgraph cluster_representation {
 //     label="Representation";
@@ -882,7 +887,7 @@ tracks reasoning about the actual world.
 //     Sentence1;
 //     Sentence2;
 //   }
-// 
+//
 //   subgraph cluster_world {
 //     label="World";
 //     style=dotted;
@@ -900,7 +905,8 @@ tracks reasoning about the actual world.
     "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.3.png",
     width: 70%,
   ),
-  caption: [Diagram relating entailment between sentences, consequence between world states, and the semantics that link representation to the world.],
+  caption: [Diagram relating entailment between sentences, consequence between world
+    states, and the semantics that link representation to the world.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -937,10 +943,15 @@ consideration.
 The inference engine cycles through four steps:
 
 #algorithm("Inference Engine Cycle", (
-  [#emph[Match]: find every rule whose conditions are satisfied by the current facts in working memory.],
-  [#emph[Conflict resolution]: when multiple rules match simultaneously, decide which one to fire (strategies range from choosing the most specific rule to prioritizing recently added facts).],
-  [#emph[Act]: apply the chosen rule, which may add new facts to working memory or trigger an external action.],
-  [#emph[Repeat]: return to step 1 and continue until no rule's conditions match, at which point the system halts.],
+  [#emph[Match]: find every rule whose conditions are satisfied by the current facts
+    in working memory.],
+  [#emph[Conflict resolution]: when multiple rules match simultaneously, decide which
+    one to fire (strategies range from choosing the most specific rule to
+    prioritizing recently added facts).],
+  [#emph[Act]: apply the chosen rule, which may add new facts to working memory or
+    trigger an external action.],
+  [#emph[Repeat]: return to step 1 and continue until no rule's conditions match, at
+    which point the system halts.],
 ))
 
 To see this cycle in action, suppose the knowledge base contains the rule "if a
@@ -975,10 +986,10 @@ observable control loops such as thermostats are the textbook case: the current
 temperature reading is all the information the agent needs. Expert systems for
 medical diagnosis and technical troubleshooting encode specialist knowledge as
 condition-action rules and were among the earliest commercial successes of AI.
-#emph[Business rule engines] apply the same pattern to automate policy decisions in domains
-like insurance underwriting or loan approval. Game AI for simple opponents often
-relies on reflex rules mapping game states to moves. Legal reasoning tools, where
-statutes and regulations can be expressed as structured conditionals, represent
+#emph[Business rule engines] apply the same pattern to automate policy decisions in
+domains like insurance underwriting or loan approval. Game AI for simple opponents
+often relies on reflex rules mapping game states to moves. Legal reasoning tools,
+where statutes and regulations can be expressed as structured conditionals, represent
 another natural application of the architecture.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:665 '* Knowledge-based Agents'
@@ -1093,13 +1104,13 @@ individuals that share a common role.
 //     ranksep=0.75;
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12,
 //     penwidth=1.4];
-// 
+//
 //     // Node styles
 //     Student [label="Student", fillcolor="#A6C8F4"];
 //     Professor [label="Professor", fillcolor="#A6E7F4"];
 //     Course [label="Course", fillcolor="#B2E2B2"];
 //     Department [label="Department", fillcolor="#FFD1A6"];
-// 
+//
 //     Alice [label="Alice", fillcolor="#C6A6F4"];
 //     Bob [label="Bob", fillcolor="#C6A6F4"];
 //     GP [label="GP", fillcolor="#C6A6F4"];
@@ -1108,10 +1119,10 @@ individuals that share a common role.
 //     MSML610 [label="MSML610", fillcolor="#D2B48C"];
 //     ComputerScience [label="ComputerScience", fillcolor="#F4A6A6"];
 //     Mathematics [label="Mathematics", fillcolor="#F4A6A6"];
-// 
+//
 //     // Force ranks
 //     //{rank=same; Student; Professor; Course; Department;}
-// 
+//
 //     // Edges
 //     Alice -> Student [label="instance of"];
 //     Bob -> Student [label="instance of"];
@@ -1121,7 +1132,7 @@ individuals that share a common role.
 //     MSML610 -> Course [label="instance of"];
 //     ComputerScience -> Department [label="instance of"];
 //     Mathematics -> Department [label="instance of"];
-// 
+//
 //     Student -> Course [label="takesCourse"];
 //     Professor -> Course [label="teachesCourse"];
 //     Student -> Department [label="belongsToDepartment"];
@@ -1138,7 +1149,8 @@ individuals that share a common role.
     "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.4.png",
     width: 70%,
   ),
-  caption: [Diagram relating student, professor, course, and department entities and instances in an example university ontology.],
+  caption: [Diagram relating student, professor, course, and department entities and
+    instances in an example university ontology.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1271,8 +1283,8 @@ explicitly stated but follows from the axioms already present.
 
 #figure(
   image("../lectures_source/figures/L03.Protege_OWL.jpg", width: 80%),
-  caption: [Protégé's visual workspace for editing ontology classes, individuals,
-    and properties.],
+  caption: [Protégé's visual workspace for editing ontology classes, individuals, and
+    properties.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,

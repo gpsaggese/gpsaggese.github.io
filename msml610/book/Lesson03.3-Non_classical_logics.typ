@@ -23,15 +23,15 @@
 
 This chapter explores logical systems that relax the assumptions of classical
 propositional and first-order logic to handle real-world reasoning challenges:
-incomplete information, evolving knowledge, and default assumptions. #emph[Non-monotonic
-  and default reasoning] allow conclusions to be retracted when new facts arrive,
-enabling systems to work with incomplete information and common-sense knowledge.
-#emph[Description logics] provide decidable fragments of first-order logic tailored
-for ontologies and knowledge organization. #emph[Knowledge representation standards]
-like RDF and OWL enable the Semantic Web, allowing machines to understand and reason
-over structured data shared across the internet. Finally, #emph[semantic networks and
-  knowledge graphs] ground these formal systems in large-scale, practical
-implementations that power modern AI applications.
+incomplete information, evolving knowledge, and default assumptions.
+#emph[Non-monotonic and default reasoning] allow conclusions to be retracted when new
+facts arrive, enabling systems to work with incomplete information and common-sense
+knowledge. #emph[Description logics] provide decidable fragments of first-order logic
+tailored for ontologies and knowledge organization. #emph[Knowledge representation
+  standards] like RDF and OWL enable the Semantic Web, allowing machines to
+understand and reason over structured data shared across the internet. Finally,
+#emph[semantic networks and knowledge graphs] ground these formal systems in
+large-scale, practical implementations that power modern AI applications.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:19 '# Non-classical Logics'
 // Slide: Non-classical Logics
@@ -113,14 +113,14 @@ assumptions about the structure of reality.
 // digraph OntologicalLevels {
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
-// 
+//
 //     root [label="Logical Systems", fillcolor="#C6A6F4"];
-// 
+//
 //     prop [label="Propositional Logic\n(facts: true/false)", fillcolor="#A0D6D1"];
 //     fol [label="First-Order Logic\n(objects & relations)", fillcolor="#A0D6D1"];
 //     hol [label="Higher-Order Logic\n(relations as objects)", fillcolor="#A0D6D1"];
 //     temp [label="Temporal Logic\n(facts at times)", fillcolor="#A0D6D1"];
-// 
+//
 //     root -> prop;
 //     root -> fol;
 //     root -> hol;
@@ -136,7 +136,9 @@ assumptions about the structure of reality.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.1.png",
     width: 70%,
   ),
-  caption: [Diagram relating logical systems, propositional logic (facts: true/false), first-order logic (objects & relations) and higher-order logic (relations as objects)],
+  caption: [Diagram relating logical systems, propositional logic (facts:
+    true/false), first-order logic (objects & relations) and higher-order logic
+    (relations as objects)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -186,15 +188,15 @@ emerge.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     kb1 [label="Initial KB:\nBirds typically fly\nTweety is a bird", fillcolor="#FFD1A6"];
 //     conc1 [label="Conclusion:\nTweety can fly", fillcolor="#B2E2B2"];
-// 
+//
 //     newFact [label="New Fact:\nTweety is a penguin\nPenguins cannot fly", fillcolor="#F4A6A6"];
-// 
+//
 //     kb2 [label="Updated KB", fillcolor="#FFD1A6"];
 //     conc2 [label="Revised Conclusion:\nTweety CANNOT fly", fillcolor="#A6E7F4"];
-// 
+//
 //     kb1 -> conc1 [label="reasoning"];
 //     conc1 -> newFact [label="conflict"];
 //     newFact -> kb2 [label="update"];
@@ -210,7 +212,9 @@ emerge.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.2.png",
     width: 70%,
   ),
-  caption: [Diagram relating Initial KB: Birds typically fly Tweety is a bird, Conclusion: Tweety can fly, New Fact: Tweety is a penguin Penguins cannot fly and Updated KB],
+  caption: [Diagram relating Initial KB: Birds typically fly Tweety is a bird,
+    Conclusion: Tweety can fly, New Fact: Tweety is a penguin Penguins cannot fly and
+    Updated KB],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -326,25 +330,25 @@ prediction about Bob's behavior.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica, fontsize=10];
-// 
+//
 //     bob_enters [label="Bob enters\nRestaurant", fillcolor="#FFD1A6"];
 //     bob_sits [label="Bob sits at\nTable", fillcolor="#FFD1A6"];
-// 
+//
 //     common_sense [label="Common Sense:\nSit at table\n→ intends to eat", fillcolor="#C6A6F4"];
-// 
+//
 //     infer1 [label="Infer: Bob\nintends to eat", fillcolor="#B2E2B2"];
 //     menu [label="Server brings\nMenu", fillcolor="#B2E2B2"];
 //     order [label="Bob places\nOrder", fillcolor="#B2E2B2"];
-// 
+//
 //     new_info [label="NEW: Bob asks\nfor directions\nonly", fillcolor="#F4A6A6"];
 //     revise [label="REVISE:\nNo order!", fillcolor="#A6E7F4"];
-// 
+//
 //     bob_enters -> bob_sits;
 //     bob_sits -> common_sense [label="apply"];
 //     common_sense -> infer1 [label="conclude"];
 //     infer1 -> menu;
 //     menu -> order;
-// 
+//
 //     order -> new_info [label="contradicts"];
 //     new_info -> revise [label="revise"];
 // }
@@ -358,7 +362,8 @@ prediction about Bob's behavior.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.3.png",
     width: 70%,
   ),
-  caption: [Diagram relating Bob enters restaurant, Bob sits at table, common sense: sit at table → intends to eat and infer: Bob intends to eat],
+  caption: [Diagram relating Bob enters restaurant, Bob sits at table, common sense:
+    sit at table → intends to eat and infer: Bob intends to eat],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -384,15 +389,16 @@ specific or more recent evidence.
   column-gutter: 1em,
 )[
   The distinction between these two assumptions becomes concrete with a simple
-  enrollment example. Suppose the only recorded fact is "Alice takes CS101." Under the
-  #strong[closed-world assumption], silence is denial: because nothing is said about
-  Bob, the system concludes "Bob does not take CS101." The absence of a positive
-  statement is treated as a negative one. Under the #strong[open-world assumption],
-  silence is ignorance: the system acknowledges that Bob's enrollment status is simply
-  unknown, and he may or may not be enrolled. Neither answer is assumed until evidence
-  arrives. @tab:openworldvsclosedworldassumptions summarizes how the two assumptions
-  diverge across several key aspects, including how they treat missing information,
-  what unstated facts imply, and where each assumption is most naturally applied.
+  enrollment example. Suppose the only recorded fact is "Alice takes CS101." Under
+  the #strong[closed-world assumption], silence is denial: because nothing is said
+  about Bob, the system concludes "Bob does not take CS101." The absence of a
+  positive statement is treated as a negative one. Under the #strong[open-world
+    assumption], silence is ignorance: the system acknowledges that Bob's enrollment
+  status is simply unknown, and he may or may not be enrolled. Neither answer is
+  assumed until evidence arrives. @tab:openworldvsclosedworldassumptions summarizes
+  how the two assumptions diverge across several key aspects, including how they
+  treat missing information, what unstated facts imply, and where each assumption is
+  most naturally applied.
 ][
   #figure(
     styled-table(
@@ -453,16 +459,16 @@ from which the system selects its learned rules.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     background [label="Background Knowledge:\nBirds have wings\nPenguins are birds", fillcolor="#FFD1A6"];
-// 
+//
 //     pos_ex [label="Positive Examples:\nTweety (bird) flies\nParrot (bird) flies", fillcolor="#B2E2B2"];
 //     neg_ex [label="Negative Examples:\nPenguin cannot fly\nOstrich cannot fly", fillcolor="#F4A6A6"];
-// 
+//
 //     hypothesis [label="Hypothesis Space", fillcolor="#A0D6D1"];
-// 
+//
 //     learned_rule [label="Learned Rules:\nBird(X) ∧ ¬Penguin(X)\n→ CanFly(X)", fillcolor="#A6C8F4"];
-// 
+//
 //     background -> hypothesis;
 //     pos_ex -> hypothesis;
 //     neg_ex -> hypothesis;
@@ -478,7 +484,9 @@ from which the system selects its learned rules.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.4.png",
     width: 70%,
   ),
-  caption: [Diagram relating background knowledge: birds have wings, penguins are birds, positive examples: Tweety (bird) flies, parrot (bird) flies, negative examples: penguin cannot fly, ostrich cannot fly and hypothesis space],
+  caption: [Diagram relating background knowledge: birds have wings, penguins are
+    birds, positive examples: Tweety (bird) flies, parrot (bird) flies, negative
+    examples: penguin cannot fly, ostrich cannot fly and hypothesis space],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -548,16 +556,16 @@ precisely why the formalism is so widely adopted.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     person [label="Class: Person", fillcolor="#C6A6F4"];
 //     pet_owner [label="PetOwner\n(Person with pet)", fillcolor="#A0D6D1"];
 //     gp [label="Instance: GP\n(a PetOwner)", fillcolor="#A6E7F4"];
 //     nuvolo [label="Instance: Nuvolo\n(GP's dog)", fillcolor="#A6E7F4"];
-// 
+//
 //     person -> pet_owner [label="subclass"];
 //     pet_owner -> gp [label="instance"];
 //     gp -> nuvolo [label="ownsPet"];
-// 
+//
 //     syntax_note [label="Syntax:\nPetOwner = Person AND exists ownsPet.Dog", fillcolor="#B2E2B2", shape=note];
 // }
 // ```
@@ -570,7 +578,8 @@ precisely why the formalism is so widely adopted.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.5.png",
     width: 70%,
   ),
-  caption: [Diagram relating class: person, petowner (person with pet), instance: GP (a petowner) and instance: Nuvolo (GP's dog)],
+  caption: [Diagram relating class: person, petowner (person with pet), instance: GP
+    (a petowner) and instance: Nuvolo (GP's dog)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -665,21 +674,21 @@ nominals.
 //     rankdir=LR;
 //     node [shape=box, style=filled, fontname=Helvetica, fontsize=9];
 //     edge [fontname=Helvetica, fontsize=8];
-// 
+//
 //     alc [label="ALC\n(base)", fillcolor="#A0D6D1"];
-// 
+//
 //     s_node [label="S:\nTransitive\nProps\n(ancestorOf)", fillcolor="#FFD1A6"];
 //     h_node [label="H:\nRole\nHierarchies\n(hasSon sub-role of hasChild)", fillcolor="#FFD1A6"];
 //     o_node [label="O:\nNominals\n(John:individual)", fillcolor="#FFD1A6"];
 //     i_node [label="I:\nInverse\nRoles\n(isChildOf)", fillcolor="#FFD1A6"];
 //     n_node [label="N:\nCardinality\n(=2 children)", fillcolor="#FFD1A6"];
-// 
+//
 //     alc -> s_node;
 //     s_node -> h_node;
 //     h_node -> o_node;
 //     o_node -> i_node;
 //     i_node -> n_node;
-// 
+//
 //     shoin [label="SHOIN\n(full)", fillcolor="#A6C8F4"];
 //     n_node -> shoin;
 // }
@@ -693,7 +702,8 @@ nominals.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.6.png",
     width: 70%,
   ),
-  caption: [Diagram relating ALC (base), S: transitive props (ancestorOf), H: role hierarchies (hasSon sub-role of hasChild) and O: nominals (John:individual)],
+  caption: [Diagram relating ALC (base), S: transitive props (ancestorOf), H: role
+    hierarchies (hasSon sub-role of hasChild) and O: nominals (John:individual)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -718,10 +728,10 @@ description-logic notation this is written as $"Cat" subset.eq "Mammal"$, a
 subsumption axiom asserting that the class Cat is a subclass of Mammal. A reasoner
 can then automatically infer that any individual classified as a Cat must also be a
 Mammal, without that fact being stated explicitly. This kind of automated inference
-powers practical applications ranging from #emph[semantic search] engines that understand
-query intent rather than just matching keywords, to biomedical data integration
-platforms where ontologies like SNOMED CT and the Gene Ontology let researchers query
-across heterogeneous datasets using shared formal vocabularies.
+powers practical applications ranging from #emph[semantic search] engines that
+understand query intent rather than just matching keywords, to biomedical data
+integration platforms where ontologies like SNOMED CT and the Gene Ontology let
+researchers query across heterogeneous datasets using shared formal vocabularies.
 
 OWL comes in three variants that trade expressiveness for computational tractability,
 as @fig:owl illustrates. #emph[OWL Lite] is the simplest profile, restricted largely
@@ -741,20 +751,20 @@ algorithm guaranteed to answer every reasoning query in finite time.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     owl [label="Web Ontology\nLanguage (OWL)", fillcolor="#C6A6F4"];
-// 
+//
 //     lite [label="OWL Lite\n(Simpler)\nfor classification", fillcolor="#A0D6D1"];
 //     dl [label="OWL DL\n(Full expressiveness)\nDecidable reasoning", fillcolor="#A6E7F4"];
 //     full [label="OWL Full\n(Maximum)\nUndecidable", fillcolor="#FFD1A6"];
-// 
+//
 //     owl -> lite;
 //     owl -> dl;
 //     owl -> full;
-// 
+//
 //     lite -> dl [style=invis];
 //     dl -> full [style=invis];
-// 
+//
 //     note1 [label="Lite:\nHierarchies only", fillcolor="#B2E2B2", shape=note, fontsize=8];
 //     note2 [label="DL:\nDecidable\n= practical", fillcolor="#B2E2B2", shape=note, fontsize=8];
 //     note3 [label="Full:\nTuring\ncomplete", fillcolor="#F4A6A6", shape=note, fontsize=8];
@@ -769,7 +779,9 @@ algorithm guaranteed to answer every reasoning query in finite time.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.7.png",
     width: 70%,
   ),
-  caption: [Diagram relating web ontology language (OWL), OWL Lite (simpler) for classification, OWL DL (full expressiveness) decidable reasoning and OWL Full (maximum) undecidable],
+  caption: [Diagram relating web ontology language (OWL), OWL Lite (simpler) for
+    classification, OWL DL (full expressiveness) decidable reasoning and OWL Full
+    (maximum) undecidable],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -792,12 +804,12 @@ constraint that propositional or plain first-order logic cannot express as compa
 // digraph OWL_Example {
 //     rankdir=TD;
 //     node [shape=ellipse, style=filled, fillcolor=lightgray];
-// 
+//
 //     Person [label="Person (Class)"];
 //     Student [label="Student (Class)"];
 //     hasAdvisor [label="hasAdvisor (ObjectProperty)", shape=box, fillcolor=lightblue];
 //     Restriction [label="Restriction: minCardinality 1", shape=diamond, fillcolor=lightyellow];
-// 
+//
 //     Student -> Person [label="subClassOf"];
 //     Student -> Restriction [label="subClassOf"];
 //     Restriction -> hasAdvisor [label="onProperty"];
@@ -812,7 +824,8 @@ constraint that propositional or plain first-order logic cannot express as compa
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.8.png",
     width: 70%,
   ),
-  caption: [Diagram relating person (class), student (class), hasadvisor (objectproperty) and restriction: mincardinality 1],
+  caption: [Diagram relating person (class), student (class), hasadvisor
+    (objectproperty) and restriction: mincardinality 1],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -859,8 +872,8 @@ to share and combine data without loss of meaning.
 
   As @tab:rdftriples illustrates, each row captures one atomic fact about an entity.
   The triple `(Book123, hasAuthor, Author456)` connects a book to its author, while
-  `(Author456, hasName, "F. Scott Fitzgerald")` attaches a human-readable name to that
-  author entity. By chaining triples together this way, RDF builds up a rich
+  `(Author456, hasName, "F. Scott Fitzgerald")` attaches a human-readable name to
+  that author entity. By chaining triples together this way, RDF builds up a rich
   description from minimal primitives.
 ][
   #figure(
@@ -969,18 +982,18 @@ properties, and OWL sits at the top, enabling expressive ontological reasoning.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     foundation [label="Foundation:\nURIs and Unicode", fillcolor="#FFD1A6"];
-// 
+//
 //     rdf [label="RDF\n(Data Model)\nTriples: Subject-Predicate-Object", fillcolor="#A0D6D1"];
 //     rdfs [label="RDFS\n(Schema Layer)\nClasses and Properties", fillcolor="#A0D6D1"];
-// 
+//
 //     owl [label="OWL\n(Ontology Language)\nExpress complex relationships", fillcolor="#A6E7F4"];
-// 
+//
 //     sparql [label="SPARQL\n(Query Language)\nRetrieve and query RDF", fillcolor="#B2E2B2"];
-// 
+//
 //     apps [label="Applications:\nSemantic Search, KGs, AI Reasoning", fillcolor="#A6C8F4"];
-// 
+//
 //     foundation -> rdf;
 //     foundation -> rdfs;
 //     rdf -> owl;
@@ -998,7 +1011,9 @@ properties, and OWL sits at the top, enabling expressive ontological reasoning.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.9.png",
     width: 70%,
   ),
-  caption: [Diagram relating foundation: URIs and Unicode, RDF (data model) triples: subject-predicate-object, RDFS (schema layer) classes and properties and OWL (ontology language) express complex relationships],
+  caption: [Diagram relating foundation: URIs and Unicode, RDF (data model) triples:
+    subject-predicate-object, RDFS (schema layer) classes and properties and OWL
+    (ontology language) express complex relationships],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1057,23 +1072,23 @@ example, showing items linked to values through properties in a directed graph.
 //     rankdir=LR;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     q42 [label="Item: Q42\n(Douglas Adams)", fillcolor="#FFD1A6"];
 //     p31 [label="Property: P31\n(instance of)", fillcolor="#A0D6D1"];
 //     q5 [label="Value: Q5\n(Human)", fillcolor="#A6E7F4"];
-// 
+//
 //     p106 [label="Property: P106\n(occupation)", fillcolor="#A0D6D1"];
 //     q36180 [label="Value: Q36180\n(Sci-fi writer)", fillcolor="#A6E7F4"];
-// 
+//
 //     ref [label="Reference:\nSupporting citation", fillcolor="#B2E2B2", shape=note];
 //     qual [label="Qualifier:\nYear = 1952", fillcolor="#B2E2B2", shape=note];
-// 
+//
 //     q42 -> p31 [label="statement"];
 //     p31 -> q5 [label="value"];
-// 
+//
 //     q42 -> p106 [label="statement"];
 //     p106 -> q36180 [label="value"];
-// 
+//
 //     p31 -> ref [label=""];
 //     p106 -> qual [label=""];
 // }
@@ -1087,7 +1102,8 @@ example, showing items linked to values through properties in a directed graph.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.10.png",
     width: 70%,
   ),
-  caption: [Diagram relating item: Q42 (Douglas Adams), property: P31 (instance of), value: Q5 (human) and property: P106 (occupation)],
+  caption: [Diagram relating item: Q42 (Douglas Adams), property: P31 (instance of),
+    value: Q5 (human) and property: P106 (occupation)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1162,21 +1178,21 @@ hierarchical structure that makes inheritance-based inference straightforward.
 //     rankdir=TB;
 //     node [shape=ellipse, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     animal [label="Animal", fillcolor="#C6A6F4"];
 //     dog [label="Dog", fillcolor="#A0D6D1"];
 //     cat [label="Cat", fillcolor="#A0D6D1"];
 //     mammal [label="Mammal", fillcolor="#A0D6D1"];
 //     fido [label="Fido\n(instance)", fillcolor="#A6E7F4"];
-// 
+//
 //     animal -> mammal [label="is-a"];
 //     animal -> dog [label="is-a"];
 //     animal -> cat [label="is-a"];
 //     dog -> fido [label="instance"];
-// 
+//
 //     hasLeg [label="has 4 legs", fillcolor="#FFD1A6"];
 //     dog -> hasLeg [label="has-property"];
-// 
+//
 //     mammal_box [label="Mammals\nhave fur", fillcolor="#B2E2B2", shape=note];
 // }
 // ```
@@ -1227,9 +1243,9 @@ The edges connecting synsets encode several types of semantic relations:
 ) <fig:wordnet>
 
 These structured relationships make WordNet useful across a range of NLP tasks. In
-#emph[word sense disambiguation], the synset structure helps determine which meaning of a
-polysemous word is intended in a given context. Semantic similarity measures can be
-computed by traversing the graph and measuring path length or shared ancestors
+#emph[word sense disambiguation], the synset structure helps determine which meaning
+of a polysemous word is intended in a given context. Semantic similarity measures can
+be computed by traversing the graph and measuring path length or shared ancestors
 between synsets. WordNet also serves as a backbone for information retrieval and
 question answering systems, where understanding that a query about "automobiles"
 should also match documents about "cars" directly improves recall.
@@ -1298,9 +1314,10 @@ structured knowledge that machines can traverse and reason over.
 
 Knowledge graphs support expressive information retrieval through query languages
 like SPARQL, which lets users pose complex questions that span multiple hops across
-the graph. Beyond simple lookup, they enable reasoning through #strong[path traversal]
-(following chains of edges to discover implicit connections) and #strong[schema inference]
-(deriving new facts from the types and constraints declared in the graph's ontology).
+the graph. Beyond simple lookup, they enable reasoning through #strong[path
+  traversal] (following chains of edges to discover implicit connections) and
+#strong[schema inference] (deriving new facts from the types and constraints declared
+in the graph's ontology).
 
 These capabilities make knowledge graphs a foundational component in several
 practical systems:
@@ -1335,13 +1352,13 @@ responsible for every course a given student takes.
 // digraph UniversityOntology {
 //     rankdir=LR;
 //     node [shape=ellipse, style=filled, fontname=Helvetica];
-// 
+//
 //     // Classes (purple color)
 //     Student [fillcolor="#f9f", fontcolor=black];
 //     Professor [fillcolor="#f9f", fontcolor=black];
 //     Course [fillcolor="#f9f", fontcolor=black];
 //     Department [fillcolor="#f9f", fontcolor=black];
-// 
+//
 //     // Individuals (blue color)
 //     Alice [fillcolor="#9ff", fontcolor=black];
 //     Bob [fillcolor="#9ff", fontcolor=black];
@@ -1351,14 +1368,14 @@ responsible for every course a given student takes.
 //     MATH201 [fillcolor="#9ff", fontcolor=black];
 //     ComputerScience [fillcolor="#9ff", fontcolor=black];
 //     Mathematics [fillcolor="#9ff", fontcolor=black];
-// 
+//
 //     // Class-level relationships
 //     Student -> Course [label="takesCourse"];
 //     Professor -> Course [label="teachesCourse"];
 //     Student -> Department [label="belongsToDepartment"];
 //     Professor -> Department [label="belongsToDepartment"];
 //     Department -> Course [label="offersCourse"];
-// 
+//
 //     // Individual-level relationships
 //     Alice -> CS101 [label="takesCourse"];
 //     Bob -> MATH201 [label="takesCourse"];
@@ -1381,7 +1398,8 @@ responsible for every course a given student takes.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.12.png",
     width: 70%,
   ),
-  caption: [Diagram relating takesCourse, teachesCourse, belongsToDepartment and offersCourse],
+  caption: [Diagram relating takesCourse, teachesCourse, belongsToDepartment and
+    offersCourse],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,

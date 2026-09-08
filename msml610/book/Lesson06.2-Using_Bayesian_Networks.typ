@@ -1,7 +1,9 @@
 // Import AIMA style formatting and macros
 // TODO(ai_gp): Use root-absolute path `/helpers_root/...` instead of relative `../../helpers_root/...` (typst.rules.md:## Boilerplate and Imports)
 // TODO(ai_gp): Add missing citation import: `#import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": (cite, references,)` (typst.rules.md:## Boilerplate and Imports)
-#import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": aima-style, chapter, algorithm, glossary, wrap-content
+#import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
+  aima-style, algorithm, chapter, glossary, wrap-content,
+)
 
 // Document metadata
 #set document(
@@ -20,35 +22,34 @@
 
 // Slide: Bayesian Networks Semantics
 
-A #strong[Bayesian Network] encodes probabilistic relationships among variables
-and can be understood through two equivalent semantic interpretations.
-Understanding these interpretations is fundamental to working with Bayesian
-networks effectively.
+A #strong[Bayesian Network] encodes probabilistic relationships among variables and
+can be understood through two equivalent semantic interpretations. Understanding
+these interpretations is fundamental to working with Bayesian networks effectively.
 
 The #strong[joint distribution view] treats the network as an encoding of the
-complete joint probability distribution over all variables. This distribution
-can be computed as a product of local conditional probabilities:
+complete joint probability distribution over all variables. This distribution can be
+computed as a product of local conditional probabilities:
 
 $P(X_1, ..., X_n) = product_(i=1)^(n) P(X_i | "Parents"(X_i))$
 
-This perspective is particularly useful for constructing models and
-understanding the overall behavior of a system. It captures how variables
-collectively define a complete probabilistic model.
+This perspective is particularly useful for constructing models and understanding the
+overall behavior of a system. It captures how variables collectively define a
+complete probabilistic model.
 
 The #strong[conditional independence view] interprets the network structure as
-encoding conditional independencies between variables. In this view, a variable
-is conditionally independent of its non-descendants given its parents. This
-perspective is invaluable for inference and reasoning, as it guides which
-information is relevant for predicting a variable's state.
+encoding conditional independencies between variables. In this view, a variable is
+conditionally independent of its non-descendants given its parents. This perspective
+is invaluable for inference and reasoning, as it guides which information is relevant
+for predicting a variable's state.
 
 === Chain Rule for Joint Distributions
 
 // Slide: Chain Rule for a Joint Distribution
 
-The #strong[chain rule] provides a fundamental theorem: any joint distribution
-can be expressed as a product of conditional probabilities for any ordering of
-random variables. This flexibility makes the chain rule a powerful tool for
-deriving Bayesian networks.
+The #strong[chain rule] provides a fundamental theorem: any joint distribution can be
+expressed as a product of conditional probabilities for any ordering of random
+variables. This flexibility makes the chain rule a powerful tool for deriving
+Bayesian networks.
 
 #strong[Proof outline:] For any variables $x_(1), ..., x_n$, we can express one
 variable conditionally:
@@ -56,8 +57,7 @@ variable conditionally:
 // TODO(ai_gp): Use Typst syntax for subscripts: replace `x_{n-1}` with `x_(n-1)` throughout (typst.rules.md:## Formulas)
 $Pr(x_1, ..., x_{n-1}, x_n) = Pr(x_n | x_{n-1}, ..., x_1) Pr(x_{n-1}, ..., x_1)$
 
-Applying this formula recursively until reaching unconditional probabilities
-yields:
+Applying this formula recursively until reaching unconditional probabilities yields:
 
 $Pr(x_1, x_2, ..., x_(n-2), x_(n-1), x_n) = product_(i=1)^n Pr(x_i | x_(i-1), ..., x_1)$
 
@@ -67,30 +67,29 @@ $Pr(x_1, x_2, ..., x_(n-2), x_(n-1), x_n) = product_(i=1)^n Pr(x_i | x_(i-1), ..
 
 To compute probabilities using a Bayesian network:
 
-1. Sort the nodes in topological order (multiple valid orderings may exist given
-  the directed acyclic graph structure).
+1. Sort the nodes in topological order (multiple valid orderings may exist given the
+  directed acyclic graph structure).
 2. Apply the chain rule using the topological ordering:
   $Pr(X_1, ..., X_n) = product_(i=1)^n Pr(X_i | X_(i-1), ..., X_1)$
-3. Leverage conditional independence: since each node is conditionally
-  independent of all predecessors given its parents,
+3. Leverage conditional independence: since each node is conditionally independent of
+  all predecessors given its parents,
   // TODO(ai_gp): Use Typst syntax for subscripts: replace `X_{i-1}` with `X_(i-1)` (typst.rules.md:## Formulas)
   $Pr(X_i | X_{i-1}, ..., X_1) = Pr(X_i | text("Parents")(X_i))$
-4. Express the joint probability using the Conditional Probability Tables
-  (CPTs): $Pr(X_1, ..., X_n) = product_(i=1)^n Pr(X_i | "Parents"(X_i))$
+4. Express the joint probability using the Conditional Probability Tables (CPTs):
+  $Pr(X_1, ..., X_n) = product_(i=1)^n Pr(X_i | "Parents"(X_i))$
 
-This systematic approach transforms the full joint distribution into a factored
-form tractable by the network structure.
+This systematic approach transforms the full joint distribution into a factored form
+tractable by the network structure.
 
 === Example: Pearl's Burglary-Earthquake Network
 
 // Slide: Evaluate a Bayesian Network: Example
 
-Consider Pearl's classic alarm network example. Given the network structure
-showing burglary and earthquake events triggering an alarm, which causes John
-and Mary to call:
+Consider Pearl's classic alarm network example. Given the network structure showing
+burglary and earthquake events triggering an alarm, which causes John and Mary to
+call:
 
-To compute
-$Pr("JohnCalls", "MaryCalls", "Alarm", not "Burglary", not "Earthquake")$:
+To compute $Pr("JohnCalls", "MaryCalls", "Alarm", not "Burglary", not "Earthquake")$:
 
 The computation follows from the network structure:
 
@@ -109,29 +108,27 @@ allowing efficient computation without enumerating the full joint distribution.
 
 // Slide: Constructing a Bayesian Network
 
-Building an effective Bayesian network requires systematic domain engineering
-and probabilistic specification. The construction process involves several key
-steps:
+Building an effective Bayesian network requires systematic domain engineering and
+probabilistic specification. The construction process involves several key steps:
 
-1. #strong[Gather domain knowledge]: List all relevant random variables
-  necessary to describe the system. Identify key variables and their potential
-  interactions based on expert understanding or data exploration.
+1. #strong[Gather domain knowledge]: List all relevant random variables necessary to
+  describe the system. Identify key variables and their potential interactions based
+  on expert understanding or data exploration.
 
 2. #strong[Order nodes by causality]: Arrange nodes according to cause-effect
   dependencies. This ordering ensures the resulting network is minimal in
   connectivity.
 
-3. #strong[Specify parent relationships]: For each node, select the minimum set
-  of parents $"Parents"(X_i)$ that determine its probabilistic behavior. Add
-  edges to represent dependencies while avoiding redundant connections.
+3. #strong[Specify parent relationships]: For each node, select the minimum set of
+  parents $"Parents"(X_i)$ that determine its probabilistic behavior. Add edges to
+  represent dependencies while avoiding redundant connections.
 
-4. #strong[Estimate conditional probabilities]: Provide
-  $Pr(X_i | "Parents"(X_i))$ for each node using data, expert opinion, or
-  statistical estimation techniques.
+4. #strong[Estimate conditional probabilities]: Provide $Pr(X_i | "Parents"(X_i))$
+  for each node using data, expert opinion, or statistical estimation techniques.
 
-5. #strong[Validate the model]: Have domain experts review the structure. Verify
-  the network is a Directed Acyclic Graph (DAG). Test predictions against known
-  outcomes and compare with actual data to ensure fidelity.
+5. #strong[Validate the model]: Have domain experts review the structure. Verify the
+  network is a Directed Acyclic Graph (DAG). Test predictions against known outcomes
+  and compare with actual data to ensure fidelity.
 
 === Properties of Bayesian Networks
 
@@ -139,68 +136,67 @@ steps:
 
 Bayesian networks possess several desirable properties:
 
-#strong[Completeness]: The network encodes all information in the joint
-probability distribution. No relevant probabilistic relationships are implicit
-or missing.
+#strong[Completeness]: The network encodes all information in the joint probability
+distribution. No relevant probabilistic relationships are implicit or missing.
 
-#strong[Consistency]: The representation contains no redundant probability
-values. Domain experts cannot create a Bayesian network violating probability
-axioms, as the formal structure enforces consistency automatically.
+#strong[Consistency]: The representation contains no redundant probability values.
+Domain experts cannot create a Bayesian network violating probability axioms, as the
+formal structure enforces consistency automatically.
 
 #strong[Compactness]: Bayesian networks are locally structured and sparse. Each
-component typically interacts directly with a limited number of other
-components, yielding linear rather than exponential growth in complexity.
-However, in fully connected systems where every variable influences all others,
-the network retains the complexity of the full joint distribution.
+component typically interacts directly with a limited number of other components,
+yielding linear rather than exponential growth in complexity. However, in fully
+connected systems where every variable influences all others, the network retains the
+complexity of the full joint distribution.
 
-These properties make Bayesian networks practical for reasoning under
-uncertainty in complex domains.
+These properties make Bayesian networks practical for reasoning under uncertainty in
+complex domains.
 
 === Node Ordering and Network Complexity
 
 // Slide: Ordering of Nodes
 
-The complexity of a Bayesian network depends critically on the node ordering
-chosen during construction. Different orderings can produce networks with vastly
-different edge counts and conditional probability table sizes.
+The complexity of a Bayesian network depends critically on the node ordering chosen
+during construction. Different orderings can produce networks with vastly different
+edge counts and conditional probability table sizes.
 
 #wrap-content(
   [
-// rendered_images:begin
-//     ```graphviz
-//     digraph BayesianNetwork {
-//         splines=true;
-//         nodesep=0.8;
-//         ranksep=0.8;
-//     
-//         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-//     
-//         Burglary   [label="Burglary", fillcolor="#A6C8F4"];
-//         Alarm      [label="Alarm", fillcolor="#FFD1A6"];
-//         JohnCalls   [label="JohnCalls", fillcolor="#B2E2B2"];
-//         MaryCalls   [label="MaryCalls", fillcolor="#B2E2B2"];
-//         Earthquake [label="Earthquake", fillcolor="#A6C8F4"];
-//     
-//         Burglary -> Alarm;
-//         Earthquake -> Alarm;
-//         Alarm -> JohnCalls;
-//         Alarm -> MaryCalls;
-//     }
-//     ```
-// rendered_images:end
-// render_images:begin
-// TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
-#figure(
-  image(
-    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.1.png",
-    width: 100%,
-  ),
-  caption: [caption],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:placeholder1>
-// render_images:end
+    // rendered_images:begin
+    //     ```graphviz
+    //     digraph BayesianNetwork {
+    //         splines=true;
+    //         nodesep=0.8;
+    //         ranksep=0.8;
+    //
+    //         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+    //
+    //         Burglary   [label="Burglary", fillcolor="#A6C8F4"];
+    //         Alarm      [label="Alarm", fillcolor="#FFD1A6"];
+    //         JohnCalls   [label="JohnCalls", fillcolor="#B2E2B2"];
+    //         MaryCalls   [label="MaryCalls", fillcolor="#B2E2B2"];
+    //         Earthquake [label="Earthquake", fillcolor="#A6C8F4"];
+    //
+    //         Burglary -> Alarm;
+    //         Earthquake -> Alarm;
+    //         Alarm -> JohnCalls;
+    //         Alarm -> MaryCalls;
+    //     }
+    //     ```
+    // rendered_images:end
+    // render_images:begin
+    // TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
+    #figure(
+      image(
+        "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.1.png",
+        width: 100%,
+      ),
+      caption: [caption],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:placeholder1>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -208,8 +204,8 @@ different edge counts and conditional probability table sizes.
 )[
   // TODO(ai_gp): Prose paired with wrap-content image is too short; add more sentences to fill the image height (typst.rules.md:# Visuals)
   // TODO(ai_gp): Replace Markdown `*Causal ordering*` with `#emph[Causal ordering]` (typst.rules.md:## Typst Vs. Markdown Syntax)
-  *Causal ordering* (Burglary, Earthquake, Alarm, JohnCalls, MaryCalls)—minimal
-  edges following causal direction:
+  *Causal ordering* (Burglary, Earthquake, Alarm, JohnCalls, MaryCalls)—minimal edges
+  following causal direction:
 ]
 
 // TODO(ai_gp): Replace Markdown `*Poor ordering 1*` with `#emph[Poor ordering 1]` (typst.rules.md:## Typst Vs. Markdown Syntax)
@@ -221,15 +217,15 @@ different edge counts and conditional probability table sizes.
 //     splines=true;
 //     nodesep=0.8;
 //     ranksep=0.8;
-// 
+//
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-// 
+//
 //     Burglary   [label="Burglary", fillcolor="#A6C8F4"];
 //     Alarm      [label="Alarm", fillcolor="#FFD1A6"];
 //     JohnCalls   [label="JohnCalls", fillcolor="#B2E2B2"];
 //     MaryCalls   [label="MaryCalls", fillcolor="#B2E2B2"];
 //     Earthquake [label="Earthquake", fillcolor="#A6C8F4"];
-// 
+//
 //     MaryCalls -> Alarm;
 //     JohnCalls -> Alarm;
 //     Alarm -> Burglary;
@@ -262,15 +258,15 @@ different edge counts and conditional probability table sizes.
 //     splines=true;
 //     nodesep=0.8;
 //     ranksep=0.8;
-// 
+//
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-// 
+//
 //     Burglary   [label="Burglary", fillcolor="#A6C8F4"];
 //     Alarm      [label="Alarm", fillcolor="#FFD1A6"];
 //     JohnCalls   [label="JohnCalls", fillcolor="#B2E2B2"];
 //     MaryCalls   [label="MaryCalls", fillcolor="#B2E2B2"];
 //     Earthquake [label="Earthquake", fillcolor="#A6C8F4"];
-// 
+//
 //     MaryCalls -> Earthquake;
 //     MaryCalls -> Burglary;
 //     MaryCalls -> JohnCalls;
@@ -298,86 +294,85 @@ different edge counts and conditional probability table sizes.
 // render_images:end
 
 The graph is "minimal" in terms of connectivity when all edges represent causal
-relationships. Using domain knowledge to order nodes causally leads to simpler,
-more interpretable networks.
+relationships. Using domain knowledge to order nodes causally leads to simpler, more
+interpretable networks.
 
 === Causal vs. Diagnostic Models
 
 // Slide: Causal vs Diagnostic Models
 
-#strong[Causal models] express relationships flowing from causes to symptoms
-(e.g., $"Burglary" -> "Alarm"$). These models are simpler, involve fewer and
-more robust dependencies, and are easier to estimate from data or expert
-judgment. The conditional probabilities capture mechanisms: "If burglary occurs,
-what is the alarm probability?"
+#strong[Causal models] express relationships flowing from causes to symptoms (e.g.,
+$"Burglary" -> "Alarm"$). These models are simpler, involve fewer and more robust
+dependencies, and are easier to estimate from data or expert judgment. The
+conditional probabilities capture mechanisms: "If burglary occurs, what is the alarm
+probability?"
 
 #wrap-content(
   [
-// rendered_images:begin
-//     ```graphviz
-//     digraph CausalModel {
-//         splines=true;
-//         nodesep=2.0;
-//         ranksep=1.5;
-//         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-//     
-//         Causes [label="Causes", fillcolor="#B2E2B2"];
-//         Symptoms [label="Symptoms", fillcolor="#F4A6A6"];
-//     
-//         Causes -> Symptoms;
-//         Symptoms -> Causes;
-//     }
-//     ```
-// rendered_images:end
-// render_images:begin
-// TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
-#figure(
-  image(
-    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.4.png",
-    width: 100%,
-  ),
-  caption: [caption],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:placeholder4>
-// render_images:end
+    // rendered_images:begin
+    //     ```graphviz
+    //     digraph CausalModel {
+    //         splines=true;
+    //         nodesep=2.0;
+    //         ranksep=1.5;
+    //         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+    //
+    //         Causes [label="Causes", fillcolor="#B2E2B2"];
+    //         Symptoms [label="Symptoms", fillcolor="#F4A6A6"];
+    //
+    //         Causes -> Symptoms;
+    //         Symptoms -> Causes;
+    //     }
+    //     ```
+    // rendered_images:end
+    // render_images:begin
+    // TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
+    #figure(
+      image(
+        "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.4.png",
+        width: 100%,
+      ),
+      caption: [caption],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:placeholder4>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
   columns: (1fr, 20%),
 )[
-  #strong[Diagnostic models] work in the reverse direction, from symptoms to
-  causes (e.g., $"MaryCalls" -> "Alarm"$ or $"Alarm" -> "Burglary"$). These models
-  are tenuous and unstable, difficult to estimate reliably. However, they align
-  with practical reasoning: given that Mary called, what caused it? To use
-  diagnostic models, we apply Bayes' rule to invert the probabilities:
+  #strong[Diagnostic models] work in the reverse direction, from symptoms to causes
+  (e.g., $"MaryCalls" -> "Alarm"$ or $"Alarm" -> "Burglary"$). These models are
+  tenuous and unstable, difficult to estimate reliably. However, they align with
+  practical reasoning: given that Mary called, what caused it? To use diagnostic
+  models, we apply Bayes' rule to invert the probabilities:
   $Pr("Cause"|"Symptom") = (Pr("Symptom"|"Cause")Pr("Cause"))/(Pr("Symptom"))$
 ]
 
-Effective Bayesian networks typically use causal structure for specification,
-then invert via Bayes' rule for diagnostic reasoning.
+Effective Bayesian networks typically use causal structure for specification, then
+invert via Bayes' rule for diagnostic reasoning.
 
 == Markov Blanket of a Node
 
 // Slide: Markov Blanket of a Node
 
-The #strong[Markov blanket] of a node $X$ is the set of variables that
-completely determine its conditional distribution, rendering all other variables
-irrelevant. It consists of three components:
+The #strong[Markov blanket] of a node $X$ is the set of variables that completely
+determine its conditional distribution, rendering all other variables irrelevant. It
+consists of three components:
 
 1. #strong[Parents]: Nodes that directly influence $X$.
 2. #strong[Children]: Nodes directly influenced by $X$.
 3. #strong[Spouses]: Nodes that are parents of $X$'s children (co-parents).
 
-Once the Markov blanket is known, $X$ is conditionally independent of all other
-nodes in the network. This means inference about $X$ requires only information
-about its parents, children, and spouses—enabling efficient and localized
-computation.
+Once the Markov blanket is known, $X$ is conditionally independent of all other nodes
+in the network. This means inference about $X$ requires only information about its
+parents, children, and spouses—enabling efficient and localized computation.
 
-The Markov blanket is fundamental to many inference algorithms (particularly
-Gibbs sampling) because it identifies the minimal sufficient information for
-reasoning about a variable.
+The Markov blanket is fundamental to many inference algorithms (particularly Gibbs
+sampling) because it identifies the minimal sufficient information for reasoning
+about a variable.
 
 === Conditional Independence and Markov Blankets
 
@@ -390,65 +385,65 @@ In a Bayesian network, each variable exhibits strong independence properties:
 - A variable is conditionally independent of *all other nodes* given its Markov
   blanket (parents, children, and spouses).
 
-This means the Markov blanket contains all nodes necessary to predict the state
-of $X_(i)$, making the rest of the network irrelevant for that variable. This
-principle enables efficient inference: instead of considering all variables,
-focus computation on the local Markov blanket.
+This means the Markov blanket contains all nodes necessary to predict the state of
+$X_(i)$, making the rest of the network irrelevant for that variable. This principle
+enables efficient inference: instead of considering all variables, focus computation
+on the local Markov blanket.
 
 === Influence Through Explaining Away
 
 // Slide: How Can a Node Be Influenced by Its Children?
 
 Descendants can influence ancestors indirectly through a process called
-#strong[explaining away]. When evidence about a descendant becomes available, it
-can change beliefs about an ancestor through competing explanations.
+#strong[explaining away]. When evidence about a descendant becomes available, it can
+change beliefs about an ancestor through competing explanations.
 
 #wrap-content(
   [
-// rendered_images:begin
-//     ```graphviz
-//     digraph BayesianFlow {
-//         splines=true;
-//         nodesep=1.0;
-//         ranksep=0.75;
-//         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-//     
-//         Rain [fillcolor="#A6C8F4", label="Rain"];
-//         WetGrass [fillcolor="#B2E2B2", label="WetGrass"];
-//         Sprinkler [fillcolor="#A6E7F4", label="Sprinkler"];
-//     
-//         Rain -> WetGrass;
-//         Sprinkler -> WetGrass;
-//     }
-//     ```
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.5.png",
-    width: 100%,
-  ),
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-)
-// render_images:end
+    // rendered_images:begin
+    //     ```graphviz
+    //     digraph BayesianFlow {
+    //         splines=true;
+    //         nodesep=1.0;
+    //         ranksep=0.75;
+    //         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+    //
+    //         Rain [fillcolor="#A6C8F4", label="Rain"];
+    //         WetGrass [fillcolor="#B2E2B2", label="WetGrass"];
+    //         Sprinkler [fillcolor="#A6E7F4", label="Sprinkler"];
+    //
+    //         Rain -> WetGrass;
+    //         Sprinkler -> WetGrass;
+    //     }
+    //     ```
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image(
+        "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.5.png",
+        width: 100%,
+      ),
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    )
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
   columns: (1fr, 20%),
 )[
   #strong[Example—Garden World:] Suppose you observe wet grass ($"WetGrass"$).
-  Without additional information, this evidence increases the probability of
-  either the sprinkler being on or rain falling. However, if you later observe
-  that the sprinkler was on, this explains the wet grass, and the probability of
-  rain decreases—the observed cause "explains away" the alternative. Evidence from
-  a descendant thus flows backward, updating ancestors through dependent paths in
-  the network.
+  Without additional information, this evidence increases the probability of either
+  the sprinkler being on or rain falling. However, if you later observe that the
+  sprinkler was on, this explains the wet grass, and the probability of rain
+  decreases—the observed cause "explains away" the alternative. Evidence from a
+  descendant thus flows backward, updating ancestors through dependent paths in the
+  network.
 ]
 
-This bidirectional information flow, despite the network's directed structure,
-is a subtle but powerful aspect of Bayesian reasoning.
+This bidirectional information flow, despite the network's directed structure, is a
+subtle but powerful aspect of Bayesian reasoning.
 
 === Medical Example: Heart Disease
 
@@ -462,9 +457,9 @@ Consider risk factors and outcomes for heart disease:
 //     splines=true;
 //     nodesep=1.0;
 //     ranksep=0.75;
-// 
+//
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-// 
+//
 //     H [label="HeartDisease", fillcolor="#F4A6A6"];
 //     A [label="Age", fillcolor="#A6C8F4"];
 //     G [label="Genetics", fillcolor="#A6C8F4"];
@@ -472,15 +467,15 @@ Consider risk factors and outcomes for heart disease:
 //     E [label="Exercise", fillcolor="#A6C8F4"];
 //     BP [label="BloodPressure", fillcolor="#B2E2B2"];
 //     C [label="Cholesterol", fillcolor="#B2E2B2"];
-// 
+//
 //     A -> H;
 //     G -> H;
 //     D -> H;
 //     E -> H;
-// 
+//
 //     H -> BP;
 //     H -> C;
-// 
+//
 //     A -> BP;
 //     A -> C;
 //     G -> BP;
@@ -489,7 +484,7 @@ Consider risk factors and outcomes for heart disease:
 //     D -> C;
 //     E -> BP;
 //     E -> C;
-// 
+//
 //     {rank=same; A; G; D; E}
 //     {rank=same; BP; C}
 // }
@@ -510,14 +505,13 @@ Consider risk factors and outcomes for heart disease:
 - #strong[Target node]: HeartDisease
 - #strong[Parent nodes] (direct causes): Age, Genetics, Diet, Exercise
 - #strong[Children nodes] (outcomes): BloodPressure, Cholesterol
-- #strong[Spouse nodes]: The risk factors that also influence the outcomes
-  directly
+- #strong[Spouse nodes]: The risk factors that also influence the outcomes directly
 
-The Markov blanket of $"HeartDisease"$ includes all parents, children, and
-spouses. Knowing only these nodes allows prediction of heart disease without
-requiring information about variables outside this blanket. This structure
-reflects the medical reality that certain risk factors and measurable outcomes
-contain all relevant information for assessing disease presence.
+The Markov blanket of $"HeartDisease"$ includes all parents, children, and spouses.
+Knowing only these nodes allows prediction of heart disease without requiring
+information about variables outside this blanket. This structure reflects the medical
+reality that certain risk factors and measurable outcomes contain all relevant
+information for assessing disease presence.
 
 === Economic Example: House Prices
 
@@ -531,23 +525,23 @@ For house prices in a region:
 //     splines=true;
 //     nodesep=1.0;
 //     ranksep=0.75;
-// 
+//
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-// 
+//
 //     HP [label="HousePrices", fillcolor="#F4A6A6"];
 //     E [label="EconomicGrowth", fillcolor="#A6C8F4"];
 //     IR [label="InterestRate", fillcolor="#A6C8F4"];
 //     UE [label="UnemploymentRate", fillcolor="#A6C8F4"];
 //     DI [label="DisposableIncome", fillcolor="#B2E2B2"];
 //     D [label="HousingDemand", fillcolor="#B2E2B2"];
-// 
+//
 //     E -> HP;
 //     IR -> HP;
 //     UE -> HP;
-// 
+//
 //     HP -> DI;
 //     HP -> D;
-// 
+//
 //     {rank=same; E; IR; UE}
 //     {rank=same; DI; D}
 // }
@@ -568,14 +562,13 @@ For house prices in a region:
 - #strong[Target node]: HousePrices
 - #strong[Parent nodes] (direct influences): EconomicGrowth, InterestRate,
   UnemploymentRate
-- #strong[Children nodes]: DisposableIncome (house price affects purchasing
-  power), HousingDemand (price inversely affects demand)
+- #strong[Children nodes]: DisposableIncome (house price affects purchasing power),
+  HousingDemand (price inversely affects demand)
 
 The Markov blanket contains all nodes needed to estimate house prices, excluding
-grandparents and other distant relatives in the network. This localized
-structure shows that effective real-estate pricing depends on immediate economic
-factors and observable demand signals, not on the full chain of global economic
-determinants.
+grandparents and other distant relatives in the network. This localized structure
+shows that effective real-estate pricing depends on immediate economic factors and
+observable demand signals, not on the full chain of global economic determinants.
 
 === Financial Example: Stock Prices
 
@@ -589,9 +582,9 @@ For an individual company's stock price:
 //     splines=true;
 //     nodesep=1.0;
 //     ranksep=0.75;
-// 
+//
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-// 
+//
 //     SP [label="Stock Price", fillcolor="#F4A6A6"];
 //     EPS [label="Earnings Per Share", fillcolor="#A6C8F4"];
 //     IP [label="Industry Performance", fillcolor="#A6C8F4"];
@@ -599,18 +592,18 @@ For an individual company's stock price:
 //     TV [label="Trading Volume", fillcolor="#B2E2B2"];
 //     RC [label="Regulatory Changes", fillcolor="#C6A6F4"];
 //     GE [label="Global Economic Conditions", fillcolor="#C6A6F4"];
-// 
+//
 //     EPS -> SP;
 //     IP -> SP;
 //     MS -> SP;
-// 
+//
 //     SP -> TV;
-// 
+//
 //     RC -> EPS;
 //     RC -> IP;
 //     GE -> EPS;
 //     GE -> MS;
-// 
+//
 //     {rank=same; EPS; IP; MS}
 //     {rank=same; RC; GE}
 //     {rank=same; TV}
@@ -638,25 +631,25 @@ For an individual company's stock price:
 Notably, grandparents do not belong to the Markov blanket. This means estimating
 stock price requires only immediate factors (industry performance, earnings,
 sentiment) and their observable effects (volume), not the global factors that
-influence these immediate factors. This principle guides practical stock
-analysis: focus on a company's fundamentals and market perception, not on
-distant macroeconomic causes.
+influence these immediate factors. This principle guides practical stock analysis:
+focus on a company's fundamentals and market perception, not on distant macroeconomic
+causes.
 
 == Specifying Conditional Probabilities
 
 // Slide: Specifying a Conditional Probability Table
 
-A critical practical challenge is specifying #strong[Conditional Probability
-  Tables (CPTs)]. A naive CPT for a node with $k$ parents requires $O(2^k)$
-values, growing exponentially with parent count. Fortunately, many real-world
-relationships exhibit special structure that compresses representation.
+A critical practical challenge is specifying #strong[Conditional Probability Tables
+  (CPTs)]. A naive CPT for a node with $k$ parents requires $O(2^k)$ values, growing
+exponentially with parent count. Fortunately, many real-world relationships exhibit
+special structure that compresses representation.
 
 When nodes have many parents or relationships are complex, exploiting structure
 becomes essential. Several approaches reduce the required number of probability
 values:
 
-1. #strong[Deterministic relationships]: Some nodes are functions of parents
-  without uncertainty.
+1. #strong[Deterministic relationships]: Some nodes are functions of parents without
+  uncertainty.
 2. #strong[Noisy logical relationships]: Probabilistic versions of logical rules
   (e.g., noisy-OR).
 3. #strong[Context-specific independence]: A variable's independence from some
@@ -669,40 +662,38 @@ dependencies.
 
 // Slide: Deterministic Nodes
 
-Some nodes in a Bayesian network are #strong[deterministic], meaning their
-values are completely determined by parents without any uncertainty. Examples
-include:
+Some nodes in a Bayesian network are #strong[deterministic], meaning their values are
+completely determined by parents without any uncertainty. Examples include:
 
 // TODO(ai_gp): Replace Markdown `*Logical relationships*` with `#emph[Logical relationships]` (typst.rules.md:## Typst Vs. Markdown Syntax)
 - *Logical relationships*:
-  $"IsNorthAmerican" = "IsCanadian" or "IsUS" or "IsMexican"$. The child is true
-  if any parent is true.
+  $"IsNorthAmerican" = "IsCanadian" or "IsUS" or "IsMexican"$. The child is true if
+  any parent is true.
 // TODO(ai_gp): Replace Markdown `*Numerical relationships*` with `#emph[Numerical relationships]` (typst.rules.md:## Typst Vs. Markdown Syntax)
 - *Numerical relationships*: $"BestPrice" = min("Price"_1, "Price"_2, ...)$. The
   child is the minimum of parent prices.
 
-Deterministic nodes reduce CPT size to zero (or one entry) and simplify
-inference, making networks more efficient when such relationships exist.
+Deterministic nodes reduce CPT size to zero (or one entry) and simplify inference,
+making networks more efficient when such relationships exist.
 
 === Noisy Logical Relationships
 
 // Slide: Noisy Logic Relationships
 
-#strong[Noisy logical relationships] are probabilistic versions of logical
-rules, useful when causes combine with uncertainty. Consider the classic
-example: Fever might result from Cold, Flu, or Malaria, but not
-deterministically.
+#strong[Noisy logical relationships] are probabilistic versions of logical rules,
+useful when causes combine with uncertainty. Consider the classic example: Fever
+might result from Cold, Flu, or Malaria, but not deterministically.
 
-#strong[Noisy-OR model:] Under assumptions that all causes are listed (with
-optional "leak" node for miscellaneous causes), probabilities of parents are
-independent, we compute:
+#strong[Noisy-OR model:] Under assumptions that all causes are listed (with optional
+"leak" node for miscellaneous causes), probabilities of parents are independent, we
+compute:
 
 $Pr(text("Fever") | text("parents")) = 1 - Pr(text("No Fever") | text("Cold")) times Pr(text("No Fever") | text("Flu")) times Pr(text("No Fever") | text("Malaria"))$
 
 // TODO(ai_gp): Replace Markdown `*all*` with `#emph[all]` (typst.rules.md:## Typst Vs. Markdown Syntax)
-This formulation captures the intuition: fever is absent only if *all* causes
-fail to produce it. With $k$ parents, this reduces specification from $O(2^k)$
-probabilities to $k+1$ parameters (one per cause, plus a base rate).
+This formulation captures the intuition: fever is absent only if *all* causes fail to
+produce it. With $k$ parents, this reduces specification from $O(2^k)$ probabilities
+to $k+1$ parameters (one per cause, plus a base rate).
 
 === Context-Specific Independence
 
@@ -712,48 +703,48 @@ probabilities to $k+1$ parameters (one per cause, plus a base rate).
 independent of some parents depending on values of other parents. Rather than
 specifying uniform CPTs, we condition probabilities on contexts.
 
-#strong[Example—Vehicle Damage:] The probability of damage depends on ruggedness
-and accident occurrence. When an accident occurs, damage is essentially certain
-regardless of ruggedness ($d_(1)$ is high). When no accident occurs, damage
-depends on ruggedness via distribution $d_(2)(text("Ruggedness"))$. This
-context-specific structure dramatically reduces the CPT size compared to a full
-specification, requiring only two conditional distributions instead of
-specifying damage for every combination of ruggedness and accident values.
+#strong[Example—Vehicle Damage:] The probability of damage depends on ruggedness and
+accident occurrence. When an accident occurs, damage is essentially certain
+regardless of ruggedness ($d_(1)$ is high). When no accident occurs, damage depends
+on ruggedness via distribution $d_(2)(text("Ruggedness"))$. This context-specific
+structure dramatically reduces the CPT size compared to a full specification,
+requiring only two conditional distributions instead of specifying damage for every
+combination of ruggedness and accident values.
 
 == Bayesian Networks with Continuous Variables
 
 // Slide: Bayesian Networks with Continuous Variables
 
-Many real-world problems involve continuous quantities (height, temperature,
-income), for which Conditional Probability Tables are inappropriate. The
-Bayesian network framework extends naturally to continuous variables through
-alternative representations:
+Many real-world problems involve continuous quantities (height, temperature, income),
+for which Conditional Probability Tables are inappropriate. The Bayesian network
+framework extends naturally to continuous variables through alternative
+representations:
 
 #strong[Discretization]: Divide continuous ranges into intervals and treat as
 discrete. Simple but suffers from loss of accuracy and requires large CPTs as
 discretization granularity increases.
 
-#strong[Probability density functions]: Represent continuous parents and
-children using families of distributions (e.g., Gaussian). Compact and
-interpretable but requires choosing appropriate distributional families.
+#strong[Probability density functions]: Represent continuous parents and children
+using families of distributions (e.g., Gaussian). Compact and interpretable but
+requires choosing appropriate distributional families.
 
 #strong[Non-parametric PDFs]: Use flexible density representations when standard
 families are inadequate.
 
-#strong[Hybrid networks] combine discrete and continuous variables, essential
-for realistic modeling. Example: number of apples purchased (discrete) depends
-on price (continuous).
+#strong[Hybrid networks] combine discrete and continuous variables, essential for
+realistic modeling. Example: number of apples purchased (discrete) depends on price
+(continuous).
 
 === Car Insurance: Network Structure
 
 // Slide: Bayesian Network: Car Insurance Company (1/2)
 
-A practical application: insurance companies must assess risk and set premiums
-based on applicant and vehicle information. A Bayesian network captures the
-causal structure of insurance risk:
+A practical application: insurance companies must assess risk and set premiums based
+on applicant and vehicle information. A Bayesian network captures the causal
+structure of insurance risk:
 
-#strong[Applicant information]: Age, Years With License, Driving Record, Good
-Student status
+#strong[Applicant information]: Age, Years With License, Driving Record, Good Student
+status
 
 #strong[Vehicle information]: Make/Model, Year, Airbag, Safety Features
 
@@ -767,8 +758,8 @@ features), Driving Behavior (results from skill and personality)
 - Liability Cost: lawsuits from other parties
 - Property Cost: vehicle damage and theft
 
-The network structure reflects causal influences: applicant attributes and
-vehicle characteristics drive accident and theft risk, which translate to costs.
+The network structure reflects causal influences: applicant attributes and vehicle
+characteristics drive accident and theft risk, which translate to costs.
 
 === Car Insurance: Network Visualization
 
@@ -780,9 +771,9 @@ vehicle characteristics drive accident and theft risk, which translate to costs.
 //     splines=true;
 //     nodesep=1.0;
 //     ranksep=0.75;
-// 
+//
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.2];
-// 
+//
 //     Age [fillcolor="#A6C8F4"];
 //     GoodStudent [fillcolor="#A6C8F4"];
 //     YearsLicensed [fillcolor="#A6C8F4"];
@@ -796,7 +787,7 @@ vehicle characteristics drive accident and theft risk, which translate to costs.
 //     AntiTheft [fillcolor="#A6C8F4"];
 //     Garaged [fillcolor="#A6C8F4"];
 //     ExtraCar [fillcolor="#A6C8F4"];
-// 
+//
 //     RiskAversion [fillcolor="#FFD1A6"];
 //     DrivingSkill [fillcolor="#FFD1A6"];
 //     DrivingBehavior [fillcolor="#FFD1A6"];
@@ -807,12 +798,12 @@ vehicle characteristics drive accident and theft risk, which translate to costs.
 //     OtherCost [fillcolor="#FFD1A6"];
 //     Accident [fillcolor="#FFD1A6"];
 //     SocioEcon [fillcolor="#FFD1A6"];
-// 
+//
 //     MedicalCost [fillcolor="#C6A6F4"];
 //     LiabilityCost [fillcolor="#C6A6F4"];
 //     PropertyCost [fillcolor="#C6A6F4"];
 //     OwnCarCost [fillcolor="#C6A6F4"];
-// 
+//
 //     Age -> YearsLicensed;
 //     Age -> DrivingSkill;
 //     Age -> GoodStudent;
@@ -862,10 +853,10 @@ vehicle characteristics drive accident and theft risk, which translate to costs.
 )
 // render_images:end
 
-The network uses color coding: blue nodes are observable applicant/vehicle
-inputs, brown nodes are hidden variables, purple nodes are claim costs. This
-structure enables the insurance company to reason from observable facts to
-unobservable risk factors to financial outcomes.
+The network uses color coding: blue nodes are observable applicant/vehicle inputs,
+brown nodes are hidden variables, purple nodes are claim costs. This structure
+enables the insurance company to reason from observable facts to unobservable risk
+factors to financial outcomes.
 
 #pagebreak()
 
@@ -874,8 +865,7 @@ unobservable risk factors to financial outcomes.
 // Slide: Exact Inference in Bayesian Networks
 
 #strong[Exact inference] computes posterior probabilities $P(X|E=e)$ for query
-variable $X$ given evidence $E=e$, where hidden variables $Y$ may also be
-present.
+variable $X$ given evidence $E=e$, where hidden variables $Y$ may also be present.
 
 The fundamental approach uses the full joint distribution:
 
@@ -884,10 +874,9 @@ $P(X|e) = alpha sum_Y P(X,e,Y)$
 This sums the joint probability over all configurations of hidden variables,
 normalizing by the probability of evidence.
 
-#strong[Variable elimination] improves efficiency by caching intermediate
-results and systematically eliminating variables to avoid redundant computation.
-Irrelevant variables—those not ancestors of query or evidence variables—can be
-ignored entirely.
+#strong[Variable elimination] improves efficiency by caching intermediate results and
+systematically eliminating variables to avoid redundant computation. Irrelevant
+variables—those not ancestors of query or evidence variables—can be ignored entirely.
 
 #strong[Limitations]:
 - Exact inference is efficient (linear time) for tree-structured networks but
@@ -914,9 +903,9 @@ Factoring using the network's conditional probabilities:
 
 $Pr(b | j, m) = alpha sum_e sum_a Pr(b) Pr(e) Pr(a | b, e) Pr(j | a) Pr(m | a)$
 
-This expression shows how the joint probability decomposes. Computing this sum
-yields the posterior probability that a burglary occurred, accounting for all
-possible explanations consistent with the observed evidence.
+This expression shows how the joint probability decomposes. Computing this sum yields
+the posterior probability that a burglary occurred, accounting for all possible
+explanations consistent with the observed evidence.
 
 #pagebreak()
 
@@ -924,16 +913,15 @@ possible explanations consistent with the observed evidence.
 
 // Slide: Monte Carlo Algorithms
 
-When exact inference becomes intractable, #strong[Monte Carlo algorithms]
-provide approximate solutions by generating random samples from the posterior
-distribution. These randomized sampling methods estimate probabilities difficult
-to calculate exactly.
+When exact inference becomes intractable, #strong[Monte Carlo algorithms] provide
+approximate solutions by generating random samples from the posterior distribution.
+These randomized sampling methods estimate probabilities difficult to calculate
+exactly.
 
 #strong[Advantages]:
-- Accuracy improves with sample count; arbitrarily close approximation possible
-  with sufficient samples.
-- Convergence is well-understood; used successfully across science and
-  engineering.
+- Accuracy improves with sample count; arbitrarily close approximation possible with
+  sufficient samples.
+- Convergence is well-understood; used successfully across science and engineering.
 - Flexible, working with general network structures.
 
 #strong[Disadvantages]:
@@ -962,8 +950,8 @@ For #strong[continuous distributions]:
 // TODO(ai_gp): Use Typst syntax for superscripts: replace `F^{-1}` with `F^(-1)` (typst.rules.md:## Formulas)
 - Use inverse transform when CDF is invertible: $x = F^{-1}(r)$.
 // TODO(ai_gp): Use Typst syntax for superscripts: replace `e^{-lambda x}` with `e^(-lambda x)` (typst.rules.md:## Formulas)
-- Example: Exponential distribution with CDF $F(x) = 1 - e^{-lambda x}$ inverts
-  to $x = -1/lambda times ln(1-r)$.
+- Example: Exponential distribution with CDF $F(x) = 1 - e^{-lambda x}$ inverts to
+  $x = -1/lambda times ln(1-r)$.
 - Use numerical methods if closed form is unavailable.
 
 This inverse-transform method is efficient and fundamental to sampling-based
@@ -973,15 +961,14 @@ inference.
 
 // Slide: Sampling Bayesian Network Without Evidence
 
-#strong[Prior sampling] generates independent samples from a Bayesian network's
-prior distribution (without conditioning on evidence).
+#strong[Prior sampling] generates independent samples from a Bayesian network's prior
+distribution (without conditioning on evidence).
 
 // TODO(ai_gp): Convert algorithm from list to `#algorithm(...)` macro (typst.rules.md:# Algorithms and Pseudocode)
 #strong[Algorithm]:
 1. Sample variables in topological order.
 2. Source nodes (roots) sample from unconditional distributions.
-3. Conditional nodes sample using their CPTs, conditioned on sampled parent
-  values.
+3. Conditional nodes sample using their CPTs, conditioned on sampled parent values.
 
 #strong[Example—Garden World]:
 - Sample $"Rain"$ from $Pr("Rain") = 0.5$.
@@ -999,8 +986,8 @@ where "PS" denotes "Prior Sampling."
 
 // Slide: Consistency of Sampling
 
-A key theoretical result: the empirical distribution from prior sampling
-converges to the true distribution as sample count $N -> infinity$.
+A key theoretical result: the empirical distribution from prior sampling converges to
+the true distribution as sample count $N -> infinity$.
 
 If $N_("PS")(x_1,...,x_n)$ is the number of samples matching configuration
 $(x_1,...,x_n)$:
@@ -1012,8 +999,8 @@ This enables probability estimation:
 Pr(x_1,...,x_n) ≈ (N_PS(x_1,...,x_n) / N)
 
 Convergence is guaranteed at rate $O(1\/sqrt(N))$: doubling accuracy requires
-quadrupling samples. This convergence guarantee justifies the use of sampling
-for inference.
+quadrupling samples. This convergence guarantee justifies the use of sampling for
+inference.
 
 === Rejection Sampling
 
@@ -1027,11 +1014,10 @@ prior, then filtering to retained samples matching evidence.
 1. Generate samples from the prior distribution.
 2. Reject samples not matching evidence $E=e$.
 3. Count occurrences of query variable $X=x$ among retained samples.
-4. Estimate
-  $Pr(X=x|E=e) = (\#("samples with " X=x, E=e))/(\#("samples with " E=e))$.
+4. Estimate $Pr(X=x|E=e) = (\#("samples with " X=x, E=e))/(\#("samples with " E=e))$.
 
-#strong[Garden World example]: To estimate $Pr("Rain"|"Sprinkler"="True")$ with
-100 samples:
+#strong[Garden World example]: To estimate $Pr("Rain"|"Sprinkler"="True")$ with 100
+samples:
 - 73 samples have $"Sprinkler"="False"$ → rejected.
 - 27 samples have $"Sprinkler"="True"$ → retained.
 - Among retained: 8 have $"Rain"$, 19 have $"neg""Rain"$.
@@ -1040,9 +1026,8 @@ prior, then filtering to retained samples matching evidence.
 #strong[Advantages]: Simple to implement; consistent estimates.
 
 #strong[Disadvantages]: Many samples rejected if evidence is rare; rejection
-probability grows exponentially with evidence variables (curse of
-dimensionality). Impractical for high-dimensional evidence or continuous
-variables.
+probability grows exponentially with evidence variables (curse of dimensionality).
+Impractical for high-dimensional evidence or continuous variables.
 
 === Importance Sampling
 
@@ -1075,17 +1060,16 @@ samples are focused on relevant regions.
 
 // Slide: Markov Chain Monte Carlo
 
-MCMC ranks among the top 10 most influential algorithms in history, developed
-during the Manhattan Project (1940s) by Ulam, von Neumann, Metropolis, and
-others for solving high-dimensional integration problems in physics.
+MCMC ranks among the top 10 most influential algorithms in history, developed during
+the Manhattan Project (1940s) by Ulam, von Neumann, Metropolis, and others for
+solving high-dimensional integration problems in physics.
 
-#strong[Key insight]: Connect two distinct mathematical objects—Markov chains
-and Bayesian networks—to enable powerful approximate inference.
+#strong[Key insight]: Connect two distinct mathematical objects—Markov chains and
+Bayesian networks—to enable powerful approximate inference.
 
-Unlike rejection and importance sampling, which generate independent samples,
-MCMC builds a sequence of samples where each depends on the previous. The chain
-is constructed to have a #strong[stationary distribution] equal to the target
-posterior.
+Unlike rejection and importance sampling, which generate independent samples, MCMC
+builds a sequence of samples where each depends on the previous. The chain is
+constructed to have a #strong[stationary distribution] equal to the target posterior.
 
 Under conditions of ergodicity (chain can reach any state) and aperiodicity (no
 cycles), the chain's distribution converges to the posterior distribution
@@ -1096,8 +1080,8 @@ $Pr(X|"mathbf"{e})$.
 
 // Slide: Markov Chain Construction
 
-A #strong[Markov chain] is a random walk through state space where the future
-depends only on the present:
+A #strong[Markov chain] is a random walk through state space where the future depends
+only on the present:
 
 // TODO(ai_gp): Use Typst syntax for superscripts: replace `x^{(0)}, x^{(1)}, x^{(2)}` with `x^((0)), x^((1)), x^((2))` (typst.rules.md:## Formulas)
 - Sequence of states: $x^{(0)}, x^{(1)}, x^{(2)}, ...$
@@ -1108,12 +1092,11 @@ depends only on the present:
 
 Two main transition operators:
 
-#strong[Gibbs sampling]: Resample one variable given its Markov blanket (all
-parents, children, and spouses). Simple and local.
+#strong[Gibbs sampling]: Resample one variable given its Markov blanket (all parents,
+children, and spouses). Simple and local.
 
-#strong[Metropolis–Hastings]: Propose a new state from a proposal distribution,
-then accept/reject based on probability ratio. Flexible; works with any
-proposal.
+#strong[Metropolis–Hastings]: Propose a new state from a proposal distribution, then
+accept/reject based on probability ratio. Flexible; works with any proposal.
 
 #strong[Magic]: Under appropriate conditions, these chains have stationary
 distribution equal to the posterior—samples after burn-in approximate the true
@@ -1123,8 +1106,8 @@ posterior.
 
 // Slide: Markov Chain Monte Carlo: Mixing
 
-#strong[Mixing] describes how quickly a chain forgets its initial state and
-explores the entire distribution.
+#strong[Mixing] describes how quickly a chain forgets its initial state and explores
+the entire distribution.
 
 A #strong[well-mixed chain]:
 - Moves between high-probability regions frequently.
@@ -1137,15 +1120,14 @@ A #strong[well-mixed chain]:
 - Leads to biased estimates and high variance.
 
 In practice:
-- Discard initial samples as a #strong[burn-in period] before the chain
-  converges.
+- Discard initial samples as a #strong[burn-in period] before the chain converges.
 - After convergence, collected samples approximate the true posterior.
-- Monitor mixing diagnostics (autocorrelation, potential scale reduction) to
-  ensure adequate sampling.
+- Monitor mixing diagnostics (autocorrelation, potential scale reduction) to ensure
+  adequate sampling.
 
-#strong[Example]: For a bimodal distribution, poor mixing means the chain stays
-in one peak, missing the second mode. Good mixing jumps between peaks,
-reflecting the true posterior.
+#strong[Example]: For a bimodal distribution, poor mixing means the chain stays in
+one peak, missing the second mode. Good mixing jumps between peaks, reflecting the
+true posterior.
 
 === Gibbs Sampling
 
@@ -1164,8 +1146,7 @@ time, given all others.
 
 #strong[Example—Weather network]:
 - Fix evidence: $"WetGrass"="true"$, $"Sprinkler"="true"$.
-- Repeatedly sample $"Cloudy"$ from
-  $Pr("Cloudy"|"Sprinkler", "Rain", "WetGrass")$.
+- Repeatedly sample $"Cloudy"$ from $Pr("Cloudy"|"Sprinkler", "Rain", "WetGrass")$.
 - Then sample $"Rain"$ from $Pr("Rain"|"Cloudy", "Sprinkler", "WetGrass")$.
 - Continue iterating.
 

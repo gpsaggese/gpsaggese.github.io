@@ -6,5 +6,7 @@
 FILES=$(ls msml610/lectures_source/*.smd | xargs)
 gen_slides.py -f "$FILES" --action release --notes_to_pdf_args="--skip_action open_pdf"
 
+lint_text.py --files "$(ls msml610/book/Lesson*.typ | xargs)"
+
 FILES=$(ls msml610/book/*.typ | xargs)
 render_book_chapter.py -f "$FILES" --action release --run_typst_args="--skip_action open_pdf"
