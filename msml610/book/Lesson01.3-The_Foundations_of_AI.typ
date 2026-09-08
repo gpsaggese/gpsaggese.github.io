@@ -993,9 +993,9 @@ support interactions at scale.
 #figure(
   image(
     "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.6.png",
-    width: 42%,
+    width: 75%,
   ),
-  caption: [Diagram relating Natural Language, Computational Linguistics, Knowledge Representation and Machine Translation],
+  caption: [Natural language understanding requires computational linguistics and knowledge representation.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,

@@ -113,10 +113,11 @@ an appropriate algorithm.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.1.png",
     width: 80%,
   ),
+  caption: [Diagram relating learning paradigms, label availability and interactive/sequential.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-) <fig:machinelearningparadigmsataxonomy caption=Diagram relating Learning>
+) <fig:machinelearningparadigmsataxonomy>
 // render_images:end
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:53 '* Machine Learning Paradigms: Examples (1/3)'
@@ -503,10 +504,11 @@ or tuning parameters).
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.3.png",
     width: 70%,
   ),
+  caption: [Diagram illustrating the machine learning workflow: from question to evaluation.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-) <fig:machinelearningflow22 caption=Diagram illustrating Machine Learning>
+) <fig:machinelearningflow22>
 // render_images:end
 
 Not all phases in the machine learning workflow carry equal weight. A useful
@@ -694,10 +696,11 @@ application.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.4.png",
     width: 70%,
   ),
+  caption: [Tradeoffs between accuracy, interpretability, simplicity, speed and scalability.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-) <fig:whatmakesagoodmodel caption=Diagram relating Accurate, Interpretable,>
+) <fig:whatmakesagoodmodel>
 // render_images:end
 
 #strong[Simplicity] makes a model easier to implement, maintain, and debug.
@@ -838,10 +841,11 @@ every stage is therefore critical.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.5.png",
     width: 70%,
   ),
+  caption: [Four-stage OCR pipeline: text detection, character segmentation, classification and spelling correction.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-) <fig:exampleofphotoocrsystem caption=Diagram relating Input image, Text>
+) <fig:exampleofphotoocrsystem>
 // render_images:end
 
 @fig:exampleofphotoocrsystem illustrates how these four stages connect, showing

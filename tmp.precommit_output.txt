@@ -1,2 +1,0 @@
-Pre-commit checks:
-All checks passed ✅
