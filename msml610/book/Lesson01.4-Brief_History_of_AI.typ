@@ -30,7 +30,7 @@ the rise of probabilistic methods and machine learning, and the reunification of
 research around data-driven approaches. Finally, we survey modern AI achievements from
 2001 to the present, including deep learning breakthroughs, current capabilities across
 robotics, game playing, and language understanding, and conclude with reflections on
-future risks, benefits, and open questions surrounding artificial general intelligence.
+future risks, benefits, and open questions surrounding #emph[artificial general intelligence].
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:11 '# Brief History of AI'
 // Slide: Brief History of AI
@@ -238,7 +238,7 @@ Alan Turing, a pivotal figure in the history of artificial intelligence, made
 significant contributions between 1947 and 1950. In 1947, he introduced ideas
 related to machine learning and reinforcement learning, laying the groundwork
 for future developments in these fields. By 1950, Turing had proposed the famous
-Turing test #cite("turing1950computing"), a criterion for determining whether a
+#strong[Turing test] #cite("turing1950computing"), a criterion for determining whether a
 machine exhibits human-like intelligence. Turing envisioned creating human-level
 AI by developing sophisticated learning algorithms and teaching machines in a
 manner akin to how children learn.
@@ -247,8 +247,8 @@ The birth of AI as a formal field can be traced back to 1956 when John McCarthy
 organized the first AI workshop #cite("mccarthy1955dartmouth"). This event
 marked a significant milestone in AI history, bringing together researchers to
 explore the potential of machines to perform tasks that require human-like
-intelligence. Around the same time, Newell and Simon developed the Logic
-Theorist, a program designed to "think non-numerically" and prove theorems,
+intelligence. Around the same time, Newell and Simon developed the
+#strong[Logic Theorist], a program designed to "think non-numerically" and prove theorems,
 showcasing the potential of AI to tackle complex problems beyond mere numerical
 calculations.
 
@@ -297,7 +297,7 @@ In 1958, the programming language #strong[Lisp] was introduced. It became a
 high-level language extensively used in AI research for the next three decades,
 owing to its powerful features suited for symbolic computation.
 
-The first neural network was developed by Marvin Minsky in 1951, utilizing 3,000
+The #emph[first neural network] was developed by Marvin Minsky in 1951, utilizing 3,000
 vacuum tubes to simulate 40 neurons. This pioneering work laid the foundation
 for future advancements in neural network research.
 
@@ -380,7 +380,7 @@ ultimately failed to meet expectations. This shortfall can be attributed to
 several factors. First, the construction and upkeep of expert systems proved to
 be a challenging task. These systems relied on predefined rules and logic, which
 made them rigid and difficult to modify or expand. Additionally, the reasoning
-methods employed by expert systems often overlooked the inherent uncertainty
+methods employed by expert systems often overlooked the #emph[inherent uncertainty]
 present in real-world scenarios. This limitation meant that these systems
 struggled to make decisions when faced with ambiguous or incomplete information.
 
@@ -425,7 +425,7 @@ and manipulation of symbols.
 
 The connectionist approach is favored in many applications because it excels in
 situations where concepts are not easily defined using symbolic axioms. Neural
-networks can form fluid internal concepts that better represent the complexity
+networks can form #emph[fluid internal concepts] that better represent the complexity
 of the real world. This ability to learn from examples is particularly
 advantageous in fields like image recognition, where neural networks can
 identify objects by learning from labeled images. This learning process allows
@@ -451,7 +451,7 @@ AI has undergone a significant transformation over the years. Initially, the
 focus was on boolean logic, but it has since shifted towards probability-based
 approaches. Similarly, the reliance on hand-coded rules has been replaced by
 machine learning techniques. This evolution reflects a broader transition from
-a-priori reasoning to a reliance on experimental results to drive advancements
+#emph[a-priori reasoning] to a reliance on experimental results to drive advancements
 in AI.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:377 '* Speech Recognition: From Rules to Statistics'
@@ -469,8 +469,8 @@ of the speech recognizer goes up" (Jelinek, 1988). This remark underscores the
 limitations of relying heavily on handcrafted rules, suggesting that removing
 human-crafted elements sometimes led to better system performance.
 
-The 1980s marked a significant shift with the introduction of Hidden Markov
-Models (HMMs), as detailed by Rabiner in 1989 #cite("rabiner1989hmm"). HMMs were
+The 1980s marked a significant shift with the introduction of
+#strong[Hidden Markov Models] (HMMs), as detailed by Rabiner in 1989 #cite("rabiner1989hmm"). HMMs were
 trained on large speech corpora, which allowed them to learn patterns and
 structures in data more effectively than the rule-based systems of the previous
 decade. One of the key advantages of HMMs was their effective learning
@@ -479,7 +479,7 @@ attributes made HMMs the dominant approach in speech recognition and other areas
 of AI during this period.
 
 The evolution of AI methodologies is encapsulated in what Sutton referred to as
-"The bitter lesson" in 2019 #cite("sutton2019bitterlesson"). This lesson
+"#strong[The bitter lesson]" in 2019 #cite("sutton2019bitterlesson"). This lesson
 emphasizes that general methods, when combined with large amounts of data, tend
 to outperform systems that rely on handcrafted solutions. The insight here is
 that the scalability and adaptability of general methods make them more
@@ -490,7 +490,7 @@ performance without the need for extensive manual intervention.
 // Slide: Bayesian Networks (1988-)
 == Bayesian Networks (1988-)
 
-Bayesian networks, as introduced by Judea Pearl in 1988 #cite(
+#strong[Bayesian networks], as introduced by Judea Pearl in 1988 #cite(
   "pearl1988probabilistic",
 ), are a fundamental concept in artificial intelligence. They establish a
 connection between AI and several key areas: probability, decision theory, and
@@ -626,7 +626,7 @@ choice of algorithm.
 
 To effectively utilize these vast datasets, there has been a parallel
 development of algorithms and infrastructure designed to handle and process
-large amounts of data efficiently. Technologies such as map-reduce and cloud
+large amounts of data efficiently. Technologies such as #emph[map-reduce] and cloud
 computing have emerged as essential tools in this context. These technologies
 enable the processing of large datasets by distributing the computational load
 across multiple machines, thus making it feasible to analyze and extract
@@ -670,7 +670,7 @@ amounts of information to outperform human experts in specific tasks.
 // Slide: Deep Learning (2011-Present)
 == Deep Learning (2011-Present)
 
-Deep learning refers to machine learning models that consist of multiple layers
+#strong[Deep learning] refers to machine learning models that consist of multiple layers
 of computing elements, allowing them to learn complex patterns in data. Although
 the foundational ideas of deep learning have been around since the 1970s, they
 were largely forgotten until their resurgence in the 1990s, when they achieved
@@ -751,7 +751,7 @@ classification performance.
 ) <fig:deeplearning2011present>
 // render_images:end
 
-The field experienced its "ImageNet moment" in 2012 when a deep learning system
+The field experienced its "#emph[ImageNet moment]" in 2012 when a deep learning system
 demonstrated a dramatic improvement in the `ImageNet` competition #cite(
   "krizhevsky2012alexnet",
 ). This breakthrough eclipsed systems that relied on handcrafted features and
@@ -914,7 +914,7 @@ Lee Sedol, one of the world's top Go players. This victory was a testament to
 the power of deep learning and reinforcement learning techniques in mastering
 games with vast possibilities and strategic depth #cite("silver2016alphago").
 Building on this success, AlphaZero emerged in 2018, reaching superhuman levels
-in both Go and chess by learning solely through self-play and the basic rules of
+in both Go and chess by learning solely through #emph[self-play] and the basic rules of
 the games #cite("silver2018alphazero"). Beyond traditional board games, AI has
 also surpassed human performance in various video games, including Dota 2,
 StarCraft, and Quake, demonstrating its versatility and adaptability across
@@ -951,7 +951,7 @@ range of tasks, akin to human intelligence.
 )[
   As @fig:deepblue illustrates, Deep Blue's victory in 1997 was a pivotal moment
   in AI history. Built by IBM specifically to play chess, it relied on
-  brute-force search evaluating roughly 200 million positions per second,
+  #emph[brute-force search] evaluating roughly 200 million positions per second,
   rather than the learned, general-purpose techniques that would define later
   game-playing systems.
 ]
@@ -973,7 +973,7 @@ range of tasks, akin to human intelligence.
   Similarly, @fig:alphagorack shows the technological infrastructure behind
   AlphaGo's success in 2016, underscoring the computational power required for
   such achievements. Unlike Deep Blue's brute-force search, AlphaGo combined
-  deep neural networks with Monte Carlo tree search, trained first on human
+  deep neural networks with #emph[Monte Carlo tree search], trained first on human
   games and then refined through self-play.
 ]
 
@@ -1026,7 +1026,7 @@ intelligence could be the key to addressing a wide range of global challenges.
   column-gutter: 1em,
   columns: (1fr, 30%),
 )[
-  As @fig:friendlyai illustrates, the concept of "Friendly AI" emphasizes the
+  As @fig:friendlyai illustrates, the concept of "#emph[Friendly AI]" emphasizes the
   potential for artificial intelligence to benefit humanity. The benefits of AI
   and robotics are numerous. They have the potential to liberate humanity from
   mundane tasks, allowing people to focus on more meaningful pursuits.
@@ -1114,7 +1114,7 @@ cat-and-mouse game between cybersecurity experts and malicious actors.
 )[
   Meanwhile, @fig:misinformation highlights the pervasive issue of
   misinformation, exacerbated by AI's ability to tailor and spread content
-  rapidly across digital platforms. Generative models now make it cheap to
+  rapidly across digital platforms. #emph[Generative models] now make it cheap to
   produce convincing fake text, images, and video at scale, further blurring
   the line between authentic and fabricated content.
 ]
@@ -1219,7 +1219,7 @@ In contrast, more robust solutions involve embedding purpose into AI systems,
 even when objectives are not entirely clear. One approach is to incentivize AI
 systems to shut down if they are uncertain about human objectives. This ensures
 that AI systems remain aligned with human values and intentions. Another
-promising solution is Cooperative Inverse Reinforcement Learning (CIRL), where
+promising solution is #strong[Cooperative Inverse Reinforcement Learning] (CIRL), where
 AI observes human behavior to infer the reward function #cite(
   "hadfieldmenell2016cirl",
 ). This method allows AI to learn and adapt to human preferences, promoting
@@ -1327,8 +1327,8 @@ and their companies rather than addressing the core issues.
 The history of artificial intelligence is marked by cycles of enthusiasm, disillusionment,
 and renewal. The field began with revolutionary breakthroughs in the 1950s (the McCulloch-Pitts
 neuron, Turing's test, the Dartmouth Workshop), followed by exuberant early successes that
-promised rapid progress. Yet by the late 1960s, fundamental challenges emerged: combinatorial
-explosion, the brittleness of symbolic reasoning, and the lack of sufficient data and computing
+promised rapid progress. Yet by the late 1960s, fundamental challenges emerged: #emph[combinatorial
+explosion], the brittleness of symbolic reasoning, and the lack of sufficient data and computing
 power. These challenges led to the first AI winter (1975–1980), from which the field recovered
 with expert systems—only to face disillusionment again as those systems proved too rigid and
 brittle.
@@ -1337,12 +1337,12 @@ The true inflection point came in the 1980s and beyond, with the return of neura
 the embrace of probabilistic and statistical methods, and a shift in focus from hand-crafted
 rules to learning from data. This statistical turn unified the field around the principle that
 large datasets combined with scalable algorithms outperform human expertise encoded as rules—
-a lesson now known as "the bitter lesson." The availability of web-scale data, GPU acceleration,
+a lesson now known as "#emph[the bitter lesson]." The availability of web-scale data, GPU acceleration,
 and the deep learning revolution (highlighted by ImageNet 2012) catapulted AI into the modern era.
 
 Today, AI systems exceed human performance on many narrow tasks: game-playing, image recognition,
-speech understanding, machine translation, and medical diagnosis. Yet the path to artificial general
-intelligence remains unclear, and significant challenges persist: alignment with human values, robustness,
+speech understanding, machine translation, and medical diagnosis. Yet the path to #emph[artificial general
+intelligence] remains unclear, and significant challenges persist: alignment with human values, robustness,
 transfer learning, fairness, and safety in critical applications. As we advance, the dual nature of AI—
 its potential to solve humanity's greatest challenges alongside its risks if misaligned or misused—demands
 careful, thoughtful stewardship.

@@ -718,7 +718,7 @@ description-logic notation this is written as $"Cat" subset.eq "Mammal"$, a
 subsumption axiom asserting that the class Cat is a subclass of Mammal. A reasoner
 can then automatically infer that any individual classified as a Cat must also be a
 Mammal, without that fact being stated explicitly. This kind of automated inference
-powers practical applications ranging from semantic search engines that understand
+powers practical applications ranging from #emph[semantic search] engines that understand
 query intent rather than just matching keywords, to biomedical data integration
 platforms where ontologies like SNOMED CT and the Gene Ontology let researchers query
 across heterogeneous datasets using shared formal vocabularies.
@@ -1227,7 +1227,7 @@ The edges connecting synsets encode several types of semantic relations:
 ) <fig:wordnet>
 
 These structured relationships make WordNet useful across a range of NLP tasks. In
-word sense disambiguation, the synset structure helps determine which meaning of a
+#emph[word sense disambiguation], the synset structure helps determine which meaning of a
 polysemous word is intended in a given context. Semantic similarity measures can be
 computed by traversing the graph and measuring path length or shared ancestors
 between synsets. WordNet also serves as a backbone for information retrieval and
@@ -1298,8 +1298,8 @@ structured knowledge that machines can traverse and reason over.
 
 Knowledge graphs support expressive information retrieval through query languages
 like SPARQL, which lets users pose complex questions that span multiple hops across
-the graph. Beyond simple lookup, they enable reasoning through path traversal
-(following chains of edges to discover implicit connections) and schema inference
+the graph. Beyond simple lookup, they enable reasoning through #strong[path traversal]
+(following chains of edges to discover implicit connections) and #strong[schema inference]
 (deriving new facts from the types and constraints declared in the graph's ontology).
 
 These capabilities make knowledge graphs a foundational component in several

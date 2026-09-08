@@ -31,7 +31,7 @@ assumptions, and situate ML within the nested hierarchies of AI, deep learning,
 and large language models. Finally, we acknowledge where current machine learning
 systems still fall short compared to human intelligence: their fragility,
 inability to transfer knowledge across domains, data inefficiency, and lack of
-common-sense reasoning.
+#emph[common-sense reasoning].
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:12 '# What Is AI?'
 // Slide: What Is AI?
@@ -123,7 +123,7 @@ or even surpass that extraordinary capability in a machine.
   can perceive, reason, and act forces researchers to make their theories of
   cognition precise enough to implement. As @fig:richardfeynman reminds us,
   Richard Feynman captured this idea succinctly: "What I cannot create, I do not
-  understand." The act of engineering intelligence is itself a path to
+  understand." The act of #emph[engineering intelligence] is itself a path to
   understanding it.
 
   What makes AI unique among engineering disciplines is the breadth of its
@@ -142,7 +142,7 @@ distinguishes it from fields that possess settled core theories: arithmetic
 rests on axioms that have been stable for millennia, and Newtonian mechanics
 delivers reliable predictions within its domain. AI has no comparable consensus
 on its foundational questions: What is the right representation of knowledge?
-How should an agent balance exploration and exploitation? What does it even mean
+How should an agent balance #emph[exploration and exploitation]? What does it even mean
 for a machine to "understand"? These open questions are not signs of immaturity
 so much as reflections of the extraordinary difficulty of the problem.
 Intelligence, after all, is the most complex phenomenon we have ever tried to
@@ -213,7 +213,7 @@ whose internal reasoning processes mirror those of the human mind, not merely
 models that produce the same outputs.
 
 Expressing such a theory as a computer program carries a genuine advantage: it
-forces precision. A verbal theory of cognition can hide ambiguities behind
+forces precision. A #emph[verbal theory of cognition] can hide ambiguities behind
 natural language, but a running program must commit to every detail: how
 memories are retrieved, how analogies are drawn, how conflicting evidence is
 weighed. If the program behaves like a human subject in controlled experiments,
@@ -287,7 +287,7 @@ Nothing false sneaks in along the way.
     "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.1.png",
     width: 100%,
   ),
-  caption: [Diagram relating correct premises, logic and correct conclusions.],
+  caption: [Diagram relating Correct premises, Logic and Correct conclusions],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -350,7 +350,7 @@ answers in reasonable time.
 Finally, intelligence requires more than rational thinking in isolation. An
 agent must #emph[interact with the world]: perceive its environment, take
 physical or communicative actions, and cope with the consequences. This is the
-problem of the embodiment of AI: the recognition that reasoning in a vacuum, no
+problem of the #emph[embodiment of AI]: the recognition that reasoning in a vacuum, no
 matter how logically impeccable, falls short of what we mean by intelligent
 behavior. A chess engine that cannot parse a spoken question or pick up a piece
 is intelligent only in the narrowest sense.
@@ -487,8 +487,8 @@ fundamental than thinking, because #strong[acting rationally] is a broader
 objective: it subsumes correct reasoning as a special case but also covers
 situations where an agent must act under uncertainty or time pressure without
 the luxury of deliberate thought. Rationality, in turn, is more objective than
-human-likeness: it can be defined mathematically through expected-utility
-maximization or similar formal criteria, whereas human behavior is shaped by
+human-likeness: it can be defined mathematically through #emph[expected-utility
+maximization] or similar formal criteria, whereas human behavior is shaped by
 evolutionary pressures, cognitive biases, and cultural context that are
 difficult to pin down as a stable benchmark.
 
@@ -549,7 +549,7 @@ These everyday examples already hint at deeper difficulties, but the stakes
 sharpen considerably when we move to autonomous systems. A recurring challenge
 in self-driving car design captures this vividly: should a car swerve and hit a
 pedestrian to avoid a frontal crash that would kill two occupants? Any answer
-forces a choice among competing moral frameworks: utilitarian body counts,
+forces a choice among #emph[competing moral frameworks]: utilitarian body counts,
 deontological duties not to use a bystander as a means, legal liability, public
 trust. No single definition of "the right thing" resolves them all. For an AI
 agent, these are not philosophical thought experiments; they are engineering
@@ -613,7 +613,7 @@ One of the earliest and most widely cited characterizations comes from Arthur
 Samuel, who in 1959 described machine learning as "the field of study that gives
 computers the ability to learn without being explicitly programmed" #cite(
   "samuel1959checkers",
-). The key insight here is the phrase "without being explicitly programmed":
+). The key insight here is the phrase "#emph[without being explicitly programmed]":
 rather than writing out every rule a system should follow, we instead provide it
 with data and let it discover patterns on its own. Samuel's own work
 demonstrated this concretely: he built a checkers-playing program that improved
@@ -640,7 +640,7 @@ experience.
   testable. In his 1997 formulation, "a computer program is said to learn from
   experience $E$ with respect to some task $T$ and some performance measure $P$,
   if $P(T)$ improves with experience $E$" #cite("mitchell1997machinelearning").
-  This definition is valuable because it gives us three concrete knobs to
+  This definition is valuable because it gives us #emph[three concrete knobs] to
   specify for any learning problem: what the task is, what counts as doing well
   at it, and what kind of experience the system trains on. For Samuel's checkers
   program, the task $T$ is playing checkers, the performance measure $P$ is the
@@ -749,7 +749,7 @@ their decision logic.
     "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.2.png",
     width: 100%,
   ),
-  caption: [Diagram illustrating AI vs ML vs deep learning.],
+  caption: [Diagram illustrating AI vs ML vs Deep Learning],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,

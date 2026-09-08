@@ -29,26 +29,43 @@ This script:
 
 - Release the slides PDF already built for msml610 lesson 08.1, i.e., copy
   it from `msml610/lectures_pdf.tmp/` to `msml610/lectures_pdf/` and
-  compress it:
+  compress it (without rebuilding it):
+> gen_slides.py -i msml610/08.1 --only_action release
+
+- Generate and release the slides PDF in a single command:
 > gen_slides.py -i msml610/08.1 --action release
 
 - Generate the slides PDFs for multiple lessons in one run:
 > gen_slides.py --files "msml610/08.1 msml610/08.2"
+
+- Generate the slides PDFs for many lessons, continuing past any failures and
+  printing a summary of what failed at the end:
+> gen_slides.py --files "msml610/08.1 msml610/08.2 msml610/09.1" \
+      --no_abort_on_error
 """
 
 import argparse
 import logging
 import shlex
 import shutil
+from typing import List
 
 import class_scripts.common_utils as csccouti
 import helpers.hdbg as hdbg
 import helpers.hgit as hgit
 import helpers.hparser as hparser
 import helpers.hprint as hprint
+import helpers.hselect_action as hselacti
 import helpers.hsystem as hsystem
 
 _LOG = logging.getLogger(__name__)
+
+# `generate` must run before `release`: `hselacti.select_actions()` reorders
+# whatever the user passes to match this order, so a single
+# `--action release` (which adds to the `generate` default) always builds
+# before releasing.
+_VALID_ACTIONS = ["generate", "release"]
+_DEFAULT_ACTIONS = ["generate"]
 
 # #############################################################################
 
@@ -79,15 +96,7 @@ def _parse() -> argparse.ArgumentParser:
         action="store_true",
         help="Watch input file for changes and regenerate PDF on change",
     )
-    parser.add_argument(
-        "--action",
-        action="store",
-        default="generate",
-        choices=["generate", "release"],
-        help="'generate' builds the slides PDF in the staging dir "
-        "lectures_pdf.tmp (default); 'release' copies the built PDF from "
-        "lectures_pdf.tmp to lectures_pdf",
-    )
+    hselacti.add_action_arg(parser, _VALID_ACTIONS, _DEFAULT_ACTIONS)
     parser.add_argument(
         "--slides_engine",
         action="store",
@@ -99,6 +108,13 @@ def _parse() -> argparse.ArgumentParser:
         "--dry_run",
         action="store_true",
         help="Print the commands that would be executed without running them",
+    )
+    parser.add_argument(
+        "--no_abort_on_error",
+        action="store_true",
+        help="Continue processing the remaining targets if one fails "
+        "(instead of aborting on the first failure) and print a summary of "
+        "the failed targets at the end",
     )
     parser.add_argument(
         "--notes_to_pdf_args",
@@ -163,33 +179,18 @@ def _release(dir_arg: str, dst_name: str, log_level: str) -> None:
     _compress_pdf(dst_file, log_level)
 
 
-def _process_lesson_spec(input_spec: str, args: argparse.Namespace) -> None:
+def _generate(
+    dir_arg: str, src_name: str, dst_name: str, args: argparse.Namespace
+) -> None:
     """
-    Generate (or release) the slides PDF for a single lecture specification.
+    Build the slides PDF in the staging dir via `notes_to_pdf.py`.
 
-    :param input_spec: lecture specification, e.g. 'msml610/08.1' or a
-        lecture source file path
+    :param dir_arg: course directory, e.g. "msml610"
+    :param src_name: lecture source file name, e.g.
+        "Lesson08.1-Causal_AI_intro.smd"
+    :param dst_name: PDF file name, e.g. "Lesson08.1-Causal_AI_intro.pdf"
     :param args: parsed command-line arguments
     """
-    dir_arg, lesson_arg = csccouti.parse_lesson_spec(input_spec)
-    csccouti.validate_dir_lesson_args(dir_arg, lesson_arg)
-    # Get source and destination names.
-    src_name = csccouti.get_source_name(dir_arg, lesson_arg)
-    dst_name = csccouti.get_output_name(src_name, ".pdf")
-    if args.action == "release":
-        if args.dry_run:
-            src_file = f"{dir_arg}/lectures_pdf.tmp/{dst_name}"
-            dst_file = f"{dir_arg}/lectures_pdf/{dst_name}"
-            _LOG.info(
-                "%s",
-                hprint.color_highlight(
-                    f"[dry run] Would release: {src_file} -> {dst_file}",
-                    "green",
-                ),
-            )
-            return
-        _release(dir_arg, dst_name, args.log_level)
-        return
     # Build paths.
     input_file = f"{dir_arg}/lectures_source/{src_name}"
     output_file = f"{dir_arg}/lectures_pdf.tmp/{dst_name}"
@@ -246,9 +247,66 @@ def _process_lesson_spec(input_spec: str, args: argparse.Namespace) -> None:
     hsystem.system(cmd, suppress_output=False)
 
 
+def _process_lesson_spec(
+    input_spec: str, args: argparse.Namespace, actions: List[str]
+) -> None:
+    """
+    Generate and/or release the slides PDF for a single lecture
+    specification.
+
+    :param input_spec: lecture specification, e.g. 'msml610/08.1' or a
+        lecture source file path
+    :param args: parsed command-line arguments
+    :param actions: actions to execute, e.g. ["generate"], ["release"], or
+        ["generate", "release"]
+    """
+    dir_arg, lesson_arg = csccouti.parse_lesson_spec(input_spec)
+    csccouti.validate_dir_lesson_args(dir_arg, lesson_arg)
+    # Get source and destination names.
+    src_name = csccouti.get_source_name(dir_arg, lesson_arg)
+    dst_name = csccouti.get_output_name(src_name, ".pdf")
+    # `generate` always runs before `release` since `actions` is already
+    # ordered to match `_VALID_ACTIONS`.
+    remaining_actions = list(actions)
+    to_execute, remaining_actions = hselacti.mark_action(
+        "generate", remaining_actions
+    )
+    if to_execute:
+        # `_generate()` handles `args.dry_run` itself, since it needs to
+        # print the exact `notes_to_pdf.py` command it would run.
+        _generate(dir_arg, src_name, dst_name, args)
+    to_execute, remaining_actions = hselacti.mark_action(
+        "release", remaining_actions
+    )
+    if to_execute:
+        if args.dry_run:
+            src_file = f"{dir_arg}/lectures_pdf.tmp/{dst_name}"
+            dst_file = f"{dir_arg}/lectures_pdf/{dst_name}"
+            _LOG.info(
+                "%s",
+                hprint.color_highlight(
+                    f"[dry run] Would release: {src_file} -> {dst_file}",
+                    "green",
+                ),
+            )
+        else:
+            _release(dir_arg, dst_name, args.log_level)
+    hdbg.dassert_eq(
+        len(remaining_actions or []),
+        0,
+        "There are unprocessed actions: %s",
+        remaining_actions,
+    )
+
+
 def _main(parser: argparse.ArgumentParser) -> None:
     args = parser.parse_args()
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
+    actions = hselacti.select_actions(args, _VALID_ACTIONS, _DEFAULT_ACTIONS)
+    _LOG.info(
+        "%s",
+        hselacti.actions_to_string(actions, _VALID_ACTIONS, add_frame=True),
+    )
     input_specs = args.files.split() if args.files else [args.input]
     if args.daemon:
         hdbg.dassert_eq(
@@ -257,8 +315,17 @@ def _main(parser: argparse.ArgumentParser) -> None:
             "`--daemon` only supports a single lecture, got: %s",
             input_specs,
         )
-    for input_spec in input_specs:
-        _process_lesson_spec(input_spec, args)
+        hdbg.dassert_eq(
+            actions,
+            ["generate"],
+            "`--daemon` only supports the 'generate' action, got: %s",
+            actions,
+        )
+    csccouti.process_targets(
+        input_specs,
+        lambda input_spec: _process_lesson_spec(input_spec, args, actions),
+        no_abort_on_error=args.no_abort_on_error,
+    )
 
 
 if __name__ == "__main__":

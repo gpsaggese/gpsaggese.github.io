@@ -22,7 +22,7 @@
 
 = Roadmap
 
-This chapter introduces the foundational learning paradigms that organize machine learning problem formulations. It covers the taxonomy of learning approaches (supervised, unsupervised, semi-supervised, self-supervised, reinforcement, active, and more), explains the machine learning workflow from question formulation through evaluation, and examines how practical ML systems are structured as pipelines where component errors compound. Understanding these paradigms is essential for framing problems appropriately and choosing suitable algorithms.
+This chapter introduces the foundational learning paradigms that organize machine learning problem formulations. It covers the #emph[taxonomy] of learning approaches (supervised, unsupervised, semi-supervised, self-supervised, reinforcement, active, and more), explains the machine learning workflow from question formulation through evaluation, and examines how practical ML systems are structured as #emph[pipelines] where component errors compound. Understanding these paradigms is essential for framing problems appropriately and choosing suitable algorithms.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:7 '# Machine Learning Paradigms'
 // Slide: Machine Learning Paradigms
@@ -113,11 +113,10 @@ an appropriate algorithm.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.1.png",
     width: 80%,
   ),
-  caption: [Diagram relating learning paradigms, label availability and interactive/sequential.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-) <fig:machinelearningparadigmsataxonomy>
+) <fig:machinelearningparadigmsataxonomy caption=Diagram relating Learning>
 // render_images:end
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:53 '* Machine Learning Paradigms: Examples (1/3)'
@@ -275,7 +274,7 @@ setting.
 
 Common supervised learning algorithms include linear regression, decision trees,
 and neural networks, among many others. Each makes different assumptions about
-the shape of $f$ and trades off interpretability against expressive power, a
+the shape of $f$ and trades off #emph[interpretability] against #emph[expressive power], a
 theme that recurs throughout the course.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:145 '* Unsupervised Learning'
@@ -314,7 +313,7 @@ Representative algorithms span all of these families. K-means #cite(
 ) is perhaps the most widely known clustering method, partitioning data into $k$
 groups by iteratively assigning points to their nearest centroid. PCA (Principal
 Component Analysis) is the workhorse of linear dimensionality reduction,
-projecting data onto the directions of greatest variance. Autoencoders, a
+projecting data onto the directions of greatest variance. #strong[Autoencoders], a
 neural-network approach, learn a compressed latent representation by training
 the network to reconstruct its own input through a narrow bottleneck layer, and
 they can serve both dimensionality reduction and density estimation purposes
@@ -504,11 +503,10 @@ or tuning parameters).
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.3.png",
     width: 70%,
   ),
-  caption: [Diagram illustrating the machine learning workflow: from question to evaluation.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-) <fig:machinelearningflow22>
+) <fig:machinelearningflow22 caption=Diagram illustrating Machine Learning>
 // render_images:end
 
 Not all phases in the machine learning workflow carry equal weight. A useful
@@ -534,7 +532,7 @@ solving the wrong problem, collecting the wrong data, and producing results that
 serve no one. As Einstein reportedly put it, "If I were given one hour to save
 the planet, I would spend 59 minutes defining the problem and one minute
 resolving it." Whether or not the attribution is genuine, the principle holds:
-precision in problem definition determines whether the rest of the work has any
+precision in #emph[problem definition] determines whether the rest of the work has any
 value.
 
 Making the question concrete and precise means aligning it with the actual
@@ -550,7 +548,7 @@ The first version gives no guidance on what data to gather, what outcome
 variable to model, or what "improve" even means. The second version pins down
 the product, the geographic scope, and the temporal window, which together
 determine the dataset, the target variable, and the evaluation criteria. A
-well-posed question is one where you can immediately see what a correct answer
+#emph[well-posed question] is one where you can immediately see what a correct answer
 would look like and how you would know if you had found it.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:296 '* Input Data: Fit, Quality, and Scale'
@@ -696,11 +694,10 @@ application.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.4.png",
     width: 70%,
   ),
-  caption: [Tradeoffs between accuracy, interpretability, simplicity, speed and scalability.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-) <fig:whatmakesagoodmodel>
+) <fig:whatmakesagoodmodel caption=Diagram relating Accurate, Interpretable,>
 // render_images:end
 
 #strong[Simplicity] makes a model easier to implement, maintain, and debug.
@@ -841,11 +838,10 @@ every stage is therefore critical.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.5.png",
     width: 70%,
   ),
-  caption: [Four-stage OCR pipeline: text detection, character segmentation, classification and spelling correction.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-) <fig:exampleofphotoocrsystem>
+) <fig:exampleofphotoocrsystem caption=Diagram relating Input image, Text>
 // render_images:end
 
 @fig:exampleofphotoocrsystem illustrates how these four stages connect, showing
@@ -967,7 +963,7 @@ oracle produces the largest jump in that metric is the highest-value target for
 further work: it is the bottleneck whose errors propagate most heavily through
 the rest of the system.
 
-The key discipline ceiling analysis enforces is measurement over intuition. It
+The key discipline ceiling analysis enforces is #emph[measurement over intuition]. It
 is tempting to optimize whichever stage feels most imperfect or most
 intellectually interesting, but as Knuth warned, "premature optimization is the
 root of all evil" #cite("knuth1974premature"). Without ceiling analysis, teams

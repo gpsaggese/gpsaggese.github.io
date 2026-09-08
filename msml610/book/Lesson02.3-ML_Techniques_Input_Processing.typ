@@ -162,7 +162,7 @@ real-time monitoring system, that delay can matter. A centered smoothing window
 is even more problematic in time-series forecasting: it computes each output
 value using samples from both the past and the future, which means the model has
 access to information it would never have at prediction time. This is a form of
-data leakage that inflates validation metrics and then fails silently in
+#emph[data leakage] that inflates validation metrics and then fails silently in
 production.
 
 // From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:92 '* Outliers'
@@ -182,7 +182,7 @@ standard deviation, pulling those statistics toward the extreme values and
 potentially hiding (masking) the points that should be caught. The IQR rule,
 built on quartiles rather than moments, is more robust to this distortion. Once
 outliers are identified, common treatments include outright removal, capping
-values at the fence boundaries (sometimes called Winsorizing), or applying a
+values at the fence boundaries (sometimes called #strong[Winsorizing]), or applying a
 variance-stabilizing transform such as a log scale that compresses the tails and
 reduces the leverage of extreme points.
 
@@ -401,7 +401,7 @@ represent very different life stages. The cut points themselves are often
 arbitrary, chosen by convention rather than by any property of the data or the
 target. Equal-width bins are particularly fragile, since a bin covering a
 sparsely populated part of the range may end up with zero observations. Perhaps
-most problematically, a genuine threshold effect in the relationship between the
+most problematically, a genuine #emph[threshold effect] in the relationship between the
 feature and the target can fall in the interior of a bin rather than at its
 edge, hiding the very signal the analyst hoped to capture.
 
@@ -649,7 +649,7 @@ same label to the modified example as to the original. A cropped photo of a cat
 is still a cat; a sentence with one synonym swapped still carries the same
 sentiment.
 
-Augmentation also acts as a form of regularization. By exposing the model to
+Augmentation also acts as a form of #emph[regularization]. By exposing the model to
 more variation than the raw dataset contains, it discourages the learner from
 memorizing surface-level patterns (a particular background color, a specific
 phrasing) that happen to correlate with the label in the original sample but
@@ -667,7 +667,7 @@ transformation it applies is genuinely label-preserving for the task at hand.
 
 = Summary
 
-Input processing transforms raw, messy data into clean, well-scaled, informative features that improve model performance and generalization. The pipeline flows through data quality (removing duplicates, errors, and handling missing values), scaling and encoding (standardizing numeric features and converting categories to numbers), feature space engineering (constructing new features and reducing dimensionality when needed), and safe application discipline (fitting transformers on training data only and applying them identically to validation and test sets). Data augmentation can further increase dataset diversity without collecting new labels. Every step trades off simplicity against the risk of losing information, and every decision should be guided by domain knowledge about what the data represents and what the task demands.
+Input processing transforms raw, messy data into clean, well-scaled, informative features that improve model performance and generalization. The pipeline flows through #emph[data quality] (removing duplicates, errors, and handling missing values), #emph[scaling and encoding] (standardizing numeric features and converting categories to numbers), #emph[feature space engineering] (constructing new features and reducing dimensionality when needed), and #emph[safe application] discipline (fitting transformers on training data only and applying them identically to validation and test sets). #emph[Data augmentation] can further increase dataset diversity without collecting new labels. Every step trades off simplicity against the risk of losing information, and every decision should be guided by domain knowledge about what the data represents and what the task demands.
 
 = References
 

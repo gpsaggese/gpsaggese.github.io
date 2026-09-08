@@ -32,11 +32,20 @@ This script:
 > render_book_chapter.py -i msml610/03.2 --run_typst_args="--skip_action open_pdf"
 
 - Release the book chapter PDF already built for msml610 lesson 03.2, i.e.,
-  copy it from `msml610/book.tmp/` to `msml610/book/` and compress it:
+  copy it from `msml610/book.tmp/` to `msml610/book/` and compress it
+  (without rebuilding it):
+> render_book_chapter.py -i msml610/03.2 --only_action release
+
+- Render and release the book chapter PDF in a single command:
 > render_book_chapter.py -i msml610/03.2 --action release
 
 - Render the book chapter PDFs for multiple lessons in one run:
 > render_book_chapter.py --files "msml610/03.1 msml610/03.2"
+
+- Render book chapter PDFs for many lessons, continuing past any failures and
+  printing a summary of what failed at the end:
+> render_book_chapter.py --files "msml610/03.1 msml610/03.2 msml610/04.1" \
+      --no_abort_on_error
 
 Import as:
 
@@ -48,16 +57,24 @@ import logging
 import os
 import shlex
 import shutil
-from typing import Tuple
+from typing import List, Tuple
 
 import class_scripts.common_utils as csccouti
 import helpers.hdbg as hdbg
 import helpers.hgit as hgit
 import helpers.hparser as hparser
 import helpers.hprint as hprint
+import helpers.hselect_action as hselacti
 import helpers.hsystem as hsystem
 
 _LOG = logging.getLogger(__name__)
+
+# `generate` must run before `release`: `hselacti.select_actions()` reorders
+# whatever the user passes to match this order, so a single
+# `--action release` (which adds to the `generate` default) always builds
+# before releasing.
+_VALID_ACTIONS = ["generate", "release"]
+_DEFAULT_ACTIONS = ["generate"]
 
 # #############################################################################
 
@@ -88,19 +105,18 @@ def _parse() -> argparse.ArgumentParser:
         action="store_true",
         help="Watch the book chapter file for changes and re-render on change",
     )
-    parser.add_argument(
-        "--action",
-        action="store",
-        default="generate",
-        choices=["generate", "release"],
-        help="'generate' compiles the book chapter PDF in the staging dir "
-        "book.tmp (default); 'release' copies the built PDF from book.tmp "
-        "to book",
-    )
+    hselacti.add_action_arg(parser, _VALID_ACTIONS, _DEFAULT_ACTIONS)
     parser.add_argument(
         "--dry_run",
         action="store_true",
         help="Print the commands that would be executed without running them",
+    )
+    parser.add_argument(
+        "--no_abort_on_error",
+        action="store_true",
+        help="Continue processing the remaining targets if one fails "
+        "(instead of aborting on the first failure) and print a summary of "
+        "the failed targets at the end",
     )
     parser.add_argument(
         "--no_abort_on_warnings",
@@ -180,31 +196,18 @@ def _release(dir_arg: str, basename: str, log_level: str) -> None:
     _compress_pdf(dst_file, log_level)
 
 
-def _process_lesson_spec(input_spec: str, args: argparse.Namespace) -> None:
+def _generate(
+    dir_arg: str, typ_file: str, basename: str, args: argparse.Namespace
+) -> None:
     """
-    Render (or release) the book chapter PDF for a single lecture
-    specification.
+    Compile the book chapter PDF in the staging dir via `run_typst.py`.
 
-    :param input_spec: lecture specification, e.g. 'msml610/03.2' or a book
-        chapter file path
+    :param dir_arg: course directory, e.g. "msml610"
+    :param typ_file: path to the book chapter `.typ` file
+    :param basename: PDF file name without extension, e.g.
+        "Lesson03.2-Name"
     :param args: parsed command-line arguments
     """
-    dir_arg, typ_file = _resolve_book_chapter_file(input_spec)
-    basename = os.path.splitext(os.path.basename(typ_file))[0]
-    if args.action == "release":
-        if args.dry_run:
-            src_file = f"{dir_arg}/book.tmp/{basename}.pdf"
-            dst_file = f"{dir_arg}/book/{basename}.pdf"
-            _LOG.info(
-                "%s",
-                hprint.color_highlight(
-                    f"[dry run] Would release: {src_file} -> {dst_file}",
-                    "green",
-                ),
-            )
-            return
-        _release(dir_arg, basename, args.log_level)
-        return
     # Stage the rendered PDF in `book.tmp/`, next to the published `book/`
     # dir, so a preview render never touches the tracked PDF.
     out_dir = f"{dir_arg}/book.tmp"
@@ -236,9 +239,63 @@ def _process_lesson_spec(input_spec: str, args: argparse.Namespace) -> None:
     hsystem.system(cmd, suppress_output=False)
 
 
+def _process_lesson_spec(
+    input_spec: str, args: argparse.Namespace, actions: List[str]
+) -> None:
+    """
+    Render and/or release the book chapter PDF for a single lecture
+    specification.
+
+    :param input_spec: lecture specification, e.g. 'msml610/03.2' or a book
+        chapter file path
+    :param args: parsed command-line arguments
+    :param actions: actions to execute, e.g. ["generate"], ["release"], or
+        ["generate", "release"]
+    """
+    dir_arg, typ_file = _resolve_book_chapter_file(input_spec)
+    basename = os.path.splitext(os.path.basename(typ_file))[0]
+    # `generate` always runs before `release` since `actions` is already
+    # ordered to match `_VALID_ACTIONS`.
+    remaining_actions = list(actions)
+    to_execute, remaining_actions = hselacti.mark_action(
+        "generate", remaining_actions
+    )
+    if to_execute:
+        # `_generate()` handles `args.dry_run` itself, since it needs to
+        # print the exact `run_typst.py` command it would run.
+        _generate(dir_arg, typ_file, basename, args)
+    to_execute, remaining_actions = hselacti.mark_action(
+        "release", remaining_actions
+    )
+    if to_execute:
+        if args.dry_run:
+            src_file = f"{dir_arg}/book.tmp/{basename}.pdf"
+            dst_file = f"{dir_arg}/book/{basename}.pdf"
+            _LOG.info(
+                "%s",
+                hprint.color_highlight(
+                    f"[dry run] Would release: {src_file} -> {dst_file}",
+                    "green",
+                ),
+            )
+        else:
+            _release(dir_arg, basename, args.log_level)
+    hdbg.dassert_eq(
+        len(remaining_actions or []),
+        0,
+        "There are unprocessed actions: %s",
+        remaining_actions,
+    )
+
+
 def _main(parser: argparse.ArgumentParser) -> None:
     args = parser.parse_args()
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
+    actions = hselacti.select_actions(args, _VALID_ACTIONS, _DEFAULT_ACTIONS)
+    _LOG.info(
+        "%s",
+        hselacti.actions_to_string(actions, _VALID_ACTIONS, add_frame=True),
+    )
     input_specs = args.files.split() if args.files else [args.input]
     if args.daemon:
         hdbg.dassert_eq(
@@ -247,8 +304,17 @@ def _main(parser: argparse.ArgumentParser) -> None:
             "`--daemon` only supports a single lecture, got: %s",
             input_specs,
         )
-    for input_spec in input_specs:
-        _process_lesson_spec(input_spec, args)
+        hdbg.dassert_eq(
+            actions,
+            ["generate"],
+            "`--daemon` only supports the 'generate' action, got: %s",
+            actions,
+        )
+    csccouti.process_targets(
+        input_specs,
+        lambda input_spec: _process_lesson_spec(input_spec, args, actions),
+        no_abort_on_error=args.no_abort_on_error,
+    )
 
 
 if __name__ == "__main__":

@@ -24,10 +24,10 @@
 This chapter explores two foundational logical systems for knowledge representation:
 #emph[propositional logic] and #emph[first-order logic]. Propositional logic provides
 a clean, tractable framework for reasoning about fixed facts, using syntax and
-semantics grounded in truth tables and model checking. First-order logic extends this
+semantics grounded in truth tables and #emph[model checking]. First-order logic extends this
 with variables, predicates, and quantifiers, dramatically increasing expressiveness at
 the cost of computational complexity. Both systems form the theoretical backbone for
-automated reasoning, constraint satisfaction, and knowledge-based AI systems. This
+automated reasoning, #emph[constraint satisfaction], and knowledge-based AI systems. This
 chapter walks through their formal definitions, inference procedures, and practical
 applications.
 
@@ -104,7 +104,7 @@ The #strong[logical connectives] that glue sentences together are:
 
 Regardless of whether a sentence is atomic or complex, it evaluates to exactly one of
 two values: true or false. There is no middle ground, no "partially true." This
-strict bivalence is what makes propositional logic tractable: every well-formed
+strict #emph[bivalence] is what makes propositional logic tractable: every well-formed
 sentence, no matter how deeply nested, ultimately reduces to a single truth value
 once the truth values of its atomic components are fixed.
 
@@ -371,7 +371,7 @@ toolkit:
   $(not p or r)$, infer $(q or r)$.
 
 Resolution deserves special attention. Introduced by Robinson in 1965, it is the
-single rule on which most automated theorem provers are built, because every other
+single rule on which most #emph[automated theorem provers] are built, because every other
 rule in this list can be derived as a special case of resolution when statements are
 first converted to clausal form.
 
@@ -1067,20 +1067,20 @@ keep proof search tractable for the cases that arise in practice.
 Propositional logic and first-order logic form the theoretical backbone of automated
 reasoning. Propositional logic provides a clean, decidable framework for reasoning
 about fixed facts through truth-functional semantics and complete inference procedures
-like model checking and resolution. Its strength is tractability; its weakness is
-expressiveness: it cannot quantify over objects or express relations compactly.
+like model checking and resolution. Its strength is #emph[tractability]; its weakness is
+#emph[expressiveness]: it cannot quantify over objects or express relations compactly.
 
 First-order logic overcomes these limitations by introducing variables, predicates, and
 quantifiers, allowing statements that range over collections of objects and express
 complex relational structures. This dramatic increase in expressiveness comes at a cost:
-reasoning becomes semi-decidable rather than decidable, and proof search strategies
+reasoning becomes #emph[semi-decidable] rather than decidable, and proof search strategies
 become essential to keep inference tractable. Despite these challenges, FOL serves as
 the foundation for logic programming languages, automated theorem provers, and
 knowledge representation systems across AI.
 
 Both logics rest on the same core principles: clear syntax-semantics separation, the
-notion of entailment as truth preservation across models, and the ideal of sound and
-complete inference. These principles, developed rigorously over decades, continue to
+notion of entailment as truth preservation across models, and the ideal of #emph[sound and
+complete inference]. These principles, developed rigorously over decades, continue to
 guide the design of modern AI reasoning systems, even as richer and more practical
 formalisms build upon them.
 

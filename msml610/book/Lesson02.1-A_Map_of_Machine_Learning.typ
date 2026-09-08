@@ -24,11 +24,11 @@
 This chapter provides a map of machine learning's landscape: the key dimensions
 along which learning problems and approaches vary. We explore four branches of
 the field—paradigms, models, techniques, and theory—that organize how learning
-can be set up and executed. Paradigms describe the nature of the feedback (labeled
-data, rewards, or unlabeled structure). Models are the functional forms that
-encode hypotheses (parametric, non-parametric, or graphical). Techniques are the
+can be set up and executed. #emph[Paradigms] describe the nature of the feedback (labeled
+data, rewards, or unlabeled structure). #emph[Models] are the functional forms that
+encode hypotheses (parametric, non-parametric, or graphical). #emph[Techniques] are the
 algorithms that fit models to data (input processing, model building, evaluation,
-diagnostics, regularization, and aggregation). Finally, theory provides formal
+diagnostics, regularization, and aggregation). Finally, #emph[theory] provides formal
 foundations and guarantees. The chapter concludes with adages—practical wisdom
 accumulated by the field—that highlight the recurring tension between model
 simplicity and expressiveness, the central role of data quality and quantity, and
@@ -243,7 +243,7 @@ assumptions explicit and auditable.
 These three families are not mutually exclusive. A Bayesian network, for
 instance, can use parametric distributions at each node, or it can use
 non-parametric conditional density estimators. The choice of family shapes
-everything downstream: how training scales, what inductive biases the learner
+everything downstream: how training scales, what #emph[inductive biases] the learner
 brings, and how transparent the resulting model is to inspection.
 @fig:modelfamilies summarizes this taxonomy, showing how the three families
 branch from the central concept of an ML model.

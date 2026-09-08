@@ -34,8 +34,8 @@
 #strong[Minimizing a Function]
 
 The goal of optimization in machine learning is to minimize a scalar function
-$J(bold(w))$ of $P$ variables $bold(w)$. A common instance is the in-sample
-error
+$J(bold(w))$ of $P$ variables $bold(w)$. A common instance is the #strong[in-sample
+error]
 
 $ E_(i n)(bold(w)) eq.def 1/N sum_(i=1)^N e(h_(bold(w))(bold(x)_i), y_i) $
 
@@ -83,7 +83,7 @@ a minimum of the objective surface.
 
 Imagine standing on a hilly surface with the goal of reaching the lowest point.
 How do you get there? At each position, you look around to assess the slope in
-every direction, then take a step along the steepest downhill direction. You
+every direction, then take a step along the #emph[steepest downhill direction]. You
 repeat this process until you arrive at a point where no further descent is
 possible. This intuitive procedure is precisely what gradient descent formalizes
 for mathematical optimization, as @fig:gradientdescent1 illustrates.
@@ -132,7 +132,7 @@ plateaus.
 Consider the contour plot of a loss function $E_{"in"}$ over weight space.
 Gradient descent begins from an initial point $bold(w)(0)$, which might be
 chosen randomly or set to the origin. At each step, the algorithm moves a fixed
-distance $eta$ (the learning rate) through weight space:
+distance $eta$ (#strong[the learning rate]) through weight space:
 
 $ bold(w)(t + 1) = bold(w)(t) + eta hat(bold(v)) $
 
@@ -315,7 +315,7 @@ larger learning rate lets the algorithm make rapid initial progress, and then
 gradually reducing $eta$ as a function of the iteration count allows it to
 settle into a tighter neighborhood of the minimum. Smaller learning rates in
 later stages can even help the optimizer find a better local minimum in
-non-convex landscapes. The tradeoff is that a learning-rate schedule introduces
+non-convex landscapes. The tradeoff is that a #strong[learning-rate schedule] introduces
 an additional hyperparameter (or family of hyperparameters, such as a decay rate
 and a decay schedule) that must itself be tuned, adding complexity to the
 training pipeline. @fig:gradientdescent3c depicts the effect of a well-chosen
@@ -569,7 +569,7 @@ In many applications, training data arrives as a
 #strong[continuous stream]
 rather than a fixed batch. The model must incorporate new observations on the
 fly, updating its parameters as each example (or small group of examples)
-becomes available. This contrasts sharply with the offline setting, where the
+becomes available. This contrasts sharply with the #emph[offline setting], where the
 entire dataset is collected up front and the model is trained once.
 
 Real-time systems make this requirement especially pressing. A deployed model
@@ -622,7 +622,7 @@ adequate today.
 Stochastic gradient descent and mini-batch gradient descent are naturally
 #emph[suitable for online learning], as @fig:onlinelearningandgradientdescent
 illustrates. Because these methods update the model one example (or one small
-batch) at a time, they fit directly into a streaming pipeline: each incoming
+batch) at a time, they fit directly into a #emph[streaming pipeline]: each incoming
 observation triggers a parameter update, after which the raw data point can be
 discarded. The model itself serves as a "compressed" representation of
 everything seen so far, which is valuable when storing every data point is

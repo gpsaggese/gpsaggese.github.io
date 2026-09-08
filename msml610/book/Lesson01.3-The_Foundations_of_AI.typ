@@ -25,7 +25,7 @@ Artificial intelligence draws its concepts, methods, and perspectives from a ric
 constellation of disciplines beyond computer science alone. This chapter traces
 those intellectual foundations: how philosophy posed foundational questions about
 reasoning and mind, mathematics provided logic and probability theory, economics
-introduced rational decision-making under uncertainty, and neuroscience and
+introduced #emph[rational decision-making under uncertainty], and neuroscience and
 psychology revealed how biological brains actually work. We explore how computer
 science formalized what computation can and cannot do, control theory contributed
 feedback and optimization, and linguistics tackled the structure of language. By
@@ -156,7 +156,7 @@ being linked to experimental data.
   The discovery of black swans in Australia, shown in @fig:blackswans,
   famously overturned the long-standing European generalisation that all
   swans are white: inductive reasoning is powerful but fallible, and this is
-  a textbook case of the problem of induction.
+  a famous case of the #emph[problem of induction].
 ]
 
 A separate but equally fundamental question is _how obtained knowledge
@@ -448,7 +448,7 @@ strategy each regime demands.
   processing occurs in the cerebral cortex, and damage to particular areas
   produces predictable deficits: a frontal lobe injury, for instance, may
   impair decision-making while leaving perception largely intact. This
-  localization of function, pictured in @fig:brain, was one of the earliest
+  #emph[localization of function], pictured in @fig:brain, was one of the earliest
   clues that cognition is not a single indivisible process but a collection
   of specialized subsystems.
 ]
@@ -468,7 +468,7 @@ strategy each regime demands.
   columns: (1fr, 40%),
 )[
   At the hardware level, the brain is composed of roughly 100 billion
-  neurons. Each neuron forms between 10,000 and 100,000 synaptic connections
+  neurons. Each neuron forms between 10,000 and 100,000 #emph[synaptic connections]
   to other neurons, and axons enable these connections to span long
   distances across the brain. Signals propagate through electrochemical
   reactions: a neuron integrates incoming electrical impulses and, if a
@@ -480,7 +480,7 @@ strategy each regime demands.
 
 What makes this network more than a fixed circuit is its capacity for
 change. Short-term signaling pathways can be strengthened or weakened over
-time, and these modifications support long-term connections, the physical
+time, and these modifications support #emph[long-term connections], the physical
 basis of learning. Repeated activation of a particular pathway makes future
 activation easier, a principle often summarized as "neurons that fire
 together wire together."
@@ -513,7 +513,7 @@ basis.
 Brain-machine interfaces offer a striking illustration of the brain's
 adaptability. When a person is fitted with a neural prosthetic, the brain
 gradually adjusts its own signals to operate the device, effectively
-learning to treat an artificial limb as part of the body. This plasticity,
+learning to treat an artificial limb as part of the body. This #strong[plasticity],
 the capacity to reorganise itself around entirely new inputs and outputs, is
 something current AI systems cannot replicate without extensive retraining
 from scratch.
@@ -951,7 +951,7 @@ support interactions at scale.
 //         nodesep=0.4;
 //         ranksep=0.5;
 //         rankdir=LR;
-//
+// 
 //         node [shape=box,
 //               style="rounded,filled",
 //               penwidth=1.8,
@@ -959,7 +959,7 @@ support interactions at scale.
 //               fontsize=12,
 //               margin="0.22,0.14",
 //               height=0.50];
-//
+// 
 //         edge [color="#A3B1C0",
 //               penwidth=1.3,
 //               arrowhead=vee,
@@ -967,7 +967,7 @@ support interactions at scale.
 //               fontname="Helvetica",
 //               fontsize=10,
 //               fontcolor="#7B8794"];
-//
+// 
 //         NL     [label="Natural\nLanguage", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
 //         CL     [label="Computational\nLinguistics", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
 //         KR     [label="Knowledge\nRepresentation", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
@@ -975,14 +975,14 @@ support interactions at scale.
 //         Sent   [label="Sentiment\nAnalysis", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
 //         Chat   [label="Chatbots", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
 //         Reason [label="Reasoning", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
-//
+// 
 //         NL -> CL;
 //         NL -> KR;
 //         CL -> Trans;
 //         CL -> Sent;
 //         CL -> Chat;
 //         KR -> Reason;
-//
+// 
 //         { rank=same; Trans; Sent; Chat; Reason; }
 //     }
 //     ```
@@ -993,9 +993,9 @@ support interactions at scale.
 #figure(
   image(
     "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.6.png",
-    width: 75%,
+    width: 42%,
   ),
-  caption: [Natural language understanding requires computational linguistics and knowledge representation.],
+  caption: [Diagram relating Natural Language, Computational Linguistics, Knowledge Representation and Machine Translation],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1026,8 +1026,8 @@ philosophy, mathematics, economics, neuroscience, psychology, computer
 science and engineering, control theory, and linguistics. Each contributed
 something essential: philosophy posed the questions of whether machines can
 reason and whether mind reduces to physical process; mathematics supplied
-logic, probability, and computation theory; economics formalized rational
-choice under uncertainty; neuroscience and psychology offered models of how
+logic, probability, and computation theory; economics formalized
+#emph[rational choice under uncertainty]; neuroscience and psychology offered models of how
 biological agents actually perceive, learn, and decide; computer science and
 engineering provided the substrates on which these ideas could be realized;
 control theory introduced feedback and optimization in dynamic environments;

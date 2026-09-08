@@ -1,1 +1,0 @@
-(/Users/saggese/src/umd_classes1/helpers_root/dev_scripts_helpers/typst/run_typst.py --input=msml610/book/Lesson02.5-ML_Techniques_Model_Evaluation.typ --output=msml610/book.tmp/Lesson02.5-ML_Techniques_Model_Evaluation.pdf) 2>&1

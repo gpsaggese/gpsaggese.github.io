@@ -272,7 +272,7 @@ distance: the closer two points lie, the more alike the objects they represent. 
 #strong[concept], in this framework, is simply a region in that multidimensional
 space.
 
-Conceptual spaces handle similarity and vagueness through geometric grounding.
+Conceptual spaces handle similarity and vagueness through #emph[geometric grounding].
 Symbolic systems, by contrast, represent categories with discrete tokens such as
 `Car` or `Bicycle` that carry no built-in similarity structure; nothing in the symbol
 itself tells you how alike a car and a bicycle are. In a conceptual space, their
@@ -446,7 +446,7 @@ of relevant facts is fixed and finite. Practical applications include:
   true-or-false statements.
 
 These strengths come with real costs. Propositional logic cannot represent objects,
-relations between objects, or quantified statements ("for all" or "there exists"). A
+relations between objects, or #emph[quantified statements] ("for all" or "there exists"). A
 sentence like "every student enrolled in the course has completed the prerequisite"
 has no direct encoding: you would need a separate proposition for each individual
 student. This makes propositional logic unsuitable for open or dynamic domains where
@@ -484,7 +484,7 @@ automated reasoning possible:
   symbols.
 
 These capabilities make first-order logic a workhorse across several areas of AI and
-computer science: representing structured knowledge in expert systems and databases,
+computer science: representing structured knowledge in #emph[expert systems] and databases,
 powering automated theorem proving where new conclusions must be derived mechanically
 from axioms, and underpinning the semantic web and ontologies that give
 machine-readable meaning to data shared across the internet.
@@ -975,7 +975,7 @@ observable control loops such as thermostats are the textbook case: the current
 temperature reading is all the information the agent needs. Expert systems for
 medical diagnosis and technical troubleshooting encode specialist knowledge as
 condition-action rules and were among the earliest commercial successes of AI.
-Business rule engines apply the same pattern to automate policy decisions in domains
+#emph[Business rule engines] apply the same pattern to automate policy decisions in domains
 like insurance underwriting or loan approval. Game AI for simple opponents often
 relies on reflex rules mapping game states to moves. Legal reasoning tools, where
 statutes and regulations can be expressed as structured conditionals, represent

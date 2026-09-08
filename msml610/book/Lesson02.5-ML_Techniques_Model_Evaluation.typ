@@ -21,7 +21,7 @@
 
 = Roadmap
 
-This chapter covers the principles and practice of evaluating machine learning models. Model evaluation requires separating data into training, validation, and test sets to estimate generalization performance honestly. We explore essential error measures (accuracy, precision, recall, F-score, and ROC/AUC), understand how to choose metrics aligned with application-specific costs, and learn strategies for model selection including hyperparameter tuning, cross-validation, and ensemble methods. Finally, we examine bias-variance tradeoffs and how to recognize when a model is overfitting.
+This chapter covers the principles and practice of evaluating machine learning models. Model evaluation requires separating data into training, validation, and test sets to estimate generalization performance honestly. We explore essential #emph[error measures] (accuracy, precision, recall, F-score, and ROC/AUC), understand how to choose metrics aligned with application-specific costs, and learn strategies for model selection including hyperparameter tuning, cross-validation, and #emph[ensemble methods]. Finally, we examine bias-variance tradeoffs and how to recognize when a model is overfitting.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:11 '# Model Evaluation'
 // Slide: Model Evaluation
@@ -39,7 +39,7 @@ Machine learning offers a vast landscape of choices at every stage of a project:
 how to preprocess the data, which features to extract or engineer, which model
 family to use, which training algorithm to apply, and how to evaluate the
 result. Each of these axes can be varied independently, producing a
-combinatorial explosion of possible pipelines. Faced with so many degrees of
+#emph[combinatorial explosion] of possible pipelines. Faced with so many degrees of
 freedom, how should a practitioner decide which combination actually works best?
 
 The answer is to evaluate models systematically using a single number. Rather
@@ -69,7 +69,7 @@ model selection from guesswork into an evidence-based process.
 The goal of learning is to find a function $h$ that approximates an unknown
 target function $f$ over the space of inputs $x in cal(X)$. Because $f$ is
 unknown, we cannot compare $h$ to it everywhere; instead, we measure how well
-$h$ matches $f$ at individual points through a pointwise error function:
+$h$ matches $f$ at individual points through a #strong[pointwise error function]:
 
 $ e(h(bold(x)_i), f(bold(x)_i)) $
 
@@ -142,7 +142,7 @@ fundamentally shapes every decision about how to train, evaluate, and deploy
 them. In an ideal world, you would have an essentially unlimited supply of
 labeled examples. With enough data, you can fit all the degrees of freedom of a
 complex model without worrying about overfitting, and you can set aside a large
-holdout set to get a precise, low-variance estimate of out-of-sample
+#emph[holdout set] to get a precise, low-variance estimate of out-of-sample
 performance. In practice, this scenario is rare outside a few domains (web-scale
 text, ad clicks, sensor telemetry) where data is generated continuously and
 cheaply.
@@ -223,14 +223,14 @@ Several techniques help ensure that every split shares the #emph[same underlying
 // Slide: Rule of Thumbs for Data Set Splits
 #strong[Rule of Thumbs for Data Set Splits]
 
-When the dataset is large, a common strategy is the 60-20-20 split: 60% of the
+When the dataset is large, a common strategy is the #strong[60-20-20 split]: 60% of the
 data goes to training, 20% to validation for tuning hyperparameters, and the
 remaining 20% to a held-out test set for final evaluation. This three-way
 partition gives enough examples in each subset that the estimates of both
 hyperparameter quality and generalization error are reliable.
 
 When the dataset is of moderate size, the validation set becomes a luxury the
-practitioner can no longer afford. A 60-40 split between training and test is
+practitioner can no longer afford. A #strong[60-40 split] between training and test is
 typical here. Because there is no separate validation set, hyperparameter tuning
 must rely on other means (or be foregone entirely), and the model is evaluated
 directly on the 40% test portion.
@@ -292,7 +292,7 @@ Once that final performance number $E_"test"$ has been recorded, however, you
 can and often should fold the test data back into the training pool before
 deploying the model. The reasoning is straightforward: you have already
 committed to the modeling procedure (the algorithm, the hyperparameters, the
-preprocessing pipeline), so there is no further selection bias to worry about.
+preprocessing pipeline), so there is no further #emph[selection bias] to worry about.
 Retraining on the combined dataset simply gives the deployed model access to
 every available example, which generally improves its accuracy.
 
@@ -515,7 +515,7 @@ error for that single observation is $(20{,}000)^2 = 4 times 10^8$. MSE
 aggregates contributions like this across every house in the dataset, producing
 a single number that summarizes overall prediction quality.
 
-MSE is popular in part because of its connection to the Gaussian error model.
+MSE is popular in part because of its connection to the #emph[Gaussian error model].
 When residuals are normally distributed, minimizing MSE is equivalent to
 maximizing the likelihood of the data, giving the metric a principled
 statistical justification. It is also optimization-friendly: the squared term is
@@ -582,7 +582,7 @@ $ "median"_i (|h(bold(x)_i) - f(bold(x)_i)|^2) $
 
 Both measures report the "typical" residual rather than the average one, so a
 handful of poorly predicted points cannot inflate the overall score. This
-robustness to outliers is their chief advantage: in data sets where a few
+#emph[robustness to outliers] is their chief advantage: in data sets where a few
 observations are corrupted, mislabeled, or genuinely extreme, median-based
 metrics give a far more stable picture of model quality than their mean-based
 counterparts. The tradeoff is computational: medians do not decompose as neatly
@@ -608,7 +608,7 @@ Consider training a classifier to distinguish tumors as malignant ($y = 1$) or
 benign ($y = 0$). Suppose the classifier achieves an error rate of just 1%,
 meaning it guesses correctly 99% of the time. That sounds impressive at first
 glance. But now consider the underlying data: only 0.5% of patients actually
-have cancer. A trivial classifier that always outputs $y = 0$ (predicting every
+have cancer. A #emph[trivial classifier] that always outputs $y = 0$ (predicting every
 patient is healthy, regardless of any input) would achieve an error rate of only
 0.5%, outperforming the trained model without learning anything at all.
 Suddenly, that 1% error rate no longer looks so good; the model is actually
@@ -857,7 +857,7 @@ and recall scores; plotting all such pairs on a plane with recall on the
 horizontal axis and precision on the vertical axis traces out the curve.
 
 Several features of the precision-recall plane help compare classifiers. The
-ideal classifier, achieving both perfect precision and perfect recall, sits in
+#emph[ideal classifier], achieving both perfect precision and perfect recall, sits in
 the top-right corner of the plot. When one curve lies entirely above another,
 the higher curve represents a strictly better classifier: at every level of
 recall it delivers higher precision. The baseline for comparison is a horizontal
@@ -1058,7 +1058,7 @@ as accuracy, precision, and recall, are computed on the held-out folds rather
 than on the data the model was trained on, giving a less biased estimate of
 real-world performance. By systematically varying the components listed above
 and comparing cross-validated scores, model selection turns what would otherwise
-be an ad hoc series of judgment calls into a principled, reproducible search
+be an ad hoc series of judgment calls into a #emph[principled, reproducible search]
 over the space of candidate pipelines.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:625 '* Model Selection Process'
@@ -1217,7 +1217,7 @@ cannot be trusted as a final performance estimate.
 
 Once a model has been selected, its true performance must still be assessed on a
 separate test set $D_("test")$. The validation error $E_("val")(g_m)$ is an
-optimistically biased estimate of the out-of-sample error because the selection
+#strong[optimistically biased estimate] of the out-of-sample error because the selection
 process specifically chose the model that looked best on $D_("val")$; formally,
 $E_("val")(g_m) < E_("out")(g_m)$. From a theoretical standpoint, the penalty
 for searching over a finite hypothesis set of size $N$ using $K$ validation
@@ -1228,7 +1228,7 @@ $ E_("out")(g_m) lt.eq E_("val")(g_m) + O(sqrt(log(N) / K)) $
 This bound grows only logarithmically in $N$, so even a moderately large model
 zoo incurs a mild penalty as long as the validation set is sizeable. When the
 number of hypotheses is effectively infinite, for instance when choosing a
-continuous regularization parameter λ, the VC dimension replaces $log(N)$ in the
+continuous regularization parameter λ, the #emph[VC dimension] replaces $log(N)$ in the
 complexity term and provides an analogous guarantee.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:735 '## Ensemble Learning'
@@ -1239,9 +1239,9 @@ complexity term and provides an analogous guarantee.
 // Slide: Ensemble Learning: Intuition
 === Ensemble Learning: Intuition
 
-The core intuition behind ensemble methods is straightforward: a group of weak
-learners, each only slightly better than random guessing, can be combined into a
-strong learner with substantially higher accuracy. No single model needs to be
+The core intuition behind ensemble methods is straightforward: a group of #strong[weak
+learners], each only slightly better than random guessing, can be combined into a
+#strong[strong learner] with substantially higher accuracy. No single model needs to be
 perfect; what matters is that the models disagree in useful ways.
 
 #strong[Ensemble learning] combines the outputs of multiple models $X_i$ to
@@ -1651,7 +1651,7 @@ prediction.
 
 = Summary
 
-This chapter has presented a comprehensive framework for evaluating machine learning models. Model evaluation requires more than computing accuracy on training data: it demands a careful separation of data into training, validation, and test sets to obtain honest estimates of generalization performance. The choice of error measure must align with application-specific costs and the nature of the prediction task, whether classification or regression. Precision, recall, and their combinations (F-score, ROC, AUC) provide nuanced views of classifier performance, especially in imbalanced settings. Model selection via validation balances the need for good performance with the risk of overfitting, while ensemble methods like bagging, boosting, and stacking harness the power of combining multiple learners to achieve accuracy beyond what any single model could provide. Understanding these evaluation and ensemble techniques is essential for building machine learning systems that generalize reliably to new data.
+This chapter has presented a comprehensive framework for evaluating machine learning models. Model evaluation requires more than computing accuracy on training data: it demands a careful separation of data into training, validation, and test sets to obtain honest estimates of #emph[generalization performance]. The choice of error measure must align with application-specific costs and the nature of the prediction task, whether classification or regression. Precision, recall, and their combinations (F-score, ROC, AUC) provide nuanced views of classifier performance, especially in #emph[imbalanced settings]. Model selection via validation balances the need for good performance with the risk of overfitting, while ensemble methods like bagging, boosting, and stacking harness the power of combining multiple learners to achieve accuracy beyond what any single model could provide. Understanding these evaluation and ensemble techniques is essential for building machine learning systems that generalize reliably to new data.
 
 = References
 
