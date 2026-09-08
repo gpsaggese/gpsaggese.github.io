@@ -3,10 +3,13 @@
 """
 Generate lecture slides PDF.
 
-This script generates a PDF from lecture source files using notes_to_pdf.py.
-The PDF is built in the staging dir `{DIR}/lectures_pdf.tmp/`. Use the
-`release` action to copy the built PDF from `{DIR}/lectures_pdf.tmp/` to the
-published dir `{DIR}/lectures_pdf/`.
+This script:
+- generates a PDF from lecture source files using `notes_to_pdf.py`. The PDF is
+  built in the staging dir `{DIR}/lectures_pdf.tmp/`
+- uses the `release` action to copy the built PDF from
+  `{DIR}/lectures_pdf.tmp/` to the published dir `{DIR}/lectures_pdf/` and
+  compress it in place via `compress_pdf.py`; a plain `generate` run is left
+  uncompressed so preview iterations stay fast.
 
 # Usage Example
 
@@ -25,7 +28,8 @@ published dir `{DIR}/lectures_pdf/`.
 > gen_slides.py -i msml610/lectures_source/Lesson10.2-Causal_Discovery.smd
 
 - Release the slides PDF already built for msml610 lesson 08.1, i.e., copy
-  it from `msml610/lectures_pdf.tmp/` to `msml610/lectures_pdf/`:
+  it from `msml610/lectures_pdf.tmp/` to `msml610/lectures_pdf/` and
+  compress it:
 > gen_slides.py -i msml610/08.1 --action release
 
 - Generate the slides PDFs for multiple lessons in one run:
@@ -39,6 +43,7 @@ import shutil
 
 import class_scripts.common_utils as csccouti
 import helpers.hdbg as hdbg
+import helpers.hgit as hgit
 import helpers.hparser as hparser
 import helpers.hprint as hprint
 import helpers.hsystem as hsystem
@@ -123,12 +128,27 @@ def _extra_opts_mention_open_pdf(notes_to_pdf_args: str) -> bool:
     return bool(notes_to_pdf_args) and "open_pdf" in notes_to_pdf_args
 
 
-def _release(dir_arg: str, dst_name: str) -> None:
+def _compress_pdf(pdf_file: str, log_level: str) -> None:
     """
-    Copy a built slides PDF from the staging dir to the published dir.
+    Compress a PDF in place via `compress_pdf.py`.
+
+    :param pdf_file: path to the PDF to compress
+    :param log_level: verbosity level (e.g., "DEBUG") to forward to
+        `compress_pdf.py`
+    """
+    exec_file = hgit.find_file("compress_pdf.py")
+    cmd = f"{exec_file} --input {pdf_file} -v {log_level}"
+    hsystem.system(cmd, suppress_output=False)
+
+
+def _release(dir_arg: str, dst_name: str, log_level: str) -> None:
+    """
+    Copy a built slides PDF from the staging dir to the published dir and
+    compress it in place.
 
     :param dir_arg: course directory, e.g. "msml610"
     :param dst_name: PDF file name, e.g. "Lesson08.1-Causal_AI_intro.pdf"
+    :param log_level: verbosity level forwarded to `compress_pdf.py`
     """
     src_file = f"{dir_arg}/lectures_pdf.tmp/{dst_name}"
     hdbg.dassert_file_exists(src_file)
@@ -138,6 +158,9 @@ def _release(dir_arg: str, dst_name: str) -> None:
     shutil.copy2(src_file, dst_file)
     msg = f"Released: {src_file} -> {dst_file}"
     _LOG.info("%s", hprint.color_highlight(msg, "green"))
+    # Compress the PDF only on release, so preview (`generate`) renders stay
+    # fast and untouched.
+    _compress_pdf(dst_file, log_level)
 
 
 def _process_lesson_spec(input_spec: str, args: argparse.Namespace) -> None:
@@ -165,7 +188,7 @@ def _process_lesson_spec(input_spec: str, args: argparse.Namespace) -> None:
                 ),
             )
             return
-        _release(dir_arg, dst_name)
+        _release(dir_arg, dst_name, args.log_level)
         return
     # Build paths.
     input_file = f"{dir_arg}/lectures_source/{src_name}"
