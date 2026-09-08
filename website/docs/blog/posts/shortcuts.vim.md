@@ -490,9 +490,12 @@ TL;DR: A cheat sheet of Vim commands and concepts.
 
 # Folding
 
+- Close everything (foldlevel=0): `zM`
 - Open all folds: `zR`
-- Close all folds: `zM`
+- Bump foldlevel up twice: `zr zr`
+- Open all / close one more level: `zR` / `zm`
 - Open current fold recursively: `zO`
+- Open just one level at the cursor: `zo`
 
 - Move the cursor to the next fold: `zj`
 - Move the cursor to the previous fold: `zk`

@@ -19,6 +19,19 @@
 
 #chapter("L01.4: A Brief History of AI")
 
+= Roadmap
+
+This chapter traces the history of artificial intelligence from its formal founding
+in 1956 to the present day. We explore the early years of optimism and groundbreaking
+results (1943–1969), followed by the realistic assessment of challenges and the first
+AI winter (1975–1980). We then examine the expert systems era and its collapse, leading
+to the second AI winter (1987–1993). The chapter describes the return of neural networks,
+the rise of probabilistic methods and machine learning, and the reunification of AI
+research around data-driven approaches. Finally, we survey modern AI achievements from
+2001 to the present, including deep learning breakthroughs, current capabilities across
+robotics, game playing, and language understanding, and conclude with reflections on
+future risks, benefits, and open questions surrounding artificial general intelligence.
+
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:11 '# Brief History of AI'
 // Slide: Brief History of AI
 
@@ -320,9 +333,9 @@ and symbolic processing.
 == First AI Winter (1975-1980)
 
 Early successes in artificial intelligence (AI) led to high expectations for the
-field. However, between 1965 and 1975, AI struggled to address #strong[real
-  problems] effectively. One major issue was that many AI solutions were based
-on _human problem-solving methods_, which did not always translate well to
+field. However, between 1965 and 1975, AI struggled to address
+#emph[real problems] effectively. One major issue was that many AI solutions were based
+on #emph[human problem-solving methods], which did not always translate well to
 computational approaches. Additionally, AI systems faced significant challenges
 with _combinatorial explosion_. For instance, while theorem proving could tackle
 small problems using brute force methods, it failed to scale to larger, more
@@ -549,9 +562,9 @@ executing strategies that maximize the likelihood of achieving desired outcomes.
 )[
   As shown in @fig:richardsutton, Richard Sutton's contributions to the field
   have been instrumental in advancing our understanding of reinforcement
-  learning and its applications. His textbook _Reinforcement Learning: An
-  Introduction_, co-authored with Andrew Barto, remains the field's standard
-  reference decades after its first edition.
+  learning and its applications. His textbook
+  #emph[Reinforcement Learning: An Introduction], co-authored with Andrew Barto,
+  remains the field's standard reference decades after its first edition.
 ]
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:441 '* Reunification (1990s-2000s)'
@@ -778,8 +791,7 @@ the exponential increase in AI computing power.
       ("AI startups", "100", "2,000", "6,000", "60x"),
     ),
   ),
-  caption: [Growth of AI research activity, 2010-2026 (2026 figures are
-    projections).],
+  caption: [Growth of AI research activity, 2010-2026 (2026 figures are projections).],
   kind: "table",
   supplement: [Table.],
   placement: auto,
@@ -988,7 +1000,7 @@ periods of disillusionment.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:713 '# Risks and Benefits of AI'
 // Slide: Risks and Benefits of AI
-== Risks and Benefits of AI
+= Risks and Benefits of AI
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:715 '* Benefits of AI'
 // Slide: Benefits of AI
@@ -1309,6 +1321,31 @@ and their companies rather than addressing the core issues.
   involved in technological advancements and the importance of addressing them
   thoughtfully.
 ]
+
+= Summary
+
+The history of artificial intelligence is marked by cycles of enthusiasm, disillusionment,
+and renewal. The field began with revolutionary breakthroughs in the 1950s (the McCulloch-Pitts
+neuron, Turing's test, the Dartmouth Workshop), followed by exuberant early successes that
+promised rapid progress. Yet by the late 1960s, fundamental challenges emerged: combinatorial
+explosion, the brittleness of symbolic reasoning, and the lack of sufficient data and computing
+power. These challenges led to the first AI winter (1975–1980), from which the field recovered
+with expert systems—only to face disillusionment again as those systems proved too rigid and
+brittle.
+
+The true inflection point came in the 1980s and beyond, with the return of neural networks,
+the embrace of probabilistic and statistical methods, and a shift in focus from hand-crafted
+rules to learning from data. This statistical turn unified the field around the principle that
+large datasets combined with scalable algorithms outperform human expertise encoded as rules—
+a lesson now known as "the bitter lesson." The availability of web-scale data, GPU acceleration,
+and the deep learning revolution (highlighted by ImageNet 2012) catapulted AI into the modern era.
+
+Today, AI systems exceed human performance on many narrow tasks: game-playing, image recognition,
+speech understanding, machine translation, and medical diagnosis. Yet the path to artificial general
+intelligence remains unclear, and significant challenges persist: alignment with human values, robustness,
+transfer learning, fairness, and safety in critical applications. As we advance, the dual nature of AI—
+its potential to solve humanity's greatest challenges alongside its risks if misaligned or misused—demands
+careful, thoughtful stewardship.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:983 '* References'
 // Slide: References

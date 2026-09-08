@@ -19,8 +19,11 @@
 
 #chapter("L02.5: ML Techniques - Model Evaluation")
 
+// TODO(ai_gp): Add `= Roadmap` section immediately after #chapter(...), before first content (typst.rules.md:## Mandatory Sections)
+
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:11 '# Model Evaluation'
 // Slide: Model Evaluation
+// TODO(ai_gp): Replace #strong[Model Evaluation] with real Typst heading syntax `=` or integrate into section structure (typst.rules.md:## Structural Hierarchy)
 #strong[Model Evaluation]
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:13 '## Why Evaluate'
@@ -29,6 +32,7 @@
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:15 '* How to Make Progress in ML Research'
 // Slide: How to Make Progress in ML Research
+// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
 #strong[How to Make Progress in ML Research]
 
 Machine learning offers a vast landscape of choices at every stage of a project:
@@ -46,6 +50,7 @@ straightforward to rank alternatives and to communicate results to stakeholders
 who need a bottom line.
 
 A metric alone, however, is only as trustworthy as the evaluation protocol
+// TODO(ai_gp): Cross-validation is being formally defined here for the first time; use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
 behind it. #emph[Cross-validation] provides a principled way to estimate how
 well a model will generalize: by repeatedly splitting the data into training and
 validation folds, it guards against the optimistic bias that comes from
@@ -60,6 +65,7 @@ model selection from guesswork into an evidence-based process.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:33 '* In-Sample vs Out-Of-Sample Error Expressions'
 // Slide: In-Sample vs Out-Of-Sample Error Expressions
+// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
 #strong[In-Sample vs Out-Of-Sample Error Expressions]
 
 The goal of learning is to find a function $h$ that approximates an unknown
@@ -106,6 +112,7 @@ finite training data.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:58 '* Training vs Test Set'
 // Slide: Training vs Test Set
+// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
 #strong[Training vs Test Set]
 
 Performance on the training set $E_(i n)$ is an #strong[optimistic estimate] of
@@ -115,6 +122,7 @@ essentially at random on unseen examples, yielding a 50% error rate on a test
 set. The gap between these two numbers is the core danger of overfitting:
 in-sample success tells you almost nothing about real-world reliability.
 
+// TODO(ai_gp): "properly evaluate model performance" is not a term being formally defined; use #emph instead of #strong (typst.rules.md:## Highlighting and Emphasis)
 To #strong[properly evaluate model performance], the data used for evaluation
 must be kept entirely separate from the data used for training. Both the
 training and test sets should be representative samples drawn from the same
@@ -151,6 +159,7 @@ afford to use every example for training, because you would have nothing left to
 honestly assess how well the model generalizes. The standard remedy is to
 #strong[hold out] a portion of the data exclusively for evaluation.
 
+// TODO(ai_gp): "train/test split" is a term being formally defined (followed by colon and description); use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
 The simplest version of this idea is a single #emph[train/test split]: partition
 the dataset into a training set used to fit the model and a test set used only
 once, at the end, to estimate performance metrics and confidence bounds.
@@ -199,6 +208,7 @@ while a very large dataset can afford a thin validation slice.
 Several techniques help ensure that every split shares the #emph[same underlying
   distribution]:
 
+// TODO(ai_gp): "Stratified sampling" and "Shuffle and sample" and "Sample and check statistics" are techniques being formally defined; use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
 - #emph[Stratified sampling]: split the data so that each class label (or, more
   generally, each important subgroup) appears in every set in proportion to its
   frequency in the full dataset. This is especially important when some classes
@@ -232,6 +242,7 @@ must rely on other means (or be foregone entirely), and the model is evaluated
 directly on the 40% test portion.
 
 When the dataset is small, even a single fixed split wastes too many examples.
+// TODO(ai_gp): "K-fold cross-validation" is being formally defined here; use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
 #emph[K-fold cross-validation] is the standard remedy: the data is partitioned
 into $K$ equally sized folds, and the model is trained $K$ times, each time
 holding out a different fold for evaluation and averaging the results. Even so,
@@ -254,6 +265,7 @@ however, adding more data yields smaller and smaller accuracy gains, and the
 computational cost of processing that additional data may no longer be justified
 by the marginal improvement.
 
+// TODO(ai_gp): "learning curves" is being formally defined and explained here; use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
 You should use #emph[learning curves] to track this effect. A learning curve
 plots model performance (on the vertical axis) against training set size (on the
 horizontal axis), making it easy to see where the curve begins to flatten.
@@ -269,6 +281,7 @@ feature engineering instead.
     "../lectures_source/figures/L02.5.Learning_Curves_Example.png",
     width: 80%,
   ),
+  // TODO(ai_gp): Caption should use sentence case, not Title Case: "Learning curves example" (typst.rules.md:## Figures: Required Elements)
   caption: [Learning Curves Example],
   kind: "figure",
   supplement: [Fig.],
@@ -295,6 +308,7 @@ every available example, which generally improves its accuracy.
 There is a subtle but important shift in interpretation that comes with this
 practice. The reported $E_"test"$ no longer describes the exact model sitting in
 production, because that model was retrained on a larger dataset. Instead,
+// TODO(ai_gp): "procedure" is being formally redefined/introduced here in a new context; use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
 $E_"test"$ estimates the quality of the #emph[procedure]: the entire pipeline
 that, given data of this size and shape, produces a fitted model. In practice,
 the deployed model will usually perform at least as well as the estimate
@@ -355,6 +369,7 @@ deployment.
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.1.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Caption should use sentence case, not Title Case: "diagram illustrating using test data" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram illustrating Using Test Data],
   kind: "figure",
   supplement: [Fig.],
@@ -371,6 +386,7 @@ deployment.
 #strong[How to Choose an Error Measure?]
 
 The choice of error measure is not purely a technical decision; it depends on
+// TODO(ai_gp): "application" is not being formally defined here, just emphasized in context; use #emph instead of #strong (typst.rules.md:## Highlighting and Emphasis)
 the #strong[application] domain and should ultimately be defined by the customer
 or end user in terms of an acceptable error level. A medical diagnostic system,
 for instance, demands extremely low error tolerance because a missed diagnosis
@@ -390,6 +406,7 @@ objective.
 
 Beyond application-specific costs, a good error measure should satisfy two
 general properties. First, it should be #emph[plausible]: the measure should
+// TODO(ai_gp): "plausible" and "friendly" are two properties/criteria being formally defined (followed by colons and explanations); use #strong instead of #emph (typst.rules.md:## Highlighting and Emphasis)
 match the statistical assumptions underlying the data. Squared error, for
 example, is a natural choice when the noise in the observations follows a
 Gaussian distribution, because minimizing squared error is equivalent to maximum
@@ -412,13 +429,13 @@ a #strong[false negative] (rejecting a valid one). The weight assigned to each
 type of error depends entirely on the application.
 
 Consider a supermarket loyalty program that uses fingerprint scanning to verify
-discount eligibility. A false positive here (✓) is a minor issue:
-one customer receives an undeserved discount. A false negative (⚠)
+discount eligibility. A false positive here is a minor issue:
+one customer receives an undeserved discount. A false negative
 is far more costly: a legitimate customer is denied their discount, leading to
 frustration and checkout delays. Now consider access control at a CIA facility.
-The calculus reverses completely. A false positive (💀) is critical: an
+The calculus reverses completely. A false positive is critical: an
 unauthorized person gains entry, creating a security breach. A false negative
-(✓) is acceptable: a legitimate employee is simply asked to verify
+is acceptable: a legitimate employee is simply asked to verify
 their identity through an additional check.
 
 #figure(
@@ -437,6 +454,7 @@ their identity through an additional check.
       ),
     ),
   ),
+  // TODO(ai_gp): Caption must be one plain line, not wrapped across multiple lines (typst.rules.md:## Figures: Required Elements)
   caption: [Error severity for fingerprint verification in two different
     settings.],
   kind: "table",
@@ -453,6 +471,7 @@ in which it operates.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:235 '* How to Measure Classifier's Performance?'
 // Slide: How to Measure Classifier's Performance?
+// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
 #strong[How to Measure Classifier's Performance?]
 
 #strong[Success rate] (also called hit rate or win rate) measures the proportion
@@ -471,6 +490,7 @@ of incorrect predictions.
   loss], evaluates a classifier that outputs probabilities between 0 and 1
 rather than hard labels. It is defined as
 
+// TODO(ai_gp): This formula could be kept on a single line to avoid potential line-wrapping issues in narrow columns (typst.rules.md:## Formulas)
 $
   "cross-entropy" = -frac(1, N) sum_(i=1)^N [y_i log(p_i) + (1 - y_i) log(1 - p_i)]
 $
@@ -501,6 +521,7 @@ definitions of each metric appear in later sections.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:261 '* Mean Squared Error (MSE)'
 // Slide: Mean Squared Error (MSE)
+// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
 #strong[Mean Squared Error (MSE)]
 
 #strong[Mean squared error] (MSE) is the average squared difference between
@@ -545,6 +566,7 @@ summaries that are far less influenced by extreme values.
 #strong[Root Mean Squared Error] (RMSE) is defined as the square root of the
 Mean Squared Error:
 
+// TODO(ai_gp): This formula could be kept on a single line to avoid potential line-wrapping issues in narrow columns (typst.rules.md:## Formulas)
 $
   "RMSE" equiv sqrt("MSE") = sqrt(1/N sum_(i=1)^N (h(bold(x)_i) - f(bold(x)_i))^2)
 $
@@ -629,6 +651,7 @@ the confusion matrix provide.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:339 '* Confusion Matrix'
 // Slide: Confusion Matrix
+// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
 #strong[Confusion Matrix]
 
 Binary classification problems rest on two assumptions: the actual and predicted
@@ -683,6 +706,7 @@ between the two kinds of mistakes.
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.2.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Caption should use sentence case: "diagram illustrating confusion matrix" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram illustrating Confusion Matrix],
   kind: "figure",
   supplement: [Fig.],
@@ -710,6 +734,7 @@ class we most care about detecting correctly.
 Formally, it is the conditional probability of a true positive given that the
 model predicted positive:
 
+// TODO(ai_gp): This formula could be kept on a single line to avoid potential line-wrapping issues in narrow columns (typst.rules.md:## Formulas)
 $
   "precision" := Pr("TP" | "pred = 1") = frac(|"pred = 1" and "act = 1"|, |"pred = 1"|) = frac("TP", "TP" + "FP")
 $
@@ -722,6 +747,7 @@ model labeled positive, so every false positive drags precision down.
 conditional probability of a true positive given that the actual label is
 positive:
 
+// TODO(ai_gp): This formula could be kept on a single line to avoid potential line-wrapping issues in narrow columns (typst.rules.md:## Formulas)
 $
   "recall" := Pr("TP" | "act = 1") = frac("TP", |"act = 1"|) = frac("TP", "TP" + "FN")
 $
@@ -778,6 +804,7 @@ precision and recall shift as the decision threshold changes.
     "../lectures_source/figures/L02.5.Precision_Recall_ROC.png",
     width: 80%,
   ),
+  // TODO(ai_gp): Caption should use sentence case: "precision-recall ROC" or similar (typst.rules.md:## Figures: Required Elements)
   caption: [Precision Recall ROC],
   kind: "figure",
   supplement: [Fig.],
@@ -919,6 +946,7 @@ and how the random baseline provides a floor for useful performance.
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.3.png",
     width: 55%,
   ),
+  // TODO(ai_gp): Caption should use sentence case: "diagram illustrating precision-recall" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram illustrating Precision-Recall],
   kind: "figure",
   supplement: [Fig.],
@@ -997,6 +1025,7 @@ corner encloses more area and reflects stronger overall discrimination.
 
 #figure(
   image("../lectures_source/figures/L02.5.AUC_ROC_Curve.png", width: 80%),
+  // TODO(ai_gp): Caption should use sentence case: "AUC ROC curve" (typst.rules.md:## Figures: Required Elements)
   caption: [AUC ROC Curve],
   kind: "figure",
   supplement: [Fig.],
@@ -1079,6 +1108,7 @@ into three disjoint subsets, typically in a 60-20-20 ratio: a training set
 $D_"train"$, a validation set $D_"val"$, and a test set $D_"test"$. With this
 partition in hand, the process unfolds in a clear sequence of steps:
 
+// TODO(ai_gp): Use #algorithm(...) macro for this structured 5-step procedure instead of bare numbered list (typst.rules.md:## Algorithms and Pseudocode)
 1. Learn $N$ candidate hypotheses $g_1, dots, g_N$ on $D_"train"$ alone.
 2. Evaluate each hypothesis on $D_"val"$, producing validation errors
   $E_"val"^((1)), dots, E_"val"^((N))$.
@@ -1161,6 +1191,7 @@ evaluation, and final retraining on the combined dataset.
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.4.png",
     width: 65%,
   ),
+  // TODO(ai_gp): Caption should use sentence case: "diagram illustrating model selection" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram illustrating Model Selection],
   kind: "figure",
   supplement: [Fig.],
@@ -1221,6 +1252,7 @@ cannot be trusted as a final performance estimate.
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.5.png",
     width: 55%,
   ),
+  // TODO(ai_gp): Caption should use sentence case: "diagram illustrating model selection as learning" or similar (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram illustrating Model Selection],
   kind: "figure",
   supplement: [Fig.],
@@ -1251,6 +1283,7 @@ complexity term and provides an analogous guarantee.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:737 '* Ensemble Learning: Intuition'
 // Slide: Ensemble Learning: Intuition
+// TODO(ai_gp): Replace #strong[...] with real Typst heading syntax (typst.rules.md:## Structural Hierarchy)
 #strong[Ensemble Learning: Intuition]
 
 The core intuition behind ensemble methods is straightforward: a group of weak
@@ -1422,6 +1455,7 @@ dataset and combining their predictions.
 
 The learning procedure works as follows:
 
+// TODO(ai_gp): Use #algorithm(...) macro for this structured 3-step Bagging procedure instead of bare numbered list (typst.rules.md:## Algorithms and Pseudocode)
 1. Draw several training datasets at random from the original data, sampling
   _with replacement_ (the bootstrap step).
 2. Train one model on each of these bootstrapped datasets.
@@ -1450,6 +1484,7 @@ output.
 
 #figure(
   image("../lectures_source/figures/L02.5.Bagging_Classifier.png", width: 80%),
+  // TODO(ai_gp): Caption should use sentence case: "bagging classifier" (typst.rules.md:## Figures: Required Elements)
   caption: [Bagging Classifier],
   kind: "figure",
   supplement: [Fig.],
@@ -1522,6 +1557,7 @@ sequentially added weak learners collectively form a strong predictor.
 
 #figure(
   image("../lectures_source/figures/L02.5.Boosting_Concept.png", width: 80%),
+  // TODO(ai_gp): Caption should use sentence case: "boosting concept" (typst.rules.md:## Figures: Required Elements)
   caption: [Boosting Concept],
   kind: "figure",
   supplement: [Fig.],
@@ -1550,6 +1586,7 @@ of boosting.
 
 #figure(
   image("../lectures_source/figures/L02.5.AdaBoost_Diagram.png", width: 80%),
+  // TODO(ai_gp): Caption should use sentence case: "AdaBoost diagram" (typst.rules.md:## Figures: Required Elements)
   caption: [AdaBoost Diagram],
   kind: "figure",
   supplement: [Fig.],
@@ -1558,6 +1595,7 @@ of boosting.
 
 The learning procedure follows a clear iterative pattern:
 
+// TODO(ai_gp): Use #algorithm(...) macro for this structured 5-step AdaBoost procedure instead of bare numbered list (typst.rules.md:## Algorithms and Pseudocode)
 1. Initialize all training examples with equal weight, so the first weak learner
   treats every point as equally important.
 2. At each round, train a new classifier using the current weight distribution
@@ -1613,6 +1651,7 @@ prediction.
 
 #figure(
   image("../lectures_source/figures/L02.5.Stacking_Ensemble.png", width: 80%),
+  // TODO(ai_gp): Caption should use sentence case: "stacking ensemble" (typst.rules.md:## Figures: Required Elements)
   caption: [Stacking Ensemble],
   kind: "figure",
   supplement: [Fig.],
@@ -1668,3 +1707,6 @@ prediction.
   supplement: [Table.],
   placement: auto,
 )
+
+// TODO(ai_gp): Add mandatory level-1 sections: `= Summary` before `= References` (typst.rules.md:## Mandatory Sections)
+// TODO(ai_gp): Add mandatory `= References` section at the end with bibliography (typst.rules.md:## Mandatory Sections)

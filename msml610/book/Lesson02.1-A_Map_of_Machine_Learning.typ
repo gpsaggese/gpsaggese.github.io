@@ -19,6 +19,22 @@
 
 #chapter("L02.1: A Map of Machine Learning")
 
+= Roadmap
+
+This chapter provides a map of machine learning's landscape: the key dimensions
+along which learning problems and approaches vary. We explore four branches of
+the field—paradigms, models, techniques, and theory—that organize how learning
+can be set up and executed. Paradigms describe the nature of the feedback (labeled
+data, rewards, or unlabeled structure). Models are the functional forms that
+encode hypotheses (parametric, non-parametric, or graphical). Techniques are the
+algorithms that fit models to data (input processing, model building, evaluation,
+diagnostics, regularization, and aggregation). Finally, theory provides formal
+foundations and guarantees. The chapter concludes with adages—practical wisdom
+accumulated by the field—that highlight the recurring tension between model
+simplicity and expressiveness, the central role of data quality and quantity, and
+the consistent historical lesson that general methods combined with scale often
+outperform hand-crafted domain-specific approaches.
+
 // From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:13 '# A Map of Machine Learning'
 // Slide: A Map of Machine Learning
 
@@ -87,7 +103,7 @@ and limits that tell us when and why a method works.
     "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.1.png",
     width: 70%,
   ),
-  caption: [Diagram relating Machine Learning, Paradigms, Models and Techniques],
+  caption: [Diagram relating machine learning, paradigms, models and techniques.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -149,7 +165,7 @@ interactive or sequential.
     "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.2.png",
     width: 80%,
   ),
-  caption: [Diagram relating Learning Paradigms, Label Availability and Interactive/Sequential],
+  caption: [Diagram relating learning paradigms, label availability and interactive/sequential.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -284,7 +300,7 @@ branch from the central concept of an ML model.
     "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.3.png",
     width: 70%,
   ),
-  caption: [Diagram relating ML Models, Parametric, Non-parametric and Graphical models],
+  caption: [Diagram relating ML models, parametric, non-parametric and graphical models.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -391,7 +407,7 @@ practitioner to revisit earlier decisions when later stages reveal problems.
     "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.4.png",
     width: 70%,
   ),
-  caption: [Diagram illustrating Stages of an ML Pipeline],
+  caption: [Diagram illustrating stages of an ML pipeline.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -444,15 +460,15 @@ incorporates uncertainty: predictions reflect not just the most likely model but
 the entire posterior distribution, and model complexity is penalized implicitly
 through the marginal likelihood.
 
-These frameworks are complementary rather than competing: VC theory provides
-worst-case guarantees, bias-variance analysis guides model selection, MDL links
-learning to compression, and the Bayesian view supplies a coherent probabilistic
-calculus. That said, a common difficulty in ML theory is that the assumptions
-each framework requires may not align neatly with the messy, high-dimensional
-problems encountered in practice. Distribution-free bounds can be too loose to
-be informative; bias-variance decompositions assume a squared-error loss that
-may not match the task; and Bayesian priors may be chosen for computational
-convenience rather than genuine belief. Recognizing these gaps between theory
+These frameworks are complementary rather than competing: #emph[VC theory] provides
+worst-case guarantees, #emph[bias-variance] analysis guides model selection,
+#emph[MDL] links learning to compression, and the #emph[Bayesian] view supplies a
+coherent probabilistic calculus. That said, a common difficulty in ML theory is
+that the assumptions each framework requires may not align neatly with the messy,
+high-dimensional problems encountered in practice. Distribution-free bounds can be
+too loose to be informative; #emph[bias-variance] decompositions assume a
+squared-error loss that may not match the task; and #emph[Bayesian] priors may be
+chosen for computational convenience rather than genuine belief. Recognizing these gaps between theory
 and practice is essential for applying any of these tools responsibly.
 
 // From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:234 '* Adages of Machine Learning'
@@ -469,7 +485,7 @@ Some of the oldest principles concern simplicity. Einstein's dictum that
   simpler] warns against both over-complicated models and naive ones that throw
 away necessary structure. This echoes #emph[Occam's razor]: the simplest model
 that fits the data is also the most plausible, a principle formalized in
-Bayesian model selection and minimum description length.
+#emph[Bayesian] model selection and minimum description length.
 
 Other adages focus on data quality and quantity. #emph[Garbage in, garbage out]
 (Fuechse, 1957) reminds us that no algorithm can rescue fundamentally flawed
@@ -498,6 +514,27 @@ knowledge-intensive approaches only to be overtaken by brute-force scaling.
 Taken together, these adages trace a shift in emphasis: from model elegance and
 careful feature engineering toward large-scale data and computation as the
 dominant drivers of progress.
+
+= Summary
+
+Machine learning is a sprawling field, but it can be organized along four key dimensions.
+#strong[Paradigms] describe how learning is set up: whether data is labeled, rewards-based,
+unlabeled, interactive, or some combination. #strong[Models] are the functional forms that
+encode hypotheses—parametric (fixed structure, e.g., linear, neural networks), non-parametric
+(flexible structure, e.g., KNN, Gaussian processes), or graphical (probability distributions
+over variables). #strong[Techniques] are the algorithms and processes that fit models to data,
+spanning input processing, model building, performance evaluation, diagnostics, regularization,
+and ensemble methods. Finally, #strong[Theory] provides formal foundations through frameworks
+like VC theory, #emph[bias-variance] decomposition, minimum description length, and #emph[Bayesian]
+inference, each offering different insights into why learning from data works and when it fails.
+
+Beyond these technical dimensions, machine learning has accumulated folk wisdom—adages that
+capture recurring lessons. These include the importance of model simplicity (#emph[Occam's razor],
+Einstein's principle), the critical role of data quality and quantity (#emph[garbage in, garbage
+out], the unreasonable effectiveness of data), and the consistent historical lesson that general
+methods combined with computation and scale outperform hand-crafted, domain-specific approaches.
+These principles reflect a fundamental shift in the field: from elegant models and careful feature
+engineering toward data-driven, large-scale learning as the dominant driver of progress.
 
 // From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:252 '* References'
 // Slide: References

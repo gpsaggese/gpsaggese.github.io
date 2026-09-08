@@ -19,12 +19,27 @@
 
 #chapter("L01.3: The Foundations of AI")
 
+= Roadmap
+
+Artificial intelligence draws its concepts, methods, and perspectives from a rich
+constellation of disciplines beyond computer science alone. This chapter traces
+those intellectual foundations: how philosophy posed foundational questions about
+reasoning and mind, mathematics provided logic and probability theory, economics
+introduced rational decision-making under uncertainty, and neuroscience and
+psychology revealed how biological brains actually work. We explore how computer
+science formalized what computation can and cannot do, control theory contributed
+feedback and optimization, and linguistics tackled the structure of language. By
+the end, you will see that modern AI is not a field that emerged in isolation but
+rather one that synthesized insights from multiple fronts, and many of its deepest
+open questions trace back to philosophical, mathematical, and scientific problems
+that predate computers by centuries.
+
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:10 '# The Foundations of AI'
 // Slide: The Foundations of AI
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:12 '## Overview'
 // Slide: Overview
-= The Foundations of AI
+== The Foundations of AI
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:14 '* AI Relates to Many Other Disciplines'
 // Slide: AI Relates to Many Other Disciplines
@@ -66,8 +81,14 @@
 )[
   @fig:airelatestomanyotherdisciplines maps how AI connects to philosophy,
   mathematics, economics, neuroscience, psychology, computer engineering,
-  control theory, and linguistics.
-  // TODO(ai_gp): Add more
+  control theory, and linguistics. This diagram is not merely a historical
+  curiosity: each of these fields remains active today in shaping how AI
+  systems are designed and evaluated. A machine-learning engineer building a
+  classifier may be solving an optimization problem (mathematics and economics)
+  while reasoning about bias (psychology and ethics, a philosophical concern)
+  and selecting hardware accelerators (computer engineering). Understanding
+  these connections prepares you to see AI not as a monolithic technique but as
+  a synthesis of multiple, complementary perspectives on intelligence itself.
 ]
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:29 '## Philosophy'
@@ -209,7 +230,7 @@ solving. But not every well-posed question has an algorithmic answer.
   ],
   align: right,
   column-gutter: 1em,
-  columns: (1fr, 20%),
+  columns: (1fr, 30%),
 )[
   Some functions are simply #strong[non-computable]. In 1936, Alan Turing
   introduced the #emph[Turing machine] #cite("turing1936computable"), a
@@ -333,7 +354,7 @@ sequential problem into stages so that an optimal policy can be computed
 recursively. Not every real decision-maker, however, hunts for the global
 optimum. Herbert Simon's concept of #strong[satisficing]
 #cite("simon1956satisficing") captures the observation that humans, and many
-practical systems, settle for outcomes that are _"good enough"_ rather than
+practical systems, settle for outcomes that are #emph["good enough"] rather than
 provably best. Choosing a restaurant that meets basic criteria for price,
 distance, and cuisine instead of exhaustively ranking every option in the
 city is a canonical example. Satisficing trades optimality for tractability
@@ -376,7 +397,6 @@ controlled randomness becomes the rational response.
 dimensions, from the degree of mutual influence among agents to the type of
 strategy each regime demands.
 
-// TODO(ai_gp): Keep the table here.
 #figure(
   styled-table(
     headers: ("Aspect", "Large Economies", "Small Economies", "Game Theory"),
@@ -396,7 +416,7 @@ strategy each regime demands.
     ),
     bold-first-col: true,
   ),
-  caption: [Table of Aspect, Large Economies, Small Economies, Game Theory],
+  caption: [How agent mutual influence varies across economic regimes.],
   kind: "table",
   supplement: [Table.],
   placement: auto,
@@ -554,7 +574,7 @@ that far exceeds any human cognitive ability #cite("good1965ultraintelligent").
     "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.3.png",
     width: 28%,
   ),
-  caption: [Diagram relating AI System, Improves Itself, Capability Increases and Superintelligence],
+  caption: [Recursive feedback loop of self-improvement leading toward superintelligence.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -639,7 +659,7 @@ machinery of the mind.
     "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.4.png",
     width: 100%,
   ),
-  caption: [Diagram relating Stimuli, Internal Representation, Cognitive Processes and Beliefs],
+  caption: [Cognitive psychology model: stimulus → representation → processing → beliefs → action.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -710,7 +730,7 @@ with the second, and delivering technology to the third.
   ],
   align: right,
   column-gutter: 1em,
-  columns: (1fr, 20%),
+  columns: (1fr, 30%),
 )[
   Computing hardware has evolved dramatically to become fast enough for AI,
   and the story begins during World War II, when the first #emph[electronic
@@ -886,7 +906,7 @@ provable stability and performance guarantees.
     "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.5.png",
     width: 100%,
   ),
-  caption: [Diagram relating Goal State, Controller, System and Current State],
+  caption: [Feedback control loop: goal drives controller, which adjusts system toward desired state.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -922,8 +942,6 @@ Google Translate convert text between languages, sentiment analysis tools
 mine opinions from social media, and automated chatbots handle customer
 support interactions at scale.
 
-#wrap-content(
-  [
 // rendered_images:begin
 //     ```graphviz[width=42%]
 //     digraph Linguistics {
@@ -933,7 +951,7 @@ support interactions at scale.
 //         nodesep=0.4;
 //         ranksep=0.5;
 //         rankdir=LR;
-// 
+//
 //         node [shape=box,
 //               style="rounded,filled",
 //               penwidth=1.8,
@@ -941,7 +959,7 @@ support interactions at scale.
 //               fontsize=12,
 //               margin="0.22,0.14",
 //               height=0.50];
-// 
+//
 //         edge [color="#A3B1C0",
 //               penwidth=1.3,
 //               arrowhead=vee,
@@ -949,7 +967,7 @@ support interactions at scale.
 //               fontname="Helvetica",
 //               fontsize=10,
 //               fontcolor="#7B8794"];
-// 
+//
 //         NL     [label="Natural\nLanguage", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
 //         CL     [label="Computational\nLinguistics", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
 //         KR     [label="Knowledge\nRepresentation", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
@@ -957,14 +975,14 @@ support interactions at scale.
 //         Sent   [label="Sentiment\nAnalysis", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
 //         Chat   [label="Chatbots", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
 //         Reason [label="Reasoning", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
-// 
+//
 //         NL -> CL;
 //         NL -> KR;
 //         CL -> Trans;
 //         CL -> Sent;
 //         CL -> Chat;
 //         KR -> Reason;
-// 
+//
 //         { rank=same; Trans; Sent; Chat; Reason; }
 //     }
 //     ```
@@ -975,30 +993,25 @@ support interactions at scale.
 #figure(
   image(
     "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.6.png",
-    width: 42%,
+    width: 75%,
   ),
-  caption: [Diagram relating Natural Language, Computational Linguistics, Knowledge Representation and Machine Translation],
+  caption: [Natural language understanding requires computational linguistics and knowledge representation.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:aiandlinguistics>
 // render_images:end
-  ],
-  align: right,
-  column-gutter: 1em,
-  columns: (1fr, 30%),
-)[
-  A related question follows: how does language relate to thought? To bridge
-  that gap, #strong[knowledge representation] studies how to encode knowledge
-  in forms that computers can reason over. Formalisms such as first-order
-  logic let a system draw inferences from stated facts, while knowledge graphs
-  capture rich webs of relationships between entities, giving a machine
-  something closer to a structured understanding of the world rather than a
-  mere string of words. @fig:aiandlinguistics places computational linguistics
-  and knowledge representation at the intersection of natural language
-  understanding and machine reasoning, with machine translation serving as a
-  concrete application that draws on both.
-]
+
+A related question follows: how does language relate to thought? To bridge
+that gap, #strong[knowledge representation] studies how to encode knowledge
+in forms that computers can reason over. Formalisms such as first-order
+logic let a system draw inferences from stated facts, while knowledge graphs
+capture rich webs of relationships between entities, giving a machine
+something closer to a structured understanding of the world rather than a
+mere string of words. @fig:aiandlinguistics places computational linguistics
+and knowledge representation at the intersection of natural language
+understanding and machine reasoning, with machine translation serving as a
+concrete application that draws on both.
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:540 '## Wrap-Up'
 // Slide: Wrap-Up

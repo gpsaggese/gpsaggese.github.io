@@ -1,5 +1,7 @@
 // Import AIMA style formatting and macros
+// TODO(ai_gp): Use root-absolute import path `/helpers_root/...` instead of relative `../../` which breaks when file moves to different directory depth (typst.rules.md:## Boilerplate and Imports)
 #import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": aima-style, algorithm, chapter, glossary, wrap-content
+// TODO(ai_gp): Add separate import from `/helpers_root/dev_scripts_helpers/typst/umd_references.typ` for `cite` and `references` functions (typst.rules.md:## Boilerplate and Imports)
 
 // Document metadata
 #set document(
@@ -10,7 +12,10 @@
 // Apply the AIMA document template (page/text/heading set + show rules)
 #show: aima-style
 
+// TODO(ai_gp): Use unnumbered #chapter("Introduction to Causal AI") instead of #chapter(8, ...) for standalone lesson; numbered form is only for one chapter of a larger numbered book (typst.rules.md:## The `#chapter(...)` Call)
 #chapter(8, "Introduction to Causal AI")
+
+// TODO(ai_gp): Add `= Roadmap` section as first level-1 heading right after #chapter(...), before first content section (typst.rules.md:## Mandatory Sections)
 
 == Introduction and Motivation
 
@@ -48,6 +53,7 @@ will happen?" using forecasting models. #strong[Prescriptive analytics] answers
 #strong[simulation and optimization] answers "What is the best we can do?" by
 modeling complex scenarios and finding optimal strategies.
 
+// TODO(ai_gp): Add figure label `<fig:...>` and in-text reference `@fig:...` - every figure needs both to be integrated into prose (typst.rules.md:## Figures: Required Elements)
 #figure(
   image(
     "../lectures_source/figures/L08.1.Analytical_sophistication.png",
@@ -126,6 +132,7 @@ knowing one variable tells you something about the other.
 // ```
 // rendered_images:end
 // render_images:begin
+// TODO(ai_gp): Add caption, label `<fig:...>`, and in-text reference `@fig:...` - every figure needs all three elements (typst.rules.md:## Figures: Required Elements)
 #figure(
   image(
     "Lesson08.1-Causal_AI_intro.typ.figs/Lesson08.1-Causal_AI_intro.1.png",
@@ -165,23 +172,28 @@ feature importance fundamentally cannot distinguish correlation from causation.
 The limitations of ML systems become clear when we consider what they *cannot*
 tell us:
 
+// TODO(ai_gp): Use #emph[...] for list item lead phrases followed by colons, not #strong[...] - these are not formal definitions but emphasis on list items (typst.rules.md:## Highlighting and Emphasis)
 #strong[Causation from observational data alone]: Strong correlations may arise
 from confounding, reverse causation, or mere coincidence.
 
+// TODO(ai_gp): Use #emph[...] for list item lead phrases followed by colons, not #strong[...] - these are not formal definitions but emphasis on list items (typst.rules.md:## Highlighting and Emphasis)
 #strong[Effects of interventions]: Questions like "If we change $X$, what
 happens to $Y$?" cannot be answered from observational data without causal
 assumptions. For example, "If we lower prices by 10%, will revenue increase?"
 requires understanding the causal mechanism linking price to demand.
 
+// TODO(ai_gp): Use #emph[...] for list item lead phrases followed by colons, not #strong[...] - these are not formal definitions but emphasis on list items (typst.rules.md:## Highlighting and Emphasis)
 #strong[Counterfactuals]: Questions about what would have happened under
 different decisions---"Would the customer have churned if we offered them a
 discount?"---require reasoning beyond observed data.
 
+// TODO(ai_gp): Use #emph[...] for list item lead phrases followed by colons, not #strong[...] - these are not formal definitions but emphasis on list items (typst.rules.md:## Highlighting and Emphasis)
 #strong[Fairness]: A model can be *statistically* unbiased
 ($EE["Prediction"] = EE["True Value"]$) yet *causally* biased if it uses
 variables that are proxies for protected attributes, even when those attributes
 are not explicitly included.
 
+// TODO(ai_gp): Use #emph[...] for list item lead phrases followed by colons, not #strong[...] - these are not formal definitions but emphasis on list items (typst.rules.md:## Highlighting and Emphasis)
 #strong[Optimal decisions]: ML optimizes for accuracy, not business outcomes. A
 90% accurate model might lead to worse decisions than an 85% accurate one,
 depending on the consequences of different types of errors.
@@ -194,12 +206,14 @@ depending on the consequences of different types of errors.
 
 // Slide: Problem 1: Correlation is Not Causation!
 
+// TODO(ai_gp): Use #emph[...] for emphasis of a key claim that is not a formal definition - "correlation is not causation" is rhetorical emphasis, not a term being formally named (typst.rules.md:## Highlighting and Emphasis)
 The most fundamental problem with traditional AI is that #strong[correlation is
   not causation]. Correlation describes statistical relationships between
 variables: it excels at finding patterns in past data to predict the future, but
 it does not explain cause. Variables may move together by coincidence or due to
 hidden confounding factors.
 
+// TODO(ai_gp): Use #emph[...] for second mention of "Causation" which was already #strong-defined earlier at line 150 - subsequent references become #emph (typst.rules.md:## Highlighting and Emphasis)
 #strong[Causation], by contrast, explains how changing one variable influences
 another. It cannot be concluded from correlation alone. The key insight is that
 data itself does not understand causes and effects---only humans can identify
@@ -217,12 +231,14 @@ Sometimes both causal directions are plausible: does top-notch consulting
 improve businesses, or do successful businesses hire top consultants? Without
 causal analysis, the data alone cannot distinguish these explanations.
 
+// TODO(ai_gp): Use #emph[...] for context/domain phrase "hotel industry" - this is emphasis within an example, not a formal definition (typst.rules.md:## Highlighting and Emphasis)
 In the #strong[hotel industry], prices tend to be low when hotels are empty and
 high when demand fills rooms. A naive correlation-based analysis might suggest
 that increasing prices leads to selling more rooms---the exact opposite of the
 true causal relationship. The confounding variable is demand: high demand causes
 both high prices *and* high occupancy.
 
+// TODO(ai_gp): Use #emph[...] for context/domain phrase "online marketplace" - this is emphasis within an example, not a formal definition (typst.rules.md:## Highlighting and Emphasis)
 For an #strong[online marketplace], the causal question "What is the impact of
 lowering prices on units sold?" requires understanding that gains from selling
 more units must compensate for the loss from selling cheaper. Furthermore, price
@@ -358,6 +374,7 @@ ML focuses primarily on inference and optimization, but real-world problems
 demand decision theory---the ability to act under uncertainty with causal
 knowledge.
 
+// TODO(ai_gp): Use styled-table(...) from aima_style.typ instead of raw #table(...), wrap in #figure(...) with caption/label/kind:"table"/supplement:[Table.], add in-text reference @tab:... (typst.rules.md:## Tables)
 #block(
   inset: 8pt,
 )[
@@ -467,6 +484,7 @@ Judea Pearl provided a three-level framework for understanding causality---the
 type of reasoning, and higher rungs cannot be answered using tools from lower
 rungs alone.
 
+// TODO(ai_gp): Use styled-table(...) from aima_style.typ instead of raw #table(...), wrap in #figure(...) with caption/label/kind:"table"/supplement:[Table.], add in-text reference @tab:... (typst.rules.md:## Tables)
 #block(
   inset: 8pt,
 )[
@@ -580,6 +598,7 @@ a DAG), followed by targeted data acquisition aligned with the causal structure.
 Data science and decision science represent #strong[two fundamentally different
   paradigms]:
 
+// TODO(ai_gp): Use styled-table(...) from aima_style.typ instead of raw #table(...), wrap in #figure(...) with caption/label/kind:"table"/supplement:[Table.], add in-text reference @tab:... (typst.rules.md:## Tables)
 #block(
   inset: 8pt,
 )[
@@ -614,6 +633,7 @@ questions and decisions involving interventions.
 The distinction between predictive and causal questions clarifies when standard
 ML suffices and when causal methods are needed:
 
+// TODO(ai_gp): Use styled-table(...) from aima_style.typ instead of raw #table(...), wrap in #figure(...) with caption/label/kind:"table"/supplement:[Table.], add in-text reference @tab:... (typst.rules.md:## Tables)
 #block(
   inset: 8pt,
 )[
@@ -741,6 +761,7 @@ components:
 // ```
 // rendered_images:end
 // render_images:begin
+// TODO(ai_gp): Add caption, label `<fig:...>`, and in-text reference `@fig:...` - every figure needs all three elements (typst.rules.md:## Figures: Required Elements)
 #figure(
   image(
     "Lesson08.1-Causal_AI_intro.typ.figs/Lesson08.1-Causal_AI_intro.2.png",
@@ -850,6 +871,7 @@ The causal DAG reveals the complexity:
 )
 // render_images:end
 
+// TODO(ai_gp): Add caption, label `<fig:...>`, and in-text reference `@fig:...` - every figure needs all three elements (typst.rules.md:## Figures: Required Elements)
 The DAG reveals multiple confounders: product supply and distance to store
 affect product amount independently of price, and competitive offers mediate
 part of the price effect. Without this causal structure, a naive analysis would
@@ -972,3 +994,7 @@ systems to reflect human thinking and decision-making.
 This convergence brings together causal AI, traditional AI, deep learning, and
 generative techniques into unified systems that can both predict and explain,
 both correlate and reason about causation.
+
+// TODO(ai_gp): Add `= Summary` level-1 section before references (typst.rules.md:## Mandatory Sections)
+
+// TODO(ai_gp): Add `= References` level-1 section at the end; required even if .smd has no such slide (typst.rules.md:## Mandatory Sections)

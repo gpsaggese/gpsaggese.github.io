@@ -19,6 +19,20 @@
 
 #chapter("L01.2: AI and Machine Learning")
 
+= Roadmap
+
+This chapter explores two foundational concepts: what artificial intelligence is
+and how machine learning relates to the broader AI landscape. We begin with four
+competing definitions of AI (thinking humanly, thinking rationally, acting humanly,
+acting rationally) and establish why #emph[acting rationally] emerged as the
+central goal of modern AI research. We then define machine learning precisely
+through both intuitive and formal characterizations, examine its three core
+assumptions, and situate ML within the nested hierarchies of AI, deep learning,
+and large language models. Finally, we acknowledge where current machine learning
+systems still fall short compared to human intelligence: their fragility,
+inability to transfer knowledge across domains, data inefficiency, and lack of
+common-sense reasoning.
+
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:12 '# What Is AI?'
 // Slide: What Is AI?
 = What Is Intelligence? What is AI?
@@ -69,8 +83,7 @@ or even surpass that extraordinary capability in a machine.
           width: 100%,
         ),
       ),
-      caption: [The 1956 Dartmouth workshop founders (top) and their 2006
-        fiftieth-anniversary reunion (bottom)],
+      caption: [The Dartmouth workshop founders and fiftieth-anniversary reunion.],
       kind: "figure",
       supplement: [Fig.],
     ) <fig:dartmouthworkshop>
@@ -103,7 +116,7 @@ or even surpass that extraordinary capability in a machine.
   ],
   align: right,
   column-gutter: 1em,
-  columns: (1fr, 20%),
+  columns: (1fr, 30%),
 )[
   The goals of AI are twofold: to understand human intelligence and to create
   intelligent entities. These goals reinforce each other. Building a system that
@@ -164,7 +177,7 @@ reproduce.
       ),
       bold-first-col: true,
     ),
-    caption: [Table of Human, Rational],
+    caption: [Four perspectives on artificial intelligence.],
     kind: "table",
     supplement: [Table.],
     placement: auto,
@@ -274,7 +287,7 @@ Nothing false sneaks in along the way.
     "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.1.png",
     width: 100%,
   ),
-  caption: [Diagram relating Correct premises, Logic and Correct conclusions],
+  caption: [Diagram relating correct premises, logic and correct conclusions.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -283,7 +296,7 @@ Nothing false sneaks in along the way.
   ],
   align: right,
   column-gutter: 1em,
-  columns: (1fr, 20%),
+  columns: (1fr, 45%),
 )[
   #strong[Logic] provides the framework for studying these "laws of thought." It
   allows us to formalize statements about objects in the world and the relations
@@ -387,7 +400,7 @@ broad set of capabilities:
   ],
   align: right,
   column-gutter: 1em,
-  columns: (1fr, 20%),
+  columns: (1fr, 30%),
 )[
   Each of these areas has grown into a major subfield of AI in its own right,
   yet the Turing test reminds us that genuine human-level intelligence weaves
@@ -490,7 +503,7 @@ difficult to pin down as a stable benchmark.
         ),
         bold-first-col: true,
       ),
-      caption: [Table of Human, Rational],
+      caption: [AI should focus on agents acting rationally.],
       kind: "table",
       supplement: [Table.],
       placement: auto,
@@ -736,7 +749,7 @@ their decision logic.
     "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.2.png",
     width: 100%,
   ),
-  caption: [Diagram illustrating AI vs ML vs Deep Learning],
+  caption: [Diagram illustrating AI vs ML vs deep learning.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,

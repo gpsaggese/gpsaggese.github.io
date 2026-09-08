@@ -19,8 +19,10 @@
 
 #chapter("L03.3: Non-classical Logics and Knowledge Representation")
 
+// TODO(ai_gp): Add = Roadmap section right here as first mandatory level-1 section (typst.rules.md:## Mandatory Sections)
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:19 '# Non-classical Logics'
 // Slide: Non-classical Logics
+// TODO(ai_gp): Replace with real heading syntax = or == instead of #strong[] (typst.rules.md:## Structural Hierarchy)
 #strong[Non-classical Logics]
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:21 '* Motivation'
@@ -122,6 +124,7 @@ assumptions about the structure of reality.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.1.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Change caption to sentence case: "Diagram relating logical systems, propositional logic..." not Title Case (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram relating Logical Systems, Propositional Logic (facts: true/false), First-Order Logic (objects & relations) and Higher-Order Logic (relations as objects)],
   kind: "figure",
   supplement: [Fig.],
@@ -148,6 +151,7 @@ forcing a hard true-or-false judgment.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:101 '* Non-monotonic Logic'
 // Slide: Non-monotonic Logic
+// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
 #strong[Non-monotonic Logic]
 
 #strong[Non-monotonic logic] is a logic in which adding new information can
@@ -215,6 +219,7 @@ the absence of more specific information.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:152 '* Default Reasoning'
 // Slide: Default Reasoning
+// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
 #strong[Default Reasoning]
 
 #strong[Default reasoning] makes assumptions in the absence of contrary evidence,
@@ -240,6 +245,7 @@ sensibly in the common case while remaining open to correction.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:171 '* Non-Monotonic Logic: University Example'
 // Slide: Non-Monotonic Logic: University Example
+// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
 #strong[Non-Monotonic Logic: University Example]
 
 The initial facts establish that $"Alice"$ is a $"Student"$ belonging to the
@@ -257,6 +263,7 @@ extending them.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:193 '* Common Sense Reasoning'
 // Slide: Common Sense Reasoning
+// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
 #strong[Common Sense Reasoning]
 
 Much of what humans know about the world is never stated explicitly: if you drop a
@@ -344,6 +351,7 @@ prediction about Bob's behavior.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.3.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Change caption to sentence case: lowercase "Restaurant", "Table", "Common Sense" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram relating Bob enters Restaurant, Bob sits at Table, Common Sense: Sit at table → intends to eat and Infer: Bob intends to eat],
   kind: "figure",
   supplement: [Fig.],
@@ -376,6 +384,7 @@ arrives. @tab:openworldvsclosedworldassumptions summarizes how the two assumptio
 diverge across several key aspects, including how they treat missing information,
 what unstated facts imply, and where each assumption is most naturally applied.
 
+// TODO(ai_gp): Use #grid(...) to pair this 3-column table with the paragraph prose, or add a comment explaining why full-width bare #figure is needed (typst.rules.md:## Every Visual Pairs with Its Text)
 #figure(
   styled-table(
     headers: (
@@ -403,6 +412,7 @@ what unstated facts imply, and where each assumption is most naturally applied.
       ),
     ),
   ),
+  // TODO(ai_gp): Change caption to sentence case: "Closed world assumption vs open world assumption" not Title Case (typst.rules.md:## Figures: Required Elements)
   caption: [Closed World Assumption vs Open World Assumption],
   kind: "table",
   supplement: [Table.],
@@ -459,6 +469,7 @@ from which the system selects its learned rules.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.4.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Change caption to sentence case: lowercase "Background Knowledge", "Positive Examples", "Negative Examples", "Hypothesis Space" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram relating Background Knowledge: Birds have wings Penguins are birds, Positive Examples: Tweety (bird) flies Parrot (bird) flies, Negative Examples: Penguin cannot fly Ostrich cannot fly and Hypothesis Space],
   kind: "figure",
   supplement: [Fig.],
@@ -551,6 +562,7 @@ precisely why the formalism is so widely adopted.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.5.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Change caption to sentence case: lowercase "Class", "Person", "PetOwner", "Instance" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram relating Class: Person, PetOwner (Person with pet), Instance: GP (a PetOwner) and Instance: Nuvolo (GP's dog)],
   kind: "figure",
   supplement: [Fig.],
@@ -674,6 +686,7 @@ nominals.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.6.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Change caption to sentence case: lowercase "Transitive Props", "Role Hierarchies" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram relating ALC (base), S: Transitive Props (ancestorOf), H: Role Hierarchies (hasSon sub-role of hasChild) and O: Nominals (John:individual)],
   kind: "figure",
   supplement: [Fig.],
@@ -750,6 +763,7 @@ algorithm guaranteed to answer every reasoning query in finite time.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.7.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Change caption to sentence case: lowercase "Web Ontology Language", "Simpler", "Full expressiveness", "Maximum", "Decidable reasoning", "Undecidable" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram relating Web Ontology Language (OWL), OWL Lite (Simpler) for classification, OWL DL (Full expressiveness) Decidable reasoning and OWL Full (Maximum) Undecidable],
   kind: "figure",
   supplement: [Fig.],
@@ -793,6 +807,7 @@ constraint that propositional or plain first-order logic cannot express as compa
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.8.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Change caption to sentence case: lowercase "Class", "ObjectProperty" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram relating Person (Class), Student (Class), hasAdvisor (ObjectProperty) and Restriction: minCardinality 1],
   kind: "figure",
   supplement: [Fig.],
@@ -834,6 +849,7 @@ links two pieces of information through a named relationship:
 - #emph[Predicate]: the property or relationship (e.g., `isA`)
 - #emph[Object]: the value or related entity (e.g., `Dog`)
 
+// TODO(ai_gp): Use #grid(...) to pair this 3-column table with the surrounding prose, or add a comment explaining why full-width bare #figure is needed (typst.rules.md:## Every Visual Pairs with Its Text)
 #figure(
   styled-table(
     headers: (
@@ -974,6 +990,7 @@ properties, and OWL sits at the top, enabling expressive ontological reasoning.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.9.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Change caption to sentence case: lowercase "Foundation", "Data Model", "Schema Layer", "Ontology Language" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram relating Foundation: URIs and Unicode, RDF (Data Model) Triples: Subject-Predicate-Object, RDFS (Schema Layer) Classes and Properties and OWL (Ontology Language) Express complex relationships],
   kind: "figure",
   supplement: [Fig.],
@@ -1063,6 +1080,7 @@ example, showing items linked to values through properties in a directed graph.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.10.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Change caption to sentence case: lowercase "Item", "Property", "Value" (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram relating Item: Q42 (Douglas Adams), Property: P31 (instance of), Value: Q5 (Human) and Property: P106 (occupation)],
   kind: "figure",
   supplement: [Fig.],
@@ -1165,6 +1183,7 @@ hierarchical structure that makes inheritance-based inference straightforward.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.11.png",
     width: 70%,
   ),
+  // TODO(ai_gp): Change caption to sentence case: "Diagram relating animal, dog, cat and mammal" not Title Case (typst.rules.md:## Figures: Required Elements)
   caption: [Diagram relating Animal, Dog, Cat and Mammal],
   kind: "figure",
   supplement: [Fig.],
