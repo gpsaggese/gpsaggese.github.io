@@ -6,11 +6,14 @@ Import as:
 import class_scripts.test.test_common_utils as csttcout
 """
 
+import contextlib
 import logging
 import os
 import sys
+from typing import Iterator
 from unittest import mock
 
+import helpers
 import helpers.hio as hio
 import helpers.hunit_test as hunitest
 
@@ -531,6 +534,40 @@ class Test_call_llm(hunitest.TestCase):
     Test `call_llm()` function.
     """
 
+    @contextlib.contextmanager
+    def _mock_hllm_module(self) -> Iterator[mock.MagicMock]:
+        """
+        Inject a fake `helpers.hllm` module for the duration of the `with`
+        block, so `call_llm()`'s `import helpers.hllm as hllm` picks up a
+        `MagicMock` instead of the real module.
+
+        - Problem: `helpers.hllm` imports `openai` and `pydantic` at module
+          level. `mock.patch("helpers.hllm.get_completion", ...)` needs to
+          import the real `helpers.hllm` module to find `get_completion` to
+          patch. In an environment where `openai` isn't installed that
+          import raises `ModuleNotFoundError`.
+        - Solution: pre-populate `sys.modules["helpers.hllm"]` with a
+          `MagicMock` via `mock.patch.dict()` before `call_llm()` runs. This
+          keeps the test hermetic without adding `openai` as a dependency of
+          the CI job.
+        - Gotcha: `mock.patch.dict(sys.modules, ...)` alone is not enough.
+          `call_llm()`'s `import helpers.hllm as hllm` resolves through the
+          `helpers` package's cached `hllm` attribute, not through
+          `sys.modules`, once `helpers.hllm` has ever been really imported
+          in the process (e.g. by another test module that runs earlier in
+          the same session and imports it for real). That attribute is
+          untouched by `mock.patch.dict()`, so the real module -- and a real
+          API call -- leaks through. Patching the `helpers` package's
+          `hllm` attribute too closes that gap, regardless of import order.
+        """
+        mock_hllm = mock.MagicMock()
+        with mock.patch.dict(
+            sys.modules, {"helpers.hllm": mock_hllm}
+        ), mock.patch.object(
+            helpers, "hllm", mock_hllm, create=True
+        ):
+            yield mock_hllm
+
     def test1(self) -> None:
         """
         Test happy path: "hllm" backend dispatches to
@@ -544,22 +581,8 @@ class Test_call_llm(hunitest.TestCase):
         # Prepare outputs.
         expected = "Paris"
         # Run test.
-        # Note: the "hllm" backend tests inject a fake module into
-        # `sys.modules["helpers.hllm"]` instead of using
-        # `mock.patch("helpers.hllm.get_completion")` directly.
-        # - Problem: `helpers.hllm` imports `openai` and `pydantic` at module
-        #   level. `mock.patch("helpers.hllm.get_completion", ...)` needs to
-        #   import the real `helpers.hllm` module to find `get_completion` to
-        #   patch. In an environment where `openai` isn't installed that import
-        #   raises `ModuleNotFoundError`.
-        # - Solution: pre-populate `sys.modules["helpers.hllm"]` with a
-        #   `MagicMock` via `mock.patch.dict()` before `call_llm()` runs.
-        #   This keeps the test hermetic without adding `openai` as a
-        #   dependency of the CI job
-        # TODO(gp): Maybe factor this out.
-        mock_hllm = mock.MagicMock()
-        mock_hllm.get_completion.return_value = expected
-        with mock.patch.dict(sys.modules, {"helpers.hllm": mock_hllm}):
+        with self._mock_hllm_module() as mock_hllm:
+            mock_hllm.get_completion.return_value = expected
             actual = csccouti.call_llm(
                 user_prompt, system_prompt, model, llm_backend
             )
@@ -587,10 +610,9 @@ class Test_call_llm(hunitest.TestCase):
         images_as_base64 = ("base64_image_data",)
         # Prepare outputs.
         expected = "A slide about causal inference."
-        mock_hllm = mock.MagicMock()
-        mock_hllm.get_completion.return_value = expected
         # Run test.
-        with mock.patch.dict(sys.modules, {"helpers.hllm": mock_hllm}):
+        with self._mock_hllm_module() as mock_hllm:
+            mock_hllm.get_completion.return_value = expected
             actual = csccouti.call_llm(
                 user_prompt,
                 system_prompt,

@@ -1,23 +1,52 @@
-FILE=msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd
+SMD_FILE=msml610/lectures_source/Lesson03.3*.smd
 
-- [ ] Review and improve slides
+- Read the conventions for
+  - books: `.claude/skills/book.rules.md`
+  - slides: `.claude/skills/slides.rules.md`
+  - typst code: `.claude/skills/typst.rules.md`
 
-/slides.review $FILE
+### [ ] Review and Improve slides
 
-Make sure it renders correctly:
-> gen_slides.py -i $FILE
+- Run the skill
+  ```
+  /slides.review $SMD_FILE
+  ```
+  - Implement the restructuring of the slides and fix the high importance issues
+    reported by the skill
 
-Implement the restructuring of the slides and fix the high importance issues
+- Make sure the SMD_FILE renders correctly:
+  ```
+  > gen_slides.py -i $SMD_FILE
+  ```
+  - If not fix the problems
 
-- [ ] Add visuals and references to slides
+- Add visuals and references to the $SMD_FILE
+  ```
+  /slides.add_visuals $SMD_FILE
+  /slides.add_references $SMD_FILE
+  ```
 
-/slides.add_visuals $FILE
-/slides.add_references $FILE
+- Make sure the SMD_FILE renders correctly:
+  ```
+  > gen_slides.py -i $SMD_FILE
+  ```
+  - If not fix the problems
 
-Make sure it renders correctly
-> gen_slides.py -i $FILE
 
-- [ ] Generate the book chapter
+### [ ] Generate the book chapter
 
-> gen_book_chapter.py -i msml610/01.2 --mode typst_aima --llm_backend hllm_cli_exec --model openrouter/anthropic/claude-opus-4.6 --no_incremental
-> run_typst.py --input msml610/book/Lesson01.2-AI_and_Machine_Learning.typ
+- Generate the book chapter for $SMD_FILE
+  ```
+  > gen_book_chapter.py -i $SMD_FILE --mode typst_aima --llm_backend hllm_cli_exec --model openrouter/anthropic/claude-opus-4.6 --no_incremental
+  ```
+  which generates a file $TYP_FILE in msml610/book/<FILE>.typ
+
+- Humanize
+  ```
+  /text.humanize $TYP_FILE
+  ```
+
+- Make sure that the generated typst code compiles
+  ```
+  > run_typst.py --input $TYP_FILE
+  ```
