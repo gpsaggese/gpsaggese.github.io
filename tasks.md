@@ -1,52 +1,40 @@
-SMD_FILE=msml610/lectures_source/Lesson03.3*.smd
+### [x] Document the agentic auto_task engineering flow
 
-- Read the conventions for
-  - books: `.claude/skills/book.rules.md`
-  - slides: `.claude/skills/slides.rules.md`
-  - typst code: `.claude/skills/typst.rules.md`
+* Repo: umd_classes
 
-### [ ] Review and Improve slides
+* Problem
+- We built an agentic workflow (`auto_task` rules, template, skills) to run AI
+  coding agents end to end (spec -> branch -> PR) with minimal supervision, but
+  it is not documented anywhere outside the skill files themselves
+- We want 3 blog posts that explain the flow: what we have today and what we
+  plan to have once it is done
 
-- Run the skill
-  ```
-  /slides.review $SMD_FILE
-  ```
-  - Implement the restructuring of the slides and fix the high importance issues
-    reported by the skill
+* Solution
 
-- Make sure the SMD_FILE renders correctly:
-  ```
-  > gen_slides.py -i $SMD_FILE
-  ```
-  - If not fix the problems
+- [x] PR1: Write `blog_posts/draft.My_agentic_engineering_flow.md`
+  - Find and review all the relevant info in the repo before writing
+  - Describe the available pieces of info in the repo:
+    - `.claude/skills/auto_task.rules.md` (conventions for creating, queuing,
+      executing an `auto_task`)
+    - `.claude/templates/auto_task.template.md` (problem/solution/PR plan format)
+  - Describe the tools and the workflow:
+    - Create a `tasks.md` (e.g., from `msml610/book/prompt.slides_and_book_flow.md`)
+      in the auto_task format
+    - Review it with `/auto_task.criticize tasks.md`
+    - Execute it with `/auto_task.execute_with_stacked_prs tasks.md` or
+      `/auto_task.execute_interactively tasks.md`
+  - Describe the auto_task skills (`mdm skill l auto_task`):
+    `auto_task.create_specs_from_todos`, `auto_task.criticize`,
+    `auto_task.execute_interactively`, `auto_task.execute_with_stacked_prs`
+  - Explain the `/pr.*` skills (`pr.get_ci_to_pass`, `pr.get_local_tests_to_pass`,
+    `pr.get_to_commit_state`)
+  - Cover both current state (what is implemented and used today) and planned
+    state (what is still missing / on the roadmap)
 
-- Add visuals and references to the $SMD_FILE
-  ```
-  /slides.add_visuals $SMD_FILE
-  /slides.add_references $SMD_FILE
-  ```
+- [x] PR2: Finish `blog_posts/draft.how_to.A_queue_of_AI_coding_agents.md`
+  - This is the canonical version; `blog_posts/draft.A_queue_of_AI_coding_agents.md`
+    is an older duplicate and is not touched by this task
+  - Complete the draft describing the async queue-of-agents workflow
 
-- Make sure the SMD_FILE renders correctly:
-  ```
-  > gen_slides.py -i $SMD_FILE
-  ```
-  - If not fix the problems
-
-
-### [ ] Generate the book chapter
-
-- Generate the book chapter for $SMD_FILE
-  ```
-  > gen_book_chapter.py -i $SMD_FILE --mode typst_aima --llm_backend hllm_cli_exec --model openrouter/anthropic/claude-opus-4.6 --no_incremental
-  ```
-  which generates a file $TYP_FILE in msml610/lectures_pdf/...typ
-
-- Humanize
-  ```
-  /text.humanize $TYP_FILE
-  ```
-
-- Make sure that the generated typst code compiles
-  ```
-  > run_typst.py --input $TYP_FILE
-  ```
+- [x] PR3: Finish `blog_posts/draft.how_to.Stacked_PRs_for_agentic_developent.md`
+  - Complete the draft describing the stacked-PR workflow for agentic development

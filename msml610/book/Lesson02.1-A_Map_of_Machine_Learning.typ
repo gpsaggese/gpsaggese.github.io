@@ -102,7 +102,7 @@ us when and why a method works.
     "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.1.png",
     width: 70%,
   ),
-  caption: [Diagram relating machine learning, paradigms, models and techniques.],
+  caption: [Diagram relating Machine Learning, Paradigms, Models and Techniques],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -127,30 +127,30 @@ of labels and whether the learning process is interactive or sequential.
 //          fontcolor="#26215C", color="#D8D6EE", penwidth=1.2,
 //          height=0.46, margin="0.18,0.09"];
 //   edge  [arrowhead=none, penwidth=1.4, color="#B9B6D6"];
-//
+// 
 //   root [label="Learning Paradigms", shape=box, style="rounded,filled",
 //         fillcolor="#26215C", fontcolor="white", fontsize=14, penwidth=0,
 //         margin="0.26,0.16"];
-//
+// 
 //   // Label availability - violet
 //   label_avail [label="Label Availability", fillcolor="white", color="#7C74D6", fontcolor="#45296B", penwidth=1.6, fontsize=12];
 //   supervised   [label=<<b>Supervised</b><br/><font point-size="9" color="#45296B">Labeled input-output pairs</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 //   unsupervised [label=<<b>Unsupervised</b><br/><font point-size="9" color="#45296B">Unlabeled data, discover structure</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 //   selfsup      [label=<<b>Self-supervised</b><br/><font point-size="9" color="#45296B">Labels derived from data</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 //   semisup      [label=<<b>Semi-supervised</b><br/><font point-size="9" color="#45296B">Mixed labeled + unlabeled</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
-//
+// 
 //   // Interactive - blue
 //   interactive  [label="Interactive/Sequential", fillcolor="white", color="#3E86C8", fontcolor="#1F4E79", penwidth=1.6, fontsize=12];
 //   rl           [label=<<b>Reinforcement</b><br/><font point-size="9" color="#1F4E79">Learn from delayed rewards</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
 //   active       [label=<<b>Active Learning</b><br/><font point-size="9" color="#1F4E79">Request labels on demand</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
 //   online       [label=<<b>Online Learning</b><br/><font point-size="9" color="#1F4E79">Sequential data, incremental update</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
-//
+// 
 //   root -> label_avail [color="#7C74D6", penwidth=2.0];
 //   root -> interactive [color="#3E86C8", penwidth=2.0];
-//
+// 
 //   label_avail -> {supervised unsupervised selfsup semisup} [color="#A9A3E6"];
 //   interactive -> {rl active online}                        [color="#8FB6DE"];
-//
+// 
 //   { rank=same; supervised; unsupervised; selfsup; semisup; rl; active; online; }
 // }
 // ```
@@ -163,8 +163,7 @@ of labels and whether the learning process is interactive or sequential.
     "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.2.png",
     width: 80%,
   ),
-  caption: [Diagram relating learning paradigms, label availability and
-    interactive/sequential.],
+  caption: [Diagram relating Learning Paradigms, Label Availability and Interactive/Sequential],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -254,37 +253,37 @@ model.
 //          fontcolor="#26215C", color="#D8D6EE", penwidth=1.2,
 //          height=0.46, margin="0.18,0.09"];
 //   edge  [arrowhead=none, penwidth=1.4, color="#B9B6D6"];
-//
+// 
 //   root [label="ML Models", shape=box, style="rounded,filled",
 //         fillcolor="#26215C", fontcolor="white", fontsize=14, penwidth=0,
 //         margin="0.26,0.16"];
-//
+// 
 //   // Parametric - violet
 //   parametric [label="Parametric", fillcolor="white", color="#7C74D6", fontcolor="#45296B", penwidth=1.6, fontsize=12];
 //   linear     [label=<<b>Linear models</b><br/><font point-size="9" color="#45296B">Linear, deterministic</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 //   glm        [label=<<b>GLM</b><br/><font point-size="9" color="#45296B">Linear predictor, probabilistic</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 //   nn         [label=<<b>Neural networks</b><br/><font point-size="9" color="#45296B">Non-linear, deterministic</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
-//
+// 
 //   // Non-parametric - blue
 //   nonparam   [label="Non-parametric", fillcolor="white", color="#3E86C8", fontcolor="#1F4E79", penwidth=1.6, fontsize=12];
 //   knn        [label=<<b>Nearest neighbors</b><br/><font point-size="9" color="#1F4E79">KNN, non-linear</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
 //   svm        [label=<<b>SVM</b><br/><font point-size="9" color="#1F4E79">Kernelized, non-linear</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
 //   gp         [label=<<b>Gaussian processes</b><br/><font point-size="9" color="#1F4E79">Non-linear, probabilistic</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
-//
+// 
 //   // Graphical models - teal
 //   graphical  [label="Graphical models", fillcolor="white", color="#2F9678", fontcolor="#1F4E39", penwidth=1.6, fontsize=12];
 //   bn         [label=<<b>Bayesian networks</b><br/><font point-size="9" color="#1F4E39">Structured, probabilistic</font>>, fillcolor="#E5F4EE", color="#BCE0D2", fontcolor="#1F4E39"];
 //   hmm        [label=<<b>Hidden Markov models</b><br/><font point-size="9" color="#1F4E39">Sequential, probabilistic</font>>, fillcolor="#E5F4EE", color="#BCE0D2", fontcolor="#1F4E39"];
 //   kalman     [label=<<b>Kalman filters</b><br/><font point-size="9" color="#1F4E39">Continuous state, probabilistic</font>>, fillcolor="#E5F4EE", color="#BCE0D2", fontcolor="#1F4E39"];
-//
+// 
 //   root -> parametric [color="#7C74D6", penwidth=2.0];
 //   root -> nonparam   [color="#3E86C8", penwidth=2.0];
 //   root -> graphical  [color="#2F9678", penwidth=2.0];
-//
+// 
 //   parametric -> {linear glm nn}   [color="#A9A3E6"];
 //   nonparam   -> {knn svm gp}      [color="#8FB6DE"];
 //   graphical  -> {bn hmm kalman}   [color="#89C0AC"];
-//
+// 
 //   { rank=same; linear; glm; nn; knn; svm; gp; bn; hmm; kalman; }
 // }
 // ```
@@ -297,8 +296,7 @@ model.
     "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.3.png",
     width: 70%,
   ),
-  caption: [Diagram relating ML models, parametric, non-parametric and graphical
-    models.],
+  caption: [Diagram relating ML Models, Parametric, Non-parametric and Graphical models],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -364,7 +362,7 @@ practitioner to revisit earlier decisions when later stages reveal problems.
 //   nodesep=0.30;
 //   ranksep=0.45;
 //   rankdir=LR;
-//
+// 
 //   node [shape=box,
 //         style="rounded,filled",
 //         penwidth=1.8,
@@ -372,7 +370,7 @@ practitioner to revisit earlier decisions when later stages reveal problems.
 //         fontsize=11,
 //         margin="0.18,0.12",
 //         height=0.46];
-//
+// 
 //   edge [color="#A3B1C0",
 //         penwidth=1.3,
 //         arrowhead=vee,
@@ -380,7 +378,7 @@ practitioner to revisit earlier decisions when later stages reveal problems.
 //         fontname="Helvetica",
 //         fontsize=9,
 //         fontcolor="#7B8794"];
-//
+// 
 //   InputProcessing [label=<<b>Input Processing</b><br/><font point-size="9" color="#1F4E79">Cleaning, dim. reduction, feature eng.</font>>,
 //                     fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 //   ModelBuilding    [label=<<b>Model Building</b><br/><font point-size="9" color="#1F4E79">Choose model, learning algorithm</font>>,
@@ -403,7 +401,7 @@ practitioner to revisit earlier decisions when later stages reveal problems.
     "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.4.png",
     width: 70%,
   ),
-  caption: [Diagram illustrating stages of an ML pipeline.],
+  caption: [Diagram illustrating Stages of an ML Pipeline],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
