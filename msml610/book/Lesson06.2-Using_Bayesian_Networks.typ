@@ -1,4 +1,6 @@
 // Import AIMA style formatting and macros
+// TODO(ai_gp): Use root-absolute path `/helpers_root/...` instead of relative `../../helpers_root/...` (typst.rules.md:## Boilerplate and Imports)
+// TODO(ai_gp): Add missing citation import: `#import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": (cite, references,)` (typst.rules.md:## Boilerplate and Imports)
 #import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": aima-style, chapter, algorithm, glossary, wrap-content
 
 // Document metadata
@@ -11,6 +13,8 @@
 #show: aima-style
 
 #chapter(6, "Using Bayesian Networks")
+
+// TODO(ai_gp): Add mandatory `= Roadmap` section right after `#chapter(...)` before first content (typst.rules.md:## Mandatory Sections)
 
 == Semantics of Bayesian Networks
 
@@ -49,6 +53,7 @@ deriving Bayesian networks.
 #strong[Proof outline:] For any variables $x_(1), ..., x_n$, we can express one
 variable conditionally:
 
+// TODO(ai_gp): Use Typst syntax for subscripts: replace `x_{n-1}` with `x_(n-1)` throughout (typst.rules.md:## Formulas)
 $Pr(x_1, ..., x_{n-1}, x_n) = Pr(x_n | x_{n-1}, ..., x_1) Pr(x_{n-1}, ..., x_1)$
 
 Applying this formula recursively until reaching unconditional probabilities
@@ -68,6 +73,7 @@ To compute probabilities using a Bayesian network:
   $Pr(X_1, ..., X_n) = product_(i=1)^n Pr(X_i | X_(i-1), ..., X_1)$
 3. Leverage conditional independence: since each node is conditionally
   independent of all predecessors given its parents,
+  // TODO(ai_gp): Use Typst syntax for subscripts: replace `X_{i-1}` with `X_(i-1)` (typst.rules.md:## Formulas)
   $Pr(X_i | X_{i-1}, ..., X_1) = Pr(X_i | text("Parents")(X_i))$
 4. Express the joint probability using the Conditional Probability Tables
   (CPTs): $Pr(X_1, ..., X_n) = product_(i=1)^n Pr(X_i | "Parents"(X_i))$
@@ -160,42 +166,53 @@ different edge counts and conditional probability table sizes.
 
 #wrap-content(
   [
-    // rendered_images:begin
-    // ```graphviz
-    // digraph BayesianNetwork {
-    //     splines=true;
-    //     nodesep=0.8;
-    //     ranksep=0.8;
-    //
-    //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-    //
-    //     Burglary   [label="Burglary", fillcolor="#A6C8F4"];
-    //     Alarm      [label="Alarm", fillcolor="#FFD1A6"];
-    //     JohnCalls   [label="JohnCalls", fillcolor="#B2E2B2"];
-    //     MaryCalls   [label="MaryCalls", fillcolor="#B2E2B2"];
-    //     Earthquake [label="Earthquake", fillcolor="#A6C8F4"];
-    //
-    //     Burglary -> Alarm;
-    //     Earthquake -> Alarm;
-    //     Alarm -> JohnCalls;
-    //     Alarm -> MaryCalls;
-    // }
-    // ```
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.1.png", width: 100%),
-    )
-    // render_images:end
+// rendered_images:begin
+//     ```graphviz
+//     digraph BayesianNetwork {
+//         splines=true;
+//         nodesep=0.8;
+//         ranksep=0.8;
+//     
+//         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+//     
+//         Burglary   [label="Burglary", fillcolor="#A6C8F4"];
+//         Alarm      [label="Alarm", fillcolor="#FFD1A6"];
+//         JohnCalls   [label="JohnCalls", fillcolor="#B2E2B2"];
+//         MaryCalls   [label="MaryCalls", fillcolor="#B2E2B2"];
+//         Earthquake [label="Earthquake", fillcolor="#A6C8F4"];
+//     
+//         Burglary -> Alarm;
+//         Earthquake -> Alarm;
+//         Alarm -> JohnCalls;
+//         Alarm -> MaryCalls;
+//     }
+//     ```
+// rendered_images:end
+// render_images:begin
+// TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
+#figure(
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.1.png",
+    width: 100%,
+  ),
+  caption: [caption],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:placeholder1>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
   columns: (1fr, 20%),
 )[
+  // TODO(ai_gp): Prose paired with wrap-content image is too short; add more sentences to fill the image height (typst.rules.md:# Visuals)
+  // TODO(ai_gp): Replace Markdown `*Causal ordering*` with `#emph[Causal ordering]` (typst.rules.md:## Typst Vs. Markdown Syntax)
   *Causal ordering* (Burglary, Earthquake, Alarm, JohnCalls, MaryCalls)—minimal
   edges following causal direction:
 ]
 
+// TODO(ai_gp): Replace Markdown `*Poor ordering 1*` with `#emph[Poor ordering 1]` (typst.rules.md:## Typst Vs. Markdown Syntax)
 *Poor ordering 1*—requires backward edges, increasing complexity:
 
 // rendered_images:begin
@@ -223,11 +240,20 @@ different edge counts and conditional probability table sizes.
 // ```
 // rendered_images:end
 // render_images:begin
+// TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.2.png"),
-)
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.2.png",
+    width: 70%,
+  ),
+  caption: [caption],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:placeholder2>
 // render_images:end
 
+// TODO(ai_gp): Replace Markdown `*Poor ordering 2*` with `#emph[Poor ordering 2]` (typst.rules.md:## Typst Vs. Markdown Syntax)
 *Poor ordering 2*—dense interconnections requiring large CPTs:
 
 // rendered_images:begin
@@ -258,9 +284,17 @@ different edge counts and conditional probability table sizes.
 // ```
 // rendered_images:end
 // render_images:begin
+// TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.3.png"),
-)
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.3.png",
+    width: 70%,
+  ),
+  caption: [caption],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:placeholder3>
 // render_images:end
 
 The graph is "minimal" in terms of connectivity when all edges represent causal
@@ -279,27 +313,35 @@ what is the alarm probability?"
 
 #wrap-content(
   [
-    // rendered_images:begin
-    // ```graphviz
-    // digraph CausalModel {
-    //     splines=true;
-    //     nodesep=2.0;
-    //     ranksep=1.5;
-    //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-    //
-    //     Causes [label="Causes", fillcolor="#B2E2B2"];
-    //     Symptoms [label="Symptoms", fillcolor="#F4A6A6"];
-    //
-    //     Causes -> Symptoms;
-    //     Symptoms -> Causes;
-    // }
-    // ```
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.4.png", width: 100%),
-    )
-    // render_images:end
+// rendered_images:begin
+//     ```graphviz
+//     digraph CausalModel {
+//         splines=true;
+//         nodesep=2.0;
+//         ranksep=1.5;
+//         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+//     
+//         Causes [label="Causes", fillcolor="#B2E2B2"];
+//         Symptoms [label="Symptoms", fillcolor="#F4A6A6"];
+//     
+//         Causes -> Symptoms;
+//         Symptoms -> Causes;
+//     }
+//     ```
+// rendered_images:end
+// render_images:begin
+// TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
+#figure(
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.4.png",
+    width: 100%,
+  ),
+  caption: [caption],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:placeholder4>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -344,6 +386,7 @@ reasoning about a variable.
 In a Bayesian network, each variable exhibits strong independence properties:
 
 - A variable is conditionally independent of its predecessors given its parents.
+// TODO(ai_gp): Replace Markdown `*all other nodes*` with `#emph[all other nodes]` (typst.rules.md:## Typst Vs. Markdown Syntax)
 - A variable is conditionally independent of *all other nodes* given its Markov
   blanket (parents, children, and spouses).
 
@@ -362,28 +405,34 @@ can change beliefs about an ancestor through competing explanations.
 
 #wrap-content(
   [
-    // rendered_images:begin
-    // ```graphviz
-    // digraph BayesianFlow {
-    //     splines=true;
-    //     nodesep=1.0;
-    //     ranksep=0.75;
-    //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-    //
-    //     Rain [fillcolor="#A6C8F4", label="Rain"];
-    //     WetGrass [fillcolor="#B2E2B2", label="WetGrass"];
-    //     Sprinkler [fillcolor="#A6E7F4", label="Sprinkler"];
-    //
-    //     Rain -> WetGrass;
-    //     Sprinkler -> WetGrass;
-    // }
-    // ```
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.5.png", width: 100%),
-    )
-    // render_images:end
+// rendered_images:begin
+//     ```graphviz
+//     digraph BayesianFlow {
+//         splines=true;
+//         nodesep=1.0;
+//         ranksep=0.75;
+//         node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+//     
+//         Rain [fillcolor="#A6C8F4", label="Rain"];
+//         WetGrass [fillcolor="#B2E2B2", label="WetGrass"];
+//         Sprinkler [fillcolor="#A6E7F4", label="Sprinkler"];
+//     
+//         Rain -> WetGrass;
+//         Sprinkler -> WetGrass;
+//     }
+//     ```
+// rendered_images:end
+// render_images:begin
+#figure(
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.5.png",
+    width: 100%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+)
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -448,7 +497,13 @@ Consider risk factors and outcomes for heart disease:
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.6.png"),
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.6.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 
@@ -500,7 +555,13 @@ For house prices in a region:
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.7.png"),
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.7.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 
@@ -558,7 +619,13 @@ For an individual company's stock price:
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.8.png"),
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.8.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 
@@ -606,9 +673,11 @@ Some nodes in a Bayesian network are #strong[deterministic], meaning their
 values are completely determined by parents without any uncertainty. Examples
 include:
 
+// TODO(ai_gp): Replace Markdown `*Logical relationships*` with `#emph[Logical relationships]` (typst.rules.md:## Typst Vs. Markdown Syntax)
 - *Logical relationships*:
   $"IsNorthAmerican" = "IsCanadian" or "IsUS" or "IsMexican"$. The child is true
   if any parent is true.
+// TODO(ai_gp): Replace Markdown `*Numerical relationships*` with `#emph[Numerical relationships]` (typst.rules.md:## Typst Vs. Markdown Syntax)
 - *Numerical relationships*: $"BestPrice" = min("Price"_1, "Price"_2, ...)$. The
   child is the minimum of parent prices.
 
@@ -630,6 +699,7 @@ independent, we compute:
 
 $Pr(text("Fever") | text("parents")) = 1 - Pr(text("No Fever") | text("Cold")) times Pr(text("No Fever") | text("Flu")) times Pr(text("No Fever") | text("Malaria"))$
 
+// TODO(ai_gp): Replace Markdown `*all*` with `#emph[all]` (typst.rules.md:## Typst Vs. Markdown Syntax)
 This formulation captures the intuition: fever is absent only if *all* causes
 fail to produce it. With $k$ parents, this reduces specification from $O(2^k)$
 probabilities to $k+1$ parameters (one per cause, plus a base rate).
@@ -782,7 +852,13 @@ vehicle characteristics drive accident and theft risk, which translate to costs.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.9.png"),
+  image(
+    "Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.9.png",
+    width: 70%,
+  ),
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 )
 // render_images:end
 
@@ -863,6 +939,7 @@ to calculate exactly.
 #strong[Disadvantages]:
 - Understanding variable interactions from samples alone is difficult.
 - Computationally intensive, requiring many samples for high accuracy.
+// TODO(ai_gp): Use Typst syntax: replace `"sqrt"{N}` with `sqrt(N)` (typst.rules.md:## Formulas)
 - Variance in estimates decreases slowly (proportional to $1/"sqrt"{N}$).
 
 === Sampling from Arbitrary Distributions
@@ -872,6 +949,7 @@ to calculate exactly.
 To implement Monte Carlo methods, we must sample from arbitrary probability
 distributions.
 
+// TODO(ai_gp): Convert procedure from list to `#algorithm(...)` macro (typst.rules.md:# Algorithms and Pseudocode)
 #strong[General approach]:
 1. Start with uniform random number $r in [0,1]$.
 2. Construct cumulative distribution function (CDF): $F(x) = Pr(X <= x)$.
@@ -881,7 +959,9 @@ For #strong[discrete distributions]:
 - Find the smallest outcome where $F(x) > r$.
 
 For #strong[continuous distributions]:
+// TODO(ai_gp): Use Typst syntax for superscripts: replace `F^{-1}` with `F^(-1)` (typst.rules.md:## Formulas)
 - Use inverse transform when CDF is invertible: $x = F^{-1}(r)$.
+// TODO(ai_gp): Use Typst syntax for superscripts: replace `e^{-lambda x}` with `e^(-lambda x)` (typst.rules.md:## Formulas)
 - Example: Exponential distribution with CDF $F(x) = 1 - e^{-lambda x}$ inverts
   to $x = -1/lambda times ln(1-r)$.
 - Use numerical methods if closed form is unavailable.
@@ -896,6 +976,7 @@ inference.
 #strong[Prior sampling] generates independent samples from a Bayesian network's
 prior distribution (without conditioning on evidence).
 
+// TODO(ai_gp): Convert algorithm from list to `#algorithm(...)` macro (typst.rules.md:# Algorithms and Pseudocode)
 #strong[Algorithm]:
 1. Sample variables in topological order.
 2. Source nodes (roots) sample from unconditional distributions.
@@ -941,6 +1022,7 @@ for inference.
 #strong[Rejection sampling] handles inference with evidence by sampling from the
 prior, then filtering to retained samples matching evidence.
 
+// TODO(ai_gp): Convert algorithm from list to `#algorithm(...)` macro (typst.rules.md:# Algorithms and Pseudocode)
 #strong[Algorithm]:
 1. Generate samples from the prior distribution.
 2. Reject samples not matching evidence $E=e$.
@@ -977,6 +1059,7 @@ $w_(i) = Pr(X_i) \/ Q(X_i)$
 
 Estimate expectations as:
 
+// TODO(ai_gp): Use Typst syntax for subscripts/superscripts: replace `sum_{i=1}^N` with `sum_(i=1)^N` (typst.rules.md:## Formulas)
 $E[f(X)] approx (1\/N) sum_{i=1}^N w_i f(X_i)$
 
 #strong[Intuition]: A biased survey of a population can be corrected by giving
@@ -1006,6 +1089,7 @@ posterior.
 
 Under conditions of ergodicity (chain can reach any state) and aperiodicity (no
 cycles), the chain's distribution converges to the posterior distribution
+// TODO(ai_gp): Use Typst syntax: replace `"mathbf"{e}` with `"mathbf"(e)` or `bold(e)` (typst.rules.md:## Formulas)
 $Pr(X|"mathbf"{e})$.
 
 === Markov Chain Construction
@@ -1015,6 +1099,7 @@ $Pr(X|"mathbf"{e})$.
 A #strong[Markov chain] is a random walk through state space where the future
 depends only on the present:
 
+// TODO(ai_gp): Use Typst syntax for superscripts: replace `x^{(0)}, x^{(1)}, x^{(2)}` with `x^((0)), x^((1)), x^((2))` (typst.rules.md:## Formulas)
 - Sequence of states: $x^{(0)}, x^{(1)}, x^{(2)}, ...$
 - Initial state $x^{(0)}$: starting configuration
 - Transition probabilities: $Pr(x -> x')$
@@ -1069,6 +1154,7 @@ reflecting the true posterior.
 #strong[Gibbs sampling] is a special case of MCMC that samples one variable at a
 time, given all others.
 
+// TODO(ai_gp): Convert algorithm from list to `#algorithm(...)` macro (typst.rules.md:# Algorithms and Pseudocode)
 #strong[Algorithm]:
 1. Initialize all non-evidence variables to random states.
 2. Keep evidence variables fixed.
@@ -1099,6 +1185,7 @@ time, given all others.
 #strong[Metropolis–Hastings] generalizes MCMC beyond Gibbs sampling, allowing
 flexible proposal distributions.
 
+// TODO(ai_gp): Convert algorithm from list to `#algorithm(...)` macro (typst.rules.md:# Algorithms and Pseudocode)
 #strong[Algorithm]:
 1. Start at current state $x$.
 2. Propose new state $x'$ from proposal distribution $q(x'|x)$. Examples:
@@ -1126,3 +1213,7 @@ flexible proposal distributions.
 
 The acceptance ratio elegantly ensures that the chain converges to the correct
 posterior, regardless of proposal choice—a key theoretical guarantee.
+
+// TODO(ai_gp): Add mandatory `= Summary` section after main content (typst.rules.md:## Mandatory Sections)
+
+// TODO(ai_gp): Add mandatory `= References` section at the end (typst.rules.md:## Mandatory Sections)

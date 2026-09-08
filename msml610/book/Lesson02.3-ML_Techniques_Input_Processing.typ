@@ -1,7 +1,8 @@
 // git_hash=1cb8c0e4d-wzv timestamp=20260903_160831
 // Import AIMA style formatting and macros.
+// Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
-  aima-style, algorithm, chapter, glossary, styled-table,
+  aima-style, chapter, styled-table,
 )
 // Import the custom citation/bibliography system.
 #import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": (
@@ -24,7 +25,7 @@
 
 // From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:13 '## Overview'
 // Slide: Overview
-= Overview
+= Roadmap
 
 // From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:15 '* From Raw Data to Model Input'
 // Slide: From Raw Data to Model Input
@@ -62,12 +63,12 @@ reaching the model.
 //   nodesep=0.28;
 //   ranksep=0.4;
 //   rankdir=LR;
-// 
+//
 //   node [shape=box, style="rounded,filled", penwidth=1.6,
 //         fontname="Helvetica", fontsize=10, margin="0.14,0.10", height=0.42];
 //   edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
 //         fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-// 
+//
 //   raw   [label="Raw Data", fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
 //   clean [label="Clean &\nDenoise", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 //   fix   [label="Handle Outliers\n& Missing Values", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
@@ -75,17 +76,23 @@ reaching the model.
 //   eng   [label="Construct &\nReduce Features", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 //   aug   [label="Augment", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 //   ready [label="Model-Ready\nData", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
-// 
+//
 //   raw -> clean -> fix -> scale -> eng -> aug -> ready;
 // }
 // ```
 // label=fig:fromrawdatatomodelinput
-// caption=Diagram relating Raw Data, Clean & Denoise, Handle Outliers & Missing Values and Scale & Encode
+// caption=The input processing pipeline from raw data to model-ready data
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.1.png"),
-  caption: [Diagram relating Raw Data, Clean & Denoise, Handle Outliers & Missing Values and Scale & Encode],
+  image(
+    "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.1.png",
+    width: 95%,
+  ),
+  caption: [The input processing pipeline from raw data to model-ready data],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:fromrawdatatomodelinput>
 // render_images:end
 
@@ -138,9 +145,9 @@ and stripping that noise out makes the signal usable for transcription or
 further analysis.
 
 Two broad families of techniques handle most practical denoising tasks.
-#emph[Smoothing] replaces each sample with the average of its neighbors inside a
+#strong[Smoothing] replaces each sample with the average of its neighbors inside a
 sliding window, dampening rapid fluctuations that are unlikely to be part of the
-true signal. #emph[Filtering] applies a frequency-domain or rank-order rule: a
+true signal. #strong[Filtering] applies a frequency-domain or rank-order rule: a
 low-pass filter for audio attenuates everything above a chosen cutoff frequency,
 while a median filter replaces each sample with the median of its local
 neighborhood, which is particularly effective at eliminating isolated spikes
@@ -190,27 +197,26 @@ knowledge about its likely cause, not applied as a blanket preprocessing step.
 // From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:111 '* Missing Data and Imputation'
 // Slide: Missing Data and Imputation
 
-// TODO(ai_gp): Invert MAR -> #emph[Missing at random] (MAR)
 Pieces of data are often #strong[missing] in data sets.
-Three mechanisms explain why a value may be absent #cite("rubin1976missingdata",). #emph[MCAR] (missing
-completely at random) means the probability of missingness has no relationship
+Three mechanisms explain why a value may be absent #cite("rubin1976missingdata",).
+#strong[MCAR] (missing completely at random) means the probability of missingness has no relationship
 to any variable, observed or unobserved, so simple imputation yields unbiased
-estimates. #emph[MAR] (missing at random) means missingness depends on other
+estimates. #strong[MAR] (missing at random) means missingness depends on other
 observed variables but not on the missing value itself; imputation conditioned
-on those observed variables remains unbiased. #emph[MNAR] (missing not at
+on those observed variables remains unbiased. #strong[MNAR] (missing not at
 random) means the missingness depends on the unobserved value, so any
 imputation is biased unless the analyst explicitly models the missingness
 mechanism.
 
 Several practical techniques address missing data:
 
-- #emph[Deletion]: remove rows or columns whose missing-value fraction exceeds a
+- #strong[Deletion]: remove rows or columns whose missing-value fraction exceeds a
   chosen threshold. This is simple but discards potentially useful information
   and can introduce bias when the data are not MCAR.
-- #emph[Imputation]: fill gaps with mean, median, or mode values, with K-nearest
+- #strong[Imputation]: fill gaps with mean, median, or mode values, with K-nearest
   neighbors (KNN) estimates drawn from similar records, or with predictions from
   a fitted model such as iterative regression (MICE).
-- #emph[Missingness indicator]: add a binary `was_missing` column that flags
+- #strong[Missingness indicator]: add a binary `was_missing` column that flags
   which entries were originally absent, preserving the information that a value
   was missing even after imputation fills the cell.
 
@@ -231,7 +237,7 @@ support it.
 Feature scaling puts all input dimensions on comparable footing so that no
 single feature dominates distance calculations or gradient updates simply
 because its raw numbers are larger. Two classical approaches handle this.
-#[Min-max normalization] rescales every value to the interval $[0, 1]$
+#strong[Min-max normalization] rescales every value to the interval $[0, 1]$
 using
 
 $ x' = (x - x_(min)) / (x_(max) - x_(min)) $
@@ -261,7 +267,7 @@ or gradient-based optimizers) assume a specific scale.
 // Slide: Feature Scaling
 
 When choosing a preprocessing strategy, it helps to know which models actually
-care about the scale of their inputs. #emph[Scale-sensitive] models include KNN,
+care about the scale of their inputs. #strong[Scale-sensitive] models include KNN,
 SVM, k-means, PCA, and any model trained with gradient-based optimization. These
 methods rely on distance computations or regularization terms that treat raw
 numeric magnitude as meaningful. A feature whose values range from 0 to 1 will
@@ -271,7 +277,7 @@ penalty is not scale-invariant: shrinking a feature's range effectively
 increases the relative weight of regularization on that feature, distorting the
 model's learned coefficients.
 
-#emph[Scale-invariant] models, by contrast, include tree-based methods such as
+#strong[Scale-invariant] models, by contrast, include tree-based methods such as
 decision trees, random forests, and gradient boosting. These algorithms split
 nodes by comparing a single feature's values against a threshold, so only the
 rank ordering of values within each feature matters, not their absolute
@@ -289,7 +295,7 @@ features (color names, country codes, size labels) must be converted into
 numbers before a model can use them. Several #strong[categorical encoding]
 strategies exist, each with different assumptions and tradeoffs.
 
-#emph[Label encoding] assigns a distinct integer to each category: for instance,
+#strong[Label encoding] assigns a distinct integer to each category: for instance,
 `red`, `green`, `blue` become `1`, `2`, `3`. This is simple and
 memory-efficient, but it imposes both an ordering and equal spacing on
 categories that may have neither. The encoding implicitly asserts that
@@ -298,20 +304,20 @@ nominal categories like color. Tree-based models can tolerate this artifact
 because they split on thresholds rather than computing differences, but linear
 and distance-based models will treat the fabricated ordering as real signal.
 
-#emph[One-hot encoding] sidesteps the ordinal assumption entirely by creating a
+#strong[One-hot encoding] sidesteps the ordinal assumption entirely by creating a
 binary indicator vector for each category: `red` becomes `[1,0,0]`, `green`
 becomes `[0,1,0]`, and `blue` becomes `[0,0,1]`. No category is "closer" to any
 other in this representation, which makes it safe for any model family.
 
-#emph[Ordinal encoding] is label encoding applied in situations where the order
+#strong[Ordinal encoding] is label encoding applied in situations where the order
 genuinely exists: `small < medium < large` is a real ranking, so mapping these
 to `1, 2, 3` preserves information rather than fabricating it. The spacing
 assumption (is the gap from small to medium the same as from medium to large?)
 may still be approximate, but the ordering itself is meaningful.
 
-Beyond these three basic strategies, #emph[target (mean) encoding] replaces each
+Beyond these three basic strategies, #strong[target (mean) encoding] replaces each
 category with a statistic of the target variable (typically the conditional
-mean), and #emph[learned embeddings] map each category to a dense vector trained
+mean), and #strong[learned embeddings] map each category to a dense vector trained
 jointly with the model. Both handle high-cardinality features gracefully and can
 capture richer relationships than a single integer or a sparse binary vector.
 
@@ -329,14 +335,14 @@ category to it at serving time, so the model always receives a valid input.
 
 #strong[Discretization] converts a continuous quantity into a categorical one by
 partitioning its range into a finite set of bins. Several techniques exist for
-choosing where to place the cut points. #emph[Equal-width binning] splits the
+choosing where to place the cut points. #strong[Equal-width binning] splits the
 range into bins of identical width, which is simple but can leave some bins
-empty if the data are unevenly distributed. #emph[Quantile binning] instead
+empty if the data are unevenly distributed. #strong[Quantile binning] instead
 places the cuts so that each bin holds roughly the same number of observations,
-guaranteeing that no bin is starved of data. #emph[Supervised binning] fits a
+guaranteeing that no bin is starved of data. #strong[Supervised binning] fits a
 shallow decision tree on the target variable and uses the tree's split points as
 bin edges, aligning the discretization with the prediction task. Finally,
-#emph[k-means binning] clusters the values along a single dimension, letting the
+#strong[k-means binning] clusters the values along a single dimension, letting the
 data's own density structure determine the boundaries.
 
 Consider discretizing age into four categories: `Child` for the interval
@@ -345,6 +351,7 @@ $[65, oo)$. Under this scheme an age of 32 maps to `Adult`, as shown in
 @fig:discretization.
 
 // TODO(ai_gp): Use wrap it
+// TODO(ai_gp): Wrap this simple discretization diagram with #wrap-content(...) using ~50% width — simple diagram with 5 nodes and 1 edge label, legible at narrow width (.claude/skills/typst.rules.md:## Every Visual Pairs with Its Text)
 // rendered_images:begin
 // ```graphviz[width=90%]
 // digraph AgeBinning {
@@ -376,9 +383,16 @@ $[65, oo)$. Under this scheme an age of 32 maps to `Adult`, as shown in
 // caption=Diagram relating Child [0, 13), Teen [13, 20), Adult [20, 65) and Senior [65, inf)
 // rendered_images:end
 // render_images:begin
+// TODO(ai_gp): Simplify caption to one short clause without listing every category — change "Diagram relating Child [0, 13), Teen [13, 20), Adult [20, 65) and Senior [65, inf)" to something like "Discretization of age into four categories" (.claude/skills/typst.rules.md:## Figures: Required Elements)
 #figure(
-  image("Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.2.png"),
+  image(
+    "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.2.png",
+    width: 90%,
+  ),
   caption: [Diagram relating Child \[0, 13), Teen \[13, 20), Adult \[20, 65) and Senior \[65, inf)],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:discretization>
 // render_images:end
 
@@ -434,22 +448,28 @@ the dominant patterns. Similarly, collapsing three color channels (red, green,
 blue) into a single luminance value produces a grayscale image that retains the
 structural content at a fraction of the dimensionality.
 
-Two broad strategies exist for achieving this reduction. #emph[Feature
+Two broad strategies exist for achieving this reduction. // TODO(ai_gp): Change #emph[Feature selection] to #strong[Feature selection] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
+#emph[Feature
   selection] keeps a subset of the original columns intact, so the surviving
-features remain directly interpretable. #emph[Feature extraction], by contrast,
+features remain directly interpretable. // TODO(ai_gp): Change #emph[Feature extraction] to #strong[Feature extraction] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
+#emph[Feature extraction], by contrast,
 constructs entirely new features as combinations of the originals; the result is
 typically more compact but no longer maps one-to-one onto any single measured
 quantity.
 
-Several concrete techniques fall under feature extraction. #emph[Principal
+Several concrete techniques fall under feature extraction. // TODO(ai_gp): Change #emph[Principal Component Analysis] to #strong[Principal Component Analysis] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
+#emph[Principal
   Component Analysis] (PCA) #cite("pearson1901pca") is an unsupervised method
 that finds linear combinations of the original features ordered by the amount of
 variance they explain: the first component captures the direction of greatest
 spread, the second captures the most remaining spread orthogonal to the first,
-and so on. #emph[Linear Discriminant Analysis] (LDA) takes a supervised
+and so on. // TODO(ai_gp): Change #emph[Linear Discriminant Analysis] to #strong[Linear Discriminant Analysis] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
+#emph[Linear Discriminant Analysis] (LDA) takes a supervised
 approach, projecting the data onto axes that maximize the separation between
 known classes rather than overall variance. For visualization, non-linear
-techniques such as #emph[t-SNE] #cite("vandermaaten2008tsne") and #emph[UMAP]
+techniques such as // TODO(ai_gp): Change #emph[t-SNE] to #strong[t-SNE] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
+#emph[t-SNE] #cite("vandermaaten2008tsne") and // TODO(ai_gp): Change #emph[UMAP] to #strong[UMAP] — technique being defined for first time (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
+#emph[UMAP]
 #cite("mcinnes2018umap") embed high-dimensional data into two or three
 dimensions while attempting to preserve local neighborhood structure. Several
 of these methods are scale-dependent: features measured in different units or
@@ -525,9 +545,16 @@ already "seen" the held-out data indirectly.
 // caption=Diagram relating Wrong: fit before split, All Data, Fit scaler/imputer on ALL rows and Split
 // rendered_images:end
 // render_images:begin
+// TODO(ai_gp): Simplify caption to one short clause without listing every element — change "Diagram relating Wrong: fit before split, All Data, Fit scaler/imputer on ALL rows and Split" to something like "The incorrect workflow: fitting transformers on all data before splitting" (.claude/skills/typst.rules.md:## Figures: Required Elements)
 #figure(
-  image("Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.3.png"),
+  image(
+    "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.3.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Wrong: fit before split, All Data, Fit scaler/imputer on ALL rows and Split],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:fitontrainapplytovalidationandtest>
 // render_images:end
 
@@ -588,9 +615,16 @@ the held-out fold applies each one without refitting.
 // caption=Diagram relating Correct: split before fit, All Data, Split and Train
 // rendered_images:end
 // render_images:begin
+// TODO(ai_gp): Simplify caption to one short clause without listing every element — change "Diagram relating Correct: split before fit, All Data, Split and Train" to something like "The correct workflow: splitting data before fitting transformers" (.claude/skills/typst.rules.md:## Figures: Required Elements)
 #figure(
-  image("Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.4.png"),
+  image(
+    "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.4.png",
+    width: 70%,
+  ),
   caption: [Diagram relating Correct: split before fit, All Data, Split and Train],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:fitontrainapplytovalidationandtest-2>
 // render_images:end
 
@@ -639,3 +673,11 @@ might make a "red light" look green in a traffic-scene classifier. The guiding
 principle is that synthetic examples must preserve the same distribution as the
 true data; any augmentation pipeline should be audited to confirm that every
 transformation it applies is genuinely label-preserving for the task at hand.
+
+// TODO(ai_gp): Add mandatory '= Summary' section here with a wrap-up of key learning points (.claude/skills/typst.rules.md:## Mandatory Sections)
+
+// TODO(ai_gp): Add mandatory '= References' section at the end with bibliography of cited works (.claude/skills/typst.rules.md:## Mandatory Sections)
+// TODO(ai_gp): Add file path to #references() call — should be #references("/msml610/lectures_source/refs.bib") (.claude/skills/typst.rules.md:## Bibliography and Citations)
+#references(
+  // references go here
+)

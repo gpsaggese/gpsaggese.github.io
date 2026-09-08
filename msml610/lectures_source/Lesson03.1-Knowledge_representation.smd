@@ -59,7 +59,7 @@ mindmap
 * Why Knowledge Representation Matters
 
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=80%}
 
 - @Motivation@: Why knowledge representation is essential to AI?
   1. @Learning alone is not enough@: Machines need to _reason_ about the world
@@ -77,7 +77,7 @@ mindmap
      - Conversational agents can reason about intent and context
 
 ::::
-:::: {.column width=30%}
+:::: {.column width=20%}
 
 ```graphviz
 digraph WhyKR {
@@ -195,7 +195,7 @@ digraph WhyKR {
 
 ![](msml610/lectures_source/figures/L03.symbolic_vs_subsymbolic.png)
 
-// TODO: Convert in tikz
+// TODO(gp): Convert in tikz
 
 ::::
 :::
@@ -248,17 +248,17 @@ digraph WhyKR {
 
 - @Definition@: The **Sapir-Whorf hypothesis** claims: _"the language you speak
   shapes how you perceive, think about, and experience the world"_
-  - Even through arbitrary grammatical features (e.g., gender of nouns)
-  - The strong version (language determines what you can think) is rejected; only a
-    weak influence is supported by evidence
+  - The strong version (language determines what you can think) is rejected; a weak
+    influence is supported by evidence
 
 - @Example@
+  - Even through arbitrary grammatical features (e.g., gender of nouns)
   - Some languages lack words for certain concepts (e.g., direction)
   - Some languages have more fine-grained vocabulary for a concept
     - E.g., Russian distinguishes dark blue and light blue as two basic colors, not
       shades of one
-  - Newspeak from 1984 (Orwell)
-    - You can't think certain concepts since you don't have words for it
+  - Newspeak from 1984 (Orwell): you can't think certain concepts since you don't
+    have words for it
 
 * Procedural vs Declarative Approaches
 
@@ -268,45 +268,24 @@ digraph WhyKR {
 
 - @Definition@: **Declarative approach** specifies _what_ the goal is, but not _how_
   to achieve it
-  - Describes relationships between actions and goals
-  - Leaves solution search to the system
-  - E.g., describing the goal "reach the exit of the maze" and letting the robot find
-    the path
+  - Describes relationships between actions and goals, and leaves solution search to
+    the system
+  - E.g., describe the goal _"reach the exit of the maze"_ and let the robot find the
+    path
 
-- @Comparison@
-| **Approach**    | **Strengths**                                                        | **Weaknesses**                                                                |
-| --------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| **Procedural**  | More control over execution, explicit steps                          | Less flexible, harder to modify or extend                                     |
-| **Declarative** | More abstract, easier to modify/extend, easier to reason about goals | Less control, harder to optimize, may require more powerful inference engines |
-
-- @Remark@: Many successful AI systems use a hybrid approach
+- @Remark@: Many successful AI systems use a _hybrid approach_
   - Declarative knowledge can be compiled into procedural code
-  - E.g., a planner generates procedures (plans) from declarative goals
+  - E.g., a planner generates procedures from declarative goals (e.g., SQL)
 
 * Limits of Programming Languages
 
 ::: columns
 :::: {.column width=60%}
 
-- @Definition@: A **programming language** (e.g., C++, Python) is a formal and
-  procedural language
+- @Definition@: A **programming language** (e.g., C++, Python) is a _formal
+  procedural_ language
   - _Data structures_ represent facts
   - _Code_ updates data structures in a domain-specific way
-
-- @Limitations@: Programming languages lack:
-  1. A general _mechanism for deriving facts from other facts_
-     - Code updates data structures based on programmer's domain knowledge
-  2. Expressiveness to _handle partial information_
-     - A variable represents a single value or unknown, can't handle partial
-       information or quantify uncertainty
-     - E.g., _"A white knight is in `b1` or in `f6`"_
-
-- @Definition@: In a **declarative language**, knowledge and inference are separate
-  1. _Knowledge_ represents the domain-specific problem
-     - The meaning of a sentence is a function of the meaning of its parts
-       (compositional semantics)
-  2. _Inference_ is domain independent
-  - E.g., propositional logic, first order logic
 
 ::::
 :::: {.column width=38%}
@@ -364,23 +343,34 @@ digraph ProgVsDeclarative {
 ::::
 :::
 
+- @Limitations@: Programming languages lack:
+  1. A general _mechanism for deriving facts from other facts_
+     - Code updates data structures based on programmer's domain knowledge
+  2. Expressiveness to _handle partial information_
+     - A variable represents a single value or unknown, can't handle partial
+       information or quantify uncertainty
+     - E.g., _"A white knight is in `b1` or in `f6`"_
+
+- @Definition@: In a **declarative language**, knowledge and inference are separate
+  1. _Knowledge_ represents the domain-specific problem
+     - The meaning of a sentence is a function of the meaning of its parts
+       (compositional semantics)
+  2. _Inference_ is domain independent
+     - E.g., propositional logic, first order logic
+
 * Propositional Logic
 
-::: columns
-:::: {.column width=62%}
-
-- @Definition@: **Propositional logic** uses atomic statements (propositions) and
-  logical connectives to represent knowledge
-  - _Syntax_
+- @Definition@: **Propositional logic** uses _statements_ (propositions) and
+  _logical connectives_ to represent knowledge
+  - **Syntax**
     - Atomic formulas: $P$, $Q$
     - Connectives: NOT $\lnot$, AND $\land$, OR $\lor$, IMPLIES $\implies$
-  - _Semantics_
-    - Based on truth tables
+  - **Semantics**
     - Each proposition has a binary truth value: True or false
-  - _Inference mechanisms_
-    - Modus ponens: From statements "$P$" and "$P \implies Q$", infer "$Q$"
-    - Resolution: Derive contradictions to infer conclusions
-    -
+    - Logic connective truth value is based on truth tables
+  - **Inference mechanisms**
+    - _Modus ponens_: From statements "$P$" and "$P \implies Q$", infer "$Q$"
+    - _Resolution_: Derive contradictions to infer conclusions
 
 - @Applications@: Best used in closed and well-defined environments
   - Digital circuit design
@@ -391,52 +381,23 @@ digraph ProgVsDeclarative {
   - Cannot represent objects, relations, or quantifiers
   - Not suitable for open or dynamic domains
 
-::::
-:::: {.column width=35%}
-
-```graphviz
-digraph PropLogic {
-  bgcolor="transparent";
-  pad="0.15";
-  rankdir=TB;
-  splines=spline;
-  nodesep=0.4;
-  ranksep=0.45;
-
-  node [shape=box, style="rounded,filled", penwidth=1.6,
-        fontname="Helvetica", fontsize=11, margin="0.2,0.12", height=0.45];
-  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.7,
-        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-
-  Syntax    [label="Syntax\nP, Q,\nNOT/AND/OR/IMPLIES", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-  Semantics [label="Semantics\nTruth tables", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
-  Inference [label="Inference\nModus ponens,\nResolution", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
-
-  Syntax -> Semantics [label="  means"];
-  Syntax -> Inference [label="  derives"];
-}
-```
-
-::::
-:::
-
 * First-Order Logic (FOL)
 
 - @Definition@: **First-order logic** is an extension of propositional logic
-  - _Syntax_
+  - **Syntax**
     - Atomic formulas and connectives from propositional logic
-    - _Variables_ $x$
-    - _Predicate_ $Human(x)$
-    - _Quantifiers_ (e.g., universal "for all" $\forall$, existential "there exists"
-      $\exists$)
-  - _Semantics_
+    - _Variables_: e.g., $x$
+    - _Predicates_ e.g., $Human(x)$
+    - _Quantifiers_ e.g., universal "for all" $\forall$, existential "there exists"
+      $\exists$
+  - **Semantics**
     - Represents more complex and structured knowledge than propositional logic
     - Can model properties, relationships, and quantification over objects
       - E.g., $\forall x (Human(x) \implies Mortal(x))$ = _"All humans are mortal"_
-  - _Inference mechanisms_
-    - Unification: Matches predicates with variables
-    - Resolution: Deduces new facts from known statements
-    - Model checking: Verifies truth of statements under specific interpretations
+  - **Inference mechanisms**
+    - _Unification_: Matches predicates with variables
+    - _Resolution_: Deduces new facts from known statements
+    - _Model checking_: Verifies truth of statements under specific interpretations
 
 - @Applications@
   - Knowledge representation
@@ -456,25 +417,6 @@ digraph PropLogic {
     - E.g., _"it rains"_, _"the ground is dry"_, _"the ground is wet"_
   - _Rules_
     - E.g., _"If it rains, the ground gets wet"_
-
-- @Definition@: **Knowledge representation language** is a formal way of creating
-  sentences about the world
-  - **Syntax**: Specifies all well-formed sentences in the logic
-    - E.g., in arithmetic: "$x + y = 4$" is well-formed, "$x4y+ =$" is not
-  - **Semantics**: Meaning of sentences with respect to each possible world
-    - E.g., $x + y = 4$ is true in world $(x=2, y=2)$, false in $(x=1, y=1)$
-
-- @Definition@: **Axiom** is a sentence taken as given (not derived from others)
-
-- @Definition@: **Inference** is the process of deriving new sentences from old ones
-  - Should follow logical reasoning rules
-
-- @Definition@: **Truth values** representations
-  - Classical logic: Each sentence is true or false
-  - **Fuzzy logic**: Allows different degrees of truth
-    - E.g., $Truth(\alpha) = 0.5$
-  - **Probabilistic logic**: Sentences have probability of being true
-    - E.g., $\Pr(\alpha) = 0.3$
 
 ::::
 :::: {.column width=38%}
@@ -511,6 +453,25 @@ digraph KBStructure {
 ::::
 :::
 
+- @Definition@: **Knowledge representation language** is a formal way of creating
+  sentences about the world
+  - **Syntax**: Specifies all well-formed sentences in the logic
+    - E.g., in arithmetic: "$x + y = 4$" is well-formed, "$x4y+ =$" is not
+  - **Semantics**: Meaning of sentences with respect to each possible world
+    - E.g., $x + y = 4$ is true in world $(x=2, y=2)$, false in $(x=1, y=1)$
+
+- @Definition@: **Axiom** is a sentence taken as given (not derived from others)
+
+- @Definition@: **Inference** is the process of deriving new sentences from old ones
+  - Should follow logical reasoning rules
+
+- @Definition@: **Truth values** representations
+  - _Classical logic_: Each sentence is true or false
+  - _Fuzzy logic_: Allows different degrees of truth
+    - E.g., $Truth(\alpha) = 0.5$
+  - _Probabilistic logic_: Sentences have probability of being true
+    - E.g., $\Pr(\alpha) = 0.3$
+
 * Grounding
 
 ::: columns
@@ -518,7 +479,7 @@ digraph KBStructure {
 
 - @Definition@: **Grounding** connects abstract symbols to real-world entities or
   observations
-  - E.g., link the symbol in the KB `Apple` to the fruit "apple"
+  - E.g., link the symbol `Apple` in the KB to the fruit "apple"
   - It is the bridge between representation in a KB and the world
 
 ::::
@@ -545,28 +506,27 @@ digraph KBStructure {
 * Can We Trust Grounding?
 
 - @Question@: How do we know the symbols in the KB actually match reality?
-  - We can't be sure! Do we live in a simulation? What is reality?
+  - We can never be sure!
+  - What is reality? Do we live in a simulation?
 
-- We **assume** that it is correct
-  - Agent's sensors create a sentence in the KB when something happens in the real
-    world
-    ```
-    IF smell = burning THEN food_is_burning
-    ```
-  - Agent learns rules and acts
-    ```
-    IF food_is_burning THEN turn_off_stove
-    ```
+- @Answers@: We **need to make assumptions**
+  - Assume that symbols and reality match, e.g.,
+    - Agent's sensors create a sentence in the KB when something happens in the real
+      world
+      ```
+      IF smell = burning THEN food_is_burning
+      ```
+    - Agent learns rules and acts
+      ```
+      IF food_is_burning THEN turn_off_stove
+      ```
 
-- We assume that "learning" (going from particular cases to general cases) is
-  typically correct
-  - Learning is still fallible
-  - E.g., `smell = burning` because maybe somebody is cooking on a grill
+  - Assume that "learning" (going from particular cases to general cases) is
+    typically correct
+    - Learning is still fallible
+    - E.g., `smell = burning` because maybe somebody is cooking on a grill
 
 * Models and Possible Worlds
-
-::: columns
-:::: {.column width=60%}
 
 - @Example@: Consider a world where there is _rain_ and _wet ground_
   - In each possible world/model, values are assigned to all relevant variables
@@ -577,41 +537,12 @@ digraph KBStructure {
   - Model $m$ is a mathematical abstraction of "possible world"
     - E.g., $m$ is $(Rain = F, WetGround = T)$
 
-::::
-:::: {.column width=40%}
-
-```graphviz
-digraph G {
-  rankdir=TD;
-  nodesep=3.5;
-  node [shape=box, style="rounded,filled", fillcolor="#f7f7f7"];
-
-  Model [label="Model"];
-  Worlds [label="Possible\nworlds"];
-
-  Model -> Worlds [
-    dir=both
-    fontsize=10
-    penwidth=2
-    label="   Grounding"
-    labeldistance=3.0
-    labelangle=0
-  ];
-}
-```
-
-::::
-:::
-
 - @Example@: Consider worlds with _"men and women sitting at a table"_
   - Model represents all possible worlds as _"there are ($x$ men, $y$ women)"_
   - Sentence $x + y = 4$ is true in certain worlds and false in others
   - E.g., in worlds with $x = 2$ men and $y = 2$ women, $x + y = 4$ is true
 
 * Satisfaction
-
-::: columns
-:::: {.column width=60%}
 
 - @Recap@: A model $m$ fixes all the variables $x_1, ..., x_n$ used in sentences
   - E.g., $(Rain = T, WetGround = T)$
@@ -623,12 +554,16 @@ digraph G {
     and sentences are evaluated as true or false
 
 - @Definition@: $M(\alpha)$ is the set of all the models in which $\alpha$ is true
-  - E.g.,
-    - $\alpha: Rain = T$
-    - $M(Rain = T) = \{(Rain = T, WetGround = T), (Rain = T, WetGround = F)\}$
+
+::: columns
+:::: {.column width=50%}
+
+- @Example@
+  - $\alpha: Rain = T$
+  - $M(Rain = T) = \{(Rain = T, WetGround = T), (Rain = T, WetGround = F)\}$
 
 ::::
-:::: {.column width=38%}
+:::: {.column width=50%}
 
 ```graphviz
 digraph Satisfaction {
@@ -673,8 +608,8 @@ digraph Satisfaction {
 
 - @Definition@: **Logical entailment** between sentences is the fact that a sentence
   follows logically from another sentence in a KB
-  - "$\alpha$ **entails** $\beta$" (written $\alpha \models \beta$) iff (by def) in
-    every model in which $\alpha$ is true, $\beta$ is also true
+  - $\alpha \models \beta$ "$\alpha$ entails $\beta$" iff in every model in which
+    $\alpha$ is true, $\beta$ is also true
   - Equivalent to $M(\alpha) \subseteq M(\beta)$
 
 - @Example@: In the "rain and wet ground" world
@@ -694,9 +629,6 @@ digraph Satisfaction {
   - _"If you believe your KB, you must believe the entailed sentences"_
 
 * Entailment, Implication, and Inference
-
-::: columns
-:::: {.column width=58%}
 
 - Entailment, implication, and inference are related but distinct
   - _Implication_ is a relationship between two statements inside the logic
@@ -726,35 +658,6 @@ digraph Satisfaction {
   - Entailment is "meta-level truth-following across all models"
   - Inference is "the reasoning process that (ideally) tracks entailment"
 
-::::
-:::: {.column width=40%}
-
-```graphviz
-digraph EII {
-  bgcolor="transparent";
-  pad="0.15";
-  rankdir=TB;
-  splines=spline;
-  nodesep=0.4;
-  ranksep=0.45;
-
-  node [shape=box, style="rounded,filled", penwidth=1.6,
-        fontname="Helvetica", fontsize=10.5, margin="0.18,0.12", height=0.55];
-  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
-        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-
-  Implication [label="Implication\n(A implies B)\nstatement inside logic", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-  Entailment  [label="Entailment\n(KB entails alpha)\ntruth across all models", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
-  Inference   [label="Inference\nreasoning process", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
-
-  Implication -> Entailment [label="  used to state"];
-  Inference -> Entailment [label="  aims to track", style=dashed];
-}
-```
-
-::::
-:::
-
 * Inference Engines
 
 ::: columns
@@ -762,57 +665,85 @@ digraph EII {
 
 - @Definition@: An **inference engine** is the mechanism that applies logical rules
   to a KB to derive conclusions or answer queries
-  - _Forward chaining_
-    - Starts with known facts and applies inference rules to extract more data
-    - E.g., given $A \implies B$ and $A$, infer $B$
-  - _Backward chaining_
-    - Begins with a goal and works backward to find supporting facts
-    - E.g., to prove $B$, check if $A \implies B$ and then prove $A$
-  - _Resolution_
-    - A complete inference rule for propositional and first-order logic
-    - Useful in automated theorem proving
 
-::::
-:::: {.column width=50%}
+- **Forward chaining**
+  - Starts with known facts and applies inference rules to extract more data
+  - E.g., given $A \implies B$ and $A$, infer $B$
 
 ```graphviz
-digraph InferenceEngines {
+digraph ForwardChaining {
   bgcolor="transparent";
   pad="0.15";
   rankdir=TB;
   splines=spline;
-  nodesep=0.7;
-  ranksep=0.35;
+  nodesep=0.5;
+  ranksep=0.4;
 
   node [shape=box, style="rounded,filled", penwidth=1.5,
-        fontname="Helvetica", fontsize=9.5, margin="0.16,0.1", height=0.4];
-  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
-        fontname="Helvetica", fontsize=8.5, fontcolor="#7B8794"];
+        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
 
-  FCLabel [label="Forward chaining", shape=plaintext, fontname="Helvetica-Bold", fontsize=9.5, fontcolor="#3A4A5C"];
-  BCLabel [label="Backward chaining", shape=plaintext, fontname="Helvetica-Bold", fontsize=9.5, fontcolor="#3A4A5C"];
-  ResLabel [label="Resolution", shape=plaintext, fontname="Helvetica-Bold", fontsize=9.5, fontcolor="#3A4A5C"];
+  Facts [label="Known Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Rule  [label="Rule: A → B", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Concl [label="Conclusion: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
 
-  FactsFC [label="Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-  ConclFC [label="Conclusion: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Facts -> Rule [label="matches"];
+  Rule -> Concl [label="derives"];
+}
+```
 
-  GoalBC  [label="Goal: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
-  FactsBC [label="Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+- **Backward chaining**
+  - Begins with a goal and works backward to find supporting facts
+  - E.g., to prove $B$, check if $A \implies B$ and then prove $A$
 
-  Clauses       [label="Clauses", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-  Contradiction [label="Contradiction", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+```graphviz
+digraph BackwardChaining {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.5;
+  ranksep=0.4;
 
-  { rank=same; FCLabel; BCLabel; ResLabel; }
-  { rank=same; FactsFC; GoalBC; Clauses; }
-  { rank=same; ConclFC; FactsBC; Contradiction; }
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
 
-  FCLabel -> FactsFC [style=invis];
-  BCLabel -> GoalBC [style=invis];
-  ResLabel -> Clauses [style=invis];
+  Goal  [label="Goal: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Rule  [label="Rule: A → B", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Facts [label="Supporting Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
 
-  FactsFC -> ConclFC [label="  apply rule"];
-  GoalBC -> FactsBC [label="  find support"];
-  Clauses -> Contradiction [label="  derive"];
+  Goal -> Rule [label="matches"];
+  Rule -> Facts [label="prove"];
+}
+```
+
+- **Resolution**
+  - A complete inference rule for propositional and first-order logic
+  - Useful in automated theorem proving
+
+```graphviz
+digraph Resolution {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.5;
+  ranksep=0.4;
+
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Clauses [label="Clauses & Negation", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Process [label="Resolve & Refute", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Result  [label="Contradiction Found", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+
+  Clauses -> Process [label="apply"];
+  Process -> Result [label="derives"];
 }
 ```
 
@@ -821,15 +752,14 @@ digraph InferenceEngines {
 
 * Model Checking
 
-::: columns
-:::: {.column width=55%}
-
 - @Recap@: $M(KB)$ represents all the models / possible worlds in which our $KB$ is
   true
 
-- @Problem@
-  - We want to verify whether "a sentence $\alpha$ is entailed by $KB$", i.e.,
-    $KB \models \alpha$
+- @Problem@: We want to verify whether "a sentence $\alpha$ is entailed by $KB$",
+  i.e., $KB \models \alpha$
+
+::: columns
+:::: {.column width=70%}
 
 - @Solution@
   - According to the definition, we need to verify that $\alpha$ is true in all the
@@ -843,7 +773,7 @@ digraph InferenceEngines {
      compatible with the $KB$
 
 ::::
-:::: {.column width=42%}
+:::: {.column width=30%}
 
 ```graphviz
 digraph ModelChecking {
@@ -877,29 +807,25 @@ digraph ModelChecking {
 
 * Soundness and Completeness
 
-- @Definition@: **Inference** is a syntactic process of deriving new sentences from
-  others, using formal rules of a proof system (e.g., modus ponens, resolution, etc.)
-  - You know: _"If it rains, the ground gets wet"_
-  - You see: _"It is raining"_
-  - You infer: _"The ground must be wet"_
+- @Definition@:
+  - **Inference** is a syntactic process of deriving new sentences from others, using
+    formal rules of a proof system (e.g., modus ponens, resolution, etc.)
+    - You know: _"If it rains, the ground gets wet"_
+    - You see: _"It is raining"_
+    - You infer: _"The ground must be wet"_
+  - **Sound** inference algorithm derives only sentences entailed by $KB$
+    - _"Whatever the inference algorithm finds, it's correct"_, i.e., no false
+      positives
+  - **Complete** inference algorithm can derive any sentence entailed by $KB$
+    - _"The inference algorithm doesn't miss anything"_, i.e., no false negatives
 
-- @Definition@: **Sound** inference algorithm
-  - Derives only sentences entailed by $KB$
-  - _"Whatever the inference algorithm finds, it's correct"_, i.e., no false
-    positives
+- @Key idea@: The ideal inference algorithm is both _sound and complete_
 
-- @Definition@: **Complete** inference algorithm
-  - Can derive any sentence entailed by $KB$
-  - _"The inference algorithm doesn't miss anything"_, i.e., no false negatives
-
-- @Example@: Model checking is both sound and complete when the space of models is
-  finite
-  - Sound: Every model it finds consistent with $KB \land \alpha$ makes $\alpha$
+- @Example@: Model checking is sound and complete when space of models is finite
+  - _Sound_: Every model it finds consistent with $KB \land \alpha$ makes $\alpha$
     true, so it never asserts a false entailment
-  - Complete: Enumerating all (finitely many) models is guaranteed to find every
+  - _Complete_: Enumerating all (finitely many) models is guaranteed to find every
     entailed $\alpha$
-
-- @Key idea@: The ideal inference algorithm is both sound and complete
 
 * Representation Mirrors the World
 
@@ -907,50 +833,70 @@ digraph ModelChecking {
   in any world where the premises are true
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=50%}
 
-- In other words, even if the inference operates on "syntax" (the internal
+- In other words, even if inference operates on "syntax" (the internal
   representation):
   - _"Sentences in the representation"_ correspond to _"aspects of the real world"_
   - _"Entailment between sentences in the representation"_ corresponds to
     _"implication between aspects of the real world"_
 
 ::::
-:::: {.column width=55%}
+:::: {.column width=50%}
 
 ```graphviz
 digraph EntailmentSemantics {
+  bgcolor="transparent";
+  pad="0.15";
   rankdir=TB;
-  node [shape=box, style=filled, fillcolor=lightgray];
+  splines=spline;
+  nodesep=0.6;
+  ranksep=0.5;
 
-  // Representation layer
-  Sentence1 -> Sentence2 [label="Entails", style=dashed];
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=10.5, margin="0.18,0.1", height=0.45];
+  edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
 
-  // World layer
-  RealWorld1 -> RealWorld2 [label="Follows", style=dashed];
-
-  // Semantics arrows
-  Sentence1 -> RealWorld1 [label="Semantics", style=dashed];
-  Sentence2 -> RealWorld2 [label="Semantics", style=dashed];
-
-  // Invisible edges to align Representation and World vertically
-  {rank=same; Sentence1; Sentence2}
-  {rank=same; RealWorld1; RealWorld2}
-
-  // Labels for layers (optional)
   subgraph cluster_representation {
-    label="Representation";
-    style=dotted;
-    Sentence1;
-    Sentence2;
+    label = "Representation (Syntax)";
+    labelloc = "t";
+    fontname = "Helvetica-Bold";
+    fontsize = 11;
+    fontcolor = "#3A4A5C";
+    style = "rounded,filled";
+    fillcolor = "#F7F9FB";
+    color = "#C7D0DA";
+    penwidth = 1.0;
+    margin = 12;
+
+    Sent1 [label="Sentence α", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+    Sent2 [label="Sentence β", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+    Sent1 -> Sent2 [label="  Entails"];
   }
 
   subgraph cluster_world {
-    label="World";
-    style=dotted;
-    RealWorld1;
-    RealWorld2;
+    label = "World (Reality)";
+    labelloc = "t";
+    fontname = "Helvetica-Bold";
+    fontsize = 11;
+    fontcolor = "#3A4A5C";
+    style = "rounded,filled";
+    fillcolor = "#F7F9FB";
+    color = "#C7D0DA";
+    penwidth = 1.0;
+    margin = 12;
+
+    World1 [label="Aspect 1", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+    World2 [label="Aspect 2", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+    World1 -> World2 [label="  Follows"];
   }
+
+  Sent1 -> World1 [label="Semantics", style=dashed];
+  Sent2 -> World2 [label="Semantics", style=dashed];
+
+  {rank=same; Sent1; Sent2}
+  {rank=same; World1; World2}
 }
 ```
 
