@@ -10,12 +10,13 @@
 
 * From Raw Data to Model Input
 
-- @Motivation@: raw data rarely arrives in the shape a model needs, a fixed
-  sequence of transformations turns it into clean, well-scaled, informative
-  input
-  - Improves model performance, generalization, and training stability
+- @Motivation@:
+  - Raw data rarely arrives in the shape a model needs
+  - A fixed sequence of transformations turns it into clean, well-scaled, informative
+    input
+    - Improves model performance, generalization, and training stability
 
-- @Techniques@: this lesson covers, in order
+- This lesson covers
   - _Data quality_: remove duplicates and errors, denoise, handle outliers
     and missing values
   - _Scaling and encoding_: put numeric features on comparable scales, turn

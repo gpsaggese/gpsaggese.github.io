@@ -62,12 +62,12 @@ model.
 //   nodesep=0.28;
 //   ranksep=0.4;
 //   rankdir=LR;
-//
+// 
 //   node [shape=box, style="rounded,filled", penwidth=1.6,
 //         fontname="Helvetica", fontsize=10, margin="0.14,0.10", height=0.42];
 //   edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
 //         fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-//
+// 
 //   raw   [label="Raw Data", fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
 //   clean [label="Clean &\nDenoise", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 //   fix   [label="Handle Outliers\n& Missing Values", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
@@ -75,7 +75,7 @@ model.
 //   eng   [label="Construct &\nReduce Features", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 //   aug   [label="Augment", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 //   ready [label="Model-Ready\nData", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
-//
+// 
 //   raw -> clean -> fix -> scale -> eng -> aug -> ready;
 // }
 // ```
@@ -97,7 +97,7 @@ model.
 
 // From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:55 '## Data Quality'
 // Slide: Data Quality
-== Data Quality
+= Data Quality
 
 // From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:57 '* Data Cleaning'
 // Slide: Data Cleaning
@@ -116,7 +116,7 @@ Several techniques address the most common problems:
   transposed fields introduce noise that the model either memorizes or averages over,
   neither of which is desirable.
 - #emph[Standardize data]: when the same semantic value is recorded in multiple
-  surface forms, the model treats them as distinct. Date formats are a particularly
+  forms, the model treats them as distinct. Date formats are a particularly
   insidious example: a column that mixes `MM/DD/YYYY` with `DD-MM-YYYY` can silently
   swap month and day. The entry `01/02/2024` is valid under both conventions, so no
   single-row check catches the inconsistency; only a column-wide policy resolves it.
@@ -217,7 +217,7 @@ Several practical techniques address missing data:
   even after imputation fills the cell.
 
 Among these, mean or median substitution is the quickest to implement but carries
-real costs: it shrinks the variance of the imputed feature, attenuates correlations
+drawbacks: it shrinks the variance of the imputed feature, attenuates correlations
 with other variables, and biases any downstream estimate that depends on the true
 spread of the data. For that reason, model-based imputation or KNN imputation is
 generally preferred whenever the dataset is large enough to support it.
@@ -241,7 +241,7 @@ variance:
 
 $ x' = (x - mu) / sigma $
 
-A third option, #strong[RobustScaler], centers and scales by the median and
+A third option, #strong[robust scaler], centers and scales by the median and
 interquartile range instead of the mean and full range, making it far less sensitive
 to outliers.
 
@@ -251,8 +251,8 @@ every other point into a narrow band, and unseen test values are not guaranteed 
 stay inside $[0, 1]$. Z-score standardization handles this somewhat better because
 the mean and standard deviation are less sensitive than the absolute minimum and
 maximum, yet heavy-tailed outliers still pull both statistics and distort the result.
-RobustScaler sidesteps this problem almost entirely: because the median and IQR are
-order statistics, a handful of extreme points barely move them. In practice, choosing
+Robust scaler sidesteps this problem almost entirely: because the median and IQR are
+robust statistics, a handful of extreme points barely move them. In practice, choosing
 among the three comes down to how clean the data is and whether downstream models
 (such as $k$-nearest neighbors or gradient-based optimizers) assume a specific scale.
 
@@ -341,6 +341,7 @@ Consider discretizing age into four categories: `Child` for the interval $[0, 13
 `Teen` for $[13, 20)$, `Adult` for $[20, 65)$, and `Senior` for $[65, oo)$. Under
 this scheme an age of 32 maps to `Adult`, as shown in @fig:discretization.
 
+// TODO(ai_gp): Wrap it
 // rendered_images:begin
 // ```graphviz[width=90%]
 // digraph AgeBinning {
@@ -350,20 +351,20 @@ this scheme an age of 32 maps to `Adult`, as shown in @fig:discretization.
 //   nodesep=0.22;
 //   ranksep=0.3;
 //   rankdir=LR;
-//
+// 
 //   node [shape=box, style="rounded,filled", penwidth=1.4,
 //         fontname="Helvetica", fontsize=10, margin="0.14,0.09", height=0.4];
 //   edge [color="#A3B1C0", penwidth=1.1, arrowhead=vee, arrowsize=0.6,
 //         fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-//
+// 
 //   child  [label="Child\n[0, 13)",    fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
 //   teen   [label="Teen\n[13, 20)",    fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
 //   adult  [label="Adult\n[20, 65)",   fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
 //   senior [label="Senior\n[65, inf)", fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
-//
+// 
 //   child -> teen -> adult -> senior [style=invis];
 //   { rank=same; child; teen; adult; senior; }
-//
+// 
 //   age32 [label="Age = 32", shape=ellipse, fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
 //   age32 -> adult [label="mapped to", color="#D9902B", fontcolor="#6B4517"];
 // }
@@ -372,18 +373,16 @@ this scheme an age of 32 maps to `Adult`, as shown in @fig:discretization.
 // caption=Discretization of age into four categories
 // rendered_images:end
 // render_images:begin
-#wrap-content(width: 50%)[
-  #figure(
-    image(
-      "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.2.png",
-      width: 100%,
-    ),
-    caption: [Discretization of age into four categories],
-    kind: "figure",
-    supplement: [Fig.],
-    placement: auto,
-  ) <fig:discretization>
-]
+#figure(
+  image(
+    "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.2.png",
+    width: 90%,
+  ),
+  caption: [Discretization of age into four categories],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:discretization>
 // render_images:end
 
 The convenience of discretization comes with real costs. All within-bin variation is
@@ -490,12 +489,12 @@ pipeline. This is a form of #strong[data leakage] #cite(
 //   nodesep=0.3;
 //   ranksep=0.4;
 //   rankdir=LR;
-//
+// 
 //   node [shape=box, style="rounded,filled", penwidth=1.5,
 //         fontname="Helvetica", fontsize=10, margin="0.14,0.10", height=0.42];
 //   edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
 //         fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-//
+// 
 //   subgraph cluster_wrong {
 //     label     = "Wrong: fit before split";
 //     labelloc  = "t";
@@ -506,13 +505,13 @@ pipeline. This is a form of #strong[data leakage] #cite(
 //     fillcolor = "#FBE5E5";
 //     color     = "#D98C8C";
 //     margin    = 14;
-//
+// 
 //     all_data [label="All Data", fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
 //     fit_all  [label="Fit scaler/imputer\non ALL rows", fillcolor="#FBC6C6", color="#D64545", fontcolor="#6B1F1F"];
 //     split_w  [label="Split", fillcolor="#FBC6C6", color="#D64545", fontcolor="#6B1F1F"];
 //     train_w  [label="Train", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
 //     test_w   [label="Test\n(already leaked into)", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
-//
+// 
 //     all_data -> fit_all -> split_w;
 //     split_w -> train_w;
 //     split_w -> test_w;
@@ -528,8 +527,7 @@ pipeline. This is a form of #strong[data leakage] #cite(
     "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.3.png",
     width: 70%,
   ),
-  caption: [The incorrect workflow: fitting transformers on all data before
-    splitting],
+  caption: [The incorrect workflow: fitting transformers on all data before splitting],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -558,12 +556,12 @@ without refitting.
 //   nodesep=0.3;
 //   ranksep=0.4;
 //   rankdir=LR;
-//
+// 
 //   node [shape=box, style="rounded,filled", penwidth=1.5,
 //         fontname="Helvetica", fontsize=10, margin="0.14,0.10", height=0.42];
 //   edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
 //         fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-//
+// 
 //   subgraph cluster_correct {
 //     label     = "Correct: split before fit";
 //     labelloc  = "t";
@@ -574,14 +572,14 @@ without refitting.
 //     fillcolor = "#E5F4EE";
 //     color     = "#8FB79A";
 //     margin    = 14;
-//
+// 
 //     all_data2 [label="All Data", fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
 //     split_c   [label="Split", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
 //     train_c   [label="Train", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
 //     fit_c     [label="Fit scaler/imputer\non TRAIN only", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
 //     test_c    [label="Test", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 //     apply_c   [label="Apply fitted\ntransform", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
-//
+// 
 //     all_data2 -> split_c;
 //     split_c -> train_c -> fit_c;
 //     split_c -> test_c -> apply_c;
