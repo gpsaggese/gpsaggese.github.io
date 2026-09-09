@@ -1,4 +1,4 @@
-// git_hash=b1e45801e-gu7 timestamp=20260830_185619
+// git_hash=9b64c438-6nf timestamp=20260909_100210
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
   aima-style, algorithm, chapter, glossary, styled-table, wrap-content,
@@ -33,8 +33,8 @@ short compared to human intelligence: their fragility, inability to transfer
 knowledge across domains, data inefficiency, and lack of #emph[common-sense
   reasoning].
 
-// From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:12 '# What Is AI?'
-// Slide: What Is AI?
+// From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:11 '# What Is Intelligence? What is AI?'
+// Slide: What Is Intelligence? What is AI?
 = What Is Intelligence? What is AI?
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:14 '* ML, AI, and Intelligence'
@@ -48,16 +48,16 @@ distinct, though overlapping, area of study. Understanding where machine learnin
 sits in the broader landscape of AI requires first stepping back and asking a more
 fundamental question.
 
-What is artificial intelligence? Answering that starts with understanding what
+What is #emph[artificial intelligence]? Answering that starts with understanding what
 #strong[human intelligence] is. We call ourselves #emph["homo sapiens"] ("wise man")
 precisely because intelligence is the trait we believe sets us apart from other
 animals. For thousands of years, philosophers, scientists, and more recently computer
 scientists have tried to understand how we think, and the question remains one of the
-#emph[biggest mysteries] we face. The human brain is a remarkably small piece of
-biological matter, yet it has managed to grasp some of nature's deepest secrets: the
-theory of relativity, quantum mechanics, and abstract mathematics (and its
-limitations like Godel's incompleteness theorems), the theory of computation, to name
-just a few.
+#emph[biggest mysteries] of nature. The human brain is a remarkably small piece of
+biological matter, yet it has managed to grasp some of the universe's deepest
+secrets: the theory of relativity, quantum mechanics, and abstract mathematics (and
+its limitations like Godel's incompleteness theorems), the theory of computation, to
+name just a few.
 
 This raises a profound puzzle: how can a physical system, #emph[the brain],
 understand, predict, and manipulate a world that is vastly more complex than itself?

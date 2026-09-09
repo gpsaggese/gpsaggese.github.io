@@ -16,14 +16,13 @@
 :::: {.column width=65%}
 
 - @Goal@: Minimize scalar function $J(\vw)$ of $P$-variables $\vw$
-  - E.g., in-sample error
-    $E_{in}(\vw) \defeq \frac{1}{N} \sum_{i=1}^N e(h_{\vw}(\vx_i), y_i)$, the average
-    point-wise error of hypothesis $h_{\vw}$ over $N$ training examples
-    $(\vx_i, y_i)$
+  - E.g., in-sample error defined as the average point-wise error of hypothesis
+    $h_{\vw}$ over $N$ training examples $(\vx_i, y_i)$:
+    $$E_{in}(\vw) \defeq \frac{1}{N} \sum_{i=1}^N e(h_{\vw}(\vx_i), y_i)$$
 
 - @Solutions@
   1. _Analytical approach_
-     - Impose the gradient of $J(\vw)$ to equal 0
+     - Impose the gradient of $J(\vw)$ equal to 0
      - Find a closed-form solution for $\vw^*$
   2. _Numerical approach_
      - Use an iterative method to update $\vw$ to reach the minimum value of $J(\vw)$
@@ -35,7 +34,7 @@
 
 ![](msml610/lectures_source/figures/L02.4.Gradient_descent_2.png)
 
-// TODO: Convert in Tikz or improve
+// TODO(gp): Convert in Tikz and improve
 
 ::::
 :::
@@ -46,41 +45,45 @@
 :::: {.column width=65%}
 
 - @Problem@
-  - You are on a hilly surface and we want to walk down to the bottom of the hill
+  - You are on a hilly surface and you want to walk down to the bottom of the hill
+  - How do you do it?
 
 - @Solution@
   - At each point:
     - You look around
     - You move a step in the direction where the surface is steepest
-  - You keep doing until we reach the bottom
+  - You keep doing until you reach the bottom
 
 ::::
 :::: {.column width=35%}
 
 ![](msml610/lectures_source/figures/L02.4.Gradient_descent_1.png)
 
-// TODO: Convert in Tikz or improve
+// TODO(gp): Convert in Tikz and improve
 
 ::::
 :::
 
 - @Definition@: **Gradient descent** is a general technique for minimizing
   twice-differentiable functions
-  - Converge to a local minimum (in general)
-  - Converge to the global minimum (if $J(\vw)$ is convex)
+  - Converge to the global minimum if $J(\vw)$ is convex
     - E.g., logistic regression and linear models
+  - Converge to a local minimum in general
+    - E.g., for neural networks
+
+// TODO(ai_gp): Download image and add https://towardsdatascience.com/the-gradient-descent-algorithm-4d54e0d446cd/
 
 # Gradient Descent
 
 * Gradient Descent with Fixed Learning Rate (1/3)
 
-// TODO: Add images from tutorial
+// TODO(gp): Add images from tutorials if possible
 
 - @Algorithm@
   - Consider the contour plot of a function
-  - **Start** from a point $\vw(0)$ (e.g., random, the origin, ...)
-  - **At each step**
-    - Move a fixed amount $\eta$ in weight space (fixed learning rate):
+  - Start from a point $\vw(0)$ (e.g., random, the origin, ...)
+  - At each step:
+    - Move a fixed amount $\eta$ in weight space (i.e., fixed learning rate):
       $$
       \vw(t + 1) = \vw(t) + \eta \hat{\vvv}
       $$
@@ -94,7 +97,7 @@
   & = E_{in}(\vw(t + 1)) - E_{in}(\vw(t))
   & \\
   & = E_{in}(\vw(t) + \eta \hat{\vvv}) - E_{in}(\vw(t))
-  & \text{ (replacing the expression of $\vw(t + 1)$)}
+  & \text{ (replacing $\vw(t + 1)$)}
   \\
   & \approx \eta \nabla E_{in}(\vw(t))^T \hat{\vvv} + O(\eta ^ 2)
   & \text{ (using Taylor expansion)}
@@ -104,20 +107,23 @@
   - Gradient descent keeps only $O(\eta)$ the term and ignores the rest
   - Conjugate gradient considers up to $O(\eta^2)$ and ignores higher infinitesimals
 
+// TODO(ai_gp): Add https://hackernoon.imgix.net/images/Rd8z9ArVMycSceC003hxVrAXoj23-vu03brq.png?auto=format%2Ccompress&w=3840
+// TODO(ai_gp): Add https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Gradient_Descent_in_2D.webm/500px--Gradient_Descent_in_2D.webm.jpg
+
 * Gradient Descent with Fixed Learning Rate (2/3)
 
-- The **change** for $E_{in}$ is:
+- The @change@ for $E_{in}$ is:
   $$
   \Delta E_{in}
   \approx \eta \nabla E_{in}(\vw(t))^T \hat{\vvv}
   $$
 
 - The @minimal value of the scalar product@ $\Delta E_{in}$:
+  - Is $- \eta \|\nabla E_{in}(\vw(t))\|$
   - Happens when
     $\hat{\vvv} = - \frac{\nabla E_{in}(\vw(t))}{\|\nabla E_{in}(\vw(t))\|}$
-  - Is $- \eta \|\nabla E_{in}(\vw(t))\|$
 
-- The @change in weights@ $\Delta \vw$ is:
+- The @change in weights@ $\Delta \vw$ to maximize the change of $E_{in}$ is:
   $$
   \begin{align*}
   \Delta \vw
@@ -132,7 +138,7 @@
 
 * Gradient Descent with Fixed Learning Rate (3/3)
 
-- @Fact@: The update formula
+- @Fact@: In the update formula
   - Each $j$ component of the weight $\vw$ is updated with the partial derivative
     with respect to that coordinate:
     $$
@@ -155,8 +161,9 @@
 - @Question@: When should gradient descent to stop?
   - **In theory**, gradient descent stop when $\Delta E_{in} = \vv{0}$
     - Numerically, this might not occur
-  - **In practice**, stop when:
-    - Variation of $E_{in}$ is smaller than threshold $\Delta E_{in} < \theta$
+  - **In practice**, stop when either:
+    - Variation of $E_{in}$ is smaller than threshold $||\Delta E_{in}|| < \theta$;
+      or
     - Reached a certain number of iterations
 
 - @Monitoring gradient descent@
@@ -229,9 +236,11 @@
     flat ones
   - This ill-conditioning causes slow, unstable convergence ("bouncing")
 
-- @Solution@: Converge faster by scaling features to comparable ranges (min-max
-  scaling, standardization)
+- @Solution@: Converge faster by scaling features to comparable ranges
+  - E.g., min-max scaling, standardization
   - Makes the level sets closer to circular
+
+// TODO(ai_gp): Add https://media.springernature.com/lw685/springer-static/image/chp%3A10.1007%2F978-1-4842-4470-8_16/MediaObjects/463852_1_En_16_Fig3_HTML.jpg
 
 # Scaling to Large Datasets
 

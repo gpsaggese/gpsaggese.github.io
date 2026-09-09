@@ -1,4 +1,4 @@
-// git_hash=418671a2a-o1r timestamp=20260907_201646
+// git_hash=9b64c438-h2h timestamp=20260909_100210
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
   aima-style, algorithm, chapter, glossary, styled-table,
@@ -575,14 +575,14 @@ time, so yesterday's optimal parameters may no longer be adequate today.
 //     splines=true;
 //     nodesep=1.0;
 //     ranksep=0.50;
-//
+// 
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
-//
+// 
 //     // Node styles
 //     DataStream [label=<Stream of data<BR/>x<SUB>i</SUB>>, fillcolor=white, shape=plaintext];
 //     Model      [label="Model", fillcolor="#C6A6F4"];
 //     Output     [label=<Output<BR/>y<SUB>i</SUB>>, fillcolor=white, shape=plaintext];
-//
+// 
 //     // Edges
 //     DataStream -> Model;
 //     Model -> Model [label=<w<SUB>i</SUB>>, fontsize=10];
@@ -600,10 +600,6 @@ time, so yesterday's optimal parameters may no longer be adequate today.
     "Lesson02.4-ML_Techniques_Model_Learning.typ.figs/Lesson02.4-ML_Techniques_Model_Learning.1.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Caption is too vague. Describe what the diagram shows more
-  // specifically. Example: "Model architecture for streaming data updates in
-  // online learning." (.claude/skills/typst.rules.md:## Figures: Required
-  // Elements)
   caption: [Diagram relating Model],
   kind: "figure",
   supplement: [Fig.],
@@ -630,7 +626,6 @@ provides a safety net that pure online updates lack.
 
 // Revert garbled section at top, restore proper context
 
-
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:369 '* Map-Reduce for Batch Gradient Descent'
 // Slide: Map-Reduce for Batch Gradient Descent
 #strong[Map-Reduce for Batch Gradient Descent]
@@ -656,44 +651,44 @@ independent per-example terms.
 //     splines=true;
 //     nodesep=1.0;
 //     ranksep=0.75;
-//
+// 
 //     // Operation nodes (rounded boxes)
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
-//
+// 
 //     Map_0 [label=<Map<SUB>0</SUB><BR/>Compute Gradient>, fillcolor="#A6C8F4"];
 //     Map_1 [label=<Map<SUB>1</SUB><BR/>Compute Gradient>, fillcolor="#A6C8F4"];
 //     Map_n [label=<Map<SUB>n</SUB><BR/>Compute Gradient>, fillcolor="#A6C8F4"];
 //     ShuffleSort [label="Shuffle & Sort", fillcolor="#C6A6F4"];
 //     Update [label="Update Model", fillcolor="#D2B48C"];
-//
+// 
 //     // Variable/value nodes (plain ellipses with white background)
 //     node [shape=ellipse, style=filled, fontname="Helvetica", fontsize=12, penwidth=1.4, fillcolor=white];
-//
+// 
 //     DataShard_0  [label=<DataShard<SUB>0</SUB>>];
 //     DataShard_1  [label=<DataShard<SUB>1</SUB>>];
 //     DataShard_n  [label=<DataShard<SUB>n</SUB>>];
-//
+// 
 //     Gradient_0 [label=<Gradient<SUB>0</SUB>>];
 //     Gradient_1 [label=<Gradient<SUB>1</SUB>>];
 //     Gradient_n [label=<Gradient<SUB>n</SUB>>];
-//
+// 
 //     AggregatedGradient [label="Aggregated Gradient"];
 //     Model [label="Model Parameters"];
-//
+// 
 //     // Force ranks
 //     { rank=same; DataShard_0; DataShard_1; DataShard_n; }
 //     { rank=same; Map_0; Map_1; Map_n; }
 //     { rank=same; Gradient_0; Gradient_1; Gradient_n; }
-//
+// 
 //     // Edges
 //     DataShard_0 -> Map_0 -> Gradient_0;
 //     DataShard_1 -> Map_1 -> Gradient_1;
 //     DataShard_n -> Map_n -> Gradient_n;
-//
+// 
 //     Gradient_0 -> ShuffleSort;
 //     Gradient_1 -> ShuffleSort;
 //     Gradient_n -> ShuffleSort;
-//
+// 
 //     ShuffleSort -> AggregatedGradient;
 //     AggregatedGradient -> Update;
 //     Model -> Update -> Model;
@@ -710,10 +705,6 @@ independent per-example terms.
     "Lesson02.4-ML_Techniques_Model_Learning.typ.figs/Lesson02.4-ML_Techniques_Model_Learning.2.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Caption is too vague. Describe what the diagram shows more
-  // specifically. Example: "Map-reduce architecture for distributed gradient
-  // computation across worker nodes." (.claude/skills/typst.rules.md:## Figures:
-  // Required Elements)
   caption: [Diagram relating Shuffle & Reduce],
   kind: "figure",
   supplement: [Fig.],

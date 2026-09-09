@@ -1,5 +1,4 @@
-// git_hash=418671a2a-nmw timestamp=20260907_200914
-// FIXED_BY_CLAUDE_20260907_202440
+// git_hash=9b64c438-4no timestamp=20260909_100210
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
   aima-style, chapter, styled-table, wrap-content,
@@ -40,7 +39,6 @@ framing problems appropriately and choosing suitable algorithms.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:11 '* Machine Learning Paradigms: A Taxonomy'
 // Slide: Machine Learning Paradigms: A Taxonomy
-=== Machine Learning Paradigms: A Taxonomy
 
 How do the major machine learning paradigms differ in the way they access data and
 receive feedback? The answer turns on two axes: whether labeled outputs are
@@ -129,7 +127,6 @@ algorithm.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:53 '* Machine Learning Paradigms: Examples (1/3)'
 // Slide: Machine Learning Paradigms: Examples (1/3)
-=== Machine Learning Paradigms: Examples (1/3)
 
 How do you set up a machine learning problem? The answer depends on what kind of data
 you have and what kind of feedback the learning system receives. There are five major
@@ -175,7 +172,6 @@ a machine learning problem.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:74 '* Machine Learning Paradigms: Examples (2/3)'
 // Slide: Machine Learning Paradigms: Examples (2/3)
-=== Machine Learning Paradigms: Examples (2/3)
 
 #strong[Online learning] trains a model incrementally from a stream of data arriving
 in real time, rather than requiring the entire dataset up front. A practical example
@@ -208,7 +204,6 @@ labeling effort where it will reduce uncertainty the most.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:99 '* Machine Learning Paradigms: Examples (3/3)'
 // Slide: Machine Learning Paradigms: Examples (3/3)
-=== Machine Learning Paradigms: Examples (3/3)
 
 #strong[Federated learning] trains models across decentralized devices without
 sharing raw data #cite("mcmahan2017federated"). Each participant (a phone, a
@@ -220,7 +215,7 @@ transaction data would violate regulatory constraints, yet each institution bene
 from patterns visible only in the combined population.
 
 #strong[Evolutionary learning] optimizes model structures or parameters through
-algorithms inspired by natural selection and genetics. A population of candidate
+algorithms inspired by natural selection. A population of candidate
 solutions is maintained; each generation, the fittest individuals are selected,
 recombined, and mutated to produce offspring that (on average) perform better.
 Because the process relies on fitness evaluation rather than gradient computation, it
@@ -256,7 +251,6 @@ that no single-agent training regime would have uncovered.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:124 '* Supervised Learning'
 // Slide: Supervised Learning
-=== Supervised Learning
 
 #emph[Supervised learning] learns a function $f: X arrow.r Y$ that maps inputs to
 correct outputs #cite("mitchell1997machinelearning"). The training set consists of
@@ -282,7 +276,6 @@ theme that recurs throughout the course.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:145 '* Unsupervised Learning'
 // Slide: Unsupervised Learning
-=== Unsupervised Learning
 
 #emph[Unsupervised learning] learns from data without labeled outputs. Rather than
 receiving explicit feedback or correct answers, the algorithm's goal is to discover
@@ -323,7 +316,6 @@ architecture.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:167 '* Reinforcement Learning'
 // Slide: Reinforcement Learning
-=== Reinforcement Learning
 
 #emph[Reinforcement learning] (RL) is a paradigm in which an agent learns by
 interacting with an environment to maximize cumulative reward #cite(
@@ -411,7 +403,6 @@ receives both a reward and a new state from the environment, then repeats.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:219 '* Reinforcement Learning: Examples'
 // Slide: Reinforcement Learning: Examples
-=== Reinforcement Learning: Examples
 
 Reinforcement learning finds natural application in any domain where an agent must
 make a sequence of decisions and can learn from the outcomes of those decisions over
@@ -448,9 +439,8 @@ over traditional supervised approaches.
 // Slide: Machine Learning in Practice
 == Machine Learning in Practice
 
-// From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:234 '* Machine Learning Flow (1/2)'
-// Slide: Machine Learning Flow (1/2)
-=== Machine Learning Flow (1/2)
+// From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:234 '* Machine Learning Flow'
+// Slide: Machine Learning Flow
 
 Every machine learning project follows a common pipeline whose stages build on one
 another. The process begins with a #strong[question]: a concrete problem statement
@@ -467,10 +457,6 @@ trees in a random forest. Finally, #emph[evaluation] closes the loop: you measur
 trained model's quality with metrics such as accuracy, precision, and recall, and
 those results feed back into refining earlier stages (collecting better data,
 engineering new features, or tuning parameters).
-
-// From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:244 '* Machine Learning Flow (2/2)'
-// Slide: Machine Learning Flow (2/2)
-=== Machine Learning Flow (2/2)
 
 // rendered_images:begin
 // ```graphviz
@@ -603,7 +589,11 @@ capture the information most relevant to a learning task. Rather than feeding a 
 every pixel of a scanned digit image, for instance, you might extract just two
 numbers: the overall intensity and the vertical symmetry of the image. Those two
 quantities compress thousands of pixel values into a pair of informative signals that
-a simple classifier can work with directly.
+a simple classifier can work with directly. The same reduction applies far beyond
+images: to predict a house price you would use square footage, number of bedrooms,
+and school-district rating rather than raw photographs of the property, and to predict
+a loan default you would use the debt-to-income ratio and the number of late payments
+rather than the raw transaction log.
 
 Good features share three characteristics. First, they #emph[retain the information
   that matters] for distinguishing between classes or predicting a target. Second,
@@ -703,14 +693,14 @@ is essential for choosing the right model for a given application.
 ) <fig:whatmakesagoodmodel>
 // render_images:end
 
-#strong[Simplicity] makes a model easier to implement, maintain, and debug. Simpler
-models also carry a lower risk of overfitting, since they have fewer parameters that
-can latch onto noise in the training data rather than genuine patterns.
-
 #strong[Accuracy] is typically what practitioners optimize first, yet pushing
 accuracy higher often comes at the expense of every other property. A highly accurate
 ensemble of dozens of models may be too slow to deploy, too complex to explain, and
 too brittle to maintain.
+
+#strong[Simplicity] makes a model easier to implement, maintain, and debug. Simpler
+models also carry a lower risk of overfitting, since they have fewer parameters that
+can latch onto noise in the training data rather than genuine patterns.
 
 #strong[Interpretability] lets users understand and trust the decisions a model
 produces. Decision trees, for instance, excel here because they output an explicit
@@ -767,7 +757,7 @@ improvement in overall system performance. Stages with large $alpha_i$ are the
 bottlenecks worth investing effort in, while stages whose oracle replacement barely
 moves the system metric can be deprioritized.
 
-// From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:431 '* Example of Photo OCR System'
+// From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:433 '* Example of Photo OCR System'
 // Slide: Example of Photo OCR System
 #strong[Example of Photo OCR System]
 
@@ -850,9 +840,16 @@ at every stage is therefore critical.
 flow from a raw input image through detection, segmentation, and classification to a
 final text string.
 
-Because the location and size of text in a natural image are unknown in advance, a
-#strong[sliding window approach] is used to search for text systematically. For the
-text detection stage, the idea is to train a binary classifier that distinguishes
+// From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:486 '* Example of Photo OCR System'
+// Slide: Example of Photo OCR System
+The location and size of the text in a natural image are unknown in advance, so how
+does the detection stage find it? The answer illustrates a general principle: a stage
+of a pipeline can itself be #emph[recursively broken into stages or sub-problems],
+each simpler than the one above it.
+
+Applying that principle, the detection stage uses a #strong[sliding window approach]
+to search for text systematically. The idea is to train a binary classifier that
+distinguishes
 windows containing letters from windows containing only background. This is a simpler
 learning problem than recognizing which letter a window contains; the classifier only
 needs to say "text" or "not text." At inference time, the trained classifier is swept
@@ -971,38 +968,34 @@ bottleneck one or two steps away.
 Consider a concrete example: an OCR pipeline whose baseline accuracy is 72%. A
 ceiling analysis reveals which component deserves attention first. As
 @tab:ceilinganalysisformlpipelineoctexample shows, text detection is the
-highest-value target: perfecting it alone accounts for most of the achievable gain.
-The remaining components, while still imperfect, contribute far less marginal
-improvement, so engineering effort spent on them yields diminishing returns until the
-text detection bottleneck is resolved.
+highest-value target: making it perfect alone lifts accuracy by 17 points, out of the
+28 points that separate the baseline from a perfect system. In other words, one stage
+accounts for most of the achievable gain. The remaining components, while still
+imperfect, contribute far less marginal improvement, so engineering effort spent on
+them yields diminishing returns until the text detection bottleneck is resolved.
 
-#grid(
-  columns: (1fr, 40%),
-  column-gutter: 1em,
-  align: (left, top),
-)[
-  The table reveals that improving text detection would yield a +17% gain over
-  baseline, far exceeding the marginal contributions of character segmentation (+1%)
-  and classification (+10%) when applied in sequence. This ordering shows where
-  investment in engineering effort will have the highest return.
-][
-  #figure(
-    styled-table(
-      headers: ("Component made perfect", "Accuracy", "Gain"),
-      rows: (
-        ("(baseline system)", "72%", "--"),
-        ("Text detection", "89%", "+17%"),
-        ("+ Char. segmentation", "90%", "+1%"),
-        ("+ Char. classification", "100%", "+10%"),
-      ),
+// Keep this table full-width: its cell values are multi-word phrases.
+#figure(
+  styled-table(
+    headers: ("Component made perfect", "Accuracy", "Gain"),
+    rows: (
+      ("(baseline system)", "72%", "--"),
+      ("Text detection", "89%", "+17%"),
+      ("+ Char. segmentation", "90%", "+1%"),
+      ("+ Char. classification", "100%", "+10%"),
     ),
-    caption: [Ceiling analysis results: accuracy gains from perfecting each OCR
-      component.],
-    kind: "table",
-    supplement: [Table.],
-    placement: auto,
-  ) <tab:ceilinganalysisformlpipelineoctexample>
-]
+  ),
+  caption: [Ceiling analysis results: accuracy gains from perfecting each OCR
+    component.],
+  kind: "table",
+  supplement: [Table.],
+  placement: auto,
+) <tab:ceilinganalysisformlpipelineoctexample>
+
+The table reveals that improving text detection yields a +17% gain over baseline, far
+exceeding the marginal contributions of character segmentation (+1%) and
+classification (+10%) when applied in sequence. This ordering shows where investment
+in engineering effort will have the highest return.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:580 '* References'
 // Slide: References

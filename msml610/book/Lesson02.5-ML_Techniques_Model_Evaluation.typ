@@ -1,4 +1,4 @@
-// git_hash=6d65371d2-h2c timestamp=20260904_160218
+// git_hash=9b64c438-g5u timestamp=20260909_100210
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
   aima-style, algorithm, chapter, styled-table, wrap-content,
@@ -40,7 +40,6 @@ recognize when a model is overfitting.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:15 '* How to Make Progress in ML Research'
 // Slide: How to Make Progress in ML Research
-=== How to Make Progress in ML Research
 
 Machine learning offers a vast landscape of choices at every stage of a project: how
 to preprocess the data, which features to extract or engineer, which model family to
@@ -69,7 +68,6 @@ selection from guesswork into an evidence-based process.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:33 '* In-Sample vs Out-Of-Sample Error Expressions'
 // Slide: In-Sample vs Out-Of-Sample Error Expressions
-=== In-Sample vs Out-Of-Sample Error Expressions
 
 The goal of learning is to find a function $h$ that approximates an unknown target
 function $f$ over the space of inputs $x in cal(X)$. Because $f$ is unknown, we
@@ -112,7 +110,6 @@ training data.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:58 '* Training vs Test Set'
 // Slide: Training vs Test Set
-=== Training vs Test Set
 
 Performance on the training set $E_(i n)$ is an #strong[optimistic estimate] of the
 true out-of-sample error $E_(o u t)$. A model can achieve a 0% error rate on its
@@ -370,7 +367,7 @@ lock in the performance estimate, then retrain on everything for deployment.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:198 '* How to Choose an Error Measure?'
 // Slide: How to Choose an Error Measure?
-=== How to Choose an Error Measure?
+How to Choose an Error Measure?
 
 The choice of error measure is not purely a technical decision; it depends on the
 #emph[application] domain and should ultimately be defined by the customer or end
@@ -451,7 +448,7 @@ operates.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:235 '* How to Measure Classifier's Performance?'
 // Slide: How to Measure Classifier's Performance?
-=== How to Measure Classifier's Performance?
+How to Measure Classifier's Performance?
 
 #strong[Success rate] (also called hit rate or win rate) measures the proportion of
 correct predictions out of all predictions made. It is computed as
@@ -493,11 +490,9 @@ sections.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:259 '### Regression Metrics'
 // Slide: Regression Metrics
-=== Regression Metrics
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:261 '* Mean Squared Error (MSE)'
 // Slide: Mean Squared Error (MSE)
-=== Mean Squared Error (MSE)
 
 #strong[Mean squared error] (MSE) is the average squared difference between predicted
 and actual values:
@@ -588,7 +583,6 @@ sorting step that complicates both the loss surface and its gradients.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:321 '### Classification Metrics'
 // Slide: Classification Metrics
-=== Classification Metrics
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:323 '* Error Metrics for Skewed Classes'
 // Slide: Error Metrics for Skewed Classes
@@ -619,7 +613,6 @@ exactly what precision, recall, and the confusion matrix provide.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:339 '* Confusion Matrix'
 // Slide: Confusion Matrix
-=== Confusion Matrix
 
 Binary classification problems rest on two assumptions: the actual and predicted
 class labels both belong to $\{0, 1\}$, and by convention $y = 1$ encodes the rare,
@@ -1156,7 +1149,6 @@ dataset.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:687 '* Model Selection as Learning'
 // Slide: Model Selection as Learning
-=== Model Selection as Learning
 
 Selecting the model with the smallest $E_("val")$ is itself a #strong[form of
   learning]. The hypothesis set is the finite collection $\{g_1, dots, g_N\}$ of
@@ -1237,7 +1229,6 @@ complexity term and provides an analogous guarantee.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:737 '* Ensemble Learning: Intuition'
 // Slide: Ensemble Learning: Intuition
-=== Ensemble Learning: Intuition
 
 The core intuition behind ensemble methods is straightforward: a group of
 #strong[weak learners], each only slightly better than random guessing, can be
@@ -1389,11 +1380,9 @@ tension never fully disappears.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:821 '### Bagging'
 // Slide: Bagging
-=== Bagging
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:823 '* Bagging'
 // Slide: Bagging
-#strong[Bagging]
 
 #strong[Bagging] stands for "Bootstrap AGGregation," a technique that builds a
 stronger model by training several learners on resampled versions of the same dataset
@@ -1471,11 +1460,9 @@ produce genuinely different predictions.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:862 '### Boosting'
 // Slide: Boosting
-=== Boosting
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:864 '* Boosting'
 // Slide: Boosting
-#strong[Boosting]
 
 #strong[Boosting] builds models that complement each other, typically using
 homogeneous learners drawn from the same hypothesis class $cal(H)$. The core insight
@@ -1558,11 +1545,9 @@ most needed.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:902 '### Stacking'
 // Slide: Stacking
-=== Stacking
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:904 '* Stacking'
 // Slide: Stacking
-#strong[Stacking]
 
 #strong[Stacking] is the idea of learning how to combine models, which need not even
 be of the same type. With simple voting or averaging, every base model gets equal say

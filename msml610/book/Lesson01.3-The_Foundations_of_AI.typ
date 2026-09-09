@@ -1,4 +1,4 @@
-// git_hash=52575121d-e3r timestamp=20260830_190930
+// git_hash=9b64c438-lol timestamp=20260909_100210
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
   aima-style, algorithm, chapter, glossary, styled-table, wrap-content,
