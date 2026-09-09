@@ -1,4 +1,4 @@
-// git_hash=9b64c438-g5u timestamp=20260909_100210
+// git_hash=0fcc3aa8-g5u timestamp=20260909_125513
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
   aima-style, algorithm, chapter, styled-table, wrap-content,
@@ -181,7 +181,7 @@ Beyond smarter splitting, two other strategies help stretch a small dataset furt
   (edges, textures, shapes), so the model needs far fewer target-domain examples to
   reach good performance.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:96 '* Splitting Data Into Training, Validation, Test Sets'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:95 '* Splitting Data Into Training, Validation, Test Sets'
 // Slide: Splitting Data Into Training, Validation, Test Sets
 #strong[Splitting Data Into Training, Validation, Test Sets]
 
@@ -191,11 +191,10 @@ model's evaluation will be contaminated by information it has already seen. Seco
 each set must be #emph[representative] of the problem, meaning the distribution of
 classes, feature ranges, and edge cases in every set should mirror the overall
 dataset. If a class makes up 15% of the original data, it should make up roughly 15%
-of each split, not be concentrated in one set and absent from another. Third, the
-relative sizes of the three sets should be chosen based on the volume of available
-data and the complexity of the problem: a small dataset may need a larger validation
-share to produce stable estimates, while a very large dataset can afford a thin
-validation slice.
+of each split, not be concentrated in one set and absent from another. Third, each set
+must be #emph[sized] based on the volume of available data and the complexity of the
+problem: a small dataset may need a larger validation share to produce stable
+estimates, while a very large dataset can afford a thin validation slice.
 
 Several techniques help ensure that every split shares the #emph[same underlying
   distribution]:
@@ -215,7 +214,7 @@ Several techniques help ensure that every split shares the #emph[same underlying
   drifted from the others. A large discrepancy in any of these signals that the split
   should be redone or that stratification constraints need tightening.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:113 '* Rule of Thumbs for Data Set Splits'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:112 '* Rule of Thumbs for Data Set Splits'
 // Slide: Rule of Thumbs for Data Set Splits
 #strong[Rule of Thumbs for Data Set Splits]
 
@@ -242,7 +241,13 @@ too limited for any data-driven model to generalize reliably. Reporting the smal
 data size alongside any results is good practice, so that readers can calibrate their
 confidence accordingly.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:130 '* Training Data'
+These three labels are of course #emph[relative]. Whether a given $n$ counts as
+large, medium, or small depends on the number of features, the number of free
+parameters in the model, and how much noise the problem carries: a few thousand rows
+is plentiful for a logistic regression on ten features and desperately small for a
+deep network on raw images.
+
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:131 '* Training Data'
 // Slide: Training Data
 #strong[Training Data]
 
@@ -274,12 +279,12 @@ engineering instead.
   placement: auto,
 ) <fig:learningcurvesexample>
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:144 '* Using Test Data'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:154 '* Using Test Data'
 // Slide: Using Test Data
 #strong[Using Test Data]
 
-Can you use the test set for training? The short answer is: not until you have
-finished evaluating your model. The test set exists to give you a single, unbiased
+Can you #emph[ever] use the test set for training? The short answer is: not until you
+have finished evaluating your model. The test set exists to give you a single, unbiased
 estimate of generalization performance. If you train on it before that estimate is
 locked in, you contaminate the very measurement you need.
 
@@ -299,67 +304,59 @@ of this size and shape, produces a fitted model. In practice, the deployed model
 usually perform at least as well as the estimate suggests, since it saw strictly more
 training data, but the guarantee is about the procedure rather than the artifact.
 
-@fig:usingtestdata illustrates this workflow: evaluate first on held-out test data,
-lock in the performance estimate, then retrain on everything for deployment.
+@fig:usingtestdata illustrates this workflow as a timeline: evaluate first on held-out
+test data, lock in the performance estimate, then retrain on everything for
+deployment.
 
 // rendered_images:begin
-// ```tikz
-// % Timeline showing test set usage - professional version
-// \draw[thick, ->] (0,0) -- (11,0);
-// \node[below] at (5.5,-0.5) {Development Pipeline Timeline};
-// 
-// % Axes and grid
-// \draw[thin, gray] (0,0) grid[step=0.5] (11,0);
-// 
-// % Phase 1: Training
-// \draw[fill=blue!40, draw=blue, thick] (0.5,0.3) rectangle (3,0.9);
-// \node[font=\bfseries] at (1.75,0.6) {Training};
-// \node[below, font=\small] at (1.75,-0.8) {60\% data};
-// 
-// % Phase 2: Validation
-// \draw[fill=green!40, draw=green, thick] (3.5,0.3) rectangle (5.5,0.9);
-// \node[font=\bfseries] at (4.5,0.6) {Validation};
-// \node[below, font=\small] at (4.5,-0.8) {20\% data};
-// 
-// % Phase 3: Testing
-// \draw[fill=red!40, draw=red, thick] (6,0.3) rectangle (8,0.9);
-// \node[font=\bfseries] at (7,0.6) {Testing};
-// \node[below, font=\small] at (7,-0.8) {20\% data};
-// 
-// % Phase 4: Deployment
-// \draw[fill=purple!40, draw=purple, thick] (8.5,0.3) rectangle (10.5,0.9);
-// \node[font=\bfseries] at (9.5,0.6) {Deploy (Retrain)};
-// \node[below, font=\small] at (9.5,-0.8) {100\% data};
-// 
-// % Annotations above phases
-// \node[above, font=\small] at (1.75,1.3) {Model selection};
-// \node[above, font=\small] at (7,1.3) {Final evaluation};
-// \node[above, font=\small] at (9.5,1.3) {Production};
-// 
-// % Arrow showing data reuse
-// \draw[dashed, thick, ->] (8,0.15) to (8.5,0.15);
-// \node[font=\small, gray] at (8.25,-1.1) {Reuse test data};
-// 
-// % Legend
-// \node[anchor=west, font=\small] at (0.5,-1.8) {Note: Only retrain model with full dataset after test set evaluation is complete};
+// ```mermaid
+// timeline
+//   section Training
+//     60% data : Training : Model selection
+//   section Validation
+//     20% data : Validation : Model selection
+//   section Testing
+//     20% data : Testing : Final evaluation
+//   section Deployment
+//     100% data : Deploy (Retrain) : Production
 // ```
 // label=fig:usingtestdata
-// caption=Diagram illustrating Using Test Data
-// width=70%
+// caption=Development pipeline timeline, from the three-way split to retraining on all data.
+// width=100%
 // placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
   image(
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.1.png",
-    width: 70%,
+    width: 100%,
   ),
-  caption: [Diagram illustrating Using Test Data],
+  caption: [Development pipeline timeline, from the three-way split to retraining on all data.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:usingtestdata>
 // render_images:end
+
+The same idea can be drawn as a data-flow diagram rather than a timeline.
+@fig:testingdatafortraining shows the full dataset $cal(D)$ of $N$ points split into a
+training portion $cal(D)_"train"$ of $N - K$ points and a held-out portion
+$cal(D)_"val"$ of $K$ points. The model $g^-$ is learned on $cal(D)_"train"$ alone and
+scored on $cal(D)_"val"$ to produce $E_"val"(g^-)$, while the deployed model $g$ is
+learned on all $N$ points. The box drawn around the inner path marks what is used to
+obtain the error estimate; the arrow that leaves the box on the left is the retraining
+step that reuses the held-out data once the estimate is final.
+
+#figure(
+  image(
+    "../lectures_source/figures/L02.5.Testing_Data_For_Training.png",
+    width: 70%,
+  ),
+  caption: [Held-out data feeding both the error estimate and the final retrained model.],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:testingdatafortraining>
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:196 '## Choosing an Error Measure'
 // Slide: Choosing an Error Measure
@@ -398,100 +395,10 @@ especially valuable because convex optimization guarantees that any local minimu
 also the global minimum, so standard gradient-based algorithms can find the best
 solution reliably without getting trapped in suboptimal basins.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:218 '* Error Measures: Fingerprint Verification Example'
-// Slide: Error Measures: Fingerprint Verification Example
-#strong[Error Measures: Fingerprint Verification Example]
-
-In fingerprint verification, correctly recognizing a valid fingerprint produces no
-error. When the system gets it wrong, however, the mistake falls into one of two
-categories: a #strong[false positive] (accepting an invalid fingerprint) or a
-#strong[false negative] (rejecting a valid one). The weight assigned to each type of
-error depends entirely on the application.
-
-Consider a supermarket loyalty program that uses fingerprint scanning to verify
-discount eligibility. A false positive here is a minor issue: one customer receives
-an undeserved discount. A false negative is far more costly: a legitimate customer is
-denied their discount, leading to frustration and checkout delays. Now consider
-access control at a CIA facility. The calculus reverses completely. A false positive
-is critical: an unauthorized person gains entry, creating a security breach. A false
-negative is acceptable: a legitimate employee is simply asked to verify their
-identity through an additional check.
-
-#figure(
-  styled-table(
-    headers: ("Application", "False Positive", "False Negative"),
-    rows: (
-      (
-        "Supermarket",
-        "Minor issue: one extra discount",
-        "Costly: annoyed customer, delays",
-      ),
-      (
-        "CIA Building",
-        "Critical: security breach",
-        "Acceptable: triggers further checks",
-      ),
-    ),
-  ),
-  caption: [Error severity for fingerprint verification in two different settings.],
-  kind: "table",
-  supplement: [Table.],
-  placement: auto,
-) <tab:errorweights>
-
-As @tab:errorweights summarizes, the very same classification problem in two
-different settings demands the #emph[opposite] error measure. What counts as the
-tolerable mistake in a supermarket becomes the catastrophic one in a secure facility,
-and vice versa. This means that any practical classifier must be tuned not just for
-overall accuracy, but for the specific cost structure of the domain in which it
-operates.
-
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:235 '* How to Measure Classifier's Performance?'
-// Slide: How to Measure Classifier's Performance?
-How to Measure Classifier's Performance?
-
-#strong[Success rate] (also called hit rate or win rate) measures the proportion of
-correct predictions out of all predictions made. It is computed as
-
-$ "accuracy" = frac("TP" + "TN", "TP" + "TN" + "FP" + "FN") $
-
-where TP and TN are true positives and true negatives, while FP and FN are false
-positives and false negatives. This single number gives an at-a-glance sense of how
-often the model gets the right answer. For instance, if a classifier labels 80 out of
-100 examples correctly, it achieves an 80% success rate. The complement of this
-quantity, the error or miss rate, simply counts the fraction of incorrect
-predictions.
-
-#strong[Log probability loss], more commonly known as #strong[cross-entropy loss],
-evaluates a classifier that outputs probabilities between 0 and 1 rather than hard
-labels. It is defined as
-
-$ "cross-entropy" = -frac(1, N) sum_(i=1)^N [y_i log(p_i) + (1 - y_i) log(1 - p_i)] $
-
-where $y_i$ is the true binary label and $p_i$ is the predicted probability for
-observation $i$. Cross-entropy penalizes confident wrong predictions far more heavily
-than uncertain ones: predicting 0.99 for a true negative incurs a much larger loss
-than predicting 0.6. Lower cross-entropy therefore signals better-calibrated
-probabilistic predictions, making it the standard training objective for logistic
-regression and neural-network classifiers alike.
-
-#strong[Precision, recall, and F-score] become essential when the class distribution
-is imbalanced, because raw accuracy can be misleading in such settings (a model that
-always predicts the majority class may look accurate yet be useless).
-#emph[Precision] is the fraction of predicted positives that are actually positive,
-answering "when the model says yes, how often is it right?" #emph[Recall] is the
-fraction of actual positives that the model correctly identifies, answering "of all
-the real positives, how many did the model catch?" These two metrics trade off
-against each other: raising the decision threshold typically increases precision at
-the expense of recall, and vice versa. The #emph[F-score] reconciles the two by
-computing their weighted harmonic mean, providing a single number that rewards
-balanced performance on both axes. Formal definitions of each metric appear in later
-sections.
-
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:259 '### Regression Metrics'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:210 '### Regression Metrics'
 // Slide: Regression Metrics
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:261 '* Mean Squared Error (MSE)'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:212 '* Mean Squared Error (MSE)'
 // Slide: Mean Squared Error (MSE)
 
 #strong[Mean squared error] (MSE) is the average squared difference between predicted
@@ -528,7 +435,7 @@ robustness matters, alternatives like #emph[median absolute deviation] (MAD) or 
 median of squared errors provide summaries that are far less influenced by extreme
 values.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:283 '* Root Mean Squared Error (RMSE)'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:234 '* Root Mean Squared Error (RMSE)'
 // Slide: Root Mean Squared Error (RMSE)
 #strong[Root Mean Squared Error (RMSE)]
 
@@ -554,7 +461,7 @@ close but a few are far off, RMSE overstates how poorly the model performs on th
 bulk of examples while simultaneously underrepresenting just how extreme the worst
 cases are.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:299 '* Median-Based Metrics'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:250 '* Median-Based Metrics'
 // Slide: Median-Based Metrics
 #strong[Median-Based Metrics]
 
@@ -581,10 +488,56 @@ analytical manipulation more difficult to carry out. Gradient-based training, fo
 instance, relies on smooth, differentiable objectives, and the median introduces a
 sorting step that complicates both the loss surface and its gradients.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:321 '### Classification Metrics'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:273 '* How to Measure Classifier's Performance?'
+// Slide: How to Measure Classifier's Performance?
+How to Measure Classifier's Performance?
+
+#strong[Success rate] (also called hit rate or win rate) measures the proportion of
+correct predictions out of all predictions made. It is computed as
+
+$ "accuracy" = frac("TP" + "TN", "TP" + "TN" + "FP" + "FN") $
+
+where TP and TN are true positives and true negatives, while FP and FN are false
+positives and false negatives. This single number gives an at-a-glance sense of how
+often the model gets the right answer. For instance, if a classifier labels 80 out of
+100 examples correctly, it achieves an 80% success rate. The complement of this
+quantity, the error or miss rate, simply counts the fraction of incorrect
+predictions.
+
+#strong[Log probability loss], more commonly known as #strong[cross-entropy loss],
+evaluates a classifier that outputs probabilities between 0 and 1 rather than hard
+labels. It is defined as
+
+$ "cross-entropy" = -frac(1, N) sum_(i=1)^N [y_i log(p_i) + (1 - y_i) log(1 - p_i)] $
+
+where $y_i$ is the true binary label and $p_i$ is the predicted probability for
+observation $i$. Cross-entropy penalizes confident wrong predictions far more heavily
+than uncertain ones: predicting 0.99 for a true negative incurs a much larger loss
+than predicting 0.6. Lower cross-entropy therefore signals better-calibrated
+probabilistic predictions, making it the standard training objective for logistic
+regression and neural-network classifiers alike.
+
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:290 '* How to Measure Classifier's Performance?'
+// Slide: How to Measure Classifier's Performance?
+
+#strong[Precision, recall, and F-score] become essential when the class distribution
+is imbalanced, because raw accuracy can be misleading in such settings (a model that
+always predicts the majority class may look accurate yet be useless).
+#emph[Precision] is the fraction of predicted positives that are actually positive,
+answering "when the model says yes, how often is it right?" A precision of 0.75 means
+that 75% of the instances flagged as positive really were positive. #emph[Recall] is
+the fraction of actual positives that the model correctly identifies, answering "of
+all the real positives, how many did the model catch?" A recall of 0.60 means that
+60% of the actual positives were identified. These two metrics trade off against each
+other: raising the decision threshold typically increases precision at the expense of
+recall, and vice versa. The #emph[F-score] reconciles the two by computing their
+weighted harmonic mean, providing a single number that rewards balanced performance
+on both axes. Formal definitions of each metric appear in the sections that follow.
+
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:306 '### Classification Metrics'
 // Slide: Classification Metrics
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:323 '* Error Metrics for Skewed Classes'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:308 '* Error Metrics for Skewed Classes'
 // Slide: Error Metrics for Skewed Classes
 #strong[Error Metrics for Skewed Classes]
 
@@ -611,7 +564,54 @@ classifier has genuinely learned to identify the rare but important class, we ne
 metrics that separately measure how well it handles positives and negatives, which is
 exactly what precision, recall, and the confusion matrix provide.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:339 '* Confusion Matrix'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:324 '* Error Measures: Fingerprint Verification Example'
+// Slide: Error Measures: Fingerprint Verification Example
+#strong[Error Measures: Fingerprint Verification Example]
+
+In fingerprint verification, correctly recognizing a valid fingerprint produces no
+error. When the system gets it wrong, however, the mistake falls into one of two
+categories: a #strong[false positive] (accepting an invalid fingerprint) or a
+#strong[false negative] (rejecting a valid one). The weight assigned to each type of
+error depends entirely on the application.
+
+Consider a supermarket loyalty program that uses fingerprint scanning to verify
+discount eligibility. A false positive here is a minor issue: one customer receives
+an undeserved discount. A false negative is far more costly: a legitimate customer is
+denied their discount, leading to frustration and checkout delays. Now consider
+access control at a CIA facility. The calculus reverses completely. A false positive
+is critical: an unauthorized person gains entry, creating a security breach. A false
+negative is acceptable: a legitimate employee is simply asked to verify their
+identity through an additional check.
+
+#figure(
+  styled-table(
+    headers: ("Application", "False Positive", "False Negative"),
+    rows: (
+      (
+        "Supermarket",
+        "Minor issue (one extra discount)",
+        "Costly (annoyed customer, delays)",
+      ),
+      (
+        "CIA Building",
+        "Critical (security breach)",
+        "Acceptable (triggers further checks)",
+      ),
+    ),
+  ),
+  caption: [Error severity for fingerprint verification in two different settings.],
+  kind: "table",
+  supplement: [Table.],
+  placement: auto,
+) <tab:errorweights>
+
+As @tab:errorweights summarizes, the same outcome in two different settings demands
+the #emph[opposite] error measure. What counts as the tolerable mistake in a
+supermarket becomes the catastrophic one in a secure facility, and vice versa. This
+means that any practical classifier must be tuned not just for overall accuracy, but
+for the specific cost structure of the domain in which it operates.
+
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:346 '* Confusion Matrix'
 // Slide: Confusion Matrix
 
 Binary classification problems rest on two assumptions: the actual and predicted
@@ -683,7 +683,7 @@ asks "of everything that truly was positive, how much did the model find?" Both 
 direct functions of the TP, FP, and FN counts, so the confusion matrix is the single
 structure from which nearly all binary-classification evaluation flows.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:385 '* Precision vs Recall: Definition'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:393 '* Precision vs Recall: Definition'
 // Slide: Precision vs Recall: Definition
 #strong[Precision vs Recall: Definition]
 
@@ -725,7 +725,7 @@ sparingly can achieve near-perfect precision while missing many true cases (low
 recall), and a model that predicts positive liberally can achieve near-perfect recall
 while generating many false alarms (low precision).
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:414 '* Precision / Recall as Quality / Quantity'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:422 '* Precision / Recall as Quality / Quantity'
 // Slide: Precision / Recall as Quality / Quantity
 #strong[Precision / Recall as Quality / Quantity]
 
@@ -765,7 +765,7 @@ recall shift as the decision threshold changes.
   placement: auto,
 ) <fig:precisionrecallroc>
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:439 '* Precision / Recall for Trivial Classifiers'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:445 '* Precision / Recall for Trivial Classifiers'
 // Slide: Precision / Recall for Trivial Classifiers
 #strong[Precision / Recall for Trivial Classifiers]
 
@@ -800,7 +800,32 @@ or recall close to zero. A model that genuinely identifies the rare class must k
 both metrics respectably high, which is exactly why the two are reported as a pair
 (or combined into an F-score) rather than examined in isolation.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:473 '* Trading Off Precision and Recall'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:479 '* F-Score'
+// Slide: F-Score
+#strong[F-Score]
+
+The #strong[F-score] is defined as the harmonic mean of precision and recall:
+
+$ "F-score" eq frac(2, frac(1, P) + frac(1, R)) = 2 frac(P dot.op R, P + R) $
+
+This single number captures the balance between precision and recall. Trivial
+classifiers that achieve either $P = 0$ or $R = 0$ receive an F-score of exactly 0,
+while a perfect classifier with $P = R = 1$ achieves an F-score of 1. For the F-score
+to be large, both precision and recall must be high simultaneously; a strong value in
+one cannot compensate for a weak value in the other.
+
+Why not simply average precision and recall with an arithmetic mean? Consider a
+classifier that always predicts the positive class. Its recall is perfect ($R = 1$)
+because it never misses a positive example, but its precision is near zero
+($P approx 0$) when the positive class is rare. The arithmetic mean
+$frac(P + R, 2) approx frac(1, 2)$ makes this trivial classifier look passable. That
+is misleading: a classifier with no discriminative ability should score close to 0.
+The harmonic mean solves this problem. Because it is dominated by the smaller of its
+two inputs, the F-score for this degenerate classifier stays close to 0, correctly
+flagging it as useless. This property makes the F-score a far more reliable summary
+than the ordinary average whenever precision and recall diverge sharply.
+
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:501 '* Trading Off Precision and Recall'
 // Slide: Trading Off Precision and Recall
 #strong[Trading Off Precision and Recall]
 
@@ -833,7 +858,7 @@ classifier B, which is better? Composite measures such as the #emph[F-score]
   curve] (AUC) compress the tradeoff back into a single number, making comparison
 possible at the cost of choosing how to weight the two concerns.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:495 '* Precision-Recall Curves'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:523 '* Precision-Recall Curves'
 // Slide: Precision-Recall Curves
 #strong[Precision-Recall Curves]
 
@@ -878,7 +903,7 @@ how the random baseline provides a floor for useful performance.
 // 
 // % Good classifier curve
 // \draw[thick, blue, smooth] (0.5,5.8) to (1.5,5.5) to (3,4.8) to (5,3.5) to (7,2.2) to (8,1.6);
-// \node[blue] at (5.5,5.5) {\small Good classifier};
+// \node[blue] at (3,2.5) {\small Good classifier};
 // 
 // % Excellent classifier curve
 // \draw[thick, green, smooth] (0.2,5.9) to (1,5.95) to (2,5.9) to (4,5.5) to (6,4.2) to (7.8,2.8);
@@ -906,7 +931,7 @@ how the random baseline provides a floor for useful performance.
 ) <fig:precisionrecallcurves>
 // render_images:end
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:541 '* ROC Curves'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:577 '* ROC Curves'
 // Slide: ROC Curves
 #strong[ROC Curves]
 
@@ -943,23 +968,23 @@ FPR can still devastate precision. In such imbalanced settings, a model can look
 excellent on a ROC curve while performing poorly in practice, and the
 precision-recall curve exposes that gap.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:560 '* Area Under the Curve'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:596 '* Area Under the Curve'
 // Slide: Area Under the Curve
 #strong[Area Under the Curve]
 
-#strong[AUC] is the _area under the precision-recall curve_, a single scalar that
-summarizes classifier performance by integrating precision and recall over every
+#strong[AUC] is the #emph[area under the ROC curve], a single scalar that summarizes
+classifier performance by integrating the true and false positive rates over every
 possible decision threshold. A higher AUC indicates that the model achieves better
 separation between the positive and negative classes across the full range of
-operating points. When the AUC sits near the positive-class _prevalence_, the
+operating points. When the AUC sits near the positive-class #emph[prevalence], the
 classifier is doing no better than random guessing, because a naive model that
 predicts the positive class at the base rate would reach that same score. As AUC
 approaches 1.0, the model demonstrates strong discriminative ability at nearly every
 threshold.
 
 This metric offers several practical advantages. It condenses the entire
-precision-recall tradeoff into a single number, making it straightforward to rank
-competing models against one another. Because the integration sweeps over all
+sensitivity-specificity tradeoff into a single number, making it straightforward to
+rank competing models against one another. Because the integration sweeps over all
 thresholds, there is no need to commit to a specific cutoff before evaluating
 performance. That property is especially valuable when working with imbalanced
 datasets, where a fixed threshold chosen on one class distribution can be misleading
@@ -967,7 +992,7 @@ on another.
 
 Consider a clinical screening task in which a model must distinguish patients who
 have a disease from those who do not. The AUC tells clinicians how well the model
-separates the two groups _in aggregate_: a high AUC means that, for most threshold
+separates the two groups #emph[in aggregate]: a high AUC means that, for most threshold
 choices, the model will assign higher risk scores to truly diseased patients than to
 healthy ones. @fig:aucroccurve illustrates a typical ROC curve whose shaded area
 corresponds to the AUC; a curve that hugs the upper-left corner encloses more area
@@ -981,36 +1006,11 @@ and reflects stronger overall discrimination.
   placement: auto,
 ) <fig:aucroccurve>
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:580 '* F-Score'
-// Slide: F-Score
-#strong[F-Score]
-
-The #strong[F-score] is defined as the harmonic mean of precision and recall:
-
-$ "F-score" eq frac(2, frac(1, P) + frac(1, R)) = 2 frac(P dot.op R, P + R) $
-
-This single number captures the balance between precision and recall. Trivial
-classifiers that achieve either $P = 0$ or $R = 0$ receive an F-score of exactly 0,
-while a perfect classifier with $P = R = 1$ achieves an F-score of 1. For the F-score
-to be large, both precision and recall must be high simultaneously; a strong value in
-one cannot compensate for a weak value in the other.
-
-Why not simply average precision and recall with an arithmetic mean? Consider a
-classifier that always predicts the positive class. Its recall is perfect ($R = 1$)
-because it never misses a positive example, but its precision is near zero
-($P approx 0$) when the positive class is rare. The arithmetic mean
-$frac(P + R, 2) approx frac(1, 2)$ makes this trivial classifier look passable. That
-is misleading: a classifier with no discriminative ability should score close to 0.
-The harmonic mean solves this problem. Because it is dominated by the smaller of its
-two inputs, the F-score for this degenerate classifier stays close to 0, correctly
-flagging it as useless. This property makes the F-score a far more reliable summary
-than the ordinary average whenever precision and recall diverge sharply.
-
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:602 '## Model Selection'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:623 '## Model Selection'
 // Slide: Model Selection
 == Model Selection
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:604 '* The Problem of Model Selection'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:625 '* The Problem of Model Selection'
 // Slide: The Problem of Model Selection
 #strong[The Problem of Model Selection]
 
@@ -1045,7 +1045,7 @@ cross-validated scores, model selection turns what would otherwise be an ad hoc
 series of judgment calls into a #emph[principled, reproducible search] over the space
 of candidate pipelines.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:625 '* Model Selection Process'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:646 '* Model Selection Process'
 // Slide: Model Selection Process
 #strong[Model Selection Process]
 
@@ -1073,81 +1073,22 @@ to hold data back. The final model benefits from every example the practitioner 
 which generally reduces its out-of-sample error below what the validation-stage model
 could achieve. The test-set estimate recorded in step 4 remains a trustworthy,
 unbiased measure of generalization because it was computed before the test data
-touched the learning algorithm. @fig:modelselectionprocess illustrates this full
-pipeline, from the initial three-way split through candidate training,
-validation-based selection, test-set evaluation, and final retraining on the combined
-dataset.
+touched the learning algorithm. @fig:modelselectionprocess illustrates the selection
+stage of this pipeline: each candidate hypothesis set $cal(H)_1, dots, cal(H)_M$ is
+trained on $cal(D)_"train"$ to produce a model $g_m^-$, each model is scored on
+$cal(D)_"val"$ to produce an error $E_m$, the best pair $(cal(H)_(m^*), E_(m^*))$ is
+picked, and the winning hypothesis set is retrained on the full dataset $cal(D)$ to
+give the deployed model $g_(m^*)$.
 
-// rendered_images:begin
-// ```tikz
-// % Model Selection Process Diagram
-// % Horizontal layout showing data splitting and evaluation flow
-// 
-// % Data sources
-// \node[rectangle, draw, thick, fill=blue!30] at (1,3) {Dataset};
-// 
-// % Splitting
-// \draw[thick, ->] (1,2.7) to (0.5,2.2);
-// \draw[thick, ->] (1,2.7) to (1.5,2.2);
-// 
-// % Training data
-// \node[rectangle, draw, thick, fill=blue!20] at (0.5,1.5) {$D_{train}$ (60\%)};
-// 
-// % Validation data
-// \node[rectangle, draw, thick, fill=green!20] at (1.5,1.5) {$D_{val}$ (20\%)};
-// 
-// % Learning process
-// \draw[thick, ->] (0.5,1.2) to (0.5,0.8);
-// \node[above, font=\small] at (0.7,1.0) {Learn N models};
-// 
-// % Learned models
-// \node[rectangle, draw] at (0.5,0.2) {$g_1, ..., g_N$};
-// 
-// % Evaluation on validation
-// \draw[thick, ->] (1.2,1.2) to (1.2,0.8);
-// \node[above, font=\small] at (1.4,1.0) {Evaluate};
-// 
-// % Selection
-// \node[rectangle, draw, fill=yellow!20] at (1.2,0.2) {Best: $g_m$};
-// 
-// % Test set
-// \node[rectangle, draw, thick, fill=red!20] at (3,1.5) {$D_{test}$ (20\%)};
-// 
-// % Final evaluation
-// \draw[thick, ->] (1.7,0.2) to (2.5,0.2);
-// \draw[thick, ->] (2.9,1.2) to (2.9,0.5);
-// 
-// % Final performance
-// \node[rectangle, draw, fill=red!30, thick] at (3,0.2) {$E_{test}(g_m)$};
-// 
-// % Retraining
-// \draw[thick, ->] (1,2.5) to (4.5,2.5);
-// \draw[thick, ->] (4.5,2.5) to (4.5,1.2);
-// 
-// % Full data retrain
-// \node[rectangle, draw] at (4.5,1.5) {$D_{train+val+test}$};
-// \draw[thick, ->] (4.5,1.2) to (4.5,0.5);
-// \node[rectangle, draw, fill=purple!30, thick] at (4.5,0.2) {Deploy: $g_m^*$};
-// ```
-// label=fig:modelselectionprocess
-// caption=Diagram illustrating Model Selection
-// width=65%
-// placement=auto
-// rendered_images:end
-// render_images:begin
 #figure(
-  image(
-    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.4.png",
-    width: 65%,
-  ),
-  caption: [Diagram illustrating Model Selection],
+  image("../lectures_source/figures/L02.5.Model_Selection.png", width: 70%),
+  caption: [Candidate hypothesis sets trained, compared on validation data, and retrained on all data.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:modelselectionprocess>
-// render_images:end
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:687 '* Model Selection as Learning'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:672 '* Model Selection as Learning'
 // Slide: Model Selection as Learning
 
 Selecting the model with the smallest $E_("val")$ is itself a #strong[form of
@@ -1197,7 +1138,7 @@ performance estimate.
 // render_images:begin
 #figure(
   image(
-    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.5.png",
+    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.4.png",
     width: 55%,
   ),
   caption: [Diagram illustrating Model Selection],
@@ -1223,11 +1164,11 @@ hypotheses is effectively infinite, for instance when choosing a continuous
 regularization parameter λ, the #emph[VC dimension] replaces $log(N)$ in the
 complexity term and provides an analogous guarantee.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:735 '## Ensemble Learning'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:736 '## Ensemble Learning'
 // Slide: Ensemble Learning
 == Ensemble Learning
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:737 '* Ensemble Learning: Intuition'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:738 '* Ensemble Learning: Intuition'
 // Slide: Ensemble Learning: Intuition
 
 The core intuition behind ensemble methods is straightforward: a group of
@@ -1256,7 +1197,7 @@ their outputs are combined, the ensemble becomes a dependable face detector, bec
 a region that simultaneously satisfies all three checks is far more likely to be an
 actual face than one that satisfies only one.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:755 '* Ensemble Learning: Different Techniques'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:756 '* Ensemble Learning: Different Techniques'
 // Slide: Ensemble Learning: Different Techniques
 #strong[Ensemble Learning: Different Techniques]
 
@@ -1285,7 +1226,7 @@ support vector machine, and a neural network. The meta-model discovers which bas
 learner to trust more in which region of the input space, often outperforming any
 single base model or a simple average.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:775 '* When Ensemble Learning Works'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:778 '* When Ensemble Learning Works'
 // Slide: When Ensemble Learning Works
 #strong[When Ensemble Learning Works]
 
@@ -1312,7 +1253,7 @@ single member could reach alone. This complementarity is what distinguishes a
 genuinely useful ensemble from a collection of redundant models that all fail on the
 same hard examples.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:785 '* How to Combine Outputs in Ensemble Learning'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:788 '* How to Combine Outputs in Ensemble Learning'
 // Slide: How to Combine Outputs in Ensemble Learning
 #strong[How to Combine Outputs in Ensemble Learning]
 
@@ -1352,7 +1293,7 @@ true independence is rare, but ensembles still help whenever the base models' er
 patterns are at least partially uncorrelated, which is why diversity among base
 learners is a central design goal in ensemble construction.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:810 '* Ensemble Learning: Pros and Cons'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:813 '* Ensemble Learning: Pros and Cons'
 // Slide: Ensemble Learning: Pros and Cons
 #strong[Ensemble Learning: Pros and Cons]
 
@@ -1378,10 +1319,10 @@ practice, techniques like pruning the ensemble or using structured combination r
 (such as the weighted vote in boosting) help keep this tradeoff manageable, but the
 tension never fully disappears.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:821 '### Bagging'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:824 '### Bagging'
 // Slide: Bagging
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:823 '* Bagging'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:826 '* Bagging'
 // Slide: Bagging
 
 #strong[Bagging] stands for "Bootstrap AGGregation," a technique that builds a
@@ -1424,7 +1365,7 @@ copy, and the individual predictions are aggregated into a single final output.
   placement: auto,
 ) <fig:baggingclassifier>
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:843 '* Bagging and Instability in Learning Algorithms'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:852 '* Bagging and Instability in Learning Algorithms'
 // Slide: Bagging and Instability in Learning Algorithms
 #strong[Bagging and Instability in Learning Algorithms]
 
@@ -1458,10 +1399,10 @@ strategy is to give each base classifier a random subset of the input features, 
 that different classifiers measure distance in different subspaces and thereby
 produce genuinely different predictions.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:862 '### Boosting'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:871 '### Boosting'
 // Slide: Boosting
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:864 '* Boosting'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:873 '* Boosting'
 // Slide: Boosting
 
 #strong[Boosting] builds models that complement each other, typically using
@@ -1492,7 +1433,7 @@ learners collectively form a strong predictor.
   placement: auto,
 ) <fig:boostingconcept>
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:883 '* Adaboost.M1'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:901 '* Adaboost.M1'
 // Slide: Adaboost.M1
 #strong[Adaboost.M1]
 
@@ -1543,10 +1484,10 @@ adaptive reweighting is what gives the algorithm its name and its strength: rath
 than treating all data uniformly, it directs learning capacity precisely where it is
 most needed.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:902 '### Stacking'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:928 '### Stacking'
 // Slide: Stacking
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:904 '* Stacking'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:930 '* Stacking'
 // Slide: Stacking
 
 #strong[Stacking] is the idea of learning how to combine models, which need not even
@@ -1579,7 +1520,7 @@ prediction.
   placement: auto,
 ) <fig:stackingensemble>
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:927 '* Boosting vs Bagging vs Stacking'
+// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:962 '* Boosting vs Bagging vs Stacking'
 // Slide: Boosting vs Bagging vs Stacking
 #strong[Boosting vs Bagging vs Stacking]
 
