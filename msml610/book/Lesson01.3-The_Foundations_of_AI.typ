@@ -61,6 +61,8 @@ computers by centuries.
     //     ```
     //     label=fig:airelatestomanyotherdisciplines
     //     caption=Diagram relating AI to other disciplines
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
@@ -307,6 +309,8 @@ preferences that make such maximization coherent.
     //     ```
     //     label=fig:aiandeconomics12
     //     caption=Probability, utility, and decision theory
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
@@ -509,7 +513,7 @@ eventually producing a superintelligence that far exceeds any human cognitive ab
 #wrap-content(
   [
     // rendered_images:begin
-    //     ```graphviz[width=28%]
+    //     ```graphviz
     //     digraph Singularity {
     //         bgcolor="transparent";
     //         pad="0.15";
@@ -547,6 +551,8 @@ eventually producing a superintelligence that far exceeds any human cognitive ab
     //     ```
     //     label=fig:thebraincausesthemind
     //     caption=Diagram relating AI System, Improves Itself, Capability Increases and Superintelligence
+    // width=28%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
@@ -631,6 +637,8 @@ offering a distinct but complementary lens on the machinery of the mind.
     //     ```
     //     label=fig:aiandcognitivepsychology
     //     caption=Diagram relating Stimuli, Internal Representation, Cognitive Processes and Beliefs
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
@@ -867,6 +875,8 @@ tools for designing controllers with provable stability and performance guarante
     //     ```
     //     label=fig:aiandcontroltheory
     //     caption=Diagram relating Goal State, Controller, System and Current State
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
@@ -910,7 +920,7 @@ languages, sentiment analysis tools mine opinions from social media, and automat
 chatbots handle customer support interactions at scale.
 
 // rendered_images:begin
-//     ```graphviz[width=42%]
+//     ```graphviz
 //     digraph Linguistics {
 //         bgcolor="transparent";
 //         pad="0.15";
@@ -955,6 +965,8 @@ chatbots handle customer support interactions at scale.
 //     ```
 //     label=fig:aiandlinguistics
 //     caption=Diagram relating Natural Language, Computational Linguistics, Knowledge Representation and Machine Translation
+// width=75%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

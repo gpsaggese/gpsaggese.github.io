@@ -96,7 +96,7 @@ represents a significant shift in focus and capability, reflecting the dynamic n
 of AI research and development.
 
 // rendered_images:begin
-// ```raw_latex[width=100%]
+// ```raw_latex
 // \documentclass[tikz]{standalone}
 // \usepackage{tikz}
 // \usetikzlibrary{shapes.geometric, arrows.meta, positioning}
@@ -204,6 +204,8 @@ of AI research and development.
 // ```
 // label=fig:aitimeline
 // caption=Milestones in the history of AI, from the McCulloch-Pitts neuron (1943) to the present.
+// width=100%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -585,6 +587,8 @@ its #strong[Contributing fields] and #strong[Reunified subfields].
 // ```
 // label=fig:reunification1990s2000s
 // caption=Fields that converged into the reunified AI research agenda.
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -728,6 +732,8 @@ performance.
 // ```
 // label=fig:deeplearning2011present
 // caption=How deep learning replaces handcrafted features with learned representations.
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

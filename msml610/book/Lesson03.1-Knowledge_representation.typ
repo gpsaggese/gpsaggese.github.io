@@ -159,6 +159,8 @@ corpus.
     // ```
     // label=fig:expressivenessvstractability
     // caption=Diagram illustrating the tradeoff between expressiveness and tractability across atomic, factored, and structured representations.
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
@@ -624,6 +626,8 @@ mechanisms for revising their beliefs when new evidence contradicts old conclusi
     // ```
     // label=fig:modelsandpossibleworlds
     // caption=Diagram relating a model to the possible worlds it grounds.
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
@@ -898,6 +902,8 @@ tracks reasoning about the actual world.
 // ```
 // label=fig:representationmirrorstheworld
 // caption=Diagram relating entailment between sentences, consequence between world states, and the semantics that link representation to the world.
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -1142,6 +1148,8 @@ individuals that share a common role.
 // ```
 // label=fig:exampleuniversityontology
 // caption=Diagram relating Student, Professor, Course, and Department entities and instances in an example university ontology.
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

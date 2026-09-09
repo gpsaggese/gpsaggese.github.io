@@ -127,6 +127,8 @@ variable tells you something about the other.
 // \node[box=1.5cm, fill=red!25] (causation) at ([yshift=-6pt]correlation.center) {};
 // \node[font=\Large\bfseries] at (causation.center) {Causation};
 // ```
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 // TODO(ai_gp): Add caption, label `<fig:...>`, and in-text reference `@fig:...` - every figure needs all three elements (typst.rules.md:## Figures: Required Elements)
@@ -728,6 +730,8 @@ components:
 //   Results -> BusinessGoals;
 // }
 // ```
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 // TODO(ai_gp): Add caption, label `<fig:...>`, and in-text reference `@fig:...` - every figure needs all three elements (typst.rules.md:## Figures: Required Elements)
@@ -825,6 +829,8 @@ The causal DAG reveals the complexity:
 //     StoreDistance -> ProductAmount;
 // }
 // ```
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

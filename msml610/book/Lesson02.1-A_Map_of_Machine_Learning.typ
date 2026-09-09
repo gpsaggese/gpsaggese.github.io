@@ -86,6 +86,8 @@ Machine learning is a sprawling field with many branches #cite(
 // ```
 // label=fig:fourbranchesofmachinelearning
 // caption=Diagram relating Machine Learning, Paradigms, Models and Techniques
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -119,7 +121,7 @@ illustrates the major learning paradigms organized along two axes: the availabil
 of labels and whether the learning process is interactive or sequential.
 
 // rendered_images:begin
-// ```graphviz[width=90%]
+// ```graphviz
 // digraph LearningParadigms {
 //   graph [rankdir=LR, splines=curved, bgcolor="transparent",
 //          ranksep="1.0 equally", nodesep=0.24, pad=0.3, fontname="Helvetica"];
@@ -156,6 +158,8 @@ of labels and whether the learning process is interactive or sequential.
 // ```
 // label=fig:learningparadigms
 // caption=Diagram relating Learning Paradigms, Label Availability and Interactive/Sequential
+// width=90%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -245,7 +249,7 @@ taxonomy, showing how the three families branch from the central concept of an M
 model.
 
 // rendered_images:begin
-// ```graphviz[width=70%]
+// ```graphviz
 // digraph MLModelsTaxonomy {
 //   graph [rankdir=LR, splines=curved, bgcolor="transparent",
 //          ranksep="1.0 equally", nodesep=0.24, pad=0.3, fontname="Helvetica"];
@@ -289,6 +293,8 @@ model.
 // ```
 // label=fig:modelfamilies
 // caption=Diagram relating ML Models, Parametric, Non-parametric and Graphical models
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -394,8 +400,8 @@ practitioner to revisit earlier decisions when later stages reveal problems.
 // ```
 // label=fig:stagesofanmlpipeline
 // caption=Diagram illustrating stages of an ML Pipeline
-// width=80%
-// placement=none
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

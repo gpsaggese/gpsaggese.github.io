@@ -348,6 +348,8 @@ lock in the performance estimate, then retrain on everything for deployment.
 // ```
 // label=fig:usingtestdata
 // caption=Diagram illustrating Using Test Data
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -664,6 +666,8 @@ mistakes.
 // ```
 // label=fig:confusionmatrix
 // caption=Diagram illustrating Confusion Matrix
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -861,7 +865,7 @@ classifiers trace out curves at different heights in the precision-recall plane 
 how the random baseline provides a floor for useful performance.
 
 // rendered_images:begin
-// ```tikz[width=55%]
+// ```tikz
 // % Precision-Recall curve
 // \draw[thick, ->] (0,0) -- (8,0);
 // \draw[thick, ->] (0,0) -- (0,6);
@@ -893,6 +897,8 @@ how the random baseline provides a floor for useful performance.
 // ```
 // label=fig:precisionrecallcurves
 // caption=Diagram illustrating Precision-Recall
+// width=55%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -1080,7 +1086,7 @@ validation-based selection, test-set evaluation, and final retraining on the com
 dataset.
 
 // rendered_images:begin
-// ```tikz[width=65%]
+// ```tikz
 // % Model Selection Process Diagram
 // % Horizontal layout showing data splitting and evaluation flow
 //
@@ -1132,6 +1138,8 @@ dataset.
 // ```
 // label=fig:modelselectionprocess
 // caption=Diagram illustrating Model Selection
+// width=65%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -1159,7 +1167,7 @@ makes it clear why the validation error alone cannot be trusted as a final
 performance estimate.
 
 // rendered_images:begin
-// ```tikz[width=55%]
+// ```tikz
 // % Bias in model selection: E_val vs E_out relationship
 // \draw[thick, ->] (0,0) -- (10,0);
 // \draw[thick, ->] (0,0) -- (0,7);
@@ -1191,6 +1199,8 @@ performance estimate.
 // ```
 // label=fig:modelselectionaslearning
 // caption=Diagram illustrating Model Selection
+// width=55%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

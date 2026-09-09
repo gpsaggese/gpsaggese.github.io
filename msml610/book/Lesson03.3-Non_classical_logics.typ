@@ -129,6 +129,8 @@ assumptions about the structure of reality.
 // ```
 // label=fig:ontologicalcommitment
 // caption=Diagram relating Logical Systems, Propositional Logic (facts: true/false), First-Order Logic (objects & relations) and Higher-Order Logic (relations as objects)
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -205,6 +207,8 @@ emerge.
 // ```
 // label=fig:nonmonotoniclogic
 // caption=Diagram relating Initial KB: Birds typically fly Tweety is a bird, Conclusion: Tweety can fly, New Fact: Tweety is a penguin Penguins cannot fly and Updated KB
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -355,6 +359,8 @@ prediction about Bob's behavior.
 // ```
 // label=fig:commonsensereasoningrestaurantexample
 // caption=Diagram relating Bob enters Restaurant, Bob sits at Table, Common Sense: Sit at table → intends to eat and Infer: Bob intends to eat
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -477,6 +483,8 @@ from which the system selects its learned rules.
 // ```
 // label=fig:inductivelogicprogramming
 // caption=Diagram relating Background Knowledge: Birds have wings Penguins are birds, Positive Examples: Tweety (bird) flies Parrot (bird) flies, Negative Examples: Penguin cannot fly Ostrich cannot fly and Hypothesis Space
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -571,6 +579,8 @@ precisely why the formalism is so widely adopted.
 // ```
 // label=fig:descriptionlogic
 // caption=Diagram relating Class: Person, PetOwner (Person with pet), Instance: GP (a PetOwner) and Instance: Nuvolo (GP's dog)
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -695,6 +705,8 @@ nominals.
 // ```
 // label=fig:shoin
 // caption=Diagram relating ALC (base), S: Transitive Props (ancestorOf), H: Role Hierarchies (hasSon sub-role of hasChild) and O: Nominals (John:individual)
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -772,6 +784,8 @@ algorithm guaranteed to answer every reasoning query in finite time.
 // ```
 // label=fig:owl
 // caption=Diagram relating Web Ontology Language (OWL), OWL Lite (Simpler) for classification, OWL DL (Full expressiveness) Decidable reasoning and OWL Full (Maximum) Undecidable
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -817,6 +831,8 @@ constraint that propositional or plain first-order logic cannot express as compa
 // ```
 // label=fig:exampleofowlinrdf
 // caption=Diagram relating Person (Class), Student (Class), hasAdvisor (ObjectProperty) and Restriction: minCardinality 1
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -1004,6 +1020,8 @@ properties, and OWL sits at the top, enabling expressive ontological reasoning.
 // ```
 // label=fig:semanticweb
 // caption=Diagram relating Foundation: URIs and Unicode, RDF (Data Model) Triples: Subject-Predicate-Object, RDFS (Schema Layer) Classes and Properties and OWL (Ontology Language) Express complex relationships
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -1095,6 +1113,8 @@ example, showing items linked to values through properties in a directed graph.
 // ```
 // label=fig:wikidata
 // caption=Diagram relating Item: Q42 (Douglas Adams), Property: P31 (instance of), Value: Q5 (Human) and Property: P106 (occupation)
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -1198,6 +1218,8 @@ hierarchical structure that makes inheritance-based inference straightforward.
 // ```
 // label=fig:semanticnetworks
 // caption=Diagram relating Animal, Dog, Cat and Mammal
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -1391,6 +1413,8 @@ responsible for every course a given student takes.
 // ```
 // label=fig:knowledgegraphuniversityexample
 // caption=Diagram relating takesCourse, teachesCourse, belongsToDepartment and offersCourse
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

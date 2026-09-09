@@ -74,7 +74,7 @@ problem falls in this taxonomy is the first step toward choosing an appropriate
 algorithm.
 
 // rendered_images:begin
-// ```graphviz[width=80%]
+// ```graphviz
 // digraph LearningParadigms {
 //   graph [rankdir=LR, splines=curved, bgcolor="transparent",
 //          ranksep="1.0 equally", nodesep=0.24, pad=0.3, fontname="Helvetica"];
@@ -111,6 +111,8 @@ algorithm.
 // ```
 // label=fig:machinelearningparadigmsataxonomy
 // caption=Diagram relating learning paradigms, label availability and interactive/sequential.
+// width=80%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -378,6 +380,8 @@ receives both a reward and a new state from the environment, then repeats.
 //             ```
 //             label=fig:reinforcementlearning
 //             caption=Diagram relating agent, environment and reward signals in the RL loop.
+// width=100%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -494,6 +498,8 @@ engineering new features, or tuning parameters).
 // ```
 // label=fig:machinelearningflow22
 // caption=Diagram illustrating the machine learning workflow: from question to evaluation.
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -681,6 +687,8 @@ is essential for choosing the right model for a given application.
 // ```
 // label=fig:whatmakesagoodmodel
 // caption=Tradeoffs between accuracy, interpretability, simplicity, speed and scalability.
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -822,6 +830,8 @@ at every stage is therefore critical.
 // ```
 // label=fig:exampleofphotoocrsystem
 // caption=Four-stage OCR pipeline: text detection, character segmentation, classification and spelling correction.
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

@@ -98,6 +98,8 @@ structure.
 // ```
 // label=fig:temporal-causal
 // caption=First-order temporal causal graph showing treatment and outcome
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -227,6 +229,8 @@ bidirectional causality that OLS cannot untangle.
 // ```
 // label=fig:feedback-loop
 // caption=Feedback loop structure where policy affects outcome contemporaneously,
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -575,6 +579,8 @@ outcome. The gap represents the policy effect.
 // ```
 // label=fig:its-structure
 // caption=Interrupted Time Series design: using pre-period trends as counterfactual
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -750,6 +756,8 @@ between-group differences and common time trends are removed.
 // ```
 // label=fig:did-structure
 // caption=Difference-in-Differences design: the causal effect is the difference
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -987,6 +995,8 @@ donors contribute and how much, making the counterfactual explicit.
 // ```
 // label=fig:synthetic-control-construction
 // caption=Synthetic control construction: the donor pool is weighted optimally
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

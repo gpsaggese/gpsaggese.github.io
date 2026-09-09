@@ -284,7 +284,7 @@ explanatory content whatsoever.
 #wrap-content(
   [
     // rendered_images:begin
-    //             ```graphviz[width=100%]
+    //             ```graphviz
     //             digraph ModelChecking {
     //               graph [rankdir=TB, bgcolor="transparent", nodesep=0.25, ranksep=0.35,
     //                      fontname="Helvetica"];
@@ -301,6 +301,8 @@ explanatory content whatsoever.
     //             ```
     //             label=fig:modelcheckingissoundandcomplete
     //             caption=The three-stage model-checking pipeline for testing whether KB entails a query.
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
@@ -554,7 +556,7 @@ another, it suffices to check whether their material implication is valid.
 #wrap-content(
   [
     // rendered_images:begin
-    //         ```graphviz[width=100%]
+    //         ```graphviz
     //         digraph DeductionBridge {
     //           graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.4,
     //                  fontname="Helvetica"];
@@ -571,6 +573,8 @@ another, it suffices to check whether their material implication is valid.
     //         ```
     //         label=fig:deductiontheorem
     //         caption=The deduction theorem bridging semantic entailment and syntactic implication.
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
@@ -618,7 +622,7 @@ known algorithm solves every instance in polynomial time.
 #wrap-content(
   [
     // rendered_images:begin
-    //         ```graphviz[width=100%]
+    //         ```graphviz
     //         digraph Satisfiability {
     //           graph [bgcolor="transparent", fontname="Helvetica"];
     //           node [fontname="Helvetica", fontsize=10, fontcolor="#26215C"];
@@ -641,6 +645,8 @@ known algorithm solves every instance in polynomial time.
     //         ```
     //         label=fig:satisfiability
     //         caption=Nested regions of all sentences, satisfiable sentences, and valid tautologies.
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(

@@ -183,6 +183,8 @@ edge counts and conditional probability table sizes.
     //         Alarm -> MaryCalls;
     //     }
     //     ```
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     // TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
@@ -234,6 +236,8 @@ edge counts and conditional probability table sizes.
 //     Earthquake -> Alarm;
 // }
 // ```
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 // TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
@@ -278,6 +282,8 @@ edge counts and conditional probability table sizes.
 //     Alarm -> JohnCalls;
 // }
 // ```
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 // TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
@@ -324,6 +330,8 @@ probability?"
     //         Symptoms -> Causes;
     //     }
     //     ```
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     // TODO(ai_gp): Add required caption, label `<fig:...>`, and in-text reference `@fig:...` (typst.rules.md:## Figures: Required Elements)
@@ -416,6 +424,8 @@ change beliefs about an ancestor through competing explanations.
     //         Sprinkler -> WetGrass;
     //     }
     //     ```
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
@@ -489,6 +499,8 @@ Consider risk factors and outcomes for heart disease:
 //     {rank=same; BP; C}
 // }
 // ```
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -546,6 +558,8 @@ For house prices in a region:
 //     {rank=same; DI; D}
 // }
 // ```
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -609,6 +623,8 @@ For an individual company's stock price:
 //     {rank=same; TV}
 // }
 // ```
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -840,6 +856,8 @@ characteristics drive accident and theft risk, which translate to costs.
 //     Theft -> OwnCarDamage;
 // }
 // ```
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

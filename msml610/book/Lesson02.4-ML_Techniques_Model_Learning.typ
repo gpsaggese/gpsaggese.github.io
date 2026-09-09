@@ -591,6 +591,8 @@ time, so yesterday's optimal parameters may no longer be adequate today.
 // ```
 // label=fig:onlinelearningandgradientdescent
 // caption=Diagram relating Model
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -699,6 +701,8 @@ independent per-example terms.
 // ```
 // label=fig:mapreduceforbatchgradientdescent
 // caption=Diagram relating Shuffle & Reduce
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

@@ -2,7 +2,7 @@
 // Import AIMA style formatting and macros.
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
-  aima-style, chapter, styled-table,
+  aima-style, chapter, styled-table, wrap-content,
 )
 // Import the custom citation/bibliography system.
 #import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": (
@@ -54,7 +54,7 @@ outlier and missing-value handling, and scaling and encoding before reaching the
 model.
 
 // rendered_images:begin
-// ```graphviz[width=95%]
+// ```graphviz
 // digraph InputProcessingPipeline {
 //   bgcolor="transparent";
 //   pad="0.15";
@@ -81,6 +81,8 @@ model.
 // ```
 // label=fig:fromrawdatatomodelinput
 // caption=The input processing pipeline from raw data to model-ready data
+// width=95%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -341,36 +343,39 @@ Consider discretizing age into four categories: `Child` for the interval $[0, 13
 `Teen` for $[13, 20)$, `Adult` for $[20, 65)$, and `Senior` for $[65, oo)$. Under
 this scheme an age of 32 maps to `Adult`, as shown in @fig:discretization.
 
-// TODO(ai_gp): Wrap it
+#wrap-content(
+  [
 // rendered_images:begin
-// ```graphviz[width=90%]
-// digraph AgeBinning {
-//   bgcolor="transparent";
-//   pad="0.1";
-//   splines=spline;
-//   nodesep=0.22;
-//   ranksep=0.3;
-//   rankdir=LR;
-// 
-//   node [shape=box, style="rounded,filled", penwidth=1.4,
-//         fontname="Helvetica", fontsize=10, margin="0.14,0.09", height=0.4];
-//   edge [color="#A3B1C0", penwidth=1.1, arrowhead=vee, arrowsize=0.6,
-//         fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-// 
-//   child  [label="Child\n[0, 13)",    fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
-//   teen   [label="Teen\n[13, 20)",    fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
-//   adult  [label="Adult\n[20, 65)",   fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
-//   senior [label="Senior\n[65, inf)", fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
-// 
-//   child -> teen -> adult -> senior [style=invis];
-//   { rank=same; child; teen; adult; senior; }
-// 
-//   age32 [label="Age = 32", shape=ellipse, fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
-//   age32 -> adult [label="mapped to", color="#D9902B", fontcolor="#6B4517"];
-// }
-// ```
-// label=fig:discretization
-// caption=Discretization of age into four categories
+//     ```graphviz
+//     digraph AgeBinning {
+//       bgcolor="transparent";
+//       pad="0.1";
+//       splines=spline;
+//       nodesep=0.22;
+//       ranksep=0.3;
+//       rankdir=LR;
+//     
+//       node [shape=box, style="rounded,filled", penwidth=1.4,
+//             fontname="Helvetica", fontsize=10, margin="0.14,0.09", height=0.4];
+//       edge [color="#A3B1C0", penwidth=1.1, arrowhead=vee, arrowsize=0.6,
+//             fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+//     
+//       child  [label="Child\n[0, 13)",    fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
+//       teen   [label="Teen\n[13, 20)",    fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
+//       adult  [label="Adult\n[20, 65)",   fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+//       senior [label="Senior\n[65, inf)", fillcolor="#E8F1FB", color="#7CA6CE", fontcolor="#1F4E79"];
+//     
+//       child -> teen -> adult -> senior [style=invis];
+//       { rank=same; child; teen; adult; senior; }
+//     
+//       age32 [label="Age = 32", shape=ellipse, fillcolor="#FFD1A6", color="#D9902B", fontcolor="#6B4517"];
+//       age32 -> adult [label="mapped to", color="#D9902B", fontcolor="#6B4517"];
+//     }
+//     ```
+//     label=fig:discretization
+//     caption=Discretization of age into four categories
+//     width=90%
+//     placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -384,16 +389,21 @@ this scheme an age of 32 maps to `Adult`, as shown in @fig:discretization.
   placement: auto,
 ) <fig:discretization>
 // render_images:end
-
-The convenience of discretization comes with real costs. All within-bin variation is
-discarded: ages 21 and 64 both become `Adult`, even though they represent very
-different life stages. The cut points themselves are often arbitrary, chosen by
-convention rather than by any property of the data or the target. Equal-width bins
-are particularly fragile, since a bin covering a sparsely populated part of the range
-may end up with zero observations. Perhaps most problematically, a genuine
-#emph[threshold effect] in the relationship between the feature and the target can
-fall in the interior of a bin rather than at its edge, hiding the very signal the
-analyst hoped to capture.
+  ],
+  align: right,
+  column-gutter: 1em,
+  columns: (1fr, 40%),
+)[
+  The convenience of discretization comes with real costs. All within-bin variation is
+  discarded: ages 21 and 64 both become `Adult`, even though they represent very
+  different life stages. The cut points themselves are often arbitrary, chosen by
+  convention rather than by any property of the data or the target. Equal-width bins
+  are particularly fragile, since a bin covering a sparsely populated part of the range
+  may end up with zero observations. Perhaps most problematically, a genuine
+  #emph[threshold effect] in the relationship between the feature and the target can
+  fall in the interior of a bin rather than at its edge, hiding the very signal the
+  analyst hoped to capture.
+]
 
 // From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:236 '## Feature Space Engineering'
 // Slide: Feature Space Engineering
@@ -520,17 +530,19 @@ pipeline. This is a form of #strong[data leakage] #cite(
 // ```
 // label=fig:fitontrainapplytovalidationandtest
 // caption=The incorrect workflow: fitting transformers on all data before splitting
+// width=100%
+// placement=none
 // rendered_images:end
 // render_images:begin
 #figure(
   image(
     "Lesson02.3-ML_Techniques_Input_Processing.typ.figs/Lesson02.3-ML_Techniques_Input_Processing.3.png",
-    width: 70%,
+    width: 100%,
   ),
   caption: [The incorrect workflow: fitting transformers on all data before splitting],
   kind: "figure",
   supplement: [Fig.],
-  placement: auto,
+  placement: none,
 ) <fig:fitontrainapplytovalidationandtest>
 // render_images:end
 
@@ -589,6 +601,8 @@ without refitting.
 // ```
 // label=fig:fitontrainapplytovalidationandtest-2
 // caption=The correct workflow: splitting data before fitting transformers
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(

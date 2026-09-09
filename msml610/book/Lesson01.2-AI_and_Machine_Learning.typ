@@ -275,6 +275,8 @@ sneaks in along the way.
     //     ```
     //     label=fig:2aiasthinkingrationally
     //     caption=Diagram relating Correct premises, Logic and Correct conclusions
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
@@ -718,6 +720,8 @@ systems because they encode expert reasoning into their decision logic.
     //     ```
     //     label=fig:aivsmlvsdeeplearning
     //     caption=Diagram illustrating AI vs ML vs Deep Learning
+    // width=100%
+    // placement=auto
     // rendered_images:end
     // render_images:begin
     #figure(
