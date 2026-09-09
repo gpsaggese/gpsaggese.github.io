@@ -226,7 +226,7 @@ Commands:
 
 - **Docker Compose: Tutorial**
 - Example taken from https://github.com/nigelpoulton/counter-app
-- [tutorial\_docker\_compose](https://github.com/gpsaggese/umd_classes/tree/main/data605/tutorials/tutorial_docker_compose)
+- [tutorial\_docker\_compose](https://github.com/gpsaggese/gpsaggese.github.io/tree/main/data605/tutorials/tutorial_docker_compose)
   \begingroup \scriptsize \color{blue}
   ```
   > cd tutorials/tutorial_docker_compose

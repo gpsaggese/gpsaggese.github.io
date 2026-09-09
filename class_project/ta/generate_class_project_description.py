@@ -171,7 +171,7 @@ def create_markdown_file(
         cmd = f"{lint_script} -i {markdown_path}"
         hsystem.system(cmd, suppress_output=False)
         # Base GitHub URL for generated project files.
-        base_dir = "https://github.com/gpsaggese/umd_classes/tree/master"
+        base_dir = "https://github.com/gpsaggese/gpsaggese.github.io/tree/master"
         github_url = f"{base_dir}/{out_dir}/{file_name}"
         file_githublinks_df.loc[len(file_githublinks_df)] = [
             project_name,

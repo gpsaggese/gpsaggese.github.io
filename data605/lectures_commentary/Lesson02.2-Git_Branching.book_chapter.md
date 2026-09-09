@@ -71,7 +71,7 @@
   with others in software development projects.
 
 - **Tutorial**: The link provided
-  ([Tutorial Git](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_git))
+  ([Tutorial Git](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/data605/tutorials/tutorial_git))
   is a resource for a Git tutorial. This tutorial is likely designed to help
   beginners get started with Git, covering basic commands and workflows.
 

@@ -899,7 +899,7 @@ root   49734   49614   1    10:40   ?     00:00:08   /usr/local/bin/python /code
 \item
   Example taken from https://github.com/nigelpoulton/counter-app
 \item
-  \href{https://github.com/gpsaggese/umd_classes/tree/main/data605/tutorials/tutorial_docker_compose}{tutorial\_docker\_compose}
+  \href{https://github.com/gpsaggese/gpsaggese.github.io/tree/main/data605/tutorials/tutorial_docker_compose}{tutorial\_docker\_compose}
   \begingroup \scriptsize \color{blue}
 
 \begin{verbatim}
