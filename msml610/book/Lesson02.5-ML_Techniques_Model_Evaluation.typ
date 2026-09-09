@@ -307,39 +307,39 @@ lock in the performance estimate, then retrain on everything for deployment.
 // % Timeline showing test set usage - professional version
 // \draw[thick, ->] (0,0) -- (11,0);
 // \node[below] at (5.5,-0.5) {Development Pipeline Timeline};
-//
+// 
 // % Axes and grid
 // \draw[thin, gray] (0,0) grid[step=0.5] (11,0);
-//
+// 
 // % Phase 1: Training
 // \draw[fill=blue!40, draw=blue, thick] (0.5,0.3) rectangle (3,0.9);
 // \node[font=\bfseries] at (1.75,0.6) {Training};
 // \node[below, font=\small] at (1.75,-0.8) {60\% data};
-//
+// 
 // % Phase 2: Validation
 // \draw[fill=green!40, draw=green, thick] (3.5,0.3) rectangle (5.5,0.9);
 // \node[font=\bfseries] at (4.5,0.6) {Validation};
 // \node[below, font=\small] at (4.5,-0.8) {20\% data};
-//
+// 
 // % Phase 3: Testing
 // \draw[fill=red!40, draw=red, thick] (6,0.3) rectangle (8,0.9);
 // \node[font=\bfseries] at (7,0.6) {Testing};
 // \node[below, font=\small] at (7,-0.8) {20\% data};
-//
+// 
 // % Phase 4: Deployment
 // \draw[fill=purple!40, draw=purple, thick] (8.5,0.3) rectangle (10.5,0.9);
 // \node[font=\bfseries] at (9.5,0.6) {Deploy (Retrain)};
 // \node[below, font=\small] at (9.5,-0.8) {100\% data};
-//
+// 
 // % Annotations above phases
 // \node[above, font=\small] at (1.75,1.3) {Model selection};
 // \node[above, font=\small] at (7,1.3) {Final evaluation};
 // \node[above, font=\small] at (9.5,1.3) {Production};
-//
+// 
 // % Arrow showing data reuse
 // \draw[dashed, thick, ->] (8,0.15) to (8.5,0.15);
 // \node[font=\small, gray] at (8.25,-1.1) {Reuse test data};
-//
+// 
 // % Legend
 // \node[anchor=west, font=\small] at (0.5,-1.8) {Note: Only retrain model with full dataset after test set evaluation is complete};
 // ```
@@ -642,15 +642,15 @@ mistakes.
 // \draw[thick] (0,0) rectangle (4,4);
 // \draw[thick] (0,2) -- (4,2); % horizontal middle
 // \draw[thick] (2,0) -- (2,4); % vertical middle
-//
+// 
 // % Labels for actual class
 // \node[rotate=90] at (-0.8,3) {act = 1};
 // \node[rotate=90] at (-0.8,1) {act = 0};
-//
+// 
 // % Labels for predicted class
 // \node at (1,4.3) {pred = 1};
 // \node at (3,4.3) {pred = 0};
-//
+// 
 // % Cell labels
 // \node at (1,3) {\textbf{TP}};
 // \node at (3,3) {\textbf{FN}};
@@ -862,28 +862,28 @@ how the random baseline provides a floor for useful performance.
 // % Precision-Recall curve
 // \draw[thick, ->] (0,0) -- (8,0);
 // \draw[thick, ->] (0,0) -- (0,6);
-//
+// 
 // \node[below] at (4,-0.3) {Recall};
 // \node[left] at (-0.3,3) {Precision};
-//
+// 
 // % Axis labels
 // \node[below] at (0,-0.5) {0};
 // \node[below] at (8,-0.5) {1};
 // \node[left] at (-0.4,0) {0};
 // \node[left] at (-0.4,6) {1};
-//
+// 
 // % Baseline (random classifier)
 // \draw[dashed, gray] (0,1.5) -- (8,1.5);
 // \node[gray, right] at (8,1.5) {Baseline (random)};
-//
+// 
 // % Good classifier curve
 // \draw[thick, blue, smooth] (0.5,5.8) to (1.5,5.5) to (3,4.8) to (5,3.5) to (7,2.2) to (8,1.6);
 // \node[blue] at (5.5,5.5) {\small Good classifier};
-//
+// 
 // % Excellent classifier curve
 // \draw[thick, green, smooth] (0.2,5.9) to (1,5.95) to (2,5.9) to (4,5.5) to (6,4.2) to (7.8,2.8);
 // \node[green] at (2,6.5) {\small Excellent classifier};
-//
+// 
 // % Best point
 // \draw[fill=red] (0.3,5.95) circle (0.15);
 // \node[red, above] at (0.3,6.3) {Best};
@@ -1082,48 +1082,48 @@ dataset.
 // ```tikz
 // % Model Selection Process Diagram
 // % Horizontal layout showing data splitting and evaluation flow
-//
+// 
 // % Data sources
 // \node[rectangle, draw, thick, fill=blue!30] at (1,3) {Dataset};
-//
+// 
 // % Splitting
 // \draw[thick, ->] (1,2.7) to (0.5,2.2);
 // \draw[thick, ->] (1,2.7) to (1.5,2.2);
-//
+// 
 // % Training data
 // \node[rectangle, draw, thick, fill=blue!20] at (0.5,1.5) {$D_{train}$ (60\%)};
-//
+// 
 // % Validation data
 // \node[rectangle, draw, thick, fill=green!20] at (1.5,1.5) {$D_{val}$ (20\%)};
-//
+// 
 // % Learning process
 // \draw[thick, ->] (0.5,1.2) to (0.5,0.8);
 // \node[above, font=\small] at (0.7,1.0) {Learn N models};
-//
+// 
 // % Learned models
 // \node[rectangle, draw] at (0.5,0.2) {$g_1, ..., g_N$};
-//
+// 
 // % Evaluation on validation
 // \draw[thick, ->] (1.2,1.2) to (1.2,0.8);
 // \node[above, font=\small] at (1.4,1.0) {Evaluate};
-//
+// 
 // % Selection
 // \node[rectangle, draw, fill=yellow!20] at (1.2,0.2) {Best: $g_m$};
-//
+// 
 // % Test set
 // \node[rectangle, draw, thick, fill=red!20] at (3,1.5) {$D_{test}$ (20\%)};
-//
+// 
 // % Final evaluation
 // \draw[thick, ->] (1.7,0.2) to (2.5,0.2);
 // \draw[thick, ->] (2.9,1.2) to (2.9,0.5);
-//
+// 
 // % Final performance
 // \node[rectangle, draw, fill=red!30, thick] at (3,0.2) {$E_{test}(g_m)$};
-//
+// 
 // % Retraining
 // \draw[thick, ->] (1,2.5) to (4.5,2.5);
 // \draw[thick, ->] (4.5,2.5) to (4.5,1.2);
-//
+// 
 // % Full data retrain
 // \node[rectangle, draw] at (4.5,1.5) {$D_{train+val+test}$};
 // \draw[thick, ->] (4.5,1.2) to (4.5,0.5);
@@ -1163,28 +1163,28 @@ performance estimate.
 // % Bias in model selection: E_val vs E_out relationship
 // \draw[thick, ->] (0,0) -- (10,0);
 // \draw[thick, ->] (0,0) -- (0,7);
-//
+// 
 // \node[below] at (5,-0.3) {Model Complexity};
 // \node[left] at (-0.3,3.5) {Error};
-//
+// 
 // % Axis labels
 // \node[below] at (0,-0.5) {0};
 // \node[below] at (10,-0.5) {$\lambda$ (regularization)};
 // \node[left] at (-0.4,0) {0};
-//
+// 
 // % E_out curve (true error)
 // \draw[thick, red, smooth] (1,3) to (3,2.2) to (5,2) to (7,2.5) to (9,4);
 // \node[red, above] at (5,2) {$E_{out}(g_m)$};
-//
+// 
 // % E_val curve (validation error - lower due to bias)
 // \draw[thick, blue, smooth] (1,2) to (3,1.2) to (5,1) to (7,1.5) to (9,3);
 // \node[blue, above] at (5,1) {$E_{val}(g_m)$};
-//
+// 
 // % Gap between curves
 // \draw[dashed, gray] (5,1) -- (5,2);
 // \node[gray, right] at (5.3,1.5) {Bias from};
 // \node[gray, right] at (5.3,1.3) {model selection};
-//
+// 
 // % Optimal point
 // \draw[fill=red] (5,2) circle (0.2);
 // \node[red, above] at (5,2.5) {Optimal $\lambda$};
