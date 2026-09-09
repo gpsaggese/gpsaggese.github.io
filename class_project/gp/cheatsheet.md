@@ -41,12 +41,12 @@ git add -u
 #
 git commit -m "Merge" && git push
 
-find class_project/MSML610/Fall2025/Projects/UmdTask78_Fall2025_Ax_Multi_Objective_Optimization_for_Marketing_Campaigns/  -type f -exec du -h {} + | sort -hr | head -n 10
+find class_project/msml610/Fall2025/projects/UmdTask78_Fall2025_Ax_Multi_Objective_Optimization_for_Marketing_Campaigns/  -type f -exec du -h {} + | sort -hr | head -n 10
 
-class_project/create_PR.sh
+class_project/gp/create_PR.sh
 
-class_project/create_PR.py \
-  --input_file class_project/fall2025_msml610_branches_dirs.txt \
+class_project/gp/create_PR.py \
+  --input_file class_project/gp/fall2025_msml610_branches_dirs.txt \
   --source_dir /Users/saggese/src/umd_class_scripts \
-  --dst_dir /Users/saggese/src/umd_classes3
+  --dst_dir /Users/saggese/src/umd_classes3 \
   --copy_dirs

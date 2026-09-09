@@ -55,9 +55,9 @@
   repository as an `upstream` remote so you can keep your fork up to date:
   ```bash
   # Always clone your forked repository, not the original one.
-  > git clone --recursive git@github.com:{your_username}/umd_classes.git umd_classes
-  > cd umd_classes
-  > git remote add upstream git@github.com:gpsaggese/umd_classes.git
+  > git clone --recursive git@github.com:{your_username}/gpsaggese.github.io.git umd_classes1
+  > cd umd_classes1
+  > git remote add upstream git@github.com:gpsaggese/gpsaggese.github.io.git
   > git fetch upstream
   > git checkout master
   > git merge upstream/master
@@ -82,13 +82,13 @@
   references the issue number:
   ```bash
   > git add {file1} {file2}
-  > git commit -m "{commit message} (gpsaggese/umd_classes#{issue_number})"
+  > git commit -m "{commit message} (gpsaggese/gpsaggese.github.io#{issue_number})"
   > git push origin UmdTask{issue_number}_{short_description}
   ```
 
-- The prefix `gpsaggese/umd_classes` is required to link the commit to an issue
-  in the original repository. If the issue is in your forked repository, this
-  prefix is not required.
+- The prefix `gpsaggese/gpsaggese.github.io` is required to link the commit to
+  an issue in the original repository. If the issue is in your forked
+  repository, this prefix is not required.
 
 - Prefer staging specific files (`git add {file}`) rather than `git add .` to
   avoid accidentally including unintended changes.
@@ -98,7 +98,7 @@
   following line in the pull request description to automatically close the
   issue once the PR is merged:
   ```verbatim
-  Fixes gpsaggese/umd_classes#{issue_number}
+  Fixes gpsaggese/gpsaggese.github.io#{issue_number}
   ```
 
 - The `Fixes` keyword must appear at the start of a line to trigger auto-close.

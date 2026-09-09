@@ -64,7 +64,7 @@ Here are the instructions for the class project.
    - [DATA605 projects](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/project_descriptions/README.md#data605-big-data-systems)
    - [MSML610 projects](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/project_descriptions/README.md#msml610-advanced-machine-learning)
 2. There are more packages that would be interesting to study, listed in
-   [all_projects.md](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/all_projects.md)
+   [all_projects.md](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/project_descriptions/all_projects.md)
    - These are available only on request, since a project description needs to be
      written first
 3. Improve an old tutorial or project:
