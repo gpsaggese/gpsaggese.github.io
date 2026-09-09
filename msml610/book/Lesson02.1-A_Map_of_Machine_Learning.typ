@@ -1,4 +1,4 @@
-// git_hash=44abcfb27-twy timestamp=20260903_094703
+// git_hash=7d3f991f4-939 timestamp=20260908_111147
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
   aima-style, chapter, styled-table, wrap-content,
@@ -23,22 +23,22 @@
 
 This chapter provides a map of machine learning's landscape: the key dimensions along
 which learning problems and approaches vary. We explore four branches of the
-field—paradigms, models, techniques, and theory—that organize how learning can be set
-up and executed. #emph[Paradigms] describe the nature of the feedback (labeled data,
+field (paradigms, models, techniques, and theory) that organize how learning can be set
+up and executed. #emph[Paradigms] describe the nature of the feedback (e.g., labeled data,
 rewards, or unlabeled structure). #emph[Models] are the functional forms that encode
-hypotheses (parametric, non-parametric, or graphical). #emph[Techniques] are the
-algorithms that fit models to data (input processing, model building, evaluation,
+hypotheses (e.g., parametric, non-parametric, or graphical). #emph[Techniques] are the
+algorithms that fit models to data (e.g., input processing, model building, evaluation,
 diagnostics, regularization, and aggregation). Finally, #emph[theory] provides formal
-foundations and guarantees. The chapter concludes with adages—practical wisdom
-accumulated by the field—that highlight the recurring tension between model
+foundations and guarantees. The chapter concludes with adages, i.e., practical wisdom
+accumulated by the field, that highlight the recurring tension between model
 simplicity and expressiveness, the central role of data quality and quantity, and the
 consistent historical lesson that general methods combined with scale often
 outperform hand-crafted domain-specific approaches.
 
-// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:13 '# A Map of Machine Learning'
+// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:7 '# A Map of Machine Learning'
 // Slide: A Map of Machine Learning
 
-// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:15 '* Four Branches of Machine Learning'
+// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:9 '* Four Branches of Machine Learning'
 // Slide: Four Branches of Machine Learning
 = Four Branches of Machine Learning
 
@@ -49,15 +49,6 @@ Machine learning is a sprawling field with many branches #cite(
   "burkov2019hundredpage",
 ), and one useful way to organize it is along four dimensions, as in
 @fig:fourbranchesofmachinelearning.
-
-#strong[Paradigms] describe how learning is set up: whether the system learns from
-labeled examples, from rewards, or from unlabeled structure #cite(
-  "russell2020aima",
-). #strong[Models] are the functional forms that encode hypotheses, from linear
-functions to deep neural networks #cite("hastie2009elements"). #strong[Techniques]
-are the algorithms and processes used to fit those models to data. Finally,
-#strong[theory] provides the formal foundations, the guarantees and limits that tell
-us when and why a method works.
 
 // rendered_images:begin
 // ```mermaid
@@ -109,7 +100,16 @@ us when and why a method works.
 ) <fig:fourbranchesofmachinelearning>
 // render_images:end
 
-// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:71 '* Learning Paradigms'
+#strong[Paradigms] describe how learning is set up: whether the system learns from
+labeled examples, from rewards, or from unlabeled structure #cite(
+  "russell2020aima",
+). #strong[Models] are the functional forms that encode hypotheses, from linear
+functions to deep neural networks #cite("hastie2009elements"). #strong[Techniques]
+are the algorithms and processes used to fit those models to data. Finally,
+#strong[theory] provides the formal foundations, the guarantees and limits that tell
+us when and why a method works.
+
+// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:65 '* Learning Paradigms'
 // Slide: Learning Paradigms
 = Learning Paradigms
 
@@ -119,7 +119,7 @@ illustrates the major learning paradigms organized along two axes: the availabil
 of labels and whether the learning process is interactive or sequential.
 
 // rendered_images:begin
-// ```graphviz[width=80%]
+// ```graphviz[width=90%]
 // digraph LearningParadigms {
 //   graph [rankdir=LR, splines=curved, bgcolor="transparent",
 //          ranksep="1.0 equally", nodesep=0.24, pad=0.3, fontname="Helvetica"];
@@ -161,7 +161,7 @@ of labels and whether the learning process is interactive or sequential.
 #figure(
   image(
     "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.2.png",
-    width: 80%,
+    width: 90%,
   ),
   caption: [Diagram relating Learning Paradigms, Label Availability and Interactive/Sequential],
   kind: "figure",
@@ -178,7 +178,7 @@ predictions match the ground truth. In contrast, #strong[unsupervised learning]
 operates without any labels at all. The learner must find structure, patterns, or
 compressed representations in raw data, with no explicit signal telling it what the
 "right answer" is. Clustering, dimensionality reduction, and density estimation all
-fall under this heading.
+fall under this set up.
 
 Between these two extremes sits #strong[semi-supervised learning], where only a small
 fraction of the data carries labels while the bulk remains unlabeled. The learner
@@ -201,7 +201,7 @@ steps later. This sequential, interactive nature makes reinforcement learning
 fundamentally different from the batch, label-driven paradigms and introduces unique
 challenges such as the exploration-exploitation tradeoff.
 
-// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:110 '* Model Families'
+// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:104 '* Model Families'
 // Slide: Model Families
 = Model Families
 
@@ -209,11 +209,11 @@ What functional form can a model take? Machine learning models generally fall in
 three broad families, each making different assumptions about how the data-generating
 process is structured.
 
-#strong[Parametric models] assume that the data can be described by a fixed, finite
-set of parameters. Once those parameters are estimated from training data, the
+#strong[Parametric models] assume that the data can be described by a #emph[fixed, finite
+set of parameters]. Once those parameters are estimated from training data, the
 original observations are no longer needed for prediction. Linear regression,
 logistic regression, and neural networks are all parametric: you commit up front to a
-specific functional form (a line, a sigmoid boundary, a layered composition of
+specific functional form (e.g., a line, a sigmoid boundary, a layered composition of
 nonlinearities) and then fit its coefficients. The advantage is computational
 efficiency and interpretability when the chosen form is simple; the risk is that a
 misspecified form underfits the true relationship.
@@ -303,7 +303,7 @@ model.
 ) <fig:modelfamilies>
 // render_images:end
 
-// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:156 '* Stages of an ML Pipeline'
+// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:150 '* Stages of an ML Pipeline'
 // Slide: Stages of an ML Pipeline
 = Stages of an ML Pipeline
 
@@ -331,12 +331,12 @@ complementary subsets so the model is always evaluated on examples it was not tr
 on, giving a more honest estimate of future performance than training-set accuracy
 alone.
 
-#strong[Diagnostics] then help the practitioner understand _why_ performance is what
-it is. Bias-variance curves reveal whether errors stem from an overly simple model
-(high bias) or from excessive sensitivity to training noise (high variance). Learning
-curves plot performance as a function of training-set size, showing whether
-collecting more data is likely to help or whether the model's capacity is the
-bottleneck.
+#strong[Diagnostics] then help the practitioner understand #emph[why]
+performance is what it is. Bias-variance curves reveal whether errors stem from
+an overly simple model (high bias) or from excessive sensitivity to training
+noise (high variance). Learning curves plot performance as a function of
+training-set size, showing whether collecting more data is likely to help or
+whether the model's capacity is the bottleneck.
 
 When diagnostics reveal overfitting, #strong[regularization] techniques constrain the
 model's complexity, penalizing large parameter values or limiting the number of
@@ -393,7 +393,9 @@ practitioner to revisit earlier decisions when later stages reveal problems.
 // }
 // ```
 // label=fig:stagesofanmlpipeline
-// caption=Diagram illustrating Stages of an ML Pipeline
+// caption=Diagram illustrating stages of an ML Pipeline
+// width=80%
+// placement=none
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -401,14 +403,15 @@ practitioner to revisit earlier decisions when later stages reveal problems.
     "Lesson02.1-A_Map_of_Machine_Learning.typ.figs/Lesson02.1-A_Map_of_Machine_Learning.4.png",
     width: 70%,
   ),
-  caption: [Diagram illustrating Stages of an ML Pipeline],
+  caption: [Diagram illustrating stages of an ML Pipeline],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:stagesofanmlpipeline>
 // render_images:end
+pl
 
-// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:211 '* Theoretical Foundations'
+// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:205 '* Theoretical Foundations'
 // Slide: Theoretical Foundations
 = Theoretical Foundations
 
@@ -465,16 +468,16 @@ chosen for computational convenience rather than genuine belief. Recognizing the
 gaps between theory and practice is essential for applying any of these tools
 responsibly.
 
-// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:234 '* Adages of Machine Learning'
+// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:228 '* Adages of Machine Learning'
 // Slide: Adages of Machine Learning
 = Adages of Machine Learning
 
-Machine learning has accumulated a rich body of folk wisdom, crystallized into adages
-that capture recurring lessons practitioners encounter again and again. These sayings
-are not rigorous theorems, but they summarize real phenomena that shape how models
-are built, evaluated, and deployed.
+Machine learning has accumulated a rich body of folk wisdom, crystallized into
+#emph[adages] that capture recurring lessons practitioners encounter again and
+again. These sayings are not rigorous theorems, but they summarize real
+phenomena that shape how models are built, evaluated, and deployed.
 
-Some of the oldest principles concern simplicity. Einstein's dictum that #emph[an
+Some of the oldest principles concern simplicity. Einstein's advice that #emph[an
   explanation of the data should be as simple as possible, but not simpler] warns
 against both over-complicated models and naive ones that throw away necessary
 structure. This echoes #emph[Occam's razor]: the simplest model that fits the data is
@@ -512,14 +515,14 @@ drivers of progress.
 = Summary
 
 Machine learning is a sprawling field, but it can be organized along four key
-dimensions. #strong[Paradigms] describe how learning is set up: whether data is
-labeled, rewards-based, unlabeled, interactive, or some combination. #strong[Models]
+dimensions. #emph[Paradigms] describe how learning is set up: whether data is
+labeled, rewards-based, unlabeled, interactive, or some combination. #emph[Models]
 are the functional forms that encode hypotheses—parametric (fixed structure, e.g.,
 linear, neural networks), non-parametric (flexible structure, e.g., KNN, Gaussian
 processes), or graphical (probability distributions over variables).
-#strong[Techniques] are the algorithms and processes that fit models to data,
+#emph[Techniques] are the algorithms and processes that fit models to data,
 spanning input processing, model building, performance evaluation, diagnostics,
-regularization, and ensemble methods. Finally, #strong[Theory] provides formal
+regularization, and ensemble methods. Finally, #emph[Theory] provides formal
 foundations through frameworks like VC theory, #emph[bias-variance] decomposition,
 minimum description length, and #emph[Bayesian] inference, each offering different
 insights into why learning from data works and when it fails.
@@ -534,7 +537,7 @@ principles reflect a fundamental shift in the field: from elegant models and car
 feature engineering toward data-driven, large-scale learning as the dominant driver
 of progress.
 
-// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:252 '* References'
+// From: msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd:246 '* References'
 // Slide: References
 = References
 
