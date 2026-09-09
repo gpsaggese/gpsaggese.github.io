@@ -16,7 +16,7 @@
 - Well done projects lead to a blog post or publication, but these are the most
   challenging class projects
 
-## Tutorials "Learn X in 60 mins"
+## Tutorials "Learn X in 60 Minutes"
 
 - Learn a technology and build a system using that specific technology
   - The result of each project is a "tutorial" that can teach a curious computer
@@ -25,7 +25,7 @@
 - Examples are in:
   - `class_project/project_descriptions/DATA605`
   - `class_project/project_descriptions/MSML610`
-  - `class_project/all_projects.md`
+  - `class_project/project_descriptions/all_projects.md`
 - Each tutorial is similar in spirit to the tutorials for various technologies we
   have looked at and studied in classes
   - E.g., `Git`, `Docker`, `SQL`, `Mongo`, `Airflow`, `Dask`
@@ -40,8 +40,9 @@
 - Of course, students working on different projects can discuss and help each other
 - Each student or group picks one project from the sign-up sheet shared during class
   - Each project has a description in the corresponding directory
-  - You can pick two projects as a backup; if there is a conflict, projects are
-    assigned at random among your preferences
+  - You can pick two backup projects
+    - If there is a conflict, projects are assigned randomly based on your
+      preferences
 - The goal of the project is to get your hands dirty and figure things out
   - Often solving problems is about trying different approaches until one works
   - Make sure you understand the tool and what your code is doing
@@ -51,11 +52,7 @@
 - Your project should align with your learning goals and interests
 - Project selection must be finalized within 1 or 2 weeks to allow sufficient time
   for planning and execution
-- Your grade will be based on:
-  - **Project complexity**: depth and sophistication of the technology used
-  - **Effort and understanding**: demonstrated grasp of the tool and quality of the
-    tutorial
-  - **Adherence to guidelines**: correct structure, naming, and PR workflow
+- Your grade will be based on the criteria in the "Grading Rubric" section below
 
 ## Paid Cloud Services
 
@@ -64,7 +61,7 @@
   - You are expected to use the services efficiently to keep them within free tier
     usage
   - To save costs/improve usage, you should make sure that the services are turned
-    off/shutdown when not being used
+    off/shut down when not being used
 
 ## Project Timeline
 
@@ -73,11 +70,11 @@
 - In practice, the process is:
   - Pick 3 projects
   - Finalize the project and make sure everything is clear
-  - ... Work, work, work by yourself at home 
-  - ... Work, work, work with us in class lab 
+  - ... Work, work, work by yourself at home
+  - ... Work, work, work with us in class lab
   - First checkpoint / PR of the project
-  - ... Work, work, work by yourself at home 
-  - ... Work, work, work with us in class lab 
+  - ... Work, work, work by yourself at home
+  - ... Work, work, work with us in class lab
   - Final submission
 
 ## Pre-Requisites
@@ -90,15 +87,15 @@
   - Use `VMware` in `Windows` or dual-boot
     - If you have problems installing it on your laptop, it is recommended to use one
       computer from `UMD` laboratories
-- Check your `GitHub` issue on
-  https://github.com/gpsaggese/gpsaggese.github.io/issues
+- Check your `GitHub` issue on the
+  [issues page](https://github.com/gpsaggese/gpsaggese.github.io/issues)
   - Make sure you are assigned to it
 - Only `Python` should be used, along with necessary configuration files for the
   specific tools
 - Unless specified by project description, everything needs to run locally without
   using cloud resources
-  - E.g., instead of using an `AWS` RDS instance, install `Postgres` in your Docker
-    container for any database requirements
+  - E.g., instead of using an `AWS` RDS instance, install `Postgres` in your
+    `Docker` container for any database requirements
 - If you did not take DATA605 or you are not familiar with the basic technology we
   rely on (e.g., `Git`, `Docker`, `Jupyter`, `Python`, `bash`), take time to get
   familiar with them through the DATA605 tutorials
@@ -106,10 +103,10 @@
 ## Contribution to the Repo
 
 - You will work in the same way open-source developers contribute to a project
-- Each class project will need to be organized like a proper open source project,
+- Each class project will need to be organized like a proper open-source project,
   including filing issues, opening PRs, and checking in code in the
   [umd_classes repository](https://github.com/gpsaggese/gpsaggese.github.io)
-- (Optional) You can use some of the tooling we use for interns and Causify
+- (Optional) You can use some of the tooling we use for interns at Causify
   - Set up your working environment by following the instructions in the
     [document](https://github.com/causify-ai/helpers/blob/master/docs/onboarding/intern.set_up_development_on_laptop.how_to_guide.md)
 - Each step of the project is delivered by committing code to the dir corresponding
@@ -134,7 +131,7 @@
 - Copy/paste the project description and add a link to the document with project
   specs
   - E.g.,
-    https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/project_descriptions/DATA605/ActiveCampaign_Project_Description.md
+    [`ActiveCampaign_Project_Description.md`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/project_descriptions/DATA605/ActiveCampaign_Project_Description.md)
 - Assign the GitHub issue to yourself (if you have permissions) or tag the issue with
   the individuals working on the project
   - E.g., `Author: @gpsaggese`
@@ -145,11 +142,11 @@
 - Create a new branch in your fork, named `UmdTask{issue_number}_{project_tag}`
   - Example: If your issue number is `#645`, your branch name should be:
     `UmdTask645_DATA605_Spring2026_Redis_cache_to_fetch_user_profiles`
-- **Steps to create the branch:**
+- Steps to create the branch:
 
   ```bash
   > cd $HOME/src
-  > git clone --recursive git@github.com:gpsaggese/umd_classes.git umd_classes1
+  > git clone --recursive git@github.com:gpsaggese/gpsaggese.github.io.git umd_classes1
   > cd $HOME/src/umd_classes1
   > git checkout master
   > git checkout -b UmdTask645_DATA605_Spring2026_Redis_cache_to_fetch_user_profiles
@@ -186,23 +183,23 @@
 ### Video Recording Guidelines
 
 - The final project requires students to submit a video recording of their project
-  The goal is to learn how to present your work in a professional manner (which will
-  be extremely important in your career)
-- Video duration
+  - The goal is to learn how to present your work in a professional manner, which
+    will be extremely important in your career
+- Video duration:
   - Minimum: 10 minutes
   - Maximum: 20 minutes
-- Submission method
+- Submission method:
   - Students should upload the video in this
     [Google Drive dir](https://drive.google.com/drive/folders/1QLtgPCAS0mqE9cr1hE3UVoIbzakCNtaC)
-- Required video structure
+- Required video structure:
   - Step 1: Introduction
     - Name, UID, tool and difficulty, project title
   - Step 2: Showcase all files in the PR and confirm naming conventions
-  - Step 3: Execute the Docker image and show the successful execution message
-    - If there was a problem with Docker explain what it was and how you worked
-      around it
+  - Step 3: Execute the `Docker` image and show the successful execution message
+    - If there was a problem with `Docker`, explain what it was and how you
+      worked around it
   - Step 4: Open Jupyter Notebook
-    - Steps 1-4 should take approximately 1-2 minutes
+  - Steps 1 to 4 combined should take approximately 1 to 2 minutes
   - Step 5: Full project walkthrough
     - Run every required code cell
     - Provide clear verbal explanation of what each cell does
@@ -246,7 +243,7 @@
   - Is the submission complete enough for someone else to evaluate or run without
     requesting extra files or explanations
 - **Working Docker (5 points)**
-  - Does the Docker container build without errors, following the provided
+  - Does the `Docker` container build without errors, following the provided
     instructions
   - Does the project run successfully inside the container and behave as expected
   - Are all necessary environment configurations, ports, and dependencies correctly
@@ -267,10 +264,10 @@
   - Is the architecture or technical implementation non-trivial or particularly
     well-considered
 - **Code quality (5 points)**
-  - Is the code clean, modular, and easy to understand?
+  - Is the code clean, modular, and easy to understand
   - Are comments and docstrings used appropriately to explain non-obvious logic
   - Is the overall structure of the codebase sensible and maintainable
-  - Does it follow consistent style conventions (e.g., PEP 8 or another relevant
+  - Does it follow consistent style conventions (e.g., `PEP 8` or another relevant
     standard)
 - **PR quality (5 points)**
   - Was the pull request (PR) well-organized, with meaningful commit messages and a

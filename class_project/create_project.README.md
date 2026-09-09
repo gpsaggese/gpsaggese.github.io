@@ -49,36 +49,35 @@
 
 ### Command-line Arguments
 
-// TODO(ai_gp): Remove type column
-| Argument | Type | Default | Description |
-| :------- | :--- | :------ | :---------- |
-| `--src_dir` | str | `$GIT_ROOT/class_project/project_template` | Source template directory |
-| `--dst_dir` | str | required | Destination project directory |
-| `--overwrite` | flag | false | Overwrite `--dst_dir` if it already exists (`create_project` only) |
-| `--dry_run` | flag | false | Preview an action without changing anything on disk |
-| `--action` | str, repeatable | `create_project` | Add an action to the list of actions to run |
-| `--skip_action` | str, repeatable | - | Remove an action from the list of actions to run |
-| `--all_actions` | flag | false | Start from the list of all valid actions |
-| `--clear_actions` | flag | false | Start from an empty list of actions |
-| `-v` | str | `INFO` | Logging verbosity |
+| Argument | Default | Description |
+| :------- | :------ | :---------- |
+| `--src_dir` | `$GIT_ROOT/class_project/project_template` | Source template directory |
+| `--dst_dir` | required | Destination project directory |
+| `--overwrite` | false | Overwrite `--dst_dir` if it already exists (`create_project` only) |
+| `--dry_run` | false | Preview an action without changing anything on disk |
+| `--action` | `create_project` | Add an action to the list of actions to run |
+| `--only_action` | - | Run only this action, overriding `--action`/`--skip_action`/`--all_actions`/`--clear_actions` (mutually exclusive with them) |
+| `--skip_action` | - | Remove an action from the list of actions to run |
+| `--all_actions` | false | Start from the list of all valid actions |
+| `--clear_actions` | false | Start from an empty list of actions |
+| `-v` | `INFO` | Logging verbosity |
 
 - `$GIT_ROOT` is the root of the Git client, resolved via `helpers.hgit`
 
 ### Actions
 
-// TODO(ai_gp): Make description shorter
 | Action | Description |
 | :----- | :----------- |
-| `create_project` | Copy `--src_dir` to `--dst_dir`, rename the template files to the project name, and customize `docker_name.sh` |
-| `copy_docker_files` | Copy all and only the Docker files (see below) from `--src_dir` to `--dst_dir` |
-| `create_links` | Replace Docker files in `--dst_dir` with soft links to `--src_dir`, for files whose content is unmodified |
-| `compare_docker_files` | Print a table showing, for each Docker file, whether `--dst_dir` has the same content, a link, or diverged content, and generate a `vimdiff` script for the files that are different or missing |
+| `create_project` | Copy `--src_dir` to `--dst_dir`, rename template files, and customize `docker_name.sh` |
+| `copy_docker_files` | Copy Docker files from `--src_dir` to `--dst_dir` |
+| `create_links` | Replace Docker files in `--dst_dir` with symlinks to `--src_dir` if unmodified |
+| `compare_docker_files` | Report sync status of Docker files and generate `vimdiff` script for differences |
 
 ### Docker Files
 
 - `copy_docker_files`, `create_links`, and `compare_docker_files` all operate
   on the same fixed file set (`_DOCKER_FILES` in the script):
-  - `.dockerignore`, `bashrc`, `docker_*.sh`, `Dockerfile*`, `etc_sudoers`,
+  - `.dockerignore`, `bashrc`, `docker_*.sh`, `Dockerfile`, `etc_sudoers`,
     `requirements.txt`, `run_jupyter.sh`, `utils.sh`, `version.sh`
 - This excludes:
   - Project-specific template files (e.g., `template.example.py`), which
@@ -102,11 +101,12 @@
     `--src_dir`
   - Customized files are left untouched
 - `compare_docker_files`
-  - Prints a report table to stdout, showing what Docker file is `different`,
-    `missing_in_src`, or `missing_in_dst`
+  - Prints a report table to stdout, with one row per Docker file and a
+    `status` of `same`, `link`, `different`, `missing_in_src`, or
+    `missing_in_dst`
   - Creates `tmp.create_project.vimdiff.sh` in the current dir, an executable
-    script that runs `vimdiff` on each such file (`--dry_run` logs the plan
-    instead of creating the script)
+    script that runs `vimdiff` on each `different` or missing file
+    (`--dry_run` logs the plan instead of creating the script)
 
 ## Software Architecture
 
@@ -117,8 +117,9 @@
    - Read `--dst_dir`
    - Read and parse the list of `--action`s to run
 2. **Dispatch**: for each selected action, call the matching handler function
-3. **Execute**: each handler either mutates the filesystem (copy, rename,
-   symlink) or produces a read-only report
+3. **Execute**: each handler mutates the filesystem (copy, rename, symlink),
+   except `compare_docker_files`, which only prints a report and (unless
+   `--dry_run` or nothing differs) writes a `vimdiff` script
 
 ### Key Functions
 
@@ -132,6 +133,8 @@
   - Implements `create_links`
 - `_compare_docker_files(src_dir, dst_dir) -> pd.DataFrame`
   - Implements `compare_docker_files`
+- `_create_vimdiff_script(df, src_dir, dst_dir, ...) -> Optional[str]`
+  - Writes `tmp.create_project.vimdiff.sh` for the differing/missing files in `df`
 - `_main(parser)`
   - Selects and runs actions using the `helpers.hselect_action` idiom
 
