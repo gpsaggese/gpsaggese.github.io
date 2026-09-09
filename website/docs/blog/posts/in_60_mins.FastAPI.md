@@ -51,22 +51,22 @@ This tutorial's goal is to show you in 60 minutes:
 
 ## Tutorial Content
 This tutorial includes all the code, notebooks, and Docker containers in
-[tutorials/fastapi](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/fastapi)
+[tutorials/fastapi](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/tutorials/fastapi)
 
-- [`README.md`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/fastapi/README.md):
+- [`README.md`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/fastapi/README.md):
   Instructions and setup for the tutorial environment
 - A Docker system to build and run the environment using our standardized
   approach
-- [`fastapi.API.ipynb`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/fastapi/fastapi.API.ipynb):
+- [`fastapi.API.ipynb`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/fastapi/fastapi.API.ipynb):
   Tutorial notebook focusing on core FastAPI building blocks
   - Path and query parameters, request body validation with `pydantic` models
   - Dependency injection with `Depends()`
   - Error handling with `HTTPException`
   - The automatic `/docs`, `/redoc`, and `/openapi.json`
-- [`fastapi.example.ipynb`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/fastapi/fastapi.example.ipynb):
+- [`fastapi.example.ipynb`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/fastapi/fastapi.example.ipynb):
   End-to-end Book Catalog API example
   - Runs a real `uvicorn` server on a background thread
   - Exercises the API with real HTTP requests via `httpx`
   - Covers create, read, update, delete, filtering, and error responses
-- [`fastapi_utils.py`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/fastapi/fastapi_utils.py):
+- [`fastapi_utils.py`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/fastapi/fastapi_utils.py):
   Utility functions and models shared by both notebooks

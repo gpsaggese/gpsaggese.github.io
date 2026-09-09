@@ -114,7 +114,7 @@ models, SHAP, LIME, permutation importance, and counterfactuals.
 ## Tutorial Content
 
 - This tutorial includes all the code, notebooks, and Docker container in
-  [tutorials/ml_explainability](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/ml_explainability):
+  [tutorials/ml_explainability](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/tutorials/ml_explainability):
   - `explainability_shap_lime.API.ipynb`: core API of each explainability tool
   - `explainability_shap_lime.example.ipynb`: end-to-end explanation of a model
     on a real dataset

@@ -50,14 +50,14 @@ This tutorial's goal is to show you in 60 minutes:
 ## Tutorial Content
 
 This tutorial includes all the code, notebooks, and Docker containers in
-[tutorials/BambooAI](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/BambooAI)
+[tutorials/BambooAI](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/tutorials/BambooAI)
 
-- [`README.md`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/BambooAI/README.md): Instructions and setup for the tutorial environment
+- [`README.md`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/BambooAI/README.md): Instructions and setup for the tutorial environment
 - A Docker system to build and run the environment using our standardized
   approach
-- [`bambooai.API.ipynb`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/BambooAI/bambooai.API.ipynb): Tutorial notebook focusing on fundamental classes,
+- [`bambooai.API.ipynb`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/BambooAI/bambooai.API.ipynb): Tutorial notebook focusing on fundamental classes,
   methods, and API configurations
-- [`bambooai.example.ipynb`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/BambooAI/bambooai.example.ipynb): Complete real-world application workflow using BambooAI
+- [`bambooai.example.ipynb`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/BambooAI/bambooai.example.ipynb): Complete real-world application workflow using BambooAI
     - Data exploration: Using Dataframe Inspector and Analyst agents to
       understand your data
     - Dynamic planning: Planner agent that decomposes complex analysis tasks
@@ -65,6 +65,6 @@ This tutorial includes all the code, notebooks, and Docker containers in
     - Code generation: Code Generator agent that writes and proposes solutions
     - Error handling: Error Corrector agent that fixes and improves generated
       code
-- [`bambooai.example.py`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/BambooAI/bambooai.example.py): Stand-alone script version of the example for quick
+- [`bambooai.example.py`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/BambooAI/bambooai.example.py): Stand-alone script version of the example for quick
   reference or automation
-- [`bambooai_utils.py`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/BambooAI/bambooai_utils.py): Utility functions required by the example notebooks
+- [`bambooai_utils.py`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/BambooAI/bambooai_utils.py): Utility functions required by the example notebooks

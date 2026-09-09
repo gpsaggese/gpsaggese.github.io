@@ -5,13 +5,13 @@ Hello DATA605 team,
 This is a preparation for the in-class quiz and for the class project.
 
 1) Study the slides on Git
-   - [Lesson02.1-Git.pdf](https://github.com/gpsaggese/umd_classes/blob/master/data605/lectures_pdf/Lesson02.1-Git.pdf)
-   - [Lesson02.2-Git\_Branching.pdf](https://github.com/gpsaggese/umd_classes/blob/master/data605/lectures_pdf/Lesson02.2-Git_Branching.pdf)
+   - [Lesson02.1-Git.pdf](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson02.1-Git.pdf)
+   - [Lesson02.2-Git\_Branching.pdf](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson02.2-Git_Branching.pdf)
 
-2) Do the [Git tutorial](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_git)
+2) Do the [Git tutorial](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/data605/tutorials/tutorial_git)
    - Video of the Git tutorial is [here](https://drive.google.com/file/d/12TcMNs4vZoZUWq47TUgcqB875GMfqK01/view?usp=drive_link)
 
-3) Do the [GitHub tutorial](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_github)
+3) Do the [GitHub tutorial](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/data605/tutorials/tutorial_github)
 
 4) If you see any problem in the tutorials (code or video), pls send an email to
    me with your TAs in cc. To make this more interesting, there might be (or
@@ -23,7 +23,7 @@ This is a preparation for the in-class quiz and for the class project.
    quizzes and the class project.
 
 6) Get familiar with the GitHub repos you will interact with during class
-   - [DATA605 Git repo](https://github.com/gpsaggese/umd_classes/)
+   - [DATA605 Git repo](https://github.com/gpsaggese/gpsaggese.github.io/)
    - [Helpers](https://github.com/causify-ai/helpers)
    - Please fork and star these repos so that GitHub promotes them
 
@@ -90,9 +90,9 @@ have Windows laptop get to install a VM and run linux
 - Examples
   - `MSML610` Fall 2025:
     - [List of projects](https://docs.google.com/spreadsheets/d/1H_Ev1psuPpUrrRcmBrBb2chfurSo5rPcAdd6i2SIUTQ/edit?gid=0#gid=0)
-    - [Description of projects](https://github.com/gpsaggese/umd_classes/tree/master/class_project/MSML610/Fall2025/project_descriptions)
+    - [Description of projects](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/class_project/MSML610/Fall2025/project_descriptions)
   - `DATA605` Spring 2025:
-    - [Description of projects](https://github.com/gpsaggese/umd_classes/blob/master/class_project/DATA605/Spring2025/project_description.md)
+    - [Description of projects](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/DATA605/Spring2025/project_description.md)
 
 - You need to fill out the
   [sign up form](https://docs.google.com/forms/d/1TPCt7UFnTOEICltrPU3sIu9RoCbILR32zHbZNzRi9jw/edit)
@@ -101,17 +101,17 @@ have Windows laptop get to install a VM and run linux
 ## Project #1: Choose Your Project (DATA605 Spring 2026)
 
 - Here are the instructions for the class project.
-  - [class_project/README.md](https://github.com/gpsaggese/umd_classes/blob/master/class_project/README.md)
+  - [class_project/README.md](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/README.md)
 
 - The projects to choose from are:
   - [DATA605 - Spring 2026 - Sign up sheet](https://docs.google.com/spreadsheets/d/1O1t_DQ6xpFTcnEaT3c6ss_FBlJV2dqNv83nVH9QA124)
-  - [class_project/DATA605/Spring2026/projects.csv](https://github.com/gpsaggese/umd_classes/blob/master/class_project/DATA605/Spring2026/projects.csv)
+  - [class_project/DATA605/Spring2026/projects.csv](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/DATA605/Spring2026/projects.csv)
 
 - The specs for each projects are:
-  - [class_project/DATA605/Spring2026/projects_descriptions/](https://github.com/gpsaggese/umd_classes/tree/master/class_project/DATA605/Spring2026/projects_descriptions/)
+  - [class_project/DATA605/Spring2026/projects_descriptions/](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/class_project/DATA605/Spring2026/projects_descriptions/)
 
 - The research projects to choose from:
-  - [class_project/research_projects](https://github.com/gpsaggese/umd_classes/tree/master/class_project/research_projects)
+  - [class_project/research_projects](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/class_project/research_projects)
 
 - The form to sign up for a project is:
   - [DATA605 - Spring 2026 - Class Project](https://docs.google.com/forms/d/e/1FAIpQLSczE7sQRw7NFTVrwFHGy4fwzkPJHAVRzN-czYNVkD0WtkdlvA)

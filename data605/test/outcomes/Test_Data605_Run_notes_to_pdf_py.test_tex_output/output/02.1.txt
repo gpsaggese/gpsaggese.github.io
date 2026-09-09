@@ -602,7 +602,7 @@ UMD DATA605 - Big Data Systems \endgroup
   Concepts in the slides
 \item
   Tutorial:
-  \href{https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_git}{Tutorial
+  \href{https://github.com/gpsaggese/gpsaggese.github.io/tree/master/data605/tutorials/tutorial_git}{Tutorial
   Git}
 \item
   We will use Git during the project

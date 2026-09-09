@@ -80,7 +80,7 @@ Learn how to explain machine learning model predictions in 60 minutes using SHAP
 ## Tutorial Content
 
 - This tutorial includes all the code, notebooks, and Docker container in
-  [tutorials/shap](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/shap):
+  [tutorials/shap](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/tutorials/shap):
   - `01.API.shap.ipynb`: guided exploration of the SHAP API — Explainer,
     Explanation, and plots using a linear regression model on toy data
   - `01.API.shap.py`: Jupytext percent-format mirror of the notebook

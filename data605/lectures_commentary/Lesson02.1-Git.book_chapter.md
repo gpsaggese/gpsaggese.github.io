@@ -68,7 +68,7 @@
   effectively.
 
 - **Tutorial:
-  [Tutorial Git](https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_git)**:
+  [Tutorial Git](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/data605/tutorials/tutorial_git)**:
   This link directs you to a Git tutorial, which is a practical guide to help
   you get started with Git. It's a hands-on resource that will walk you through
   the basics of using Git, making it easier to follow along and practice.

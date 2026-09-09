@@ -268,7 +268,7 @@
     develop, ship, and run applications inside containers. Containers are
     lightweight, portable, and ensure that software runs consistently across
     different computing environments.
-- **[Docker tutorial](https://github.com/gpsaggese/umd_classes/blob/main/data605/tutorials/tutorial_docker/tutorial_docker.md)**
+- **[Docker tutorial](https://github.com/gpsaggese/gpsaggese.github.io/blob/main/data605/tutorials/tutorial_docker/tutorial_docker.md)**
   - The link provided directs you to a detailed tutorial on Docker. This
     tutorial is likely to cover the basics of Docker, including how to install
     it, create Docker images, and run containers. It might also delve into more

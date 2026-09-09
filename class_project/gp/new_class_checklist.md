@@ -11,18 +11,6 @@
 - Clean up Master Course for MSML610 based on DATA605
 - Make a copy and update the Syllabus
   - https://docs.google.com/document/d/1YXCrqh6KGg3xm4-Lr4QGdBnjeWEfkqz67FHNHB_rdAk/edit?tab=t.0#heading=h.kllzuh2prtjw
-- Update lectures
-  - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/msml610/lectures
-- Organize slides
-- Tape lessons
-
-- TAs
-  Ameer Shaik  sohail08@umd.edu 121958426
-
-- Schedule
-  DATA605 is on Tuesdays from 6-8:45 PM, so your first day of class for this section would be September 1st
-  MSML610 is on Wednesdays from 5:00-7:45 PM, so your first day of class for this section would be September 2nd
-
 
 ## Customize Courses
 
