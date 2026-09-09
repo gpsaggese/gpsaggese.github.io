@@ -117,18 +117,30 @@ def parse_lesson_spec(arg: str) -> Tuple[str, str]:
     return dir_input, lesson
 
 
-def find_lecture_file(dir_path: str, lesson: str) -> Path:
+def find_lecture_file(
+    dir_path: str,
+    lesson: str,
+    *,
+    sub_dir: str = "lectures_source",
+    extension: str = "smd",
+) -> Path:
     """
     Find the lecture file matching the lesson pattern.
 
-    Searches for exactly one file matching {dir_path}/lectures_source/Lesson{lesson}*.
+    Searches for exactly one file matching
+    `{dir_path}/{sub_dir}/Lesson{lesson}*.{extension}`.
 
     :param dir_path: course directory
     :param lesson: lesson number
+    :param sub_dir: sub-directory to search under `dir_path` (e.g.,
+        "lectures_source" for the `.smd` source, "book" for a generated
+        book chapter)
+    :param extension: file extension to search for, without the leading
+        dot (e.g., "smd", "typ")
     :return: path to the found lecture file
     """
     # Build the search pattern.
-    pattern = f"{dir_path}/lectures_source/Lesson{lesson}*.smd"
+    pattern = f"{dir_path}/{sub_dir}/Lesson{lesson}*.{extension}"
     _LOG.debug("Searching for files matching pattern='%s'", pattern)
     # Find matching files.
     files = glob.glob(pattern)

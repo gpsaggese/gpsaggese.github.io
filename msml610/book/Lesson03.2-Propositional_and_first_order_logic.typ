@@ -17,6 +17,7 @@
 // Apply the AIMA document template (page/text/heading set + show rules).
 #show: aima-style
 
+// TODO(ai_gp): Add mandatory `= Roadmap` section right after #chapter(...) before first content section (typst.rules.md:## Mandatory Sections)
 #chapter("L03.2: Propositional and First Order Logic")
 
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:13 '# Propositional logic'
@@ -234,6 +235,7 @@ that exactly five of the eight models satisfy $X$.
     ),
     bold-first-col: false,
   ),
+  // TODO(ai_gp): Replace vague caption "Table of A, B, C, X" with a descriptive one-line clause explaining what the table shows, not just listing column names (typst.rules.md:## Figures: Required Elements)
   caption: [Table of A, B, C, X],
   kind: "table",
   supplement: [Table.],
@@ -667,6 +669,7 @@ attempt to construct one collapses into contradiction.
 
 The method translates that equivalence into a step-by-step argument:
 
+// TODO(ai_gp): Replace this numbered list with #algorithm("Proof by Contradiction", [...]) macro (typst.rules.md:# Algorithms and Pseudocode)
 1. Assume the premises α.
 2. Assume that the target conclusion β is false.
 3. Derive a contradiction from these two assumptions taken together.
@@ -950,6 +953,7 @@ facts from which an inference engine can derive new conclusions. The real payoff
 bird, the system automatically concludes $"CanFly"("Tweety")$ without that conclusion
 ever being stated explicitly.
 
+// TODO(ai_gp): Use #grid(...)[prose][table] pairing instead of bare #figure for this table (typst.rules.md:## Every Visual Pairs with Its Text)
 #figure(
   styled-table(
     headers: ("Category", "Example"),
@@ -1026,6 +1030,7 @@ that can always tell you "no, this does not follow" in finite time. Practical FO
 provers therefore combine completeness guarantees with heuristic search strategies to
 keep proof search tractable for the cases that arise in practice.
 
+// TODO(ai_gp): Add mandatory `= Summary` section before `= References` (typst.rules.md:## Mandatory Sections)
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:679 '* References'
 // Slide: References
 = References
