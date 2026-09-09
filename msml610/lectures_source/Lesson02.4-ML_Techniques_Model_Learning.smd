@@ -252,17 +252,18 @@
   \triangleq \frac{1}{N} \sum_{i=1}^N (h_{\vw}(\vx_i) - y_i) ^ 2
   $$
 
-- @Definition@: **Batch Gradient Descent (BGD)** updates each weight component:
+- We have seen that (batch) gradient descent (BGD) updates each weight component
+  in one shot:
   $$
   \vw(t + 1) = \vw(t) - \eta \frac{\nabla E_{in}}{\|\nabla E_{in}\|}
   $$
-  - Coordinate update for squared error:
-    $$
-    w_j(t + 1) = w_j(t) -
-    \eta \frac{2}{N}
-    \sum_{i=1}^N (h_{\vw}(\vx_i) - y_i)
-    \frac{\partial h_{\vw}(\vx_i)}{\partial w_j}
-    $$
+- The coordinate update for squared error has the formula:
+  $$
+  w_j(t + 1) = w_j(t) -
+  \eta \frac{2}{N}
+  \sum_{i=1}^N (h_{\vw}(\vx_i) - y_i)
+  \frac{\partial h_{\vw}(\vx_i)}{\partial w_j}
+  $$
 
 - @Cons@: Gradient descent with many training examples (e.g., $N = 10^6$)
   - Is computationally expensive, requiring gradient evaluation from all examples for
@@ -286,9 +287,7 @@
     \frac{\partial h_{\vw}(\vx_t)}{\partial w_j}
     $$
 
-- @Cons@
-  - Path in weight space is random
-  - Oscillates around local minimum
+- @Cons@: path in weight space is random and oscillates around local minimum
 
 - @Intuition@: **Why SGD works**
   - $\nabla e$ is a function of a random var $\vx_n$
@@ -308,38 +307,18 @@
   - $b$ represents the batch size
   - E.g., a common choice is $b = 32$ or $b = 64$
 
-* SGD vs BGD vs Mini-Batch
-
-```{=typst}
-#styled-table(
-  headers: ("Aspect", "Batch GD", "Stochastic GD", "Mini-Batch GD"),
-  rows: (
-    ("Computation", "Uses all examples", "One random example at a time", "A random subset (b examples) at a time"),
-    ("Memory", "Requires all examples in memory", "Requires little memory", "Requires little memory"),
-    ("Randomization", "More likely to terminate in flat regions", "Avoids local minima due to randomness", "Some randomness, less noisy than SGD"),
-    ("Regularization", "No implicit regularization", "Oscillations act as regularization", "Mild implicit regularization"),
-    ("Parallelization", "Can be parallelized", "Less parallel-friendly", "Can be parallelized within a batch"),
-    ("Online learning", "Not suitable", "Suitable", "Suitable"),
-  ),
-  col-widths: (1.8fr, 1.8fr, 1.8fr, 1.8fr),
-  bold-first-col: true,
-)
-```
-
 * On-Line Learning and Gradient Descent
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=55%}
 
-- In many applications, there is a @continuous stream@ of training examples $\to$
-  need to update the model
-
-- In real-time systems
+- In many applications (e.g., real-time systems), there is a @continuous stream@ of
+  training examples
   - Adapt model with new data points without full retraining
   - Handle variation in underlying process dynamics
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 ```graphviz
 digraph StreamModel {
@@ -365,22 +344,22 @@ digraph StreamModel {
 ::::
 :::
 
-- Stochastic GD and mini-batch GD @suitable for online learning@
+- Stochastic GD and mini-batch GD are @suitable for online learning@
   - Update model one example at a time
-  - Discard examples and keep "compressed" model representation
-    - Useful for large data streams where storing every data point is impractical,
-      e.g.,
+  - E.g.,
     - In stock market prediction
     - In training a language model on live chat data, discard older conversations
       after updates
-  - Discarding the data is a _bad idea_
+  - Discard examples and keep "compressed" model representation
+    - Useful for large data streams where storing every data point is impractical
+    - In general discarding the data is a _bad idea_
 
 * Map-Reduce for Batch Gradient Descent
 
 ::: columns
 :::: {.column width=45%}
 
-- Batch GD can be expressed in @map-reduce@ (like many learning algorithms)
+- Batch GD can be expressed in @map-reduce@, like many learning algorithms
 
 - @Definition@: **Map-reduce** is a big data framework for distribute computation
   - **Map step**: Use $k$ machines to parallelize summation
@@ -437,42 +416,61 @@ digraph BayesianFlow {
     Model -> Update -> Model;
 }
 ```
-
 ::::
 :::
+
+* SGD vs BGD vs Mini-Batch
+
+```{=typst}
+#styled-table(
+  headers: ("Aspect", "Batch GD", "Stochastic GD", "Mini-Batch GD"),
+  rows: (
+    ("Computation", "Uses all examples", "One random example at a time", "A random subset at a time"),
+    ("Memory", "Requires all examples in memory", "Requires little memory", "Requires little memory"),
+    ("Randomization", "More likely to terminate in flat regions", "Avoids local minima due to randomness", "Some randomness, less noisy than SGD"),
+    ("Regularization", "No implicit regularization", "Oscillations act as regularization", "Mild implicit regularization"),
+    ("Parallelization", "Can be parallelized", "Less parallel-friendly", "Parallelized within a batch"),
+    ("Online learning", "Not suitable", "Suitable", "Suitable"),
+  ),
+  col-widths: (1.8fr, 1.8fr, 2.0fr, 2.0fr),
+  bold-first-col: true,
+)
+```
 
 # Alternatives to Gradient Descent
 
 * Coordinate Descent
 
 - @Idea@: Minimize $J(x_0, ..., x_n)$ by optimizing along one direction $x_i$ at a
-  time
-  - Instead of computing all derivatives
+  time, instead of computing all derivatives
 
 - @Algorithm@
   - Pick a random starting point $\vw(0)$
   - Pick a random order for the coordinates $\{ x_i \}$
   - Find the minimum along the current coordinate (1D optimization problem)
   - Move to the next coordinate $x_{i+1}$
-  - The sequence of $\vw(t)$ is decreasing
+  - The sequence of $\vw(t)$ is guaranteed to be decreasing
   - A minimum is found if there is no improvement after one cycle of scanning all
     coordinates
   - The minimum is local
 
+// TODO(ai_gp): Add https://adeveloperdiary.com/assets/img/Introduction-to-Coordinate-Descent-using-Least-Squares-Regression-adeveloperdiary.com-2.webp
+
 * Gradient Descent vs Pseudo-Inverse
 
-- For linear models, you can use pseudo-inverse or gradient descent to find optimal
-  $\vw^*$
+- For linear models, you can use either:
+  - Pseudo-inverse; or
+  - Gradient descent to find optimal $\vw^*$
+
+- @Pseudo-inverse@
+  - No parameter selection
+  - Converges in "one" iteration (although it is computed incrementally sometimes)
+  - Computes a $P \times P$ matrix $(\mX^T \mX)^{-1}$
+    - Complexity of matrix inversion $O(P^3)$
+    - For $P \approx 10,000$, prefer gradient descent
 
 - @Gradient descent@
   - Choose learning rate $\eta$
   - Requires many iterations
   - Monitor stopping criteria, oscillations
   - Effective for many features $P$
-
-- @Pseudo-inverse@
-  - No parameter selection
-  - Converges in one iteration
-  - Computes a $P \times P$ matrix $(\mX^T \mX)^{-1}$
-    - Complexity of matrix inversion $O(P^3)$
-    - For $P \approx 10,000$, prefer gradient descent

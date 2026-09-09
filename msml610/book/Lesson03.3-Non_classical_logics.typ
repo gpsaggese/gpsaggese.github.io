@@ -1,4 +1,4 @@
-// git_hash=9b64c438-iwd timestamp=20260909_100210
+// git_hash=335aa783-pls timestamp=20260909_102544
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
   aima-style, algorithm, chapter, glossary, styled-table,
@@ -39,7 +39,7 @@ large-scale, practical implementations that power modern AI applications.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:21 '* Motivation'
 // Slide: Motivation
-== Motivation
+= Motivation
 
 Classical logic, whether propositional or first-order, assumes a complete, static
 world in which conclusions, once proven, never need to be retracted. Real-world
@@ -166,8 +166,6 @@ forcing a hard true-or-false judgment.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:101 '* Non-monotonic Logic'
 // Slide: Non-monotonic Logic
-=== Non-monotonic Logic
-
 #strong[Non-monotonic logic] is a logic in which adding new information can
 invalidate conclusions that were previously derived #cite(
   "mccarthy1980circumscription",
@@ -237,8 +235,6 @@ the absence of more specific information.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:152 '* Default Reasoning'
 // Slide: Default Reasoning
-=== Default Reasoning
-
 #strong[Default reasoning] makes assumptions in the absence of contrary evidence,
 allowing a system to draw conclusions based on what is typical rather than waiting
 for complete information #cite("reiter1980default"). The core idea is
@@ -262,20 +258,18 @@ sensibly in the common case while remaining open to correction.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:171 '* Non-Monotonic Logic: University Example'
 // Slide: Non-Monotonic Logic: University Example
-=== Non-Monotonic Logic: University Example
-
-The initial facts establish that $"Alice"$ is a $"Student"$ belonging to the
-$"ComputerScience"$ department, and that $"CS101"$ is a $"Course"$ offered by that
-same department. A default rule states that each student in the computer science
-department takes all courses offered by their department. Under this rule, since
-Alice is a computer science student, the system concludes
-$"takesCourse"("Alice", "CS101")$. However, when new information arrives indicating
-that Alice does not meet the prerequisites for $"CS101"$, the earlier default
-conclusion is retracted. The revised reasoning yields
-$not "takesCourse"("Alice", "CS101")$, overriding the previous default with the more
-specific exception. This illustrates a core feature of non-monotonic reasoning:
-adding new facts can invalidate previously drawn conclusions rather than merely
-extending them.
+A university-registration scenario makes this pattern concrete. The initial facts
+establish that $"Alice"$ is a $"Student"$ belonging to the $"ComputerScience"$
+department, and that $"CS101"$ is a $"Course"$ offered by that same department. A
+default rule states that each student in the computer science department takes all
+courses offered by their department. Under this rule, since Alice is a computer
+science student, the system concludes $"takesCourse"("Alice", "CS101")$. However,
+when new information arrives indicating that Alice does not meet the prerequisites
+for $"CS101"$, the earlier default conclusion is retracted. The revised reasoning
+yields $not "takesCourse"("Alice", "CS101")$, overriding the previous default with
+the more specific exception. This illustrates a core feature of non-monotonic
+reasoning: adding new facts can invalidate previously drawn conclusions rather than
+merely extending them.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:193 '* Common Sense Reasoning'
 // Slide: Common Sense Reasoning
@@ -316,8 +310,6 @@ surprising facility with common sense tasks, though whether these models truly
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:215 '* Common Sense Reasoning: Restaurant Example'
 // Slide: Common Sense Reasoning: Restaurant Example
-#strong[Common Sense Reasoning: Restaurant Example]
-
 The restaurant scenario illustrates how common sense reasoning works in practice.
 Suppose the initial facts are that Bob enters a restaurant and sits at a table.
 Drawing on everyday knowledge, a reasoning system knows that customers who sit down
@@ -388,7 +380,10 @@ specific or more recent evidence.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:272 '* Open World vs Closed World Assumptions'
 // Slide: Open World vs Closed World Assumptions
-#strong[Open World vs Closed World Assumptions]
+A related question in knowledge representation is how a system should treat a fact it
+was never told: should silence be read as denial, or merely as ignorance? These two
+stances, the #strong[closed-world] and #strong[open-world assumptions], give opposite
+answers.
 
 #grid(
   columns: (1fr, 50%),
@@ -396,9 +391,9 @@ specific or more recent evidence.
 )[
   The distinction between these two assumptions becomes concrete with a simple
   enrollment example. Suppose the only recorded fact is "Alice takes CS101." Under
-  the #strong[closed-world assumption], silence is denial: because nothing is said
+  the #emph[closed-world assumption], silence is denial: because nothing is said
   about Bob, the system concludes "Bob does not take CS101." The absence of a
-  positive statement is treated as a negative one. Under the #strong[open-world
+  positive statement is treated as a negative one. Under the #emph[open-world
     assumption], silence is ignorance: the system acknowledges that Bob's enrollment
   status is simply unknown, and he may or may not be enrolled. Neither answer is
   assumed until evidence arrives. @tab:openworldvsclosedworldassumptions summarizes
@@ -442,12 +437,12 @@ specific or more recent evidence.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:302 '* Inductive Logic Programming'
 // Slide: Inductive Logic Programming
-#strong[Inductive Logic Programming]
-
-#strong[Inductive logic programming] (ILP) learns logical rules from a combination of
-examples and background knowledge. Rather than fitting numerical parameters, ILP
-systems search through a space of possible logical hypotheses to find rules that
-explain the observed data while remaining consistent with what is already known.
+A different challenge in knowledge representation is not how to treat unstated facts,
+but how to learn new logical rules directly from data. #strong[Inductive logic
+  programming] (ILP) learns logical rules from a combination of examples and
+background knowledge. Rather than fitting numerical parameters, ILP systems search
+through a space of possible logical hypotheses to find rules that explain the
+observed data while remaining consistent with what is already known.
 
 Consider a simple illustration. Suppose the background knowledge states that birds
 have wings, and that penguins are birds. The system is then given positive examples:
@@ -522,7 +517,7 @@ statistical learners dominate.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:353 '# Knowledge Representation Frameworks'
 // Slide: Knowledge Representation Frameworks
-#strong[Knowledge Representation Frameworks]
+= Knowledge Representation Frameworks
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:355 '## Description Logics'
 // Slide: Description Logics
@@ -530,8 +525,6 @@ statistical learners dominate.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:359 '* Description Logic'
 // Slide: Description Logic
-#strong[Description Logic]
-
 #strong[Description logic] represents structured knowledge about a domain #cite(
   "baader2003dlhandbook",
 ). It occupies a carefully chosen middle ground in the expressivity spectrum: more
@@ -606,18 +599,17 @@ domain knowledge on the Semantic Web.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:410 '* ALC'
 // Slide: ALC
-#strong[ALC]
-
-#strong[Attributive Concept Language with Complements (ALC)] is a basic but
-expressive description logic that serves as a foundation for knowledge representation
-in ontologies. ALC combines familiar logical operators to describe concepts and their
-relationships: intersection ($inter.sq$, analogous to "and"), union ($union.sq$,
-analogous to "or"), and negation ($not$, analogous to "not"). Beyond these Boolean
-connectives, ALC supports existential quantification ($exists R.C$, meaning "there
-exists a related individual in class $C$") and universal quantification
-($forall R.C$, meaning "all related individuals belong to class $C$"). The underlying
-semantics are set-theoretic: classes correspond to sets of individuals, and
-properties correspond to binary relations over those individuals.
+The family of description logics that ontology languages build on starts with a
+foundational member: #strong[Attributive Concept Language with Complements (ALC)] is
+a basic but expressive description logic that serves as a foundation for knowledge
+representation in ontologies. ALC combines familiar logical operators to describe
+concepts and their relationships: intersection ($inter.sq$, analogous to "and"),
+union ($union.sq$, analogous to "or"), and negation ($not$, analogous to "not").
+Beyond these Boolean connectives, ALC supports existential quantification
+($exists R.C$, meaning "there exists a related individual in class $C$") and
+universal quantification ($forall R.C$, meaning "all related individuals belong to
+class $C$"). The underlying semantics are set-theoretic: classes correspond to sets
+of individuals, and properties correspond to binary relations over those individuals.
 
 To see how these constructs work in practice, consider the statement "all students
 take some course." In ALC this is captured as
@@ -640,8 +632,6 @@ inheriting its core reasoning architecture.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:430 '* SHOIN'
 // Slide: SHOIN
-#strong[SHOIN]
-
 #strong[SHOIN] is a description logic that extends ALC with several expressive
 features #cite("horrocks2003owl"). Where ALC provides the core Boolean connectives
 over concepts and existential and universal role restrictions, SHOIN adds five
@@ -724,8 +714,6 @@ nominals.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:485 '* OWL'
 // Slide: OWL
-#strong[OWL]
-
 #strong[Web Ontology Language (OWL)] #cite("mcguinness2004owl") is a semantic web
 language designed for representing complex knowledge with formal semantics that
 machines can reason over. Built on the description logic SHOIN, OWL provides a rich
@@ -804,8 +792,6 @@ algorithm guaranteed to answer every reasoning query in finite time.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:537 '* Example of OWL in RDF'
 // Slide: Example of OWL in RDF
-#strong[Example of OWL in RDF]
-
 @fig:exampleofowlinrdf shows a small OWL ontology built from these pieces.
 $"Student"$ is declared a subclass of $"Person"$, and a restriction on the
 $"hasAdvisor"$ object property requires a minimum cardinality of one: every
@@ -868,8 +854,6 @@ graphical notation is by comparison.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:568 '* RDF (Resource Description Framework)'
 // Slide: RDF (Resource Description Framework)
-#strong[RDF (Resource Description Framework)]
-
 #strong[Resource Description Framework (RDF)] #cite("klyne2004rdf") is a standard
 model for data interchange on the web. It provides a way to represent structured
 information in a machine-readable format, enabling different systems and applications
@@ -929,8 +913,6 @@ relationships within a domain.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:611 '* SPARQL'
 // Slide: SPARQL
-#strong[SPARQL]
-
 #strong[SPARQL] #cite("prudhommeaux2008sparql") is the query language for RDF data.
 It provides a standardized way to retrieve and manipulate information stored in RDF
 format, much as SQL serves relational databases.
@@ -960,12 +942,10 @@ pointing to `ex:Bird`, returning each matching resource as a row in the result s
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:633 '# Knowledge Graphs & The Semantic Web'
 // Slide: Knowledge Graphs & The Semantic Web
-#strong[Knowledge Graphs & The Semantic Web]
+= Knowledge Graphs & The Semantic Web
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:635 '* Semantic Web'
 // Slide: Semantic Web
-#strong[Semantic Web]
-
 The #strong[Semantic Web] extends the ordinary World Wide Web so that machines, not
 just humans, can understand and process its content. Traditional HTML is designed for
 visual presentation: a browser knows how to render headings, links, and paragraphs,
@@ -1059,8 +1039,6 @@ control continue to shape the ecosystem's evolution.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:693 '* WikiData'
 // Slide: WikiData
-#strong[WikiData]
-
 #strong[Wikidata] is a free, collaborative knowledge base that serves as the
 structured-data backbone for Wikipedia #cite("vrandecic2014wikidata"). Unlike
 Wikipedia's prose articles, Wikidata stores facts in a graph-based data model that
@@ -1139,8 +1117,6 @@ ontological links upstream from `Q5`.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:747 '* DBPedia'
 // Slide: DBPedia
-#strong[DBPedia]
-
 #strong[DBpedia] extracts structured content from Wikipedia to create a large-scale,
 multilingual knowledge graph #cite("lehmann2015dbpedia"). Rather than treating
 encyclopedia articles as flat text, DBpedia parses infoboxes, categories, and other
@@ -1174,8 +1150,7 @@ to Wikipedia's content.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:772 '* Semantic Networks'
 // Slide: Semantic Networks
-#strong[Semantic Networks]
-
+Wikidata and DBpedia are both instances of a broader, older formalism.
 #strong[Semantic networks] represent knowledge as graphs of concepts and relations.
 In this formalism, nodes stand for entities or concepts, while edges encode the
 semantic relations between them: typical edge labels include "is-a," "part-of," and
@@ -1236,8 +1211,6 @@ hierarchical structure that makes inheritance-based inference straightforward.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:823 '* WordNet'
 // Slide: WordNet
-#strong[WordNet]
-
 #strong[WordNet] #cite("miller1995wordnet") is a large lexical database of English
 words that models semantic relationships between them. Unlike resources built
 automatically from corpora, WordNet was manually curated by linguists, which gives it
@@ -1274,8 +1247,7 @@ should also match documents about "cars" directly improves recall.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:855 '* ConceptNet'
 // Slide: ConceptNet
-#strong[ConceptNet]
-
+The second of WordNet's two sibling examples takes a different focus.
 #strong[ConceptNet] #cite("speer2017conceptnet") is a large knowledge graph that
 connects words and phrases through labeled semantic relationships, serving as a
 structured repository of commonsense knowledge. Rather than encoding narrow,
@@ -1325,8 +1297,6 @@ similarity rather than relying solely on keyword overlap.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:888 '* Knowledge Graphs'
 // Slide: Knowledge Graphs
-#strong[Knowledge Graphs]
-
 #strong[Knowledge graphs] represent entities and their relationships as graph
 structures #cite("hogan2021knowledgegraphs"). In a knowledge graph, #emph[nodes]
 correspond to entities (people, places, concepts) and #emph[edges] encode the
@@ -1358,8 +1328,6 @@ Semantic Scholar use them to link papers, authors, and concepts.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:906 '* Knowledge Graph: University Example'
 // Slide: Knowledge Graph: University Example
-#strong[Knowledge Graph: University Example]
-
 @fig:knowledgegraphuniversityexample puts these ideas together in a university
 setting. At the class level, $"Student"$ and $"Professor"$ both connect to
 $"Department"$ through $"belongsToDepartment"$, and $"Department"$ connects to
@@ -1432,7 +1400,7 @@ responsible for every course a given student takes.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:949 '* References'
 // Slide: References
-#strong[References]
+= References
 
 #set text(size: 0.75em)
 #references("/msml610/lectures_source/refs.bib")
