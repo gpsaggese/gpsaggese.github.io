@@ -56,7 +56,7 @@ This project builds an end-to-end credit scoring model on the German Credit data
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/gpsaggese/umd_classes.git
+   git clone https://github.com/gpsaggese/gpsaggese.github.io.git
    cd umd_classes/class_project/MSML610/Fall2025/Projects/TutorTask_28_Fall2025_SHAP_Credit_Scoring_Model_with_SHAP_for_Interpretability
    ```
 
