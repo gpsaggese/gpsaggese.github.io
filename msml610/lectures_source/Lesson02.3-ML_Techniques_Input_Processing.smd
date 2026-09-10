@@ -10,22 +10,20 @@
 
 * From Raw Data to Model Input
 
-- @Motivation@:
+- @Motivation@
   - Raw data rarely arrives in the shape a model needs
   - A fixed sequence of transformations turns it into clean, well-scaled, informative
     input
     - Improves model performance, generalization, and training stability
 
 - This lesson covers
-  - _Data quality_: remove duplicates and errors, denoise, handle outliers
-    and missing values
-  - _Scaling and encoding_: put numeric features on comparable scales, turn
+  - _Data quality_: Remove duplicates and errors, denoise, handle outliers and
+    missing values
+  - _Scaling and encoding_: Put numeric features on comparable scales, turn
     categories into numbers, bin continuous values
-  - _Feature space engineering_: construct new features, reduce
-    dimensionality
-  - _Safe application_: fit every transformation on train only, then
-    augment the training set
-
+  - _Feature space engineering_: Construct new features, reduce dimensionality
+  - _Safe application_: Fit every transformation on train only, then augment the
+    training set
 ```graphviz[width=95%]
 digraph InputProcessingPipeline {
   bgcolor="transparent";
@@ -56,75 +54,76 @@ digraph InputProcessingPipeline {
 
 * Data Cleaning
 
-- @Goal@: ensure data quality for accurate model training by detecting and correcting
+- @Goal@: Ensure data quality for accurate model training by detecting and correcting
   _errors or inconsistencies_ in the dataset
 
-- @Techniques@:
-  - _Remove duplicates_: eliminate identical records
-  - _Correct data entry errors_: fix misspellings or misformatted entries
+- @Techniques@
+  - _Remove duplicates_: Eliminate identical records
+  - _Correct data entry errors_: Fix misspellings or misformatted entries
   - _Standardize data_:
     - Convert dates formatted as both `MM/DD/YYYY` and `DD-MM-YYYY` into one
       consistent format
-      - E.g., `01/02/2024` is ambiguous between the two formats, so the bug
-        is invisible on any single row
+      - E.g., `01/02/2024` is ambiguous between the two formats, so the bug is
+        invisible on any single row
     - Normalize strings (e.g., lowercase conversion)
     - Convert types (e.g., strings to integers)
     - Handle unexpected characters or encodings
 
-- @Remark@: removing mislabeled and noisy records lowers both the variance
-  of the fitted model and the irreducible error floor
+- @Remark@: Removing mislabeled and noisy records lowers both the variance of the
+  fitted model and the irreducible error floor
 
 * Noise Removal and Smoothing
 
-- @Goal@: remove irrelevant or corrupt variation from a signal to improve
-  clarity and model robustness
+- @Goal@: Remove irrelevant or corrupt variation from a signal to improve clarity and
+  model robustness
   - E.g., clean noisy speech by removing high-frequency noise
 
-- @Techniques@:
-  - _Smoothing_: moving average over a window of samples
-  - _Filtering_: low-pass filter for audio, median filter for spikes
+- @Techniques@
+  - _Smoothing_: Moving average over a window of samples
+  - _Filtering_: Low-pass filter for audio, median filter for spikes
 
-- @Cons@:
+- @Cons@
   - A moving average removes real signal along with noise
   - A low-pass filter adds lag between the true and the smoothed value
-  - A centered window uses future samples, which is leakage in any
-    forecasting setup
+  - A centered window uses future samples, which is leakage in any forecasting setup
 
 * Outliers
 
-- @Definition@: a data point that falls outside $[Q_1 - 1.5 \cdot IQR,
+- @Definition@: A data point that falls outside
+  $[Q_1 - 1.5 \cdot IQR,
   Q_3 + 1.5 \cdot IQR]$ (the interquartile range rule
   `#cite("tukey1977eda")`{=typst}) or has $|z| > 3$
-  - _Causes_: measurement errors, or genuine variability in the data
+  - _Causes_: Measurement errors, or genuine variability in the data
 
-- @Techniques@:
-  - _Detection_: box plots, the IQR rule, or the Z-score
-    - The Z-score test assumes approximate normality and is itself
-      distorted by the outliers it is trying to find (masking)
-  - _Treatment_: removal, capping, or a variance-stabilizing transform
-    (e.g., log scale)
+- @Techniques@
+  - _Detection_: Box plots, the IQR rule, or the Z-score
+    - The Z-score test assumes approximate normality and is itself distorted by the
+      outliers it is trying to find (masking)
+  - _Treatment_: Removal, capping, or a variance-stabilizing transform (e.g., log
+    scale)
 
-- @Remark@: an outlier can be an _error_ or a _rare true event_
-  - In fraud detection, anomaly detection, and risk modeling, the outlier
-    _is_ the signal, decide which case applies before removing anything
+- @Remark@: An outlier can be an _error_ or a _rare true event_
+  - In fraud detection, anomaly detection, and risk modeling, the outlier _is_ the
+    signal, decide which case applies before removing anything
 
 * Missing Data and Imputation
 
-- @Detection@: count of null values or incomplete entries per column
+- @Detection@: Count of null values or incomplete entries per column
 
 ::: columns
 :::: {.column width=50%}
-- @Definition@: three mechanisms explain why a value is missing
+
+- @Definition@: Three mechanisms explain why a value is missing
   `#cite("rubin1976missingdata")`{=typst}, and which one holds decides whether
   imputation is safe
-  - _MCAR_ (missing completely at random): missingness unrelated to any
-    variable, imputation is unbiased
-  - _MAR_ (missing at random): missingness depends on observed variables,
-    imputation conditioned on those variables is unbiased
-  - _MNAR_ (missing not at random): missingness depends on the missing value
-    itself
-    - E.g., high earners skip the income question, imputation is biased unless
-      the mechanism is modeled explicitly
+  - _MCAR_ (missing completely at random): Missingness unrelated to any variable,
+    imputation is unbiased
+  - _MAR_ (missing at random): Missingness depends on observed variables, imputation
+    conditioned on those variables is unbiased
+  - _MNAR_ (missing not at random): Missingness depends on the missing value itself
+    - E.g., high earners skip the income question, imputation is biased unless the
+      mechanism is modeled explicitly
+
 ::::
 :::: {.column width=50%}
 
@@ -155,21 +154,22 @@ digraph MissingnessMechanisms {
   { rank=same; mcar; mar; mnar; }
 }
 ```
+
 ::::
 :::
 
 * Missing Data and Imputation
 
-- @Techniques@:
-  - **Deletion**: remove rows or columns with too many missing values
-  - **Imputation**: mean/median/mode substitution, K-nearest neighbors (KNN), or a
+- @Techniques@
+  - **Deletion**: Remove rows or columns with too many missing values
+  - **Imputation**: Mean/median/mode substitution, K-nearest neighbors (KNN), or a
     regression/model-based estimate
     - E.g., impute a missing temperature reading by interpolating between the day's
       surrounding readings
-  - **Missingness indicator**: add a binary `was_missing` column, missingness is
+  - **Missingness indicator**: Add a binary `was_missing` column, missingness is
     often predictive on its own
 
-- @Cons@: mean/median/mode substitution
+- @Cons@: Mean/median/mode substitution
   - Shrinks feature variance
   - Attenuates correlations
   - Bias downstream estimates toward zero
@@ -178,18 +178,18 @@ digraph MissingnessMechanisms {
 
 * Feature Scaling
 
-- @Goal@: put features on comparable scales for fair distance comparisons
-  and faster, more stable optimization
-  - _Normalize_ (min-max): rescale to [0, 1]
-  - _Standardize_ (z-score): zero mean, unit variance
+- @Goal@: Put features on comparable scales for fair distance comparisons and faster,
+  more stable optimization
+  - _Normalize_ (min-max): Rescale to [0, 1]
+  - _Standardize_ (z-score): Zero mean, unit variance
 
-- @Techniques@:
+- @Techniques@
   - _Min-max normalization_: $x' = \frac{x - x_{\min}}{x_{\max} - x_{\min}}$
   - Z-score standardization: $x' = \frac{x - \mu}{\sigma}$
-  - RobustScaler: center and scale by the median and IQR instead of the
-    mean and range, unaffected by outliers
+  - RobustScaler: Center and scale by the median and IQR instead of the mean and
+    range, unaffected by outliers
 
-- @Comparison@:
+- @Comparison@
   - Min-max is affected by a single extreme value and does not bound unseen test
     values to [0, 1]
   - Z-score is more robust, but is still pulled by heavy outliers
@@ -197,10 +197,9 @@ digraph MissingnessMechanisms {
 
 * Feature Scaling
 
-- @Comparison@: scale-sensitive vs scale-invariant models
-
+- @Comparison@: Scale-sensitive vs scale-invariant models
   - _Needs scaling_
-    - kNN, SVM, k-means, PCA, and gradient-based models
+    - SVM, kNN, k-means, PCA, and gradient-based models
     - Unscaled feature with a small range gets penalized more heavily by an L1/L2
       penalty, the penalty is not scale-invariant
   - _Invariant to scaling_
@@ -209,49 +208,49 @@ digraph MissingnessMechanisms {
 
 * Categorical Encoding
 
-- @Goal@: convert non-numeric categories into numeric representations
+- @Goal@: Convert non-numeric categories into numeric representations
 
-- @Techniques@:
-  - _Label encoding_: assign an integer to each category
+- @Techniques@
+  - _Label encoding_: Assign an integer to each category
     - E.g., `red`, `green`, `blue` $\to$ `1`, `2`, `3`
     - Asserts both an order and equal spacing that is usually not meaningful
       - E.g., `green - red = blue - green`
-  - _One-hot encoding_: create a binary vector per category
+  - _One-hot encoding_: Create a binary vector per category
     - E.g., `red`, `green`, `blue` $\to$ `[1,0,0]`, `[0,1,0]`, `[0,0,1]`
     - Avoids the ordinal assumption
-  - _Ordinal encoding_: label encoding is correct when the order _is_ real
+  - _Ordinal encoding_: Label encoding is correct when the order _is_ real
     - E.g., `small < medium < large`
-  - _Target/mean encoding_, _learned embeddings_: map each category to a statistic of
+  - _Target/mean encoding_, _learned embeddings_: Map each category to a statistic of
     the target, or to a learned dense vector
 
-- @Cons@:
+- @Cons@
   - One-hot increases dimensionality sharply for high-cardinality columns
   - A category unseen at inference time has no learned encoding, map it to an
     explicit `unknown` bucket
 
 * Discretization
 
-- @Goal@: convert a continuous quantity to categorical
+- @Goal@: Convert a continuous quantity to categorical
 
-
-- @Techniques@:
-  - _Equal-width binning_: split the range into bins of equal width
-  - _Quantile binning_: split so each bin holds an equal count of points
-  - _Supervised binning_: choose cut points with a decision tree on the
-    target
-  - _K-means binning_: cluster values into bins along one dimension
+- @Techniques@
+  - _Equal-width binning_: Split the range into bins of equal width
+  - _Quantile binning_: Split so each bin holds an equal count of points
+  - _Supervised binning_: Choose cut points with a decision tree on the target
+  - _K-means binning_: Cluster values into bins along one dimension
 
 ::: columns
 :::: {.column width=50%}
-- @Example@: discretizing age
-  - `Child`: [0, 13), `Teen`: [13, 20), `Adult`: [20, 65), `Senior`: [65,
-    $\infty$)
+
+- @Example@: Discretizing age
+  - `Child`: [0, 13), `Teen`: [13, 20), `Adult`: [20, 65), `Senior`: [65, $\infty$)
   - Age 32 $\to$ `Adult`
-- @Cons@:
+
+- @Cons@
   - Discards all within-bin variation, e.g., ages 21 and 64 both become `Adult`
   - Cut points are arbitrary
   - An equal-width bin can end up empty
   - A real threshold effect can fall inside a bin instead of at its edge
+
 ::::
 :::: {.column width=45%}
 
@@ -281,6 +280,7 @@ digraph AgeBinning {
   age32 -> adult [label="mapped to", color="#D9902B", fontcolor="#6B4517"];
 }
 ```
+
 ::::
 :::
 
@@ -288,39 +288,39 @@ digraph AgeBinning {
 
 * Feature Construction
 
-- @Goal@:
+- @Goal@
   - Derive more informative features from raw inputs
   - Encod domain knowledge the raw columns don't expose directly
 
-- @Techniques@:
+- @Techniques@
   - Combine variables (e.g., $area = height \times width$)
   - Extract parts (e.g., year from a date)
   - Derive logical features
     - E.g., transform `2023-04-15` $\to$ (`Saturday`, `is_weekend = True`)
 
-- @Remark@: hand-built features are the part representation learning in deep learning
+- @Remark@: Hand-built features are the part representation learning in deep learning
   replaces
 
-- @Cons@: a feature built from the target, or from rows that occur after the
+- @Cons@: A feature built from the target, or from rows that occur after the
   prediction point in time, leaks _information_
 
 * Dimensionality Reduction
 
-- @Goal@: reduce the number of features while preserving key information, e.g.,
+- @Goal@: Reduce the number of features while preserving key information, e.g.,
   - Reduce 1024x640 image pixels to 10 principal components
   - Collapse 3 color channels into 1 luminance (grayscale) channel
 
-- @Comparison@: feature selection vs feature extraction
-  - _Selection_: keep a subset of the original, interpretable columns
-  - _Extraction_ (e.g., PCA): build new combinations of columns that are no
-    longer directly interpretable
+- @Comparison@: Feature selection vs feature extraction
+  - _Selection_: Keep a subset of the original, interpretable columns
+  - _Extraction_ (e.g., PCA): Build new combinations of columns that are no longer
+    directly interpretable
 
-- @Techniques@:
-  - _PCA_ `#cite("pearson1901pca")`{=typst}: unsupervised, linear combinations
-    that maximize variance
-  - _LDA_: supervised, projects data to maximize class separability
+- @Techniques@
+  - _PCA_ `#cite("pearson1901pca")`{=typst}: Unsupervised, linear combinations that
+    maximize variance
+  - _LDA_: Supervised, projects data to maximize class separability
   - _t-SNE_ `#cite("vandermaaten2008tsne")`{=typst}, _UMAP_
-    `#cite("mcinnes2018umap")`{=typst}: non-linear methods used mainly for
+    `#cite("mcinnes2018umap")`{=typst}: Non-linear methods used mainly for
     visualization
   - Some techniques are scale dependent
 
@@ -336,11 +336,13 @@ digraph AgeBinning {
 
 ::: columns
 :::: {.column width=50%}
-- @Problem@: a model, a scaler, imputer, encoder, and PCA are all _fitted_ objects,
+
+- @Problem@: A model, a scaler, imputer, encoder, and PCA are all _fitted_ objects,
   each learns statistics from data
   - E.g., mean, min/max, category list, principal axes
   - Fitting them on the full dataset (before splitting) leaks information into
     training `#cite("kaufman2012leakage")`{=typst}
+
 ::::
 :::: {.column width=50%}
 
@@ -381,18 +383,20 @@ digraph FitTransformLeakage {
   }
 }
 ```
+
 ::::
 :::
-
 ::: columns
 :::: {.column width=50%}
-- @Solution@: fit every transformer on the training fold only, then apply the
+
+- @Solution@: Fit every transformer on the training fold only, then apply the
   already-fitted transformer to validation and test
-  - Repeat this inside every cross-validation fold, not once for the whole
-    dataset
+  - Repeat this inside every cross-validation fold, not once for the whole dataset
   - E.g., `sklearn.pipeline.Pipeline` chains the fitted steps
+
 ::::
 :::: {.column width=50%}
+
 ```graphviz
 digraph FitTransformLeakage {
   bgcolor="transparent";
@@ -438,21 +442,21 @@ digraph FitTransformLeakage {
 
 * Data Augmentation
 
-- @Goal@: increase the effective size and diversity of a dataset by
-  applying label-preserving transformations to existing examples
+- @Goal@: Increase the effective size and diversity of a dataset by applying
+  label-preserving transformations to existing examples
 
-- @Techniques@:
-  - _Vision_: random crop, flip, rotation, color jitter, cutout
-  - _Text_: synonym replacement, back-translation, random word dropout
-  - _Audio_: pitch shift, time stretch, added background noise
+- @Techniques@
+  - _Vision_: Random crop, flip, rotation, color jitter, cutout
+  - _Text_: Synonym replacement, back-translation, random word dropout
+  - _Audio_: Pitch shift, time stretch, added background noise
   - _Tabular_: SMOTE-style synthetic minority oversampling
     `#cite("chawla2002smote")`{=typst}
 
-- @Remark@: augmentation acts as a "regularizer"
+- @Remark@: Augmentation acts as a "regularizer"
   - It exposes the model to more variation than the raw dataset contains, without
     collecting new labels
 
-- @Cons@:
+- @Cons@
   - An augmentation that changes the true label trains the model on wrong data
     - E.g., flipping an image of a `6` into a `9`
   - Make sure the synthetic data has the same distribution of the true data

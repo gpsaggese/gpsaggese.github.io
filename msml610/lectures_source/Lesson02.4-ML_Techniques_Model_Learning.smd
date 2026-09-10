@@ -18,7 +18,9 @@
 - @Goal@: Minimize scalar function $J(\vw)$ of $P$-variables $\vw$
   - E.g., in-sample error defined as the average point-wise error of hypothesis
     $h_{\vw}$ over $N$ training examples $(\vx_i, y_i)$:
-    $$E_{in}(\vw) \defeq \frac{1}{N} \sum_{i=1}^N e(h_{\vw}(\vx_i), y_i)$$
+    $$
+    E_{in}(\vw) \defeq \frac{1}{N} \sum_{i=1}^N e(h_{\vw}(\vx_i), y_i)
+    $$
 
 - @Solutions@
   1. _Analytical approach_
@@ -252,11 +254,12 @@
   \triangleq \frac{1}{N} \sum_{i=1}^N (h_{\vw}(\vx_i) - y_i) ^ 2
   $$
 
-- We have seen that (batch) gradient descent (BGD) updates each weight component
-  in one shot:
+- We have seen that (batch) gradient descent (BGD) updates each weight component in
+  one shot:
   $$
   \vw(t + 1) = \vw(t) - \eta \frac{\nabla E_{in}}{\|\nabla E_{in}\|}
   $$
+
 - The coordinate update for squared error has the formula:
   $$
   w_j(t + 1) = w_j(t) -
@@ -287,7 +290,7 @@
     \frac{\partial h_{\vw}(\vx_t)}{\partial w_j}
     $$
 
-- @Cons@: path in weight space is random and oscillates around local minimum
+- @Cons@: Path in weight space is random and oscillates around local minimum
 
 - @Intuition@: **Why SGD works**
   - $\nabla e$ is a function of a random var $\vx_n$
@@ -416,6 +419,7 @@ digraph BayesianFlow {
     Model -> Update -> Model;
 }
 ```
+
 ::::
 :::
 

@@ -161,6 +161,7 @@
 :::: {.column width=65%}
 
 // TODO(ai_gp): Make the font bigger
+
 ```mermaid
 timeline
   section Training
@@ -265,22 +266,21 @@ timeline
 - @Cons@
   - More difficult to evaluate
 
-
 * How to Measure Classifier's Performance?
 
 - @Success/hit/win rate@ (or error/miss rate)
   - Measures correct predictions proportion
-  $$
+    $$
   \text{accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
-  $$
+    $$
   - Important for overall accuracy
   - E.g., 80 correct out of 100 = 80% success rate
 
 - @Log probability/cross-entropy error@
   - Evaluates classification with probabilities 0 to 1
-  $$
+    $$
   \text{cross-entropy} = -\frac{1}{N} \sum_{i=1}^N [y_i \log(p_i) + (1 - y_i) \log(1 - p_i)]
-  $$
+    $$
   - Lower cross-entropy loss = better performance
 
 * How to Measure Classifier's Performance?
@@ -324,7 +324,6 @@ timeline
   - Otherwise $\to$ false positive or false negative
 
 - @Remark@: Error weight depends on the application
-
 ```{=typst}
 #styled-table(
   headers: ("Application", "False Positive", "False Negative"),
@@ -491,12 +490,12 @@ timeline
   - A classifier that always outputs 1 has $R = 1$ and $P \approx 0$ (the positive
     class is rare)
   - The _arithmetic mean_ $\frac{P + R}{2} \approx \frac{1}{2}$ looks fine
-  - But this is a trivial classifier: we want a score close to 0 to detect this
+  - But this is a trivial classifier: We want a score close to 0 to detect this
   - The F-score (harmonic mean) correctly gives a value close to 0
 
 * Trading Off Precision and Recall
 
-- @Remark@:
+- @Remark@
   - In theory, you want to increase **both precision and recall**
   - In practice, modify the threshold $\theta$ of a probabilistic classifier to
     **trade off precision and recall**
@@ -526,11 +525,11 @@ timeline
 ::: columns
 :::: {.column width=50%}
 
-- @Remark@: on a precision-recall plane
+- @Remark@: On a precision-recall plane
   - **Best classifier** (precision = recall = 1) is in the top-right corner
   - A curve **higher** than another one means a better classifier
-  - The baseline "random classifier" is a horizontal line at the fraction of
-    positive examples, and a curve above it is better than random guessing
+  - The baseline "random classifier" is a horizontal line at the fraction of positive
+    examples, and a curve above it is better than random guessing
 
 ::::
 :::: {.column width=50%}
@@ -599,6 +598,7 @@ timeline
   - AUC near the positive-class **prevalence** suggests no discriminative power,
     since that is the score of a random classifier
   - AUC closer to 1.0 indicates high performance
+
 ::::
 :::: {.column width=40%}
 
@@ -613,8 +613,8 @@ timeline
   - Handles imbalanced datasets effectively
 
 - @Example@
-  - Helps understand a model's ability to distinguish between patients with
-    and without a disease
+  - Helps understand a model's ability to distinguish between patients with and
+    without a disease
 
 ## Model Selection
 
@@ -654,8 +654,8 @@ timeline
   4. Pick model $g_m$ with minimum $E_{val}^{(m)}$
   5. Use test set $D_{test}$ to estimate fair performance of model $g_m$, i.e.,
      $E_{test} \approx E_{out}$
-  6. Retrain model with entire $D = D_{train} \cup D_{val} \cup D_{test}$ to get final
-     $g_m^{*}$
+  6. Retrain model with entire $D = D_{train} \cup D_{val} \cup D_{test}$ to get
+     final $g_m^{*}$
 
 ::::
 :::: {.column width=50%}
@@ -670,7 +670,7 @@ timeline
 ::: columns
 :::: {.column width=60%}
 
-- @Interpretation@: _"picking the model with smallest $E_{val}$"_ is a **form of
+- @Interpretation@: _"picking the model with smallest $E_{val}$"\_ is a **form of
   learning**:
   - Hypothesis set: $\{g_1, ... , g_N\}$
   - Training set: $D_{val}$
@@ -683,11 +683,11 @@ timeline
     $$
     E_{val}(g_m) < E_{out}(g_m)
     $$
-  - _Theoretically_: the penalty for model complexity with a finite set of hypotheses
+  - _Theoretically_: The penalty for model complexity with a finite set of hypotheses
     is:
-      $$
+    $$
       E_{out}(g_m) \le E_{val}(g_m) + O(\sqrt{\log(N) / K})
-      $$
+    $$
     - Use VC dimension for an infinite number of hypotheses (e.g., choice of
       $\lambda$ for regularization)
 
@@ -761,8 +761,8 @@ timeline
 - @Boosting@
   - Reduces bias by focusing on errors made by previous models
   - Sequentially adds models, each correcting its predecessor
-  - E.g., `adaBoost` increases weights of incorrectly classified data points to
-    learn the next model
+  - E.g., `adaBoost` increases weights of incorrectly classified data points to learn
+    the next model
 
 - @Stacking@
   - Uses a meta-model to combine separate models using weights
@@ -875,7 +875,8 @@ timeline
   - Typically use homogeneous models, i.e., parametrized models from $\calH$
 
 - @Remark@: Strong classifiers can be built from weak classifiers
-  - E.g., a tree is built out of decision stumps (i.e., decision trees with one level)
+  - E.g., a tree is built out of decision stumps (i.e., decision trees with one
+    level)
 
 ::::
 :::: {.column width=50%}
@@ -901,8 +902,8 @@ timeline
 
 - @Definition@: **AdaBoost** (from Adaptive Boosting) is an ensemble method, widely
   used for classification
-  - Assumes examples can be weighted in the cost function used to learn
-    (otherwise use resampling)
+  - Assumes examples can be weighted in the cost function used to learn (otherwise
+    use resampling)
 
 ::::
 :::: {.column width=40%}

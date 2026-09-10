@@ -221,6 +221,7 @@ def _generate_slides_pdf(
     output_path = os.path.join(lectures_dir, dst_name)
     # Build command.
     _LOG.info("Processing %s -> %s", source_name, dst_name)
+    # TODO(ai_gp): This should go through the gen_slides.py code path.
     cmd = [
         "notes_to_pdf.py",
         f"--input {source_path}",
