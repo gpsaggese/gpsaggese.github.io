@@ -350,7 +350,6 @@ obtain the error estimate; the arrow that leaves the box on the left is the retr
 step that reuses the held-out data once the estimate is final.
 
 // TODO(ai_gp): Use wrap-it
-// TODO(ai_gp): Create a tikz graph from this
 #figure(
   image(
     "../lectures_source/figures/L02.5.Testing_Data_For_Training.png",
@@ -521,24 +520,25 @@ than predicting 0.6. Lower cross-entropy therefore signals better-calibrated
 probabilistic predictions, making it the standard training objective for logistic
 regression and neural-network classifiers alike.
 
-// From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:290 '* How to Measure Classifier's Performance?'
-// Slide: How to Measure Classifier's Performance?
+// // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:290 '* How to Measure Classifier's Performance?'
+// // Slide: How to Measure Classifier's Performance?
 
-// TODO(ai_gp): A bit of back and forth here and in the slides, merge it better
+// // TODO(ai_gp): A bit of back and forth here and in the slides, merge it better
 
-#strong[Precision, recall, and F-score] become essential when the class distribution
-is imbalanced, because raw accuracy can be misleading in such settings (a model that
-always predicts the majority class may look accurate yet be useless).
-#emph[Precision] is the fraction of predicted positives that are actually positive,
-answering "when the model says yes, how often is it right?" A precision of 0.75 means
-that 75% of the instances flagged as positive really were positive. #emph[Recall] is
-the fraction of actual positives that the model correctly identifies, answering "of
-all the real positives, how many did the model catch?" A recall of 0.60 means that
-60% of the actual positives were identified. These two metrics trade off against each
-other: raising the decision threshold typically increases precision at the expense of
-recall, and vice versa. The #emph[F-score] reconciles the two by computing their
-weighted harmonic mean, providing a single number that rewards balanced performance
-on both axes. Formal definitions of each metric appear in the sections that follow.
+// #strong[Precision, recall, and F-score] become essential when the class distribution
+// is imbalanced, because raw accuracy can be misleading in such settings (a model that
+// always predicts the majority class may look accurate yet be useless).
+// #emph[Precision] is the fraction of predicted positives that are actually positive,
+// answering "when the model says yes, how often is it right?" A precision of 0.75 means
+// that 75% of the instances flagged as positive really were positive. #emph[Recall] is
+// the fraction of actual positives that the model correctly identifies, answering "of
+// all the real positives, how many did the model catch?" A recall of 0.60 means that
+// 60% of the actual positives were identified. These two metrics trade off against each
+// other: raising the decision threshold typically increases precision at the expense of
+// recall, and vice versa. The #emph[F-score] reconciles the two by computing their
+// weighted harmonic mean, providing a single number that rewards balanced performance
+// on both axes. Formal definitions of each metric appear in the sections that follow.
+
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:306 '### Classification Metrics'
 // Slide: Classification Metrics
@@ -641,53 +641,60 @@ These four counts are arranged into a two-by-two grid called the #strong[confusi
 immediately reveals how the model's errors are distributed between the two kinds of
 mistakes.
 
-// TODO(ai_gp): Wrap it.
-// rendered_images:begin
-// ```tikz
-// % Draw matrix
-// \draw[thick] (0,0) rectangle (4,4);
-// \draw[thick] (0,2) -- (4,2); % horizontal middle
-// \draw[thick] (2,0) -- (2,4); % vertical middle
-// 
-// % Labels for actual class
-// \node[rotate=90] at (-0.8,3) {act = 1};
-// \node[rotate=90] at (-0.8,1) {act = 0};
-// 
-// % Labels for predicted class
-// \node at (1,4.3) {pred = 1};
-// \node at (3,4.3) {pred = 0};
-// 
-// % Cell labels
-// \node at (1,3) {\textbf{TP}};
-// \node at (3,3) {\textbf{FN}};
-// \node at (1,1) {\textbf{FP}};
-// \node at (3,1) {\textbf{TN}};
-// ```
-// label=fig:confusionmatrix
-// caption=Diagram illustrating Confusion Matrix
-// width=70%
-// placement=auto
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.2.png",
-    width: 70%,
-  ),
-  caption: [Diagram illustrating Confusion Matrix],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:confusionmatrix>
+#wrap-content(
+  // rendered_images:begin
+  // ```tikz
+  // % Draw matrix
+  // \draw[thick] (0,0) rectangle (4,4);
+  // \draw[thick] (0,2) -- (4,2); % horizontal middle
+  // \draw[thick] (2,0) -- (2,4); % vertical middle
+  //
+  // % Labels for actual class
+  // \node[rotate=90] at (-0.8,3) {act = 1};
+  // \node[rotate=90] at (-0.8,1) {act = 0};
+  //
+  // % Labels for predicted class
+  // \node at (1,4.3) {pred = 1};
+  // \node at (3,4.3) {pred = 0};
+  //
+  // % Cell labels
+  // \node at (1,3) {\textbf{TP}};
+  // \node at (3,3) {\textbf{FN}};
+  // \node at (1,1) {\textbf{FP}};
+  // \node at (3,1) {\textbf{TN}};
+  // ```
+  // label=fig:confusionmatrix
+  // caption=Diagram illustrating Confusion Matrix
+  // width=70%
+  // placement=auto
+  // rendered_images:end
+  // render_images:begin
+  [
+    #figure(
+      image(
+        "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.2.png",
+        width: 70%,
+      ),
+      caption: [Diagram illustrating Confusion Matrix],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:confusionmatrix>
+  ],
+  align: left,
+  column-gutter: 1em,
+  columns: (50%, 1fr),
+)[
+  The confusion matrix four cells can be aggregated into the two most widely
+  used classification metrics, #emph[precision] and #emph[recall], each of
+  which highlights a different axis of model quality. Precision asks "of
+  everything the model called positive, how much really was?" while recall asks
+  "of everything that truly was positive, how much did the model find?" Both
+  are direct functions of the TP, FP, and FN counts, so the confusion matrix is
+  the single structure from which nearly all binary-classification evaluation
+  flows.
+]
 // render_images:end
-
-The confusion matrix four cells can be aggregated into the two most widely used
-classification metrics, #emph[precision] and #emph[recall], each of which
-highlights a different axis of model quality. Precision asks "of everything the
-model called positive, how much really was?" while recall asks "of everything
-that truly was positive, how much did the model find?" Both are direct
-functions of the TP, FP, and FN counts, so the confusion matrix is the single
-structure from which nearly all binary-classification evaluation flows.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:393 '* Precision vs Recall: Definition'
 // Slide: Precision vs Recall: Definition
