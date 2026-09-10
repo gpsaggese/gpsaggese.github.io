@@ -38,19 +38,19 @@
   e(h(\vx_i), f(\vx_i))
   $$
   - E.g.,
-    - Squared error: $e(\vx) = (h(\vx) - f(\vx))^2$
-    - 0-1 binary error: $e(\vx) = I[h(\vx) \ne f(\vx)]$
-    - Log probability: $e(\vx) = - \log( \Pr(h(\vx) == f(\vx)) )$
+    - Squared error: $e(\vx) \triangleq (h(\vx) - f(\vx))^2$
+    - 0-1 binary error: $e(\vx) \triangleq I[h(\vx) \ne f(\vx)]$
+    - Log probability: $e(\vx) \triangleq - \log( \Pr(h(\vx) == f(\vx)) )$
 
 - @Definition@: **In-sample error** computed using all points in the training set:
   $$
-  E_{in}{(h)} = \frac{1}{N} \sum_{i=1}^N e(h(\vx_i), f(\vx_i))
+  E_{in}{(h)} \triangleq \frac{1}{N} \sum_{i=1}^N e(h(\vx_i), f(\vx_i))
   $$
 
 - @Definition@: **Out-of-sample error** computed on the entire space of inputs
   $\calX$:
   $$
-  E_{out}(h) = \EE_{\vx \in \calX}[e(h(\vx), f(\vx))]
+  E_{out}(h) \triangleq \EE_{\vx \in \calX}[e(h(\vx), f(\vx))]
   $$
 
 * Training vs Test Set
@@ -214,7 +214,7 @@ timeline
   `#cite("hastie2009elements")`{=typst}:
   $$
   \text{MSE}
-  \defeq \frac{1}{N} \sum_{i=1}^N (h(\vx_i) - f(\vx_i))^2
+  \triangleq \frac{1}{N} \sum_{i=1}^N (h(\vx_i) - f(\vx_i))^2
   $$
   - Quantify difference between estimated and actual values
   - E.g., in house price prediction, determines how close predicted prices are to
@@ -235,7 +235,7 @@ timeline
 
 - @Definition@: RMSE is the **square root of Mean Squared Error** (MSE):
   $$
-  \text{RMSE} \defeq \sqrt{\text{MSE}}
+  \text{RMSE} \triangleq \sqrt{\text{MSE}}
   = \sqrt{\frac{1}{N} \sum_{i=1}^N (h(\vx_i) - f(\vx_i))^2}
   $$
 
@@ -255,12 +255,12 @@ timeline
 
 - @Definition@: **Median absolute deviation**:
   $$
-  \text{MAD} \defeq \text{median}_i(|h(\vx_i) - f(\vx_i)|)
+  \text{MAD} \triangleq \text{median}_i(|h(\vx_i) - f(\vx_i)|)
   $$
 
 - @Definition@: **Median squared error**:
   $$
-  \defeq \text{median}_i(|h(\vx_i) - f(\vx_i)|^2)
+  \triangleq \text{median}_i(|h(\vx_i) - f(\vx_i)|^2)
   $$
 
 - @Pros@
@@ -274,7 +274,7 @@ timeline
 - @Success/hit/win rate@ (or error/miss rate)
   - Measures correct predictions proportion
     $$
-  \text{accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
+  \text{accuracy} \triangleq \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
     $$
   - Important for overall accuracy
   - E.g., 80 correct out of 100 = 80% success rate
@@ -282,7 +282,7 @@ timeline
 - @Log probability/cross-entropy error@
   - Evaluates classification with probabilities 0 to 1
     $$
-  \text{cross-entropy} = -\frac{1}{N} \sum_{i=1}^N [y_i \log(p_i) + (1 - y_i) \log(1 - p_i)]
+  \text{cross-entropy} \triangleq -\frac{1}{N} \sum_{i=1}^N [y_i \log(p_i) + (1 - y_i) \log(1 - p_i)]
     $$
   - Lower cross-entropy loss = better performance
 
@@ -292,12 +292,12 @@ timeline
   - Useful for imbalanced data
   - _Precision_: Correctly predicted positives / total predicted positives
     $$
-    \text{precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
+    \text{precision} \triangleq \frac{\text{TP}}{\text{TP} + \text{FP}}
     $$
     - E.g., 0.75 precision = 75% true positives identified
   - _Recall_: Correctly predicted positives / actual positives
     $$
-    \text{recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
+    \text{recall} \triangleq \frac{\text{TP}}{\text{TP} + \text{FN}}
     $$
     - E.g., 0.60 recall = 60% actual positives identified
   - _F-score_: Weighted harmonic mean of precision and recall
@@ -396,7 +396,7 @@ timeline
   pred = 1_ \begingroup \small \vspace{-0.2cm}
   $$
   \text{precision}
-  \defeq \Pr(\text{TP} | \text{pred = 1})
+  \triangleq \Pr(\text{TP} | \text{pred = 1})
   = \frac{|\text{pred = 1} \land \text{act = 1}|}{|\text{pred = 1}|}
   = \frac{\text{TP}}{\text{TP} + \text{FP}}
   $$
@@ -406,7 +406,7 @@ timeline
   act = 1_ \begingroup \small \vspace{-0.2cm}
   $$
   \text{recall}
-  \defeq \Pr(\text{TP} | \text{act = 1})
+  \triangleq \Pr(\text{TP} | \text{act = 1})
   = \frac{\text{TP}}{|\text{act = 1}|}
   = \frac{\text{TP}}{\text{TP} + \text{FN}}
   $$
@@ -446,10 +446,10 @@ timeline
   $$
   \begin{alignat*}{3}
   \text{precision}
-    & \defeq \Pr(\text{TP} | \text{pred = 1}) = 0
+    & \triangleq \Pr(\text{TP} | \text{pred = 1}) = 0
     & \text{(since TP = 0)} \\
   \text{recall}
-    & \defeq \Pr(\text{TP} | \text{act = 1}) = 0
+    & \triangleq \Pr(\text{TP} | \text{act = 1}) = 0
     & \text{(since TP = 0)} \\
   \end{alignat*}
   $$
@@ -461,7 +461,7 @@ timeline
     & = 1
     & \text{(since FN = 0)} \\
   \text{precision}
-    & \defeq \Pr(\text{TP} | \text{pred = 1})
+    & \triangleq \Pr(\text{TP} | \text{pred = 1})
     & \text{(by definition)} \\
   &= \frac{\text{TP}}{\text{TP + FP}}
     & \text{($TP + FP = n$ because} \\
@@ -480,7 +480,7 @@ timeline
   recall_:
   $$
   \text{F-score}
-  \defeq \frac{2}{\frac{1}{P} + \frac{1}{R}}
+  \triangleq \frac{2}{\frac{1}{P} + \frac{1}{R}}
   = 2 \frac{P \cdot R}{P + R}
   $$
 
@@ -577,8 +577,8 @@ timeline
 - @Definition@: A **ROC curve** ("Receiver Operating Characteristic") plots _true
   positive rate vs false positive rate_ as the classification threshold $\theta$
   varies `#cite("fawcett2006roc")`{=typst}
-  - True positive rate (TPR) = recall = $\frac{\text{TP}}{\text{TP} + \text{FN}}$
-  - False positive rate (FPR) = $\frac{\text{FP}}{\text{FP} + \text{TN}}$
+  - True positive rate: $\text{TPR} \triangleq \text{recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}$
+  - False positive rate: $\text{FPR} \triangleq \frac{\text{FP}}{\text{FP} + \text{TN}}$
 
 - @Algorithm@: Plot the curve on the ROC plane ($x =$ FPR, $y =$ TPR)
   - Best classifier (TPR = 1, FPR = 0) is in the top-left corner

@@ -435,7 +435,7 @@ but also needs more data to generalize reliably.
 The #strong[bias-variance decomposition] #cite("geman1992biasvariance") breaks
 prediction error into three components:
 
-$ "Error" = "Bias"^2 + "Variance" + sigma^2 $
+$ "Error" eq.delta "Bias"^2 + "Variance" + sigma^2 $
 
 #emph[Bias] captures the error introduced when a model's assumptions are too
 simplistic to represent the true relationship; for instance, fitting a linear model

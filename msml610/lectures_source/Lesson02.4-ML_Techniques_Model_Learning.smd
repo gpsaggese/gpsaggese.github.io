@@ -19,7 +19,7 @@
   - E.g., in-sample error defined as the average point-wise error of hypothesis
     $h_{\vw}$ over $N$ training examples $(\vx_i, y_i)$:
     $$
-    E_{in}(\vw) \defeq \frac{1}{N} \sum_{i=1}^N e(h_{\vw}(\vx_i), y_i)
+    E_{in}(\vw) \triangleq \frac{1}{N} \sum_{i=1}^N e(h_{\vw}(\vx_i), y_i)
     $$
 
 - @Solutions@
