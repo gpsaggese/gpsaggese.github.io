@@ -423,18 +423,18 @@ class Test_generate_tex(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_generate_pdf
+# Test_generate_slides_pdf
 # #############################################################################
 
 
-class Test_generate_pdf(hunitest.TestCase):
+class Test_generate_slides_pdf(hunitest.TestCase):
     """
-    Test `_generate_pdf()` function for generating PDF slides.
+    Test `_generate_slides_pdf()` function for generating PDF slides.
     """
 
     def test1(self) -> None:
         """
-        Test `_generate_pdf()` with basic inputs generates correct command.
+        Test `_generate_slides_pdf()` with basic inputs generates correct command.
         """
         # Prepare inputs.
         class_dir, scratch_dir = _create_test_structure(
@@ -445,16 +445,16 @@ class Test_generate_pdf(hunitest.TestCase):
         hio.to_file(source_path, "Test content")
         # Run test.
         with hunteuti.capture_sys_calls() as sys_calls:
-            csfolole._generate_pdf(
+            csfolole._generate_slides_pdf(
                 class_dir, source_path, source_name, skip_action="open_pdf"
             )
         # Check outputs.
         actual_str = pprint.pformat(sys_calls)
         expected_str = hprint.dedent("""
             [{'args': ('notes_to_pdf.py --input '
-                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test1/tmp.scratch/Lesson01.1-Intro.smd '
+                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_slides_pdf.test1/tmp.scratch/Lesson01.1-Intro.smd '
                        '--output '
-                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test1/tmp.scratch/msml610/lectures/Lesson01.1-Intro.pdf '
+                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_slides_pdf.test1/tmp.scratch/msml610/lectures/Lesson01.1-Intro.pdf '
                        '--type slides --toc_type navigation --skip_action open_pdf '
                        '--debug_on_error',),
               'function': 'hsystem.system',
@@ -464,7 +464,7 @@ class Test_generate_pdf(hunitest.TestCase):
 
     def test2(self) -> None:
         """
-        Test `_generate_pdf()` with limit parameter includes limit in command.
+        Test `_generate_slides_pdf()` with limit parameter includes limit in command.
         """
         # Prepare inputs.
         class_dir, scratch_dir = _create_test_structure(
@@ -476,16 +476,16 @@ class Test_generate_pdf(hunitest.TestCase):
         limit = "1:5"
         # Run test.
         with hunteuti.capture_sys_calls() as sys_calls:
-            csfolole._generate_pdf(
+            csfolole._generate_slides_pdf(
                 class_dir, source_path, source_name, limit=limit
             )
         # Check outputs.
         actual_str = pprint.pformat(sys_calls)
         expected_str = hprint.dedent("""
             [{'args': ('notes_to_pdf.py --input '
-                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test2/tmp.scratch/Lesson01.1-Intro.smd '
+                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_slides_pdf.test2/tmp.scratch/Lesson01.1-Intro.smd '
                        '--output '
-                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test2/tmp.scratch/msml610/lectures/Lesson01.1-Intro.pdf '
+                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_slides_pdf.test2/tmp.scratch/msml610/lectures/Lesson01.1-Intro.pdf '
                        '--type slides --toc_type navigation --skip_action open_pdf '
                        '--debug_on_error --filter_by_slides 1:5',),
               'function': 'hsystem.system',
@@ -495,7 +495,7 @@ class Test_generate_pdf(hunitest.TestCase):
 
     def test3(self) -> None:
         """
-        Test `_generate_pdf()` with `cmd_opts` appends the extra options to
+        Test `_generate_slides_pdf()` with `cmd_opts` appends the extra options to
         the invoked command.
         """
         # Prepare inputs.
@@ -508,13 +508,68 @@ class Test_generate_pdf(hunitest.TestCase):
         cmd_opts = "--no_incremental --open_pdf"
         # Run test.
         with hunteuti.capture_sys_calls() as sys_calls:
-            csfolole._generate_pdf(
+            csfolole._generate_slides_pdf(
                 class_dir, source_path, source_name, cmd_opts=cmd_opts
             )
         # Check outputs.
         self.assertEqual(len(sys_calls), 1)
         cmd_str = sys_calls[0]["args"][0]
         self.assertIn(cmd_opts, cmd_str)
+
+
+# #############################################################################
+# Test_release_slides_pdf
+# #############################################################################
+
+
+class Test_release_slides_pdf(hunitest.TestCase):
+    """
+    Test `_release_slides_pdf()` function for releasing PDF slides.
+    """
+
+    def test1(self) -> None:
+        """
+        Test `_release_slides_pdf()` with basic inputs generates correct
+        `gen_slides.py` command. No real command is run: `hsystem.system()`
+        is mocked via `capture_sys_calls()`.
+        """
+        # Prepare inputs.
+        class_dir = "msml610"
+        source_path = "msml610/lectures_source/Lesson08.1-Intro.smd"
+        source_name = "Lesson08.1-Intro.smd"
+        # Run test.
+        with hunteuti.capture_sys_calls() as sys_calls:
+            csfolole._release_slides_pdf(class_dir, source_path, source_name)
+        # Check outputs.
+        self.assertEqual(len(sys_calls), 1)
+        cmd_str = sys_calls[0]["args"][0]
+        self.assertEqual(
+            cmd_str, "gen_slides.py -i msml610/08.1 --action release"
+        )
+
+    def test2(self) -> None:
+        """
+        Test `_release_slides_pdf()` with `cmd_opts` appends the extra
+        options to the invoked `gen_slides.py` command.
+        """
+        # Prepare inputs.
+        class_dir = "data605"
+        source_path = "data605/lectures_source/Lesson01.1-Intro.smd"
+        source_name = "Lesson01.1-Intro.smd"
+        cmd_opts = '--notes_to_pdf_args="--skip_action open_pdf"'
+        # Run test.
+        with hunteuti.capture_sys_calls() as sys_calls:
+            csfolole._release_slides_pdf(
+                class_dir, source_path, source_name, cmd_opts=cmd_opts
+            )
+        # Check outputs.
+        self.assertEqual(len(sys_calls), 1)
+        cmd_str = sys_calls[0]["args"][0]
+        self.assertEqual(
+            cmd_str,
+            "gen_slides.py -i data605/01.1 --action release "
+            '--notes_to_pdf_args="--skip_action open_pdf"',
+        )
 
 
 # #############################################################################
@@ -628,13 +683,71 @@ class Test_generate_lecture_commentary(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_generate_pdf_e2e
+# Test_release_book_chapters_pdf
 # #############################################################################
 
 
-class Test_generate_pdf_e2e(hunitest.TestCase):
+class Test_release_book_chapters_pdf(hunitest.TestCase):
     """
-    End-to-end tests for `_generate_pdf()` function.
+    Test `_release_book_chapters_pdf()` function for releasing book chapter
+    PDFs.
+    """
+
+    def test1(self) -> None:
+        """
+        Test `_release_book_chapters_pdf()` with basic inputs generates the
+        correct `render_book_chapter.py` command. No real command is run:
+        `hsystem.system()` is mocked via `capture_sys_calls()`.
+        """
+        # Prepare inputs.
+        class_dir = "msml610"
+        source_path = "msml610/lectures_source/Lesson03.2-Advanced.smd"
+        source_name = "Lesson03.2-Advanced.smd"
+        # Run test.
+        with hunteuti.capture_sys_calls() as sys_calls:
+            csfolole._release_book_chapters_pdf(
+                class_dir, source_path, source_name
+            )
+        # Check outputs.
+        self.assertEqual(len(sys_calls), 1)
+        cmd_str = sys_calls[0]["args"][0]
+        self.assertEqual(
+            cmd_str, "render_book_chapter.py -i msml610/03.2 --action release"
+        )
+
+    def test2(self) -> None:
+        """
+        Test `_release_book_chapters_pdf()` with `cmd_opts` appends the extra
+        options to the invoked `render_book_chapter.py` command.
+        """
+        # Prepare inputs.
+        class_dir = "data605"
+        source_path = "data605/lectures_source/Lesson01.1-Intro.smd"
+        source_name = "Lesson01.1-Intro.smd"
+        cmd_opts = '--run_typst_args="--skip_action open_pdf"'
+        # Run test.
+        with hunteuti.capture_sys_calls() as sys_calls:
+            csfolole._release_book_chapters_pdf(
+                class_dir, source_path, source_name, cmd_opts=cmd_opts
+            )
+        # Check outputs.
+        self.assertEqual(len(sys_calls), 1)
+        cmd_str = sys_calls[0]["args"][0]
+        self.assertEqual(
+            cmd_str,
+            "render_book_chapter.py -i data605/01.1 --action release "
+            '--run_typst_args="--skip_action open_pdf"',
+        )
+
+
+# #############################################################################
+# Test_generate_slides_pdf_e2e
+# #############################################################################
+
+
+class Test_generate_slides_pdf_e2e(hunitest.TestCase):
+    """
+    End-to-end tests for `_generate_slides_pdf()` function.
 
     These tests execute the actual command line using `hsystem.system()`
     to verify the complete integration of the PDF generation pipeline.
@@ -642,7 +755,7 @@ class Test_generate_pdf_e2e(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        Fast test: `_generate_pdf()` executes successfully with minimal source file.
+        Fast test: `_generate_slides_pdf()` executes successfully with minimal source file.
         """
         # Prepare inputs.
         class_dir, scratch_dir = _create_test_structure(
@@ -658,11 +771,11 @@ class Test_generate_pdf_e2e(hunitest.TestCase):
         """
         source_content = hprint.dedent(source_content)
         hio.to_file(source_path, source_content)
-        csfolole._generate_pdf(class_dir, source_path, source_name)
+        csfolole._generate_slides_pdf(class_dir, source_path, source_name)
 
     def test2(self) -> None:
         """
-        Fast test: `_generate_pdf()` with limit parameter completes successfully.
+        Fast test: `_generate_slides_pdf()` with limit parameter completes successfully.
         """
         # Prepare inputs.
         class_dir, scratch_dir = _create_test_structure(
@@ -682,7 +795,7 @@ class Test_generate_pdf_e2e(hunitest.TestCase):
         source_content = hprint.dedent(source_content)
         hio.to_file(source_path, source_content)
         limit = "0:1"
-        csfolole._generate_pdf(class_dir, source_path, source_name, limit=limit)
+        csfolole._generate_slides_pdf(class_dir, source_path, source_name, limit=limit)
 
 
 # #############################################################################
@@ -781,7 +894,7 @@ class Test_process_lecture_file_e2e(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        Fast test: Process single file with `generate_pdf` action.
+        Fast test: Process single file with `generate_slides_pdf` action.
         """
         # Prepare inputs.
         class_dir, scratch_dir = _create_test_structure(
@@ -797,7 +910,7 @@ class Test_process_lecture_file_e2e(hunitest.TestCase):
         """
         source_content = hprint.dedent(source_content)
         hio.to_file(source_path, source_content)
-        actions = ["generate_pdf"]
+        actions = ["generate_slides_pdf"]
         # Run test - only verify it completes without exception.
         csfolole._process_lecture_file(
             class_dir, source_path, source_name, actions
@@ -825,7 +938,7 @@ class Test_process_lecture_file_e2e(hunitest.TestCase):
         """
         source_content = hprint.dedent(source_content)
         hio.to_file(source_path, source_content)
-        actions = ["generate_pdf", "generate_tex"]
+        actions = ["generate_slides_pdf", "generate_tex"]
         # Run test - only verify it completes without exception.
         csfolole._process_lecture_file(
             class_dir, source_path, source_name, actions
@@ -905,7 +1018,7 @@ class Test_process_lecture_file_with_generate_toc(hunitest.TestCase):
         - class_dir: test class directory
         - source_path: path to source file
         - source_name: name of source file
-        - actions: ['generate_pdf']
+        - actions: ['generate_slides_pdf']
 
         Expected:
         - Returns None
@@ -917,7 +1030,7 @@ class Test_process_lecture_file_with_generate_toc(hunitest.TestCase):
         source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
         source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "# Title")
-        actions = ["generate_pdf"]
+        actions = ["generate_slides_pdf"]
         # Capture system calls.
         with hunteuti.capture_sys_calls() as sys_calls:
             result = csfolole._process_lecture_file(
@@ -949,7 +1062,7 @@ class Test_process_lecture_file_with_generate_toc(hunitest.TestCase):
         source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
         source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "# Title")
-        actions = ["generate_pdf"]
+        actions = ["generate_slides_pdf"]
         cmd_opts = "--no_incremental"
         # Capture system calls.
         with hunteuti.capture_sys_calls() as sys_calls:

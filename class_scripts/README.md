@@ -22,7 +22,7 @@ automated LLM-powered transformations
   - `lectures_source/`: directory containing `Lesson*.smd` files
   - `lectures_pdf.tmp/`: directory storing temporary PDF slides
   - `lectures_pdf/`: directory storing generated PDF slides
-    - E.g., `gen_slides.py`, `for_loop_lessons.py --action generate_pdf`
+    - E.g., `gen_slides.py`, `for_loop_lessons.py --action generate_slides_pdf`
   - `lectures_tex/`: directory for generated `.tex` slide sources
     - E.g., `for_loop_lessons.py --action generate_tex`
   - `lectures_video_script/`: directory for generated video script files
@@ -93,7 +93,7 @@ automated LLM-powered transformations
 ## Script Dependency Hierarchy
 
 - `for_loop_lessons.py` (Main orchestrator)
-  - action=`generate_pdf` -> `notes_to_pdf.py`
+  - action=`generate_slides_pdf` -> `notes_to_pdf.py`
   - action=`generate_tex` -> `notes_to_pdf.py`
   - action=`generate_script` -> `gen_lecture_video_script.py`
   - action=`reduce_slide` -> `process_slides.py`
@@ -827,7 +827,7 @@ automated LLM-powered transformations
 
 **Available Actions:**
 
-- `generate_pdf`: Generate presentation slide PDFs from text source files,
+- `generate_slides_pdf`: Generate presentation slide PDFs from text source files,
   written to `<class>/lectures/`
 - `generate_tex`: Generate `.tex` slide sources (no PDF), written to
   `<class>/lectures_tex/`
@@ -861,8 +861,8 @@ automated LLM-powered transformations
   - Continuous range (hyphen-separated): '01.1-03.2' (inclusive)
   - Note: Range and union syntax cannot be mixed
 - `--class`: Class directory name (required, e.g., data605, msml610)
-- `--action`: Actions to perform (default: generate_pdf)
-  - Can specify multiple: `--action generate_pdf --action generate_script`
+- `--action`: Actions to perform (default: generate_slides_pdf)
+  - Can specify multiple: `--action generate_slides_pdf --action generate_script`
 - `--limit`: Optional slide range to process (e.g., '1:3')
   - Only works when processing a single lecture file
 - `--cmd_opts`: Extra options string passed through verbatim to the invoked
@@ -876,7 +876,7 @@ automated LLM-powered transformations
 
 - Generate PDF for single lecture:
   ```bash
-  > for_loop_lessons.py --lectures 01.1 --class data605 --action generate_pdf
+  > for_loop_lessons.py --lectures 01.1 --class data605 --action generate_slides_pdf
   ```
 
 - Generate scripts for multiple lectures:
@@ -886,17 +886,17 @@ automated LLM-powered transformations
 
 - Multiple actions on same lectures:
   ```bash
-  > for_loop_lessons.py --lectures 01* --class msml610 --action generate_pdf --action generate_script
+  > for_loop_lessons.py --lectures 01* --class msml610 --action generate_slides_pdf --action generate_script
   ```
 
 - Partial slide processing:
   ```bash
-  > for_loop_lessons.py --lectures 01.1 --limit 1:3 --class data605 --action generate_pdf
+  > for_loop_lessons.py --lectures 01.1 --limit 1:3 --class data605 --action generate_slides_pdf
   ```
 
 - Process a continuous range of lessons:
   ```bash
-  > for_loop_lessons.py --lectures "01.1-03.2" --class data605 --action generate_pdf
+  > for_loop_lessons.py --lectures "01.1-03.2" --class data605 --action generate_slides_pdf
   ```
 
 - Reduce slide content using LLM for a single lecture:
@@ -911,7 +911,7 @@ automated LLM-powered transformations
 
 - Process with verbose logging for debugging:
   ```bash
-  > for_loop_lessons.py --lectures "01.1" --class data605 --action generate_pdf -v DEBUG
+  > for_loop_lessons.py --lectures "01.1" --class data605 --action generate_slides_pdf -v DEBUG
   ```
 
 ### Workflow
@@ -937,21 +937,21 @@ automated LLM-powered transformations
 - Generates PDF files for all lessons starting with 0 or 1 (e.g., 01.1, 01.2,
   10.1, etc.) in `data605/lectures/`:
   ```bash
-  > for_loop_lessons.py --lectures "0*:1*" --class data605 --action generate_pdf
+  > for_loop_lessons.py --lectures "0*:1*" --class data605 --action generate_slides_pdf
   ```
 
 ### Generate Both PDF Slides and Reading Scripts
 
 - Generates PDFs in `lectures/` and scripts in `lectures_video_script/`:
   ```bash
-  > for_loop_lessons.py --lectures 01* --class msml610 --action generate_pdf --action generate_script
+  > for_loop_lessons.py --lectures 01* --class msml610 --action generate_slides_pdf --action generate_script
   ```
 
 ### Generate PDF and Book Chapter for a Single Lesson
 
 - Creates slide PDF and corresponding book chapter with pandoc conversion:
   ```bash
-  > for_loop_lessons.py --lectures 01.1 --class data605 --action generate_pdf --action generate_lecture_commentary
+  > for_loop_lessons.py --lectures 01.1 --class data605 --action generate_slides_pdf --action generate_lecture_commentary
   ```
 
 ## Lecture Commentary Generation
@@ -1194,14 +1194,14 @@ for reading and study.
 
 ### Generate Specific Slides From a Lecture (slides 1-3 Only)
 
-- Only applies to `generate_pdf` action when a single lecture file matches:
+- Only applies to `generate_slides_pdf` action when a single lecture file matches:
   ```bash
-  > for_loop_lessons.py --lectures 01.1 --limit 1:3 --class data605 --action generate_pdf
+  > for_loop_lessons.py --lectures 01.1 --limit 1:3 --class data605 --action generate_slides_pdf
   ```
 
 ### Preview Commands Without Executing (dry-run)
 
 - Prints all commands that would be executed without running them:
   ```bash
-  > for_loop_lessons.py --lectures 01* --class data605 --action generate_pdf --dry_run
+  > for_loop_lessons.py --lectures 01* --class data605 --action generate_slides_pdf --dry_run
   ```

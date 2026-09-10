@@ -34,19 +34,22 @@ import helpers.hsystem as hsystem
 
 _LOG = logging.getLogger(__name__)
 
+# TODO(ai_gp): Add a one line comment explaining every target.
 _VALID_ACTIONS = [
     "check_slide",
     "generate_lecture_commentary",
     "generate_class_quizzes",
     "generate_class_recap",
-    "generate_pdf",
+    "generate_slides_pdf",
     "generate_script",
     "generate_tex",
     "generate_toc",
     "improve_slide",
     "reduce_slide",
+    "release_book_chapters_pdf",
+    "release_slides_pdf",
 ]
-_DEFAULT_ACTIONS = ["generate_pdf"]
+_DEFAULT_ACTIONS = []
 
 
 # #############################################################################
@@ -188,7 +191,7 @@ def _find_lecture_files(
 # #############################################################################
 
 
-def _generate_pdf(
+def _generate_slides_pdf(
     class_dir: str,
     source_path: str,
     source_name: str,
@@ -233,6 +236,85 @@ def _generate_pdf(
         cmd.append(cmd_opts)
     # Execute command.
     cmd_str = " ".join(cmd)
+    _LOG.info("Executing: %s", cmd_str)
+    hsystem.system(cmd_str, suppress_output=False)
+
+
+def _release_slides_pdf(
+    class_dir: str,
+    source_path: str,
+    source_name: str,
+    *,
+    cmd_opts: Optional[str] = None,
+) -> None:
+    """
+    Release the slides PDF for a lecture via `gen_slides.py --action release`.
+
+    Copies the PDF already built in the staging dir `{class_dir}/lectures_pdf.tmp/`
+    to the published dir `{class_dir}/lectures_pdf/` and compresses it in place.
+    Does not rebuild the PDF: run the `generate_slides_pdf` action first.
+
+    :param class_dir: class directory (data605 or msml610)
+    :param source_path: path to source .smd file
+    :param source_name: name of source file
+    :param cmd_opts: extra options string appended verbatim to the invoked
+        command
+    """
+    # Extract lesson number from source name (e.g., Lesson01.1-Intro.smd -> 01.1).
+    match = re.match(r"Lesson([\d.]+)", source_name)
+    hdbg.dassert_is_not(
+        match, None, "Could not extract lesson number from %s", source_name
+    )
+    lesson_number = match.group(1)
+    # Build command.
+    _LOG.info("Releasing PDF for %s (lesson %s)", source_name, lesson_number)
+    cmd_str = f"gen_slides.py -i {class_dir}/{lesson_number} --action release"
+    if cmd_opts:
+        cmd_str += f" {cmd_opts}"
+    _LOG.info("Executing: %s", cmd_str)
+    hsystem.system(cmd_str, suppress_output=False)
+
+
+def _release_book_chapters_pdf(
+    class_dir: str,
+    source_path: str,
+    source_name: str,
+    *,
+    cmd_opts: Optional[str] = None,
+) -> None:
+    """
+    Release the book chapter PDF for a lecture via
+    `render_book_chapter.py --action release`.
+
+    Copies the PDF already built in the staging dir `{class_dir}/book.tmp/`
+    to the published dir `{class_dir}/book/` and compresses it in place.
+    Does not rebuild the PDF: run the `generate_lecture_commentary` action
+    first.
+
+    :param class_dir: class directory (data605 or msml610)
+    :param source_path: path to source .smd file
+    :param source_name: name of source file
+    :param cmd_opts: extra options string appended verbatim to the invoked
+        command
+    """
+    # Extract lesson number from source name (e.g., Lesson01.1-Intro.smd -> 01.1).
+    match = re.match(r"Lesson([\d.]+)", source_name)
+    hdbg.dassert_is_not(
+        match, None, "Could not extract lesson number from %s", source_name
+    )
+    lesson_number = match.group(1)
+    # Build command.
+    _LOG.info(
+        "Releasing book chapter PDF for %s (lesson %s)",
+        source_name,
+        lesson_number,
+    )
+    cmd_str = (
+        f"render_book_chapter.py -i {class_dir}/{lesson_number} "
+        "--action release"
+    )
+    if cmd_opts:
+        cmd_str += f" {cmd_opts}"
     _LOG.info("Executing: %s", cmd_str)
     hsystem.system(cmd_str, suppress_output=False)
 
@@ -569,9 +651,7 @@ def _process_lecture_file(
     :param class_dir: class directory (data605 or msml610)
     :param source_path: path to source .smd file
     :param source_name: name of source file
-    :param actions: list of actions to execute ('generate_pdf', 'generate_script',
-        'reduce_slide', 'check_slide', 'improve_slide', 'generate_lecture_commentary',
-        'generate_class_quizzes', 'generate_class_recap', 'generate_toc')
+    :param actions: list of actions to execute
     :param limit: optional slide range to process
     :param cmd_opts: extra options string passed through verbatim to the
         invoked commands (e.g., 'gen_lecture_commentary.py')
@@ -580,13 +660,21 @@ def _process_lecture_file(
     _LOG.info("Processing file: %s", source_path)
     res = ""
     for action in actions:
-        if action == "generate_pdf":
-            _generate_pdf(
+        if action == "generate_slides_pdf":
+            _generate_slides_pdf(
                 class_dir,
                 source_path,
                 source_name,
                 limit=limit,
                 cmd_opts=cmd_opts,
+            )
+        elif action == "release_slides_pdf":
+            _release_slides_pdf(
+                class_dir, source_path, source_name, cmd_opts=cmd_opts
+            )
+        elif action == "release_book_chapters_pdf":
+            _release_book_chapters_pdf(
+                class_dir, source_path, source_name, cmd_opts=cmd_opts
             )
         elif action == "generate_tex":
             _generate_tex(
