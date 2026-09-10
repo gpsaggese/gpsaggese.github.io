@@ -5,16 +5,25 @@ group
 
 ## What Do You Gain From Working with GP's Research Group?
 - Write blogs, academic papers, books that will make your resume stand out
-- Work on interesting technical projects that will improve your resume
+- Work on interesting technical projects and learn how to be an AI researcher
 - Meet interesting people who will be useful as part of your network
-- Get recommendation letters and advice from GP
+- Get recommendation letters and career advice from GP
+  - I wrote more than 50 letter of recommendations for my students, got them OPT, etc
 - Get TA or RA positions for GP's classes
+  - I had more than 20 TAs and RAs in the last 5 years alone
 - Get internships, part-time, full-time jobs
-- Get exposure to companies
   - GP is a liaison between UMD CS/Engineering and startups, venture capital,
     and large companies
+  - I know a bunch of people who can be helpful for your endeavours (see
+    https://gpsaggese.github.io/08_screw_ups/)
+  - More than 30 students found a job with my network
+- Get help starting your company
+  - As part of [UMD I-Corps](https://www.icorps.umd.edu/team) I've helped more than
+    60 professors (and 4 students) start their company
+  - I've raised more than $10M for my startups and while helping others
 
 ## What is the AI Policy
+- See ./website/docs/blog/posts/My_AI_Policy.md
 
 ## Authorship Policy
 - Ideas and projects go through the following life cycle:
