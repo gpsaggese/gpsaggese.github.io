@@ -712,7 +712,9 @@ class Test_release_book_chapters_pdf(hunitest.TestCase):
         self.assertEqual(len(sys_calls), 1)
         cmd_str = sys_calls[0]["args"][0]
         self.assertEqual(
-            cmd_str, "render_book_chapter.py -i msml610/03.2 --action release"
+            cmd_str,
+            "render_book_chapter.py -i msml610/03.2 --action release "
+            '--run_typst_args="--skip_action open_pdf"',
         )
 
     def test2(self) -> None:
@@ -724,7 +726,7 @@ class Test_release_book_chapters_pdf(hunitest.TestCase):
         class_dir = "data605"
         source_path = "data605/lectures_source/Lesson01.1-Intro.smd"
         source_name = "Lesson01.1-Intro.smd"
-        cmd_opts = '--run_typst_args="--skip_action open_pdf"'
+        cmd_opts = "--no_abort_on_warnings"
         # Run test.
         with hunteuti.capture_sys_calls() as sys_calls:
             csfolole._release_book_chapters_pdf(
@@ -736,7 +738,8 @@ class Test_release_book_chapters_pdf(hunitest.TestCase):
         self.assertEqual(
             cmd_str,
             "render_book_chapter.py -i data605/01.1 --action release "
-            '--run_typst_args="--skip_action open_pdf"',
+            '--run_typst_args="--skip_action open_pdf" '
+            "--no_abort_on_warnings",
         )
 
 

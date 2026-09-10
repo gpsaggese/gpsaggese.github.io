@@ -284,13 +284,15 @@ def _release_book_chapters_pdf(
     cmd_opts: Optional[str] = None,
 ) -> None:
     """
-    Release the book chapter PDF for a lecture via
+    Compile and release the book chapter PDF for a lecture via
     `render_book_chapter.py --action release`.
 
-    Copies the PDF already built in the staging dir `{class_dir}/book.tmp/`
-    to the published dir `{class_dir}/book/` and compresses it in place.
-    Does not rebuild the PDF: run the `generate_lecture_commentary` action
-    first.
+    `--action release` adds to `render_book_chapter.py`'s `generate` default
+    action, so this compiles the `.typ` chapter via `run_typst.py` (requires
+    the `.typ` source to already exist, e.g. from `generate_lecture_commentary`)
+    and then copies the built PDF from the staging dir `{class_dir}/book.tmp/`
+    to the published dir `{class_dir}/book/`, compressing it in place. The
+    PDF viewer is not opened.
 
     :param class_dir: class directory (data605 or msml610)
     :param source_path: path to source .smd file
@@ -312,7 +314,7 @@ def _release_book_chapters_pdf(
     )
     cmd_str = (
         f"render_book_chapter.py -i {class_dir}/{lesson_number} "
-        "--action release"
+        '--action release --run_typst_args="--skip_action open_pdf"'
     )
     if cmd_opts:
         cmd_str += f" {cmd_opts}"
