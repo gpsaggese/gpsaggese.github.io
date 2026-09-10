@@ -102,15 +102,39 @@ example of each.
   placement: auto,
 ) <tab:whatisasimplemodel>
 
+// From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:59 '* Model Soundness'
+// Slide: Model Soundness
+Controlling complexity is not enough on its own, however: even a simple model still
+has to earn your trust by telling a coherent story. You cannot simply accept its
+output at face value without interrogating it. As statistician George Box put it,
+"All models are wrong, but some are useful" #cite("box1976science"). A useful
+discipline is to ask yourself the same question a skeptical reviewer would: "What
+criticisms would I give if this model were presented for the first time?"
+
+One way to keep that skepticism grounded is to compare the model against a simple
+benchmark rather than judging its performance in isolation. A benchmark might always
+output a constant value, such as a long-only model that always predicts a stock will
+rise, or it might produce purely random results, mimicking a bootstrap test of the
+null hypothesis that the model has no genuine predictive power. A model that cannot
+clear either baseline is not adding value, however sophisticated it looks.
+
+#strong[A perfect fit can mean nothing], and the reason is a matter of degrees of
+freedom rather than modeling skill. Take two data points on a plane: a straight line
+always fits them perfectly, simply because two points determine a unique line. That
+perfect fit reveals nothing about the underlying process, since the model (the line)
+is exactly as complex as the dataset it was fit to (two points), leaving no room for
+the data to falsify the hypothesis. A model this flexible relative to its data can
+never be wrong, and a hypothesis that can never be wrong has not really been tested.
+
 // From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:78 '* Sampling Bias (1/2)'
 // Slide: Sampling Bias (1/2)
-Complexity is not the only threat to a trustworthy model, however: how the data
-itself was collected matters just as much. #strong[Sampling bias] occurs when the
-data used to train or evaluate a model is not representative of the intended
-population. Because a model views the world entirely through its training data,
-biased sampling leads directly to biased outcomes. This connection is formalized by
-Hoeffding's inequality in ML theory, which assumes that training and testing
-distributions are drawn from the same underlying population #cite(
+Even a properly falsifiable model, however, is only as trustworthy as the data used
+to test it. #strong[Sampling bias] occurs when the data used to train or evaluate a
+model is not representative of the intended population. Because a model views the
+world entirely through its training data, biased sampling leads directly to biased
+outcomes. This connection is formalized by Hoeffding's inequality in ML theory, which
+assumes that training and testing distributions are drawn from the same underlying
+population #cite(
   "abumostafa2012learning",
 ). When that assumption breaks, the guarantees on generalization break with it.
 
