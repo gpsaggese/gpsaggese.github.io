@@ -350,9 +350,10 @@ obtain the error estimate; the arrow that leaves the box on the left is the retr
 step that reuses the held-out data once the estimate is final.
 
 // TODO(ai_gp): Use wrap-it
+// include:msml610/lectures_source/figures/L02.5.Testing_Data_For_Training.tex "Testing Data For Training"
 #figure(
   image(
-    "../lectures_source/figures/L02.5.Testing_Data_For_Training.png",
+    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.5.png",
     width: 70%,
   ),
   caption: [Held-out data feeding both the error estimate and the final retrained model.],
@@ -524,7 +525,6 @@ regression and neural-network classifiers alike.
 // // Slide: How to Measure Classifier's Performance?
 
 // // TODO(ai_gp): A bit of back and forth here and in the slides, merge it better
-
 // #strong[Precision, recall, and F-score] become essential when the class distribution
 // is imbalanced, because raw accuracy can be misleading in such settings (a model that
 // always predicts the majority class may look accurate yet be useless).
@@ -538,7 +538,6 @@ regression and neural-network classifiers alike.
 // recall, and vice versa. The #emph[F-score] reconciles the two by computing their
 // weighted harmonic mean, providing a single number that rewards balanced performance
 // on both axes. Formal definitions of each metric appear in the sections that follow.
-
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:306 '### Classification Metrics'
 // Slide: Classification Metrics
@@ -641,59 +640,43 @@ These four counts are arranged into a two-by-two grid called the #strong[confusi
 immediately reveals how the model's errors are distributed between the two kinds of
 mistakes.
 
-#wrap-content(
-  // rendered_images:begin
-  // ```tikz
-  // % Draw matrix
-  // \draw[thick] (0,0) rectangle (4,4);
-  // \draw[thick] (0,2) -- (4,2); % horizontal middle
-  // \draw[thick] (2,0) -- (2,4); % vertical middle
-  //
-  // % Labels for actual class
-  // \node[rotate=90] at (-0.8,3) {act = 1};
-  // \node[rotate=90] at (-0.8,1) {act = 0};
-  //
-  // % Labels for predicted class
-  // \node at (1,4.3) {pred = 1};
-  // \node at (3,4.3) {pred = 0};
-  //
-  // % Cell labels
-  // \node at (1,3) {\textbf{TP}};
-  // \node at (3,3) {\textbf{FN}};
-  // \node at (1,1) {\textbf{FP}};
-  // \node at (3,1) {\textbf{TN}};
-  // ```
-  // label=fig:confusionmatrix
-  // caption=Diagram illustrating Confusion Matrix
-  // width=70%
-  // placement=auto
-  // rendered_images:end
-  // render_images:begin
-  [
-    #figure(
-      image(
-        "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.2.png",
-        width: 70%,
-      ),
-      caption: [Diagram illustrating Confusion Matrix],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:confusionmatrix>
-  ],
-  align: left,
-  column-gutter: 1em,
-  columns: (50%, 1fr),
-)[
-  The confusion matrix four cells can be aggregated into the two most widely
-  used classification metrics, #emph[precision] and #emph[recall], each of
-  which highlights a different axis of model quality. Precision asks "of
-  everything the model called positive, how much really was?" while recall asks
-  "of everything that truly was positive, how much did the model find?" Both
-  are direct functions of the TP, FP, and FN counts, so the confusion matrix is
-  the single structure from which nearly all binary-classification evaluation
-  flows.
-]
+// rendered_images:begin
+//   ```tikz
+//   % Draw matrix
+//   \draw[thick] (0,0) rectangle (4,4);
+//   \draw[thick] (0,2) -- (4,2); % horizontal middle
+//   \draw[thick] (2,0) -- (2,4); % vertical middle
+//   
+//   % Labels for actual class
+//   \node[rotate=90] at (-0.8,3) {act = 1};
+//   \node[rotate=90] at (-0.8,1) {act = 0};
+//   
+//   % Labels for predicted class
+//   \node at (1,4.3) {pred = 1};
+//   \node at (3,4.3) {pred = 0};
+//   
+//   % Cell labels
+//   \node at (1,3) {\textbf{TP}};
+//   \node at (3,3) {\textbf{FN}};
+//   \node at (1,1) {\textbf{FP}};
+//   \node at (3,1) {\textbf{TN}};
+//   ```
+//   label=fig:confusionmatrix
+//   caption=Diagram illustrating Confusion Matrix
+//   width=70%
+//   placement=auto
+// rendered_images:end
+// render_images:begin
+#figure(
+  image(
+    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.2.png",
+    width: 70%,
+  ),
+  caption: [Diagram illustrating Confusion Matrix],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:confusionmatrix>
 // render_images:end
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:393 '* Precision vs Recall: Definition'
