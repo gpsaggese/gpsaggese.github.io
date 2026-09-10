@@ -45,8 +45,8 @@ Machine learning offers a vast landscape of choices at every stage of a project:
 to preprocess the data, which features to extract or engineer, which model family to
 use, which training algorithm to apply, and how to evaluate the result. Each of these
 axes can be varied independently, producing a #emph[combinatorial explosion] of
-possible pipelines. Faced with so many degrees of freedom, how should a practitioner
-decide which combination actually works best?
+possible research directions. Faced with so many degrees of freedom, how should
+a practitioner decide which direction to take?
 
 The answer is to evaluate models systematically using a single number. Rather than
 relying on intuition or anecdotal comparisons, each candidate pipeline is scored with
@@ -55,22 +55,24 @@ comparable summary of performance. A single scalar makes it straightforward to r
 alternatives and to communicate results to stakeholders who need a bottom line.
 
 A metric alone, however, is only as trustworthy as the evaluation protocol behind it.
-#strong[Cross-validation] provides a principled way to estimate how well a model will
-generalize: by repeatedly splitting the data into training and validation folds, it
-guards against the optimistic bias that comes from evaluating on the same data used
-for fitting. Beyond cross-validation, #emph[statistical tests] are essential for
-confirming that an observed improvement is genuine rather than an artifact of random
-variation. Hypothesis testing quantifies the probability that the difference between
-two models' scores could have arisen by chance, while #emph[A/B testing] extends this
-reasoning into production settings, where a new model is compared against a baseline
-on live traffic under controlled conditions. Together, these tools turn model
-selection from guesswork into an evidence-based process.
+#strong[Cross-validation] #cite("kohavi1995crossvalidation") provides a principled
+way to estimate how well a model will generalize: by repeatedly splitting the data
+into training and validation folds, it guards against the optimistic bias that comes
+from evaluating on the same data used for fitting. Beyond cross-validation,
+#emph[statistical tests] are essential for confirming that an observed improvement is
+genuine rather than an artifact of random variation. Hypothesis testing quantifies
+the probability that the difference between two models' scores could have arisen by
+chance, while #emph[A/B testing] extends this reasoning into production settings,
+where a new model is compared against a baseline on live traffic under controlled
+conditions. Together, these tools turn model selection from guesswork into an
+evidence-based process.
 
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:33 '* In-Sample vs Out-Of-Sample Error Expressions'
 // Slide: In-Sample vs Out-Of-Sample Error Expressions
 
 The goal of learning is to find a function $h$ that approximates an unknown target
-function $f$ over the space of inputs $x in cal(X)$. Because $f$ is unknown, we
+function $f$ over the space of inputs $x in cal(X)$ #cite("abumostafa2012learning").
+Because $f$ is unknown, we
 cannot compare $h$ to it everywhere; instead, we measure how well $h$ matches $f$ at
 individual points through a #strong[pointwise error function]:
 
@@ -401,8 +403,8 @@ solution reliably without getting trapped in suboptimal basins.
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:212 '* Mean Squared Error (MSE)'
 // Slide: Mean Squared Error (MSE)
 
-#strong[Mean squared error] (MSE) is the average squared difference between predicted
-and actual values:
+#strong[Mean squared error] (MSE) #cite("hastie2009elements") is the average squared
+difference between predicted and actual values:
 
 $ "MSE" equiv 1 / N sum_(i=1)^N (h(bold(x)_i) - f(bold(x)_i))^2 $
 
@@ -688,7 +690,7 @@ structure from which nearly all binary-classification evaluation flows.
 #strong[Precision vs Recall: Definition]
 
 Throughout this discussion we assume that $y = 1$ encodes the rare event, the class
-we most care about detecting correctly.
+we most care about detecting correctly #cite("vanrijsbergen1979ir").
 
 #strong[Precision] measures how often a positive prediction is actually correct.
 Formally, it is the conditional probability of a true positive given that the model
@@ -937,7 +939,7 @@ how the random baseline provides a floor for useful performance.
 
 A #strong[ROC curve] (short for "Receiver Operating Characteristic") plots the true
 positive rate against the false positive rate as the classification threshold θ
-varies. The true positive rate (also called recall) is defined as
+varies #cite("fawcett2006roc"). The true positive rate (also called recall) is defined as
 $"TPR" = "TP" / ("TP" + "FN")$, measuring the fraction of actual positives the
 classifier correctly identifies. The false positive rate is
 $"FPR" = "FP" / ("FP" + "TN")$, measuring the fraction of actual negatives the
@@ -1203,12 +1205,12 @@ actual face than one that satisfies only one.
 
 #strong[Bagging] (bootstrap aggregating) reduces variance by averaging predictions
 from multiple models trained on different random samples of the original data. The
-canonical example is the random forest: the algorithm creates many decision trees,
-each fitted to a bootstrapped subset of the training set, and then averages their
-predictions (for regression) or takes a majority vote (for classification). Because
-each tree sees a slightly different sample, the individual trees' errors are
-partially uncorrelated, and the average is more stable than any single tree would be
-on its own.
+canonical example is the random forest #cite("breiman2001randomforest"): the
+algorithm creates many decision trees, each fitted to a bootstrapped subset of the
+training set, and then averages their predictions (for regression) or takes a
+majority vote (for classification). Because each tree sees a slightly different
+sample, the individual trees' errors are partially uncorrelated, and the average is
+more stable than any single tree would be on its own.
 
 #strong[Boosting] attacks the opposite problem: it reduces bias by sequentially
 adding models, where each new model focuses on the mistakes its predecessors made.
@@ -1325,9 +1327,9 @@ tension never fully disappears.
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:826 '* Bagging'
 // Slide: Bagging
 
-#strong[Bagging] stands for "Bootstrap AGGregation," a technique that builds a
-stronger model by training several learners on resampled versions of the same dataset
-and combining their predictions.
+#strong[Bagging] stands for "Bootstrap AGGregation," #cite("breiman1996bagging") a
+technique that builds a stronger model by training several learners on resampled
+versions of the same dataset and combining their predictions.
 
 The learning procedure works as follows:
 
@@ -1437,10 +1439,10 @@ learners collectively form a strong predictor.
 // Slide: Adaboost.M1
 #strong[Adaboost.M1]
 
-#strong[AdaBoost] (Adaptive Boosting) is a powerful ensemble method widely used for
-classification. The core idea is to train a sequence of weak learners, each one
-focusing harder on the examples its predecessors got wrong, then combine their
-predictions into a single strong classifier.
+#strong[AdaBoost] (Adaptive Boosting) #cite("freundschapire1997boosting") is a
+powerful ensemble method widely used for classification. The core idea is to train a
+sequence of weak learners, each one focusing harder on the examples its predecessors
+got wrong, then combine their predictions into a single strong classifier.
 
 The method assumes that the learning algorithm can accept weighted examples in its
 cost function, so that some training points count more heavily than others during
@@ -1490,10 +1492,11 @@ most needed.
 // From: msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd:930 '* Stacking'
 // Slide: Stacking
 
-#strong[Stacking] is the idea of learning how to combine models, which need not even
-be of the same type. With simple voting or averaging, every base model gets equal say
-(or a fixed weight), and there is no principled way to know which model to trust on
-which kinds of inputs. Stacking solves this by introducing a #emph[meta-learner]
+#strong[Stacking] #cite("wolpert1992stacking") is the idea of learning how to combine
+models, which need not even be of the same type. With simple voting or averaging,
+every base model gets equal say (or a fixed weight), and there is no principled way
+to know which model to trust on which kinds of inputs. Stacking solves this by
+introducing a #emph[meta-learner]
 (called the level-1 model) whose job is to discover how best to pick or mix the
 predictions of several base learners (the level-0 models).
 

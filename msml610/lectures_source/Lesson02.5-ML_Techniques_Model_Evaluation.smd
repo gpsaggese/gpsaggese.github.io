@@ -21,7 +21,8 @@
 
 - @Solution@: Evaluate models **systematically using a single number**
   - Implement _metrics_ (e.g., accuracy, F1 score) for insight
-  - Use _cross-validation_ for model validation
+  - Use _cross-validation_ `#cite("kohavi1995crossvalidation")`{=typst} for model
+    validation
   - Use _statistical tests_ to ensure differences are not random
     - Utilize hypothesis testing
     - Conduct A/B testing in real-world
@@ -30,6 +31,7 @@
 
 - @Goal@: Find a function $h$ that approximates $h \approx f$ the unknown function
   $f$ over the space of inputs $\vx \in \calX$ ("script X")
+  `#cite("abumostafa2012learning")`{=typst}
 
 - Usually the **error is point-wise**:
   $$
@@ -208,7 +210,8 @@ timeline
 
 * Mean Squared Error (MSE)
 
-- @Definition@: MSE is the **average squared difference of error**:
+- @Definition@: MSE is the **average squared difference of error**
+  `#cite("hastie2009elements")`{=typst}:
   $$
   \text{MSE}
   \defeq \frac{1}{N} \sum_{i=1}^N (h(\vx_i) - f(\vx_i))^2
@@ -387,7 +390,7 @@ timeline
 
 * Precision vs Recall: Definition
 
-- @Assumptions@: $y = 1$ encodes the rare event
+- @Assumptions@: $y = 1$ encodes the rare event `#cite("vanrijsbergen1979ir")`{=typst}
 
 - @Definition@: **Precision** measures how often there is a true positive _given that
   pred = 1_ \begingroup \small \vspace{-0.2cm}
@@ -573,7 +576,7 @@ timeline
 
 - @Definition@: A **ROC curve** ("Receiver Operating Characteristic") plots _true
   positive rate vs false positive rate_ as the classification threshold $\theta$
-  varies
+  varies `#cite("fawcett2006roc")`{=typst}
   - True positive rate (TPR) = recall = $\frac{\text{TP}}{\text{TP} + \text{FN}}$
   - False positive rate (FPR) = $\frac{\text{FP}}{\text{FP} + \text{TN}}$
 
@@ -754,6 +757,7 @@ timeline
 - @Bagging@
   - Reduces variance by averaging predictions from different models
   - E.g., decision trees + bagging = random forest
+    `#cite("breiman2001randomforest")`{=typst}
     - Creates multiple versions of a decision tree
     - Each tree is trained on a random sample of data
     - Averages predictions to improve accuracy
@@ -824,7 +828,8 @@ timeline
 ::: columns
 :::: {.column width=50%}
 
-- @Definition@: Bagging (from "Bootstrap AGGregation") consists of
+- @Definition@: Bagging (from "Bootstrap AGGregation") `#cite("breiman1996bagging")`{=typst}
+  consists of
   - Several training datasets are extracted randomly by sampling with replacement
     from the original dataset (i.e., bootstrap)
   - Learn multiple models, one for each training set
@@ -900,8 +905,8 @@ timeline
 ::: columns
 :::: {.column width=60%}
 
-- @Definition@: **AdaBoost** (from Adaptive Boosting) is an ensemble method, widely
-  used for classification
+- @Definition@: **AdaBoost** (from Adaptive Boosting) `#cite("freundschapire1997boosting")`{=typst}
+  is an ensemble method, widely used for classification
   - Assumes examples can be weighted in the cost function used to learn (otherwise
     use resampling)
 
@@ -929,8 +934,8 @@ timeline
 ::: columns
 :::: {.column width=60%}
 
-- @Definition@: **Stacking** is about learning how to combine models (not necessarily
-  of the same type)
+- @Definition@: **Stacking** `#cite("wolpert1992stacking")`{=typst} is about learning
+  how to combine models (not necessarily of the same type)
 
 - @Problem@: With voting / averaging we don't know which model to trust
 

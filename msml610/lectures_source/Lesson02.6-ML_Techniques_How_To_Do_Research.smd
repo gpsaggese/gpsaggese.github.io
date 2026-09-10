@@ -36,10 +36,11 @@
 
 - @Definition@: There are many **measures of complexity**
   - Complexity of a single hypothesis $h$
-    - E.g., polynomial order, MDL (describe hypothesis in bits), Kolmogorov
-      complexity
+    - E.g., polynomial order, MDL (describe hypothesis in bits)
+      `#cite("rissanen1978mdl")`{=typst}, Kolmogorov complexity
   - Complexity of a hypothesis set $\calH$
     - E.g., VC dimension of the model `#cite("abumostafa2012learning")`{=typst}
+      `#cite("vapnikchervonenkis1971uniform")`{=typst}
   - Complexity of both $h$ and $\calH$ are related by counting:
     - If you need $l$ bits to specify $h$, then $h$ is one of $2^l$ elements of set
       $\calH$
@@ -59,6 +60,8 @@
 
 - @Model should tell a story@
   - You cannot blindly accept results of modeling
+    - _"All models are wrong, but some are useful"_
+      `#cite("box1976science")`{=typst}
   - Ask: _"What criticisms would you give if the model was presented for the first
     time?"_
 
@@ -125,7 +128,8 @@ mindmap
 * Data Snooping (1/2)
 
 - @Definition@: **Data snooping** occurs when test set information improperly
-  influences model-building `#cite("hastie2009statlearn")`{=typst}
+  influences model-building `#cite("hastie2009elements")`{=typst}
+  `#cite("kaufman2012leakage")`{=typst}
 
 - @Causes of Data Snooping@
   - _Train-test contamination_: Test data leaks into training
@@ -167,7 +171,7 @@ mindmap
 
 * "Burning the Test Set"
 
-- @Problem@ `#cite("hastie2009statlearn")`{=typst}
+- @Problem@ `#cite("hastie2009elements")`{=typst}
   - Repeated test set use during development leaks into training $\to$ overfitting to
     _test data_
   - _"If you torture the data long enough, it will confess whatever you want"_
@@ -240,8 +244,10 @@ mindmap
 * Why Using a Lot of Data?
 
 - @Fact@: **Several studies** show that: `#cite("abumostafa2012learning")`{=typst}
+  `#cite("banko2001data")`{=typst}
   - Different algorithms/models have remarkably similar performance
   - Increasing training set improves performance
+    `#cite("halevy2009unreasonable")`{=typst}
 
 - @Consequence@
   - High capacity model + massive training set = good performance
@@ -306,6 +312,7 @@ mindmap
   3. Set up diagnostic tools
      - Compute learning and bias-variance curves
      - Understand issues before fixing (avoid premature optimization)
+       `#cite("knuth1974premature")`{=typst}
   4. Understand the problem (debug)
      - Review misclassified emails manually: What are their types?
   5. Sometimes you just need to try approaches to see if they work
