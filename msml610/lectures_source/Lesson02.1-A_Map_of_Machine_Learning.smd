@@ -65,7 +65,7 @@ mindmap
 * Learning Paradigms
 
 - @Question@: How do you set up the learning problem?
-```graphviz[width=80%]
+```graphviz[width=90%]
 digraph LearningParadigms {
   graph [rankdir=LR, splines=curved, bgcolor="transparent",
          ranksep="1.0 equally", nodesep=0.24, pad=0.3, fontname="Helvetica"];
@@ -104,7 +104,7 @@ digraph LearningParadigms {
 * Model Families
 
 - @Question@: What functional form can a model take?
-```graphviz[width=70%]
+```graphviz[width=80%]
 digraph MLModelsTaxonomy {
   graph [rankdir=LR, splines=curved, bgcolor="transparent",
          ranksep="1.0 equally", nodesep=0.24, pad=0.3, fontname="Helvetica"];
@@ -151,18 +151,18 @@ digraph MLModelsTaxonomy {
 
 - @Question@: What are the _stages_ and _common techniques_ used in a ML pipeline?
   - @Input processing@
-    - Data cleaning, Dimensionality reduction, Feature engineering,
+    - Data cleaning, dimensionality reduction, feature engineering
   - @Model building@
     - Choosing a model / functional form for the hypothesis
     - Learning algorithms
   - @Performance evaluation@
     - Cross-validation
   - @Diagnostic@
-    - Bias-variance curves, Learning curves
+    - Bias-variance curves, learning curves
   - @Regularization@
   - @Aggregation@
-    - Boosting `#cite("freundschapire1997boosting")`{=typst}, Bagging
-      `#cite("breiman1996bagging")`{=typst}, Stacking,
+    - Boosting `#cite("freundschapire1997boosting")`{=typst}, bagging
+      `#cite("breiman1996bagging")`{=typst}, stacking
 ```graphviz
 digraph MLPipeline {
   bgcolor="transparent";

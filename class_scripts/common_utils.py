@@ -11,7 +11,7 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 import dev_scripts_helpers.documentation.preprocess_notes as dshdprno
 import helpers.hcache_simple as hcacsimp
@@ -209,6 +209,58 @@ def ensure_dir_exists(dir_path: str, *, from_scratch: bool = False) -> None:
     # Create directory if it doesn't exist.
     hio.create_dir(dir_path, incremental=True)
     _LOG.debug("Ensured directory exists: %s", dir_path)
+
+
+def process_targets(
+    targets: List[str],
+    process_one: Callable[[str], None],
+    # TODO(ai_gp): Make this mandatory.
+    *,
+    no_abort_on_error: bool = False,
+) -> None:
+    """
+    Run `process_one` for each target, optionally continuing past failures.
+
+    Used by CLIs that process a batch of targets (e.g., `gen_slides.py`,
+    `render_book_chapter.py` processing a list of lecture specs) to support
+    a `--no_abort_on_error` option.
+
+    :param targets: target identifiers (e.g., lecture specs), used for
+        logging/reporting only
+    :param process_one: callback invoked as `process_one(target)` for each
+        target
+    :param no_abort_on_error: if True, continue with the remaining targets
+        when one fails, instead of letting the exception propagate
+        immediately; a summary of the failed targets is logged and raised
+        as a single `RuntimeError` at the end
+    :raises RuntimeError: if `no_abort_on_error` is True and at least one
+        target failed
+    """
+    failures: List[Tuple[str, Exception]] = []
+    for target in targets:
+        if not no_abort_on_error:
+            process_one(target)
+            continue
+        try:
+            process_one(target)
+        except Exception as e:  # pylint: disable=broad-except
+            _LOG.error(
+                "%s",
+                hprint.color_highlight(f"FAILED: {target}: {e}", "red"),
+            )
+            failures.append((target, e))
+    if failures:
+        summary = "\n".join(f"- {target}: {e}" for target, e in failures)
+        _LOG.error(
+            "\n%s",
+            hprint.frame(f"{len(failures)}/{len(targets)} targets failed")
+            + "\n"
+            + summary,
+        )
+        raise RuntimeError(
+            f"{len(failures)} out of {len(targets)} targets failed: "
+            f"{[target for target, _ in failures]}"
+        )
 
 
 def count_pdf_pages(pdf_path: str) -> int:

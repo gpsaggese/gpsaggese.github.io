@@ -14,6 +14,7 @@
 ## Origins and Early AI (1943-1990)
 
 * AI Timeline
+
 ```raw_latex
 \documentclass[tikz]{standalone}
 \usepackage{tikz}
@@ -176,8 +177,10 @@
 //```
 
 * The Beginning (1943-1956)
+
 ::: columns
 :::: {.column width=80%}
+
 - @Artificial neuron@
   - Model _(McCulloch-Pitts, 1943)_ `#cite("mcculloch1943logical")`{=typst} based on:
     - Brain physiology
@@ -194,21 +197,25 @@
     - Teaching machine like a child
 
 - @Birth of AI@
-  - McCarthy organized first AI workshop (1956) `#cite("mccarthy1955dartmouth")`{=typst}
+  - McCarthy organized first AI workshop (1956)
+    `#cite("mccarthy1955dartmouth")`{=typst}
   - The Logic Theorist _(Newell and Simon, 1956)_
     - Programs to "think non-numerically" and prove theorems
+
 ::::
 :::: {.column width=20%}
 
 ![](msml610/lectures_source/figures/L01.4.Alan_Turing.jpg)
-
 \scriptsize `#text(size: 0.8em)[`{=typst}_Alan Turing, 1951_`]`{=typst}
+
 ::::
 :::
 
 * Enthusiasm and Great Expectations (1952-1969)
+
 ::: columns
 :::: {.column width=80%}
+
 - @Early years of AI were full of successes@
   - At the beginning, computers could only do arithmetics
   - _"A machine can never do X (e.g., games, puzzles, IQ tests, ...)"_
@@ -225,24 +232,25 @@
   - 3,000 vacuum tubes for 40 neurons
 
 - @MIT and Stanford@
-  - Minsky at MIT: focus on neural network
-  - McCarthy at Stanford: focus on representation, logic
+  - Minsky at MIT: Focus on neural network
+  - McCarthy at Stanford: Focus on representation, logic
+
 ::::
 :::: {.column width=20%}
 
 ![](msml610/lectures_source/figures/L01.4.Marvin_Minsky.jpg)
-
 \scriptsize `#text(size: 0.8em)[`{=typst}_Marvin Minsky (2008)_`]`{=typst}
+
 ::::
 :::
 
 * First AI Winter (1975-1980)
+
 - @Fact@: Early successes of AI set high expectations
   - In 1965-1975 AI didn't succeed on **real problems** due to:
     - Solutions were based on _human problem-solving methods_
     - Difficulty handling _combinatorial explosion_
-      - Theorem proving handles small problems with brute force, but doesn't
-        scale
+      - Theorem proving handles small problems with brute force, but doesn't scale
     - Neural networks couldn't be used since they needed:
       - Algorithms (e.g., backpropagation)
       - Compute power
@@ -253,8 +261,10 @@
   - Slow AI progress through late 1970s
 
 * Expert Systems (1980-1990)
+
 ::: columns
 :::: {.column width=70%}
+
 - @Definition@: **Expert systems** (aka "knowledge-based systems")
   - Combine _weak methods_ with _extensive domain knowledge_ as rules
   - Use inference engines to apply rules to facts
@@ -262,13 +272,14 @@
 
 - @Definition@: **Weak AI** (aka "narrow AI")
   - Uses _"weak methods"_ (search, logic) that struggle to scale
-  - _"Narrow AI"_ performs specific tasks (not general reasoning) and
-    operates in a limited, well-defined domain
+  - _"Narrow AI"_ performs specific tasks (not general reasoning) and operates in a
+    limited, well-defined domain
 
 - @Commercial adoption and industry growth@
   - AI shifted to practical applications
   - Major US corporations deployed expert systems
   - AI emerged as a commercial industry
+
 ::::
 :::: {.column width=30%}
 
@@ -305,18 +316,20 @@ digraph ExpertSystem {
     Engine -> Conclusion;
 }
 ```
+
 ::::
 :::
 
 * Second AI Winter (late 1980-early 1990)
-- @Fact@: lots of hype / expert systems didn't deliver
+
+- @Fact@: Lots of hype / expert systems didn't deliver
 
 - @Reasons@
   - Building/maintaining expert systems is difficult
   - Reasoning methods ignore uncertainty
   - Systems can't learn from experience
-  - E.g., expert systems in medical diagnosis struggle with complex, variable
-    patient data
+  - E.g., expert systems in medical diagnosis struggle with complex, variable patient
+    data
   - E.g., early AI chess systems couldn't adapt to new strategies without manual
     updates
 
@@ -325,6 +338,7 @@ digraph ExpertSystem {
 ## The Statistical Turn (1986-2000s)
 
 * Return of Neural Networks (1986-)
+
 - @Fact@: Back-propagation algorithm is (re)discovered in mid-1980s
   `#cite("rumelhart1986backprop")`{=typst}
   - First applied to neural networks in 1970s (Werbos)
@@ -343,20 +357,23 @@ digraph ExpertSystem {
     - E.g., in image recognition identify objects by learning from labeled images
 
 * Probabilistic Reasoning and ML (1987-)
+
 ::: columns
 :::: {.column width=55%}
+
 - @AI and scientific method@
   - Rigorous methods to test performance
     - E.g., speech recognition, handwritten character recognition
   - Benchmarks for progress, e.g.,
-    - MNIST: handwritten digit recognition
-    - ImageNet: image object recognition
-    - SAT Competitions: boolean satisfiability solvers
+    - MNIST: Handwritten digit recognition
+    - ImageNet: Image object recognition
+    - SAT Competitions: Boolean satisfiability solvers
 
 - @Fact@: AI shifts from:
   - Boolean logic to probability
   - Hand-coded rules to machine learning
   - A-priori reasoning to experimental results
+
 ::::
 :::: {.column width=40%}
 
@@ -372,10 +389,12 @@ digraph ExpertSystem {
 )
 ```
 \endgroup
+
 ::::
 :::
 
 * Speech Recognition: From Rules to Statistics
+
 - @Ad-hoc approaches (1970s)@
   - Several approaches to Rule-based systems with limited robustness
   - Cons
@@ -394,8 +413,10 @@ digraph ExpertSystem {
   - _"General methods + lots of data beat handcrafted systems"_
 
 * Bayesian Networks (1988-)
+
 ::: columns
 :::: {.column width=65%}
+
 - @Bayesian networks@ _(Pearl, 1988)_ `#cite("pearl1988probabilistic")`{=typst}
   - AI is linked with:
     - Probability
@@ -408,34 +429,40 @@ digraph ExpertSystem {
   - Diagnosing diseases based on symptoms
   - Predictive text input in smartphones
   - Fraud detection in banking
+
 ::::
 :::: {.column width=30%}
 
 ![](msml610/lectures_source/figures/L01.4.Judea_Pearl.jpg)
 
 // TODO(ai_gp): Update with https://preposterousuniverse.com/podcast/2022/05/09/196-judea-pearl-on-cause-and-effect/
+
 \scriptsize `#text(size: 0.8em)[`{=typst}_Judea Pearl (2013)_`]`{=typst}
+
 ::::
 :::
 
 * Reinforcement Learning (1988-)
+
 ::: columns
 :::: {.column width=65%}
-- **Reinforcement Learning** _(Sutton, 1988)_ `#cite("sutton1988td")`{=typst} involves agents learning by
-  interacting with an environment
-  - E.g., a robot learning to navigate a maze by receiving rewards for
-    successful paths
+
+- **Reinforcement Learning** _(Sutton, 1988)_ `#cite("sutton1988td")`{=typst}
+  involves agents learning by interacting with an environment
+  - E.g., a robot learning to navigate a maze by receiving rewards for successful
+    paths
 
 - **Markov Decision Problems** (MDPs) provide a framework for modeling
   decision-making
-  - E.g., a game strategy modeled where each move influences the outcome with
-    certain probabilities
+  - E.g., a game strategy modeled where each move influences the outcome with certain
+    probabilities
+
 ::::
 :::: {.column width=30%}
 
 ![](msml610/lectures_source/figures/L01.4.Richard_Sutton.jpg)
-
 \scriptsize `#text(size: 0.8em)[`{=typst}_Richard Sutton (2025)_`]`{=typst}
+
 ::::
 :::
 
@@ -461,8 +488,10 @@ mindmap
 ## Modern AI (2001-Present)
 
 * Big Data (2001-Present)
+
 ::: columns
 :::: {.column width=50%}
+
 - @Focus shifted from algorithms to data@
   - For 60 years, AI focused on algorithms and models
   - For many problems, data availability matters more than algorithms
@@ -471,6 +500,7 @@ mindmap
 
 - In 2011, IBM's Watson beat human _Jeopardy!_ champions
   `#cite("ferrucci2010watson")`{=typst}
+
 ::::
 :::: {.column width=50%}
 
@@ -487,12 +517,15 @@ mindmap
 )
 ```
 \endgroup
+
 ::::
 :::
 
 * Deep Learning (2011-Present)
+
 ::: columns
 :::: {.column width=58%}
+
 - @Deep learning@
   - ML models with multiple layers of computing elements
   - Ideas known since 1970s, but then forgot
@@ -554,6 +587,7 @@ digraph DLPipeline {
     }
 }
 ```
+
 ::::
 :::
 
@@ -569,8 +603,8 @@ digraph DLPipeline {
   - Universal algorithm for learning and acting (e.g., driving, chess, speech)
 
 * Progress in AI Research
-- @Huge interest in deep learning@
 
+- @Huge interest in deep learning@
 ```{=typst}
 #styled-table(
   headers: ("Metric", "2010", "2019", "2026", "Growth"),
@@ -596,8 +630,8 @@ digraph DLPipeline {
 :::: {.column width=80%}
 
 - @Robotic vehicles@
-  - Waymo's driverless fleet has logged far more than its original 10
-    million-mile safety milestone
+  - Waymo's driverless fleet has logged far more than its original 10 million-mile
+    safety milestone
 
 - @Legged locomotion@
   - BigDog recovers on ice
@@ -617,6 +651,7 @@ digraph DLPipeline {
   - ML recommends based on past experiences
   - Spam filtering 99.9% accuracy
   - E.g., Amazon, Facebook, Netflix, Spotify, YouTube
+
 ::::
 :::: {.column width=20%}
 
@@ -628,8 +663,10 @@ digraph DLPipeline {
 :::
 
 * What Can AI Do Today? (2/2)
+
 ::: columns
 :::: {.column width=78%}
+
 - @Game playing@
   - 1997: Deep Blue defeated Kasparov
   - 2011: Watson beat Jeopardy! champion
@@ -647,25 +684,23 @@ digraph DLPipeline {
   - AI equivalent to health care professionals
 
 - @Question@: When will we reach AGI (Artificial General Intelligence)?
+
 ::::
 :::: {.column width=20%}
 
 ![](msml610/lectures_source/figures/L01.3.Deep_Blue.jpg){width=65%}
-
 \scriptsize `#text(size: 0.8em)[`{=typst}_Deep Blue, 1997_`]`{=typst}
-
 ![](msml610/lectures_source/figures/L01.3.AlphaGo_Rack.jpg){width=65%}
-
 \scriptsize `#text(size: 0.8em)[`{=typst}_AlphaGo's TPU rack, 2016_`]`{=typst}
+
 ::::
 :::
 
 * The AI Hype Cycle
-- @Fact@: enthusiasm for AI has swung between boom and bust, not grown
-  steadily
+
+- @Fact@: Enthusiasm for AI has swung between boom and bust, not grown steadily
   - Two winters followed unmet expectations
   - The current boom is driven by data and compute, not a single algorithm
-
 ```raw_latex[width=62%]
 \documentclass[tikz]{standalone}
 \usepackage{tikz}
@@ -708,20 +743,25 @@ digraph DLPipeline {
 \end{document}
 ```
 
-- @Key idea@: past booms also felt inevitable at the time
+- @Key idea@: Past booms also felt inevitable at the time
   - Reason for caution about claims of imminent AGI today
 
 # Risks and Benefits of AI
 
 * Benefits of AI
+
 ::: columns
 :::: {.column width=65%}
+
 - Our civilization is the product of **human intelligence**
   - Greater machine intelligence leads to better human society
   - _"First solve AI, then use AI to solve everything else"_
+
 ::::
 :::: {.column width=30%}
+
 ![](msml610/lectures_source/figures/L01.3.Friendly_AI.png)
+
 ::::
 :::
 
@@ -738,6 +778,7 @@ digraph DLPipeline {
 
 ::: columns
 :::: {.column width=65%}
+
 - @Autonomous weapons@
   - Locate and eliminate targets autonomously
   - Deploy large number of weapons
@@ -759,13 +800,15 @@ digraph DLPipeline {
 
 ::::
 :::: {.column width=30%}
-![](msml610/lectures_source/figures/L01.3.Terminator.png)
 
+![](msml610/lectures_source/figures/L01.3.Terminator.png)
 ![](msml610/lectures_source/figures/L01.3.Misinformation.png)
+
 ::::
 :::
 
 * Risks of AI (2/2)
+
 - @Impact on employment@
   - Machines eliminate jobs
   - Rebuttal
@@ -785,12 +828,13 @@ digraph DLPipeline {
   - AI requires technical and ethical standards
 
 * Human-Level AI (AGI)
+
 ::: columns
 :::: {.column width=68%}
+
 - @Human-level AI (AGI)@
   - Machines able to learn to do anything a human can do
   - Aka AGI (Artificial General Intelligence)
-
   - When AGI?
     - Expert prediction average is 2099 `#cite("grace2018whenwill")`{=typst}
       - Papers show that expert predictions no better than amateurs
@@ -800,6 +844,7 @@ digraph DLPipeline {
 - @Artificial Super-Intelligence (ASI)@
   - Machines surpass human ability in every domain and self-improving
   - Exponential take-off
+
 ::::
 :::: {.column width=30%}
 
@@ -833,10 +878,12 @@ digraph AGISpectrum {
     ASI -> ASI [style=dashed, color="#8C8C8C", label="  Exponential\n  take-off", constraint=false];
 }
 ```
+
 ::::
 :::
 
 * The Problem of Control
+
 - @Question@: Can humans control machines more intelligent than them?
 
 - @King Midas problem@
@@ -844,18 +891,20 @@ digraph AGISpectrum {
   - Humans ask for something, get it, then regret it
   - _Rebuttal_
     - If AGI arrived in a black box from space, need exercise caution before opening
-    - We design AI: if AI gains control, it's a "design failure"
+    - We design AI: If AI gains control, it's a "design failure"
 
 - @Problem of alignment@
   - Super-intelligent AI might pursue goals in unintended, dangerous ways
 
-- @The paperclip problem@ _(Nick Bostrom, 2003)_ `#cite("bostrom2003ethical")`{=typst}
-  - Thought experiment in AI safety 
+- @The paperclip problem@ _(Nick Bostrom, 2003)_
+  `#cite("bostrom2003ethical")`{=typst}
+  - Thought experiment in AI safety
   - AI is tasked with maximizing paperclip production
   - AI becomes superintelligent and single-mindedly pursues this goal
   - Converts Earth and humans into paperclips
 
 * Solutions to Problem of Control
+
 - @Naive Solution@: **Checks-and-balances**
   - Researchers and corporations develop voluntary self-governance principles for AI
   - Governments and international organizations established advisory bodies
@@ -873,12 +922,14 @@ digraph AGISpectrum {
     - AI observes human behavior to infer reward function
 
 * Cooperative Inverse Reinforcement Learning
+
 ::: columns
 :::: {.column width=70%}
+
 - AI infers human goals based on actions
 
-- **Observation**: GP looks tired, sits on the couch, observes the messy table,
-  and starts watching TV
+- **Observation**: GP looks tired, sits on the couch, observes the messy table, and
+  starts watching TV
 
 - **Inference**: AI infers:
   - GP is tired and wants to relax
@@ -891,6 +942,7 @@ digraph AGISpectrum {
 - **Feedback loop**: AI monitors GP's reactions
   - If GP is relaxed and happy, AI understanding is reinforced
   - If GP is not happy, AI adjusts actions and improves inference
+
 ::::
 :::: {.column width=30%}
 
@@ -925,10 +977,12 @@ digraph CIRLLoop {
     Feedback -> Observation [style=dashed, color="#8C8C8C", label="  Loop", constraint=false];
 }
 ```
+
 ::::
 :::
 
 * E/acc vs P(doom)
+
 ::: columns
 :::: {.column width=60%}
 
@@ -942,21 +996,23 @@ digraph CIRLLoop {
   - "Probability of Doom"
   - Estimated probability that advanced AI will cause catastrophic harm
   - Used informally by AI researchers to quantify risk
+
 ::::
 :::: {.column width=40%}
+
 ![](msml610/lectures_source/figures/L01.3.e_acc.png)
-
 \vspace{0.5cm}
-
 ![](msml610/lectures_source/figures/L01.3.P_doom.png)
-
 _Mountainhead, 2025_
+
 ::::
 :::
 
 * My 2 Cents
+
 ::: columns
 :::: {.column width=55%}
+
 - AI alignment is a serious problem
   - For now philosophical, at some point a real one
   - Most tech people have used it for marketing themselves and their companies
@@ -964,20 +1020,26 @@ _Mountainhead, 2025_
 - We are quite bad at predicting the future, e.g.,
   - [Paleofuture](https://paleofuture.com/)
   - [Elon-O-Meter](https://elonmusk.today/)
+
 ::::
 :::: {.column width=40%}
+
 ![](msml610/lectures_source/figures/L01.3.Windows_failure.png)
+
 ::::
 :::
-
 ::: columns
 :::: {.column width=55%}
+
 - IMO it's as urgent as debating what political system humanity will need when living
   on Mars
   - For now we can't get airport terminals to work!
+
 ::::
 :::: {.column width=40%}
+
 ![](msml610/lectures_source/figures/L01.3.Y2K.png)
+
 ::::
 :::
 
